@@ -1,0 +1,98 @@
+{
+    "ehi_mod_title" : "Extra Heist Info",
+    "ehi_mod_desc" : "",
+
+    "ehi_preview" : "Preview (A map restart is required to take effect)\nRed corner indicates where the first tracker is going to appear",
+
+    "ehi_x_offset" : "X offset",
+    "ehi_x_offset_desc" : "X offset",
+    "ehi_y_offset" : "Y offset",
+    "ehi_y_offset_desc" : "Y offset",
+
+    "ehi_scale" : "Scale",
+    "ehi_scale_desc" : "Sets scale of trackers. The higher number the bigger trackers are and vice versa",
+
+    "ehi_vr_scale": "VR Scale",
+    "ehi_vr_scale_desc": "Sets scale of trackers in VR. The higher number the bigger trackers are and vice versa",
+
+    "ehi_time_format" : "Time Format",
+    "ehi_time_format_desc" : "Defines how tracker should be formated",
+    "ehi_time_format_1" : "Seconds Only",
+    "ehi_time_format_2" : "Minutes and Seconds",
+
+    "ehi_trackers" : "Trackers",
+    "ehi_trackers_desc" : "",
+
+    "ehi_show_achievement" : "Show achievement tracker",
+    "ehi_show_achievement_desc" : "Shows on the screen timed achievements",
+
+    "ehi_show_gained_xp" : "Show gained XP",
+    "ehi_show_gained_xp_desc" : "Shows earned XP in a mission.\nThis tracker is disabled in Crime Spree.",
+
+    "ehi_xp_format" : "How to format gained XP",
+    "ehi_xp_format_desc" : "Example: Base value: 1000; Death Wish difficulty\nBase value only: 1000\nValue multiplied with difficulty: 13000\nValue multiplied with all XP bonuses: 13000+",
+    "ehi_xp_format_base" : "Show base value only",
+    "ehi_xp_format_difficulty_multiplier" : "Show value multiplied with difficulty",
+    "ehi_xp_format_all_bonuses" : "Show value multiplied with all XP bonuses",
+
+    "ehi_xp_panel" : "How to show gained XP",
+    "ehi_xp_panel_desc" : "",
+    "ehi_xp_panel_1" : "Show panel for every XP gained",
+    "ehi_xp_panel_2" : "Show total XP gained from the heist",
+
+    "ehi_show_trade_delay" : "Show Trade Delay Tracker",
+    "ehi_show_trade_delay_desc" : "Shows trade delay when you or your teammates kill a civilian",
+
+    "ehi_show_trade_delay_option" : "When Show Trade Delay Tracker",
+    "ehi_show_trade_delay_option_desc": "Always: Always show a tracker when you or your teammate killed a civilian\nIn Custody: Show a tracker when you or your teammate went to custody and killed atleast 1 civilian",
+    "ehi_show_trade_delay_option_1" : "Always",
+    "ehi_show_trade_delay_option_2" : "In Custody",
+
+    "ehi_show_trade_delay_other_players_only": "Show Trade Delay Tracker For Other Players Only",
+    "ehi_show_trade_delay_other_players_only_desc": "When enabled, this tracker will not show how many civilians you killed.",
+
+    "ehi_show_timers" : "Show Timers",
+    "ehi_show_timers_desc" : "Shows timers for hacking, drilling, sawing, etc...",
+
+    "ehi_show_zipline_timer" : "Show Zipline Tracker",
+    "ehi_show_zipline_timer_desc" : "Shows 2 timers for zipline.\nFirst timer shows how long it takes to drop a bag/player, second timer shows zipline reset",
+
+    "ehi_show_gage_tracker" : "Show Gage Tracker",
+    "ehi_show_gage_tracker_desc" : "Shows tracker for Gage Packages on the map.\nIf the map does not allow Gage Packages, the tracker will not show",
+
+    "ehi_show_captain_damage_reduction" : "Show Enemy Damage Reduction",
+    "ehi_show_captain_damage_reduction_desc" : "Shows tracker for damage reduction when Captain is present",
+
+    "ehi_show_equipment_tracker" : "Show Equipment Tracker",
+    "ehi_show_equipment_tracker_desc" : "Shows a separate tracker for deployed Doctor Bags, Ammo Bags, Grenade Cases, Body Bags and First Aid Kits",
+
+    "ehi_equipment_menu" : "Equipment Menu",
+    "ehi_equipment_menu_desc" : "",
+
+    "ehi_show_equipment_doctorbag" : "Show Doctor Bags Tracker",
+    "ehi_show_equipment_doctorbag_desc" : "Shows a tracker for Doctor Bags",
+
+    "ehi_show_equipment_ammobag" : "Show Ammo Bags Tracker",
+    "ehi_show_equipment_ammobag_desc" : "Shows a tracker for Ammo Bags",
+
+    "ehi_show_equipment_grenadecases" : "Show Grenade Crates Tracker",
+    "ehi_show_equipment_grenadecases_desc" : "Shows a tracker for Grenade Crates",
+
+    "ehi_show_equipment_bodybags": "Show Body Bags Tracker",
+    "ehi_show_equipment_bodybags_desc": "Shows a tracker for Body Bags\nThis tracker is removed when alarm sounds",
+
+    "ehi_show_equipment_firstaidkit": "Show First Aid Kit Tracker",
+    "ehi_show_equipment_firstaidkit_desc": "Shows a tracker for First Aid Kits",
+
+    "ehi_show_equipment_aggregate_health" : "Aggregate Doctor Bags and First Aid Kits",
+    "ehi_show_equipment_aggregate_health_desc" : "Aggregates Doctor Bags and First Aid Kits into one tracker",
+
+    "ehi_show_minion_tracker" : "Show Converts Tracker",
+    "ehi_show_minion_tracker_desc" : "Shows tracker for how much converted enemies are on the map",
+
+    "ehi_show_difficulty_tracker" : "Show Difficulty Tracker",
+    "ehi_show_difficulty_tracker_desc" : "Shows a tracker for how much difficulty the wave is",
+
+    "ehi_show_pager_tracker" : "Show Pager Tracker",
+    "ehi_show_pager_tracker_desc" : "Shows a tracker for how many pagers you have left"
+}

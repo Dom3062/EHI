@@ -1,0 +1,168 @@
+if not (Global and Global.game_settings and Global.game_settings.level_id) then
+    return
+end
+
+core:module("CoreElementLogicChance")
+local level_id = Global.game_settings.level_id
+local triggers = {}
+local SF =
+{
+    AddMoney = 1,
+    RemoveTracker = 2,
+    PauseTracker = 3,
+    UnpauseTracker = 4,
+    UnpauseTrackerIfExists = 5,
+    ResetTrackerTimeWhenUnpaused = 6,
+    AddTrackerIfDoesNotExist = 7,
+    CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused = 8,
+    AddToCache = 9,
+    GetFromCache = 10,
+    ReplaceTrackerWithTracker = 11,
+    IncreaseChance = 12,
+    ExecuteIfTrackerExists = 13,
+    CreateAnotherTrackerWithTracker = 14,
+    SetChanceWhenTrackerExists = 15,
+    RemoveTriggerWhenExecuted = 16,
+    TriggerID = 17,
+    RemoveTrigger = 18,
+    SetTimeOrCreateTracker = 19,
+    ExecuteIfElementIsEnabled = 20,
+    RemoveTrackers = 21,
+    SetChanceWhenTrackerExistsOrIncreaseChance = 100
+}
+
+if level_id == "pines" then -- White Xmas
+    triggers = {
+        [101005] = { chance = 50, id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = "EHIChanceTracker", special_function = SF.SetChanceWhenTrackerExists },
+        [101006] = { chance = 40, id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = "EHIChanceTracker", special_function = SF.SetChanceWhenTrackerExists },
+        [101007] = { chance = 20, id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = "EHIChanceTracker", special_function = SF.SetChanceWhenTrackerExists },
+        [101008] = { chance = 30, id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = "EHIChanceTracker", special_function = SF.SetChanceWhenTrackerExists }
+    }
+elseif level_id == "alex_1" or level_id == "rat" then -- Rats Day 1 and Cook Off
+    local chance = 10
+    if level_id == "rat" then
+        chance = 15
+    end
+    triggers = {
+        [100723] = { chance = chance, id = "CookChance", icons = { "pd2_methlab" }, class = "EHIChanceTracker", special_function = SF.SetChanceWhenTrackerExistsOrIncreaseChance }
+    }
+else
+    return
+end
+
+local function CreateTrackerForReal(id, icon2)
+    if icon2 then
+        triggers[id].icons[2] = icon2
+    end
+    managers.hud:AddTracker({
+        id = triggers[id].id or trigger_id_all,
+        time = triggers[id].time or (triggers[id].random_time and math.random(triggers[id].random_time.low, triggers[id].random_time.high)) + (triggers[id].delay or 0),
+        chance = triggers[id].chance,
+        max = triggers[id].max,
+        icons = triggers[id].icons or trigger_icon_all,
+        class = triggers[id].class
+    })
+end
+
+local function CreateTracker(id)
+    if triggers[id].condition ~= nil then
+        if triggers[id].condition == true then
+            CreateTrackerForReal(id)
+        end
+    else
+        CreateTrackerForReal(id)
+    end
+end
+
+local function Trigger(id)
+    --[[if managers.hud and managers.hud.Debug then
+        managers.hud:Debug(id, "MissionScriptElement")
+    end]]
+    if triggers[id] then
+        if triggers[id].special_function then
+            local f = triggers[id].special_function
+            if f == SF.AddMoney then
+                managers.hud:AddMoney(triggers[id].id, triggers[id].amount)
+            elseif f == SF.RemoveTracker then
+                managers.hud:RemoveTracker(triggers[id].id)
+            elseif f == SF.PauseTracker then
+                managers.hud:PauseTracker(triggers[id].id)
+            elseif f == SF.UnpauseTracker then
+                managers.hud:UnpauseTracker(triggers[id].id)
+            elseif f == SF.UnpauseTrackerIfExists then
+                if managers.hud:TrackerExists(triggers[id].id) then
+                    managers.hud:UnpauseTracker(triggers[id].id)
+                else
+                    CreateTracker(id)
+                end
+            elseif f == SF.ResetTrackerTimeWhenUnpaused then
+                if managers.hud:TrackerExists(triggers[id].id) then
+                    managers.hud:ResetTrackerTimeAndUnpause(triggers[id].id)
+                else
+                    CreateTracker(id)
+                end
+            elseif f == SF.AddTrackerIfDoesNotExist then
+                if not managers.hud:TrackerExists(triggers[id].id) then
+                    CreateTracker(id)
+                end
+            elseif f == SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused then
+                local trigger = triggers[id]
+                if managers.hud:TrackerExists(trigger.id) then
+                    managers.hud:AddDelayToTrackerAndUnpause(trigger.id, trigger.delay_time)
+                else
+                    CreateTracker(id)
+                end
+            elseif f == SF.AddToCache then
+                _cache[triggers[id].id or trigger_id_all] = triggers[id].data
+            elseif f == SF.GetFromCache then
+                local data = _cache[triggers[id].id or trigger_id_all]
+                _cache[triggers[id].id or trigger_id_all] = nil
+                CreateTrackerForReal(triggers[id].id or trigger_id_all, data.icon)
+            elseif f == SF.ReplaceTrackerWithTracker then
+                managers.hud:RemoveTracker(triggers[id].data.id)
+                triggers[triggers[id].data.trigger] = nil -- Removes trigger from the list, used in The White House
+                CreateTracker(id)
+            elseif f == SF.IncreaseChance then
+                local trigger = triggers[id]
+                managers.hud.ehi:IncreaseChance(trigger.id, trigger.amount)
+            elseif f == SF.CreateAnotherTrackerWithTracker then
+                CreateTracker(id)
+                CreateTracker(triggers[id].data.fake_id)
+            elseif f == SF.ExecuteIfTrackerExists then
+                local data = triggers[id].data
+                if managers.hud:TrackerExists(data.id) then
+                    managers.hud:SetTime(triggers[id].id, triggers[id].time)
+                    managers.hud:RemoveTracker(data.id)
+                end
+            elseif f == SF.SetChanceWhenTrackerExists then
+                local trigger = triggers[id]
+                if managers.hud:TrackerExists(trigger.id) then
+                    managers.hud.ehi:SetChance(trigger.id, trigger.chance)
+                else
+                    CreateTracker(id)
+                end
+            elseif f == SF.SetChanceWhenTrackerExistsOrIncreaseChance then
+                local trigger = triggers[id]
+                if managers.hud:TrackerExists(trigger.id) then
+                    managers.hud.ehi:CallFunction(trigger.id, "IncreaseChance", trigger.chance)
+                else
+                    CreateTracker(id)
+                end
+            end
+        else
+            CreateTracker(id)
+        end
+    end
+end
+
+local _f_client_on_executed = ElementLogicChanceOperator.client_on_executed
+function ElementLogicChanceOperator:client_on_executed()
+    _f_client_on_executed(self)
+    Trigger(self._id)
+end
+
+local _f_on_executed = ElementLogicChanceOperator.on_executed
+function ElementLogicChanceOperator:on_executed(...)
+    _f_on_executed(self, ...)
+    Trigger(self._id)
+end

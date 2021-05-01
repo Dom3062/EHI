@@ -1,0 +1,28 @@
+EHIChanceTracker = EHIChanceTracker or class(EHITracker)
+EHIChanceTracker._update = false
+function EHIChanceTracker:init(panel, params)
+    params.update = false
+    self._chance = params.chance or 0
+    EHIChanceTracker.super.init(self, panel, params)
+end
+
+function EHIChanceTracker:Format()
+    return self._chance .. "%"
+end
+
+function EHIChanceTracker:IncreaseChance(amount)
+    self:SetChance(self._chance + amount)
+end
+
+function EHIChanceTracker:DecreaseChance(amount)
+    self:SetChance(self._chance - amount)
+end
+
+function EHIChanceTracker:SetChance(amount)
+    if amount < 0 then
+        amount = 0
+    end
+    self._chance = amount
+    self._text:set_text(self:Format())
+    self:AnimateBG()
+end

@@ -1,0 +1,67 @@
+{
+    "menu_id": "ehi_equipment_menu",
+    "parent_menu" : "ehi_menu",
+    "title": "ehi_equipment_menu",
+    "items": [
+        {
+            "type": "toggle",
+            "id": "ehi_show_equipment_doctorbag_choice",
+            "title": "ehi_show_equipment_doctorbag",
+            "description": "ehi_show_equipment_doctorbag_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_equipment_doctorbag",
+            "value": "show_equipment_doctorbag",
+            "default_value": true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_equipment_ammobag_choice",
+            "title": "ehi_show_equipment_ammobag",
+            "description": "ehi_show_equipment_ammobag_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_equipment_ammobag",
+            "value": "show_equipment_ammobag",
+            "default_value": true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_equipment_grenadecases_choice",
+            "title": "ehi_show_equipment_grenadecases",
+            "description": "ehi_show_equipment_grenadecases_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_equipment_grenadecases",
+            "value": "show_equipment_grenadecases",
+            "default_value": true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_equipment_bodybags_choice",
+            "title": "ehi_show_equipment_bodybags",
+            "description": "ehi_show_equipment_bodybags_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_equipment_bodybags",
+            "value": "show_equipment_bodybags",
+            "default_value": true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_equipment_firstaidkit_choice",
+            "title": "ehi_show_equipment_firstaidkit",
+            "description": "ehi_show_equipment_firstaidkit_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_equipment_firstaidkit",
+            "value": "show_equipment_firstaidkit",
+            "default_value": true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_equipment_aggregate_health_choice",
+            "title": "ehi_show_equipment_aggregate_health",
+            "description": "ehi_show_equipment_aggregate_health_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_equipment_aggregate_health",
+            "value": "show_equipment_aggregate_health",
+            "default_value": true
+        }
+    ]
+}
