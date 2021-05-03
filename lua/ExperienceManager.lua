@@ -20,8 +20,8 @@ end
 
 local function MultiplyXPWillAllBonuses(base_amount)
     local stealth_bonus = 1 + (managers.job:get_ghost_bonus() or 0)
-    local player_bonus = math.min(0, (managers.player:get_skill_exp_multiplier(managers.groupai and managers.groupai:state():whisper_mode())) - 1)
-    local infamy_bonus = math.min(0, managers.player:get_infamy_exp_multiplier() - 1)
+    local player_bonus = math.max(0, (managers.player:get_skill_exp_multiplier(managers.groupai and managers.groupai:state():whisper_mode())) - 1)
+    local infamy_bonus = math.max(0, managers.player:get_infamy_exp_multiplier() - 1)
     return base_amount * difficulty_multiplier * (1 + player_bonus + infamy_bonus + limited_bonus_multiplier) * stealth_bonus
 end
 

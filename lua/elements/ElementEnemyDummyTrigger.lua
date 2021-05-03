@@ -6,7 +6,7 @@ local EHI = EHI
 local level_id = Global.game_settings.level_id
 local SF = EHI:GetSpecialFunctions()
 local triggers = {}
-SF.IncreaseProgressMax = 99
+SF.IncreaseProgressMax = 399
 if level_id == "spa" then -- Brooklyn 10-10
     triggers = {
         [103419] = { id = "SniperDeath", special_function = SF.IncreaseProgress }

@@ -32,14 +32,14 @@ local TT = -- Tracker Type
     Inaccurate = "EHIInaccurateTracker",
     InaccurateWarning = "EHIInaccurateWarningTracker"
 }
-SF.ExecuteIfIDDoesNotExists = 95
-SF.AddToGlobalAndExecute = 96
-SF.DecreaseChance = 97
-SF.UnpauseAndSetTime = 98
-SF.SetTrackerAccurate2 = 99
+SF.ExecuteIfIDDoesNotExists = 195
+SF.AddToGlobalAndExecute = 196
+SF.DecreaseChance = 197
+SF.UnpauseAndSetTime = 198
+SF.SetTrackerAccurate2 = 199
 local SFF =
 {
-    PAL_UnpauseOrCreate = 100
+    PAL_UnpauseOrCreate = 200
 }
 local _cache = {}
 if level_id == "short2_stage2b" then -- Basic Mission: Loud - Plan B
@@ -211,8 +211,6 @@ elseif level_id == "mia_1" then -- Hotline Miami Day 1
         [102177] = { time = (ovk_and_up and (3 + 60 + 23 + 5) or (30 + 23 + 5)), id = "heli", icons = { Icon.Bag } } -- Time before Bile arrives
         --,[105967] = { time = 60 + 23 + 5 }
         --,[103808] = { time = 30 + 23 + 5 }
-        --[[,[106014] = { time = (very_hard_and_below and 40 or 60) + 1, id = "Truck", class = TT.Pausable, special_function = SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused, delay_time = 1, icons = { Icon.Defend } }
-        ,[106020] = { id = "Truck", special_function = SF.PauseTracker }]]
     }
 elseif level_id == "mia_2" then -- Hotline Miami Day 2
     triggers = {
@@ -274,11 +272,6 @@ elseif level_id == "born" then -- The Biker Heist Day 1
         [100728] = { time = 80, random_time = { low = 0, high = 10 }, id = "mike_defend_truck", icons = { Icon.Defend }, class = "EHIInaccuratePausableTracker" },
         [100672] = { id = "mike_defend_truck", special_function = SF.PauseTracker },
         [100647] = { id = "mike_defend_truck", special_function = SF.UnpauseTracker },
-
-        -- Mike (Garage)
-        [101589] = { time = 90, random_time = { low = 0, high = 30 }, id = "mike_defend_garage", icons = { Icon.Defend }, class = "EHIInaccuratePausableTracker", special_function = SF.UnpauseTrackerIfExists },
-        [101461] = { id = "mike_defend_garage", special_function = SF.PauseTracker }--,
-        --[101462] = { id = "mike_defend_garage", special_function = SF.UnpauseTracker }
     }
 elseif level_id == "chew" then -- The Biker Heist Day 2
     triggers = {
@@ -865,6 +858,13 @@ elseif level_id == "skm_run" or level_id == "skm_red2" or level_id == "skm_mus" 
     triggers = {
         [EHI:GetInstanceElementID(100032, start_index)] = { time = 7, id = "HostageRescue", icons = { "pd2_kill" }, class = TT.Warning },
         [EHI:GetInstanceElementID(100036, start_index)] = { id = "HostageRescue", special_function = SF.RemoveTracker }
+    }
+elseif level_id == "Triad Takedown Yacht Heist" then
+    local bag_delay = 24.700000762939
+    triggers = {
+        [100285] = { time = 125 + bag_delay, id = "HeliDrillDrop", icons = { Icon.Heli, "pd2_drill", "pd2_goto" } },
+        [100286] = { time = 130 + bag_delay, id = "HeliDrillDrop", icons = { Icon.Heli, "pd2_drill", "pd2_goto" } },
+        [100297] = { time = 65 + 23, id = "HeliEscape", icons = { Icon.Heli, Icon.Escape, Icon.LootDrop } }
     }
 else
     return

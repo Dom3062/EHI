@@ -238,6 +238,12 @@ elseif level_id == "kosugi" then -- Shadow Raid
         [100957] = { time = 10, id = "KeycardRight", icons = { "equipment_bank_manager_key" }, class = "EHIWarningTracker", special_function = SF.DisableTriggerAndExecute, data = { id = 100955 } },
         [100967] = { special_function = SF.RemoveTrackers, data = { "KeycardLeft", "KeycardRight" } }
     }
+elseif level_id == "born" then -- The Biker Heist Day 1
+    triggers = {
+        [101535] = { time = 90, random_time = { low = 0, high = 30 }, id = "MikeDefendGarage", icons = { "pd2_defend" }, class = "EHIInaccuratePausableTracker", special_function = SF.UnpauseTrackerIfExists },
+        [101534] = { id = "MikeDefendGarage", special_function = SF.UnpauseTracker },
+        [101533] = { id = "MikeDefendGarage", special_function = SF.PauseTracker }
+    }
 elseif level_id == "wwh" then -- Alaskan Deal
     triggers = {
         [100322] = { time = 120, id = "Fuel", icons = { "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },

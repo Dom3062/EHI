@@ -24,7 +24,7 @@
     "ehi_trackers_desc" : "",
 
     "ehi_show_achievement" : "Show achievement tracker",
-    "ehi_show_achievement_desc" : "Shows on the screen timed achievements",
+    "ehi_show_achievement_desc" : "Shows on the screen timed achievements\nSome heists may not have any timed achievements available",
 
     "ehi_show_gained_xp" : "Show gained XP",
     "ehi_show_gained_xp_desc" : "Shows earned XP in a mission.\nThis tracker is disabled in Crime Spree.",
@@ -49,7 +49,7 @@
     "ehi_show_trade_delay_option_2" : "In Custody",
 
     "ehi_show_trade_delay_other_players_only": "Show Trade Delay Tracker For Other Players Only",
-    "ehi_show_trade_delay_other_players_only_desc": "When enabled, this tracker will not show how many civilians you killed.",
+    "ehi_show_trade_delay_other_players_only_desc": "When enabled, this tracker will not show how many civilians you killed but it will still show for other players.",
 
     "ehi_show_timers" : "Show Timers",
     "ehi_show_timers_desc" : "Shows timers for hacking, drilling, sawing, etc...",

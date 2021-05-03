@@ -223,6 +223,7 @@ function EHICiviliansKilledTracker:update(t, dt)
             if time <= 0 then
                 self:RemovePeerFromCustody(peer_id)
             else
+                self._peer_custody_time[peer_id] = time
                 self:FormatUnique(time, peer_id)
             end
         end

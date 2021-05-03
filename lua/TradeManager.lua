@@ -39,10 +39,14 @@ end
 function TradeManager:init()
     original.init(self)
     EHI:Hook(self, "set_trade_countdown", function(s, enabled)
-        local function f()
-            managers.hud.ehi:CallFunction("CustodyTime", "SetPaused", not enabled)
+        if enabled then
+            local function f()
+                managers.hud.ehi:CallFunction("CustodyTime", "SetPaused", false)
+            end
+            EHI:DelayCall("CustodyTime", 1, f) -- For some reason there is a second delay when assault ends
+        else -- The delay is not there when assault starts
+            managers.hud.ehi:CallFunction("CustodyTime", "SetPaused", true)
         end
-        EHI:DelayCall("CustodyTime", 1, f)
     end)
 end
 

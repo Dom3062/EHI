@@ -12,8 +12,7 @@ local triggers = {}
 local trigger_id_all = "Trigger"
 local trigger_icon_all = nil
 local SF = EHI:GetSpecialFunctions()
-SF.ExecuteAndDisableTriggers = 98
-SF.SetAchievementComplete = 99
+SF.ExecuteAndDisableTriggers = 498
 if level_id == "red2" then
     if ovk_and_up and show_achievement then -- Optimization
         triggers = {
@@ -93,13 +92,8 @@ local function Trigger(id)
                 if not managers.hud:TrackerExists(triggers[id].id) then
                     CreateTracker(id)
                 end
-            elseif f == SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused then
-                local trigger = triggers[id]
-                if managers.hud:TrackerExists(trigger.id) then
-                    managers.hud:AddDelayToTrackerAndUnpause(trigger.id, trigger.delay_time)
-                else
-                    CreateTracker(id)
-                end
+            elseif f == SF.SetAchievementComplete then
+                managers.hud.ehi:CallFunction(triggers[id].id, "SetCompleted")
             elseif f == SF.AddToCache then
                 _cache[triggers[id].id or trigger_id_all] = triggers[id].data
             elseif f == SF.GetFromCache then
@@ -125,8 +119,6 @@ local function Trigger(id)
             elseif f == SF.RemoveTriggerWhenExecuted then
                 CreateTracker(id)
                 triggers[id] = nil
-            elseif f == SF.SetAchievementComplete then
-                managers.hud.ehi:CallFunction(triggers[id].id, "SetCompleted")
             elseif f == SF.ExecuteAndDisableTriggers then
                 CreateTracker(id)
                 for _, ID in ipairs(triggers[id].data) do

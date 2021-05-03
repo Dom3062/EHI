@@ -5,8 +5,6 @@
         <pre hook_id="core/lib/utils/coreapp" :script_path="core.lua"/>
 
         <group hook_id="lib/managers/">
-            <!--<post :hook_id="crimespreemanager" :script_path="CrimeSpreeManager.lua"/>-->
-
             <post :hook_id="group_ai_states/groupaistatebase" :script_path="GroupAIStateBase.lua" />
             <post :hook_id="group_ai_states/groupaistatebesiege" :script_path="GroupAIStateBesiege.lua" />
 
@@ -103,12 +101,6 @@
         <post hook_id="core/lib/managers/mission/coreelementinstance" :script_path="elements/ElementInstanceOutputEvent.lua"/>
 
         <post hook_id="lib/tweak_data/tweakdata" :script_path="tweak_data.lua"/>
-
-        <!--post hook_id="lib/network/base/handlers/connectionnetworkhandler" :script_path="ConnectionNetworkHandler.lua"/>
-
-        <post hook_id="lib/setups/networkgamesetup" :script_path="NetworkGameSetup.lua"/>
-
-        <post hook_id="lib/tweak_data/tweakdata" :script_path="TweakData.lua"/>-->
     </hooks>
 
     <!-- Textures -->

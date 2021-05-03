@@ -29,7 +29,7 @@ local level_id = Global.game_settings.level_id
 local triggers = {}
 local trigger_id_all = "Trigger"
 local SF = EHI:GetSpecialFunctions()
-SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused = 99
+SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused = 599
 local Icon = EHI:GetIcons()
 if level_id == "des" then -- Henry's Rock
     triggers = {
@@ -130,10 +130,6 @@ elseif level_id == "arena" then -- The Alesso Heist
             triggers[element].id = triggers[element].id .. tostring(element)
         end
     end
-elseif level_id == "hox_2" then
-    triggers = {
-        [104593] = { id = "RequestCounter", special_function = SF.IncreaseProgress }
-    }
 elseif level_id == "pex" then -- Breakfast in Tijuana
     triggers = {
         [103735] = { id = "pex_11", special_function = SF.IncreaseProgress }

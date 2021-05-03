@@ -63,6 +63,10 @@ if level_id == "bph" then -- Hell's Island
         [101412] = { id = "EnemyDeathOutside", special_function = SF.IncreaseProgress },
         [102171] = { id = "bph_10", special_function = SF.IncreaseProgress }
     }
+elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
+    triggers = {
+        [104591] = { id = "RequestCounter", special_function = SF.IncreaseProgress }
+    }
 elseif level_id == "help" then -- Prison Nightmare
     triggers = {
         [GetInstanceElementID(100474, 21700)] = { id = "orange_5", special_function = SF.IncreaseProgress }

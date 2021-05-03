@@ -281,7 +281,6 @@ end
 
 -- Mouse Functions
 function EHIMenu:mouse_move(o, x, y)
-    --x, y = managers.mouse_pointer:convert_fullscreen_16_9_mouse_pos(x, y)
     if self._open_menu then
         managers.mouse_pointer:set_pointer_image("arrow")
         if self._open_choice_dialog and self._open_choice_dialog.panel then
@@ -334,7 +333,6 @@ function EHIMenu:mouse_move(o, x, y)
 end
 
 function EHIMenu:mouse_press(o, button, x, y)
-    --x, y = managers.mouse_pointer:convert_fullscreen_16_9_mouse_pos(x, y)
     if button == Idstring("0") then
         if self._open_choice_dialog then
             if self._open_choice_dialog.panel:inside(x,y) then
@@ -380,7 +378,6 @@ function EHIMenu:mouse_press(o, button, x, y)
 end
 
 function EHIMenu:mouse_release(o, button, x, y)
-    --x, y = managers.mouse_pointer:convert_fullscreen_16_9_mouse_pos(x, y)
     if button == Idstring("0") then
         if self._slider then
             self:CallCallback(self._slider, { to_n = true })

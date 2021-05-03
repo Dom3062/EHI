@@ -1,4 +1,32 @@
 Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", function(loc)
+	local language_filename = nil
+	local LanguageKey =
+	{
+		["PAYDAY 2 THAI LANGUAGE Mod"] = "thai",
+		--["Ultimate Localization Manager & 正體中文化"] = "tchinese",
+		--["PAYDAY 2 Translate in Portuguese Brazilian"] = "portuguese-br",
+		--["Payday 2 Korean patch"] = "korean"
+	}
+	for _, mod in pairs(BLT and BLT.Mods and BLT.Mods:Mods()) do
+		language_filename = mod:IsEnabled() and LanguageKey[mod:GetName()] or nil
+		if language_filename then
+			break
+		end
+	end
+	if not language_filename then
+		--[[for _, filename in pairs(file.GetFiles(CSGOHUD.LocPath)) do
+			local str = filename:match('^(.*).json$')
+			if str and Idstring(str) and Idstring(str):key() == SystemInfo:language():key() then
+				language_filename = str
+				break
+			end
+		end]]
+		language_filename = "english"
+	end
+	if language_filename ~= "english" then
+		loc:load_localization_file(EHI.ModPath .. "loc/" .. language_filename .. ".json")
+	end
+	loc:load_localization_file(EHI.ModPath .. "loc/english.json", false)
 	--[[for _, filename in pairs(file.GetFiles(BB._path .. "loc/")) do
 		local str = filename:match('^(.*).txt$')
 		if str and Idstring(str) and Idstring(str):key() == SystemInfo:language():key() then
@@ -6,7 +34,6 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
 			break
 		end
 	end]]
-	loc:load_localization_file(EHI.ModPath .. "loc/english.json", false)
 end)
 
 Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_EHI", function(menu_manager, nodes)
