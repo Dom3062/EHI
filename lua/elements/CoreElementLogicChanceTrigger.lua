@@ -38,7 +38,7 @@ local triggers = {}
 
 local outcome =
 {
-    [100013] = { random_time = { low = 15, high = 20 }, delay = 25 + 40/30, id = "Fail", icons = { "equipment_bloodvial", "restarter" }, class = "EHIInaccurateTracker" },
+    [100013] = { time = 25 + 40/30, random_time = { low = 15, high = 20 }, id = "Fail", icons = { "equipment_bloodvial", "restarter" }, class = "EHIInaccurateTracker" },
     [100017] = { time = 30, id = "Success", icons = { "equipment_bloodvialok" } }
 }
 
@@ -55,13 +55,19 @@ for id, value in pairs(outcome) do
     end
 end
 
+local function GetTime(id)
+    local full_time = triggers[id].time or 0
+    full_time = full_time + (triggers[id].random_time and math.random(triggers[id].random_time.low, triggers[id].random_time.high) or 0)
+    return full_time
+end
+
 local function CreateTrackerForReal(id, icon2)
     if icon2 then
         triggers[id].icons[2] = icon2
     end
     managers.hud:AddTracker({
         id = triggers[id].id or trigger_id_all,
-        time = triggers[id].time or (triggers[id].random_time and math.random(triggers[id].random_time.low, triggers[id].random_time.high)) + (triggers[id].delay or 0),
+        time = GetTime(id),
         chance = triggers[id].chance,
         max = triggers[id].max,
         icons = triggers[id].icons or trigger_icon_all,

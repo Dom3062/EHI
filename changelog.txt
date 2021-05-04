@@ -1,6 +1,10 @@
+r3 (04. 05. 2021):
+Cook Off/Rats Day 1: Fixed a crash when you dropped in
+Menu: Fixed an issue where textures were missing
+
 r2 (03. 05. 2021):
 Added Thai translation
-Added support for Triad Takedown (Yacht Heist) custom heist
+Added trackers for Triad Takedown (Yacht Heist) custom heist
 Trade Delay Tracker: Fixed an issue where time did not count down
 XP Tracker: Fixed an issue where experience was not multiplied correctly if "Multiply by all XP bonuses" option was selected
 The Biker Heist Day 1: Fixed an issue where a tracker for Mike in the garage did not unpause (client only)

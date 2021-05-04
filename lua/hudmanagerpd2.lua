@@ -14,7 +14,8 @@ local original =
 local EHI = EHI
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
-    self.ehi = EHIPanel:new()
+    self.ehi = managers.ehi
+    self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
     local level_id = Global.game_settings.level_id
     if EHI:GetOption("show_pager_tracker") and tweak_data.levels[level_id] and tweak_data.levels[level_id].ghost_bonus then
         local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
@@ -32,7 +33,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             class = "EHIProgressTracker"
         })
         if max == 0 then
-            managers.hud.ehi:CallFunction("pagers", "SetBad")
+            self.ehi:CallFunction("pagers", "SetBad")
         end
     end
     if EHI:GetOption("show_difficulty_tracker") and level_id ~= "chill" then

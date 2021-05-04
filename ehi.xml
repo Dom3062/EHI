@@ -8,7 +8,6 @@
             <post :hook_id="group_ai_states/groupaistatebase" :script_path="GroupAIStateBase.lua" />
             <post :hook_id="group_ai_states/groupaistatebesiege" :script_path="GroupAIStateBesiege.lua" />
 
-            <post :hook_id="hudmanagerpd2" :script_path="EHIPanel.lua" />
             <group :script_path="trackers/">
                 <post :hook_id="hudmanagerpd2" :script_path="EHITracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIInaccurateTracker.lua"/>
@@ -64,6 +63,8 @@
             <post :hook_id="trademanager" :script_path="TradeManager.lua" />
         </group>
 
+        <post hook_id="lib/setups/setup" :script_path="EHIManager.lua" />
+        <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
 
         <post hook_id="lib/states/ingamewaitingforplayers" :script_path="IngameWaitingForPlayers.lua" />

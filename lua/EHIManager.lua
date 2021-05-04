@@ -1,7 +1,7 @@
 local panel_size = 32
 local panel_offset = 6
-EHIPanel = EHIPanel or class()
-function EHIPanel:init()
+EHIManager = EHIManager or class()
+function EHIManager:init()
     self._ws = managers.gui_data:create_fullscreen_workspace()
     self._ws:hide()
     self._hud_panel = self._ws:panel():panel({
@@ -26,31 +26,31 @@ function EHIPanel:init()
     end
     panel_size = panel_size * self._scale
     panel_offset = panel_offset * self._scale
-    managers.hud:add_updator("EHI_Update", callback(self, self, "update"))
+    --managers.hud:add_updator("EHI_Update", callback(self, self, "update"))
 end
 
-function EHIPanel:ShowPanel()
+function EHIManager:ShowPanel()
     self._ws:show()
 end
 
-function EHIPanel:HidePanel()
+function EHIManager:HidePanel()
     self._ws:hide()
 end
 
-function EHIPanel:Load(sync_time)
+function EHIManager:Load(sync_time)
     --EHI:Log("Loaded synced Heist time")
     --EHI:Log(tostring(sync_time))
     self._sync_time = sync_time
     self._sync_real_time = Application:time()
 end
 
-function EHIPanel:update(t, dt)
+function EHIManager:update(t, dt)
     for _, tracker in pairs(self._trackers_to_update) do
         tracker:update(t, dt)
     end
 end
 
-function EHIPanel:destroy()
+function EHIManager:destroy()
     for _, tracker in pairs(self._trackers) do
         tracker:destroy()
     end
@@ -60,7 +60,7 @@ function EHIPanel:destroy()
     end
 end
 
-function EHIPanel:SyncTime(time)
+function EHIManager:SyncTime(time)
     --EHI:Log("Synced Heist time: " .. tostring(time))
     self._sync_time = time
     self._sync_real_time = Application:time()
@@ -69,7 +69,7 @@ function EHIPanel:SyncTime(time)
     end
 end
 
-function EHIPanel:AddTracker(params)
+function EHIManager:AddTracker(params)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists! Traceback:")
         EHI:Log(debug.traceback())
@@ -91,32 +91,32 @@ function EHIPanel:AddTracker(params)
     self._n_of_trackers = self._n_of_trackers + 1
 end
 
-function EHIPanel:GetClass(class)
+function EHIManager:GetClass(class)
     class = class or "EHITracker"
     return _G[class]
 end
 
-function EHIPanel:GetY(pos)
+function EHIManager:GetY(pos)
     pos = pos or self._n_of_trackers
     return self._y + (pos * (panel_size + panel_offset))
 end
 
-function EHIPanel:AddTrackerToUpdate(id, tracker)
+function EHIManager:AddTrackerToUpdate(id, tracker)
     self._trackers_to_update[id] = tracker
 end
 
-function EHIPanel:RemoveTrackerFromUpdate(id)
+function EHIManager:RemoveTrackerFromUpdate(id)
     self._trackers_to_update[id] = nil
 end
 
-function EHIPanel:GetTracker(id)
+function EHIManager:GetTracker(id)
     if id then
         return self._trackers[id]
     end
     return nil
 end
 
-function EHIPanel:RemoveTracker(id, remove_ref_only)
+function EHIManager:RemoveTracker(id, remove_ref_only)
     if not remove_ref_only then
         local tracker = self._trackers[id]
         if tracker then
@@ -132,7 +132,7 @@ function EHIPanel:RemoveTracker(id, remove_ref_only)
     self:RearrangeTrackers(pos)
 end
 
-function EHIPanel:RearrangeTrackers(pos)
+function EHIManager:RearrangeTrackers(pos)
     if not pos then
         return
     end
@@ -145,151 +145,151 @@ function EHIPanel:RearrangeTrackers(pos)
     end
 end
 
-function EHIPanel:AddTrackerToUpdate(id, tracker)
+function EHIManager:AddTrackerToUpdate(id, tracker)
     self._trackers_to_update[id] = tracker
 end
 
-function EHIPanel:TrackerExists(id)
+function EHIManager:TrackerExists(id)
     return self._trackers[id] ~= nil
 end
 
-function EHIPanel:SetTrackerPaused(id, pause)
+function EHIManager:SetTrackerPaused(id, pause)
     local tracker = self._trackers[id]
     if tracker and tracker.SetPause then
         tracker:SetPause(pause)
     end
 end
 
-function EHIPanel:AddMoneyToTracker(id, money)
+function EHIManager:AddMoneyToTracker(id, money)
     local tracker = self._trackers[id]
     if tracker and tracker.AddMoney then
         tracker:AddMoney(money)
     end
 end
 
-function EHIPanel:RemoveMoneyFromTracker(id, money)
+function EHIManager:RemoveMoneyFromTracker(id, money)
     local tracker = self._trackers[id]
     if tracker and tracker.RemoveMoney then
         tracker:RemoveMoney(money)
     end
 end
 
-function EHIPanel:AddXPToTracker(id, amount)
+function EHIManager:AddXPToTracker(id, amount)
     local tracker = self._trackers[id]
     if tracker and tracker.AddXP then
         tracker:AddXP(amount)
     end
 end
 
-function EHIPanel:SetTrackerUpgradeable(id, upgradeable)
+function EHIManager:SetTrackerUpgradeable(id, upgradeable)
     local tracker = self._trackers[id]
     if tracker and tracker.SetUpgradeable then
         tracker:SetUpgradeable(upgradeable)
     end
 end
 
-function EHIPanel:SetTrackerUpgrades(id, upgrades)
+function EHIManager:SetTrackerUpgrades(id, upgrades)
     local tracker = self._trackers[id]
     if tracker and tracker.SetUpgrades then
         tracker:SetUpgrades(upgrades)
     end
 end
 
-function EHIPanel:SetTrackerTime(id, time)
+function EHIManager:SetTrackerTime(id, time)
     local tracker = self._trackers[id]
     if tracker and tracker.SetTime then
         tracker:SetTime(time)
     end
 end
 
-function EHIPanel:SetTimerJammed(id, jammed)
+function EHIManager:SetTimerJammed(id, jammed)
     local tracker = self._trackers[id]
     if tracker and tracker.SetJammed then
         tracker:SetJammed(jammed)
     end
 end
 
-function EHIPanel:SetTimerPowered(id, powered)
+function EHIManager:SetTimerPowered(id, powered)
     local tracker = self._trackers[id]
     if tracker and tracker.SetPowered then
         tracker:SetPowered(powered)
     end
 end
 
-function EHIPanel:ResetTrackerTime(id)
+function EHIManager:ResetTrackerTime(id)
     local tracker = self._trackers[id]
     if tracker then
         tracker:ResetTime()
     end
 end
 
-function EHIPanel:AddDelayToTracker(id, delay)
+function EHIManager:AddDelayToTracker(id, delay)
     local tracker = self._trackers[id]
     if tracker then
         tracker:AddDelay(delay)
     end
 end
 
-function EHIPanel:AddToCache(id, data)
+function EHIManager:AddToCache(id, data)
     self._cache[id] = data
 end
 
-function EHIPanel:GetAndRemoveFromCache(id)
+function EHIManager:GetAndRemoveFromCache(id)
     local data = self._cache[id]
     self._cache[id] = nil
     return data
 end
 
-function EHIPanel:IncreaseChance(id, amount)
+function EHIManager:IncreaseChance(id, amount)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseChance then
         tracker:IncreaseChance(amount)
     end
 end
 
-function EHIPanel:DecreaseChance(id, amount)
+function EHIManager:DecreaseChance(id, amount)
     local tracker = self._trackers[id]
     if tracker and tracker.DecreaseChance then
         tracker:DecreaseChance(amount)
     end
 end
 
-function EHIPanel:SetChance(id, amount)
+function EHIManager:SetChance(id, amount)
     local tracker = self._trackers[id]
     if tracker and tracker.SetChance then
         tracker:SetChance(amount)
     end
 end
 
-function EHIPanel:SetTrackerProgress(id, progress)
+function EHIManager:SetTrackerProgress(id, progress)
     local tracker = self._trackers[id]
     if tracker and tracker.SetProgress then
         tracker:SetProgress(progress)
     end
 end
 
-function EHIPanel:SetTrackerIncreaseProgress(id)
+function EHIManager:SetTrackerIncreaseProgress(id)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseProgress then
         tracker:IncreaseProgress()
     end
 end
 
-function EHIPanel:SetTrackerProgressMax(id, max)
+function EHIManager:SetTrackerProgressMax(id, max)
     local tracker = self._trackers[id]
     if tracker and tracker.SetProgressMax then
         tracker:SetProgressMax(max)
     end
 end
 
-function EHIPanel:SetTrackerTextColor(id, color)
+function EHIManager:SetTrackerTextColor(id, color)
     local tracker = self._trackers[id]
     if tracker then
         tracker:SetTextColor(color)
     end
 end
 
-function EHIPanel:CallFunction(id, f, ...)
+function EHIManager:CallFunction(id, f, ...)
     local tracker = self._trackers[id]
     if tracker and tracker[f] then
         tracker[f](tracker, ...)

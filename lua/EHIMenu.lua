@@ -1159,7 +1159,7 @@ function EHIMenu:CreateToggle(params)
     end
     local check_bg = toggle_panel:bitmap({
         name = "check_bg",
-        texture = "guis/textures/pd2_mod_bai/check_bg",
+        texture = "guis/textures/pd2_mod_ehi/check_bg",
         x = 2,
         y = 2,
         w = 22,
@@ -1168,7 +1168,7 @@ function EHIMenu:CreateToggle(params)
     })
     local check = toggle_panel:bitmap({
         name = "check",
-        texture = "guis/textures/pd2_mod_bai/check",
+        texture = "guis/textures/pd2_mod_ehi/check",
         x = 2,
         y = 2,
         w = params.value and 22 or 44,
