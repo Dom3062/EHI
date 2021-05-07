@@ -7,6 +7,7 @@ function EHIProgressTracker:init(panel, params)
     self._remove_after_reaching_counter_target = not params.remove_after_reaching_target
     self._set_color_bad_when_reached = params.set_color_bad_when_reached
     self._flash_times = params.flash_times or 3
+    self._status_is_overridable = params.status_is_overridable
     EHIProgressTracker.super.init(self, panel, params)
     self._time = 5
 end
@@ -52,7 +53,8 @@ function EHIProgressTracker:IncreaseProgress()
 end
 
 function EHIProgressTracker:SetCompleted()
-    if self._progress == self._max then
+    if self._progress == self._max and not self._status then
+        self._status = "completed"
         self:SetTextColor(Color.green)
         if self._remove_after_reaching_counter_target then
             self._parent_class:AddTrackerToUpdate(self._id, self)

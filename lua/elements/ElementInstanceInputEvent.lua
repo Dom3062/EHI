@@ -50,7 +50,7 @@ elseif level_id == "bex" then -- San Martín Bank
     }
 elseif level_id == "bph" then -- Hell's Island
     triggers = {
-        [101137] = { max = 10, id = "EnemyDeathOutside", icons = { "pd2_kill" }, dont_flash = true, class = "EHIProgressTracker" },
+        [101137] = { max = 10, id = "EnemyDeathOutside", icons = { "pd2_kill" }, flash_times = 1, class = "EHIProgressTracker" },
         [101405] = { id = "EnemyDeathOutside", special_function = SF.RemoveTracker }
     }
 elseif level_id == "kenaz" then -- Golden Grin Casino
@@ -76,7 +76,7 @@ local function CreateTrackerForReal(id)
         time = triggers[id].time,
         max = triggers[id].max,
         icons = triggers[id].icons,
-        dont_flash = triggers[id].dont_flash,
+        flash_times = triggers[id].flash_times,
         class = triggers[id].class
     })
 end

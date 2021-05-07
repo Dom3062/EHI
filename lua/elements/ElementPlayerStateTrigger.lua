@@ -15,7 +15,6 @@ local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = difficulty_index >= 3
 local triggers = {}
 local SF = EHI:GetSpecialFunctions()
-SF.SetAchievementFailed = 299
 if level_id == "flat" then -- Panic Room
     if show_achievement and ovk_and_up then
         triggers = {

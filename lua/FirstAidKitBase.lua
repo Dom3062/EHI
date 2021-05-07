@@ -10,6 +10,9 @@ local UpdateTracker
 
 if EHI:GetOption("show_equipment_aggregate_health") then
     UpdateTracker = function(key, amount)
+        if not key then
+            return
+        end
         if not managers.hud:TrackerExists("Health") then
             managers.hud:AddAggregatedHealthTracker()
         end
@@ -17,6 +20,9 @@ if EHI:GetOption("show_equipment_aggregate_health") then
     end
 else
     UpdateTracker = function(key, amount)
+        if not key then
+            return
+        end
         if not managers.hud:TrackerExists("FirstAidKits") then
             managers.hud:AddTracker({
                 id = "FirstAidKits",

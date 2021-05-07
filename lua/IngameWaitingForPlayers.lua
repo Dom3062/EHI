@@ -26,13 +26,6 @@ function IngameWaitingForPlayersState:at_exit(next_state)
         if Network:is_client() then
             managers.hud.ehi:SyncTime(0)
         end
-        if Global.game_settings.level_id == "dah" then
-            managers.mission:add_global_event_listener("EHI_dah8", {
-                "pku_blue_diamond"
-            }, function()
-                managers.hud:IncreaseProgress("dah_8")
-            end)
-        end
     else
         managers.hud:RemoveTracker("uno_9")
         managers.hud:RemoveTracker("cane_3")

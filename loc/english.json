@@ -16,7 +16,7 @@
     "ehi_vr_scale_desc": "Sets scale of trackers in VR. The higher number the bigger trackers are and vice versa",
 
     "ehi_time_format" : "Time Format",
-    "ehi_time_format_desc" : "Defines how tracker should be formated",
+    "ehi_time_format_desc" : "Defines how timed tracker should be formated",
     "ehi_time_format_1" : "Seconds Only",
     "ehi_time_format_2" : "Minutes and Seconds",
 

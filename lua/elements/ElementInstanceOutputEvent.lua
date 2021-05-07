@@ -13,6 +13,8 @@ core:module("CoreElementInstance")
 local level_id = Global.game_settings.level_id
 local difficulty = Global.game_settings.difficulty
 local difficulty_index = EHI:DifficultyToIndex(difficulty)
+local show_achievement = EHI:GetOption("show_achievement")
+local ovk_and_up = difficulty_index >= 3
 local triggers = {}
 local trigger_id_all = "Trigger"
 local SF = EHI:GetSpecialFunctions()
@@ -37,7 +39,7 @@ elseif level_id == "mad" then -- Boiling Point
 elseif level_id == "vit" then -- The White House
     triggers = {
         [102335] = { time = 60, id = "Thermite", icons = { "pd2_fire" } }, -- units/pd2_dlc_vit/props/security_shutter/vit_prop_branch_security_shutter
-        [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = { "pd2_escape" } } -- 30s delay + 26s escape zone delay
+        [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = { "heli", "pd2_escape" } } -- 30s delay + 26s escape zone delay
     }
 elseif level_id == "moon" then -- Stealing Xmas
     triggers = {
@@ -55,6 +57,7 @@ elseif level_id == "nail" then -- Lab Rats
     }
 elseif level_id == "des" then -- Henry's Rock
     triggers = {
+        [100296] = { max = 2, id = "uno_5", icons = { "C_Locke_H_HenrysRock_Hack" }, class = "EHIAchievementProgressTracker", condition = show_achievement and ovk_and_up },
         [100423] = { time = 60 + 25 + 3, id = "EscapeHeli", icons = { "heli", "pd2_escape", "pd2_lootdrop" } },
         -- 60s delay after flare has been placed
         -- 25s to land
@@ -118,6 +121,10 @@ elseif level_id == "chas" then -- Dragon Heist
     triggers = {
         [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { "pd2_drill", "pd2_generic_interact" } },
         [101660] = { time = 120, id = "Gas", icons = { "teargas" } }
+    }
+elseif level_id == "rat" then -- Cook Off
+    triggers = {
+        [102611] = { id = "voff_5", special_function = SF.IncreaseProgress }
     }
 elseif level_id == "brb" then -- Brooklyn Bank
     triggers = {

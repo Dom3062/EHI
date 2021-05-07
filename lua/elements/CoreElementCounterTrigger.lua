@@ -19,7 +19,7 @@ local triggers = {}
 local trigger_icon_all = {}
 local trigger_id_all = "Trigger"
 
-if level_id ~= "watchdogs_1" and level_id ~= "watchdogs_1_night" then -- Watchdogs Day 1
+if level_id == "watchdogs_1" or level_id == "watchdogs_1_night" then -- Watchdogs Day 1
     triggers = {
         [101256] = { time = 28 + 3 + 10 + 10, id = "CarEscape", icons = { "pd2_car", "pd2_escape" } }
     }

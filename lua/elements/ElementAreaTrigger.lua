@@ -13,12 +13,23 @@ local trigger_id_all = "Trigger"
 local trigger_icon_all = nil
 local SF = EHI:GetSpecialFunctions()
 SF.ExecuteAndDisableTriggers = 498
-if level_id == "red2" then
+if level_id == "red2" then -- First World Bank
     if ovk_and_up and show_achievement then -- Optimization
         triggers = {
-            [101544] = { time = 30, id = "cac_10", icons = { "C_Classics_H_FirstWorldBank_Federal" }, class = "EHIAchievementTracker", special_function = SF.RemoveTriggerWhenExecuted }
+            [101544] = { time = 30, id = "cac_10", icons = { "C_Classics_H_FirstWorldBank_Federal" }, class = "EHIAchievementTracker", special_function = SF.RemoveTriggerWhenExecuted, condition_function = function()
+                if managers.groupai and not managers.groupai:state():whisper_mode() then
+                    return true
+                end
+                return false
+            end }
         }
+    else
+        return
     end
+elseif level_id == "run" then -- Heat Street
+    triggers = {
+        [101521] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { "heli", "pd2_escape" }, special_function = SF.RemoveTriggerWhenExecuted }
+    }
 elseif level_id == "firestarter_3" then -- Firestarter Day 3
     triggers = {
         [105217] = { id = "slakt_5", special_function = SF.RemoveTracker }
@@ -40,7 +51,7 @@ local function CreateTrackerForReal(id, icon2)
     if icon2 then
         triggers[id].icons[2] = icon2
     end
-    managers.hud:AddTracker({
+    managers.ehi:AddTracker({
         id = triggers[id].id or trigger_id_all,
         time = triggers[id].time,
         chance = triggers[id].chance,
@@ -50,13 +61,23 @@ local function CreateTrackerForReal(id, icon2)
     })
 end
 
-local function CreateTracker(id)
-    if triggers[id].condition ~= nil then
-        if triggers[id].condition == true then
+local function CreateTracker2(id)
+    if triggers[id].condition_function then
+        if triggers[id].condition_function() then
             CreateTrackerForReal(id)
         end
     else
         CreateTrackerForReal(id)
+    end
+end
+
+local function CreateTracker(id)
+    if triggers[id].condition ~= nil then
+        if triggers[id].condition == true then
+            CreateTracker2(id)
+        end
+    else
+        CreateTracker2(id)
     end
 end
 

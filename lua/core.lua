@@ -67,7 +67,8 @@ _G.EHI =
         SetTrackerAccurate = 27,
         RemoveTriggers = 28,
         AddToGlobalCache = 29,
-        GetFromGlobalCache = 30
+        GetFromGlobalCache = 30,
+        SetAchievementFailed = 31
     },
 
     Icons =

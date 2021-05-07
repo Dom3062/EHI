@@ -84,6 +84,7 @@
             "description": "ehi_show_achievement_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_achievement",
+            "focus_changed_callback" : "SetFocus",
             "value": "show_achievement",
             "default_value": true
         },
@@ -94,6 +95,7 @@
             "description": "ehi_show_gained_xp_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_gained_xp",
+            "focus_changed_callback": "SetFocus",
             "value": "show_gained_xp",
             "is_parent" : true,
             "default_value": true
@@ -136,6 +138,7 @@
             "description": "ehi_show_trade_delay_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_trade_delay",
+            "focus_changed_callback": "SetFocus",
             "value": "show_trade_delay",
             "is_parent" : true,
             "default_value": true
@@ -173,6 +176,7 @@
             "description": "ehi_show_timers_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_timers",
+            "focus_changed_callback": "SetFocus",
             "value": "show_timers",
             "default_value": true
         },
@@ -183,6 +187,7 @@
             "description": "ehi_show_zipline_timer_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_zipline_timer",
+            "focus_changed_callback": "SetFocus",
             "value": "show_zipline_timer",
             "default_value": true
         },
@@ -193,6 +198,7 @@
             "description": "ehi_show_gage_tracker_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_gage_tracker",
+            "focus_changed_callback": "SetFocus",
             "value": "show_gage_tracker",
             "default_value": true
         },
@@ -203,6 +209,7 @@
             "description": "ehi_show_captain_damage_reduction_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_captain_damage_reduction",
+            "focus_changed_callback": "SetFocus",
             "value": "show_captain_damage_reduction",
             "default_value": true
         },
@@ -214,6 +221,7 @@
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_equipment_tracker",
             "value": "show_equipment_tracker",
+            "focus_changed_callback": "SetFocus",
             "is_parent" : true,
             "default_value": true
         },
@@ -232,6 +240,7 @@
             "description": "ehi_show_minion_tracker_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_minion_tracker",
+            "focus_changed_callback": "SetFocus",
             "value": "show_minion_tracker",
             "default_value": true
         },
@@ -242,6 +251,7 @@
             "description": "ehi_show_difficulty_tracker_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_difficulty_tracker",
+            "focus_changed_callback": "SetFocus",
             "value": "show_difficulty_tracker",
             "default_value": true
         },
@@ -252,6 +262,7 @@
             "description": "ehi_show_pager_tracker_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_pager_tracker",
+            "focus_changed_callback": "SetFocus",
             "value": "show_pager_tracker",
             "default_value": true
         }

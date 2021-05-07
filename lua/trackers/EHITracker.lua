@@ -1,6 +1,10 @@
 local function GetIcon(icon, type)
     if type == "achievement" then
-        return tweak_data.hud_icons:get_icon_data(icon)
+        if icon == "faster" then -- Heat Street
+            return "guis/textures/pd2/skilltree/drillgui_icon_faster"
+        else
+            return tweak_data.hud_icons:get_icon_data(icon)
+        end
     else
         if icon == "pd2_escape" or icon == "pd2_lootdrop" or icon == "C_Vlad_H_Mallcrasher_Shoot" or icon == "wp_bag" or icon == "pd2_defend" or icon == "pd2_fire" or
         icon == "pd2_generic_interact" or icon == "wp_sentry" or icon == "pd2_fix" or icon == "pd2_drill" or icon == "pd2_generic_saw" or icon == "wp_hack" or

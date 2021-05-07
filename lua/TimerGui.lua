@@ -15,6 +15,12 @@ local original =
     hide = TimerGui.hide
 }
 
+local level_id = Global.game_settings.level_id
+local remove_on_power_off = false
+if level_id == "des" then -- Henry's Rock
+    remove_on_power_off = true
+end
+
 function TimerGui:init(unit, ...)
     self._ehi_key = tostring(unit:key())
     self._ehi_icon = unit:base().is_drill and "drill" or unit:base().is_hacking_device and "hack" or unit:base().is_saw and "saw" or "timer"
@@ -23,7 +29,10 @@ function TimerGui:init(unit, ...)
 end
 
 function TimerGui:EHIRemove(unit)
-    managers.hud:RemoveTracker(self._ehi_key)
+    if not self._powered then
+        return
+    end
+    managers.ehi:RemoveTracker(self._ehi_key)
 end
 
 function TimerGui:set_background_icons(background_icons)
@@ -74,18 +83,19 @@ function TimerGui:_set_jammed(jammed, ...)
 end
 
 function TimerGui:_set_powered(powered, ...)
+    if powered == false and remove_on_power_off then
+        managers.ehi:RemoveTracker(self._ehi_key)
+    end
     managers.hud:SetTimerPowered(self._ehi_key, powered)
     original._set_powered(self, powered, ...)
 end
 
 function TimerGui:hide()
-    if managers.hud and managers.hud.ehi then
-        managers.hud:RemoveTracker(self._ehi_key)
-    end
+    managers.ehi:RemoveTracker(self._ehi_key)
     original.hide(self)
 end
 
 function TimerGui:destroy(...)
-    managers.hud:RemoveTracker(self._ehi_key)
+    managers.ehi:RemoveTracker(self._ehi_key)
     original.destroy(self, ...)
 end

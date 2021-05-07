@@ -25,6 +25,7 @@ function EHITimerTracker:init(panel, params)
     self._paused = false
     self._jammed = false
     self._not_powered = false
+    self._faster_level = 1
     local upgrades = self._parent_class:GetAndRemoveFromCache(self._id)
     if upgrades then
         self:SetUpgradeable(true)
@@ -33,7 +34,7 @@ function EHITimerTracker:init(panel, params)
 end
 
 function EHITimerTracker:update(t, dt)
-    if self._paused or self._jammed or self._not_powered then
+    if self._jammed or self._not_powered then
         return
     end
     self._time = self._time - dt
@@ -87,14 +88,14 @@ end
 
 function EHITimerTracker:SetTimerMultiplier(multiplier)
     local decrease_time = true
-    if self._faster_level and multiplier >= self._faster_level then
+    if multiplier >= self._faster_level then
         decrease_time = false
     end
     if decrease_time then
-        local time_diff = (self._faster_level or 1) - multiplier
+        local time_diff = self._faster_level - multiplier
         local decrease = 1 - time_diff
         self._time = self._time * decrease
-        if self._faster_level then
+        if self._faster_level ~= 1 and self._faster_level > multiplier then
             self:AnimateBG()
         end
         self._faster_level = multiplier

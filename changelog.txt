@@ -1,3 +1,13 @@
+r4 (07. 05. 2021):
+First Aid Kits: Fixed a rare crash
+Watchdogs Day 1: Fixed an issue where car escape timer was not visible
+First World Bank: Fixed an issue where tracker for achievement "Federal Assurance" showed in stealth
+Henry's Rock: Added tracker for achievement "Hack This!"
+Henry's Rock: Fixed an issue where hack timer was stuck when a turret was destroyed
+Diamond Heist: Added tracker for achievement "The Hunt for the Blue Sapphires"
+The White House: Fixed an issue where drill timer tracker disappeared when enemies pulled the power
+Menu: Hovering over options highlight trackers
+
 r3 (04. 05. 2021):
 Cook Off/Rats Day 1: Fixed a crash when you dropped in
 Menu: Fixed an issue where textures were missing

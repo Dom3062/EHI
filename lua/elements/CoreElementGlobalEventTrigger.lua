@@ -7,7 +7,6 @@ if EHI._hooks.ElementGlobalEventTrigger then
     return
 else
     EHI._hooks.ElementGlobalEventTrigger = true
-    return
 end
 
 if Global.game_settings.level_id ~= "dah" then
@@ -26,11 +25,11 @@ local function Trigger(id)
     end
 end
 
---[[local _f_client_on_executed = ElementGlobalEventTrigger.client_on_executed
+local _f_client_on_executed = ElementGlobalEventTrigger.client_on_executed
 function ElementGlobalEventTrigger:client_on_executed(...)
     _f_client_on_executed(self, ...)
     Trigger(self._id)
-end]]
+end
 
 local _f_on_executed = ElementGlobalEventTrigger.on_executed
 function ElementGlobalEventTrigger:on_executed(...)

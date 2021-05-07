@@ -33,6 +33,8 @@ SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused = 599
 local Icon = EHI:GetIcons()
 if level_id == "des" then -- Henry's Rock
     triggers = {
+        [103391] = { id = "uno_5", special_function = SF.IncreaseProgress },
+        [103395] = { id = "uno_5", special_function = SF.SetAchievementFailed },
         [100716] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire } },
         [101446] = { time = 60, id = "Crane", icons = { Icon.Defend }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [102996] = { id = "Crane", special_function = SF.UnpauseTracker }
@@ -212,6 +214,10 @@ local function Trigger(id, enabled)
                 for _, trigger_id in pairs(triggers[id].data) do
                     triggers[trigger_id] = nil
                 end
+            elseif f == SF.SetAchievementComplete then
+                managers.hud.ehi:CallFunction(triggers[id].id, "SetCompleted")
+            elseif f == SF.SetAchievementFailed then
+                managers.hud.ehi:CallFunction(triggers[id].id, "SetFailed")
             end
         else
             CreateTracker(id)

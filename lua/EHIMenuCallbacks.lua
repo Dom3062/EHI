@@ -18,6 +18,11 @@ function EHIMenu:UpdateFormat(format)
     self._preview_panel:UpdateFormat(format)
 end
 
-function EHIMenu:UpdateTrackerVisibility(value)
+function EHIMenu:UpdateTrackerVisibility(value, option)
     self._preview_panel:Redraw()
+    self:SetFocus(value, option)
+end
+
+function EHIMenu:SetFocus(focus, value)
+    self._preview_panel:SetSelected(value)
 end

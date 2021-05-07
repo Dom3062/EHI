@@ -337,7 +337,7 @@ elseif level_id == "flat" then -- Panic Room
 elseif level_id == "dah" then -- Diamond Heist
     triggers = {
         [100276] = { time = 25 + 3 + 11, id = "CFOInChopper", icons = { Icon.Heli, "pd2_goto" } },
-        --[103969] = { max = 12, id = "dah_8", icons = { "C_Classics_H_DiamondHesit_TheHuntfor" }, class = TT.AchievementProgress, condition = ovk_and_up and show_achievement }
+        [103969] = { max = 12, id = "dah_8", icons = { "C_Classics_H_DiamondHesit_TheHuntfor" }, class = TT.AchievementProgress, condition = ovk_and_up and show_achievement }
     }
 elseif level_id == "arena" then -- The Alesso Heist
     triggers = {
@@ -349,8 +349,8 @@ elseif level_id == "run" then -- Heat Street
     triggers = {
         [100120] = { time = 1800, id = "run_9", icons = { "C_Classics_H_HeatStreet_Patience" }, class = "EHIAchievementDoneTracker", condition = show_achievement },
         [102426] = { max = 8, id = "run_8", icons = { "C_Classics_H_HeatStreet_Zookeeper" }, class = TT.AchievementProgress, condition = show_achievement },
-        [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = TT.Warning },
-        [101550] = { id = "ClearPickupZone", special_function = SF.RemoveTracker }
+        [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = TT.Achievement }, -- Not really an achievement, but I want to use "SetCompleted" function :p
+        [101550] = { id = "ClearPickupZone", special_function = SF.SetAchievementComplete }
     }
 elseif level_id == "tag" then -- Breakin' Feds
     triggers = {
@@ -365,10 +365,12 @@ elseif level_id == "fish" then -- The Yacht Heist
 elseif level_id == "rat" then -- Cook Off
     local anim_delay = 743/30 -- 743/30 is a animation duration; 3s is zone activation delay (never used when van is coming back)
     triggers = {
+        [101780] = { max = 25, id = "voff_5", icons = { "C_Bain_H_CookOff_KissTheChef" }, class = TT.AchievementProgress },
         [102318] = { time = 60 + 60 + 30 + 15 + anim_delay, id = "VanReturn", icons = { Icon.Car, Icon.Escape, Icon.LootDrop }, special_function = SF.AddToGlobalAndExecute },
         [102319] = { time = 60 + 60 + 60 + 30 + 15 + anim_delay, id = "VanReturn", icons = { Icon.Car, Icon.Escape, Icon.LootDrop }, special_function = SF.AddToGlobalAndExecute },
 
-        [102383] = { time = 7, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait } },
+        [102383] = { time = 2 + 5, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1023831 } },
+        [1023831] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 4 + 5 + 6 + 7, id = "FirstAssaultDelay", icons = { "enemy" }, class = TT.Warning },
         [100721] = { time = 1, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
         [1007211] = { chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists },
         [100724] = { random_time = { low = 20, high = 25 }, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeNoAnimOrCreateTracker },
@@ -762,9 +764,9 @@ elseif level_id == "bph" then -- Hell's Island
     triggers = {
         [101815] = { time = 10, id = "MoveWalkway", icons = { Icon.Wait } },
         [101433] = { id = "EnemyDeathShowers", special_function = SF.RemoveTracker },
-        [100109] = { max = (very_hard_and_below and 30 or 40), id = "EnemyDeathShowers", icons = { "pd2_kill" }, dont_flash = true, class = TT.Progress },
+        [100109] = { max = (very_hard_and_below and 30 or 40), id = "EnemyDeathShowers", icons = { "pd2_kill" }, flash_times = 1, class = TT.Progress },
         [101742] = { max = 3, id = "bph_10", icons = { "C_Locke_H_HellsIsland_Another" }, class = TT.AchievementProgress, special_function = SF.RemoveTriggerWhenExecuted, condition = ovk_and_up and show_achievement },
-        [101885] = { id = "bph_10", special_function = SF.RemoveTracker }
+        [101885] = { id = "bph_10", special_function = SF.SetAchievementFailed }
     }
 elseif level_id == "hox_1" then -- Hoxton Breakout Day 1
     triggers = {
@@ -803,7 +805,7 @@ elseif level_id == "help" then -- Prison Nightmare
     triggers = {
         [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, id = "orange_4", icons = { "C_Event_H_PrisonNightmare_SalemAsylum" }, class = TT.Achievement, condition = mayhem_and_up and show_achievement },
         [EHI:GetInstanceElementID(100461, 21700)] = { id = "orange_4", special_function = SF.RemoveTracker },
-        [100279] = { max = 15, id = "orange_5", icons = { "C_Event_H_PrisonNightmare_ALongNight" }, class = TT.AchievementProgress, remove_after_reaching_target = true, condition = mayhem_and_up and show_achievement },
+        [100279] = { max = 15, id = "orange_5", icons = { "C_Event_H_PrisonNightmare_ALongNight" }, class = TT.AchievementProgress, status_is_overridable = true, remove_after_reaching_target = true, condition = mayhem_and_up and show_achievement },
         [101725] = { time = 25 + 0.25 + 2 + 2.35, id = "C4", icons = { Icon.Heli, "pd2_c4", "pd2_goto" } }
     }
 elseif level_id == "mex" then -- Border Crossing
@@ -897,7 +899,9 @@ local function CreateTrackerForReal(id, icon2)
         chance = triggers[id].chance,
         max = triggers[id].max,
         dont_flash = triggers[id].dont_flash,
+        flash_times = triggers[id].flash_times,
         remove_after_reaching_target = triggers[id].remove_after_reaching_target,
+        status_is_overridable = triggers[id].status_is_overridable,
         icons = triggers[id].icons or trigger_icon_all,
         class = triggers[id].class
     })
@@ -1041,6 +1045,8 @@ local function Trigger(id, enabled)
             elseif f == SF.AddToGlobalAndExecute then
                 EHI._cache.VanReturn = true
                 CreateTracker(id)
+            elseif f == SF.SetAchievementFailed then
+                managers.ehi:CallFunction(triggers[id].id, "SetFailed")
             elseif f == SFF.PAL_UnpauseOrCreate then
                 if managers.hud:TrackerExists(triggers[id].id) then
                     managers.hud.ehi:CallFunction(triggers[id].id, "ResumeAll")

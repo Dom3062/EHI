@@ -277,6 +277,7 @@ function EHIMenu:Close()
             menu.input._controller:enable()
         end
     end)
+    self:SetFocus(false, "")
 end
 
 -- Mouse Functions
@@ -594,13 +595,13 @@ function EHIMenu:HighlightItem(item)
 
     self._tooltip:set_text(self._highlighted_item.desc or "")
     if item.focus_changed_callback then
-        self[item.focus_changed_callback](self, true)
+        self[item.focus_changed_callback](self, true, item.callback_arguments)
     end
 end
 
 function EHIMenu:UnhighlightItem(item)
     if item.focus_changed_callback then
-        self[item.focus_changed_callback](self, false)
+        self[item.focus_changed_callback](self, false, "")
     end
     item.panel:child("bg"):stop()
     item.panel:child("bg"):animate(function(o)
@@ -797,7 +798,7 @@ function EHIMenu:CreateItem(item, items, menu_id)
             parent = item.parent,
             callback = item.callback,
             callback_arguments = item.callback_arguments,
-            focus_changed_callback = item.focus_changed_callbac
+            focus_changed_callback = item.focus_changed_callback
         })
     elseif item_type == "slider" then
         itm = self:CreateSlider({
