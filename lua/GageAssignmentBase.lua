@@ -1,3 +1,9 @@
+if EHI._hooks.GageAssignmentBase then
+    return
+else
+    EHI._hooks.GageAssignmentBase = true
+end
+
 if not EHI:GetOption("show_gage_tracker") then
 	return
 end

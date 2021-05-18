@@ -1,3 +1,9 @@
+if EHI._hooks.QuickCsGrenade then
+	return
+else
+	EHI._hooks.QuickCsGrenade = true
+end
+
 local _f_detonate = QuickCsGrenade.detonate
 function QuickCsGrenade:detonate()
     _f_detonate(self)

@@ -1,3 +1,9 @@
+if EHI._hooks.GroupAIStateBase then
+	return
+else
+	EHI._hooks.GroupAIStateBase = true
+end
+
 local achievements_to_remove =
 {
     "green_3",
@@ -5,8 +11,11 @@ local achievements_to_remove =
     "cow_11",
     "sah_9",
     "friend_6",
+    "chas_10",
+}
 
-    -- Not an achievement, but it removes body bags
+local trackers_to_remove =
+{
     "BodyBags",
     "pagers" -- Removes pager tracker
 }
@@ -16,12 +25,45 @@ local achievements_to_toggle =
     "uno_7"
 }
 
+local unhook =
+{
+    -- Pager stuff
+    "set_tweak_data",
+    "sync_interacted",
+    "interact",
+    "_at_interact_start"
+}
+
+local show_trackers =
+{
+}
+
+local level_id = Global.game_settings.level_id
+if level_id == "alex_2" then
+    show_trackers[#show_trackers + 1] = { time = 75 + 15 + 30, id = "FirstAssaultDelay", icons = { "assaultbox" }, class = "EHIWarningTracker" }
+end
+
 local function Execute()
     for _, achievement in ipairs(achievements_to_remove) do
-        managers.hud:RemoveTracker(achievement)
+        managers.ehi:SetFailedAchievement(achievement)
+    end
+    for _, tracker in ipairs(trackers_to_remove) do
+        managers.ehi:RemoveTracker(tracker)
     end
     for _, achievement in ipairs(achievements_to_toggle) do
-        managers.hud.ehi:CallFunction(achievement, "ToggleObtainable")
+        managers.ehi:CallFunction(achievement, "ToggleObtainable")
+    end
+    managers.ehi:RemovePagerTrackers()
+    for _, hook in ipairs(unhook) do
+        EHI:Unhook(hook)
+    end
+    for _, tracker in pairs(show_trackers) do
+        managers.ehi:AddTracker({
+            id = tracker.id,
+            time = tracker.time,
+            icons = tracker.icons,
+            class = tracker.class
+        })
     end
 end
 
@@ -63,23 +105,21 @@ function GroupAIStateBase:load(load_data)
 end
 
 if EHI:GetOption("show_minion_tracker") then
-    local function UpdateTracker(key, amount)
-        if managers.hud.ehi then
-            if not managers.hud:TrackerExists("Converts") then
-                managers.hud:AddTracker({
-                    id = "Converts",
-                    dont_show_placed = true,
-                    icons = { "minion" },
-                    class = "EHIEquipmentTracker"
-                })
-            end
-            managers.hud.ehi:CallFunction("Converts", "UpdateAmount", key, amount)
+    local function UpdateTracker(unit, key, amount)
+        if managers.ehi:TrackerDoesNotExist("Converts") then
+            managers.ehi:AddTracker({
+                id = "Converts",
+                dont_show_placed = true,
+                icons = { "minion" },
+                class = "EHIEquipmentTracker"
+            })
         end
+        managers.ehi:CallFunction("Converts", "UpdateAmount", unit, key, amount)
     end
 
     original._set_converted_police = GroupAIStateBase._set_converted_police
     function GroupAIStateBase:_set_converted_police(u_key, unit, owner_unit)
         original._set_converted_police(self, u_key, unit, owner_unit)
-        UpdateTracker(tostring(u_key), unit and 1 or 0)
+        UpdateTracker(unit, tostring(u_key), unit and 1 or 0)
     end
 end

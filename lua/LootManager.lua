@@ -3,7 +3,107 @@ if not (Global and Global.game_settings and Global.game_settings.level_id) then
 end
 
 local EHI = EHI
+if EHI._hooks.LootManager then
+	return
+else
+	EHI._hooks.LootManager = true
+end
+local check_types = {
+    AllLoot = 1,
+    BagsOnly = 2,
+    SmallLootOnly = 3,
+    OneTypeOfLoot = 4,
+    MultipleTriggers = 5
+}
 local level_id = Global.game_settings.level_id
-if level_id ~= "mex_cooking" then
+local tracker_id = nil
+local check_type = nil
+local multiple_check_type = {}
+local loot_type = nil
+local sync_only = false
+if level_id == "mex_cooking" then -- Border Crystals
+    check_type = check_types.BagsOnly
+    tracker_id = "mex2_9"
+elseif level_id == "cane" then -- Santa's Workshop
+    check_type = check_types.BagsOnly
+    tracker_id = "cane_3"
+elseif level_id == "crojob2" then -- The Bomb: Dockyard
+    check_type = check_types.OneTypeOfLoot
+    loot_type = "meth"
+    tracker_id = "voff_2"
+elseif level_id == "pal" then -- Counterfeit
+    check_type = check_types.BagsOnly
+    tracker_id = "pal_2"
+elseif level_id == "pex" then -- Breakfast in Tijuana
+    check_type = check_types.BagsOnly
+    tracker_id = "pex_10"
+elseif level_id == "dah" then -- Diamond Heist
+    check_type = check_types.OneTypeOfLoot
+    loot_type = "diamondheist_big_diamond"
+    tracker_id = "dah_8"
+    sync_only = true
+elseif level_id == "alex_1" then -- Rats Day 1
+    check_type = check_types.BagsOnly
+    tracker_id = "halloween_2"
+elseif level_id == "chas" then -- Dragon Heist
+    check_type = check_types.BagsOnly
+    tracker_id = "chas_10"
+else
     return
+end
+
+local original =
+{
+    sync_secure_loot = LootManager.sync_secure_loot,
+    sync_load = LootManager.sync_load
+}
+
+function LootManager:sync_secure_loot(carry_id, multiplier_level, silent, peer_id)
+    original.sync_secure_loot(self, carry_id, multiplier_level, silent, peer_id)
+    if not sync_only then
+        self:EHIReportProgress()
+    end
+end
+
+function LootManager:EHIReportProgress(tid, ct, lt)
+    tid = tid or tracker_id
+    ct = ct or check_type
+    lt = lt or loot_type
+    if ct == check_types.AllLoot then
+    elseif ct == check_types.BagsOnly then
+        local mandatory = managers.loot:get_secured_mandatory_bags_amount()
+        local bonus = managers.loot:get_secured_bonus_bags_amount()
+        local total = (mandatory or 0) + (bonus or 0)
+        managers.ehi:SetTrackerProgress(tid, total)
+    elseif ct == check_types.SmallLootOnly then
+    elseif ct == check_types.OneTypeOfLoot then
+        if lt then
+            local secured = 0
+            if type(lt) == "string" then
+                for _, data in ipairs(self._global.secured) do
+                    if data.carry_id == lt then
+                        secured = secured + 1
+                    end
+                end
+            elseif type(lt) == "table" then
+                for _, carry_id in pairs(lt) do
+                    for _, data in ipairs(self._global.secured) do
+                        if data.carry_id == carry_id then
+                            secured = secured + 1
+                        end
+                    end
+                end
+            end
+            managers.ehi:SetTrackerProgress(tid, secured)
+        end
+    elseif ct == check_types.MultipleTriggers then
+        for i, value in ipairs(multiple_check_type) do
+            self:EHIReportProgress(tracker_id[i], value, loot_type[i])
+        end
+    end
+end
+
+function LootManager:sync_load(data)
+    original.sync_load(self, data)
+    self:EHIReportProgress()
 end

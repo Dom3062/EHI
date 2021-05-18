@@ -28,8 +28,9 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIEquipmentTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAggregatedEquipmentTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementObtainableTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIPALTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIPagerTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIVaultTemperatureTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementUnlockTracker.lua"/>
             </group>
             <post :hook_id="hudmanagerpd2" :script_path="hudmanagerpd2.lua" />
             <post :hook_id="gameplaycentralmanager" :script_path="GamePlayCentralManager.lua"/>
@@ -37,11 +38,12 @@
 
             <post :hook_id="experiencemanager" :script_path="ExperienceManager.lua" />
 
+            <post :hook_id="lootmanager" :script_path="LootManager.lua" />
+
             <post :hook_id="mission/elementareatrigger" :script_path="elements/ElementAreaTrigger.lua" />
             <post :hook_id="mission/elementawardachievment" :script_path="elements/ElementAwardAchievment.lua" />
             <post :hook_id="mission/elementenemydummytrigger" :script_path="elements/ElementEnemyDummyTrigger.lua" />
             <post :hook_id="mission/elementdisableunit" :script_path="elements/ElementDisableUnit.lua" />
-            <!--<post :hook_id="mission/elementinteraction" :script_path="elements/ElementInteraction.lua" />-->
             <post :hook_id="mission/elementplayerstate" :script_path="elements/ElementPlayerStateTrigger.lua" />
             <post :hook_id="mission/elementdialogue" :script_path="elements/ElementDialogue.lua" />
             <post :hook_id="mission/elementdifficulty" :script_path="elements/ElementDifficulty.lua" />
@@ -49,7 +51,7 @@
             <post :hook_id="mission/missionscriptelement" :script_path="elements/MissionScriptElement.lua" />
 
             <!-- Menu code -->
-            <post :hook_id="menumanager" :script_path="FakeEHIPanel.lua" />
+            <post :hook_id="menumanager" :script_path="FakeEHIManager.lua" />
             <post :hook_id="menumanager" :script_path="EHIMenu.lua" />
             <post :hook_id="menumanager" :script_path="EHIMenuCallbacks.lua" />
             <post :hook_id="menumanager" :script_path="menu.lua" />
@@ -60,6 +62,8 @@
             <post :hook_id="playermanager" :script_path="PlayerManager.lua" />
             <post :hook_id="preplanningmanager" :script_path = "PrePlanningManager.lua" />
 
+            <!--<post :hook_id="objectinteractionmanager" :script_path="Debug.lua" />-->
+
             <post :hook_id="trademanager" :script_path="TradeManager.lua" />
         </group>
 
@@ -67,10 +71,13 @@
         <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
 
+        <post hook_id="lib/network/handlers/unitnetworkhandler" :script_path="UnitNetworkHandler.lua" />
+
         <post hook_id="lib/states/ingamewaitingforplayers" :script_path="IngameWaitingForPlayers.lua" />
 
         <post hook_id="lib/units/enemies/cop/copbrain" :script_path="CopBrain.lua" />
         <post hook_id="lib/units/civilians/civiliandamage" :script_path="CivilianDamage.lua" />
+        <post hook_id="lib/units/interactions/interactionext" :script_path="InteractionExt.lua" />
         <post hook_id="lib/units/equipment/sentry_gun/sentrygunmovement" :script_path="SentryGunMovement.lua" />
         <post hook_id="lib/units/equipment/ammo_bag/ammobagbase" :script_path="AmmoBagBase.lua" />
         <post hook_id="lib/units/equipment/bodybags_bag/bodybagsbagbase" :script_path="BodyBagsBagBase.lua" />
@@ -85,9 +92,10 @@
         <post hook_id="lib/units/props/zipline" :script_path="Zipline.lua" />
         <post hook_id="lib/units/weapons/grenades/quickcsgrenade" :script_path="QuickCsGrenade.lua" />
 
-        <post hook_id="core/lib/managers/mission/coremissionmanager" :script_path="CoreMissionManager.lua"/>
-        <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
-        <post hook_id="core/lib/managers/mission/coremissionscriptelement" :script_path="elements/CoreMissionScriptElement.lua"/>
+        <!--<post hook_id="core/lib/managers/mission/coremissionmanager" :script_path="CoreMissionManager.lua"/>
+        <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>-->
+        <post hook_id="core/lib/managers/mission/coremissionscriptelement" :script_path="elements/CoreMissionScriptElement_BaseDelay.lua"/>
+        <post hook_id="core/lib/managers/mission/coremissionscriptelement" :script_path="elements/CoreMissionScriptElement_ElementDelay.lua"/>
         <post hook_id="core/lib/managers/mission/coreelementlogicchance" :script_path="elements/CoreElementLogicChanceOperator.lua"/>
         <post hook_id="core/lib/managers/mission/coreelementlogicchance" :script_path="elements/CoreElementLogicChanceTrigger.lua"/>
         <post hook_id="core/lib/managers/mission/coreelementunitsequence" :script_path="elements/CoreElementUnitSequence.lua"/>

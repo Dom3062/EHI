@@ -3,6 +3,11 @@ if not (Global and Global.game_settings and Global.game_settings.level_id) then
 end
 
 local EHI = EHI
+if EHI._hooks.ElementAreaTrigger then -- Don't hook multiple times, pls
+    return
+else
+    EHI._hooks.ElementAreaTrigger = true
+end
 local level_id = Global.game_settings.level_id
 local difficulty = Global.game_settings.difficulty
 local difficulty_index = EHI:DifficultyToIndex(difficulty)
@@ -12,16 +17,13 @@ local triggers = {}
 local trigger_id_all = "Trigger"
 local trigger_icon_all = nil
 local SF = EHI:GetSpecialFunctions()
+SF.SetTimeIfMoreThanOrCreateTracker = 497
 SF.ExecuteAndDisableTriggers = 498
+local CF = EHI:GetConditionFunctions()
 if level_id == "red2" then -- First World Bank
     if ovk_and_up and show_achievement then -- Optimization
         triggers = {
-            [101544] = { time = 30, id = "cac_10", icons = { "C_Classics_H_FirstWorldBank_Federal" }, class = "EHIAchievementTracker", special_function = SF.RemoveTriggerWhenExecuted, condition_function = function()
-                if managers.groupai and not managers.groupai:state():whisper_mode() then
-                    return true
-                end
-                return false
-            end }
+            [101544] = { time = 30, id = "cac_10", icons = { "C_Classics_H_FirstWorldBank_Federal" }, class = "EHIAchievementTracker", special_function = SF.RemoveTriggerWhenExecuted, condition_function = CF.IsLoud }
         }
     else
         return
@@ -42,6 +44,11 @@ elseif level_id == "kosugi" then -- Shadow Raid
     triggers = {
         [101131] = { time = 300, id = "Blackhawk", icons = { "heli", "pd2_goto" }, special_function = SF.ExecuteAndDisableTriggers, data = { 101131, 100900 } },
         [100900] = { time = 300, id = "Blackhawk", icons = { "heli", "pd2_goto" }, special_function = SF.ExecuteAndDisableTriggers, data = { 101131, 100900 } }
+    }
+elseif level_id == "alex_1" then -- Rats Day 1
+    local assault_delay = 20 + 4 + 3 + 3 + 3 + 5 + 1 + 30
+    triggers = {
+        [100707] = { time = assault_delay, id = "FirstAssaultDelay", icons = { "assaultbox" }, class = "EHIWarningTracker", special_function = SF.SetTimeIfMoreThanOrCreateTracker, data = { time = assault_delay } }
     }
 else
     return
@@ -94,27 +101,27 @@ local function Trigger(id)
                 managers.hud:RemoveTracker(triggers[id].id)
                 triggers = {}
             elseif f == SF.PauseTracker then
-                managers.hud:PauseTracker(triggers[id].id)
+                managers.ehi:PauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTracker then
-                managers.hud:UnpauseTracker(triggers[id].id)
+                managers.ehi:UnpauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud:UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.ResetTrackerTimeWhenUnpaused then
-                if managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.hud:ResetTrackerTimeAndUnpause(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.AddTrackerIfDoesNotExist then
-                if not managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
                     CreateTracker(id)
                 end
             elseif f == SF.SetAchievementComplete then
-                managers.hud.ehi:CallFunction(triggers[id].id, "SetCompleted")
+                managers.ehi:CallFunction(triggers[id].id, "SetCompleted", true)
             elseif f == SF.AddToCache then
                 _cache[triggers[id].id or trigger_id_all] = triggers[id].data
             elseif f == SF.GetFromCache then
@@ -133,7 +140,7 @@ local function Trigger(id)
                 CreateTracker(triggers[id].data.fake_id)
             elseif f == SF.ExecuteIfTrackerExists then
                 local data = triggers[id].data
-                if managers.hud:TrackerExists(data.id) then
+                if managers.ehi:TrackerExists(data.id) then
                     managers.hud:SetTime(triggers[id].id, triggers[id].time)
                     managers.hud:RemoveTracker(data.id)
                 end
@@ -145,6 +152,20 @@ local function Trigger(id)
                 for _, ID in ipairs(triggers[id].data) do
                     triggers[ID] = nil
                 end
+            elseif f == SF.SetTimeIfMoreThanOrCreateTracker then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    local tracker = managers.ehi:GetTracker(triggers[id].id)
+                    if tracker then
+                        if tracker._time >= triggers[id].data.time then
+                            managers.ehi:SetTrackerTime(triggers[id].id, triggers[id].time)
+                        end
+                    else
+                        CreateTracker(id)
+                    end
+                else
+                    CreateTracker(id)
+                end
+                triggers[id] = nil
             end
         else
             CreateTracker(id)

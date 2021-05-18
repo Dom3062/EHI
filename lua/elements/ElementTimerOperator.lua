@@ -35,8 +35,11 @@ end
 local level_id = Global.game_settings.level_id
 local difficulty = Global.game_settings.difficulty
 local difficulty_index = EHI:DifficultyToIndex(difficulty)
+local mayhem_and_up = difficulty_index >= 4
 local very_hard_and_below = difficulty_index <= 2
 local SF = EHI:GetSpecialFunctions()
+SF.GetTimeAccurate = 91
+SF.UnpauseTrackerIfExistsAccurate = 92
 SF.DisableTriggerAndExecute = 93
 SF.UnpauseOrSetTimeByPreplanning = 94
 SF.PauseTrackerAndAddNewTracker = 95
@@ -59,6 +62,7 @@ local SFF =
 local triggers = {}
 local _cache = {}
 local trigger_id_all = "Trigger"
+local trigger_icon_all = nil
 if level_id == "mia_1" then -- Hotline Miami Day 1
     local delay = 1.5
     triggers =
@@ -85,8 +89,6 @@ elseif level_id == "rat" then -- Cook Off
     triggers = {
         [102167] = { time = 60 + heli_delay, id = "HeliMeth", icons = heli_icon },
         [102168] = { time = 90 + heli_delay, id = "HeliMeth", icons = heli_icon },
-        [102175] = { time = 120 + heli_delay, id = "HeliMeth", icons = heli_icon },
-        [102176] = { time = 180 + heli_delay, id = "HeliMeth", icons = heli_icon },
 
         [102220] = { time = 60 + van_delay_ovk, id = "VanStayDelay", icons = van_icon, class = "EHIWarningTracker" },
         [102219] = { time = 45 + van_delay, id = "VanStayDelay", icons = van_icon, class = "EHIWarningTracker" },
@@ -96,6 +98,9 @@ elseif level_id == "rat" then -- Cook Off
         [102237] = { time = 80 + van_delay_ovk, id = "VanStayDelay", icons = van_icon, class = "EHIWarningTracker" },
         [102238] = { time = 70 + van_delay_ovk, id = "VanStayDelay", icons = van_icon, class = "EHIWarningTracker" },
     }
+    if very_hard_and_below then
+        triggers[102175] = { time = 120 + heli_delay, id = "HeliMeth", icons = heli_icon }
+    end
 elseif level_id == "watchdogs_2_day" or level_id == "watchdogs_2" then -- Watchdogs Day 2
     local anim_delay = 450/30
     local boat_icon = { "boat", "pd2_lootdrop" }
@@ -124,9 +129,9 @@ elseif level_id == "friend" then -- Scarface Mansion
 elseif level_id == "roberts" then -- GO Bank
     local start_delay = 1
     triggers = {
-        [101959] = { time = 90 + start_delay, id = "Plane", icons = { "faster" } },
-        [101960] = { time = 120 + start_delay, id = "Plane", icons = { "faster" } },
-        [101961] = { time = 150 + start_delay, id = "Plane", icons = { "faster" } }
+        [101959] = { time = 90 + start_delay, id = "Plane", icons = { "heli", "faster" } },
+        [101960] = { time = 120 + start_delay, id = "Plane", icons = { "heli", "faster" } },
+        [101961] = { time = 150 + start_delay, id = "Plane", icons = { "heli", "faster" } }
     }
 elseif level_id == "cane" then -- Santa's Workshop
     triggers = {
@@ -149,23 +154,20 @@ elseif level_id == "pal" then -- Counterfeit
         [101230] = { time = 120, id = "Water", icons = { "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [101231] = { id = "Water", special_function = SF.PauseTracker },
 
-        [102737] = { id = "PAL", special_function = SFF.PAL_ResetMoneyTimer },
-        [102742] = { id = "PAL", special_function = SFF.PAL_ResetPaperTimer },
-        [102743] = { id = "PAL", special_function = SFF.PAL_ResetInkTimer },
-        [102747] = { id = "PAL", special_function = SFF.PAL_PausePaper },
-        [102748] = { id = "PAL", special_function = SFF.PAL_PauseInk },
-        [102749] = { id = "PAL", special_function = SFF.PAL_PauseMoney },
+        --[[[102747] = { id = "PAL", special_function = SFF.PAL_PausePaper },
+        [102748] = { id = "PAL", special_function = SFF.PAL_PauseInk },]]
+        [102749] = { id = "PAL", special_function = SF.PauseTracker },
 
-        [102738] = { id = "PAL", special_function = SFF.PAL_Pause },
-        [102744] = { id = "PAL", special_function = SFF.PAL_Unpause }
+        [102738] = { id = "PAL", special_function = SF.PauseTracker },
+        [102744] = { id = "PAL", special_function = SF.UnpauseTracker }
     }
 elseif level_id == "spa" then -- Brooklyn 10-10
-    local zone_delay = 12
     triggers = {
         [100681] = { time = 60, id = "CharonPickLock", icons = { "pd2_generic_interact" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [101430] = { id = "CharonPickLock", special_function = SF.PauseTracker },
-        [101202] = { time = 3 + zone_delay, id = "Escape", icons = { "pd2_car", "pd2_escape", "pd2_lootdrop" } },
-        [101313] = { time = 63 + zone_delay, id = "Escape", icons = { "pd2_car", "pd2_escape", "pd2_lootdrop" } }
+        [101202] = { time = 15, id = "Escape", icons = { "pd2_car", "pd2_escape", "pd2_lootdrop" } },
+        [101313] = { time = 75, id = "Escape", icons = { "pd2_car", "pd2_escape", "pd2_lootdrop" } },
+        [100549] = { time = 20, id = "ObjectiveWait", icons = { "faster" } }
     }
 elseif level_id == "sah" then -- Shacklethorne Auction
     triggers = {
@@ -226,12 +228,18 @@ elseif level_id == "kenaz" then -- Golden Grin Casino
     }
 elseif level_id == "glace" then -- Green Bridge
     triggers = {
-        [102368] = { time = 120, random_time = { low = 0, high = 10 }, id = "PickUpBalloonFirstTry", icons = { "pd2_defend" }, class = "EHIInaccuratePausableTracker" },
+        [102368] = { id = "PickUpBalloonFirstTry", icons = { "pd2_defend" }, class = "EHIPausableTracker", special_function = SF.GetTimeAccurate, element = 102333 },
         [104290] = { id = "PickUpBalloonFirstTry", special_function = SF.PauseTracker },
         [103517] = { id = "PickUpBalloonFirstTry", special_function = SF.UnpauseTracker },
         [101205] = { id = "PickUpBalloonFirstTry", special_function = SF.UnpauseTracker },
         [102370] = { time = 45, id = "PickUpBalloonSecondTry", icons = { "pd2_escape" }, class = "EHIPausableTracker" }
     }
+    if Network:is_client() then
+        triggers[102368].time = 120
+        triggers[102368].random_time = { low = 0, high = 10 }
+        triggers[102368].class = "EHIInaccuratePausableTracker"
+        EHI:AddSyncTrigger(102368, triggers[102368])
+    end
 elseif level_id == "kosugi" then -- Shadow Raid
     triggers = {
         [100955] = { time = 10, id = "KeycardLeft", icons = { "equipment_bank_manager_key" }, class = "EHIWarningTracker", special_function = SF.DisableTriggerAndExecute, data = { id = 100957 } },
@@ -239,11 +247,28 @@ elseif level_id == "kosugi" then -- Shadow Raid
         [100967] = { special_function = SF.RemoveTrackers, data = { "KeycardLeft", "KeycardRight" } }
     }
 elseif level_id == "born" then -- The Biker Heist Day 1
+    trigger_icon_all = { "pd2_defend" }
     triggers = {
-        [101535] = { time = 90, random_time = { low = 0, high = 30 }, id = "MikeDefendGarage", icons = { "pd2_defend" }, class = "EHIInaccuratePausableTracker", special_function = SF.UnpauseTrackerIfExists },
+        [101034] = { id = "MikeDefendTruck", class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033 },
+        [101038] = { id = "MikeDefendTruck", special_function = SF.PauseTracker },
+        [101070] = { id = "MikeDefendTruck", special_function = SF.UnpauseTracker },
+
+        [101535] = { id = "MikeDefendGarage", class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101532 },
         [101534] = { id = "MikeDefendGarage", special_function = SF.UnpauseTracker },
         [101533] = { id = "MikeDefendGarage", special_function = SF.PauseTracker }
     }
+    if Network:is_client() then
+        triggers[101034].time = 80
+        triggers[101034].random_time = { low = 0, high = 10 }
+        triggers[101034].special_function = SF.UnpauseTrackerIfExists
+        triggers[101034].class = "EHIInaccuratePausableTracker"
+        EHI:AddSyncTrigger(101034, triggers[101034])
+        triggers[101535].time = 90
+        triggers[101535].random_time = { low = 0, high = 30 }
+        triggers[101535].special_function = SF.UnpauseTrackerIfExists
+        triggers[101535].class = "EHIInaccuratePausableTracker"
+        EHI:AddSyncTrigger(101535, triggers[101535])
+    end
 elseif level_id == "wwh" then -- Alaskan Deal
     triggers = {
         [100322] = { time = 120, id = "Fuel", icons = { "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
@@ -251,7 +276,7 @@ elseif level_id == "wwh" then -- Alaskan Deal
     }
 elseif level_id == "mex" then -- Border Crossing
     triggers = {
-        [102685] = { id = "Refueling", icons = { "pd2_water_tap", "pd2_defend" }, class = "EHIPausableTracker", special_function = SF.CheckIfLoud, data = { yes = 121, no = 91 } },
+        [102685] = { id = "Refueling", icons = { "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.CheckIfLoud, data = { yes = 121, no = 91 } },
         [102678] = { id = "Refueling", special_function = SF.UnpauseTracker },
         [102684] = { id = "Refueling", special_function = SF.PauseTracker },
     }
@@ -262,11 +287,11 @@ elseif level_id == "bex" then -- San Martín Bank
         [EHI:GetInstanceElementID(100016, 20450)] = { id = "ServerHack", special_function = SF.PauseTracker }
     }
 elseif level_id == "pex" then -- Breakfast in Tijuana
-    local armory_hack_start = { time = 120, id = "ArmoryHack", icons = { "wp_hack", "pd2_defend" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists }
+    local armory_hack_start = { time = 120, id = "ArmoryHack", icons = { "wp_hack" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists }
     local armory_hack_pause = { id = "ArmoryHack", special_function = SF.PauseTracker }
     local start_index = { 5300, 6300, 7300 }
     triggers = {
-        [101392] = { time = 120, id = "FireEvidence", icons = { "pd2_fire", "pd2_defend" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
+        [101392] = { time = 120, id = "FireEvidence", icons = { "pd2_fire" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [101588] = { id = "FireEvidence", special_function = SF.PauseTracker },
     }
     for _, index in ipairs(start_index) do
@@ -277,9 +302,9 @@ elseif level_id == "pex" then -- Breakfast in Tijuana
     end
 elseif level_id == "fex" then -- Buluc's Mansion
     triggers = {
-        [EHI:GetInstanceElementID(100008, 8130)] = { time = 60, id = "ExplosivesTimer", icons = { "equipment_timer", "pd2_defend" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
+        [EHI:GetInstanceElementID(100008, 8130)] = { time = 60, id = "ExplosivesTimer", icons = { "equipment_timer" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [EHI:GetInstanceElementID(100007, 8130)] = { id = "ExplosivesTimer", special_function = SF.PauseTracker },
-        [EHI:GetInstanceElementID(100008, 8630)] = { time = 60, id = "ExplosivesTimer", icons = { "equipment_timer", "pd2_defend" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
+        [EHI:GetInstanceElementID(100008, 8630)] = { time = 60, id = "ExplosivesTimer", icons = { "equipment_timer" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [EHI:GetInstanceElementID(100007, 8630)] = { id = "ExplosivesTimer", special_function = SF.PauseTracker }
     }
 else
@@ -292,11 +317,8 @@ local function GetTime(id)
     return full_time
 end
 
-local function CreateTrackerForReal(id, icon2)
-    if icon2 then
-        triggers[id].icons[2] = icon2
-    end
-    managers.hud:AddTracker({
+local function CreateTrackerForReal(id, sync)
+    managers.ehi:AddTracker({
         id = triggers[id].id or trigger_id_all,
         time = GetTime(id),
         chance = triggers[id].chance,
@@ -304,15 +326,18 @@ local function CreateTrackerForReal(id, icon2)
         icons = triggers[id].icons or trigger_icon_all,
         class = triggers[id].class
     })
+    if sync then
+        managers.ehi:Sync(id, GetTime(id))
+    end
 end
 
-local function CreateTracker(id)
+local function CreateTracker(id, sync)
     if triggers[id].condition ~= nil then
         if triggers[id].condition == true then
-            CreateTrackerForReal(id)
+            CreateTrackerForReal(id, sync)
         end
     else
-        CreateTrackerForReal(id)
+        CreateTrackerForReal(id, sync)
     end
 end
 
@@ -325,35 +350,61 @@ local function Trigger(id)
             elseif f == SF.RemoveTracker then
                 managers.hud:RemoveTracker(triggers[id].id)
             elseif f == SF.PauseTracker then
-                managers.hud:PauseTracker(triggers[id].id)
+                managers.ehi:PauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTracker then
-                managers.hud:UnpauseTracker(triggers[id].id)
+                managers.ehi:UnpauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud:UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
+            elseif f == SF.GetTimeAccurate then
+                if Network:is_server() then
+                    local element = managers.mission:get_element_by_id(triggers[id].element)
+                    if element then
+                        local t = element._timer or 0
+                        triggers[id].time = t
+                        CreateTracker(id, true)
+                    end
+                else
+                    CreateTracker(id)
+                end
+            elseif f == SF.UnpauseTrackerIfExistsAccurate then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
+                else
+                    if Network:is_server() then
+                        local element = managers.mission:get_element_by_id(triggers[id].element)
+                        if element then
+                            local t = element._timer or 0
+                            triggers[id].time = t
+                            CreateTracker(id, true)
+                        end
+                    else
+                        CreateTracker(id)
+                    end
+                end
             elseif f == SF.ResetTrackerTimeWhenUnpaused then
-                if managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.hud:ResetTrackerTimeAndUnpause(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.AddTrackerIfDoesNotExist then
-                if not managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
                     CreateTracker(id)
                 end
             elseif f == SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused then
                 local trigger = triggers[id]
-                if managers.hud:TrackerExists(trigger.id) then
+                if managers.ehi:TrackerExists(trigger.id) then
                     managers.hud:AddDelayToTrackerAndUnpause(trigger.id, trigger.delay_time)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.AddToCache then
                 _cache[triggers[id].id or trigger_id_all] = triggers[id].time
-            elseif f == SF.GetFromCache then
+            elseif f == SF.GetFromCache then -- Watchdogs Day 2
                 local data = _cache[triggers[id].id or trigger_id_all]
                 _cache[triggers[id].id or trigger_id_all] = nil
                 if data then
@@ -377,13 +428,13 @@ local function Trigger(id)
                 CreateTracker(triggers[id].data.fake_id)
             elseif f == SF.ExecuteIfTrackerExists then
                 local data = triggers[id].data
-                if managers.hud:TrackerExists(data.id) then
+                if managers.ehi:TrackerExists(data.id) then
                     managers.hud:SetTime(triggers[id].id, triggers[id].time)
                     managers.hud:RemoveTracker(data.id)
                 end
             elseif f == SF.SetChanceWhenTrackerExists then
                 local trigger = triggers[id]
-                if managers.hud:TrackerExists(trigger.id) then
+                if managers.ehi:TrackerExists(trigger.id) then
                     managers.hud.ehi:SetChance(trigger.id, trigger.chance)
                 else
                     CreateTracker(id)
@@ -394,11 +445,11 @@ local function Trigger(id)
                 end
             elseif f == SF.PauseTrackers then
                 for _, tracker in ipairs(triggers[id].data) do
-                    managers.hud:PauseTracker(tracker)
+                    managers.ehi:PauseTracker(tracker)
                 end
             elseif f == SF.UnpauseTrackers then
                 for _, tracker in ipairs(triggers[id].data) do
-                    managers.hud:UnpauseTracker(tracker)
+                    managers.ehi:UnpauseTracker(tracker)
                 end
             elseif f == SF.AddTime then
                 managers.hud:AddDelay(triggers[id].id, triggers[id].time)
@@ -413,11 +464,11 @@ local function Trigger(id)
                     CreateTracker(id)
                 end
             elseif f == SF.PauseTrackerAndAddNewTracker then
-                managers.hud:PauseTracker(triggers[id].id)
+                managers.ehi:PauseTracker(triggers[id].id)
                 Trigger(triggers[id].data.fake_id)
             elseif f == SF.UnpauseOrSetTimeByPreplanning then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud:UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
                 else
                     if managers.preplanning:IsAssetBought(triggers[id].data.id) then
                         triggers[id].time = triggers[id].data.yes
@@ -444,8 +495,8 @@ local function Trigger(id)
                     CreateTracker(id)
                 end
             elseif f == SF.UnpauseOrSetTimeByElement then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud:UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
                 else
                     if triggers[id].data.cache_id and _cache[triggers[id].data.cache_id] then
                         CreateTracker(id)
@@ -475,21 +526,21 @@ local function Trigger(id)
                 triggers[triggers[id].data.id] = nil
                 CreateTracker(id)
             elseif f == SFF.PAL_Pause then
-                managers.hud.ehi:CallFunction(triggers[id].id, "StopAll")
+                managers.ehi:CallFunction(triggers[id].id, "StopAll")
             elseif f == SFF.PAL_Unpause then
-                managers.hud.ehi:CallFunction(triggers[id].id, "ResumeAll")
+                managers.ehi:CallFunction(triggers[id].id, "ResumeAll")
             elseif f == SFF.PAL_PauseMoney then
-                managers.hud.ehi:CallFunction(triggers[id].id, "SetMoneyPaused", true)
+                managers.ehi:CallFunction(triggers[id].id, "SetMoneyPaused", true)
             elseif f == SFF.PAL_PausePaper then
-                managers.hud.ehi:CallFunction(triggers[id].id, "SetPaperPaused", true)
+                managers.ehi:CallFunction(triggers[id].id, "SetPaperPaused", true)
             elseif f == SFF.PAL_PauseInk then
-                managers.hud.ehi:CallFunction(triggers[id].id, "SetInkPaused", true)
+                managers.ehi:CallFunction(triggers[id].id, "SetInkPaused", true)
             elseif f == SFF.PAL_ResetMoneyTimer then
-                managers.hud.ehi:CallFunction(triggers[id].id, "ResetMoneyTime")
+                managers.ehi:CallFunction(triggers[id].id, "ResetMoneyTime")
             elseif f == SFF.PAL_ResetPaperTimer then
-                managers.hud.ehi:CallFunction(triggers[id].id, "ResetPaperTime")
+                managers.ehi:CallFunction(triggers[id].id, "ResetPaperTime")
             elseif f == SFF.PAL_ResetInkTimer then
-                managers.hud.ehi:CallFunction(triggers[id].id, "ResetInkTime")
+                managers.ehi:CallFunction(triggers[id].id, "ResetInkTime")
             end
         else
             CreateTracker(id)

@@ -3,8 +3,8 @@ local panel_size_original = 32
 local panel_offset_original = 6
 local panel_size = 32
 local panel_offset = 6
-FakeEHIPanel = FakeEHIPanel or class()
-function FakeEHIPanel:init(panel)
+FakeEHIManager = FakeEHIManager or class()
+function FakeEHIManager:init(panel)
     self._hud_panel = panel:panel({
         name = "fake_ehi_panel",
         layer = 400,
@@ -23,7 +23,7 @@ function FakeEHIPanel:init(panel)
     self:AddFakeTrackers()
 end
 
-function FakeEHIPanel:AddFakeTrackers()
+function FakeEHIManager:AddFakeTrackers()
     self._fake_trackers = {}
     local first_tracker = FakeEHITracker:new(self._hud_panel, { id = "N/A", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { "faster" }, x = self._x, y = self:GetY(0), scale = self._scale } )
     self._fake_trackers[#self._fake_trackers + 1] = first_tracker
@@ -80,14 +80,14 @@ function FakeEHIPanel:AddFakeTrackers()
     self:AddPreviewText()
 end
 
-function FakeEHIPanel:make_fine_text(text)
+function FakeEHIManager:make_fine_text(text)
 	local x, y, w, h = text:text_rect()
 
 	text:set_size(w, h)
 	text:set_position(math.round(text:x()), math.round(text:y()))
 end
 
-function FakeEHIPanel:AddPreviewText()
+function FakeEHIManager:AddPreviewText()
     self._preview_text = self._hud_panel:text({
         name = "preview_text",
         text = managers.localization:text("ehi_preview"),
@@ -102,17 +102,17 @@ function FakeEHIPanel:AddPreviewText()
     self._preview_text:set_x(self._x)
 end
 
-function FakeEHIPanel:GetY(pos)
+function FakeEHIManager:GetY(pos)
     return self._y + (pos * (panel_size + panel_offset))
 end
 
-function FakeEHIPanel:UpdateFormat(format)
+function FakeEHIManager:UpdateFormat(format)
     for _, tracker in pairs(self._fake_trackers) do
         tracker:UpdateFormat(format)
     end
 end
 
-function FakeEHIPanel:UpdateXOffset(x)
+function FakeEHIManager:UpdateXOffset(x)
     local x_full, _ = managers.gui_data:safe_to_full(x, 0)
     self._x = x_full
     for _, tracker in pairs(self._fake_trackers) do
@@ -120,7 +120,7 @@ function FakeEHIPanel:UpdateXOffset(x)
     end
 end
 
-function FakeEHIPanel:UpdateYOffset(y)
+function FakeEHIManager:UpdateYOffset(y)
     local _, y_full = managers.gui_data:safe_to_full(0, y)
     self._y = y_full
     for i, tracker in pairs(self._fake_trackers) do
@@ -129,21 +129,20 @@ function FakeEHIPanel:UpdateYOffset(y)
     self._preview_text:set_bottom(self:GetY(0) - panel_offset)
 end
 
-function FakeEHIPanel:SetSelected(id)
-    EHI:Log("id: " .. tostring(id))
+function FakeEHIManager:SetSelected(id)
     for _, tracker in pairs(self._fake_trackers) do
         tracker:SetTextColor(id == tracker:GetID())
     end
 end
 
-function FakeEHIPanel:UpdateScale(scale)
+function FakeEHIManager:UpdateScale(scale)
     self._scale = scale
     panel_size = panel_size_original * self._scale
     panel_offset = panel_offset_original * self._scale
     self:Redraw()
 end
 
-function FakeEHIPanel:Redraw()
+function FakeEHIManager:Redraw()
     for _, tracker in pairs(self._fake_trackers) do
         tracker:destroy()
     end
@@ -429,7 +428,7 @@ end
 FakeEHIXPTracker = FakeEHIXPTracker or class(FakeEHITracker)
 function FakeEHIXPTracker:init(panel, params)
     self._xp = math.random(1000, 100000)
-    self.super.init(self, panel, params)
+    FakeEHIXPTracker.super.init(self, panel, params)
 end
 
 function FakeEHIXPTracker:Format(format)
@@ -440,7 +439,7 @@ FakeEHIProgressTracker = FakeEHIProgressTracker or class(FakeEHITracker)
 function FakeEHIProgressTracker:init(panel, params)
     self._progress = math.random(0, params.progress or 9)
     self._max = params.max or 10
-    self.super.init(self, panel, params)
+    FakeEHIProgressTracker.super.init(self, panel, params)
 end
 
 function FakeEHIProgressTracker:Format(format)
@@ -450,7 +449,7 @@ end
 FakeEHIChanceTracker = FakeEHIChanceTracker or class(FakeEHITracker)
 function FakeEHIChanceTracker:init(panel, params)
     self._chance = math.random(1, 10) * 5
-    self.super.init(self, panel, params)
+    FakeEHIChanceTracker.super.init(self, panel, params)
 end
 
 function FakeEHIChanceTracker:Format(format)
@@ -463,7 +462,7 @@ function FakeEHIEquipmentTracker:init(panel, params)
     local max = params.charges or 8
     self._charges = math.random(1, max)
     self._placed = self._charges > 4 and 2 or 1
-    self.super.init(self, panel, params)
+    FakeEHIEquipmentTracker.super.init(self, panel, params)
 end
 
 function FakeEHIEquipmentTracker:Format(format)

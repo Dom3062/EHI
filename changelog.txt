@@ -1,3 +1,28 @@
+r5 (18. 05. 2021):
+Added a pager timer tracker
+Added more trackers
+Made some trackers accurate on host. Client will see trackers accurate when host have EHI installed
+Election Day D2 Plan C: Fixed a crash when hacking timer hit zero
+Cook Off/Rats Day 1: When methlab explodes the cooking chance tracker is removed
+Rats Day 1: Fixed an issue where 2 van trackers are visible when methlab explodes
+Rats Day 1: Added tracker for achievement "Full Measure". This tracker also works when you drop-in
+Birth of Sky: Added trackers for achievement "Mellon" and thermite. "Mellon" achievement tracker also works when you drop-in
+Border Crystals: Added tracker for achievement "Heister Cocinero". This tracker also works when you drop-in
+Breakfast in Tijuana: Reworked achievement tracker "Paid in Full" to also work when you drop-in
+Dragon Heist: Added tracker for achievement "All the Gold in Chinatown". This tracker also works when you drop-in
+The Bomb: Dockyard: Added trackers for achievement "High Times" and methlab
+The Alesso Heist: Achievement "Even Steven" will blink green when close to unlock
+Slaughterhouse Heist: Achievement "But How?" will blink green when close to unlock
+Hotline Miami Day 1: Added trackers for methlab
+Hotline Miami Day 2: Fixed an issue where "Phew!" achievement did not mark itself as complete or failed when achieved or failed
+Watchdogs Day 1: Improved car lootdrop tracker
+Reworked code and reduced a lot of conditions
+Reworked some icons on trackers to make them more consistent with other trackers
+Reworked some trackers to animate when achieved or failed
+Fixed an issue where Drill/Saw timers could get stucked when finished
+Fixed an issue on host where Difficulty tracker showed difficulty that was disabled
+Fixed an issue on client where some trackers were not visible when you dropped-in
+
 r4 (07. 05. 2021):
 First Aid Kits: Fixed a rare crash
 Watchdogs Day 1: Fixed an issue where car escape timer was not visible

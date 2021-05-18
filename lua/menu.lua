@@ -1,3 +1,9 @@
+if EHI._hooks.MenuManager then
+	return
+else
+	EHI._hooks.MenuManager = true
+end
+
 Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", function(loc)
 	local language_filename = nil
 	local LanguageKey =

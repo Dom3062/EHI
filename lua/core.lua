@@ -54,7 +54,7 @@ _G.EHI =
         CreateAnotherTrackerWithTracker = 14,
         SetChanceWhenTrackerExists = 15,
         RemoveTriggerWhenExecuted = 16,
-        TriggerID = 17,
+        Trigger = 17,
         RemoveTrigger = 18,
         SetTimeOrCreateTracker = 19,
         ExecuteIfElementIsEnabled = 20,
@@ -68,7 +68,24 @@ _G.EHI =
         RemoveTriggers = 28,
         AddToGlobalCache = 29,
         GetFromGlobalCache = 30,
-        SetAchievementFailed = 31
+        SetAchievementFailed = 31,
+        SetRandomTime = 32
+    },
+
+    ConditionFunctions =
+    {
+        IsLoud = function()
+            if managers.groupai and not managers.groupai:state():whisper_mode() then
+                return true
+            end
+            return false
+        end,
+        IsStealth = function()
+            if managers.groupai and managers.groupai:state():whisper_mode() then
+                return true
+            end
+            return false
+        end
     },
 
     Icons =
@@ -117,12 +134,20 @@ function EHI:DifficultyToIndex(difficulty)
     return table.index_of(self.difficulties, difficulty) - 2
 end
 
+function EHI:IsOVKOrAbove(difficulty)
+    return self:DifficultyToIndex(difficulty) >= 3
+end
+
 function EHI:GetSpecialFunctions()
     return self.SpecialFunctions
 end
 
 function EHI:GetIcons()
     return self.Icons
+end
+
+function EHI:GetConditionFunctions()
+    return self.ConditionFunctions
 end
 
 function EHI:Log(s)
@@ -145,7 +170,7 @@ function EHI:Load()
     end
     for _, mod in pairs(BLT.Mods:Mods()) do
         if mod:GetName() == "Extra Heist Info" and mod:GetAuthor() == "Dom" then
-            self.ModVersion = mod:GetVersion()--tonumber(mod:GetVersion())
+            self.ModVersion = tonumber(mod:GetVersion())
             break
         end
     end
@@ -153,7 +178,7 @@ end
 
 function EHI:Save()
     self.settings.SaveDataVer = self.SaveDataVer
-    self.settings.ModVersion = 1
+    self.settings.ModVersion = self.ModVersion
     local file = io.open(self.SettingsSaveFilePath, "w+")
     if file then
         file:write(json.encode(self.settings) or {})
@@ -223,6 +248,10 @@ function EHI:Hook(object, func, post_call)
     Hooks:PostHook(object, func, "EHI_" .. func, post_call)
 end
 
+function EHI:Unhook(id)
+    Hooks:RemovePostHook("EHI_" .. id)
+end
+
 function EHI:GetPeerColor(unit)
     local color = Color.white
     if unit then
@@ -263,28 +292,60 @@ function EHI:Sync(message, data)
 end
 
 function EHI:SetSyncTriggers(triggers)
-    self._sync_triggers = triggers
+    if self._sync_triggers then
+        for key, value in pairs(triggers) do
+            if self._sync_triggers[key] then
+                self:Log("key: " .. tostring(key) .. " already exists in sync!")
+            else
+                self._sync_triggers[key] = value
+            end
+        end
+    else
+        self._sync_triggers = triggers
+    end
+end
+
+function EHI:AddSyncTrigger(id, trigger)
+    local table = {}
+    table[id] = trigger
+    self:SetSyncTriggers(table)
 end
 
 function EHI:AddTrackerSynced(id, delay)
-    if self._sync_triggers[id] and managers.hud.ehi then
+    if self._sync_triggers[id] and managers.ehi then
         local trigger_id = self._sync_triggers[id].id
-        if managers.hud:TrackerExists(trigger_id) then
-            managers.hud:SetTrackerAccurate(trigger_id)
-            managers.hud:SetTimeNoAnim(trigger_id, self._sync_triggers[id].time + delay)
+        if managers.ehi:TrackerExists(trigger_id) then
+            managers.ehi:SetTrackerAccurate(trigger_id, (self._sync_triggers[id].time or 0) + delay)
         else
-            managers.hud:AddTracker({
-                id = self._sync_triggers[id].id,
-                time = self._sync_triggers[id].time + delay,
-                icons = self._sync_triggers[id].icons
+            managers.ehi:AddTracker({
+                id = trigger_id,
+                time = (self._sync_triggers[id].time or 0) + delay,
+                icons = self._sync_triggers[id].icons,
+                class = self._sync_triggers[id].class
             })
+        end
+        if self._sync_triggers[id].client_on_executed then
+            -- Right now there is only SF.RemoveTriggerWhenExecuted
+            self._sync_triggers[id] = nil
         end
     end
 end
 
+function EHI:DebugEquipment(tracker_id, unit, key, amount)
+    self:Log("Received garbage. Key is nil. Tracker ID: " .. tostring(tracker_id))
+    self:Log("unit: " .. tostring(unit))
+    if unit and alive(unit) then
+        self:Log("unit:name(): " .. tostring(unit:name()))
+        self:Log("unit:key(): " .. tostring(unit:key()))
+    end
+    self:Log("key: " .. tostring(key))
+    self:Log("amount: " .. tostring(amount))
+    self:Log("traceback: " .. debug.traceback())
+end
+
 Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", function(peer, peer_id, reason)
-    if managers.hud and managers.hud.ehi then
-        local tracker = managers.hud.ehi:GetTracker("CustodyTime")
+    if managers.ehi then
+        local tracker = managers.ehi:GetTracker("CustodyTime")
         if tracker then
             tracker:RemovePeerFromCustody(peer_id)
         end

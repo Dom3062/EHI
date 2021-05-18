@@ -1,4 +1,9 @@
 local EHI = EHI
+if EHI._hooks.CivilianDamage then
+    return
+else
+    EHI._hooks.CivilianDamage = true
+end
 if not EHI:GetOption("show_trade_delay") then
     return
 end
@@ -13,8 +18,8 @@ local function AddTracker(peer_id)
     end
     local tweak_data = tweak_data.player.damage
     local delay = tweak_data.base_respawn_time_penalty + tweak_data.respawn_time_penalty
-    if managers.hud:TrackerExists("CustodyTime") then
-        local tracker = managers.hud.ehi:GetTracker("CustodyTime")
+    if managers.ehi:TrackerExists("CustodyTime") then
+        local tracker = managers.ehi:GetTracker("CustodyTime")
         if tracker then
             if tracker:PeerExists(peer_id) then
                 tracker:IncreasePeerCustodyTime(peer_id, tweak_data.respawn_time_penalty)

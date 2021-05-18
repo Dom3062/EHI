@@ -2,13 +2,24 @@ if not (Global and Global.game_settings and Global.game_settings.level_id) then
     return
 end
 
+local EHI = rawget(_G, "EHI")
+if EHI._hooks.ElementToggle then
+    return
+else
+    EHI._hooks.ElementToggle = true
+end
+
 core:module("CoreElementToggle")
 
 local level_id = Global.game_settings.level_id
 local triggers = {}
+local SF = EHI:GetSpecialFunctions()
 if level_id == "bex" then -- San Martín Bank
+    if Network:is_server() then
+        return
+    end
     triggers = {
-        [102157] = { time = 60, random_time = { low = 0, high = 15 }, id = "VaultGas", icons = { "teargas" }, class = "EHIInaccurateTracker" }
+        [102157] = { time = 60, random_time = { low = 0, high = 15 }, id = "VaultGas", icons = { "teargas" }, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist }
     }
 elseif level_id == "flat" then -- Panic Room
     triggers = {
@@ -29,7 +40,7 @@ local function CreateTrackerForReal(id, icon2)
     if icon2 then
         triggers[id].icons[1] = icon2
     end
-    managers.hud:AddTracker({
+    managers.ehi:AddTracker({
         id = triggers[id].id or trigger_id_all,
         time = GetTime(id),
         chance = triggers[id].chance,
@@ -61,28 +72,28 @@ local function Trigger(id, enabled)
             elseif f == SF.RemoveTracker then
                 managers.hud:RemoveTracker(triggers[id].id)
             elseif f == SF.PauseTracker then
-                managers.hud:PauseTracker(triggers[id].id)
+                managers.ehi:PauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTracker then
-                managers.hud:UnpauseTracker(triggers[id].id)
+                managers.ehi:UnpauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud:UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.ResetTrackerTimeWhenUnpaused then
-                if managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.hud:ResetTrackerTimeAndUnpause(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.AddTrackerIfDoesNotExist then
-                if not managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
                     CreateTracker(id)
                 end
             elseif f == SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused then
                 local trigger = triggers[id]
-                if managers.hud:TrackerExists(trigger.id) then
+                if managers.ehi:TrackerExists(trigger.id) then
                     managers.hud:AddDelayToTrackerAndUnpause(trigger.id, trigger.delay_time)
                 else
                     CreateTracker(id)
@@ -107,13 +118,13 @@ local function Trigger(id, enabled)
                 CreateTracker(triggers[id].data.fake_id)
             elseif f == SF.ExecuteIfTrackerExists then
                 local data = triggers[id].data
-                if managers.hud:TrackerExists(data.id) then
+                if managers.ehi:TrackerExists(data.id) then
                     managers.hud:SetTime(triggers[id].id, triggers[id].time)
                     managers.hud:RemoveTracker(data.id)
                 end
             elseif f == SF.SetChanceWhenTrackerExists then
                 local trigger = triggers[id]
-                if managers.hud:TrackerExists(trigger.id) then
+                if managers.ehi:TrackerExists(trigger.id) then
                     managers.hud.ehi:SetChance(trigger.id, trigger.chance)
                 else
                     CreateTracker(id)
@@ -122,7 +133,7 @@ local function Trigger(id, enabled)
                 CreateTracker(id)
                 triggers[id] = nil
             elseif f == SF.SetTimeOrCreateTracker then
-                if managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.hud:SetTime(triggers[id].id, triggers[id].time)
                 else
                     CreateTracker(id)
@@ -141,8 +152,8 @@ local function Trigger(id, enabled)
                 end
             elseif f == SF.UnpauseTrackersOrCreateThem then
                 for _, tracker in ipairs(triggers[id].data) do
-                    if managers.hud:TrackerExists(triggers[tracker].id) then
-                        managers.hud:UnpauseTracker(triggers[tracker].id)
+                    if managers.ehi:TrackerExists(triggers[tracker].id) then
+                        managers.ehi:UnpauseTracker(triggers[tracker].id)
                     else
                         CreateTracker(tracker)
                     end
@@ -150,21 +161,15 @@ local function Trigger(id, enabled)
             elseif f == SF.IncreaseProgress then
                 managers.hud:IncreaseProgress(triggers[id].id)
             elseif f == SF.SetTimeNoAnimOrCreateTracker then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud.ehi:CallFunction(triggers[id].id, "SetTimeNoAnim", triggers[id].time)
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:CallFunction(triggers[id].id, "SetTimeNoAnim", triggers[id].time)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.SetTrackerAccurate then
-                if managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.hud:SetTrackerAccurate(triggers[id].id)
                     managers.hud:SetTime(triggers[id].id, triggers[id].time)
-                else
-                    CreateTracker(id)
-                end
-            elseif f == SFF.PAL_UnpauseOrCreate then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud.ehi:CallFunction(triggers[id].id, "ResumeAll")
                 else
                     CreateTracker(id)
                 end

@@ -1,3 +1,9 @@
+if EHI._hooks.PlayerManager then
+	return
+else
+	EHI._hooks.PlayerManager = true
+end
+
 local _f_spawn_smoke_screen = PlayerManager.spawn_smoke_screen
 function PlayerManager:spawn_smoke_screen(position, normal, grenade_unit, has_dodge_bonus)
     _f_spawn_smoke_screen(self, position, normal, grenade_unit, has_dodge_bonus)
@@ -11,7 +17,7 @@ function PlayerManager:spawn_smoke_screen(position, normal, grenade_unit, has_do
             color_id = #tweak_data.chat_colors
         end
 	    local color = tweak_data.chat_colors[color_id] or Color.white
-        managers.hud:AddTracker({
+        managers.ehi:AddTracker({
             id = "SmokeScreenGrenade_" .. key,
             time = tweak_data.projectiles.smoke_screen_grenade.duration,
             icons = {

@@ -30,6 +30,7 @@ local SF =
     SetTimeOrCreateTracker = 11,
     SetTimeByGlobalOrCreateTracker = 12,
     SetTrackerAccurate = 27,
+    ReplaceTrackerWithTracker = 28,
     ExecuteDifferentTriggerByGlobal = 99
 }
 local Icon =
@@ -105,7 +106,7 @@ elseif level_id == "flat" then -- Panic Room
         [100206] = { time = 30, id = "LoweringTheWinch", icons = { "heli", "equipment_winch_hook", "pd2_goto" }}
     }
 elseif level_id == "rat" then -- Cook Off
-    triggers = {
+triggers = {
         [101982] = { special_function = SF.ExecuteDifferentTriggerByGlobal, data = { id = "VanReturn", yes = 1019822, no = 1019821 } },
         [1019821] = { time = 589/30 + 3, id = "Van", icons = { "pd2_car", Icon.Escape, Icon.LootDrop }, special_function = SF.SetTimeOrCreateTracker },
         [1019822] = { time = 589/30, id = "VanReturn", icons = { "pd2_car", Icon.Escape, Icon.LootDrop }, special_function = SF.SetTimeOrCreateTracker },
@@ -141,9 +142,9 @@ elseif level_id == "cane" then -- Santa's Workshop
     }
 elseif level_id == "peta2" then -- Goat Simulator Heist Day 2
     triggers = {
-        [GetInstanceElementID(100011, 3750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { "heli", Icon.Interact } },
-        [GetInstanceElementID(100011, 4250)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { "heli", Icon.Interact } },
-        [GetInstanceElementID(100011, 4750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { "heli", Icon.Interact } }
+        [GetInstanceElementID(100011, 3750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { "heli", Icon.Interact }, special_function = SF.ReplaceTrackerWithTracker, data = { "PilotComingIn" } },
+        [GetInstanceElementID(100011, 4250)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { "heli", Icon.Interact }, special_function = SF.ReplaceTrackerWithTracker, data = { "PilotComingIn" } },
+        [GetInstanceElementID(100011, 4750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { "heli", Icon.Interact }, special_function = SF.ReplaceTrackerWithTracker, data = { "PilotComingIn" } }
     }
 elseif level_id == "rvd1" then -- Reservoir Dogs Heist Day 2
     triggers = {
@@ -184,7 +185,7 @@ else
 end
 
 local function CreateTracker(id)
-    managers.hud:AddTracker({
+    managers.ehi:AddTracker({
         id = triggers[id].id or trigger_id_all,
         time = triggers[id].time,
         icons = triggers[id].icons or trigger_icon_all,
@@ -204,35 +205,41 @@ local function Trigger(id)
             elseif f == SF.RemoveTracker then
                 managers.hud:RemoveTracker(triggers[id].id)
             elseif f == SF.PauseTracker then
-                managers.hud:PauseTracker(triggers[id].id)
+                managers.ehi:PauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTracker then
-                managers.hud:UnpauseTracker(triggers[id].id)
+                managers.ehi:UnpauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud:UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.SetTimeOrCreateTracker then
-                if managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.hud:SetTime(triggers[id].id, triggers[id].time)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.SetTrackerAccurate then
-                if managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.hud:SetTrackerAccurate(triggers[id].id)
                     managers.hud:SetTime(triggers[id].id, triggers[id].time)
                 else
                     CreateTracker(id)
                 end
+            elseif f == SF.ReplaceTrackerWithTracker then
+                managers.hud:RemoveTracker(triggers[id].data.id)
+                if triggers[id].data.trigger then
+                    triggers[triggers[id].data.trigger] = nil -- Removes trigger from the list, used in The White House
+                end
+                CreateTracker(id)
             elseif f == SF.ExecuteDifferentTriggerByGlobal then
-                if EHI._cache[triggers[id].data.id] then
+                if EHI._cache.VanReturn then
                     Trigger(triggers[id].data.yes)
                 else
                     Trigger(triggers[id].data.no)
                 end
-                EHI._cache[triggers[id].data.id] = nil
+                EHI._cache.VanReturn = nil
             end
         else
             if triggers[id].condition ~= nil then
@@ -243,11 +250,11 @@ local function Trigger(id)
     end
 end
 
-local _f_client_on_executed = ElementUnitSequence.client_on_executed
+--[[local _f_client_on_executed = ElementUnitSequence.client_on_executed
 function ElementUnitSequence:client_on_executed(...)
     _f_client_on_executed(self, ...)
     Trigger(self._id)
-end
+end]]
 
 local _f_on_executed = ElementUnitSequence.on_executed
 function ElementUnitSequence:on_executed(...)

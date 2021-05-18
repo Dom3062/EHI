@@ -1,15 +1,16 @@
-local deployable_icon =
-{
-    ["DoctorBags"] = "doctor_bag",
-    ["AmmoBags"] = "ammo_bag",
-    ["GrenadeCases"] = "frag_grenade",
-    ["BodyBagsBagBase"] = "bodybags_bag"
-}
+if EHI._hooks.HUDManagerPD2 then
+	return
+else
+	EHI._hooks.HUDManagerPD2 = true
+end
+
 local original =
 {
     _setup_player_info_hud_pd2 = HUDManager._setup_player_info_hud_pd2,
     sync_set_assault_mode = HUDManager.sync_set_assault_mode,
-    destroy = HUDManager.destroy
+    destroy = HUDManager.destroy,
+    set_disabled = HUDManager.set_disabled,
+    set_enabled = HUDManager.set_enabled
 }
 local EHI = EHI
 function HUDManager:_setup_player_info_hud_pd2(...)
@@ -17,7 +18,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     self.ehi = managers.ehi
     self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
     local level_id = Global.game_settings.level_id
-    if EHI:GetOption("show_pager_tracker") and tweak_data.levels[level_id] and tweak_data.levels[level_id].ghost_bonus then
+    if EHI:GetOption("show_pager_tracker") and tweak_data.levels[level_id] and tweak_data.levels[level_id].ghost_bonus and level_id ~= "chill" then
         local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
         local max = 0
         for _, value in pairs(base) do
@@ -36,68 +37,113 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             self.ehi:CallFunction("pagers", "SetBad")
         end
     end
-    if EHI:GetOption("show_difficulty_tracker") and level_id ~= "chill" then
-        local diff = EHI._cache.Difficulty
-        if diff then
-            diff = EHI:RoundNumber(diff, 0.01) * 100
-        else
-            diff = 0
-        end
-        self:AddTracker({
-            id = "Difficulty",
-            icons = { "enemy" },
-            chance = diff,
-            class = "EHIChanceTracker"
-        })
-    end
     if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" then
         self:AddTracker({
             id = "XPTotal",
             class = "EHITotalXPTracker"
         })
     end
-    for deployable, tbl in pairs(EHI._cache.Deployables) do
-        if table.size(tbl) ~= 0 then
-            if deployable == "Health" then
-                self:AddAggregatedHealthTracker()
-                for id, tblh in pairs(EHI._cache.Deployables.Health) do
-                    for key, amount in pairs(tblh) do
-                        self.ehi:CallFunction(deployable, "UpdateAmount", id, key, amount)
-                    end
-                end
-            else
+    if EHI:GetOption("show_achievement") then
+        if level_id == "pines" then
+            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
                 self:AddTracker({
-                    id = deployable,
-                    format = deployable == "AmmoBags" and "percent" or "charges",
-                    icons = { (deployable_icon[deployable] or "doctor_bag") },
-                    class = "EHIEquipmentTracker"
+                    id = "uno_9",
+                    max = 40,
+                    icons = { "C_Vlad_H_XMas_Whats" },
+                    class = "EHIAchievementProgressTracker"
                 })
-                for key, amount in pairs(tbl) do
-                    self.ehi:CallFunction(deployable, "UpdateAmount", key, amount)
-                end
             end
-            EHI._cache.Deployables[deployable] = {}
         end
-    end
-    if level_id == "pines" then
-        if EHI:DifficultyToIndex(Global.game_settings.difficulty) >= 3 and EHI:GetOption("show_achievement") then
+        if level_id == "cane" then
+            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
+                self:AddTracker({
+                    id = "cane_3",
+                    max = 100,
+                    icons = { "C_Vlad_H_Santa_EuroBag" },
+                    class = "EHIAchievementProgressTracker"
+                })
+            end
+        end
+        if level_id == "mex_cooking" then
+            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
+                self:AddTracker({
+                    id = "mex2_9",
+                    max = 25,
+                    icons = { "C_Locke_H_BorderCrystals_HeisterCocinero" },
+                    class = "EHIAchievementProgressTracker"
+                })
+            end
+        end
+        if level_id == "crojob2" then
             self:AddTracker({
-                id = "uno_9",
-                max = 40,
-                icons = { "C_Vlad_H_XMas_Whats" },
+                max = 2,
+                id = "voff_2",
+                icons = { "C_Butcher_H_BombDock_HighTimes" },
                 class = "EHIAchievementProgressTracker"
             })
         end
-    end
-    if level_id == "cane" then
-        if EHI:DifficultyToIndex(Global.game_settings.difficulty) >= 3 and EHI:GetOption("show_achievement") then
+        if level_id == "pal" then
+            local value_max = 1000000
+            local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)
+            local max = math.ceil(value_max / loot_value)
             self:AddTracker({
-                id = "cane_3",
-                max = 100,
-                icons = { "C_Vlad_H_Santa_EuroBag" },
-                remove_after_reaching_target = true,
+                max = max,
+                id = "pal_2",
+                icons = { "C_Classics_H_Counterfeit_DrEvil" },
                 class = "EHIAchievementProgressTracker"
             })
+        end
+        if level_id == "pbr2" then
+            self:AddTracker({
+                max = 9,
+                id = "voff_4",
+                icons = { "C_Locke_H_BirthOfSky_Mellon" },
+                class = "EHIAchievementProgressTracker"
+            })
+        end
+        if level_id == "pex" then
+            self:AddTracker({
+                max = 6,
+                id = "pex_10",
+                icons = { "C_Locke_H_BreakfastInTijuana_PaidInFull" },
+                class = "EHIAchievementProgressTracker"
+            })
+            --[[self:AddTracker({
+                max = 7,
+                id = "pex_11",
+                icons = { "C_Locke_H_BreakfastInTijuana_StolenValor" },
+                class = "EHIAchievementProgressTracker"
+            })]]
+        end
+        if level_id == "dah" then
+            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
+                self:AddTracker({
+                    max = 12,
+                    id = "dah_8",
+                    icons = { "C_Classics_H_DiamondHesit_TheHuntfor" },
+                    class = "EHIAchievementProgressTracker"
+                })
+            end
+        end
+        if level_id == "alex_1" then
+            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
+                self:AddTracker({
+                    max = 7,
+                    id = "halloween_2",
+                    icons = { "C_Hector_H_Rats_FullMeasure" },
+                    class = "EHIAchievementProgressTracker"
+                })
+            end
+        end
+        if level_id == "chas" then
+            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
+                self:AddTracker({
+                    max = 15,
+                    id = "chas_10",
+                    icons = { "C_JiuFeng_H_DragonHeist_AllTheGold" },
+                    class = "EHIAchievementProgressTracker"
+                })
+            end
         end
     end
 end
@@ -115,6 +161,16 @@ function HUDManager:sync_set_assault_mode(mode)
     end
 end
 
+function HUDManager:set_disabled()
+    original.set_disabled(self)
+    managers.ehi:HidePanel()
+end
+
+function HUDManager:set_enabled()
+    original.set_enabled(self)
+    managers.ehi:ShowPanel()
+end
+
 function HUDManager:destroy()
     self.ehi:destroy()
     original.destroy(self)
@@ -122,16 +178,6 @@ end
 
 function HUDManager:SyncHeistTime(time)
     self.ehi:SyncTime(time)
-end
-
-function HUDManager:AddAggregatedHealthTracker()
-    self:AddTracker({
-        id = "Health",
-        ids = { "doctor_bag", "first_aid_kit" },
-        icons = { { icon = "doctor_bag", visible = false }, { icon = "first_aid_kit", visible = false } },
-        dont_show_placed = { first_aid_kit = true },
-        class = "EHIAggregatedEquipmentTracker"
-    })
 end
 
 function HUDManager:AddCustodyTimeTracker()
@@ -149,12 +195,6 @@ end
 
 function HUDManager:AddTracker(params)
     self.ehi:AddTracker(params)
-end
-
--- Called by host only. Clients with EHI call HUDManager:AddTracker() when synced
-function HUDManager:AddTrackerAndSync(params, id, delay)
-    self:AddTracker(params)
-    EHI:Sync(EHI.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
 end
 
 function HUDManager:RemoveTracker(id)
@@ -257,10 +297,3 @@ end
 function HUDManager:Debug(id, element)
     managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; Element: " .. tostring(element), Color.white)
 end
-
-Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id, data)
-    if id == EHI.SyncMessages.EHISyncAddTracker then
-        local tbl = LuaNetworking:StringToTable(data)
-        EHI:AddTrackerSynced(tonumber(tbl.id), tonumber(tbl.delay))
-    end
-end)

@@ -77,10 +77,6 @@ elseif level_id == "bph" then -- Hell's Island
         [101715] = { time = 11, id = "Thermite3", icons = { "pd2_fire" } },
         [101716] = { time = 11, id = "Thermite4", icons = { "pd2_fire" } }
     }
-elseif level_id == "cane" then -- Santa's Workshop
-    triggers = {
-        [100476] = { id = "cane_3", special_function = SF.IncreaseProgress }
-    }
 elseif level_id == "flat" then -- Panic Room
     local kills = 7 -- Normal + Hard
     if difficulty_index == 2 or difficulty_index == 3 then
@@ -128,21 +124,25 @@ elseif level_id == "rat" then -- Cook Off
     }
 elseif level_id == "brb" then -- Brooklyn Bank
     triggers = {
-        [100837] = { random_time = { low = 50, high = 60 }, id = "VaultThermite", icons = { "pd2_fire" }, class = "EHIInaccurateTracker", trigger_at = 4, trigger_count = 0 }
+        [100837] = { time = 50, delay = 10, id = "VaultThermite", icons = { "pd2_fire" }, class = "EHIInaccurateTracker", trigger_at = 4, trigger_count = 0 }
     }
 elseif level_id == "arena" then -- The Alesso Heist
     triggers = {
-        [100304] = { time = 5, id = "live_3", icons = { "C_Bain_H_Arena_Even" } }
+        [100304] = { time = 5, id = "live_3", icons = { "C_Bain_H_Arena_Even" }, class = "EHIAchievementUnlockTracker" }
     }
 elseif level_id == "dah" then -- Diamond Heist
     triggers = {
         [101343] = { time = 30, id = "KeypadReset", icons = { "restarter" } }
     }
 elseif level_id == "mex_cooking" then -- Border Crystals
-    triggers = {
-        [103573] = { time = 30, random_time = { low = 0, high = 10 }, id = "CookingStartDelay", icons = { "pd2_methlab", "faster" }, class = "EHIInaccurateTracker" },
-        [103574] = { time = 30, random_time = { low = 0, high = 10 }, id = "CookingStartDelay", icons = { "pd2_methlab", "faster" }, class = "EHIInaccurateTracker" }
-    }
+    if Network:is_client() then
+        triggers = {
+            [103573] = { time = 30, delay = 10, id = "CookingStartDelay", icons = { "pd2_methlab", "faster" }, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist },
+            [103574] = { time = 30, delay = 10, id = "CookingStartDelay", icons = { "pd2_methlab", "faster" }, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist }
+        }
+    else
+        return
+    end
 elseif level_id == "fex" then -- Buluc's Mansion
     triggers = {
         [102943] = { time = 180 + 2, id = "HeliEscape", icons = { "heli", "pd2_escape", "pd2_lootdrop" } }
@@ -153,7 +153,7 @@ end
 
 local function GetTime(id)
     local full_time = triggers[id].time or 0
-    full_time = full_time + (triggers[id].random_time and math.random(triggers[id].random_time.low, triggers[id].random_time.high) or 0)
+    full_time = full_time + (triggers[id].delay and math.rand(triggers[id].delay) or 0)
     return full_time
 end
 
@@ -174,7 +174,7 @@ local function CreateTrackerForReal(id)
             return
         end
     end
-    managers.hud:AddTracker({
+    managers.ehi:AddTracker({
         id = triggers[id].id or trigger_id_all,
         max = triggers[id].max,
         time = GetTime(id),
@@ -205,28 +205,28 @@ local function Trigger(id, enabled)
             elseif f == SF.RemoveTracker then
                 managers.hud:RemoveTracker(triggers[id].id)
             elseif f == SF.PauseTracker then
-                managers.hud:PauseTracker(triggers[id].id)
+                managers.ehi:PauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTracker then
-                managers.hud:UnpauseTracker(triggers[id].id)
+                managers.ehi:UnpauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud:UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.ResetTrackerTimeWhenUnpaused then
-                if managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.hud:ResetTrackerTimeAndUnpause(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.AddTrackerIfDoesNotExist then
-                if not managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
                     CreateTracker(id)
                 end
             elseif f == SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused then
                 local trigger = triggers[id]
-                if managers.hud:TrackerExists(trigger.id) then
+                if managers.ehi:TrackerExists(trigger.id) then
                     managers.hud:AddDelayToTrackerAndUnpause(trigger.id, trigger.delay_time)
                 else
                     CreateTracker(id)
@@ -252,7 +252,7 @@ local function Trigger(id, enabled)
                     CreateTracker(id)
                 end
             elseif f == SF.MeltdownAddCrowbar then
-                managers.hud.ehi:CallFunction(triggers[id].id, "AddCrowbar")
+                managers.ehi:CallFunction(triggers[id].id, "AddCrowbar")
             end
         else
             CreateTracker(id)
@@ -263,7 +263,7 @@ end
 local _f_client_on_executed = ElementInstanceOutputEvent.client_on_executed
 function ElementInstanceOutputEvent:client_on_executed(...)
     _f_client_on_executed(self, ...)
-    Trigger(self._id, self._values.enabled)
+    Trigger(self._id, true)
 end
 
 local _f_on_executed = ElementInstanceOutputEvent.on_executed

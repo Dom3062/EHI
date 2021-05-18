@@ -1,3 +1,9 @@
+if EHI._hooks.SecurityCamera then
+	return
+else
+	EHI._hooks.SecurityCamera = true
+end
+
 local original =
 {
     init = SecurityCamera.init,
@@ -12,7 +18,7 @@ end
 
 function SecurityCamera:_start_tape_loop(tape_loop_t)
     original._start_tape_loop(self, tape_loop_t)
-    managers.hud:AddTracker({
+    managers.ehi:AddTracker({
         id = self._ehi_key,
         time = tape_loop_t + 5,
         icons = { "camera_loop" },

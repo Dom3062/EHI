@@ -161,6 +161,9 @@ function EHICiviliansKilledTracker:RemovePeerFromCustody(peer_id)
 end
 
 function EHICiviliansKilledTracker:SetPeerInCustody(peer_id)
+    if not self:PeerExists(peer_id) then
+        return
+    end
     self._peer_in_custody[peer_id] = true
 end
 
@@ -232,9 +235,9 @@ end
 
 function EHICiviliansKilledTracker:SetPaused(pause)
     if pause then
-        self._parent_class:RemoveTrackerFromUpdate(self._id)
+        self:RemoveTrackerFromUpdate()
     else
-        self._parent_class:AddTrackerToUpdate(self._id, self)
+        self:AddTrackerToUpdate()
     end
 end
 

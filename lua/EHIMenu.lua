@@ -7,7 +7,6 @@
     Focus changed callback
     Callback arguments
     Color animation
-    Input
 ]]
 
 local function make_fine_text(text_obj)
@@ -133,7 +132,15 @@ function EHIMenu:init()
         self._button_legends:set_right(self._options_panel:right() - 5)
         self._button_legends:set_top(self._options_panel:bottom())
     end
-    self._preview_panel = FakeEHIPanel:new(self._panel)
+    if _G.IS_VR then
+        self._ws_vr = managers.gui_data:create_fullscreen_workspace(nil, MenuRoom:gui())
+        self._vr_panel = self._ws_vr:panel():panel({
+            name = "vr_panel",
+            layer = 500,
+            alpha = 1
+        })
+    end
+    self._preview_panel = FakeEHIManager:new(self._vr_panel or self._panel)
 
     self:GetMenuFromJson(EHI.MenuPath .. "menu.json", EHI.settings)
     self:GetMenuFromJson(EHI.MenuPath .. "equipment.json", EHI.settings)
@@ -366,12 +373,6 @@ function EHIMenu:mouse_press(o, button, x, y)
             else
                 self:CloseColorMenu(false)
             end
-        elseif self._input then
-            if self._input.panel:inside(x, y) then
-                --EHI:Log("Activate input")
-            else
-                self:CloseInput()
-            end
         elseif self._highlighted_item and self._highlighted_item.panel:inside(x,y) then
             self:ActivateItem(self._highlighted_item, x)
         end
@@ -528,8 +529,6 @@ function EHIMenu:ActivateItem(item, x)
         self._slider = item
         self:SetSlider(item, x)
         managers.mouse_pointer:set_pointer_image("grab")
-    elseif item.type == "input" then
-        self:SetInput(item)
     elseif item.type == "color_select" and not self._open_color_dialog then
         self:OpenColorMenu(item)
     end
@@ -630,8 +629,6 @@ function EHIMenu:Cancel()
         self:CloseMultipleChoicePanel()
     elseif self._open_color_dialog then
         self:CloseColorMenu(false)
-    elseif self._input then
-        self:CloseInput()
     elseif self._open_menu.parent_menu then
         self:OpenMenu(self._open_menu.parent_menu, true)
     else
@@ -838,19 +835,6 @@ function EHIMenu:CreateItem(item, items, menu_id)
             callback_arguments = item.callback_arguments,
             focus_changed_callback = item.focus_changed_callback
         })
-    elseif item_type == "input" then
-        itm = self:CreateInput({
-            menu_id = menu_id,
-            id = id,
-            title = managers.localization:text(title),
-            description = managers.localization:text(desc),
-            value = value,
-            default_value = default_value,
-            enabled = enabled,
-            parent = item.parent,
-            callback = item.callback,
-            callback_arguments = item.callback_arguments
-        })
     elseif item_type == "color_select" then
         local stored_value = BAI.settings.assault_panel
         if item.hud_value then
@@ -892,7 +876,6 @@ function EHIMenu:CreateOneLineItems(item, items, menu_id)
         ["toggle"] = 34,
         ["slider"] = 110,
         ["multiple_choice"] = 215,
-        ["input"] = 34,
         ["color_select"] = 64
     }
     local n = table.getn(item.table)
@@ -1305,111 +1288,6 @@ function EHIMenu:SetSlider(item, x, add)
     end
 end
 
-function EHIMenu:SetInput(item)
-    if self._input then
-        self:CloseInput()
-    end
-    self._input = item
-    --BAI:Log("Input")
-    self._input.gui_panel = self._input.panel:panel({
-        alpha = 0.9,
-        w = self._input.panel:w()
-    })
-    self._input.limit = 30
-    self._input.caret = self._input.panel:child("caret")
-    self._input.caret:animate(function(o)
-        while true do
-            o:set_visible(true)
-            wait(0.5)
-            o:set_visible(false)
-            wait(0.5)
-        end
-    end)
-    self._input.caret:set_x(-5 + select(3, item.panel:child("value"):text_rect()))
-
-    self._input.gui_panel:key_press(callback(self, self, "key_press", self._input))
-    self._input.gui_panel:enter_text(callback(self, self, "enter_text", self._input))
-    self._input.gui_panel:key_release(callback(self, self, "key_release", self._input))
-
-    self._input.panel:child("left_top"):set_color(Color.red)
-    self._input.panel:child("left_bottom"):set_color(Color.red)
-    self._input.panel:child("right_top"):set_color(Color.red)
-    self._input.panel:child("right_bottom"):set_color(Color.red)
-
-    if managers.menu:is_pc_controller() then
-        managers.mouse_pointer:_deactivate()
-    end
-
-    --self._esc_released_callback = callback(self, self, "esc_key_callback", row_item)
-    --self._enter_callback = callback(self, self, "enter_key_callback", row_item)
-
-    --[[caret:animate(function(o)
-        while true do
-            o:set_color(Color(0.05, 1, 1, 1))
-            wait(0.4)
-            o:set_color(Color(0.9, 1, 1, 1))
-            wait(0.4)
-        end
-    end)]]
-end
-
-function EHIMenu:key_press(item, o, k)
-    if k == Idstring("backspace") then
-        local text = item.value
-        local n = utf8.len(text)
-        if n > 0 then
-            local s = ""
-            if n ~= 1 then
-                s = utf8.sub(text, 1, n - 1)
-            end
-            item.panel:child("value"):set_text(s)
-            item.value = s
-            item.caret:set_x(-5 + select(3, item.panel:child("value"):text_rect()))
-        end
-    end
-end
-
-function EHIMenu:enter_text(item, o, s)
-    local text = item.value
-    local m = item.limit
-    local n = utf8.len(text)
-    s = utf8.sub(s, 1, m - n)
-
-    item.panel:child("value"):set_text(text .. s)
-    item.value = text .. s
-    item.caret:set_x(-5 + select(3, item.panel:child("value"):text_rect()))
-end
-
-function EHIMenu:key_release(item, o, k)
-    if BAI:IsOr(k, Idstring("esc"), Idstring("enter")) then
-        self:CloseInput()
-    end
-end
-
-function EHIMenu:CloseInput()
-    if self._input then
-        self:CallCallback(self._input)
-
-        self._input.panel:child("left_top"):set_color(Color.white)
-        self._input.panel:child("left_bottom"):set_color(Color.white)
-        self._input.panel:child("right_top"):set_color(Color.white)
-        self._input.panel:child("right_bottom"):set_color(Color.white)
-
-        self._input.gui_panel:key_press(nil)
-        self._input.gui_panel:enter_text(nil)
-        self._input.gui_panel:key_release(nil)
-        self._input.gui_panel = nil
-        self._input.caret:stop()
-        self._input.caret:set_visible(false)
-        self._input.caret = nil
-        self._input = nil
-
-        if managers.menu:is_pc_controller() then
-            managers.mouse_pointer:_activate()
-        end
-    end
-end
-
 --Multiple Choice Items
 function EHIMenu:CreateMultipleChoice(params)
     local menu_panel = self._options_panel:child("menu_"..tostring(params.menu_id))
@@ -1570,149 +1448,6 @@ function EHIMenu:CloseMultipleChoicePanel()
         self._open_choice_dialog = nil
     end)
     self:SetLegends(true, true, false)
-end
-
-function EHIMenu:CreateInput(params)
-    local menu_panel = self._options_panel:child("menu_"..tostring(params.menu_id))
-    if not menu_panel or not self._menus[params.menu_id] then
-        return
-    end
-    local input_panel = menu_panel:panel({
-        name = "input_" .. tostring(params.id),
-        y = self:GetLastPosInMenu(params.menu_id),
-        h = 25,
-        layer = 2,
-        alpha = params.enabled and 1 or 0.5
-    })
-    input_panel:bitmap({
-        name = "bg",
-        alpha = 0
-    })
-    local title = input_panel:text({
-        name = "title",
-        font_size = 20,
-        font = tweak_data.menu.pd2_medium_font,
-        text = params.title or "",
-        x = 29,
-        w = input_panel:w() - 34,
-        align = "right",
-        vertical = "center",
-        layer = 1
-    })
-    local w = select(3, title:text_rect())
-    if w > title:w() then
-        title:set_font_size(title:font_size() * (title:w() / w))
-    end
-
-    local value = input_panel:text({
-        name = "value",
-        font_size = 20,
-        font = tweak_data.menu.pd2_medium_font,
-        text = params.value or "",
-        x = input_panel:left() + 5,
-        w = input_panel:w(),
-        align = "left",
-        vertical = "center",
-        layer = 1
-    })
-    local w = select(3, value:text_rect())
-    if w > value:w() then
-        value:set_font_size(value:font_size() * (value:w() / w))
-    end
-
-    input_panel:bitmap({
-        texture = "guis/textures/pd2_mod_bai/hud_corner",
-        name = "left_top",
-        visible = true,
-        layer = 0,
-        y = 0,
-        halign = "left",
-        x = 0,
-        valign = "top",
-        color = Color.white,
-        blend_mode = "add"
-    })
-
-    local left_bottom = input_panel:bitmap({
-        texture = "guis/textures/pd2_mod_bai/hud_corner",
-        name = "left_bottom",
-        visible = true,
-        layer = 0,
-        x = 0,
-        y = 0,
-        halign = "left",
-        rotation = -90,
-        valign = "bottom",
-        color = Color.white,
-        blend_mode = "add"
-    })
-
-    left_bottom:set_bottom(input_panel:h())
-
-    local right_top = input_panel:bitmap({
-        texture = "guis/textures/pd2_mod_bai/hud_corner",
-        name = "right_top",
-        visible = true,
-        layer = 0,
-        x = 0,
-        y = 0,
-        halign = "right",
-        rotation = 90,
-        valign = "top",
-        color = Color.white,
-        blend_mode = "add"
-    })
-
-    right_top:set_right(input_panel:w())
-
-    local right_bottom = input_panel:bitmap({
-        texture = "guis/textures/pd2_mod_bai/hud_corner",
-        name = "right_bottom",
-        visible = true,
-        layer = 0,
-        x = 0,
-        y = 0,
-        halign = "right",
-        rotation = 180,
-        valign = "bottom",
-        color = Color.white,
-        blend_mode = "add"
-    })
-
-    right_bottom:set_right(input_panel:w())
-    right_bottom:set_bottom(input_panel:h())
-
-    local caret = input_panel:bitmap({
-        name = "caret",
-        visible = false,
-        layer = 3,
-        x = 0,
-        y = 12,
-        w = input_panel:h() - 6,
-        h = 2,
-        rotation = 90,
-        color = Color.white,
-        blend_mode = "add",
-        halign = "left"
-    })
-
-    local input = {
-        panel = input_panel,
-        type = "input",
-        id = params.id,
-        enabled = params.enabled,
-        value = params.value or "",
-        default_value = params.default_value,
-        parent = params.parent,
-        desc = params.description,
-        callback = params.callback,
-        callback_arguments = params.callback_arguments,
-        num = #self._menus[params.menu_id].items
-    }
-
-    self:AddItemToMenu(params.menu_id, input)
-
-    return input
 end
 
 -- Custom Color Items

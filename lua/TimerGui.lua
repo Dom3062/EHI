@@ -1,3 +1,9 @@
+if EHI._hooks.TimerGui then
+	return
+else
+	EHI._hooks.TimerGui = true
+end
+
 if not EHI:GetOption("show_timers") then
     return
 end
@@ -11,6 +17,7 @@ local original =
     _set_done = TimerGui._set_done,
     _set_jammed = TimerGui._set_jammed,
     _set_powered = TimerGui._set_powered,
+    set_visible = TimerGui.set_visible,
     destroy = TimerGui.destroy,
     hide = TimerGui.hide
 }
@@ -24,15 +31,7 @@ end
 function TimerGui:init(unit, ...)
     self._ehi_key = tostring(unit:key())
     self._ehi_icon = unit:base().is_drill and "drill" or unit:base().is_hacking_device and "hack" or unit:base().is_saw and "saw" or "timer"
-    self:add_listener_to_done_event(callback(self, self, "EHIRemove"))
     original.init(self, unit, ...)
-end
-
-function TimerGui:EHIRemove(unit)
-    if not self._powered then
-        return
-    end
-    managers.ehi:RemoveTracker(self._ehi_key)
 end
 
 function TimerGui:set_background_icons(background_icons)
@@ -45,8 +44,8 @@ function TimerGui:set_background_icons(background_icons)
             silent = (skills.reduced_alert and 1 or 0) + (skills.silent_drill and 1 or 0)
         }
 
-        if managers.hud:TrackerExists(self._ehi_key) then
-            managers.hud.ehi:CallFunction(self._ehi_key, "SetUpgradeable", true)
+        if managers.ehi:TrackerExists(self._ehi_key) then
+            managers.ehi:CallFunction(self._ehi_key, "SetUpgradeable", true)
             managers.hud:SetUpgrades(self._ehi_key, upgrade_table)
         else
             managers.hud:AddToCache(self._ehi_key, upgrade_table)
@@ -58,11 +57,11 @@ end
 
 function TimerGui:_start(timer)
     original._start(self, timer)
-    if managers.hud:TrackerExists(self._ehi_key) then
+    if managers.ehi:TrackerExists(self._ehi_key) then
         managers.hud:SetTimerJammed(self._ehi_key, false)
         managers.hud:SetTimerPowered(self._ehi_key, true)
     else
-        managers.hud:AddTracker({
+        managers.ehi:AddTracker({
             id = self._ehi_key,
             time = self._current_timer,
             icons = { { icon = "pd2_" .. self._ehi_icon } },
@@ -72,9 +71,9 @@ function TimerGui:_start(timer)
     end
 end
 
-function TimerGui:_set_done(...)
-    managers.hud:RemoveTracker(self._ehi_key)
-    original._set_done(self, ...)
+function TimerGui:_set_done()
+    managers.ehi:RemoveTracker(self._ehi_key)
+    original._set_done(self)
 end
 
 function TimerGui:_set_jammed(jammed, ...)
@@ -88,6 +87,13 @@ function TimerGui:_set_powered(powered, ...)
     end
     managers.hud:SetTimerPowered(self._ehi_key, powered)
     original._set_powered(self, powered, ...)
+end
+
+function TimerGui:set_visible(visible)
+    if visible == false then
+        managers.ehi:RemoveTracker(self._ehi_key)
+    end
+    original.set_visible(self, visible)
 end
 
 function TimerGui:hide()

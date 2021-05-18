@@ -5,6 +5,11 @@ end
 core:module("CoreElementUnitSequenceTrigger")
 
 local EHI = rawget(_G, "EHI")
+if EHI._hooks.ElementUnitSequenceTrigger then
+    return
+else
+    EHI._hooks.ElementUnitSequenceTrigger = true
+end
 local function deep_clone(o)
 	if type(o) == "userdata" then
 		return o
@@ -31,7 +36,44 @@ local trigger_id_all = "Trigger"
 local SF = EHI:GetSpecialFunctions()
 SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused = 599
 local Icon = EHI:GetIcons()
-if level_id == "des" then -- Henry's Rock
+if level_id == "pbr2" then -- Birth of Sky
+    triggers = {
+        [103248] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103252] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103255] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103258] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103261] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103264] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103267] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103270] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103273] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103276] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103279] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103282] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103285] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103288] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103291] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103294] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103297] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103300] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103303] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103306] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103309] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103312] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103315] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103318] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103321] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103324] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103327] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103330] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103333] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103336] = { id = "voff_4", special_function = SF.IncreaseProgress },
+        [103339] = { id = "voff_4", special_function = SF.IncreaseProgress },
+
+        [101985] = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } }, -- First grate
+        [101984] = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } } -- Second grate
+    }
+elseif level_id == "des" then -- Henry's Rock
     triggers = {
         [103391] = { id = "uno_5", special_function = SF.IncreaseProgress },
         [103395] = { id = "uno_5", special_function = SF.SetAchievementFailed },
@@ -53,7 +95,7 @@ elseif level_id == "wwh" then -- Alaskan Deal
     }
 elseif level_id == "dinner" then -- Slaughterhouse
     triggers = {
-        [100319] = { id = "farm_2", special_function = SF.RemoveTracker }
+        [100319] = { id = "farm_2", special_function = SF.SetAchievementFailed }
     }
 elseif level_id == "dah" then -- Diamond Heist
     triggers = {
@@ -82,7 +124,7 @@ elseif level_id == "dark" then -- Murky Station
         [EHI:GetInstanceElementID(100160, 36525)] = { time = 10, id = "Thermite4", icons = { Icon.Fire } }
     }
 elseif level_id == "mia_2" then -- Hotline Miami Day 2
-    local trigger = { id = "HostageBomb", special_function = SF.RemoveTracker } -- Hostage blew out
+    local trigger = { id = "HostageBomb", special_function = SF.SetAchievementFailed } -- Hostage blew out
     local start_index =
     {
         3500, 3750, 3900, 4450, 4900, 6100, 17600, 17650
@@ -150,7 +192,7 @@ else
 end
 
 local function CreateTrackerForReal(id)
-    managers.hud:AddTracker({
+    managers.ehi:AddTracker({
         id = triggers[id].id or trigger_id_all,
         time = triggers[id].time,
         icons = triggers[id].icons,
@@ -177,12 +219,12 @@ local function Trigger(id, enabled)
             elseif f == SF.RemoveTracker then
                 managers.hud:RemoveTracker(triggers[id].id)
             elseif f == SF.PauseTracker then
-                managers.hud:PauseTracker(triggers[id].id)
+                managers.ehi:PauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTracker then
-                managers.hud:UnpauseTracker(triggers[id].id)
+                managers.ehi:UnpauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud:UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
@@ -190,7 +232,7 @@ local function Trigger(id, enabled)
                 managers.hud:IncreaseProgress(triggers[id].id)
             elseif f == SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused then
                 local trigger = triggers[id]
-                if managers.hud:TrackerExists(trigger.id) then
+                if managers.ehi:TrackerExists(trigger.id) then
                     managers.hud:AddDelayToTrackerAndUnpause(trigger.id, trigger.delay_time)
                 else
                     CreateTracker(id)
@@ -215,9 +257,9 @@ local function Trigger(id, enabled)
                     triggers[trigger_id] = nil
                 end
             elseif f == SF.SetAchievementComplete then
-                managers.hud.ehi:CallFunction(triggers[id].id, "SetCompleted")
+                managers.ehi:CallFunction(triggers[id].id, "SetCompleted", true)
             elseif f == SF.SetAchievementFailed then
-                managers.hud.ehi:CallFunction(triggers[id].id, "SetFailed")
+                managers.ehi:CallFunction(triggers[id].id, "SetFailed")
             end
         else
             CreateTracker(id)
@@ -228,7 +270,7 @@ end
 local _f_client_on_executed = ElementUnitSequenceTrigger.client_on_executed
 function ElementUnitSequenceTrigger:client_on_executed(...)
     _f_client_on_executed(self, ...)
-    Trigger(self._id, self._values.enabled)
+    Trigger(self._id, true)
 end
 
 local _f_on_executed = ElementUnitSequenceTrigger.on_executed

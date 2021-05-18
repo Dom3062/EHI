@@ -1,3 +1,9 @@
+if EHI._hooks.AmmoBagBase then
+    return
+else
+    EHI._hooks.AmmoBagBase = true
+end
+
 if not EHI:GetOption("show_equipment_tracker") then
     return
 end
@@ -22,20 +28,16 @@ local correction =
 	[tostring(Idstring("units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"))] = 1,	--CustomAmmoBagBase / shelf 2
 }
 
-local function UpdateTracker(key, amount)
-    if managers.hud.ehi then
-        if not managers.hud:TrackerExists("AmmoBags") then
-            managers.hud:AddTracker({
-                id = "AmmoBags",
-                format = "percent",
-                icons = { "ammo_bag" },
-                class = "EHIEquipmentTracker"
-            })
-        end
-        managers.hud.ehi:CallFunction("AmmoBags", "UpdateAmount", key, amount)
-    elseif EHI._cache.Deployables.AmmoBags then
-        EHI._cache.Deployables.AmmoBags[key] = amount
+local function UpdateTracker(unit, key, amount)
+    if managers.ehi:TrackerDoesNotExist("AmmoBags") then
+        managers.ehi:AddTracker({
+            id = "AmmoBags",
+            format = "percent",
+            icons = { "ammo_bag" },
+            class = "EHIEquipmentTracker"
+        })
     end
+    managers.ehi:CallFunction("AmmoBags", "UpdateAmount", unit, key, amount)
 end
 
 local original =
@@ -55,11 +57,11 @@ end
 function AmmoBagBase:_set_visual_stage()
     original._set_visual_stage(self)
     if not self._ignore then
-        UpdateTracker(self._ehi_key, self._ammo_amount - self._offset)
+        UpdateTracker(self._unit, self._ehi_key, self._ammo_amount - self._offset)
     end
 end
 
 function AmmoBagBase:destroy()
     original.destroy(self)
-    UpdateTracker(self._ehi_key, 0)
+    UpdateTracker(self._unit, self._ehi_key, 0)
 end

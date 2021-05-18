@@ -8,3 +8,8 @@ end
 function EHIInaccuratePausableTracker:SetTextColor()
     self._text:set_color(self._paused and Color.red or color)
 end
+
+function EHIInaccuratePausableTracker:SetTrackerAccurate(time)
+    color = Color.white
+    EHIInaccuratePausableTracker.super.SetTrackerAccurate(self, time)
+end

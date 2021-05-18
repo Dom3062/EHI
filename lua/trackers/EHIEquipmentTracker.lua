@@ -22,7 +22,11 @@ function EHIEquipmentTracker:Format()
     end
 end
 
-function EHIEquipmentTracker:UpdateAmount(key, amount)
+function EHIEquipmentTracker:UpdateAmount(unit, key, amount)
+    if not key then
+        EHI:DebugEquipment(self._id, unit, key, amount)
+        return
+    end
     self._deployables[key] = amount
     self._amount = 0
     self._placed = 0

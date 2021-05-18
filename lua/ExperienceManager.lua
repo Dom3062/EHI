@@ -1,8 +1,14 @@
-if not EHI:GetOption("show_gained_xp") then
+if not Global.load_level then
     return
 end
 
-if not Global.load_level then
+if EHI._hooks.ExperienceManager then
+	return
+else
+	EHI._hooks.ExperienceManager = true
+end
+
+if not EHI:GetOption("show_gained_xp") then
     return
 end
 
@@ -29,12 +35,12 @@ local f
 if EHI:GetOption("xp_panel") == 1 then
     if xp_format == 1 then
         f = function(self, amount)
-            if amount > 0 and managers.hud.ehi then
+            if amount > 0 and managers.ehi then
                 local id = "XP"
-                if managers.hud:TrackerExists(id) then
+                if managers.ehi:TrackerExists(id) then
                     managers.hud:AddXP(id, amount)
                 else
-                    managers.hud:AddTracker({
+                    managers.ehi:AddTracker({
                         id = id,
                         amount = amount,
                         class = "EHIXPTracker"
@@ -46,10 +52,10 @@ if EHI:GetOption("xp_panel") == 1 then
         f = function(self, amount)
             if amount > 0 and managers.hud.ehi then
                 local id = "XP"
-                if managers.hud:TrackerExists(id) then
+                if managers.ehi:TrackerExists(id) then
                     managers.hud:AddXP(id, amount * difficulty_multiplier)
                 else
-                    managers.hud:AddTracker({
+                    managers.ehi:AddTracker({
                         id = id,
                         amount = amount * difficulty_multiplier,
                         class = "EHIXPTracker"
@@ -62,10 +68,10 @@ if EHI:GetOption("xp_panel") == 1 then
             if amount > 0 and managers.hud.ehi then
                 local id = "XP"
                 local xp_gained = MultiplyXPWillAllBonuses(amount)
-                if managers.hud:TrackerExists(id) then
+                if managers.ehi:TrackerExists(id) then
                     managers.hud:AddXP(id, xp_gained)
                 else
-                    managers.hud:AddTracker({
+                    managers.ehi:AddTracker({
                         id = id,
                         amount = xp_gained,
                         class = "EHIXPTracker"

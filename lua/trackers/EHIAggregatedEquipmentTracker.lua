@@ -72,7 +72,11 @@ function EHIAggregatedEquipmentTracker:UpdateIconsVisibility()
     end
 end
 
-function EHIAggregatedEquipmentTracker:UpdateAmount(id, key, amount)
+function EHIAggregatedEquipmentTracker:UpdateAmount(id, unit, key, amount)
+    if not key then
+        EHI:DebugEquipment(self._id, unit, key, amount)
+        return
+    end
     self._deployables[id][key] = amount
     self._amount[id] = 0
     self._placed[id] = 0

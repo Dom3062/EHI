@@ -3,10 +3,10 @@ if not (Global and Global.game_settings and Global.game_settings.level_id) then
 end
 
 local EHI = rawget(_G, "EHI")
-if EHI._hooks.CoreMissionScriptElement then -- Don't hook multiple times, pls
+if EHI._hooks.CoreMissionScriptElement_BaseDelay then -- Don't hook multiple times, pls
     return
 else
-    EHI._hooks.CoreMissionScriptElement = true
+    EHI._hooks.CoreMissionScriptElement_BaseDelay = true
 end
 
 core:module("CoreMissionScriptElement")
@@ -29,31 +29,17 @@ local SF =
     GetFromCache = 10
 }
 local Icon = EHI:GetIcons()
-local TT = -- Tracker Type
+local TT =
 {
-    MallcrasherMoney = "EHIMoneyCounterTracker",
-    Warning = "EHIWarningTracker",
-    Pausable = "EHIPausableTracker"
+    Warning = "EHIWarningTracker"
 }
 local _cache = {}
-if level_id == "vit" then -- The White House
+if level_id == "pal" then -- Counterfeit
     triggers = {
-        -- Time before the tear gas is removed
-        [102074] = { time = 5, id = "TearGasPEOC", icons = { Icon.Teargas } }
-    }
-elseif level_id == "mia_2" then -- Hotline Miami Day 2
-    triggers = {
-        [100428] = { time = 24, id = "PickUpThermalDrill", icons = { Icon.Interact, "pd2_drill" } },
-        [100430] = { time = 24, id = "PickUpThermalDrill", icons = { Icon.Interact, "pd2_drill" } }
-    }
-elseif level_id == "dah" then -- Diamond Heist
-    triggers = { -- 100438, ElementInstanceOutputEvent, check if enabled
-        [103569] = { time = 25, id = "CFOFall", icons = { "hostage", "pd2_goto" } }
-    }
-elseif level_id == "chas" then -- Dragon Heist
-    triggers = {
-        [100209] = { time = 5, id = "LoudEscape", icons = { Icon.Car, Icon.Escape, Icon.LootDrop } },
-        [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = { Icon.Heli, "pd2_drill", "pd2_goto" } }
+        [EHI:GetInstanceElementID(100013, 4700)] = { id = "HeliCageDelay", icons = { Icon.Heli, Icon.LootDrop, "faster" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning },
+        [EHI:GetInstanceElementID(100013, 4750)] = { id = "HeliCageDelay", icons = { Icon.Heli, Icon.LootDrop, "faster" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning },
+        [EHI:GetInstanceElementID(100013, 4800)] = { id = "HeliCageDelay", icons = { Icon.Heli, Icon.LootDrop, "faster" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning },
+        [EHI:GetInstanceElementID(100013, 4850)] = { id = "HeliCageDelay", icons = { Icon.Heli, Icon.LootDrop, "faster" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning }
     }
 else
     return
@@ -66,7 +52,7 @@ EHI:SetSyncTriggers(triggers)
 -- BASE DELAY 5-10
 
 local function CreateTrackerForReal(id, delay, icon2)
-    managers.hud:AddTrackerAndSync({
+    managers.ehi:AddTrackerAndSync({
         id = triggers[id].id or trigger_id_all,
         time = (triggers[id].time or 0) + (delay or 0),
         icons = triggers[id].icons,
@@ -99,27 +85,27 @@ local function Trigger(id, delay)
             elseif f == SF.RemoveTracker then
                 managers.hud:RemoveTracker(triggers[id].id)
            elseif f == SF.PauseTracker then
-                managers.hud:PauseTracker(triggers[id].id)
+                managers.ehi:PauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTracker then
-                managers.hud:UnpauseTracker(triggers[id].id)
+                managers.ehi:UnpauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud:UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.ResetTrackerTimeWhenUnpaused then
-                if managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.hud:ResetTrackerTimeAndUnpause(triggers[id].id)
                 else
                     CreateTracker(id, delay)
                 end
             elseif f == SF.AddTrackerIfDoesNotExist then
-                if not managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
                     CreateTracker(id, delay)
                 end
             elseif f == SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused then
-                if managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.hud:AddDelayToTrackerAndUnpause(triggers[id].id, 1)
                 else
                     CreateTracker(id, delay)
@@ -137,11 +123,11 @@ local function Trigger(id, delay)
     end
 end
 
-local _f_calc_element_delay = MissionScriptElement._calc_element_delay
-function MissionScriptElement:_calc_element_delay(params)
-    local delay = _f_calc_element_delay(self, params)
-    if triggers[params.id] then
-        CreateTrackerForReal(params.id, delay)
+local _f_calc_base_delay = MissionScriptElement._calc_base_delay
+function MissionScriptElement:_calc_base_delay()
+    local delay = _f_calc_base_delay(self)
+    if triggers[self._id] then
+        CreateTrackerForReal(self._id, delay)
     end
     return delay
 end

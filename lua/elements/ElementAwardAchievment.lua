@@ -50,13 +50,17 @@ elseif level_id == "rvd1" then -- Reservoir Dogs Heist Day 2
     triggers = {
         [100247] = { id = "rvd_10" }
     }
+elseif level_id == "dah" then -- Diamond Heist
+    triggers = {
+        [102259] = { id = "dah_8" } -- Achievement is a bit buggy with high ping clients
+    }
 else
     return
 end
 
 local function Trigger(id)
     if triggers[id] then
-        managers.hud.ehi:CallFunction(triggers[id].id, "SetCompleted")
+        managers.ehi:CallFunction(triggers[id].id, "SetCompleted", true)
     end
 end
 

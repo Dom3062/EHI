@@ -1,3 +1,9 @@
+if EHI._hooks.Setup then
+	return
+else
+	EHI._hooks.Setup = true
+end
+
 local original =
 {
     init_managers = Setup.init_managers,

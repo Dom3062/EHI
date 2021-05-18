@@ -2,18 +2,21 @@ if not EHI:GetOption("show_gage_tracker") then
     return
 end
 
+local EHI = rawget(_G, "EHI")
+if EHI._hooks.ElementSpawnGageAssignment then -- Don't hook multiple times, pls
+    return
+else
+    EHI._hooks.ElementSpawnGageAssignment = true
+end
+
 local function CreateTracker()
     local max = tweak_data.gage_assignment:get_num_assignment_units() or 1
-    if managers.hud.ehi then
-        managers.hud:AddTracker({
-            id = "Gage",
-            icons = { "gage" },
-            max = max,
-            class = "EHIProgressTracker"
-        })
-    else
-        EHI._cache.GagePackages = max
-    end
+    managers.ehi:AddTracker({
+        id = "Gage",
+        icons = { "gage" },
+        max = max,
+        class = "EHIProgressTracker"
+    })
 end
 
 local _f_client_on_executed = ElementSpawnGageAssignment.client_on_executed

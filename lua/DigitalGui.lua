@@ -3,6 +3,11 @@ if not (Global and Global.game_settings and Global.game_settings.level_id) then
 end
 
 local EHI = EHI
+if EHI._hooks.DigitalGui then
+	return
+else
+	EHI._hooks.DigitalGui = true
+end
 local original =
 {
     init = DigitalGui.init,
@@ -168,10 +173,10 @@ function DigitalGui:timer_start_count_down(sync)
 	if ignore[editor_id] then
 		return
 	end
-	if managers.hud:TrackerExists(self._ehi_key) then
+	if managers.ehi:TrackerExists(self._ehi_key) then
 		managers.hud:SetTimerJammed(self._ehi_key, false)
 	else
-		managers.hud:AddTracker({
+		managers.ehi:AddTracker({
 			id = self._ehi_key,
 			time = self._timer,
 			icons = icons[editor_id] or { "wp_hack" },
@@ -183,7 +188,7 @@ end
 function DigitalGui:timer_pause(sync)
 	original.timer_pause(self, sync)
 	if remove[self._unit:editor_id()] then
-		managers.hud:RemoveTracker(self._ehi_key)
+		managers.ehi:RemoveTracker(self._ehi_key)
 	else
 		managers.hud:SetTimerJammed(self._ehi_key, true)
 	end
@@ -222,7 +227,7 @@ end
 
 function DigitalGui:set_visible(visible)
 	original.set_visible(self, visible)
-	if not visible and managers.hud and managers.hud.ehi then
-		managers.hud:RemoveTracker(self._ehi_key)
+	if not visible and managers.ehi then
+		managers.ehi:RemoveTracker(self._ehi_key)
 	end
 end

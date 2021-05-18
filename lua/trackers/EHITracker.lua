@@ -2,6 +2,8 @@ local function GetIcon(icon, type)
     if type == "achievement" then
         if icon == "faster" then -- Heat Street
             return "guis/textures/pd2/skilltree/drillgui_icon_faster"
+        elseif icon == "hostage" then
+            return "guis/textures/pd2/hud_icon_hostage"
         else
             return tweak_data.hud_icons:get_icon_data(icon)
         end
@@ -11,15 +13,14 @@ local function GetIcon(icon, type)
         icon == "pagers_used" or icon == "mugshot_in_custody" or icon == "pd2_car" or icon == "pd2_c4" or icon == "pd2_generic_interact" or icon == "pd2_talk" or
         icon == "equipment_winch_hook" or icon == "pd2_water_tap" or icon == "pd2_goto" or icon == "pd2_methlab" or icon == "pd2_generic_look" or
         icon == "equipment_bloodvialok" or icon == "pd2_door" or icon == "pd2_kill" or icon == "equipment_liquid_nitrogen_canister" or icon == "pd2_question" or
-        icon == "equipment_glasscutter" or icon == "C_Bain_H_Arena_Even" or icon == "C_Elephant_H_ElectionDay_Murphy" or icon == "C_Vlad_H_XMas_Impossible" or
-        icon == "Other_H_None_Merry" or icon == "equipment_timer" or icon == "equipment_bloodvial" or icon == "C_Dentist_H_BigBank_Entrapment" or
-        icon == "equipment_bank_manager_key" then
+        icon == "equipment_glasscutter" or icon == "C_Elephant_H_ElectionDay_Murphy" or icon == "C_Vlad_H_XMas_Impossible" or icon == "Other_H_None_Merry" or
+        icon == "equipment_timer" or icon == "equipment_bloodvial" or icon == "C_Dentist_H_BigBank_Entrapment" or icon == "equipment_bank_manager_key" then
             return tweak_data.hud_icons:get_icon_data(icon)
         elseif icon == "faster" or icon == "silent" or icon == "restarter" then
             return "guis/textures/pd2/skilltree/drillgui_icon_" .. icon
         elseif icon == "xp" then
             return "guis/textures/pd2/blackmarket/xp_drop"
-        elseif icon == "heli" or icon == "mad_scan" or icon == "boat" or icon == "enemy" or icon == "piggy" then
+        elseif icon == "heli" or icon == "mad_scan" or icon == "boat" or icon == "enemy" or icon == "piggy" or icon == "assaultbox" then
             return "guis/textures/pd2_mod_ehi/" .. icon
         elseif icon == "reload" then
             return "guis/textures/pd2/skilltree/icons_atlas", {0, 576, 64, 64}
@@ -54,6 +55,8 @@ local function GetIcon(icon, type)
             return "guis/textures/pd2/skilltree/icons_atlas", {384, 320, 64, 64}
         elseif icon == "camera_loop" then
             return "guis/textures/pd2/skilltree/icons_atlas", {256, 128, 64, 64}
+        elseif icon == "pager_icon" then
+            return "guis/textures/pd2/specialization/icons_atlas", {64, 256, 64, 64}
         end
     end
 end
@@ -272,6 +275,19 @@ end
 
 function EHITracker:SetTextColor(color)
     self._text:set_color(color)
+end
+
+function EHITracker:SetTrackerAccurate(time)
+    self:SetTextColor(Color.white)
+    self:SetTimeNoAnim(time)
+end
+
+function EHITracker:RemoveTrackerFromUpdate()
+    self._parent_class:RemoveTrackerFromUpdate(self._id)
+end
+
+function EHITracker:AddTrackerToUpdate()
+    self._parent_class:AddTrackerToUpdate(self._id, self)
 end
 
 function EHITracker:destroy()

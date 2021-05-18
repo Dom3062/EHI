@@ -1,3 +1,9 @@
+if EHI._hooks.SecurityLockGui then
+	return
+else
+	EHI._hooks.SecurityLockGui = true
+end
+
 if not EHI:GetOption("show_timers") then
     return
 end
@@ -19,10 +25,10 @@ end
 function SecurityLockGui:_start(bar, timer, current_timer)
     original._start(self, bar, timer, current_timer)
     if self._bars > 1 then
-        if managers.hud:TrackerExists(self._ehi_bar_key) then
+        if managers.ehi:TrackerExists(self._ehi_bar_key) then
             managers.hud:IncreaseProgress(self._ehi_bar_key)
         else
-            managers.hud:AddTracker({
+            managers.ehi:AddTracker({
                 id = self._ehi_bar_key,
                 icons = { "wp_hack" },
                 class = "EHIProgressTracker",
@@ -32,7 +38,7 @@ function SecurityLockGui:_start(bar, timer, current_timer)
             })
         end
     end
-    managers.hud:AddTracker({
+    managers.ehi:AddTracker({
         id = self._ehi_key,
         time = self._current_timer,
         icons = { { icon = "wp_hack" } },
@@ -47,14 +53,14 @@ end
 
 function SecurityLockGui:_set_done(bar)
     original._set_done(self, bar)
-    managers.hud:RemoveTracker(self._ehi_key)
+    managers.ehi:RemoveTracker(self._ehi_key)
     if self._started then
-        managers.hud:RemoveTracker(self._ehi_bar_key)
+        managers.ehi:RemoveTracker(self._ehi_bar_key)
     end
 end
 
 function SecurityLockGui:destroy()
     original.destroy(self)
-	managers.hud:RemoveTracker(self._ehi_key)
-    managers.hud:RemoveTracker(self._ehi_bar_key)
+	managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi:RemoveTracker(self._ehi_bar_key)
 end

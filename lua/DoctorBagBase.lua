@@ -1,3 +1,9 @@
+if EHI._hooks.DoctorBagBase then
+	return
+else
+	EHI._hooks.DoctorBagBase = true
+end
+
 if not EHI:GetOption("show_equipment_tracker") then
     return
 end
@@ -15,31 +21,22 @@ local correction =
 local UpdateTracker
 
 if EHI:GetOption("show_equipment_aggregate_health") then
-    UpdateTracker = function(key, amount)
-        if managers.hud.ehi then
-            if not managers.hud:TrackerExists("Health") then
-                managers.hud:AddAggregatedHealthTracker()
-            end
-            managers.hud.ehi:CallFunction("Health", "UpdateAmount", "doctor_bag", key, amount)
-        elseif EHI._cache.Deployables.Health then
-            EHI._cache.Deployables.Health.doctor_bag = EHI._cache.Deployables.Health.doctor_bag or {}
-            EHI._cache.Deployables.Health.doctor_bag[key] = amount
+    UpdateTracker = function(unit, key, amount)
+        if managers.ehi:TrackerDoesNotExist("Health") then
+            managers.ehi:AddAggregatedHealthTracker()
         end
+        managers.ehi:CallFunction("Health", "UpdateAmount", "doctor_bag", unit, key, amount)
     end
 else
-    UpdateTracker = function(key, amount)
-        if managers.hud.ehi then
-            if not managers.hud:TrackerExists("DoctorBags") then
-                managers.hud:AddTracker({
-                    id = "DoctorBags",
-                    icons = { "doctor_bag" },
-                    class = "EHIEquipmentTracker"
-                })
-            end
-            managers.hud.ehi:CallFunction("DoctorBags", "UpdateAmount", key, amount)
-        elseif EHI._cache.Deployables.DoctorBags then
-            EHI._cache.Deployables.DoctorBags[key] = amount
+    UpdateTracker = function(unit, key, amount)
+        if managers.ehi:TrackerDoesNotExist("DoctorBags") then
+            managers.ehi:AddTracker({
+                id = "DoctorBags",
+                icons = { "doctor_bag" },
+                class = "EHIEquipmentTracker"
+            })
         end
+        managers.ehi:CallFunction("DoctorBags", "UpdateAmount", unit, key, amount)
     end
 end
 
@@ -58,10 +55,10 @@ end
 
 function DoctorBagBase:_set_visual_stage()
     original._set_visual_stage(self)
-    UpdateTracker(self._ehi_key, self._amount - self._offset)
+    UpdateTracker(self._unit, self._ehi_key, self._amount - self._offset)
 end
 
 function DoctorBagBase:destroy()
     original.destroy(self)
-    UpdateTracker(self._ehi_key, 0)
+    UpdateTracker(self._unit, self._ehi_key, 0)
 end

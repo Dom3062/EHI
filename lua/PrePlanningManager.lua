@@ -1,3 +1,9 @@
+if EHI._hooks.PrePlanningManager then
+	return
+else
+	EHI._hooks.PrePlanningManager = true
+end
+
 function PrePlanningManager:IsAssetBought(asset_id)
     EHI:Log("[PrePlanningManager] IsAssetBought; asset_id: " .. tostring(asset_id))
     if self._finished_preplan then

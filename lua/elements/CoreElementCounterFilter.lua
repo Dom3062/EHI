@@ -7,7 +7,16 @@ if level_id ~= "mex_cooking" then -- Border Crystals
     return
 end
 
-log("[EHI] CoreElementCounterFilter")
+if Network:is_server() then
+    return
+end
+
+local EHI = rawget(_G, "EHI")
+if EHI._hooks.ElementCounterFilter then
+    return
+else
+    EHI._hooks.ElementCounterFilter = true
+end
 
 core:module("CoreElementCounter")
 
@@ -15,13 +24,13 @@ local function GetInstanceElementID(id, start_index)
     return 100000 + math.mod(id, 100000) + 30000 + start_index
 end
 
---local EHI = EHI
+local SF = EHI:GetSpecialFunctions()
 --local difficulty_index = EHI:DifficultyToIndex(difficulty)
 local triggers = {
-    [GetInstanceElementID(100173, 55850)] = { time = 40, random_time = { low = 0, high = 5 }, id = "NextIngredient", icons = { "pd2_methlab", "restarter" }, class = "EHIInaccurateTracker" },
-    [GetInstanceElementID(100173, 56850)] = { time = 40, random_time = { low = 0, high = 5 }, id = "NextIngredient", icons = { "pd2_methlab", "restarter" }, class = "EHIInaccurateTracker" },
-    [GetInstanceElementID(100174, 55850)] = { time = 10, random_time = { low = 0, high = 5 }, id = "MethReady", icons = { "pd2_methlab", "pd2_generic_interact" }, class = "EHIInaccurateTracker" },
-    [GetInstanceElementID(100174, 56850)] = { time = 10, random_time = { low = 0, high = 5 }, id = "MethReady", icons = { "pd2_methlab", "pd2_generic_interact" }, class = "EHIInaccurateTracker" }
+    [GetInstanceElementID(100173, 55850)] = { time = 40, delay = 5, id = "NextIngredient", icons = { "pd2_methlab", "restarter" }, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist },
+    [GetInstanceElementID(100173, 56850)] = { time = 40, delay = 5, id = "NextIngredient", icons = { "pd2_methlab", "restarter" }, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist },
+    [GetInstanceElementID(100174, 55850)] = { time = 10, delay = 5, id = "MethReady", icons = { "pd2_methlab", "pd2_generic_interact" }, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist },
+    [GetInstanceElementID(100174, 56850)] = { time = 10, delay = 5, id = "MethReady", icons = { "pd2_methlab", "pd2_generic_interact" }, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist }
 }
 local trigger_icon = {}
 local trigger_id = {}
@@ -44,7 +53,7 @@ end]]
 
 local function GetTime(id)
     local full_time = triggers[id].time or 0
-    full_time = full_time + (triggers[id].random_time and math.random(triggers[id].random_time.low, triggers[id].random_time.high) or 0)
+    full_time = full_time + (triggers[id].delay and math.rand(triggers[id].delay) or 0)
     return full_time
 end
 
@@ -52,7 +61,7 @@ local function CreateTrackerForReal(id, icon2)
     if icon2 then
         triggers[id].icons[2] = icon2
     end
-    managers.hud:AddTracker({
+    managers.ehi:AddTracker({
         id = triggers[id].id or trigger_id_all,
         time = GetTime(id),
         chance = triggers[id].chance,
@@ -73,9 +82,6 @@ local function CreateTracker(id)
 end
 
 local function Trigger(id)
-    --[[if managers.hud and managers.hud.Debug then
-        managers.hud:Debug(id, "MissionScriptElement")
-    end]]
     if triggers[id] then
         if triggers[id].special_function then
             local f = triggers[id].special_function
@@ -84,28 +90,28 @@ local function Trigger(id)
             elseif f == SF.RemoveTracker then
                 managers.hud:RemoveTracker(triggers[id].id)
             elseif f == SF.PauseTracker then
-                managers.hud:PauseTracker(triggers[id].id)
+                managers.ehi:PauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTracker then
-                managers.hud:UnpauseTracker(triggers[id].id)
+                managers.ehi:UnpauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.hud:TrackerExists(triggers[id].id) then
-                    managers.hud:UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.ResetTrackerTimeWhenUnpaused then
-                if managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.hud:ResetTrackerTimeAndUnpause(triggers[id].id)
                 else
                     CreateTracker(id)
                 end
             elseif f == SF.AddTrackerIfDoesNotExist then
-                if not managers.hud:TrackerExists(triggers[id].id) then
+                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
                     CreateTracker(id)
                 end
             elseif f == SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused then
                 local trigger = triggers[id]
-                if managers.hud:TrackerExists(trigger.id) then
+                if managers.ehi:TrackerExists(trigger.id) then
                     managers.hud:AddDelayToTrackerAndUnpause(trigger.id, trigger.delay_time)
                 else
                     CreateTracker(id)
@@ -128,13 +134,13 @@ local function Trigger(id)
                 CreateTracker(triggers[id].data.fake_id)
             elseif f == SF.ExecuteIfTrackerExists then
                 local data = triggers[id].data
-                if managers.hud:TrackerExists(data.id) then
+                if managers.ehi:TrackerExists(data.id) then
                     managers.hud:SetTime(triggers[id].id, triggers[id].time)
                     managers.hud:RemoveTracker(data.id)
                 end
             elseif f == SF.SetChanceWhenTrackerExists then
                 local trigger = triggers[id]
-                if managers.hud:TrackerExists(trigger.id) then
+                if managers.ehi:TrackerExists(trigger.id) then
                     managers.hud.ehi:SetChance(trigger.id, trigger.chance)
                 else
                     CreateTracker(id)
