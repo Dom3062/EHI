@@ -4,7 +4,9 @@
         <file :name="menu_background.texture" :path="menu_background.texture"/>
         <file :name="check_bg.texture" :path="check_bg.texture"/>
         <file :name="check.texture" :path="check.texture"/>
+        <file :name="hud_corner.texture" :path="hud_corner.texture"/>
 
+        <!-- Custom tracker icons -->
         <file :name="assaultbox.texture" :path="assaultbox.texture"/>
         <file :name="boat.texture" :path="boat.texture"/>
         <file :name="enemy.texture" :path="enemy.texture"/>

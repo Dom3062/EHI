@@ -2,7 +2,26 @@
     "menu_id": "ehi_equipment_menu",
     "parent_menu" : "ehi_menu",
     "title": "ehi_equipment_menu",
+    "focus_changed_callback": "fcc_equipment_tracker_menu",
     "items": [
+        {
+            "type": "multiple_choice",
+            "id": "ehi_equipment_format_choice",
+            "title": "ehi_equipment_format",
+            "description": "ehi_equipment_format_desc",
+            "callback": ["SetOption", "UpdateEquipmentFormat"],
+            "callback_arguments": "equipment_format",
+            "items": [
+                "ehi_equipment_format_1",
+                "ehi_equipment_format_2",
+                "ehi_equipment_format_3",
+                "ehi_equipment_format_4",
+                "ehi_equipment_format_5",
+                "ehi_equipment_format_6"
+            ],
+            "value": "equipment_format",
+            "default_value": 1
+        },
         {
             "type": "toggle",
             "id": "ehi_show_equipment_doctorbag_choice",

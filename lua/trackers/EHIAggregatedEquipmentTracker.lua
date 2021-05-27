@@ -28,11 +28,59 @@ function EHIAggregatedEquipmentTracker:Format()
     return s
 end
 
-function EHIAggregatedEquipmentTracker:FormatDeployable(id)
+--[[function EHIAggregatedEquipmentTracker:FormatDeployable(id)
     if self._dont_show_placed[id] then
         return self._amount[id]
     else
         return self._amount[id] .. " (" .. self._placed[id] .. ")"
+    end
+end]]
+do
+    local format = EHI:GetOption("equipment_format")
+    if format == 1 then -- Uses (Bags placed)
+        function EHIAggregatedEquipmentTracker:FormatDeployable(id)
+            if self._dont_show_placed[id] then
+                return self._amount[id]
+            else
+                return self._amount[id] .. " (" .. self._placed[id] .. ")"
+            end
+        end
+    elseif format == 2 then -- (Bags placed) Uses
+        function EHIAggregatedEquipmentTracker:FormatDeployable(id)
+            if self._dont_show_placed[id] then
+                return self._amount[id]
+            else
+                return "(" .. self._placed[id] .. ") " .. self._amount[id]
+            end
+        end
+    elseif format == 3 then -- (Uses) Bags placed
+        function EHIAggregatedEquipmentTracker:FormatDeployable(id)
+            if self._dont_show_placed[id] then
+                return self._amount[id]
+            else
+                return "(" .. self._amount[id] .. ") " .. self._placed[id]
+            end
+        end
+    elseif format == 4 then -- Bags placed (Uses)
+        function EHIAggregatedEquipmentTracker:FormatDeployable(id)
+            if self._dont_show_placed[id] then
+                return self._amount[id]
+            else
+                return self._placed[id] .. " (" .. self._amount[id] .. ")"
+            end
+        end
+    elseif format == 5 then -- Uses
+        function EHIAggregatedEquipmentTracker:FormatDeployable(id)
+            return tostring(self._amount[id])
+        end
+    else -- Bags placed
+        function EHIAggregatedEquipmentTracker:FormatDeployable(id)
+            if self._dont_show_placed[id] then
+                return tostring(self._amount[id])
+            else
+                return tostring(self._placed[id])
+            end
+        end
     end
 end
 
@@ -56,7 +104,10 @@ function EHIAggregatedEquipmentTracker:UpdateIconsVisibility()
     local visibility = {}
     for i = 1, #self._pos, 1 do
         local s_i = tostring(i)
-        self["_icon" .. s_i]:set_visible(false)
+        local icon = self["_icon" .. s_i]
+        if icon then
+            icon:set_visible(false)
+        end
     end
     for i, id in ipairs(self._pos) do
         if self._amount[id] > 0 then
@@ -66,8 +117,11 @@ function EHIAggregatedEquipmentTracker:UpdateIconsVisibility()
     local move_x = 1
     for _, i in pairs(visibility) do
         local s_i = tostring(i)
-        self["_icon" .. s_i]:set_visible(true)
-        self["_icon" .. s_i]:set_x(self:GetIconPosition(move_x - 1))
+        local icon = self["_icon" .. s_i]
+        if icon then
+            icon:set_visible(true)
+            icon:set_x(self:GetIconPosition(move_x - 1))
+        end
         move_x = move_x + 1
     end
 end
@@ -94,13 +148,4 @@ function EHIAggregatedEquipmentTracker:UpdateAmount(id, unit, key, amount)
         self:FitTheText()
         self:AnimateBG()
     end
-end
-
-function EHIAggregatedEquipmentTracker:ResetFontSize()
-    self._text:set_font_size(self._panel:h())
-end
-
-function EHIAggregatedEquipmentTracker:FitTheText()
-    self:ResetFontSize()
-    EHIAggregatedEquipmentTracker.super.FitTheText(self)
 end

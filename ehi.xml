@@ -31,10 +31,13 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIPagerTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIVaultTemperatureTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementUnlockTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHICountTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIElevatorTimerTracker.lua"/>
             </group>
             <post :hook_id="hudmanagerpd2" :script_path="hudmanagerpd2.lua" />
             <post :hook_id="gameplaycentralmanager" :script_path="GamePlayCentralManager.lua"/>
             <post :hook_id="gageassignmentmanager" :script_path="GageAssignmentManager.lua" />
+            <post :hook_id="enemymanager" :script_path="EnemyManager.lua" />
 
             <post :hook_id="experiencemanager" :script_path="ExperienceManager.lua" />
 
@@ -92,8 +95,6 @@
         <post hook_id="lib/units/props/zipline" :script_path="Zipline.lua" />
         <post hook_id="lib/units/weapons/grenades/quickcsgrenade" :script_path="QuickCsGrenade.lua" />
 
-        <!--<post hook_id="core/lib/managers/mission/coremissionmanager" :script_path="CoreMissionManager.lua"/>
-        <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>-->
         <post hook_id="core/lib/managers/mission/coremissionscriptelement" :script_path="elements/CoreMissionScriptElement_BaseDelay.lua"/>
         <post hook_id="core/lib/managers/mission/coremissionscriptelement" :script_path="elements/CoreMissionScriptElement_ElementDelay.lua"/>
         <post hook_id="core/lib/managers/mission/coreelementlogicchance" :script_path="elements/CoreElementLogicChanceOperator.lua"/>

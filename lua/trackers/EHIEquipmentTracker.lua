@@ -1,7 +1,6 @@
 EHIEquipmentTracker = EHIEquipmentTracker or class(EHITracker)
 EHIEquipmentTracker._update = false
 function EHIEquipmentTracker:init(panel, params)
-    params.update = false
     self._format = params.format or "charges"
     self._dont_show_placed = params.dont_show_placed or false
     self._amount = 0
@@ -10,14 +9,71 @@ function EHIEquipmentTracker:init(panel, params)
     EHIEquipmentTracker.super.init(self, panel, params)
 end
 
-function EHIEquipmentTracker:Format()
-    if self._format == "percent" then
-        return EHI:RoundNumber(self._amount, 0.01) .. " (" .. self._placed .. ")"
-    else
-        if self._dont_show_placed then
-            return self._amount
-        else
-            return self._amount .. " (" .. self._placed .. ")"
+do
+    local format = EHI:GetOption("equipment_format")
+    if format == 1 then -- Uses (Bags placed)
+        function EHIEquipmentTracker:Format()
+            if self._format == "percent" then
+                return EHI:RoundNumber(self._amount, 0.01) .. " (" .. self._placed .. ")"
+            else
+                if self._dont_show_placed then
+                    return self._amount
+                else
+                    return self._amount .. " (" .. self._placed .. ")"
+                end
+            end
+        end
+    elseif format == 2 then -- (Bags placed) Uses
+        function EHIEquipmentTracker:Format()
+            if self._format == "percent" then
+                return "(" .. self._placed .. ") " .. EHI:RoundNumber(self._amount, 0.01)
+            else
+                if self._dont_show_placed then
+                    return self._amount
+                else
+                    return "(" .. self._placed .. ") " .. self._amount
+                end
+            end
+        end
+    elseif format == 3 then -- (Uses) Bags placed
+        function EHIEquipmentTracker:Format()
+            if self._format == "percent" then
+                return "(" .. EHI:RoundNumber(self._amount, 0.01) .. ") " .. self._placed
+            else
+                if self._dont_show_placed then
+                    return self._amount
+                else
+                    return "(" .. self._amount .. ") " .. self._placed
+                end
+            end
+        end
+    elseif format == 4 then -- Bags placed (Uses)
+        function EHIEquipmentTracker:Format()
+            if self._format == "percent" then
+                return self._placed .. "(" .. EHI:RoundNumber(self._amount, 0.01) .. ")"
+            else
+                if self._dont_show_placed then
+                    return self._amount
+                else
+                    return self._placed .. " (" .. self._amount .. ")"
+                end
+            end
+        end
+    elseif format == 5 then -- Uses
+        function EHIEquipmentTracker:Format()
+            if self._format == "percent" then
+                return EHI:RoundNumber(self._amount, 0.01)
+            else
+                return tostring(self._amount)
+            end
+        end
+    else -- Bags placed
+        function EHIEquipmentTracker:Format()
+            if self._dont_show_placed then
+                return tostring(self._amount)
+            else
+                return tostring(self._placed)
+            end
         end
     end
 end

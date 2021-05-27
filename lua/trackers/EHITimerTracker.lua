@@ -68,8 +68,10 @@ function EHITimerTracker:SetUpgrades(upgrades)
 	for upgrade, level in pairs(upgrades) do
 		if level > 0 then
             local icon = self["_icon" .. tostring(icon_definition[upgrade])]
-			icon:set_color(self:GetUpgradeColor(level))
-            icon:set_alpha(1)
+            if icon then
+                icon:set_color(self:GetUpgradeColor(level))
+                icon:set_alpha(1)
+            end
 		end
 	end
     local timer_multiplier = tweak_data.upgrades.values.player.drill_speed_multiplier[upgrades.faster]

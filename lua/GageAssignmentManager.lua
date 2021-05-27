@@ -26,7 +26,7 @@ local function UpdateTracker(self, client_sync_load)
 			EHI._cache.GagePackagesProgress = picked_up
 		end
 	end
-	managers.hud.ehi:SetTrackerProgress("Gage", picked_up)
+	managers.ehi:SetTrackerProgress("Gage", picked_up)
 end
 
 function GageAssignmentManager:EHIPresentProgress()

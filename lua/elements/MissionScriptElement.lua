@@ -37,6 +37,7 @@ local TT = -- Tracker Type
     Inaccurate = "EHIInaccurateTracker",
     InaccurateWarning = "EHIInaccurateWarningTracker"
 }
+SF.NMH_LowerFloor = 191
 SF.SetWhiteColorWhenUnpaused = 192
 SF.SetPausedColor = 193
 SF.ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = 194
@@ -128,7 +129,7 @@ elseif level_id == "escape_cafe" or level_id == "escape_cafe_day" then -- Escape
         [100287] = { time = 30, id = "frappucino_to_go_please", icons = { "C_Escape_H_Cafe_Cappuccino" } , condition = show_achievement, class = TT.Achievement }
     }
     trigger_id_all = "EscapeVan"
-    trigger_icon_all = { Icon.Escape, Icon.LootDrop }
+    trigger_icon_all = { Icon.Car, Icon.Escape, Icon.LootDrop }
 elseif level_id == "escape_overpass" or level_id == "escape_overpass_night" then -- Escape: Overpass
     triggers = {
         [101145] = { time = 180, special_function = SF.GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop } },
@@ -189,6 +190,7 @@ elseif level_id == "pbr" then -- Beneath the Mountain
 elseif level_id == "pbr2" then -- Birth of Sky
     triggers = {
         [101897] = { time = 60, id = "LockeSecureHeli", icons = { Icon.Heli, "equipment_winch_hook" } }, -- Time before Locke arrives with heli to pickup the money
+        [102452] = { id = "jerry_4", special_function = SF.SetAchievementComplete },
         [102453] = { time = 83, id = "jerry_4", icons = { "C_Locke_H_BirthOfSky_OneTwoThree" }, class = TT.Achievement, condition = ovk_and_up and show_achievement }
     }
 elseif level_id == "mus" then -- The Diamond
@@ -474,6 +476,8 @@ elseif level_id == "nmh" then -- No Mercy
         [102701] = { time = 13, id = "Patrol", icons = { "pd2_generic_look" }, class = TT.Warning },
         [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
         [103456] = { time = 5, id = "nmh_11", icons = { "C_Classics_H_NoMercy_Nyctophobia" }, class = TT.Achievement, special_function = SF.RemoveTriggerWhenExecuted, condition = hard_and_above and show_achievement },
+        [103439] = { id = "EscapeElevator", special_function = SF.RemoveTracker },
+        [102619] = { id = "EscapeElevator", special_function = SF.NMH_LowerFloor }
     }
 elseif level_id == "chas" then -- Dragon Heist
     triggers = {
@@ -796,6 +800,31 @@ elseif level_id == "arm_for" then -- Transport: Train Heist
 
         -- Truck
         [105055] = { time = 15 + truck_delay, id = "TruckSecureTurret", icons = { Icon.Car, Icon.LootDrop } }
+    }
+elseif level_id == "man" then -- Undercover
+    local deal = { "pd2_car", "pd2_goto" }
+    local delay = 4 + 356/30
+    local start_chance = 15 -- Normal
+    if difficulty_index == 1 or difficulty_index == 2 then
+        -- Hard + Very Hard
+        start_chance = 10
+    elseif ovk_and_up then
+        -- OVERKILL+
+        start_chance = 5
+    end
+    local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, "wp_hack" }, flash_times = 1, class = "EHIChanceTracker" }
+    triggers = {
+        [101587] = { time = 30 + delay, id = "DealGoingDown", icons = deal },
+        [101588] = { time = 40 + delay, id = "DealGoingDown", icons = deal },
+        [101589] = { time = 50 + delay, id = "DealGoingDown", icons = deal },
+        [101590] = { time = 60 + delay, id = "DealGoingDown", icons = deal },
+        [101591] = { time = 70 + delay, id = "DealGoingDown", icons = deal },
+
+        [102891] = { id = "CodeChance", special_function = SF.RemoveTracker },
+
+        [101825] = CodeChance, -- First hack
+        [102016] = CodeChance, -- Second and Third Hack
+        [102121] = { time = 10, id = "Escape", icons = { Icon.Escape } }
     }
 elseif level_id == "pal" then -- Counterfeit
     triggers = {
@@ -1141,6 +1170,10 @@ local function Trigger(id, enabled)
                     managers.ehi:SetTrackerTextColor(triggers[id].id or trigger_id_all, Color.white)
                 else
                     CreateTracker(id)
+                end
+            elseif f == SF.NMH_LowerFloor then
+                if enabled then
+                    managers.ehi:CallFunction(triggers[id].id, "LowerFloor")
                 end
             end
         elseif triggers[id].on_executed then

@@ -51,7 +51,11 @@ elseif level_id == "alex_1" or level_id == "rat" then -- Rats Day 1 and Cook Off
         chance = 15
     end
     triggers = {
-        [100723] = { amount = chance, id = "CookChance", icons = { "pd2_methlab" }, class = "EHIChanceTracker", special_function = SF.IncreaseChance }
+        [100723] = { amount = chance, id = "CookChance", special_function = SF.IncreaseChance }
+    }
+elseif level_id == "man" then -- Undercover
+    triggers = {
+        [102887] = { amount = 5, id = "CodeChance", special_function = SF.IncreaseChance }
     }
 else
     return
@@ -137,7 +141,7 @@ local function Trigger(id)
                 CreateTracker(id)
             elseif f == SF.IncreaseChance then
                 local trigger = triggers[id]
-                managers.hud.ehi:IncreaseChance(trigger.id, trigger.amount)
+                managers.ehi:IncreaseChance(trigger.id, trigger.amount)
             elseif f == SF.CreateAnotherTrackerWithTracker then
                 CreateTracker(id)
                 CreateTracker(triggers[id].data.fake_id)

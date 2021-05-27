@@ -6,8 +6,6 @@ end
 
 EHI:Hook(IntimitateInteractionExt, "set_tweak_data", function(self, id)
     if id == "corpse_alarm_pager" and not self._pager_has_run then
-        EHI:Log("set_tweak_data")
-        EHI:Log("unit:key() " .. tostring(self._unit:key()))
         managers.ehi:AddPagerTracker({
             id = "pager_" .. tostring(self._unit:key()),
             class = "EHIPagerTracker"
@@ -21,8 +19,6 @@ EHI:Hook(IntimitateInteractionExt, "interact", function(self, player)
 		return
 	end
     if self.tweak_data == "corpse_alarm_pager" then
-        EHI:Log("interact")
-        EHI:Log("unit:key() " .. tostring(self._unit:key()))
         managers.ehi:RemoveTracker("pager_" .. tostring(self._unit:key()))
     end
 end)
@@ -32,17 +28,12 @@ EHI:Hook(IntimitateInteractionExt, "_at_interact_start", function(self, player, 
 		if Network:is_server() then
 			return
 		end
-        EHI:Log("_at_interact_start")
-        EHI:Log("unit:key() " .. tostring(self._unit:key()))
         managers.ehi:CallFunction("pager_" .. tostring(self._unit:key()), "SetAnswered")
 	end
 end)
 
 EHI:Hook(IntimitateInteractionExt, "sync_interacted", function(self, peer, player, status, skip_alive_check)
     if self.tweak_data == "corpse_alarm_pager" then
-        EHI:Log("sync_interacted")
-        EHI:Log("unit:key() " .. tostring(self._unit:key()))
-        EHI:Log("status: ".. tostring(status))
         local id = "pager_" .. tostring(self._unit:key())
         if status == "started" or status == 1 then
             managers.ehi:CallFunction(id, "SetAnswered")

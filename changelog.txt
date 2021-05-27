@@ -1,3 +1,16 @@
+r6 (27. 05. 2021):
+Added French translation
+Added Brazilian Portuguese translation
+Added option "Show Tracker Background"
+Added option "Show 1 Icon in Tracker"
+Added option "Equipment Format"
+Added tracker "Enemy Count"
+No Mercy: Fixed an issue where trackers for centrifuges did not show up
+No Mercy: Fixed issues with elevator tracker
+No Mercy: Achievement "Nyctophobia" will blink green when unlocked
+Birth of Sky: Achievement "1... 2... 3... JUMP!" will blink green when unlocked
+Undercover: Added more trackers
+
 r5 (18. 05. 2021):
 Added a pager timer tracker
 Added more trackers
@@ -19,7 +32,7 @@ Watchdogs Day 1: Improved car lootdrop tracker
 Reworked code and reduced a lot of conditions
 Reworked some icons on trackers to make them more consistent with other trackers
 Reworked some trackers to animate when achieved or failed
-Fixed an issue where Drill/Saw timers could get stucked when finished
+Fixed an issue where Drill/Saw timers could get stuck when finished
 Fixed an issue on host where Difficulty tracker showed difficulty that was disabled
 Fixed an issue on client where some trackers were not visible when you dropped-in
 

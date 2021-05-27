@@ -144,6 +144,7 @@ function EHIMenu:init()
 
     self:GetMenuFromJson(EHI.MenuPath .. "menu.json", EHI.settings)
     self:GetMenuFromJson(EHI.MenuPath .. "equipment.json", EHI.settings)
+    self:GetMenuFromJson(EHI.MenuPath .. "visuals.json", EHI.settings)
 
     self:OpenMenu("ehi_menu")
 end
@@ -780,7 +781,8 @@ function EHIMenu:CreateItem(item, items, menu_id)
             callback = item.callback,
             callback_arguments = item.callback_arguments,
             enabled = enabled,
-            parent = item.parent
+            parent = item.parent,
+            focus_changed_callback = item.focus_changed_callback
         })
     elseif item_type == "toggle" then
         itm = self:CreateToggle({
@@ -1103,7 +1105,7 @@ function EHIMenu:CreateButton(params)
         callback = params.next_menu and nil or params.callback,
         callback_arguments = params.callback_arguments,
         num = #self._menus[params.menu_id].items,
-        from_module = params.from_module
+        focus_changed_callback = params.focus_changed_callback
     }
     self:AddItemToMenu(params.menu_id, button)
     return button

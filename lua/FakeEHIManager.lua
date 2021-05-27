@@ -18,66 +18,72 @@ function FakeEHIManager:init(panel)
     else
         self._scale = EHI:GetOption("scale")
     end
+    self._bg_visibility = EHI:GetOption("show_tracker_bg")
+    self._icons_visibility = EHI:GetOption("show_one_icon")
     panel_size = panel_size_original * self._scale
     panel_offset = panel_offset_original * self._scale
     self:AddFakeTrackers()
 end
 
 function FakeEHIManager:AddFakeTrackers()
+    self._n_of_trackers = 0
     self._fake_trackers = {}
-    local first_tracker = FakeEHITracker:new(self._hud_panel, { id = "N/A", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { "faster" }, x = self._x, y = self:GetY(0), scale = self._scale } )
-    self._fake_trackers[#self._fake_trackers + 1] = first_tracker
-    first_tracker._time_bg_box:child("left_top"):set_color(Color.red)
-    self._fake_trackers[#self._fake_trackers + 1] = FakeEHITracker:new(self._hud_panel, { id = "N/A", time = math.random(60, 180), icons = { EHI.Icons.Car, EHI.Icons.Escape }, x = self._x, y = self:GetY(1), scale = self._scale } )
-    local y = #self._fake_trackers
+    self:AddFakeTracker({ id = "N/A", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { "faster" } }, true )
+    self:AddFakeTracker({ id = "N/A", time = math.random(60, 180), icons = { EHI.Icons.Car, EHI.Icons.Escape } } )
     if EHI:GetOption("show_achievement") then
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHITracker:new(self._hud_panel, { id = "show_achievement", time = math.random(60, 180), icons = { "trophy" }, x = self._x, y = self:GetY(y), scale = self._scale } )
-        y = y + 1
+        self:AddFakeTracker({ id = "show_achievement", time = math.random(60, 180), icons = { "trophy" } } )
     end
     if EHI:GetOption("show_gained_xp") then
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHIXPTracker:new(self._hud_panel, { id = "show_gained_xp", icons = { "xp" }, x = self._x, y = self:GetY(y), scale = self._scale } )
-        y = y + 1
+        self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, class = "FakeEHIXPTracker" } )
     end
     if EHI:GetOption("show_trade_delay") then
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHITracker:new(self._hud_panel, { id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = tweak_data.chat_colors[1] or tweak_data.chat_colors[#tweak_data.chat_colors] or Color.white, visible = true } }, x = self._x, y = self:GetY(y), scale = self._scale } )
-        y = y + 1
+        self:AddFakeTracker({ id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = tweak_data.chat_colors[1] or tweak_data.chat_colors[#tweak_data.chat_colors] or Color.white, visible = true } } } )
     end
     if EHI:GetOption("show_timers") then
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHITracker:new(self._hud_panel, { id = "show_timers", time = math.random(60, 240), icons = { "pd2_drill", "faster", "silent", "restarter" }, x = self._x, y = self:GetY(y), scale = self._scale } )
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHITracker:new(self._hud_panel, { id = "show_timers", time = math.random(60, 120), icons = { "wp_hack" }, x = self._x, y = self:GetY(y + 1), scale = self._scale } )
-        y = y + 2
+        self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { "pd2_drill", "faster", "silent", "restarter" } } )
+        self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { "wp_hack" } } )
     end
     if EHI:GetOption("show_zipline_timer") then
         local time = math.random() * (8 - 1) + 1
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHITracker:new(self._hud_panel, { id = "show_zipline_timer", time = time, icons = { "equipment_winch_hook", "wp_bag", "pd2_goto" }, x = self._x, y = self:GetY(y), scale = self._scale } )
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHITracker:new(self._hud_panel, { id = "show_zipline_timer", time = time * 2, icons = { "equipment_winch_hook", "wp_bag", "restarter" }, x = self._x, y = self:GetY(y + 1), scale = self._scale } )
-        y = y + 2
+        self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { "equipment_winch_hook", "wp_bag", "pd2_goto" } } )
+        self:AddFakeTracker({ id = "show_zipline_timer", time = time * 2, icons = { "equipment_winch_hook", "wp_bag", "restarter" } } )
     end
     if EHI:GetOption("show_gage_tracker") then
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHIProgressTracker:new(self._hud_panel, { id = "show_gage_tracker", icons = { "gage" }, x = self._x, y = self:GetY(y), scale = self._scale } )
-        y = y + 1
+        self:AddFakeTracker({ id = "show_gage_tracker", icons = { "gage" }, class = "FakeEHIProgressTracker" } )
     end
     if EHI:GetOption("show_captain_damage_reduction") then
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHIChanceTracker:new(self._hud_panel, { id = "show_captain_damage_reduction", icons = { "buff_shield" }, x = self._x, y = self:GetY(y), scale = self._scale } )
-        y = y + 1
+        self:AddFakeTracker({ id = "show_captain_damage_reduction", icons = { "buff_shield" }, class = "FakeEHIChanceTracker" } )
     end
     if EHI:GetOption("show_equipment_tracker") then
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHIEquipmentTracker:new(self._hud_panel, { id = "show_equipment_tracker", show_placed = true, icons = { "doctor_bag" }, x = self._x, y = self:GetY(y), scale = self._scale } )
-        y = y + 1
+        self:AddFakeTracker({ id = "show_equipment_tracker", show_placed = true, icons = { "doctor_bag" }, class = "FakeEHIEquipmentTracker" } )
     end
     if EHI:GetOption("show_minion_tracker") then
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHIEquipmentTracker:new(self._hud_panel, { id = "show_minion_tracker", charges = 4, icons = { "minion" }, x = self._x, y = self:GetY(y), scale = self._scale } )
-        y = y + 1
+        self:AddFakeTracker({ id = "show_minion_tracker", min = 1, charges = 4, icons = { "minion" }, class = "FakeEHIEquipmentTracker" } )
     end
     if EHI:GetOption("show_difficulty_tracker") then
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHIChanceTracker:new(self._hud_panel, { id = "show_difficulty_tracker", icons = { "enemy" }, x = self._x, y = self:GetY(y), scale = self._scale } )
-        y = y + 1
+        self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "enemy" }, class = "FakeEHIChanceTracker" } )
     end
     if EHI:GetOption("show_pager_tracker") then
-        self._fake_trackers[#self._fake_trackers + 1] = FakeEHIProgressTracker:new(self._hud_panel, { id = "show_pager_tracker", progress = 3, max = 4, icons = { "pagers_used" }, x = self._x, y = self:GetY(y), scale = self._scale } )
-        y = y + 1
+        self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { "pagers_used" }, class = "FakeEHIProgressTracker" } )
+    end
+    if EHI:GetOption("show_enemy_count_tracker") then
+        self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "enemy" }, class = "FakeEHICountTracker" } )
     end
     self:AddPreviewText()
+end
+
+function FakeEHIManager:AddFakeTracker(params, first)
+    params.x = self._x
+    params.y = self:GetY(self._n_of_trackers)
+    params.scale = self._scale
+    params.bg = self._bg_visibility
+    params.one_icon = self._icons_visibility
+    self._n_of_trackers = self._n_of_trackers + 1
+    local tracker = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params)
+    self._fake_trackers[#self._fake_trackers + 1] = tracker
+    if first then
+        tracker._time_bg_box:child("left_top"):set_color(Color.red)
+    end
 end
 
 function FakeEHIManager:make_fine_text(text)
@@ -112,6 +118,14 @@ function FakeEHIManager:UpdateFormat(format)
     end
 end
 
+function FakeEHIManager:UpdateEquipmentFormat(format)
+    for _, tracker in pairs(self._fake_trackers) do
+        if tracker.UpdateEquipmentFormat then
+            tracker:UpdateEquipmentFormat(format)
+        end
+    end
+end
+
 function FakeEHIManager:UpdateXOffset(x)
     local x_full, _ = managers.gui_data:safe_to_full(x, 0)
     self._x = x_full
@@ -140,6 +154,20 @@ function FakeEHIManager:UpdateScale(scale)
     panel_size = panel_size_original * self._scale
     panel_offset = panel_offset_original * self._scale
     self:Redraw()
+end
+
+function FakeEHIManager:UpdateBGVisibility(visibility)
+    self._bg_visibility = visibility
+    for _, tracker in pairs(self._fake_trackers) do
+        tracker:UpdateBGVisibility(visibility)
+    end
+end
+
+function FakeEHIManager:UpdateIconsVisibility(visibility)
+    self._icons_visibility = visibility
+    for _, tracker in pairs(self._fake_trackers) do
+        tracker:UpdateIconsVisibility(visibility)
+    end
 end
 
 function FakeEHIManager:Redraw()
@@ -222,7 +250,7 @@ end
 
 local function HUDBGBox_create(panel, params, config) -- Not available when called from menu
 	local box_panel = panel:panel(params)
-	local color = config and config.color
+	local color = config and config.color or Color.white
 	local bg_color = config and config.bg_color or Color(1, 0, 0, 0)
 	local blend_mode = config and config.blend_mode
 
@@ -233,13 +261,14 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
 		alpha = 0.25,
 		layer = -1,
 		valign = "grow",
-		color = bg_color
+		color = bg_color,
+        visible = config.visible
 	})
 
 	local left_top = box_panel:bitmap({
-		texture = "guis/textures/pd2/hud_corner",
+		texture = "guis/textures/pd2_mod_ehi/hud_corner",
 		name = "left_top",
-		visible = true,
+		visible = config.visible,
 		layer = 0,
 		y = 0,
 		halign = "left",
@@ -249,9 +278,9 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
 		blend_mode = blend_mode
 	})
 	local left_bottom = box_panel:bitmap({
-		texture = "guis/textures/pd2/hud_corner",
+		texture = "guis/textures/pd2_mod_ehi/hud_corner",
 		name = "left_bottom",
-		visible = true,
+		visible = config.visible,
 		layer = 0,
 		x = 0,
 		y = 0,
@@ -265,9 +294,9 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
 	left_bottom:set_bottom(box_panel:h())
 
 	local right_top = box_panel:bitmap({
-		texture = "guis/textures/pd2/hud_corner",
+		texture = "guis/textures/pd2_mod_ehi/hud_corner",
 		name = "right_top",
-		visible = true,
+		visible = config.visible,
 		layer = 0,
 		x = 0,
 		y = 0,
@@ -281,9 +310,9 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
 	right_top:set_right(box_panel:w())
 
 	local right_bottom = box_panel:bitmap({
-		texture = "guis/textures/pd2/hud_corner",
+		texture = "guis/textures/pd2_mod_ehi/hud_corner",
 		name = "right_bottom",
-		visible = true,
+		visible = config.visible,
 		layer = 0,
 		x = 0,
 		y = 0,
@@ -325,7 +354,8 @@ function FakeEHITracker:init(panel, params)
         w = 64 * self._scale,
         h = 32 * self._scale
     }, {
-        blend_mode = "add"
+        blend_mode = "add",
+        visible = params.bg
     })
     self._text = self._time_bg_box:text({
         name = "text1",
@@ -339,6 +369,7 @@ function FakeEHITracker:init(panel, params)
         color = params.text_color or Color.white
     })
     self:FitTheText()
+    self._n_of_icons = number_of_icons
     if number_of_icons > 0 then
         local start = self._time_bg_box:w()
         local icon_gap = 5 * self._scale
@@ -356,6 +387,9 @@ function FakeEHITracker:init(panel, params)
             end
             start = start + (32 * self._scale)
             icon_gap = icon_gap + (5 * self._scale)
+        end
+        if params.one_icon then
+            self:UpdateIconsVisibility(true)
         end
     end
     self._id = params.id
@@ -419,6 +453,21 @@ function FakeEHITracker:SetTextColor(selected)
     self._text:set_color(selected and tweak_data.ehi.color.InaccurateColor or Color.white)
 end
 
+function FakeEHITracker:UpdateBGVisibility(visibility)
+    self._time_bg_box:child("bg"):set_visible(visibility)
+    self._time_bg_box:child("left_top"):set_visible(visibility)
+    self._time_bg_box:child("left_bottom"):set_visible(visibility)
+    self._time_bg_box:child("right_top"):set_visible(visibility)
+    self._time_bg_box:child("right_bottom"):set_visible(visibility)
+end
+
+function FakeEHITracker:UpdateIconsVisibility(visibility)
+    local i_start = visibility and 2 or 1
+    for i = i_start, self._n_of_icons, 1 do
+        self["_icon" .. i]:set_visible(not visibility)
+    end
+end
+
 function FakeEHITracker:destroy()
     if alive(self._panel) and alive(self._parent_panel) then
         self._parent_panel:remove(self._panel)
@@ -459,16 +508,65 @@ end
 FakeEHIEquipmentTracker = FakeEHIEquipmentTracker or class(FakeEHITracker)
 function FakeEHIEquipmentTracker:init(panel, params)
     self._show_placed = params.show_placed
-    local max = params.charges or 8
-    self._charges = math.random(1, max)
-    self._placed = self._charges > 4 and 2 or 1
+    local max = params.charges or 16
+    self._charges = math.random(params.min or 2, max)
+    self._placed = self._charges > 4 and math.ceil(self._charges / 4) or 1
     FakeEHIEquipmentTracker.super.init(self, panel, params)
 end
 
 function FakeEHIEquipmentTracker:Format(format)
-    if self._show_placed then
-        return self._charges .. " (" .. self._placed .. ")"
-    else
+    return self:EquipmentFormat()
+end
+
+function FakeEHIEquipmentTracker:EquipmentFormat(format)
+    format = format or EHI:GetOption("equipment_format")
+    if format == 1 then -- Uses (Bags placed)
+        if self._show_placed then
+            return self._charges .. " (" .. self._placed .. ")"
+        else
+            return tostring(self._charges)
+        end
+    elseif format == 2 then -- (Bags placed) Uses
+        if self._show_placed then
+            return "(" .. self._placed .. ") " .. self._charges
+        else
+            return tostring(self._charges)
+        end
+    elseif format == 3 then -- (Uses) Bags placed
+        if self._show_placed then
+            return "(" .. self._charges .. ") " .. self._placed
+        else
+            return tostring(self._charges)
+        end
+    elseif format == 4 then -- Bags placed (Uses)
+        if self._show_placed then
+            return self._placed .. " (" .. self._charges .. ")"
+        else
+            return tostring(self._charges)
+        end
+    elseif format == 5 then -- Uses
         return tostring(self._charges)
+    else -- Bags placed
+        if self._show_placed then
+            return tostring(self._placed)
+        else
+            return tostring(self._charges)
+        end
     end
+end
+
+function FakeEHIEquipmentTracker:UpdateEquipmentFormat(format)
+    self._text:set_font_size(self._panel:h())
+    self._text:set_text(self:Format(format))
+    self:FitTheText()
+end
+
+FakeEHICountTracker = FakeEHICountTracker or class(FakeEHITracker)
+function FakeEHICountTracker:init(panel, params)
+    self._count = params.count
+    FakeEHICountTracker.super.init(self, panel, params)
+end
+
+function FakeEHICountTracker:Format(format)
+    return tostring(self._count)
 end

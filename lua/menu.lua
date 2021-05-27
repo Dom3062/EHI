@@ -10,24 +10,23 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
 	{
 		["PAYDAY 2 THAI LANGUAGE Mod"] = "thai",
 		--["Ultimate Localization Manager & 正體中文化"] = "tchinese",
-		--["PAYDAY 2 Translate in Portuguese Brazilian"] = "portuguese-br",
+		["PAYDAY 2 BRAZILIAN PORTUGUESE"] = "portuguese-br",
 		--["Payday 2 Korean patch"] = "korean"
 	}
-	for _, mod in pairs(BLT and BLT.Mods and BLT.Mods:Mods()) do
-		language_filename = mod:IsEnabled() and LanguageKey[mod:GetName()] or nil
+	for _, mod in pairs(BLT and BLT.Mods and BLT.Mods:Mods() or {}) do
+		language_filename = mod:IsEnabled() and LanguageKey[mod:GetName()]
 		if language_filename then
 			break
 		end
 	end
 	if not language_filename then
-		--[[for _, filename in pairs(file.GetFiles(CSGOHUD.LocPath)) do
+		for _, filename in pairs(file.GetFiles(EHI.LocPath)) do
 			local str = filename:match('^(.*).json$')
 			if str and Idstring(str) and Idstring(str):key() == SystemInfo:language():key() then
 				language_filename = str
 				break
 			end
-		end]]
-		language_filename = "english"
+		end
 	end
 	if language_filename ~= "english" then
 		loc:load_localization_file(EHI.ModPath .. "loc/" .. language_filename .. ".json")

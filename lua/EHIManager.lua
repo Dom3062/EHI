@@ -403,6 +403,26 @@ function EHIManager:SetFailedAchievement(id)
     end
 end
 
+function EHIManager:SetTrackerCount(id, count)
+    local tracker = self._trackers[id]
+    if tracker and tracker.SetCount then
+        tracker:SetCount(count)
+    end
+end
+
+function EHIManager:AddCustodyTimeTracker()
+    self:AddTracker({
+        id = "CustodyTime",
+        icons = { "mugshot_in_custody" },
+        class = "EHICiviliansKilledTracker"
+    })
+end
+
+function EHIManager:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, time)
+    self:AddCustodyTimeTracker()
+    self:CallFunction("CustodyTime", "AddPeerCustodyTime", peer_id, time)
+end
+
 function EHIManager:CallFunction(id, f, ...)
     local tracker = self._trackers[id]
     if tracker and tracker[f] then

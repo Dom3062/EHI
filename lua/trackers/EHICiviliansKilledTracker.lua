@@ -233,7 +233,7 @@ function EHICiviliansKilledTracker:update(t, dt)
     end
 end
 
-function EHICiviliansKilledTracker:SetPaused(pause)
+function EHICiviliansKilledTracker:SetPause(pause)
     if pause then
         self:RemoveTrackerFromUpdate()
     else

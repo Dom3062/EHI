@@ -20,6 +20,15 @@
     "ehi_time_format_1" : "Seconds Only",
     "ehi_time_format_2" : "Minutes and Seconds",
 
+    "ehi_visuals_menu" : "Visuals",
+    "ehi_visuals_menu_desc" : "",
+
+    "ehi_show_tracker_bg" : "Show tracker background",
+    "ehi_show_tracker_bg_desc" : "Shows tracker background\nWhen disabled, the background is hidden and animation is not visible",
+
+    "ehi_show_one_icon" : "Show 1 Icon in Tracker",
+    "ehi_show_one_icon_desc" : "Shows 1 icon in tracker when enabled\nAll icons are visible when this option is disabled",
+
     "ehi_trackers" : "Trackers",
     "ehi_trackers_desc" : "",
 
@@ -69,6 +78,15 @@
     "ehi_equipment_menu" : "Equipment Menu",
     "ehi_equipment_menu_desc" : "",
 
+    "ehi_equipment_format" : "Equipment Format",
+    "ehi_equipment_format_desc" : "Defines how equipment should be formated",
+    "ehi_equipment_format_1" : "Uses (Bags placed)",
+    "ehi_equipment_format_2" : "(Bags placed) Uses",
+    "ehi_equipment_format_3" : "(Uses) Bags placed",
+    "ehi_equipment_format_4" : "Bags placed (Uses)",
+    "ehi_equipment_format_5" : "Uses",
+    "ehi_equipment_format_6" : "Bags placed",
+
     "ehi_show_equipment_doctorbag" : "Show Doctor Bags Tracker",
     "ehi_show_equipment_doctorbag_desc" : "Shows a tracker for Doctor Bags",
 
@@ -94,5 +112,8 @@
     "ehi_show_difficulty_tracker_desc" : "Shows a tracker for how much difficulty the wave is",
 
     "ehi_show_pager_tracker" : "Show Pager Tracker",
-    "ehi_show_pager_tracker_desc" : "Shows a tracker for how many pagers you have left"
+    "ehi_show_pager_tracker_desc" : "Shows a tracker for how many pagers you have left",
+
+    "ehi_show_enemy_count_tracker" : "Show Enemy Count Tracker",
+    "ehi_show_enemy_count_tracker_desc" : "Shows a tracker for how many enemies are on the map"
 }

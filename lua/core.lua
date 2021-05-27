@@ -14,21 +14,6 @@ _G.EHI =
 
     _cache =
     {
-        Deployables =
-        {
-            Health =
-            {
-            },
-            DoctorBags =
-            {
-            },
-            AmmoBags =
-            {
-            },
-            GrenadeCases =
-            {
-            }
-        }
     },
 
     SyncMessages =
@@ -123,10 +108,12 @@ _G.EHI =
 		"sm_wish"
 	},
 
+    ModVersion = tonumber(ModInstance:GetVersion()),
     ModPath = ModPath,
+    LocPath = ModPath .. "loc/",
     LuaPath = ModPath .. "lua/",
     MenuPath = ModPath .. "menu/",
-    SettingsSaveFilePath = SavePath .. "ehi.json",
+    SettingsSaveFilePath = BLTModManager.Constants:SavesDirectory() .. "ehi.json",
     SaveDataVer = 1
 }
 
@@ -168,12 +155,7 @@ function EHI:Load()
             self:Save()
         end
     end
-    for _, mod in pairs(BLT.Mods:Mods()) do
-        if mod:GetName() == "Extra Heist Info" and mod:GetAuthor() == "Dom" then
-            self.ModVersion = tonumber(mod:GetVersion())
-            break
-        end
-    end
+    self.ModVersion = tonumber(self.ModInstance:GetVersion())
 end
 
 function EHI:Save()
@@ -208,11 +190,18 @@ end
 function EHI:LoadDefaultValues()
     self.settings =
     {
+        -- Common
         x_offset = 0,
         y_offset = 150,
         scale = 1,
         vr_scale = 2.5,
         time_format = 2,
+
+        -- Visuals
+        show_tracker_bg = true,
+        show_one_icon = false,
+
+        -- Trackers
         show_achievement = true,
         show_gained_xp = true,
         xp_format = 3,
@@ -225,6 +214,7 @@ function EHI:LoadDefaultValues()
         show_gage_tracker = true,
         show_captain_damage_reduction = true,
         show_equipment_tracker = true,
+        equipment_format = 1,
         show_equipment_doctorbag = true,
         show_equipment_ammobag = true,
         show_equipment_grenadecases = true,
@@ -233,7 +223,8 @@ function EHI:LoadDefaultValues()
         show_equipment_aggregate_health = true,
         show_minion_tracker = true,
         show_difficulty_tracker = true,
-        show_pager_tracker = true
+        show_pager_tracker = true,
+        show_enemy_count_tracker = true
     }
     self:Log("Default values loaded")
 end

@@ -19,12 +19,12 @@ local original =
 
 local function OnPlayerCriminalDeath(peer_id, respawn_penalty)
     if managers.ehi:TrackerExists("CustodyTime") then
-        local tracker = managers.hud.ehi:GetTracker("CustodyTime")
+        local tracker = managers.ehi:GetTracker("CustodyTime")
         if tracker and not tracker:PeerExists(peer_id) then
             tracker:AddPeerCustodyTime(peer_id, respawn_penalty)
         end
     else
-        managers.hud:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, respawn_penalty)
+        managers.ehi:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, respawn_penalty)
     end
 end
 
@@ -39,7 +39,7 @@ local function CreateTracker(peer_id, respawn_penalty)
 end
 
 local function SetTrackerPause(character_name)
-    managers.ehi:CallFunction("CustodyTime", "SetPaused", not character_name)
+    managers.ehi:SetTrackerPaused("CustodyTime", not character_name)
 end
 
 function TradeManager:init()
@@ -47,11 +47,11 @@ function TradeManager:init()
     EHI:Hook(self, "set_trade_countdown", function(s, enabled)
         if enabled then
             local function f()
-                managers.ehi:CallFunction("CustodyTime", "SetPaused", false)
+                managers.ehi:UnpauseTracker("CustodyTime")
             end
             EHI:DelayCall("CustodyTime", 1, f) -- For some reason there is a second delay when assault ends
         else -- The delay is not there when assault starts
-            managers.ehi:CallFunction("CustodyTime", "SetPaused", true)
+            managers.ehi:PauseTracker("CustodyTime")
         end
     end)
 end

@@ -63,11 +63,11 @@ local function AddUserZipline(self, unit)
 end
 
 function ZipLine:set_user(unit)
-    original.set_user(self, unit)
     AddUserZipline(self, unit)
+    original.set_user(self, unit or nil)
 end
 
 function ZipLine:sync_set_user(unit)
-    original.sync_set_user(self, unit)
     AddUserZipline(self, unit)
+    original.sync_set_user(self, unit or nil)
 end

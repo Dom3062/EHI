@@ -19,6 +19,15 @@
     "ehi_time_format_desc" : "กำหนดรูปแบบเวลาของไอคอนติดตามว่าควรมีลักษณะเป็นอย่างไร",
     "ehi_time_format_1" : "แสดงหน่วยเป็นวินาทีเท่านั้น",
     "ehi_time_format_2" : "แสดงหน่วยเป็นนาทีและวินาที",
+	
+    "ehi_visuals_menu" : "ภาพไอคอน",
+    "ehi_visuals_menu_desc" : "",
+
+    "ehi_show_tracker_bg" : "แสดงพื้นหลังไอคอนติดตาม",
+    "ehi_show_tracker_bg_desc" : "Shows tracker background:\nเมื่อปิดตัวเลือกนี้ พื้นหลังของไอคอนติดตามจะถูกซ่อนและไม่มีการแสดงแอนิเมชันใดๆ ",
+
+    "ehi_show_one_icon" : "แสดงรูปภาพของไอคอนติดตามเพียง 1 รูป",
+    "ehi_show_one_icon_desc" : "เมื่อเลือกตัวเลือกนี้ ขณะเล่นเกม จะแสดงรูปภาพของไอคอนติดตามเพียง 1 รูปเท่านั้น\nรูปภาพแสดงไอคอนอธิบายถัดจากนั้นจะถูกซ่อน",
 
     "ehi_trackers" : "ไอคอนติดตาม",
     "ehi_trackers_desc" : "Trackers หรือ ไอตอนแสดงการติดตามเหตุการณ์ที่เกิดขึ้นอยู่หรือกำลังเกิดขึ้นในด่านนั้นๆ",
@@ -68,6 +77,15 @@
 
     "ehi_equipment_menu" : "เมนูอุปกรณ์",
     "ehi_equipment_menu_desc" : "",
+	
+    "ehi_equipment_format" : "รูปแบบการแสดงอุปกรณ์",
+    "ehi_equipment_format_desc" : "กำหนดรูปแบบการแสดงอุปกรณ์",
+    "ehi_equipment_format_1" : "จำนวนครั้งที่ใช้ได้ (จำนวนกระเป๋าที่ปรากฎในเกม)",
+    "ehi_equipment_format_2" : "(จำนวนกระเป๋าที่ปรากฎในเกม) จำนวนครั้งที่ใช้ได้",
+    "ehi_equipment_format_3" : "(จำนวนครั้งที่ใช้ได้) จำนวนกระเป๋าที่ปรากฎในเกม",
+    "ehi_equipment_format_4" : "จำนวนกระเป๋าที่ปรากฎในเกม (จำนวนครั้งที่ใช้ได้)",
+    "ehi_equipment_format_5" : "จำนวนครั้งที่ใช้ได้",
+    "ehi_equipment_format_6" : "จำนวนกระเป๋าที่ปรากฎในเกม",
 
     "ehi_show_equipment_doctorbag" : "แสดงกระเป๋าแพทย์",
     "ehi_show_equipment_doctorbag_desc" : "แสดงจำนวนครั้งทั้งหมดจากกระเป๋าแพทย์",
@@ -94,5 +112,8 @@
     "ehi_show_difficulty_tracker_desc" : "แสดงไอคอนความยากของการจู่โจมในแต่ละรอบ มีค่าเป็นเปอร์เซ็นต์",
 
     "ehi_show_pager_tracker" : "แสดงไอคอนจำนวนวิทยุเรียกตัว",
-    "ehi_show_pager_tracker_desc" : "แสดงไอคอนจำนวนวิทยุเรียกตัวหรือ pager ที่เหลืออยู่"
+    "ehi_show_pager_tracker_desc" : "แสดงไอคอนจำนวนวิทยุเรียกตัวหรือ pager ที่เหลืออยู่",
+
+    "ehi_show_enemy_count_tracker" : "แสดงจำนวนศัตรูทั้งหมด",
+    "ehi_show_enemy_count_tracker_desc" : "แสดงจำนวนศัตรูทั้งหมดที่อยู่ในด่าน ณ ขณะนั้น"
 }

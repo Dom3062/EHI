@@ -28,7 +28,7 @@ local function AddTracker(peer_id)
             end
         end
     else
-        managers.hud:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, delay)
+        managers.ehi:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, delay)
     end
 end
 

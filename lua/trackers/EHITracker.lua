@@ -75,6 +75,8 @@ local function CreateIcon(self, i, texture, texture_rect, color, alpha, visible,
     })
 end
 
+local bg_visibility = EHI:GetOption("show_tracker_bg")
+
 EHITracker = EHITracker or class()
 EHITracker._type = "base"
 EHITracker._update = true
@@ -104,6 +106,11 @@ function EHITracker:init(panel, params)
     }, {
         blend_mode = "add"
     })
+    self._time_bg_box:child("bg"):set_visible(bg_visibility)
+    self._time_bg_box:child("left_top"):set_visible(bg_visibility)
+    self._time_bg_box:child("left_bottom"):set_visible(bg_visibility)
+    self._time_bg_box:child("right_top"):set_visible(bg_visibility)
+    self._time_bg_box:child("right_bottom"):set_visible(bg_visibility)
     self._text = self._time_bg_box:text({
         name = "text1",
         text = self:Format(),
@@ -117,9 +124,33 @@ function EHITracker:init(panel, params)
     })
     self:FitTheText()
     if number_of_icons > 0 then
+        self:CreateIcons(params.icons)
+    end
+    self._id = params.id
+    self._parent_class = params.parent_class
+    self:PostInit(params)
+end
+
+if EHI:GetOption("show_one_icon") then
+    EHITracker.CreateIcons = function(self, icons)
+        local icon_pos = self._time_bg_box:w() + (5 * self._scale)
+        local first_icon = icons[1]
+        if type(first_icon) == "string" then
+            local texture, rect = GetIcon(first_icon, self._type)
+            CreateIcon(self, "1", texture, rect, Color.white, 1, true, icon_pos)
+        elseif type(first_icon) == "table" then
+            local texture, rect = GetIcon(first_icon.icon, self._type)
+            CreateIcon(self, "1", texture, rect, first_icon.color,
+                first_icon.alpha or 1,
+                (not not first_icon.visible),
+                icon_pos)
+        end
+    end
+else
+    EHITracker.CreateIcons = function(self, icons)
         local start = self._time_bg_box:w()
         local icon_gap = 5 * self._scale
-        for i, v in ipairs(params.icons) do
+        for i, v in ipairs(icons) do
             local s_i = tostring(i)
             if type(v) == "string" then
                 local texture, rect = GetIcon(v, self._type)
@@ -135,9 +166,6 @@ function EHITracker:init(panel, params)
             icon_gap = icon_gap + (5 * self._scale)
         end
     end
-    self._id = params.id
-    self._parent_class = params.parent_class
-    self:PostInit(params)
 end
 
 if Network:is_server() then
@@ -214,7 +242,12 @@ function EHITracker:Sync(new_time)
     self._end_time = new_time + self._time
 end
 
+function EHITracker:ResetFontSize()
+    self._text:set_font_size(self._panel:h())
+end
+
 function EHITracker:FitTheText()
+    self:ResetFontSize()
     local w = select(3, self._text:text_rect())
     if w > self._text:w() then
         self._text:set_font_size(self._text:font_size() * (self._text:w() / w))

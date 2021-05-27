@@ -18,7 +18,13 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     self.ehi = managers.ehi
     self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
     local level_id = Global.game_settings.level_id
-    if EHI:GetOption("show_pager_tracker") and tweak_data.levels[level_id] and tweak_data.levels[level_id].ghost_bonus and level_id ~= "chill" then
+    if EHI:GetOption("show_enemy_count_tracker") and level_id ~= "chill" then
+        self:AddTracker({
+            id = "EnemyCount",
+            class = "EHICountTracker"
+        })
+    end
+    if EHI:GetOption("show_pager_tracker") and level_id ~= "chill" then
         local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
         local max = 0
         for _, value in pairs(base) do
@@ -178,19 +184,6 @@ end
 
 function HUDManager:SyncHeistTime(time)
     self.ehi:SyncTime(time)
-end
-
-function HUDManager:AddCustodyTimeTracker()
-    self:AddTracker({
-        id = "CustodyTime",
-        icons = { "mugshot_in_custody" },
-        class = "EHICiviliansKilledTracker"
-    })
-end
-
-function HUDManager:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, time)
-    self:AddCustodyTimeTracker()
-    self.ehi:CallFunction("CustodyTime", "AddPeerCustodyTime", peer_id, time)
 end
 
 function HUDManager:AddTracker(params)

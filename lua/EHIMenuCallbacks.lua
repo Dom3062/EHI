@@ -18,11 +18,34 @@ function EHIMenu:UpdateFormat(format)
     self._preview_panel:UpdateFormat(format)
 end
 
+function EHIMenu:UpdateEquipmentFormat(format)
+    self._preview_panel:UpdateEquipmentFormat(format)
+end
+
 function EHIMenu:UpdateTrackerVisibility(value, option)
     self._preview_panel:Redraw()
     self:SetFocus(value, option)
 end
 
+function EHIMenu:UpdateBGVisibility(visibility)
+    self._preview_panel:UpdateBGVisibility(visibility)
+end
+
+function EHIMenu:UpdateIconsVisibility(visibility)
+    self._preview_panel:UpdateIconsVisibility(visibility)
+end
+
 function EHIMenu:SetFocus(focus, value)
     self._preview_panel:SetSelected(value)
+end
+
+function EHIMenu:fcc_equipment_tracker(focus, ...)
+    self:SetFocus(focus, focus and "show_equipment_tracker" or "")
+end
+
+function EHIMenu:fcc_equipment_tracker_menu(focus, ...)
+    local function f()
+        self:SetFocus(focus, focus and "show_equipment_tracker" or "")
+    end
+    EHI:DelayCall("HighlightDelay", 0.5, f)
 end

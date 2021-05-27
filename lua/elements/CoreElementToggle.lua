@@ -26,6 +26,10 @@ elseif level_id == "flat" then -- Panic Room
         [100049] = { time = 20, id = "flat_2", icons = { "C_Classics_H_PanicRoom_Cardio" }, class = "EHIAchievementTracker" },
         [102001] = { time = 5, id = "C4Explosion", icons = { "pd2_c4" } }
     }
+elseif level_id == "man" then -- Undercover
+    triggers = {
+        [103163] = { time = 1.5, random_time = { low = 25, high = 35 }, id = "Faint", icons = { "hostage", "faster" }, class = "EHIInaccurateTracker" }
+    }
 else
     return
 end

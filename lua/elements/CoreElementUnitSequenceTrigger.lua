@@ -81,14 +81,6 @@ elseif level_id == "des" then -- Henry's Rock
         [101446] = { time = 60, id = "Crane", icons = { Icon.Defend }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [102996] = { id = "Crane", special_function = SF.UnpauseTracker }
     }
-elseif level_id == "kosugi" then -- Shadow Raid
-    triggers = {
-        -- See "EHI/lua/levels/kosugi.lua" for more information
-        [105500] = { time = 10, id = "SewerGrate1", icons = { Icon.Fire } },
-        [105501] = { time = 10, id = "SewerGrate2", icons = { Icon.Fire } },
-        [105502] = { time = 10, id = "SewerGrate3", icons = { Icon.Fire } },
-        [105503] = { time = 10, id = "SewerGrate4", icons = { Icon.Fire } }
-    }
 elseif level_id == "wwh" then -- Alaskan Deal
     triggers = {
         [101226] = { id = "wwh_10", special_function = SF.IncreaseProgress }
@@ -116,6 +108,9 @@ elseif level_id == "run" then -- Heat Street
         [100658] = { id = "run_8", special_function = SF.IncreaseProgress }
     }
 elseif level_id == "dark" then -- Murky Station
+    if true then
+        return
+    end
     -- See "EHI/lua/levels/dark.lua" for more information
     triggers = {
         [EHI:GetInstanceElementID(100160, 8750)] = { time = 10, id = "Thermite1", icons = { Icon.Fire } },
@@ -134,9 +129,9 @@ elseif level_id == "mia_2" then -- Hotline Miami Day 2
     end
 elseif level_id == "nmh" then -- No Mercy
     triggers = {
-        [103460] = { id = "nmh_11", special_function = SF.RemoveTracker },
+        [103460] = { id = "nmh_11", special_function = SF.SetAchievementComplete },
 
-        [103443] = { time = 208, delay_time = 8, id = "EscapeElevator", icons = { "pd2_door" }, class = "EHIPausableTracker", special_function = SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused },
+        [103443] = { id = "EscapeElevator", icons = { "pd2_door" }, class = "EHIElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists },
         [104072] = { id = "EscapeElevator", special_function = SF.UnpauseTracker }
     }
 elseif level_id == "moon" then -- Stealing Xmas
@@ -157,6 +152,9 @@ elseif level_id == "brb" then -- Brooklyn Bank
         [100124] = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } }
     }
 elseif level_id == "arena" then -- The Alesso Heist
+    if true then
+        return
+    end
     -- See "EHI/lua/levels/arena.lua" for more information
     local trigger = { time = 30, id = "Cutter", icons = { "equipment_glasscutter" } }
     local start_index =

@@ -2,10 +2,6 @@ if not (Global and Global.game_settings and Global.game_settings.level_id) then
     return
 end
 
-if Global.game_settings.level_id ~= "nmh" then -- No Mercy
-    return
-end
-
 local EHI = rawget(_G, "EHI")
 if EHI._hooks.ElementLogicChanceTrigger then
     return
@@ -42,25 +38,34 @@ local function GetInstanceElementID(id, start_index)
     return 100000 + math.mod(id, 100000) + 30000 + start_index
 end
 
+local level_id = Global.game_settings.level_id
 local triggers = {}
 
-local outcome =
-{
-    [100013] = { time = 25 + 40/30, random_time = { low = 15, high = 20 }, id = "Fail", icons = { "equipment_bloodvial", "restarter" }, class = "EHIInaccurateTracker" },
-    [100017] = { time = 30, id = "Success", icons = { "equipment_bloodvialok" } }
-}
+if level_id == "nmh" then -- No Mercy
+    local outcome =
+    {
+        [100013] = { time = 25 + 40/30, random_time = { low = 15, high = 20 }, id = "Fail", icons = { "equipment_bloodvial", "restarter" }, class = "EHIInaccurateTracker" },
+        [100017] = { time = 30, id = "Success", icons = { "equipment_bloodvialok" } }
+    }
 
-local start_index_table =
-{
-    2100, 2200, 2300, 2400, 2500, 2600, 2700
-}
+    local start_index_table =
+    {
+        2100, 2200, 2300, 2400, 2500, 2600, 2700
+    }
 
-for id, value in pairs(outcome) do
-    for _, index in ipairs(start_index_table) do
-        local element = GetInstanceElementID(id, index)
-        triggers[element] = deep_clone(value)
-        triggers[element].id = triggers[element].id .. tostring(element)
+    for id, value in pairs(outcome) do
+        for _, index in ipairs(start_index_table) do
+            local element = GetInstanceElementID(id, index)
+            triggers[element] = deep_clone(value)
+            triggers[element].id = triggers[element].id .. tostring(element)
+        end
     end
+elseif level_id == "man" then -- Undercover
+    triggers = {
+        [102866] = { time = 5, id = "GotCode", icons = { "faster" } }
+    }
+else
+    return
 end
 
 local function GetTime(id)
@@ -94,9 +99,6 @@ local function CreateTracker(id)
 end
 
 local function Trigger(id)
-    --[[if managers.hud and managers.hud.Debug then
-        managers.hud:Debug(id, "MissionScriptElement")
-    end]]
     if triggers[id] then
         if triggers[id].special_function then
             local f = triggers[id].special_function
