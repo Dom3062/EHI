@@ -28,7 +28,7 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
 			end
 		end
 	end
-	if language_filename ~= "english" then
+	if language_filename and language_filename ~= "english" then
 		loc:load_localization_file(EHI.ModPath .. "loc/" .. language_filename .. ".json")
 	end
 	loc:load_localization_file(EHI.ModPath .. "loc/english.json", false)

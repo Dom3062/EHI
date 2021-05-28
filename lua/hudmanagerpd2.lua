@@ -82,8 +82,8 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         end
         if level_id == "crojob2" then
             self:AddTracker({
-                max = 2,
                 id = "voff_2",
+                max = 2,
                 icons = { "C_Butcher_H_BombDock_HighTimes" },
                 class = "EHIAchievementProgressTracker"
             })
@@ -93,24 +93,24 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)
             local max = math.ceil(value_max / loot_value)
             self:AddTracker({
-                max = max,
                 id = "pal_2",
+                max = max,
                 icons = { "C_Classics_H_Counterfeit_DrEvil" },
                 class = "EHIAchievementProgressTracker"
             })
         end
         if level_id == "pbr2" then
             self:AddTracker({
-                max = 9,
                 id = "voff_4",
+                max = 9,
                 icons = { "C_Locke_H_BirthOfSky_Mellon" },
                 class = "EHIAchievementProgressTracker"
             })
         end
         if level_id == "pex" then
             self:AddTracker({
-                max = 6,
                 id = "pex_10",
+                max = 6,
                 icons = { "C_Locke_H_BreakfastInTijuana_PaidInFull" },
                 class = "EHIAchievementProgressTracker"
             })
@@ -124,8 +124,8 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         if level_id == "dah" then
             if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
                 self:AddTracker({
-                    max = 12,
                     id = "dah_8",
+                    max = 12,
                     icons = { "C_Classics_H_DiamondHesit_TheHuntfor" },
                     class = "EHIAchievementProgressTracker"
                 })
@@ -134,8 +134,8 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         if level_id == "alex_1" then
             if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
                 self:AddTracker({
-                    max = 7,
                     id = "halloween_2",
+                    max = 7,
                     icons = { "C_Hector_H_Rats_FullMeasure" },
                     class = "EHIAchievementProgressTracker"
                 })
@@ -144,12 +144,20 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         if level_id == "chas" then
             if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
                 self:AddTracker({
-                    max = 15,
                     id = "chas_10",
+                    max = 15,
                     icons = { "C_JiuFeng_H_DragonHeist_AllTheGold" },
                     class = "EHIAchievementProgressTracker"
                 })
             end
+        end
+        if level_id == "run" then
+            self:AddTracker({
+                id = "run_8",
+                max = 8,
+                icons = { "C_Classics_H_HeatStreet_Zookeeper" },
+                class = "EHIAchievementProgressTracker"
+            })
         end
     end
 end

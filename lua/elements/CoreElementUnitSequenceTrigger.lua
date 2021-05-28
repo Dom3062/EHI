@@ -100,7 +100,7 @@ elseif level_id == "big" then -- The Big Bank
     }
 elseif level_id == "run" then -- Heat Street
     triggers = {
-        [100144] = { id = "run_9", special_function = SF.RemoveTracker },
+        [100144] = { id = "run_9", special_function = SF.SetAchievementFailed },
         [102869] = { time = 60, id = "gas1", icons = { Icon.Fire }, special_function = SF.RemoveTriggerWhenExecuted },
         [102870] = { time = 60, id = "gas2", icons = { Icon.Fire }, special_function = SF.RemoveTriggerWhenExecuted },
         [102871] = { time = 60, id = "gas3", icons = { Icon.Fire }, special_function = SF.RemoveTriggerWhenExecuted },

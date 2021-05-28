@@ -35,4 +35,9 @@ function IngameWaitingForPlayersState:at_exit(next_state)
         managers.hud:RemoveTracker("uno_9")
     end
     AddGageTracker()
+    if EHI.debug then
+        for _, unit in pairs(managers.interaction._interactive_units or {}) do
+            EHI:Log("unit:interaction().tweak_data = " .. tostring(unit:interaction().tweak_data))
+        end
+    end
 end

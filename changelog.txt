@@ -1,3 +1,9 @@
+r7 (28. 05. 2021):
+Heat Street: Achievement "Zookeeper" also works when you drop-in
+Heat Street: Achievement "Patience is Key" will blink red when failed
+Possible fix for "Trade Delay" tracker not accurate
+Fixed a crash during game start-up
+
 r6 (27. 05. 2021):
 Added French translation
 Added Brazilian Portuguese translation

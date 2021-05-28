@@ -46,7 +46,7 @@ function EHIManager:LoadTime(sync_time)
     self._sync_real_time = Application:time()
 end
 
-function EHIManager:CountPickupAvailable(tweak_data)
+function EHIManager:CountPickupRemaining(tweak_data, max)
     local interactions = managers.interaction._interactive_units or {}
     local count = 0
     for _, unit in pairs(interactions) do
@@ -54,15 +54,17 @@ function EHIManager:CountPickupAvailable(tweak_data)
             count = count + 1
         end
     end
-    return count
+    return max - count
 end
 
 function EHIManager:load()
     local level_id = Global.game_settings.level_id
     if level_id == "pbr2" then -- Birth of Sky
-        self:SetTrackerProgress("voff_4", 9 - self:CountPickupAvailable("ring_band"))
+        self:SetTrackerProgress("voff_4", self:CountPickupRemaining("ring_band", 9))
+    elseif level_id == "run" then -- Heat Street
+        self:SetTrackerProgress("run_8", self:CountPickupRemaining("hold_take_missing_animal_poster", 8))
     --[[elseif level_id == "pex" then -- Breakfast in Tijuana
-        self:SetTrackerProgress("pex_11", 7 - self:CountPickupAvailable("pex_medal"))]]
+        self:SetTrackerProgress("pex_11", self:CountPickupRemaining("pex_medal", 7))]]
     end
 end
 
@@ -101,7 +103,7 @@ function EHIManager:AddTracker(params, pos)
         EHI:Log(debug.traceback())
         self._trackers[params.id]:delete()
     end
-    if pos and self._n_of_trackers ~= 0 then
+    if pos and type(pos) == "number" and self._n_of_trackers ~= 0 then
         local move = false
         local trackers_to_move = {}
         for key, tbl in pairs(self._trackers_pos) do

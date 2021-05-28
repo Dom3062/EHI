@@ -361,7 +361,6 @@ elseif level_id == "arena" then -- The Alesso Heist
 elseif level_id == "run" then -- Heat Street
     triggers = {
         [100120] = { time = 1800, id = "run_9", icons = { "C_Classics_H_HeatStreet_Patience" }, class = "EHIAchievementDoneTracker", condition = show_achievement },
-        [102426] = { max = 8, id = "run_8", icons = { "C_Classics_H_HeatStreet_Zookeeper" }, class = TT.AchievementProgress, condition = show_achievement },
         [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = TT.Achievement }, -- Not really an achievement, but I want to use "SetCompleted" function :p
         [101550] = { id = "ClearPickupZone", special_function = SF.SetAchievementComplete }
     }

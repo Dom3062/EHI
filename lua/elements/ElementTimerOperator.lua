@@ -422,7 +422,7 @@ local function Trigger(id)
                 CreateTracker(id)
             elseif f == SF.IncreaseChance then
                 local trigger = triggers[id]
-                managers.hud.ehi:IncreaseChance(trigger.id, trigger.amount)
+                managers.ehi:IncreaseChance(trigger.id, trigger.amount)
             elseif f == SF.CreateAnotherTrackerWithTracker then
                 CreateTracker(id)
                 CreateTracker(triggers[id].data.fake_id)
@@ -435,7 +435,7 @@ local function Trigger(id)
             elseif f == SF.SetChanceWhenTrackerExists then
                 local trigger = triggers[id]
                 if managers.ehi:TrackerExists(trigger.id) then
-                    managers.hud.ehi:SetChance(trigger.id, trigger.chance)
+                    managers.ehi:SetChance(trigger.id, trigger.chance)
                 else
                     CreateTracker(id)
                 end

@@ -38,21 +38,14 @@ local function CreateTracker(peer_id, respawn_penalty)
     OnPlayerCriminalDeath(peer_id, respawn_penalty)
 end
 
-local function SetTrackerPause(character_name)
-    managers.ehi:SetTrackerPaused("CustodyTime", not character_name)
+local function SetTrackerPause(character_name, t)
+    managers.ehi:CallFunction("CustodyTime", "SetPause", not character_name, t)
 end
 
 function TradeManager:init()
     original.init(self)
     EHI:Hook(self, "set_trade_countdown", function(s, enabled)
-        if enabled then
-            local function f()
-                managers.ehi:UnpauseTracker("CustodyTime")
-            end
-            EHI:DelayCall("CustodyTime", 1, f) -- For some reason there is a second delay when assault ends
-        else -- The delay is not there when assault starts
-            managers.ehi:PauseTracker("CustodyTime")
-        end
+        managers.ehi:CallFunction("CustodyTime", "SetPause", not enabled, self._trade_counter_tick)
     end)
 end
 
@@ -86,12 +79,12 @@ end
 
 function TradeManager:_set_auto_assault_ai_trade(character_name, time)
     if self._auto_assault_ai_trade_criminal_name ~= character_name then
-        SetTrackerPause(character_name)
+        SetTrackerPause(character_name, self._trade_counter_tick)
 	end
     original._set_auto_assault_ai_trade(self, character_name, time)
 end
 
 function TradeManager:sync_set_auto_assault_ai_trade(character_name, time)
     original.sync_set_auto_assault_ai_trade(self, character_name, time)
-    SetTrackerPause(character_name)
+    SetTrackerPause(character_name, self._trade_counter_tick)
 end

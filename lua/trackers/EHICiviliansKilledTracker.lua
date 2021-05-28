@@ -7,6 +7,7 @@ function EHICiviliansKilledTracker:init(panel, params)
     self._peer_custody_time = {}
     self._peer_in_custody = {}
     self._peer_pos = {}
+    self._tick = 0
     EHICiviliansKilledTracker.super.init(self, panel, params)
     self._time_bg_box:remove(self._text)
 end
@@ -120,6 +121,21 @@ function EHICiviliansKilledTracker:IncreasePeerCustodyTime(peer_id, time)
     self:SetPeerCustodyTime(peer_id, t + time)
 end
 
+function EHICiviliansKilledTracker:SetTick(t)
+    --[[
+        This function makes Trade Delay accurate because of the braindead use of the "update" loop in TradeManager
+        Why is OVK is using another variable to "count down" the remaining time:
+        "self._trade_counter_tick = self._trade_counter_tick - dt" (which later subtracts 1s from the delay when self._trade_counter_tick <= 0)
+        when they could just simply do:
+        "crim.respawn_penalty - dt"
+        Much faster and cleaner imo
+
+        This time correction actually makes the tracker accurate
+        To not confuse players why the tracker is blinking after a teammate is taken to custody
+    ]]
+    self._tick = t
+end
+
 function EHICiviliansKilledTracker:RemovePeerFromCustody(peer_id)
     if not self._peer_custody_time[peer_id] then
         return
@@ -220,6 +236,10 @@ else
 end
 
 function EHICiviliansKilledTracker:update(t, dt)
+    if self._tick > 0 then
+        self._tick = self._tick - dt
+        return
+    end
     for peer_id, time in pairs(self._peer_custody_time) do
         if self._peer_in_custody[peer_id] then
             time = time - dt
@@ -233,10 +253,11 @@ function EHICiviliansKilledTracker:update(t, dt)
     end
 end
 
-function EHICiviliansKilledTracker:SetPause(pause)
+function EHICiviliansKilledTracker:SetPause(pause, t_correction)
     if pause then
         self:RemoveTrackerFromUpdate()
     else
+        self:SetTick(t_correction)
         self:AddTrackerToUpdate()
     end
 end

@@ -98,17 +98,17 @@ _G.EHI =
     },
 
     difficulties = {
-		"easy", -- Leftover from PD:TH
-		"normal",
-		"hard",
-		"overkill",
-		"overkill_145",
-		"easy_wish",
-		"overkill_290",
-		"sm_wish"
-	},
+        "easy", -- Leftover from PD:TH
+        "normal",
+        "hard",
+        "overkill",
+        "overkill_145",
+        "easy_wish",
+        "overkill_290",
+        "sm_wish"
+    },
 
-    ModVersion = tonumber(ModInstance:GetVersion()),
+    ModVersion = ModInstance and tonumber(ModInstance:GetVersion()) or "N/A",
     ModPath = ModPath,
     LocPath = ModPath .. "loc/",
     LuaPath = ModPath .. "lua/",
@@ -155,7 +155,6 @@ function EHI:Load()
             self:Save()
         end
     end
-    self.ModVersion = tonumber(self.ModInstance:GetVersion())
 end
 
 function EHI:Save()
