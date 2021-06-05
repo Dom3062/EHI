@@ -73,7 +73,8 @@ local original =
     on_successful_alarm_pager_bluff = GroupAIStateBase.on_successful_alarm_pager_bluff,
     sync_alarm_pager_bluff = GroupAIStateBase.sync_alarm_pager_bluff,
     load = GroupAIStateBase.load,
-    sync_cs_grenade = GroupAIStateBase.sync_cs_grenade
+    sync_cs_grenade = GroupAIStateBase.sync_cs_grenade,
+    _add_drama = GroupAIStateBase._add_drama
 }
 
 function GroupAIStateBase:init()
@@ -101,6 +102,13 @@ function GroupAIStateBase:load(load_data)
     local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
     if law1team and law1team.damage_reduction then
         managers.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundNumber(law1team.damage_reduction or 0, 0.01) * 100))
+    end
+end
+
+if false then
+    function GroupAIStateBase:_add_drama(amount)
+        original._add_drama(self, amount)
+        managers.ehi:SetChance("Drama", (EHI:RoundNumber(self._drama_data.amount, 0.01) * 100))
     end
 end
 

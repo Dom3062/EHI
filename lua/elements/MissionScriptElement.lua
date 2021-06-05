@@ -1465,6 +1465,7 @@ elseif level_id == "help" then -- Prison Nightmare
         [EHI:GetInstanceElementID(100474, 21700)] = { id = "orange_5", special_function = SF.IncreaseProgress }
     }
 elseif level_id == "mex" then -- Border Crossing
+    local mex_9 = { id = "mex_9", special_function = SF.IncreaseProgress }
     triggers = {
         [100107] = { max = 4, id = "mex_9", icons = { "C_Locke_H_BorderCrossing_Identity" }, class = TT.AchievementProgress, condition = show_achievement },
         [101983] = { time = 15, id = "C4Trap", icons = { "pd2_c4" }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
@@ -1474,14 +1475,14 @@ elseif level_id == "mex" then -- Border Crossing
         [102678] = { id = "Refueling", special_function = SF.UnpauseTracker },
         [102684] = { id = "Refueling", special_function = SF.PauseTracker },
 
-        [101502] = { id = "mex_9", special_function = SF.IncreaseProgress },
-        [101506] = { id = "mex_9", special_function = SF.IncreaseProgress },
-        [101503] = { id = "mex_9", special_function = SF.IncreaseProgress },
-        [101504] = { id = "mex_9", special_function = SF.IncreaseProgress },
-        [101509] = { id = "mex_9", special_function = SF.IncreaseProgress },
-        [101505] = { id = "mex_9", special_function = SF.IncreaseProgress },
-        [101507] = { id = "mex_9", special_function = SF.IncreaseProgress },
-        [101508] = { id = "mex_9", special_function = SF.IncreaseProgress }
+        [101502] = mex_9,
+        [101506] = mex_9,
+        [101503] = mex_9,
+        [101504] = mex_9,
+        [101509] = mex_9,
+        [101505] = mex_9,
+        [101507] = mex_9,
+        [101508] = mex_9
     }
 elseif level_id == "mex_cooking" then -- Border Crystals
     if Network:is_client() then

@@ -21,6 +21,14 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     local level_id = Global.game_settings.level_id
     local difficulty = Global.game_settings.difficulty
     if level_id ~= "chill" then
+        if false then
+            self:AddTracker({
+                id = "Drama",
+                icons = { "enemy" },
+                dont_flash = true,
+                class = "EHIChanceTracker"
+            })
+        end
         if EHI:GetOption("show_enemy_count_tracker") then
             self:AddTracker({
                 id = "EnemyCount",

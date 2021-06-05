@@ -39,7 +39,7 @@ local function CreateTracker(peer_id, respawn_penalty)
 end
 
 local function SetTrackerPause(character_name, t)
-    managers.ehi:CallFunction("CustodyTime", "SetPause", not character_name, t)
+    managers.ehi:CallFunction("CustodyTime", "SetPause", character_name, t)
 end
 
 function TradeManager:init()

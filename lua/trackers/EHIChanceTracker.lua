@@ -2,6 +2,7 @@ EHIChanceTracker = EHIChanceTracker or class(EHITracker)
 EHIChanceTracker._update = false
 function EHIChanceTracker:init(panel, params)
     params.update = false
+    self._flash = not params.dont_flash
     self._flash_times = params.flash_times or 3
     self._chance = params.chance or 0
     EHIChanceTracker.super.init(self, panel, params)
@@ -25,5 +26,7 @@ function EHIChanceTracker:SetChance(amount)
     end
     self._chance = amount
     self._text:set_text(self:Format())
-    self:AnimateBG(self._flash_times)
+    if self._flash then
+        self:AnimateBG(self._flash_times)
+    end
 end

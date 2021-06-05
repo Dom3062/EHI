@@ -519,7 +519,7 @@ function EHI:Trigger(id, enabled)
             elseif f == SF.ReplaceTrackerWithTracker then
                 managers.ehi:RemoveTracker(triggers[id].data.id)
                 if triggers[id].data.trigger then
-                    UnhookTrigger(triggers[id].data.trigger) -- Removes trigger from the list, used in The White House
+                    UnhookTrigger(self, triggers[id].data.trigger) -- Removes trigger from the list, used in The White House
                 end
                 self:CheckCondition(id)
             elseif f == SF.IncreaseChance then
@@ -697,7 +697,7 @@ function EHI:Trigger(id, enabled)
                     self:CheckCondition(1011480)
                 end
             elseif f == SF.KOSUGI_DisableTriggerAndExecute then
-                UnhookTrigger(triggers[id].data.id)
+                UnhookTrigger(self, triggers[id].data.id)
                 self:CheckCondition(id)
             elseif f == SF.CROJOB3_PauseTrackerAndAddNewTracker then
                 managers.ehi:PauseTracker(triggers[id].id)

@@ -1,3 +1,7 @@
+r9 (06. 06. 2021):
+Trade Delay Tracker: Possible fix for an issue when the time did not count down when all players were in custody and AI trade was possible
+Shadow Raid: Fixed a crash
+
 r8 (05. 06. 2021):
 Optimization improvements
 Fixed an issue where some synced tracker times were not accurate
