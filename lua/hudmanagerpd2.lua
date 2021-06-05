@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.HUDManagerPD2 then
 	return
 else
@@ -12,35 +13,38 @@ local original =
     set_disabled = HUDManager.set_disabled,
     set_enabled = HUDManager.set_enabled
 }
-local EHI = EHI
+
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
     self.ehi = managers.ehi
     self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
     local level_id = Global.game_settings.level_id
-    if EHI:GetOption("show_enemy_count_tracker") and level_id ~= "chill" then
-        self:AddTracker({
-            id = "EnemyCount",
-            class = "EHICountTracker"
-        })
-    end
-    if EHI:GetOption("show_pager_tracker") and level_id ~= "chill" then
-        local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
-        local max = 0
-        for _, value in pairs(base) do
-            if value > 0 then
-                max = max + 1
-            end
+    local difficulty = Global.game_settings.difficulty
+    if level_id ~= "chill" then
+        if EHI:GetOption("show_enemy_count_tracker") then
+            self:AddTracker({
+                id = "EnemyCount",
+                class = "EHICountTracker"
+            })
         end
-        self:AddTracker({
-            id = "pagers",
-            max = max,
-            icons = { "pagers_used" },
-            set_color_bad_when_reached = true,
-            class = "EHIProgressTracker"
-        })
-        if max == 0 then
-            self.ehi:CallFunction("pagers", "SetBad")
+        if EHI:GetOption("show_pager_tracker") then
+            local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
+            local max = 0
+            for _, value in pairs(base) do
+                if value > 0 then
+                    max = max + 1
+                end
+            end
+            self:AddTracker({
+                id = "pagers",
+                max = max,
+                icons = { "pagers_used" },
+                set_color_bad_when_reached = true,
+                class = "EHIProgressTracker"
+            })
+            if max == 0 then
+                self.ehi:CallFunction("pagers", "SetBad")
+            end
         end
     end
     if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" then
@@ -50,116 +54,90 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         })
     end
     if EHI:GetOption("show_achievement") then
-        if level_id == "pines" then
-            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
-                self:AddTracker({
-                    id = "uno_9",
-                    max = 40,
-                    icons = { "C_Vlad_H_XMas_Whats" },
-                    class = "EHIAchievementProgressTracker"
-                })
-            end
-        end
-        if level_id == "cane" then
-            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
-                self:AddTracker({
-                    id = "cane_3",
-                    max = 100,
-                    icons = { "C_Vlad_H_Santa_EuroBag" },
-                    class = "EHIAchievementProgressTracker"
-                })
-            end
-        end
-        if level_id == "mex_cooking" then
-            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
-                self:AddTracker({
-                    id = "mex2_9",
-                    max = 25,
-                    icons = { "C_Locke_H_BorderCrystals_HeisterCocinero" },
-                    class = "EHIAchievementProgressTracker"
-                })
-            end
-        end
-        if level_id == "crojob2" then
-            self:AddTracker({
-                id = "voff_2",
-                max = 2,
-                icons = { "C_Butcher_H_BombDock_HighTimes" },
-                class = "EHIAchievementProgressTracker"
-            })
-        end
-        if level_id == "pal" then
-            local value_max = 1000000
-            local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)
-            local max = math.ceil(value_max / loot_value)
-            self:AddTracker({
-                id = "pal_2",
-                max = max,
-                icons = { "C_Classics_H_Counterfeit_DrEvil" },
-                class = "EHIAchievementProgressTracker"
-            })
-        end
-        if level_id == "pbr2" then
-            self:AddTracker({
-                id = "voff_4",
-                max = 9,
-                icons = { "C_Locke_H_BirthOfSky_Mellon" },
-                class = "EHIAchievementProgressTracker"
-            })
-        end
-        if level_id == "pex" then
-            self:AddTracker({
-                id = "pex_10",
-                max = 6,
-                icons = { "C_Locke_H_BreakfastInTijuana_PaidInFull" },
-                class = "EHIAchievementProgressTracker"
-            })
-            --[[self:AddTracker({
-                max = 7,
-                id = "pex_11",
-                icons = { "C_Locke_H_BreakfastInTijuana_StolenValor" },
-                class = "EHIAchievementProgressTracker"
-            })]]
-        end
-        if level_id == "dah" then
-            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
-                self:AddTracker({
-                    id = "dah_8",
-                    max = 12,
-                    icons = { "C_Classics_H_DiamondHesit_TheHuntfor" },
-                    class = "EHIAchievementProgressTracker"
-                })
-            end
-        end
-        if level_id == "alex_1" then
-            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
-                self:AddTracker({
-                    id = "halloween_2",
-                    max = 7,
-                    icons = { "C_Hector_H_Rats_FullMeasure" },
-                    class = "EHIAchievementProgressTracker"
-                })
-            end
-        end
-        if level_id == "chas" then
-            if EHI:IsOVKOrAbove(Global.game_settings.difficulty) then
-                self:AddTracker({
-                    id = "chas_10",
-                    max = 15,
-                    icons = { "C_JiuFeng_H_DragonHeist_AllTheGold" },
-                    class = "EHIAchievementProgressTracker"
-                })
-            end
-        end
-        if level_id == "run" then
-            self:AddTracker({
-                id = "run_8",
-                max = 8,
-                icons = { "C_Classics_H_HeatStreet_Zookeeper" },
-                class = "EHIAchievementProgressTracker"
-            })
+        self:ShowAchievements(level_id, difficulty)
+    end
+    self:ShowLootCounter(level_id, difficulty)
+end
+
+function HUDManager:ShowAchievements(level_id, difficulty)
+    if level_id == "pines" then
+        if EHI:IsOVKOrAbove(difficulty) then
+            self.ehi:AddAchievementProgressTracker("uno_9", 40, "C_Vlad_H_XMas_Whats")
         end
     end
+    if level_id == "cane" then
+        if EHI:IsOVKOrAbove(difficulty) then
+            self.ehi:AddAchievementProgressTracker("cane_3", 100, "C_Vlad_H_Santa_EuroBag")
+        end
+    end
+    if level_id == "mex_cooking" then
+        if EHI:IsOVKOrAbove(difficulty) then
+            self.ehi:AddAchievementProgressTracker("mex2_9", 25, "C_Locke_H_BorderCrystals_HeisterCocinero")
+        end
+    end
+    if level_id == "crojob2" then
+        self.ehi:AddAchievementProgressTracker("voff_2", 2, "C_Butcher_H_BombDock_HighTimes")
+    end
+    if level_id == "pal" then
+        local value_max = tweak_data.achievement.loot_cash_achievements.pal_2.secured.value
+        local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)
+        local max = math.ceil(value_max / loot_value)
+        self.ehi:AddAchievementProgressTracker("pal_2", max, "C_Classics_H_Counterfeit_DrEvil")
+    end
+    if level_id == "pbr" then
+        self.ehi:AddAchievementProgressTracker("berry_2", 10, "C_Locke_H_Beneath_Clean")
+    end
+    if level_id == "pbr2" then
+        self.ehi:AddAchievementProgressTracker("voff_4", 9, "C_Locke_H_BirthOfSky_Mellon")
+    end
+    if level_id == "pex" then
+        self.ehi:AddAchievementProgressTracker("pex_10", 6, "C_Locke_H_BreakfastInTijuana_PaidInFull")
+        --self.ehi:AddAchievementProgressTracker("pex_11", 7, "C_Locke_H_BreakfastInTijuana_StolenValor")
+    end
+    if level_id == "dah" then
+        if EHI:IsOVKOrAbove(difficulty) then
+            self.ehi:AddAchievementProgressTracker("dah_8", 12, "C_Classics_H_DiamondHesit_TheHuntfor")
+        end
+    end
+    if level_id == "alex_1" then
+        if EHI:IsOVKOrAbove(difficulty) then
+            self.ehi:AddAchievementProgressTracker("halloween_2", 7, "C_Hector_H_Rats_FullMeasure")
+        end
+    end
+    if level_id == "chas" then
+        if EHI:IsOVKOrAbove(difficulty) then
+            self.ehi:AddAchievementProgressTracker("chas_10", 15, "C_JiuFeng_H_DragonHeist_AllTheGold")
+        end
+    end
+    if level_id == "run" then
+        self.ehi:AddAchievementProgressTracker("run_8", 8, "C_Classics_H_HeatStreet_Zookeeper")
+    end
+    if level_id == "brb" and EHI:DifficultyToIndex(difficulty) >= 2 then
+        self.ehi:AddAchievementProgressTracker("brb_8", 12, "C_Locke_H_BrooklynBank_AlltheGold") -- Removed when you drop-in
+    end
+    if level_id == "rvd2" then
+        self.ehi:AddAchievementProgressTracker("rvd_11", 19, "C_Bain_H_ReservoirDogs_WasteNot")
+    end
+end
+
+function HUDManager:ShowLootCounter(level_id, difficulty)
+    local max = 0
+    if level_id == "spa" then
+        max = 4
+    elseif level_id == "friend" then
+        max = 16
+    --[[elseif level_id == "rvd1" then
+        max = 6]]
+    end
+    if max == 0 then
+        return
+    end
+    self:AddTracker({
+        id = "LootCounter",
+        max = max,
+        icons = { "pd2_loot" },
+        class = "EHIProgressTracker"
+    })
 end
 
 function HUDManager:sync_set_assault_mode(mode)
@@ -202,10 +180,6 @@ function HUDManager:RemoveTracker(id)
     self.ehi:RemoveTracker(id)
 end
 
-function HUDManager:AddMoney(id, amount)
-    self.ehi:AddMoneyToTracker(id, amount)
-end
-
 function HUDManager:AddXP(id, amount)
     self.ehi:AddXPToTracker(id, amount)
 end
@@ -222,43 +196,6 @@ function HUDManager:SetTimeNoAnim(id, time)
     self.ehi:CallFunction(id, "SetTimeNoAnim", time)
 end
 
-function HUDManager:SetUpgrades(id, upgrades)
-    self.ehi:SetTrackerUpgrades(id, upgrades)
-end
-
-function HUDManager:SetTimerJammed(id, jammed)
-    self.ehi:SetTimerJammed(id, jammed)
-end
-
-function HUDManager:SetTimerPowered(id, powered)
-    self.ehi:SetTimerPowered(id, powered)
-end
-
-function HUDManager:SetTrackerPaused(id, pause)
-    self.ehi:SetTrackerPaused(id, pause)
-end
-
-function HUDManager:PauseTracker(id)
-    self:SetTrackerPaused(id, true)
-end
-
-function HUDManager:UnpauseTracker(id)
-    self:SetTrackerPaused(id, false)
-end
-
-function HUDManager:TrackerExists(id)
-    return self.ehi:TrackerExists(id)
-end
-
-function HUDManager:ResetTrackerTime(id)
-    self.ehi:ResetTrackerTime(id)
-end
-
-function HUDManager:ResetTrackerTimeAndUnpause(id)
-    self:ResetTrackerTime(id)
-    self:UnpauseTracker(id)
-end
-
 function HUDManager:AddDelay(id, delay)
     self.ehi:AddDelayToTracker(id, delay)
 end
@@ -268,33 +205,17 @@ function HUDManager:AddDelayToTrackerAndUnpause(id, delay)
     self:UnpauseTracker(id)
 end
 
-function HUDManager:AddToCache(id, data)
-    self.ehi:AddToCache(id, data)
-end
-
-function HUDManager:GetAndRemoveFromCache(id)
-    return self.ehi:GetAndRemoveFromCache(id)
-end
-
-function HUDManager:SetProgress(id, progress)
-    self.ehi:SetTrackerProgress(id, progress)
-end
-
-function HUDManager:IncreaseProgress(id)
-    self.ehi:SetTrackerIncreaseProgress(id)
-end
-
-function HUDManager:SetTrackerTextColor(id, color)
-    self.ehi:SetTrackerTextColor(id, color)
-end
-
-function HUDManager:SetTrackerAccurate(id)
-    self:SetTrackerTextColor(id, Color.white)
-end
-
 if Network:is_client() then
 end
 
-function HUDManager:Debug(id, element)
-    managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; Element: " .. tostring(element), Color.white)
+function HUDManager:Debug(id)
+    local dt = 0
+    if self._ehi_debug_time then
+        local new_time = TimerManager:game():time()
+        dt = new_time - self._ehi_debug_time
+        self._ehi_debug_time = new_time
+    else
+        self._ehi_debug_time = TimerManager:game():time()
+    end
+    managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; dt: " .. dt, Color.white)
 end

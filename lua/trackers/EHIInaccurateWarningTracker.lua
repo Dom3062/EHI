@@ -27,5 +27,6 @@ end
 
 function EHIInaccurateWarningTracker:SetTrackerAccurate(time)
     self._tracker_is_accurate = true
-    EHIInaccurateWarningTracker.super.SetTrackerAccurate(self, time)
+    self:SetTextColor(Color.white)
+    self:SetTimeNoAnim(time)
 end

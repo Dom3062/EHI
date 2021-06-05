@@ -26,7 +26,7 @@ function SecurityLockGui:_start(bar, timer, current_timer)
     original._start(self, bar, timer, current_timer)
     if self._bars > 1 then
         if managers.ehi:TrackerExists(self._ehi_bar_key) then
-            managers.hud:IncreaseProgress(self._ehi_bar_key)
+            managers.ehi:IncreaseTrackerProgress(self._ehi_bar_key)
         else
             managers.ehi:AddTracker({
                 id = self._ehi_bar_key,
@@ -48,7 +48,7 @@ end
 
 function SecurityLockGui:_set_powered(powered)
     original._set_powered(self, powered)
-    managers.hud:SetTimerPowered(self._ehi_key, powered)
+    managers.ehi:SetTimerPowered(self._ehi_key, powered)
 end
 
 function SecurityLockGui:_set_done(bar)

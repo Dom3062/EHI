@@ -33,6 +33,7 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementUnlockTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHICountTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIElevatorTimerTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIGasTracker.lua"/>
             </group>
             <post :hook_id="hudmanagerpd2" :script_path="hudmanagerpd2.lua" />
             <post :hook_id="gameplaycentralmanager" :script_path="GamePlayCentralManager.lua"/>
@@ -43,12 +44,6 @@
 
             <post :hook_id="lootmanager" :script_path="LootManager.lua" />
 
-            <post :hook_id="mission/elementareatrigger" :script_path="elements/ElementAreaTrigger.lua" />
-            <post :hook_id="mission/elementawardachievment" :script_path="elements/ElementAwardAchievment.lua" />
-            <post :hook_id="mission/elementenemydummytrigger" :script_path="elements/ElementEnemyDummyTrigger.lua" />
-            <post :hook_id="mission/elementdisableunit" :script_path="elements/ElementDisableUnit.lua" />
-            <post :hook_id="mission/elementplayerstate" :script_path="elements/ElementPlayerStateTrigger.lua" />
-            <post :hook_id="mission/elementdialogue" :script_path="elements/ElementDialogue.lua" />
             <post :hook_id="mission/elementdifficulty" :script_path="elements/ElementDifficulty.lua" />
             <post :hook_id="mission/elementspawngageassignment" :script_path="elements/ElementSpawnGageAssignment.lua" />
             <post :hook_id="mission/missionscriptelement" :script_path="elements/MissionScriptElement.lua" />
@@ -97,18 +92,6 @@
 
         <post hook_id="core/lib/managers/mission/coremissionscriptelement" :script_path="elements/CoreMissionScriptElement_BaseDelay.lua"/>
         <post hook_id="core/lib/managers/mission/coremissionscriptelement" :script_path="elements/CoreMissionScriptElement_ElementDelay.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementlogicchance" :script_path="elements/CoreElementLogicChanceOperator.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementlogicchance" :script_path="elements/CoreElementLogicChanceTrigger.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementunitsequence" :script_path="elements/CoreElementUnitSequence.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementunitsequencetrigger" :script_path="elements/CoreElementUnitSequenceTrigger.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementglobaleventtrigger" :script_path="elements/CoreElementGlobalEventTrigger.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementcounter" :script_path="elements/CoreElementCounterOperator.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementcounter" :script_path="elements/CoreElementCounterTrigger.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementcounter" :script_path="elements/CoreElementCounterFilter.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementtimer" :script_path="elements/ElementTimerOperator.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementtoggle" :script_path="elements/CoreElementToggle.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementinstance" :script_path="elements/ElementInstanceInputEvent.lua"/>
-        <post hook_id="core/lib/managers/mission/coreelementinstance" :script_path="elements/ElementInstanceOutputEvent.lua"/>
 
         <post hook_id="lib/tweak_data/tweakdata" :script_path="tweak_data.lua"/>
     </hooks>

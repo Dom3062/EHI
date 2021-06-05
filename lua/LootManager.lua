@@ -15,6 +15,12 @@ local check_types = {
     OneTypeOfLoot = 4,
     MultipleTriggers = 5
 }
+local LootCounter =
+{
+    ["spa"] = true, -- Brooklyn 10-10
+    ["friend"] = true, -- Scarface Mansion
+    --["rvd1"] = true -- Reservoir Dogs Heist Day 2
+}
 local level_id = Global.game_settings.level_id
 local tracker_id = nil
 local check_type = nil
@@ -48,6 +54,20 @@ elseif level_id == "alex_1" then -- Rats Day 1
 elseif level_id == "chas" then -- Dragon Heist
     check_type = check_types.BagsOnly
     tracker_id = "chas_10"
+elseif level_id == "brb" then -- Brooklyn Bank
+    check_type = check_types.OneTypeOfLoot
+    loot_type = "gold"
+    tracker_id = "brb_8"
+elseif level_id == "rvd2" then -- Reservoir Dogs Heist Day 1
+    check_type = check_types.OneTypeOfLoot
+    loot_type = { "diamonds_dah", "diamonds" }
+    tracker_id = "rvd_11"
+elseif level_id == "pbr" then -- Beneath the Mountain
+    check_type = check_types.BagsOnly
+    tracker_id = "berry_2"
+elseif LootCounter[level_id] then
+    check_type = check_types.BagsOnly
+    tracker_id = "LootCounter"
 else
     return
 end

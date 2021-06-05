@@ -14,7 +14,8 @@ local function GetIcon(icon, type)
         icon == "equipment_winch_hook" or icon == "pd2_water_tap" or icon == "pd2_goto" or icon == "pd2_methlab" or icon == "pd2_generic_look" or
         icon == "equipment_bloodvialok" or icon == "pd2_door" or icon == "pd2_kill" or icon == "equipment_liquid_nitrogen_canister" or icon == "pd2_question" or
         icon == "equipment_glasscutter" or icon == "C_Elephant_H_ElectionDay_Murphy" or icon == "C_Vlad_H_XMas_Impossible" or icon == "Other_H_None_Merry" or
-        icon == "equipment_timer" or icon == "equipment_bloodvial" or icon == "C_Dentist_H_BigBank_Entrapment" or icon == "equipment_bank_manager_key" then
+        icon == "equipment_timer" or icon == "equipment_bloodvial" or icon == "C_Dentist_H_BigBank_Entrapment" or icon == "equipment_bank_manager_key" or
+        icon == "pd2_loot" then
             return tweak_data.hud_icons:get_icon_data(icon)
         elseif icon == "faster" or icon == "silent" or icon == "restarter" then
             return "guis/textures/pd2/skilltree/drillgui_icon_" .. icon

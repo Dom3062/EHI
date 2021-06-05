@@ -124,14 +124,15 @@ end
 function EHICiviliansKilledTracker:SetTick(t)
     --[[
         This function makes Trade Delay accurate because of the braindead use of the "update" loop in TradeManager
-        Why is OVK is using another variable to "count down" the remaining time:
+        Why is OVK is using another variable to "count down" the remaining time ? As shown below:
         "self._trade_counter_tick = self._trade_counter_tick - dt" (which later subtracts 1s from the delay when self._trade_counter_tick <= 0)
         when they could just simply do:
         "crim.respawn_penalty - dt"
         Much faster and cleaner imo
 
-        This time correction actually makes the tracker accurate
-        To not confuse players why the tracker is blinking after a teammate is taken to custody
+        But why bother ?
+        1. This time correction actually makes the tracker accurate
+        2. To not confuse players why the tracker is blinking after a teammate is taken to custody
     ]]
     self._tick = t
 end

@@ -46,9 +46,9 @@ function TimerGui:set_background_icons(background_icons)
 
         if managers.ehi:TrackerExists(self._ehi_key) then
             managers.ehi:CallFunction(self._ehi_key, "SetUpgradeable", true)
-            managers.hud:SetUpgrades(self._ehi_key, upgrade_table)
+            managers.ehi:SetTimerUpgrades(self._ehi_key, upgrade_table)
         else
-            managers.hud:AddToCache(self._ehi_key, upgrade_table)
+            managers.ehi:AddToCache(self._ehi_key, upgrade_table)
         end
     end
 
@@ -58,8 +58,8 @@ end
 function TimerGui:_start(timer)
     original._start(self, timer)
     if managers.ehi:TrackerExists(self._ehi_key) then
-        managers.hud:SetTimerJammed(self._ehi_key, false)
-        managers.hud:SetTimerPowered(self._ehi_key, true)
+        managers.ehi:SetTimerJammed(self._ehi_key, false)
+        managers.ehi:SetTimerPowered(self._ehi_key, true)
     else
         managers.ehi:AddTracker({
             id = self._ehi_key,
@@ -77,7 +77,7 @@ function TimerGui:_set_done()
 end
 
 function TimerGui:_set_jammed(jammed, ...)
-    managers.hud:SetTimerJammed(self._ehi_key, jammed)
+    managers.ehi:SetTimerJammed(self._ehi_key, jammed)
     original._set_jammed(self, jammed, ...)
 end
 
@@ -85,7 +85,7 @@ function TimerGui:_set_powered(powered, ...)
     if powered == false and remove_on_power_off then
         managers.ehi:RemoveTracker(self._ehi_key)
     end
-    managers.hud:SetTimerPowered(self._ehi_key, powered)
+    managers.ehi:SetTimerPowered(self._ehi_key, powered)
     original._set_powered(self, powered, ...)
 end
 

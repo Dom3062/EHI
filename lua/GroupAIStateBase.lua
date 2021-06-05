@@ -83,24 +83,24 @@ end
 
 function GroupAIStateBase:on_successful_alarm_pager_bluff()
     original.on_successful_alarm_pager_bluff(self)
-    managers.hud:SetProgress("pagers", self._nr_successful_alarm_pager_bluffs)
+    managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 end
 
 function GroupAIStateBase:sync_alarm_pager_bluff()
     original.sync_alarm_pager_bluff(self)
-    managers.hud:SetProgress("pagers", self._nr_successful_alarm_pager_bluffs)
+    managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 end
 
 function GroupAIStateBase:load(load_data)
     original.load(self, load_data)
     if self._enemy_weapons_hot then
-		managers.hud:RemoveTracker("pagers")
+		managers.ehi:RemoveTracker("pagers")
     else
-        managers.hud:SetProgress("pagers", self._nr_successful_alarm_pager_bluffs)
+        managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 	end
     local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
     if law1team and law1team.damage_reduction then
-        managers.hud.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundNumber(law1team.damage_reduction or 0, 0.01) * 100))
+        managers.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundNumber(law1team.damage_reduction or 0, 0.01) * 100))
     end
 end
 

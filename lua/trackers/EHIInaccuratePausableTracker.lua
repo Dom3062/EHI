@@ -10,6 +10,7 @@ function EHIInaccuratePausableTracker:SetTextColor()
 end
 
 function EHIInaccuratePausableTracker:SetTrackerAccurate(time)
-    color = Color.white
-    EHIInaccuratePausableTracker.super.SetTrackerAccurate(self, time)
+    color = tweak_data.ehi.color.InaccurateColor
+    self:SetTextColor()
+    self:SetTimeNoAnim(time)
 end

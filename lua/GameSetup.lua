@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.GameSetup then
 	return
 else
@@ -23,6 +24,7 @@ function GameSetup:init_finalize()
     if add[level_id] then
         dofile(EHI.LuaPath .. "levels/" .. level_id .. ".lua")
     end
+    EHI:InitElements()
 end
 
 function GameSetup:load(data)

@@ -32,7 +32,8 @@ function IngameWaitingForPlayersState:at_exit(next_state)
             managers.ehi:SyncTime(0)
         end
     else
-        managers.hud:RemoveTracker("uno_9")
+        managers.ehi:RemoveTracker("uno_9")
+        managers.ehi:RemoveTracker("brb_8")
     end
     AddGageTracker()
     if EHI.debug then

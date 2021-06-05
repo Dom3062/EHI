@@ -20,7 +20,6 @@ function EHIManager:init()
     self._trackers_to_update = {}
     self._trackers_pos = {}
     self._n_of_trackers = 0
-    self._civilian_killed_tracker = {}
     self._cache = {}
     self._sync_time = 0
     self._sync_real_time = Application:time()
@@ -46,7 +45,7 @@ function EHIManager:LoadTime(sync_time)
     self._sync_real_time = Application:time()
 end
 
-function EHIManager:CountPickupRemaining(tweak_data, max)
+function EHIManager:CountPickupAvailable(tweak_data)
     local interactions = managers.interaction._interactive_units or {}
     local count = 0
     for _, unit in pairs(interactions) do
@@ -54,17 +53,17 @@ function EHIManager:CountPickupRemaining(tweak_data, max)
             count = count + 1
         end
     end
-    return max - count
+    return count
 end
 
 function EHIManager:load()
     local level_id = Global.game_settings.level_id
-    if level_id == "pbr2" then -- Birth of Sky
-        self:SetTrackerProgress("voff_4", self:CountPickupRemaining("ring_band", 9))
+    if level_id == "pbr2" and not Global.statistics_manager.playing_from_start then -- Birth of Sky
+        self:SetTrackerProgressRemaining("voff_4", self:CountPickupAvailable("ring_band"))
     elseif level_id == "run" then -- Heat Street
-        self:SetTrackerProgress("run_8", self:CountPickupRemaining("hold_take_missing_animal_poster", 8))
+        self:SetTrackerProgressRemaining("run_8", self:CountPickupAvailable("hold_take_missing_animal_poster"))
     --[[elseif level_id == "pex" then -- Breakfast in Tijuana
-        self:SetTrackerProgress("pex_11", self:CountPickupRemaining("pex_medal", 7))]]
+        self:SetTrackerProgressRemaining("pex_11", self:CountPickupAvailable("pex_medal"))]]
     end
 end
 
@@ -153,6 +152,15 @@ function EHIManager:AddPagerTracker(params)
     self:AddTracker(params)
 end
 
+function EHIManager:AddAchievementProgressTracker(id, max, icon)
+    self:AddTracker({
+        id = id,
+        max = max,
+        icons = { icon },
+        class = "EHIAchievementProgressTracker"
+    })
+end
+
 function EHIManager:RemovePager(id)
     self._pager_trackers[id] = nil
 end
@@ -183,10 +191,7 @@ function EHIManager:RemoveTrackerFromUpdate(id)
 end
 
 function EHIManager:GetTracker(id)
-    if id then
-        return self._trackers[id]
-    end
-    return nil
+    return id and self._trackers[id]
 end
 
 function EHIManager:RemoveTracker(id, remove_ref_only)
@@ -273,13 +278,6 @@ function EHIManager:SetTrackerUpgradeable(id, upgradeable)
     end
 end
 
-function EHIManager:SetTrackerUpgrades(id, upgrades)
-    local tracker = self._trackers[id]
-    if tracker and tracker.SetUpgrades then
-        tracker:SetUpgrades(upgrades)
-    end
-end
-
 function EHIManager:SetTrackerTime(id, time)
     local tracker = self._trackers[id]
     if tracker and tracker.SetTime then
@@ -291,6 +289,13 @@ function EHIManager:SetTrackerTimeNoAnim(id, time)
     local tracker = self._trackers[id]
     if tracker and tracker.SetTimeNoAnim then
         tracker:SetTimeNoAnim(time)
+    end
+end
+
+function EHIManager:SetTimerUpgrades(id, upgrades)
+    local tracker = self._trackers[id]
+    if tracker and tracker.SetUpgrades then
+        tracker:SetUpgrades(upgrades)
     end
 end
 
@@ -360,7 +365,7 @@ function EHIManager:SetTrackerProgress(id, progress)
     end
 end
 
-function EHIManager:SetTrackerIncreaseProgress(id)
+function EHIManager:IncreaseTrackerProgress(id)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseProgress then
         tracker:IncreaseProgress()
@@ -371,6 +376,13 @@ function EHIManager:SetTrackerProgressMax(id, max)
     local tracker = self._trackers[id]
     if tracker and tracker.SetProgressMax then
         tracker:SetProgressMax(max)
+    end
+end
+
+function EHIManager:SetTrackerProgressRemaining(id, remaining)
+    local tracker = self._trackers[id]
+    if tracker and tracker.SetProgressRemaining then
+        tracker:SetProgressRemaining(remaining)
     end
 end
 

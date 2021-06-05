@@ -1,3 +1,23 @@
+r8 (05. 06. 2021):
+Optimization improvements
+Fixed an issue where some synced tracker times were not accurate
+Big Oil Day 1: Added delay timer tracker for the first assault
+Beneath the Mountain: Added tracker for achievement "Clean House"
+Beneath the Mountain: Achievement "Commando Crew" will blink green when achieved
+Buluc's Mansion: Added thermite tracker for the front gate
+Brooklyn 10-10: Added Loot Counter
+Brooklyn 10-10: Fixed an issue where achievement "A Rendezvous With Destiny" showed on difficulties lower than OVERKILL
+Brooklyn Bank: Added tracker for achievement "All the Gold in Brooklyn"
+Birth of Sky: Fixed an issue where achievement "Mellon" did not show up on client when the game was started from lobby
+Heat Street: Added Gas Needed Amount tracker when you gas out Matt from the van
+Heat Street: Fixed an issue where achievement "Patience is Key" did not hide when failed
+Reservoir Dogs Heist Day 1: Added tracker for achievement "Waste Not, Want Not"
+San Martín Bank: Hacking timer is now accurate on host. Clients will see it accurate when host has EHI installed
+Scarface Mansion: Added delay timer tracker for the first assault
+Scarface Mansion: Added Loot Counter
+The Bomb: Forest: Achievement "Beaver Team" will blink green when achieved
+Watchdogs Day 1: Fixed an issue where Car Pickup timer was not accurate
+
 r7 (28. 05. 2021):
 Heat Street: Achievement "Zookeeper" also works when you drop-in
 Heat Street: Achievement "Patience is Key" will blink red when failed
@@ -20,7 +40,7 @@ Undercover: Added more trackers
 r5 (18. 05. 2021):
 Added a pager timer tracker
 Added more trackers
-Made some trackers accurate on host. Client will see trackers accurate when host have EHI installed
+Made some trackers accurate on host. Client will see trackers accurate when host has EHI installed
 Election Day D2 Plan C: Fixed a crash when hacking timer hit zero
 Cook Off/Rats Day 1: When methlab explodes the cooking chance tracker is removed
 Rats Day 1: Fixed an issue where 2 van trackers are visible when methlab explodes

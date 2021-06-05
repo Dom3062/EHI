@@ -33,8 +33,8 @@ else
     end
 end
 
-function EHIPausableTracker:SetTextColor()
-    self._text:set_color(self._paused and Color.red or Color.white)
+function EHIPausableTracker:SetTextColor(color)
+    self._text:set_color(self._paused and Color.red or (color or Color.white))
 end
 
 function EHIPausableTracker:Sync(new_time)

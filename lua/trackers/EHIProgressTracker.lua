@@ -30,6 +30,9 @@ end
 function EHIProgressTracker:SetProgressMax(max)
     self._max = max
     self._text:set_text(self:Format())
+    if self._flash then
+        self:AnimateBG(self._flash_times)
+    end
 end
 
 function EHIProgressTracker:IncreaseProgressMax()
@@ -52,6 +55,10 @@ end
 
 function EHIProgressTracker:IncreaseProgress()
     self:SetProgress(self._progress + 1)
+end
+
+function EHIProgressTracker:SetProgressRemaining(remaining)
+    self:SetProgress(self._max - remaining)
 end
 
 function EHIProgressTracker:SetCompleted(force)

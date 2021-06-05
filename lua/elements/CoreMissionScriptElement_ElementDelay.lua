@@ -15,7 +15,7 @@ local level_id = Global.game_settings.level_id
 local triggers = {}
 local trigger_id_all = "Trigger"
 local trigger_icon_all = nil
-local SF = EHI:GetSpecialFunctions()
+local SF = EHI.SpecialFunctions
 local Icon = EHI:GetIcons()
 local TT = -- Tracker Type
 {
@@ -105,85 +105,18 @@ else
     return
 end
 
-EHI:SetSyncTriggers(triggers)
-
-local function CreateTrackerForReal(id, delay, icon2)
-    managers.ehi:AddTrackerAndSync({
-        id = triggers[id].id or trigger_id_all,
-        time = (triggers[id].time or 0) + (delay or 0),
-        icons = triggers[id].icons,
-        class = triggers[id].class
-    }, id, delay)
-end
-
-local function CreateTracker(id, delay)
-    if triggers[id].condition ~= nil then
-        if triggers[id].condition == true then
-            CreateTrackerForReal(id, delay)
-        end
-    else
-        CreateTrackerForReal(id, delay)
-    end
-end
-
-local function Trigger(id, delay)
-    --[[if managers.hud and managers.hud.Debug then
-        managers.hud:Debug(id, "MissionScriptElement")
-    end]]
-    if triggers[id] then
-        if triggers[id].special_function then
-            local f = triggers[id].special_function
-            if f == SF.AddMoney then
-                managers.hud:AddMoney(
-                    triggers[id].id,
-                    triggers[id].amount
-                )
-            elseif f == SF.RemoveTracker then
-                managers.hud:RemoveTracker(triggers[id].id)
-           elseif f == SF.PauseTracker then
-                managers.ehi:PauseTracker(triggers[id].id)
-            elseif f == SF.UnpauseTracker then
-                managers.ehi:UnpauseTracker(triggers[id].id)
-            elseif f == SF.UnpauseTrackerIfExists then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:UnpauseTracker(triggers[id].id)
-                else
-                    CreateTracker(id)
-                end
-            elseif f == SF.ResetTrackerTimeWhenUnpaused then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.hud:ResetTrackerTimeAndUnpause(triggers[id].id)
-                else
-                    CreateTracker(id, delay)
-                end
-            elseif f == SF.AddTrackerIfDoesNotExist then
-                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
-                    CreateTracker(id, delay)
-                end
-            elseif f == SF.CreateTrackerIfDoesNotExistOrAddDelayWhenUnpaused then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.hud:AddDelayToTrackerAndUnpause(triggers[id].id, 1)
-                else
-                    CreateTracker(id, delay)
-                end
-            elseif f == SF.AddToCache then
-                _cache[triggers[id].id or trigger_id_all] = triggers[id].data
-            elseif f == SF.GetFromCache then
-                local data = _cache[triggers[id].id or trigger_id_all]
-                _cache[triggers[id].id or trigger_id_all] = nil
-                CreateTrackerForReal(triggers[id].id or trigger_id_all, nil, data.icon)
-            end
-        else
-            CreateTracker(id, delay)
-        end
-    end
+if Network:is_server() then
+    EHI:Log("CoreMissionScriptElement_ElementDelay: AddTriggers")
+    EHI:AddTriggers(triggers)
+else
+    EHI:SetSyncTriggers(triggers)
 end
 
 local _f_calc_element_delay = MissionScriptElement._calc_element_delay
 function MissionScriptElement:_calc_element_delay(params)
     local delay = _f_calc_element_delay(self, params)
     if triggers[params.id] then
-        CreateTrackerForReal(params.id, delay)
+        EHI:AddTrackerAndSync(params.id, delay)
     end
     return delay
 end

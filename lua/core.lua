@@ -54,7 +54,17 @@ _G.EHI =
         AddToGlobalCache = 29,
         GetFromGlobalCache = 30,
         SetAchievementFailed = 31,
-        SetRandomTime = 32
+        SetRandomTime = 32,
+        SetProgressMax = 33,
+        DecreaseChance = 34,
+        GetElementTimerAccurate = 35,
+        UnpauseOrSetTimeByPreplanning = 36,
+        UnpauseTrackerIfExistsAccurate = 37,
+
+        ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = 99997, -- REMOVE ME
+        AddToGlobalAndExecute = 99998, -- REMOVE ME
+        UnpauseAndSetTime = 99999, -- REMOVE ME
+        Debug = 100000
     },
 
     ConditionFunctions =
@@ -117,16 +127,14 @@ _G.EHI =
     SaveDataVer = 1
 }
 
+local SF = EHI.SpecialFunctions
+
 function EHI:DifficultyToIndex(difficulty)
     return table.index_of(self.difficulties, difficulty) - 2
 end
 
 function EHI:IsOVKOrAbove(difficulty)
     return self:DifficultyToIndex(difficulty) >= 3
-end
-
-function EHI:GetSpecialFunctions()
-    return self.SpecialFunctions
 end
 
 function EHI:GetIcons()
@@ -138,7 +146,7 @@ function EHI:GetConditionFunctions()
 end
 
 function EHI:Log(s)
-    log("[EHI] " .. s)
+    log("[EHI] " .. (s or "nil"))
 end
 
 function EHI:Load()
@@ -167,16 +175,16 @@ function EHI:Save()
     end
 end
 
-function EHI:LoadValues(bai_table, file_table)
+function EHI:LoadValues(ehi_table, file_table)
     for k, v in pairs(file_table) do -- Load subtables in table and calls the same method to load subtables or values in that subtable
-        if type(file_table[k]) == "table" and bai_table[k] then
-            self:LoadValues(bai_table[k], v)
+        if type(file_table[k]) == "table" and ehi_table[k] then
+            self:LoadValues(ehi_table[k], v)
         end
     end
     for k, v in pairs(file_table) do
         if type(file_table[k]) ~= "table" then
-            if bai_table and bai_table[k] ~= nil then -- Load values to the table
-                bai_table[k] = v
+            if ehi_table and ehi_table[k] ~= nil then -- Load values to the table
+                ehi_table[k] = v
             end
         end
     end
@@ -238,8 +246,16 @@ function EHI:Hook(object, func, post_call)
     Hooks:PostHook(object, func, "EHI_" .. func, post_call)
 end
 
+function EHI:ElementHook(object, func, id, post_call)
+    Hooks:PostHook(object, func, "EHI_Element_" .. id, post_call)
+end
+
 function EHI:Unhook(id)
     Hooks:RemovePostHook("EHI_" .. id)
+end
+
+function EHI:UnhookElement(id)
+    Hooks:RemovePostHook("EHI_Element_" .. id)
 end
 
 function EHI:GetPeerColor(unit)
@@ -287,34 +303,45 @@ function EHI:SetSyncTriggers(triggers)
             if self._sync_triggers[key] then
                 self:Log("key: " .. tostring(key) .. " already exists in sync!")
             else
-                self._sync_triggers[key] = value
+                self._sync_triggers[key] = self:DeepClone(value)
             end
         end
     else
-        self._sync_triggers = triggers
+        self._sync_triggers = self:DeepClone(triggers)
     end
 end
 
 function EHI:AddSyncTrigger(id, trigger)
-    local table = {}
-    table[id] = trigger
-    self:SetSyncTriggers(table)
+    self:SetSyncTriggers({ [id] = trigger })
+end
+
+function EHI:GetTimeSynced(id, delay)
+    if self._sync_triggers[id].delay_only then
+        return delay
+    else
+        return (self._sync_triggers[id].time or 0) + delay
+    end
 end
 
 function EHI:AddTrackerSynced(id, delay)
     if self._sync_triggers[id] and managers.ehi then
-        local trigger_id = self._sync_triggers[id].id
+        local trigger = self._sync_triggers[id]
+        local trigger_id = trigger.id
         if managers.ehi:TrackerExists(trigger_id) then
-            managers.ehi:SetTrackerAccurate(trigger_id, (self._sync_triggers[id].time or 0) + delay)
+            if trigger.delay_only then
+                managers.ehi:SetTrackerAccurate(trigger_id, delay)
+            else
+                managers.ehi:SetTrackerAccurate(trigger_id, (trigger.time or 0) + delay)
+            end
         else
             managers.ehi:AddTracker({
                 id = trigger_id,
-                time = (self._sync_triggers[id].time or 0) + delay,
-                icons = self._sync_triggers[id].icons,
-                class = self._sync_triggers[id].class
+                time = self:GetTimeSynced(id, delay),
+                icons = trigger.icons,
+                class = trigger.synced and trigger.synced.class or trigger.class
             })
         end
-        if self._sync_triggers[id].client_on_executed then
+        if trigger.client_on_executed then
             -- Right now there is only SF.RemoveTriggerWhenExecuted
             self._sync_triggers[id] = nil
         end
@@ -333,13 +360,478 @@ function EHI:DebugEquipment(tracker_id, unit, key, amount)
     self:Log("traceback: " .. debug.traceback())
 end
 
+function EHI:DeepClone(o) -- Copy of OVK's function deep_clone
+    if type(o) == "userdata" then
+		return o
+	end
+
+	local res = {}
+
+	setmetatable(res, getmetatable(o))
+
+	for k, v in pairs(o) do
+		if type(v) == "table" then
+			res[k] = self:DeepClone(v)
+		else
+			res[k] = v
+		end
+	end
+
+	return res
+end
+
+local triggers = {}
+function EHI:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
+    for key, value in pairs(new_triggers) do
+        if triggers[key] then
+            self:Log("key: " .. tostring(key) .. " already exists in triggers!")
+        else
+            triggers[key] = value
+            if not value.id then
+                triggers[key].id = trigger_id_all
+            end
+            if not value.icons then
+                triggers[key].icons = trigger_icons_all
+            end
+        end
+    end
+end
+
+function EHI:GetTime(id)
+    local full_time = triggers[id].time or 0
+    full_time = full_time + (triggers[id].random_time and math.rand(triggers[id].random_time) or 0)
+    return full_time
+end
+
+function EHI:AddTrackerWithRandomTime(id)
+    managers.ehi:AddTracker({
+        id = triggers[id].id,
+        time = triggers[id].data[math.random(#triggers[id].data)],
+        icons = triggers[id].icons,
+        class = triggers[id].class
+    })
+end
+
+function EHI:AddTracker(id, sync)
+    local trigger = triggers[id]
+    managers.ehi:AddTracker({
+        id = trigger.id,
+        time = self:GetTime(id),
+        chance = trigger.chance,
+        max = trigger.max,
+        dont_flash = trigger.dont_flash,
+        flash_times = trigger.flash_times,
+        remove_after_reaching_target = trigger.remove_after_reaching_target,
+        status_is_overridable = trigger.status_is_overridable,
+        icons = trigger.icons,
+        class = trigger.class
+    })
+    if sync then
+        managers.ehi:Sync(id, self:GetTime(id))
+    end
+end
+
+function EHI:AddTrackerAndSync(id, delay)
+    managers.ehi:AddTrackerAndSync({
+        id = triggers[id].id,
+        time = (triggers[id].time or 0) + (delay or 0),
+        icons = triggers[id].icons,
+        class = triggers[id].class
+    }, id, delay)
+end
+
+function EHI:CheckConditionFunction(id, sync)
+    if triggers[id].condition_function then
+        if triggers[id].condition_function() then
+            self:AddTracker(id, sync)
+        end
+    else
+        self:AddTracker(id, sync)
+    end
+end
+
+function EHI:CheckCondition(id, sync)
+    if triggers[id].condition ~= nil then
+        if triggers[id].condition == true then
+            self:CheckConditionFunction(id, sync)
+        end
+    else
+        self:CheckConditionFunction(id, sync)
+    end
+end
+
+local function GetElementTimer(self, id)
+    if Network:is_server() then
+        local element = managers.mission:get_element_by_id(triggers[id].element)
+        if element then
+            local t = element._timer or 0
+            triggers[id].time = t
+            self:CheckCondition(id, true)
+        end
+    else
+        self:CheckCondition(id)
+    end
+end
+
+local function UnhookTrigger(self, id)
+    self:UnhookElement(id)
+    triggers[id] = nil
+end
+
+function EHI:Trigger(id, enabled)
+    if triggers[id] then
+        if triggers[id].special_function then
+            local f = triggers[id].special_function
+            if f == SF.AddMoney then
+                managers.ehi:AddMoneyToTracker(triggers[id].id, triggers[id].amount)
+            elseif f == SF.RemoveTracker then
+                managers.ehi:RemoveTracker(triggers[id].id)
+            elseif f == SF.PauseTracker then
+                managers.ehi:PauseTracker(triggers[id].id)
+            elseif f == SF.UnpauseTracker then
+                managers.ehi:UnpauseTracker(triggers[id].id)
+            elseif f == SF.UnpauseTrackerIfExists then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
+                else
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.ResetTrackerTimeWhenUnpaused then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:ResetTrackerTime(triggers[id].id)
+                    managers.ehi:UnpauseTracker(triggers[id].id)
+                else
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.AddTrackerIfDoesNotExist then
+                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.SetAchievementComplete then
+                managers.ehi:CallFunction(triggers[id].id, "SetCompleted", true)
+            elseif f == SF.AddToCache then
+                self._cache[triggers[id].id] = triggers[id].data
+            elseif f == SF.GetFromCache then
+                local data = self._cache[triggers[id].id]
+                self._cache[triggers[id].id] = nil
+                triggers[id].icons[1] = data.icon
+                self:CheckCondition(id)
+            elseif f == SF.ReplaceTrackerWithTracker then
+                managers.ehi:RemoveTracker(triggers[id].data.id)
+                if triggers[id].data.trigger then
+                    UnhookTrigger(triggers[id].data.trigger) -- Removes trigger from the list, used in The White House
+                end
+                self:CheckCondition(id)
+            elseif f == SF.IncreaseChance then
+                local trigger = triggers[id]
+                managers.ehi:IncreaseChance(trigger.id, trigger.amount)
+            elseif f == SF.ExecuteIfTrackerExists then
+                local data = triggers[id].data
+                if managers.ehi:TrackerExists(data.id) then
+                    managers.hud:SetTime(triggers[id].id, triggers[id].time)
+                    managers.ehi:RemoveTracker(data.id)
+                end
+            elseif f == SF.CreateAnotherTrackerWithTracker then
+                self:CheckCondition(id)
+                self:Trigger(triggers[id].data.fake_id)
+            elseif f == SF.SetChanceWhenTrackerExists then
+                local trigger = triggers[id]
+                if managers.ehi:TrackerExists(trigger.id) then
+                    managers.ehi:SetChance(trigger.id, trigger.chance)
+                else
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.RemoveTriggerWhenExecuted then
+                self:CheckCondition(id)
+                UnhookTrigger(self, id)
+            elseif f == SF.Trigger then
+                for _, trigger in pairs(triggers[id].data) do
+                    self:Trigger(trigger)
+                end
+            elseif f == SF.RemoveTrigger then
+                UnhookTrigger(self, id)
+            elseif f == SF.SetTimeOrCreateTracker then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.hud:SetTime(triggers[id].id, triggers[id].time)
+                else
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.ExecuteIfElementIsEnabled then
+                if enabled then
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.RemoveTrackers then
+                for _, tracker in ipairs(triggers[id].data) do
+                    managers.ehi:RemoveTracker(tracker)
+                end
+            elseif f == SF.CreateTrackers then
+                -- REPLACE ME
+                for _, tracker in ipairs(triggers[id].data) do
+                    --CreateTracker(tracker)
+                end
+            elseif f == SF.UnpauseTrackersOrCreateThem then
+                -- REPLACE ME
+                for _, tracker in ipairs(triggers[id].data) do
+                    --[[if managers.ehi:TrackerExists(triggers[tracker].id) then
+                        managers.ehi:UnpauseTracker(triggers[tracker].id)
+                    else
+                        CreateTracker(tracker)
+                    end]]
+                end
+            elseif f == SF.AddTime then
+                -- REPLACE ME
+                managers.hud:AddDelay(triggers[id].id, triggers[id].time)
+                UnhookTrigger(self, id)
+            elseif f == SF.IncreaseProgress then
+                managers.ehi:IncreaseTrackerProgress(triggers[id].id)
+            elseif f == SF.SetTimeNoAnimOrCreateTracker then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.hud:SetTimeNoAnim(triggers[id].id, self:GetTime(id))
+                else
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.SetTrackerAccurate then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:SetTrackerAccurate(triggers[id].id)
+                    managers.hud:SetTime(triggers[id].id, triggers[id].time)
+                else
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.RemoveTriggers then
+                for _, trigger_id in pairs(triggers[id].data) do
+                    UnhookTrigger(self, trigger_id)
+                end
+            elseif f == SF.UnpauseAndSetTime then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.hud:SetTime(triggers[id].id, triggers[id].time)
+                    managers.ehi:UnpauseTracker(triggers[id].id)
+                else
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.AddToGlobalAndExecute then
+                self._cache.VanReturn = true
+                self:CheckCondition(id)
+            elseif f == SF.SetAchievementFailed then
+                managers.ehi:CallFunction(triggers[id].id, "SetFailed")
+            elseif f == SF.SetRandomTime then
+                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
+                    self:AddTrackerWithRandomTime(id)
+                end
+            elseif f == SF.SetProgressMax then
+                managers.ehi:SetTrackerProgressMax(triggers[id].id, triggers[id].max)
+            elseif f == SF.ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists then
+                -- REMOVE ME
+                --[[managers.ehi:RemoveTracker(triggers[id].data.id)
+                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
+                    self:CheckCondition(id)
+                end]]
+            elseif f == SF.DecreaseChance then
+                local trigger = triggers[id]
+                managers.ehi:DecreaseChance(trigger.id, trigger.amount)
+            elseif f == SF.GetElementTimerAccurate then
+                GetElementTimer(self, id)
+            elseif f == SF.UnpauseOrSetTimeByPreplanning then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
+                else
+                    if managers.preplanning:IsAssetBought(triggers[id].data.id) then
+                        triggers[id].time = triggers[id].data.yes
+                    else
+                        triggers[id].time = triggers[id].data.no
+                    end
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.UnpauseTrackerIfExistsAccurate then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
+                else
+                    GetElementTimer(self, id)
+                end
+            elseif f == SF.Debug then
+                managers.hud:Debug(id)
+
+            -- MissionScriptElement
+            elseif f == SF.NMH_LowerFloor then
+                if enabled then
+                    managers.ehi:CallFunction(triggers[id].id, "LowerFloor")
+                end
+            elseif f == SF.ED3_SetWhiteColorWhenUnpaused then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:SetTrackerTextColor(triggers[id].id, Color.white)
+                else
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.ED3_SetPausedColor then
+                managers.ehi:SetTrackerTextColor(triggers[id].id, Color.red)
+            elseif f == SF.PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists then
+                managers.hud:RemoveTracker(triggers[id].data.id)
+                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.WD2_SetTrackerAccurate then -- Used in Watchdogs D2
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:SetTrackerAccurate(triggers[id].id)
+                    managers.hud:SetTime(triggers[id].id, triggers[id].time)
+                elseif not (managers.ehi:TrackerExists(triggers[id].id2) or managers.ehi:TrackerExists(triggers[id].id3)) then
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.FRIEND_ExecuteIfElementIsEnabledAndRemoveTrigger then
+                if enabled then
+                    self:CheckCondition(id)
+                    UnhookTrigger(self, id)
+                end
+
+            -- ElementTimerOperator
+            elseif f == SF.WATCHDOGS_2_AddToCache then
+                self._cache[triggers[id].id] = triggers[id].time
+            elseif f == SF.WATCHDOGS_2_GetFromCache then
+                local data = self._cache[triggers[id].id]
+                self._cache[triggers[id].id] = nil
+                if data then
+                    triggers[id].time = data
+                    self:CheckCondition(id)
+                    triggers[id].time = nil
+                else
+                    self:Log("No time saved in cache for id " .. tostring(id) .. "! This happens when client connected after the time was saved.")
+                    self:Log("Inaccurate timer created to represent the missing tracker.")
+                    self:CheckCondition(1011480)
+                end
+            elseif f == SF.KOSUGI_DisableTriggerAndExecute then
+                UnhookTrigger(triggers[id].data.id)
+                self:CheckCondition(id)
+            elseif f == SF.CROJOB3_PauseTrackerAndAddNewTracker then
+                managers.ehi:PauseTracker(triggers[id].id)
+                self:Trigger(triggers[id].data.fake_id)
+            elseif f == SF.CROJOB3_SetTimeByElement then
+                if triggers[id].data.cache_id and self._cache[triggers[id].data.cache_id] then
+                    self:CheckCondition(id)
+                    return
+                end
+                local element = managers.mission:get_element_by_id(triggers[id].data.id)
+                if element then
+                    if element:enabled() then
+                        triggers[id].time = triggers[id].data.yes
+                    else
+                        triggers[id].time = triggers[id].data.no
+                    end
+                    if triggers[id].data.cache_id then
+                        self._cache[triggers[id].data.cache_id] = true
+                    end
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.KENAZ_UnpauseOrSetTimeByElement then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:UnpauseTracker(triggers[id].id)
+                else
+                    if triggers[id].data.cache_id and self._cache[triggers[id].data.cache_id] then
+                        self:CheckCondition(id)
+                        return
+                    end
+                    local element = managers.mission:get_element_by_id(triggers[id].data.id)
+                    if element then
+                        if element:enabled() then
+                            triggers[id].time = triggers[id].data.yes
+                        else
+                            triggers[id].time = triggers[id].data.no
+                        end
+                        if triggers[id].data.cache_id then
+                            self._cache[triggers[id].data.cache_id] = true
+                        end
+                        self:CheckCondition(id)
+                    end
+                end
+            elseif f == SF.MEX_CheckIfLoud then
+                if managers.groupai then
+                    if managers.groupai:state():whisper_mode() then -- Stealth
+                        triggers[id].time = triggers[id].data.no
+                    else -- Loud
+                        triggers[id].time = triggers[id].data.yes
+                    end
+                    self:CheckCondition(id)
+                end
+
+            -- ElementInstanceOutputEvent
+            elseif f == SF.MeltdownAddCrowbar then
+                managers.ehi:CallFunction(triggers[id].id, "AddCrowbar")
+
+            -- ElementInstanceInputEvent
+            elseif f == SF.KENAZ_SetTimeByPreplanning then
+                if managers.preplanning:IsAssetBought(triggers[id].data.id) then
+                    triggers[id].time = triggers[id].data.yes
+                else
+                    triggers[id].time = triggers[id].data.no
+                end
+                self:CheckCondition(id)
+
+            -- ElementDialogue
+
+            -- ElementAreaTrigger
+            elseif f == SF.ALEX_1_SetTimeIfMoreThanOrCreateTracker then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    local tracker = managers.ehi:GetTracker(triggers[id].id)
+                    if tracker then
+                        if tracker._time >= triggers[id].time then
+                            managers.ehi:SetTrackerTime(triggers[id].id, triggers[id].time)
+                        end
+                    else
+                        self:CheckCondition(id)
+                    end
+                else
+                    self:CheckCondition(id)
+                end
+                UnhookTrigger(self, id)
+            end
+        else
+            self:CheckCondition(id)
+        end
+    end
+end
+
+function EHI:InitElements()
+    local function Client(element, ...)
+        self:Trigger(element._id, true)
+    end
+    local function Host(element, ...)
+        self:Trigger(element._id, element._values.enabled)
+    end
+    local server = Network:is_server()
+    local func = server and "on_executed" or "client_on_executed"
+    local f = server and Host or Client
+    local scripts = managers.mission._scripts or {}
+    for id, _ in pairs(triggers) do
+        if id >= 100000 and id <= 999999 then
+            for _, script in pairs(scripts) do
+                local element = script:element(id)
+                if element then
+                    self:ElementHook(element, func, id, f)
+                end
+            end
+        end
+    end
+end
+
 Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", function(peer, peer_id, reason)
     if managers.ehi then
-        local tracker = managers.ehi:GetTracker("CustodyTime")
-        if tracker then
-            tracker:RemovePeerFromCustody(peer_id)
-        end
+        managers.ehi:CallFunction("CustodyTime", "RemovePeerFromCustody", peer_id)
     end
 end)
 
 EHI:Load()
+
+if EHI:GetOption() then
+    function EHI:IsAchievementUnlocked(achievement)
+        local a = managers.achievment.achievement[achievement]
+        return a.awarded
+    end
+    function EHI:IsAchievementLocked(achievement)
+        return not self:IsAchievementUnlocked(achievement)
+    end
+else
+    -- Always show trackers for achievements
+    function EHI:IsAchievementUnlocked(achievement)
+        return false
+    end
+    function EHI:IsAchievementLocked(achievement)
+        return true
+    end
+end

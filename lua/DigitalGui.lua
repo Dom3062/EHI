@@ -174,7 +174,7 @@ function DigitalGui:timer_start_count_down(sync)
 		return
 	end
 	if managers.ehi:TrackerExists(self._ehi_key) then
-		managers.hud:SetTimerJammed(self._ehi_key, false)
+		managers.ehi:SetTimerJammed(self._ehi_key, false)
 	else
 		managers.ehi:AddTracker({
 			id = self._ehi_key,
@@ -190,17 +190,24 @@ function DigitalGui:timer_pause(sync)
 	if remove[self._unit:editor_id()] then
 		managers.ehi:RemoveTracker(self._ehi_key)
 	else
-		managers.hud:SetTimerJammed(self._ehi_key, true)
+		managers.ehi:SetTimerJammed(self._ehi_key, true)
 	end
 end
 
 function DigitalGui:timer_resume(sync)
 	original.timer_resume(self, sync)
-	managers.hud:SetTimerJammed(self._ehi_key, false)
+	managers.ehi:SetTimerJammed(self._ehi_key, false)
 end
 
 local SetTime = function(key, time) end
--- Fixes timer flashing in Beneath the Mountain, The Big Bank and Golden Grin Casino
+if level_id ~= "shoutout_raid" then
+	SetTime = function (key, time)
+		if managers.ehi then
+			managers.ehi:SetTrackerTimeNoAnim(key, time)
+		end
+	end
+end
+--[[-- Fixes timer flashing in Beneath the Mountain, The Big Bank and Golden Grin Casino
 if level_id == "pbr" or level_id == "big" or level_id == "kenaz" then
 	SetTime = function(key, time)
 		if managers.hud.ehi then
@@ -213,7 +220,7 @@ elseif level_id ~= "shoutout_raid" then
 			managers.hud:SetTime(key, time)
 		end
 	end
-end
+end]]
 
 function DigitalGui:timer_set(timer, sync)
 	original.timer_set(self, timer, sync)
