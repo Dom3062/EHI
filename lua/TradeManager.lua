@@ -17,9 +17,11 @@ local original =
     sync_set_auto_assault_ai_trade = TradeManager.sync_set_auto_assault_ai_trade
 }
 
+local TrackerID = "CustodyTime"
+
 local function OnPlayerCriminalDeath(peer_id, respawn_penalty)
-    if managers.ehi:TrackerExists("CustodyTime") then
-        local tracker = managers.ehi:GetTracker("CustodyTime")
+    if managers.ehi:TrackerExists(TrackerID) then
+        local tracker = managers.ehi:GetTracker(TrackerID)
         if tracker and not tracker:PeerExists(peer_id) then
             tracker:AddPeerCustodyTime(peer_id, respawn_penalty)
         end
@@ -39,13 +41,13 @@ local function CreateTracker(peer_id, respawn_penalty)
 end
 
 local function SetTrackerPause(character_name, t)
-    managers.ehi:CallFunction("CustodyTime", "SetPause", character_name, t)
+    managers.ehi:CallFunction(TrackerID, "SetPause", character_name == nil, t)
 end
 
 function TradeManager:init()
     original.init(self)
     EHI:Hook(self, "set_trade_countdown", function(s, enabled)
-        managers.ehi:CallFunction("CustodyTime", "SetPause", not enabled, self._trade_counter_tick)
+        managers.ehi:CallFunction(TrackerID, "SetPause", not enabled, self._trade_counter_tick)
     end)
 end
 
@@ -67,12 +69,12 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, h
         if EHI:GetOption("show_trade_delay_option") == 2 then
             CreateTracker(peer_id, respawn_penalty)
         elseif respawn_penalty ~= tweak_data.player.damage.base_respawn_time_penalty then
-            local tracker = managers.ehi:GetTracker("CustodyTime")
+            local tracker = managers.ehi:GetTracker(TrackerID)
             if tracker and not tracker:PeerExists(peer_id) then
                 tracker:AddPeerCustodyTime(peer_id, respawn_penalty)
             end
         end
-        managers.ehi:CallFunction("CustodyTime", "SetPeerInCustody", peer_id)
+        managers.ehi:CallFunction(TrackerID, "SetPeerInCustody", peer_id)
     end
     return crim
 end

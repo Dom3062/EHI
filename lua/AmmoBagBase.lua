@@ -44,7 +44,9 @@ local original =
 {
     init = AmmoBagBase.init,
     _set_visual_stage = AmmoBagBase._set_visual_stage,
-    destroy = AmmoBagBase.destroy
+    destroy = AmmoBagBase.destroy,
+
+    custom_set_empty = CustomAmmoBagBase._set_empty
 }
 
 function AmmoBagBase:init(unit)
@@ -52,6 +54,14 @@ function AmmoBagBase:init(unit)
     self._ehi_key = tostring(unit:key())
     self._offset = correction[tostring(unit:name())] or 0
     self._ignore = ignore[unit:editor_id()] or false
+end
+
+function AmmoBagBase:GetEHIKey()
+    return self._ehi_key
+end
+
+function AmmoBagBase:GetRealAmount()
+    return (self._ammo_amount or self._max_ammo_amount) - self._offset
 end
 
 function AmmoBagBase:_set_visual_stage()
@@ -63,5 +73,10 @@ end
 
 function AmmoBagBase:destroy()
     original.destroy(self)
+    UpdateTracker(self._unit, self._ehi_key, 0)
+end
+
+function CustomAmmoBagBase:_set_empty()
+    original.custom_set_empty(self)
     UpdateTracker(self._unit, self._ehi_key, 0)
 end

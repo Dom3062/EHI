@@ -6,10 +6,24 @@ function EHIInaccurateWarningTracker:init(panel, params)
 end
 
 function EHIInaccurateWarningTracker:AnimateWarning()
+    local anim
     if self._tracker_is_accurate then
-        EHIInaccurateWarningTracker.super.AnimateWarning(self)
+        anim = function(o)
+            while true do
+                local t = 0
+
+                while t < 1 do
+                    t = t + coroutine.yield()
+                    local n = 1 - math.sin(t * 180)
+                    --local r = math.lerp(1, 0, n)
+                    local g = math.lerp(1, 0, n)
+
+                    o:set_color(Color(1, g, g))
+                end
+            end
+        end
     else
-        self._text:animate(function(o)
+        anim = function(o)
             while true do
                 local t = 0
 
@@ -21,8 +35,9 @@ function EHIInaccurateWarningTracker:AnimateWarning()
                     o:set_color(Color(1, g, 0))
                 end
             end
-        end)
+        end
     end
+    self._text:animate(anim)
 end
 
 function EHIInaccurateWarningTracker:SetTrackerAccurate(time)

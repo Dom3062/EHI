@@ -34,6 +34,8 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHICountTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIElevatorTimerTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIGasTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIAnimatedTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHILaserTracker.lua"/>
             </group>
             <post :hook_id="hudmanagerpd2" :script_path="hudmanagerpd2.lua" />
             <post :hook_id="gameplaycentralmanager" :script_path="GamePlayCentralManager.lua"/>
@@ -45,6 +47,7 @@
             <post :hook_id="lootmanager" :script_path="LootManager.lua" />
 
             <post :hook_id="mission/elementdifficulty" :script_path="elements/ElementDifficulty.lua" />
+            <post :hook_id="mission/elementlasertrigger" :script_path="elements/ElementLaserTrigger.lua" />
             <post :hook_id="mission/elementspawngageassignment" :script_path="elements/ElementSpawnGageAssignment.lua" />
             <post :hook_id="mission/missionscriptelement" :script_path="elements/MissionScriptElement.lua" />
 
@@ -84,6 +87,7 @@
         <post hook_id="lib/units/equipment/first_aid_kit/firstaidkitbase" :script_path="FirstAidKitBase.lua" />
         <post hook_id="lib/units/pickups/gageassignmentbase" :script_path="GageAssignmentBase.lua" />
         <post hook_id="lib/units/props/digitalgui" :script_path="DigitalGui.lua" />
+        <post hook_id="lib/units/props/missiondoor" :script_path="MissionDoor.lua" />
         <post hook_id="lib/units/props/securitycamera" :script_path="SecurityCamera.lua" />
         <post hook_id="lib/units/props/timergui" :script_path="TimerGui.lua" />
         <post hook_id="lib/units/props/securitylockgui" :script_path="SecurityLockGui.lua" />

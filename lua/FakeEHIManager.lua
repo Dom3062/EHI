@@ -28,7 +28,7 @@ end
 function FakeEHIManager:AddFakeTrackers()
     self._n_of_trackers = 0
     self._fake_trackers = {}
-    self:AddFakeTracker({ id = "N/A", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { "faster" } }, true )
+    self:AddFirstFakeTracker({ id = "N/A", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { "faster" } } )
     self:AddFakeTracker({ id = "N/A", time = math.random(60, 180), icons = { EHI.Icons.Car, EHI.Icons.Escape } } )
     if EHI:GetOption("show_achievement") then
         self:AddFakeTracker({ id = "show_achievement", time = math.random(60, 180), icons = { "trophy" } } )
@@ -63,16 +63,22 @@ function FakeEHIManager:AddFakeTrackers()
     if EHI:GetOption("show_difficulty_tracker") then
         self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "enemy" }, class = "FakeEHIChanceTracker" } )
     end
+    if EHI:GetOption("show_drama_tracker") then
+        self:AddFakeTracker({ id = "show_drama_tracker", chance = math.random(100), icons = { "enemy" }, class = "FakeEHIChanceTracker" })
+    end
     if EHI:GetOption("show_pager_tracker") then
         self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { "pagers_used" }, class = "FakeEHIProgressTracker" } )
     end
     if EHI:GetOption("show_enemy_count_tracker") then
         self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "enemy" }, class = "FakeEHICountTracker" } )
     end
+    if EHI:GetOption("show_laser_tracker") then
+        self:AddFakeTracker({ id = "show_laser_tracker", time = math.random() * (4 - 0.5) + 0.5, icons = { EHI.Icons.Lasers } })
+    end
     self:AddPreviewText()
 end
 
-function FakeEHIManager:AddFakeTracker(params, first)
+function FakeEHIManager:AddFakeTracker(params)
     params.x = self._x
     params.y = self:GetY(self._n_of_trackers)
     params.scale = self._scale
@@ -81,9 +87,11 @@ function FakeEHIManager:AddFakeTracker(params, first)
     self._n_of_trackers = self._n_of_trackers + 1
     local tracker = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params)
     self._fake_trackers[#self._fake_trackers + 1] = tracker
-    if first then
-        tracker._time_bg_box:child("left_top"):set_color(Color.red)
-    end
+end
+
+function FakeEHIManager:AddFirstFakeTracker(params)
+    self:AddFakeTracker(params)
+    self._fake_trackers[1]._time_bg_box:child("left_top"):set_color(Color.red)
 end
 
 function FakeEHIManager:make_fine_text(text)
@@ -497,7 +505,7 @@ end
 
 FakeEHIChanceTracker = FakeEHIChanceTracker or class(FakeEHITracker)
 function FakeEHIChanceTracker:init(panel, params)
-    self._chance = math.random(1, 10) * 5
+    self._chance = params.chance or (math.random(1, 10) * 5)
     FakeEHIChanceTracker.super.init(self, panel, params)
 end
 

@@ -74,6 +74,12 @@ elseif level_id == "pal" then -- Counterfeit
     triggers = {
         [102887] = { time = 1800/30, id = "HeliCage", icons = { Icon.Heli, Icon.LootDrop } }
     }
+elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
+    triggers = {
+        [EHI:GetInstanceElementID(100062, 6690)] = { id = "SecurityOfficeTeargas", icons = { "teargas" } },
+        [EHI:GetInstanceElementID(100063, 6690)] = { id = "SecurityOfficeTeargas", icons = { "teargas" } },
+        [EHI:GetInstanceElementID(100064, 6690)] = { id = "SecurityOfficeTeargas", icons = { "teargas" } }
+    }
 elseif level_id == "mex_cooking" then -- Border Crystals
     triggers = {
         [103575] = { id = "CookingStartDelay", icons = { "pd2_methlab", "faster" } },
@@ -106,8 +112,7 @@ else
 end
 
 if Network:is_server() then
-    EHI:Log("CoreMissionScriptElement_ElementDelay: AddTriggers")
-    EHI:AddTriggers(triggers)
+    EHI:AddHostTriggers(triggers)
 else
     EHI:SetSyncTriggers(triggers)
 end

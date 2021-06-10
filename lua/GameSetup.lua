@@ -30,4 +30,5 @@ end
 function GameSetup:load(data)
     original.load(self, data)
     managers.ehi:load()
+    EHI:SyncLoad()
 end

@@ -1,3 +1,4 @@
+local EHI = EHI
 local panel_size = 32
 local panel_offset = 6
 EHIManager = EHIManager or class()
@@ -17,10 +18,12 @@ function EHIManager:init()
     })
     self._trackers = {}
     self._pager_trackers = {}
+    self._laser_trackers = {}
     self._trackers_to_update = {}
     self._trackers_pos = {}
     self._n_of_trackers = 0
     self._cache = {}
+    self._deployable_cache = {}
     self._sync_time = 0
     self._sync_real_time = Application:time()
     local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
@@ -104,14 +107,20 @@ function EHIManager:AddTracker(params, pos)
     end
     if pos and type(pos) == "number" and self._n_of_trackers ~= 0 then
         local move = false
-        local trackers_to_move = {}
-        for key, tbl in pairs(self._trackers_pos) do
+        for _, tbl in pairs(self._trackers_pos) do
             if tbl.pos >= pos then
                 move = true
-                trackers_to_move[key] = tbl
+                break
             end
         end
         if move then
+            for id, tbl in pairs(self._trackers_pos) do
+                if tbl.pos >= pos then
+                    local final_pos = tbl.pos + 1
+                    tbl.tracker:SetTop(self:GetY(final_pos))
+                    self._trackers_pos[id].pos = final_pos
+                end
+            end
         else
             -- No tracker found on the provided pos
             -- Scrap this and create the tracker on the first available position
@@ -152,7 +161,15 @@ function EHIManager:AddPagerTracker(params)
     self:AddTracker(params)
 end
 
+function EHIManager:AddLaserTracker(params)
+    self._laser_trackers[params.id] = true
+    self:AddTracker(params)
+end
+
 function EHIManager:AddAchievementProgressTracker(id, max, icon)
+    if EHI:IsAchievementUnlocked(id) then
+        return
+    end
     self:AddTracker({
         id = id,
         max = max,
@@ -165,11 +182,22 @@ function EHIManager:RemovePager(id)
     self._pager_trackers[id] = nil
 end
 
+function EHIManager:RemoveLaser(id)
+    self._laser_trackers[id] = nil
+end
+
 function EHIManager:RemovePagerTrackers()
     for key, _ in pairs(self._pager_trackers) do
         self:RemoveTracker(key)
     end
     self._pager_trackers = {}
+end
+
+function EHIManager:RemoveLaserTrackers()
+    for key, _ in pairs(self._laser_trackers) do
+        self:RemoveTracker(key)
+    end
+    self._laser_trackers = {}
 end
 
 function EHIManager:GetClass(class)
@@ -335,6 +363,70 @@ function EHIManager:GetAndRemoveFromCache(id)
     local data = self._cache[id]
     self._cache[id] = nil
     return data
+end
+
+function EHIManager:AddToDeployableCache(type, key, unit, tracker_type)
+    self._deployable_cache[type] = self._deployable_cache[type] or {}
+    self._deployable_cache[type][key] = { unit = unit, tracker_type = tracker_type }
+    local tracker = self:GetTracker(type)
+    if tracker then
+        if tracker_type then
+            tracker:UpdateAmount(tracker_type, unit, key, 0)
+        else
+            tracker:UpdateAmount(unit, key, 0)
+        end
+    end
+end
+
+function EHIManager:LoadFromDeployableCache(type, key)
+    self._deployable_cache[type] = self._deployable_cache[type] or {}
+    if self._deployable_cache[type][key] then
+        if self:TrackerDoesNotExist(type) then
+            self:CreateDeployableTracker(type)
+        end
+        local deployable = self._deployable_cache[type][key]
+        local unit = deployable.unit
+        local tracker = self:GetTracker(type)
+        if tracker then
+            if deployable.tracker_type then
+                tracker:UpdateAmount(deployable.tracker_type, unit, key, unit:base():GetRealAmount())
+            else
+                tracker:UpdateAmount(unit, key, unit:base():GetRealAmount())
+            end
+        end
+        self._deployable_cache[type][key] = nil
+    end
+end
+
+function EHIManager:RemoveFromDeployableCache(type, key)
+    self._deployable_cache[type] = self._deployable_cache[type] or {}
+    self._deployable_cache[type][key] = nil
+end
+
+function EHIManager:CreateDeployableTracker(type)
+    if type == "Health" then
+        self:AddAggregatedHealthTracker()
+    elseif type == "DoctorBags" then
+        self:AddTracker({
+            id = "DoctorBags",
+            icons = { "doctor_bag" },
+            class = "EHIEquipmentTracker"
+        })
+    elseif type == "AmmoBags" then
+        self:AddTracker({
+            id = "AmmoBags",
+            format = "percent",
+            icons = { "ammo_bag" },
+            class = "EHIEquipmentTracker"
+        })
+    elseif type == "FirstAidKits" then
+        managers.ehi:AddTracker({
+            id = "FirstAidKits",
+            icons = { "first_aid_kit" },
+            dont_show_placed = true,
+            class = "EHIEquipmentTracker"
+        })
+    end
 end
 
 function EHIManager:IncreaseChance(id, amount)

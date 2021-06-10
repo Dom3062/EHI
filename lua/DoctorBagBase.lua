@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.DoctorBagBase then
 	return
 else
@@ -44,7 +45,9 @@ local original =
 {
     init = DoctorBagBase.init,
     _set_visual_stage = DoctorBagBase._set_visual_stage,
-    destroy = DoctorBagBase.destroy
+    destroy = DoctorBagBase.destroy,
+
+    custom_set_empty = CustomDoctorBagBase._set_empty
 }
 
 function DoctorBagBase:init(unit)
@@ -58,7 +61,20 @@ function DoctorBagBase:_set_visual_stage()
     UpdateTracker(self._unit, self._ehi_key, self._amount - self._offset)
 end
 
+function DoctorBagBase:GetEHIKey()
+    return self._ehi_key
+end
+
+function DoctorBagBase:GetRealAmount()
+    return (self._amount or self._max_amount) - self._offset
+end
+
 function DoctorBagBase:destroy()
     original.destroy(self)
+    UpdateTracker(self._unit, self._ehi_key, 0)
+end
+
+function CustomDoctorBagBase:_set_empty()
+    original.custom_set_empty(self)
     UpdateTracker(self._unit, self._ehi_key, 0)
 end

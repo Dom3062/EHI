@@ -20,39 +20,33 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
     local level_id = Global.game_settings.level_id
     local difficulty = Global.game_settings.difficulty
-    if level_id ~= "chill" then
-        if false then
-            self:AddTracker({
-                id = "Drama",
-                icons = { "enemy" },
-                dont_flash = true,
-                class = "EHIChanceTracker"
-            })
-        end
-        if EHI:GetOption("show_enemy_count_tracker") then
-            self:AddTracker({
-                id = "EnemyCount",
-                class = "EHICountTracker"
-            })
-        end
-        if EHI:GetOption("show_pager_tracker") then
-            local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
-            local max = 0
-            for _, value in pairs(base) do
-                if value > 0 then
-                    max = max + 1
-                end
+    local level_tweak_data = tweak_data.levels[level_id]
+    if level_tweak_data and level_tweak_data.team_ai_off then
+        return
+    end
+    if EHI:GetOption("show_enemy_count_tracker") then
+        self:AddTracker({
+            id = "EnemyCount",
+            class = "EHICountTracker"
+        })
+    end
+    if EHI:GetOption("show_pager_tracker") then
+        local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
+        local max = 0
+        for _, value in pairs(base) do
+            if value > 0 then
+                max = max + 1
             end
-            self:AddTracker({
-                id = "pagers",
-                max = max,
-                icons = { "pagers_used" },
-                set_color_bad_when_reached = true,
-                class = "EHIProgressTracker"
-            })
-            if max == 0 then
-                self.ehi:CallFunction("pagers", "SetBad")
-            end
+        end
+        self:AddTracker({
+            id = "pagers",
+            max = max,
+            icons = { "pagers_used" },
+            set_color_bad_when_reached = true,
+            class = "EHIProgressTracker"
+        })
+        if max == 0 then
+            self.ehi:CallFunction("pagers", "SetBad")
         end
     end
     if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" then
@@ -134,6 +128,8 @@ function HUDManager:ShowLootCounter(level_id, difficulty)
         max = 4
     elseif level_id == "friend" then
         max = 16
+    elseif level_id == "wwh" then
+        max = 8
     --[[elseif level_id == "rvd1" then
         max = 6]]
     end
@@ -188,10 +184,6 @@ function HUDManager:RemoveTracker(id)
     self.ehi:RemoveTracker(id)
 end
 
-function HUDManager:AddXP(id, amount)
-    self.ehi:AddXPToTracker(id, amount)
-end
-
 function HUDManager:SetUpgradeable(id, upgradeable)
     self.ehi:SetTrackerUpgradeable(id, upgradeable)
 end
@@ -226,4 +218,8 @@ function HUDManager:Debug(id)
         self._ehi_debug_time = TimerManager:game():time()
     end
     managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; dt: " .. dt, Color.white)
+end
+
+function HUDManager:DebugElement(id, element)
+    managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; Element: " .. tostring(element), Color.white)
 end

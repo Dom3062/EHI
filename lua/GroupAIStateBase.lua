@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.GroupAIStateBase then
 	return
 else
@@ -34,9 +35,10 @@ local unhook =
     "_at_interact_start"
 }
 
-local show_trackers =
-{
-}
+local show_trackers = {}
+if EHI:ShowDramaTracker() then
+    show_trackers[#show_trackers + 1] = { id = "Drama", icons = { "enemy" }, class = "EHIChanceTracker", dont_flash = true, pos = 0 }
+end
 
 local level_id = Global.game_settings.level_id
 if level_id == "alex_2" then
@@ -54,6 +56,7 @@ local function Execute()
         managers.ehi:CallFunction(achievement, "ToggleObtainable")
     end
     managers.ehi:RemovePagerTrackers()
+    managers.ehi:RemoveLaserTrackers()
     for _, hook in ipairs(unhook) do
         EHI:Unhook(hook)
     end
@@ -62,8 +65,9 @@ local function Execute()
             id = tracker.id,
             time = tracker.time,
             icons = tracker.icons,
+            dont_flash = tracker.dont_flash,
             class = tracker.class
-        })
+        }, tracker.pos)
     end
 end
 
@@ -73,8 +77,7 @@ local original =
     on_successful_alarm_pager_bluff = GroupAIStateBase.on_successful_alarm_pager_bluff,
     sync_alarm_pager_bluff = GroupAIStateBase.sync_alarm_pager_bluff,
     load = GroupAIStateBase.load,
-    sync_cs_grenade = GroupAIStateBase.sync_cs_grenade,
-    _add_drama = GroupAIStateBase._add_drama
+    sync_cs_grenade = GroupAIStateBase.sync_cs_grenade
 }
 
 function GroupAIStateBase:init()
@@ -105,7 +108,8 @@ function GroupAIStateBase:load(load_data)
     end
 end
 
-if false then
+if EHI:ShowDramaTracker() then
+    original._add_drama = GroupAIStateBase._add_drama
     function GroupAIStateBase:_add_drama(amount)
         original._add_drama(self, amount)
         managers.ehi:SetChance("Drama", (EHI:RoundNumber(self._drama_data.amount, 0.01) * 100))

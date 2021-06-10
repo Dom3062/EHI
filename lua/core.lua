@@ -12,6 +12,8 @@ _G.EHI =
 
     _sync_triggers = {},
 
+    HookOnLoad = {},
+
     _cache =
     {
     },
@@ -44,8 +46,8 @@ _G.EHI =
         SetTimeOrCreateTracker = 19,
         ExecuteIfElementIsEnabled = 20,
         RemoveTrackers = 21,
-        CreateTrackers = 22,
-        UnpauseTrackersOrCreateThem = 23,
+        ShowAchievement = 22,
+        RemoveTriggerAndShowAchievement = 23,
         AddTime = 24,
         IncreaseProgress = 25,
         SetTimeNoAnimOrCreateTracker = 26,
@@ -64,7 +66,8 @@ _G.EHI =
         ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = 99997, -- REMOVE ME
         AddToGlobalAndExecute = 99998, -- REMOVE ME
         UnpauseAndSetTime = 99999, -- REMOVE ME
-        Debug = 100000
+        Debug = 100000,
+        CustomCode = 100001
     },
 
     ConditionFunctions =
@@ -210,6 +213,7 @@ function EHI:LoadDefaultValues()
 
         -- Trackers
         show_achievement = true,
+        hide_unlocked_achievements = true,
         show_gained_xp = true,
         xp_format = 3,
         xp_panel = 1,
@@ -230,8 +234,10 @@ function EHI:LoadDefaultValues()
         show_equipment_aggregate_health = true,
         show_minion_tracker = true,
         show_difficulty_tracker = true,
+        show_drama_tracker = true,
         show_pager_tracker = true,
-        show_enemy_count_tracker = true
+        show_enemy_count_tracker = true,
+        show_laser_tracker = false
     }
     self:Log("Default values loaded")
 end
@@ -246,6 +252,10 @@ function EHI:Hook(object, func, post_call)
     Hooks:PostHook(object, func, "EHI_" .. func, post_call)
 end
 
+function EHI:PreHook(object, func, pre_call)
+    Hooks:PreHook(object, func, "EHI_Pre_" .. func, pre_call)
+end
+
 function EHI:ElementHook(object, func, id, post_call)
     Hooks:PostHook(object, func, "EHI_Element_" .. id, post_call)
 end
@@ -256,6 +266,10 @@ end
 
 function EHI:UnhookElement(id)
     Hooks:RemovePostHook("EHI_Element_" .. id)
+end
+
+function EHI:ShowDramaTracker()
+    return self:GetOption("show_drama_tracker") and Network:is_server()
 end
 
 function EHI:GetPeerColor(unit)
@@ -381,6 +395,7 @@ function EHI:DeepClone(o) -- Copy of OVK's function deep_clone
 end
 
 local triggers = {}
+local host_triggers = {}
 function EHI:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     for key, value in pairs(new_triggers) do
         if triggers[key] then
@@ -392,6 +407,22 @@ function EHI:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
             end
             if not value.icons then
                 triggers[key].icons = trigger_icons_all
+            end
+        end
+    end
+end
+
+function EHI:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all)
+    for key, value in pairs(new_triggers) do
+        if host_triggers[key] then
+            self:Log("key: " .. tostring(key) .. " already exists in host triggers!")
+        else
+            host_triggers[key] = value
+            if not value.id then
+                host_triggers[key].id = trigger_id_all
+            end
+            if not value.icons then
+                host_triggers[key].icons = trigger_icons_all
             end
         end
     end
@@ -433,10 +464,10 @@ end
 
 function EHI:AddTrackerAndSync(id, delay)
     managers.ehi:AddTrackerAndSync({
-        id = triggers[id].id,
-        time = (triggers[id].time or 0) + (delay or 0),
-        icons = triggers[id].icons,
-        class = triggers[id].class
+        id = host_triggers[id].id,
+        time = (host_triggers[id].time or 0) + (delay or 0),
+        icons = host_triggers[id].icons,
+        class = host_triggers[id].class
     }, id, delay)
 end
 
@@ -564,24 +595,19 @@ function EHI:Trigger(id, enabled)
                 for _, tracker in ipairs(triggers[id].data) do
                     managers.ehi:RemoveTracker(tracker)
                 end
-            elseif f == SF.CreateTrackers then
-                -- REPLACE ME
-                for _, tracker in ipairs(triggers[id].data) do
-                    --CreateTracker(tracker)
+            elseif f == SF.ShowAchievement then
+                if self:IsAchievementLocked(triggers[id].id) then
+                    self:CheckCondition(id)
                 end
-            elseif f == SF.UnpauseTrackersOrCreateThem then
-                -- REPLACE ME
-                for _, tracker in ipairs(triggers[id].data) do
-                    --[[if managers.ehi:TrackerExists(triggers[tracker].id) then
-                        managers.ehi:UnpauseTracker(triggers[tracker].id)
-                    else
-                        CreateTracker(tracker)
-                    end]]
+            elseif f == SF.RemoveTriggerAndShowAchievement then
+                if self:IsAchievementLocked(triggers[id].id) then
+                    self:CheckCondition(id)
                 end
+                UnhookTrigger(self, id)
             elseif f == SF.AddTime then
                 -- REPLACE ME
-                managers.hud:AddDelay(triggers[id].id, triggers[id].time)
-                UnhookTrigger(self, id)
+                --managers.hud:AddDelay(triggers[id].id, triggers[id].time)
+                --UnhookTrigger(self, id)
             elseif f == SF.IncreaseProgress then
                 managers.ehi:IncreaseTrackerProgress(triggers[id].id)
             elseif f == SF.SetTimeNoAnimOrCreateTracker then
@@ -609,8 +635,9 @@ function EHI:Trigger(id, enabled)
                     self:CheckCondition(id)
                 end
             elseif f == SF.AddToGlobalAndExecute then
-                self._cache.VanReturn = true
-                self:CheckCondition(id)
+                -- REMOVE ME
+                --self._cache.VanReturn = true
+                --self:CheckCondition(id)
             elseif f == SF.SetAchievementFailed then
                 managers.ehi:CallFunction(triggers[id].id, "SetFailed")
             elseif f == SF.SetRandomTime then
@@ -649,6 +676,8 @@ function EHI:Trigger(id, enabled)
                 end
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
+            elseif f == SF.CustomCode then
+                triggers[id].f()
 
             -- MissionScriptElement
             elseif f == SF.NMH_LowerFloor then
@@ -794,9 +823,9 @@ function EHI:InitElements()
     local function Host(element, ...)
         self:Trigger(element._id, element._values.enabled)
     end
-    local server = Network:is_server()
-    local func = server and "on_executed" or "client_on_executed"
-    local f = server and Host or Client
+    local client = Network:is_client()
+    local func = client and "client_on_executed" or "on_executed"
+    local f = client and Client or Host
     local scripts = managers.mission._scripts or {}
     for id, _ in pairs(triggers) do
         if id >= 100000 and id <= 999999 then
@@ -804,10 +833,36 @@ function EHI:InitElements()
                 local element = script:element(id)
                 if element then
                     self:ElementHook(element, func, id, f)
+                elseif client then
+                    --[[
+                        On client, the element was not found
+                        This is because the element is from an instance that is mission placed
+                        Mission Placed instances are preloaded and all elements are not cached until
+                        ElementInstancePoint is called
+                        These instances are synced when u join
+                        Delay the hook until the sync is complete (see: EHI:SyncLoad())
+                    ]]
+                    self.HookOnLoad[#self.HookOnLoad + 1] = id
                 end
             end
         end
     end
+end
+
+function EHI:SyncLoad()
+    local function Client(element, ...)
+        self:Trigger(element._id, true)
+    end
+    local scripts = managers.mission._scripts or {}
+    for _, id in pairs(self.HookOnLoad) do
+        for _, script in pairs(scripts) do
+            local element = script:element(id)
+            if element then
+                self:ElementHook(element, "client_on_executed", id, Client)
+            end
+        end
+    end
+    self.HookOnLoad = {}
 end
 
 Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", function(peer, peer_id, reason)
@@ -818,16 +873,15 @@ end)
 
 EHI:Load()
 
-if EHI:GetOption() then
+if EHI:GetOption("hide_unlocked_achievements") then
     function EHI:IsAchievementUnlocked(achievement)
-        local a = managers.achievment.achievement[achievement]
-        return a.awarded
+        local a = managers.achievment.achievments[achievement]
+        return a and a.awarded
     end
     function EHI:IsAchievementLocked(achievement)
         return not self:IsAchievementUnlocked(achievement)
     end
-else
-    -- Always show trackers for achievements
+else -- Always show trackers for achievements
     function EHI:IsAchievementUnlocked(achievement)
         return false
     end

@@ -85,15 +85,31 @@
             "title" : "ehi_trackers"
         },
         {
-            "type": "toggle",
-            "id": "ehi_show_achievement_choice",
-            "title": "ehi_show_achievement",
-            "description": "ehi_show_achievement_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_achievement",
-            "focus_changed_callback" : "SetFocus",
-            "value": "show_achievement",
-            "default_value": true
+            "table" : [
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_achievement_choice",
+                    "title": "ehi_show_achievement",
+                    "description": "ehi_show_achievement_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_achievement",
+                    "focus_changed_callback" : "SetFocus",
+                    "value": "show_achievement",
+                    "default_value": true,
+                    "is_parent" : true
+                },
+                {
+                    "type": "toggle",
+                    "id": "ehi_hide_unlocked_achievements_choice",
+                    "title": "ehi_hide_unlocked_achievements",
+                    "description": "ehi_hide_unlocked_achievements_desc",
+                    "callback": "SetOption",
+                    "callback_arguments": "hide_unlocked_achievements",
+                    "value": "hide_unlocked_achievements",
+                    "default_value": true,
+                    "parent" : "ehi_show_achievement_choice"
+                }
+            ]
         },
         {
             "type": "toggle",
@@ -257,15 +273,30 @@
             "default_value": true
         },
         {
-            "type": "toggle",
-            "id": "ehi_show_difficulty_tracker_choice",
-            "title": "ehi_show_difficulty_tracker",
-            "description": "ehi_show_difficulty_tracker_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_difficulty_tracker",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_difficulty_tracker",
-            "default_value": true
+            "table" : [
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_difficulty_tracker_choice",
+                    "title": "ehi_show_difficulty_tracker",
+                    "description": "ehi_show_difficulty_tracker_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_difficulty_tracker",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_difficulty_tracker",
+                    "default_value": true
+                },
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_drama_tracker_choice",
+                    "title": "ehi_show_drama_tracker",
+                    "description": "ehi_show_drama_tracker_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_drama_tracker",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_drama_tracker",
+                    "default_value": true
+                }
+            ]
         },
         {
             "type": "toggle",
@@ -279,15 +310,30 @@
             "default_value": true
         },
         {
-            "type": "toggle",
-            "id": "ehi_show_enemy_count_tracker_choice",
-            "title": "ehi_show_enemy_count_tracker",
-            "description": "ehi_show_enemy_count_tracker_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_enemy_count_tracker",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_enemy_count_tracker",
-            "default_value": true
+            "table" : [
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_enemy_count_tracker_choice",
+                    "title": "ehi_show_enemy_count_tracker",
+                    "description": "ehi_show_enemy_count_tracker_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_enemy_count_tracker",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_enemy_count_tracker",
+                    "default_value": true
+                },
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_laser_tracker_choice",
+                    "title": "ehi_show_laser_tracker",
+                    "description": "ehi_show_laser_tracker_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_laser_tracker",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_laser_tracker",
+                    "default_value": false
+                }
+            ]
         }
     ]
 }

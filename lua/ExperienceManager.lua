@@ -35,10 +35,10 @@ local f
 if EHI:GetOption("xp_panel") == 1 then
     if xp_format == 1 then
         f = function(self, amount)
-            if amount > 0 and managers.ehi then
+            if amount > 0 then
                 local id = "XP"
                 if managers.ehi:TrackerExists(id) then
-                    managers.hud:AddXP(id, amount)
+                    managers.ehi:AddXPToTracker(id, amount)
                 else
                     managers.ehi:AddTracker({
                         id = id,
@@ -50,10 +50,10 @@ if EHI:GetOption("xp_panel") == 1 then
         end
     elseif xp_format == 2 then
         f = function(self, amount)
-            if amount > 0 and managers.hud.ehi then
+            if amount > 0 then
                 local id = "XP"
                 if managers.ehi:TrackerExists(id) then
-                    managers.hud:AddXP(id, amount * difficulty_multiplier)
+                    managers.ehi:AddXPToTracker(id, amount * difficulty_multiplier)
                 else
                     managers.ehi:AddTracker({
                         id = id,
@@ -65,11 +65,11 @@ if EHI:GetOption("xp_panel") == 1 then
         end
     else
         f = function(self, amount)
-            if amount > 0 and managers.hud.ehi then
+            if amount > 0 then
                 local id = "XP"
                 local xp_gained = MultiplyXPWillAllBonuses(amount)
                 if managers.ehi:TrackerExists(id) then
-                    managers.hud:AddXP(id, xp_gained)
+                    managers.ehi:AddXPToTracker(id, xp_gained)
                 else
                     managers.ehi:AddTracker({
                         id = id,
@@ -83,21 +83,21 @@ if EHI:GetOption("xp_panel") == 1 then
 else
     if xp_format == 1 then
         f = function(self, amount)
-            if amount > 0 and managers.hud.ehi then
-                managers.hud:AddXP("XPTotal", amount)
+            if amount > 0 then
+                managers.ehi:AddXPToTracker("XPTotal", amount)
             end
         end
     elseif xp_format == 2 then
         f = function(self, amount)
-            if amount > 0 and managers.hud.ehi then
-                managers.hud:AddXP("XPTotal", amount * difficulty_multiplier)
+            if amount > 0 then
+                managers.ehi:AddXPToTracker("XPTotal", amount * difficulty_multiplier)
             end
         end
     else
         f = function(self, amount)
-            if amount > 0 and managers.hud.ehi then
+            if amount > 0 then
                 local xp_gained = MultiplyXPWillAllBonuses(amount)
-                managers.hud:AddXP("XPTotal", xp_gained)
+                managers.ehi:AddXPToTracker("XPTotal", xp_gained)
             end
         end
     end

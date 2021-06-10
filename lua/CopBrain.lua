@@ -6,7 +6,6 @@ end
 
 local original =
 {
-    clbk_alarm_pager = CopBrain.clbk_alarm_pager,
     on_alarm_pager_interaction = CopBrain.on_alarm_pager_interaction
 }
 

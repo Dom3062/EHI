@@ -87,8 +87,8 @@ function EHIEquipmentTracker:UpdateAmount(unit, key, amount)
     self._amount = 0
     self._placed = 0
     for _, value in pairs(self._deployables) do
-        self._amount = self._amount + value
-        if value ~= 0 then
+        if value > 0 then
+            self._amount = self._amount + value
             self._placed = self._placed + 1
         end
     end

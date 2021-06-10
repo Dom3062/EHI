@@ -35,8 +35,7 @@ else
 end
 
 if Network:is_server() then
-    EHI:Log("CoreMissionScriptElement_BaseDelay: AddTriggers")
-    EHI:AddTriggers(triggers)
+    EHI:AddHostTriggers(triggers)
 else
     EHI:SetSyncTriggers(triggers)
 end

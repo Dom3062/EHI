@@ -47,6 +47,14 @@ function FirstAidKitBase:init(unit)
     UpdateTracker(self._unit, self._ehi_key, 1)
 end
 
+function FirstAidKitBase:GetEHIKey()
+    return self._ehi_key
+end
+
+function FirstAidKitBase:GetRealAmount()
+    return self._empty and 0 or 1
+end
+
 function FirstAidKitBase:destroy()
     original.destroy(self)
     if managers.hud.ehi then

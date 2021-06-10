@@ -1,3 +1,18 @@
+r10 (11. 06. 2021):
+Added Simplified Chinese translation
+Added option "Don't Show Unlocked Achievements"
+Added tracker "Drama"
+Added tracker "Show Lasers"
+Added C4 tracker to most doors and safes
+Greatly improved counting of deployables
+Trade Delay Tracker: Definitely fixed an issue where time did not count down when AI trade was possible
+Fixed an issue where Ammo Shelves did not correctly update the amount
+Fixed an issue where some achievement trackers did not respect option "Show Achievement Tracker"
+Fixed an issue where trackers did not show up on client but on host they were working fine
+Alaskan Deal: Added Loot Counter
+Counterfeit: Fixed a crash when Bile arrived with cage
+The Bomb: Dockyard: Fixed an issue where Boat Move tracker reset after alarm went off
+
 r9 (06. 06. 2021):
 Trade Delay Tracker: Possible fix for an issue when the time did not count down when all players were in custody and AI trade was possible
 Shadow Raid: Fixed a crash

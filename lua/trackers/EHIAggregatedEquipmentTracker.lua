@@ -135,8 +135,8 @@ function EHIAggregatedEquipmentTracker:UpdateAmount(id, unit, key, amount)
     self._amount[id] = 0
     self._placed[id] = 0
     for _, value in pairs(self._deployables[id]) do
-        self._amount[id] = self._amount[id] + value
-        if value ~= 0 then
+        if value > 0 then
+            self._amount[id] = self._amount[id] + value
             self._placed[id] = self._placed[id] + 1
         end
     end

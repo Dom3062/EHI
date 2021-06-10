@@ -40,5 +40,8 @@ function IngameWaitingForPlayersState:at_exit(next_state)
         for _, unit in pairs(managers.interaction._interactive_units or {}) do
             EHI:Log("unit:interaction().tweak_data = " .. tostring(unit:interaction().tweak_data))
         end
+        EHI:DelayCall("Test", 10, function()
+            managers.preplanning:IsAssetBought(101854)
+        end)
     end
 end

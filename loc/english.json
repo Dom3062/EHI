@@ -32,8 +32,11 @@
     "ehi_trackers" : "Trackers",
     "ehi_trackers_desc" : "",
 
-    "ehi_show_achievement" : "Show achievement tracker",
+    "ehi_show_achievement" : "Show Achievement Tracker",
     "ehi_show_achievement_desc" : "Shows on the screen timed achievements\nSome heists may not have any timed achievements available",
+
+    "ehi_hide_unlocked_achievements" : "Don't Show Unlocked Achievements",
+    "ehi_hide_unlocked_achievements_desc" : "When enabled, EHI will not show trackers for unlocked achievements\nWhen disabled, EHI will show all trackers for achievements",
 
     "ehi_show_gained_xp" : "Show gained XP",
     "ehi_show_gained_xp_desc" : "Shows earned XP in a mission.\nThis tracker is disabled in Crime Spree.",
@@ -111,9 +114,15 @@
     "ehi_show_difficulty_tracker" : "Show Difficulty Tracker",
     "ehi_show_difficulty_tracker_desc" : "Shows a tracker for how much difficulty the wave is",
 
+    "ehi_show_drama_tracker" : "Show Drama Tracker",
+    "ehi_show_drama_tracker_desc" : "Shows a tracker for accumulated drama (host only)",
+
     "ehi_show_pager_tracker" : "Show Pager Tracker",
     "ehi_show_pager_tracker_desc" : "Shows a tracker for how many pagers you have left",
 
     "ehi_show_enemy_count_tracker" : "Show Enemy Count Tracker",
-    "ehi_show_enemy_count_tracker_desc" : "Shows a tracker for how many enemies are on the map"
+    "ehi_show_enemy_count_tracker_desc" : "Shows a tracker for how many enemies are on the map",
+
+    "ehi_show_laser_tracker" : "Show Laser Tracker",
+    "ehi_show_laser_tracker_desc" : "Shows a tracker for lasers that cycle every few seconds"
 }
