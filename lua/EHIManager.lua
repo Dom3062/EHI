@@ -366,6 +366,9 @@ function EHIManager:GetAndRemoveFromCache(id)
 end
 
 function EHIManager:AddToDeployableCache(type, key, unit, tracker_type)
+    if not key then
+        return
+    end
     self._deployable_cache[type] = self._deployable_cache[type] or {}
     self._deployable_cache[type][key] = { unit = unit, tracker_type = tracker_type }
     local tracker = self:GetTracker(type)
@@ -379,6 +382,9 @@ function EHIManager:AddToDeployableCache(type, key, unit, tracker_type)
 end
 
 function EHIManager:LoadFromDeployableCache(type, key)
+    if not key then
+        return
+    end
     self._deployable_cache[type] = self._deployable_cache[type] or {}
     if self._deployable_cache[type][key] then
         if self:TrackerDoesNotExist(type) then
@@ -399,6 +405,9 @@ function EHIManager:LoadFromDeployableCache(type, key)
 end
 
 function EHIManager:RemoveFromDeployableCache(type, key)
+    if not key then
+        return
+    end
     self._deployable_cache[type] = self._deployable_cache[type] or {}
     self._deployable_cache[type][key] = nil
 end

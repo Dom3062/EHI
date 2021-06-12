@@ -618,8 +618,7 @@ function EHI:Trigger(id, enabled)
                 end
             elseif f == SF.SetTrackerAccurate then
                 if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:SetTrackerAccurate(triggers[id].id)
-                    managers.hud:SetTime(triggers[id].id, triggers[id].time)
+                    managers.ehi:SetTrackerAccurate(triggers[id].id, triggers[id].time)
                 else
                     self:CheckCondition(id)
                 end
@@ -699,8 +698,7 @@ function EHI:Trigger(id, enabled)
                 end
             elseif f == SF.WD2_SetTrackerAccurate then -- Used in Watchdogs D2
                 if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:SetTrackerAccurate(triggers[id].id)
-                    managers.hud:SetTime(triggers[id].id, triggers[id].time)
+                    managers.ehi:SetTrackerAccurate(triggers[id].id, triggers[id].time)
                 elseif not (managers.ehi:TrackerExists(triggers[id].id2) or managers.ehi:TrackerExists(triggers[id].id3)) then
                     self:CheckCondition(id)
                 end

@@ -1,3 +1,7 @@
+r11 (12. 06. 2021):
+Fixed a crash when game synced used and empty deployable
+San Martín Bank: Fixed a crash
+
 r10 (11. 06. 2021):
 Added Simplified Chinese translation
 Added option "Don't Show Unlocked Achievements"
