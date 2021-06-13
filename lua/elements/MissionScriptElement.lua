@@ -52,10 +52,8 @@ local Holdout =
 SF.WATCHDOGS_2_AddToCache = 90
 SF.WATCHDOGS_2_GetFromCache = 91
 SF.KOSUGI_DisableTriggerAndExecute = 93
-SF.UnpauseOrSetTimeByPreplanning = 94
 SF.CROJOB3_PauseTrackerAndAddNewTracker = 95
 SF.CROJOB3_SetTimeByElement = 96
-SF.KENAZ_UnpauseOrSetTimeByElement = 97
 SF.MEX_CheckIfLoud = 98 -- Custom special function
 SF.FRIEND_ExecuteIfElementIsEnabledAndRemoveTrigger = 99
 SF.NMH_LowerFloor = 191
@@ -67,8 +65,8 @@ SF.WD2_SetTrackerAccurate = 199
 SF.ALEX_1_SetTimeIfMoreThanOrCreateTracker = 497
 SF.KOSUGI_ExecuteAndDisableTriggers = 498
 SF.MeltdownAddCrowbar = 999
-SF.KENAZ_SetTimeByPreplanning = 2000
 local client = Network:is_client()
+local host = not client
 local CarEscape = { Icon.Car, Icon.Escape, Icon.LootDrop }
 local CarWait = { Icon.Car, Icon.Escape, Icon.LootDrop, Icon.Wait }
 local HeliEscape = { Icon.Heli, Icon.Escape, Icon.LootDrop }
@@ -424,9 +422,18 @@ elseif level_id == "mad" then -- Boiling Point
     end
 elseif level_id == "chew" then -- The Biker Heist Day 2
     triggers = {
-        [100595] = { time = 120, id = "born_5", icons = { "C_Elephant_H_Biker_FullThrottle" }, class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.ShowAchievement },
-        [100558] = { tiem = 5, random_time = 5, id = "BileReturn", icons = HeliEscape }
+        [100595] = { time = 120, id = "born_5", icons = { "C_Elephant_H_Biker_FullThrottle" }, class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.ShowAchievement }
     }
+    local sync_triggers =
+    {
+        [100558] = { id = "BileReturn", icons = HeliEscape }
+    }
+    if client then
+        triggers[100558] = { time = 5, random_time = 5, id = "BileReturn", icons = HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
+        EHI:SetSyncTriggers(sync_triggers)
+    else
+        EHI:AddHostTriggers(sync_triggers, nil, nil, "base")
+    end
 elseif level_id == "vit" then -- The White House
     triggers = {
         [100246] = { time = 31, id = "TearGasOffice", icons = { Icon.Teargas }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "TearGasOfficeChance", trigger = 100808 } },
@@ -771,25 +778,28 @@ elseif level_id == "watchdogs_2_day" or level_id == "watchdogs_2" then -- Watchd
     trigger_icon_all = { Icon.Boat, Icon.LootDrop }
     trigger_id_all = "BoatLootDropReturn"
     if client then
-        triggers[100470] = { time = 450/30, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = SF.WD2_SetTrackerAccurate }
-        triggers[100472] = { time = 450/30, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = SF.WD2_SetTrackerAccurate }
-        triggers[100474] = { time = 450/30, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = SF.WD2_SetTrackerAccurate }
+        local boat_return = { time = 450/30, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = SF.WD2_SetTrackerAccurate }
+        triggers[100470] = boat_return
+        triggers[100472] = boat_return
+        triggers[100474] = boat_return
     end
 elseif level_id == "kenaz" then -- Golden Grin Casino
     local heli_delay = 22 + 1 + 1.5
     local heli_icon = { Icon.Heli, "equipment_winch_hook", "pd2_goto" }
     local refill_icon = { "pd2_water_tap", "pd2_goto" }
+    local heli_60 = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
+    local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
     triggers = {
         [100282] = { time = 840, id = "kenaz_4", icons = { "C_Dentist_H_GoldenGrinCasino_HighRoller" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement },
 
-        [EHI:GetInstanceElementID(100021, 29150)] = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled },
-        [EHI:GetInstanceElementID(100042, 29150)] = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled },
-        [EHI:GetInstanceElementID(100021, 29225)] = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled },
-        [EHI:GetInstanceElementID(100042, 29225)] = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled },
-        [EHI:GetInstanceElementID(100021, 15220)] = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled },
-        [EHI:GetInstanceElementID(100042, 15220)] = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled },
-        [EHI:GetInstanceElementID(100021, 15295)] = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled },
-        [EHI:GetInstanceElementID(100042, 15295)] = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled },
+        [EHI:GetInstanceElementID(100021, 29150)] = heli_60,
+        [EHI:GetInstanceElementID(100042, 29150)] = heli_30,
+        [EHI:GetInstanceElementID(100021, 29225)] = heli_60,
+        [EHI:GetInstanceElementID(100042, 29225)] = heli_30,
+        [EHI:GetInstanceElementID(100021, 15220)] = heli_60,
+        [EHI:GetInstanceElementID(100042, 15220)] = heli_30,
+        [EHI:GetInstanceElementID(100021, 15295)] = heli_60,
+        [EHI:GetInstanceElementID(100042, 15295)] = heli_30,
 
         -- Toilets
         [EHI:GetInstanceElementID(100181, 13000)] = { time = 30, id = "RefillLeft01", icons = refill_icon },
@@ -805,17 +815,19 @@ elseif level_id == "kenaz" then -- Golden Grin Casino
         [EHI:GetInstanceElementID(100167, 44535)] = { id = "DrillDrop", special_function = SF.PauseTracker },
 
         -- Water during drilling
-        [EHI:GetInstanceElementID(100148, 37575)] = { id = "WaterTimer1", icons = { "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.KENAZ_UnpauseOrSetTimeByElement, data = { id = EHI:GetInstanceElementID(100229, 37575), yes = 120, no = 60, cache_id = "Water1" } },
+        [EHI:GetInstanceElementID(100148, 37575)] = { id = "WaterTimer1", icons = { "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60, cache_id = "Water1" } },
         [EHI:GetInstanceElementID(100146, 37575)] = { id = "WaterTimer1", special_function = SF.PauseTracker },
-        [EHI:GetInstanceElementID(100149, 37575)] = { id = "WaterTimer2", icons = { "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.KENAZ_UnpauseOrSetTimeByElement, data = { id = EHI:GetInstanceElementID(100230, 37575), yes = 120, no = 60, cache_id = "Water2" } },
+        [EHI:GetInstanceElementID(100149, 37575)] = { id = "WaterTimer2", icons = { "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60, cache_id = "Water2" } },
         [EHI:GetInstanceElementID(100147, 37575)] = { id = "WaterTimer2", special_function = SF.PauseTracker },
 
         -- Skylight Hack
         [EHI:GetInstanceElementID(100018, 29650)] = { time = 30, id = "SkylightHack", icons = { "wp_hack" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [EHI:GetInstanceElementID(100037, 29650)] = { id = "SkylightHack", special_function = SF.PauseTracker },
 
-        [100159] = { id = "BlimpWithTheDrill", icons = { "pd2_question", "pd2_drill" }, special_function = SF.KENAZ_SetTimeByPreplanning, data = { id = 101854, yes = 976/30, no = 1952/30 } },
-        [100426] = { time = 1000/30, id = "BlimpLowerTheDrill", icons = { "pd2_question", "pd2_drill", "pd2_goto" } }
+        [100159] = { id = "BlimpWithTheDrill", icons = { "pd2_question", "pd2_drill" }, special_function = SF.SetTimeByPreplanning, data = { id = 101854, yes = 976/30, no = 1952/30 } },
+        [100426] = { time = 1000/30, id = "BlimpLowerTheDrill", icons = { "pd2_question", "pd2_drill", "pd2_goto" } },
+
+        [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { "restarter" } }
     }
 elseif level_id == "nmh" then -- No Mercy
     triggers = {
@@ -1047,6 +1059,8 @@ elseif level_id == "pines" then -- White Xmas
     trigger_id_all = "PresentDrop"
     trigger_icon_all = { "C_Vlad_H_XMas_Impossible" }
 elseif level_id == "friend" then -- Scarface Mansion
+    local random_car = { time = 18, id = "RandomCar", icons = { Icon.Heli, "pd2_goto" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" } }
+    local caddilac = { time = 18, id = "Caddilac", icons = { Icon.Heli, "pd2_goto" } }
     triggers = {
         [100109] = { time = 30 + 1 + 30, id = "FirstAssaultDelay", icons = { "assaultbox" }, class = TT.Warning, special_function = SF.RemoveTriggerWhenExecuted },
 
@@ -1056,21 +1070,21 @@ elseif level_id == "friend" then -- Scarface Mansion
 
         [100103] = { time = 15 + 5, random_time = 10, id = "BileArrival", icons = { Icon.Heli } },
 
-        [100238] = { time = 18, id = "RandomCar1", icons = { Icon.Heli, "pd2_goto" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" } },
-        [100249] = { time = 18, id = "RandomCar2", icons = { Icon.Heli, "pd2_goto" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" } },
-        [100310] = { time = 18, id = "RandomCar3", icons = { Icon.Heli, "pd2_goto" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" } },
-        [100313] = { time = 18, id = "RandomCar4", icons = { Icon.Heli, "pd2_goto" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" } },
-        [100314] = { time = 18, id = "RandomCar5", icons = { Icon.Heli, "pd2_goto" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" } },
+        [100238] = random_car,
+        [100249] = random_car,
+        [100310] = random_car,
+        [100313] = random_car,
+        [100314] = random_car,
 
-        [102231] = { time = 20, id = "BileCarDropToWater", icons = { Icon.Heli, Icon.Car, "pd2_goto" } },
+        [102231] = { time = 20, id = "BileDropCar", icons = { Icon.Heli, Icon.Car, "pd2_goto" } },
 
-        [100718] = { time = 18, id = "Caddilac1", icons = { Icon.Heli, "pd2_goto" } },
-        [100720] = { time = 18, id = "Caddilac2", icons = { Icon.Heli, "pd2_goto" } },
-        [100732] = { time = 18, id = "Caddilac3", icons = { Icon.Heli, "pd2_goto" } },
-        [100733] = { time = 18, id = "Caddilac4", icons = { Icon.Heli, "pd2_goto" } },
-        [100734] = { time = 18, id = "Caddilac5", icons = { Icon.Heli, "pd2_goto" } },
+        [100718] = caddilac,
+        [100720] = caddilac,
+        [100732] = caddilac,
+        [100733] = caddilac,
+        [100734] = caddilac,
 
-        [102253] = { time = 11, id = "BileDropCaddilac", icons = { Icon.Heli, Icon.Car, "pd2_goto" } },
+        [102253] = { time = 11, id = "BileDropCaddilac", icons = { Icon.Heli, { icon = Icon.Car, color = Color("FFFF00") }, "pd2_goto" } },
 
         [100213] = { time = 450/30, id = "EscapeCar1", icons = CarEscape },
         [100214] = { time = 160/30, id = "EscapeCar2", icons = CarEscape },
@@ -1106,74 +1120,65 @@ elseif level_id == "crojob2" then -- The Bomb: Dockyard
     end
     if client then
         local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" }, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
-        local delete_interact = { id = "MethlabInteract", special_function = SF.RemoveTracker }
         for _, index in pairs(start_index) do
             triggers[EHI:GetInstanceElementID(100149, index)] = random_time
             triggers[EHI:GetInstanceElementID(100150, index)] = random_time
-            triggers[EHI:GetInstanceElementID(100184, index)] = delete_interact
+            triggers[EHI:GetInstanceElementID(100184, index)] = { id = "MethlabInteract", special_function = SF.RemoveTracker }
         end
     end
 elseif level_id == "crojob3" or level_id == "crojob3_night" then -- The Bomb: Forest
     local heli_anim = 35
     local heli_anim_full = 35 + 10 -- 10 seconds is hose lifting up animation when chopper goes refilling
+    local thermite_right = { time = 86, id = "Thermite", icons = { "pd2_fire" } }
+    local thermite_left_top = { time = 90, id = "Thermite", icons = { "pd2_fire" } }
+    local heli_20 = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, "pd2_water_tap", "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled }
+    local heli_65 = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, "pd2_water_tap", "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled }
     triggers = {
         [101499] = { time = 155 + 25, id = "EscapeHeli", icons = HeliEscape },
-        [101253] = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, "pd2_water_tap", "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled },
-        [101254] = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, "pd2_water_tap", "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled },
-        [101255] = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, "pd2_water_tap", "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled },
-        [101256] = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, "pd2_water_tap", "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled },
-        [101259] = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, "pd2_water_tap", "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled },
-        [101278] = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, "pd2_water_tap", "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled },
-        [101279] = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, "pd2_water_tap", "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled },
-        [101280] = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, "pd2_water_tap", "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled },
+        [101253] = heli_65,
+        [101254] = heli_20,
+        [101255] = heli_65,
+        [101256] = heli_20,
+        [101259] = heli_65,
+        [101278] = heli_20,
+        [101279] = heli_65,
+        [101280] = heli_20,
 
         [101691] = { time = 10 + 700/30, id = "PlaneEscape", icons = HeliEscape },
 
         [102996] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
 
-        [102825] = { id = "WaterFill", icons = { "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.CROJOB3_SetTimeByElement, data = { id = 104301, yes = 160, no = 300 } },
+        [102825] = { id = "WaterFill", icons = { "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 160, no = 300 } },
         [102905] = { id = "WaterFill", special_function = SF.PauseTracker },
         [102920] = { id = "WaterFill", special_function = SF.UnpauseTracker },
 
-        [EHI:GetInstanceElementID(100032, 100)] = { time = 240, id = "HeliWaterFill", icons = { "heli", "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
-        [EHI:GetInstanceElementID(100032, 150)] = { time = 240, id = "HeliWaterFill", icons = { "heli", "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
-        [EHI:GetInstanceElementID(100032, 250)] = { time = 240, id = "HeliWaterFill", icons = { "heli", "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
-        [EHI:GetInstanceElementID(100032, 300)] = { time = 240, id = "HeliWaterFill", icons = { "heli", "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
-        [EHI:GetInstanceElementID(100030, 100)] = { id = "HeliWaterFill", special_function = SF.PauseTracker },
-        [EHI:GetInstanceElementID(100030, 150)] = { id = "HeliWaterFill", special_function = SF.PauseTracker },
-        [EHI:GetInstanceElementID(100030, 250)] = { id = "HeliWaterFill", special_function = SF.PauseTracker },
-        [EHI:GetInstanceElementID(100030, 300)] = { id = "HeliWaterFill", special_function = SF.PauseTracker },
-        [EHI:GetInstanceElementID(100037, 100)] = { id = "HeliWaterFill", special_function = SF.CROJOB3_PauseTrackerAndAddNewTracker, data = { fake_id = 1 } },
-        [EHI:GetInstanceElementID(100037, 150)] = { id = "HeliWaterFill", special_function = SF.CROJOB3_PauseTrackerAndAddNewTracker, data = { fake_id = 2 } },
-        [EHI:GetInstanceElementID(100037, 250)] = { id = "HeliWaterFill", special_function = SF.CROJOB3_PauseTrackerAndAddNewTracker, data = { fake_id = 3 } },
-        [EHI:GetInstanceElementID(100037, 300)] = { id = "HeliWaterFill", special_function = SF.CROJOB3_PauseTrackerAndAddNewTracker, data = { fake_id = 4 } },
-
-        [1] = { id = "HeliWaterReset", icons = { "heli", "pd2_water_tap", "restarter" }, special_function = SF.CROJOB3_SetTimeByElement, data = { id = EHI:GetInstanceElementID(100047, 100), yes = 62 + heli_anim_full, no = 122 + heli_anim_full } },
-        [2] = { id = "HeliWaterReset", icons = { "heli", "pd2_water_tap", "restarter" }, special_function = SF.CROJOB3_SetTimeByElement, data = { id = EHI:GetInstanceElementID(100047, 150), yes = 62 + heli_anim_full, no = 122 + heli_anim_full } },
-        [3] = { id = "HeliWaterReset", icons = { "heli", "pd2_water_tap", "restarter" }, special_function = SF.CROJOB3_SetTimeByElement, data = { id = EHI:GetInstanceElementID(100047, 250), yes = 62 + heli_anim_full, no = 122 + heli_anim_full } },
-        [4] = { id = "HeliWaterReset", icons = { "heli", "pd2_water_tap", "restarter" }, special_function = SF.CROJOB3_SetTimeByElement, data = { id = EHI:GetInstanceElementID(100047, 300), yes = 62 + heli_anim_full, no = 122 + heli_anim_full } },
+        [1] = { id = "HeliWaterReset", icons = { "heli", "pd2_water_tap", "restarter" }, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 62 + heli_anim_full, no = 122 + heli_anim_full } },
 
         [103461] = { time = 5, id = "cow_3", icons = { "C_Butcher_H_BombForest_Beaver" }, class = TT.Achievement, condition = show_achievement, special_function = SF.RemoveTriggerAndShowAchievement },
         [103458] = { id = "cow_3", special_function = SF.SetAchievementComplete },
 
         -- Right
-        [100283] = { time = 86 },
-        [100284] = { time = 86 },
-        [100288] = { time = 86 },
+        [100283] = thermite_right,
+        [100284] = thermite_right,
+        [100288] = thermite_right,
 
         -- Left
-        [100285] = { time = 90 },
-        [100286] = { time = 90 },
-        [100560] = { time = 90 },
+        [100285] = thermite_left_top,
+        [100286] = thermite_left_top,
+        [100560] = thermite_left_top,
 
         -- Top
-        [100282] = { time = 90 },
-        [100287] = { time = 90 },
-        [100558] = { time = 90 },
-        [100559] = { time = 90 }
+        [100282] = thermite_left_top,
+        [100287] = thermite_left_top,
+        [100558] = thermite_left_top,
+        [100559] = thermite_left_top
     }
-    trigger_id_all = "Thermite"
-    trigger_icon_all = { "pd2_fire" }
+    local indexes = { 100, 150, 250, 300 }
+    for _, index in pairs(indexes) do
+        triggers[EHI:GetInstanceElementID(100032, index)] = { time = 240, id = "HeliWaterFill", icons = { "heli", "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists }
+        triggers[EHI:GetInstanceElementID(100030, index)] = { id = "HeliWaterFill", special_function = SF.PauseTracker }
+        triggers[EHI:GetInstanceElementID(100037, index)] = { id = "HeliWaterFill", special_function = SF.CROJOB3_PauseTrackerAndAddNewTracker, data = { fake_id = 1 } }
+    end
 elseif level_id == "shoutout_raid" then -- Meltdown
     triggers = {
         [102314] = { id = "Vault", class = "EHIVaultTemperatureTracker", special_function = SF.AddTrackerIfDoesNotExist },
@@ -1196,7 +1201,7 @@ elseif level_id == "roberts" then -- GO Bank
         [101961] = { time = 150 + start_delay, id = "Plane", icons = { "heli", "faster" } }
     }
 elseif level_id == "rvd1" then -- Reservoir Dogs Heist Day 2
-    local pink_car = { { icon = Icon.Car, color = Color("D983D1"), visible = true }, "pd2_goto" }
+    local pink_car = { { icon = Icon.Car, color = Color("D983D1") }, "pd2_goto" }
     triggers = {
         [100727] = { time = 6 + 18 + 8.5 + 30 + 25 + 375/30, id = "Escape", icons = CarEscape },
         [100057] = { time = 60, id = "rvd_10", icons = { "C_Bain_H_ReservoirDogs_Pinky" }, class = TT.Achievement, condition = dw_and_above and show_achievement, special_function = SF.ShowAchievement },
@@ -1236,7 +1241,7 @@ elseif level_id == "des" then -- Henry's Rock
         -- 3s to open the heli doors
 
         [102593] = { time = 30, id = "ChemSetReset", icons = { "restarter" } },
-        [101217] = { time = 30, id = "ChemSetInterrupted", icons = { "restarter" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "ChemSetCooking" }},
+        [101217] = { time = 30, id = "ChemSetInterrupted", icons = { "restarter" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "ChemSetCooking" } },
         [102595] = { time = 30, id = "ChemSetCooking", icons = { "pd2_defend" } },
 
         [102009] = { time = 60, id = "Crane", icons = { "equipment_winch_hook" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
@@ -1377,12 +1382,22 @@ elseif level_id == "pal" then -- Counterfeit
 
         [102826] = { id = "PAL", special_function = SF.RemoveTracker }
     }
+    local heli = { id = "HeliCageDelay", icons = { Icon.Heli, Icon.LootDrop, "faster" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning }
+    local sync_triggers = {
+        [EHI:GetInstanceElementID(100013, 4700)] = heli,
+        [EHI:GetInstanceElementID(100013, 4750)] = heli,
+        [EHI:GetInstanceElementID(100013, 4800)] = heli,
+        [EHI:GetInstanceElementID(100013, 4850)] = heli
+    }
     if client then
         triggers[102892] = { time = 1800/30 + 120, random_time = 60, id = "HeliCage", icons = { Icon.Heli, Icon.LootDrop }, special_function = SF.AddTrackerIfDoesNotExist }
         triggers[EHI:GetInstanceElementID(100013, 4700)] = { time = 180, random_time = 60, id = "HeliCageDelay", icons = { Icon.Heli, Icon.LootDrop, "faster" }, special_function = SF.PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning }
         triggers[EHI:GetInstanceElementID(100013, 4750)] = { time = 180, random_time = 60, id = "HeliCageDelay", icons = { Icon.Heli, Icon.LootDrop, "faster" }, special_function = SF.PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning }
         triggers[EHI:GetInstanceElementID(100013, 4800)] = { time = 180, random_time = 60, id = "HeliCageDelay", icons = { Icon.Heli, Icon.LootDrop, "faster" }, special_function = SF.PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning }
         triggers[EHI:GetInstanceElementID(100013, 4850)] = { time = 180, random_time = 60, id = "HeliCageDelay", icons = { Icon.Heli, Icon.LootDrop, "faster" }, special_function = SF.PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning }
+        EHI:SetSyncTriggers(sync_triggers)
+    else
+        EHI:AddHostTriggers(sync_triggers, nil, nil, "base")
     end
 elseif level_id == "nail" then -- Lab Rats
     triggers = {
@@ -1473,7 +1488,7 @@ elseif level_id == "help" then -- Prison Nightmare
     triggers = {
         [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, id = "orange_4", icons = { "C_Event_H_PrisonNightmare_SalemAsylum" }, class = TT.Achievement, condition = mayhem_and_up and show_achievement, special_function = SF.ShowAchievement },
         [EHI:GetInstanceElementID(100461, 21700)] = { id = "orange_4", special_function = SF.SetAchievementComplete },
-        [100279] = { max = 15, id = "orange_5", icons = { "C_Event_H_PrisonNightmare_ALongNight" }, class = TT.AchievementProgress, status_is_overridable = true, remove_after_reaching_target = true, condition = mayhem_and_up and show_achievement, special_function = SF.ShowAchievement },
+        [100279] = { max = 15, id = "orange_5", icons = { "C_Event_H_PrisonNightmare_ALongNight" }, class = TT.AchievementProgress, status_is_overridable = true, remove_after_reaching_target = false, condition = mayhem_and_up and show_achievement, special_function = SF.ShowAchievement },
         [101725] = { time = 25 + 0.25 + 2 + 2.35, id = "C4", icons = { Icon.Heli, "pd2_c4", "pd2_goto" } },
         [EHI:GetInstanceElementID(100471, 21700)] = { id = "orange_5", special_function = SF.SetAchievementFailed },
         [100866] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
@@ -1613,12 +1628,26 @@ elseif Holdout[level_id] then
         [EHI:GetInstanceElementID(100032, start_index)] = { time = 7, id = "HostageRescue", icons = { "pd2_kill" }, class = TT.Warning },
         [EHI:GetInstanceElementID(100036, start_index)] = { id = "HostageRescue", special_function = SF.RemoveTracker }
     }
-elseif level_id == "Triad Takedown Yacht Heist" then
+elseif level_id == "Triad Takedown Yacht Heist" then -- Custom Heist
     local bag_delay = 24.700000762939 -- I'm not even kidding
     triggers = {
         [100285] = { time = 125 + bag_delay, id = "HeliDrillDrop", icons = HeliDropDrill },
         [100286] = { time = 130 + bag_delay, id = "HeliDrillDrop", icons = HeliDropDrill },
         [100297] = { time = 65 + 23, id = "HeliEscape", icons = HeliEscape }
+    }
+elseif level_id == "ruswl" then -- Scorched Earth Custom Heist
+    local obj_delay = { time = 30, id = "ObjectiveDelay", icons = { "faster" } }
+    triggers = {
+        [100404] = obj_delay,
+        [100405] = obj_delay,
+        [101181] = { time = 30, id = "ChemSetReset", icons = { "restarter" } },
+        [101182] = { time = 30, id = "ChemSetCooking", icons = { "pd2_methlab" } },
+        [101088] = { time = 84, id = "HeliEscape", icons = { Icon.Heli, Icon.Escape } }
+    }
+elseif level_id == "rusdl" then -- Cold Stones Custom Heist
+    triggers = {
+        [100114] = { time = 17 * 18, id = "Thermite", icons = { "pd2_fire" } },
+        [100138] = { time = 20, id = "ObjectiveWait", icons = { "faster" } }
     }
 end
 

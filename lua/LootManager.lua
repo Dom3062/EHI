@@ -19,8 +19,10 @@ local LootCounter =
 {
     spa = true, -- Brooklyn 10-10
     friend = true, -- Scarface Mansion
-    wwh = true -- Alaskan Deal
-    --["rvd1"] = true -- Reservoir Dogs Heist Day 2
+    wwh = true, -- Alaskan Deal
+    --rvd1 = true -- Reservoir Dogs Heist Day 2
+    -- Custom Heist
+    rusdl = true
 }
 local level_id = Global.game_settings.level_id
 local tracker_id = nil

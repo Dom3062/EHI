@@ -16,3 +16,8 @@ end
 function EHILaserTracker:UpdateInterval(t)
     self._time = t
 end
+
+function EHILaserTracker:delete()
+    self._parent_class:RemoveLaser(self._id)
+    EHILaserTracker.super.delete(self)
+end

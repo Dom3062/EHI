@@ -23,7 +23,6 @@ function PlayerManager:spawn_smoke_screen(position, normal, grenade_unit, has_do
             icons = {
                 {
                     icon = "smoke",
-                    visible = true,
                     color = color
                 }
             }

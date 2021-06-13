@@ -18,6 +18,8 @@ _G.EHI =
     {
     },
 
+    _element_delay = {},
+
     SyncMessages =
     {
         EHISyncAddTracker = "EHISyncAddTracker"
@@ -48,7 +50,7 @@ _G.EHI =
         RemoveTrackers = 21,
         ShowAchievement = 22,
         RemoveTriggerAndShowAchievement = 23,
-        AddTime = 24,
+        SetTimeByPreplanning = 24,
         IncreaseProgress = 25,
         SetTimeNoAnimOrCreateTracker = 26,
         SetTrackerAccurate = 27,
@@ -396,6 +398,8 @@ end
 
 local triggers = {}
 local host_triggers = {}
+local base_delay_triggers = {}
+local element_delay_triggers = {}
 function EHI:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     for key, value in pairs(new_triggers) do
         if triggers[key] then
@@ -412,7 +416,7 @@ function EHI:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     end
 end
 
-function EHI:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all)
+function EHI:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, type)
     for key, value in pairs(new_triggers) do
         if host_triggers[key] then
             self:Log("key: " .. tostring(key) .. " already exists in host triggers!")
@@ -423,6 +427,19 @@ function EHI:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all)
             end
             if not value.icons then
                 host_triggers[key].icons = trigger_icons_all
+            end
+        end
+        if type == "base" then
+            if base_delay_triggers[key] then
+                self:Log("key: " .. tostring(key) .. " already exists in host base delay triggers!")
+            else
+                base_delay_triggers[key] = true
+            end
+        else
+            if element_delay_triggers[key] then
+                self:Log("key: " .. tostring(key) .. " already exists in host element delay triggers!")
+            else
+                element_delay_triggers[key] = true
             end
         end
     end
@@ -604,10 +621,13 @@ function EHI:Trigger(id, enabled)
                     self:CheckCondition(id)
                 end
                 UnhookTrigger(self, id)
-            elseif f == SF.AddTime then
-                -- REPLACE ME
-                --managers.hud:AddDelay(triggers[id].id, triggers[id].time)
-                --UnhookTrigger(self, id)
+            elseif f == SF.SetTimeByPreplanning then
+                if managers.preplanning:IsAssetBought(triggers[id].data.id) then
+                    triggers[id].time = triggers[id].data.yes
+                else
+                    triggers[id].time = triggers[id].data.no
+                end
+                self:CheckCondition(id)
             elseif f == SF.IncreaseProgress then
                 managers.ehi:IncreaseTrackerProgress(triggers[id].id)
             elseif f == SF.SetTimeNoAnimOrCreateTracker then
@@ -660,6 +680,10 @@ function EHI:Trigger(id, enabled)
                 if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.ehi:UnpauseTracker(triggers[id].id)
                 else
+                    if triggers[id].data.cache_id and self._cache[triggers[id].data.cache_id] then
+                        self:CheckCondition(id)
+                        return
+                    end
                     if managers.preplanning:IsAssetBought(triggers[id].data.id) then
                         triggers[id].time = triggers[id].data.yes
                     else
@@ -746,27 +770,6 @@ function EHI:Trigger(id, enabled)
                     end
                     self:CheckCondition(id)
                 end
-            elseif f == SF.KENAZ_UnpauseOrSetTimeByElement then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:UnpauseTracker(triggers[id].id)
-                else
-                    if triggers[id].data.cache_id and self._cache[triggers[id].data.cache_id] then
-                        self:CheckCondition(id)
-                        return
-                    end
-                    local element = managers.mission:get_element_by_id(triggers[id].data.id)
-                    if element then
-                        if element:enabled() then
-                            triggers[id].time = triggers[id].data.yes
-                        else
-                            triggers[id].time = triggers[id].data.no
-                        end
-                        if triggers[id].data.cache_id then
-                            self._cache[triggers[id].data.cache_id] = true
-                        end
-                        self:CheckCondition(id)
-                    end
-                end
             elseif f == SF.MEX_CheckIfLoud then
                 if managers.groupai then
                     if managers.groupai:state():whisper_mode() then -- Stealth
@@ -780,17 +783,6 @@ function EHI:Trigger(id, enabled)
             -- ElementInstanceOutputEvent
             elseif f == SF.MeltdownAddCrowbar then
                 managers.ehi:CallFunction(triggers[id].id, "AddCrowbar")
-
-            -- ElementInstanceInputEvent
-            elseif f == SF.KENAZ_SetTimeByPreplanning then
-                if managers.preplanning:IsAssetBought(triggers[id].data.id) then
-                    triggers[id].time = triggers[id].data.yes
-                else
-                    triggers[id].time = triggers[id].data.no
-                end
-                self:CheckCondition(id)
-
-            -- ElementDialogue
 
             -- ElementAreaTrigger
             elseif f == SF.ALEX_1_SetTimeIfMoreThanOrCreateTracker then
@@ -837,10 +829,25 @@ function EHI:InitElements()
                         This is because the element is from an instance that is mission placed
                         Mission Placed instances are preloaded and all elements are not cached until
                         ElementInstancePoint is called
-                        These instances are synced when u join
+                        These instances are synced when you join
                         Delay the hook until the sync is complete (see: EHI:SyncLoad())
                     ]]
                     self.HookOnLoad[#self.HookOnLoad + 1] = id
+                end
+            end
+        end
+    end
+    if not client then
+        for id, _ in pairs(base_delay_triggers) do
+            for _, script in pairs(scripts) do
+                local element = script:element(id)
+                if element then
+                    self._element_delay[id] = element._calc_base_delay
+                    element._calc_base_delay = function(e)
+                        local delay = self._element_delay[e._id](e)
+                        self:AddTrackerAndSync(e._id, delay)
+                        return delay
+                    end
                 end
             end
         end

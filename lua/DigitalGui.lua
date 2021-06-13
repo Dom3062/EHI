@@ -131,7 +131,7 @@ elseif level_id == "chas" then -- Dragon Heist
 elseif level_id == "cane" then -- Santa's Workshop
 	-- OVK decided to use one timer for fire and fire recharge
 	-- This class ignores them and that timer is implemented
-	-- in ElementTimerOperator.lua
+	-- in MissionScriptElement.lua
 	ignore =
 	{
 		[EHI:GetInstanceUnitID(100002, 0)] = true,

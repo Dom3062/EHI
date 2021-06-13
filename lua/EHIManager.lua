@@ -162,6 +162,13 @@ function EHIManager:AddPagerTracker(params)
 end
 
 function EHIManager:AddLaserTracker(params)
+    for id, _ in pairs(self._laser_trackers) do
+        -- Don't add this tracker if the "next_cycle_t" is the same as time to prevent duplication
+        local tracker = self:GetTracker(id)
+        if tracker and tracker._next_cycle_t == params.time then
+            return
+        end
+    end
     self._laser_trackers[params.id] = true
     self:AddTracker(params)
 end

@@ -5,7 +5,7 @@ function EHIProgressTracker:init(panel, params)
     self._progress = params.progress or 0
     self._previous_progress = self._progress
     self._flash = not params.dont_flash
-    self._remove_after_reaching_counter_target = not params.remove_after_reaching_target
+    self._remove_after_reaching_counter_target = params.remove_after_reaching_target ~= false
     self._set_color_bad_when_reached = params.set_color_bad_when_reached
     self._flash_times = params.flash_times or 3
     self._status_is_overridable = params.status_is_overridable

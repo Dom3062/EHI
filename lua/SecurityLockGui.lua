@@ -32,7 +32,7 @@ function SecurityLockGui:_start(bar, timer, current_timer)
                 id = self._ehi_bar_key,
                 icons = { "wp_hack" },
                 class = "EHIProgressTracker",
-                remove_after_reaching_target = true,
+                remove_after_reaching_target = false,
                 progress = bar,
                 max = self._bars
             })

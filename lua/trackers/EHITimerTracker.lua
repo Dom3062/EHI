@@ -12,7 +12,6 @@ EHITimerTracker = EHITimerTracker or class(EHITracker)
 function EHITimerTracker:init(panel, params)
     if params.icons[1].icon then
         params.icons[1].icon = FixIcon(params.icons[1].icon)
-        params.icons[1].visible = true
         params.icons[2] = { icon = "faster", visible = false, alpha = 0.25 }
         params.icons[3] = { icon = "silent", visible = false, alpha = 0.25 }
         params.icons[4] = { icon = "restarter", visible = false, alpha = 0.25 }

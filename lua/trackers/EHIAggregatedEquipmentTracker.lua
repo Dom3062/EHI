@@ -28,13 +28,6 @@ function EHIAggregatedEquipmentTracker:Format()
     return s
 end
 
---[[function EHIAggregatedEquipmentTracker:FormatDeployable(id)
-    if self._dont_show_placed[id] then
-        return self._amount[id]
-    else
-        return self._amount[id] .. " (" .. self._placed[id] .. ")"
-    end
-end]]
 do
     local format = EHI:GetOption("equipment_format")
     if format == 1 then -- Uses (Bags placed)

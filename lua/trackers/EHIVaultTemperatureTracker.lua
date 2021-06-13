@@ -1,4 +1,5 @@
 EHIVaultTemperatureTracker = EHIVaultTemperatureTracker or class(EHITracker)
+EHIVaultTemperatureTracker._update = false
 function EHIVaultTemperatureTracker:init(panel, params)
     params.time = 501 -- 500 + 1 second delay to launch countdown
     params.icons = { EHI.Icons.Vault }
@@ -6,16 +7,10 @@ function EHIVaultTemperatureTracker:init(panel, params)
     EHIVaultTemperatureTracker.super.init(self, panel, params)
 end
 
-function EHIVaultTemperatureTracker:update(t, dt)
-    if self._n_of_crowbars == 0 then
-        return
-    end
-    EHIVaultTemperatureTracker.super.update(self, t, dt)
-end
-
 function EHIVaultTemperatureTracker:AddCrowbar()
     self._n_of_crowbars = self._n_of_crowbars + 1
     if self._n_of_crowbars == 1 then
+        self:AddTrackerToUpdate()
         return
     elseif self._n_of_crowbars == 2 then
         self._time = self._time / 2

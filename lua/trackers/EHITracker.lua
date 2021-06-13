@@ -143,7 +143,7 @@ if EHI:GetOption("show_one_icon") then
             local texture, rect = GetIcon(first_icon.icon, self._type)
             CreateIcon(self, "1", texture, rect, first_icon.color,
                 first_icon.alpha or 1,
-                (not not first_icon.visible),
+                first_icon.visible ~= false,
                 icon_pos)
         end
     end
@@ -160,7 +160,7 @@ else
                 local texture, rect = GetIcon(v.icon, self._type)
                 CreateIcon(self, s_i, texture, rect, v.color,
                     v.alpha or 1,
-                    (not not v.visible),
+                    v.visible ~= false,
                     start + icon_gap)
             end
             start = start + (32 * self._scale)

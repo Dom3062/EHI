@@ -132,6 +132,8 @@ function HUDManager:ShowLootCounter(level_id, difficulty)
         max = 8
     --[[elseif level_id == "rvd1" then
         max = 6]]
+    elseif level_id == "rusdl" then -- Cold Stones Custom Heist
+        max = 20
     end
     if max == 0 then
         return

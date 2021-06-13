@@ -1,4 +1,4 @@
-EHIAchievementNotificationTracker = EHIAchievementNotificationTracker or class(EHITracker)
+EHIAchievementNotificationTracker = EHIAchievementNotificationTracker or class(EHIAchievementTracker)
 EHIAchievementNotificationTracker._update = false
 function EHIAchievementNotificationTracker:init(panel, params)
     self._status = params.status or "ok"
@@ -22,7 +22,7 @@ function EHIAchievementNotificationTracker:SetTextColor(color)
     local c
     if color then
         c = color
-    elseif self._status == "ok" or self._status == "done" then
+    elseif self._status == "ok" or self._status == "done" or self._status == "pass" then
         c = Color.green
     else
         c = Color.red
@@ -37,12 +37,12 @@ function EHIAchievementNotificationTracker:SetStatus(status)
     self:AnimateBG()
 end
 
-function EHIAchievementTracker:SetCompleted()
+function EHIAchievementNotificationTracker:SetCompleted()
     self:SetStatus("done")
     self:AddTrackerToUpdate()
 end
 
-function EHIAchievementTracker:SetFailed()
+function EHIAchievementNotificationTracker:SetFailed()
     self:SetStatus("fail")
     self:AddTrackerToUpdate()
 end

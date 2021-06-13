@@ -1,9 +1,4 @@
 EHIAchievementDoneTracker = EHIAchievementDoneTracker or class(EHIAchievementTracker)
-EHIAchievementDoneTracker._type = "achievement"
-function EHIAchievementDoneTracker:init(panel, params)
-    EHIAchievementDoneTracker.super.init(self, panel, params)
-end
-
 function EHIAchievementDoneTracker:update(t, dt)
     if self._fade then
         self._fade_time = self._fade_time - dt

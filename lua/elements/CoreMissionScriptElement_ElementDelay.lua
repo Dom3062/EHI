@@ -27,7 +27,7 @@ local _cache = {}
 if level_id == "vit" then -- The White House
     triggers = {
         -- Time before the tear gas is removed
-        [102074] = { time = 5, id = "TearGasPEOC", icons = { Icon.Teargas } }
+        [102074] = { time = 5, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist }
     }
 elseif level_id == "mia_2" then -- Hotline Miami Day 2
     triggers = {
@@ -35,32 +35,20 @@ elseif level_id == "mia_2" then -- Hotline Miami Day 2
         [100430] = { time = 24, id = "PickUpThermalDrill", icons = { Icon.Interact, "pd2_drill" } }
     }
 elseif level_id == "mia_1" then -- Hotline Miami Day 1
-    triggers = {
+    local trigger = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } }
+    local start_index = { 7800, 8200, 8600 }
+    for _, index in pairs(start_index) do
         -- Cooking restart
-        [EHI:GetInstanceElementID(100120, 7800)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100120, 8200)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100120, 8600)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100121, 7800)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100121, 8200)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100121, 8600)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100122, 7800)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100122, 8200)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100122, 8600)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
+        triggers[EHI:GetInstanceElementID(100120, index)] = trigger
+        triggers[EHI:GetInstanceElementID(100121, index)] = trigger
+        triggers[EHI:GetInstanceElementID(100122, index)] = trigger
 
         -- Cooking continuation
-        [EHI:GetInstanceElementID(100169, 7800)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100169, 8200)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100169, 8600)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100170, 7800)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100170, 8200)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100170, 8600)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100171, 7800)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100171, 8200)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100171, 8600)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100172, 7800)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100172, 8200)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } },
-        [EHI:GetInstanceElementID(100172, 8600)] = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } }
-    }
+        triggers[EHI:GetInstanceElementID(100169, index)] = trigger
+        triggers[EHI:GetInstanceElementID(100170, index)] = trigger
+        triggers[EHI:GetInstanceElementID(100171, index)] = trigger
+        triggers[EHI:GetInstanceElementID(100172, index)] = trigger
+    end
 elseif level_id == "dah" then -- Diamond Heist
     triggers = { -- 100438, ElementInstanceOutputEvent, check if enabled
         [103569] = { time = 25, id = "CFOFall", icons = { "hostage", "pd2_goto" } }
@@ -112,7 +100,7 @@ else
 end
 
 if Network:is_server() then
-    EHI:AddHostTriggers(triggers)
+    EHI:AddHostTriggers(triggers, nil, nil, "element")
 else
     EHI:SetSyncTriggers(triggers)
 end

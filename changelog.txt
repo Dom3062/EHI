@@ -1,3 +1,8 @@
+r12 (13. 06. 2021):
+Added trackers for Cold Stones custom heist
+Added trackers for Scorched Earth custom heist
+Laser Tracker: Lasers with the same cycle time will show only once
+
 r11 (12. 06. 2021):
 Fixed a crash when game synced used and empty deployable
 San Martín Bank: Fixed a crash
