@@ -34,8 +34,8 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHICountTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIElevatorTimerTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIGasTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIAnimatedTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHILaserTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementNotificationTracker.lua"/>
             </group>
             <post :hook_id="hudmanagerpd2" :script_path="hudmanagerpd2.lua" />
             <post :hook_id="gameplaycentralmanager" :script_path="GamePlayCentralManager.lua"/>

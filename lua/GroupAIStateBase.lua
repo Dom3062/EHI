@@ -35,6 +35,11 @@ local unhook =
     "_at_interact_start"
 }
 
+local set_ok_state =
+{
+    "ameno_7"
+}
+
 local show_trackers = {}
 if EHI:ShowDramaTracker() then
     show_trackers[#show_trackers + 1] = { id = "Drama", icons = { "enemy" }, class = "EHIChanceTracker", dont_flash = true, pos = 0 }
@@ -45,7 +50,7 @@ if level_id == "alex_2" then
     show_trackers[#show_trackers + 1] = { time = 75 + 15 + 30, id = "FirstAssaultDelay", icons = { "assaultbox" }, class = "EHIWarningTracker" }
 end
 
-local function Execute()
+local function Execute(dropin)
     for _, achievement in ipairs(achievements_to_remove) do
         managers.ehi:SetFailedAchievement(achievement)
     end
@@ -55,19 +60,25 @@ local function Execute()
     for _, achievement in ipairs(achievements_to_toggle) do
         managers.ehi:CallFunction(achievement, "ToggleObtainable")
     end
+    for _, achievement in ipairs(set_ok_state) do
+        managers.ehi:CallFunction(achievement, "SetStatus", "ok")
+    end
     managers.ehi:RemovePagerTrackers()
     managers.ehi:RemoveLaserTrackers()
+    EHI:RunOnAlarmCallbacks()
     for _, hook in ipairs(unhook) do
         EHI:Unhook(hook)
     end
-    for _, tracker in pairs(show_trackers) do
-        managers.ehi:AddTracker({
-            id = tracker.id,
-            time = tracker.time,
-            icons = tracker.icons,
-            dont_flash = tracker.dont_flash,
-            class = tracker.class
-        }, tracker.pos)
+    if not dropin then
+        for _, tracker in pairs(show_trackers) do
+            managers.ehi:AddTracker({
+                id = tracker.id,
+                time = tracker.time,
+                icons = tracker.icons,
+                dont_flash = tracker.dont_flash,
+                class = tracker.class
+            }, tracker.pos)
+        end
     end
 end
 
@@ -98,7 +109,7 @@ end
 function GroupAIStateBase:load(load_data)
     original.load(self, load_data)
     if self._enemy_weapons_hot then
-		managers.ehi:RemoveTracker("pagers")
+		Execute(true)
     else
         managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 	end

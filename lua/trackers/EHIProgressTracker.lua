@@ -65,7 +65,7 @@ function EHIProgressTracker:SetCompleted(force)
     if (self._progress == self._max and not self._status) or force then
         self._status = "completed"
         self:SetTextColor(Color.green)
-        if self._remove_after_reaching_counter_target then
+        if self._remove_after_reaching_counter_target or force then
             self._parent_class:AddTrackerToUpdate(self._id, self)
         end
     end
@@ -75,4 +75,26 @@ function EHIProgressTracker:SetBad()
     if self._progress == self._max then
         self:SetTextColor(tweak_data.ehi.color.InaccurateColor)
     end
+end
+
+function EHIProgressTracker:Finalize()
+    if self._progress == self._max then
+        self:SetCompleted(true)
+    else
+        self:SetFailed()
+    end
+end
+
+function EHIProgressTracker:SetFailed()
+    if self._status and not self._status_is_overridable then
+        return
+    end
+    self:SetTextColor(Color.red)
+    self._status = "failed"
+    self._parent_class:AddTrackerToUpdate(self._id, self)
+    self:AnimateBG()
+end
+
+function EHIProgressTracker:GetProgress()
+    return self._progress
 end

@@ -69,6 +69,9 @@ function FakeEHIManager:AddFakeTrackers()
     if EHI:GetOption("show_pager_tracker") then
         self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { "pagers_used" }, class = "FakeEHIProgressTracker" } )
     end
+    if EHI:GetOption("show_pager_callback") then
+        self:AddFakeTracker({ id = "show_pager_callback", time = math.random() * (12 - 0.5) + 0.5, icons = { "pager_icon" } })
+    end
     if EHI:GetOption("show_enemy_count_tracker") then
         self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "enemy" }, class = "FakeEHICountTracker" } )
     end
@@ -238,6 +241,8 @@ local function GetIcon(icon, type)
             return "guis/textures/pd2/skilltree/icons_atlas", {384, 320, 64, 64}
         elseif icon == "camera_loop" then
             return "guis/textures/pd2/skilltree/icons_atlas", {256, 128, 64, 64}
+        elseif icon == "pager_icon" then
+            return "guis/textures/pd2/specialization/icons_atlas", {64, 256, 64, 64}
         end
     end
 end

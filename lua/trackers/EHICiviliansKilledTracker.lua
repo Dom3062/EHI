@@ -256,12 +256,33 @@ function EHICiviliansKilledTracker:update(t, dt)
     end
 end
 
-function EHICiviliansKilledTracker:SetPause(pause, t)
-    if pause then
-        self:RemoveTrackerFromUpdate()
+function EHICiviliansKilledTracker:SetAITrade(trade, t)
+    if trade then
+        if not self._trade then
+            self:SetTick(t)
+            self:AddTrackerToUpdate()
+        end
+        self._ai_trade = true
     else
-        self:SetTick(t)
-        self:AddTrackerToUpdate()
+        if not self._trade then
+            self:RemoveTrackerFromUpdate()
+        end
+        self._ai_trade = false
+    end
+end
+
+function EHICiviliansKilledTracker:SetTrade(trade, t)
+    if trade then
+        if not self._ai_trade then
+            self:SetTick(t)
+            self:AddTrackerToUpdate()
+        end
+        self._trade = true
+    else
+        if not self._ai_trade then
+            self:RemoveTrackerFromUpdate()
+        end
+        self._trade = false
     end
 end
 

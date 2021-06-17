@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.TimerGui then
 	return
 else
@@ -24,8 +25,20 @@ local original =
 
 local level_id = Global.game_settings.level_id
 local remove_on_power_off = false
+local ignore = {}
 if level_id == "des" then -- Henry's Rock
     remove_on_power_off = true
+elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
+    local function f()
+        local editor_id = EHI:GetInstanceUnitID(100150, 9030)
+        for _, unit in ipairs(World:find_units_quick("all", 1)) do
+            if unit and unit:editor_id() == editor_id then
+                unit:timer_gui():OnAlarm()
+            end
+        end
+        ignore[editor_id] = true
+    end
+    EHI:AddOnAlarmCallback(f)
 end
 
 function TimerGui:init(unit, ...)
@@ -57,6 +70,9 @@ end
 
 function TimerGui:_start(timer)
     original._start(self, timer)
+    if ignore[self._unit:editor_id()] then
+        return
+    end
     if managers.ehi:TrackerExists(self._ehi_key) then
         managers.ehi:SetTimerJammed(self._ehi_key, false)
         managers.ehi:SetTimerPowered(self._ehi_key, true)
@@ -104,4 +120,8 @@ end
 function TimerGui:destroy(...)
     managers.ehi:RemoveTracker(self._ehi_key)
     original.destroy(self, ...)
+end
+
+function TimerGui:OnAlarm()
+    managers.ehi:RemoveTracker(self._ehi_key)
 end

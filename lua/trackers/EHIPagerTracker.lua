@@ -5,15 +5,8 @@ function EHIPagerTracker:init(panel, params)
     EHIPagerTracker.super.init(self, panel, params)
 end
 
-function EHIPagerTracker:update(t, dt)
-    if self._answered then
-        return
-    end
-    EHIPagerTracker.super.update(self, t, dt)
-end
-
 function EHIPagerTracker:SetAnswered()
-    self._answered = true
+    self:RemoveTrackerFromUpdate()
     self._text:stop()
     self:SetTextColor(Color.green)
     self:AnimateBG()

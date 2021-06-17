@@ -1,7 +1,12 @@
+local EHI = EHI
 if EHI._hooks.CopBrain then
     return
 else
     EHI._hooks.CopBrain = true
+end
+
+if not EHI:GetOption("show_pager_callback") then
+    return
 end
 
 local original =

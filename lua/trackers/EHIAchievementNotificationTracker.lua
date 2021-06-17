@@ -4,6 +4,7 @@ function EHIAchievementNotificationTracker:init(panel, params)
     self._status = params.status or "ok"
     self._fade_time = 5
     EHIAchievementNotificationTracker.super.init(self, panel, params)
+    self:SetTextColor()
 end
 
 function EHIAchievementNotificationTracker:update(t, dt)
@@ -11,6 +12,10 @@ function EHIAchievementNotificationTracker:update(t, dt)
     if self._fade_time <= 0 then
         self:delete()
     end
+end
+
+function EHIAchievementNotificationTracker:Format()
+    return string.upper(self._status)
 end
 
 function EHIAchievementNotificationTracker:SetText(text)
@@ -24,6 +29,8 @@ function EHIAchievementNotificationTracker:SetTextColor(color)
         c = color
     elseif self._status == "ok" or self._status == "done" or self._status == "pass" then
         c = Color.green
+    elseif self._status == "ready" then
+        c = Color.yellow
     else
         c = Color.red
     end

@@ -160,6 +160,27 @@ elseif level_id == "shoutout_raid" then -- Meltdown
 	{
 		[EHI:GetInstanceUnitID(100014, 2850)] = true
 	}
+elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
+	remove =
+	{
+		[EHI:GetInstanceUnitID(100150, 9030)] = true
+	}
+	local function f()
+        local editor_id = EHI:GetInstanceUnitID(100150, 9030)
+        for _, unit in ipairs(World:find_units_quick("all", 1)) do
+            if unit and unit:editor_id() == editor_id then
+                unit:digital_gui():OnAlarm()
+            end
+        end
+        ignore[editor_id] = true
+    end
+    EHI:AddOnAlarmCallback(f)
+	icons =
+	{
+		[EHI:GetInstanceUnitID(100009, 16580)] = { "pd2_power" },
+		[EHI:GetInstanceUnitID(100009, 16680)] = { "pd2_power" },
+		[EHI:GetInstanceUnitID(100009, 16780)] = { "pd2_power" }
+	}
 end
 
 function DigitalGui:init(unit)
@@ -237,4 +258,8 @@ function DigitalGui:set_visible(visible)
 	if not visible and managers.ehi then
 		managers.ehi:RemoveTracker(self._ehi_key)
 	end
+end
+
+function DigitalGui:OnAlarm()
+	managers.hud:RemoveTracker(self._ehi_key)
 end

@@ -114,11 +114,14 @@ function HUDManager:ShowAchievements(level_id, difficulty)
     if level_id == "run" then
         self.ehi:AddAchievementProgressTracker("run_8", 8, "C_Classics_H_HeatStreet_Zookeeper")
     end
-    if level_id == "brb" and EHI:DifficultyToIndex(difficulty) >= 2 then
-        self.ehi:AddAchievementProgressTracker("brb_8", 12, "C_Locke_H_BrooklynBank_AlltheGold") -- Removed when you drop-in
-    end
     if level_id == "rvd2" then
         self.ehi:AddAchievementProgressTracker("rvd_11", 19, "C_Bain_H_ReservoirDogs_WasteNot")
+    end
+    if level_id == "mus" then
+        self.ehi:AddAchievementProgressTracker("bat_3", 10, "C_Dentist_H_Diamond_Culture")
+    end
+    if level_id == "shoutout_raid" then
+        self.ehi:AddAchievementProgressTracker("melt_3", 8, "C_Vlad_H_Meltdown_TheyDontPay")
     end
 end
 
@@ -126,11 +129,13 @@ function HUDManager:ShowLootCounter(level_id, difficulty)
     local max = 0
     if level_id == "spa" then
         max = 4
-    elseif level_id == "friend" then
+    elseif level_id == "friend" or level_id == "dark" then
         max = 16
     elseif level_id == "wwh" then
         max = 8
-    --[[elseif level_id == "rvd1" then
+    --[[elseif level_id == "shoutout_raid" then
+        max = 8 + (EHI:IsOVKOrAbove(difficulty) and 8 or 6)
+    elseif level_id == "rvd1" then
         max = 6]]
     elseif level_id == "rusdl" then -- Cold Stones Custom Heist
         max = 20

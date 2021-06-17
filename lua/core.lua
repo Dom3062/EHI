@@ -18,6 +18,8 @@ _G.EHI =
     {
     },
 
+    OnAlarmCallback = {},
+
     _element_delay = {},
 
     SyncMessages =
@@ -55,8 +57,8 @@ _G.EHI =
         SetTimeNoAnimOrCreateTracker = 26,
         SetTrackerAccurate = 27,
         RemoveTriggers = 28,
-        AddToGlobalCache = 29,
-        GetFromGlobalCache = 30,
+        SetAchievementStatus = 29,
+        ShowAchievementFromStart = 30,
         SetAchievementFailed = 31,
         SetRandomTime = 32,
         SetProgressMax = 33,
@@ -64,10 +66,11 @@ _G.EHI =
         GetElementTimerAccurate = 35,
         UnpauseOrSetTimeByPreplanning = 36,
         UnpauseTrackerIfExistsAccurate = 37,
+        ShowAchievementCustom = 38,
+        FinalizeAchievement = 39,
 
         ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = 99997, -- REMOVE ME
         AddToGlobalAndExecute = 99998, -- REMOVE ME
-        UnpauseAndSetTime = 99999, -- REMOVE ME
         Debug = 100000,
         CustomCode = 100001
     },
@@ -131,7 +134,7 @@ _G.EHI =
     SettingsSaveFilePath = BLTModManager.Constants:SavesDirectory() .. "ehi.json",
     SaveDataVer = 1
 }
-
+local EHI = _G.EHI
 local SF = EHI.SpecialFunctions
 
 function EHI:DifficultyToIndex(difficulty)
@@ -238,6 +241,7 @@ function EHI:LoadDefaultValues()
         show_difficulty_tracker = true,
         show_drama_tracker = true,
         show_pager_tracker = true,
+        show_pager_callback = true,
         show_enemy_count_tracker = true,
         show_laser_tracker = false
     }
@@ -248,6 +252,17 @@ function EHI:GetOption(option)
     if option then
         return self.settings[option]
     end
+end
+
+function EHI:AddOnAlarmCallback(f)
+    self.OnAlarmCallback[#self.OnAlarmCallback + 1] = f
+end
+
+function EHI:RunOnAlarmCallbacks()
+    for _, callback in pairs(self.OnAlarmCallback) do
+        callback()
+    end
+    self.OnAlarmCallback = {}
 end
 
 function EHI:Hook(object, func, post_call)
@@ -471,6 +486,7 @@ function EHI:AddTracker(id, sync)
         flash_times = trigger.flash_times,
         remove_after_reaching_target = trigger.remove_after_reaching_target,
         status_is_overridable = trigger.status_is_overridable,
+        status = trigger.status,
         icons = trigger.icons,
         class = trigger.class
     })
@@ -556,7 +572,7 @@ function EHI:Trigger(id, enabled)
                     self:CheckCondition(id)
                 end
             elseif f == SF.SetAchievementComplete then
-                managers.ehi:CallFunction(triggers[id].id, "SetCompleted", true)
+                managers.ehi:SetAchievementComplete(triggers[id].id, true)
             elseif f == SF.AddToCache then
                 self._cache[triggers[id].id] = triggers[id].data
             elseif f == SF.GetFromCache then
@@ -646,19 +662,14 @@ function EHI:Trigger(id, enabled)
                 for _, trigger_id in pairs(triggers[id].data) do
                     UnhookTrigger(self, trigger_id)
                 end
-            elseif f == SF.UnpauseAndSetTime then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.hud:SetTime(triggers[id].id, triggers[id].time)
-                    managers.ehi:UnpauseTracker(triggers[id].id)
-                else
+            elseif f == SF.SetAchievementStatus then
+                managers.ehi:SetAchievementStatus(triggers[id].id, triggers[id].status or "ok")
+            elseif f == SF.ShowAchievementFromStart then
+                if Global.statistics_manager.playing_from_start then
                     self:CheckCondition(id)
                 end
-            elseif f == SF.AddToGlobalAndExecute then
-                -- REMOVE ME
-                --self._cache.VanReturn = true
-                --self:CheckCondition(id)
             elseif f == SF.SetAchievementFailed then
-                managers.ehi:CallFunction(triggers[id].id, "SetFailed")
+                managers.ehi:SetFailedAchievement(triggers[id].id)
             elseif f == SF.SetRandomTime then
                 if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
                     self:AddTrackerWithRandomTime(id)
@@ -697,6 +708,12 @@ function EHI:Trigger(id, enabled)
                 else
                     GetElementTimer(self, id)
                 end
+            elseif f == SF.ShowAchievementCustom then
+                if self:IsAchievementLocked(triggers[id].data) then
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.FinalizeAchievement then
+                managers.ehi:CallFunction(triggers[id].id, "Finalize")
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
@@ -799,11 +816,23 @@ function EHI:Trigger(id, enabled)
                     self:CheckCondition(id)
                 end
                 UnhookTrigger(self, id)
+            elseif f == SF.SAND_ExecuteIfProgressMatch then
+                local tracker = managers.ehi:GetTracker("sand_9_buttons")
+                if tracker then
+                    if tracker:GetProgress() == triggers[id].data then
+                        managers.ehi:RemoveTracker("sand_9_buttons")
+                        managers.ehi:SetFailedAchievement("sand_9")
+                    end
+                end
             end
         else
             self:CheckCondition(id)
         end
     end
+end
+
+function EHI.Client(element, ...)
+    EHI:Trigger(element._id, true)
 end
 
 function EHI:InitElements()

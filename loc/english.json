@@ -120,6 +120,9 @@
     "ehi_show_pager_tracker" : "Show Pager Tracker",
     "ehi_show_pager_tracker_desc" : "Shows a tracker for how many pagers you have left",
 
+    "ehi_show_pager_callback_trackers" : "Show Pager Callback Timers",
+    "ehi_show_pager_callback_trackers_desc" : "Shows a tracker for pagers that needs to be answered",
+
     "ehi_show_enemy_count_tracker" : "Show Enemy Count Tracker",
     "ehi_show_enemy_count_tracker_desc" : "Shows a tracker for how many enemies are on the map",
 

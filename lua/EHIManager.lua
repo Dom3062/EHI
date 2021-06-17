@@ -518,10 +518,24 @@ function EHIManager:AddAggregatedHealthTracker()
     })
 end
 
+function EHIManager:SetAchievementComplete(id, force)
+    local tracker = self._trackers[id]
+    if tracker and tracker.SetCompleted then
+        tracker:SetCompleted(force)
+    end
+end
+
 function EHIManager:SetFailedAchievement(id)
     local tracker = self._trackers[id]
     if tracker and tracker.SetFailed then
         tracker:SetFailed()
+    end
+end
+
+function EHIManager:SetAchievementStatus(id, status)
+    local tracker = self._trackers[id]
+    if tracker and tracker.SetStatus then
+        tracker:SetStatus(status)
     end
 end
 

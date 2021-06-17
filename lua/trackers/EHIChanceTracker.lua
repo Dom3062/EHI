@@ -1,7 +1,6 @@
 EHIChanceTracker = EHIChanceTracker or class(EHITracker)
 EHIChanceTracker._update = false
 function EHIChanceTracker:init(panel, params)
-    params.update = false
     self._flash = not params.dont_flash
     self._flash_times = params.flash_times or 3
     self._chance = params.chance or 0

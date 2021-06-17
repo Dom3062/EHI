@@ -19,6 +19,7 @@ local LootCounter =
 {
     spa = true, -- Brooklyn 10-10
     friend = true, -- Scarface Mansion
+    dark = true, -- Murky Station
     wwh = true, -- Alaskan Deal
     --rvd1 = true -- Reservoir Dogs Heist Day 2
     -- Custom Heist
@@ -68,6 +69,17 @@ elseif level_id == "rvd2" then -- Reservoir Dogs Heist Day 1
 elseif level_id == "pbr" then -- Beneath the Mountain
     check_type = check_types.BagsOnly
     tracker_id = "berry_2"
+elseif level_id == "mus" then -- The Diamond
+    check_type = check_types.OneTypeOfLoot
+    loot_type = { "mus_artifact_paint", "mus_artifact" }
+    tracker_id = "bat_3"
+elseif level_id == "shoutout_raid" then -- Meltdown
+    check_type = check_types.OneTypeOfLoot
+    loot_type = { "coke", "gold", "money", "weapon", "weapons" }
+    tracker_id = "melt_3"
+elseif level_id == "sand" then -- Ukrainian Prisoner Heist
+    check_type = check_types.BagsOnly
+    tracker_id = "sand_9"
 elseif LootCounter[level_id] then
     check_type = check_types.BagsOnly
     tracker_id = "LootCounter"

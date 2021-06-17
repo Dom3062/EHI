@@ -1,3 +1,11 @@
+r13 (17. 06. 2021):
+Added trackers for The Ukrainian Prisoner Heist
+Added option "Show Pager Callback Timers"
+Added a lot of area achievements
+Murky Station: Added Loot Counter
+Reservoir Dogs Heist Day 2: Fixed an issue where achievement "Pinky Swear" appeared to be achieveable when it was not
+Trade Delay Tracker: Fixed an issue where timer stopped counting down when AI Trade switched to normal hostage trade
+
 r12 (13. 06. 2021):
 Added trackers for Cold Stones custom heist
 Added trackers for Scorched Earth custom heist

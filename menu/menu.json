@@ -299,15 +299,30 @@
             ]
         },
         {
-            "type": "toggle",
-            "id": "ehi_show_pager_tracker_choice",
-            "title": "ehi_show_pager_tracker",
-            "description": "ehi_show_pager_tracker_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_pager_tracker",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_pager_tracker",
-            "default_value": true
+            "table" : [
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_pager_tracker_choice",
+                    "title": "ehi_show_pager_tracker",
+                    "description": "ehi_show_pager_tracker_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_pager_tracker",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_pager_tracker",
+                    "default_value": true
+                },
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_pager_callback_trackers_choice",
+                    "title": "ehi_show_pager_callback_trackers",
+                    "description": "ehi_show_pager_callback_trackers_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_pager_callback",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_pager_callback",
+                    "default_value": true
+                }
+            ]
         },
         {
             "table" : [

@@ -41,13 +41,13 @@ local function CreateTracker(peer_id, respawn_penalty)
 end
 
 local function SetTrackerPause(character_name, t)
-    managers.ehi:CallFunction(TrackerID, "SetPause", character_name == nil, t)
+    managers.ehi:CallFunction(TrackerID, "SetAITrade", character_name ~= nil, t)
 end
 
 function TradeManager:init()
     original.init(self)
     EHI:Hook(self, "set_trade_countdown", function(s, enabled)
-        managers.ehi:CallFunction(TrackerID, "SetPause", not enabled, self._trade_counter_tick)
+        managers.ehi:CallFunction(TrackerID, "SetTrade", enabled, self._trade_counter_tick)
     end)
 end
 
