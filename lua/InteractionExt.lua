@@ -111,7 +111,7 @@ end
 if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_firstaidkit") then
     local aggregate = EHI:GetOption("show_equipment_aggregate_health")
     EHI:PreHook(DoctorBagBaseInteractionExt, "init", function (self, unit)
-        self._ehi_key = unit:base():GetEHIKey()
+        self._ehi_key = unit:base().GetEHIKey and unit:base():GetEHIKey()
         self._ehi_tweak = self.tweak_data == "first_aid_kit" and "FirstAidKits" or "DoctorBags"
         self._ehi_unit_tweak = self.tweak_data == "first_aid_kit" and "first_aid_kit" or "doctor_bag"
         self._tracker_id = aggregate and "Health" or self._ehi_tweak
@@ -122,11 +122,11 @@ if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_fi
     EHI:Hook(DoctorBagBaseInteractionExt, "set_active", function(self, active, ...)
         if self._ehi_active ~= self._active then
             if self._active then -- Active
-                if self._unit:base():GetRealAmount() > 0 then -- The unit is active now, load it from cache and show it on screen
+                if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 then -- The unit is active now, load it from cache and show it on screen
                     managers.ehi:LoadFromDeployableCache(self._tracker_id, self._ehi_key)
                 end
             else -- Not Active
-                if self._unit:base():GetRealAmount() > 0 then -- There are some charges left in the unit, let's cache the unit
+                if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 then -- There are some charges left in the unit, let's cache the unit
                     if aggregate then
                         managers.ehi:AddToDeployableCache("Health", self._ehi_key, self._unit, self._ehi_unit_tweak)
                     else

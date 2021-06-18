@@ -1,3 +1,6 @@
+r14 (18. 06. 2021):
+Fixed a crash when First Aid Kit or Doctor Bag were placed and tracking is disabled in EHI
+
 r13 (17. 06. 2021):
 Added trackers for The Ukrainian Prisoner Heist
 Added option "Show Pager Callback Timers"
