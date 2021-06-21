@@ -106,8 +106,8 @@ else
 end
 
 local _f_calc_element_delay = MissionScriptElement._calc_element_delay
-function MissionScriptElement:_calc_element_delay(params)
-    local delay = _f_calc_element_delay(self, params)
+function MissionScriptElement:_calc_element_delay(params, ...)
+    local delay = _f_calc_element_delay(self, params, ...)
     if triggers[params.id] then
         EHI:AddTrackerAndSync(params.id, delay)
     end

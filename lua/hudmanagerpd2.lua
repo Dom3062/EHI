@@ -94,7 +94,7 @@ function HUDManager:ShowAchievements(level_id, difficulty)
     end
     if level_id == "pex" then
         self.ehi:AddAchievementProgressTracker("pex_10", 6, "C_Locke_H_BreakfastInTijuana_PaidInFull")
-        --self.ehi:AddAchievementProgressTracker("pex_11", 7, "C_Locke_H_BreakfastInTijuana_StolenValor")
+        self.ehi:AddAchievementProgressTracker("pex_11", 7, "C_Locke_H_BreakfastInTijuana_StolenValor")
     end
     if level_id == "dah" then
         if EHI:IsOVKOrAbove(difficulty) then
@@ -110,9 +110,6 @@ function HUDManager:ShowAchievements(level_id, difficulty)
         if EHI:IsOVKOrAbove(difficulty) then
             self.ehi:AddAchievementProgressTracker("chas_10", 15, "C_JiuFeng_H_DragonHeist_AllTheGold")
         end
-    end
-    if level_id == "run" then
-        self.ehi:AddAchievementProgressTracker("run_8", 8, "C_Classics_H_HeatStreet_Zookeeper")
     end
     if level_id == "rvd2" then
         self.ehi:AddAchievementProgressTracker("rvd_11", 19, "C_Bain_H_ReservoirDogs_WasteNot")
@@ -151,8 +148,8 @@ function HUDManager:ShowLootCounter(level_id, difficulty)
     })
 end
 
-function HUDManager:sync_set_assault_mode(mode)
-    original.sync_set_assault_mode(self, mode)
+function HUDManager:sync_set_assault_mode(mode, ...)
+    original.sync_set_assault_mode(self, mode, ...)
     if mode == "phalanx" and EHI:GetOption("show_captain_damage_reduction") then
         self:AddTracker({
             id = "PhalanxDamageReduction",
@@ -164,19 +161,19 @@ function HUDManager:sync_set_assault_mode(mode)
     end
 end
 
-function HUDManager:set_disabled()
-    original.set_disabled(self)
+function HUDManager:set_disabled(...)
+    original.set_disabled(self, ...)
     managers.ehi:HidePanel()
 end
 
-function HUDManager:set_enabled()
-    original.set_enabled(self)
+function HUDManager:set_enabled(...)
+    original.set_enabled(self, ...)
     managers.ehi:ShowPanel()
 end
 
-function HUDManager:destroy()
+function HUDManager:destroy(...)
     self.ehi:destroy()
-    original.destroy(self)
+    original.destroy(self, ...)
 end
 
 function HUDManager:SyncHeistTime(time)

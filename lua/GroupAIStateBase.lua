@@ -91,23 +91,23 @@ local original =
     sync_cs_grenade = GroupAIStateBase.sync_cs_grenade
 }
 
-function GroupAIStateBase:init()
-	original.init(self)
+function GroupAIStateBase:init(...)
+	original.init(self, ...)
     self:add_listener("EHI_EnemyWeaponsHot", { "enemy_weapons_hot" }, Execute)
 end
 
-function GroupAIStateBase:on_successful_alarm_pager_bluff()
-    original.on_successful_alarm_pager_bluff(self)
+function GroupAIStateBase:on_successful_alarm_pager_bluff(...)
+    original.on_successful_alarm_pager_bluff(self, ...)
     managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 end
 
-function GroupAIStateBase:sync_alarm_pager_bluff()
-    original.sync_alarm_pager_bluff(self)
+function GroupAIStateBase:sync_alarm_pager_bluff(...)
+    original.sync_alarm_pager_bluff(self, ...)
     managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 end
 
-function GroupAIStateBase:load(load_data)
-    original.load(self, load_data)
+function GroupAIStateBase:load(...)
+    original.load(self, ...)
     if self._enemy_weapons_hot then
 		Execute(true)
     else
@@ -121,8 +121,8 @@ end
 
 if EHI:ShowDramaTracker() then
     original._add_drama = GroupAIStateBase._add_drama
-    function GroupAIStateBase:_add_drama(amount)
-        original._add_drama(self, amount)
+    function GroupAIStateBase:_add_drama(...)
+        original._add_drama(self, ...)
         managers.ehi:SetChance("Drama", (EHI:RoundNumber(self._drama_data.amount, 0.01) * 100))
     end
 end
@@ -141,8 +141,8 @@ if EHI:GetOption("show_minion_tracker") then
     end
 
     original._set_converted_police = GroupAIStateBase._set_converted_police
-    function GroupAIStateBase:_set_converted_police(u_key, unit, owner_unit)
-        original._set_converted_police(self, u_key, unit, owner_unit)
+    function GroupAIStateBase:_set_converted_police(u_key, unit, ...)
+        original._set_converted_police(self, u_key, unit, ...)
         UpdateTracker(unit, tostring(u_key), unit and 1 or 0)
     end
 end

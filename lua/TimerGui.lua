@@ -47,7 +47,7 @@ function TimerGui:init(unit, ...)
     original.init(self, unit, ...)
 end
 
-function TimerGui:set_background_icons(background_icons)
+function TimerGui:set_background_icons(background_icons, ...)
     local skills = self._unit:base().get_skill_upgrades and self._unit:base():get_skill_upgrades()
 
     if skills and table.size(background_icons or {}) > 0 then
@@ -65,11 +65,11 @@ function TimerGui:set_background_icons(background_icons)
         end
     end
 
-    original.set_background_icons(self, background_icons)
+    original.set_background_icons(self, background_icons, ...)
 end
 
-function TimerGui:_start(timer)
-    original._start(self, timer)
+function TimerGui:_start(...)
+    original._start(self, ...)
     if ignore[self._unit:editor_id()] then
         return
     end
@@ -87,9 +87,9 @@ function TimerGui:_start(timer)
     end
 end
 
-function TimerGui:_set_done()
+function TimerGui:_set_done(...)
     managers.ehi:RemoveTracker(self._ehi_key)
-    original._set_done(self)
+    original._set_done(self, ...)
 end
 
 function TimerGui:_set_jammed(jammed, ...)
@@ -105,16 +105,16 @@ function TimerGui:_set_powered(powered, ...)
     original._set_powered(self, powered, ...)
 end
 
-function TimerGui:set_visible(visible)
+function TimerGui:set_visible(visible, ...)
     if visible == false then
         managers.ehi:RemoveTracker(self._ehi_key)
     end
-    original.set_visible(self, visible)
+    original.set_visible(self, visible, ...)
 end
 
-function TimerGui:hide()
+function TimerGui:hide(...)
     managers.ehi:RemoveTracker(self._ehi_key)
-    original.hide(self)
+    original.hide(self, ...)
 end
 
 function TimerGui:destroy(...)

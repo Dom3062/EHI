@@ -50,14 +50,14 @@ local original =
     custom_set_empty = CustomDoctorBagBase._set_empty
 }
 
-function DoctorBagBase:init(unit)
-    original.init(self, unit)
+function DoctorBagBase:init(unit, ...)
+    original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._offset = correction[tostring(unit:name())] or 0
 end
 
-function DoctorBagBase:_set_visual_stage()
-    original._set_visual_stage(self)
+function DoctorBagBase:_set_visual_stage(...)
+    original._set_visual_stage(self, ...)
     UpdateTracker(self._unit, self._ehi_key, self._amount - self._offset)
 end
 
@@ -69,12 +69,12 @@ function DoctorBagBase:GetRealAmount()
     return (self._amount or self._max_amount) - self._offset
 end
 
-function DoctorBagBase:destroy()
-    original.destroy(self)
+function DoctorBagBase:destroy(...)
+    original.destroy(self, ...)
     UpdateTracker(self._unit, self._ehi_key, 0)
 end
 
-function CustomDoctorBagBase:_set_empty()
-    original.custom_set_empty(self)
+function CustomDoctorBagBase:_set_empty(...)
+    original.custom_set_empty(self, ...)
     UpdateTracker(self._unit, self._ehi_key, 0)
 end

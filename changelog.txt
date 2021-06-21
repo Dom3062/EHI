@@ -1,3 +1,9 @@
+r15 (21. 06. 2021):
+Added Spanish translation
+Brooklyn 10-10: Fixed a startup crash
+Breakfast in Tijuana: Achievement "Stolen Valor" also works when you drop-in
+Heat Street: Fixed an issue where achievement "Zookeeper" was visible after you drop-in
+
 r14 (18. 06. 2021):
 Fixed a crash when First Aid Kit or Doctor Bag were placed and tracking is disabled in EHI
 

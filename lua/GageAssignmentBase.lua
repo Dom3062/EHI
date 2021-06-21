@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.GageAssignmentBase then
     return
 else
@@ -14,13 +15,13 @@ local original =
     show_pickup_msg = GageAssignmentBase.show_pickup_msg
 }
 
-function GageAssignmentBase:init(unit)
-    original.init(self, unit)
+function GageAssignmentBase:init(unit, ...)
+    original.init(self, unit, ...)
     EHI._cache.GagePackages = (EHI._cache.GagePackages or 0) + 1
 end
 
 local _f_show_pickup_msg = GageAssignmentBase.show_pickup_msg
-function GageAssignmentBase:show_pickup_msg(peer_id)
-    _f_show_pickup_msg(self, peer_id)
+function GageAssignmentBase:show_pickup_msg(...)
+    _f_show_pickup_msg(self, ...)
     managers.gage_assignment:EHIPresentProgress()
 end

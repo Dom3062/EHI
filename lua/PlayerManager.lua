@@ -5,8 +5,8 @@ else
 end
 
 local _f_spawn_smoke_screen = PlayerManager.spawn_smoke_screen
-function PlayerManager:spawn_smoke_screen(position, normal, grenade_unit, has_dodge_bonus)
-    _f_spawn_smoke_screen(self, position, normal, grenade_unit, has_dodge_bonus)
+function PlayerManager:spawn_smoke_screen(position, normal, grenade_unit, ...)
+    _f_spawn_smoke_screen(self, position, normal, grenade_unit, ...)
     if grenade_unit:base():thrower_unit() then
         local key, color_id
         if alive(grenade_unit:base():thrower_unit()) then

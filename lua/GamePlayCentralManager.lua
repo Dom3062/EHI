@@ -10,13 +10,13 @@ local original =
     load = GamePlayCentralManager.load
 }
 
-function GamePlayCentralManager:sync_heist_time(heist_time)
-    original.sync_heist_time(self, heist_time)
+function GamePlayCentralManager:sync_heist_time(heist_time, ...)
+    original.sync_heist_time(self, heist_time, ...)
     managers.ehi:SyncTime(heist_time)
 end
 
-function GamePlayCentralManager:load(data)
-    original.load(self, data)
+function GamePlayCentralManager:load(data, ...)
+    original.load(self, data, ...)
 	local state = data.GamePlayCentralManager
 	if state.heist_timer then
         managers.ehi:LoadTime(state.heist_timer)

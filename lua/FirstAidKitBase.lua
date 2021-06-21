@@ -41,8 +41,8 @@ local original =
     destroy = FirstAidKitBase.destroy
 }
 
-function FirstAidKitBase:init(unit)
-    original.init(self, unit)
+function FirstAidKitBase:init(unit, ...)
+    original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     UpdateTracker(self._unit, self._ehi_key, 1)
 end
@@ -55,8 +55,8 @@ function FirstAidKitBase:GetRealAmount()
     return self._empty and 0 or 1
 end
 
-function FirstAidKitBase:destroy()
-    original.destroy(self)
+function FirstAidKitBase:destroy(...)
+    original.destroy(self, ...)
     if managers.hud.ehi then
         UpdateTracker(self._unit, self._ehi_key, 0)
     end

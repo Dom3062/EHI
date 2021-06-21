@@ -1,0 +1,131 @@
+{
+    "ehi_mod_title" : "Información Adicional para Atracos",
+    "ehi_mod_desc" : "",
+
+    "ehi_preview" : "Vista Previa (Para que los cambios surtan efecto, debes reiniciar el mapa)\nLa esquina roja indica donde aparecerá el primer contador",
+
+    "ehi_x_offset" : "Mover en X",
+    "ehi_x_offset_desc" : "Mueve los contadores en el eje X",
+    "ehi_y_offset" : "Mover en Y",
+    "ehi_y_offset_desc" : "Mueve los contadores en el eje Y",
+
+    "ehi_scale" : "Tamaño",
+    "ehi_scale_desc" : "Ajusta el tamaño de los contadores. Entre más alto el numero más grande el contador y vice versa",
+
+    "ehi_vr_scale": "Tamaño en VR",
+    "ehi_vr_scale_desc": "Ajusta el tamaño de los contadores en la versión de VR. Entre más alto el numero más grande el contador y vice versa",
+
+    "ehi_time_format" : "Formato del Tiempo",
+    "ehi_time_format_desc" : "Define el formato de como se muestran los contadores",
+    "ehi_time_format_1" : "Solo Segundos",
+    "ehi_time_format_2" : "Minutos y Segundos",
+
+    "ehi_visuals_menu" : "Aspecto Visual",
+    "ehi_visuals_menu_desc" : "",
+
+    "ehi_show_tracker_bg" : "Mostrar fondo del contador",
+    "ehi_show_tracker_bg_desc" : "Muestra el fondo del contador\nCuando se desactiva, el fondo se oculta y la animacion se desactiva",
+
+    "ehi_show_one_icon" : "Mostrar icono en el Contador",
+    "ehi_show_one_icon_desc" : "Muestra un icono cuando el contador está activo\nLos iconos del contador son visibles",
+
+    "ehi_trackers" : "Contadores",
+    "ehi_trackers_desc" : "",
+
+    "ehi_show_achievement" : "Mostrar Logros Cronometrados",
+    "ehi_show_achievement_desc" : "Muestra los logros cronometrados\nAlgunos atracos no tienen logros cronometrados",
+
+    "ehi_hide_unlocked_achievements" : "No Mostrar Logros Cronometrados",
+    "ehi_hide_unlocked_achievements_desc" : "Activado, EHI no mostrará logros cronometrados\nDesactivado, EHI mostrará logros cronometrados",
+
+    "ehi_show_gained_xp" : "Mostrar EXP Ganado",
+    "ehi_show_gained_xp_desc" : "Muestra la EXP ganada en la misión.\nEste contador se desactiva en Racha Criminal.",
+
+    "ehi_xp_format" : "Formato de la EXP ganada",
+    "ehi_xp_format_desc" : "Ejemplo: Valor Base: 1000; En dificultad Aniquilación\nSolo Valor Base: 1000\nValor mutliplicado con la dificultad: 13000\nValor multiplicado con todos los bonuses de EXP: 13000+",
+    "ehi_xp_format_base" : "Solo mostrar Valor Base",
+    "ehi_xp_format_difficulty_multiplier" : "Mostrar valor multiplicado por la dificultad",
+    "ehi_xp_format_all_bonuses" : "Mostrar valor multiplicado por todos los bonuses de EXP",
+
+    "ehi_xp_panel" : "Como mostrar la EXP ganada",
+    "ehi_xp_panel_desc" : "",
+    "ehi_xp_panel_1" : "Mostrar panel por cada EXP ganada al momento",
+    "ehi_xp_panel_2" : "Mostrar la EXP total del atraco",
+
+    "ehi_show_trade_delay" : "Mostrar Contador de Custodia",
+    "ehi_show_trade_delay_desc" : "Muestra un contador del tiempo de espera de la custodia",
+
+    "ehi_show_trade_delay_option" : "Cuando mostrar el Contador de Custodia",
+    "ehi_show_trade_delay_option_desc": "Siempre: Siempre mostrar el contador cuando tu o tus compañeros maten un civil\nEn Custodia: Mostrar un contador cuando tu o tus compañeros hayan matado al menos 1 civil",
+    "ehi_show_trade_delay_option_1" : "Siempre",
+    "ehi_show_trade_delay_option_2" : "En Custodia",
+
+    "ehi_show_trade_delay_other_players_only": "Mostrar Contador de Custodia solo para tus compañeros",
+    "ehi_show_trade_delay_other_players_only_desc": "Activado, el contador no mostrará cuantos civiles has matado tu pero si los de tus compañeros.",
+
+    "ehi_show_timers" : "Mostrar Contadores",
+    "ehi_show_timers_desc" : "Muestra contadores para hacks, taladros, sierras, etc...",
+
+    "ehi_show_zipline_timer" : "Mostrar Contador de Tirolesa",
+    "ehi_show_zipline_timer_desc" : "Muestra dos contadores para tirolesas.\nEl primero muestra cuanto tiempo le toma dejar una bolsa/jugador, el segundo muestra cuanto tiempo le toma volver",
+
+    "ehi_show_gage_tracker" : "Mostrar contador de Gage",
+    "ehi_show_gage_tracker_desc" : "Muestra un Contador para los paquetes de Gage en el mapa.\nSi el mapa no tiene paquetes de Gage, este contador no se mostrará",
+
+    "ehi_show_captain_damage_reduction" : "Mostrar Reducción de Daño de los enemigos",
+    "ehi_show_captain_damage_reduction_desc" : "Muestra un contador de reducción de daño para cuando el Capitán Winters esté presente",
+
+    "ehi_show_equipment_tracker" : "Contador de Equipamiento",
+    "ehi_show_equipment_tracker_desc" : "Muestra contadores separados para Botiquines, Bolsas de Munición, Maletín de Arrojadizas, Bolsas para Cadáveres y Kits de Primeros Auxilios",
+
+    "ehi_equipment_menu" : "Menú de Equipamiento",
+    "ehi_equipment_menu_desc" : "",
+
+    "ehi_equipment_format" : "Formato del Equipamiento",
+    "ehi_equipment_format_desc" : "Define la forma en la que se muestra el equipamiento",
+    "ehi_equipment_format_1" : "Usos (Equipamientos disponibles)",
+    "ehi_equipment_format_2" : "(Equipamientos disponibles) Usos",
+    "ehi_equipment_format_3" : "(Usos) Equipamientos disponibles",
+    "ehi_equipment_format_4" : "Equipamientos disponibles (Usos)",
+    "ehi_equipment_format_5" : "Usos",
+    "ehi_equipment_format_6" : "Equipamientos disponibles",
+
+    "ehi_show_equipment_doctorbag" : "Mostrar Contador para Botiquines",
+    "ehi_show_equipment_doctorbag_desc" : "Muestra un Contador para los Botiquines",
+
+    "ehi_show_equipment_ammobag" : "Mostrar Contador para Bolsas de Munición",
+    "ehi_show_equipment_ammobag_desc" : "Muestra un Contador para las Bolsas de Munición",
+
+    "ehi_show_equipment_grenadecases" : "Mostrar Contador para el Maletín de Arrojadizas",
+    "ehi_show_equipment_grenadecases_desc" : "Muestra un Contador para el Maletín de Arrojadizas",
+
+    "ehi_show_equipment_bodybags": "Mostrar Contador de Bolsas para Cadáveres",
+    "ehi_show_equipment_bodybags_desc": "Muestra un Contador para Bolsas para Cadáveres\nEste Contador se desactiva cuando el sigilo falla",
+
+    "ehi_show_equipment_firstaidkit": "Mostrar Contador para los Kits de Primeros Auxilios",
+    "ehi_show_equipment_firstaidkit_desc": "Muestra un contador para los Kits de Primeros Auxilios",
+
+    "ehi_show_equipment_aggregate_health" : "Unificar Botiquines y Kits de Primeros Auxilios",
+    "ehi_show_equipment_aggregate_health_desc" : "Unifica los Botiquines y Kits de Primeros Auxilios en un solo Contador",
+
+    "ehi_show_minion_tracker" : "Contador para Convertidos (Jokers)",
+    "ehi_show_minion_tracker_desc" : "Muestra un contador para la cantidad de Convertidos (Jokers) en el mapa",
+
+    "ehi_show_difficulty_tracker" : "Mostrar Contador de Dificultad",
+    "ehi_show_difficulty_tracker_desc" : "Muestra un contador para el nivel de dificultad de la ronda",
+
+    "ehi_show_drama_tracker" : "Mostrar Contador de Drama",
+    "ehi_show_drama_tracker_desc" : "Muestra un contador del drama acumulado (Solo para el anfitrión)",
+
+    "ehi_show_pager_tracker" : "Mostrar Contador de Localizadores",
+    "ehi_show_pager_tracker_desc" : "Muestra un Contador para cuantos Localizadores quedan",
+
+    "ehi_show_pager_callback_trackers" : "Mostrar Contador de Localizadores Pendientes",
+    "ehi_show_pager_callback_trackers_desc" : "Muestra un contador para los localizadores que necesitan ser contestados",
+
+    "ehi_show_enemy_count_tracker" : "Mostrar Contador para Cantidad de Enemigos",
+    "ehi_show_enemy_count_tracker_desc" : "Muestra un contador para la cantidad de enemigos en el mapa",
+
+    "ehi_show_laser_tracker" : "Mostrar Contador de Láseres",
+    "ehi_show_laser_tracker_desc" : "Muestra un Contador para el ciclo que hacen los láseres cada ciertos segundos"
+}

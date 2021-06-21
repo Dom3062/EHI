@@ -16,14 +16,14 @@ local original =
     _set_done = SecurityLockGui._set_done,
     destroy = SecurityLockGui.destroy
 }
-function SecurityLockGui:init(unit)
-    original.init(self, unit)
+function SecurityLockGui:init(unit, ...)
+    original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._ehi_bar_key = self._ehi_key .. "_bar"
 end
 
-function SecurityLockGui:_start(bar, timer, current_timer)
-    original._start(self, bar, timer, current_timer)
+function SecurityLockGui:_start(bar, ...)
+    original._start(self, bar, ...)
     if self._bars > 1 then
         if managers.ehi:TrackerExists(self._ehi_bar_key) then
             managers.ehi:IncreaseTrackerProgress(self._ehi_bar_key)
@@ -46,21 +46,21 @@ function SecurityLockGui:_start(bar, timer, current_timer)
     })
 end
 
-function SecurityLockGui:_set_powered(powered)
-    original._set_powered(self, powered)
+function SecurityLockGui:_set_powered(powered, ...)
+    original._set_powered(self, powered, ...)
     managers.ehi:SetTimerPowered(self._ehi_key, powered)
 end
 
-function SecurityLockGui:_set_done(bar)
-    original._set_done(self, bar)
+function SecurityLockGui:_set_done(bar, ...)
+    original._set_done(self, bar, ...)
     managers.ehi:RemoveTracker(self._ehi_key)
     if self._started then
         managers.ehi:RemoveTracker(self._ehi_bar_key)
     end
 end
 
-function SecurityLockGui:destroy()
-    original.destroy(self)
+function SecurityLockGui:destroy(...)
+    original.destroy(self, ...)
 	managers.ehi:RemoveTracker(self._ehi_key)
     managers.ehi:RemoveTracker(self._ehi_bar_key)
 end

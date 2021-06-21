@@ -93,8 +93,8 @@ local original =
     sync_load = LootManager.sync_load
 }
 
-function LootManager:sync_secure_loot(carry_id, multiplier_level, silent, peer_id)
-    original.sync_secure_loot(self, carry_id, multiplier_level, silent, peer_id)
+function LootManager:sync_secure_loot(...)
+    original.sync_secure_loot(self, ...)
     if not sync_only then
         self:EHIReportProgress()
     end
@@ -138,7 +138,7 @@ function LootManager:EHIReportProgress(tid, ct, lt)
     end
 end
 
-function LootManager:sync_load(data)
-    original.sync_load(self, data)
+function LootManager:sync_load(...)
+    original.sync_load(self, ...)
     self:EHIReportProgress()
 end

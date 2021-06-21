@@ -11,15 +11,15 @@ local original =
     repair = SentryGunMovement.repair,
     on_death = SentryGunMovement.on_death
 }
-function SentryGunMovement:init(unit)
-    original.init(self, unit)
+function SentryGunMovement:init(unit, ...)
+    original.init(self, unit, ...)
     local key = tostring(unit:key())
     self._ehi_key_reload = key .. "_reload"
     self._ehi_key_repair = key .. "_repair"
 end
 
-function SentryGunMovement:rearm()
-    original.rearm(self)
+function SentryGunMovement:rearm(...)
+    original.rearm(self, ...)
     managers.ehi:AddTracker({
         id = self._ehi_key_reload,
         time = self._tweak.AUTO_RELOAD_DURATION,
@@ -28,8 +28,8 @@ function SentryGunMovement:rearm()
     })
 end
 
-function SentryGunMovement:repair()
-    original.repair(self)
+function SentryGunMovement:repair(...)
+    original.repair(self, ...)
     managers.ehi:RemoveTracker(self._ehi_key_reload)
     managers.ehi:AddTracker({
         id = self._ehi_key_repair,
@@ -39,8 +39,8 @@ function SentryGunMovement:repair()
     })
 end
 
-function SentryGunMovement:on_death()
-    original.on_death(self)
+function SentryGunMovement:on_death(...)
+    original.on_death(self, ...)
     managers.ehi:RemoveTracker(self._ehi_key_reload)
     managers.ehi:RemoveTracker(self._ehi_key_repair)
 end

@@ -26,7 +26,7 @@ function ElementSpawnGageAssignment:client_on_executed(...)
 end
 
 local _f_on_executed = ElementSpawnGageAssignment.on_executed
-function ElementSpawnGageAssignment:on_executed(instigator)
-    _f_on_executed(self, instigator)
+function ElementSpawnGageAssignment:on_executed(...)
+    _f_on_executed(self, ...)
     CreateTracker()
 end

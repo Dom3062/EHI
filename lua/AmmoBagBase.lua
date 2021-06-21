@@ -49,8 +49,8 @@ local original =
     custom_set_empty = CustomAmmoBagBase._set_empty
 }
 
-function AmmoBagBase:init(unit)
-    original.init(self, unit)
+function AmmoBagBase:init(unit, ...)
+    original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._offset = correction[tostring(unit:name())] or 0
     self._ignore = ignore[unit:editor_id()] or false
@@ -64,19 +64,19 @@ function AmmoBagBase:GetRealAmount()
     return (self._ammo_amount or self._max_ammo_amount) - self._offset
 end
 
-function AmmoBagBase:_set_visual_stage()
-    original._set_visual_stage(self)
+function AmmoBagBase:_set_visual_stage(...)
+    original._set_visual_stage(self, ...)
     if not self._ignore then
         UpdateTracker(self._unit, self._ehi_key, self._ammo_amount - self._offset)
     end
 end
 
-function AmmoBagBase:destroy()
-    original.destroy(self)
+function AmmoBagBase:destroy(...)
+    original.destroy(self, ...)
     UpdateTracker(self._unit, self._ehi_key, 0)
 end
 
-function CustomAmmoBagBase:_set_empty()
-    original.custom_set_empty(self)
+function CustomAmmoBagBase:_set_empty(...)
+    original.custom_set_empty(self, ...)
     UpdateTracker(self._unit, self._ehi_key, 0)
 end

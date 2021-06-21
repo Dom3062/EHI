@@ -14,12 +14,12 @@ local original =
     on_enemy_unregistered = EnemyManager.on_enemy_unregistered
 }
 
-function EnemyManager:on_enemy_registered(unit)
-	original.on_enemy_registered(self, unit)
+function EnemyManager:on_enemy_registered(unit, ...)
+	original.on_enemy_registered(self, unit, ...)
     managers.ehi:SetTrackerCount("EnemyCount", self._enemy_data.nr_units)
 end
 
-function EnemyManager:on_enemy_unregistered(unit)
-	original.on_enemy_unregistered(self, unit)
+function EnemyManager:on_enemy_unregistered(unit, ...)
+	original.on_enemy_unregistered(self, unit, ...)
     managers.ehi:SetTrackerCount("EnemyCount", self._enemy_data.nr_units)
 end

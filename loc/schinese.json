@@ -35,6 +35,9 @@
     "ehi_show_achievement" : "显示成就追踪器",
     "ehi_show_achievement_desc" : "显示完成成就的时间追踪器\n某些劫案没有可供追踪的成就",
 
+    "ehi_hide_unlocked_achievements" : "隐藏已解锁的成就追踪器",
+    "ehi_hide_unlocked_achievements_desc" : "勾选后，本模组将隐藏您已经解锁过的成就追踪器\n取消勾选后，本模组依然会为您显示当前所有可用的成就追踪器",
+
     "ehi_show_gained_xp" : "显示获得的经验",
     "ehi_show_gained_xp_desc" : "显示当前获得的经验\n此追踪器将在罪无止境模式下禁用",
 
@@ -111,9 +114,18 @@
     "ehi_show_difficulty_tracker" : "显示难度追踪器",
     "ehi_show_difficulty_tracker_desc" : "显示当前突击波次的难度追踪器\n难度：一个介于0%~100%的数值，其大小决定了本次突击人数的多寡与突击持续时间的长短\n多数地图中警报触发后一段时间由0%提升至最高50%，在第一波突击结束后一般会达到75%，第二波结束后会达到100%",
 
+    "ehi_show_drama_tracker" : "显示导演系统追踪器",
+    "ehi_show_drama_tracker_desc" : "显示导演系统当前的剧本值（仅主机）\n 剧本值：决定突击波次进度的值，它会根据劫案中发生的事件动态变化 \n此值从0开始，并会因为以下事件发生变动： \n -有劫匪受到伤害（根据伤害量增加剧本值）\n -有劫匪被击倒（+10%） \n -有劫匪被逮捕（+20%） \n -随时间流逝而减少（-3%/秒）\n当剧本值达到一定数值时可以跳过突击的某一阶段（如剧本值超过95%则跳过构建阶段直接进入持续阶段；剧本值低于25%时，将跳过撤退阶段直接进入控场阶段） \n PS:剧本值会被诸多因素影响，本简介只是介绍了该机制的冰山一角",
+
     "ehi_show_pager_tracker" : "显示对讲机追踪器",
     "ehi_show_pager_tracker_desc" : "显示当前劫案还有几次可用的对讲机次数",
 
+    "ehi_show_pager_callback_trackers" : "显示对讲机剩余时间追踪器",
+    "ehi_show_pager_callback_trackers_desc" : "显示当前待回答对讲机的剩余时间追踪器",
+
     "ehi_show_enemy_count_tracker" : "显示敌人追踪器",
-    "ehi_show_enemy_count_tracker_desc" : "显示地图上正在行动的敌人数量追踪器"
+    "ehi_show_enemy_count_tracker_desc" : "显示地图上正在行动的敌人数量追踪器",
+
+    "ehi_show_laser_tracker" : "显示镭射循环追踪器",
+    "ehi_show_laser_tracker_desc" : "显示地图上传感器镭射的循环时间追踪器"
 }

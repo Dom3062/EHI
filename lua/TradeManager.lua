@@ -44,15 +44,15 @@ local function SetTrackerPause(character_name, t)
     managers.ehi:CallFunction(TrackerID, "SetAITrade", character_name ~= nil, t)
 end
 
-function TradeManager:init()
-    original.init(self)
+function TradeManager:init(...)
+    original.init(self, ...)
     EHI:Hook(self, "set_trade_countdown", function(s, enabled)
         managers.ehi:CallFunction(TrackerID, "SetTrade", enabled, self._trade_counter_tick)
     end)
 end
 
-function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, hostages_killed, skip_netsend)
-    local crim = original.on_player_criminal_death(self, criminal_name, respawn_penalty, hostages_killed, skip_netsend)
+function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, ...)
+    local crim = original.on_player_criminal_death(self, criminal_name, respawn_penalty, ...)
     if crim and type(crim) == "table" then -- Apparently OVK sometimes send empty criminal, not sure why; Probably mods
         local peer_id = crim.peer_id
         if not peer_id then
@@ -79,14 +79,14 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, h
     return crim
 end
 
-function TradeManager:_set_auto_assault_ai_trade(character_name, time)
+function TradeManager:_set_auto_assault_ai_trade(character_name, ...)
     if self._auto_assault_ai_trade_criminal_name ~= character_name then
         SetTrackerPause(character_name, self._trade_counter_tick)
 	end
-    original._set_auto_assault_ai_trade(self, character_name, time)
+    original._set_auto_assault_ai_trade(self, character_name, ...)
 end
 
-function TradeManager:sync_set_auto_assault_ai_trade(character_name, time)
-    original.sync_set_auto_assault_ai_trade(self, character_name, time)
+function TradeManager:sync_set_auto_assault_ai_trade(character_name, ...)
+    original.sync_set_auto_assault_ai_trade(self, character_name, ...)
     SetTrackerPause(character_name, self._trade_counter_tick)
 end

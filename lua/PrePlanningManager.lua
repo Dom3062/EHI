@@ -8,9 +8,9 @@ end
 local preplan = nil
 
 local _f_on_execute_preplanning = PrePlanningManager.on_execute_preplanning
-function PrePlanningManager:on_execute_preplanning()
+function PrePlanningManager:on_execute_preplanning(...)
     preplan = EHI:DeepClone(self._reserved_mission_elements)
-    _f_on_execute_preplanning(self)
+    _f_on_execute_preplanning(self, ...)
 end
 
 function PrePlanningManager:IsAssetBought(asset_id)

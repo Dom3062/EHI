@@ -59,14 +59,35 @@ function EHIManager:CountPickupAvailable(tweak_data)
     return count
 end
 
+function EHIManager:CountUnitAvailable(idstring, slotmask)
+    local count = 0
+    local units = World:find_units_quick("all", slotmask)
+    for _, unit in pairs(units) do
+        if unit and unit:name() == idstring then
+            count = count + 1
+        end
+    end
+    return count
+end
+
 function EHIManager:load()
+    if Global.statistics_manager.playing_from_start then
+        return
+    end
     local level_id = Global.game_settings.level_id
-    if level_id == "pbr2" and not Global.statistics_manager.playing_from_start then -- Birth of Sky
+    if level_id == "pbr2" then -- Birth of Sky
         self:SetTrackerProgressRemaining("voff_4", self:CountPickupAvailable("ring_band"))
-    elseif level_id == "run" then -- Heat Street
-        self:SetTrackerProgressRemaining("run_8", self:CountPickupAvailable("hold_take_missing_animal_poster"))
-    --[[elseif level_id == "pex" then -- Breakfast in Tijuana
-        self:SetTrackerProgressRemaining("pex_11", self:CountPickupAvailable("pex_medal"))]]
+    elseif level_id == "pex" then -- Breakfast in Tijuana
+        --[[
+            There are total 12 places where medals can appears
+            -- 11 places are on the first floor (6 randomly selected)
+            -- last place is in the locker room (instance)
+            Game sync all used places. When a medal is picked up, it is removed from the world
+            and not synced to other drop-in players
+        ]]
+        self:SetTrackerProgressRemaining("pex_11", self:CountUnitAvailable(
+            Idstring("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal"),
+            1) - 5)
     end
 end
 

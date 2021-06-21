@@ -22,8 +22,8 @@ if level_id == "dah" then
     bag_time_correction = 1
 end
 
-function ZipLine:init(unit)
-    original.init(self, unit)
+function ZipLine:init(unit, ...)
+    original.init(self, unit, ...)
     local key = tostring(unit:key())
     self._ehi_key_bag_half = key .. "_bag_drop"
     self._ehi_key_bag_full = key .. "_bag_reset"
@@ -31,8 +31,8 @@ function ZipLine:init(unit)
     self._ehi_key_user_full = key .. "_person_reset"
 end
 
-function ZipLine:attach_bag(bag)
-    original.attach_bag(self, bag)
+function ZipLine:attach_bag(...)
+    original.attach_bag(self, ...)
     local total_time = self:total_time()
     managers.ehi:AddTracker({
         id = self._ehi_key_bag_half,
@@ -62,12 +62,12 @@ local function AddUserZipline(self, unit)
     end
 end
 
-function ZipLine:set_user(unit)
+function ZipLine:set_user(unit, ...)
     AddUserZipline(self, unit)
-    original.set_user(self, unit or nil)
+    original.set_user(self, unit or nil, ...)
 end
 
-function ZipLine:sync_set_user(unit)
+function ZipLine:sync_set_user(unit, ...)
     AddUserZipline(self, unit)
-    original.sync_set_user(self, unit or nil)
+    original.sync_set_user(self, unit or nil, ...)
 end

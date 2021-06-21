@@ -43,14 +43,14 @@ local original =
     init_custom = CustomGrenadeCrateBase.init,
     _set_empty_custom = CustomGrenadeCrateBase._set_empty
 }
-function GrenadeCrateBase:init(unit)
+function GrenadeCrateBase:init(unit, ...)
     self._ehi_key = tostring(unit:key())
     self._ignore = ignore[unit:editor_id()] or false
-    original.init(self, unit)
+    original.init(self, unit, ...)
 end
 
-function GrenadeCrateBase:_set_visual_stage()
-    original._set_visual_stage(self)
+function GrenadeCrateBase:_set_visual_stage(...)
+    original._set_visual_stage(self, ...)
     if not self._ignore then
         UpdateTracker(self._unit, self._ehi_key, self._grenade_amount)
     end
@@ -64,18 +64,18 @@ function GrenadeCrateBase:GetRealAmount()
     return self._grenade_amount or self._max_grenade_amount
 end
 
-function GrenadeCrateBase:destroy()
-    original.destroy(self)
+function GrenadeCrateBase:destroy(...)
+    original.destroy(self, ...)
     UpdateTracker(self._unit, self._ehi_key, 0)
 end
 
-function CustomGrenadeCrateBase:init(unit)
-    original.init_custom(self, unit)
+function CustomGrenadeCrateBase:init(unit, ...)
+    original.init_custom(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._ignore = ignore[unit:editor_id()] or false
 end
 
-function CustomGrenadeCrateBase:_set_empty()
-    original._set_empty_custom(self)
+function CustomGrenadeCrateBase:_set_empty(...)
+    original._set_empty_custom(self, ...)
     UpdateTracker(self._unit, self._ehi_key, 0)
 end

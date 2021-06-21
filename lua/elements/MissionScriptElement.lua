@@ -38,6 +38,15 @@ local TT = -- Tracker Type
     Inaccurate = "EHIInaccurateTracker",
     InaccurateWarning = "EHIInaccurateWarningTracker"
 }
+local AchievementTT =
+{
+    EHIAchievementTracker = true,
+    EHIAchievementDoneTracker = true,
+    EHIAchievementUnlockTracker = true,
+    EHIAchievementProgressTracker = true,
+    EHIAchievementObtainableTracker = true,
+    EHIAchievementNotificationTracker = true,
+}
 local Holdout =
 {
     skm_run = true,
@@ -123,7 +132,7 @@ elseif level_id == "mallcrasher" then -- Mallcrasher
         --[300870] = { amount = 5600, id = "MallDestruction", special_function = true },
         --[300830] = { amount = 8000, id = "MallDestruction", special_function = true },
 
-        [301148] = { time = 180, id = "uno_3", icons = { "C_Vlad_H_Mallcrasher_SelfCheck" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement },
+        [301148] = { time = 180, id = "uno_3", icons = { "C_Vlad_H_Mallcrasher_SelfCheck" }, class = TT.Achievement },
         [300241] = { id = "uno_3", special_function = SF.SetAchievementComplete }
     }
     trigger_id_all = "EscapeHeli"
@@ -154,14 +163,14 @@ elseif level_id == "escape_cafe" or level_id == "escape_cafe_day" then -- Escape
     triggers = {
         [100247] = { time = 180 },
         [100248] = { time = 120 },
-        [100287] = { time = 30, id = "frappucino_to_go_please", icons = { "C_Escape_H_Cafe_Cappuccino" } , condition = show_achievement, class = TT.Achievement, special_function = SF.ShowAchievement },
+        [100287] = { time = 30, id = "frappucino_to_go_please", icons = { "C_Escape_H_Cafe_Cappuccino" }, class = TT.Achievement },
         [101379] = { id = "frappucino_to_go_please", special_function = SF.SetAchievementComplete }
     }
     trigger_id_all = "EscapeVan"
     trigger_icon_all = CarEscape
 elseif level_id == "escape_overpass" or level_id == "escape_overpass_night" then -- Escape: Overpass
     triggers = {
-        [101148] = { id = "you_shall_not_pass", icons = { "C_Escape_H_Overpass_YouShallNot" }, status = "ok", class = TT.AchievementNotification, condition = show_achievement, special_function = SF.ShowAchievement },
+        [101148] = { id = "you_shall_not_pass", icons = { "C_Escape_H_Overpass_YouShallNot" }, status = "ok", class = TT.AchievementNotification },
         [102471] = { id = "you_shall_not_pass", special_function = SF.SetAchievementFailed },
         [100426] = { id = "you_shall_not_pass", special_function = SF.SetAchievementComplete },
         [101145] = { time = 180, special_function = SF.GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop } },
@@ -173,7 +182,7 @@ elseif level_id == "escape_overpass" or level_id == "escape_overpass_night" then
     trigger_id_all = "Escape"
 elseif level_id == "escape_park" or level_id == "escape_park_day" then -- Escape: Park and Escape: Park (Day)
     triggers = {
-        [102444] = { id = "king_of_the_hill", icons = { "C_Escape_H_Park_King" }, status = "ok", class = TT.AchievementNotification, condition = show_achievement, special_function = SF.ShowAchievement },
+        [102444] = { id = "king_of_the_hill", icons = { "C_Escape_H_Park_King" }, status = "ok", class = TT.AchievementNotification },
         [101297] = { id = "king_of_the_hill", special_function = SF.SetAchievementFailed },
         [101343] = { id = "king_of_the_hill", special_function = SF.SetAchievementComplete },
         [102449] = { time = 240 },
@@ -184,7 +193,7 @@ elseif level_id == "escape_park" or level_id == "escape_park_day" then -- Escape
     trigger_icon_all = CarEscape
 elseif level_id == "escape_street" then -- Escape: Street
     triggers = {
-        [101959] = { id = "bullet_dodger", icons = { "C_Escape_H_Street_Bullet" }, status = "ok", class = TT.AchievementNotification, condition = show_achievement, special_function = SF.ShowAchievement },
+        [101959] = { id = "bullet_dodger", icons = { "C_Escape_H_Street_Bullet" }, status = "ok", class = TT.AchievementNotification },
         [101872] = { id = "bullet_dodger", special_function = SF.SetAchievementFailed },
         [101874] = { id = "bullet_dodger", special_function = SF.SetAchievementComplete },
         [101961] = { time = 120 },
@@ -194,8 +203,8 @@ elseif level_id == "escape_street" then -- Escape: Street
     trigger_icon_all = HeliEscape
 elseif level_id == "election_day_1" then -- Election Day 1
     triggers = {
-        [100003] = { time = 60, id = "slakt_1", icons = { "C_Elephant_H_ElectionDay_Speedlock" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement },
-        [100012] = { id = "bob_8", icons = { "C_Elephant_H_ElectionDay_HotLava" }, class = TT.AchievementNotification, condition = show_achievement, special_function = SF.ShowAchievement },
+        [100003] = { time = 60, id = "slakt_1", icons = { "C_Elephant_H_ElectionDay_Speedlock" }, class = TT.Achievement },
+        [100012] = { id = "bob_8", icons = { "C_Elephant_H_ElectionDay_HotLava" }, class = TT.AchievementNotification },
         [101248] = { id = "bob_8", special_function = SF.SetAchievementComplete },
         [100469] = { id = "bob_8", special_function = SF.SetAchievementFailed }
     }
@@ -228,7 +237,7 @@ elseif level_id == "framing_frame_3" then -- Framing Frame Day 3
 elseif level_id == "pbr" then -- Beneath the Mountain
     triggers = {
         [102290] = { id = "berry_3", special_function = SF.SetAchievementComplete },
-        [102292] = { time = 600, id = "berry_3", icons = { "C_Locke_H_Beneath_Commando" }, class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.ShowAchievement },
+        [102292] = { time = 600, id = "berry_3", icons = { "C_Locke_H_Beneath_Commando" }, class = TT.Achievement, condition = ovk_and_up and show_achievement },
 
         [101774] = { time = 90, id = "EscapeHeli", icons = { "pd2_escape" } }
     }
@@ -236,7 +245,7 @@ elseif level_id == "pbr2" then -- Birth of Sky
     local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } }
     local ring = { id = "voff_4", special_function = SF.IncreaseProgress }
     triggers = {
-        [102504] = { id = "cac_33", status = "ready", icons = { "C_Locke_H_BirthOfSky_Expert" }, class = TT.AchievementNotification, condition = show_achievement and dw_and_above, special_function = SF.ShowAchievement },
+        [102504] = { id = "cac_33", status = "ready", icons = { "C_Locke_H_BirthOfSky_Expert" }, class = TT.AchievementNotification, condition = show_achievement and dw_and_above },
         [103486] = { id = "cac_33", status = "ok", special_function = SF.SetAchievementStatus },
         [103479] = { id = "cac_33", special_function = SF.SetAchievementComplete },
         [103475] = { id = "cac_33", special_function = SF.SetAchievementFailed },
@@ -245,7 +254,7 @@ elseif level_id == "pbr2" then -- Birth of Sky
         [103481] = { id = "cac_33_kills", special_function = SF.RemoveTracker },
         [101897] = { time = 60, id = "LockeSecureHeli", icons = { Icon.Heli, "equipment_winch_hook" } }, -- Time before Locke arrives with heli to pickup the money
         [102452] = { id = "jerry_4", special_function = SF.SetAchievementComplete },
-        [102453] = { time = 83, id = "jerry_4", icons = { "C_Locke_H_BirthOfSky_OneTwoThree" }, class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.ShowAchievement },
+        [102453] = { time = 83, id = "jerry_4", icons = { "C_Locke_H_BirthOfSky_OneTwoThree" }, class = TT.Achievement, condition = ovk_and_up and show_achievement },
 
         [103248] = ring,
         [103252] = ring,
@@ -290,7 +299,7 @@ elseif level_id == "mus" then -- The Diamond
         [102441] = { time = 120 + delay, special_function = SF.AddTrackerIfDoesNotExist },
         [102434] = { time = 110 + delay, special_function = SF.AddTrackerIfDoesNotExist },
         [102433] = { time = 80 + delay, special_function = SF.AddTrackerIfDoesNotExist },
-        [100840] = { time = 600, id = "bat_4", icons = { "C_Dentist_H_Diamond_Smoke" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement },
+        [100840] = { time = 600, id = "bat_4", icons = { "C_Dentist_H_Diamond_Smoke" }, class = TT.Achievement },
 
         [102065] = { time = 50 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
         [102067] = { time = 65 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
@@ -333,7 +342,7 @@ elseif level_id == "mia_1" then -- Hotline Miami Day 1
     end
 elseif level_id == "mia_2" then -- Hotline Miami Day 2
     triggers = {
-        [101228] = { time = 210, id = "pig_2", icons = { "C_Dentist_H_HotlineMiami_WalkFaster" }, class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.ShowAchievement },
+        [101228] = { time = 210, id = "pig_2", icons = { "C_Dentist_H_HotlineMiami_WalkFaster" }, class = TT.Achievement, condition = ovk_and_up and show_achievement },
         [100788] = { id = "pig_2", special_function = SF.SetAchievementComplete },
 
         [100225] = { time = 5 + 5 + 22, id = "heli", icons = HeliEscape },
@@ -389,8 +398,8 @@ elseif level_id == "glace" then -- Green Bridge
         [102370] = { time = 45, id = "PickUpBalloonSecondTry", icons = { "pd2_escape" }, class = "EHIPausableTracker" },
 
         [101732] = { special_function = SF.Trigger, data = { 1017321, 1017322 } },
-        [1017321] = { id = "glace_9", status = "ready", icons = { "C_Classics_H_GreenBridge_Caution" }, class = TT.AchievementNotification, condition = show_achievement and ovk_and_up, special_function = SF.ShowAchievement },
-        [1017322] = { max = 6, id = "glace_10", icons = { "C_Classics_H_GreenBridge_BackToPrison" }, class = TT.AchievementProgress, condition = show_achievement, special_function = SF.ShowAchievement },
+        [1017321] = { id = "glace_9", status = "ready", icons = { "C_Classics_H_GreenBridge_Caution" }, class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+        [1017322] = { max = 6, id = "glace_10", icons = { "C_Classics_H_GreenBridge_BackToPrison" }, class = TT.AchievementProgress },
         [105758] = { id = "glace_9", special_function = SF.SetAchievementFailed },
         [105756] = { id = "glace_9", status = "ok", special_function = SF.SetAchievementStatus },
         [105759] = { id = "glace_9", special_function = SF.SetAchievementComplete },
@@ -418,7 +427,7 @@ elseif level_id == "moon" then -- Stealing Xmas
         -- Second animation is counted in this trigger, the first is in CoreElementUnitSequence.lua.
         -- If the first fly in is selected, the tracker is updated to reflect that
 
-        [100107] = { max = 2, id = "moon_4", icons = { "C_Vlad_H_StealingXmas_Imitations" }, class = TT.AchievementProgress, condition = show_achievement, special_function = SF.RemoveTriggerAndShowAchievement },
+        [100107] = { max = 2, id = "moon_4", icons = { "C_Vlad_H_StealingXmas_Imitations" }, class = TT.AchievementProgress, special_function = SF.RemoveTriggerAndShowAchievement },
 
         [100647] = { time = 10, id = "SantaTalk", icons = { "pd2_talk" }, special_function = SF.ExecuteIfElementIsEnabled },
         [100159] = { time = 5 + 7 + 7.3, id = "Escape", icons = { "pd2_escape" }, special_function = SF.ExecuteIfElementIsEnabled },
@@ -430,7 +439,7 @@ elseif level_id == "moon" then -- Stealing Xmas
     }
 elseif level_id == "dark" then -- Murky Station
     triggers = {
-        [100296] = { time = 420, id = "dark_2", icons = { "C_Jimmy_H_MurkyStation_GhostRun" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement },
+        [100296] = { time = 420, id = "dark_2", icons = { "C_Jimmy_H_MurkyStation_GhostRun" }, class = TT.Achievement },
         [106026] = { time = 10, id = "Van", icons = CarEscape },
 
         [106036] = { time = 410/30, id = "Boat", icons = { "boat", "pd2_escape", "pd2_lootdrop" } }
@@ -439,20 +448,29 @@ elseif level_id == "mad" then -- Boiling Point
     triggers = {
         [100891] = { time = 15.33, id = "emp_bomp_drop", icons = { "pd2_goto" } },
         [101906] = { time = 1200, id = "daily_cake", icons = { Icon.Trophy }, class = TT.Warning, condition = ovk_and_up },
+        [100547] = { special_function = SF.Trigger, data = { 1005471, 1005472 } },
+        [1005471] = { id = "mad_2", icons = { "C_Jimmy_H_Boiling_TheGround" }, class = TT.AchievementNotification, contidition = show_achievement and ovk_and_up },
+        [1005472] = { id = "cac_13", icons = { "C_Jimmy_H_Boiling_Remember" }, class = TT.AchievementNotification, contidition = show_achievement and ovk_and_up },
 
         [EHI:GetInstanceElementID(100019, 3150)] = { time = 90, id = "Scan", icons = { "mad_scan" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [EHI:GetInstanceElementID(100049, 3150)] = { id = "Scan", special_function = SF.PauseTracker },
         [EHI:GetInstanceElementID(100030, 3150)] = { id = "Scan", special_function = SF.RemoveTracker }, -- Just in case
 
         [EHI:GetInstanceElementID(100013, 1350)] = { time = 120, id = "EMP", icons = { "pd2_defend" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
-        [EHI:GetInstanceElementID(100023, 1350)] = { id = "EMP", special_function = SF.PauseTracker }
+        [EHI:GetInstanceElementID(100023, 1350)] = { id = "EMP", special_function = SF.PauseTracker },
+
+        [101400] = { id = "mad_2", special_function = SF.SetAchievementFailed },
+        [101823] = { id = "mad_2", special_function = SF.SetAchievementComplete },
+
+        [101925] = { id = "cac_13", special_function = SF.SetAchievementFailed },
+        [101924] = { id = "cac_13", special_function = SF.SetAchievementComplete }
     }
     if client then
         triggers[101410] = { id = "Scan", special_function = SF.RemoveTracker } -- Just in case
     end
 elseif level_id == "chew" then -- The Biker Heist Day 2
     triggers = {
-        [100595] = { time = 120, id = "born_5", icons = { "C_Elephant_H_Biker_FullThrottle" }, class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.ShowAchievement }
+        [100595] = { time = 120, id = "born_5", icons = { "C_Elephant_H_Biker_FullThrottle" }, class = TT.Achievement, condition = ovk_and_up and show_achievement }
     }
     local sync_triggers =
     {
@@ -476,7 +494,10 @@ elseif level_id == "vit" then -- The White House
     }
 elseif level_id == "wwh" then -- Alaskan Deal
     triggers = {
-        [100944] = { max = 4, id = "wwh_10", icons = { "C_Locke_H_AlsDeal_HeadlessSnow" }, class = TT.AchievementProgress, condition = show_achievement, special_function = SF.ShowAchievement },
+        [100946] = { max = 4, id = "wwh_10", icons = { "C_Locke_H_AlsDeal_HeadlessSnow" }, class = TT.AchievementProgress },
+        [100944] = { id = "wwh_9", icons = { "C_Locke_H_AlsDeal_TheFuelMust" }, class = TT.AchievementNotification, contidition = show_achievement and ovk_and_up },
+        [101250] = { id = "wwh_9", special_function = SF.SetAchievementFailed },
+        [100082] = { id = "wwh_9", special_function = SF.SetAchievementComplete },
         [100322] = { time = 120, id = "Fuel", icons = { "pd2_water_tap" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [100323] = { id = "Fuel", special_function = SF.PauseTracker },
         [101226] = { id = "wwh_10", special_function = SF.IncreaseProgress }
@@ -485,7 +506,7 @@ elseif level_id == "big" then -- The Big Bank
     local pc_hack = { time = 20, id = "PCHack", icons = { "wp_hack" } }
     local bigbank_4 = { special_function = SF.Trigger, data = { 1, 2 } }
     triggers = {
-        [1] = { time = 720, id = "bigbank_4", icons = { "C_Dentist_H_BigBank_TwelveAngry" }, class = TT.Achievement, condition = show_achievement and hard_and_above, special_function = SF.ShowAchievement },
+        [1] = { time = 720, id = "bigbank_4", icons = { "C_Dentist_H_BigBank_TwelveAngry" }, class = TT.Achievement, condition = show_achievement and hard_and_above },
         [2] = { special_function = SF.RemoveTriggers, data = { 100107, 106140, 106150 } },
         [100107] = bigbank_4,
         [106140] = bigbank_4,
@@ -551,14 +572,14 @@ elseif level_id == "red2" then -- First World Bank
         [101299] = { time = 300, id = "Thermite", icons = { Icon.Fire }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1012991 } },
         [1012991] = { time = 90, id = "ThermiteShorterTime", icons = { Icon.Fire, Icon.Wait }, class = TT.Warning }, -- Triggered by 101299
         [101325] = { time = 180, id = "Thermite", special_function = SF.ExecuteIfTrackerExists, data = { id = "ThermiteShortTime" } },
-        [103373] = { time = 817, id = "green_3", icons = { "C_Classics_H_FirstWorldBank_LEET" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement },
+        [103373] = { time = 817, id = "green_3", icons = { "C_Classics_H_FirstWorldBank_LEET" }, class = TT.Achievement },
         [107072] = { id = "cac_10", special_function = SF.SetAchievementComplete },
-        [101544] = { time = 30, id = "cac_10", icons = { "C_Classics_H_FirstWorldBank_Federal" }, class = TT.Achievement, condition = show_achievement, special_function = SF.RemoveTriggerAndShowAchievement, condition_function = CF.IsLoud }
+        [101544] = { time = 30, id = "cac_10", icons = { "C_Classics_H_FirstWorldBank_Federal" }, class = TT.Achievement, special_function = SF.RemoveTriggerAndShowAchievement, condition_function = CF.IsLoud }
     }
 elseif level_id == "dinner" then -- Slaughterhouse
     triggers = {
-        [100484] = { time = 300, id = "farm_2", icons = { "C_Classics_H_Slaughterhouse_ButHow" }, class = "EHIAchievementUnlockTracker", condition = show_achievement },
-        [100485] = { time = 30, id = "farm_4", icons = { "C_Classics_H_Slaughterhouse_Pyromaniacs" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement },
+        [100484] = { time = 300, id = "farm_2", icons = { "C_Classics_H_Slaughterhouse_ButHow" }, class = "EHIAchievementUnlockTracker" },
+        [100485] = { time = 30, id = "farm_4", icons = { "C_Classics_H_Slaughterhouse_Pyromaniacs" }, class = TT.Achievement },
         [100915] = { time = 4640/30, id = "CraneGasMove", icons = { "equipment_winch_hook", Icon.Fire, "pd2_goto" } },
         [100967] = { time = 3660/30, id = "CraneGoldMove", icons = { Icon.Escape } },
         [100319] = { id = "farm_2", special_function = SF.SetAchievementFailed },
@@ -591,7 +612,7 @@ elseif level_id == "flat" then -- Panic Room
 
         [100206] = { time = 30, id = "LoweringTheWinch", icons = { "heli", "equipment_winch_hook", "pd2_goto" } },
 
-        [100049] = { time = 20, id = "flat_2", icons = { "C_Classics_H_PanicRoom_Cardio" }, class = TT.Achievement, special_function = SF.ShowAchievement },
+        [100049] = { time = 20, id = "flat_2", icons = { "C_Classics_H_PanicRoom_Cardio" }, class = TT.Achievement },
         [102001] = { time = 5, id = "C4Explosion", icons = { "pd2_c4" } }
     }
 elseif level_id == "dah" then -- Diamond Heist
@@ -620,7 +641,7 @@ elseif level_id == "arena" then -- The Alesso Heist
     }
 elseif level_id == "run" then -- Heat Street
     triggers = {
-        [100120] = { time = 1800, id = "run_9", icons = { "C_Classics_H_HeatStreet_Patience" }, class = "EHIAchievementDoneTracker", condition = show_achievement },
+        [100120] = { time = 1800, id = "run_9", icons = { "C_Classics_H_HeatStreet_Patience" }, class = "EHIAchievementDoneTracker" },
         [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = TT.Achievement }, -- Not really an achievement, but I want to use "SetCompleted" function :p
         [101550] = { id = "ClearPickupZone", special_function = SF.SetAchievementComplete },
 
@@ -630,6 +651,7 @@ elseif level_id == "run" then -- Heat Street
         [1001441] = { id = "run_9", special_function = SF.SetAchievementFailed },
         [1001442] = { id = "GasAmount", class = "EHIGasTracker" },
         [1001443] = { special_function = SF.RemoveTriggers, data = { 100144 } },
+        [102426] = { max = 8, id = "run_8", icons = { "C_Classics_H_HeatStreet_Zookeeper" }, class = TT.AchievementProgress },
         [100658] = { id = "run_8", special_function = SF.IncreaseProgress },
 
         [1] = { id = "GasAmount", special_function = SF.IncreaseProgress },
@@ -667,15 +689,33 @@ elseif level_id == "tag" then -- Breakin' Feds
         time = 40
     end
     triggers = {
+        [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
+        [1001071] = { id = "tag_9", icons = { "C_Locke_H_BreakinFeds_AMoment" }, class = TT.AchievementNotification, contidition = show_achievement and ovk_and_up },
+        [1001072] = { id = "tag_10", status = "ready", icons = { "C_Locke_H_BreakinFeds_Salker" }, class = TT.AchievementNotification },
+        [1001073] = { id = "tag_11", status = "no", icons = { "C_Locke_H_BreakinFeds_Staple" }, class = TT.AchievementNotification },
         [101335] = { time = 7, id = "C4BasementWall", icons = { "pd2_c4" } },
         [101968] = { time = 10, id = "LureDelay", icons = { "faster" } },
 
-        [101282] = { time = 5 + time, id = "KeypadReset", icons = { "faster" } }
+        [101282] = { time = 5 + time, id = "KeypadReset", icons = { "faster" } },
+
+        [100609] = { id = "tag_9", special_function = SF.SetAchievementComplete },
+        [100617] = { id = "tag_9", special_function = SF.SetAchievementFailed },
+        [101929] = { id = "tag_11", special_function = SF.SetAchievementComplete }
     }
+    for _, index in pairs({4550, 5450}) do
+        triggers[EHI:GetInstanceElementID(100319, index)] = { id = "tag_10", special_function = SF.SetAchievementFailed }
+        triggers[EHI:GetInstanceElementID(100321, index)] = { id = "tag_10", status = "ok", special_function = SF.SetAchievementStatus }
+        triggers[EHI:GetInstanceElementID(100282, index)] = { id = "tag_10", special_function = SF.SetAchievementComplete }
+    end
 elseif level_id == "fish" then -- The Yacht Heist
     triggers = {
-        -- 100244 is ´Players_spawned´, the achievement is not in the Mission Script
-        [100244] = { time = 360, id = "fish_4", icons = { "C_Continental_H_YachtHeist_Thalasso" }, class = TT.Achievement, condition = show_achievement and ovk_and_up, special_function = SF.ShowAchievement }
+        -- 100244 is ´Players_spawned´
+        [100244] = { special_function = SF.Trigger, data = { 1002441, 1002442 } },
+        -- "fish_4" achievement is not in the Mission Script
+        [1002441] = { time = 360, id = "fish_4", icons = { "C_Continental_H_YachtHeist_Thalasso" }, class = TT.Achievement, condition = show_achievement and ovk_and_up },
+        [1002442] = { id = "fish_5", icons = { "C_Continental_H_YachtHeist_Pacifish" }, class = TT.AchievementNotification },
+        [100395] = { id = "fish_5", special_function = SF.SetAchievementFailed },
+        [100842] = { id = "fish_5", special_function = SF.SetAchievementComplete }
     }
 elseif level_id == "rat" then -- Cook Off
     local van_delay = 47 -- 1 second before setting up the timer and 5 seconds after the van leaves (base delay when timer is 0), 31s before the timer gets activated; 10s before the timer is started; total 47s; Mayhem difficulty and above
@@ -686,11 +726,11 @@ elseif level_id == "rat" then -- Cook Off
     local heli_delay_full = 13 + 19 -- 13 = Base Delay; 19 = anim delay
     local heli_icon = { "heli", "pd2_methlab", "pd2_goto" }
     triggers = {
-        [101081] = { id = "halloween_1", status = "ready", icons = { "C_Hector_H_Rats_IAmTheOne" }, class = TT.AchievementNotification, condition = show_achievement, special_function = SF.ShowAchievement },
+        [101081] = { id = "halloween_1", status = "ready", icons = { "C_Hector_H_Rats_IAmTheOne" }, class = TT.AchievementNotification },
         [101907] = { id = "halloween_1", status = "ok", special_function = SF.SetAchievementStatus },
         [101917] = { id = "halloween_1", special_function = SF.SetAchievementComplete },
         [101914] = { id = "halloween_1", special_function = SF.SetAchievementFailed },
-        [101780] = { max = 25, id = "voff_5", icons = { "C_Bain_H_CookOff_KissTheChef" }, class = TT.AchievementProgress, condition = show_achievement, special_function = SF.ShowAchievement },
+        [101780] = { max = 25, id = "voff_5", icons = { "C_Bain_H_CookOff_KissTheChef" }, class = TT.AchievementProgress },
         [102318] = { time = 60 + 60 + 30 + 15 + anim_delay, id = "Van", icons = CarEscape },
         [102319] = { time = 60 + 60 + 60 + 30 + 15 + anim_delay, id = "Van", icons = CarEscape },
         [101001] = { special_function = SF.RemoveTrackers, data = { "CookChance", "CantTakeTheHeat", "VanStayDelay" } },
@@ -744,7 +784,7 @@ elseif level_id == "alex_1" then -- Rats Day 1
     local assault_delay_methlab = 20 + 4 + 3 + 3 + 3 + 5 + 1 + 30
     local assault_delay = 4 + 3 + 3 + 3 + 5 + 1 + 30
     triggers = {
-        [101088] = { id = "halloween_1", status = "ready", icons = { "C_Hector_H_Rats_IAmTheOne" }, class = TT.AchievementNotification, condition = show_achievement, special_function = SF.ShowAchievement },
+        [101088] = { id = "halloween_1", status = "ready", icons = { "C_Hector_H_Rats_IAmTheOne" }, class = TT.AchievementNotification },
         [101907] = { id = "halloween_1", status = "ok", special_function = SF.SetAchievementStatus },
         [101917] = { id = "halloween_1", special_function = SF.SetAchievementComplete },
         [101914] = { id = "halloween_1", special_function = SF.SetAchievementFailed },
@@ -803,7 +843,7 @@ elseif level_id == "watchdogs_1" or level_id == "watchdogs_1_night" then -- Watc
 elseif level_id == "watchdogs_2_day" or level_id == "watchdogs_2" then -- Watchdogs Day 2
     local anim_delay = 450/30
     local boat_delay = 60 + 30 + 30 + 450/30
-    local boat_icon = { "boat", "pd2_lootdrop" }
+    local boat_icon = { Icon.Boat, Icon.LootDrop }
     triggers = {
         [101560] = { time = 35 + 75 + 30 + boat_delay, id = "BoatLootFirst" },
         -- 101127 tracked in 101560
@@ -838,7 +878,7 @@ elseif level_id == "kenaz" then -- Golden Grin Casino
     local heli_60 = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
     local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
     triggers = {
-        [100282] = { time = 840, id = "kenaz_4", icons = { "C_Dentist_H_GoldenGrinCasino_HighRoller" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement },
+        [100282] = { time = 840, id = "kenaz_4", icons = { "C_Dentist_H_GoldenGrinCasino_HighRoller" }, class = TT.Achievement },
 
         [EHI:GetInstanceElementID(100021, 29150)] = heli_60,
         [EHI:GetInstanceElementID(100042, 29150)] = heli_30,
@@ -916,16 +956,11 @@ elseif level_id == "firestarter_3" or level_id == "branchbank" or level_id == "b
             [1021441] = { time = 90, id = "slakt_5", icons = { "C_Hector_H_Firestarter_ItsGettingHot" }, class = "EHIAchievementDoneTracker", condition = dw_and_above and show_achievement },
             [102073] = { id = "slakt_5", special_function = SF.RemoveTracker },
             [105237] = { id = "slakt_5", special_function = SF.SetAchievementComplete },
-            [105217] = { id = "slakt_5", special_function = SF.RemoveTracker },
-            [101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning },
-            [105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning }
-        }
-    else
-        triggers = {
-            [101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning },
-            [105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning }
+            [105217] = { id = "slakt_5", special_function = SF.RemoveTracker }
         }
     end
+    triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning }
+    triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning }
 elseif level_id == "spa" then -- Brooklyn 10-10
     triggers = {
         -- First Assault Delay
@@ -938,9 +973,9 @@ elseif level_id == "spa" then -- Brooklyn 10-10
 
         [101989] = { special_function = SF.Trigger, data = { 1019891, 1019892 } },
         -- It was 7 minutes before the change
-        [1019891] = { time = 360, id = "spa_5", icons = { "C_Continental_H_Brooklyn_ARendezvous" }, class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.ShowAchievement },
+        [1019891] = { time = 360, id = "spa_5", icons = { "C_Continental_H_Brooklyn_ARendezvous" }, class = TT.Achievement, condition = ovk_and_up and show_achievement },
         [101997] = { id = "spa_5", special_function = SF.SetAchievementComplete },
-        [1019892] = { max = 8, id = "spa_6", icons = { "C_Continental_H_Brooklyn_PassTheAmmo" }, class = TT.Achievement, remove_after_reaching_target = false, condition = ovk_and_up and show_achievement, special_function = SF.ShowAchievement },
+        [1019892] = { max = 8, id = "spa_6", icons = { "C_Continental_H_Brooklyn_PassTheAmmo" }, class = TT.AchievementProgress, remove_after_reaching_target = false, condition = ovk_and_up and show_achievement },
         [101999] = { id = "spa_6", special_function = SF.IncreaseProgress },
         [102002] = { id = "spa_6", special_function = SF.SetAchievementComplete },
 
@@ -959,7 +994,7 @@ elseif level_id == "spa" then -- Brooklyn 10-10
 elseif level_id == "welcome_to_the_jungle_1" or level_id == "welcome_to_the_jungle_1_night" then -- Big Oil Day 1
     triggers = {
         [102064] = { time = 60 + 1 + 30, id = "FirstAssaultDelay", icons = { "assaultbox" }, class = TT.Warning, special_function = SF.RemoveTriggerWhenExecuted },
-        [101282] = { time = 60, id = "cac_24", icons = { "C_Elephant_H_BigOil_Junkyard" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement }
+        [101282] = { time = 60, id = "cac_24", icons = { "C_Elephant_H_BigOil_Junkyard" }, class = TT.Achievement }
     }
 elseif level_id == "welcome_to_the_jungle_2" then -- Big Oil Day 2
     local inspect = 30
@@ -987,7 +1022,7 @@ elseif level_id == "welcome_to_the_jungle_2" then -- Big Oil Day 2
     }
 elseif level_id == "sah" then -- Shacklethorne Auction
     triggers = {
-        [100107] = { time = 300, id = "sah_9", icons = { "C_Locke_H_Shacklethorne_AuctionCry" }, class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.ShowAchievement },
+        [100107] = { time = 300, id = "sah_9", icons = { "C_Locke_H_Shacklethorne_AuctionCry" }, class = TT.Achievement, condition = ovk_and_up and show_achievement },
 
         [100643] = { time = 30, id = "CrowdAlert", icons = { "enemy" }, class = TT.Warning },
         [100645] = { id = "CrowdAlert", special_function = SF.RemoveTracker },
@@ -1009,7 +1044,7 @@ elseif level_id == "jolly" then -- Aftershock
     }
 elseif level_id == "cage" then -- Car Shop
     triggers = {
-        [100107] = { time = 240, id = "fort_4", icons = { "C_Bain_H_Car_Gone" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement }
+        [100107] = { time = 240, id = "fort_4", icons = { "C_Bain_H_Car_Gone" }, class = TT.Achievement }
     }
 elseif level_id == "family" then -- Diamond Store
     triggers = {
@@ -1025,7 +1060,7 @@ elseif level_id == "family" then -- Diamond Store
     }
 elseif level_id == "jewelry_store" then -- Jewelry Store
     triggers = {
-        [100073] = { id = "ameno_7", status = "ready", icons = { "C_Bain_H_JewelryStore_PrivateParty" }, class = TT.AchievementNotification, condition = show_achievement and ovk_and_up, special_function = SF.ShowAchievement },
+        [100073] = { id = "ameno_7", status = "ready", icons = { "C_Bain_H_JewelryStore_PrivateParty" }, class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
         [100624] = { id = "ameno_7", special_function = SF.SetAchievementFailed },
         [100634] = { id = "ameno_7", special_function = SF.SetAchievementComplete },
         [101541] = { time = 2, id = "VanDriveAway", icons = CarWait, class = TT.Warning },
@@ -1038,6 +1073,7 @@ elseif level_id == "jewelry_store" then -- Jewelry Store
         [101770] = { time = 650/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker }
     }
 elseif level_id == "ukrainian_job" then -- Ukrainian Job
+    local cac_12_disable = { id = "cac_12", special_function = SF.SetAchievementFailed }
     local zone_delay = 12
     triggers = {
         [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = CarWait, class = TT.Warning },
@@ -1048,7 +1084,12 @@ elseif level_id == "ukrainian_job" then -- Ukrainian Job
         [103181] = { time = 580/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
         [101770] = { time = 650/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
 
-        [100073] = { time = 36, id = "lets_do_this", icons = { "C_Vlad_H_Ukrainian_LetsDoTh" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement }
+        [100073] = { time = 36, id = "lets_do_this", icons = { "C_Vlad_H_Ukrainian_LetsDoTh" }, class = TT.Achievement },
+        [100074] = { id = "cac_12", status = "ready", icons = { "C_Vlad_H_Ukrainian_ImSure" }, class = TT.AchievementNotification },
+        [104406] = { id = "cac_12", status = "ok", special_function = SF.SetAchievementStatus },
+        [104408] = { id = "cac_12", special_function = SF.SetAchievementComplete },
+        [104409] = cac_12_disable,
+        [103116] = cac_12_disable
     }
 elseif level_id == "peta" then -- Goat Simulator Heist Day 1
     triggers = {
@@ -1059,7 +1100,7 @@ elseif level_id == "peta" then -- Goat Simulator Heist Day 1
         [105804] = { time = 20, id = "FireApartment2", icons = { Icon.Fire, Icon.Wait } },
         [105824] = { time = 20, id = "FireApartment3", icons = { Icon.Fire, Icon.Wait } },
         [105840] = { time = 20, id = "FireApartment4", icons = { Icon.Fire, Icon.Wait } },
-        [EHI:GetInstanceElementID(100010, 2900)] = { time = 60, id = "peta_2", icons = { "C_Vlad_H_GoatSim_GoatIn" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement },
+        [EHI:GetInstanceElementID(100010, 2900)] = { time = 60, id = "peta_2", icons = { "C_Vlad_H_GoatSim_GoatIn" }, class = TT.Achievement },
         [EHI:GetInstanceElementID(100080, 2900)] = { id = "peta_2", special_function = SF.SetAchievementComplete }
     }
 elseif level_id == "peta2" then -- Goat Simulator Heist Day 2
@@ -1069,7 +1110,7 @@ elseif level_id == "peta2" then -- Goat Simulator Heist Day 2
         [100109] = { time = 100 + 30, id = "FirstAssaultDelay", icons = { "assaultbox" }, class = TT.Warning },
 
         -- Formerly 5 minutes
-        [101540] = { time = 240, id = "peta_3", icons = { "C_Vlad_H_GoatSim_Hazzard" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement },
+        [101540] = { time = 240, id = "peta_3", icons = { "C_Vlad_H_GoatSim_Hazzard" }, class = TT.Achievement },
         [101533] = { id = "peta_3", special_function = SF.SetAchievementComplete },
 
         [EHI:GetInstanceElementID(100022, 2850)] = { time = 180 + 6.9, id = "BagsDropin", icons = bag_drop },
@@ -1121,8 +1162,8 @@ elseif level_id == "friend" then -- Scarface Mansion
         [100109] = { time = 30 + 1 + 30, id = "FirstAssaultDelay", icons = { "assaultbox" }, class = TT.Warning, special_function = SF.RemoveTriggerWhenExecuted },
 
         [100107] = { time = 901, id = "uno_7", icons = { "C_Butcher_H_Scarface_Setting" }, class = "EHIAchievementObtainableTracker", condition = mayhem_and_up and show_achievement },
-        [102291] = { max = 2, id = "friend_5", icons = { "C_Butcher_H_Scarface_LookAtThese" }, class = TT.AchievementProgress, condition = show_achievement, special_function = SF.ShowAchievement },
-        [102430] = { time = 780, id = "friend_6", icons = { "C_Butcher_H_Scarface_WhatYouWant" }, class = TT.Achievement, condition = mayhem_and_up and show_achievement, special_function = SF.ShowAchievement },
+        [102291] = { max = 2, id = "friend_5", icons = { "C_Butcher_H_Scarface_LookAtThese" }, class = TT.AchievementProgress },
+        [102430] = { time = 780, id = "friend_6", icons = { "C_Butcher_H_Scarface_WhatYouWant" }, class = TT.Achievement, condition = mayhem_and_up and show_achievement },
 
         [100103] = { time = 15 + 5, random_time = 10, id = "BileArrival", icons = { Icon.Heli } },
 
@@ -1154,7 +1195,7 @@ elseif level_id == "friend" then -- Scarface Mansion
 elseif level_id == "crojob2" then -- The Bomb: Dockyard
     local chopper_delay = 25 + 1 + 2.5
     triggers = {
-        [101737] = { time = 60, id = "cow_11", icons = { "C_Butcher_H_BombDock_Done" }, class = TT.Achievement, condition = show_achievement, special_function = SF.ShowAchievement },
+        [101737] = { time = 60, id = "cow_11", icons = { "C_Butcher_H_BombDock_Done" }, class = TT.Achievement },
 
         [102120] = { time = 5400/30, id = "ShipMove", icons = { Icon.Boat, Icon.Wait }, special_function = SF.RemoveTriggerWhenExecuted },
 
@@ -1208,7 +1249,7 @@ elseif level_id == "crojob3" or level_id == "crojob3_night" then -- The Bomb: Fo
 
         [1] = { id = "HeliWaterReset", icons = { "heli", "pd2_water_tap", "restarter" }, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 62 + heli_anim_full, no = 122 + heli_anim_full } },
 
-        [103461] = { time = 5, id = "cow_3", icons = { "C_Butcher_H_BombForest_Beaver" }, class = TT.Achievement, condition = show_achievement, special_function = SF.RemoveTriggerAndShowAchievement },
+        [103461] = { time = 5, id = "cow_3", icons = { "C_Butcher_H_BombForest_Beaver" }, class = TT.Achievement, special_function = SF.RemoveTriggerAndShowAchievement },
         [103458] = { id = "cow_3", special_function = SF.SetAchievementComplete },
 
         -- Right
@@ -1257,7 +1298,7 @@ elseif level_id == "roberts" then -- GO Bank
 elseif level_id == "rvd1" then -- Reservoir Dogs Heist Day 2
     local pink_car = { { icon = Icon.Car, color = Color("D983D1") }, "pd2_goto" }
     triggers = {
-        [100107] = { id = "rvd_9", icons = { "C_Bain_H_ReservoirDogs_GetOffMy" }, class = TT.AchievementNotification, condition = show_achievement, special_function = SF.ShowAchievement },
+        [100107] = { id = "rvd_9", icons = { "C_Bain_H_ReservoirDogs_GetOffMy" }, class = TT.AchievementNotification },
         [100839] = { id = "rvd_9", special_function = SF.SetAchievementFailed },
         [100869] = { id = "rvd_9", special_function = SF.SetAchievementComplete },
 
@@ -1292,9 +1333,12 @@ elseif level_id == "des" then -- Henry's Rock
     triggers = {
         [103391] = { id = "uno_5", special_function = SF.IncreaseProgress },
         [103395] = { id = "uno_5", special_function = SF.SetAchievementFailed },
+
+        [103025] = { time = 3, id = "des_11", icons = { "C_Locke_H_HenrysRock_BoomHead" }, class = TT.Achievement },
+        [102822] = { id = "des_11", special_function = SF.SetAchievementComplete },
         [100716] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire } },
 
-        [100296] = { max = 2, id = "uno_5", icons = { "C_Locke_H_HenrysRock_Hack" }, class = "EHIAchievementProgressTracker", condition = show_achievement and ovk_and_up },
+        [100296] = { max = 2, id = "uno_5", icons = { "C_Locke_H_HenrysRock_Hack" }, class = TT.AchievementProgress, condition = show_achievement and ovk_and_up },
         [100423] = { time = 60 + 25 + 3, id = "EscapeHeli", icons = HeliEscape },
         -- 60s delay after flare has been placed
         -- 25s to land
@@ -1306,6 +1350,11 @@ elseif level_id == "des" then -- Henry's Rock
 
         [102009] = { time = 60, id = "Crane", icons = { "equipment_winch_hook" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [101702] = { id = "Crane", special_function = SF.PauseTracker }
+    }
+elseif level_id == "hvh" then -- Cursed Kill Room
+    triggers = {
+        [100107] = { max = 6, id = "cac_21", icons = { "C_Event_H_CursedKillRoom_FasterFaster" }, class = TT.AchievementProgress, condition = show_achievement and very_hard_and_up, special_function = SF.RemoveTriggerAndShowAchievement },
+        [100224] = { id = "cac_21", special_function = SF.IncreaseProgress }
     }
 elseif level_id == "arm_cro" then -- Transport: Crossroads
     local van_delay = 674/30
@@ -1469,7 +1518,7 @@ elseif level_id == "nail" then -- Lab Rats
     }
 elseif level_id == "brb" then -- Brooklyn Bank
     triggers = {
-        [101136] = { max = 12, id = "brb_8", icons = { "C_Locke_H_BrooklynBank_AlltheGold" }, remove_after_reaching_target = false, class = "EHIAchievementProgressTracker", condition = show_achievement and very_hard_and_up, special_function = SF.ShowAchievement },
+        [101136] = { max = 12, id = "brb_8", icons = { "C_Locke_H_BrooklynBank_AlltheGold" }, remove_after_reaching_target = false, class = "EHIAchievementProgressTracker", condition = show_achievement and very_hard_and_up },
         [100128] = { time = 38, id = "WinchDropTrainA", icons = { "equipment_winch_hook", "pd2_goto" } },
         [100164] = { time = 38, id = "WinchDropTrainB", icons = { "equipment_winch_hook", "pd2_goto" } },
 
@@ -1512,15 +1561,16 @@ elseif level_id == "hox_1" then -- Hoxton Breakout Day 1
         [101595] = { time = 6, id = "Wait", icons = { Icon.Wait } }
     }
 elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
+    local request = { "wp_hack", Icon.Wait }
     triggers = {
-        [100107] = { id = "cac_26", icons = { "C_Dentist_H_HoxtonBreakout_WatchThePower" }, class = TT.AchievementNotification, condition = show_achievement and ovk_and_up, special_function = SF.ShowAchievement },
+        [100107] = { id = "cac_26", icons = { "C_Dentist_H_HoxtonBreakout_WatchThePower" }, class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
         [100320] = { id = "cac_26", special_function = SF.SetAchievementComplete },
         [100322] = { id = "cac_26", special_function = SF.SetAchievementFailed },
 
-        [104579] = { time = 15, id = "Request", icons = { "wp_hack", Icon.Wait } },
-        [104580] = { time = 25, id = "Request", icons = { "wp_hack", Icon.Wait } },
-        [104581] = { time = 20, id = "Request", icons = { "wp_hack", Icon.Wait } },
-        [104582] = { time = 30, id = "Request", icons = { "wp_hack", Icon.Wait } }, -- Disabled in the mission script
+        [104579] = { time = 15, id = "Request", icons = request },
+        [104580] = { time = 25, id = "Request", icons = request },
+        [104581] = { time = 20, id = "Request", icons = request },
+        [104582] = { time = 30, id = "Request", icons = request }, -- Disabled in the mission script
 
         [104509] = { time = 30, id = "HackRestartWait", icons = { "wp_hack", "restarter" } },
 
@@ -1551,15 +1601,15 @@ elseif level_id == "hox_3" then -- Hoxton Revenge
     }
 elseif level_id == "chill_combat" then -- Safehouse Raid
     triggers = {
-        [100979] = { id = "cac_30", icons = { "C_Hoxton_H_SafeHouse_TheRaid" }, class = TT.AchievementNotification, condition = show_achievement and dw_and_above, special_function = SF.ShowAchievement },
+        [100979] = { id = "cac_30", icons = { "C_Hoxton_H_SafeHouse_TheRaid" }, class = TT.AchievementNotification, condition = show_achievement and dw_and_above },
         [102831] = { id = "cac_30", special_function = SF.SetAchievementComplete },
         [102829] = { id = "cac_30", special_function = SF.SetAchievementFailed }
     }
 elseif level_id == "help" then -- Prison Nightmare
     triggers = {
-        [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, id = "orange_4", icons = { "C_Event_H_PrisonNightmare_SalemAsylum" }, class = TT.Achievement, condition = mayhem_and_up and show_achievement, special_function = SF.ShowAchievement },
+        [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, id = "orange_4", icons = { "C_Event_H_PrisonNightmare_SalemAsylum" }, class = TT.Achievement, condition = mayhem_and_up and show_achievement },
         [EHI:GetInstanceElementID(100461, 21700)] = { id = "orange_4", special_function = SF.SetAchievementComplete },
-        [100279] = { max = 15, id = "orange_5", icons = { "C_Event_H_PrisonNightmare_ALongNight" }, class = TT.AchievementProgress, status_is_overridable = true, remove_after_reaching_target = false, condition = mayhem_and_up and show_achievement, special_function = SF.ShowAchievement },
+        [100279] = { max = 15, id = "orange_5", icons = { "C_Event_H_PrisonNightmare_ALongNight" }, class = TT.AchievementProgress, status_is_overridable = true, remove_after_reaching_target = false, condition = mayhem_and_up and show_achievement },
         [101725] = { time = 25 + 0.25 + 2 + 2.35, id = "C4", icons = { Icon.Heli, "pd2_c4", "pd2_goto" } },
         [EHI:GetInstanceElementID(100471, 21700)] = { id = "orange_5", special_function = SF.SetAchievementFailed },
         [100866] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
@@ -1568,7 +1618,7 @@ elseif level_id == "help" then -- Prison Nightmare
 elseif level_id == "mex" then -- Border Crossing
     local mex_9 = { id = "mex_9", special_function = SF.IncreaseProgress }
     triggers = {
-        [100107] = { max = 4, id = "mex_9", icons = { "C_Locke_H_BorderCrossing_Identity" }, class = TT.AchievementProgress, condition = show_achievement, special_function = SF.ShowAchievement },
+        [100107] = { max = 4, id = "mex_9", icons = { "C_Locke_H_BorderCrossing_Identity" }, class = TT.AchievementProgress },
         [101983] = { time = 15, id = "C4Trap", icons = { "pd2_c4" }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
         [101722] = { id = "C4Trap", special_function = SF.RemoveTracker },
 
@@ -1632,7 +1682,7 @@ elseif level_id == "pex" then -- Breakfast in Tijuana
     local armory_hack_pause = { id = "ArmoryHack", special_function = SF.PauseTracker }
     local start_index = { 5300, 6300, 7300 }
     triggers = {
-        [102355] = { max = 7, id = "pex_11", icons = { "C_Locke_H_BreakfastInTijuana_StolenValor" }, class = TT.AchievementProgress, condition = show_achievement, special_function = SF.ShowAchievement },
+        --[102355] = { max = 7, id = "pex_11", icons = { "C_Locke_H_BreakfastInTijuana_StolenValor" }, class = TT.AchievementProgress },
         [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, "equipment_winch_hook" } },
 
         [101392] = { time = 120, id = "FireEvidence", icons = { "pd2_fire" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
@@ -1673,7 +1723,7 @@ elseif level_id == "fex" then -- Buluc's Mansion
     }
 elseif level_id == "chas" then -- Dragon Heist
     triggers = {
-        [100107] = { time = 360, id = "chas_11", icons = { "C_JiuFeng_H_DragonHeist_Speed" }, class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.ShowAchievement },
+        [100107] = { time = 360, id = "chas_11", icons = { "C_JiuFeng_H_DragonHeist_Speed" }, class = TT.Achievement, condition = ovk_and_up and show_achievement },
         [EHI:GetInstanceElementID(100017, 11325)] = { id = "Gas", special_function = SF.RemoveTracker },
 
         [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { "pd2_question", "pd2_drill", "pd2_goto" } },
@@ -1690,9 +1740,9 @@ elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
     triggers = {
         -- Players spawned
         [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
-        [1001071] = { max = 10, id = "sand_9", icons = { "C_JiuFeng_H_UkrainianPrisoner_Thinking" }, remove_after_reaching_target = false, class = TT.AchievementProgress, condition = show_achievement, special_function = SF.ShowAchievement },
-        [1001072] = { max = 3, id = "sand_9_buttons", icons = { "pd2_generic_interact" }, class = TT.Progress, condition = show_achievement, special_function = SF.ShowAchievementCustom, data = "sand_9" },
-        [1001073] = { max = 8, id = "sand_10", icons = { "C_JiuFeng_H_UkrainianPrisoner_JustToCheese" }, class = TT.AchievementProgress, condition = show_achievement, special_function = SF.ShowAchievement },
+        [1001071] = { max = 10, id = "sand_9", icons = { "C_JiuFeng_H_UkrainianPrisoner_Thinking" }, remove_after_reaching_target = false, class = TT.AchievementProgress },
+        [1001072] = { max = 3, id = "sand_9_buttons", icons = { "pd2_generic_interact" }, class = TT.Progress, special_function = SF.ShowAchievementCustom, data = "sand_9" },
+        [1001073] = { max = 8, id = "sand_10", icons = { "C_JiuFeng_H_UkrainianPrisoner_JustToCheese" }, class = TT.AchievementProgress },
         [103161] = sand_9_buttons,
         [101369] = { special_function = SF.SAND_ExecuteIfProgressMatch, data = 0 },
         [103167] = sand_9_buttons,
@@ -1715,9 +1765,11 @@ elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
         [104262] = { time = 549/30, id = "SkidDriving8", icons = skid },
         [104304] = { time = 40, id = "SkidDriving9", icons = skid }, -- More accurate
         [103667] = { time = 1399/30, id = "SkidDriving10", icons = skid },
-        [100782] = { time = 959/30, id = "SkidDriving11", icons = skid },
+        [100782] = { time = 18, id = "SkidDriving11", icons = skid }, -- 959/30
         [104227] = { time = 37, id = "SkidDriving12", icons = skid }, -- More accurate
         [104305] = { time = 25, id = "SkidDriving13", icons = skid }, -- More accurate
+        [101009] = { time = 210/30, id = "RampRaise", icons = { "faster" } },
+        [101799] = { time = 181/30, id = "RampLower", icons = { "faster" } },
 
         [104528] = { time = 22, id = "Crane", icons = { "equipment_winch_hook" } }, -- 104528 -> 100703
 
@@ -1795,6 +1847,14 @@ for id, data in pairs(triggers) do
             triggers[id].class = TT.Inaccurate
         elseif data.class ~= "EHIInaccuratePausableTracker" and data.class == TT.Warning then
             triggers[id].class = TT.InaccurateWarning
+        end
+    end
+    if data.class and AchievementTT[data.class] then
+        if not data.special_function then
+            triggers[id].special_function = SF.ShowAchievement
+        end
+        if data.condition == nil then
+            triggers[id].condition = show_achievement
         end
     end
 end

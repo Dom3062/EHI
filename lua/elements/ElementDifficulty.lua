@@ -39,8 +39,8 @@ function ElementDifficulty:client_on_executed(...)
 end
 
 local _f_on_executed = ElementDifficulty.on_executed
-function ElementDifficulty:on_executed(instigator)
-    _f_on_executed(self, instigator)
+function ElementDifficulty:on_executed(...)
+    _f_on_executed(self, ...)
     if not self._values.enabled then
         return
     end

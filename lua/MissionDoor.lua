@@ -1,6 +1,6 @@
 local _f_initiate_c4_sequence = MissionDoor._initiate_c4_sequence
-function MissionDoor:_initiate_c4_sequence()
-    _f_initiate_c4_sequence(self)
+function MissionDoor:_initiate_c4_sequence(...)
+    _f_initiate_c4_sequence(self, ...)
     managers.ehi:AddTracker({
         id = tostring(self._unit:key()),
         time = 5,

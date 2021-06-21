@@ -33,8 +33,8 @@ local function AddTracker(peer_id)
 end
 
 local _f_on_damage_received = CivilianDamage._on_damage_received
-function CivilianDamage:_on_damage_received(damage_info)
-    _f_on_damage_received(self, damage_info)
+function CivilianDamage:_on_damage_received(damage_info, ...)
+    _f_on_damage_received(self, damage_info, ...)
     local attacker_unit = damage_info and damage_info.attacker_unit
     if damage_info.result.type == "death" and attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)

@@ -10,12 +10,12 @@ local original =
     destroy = Setup.destroy
 }
 
-function Setup:init_managers(managers)
-    original.init_managers(self, managers)
+function Setup:init_managers(managers, ...)
+    original.init_managers(self, managers, ...)
     managers.ehi = EHIManager:new()
 end
 
-function Setup:destroy()
-    original.destroy(self)
+function Setup:destroy(...)
+    original.destroy(self, ...)
     managers.ehi:destroy()
 end

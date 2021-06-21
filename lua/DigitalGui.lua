@@ -183,13 +183,13 @@ elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
 	}
 end
 
-function DigitalGui:init(unit)
-    original.init(self, unit)
+function DigitalGui:init(unit, ...)
+    original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
 end
 
-function DigitalGui:timer_start_count_down(sync)
-	original.timer_start_count_down(self, sync)
+function DigitalGui:timer_start_count_down(...)
+	original.timer_start_count_down(self, ...)
 	local editor_id = self._unit:editor_id()
 	if ignore[editor_id] then
 		return
@@ -206,8 +206,8 @@ function DigitalGui:timer_start_count_down(sync)
 	end
 end
 
-function DigitalGui:timer_pause(sync)
-	original.timer_pause(self, sync)
+function DigitalGui:timer_pause(...)
+	original.timer_pause(self, ...)
 	if remove[self._unit:editor_id()] then
 		managers.ehi:RemoveTracker(self._ehi_key)
 	else
@@ -215,8 +215,8 @@ function DigitalGui:timer_pause(sync)
 	end
 end
 
-function DigitalGui:timer_resume(sync)
-	original.timer_resume(self, sync)
+function DigitalGui:timer_resume(...)
+	original.timer_resume(self, ...)
 	managers.ehi:SetTimerJammed(self._ehi_key, false)
 end
 
@@ -243,19 +243,19 @@ elseif level_id ~= "shoutout_raid" then
 	end
 end]]
 
-function DigitalGui:timer_set(timer, sync)
-	original.timer_set(self, timer, sync)
+function DigitalGui:timer_set(timer, ...)
+	original.timer_set(self, timer, ...)
 	SetTime(self._ehi_key, timer)
 end
 
-function DigitalGui:_timer_stop()
-	original._timer_stop(self)
+function DigitalGui:_timer_stop(...)
+	original._timer_stop(self, ...)
 	managers.hud:RemoveTracker(self._ehi_key)
 end
 
-function DigitalGui:set_visible(visible)
-	original.set_visible(self, visible)
-	if not visible and managers.ehi then
+function DigitalGui:set_visible(visible, ...)
+	original.set_visible(self, visible, ...)
+	if not visible then
 		managers.ehi:RemoveTracker(self._ehi_key)
 	end
 end

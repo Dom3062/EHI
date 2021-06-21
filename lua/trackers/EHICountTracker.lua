@@ -1,7 +1,7 @@
 EHICountTracker = EHICountTracker or class(EHITracker)
 EHICountTracker._update = false
 function EHICountTracker:init(panel, params)
-    params.icons = { "enemy" }
+    params.icons = { "crime_spree_assault_extender" }
     self._count = 0
     EHICountTracker.super.init(self, panel, params)
 end

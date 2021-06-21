@@ -33,7 +33,7 @@ function GageAssignmentManager:EHIPresentProgress()
 	UpdateTracker(self)
 end
 
-function GageAssignmentManager:sync_load(data)
-	original.sync_load(self, data)
+function GageAssignmentManager:sync_load(...)
+	original.sync_load(self, ...)
 	UpdateTracker(self, true)
 end
