@@ -9,6 +9,9 @@ if not EHI:GetOption("show_trade_delay") then
     return
 end
 
+local show_trade_for_other_players = EHI:GetOption("show_trade_delay_other_players_only")
+local on_death_show = EHI:GetOption("show_trade_delay_option") == 2
+
 local original =
 {
     init = TradeManager.init,
@@ -34,21 +37,25 @@ local function CreateTracker(peer_id, respawn_penalty)
     if respawn_penalty == tweak_data.player.damage.base_respawn_time_penalty then
         return
     end
-    if EHI:GetOption("show_trade_delay_other_players_only") and peer_id == managers.network:session():local_peer():id() then
+    if show_trade_for_other_players and peer_id == managers.network:session():local_peer():id() then
         return
     end
     OnPlayerCriminalDeath(peer_id, respawn_penalty)
 end
 
 local function SetTrackerPause(character_name, t)
-    managers.ehi:CallFunction(TrackerID, "SetAITrade", character_name ~= nil, t)
+    managers.ehi:SetTrade("ai", character_name ~= nil, t)
 end
 
 function TradeManager:init(...)
     original.init(self, ...)
     EHI:Hook(self, "set_trade_countdown", function(s, enabled)
-        managers.ehi:CallFunction(TrackerID, "SetTrade", enabled, self._trade_counter_tick)
+        managers.ehi:SetTrade("normal", enabled, self._trade_counter_tick)
     end)
+end
+
+function TradeManager:GetTradeCounterTick()
+    return self._trade_counter_tick
 end
 
 function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, ...)
@@ -66,11 +73,13 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, .
                 return crim
             end
         end
-        if EHI:GetOption("show_trade_delay_option") == 2 then
+        if on_death_show then
             CreateTracker(peer_id, respawn_penalty)
         elseif respawn_penalty ~= tweak_data.player.damage.base_respawn_time_penalty then
             local tracker = managers.ehi:GetTracker(TrackerID)
-            if tracker and not tracker:PeerExists(peer_id) then
+            if tracker and tracker:PeerExists(peer_id) then
+                tracker:UpdatePeerCustodyTime(peer_id, respawn_penalty)
+            else
                 tracker:AddPeerCustodyTime(peer_id, respawn_penalty)
             end
         end

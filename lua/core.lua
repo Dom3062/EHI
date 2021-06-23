@@ -208,6 +208,7 @@ function EHI:LoadDefaultValues()
         -- Common
         x_offset = 0,
         y_offset = 150,
+        text_scale = 1,
         scale = 1,
         vr_scale = 2.5,
         time_format = 2,

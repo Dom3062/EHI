@@ -49,7 +49,7 @@ function EHICiviliansKilledTracker:SetTextSize()
     end
     for i = HUDManager.PLAYER_PANEL, 1, -1 do
         if self._time_bg_box:child("text" .. i) then
-            self._time_bg_box:child("text" .. i):set_font_size(self._panel:h())
+            self._time_bg_box:child("text" .. i):set_font_size(self._panel:h() * self._text_scale)
             self._time_bg_box:child("text" .. i):set_w(self._time_bg_box:w())
             self:FitTheTextUnique(i)
             break
@@ -69,7 +69,7 @@ function EHICiviliansKilledTracker:AddPeerCustodyTime(peer_id, time)
         w = self._time_bg_box:w(),
         h = self._time_bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
-        font_size = self._panel:h(),
+        font_size = self._panel:h() * self._text_scale,
         color = Color.white
     })
     self._n_of_peers_in_custody = self._n_of_peers_in_custody + 1
@@ -121,6 +121,14 @@ function EHICiviliansKilledTracker:IncreasePeerCustodyTime(peer_id, time)
     self:SetPeerCustodyTime(peer_id, t + time)
 end
 
+function EHICiviliansKilledTracker:UpdatePeerCustodyTime(peer_id, time)
+    local t = self._peer_custody_time[peer_id] or 0
+    if t == time then -- Don't blink on the player, son
+        return
+    end
+    self:SetPeerCustodyTime(peer_id, time)
+end
+
 function EHICiviliansKilledTracker:SetTick(t)
     --[[
         This function makes Trade Delay accurate because of the braindead use of the "update" loop in TradeManager
@@ -160,7 +168,7 @@ function EHICiviliansKilledTracker:RemovePeerFromCustody(peer_id)
     if self._n_of_peers_in_custody == 1 then
         for i = 1, HUDManager.PLAYER_PANEL, 1 do
             if self._time_bg_box:child("text" .. i) then
-                self._time_bg_box:child("text" .. i):set_font_size(self._panel:h())
+                self._time_bg_box:child("text" .. i):set_font_size(self._panel:h() * self._text_scale)
                 self._time_bg_box:child("text" .. i):set_color(Color.white)
                 self._time_bg_box:child("text" .. i):set_x(0)
                 self._time_bg_box:child("text" .. i):set_w(self._time_bg_box:w())
@@ -194,7 +202,7 @@ function EHICiviliansKilledTracker:FitTheTextUnique(i)
     local text = self._time_bg_box:child("text" .. i)
     local w = select(3, text:text_rect())
     if w > text:w() then
-        text:set_font_size(text:font_size() * (text:w() / w))
+        text:set_font_size(text:font_size() * (text:w() / w) * self._text_scale)
     end
 end
 
@@ -256,11 +264,14 @@ function EHICiviliansKilledTracker:update(t, dt)
     end
 end
 
-function EHICiviliansKilledTracker:SetAITrade(trade, t)
+function EHICiviliansKilledTracker:SetAITrade(trade, t, force_t)
     if trade then
         if not self._trade then
             self:SetTick(t)
             self:AddTrackerToUpdate()
+        end
+        if force_t then
+            self:SetTick(t)
         end
         self._ai_trade = true
     else
@@ -271,11 +282,14 @@ function EHICiviliansKilledTracker:SetAITrade(trade, t)
     end
 end
 
-function EHICiviliansKilledTracker:SetTrade(trade, t)
+function EHICiviliansKilledTracker:SetTrade(trade, t, force_t)
     if trade then
         if not self._ai_trade then
             self:SetTick(t)
             self:AddTrackerToUpdate()
+        end
+        if force_t then
+            self:SetTick(t)
         end
         self._trade = true
     else
@@ -284,6 +298,10 @@ function EHICiviliansKilledTracker:SetTrade(trade, t)
         end
         self._trade = false
     end
+end
+
+function EHICiviliansKilledTracker:IsTrading()
+    return self._trade or self._ai_trade
 end
 
 function EHICiviliansKilledTracker:Sync(new_time) -- Don't re-sync time

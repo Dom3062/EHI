@@ -83,6 +83,7 @@ EHITracker._type = "base"
 EHITracker._update = true
 function EHITracker:init(panel, params)
     self._scale = params.scale
+    self._text_scale = params.text_scale
     local number_of_icons = 0
     local gap = 0
     if params.icons then
@@ -120,7 +121,7 @@ function EHITracker:init(panel, params)
         w = self._time_bg_box:w(),
         h = self._time_bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h(),
+		font_size = self._panel:h() * self._text_scale,
         color = params.text_color or Color.white
     })
     self:FitTheText()
@@ -129,7 +130,6 @@ function EHITracker:init(panel, params)
     end
     self._id = params.id
     self._parent_class = params.parent_class
-    self:PostInit(params)
 end
 
 if EHI:GetOption("show_one_icon") then
@@ -166,16 +166,6 @@ else
             start = start + (32 * self._scale)
             icon_gap = icon_gap + (5 * self._scale)
         end
-    end
-end
-
-if Network:is_server() then
-    EHITracker.PostInit = function(self, params) end
-else
-    EHITracker.PostInit = function(self, params)
-        self._last_sync = params.sync_time
-        self._start_time = self._time + (Application:time() - params.sync_real_time)
-        self._end_time = self._last_sync + self._time
     end
 end
 
@@ -244,14 +234,14 @@ function EHITracker:Sync(new_time)
 end
 
 function EHITracker:ResetFontSize()
-    self._text:set_font_size(self._panel:h())
+    self._text:set_font_size(self._panel:h() * self._text_scale)
 end
 
 function EHITracker:FitTheText()
     self:ResetFontSize()
     local w = select(3, self._text:text_rect())
     if w > self._text:w() then
-        self._text:set_font_size(self._text:font_size() * (self._text:w() / w))
+        self._text:set_font_size(self._text:font_size() * (self._text:w() / w) * self._text_scale)
     end
 end
 
@@ -261,23 +251,13 @@ function EHITracker:SetTime(time)
 end
 
 function EHITracker:SetTimeNoAnim(time)
-    if self._end_time then
-        if time < self._time then
-            self._end_time = self._end_time - (self._time - time)
-        elseif time > self._time then
-            self._end_time = self._end_time + (time - self._time)
-        end
-    end
     self._time = time
     self._text:set_text(self:Format())
     self:FitTheText()
 end
 
 function EHITracker:ResetTime()
-    self._time = self._former_time
-    self._text:set_text(self:Format())
-    self:FitTheText()
-    self:AnimateBG()
+    self:SetTime(self._former_time)
 end
 
 function EHITracker:AddDelay(delay)

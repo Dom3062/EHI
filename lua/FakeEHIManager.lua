@@ -18,6 +18,7 @@ function FakeEHIManager:init(panel)
     else
         self._scale = EHI:GetOption("scale")
     end
+    self._text_scale = EHI:GetOption("text_scale")
     self._bg_visibility = EHI:GetOption("show_tracker_bg")
     self._icons_visibility = EHI:GetOption("show_one_icon")
     panel_size = panel_size_original * self._scale
@@ -46,7 +47,7 @@ function FakeEHIManager:AddFakeTrackers()
     if EHI:GetOption("show_zipline_timer") then
         local time = math.random() * (8 - 1) + 1
         self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { "equipment_winch_hook", "wp_bag", "pd2_goto" } } )
-        self:AddFakeTracker({ id = "show_zipline_timer", time = time * 2, icons = { "equipment_winch_hook", "wp_bag", "restarter" } } )
+        self:AddFakeTracker({ id = "show_zipline_timer", time = time * 2, icons = { "equipment_winch_hook", "restarter" } } )
     end
     if EHI:GetOption("show_gage_tracker") then
         self:AddFakeTracker({ id = "show_gage_tracker", icons = { "gage" }, class = "FakeEHIProgressTracker" } )
@@ -85,6 +86,7 @@ function FakeEHIManager:AddFakeTracker(params)
     params.x = self._x
     params.y = self:GetY(self._n_of_trackers)
     params.scale = self._scale
+    params.text_scale = self._text_scale
     params.bg = self._bg_visibility
     params.one_icon = self._icons_visibility
     self._n_of_trackers = self._n_of_trackers + 1
@@ -160,6 +162,13 @@ function FakeEHIManager:SetSelected(id)
     end
 end
 
+function FakeEHIManager:UpdateTextScale(scale)
+    self._text_scale = scale
+    for _, tracker in pairs(self._fake_trackers) do
+        tracker:UpdateTextScale(scale)
+    end
+end
+
 function FakeEHIManager:UpdateScale(scale)
     self._scale = scale
     panel_size = panel_size_original * self._scale
@@ -200,7 +209,7 @@ local function GetIcon(icon, type)
         icon == "equipment_bloodvialok" or icon == "pd2_door" or icon == "pd2_kill" or icon == "equipment_liquid_nitrogen_canister" or icon == "pd2_question" or
         icon == "equipment_glasscutter" or icon == "C_Bain_H_Arena_Even" or icon == "C_Elephant_H_ElectionDay_Murphy" or icon == "C_Vlad_H_XMas_Impossible" or
         icon == "Other_H_None_Merry" or icon == "equipment_timer" or icon == "equipment_bloodvial" or icon == "C_Dentist_H_BigBank_Entrapment" or
-        icon == "equipment_bank_manager_key" then
+        icon == "equipment_bank_manager_key" or icon == "crime_spree_assault_extender" then
             return tweak_data.hud_icons:get_icon_data(icon)
         elseif icon == "faster" or icon == "silent" or icon == "restarter" then
             return "guis/textures/pd2/skilltree/drillgui_icon_" .. icon
@@ -346,6 +355,7 @@ FakeEHITracker = FakeEHITracker or class()
 FakeEHITracker._type = "base"
 function FakeEHITracker:init(panel, params)
     self._scale = params.scale
+    self._text_scale = params.text_scale
     local number_of_icons = 0
     local gap = 0
     if params.icons then
@@ -378,7 +388,7 @@ function FakeEHITracker:init(panel, params)
         w = self._time_bg_box:w(),
         h = self._time_bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h(),
+		font_size = self._panel:h() * self._text_scale,
         color = params.text_color or Color.white
     })
     self:FitTheText()
@@ -412,15 +422,19 @@ function FakeEHITracker:GetID()
     return self._id
 end
 
+function FakeEHITracker:ResetFontSize()
+    self._text:set_font_size(self._panel:h() * self._text_scale)
+end
+
 function FakeEHITracker:FitTheText()
+    self:ResetFontSize()
     local w = select(3, self._text:text_rect())
     if w > self._text:w() then
-        self._text:set_font_size(self._text:font_size() * (self._text:w() / w))
+        self._text:set_font_size(self._text:font_size() * (self._text:w() / w) * self._text_scale)
     end
 end
 
 function FakeEHITracker:UpdateFormat(format)
-    self._text:set_font_size(self._panel:h())
     self._text:set_text(self:Format(format))
     self:FitTheText()
 end
@@ -479,6 +493,11 @@ function FakeEHITracker:UpdateIconsVisibility(visibility)
     for i = i_start, self._n_of_icons, 1 do
         self["_icon" .. i]:set_visible(not visibility)
     end
+end
+
+function FakeEHITracker:UpdateTextScale(scale)
+    self._text_scale = scale
+    self:FitTheText()
 end
 
 function FakeEHITracker:destroy()
@@ -569,7 +588,7 @@ function FakeEHIEquipmentTracker:EquipmentFormat(format)
 end
 
 function FakeEHIEquipmentTracker:UpdateEquipmentFormat(format)
-    self._text:set_font_size(self._panel:h())
+    self._text:set_font_size(self._panel:h() * self._text_scale)
     self._text:set_text(self:Format(format))
     self:FitTheText()
 end

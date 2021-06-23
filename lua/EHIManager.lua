@@ -21,6 +21,11 @@ function EHIManager:init()
     self._laser_trackers = {}
     self._trackers_to_update = {}
     self._trackers_pos = {}
+    self._trade = {
+        ai = false,
+        normal = false,
+        t = nil
+    }
     self._n_of_trackers = 0
     self._cache = {}
     self._deployable_cache = {}
@@ -29,6 +34,7 @@ function EHIManager:init()
     local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
     self._x = x
     self._y = y
+    self._text_scale = EHI:GetOption("text_scale")
     panel_size = panel_size * self._scale
     panel_offset = panel_offset * self._scale
 end
@@ -48,7 +54,7 @@ function EHIManager:LoadTime(sync_time)
     self._sync_real_time = Application:time()
 end
 
-function EHIManager:CountPickupAvailable(tweak_data)
+function EHIManager:CountInteractionAvailable(tweak_data)
     local interactions = managers.interaction._interactive_units or {}
     local count = 0
     for _, unit in pairs(interactions) do
@@ -59,8 +65,9 @@ function EHIManager:CountPickupAvailable(tweak_data)
     return count
 end
 
-function EHIManager:CountUnitAvailable(idstring, slotmask)
+function EHIManager:CountUnitAvailable(path, slotmask)
     local count = 0
+    local idstring = Idstring(path)
     local units = World:find_units_quick("all", slotmask)
     for _, unit in pairs(units) do
         if unit and unit:name() == idstring then
@@ -76,7 +83,7 @@ function EHIManager:load()
     end
     local level_id = Global.game_settings.level_id
     if level_id == "pbr2" then -- Birth of Sky
-        self:SetTrackerProgressRemaining("voff_4", self:CountPickupAvailable("ring_band"))
+        self:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
     elseif level_id == "pex" then -- Breakfast in Tijuana
         --[[
             There are total 12 places where medals can appears
@@ -84,10 +91,11 @@ function EHIManager:load()
             -- last place is in the locker room (instance)
             Game sync all used places. When a medal is picked up, it is removed from the world
             and not synced to other drop-in players
+
+            Can't use function "CountInteractionAvailable" because the medal in the locker room is not interactable first
+            This is more accurate and reliable
         ]]
-        self:SetTrackerProgressRemaining("pex_11", self:CountUnitAvailable(
-            Idstring("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal"),
-            1) - 5)
+        self:SetTrackerProgressRemaining("pex_11", self:CountUnitAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5)
     end
 end
 
@@ -155,6 +163,7 @@ function EHIManager:AddTracker(params, pos)
     params.x = self._x
     params.y = self:GetY(pos)
     params.scale = self._scale
+    params.text_scale = self._text_scale
     params.sync_time = self._sync_time
     params.sync_real_time = self._sync_real_time
     local class = self:GetClass(params.class)
@@ -578,6 +587,16 @@ end
 function EHIManager:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, time)
     self:AddCustodyTimeTracker()
     self:CallFunction("CustodyTime", "AddPeerCustodyTime", peer_id, time)
+    if self._trade.normal or self._trade.ai then
+        local f = self._trade.normal and "SetTrade" or "SetAITrade"
+        self:CallFunction("CustodyTime", f, true, managers.trade:GetTradeCounterTick(), true)
+    end
+end
+
+function EHIManager:SetTrade(type, pause, t)
+    self._trade[type] = pause
+    local f = type == "normal" and "SetTrade" or "SetAITrade"
+    self:CallFunction("CustodyTime", f, pause, t)
 end
 
 function EHIManager:CallFunction(id, f, ...)

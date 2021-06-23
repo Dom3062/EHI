@@ -9,6 +9,9 @@
     "ehi_y_offset" : "Y offset",
     "ehi_y_offset_desc" : "Y offset",
 
+    "ehi_text_scale" : "Text Scale",
+    "ehi_text_scale_desc" : "Sets text scale.\nThis feature is useful for players with modded in-game fonts",
+
     "ehi_scale" : "Scale",
     "ehi_scale_desc" : "Sets scale of trackers. The higher number the bigger trackers are and vice versa",
 
@@ -23,7 +26,7 @@
     "ehi_visuals_menu" : "Visuals",
     "ehi_visuals_menu_desc" : "",
 
-    "ehi_show_tracker_bg" : "Show tracker background",
+    "ehi_show_tracker_bg" : "Show Tracker Background",
     "ehi_show_tracker_bg_desc" : "Shows tracker background\nWhen disabled, the background is hidden and animation is not visible",
 
     "ehi_show_one_icon" : "Show 1 Icon in Tracker",

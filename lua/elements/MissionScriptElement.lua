@@ -449,8 +449,8 @@ elseif level_id == "mad" then -- Boiling Point
         [100891] = { time = 15.33, id = "emp_bomp_drop", icons = { "pd2_goto" } },
         [101906] = { time = 1200, id = "daily_cake", icons = { Icon.Trophy }, class = TT.Warning, condition = ovk_and_up },
         [100547] = { special_function = SF.Trigger, data = { 1005471, 1005472 } },
-        [1005471] = { id = "mad_2", icons = { "C_Jimmy_H_Boiling_TheGround" }, class = TT.AchievementNotification, contidition = show_achievement and ovk_and_up },
-        [1005472] = { id = "cac_13", icons = { "C_Jimmy_H_Boiling_Remember" }, class = TT.AchievementNotification, contidition = show_achievement and ovk_and_up },
+        [1005471] = { id = "mad_2", icons = { "C_Jimmy_H_Boiling_TheGround" }, class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+        [1005472] = { id = "cac_13", icons = { "C_Jimmy_H_Boiling_Remember" }, class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
 
         [EHI:GetInstanceElementID(100019, 3150)] = { time = 90, id = "Scan", icons = { "mad_scan" }, class = "EHIPausableTracker", special_function = SF.UnpauseTrackerIfExists },
         [EHI:GetInstanceElementID(100049, 3150)] = { id = "Scan", special_function = SF.PauseTracker },
@@ -1765,7 +1765,7 @@ elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
         [104262] = { time = 549/30, id = "SkidDriving8", icons = skid },
         [104304] = { time = 40, id = "SkidDriving9", icons = skid }, -- More accurate
         [103667] = { time = 1399/30, id = "SkidDriving10", icons = skid },
-        [100782] = { time = 18, id = "SkidDriving11", icons = skid }, -- 959/30
+        [100782] = { time = 18, id = "SkidDriving11", icons = skid }, -- More accurate
         [104227] = { time = 37, id = "SkidDriving12", icons = skid }, -- More accurate
         [104305] = { time = 25, id = "SkidDriving13", icons = skid }, -- More accurate
         [101009] = { time = 210/30, id = "RampRaise", icons = { "faster" } },

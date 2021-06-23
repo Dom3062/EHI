@@ -1,3 +1,8 @@
+r16 (23. 06. 2021):
+Added option "Text Scale"
+Trade Delay Tracker: Fixed an issue where the tracker could get wonky when related settings were changed mid-game
+Trade Delay Tracker: Fixed an issue where delay did not count down when a player went to custody in Control or Anticipation state
+
 r15 (21. 06. 2021):
 Added Spanish translation
 Brooklyn 10-10: Fixed a startup crash

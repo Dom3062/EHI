@@ -10,6 +10,10 @@ function EHIMenu:UpdateYOffset(y)
     self._preview_panel:UpdateYOffset(y)
 end
 
+function EHIMenu:UpdateTextScale(scale)
+    self._preview_panel:UpdateTextScale(scale)
+end
+
 function EHIMenu:UpdateScale(scale)
     self._preview_panel:UpdateScale(scale)
 end

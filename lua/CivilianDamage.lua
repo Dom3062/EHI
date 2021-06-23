@@ -12,8 +12,10 @@ if EHI:GetOption("show_trade_delay_option") == 2 then
     return
 end
 
+local other_players_only = EHI:GetOption("show_trade_delay_other_players_only")
+
 local function AddTracker(peer_id)
-    if EHI:GetOption("show_trade_delay_other_players_only") and peer_id == managers.network:session():local_peer():id() then
+    if other_players_only and peer_id == managers.network:session():local_peer():id() then
         return
     end
     local tweak_data = tweak_data.player.damage

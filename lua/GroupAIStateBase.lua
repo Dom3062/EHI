@@ -51,6 +51,9 @@ if level_id == "alex_2" then
 end
 
 local function Execute(dropin)
+    if not dropin then
+        managers.ehi:SetTrade("normal", true, managers.trade:GetTradeCounterTick())
+    end
     for _, achievement in ipairs(achievements_to_remove) do
         managers.ehi:SetFailedAchievement(achievement)
     end

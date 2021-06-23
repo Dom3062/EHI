@@ -1,3 +1,7 @@
+if true then
+    return
+end
+
 if EHI._hooks.GamePlayCentralManager then
 	return
 else
