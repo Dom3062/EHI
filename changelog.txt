@@ -1,3 +1,6 @@
+r17 (24. 06. 2021):
+Fixed a crash after alarm went off when "Trade Delay Tracker" is not enabled
+
 r16 (23. 06. 2021):
 Added option "Text Scale"
 Trade Delay Tracker: Fixed an issue where the tracker could get wonky when related settings were changed mid-game
