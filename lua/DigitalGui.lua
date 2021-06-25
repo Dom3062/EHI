@@ -63,7 +63,7 @@ if level_id == "hvh" then -- Cursed Kill Room
 elseif level_id == "mus" then -- The Diamond
 	remove =
 	{
-		[133922] = true -- Path time lock in the The Diamond chamber
+		[133922] = true -- Path time lock in the Diamond chamber
 	}
 elseif level_id == "hox_3" then -- Hoxton Revenge
 	local alarm_box = EHI:GetInstanceUnitID(100021, 9685) -- Alarm Box
@@ -167,7 +167,7 @@ elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
 	}
 	local function f()
         local editor_id = EHI:GetInstanceUnitID(100150, 9030)
-        for _, unit in ipairs(World:find_units_quick("all", 1)) do
+        for _, unit in pairs(World:find_units_quick("all", 1)) do
             if unit and unit:editor_id() == editor_id then
                 unit:digital_gui():OnAlarm()
             end
@@ -231,8 +231,8 @@ end
 --[[-- Fixes timer flashing in Beneath the Mountain, The Big Bank and Golden Grin Casino
 if level_id == "pbr" or level_id == "big" or level_id == "kenaz" then
 	SetTime = function(key, time)
-		if managers.hud.ehi then
-			managers.hud:SetTimeNoAnim(key, time)
+		if managers.ehi then
+			managers.ehi:SetTrackerTimeNoAnim(key, time)
 		end
 	end
 elseif level_id ~= "shoutout_raid" then

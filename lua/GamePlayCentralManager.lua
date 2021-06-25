@@ -1,7 +1,3 @@
-if true then
-    return
-end
-
 if EHI._hooks.GamePlayCentralManager then
 	return
 else
@@ -16,13 +12,10 @@ local original =
 
 function GamePlayCentralManager:sync_heist_time(heist_time, ...)
     original.sync_heist_time(self, heist_time, ...)
-    managers.ehi:SyncTime(heist_time)
 end
 
 function GamePlayCentralManager:load(data, ...)
     original.load(self, data, ...)
 	local state = data.GamePlayCentralManager
-	if state.heist_timer then
-        managers.ehi:LoadTime(state.heist_timer)
-	end
+    managers.ehi:LoadTime(state.heist_timer or 0)
 end

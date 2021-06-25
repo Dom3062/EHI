@@ -120,6 +120,3 @@ function EHITimerTracker:SetTextColor()
         self._text:set_color(Color.white)
     end
 end
-
-function EHITimerTracker:Sync(new_time)
-end

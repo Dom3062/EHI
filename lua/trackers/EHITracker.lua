@@ -217,22 +217,6 @@ function EHITracker:update(t, dt)
     end
 end
 
-function EHITracker:Sync(new_time)
-    if true then
-        return
-    end
-    local time_diff = new_time - self._last_sync
-    local timer_diff = self._start_time - self._time
-    if time_diff < timer_diff then
-        self._time = self._time - (timer_diff - time_diff)
-    elseif time_diff > timer_diff then
-        self._time = self._time + (time_diff - timer_diff)
-    end
-    self._last_sync = new_time
-    self._start_time = self._time
-    self._end_time = new_time + self._time
-end
-
 function EHITracker:ResetFontSize()
     self._text:set_font_size(self._panel:h() * self._text_scale)
 end

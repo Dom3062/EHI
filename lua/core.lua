@@ -41,7 +41,7 @@ _G.EHI =
         GetFromCache = 10,
         ReplaceTrackerWithTracker = 11,
         IncreaseChance = 12,
-        ExecuteIfTrackerExists = 13,
+        TriggerIfEnabled = 13,
         CreateAnotherTrackerWithTracker = 14,
         SetChanceWhenTrackerExists = 15,
         RemoveTriggerWhenExecuted = 16,
@@ -590,11 +590,11 @@ function EHI:Trigger(id, enabled)
             elseif f == SF.IncreaseChance then
                 local trigger = triggers[id]
                 managers.ehi:IncreaseChance(trigger.id, trigger.amount)
-            elseif f == SF.ExecuteIfTrackerExists then
-                local data = triggers[id].data
-                if managers.ehi:TrackerExists(data.id) then
-                    managers.hud:SetTime(triggers[id].id, triggers[id].time)
-                    managers.ehi:RemoveTracker(data.id)
+            elseif f == SF.TriggerIfEnabled then
+                if enabled then
+                    for _, trigger in pairs(triggers[id].data) do
+                        self:Trigger(trigger)
+                    end
                 end
             elseif f == SF.CreateAnotherTrackerWithTracker then
                 self:CheckCondition(id)
@@ -649,7 +649,7 @@ function EHI:Trigger(id, enabled)
                 managers.ehi:IncreaseTrackerProgress(triggers[id].id)
             elseif f == SF.SetTimeNoAnimOrCreateTracker then
                 if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.hud:SetTimeNoAnim(triggers[id].id, self:GetTime(id))
+                    managers.ehi:SetTrackerTimeNoAnim(triggers[id].id, self:GetTime(id))
                 else
                     self:CheckCondition(id)
                 end

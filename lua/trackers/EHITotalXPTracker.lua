@@ -7,7 +7,7 @@ function EHITotalXPTracker:init(panel, params)
 end
 
 function EHITotalXPTracker:Format()
-    return "+" .. self._xp
+    return managers.experience:cash_string(self._xp, "+")
 end
 
 function EHITotalXPTracker:AddXP(amount)

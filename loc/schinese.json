@@ -9,6 +9,9 @@
     "ehi_y_offset" : "Y轴偏移",
     "ehi_y_offset_desc" : "Y轴偏移设置（数值越小追踪器越靠上）",
 
+    "ehi_text_scale" : "文本大小",
+    "ehi_text_scale_desc" : "设置模组显示的文本大小\n对更改了游戏字体的玩家来说很有用",
+
     "ehi_scale" : "追踪器大小",
     "ehi_scale_desc" : "更改追踪器大小，数值越大追踪器越大",
 

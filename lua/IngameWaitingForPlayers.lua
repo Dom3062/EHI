@@ -39,13 +39,6 @@ function IngameWaitingForPlayersState:at_exit(...)
     if not Global.hud_disabled then
         managers.ehi:ShowPanel()
     end
-    if Global.statistics_manager.playing_from_start then
-        if Network:is_client() then
-            managers.ehi:SyncTime(0)
-        end
-    else
-        managers.ehi:RemoveTracker("uno_9")
-    end
     AddGageTracker()
     if EHI.debug then
         for _, unit in pairs(managers.interaction._interactive_units or {}) do

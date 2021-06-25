@@ -16,6 +16,7 @@ function EHIManager:init()
         name = "ehi_panel",
         layer = -10
     })
+    self._t = 0
     self._trackers = {}
     self._pager_trackers = {}
     self._laser_trackers = {}
@@ -23,14 +24,11 @@ function EHIManager:init()
     self._trackers_pos = {}
     self._trade = {
         ai = false,
-        normal = false,
-        t = nil
+        normal = false
     }
     self._n_of_trackers = 0
     self._cache = {}
     self._deployable_cache = {}
-    self._sync_time = 0
-    self._sync_real_time = Application:time()
     local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
     self._x = x
     self._y = y
@@ -47,11 +45,8 @@ function EHIManager:HidePanel()
     self._ws:hide()
 end
 
-function EHIManager:LoadTime(sync_time)
-    --EHI:Log("Loaded synced Heist time")
-    --EHI:Log(tostring(sync_time))
-    self._sync_time = sync_time
-    self._sync_real_time = Application:time()
+function EHIManager:LoadTime(t)
+    self._t = t
 end
 
 function EHIManager:CountInteractionAvailable(tweak_data)
@@ -105,6 +100,12 @@ function EHIManager:update(t, dt)
     end
 end
 
+function EHIManager:update_client(t)
+    local dt = t - self._t
+    self._t = t
+    self:update(self._t, dt)
+end
+
 function EHIManager:destroy()
     for _, tracker in pairs(self._trackers) do
         tracker:destroy()
@@ -116,15 +117,6 @@ function EHIManager:destroy()
             managers.gui_data:destroy_workspace(self._ws)
         end
         self._ws = nil
-    end
-end
-
-function EHIManager:SyncTime(time)
-    --EHI:Log("Synced Heist time: " .. tostring(time))
-    self._sync_time = time
-    self._sync_real_time = Application:time()
-    for _, tracker in pairs(self._trackers_to_update) do
-        tracker:Sync(time)
     end
 end
 

@@ -31,7 +31,7 @@ if level_id == "des" then -- Henry's Rock
 elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
     local function f()
         local editor_id = EHI:GetInstanceUnitID(100150, 9030)
-        for _, unit in ipairs(World:find_units_quick("all", 1)) do
+        for _, unit in pairs(World:find_units_quick("all", 1)) do
             if unit and unit:editor_id() == editor_id then
                 unit:timer_gui():OnAlarm()
             end

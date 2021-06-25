@@ -5,6 +5,8 @@ else
 	EHI._hooks.HUDManagerPD2 = true
 end
 
+local level_id = Global.game_settings.level_id
+
 local original =
 {
     _setup_player_info_hud_pd2 = HUDManager._setup_player_info_hud_pd2,
@@ -17,8 +19,9 @@ local original =
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
     self.ehi = managers.ehi
-    self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
-    local level_id = Global.game_settings.level_id
+    if Network:is_server() or level_id == "hvh" then
+        self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
+    end
     local difficulty = Global.game_settings.difficulty
     local level_tweak_data = tweak_data.levels[level_id]
     if level_tweak_data and level_tweak_data.team_ai_off then
@@ -56,17 +59,12 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         })
     end
     if EHI:GetOption("show_achievement") then
-        self:ShowAchievements(level_id, difficulty)
+        self:ShowAchievements(difficulty)
     end
-    self:ShowLootCounter(level_id, difficulty)
+    self:ShowLootCounter(difficulty)
 end
 
-function HUDManager:ShowAchievements(level_id, difficulty)
-    if level_id == "pines" then
-        if EHI:IsOVKOrAbove(difficulty) then
-            self.ehi:AddAchievementProgressTracker("uno_9", 40, "C_Vlad_H_XMas_Whats")
-        end
-    end
+function HUDManager:ShowAchievements(difficulty)
     if level_id == "cane" then
         if EHI:IsOVKOrAbove(difficulty) then
             self.ehi:AddAchievementProgressTracker("cane_3", 100, "C_Vlad_H_Santa_EuroBag")
@@ -122,7 +120,7 @@ function HUDManager:ShowAchievements(level_id, difficulty)
     end
 end
 
-function HUDManager:ShowLootCounter(level_id, difficulty)
+function HUDManager:ShowLootCounter(difficulty)
     local max = 0
     if level_id == "spa" then
         max = 4
@@ -176,10 +174,6 @@ function HUDManager:destroy(...)
     original.destroy(self, ...)
 end
 
-function HUDManager:SyncHeistTime(time)
-    self.ehi:SyncTime(time)
-end
-
 function HUDManager:AddTracker(params)
     self.ehi:AddTracker(params)
 end
@@ -196,10 +190,6 @@ function HUDManager:SetTime(id, time)
     self.ehi:SetTrackerTime(id, time)
 end
 
-function HUDManager:SetTimeNoAnim(id, time)
-    self.ehi:CallFunction(id, "SetTimeNoAnim", time)
-end
-
 function HUDManager:AddDelay(id, delay)
     self.ehi:AddDelayToTracker(id, delay)
 end
@@ -209,7 +199,12 @@ function HUDManager:AddDelayToTrackerAndUnpause(id, delay)
     self:UnpauseTracker(id)
 end
 
-if Network:is_client() then
+if Network:is_client() and level_id ~= "hvh" then
+    original.feed_heist_time = HUDManager.feed_heist_time
+    function HUDManager:feed_heist_time(time, ...)
+        original.feed_heist_time(self, time, ...)
+        managers.ehi:update_client(time)
+    end
 end
 
 function HUDManager:Debug(id)

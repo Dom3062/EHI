@@ -1,8 +1,8 @@
 local EHI = EHI
 if EHI._hooks.TradeManager then
-	return
+    return
 else
-	EHI._hooks.TradeManager = true
+    EHI._hooks.TradeManager = true
 end
 
 if not EHI:GetOption("show_trade_delay") then
@@ -77,10 +77,12 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, .
             CreateTracker(peer_id, respawn_penalty)
         elseif respawn_penalty ~= tweak_data.player.damage.base_respawn_time_penalty then
             local tracker = managers.ehi:GetTracker(TrackerID)
-            if tracker and tracker:PeerExists(peer_id) then
-                tracker:UpdatePeerCustodyTime(peer_id, respawn_penalty)
-            else
-                tracker:AddPeerCustodyTime(peer_id, respawn_penalty)
+            if tracker then
+                if tracker:PeerExists(peer_id) then
+                    tracker:UpdatePeerCustodyTime(peer_id, respawn_penalty)
+                else
+                    tracker:AddPeerCustodyTime(peer_id, respawn_penalty)
+                end
             end
         end
         managers.ehi:CallFunction(TrackerID, "SetPeerInCustody", peer_id)

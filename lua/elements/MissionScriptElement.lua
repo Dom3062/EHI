@@ -547,34 +547,35 @@ elseif level_id == "big" then -- The Big Bank
         [105623] = { time = 8, id = "Bus", icons = { Icon.Wait } }
     }
 elseif level_id == "cane" then -- Santa's Workshop
+    local fire_recharge = { time = 180, id = "FireRecharge", icons = { "pd2_fire", "restarter" } }
+    local fire_t = { time = 60, id = "Fire", icons = { "pd2_fire" }, class = TT.Warning }
     triggers = {
         [100647] = { time = 240 + 60, id = "Chimney", icons = { Icon.Escape, Icon.LootDrop } },
         [EHI:GetInstanceElementID(100078, 10700)] = { time = 60, id = "Chimney", icons = { Icon.Escape, Icon.LootDrop }, special_function = SF.AddTrackerIfDoesNotExist },
         [EHI:GetInstanceElementID(100078, 11000)] = { time = 60, id = "Chimney", icons = { Icon.Escape, Icon.LootDrop }, special_function = SF.AddTrackerIfDoesNotExist },
         [EHI:GetInstanceElementID(100011, 10700)] = { time = 207 + 3, id = "ChimneyClose", icons = { Icon.Escape, Icon.LootDrop, "faster" }, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" } },
         [EHI:GetInstanceElementID(100011, 11000)] = { time = 207 + 3, id = "ChimneyClose", icons = { Icon.Escape, Icon.LootDrop, "faster" }, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" } },
-        [EHI:GetInstanceElementID(100135, 11300)] = { time = 12, id = "SafeEvent", icons = { "heli", "pd2_goto" } },
-
-        [EHI:GetInstanceElementID(100024, 0)] = { time = 180, id = "FireRecharge", icons = { "pd2_fire", "restarter" } },
-        [EHI:GetInstanceElementID(100024, 120)] = { time = 180, id = "FireRecharge", icons = { "pd2_fire", "restarter" } },
-        [EHI:GetInstanceElementID(100024, 240)] = { time = 180, id = "FireRecharge", icons = { "pd2_fire", "restarter" } },
-        [EHI:GetInstanceElementID(100024, 360)] = { time = 180, id = "FireRecharge", icons = { "pd2_fire", "restarter" } },
-        [EHI:GetInstanceElementID(100024, 480)] = { time = 180, id = "FireRecharge", icons = { "pd2_fire", "restarter" } },
-
-        [EHI:GetInstanceElementID(100022, 0)] = { time = 60, id = "Fire", icons = { "pd2_fire" }, class = TT.Warning },
-        [EHI:GetInstanceElementID(100022, 120)] = { time = 60, id = "Fire", icons = { "pd2_fire" }, class = TT.Warning },
-        [EHI:GetInstanceElementID(100022, 240)] = { time = 60, id = "Fire", icons = { "pd2_fire" }, class = TT.Warning },
-        [EHI:GetInstanceElementID(100022, 360)] = { time = 60, id = "Fire", icons = { "pd2_fire" }, class = TT.Warning },
-        [EHI:GetInstanceElementID(100022, 480)] = { time = 60, id = "Fire", icons = { "pd2_fire" }, class = TT.Warning }
+        [EHI:GetInstanceElementID(100135, 11300)] = { time = 12, id = "SafeEvent", icons = { "heli", "pd2_goto" } }
     }
+    for _, index in pairs({0, 120, 240, 360, 480}) do
+        local recharge = EHI:DeepClone(fire_recharge)
+        recharge.id = recharge.id .. index
+        triggers[EHI:GetInstanceElementID(100024, index)] = recharge
+        local fire = EHI:DeepClone(fire_t)
+        fire.id = fire.id .. index
+        triggers[EHI:GetInstanceElementID(100022, index)] = fire
+    end
 elseif level_id == "red2" then -- First World Bank
     triggers = {
         [101299] = { time = 300, id = "Thermite", icons = { Icon.Fire }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1012991 } },
         [1012991] = { time = 90, id = "ThermiteShorterTime", icons = { Icon.Fire, Icon.Wait }, class = TT.Warning }, -- Triggered by 101299
-        [101325] = { time = 180, id = "Thermite", special_function = SF.ExecuteIfTrackerExists, data = { id = "ThermiteShortTime" } },
+        [101325] = { special_function = SF.TriggerIfEnabled, data = { 1013251, 1013252 } },
+        [1013251] = { time = 180, id = "Thermite", icons = { Icon.Fire }, special_function = SF.SetTimeOrCreateTracker },
+        [1013252] = { id = "ThermiteShorterTime", special_function = SF.RemoveTracker },
         [103373] = { time = 817, id = "green_3", icons = { "C_Classics_H_FirstWorldBank_LEET" }, class = TT.Achievement },
         [107072] = { id = "cac_10", special_function = SF.SetAchievementComplete },
-        [101544] = { time = 30, id = "cac_10", icons = { "C_Classics_H_FirstWorldBank_Federal" }, class = TT.Achievement, special_function = SF.RemoveTriggerAndShowAchievement, condition_function = CF.IsLoud }
+        [101544] = { time = 30, id = "cac_10", icons = { "C_Classics_H_FirstWorldBank_Federal" }, class = TT.Achievement, special_function = SF.RemoveTriggerAndShowAchievement, condition_function = CF.IsLoud },
+        [101684] = { time = 5.1, id = "C4", icons = { "pd2_c4" } }
     }
 elseif level_id == "dinner" then -- Slaughterhouse
     triggers = {
@@ -1133,6 +1134,7 @@ elseif level_id == "peta2" then -- Goat Simulator Heist Day 2
     }
 elseif level_id == "pines" then -- White Xmas
     triggers = {
+        [101471] = { max = 40, id = "uno_9", icons = { "C_Vlad_H_XMas_Whats" }, class = TT.AchievementProgress, condition = show_achievement and ovk_and_up },
         [103707] = { time = 1800, id = "BulldozerSpawn", icons = { "heavy" }, class = TT.Warning, condition = very_hard_and_up },
         [103367] = { chance = 100, id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = TT.Chance },
         [101001] = { time = 1200, id = "PresentDropChance50", icons = { "C_Vlad_H_XMas_Impossible", Icon.Wait }, class = TT.Warning },

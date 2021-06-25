@@ -20,9 +20,6 @@ function EHIProgressTracker:update(t, dt)
     end
 end
 
-function EHIProgressTracker:Sync(new_time)
-end
-
 function EHIProgressTracker:Format()
     return self._progress .. "/" .. self._max
 end

@@ -303,6 +303,3 @@ end
 function EHICiviliansKilledTracker:IsTrading()
     return self._trade or self._ai_trade
 end
-
-function EHICiviliansKilledTracker:Sync(new_time) -- Don't re-sync time
-end

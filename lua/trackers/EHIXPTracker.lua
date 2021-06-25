@@ -7,7 +7,7 @@ function EHIXPTracker:init(panel, params)
 end
 
 function EHIXPTracker:Format() -- Formats the amount of XP in the panel
-    return "+" .. self._xp
+    return managers.experience:cash_string(self._xp, "+")
 end
 
 function EHIXPTracker:update(t, dt)
@@ -15,9 +15,6 @@ function EHIXPTracker:update(t, dt)
     if self._time <= 0 then
         self:delete()
     end
-end
-
-function EHIXPTracker:Sync(new_time) -- Don't re-sync time
 end
 
 function EHIXPTracker:AddXP(amount)

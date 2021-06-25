@@ -1,3 +1,9 @@
+r18 (25. 06. 2021):
+Greatly improved accuracy of timed trackers on client
+Fixed a crash when a player went to custody and "Trade Delay" tracker was not visible
+First World Bank: Fixed an issue where Thermite timer did not update correctly
+XP Tracker: Improved formatting
+
 r17 (24. 06. 2021):
 Fixed a crash after alarm went off when "Trade Delay Tracker" is not enabled
 
