@@ -1,65 +1,44 @@
-local function GetIcon(icon, type)
-    if type == "achievement" then
-        if icon == "faster" then -- Heat Street
-            return "guis/textures/pd2/skilltree/drillgui_icon_faster"
-        elseif icon == "hostage" then
-            return "guis/textures/pd2/hud_icon_hostage"
-        else
-            return tweak_data.hud_icons:get_icon_data(icon)
-        end
-    else
-        if icon == "pd2_escape" or icon == "pd2_lootdrop" or icon == "C_Vlad_H_Mallcrasher_Shoot" or icon == "wp_bag" or icon == "pd2_defend" or icon == "pd2_fire" or
-        icon == "pd2_generic_interact" or icon == "wp_sentry" or icon == "pd2_fix" or icon == "pd2_drill" or icon == "pd2_generic_saw" or icon == "wp_hack" or
-        icon == "pagers_used" or icon == "mugshot_in_custody" or icon == "pd2_car" or icon == "pd2_c4" or icon == "pd2_generic_interact" or icon == "pd2_talk" or
-        icon == "equipment_winch_hook" or icon == "pd2_water_tap" or icon == "pd2_goto" or icon == "pd2_methlab" or icon == "pd2_generic_look" or
-        icon == "equipment_bloodvialok" or icon == "pd2_door" or icon == "pd2_kill" or icon == "equipment_liquid_nitrogen_canister" or icon == "pd2_question" or
-        icon == "equipment_glasscutter" or icon == "C_Elephant_H_ElectionDay_Murphy" or icon == "C_Vlad_H_XMas_Impossible" or icon == "Other_H_None_Merry" or
-        icon == "equipment_timer" or icon == "equipment_bloodvial" or icon == "C_Dentist_H_BigBank_Entrapment" or icon == "equipment_bank_manager_key" or
-        icon == "pd2_loot" or icon == "pd2_power" or icon == "equipment_defibrillator" or icon == "crime_spree_assault_extender" then
-            return tweak_data.hud_icons:get_icon_data(icon)
-        elseif icon == "faster" or icon == "silent" or icon == "restarter" then
-            return "guis/textures/pd2/skilltree/drillgui_icon_" .. icon
-        elseif icon == "xp" then
-            return "guis/textures/pd2/blackmarket/xp_drop"
-        elseif icon == "heli" or icon == "mad_scan" or icon == "boat" or icon == "enemy" or icon == "piggy" or icon == "assaultbox" then
-            return "guis/textures/pd2_mod_ehi/" .. icon
-        elseif icon == "reload" then
-            return "guis/textures/pd2/skilltree/icons_atlas", {0, 576, 64, 64}
-        elseif icon == "trophy" then
-            return tweak_data.hud_icons:get_icon_data("milestone_trophy")
-        elseif icon == "smoke" then
-            return "guis/dlcs/max/textures/pd2/specialization/icons_atlas", {0, 0, 64, 64}
-        elseif icon == "teargas" then
-            return "guis/dlcs/drm/textures/pd2/crime_spree/modifiers_atlas_2", {128, 256, 128, 128}
-        elseif icon == "gage" then
-            return "guis/dlcs/gage_pack_jobs/textures/pd2/endscreen/gage_assignment"
-        elseif icon == "hostage" then
-            return "guis/textures/pd2/hud_icon_hostage"
-        elseif icon == "buff_shield" then
-            return "guis/textures/pd2/hud_buff_shield"
-        elseif icon == "doctor_bag" or icon == "ammo_bag" or icon == "first_aid_kit" or icon == "bodybags_bag" then
-            return "guis/textures/pd2/blackmarket/icons/deployables/outline/" .. icon
-        elseif icon == "frag_grenade" then
-            local icon_definition = tweak_data.hud_icons.frag_grenade
-            return icon_definition.texture, icon_definition.texture_rect
-        elseif icon == "minion" then
-            return "guis/textures/pd2/skilltree/icons_atlas", {384, 512, 64, 64}
-        elseif icon == "heavy" then
-            return "guis/textures/pd2/skilltree/icons_atlas", {192, 64, 64, 64}
-        elseif icon == "money" then
-            return tweak_data.hud_icons:get_icon_data("equipment_plates")
-        elseif icon == "paper" then
-            return tweak_data.hud_icons:get_icon_data("equipment_paper_roll")
-        elseif icon == "ink" then
-            return tweak_data.hud_icons:get_icon_data("equipment_printer_ink")
-        elseif icon == "sniper" then
-            return "guis/textures/pd2/skilltree/icons_atlas", {384, 320, 64, 64}
-        elseif icon == "camera_loop" then
-            return "guis/textures/pd2/skilltree/icons_atlas", {256, 128, 64, 64}
-        elseif icon == "pager_icon" then
-            return "guis/textures/pd2/specialization/icons_atlas", {64, 256, 64, 64}
-        end
+local icons =
+{
+    default = { texture = "guis/textures/pd2/pd2_waypoints", texture_rect = {64, 64, 32, 32} },
+
+    faster = { texture = "guis/textures/pd2/skilltree/drillgui_icon_faster" },
+    silent = { texture = "guis/textures/pd2/skilltree/drillgui_icon_silent" },
+    restarter = { texture = "guis/textures/pd2/skilltree/drillgui_icon_restarter" },
+    xp = { texture = "guis/textures/pd2/blackmarket/xp_drop" },
+
+    heli = { texture = "guis/textures/pd2_mod_ehi/heli" },
+    mad_scan = { texture = "guis/textures/pd2_mod_ehi/mad_scan" },
+    boat = { texture = "guis/textures/pd2_mod_ehi/boat" },
+    enemy = { texture = "guis/textures/pd2_mod_ehi/enemy" },
+    piggy = { texture = "guis/textures/pd2_mod_ehi/piggy" },
+    assaultbox = { texture = "guis/textures/pd2_mod_ehi/assaultbox" },
+
+    reload = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {0, 576, 64, 64} },
+    smoke = { texture = "guis/dlcs/max/textures/pd2/specialization/icons_atlas", texture_rect = {0, 0, 64, 64} },
+    teargas = { texture = "guis/dlcs/drm/textures/pd2/crime_spree/modifiers_atlas_2", texture_rect = {128, 256, 128, 128} },
+    gage = { texture = "guis/dlcs/gage_pack_jobs/textures/pd2/endscreen/gage_assignment" },
+    hostage = { texture = "guis/textures/pd2/hud_icon_hostage" },
+    buff_shield = { texture = "guis/textures/pd2/hud_buff_shield" },
+
+    doctor_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/doctor_bag" },
+    ammo_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/ammo_bag" },
+    first_aid_kit = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/first_aid_kit" },
+    bodybags_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/bodybags_bag" },
+    frag_grenade = { texture = tweak_data.hud_icons.frag_grenade.texture, texture_rect = tweak_data.hud_icons.frag_grenade.texture_rect },
+
+    minion = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 512, 64, 64} },
+    heavy = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {192, 64, 64, 64} },
+    sniper = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 320, 64, 64} },
+    camera_loop = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {256, 128, 64, 64} },
+    pager_icon = { texture = "guis/textures/pd2/specialization/icons_atlas", texture_rect = {64, 256, 64, 64} }
+}
+
+local function GetIcon(icon)
+    if icons[icon] then
+        return icons[icon].texture, icons[icon].texture_rect
     end
+    return tweak_data.hud_icons:get_icon_or(icon, icons.default.texture, icons.default.texture_rect)
 end
 
 local function CreateIcon(self, i, texture, texture_rect, color, alpha, visible, x)
@@ -79,14 +58,13 @@ end
 local bg_visibility = EHI:GetOption("show_tracker_bg")
 
 EHITracker = EHITracker or class()
-EHITracker._type = "base"
 EHITracker._update = true
 function EHITracker:init(panel, params)
     self._scale = params.scale
     self._text_scale = params.text_scale
     local number_of_icons = 0
     local gap = 0
-    if params.icons then
+    if params.icons and type(params.icons) == "table" then
         number_of_icons = #params.icons
         gap = 5 * number_of_icons
     end
@@ -137,10 +115,10 @@ if EHI:GetOption("show_one_icon") then
         local icon_pos = self._time_bg_box:w() + (5 * self._scale)
         local first_icon = icons[1]
         if type(first_icon) == "string" then
-            local texture, rect = GetIcon(first_icon, self._type)
+            local texture, rect = GetIcon(first_icon)
             CreateIcon(self, "1", texture, rect, Color.white, 1, true, icon_pos)
         elseif type(first_icon) == "table" then
-            local texture, rect = GetIcon(first_icon.icon, self._type)
+            local texture, rect = GetIcon(first_icon.icon)
             CreateIcon(self, "1", texture, rect, first_icon.color,
                 first_icon.alpha or 1,
                 first_icon.visible ~= false,
@@ -154,10 +132,10 @@ else
         for i, v in ipairs(icons) do
             local s_i = tostring(i)
             if type(v) == "string" then
-                local texture, rect = GetIcon(v, self._type)
+                local texture, rect = GetIcon(v)
                 CreateIcon(self, s_i, texture, rect, Color.white, 1, true, start + icon_gap)
             else -- table
-                local texture, rect = GetIcon(v.icon, self._type)
+                local texture, rect = GetIcon(v.icon)
                 CreateIcon(self, s_i, texture, rect, v.color,
                     v.alpha or 1,
                     v.visible ~= false,

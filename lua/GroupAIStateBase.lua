@@ -47,7 +47,7 @@ end
 
 local level_id = Global.game_settings.level_id
 if level_id == "alex_2" then
-    show_trackers[#show_trackers + 1] = { time = 75 + 15 + 30, id = "FirstAssaultDelay", icons = { "assaultbox" }, class = "EHIWarningTracker" }
+    show_trackers[#show_trackers + 1] = { time = 75 + 15 + 30, id = "FirstAssaultDelay", icons = { { icon = "assaultbox", color = Color(1, 1, 0) } }, class = "EHIWarningTracker" }
 end
 
 local function Execute(dropin)
@@ -66,8 +66,6 @@ local function Execute(dropin)
     for _, achievement in ipairs(set_ok_state) do
         managers.ehi:CallFunction(achievement, "SetStatus", "ok")
     end
-    managers.ehi:RemovePagerTrackers()
-    managers.ehi:RemoveLaserTrackers()
     EHI:RunOnAlarmCallbacks()
     for _, hook in ipairs(unhook) do
         EHI:Unhook(hook)

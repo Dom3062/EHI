@@ -1,2 +1,0 @@
-EHIAchievementProgressTracker = EHIAchievementProgressTracker or class(EHIProgressTracker)
-EHIAchievementProgressTracker._type = "achievement"

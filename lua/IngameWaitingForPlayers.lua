@@ -19,15 +19,13 @@ local function AddGageTracker()
 end
 
 local function f()
-    local pex_medal = Idstring("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal")
-    local total = 0
-    for _, unit in ipairs(World:find_units_quick("all", 1)) do
-        if unit and unit:name() == pex_medal then
-            EHI:Log("Medal found (" .. tostring(unit:editor_id()) .. "); interactable: " .. tostring(unit:interaction() and unit:interaction():active()) .. "; empty: " .. tostring(unit:base()._empty) .. "; enabled: " .. tostring(unit:enabled()))
-            total = total + 1
+    local idstring = Idstring("units/pd2_dlc_nmh/props/nmh_prop_counter/nmh_prop_counter")
+    local units = World:find_units_quick("all", 1)
+    for _, unit in pairs(units) do
+        if unit and unit:name() == idstring and unit:digital_gui() then
+            EHI:Log("Found counter; Timer: " .. tostring(unit:digital_gui()._timer) .. "; Timer Count Down: " .. tostring(unit:digital_gui()._timer_count_down) .. "; Paused: " .. tostring(unit:digital_gui()._timer_paused))
         end
     end
-    EHI:Log("Total medals found: " .. tostring(total))
 end
 
 local original =
@@ -44,7 +42,6 @@ function IngameWaitingForPlayersState:at_exit(...)
         for _, unit in pairs(managers.interaction._interactive_units or {}) do
             EHI:Log("unit:interaction().tweak_data = " .. tostring(unit:interaction().tweak_data))
         end
-        f()
-        --EHI:DelayCall("EHIMedals", 60, f)
+        EHI:DelayCall("Debug", 5, f)
     end
 end

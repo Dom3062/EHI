@@ -1,0 +1,134 @@
+{
+    "ehi_mod_title" : "Расширенное инфо при ограблении",
+    "ehi_mod_desc" : "Extra Heist Info(EHI): Показывает дополнительную информацию во время миссии",
+
+    "ehi_preview" : "Предварительный просмотр (Необходим рестарт миссии)\nКрасный угол указывает на место появления первого трекера",
+
+    "ehi_x_offset" : "Смещение по горизонтали",
+    "ehi_x_offset_desc" : "Левее - правее",
+    "ehi_y_offset" : "Смещение по вертикали",
+    "ehi_y_offset_desc" : "Выше - ниже",
+
+    "ehi_text_scale" : "Размер текста",
+    "ehi_text_scale_desc" : "Изменяет размер шрифта.\nМожет быть полезно при установленных кастомных шрифтах... и не только.",
+
+    "ehi_scale" : "Размер значков",
+    "ehi_scale_desc" : "Изменяет размер трекеров. Чем больше число, тем крупнее размер трекера",
+
+    "ehi_vr_scale": "Размер значков в VR",
+    "ehi_vr_scale_desc": "Изменяет размер трекеров в VR. Чем больше число, тем крупнее размер трекера",
+
+    "ehi_time_format" : "Формат времени",
+    "ehi_time_format_desc" : "Определяет как показывать время в трекере",
+    "ehi_time_format_1" : "Только секунды",
+    "ehi_time_format_2" : "Минуты и секунды",
+
+    "ehi_visuals_menu" : "Настройки отображения",
+    "ehi_visuals_menu_desc" : "",
+
+    "ehi_show_tracker_bg" : "Показывать рамку трекера",
+    "ehi_show_tracker_bg_desc" : "Показывать фон трекера\nКогда выключено - скрывает фон и анимации",
+
+    "ehi_show_one_icon" : "Только 1 иконка в трекере",
+    "ehi_show_one_icon_desc" : "Показывает только 1 иконку трекера\nКогда выключено - показывает все связанные иконки",
+
+    "ehi_trackers" : "Трекеры",
+    "ehi_trackers_desc" : "",
+
+    "ehi_show_achievement" : "Показывать трекер достижений",
+    "ehi_show_achievement_desc" : "Показывает связанные с миссией достижения на время\nНекоторые миссии могут не иметь достижений на время",
+
+    "ehi_hide_unlocked_achievements" : "Не показывать открытые достижения",
+    "ehi_hide_unlocked_achievements_desc" : "Когда выбрано, открытые достижения не будут показываться в трекерах",
+
+    "ehi_show_gained_xp" : "Показывать полученную XP",
+    "ehi_show_gained_xp_desc" : "Показывает полученную XP за миссию.\nТрекер не работает в режиме Серии Преступлений.",
+
+    "ehi_xp_format" : "Как показывать полученную XP",
+    "ehi_xp_format_desc" : "Пример: базовое значение: 1000; Сложность Death Wish\nТолько базовое значение: 1000\nЗначение умноженное сложностью: 13000\nЗначение, умноженное всеми бонусами: 13000+", 
+    "ehi_xp_format_base" : "Только базовое значение",
+    "ehi_xp_format_difficulty_multiplier" : "Значение умноженное сложностью",
+    "ehi_xp_format_all_bonuses" : "Значение со всеми бонусами",
+
+    "ehi_xp_panel" : "Показывать XP как:",
+    "ehi_xp_panel_desc" : "",
+    "ehi_xp_panel_1" : "Раздельные панели",
+    "ehi_xp_panel_2" : "Общее количество",
+
+    "ehi_show_trade_delay" : "Отсрочка обмена",
+    "ehi_show_trade_delay_desc" : "Показывает на сколько произойдёт отсрочка обмена, когда тиммейт убивает гражданских",
+
+    "ehi_show_trade_delay_option" : "Когда показывать трекер отсрочки обмена",
+    "ehi_show_trade_delay_option_desc": "Всегда: Всегда показывает трекер если Вы или тиммейт убил гражданского\nПод стражей: Если Вы или тиммейт убили как минимум 1 гражданского и оказались под стражей",
+    "ehi_show_trade_delay_option_1" : "Всегда",
+    "ehi_show_trade_delay_option_2" : "Под стражей",
+
+    "ehi_show_trade_delay_other_players_only": "Показывать трекер отсрочки обмена только для других игроков",
+    "ehi_show_trade_delay_other_players_only_desc": "Когда включено - не показывает сколько гражданских вы убили.",
+
+    "ehi_show_timers" : "Показ таймеров",
+    "ehi_show_timers_desc" : "Показ таймеров взлома, сверления и т.п.",
+
+    "ehi_show_zipline_timer" : "Таймер зиплайна",
+    "ehi_show_zipline_timer_desc" : "покажет 2 таймера.\nПервый покажет, сколько времени зиплайн будет переносить сумку/игрока, второй - когда вернётся",
+
+    "ehi_show_gage_tracker" : "Счётчик посылок для Гейджа",
+    "ehi_show_gage_tracker_desc" : "Сколько посылок Гейджа осталось на карте.\nЕсли на карте отсутствуют посылки, трекер не появится.",
+
+    "ehi_show_captain_damage_reduction" : "Показывать уменьшение урона по врагам",
+    "ehi_show_captain_damage_reduction_desc" : "Показывает, на сколько уменьшается урон по врагам, когда приходит капитан Уинтерс", 
+
+    "ehi_show_equipment_tracker" : "Трекер снаряжения",
+    "ehi_show_equipment_tracker_desc" : "Пока раздельные трекеры для медсумок, сумок с патронами, метательным, мешками для трупов и аптечек первой помощи",
+
+    "ehi_equipment_menu" : "Меню снаряжения",
+    "ehi_equipment_menu_desc" : "",
+
+    "ehi_equipment_format" : "Отображение снаряжения",
+    "ehi_equipment_format_desc" : "Определяет как показывать снаряжение",
+    "ehi_equipment_format_1" : "Использований (Количество сумок)",
+    "ehi_equipment_format_2" : "(Количество сумок) Использований",
+    "ehi_equipment_format_3" : "(Использований) Количество сумок",
+    "ehi_equipment_format_4" : "Количество сумок (Использований)",
+    "ehi_equipment_format_5" : "Использований",
+    "ehi_equipment_format_6" : "Количество сумок",
+
+    "ehi_show_equipment_doctorbag" : "Показывать количество медсумок",
+    "ehi_show_equipment_doctorbag_desc" : "Показывать трекер с медсумками",
+
+    "ehi_show_equipment_ammobag" : "Показывать количество сумок с патронами",
+    "ehi_show_equipment_ammobag_desc" : "Показывать трекер сумок с патронами",
+
+    "ehi_show_equipment_grenadecases" : "Показывать количество сумок с метательным",
+    "ehi_show_equipment_grenadecases_desc" : "Показывать трекер сумок с метательным",
+
+    "ehi_show_equipment_bodybags": "Показывать количество сумок с мешками для трупов",
+    "ehi_show_equipment_bodybags_desc": "Показывать трекер сумок с мешками для трупов\nПропадёт в случае подъёма тревоги",
+
+    "ehi_show_equipment_firstaidkit": "Показывать количество аптечек первой помощи",
+    "ehi_show_equipment_firstaidkit_desc": "Показывать трекер с аптечками первой помощи",
+
+    "ehi_show_equipment_aggregate_health" : "Считать медсумки и аптечки первой помощи вместе",
+    "ehi_show_equipment_aggregate_health_desc" : "Объединить медсумки и аптечки первой помощи в один трекер",
+
+    "ehi_show_minion_tracker" : "Показывать союзных бойцов",
+    "ehi_show_minion_tracker_desc" : "Показывать, сколько бойцов было переведено игроками на свою сторону",
+
+    "ehi_show_difficulty_tracker" : "Показывать уровень сложности",
+    "ehi_show_difficulty_tracker_desc" : "Показывает уровень сложности волны",
+
+    "ehi_show_drama_tracker" : "Показывать уровень драмы",
+    "ehi_show_drama_tracker_desc" : "Только для хоста",
+
+    "ehi_show_pager_tracker" : "Показывать трекер пейджеров",
+    "ehi_show_pager_tracker_desc" : "Отображает количество пейджеров как \nиспользованно / всего",
+
+    "ehi_show_pager_callback_trackers" : "Отсчёт тревоги пейджера",
+    "ehi_show_pager_callback_trackers_desc" : "Показывает время, за которое надо успеть ответить на пейджер",
+
+    "ehi_show_enemy_count_tracker" : "Счётчик врагов",
+    "ehi_show_enemy_count_tracker_desc" : "Показывает, сколько врагов осталось на карте",
+
+    "ehi_show_laser_tracker" : "Трекер лазеров",
+    "ehi_show_laser_tracker_desc" : "Показывает трекер для лазеров, которые работают каждые несколько секунд"
+}

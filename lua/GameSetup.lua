@@ -13,9 +13,9 @@ local original =
 
 local add =
 {
-    ["arena"] = true,
-    ["kosugi"] = true,
-    ["dark"] = true
+    arena = true, -- The Alesso Heist
+    kosugi = true, -- Shadow Raid
+    dark = true -- Murky Station
 }
 
 function GameSetup:init_finalize(...)

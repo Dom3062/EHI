@@ -8,6 +8,11 @@ if EHI._hooks.DigitalGui then
 else
 	EHI._hooks.DigitalGui = true
 end
+
+if not EHI:GetOption("show_timers") then
+    return
+end
+
 local original =
 {
     init = DigitalGui.init,
@@ -119,6 +124,15 @@ elseif level_id == "help" then -- Prison Nightmare
 		[EHI:GetInstanceUnitID(100072, 12400)] = "EHIWarningTracker"
 	}
 elseif level_id == "chas" then -- Dragon Heist
+	remove =
+	{
+		-- Crates in the vault
+		[EHI:GetInstanceUnitID(100140, 8500)] = true,
+		[EHI:GetInstanceUnitID(100140, 8800)] = true,
+		[EHI:GetInstanceUnitID(100140, 9400)] = true,
+		[EHI:GetInstanceUnitID(100140, 9700)] = true,
+		[EHI:GetInstanceUnitID(100140, 10000)] = true
+	}
 	ignore =
 	{
 		[EHI:GetInstanceUnitID(100053, 8350)] = true,
@@ -126,7 +140,29 @@ elseif level_id == "chas" then -- Dragon Heist
 	}
 	icons =
 	{
+		-- Crates in the vault
+		[EHI:GetInstanceUnitID(100140, 8500)] = { "pd2_c4" },
+		[EHI:GetInstanceUnitID(100140, 8800)] = { "pd2_c4" },
+		[EHI:GetInstanceUnitID(100140, 9400)] = { "pd2_c4" },
+		[EHI:GetInstanceUnitID(100140, 9700)] = { "pd2_c4" },
+		[EHI:GetInstanceUnitID(100140, 10000)] = { "pd2_c4" },
+
+		-- C4 Wall (Objective)
 		[EHI:GetInstanceUnitID(100057, 8350)] = { "pd2_c4" }
+	}
+	class =
+	{
+		-- Crates in the vault
+		[EHI:GetInstanceUnitID(100140, 8500)] = "EHIWarningTracker",
+		[EHI:GetInstanceUnitID(100140, 8800)] = "EHIWarningTracker",
+		[EHI:GetInstanceUnitID(100140, 9400)] = "EHIWarningTracker",
+		[EHI:GetInstanceUnitID(100140, 9700)] = "EHIWarningTracker",
+		[EHI:GetInstanceUnitID(100140, 10000)] = "EHIWarningTracker",
+	}
+elseif level_id == "roberts" then -- GO Bank
+	icons =
+	{
+		[101936] = { EHI.Icons.Vault }
 	}
 elseif level_id == "cane" then -- Santa's Workshop
 	-- OVK decided to use one timer for fire and fire recharge
@@ -159,6 +195,18 @@ elseif level_id == "shoutout_raid" then -- Meltdown
 	ignore =
 	{
 		[EHI:GetInstanceUnitID(100014, 2850)] = true
+	}
+elseif level_id == "pbr" then -- Beneath the Mountain
+	icons =
+	{
+		[EHI:GetInstanceUnitID(100113, 0)] = { "pd2_c4" }
+	}
+elseif level_id == "sah" then -- Shacklethorne Auction
+	icons =
+	{
+		[EHI:GetInstanceUnitID(100001, 4900)] = { EHI.Icons.Vault },
+		[EHI:GetInstanceUnitID(100001, 5000)] = { EHI.Icons.Vault },
+		[EHI:GetInstanceUnitID(100001, 5100)] = { EHI.Icons.Vault }
 	}
 elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
 	remove =
@@ -250,7 +298,7 @@ end
 
 function DigitalGui:_timer_stop(...)
 	original._timer_stop(self, ...)
-	managers.hud:RemoveTracker(self._ehi_key)
+	managers.ehi:RemoveTracker(self._ehi_key)
 end
 
 function DigitalGui:set_visible(visible, ...)
@@ -261,5 +309,5 @@ function DigitalGui:set_visible(visible, ...)
 end
 
 function DigitalGui:OnAlarm()
-	managers.hud:RemoveTracker(self._ehi_key)
+	managers.ehi:RemoveTracker(self._ehi_key)
 end

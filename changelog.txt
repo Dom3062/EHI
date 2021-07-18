@@ -1,3 +1,15 @@
+r19 (18. 07. 2021):
+Added Russian translation
+Optimized getting icons for trackers
+Optimized calling of delayed elements
+Improved some timed achievements so they will appear when you drop-in
+Fixed an issue where single grenade cases were not counted correctly
+Big Oil Day 1: Fixed an issue where achievement "A Junkyard Full Of Junkies" did not blink green when achieved
+Green Bridge: Fixed an issue where synced plane tracker showed as inaccurate tracker
+Mallcrasher: Added tracker for achievement "Shoot the Glass!"
+No Mercy: Elevator timer will show up when you drop-in
+Ukrainian Job: Fixed an issue where achievement "I'm Sure No One Heard That" was visible when metal detectors were not in the store
+
 r18 (25. 06. 2021):
 Greatly improved accuracy of timed trackers on client
 Fixed a crash when a player went to custody and "Trade Delay" tracker was not visible

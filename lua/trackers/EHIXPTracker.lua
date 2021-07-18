@@ -24,3 +24,6 @@ function EHIXPTracker:AddXP(amount)
     self:FitTheText()
     self:AnimateBG()
 end
+
+EHITotalXPTracker = EHITotalXPTracker or class(EHIXPTracker)
+EHITotalXPTracker._update = false

@@ -212,8 +212,6 @@ local function SecondsOnly(self, time, peer_id)
     local s
 	if t < 0 then
 		s = string.format("%d", 0)
-    elseif t < 1 then
-        s = string.format("%.2f", time)
 	elseif t < 10 then
 		s = string.format("%.1f", t)
 	else
@@ -228,8 +226,6 @@ local function MinutesAndSeconds(self, time, peer_id)
     local s
 	if t < 0 then
 		s = string.format("%d", 0)
-    elseif t < 1 then
-        s = string.format("%.2f", time)
 	elseif t < 10 then
 		s = string.format("%.1f", t)
 	elseif t < 60 then

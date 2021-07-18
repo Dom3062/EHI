@@ -18,23 +18,32 @@ function EHIManager:init()
     })
     self._t = 0
     self._trackers = {}
+    setmetatable(self._trackers, {__mode = "k"})
+    self._stealth_trackers = { pagers = {}, lasers = {} }
     self._pager_trackers = {}
     self._laser_trackers = {}
     self._trackers_to_update = {}
+    setmetatable(self._trackers_to_update, {__mode = "k"})
     self._trackers_pos = {}
+    setmetatable(self._trackers_pos, {__mode = "k"})
     self._trade = {
         ai = false,
         normal = false
     }
     self._n_of_trackers = 0
-    self._cache = {}
-    self._deployable_cache = {}
+    self._cache = { _deployables = {} }
     local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
     self._x = x
     self._y = y
     self._text_scale = EHI:GetOption("text_scale")
+    self._level_started_from_beginning = true
     panel_size = panel_size * self._scale
     panel_offset = panel_offset * self._scale
+end
+
+function EHIManager:init_finalize()
+    managers.network:add_event_listener("EHIDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
+    EHI:AddOnAlarmCallback(callback(self, self, "RemoveStealthTrackers"))
 end
 
 function EHIManager:ShowPanel()
@@ -49,6 +58,16 @@ function EHIManager:LoadTime(t)
     self._t = t
 end
 
+function EHIManager:InteractionExists(tweak_data)
+    local interactions = managers.interaction._interactive_units or {}
+    for _, unit in pairs(interactions) do
+        if unit:interaction().tweak_data == tweak_data then
+            return true
+        end
+    end
+    return false
+end
+
 function EHIManager:CountInteractionAvailable(tweak_data)
     local interactions = managers.interaction._interactive_units or {}
     local count = 0
@@ -61,11 +80,35 @@ function EHIManager:CountInteractionAvailable(tweak_data)
 end
 
 function EHIManager:CountUnitAvailable(path, slotmask)
-    local count = 0
+    return #self:GetUnits(path, slotmask)
+end
+
+function EHIManager:GetUnits(path, slotmask)
+    local tbl = {}
     local idstring = Idstring(path)
     local units = World:find_units_quick("all", slotmask)
     for _, unit in pairs(units) do
         if unit and unit:name() == idstring then
+            tbl[#tbl + 1] = unit
+        end
+    end
+    return tbl
+end
+
+--[[
+    Returns unit on provided (or first pos if not) position
+]]
+function EHIManager:GetUnit(path, slotmask, pos)
+    return self:GetUnits(path, slotmask)[pos or 1]
+end
+
+function EHIManager:CountLootbagsAvailable(path, loot_type, slotmask)
+    slotmask = slotmask or 14
+    local count = 0
+    local idstring = Idstring(path)
+    local units = World:find_units_quick("all", slotmask)
+    for _, unit in pairs(units) do
+        if unit and unit:name() == idstring and unit:carry_data() and unit:carry_data():carry_id() == loot_type then
             count = count + 1
         end
     end
@@ -73,12 +116,17 @@ function EHIManager:CountUnitAvailable(path, slotmask)
 end
 
 function EHIManager:load()
-    if Global.statistics_manager.playing_from_start then
+    if self._level_started_from_beginning then
         return
     end
     local level_id = Global.game_settings.level_id
+    local difficulty = Global.game_settings.difficulty
+    local show_achievement = EHI:GetOption("show_achievement")
     if level_id == "pbr2" then -- Birth of Sky
         self:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
+        --[[if show_achievement and EHI:IsOVKOrAbove(difficulty) then
+            self:AddTimedAchievementTracker("jerry_4", 83)
+        end]]
     elseif level_id == "pex" then -- Breakfast in Tijuana
         --[[
             There are total 12 places where medals can appears
@@ -91,7 +139,79 @@ function EHIManager:load()
             This is more accurate and reliable
         ]]
         self:SetTrackerProgressRemaining("pex_11", self:CountUnitAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5)
+    elseif level_id == "mus" then -- The Diamond
+        if show_achievement then
+            self:AddTimedAchievementTracker("bat_4", 600)
+        end
+    elseif level_id == "dark" then -- Murky Station
+        if show_achievement then
+            self:AddTimedAchievementTracker("dark_2", 420)
+        end
+    elseif level_id == "chew" then -- The Biker Heist Day 2
+        if show_achievement then
+            self:AddTimedAchievementTracker("born_5", 120)
+        end
+    elseif level_id == "big" then -- The Big Bank
+        if show_achievement and EHI:DifficultyToIndex(difficulty) >= 1 then -- Hard or above
+            self:AddTimedAchievementTracker("bigbank_4", 720)
+        end
+    elseif level_id == "red2" then -- First World Bank
+        if show_achievement and managers.groupai:state():whisper_mode() then
+            self:AddTimedAchievementTracker("green_3", 817)
+        end
+    elseif level_id == "fish" then -- The Yacht Heist
+        if show_achievement and EHI:IsOVKOrAbove(difficulty) then
+            self:AddTimedAchievementTracker("fish_4", 360)
+        end
+    elseif level_id == "kenaz" then -- Golden Grin Casino
+        if show_achievement then
+            self:AddTimedAchievementTracker("kenaz_4", 840)
+        end
+    elseif level_id == "cage" then -- Car Shop
+        if show_achievement then
+            self:AddTimedAchievementTracker("fort_4", 240)
+        end
+    elseif level_id == "ukrainian_job" then -- Ukrainian Job
+        if show_achievement then
+            self:AddTimedAchievementTracker("lets_do_this", 36)
+        end
+    elseif level_id == "chas" then -- Dragon Heist
+        if show_achievement and EHI:IsOVKOrAbove(difficulty) then
+            self:AddTimedAchievementTracker("chas_11", 360)
+        end
+    elseif level_id == "nmh" then -- No Mercy
+        local units = self:GetUnits("units/pd2_dlc_nmh/props/nmh_prop_counter/nmh_prop_counter", 1)
+        for _, unit in ipairs(units or {}) do
+            local o = unit:digital_gui()
+            if o and (o._timer_count_down or o._timer_paused) then
+                self:AddTracker({
+                    floors = o._timer - 4,
+                    id = "EscapeElevator",
+                    icons = { "pd2_door" },
+                    class = "EHIElevatorTimerTracker"
+                })
+                if o._timer_paused then
+                    self:CallFunction("EscapeElevator", "SetPause", true)
+                end
+                break
+            end
+        end
+    elseif level_id == "man" then -- Undercover
+        -- Achievement count used planks on windows, vents, ...
+        -- There are total 49 positions and 10 planks
+        self:SetTrackerProgressRemaining("man_4", 49 - self:CountInteractionAvailable("stash_planks"))
+        if managers.groupai:state():whisper_mode() then
+            self:AddAchievementNotificationTracker("man_3")
+        end
+    elseif level_id == "arm_for" then -- Transport: Train Heist
+        if managers.groupai:state():whisper_mode() then
+            self:AddAchievementNotificationTracker("armored_6")
+        end
     end
+end
+
+function EHIManager:DisableStartFromBeginning()
+    self._level_started_from_beginning = false
 end
 
 function EHIManager:update(t, dt)
@@ -156,10 +276,8 @@ function EHIManager:AddTracker(params, pos)
     params.y = self:GetY(pos)
     params.scale = self._scale
     params.text_scale = self._text_scale
-    params.sync_time = self._sync_time
-    params.sync_real_time = self._sync_real_time
-    local class = self:GetClass(params.class)
-    local tracker = class:new(self._hud_panel, params)
+    local class = params.class or "EHITracker"
+    local tracker = _G[class]:new(self._hud_panel, params)
     if tracker._update then
         self._trackers_to_update[params.id] = tracker
     end
@@ -179,59 +297,82 @@ function EHIManager:Sync(id, delay)
 end
 
 function EHIManager:AddPagerTracker(params)
-    self._pager_trackers[params.id] = true
+    self._stealth_trackers.pagers[params.id] = true
     self:AddTracker(params)
 end
 
 function EHIManager:AddLaserTracker(params)
-    for id, _ in pairs(self._laser_trackers) do
+    for id, _ in pairs(self._stealth_trackers.lasers) do
         -- Don't add this tracker if the "next_cycle_t" is the same as time to prevent duplication
         local tracker = self:GetTracker(id)
         if tracker and tracker._next_cycle_t == params.time then
             return
         end
     end
-    self._laser_trackers[params.id] = true
+    self._stealth_trackers.lasers[params.id] = true
     self:AddTracker(params)
 end
 
-function EHIManager:AddAchievementProgressTracker(id, max, icon)
+function EHIManager:GetAchievementIcon(id)
+    local achievement = tweak_data.achievement.visual[id]
+    return achievement and achievement.icon_id
+end
+
+function EHIManager:AddTimedAchievementTracker(id, time_max, icon)
+    local t = time_max - self._t
+    if EHI:IsAchievementUnlocked(id) or t <= 0 then
+        return
+    end
+    icon = icon or self:GetAchievementIcon(id)
+    self:AddTracker({
+        id = id,
+        time = t,
+        icons = { icon },
+        class = "EHIAchievementTracker"
+    })
+end
+
+function EHIManager:AddAchievementProgressTracker(id, max, icon, remove_after_reaching_target)
     if EHI:IsAchievementUnlocked(id) then
         return
     end
+    icon = icon or self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         max = max,
         icons = { icon },
+        remove_after_reaching_target = remove_after_reaching_target,
         class = "EHIAchievementProgressTracker"
     })
 end
 
+function EHIManager:AddAchievementNotificationTracker(id, status, icon)
+    if EHI:IsAchievementUnlocked(id) then
+        return
+    end
+    icon = icon or self:GetAchievementIcon(id)
+    self:AddTracker({
+        id = id,
+        status = status,
+        icons = { icon },
+        class = "EHIAchievementNotificationTracker"
+    })
+end
+
 function EHIManager:RemovePager(id)
-    self._pager_trackers[id] = nil
+    self._stealth_trackers.pagers[id] = nil
 end
 
 function EHIManager:RemoveLaser(id)
-    self._laser_trackers[id] = nil
+    self._stealth_trackers.lasers[id] = nil
 end
 
-function EHIManager:RemovePagerTrackers()
-    for key, _ in pairs(self._pager_trackers) do
-        self:RemoveTracker(key)
+function EHIManager:RemoveStealthTrackers()
+    for _, trackers in pairs(self._stealth_trackers) do
+        for key, _ in pairs(trackers) do
+            self:RemoveTracker(key)
+        end
     end
-    self._pager_trackers = {}
-end
-
-function EHIManager:RemoveLaserTrackers()
-    for key, _ in pairs(self._laser_trackers) do
-        self:RemoveTracker(key)
-    end
-    self._laser_trackers = {}
-end
-
-function EHIManager:GetClass(class)
-    class = class or "EHITracker"
-    return _G[class]
 end
 
 function EHIManager:GetY(pos)
@@ -398,8 +539,8 @@ function EHIManager:AddToDeployableCache(type, key, unit, tracker_type)
     if not key then
         return
     end
-    self._deployable_cache[type] = self._deployable_cache[type] or {}
-    self._deployable_cache[type][key] = { unit = unit, tracker_type = tracker_type }
+    self._cache._deployables[type] = self._cache._deployables[type] or {}
+    self._cache._deployables[type][key] = { unit = unit, tracker_type = tracker_type }
     local tracker = self:GetTracker(type)
     if tracker then
         if tracker_type then
@@ -414,12 +555,12 @@ function EHIManager:LoadFromDeployableCache(type, key)
     if not key then
         return
     end
-    self._deployable_cache[type] = self._deployable_cache[type] or {}
-    if self._deployable_cache[type][key] then
+    self._cache._deployables[type] = self._cache._deployables[type] or {}
+    if self._cache._deployables[type][key] then
         if self:TrackerDoesNotExist(type) then
             self:CreateDeployableTracker(type)
         end
-        local deployable = self._deployable_cache[type][key]
+        local deployable = self._cache._deployables[type][key]
         local unit = deployable.unit
         local tracker = self:GetTracker(type)
         if tracker then
@@ -429,7 +570,7 @@ function EHIManager:LoadFromDeployableCache(type, key)
                 tracker:UpdateAmount(unit, key, unit:base():GetRealAmount())
             end
         end
-        self._deployable_cache[type][key] = nil
+        self._cache._deployables[type][key] = nil
     end
 end
 
@@ -437,8 +578,8 @@ function EHIManager:RemoveFromDeployableCache(type, key)
     if not key then
         return
     end
-    self._deployable_cache[type] = self._deployable_cache[type] or {}
-    self._deployable_cache[type][key] = nil
+    self._cache._deployables[type] = self._cache._deployables[type] or {}
+    self._cache._deployables[type][key] = nil
 end
 
 function EHIManager:CreateDeployableTracker(type)
@@ -458,7 +599,7 @@ function EHIManager:CreateDeployableTracker(type)
             class = "EHIEquipmentTracker"
         })
     elseif type == "FirstAidKits" then
-        managers.ehi:AddTracker({
+        self:AddTracker({
             id = "FirstAidKits",
             icons = { "first_aid_kit" },
             dont_show_placed = true,

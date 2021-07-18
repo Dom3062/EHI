@@ -65,59 +65,60 @@ function HUDManager:_setup_player_info_hud_pd2(...)
 end
 
 function HUDManager:ShowAchievements(difficulty)
-    if level_id == "cane" then
-        if EHI:IsOVKOrAbove(difficulty) then
-            self.ehi:AddAchievementProgressTracker("cane_3", 100, "C_Vlad_H_Santa_EuroBag")
-        end
+    if level_id == "cane" and EHI:IsOVKOrAbove(difficulty) then
+        self.ehi:AddAchievementProgressTracker("cane_3", 100)
     end
-    if level_id == "mex_cooking" then
-        if EHI:IsOVKOrAbove(difficulty) then
-            self.ehi:AddAchievementProgressTracker("mex2_9", 25, "C_Locke_H_BorderCrystals_HeisterCocinero")
-        end
+    if level_id == "mex_cooking" and EHI:IsOVKOrAbove(difficulty) then
+        self.ehi:AddAchievementProgressTracker("mex2_9", 25)
     end
     if level_id == "crojob2" then
-        self.ehi:AddAchievementProgressTracker("voff_2", 2, "C_Butcher_H_BombDock_HighTimes")
+        self.ehi:AddAchievementProgressTracker("voff_2", 2)
     end
     if level_id == "pal" then
         local value_max = tweak_data.achievement.loot_cash_achievements.pal_2.secured.value
         local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)
         local max = math.ceil(value_max / loot_value)
-        self.ehi:AddAchievementProgressTracker("pal_2", max, "C_Classics_H_Counterfeit_DrEvil")
+        self.ehi:AddAchievementProgressTracker("pal_2", max)
     end
     if level_id == "pbr" then
-        self.ehi:AddAchievementProgressTracker("berry_2", 10, "C_Locke_H_Beneath_Clean")
+        self.ehi:AddAchievementProgressTracker("berry_2", 10)
     end
     if level_id == "pbr2" then
-        self.ehi:AddAchievementProgressTracker("voff_4", 9, "C_Locke_H_BirthOfSky_Mellon")
+        self.ehi:AddAchievementProgressTracker("voff_4", 9)
     end
     if level_id == "pex" then
-        self.ehi:AddAchievementProgressTracker("pex_10", 6, "C_Locke_H_BreakfastInTijuana_PaidInFull")
-        self.ehi:AddAchievementProgressTracker("pex_11", 7, "C_Locke_H_BreakfastInTijuana_StolenValor")
+        self.ehi:AddAchievementProgressTracker("pex_10", 6)
+        self.ehi:AddAchievementProgressTracker("pex_11", 7)
     end
-    if level_id == "dah" then
-        if EHI:IsOVKOrAbove(difficulty) then
-            self.ehi:AddAchievementProgressTracker("dah_8", 12, "C_Classics_H_DiamondHesit_TheHuntfor")
-        end
+    if level_id == "dah" and EHI:IsOVKOrAbove(difficulty) then
+        self.ehi:AddAchievementProgressTracker("dah_8", 12)
     end
-    if level_id == "alex_1" then
-        if EHI:IsOVKOrAbove(difficulty) then
-            self.ehi:AddAchievementProgressTracker("halloween_2", 7, "C_Hector_H_Rats_FullMeasure")
-        end
+    if level_id == "alex_1" and EHI:IsOVKOrAbove(difficulty) then
+        self.ehi:AddAchievementProgressTracker("halloween_2", 7)
     end
-    if level_id == "chas" then
-        if EHI:IsOVKOrAbove(difficulty) then
-            self.ehi:AddAchievementProgressTracker("chas_10", 15, "C_JiuFeng_H_DragonHeist_AllTheGold")
-        end
+    if level_id == "chas" and EHI:IsOVKOrAbove(difficulty) then
+        self.ehi:AddAchievementProgressTracker("chas_10", 15)
     end
     if level_id == "rvd2" then
-        self.ehi:AddAchievementProgressTracker("rvd_11", 19, "C_Bain_H_ReservoirDogs_WasteNot")
+        self.ehi:AddAchievementProgressTracker("rvd_11", 19)
     end
     if level_id == "mus" then
-        self.ehi:AddAchievementProgressTracker("bat_3", 10, "C_Dentist_H_Diamond_Culture")
+        self.ehi:AddAchievementProgressTracker("bat_3", 10)
     end
     if level_id == "shoutout_raid" then
-        self.ehi:AddAchievementProgressTracker("melt_3", 8, "C_Vlad_H_Meltdown_TheyDontPay")
+        self.ehi:AddAchievementProgressTracker("melt_3", 8)
     end
+    if level_id == "dinner" and EHI:IsOVKOrAbove(difficulty) then
+        self.ehi:AddAchievementProgressTracker("farm_6", 1, nil, false)
+    end
+    if level_id == "man" then
+        self.ehi:AddAchievementProgressTracker("man_4", 10)
+    end
+    if level_id == "arm_for" then -- Transport: Train Heist
+        self.ehi:AddAchievementProgressTracker("armored_1", 20)
+    end
+    --[[if level_id == "" then
+    end]]
 end
 
 function HUDManager:ShowLootCounter(difficulty)
@@ -128,10 +129,23 @@ function HUDManager:ShowLootCounter(difficulty)
         max = 16
     elseif level_id == "wwh" then
         max = 8
-    --[[elseif level_id == "shoutout_raid" then
-        max = 8 + (EHI:IsOVKOrAbove(difficulty) and 8 or 6)
-    elseif level_id == "rvd1" then
+    elseif level_id == "shoutout_raid" then
+        max = EHI:IsOVKOrAbove(difficulty) and 8 or 6
+        if self.ehi:TrackerDoesNotExist("melt_3") then
+            max = max + 8
+        end
+    --[[elseif level_id == "rvd1" then
         max = 6]]
+    elseif level_id == "alex_3" then
+        max = 14
+    elseif level_id == "dinner" then
+        max = self.ehi:TrackerDoesNotExist("farm_6") and 11 or 10
+    elseif level_id == "pbr" then
+        if self.ehi:TrackerDoesNotExist("berry_2") then
+            max = 10
+        end
+    elseif level_id == "arm_for" then
+        max = 3 + (self.ehi:TrackerDoesNotExist("armored_1") and 20 or 0)
     elseif level_id == "rusdl" then -- Cold Stones Custom Heist
         max = 20
     end
@@ -155,7 +169,7 @@ function HUDManager:sync_set_assault_mode(mode, ...)
             class = "EHIChanceTracker"
         })
     else
-        self:RemoveTracker("PhalanxDamageReduction")
+        self.ehi:RemoveTracker("PhalanxDamageReduction")
     end
 end
 
@@ -176,10 +190,6 @@ end
 
 function HUDManager:AddTracker(params)
     self.ehi:AddTracker(params)
-end
-
-function HUDManager:RemoveTracker(id)
-    self.ehi:RemoveTracker(id)
 end
 
 function HUDManager:SetUpgradeable(id, upgradeable)
@@ -221,4 +231,30 @@ end
 
 function HUDManager:DebugElement(id, element)
     managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; Element: " .. tostring(element), Color.white)
+end
+
+local animation = { start_t = {}, end_t = {} }
+function HUDManager:DebugAnimation(id, type)
+    if type == "start" then
+        animation.start_t[id] = TimerManager:game():time()
+    else -- "end"
+        animation.end_t[id] = TimerManager:game():time()
+    end
+    if animation.start_t[id] and animation.end_t[id] then
+        local diff = animation.end_t[id] - animation.start_t[id]
+        managers.chat:_receive_message(1, "[EHI]", "Animation: " .. tostring(id) .. "; Time: " .. tostring(diff), Color.white)
+        animation.end_t[id] = nil
+        animation.start_t[id] = nil
+    end
+end
+
+local last_id = ""
+function HUDManager:DebugAnimation2(id, type)
+    if id then
+        last_id = id
+    end
+    self:DebugAnimation(last_id, type)
+    if type == "end" then
+        last_id = ""
+    end
 end

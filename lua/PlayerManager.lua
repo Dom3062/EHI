@@ -4,9 +4,19 @@ else
 	EHI._hooks.PlayerManager = true
 end
 
-local _f_spawn_smoke_screen = PlayerManager.spawn_smoke_screen
+local original =
+{
+    spawn_smoke_screen = PlayerManager.spawn_smoke_screen
+}
+
+if EHI:GetOption("show_gained_xp") and Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode ~= "crime_spree" and Global.load_level then
+    function PlayerManager:SetInfamyBonus()
+        managers.experience:SetInfamyBonus(math.max(0, self:get_infamy_exp_multiplier() - 1))
+    end
+end
+
 function PlayerManager:spawn_smoke_screen(position, normal, grenade_unit, ...)
-    _f_spawn_smoke_screen(self, position, normal, grenade_unit, ...)
+    original.spawn_smoke_screen(self, position, normal, grenade_unit, ...)
     if grenade_unit:base():thrower_unit() then
         local key, color_id
         if alive(grenade_unit:base():thrower_unit()) then

@@ -58,7 +58,7 @@ function TimerGui:set_background_icons(background_icons, ...)
         }
 
         if managers.ehi:TrackerExists(self._ehi_key) then
-            managers.ehi:CallFunction(self._ehi_key, "SetUpgradeable", true)
+            managers.ehi:SetTrackerUpgradeable(self._ehi_key, true)
             managers.ehi:SetTimerUpgrades(self._ehi_key, upgrade_table)
         else
             managers.ehi:AddToCache(self._ehi_key, upgrade_table)

@@ -28,5 +28,5 @@ end
 
 function SecurityCamera:destroy(unit, ...)
     original.destroy(self, unit, ...)
-    managers.hud:RemoveTracker(self._ehi_key)
+    managers.ehi:RemoveTracker(self._ehi_key)
 end

@@ -32,26 +32,28 @@ function EHIProgressTracker:SetProgressMax(max)
     end
 end
 
-function EHIProgressTracker:IncreaseProgressMax()
-    self:SetProgressMax(self._max + 1)
+function EHIProgressTracker:IncreaseProgressMax(progress)
+    self:SetProgressMax(self._max + (progress or 1))
 end
 
 function EHIProgressTracker:SetProgress(progress)
-    self._progress = progress
-    self._text:set_text(self:Format())
-    if self._flash and self._previous_progress ~= self._progress then
-        self:AnimateBG(self._flash_times)
+    if self._progress ~= progress then
+        self._progress = progress
+        self._text:set_text(self:Format())
+        self:FitTheText()
+        if self._flash then
+            self:AnimateBG(self._flash_times)
+        end
+        if self._set_color_bad_when_reached then
+            self:SetBad()
+        else
+            self:SetCompleted()
+        end
     end
-    if self._set_color_bad_when_reached then
-        self:SetBad()
-    else
-        self:SetCompleted()
-    end
-    self._previous_progress = self._progress
 end
 
-function EHIProgressTracker:IncreaseProgress()
-    self:SetProgress(self._progress + 1)
+function EHIProgressTracker:IncreaseProgress(progress)
+    self:SetProgress(self._progress + (progress or 1))
 end
 
 function EHIProgressTracker:SetProgressRemaining(remaining)
@@ -64,6 +66,9 @@ function EHIProgressTracker:SetCompleted(force)
         self:SetTextColor(Color.green)
         if self._remove_after_reaching_counter_target or force then
             self._parent_class:AddTrackerToUpdate(self._id, self)
+        else
+            self._text:set_text("FINISH")
+            self:FitTheText()
         end
     end
 end

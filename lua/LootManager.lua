@@ -9,11 +9,13 @@ else
 	EHI._hooks.LootManager = true
 end
 local check_types = {
-    AllLoot = 1,
+    AllLoot = 1, -- Currently unused
     BagsOnly = 2,
-    SmallLootOnly = 3,
-    OneTypeOfLoot = 4,
-    MultipleTriggers = 5
+    ValueOfBags = 3, -- Currently unused
+    SmallLootOnly = 4, -- Currently unused
+    ValueOfSmallLoot = 5, -- Currently unused
+    OneTypeOfLoot = 6,
+    MultipleTriggers = 7
 }
 local LootCounter =
 {
@@ -21,6 +23,7 @@ local LootCounter =
     friend = true, -- Scarface Mansion
     dark = true, -- Murky Station
     wwh = true, -- Alaskan Deal
+    alex_3 = true, -- Rats Day 3
     --rvd1 = true -- Reservoir Dogs Heist Day 2
     -- Custom Heist
     rusdl = true
@@ -68,18 +71,44 @@ elseif level_id == "rvd2" then -- Reservoir Dogs Heist Day 1
     tracker_id = "rvd_11"
 elseif level_id == "pbr" then -- Beneath the Mountain
     check_type = check_types.BagsOnly
-    tracker_id = "berry_2"
+    tracker_id = EHI:IsAchievementLocked("berry_2") and "berry_2" or "LootCounter"
 elseif level_id == "mus" then -- The Diamond
     check_type = check_types.OneTypeOfLoot
     loot_type = { "mus_artifact_paint", "mus_artifact" }
     tracker_id = "bat_3"
 elseif level_id == "shoutout_raid" then -- Meltdown
-    check_type = check_types.OneTypeOfLoot
-    loot_type = { "coke", "gold", "money", "weapon", "weapons" }
-    tracker_id = "melt_3"
+    if EHI:IsAchievementLocked("melt_3") then
+        check_type = check_types.MultipleTriggers
+        multiple_check_type = { check_types.OneTypeOfLoot, check_types.OneTypeOfLoot }
+        loot_type = { "warhead", { "coke", "gold", "money", "weapon", "weapons" } }
+        tracker_id = { "LootCounter", "melt_3" }
+    else
+        check_type = check_types.BagsOnly
+        tracker_id = "LootCounter"
+    end
+elseif level_id == "arm_for" then -- Transport: Train Heist
+    if EHI:IsAchievementLocked("armored_1") then
+        check_type = check_types.MultipleTriggers
+        multiple_check_type = { check_types.OneTypeOfLoot, check_types.OneTypeOfLoot }
+        loot_type = { "turret", "ammo" }
+        tracker_id = { "LootCounter", "armored_1" }
+    else
+        check_type = check_types.BagsOnly
+        tracker_id = "LootCounter"
+    end
 elseif level_id == "sand" then -- Ukrainian Prisoner Heist
     check_type = check_types.BagsOnly
     tracker_id = "sand_9"
+elseif level_id == "dinner" then -- Slaughterhouse
+    if EHI:IsOVKOrAbove(Global.game_settings.difficulty) and EHI:IsAchievementLocked("farm_6") then
+        check_type = check_types.MultipleTriggers
+        multiple_check_type = { check_types.OneTypeOfLoot, check_types.OneTypeOfLoot }
+        loot_type = { "gold", "din_pig" }
+        tracker_id = { "LootCounter", "farm_6" }
+    else
+        check_type = check_types.BagsOnly
+        tracker_id = "LootCounter"
+    end
 elseif LootCounter[level_id] then
     check_type = check_types.BagsOnly
     tracker_id = "LootCounter"
@@ -100,17 +129,23 @@ function LootManager:sync_secure_loot(...)
     end
 end
 
+function LootManager:GetSecuredBagsAmount()
+    local mandatory = managers.loot:get_secured_mandatory_bags_amount()
+    local bonus = managers.loot:get_secured_bonus_bags_amount()
+    local total = (mandatory or 0) + (bonus or 0)
+    return total
+end
+
 function LootManager:EHIReportProgress(tid, ct, lt)
     tid = tid or tracker_id
     ct = ct or check_type
     lt = lt or loot_type
     if ct == check_types.AllLoot then
     elseif ct == check_types.BagsOnly then
-        local mandatory = managers.loot:get_secured_mandatory_bags_amount()
-        local bonus = managers.loot:get_secured_bonus_bags_amount()
-        local total = (mandatory or 0) + (bonus or 0)
-        managers.ehi:SetTrackerProgress(tid, total)
+        managers.ehi:SetTrackerProgress(tid, self:GetSecuredBagsAmount())
+    elseif ct == check_types.ValueOfBags then
     elseif ct == check_types.SmallLootOnly then
+    elseif ct == check_types.ValueOfSmallLoot then
     elseif ct == check_types.OneTypeOfLoot then
         if lt then
             local secured = 0

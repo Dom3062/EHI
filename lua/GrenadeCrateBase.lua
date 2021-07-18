@@ -70,9 +70,9 @@ function GrenadeCrateBase:destroy(...)
 end
 
 function CustomGrenadeCrateBase:init(unit, ...)
-    original.init_custom(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._ignore = ignore[unit:editor_id()] or false
+    original.init_custom(self, unit, ...)
 end
 
 function CustomGrenadeCrateBase:_set_empty(...)
