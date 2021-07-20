@@ -1,3 +1,6 @@
+r20 (20. 07. 2021):
+Fixed a crash when a mission did not have a "heat system" set up
+
 r19 (18. 07. 2021):
 Added Russian translation
 Optimized getting icons for trackers

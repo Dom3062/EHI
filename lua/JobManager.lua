@@ -25,5 +25,5 @@ function JobManager:init(...)
         projob_multiplier = tweak_data:get_value("experience_manager", "pro_job_multiplier") or 1
     end
     managers.experience:SetProJobMultiplier(projob_multiplier)
-    managers.experience:SetJobHeat(self:heat_to_experience_multiplier(self:current_job_heat()))
+    managers.experience:SetJobHeat(self:heat_to_experience_multiplier(self:current_job_heat() or 0))
 end
