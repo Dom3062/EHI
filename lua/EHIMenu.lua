@@ -143,6 +143,8 @@ function EHIMenu:init()
     self._preview_panel = FakeEHIManager:new(self._vr_panel or self._panel)
 
     self:GetMenuFromJson(EHI.MenuPath .. "menu.json", EHI.settings)
+    self:GetMenuFromJson(EHI.MenuPath .. "trackers.json", EHI.settings)
+    self:GetMenuFromJson(EHI.MenuPath .. "waypoints.json", EHI.settings)
     self:GetMenuFromJson(EHI.MenuPath .. "equipment.json", EHI.settings)
     self:GetMenuFromJson(EHI.MenuPath .. "visuals.json", EHI.settings)
 
@@ -838,21 +840,13 @@ function EHIMenu:CreateItem(item, items, menu_id)
             focus_changed_callback = item.focus_changed_callback
         })
     elseif item_type == "color_select" then
-        local stored_value = BAI.settings.assault_panel
-        if item.hud_value then
-            if item.hud_value == "pdth_hud_reborn" then
-                stored_value = BAI.settings.hud.pdth_hud_reborn
-            elseif item.hud_value == "restoration_mod" then
-                stored_value = BAI.settings.hud.restoration_mod.assault_panel
+        local stored_value = EHI.settings
+        if item.setting_value then
+            if item.setting_value == "equipment" then
+                stored_value = EHI.settings.equipment_color
             end
         end
-
-        if item.hud_value and item.hud_value == "restoration_mod" then
-            value = BAI:GetColorFromTable(stored_value[item.value][item.hud_c])
-        else
-            value = BAI:GetColorFromTable(stored_value[item.value])
-        end
-
+        value = EHI:GetColor(stored_value[item.value])
         itm = self:CreateColorSelect({
             menu_id = menu_id,
             id = id,
@@ -1458,19 +1452,10 @@ function EHIMenu:CreateColorSelect(params)
     if not menu_panel or not self._menus[params.menu_id] then
         return
     end
-    local texture = params.texture or nil
-    local texture_extension = "_bai"
-    if texture and type(texture) == "table" then
-        texture = texture[math.random(#texture)] -- Randomize texture
-    end
-    if texture and texture == "padlock" then
-        texture_extension = ""
-    end
-    local move = texture and 16 or 0
     local color_panel = menu_panel:panel({
         name = "color_select_"..tostring(params.id),
         y = self:GetLastPosInMenu(params.menu_id),
-        h = 25 + move,
+        h = 25,
         layer = 2,
         alpha = params.enabled and 1 or 0.5
     })
@@ -1497,17 +1482,16 @@ function EHIMenu:CreateColorSelect(params)
         name = "color_border",
         x = 3,
         y = 3,
-        w = 51 - move,
-        h = 19 + move,
+        w = 51,
+        h = 19,
         layer = 1
     })
     color_panel:bitmap({
         name = "color",
         x = 4,
         y = 4,
-        w = 49 - move,
-        h = 17 + move,
-        texture = texture and ("guis/textures/pd2/hud_icon_" .. texture .. "box" .. texture_extension) or nil,
+        w = 49,
+        h = 17,
         color = params.value,
         layer = 2
     })
@@ -1592,7 +1576,7 @@ function EHIMenu:OpenColorMenu(item)
         name = "title",
         font_size = 18,
         font = tweak_data.menu.pd2_small_font,
-        text = managers.localization:text("bai_r"),
+        text = managers.localization:text("ehi_r"),
         x = 85,
         w = red_panel:w() - 90,
         h = 25,
@@ -1634,7 +1618,7 @@ function EHIMenu:OpenColorMenu(item)
         name = "title",
         font_size = 18,
         font = tweak_data.menu.pd2_small_font,
-        text = managers.localization:text("bai_g"),
+        text = managers.localization:text("ehi_g"),
         x = 85,
         w = red_panel:w() - 90,
         h = 25,
@@ -1676,7 +1660,7 @@ function EHIMenu:OpenColorMenu(item)
         name = "title",
         font_size = 18,
         font = tweak_data.menu.pd2_small_font,
-        text = managers.localization:text("bai_b"),
+        text = managers.localization:text("ehi_b"),
         x = 85,
         w = red_panel:w() - 90,
         h = 25,
@@ -1711,7 +1695,7 @@ function EHIMenu:OpenColorMenu(item)
         name = "title",
         font_size = 18,
         font = tweak_data.menu.pd2_small_font,
-        text = managers.localization:text("bai_button_ok"),
+        text = managers.localization:text("ehi_button_ok"),
         x = 5,
         w = red_panel:w() - 10,
         h = 25,
@@ -1735,7 +1719,7 @@ function EHIMenu:OpenColorMenu(item)
         name = "title",
         font_size = 18,
         font = tweak_data.menu.pd2_small_font,
-        text = managers.localization:text("bai_color_reset"),
+        text = managers.localization:text("ehi_color_reset"),
         x = 5,
         w = red_panel:w() - 10,
         h = 25,

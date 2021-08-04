@@ -10,14 +10,6 @@ end
 
 local id = "Difficulty"
 
---[[if not (Global and Global.game_settings and Global.game_settings.level_id) then
-    return
-end
-
-if Global.game_settings.level_id == "chill" then
-    return
-end]]
-
 local function Trigger(value)
     local diff = EHI:RoundNumber(value, 0.01) * 100
     if managers.ehi:TrackerExists(id) then

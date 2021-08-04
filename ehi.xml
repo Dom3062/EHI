@@ -23,6 +23,7 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIProgressTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIEquipmentTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAggregatedEquipmentTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIAggregatedHealthEquipmentTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIPagerTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIVaultTemperatureTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHICountTracker.lua"/>
@@ -30,6 +31,8 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIGasTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHILaserTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementTrackers.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIECMTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIStopwatchTracker.lua"/>
             </group>
             <post :hook_id="hudmanagerpd2" :script_path="hudmanagerpd2.lua" />
             <post :hook_id="gameplaycentralmanager" :script_path="GamePlayCentralManager.lua"/>
@@ -63,23 +66,29 @@
             <post :hook_id="trademanager" :script_path="TradeManager.lua" />
         </group>
 
+        <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
+
         <post hook_id="lib/setups/setup" :script_path="EHIManager.lua" />
         <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
 
+        <post hook_id="lib/network/base/hostnetworksession" :script_path="HostNetworkSession.lua" />
         <post hook_id="lib/network/handlers/unitnetworkhandler" :script_path="UnitNetworkHandler.lua" />
 
         <post hook_id="lib/states/ingamewaitingforplayers" :script_path="IngameWaitingForPlayers.lua" />
+        <post hook_id="lib/states/missionendstate" :script_path="MissionEndState.lua" />
 
+        <post hook_id="lib/units/beings/player/playerinventory" :script_path="PlayerInventory.lua" />
         <post hook_id="lib/units/enemies/cop/copbrain" :script_path="CopBrain.lua" />
         <post hook_id="lib/units/civilians/civiliandamage" :script_path="CivilianDamage.lua" />
         <post hook_id="lib/units/interactions/interactionext" :script_path="InteractionExt.lua" />
-        <post hook_id="lib/units/equipment/sentry_gun/sentrygunmovement" :script_path="SentryGunMovement.lua" />
         <post hook_id="lib/units/equipment/ammo_bag/ammobagbase" :script_path="AmmoBagBase.lua" />
         <post hook_id="lib/units/equipment/bodybags_bag/bodybagsbagbase" :script_path="BodyBagsBagBase.lua" />
         <post hook_id="lib/units/equipment/doctor_bag/doctorbagbase" :script_path="DoctorBagBase.lua" />
+        <post hook_id="lib/units/equipment/ecm_jammer/ecmjammerbase" :script_path="ECMJammerBase.lua" />
         <post hook_id="lib/units/equipment/grenade_crate/grenadecratebase" :script_path="GrenadeCrateBase.lua" />
         <post hook_id="lib/units/equipment/first_aid_kit/firstaidkitbase" :script_path="FirstAidKitBase.lua" />
+        <post hook_id="lib/units/equipment/sentry_gun/sentrygunmovement" :script_path="SentryGunMovement.lua" />
         <post hook_id="lib/units/pickups/gageassignmentbase" :script_path="GageAssignmentBase.lua" />
         <post hook_id="lib/units/props/digitalgui" :script_path="DigitalGui.lua" />
         <post hook_id="lib/units/props/missiondoor" :script_path="MissionDoor.lua" />

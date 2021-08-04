@@ -3,9 +3,9 @@ if not Global.load_level then
 end
 
 if EHI._hooks.ExperienceManager then
-	return
+    return
 else
-	EHI._hooks.ExperienceManager = true
+    EHI._hooks.ExperienceManager = true
 end
 
 if not EHI:GetOption("show_gained_xp") then
@@ -24,13 +24,20 @@ local projob_multiplier = 1  -- Not used in Vanilla, but other mods can create P
 local limited_bonus_multiplier = (tweak_data:get_value("experience_manager", "limited_bonus_multiplier") or 1) - 1
 local stealth_bonus = 1
 local infamy_bonus = 0
+local stealth_mode = true
 if xp_format ~= 1 then
     local difficulty_index = tweak_data:difficulty_to_index(Global.game_settings.difficulty) - 2
     difficulty_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", difficulty_index) or 1
 end
 
+if xp_format == 3 then -- Multiply
+    EHI:AddOnAlarmCallback(function()
+        stealth_mode = false
+    end)
+end
+
 local function MultiplyXPWillAllBonuses(base_amount)
-    local player_bonus = math.max(0, (managers.player:get_skill_exp_multiplier(managers.groupai and managers.groupai:state():whisper_mode())) - 1) * heat
+    local player_bonus = math.max(0, (managers.player:get_skill_exp_multiplier(stealth_mode)) - 1) * heat
     return (base_amount * heat) * difficulty_multiplier * (1 + player_bonus + infamy_bonus + limited_bonus_multiplier) * stealth_bonus * projob_multiplier
 end
 
@@ -70,6 +77,7 @@ if xp_panel == 1 then
                     managers.ehi:AddTracker({
                         id = TrackerID,
                         amount = amount,
+                        exclude_from_sync = true,
                         class = "EHIXPTracker"
                     })
                 end
@@ -84,6 +92,7 @@ if xp_panel == 1 then
                     managers.ehi:AddTracker({
                         id = TrackerID,
                         amount = amount * difficulty_multiplier,
+                        exclude_from_sync = true,
                         class = "EHIXPTracker"
                     })
                 end
@@ -99,6 +108,7 @@ if xp_panel == 1 then
                     managers.ehi:AddTracker({
                         id = TrackerID,
                         amount = xp_gained,
+                        exclude_from_sync = true,
                         class = "EHIXPTracker"
                     })
                 end
@@ -121,8 +131,7 @@ else
     else
         f = function(self, amount)
             if amount > 0 then
-                local xp_gained = MultiplyXPWillAllBonuses(amount)
-                managers.ehi:AddXPToTracker(TrackerID, xp_gained)
+                managers.ehi:AddXPToTracker(TrackerID, MultiplyXPWillAllBonuses(amount))
             end
         end
     end

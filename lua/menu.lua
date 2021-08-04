@@ -33,13 +33,6 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
 		loc:load_localization_file(EHI.ModPath .. "loc/" .. language_filename .. ".json")
 	end
 	loc:load_localization_file(EHI.ModPath .. "loc/english.json", false)
-	--[[for _, filename in pairs(file.GetFiles(BB._path .. "loc/")) do
-		local str = filename:match('^(.*).txt$')
-		if str and Idstring(str) and Idstring(str):key() == SystemInfo:language():key() then
-			loc:load_localization_file(BB._path .. "loc/" .. filename)
-			break
-		end
-	end]]
 end)
 
 Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_EHI", function(menu_manager, nodes)

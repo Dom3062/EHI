@@ -2,6 +2,12 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "",
 
+    "ehi_r" : "Red",
+    "ehi_g" : "Green",
+    "ehi_b" : "Blue",
+    "ehi_button_ok" : "OK",
+    "ehi_color_reset" : "Reset Color",
+
     "ehi_preview" : "Preview (A map restart is required to take effect)\nRed corner indicates where the first tracker is going to appear",
 
     "ehi_x_offset" : "X offset",
@@ -32,8 +38,8 @@
     "ehi_show_one_icon" : "Show 1 Icon in Tracker",
     "ehi_show_one_icon_desc" : "Shows 1 icon in tracker when enabled\nAll icons are visible when this option is disabled",
 
-    "ehi_trackers" : "Trackers",
-    "ehi_trackers_desc" : "",
+    "ehi_trackers_menu" : "Trackers",
+    "ehi_trackers_menu_desc" : "",
 
     "ehi_show_achievement" : "Show Achievement Tracker",
     "ehi_show_achievement_desc" : "Shows on the screen timed achievements\nSome heists may not have any timed achievements available",
@@ -108,14 +114,29 @@
     "ehi_show_equipment_firstaidkit": "Show First Aid Kit Tracker",
     "ehi_show_equipment_firstaidkit_desc": "Shows a tracker for First Aid Kits",
 
+    "ehi_show_equipment_ecmjammer" : "Show ECM Jammer Duration Tracker",
+    "ehi_show_equipment_ecmjammer_desc" : "Shows a tracker for the remaining duration of an ECM Jammer\nAn ECM Jammer with the longest duration is shown in the tracker",
+
+    "ehi_show_equipment_ecmfeedback" : "Show ECM Feedback Duration Tracker",
+    "ehi_show_equipment_ecmfeedback_desc" : "Shows a tracker for the remaining duration of an ECM Feedback\nAn ECM Feedback with the longest duration is shown in the tracker (host only)\nPocket ECM Feedback also works clientside",
+
     "ehi_show_equipment_aggregate_health" : "Aggregate Doctor Bags and First Aid Kits",
     "ehi_show_equipment_aggregate_health_desc" : "Aggregates Doctor Bags and First Aid Kits into one tracker",
+
+    "ehi_show_equipment_aggregate_all" : "Aggregate All Deployables",
+    "ehi_show_equipment_aggregate_all_desc" : "Aggregates all deployables into one tracker\nDeployables use their respective color from down below",
+
+    "ehi_doctor_bag" : "Doctor Bag",
+    "ehi_ammo_bag" : "Ammo Bag",
+    "ehi_grenade_crate" : "Grenade Crate",
+    "ehi_first_aid_kit" : "First Aid Kit",
+    "ehi_bodybags_bag" : "Bodybags Bag",
 
     "ehi_show_minion_tracker" : "Show Converts Tracker",
     "ehi_show_minion_tracker_desc" : "Shows tracker for how much converted enemies are on the map",
 
     "ehi_show_difficulty_tracker" : "Show Difficulty Tracker",
-    "ehi_show_difficulty_tracker_desc" : "Shows a tracker for how much difficulty the wave is",
+    "ehi_show_difficulty_tracker_desc" : "Shows a tracker for how much difficult the wave is",
 
     "ehi_show_drama_tracker" : "Show Drama Tracker",
     "ehi_show_drama_tracker_desc" : "Shows a tracker for accumulated drama (host only)",
@@ -130,5 +151,17 @@
     "ehi_show_enemy_count_tracker_desc" : "Shows a tracker for how many enemies are on the map",
 
     "ehi_show_laser_tracker" : "Show Laser Tracker",
-    "ehi_show_laser_tracker_desc" : "Shows a tracker for lasers that cycle every few seconds"
+    "ehi_show_laser_tracker_desc" : "Shows a tracker for lasers that cycle every few seconds",
+
+    "ehi_waypoints_menu" : "Waypoints",
+    "ehi_waypoints_menu_desc" : "",
+
+    "ehi_show_waypoints" : "Show Waypoints",
+    "ehi_show_waypoints_desc" : "Show waypoints in the game world",
+
+    "ehi_show_waypoints_present_timer" : "Present Timer",
+    "ehi_show_waypoints_present_timer_desc" : "Sets how long the waypoint will stay on your screen before it will 'move' to its destination",
+
+    "ehi_show_waypoints_enemy_turret" : "Show Waypoints For Enemy Turret",
+    "ehi_show_waypoints_enemy_turret_desc" : "Shows a waypoint on the enemy turret when it is reloading or repairing"
 }

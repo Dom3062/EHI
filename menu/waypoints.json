@@ -1,0 +1,47 @@
+{
+    "menu_id": "ehi_waypoints_menu",
+    "parent_menu" : "ehi_menu",
+    "title": "ehi_waypoints_menu",
+    "items": [
+        {
+            "type": "toggle",
+            "id": "ehi_show_waypoints_choice",
+            "title": "ehi_show_waypoints",
+            "description": "ehi_show_waypoints_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints",
+            "value": "show_waypoints",
+            "default_value": true,
+            "is_parent" : true
+        },
+        {
+            "type": "slider",
+            "id": "ehi_show_waypoints_present_timer_choice",
+            "title": "ehi_show_waypoints_present_timer",
+            "description": "ehi_show_waypoints_present_timer_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints_present_timer",
+            "value": "show_waypoints_present_timer",
+            "default_value": 2,
+            "max": 5,
+            "min": 0.5,
+            "step": 2,
+            "parent" : "ehi_show_waypoints_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_waypoints_enemy_turret_choice",
+            "title": "ehi_show_waypoints_enemy_turret",
+            "description": "ehi_show_waypoints_enemy_turret_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints_enemy_turret",
+            "value": "show_waypoints_enemy_turret",
+            "default_value": true,
+            "parent" : "ehi_show_waypoints_choice"
+        }
+    ]
+}

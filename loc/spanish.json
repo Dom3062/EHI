@@ -2,6 +2,12 @@
     "ehi_mod_title" : "Información Adicional para Atracos",
     "ehi_mod_desc" : "",
 
+    "ehi_r" : "Rojo",
+    "ehi_g" : "Verde",
+    "ehi_b" : "Azul",
+    "ehi_button_ok" : "Aceptar",
+    "ehi_color_reset" : "Restablecer Color",
+
     "ehi_preview" : "Vista Previa (Para que los cambios surtan efecto, debes reiniciar el mapa)\nLa esquina roja indica donde aparecerá el primer contador",
 
     "ehi_x_offset" : "Mover en X",
@@ -29,8 +35,8 @@
     "ehi_show_one_icon" : "Mostrar icono en el Contador",
     "ehi_show_one_icon_desc" : "Muestra un icono cuando el contador está activo\nLos iconos del contador son visibles",
 
-    "ehi_trackers" : "Contadores",
-    "ehi_trackers_desc" : "",
+    "ehi_trackers_menu" : "Contadores",
+    "ehi_trackers_menu_desc" : "",
 
     "ehi_show_achievement" : "Mostrar Logros Cronometrados",
     "ehi_show_achievement_desc" : "Muestra los logros cronometrados\nAlgunos atracos no tienen logros cronometrados",

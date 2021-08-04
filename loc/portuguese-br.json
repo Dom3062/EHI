@@ -2,6 +2,12 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "",
 
+    "ehi_r" : "Vermelho",
+    "ehi_g" : "Verde",
+    "ehi_b" : "Azul",
+    "ehi_button_ok" : "OK",
+    "ehi_color_reset" : "Redefinir a cor",
+
     "ehi_preview" : "Prévia (É necessário recarregar o mapa para ter efeito)\nO canto vermelho indica onde o primeiro Tracker vai ser pocisionado",
 
     "ehi_x_offset" : "Posição X",
@@ -29,8 +35,8 @@
     "ehi_show_one_icon" : "Mostra 1 ícone no Tracker",
 	"ehi_show_one_icon_desc" : "Mostra 1 ícone no Tracker quando ativado\nTodos os ícones são visíveis quando essa opção está desativado",
 
-    "ehi_trackers" : "Trackers",
-    "ehi_trackers_desc" : "",
+    "ehi_trackers_menu" : "Trackers",
+    "ehi_trackers_menu_desc" : "",
 
     "ehi_show_achievement" : "Mostrar Tracker de Conquista",
     "ehi_show_achievement_desc" : "Mostra as conquistas que requerem recordes de tempo\nAlgumas missões podem não ter essas tipos de conquistas",

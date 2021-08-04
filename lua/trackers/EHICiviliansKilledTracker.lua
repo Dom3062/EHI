@@ -295,7 +295,3 @@ function EHICiviliansKilledTracker:SetTrade(trade, t, force_t)
         self._trade = false
     end
 end
-
-function EHICiviliansKilledTracker:IsTrading()
-    return self._trade or self._ai_trade
-end

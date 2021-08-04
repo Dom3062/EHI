@@ -26,8 +26,15 @@ local original =
 local level_id = Global.game_settings.level_id
 local remove_on_power_off = false
 local ignore = {}
+local icons = {}
 if level_id == "des" then -- Henry's Rock
     remove_on_power_off = true
+elseif level_id == "hox_2" then
+    icons =
+    {
+        [EHI:GetInstanceUnitID(100018, 2650)] = { "equipment_evidence" },
+        [EHI:GetInstanceUnitID(100068, 6690)] = { "equipment_harddrive" }
+    }
 elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
     local function f()
         local editor_id = EHI:GetInstanceUnitID(100150, 9030)
@@ -43,7 +50,7 @@ end
 
 function TimerGui:init(unit, ...)
     self._ehi_key = tostring(unit:key())
-    self._ehi_icon = unit:base().is_drill and "drill" or unit:base().is_hacking_device and "hack" or unit:base().is_saw and "saw" or "timer"
+    self._ehi_icon = unit:base().is_drill and "pd2_drill" or unit:base().is_hacking_device and "wp_hack" or unit:base().is_saw and "pd2_generic_saw" or "faster"
     original.init(self, unit, ...)
 end
 
@@ -70,6 +77,7 @@ end
 
 function TimerGui:_start(...)
     original._start(self, ...)
+    local editor_id = self._unit:editor_id()
     if ignore[self._unit:editor_id()] then
         return
     end
@@ -80,8 +88,9 @@ function TimerGui:_start(...)
         managers.ehi:AddTracker({
             id = self._ehi_key,
             time = self._current_timer,
-            icons = { { icon = "pd2_" .. self._ehi_icon } },
+            icons = icons[editor_id] or { { icon = self._ehi_icon } },
             theme = self.THEME,
+            exclude_from_sync = true,
             class = "EHITimerTracker"
         })
     end
@@ -124,4 +133,8 @@ end
 
 function TimerGui:OnAlarm()
     managers.ehi:RemoveTracker(self._ehi_key)
+end
+
+function TimerGui:DisableOnSetVisible()
+    self.set_visible = original.set_visible
 end

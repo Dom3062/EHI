@@ -12,15 +12,26 @@ if not EHI:GetOption("show_equipment_bodybags") then
     return
 end
 
-local function UpdateTracker(unit, key, amount)
-    if managers.ehi:TrackerDoesNotExist("BodyBags") and managers.groupai:state():whisper_mode() then
-        managers.ehi:AddTracker({
-            id = "BodyBags",
-            icons = { "bodybags_bag" },
-            class = "EHIEquipmentTracker"
-        })
+local UpdateTracker
+if EHI:GetOption("show_equipment_aggregate_all") then
+    UpdateTracker = function(unit, key, amount)
+        if managers.ehi:TrackerDoesNotExist("Deployables") then
+            managers.ehi:AddAggregatedDeployablesTracker()
+        end
+        managers.ehi:CallFunction("Deployables", "UpdateAmount", "bodybags_bag", unit, key, amount)
     end
-    managers.ehi:CallFunction("BodyBags", "UpdateAmount", unit, key, amount)
+else
+    UpdateTracker = function(unit, key, amount)
+        if managers.ehi:TrackerDoesNotExist("BodyBags") and managers.groupai:state():whisper_mode() then
+            managers.ehi:AddTracker({
+                id = "BodyBags",
+                icons = { "bodybags_bag" },
+                exclude_from_sync = true,
+                class = "EHIEquipmentTracker"
+            })
+        end
+        managers.ehi:CallFunction("BodyBags", "UpdateAmount", unit, key, amount)
+    end
 end
 
 local original =

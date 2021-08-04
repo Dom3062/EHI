@@ -1,3 +1,15 @@
+r21 (04. 08. 2021):
+Added Waypoints
+Added trackers for ECM Jammer and ECM Feedback
+Added "Aggregate All Deployables" tracker
+Added moving animation for trackers
+Added fade in animation for new trackers
+Added fade out animation for trackers that are going to be deleted
+Added trackers for Crime and Punishment custom heist
+All Holdout maps (Vanilla and custom) should be supported out of the box
+Fixed an issue where PEOC Mainframe from The White House or Buluc's Mansion removed tracker when paused
+HoloUI: Fixed an issue where tracker edges were visible in the heist end screen
+
 r20 (20. 07. 2021):
 Fixed a crash when a mission did not have a "heat system" set up
 

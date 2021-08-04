@@ -1,0 +1,49 @@
+EHIStopwatchTracker = EHIStopwatchTracker or class(EHITracker)
+function EHIStopwatchTracker:update(t, dt)
+	if self._fade_time then
+		self._fade_time = self._fade_time - dt
+		if self._fade_time <= 0 then
+			self:delete()
+		end
+		return
+	end
+    self._time = self._time + dt
+    self._text:set_text(self:Format())
+end
+
+local function SecondsOnly(self)
+    local t = math.floor(self._time * 10) / 10
+
+	if t < 0 then
+		return string.format("%d", 0)
+	elseif t < 100 then
+		return string.format("%.2f", self._time)
+	elseif t < 1000 then
+		return string.format("%.1f", self._time)
+	else
+		return string.format("%d", t)
+	end
+end
+
+local function MinutesAndSeconds(self)
+    local t = math.floor(self._time * 10) / 10
+
+	if t < 0 then
+		return string.format("%d", 0)
+    elseif t < 60 then
+        return string.format("%.2f", self._time)
+	else
+		return string.format("%d:%02d", t / 60, t % 60)
+	end
+end
+
+if EHI:GetOption("time_format") == 1 then
+    EHIStopwatchTracker.Format = SecondsOnly
+else
+    EHIStopwatchTracker.Format = MinutesAndSeconds
+end
+
+function EHIStopwatchTracker:Stop()
+	self._fade_time = 3.5
+	self:AnimateBG()
+end

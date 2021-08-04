@@ -32,7 +32,7 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddFirstFakeTracker({ id = "N/A", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { "faster" } } )
     self:AddFakeTracker({ id = "N/A", time = math.random(60, 180), icons = { EHI.Icons.Car, EHI.Icons.Escape } } )
     if EHI:GetOption("show_achievement") then
-        self:AddFakeTracker({ id = "show_achievement", time = math.random(60, 180), icons = { "trophy" } } )
+        self:AddFakeTracker({ id = "show_achievement", time = math.random(60, 180), icons = { "milestone_trophy" } } )
     end
     if EHI:GetOption("show_gained_xp") then
         self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, class = "FakeEHIXPTracker" } )
@@ -65,7 +65,7 @@ function FakeEHIManager:AddFakeTrackers()
         self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "enemy" }, class = "FakeEHIChanceTracker" } )
     end
     if EHI:GetOption("show_drama_tracker") then
-        self:AddFakeTracker({ id = "show_drama_tracker", chance = math.random(100), icons = { "enemy" }, class = "FakeEHIChanceTracker" })
+        self:AddFakeTracker({ id = "show_drama_tracker", chance = math.random(100), icons = { "C_Escape_H_Street_Bullet" }, class = "FakeEHIChanceTracker" })
     end
     if EHI:GetOption("show_pager_tracker") then
         self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { "pagers_used" }, class = "FakeEHIProgressTracker" } )
@@ -200,7 +200,7 @@ end
 
 local icons =
 {
-    default = { texture = "guis/textures/pd2/pd2_waypoints", texture_rect = { 64, 64, 32, 32 } },
+    default = { texture = "guis/textures/pd2/pd2_waypoints", texture_rect = {96, 64, 32, 32} },
 
     faster = { texture = "guis/textures/pd2/skilltree/drillgui_icon_faster" },
     silent = { texture = "guis/textures/pd2/skilltree/drillgui_icon_silent" },

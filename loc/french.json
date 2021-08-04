@@ -2,6 +2,12 @@
     "ehi_mod_title": "Extra infos de braquage",
     "ehi_mod_desc": "",
 
+    "ehi_r" : "Rouge",
+    "ehi_g" : "Vert",
+    "ehi_b" : "Bleu",
+    "ehi_button_ok" : "OK",
+    "ehi_color_reset" : "Réinitialiser la couleur",
+
     "ehi_preview": "Aperçu (Un redémarrage de la carte est nécessaire pour être appliqué)\nLe coin rouge indiquera quand le premier moniteur apparaîtra",
 
     "ehi_x_offset": "Décalage X",
@@ -29,8 +35,8 @@
     "ehi_show_one_icon" : "Montre une icône dans le moniteur",
     "ehi_show_one_icon_desc" : "Montre une icône dans le moniteur quand activé\nToutes les icônes sont visibles quand cette option est désactivée.",
 
-    "ehi_trackers": "Moniteurs",
-    "ehi_trackers_desc": "",
+    "ehi_trackers_menu": "Moniteurs",
+    "ehi_trackers_menu_desc": "",
 
     "ehi_show_achievement": "Montre les moniteurs de succès",
     "ehi_show_achievement_desc": "Montre les succès chronométrés\nCertains braquages n’ont pas de succès chronométrés.",

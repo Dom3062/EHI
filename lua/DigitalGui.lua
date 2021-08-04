@@ -28,7 +28,12 @@ local ignore = {}
 local icons = {}
 local remove = {}
 local class = {}
-if level_id == "hvh" then -- Cursed Kill Room
+if level_id == "chill" then -- New Safehouse
+	icons =
+	{
+		[EHI:GetInstanceUnitID(100056, 15620)] = { "faster" }
+	}
+elseif level_id == "hvh" then -- Cursed Kill Room
 	ignore =
 	{
 		-- Clocks
@@ -249,17 +254,41 @@ function DigitalGui:timer_start_count_down(...)
 			id = self._ehi_key,
 			time = self._timer,
 			icons = icons[editor_id] or { "wp_hack" },
+			exclude_from_sync = true,
 			class = class[editor_id] or "EHITimerTracker"
 		})
 	end
 end
 
-function DigitalGui:timer_pause(...)
-	original.timer_pause(self, ...)
-	if remove[self._unit:editor_id()] then
-		managers.ehi:RemoveTracker(self._ehi_key)
-	else
-		managers.ehi:SetTimerJammed(self._ehi_key, true)
+if level_id == "chill" then
+	original.timer_start_count_up = DigitalGui.timer_start_count_up
+	function DigitalGui:timer_start_count_up(...)
+		original.timer_start_count_up(self, ...)
+		if managers.ehi:TrackerExists(self._ehi_key) then
+			managers.ehi:SetTimerJammed(self._ehi_key, false)
+		else
+			managers.ehi:AddTracker({
+				id = self._ehi_key,
+				time = 0,
+				icons = { "faster" },
+				exclude_from_sync = true,
+				class = "EHIStopwatchTracker"
+			})
+		end
+	end
+
+	function DigitalGui:timer_pause(...)
+		original.timer_pause(self, ...)
+		managers.ehi:CallFunction(self._ehi_key, "Stop")
+	end
+else
+	function DigitalGui:timer_pause(...)
+		original.timer_pause(self, ...)
+		if remove[self._unit:editor_id()] then
+			managers.ehi:RemoveTracker(self._ehi_key)
+		else
+			managers.ehi:SetTimerJammed(self._ehi_key, true)
+		end
 	end
 end
 
@@ -276,20 +305,6 @@ if level_id ~= "shoutout_raid" then
 		end
 	end
 end
---[[-- Fixes timer flashing in Beneath the Mountain, The Big Bank and Golden Grin Casino
-if level_id == "pbr" or level_id == "big" or level_id == "kenaz" then
-	SetTime = function(key, time)
-		if managers.ehi then
-			managers.ehi:SetTrackerTimeNoAnim(key, time)
-		end
-	end
-elseif level_id ~= "shoutout_raid" then
-	SetTime = function(key, time)
-		if managers.hud.ehi then
-			managers.hud:SetTime(key, time)
-		end
-	end
-end]]
 
 function DigitalGui:timer_set(timer, ...)
 	original.timer_set(self, timer, ...)

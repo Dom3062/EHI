@@ -1,8 +1,8 @@
 local EHI = EHI
 if EHI._hooks.IngameWaitingForPlayersState then
-	return
+    return
 else
-	EHI._hooks.IngameWaitingForPlayersState = true
+    EHI._hooks.IngameWaitingForPlayersState = true
 end
 
 local function AddGageTracker()

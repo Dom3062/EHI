@@ -4,6 +4,7 @@ function MissionDoor:_initiate_c4_sequence(...)
     managers.ehi:AddTracker({
         id = tostring(self._unit:key()),
         time = 5,
-        icons = { "pd2_c4" }
+        icons = { "pd2_c4" },
+        exclude_from_sync = true
     })
 end

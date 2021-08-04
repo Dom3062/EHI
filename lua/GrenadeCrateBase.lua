@@ -23,15 +23,26 @@ end
 
 local _cache = {}
 
-local function UpdateTracker(unit, key, amount)
-    if managers.ehi:TrackerDoesNotExist("GrenadeCases") then
-        managers.ehi:AddTracker({
-            id = "GrenadeCases",
-            icons = { "frag_grenade" },
-            class = "EHIEquipmentTracker"
-        })
+local UpdateTracker
+if EHI:GetOption("show_equipment_aggregate_all") then
+    UpdateTracker = function(unit, key, amount)
+        if managers.ehi:TrackerDoesNotExist("Deployables") then
+            managers.ehi:AddAggregatedDeployablesTracker()
+        end
+        managers.ehi:CallFunction("Deployables", "UpdateAmount", "grenade_crate", unit, key, amount)
     end
-    managers.ehi:CallFunction("GrenadeCases", "UpdateAmount", unit, key, amount)
+else
+    UpdateTracker = function(unit, key, amount)
+        if managers.ehi:TrackerDoesNotExist("GrenadeCases") then
+            managers.ehi:AddTracker({
+                id = "GrenadeCases",
+                icons = { "frag_grenade" },
+                exclude_from_sync = true,
+                class = "EHIEquipmentTracker"
+            })
+        end
+        managers.ehi:CallFunction("GrenadeCases", "UpdateAmount", unit, key, amount)
+    end
 end
 
 local original =
@@ -65,8 +76,8 @@ function GrenadeCrateBase:GetRealAmount()
 end
 
 function GrenadeCrateBase:destroy(...)
-    original.destroy(self, ...)
     UpdateTracker(self._unit, self._ehi_key, 0)
+    original.destroy(self, ...)
 end
 
 function CustomGrenadeCrateBase:init(unit, ...)

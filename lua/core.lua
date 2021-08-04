@@ -74,8 +74,9 @@ _G.EHI =
         IncreaseChanceFromElement = 42,
         DecreaseChanceFromElement = 43,
         SetChanceFromElement = 44,
+        SetChanceFromElementWhenTrackerExists = 45,
+        PauseTrackerWithTime = 46,
 
-        ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = 99997, -- REMOVE ME
         AddToGlobalAndExecute = 99998, -- REMOVE ME
         Debug = 100000,
         CustomCode = 100001,
@@ -246,14 +247,55 @@ function EHI:LoadDefaultValues()
         show_equipment_grenadecases = true,
         show_equipment_bodybags = true,
         show_equipment_firstaidkit = true,
+        show_equipment_ecmjammer = true,
+        show_equipment_ecmfeedback = true,
         show_equipment_aggregate_health = true,
+        show_equipment_aggregate_all = false,
+        equipment_color =
+        {
+            doctor_bag =
+            {
+                r = 255,
+                g = 0,
+                b = 0
+            },
+            ammo_bag =
+            {
+                r = 255,
+                g = 255,
+                b = 0
+            },
+            grenade_crate =
+            {
+                r = 0,
+                g = 255,
+                b = 0
+            },
+            first_aid_kit =
+            {
+                r = 255,
+                g = 102,
+                b = 102
+            },
+            bodybags_bag =
+            {
+                r = 51,
+                g = 204,
+                b = 255
+            }
+        },
         show_minion_tracker = true,
         show_difficulty_tracker = true,
         show_drama_tracker = true,
         show_pager_tracker = true,
         show_pager_callback = true,
         show_enemy_count_tracker = true,
-        show_laser_tracker = false
+        show_laser_tracker = false,
+
+        -- Waypoints
+        show_waypoints = true,
+        show_waypoints_present_timer = 2,
+        show_waypoints_enemy_turret = true
     }
     self:Log("Default values loaded")
 end
@@ -262,6 +304,20 @@ function EHI:GetOption(option)
     if option then
         return self.settings[option]
     end
+end
+
+function EHI:GetEquipmentOption(equipment)
+    if equipment and self.settings.equipment_color[equipment] then
+        return self:GetColor(self.settings.equipment_color[equipment])
+    end
+    return Color.white
+end
+
+function EHI:GetColor(color)
+    if color and color.r and color.g and color.b then
+        return Color(255, color.r, color.g, color.b) / 255
+    end
+    return Color.white
 end
 
 function EHI:AddOnAlarmCallback(f)
@@ -318,18 +374,16 @@ function EHI:GetPeerColorByPeerID(peer_id)
     local color = Color.white
     if peer_id then
         color = tweak_data.chat_colors[peer_id] or Color.white
-    else
-        self:Log("peer_id is nil, returned color set to white")
     end
     return color
 end
 
-function EHI:GetInstanceElementID(id, start_index)
-    return 100000 + math.mod(id, 100000) + 30000 + start_index
+function EHI:GetInstanceElementID(id, start_index, continent_index)
+    return (continent_index or 100000) + math.mod(id, 100000) + 30000 + start_index
 end
 
-function EHI:GetInstanceUnitID(id, start_index)
-    return self:GetInstanceElementID(id, start_index)
+function EHI:GetInstanceUnitID(id, start_index, continent_index)
+    return self:GetInstanceElementID(id, start_index, continent_index)
 end
 
 function EHI:RoundNumber(n, bracket)
@@ -487,6 +541,9 @@ function EHI:AddTrackerWithRandomTime(id)
         icons = triggers[id].icons,
         class = triggers[id].class
     })
+    if triggers[id].waypoint then
+        managers.hud:AddTrackerWaypoint(triggers[id].id, triggers[id].waypoint)
+    end
 end
 
 function EHI:AddTracker(id, sync)
@@ -507,6 +564,9 @@ function EHI:AddTracker(id, sync)
     if sync then
         managers.ehi:Sync(id, self:GetTime(id))
     end
+    if trigger.waypoint then
+        managers.hud:AddTrackerWaypoint(trigger.id, trigger.waypoint)
+    end
 end
 
 function EHI:AddTrackerAndSync(id, delay)
@@ -516,6 +576,9 @@ function EHI:AddTrackerAndSync(id, delay)
         icons = host_triggers[id].icons,
         class = host_triggers[id].class
     }, id, delay)
+    if host_triggers[id].waypoint then
+        managers.hud:AddTrackerWaypoint(triggers[id].id, triggers[id].waypoint)
+    end
 end
 
 function EHI:CheckConditionFunction(id, sync)
@@ -564,10 +627,13 @@ function EHI:Trigger(id, element, enabled)
                 managers.ehi:AddMoneyToTracker(triggers[id].id, triggers[id].amount)
             elseif f == SF.RemoveTracker then
                 managers.ehi:RemoveTracker(triggers[id].id)
+                managers.hud:RemoveTrackerWaypoint(triggers[id].id)
             elseif f == SF.PauseTracker then
                 managers.ehi:PauseTracker(triggers[id].id)
+                managers.hud:PauseTrackerWaypoint(triggers[id].id)
             elseif f == SF.UnpauseTracker then
                 managers.ehi:UnpauseTracker(triggers[id].id)
+                managers.hud:UnpauseTrackerWaypoint(triggers[id].id)
             elseif f == SF.UnpauseTrackerIfExists then
                 if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.ehi:UnpauseTracker(triggers[id].id)
@@ -578,6 +644,7 @@ function EHI:Trigger(id, element, enabled)
                 if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.ehi:ResetTrackerTime(triggers[id].id)
                     managers.ehi:UnpauseTracker(triggers[id].id)
+                    managers.hud:UnpauseTrackerWaypoint(triggers[id].id)
                 else
                     self:CheckCondition(id)
                 end
@@ -596,6 +663,7 @@ function EHI:Trigger(id, element, enabled)
                 self:CheckCondition(id)
             elseif f == SF.ReplaceTrackerWithTracker then
                 managers.ehi:RemoveTracker(triggers[id].data.id)
+                managers.hud:RemoveTrackerWaypoint(triggers[id].data.id)
                 if triggers[id].data.trigger then
                     UnhookTrigger(self, triggers[id].data.trigger) -- Removes trigger from the list, used in The White House
                 end
@@ -630,7 +698,7 @@ function EHI:Trigger(id, element, enabled)
                 UnhookTrigger(self, id)
             elseif f == SF.SetTimeOrCreateTracker then
                 if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.hud:SetTime(triggers[id].id, triggers[id].time)
+                    managers.ehi:SetTrackerTime(triggers[id].id, triggers[id].time)
                 else
                     self:CheckCondition(id)
                 end
@@ -641,6 +709,7 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.RemoveTrackers then
                 for _, tracker in ipairs(triggers[id].data) do
                     managers.ehi:RemoveTracker(tracker)
+                    managers.hud:RemoveTrackerWaypoint(tracker)
                 end
             elseif f == SF.ShowAchievement then
                 if self:IsAchievementLocked(triggers[id].id) then
@@ -660,6 +729,7 @@ function EHI:Trigger(id, element, enabled)
                 self:CheckCondition(id)
             elseif f == SF.IncreaseProgress then
                 managers.ehi:IncreaseTrackerProgress(triggers[id].id)
+                managers.hud:IncreaseTrackerWaypointProgress(triggers[id].id)
             elseif f == SF.SetTimeNoAnimOrCreateTracker then
                 if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.ehi:SetTrackerTimeNoAnim(triggers[id].id, self:GetTime(id))
@@ -690,12 +760,6 @@ function EHI:Trigger(id, element, enabled)
                 end
             elseif f == SF.SetProgressMax then
                 managers.ehi:SetTrackerProgressMax(triggers[id].id, triggers[id].max)
-            elseif f == SF.ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists then
-                -- REMOVE ME
-                --[[managers.ehi:RemoveTracker(triggers[id].data.id)
-                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
-                    self:CheckCondition(id)
-                end]]
             elseif f == SF.DecreaseChance then
                 local trigger = triggers[id]
                 managers.ehi:DecreaseChance(trigger.id, trigger.amount)
@@ -737,6 +801,24 @@ function EHI:Trigger(id, element, enabled)
                 if self:IsAchievementLocked(triggers[id].id) and managers.ehi:InteractionExists(triggers[id].data) then
                     self:CheckCondition(id)
                 end
+            elseif f == SF.IncreaseChanceFromElement then
+                managers.ehi:IncreaseChance(triggers[id].id, element._values.chance)
+            elseif f == SF.DecreaseChanceFromElement then
+                managers.ehi:DecreaseChance(triggers[id].id, element._values.chance)
+            elseif f == SF.SetChanceFromElement then
+                managers.ehi:SetChance(triggers[id].id, element._values.chance)
+            elseif f == SF.SetChanceFromElementWhenTrackerExists then
+                local trigger = triggers[id]
+                if managers.ehi:TrackerExists(trigger.id) then
+                    managers.ehi:SetChance(trigger.id, element._values.chance)
+                else
+                    trigger.chance = element._values.chance
+                    self:CheckCondition(id)
+                end
+            elseif f == SF.PauseTrackerWithTime then
+                managers.ehi:PauseTracker(triggers[id].id)
+                managers.hud:PauseTrackerWaypoint(triggers[id].id)
+                managers.ehi:SetTrackerTimeNoAnim(triggers[id].time)
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
@@ -921,6 +1003,13 @@ end
 Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", function(peer, peer_id, reason)
     if managers.ehi then
         managers.ehi:CallFunction("CustodyTime", "RemovePeerFromCustody", peer_id)
+    end
+end)
+
+Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id, data)
+    if id == EHI.SyncMessages.EHISyncAddTracker then
+        local tbl = LuaNetworking:StringToTable(data)
+        EHI:AddTrackerSynced(tonumber(tbl.id), tonumber(tbl.delay))
     end
 end)
 

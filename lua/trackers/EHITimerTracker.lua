@@ -1,22 +1,9 @@
-local function FixIcon(icon)
-    if icon == "pd2_hack" then
-        return "wp_hack"
-    elseif icon == "pd2_saw" then
-        return "pd2_generic_saw"
-    else
-        return icon
-    end
-end
-
 EHITimerTracker = EHITimerTracker or class(EHITracker)
 function EHITimerTracker:init(panel, params)
     if params.icons[1].icon then
-        params.icons[1].icon = FixIcon(params.icons[1].icon)
         params.icons[2] = { icon = "faster", visible = false, alpha = 0.25 }
         params.icons[3] = { icon = "silent", visible = false, alpha = 0.25 }
         params.icons[4] = { icon = "restarter", visible = false, alpha = 0.25 }
-    else
-        params.icons[1] = FixIcon(params.icons[1])
     end
     self.theme = params.theme
     EHITimerTracker.super.init(self, panel, params)

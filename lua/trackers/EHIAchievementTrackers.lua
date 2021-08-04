@@ -11,6 +11,7 @@ function EHIAchievementTracker:update(t, dt)
 end
 
 function EHIAchievementTracker:SetCompleted()
+    self._exclude_from_sync = true
     self._text:stop()
     self._fade_time = 5
     self._fade = true
@@ -19,6 +20,7 @@ function EHIAchievementTracker:SetCompleted()
 end
 
 function EHIAchievementTracker:SetFailed()
+    self._exclude_from_sync = true
     self._text:stop()
     self._fade_time = 5
     self._fade = true
@@ -40,9 +42,9 @@ function EHIAchievementDoneTracker:update(t, dt)
     self._time = self._time - dt
     self._text:set_text(self:Format())
     if self._time <= 0 then
+        self:SetCompleted()
         self._text:set_text("DONE")
         self:FitTheText()
-        self:SetCompleted()
         self:RemoveTrackerFromUpdate()
     end
 end
@@ -171,11 +173,13 @@ function EHIAchievementNotificationTracker:SetStatus(status)
 end
 
 function EHIAchievementNotificationTracker:SetCompleted()
+    self._exclude_from_sync = true
     self:SetStatus("done")
     self:AddTrackerToUpdate()
 end
 
 function EHIAchievementNotificationTracker:SetFailed()
+    self._exclude_from_sync = true
     self:SetStatus("fail")
     self:AddTrackerToUpdate()
 end

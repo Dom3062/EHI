@@ -42,7 +42,7 @@ local set_ok_state =
 
 local show_trackers = {}
 if EHI:ShowDramaTracker() then
-    show_trackers[#show_trackers + 1] = { id = "Drama", icons = { "enemy" }, class = "EHIChanceTracker", dont_flash = true, pos = 0 }
+    show_trackers[#show_trackers + 1] = { id = "Drama", icons = { "C_Escape_H_Street_Bullet" }, class = "EHIChanceTracker", dont_flash = true, pos = 0 }
 end
 
 local level_id = Global.game_settings.level_id
@@ -135,6 +135,7 @@ if EHI:GetOption("show_minion_tracker") then
                 id = "Converts",
                 dont_show_placed = true,
                 icons = { "minion" },
+                exclude_from_sync = true,
                 class = "EHIEquipmentTracker"
             })
         end

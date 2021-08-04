@@ -70,6 +70,9 @@ do
     else -- Bags placed
         function EHIEquipmentTracker:Format()
             if self._dont_show_placed then
+                if self._format == "percent" then
+                    return tostring(EHI:RoundNumber(self._amount, 0.01))
+                end
                 return tostring(self._amount)
             else
                 return tostring(self._placed)

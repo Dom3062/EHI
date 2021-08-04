@@ -62,6 +62,7 @@ end
 
 function EHIProgressTracker:SetCompleted(force)
     if (self._progress == self._max and not self._status) or force then
+        self._exclude_from_sync = true
         self._status = "completed"
         self:SetTextColor(Color.green)
         if self._remove_after_reaching_counter_target or force then
@@ -91,6 +92,7 @@ function EHIProgressTracker:SetFailed()
     if self._status and not self._status_is_overridable then
         return
     end
+    self._exclude_from_sync = true
     self:SetTextColor(Color.red)
     self._status = "failed"
     self._parent_class:AddTrackerToUpdate(self._id, self)

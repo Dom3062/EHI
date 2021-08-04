@@ -2,6 +2,12 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "更多劫案信息",
 
+    "ehi_r" : "红色数值",
+    "ehi_g" : "绿色数值",
+    "ehi_b" : "蓝色数值",
+    "ehi_button_ok" : "OK",
+    "ehi_color_reset" : "恢复默认颜色",
+
     "ehi_preview" : "预览 (重启劫案以应用更改)\n红色角标为第一个追踪器出现的位置",
 
     "ehi_x_offset" : "X轴偏移",
@@ -32,8 +38,8 @@
     "ehi_show_one_icon" : "精简追踪器",
     "ehi_show_one_icon_desc" : "每个追踪器仅显示1个图标\n如果取消勾选将显示该追踪器的所有图标",
 
-    "ehi_trackers" : "追踪器",
-    "ehi_trackers_desc" : "",
+    "ehi_trackers_menu" : "追踪器",
+    "ehi_trackers_menu_desc" : "",
 
     "ehi_show_achievement" : "显示成就追踪器",
     "ehi_show_achievement_desc" : "显示完成成就的时间追踪器\n某些劫案没有可供追踪的成就",

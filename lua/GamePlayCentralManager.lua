@@ -6,13 +6,8 @@ end
 
 local original =
 {
-    sync_heist_time = GamePlayCentralManager.sync_heist_time,
     load = GamePlayCentralManager.load
 }
-
-function GamePlayCentralManager:sync_heist_time(heist_time, ...)
-    original.sync_heist_time(self, heist_time, ...)
-end
 
 function GamePlayCentralManager:load(data, ...)
     original.load(self, data, ...)

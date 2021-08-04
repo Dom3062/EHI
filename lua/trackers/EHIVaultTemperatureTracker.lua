@@ -16,7 +16,11 @@ function EHIVaultTemperatureTracker:AddCrowbar()
         self._time = self._time / 2
     else
         self._time = self._time / 2.5
-        -- The number was already divided by 2; dividing by 5 would get the tracker inaccurate
+        -- The number was already divided by 2; dividing it by 5 would get the tracker inaccurate
     end
     self:AnimateBG()
+end
+
+function EHIVaultTemperatureTracker:SetNumberOfCrowbars(n)
+    self._n_of_crowbars = n
 end

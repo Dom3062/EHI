@@ -1,7 +1,7 @@
 EHIMoneyCounterTracker = EHIMoneyCounterTracker or class(EHITracker)
 EHIMoneyCounterTracker._update = false
 function EHIMoneyCounterTracker:init(panel, params)
-    self._money = 0
+    self._money = params.money or 0
     EHIMoneyCounterTracker.super.init(self, panel, params)
 end
 

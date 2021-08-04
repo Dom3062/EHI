@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.FirstAidKitBase then
 	return
 else
@@ -14,7 +15,14 @@ end
 
 local UpdateTracker
 
-if EHI:GetOption("show_equipment_aggregate_health") then
+if EHI:GetOption("show_equipment_aggregate_all") then
+    UpdateTracker = function(unit, key, amount)
+        if managers.ehi:TrackerDoesNotExist("Deployables") then
+            managers.ehi:AddAggregatedDeployablesTracker()
+        end
+        managers.ehi:CallFunction("Deployables", "UpdateAmount", "first_aid_kit", unit, key, amount)
+    end
+elseif EHI:GetOption("show_equipment_aggregate_health") then
     UpdateTracker = function(unit, key, amount)
         if managers.ehi:TrackerDoesNotExist("Health") then
             managers.ehi:AddAggregatedHealthTracker()
@@ -28,6 +36,7 @@ else
                 id = "FirstAidKits",
                 icons = { "first_aid_kit" },
                 dont_show_placed = true,
+                exclude_from_sync = true,
                 class = "EHIEquipmentTracker"
             })
         end
@@ -56,8 +65,6 @@ function FirstAidKitBase:GetRealAmount()
 end
 
 function FirstAidKitBase:destroy(...)
+    UpdateTracker(self._unit, self._ehi_key, 0)
     original.destroy(self, ...)
-    if managers.hud.ehi then
-        UpdateTracker(self._unit, self._ehi_key, 0)
-    end
 end

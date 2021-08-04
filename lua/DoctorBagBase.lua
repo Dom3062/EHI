@@ -20,8 +20,14 @@ local correction =
 }
 
 local UpdateTracker
-
-if EHI:GetOption("show_equipment_aggregate_health") then
+if EHI:GetOption("show_equipment_aggregate_all") then
+    UpdateTracker = function(unit, key, amount)
+        if managers.ehi:TrackerDoesNotExist("Deployables") then
+            managers.ehi:AddAggregatedDeployablesTracker()
+        end
+        managers.ehi:CallFunction("Deployables", "UpdateAmount", "doctor_bag", unit, key, amount)
+    end
+elseif EHI:GetOption("show_equipment_aggregate_health") then
     UpdateTracker = function(unit, key, amount)
         if managers.ehi:TrackerDoesNotExist("Health") then
             managers.ehi:AddAggregatedHealthTracker()
@@ -34,6 +40,7 @@ else
             managers.ehi:AddTracker({
                 id = "DoctorBags",
                 icons = { "doctor_bag" },
+                exclude_from_sync = true,
                 class = "EHIEquipmentTracker"
             })
         end
@@ -70,8 +77,8 @@ function DoctorBagBase:GetRealAmount()
 end
 
 function DoctorBagBase:destroy(...)
-    original.destroy(self, ...)
     UpdateTracker(self._unit, self._ehi_key, 0)
+    original.destroy(self, ...)
 end
 
 function CustomDoctorBagBase:_set_empty(...)

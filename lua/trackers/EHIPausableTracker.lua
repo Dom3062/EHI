@@ -2,7 +2,6 @@ EHIPausableTracker = EHIPausableTracker or class(EHITracker)
 function EHIPausableTracker:init(panel, params)
     EHIPausableTracker.super.init(self, panel, params)
     self._paused = params.paused
-    self._pause_sync = 0
     self:SetTextColor()
 end
 

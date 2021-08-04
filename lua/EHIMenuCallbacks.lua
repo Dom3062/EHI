@@ -2,6 +2,13 @@ function EHIMenu:SetOption(value, option)
     EHI.settings[option] = value
 end
 
+function EHIMenu:SetEquipmentColor(color, option)
+    local c = EHI.settings.equipment_color[option]
+    c.r = color.red
+    c.g = color.green
+    c.b = color.blue
+end
+
 function EHIMenu:UpdateXOffset(x)
     self._preview_panel:UpdateXOffset(x)
 end

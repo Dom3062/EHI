@@ -1,6 +1,6 @@
 local icons =
 {
-    default = { texture = "guis/textures/pd2/pd2_waypoints", texture_rect = {64, 64, 32, 32} },
+    default = { texture = "guis/textures/pd2/pd2_waypoints", texture_rect = {96, 64, 32, 32} },
 
     faster = { texture = "guis/textures/pd2/skilltree/drillgui_icon_faster" },
     silent = { texture = "guis/textures/pd2/skilltree/drillgui_icon_silent" },
@@ -13,6 +13,8 @@ local icons =
     enemy = { texture = "guis/textures/pd2_mod_ehi/enemy" },
     piggy = { texture = "guis/textures/pd2_mod_ehi/piggy" },
     assaultbox = { texture = "guis/textures/pd2_mod_ehi/assaultbox" },
+    deployables = { texture = "guis/textures/pd2_mod_ehi/deployables" },
+    padlock = { texture = "guis/textures/pd2_mod_ehi/padlock" },
 
     reload = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {0, 576, 64, 64} },
     smoke = { texture = "guis/dlcs/max/textures/pd2/specialization/icons_atlas", texture_rect = {0, 0, 64, 64} },
@@ -31,7 +33,10 @@ local icons =
     heavy = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {192, 64, 64, 64} },
     sniper = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 320, 64, 64} },
     camera_loop = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {256, 128, 64, 64} },
-    pager_icon = { texture = "guis/textures/pd2/specialization/icons_atlas", texture_rect = {64, 256, 64, 64} }
+    pager_icon = { texture = "guis/textures/pd2/specialization/icons_atlas", texture_rect = {64, 256, 64, 64} },
+
+    ecm_jammer = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {64, 256, 64, 64} },
+    ecm_feedback = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 128, 64, 64} }
 }
 
 local function GetIcon(icon)
@@ -60,12 +65,15 @@ local bg_visibility = EHI:GetOption("show_tracker_bg")
 EHITracker = EHITracker or class()
 EHITracker._update = true
 function EHITracker:init(panel, params)
+    self._exclude_from_sync = params.exclude_from_sync
+    self._icons = params.icons
+    self._class = params.class
     self._scale = params.scale
     self._text_scale = params.text_scale
     local number_of_icons = 0
     local gap = 0
-    if params.icons and type(params.icons) == "table" then
-        number_of_icons = #params.icons
+    if self._icons and type(self._icons) == "table" then
+        number_of_icons = #self._icons
         gap = 5 * number_of_icons
     end
     self._parent_panel = panel
@@ -74,7 +82,9 @@ function EHITracker:init(panel, params)
         x = params.x,
         y = params.y,
         w = (64 + gap + (32 * number_of_icons)) * self._scale,
-        h = 32 * self._scale
+        h = 32 * self._scale,
+        alpha = 0,
+        visible = true
     })
     self._time = params.time or 0
     self._former_time = self._time -- Time to reset the tracker to default
@@ -104,16 +114,29 @@ function EHITracker:init(panel, params)
     })
     self:FitTheText()
     if number_of_icons > 0 then
-        self:CreateIcons(params.icons)
+        self:CreateIcons()
     end
     self._id = params.id
     self._parent_class = params.parent_class
 end
 
+function EHITracker:SetPanelVisible()
+    self._panel:animate(function(o)
+        local TOTAL_T = 0.18
+        local t = 0
+        while TOTAL_T > t do
+            local dt = coroutine.yield()
+            t = math.min(t + dt, TOTAL_T)
+            local lerp = t / TOTAL_T
+            o:set_alpha(math.lerp(0, 1, lerp))
+        end
+    end)
+end
+
 if EHI:GetOption("show_one_icon") then
-    EHITracker.CreateIcons = function(self, icons)
+    EHITracker.CreateIcons = function(self)
         local icon_pos = self._time_bg_box:w() + (5 * self._scale)
-        local first_icon = icons[1]
+        local first_icon = self._icons[1]
         if type(first_icon) == "string" then
             local texture, rect = GetIcon(first_icon)
             CreateIcon(self, "1", texture, rect, Color.white, 1, true, icon_pos)
@@ -126,15 +149,15 @@ if EHI:GetOption("show_one_icon") then
         end
     end
 else
-    EHITracker.CreateIcons = function(self, icons)
+    EHITracker.CreateIcons = function(self)
         local start = self._time_bg_box:w()
         local icon_gap = 5 * self._scale
-        for i, v in ipairs(icons) do
+        for i, v in ipairs(self._icons) do
             local s_i = tostring(i)
             if type(v) == "string" then
                 local texture, rect = GetIcon(v)
                 CreateIcon(self, s_i, texture, rect, Color.white, 1, true, start + icon_gap)
-            else -- table
+            elseif type(v) == "table" then -- table
                 local texture, rect = GetIcon(v.icon)
                 CreateIcon(self, s_i, texture, rect, v.color,
                     v.alpha or 1,
@@ -147,8 +170,21 @@ else
     end
 end
 
-function EHITracker:SetTop(y)
-    self._panel:set_y(y)
+function EHITracker:SetTop(from_y, target_y)
+    if self._anim_move then
+        self._panel:stop(self._anim_move)
+        self._anim_move = nil
+    end
+    self._anim_move = self._panel:animate(function(o)
+        local TOTAL_T = 0.18
+        local t = (1 - math.abs(from_y - target_y) / math.abs(from_y - target_y)) * TOTAL_T
+        while TOTAL_T > t do
+            local dt = coroutine.yield()
+            t = math.min(t + dt, TOTAL_T)
+            local lerp = t / TOTAL_T
+            o:set_y(math.lerp(from_y, target_y, lerp))
+        end
+    end)
 end
 
 local function SecondsOnly(self)
@@ -253,6 +289,10 @@ function EHITracker:SetTextColor(color)
     self._text:set_color(color)
 end
 
+function EHITracker:SetIconColor(color)
+    self._icon1:set_color(color)
+end
+
 function EHITracker:SetTrackerAccurate(time)
     self:SetTextColor(Color.white)
     self:SetTimeNoAnim(time)
@@ -266,10 +306,23 @@ function EHITracker:AddTrackerToUpdate()
     self._parent_class:AddTrackerToUpdate(self._id, self)
 end
 
-function EHITracker:destroy()
+function EHITracker:destroy(skip)
     if alive(self._panel) and alive(self._parent_panel) then
-        self._time_bg_box:child("bg"):stop()
-        self._parent_panel:remove(self._panel)
+        self._panel:stop()
+        self._panel:animate(function(o)
+            if not skip then
+                local TOTAL_T = 0.18
+                local t = 0
+                while TOTAL_T > t do
+                    local dt = coroutine.yield()
+                    t = math.min(t + dt, TOTAL_T)
+                    local lerp = t / TOTAL_T
+                    o:set_alpha(math.lerp(1, 0, lerp))
+                end
+            end
+            self._time_bg_box:child("bg"):stop()
+            self._parent_panel:remove(self._panel)
+        end)
     end
 end
 
