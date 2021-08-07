@@ -1,3 +1,7 @@
+r22 (07. 08. 2021):
+Improved time accuracy of drills and saws
+Fixed a crash on The White House or Buluc's Mansion when "Show Timers" option is disabled
+
 r21 (04. 08. 2021):
 Added Waypoints
 Added trackers for ECM Jammer and ECM Feedback

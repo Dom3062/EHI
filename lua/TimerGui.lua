@@ -15,6 +15,7 @@ local original =
     set_background_icons = TimerGui.set_background_icons,
     set_timer_multiplier = TimerGui.set_timer_multiplier,
     _start = TimerGui._start,
+    update = TimerGui.update,
     _set_done = TimerGui._set_done,
     _set_jammed = TimerGui._set_jammed,
     _set_powered = TimerGui._set_powered,
@@ -94,6 +95,11 @@ function TimerGui:_start(...)
             class = "EHITimerTracker"
         })
     end
+end
+
+function TimerGui:update(...)
+    managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
+    original.update(self, ...)
 end
 
 function TimerGui:_set_done(...)

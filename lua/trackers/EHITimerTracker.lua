@@ -1,4 +1,5 @@
 EHITimerTracker = EHITimerTracker or class(EHITracker)
+EHITimerTracker._update = false
 function EHITimerTracker:init(panel, params)
     if params.icons[1].icon then
         params.icons[2] = { icon = "faster", visible = false, alpha = 0.25 }
@@ -19,17 +20,9 @@ function EHITimerTracker:init(panel, params)
     end
 end
 
-function EHITimerTracker:update(t, dt)
-    if self._jammed or self._not_powered then
-        return
-    end
-    self._time = self._time - dt
+function EHITimerTracker:SetTimeNoAnim(time) -- No fit text function needed, these timers just run down
+    self._time = time
     self._text:set_text(self:Format())
-    if self._time <= 0 then
-        self._text:set_text("DONE")
-        self:FitTheText()
-        self._parent_class:RemoveTrackerFromUpdate(self._id)
-    end
 end
 
 function EHITimerTracker:SetUpgradeable(upgradeable)
@@ -60,10 +53,6 @@ function EHITimerTracker:SetUpgrades(upgrades)
             end
 		end
 	end
-    local timer_multiplier = tweak_data.upgrades.values.player.drill_speed_multiplier[upgrades.faster]
-    if timer_multiplier then
-        self:SetTimerMultiplier(timer_multiplier)
-    end
 end
 
 function EHITimerTracker:GetUpgradeColor(level)
@@ -72,22 +61,6 @@ function EHITimerTracker:GetUpgradeColor(level)
     end
     local theme = TimerGui.themes[self.theme]
     return theme and theme["upgrade_color_" .. level] or TimerGui.upgrade_colors["upgrade_color_" .. level]
-end
-
-function EHITimerTracker:SetTimerMultiplier(multiplier)
-    local decrease_time = true
-    if multiplier >= self._faster_level then
-        decrease_time = false
-    end
-    if decrease_time then
-        local time_diff = self._faster_level - multiplier
-        local decrease = 1 - time_diff
-        self._time = self._time * decrease
-        if self._faster_level ~= 1 and self._faster_level > multiplier then
-            self:AnimateBG()
-        end
-        self._faster_level = multiplier
-    end
 end
 
 function EHITimerTracker:SetJammed(jammed)

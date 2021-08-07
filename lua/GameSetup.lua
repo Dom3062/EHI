@@ -35,7 +35,7 @@ function GameSetup:init_finalize(...)
     EHI:InitElements()
     local units = World:find_units_quick("all", 1)
     for _, unit in pairs(units or {}) do
-        if unit and unit:timer_gui() and broken_units[tostring(unit:name())] then
+        if unit and unit:timer_gui() and unit:timer_gui().DisableOnSetVisible and broken_units[tostring(unit:name())] then
             unit:timer_gui():DisableOnSetVisible()
         end
     end

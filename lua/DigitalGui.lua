@@ -16,6 +16,7 @@ end
 local original =
 {
     init = DigitalGui.init,
+	_update_timer_text = DigitalGui._update_timer_text,
 	timer_start_count_down = DigitalGui.timer_start_count_down,
 	timer_pause = DigitalGui.timer_pause,
 	timer_resume = DigitalGui.timer_resume,
@@ -258,6 +259,11 @@ function DigitalGui:timer_start_count_down(...)
 			class = class[editor_id] or "EHITimerTracker"
 		})
 	end
+end
+
+function DigitalGui:_update_timer_text(...)
+	managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
+	original._update_timer_text(self, ...)
 end
 
 if level_id == "chill" then

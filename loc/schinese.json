@@ -1,12 +1,12 @@
 {
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "更多劫案信息",
-
-    "ehi_r" : "红色数值",
-    "ehi_g" : "绿色数值",
-    "ehi_b" : "蓝色数值",
-    "ehi_button_ok" : "OK",
-    "ehi_color_reset" : "恢复默认颜色",
+    
+    "ehi_r" : "红色",
+    "ehi_g" : "绿色",
+    "ehi_b" : "蓝色",
+    "ehi_button_ok" : "确认",
+    "ehi_color_reset" : "重置颜色",
 
     "ehi_preview" : "预览 (重启劫案以应用更改)\n红色角标为第一个追踪器出现的位置",
 
@@ -14,9 +14,9 @@
     "ehi_x_offset_desc" : "X轴偏移设置（数值越小追踪器越靠左）",
     "ehi_y_offset" : "Y轴偏移",
     "ehi_y_offset_desc" : "Y轴偏移设置（数值越小追踪器越靠上）",
-
+    
     "ehi_text_scale" : "文本大小",
-    "ehi_text_scale_desc" : "设置模组显示的文本大小\n对更改了游戏字体的玩家来说很有用",
+    "ehi_text_scale_desc" : "设置追踪器中文本的显示大小",
 
     "ehi_scale" : "追踪器大小",
     "ehi_scale_desc" : "更改追踪器大小，数值越大追踪器越大",
@@ -38,12 +38,12 @@
     "ehi_show_one_icon" : "精简追踪器",
     "ehi_show_one_icon_desc" : "每个追踪器仅显示1个图标\n如果取消勾选将显示该追踪器的所有图标",
 
-    "ehi_trackers_menu" : "追踪器",
-    "ehi_trackers_menu_desc" : "",
+    "ehi_trackers" : "追踪器",
+    "ehi_trackers_desc" : "",
 
     "ehi_show_achievement" : "显示成就追踪器",
     "ehi_show_achievement_desc" : "显示完成成就的时间追踪器\n某些劫案没有可供追踪的成就",
-
+    
     "ehi_hide_unlocked_achievements" : "隐藏已解锁的成就追踪器",
     "ehi_hide_unlocked_achievements_desc" : "勾选后，本模组将隐藏您已经解锁过的成就追踪器\n取消勾选后，本模组依然会为您显示当前所有可用的成就追踪器",
 
@@ -113,28 +113,55 @@
 
     "ehi_show_equipment_firstaidkit": "显示急救包追踪器",
     "ehi_show_equipment_firstaidkit_desc": "显示急救包的追踪器",
+    
+    "ehi_show_equipment_ecmjammer" : "显示ECM干扰时间追踪器",
+    "ehi_show_equipment_ecmjammer_desc" : "显示ECM干扰持续时间追踪器\n默认显示结束时间最晚的ECM时间",
 
+    "ehi_show_equipment_ecmfeedback" : "显示ECM啸叫时间追踪器",
+    "ehi_show_equipment_ecmfeedback_desc" : "显示ECM啸叫持续时间追踪器\n默认显示结束时间最晚的ECM时间",
+    
     "ehi_show_equipment_aggregate_health" : "整合医疗箱与急救包追踪器",
     "ehi_show_equipment_aggregate_health_desc" : "把医疗箱与急救包追踪器整合为一个追踪器 ",
 
+    "ehi_show_equipment_aggregate_all" : "整合所有部署装备追踪器",
+    "ehi_show_equipment_aggregate_all_desc" : "把所有已部署的随身装备追踪器整合为一个追踪器\n部署物的颜色将按照以下的设置显示",
+
+    "ehi_doctor_bag" : "医疗箱",
+    "ehi_ammo_bag" : "弹药箱",
+    "ehi_grenade_crate" : "手雷箱",
+    "ehi_first_aid_kit" : "急救包",
+    "ehi_bodybags_bag" : "尸体袋",
+    
     "ehi_show_minion_tracker" : "显示变节警察追踪器",
     "ehi_show_minion_tracker_desc" : "显示地图上已变节警察的数量追踪器",
 
     "ehi_show_difficulty_tracker" : "显示难度追踪器",
-    "ehi_show_difficulty_tracker_desc" : "显示当前突击波次的难度追踪器\n难度：一个介于0%~100%的数值，其大小决定了本次突击人数的多寡与突击持续时间的长短\n多数地图中警报触发后一段时间由0%提升至最高50%，在第一波突击结束后一般会达到75%，第二波结束后会达到100%",
+    "ehi_show_difficulty_tracker_desc" : "显示当前突击波次的难度追踪器\n难度：一个介于0%~100%的数值，其大小决定了本次突击人数的多寡与突击持续时间的长短\n每个地图都有自己预设的难度，多数地图警报触发后一段时间由0%提升至最高50%，在第一波突击结束后一般会达到75%，第二波结束后会达到100%",
 
+    "ehi_show_pager_tracker" : "显示对讲机次数追踪器",
+    "ehi_show_pager_tracker_desc" : "显示当前劫案还有几次可用的对讲机次数",
+    
     "ehi_show_drama_tracker" : "显示导演系统追踪器",
     "ehi_show_drama_tracker_desc" : "显示导演系统当前的剧本值（仅主机）\n 剧本值：决定突击波次进度的值，它会根据劫案中发生的事件动态变化 \n此值从0开始，并会因为以下事件发生变动： \n -有劫匪受到伤害（根据伤害量增加剧本值）\n -有劫匪被击倒（+10%） \n -有劫匪被逮捕（+20%） \n -随时间流逝而减少（-3%/秒）\n当剧本值达到一定数值时可以跳过突击的某一阶段（如剧本值超过95%则跳过构建阶段直接进入持续阶段；剧本值低于25%时，将跳过撤退阶段直接进入控场阶段） \n PS:剧本值会被诸多因素影响，本简介只是介绍了该机制的冰山一角",
-
-    "ehi_show_pager_tracker" : "显示对讲机追踪器",
-    "ehi_show_pager_tracker_desc" : "显示当前劫案还有几次可用的对讲机次数",
-
-    "ehi_show_pager_callback_trackers" : "显示对讲机剩余时间追踪器",
-    "ehi_show_pager_callback_trackers_desc" : "显示当前待回答对讲机的剩余时间追踪器",
 
     "ehi_show_enemy_count_tracker" : "显示敌人追踪器",
     "ehi_show_enemy_count_tracker_desc" : "显示地图上正在行动的敌人数量追踪器",
 
+    "ehi_show_pager_callback_trackers" : "显示对讲机剩余时间追踪器",
+    "ehi_show_pager_callback_trackers_desc" : "显示当前待回答对讲机的剩余时间追踪器",
+
     "ehi_show_laser_tracker" : "显示镭射循环追踪器",
-    "ehi_show_laser_tracker_desc" : "显示地图上传感器镭射的循环时间追踪器"
+    "ehi_show_laser_tracker_desc" : "显示地图上传感器镭射的循环时间追踪器",
+    
+    "ehi_waypoints_menu" : "路径导航",
+    "ehi_waypoints_menu_desc" : "",
+
+    "ehi_show_waypoints" : "显示路径导航点",
+    "ehi_show_waypoints_desc" : "在游戏中显示路径导航点",
+
+    "ehi_show_waypoints_present_timer" : "动画时间",
+    "ehi_show_waypoints_present_timer_desc" : "设置导航点在'移动'到目标前在屏幕上停留的时间。",
+
+    "ehi_show_waypoints_enemy_turret" : "显示敌方机枪塔的导航点",
+    "ehi_show_waypoints_enemy_turret_desc" : "在敌方炮塔重装或修理时显示一个导航点"
 }
