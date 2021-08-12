@@ -1,3 +1,7 @@
+r24 (13. 08. 2021):
+Offshore Spend Tracker: Improved formatting
+Goat Simulator Day 2: Fixed a crash when pilot missed the cage
+
 r23 (12. 08. 2021):
 Added Offshore Spend tracker for weapon "Cash Blaster"
 Fixed an issue where PC Hack in Undercover did not update the tracker

@@ -5,6 +5,10 @@ function EHIOffshoreSpendTracker:init(panel, params)
     EHIOffshoreSpendTracker.super.init(self, panel, params)
 end
 
+function EHIOffshoreSpendTracker:Format()
+    return managers.experience:cash_string(self._money, "$")
+end
+
 function EHIOffshoreSpendTracker:MoneyChanged()
     if self._money > self._max_offshore_limit then
         return

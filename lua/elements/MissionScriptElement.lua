@@ -1201,9 +1201,9 @@ elseif level_id == "peta2" then -- Goat Simulator Heist Day 2
         [101720] = { time = 80, id = "Bridge", icons = { "faster" }, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable },
         [101718] = { id = "Bridge", special_function = SF.PauseTracker },
 
-        [EHI:GetInstanceElementID(100011, 3750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { Icon.Heli, Icon.Interact }, special_function = SF.ReplaceTrackerWithTracker, data = { "PilotComingIn" } },
-        [EHI:GetInstanceElementID(100011, 4250)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { Icon.Heli, Icon.Interact }, special_function = SF.ReplaceTrackerWithTracker, data = { "PilotComingIn" } },
-        [EHI:GetInstanceElementID(100011, 4750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { Icon.Heli, Icon.Interact }, special_function = SF.ReplaceTrackerWithTracker, data = { "PilotComingIn" } }
+        [EHI:GetInstanceElementID(100011, 3750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { Icon.Heli, Icon.Interact }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "PilotComingIn" } },
+        [EHI:GetInstanceElementID(100011, 4250)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { Icon.Heli, Icon.Interact }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "PilotComingIn" } },
+        [EHI:GetInstanceElementID(100011, 4750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = { Icon.Heli, Icon.Interact }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "PilotComingIn" } }
     }
 elseif level_id == "cane" then -- Santa's Workshop
     local fire_recharge = { time = 180, id = "FireRecharge", icons = { "pd2_fire", "restarter" } }
