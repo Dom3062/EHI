@@ -18,6 +18,7 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHICiviliansKilledTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHITimerTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIMoneyCounterTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIOffshoreSpendTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIXPTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIChanceTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIProgressTracker.lua"/>

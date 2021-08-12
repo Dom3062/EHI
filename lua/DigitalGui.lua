@@ -71,6 +71,20 @@ elseif level_id == "hvh" then -- Cursed Kill Room
 		[EHI:GetInstanceUnitID(100029, 11294)] = { EHI.Icons.Vault },
 		[EHI:GetInstanceUnitID(100029, 11794)] = { EHI.Icons.Vault }
 	}
+elseif level_id == "arm_for" then -- Transport: Train Heist
+	local ids = {}
+	for _, start_index in pairs({0, 100, 200, 300, 400, 500}) do
+		ids[EHI:GetInstanceUnitID(100022, start_index)] = true
+	end
+	local function f()
+        for _, unit in pairs(World:find_units_quick("all", 1)) do
+            if unit and ids[unit:editor_id()] then
+                unit:digital_gui():OnAlarm()
+				ignore[unit:editor_id()] = true
+            end
+        end
+    end
+    EHI:AddOnAlarmCallback(f)
 elseif level_id == "mus" then -- The Diamond
 	remove =
 	{

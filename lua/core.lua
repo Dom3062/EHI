@@ -577,7 +577,10 @@ function EHI:AddTrackerAndSync(id, delay)
         class = host_triggers[id].class
     }, id, delay)
     if host_triggers[id].waypoint then
-        managers.hud:AddTrackerWaypoint(triggers[id].id, triggers[id].waypoint)
+        managers.hud:AddTrackerWaypoint(host_triggers[id].id, host_triggers[id].waypoint)
+    end
+    if host_triggers[id].special_function then -- Currently it has SF.AddTrackerIfDoesNotExists
+        host_triggers[id] = nil
     end
 end
 

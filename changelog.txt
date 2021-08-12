@@ -1,3 +1,9 @@
+r23 (12. 08. 2021):
+Added Offshore Spend tracker for weapon "Cash Blaster"
+Fixed an issue where PC Hack in Undercover did not update the tracker
+Dragon Heist: Fixed an issue where escape vehicle tracker is not accurate on host
+Transport: Train Heist: Fixed an issue where traincard hacking did not hide after alarm went off
+
 r22 (07. 08. 2021):
 Improved time accuracy of drills and saws
 Fixed a crash on The White House or Buluc's Mansion when "Show Timers" option is disabled

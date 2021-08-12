@@ -12,6 +12,7 @@ local original =
 {
     init = SecurityLockGui.init,
     _start = SecurityLockGui._start,
+    update = SecurityLockGui.update,
     _set_powered = SecurityLockGui._set_powered,
     _set_done = SecurityLockGui._set_done,
     destroy = SecurityLockGui.destroy
@@ -48,6 +49,11 @@ function SecurityLockGui:_start(bar, ...)
     })
 end
 
+function SecurityLockGui:update(...)
+    managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._current_timer)
+    original.update(self, ...)
+end
+
 function SecurityLockGui:_set_powered(powered, ...)
     original._set_powered(self, powered, ...)
     managers.ehi:SetTimerPowered(self._ehi_key, powered)
@@ -62,7 +68,7 @@ function SecurityLockGui:_set_done(bar, ...)
 end
 
 function SecurityLockGui:destroy(...)
-    original.destroy(self, ...)
-	managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi:RemoveTracker(self._ehi_key)
     managers.ehi:RemoveTracker(self._ehi_bar_key)
+    original.destroy(self, ...)
 end

@@ -1932,7 +1932,7 @@ elseif level_id == "fex" then -- Buluc's Mansion
     }
 elseif level_id == "chas" then -- Dragon Heist
     local element_sync_triggers = {
-        [100209] = { time = 5, id = "LoudEscape", icons = { Icon.Car, Icon.Escape, Icon.LootDrop }, client_on_executed = SF.RemoveTriggerWhenExecuted, hook_element = 100602 },
+        [100209] = { time = 5, id = "LoudEscape", icons = { Icon.Car, Icon.Escape, Icon.LootDrop }, special_function = SF.AddTrackerIfDoesNotExist, client_on_executed = SF.RemoveTriggerWhenExecuted, hook_element = 100602 },
         [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = { Icon.Heli, "pd2_drill", "pd2_goto" }, hook_element = 102453, remove_trigger_when_executed = true }
     }
     triggers = {
