@@ -33,6 +33,7 @@ local TT = -- Tracker Type
     Chance = "EHIChanceTracker",
     Progress = "EHIProgressTracker",
     Achievement = "EHIAchievementTracker",
+    AchievementUnlock = "EHIAchievementUnlockTracker",
     AchievementProgress = "EHIAchievementProgressTracker",
     AchievementNotification = "EHIAchievementNotificationTracker",
     Inaccurate = "EHIInaccurateTracker",
@@ -57,7 +58,6 @@ SF.ED3_SetWhiteColorWhenUnpaused = 192
 SF.ED3_SetPausedColor = 193
 SF.PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = 194
 SF.WD2_SetTrackerAccurate = 199
---SF.IncreaseProgressMax = 399
 SF.ALEX_1_SetTimeIfMoreThanOrCreateTracker = 497
 SF.KOSUGI_ExecuteAndDisableTriggers = 498
 SF.MeltdownAddCrowbar = 999
@@ -1021,7 +1021,7 @@ elseif level_id == "arena" then -- The Alesso Heist
         [EHI:GetInstanceElementID(100166, 4900)] = { time = 5, id = "WaitTime", icons = { "faster" } },
         [EHI:GetInstanceElementID(100128, 4900)] = { time = 10, id = "PressSequence", icons = { "pd2_generic_interact" }, class = TT.Warning },
 
-        [100304] = { time = 5, id = "live_3", icons = { "C_Bain_H_Arena_Even" }, class = "EHIAchievementUnlockTracker" }
+        [100304] = { time = 5, id = "live_3", icons = { "C_Bain_H_Arena_Even" }, class = TT.AchievementUnlock }
     }
 elseif level_id == "pal" then -- Counterfeit
     local element_sync_triggers =
@@ -1131,8 +1131,13 @@ elseif level_id == "red2" then -- First World Bank
         [1013252] = { id = "ThermiteShorterTime", special_function = SF.RemoveTracker },
         [103373] = { time = 817, id = "green_3", class = TT.Achievement },
         [107072] = { id = "cac_10", special_function = SF.SetAchievementComplete },
-        [101544] = { time = 30, id = "cac_10", class = TT.Achievement, special_function = SF.RemoveTriggerAndShowAchievement, condition_function = CF.IsLoud },
-        [101684] = { time = 5.1, id = "C4", icons = { "pd2_c4" } }
+        [101544] = { special_function = SF.Trigger, data = { 1015441, 1015442 } },
+        [1015441] = { time = 30, id = "cac_10", class = TT.Achievement, condition = show_achievement and ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement, condition_function = CF.IsLoud },
+        [1015442] = { id = "cac_10_counter", icons = { "C_Classics_H_FirstWorldBank_Federal" }, class = TT.AchievementProgress, condition = show_achievement and ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievementCustom, condition_function = CF.IsLoud, dont_flash_max = true, data = { id = "cac_10" } },
+        [107066] = { id = "cac_10_counter", special_function = SF.IncreaseProgressMax },
+        [107067] = { id = "cac_10_counter", special_function = SF.IncreaseProgress },
+        [101684] = { time = 5.1, id = "C4", icons = { "pd2_c4" } },
+        [102567] = { id = "green_3", special_function = SF.SetAchievementFailed }
     }
 elseif level_id == "dark" then -- Murky Station
     triggers = {
@@ -1399,7 +1404,7 @@ elseif level_id == "man" then -- Undercover
 elseif level_id == "dinner" then -- Slaughterhouse
     local c4 = { time = 5, id = "C4", icons = { "pd2_c4" } }
     triggers = {
-        [100484] = { time = 300, id = "farm_2", icons = { "C_Classics_H_Slaughterhouse_ButHow" }, class = "EHIAchievementUnlockTracker" },
+        [100484] = { time = 300, id = "farm_2", icons = { "C_Classics_H_Slaughterhouse_ButHow" }, class = TT.AchievementUnlock },
         [100485] = { time = 30, id = "farm_4", class = TT.Achievement },
         [100915] = { time = 4640/30, id = "CraneGasMove", icons = { "equipment_winch_hook", Icon.Fire, "pd2_goto" } },
         [100967] = { time = 3660/30, id = "CraneGoldMove", icons = { Icon.Escape } },
@@ -1914,7 +1919,7 @@ elseif level_id == "pex" then -- Breakfast in Tijuana
     end
 elseif level_id == "fex" then -- Buluc's Mansion
     triggers = {
-        -- Van Escape, 2 possible car escape scenarions here, the longer is here, the shorter is in CoreElementUnitSequence
+        -- Van Escape, 2 possible car escape scenarions here, the longer is here, the shorter is in WankerCar
         [101638] = { time = 1 + 60 + 900/30 + 5, id = "CarEscape", icons = CarEscape },
         [EHI:GetInstanceElementID(100358, 10130)] = { time = 1 + 210/30, id = "MayanDoorOpen", icons = { "pd2_door" } },
 
@@ -1928,11 +1933,11 @@ elseif level_id == "fex" then -- Buluc's Mansion
 
         [EHI:GetInstanceElementID(100026, 24580)] = { time = 26.5 + 5, id = "CarBurn", icons = { "pd2_car", "pd2_fire" } },
 
-        [EHI:GetInstanceElementID(100049, 5200)] = { time = 6, id = "FrontGateThermite", icons = { "pd2_fire" } }
+        [EHI:GetInstanceElementID(100049, 5200)] = { time = 6, id = "ThermiteFrontGate", icons = { "pd2_fire" } }
     }
 elseif level_id == "chas" then -- Dragon Heist
     local element_sync_triggers = {
-        [100209] = { time = 5, id = "LoudEscape", icons = { Icon.Car, Icon.Escape, Icon.LootDrop }, special_function = SF.AddTrackerIfDoesNotExist, client_on_executed = SF.RemoveTriggerWhenExecuted, hook_element = 100602 },
+        [100209] = { time = 5, id = "LoudEscape", icons = { Icon.Car, Icon.Escape, Icon.LootDrop }, special_function = SF.AddTrackerIfDoesNotExist, client_on_executed = SF.RemoveTriggerWhenExecuted, hook_element = 100602, remove_trigger_when_executed = true },
         [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = { Icon.Heli, "pd2_drill", "pd2_goto" }, hook_element = 102453, remove_trigger_when_executed = true }
     }
     triggers = {
@@ -2047,6 +2052,17 @@ elseif level_id == "crimepunishlvl" then -- Crime and Punishment Custom Heist
         [101137] = { time = 43, id = "EscapeHeli", special_function = SF.PauseTrackerWithTime },
         [101144] = { time = 43, id = "EscapeHeli", icons = HeliEscapeNoLoot, special_function = SF.UnpauseTrackerIfExists }
     }
+elseif level_id == "RogueCompany" then -- Yaeger - Rogue Company Custom Heist
+    local ObjectiveWait = { time = 90, id = "ObjectiveWait", icons = { "faster" } }
+    triggers = {
+        --[100824] = { time = 360, id = "RC_Achieve_speedrun", icons = { "ehi_rc_6mins" }, class = TT.Achievement, condition = show_achievement and ovk_and_up }
+        --[100756] = { id = "RC_Achieve_speedrun", special_function = SF.SetAchievementComplete },
+        -- Apparently there is a bug in the mission script which causes to unlock this achievement even when the time runs out
+        [100824] = { time = 360, id = "RC_Achieve_speedrun", icons = { "ehi_rc_6mins" }, class = TT.AchievementUnlock, condition = show_achievement and ovk_and_up },
+        [100271] = ObjectiveWait,
+        [100269] = ObjectiveWait
+    }
+    tweak_data.hud_icons.ehi_rc_6mins = { texture = "guis/achievements/rc_6mins", texture_rect = nil }
 end
 
 local function GetAchievementIcon(id)

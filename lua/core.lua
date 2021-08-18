@@ -76,6 +76,8 @@ _G.EHI =
         SetChanceFromElement = 44,
         SetChanceFromElementWhenTrackerExists = 45,
         PauseTrackerWithTime = 46,
+        RemoveTriggerAndShowAchievementCustom = 47,
+        IncreaseProgressMax = 48,
 
         AddToGlobalAndExecute = 99998, -- REMOVE ME
         Debug = 100000,
@@ -343,7 +345,7 @@ function EHI:PreHook(object, func, pre_call)
     Hooks:PreHook(object, func, "EHI_Pre_" .. func, pre_call)
 end
 
-function EHI:ElementHook(object, func, id, post_call)
+function EHI:HookElement(object, func, id, post_call)
     Hooks:PostHook(object, func, "EHI_Element_" .. id, post_call)
 end
 
@@ -554,6 +556,7 @@ function EHI:AddTracker(id, sync)
         chance = trigger.chance,
         max = trigger.max,
         dont_flash = trigger.dont_flash,
+        dont_flash_max = trigger.dont_flash_max,
         flash_times = trigger.flash_times,
         remove_after_reaching_target = trigger.remove_after_reaching_target,
         status_is_overridable = trigger.status_is_overridable,
@@ -578,9 +581,6 @@ function EHI:AddTrackerAndSync(id, delay)
     }, id, delay)
     if host_triggers[id].waypoint then
         managers.hud:AddTrackerWaypoint(host_triggers[id].id, host_triggers[id].waypoint)
-    end
-    if host_triggers[id].special_function then -- Currently it has SF.AddTrackerIfDoesNotExists
-        host_triggers[id] = nil
     end
 end
 
@@ -822,6 +822,13 @@ function EHI:Trigger(id, element, enabled)
                 managers.ehi:PauseTracker(triggers[id].id)
                 managers.hud:PauseTrackerWaypoint(triggers[id].id)
                 managers.ehi:SetTrackerTimeNoAnim(triggers[id].time)
+            elseif f == SF.RemoveTriggerAndShowAchievementCustom then
+                if self:IsAchievementLocked(triggers[id].data) then
+                    self:CheckCondition(id)
+                end
+                UnhookTrigger(self, id)
+            elseif f == SF.IncreaseProgressMax then
+                managers.ehi:IncreaseTrackerProgressMax(triggers[id].id)
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
@@ -937,7 +944,7 @@ function EHI:InitElements()
             for _, script in pairs(scripts) do
                 local element = script:element(id)
                 if element then
-                    self:ElementHook(element, func, id, f)
+                    self:HookElement(element, func, id, f)
                 elseif client then
                     --[[
                         On client, the element was not found
@@ -996,7 +1003,7 @@ function EHI:SyncLoad()
         for _, script in pairs(scripts) do
             local element = script:element(id)
             if element then
-                self:ElementHook(element, "client_on_executed", id, Client)
+                self:HookElement(element, "client_on_executed", id, Client)
             end
         end
     end

@@ -25,6 +25,11 @@ function EHITimerTracker:SetTimeNoAnim(time) -- No fit text function needed, the
     self._text:set_text(self:Format())
 end
 
+function EHITimerTracker:SetDone()
+    self._text:set_text("DONE")
+    self:FitTheText()
+end
+
 function EHITimerTracker:SetUpgradeable(upgradeable)
     self._upgradeable = upgradeable
     if self._icon2 then
@@ -44,15 +49,15 @@ function EHITimerTracker:SetUpgrades(upgrades)
         ["silent"] = 3,
         ["restarter"] = 4
     }
-	for upgrade, level in pairs(upgrades) do
-		if level > 0 then
+    for upgrade, level in pairs(upgrades) do
+        if level > 0 then
             local icon = self["_icon" .. tostring(icon_definition[upgrade])]
             if icon then
                 icon:set_color(self:GetUpgradeColor(level))
                 icon:set_alpha(1)
             end
-		end
-	end
+        end
+    end
 end
 
 function EHITimerTracker:GetUpgradeColor(level)

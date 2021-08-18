@@ -600,6 +600,13 @@ function EHIManager:SetTrackerTimeNoAnim(id, time)
     end
 end
 
+function EHIManager:SetTimerDone(id)
+    local tracker = self._trackers[id]
+    if tracker and tracker.SetDone then
+        tracker:SetDone()
+    end
+end
+
 function EHIManager:SetTimerUpgrades(id, upgrades)
     local tracker = self._trackers[id]
     if tracker and tracker.SetUpgrades then
@@ -755,6 +762,13 @@ function EHIManager:IncreaseTrackerProgress(id)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseProgress then
         tracker:IncreaseProgress()
+    end
+end
+
+function EHIManager:IncreaseTrackerProgressMax(id)
+    local tracker = self._trackers[id]
+    if tracker and tracker.IncreaseProgressMax then
+        tracker:IncreaseProgressMax()
     end
 end
 

@@ -7,7 +7,6 @@ end
 
 local achievements_to_remove =
 {
-    "green_3",
     "dah_8",
     "cow_11",
     "sah_9",
@@ -29,6 +28,7 @@ local achievements_to_toggle =
 local unhook =
 {
     -- Pager stuff
+    "PagerInit",
     "set_tweak_data",
     "sync_interacted",
     "interact",
@@ -41,9 +41,6 @@ local set_ok_state =
 }
 
 local show_trackers = {}
-if EHI:ShowDramaTracker() then
-    show_trackers[#show_trackers + 1] = { id = "Drama", icons = { "C_Escape_H_Street_Bullet" }, class = "EHIChanceTracker", dont_flash = true, pos = 0 }
-end
 
 local level_id = Global.game_settings.level_id
 if level_id == "alex_2" then
@@ -121,6 +118,7 @@ function GroupAIStateBase:load(...)
 end
 
 if EHI:ShowDramaTracker() then
+    show_trackers[#show_trackers + 1] = { id = "Drama", icons = { "C_Escape_H_Street_Bullet" }, class = "EHIChanceTracker", dont_flash = true, pos = 0 }
     original._add_drama = GroupAIStateBase._add_drama
     function GroupAIStateBase:_add_drama(...)
         original._add_drama(self, ...)

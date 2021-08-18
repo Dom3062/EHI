@@ -22,7 +22,8 @@ local original =
 	timer_resume = DigitalGui.timer_resume,
 	_timer_stop = DigitalGui._timer_stop,
 	set_visible = DigitalGui.set_visible,
-	timer_set = DigitalGui.timer_set
+	timer_set = DigitalGui.timer_set,
+	load = DigitalGui.load
 }
 local level_id = Global.game_settings.level_id
 local ignore = {}
@@ -256,12 +257,7 @@ function DigitalGui:init(unit, ...)
     self._ehi_key = tostring(unit:key())
 end
 
-function DigitalGui:timer_start_count_down(...)
-	original.timer_start_count_down(self, ...)
-	local editor_id = self._unit:editor_id()
-	if ignore[editor_id] then
-		return
-	end
+function DigitalGui:TimerStartCountDown(editor_id)
 	if managers.ehi:TrackerExists(self._ehi_key) then
 		managers.ehi:SetTimerJammed(self._ehi_key, false)
 	else
@@ -273,6 +269,15 @@ function DigitalGui:timer_start_count_down(...)
 			class = class[editor_id] or "EHITimerTracker"
 		})
 	end
+end
+
+function DigitalGui:timer_start_count_down(...)
+	original.timer_start_count_down(self, ...)
+	local editor_id = self._unit:editor_id()
+	if ignore[editor_id] then
+		return
+	end
+	self:TimerStartCountDown(editor_id)
 end
 
 function DigitalGui:_update_timer_text(...)
@@ -345,4 +350,30 @@ end
 
 function DigitalGui:OnAlarm()
 	managers.ehi:RemoveTracker(self._ehi_key)
+end
+
+function DigitalGui:load(data, ...)
+	local state = data.DigitalGui
+	if self:is_timer() then
+		local editor_id = self._unit:editor_id()
+		if not ignore[editor_id] then
+			if state.timer_count_down then
+				if remove[editor_id] then
+					if not state.timer_paused then
+						self:TimerStartCountDown(editor_id)
+					end
+				else
+					self:TimerStartCountDown(editor_id)
+				end
+			end
+			
+
+			if not state.timer_paused and not remove[editor_id] then
+				if state.timer_count_down then
+					
+				end
+			end
+		end
+	end
+	original.load(self, data, ...)
 end

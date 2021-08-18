@@ -1,3 +1,10 @@
+r25 (18. 08. 2021):
+Removed Offshore Spend tracker as the event ended
+Fixed an issue where some trackers did not behave correctly
+Dragon Heist: Fixed a crash when Escape sequence is initiated
+First World Bank: Fixed an issue where achievement tracker "Federal Assurance" showed when no Bulldozer spawned
+The White House: Fixed a crash where teargas is activated
+
 r24 (13. 08. 2021):
 Offshore Spend Tracker: Improved formatting
 Goat Simulator Day 2: Fixed a crash when pilot missed the cage

@@ -5,11 +5,17 @@ else
     EHI._hooks.InteractionExt = true
 end
 
+local server = Network:is_server()
+
 if EHI:GetOption("show_pager_callback") then
+    EHI:HookWithID(IntimitateInteractionExt, "init", "PagerInit", function(self, unit, ...)
+        self._ehi_key = "pager_" .. tostring(unit:key())
+    end)
+
     EHI:Hook(IntimitateInteractionExt, "set_tweak_data", function(self, id)
         if id == "corpse_alarm_pager" and not self._pager_has_run then
             managers.ehi:AddPagerTracker({
-                id = "pager_" .. tostring(self._unit:key()),
+                id = self._ehi_key,
                 class = "EHIPagerTracker"
             })
             self._pager_has_run = true
@@ -21,26 +27,25 @@ if EHI:GetOption("show_pager_callback") then
             return
         end
         if self.tweak_data == "corpse_alarm_pager" then
-            managers.ehi:RemoveTracker("pager_" .. tostring(self._unit:key()))
+            managers.ehi:RemoveTracker(self._ehi_key)
         end
     end)
 
     EHI:Hook(IntimitateInteractionExt, "_at_interact_start", function(self, player, timer)
         if self.tweak_data == "corpse_alarm_pager" then
-            if Network:is_server() then
+            if server then
                 return
             end
-            managers.ehi:CallFunction("pager_" .. tostring(self._unit:key()), "SetAnswered")
+            managers.ehi:CallFunction(self._ehi_key, "SetAnswered")
         end
     end)
 
     EHI:Hook(IntimitateInteractionExt, "sync_interacted", function(self, peer, player, status, skip_alive_check)
         if self.tweak_data == "corpse_alarm_pager" then
-            local id = "pager_" .. tostring(self._unit:key())
             if status == "started" or status == 1 then
-                managers.ehi:CallFunction(id, "SetAnswered")
+                managers.ehi:CallFunction(self._ehi_key, "SetAnswered")
             else
-                managers.ehi:RemoveTracker(id)
+                managers.ehi:RemoveTracker(self._ehi_key)
             end
         end
     end)

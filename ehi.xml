@@ -18,7 +18,6 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHICiviliansKilledTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHITimerTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIMoneyCounterTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIOffshoreSpendTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIXPTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIChanceTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIProgressTracker.lua"/>
@@ -97,6 +96,7 @@
         <post hook_id="lib/units/props/timergui" :script_path="TimerGui.lua" />
         <post hook_id="lib/units/props/securitylockgui" :script_path="SecurityLockGui.lua" />
         <post hook_id="lib/units/props/zipline" :script_path="Zipline.lua" />
+        <post hook_id="lib/units/vehicles/vehicledrivingext" :script_path="VehicleDrivingExt.lua" />
         <post hook_id="lib/units/weapons/grenades/quickcsgrenade" :script_path="QuickCsGrenade.lua" />
 
         <post hook_id="lib/tweak_data/tweakdata" :script_path="tweak_data.lua"/>
