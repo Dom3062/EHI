@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.SentryGunMovement then
 	return
 else
@@ -31,7 +32,7 @@ function SentryGunMovement:rearm(...)
         class = "EHIWarningTracker"
     })
     if show_waypoints then
-        managers.hud:AddTrackerWaypoint(self._ehi_key_reload, {
+        managers.ehi_waypoint:AddWaypoint(self._ehi_key_reload, {
             time = self._tweak.AUTO_RELOAD_DURATION,
             texture = "guis/textures/pd2/skilltree/icons_atlas",
             text_rect = {0, 576, 64, 64},
@@ -44,7 +45,7 @@ end
 function SentryGunMovement:repair(...)
     original.repair(self, ...)
     managers.ehi:RemoveTracker(self._ehi_key_reload)
-    managers.hud:RemoveTrackerWaypoint(self._ehi_key_reload)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_reload)
     managers.ehi:AddTracker({
         id = self._ehi_key_repair,
         time = self._tweak.AUTO_REPAIR_DURATION,
@@ -52,7 +53,7 @@ function SentryGunMovement:repair(...)
         class = "EHIWarningTracker"
     })
     if show_waypoints then
-        managers.hud:AddTrackerWaypoint(self._ehi_key_repair, {
+        managers.ehi_waypoint:AddWaypoint(self._ehi_key_repair, {
             time = self._tweak.AUTO_REPAIR_DURATION,
             icon = "pd2_fix",
             warning = true,
@@ -64,13 +65,13 @@ end
 function SentryGunMovement:on_death(...)
     original.on_death(self, ...)
     managers.ehi:RemoveTracker(self._ehi_key_reload)
-    managers.hud:RemoveTrackerWaypoint(self._ehi_key_reload)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_reload)
     managers.ehi:RemoveTracker(self._ehi_key_repair)
-    managers.hud:RemoveTrackerWaypoint(self._ehi_key_repair)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_repair)
 end
 
 function SentryGunMovement:pre_destroy(...)
-    managers.hud:RemoveTrackerWaypoint(self._ehi_key_reload)
-    managers.hud:RemoveTrackerWaypoint(self._ehi_key_repair)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_reload)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_repair)
     original.pre_destroy(self, ...)
 end

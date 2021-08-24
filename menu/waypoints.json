@@ -24,7 +24,7 @@
             "value": "show_waypoints_present_timer",
             "default_value": 2,
             "max": 5,
-            "min": 0.5,
+            "min": 0,
             "step": 2,
             "parent" : "ehi_show_waypoints_choice"
         },
@@ -40,6 +40,28 @@
             "callback": "SetOption",
             "callback_arguments": "show_waypoints_enemy_turret",
             "value": "show_waypoints_enemy_turret",
+            "default_value": true,
+            "parent" : "ehi_show_waypoints_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_waypoints_timers_choice",
+            "title": "ehi_show_waypoints_timers",
+            "description": "ehi_show_waypoints_timers_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints_timers",
+            "value": "show_waypoints_timers",
+            "default_value": true,
+            "parent" : "ehi_show_waypoints_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_waypoints_pager_choice",
+            "title": "ehi_show_waypoints_pager",
+            "description": "ehi_show_waypoints_pager_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints_pager",
+            "value": "show_waypoints_pager",
             "default_value": true,
             "parent" : "ehi_show_waypoints_choice"
         }

@@ -9,7 +9,20 @@ if not EHI:GetOption("show_equipment_tracker") then
     return
 end
 
-local original = {}
+local original =
+{
+    spawn = ECMJammerBase.spawn
+}
+
+function ECMJammerBase.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
+    local unit = original.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
+    unit:base():SetPeerID(peer_id or 0)
+	return unit
+end
+
+function ECMJammerBase:SetPeerID(peer_id)
+    self._ehi_peer_id = peer_id
+end
 
 if EHI:GetOption("show_equipment_ecmjammer") then
     original.set_active = ECMJammerBase.set_active
@@ -21,12 +34,12 @@ if EHI:GetOption("show_equipment_ecmjammer") then
                 return
             end
             if managers.ehi:TrackerExists("ECMJammer") then
-                managers.ehi:CallFunction("ECMJammer", "SetTimeIfLower", battery_life, self._owner_id)
+                managers.ehi:CallFunction("ECMJammer", "SetTimeIfLower", battery_life, self._ehi_peer_id)
             else
                 managers.ehi:AddTracker({
                     id = "ECMJammer",
                     time = battery_life,
-                    icons = { { icon = "ecm_jammer", color = EHI:GetPeerColorByPeerID(self._owner_id) } },
+                    icons = { { icon = "ecm_jammer", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
                     exclude_from_sync = true,
                     class = "EHIECMTracker"
                 })
@@ -41,12 +54,12 @@ if EHI:GetOption("show_equipment_ecmfeedback") then
         original._set_feedback_active(self, state, ...)
         if state and self._feedback_duration then
             if managers.ehi:TrackerExists("ECMFeedback") then
-                managers.ehi:CallFunction("ECMFeedback", "SetTimeIfLower", self._feedback_duration, self._owner_id)
+                managers.ehi:CallFunction("ECMFeedback", "SetTimeIfLower", self._feedback_duration, self._ehi_peer_id)
             else
                 managers.ehi:AddTracker({
                     id = "ECMFeedback",
                     time = self._feedback_duration,
-                    icons = { { icon = "ecm_feedback", color = EHI:GetPeerColorByPeerID(self._owner_id) } },
+                    icons = { { icon = "ecm_feedback", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
                     exclude_from_sync = true,
                     class = "EHIECMTracker"
                 })

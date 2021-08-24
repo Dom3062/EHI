@@ -24,6 +24,7 @@ local projob_multiplier = 1  -- Not used in Vanilla, but other mods can create P
 local limited_bonus_multiplier = (tweak_data:get_value("experience_manager", "limited_bonus_multiplier") or 1) - 1
 local stealth_bonus = 1
 local infamy_bonus = 0
+local gage_bonus = 1
 local stealth_mode = true
 if xp_format ~= 1 then
     local difficulty_index = tweak_data:difficulty_to_index(Global.game_settings.difficulty) - 2
@@ -38,7 +39,7 @@ end
 
 local function MultiplyXPWillAllBonuses(base_amount)
     local player_bonus = math.max(0, (managers.player:get_skill_exp_multiplier(stealth_mode)) - 1) * heat
-    return (base_amount * heat) * difficulty_multiplier * (1 + player_bonus + infamy_bonus + limited_bonus_multiplier) * stealth_bonus * projob_multiplier
+    return (base_amount * heat) * difficulty_multiplier * (1 + player_bonus + infamy_bonus + limited_bonus_multiplier) * stealth_bonus * projob_multiplier * gage_bonus
 end
 
 local TrackerID = xp_panel == 1 and "XP" or "XPTotal"
@@ -64,6 +65,12 @@ end
 
 function ExperienceManager:SetInfamyBonus(bonus)
     infamy_bonus = bonus
+end
+
+function ExperienceManager:SetGagePackageBonus(bonus)
+    if xp_panel == 1 then -- Don't set the Gage XP Multiplier when Total XP Tracker is visible, because that tracker is also using that multiplier
+        gage_bonus = bonus * heat
+    end
 end
 
 local f

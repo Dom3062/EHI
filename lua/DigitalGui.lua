@@ -13,6 +13,8 @@ if not EHI:GetOption("show_timers") then
     return
 end
 
+local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")
+
 local original =
 {
     init = DigitalGui.init,
@@ -260,6 +262,7 @@ end
 function DigitalGui:TimerStartCountDown(editor_id)
 	if managers.ehi:TrackerExists(self._ehi_key) then
 		managers.ehi:SetTimerJammed(self._ehi_key, false)
+		managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
 	else
 		managers.ehi:AddTracker({
 			id = self._ehi_key,
@@ -268,6 +271,15 @@ function DigitalGui:TimerStartCountDown(editor_id)
 			exclude_from_sync = true,
 			class = class[editor_id] or "EHITimerTracker"
 		})
+		if show_waypoint then
+			managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+                time = self._timer,
+                icon = icons[editor_id] or "wp_hack",
+                pause_timer = 1,
+                type = "timer",
+                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
+            })
+		end
 	end
 end
 
@@ -280,9 +292,17 @@ function DigitalGui:timer_start_count_down(...)
 	self:TimerStartCountDown(editor_id)
 end
 
-function DigitalGui:_update_timer_text(...)
-	managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
-	original._update_timer_text(self, ...)
+if show_waypoint then
+	function DigitalGui:_update_timer_text(...)
+		managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
+		managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._timer)
+		original._update_timer_text(self, ...)
+	end
+else
+	function DigitalGui:_update_timer_text(...)
+		managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
+		original._update_timer_text(self, ...)
+	end
 end
 
 if level_id == "chill" then
@@ -311,8 +331,10 @@ else
 		original.timer_pause(self, ...)
 		if remove[self._unit:editor_id()] then
 			managers.ehi:RemoveTracker(self._ehi_key)
+			managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 		else
 			managers.ehi:SetTimerJammed(self._ehi_key, true)
+			managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, true)
 		end
 	end
 end
@@ -320,6 +342,7 @@ end
 function DigitalGui:timer_resume(...)
 	original.timer_resume(self, ...)
 	managers.ehi:SetTimerJammed(self._ehi_key, false)
+	managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
 end
 
 local SetTime = function(key, time) end
@@ -327,6 +350,7 @@ if level_id ~= "shoutout_raid" then
 	SetTime = function (key, time)
 		if managers.ehi then
 			managers.ehi:SetTrackerTimeNoAnim(key, time)
+			managers.ehi_waypoint:SetTimerWaypointTime(key, time)
 		end
 	end
 end
@@ -339,39 +363,33 @@ end
 function DigitalGui:_timer_stop(...)
 	original._timer_stop(self, ...)
 	managers.ehi:RemoveTracker(self._ehi_key)
+	managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
 function DigitalGui:set_visible(visible, ...)
 	original.set_visible(self, visible, ...)
 	if not visible then
 		managers.ehi:RemoveTracker(self._ehi_key)
+		managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 	end
 end
 
 function DigitalGui:OnAlarm()
 	managers.ehi:RemoveTracker(self._ehi_key)
+	managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
 function DigitalGui:load(data, ...)
 	local state = data.DigitalGui
 	if self:is_timer() then
 		local editor_id = self._unit:editor_id()
-		if not ignore[editor_id] then
-			if state.timer_count_down then
-				if remove[editor_id] then
-					if not state.timer_paused then
-						self:TimerStartCountDown(editor_id)
-					end
-				else
+		if not ignore[editor_id] and state.timer_count_down then
+			if remove[editor_id] then
+				if not state.timer_paused then
 					self:TimerStartCountDown(editor_id)
 				end
-			end
-			
-
-			if not state.timer_paused and not remove[editor_id] then
-				if state.timer_count_down then
-					
-				end
+			else
+				self:TimerStartCountDown(editor_id)
 			end
 		end
 	end

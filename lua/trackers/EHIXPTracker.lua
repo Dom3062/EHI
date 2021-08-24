@@ -27,3 +27,32 @@ end
 
 EHITotalXPTracker = EHITotalXPTracker or class(EHIXPTracker)
 EHITotalXPTracker._update = false
+function EHITotalXPTracker:init(panel, params)
+    self._gage_ratio = 1
+    self._total_xp = params.amount or 0
+    EHITotalXPTracker.super.init(self, panel, params)
+end
+
+function EHITotalXPTracker:SetGageBonusRatio(ratio)
+    self._gage_ratio = ratio
+    self:UpdateTotalXP()
+end
+
+function EHITotalXPTracker:UpdateTotalXP()
+    local new_xp = self._xp * self._gage_ratio
+    if self._total_xp ~= new_xp then
+        self._total_xp = new_xp
+        self._text:set_text(self:Format())
+        self:FitTheText()
+        self:AnimateBG()
+    end
+end
+
+function EHITotalXPTracker:AddXP(amount)
+    self._xp = self._xp + amount
+    self:UpdateTotalXP()
+end
+
+function EHITotalXPTracker:Format() -- Formats the amount of XP in the panel
+    return managers.experience:cash_string(self._total_xp, "+")
+end

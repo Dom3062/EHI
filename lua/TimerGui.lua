@@ -9,6 +9,8 @@ if not EHI:GetOption("show_timers") then
     return
 end
 
+local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")
+
 local original =
 {
     init = TimerGui.init,
@@ -25,11 +27,15 @@ local original =
 }
 
 local level_id = Global.game_settings.level_id
-local remove_on_power_off = false
+local remove_on_power_off = {}
 local ignore = {}
 local icons = {}
 if level_id == "des" then -- Henry's Rock
-    remove_on_power_off = true
+    remove_on_power_off =
+    {
+        [101323] = true,
+        [101324] = true
+    }
 elseif level_id == "hox_2" then
     icons =
     {
@@ -85,6 +91,8 @@ function TimerGui:_start(...)
     if managers.ehi:TrackerExists(self._ehi_key) then
         managers.ehi:SetTimerJammed(self._ehi_key, false)
         managers.ehi:SetTimerPowered(self._ehi_key, true)
+        managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
+        managers.ehi_waypoint:SetTimerWaypointPowered(self._ehi_key, true)
     else
         managers.ehi:AddTracker({
             id = self._ehi_key,
@@ -94,51 +102,76 @@ function TimerGui:_start(...)
             exclude_from_sync = true,
             class = "EHITimerTracker"
         })
+        if show_waypoint then
+            managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+                time = self._current_timer,
+                icon = icons[editor_id] or self._ehi_icon,
+                pause_timer = 1,
+                type = "timer",
+                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
+            })
+        end
     end
 end
 
-function TimerGui:update(...)
-    managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
-    original.update(self, ...)
+if show_waypoint then
+    function TimerGui:update(...)
+        managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
+        managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._time_left)
+        original.update(self, ...)
+    end
+else
+    function TimerGui:update(...)
+        managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
+        original.update(self, ...)
+    end
 end
 
 function TimerGui:_set_done(...)
     managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     original._set_done(self, ...)
 end
 
 function TimerGui:_set_jammed(jammed, ...)
     managers.ehi:SetTimerJammed(self._ehi_key, jammed)
+    managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, jammed)
     original._set_jammed(self, jammed, ...)
 end
 
 function TimerGui:_set_powered(powered, ...)
-    if powered == false and remove_on_power_off then
+    if powered == false and remove_on_power_off[self._unit:editor_id()] then
         managers.ehi:RemoveTracker(self._ehi_key)
+        managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     end
     managers.ehi:SetTimerPowered(self._ehi_key, powered)
+    managers.ehi_waypoint:SetTimerWaypointPowered(self._ehi_key, powered)
     original._set_powered(self, powered, ...)
 end
 
 function TimerGui:set_visible(visible, ...)
     if visible == false then
         managers.ehi:RemoveTracker(self._ehi_key)
+        managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     end
     original.set_visible(self, visible, ...)
 end
 
 function TimerGui:hide(...)
     managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     original.hide(self, ...)
 end
 
 function TimerGui:destroy(...)
     managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     original.destroy(self, ...)
 end
 
 function TimerGui:OnAlarm()
     managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
 function TimerGui:DisableOnSetVisible()

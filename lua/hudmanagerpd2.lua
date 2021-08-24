@@ -16,12 +16,22 @@ local original =
     set_enabled = HUDManager.set_enabled
 }
 
+local EHIWaypoints = EHI:GetOption("show_waypoints")
+
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
     self.ehi = managers.ehi
+    local ehi_waypoint = managers.ehi_waypoint
+    ehi_waypoint:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2), self._workspaces.overlay.saferect)
     self._tracker_waypoints = {}
     if Network:is_server() or level_id == "hvh" then
         self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
+        if EHIWaypoints then
+            self:add_updator("EHI_Waypoint_Update", callback(ehi_waypoint, ehi_waypoint, "update"))
+        end
+    end
+    if Network:is_client() and EHIWaypoints then
+        self:add_updator("EHI_Waypoint_dt_update", callback(ehi_waypoint, ehi_waypoint, "update_dt"))
     end
     local difficulty = Global.game_settings.difficulty
     local level_tweak_data = tweak_data.levels[level_id]
@@ -191,6 +201,7 @@ end
 
 function HUDManager:destroy(...)
     self.ehi:destroy()
+    managers.ehi_waypoint:destroy()
     original.destroy(self, ...)
 end
 
@@ -200,61 +211,18 @@ end
 
 if Network:is_client() and level_id ~= "hvh" then
     original.feed_heist_time = HUDManager.feed_heist_time
-    function HUDManager:feed_heist_time(time, ...)
-        original.feed_heist_time(self, time, ...)
-        managers.ehi:update_client(time)
-    end
-end
-
-if EHI:GetOption("show_waypoints") then
-    local present_timer = EHI:GetOption("show_waypoints_present_timer")
-    function HUDManager:AddTrackerWaypoint(id, params)
-        params.no_sync = true -- Very important here, do not sync custom waypoints to avoid confusion between players and possible crashes
-        params.pause_timer = params.no_time and 3 or (params.time and 1 or 3)
-        params.timer = params.pause_timer ~= 3 and params.time or nil
-        params.present_timer = present_timer
-        --[[
-            Remaining time is calculated in HUDManager:UpdateTrackerWaypoints() due to bad inaccuracy after slowmotion
-            Pause Timer values:
-            0 => Running (Vanilla)
-            1 => Running / Paused (Vanilla)
-            2 => Paused
-            3 => Not-pausauble
-            Trackers are using only values 1 and 2
-        ]]
-        --params.distance = true
-        self:add_waypoint(id, params)
-        if not params.no_time then
-            self._tracker_waypoints[id] = true
+    if EHIWaypoints then
+        function HUDManager:feed_heist_time(time, ...)
+            original.feed_heist_time(self, time, ...)
+            managers.ehi:update_client(time)
+            managers.ehi_waypoint:update_client(time)
         end
-        if params.progress then
-            self:UpdateTrackerWaypointProgress(id, 0)
-        end
-        if params.texture then
-            self:ChangeWaypointIcon(id, params.texture, params.text_rect)
+    else
+        function HUDManager:feed_heist_time(time, ...)
+            original.feed_heist_time(self, time, ...)
+            managers.ehi:update_client(time)
         end
     end
-else
-    function HUDManager:AddTrackerWaypoint(id, params)
-    end
-end
-
-function HUDManager:ChangeWaypointIcon(id, texture, text_rect)
-    if self._tracker_waypoints[id] then
-        if text_rect then
-            self._hud.waypoints[id].bitmap:set_image(texture, unpack(text_rect))
-        else
-            self._hud.waypoints[id].bitmap:set_image(texture)
-        end
-    end
-end
-
-function HUDManager:RemoveTrackerWaypoint(id)
-    if self._tracker_waypoints[id] then
-        self._hud.waypoints[id].timer_gui:stop()
-    end
-    self._tracker_waypoints[id] = nil
-    self:remove_waypoint(id)
 end
 
 function HUDManager:PauseTrackerWaypoint(id)
@@ -285,71 +253,6 @@ end
 
 function HUDManager:IncreaseTrackerWaypointProgress(id, increase)
     self:UpdateTrackerWaypointProgress(id, increase or 1)
-end
-
-function HUDManager:UpdateTrackerWaypoints(t, dt)
-    for key, _ in pairs(self._tracker_waypoints) do
-        local wp = self._hud.waypoints[key]
-        if wp.pause_timer == 1 then
-            wp.timer = wp.timer - dt
-            if wp.timer > 0 then
-                wp.timer_gui:set_text(self:TrackerFormat(wp.timer))
-                if wp.timer <= 10 and wp.init_data.warning and not wp.init_data.warning_animating then
-                    wp.init_data.warning_animating = true
-                    wp.timer_gui:animate(function(o)
-                        while true do
-                            local _t = 0
-                            while _t < 1 do
-                                _t = _t + coroutine.yield()
-                                local n = 1 - math.sin(_t * 180)
-                                --local r = math.lerp(1, 0, n)
-                                local g = math.lerp(1, 0, n)
-                                o:set_color(Color(1, g, g))
-                            end
-                        end
-                    end)
-                end
-            else
-                self:RemoveTrackerWaypoint(key)
-            end
-        end
-    end
-end
-
-local function SecondsOnly(self, time)
-    local t = math.floor(time * 10) / 10
-
-	if t < 0 then
-		return string.format("%d", 0)
-    elseif t < 1 then
-        return string.format("%.2f", time)
-	elseif t < 10 then
-		return string.format("%.1f", t)
-	else
-		return string.format("%d", t)
-	end
-end
-
-local function MinutesAndSeconds(self, time)
-    local t = math.floor(time * 10) / 10
-
-	if t < 0 then
-		return string.format("%d", 0)
-    elseif t < 1 then
-        return string.format("%.2f", time)
-	elseif t < 10 then
-		return string.format("%.1f", t)
-	elseif t < 60 then
-		return string.format("%d", t)
-	else
-		return string.format("%d:%02d", t / 60, t % 60)
-	end
-end
-
-if EHI:GetOption("time_format") == 1 then
-    HUDManager.TrackerFormat = SecondsOnly
-else
-    HUDManager.TrackerFormat = MinutesAndSeconds
 end
 
 function HUDManager:Debug(id)

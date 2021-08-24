@@ -20,8 +20,8 @@ function GageAssignmentBase:init(unit, ...)
     EHI._cache.GagePackages = (EHI._cache.GagePackages or 0) + 1
 end
 
-local _f_show_pickup_msg = GageAssignmentBase.show_pickup_msg
+--[[local _f_show_pickup_msg = GageAssignmentBase.show_pickup_msg
 function GageAssignmentBase:show_pickup_msg(...)
     _f_show_pickup_msg(self, ...)
     managers.gage_assignment:EHIPresentProgress()
-end
+end]]

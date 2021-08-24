@@ -11,36 +11,40 @@ function EHIStopwatchTracker:update(t, dt)
     self._text:set_text(self:Format())
 end
 
-local function SecondsOnly(self)
-    local t = math.floor(self._time * 10) / 10
+do
+	local math_floor = math.floor
+    local string_format = string.format
+	local function SecondsOnly(self)
+		local t = math_floor(self._time * 10) / 10
 
-	if t < 0 then
-		return string.format("%d", 0)
-	elseif t < 100 then
-		return string.format("%.2f", self._time)
-	elseif t < 1000 then
-		return string.format("%.1f", self._time)
-	else
-		return string.format("%d", t)
+		if t < 0 then
+			return string_format("%d", 0)
+		elseif t < 100 then
+			return string_format("%.2f", self._time)
+		elseif t < 1000 then
+			return string_format("%.1f", self._time)
+		else
+			return string_format("%d", t)
+		end
 	end
-end
 
-local function MinutesAndSeconds(self)
-    local t = math.floor(self._time * 10) / 10
+	local function MinutesAndSeconds(self)
+		local t = math_floor(self._time * 10) / 10
 
-	if t < 0 then
-		return string.format("%d", 0)
-    elseif t < 60 then
-        return string.format("%.2f", self._time)
-	else
-		return string.format("%d:%02d", t / 60, t % 60)
+		if t < 0 then
+			return string_format("%d", 0)
+		elseif t < 60 then
+			return string_format("%.2f", self._time)
+		else
+			return string_format("%d:%02d", t / 60, t % 60)
+		end
 	end
-end
 
-if EHI:GetOption("time_format") == 1 then
-    EHIStopwatchTracker.Format = SecondsOnly
-else
-    EHIStopwatchTracker.Format = MinutesAndSeconds
+	if EHI:GetOption("time_format") == 1 then
+		EHIStopwatchTracker.Format = SecondsOnly
+	else
+		EHIStopwatchTracker.Format = MinutesAndSeconds
+	end
 end
 
 function EHIStopwatchTracker:Stop()

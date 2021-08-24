@@ -1,3 +1,10 @@
+r26 (24. 08. 2021):
+Added waypoint option for "Pager Callback Timers"
+Added waypoint option for "Timers"
+Rewrote waypoint system for better speed and extensibility
+Fixed an issue where time trackers are not updated if certain HUD mods are installed (client only)
+Henry's Rock: Fixed an issue where trackers for computers were removed when they were powered off by enemies
+
 r25 (18. 08. 2021):
 Removed Offshore Spend tracker as the event ended
 Fixed an issue where some trackers did not behave correctly

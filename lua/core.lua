@@ -297,7 +297,9 @@ function EHI:LoadDefaultValues()
         -- Waypoints
         show_waypoints = true,
         show_waypoints_present_timer = 2,
-        show_waypoints_enemy_turret = true
+        show_waypoints_enemy_turret = true,
+        show_waypoints_timers = true,
+        show_waypoints_pager = true
     }
     self:Log("Default values loaded")
 end
@@ -313,6 +315,10 @@ function EHI:GetEquipmentOption(equipment)
         return self:GetColor(self.settings.equipment_color[equipment])
     end
     return Color.white
+end
+
+function EHI:GetWaypointOption(waypoint)
+    return self:GetOption("show_waypoints") and self:GetOption(waypoint)
 end
 
 function EHI:GetColor(color)
@@ -544,7 +550,7 @@ function EHI:AddTrackerWithRandomTime(id)
         class = triggers[id].class
     })
     if triggers[id].waypoint then
-        managers.hud:AddTrackerWaypoint(triggers[id].id, triggers[id].waypoint)
+        managers.ehi_waypoint:AddWaypoint(triggers[id].id, triggers[id].waypoint)
     end
 end
 
@@ -568,7 +574,7 @@ function EHI:AddTracker(id, sync)
         managers.ehi:Sync(id, self:GetTime(id))
     end
     if trigger.waypoint then
-        managers.hud:AddTrackerWaypoint(trigger.id, trigger.waypoint)
+        managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
     end
 end
 
@@ -580,7 +586,7 @@ function EHI:AddTrackerAndSync(id, delay)
         class = host_triggers[id].class
     }, id, delay)
     if host_triggers[id].waypoint then
-        managers.hud:AddTrackerWaypoint(host_triggers[id].id, host_triggers[id].waypoint)
+        managers.ehi_waypoint:AddWaypoint(host_triggers[id].id, host_triggers[id].waypoint)
     end
 end
 
@@ -622,6 +628,21 @@ local function UnhookTrigger(self, id)
     triggers[id] = nil
 end
 
+local function PauseTracker(id)
+    managers.ehi:PauseTracker(id)
+    managers.ehi_waypoint:PauseWaypoint(id)
+end
+
+local function UnpauseTracker(id)
+    managers.ehi:UnpauseTracker(id)
+    managers.ehi_waypoint:UnpauseWaypoint(id)
+end
+
+local function RemoveTracker(id)
+    managers.ehi:RemoveTracker(id)
+    managers.ehi_waypoint:RemoveWaypoint(id)
+end
+
 function EHI:Trigger(id, element, enabled)
     if triggers[id] then
         if triggers[id].special_function then
@@ -629,25 +650,21 @@ function EHI:Trigger(id, element, enabled)
             if f == SF.AddMoney then
                 managers.ehi:AddMoneyToTracker(triggers[id].id, triggers[id].amount)
             elseif f == SF.RemoveTracker then
-                managers.ehi:RemoveTracker(triggers[id].id)
-                managers.hud:RemoveTrackerWaypoint(triggers[id].id)
+                RemoveTracker(triggers[id].id)
             elseif f == SF.PauseTracker then
-                managers.ehi:PauseTracker(triggers[id].id)
-                managers.hud:PauseTrackerWaypoint(triggers[id].id)
+                PauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTracker then
-                managers.ehi:UnpauseTracker(triggers[id].id)
-                managers.hud:UnpauseTrackerWaypoint(triggers[id].id)
+                UnpauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTrackerIfExists then
                 if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:UnpauseTracker(triggers[id].id)
+                    UnpauseTracker(triggers[id].id)
                 else
                     self:CheckCondition(id)
                 end
             elseif f == SF.ResetTrackerTimeWhenUnpaused then
                 if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.ehi:ResetTrackerTime(triggers[id].id)
-                    managers.ehi:UnpauseTracker(triggers[id].id)
-                    managers.hud:UnpauseTrackerWaypoint(triggers[id].id)
+                    UnpauseTracker(triggers[id].id)
                 else
                     self:CheckCondition(id)
                 end
@@ -665,8 +682,7 @@ function EHI:Trigger(id, element, enabled)
                 triggers[id].icons[1] = data.icon
                 self:CheckCondition(id)
             elseif f == SF.ReplaceTrackerWithTracker then
-                managers.ehi:RemoveTracker(triggers[id].data.id)
-                managers.hud:RemoveTrackerWaypoint(triggers[id].data.id)
+                RemoveTracker(triggers[id].id)
                 if triggers[id].data.trigger then
                     UnhookTrigger(self, triggers[id].data.trigger) -- Removes trigger from the list, used in The White House
                 end
@@ -711,8 +727,7 @@ function EHI:Trigger(id, element, enabled)
                 end
             elseif f == SF.RemoveTrackers then
                 for _, tracker in ipairs(triggers[id].data) do
-                    managers.ehi:RemoveTracker(tracker)
-                    managers.hud:RemoveTrackerWaypoint(tracker)
+                    RemoveTracker(tracker)
                 end
             elseif f == SF.ShowAchievement then
                 if self:IsAchievementLocked(triggers[id].id) then
@@ -785,7 +800,7 @@ function EHI:Trigger(id, element, enabled)
                 end
             elseif f == SF.UnpauseTrackerIfExistsAccurate then
                 if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:UnpauseTracker(triggers[id].id)
+                    UnpauseTracker(triggers[id].id)
                 else
                     GetElementTimer(self, id)
                 end
@@ -819,9 +834,9 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(id)
                 end
             elseif f == SF.PauseTrackerWithTime then
-                managers.ehi:PauseTracker(triggers[id].id)
-                managers.hud:PauseTrackerWaypoint(triggers[id].id)
-                managers.ehi:SetTrackerTimeNoAnim(triggers[id].time)
+                PauseTracker(triggers[id].id)
+                managers.ehi:SetTrackerTimeNoAnim(triggers[id].id, triggers[id].time)
+                managers.ehi_waypoint:SetWaypointTime(triggers[id].id, triggers[id].time)
             elseif f == SF.RemoveTriggerAndShowAchievementCustom then
                 if self:IsAchievementLocked(triggers[id].data) then
                     self:CheckCondition(id)

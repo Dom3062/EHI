@@ -19,7 +19,9 @@ function CopBrain:on_alarm_pager_interaction(status, ...)
     local id = "pager_" .. tostring(self._unit:key())
     if status == "started" then
         managers.ehi:CallFunction(id, "SetAnswered")
+        managers.ehi_waypoint:SetPagerWaypointAnswered(id)
     else
         managers.ehi:RemoveTracker(id)
+        managers.ehi_waypoint:RemoveWaypoint(id)
     end
 end

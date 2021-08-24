@@ -319,7 +319,6 @@ function EHIManager:update(t, dt)
     for _, tracker in pairs(self._trackers_to_update) do
         tracker:update(t, dt)
     end
-    managers.hud:UpdateTrackerWaypoints(t, dt)
 end
 
 function EHIManager:update_client(t)

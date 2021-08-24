@@ -8,6 +8,7 @@ end
 local server = Network:is_server()
 
 if EHI:GetOption("show_pager_callback") then
+    local show_waypoint = EHI:GetWaypointOption("show_waypoints_pager")
     EHI:HookWithID(IntimitateInteractionExt, "init", "PagerInit", function(self, unit, ...)
         self._ehi_key = "pager_" .. tostring(unit:key())
     end)
@@ -18,6 +19,16 @@ if EHI:GetOption("show_pager_callback") then
                 id = self._ehi_key,
                 class = "EHIPagerTracker"
             })
+            if show_waypoint then
+                managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+                    time = 12,
+                    texture = "guis/textures/pd2/specialization/icons_atlas",
+                    text_rect = {64, 256, 64, 64},
+                    type = "pager_timer",
+                    position = self._unit:position(),
+                    warning = true
+                })
+            end
             self._pager_has_run = true
         end
     end)
@@ -28,6 +39,7 @@ if EHI:GetOption("show_pager_callback") then
         end
         if self.tweak_data == "corpse_alarm_pager" then
             managers.ehi:RemoveTracker(self._ehi_key)
+            managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
         end
     end)
 
@@ -37,6 +49,7 @@ if EHI:GetOption("show_pager_callback") then
                 return
             end
             managers.ehi:CallFunction(self._ehi_key, "SetAnswered")
+            managers.ehi_waypoint:SetPagerWaypointAnswered(self._ehi_key)
         end
     end)
 
@@ -44,8 +57,10 @@ if EHI:GetOption("show_pager_callback") then
         if self.tweak_data == "corpse_alarm_pager" then
             if status == "started" or status == 1 then
                 managers.ehi:CallFunction(self._ehi_key, "SetAnswered")
+                managers.ehi_waypoint:SetPagerWaypointAnswered(self._ehi_key)
             else
                 managers.ehi:RemoveTracker(self._ehi_key)
+                managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
             end
         end
     end)

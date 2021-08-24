@@ -187,40 +187,44 @@ function EHITracker:SetTop(from_y, target_y)
     end)
 end
 
-local function SecondsOnly(self)
-    local t = math.floor(self._time * 10) / 10
+do
+    local math_floor = math.floor
+    local string_format = string.format
+    local function SecondsOnly(self)
+        local t = math_floor(self._time * 10) / 10
 
-	if t < 0 then
-		return string.format("%d", 0)
-    elseif t < 1 then
-        return string.format("%.2f", self._time)
-	elseif t < 10 then
-		return string.format("%.1f", t)
-	else
-		return string.format("%d", t)
-	end
-end
+        if t < 0 then
+            return string_format("%d", 0)
+        elseif t < 1 then
+            return string_format("%.2f", self._time)
+        elseif t < 10 then
+            return string_format("%.1f", t)
+        else
+            return string_format("%d", t)
+        end
+    end
 
-local function MinutesAndSeconds(self)
-    local t = math.floor(self._time * 10) / 10
+    local function MinutesAndSeconds(self)
+        local t = math_floor(self._time * 10) / 10
 
-	if t < 0 then
-		return string.format("%d", 0)
-    elseif t < 1 then
-        return string.format("%.2f", self._time)
-	elseif t < 10 then
-		return string.format("%.1f", t)
-	elseif t < 60 then
-		return string.format("%d", t)
-	else
-		return string.format("%d:%02d", t / 60, t % 60)
-	end
-end
+        if t < 0 then
+            return string_format("%d", 0)
+        elseif t < 1 then
+            return string_format("%.2f", self._time)
+        elseif t < 10 then
+            return string_format("%.1f", t)
+        elseif t < 60 then
+            return string_format("%d", t)
+        else
+            return string_format("%d:%02d", t / 60, t % 60)
+        end
+    end
 
-if EHI:GetOption("time_format") == 1 then
-    EHITracker.Format = SecondsOnly
-else
-    EHITracker.Format = MinutesAndSeconds
+    if EHI:GetOption("time_format") == 1 then
+        EHITracker.Format = SecondsOnly
+    else
+        EHITracker.Format = MinutesAndSeconds
+    end
 end
 
 function EHITracker:update(t, dt)

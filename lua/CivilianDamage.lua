@@ -76,7 +76,7 @@ function CivilianDamage:_on_car_damage_received(attacker_unit)
     end
 end
 
-function HuskCivilianDamage:_on_car_damage_received(attacker_unit)
+--[[function HuskCivilianDamage:_on_car_damage_received(attacker_unit)
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
         if peer_id then
@@ -84,4 +84,4 @@ function HuskCivilianDamage:_on_car_damage_received(attacker_unit)
             AddTracker(peer_id)
         end
     end
-end
+end]]

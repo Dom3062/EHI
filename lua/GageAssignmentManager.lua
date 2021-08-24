@@ -4,14 +4,21 @@ else
 	EHI._hooks.GageAssignmentManager = true
 end
 
-if not EHI:GetOption("show_gage_tracker") then
-	return
-end
-
 local original =
 {
-	sync_load = GageAssignmentManager.sync_load
+	sync_load = GageAssignmentManager.sync_load,
+	present_progress = GageAssignmentManager.present_progress
 }
+
+local function GetGageXPRatio(self, picked_up, max_units)
+	if picked_up > 0 then
+		local ratio = 1 - (max_units - picked_up) / max_units
+		local final_ratio = self._tweak_data:get_experience_multiplier(ratio)
+		return final_ratio
+	else
+		return 1
+	end
+end
 
 local function UpdateTracker(self, client_sync_load)
 	local max_units = self:count_all_units()
@@ -27,9 +34,15 @@ local function UpdateTracker(self, client_sync_load)
 		end
 	end
 	managers.ehi:SetTrackerProgress("Gage", picked_up)
+	local xp_bonus_multiplier = GetGageXPRatio(self, picked_up, max_units)
+	managers.ehi:CallFunction("XPTotal", "SetGageBonusRatio", xp_bonus_multiplier)
+	if managers.experience.SetGagePackageBonus then
+		managers.experience:SetGagePackageBonus(xp_bonus_multiplier)
+	end
 end
 
-function GageAssignmentManager:EHIPresentProgress()
+function GageAssignmentManager:present_progress(assignment, peer_name, ...)
+	original.present_progress(self, assignment, peer_name, ...)
 	UpdateTracker(self)
 end
 
