@@ -21,8 +21,6 @@ if level_id == "sah" then -- Shacklethorne Auction
     }
 end
 
-local _cache = {}
-
 local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(unit, key, amount)

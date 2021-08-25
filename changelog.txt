@@ -1,3 +1,8 @@
+r27 (25. 08. 2021):
+Fixed a crash when waypoints are still visible during heist restart/termination
+Fixed an issue where a few icons in waypoints are corrupted/malformed
+The Big Bank: Fixed waypoint position issue when timelock is counting down
+
 r26 (24. 08. 2021):
 Added waypoint option for "Pager Callback Timers"
 Added waypoint option for "Timers"

@@ -119,12 +119,9 @@ elseif level_id == "nail" then -- Lab Rats
 		[EHI:GetInstanceUnitID(100227, 5020)] = true
 	}
 elseif level_id == "big" then -- The Big Bank
-	ignore =
-	{
-		[101457] = true
-	}
 	icons =
 	{
+		[101457] = { "faster" },
 		[104671] = { "faster" }
 	}
 elseif level_id == "kenaz" then -- Golden Grin Casino
@@ -286,7 +283,7 @@ end
 function DigitalGui:timer_start_count_down(...)
 	original.timer_start_count_down(self, ...)
 	local editor_id = self._unit:editor_id()
-	if ignore[editor_id] then
+	if ignore[editor_id] or not self._visible then
 		return
 	end
 	self:TimerStartCountDown(editor_id)
@@ -383,7 +380,7 @@ function DigitalGui:load(data, ...)
 	local state = data.DigitalGui
 	if self:is_timer() then
 		local editor_id = self._unit:editor_id()
-		if not ignore[editor_id] and state.timer_count_down then
+		if not ignore[editor_id] and self._visible and state.visible and state.timer_count_down then
 			if remove[editor_id] then
 				if not state.timer_paused then
 					self:TimerStartCountDown(editor_id)

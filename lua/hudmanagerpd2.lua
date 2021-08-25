@@ -24,13 +24,12 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     local ehi_waypoint = managers.ehi_waypoint
     ehi_waypoint:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2), self._workspaces.overlay.saferect)
     self._tracker_waypoints = {}
-    if Network:is_server() or level_id == "hvh" then
+    if Network:is_server() then
         self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
         if EHIWaypoints then
             self:add_updator("EHI_Waypoint_Update", callback(ehi_waypoint, ehi_waypoint, "update"))
         end
-    end
-    if Network:is_client() and EHIWaypoints then
+    elseif EHIWaypoints then
         self:add_updator("EHI_Waypoint_dt_update", callback(ehi_waypoint, ehi_waypoint, "update_dt"))
     end
     local difficulty = Global.game_settings.difficulty
@@ -209,7 +208,7 @@ function HUDManager:AddTracker(params)
     self.ehi:AddTracker(params)
 end
 
-if Network:is_client() and level_id ~= "hvh" then
+if Network:is_client() then
     original.feed_heist_time = HUDManager.feed_heist_time
     if EHIWaypoints then
         function HUDManager:feed_heist_time(time, ...)

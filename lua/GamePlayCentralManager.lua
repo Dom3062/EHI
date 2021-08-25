@@ -12,5 +12,7 @@ local original =
 function GamePlayCentralManager:load(data, ...)
     original.load(self, data, ...)
 	local state = data.GamePlayCentralManager
-    managers.ehi:LoadTime(state.heist_timer or 0)
+    local heist_timer = state.heist_timer or 0
+    managers.ehi:LoadTime(heist_timer)
+    managers.ehi_waypoint:LoadTime(heist_timer)
 end
