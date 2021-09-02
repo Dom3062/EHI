@@ -8,7 +8,6 @@ end
 local achievements_to_remove =
 {
     "dah_8",
-    "cow_11",
     "sah_9",
     "friend_6",
     "chas_10",

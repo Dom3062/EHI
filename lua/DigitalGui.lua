@@ -184,6 +184,10 @@ elseif level_id == "roberts" then -- GO Bank
 	{
 		[101936] = { EHI.Icons.Vault }
 	}
+	remove =
+	{
+		[101936] = true
+	}
 elseif level_id == "cane" then -- Santa's Workshop
 	-- OVK decided to use one timer for fire and fire recharge
 	-- This class ignores them and that timer is implemented

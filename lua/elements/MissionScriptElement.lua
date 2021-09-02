@@ -884,6 +884,7 @@ elseif level_id == "crojob2" then -- The Bomb: Dockyard
     local chopper_delay = 25 + 1 + 2.5
     triggers = {
         [101737] = { time = 60, id = "cow_11", class = TT.Achievement },
+        [102466] = { id = "cow_11", special_function = SF.RemoveTracker },
 
         [102120] = { time = 5400/30, id = "ShipMove", icons = { Icon.Boat, Icon.Wait }, special_function = SF.RemoveTriggerWhenExecuted },
 
@@ -1065,7 +1066,7 @@ elseif level_id == "pal" then -- Counterfeit
         EHI:AddHostTriggers(sync_triggers, nil, nil, "base")
         EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
     end
-elseif level_id == "rat" then -- Cook Off
+elseif level_id == "rat" or level_id == "ratdaylight" then -- Cook Off and Cook Off (Daylight); Custom Map
     local van_delay = 47 -- 1 second before setting up the timer and 5 seconds after the van leaves (base delay when timer is 0), 31s before the timer gets activated; 10s before the timer is started; total 47s; Mayhem difficulty and above
     local van_delay_ovk = 6 -- 1 second before setting up the timer and 5 seconds after the van leaves (base delay when timer is 0); OVERKILL difficulty and below
     local heli_delay = 19
@@ -1131,9 +1132,8 @@ elseif level_id == "red2" then -- First World Bank
         [1013252] = { id = "ThermiteShorterTime", special_function = SF.RemoveTracker },
         [103373] = { time = 817, id = "green_3", class = TT.Achievement },
         [107072] = { id = "cac_10", special_function = SF.SetAchievementComplete },
-        [101544] = { special_function = SF.Trigger, data = { 1015441, 1015442 } },
-        [1015441] = { time = 30, id = "cac_10", class = TT.Achievement, condition = show_achievement and ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement, condition_function = CF.IsLoud },
-        [1015442] = { id = "cac_10_counter", icons = { "C_Classics_H_FirstWorldBank_Federal" }, class = TT.AchievementProgress, condition = show_achievement and ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievementCustom, condition_function = CF.IsLoud, dont_flash_max = true, data = { id = "cac_10" } },
+        [101544] = { time = 30, id = "cac_10", class = TT.Achievement, condition = show_achievement and ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement, condition_function = CF.IsLoud },
+        [101341] = { id = "cac_10_counter", icons = { "C_Classics_H_FirstWorldBank_Federal" }, class = TT.AchievementProgress, condition = show_achievement and ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievementCustom, condition_function = CF.IsLoud, dont_flash_max = true, data = { id = "cac_10" } },
         [107066] = { id = "cac_10_counter", special_function = SF.IncreaseProgressMax },
         [107067] = { id = "cac_10_counter", special_function = SF.IncreaseProgress },
         [101684] = { time = 5.1, id = "C4", icons = { "pd2_c4" } },

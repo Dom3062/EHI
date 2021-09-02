@@ -1,3 +1,7 @@
+r28 (02. 09. 2021):
+Added support for Cook Off (Daylight)
+GO Bank: Fixed an issue where vault timer could get stuck when vault opened
+
 r27 (25. 08. 2021):
 Fixed a crash when waypoints are still visible during heist restart/termination
 Fixed an issue where a few icons in waypoints are corrupted/malformed
