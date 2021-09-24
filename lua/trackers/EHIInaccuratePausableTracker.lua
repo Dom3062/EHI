@@ -1,4 +1,4 @@
-local color = tweak_data.ehi.color.InaccurateColor
+local color = tweak_data.ehi.color.Inaccurate
 EHIInaccuratePausableTracker = EHIInaccuratePausableTracker or class(EHIPausableTracker)
 function EHIInaccuratePausableTracker:init(panel, params)
     params.text_color = color

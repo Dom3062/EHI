@@ -11,7 +11,8 @@
             "callback": ["SetOption", "UpdateBGVisibility"],
             "callback_arguments": "show_tracker_bg",
             "value": "show_tracker_bg",
-            "default_value": true
+            "default_value": true,
+            "ehi_ver" : 6
         },
         {
             "type": "toggle",
@@ -21,7 +22,8 @@
             "callback": ["SetOption", "UpdateIconsVisibility"],
             "callback_arguments": "show_one_icon",
             "value": "show_one_icon",
-            "default_value": false
+            "default_value": false,
+            "ehi_ver" : 6
         }
     ]
 }

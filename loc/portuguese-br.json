@@ -38,9 +38,6 @@
     "ehi_trackers_menu" : "Trackers",
     "ehi_trackers_menu_desc" : "",
 
-    "ehi_show_achievement" : "Mostrar Tracker de Conquista",
-    "ehi_show_achievement_desc" : "Mostra as conquistas que requerem recordes de tempo\nAlgumas missões podem não ter essas tipos de conquistas",
-
     "ehi_show_gained_xp" : "Mostrar XP Ganho",
     "ehi_show_gained_xp_desc" : "Mostra o XP Ganho em uma missão.\nEsse Tracker é desativado em Crime Spree.",
 

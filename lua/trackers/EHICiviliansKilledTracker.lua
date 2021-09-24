@@ -200,46 +200,51 @@ end
 
 function EHICiviliansKilledTracker:FitTheTextUnique(i)
     local text = self._time_bg_box:child("text" .. i)
+    text:set_font_size(self._panel:h() * self._text_scale)
     local w = select(3, text:text_rect())
     if w > text:w() then
         text:set_font_size(text:font_size() * (text:w() / w) * self._text_scale)
     end
 end
 
-local function SecondsOnly(self, time, peer_id)
-    local t = math.floor(time * 10) / 10
-    local text = self._time_bg_box:child("text" .. peer_id)
-    local s
-	if t < 0 then
-		s = string.format("%d", 0)
-	elseif t < 10 then
-		s = string.format("%.1f", t)
-	else
-		s = string.format("%d", t)
-	end
-    text:set_text(s)
-end
+do
+    local math_floor = math.floor
+    local string_format = string.format
+    local function SecondsOnly(self, time, peer_id)
+        local t = math_floor(time * 10) / 10
+        local text = self._time_bg_box:child("text" .. peer_id)
+        local s
+        if t < 0 then
+            s = string_format("%d", 0)
+        elseif t < 10 then
+            s = string_format("%.1f", t)
+        else
+            s = string_format("%d", t)
+        end
+        text:set_text(s)
+    end
 
-local function MinutesAndSeconds(self, time, peer_id)
-    local t = math.floor(time * 10) / 10
-    local text = self._time_bg_box:child("text" .. peer_id)
-    local s
-	if t < 0 then
-		s = string.format("%d", 0)
-	elseif t < 10 then
-		s = string.format("%.1f", t)
-	elseif t < 60 then
-		s = string.format("%d", t)
-	else
-		s = string.format("%d:%02d", t / 60, t % 60)
-	end
-    text:set_text(s)
-end
+    local function MinutesAndSeconds(self, time, peer_id)
+        local t = math_floor(time * 10) / 10
+        local text = self._time_bg_box:child("text" .. peer_id)
+        local s
+        if t < 0 then
+            s = string_format("%d", 0)
+        elseif t < 10 then
+            s = string_format("%.1f", t)
+        elseif t < 60 then
+            s = string_format("%d", t)
+        else
+            s = string_format("%d:%02d", t / 60, t % 60)
+        end
+        text:set_text(s)
+    end
 
-if EHI:GetOption("time_format") == 1 then
-    EHICiviliansKilledTracker.FormatUnique = SecondsOnly
-else
-    EHICiviliansKilledTracker.FormatUnique = MinutesAndSeconds
+    if EHI:GetOption("time_format") == 1 then
+        EHICiviliansKilledTracker.FormatUnique = SecondsOnly
+    else
+        EHICiviliansKilledTracker.FormatUnique = MinutesAndSeconds
+    end
 end
 
 function EHICiviliansKilledTracker:update(t, dt)
@@ -255,6 +260,7 @@ function EHICiviliansKilledTracker:update(t, dt)
             else
                 self._peer_custody_time[peer_id] = time
                 self:FormatUnique(time, peer_id)
+                self:FitTheTextUnique(peer_id)
             end
         end
     end

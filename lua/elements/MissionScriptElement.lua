@@ -74,6 +74,8 @@ local HeliDropDrill = { Icon.Heli, "pd2_drill", "pd2_goto" }
 local BoatEscape = { Icon.Boat, Icon.Escape, Icon.LootDrop }
 local FirstAssaultDelay = { { icon = "assaultbox", color = Color(1, 1, 0) } }
 local EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } }
+local VanCrashChance = { Icon.Car, Icon.Fire }
+local DifficultyIncrease = { "enemy", "arrow_up" }
 if level_id == "short2_stage2b" then -- Basic Mission: Loud - Plan B
     triggers = {
         [100806] = { time = 62 + 24, id = Icon.Heli, icons = HeliEscape }
@@ -90,8 +92,37 @@ elseif level_id == "jewelry_store" then -- Jewelry Store
         [103172] = { time = 45 + 830/30, id = "Van", icons = CarEscape },
         [103182] = { time = 600/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
         [103181] = { time = 580/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
-        [101770] = { time = 650/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker }
+        [101770] = { time = 650/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+
+        [101433] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
+
+        --[[[101157] = { time = 80, id = "DifficultyIncrease50", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
+        [103999] = { special_function = SF.Trigger, data = { 1039991, 1039992 } },
+        [1039991] = { time = 30, id = "DifficultyIncrease50", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExistElementHostCheckOnly },
+        [1039992] = { special_function = SF.RemoveTriggers, data = { 103999 } },
+        [101999] = { time = 300, id = "DifficultyIncrease75", icons = DifficultyIncrease, class = TT.Warning },
+        [102526] = { time = 300, id = "DifficultyIncrease100", icons = DifficultyIncrease, class = TT.Warning }]]
     }
+    EHI:AddOnAlarmCallback(function(dropin)
+        if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
+            return
+        end
+        managers.ehi:DisableIncreaseCivilianKilled()
+        local start_chance = 25 -- Normal
+        if difficulty_index == 1 then -- Hard
+            start_chance = 27
+        elseif difficulty_index == 2 then -- Very Hard
+            start_chance = 32
+        elseif ovk_and_up then
+            start_chance = 36
+        end
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = start_chance + (managers.ehi:GetAndRemoveFromCache("CiviliansKilled") or 0) * 5,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "firestarter_3" or level_id == "branchbank" or level_id == "branchbank_gold" or level_id == "branchbank_cash" or level_id == "branchbank_deposit" then
     -- Firestarter Day 3, Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
     if level_id == "firestarter_3" then
@@ -105,6 +136,22 @@ elseif level_id == "firestarter_3" or level_id == "branchbank" or level_id == "b
     end
     triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning }
     triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning }
+    EHI:AddOnAlarmCallback(function(dropin)
+        if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
+            return
+        end
+        managers.ehi:DisableIncreaseCivilianKilled()
+        local start_chance = 5
+        if managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3) then -- Cash or Gold
+            start_chance = 15 -- 5 (start_chance) + 10
+        end
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = start_chance + (managers.ehi:GetAndRemoveFromCache("CiviliansKilled") or 0) * 5,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "kosugi" then -- Shadow Raid
     local trigger = { special_function = SF.Trigger, data = { 1, 2 } }
     triggers = {
@@ -132,8 +179,8 @@ elseif level_id == "roberts" then -- GO Bank
 
         [102975] = { special_function = SF.Trigger, data = { 1029751, 1029752 } },
         [1029751] = { chance = 5, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance },
-        [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { "pd2_generic_look" }, class = TT.Warning },
-        [102986] = { special_function = SF.RemoveTrackers, data = { "CorrectPaperChance", "GenSecArrival" } },
+        [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { Icon.Phone, "pd2_generic_look" }, class = TT.Warning },
+        [102986] = { special_function = SF.RemoveTrackers, data = { "CorrectPaperChance", "GenSecArrivalWarning" } },
         [102985] = { amount = 25, id = "CorrectPaperChance", special_function = SF.IncreaseChance },
         [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, special_function = SF.RemoveTriggerWhenExecuted },
 
@@ -165,18 +212,47 @@ elseif level_id == "family" then -- Diamond Store
         [101568] = { time = 20, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
         [101566] = { time = 40, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
         [101572] = { time = 60, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
-        [101573] = { time = 80, id = "Van", icons = CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
+        [101573] = { time = 80, id = "Van", icons = CarEscape, special_function = SF.AddTrackerIfDoesNotExist },
+
+        [102622] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     }
+    EHI:AddOnAlarmCallback(function(dropin)
+        if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
+            return
+        end
+        managers.ehi:DisableIncreaseCivilianKilled()
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = 10 + (managers.ehi:GetAndRemoveFromCache("CiviliansKilled") or 0) * 5,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "arm_cro" then -- Transport: Crossroads
     local van_delay = 674/30
     triggers = {
         [101880] = { time = 120 + van_delay },
         [101881] = { time = 100 + van_delay },
         [101882] = { time = 80 + van_delay },
-        [101883] = { time = 60 + van_delay }
+        [101883] = { time = 60 + van_delay },
+
+        --[100116] = { time = 30, id = "DifficultyIncrease", icons = DifficultyIncrease, class = TT.Warning },
+
+        [100916] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     }
     trigger_id_all = "Escape"
     trigger_icon_all = CarEscape
+    EHI:AddOnAlarmCallback(function(dropin)
+        if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
+            return
+        end
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = 15,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "arm_fac" then -- Transport: Harbor
     local delay = 17 + 30 + 450/30 -- Boat escape; Van escape is in CoreElementUnitSequence
     triggers = {
@@ -186,10 +262,25 @@ elseif level_id == "arm_fac" then -- Transport: Harbor
         [100209] = { time = 60 + delay },
 
         [100215] = { time = 674/30, id = "Escape", icons = { Icon.Escape, Icon.LootDrop }, special_function = SF.SetTimeOrCreateTracker },
-        [100216] = { time = 543/30, id = "Escape", icons = { Icon.Escape, Icon.LootDrop }, special_function = SF.SetTimeOrCreateTracker }
+        [100216] = { time = 543/30, id = "Escape", icons = { Icon.Escape, Icon.LootDrop }, special_function = SF.SetTimeOrCreateTracker },
+
+        [104800] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
+
+        --[100116] = { time = 30, id = "DifficultyIncrease", icons = DifficultyIncrease, class = TT.Warning }
     }
     trigger_id_all = "Escape"
     trigger_icon_all = { Icon.Escape, Icon.LootDrop }
+    EHI:AddOnAlarmCallback(function(dropin)
+        if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
+            return
+        end
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = 15,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "arm_hcm" then -- Transport: Downtown
     local van_delay = 363/30
     triggers = {
@@ -199,10 +290,27 @@ elseif level_id == "arm_hcm" then -- Transport: Downtown
         [100219] = { time = 60 + van_delay },
 
         -- Heli
-        [102200] = { time = 23, special_function = SF.SetTimeOrCreateTracker }
+        [102200] = { time = 23, special_function = SF.SetTimeOrCreateTracker },
+
+        [101620] = { special_function = SF.Trigger, data = { 1016201, 1016202 } },
+        [1016201] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
+        [1016202] = { special_function = SF.RemoveTriggers, data = { 101620 } },
+
+        --[100116] = { time = 30, id = "DifficultyIncrease", icons = DifficultyIncrease, class = TT.Warning }
     }
     trigger_id_all = "Escape"
     trigger_icon_all = { Icon.Escape, Icon.LootDrop }
+    EHI:AddOnAlarmCallback(function(dropin)
+        if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
+            return
+        end
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = 10,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "arm_par" then -- Transport: Park
     local van_delay = 543/30
     triggers = {
@@ -212,20 +320,48 @@ elseif level_id == "arm_par" then -- Transport: Park
         [100208] = { time = 60 + van_delay },
 
         -- Heli
-        [102200] = { time = 23, special_function = SF.SetTimeOrCreateTracker }
+        [102200] = { time = 23, special_function = SF.SetTimeOrCreateTracker },
+
+        --[100116] = { time = 30, id = "DifficultyIncrease", icons = DifficultyIncrease, class = TT.Warning }
     }
     trigger_id_all = "Escape"
     trigger_icon_all = { Icon.Escape, Icon.LootDrop }
+    EHI:AddOnAlarmCallback(function(dropin)
+        if managers.assets:IsEscapeDriverAssetUnlocked() then
+            return
+        end
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = 15,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "arm_und" then -- Transport: Underpass
     local van_delay = 674/30
     triggers = {
         [101235] = { time = 120 + van_delay },
         [100257] = { time = 100 + van_delay },
         [100209] = { time = 80 + van_delay },
-        [100208] = { time = 60 + van_delay }
+        [100208] = { time = 60 + van_delay },
+
+        [100677] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
+
+        --[100116] = { time = 60, id = "DifficultyIncrease", icons = DifficultyIncrease, class = TT.Warning }
     }
     trigger_id_all = "Escape"
     trigger_icon_all = CarEscape
+    EHI:AddOnAlarmCallback(function(dropin)
+        if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
+            return
+        end
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = 10,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "arm_for" then -- Transport: Train Heist
     local truck_delay = 524/30
     local boat_delay = 450/30
@@ -270,8 +406,27 @@ elseif level_id == "mallcrasher" then -- Mallcrasher
         [300241] = { id = "uno_3", special_function = SF.SetAchievementComplete },
 
         [301056] = { max = 171, id = "window_cleaner", flash_times = 1, class = TT.AchievementProgress },
-        [300791] = { id = "window_cleaner", special_function = SF.IncreaseProgress }
+        [300791] = { id = "window_cleaner", special_function = SF.IncreaseProgress },
+
+        --[[[300286] = { time = 60, id = "DifficultyIncrease30", icons = DifficultyIncrease, class = TT.Warning },
+        [300287] = { time = 60, id = "DifficultyIncrease40", icons = DifficultyIncrease, class = TT.Warning },
+        [300288] = { time = 60, id = "DifficultyIncrease50", icons = DifficultyIncrease, class = TT.Warning },
+        [300310] = { time = 125, id = "DifficultyIncrease60", icons = DifficultyIncrease, class = TT.Warning },
+        [300311] = { time = 180, id = "DifficultyIncrease70", icons = DifficultyIncrease, class = TT.Warning },
+        [300312] = { time = 180, id = "DifficultyIncrease80", icons = DifficultyIncrease, class = TT.Warning },
+        [300315] = { time = 180, id = "DifficultyIncrease90", icons = DifficultyIncrease, class = TT.Warning },
+        [300334] = { time = 180, id = "DifficultyIncrease100", icons = DifficultyIncrease, class = TT.Warning }]]
     }
+    --[[if ovk_and_below then -- Mayhem and up sets the difficulty to 20% after alarm
+        local element_delay = 10
+        triggers[301138] = { time = 50 + element_delay, id = "DifficultyIncrease10", icons = DifficultyIncrease, class = TT.Warning }
+        triggers[301766] = { time = 40 + element_delay, id = "DifficultyIncrease10", icons = DifficultyIncrease, class = TT.Warning }
+        triggers[301771] = { time = 30 + element_delay, id = "DifficultyIncrease10", icons = DifficultyIncrease, class = TT.Warning }
+        triggers[301772] = { time = 20 + element_delay, id = "DifficultyIncrease10", icons = DifficultyIncrease, class = TT.Warning }
+        triggers[301773] = { time = 10 + element_delay, id = "DifficultyIncrease10", icons = DifficultyIncrease, class = TT.Warning }
+        triggers[300284] = { time = element_delay, id = "DifficultyIncrease10", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist }
+        triggers[300285] = { time = 30, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning }
+    end]]
     trigger_id_all = "EscapeHeli"
     trigger_icon_all = HeliEscapeNoLoot
 elseif level_id == "four_stores" then -- Four Stores
@@ -292,10 +447,38 @@ elseif level_id == "four_stores" then -- Four Stores
         [102526] = { time = 130 + van_anim_delay },
         [103592] = { time = 160 + van_anim_delay },
         [103593] = { time = 180 + van_anim_delay },
-        [103594] = { time = 200 + van_anim_delay }
+        [103594] = { time = 200 + van_anim_delay },
+
+        [103501] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
+
+        -- First cop car
+        --[[[101169] = { time = 2.5 + 3 + 2 + 30 + 20, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning },
+        [101170] = { time = 3 + 2 + 30 + 20, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
+        [101171] = { time = 2 + 30 + 20, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
+        [101172] = { time = 30 + 20, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
+        [101594] = { special_function = SF.Trigger, data = { 1015941, 1015942 } },
+        [1015941] = { time = 20, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
+        [1015942] = { time = 60, id = "DifficultyIncrease35", icons = DifficultyIncrease, class = TT.Warning },
+        [101808] = { time = 60, id = "DifficultyIncrease50", icons = DifficultyIncrease, class = TT.Warning },
+        [101812] = { time = 120, id = "DifficultyIncrease65", icons = DifficultyIncrease, class = TT.Warning },
+        [101816] = { time = 180, id = "DifficultyIncrease70", icons = DifficultyIncrease, class = TT.Warning },
+        [101820] = { time = 180, id = "DifficultyIncrease80", icons = DifficultyIncrease, class = TT.Warning },
+        [101837] = { time = 180, id = "DifficultyIncrease100", icons = DifficultyIncrease, class = TT.Warning }]]
     }
     trigger_id_all = "EscapeVan"
     trigger_icon_all = CarEscape
+    EHI:AddOnAlarmCallback(function(dropin)
+        if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
+            return
+        end
+        managers.ehi:DisableIncreaseCivilianKilled()
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = 30 + (managers.ehi:GetAndRemoveFromCache("CiviliansKilled") or 0) * 5,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "pines" then -- White Xmas
     local chance = { id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = "EHIChanceTracker", special_function = SF.SetChanceFromElementWhenTrackerExists }
     triggers = {
@@ -337,8 +520,34 @@ elseif level_id == "ukrainian_job" then -- Ukrainian Job
         [104406] = { id = "cac_12", status = "finish", special_function = SF.SetAchievementStatus },
         [104408] = { id = "cac_12", special_function = SF.SetAchievementComplete },
         [104409] = cac_12_disable,
-        [103116] = cac_12_disable
+        [103116] = cac_12_disable,
+
+        [101614] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
+
+        --[101995] = { time = 90, id = "DifficultyIncrease50", icons = DifficultyIncrease, class = TT.Warning },
+        --[101999] = { time = 300, id = "DifficultyIncrease75", icons = DifficultyIncrease, class = TT.Warning },
+        --[102526] = { time = 300, id = "DifficultyIncrease100", icons = DifficultyIncrease, class = TT.Warning },
     }
+    EHI:AddOnAlarmCallback(function(dropin)
+        if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
+            return
+        end
+        managers.ehi:DisableIncreaseCivilianKilled()
+        local start_chance = 30 -- Normal
+        if difficulty_index == 1 then -- Hard
+            start_chance = 33
+        elseif difficulty_index == 2 then -- Very Hard
+            start_chance = 35
+        elseif ovk_and_up then
+            start_chance = 37
+        end
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = start_chance + (managers.ehi:GetAndRemoveFromCache("CiviliansKilled") or 0) * 5,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "shoutout_raid" then -- Meltdown
     triggers = {
         [102314] = { id = "VaultTimeToOpen", class = "EHIVaultTemperatureTracker", special_function = SF.AddTrackerIfDoesNotExist },
@@ -374,13 +583,39 @@ elseif level_id == "nightclub" then -- Nightclub
         [101453] = { time = 300, id = "fire2", icons = { Icon.Fire }, class = TT.Warning },
 
         -- Asset
-        [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = { Icon.Car, Icon.LootDrop } }
+        [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = { Icon.Car, Icon.LootDrop } },
         -- 20: Base Delay
         -- 40/3: Animation finish delay
         -- Total 33.33 s
+
+        [104285] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
+
+        -- First cop car
+        --[[[101168] = { time = 3.5 + 2.5 + 3 + 2, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning },
+        [101169] = { time = 2.5 + 3 + 2, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
+        [101170] = { time = 3 + 2, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
+        [101171] = { time = 2, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
+        [101808] = { time = 100, id = "DifficultyIncrease35", icons = DifficultyIncrease, class = TT.Warning },
+        [101812] = { time = 150, id = "DifficultyIncrease50", icons = DifficultyIncrease, class = TT.Warning },
+        [101816] = { time = 200, id = "DifficultyIncrease65", icons = DifficultyIncrease, class = TT.Warning },
+        [101820] = { time = 200, id = "DifficultyIncrease75", icons = DifficultyIncrease, class = TT.Warning },
+        [101837] = { time = 200, id = "DifficultyIncrease80", icons = DifficultyIncrease, class = TT.Warning },
+        [101849] = { time = 200, id = "DifficultyIncrease100", icons = DifficultyIncrease, class = TT.Warning }]]
     }
     trigger_id_all = "EscapeVan"
     trigger_icon_all = CarEscape
+    EHI:AddOnAlarmCallback(function(dropin)
+        if managers.assets:IsEscapeDriverAssetUnlocked() then
+            return
+        end
+        --managers.ehi:DisableIncreaseCivilianKilled()
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = 25,-- + (managers.ehi:GetAndRemoveFromCache("CiviliansKilled") or 0) * 5,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "moon" then -- Stealing Xmas
     triggers = {
         [101176] = { time = 67 + 400/30, id = "WinchInteract", icons = { Icon.Heli, Icon.Winch } },
@@ -481,15 +716,27 @@ elseif level_id == "alex_1" then -- Rats Day 1
 
         [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", "pd2_goto" }, class = TT.Warning },
 
-        [100723] = { amount = 10, id = "CookChance", special_function = SF.IncreaseChance }
+        [100723] = { amount = 10, id = "CookChance", special_function = SF.IncreaseChance },
+
+        [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     }
     trigger_id_all = "Van"
     trigger_icon_all = CarEscape
+    EHI:AddOnAlarmCallback(function(dropin)
+        managers.ehi:AddTracker({
+            id = "EscapeChance",
+            chance = 35,
+            icons = VanCrashChance,
+            class = TT.Chance
+        })
+    end)
 elseif level_id == "alex_2" then -- Rats Day 2
     local assault_delay = 15 + 1 + 30
     triggers = {
         [104488] = { time = assault_delay, id = "FirstAssaultDelay", icons = FirstAssaultDelay, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker },
-        [104489] = { time = assault_delay, id = "FirstAssaultDelay", icons = FirstAssaultDelay, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist }
+        [104489] = { time = assault_delay, id = "FirstAssaultDelay", icons = FirstAssaultDelay, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
+
+        [100342] = { chance = 25, id = "EscapeChance", icons = VanCrashChance, class = TT.Chance }
     }
 elseif level_id == "alex_3" then -- Rats Day 3
     local delay = 2
@@ -868,7 +1115,10 @@ elseif level_id == "kenaz" then -- Golden Grin Casino
         [100159] = { id = "BlimpWithTheDrill", icons = { "pd2_question", "pd2_drill" }, special_function = SF.SetTimeByPreplanning, data = { id = 101854, yes = 976/30, no = 1952/30 } },
         [100426] = { time = 1000/30, id = "BlimpLowerTheDrill", icons = { "pd2_question", "pd2_drill", "pd2_goto" } },
 
-        [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { "restarter" } }
+        [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { "restarter" } },
+
+        --[101905] = { time = 10, id = "DifficultyIncrease65", icons = DifficultyIncrease, class = TT.Warning },
+        --[101906] = { time = 30, id = "DifficultyIncrease65", icons = DifficultyIncrease, class = TT.Warning }
     }
 elseif level_id == "crojob2" then -- The Bomb: Dockyard
     local start_index = { 1100, 1400, 1700, 2000, 2300, 2600, 2900, 3500, 3800, 4100, 4400, 4700 }
@@ -1417,7 +1667,9 @@ elseif level_id == "dinner" then -- Slaughterhouse
         [100985] = c4,
         -- C4 (GenSec Truck)
         [100830] = c4,
-        [100961] = c4
+        [100961] = c4,
+
+        --[101346] = { time = 85, id = "DifficultyIncrease85", icons = DifficultyIncrease, class = TT.Warning }
     }
 elseif level_id == "nail" then -- Lab Rats
     triggers = {

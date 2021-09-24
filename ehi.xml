@@ -49,6 +49,8 @@
             <post :hook_id="mission/elementspawngageassignment" :script_path="elements/ElementSpawnGageAssignment.lua" />
             <post :hook_id="mission/missionscriptelement" :script_path="elements/MissionScriptElement.lua" />
 
+            <post :hook_id="missionassetsmanager" :script_path="MissionAssetsManager.lua" />   
+    
             <!-- Menu code -->
             <post :hook_id="menumanager" :script_path="FakeEHIManager.lua" />
             <post :hook_id="menumanager" :script_path="EHIMenu.lua" />
@@ -69,6 +71,7 @@
         <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
 
         <post hook_id="lib/setups/setup" :script_path="EHIManager.lua" />
+        <!--<post hook_id="lib/setups/setup" :script_path="EHIManagerVR.lua" />-->
         <post hook_id="lib/setups/setup" :script_path="EHIWaypointManager.lua" />
         <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
@@ -91,6 +94,7 @@
         <post hook_id="lib/units/equipment/first_aid_kit/firstaidkitbase" :script_path="FirstAidKitBase.lua" />
         <post hook_id="lib/units/equipment/sentry_gun/sentrygunmovement" :script_path="SentryGunMovement.lua" />
         <post hook_id="lib/units/pickups/gageassignmentbase" :script_path="GageAssignmentBase.lua" />
+        <post hook_id="lib/units/props/drill" :script_path="Drill.lua" />
         <post hook_id="lib/units/props/digitalgui" :script_path="DigitalGui.lua" />
         <post hook_id="lib/units/props/missiondoor" :script_path="MissionDoor.lua" />
         <post hook_id="lib/units/props/securitycamera" :script_path="SecurityCamera.lua" />

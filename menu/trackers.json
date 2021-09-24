@@ -24,7 +24,8 @@
             "callback_arguments": "hide_unlocked_achievements",
             "value": "hide_unlocked_achievements",
             "default_value": true,
-            "parent" : "ehi_show_achievement_choice"
+            "parent" : "ehi_show_achievement_choice",
+            "ehi_ver" : 10
         },
         {
             "type": "divider",
@@ -116,6 +117,18 @@
             "default_value": true
         },
         {
+            "type": "toggle",
+            "id": "ehi_show_trade_delay_suppress_in_stealth_choice",
+            "title": "ehi_show_trade_delay_suppress_in_stealth",
+            "description": "ehi_show_trade_delay_suppress_in_stealth_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_trade_delay_suppress_in_stealth",
+            "value": "show_trade_delay_suppress_in_stealth",
+            "parent": "ehi_show_trade_delay_choice",
+            "default_value": true,
+            "ehi_ver" : 29
+        },
+        {
             "type": "divider",
             "size": 20
         },
@@ -197,7 +210,8 @@
             "callback_arguments": "show_minion_tracker",
             "focus_changed_callback": "SetFocus",
             "value": "show_minion_tracker",
-            "default_value": true
+            "default_value": true,
+            "ehi_ver" : 16
         },
         {
             "type": "toggle",
@@ -219,7 +233,8 @@
             "callback_arguments": "show_drama_tracker",
             "focus_changed_callback": "SetFocus",
             "value": "show_drama_tracker",
-            "default_value": true
+            "default_value": true,
+            "ehi_ver" : 10
         },
         {
             "type": "toggle",
@@ -241,7 +256,8 @@
             "callback_arguments": "show_pager_callback",
             "focus_changed_callback": "SetFocus",
             "value": "show_pager_callback",
-            "default_value": true
+            "default_value": true,
+            "ehi_ver" : 13
         },
         {
             "type": "toggle",
@@ -252,7 +268,8 @@
             "callback_arguments": "show_enemy_count_tracker",
             "focus_changed_callback": "SetFocus",
             "value": "show_enemy_count_tracker",
-            "default_value": true
+            "default_value": true,
+            "ehi_ver" : 6
         },
         {
             "type": "toggle",
@@ -263,7 +280,8 @@
             "callback_arguments": "show_laser_tracker",
             "focus_changed_callback": "SetFocus",
             "value": "show_laser_tracker",
-            "default_value": false
+            "default_value": false,
+            "ehi_ver" : 10
         }
     ]
 }

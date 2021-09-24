@@ -31,7 +31,7 @@ function EHIManager:init()
         normal = false
     }
     self._n_of_trackers = 0
-    self._cache = { _deployables = {} }
+    self._cache = { _deployables = {}, TradeDelay = {} }
     local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
     self._x = x
     self._y = y
@@ -286,8 +286,8 @@ function EHIManager:LoadSync()
             local o = unit:digital_gui()
             if o and (o._timer_count_down or o._timer_paused) then
                 self:AddTracker({
-                    floors = o._timer - 4,
                     id = "EscapeElevator",
+                    floors = o._timer - 4,
                     icons = { "pd2_door" },
                     class = "EHIElevatorTimerTracker"
                 })
@@ -308,11 +308,24 @@ function EHIManager:LoadSync()
         if managers.groupai:state():whisper_mode() then
             self:AddAchievementNotificationTracker("armored_6")
         end
+    elseif level_id == "alex_1" then
+        if managers.environment_effects:effect(101437) then
+            self:IncreaseChance("EscapeChance", 70)
+            EHI:UnhookElement(101863)
+        end
     end
 end
 
 function EHIManager:DisableStartFromBeginning()
     self._level_started_from_beginning = false
+end
+
+function EHIManager:GetStartedFromBeginning()
+    return self._level_started_from_beginning
+end
+
+function EHIManager:GetDropin()
+    return not self:GetStartedFromBeginning()
 end
 
 function EHIManager:update(t, dt)
@@ -331,7 +344,7 @@ function EHIManager:destroy()
     for _, tracker in pairs(self._trackers) do
         tracker:destroy(true)
     end
-    if alive(self._ws) then
+    if self._ws and alive(self._ws) then
         if _G.IS_VR then
             Overlay:gui():destroy_workspace(self._ws)
         else
@@ -349,7 +362,7 @@ end
 function EHIManager:AddTracker(params, pos)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists! Traceback:")
-        EHI:Log(debug.traceback())
+        EHI:LogTraceback()
         self._trackers[params.id]:delete()
     end
     if pos and type(pos) == "number" and self._n_of_trackers ~= 0 then
@@ -384,7 +397,6 @@ function EHIManager:AddTracker(params, pos)
     params.text_scale = self._text_scale
     local class = params.class or "EHITracker"
     local tracker = _G[class]:new(self._hud_panel, params)
-    tracker:SetPanelVisible()
     if tracker._update then
         self._trackers_to_update[params.id] = tracker
     end
@@ -578,13 +590,6 @@ function EHIManager:AddXPToTracker(id, amount)
     end
 end
 
-function EHIManager:SetTrackerUpgradeable(id, upgradeable)
-    local tracker = self._trackers[id]
-    if tracker and tracker.SetUpgradeable then
-        tracker:SetUpgradeable(upgradeable)
-    end
-end
-
 function EHIManager:SetTrackerTime(id, time)
     local tracker = self._trackers[id]
     if tracker and tracker.SetTime then
@@ -649,6 +654,52 @@ function EHIManager:GetAndRemoveFromCache(id)
     local data = self._cache[id]
     self._cache[id] = nil
     return data
+end
+
+function EHIManager:AddToTradeDelayCache(peer_id, respawn_penalty, in_custody)
+    self._cache.TradeDelay[peer_id] =
+    {
+        respawn_t = respawn_penalty,
+        in_custody = in_custody
+    }
+end
+
+function EHIManager:SetCachedPeerInCustody(peer_id)
+    if not self._cache.TradeDelay[peer_id] then
+        return
+    end
+    self._cache.TradeDelay[peer_id].in_custody = true
+end
+
+function EHIManager:IncreaseCachedPeerCustodyTime(peer_id, time)
+    if not self._cache.TradeDelay[peer_id] then
+        return
+    end
+    self._cache.TradeDelay[peer_id].respawn_t = self._cache.TradeDelay[peer_id].respawn_t + time
+end
+
+function EHIManager:SetCachedPeerCustodyTime(peer_id, time)
+    if not self._cache.TradeDelay[peer_id] then
+        return
+    end
+    self._cache.TradeDelay[peer_id].respawn_t = time
+end
+
+function EHIManager:CachedPeerInCustodyExists(peer_id)
+    return self._cache.TradeDelay[peer_id] ~= nil
+end
+
+function EHIManager:LoadFromTradeDelayCache()
+    if #self._cache.TradeDelay == 0 then
+        return
+    end
+    self:AddCustodyTimeTracker()
+    for peer_id, crim in pairs(self._cache.TradeDelay) do
+        self:AddPeerCustodyTime(peer_id, crim.respawn_t)
+        if crim.in_custody then
+            self:CallFunction("CustodyTime", "SetPeerInCustody", peer_id)
+        end
+    end
 end
 
 function EHIManager:AddToDeployableCache(type, key, unit, tracker_type)
@@ -830,7 +881,7 @@ function EHIManager:SetAchievementComplete(id, force)
     end
 end
 
-function EHIManager:SetFailedAchievement(id)
+function EHIManager:SetAchievementFailed(id)
     local tracker = self._trackers[id]
     if tracker and tracker.SetFailed then
         tracker:SetFailed()
@@ -862,17 +913,32 @@ end
 
 function EHIManager:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, time)
     self:AddCustodyTimeTracker()
-    self:CallFunction("CustodyTime", "AddPeerCustodyTime", peer_id, time)
+    self:AddPeerCustodyTime(peer_id, time)
     if self._trade.normal or self._trade.ai then
         local f = self._trade.normal and "SetTrade" or "SetAITrade"
         self:CallFunction("CustodyTime", f, true, managers.trade:GetTradeCounterTick(), true)
     end
 end
 
+function EHIManager:AddPeerCustodyTime(peer_id, respawn_time_penalty)
+    self:CallFunction("CustodyTime", "AddPeerCustodyTime", peer_id, respawn_time_penalty)
+end
+
 function EHIManager:SetTrade(type, pause, t)
     self._trade[type] = pause
     local f = type == "normal" and "SetTrade" or "SetAITrade"
     self:CallFunction("CustodyTime", f, pause, t)
+end
+
+function EHIManager:IncreaseCivilianKilled()
+    if self._cache.CiviliansKilledDisabled then
+        return
+    end
+    self._cache.CiviliansKilled = (self._cache.CiviliansKilled or 0) + 1
+end
+
+function EHIManager:DisableIncreaseCivilianKilled()
+    self._cache.CiviliansKilledDisabled = true
 end
 
 function EHIManager:CallFunction(id, f, ...)

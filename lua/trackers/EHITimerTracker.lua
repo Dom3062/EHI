@@ -12,11 +12,12 @@ function EHITimerTracker:init(panel, params)
     self._paused = false
     self._jammed = false
     self._not_powered = false
-    self._faster_level = 1
-    local upgrades = self._parent_class:GetAndRemoveFromCache(self._id)
-    if upgrades then
+    if params.upgrades then
         self:SetUpgradeable(true)
-        self:SetUpgrades(upgrades)
+        self:SetUpgrades(params.upgrades)
+    end
+    if params.autorepair ~= nil then
+        self:SetAutorepair(params.autorepair)
     end
 end
 
@@ -40,14 +41,14 @@ function EHITimerTracker:SetUpgradeable(upgradeable)
 end
 
 function EHITimerTracker:SetUpgrades(upgrades)
-    if not self._upgradeable then
+    if not (self._upgradeable and upgrades) then
         return
     end
     local icon_definition =
     {
-        ["faster"] = 2,
-        ["silent"] = 3,
-        ["restarter"] = 4
+        faster = 2,
+        silent = 3,
+        restarter = 4
     }
     for upgrade, level in pairs(upgrades) do
         if level > 0 then
@@ -66,6 +67,10 @@ function EHITimerTracker:GetUpgradeColor(level)
     end
     local theme = TimerGui.themes[self.theme]
     return theme and theme["upgrade_color_" .. level] or TimerGui.upgrade_colors["upgrade_color_" .. level]
+end
+
+function EHITimerTracker:SetAutorepair(state)
+    self._icon1:set_color(state and tweak_data.ehi.color.DrillAutorepair or Color.white)
 end
 
 function EHITimerTracker:SetJammed(jammed)

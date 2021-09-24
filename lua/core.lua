@@ -78,6 +78,7 @@ _G.EHI =
         PauseTrackerWithTime = 46,
         RemoveTriggerAndShowAchievementCustom = 47,
         IncreaseProgressMax = 48,
+        AddTrackerIfDoesNotExistElementHostCheckOnly = 49,
 
         AddToGlobalAndExecute = 99998, -- REMOVE ME
         Debug = 100000,
@@ -138,7 +139,7 @@ _G.EHI =
         "sm_wish"
     },
 
-    ModVersion = ModInstance and tonumber(ModInstance:GetVersion()) or "?",
+    ModVersion = ModInstance and tonumber(ModInstance:GetVersion()) or "N/A",
     ModPath = ModPath,
     LocPath = ModPath .. "loc/",
     LuaPath = ModPath .. "lua/",
@@ -167,6 +168,10 @@ end
 
 function EHI:Log(s)
     log("[EHI] " .. (s or "nil"))
+end
+
+function EHI:LogTraceback()
+    log("[EHI] " .. debug.traceback())
 end
 
 function EHI:Load()
@@ -238,6 +243,7 @@ function EHI:LoadDefaultValues()
         show_trade_delay = true,
         show_trade_delay_option = 1,
         show_trade_delay_other_players_only = true,
+        show_trade_delay_suppress_in_stealth = true,
         show_timers = true,
         show_zipline_timer = true,
         show_gage_tracker = true,
@@ -296,6 +302,7 @@ function EHI:LoadDefaultValues()
 
         -- Waypoints
         show_waypoints = true,
+        show_waypoints_only = false,
         show_waypoints_present_timer = 2,
         show_waypoints_enemy_turret = true,
         show_waypoints_timers = true,
@@ -332,9 +339,9 @@ function EHI:AddOnAlarmCallback(f)
     self.OnAlarmCallback[#self.OnAlarmCallback + 1] = f
 end
 
-function EHI:RunOnAlarmCallbacks()
+function EHI:RunOnAlarmCallbacks(dropin)
     for _, callback in pairs(self.OnAlarmCallback) do
-        callback()
+        callback(dropin)
     end
     self.OnAlarmCallback = {}
 end
@@ -398,6 +405,10 @@ function EHI:RoundNumber(n, bracket)
     bracket = bracket or 1
     local sign = n >= 0 and 1 or -1
     return math.floor(n / bracket + sign * 0.5) * bracket
+end
+
+function EHI:RoundChanceNumber(n)
+    return self:RoundNumber(n, 0.01) * 100
 end
 
 function EHI:Sync(message, data)
@@ -771,7 +782,7 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(id)
                 end
             elseif f == SF.SetAchievementFailed then
-                managers.ehi:SetFailedAchievement(triggers[id].id)
+                managers.ehi:SetAchievementFailed(triggers[id].id)
             elseif f == SF.SetRandomTime then
                 if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
                     self:AddTrackerWithRandomTime(id)
@@ -844,6 +855,16 @@ function EHI:Trigger(id, element, enabled)
                 UnhookTrigger(self, id)
             elseif f == SF.IncreaseProgressMax then
                 managers.ehi:IncreaseTrackerProgressMax(triggers[id].id)
+            elseif f == SF.AddTrackerIfDoesNotExistElementHostCheckOnly then
+                if Network:is_server() and element._values.counter_target == 0 then
+                    if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
+                        self:CheckCondition(id)
+                    end
+                else
+                    if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
+                        self:CheckCondition(id)
+                    end
+                end
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
@@ -934,7 +955,7 @@ function EHI:Trigger(id, element, enabled)
                 local tracker = managers.ehi:GetTracker("sand_9_buttons")
                 if tracker and tracker:GetProgress() == triggers[id].data then
                     managers.ehi:RemoveTracker("sand_9_buttons")
-                    managers.ehi:SetFailedAchievement("sand_9")
+                    managers.ehi:SetAchievementFailed("sand_9")
                 end
             end
         else

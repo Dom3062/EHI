@@ -10,6 +10,7 @@ if not EHI:GetOption("show_timers") then
 end
 
 local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")
+local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
 
 local original =
 {
@@ -62,30 +63,30 @@ function TimerGui:init(unit, ...)
 end
 
 function TimerGui:set_background_icons(background_icons, ...)
-    local skills = self._unit:base().get_skill_upgrades and self._unit:base():get_skill_upgrades()
+    original.set_background_icons(self, background_icons, ...)
+    managers.ehi:SetTimerUpgrades(self._ehi_key, self:GetUpgrades())
+end
 
-    if skills and table.size(background_icons or {}) > 0 then
-        local upgrade_table = {
+function TimerGui:GetUpgrades()
+    if self._unit:base()._disable_upgrades then
+        return nil
+    end
+    local upgrade_table = nil
+    local skills = self._unit:base().get_skill_upgrades and self._unit:base():get_skill_upgrades()
+    if skills and table.size(self._original_colors or {}) > 0 then
+        upgrade_table = {
             restarter = (skills.auto_repair_level_1 or 0) + (skills.auto_repair_level_2 or 0),
             faster = (skills.speed_upgrade_level or 0),
             silent = (skills.reduced_alert and 1 or 0) + (skills.silent_drill and 1 or 0)
         }
-
-        if managers.ehi:TrackerExists(self._ehi_key) then
-            managers.ehi:SetTrackerUpgradeable(self._ehi_key, true)
-            managers.ehi:SetTimerUpgrades(self._ehi_key, upgrade_table)
-        else
-            managers.ehi:AddToCache(self._ehi_key, upgrade_table)
-        end
     end
-
-    original.set_background_icons(self, background_icons, ...)
+    return upgrade_table
 end
 
 function TimerGui:_start(...)
     original._start(self, ...)
     local editor_id = self._unit:editor_id()
-    if ignore[self._unit:editor_id()] then
+    if ignore[editor_id] then
         return
     end
     if managers.ehi:TrackerExists(self._ehi_key) then
@@ -94,27 +95,38 @@ function TimerGui:_start(...)
         managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
         managers.ehi_waypoint:SetTimerWaypointPowered(self._ehi_key, true)
     else
-        managers.ehi:AddTracker({
-            id = self._ehi_key,
-            time = self._current_timer,
-            icons = icons[editor_id] or { { icon = self._ehi_icon } },
-            theme = self.THEME,
-            exclude_from_sync = true,
-            class = "EHITimerTracker"
-        })
+        local autorepair = self._unit:base()._autorepair
+        if not show_waypoint_only then
+            managers.ehi:AddTracker({
+                id = self._ehi_key,
+                time = self._current_timer,
+                icons = icons[editor_id] or { { icon = self._ehi_icon } },
+                theme = self.THEME,
+                exclude_from_sync = true,
+                class = "EHITimerTracker",
+                upgrades = self:GetUpgrades(),
+                autorepair = autorepair
+            })
+        end
         if show_waypoint then
             managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
                 time = self._current_timer,
                 icon = icons[editor_id] or self._ehi_icon,
                 pause_timer = 1,
                 type = "timer",
-                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
+                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
+                color = autorepair and tweak_data.ehi.color.DrillAutorepair or Color.white
             })
         end
     end
 end
 
-if show_waypoint then
+if show_waypoint_only then
+    function TimerGui:update(...)
+        managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._time_left)
+        original.update(self, ...)
+    end
+elseif show_waypoint then
     function TimerGui:update(...)
         managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
         managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._time_left)

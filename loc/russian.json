@@ -41,9 +41,6 @@
     "ehi_trackers_menu" : "Трекеры",
     "ehi_trackers_menu_desc" : "",
 
-    "ehi_show_achievement" : "Показывать трекер достижений",
-    "ehi_show_achievement_desc" : "Показывает связанные с миссией достижения на время\nНекоторые миссии могут не иметь достижений на время",
-
     "ehi_hide_unlocked_achievements" : "Не показывать открытые достижения",
     "ehi_hide_unlocked_achievements_desc" : "Когда выбрано, открытые достижения не будут показываться в трекерах",
 

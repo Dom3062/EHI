@@ -12,7 +12,7 @@ local unit_ids =
 
 for _, unit_id in pairs(unit_ids) do
     for _, index in pairs(start_index) do
-        local fixed_unit_id = EHI:GetInstanceElementID(unit_id, index)
+        local fixed_unit_id = EHI:GetInstanceUnitID(unit_id, index)
         managers.mission:add_runned_unit_sequence_trigger(fixed_unit_id, "interact", function(unit)
             managers.ehi:AddTracker({
                 id = tostring(fixed_unit_id),

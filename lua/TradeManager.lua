@@ -11,6 +11,7 @@ end
 
 local show_trade_for_other_players = EHI:GetOption("show_trade_delay_other_players_only")
 local on_death_show = EHI:GetOption("show_trade_delay_option") == 2
+local suppress_in_stealth = EHI:GetOption("show_trade_delay_suppress_in_stealth")
 
 local original =
 {
@@ -23,6 +24,10 @@ local original =
 local TrackerID = "CustodyTime"
 
 local function OnPlayerCriminalDeath(peer_id, respawn_penalty)
+    if suppress_in_stealth and managers.groupai:state():whisper_mode() then
+        managers.ehi:AddToTradeDelayCache(peer_id, respawn_penalty, true)
+        return
+    end
     if managers.ehi:TrackerExists(TrackerID) then
         local tracker = managers.ehi:GetTracker(TrackerID)
         if tracker and not tracker:PeerExists(peer_id) then
@@ -76,6 +81,15 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, .
         if on_death_show then
             CreateTracker(peer_id, respawn_penalty)
         elseif respawn_penalty ~= tweak_data.player.damage.base_respawn_time_penalty then
+            if suppress_in_stealth and managers.groupai:state():whisper_mode() then
+                if managers.ehi:CachedPeerInCustodyExists(peer_id) then
+                    managers.ehi:SetCachedPeerCustodyTime(peer_id, respawn_penalty)
+                else
+                    managers.ehi:AddToTradeDelayCache(peer_id, respawn_penalty)
+                end
+                managers.ehi:SetCachedPeerInCustody(peer_id)
+                return
+            end
             local tracker = managers.ehi:GetTracker(TrackerID)
             if tracker then
                 if tracker:PeerExists(peer_id) then

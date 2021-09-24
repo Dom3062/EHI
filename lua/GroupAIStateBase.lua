@@ -16,7 +16,8 @@ local achievements_to_remove =
 local trackers_to_remove =
 {
     "BodyBags",
-    "pagers" -- Removes pager tracker
+    "pagers", -- Removes pager tracker
+    "pagers_chance" -- Removes pager chance tracker (if using mods)
 }
 
 local achievements_to_toggle =
@@ -41,17 +42,20 @@ local set_ok_state =
 
 local show_trackers = {}
 
+local dropin = false
+
 local level_id = Global.game_settings.level_id
 if level_id == "alex_2" then
     show_trackers[#show_trackers + 1] = { time = 75 + 15 + 30, id = "FirstAssaultDelay", icons = { { icon = "assaultbox", color = Color(1, 1, 0) } }, class = "EHIWarningTracker" }
 end
 
-local function Execute(dropin)
+local function Execute()
     if not dropin and managers.trade.GetTradeCounterTick then
+        managers.ehi:LoadFromTradeDelayCache()
         managers.ehi:SetTrade("normal", true, managers.trade:GetTradeCounterTick())
     end
     for _, achievement in ipairs(achievements_to_remove) do
-        managers.ehi:SetFailedAchievement(achievement)
+        managers.ehi:SetAchievementFailed(achievement)
     end
     for _, tracker in ipairs(trackers_to_remove) do
         managers.ehi:RemoveTracker(tracker)
@@ -62,7 +66,7 @@ local function Execute(dropin)
     for _, achievement in ipairs(set_ok_state) do
         managers.ehi:CallFunction(achievement, "SetStatus", "ok")
     end
-    EHI:RunOnAlarmCallbacks()
+    EHI:RunOnAlarmCallbacks(dropin)
     for _, hook in ipairs(unhook) do
         EHI:Unhook(hook)
     end
@@ -93,26 +97,26 @@ function GroupAIStateBase:init(...)
     self:add_listener("EHI_EnemyWeaponsHot", { "enemy_weapons_hot" }, Execute)
 end
 
-function GroupAIStateBase:on_successful_alarm_pager_bluff(...)
+function GroupAIStateBase:on_successful_alarm_pager_bluff(...) -- Called by host
     original.on_successful_alarm_pager_bluff(self, ...)
     managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
+    managers.ehi:SetChance("pagers_chance", (EHI:RoundChanceNumber(tweak_data.player.alarm_pager.bluff_success_chance_w_skill[self._nr_successful_alarm_pager_bluffs + 1] or 0)))
 end
 
-function GroupAIStateBase:sync_alarm_pager_bluff(...)
+function GroupAIStateBase:sync_alarm_pager_bluff(...) -- Called by client
     original.sync_alarm_pager_bluff(self, ...)
     managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 end
 
 function GroupAIStateBase:load(...)
+    dropin = managers.ehi:GetDropin()
     original.load(self, ...)
-    if self._enemy_weapons_hot then
-		Execute(true)
-    else
+    if not self._enemy_weapons_hot then
         managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 	end
     local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
     if law1team and law1team.damage_reduction then
-        managers.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundNumber(law1team.damage_reduction or 0, 0.01) * 100))
+        managers.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(law1team.damage_reduction or 0)))
     end
 end
 
@@ -121,7 +125,7 @@ if EHI:ShowDramaTracker() then
     original._add_drama = GroupAIStateBase._add_drama
     function GroupAIStateBase:_add_drama(...)
         original._add_drama(self, ...)
-        managers.ehi:SetChance("Drama", (EHI:RoundNumber(self._drama_data.amount, 0.01) * 100))
+        managers.ehi:SetChance("Drama", (EHI:RoundChanceNumber(self._drama_data.amount)))
     end
 end
 

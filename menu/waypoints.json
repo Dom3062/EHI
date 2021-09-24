@@ -12,7 +12,28 @@
             "callback_arguments": "show_waypoints",
             "value": "show_waypoints",
             "default_value": true,
-            "is_parent" : true
+            "is_parent" : true,
+            "ehi_ver" : 21
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_waypoints_only_choice",
+            "title": "ehi_show_waypoints_only",
+            "description": "ehi_show_waypoints_only_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints_only",
+            "value": "show_waypoints_only",
+            "default_value": false,
+            "parent" : "ehi_show_waypoints_choice",
+            "ehi_ver" : 29
+        },
+        {
+            "type": "divider",
+            "size": 20
         },
         {
             "type": "slider",
@@ -26,7 +47,8 @@
             "max": 5,
             "min": 0,
             "step": 2,
-            "parent" : "ehi_show_waypoints_choice"
+            "parent" : "ehi_show_waypoints_choice",
+            "ehi_ver" : 21
         },
         {
             "type": "divider",
@@ -41,7 +63,8 @@
             "callback_arguments": "show_waypoints_enemy_turret",
             "value": "show_waypoints_enemy_turret",
             "default_value": true,
-            "parent" : "ehi_show_waypoints_choice"
+            "parent" : "ehi_show_waypoints_choice",
+            "ehi_ver" : 21
         },
         {
             "type": "toggle",
@@ -52,7 +75,8 @@
             "callback_arguments": "show_waypoints_timers",
             "value": "show_waypoints_timers",
             "default_value": true,
-            "parent" : "ehi_show_waypoints_choice"
+            "parent" : "ehi_show_waypoints_choice",
+            "ehi_ver" : 26
         },
         {
             "type": "toggle",
@@ -63,7 +87,8 @@
             "callback_arguments": "show_waypoints_pager",
             "value": "show_waypoints_pager",
             "default_value": true,
-            "parent" : "ehi_show_waypoints_choice"
+            "parent" : "ehi_show_waypoints_choice",
+            "ehi_ver" : 26
         }
     ]
 }

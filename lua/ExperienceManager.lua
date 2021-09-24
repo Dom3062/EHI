@@ -39,10 +39,11 @@ end
 
 local function MultiplyXPWillAllBonuses(base_amount)
     local player_bonus = math.max(0, (managers.player:get_skill_exp_multiplier(stealth_mode)) - 1) * heat
-    return (base_amount * heat) * difficulty_multiplier * (1 + player_bonus + infamy_bonus + limited_bonus_multiplier) * stealth_bonus * projob_multiplier * gage_bonus
+    return (base_amount * heat) * difficulty_multiplier * (1 + player_bonus + infamy_bonus + limited_bonus_multiplier) * stealth_bonus * projob_multiplier
 end
 
-local TrackerID = xp_panel == 1 and "XP" or "XPTotal"
+local TotalXP = 0
+local GainedXP = 0
 
 function ExperienceManager:SetJobHeat(job_heat)
     if xp_format == 3 then
@@ -53,6 +54,10 @@ function ExperienceManager:SetJobHeat(job_heat)
         stealth_bonus = stealth_bonus * job_heat
         infamy_bonus = infamy_bonus * job_heat
     end
+end
+
+function ExperienceManager:GetJobHeat()
+    return heat
 end
 
 function ExperienceManager:SetProJobMultiplier(multiplier)
@@ -68,8 +73,28 @@ function ExperienceManager:SetInfamyBonus(bonus)
 end
 
 function ExperienceManager:SetGagePackageBonus(bonus)
-    if xp_panel == 1 then -- Don't set the Gage XP Multiplier when Total XP Tracker is visible, because that tracker is also using that multiplier
+    if xp_panel == 1 and xp_format == 3 then -- Don't set the Gage XP Multiplier when Total XP Tracker is visible, because that tracker is also using that multiplier
         gage_bonus = bonus * heat
+        self:ShowGainedXP(0)
+    end
+end
+
+function ExperienceManager:ShowGainedXP(xp_gained)
+    GainedXP = GainedXP + xp_gained
+    local new_xp = GainedXP * gage_bonus
+    if new_xp ~= TotalXP then
+        local diff = new_xp - TotalXP
+        TotalXP = new_xp
+        if managers.ehi:TrackerExists("XP") then
+            managers.ehi:AddXPToTracker("XP", diff)
+        else
+            managers.ehi:AddTracker({
+                id = "XP",
+                amount = diff,
+                exclude_from_sync = true,
+                class = "EHIXPTracker"
+            })
+        end
     end
 end
 
@@ -78,47 +103,19 @@ if xp_panel == 1 then
     if xp_format == 1 then
         f = function(self, amount)
             if amount > 0 then
-                if managers.ehi:TrackerExists(TrackerID) then
-                    managers.ehi:AddXPToTracker(TrackerID, amount)
-                else
-                    managers.ehi:AddTracker({
-                        id = TrackerID,
-                        amount = amount,
-                        exclude_from_sync = true,
-                        class = "EHIXPTracker"
-                    })
-                end
+                self:ShowGainedXP(amount)
             end
         end
     elseif xp_format == 2 then
         f = function(self, amount)
             if amount > 0 then
-                if managers.ehi:TrackerExists(TrackerID) then
-                    managers.ehi:AddXPToTracker(TrackerID, amount * difficulty_multiplier)
-                else
-                    managers.ehi:AddTracker({
-                        id = TrackerID,
-                        amount = amount * difficulty_multiplier,
-                        exclude_from_sync = true,
-                        class = "EHIXPTracker"
-                    })
-                end
+                self:ShowGainedXP(amount * difficulty_multiplier)
             end
         end
     else
         f = function(self, amount)
             if amount > 0 then
-                local xp_gained = MultiplyXPWillAllBonuses(amount)
-                if managers.ehi:TrackerExists(TrackerID) then
-                    managers.ehi:AddXPToTracker(TrackerID, xp_gained)
-                else
-                    managers.ehi:AddTracker({
-                        id = TrackerID,
-                        amount = xp_gained,
-                        exclude_from_sync = true,
-                        class = "EHIXPTracker"
-                    })
-                end
+                self:ShowGainedXP(MultiplyXPWillAllBonuses(amount))
             end
         end
     end
@@ -126,19 +123,19 @@ else
     if xp_format == 1 then
         f = function(self, amount)
             if amount > 0 then
-                managers.ehi:AddXPToTracker(TrackerID, amount)
+                managers.ehi:AddXPToTracker("XPTotal", amount)
             end
         end
     elseif xp_format == 2 then
         f = function(self, amount)
             if amount > 0 then
-                managers.ehi:AddXPToTracker(TrackerID, amount * difficulty_multiplier)
+                managers.ehi:AddXPToTracker("XPTotal", amount * difficulty_multiplier)
             end
         end
     else
         f = function(self, amount)
             if amount > 0 then
-                managers.ehi:AddXPToTracker(TrackerID, MultiplyXPWillAllBonuses(amount))
+                managers.ehi:AddXPToTracker("XPTotal", MultiplyXPWillAllBonuses(amount))
             end
         end
     end

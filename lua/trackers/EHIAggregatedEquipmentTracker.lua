@@ -222,8 +222,7 @@ function EHIAggregatedEquipmentTracker:RemoveText(id)
     elseif n % 2 == 1 then
         for i = 5, 1, -1 do
             if self._time_bg_box:child(text_i[i]) then
-                self._time_bg_box:child(text_i[i]):set_font_size(self._panel:h() * self._text_scale)
-                self._time_bg_box:child(text_i[i]):set_w(32 * self._scale)
+                self._time_bg_box:child(text_i[i]):set_w(self._time_bg_box:w() / 2)
                 self:FitTheTextUnique(text_i[i])
                 break
             end
@@ -250,7 +249,6 @@ function EHIAggregatedEquipmentTracker:SetTextSize(n)
     end
     for i = 5, 1, -1 do
         if self._time_bg_box:child(text_i[i]) then
-            self._time_bg_box:child(text_i[i]):set_font_size(self._panel:h() * self._text_scale)
             self._time_bg_box:child(text_i[i]):set_w(self._time_bg_box:w())
             self:FitTheTextUnique(text_i[i])
             break

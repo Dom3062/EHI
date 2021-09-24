@@ -1,3 +1,12 @@
+r29 (24. 09. 2021):
+Added "Escape Chance" to heists with possible escape
+Added "Show Only Waypoints" option
+Added "Don't Show Trade Delay Tracker in Stealth" option
+Aggregate Equipment Tracker: Fixed a gap
+Difficulty Tracker: Disabled in Holdout mode
+Drill/Saw Tracker: Drill/Saw will appear blue if it can autorestart (host only)
+Menu: New options are in yellow color
+
 r28 (02. 09. 2021):
 Added support for Cook Off (Daylight)
 GO Bank: Fixed an issue where vault timer could get stuck when vault opened

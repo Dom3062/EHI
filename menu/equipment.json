@@ -20,7 +20,8 @@
                 "ehi_equipment_format_6"
             ],
             "value": "equipment_format",
-            "default_value": 1
+            "default_value": 1,
+            "ehi_ver" : 6
         },
         {
             "type": "toggle",
@@ -80,7 +81,8 @@
             "callback": "SetOption",
             "callback_arguments": "show_equipment_ecmjammer",
             "value": "show_equipment_ecmjammer",
-            "default_value": true
+            "default_value": true,
+            "ehi_ver" : 21
         },
         {
             "type": "toggle",
@@ -90,7 +92,8 @@
             "callback": "SetOption",
             "callback_arguments": "show_equipment_ecmfeedback",
             "value": "show_equipment_ecmfeedback",
-            "default_value": true
+            "default_value": true,
+            "ehi_ver" : 21
         },
         {
             "type": "toggle",
@@ -111,7 +114,8 @@
             "callback_arguments": "show_equipment_aggregate_all",
             "value": "show_equipment_aggregate_all",
             "default_value": true,
-            "is_parent": true
+            "is_parent": true,
+            "ehi_ver" : 21
         },
         {
             "type": "color_select",
@@ -123,7 +127,8 @@
             "callback": "SetEquipmentColor",
             "callback_arguments": "doctor_bag",
             "setting_value": "equipment",
-            "parent": "ehi_show_equipment_aggregate_all_choice"
+            "parent": "ehi_show_equipment_aggregate_all_choice",
+            "ehi_ver" : 21
         },
         {
             "type": "color_select",
@@ -135,7 +140,8 @@
             "callback": "SetEquipmentColor",
             "callback_arguments": "ammo_bag",
             "setting_value": "equipment",
-            "parent": "ehi_show_equipment_aggregate_all_choice"
+            "parent": "ehi_show_equipment_aggregate_all_choice",
+            "ehi_ver" : 21
         },
         {
             "type": "color_select",
@@ -147,7 +153,8 @@
             "callback": "SetEquipmentColor",
             "callback_arguments": "grenade_crate",
             "setting_value": "equipment",
-            "parent": "ehi_show_equipment_aggregate_all_choice"
+            "parent": "ehi_show_equipment_aggregate_all_choice",
+            "ehi_ver" : 21
         },
         {
             "type": "color_select",
@@ -159,7 +166,8 @@
             "callback": "SetEquipmentColor",
             "callback_arguments": "first_aid_kit",
             "setting_value": "equipment",
-            "parent": "ehi_show_equipment_aggregate_all_choice"
+            "parent": "ehi_show_equipment_aggregate_all_choice",
+            "ehi_ver" : 21
         },
         {
             "type": "color_select",
@@ -171,7 +179,8 @@
             "callback": "SetEquipmentColor",
             "callback_arguments": "bodybags_bag",
             "setting_value": "equipment",
-            "parent": "ehi_show_equipment_aggregate_all_choice"
+            "parent": "ehi_show_equipment_aggregate_all_choice",
+            "ehi_ver" : 21
         }
     ]
 }

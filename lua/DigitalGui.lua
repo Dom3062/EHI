@@ -14,6 +14,7 @@ if not EHI:GetOption("show_timers") then
 end
 
 local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")
+local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
 
 local original =
 {
@@ -265,20 +266,23 @@ function DigitalGui:TimerStartCountDown(editor_id)
 		managers.ehi:SetTimerJammed(self._ehi_key, false)
 		managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
 	else
-		managers.ehi:AddTracker({
-			id = self._ehi_key,
-			time = self._timer,
-			icons = icons[editor_id] or { "wp_hack" },
-			exclude_from_sync = true,
-			class = class[editor_id] or "EHITimerTracker"
-		})
+		if not show_waypoint_only then
+			managers.ehi:AddTracker({
+				id = self._ehi_key,
+				time = self._timer,
+				icons = icons[editor_id] or { "wp_hack" },
+				exclude_from_sync = true,
+				class = class[editor_id] or "EHITimerTracker"
+			})
+		end
 		if show_waypoint then
 			managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
                 time = self._timer,
                 icon = icons[editor_id] or "wp_hack",
                 pause_timer = 1,
                 type = "timer",
-                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
+                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
+				warning = class[editor_id] and class[editor_id] == "EHIWarningTracker"
             })
 		end
 	end
@@ -293,7 +297,12 @@ function DigitalGui:timer_start_count_down(...)
 	self:TimerStartCountDown(editor_id)
 end
 
-if show_waypoint then
+if show_waypoint_only then
+	function DigitalGui:_update_timer_text(...)
+		managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._timer)
+		original._update_timer_text(self, ...)
+	end
+elseif show_waypoint then
 	function DigitalGui:_update_timer_text(...)
 		managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
 		managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._timer)

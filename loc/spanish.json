@@ -38,9 +38,6 @@
     "ehi_trackers_menu" : "Contadores",
     "ehi_trackers_menu_desc" : "",
 
-    "ehi_show_achievement" : "Mostrar Logros Cronometrados",
-    "ehi_show_achievement_desc" : "Muestra los logros cronometrados\nAlgunos atracos no tienen logros cronometrados",
-
     "ehi_hide_unlocked_achievements" : "No Mostrar Logros Cronometrados",
     "ehi_hide_unlocked_achievements_desc" : "Activado, EHI no mostrará logros cronometrados\nDesactivado, EHI mostrará logros cronometrados",
 

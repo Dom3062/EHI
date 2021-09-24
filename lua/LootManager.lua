@@ -130,8 +130,8 @@ function LootManager:sync_secure_loot(...)
 end
 
 function LootManager:GetSecuredBagsAmount()
-    local mandatory = managers.loot:get_secured_mandatory_bags_amount()
-    local bonus = managers.loot:get_secured_bonus_bags_amount()
+    local mandatory = self:get_secured_mandatory_bags_amount()
+    local bonus = self:get_secured_bonus_bags_amount()
     local total = (mandatory or 0) + (bonus or 0)
     return total
 end

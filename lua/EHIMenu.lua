@@ -28,7 +28,18 @@ end
 
 EHIMenu = EHIMenu or class()
 function EHIMenu:init()
-    self._ws = managers.gui_data:create_fullscreen_workspace()
+    local aspect_ratio = RenderSettings.resolution.x / RenderSettings.resolution.y
+    if aspect_ratio == 1.6 then -- 16:10
+        self._ws = managers.gui_data:create_fullscreen_16_9_workspace()
+        self._convert_mouse_pos = function(menu, x, y)
+            return managers.mouse_pointer:convert_fullscreen_16_9_mouse_pos(x, y)
+        end
+    else
+        self._ws = managers.gui_data:create_fullscreen_workspace()
+        self._convert_mouse_pos = function(menu, x, y)
+            return x, y
+        end
+    end
     self._ws:connect_keyboard(Input:keyboard())
     self._mouse_id = managers.mouse_pointer:get_id()
     self._menus = {}
@@ -142,11 +153,18 @@ function EHIMenu:init()
     end
     self._preview_panel = FakeEHIManager:new(self._vr_panel or self._panel)
 
-    self:GetMenuFromJson(EHI.MenuPath .. "menu.json", EHI.settings)
-    self:GetMenuFromJson(EHI.MenuPath .. "trackers.json", EHI.settings)
-    self:GetMenuFromJson(EHI.MenuPath .. "waypoints.json", EHI.settings)
-    self:GetMenuFromJson(EHI.MenuPath .. "equipment.json", EHI.settings)
-    self:GetMenuFromJson(EHI.MenuPath .. "visuals.json", EHI.settings)
+    self._menu_ver = 1
+    if EHI.settings.ModVersion and EHI.settings.ModVersion ~= "N/A" then
+        self._menu_ver = tonumber(EHI.settings.ModVersion)
+    elseif EHI.ModVersion ~= "N/A" then
+        self._menu_ver = tonumber(EHI.ModVersion)
+    end
+
+    self:GetMenuFromJson(EHI.MenuPath .. "menu.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "visuals.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "trackers.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "equipment.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "waypoints.json")
 
     self:OpenMenu("ehi_menu")
 end
@@ -292,6 +310,7 @@ end
 
 -- Mouse Functions
 function EHIMenu:mouse_move(o, x, y)
+    x, y = self:_convert_mouse_pos(x, y)
     if self._open_menu then
         managers.mouse_pointer:set_pointer_image("arrow")
         if self._open_choice_dialog and self._open_choice_dialog.panel then
@@ -344,6 +363,7 @@ function EHIMenu:mouse_move(o, x, y)
 end
 
 function EHIMenu:mouse_press(o, button, x, y)
+    x, y = self:_convert_mouse_pos(x, y)
     if button == Idstring("0") then
         if self._open_choice_dialog then
             if self._open_choice_dialog.panel:inside(x,y) then
@@ -730,6 +750,7 @@ function EHIMenu:CreateItem(item, items, menu_id)
     local default_value = item.default_value
     local parents = item.parent
     local enabled = true
+    local new = (item.ehi_ver or 1) > self._menu_ver
 
     if item.enabled ~= nil then
         enabled = item.enabled
@@ -766,7 +787,8 @@ function EHIMenu:CreateItem(item, items, menu_id)
             enabled = enabled,
             title = managers.localization:text(title),
             parent = item.parent,
-            center = item.center
+            center = item.center,
+            new = new
         })
     elseif item_type == "divider" then
         itm = self:CreateDivider({
@@ -784,7 +806,8 @@ function EHIMenu:CreateItem(item, items, menu_id)
             callback_arguments = item.callback_arguments,
             enabled = enabled,
             parent = item.parent,
-            focus_changed_callback = item.focus_changed_callback
+            focus_changed_callback = item.focus_changed_callback,
+            new = new
         })
     elseif item_type == "toggle" then
         itm = self:CreateToggle({
@@ -799,7 +822,8 @@ function EHIMenu:CreateItem(item, items, menu_id)
             parent = item.parent,
             callback = item.callback,
             callback_arguments = item.callback_arguments,
-            focus_changed_callback = item.focus_changed_callback
+            focus_changed_callback = item.focus_changed_callback,
+            new = new
         })
     elseif item_type == "slider" then
         itm = self:CreateSlider({
@@ -818,7 +842,8 @@ function EHIMenu:CreateItem(item, items, menu_id)
             default_value = default_value,
             enabled = enabled,
             parent = item.parent,
-            focus_changed_callback = item.focus_changed_callback
+            focus_changed_callback = item.focus_changed_callback,
+            new = new
         })
     elseif item_type == "multiple_choice" then
         for k = 1, #item.items do
@@ -837,7 +862,8 @@ function EHIMenu:CreateItem(item, items, menu_id)
             parent = item.parent,
             callback = item.callback,
             callback_arguments = item.callback_arguments,
-            focus_changed_callback = item.focus_changed_callback
+            focus_changed_callback = item.focus_changed_callback,
+            new = new
         })
     elseif item_type == "color_select" then
         local stored_value = EHI.settings
@@ -858,7 +884,8 @@ function EHIMenu:CreateItem(item, items, menu_id)
             parent = item.parent,
             callback = item.callback,
             callback_arguments = item.callback_arguments,
-            texture = item.texture
+            texture = item.texture,
+            new = new
         })
     end
 
@@ -1017,7 +1044,7 @@ function EHIMenu:CreateLabel(params)
         font_size = 23,
         font = tweak_data.menu.pd2_large_font,
         text = utf8.to_upper(params.title) or "",
-        color = Color(0.7,0.7,0.7),
+        color = params.new and Color.yellow or Color(0.7, 0.7, 0.7),
         w = label_panel:w(),
         align = params.center and "center" or "right",
         vertical = "center",
@@ -1082,7 +1109,8 @@ function EHIMenu:CreateButton(params)
         w = button_panel:w() - 10,
         align = "right",
         vertical = "center",
-        layer = 1
+        layer = 1,
+        colors = params.new and Color.yellow or Color.white
     })
     local w = select(3, title:text_rect())
     if w > title:w() then
@@ -1111,6 +1139,7 @@ function EHIMenu:CreateToggle(params)
     if not menu_panel or not self._menus[params.menu_id] then
         return
     end
+    local color = params.new and Color.yellow or Color.white
     local toggle_panel = menu_panel:panel({
         name = "toggle_"..tostring(params.id),
         y = self:GetLastPosInMenu(params.menu_id),
@@ -1131,7 +1160,8 @@ function EHIMenu:CreateToggle(params)
         w = toggle_panel:w() - 34,
         align = "right",
         vertical = "center",
-        layer = 1
+        layer = 1,
+        color = color
     })
     local w = select(3, title:text_rect())
     if w > title:w() then
@@ -1144,7 +1174,8 @@ function EHIMenu:CreateToggle(params)
         y = 2,
         w = 22,
         h = 21,
-        layer = 1
+        layer = 1,
+        color = color
     })
     local check = toggle_panel:bitmap({
         name = "check",
@@ -1154,7 +1185,8 @@ function EHIMenu:CreateToggle(params)
         w = params.value and 22 or 44,
         h = params.value and 21 or 42,
         alpha = params.value and 1 or 0,
-        layer = 2
+        layer = 2,
+        color = color
     })
     check:set_center(check_bg:center())
     local toggle = {
@@ -1183,6 +1215,7 @@ function EHIMenu:CreateSlider(params)
     if not menu_panel or not self._menus[params.menu_id] then
         return
     end
+    local color = params.new and Color.yellow or Color.white
     local percentage = (params.value - params.min) / (params.max - params.min)
     local slider_panel = menu_panel:panel({
         name = "slider_"..tostring(params.id),
@@ -1222,7 +1255,8 @@ function EHIMenu:CreateSlider(params)
         w = 100,
         align = "left",
         vertical = "center",
-        layer = 2
+        layer = 2,
+        color = color
     })
     local title = slider_panel:text({
         name = "title",
@@ -1233,7 +1267,8 @@ function EHIMenu:CreateSlider(params)
         w = slider_panel:w() - 110,
         align = "right",
         vertical = "center",
-        layer = 2
+        layer = 2,
+        color = color
     })
     local w = select(3, title:text_rect())
     if w > title:w() then
@@ -1310,7 +1345,8 @@ function EHIMenu:CreateMultipleChoice(params)
         w = multiple_panel:w() - 215,
         align = "right",
         vertical = "center",
-        layer = 1
+        layer = 1,
+        color = params.new and Color.yellow or Color.white
     })
     local w = select(3, title:text_rect())
     if w > title:w() then

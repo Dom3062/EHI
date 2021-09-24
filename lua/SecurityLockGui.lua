@@ -10,6 +10,7 @@ if not EHI:GetOption("show_timers") then
 end
 
 local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")
+local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
 
 local original =
 {
@@ -44,13 +45,15 @@ function SecurityLockGui:_start(bar, ...)
             })
         end
     end
-    managers.ehi:AddTracker({
-        id = self._ehi_key,
-        time = self._current_timer,
-        icons = { { icon = "wp_hack" } },
-        exclude_from_sync = true,
-        class = "EHITimerTracker"
-    })
+    if not show_waypoint_only then
+        managers.ehi:AddTracker({
+            id = self._ehi_key,
+            time = self._current_timer,
+            icons = { { icon = "wp_hack" } },
+            exclude_from_sync = true,
+            class = "EHITimerTracker"
+        })
+    end
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
             time = self._current_timer,
@@ -62,7 +65,12 @@ function SecurityLockGui:_start(bar, ...)
     end
 end
 
-if show_waypoint then
+if show_waypoint_only then
+    function SecurityLockGui:update(...)
+        managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._current_timer)
+        original.update(self, ...)
+    end
+elseif show_waypoint then
     function SecurityLockGui:update(...)
         managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._current_timer)
         managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._current_timer)

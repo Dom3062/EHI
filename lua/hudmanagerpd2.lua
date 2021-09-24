@@ -17,14 +17,18 @@ local original =
 }
 
 local EHIWaypoints = EHI:GetOption("show_waypoints")
+local server = Network:is_server()
 
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
     self.ehi = managers.ehi
     local ehi_waypoint = managers.ehi_waypoint
     ehi_waypoint:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2), self._workspaces.overlay.saferect)
+    if _G.IS_VR and false then
+        self.ehi:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2))
+    end
     self._tracker_waypoints = {}
-    if Network:is_server() then
+    if server then
         self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
         if EHIWaypoints then
             self:add_updator("EHI_Waypoint_Update", callback(ehi_waypoint, ehi_waypoint, "update"))
@@ -46,6 +50,25 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     end
     if EHI:GetOption("show_pager_tracker") then
         local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
+        if server then
+            local random_chance = false
+            for _, value in pairs(base) do
+                if value > 0 and value < 1 then
+                    random_chance = true
+                    break
+                end
+            end
+            if random_chance then
+                self:AddTracker({
+                    id = "pagers_chance",
+                    chance = EHI:RoundChanceNumber(base[1] or 0),
+                    icons = { "pagers_used" },
+                    exclude_from_sync = true,
+                    class = "EHIChanceTracker"
+                })
+                return
+            end
+        end
         local max = 0
         for _, value in pairs(base) do
             if value > 0 then
@@ -67,6 +90,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" then
         self:AddTracker({
             id = "XPTotal",
+            heat = managers.experience:GetJobHeat(),
             exclude_from_sync = true,
             class = "EHITotalXPTracker"
         })
@@ -221,20 +245,6 @@ if Network:is_client() then
             original.feed_heist_time(self, time, ...)
             managers.ehi:update_client(time)
         end
-    end
-end
-
-function HUDManager:PauseTrackerWaypoint(id)
-    if self._tracker_waypoints[id] and self._hud.waypoints[id].pause_timer ~= 3 then
-        self._hud.waypoints[id].pause_timer = 2
-        self._hud.waypoints[id].timer_gui:set_color(Color.red)
-    end
-end
-
-function HUDManager:UnpauseTrackerWaypoint(id)
-    if self._tracker_waypoints[id] and self._hud.waypoints[id].pause_timer ~= 3 then
-        self._hud.waypoints[id].pause_timer = 1
-        self._hud.waypoints[id].timer_gui:set_color(Color.white)
     end
 end
 

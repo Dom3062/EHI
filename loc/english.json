@@ -42,7 +42,7 @@
     "ehi_trackers_menu_desc" : "",
 
     "ehi_show_achievement" : "Show Achievement Tracker",
-    "ehi_show_achievement_desc" : "Shows on the screen timed achievements\nSome heists may not have any timed achievements available",
+    "ehi_show_achievement_desc" : "Shows on the screen achievements\nSome heists may not have any achievements available",
 
     "ehi_hide_unlocked_achievements" : "Don't Show Unlocked Achievements",
     "ehi_hide_unlocked_achievements_desc" : "When enabled, EHI will not show trackers for unlocked achievements\nWhen disabled, EHI will show all trackers for achievements",
@@ -71,6 +71,9 @@
 
     "ehi_show_trade_delay_other_players_only": "Show Trade Delay Tracker For Other Players Only",
     "ehi_show_trade_delay_other_players_only_desc": "When enabled, this tracker will not show how many civilians you killed but it will still show for other players.",
+
+    "ehi_show_trade_delay_suppress_in_stealth" : "Don't Show Trade Delay Tracker in Stealth",
+    "ehi_show_trade_delay_suppress_in_stealth_desc" : "Hides Trade Delay in stealth when enabled. Once the alarm goes off, the tracker appears with all accumulated delay.",
 
     "ehi_show_timers" : "Show Timers",
     "ehi_show_timers_desc" : "Shows timers for hacking, drilling, sawing, etc...",
@@ -158,6 +161,9 @@
 
     "ehi_show_waypoints" : "Show Waypoints",
     "ehi_show_waypoints_desc" : "Show waypoints in the game world",
+
+    "ehi_show_waypoints_only" : "Show Only Waypoints",
+    "ehi_show_waypoints_only_desc" : "When enabled and an element has both tracker and waypoint defined, show only the waypoint\nOtherwise tracker will be shown",
 
     "ehi_show_waypoints_present_timer" : "Present Timer",
     "ehi_show_waypoints_present_timer_desc" : "Sets how long the waypoint will stay on your screen before it will 'move' to its destination",

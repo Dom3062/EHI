@@ -8,10 +8,19 @@ else
     EHI._hooks.ElementDifficulty = true
 end
 
+if not (Global and Global.game_settings and Global.game_settings.level_id) then
+    return
+end
+
+local level_tweak = tweak_data.levels[Global.game_settings.level_id]
+if level_tweak and level_tweak.ai_group_type and level_tweak.ai_group_type == "skirmish" then
+    return
+end
+
 local id = "Difficulty"
 
 local function Trigger(value)
-    local diff = EHI:RoundNumber(value, 0.01) * 100
+    local diff = EHI:RoundChanceNumber(value)
     if managers.ehi:TrackerExists(id) then
         managers.ehi:SetChance(id, diff)
     else

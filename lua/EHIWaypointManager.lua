@@ -1,43 +1,4 @@
-local icons =
-{
-    default = { texture = "guis/textures/pd2/pd2_waypoints", texture_rect = {96, 64, 32, 32} },
-
-    faster = { texture = "guis/textures/pd2/skilltree/drillgui_icon_faster" },
-    silent = { texture = "guis/textures/pd2/skilltree/drillgui_icon_silent" },
-    restarter = { texture = "guis/textures/pd2/skilltree/drillgui_icon_restarter" },
-    xp = { texture = "guis/textures/pd2/blackmarket/xp_drop" },
-
-    heli = { texture = "guis/textures/pd2_mod_ehi/heli" },
-    mad_scan = { texture = "guis/textures/pd2_mod_ehi/mad_scan" },
-    boat = { texture = "guis/textures/pd2_mod_ehi/boat" },
-    enemy = { texture = "guis/textures/pd2_mod_ehi/enemy" },
-    piggy = { texture = "guis/textures/pd2_mod_ehi/piggy" },
-    assaultbox = { texture = "guis/textures/pd2_mod_ehi/assaultbox" },
-    deployables = { texture = "guis/textures/pd2_mod_ehi/deployables" },
-    padlock = { texture = "guis/textures/pd2_mod_ehi/padlock" },
-
-    reload = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {0, 576, 64, 64} },
-    smoke = { texture = "guis/dlcs/max/textures/pd2/specialization/icons_atlas", texture_rect = {0, 0, 64, 64} },
-    teargas = { texture = "guis/dlcs/drm/textures/pd2/crime_spree/modifiers_atlas_2", texture_rect = {128, 256, 128, 128} },
-    gage = { texture = "guis/dlcs/gage_pack_jobs/textures/pd2/endscreen/gage_assignment" },
-    hostage = { texture = "guis/textures/pd2/hud_icon_hostage" },
-    buff_shield = { texture = "guis/textures/pd2/hud_buff_shield" },
-
-    doctor_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/doctor_bag" },
-    ammo_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/ammo_bag" },
-    first_aid_kit = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/first_aid_kit" },
-    bodybags_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/bodybags_bag" },
-    frag_grenade = { texture = tweak_data.hud_icons.frag_grenade.texture, texture_rect = tweak_data.hud_icons.frag_grenade.texture_rect },
-
-    minion = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 512, 64, 64} },
-    heavy = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {192, 64, 64, 64} },
-    sniper = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 320, 64, 64} },
-    camera_loop = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {256, 128, 64, 64} },
-    pager_icon = { texture = "guis/textures/pd2/specialization/icons_atlas", texture_rect = {64, 256, 64, 64} },
-
-    ecm_jammer = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {64, 256, 64, 64} },
-    ecm_feedback = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 128, 64, 64} }
-}
+local icons = tweak_data.ehi.icons
 
 local EHI = EHI
 EHIWaypointManager = EHIWaypointManager or class()
@@ -122,6 +83,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
     local waypoint_panel = self._hud_panel
     local text = ""
     local icon, texture_rect
+    local wp_color = params.color or Color.white
     if params.texture then
         icon = params.texture
         texture_rect = params.text_rect
@@ -142,7 +104,8 @@ function EHIWaypointManager:AddWaypoint(id, params)
         texture_rect = texture_rect,
         w = 32,
         h = 32,
-        blend_mode = params.blend_mode
+        blend_mode = params.blend_mode,
+        color = wp_color
     })
     local arrow_icon, arrow_texture_rect = tweak_data.hud_icons:get_icon_data("wp_arrow")
     local arrow = waypoint_panel:bitmap({
@@ -152,7 +115,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
         name = "arrow" .. id,
         texture = arrow_icon,
         texture_rect = arrow_texture_rect,
-        color = (params.color or Color.white):with_alpha(0.75),
+        color = wp_color:with_alpha(0.75),
         w = arrow_texture_rect[3],
         h = arrow_texture_rect[4],
         blend_mode = params.blend_mode
@@ -169,7 +132,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
             rotation = 360,
             layer = 0,
             name = "distance" .. id,
-            color = params.color or Color.white,
+            color = wp_color,
             font = tweak_data.menu.pd2_large_font,
             font_size = tweak_data.hud.default_font_size,
             blend_mode = params.blend_mode
@@ -188,7 +151,8 @@ function EHIWaypointManager:AddWaypoint(id, params)
         layer = 0,
         name = "timer" .. id,
         text = self:WaypointFormat(params.time),
-        font = tweak_data.menu.pd2_large_font
+        font = tweak_data.menu.pd2_large_font,
+        color = wp_color
     })
     text = waypoint_panel:text({
         h = 24,
@@ -200,7 +164,8 @@ function EHIWaypointManager:AddWaypoint(id, params)
         name = "text" .. id,
         text = utf8.to_upper(" " .. text),
         font = tweak_data.hud.small_font,
-        font_size = tweak_data.hud.small_font_size
+        font_size = tweak_data.hud.small_font_size,
+        color = wp_color
     })
     local _, _, w, _ = text:text_rect()
 
@@ -223,7 +188,8 @@ function EHIWaypointManager:AddWaypoint(id, params)
         position = params.position,
         unit = params.unit,
         radius = params.radius or 160,
-        type = params.type or "standard_timer"
+        type = params.type or "standard_timer",
+        color = wp_color
     }
     self._waypoints[id].init_data.position = params.position or params.unit:position()
     local t = {}
@@ -320,7 +286,7 @@ function EHIWaypointManager:SetTimerWaypointColor(id)
         return
     end
     local wp = self._waypoints[id]
-    local final_color = Color.white
+    local final_color = wp.color
     if wp._jammed or wp._not_powered then
         final_color = Color.red
     end

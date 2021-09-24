@@ -38,9 +38,6 @@
     "ehi_trackers_menu": "Moniteurs",
     "ehi_trackers_menu_desc": "",
 
-    "ehi_show_achievement": "Montre les moniteurs de succès",
-    "ehi_show_achievement_desc": "Montre les succès chronométrés\nCertains braquages n’ont pas de succès chronométrés.",
-
     "ehi_show_gained_xp": "Montre l’EXP gagné",
     "ehi_show_gained_xp_desc": "Montre l’EXP gagné dans une mission.\nCe moniteur est désactivé en mode série de crimes.",
 

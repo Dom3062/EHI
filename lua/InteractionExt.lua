@@ -9,16 +9,19 @@ local server = Network:is_server()
 
 if EHI:GetOption("show_pager_callback") then
     local show_waypoint = EHI:GetWaypointOption("show_waypoints_pager")
+    local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
     EHI:HookWithID(IntimitateInteractionExt, "init", "PagerInit", function(self, unit, ...)
         self._ehi_key = "pager_" .. tostring(unit:key())
     end)
 
     EHI:Hook(IntimitateInteractionExt, "set_tweak_data", function(self, id)
         if id == "corpse_alarm_pager" and not self._pager_has_run then
-            managers.ehi:AddPagerTracker({
-                id = self._ehi_key,
-                class = "EHIPagerTracker"
-            })
+            if not show_waypoint_only then
+                managers.ehi:AddPagerTracker({
+                    id = self._ehi_key,
+                    class = "EHIPagerTracker"
+                })
+            end
             if show_waypoint then
                 managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
                     time = 12,

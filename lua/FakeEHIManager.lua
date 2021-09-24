@@ -461,7 +461,7 @@ function FakeEHITracker:SetY(y)
 end
 
 function FakeEHITracker:SetTextColor(selected)
-    self._text:set_color(selected and tweak_data.ehi.color.InaccurateColor or Color.white)
+    self._text:set_color(selected and tweak_data.ehi.color.Inaccurate or Color.white)
 end
 
 function FakeEHITracker:UpdateBGVisibility(visibility)

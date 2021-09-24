@@ -77,7 +77,7 @@ end
 
 function EHIProgressTracker:SetBad()
     if self._progress == self._max then
-        self:SetTextColor(tweak_data.ehi.color.InaccurateColor)
+        self:SetTextColor(tweak_data.ehi.color.Inaccurate)
     end
 end
 

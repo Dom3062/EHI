@@ -29,12 +29,13 @@ EHITotalXPTracker = EHITotalXPTracker or class(EHIXPTracker)
 EHITotalXPTracker._update = false
 function EHITotalXPTracker:init(panel, params)
     self._gage_ratio = 1
+    self._heat = params.heat or 1
     self._total_xp = params.amount or 0
     EHITotalXPTracker.super.init(self, panel, params)
 end
 
 function EHITotalXPTracker:SetGageBonusRatio(ratio)
-    self._gage_ratio = ratio
+    self._gage_ratio = ratio * self._heat
     self:UpdateTotalXP()
 end
 

@@ -40,7 +40,8 @@
             "default_value": 1,
             "max": 2,
             "min": 0.5,
-            "step": 2
+            "step": 2,
+            "ehi_ver" : 16
         },
         {
             "type": "slider",
@@ -87,7 +88,8 @@
             "id": "ehi_visuals_menu",
             "title": "ehi_visuals_menu",
             "description": "ehi_visuals_menu_desc",
-            "next_menu": "ehi_visuals_menu"
+            "next_menu": "ehi_visuals_menu",
+            "ehi_ver" : 6
         },
         {
             "type" : "divider",
@@ -105,7 +107,8 @@
             "id": "ehi_waypoints_menu",
             "title": "ehi_waypoints_menu",
             "description": "ehi_waypoints_menu_desc",
-            "next_menu": "ehi_waypoints_menu"
+            "next_menu": "ehi_waypoints_menu",
+            "ehi_ver" : 21
         }
     ]
 }

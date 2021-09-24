@@ -6,6 +6,7 @@ else
 end
 
 local show_waypoints = EHI:GetOption("show_waypoints_enemy_turret")
+local show_waypoint_only = show_waypoints and EHI:GetWaypointOption("show_waypoints_only")
 
 local original =
 {
@@ -25,12 +26,14 @@ end
 
 function SentryGunMovement:rearm(...)
     original.rearm(self, ...)
-    managers.ehi:AddTracker({
-        id = self._ehi_key_reload,
-        time = self._tweak.AUTO_RELOAD_DURATION,
-        icons = { "wp_sentry", "reload" },
-        class = "EHIWarningTracker"
-    })
+    if not show_waypoint_only then
+        managers.ehi:AddTracker({
+            id = self._ehi_key_reload,
+            time = self._tweak.AUTO_RELOAD_DURATION,
+            icons = { "wp_sentry", "reload" },
+            class = "EHIWarningTracker"
+        })
+    end
     if show_waypoints then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_reload, {
             time = self._tweak.AUTO_RELOAD_DURATION,
@@ -46,12 +49,14 @@ function SentryGunMovement:repair(...)
     original.repair(self, ...)
     managers.ehi:RemoveTracker(self._ehi_key_reload)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_reload)
-    managers.ehi:AddTracker({
-        id = self._ehi_key_repair,
-        time = self._tweak.AUTO_REPAIR_DURATION,
-        icons = { "wp_sentry", "pd2_fix" },
-        class = "EHIWarningTracker"
-    })
+    if not show_waypoint_only then
+        managers.ehi:AddTracker({
+            id = self._ehi_key_repair,
+            time = self._tweak.AUTO_REPAIR_DURATION,
+            icons = { "wp_sentry", "pd2_fix" },
+            class = "EHIWarningTracker"
+        })
+    end
     if show_waypoints then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_repair, {
             time = self._tweak.AUTO_REPAIR_DURATION,
