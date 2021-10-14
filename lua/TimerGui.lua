@@ -68,7 +68,7 @@ function TimerGui:set_background_icons(background_icons, ...)
 end
 
 function TimerGui:GetUpgrades()
-    if self._unit:base()._disable_upgrades then
+    if self._unit:base()._disable_upgrades or not (self._unit:base().is_drill or self._unit:base().is_saw) or table.size(self._original_colors or {}) == 0 then
         return nil
     end
     local upgrade_table = nil

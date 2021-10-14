@@ -16,7 +16,8 @@ local add =
 {
     arena = true, -- The Alesso Heist
     kosugi = true, -- Shadow Raid
-    dark = true -- Murky Station
+    dark = true, -- Murky Station,
+    firestarter_1 = true -- Firestarter Day 1
 }
 
 local broken_units =

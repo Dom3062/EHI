@@ -1,3 +1,14 @@
+r30 (14. 10. 2021):
+Added trackers for Black Cat Heist
+Added "Tracker Alignment" option
+Added a lot of achievement tracking (mostly weapon kills)
+Fixed an issue where some trackers were not replaced correctly
+Show Timers Tracker: Fixed an issue where upgrades were visible if the unit did not have any upgrades available
+Firestarter Day 1: Added tracker for achievement "Lord of War"
+Transport: Downtown: Fixed a crash when civilian died
+The Ukrainian Prisoner Heist: Added tracker for achievement "This Calls for a Round of Sputniks!" - both kills and accuracy
+The White House: Fixed issues with the gas tracker in the Oval Office
+
 r29 (24. 09. 2021):
 Added "Escape Chance" to heists with possible escape
 Added "Show Only Waypoints" option

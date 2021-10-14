@@ -87,7 +87,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             self.ehi:CallFunction("pagers", "SetBad")
         end
     end
-    if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" then
+    if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" and not EHI:IsOneXPElementHeist(level_id) then
         self:AddTracker({
             id = "XPTotal",
             heat = managers.experience:GetJobHeat(),
@@ -154,8 +154,9 @@ function HUDManager:ShowAchievements(difficulty)
     if level_id == "arm_for" then -- Transport: Train Heist
         self.ehi:AddAchievementProgressTracker("armored_1", 20, true)
     end
-    --[[if level_id == "" then
-    end]]
+    if level_id == "big" then -- The Big Bank
+        self.ehi:AddAchievementProgressTracker("bigbank_3", 16, true, false)
+    end
 end
 
 function HUDManager:ShowLootCounter(difficulty)

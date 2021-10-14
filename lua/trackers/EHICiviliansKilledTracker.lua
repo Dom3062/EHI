@@ -3,12 +3,14 @@ EHICiviliansKilledTracker._update = false
 function EHICiviliansKilledTracker:init(panel, params)
     self._n_of_peers_in_custody = 0
     self._panel_size = 2
+    self._icon_remove = 0
     self._peer_text = {}
     self._peer_custody_time = {}
     self._peer_in_custody = {}
     self._peer_pos = {}
     self._tick = 0
     EHICiviliansKilledTracker.super.init(self, panel, params)
+    self._default_panel_w = self._panel:w()
     self._time_bg_box:remove(self._text)
 end
 
@@ -88,25 +90,36 @@ function EHICiviliansKilledTracker:Reorganize()
     if self._n_of_peers_in_custody == 1 then
         return
     end
+    local old_panel_size = self._panel_size
     if self._n_of_peers_in_custody > self._panel_size then
         self._panel_size = self._panel_size * 2
-        self._panel:set_w(self._panel:w() * 2)
+        self:SetPanelW(self._panel:w() * 3) -- Fixes text being cut off after animation
         self._time_bg_box:set_w(self._time_bg_box:w() * 2)
+        self._icon_remove = self._icon_remove + 1
     end
     if self._n_of_peers_in_custody < self._panel_size and self._n_of_peers_in_custody % 2 == 0 then
         self._panel_size = self._panel_size / 2
-        self._panel:set_w(self._panel:w() / 2)
+        self:SetPanelW(self._panel:w() / 3) -- Fixes text being cut off after animation
         self._time_bg_box:set_w(self._time_bg_box:w() / 2)
+        self._icon_remove = self._icon_remove - 1
     end
-    self._icon1:set_x(self._time_bg_box:w() + (5 * self._scale))
-    local half = self._time_bg_box:w() / self._panel_size
-    local pos = 1
+    local bg_w = self._time_bg_box:w()
+    if old_panel_size ~= self._panel_size then
+        self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
+        self:SetIconX(bg_w + (5 * self._scale))
+    end
+    local half = bg_w / self._panel_size
+    local pos = 0
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
         if self._time_bg_box:child("text" .. i) then
-            self._time_bg_box:child("text" .. i):set_x(half * (pos - 1))
+            self._time_bg_box:child("text" .. i):set_x(half * pos)
             pos = pos + 1
         end
     end
+end
+
+function EHICiviliansKilledTracker:GetPanelSize()
+    return (self._default_panel_w * (self._panel_size / 2)) - (37 * self._scale * self._icon_remove) -- 32 + 5 (gap)
 end
 
 function EHICiviliansKilledTracker:SetPeerCustodyTime(peer_id, time)

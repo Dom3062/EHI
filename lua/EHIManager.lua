@@ -35,6 +35,7 @@ function EHIManager:init()
     local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
     self._x = x
     self._y = y
+    self._last_x = self._x
     self._text_scale = EHI:GetOption("text_scale")
     self._level_started_from_beginning = true
     panel_size = panel_size * self._scale
@@ -313,6 +314,20 @@ function EHIManager:LoadSync()
             self:IncreaseChance("EscapeChance", 70)
             EHI:UnhookElement(101863)
         end
+    elseif level_id == "firestarter_1" then
+        EHI:LordOfWarAchievement()
+        local tracker_id = EHI:IsAchievementUnlocked("lord_of_war") and "LootCounter" or "lord_of_war"
+        self:SetTrackerProgress(tracker_id, managers.loot:GetSecuredBagsAmount())
+    elseif level_id == "mallcrasher" then
+        if show_achievement and EHI:DifficultyToIndex(difficulty) == 3 and self._t <= 50 then
+            self:AddTracker({
+                id = "ameno_3_counter",
+                to_secure = 1800000,
+                icons = { "C_Vlad_H_Mallcrasher_OnePointEight" },
+                class = "EHIAchievementBagValueTracker"
+            })
+            self:SetTrackerProgress("ameno_3_counter", managers.loot:get_real_total_small_loot_value())
+        end
     end
 end
 
@@ -365,33 +380,9 @@ function EHIManager:AddTracker(params, pos)
         EHI:LogTraceback()
         self._trackers[params.id]:delete()
     end
-    if pos and type(pos) == "number" and self._n_of_trackers ~= 0 then
-        local move = false
-        for _, tbl in pairs(self._trackers_pos) do
-            if tbl.pos >= pos then
-                move = true
-                break
-            end
-        end
-        if move then
-            for id, tbl in pairs(self._trackers_pos) do
-                if tbl.pos >= pos then
-                    local final_pos = tbl.pos + 1
-                    tbl.tracker:SetTop(self:GetY(tbl.pos), self:GetY(final_pos))
-                    self._trackers_pos[id].pos = final_pos
-                end
-            end
-        else
-            -- No tracker found on the provided pos
-            -- Scrap this and create the tracker on the first available position
-            pos = nil
-        end
-    else
-        -- Received crap or no tracker exists
-        pos = nil
-    end
+    pos = self:MoveTracker(pos, params.icons)
     params.parent_class = self
-    params.x = self._x
+    params.x = self:GetX(pos)
     params.y = self:GetY(pos)
     params.scale = self._scale
     params.text_scale = self._text_scale
@@ -401,7 +392,7 @@ function EHIManager:AddTracker(params, pos)
         self._trackers_to_update[params.id] = tracker
     end
     self._trackers[params.id] = tracker
-    self._trackers_pos[params.id] = { tracker = tracker, pos = pos or self._n_of_trackers }
+    self._trackers_pos[params.id] = { tracker = tracker, pos = pos or self._n_of_trackers, x = params.x, y = params.y, w = tracker:GetPanelW() }
     self._n_of_trackers = self._n_of_trackers + 1
 end
 
@@ -500,9 +491,141 @@ function EHIManager:DisableBodyBags()
     self._deployables_ignore = { bodybags_bag = true }
 end
 
-function EHIManager:GetY(pos)
-    pos = pos or self._n_of_trackers
-    return self._y + (pos * (panel_size + panel_offset))
+if EHI:GetOption("tracker_alignment") == 1 then -- Vertical
+    function EHIManager:GetX(pos)
+        return self._x
+    end
+
+    function EHIManager:GetY(pos)
+        pos = pos or self._n_of_trackers
+        return self._y + (pos * (panel_size + panel_offset))
+    end
+
+    function EHIManager:MoveTracker(pos, icons)
+        if pos and type(pos) == "number" and self._n_of_trackers ~= 0 then
+            local move = false
+            for _, tbl in pairs(self._trackers_pos) do
+                if tbl.pos >= pos then
+                    move = true
+                    break
+                end
+            end
+            if move then
+                for id, tbl in pairs(self._trackers_pos) do
+                    if tbl.pos >= pos then
+                        local final_pos = tbl.pos + 1
+                        tbl.tracker:SetTop(self:GetY(tbl.pos), self:GetY(final_pos))
+                        self._trackers_pos[id].pos = final_pos
+                    end
+                end
+            else
+                -- No tracker found on the provided pos
+                -- Scrap this and create the tracker on the first available position
+                pos = nil
+            end
+        else
+            -- Received crap or no tracker exists
+            pos = nil
+        end
+        return pos
+    end
+
+    function EHIManager:RearrangeTrackers(pos, w)
+        if not pos then
+            return
+        end
+        for id, value in pairs(self._trackers_pos) do
+            if value.pos > pos then
+                local final_pos = value.pos - 1
+                value.tracker:SetTop(self:GetY(value.pos), self:GetY(final_pos))
+                self._trackers_pos[id].pos = final_pos
+            end
+        end
+    end
+
+    function EHIManager:ChangeTrackerWidth(id, new_w)
+    end
+else -- Horizontal
+    function EHIManager:GetX(pos)
+        if self._n_of_trackers == 0 or pos and pos == 0 then
+            return self._x
+        end
+        local x = 0
+        local pos_create = pos or (self._n_of_trackers - 1)
+        for _, value in pairs(self._trackers_pos) do
+            if value.pos == pos_create then
+                x = value.x + value.w + panel_offset
+                break
+            end
+        end
+        return x
+    end
+
+    function EHIManager:GetY(pos)
+        return self._y
+    end
+
+    function EHIManager:MoveTracker(pos, icons)
+        if pos and type(pos) == "number" and self._n_of_trackers ~= 0 then
+            local move = false
+            for _, tbl in pairs(self._trackers_pos) do
+                if tbl.pos >= pos then
+                    move = true
+                    break
+                end
+            end
+            if move then
+                local w = 64 * self._scale
+                if type(icons) == "table" then
+                    local n = #icons
+                    local gap = 5 * n
+                    w = ((64 + gap + (32 * n)) * self._scale)
+                end
+                for id, tbl in pairs(self._trackers_pos) do
+                    if tbl.pos >= pos then
+                        local final_x = tbl.x + w + panel_offset
+                        tbl.tracker:SetLeft(tbl.x, final_x)
+                        self._trackers_pos[id].x = final_x
+                        self._trackers_pos[id].pos = tbl.pos + 1
+                    end
+                end
+            else
+                -- No tracker found on the provided pos
+                -- Scrap this and create the tracker on the first available position
+                pos = nil
+            end
+        else
+            -- Received crap or no tracker exists
+            pos = nil
+        end
+        return pos
+    end
+
+    function EHIManager:RearrangeTrackers(pos, w, pos_move, panel_offset_move)
+        if not pos then
+            return
+        end
+        pos_move = pos_move or 1
+        panel_offset_move = panel_offset_move or panel_offset
+        for id, value in pairs(self._trackers_pos) do
+            if value.pos > pos then
+                local final_x = value.x - w - panel_offset_move
+                value.tracker:SetLeft(value.x, final_x)
+                self._trackers_pos[id].x = final_x
+                self._trackers_pos[id].pos = value.pos - pos_move
+            end
+        end
+    end
+
+    function EHIManager:ChangeTrackerWidth(id, new_w)
+        if not self._trackers_pos[id] then
+            return
+        end
+        local tracker = self._trackers_pos[id]
+        local w = tracker.w
+        tracker.w = new_w
+        self:RearrangeTrackers(tracker.pos, -(new_w - w), 0, 0)
+    end
 end
 
 function EHIManager:AddTrackerToUpdate(id, tracker)
@@ -528,22 +651,10 @@ function EHIManager:RemoveTracker(id, remove_ref_only)
     self._trackers[id] = nil
     self._trackers_to_update[id] = nil
     local pos = self._trackers_pos[id].pos
+    local w = self._trackers_pos[id].w
     self._trackers_pos[id] = nil
     self._n_of_trackers = self._n_of_trackers - 1
-    self:RearrangeTrackers(pos)
-end
-
-function EHIManager:RearrangeTrackers(pos)
-    if not pos then
-        return
-    end
-    for id, value in pairs(self._trackers_pos) do
-        if value.pos > pos then
-            local final_pos = value.pos - 1
-            value.tracker:SetTop(self:GetY(value.pos), self:GetY(final_pos))
-            self._trackers_pos[id].pos = final_pos
-        end
-    end
+    self:RearrangeTrackers(pos, w)
 end
 
 function EHIManager:TrackerExists(id)
@@ -657,6 +768,10 @@ function EHIManager:GetAndRemoveFromCache(id)
 end
 
 function EHIManager:AddToTradeDelayCache(peer_id, respawn_penalty, in_custody)
+    if self._cache.TradeDelayShowed then
+        self:PostPeerCustodyTime(peer_id, respawn_penalty, in_custody)
+        return
+    end
     self._cache.TradeDelay[peer_id] =
     {
         respawn_t = respawn_penalty,
@@ -668,6 +783,11 @@ function EHIManager:SetCachedPeerInCustody(peer_id)
     if not self._cache.TradeDelay[peer_id] then
         return
     end
+    if self._cache.TradeDelayShowed then
+        local data = self._cache.TradeDelay[peer_id]
+        self:PostPeerCustodyTime(peer_id, data.respawn_t, data.in_custody)
+        return
+    end
     self._cache.TradeDelay[peer_id].in_custody = true
 end
 
@@ -675,11 +795,20 @@ function EHIManager:IncreaseCachedPeerCustodyTime(peer_id, time)
     if not self._cache.TradeDelay[peer_id] then
         return
     end
+    if self._cache.TradeDelayShowed then
+        local respawn_t = self._cache.TradeDelay[peer_id].respawn_t
+        self:PostPeerCustodyTime(peer_id, respawn_t + time)
+        return
+    end
     self._cache.TradeDelay[peer_id].respawn_t = self._cache.TradeDelay[peer_id].respawn_t + time
 end
 
 function EHIManager:SetCachedPeerCustodyTime(peer_id, time)
     if not self._cache.TradeDelay[peer_id] then
+        return
+    end
+    if self._cache.TradeDelayShowed then
+        self:PostPeerCustodyTime(peer_id, time)
         return
     end
     self._cache.TradeDelay[peer_id].respawn_t = time
@@ -691,12 +820,36 @@ end
 
 function EHIManager:LoadFromTradeDelayCache()
     if #self._cache.TradeDelay == 0 then
+        self._cache.TradeDelayShowed = true
         return
     end
     self:AddCustodyTimeTracker()
     for peer_id, crim in pairs(self._cache.TradeDelay) do
         self:AddPeerCustodyTime(peer_id, crim.respawn_t)
         if crim.in_custody then
+            self:CallFunction("CustodyTime", "SetPeerInCustody", peer_id)
+        end
+    end
+    self._cache.TradeDelayShowed = true
+end
+
+function EHIManager:PostPeerCustodyTime(peer_id, time, in_custody) -- In case the civilian is killed at the same time when alarm went off
+    if self:TrackerExists("CustodyTime") then
+        local tracker = self:GetTracker("CustodyTime")
+        if tracker then
+            if tracker:PeerExists(peer_id) then
+                tracker:IncreasePeerCustodyTime(peer_id, time)
+            else
+                tracker:AddPeerCustodyTime(peer_id, time)
+            end
+            if in_custody then
+                tracker:SetPeerInCustody(peer_id)
+            end
+        end
+    else
+        self:AddCustodyTimeTracker()
+        self:AddPeerCustodyTime(peer_id, time)
+        if in_custody then
             self:CallFunction("CustodyTime", "SetPeerInCustody", peer_id)
         end
     end

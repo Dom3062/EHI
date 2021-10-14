@@ -38,6 +38,13 @@ function EHITimerTracker:SetUpgradeable(upgradeable)
         self._icon3:set_visible(upgradeable)
         self._icon4:set_visible(upgradeable)
     end
+    if upgradeable then
+        self._panel_override_w = self._panel:w()
+        self._parent_class:ChangeTrackerWidth(self._id, self._panel_override_w)
+    else
+        self._panel_override_w = self._time_bg_box:w() + (38 * self._scale) -- 32 (icon size) + 6 (gap)
+        self._parent_class:ChangeTrackerWidth(self._id, self._panel_override_w)
+    end
 end
 
 function EHITimerTracker:SetUpgrades(upgrades)

@@ -25,6 +25,7 @@ function EHIAggregatedEquipmentTracker:init(panel, params)
     self._deployables = {}
     self._ignore = params.ignore or {}
     self._panel_size = 2
+    self._icon_remove = 0
     self._format = {}
     self.text =
     {
@@ -42,6 +43,7 @@ function EHIAggregatedEquipmentTracker:init(panel, params)
         self._format[id] = params.format[id] or "charges"
     end
     EHIAggregatedEquipmentTracker.super.init(self, panel, params)
+    self._default_panel_w = self._panel:w()
     self._time_bg_box:remove(self._text)
 end
 
@@ -261,25 +263,36 @@ function EHIAggregatedEquipmentTracker:Reorganize(n)
     if n == 1 then
         return
     end
+    local old_panel_size = self._panel_size
     if n > self._panel_size then
         self._panel_size = self._panel_size * 2
-        self._panel:set_w(self._panel:w() * 2)
+        self:SetPanelW(self._panel:w() * 3) -- Fixes text being cut off after animation; I suspect a math.floor call somewhere during the anim, maybe the parameter ?
         self._time_bg_box:set_w(self._time_bg_box:w() * 2)
+        self._icon_remove = self._icon_remove + 1
     end
     if n < self._panel_size and n % 2 == 0 then
         self._panel_size = self._panel_size / 2
-        self._panel:set_w(self._panel:w() / 2)
+        self:SetPanelW(self._panel:w() / 3) -- Fixes text being cut off after animation
         self._time_bg_box:set_w(self._time_bg_box:w() / 2)
+        self._icon_remove = self._icon_remove - 1
     end
-    self._icon1:set_x(self._time_bg_box:w() + (5 * self._scale))
-    local half = self._time_bg_box:w() / self._panel_size
-    local pos = 1
+    local bg_w = self._time_bg_box:w()
+    if old_panel_size ~= self._panel_size then
+        self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
+        self:SetIconX(bg_w + (5 * self._scale))
+    end
+    local half = bg_w / self._panel_size
+    local pos = 0
     for id, _ in pairs(self.text) do
         if self._time_bg_box:child(id) then
-            self._time_bg_box:child(id):set_x(half * (pos - 1))
+            self._time_bg_box:child(id):set_x(half * pos)
             pos = pos + 1
         end
     end
+end
+
+function EHIAggregatedEquipmentTracker:GetPanelSize()
+    return (self._default_panel_w * (self._panel_size / 2)) - (37 * self._scale * self._icon_remove) -- 32 + 5 (gap)
 end
 
 function EHIAggregatedEquipmentTracker:ResetFontSizeUnique(id)

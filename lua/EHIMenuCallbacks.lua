@@ -46,6 +46,10 @@ function EHIMenu:UpdateIconsVisibility(visibility)
     self._preview_panel:UpdateIconsVisibility(visibility)
 end
 
+function EHIMenu:UpdateTrackerAlignment(alignment)
+    self._preview_panel:UpdateTrackerAlignment(alignment)
+end
+
 function EHIMenu:SetFocus(focus, value)
     self._preview_panel:SetSelected(value)
 end

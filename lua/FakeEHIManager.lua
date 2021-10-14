@@ -7,7 +7,7 @@ FakeEHIManager = FakeEHIManager or class()
 function FakeEHIManager:init(panel)
     self._hud_panel = panel:panel({
         name = "fake_ehi_panel",
-        layer = 400,
+        layer = 0,
         alpha = 1
     })
     local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
@@ -21,6 +21,7 @@ function FakeEHIManager:init(panel)
     self._text_scale = EHI:GetOption("text_scale")
     self._bg_visibility = EHI:GetOption("show_tracker_bg")
     self._icons_visibility = EHI:GetOption("show_one_icon")
+    self._tracker_alignment = EHI:GetOption("tracker_alignment")
     panel_size = panel_size_original * self._scale
     panel_offset = panel_offset_original * self._scale
     self:AddFakeTrackers()
@@ -83,8 +84,7 @@ function FakeEHIManager:AddFakeTrackers()
 end
 
 function FakeEHIManager:AddFakeTracker(params)
-    params.x = self._x
-    params.y = self:GetY(self._n_of_trackers)
+    params.x, params.y = self:GetPos(self._n_of_trackers, params.icons)
     params.scale = self._scale
     params.text_scale = self._text_scale
     params.bg = self._bg_visibility
@@ -119,6 +119,17 @@ function FakeEHIManager:AddPreviewText()
     self:make_fine_text(self._preview_text)
     self._preview_text:set_bottom(self:GetY(0) - panel_offset)
     self._preview_text:set_x(self._x)
+end
+
+function FakeEHIManager:GetPos(pos)
+    local x, y = self._x, self._y
+    if self._tracker_alignment == 1 then -- Vertical
+        y = self._y + (pos * (panel_size + panel_offset))
+    elseif self._n_of_trackers > 0 then -- Horizontal
+        local last_tracker = self._fake_trackers[self._n_of_trackers]
+        x = last_tracker._panel:right() + panel_offset
+    end
+    return x, y
 end
 
 function FakeEHIManager:GetY(pos)
@@ -188,6 +199,11 @@ function FakeEHIManager:UpdateIconsVisibility(visibility)
     for _, tracker in pairs(self._fake_trackers) do
         tracker:UpdateIconsVisibility(visibility)
     end
+end
+
+function FakeEHIManager:UpdateTrackerAlignment(alignment)
+    self._tracker_alignment = alignment
+    self:Redraw()
 end
 
 function FakeEHIManager:Redraw()

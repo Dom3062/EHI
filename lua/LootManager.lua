@@ -13,7 +13,7 @@ local check_types = {
     BagsOnly = 2,
     ValueOfBags = 3, -- Currently unused
     SmallLootOnly = 4, -- Currently unused
-    ValueOfSmallLoot = 5, -- Currently unused
+    ValueOfSmallLoot = 5,
     OneTypeOfLoot = 6,
     MultipleTriggers = 7
 }
@@ -109,6 +109,19 @@ elseif level_id == "dinner" then -- Slaughterhouse
         check_type = check_types.BagsOnly
         tracker_id = "LootCounter"
     end
+elseif level_id == "firestarter_1" then -- Firestarter Day 1
+    check_type = check_types.BagsOnly
+    if EHI:IsAchievementLocked("lord_of_war") then
+        tracker_id = "lord_of_war"
+    else
+        tracker_id = "LootCounter"
+    end
+elseif level_id == "big" then -- The Big Bank
+    check_type = check_types.BagsOnly
+    tracker_id = "bigbank_3"
+elseif level_id == "mallcrasher" and EHI:DifficultyToIndex(Global.game_settings.difficulty) == 3 then -- Mallcrasher
+    check_type = check_types.ValueOfSmallLoot
+    tracker_id = "ameno_3_counter"
 elseif LootCounter[level_id] then
     check_type = check_types.BagsOnly
     tracker_id = "LootCounter"
@@ -146,6 +159,7 @@ function LootManager:EHIReportProgress(tid, ct, lt)
     elseif ct == check_types.ValueOfBags then
     elseif ct == check_types.SmallLootOnly then
     elseif ct == check_types.ValueOfSmallLoot then
+        managers.ehi:SetTrackerProgress(tid, self:get_real_total_small_loot_value())
     elseif ct == check_types.OneTypeOfLoot then
         if lt then
             local secured = 0

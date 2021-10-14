@@ -166,6 +166,9 @@ function EHIAchievementNotificationTracker:SetTextColor(color)
 end
 
 function EHIAchievementNotificationTracker:SetStatus(status)
+    if self._dont_override_status then
+        return
+    end
     self._status = status
     self:SetText(status)
     self:SetTextColor()
@@ -176,12 +179,14 @@ function EHIAchievementNotificationTracker:SetCompleted()
     self._exclude_from_sync = true
     self:SetStatus("done")
     self:AddTrackerToUpdate()
+    self._dont_override_status = true
 end
 
 function EHIAchievementNotificationTracker:SetFailed()
     self._exclude_from_sync = true
     self:SetStatus("fail")
     self:AddTrackerToUpdate()
+    self._dont_override_status = true
 end
 
 EHIAchievementBagValueTracker = EHIAchievementBagValueTracker or class(EHIProgressTracker)
@@ -196,6 +201,22 @@ function EHIAchievementBagValueTracker:Format()
     return "$" .. self._secured .. "/$" .. self._to_secure
 end
 
+function EHIAchievementBagValueTracker:SetProgress(progress)
+    if self._secured ~= progress then
+        self._secured = progress
+        self._text:set_text(self:Format())
+        self:FitTheText()
+        if self._flash then
+            self:AnimateBG(self._flash_times)
+        end
+        self:SetCompleted()
+    end
+end
+
+function EHIAchievementBagValueTracker:IncreaseProgress(progress)
+    self:SetProgress(self._secured + (progress or 1))
+end
+
 function EHIAchievementBagValueTracker:SetCompleted(force)
     if (self._secured >= self._to_secure and not self._status) or force then
         self._status = "completed"
@@ -207,4 +228,15 @@ function EHIAchievementBagValueTracker:SetCompleted(force)
             self:FitTheText()
         end
     end
+end
+
+function EHIAchievementBagValueTracker:SetFailed()
+    if self._status and not self._status_is_overridable then
+        return
+    end
+    self._exclude_from_sync = true
+    self:SetTextColor(Color.red)
+    self._status = "failed"
+    self._parent_class:AddTrackerToUpdate(self._id, self)
+    self:AnimateBG()
 end

@@ -33,7 +33,7 @@ function EHITracker:init(panel, params)
     self._text_scale = params.text_scale
     local number_of_icons = 0
     local gap = 0
-    if self._icons and type(self._icons) == "table" then
+    if type(self._icons) == "table" then
         number_of_icons = #self._icons
         gap = 5 * number_of_icons
     end
@@ -145,6 +145,63 @@ function EHITracker:SetTop(from_y, target_y)
             t = math.min(t + dt, TOTAL_T)
             local lerp = t / TOTAL_T
             o:set_y(math.lerp(from_y, target_y, lerp))
+        end
+    end)
+end
+
+function EHITracker:SetLeft(from_x, target_x)
+    if self._anim_move then
+        self._panel:stop(self._anim_move)
+        self._anim_move = nil
+    end
+    self._anim_move = self._panel:animate(function(o)
+        local TOTAL_T = 0.18
+        local t = (1 - math.abs(from_x - target_x) / math.abs(from_x - target_x)) * TOTAL_T
+        while TOTAL_T > t do
+            local dt = coroutine.yield()
+            t = math.min(t + dt, TOTAL_T)
+            local lerp = t / TOTAL_T
+            o:set_x(math.lerp(from_x, target_x, lerp))
+        end
+    end)
+end
+
+function EHITracker:SetPanelW(target_w)
+    if self._anim_set_w then
+        self._panel:stop(self._anim_set_w)
+        self._anim_set_w = nil
+    end
+    self._anim_set_w = self._panel:animate(function(o)
+        local TOTAL_T = 0.18
+        local from_w = o:w()
+        local abs = -(from_w - target_w)
+        local t = (1 - abs / abs) * TOTAL_T
+        while TOTAL_T > t do
+            local dt = coroutine.yield()
+            t = math.min(t + dt, TOTAL_T)
+            local lerp = t / TOTAL_T
+            o:set_w(math.lerp(from_w, target_w, lerp))
+        end
+    end)
+end
+
+function EHITracker:SetIconX(target_x)
+    if not self._icon1 then
+        return
+    end
+    if self._anim_icon1_x then
+        self._icon1:stop(self._anim_icon1_x)
+        self._anim_icon1_x = nil
+    end
+    self._anim_icon1_x = self._icon1:animate(function(o)
+        local TOTAL_T = 0.18
+        local from_x = o:x()
+        local t = (1 - math.abs(from_x - target_x) / math.abs(from_x - target_x)) * TOTAL_T
+        while TOTAL_T > t do
+            local dt = coroutine.yield()
+            t = math.min(t + dt, TOTAL_T)
+            local lerp = t / TOTAL_T
+            o:set_x(math.lerp(from_x, target_x, lerp))
         end
     end)
 end
@@ -272,8 +329,15 @@ function EHITracker:AddTrackerToUpdate()
     self._parent_class:AddTrackerToUpdate(self._id, self)
 end
 
+function EHITracker:GetPanelW()
+    return self._panel_override_w or self._panel:w()
+end
+
 function EHITracker:destroy(skip)
     if alive(self._panel) and alive(self._parent_panel) then
+        if self._icon1 then
+            self._icon1:stop()
+        end
         self._panel:stop()
         self._panel:animate(function(o)
             if not skip then

@@ -84,6 +84,21 @@
             "default_value": 2
         },
         {
+            "type": "multiple_choice",
+            "id": "ehi_tracker_alignment_choice",
+            "title": "ehi_tracker_alignment",
+            "description": "ehi_tracker_alignment_desc",
+            "callback": ["SetOption", "UpdateTrackerAlignment"],
+            "callback_arguments": "tracker_alignment",
+            "items": [
+                "ehi_tracker_alignment_1",
+                "ehi_tracker_alignment_2"
+            ],
+            "value": "tracker_alignment",
+            "default_value": 1,
+            "ehi_ver" : 30
+        },
+        {
             "type": "button",
             "id": "ehi_visuals_menu",
             "title": "ehi_visuals_menu",

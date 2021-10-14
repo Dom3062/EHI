@@ -18,6 +18,9 @@ end
 
 local xp_format = EHI:GetOption("xp_format")
 local xp_panel = EHI:GetOption("xp_panel")
+if EHI:IsOneXPElementHeist(Global.game_settings.level_id) then
+    xp_panel = 1 -- Force one XP panel when the heist gives you the XP at the escape zone -> less screen clutter
+end
 local heat = 1
 local difficulty_multiplier = 1
 local projob_multiplier = 1  -- Not used in Vanilla, but other mods can create Pro Job missions

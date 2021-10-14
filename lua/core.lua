@@ -79,6 +79,7 @@ _G.EHI =
         RemoveTriggerAndShowAchievementCustom = 47,
         IncreaseProgressMax = 48,
         AddTrackerIfDoesNotExistElementHostCheckOnly = 49,
+        IncreaseChanceFromElementSpecify = 50,
 
         AddToGlobalAndExecute = 99998, -- REMOVE ME
         Debug = 100000,
@@ -162,10 +163,6 @@ function EHI:GetIcons()
     return self.Icons
 end
 
-function EHI:GetConditionFunctions()
-    return self.ConditionFunctions
-end
-
 function EHI:Log(s)
     log("[EHI] " .. (s or "nil"))
 end
@@ -229,6 +226,7 @@ function EHI:LoadDefaultValues()
         scale = 1,
         vr_scale = 2.5,
         time_format = 2,
+        tracker_alignment = 1, -- 1 = Vertical, 2 = Horizontal
 
         -- Visuals
         show_tracker_bg = true,
@@ -490,6 +488,54 @@ function EHI:DeepClone(o) -- Copy of OVK's function deep_clone
 	return res
 end
 
+function EHI:IsOneXPElementHeist(level_id)
+    return table.contains({
+            "four_stores",
+            "nightclub",
+            "jewelry_store",
+            "ukrainian_job",
+            "election_day_1",
+            "election_day_2",
+            "election_day_3",
+            "election_day_3_skip1",
+            "election_day_3_skip2",
+            "alex_1",
+            "alex_2",
+            "alex_3",
+            "firestarter_2",
+            "firestarter_3",
+            "branchbank",
+            "branchbank_gold",
+            "branchbank_cash",
+            "branchbank_deposit",
+            "haunted",
+            "safehouse",
+            "short1_stage1",
+			"short1_stage2",
+            "short2_stage1",
+			"short2_stage2b",
+            "arm_cro",
+            "arm_fac",
+            "arm_hcm",
+            "arm_par",
+            "arm_und",
+            "escape_cafe",
+            "escape_cafe_day",
+            "escape_garage",
+            "escape_overpass",
+            "escape_park",
+            "escape_park_day",
+            "escape_street"
+        }, level_id)
+end
+
+function EHI:GetAchievementIcon(id)
+    local achievement = tweak_data.achievement.visual[id]
+    if achievement then
+        return { achievement.icon_id }
+    end
+end
+
 local triggers = {}
 local host_triggers = {}
 local base_delay_triggers = {}
@@ -578,6 +624,7 @@ function EHI:AddTracker(id, sync)
         remove_after_reaching_target = trigger.remove_after_reaching_target,
         status_is_overridable = trigger.status_is_overridable,
         status = trigger.status,
+        to_secure = trigger.to_secure,
         icons = trigger.icons,
         class = trigger.class
     })
@@ -625,7 +672,7 @@ local function GetElementTimer(self, id)
     if Network:is_server() then
         local element = managers.mission:get_element_by_id(triggers[id].element)
         if element then
-            local t = element._timer or 0
+            local t = (element._timer or 0) + (triggers[id].additional_time or 0)
             triggers[id].time = t
             self:CheckCondition(id, true)
         end
@@ -693,7 +740,7 @@ function EHI:Trigger(id, element, enabled)
                 triggers[id].icons[1] = data.icon
                 self:CheckCondition(id)
             elseif f == SF.ReplaceTrackerWithTracker then
-                RemoveTracker(triggers[id].id)
+                RemoveTracker(triggers[id].data.id)
                 if triggers[id].data.trigger then
                     UnhookTrigger(self, triggers[id].data.trigger) -- Removes trigger from the list, used in The White House
                 end
@@ -865,6 +912,11 @@ function EHI:Trigger(id, element, enabled)
                         self:CheckCondition(id)
                     end
                 end
+            elseif f == SF.IncreaseChanceFromElementSpecify then
+                local e = managers.mission:get_element_by_id(triggers[id].element)
+                if e then
+                    managers.ehi:IncreaseChance(triggers[id].id, e._values.chance)
+                end
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
@@ -902,6 +954,25 @@ function EHI:Trigger(id, element, enabled)
                 if enabled then
                     self:CheckCondition(id)
                     UnhookTrigger(self, id)
+                end
+
+            -- ElementCounterFilter
+            elseif f == SF.HOX2_CheckOkValueHostCheckOnly then
+                local continue = false
+                if Network:is_server() then
+                    if element:_values_ok() then
+                        continue = true
+                    end
+                else
+                    continue = true
+                end
+                if continue then
+                    if managers.ehi:TrackerExists(triggers[id].id) then
+                        managers.ehi:SetTrackerProgress(triggers[id].id, triggers[id].data.progress)
+                    elseif not triggers[id].data.dont_create then
+                        self:CheckCondition(id)
+                        managers.ehi:SetTrackerProgress(triggers[id].id, triggers[id].data.progress)
+                    end
                 end
 
             -- ElementTimerOperator
@@ -1067,14 +1138,30 @@ if EHI:GetOption("hide_unlocked_achievements") then
         local a = G.achievment_manager.achievments[achievement]
         return a and a.awarded
     end
-    function EHI:IsAchievementLocked(achievement)
-        return not self:IsAchievementUnlocked(achievement)
-    end
 else -- Always show trackers for achievements
     function EHI:IsAchievementUnlocked(achievement)
         return false
     end
-    function EHI:IsAchievementLocked(achievement)
+end
+
+function EHI:IsAchievementLocked(achievement)
+    return not self:IsAchievementUnlocked(achievement)
+end
+
+function EHI:GetAchievementProgress(achievement)
+    return managers.achievment:get_stat(achievement) or 0
+end
+
+-- Used for achievements that has in the description "Kill X enemies in an heist" and etc... to show them only once
+-- This is done to prevent tracker spam if the player decides to replay the same heist with a similar weapon or weapon category
+-- Once the achievement has been awarded, the achievement will no longer show on the screen
+function EHI:IsAchievementLocked2(achievement)
+    local a = Global.achievment_manager.achievments[achievement]
+    return a and not a.awarded
+end
+
+if EHI.debug then -- For testing purposes
+    function EHI:IsAchievementLocked2(achievement)
         return true
     end
 end

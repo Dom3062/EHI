@@ -15,6 +15,9 @@
     "ehi_y_offset": "Décalage Y",
     "ehi_y_offset_desc": "Décalage Y",
 
+    "ehi_text_scale" : "Text Scale",
+    "ehi_text_scale_desc" : "Sets text scale.\nThis feature is useful for players with modded in-game fonts",
+
     "ehi_scale": "Échelle",
     "ehi_scale_desc": "Définit la taille des moniteurs. Plus la valeur est grande, plus les moniteurs seront grands et inversement.",
 
@@ -25,6 +28,11 @@
     "ehi_time_format_desc": "Définit comment le moniteur de temps doit-être indiqué",
     "ehi_time_format_1": "Secondes seulement",
     "ehi_time_format_2": "Minutes et Secondes",
+
+    "ehi_tracker_alignment" : "Tracker Alignment",
+    "ehi_tracker_alignment_desc" : "Defines how trackers should be aligned",
+    "ehi_tracker_alignment_1" : "Vertical",
+    "ehi_tracker_alignment_2" : "Horizontal",
 
     "ehi_visuals_menu" : "Visuels",
     "ehi_visuals_menu_desc" : "",
@@ -37,6 +45,12 @@
 
     "ehi_trackers_menu": "Moniteurs",
     "ehi_trackers_menu_desc": "",
+
+    "ehi_show_achievement" : "Show Achievement Tracker",
+    "ehi_show_achievement_desc" : "Shows on the screen achievements\nSome heists may not have any achievements available",
+
+    "ehi_hide_unlocked_achievements" : "Don't Show Unlocked Achievements",
+    "ehi_hide_unlocked_achievements_desc" : "When enabled, EHI will not show trackers for unlocked achievements\nWhen disabled, EHI will show all trackers for achievements",
 
     "ehi_show_gained_xp": "Montre l’EXP gagné",
     "ehi_show_gained_xp_desc": "Montre l’EXP gagné dans une mission.\nCe moniteur est désactivé en mode série de crimes.",
@@ -62,6 +76,9 @@
 
     "ehi_show_trade_delay_other_players_only": "Montre le moniteur de délai d’échange uniquement pour les autres joueurs",
     "ehi_show_trade_delay_other_players_only_desc": "Quand activé, ce moniteur n’indiquera pas combien de civils vous avez tués mais affichera tout de même ceux de vos coéquipiers.",
+
+    "ehi_show_trade_delay_suppress_in_stealth" : "Don't Show Trade Delay Tracker in Stealth",
+    "ehi_show_trade_delay_suppress_in_stealth_desc" : "Hides Trade Delay in stealth when enabled. Once the alarm goes off, the tracker appears with all accumulated delay.",
     
     "ehi_show_timers": "Montre les décomptes",
     "ehi_show_timers_desc": "Montre les décomptes pour les piratages, percages, découpes, etc",
@@ -104,19 +121,64 @@
     
     "ehi_show_equipment_firstaidkit": "Montre le moniteur pour les kits de premiers soins",
     "ehi_show_equipment_firstaidkit_desc": "Montre un moniteur pour les kits de premiers soins",
+
+    "ehi_show_equipment_ecmjammer" : "Show ECM Jammer Duration Tracker",
+    "ehi_show_equipment_ecmjammer_desc" : "Shows a tracker for the remaining duration of an ECM Jammer\nAn ECM Jammer with the longest duration is shown in the tracker",
+
+    "ehi_show_equipment_ecmfeedback" : "Show ECM Feedback Duration Tracker",
+    "ehi_show_equipment_ecmfeedback_desc" : "Shows a tracker for the remaining duration of an ECM Feedback\nAn ECM Feedback with the longest duration is shown in the tracker (host only)\nPocket ECM Feedback also works clientside",
     
     "ehi_show_equipment_aggregate_health": "Rassemble les sacs de soins et les kits de premiers secours",
     "ehi_show_equipment_aggregate_health_desc": "Rassemble les sacs de soins et les kits de premiers secours en un seul moniteur",
+
+    "ehi_show_equipment_aggregate_all" : "Aggregate All Deployables",
+    "ehi_show_equipment_aggregate_all_desc" : "Aggregates all deployables into one tracker\nDeployables use their respective color from down below",
+
+    "ehi_doctor_bag" : "Doctor Bag",
+    "ehi_ammo_bag" : "Ammo Bag",
+    "ehi_grenade_crate" : "Grenade Crate",
+    "ehi_first_aid_kit" : "First Aid Kit",
+    "ehi_bodybags_bag" : "Bodybags Bag",
     
     "ehi_show_minion_tracker": "Montre le moniteur de convertis",
     "ehi_show_minion_tracker_desc": "Montre un moniteur indiquant combien d’ennemis convertis sont sur la carte",
     
     "ehi_show_difficulty_tracker": "Montre le moniteur de difficulté",
     "ehi_show_difficulty_tracker_desc": "Montre un moniteur indiquant la difficulté de la vague",
+
+    "ehi_show_drama_tracker" : "Show Drama Tracker",
+    "ehi_show_drama_tracker_desc" : "Shows a tracker for accumulated drama (host only)",
     
     "ehi_show_pager_tracker": "Montre le moniteur de bipeurs",
     "ehi_show_pager_tracker_desc": "Montre un moniteur indiquant le nombre de bipeurs restants",
 
+    "ehi_show_pager_callback_trackers" : "Show Pager Callback Timers",
+    "ehi_show_pager_callback_trackers_desc" : "Shows a tracker for pagers that needs to be answered",
+
     "ehi_show_enemy_count_tracker" : "Montre le moniteur de compteur d’ennemis",
-    "ehi_show_enemy_count_tracker_desc" : "Montre un moniteur indiquant le nombre d’ennemis sur la carte."
+    "ehi_show_enemy_count_tracker_desc" : "Montre un moniteur indiquant le nombre d’ennemis sur la carte.",
+
+    "ehi_show_laser_tracker" : "Show Laser Tracker",
+    "ehi_show_laser_tracker_desc" : "Shows a tracker for lasers that cycle every few seconds",
+
+    "ehi_waypoints_menu" : "Waypoints",
+    "ehi_waypoints_menu_desc" : "",
+
+    "ehi_show_waypoints" : "Show Waypoints",
+    "ehi_show_waypoints_desc" : "Show waypoints in the game world",
+
+    "ehi_show_waypoints_only" : "Show Only Waypoints",
+    "ehi_show_waypoints_only_desc" : "When enabled and an element has both tracker and waypoint defined, show only the waypoint\nOtherwise tracker will be shown",
+
+    "ehi_show_waypoints_present_timer" : "Present Timer",
+    "ehi_show_waypoints_present_timer_desc" : "Sets how long the waypoint will stay on your screen before it will 'move' to its destination",
+
+    "ehi_show_waypoints_enemy_turret" : "Show Waypoints For Enemy Turret",
+    "ehi_show_waypoints_enemy_turret_desc" : "Shows a waypoint on the enemy turret when it is reloading or repairing",
+
+    "ehi_show_waypoints_timers" : "Show Waypoints For Timers",
+    "ehi_show_waypoints_timers_desc" : "Shows a waypoint on a visible timer (hacking, drilling, sawing, etc ...)\n\nOption 'Show Timers' must be enabled in order to work",
+
+    "ehi_show_waypoints_pager" : "Show Waypoints For Pagers",
+    "ehi_show_waypoints_pager_desc" : "Shows a waypoint on a pager that needs to be answered\n\nOption 'Show Pager Callback Timers' must be enabled in order to work"
 }

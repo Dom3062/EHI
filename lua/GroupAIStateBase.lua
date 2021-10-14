@@ -50,9 +50,11 @@ if level_id == "alex_2" then
 end
 
 local function Execute()
-    if not dropin and managers.trade.GetTradeCounterTick then
+    if managers.trade.GetTradeCounterTick then
         managers.ehi:LoadFromTradeDelayCache()
-        managers.ehi:SetTrade("normal", true, managers.trade:GetTradeCounterTick())
+        if not dropin then
+            managers.ehi:SetTrade("normal", true, managers.trade:GetTradeCounterTick())
+        end
     end
     for _, achievement in ipairs(achievements_to_remove) do
         managers.ehi:SetAchievementFailed(achievement)

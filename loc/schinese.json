@@ -29,6 +29,11 @@
     "ehi_time_format_1" : "只显示秒数",
     "ehi_time_format_2" : "分钟和秒数",
 
+    "ehi_tracker_alignment" : "Tracker Alignment",
+    "ehi_tracker_alignment_desc" : "Defines how trackers should be aligned",
+    "ehi_tracker_alignment_1" : "Vertical",
+    "ehi_tracker_alignment_2" : "Horizontal",
+
     "ehi_visuals_menu" : "显示设置",
     "ehi_visuals_menu_desc" : "",
 
@@ -41,8 +46,8 @@
     "ehi_trackers_menu" : "追踪器",
     "ehi_trackers_menu_desc" : "",
 
-    "ehi_show_achievement" : "Show Achievement Tracker",
-    "ehi_show_achievement_desc" : "Shows on the screen achievements\nSome heists may not have any achievements available",
+    "ehi_show_achievement" : "显示成就追踪器",
+    "ehi_show_achievement_desc" : "在屏幕上显示可追踪的成就\n某些劫案中没有可追踪的成就",
     
     "ehi_hide_unlocked_achievements" : "隐藏已解锁的成就追踪器",
     "ehi_hide_unlocked_achievements_desc" : "勾选后，本模组将隐藏您已经解锁过的成就追踪器\n取消勾选后，本模组依然会为您显示当前所有可用的成就追踪器",
@@ -72,8 +77,8 @@
     "ehi_show_trade_delay_other_players_only": "仅为其他玩家显示交易延迟",
     "ehi_show_trade_delay_other_players_only_desc": "启用后无论你杀死了多少平民都不会显示交易延迟追踪器，但您的队友击杀平民仍然会显示交易延迟追踪器",
 
-    "ehi_show_trade_delay_suppress_in_stealth" : "Don't Show Trade Delay Tracker in Stealth",
-    "ehi_show_trade_delay_suppress_in_stealth_desc" : "Hides Trade Delay in stealth when enabled. Once the alarm goes off, the tracker appears with all accumulated delay.",
+    "ehi_show_trade_delay_suppress_in_stealth" : "潜入阶段隐藏交易延迟",
+    "ehi_show_trade_delay_suppress_in_stealth_desc" : "勾选后在潜入阶段将隐藏交易延迟追踪器，直到警报触发后才显示已积累的交易延迟",
 
     "ehi_show_timers" : "显示计时器",
     "ehi_show_timers_desc" : "显示地图上正在进行的黑入，钻机，电锯等进程的剩余时间",
@@ -162,8 +167,8 @@
     "ehi_show_waypoints" : "显示路径导航点",
     "ehi_show_waypoints_desc" : "在游戏中显示路径导航点",
 
-    "ehi_show_waypoints_only" : "Show Only Waypoints",
-    "ehi_show_waypoints_only_desc" : "When enabled and an element has both tracker and waypoint defined, show only the waypoint\nOtherwise tracker will be shown",
+    "ehi_show_waypoints_only" : "仅显示导航点",
+    "ehi_show_waypoints_only_desc" : "勾选后，当一个可追踪的元素可以被导航点和追踪器追踪时，仅显示导航点\n否则将显示追踪器",
 
     "ehi_show_waypoints_present_timer" : "动画时间",
     "ehi_show_waypoints_present_timer_desc" : "设置导航点在'移动'到目标前在屏幕上停留的时间。",
@@ -171,9 +176,9 @@
     "ehi_show_waypoints_enemy_turret" : "显示敌方机枪塔的导航点",
     "ehi_show_waypoints_enemy_turret_desc" : "在敌方炮塔重装或修理时显示一个导航点",
 
-    "ehi_show_waypoints_timers" : "Show Waypoints For Timers",
-    "ehi_show_waypoints_timers_desc" : "Shows a waypoint on a visible timer (hacking, drilling, sawing, etc ...)\n\nOption 'Show Timers' must be enabled in order to work",
+    "ehi_show_waypoints_timers" : "显示计时器导航点",
+    "ehi_show_waypoints_timers_desc" : "显示地图上正在进行的黑入，钻机，电锯等进程的剩余时间\n\n需要勾选'显示计时器'选项以正常使用",
 
-    "ehi_show_waypoints_pager" : "Show Waypoints For Pagers",
-    "ehi_show_waypoints_pager_desc" : "Shows a waypoint on a pager that needs to be answered\n\nOption 'Show Pager Callback Timers' must be enabled in order to work"
+    "ehi_show_waypoints_pager" : "显示对讲机导航点",
+    "ehi_show_waypoints_pager_desc" : "当有待回复的对讲机时显示导航点\n\n需要勾选'显示对讲机剩余时间追踪器'选项以正常使用"
 }

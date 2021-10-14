@@ -29,6 +29,11 @@
     "ehi_time_format_1" : "Seconds Only",
     "ehi_time_format_2" : "Minutes and Seconds",
 
+    "ehi_tracker_alignment" : "Tracker Alignment",
+    "ehi_tracker_alignment_desc" : "Defines how trackers should be aligned",
+    "ehi_tracker_alignment_1" : "Vertical",
+    "ehi_tracker_alignment_2" : "Horizontal",
+
     "ehi_visuals_menu" : "Visuals",
     "ehi_visuals_menu_desc" : "",
 

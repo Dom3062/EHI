@@ -12,7 +12,9 @@ local original =
 
 function CivilianDamage:_unregister_from_enemy_manager(damage_info)
     original._unregister_from_enemy_manager(self, damage_info)
-    managers.ehi:IncreaseCivilianKilled()
+    if not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
+        managers.ehi:IncreaseCivilianKilled()
+    end
 end
 
 if not EHI:GetOption("show_trade_delay") then
@@ -58,7 +60,7 @@ original._f_on_damage_received = CivilianDamage._on_damage_received
 function CivilianDamage:_on_damage_received(damage_info, ...)
     original._f_on_damage_received(self, damage_info, ...)
     local attacker_unit = damage_info and damage_info.attacker_unit
-    if damage_info.result.type == "death" and attacker_unit then
+    if damage_info.result.type == "death" and attacker_unit and not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
         if peer_id then
             AddTracker(peer_id)
@@ -69,8 +71,8 @@ end
 function CopDamage:_on_car_damage_received(attacker_unit)
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
-        if peer_id then
-            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 53)")
+        if peer_id and not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
+            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 75)")
             AddTracker(peer_id)
         end
     end
@@ -79,8 +81,8 @@ end
 function HuskCopDamage:_on_car_damage_received(attacker_unit)
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
-        if peer_id then
-            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 63)")
+        if peer_id and not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
+            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 85)")
             AddTracker(peer_id)
         end
     end
@@ -89,8 +91,8 @@ end
 function CivilianDamage:_on_car_damage_received(attacker_unit)
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
-        if peer_id then
-            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 73)")
+        if peer_id and not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
+            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 95)")
             AddTracker(peer_id)
         end
     end
@@ -100,7 +102,7 @@ end
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
         if peer_id then
-            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 83)")
+            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 105)")
             AddTracker(peer_id)
         end
     end
