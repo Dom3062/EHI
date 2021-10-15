@@ -28,6 +28,7 @@ local limited_bonus_multiplier = (tweak_data:get_value("experience_manager", "li
 local stealth_bonus = 1
 local infamy_bonus = 0
 local gage_bonus = 1
+local mutator_reduction = 1
 local stealth_mode = true
 if xp_format ~= 1 then
     local difficulty_index = tweak_data:difficulty_to_index(Global.game_settings.difficulty) - 2
@@ -42,7 +43,7 @@ end
 
 local function MultiplyXPWillAllBonuses(base_amount)
     local player_bonus = math.max(0, (managers.player:get_skill_exp_multiplier(stealth_mode)) - 1) * heat
-    return (base_amount * heat) * difficulty_multiplier * (1 + player_bonus + infamy_bonus + limited_bonus_multiplier) * stealth_bonus * projob_multiplier
+    return (base_amount * heat) * difficulty_multiplier * (1 + player_bonus + infamy_bonus + limited_bonus_multiplier) * stealth_bonus * projob_multiplier * mutator_reduction
 end
 
 local TotalXP = 0
@@ -80,6 +81,10 @@ function ExperienceManager:SetGagePackageBonus(bonus)
         gage_bonus = bonus * heat
         self:ShowGainedXP(0)
     end
+end
+
+function ExperienceManager:SetMutatorXPReduction(reduction)
+    mutator_reduction = reduction
 end
 
 function ExperienceManager:ShowGainedXP(xp_gained)

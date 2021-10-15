@@ -11,6 +11,7 @@ local achievements_to_remove =
     "sah_9",
     "friend_6",
     "chas_10",
+    "chca_10"
 }
 
 local trackers_to_remove =

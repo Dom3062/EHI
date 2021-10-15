@@ -38,7 +38,7 @@ function EHIProgressTracker:IncreaseProgressMax(progress)
 end
 
 function EHIProgressTracker:SetProgress(progress)
-    if self._progress ~= progress then
+    if self._progress ~= progress and not self._disable_counting then
         self._progress = progress
         self._text:set_text(self:Format())
         self:FitTheText()
@@ -72,6 +72,7 @@ function EHIProgressTracker:SetCompleted(force)
             self._text:set_text("FINISH")
             self:FitTheText()
         end
+        self._disable_counting = true
     end
 end
 
@@ -98,6 +99,7 @@ function EHIProgressTracker:SetFailed()
     self._status = "failed"
     self._parent_class:AddTrackerToUpdate(self._id, self)
     self:AnimateBG()
+    self._disable_counting = true
 end
 
 function EHIProgressTracker:GetProgress()

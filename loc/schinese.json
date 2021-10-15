@@ -29,10 +29,10 @@
     "ehi_time_format_1" : "只显示秒数",
     "ehi_time_format_2" : "分钟和秒数",
 
-    "ehi_tracker_alignment" : "Tracker Alignment",
-    "ehi_tracker_alignment_desc" : "Defines how trackers should be aligned",
-    "ehi_tracker_alignment_1" : "Vertical",
-    "ehi_tracker_alignment_2" : "Horizontal",
+    "ehi_tracker_alignment" : "追踪器对齐",
+    "ehi_tracker_alignment_desc" : "设置追踪器对齐模式",
+    "ehi_tracker_alignment_1" : "垂直",
+    "ehi_tracker_alignment_2" : "水平",
 
     "ehi_visuals_menu" : "显示设置",
     "ehi_visuals_menu_desc" : "",

@@ -95,7 +95,12 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             class = "EHITotalXPTracker"
         })
     end
-    if EHI:GetOption("show_achievement") then
+    if managers.experience.SetMutatorXPReduction then
+        managers.experience:SetMutatorXPReduction(managers.mutators:get_experience_multiplier())
+    end
+    local disabled_achievements = managers.mutators:are_achievements_disabled()
+    EHI._cache.AreAchievementsDisabled = disabled_achievements
+    if EHI:GetOption("show_achievement") and not disabled_achievements then
         self:ShowAchievements(difficulty)
     end
     self:ShowLootCounter(difficulty)

@@ -22,6 +22,15 @@ local function HasWeaponEquipped(weapon_id)
     return pass, primary_selection, secondary_selection
 end
 
+local function HasWeaponTypeEquipped(type)
+    local primary_category = tweak_data.weapon[primary.weapon_id] and tweak_data.weapon[primary.weapon_id].categories[1] or "no_category"
+    local secondary_category = tweak_data.weapon[secondary.weapon_id] and tweak_data.weapon[secondary.weapon_id].categories[1] or "no_category"
+    if primary_category == type or secondary_category == type then
+        return true
+    end
+    return false
+end
+
 local function HasMeleeEquipped(melee_id)
     return managers.blackmarket:equipped_melee_weapon() == melee_id
 end
@@ -35,13 +44,12 @@ local function HasMeleeTypeEquipped(type)
     return false
 end
 
-local function CheckWeaponsType(type)
-    local primary_category = tweak_data.weapon[primary.weapon_id] and tweak_data.weapon[primary.weapon_id].categories[1] or "no_category"
-    local secondary_category = tweak_data.weapon[secondary.weapon_id] and tweak_data.weapon[secondary.weapon_id].categories[1] or "no_category"
-    if primary_category == type or secondary_category == type then
-        return true
-    end
-    return false
+local function HasPlayerStyleEquipped(player_style_id)
+    return managers.blackmarket:equipped_player_style() == player_style_id
+end
+
+local function HasSuitVariationEquipped(variation_id)
+    return managers.blackmarket:equipped_suit_variation() == variation_id
 end
 
 local function CheckWeaponsBlueprint(blueprint)
@@ -156,7 +164,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             class = "EHIChanceTracker"
         })
     else]]
-    if not EHI:GetOption("show_achievement") then
+    if not EHI:GetOption("show_achievement") or EHI._cache.AreAchievementsDisabled then
         return
     end
     primary = managers.blackmarket:equipped_primary()
@@ -182,7 +190,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end
-    if EHI:IsAchievementLocked2("halloween_6") and mask_id == tweak_data.achievement.pump_action.mask and CheckWeaponsType("shotgun") then -- "Pump-Action" achievement
+    if EHI:IsAchievementLocked2("halloween_6") and mask_id == tweak_data.achievement.pump_action.mask and HasWeaponTypeEquipped("shotgun") then -- "Pump-Action" achievement
         CreateProgressTracker("halloween_6", EHI:GetAchievementProgress("halloween_6_stats"), 666, false, true)
         EHI:HookWithID(StatisticsManager, "killed", "EHI_halloween_6_killed", function (_, data)
             if data.variant ~= "melee" and data.weapon_unit:base():is_category("shotgun") and not CopDamage.is_civilian(data.name) then
@@ -296,7 +304,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             HookKillFunctionNoCivilian("gage_7", "p226")
         end
     end
-    if EHI:IsAchievementLocked2("gage2_5") and CheckWeaponsType("lmg") then -- "The Eighth and Final Rule" achievement
+    if EHI:IsAchievementLocked2("gage2_5") and HasWeaponTypeEquipped("lmg") then -- "The Eighth and Final Rule" achievement
         local function f()
             CreateProgressTracker("gage2_5", 0, 220, false, true)
             EHI:HookWithID(StatisticsManager, "killed", "EHI_gage2_5_killed", function (self, data)
@@ -335,7 +343,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             ShowTrackerInLoud(f)
         end
     end
-    if EHI:IsAchievementLocked2("gage3_6") and CheckWeaponsType("snp") then
+    if EHI:IsAchievementLocked2("gage3_6") and HasWeaponTypeEquipped("snp") then
         if EHI:IsAchievementLocked2("gage3_3") then -- "Lord of the Flies" achievement
             CreateProgressTracker("gage3_3", EHI:GetAchievementProgress("gage3_3_stats"), 50, false, true)
         end
@@ -415,7 +423,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end]]
-    if EHI:IsAchievementLocked2("gage4_6") and CheckWeaponsType("shotgun") then -- "Knock, Knock" achievement
+    if EHI:IsAchievementLocked2("gage4_6") and HasWeaponTypeEquipped("shotgun") then -- "Knock, Knock" achievement
         local pass, primary_index, secondary_index = CheckWeaponsBlueprint("wpn_fps_upg_a_slug")
         if pass then
             local function f()
@@ -444,7 +452,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             ShowTrackerInLoud(f)
         end
     end
-    if EHI:IsAchievementLocked2("gage4_8") and CheckWeaponsType("shotgun") then -- "Clay Pigeon Shooting" achievement
+    if EHI:IsAchievementLocked2("gage4_8") and HasWeaponTypeEquipped("shotgun") then -- "Clay Pigeon Shooting" achievement
         local pass, primary_index, secondary_index = CheckWeaponsBlueprint("wpn_fps_upg_a_piercing")
         if pass then
             local function f()
@@ -473,7 +481,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             ShowTrackerInLoud(f)
         end
     end
-    if EHI:IsAchievementLocked2("gage4_10") and CheckWeaponsType("shotgun") then -- "Bang for the Buck" achievement
+    if EHI:IsAchievementLocked2("gage4_10") and HasWeaponTypeEquipped("shotgun") then -- "Bang for the Buck" achievement
         local pass, primary_index, secondary_index = CheckWeaponsBlueprint("wpn_fps_upg_a_custom")
         local pass2, primary_index2, secondary_index2 = CheckWeaponsBlueprint("wpn_fps_upg_a_custom_free")
         if pass or pass2 then
@@ -779,6 +787,28 @@ function IngameWaitingForPlayersState:at_exit(...)
             ShowTrackerInLoud(f)
         end
     end
+    if EHI:IsAchievementLocked2("gsu_01") and HasMeleeEquipped("spoon") then -- "For all you legends" achievement
+        CreateProgressTracker("gsu_01", EHI:GetAchievementProgress("gsu_stat"), 100, false, true)
+        EHI:HookWithID(StatisticsManager, "killed", "EHI_gsu_01_killed", function (self, data)
+            if data.variant == "melee" and not CopDamage.is_civilian(data.name) then
+                managers.ehi:IncreaseTrackerProgress("gsu_01")
+            end
+        end)
+    end
+    if EHI:IsAchievementLocked2("sawp_1") and EHI:IsOVKOrAbove(Global.game_settings.difficulty) then -- "Buzzbomb" achievement
+        local achievement_data = tweak_data.achievement.enemy_melee_hit_achievements.sawp_1
+        local melee_pass = table.index_of(achievement_data.melee_weapons, managers.blackmarket:equipped_melee_weapon()) ~= -1
+        local player_style_pass = HasPlayerStyleEquipped(achievement_data.player_style.style)
+        local variation_pass = HasSuitVariationEquipped(achievement_data.player_style.variation)
+        if melee_pass and player_style_pass and variation_pass then
+            CreateProgressTracker("sawp_1", EHI:GetAchievementProgress("sawp_stat"), 200, false, true)
+            EHI:HookWithID(StatisticsManager, "killed", "EHI_sawp_1_killed", function (self, data)
+                if data.variant == "melee" and not CopDamage.is_civilian(data.name) then
+                    managers.ehi:IncreaseTrackerProgress("sawp_1")
+                end
+            end)
+        end
+    end
     if level == "nightclub" then
         if EHI:IsAchievementLocked2("gage2_3") and HasMeleeEquipped("fists") then -- "The Eighth and Final Rule" achievement
             local function f()
@@ -825,6 +855,14 @@ function IngameWaitingForPlayersState:at_exit(...)
             end)
         end
     end
+    if level == "help" and EHI:IsAchievementLocked2("tawp_1") and EHI:DifficultyToIndex(Global.game_settings.difficulty) >= 2 and mask_id == tweak_data.achievement.complete_heist_achievements.tawp_1.mask then -- "Cloaker Charmer" achievement
+        CreateProgressTracker("tawp_1", 0, 1, false, false)
+        EHI:HookWithID(StatisticsManager, "killed", "EHI_tawp_1_killed", function (self, data)
+            if data.name == "spooc" then
+                managers.ehi:IncreaseTrackerProgress("tawp_1")
+            end
+        end)
+    end
     if (level == "rvd1" or level == "rvd2") and EHI:IsAchievementLocked2("rvd_12") and EHI:IsOVKOrAbove(Global.game_settings.difficulty) and HasMeleeEquipped("clean") then
         CreateProgressTracker("rvd_12", EHI:GetAchievementProgress("rvd_12_stats"), 92, false, true)
         EHI:HookWithID(StatisticsManager, "killed", "EHI_rvd_12_killed", function (self, data)
@@ -841,7 +879,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end
-    if level == "sand" and EHI:IsOVKOrAbove(difficulty) and EHI:IsAchievementLocked2("sand_11") and CheckWeaponsType("snp") then -- "This Calls for a Round of Sputniks!" achievement
+    if level == "sand" and EHI:IsOVKOrAbove(difficulty) and EHI:IsAchievementLocked2("sand_11") and HasWeaponTypeEquipped("snp") then -- "This Calls for a Round of Sputniks!" achievement
         CreateProgressTracker("sand_11_kills", 0, 100, true, false, { "C_JiuFeng_H_UkrainianPrisoner_ThisCallForARound", "C_All_H_All_AllJobs_D0" })
         managers.ehi:AddTracker({
             id = "sand_11_accuracy",

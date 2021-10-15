@@ -1,3 +1,7 @@
+r31 (15. 10. 2021):
+Added tracker for achievements "For all you legends", "Buzzbomb" and "Cloaker Charmer"
+Achievement "Master of Floatation" is now disabled in loud as per Hotfix 212.1
+
 r30 (14. 10. 2021):
 Added trackers for Black Cat Heist
 Added "Tracker Alignment" option

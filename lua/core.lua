@@ -1145,7 +1145,7 @@ else -- Always show trackers for achievements
 end
 
 function EHI:IsAchievementLocked(achievement)
-    return not self:IsAchievementUnlocked(achievement)
+    return not self:IsAchievementUnlocked(achievement) and not self._cache.AreAchievementsDisabled
 end
 
 function EHI:GetAchievementProgress(achievement)
