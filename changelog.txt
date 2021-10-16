@@ -1,3 +1,6 @@
+r32 (16. 10. 2021):
+Heat Street: Fixed a crash at "Light the van on fire!" objective
+
 r31 (15. 10. 2021):
 Added tracker for achievements "For all you legends", "Buzzbomb" and "Cloaker Charmer"
 Achievement "Master of Floatation" is now disabled in loud as per Hotfix 212.1
