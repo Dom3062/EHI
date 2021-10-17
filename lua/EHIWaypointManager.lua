@@ -318,6 +318,17 @@ function EHIWaypointManager:UnpauseWaypoint(id)
     self:SetWaypointPause(id, false)
 end
 
+function EHIWaypointManager:SetWaypointColor(id, color)
+    if not (id and self._waypoints[id]) then
+        return
+    end
+    local wp = self._waypoints[id]
+    wp.color = color
+    wp.bitmap:set_color(color)
+    wp.timer_gui:set_color(color)
+    wp.arrow:set_color(color)
+end
+
 function EHIWaypointManager:SetPagerWaypointAnswered(id)
     if not self:WaypointExistsAndType(id, "pager_timer") then
         return

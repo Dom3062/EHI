@@ -986,8 +986,6 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(id)
                     triggers[id].time = nil
                 else
-                    self:Log("No time saved in cache for id " .. tostring(id) .. "! This happens when client connected after the time was saved.")
-                    self:Log("Inaccurate timer created to represent the missing tracker.")
                     self:CheckCondition(1011480)
                 end
             elseif f == SF.KOSUGI_DisableTriggerAndExecute then

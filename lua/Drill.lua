@@ -6,4 +6,15 @@ function Drill:set_autorepair(state, ...)
     end
     local key = tostring(self._unit:key())
     managers.ehi:CallFunction(key, "SetAutorepair", self._autorepair)
+    managers.ehi_waypoint:SetWaypointColor(key, tweak_data.ehi.color.DrillAutorepair)
+end
+
+if Network:is_client() then
+    local  _f_on_autorepair = Drill.on_autorepair
+    function Drill:on_autorepair(...)
+        _f_on_autorepair(self, ...)
+        local key = tostring(self._unit:key())
+        managers.ehi:CallFunction(key, "SetAutorepair", true)
+        managers.ehi_waypoint:SetWaypointColor(key, tweak_data.ehi.color.DrillAutorepair)
+    end
 end

@@ -1781,6 +1781,9 @@ elseif level_id == "run" then -- Heat Street
         [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = TT.Achievement, condition = true }, -- Not really an achievement, but I want to use "SetCompleted" function :p
         [101550] = { id = "ClearPickupZone", special_function = SF.SetAchievementComplete },
 
+        -- Parking lot
+        [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { "faster" } },
+
         [101521] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, "pd2_escape" }, special_function = SF.RemoveTriggerWhenExecuted },
 
         [100144] = { special_function = SF.Trigger, data = { 1001441, 1001442, 1001443 } },
@@ -1819,7 +1822,7 @@ elseif level_id == "glace" then -- Green Bridge
         [104290] = { id = "PickUpBalloonFirstTry", special_function = SF.PauseTracker },
         [103517] = { id = "PickUpBalloonFirstTry", special_function = SF.UnpauseTracker },
         [101205] = { id = "PickUpBalloonFirstTry", special_function = SF.UnpauseTracker },
-        [102370] = { time = 45, id = "PickUpBalloonSecondTry", icons = { "pd2_escape" }, class = TT.Pausable },
+        [102370] = { id = "PickUpBalloonSecondTry", icons = { "pd2_escape" }, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = 100732 },
 
         [101732] = { special_function = SF.Trigger, data = { 1017321, 1017322 } },
         [1017321] = { id = "glace_9", status = "ready", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up, exclude_from_sync = true },
@@ -1838,6 +1841,17 @@ elseif level_id == "glace" then -- Green Bridge
         triggers[102368].synced = { class = TT.Pausable }
         triggers[102368].special_function = SF.AddTrackerIfDoesNotExist
         EHI:AddSyncTrigger(102368, triggers[102368])
+        triggers[102371] = { time = 60, id = "PickUpBalloonFirstTry", icons = { "pd2_defend" }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
+        triggers[102366] = { time = 30, id = "PickUpBalloonFirstTry", icons = { "pd2_defend" }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
+        triggers[103039] = { time = 20, id = "PickUpBalloonFirstTry", icons = { "pd2_defend" }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
+        triggers[102370].time = 35
+        triggers[102370].random_time = 10
+        triggers[102370].delay_only = true
+        triggers[102370].class = "EHIInaccuratePausableTracker"
+        triggers[102370].synced = { class = TT.Pausable }
+        triggers[102370].special_function = SF.AddTrackerIfDoesNotExist
+        EHI:AddSyncTrigger(102370, triggers[102370])
+        triggers[103038] = { time = 20, id = "PickUpBalloonSecondTry", icons = { "pd2_escape" }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
     end
 elseif level_id == "wwh" then -- Alaskan Deal
     triggers = {
@@ -2221,7 +2235,9 @@ elseif level_id == "fex" then -- Buluc's Mansion
 
         [EHI:GetInstanceElementID(100026, 24580)] = { time = 26.5 + 5, id = "CarBurn", icons = { "pd2_car", "pd2_fire" } },
 
-        [EHI:GetInstanceElementID(100049, 5200)] = { time = 6, id = "ThermiteFrontGate", icons = { "pd2_fire" } }
+        [EHI:GetInstanceElementID(100049, 5200)] = { time = 6, id = "ThermiteFrontGate", icons = { "pd2_fire" } },
+
+        [EHI:GetInstanceElementID(100016, 23480)] = { time = 45, id = "SafeHackStealth", icons = { Icon.Vault } }
     }
 elseif level_id == "chas" then -- Dragon Heist
     local element_sync_triggers = {

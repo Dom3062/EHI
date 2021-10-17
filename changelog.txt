@@ -1,3 +1,7 @@
+r33 (17. 10. 2021):
+Improved detection of drill/saw autorestart on client - the unit must autorestart first
+Fixed a crash while using a sniper rifle with Graze skill
+
 r32 (16. 10. 2021):
 Heat Street: Fixed a crash at "Light the van on fire!" objective
 
