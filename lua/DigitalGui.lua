@@ -90,6 +90,11 @@ elseif level_id == "arm_for" then -- Transport: Train Heist
     end
     EHI:AddOnAlarmCallback(f)
 elseif level_id == "mus" then -- The Diamond
+	icons =
+	{
+		[EHI:GetInstanceUnitID(100020, 300)] = { EHI.Icons.Keycard },
+		[EHI:GetInstanceUnitID(100020, 375)] = { EHI.Icons.Keycard }
+	}
 	remove =
 	{
 		[133922] = true -- Path time lock in the Diamond chamber

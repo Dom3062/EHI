@@ -80,7 +80,7 @@ local function ArbiterHasStandardAmmo(primary_index)
         weapon = managers.blackmarket:equipped_secondary()
     end
     local t = managers.weapon_factory:get_ammo_data_from_weapon(weapon.factory_id, weapon.blueprint)
-    return table.size(t) == 0 -- Standard ammo type is not returned in the array, only the ammo upgrades
+    return table.size(t or {}) == 0 -- Standard ammo type is not returned in the array, only the ammo upgrades
 end
 
 local function AddGageTracker()
@@ -90,6 +90,7 @@ local function AddGageTracker()
             id = "Gage",
             icons = { "gage" },
             progress = EHI._cache.GagePackagesProgress or 0,
+            exclude_from_sync = true,
             max = max,
             class = "EHIProgressTracker"
         })

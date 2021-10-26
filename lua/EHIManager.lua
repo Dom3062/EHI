@@ -376,7 +376,7 @@ end
 
 function EHIManager:AddTracker(params, pos)
     if self._trackers[params.id] then
-        EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists! Traceback:")
+        EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
         EHI:LogTraceback()
         self._trackers[params.id]:delete()
     end
@@ -404,6 +404,11 @@ end
 
 function EHIManager:Sync(id, delay)
     EHI:Sync(EHI.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
+end
+
+if Global.game_settings and Global.game_settings.single_player then
+    EHIManager.Sync = function(self, id, delay)
+    end
 end
 
 function EHIManager:AddPagerTracker(params)
@@ -1098,5 +1103,12 @@ function EHIManager:CallFunction(id, f, ...)
     local tracker = self._trackers[id]
     if tracker and tracker[f] then
         tracker[f](tracker, ...)
+    end
+end
+
+function EHIManager:ReturnValue(id, f, ...)
+    local tracker = self._trackers[id]
+    if tracker and tracker[f] then
+        return tracker[f](tracker, ...)
     end
 end

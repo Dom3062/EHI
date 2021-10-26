@@ -55,7 +55,7 @@ _G.EHI =
         RemoveTriggerAndShowAchievement = 23,
         SetTimeByPreplanning = 24,
         IncreaseProgress = 25,
-        SetTimeNoAnimOrCreateTracker = 26,
+        SetTimeNoAnimOrCreateTrackerClient = 26,
         SetTrackerAccurate = 27,
         RemoveTriggers = 28,
         SetAchievementStatus = 29,
@@ -80,6 +80,8 @@ _G.EHI =
         IncreaseProgressMax = 48,
         AddTrackerIfDoesNotExistElementHostCheckOnly = 49,
         IncreaseChanceFromElementSpecify = 50,
+        ShowWaypoint = 51,
+        ShowEHIWaypoint = 52,
 
         AddToGlobalAndExecute = 99998, -- REMOVE ME
         Debug = 100000,
@@ -126,7 +128,8 @@ _G.EHI =
         Boat = "boat",
         Lasers = "C_Dentist_H_BigBank_Entrapment",
         Money = "equipment_plates",
-        Phone = "pd2_phone"
+        Phone = "pd2_phone",
+        Keycard = "equipment_bank_manager_key"
     },
 
     difficulties = {
@@ -632,7 +635,7 @@ function EHI:AddTracker(id, sync)
         managers.ehi:Sync(id, self:GetTime(id))
     end
     if trigger.waypoint then
-        managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
+        managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.data)
     end
 end
 
@@ -644,7 +647,7 @@ function EHI:AddTrackerAndSync(id, delay)
         class = host_triggers[id].class
     }, id, delay)
     if host_triggers[id].waypoint then
-        managers.ehi_waypoint:AddWaypoint(host_triggers[id].id, host_triggers[id].waypoint)
+        managers.ehi_waypoint:AddWaypoint(host_triggers[id].id, host_triggers[id].data)
     end
 end
 
@@ -806,11 +809,14 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.IncreaseProgress then
                 managers.ehi:IncreaseTrackerProgress(triggers[id].id)
                 managers.hud:IncreaseTrackerWaypointProgress(triggers[id].id)
-            elseif f == SF.SetTimeNoAnimOrCreateTracker then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:SetTrackerTimeNoAnim(triggers[id].id, self:GetTime(id))
-                else
-                    self:CheckCondition(id)
+            elseif f == SF.SetTimeNoAnimOrCreateTrackerClient then
+                local value = managers.ehi:ReturnValue(triggers[id].id, "GetTrackerType")
+                if value ~= "accurate" then
+                    if value then
+                        managers.ehi:SetTrackerTimeNoAnim(triggers[id].id, self:GetTime(id))
+                    else
+                        self:CheckCondition(id)
+                    end
                 end
             elseif f == SF.SetTrackerAccurate then
                 if managers.ehi:TrackerExists(triggers[id].id) then
@@ -917,6 +923,14 @@ function EHI:Trigger(id, element, enabled)
                 if e then
                     managers.ehi:IncreaseChance(triggers[id].id, e._values.chance)
                 end
+            elseif f == SF.ShowWaypoint then
+                if triggers[id].delay then
+                    EHI:DelayCall("EHI_" .. triggers[id].id, triggers[id].delay, function()
+                        managers.hud:add_waypoint(triggers[id].id, triggers[id].data)
+                    end)
+                    return
+                end
+                managers.hud:add_waypoint(triggers[id].id, triggers[id].data)
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
@@ -1086,9 +1100,19 @@ function EHI:InitElements()
                     element._calc_element_delay = function (e, params, ...)
                         local delay = self._element_delay[e._id](e, params, ...)
                         if element_delay_triggers[e._id][params.id] then
-                            self:AddTrackerAndSync(params.id, delay)
-                            if host_triggers[params.id] and host_triggers[params.id].remove_trigger_when_executed then
-                                element_delay_triggers[e._id][params.id] = nil
+                            if host_triggers[params.id] then
+                                if host_triggers[params.id].remove_trigger_when_executed then
+                                    element_delay_triggers[e._id][params.id] = nil
+                                elseif host_triggers[params.id].set_time_when_tracker_exists then
+                                    if managers.ehi:TrackerExists(host_triggers[params.id].id) then
+                                        managers.ehi:SetTrackerTimeNoAnim(host_triggers[params.id].id, delay)
+                                        self:Sync(self.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
+                                    else
+                                        self:AddTrackerAndSync(params.id, delay)
+                                    end
+                                end
+                            else
+                                self:AddTrackerAndSync(params.id, delay)
                             end
                         end
                         return delay

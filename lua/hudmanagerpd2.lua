@@ -5,6 +5,10 @@ else
 	EHI._hooks.HUDManagerPD2 = true
 end
 
+if not (Global.game_settings and Global.game_settings.level_id) then
+    return
+end
+
 local level_id = Global.game_settings.level_id
 
 local original =

@@ -4,6 +4,7 @@ if EHI._hooks.CoreWorldInstanceManager then
 else
     EHI._hooks.CoreWorldInstanceManager = true
 end
+local debug_instance = false
 local SF = EHI.SpecialFunctions
 local TT = -- Tracker Type
 {
@@ -63,6 +64,11 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
             used_start_indexes[start_index] = true
         end
         instance_index = instance_index + 1
+    end
+    if debug_instance then
+        EHI:Log("Instance Folder: " .. tostring(folder))
+        EHI:Log("Instance Start Index: " .. tostring(instance.start_index))
+        EHI:Log("Instance Rotation: " .. tostring(instance.rotation))
     end
     return instance_data
 end

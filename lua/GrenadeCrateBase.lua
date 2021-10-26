@@ -17,7 +17,7 @@ local ignore = {}
 if level_id == "sah" then -- Shacklethorne Auction
     ignore =
     {
-        [400178] = true -- Unused Grenade case
+        [1] = Vector3(-1700, 2500, 1.08481) -- Unused Grenade case
     }
 end
 
@@ -43,6 +43,17 @@ else
     end
 end
 
+local function CheckIgnore(unit_pos)
+    local result = false
+    for _, pos in pairs(ignore) do
+        if pos == unit_pos then
+            result = true
+            break
+        end
+    end
+    return result
+end
+
 local original =
 {
     init = GrenadeCrateBase.init,
@@ -54,7 +65,7 @@ local original =
 }
 function GrenadeCrateBase:init(unit, ...)
     self._ehi_key = tostring(unit:key())
-    self._ignore = ignore[unit:editor_id()] or false
+    self._ignore = CheckIgnore(unit:position())
     original.init(self, unit, ...)
 end
 
@@ -80,7 +91,7 @@ end
 
 function CustomGrenadeCrateBase:init(unit, ...)
     self._ehi_key = tostring(unit:key())
-    self._ignore = ignore[unit:editor_id()] or false
+    self._ignore = CheckIgnore(unit:position())
     original.init_custom(self, unit, ...)
 end
 

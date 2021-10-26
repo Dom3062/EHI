@@ -94,11 +94,18 @@ elseif level_id == "jewelry_store" then -- Jewelry Store
         [101601] = { time = 7, id = "VanDriveAway", icons = CarWait, class = TT.Warning },
 
         [103172] = { time = 45 + 830/30, id = "Van", icons = CarEscape },
-        [103182] = { time = 600/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
-        [103181] = { time = 580/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
-        [101770] = { time = 650/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+        [103183] = { id = 103194, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(1602.0, 5635.0, 140.0) } },
+        [103182] = { special_function = SF.Trigger, data = { 1031821, 1031822 } },
+        [1031821] = { time = 600/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+        [1031822] = { id = 103193, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-3776.0, 1766.0, 156.0) } },
+        [103181] = { special_function = SF.Trigger, data = { 1031811, 1031812 } },
+        [1031811] = { time = 580/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+        [1031812] = { id = 103192, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(3280.0, 2200.0, 152.133) } },
+        [101770] = { special_function = SF.Trigger, data = { 1017701, 1017702 } },
+        [1017701] = { time = 650/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+        [1017702] = { id = 101776, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-2324.0, 4444.0, 150.0) } },
 
-        [101433] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
+        [101433] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 
         --[[[101157] = { time = 80, id = "DifficultyIncrease50", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
         [103999] = { special_function = SF.Trigger, data = { 1039991, 1039992 } },
@@ -223,7 +230,7 @@ elseif level_id == "family" then -- Diamond Store
 
         [100750] = { time = 120 + 80, id = "Van", icons = CarEscape },
         [101568] = { time = 20, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
-        [101566] = { time = 40, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+        [101569] = { time = 40, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
         [101572] = { time = 60, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
         [101573] = { time = 80, id = "Van", icons = CarEscape, special_function = SF.AddTrackerIfDoesNotExist },
 
@@ -474,6 +481,9 @@ elseif level_id == "four_stores" then -- Four Stores
 
         [103501] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
 
+        [102505] = { id = 101006, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(120.0, -7323.0, 125.0) } },
+        [103200] = { id = 103234, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-2150.0, -475.0, 150.0) } },
+
         -- First cop car
         --[[[101169] = { time = 2.5 + 3 + 2 + 30 + 20, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning },
         [101170] = { time = 3 + 2 + 30 + 20, id = "DifficultyIncrease20", icons = DifficultyIncrease, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
@@ -534,9 +544,16 @@ elseif level_id == "ukrainian_job" then -- Ukrainian Job
         [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = CarWait, class = TT.Warning },
 
         [103172] = { time = 2 + 830/30, id = "Van", icons = CarEscape },
-        [103182] = { time = 600/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
-        [103181] = { time = 580/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
-        [101770] = { time = 650/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+        [103183] = { id = 103194, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(1600.0, 5700.0, 167.0) } },
+        [103182] = { special_function = SF.Trigger, data = { 1031821, 1031822 } },
+        [1031821] = { time = 600/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+        [1031822] = { id = 103193, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-3781.0, 1779.0, 112.0) } },
+        [103181] = { special_function = SF.Trigger, data = { 1031811, 1031812 } },
+        [1031811] = { time = 580/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+        [1031812] = { id = 103192, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(3297.0, 2218.0, 170.0) } },
+        [101770] = { special_function = SF.Trigger, data = { 1017701, 1017702 } },
+        [1017701] = { time = 650/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+        [1017702] = { id = 101776, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-2341.0, 4437.0, 150.0) } },
 
         [100073] = { time = 36, id = "lets_do_this", class = TT.Achievement },
         [100074] = { id = "cac_12", status = "ready", class = TT.AchievementNotification, special_function = SF.ExecuteAchievementIfInteractionExists, data = "circuit_breaker_off", exclude_from_sync = true },
@@ -581,15 +598,27 @@ elseif level_id == "shoutout_raid" then -- Meltdown
     }
 elseif level_id == "jolly" then -- Aftershock
     local c4_drop = { time = 120 + 25 + 0.25 + 2, id = "C4Drop", icons = HeliDropC4 }
+    local c4_wp = Vector3(0, 0, 50)
     triggers = {
         [101644] = { time = 60, id = "BainWait", icons = { Icon.Wait } },
         [EHI:GetInstanceElementID(100047, 21250)] = { time = 1 + 60 + 60 + 60 + 20 + 15, id = "HeliEscape", icons = HeliEscapeNoLoot },
 
-        [101240] = c4_drop,
-        [101241] = c4_drop,
-        [101242] = c4_drop,
-        [101243] = c4_drop,
-        [101249] = c4_drop
+        -- The rotation is taken directly from the game by Lua (it is not the same as in the decompiled mission script)
+        [101240] = { special_function = SF.Trigger, data = { 1012401, 1012402 } },
+        [1012401] = c4_drop,
+        [1012402] = { delay = 120, id = EHI:GetInstanceElementID(100021, 26550), special_function = SF.ShowWaypoint, data = { icon = "pd2_c4", position = Vector3(1175.0, -1375.0, -12.6262) + c4_wp:rotate_with(Rotation(-44.9999, 0, 0)) } },
+        [101241] = { special_function = SF.Trigger, data = { 1012411, 1012412 } },
+        [1012411] = c4_drop,
+        [1012412] = { delay = 120, id = EHI:GetInstanceElementID(100021, 26650), special_function = SF.ShowWaypoint, data = { icon = "pd2_c4", position = Vector3(6325.0, 2325.0, 0.0) + c4_wp:rotate_with(Rotation(0, 0, -0)) } },
+        [101242] = { special_function = SF.Trigger, data = { 1012421, 1012422 } },
+        [1012421] = c4_drop,
+        [1012422] = { delay = 120, id = EHI:GetInstanceElementID(100021, 26750), special_function = SF.ShowWaypoint, data = { icon = "pd2_c4", position = Vector3(2425.0, 4325.0, 1201.0) + c4_wp:rotate_with(Rotation(44.9999, 0, -0)) } },
+        [101243] = { special_function = SF.Trigger, data = { 1012431, 1012432 } },
+        [1012431] = c4_drop,
+        [1012432] = { delay = 120, id = EHI:GetInstanceElementID(100021, 26850), special_function = SF.ShowWaypoint, data = { icon = "pd2_c4", position = Vector3(925.0, 10575.0, -12.6262) + c4_wp:rotate_with(Rotation(-135, 0, -0)) } },
+        [101249] = { special_function = SF.Trigger, data = { 1012491, 1012492 } },
+        [1012491] = c4_drop,
+        [1012492] = { delay = 120, id = EHI:GetInstanceElementID(100021, 26950), special_function = SF.ShowWaypoint, data = { icon = "pd2_c4", position = Vector3(1550.0, 925.0, 1200.0) + c4_wp:rotate_with(Rotation(135, 0, -0)) } },
     }
 elseif level_id == "nightclub" then -- Nightclub
     triggers = {
@@ -1351,6 +1380,10 @@ elseif level_id == "rat" or level_id == "ratdaylight" then -- Cook Off and Cook 
     local anim_delay = 743/30 -- 743/30 is a animation duration; 3s is zone activation delay (never used when van is coming back)
     local heli_delay_full = 13 + 19 -- 13 = Base Delay; 19 = anim delay
     local heli_icon = { Icon.Heli, "pd2_methlab", "pd2_goto" }
+    local element_sync_triggers =
+    {
+        [100494] = { id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100724, set_time_when_tracker_exists = true }
+    }
     triggers = {
         [101081] = { id = "halloween_1", status = "ready", class = TT.AchievementNotification },
         [101907] = { id = "halloween_1", status = "ok", special_function = SF.SetAchievementStatus },
@@ -1365,7 +1398,8 @@ elseif level_id == "rat" or level_id == "ratdaylight" then -- Cook Off and Cook 
         [1023831] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30, id = "FirstAssaultDelay", icons = FirstAssaultDelay, class = TT.Warning },
         [100721] = { time = 1, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
         [1007211] = { chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists },
-        [100724] = { time = 20, random_time = 5, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeNoAnimOrCreateTracker },
+
+        [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, "pd2_generic_interact" } },
 
         [102167] = { time = 60 + heli_delay, id = "HeliMeth", icons = heli_icon },
         [102168] = { time = 90 + heli_delay, id = "HeliMeth", icons = heli_icon },
@@ -1375,20 +1409,24 @@ elseif level_id == "rat" or level_id == "ratdaylight" then -- Cook Off and Cook 
         [102229] = { time = 90 + van_delay_ovk, id = "VanStayDelay", icons = van_icon, class = TT.Warning },
         [102235] = { time = 100 + van_delay_ovk, id = "VanStayDelay", icons = van_icon, class = TT.Warning },
         [102236] = { time = 50 + van_delay, id = "VanStayDelay", icons = van_icon, class = TT.Warning },
-        [102237] = { time = 80 + van_delay_ovk, id = "VanStayDelay", icons = van_icon, class = TT.Warning },
+        [102237] = { time = 60 + van_delay_ovk, id = "VanStayDelay", icons = van_icon, class = TT.Warning },
         [102238] = { time = 70 + van_delay_ovk, id = "VanStayDelay", icons = van_icon, class = TT.Warning },
 
         [102611] = { id = "voff_5", special_function = SF.IncreaseProgress },
 
         [1] = { special_function = SF.RemoveTriggers, data = { 101972, 101973, 101974, 101975 } },
-        [101972] = { time = 240 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
-        [101973] = { time = 180 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
-        [101974] = { time = 120 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
-        [101975] = { time = 60 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+        [101972] = { time = 60 + 60 + 60 + 30 + 15 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+        [101973] = { time = 60 + 60 + 30 + 15 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+        [101974] = { time = 60 + 30 + 15 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+        [101975] = { time = 30 + 15 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
 
         [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", "pd2_goto" }, class = TT.Warning },
 
-        [101982] = { time = 589/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+        [101982] = { special_function = SF.Trigger, data = { 1019821, 1019822 } },
+        [1019821] = { time = 589/30, id = "Van", icons = CarEscape, special_function = SF.SetTimeOrCreateTracker },
+        [1019822] = { id = 101281, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-1133.0, 1264.0, 1289.0) } },
+
+        [101128] = { id = 101454, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-1374.0, -2388.0, 1135.0) } },
 
         [100723] = { amount = 15, id = "CookChance", special_function = SF.IncreaseChance }
     }
@@ -1397,6 +1435,12 @@ elseif level_id == "rat" or level_id == "ratdaylight" then -- Cook Off and Cook 
     end
     if difficulty_index == 3 or difficulty_index == 2 then -- OVK or Very Hard
         triggers[102197] = { time = 120 + heli_delay_full, id = "HeliMeth", icons = heli_icon }
+    end
+    if client then
+        triggers[100724] = { time = 20, random_time = 5, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
+        EHI:SetSyncTriggers(element_sync_triggers)
+    else
+        EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
     end
     trigger_id_all = "Van"
     trigger_icon_all = CarEscape
@@ -2018,8 +2062,8 @@ elseif level_id == "sah" then -- Shacklethorne Auction
         [100643] = { time = 30, id = "CrowdAlert", icons = { "enemy" }, class = TT.Warning },
         [100645] = { id = "CrowdAlert", special_function = SF.RemoveTracker },
 
-        [101050] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = HeliEscape, special_function = SF.ExecuteIfElementIsEnabled }, -- West
-        [101039] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = HeliEscape, special_function = SF.ExecuteIfElementIsEnabled } -- East
+        [101725] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = HeliEscape }, -- West
+        [101845] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = HeliEscape } -- East
     }
 elseif level_id == "bph" then -- Hell's Island
     triggers = {
@@ -2133,7 +2177,9 @@ elseif level_id == "mex" then -- Border Crossing
         [101983] = { time = 15, id = "C4Trap", icons = { "pd2_c4" }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
         [101722] = { id = "C4Trap", special_function = SF.RemoveTracker },
 
-        [102685] = { id = "Refueling", icons = { "pd2_water_tap" }, class = TT.Pausable, special_function = SF.MEX_CheckIfLoud, data = { yes = 121, no = 91 } },
+        [102685] = { special_function = SF.Trigger, data = { 1026851, 1026852 } },
+        [1026851] = { id = "Refueling", icons = { "pd2_water_tap" }, class = TT.Pausable, special_function = SF.MEX_CheckIfLoud, data = { yes = 121, no = 91 } },
+        [1026852] = { special_function = SF.RemoveTriggers, data = { 102685 } },
         [102678] = { id = "Refueling", special_function = SF.UnpauseTracker },
         [102684] = { id = "Refueling", special_function = SF.PauseTracker }
     }
@@ -2473,6 +2519,13 @@ for id, data in pairs(triggers) do
         if not data.icons then
             triggers[id].icons = EHI:GetAchievementIcon(triggers[id].id)
         end
+    end
+    -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
+    if data.special_function == SF.ShowWaypoint then
+        triggers[id].data.distance = true
+        triggers[id].data.state = "sneak_present"
+        triggers[id].data.present_timer = 0
+        triggers[id].data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
     end
 end
 

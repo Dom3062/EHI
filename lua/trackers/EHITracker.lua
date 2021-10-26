@@ -25,6 +25,7 @@ local bg_visibility = EHI:GetOption("show_tracker_bg")
 
 EHITracker = EHITracker or class()
 EHITracker._update = true
+EHITracker._tracker_type = "accurate"
 function EHITracker:init(panel, params)
     self._exclude_from_sync = params.exclude_from_sync
     self._icons = params.icons
@@ -317,6 +318,7 @@ function EHITracker:SetIconColor(color)
 end
 
 function EHITracker:SetTrackerAccurate(time)
+    self._tracker_type = "accurate"
     self:SetTextColor(Color.white)
     self:SetTimeNoAnim(time)
 end
@@ -331,6 +333,10 @@ end
 
 function EHITracker:GetPanelW()
     return self._panel_override_w or self._panel:w()
+end
+
+function EHITracker:GetTrackerType()
+    return self._tracker_type
 end
 
 function EHITracker:destroy(skip)

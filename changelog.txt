@@ -1,3 +1,11 @@
+r34 (26. 10. 2021):
+Fixed a possible log spam with some specific mods
+Fixed a crash when the game returned "nil" value for Arbiter ammo
+Border Crossing: Fixed an issue where fueling timer reset in stealth
+Cook Off: Fixed an issue where the first Van arrival was not accurate
+Shacklethorne Auction: Fixed an issue where Heli timer was not visible
+Menu: Fixed a visual issue with the preview when "Tracker Alignment" was set to "Horizontal"
+
 r33 (17. 10. 2021):
 Improved detection of drill/saw autorestart on client - the unit must autorestart first
 Fixed a crash while using a sniper rifle with Graze skill

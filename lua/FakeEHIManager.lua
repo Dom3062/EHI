@@ -30,8 +30,8 @@ end
 function FakeEHIManager:AddFakeTrackers()
     self._n_of_trackers = 0
     self._fake_trackers = {}
-    self:AddFirstFakeTracker({ id = "N/A", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { "faster" } } )
-    self:AddFakeTracker({ id = "N/A", time = math.random(60, 180), icons = { EHI.Icons.Car, EHI.Icons.Escape } } )
+    self:AddFirstFakeTracker({ id = "Default", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { "faster" } } )
+    self:AddFakeTracker({ id = "Default", time = math.random(60, 180), icons = { EHI.Icons.Car, EHI.Icons.Escape } } )
     if EHI:GetOption("show_achievement") then
         self:AddFakeTracker({ id = "show_achievement", time = math.random(60, 180), icons = { "milestone_trophy" } } )
     end
@@ -84,14 +84,13 @@ function FakeEHIManager:AddFakeTrackers()
 end
 
 function FakeEHIManager:AddFakeTracker(params)
-    params.x, params.y = self:GetPos(self._n_of_trackers, params.icons)
+    params.x, params.y = self:GetPos(self._n_of_trackers)
     params.scale = self._scale
     params.text_scale = self._text_scale
     params.bg = self._bg_visibility
     params.one_icon = self._icons_visibility
     self._n_of_trackers = self._n_of_trackers + 1
-    local tracker = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params)
-    self._fake_trackers[#self._fake_trackers + 1] = tracker
+    self._fake_trackers[#self._fake_trackers + 1] = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params)
 end
 
 function FakeEHIManager:AddFirstFakeTracker(params)
@@ -125,8 +124,8 @@ function FakeEHIManager:GetPos(pos)
     local x, y = self._x, self._y
     if self._tracker_alignment == 1 then -- Vertical
         y = self._y + (pos * (panel_size + panel_offset))
-    elseif self._n_of_trackers > 0 then -- Horizontal
-        local last_tracker = self._fake_trackers[self._n_of_trackers]
+    elseif pos and pos > 0 then -- Horizontal
+        local last_tracker = self._fake_trackers[pos]
         x = last_tracker._panel:right() + panel_offset
     end
     return x, y
@@ -153,8 +152,9 @@ end
 function FakeEHIManager:UpdateXOffset(x)
     local x_full, _ = managers.gui_data:safe_to_full(x, 0)
     self._x = x_full
-    for _, tracker in pairs(self._fake_trackers) do
-        tracker:SetX(x_full)
+    for i, tracker in pairs(self._fake_trackers) do
+        local x_new, _ = self:GetPos(i - 1)
+        tracker:SetX(x_new)
     end
 end
 
@@ -162,7 +162,8 @@ function FakeEHIManager:UpdateYOffset(y)
     local _, y_full = managers.gui_data:safe_to_full(0, y)
     self._y = y_full
     for i, tracker in pairs(self._fake_trackers) do
-        tracker:SetY(self:GetY(i - 1))
+        local _, y_new = self:GetPos(i - 1)
+        tracker:SetY(y_new)
     end
     self._preview_text:set_bottom(self:GetY(0) - panel_offset)
 end
@@ -214,41 +215,7 @@ function FakeEHIManager:Redraw()
     self:AddFakeTrackers()
 end
 
-local icons =
-{
-    default = { texture = "guis/textures/pd2/pd2_waypoints", texture_rect = {96, 64, 32, 32} },
-
-    faster = { texture = "guis/textures/pd2/skilltree/drillgui_icon_faster" },
-    silent = { texture = "guis/textures/pd2/skilltree/drillgui_icon_silent" },
-    restarter = { texture = "guis/textures/pd2/skilltree/drillgui_icon_restarter" },
-    xp = { texture = "guis/textures/pd2/blackmarket/xp_drop" },
-
-    heli = { texture = "guis/textures/pd2_mod_ehi/heli" },
-    mad_scan = { texture = "guis/textures/pd2_mod_ehi/mad_scan" },
-    boat = { texture = "guis/textures/pd2_mod_ehi/boat" },
-    enemy = { texture = "guis/textures/pd2_mod_ehi/enemy" },
-    piggy = { texture = "guis/textures/pd2_mod_ehi/piggy" },
-    assaultbox = { texture = "guis/textures/pd2_mod_ehi/assaultbox" },
-
-    reload = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {0, 576, 64, 64} },
-    smoke = { texture = "guis/dlcs/max/textures/pd2/specialization/icons_atlas", texture_rect = {0, 0, 64, 64} },
-    teargas = { texture = "guis/dlcs/drm/textures/pd2/crime_spree/modifiers_atlas_2", texture_rect = {128, 256, 128, 128} },
-    gage = { texture = "guis/dlcs/gage_pack_jobs/textures/pd2/endscreen/gage_assignment" },
-    hostage = { texture = "guis/textures/pd2/hud_icon_hostage" },
-    buff_shield = { texture = "guis/textures/pd2/hud_buff_shield" },
-
-    doctor_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/doctor_bag" },
-    ammo_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/ammo_bag" },
-    first_aid_kit = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/first_aid_kit" },
-    bodybags_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/bodybags_bag" },
-    frag_grenade = { texture = tweak_data.hud_icons.frag_grenade.texture, texture_rect = tweak_data.hud_icons.frag_grenade.texture_rect },
-
-    minion = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 512, 64, 64} },
-    heavy = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {192, 64, 64, 64} },
-    sniper = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 320, 64, 64} },
-    camera_loop = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {256, 128, 64, 64} },
-    pager_icon = { texture = "guis/textures/pd2/specialization/icons_atlas", texture_rect = {64, 256, 64, 64} }
-}
+local icons = tweak_data.ehi.icons
 
 local function GetIcon(icon)
     if icons[icon] then
