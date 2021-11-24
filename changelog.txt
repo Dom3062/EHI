@@ -1,3 +1,11 @@
+r35 (24. 11. 2021):
+Added option "Show XP difference"
+Added option "Show Waypoints for Looped Cameras"
+Made improvements to units used in-game so they will work also on custom maps
+Fixed an issue where stealth trackers were visible in loud gameplay when a client dropped-in
+Fixed an issue where a tracker could be not visible entirely and a small part of the tracker is visible
+Santa's Workshop: Fixed an issue where Safe Timer was not visible
+
 r34 (26. 10. 2021):
 Fixed a possible log spam with some specific mods
 Fixed a crash when the game returned "nil" value for Arbiter ammo

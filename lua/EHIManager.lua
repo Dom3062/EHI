@@ -222,11 +222,10 @@ function EHIManager:LoadSync()
         return
     end
     local level_id = Global.game_settings.level_id
-    local difficulty = Global.game_settings.difficulty
     local show_achievement = EHI:GetOption("show_achievement")
     if level_id == "pbr2" then -- Birth of Sky
         self:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
-        --[[if show_achievement and EHI:IsOVKOrAbove(difficulty) then
+        --[[if show_achievement and EHI:IsDifficultyOrAbove("overkill") then
             self:AddTimedAchievementTracker("jerry_4", 83)
         end]]
     elseif level_id == "pex" then -- Breakfast in Tijuana
@@ -254,7 +253,7 @@ function EHIManager:LoadSync()
             self:AddTimedAchievementTracker("born_5", 120)
         end
     elseif level_id == "big" then -- The Big Bank
-        if show_achievement and EHI:DifficultyToIndex(difficulty) >= 1 then -- Hard or above
+        if show_achievement and EHI:IsDifficultyOrAbove("hard") then -- Hard or above
             self:AddTimedAchievementTracker("bigbank_4", 720)
         end
     elseif level_id == "red2" then -- First World Bank
@@ -262,7 +261,7 @@ function EHIManager:LoadSync()
             self:AddTimedAchievementTracker("green_3", 817)
         end
     elseif level_id == "fish" then -- The Yacht Heist
-        if show_achievement and EHI:IsOVKOrAbove(difficulty) then
+        if show_achievement and EHI:IsDifficultyOrAbove("overkill") then
             self:AddTimedAchievementTracker("fish_4", 360)
         end
     elseif level_id == "kenaz" then -- Golden Grin Casino
@@ -278,7 +277,7 @@ function EHIManager:LoadSync()
             self:AddTimedAchievementTracker("lets_do_this", 36)
         end
     elseif level_id == "chas" then -- Dragon Heist
-        if show_achievement and EHI:IsOVKOrAbove(difficulty) then
+        if show_achievement and EHI:IsDifficultyOrAbove("overkill") then
             self:AddTimedAchievementTracker("chas_11", 360)
         end
     elseif level_id == "nmh" then -- No Mercy
@@ -319,7 +318,7 @@ function EHIManager:LoadSync()
         local tracker_id = EHI:IsAchievementUnlocked("lord_of_war") and "LootCounter" or "lord_of_war"
         self:SetTrackerProgress(tracker_id, managers.loot:GetSecuredBagsAmount())
     elseif level_id == "mallcrasher" then
-        if show_achievement and EHI:DifficultyToIndex(difficulty) == 3 and self._t <= 50 then
+        if show_achievement and EHI:IsDifficulty("overkill") and self._t <= 50 then
             self:AddTracker({
                 id = "ameno_3_counter",
                 to_secure = 1800000,
@@ -472,6 +471,20 @@ function EHIManager:AddAchievementNotificationTracker(id, status, icon)
         status = status,
         icons = { icon },
         class = "EHIAchievementNotificationTracker"
+    })
+end
+
+function EHIManager:AddEscapeChanceTracker(dropin, chance, civilian_killed_multiplier)
+    if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
+        return
+    end
+    self:DisableIncreaseCivilianKilled()
+    civilian_killed_multiplier = civilian_killed_multiplier or 5
+    self:AddTracker({
+        id = "EscapeChance",
+        chance = chance + (self:GetAndRemoveFromCache("CiviliansKilled") or 0) * civilian_killed_multiplier,
+        icons = { EHI.Icons.Car, EHI.Icons.Fire },
+        class = "EHIChanceTracker"
     })
 end
 
@@ -759,6 +772,13 @@ function EHIManager:AddDelayToTracker(id, delay)
     local tracker = self._trackers[id]
     if tracker then
         tracker:AddDelay(delay)
+    end
+end
+
+function EHIManager:SetTrackerIcon(id, icon)
+    local tracker = self._trackers[id]
+    if tracker then
+        tracker:SetIcon(icon)
     end
 end
 

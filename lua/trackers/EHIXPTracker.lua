@@ -27,6 +27,7 @@ end
 
 EHITotalXPTracker = EHITotalXPTracker or class(EHIXPTracker)
 EHITotalXPTracker._update = false
+EHITotalXPTracker._show_diff = EHI:GetOption("total_xp_show_difference")
 function EHITotalXPTracker:init(panel, params)
     self._gage_ratio = 1
     self._heat = params.heat or 1
@@ -42,6 +43,13 @@ end
 function EHITotalXPTracker:UpdateTotalXP()
     local new_xp = self._xp * self._gage_ratio
     if self._total_xp ~= new_xp then
+        if self._show_diff then
+            self._parent_class:AddTracker({
+                id = "XP_" .. self._total_xp .. "_" .. new_xp,
+                amount = new_xp - self._total_xp,
+                class = "EHIXPTracker"
+            })
+        end
         self._total_xp = new_xp
         self._text:set_text(self:Format())
         self:FitTheText()

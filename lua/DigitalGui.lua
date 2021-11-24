@@ -4,9 +4,9 @@ end
 
 local EHI = EHI
 if EHI._hooks.DigitalGui then
-	return
+    return
 else
-	EHI._hooks.DigitalGui = true
+    EHI._hooks.DigitalGui = true
 end
 
 if not EHI:GetOption("show_timers") then
@@ -19,394 +19,275 @@ local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoin
 local original =
 {
     init = DigitalGui.init,
-	_update_timer_text = DigitalGui._update_timer_text,
-	timer_start_count_down = DigitalGui.timer_start_count_down,
-	timer_pause = DigitalGui.timer_pause,
-	timer_resume = DigitalGui.timer_resume,
-	_timer_stop = DigitalGui._timer_stop,
-	set_visible = DigitalGui.set_visible,
-	timer_set = DigitalGui.timer_set,
-	load = DigitalGui.load
+    _update_timer_text = DigitalGui._update_timer_text,
+    timer_start_count_down = DigitalGui.timer_start_count_down,
+    timer_pause = DigitalGui.timer_pause,
+    timer_resume = DigitalGui.timer_resume,
+    _timer_stop = DigitalGui._timer_stop,
+    set_visible = DigitalGui.set_visible,
+    timer_set = DigitalGui.timer_set,
+    load = DigitalGui.load
 }
 local level_id = Global.game_settings.level_id
-local ignore = {}
-local icons = {}
-local remove = {}
-local class = {}
-if level_id == "chill" then -- New Safehouse
-	icons =
-	{
-		[EHI:GetInstanceUnitID(100056, 15620)] = { "faster" }
-	}
-elseif level_id == "hvh" then -- Cursed Kill Room
-	ignore =
-	{
-		-- Clocks
-		[100007] = true,
-		[100888] = true,
-		[100889] = true,
-		[100891] = true,
-		[100892] = true,
-		[100176] = true,
-		[100177] = true,
-		[100029] = true,
-
-		-- Vault timers
-		[EHI:GetInstanceUnitID(100027, 9794)] = true,
-		[EHI:GetInstanceUnitID(100028, 9794)] = true,
-		[EHI:GetInstanceUnitID(100027, 10294)] = true,
-		[EHI:GetInstanceUnitID(100028, 10294)] = true,
-		[EHI:GetInstanceUnitID(100027, 10794)] = true,
-		[EHI:GetInstanceUnitID(100028, 10794)] = true,
-		[EHI:GetInstanceUnitID(100027, 11294)] = true,
-		[EHI:GetInstanceUnitID(100028, 11294)] = true,
-		[EHI:GetInstanceUnitID(100027, 11794)] = true,
-		[EHI:GetInstanceUnitID(100028, 11794)] = true
-	}
-	icons =
-	{
-		-- Clock
-		[100878] = { "faster" },
-
-		-- Vault timer
-		[EHI:GetInstanceUnitID(100029, 9794)] = { EHI.Icons.Vault },
-		[EHI:GetInstanceUnitID(100029, 10294)] = { EHI.Icons.Vault },
-		[EHI:GetInstanceUnitID(100029, 10794)] = { EHI.Icons.Vault },
-		[EHI:GetInstanceUnitID(100029, 11294)] = { EHI.Icons.Vault },
-		[EHI:GetInstanceUnitID(100029, 11794)] = { EHI.Icons.Vault }
-	}
-elseif level_id == "arm_for" then -- Transport: Train Heist
-	local ids = {}
-	for _, start_index in pairs({0, 100, 200, 300, 400, 500}) do
-		ids[EHI:GetInstanceUnitID(100022, start_index)] = true
-	end
-	local function f()
-        for _, unit in pairs(World:find_units_quick("all", 1)) do
-            if unit and ids[unit:editor_id()] then
-                unit:digital_gui():OnAlarm()
-				ignore[unit:editor_id()] = true
-            end
-        end
-    end
-    EHI:AddOnAlarmCallback(f)
-elseif level_id == "mus" then -- The Diamond
-	icons =
-	{
-		[EHI:GetInstanceUnitID(100020, 300)] = { EHI.Icons.Keycard },
-		[EHI:GetInstanceUnitID(100020, 375)] = { EHI.Icons.Keycard }
-	}
-	remove =
-	{
-		[133922] = true -- Path time lock in the Diamond chamber
-	}
-elseif level_id == "hox_3" then -- Hoxton Revenge
-	local alarm_box = EHI:GetInstanceUnitID(100021, 9685) -- Alarm Box
-	remove =
-	{
-		[alarm_box] = true
-	}
-	class =
-	{
-		[alarm_box] = "EHIWarningTracker"
-	}
-elseif level_id == "nail" then -- Lab Rats
-	ignore =
-	{
-		[EHI:GetInstanceUnitID(100014, 5020)] = true,
-		[EHI:GetInstanceUnitID(100056, 5020)] = true,
-		[EHI:GetInstanceUnitID(100226, 5020)] = true
-	}
-	icons =
-	{
-		[EHI:GetInstanceUnitID(100227, 5020)] = { EHI.Icons.Vault }
-	}
-	remove =
-	{
-		[EHI:GetInstanceUnitID(100227, 5020)] = true
-	}
-elseif level_id == "big" then -- The Big Bank
-	icons =
-	{
-		[101457] = { "faster" },
-		[104671] = { "faster" }
-	}
-elseif level_id == "kenaz" then -- Golden Grin Casino
-	icons =
-	{
-		[EHI:GetInstanceUnitID(100000, 37575)] = { "pd2_drill" },
-		[EHI:GetInstanceUnitID(100000, 44535)] = { "pd2_drill" }
-	}
-elseif level_id == "help" then -- Prison Nightmare
-	ignore =
-	{
-		[400003] = true
-	}
-	icons =
-	{
-		[EHI:GetInstanceUnitID(100072, 12400)] = { "faster" }
-	}
-	class =
-	{
-		[EHI:GetInstanceUnitID(100072, 12400)] = "EHIWarningTracker"
-	}
-elseif level_id == "chas" then -- Dragon Heist
-	remove =
-	{
-		-- Crates in the vault
-		[EHI:GetInstanceUnitID(100140, 8500)] = true,
-		[EHI:GetInstanceUnitID(100140, 8800)] = true,
-		[EHI:GetInstanceUnitID(100140, 9400)] = true,
-		[EHI:GetInstanceUnitID(100140, 9700)] = true,
-		[EHI:GetInstanceUnitID(100140, 10000)] = true
-	}
-	ignore =
-	{
-		[EHI:GetInstanceUnitID(100053, 8350)] = true,
-		[EHI:GetInstanceUnitID(100054, 8350)] = true
-	}
-	icons =
-	{
-		-- Crates in the vault
-		[EHI:GetInstanceUnitID(100140, 8500)] = { "pd2_c4" },
-		[EHI:GetInstanceUnitID(100140, 8800)] = { "pd2_c4" },
-		[EHI:GetInstanceUnitID(100140, 9400)] = { "pd2_c4" },
-		[EHI:GetInstanceUnitID(100140, 9700)] = { "pd2_c4" },
-		[EHI:GetInstanceUnitID(100140, 10000)] = { "pd2_c4" },
-
-		-- C4 Wall (Objective)
-		[EHI:GetInstanceUnitID(100057, 8350)] = { "pd2_c4" }
-	}
-	class =
-	{
-		-- Crates in the vault
-		[EHI:GetInstanceUnitID(100140, 8500)] = "EHIWarningTracker",
-		[EHI:GetInstanceUnitID(100140, 8800)] = "EHIWarningTracker",
-		[EHI:GetInstanceUnitID(100140, 9400)] = "EHIWarningTracker",
-		[EHI:GetInstanceUnitID(100140, 9700)] = "EHIWarningTracker",
-		[EHI:GetInstanceUnitID(100140, 10000)] = "EHIWarningTracker",
-	}
-elseif level_id == "roberts" then -- GO Bank
-	icons =
-	{
-		[101936] = { EHI.Icons.Vault }
-	}
-	remove =
-	{
-		[101936] = true
-	}
-elseif level_id == "cane" then -- Santa's Workshop
-	-- OVK decided to use one timer for fire and fire recharge
-	-- This class ignores them and that timer is implemented
-	-- in MissionScriptElement.lua
-	ignore =
-	{
-		[EHI:GetInstanceUnitID(100002, 0)] = true,
-		[EHI:GetInstanceUnitID(100002, 120)] = true,
-		[EHI:GetInstanceUnitID(100002, 240)] = true,
-		[EHI:GetInstanceUnitID(100002, 360)] = true,
-		[EHI:GetInstanceUnitID(100002, 480)] = true,
-
-		-- Safe Event
-		[EHI:GetInstanceUnitID(100056, 11300)] = true,
-		[EHI:GetInstanceUnitID(100226, 11300)] = true,
-		[EHI:GetInstanceUnitID(100227, 11300)] = true
-	}
-	icons =
-	{
-		-- Safe Event
-		[EHI:GetInstanceUnitID(100014, 11300)] = { EHI.Icons.Vault }
-	}
-	remove =
-	{
-		-- Safe Event
-		[EHI:GetInstanceUnitID(100014, 11300)] = true
-	}
-elseif level_id == "shoutout_raid" then -- Meltdown
-	ignore =
-	{
-		[EHI:GetInstanceUnitID(100014, 2850)] = true
-	}
-elseif level_id == "pbr" then -- Beneath the Mountain
-	icons =
-	{
-		[EHI:GetInstanceUnitID(100113, 0)] = { "pd2_c4" }
-	}
-elseif level_id == "sah" then -- Shacklethorne Auction
-	icons =
-	{
-		[EHI:GetInstanceUnitID(100001, 4900)] = { EHI.Icons.Vault },
-		[EHI:GetInstanceUnitID(100001, 5000)] = { EHI.Icons.Vault },
-		[EHI:GetInstanceUnitID(100001, 5100)] = { EHI.Icons.Vault }
-	}
-elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
-	remove =
-	{
-		[EHI:GetInstanceUnitID(100150, 9030)] = true
-	}
-	local function f()
-        local editor_id = EHI:GetInstanceUnitID(100150, 9030)
-        for _, unit in pairs(World:find_units_quick("all", 1)) do
-            if unit and unit:editor_id() == editor_id then
-                unit:digital_gui():OnAlarm()
-            end
-        end
-        ignore[editor_id] = true
-    end
-    EHI:AddOnAlarmCallback(f)
-	icons =
-	{
-		[EHI:GetInstanceUnitID(100009, 16580)] = { "pd2_power" },
-		[EHI:GetInstanceUnitID(100009, 16680)] = { "pd2_power" },
-		[EHI:GetInstanceUnitID(100009, 16780)] = { "pd2_power" }
-	}
-end
 
 function DigitalGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
 end
 
-function DigitalGui:TimerStartCountDown(editor_id)
-	if managers.ehi:TrackerExists(self._ehi_key) then
-		managers.ehi:SetTimerJammed(self._ehi_key, false)
-		managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
-	else
-		if not show_waypoint_only then
-			managers.ehi:AddTracker({
-				id = self._ehi_key,
-				time = self._timer,
-				icons = icons[editor_id] or { "wp_hack" },
-				exclude_from_sync = true,
-				class = class[editor_id] or "EHITimerTracker"
-			})
-		end
-		if show_waypoint then
-			managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+function DigitalGui:Visible()
+    if self._ignore_visibility then
+        return true
+    end
+    return self._visible
+end
+
+function DigitalGui:TimerStartCountDown()
+    if managers.ehi:TrackerExists(self._ehi_key) then
+        managers.ehi:SetTimerJammed(self._ehi_key, false)
+        managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
+    else
+        if not show_waypoint_only then
+            managers.ehi:AddTracker({
+                id = self._ehi_key,
                 time = self._timer,
-                icon = icons[editor_id] or "wp_hack",
+                icons = self._icons or { "wp_hack" },
+                exclude_from_sync = true,
+                warning = self._warning,
+                class = self._class or "EHITimerTracker"
+            })
+        end
+        if show_waypoint then
+            managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+                time = self._timer,
+                icon = self._icons or "wp_hack",
                 pause_timer = 1,
                 type = "timer",
                 position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
-				warning = class[editor_id] and class[editor_id] == "EHIWarningTracker"
+                warning = self._class and self._class == "EHIWarningTracker" or self._warning
             })
-		end
-	end
+        end
+    end
 end
 
 function DigitalGui:timer_start_count_down(...)
-	original.timer_start_count_down(self, ...)
-	local editor_id = self._unit:editor_id()
-	if ignore[editor_id] or not self._visible then
-		return
-	end
-	self:TimerStartCountDown(editor_id)
+    original.timer_start_count_down(self, ...)
+    if self._ignore or not self:Visible() then
+        return
+    end
+    self:TimerStartCountDown()
 end
 
-if show_waypoint_only then
-	function DigitalGui:_update_timer_text(...)
-		managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._timer)
-		original._update_timer_text(self, ...)
-	end
-elseif show_waypoint then
-	function DigitalGui:_update_timer_text(...)
-		managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
-		managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._timer)
-		original._update_timer_text(self, ...)
-	end
-else
-	function DigitalGui:_update_timer_text(...)
-		managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
-		original._update_timer_text(self, ...)
-	end
+if level_id ~= "shoutout_raid" then
+    if show_waypoint_only then
+        function DigitalGui:_update_timer_text(...)
+            managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._timer)
+            original._update_timer_text(self, ...)
+        end
+    elseif show_waypoint then
+        function DigitalGui:_update_timer_text(...)
+            managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
+            managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._timer)
+            original._update_timer_text(self, ...)
+        end
+    else
+        function DigitalGui:_update_timer_text(...)
+            managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
+            original._update_timer_text(self, ...)
+        end
+    end
 end
 
 if level_id == "chill" then
-	original.timer_start_count_up = DigitalGui.timer_start_count_up
-	function DigitalGui:timer_start_count_up(...)
-		original.timer_start_count_up(self, ...)
-		if managers.ehi:TrackerExists(self._ehi_key) then
-			managers.ehi:SetTimerJammed(self._ehi_key, false)
-		else
-			managers.ehi:AddTracker({
-				id = self._ehi_key,
-				time = 0,
-				icons = { "faster" },
-				exclude_from_sync = true,
-				class = "EHIStopwatchTracker"
-			})
-		end
-	end
+    original.timer_start_count_up = DigitalGui.timer_start_count_up
+    function DigitalGui:timer_start_count_up(...)
+        original.timer_start_count_up(self, ...)
+        if managers.ehi:TrackerExists(self._ehi_key) then
+            managers.ehi:CallFunction(self._ehi_key, "Reset")
+        else
+            managers.ehi:AddTracker({
+                id = self._ehi_key,
+                time = 0,
+                icons = { "faster" },
+                exclude_from_sync = true,
+                class = "EHIStopwatchTracker"
+            })
+        end
+    end
 
-	function DigitalGui:timer_pause(...)
-		original.timer_pause(self, ...)
-		managers.ehi:CallFunction(self._ehi_key, "Stop")
-	end
+    function DigitalGui:timer_pause(...)
+        original.timer_pause(self, ...)
+        managers.ehi:CallFunction(self._ehi_key, "Stop")
+    end
 else
-	function DigitalGui:timer_pause(...)
-		original.timer_pause(self, ...)
-		if remove[self._unit:editor_id()] then
-			managers.ehi:RemoveTracker(self._ehi_key)
-			managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
-		else
-			managers.ehi:SetTimerJammed(self._ehi_key, true)
-			managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, true)
-		end
-	end
+    function DigitalGui:timer_pause(...)
+        original.timer_pause(self, ...)
+        if self._remove_on_pause then
+            managers.ehi:RemoveTracker(self._ehi_key)
+            managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+        else
+            managers.ehi:SetTimerJammed(self._ehi_key, true)
+            managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, true)
+            if self._change_icon_on_pause then
+                managers.ehi:SetTrackerIcon(self._ehi_key, self._icon_on_pause)
+                managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icon_on_pause)
+            end
+        end
+    end
 end
 
 function DigitalGui:timer_resume(...)
-	original.timer_resume(self, ...)
-	managers.ehi:SetTimerJammed(self._ehi_key, false)
-	managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
+    original.timer_resume(self, ...)
+    managers.ehi:SetTimerJammed(self._ehi_key, false)
+    managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
 end
 
-local SetTime = function(key, time) end
-if level_id ~= "shoutout_raid" then
-	SetTime = function (key, time)
-		if managers.ehi then
-			managers.ehi:SetTrackerTimeNoAnim(key, time)
-			managers.ehi_waypoint:SetTimerWaypointTime(key, time)
-		end
-	end
+local SetTime = nil
+if level_id == "shoutout_raid" then
+    local old_time = 0
+    local created = false
+    SetTime = function(self, key, time)
+        if old_time == time then
+            return
+        end
+        old_time = time
+        if managers.ehi then
+            if not created then
+                if not show_waypoint_only then
+                    managers.ehi:AddTracker({
+                        id = key,
+                        class = "EHIVaultTemperatureTracker"
+                    })
+                end
+                if show_waypoint then
+                    managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+                        time = 500,
+                        synced_time = 0,
+                        tick = 0.1,
+                        icon = EHI.Icons.Vault,
+                        type = "timer",
+                        position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
+                    })
+                end
+                created = true
+            end
+            local t = EHI:RoundNumber(time, 0.1)
+            managers.ehi:CallFunction(key, "CheckTime", t)
+            managers.ehi_waypoint:SetTimerVaultWaypointTime(key, t)
+        end
+    end
+else
+    SetTime = function(self, key, time)
+        if managers.ehi then
+            managers.ehi:SetTrackerTimeNoAnim(key, time)
+            managers.ehi_waypoint:SetTimerWaypointTime(key, time)
+        end
+    end
 end
 
 function DigitalGui:timer_set(timer, ...)
-	original.timer_set(self, timer, ...)
-	SetTime(self._ehi_key, timer)
+    original.timer_set(self, timer, ...)
+    SetTime(self, self._ehi_key, timer)
 end
 
 function DigitalGui:_timer_stop(...)
-	original._timer_stop(self, ...)
-	managers.ehi:RemoveTracker(self._ehi_key)
-	managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    original._timer_stop(self, ...)
+    managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
 function DigitalGui:set_visible(visible, ...)
-	original.set_visible(self, visible, ...)
-	if not visible then
-		managers.ehi:RemoveTracker(self._ehi_key)
-		managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
-	end
+    original.set_visible(self, visible, ...)
+    if not visible then
+        managers.ehi:RemoveTracker(self._ehi_key)
+        managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    end
 end
 
 function DigitalGui:OnAlarm()
-	managers.ehi:RemoveTracker(self._ehi_key)
-	managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    self._ignore = true
+    managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
 function DigitalGui:load(data, ...)
-	local state = data.DigitalGui
-	if self:is_timer() then
-		local editor_id = self._unit:editor_id()
-		if not ignore[editor_id] and self._visible and state.visible and state.timer_count_down then
-			if remove[editor_id] then
-				if not state.timer_paused then
-					self:TimerStartCountDown(editor_id)
-				end
-			else
-				self:TimerStartCountDown(editor_id)
-			end
-		end
-	end
-	original.load(self, data, ...)
+    local state = data.DigitalGui
+    if self:is_timer() then
+        if state.visible and state.timer_count_down then
+            self:TimerStartCountDown()
+            if state.timer_paused then
+                managers.ehi:SetTimerJammed(self._ehi_key, true)
+                managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, true)
+            end
+        end
+    end
+    original.load(self, data, ...)
+end
+
+function DigitalGui:SetIcons(icons)
+    EHI:Log("[DigitalGui] Set Icons: " .. tostring(icons) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
+    self._icons = icons
+    if type(icons) == "table" then
+        _G.PrintTable(icons)
+    end
+end
+
+function DigitalGui:SetIconOnPause(icon)
+    if icon then
+        self._icon_on_pause = icon
+        self._change_icon_on_pause = true
+    else
+        self._change_icon_on_pause = false
+    end
+    EHI:Log("[DigitalGui] Set Icon On Pause: " .. tostring(self._icon_on_pause) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
+end
+
+function DigitalGui:SetIgnore(ignore)
+    self._ignore = ignore
+    EHI:Log("[DigitalGui] Set Ignore: " .. tostring(ignore) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
+end
+
+function DigitalGui:SetRemoveOnPause(remove_on_pause)
+    self._remove_on_pause = remove_on_pause
+    EHI:Log("[DigitalGui] Set Remove On Pause: " .. tostring(remove_on_pause) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
+end
+
+function DigitalGui:SetClass(class)
+    self._class = class
+    EHI:Log("[DigitalGui] Set Class: " .. tostring(class) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
+end
+
+function DigitalGui:SetOnAlarm()
+    EHI:AddOnAlarmCallback(callback(self, self, "OnAlarm"))
+    EHI:Log("[DigitalGui] Set On Alarm; Editor ID: " .. tostring(self._unit:editor_id()))
+end
+
+function DigitalGui:SetCustomCallback(id, operation)
+    if operation == "remove" then
+        EHI:AddCallback(id, callback(self, self, "OnAlarm"))
+    end
+    EHI:Log("[DigitalGui] Set Custom Callback with ID " .. tostring(id) .. " and operation " .. tostring(operation) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
+end
+
+function DigitalGui:SetIgnoreVisibility(value)
+    self._ignore_visibility = value
+    EHI:Log("[DigitalGui] Set Ignore Visibility: " .. tostring(value) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
+end
+
+function DigitalGui:SetWarning(warning)
+    self._warning = warning
+    EHI:Log("[DigitalGui] Set Warning: " .. tostring(warning) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
+end
+
+function DigitalGui:Finalize()
+    if self._ignore or (self._remove_on_pause and self._timer_paused) then
+        managers.ehi:RemoveTracker(self._ehi_key)
+        managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    elseif self._change_icon_on_pause and self._timer_paused then
+        managers.ehi:SetTrackerIcon(self._ehi_key, self._icon_on_pause)
+        managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icon_on_pause)
+    elseif self._icons then
+        managers.ehi:SetTrackerIcon(self._ehi_key, self._icons[1])
+        managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icons[1])
+    end
 end

@@ -91,8 +91,7 @@ local original =
     init = GroupAIStateBase.init,
     on_successful_alarm_pager_bluff = GroupAIStateBase.on_successful_alarm_pager_bluff,
     sync_alarm_pager_bluff = GroupAIStateBase.sync_alarm_pager_bluff,
-    load = GroupAIStateBase.load,
-    sync_cs_grenade = GroupAIStateBase.sync_cs_grenade
+    load = GroupAIStateBase.load
 }
 
 function GroupAIStateBase:init(...)
@@ -116,6 +115,8 @@ function GroupAIStateBase:load(...)
     original.load(self, ...)
     if not self._enemy_weapons_hot then
         managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
+    else
+        Execute()
 	end
     local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
     if law1team and law1team.damage_reduction then

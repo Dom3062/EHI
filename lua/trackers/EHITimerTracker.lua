@@ -19,11 +19,33 @@ function EHITimerTracker:init(panel, params)
     if params.autorepair ~= nil then
         self:SetAutorepair(params.autorepair)
     end
+    self._animate_warning = params.warning
 end
 
 function EHITimerTracker:SetTimeNoAnim(time) -- No fit text function needed, these timers just run down
     self._time = time
     self._text:set_text(self:Format())
+    if time <= 10 and self._animate_warning and not self._warning_started then
+        self._warning_started = true
+        self:AnimateWarning()
+    end
+end
+
+function EHITimerTracker:AnimateWarning()
+    if self._text and alive(self._text) then
+        self._text:animate(function(o)
+            while true do
+                local t = 0
+                while t < 1 do
+                    t = t + coroutine.yield()
+                    local n = 1 - math.sin(t * 180)
+                    --local r = math.lerp(1, 0, n)
+                    local g = math.lerp(1, 0, n)
+                    o:set_color(Color(1, g, g))
+                end
+            end
+        end)
+    end
 end
 
 function EHITimerTracker:SetDone()
@@ -81,6 +103,10 @@ function EHITimerTracker:SetAutorepair(state)
 end
 
 function EHITimerTracker:SetJammed(jammed)
+    if self._warning_started then
+        self._text:stop()
+        self._warning_started = false
+    end
     self._jammed = jammed
     self:SetTextColor()
 end
@@ -96,4 +122,11 @@ function EHITimerTracker:SetTextColor()
     else
         self._text:set_color(Color.white)
     end
+end
+
+function EHITimerTracker:destroy()
+    if self._text and alive(self._text) then
+        self._text:stop()
+    end
+    EHITimerTracker.super.destroy(self)
 end

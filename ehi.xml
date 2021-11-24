@@ -104,6 +104,8 @@
         <post hook_id="lib/units/vehicles/vehicledrivingext" :script_path="VehicleDrivingExt.lua" />
         <post hook_id="lib/units/weapons/grenades/quickcsgrenade" :script_path="QuickCsGrenade.lua" />
 
+        <post hook_id="lib/utils/dev/editor/worlddefinition" :script_path="WorldDefinition.lua" />
+
         <post hook_id="lib/tweak_data/tweakdata" :script_path="tweak_data.lua"/>
     </hooks>
 

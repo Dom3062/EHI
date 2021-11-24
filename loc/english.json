@@ -66,6 +66,9 @@
     "ehi_xp_panel_1" : "Show panel for every XP gained",
     "ehi_xp_panel_2" : "Show total XP gained from the heist",
 
+    "ehi_total_xp_show_difference" : "Show XP difference",
+    "ehi_total_xp_show_difference_desc" : "[Show total XP gained from the heist] option only!\nShows how much you gained XP in a standalone tracker",
+
     "ehi_show_trade_delay" : "Show Trade Delay Tracker",
     "ehi_show_trade_delay_desc" : "Shows trade delay when you or your teammates kill a civilian",
 
@@ -180,5 +183,8 @@
     "ehi_show_waypoints_timers_desc" : "Shows a waypoint on a visible timer (hacking, drilling, sawing, etc ...)\n\nOption 'Show Timers' must be enabled in order to work",
 
     "ehi_show_waypoints_pager" : "Show Waypoints For Pagers",
-    "ehi_show_waypoints_pager_desc" : "Shows a waypoint on a pager that needs to be answered\n\nOption 'Show Pager Callback Timers' must be enabled in order to work"
+    "ehi_show_waypoints_pager_desc" : "Shows a waypoint on a pager that needs to be answered\n\nOption 'Show Pager Callback Timers' must be enabled in order to work",
+
+    "ehi_show_waypoints_cameras" : "Show Waypoints for Looped Cameras",
+    "ehi_show_waypoints_cameras_desc" : "Shows a waypoint on a camera that is currently being looped"
 }

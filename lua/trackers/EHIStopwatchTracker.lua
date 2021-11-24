@@ -48,6 +48,11 @@ do
 end
 
 function EHIStopwatchTracker:Stop()
-	self._fade_time = 3.5
+	self._fade_time = 5
 	self:AnimateBG()
+end
+
+function EHIStopwatchTracker:Reset()
+	self._time = 0
+	self._fade_time = nil
 end

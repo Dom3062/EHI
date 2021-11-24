@@ -20,13 +20,6 @@ local add =
     firestarter_1 = true -- Firestarter Day 1
 }
 
-local broken_units =
-{
-    [tostring(Idstring("units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_01"))] = true,
-    [tostring(Idstring("units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"))] = true,
-    [tostring(Idstring("units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"))] = true
-}
-
 function GameSetup:init_finalize(...)
     original.init_finalize(self, ...)
     local level_id = Global.game_settings.level_id
@@ -34,14 +27,6 @@ function GameSetup:init_finalize(...)
         dofile(EHI.LuaPath .. "levels/" .. level_id .. ".lua")
     end
     EHI:InitElements()
-    if EHI:GetOption("show_timers") then
-        local units = World:find_units_quick("all", 1)
-        for _, unit in pairs(units or {}) do
-            if unit and unit:timer_gui() and unit:timer_gui().DisableOnSetVisible and broken_units[tostring(unit:name())] then
-                unit:timer_gui():DisableOnSetVisible()
-            end
-        end
-    end
 end
 
 function GameSetup:save(data, ...)
@@ -50,6 +35,10 @@ function GameSetup:save(data, ...)
 end
 
 function GameSetup:load(data, ...)
+    if managers.worlddefinition.Finalize then
+        managers.worlddefinition:Finalize()
+        managers.world_instance:Finalize()
+    end
     managers.ehi:load(data)
     original.load(self, data, ...)
     managers.ehi:LoadSync()

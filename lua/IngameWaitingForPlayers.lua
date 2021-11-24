@@ -316,7 +316,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         ShowTrackerInLoud(f)
     end
-    if EHI:IsOVKOrAbove(difficulty) and EHI:IsAchievementLocked2("gage2_9") and HasMeleeTypeEquipped("knife") then -- "I Ain't Got Time to Bleed" achievement
+    if EHI:IsAchievementLocked2("gage2_9") and EHI:IsDifficultyOrAbove("overkill") and HasMeleeTypeEquipped("knife") then -- "I Ain't Got Time to Bleed" achievement
         local function f()
             CreateProgressTracker("gage2_9", EHI:GetAchievementProgress("gage2_9_stats"), 15, false, true)
             EHI:HookWithID(StatisticsManager, "killed", "EHI_gage2_5_killed", function (self, data)
@@ -672,7 +672,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end)
         end
     end
-    if EHI:IsAchievementLocked2("pim_1") and EHI:IsOVKOrAbove(Global.game_settings.difficulty) then -- "Nothing Personal" achievement
+    if EHI:IsAchievementLocked2("pim_1") and EHI:IsDifficultyOrAbove("overkill") then -- "Nothing Personal" achievement
         local pass, _, _ = HasWeaponEquipped("desertfox")
         if pass then
             local function f()
@@ -772,8 +772,8 @@ function IngameWaitingForPlayersState:at_exit(...)
                     end
                 end
                 managers.player:register_message("player_state_changed", "EHI_cac_2_state_changed_key", on_player_state_changed)
-                ShowTrackerInLoud(f)
             end
+            ShowTrackerInLoud(f)
         end
     end
     if EHI:IsAchievementLocked2("cac_3") then -- "Denied" achievement
@@ -785,8 +785,8 @@ function IngameWaitingForPlayersState:at_exit(...)
                     managers.ehi:IncreaseTrackerProgress("cac_3")
                 end
             end)
-            ShowTrackerInLoud(f)
         end
+        ShowTrackerInLoud(f)
     end
     if EHI:IsAchievementLocked2("gsu_01") and HasMeleeEquipped("spoon") then -- "For all you legends" achievement
         CreateProgressTracker("gsu_01", EHI:GetAchievementProgress("gsu_stat"), 100, false, true)
@@ -796,7 +796,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end
-    if EHI:IsAchievementLocked2("sawp_1") and EHI:IsOVKOrAbove(Global.game_settings.difficulty) then -- "Buzzbomb" achievement
+    if EHI:IsAchievementLocked2("sawp_1") and EHI:IsDifficultyOrAbove("overkill") then -- "Buzzbomb" achievement
         local achievement_data = tweak_data.achievement.enemy_melee_hit_achievements.sawp_1
         local melee_pass = table.index_of(achievement_data.melee_weapons, managers.blackmarket:equipped_melee_weapon()) ~= -1
         local player_style_pass = HasPlayerStyleEquipped(achievement_data.player_style.style)
@@ -842,7 +842,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end
-    if level == "mad" and EHI:IsAchievementLocked2("pim_3") and EHI:IsOVKOrAbove(Global.game_settings.difficulty) then -- "UMP for Me, UMP for You" achievement
+    if level == "mad" and EHI:IsAchievementLocked2("pim_3") and EHI:IsDifficultyOrAbove("overkill") then -- "UMP for Me, UMP for You" achievement
         local pass, _, _ = HasWeaponEquipped("schakal")
         if pass then
             CreateProgressTracker("pim_3", EHI:GetAchievementProgress("pim_3_stats"), 45, false, true)
@@ -856,7 +856,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end)
         end
     end
-    if level == "help" and EHI:IsAchievementLocked2("tawp_1") and EHI:DifficultyToIndex(Global.game_settings.difficulty) >= 2 and mask_id == tweak_data.achievement.complete_heist_achievements.tawp_1.mask then -- "Cloaker Charmer" achievement
+    if level == "help" and EHI:IsAchievementLocked2("tawp_1") and EHI:DifficultyToIndex(difficulty) >= 2 and mask_id == tweak_data.achievement.complete_heist_achievements.tawp_1.mask then -- "Cloaker Charmer" achievement
         CreateProgressTracker("tawp_1", 0, 1, false, false)
         EHI:HookWithID(StatisticsManager, "killed", "EHI_tawp_1_killed", function (self, data)
             if data.name == "spooc" then
@@ -864,7 +864,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end
-    if (level == "rvd1" or level == "rvd2") and EHI:IsAchievementLocked2("rvd_12") and EHI:IsOVKOrAbove(Global.game_settings.difficulty) and HasMeleeEquipped("clean") then
+    if (level == "rvd1" or level == "rvd2") and EHI:IsAchievementLocked2("rvd_12") and EHI:IsDifficultyOrAbove("overkill") and HasMeleeEquipped("clean") then
         CreateProgressTracker("rvd_12", EHI:GetAchievementProgress("rvd_12_stats"), 92, false, true)
         EHI:HookWithID(StatisticsManager, "killed", "EHI_rvd_12_killed", function (self, data)
             if data.variant == "melee" and table.index_of(tweak_data.achievement.enemy_kill_achievements.pim_3.enemies, data.name) ~= -1 then
@@ -872,7 +872,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end
-    if level == "bph" and EHI:IsAchievementLocked2("bph_9") and EHI:IsOVKOrAbove(Global.game_settings.difficulty) and HasMeleeEquipped("toothbrush") then -- "Prison Rules, Bitch!" achievement
+    if level == "bph" and EHI:IsAchievementLocked2("bph_9") and EHI:IsDifficultyOrAbove("overkill") and HasMeleeEquipped("toothbrush") then -- "Prison Rules, Bitch!" achievement
         CreateProgressTracker("bph_9", EHI:GetAchievementProgress("bph_9_stat"), 13, false, true)
         EHI:HookWithID(StatisticsManager, "killed", "EHI_bph_9_killed", function (self, data)
             if data.variant == "melee" then
@@ -880,7 +880,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end
-    if level == "sand" and EHI:IsOVKOrAbove(difficulty) and EHI:IsAchievementLocked2("sand_11") and HasWeaponTypeEquipped("snp") then -- "This Calls for a Round of Sputniks!" achievement
+    if level == "sand" and EHI:IsDifficultyOrAbove("overkill") and EHI:IsAchievementLocked2("sand_11") and HasWeaponTypeEquipped("snp") then -- "This Calls for a Round of Sputniks!" achievement
         CreateProgressTracker("sand_11_kills", 0, 100, true, false, { "C_JiuFeng_H_UkrainianPrisoner_ThisCallForARound", "C_All_H_All_AllJobs_D0" })
         managers.ehi:AddTracker({
             id = "sand_11_accuracy",

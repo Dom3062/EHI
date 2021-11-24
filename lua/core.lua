@@ -16,7 +16,11 @@ _G.EHI =
 
     _cache =
     {
+        MissionUnits = {},
+        InstanceUnits = {}
     },
+
+    Callback = {},
 
     OnAlarmCallback = {},
 
@@ -143,6 +147,17 @@ _G.EHI =
         "sm_wish"
     },
 
+    difficulty_remap = {
+        very_hard = "overkill",
+        overkill = "overkill_145",
+        mayhem = "easy_wish",
+        death_wish = "overkill_290",
+        death_sentence = "sm_wish"
+    },
+
+    HostElement = "on_executed",
+    ClientElement = "client_on_executed",
+
     ModVersion = ModInstance and tonumber(ModInstance:GetVersion()) or "N/A",
     ModPath = ModPath,
     LocPath = ModPath .. "loc/",
@@ -158,8 +173,36 @@ function EHI:DifficultyToIndex(difficulty)
     return table.index_of(self.difficulties, difficulty) - 2
 end
 
-function EHI:IsOVKOrAbove(difficulty)
-    return self:DifficultyToIndex(difficulty) >= 3
+function EHI:IsDifficultyOrAbove(difficulty)
+    return self:DifficultyToIndex(self:DifficultyName(difficulty)) <= self._cache.DifficultyIndex
+end
+
+function EHI:IsDifficultyOrBelow(difficulty)
+    return self:DifficultyToIndex(self:DifficultyName(difficulty)) >= self._cache.DifficultyIndex
+end
+
+function EHI:DifficultyName(difficulty)
+    return self.difficulty_remap[difficulty] or difficulty
+end
+
+function EHI:IsDifficulty(difficulty)
+    return self._cache.Difficulty == self:DifficultyName(difficulty)
+end
+
+function EHI:IsBetweenDifficulties(diff_1, diff_2)
+    local diff_1_index = self:DifficultyToIndex(self:DifficultyName(diff_1))
+    local diff_2_index = self:DifficultyToIndex(self:DifficultyName(diff_2))
+    if diff_1_index > diff_2_index then
+        diff_1_index = diff_1_index - diff_2_index
+        diff_2_index = diff_1_index + diff_2_index
+        diff_1_index = diff_2_index - diff_1_index
+    end
+    return self._cache.DifficultyIndex >= diff_1_index and self._cache.DifficultyIndex <= diff_2_index
+end
+
+function EHI:Init()
+    self._cache.Difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
+    self._cache.DifficultyIndex = self:DifficultyToIndex(self._cache.Difficulty)
 end
 
 function EHI:GetIcons()
@@ -241,6 +284,7 @@ function EHI:LoadDefaultValues()
         show_gained_xp = true,
         xp_format = 3,
         xp_panel = 1,
+        total_xp_show_difference = true,
         show_trade_delay = true,
         show_trade_delay_option = 1,
         show_trade_delay_other_players_only = true,
@@ -307,7 +351,8 @@ function EHI:LoadDefaultValues()
         show_waypoints_present_timer = 2,
         show_waypoints_enemy_turret = true,
         show_waypoints_timers = true,
-        show_waypoints_pager = true
+        show_waypoints_pager = true,
+        show_waypoints_cameras = true
     }
     self:Log("Default values loaded")
 end
@@ -334,6 +379,17 @@ function EHI:GetColor(color)
         return Color(255, color.r, color.g, color.b) / 255
     end
     return Color.white
+end
+
+function EHI:AddCallback(id, f)
+    self.Callback[id] = self.Callback[id] or {}
+    self.Callback[id][#self.Callback[id] + 1] = f
+end
+
+function EHI:CallCallback(id)
+    for _, callback in pairs(self.Callback[id] or {}) do
+        callback()
+    end
 end
 
 function EHI:AddOnAlarmCallback(f)
@@ -402,6 +458,10 @@ function EHI:GetInstanceUnitID(id, start_index, continent_index)
     return self:GetInstanceElementID(id, start_index, continent_index)
 end
 
+function EHI:GetBaseUnitID(final_index, start_index, continent_index)
+    return (final_index - 30000 - start_index - continent_index) + 100000
+end
+
 function EHI:RoundNumber(n, bracket)
     bracket = bracket or 1
     local sign = n >= 0 and 1 or -1
@@ -410,6 +470,15 @@ end
 
 function EHI:RoundChanceNumber(n)
     return self:RoundNumber(n, 0.01) * 100
+end
+
+--[[
+    Instance Vector = Instance Position
+    Element Vector = Position of the element in the instance
+    Rotation = Instance Rotation
+]]
+function EHI:GetInstanceElementPosition(instance_vector, element_vector, rotation)
+    return instance_vector + element_vector:rotate_with(rotation)
 end
 
 function EHI:Sync(message, data)
@@ -596,6 +665,24 @@ function EHI:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, ty
     end
 end
 
+local function AddTracker(id, trigger)
+    managers.ehi:AddTracker({
+        id = trigger.id,
+        time = EHI:GetTime(id),
+        chance = trigger.chance,
+        max = trigger.max,
+        dont_flash = trigger.dont_flash,
+        dont_flash_max = trigger.dont_flash_max,
+        flash_times = trigger.flash_times,
+        remove_after_reaching_target = trigger.remove_after_reaching_target,
+        status_is_overridable = trigger.status_is_overridable,
+        status = trigger.status,
+        to_secure = trigger.to_secure,
+        icons = trigger.icons,
+        class = trigger.class
+    })
+end
+
 function EHI:GetTime(id)
     local full_time = triggers[id].time or 0
     full_time = full_time + (triggers[id].random_time and math.rand(triggers[id].random_time) or 0)
@@ -616,26 +703,12 @@ end
 
 function EHI:AddTracker(id, sync)
     local trigger = triggers[id]
-    managers.ehi:AddTracker({
-        id = trigger.id,
-        time = self:GetTime(id),
-        chance = trigger.chance,
-        max = trigger.max,
-        dont_flash = trigger.dont_flash,
-        dont_flash_max = trigger.dont_flash_max,
-        flash_times = trigger.flash_times,
-        remove_after_reaching_target = trigger.remove_after_reaching_target,
-        status_is_overridable = trigger.status_is_overridable,
-        status = trigger.status,
-        to_secure = trigger.to_secure,
-        icons = trigger.icons,
-        class = trigger.class
-    })
+    AddTracker(id, trigger)
     if sync then
         managers.ehi:Sync(id, self:GetTime(id))
     end
     if trigger.waypoint then
-        managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.data)
+        managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
     end
 end
 
@@ -860,6 +933,9 @@ function EHI:Trigger(id, element, enabled)
                     else
                         triggers[id].time = triggers[id].data.no
                     end
+                    if triggers[id].data.cache_id then
+                        self._cache[triggers[id].data.cache_id] = true
+                    end
                     self:CheckCondition(id)
                 end
             elseif f == SF.UnpauseTrackerIfExistsAccurate then
@@ -1055,7 +1131,7 @@ function EHI:InitElements()
         self:Trigger(element._id, element, element._values.enabled)
     end
     local client = Network:is_client()
-    local func = client and "client_on_executed" or "on_executed"
+    local func = client and self.ClientElement or self.HostElement
     local f = client and Client or Host
     local scripts = managers.mission._scripts or {}
     for id, _ in pairs(triggers) do
@@ -1102,6 +1178,7 @@ function EHI:InitElements()
                         if element_delay_triggers[e._id][params.id] then
                             if host_triggers[params.id] then
                                 if host_triggers[params.id].remove_trigger_when_executed then
+                                    self:AddTrackerAndSync(params.id, delay)
                                     element_delay_triggers[e._id][params.id] = nil
                                 elseif host_triggers[params.id].set_time_when_tracker_exists then
                                     if managers.ehi:TrackerExists(host_triggers[params.id].id) then
@@ -1110,6 +1187,8 @@ function EHI:InitElements()
                                     else
                                         self:AddTrackerAndSync(params.id, delay)
                                     end
+                                else
+                                    self:AddTrackerAndSync(params.id, delay)
                                 end
                             else
                                 self:AddTrackerAndSync(params.id, delay)
@@ -1132,7 +1211,7 @@ function EHI:SyncLoad()
         for _, script in pairs(scripts) do
             local element = script:element(id)
             if element then
-                self:HookElement(element, "client_on_executed", id, Client)
+                self:HookElement(element, self.ClientElement, id, Client)
             end
         end
     end
@@ -1153,6 +1232,20 @@ Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id,
 end)
 
 EHI:Load()
+
+if EHI:GetWaypointOption("show_waypoints_only") then
+    function EHI:AddTracker(id, sync)
+        local trigger = triggers[id]
+        if trigger.waypoint then
+            managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
+        else
+            AddTracker(id, trigger)
+        end
+        if sync then
+            managers.ehi:Sync(id, self:GetTime(id))
+        end
+    end
+end
 
 if EHI:GetOption("hide_unlocked_achievements") then
     local G = Global

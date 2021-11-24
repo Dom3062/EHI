@@ -5,6 +5,7 @@ EHIWaypointManager = EHIWaypointManager or class()
 function EHIWaypointManager:init()
     self._enabled = EHI:GetOption("show_waypoints")
     self._present_timer = EHI:GetOption("show_waypoints_present_timer")
+    self._scale = 1
     self._stored_waypoints = {}
     self._waypoints = {}
     self._t = 0
@@ -102,8 +103,8 @@ function EHIWaypointManager:AddWaypoint(id, params)
         name = "bitmap" .. id,
         texture = icon,
         texture_rect = texture_rect,
-        w = 32,
-        h = 32,
+        w = 32 * self._scale,
+        h = 32 * self._scale,
         blend_mode = params.blend_mode,
         color = wp_color
     })
@@ -116,8 +117,8 @@ function EHIWaypointManager:AddWaypoint(id, params)
         texture = arrow_icon,
         texture_rect = arrow_texture_rect,
         color = wp_color:with_alpha(0.75),
-        w = arrow_texture_rect[3],
-        h = arrow_texture_rect[4],
+        w = arrow_texture_rect[3] * self._scale,
+        h = arrow_texture_rect[4] * self._scale,
         blend_mode = params.blend_mode
     })
     local distance = nil
@@ -125,8 +126,8 @@ function EHIWaypointManager:AddWaypoint(id, params)
     if params.distance then
         distance = waypoint_panel:text({
             vertical = "center",
-            h = 24,
-            w = 128,
+            h = 24 * self._scale,
+            w = 128 * self._scale,
             align = "center",
             text = "16.5",
             rotation = 360,
@@ -143,9 +144,9 @@ function EHIWaypointManager:AddWaypoint(id, params)
 
     local timer = params.time and waypoint_panel:text({
         font_size = 32,
-        h = 32,
+        h = 32 * self._scale,
         vertical = "center",
-        w = 32,
+        w = 32 * self._scale,
         align = "center",
         rotation = 360,
         layer = 0,
@@ -155,9 +156,9 @@ function EHIWaypointManager:AddWaypoint(id, params)
         color = wp_color
     })
     text = waypoint_panel:text({
-        h = 24,
+        h = 24 * self._scale,
         vertical = "center",
-        w = 512,
+        w = 512 * self._scale,
         align = "center",
         rotation = 360,
         layer = 0,
@@ -187,7 +188,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
         pause_timer = params.pause_timer or params.time and 0,
         position = params.position,
         unit = params.unit,
-        radius = params.radius or 160,
+        radius = (params.radius or 160) * self._scale,
         type = params.type or "standard_timer",
         color = wp_color
     }
@@ -246,6 +247,27 @@ function EHIWaypointManager:RemoveWaypoint(id)
     self._waypoints[id] = nil
 end
 
+function EHIWaypointManager:SetWaypointIcon(id, new_icon)
+    if id and self._waypoints[id] then
+        local icon, texture_rect
+        if icons[new_icon] then
+            icon = icons[new_icon].texture
+            texture_rect = icons[new_icon].texture_rect
+        else
+            icon, texture_rect = tweak_data.hud_icons:get_icon_or(new_icon, icons.default.texture, icons.default.texture_rect)
+        end
+        self._waypoints[id].bitmap:set_image(icon, texture_rect)
+    end
+end
+
+function EHIWaypointManager:WaypointExists(id)
+    return id and self._waypoints[id] or false
+end
+
+function EHIWaypointManager:WaypointDoesNotExist(id)
+    return not self:WaypointExists(id)
+end
+
 function EHIWaypointManager:WaypointExistsAndType(id, type)
     if id and self._waypoints[id] and self._waypoints[id].type == type then
         return true
@@ -261,7 +283,28 @@ end
 
 function EHIWaypointManager:SetTimerWaypointTime(id, time)
     if self:WaypointExistsAndType(id, "timer") then
-        self._waypoints[id].timer_gui:set_text(self:WaypointFormat(time))
+        local wp = self._waypoints[id]
+        wp.timer_gui:set_text(self:WaypointFormat(time))
+        if time <= 10 and wp.init_data.warning and not wp.init_data.warning_started then
+            wp.init_data.warning_started = true
+            self:AnimateWarning(wp)
+        end
+    end
+end
+
+function EHIWaypointManager:SetTimerVaultWaypointTime(id, time)
+    if self:WaypointExistsAndType(id, "timer") then
+        local wp = self._waypoints[id]
+        if wp.init_data.synced_time == 0 then
+            wp.timer = (50 - time) * 10
+        else
+            local new_tick = time - wp.init_data.synced_time
+            if new_tick ~= wp.init_data.tick then
+                wp.timer= ((50 - time) / (new_tick * 10)) * 10
+                wp.init_data.tick = new_tick
+            end
+        end
+        wp.init_data.synced_time = time
     end
 end
 
@@ -269,7 +312,12 @@ function EHIWaypointManager:SetTimerWaypointJammed(id, jammed)
     if not self:WaypointExistsAndType(id, "timer") then
         return
     end
-    self._waypoints[id]._jammed = jammed
+    local wp = self._waypoints[id]
+    if wp.init_data.warning_started then
+        wp.timer_gui:stop()
+        wp.init_data.warning_started = false
+    end
+    wp._jammed = jammed
     self:SetTimerWaypointColor(id)
 end
 

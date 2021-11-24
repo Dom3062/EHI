@@ -8,7 +8,6 @@
         <file :name="hud_corner.texture" :path="hud_corner.texture"/>
 
         <!-- Custom tracker icons -->
-        <file :name="arrow_up.texture" :path="arrow_up.texture"/>
         <file :name="assaultbox.texture" :path="assaultbox.texture"/>
         <file :name="boat.texture" :path="boat.texture"/>
         <file :name="enemy.texture" :path="enemy.texture"/>

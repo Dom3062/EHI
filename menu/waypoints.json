@@ -89,6 +89,18 @@
             "default_value": true,
             "parent" : "ehi_show_waypoints_choice",
             "ehi_ver" : 26
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_waypoints_cameras_choice",
+            "title": "ehi_show_waypoints_cameras",
+            "description": "ehi_show_waypoints_cameras_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints_cameras",
+            "value": "show_waypoints_cameras",
+            "default_value": true,
+            "parent" : "ehi_show_waypoints_choice",
+            "ehi_ver" : 35
         }
     ]
 }

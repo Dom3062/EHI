@@ -26,7 +26,8 @@ local LootCounter =
     --alex_3 = true, -- Rats Day 3
     --rvd1 = true -- Reservoir Dogs Heist Day 2
     -- Custom Heist
-    rusdl = true
+    rusdl = true,
+    hunter_departure = true
 }
 local level_id = Global.game_settings.level_id
 local tracker_id = nil
@@ -100,7 +101,7 @@ elseif level_id == "sand" then -- Ukrainian Prisoner Heist
     check_type = check_types.BagsOnly
     tracker_id = "sand_9"
 elseif level_id == "dinner" then -- Slaughterhouse
-    if EHI:IsOVKOrAbove(Global.game_settings.difficulty) and EHI:IsAchievementLocked("farm_6") then
+    if EHI:IsDifficultyOrAbove("overkill") and EHI:IsAchievementLocked("farm_6") then
         check_type = check_types.MultipleTriggers
         multiple_check_type = { check_types.OneTypeOfLoot, check_types.OneTypeOfLoot }
         loot_type = { "gold", "din_pig" }
@@ -119,7 +120,7 @@ elseif level_id == "firestarter_1" then -- Firestarter Day 1
 elseif level_id == "big" then -- The Big Bank
     check_type = check_types.BagsOnly
     tracker_id = "bigbank_3"
-elseif level_id == "mallcrasher" and EHI:DifficultyToIndex(Global.game_settings.difficulty) == 3 then -- Mallcrasher
+elseif level_id == "mallcrasher" and EHI:DifficultyToIndex() == 3 then -- Mallcrasher
     check_type = check_types.ValueOfSmallLoot
     tracker_id = "ameno_3_counter"
 elseif LootCounter[level_id] then

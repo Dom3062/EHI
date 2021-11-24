@@ -1,8 +1,8 @@
 local EHI = EHI
 local panel_size_original = 32
 local panel_offset_original = 6
-local panel_size = 32
-local panel_offset = 6
+local panel_size = panel_size_original
+local panel_offset = panel_offset_original
 FakeEHIManager = FakeEHIManager or class()
 function FakeEHIManager:init(panel)
     self._hud_panel = panel:panel({
@@ -125,8 +125,8 @@ function FakeEHIManager:GetPos(pos)
     if self._tracker_alignment == 1 then -- Vertical
         y = self._y + (pos * (panel_size + panel_offset))
     elseif pos and pos > 0 then -- Horizontal
-        local last_tracker = self._fake_trackers[pos]
-        x = last_tracker._panel:right() + panel_offset
+        local tracker = self._fake_trackers[pos]
+        x = tracker._panel:right() + (tracker:GetSize() - tracker._panel:w()) + panel_offset
     end
     return x, y
 end
@@ -200,9 +200,15 @@ function FakeEHIManager:UpdateIconsVisibility(visibility)
     for _, tracker in pairs(self._fake_trackers) do
         tracker:UpdateIconsVisibility(visibility)
     end
+    if self._tracker_alignment == 2 then -- Horizontal Alignment
+        self:UpdateXOffset(EHI:GetOption("x_offset"))
+    end
 end
 
 function FakeEHIManager:UpdateTrackerAlignment(alignment)
+    if self._tracker_alignment == alignment then
+        return
+    end
     self._tracker_alignment = alignment
     self:Redraw()
 end
@@ -360,6 +366,7 @@ function FakeEHITracker:init(panel, params)
     })
     self:FitTheText()
     self._n_of_icons = number_of_icons
+    self._n = number_of_icons
     if number_of_icons > 0 then
         local start = self._time_bg_box:w()
         local icon_gap = 5 * self._scale
@@ -380,6 +387,7 @@ function FakeEHITracker:init(panel, params)
         end
         if params.one_icon then
             self:UpdateIconsVisibility(true)
+            self._n = 1
         end
     end
     self._id = params.id
@@ -457,6 +465,7 @@ end
 
 function FakeEHITracker:UpdateIconsVisibility(visibility)
     local i_start = visibility and 2 or 1
+    self._n = visibility and 1 or self._n_of_icons
     for i = i_start, self._n_of_icons, 1 do
         self["_icon" .. i]:set_visible(not visibility)
     end
@@ -465,6 +474,10 @@ end
 function FakeEHITracker:UpdateTextScale(scale)
     self._text_scale = scale
     self:FitTheText()
+end
+
+function FakeEHITracker:GetSize()
+    return (64 + (5 * self._n) + (32 * self._n)) * self._scale
 end
 
 function FakeEHITracker:destroy()

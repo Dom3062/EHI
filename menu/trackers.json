@@ -75,6 +75,18 @@
             "default_value": 1
         },
         {
+            "type": "toggle",
+            "id": "ehi_total_xp_show_difference_choice",
+            "title": "ehi_total_xp_show_difference",
+            "description": "ehi_total_xp_show_difference_desc",
+            "callback": "SetOption",
+            "callback_arguments": "total_xp_show_difference",
+            "value": "total_xp_show_difference",
+            "parent": "ehi_show_gained_xp_choice",
+            "default_value": true,
+            "ehi_ver" : 35
+        },
+        {
             "type": "divider",
             "size": 20
         },
@@ -214,27 +226,31 @@
             "ehi_ver" : 16
         },
         {
-            "type": "toggle",
-            "id": "ehi_show_difficulty_tracker_choice",
-            "title": "ehi_show_difficulty_tracker",
-            "description": "ehi_show_difficulty_tracker_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_difficulty_tracker",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_difficulty_tracker",
-            "default_value": true
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_drama_tracker_choice",
-            "title": "ehi_show_drama_tracker",
-            "description": "ehi_show_drama_tracker_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_drama_tracker",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_drama_tracker",
-            "default_value": true,
-            "ehi_ver" : 10
+            "table" : [
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_difficulty_tracker_choice",
+                    "title": "ehi_show_difficulty_tracker",
+                    "description": "ehi_show_difficulty_tracker_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_difficulty_tracker",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_difficulty_tracker",
+                    "default_value": true
+                },
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_drama_tracker_choice",
+                    "title": "ehi_show_drama_tracker",
+                    "description": "ehi_show_drama_tracker_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_drama_tracker",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_drama_tracker",
+                    "default_value": true,
+                    "ehi_ver" : 10
+                }
+            ]
         },
         {
             "type": "toggle",

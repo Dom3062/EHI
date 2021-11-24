@@ -27,39 +27,10 @@ local original =
     hide = TimerGui.hide
 }
 
-local level_id = Global.game_settings.level_id
-local remove_on_power_off = {}
-local ignore = {}
-local icons = {}
-if level_id == "des" then -- Henry's Rock
-    remove_on_power_off =
-    {
-        [101323] = true,
-        [101324] = true
-    }
-elseif level_id == "hox_2" then
-    icons =
-    {
-        [EHI:GetInstanceUnitID(100018, 2650)] = { "equipment_evidence" },
-        [EHI:GetInstanceUnitID(100068, 6690)] = { "equipment_harddrive" }
-    }
-elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
-    local function f()
-        local editor_id = EHI:GetInstanceUnitID(100150, 9030)
-        for _, unit in pairs(World:find_units_quick("all", 1)) do
-            if unit and unit:editor_id() == editor_id then
-                unit:timer_gui():OnAlarm()
-            end
-        end
-        ignore[editor_id] = true
-    end
-    EHI:AddOnAlarmCallback(f)
-end
-
 function TimerGui:init(unit, ...)
+    original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._ehi_icon = unit:base().is_drill and "pd2_drill" or unit:base().is_hacking_device and "wp_hack" or unit:base().is_saw and "pd2_generic_saw" or "faster"
-    original.init(self, unit, ...)
 end
 
 function TimerGui:set_background_icons(background_icons, ...)
@@ -83,12 +54,7 @@ function TimerGui:GetUpgrades()
     return upgrade_table
 end
 
-function TimerGui:_start(...)
-    original._start(self, ...)
-    local editor_id = self._unit:editor_id()
-    if ignore[editor_id] then
-        return
-    end
+function TimerGui:StartTimer()
     if managers.ehi:TrackerExists(self._ehi_key) then
         managers.ehi:SetTimerJammed(self._ehi_key, false)
         managers.ehi:SetTimerPowered(self._ehi_key, true)
@@ -100,7 +66,7 @@ function TimerGui:_start(...)
             managers.ehi:AddTracker({
                 id = self._ehi_key,
                 time = self._current_timer,
-                icons = icons[editor_id] or { { icon = self._ehi_icon } },
+                icons = self._icons or { { icon = self._ehi_icon } },
                 theme = self.THEME,
                 exclude_from_sync = true,
                 class = "EHITimerTracker",
@@ -111,7 +77,7 @@ function TimerGui:_start(...)
         if show_waypoint then
             managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
                 time = self._current_timer,
-                icon = icons[editor_id] or self._ehi_icon,
+                icon = self._icons or self._ehi_icon,
                 pause_timer = 1,
                 type = "timer",
                 position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
@@ -119,6 +85,14 @@ function TimerGui:_start(...)
             })
         end
     end
+end
+
+function TimerGui:_start(...)
+    original._start(self, ...)
+    if self._ignore then
+        return
+    end
+    self:StartTimer()
 end
 
 if show_waypoint_only then
@@ -152,7 +126,7 @@ function TimerGui:_set_jammed(jammed, ...)
 end
 
 function TimerGui:_set_powered(powered, ...)
-    if powered == false and remove_on_power_off[self._unit:editor_id()] then
+    if powered == false and self._remove_on_power_off then
         managers.ehi:RemoveTracker(self._ehi_key)
         managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     end
@@ -182,10 +156,36 @@ function TimerGui:destroy(...)
 end
 
 function TimerGui:OnAlarm()
+    self._ignore = true
     managers.ehi:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
 function TimerGui:DisableOnSetVisible()
     self.set_visible = original.set_visible
+    self._set_visible_disabled = true
+end
+
+function TimerGui:SetIcons(icons)
+    self._icons = icons
+end
+
+function TimerGui:SetRemoveOnPowerOff(remove_on_power_off)
+	self._remove_on_power_off = remove_on_power_off
+end
+
+function TimerGui:SetOnAlarm()
+	EHI:AddOnAlarmCallback(callback(self, self, "OnAlarm"))
+end
+
+function TimerGui:Finalize()
+    if self._ignore or (self._remove_on_power_off and not self._powered) then
+        managers.ehi:RemoveTracker(self._ehi_key)
+        managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    elseif self._icons then
+		managers.ehi:SetTrackerIcon(self._ehi_key, self._icons[1])
+		managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icons[1])
+    elseif self._set_visible_disabled and not self:is_visible() and (managers.ehi:TrackerDoesNotExist(self._ehi_key) or managers.ehi_waypoint:WaypointDoesNotExist(self._ehi_key)) then
+        self:StartTimer()
+	end
 end

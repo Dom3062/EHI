@@ -32,7 +32,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         self.ehi:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2))
     end
     self._tracker_waypoints = {}
-    if server then
+    if server or level_id == "hvh" then
         self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
         if EHIWaypoints then
             self:add_updator("EHI_Waypoint_Update", callback(ehi_waypoint, ehi_waypoint, "update"))
@@ -40,7 +40,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     elseif EHIWaypoints then
         self:add_updator("EHI_Waypoint_dt_update", callback(ehi_waypoint, ehi_waypoint, "update_dt"))
     end
-    local difficulty = Global.game_settings.difficulty
     local level_tweak_data = tweak_data.levels[level_id]
     if level_tweak_data and level_tweak_data.team_ai_off then
         return
@@ -105,16 +104,16 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     local disabled_achievements = managers.mutators:are_achievements_disabled()
     EHI._cache.AreAchievementsDisabled = disabled_achievements
     if EHI:GetOption("show_achievement") and not disabled_achievements then
-        self:ShowAchievements(difficulty)
+        self:ShowAchievements()
     end
-    self:ShowLootCounter(difficulty)
+    self:ShowLootCounter()
 end
 
-function HUDManager:ShowAchievements(difficulty)
-    if level_id == "cane" and EHI:IsOVKOrAbove(difficulty) then
+function HUDManager:ShowAchievements()
+    if level_id == "cane" and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("cane_3", 100, true)
     end
-    if level_id == "mex_cooking" and EHI:IsOVKOrAbove(difficulty) then
+    if level_id == "mex_cooking" and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("mex2_9", 25, true)
     end
     if level_id == "crojob2" then
@@ -136,13 +135,13 @@ function HUDManager:ShowAchievements(difficulty)
         self.ehi:AddAchievementProgressTracker("pex_10", 6, true)
         self.ehi:AddAchievementProgressTracker("pex_11", 7)
     end
-    if level_id == "dah" and EHI:IsOVKOrAbove(difficulty) then
+    if level_id == "dah" and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("dah_8", 12)
     end
-    if (level_id == "alex_1" or level_id == "rat") and EHI:IsOVKOrAbove(difficulty) then
+    if (level_id == "alex_1" or level_id == "rat") and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("halloween_2", 7, true)
     end
-    if level_id == "chas" and EHI:IsOVKOrAbove(difficulty) then
+    if level_id == "chas" and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("chas_10", 15, true)
     end
     if level_id == "rvd2" then
@@ -154,7 +153,7 @@ function HUDManager:ShowAchievements(difficulty)
     if level_id == "shoutout_raid" then
         self.ehi:AddAchievementProgressTracker("melt_3", 8, true)
     end
-    if level_id == "dinner" and EHI:IsOVKOrAbove(difficulty) then
+    if level_id == "dinner" and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("farm_6", 1, true, false)
     end
     if level_id == "man" then
@@ -168,7 +167,7 @@ function HUDManager:ShowAchievements(difficulty)
     end
 end
 
-function HUDManager:ShowLootCounter(difficulty)
+function HUDManager:ShowLootCounter()
     local max = 0
     if level_id == "spa" then
         max = 4
@@ -177,7 +176,7 @@ function HUDManager:ShowLootCounter(difficulty)
     elseif level_id == "wwh" then
         max = 8
     elseif level_id == "shoutout_raid" then
-        max = EHI:IsOVKOrAbove(difficulty) and 8 or 6
+        max = EHI:IsDifficultyOrAbove("overkill") and 8 or 6
         if self.ehi:TrackerDoesNotExist("melt_3") then
             max = max + 8
         end
@@ -195,6 +194,8 @@ function HUDManager:ShowLootCounter(difficulty)
         max = 3 + (self.ehi:TrackerDoesNotExist("armored_1") and 20 or 0)
     elseif level_id == "rusdl" then -- Cold Stones Custom Heist
         max = 20
+    elseif level_id == "hunter_departure" and not (EHI:GetOption("show_achievement") or EHI._cache.AreAchievementsDisabled) then -- Hunter and Hunted (Departure) Day 2 Custom Heist
+        max = 21
     end
     if max == 0 then
         return
@@ -242,7 +243,7 @@ function HUDManager:AddTracker(params)
     self.ehi:AddTracker(params)
 end
 
-if Network:is_client() then
+if Network:is_client() and level_id ~= "hvh" then
     original.feed_heist_time = HUDManager.feed_heist_time
     if EHIWaypoints then
         function HUDManager:feed_heist_time(time, ...)

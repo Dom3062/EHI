@@ -44,6 +44,7 @@ function EHIAggregatedEquipmentTracker:init(panel, params)
     end
     EHIAggregatedEquipmentTracker.super.init(self, panel, params)
     self._default_panel_w = self._panel:w()
+    self._panel_w = self._default_panel_w
     self._time_bg_box:remove(self._text)
 end
 
@@ -266,13 +267,15 @@ function EHIAggregatedEquipmentTracker:Reorganize(n)
     local old_panel_size = self._panel_size
     if n > self._panel_size then
         self._panel_size = self._panel_size * 2
-        self:SetPanelW(self._panel:w() * 3) -- Fixes text being cut off after animation; I suspect a math.floor call somewhere during the anim, maybe the parameter ?
+        self._panel_w = self._panel_w * 3 -- Fixes text being cut off after animation; I suspect a math.floor call somewhere during the anim, maybe the parameter ?
+        self:SetPanelW(self._panel_w)
         self._time_bg_box:set_w(self._time_bg_box:w() * 2)
         self._icon_remove = self._icon_remove + 1
     end
     if n < self._panel_size and n % 2 == 0 then
         self._panel_size = self._panel_size / 2
-        self:SetPanelW(self._panel:w() / 3) -- Fixes text being cut off after animation
+        self._panel_w = self._panel_w / 3 -- Fixes text being cut off after animation
+        self:SetPanelW(self._panel_w)
         self._time_bg_box:set_w(self._time_bg_box:w() / 2)
         self._icon_remove = self._icon_remove - 1
     end
