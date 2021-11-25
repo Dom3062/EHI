@@ -4,6 +4,7 @@ if EHI._hooks.CoreWorldInstanceManager then
 else
     EHI._hooks.CoreWorldInstanceManager = true
 end
+EHI:Init()
 local client = Network:is_client()
 local debug_instance = false
 local debug_unit = false
@@ -51,7 +52,7 @@ local instances =
 }
 
 if client then
-    instances["levels/instances/unique/sand/sand_helicopter_turret/world"].time = Global.game_settings and EHI:DifficultyToIndex(Global.game_settings.difficulty) == 6 and 90 or 60
+    instances["levels/instances/unique/sand/sand_helicopter_turret/world"].time = EHI:IsDifficulty("death_sentence") and 90 or 60
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"].random_time = 30
 end
 

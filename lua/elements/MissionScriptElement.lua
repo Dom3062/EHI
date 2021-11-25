@@ -8,7 +8,6 @@ if EHI._hooks.MissionScriptElement then -- Don't hook twice, pls
 else
     EHI._hooks.MissionScriptElement = true
 end
-EHI:Init()
 local level_id = Global.game_settings.level_id
 local show_achievement = EHI:GetOption("show_achievement")
 local dw_and_above = EHI:IsDifficultyOrAbove("death_wish")
@@ -343,9 +342,9 @@ elseif level_id == "mallcrasher" then -- Mallcrasher
         [3011481] = { time = 50, id = "ameno_3", class = TT.Achievement, condition = show_achievement and EHI:IsDifficulty("overkill"), exclude_from_sync = true },
         [3011482] = { to_secure = 1800000, id = "ameno_3_counter", icons = { "C_Vlad_H_Mallcrasher_OnePointEight" }, class = TT.AchievementBagValueTracker, condition = show_achievement and EHI:IsDifficulty("overkill"), exclude_from_sync = true },
         [3011483] = { special_function = SF.CustomCode, f = function()
-            if EHI:GetOption("show_achievement") and EHI:DifficultyToIndex(Global.game_settings.difficulty) == 3 then
+            if EHI:GetOption("show_achievement") and EHI:IsDifficulty("overkill") then
                 EHI:DelayCall("ameno_3_fail", 50, function()
-                    managers.ehi:RemoveTracker("ameno_3_counter")
+                    managers.ehi:SetAchievementFailed("ameno_3_counter")
                 end)
             end
         end },

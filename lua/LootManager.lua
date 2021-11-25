@@ -120,7 +120,7 @@ elseif level_id == "firestarter_1" then -- Firestarter Day 1
 elseif level_id == "big" then -- The Big Bank
     check_type = check_types.BagsOnly
     tracker_id = "bigbank_3"
-elseif level_id == "mallcrasher" and EHI:DifficultyToIndex() == 3 then -- Mallcrasher
+elseif level_id == "mallcrasher" and EHI:IsDifficulty("overkill") then -- Mallcrasher
     check_type = check_types.ValueOfSmallLoot
     tracker_id = "ameno_3_counter"
 elseif LootCounter[level_id] then

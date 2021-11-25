@@ -1,3 +1,7 @@
+r36 (25. 11. 2021):
+Improved formatting of Money achievement tracker
+Mallcrasher: Fixed an issue where achievement counter for "$1.8M Speedrun" was not counting
+
 r35 (24. 11. 2021):
 Added option "Show XP difference"
 Added option "Show Waypoints for Looped Cameras"

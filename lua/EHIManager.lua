@@ -118,7 +118,7 @@ function EHIManager:CountLootbagsAvailable(path, loot_type, slotmask)
 end
 
 function EHIManager:save(data)
-    if self._level_started_from_beginning or true then
+    if true then
         return
     end
     local state = {}
@@ -146,23 +146,13 @@ function EHIManager:save(data)
         local tracker = self:GetTracker("CustodyTime")
         state.CustodyTime = { peers = {} }
         for peer_id, time in pairs(tracker._peer_custody_time) do
-            state.CustodyTime.peers[peer_id] = {}
-            state.CustodyTime.peers[peer_id].time = time
+            state.CustodyTime.peers[peer_id] = { time = time }
         end
         for peer_id, in_custody in pairs(tracker._peer_in_custody) do
             state.CustodyTime.peers[peer_id].in_custody = in_custody
         end
         state.CustodyTime.ai_trade = tracker._ai_trade
         state.CustodyTime.trade = tracker._trade
-    end
-    -- Vault tracker in Meltdown
-    if self:TrackerExists("VaultTimeToOpen") then
-        local tracker = self:GetTracker("VaultTimeToOpen")
-        state.VaultTimeToOpen =
-        {
-            time = tracker._time,
-            n_of_crowbars = tracker._n_of_crowbars
-        }
     end
     data.EHIManager = state
 end
@@ -183,18 +173,6 @@ function EHIManager:load(data)
             self:SetTrade("normal", state.CustodyTime.trade, tick)
         end
         state.CustodyTime = nil
-        if state.VaultTimeToOpen then
-            self:AddTracker({
-                id = "VaultTimeToOpen",
-                class = "EHIVaultTemperatureTracker"
-            })
-            self:SetTrackerTime("VaultTimeToOpen", state.VaultTimeToOpen.time)
-            if state.VaultTimeToOpen.n_of_crowbars > 0 then
-                self:CallFunction("VaultTimeToOpen", "SetNumberOfCrowbars", state.VaultTimeToOpen.n_of_crowbars)
-                self:AddTrackerToUpdate("VaultTimeToOpen", self:GetTracker("VaultTimeToOpen"))
-            end
-            state.VaultTimeToOpen = nil
-        end
         for key, tracker_data in pairs(state) do
             self:AddTracker({
                 id = key,
@@ -213,12 +191,12 @@ function EHIManager:load(data)
                 class = tracker_data.class
             })
         end
-        self.synced_from_host = true
+        self._synced_from_host = true
     end
 end
 
 function EHIManager:LoadSync()
-    if self._level_started_from_beginning or self.synced_from_host then
+    if self._level_started_from_beginning or self._synced_from_host then
         return
     end
     local level_id = Global.game_settings.level_id

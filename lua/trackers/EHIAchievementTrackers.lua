@@ -193,17 +193,33 @@ EHIAchievementBagValueTracker = EHIAchievementBagValueTracker or class(EHIProgre
 EHIAchievementBagValueTracker._update = false
 function EHIAchievementBagValueTracker:init(panel, params)
     self._secured = 0
+    self._secured_formatted = "0"
     self._to_secure = params.to_secure or 0
+    self._to_secure_formatted = self:FormatNumber(self._to_secure)
     EHIAchievementBagValueTracker.super.init(self, panel, params)
 end
 
 function EHIAchievementBagValueTracker:Format()
-    return "$" .. self._secured .. "/$" .. self._to_secure
+    return "$" .. self._secured_formatted .. "/$" .. self._to_secure_formatted
+end
+
+function EHIAchievementBagValueTracker:FormatNumber(n)
+    local divisor = 1
+    local post_fix = ""
+    if n >= 1000000 then
+        divisor = 1000000
+        post_fix = "M"
+    elseif n >= 1000 then
+        divisor = 1000
+        post_fix = "K"
+    end
+    return tostring(n / divisor) .. post_fix
 end
 
 function EHIAchievementBagValueTracker:SetProgress(progress)
-    if self._secured ~= progress then
+    if self._secured ~= progress and not self._disable_counting then
         self._secured = progress
+        self._secured_formatted = self:FormatNumber(progress)
         self._text:set_text(self:Format())
         self:FitTheText()
         if self._flash then
@@ -227,6 +243,7 @@ function EHIAchievementBagValueTracker:SetCompleted(force)
             self._text:set_text("FINISH")
             self:FitTheText()
         end
+        self._disable_counting = true
     end
 end
 
@@ -239,4 +256,5 @@ function EHIAchievementBagValueTracker:SetFailed()
     self._status = "failed"
     self._parent_class:AddTrackerToUpdate(self._id, self)
     self:AnimateBG()
+    self._disable_counting = true
 end

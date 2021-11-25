@@ -66,6 +66,9 @@
     "ehi_xp_panel_1" : "当获得经验时显示",
     "ehi_xp_panel_2" : "在劫案中常态显示",
 
+    "ehi_total_xp_show_difference" : "显示经验值差异",
+    "ehi_total_xp_show_difference_desc" : "必须选择[在劫案中常态显示]选项 ！\n显示一个独立的追踪器来显示你获得的经验量",
+
     "ehi_show_trade_delay" : "显示交易延迟",
     "ehi_show_trade_delay_desc" : "当您或您的队友杀死人质时显示交易延迟",
 
@@ -180,5 +183,8 @@
     "ehi_show_waypoints_timers_desc" : "显示地图上正在进行的黑入，钻机，电锯等进程的剩余时间\n\n需要勾选'显示计时器'选项以正常使用",
 
     "ehi_show_waypoints_pager" : "显示对讲机导航点",
-    "ehi_show_waypoints_pager_desc" : "当有待回复的对讲机时显示导航点\n\n需要勾选'显示对讲机剩余时间追踪器'选项以正常使用"
+    "ehi_show_waypoints_pager_desc" : "当有待回复的对讲机时显示导航点\n\n需要勾选'显示对讲机剩余时间追踪器'选项以正常使用",
+
+    "ehi_show_waypoints_cameras" : "显示已设置回路的摄像头导航点",
+    "ehi_show_waypoints_cameras_desc" : "当摄像头被设置摄像头回路时显示导航点"
 }
