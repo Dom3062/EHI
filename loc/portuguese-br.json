@@ -118,5 +118,73 @@
     "ehi_show_pager_tracker_desc" : "Mostra um Tracker de quantos pagers restam",
 
     "ehi_show_enemy_count_tracker" : "Mostrar o Tracker de Inimigos vivos",
-	"ehi_show_enemy_count_tracker_desc" : "Mostra um Tracker para quantos inimigos tem no mapa"
+	"ehi_show_enemy_count_tracker_desc" : "Mostra um Tracker para quantos inimigos tem no mapa",
+	
+	"ehi_show_laser_tracker" : "Mostrar Tracker de Laser",
+    "ehi_show_laser_tracker_desc" : "Mostra um Tracker de lasers que ficam trocando por alguns segundos",
+
+    "ehi_tracker_alignment" : "Alinhamento do Tracker",
+    "ehi_tracker_alignment_desc" : "Define como os Trackers devem ser alinhados",
+    "ehi_tracker_alignment_1" : "Vertical",
+    "ehi_tracker_alignment_2" : "Horizontal",
+
+    "ehi_show_achievement" : "Mostrar Tracker de Conquista",
+    "ehi_show_achievement_desc" : "Mostra as conquistas na tela\nAlgumas heists não tem conquistas disponíveis",
+
+    "ehi_hide_unlocked_achievements" : "Não Mostrar Conquistas já Alcançadas",
+    "ehi_hide_unlocked_achievements_desc" : "Quando ativado, EHI não vai mostrar Trackers para conquistas que já foram alcançadas\nQuando desativado, EHI vai mostrar os Trackers para conquistas que já foram alcançadas",
+    
+    "ehi_total_xp_show_difference" : "Mostrar Diferença de XP",
+    "ehi_total_xp_show_difference_desc" : "Só tem a opção [Mostrar o total do XP ganho da Heist]!\nMostra o quanto de XP você ganhou em um Tracker",
+    
+    "ehi_show_trade_delay_suppress_in_stealth" : "Não Mostrar o Atraso da Troca em Stealth",
+    "ehi_show_trade_delay_suppress_in_stealth_desc" : "Esconde o Atraso da Troca em Stealth quando ativado. Assim que o alarme for soado, o Tracker irá aparecer com o Atraso acumulado.",
+    
+    "ehi_show_equipment_ecmjammer" : "Mostrar a duração do ECM Jammer",
+    "ehi_show_equipment_ecmjammer_desc" : "Mostra um Tracker que exibe quanto tempo resta para um ECM Jammer\nUm ECM Jammer com a duração mais longa vai ser exibido no Tracker",
+
+    "ehi_show_equipment_ecmfeedback" : "Mostrar a duração do ECM Feedback",
+    "ehi_show_equipment_ecmfeedback_desc" : "Mostra um Tracker que exibe quanto tempo resta para um ECM Feedback\nUm ECM Feedback com a duração mais longa vai ser exibido no Tracker (apenas host)\nPocket ECM Feedback também funciona para o Cliente",
+ 
+    "ehi_show_equipment_aggregate_all" : "Juntar todos os Equipamentos",
+    "ehi_show_equipment_aggregate_all_desc" : "Junta todos os equipamentos em um Tracker só\nEquipamentos vão usar uma cor diferente mostrado abaixo",
+
+    "ehi_doctor_bag" : "Bolsa Médica",
+    "ehi_ammo_bag" : "Bolsa de Munição",
+    "ehi_grenade_crate" : "Maleta de Granadas",
+    "ehi_first_aid_kit" : "Kit de Primeiro Socorros",
+    "ehi_bodybags_bag" : "Bolsas de Cadáveres",
+
+    "ehi_show_drama_tracker" : "Mostrar Tracker de Drama",
+    "ehi_show_drama_tracker_desc" : "Mostra um tracker do Drama acumulado (apenas host)",
+
+    "ehi_show_pager_callback_trackers" : "Mostrar Tracker de Pagers",
+    "ehi_show_pager_callback_trackers_desc" : "Mostra um Tracker de Pagers que precisam ser respondidas",
+
+    "ehi_waypoints_menu" : "Waypoints",
+    "ehi_waypoints_menu_desc" : "",
+
+    "ehi_show_waypoints" : "Mostrar Waypoints",
+    "ehi_show_waypoints_desc" : "Mostra waypoints no mapa do jogo",
+
+    "ehi_show_waypoints_only" : "Mostrar apenas Waypoints",
+    "ehi_show_waypoints_only_desc" : "Quando ativado e quando um elemento tem um tracker e um waypoint definido, mostra apenas o waypoint\nCaso contrário, o Tracker vai ser mostrado",
+
+    "ehi_show_waypoints_present_timer" : "Timer de Aviso",
+    "ehi_show_waypoints_present_timer_desc" : "Define por quanto tempo o waypoint vai ficar na sua tela antes de 'mover' até o seu destino",
+
+    "ehi_show_waypoints_enemy_turret" : "Mostrar waypoints para Turret Inimiga",
+    "ehi_show_waypoints_enemy_turret_desc" : "Mostra um waypoint quando a Turret Inimiga estiver recarregando ou reparando",
+
+    "ehi_show_waypoints_timers" : "Mostrar waypoints para Timers",
+    "ehi_show_waypoints_timers_desc" : "Mostra um waypoint em um Timer visível (por exemplo, um hack, uma drill ou serra, etc...)\n\nA opção 'Mostrar Timers' deve estar ativo para que possa funcionar",
+
+    "ehi_show_waypoints_pager" : "Mostrar waypoints em Pagers",
+    "ehi_show_waypoints_pager_desc" : "Mostra um Tracker de Pagers que precisam ser respondidas\n\nA opção 'Mostrar Tracker de Pagers' deve estar ativo para que possa funcionar",
+
+    "ehi_show_waypoints_cameras" : "Mostrar waypoints para câmeras afetadas pelo Loop",
+    "ehi_show_waypoints_cameras_desc" : "Mostra um waypoint em uma câmera que está sendo afetada por um Loop",
+
+    "ehi_text_scale" : "Tamanho do Texto",
+    "ehi_text_scale_desc" : "Definie o tamanho do texto.\nEssa opção é útil para jogadores que tem mods de fontes"
 }

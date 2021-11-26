@@ -46,14 +46,14 @@ local instances =
     },
     ["levels/instances/unique/sand/sand_helicopter_turret/world"] =
     {
-        [100027] = { id = "TurretTimer", icons = { EHI.Icons.Heli, "wp_sentry", "faster" }, special_function = SF.GetElementTimerAccurate, element = 100012, sync = true },
-        [100024] = { id = "TurretTimer", special_function = SF.RemoveTracker }
+        [100027] = { id = "SandTurretTimer", icons = { EHI.Icons.Heli, "wp_sentry", "faster" }, special_function = SF.GetElementTimerAccurate, element = 100012, sync = true },
+        [100024] = { id = "SandTurretTimer", special_function = SF.RemoveTracker }
     }
 }
 
 if client then
-    instances["levels/instances/unique/sand/sand_helicopter_turret/world"].time = EHI:IsDifficulty("death_sentence") and 90 or 60
-    instances["levels/instances/unique/sand/sand_helicopter_turret/world"].random_time = 30
+    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].time = EHI:IsDifficulty("death_sentence") and 90 or 60
+    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].random_time = 30
 end
 
 local original =

@@ -1,3 +1,6 @@
+r37 (26. 11. 2021):
+Fixed a client crash when a heist used attack helicopter from Ukrainian Prisoner Heist
+
 r36 (25. 11. 2021):
 Improved formatting of Money achievement tracker
 Mallcrasher: Fixed an issue where achievement counter for "$1.8M Speedrun" was not counting

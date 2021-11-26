@@ -225,11 +225,7 @@ function DigitalGui:load(data, ...)
 end
 
 function DigitalGui:SetIcons(icons)
-    EHI:Log("[DigitalGui] Set Icons: " .. tostring(icons) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
     self._icons = icons
-    if type(icons) == "table" then
-        _G.PrintTable(icons)
-    end
 end
 
 function DigitalGui:SetIconOnPause(icon)
@@ -239,44 +235,36 @@ function DigitalGui:SetIconOnPause(icon)
     else
         self._change_icon_on_pause = false
     end
-    EHI:Log("[DigitalGui] Set Icon On Pause: " .. tostring(self._icon_on_pause) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
 end
 
 function DigitalGui:SetIgnore(ignore)
     self._ignore = ignore
-    EHI:Log("[DigitalGui] Set Ignore: " .. tostring(ignore) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
 end
 
 function DigitalGui:SetRemoveOnPause(remove_on_pause)
     self._remove_on_pause = remove_on_pause
-    EHI:Log("[DigitalGui] Set Remove On Pause: " .. tostring(remove_on_pause) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
 end
 
 function DigitalGui:SetClass(class)
     self._class = class
-    EHI:Log("[DigitalGui] Set Class: " .. tostring(class) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
 end
 
 function DigitalGui:SetOnAlarm()
     EHI:AddOnAlarmCallback(callback(self, self, "OnAlarm"))
-    EHI:Log("[DigitalGui] Set On Alarm; Editor ID: " .. tostring(self._unit:editor_id()))
 end
 
 function DigitalGui:SetCustomCallback(id, operation)
     if operation == "remove" then
         EHI:AddCallback(id, callback(self, self, "OnAlarm"))
     end
-    EHI:Log("[DigitalGui] Set Custom Callback with ID " .. tostring(id) .. " and operation " .. tostring(operation) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
 end
 
 function DigitalGui:SetIgnoreVisibility(value)
     self._ignore_visibility = value
-    EHI:Log("[DigitalGui] Set Ignore Visibility: " .. tostring(value) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
 end
 
 function DigitalGui:SetWarning(warning)
     self._warning = warning
-    EHI:Log("[DigitalGui] Set Warning: " .. tostring(warning) .. "; Editor ID: " .. tostring(self._unit:editor_id()))
 end
 
 function DigitalGui:Finalize()
