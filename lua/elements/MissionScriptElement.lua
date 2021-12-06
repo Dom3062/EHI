@@ -21,23 +21,8 @@ local trigger_id_all = "Trigger"
 local trigger_icon_all = {}
 local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
-local Icon = EHI:GetIcons()
-local TT = -- Tracker Type
-{
-    MallcrasherMoney = "EHIMoneyCounterTracker",
-    Warning = "EHIWarningTracker",
-    Pausable = "EHIPausableTracker",
-    Chance = "EHIChanceTracker",
-    Progress = "EHIProgressTracker",
-    Achievement = "EHIAchievementTracker",
-    AchievementDone = "EHIAchievementDoneTracker",
-    AchievementUnlock = "EHIAchievementUnlockTracker",
-    AchievementProgress = "EHIAchievementProgressTracker",
-    AchievementNotification = "EHIAchievementNotificationTracker",
-    AchievementBagValueTracker = "EHIAchievementBagValueTracker",
-    Inaccurate = "EHIInaccurateTracker",
-    InaccurateWarning = "EHIInaccurateWarningTracker"
-}
+local Icon = EHI.Icons
+local TT = EHI.Trackers -- Tracker Type
 local AchievementTT =
 {
     EHIAchievementTracker = true,

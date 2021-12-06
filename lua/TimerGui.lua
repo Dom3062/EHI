@@ -163,7 +163,6 @@ end
 
 function TimerGui:DisableOnSetVisible()
     self.set_visible = original.set_visible
-    self._set_visible_disabled = true
 end
 
 function TimerGui:SetIcons(icons)
@@ -185,7 +184,5 @@ function TimerGui:Finalize()
     elseif self._icons then
 		managers.ehi:SetTrackerIcon(self._ehi_key, self._icons[1])
 		managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icons[1])
-    elseif self._set_visible_disabled and not self:is_visible() and (managers.ehi:TrackerDoesNotExist(self._ehi_key) or managers.ehi_waypoint:WaypointDoesNotExist(self._ehi_key)) then
-        self:StartTimer()
 	end
 end

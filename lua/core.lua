@@ -136,6 +136,23 @@ _G.EHI =
         Keycard = "equipment_bank_manager_key"
     },
 
+    Trackers =
+    {
+        MallcrasherMoney = "EHIMoneyCounterTracker",
+        Warning = "EHIWarningTracker",
+        Pausable = "EHIPausableTracker",
+        Chance = "EHIChanceTracker",
+        Progress = "EHIProgressTracker",
+        Achievement = "EHIAchievementTracker",
+        AchievementDone = "EHIAchievementDoneTracker",
+        AchievementUnlock = "EHIAchievementUnlockTracker",
+        AchievementProgress = "EHIAchievementProgressTracker",
+        AchievementNotification = "EHIAchievementNotificationTracker",
+        AchievementBagValueTracker = "EHIAchievementBagValueTracker",
+        Inaccurate = "EHIInaccurateTracker",
+        InaccurateWarning = "EHIInaccurateWarningTracker"
+    },
+
     difficulties = {
         "easy", -- Leftover from PD:TH
         "normal",
@@ -203,10 +220,6 @@ end
 function EHI:Init()
     self._cache.Difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
     self._cache.DifficultyIndex = self:DifficultyToIndex(self._cache.Difficulty)
-end
-
-function EHI:GetIcons()
-    return self.Icons
 end
 
 function EHI:Log(s)

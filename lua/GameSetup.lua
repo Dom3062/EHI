@@ -35,10 +35,7 @@ function GameSetup:save(data, ...)
 end
 
 function GameSetup:load(data, ...)
-    if managers.worlddefinition.Finalize then
-        managers.worlddefinition:Finalize()
-        managers.world_instance:Finalize()
-    end
+    EHI:FinalizeUnitsClient()
     managers.ehi:load(data)
     original.load(self, data, ...)
     managers.ehi:LoadSync()

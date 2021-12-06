@@ -1,7 +1,55 @@
+local EHI = EHI
 if EHI._hooks.WorldDefinition then
     return
 else
     EHI._hooks.WorldDefinition = true
+end
+
+function EHI:FinalizeUnitsClient()
+    self:FinalizeUnits(self._cache.MissionUnits)
+    self:FinalizeUnits(self._cache.InstanceUnits)
+end
+
+function EHI:FinalizeUnits(tbl)
+    local wd = managers.worlddefinition
+    for id, unit_data in pairs(tbl) do
+        local unit = wd:get_unit(id)
+        if unit then
+            if unit_data.f then
+                wd[unit_data.f](wd, unit_data.instance, id, unit_data, unit)
+            else
+                if unit:timer_gui() then
+                    unit:timer_gui():SetIcons(unit_data.icons)
+                    unit:timer_gui():SetRemoveOnPowerOff(unit_data.remove_on_power_off)
+                    if unit_data.disable_set_visible then
+                        unit:timer_gui():DisableOnSetVisible()
+                    end
+                    if unit_data.remove_on_alarm then
+                        unit:timer_gui():SetOnAlarm()
+                    end
+                    unit:timer_gui():Finalize()
+                end
+                if unit:digital_gui() then
+                    unit:digital_gui():SetIcons(unit_data.icons)
+                    unit:digital_gui():SetIgnore(unit_data.ignore)
+                    unit:digital_gui():SetRemoveOnPause(unit_data.remove_on_pause)
+                    unit:digital_gui():SetClass(unit_data.class)
+                    unit:digital_gui():SetWarning(unit_data.warning)
+                    if unit_data.remove_on_alarm then
+                        unit:digital_gui():SetOnAlarm()
+                    end
+                    if unit_data.custom_callback then
+                        unit:digital_gui():SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
+                    end
+                    if unit_data.icon_on_pause then
+                        unit:digital_gui():SetIconOnPause(unit_data.icon_on_pause[1])
+                    end
+                    unit:digital_gui():Finalize()
+                end
+            end
+            tbl[id] = nil
+        end
+    end
 end
 
 if not EHI:GetOption("show_timers") then
@@ -14,17 +62,15 @@ local original =
     create = WorldDefinition.create
 }
 
+local TT = EHI.Trackers
+
 local chasC4 = {}
 
 local _f_init_done = WorldDefinition.init_done
 function WorldDefinition:init_done(...)
-    self:Finalize()
+    EHI:FinalizeUnits(EHI._cache.MissionUnits)
+    EHI:FinalizeUnits(EHI._cache.InstanceUnits)
     _f_init_done(self, ...)
-end
-
-function WorldDefinition:Finalize()
-    self:FinalizeUnits(EHI._cache.MissionUnits)
-    self:FinalizeUnits(EHI._cache.InstanceUnits)
 end
 
 local level_id = Global.game_settings.level_id
@@ -35,7 +81,7 @@ local units =
     -- Copied from CoreWorldInstanceManager.lua
     ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { "pd2_drill" } },
     ["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" } },
-    ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { "faster" }, class = "EHIWarningTracker" },
+    ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { "faster" }, class = TT.Warning },
     ["units/pd2_dlc_help/props/hlp_interactable_wheel_timer/hlp_interactable_wheel_timer"] = { icons = { "faster" }, icon_on_pause = { "restarter" } },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { "pd2_c4" }, warning = true },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { "pd2_c4" }, f = "chasC4" },
@@ -76,47 +122,6 @@ function WorldDefinition:create(layer, offset, ...)
         end
     end
     return return_data
-end
-
-function WorldDefinition:FinalizeUnits(tbl)
-    for id, unit_data in pairs(tbl) do
-        local unit = self:get_unit(id)
-        if unit then
-            if unit_data.f then
-                self[unit_data.f](self, unit_data.instance, id, unit_data, unit)
-            else
-                if unit:timer_gui() then
-                    unit:timer_gui():SetIcons(unit_data.icons)
-                    unit:timer_gui():SetRemoveOnPowerOff(unit_data.remove_on_power_off)
-                    if unit_data.disable_set_visible then
-                        unit:timer_gui():DisableOnSetVisible()
-                    end
-                    if unit_data.remove_on_alarm then
-                        unit:timer_gui():SetOnAlarm()
-                    end
-                    unit:timer_gui():Finalize()
-                end
-                if unit:digital_gui() then
-                    unit:digital_gui():SetIcons(unit_data.icons)
-                    unit:digital_gui():SetIgnore(unit_data.ignore)
-                    unit:digital_gui():SetRemoveOnPause(unit_data.remove_on_pause)
-                    unit:digital_gui():SetClass(unit_data.class)
-                    unit:digital_gui():SetWarning(unit_data.warning)
-                    if unit_data.remove_on_alarm then
-                        unit:digital_gui():SetOnAlarm()
-                    end
-                    if unit_data.custom_callback then
-                        unit:digital_gui():SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
-                    end
-                    if unit_data.icon_on_pause then
-                        unit:digital_gui():SetIconOnPause(unit_data.icon_on_pause[1])
-                    end
-                    unit:digital_gui():Finalize()
-                end
-            end
-            tbl[id] = nil
-        end
-    end
 end
 
 function WorldDefinition:chasC4(instance, unit_id, unit_data, unit)
@@ -167,7 +172,7 @@ function WorldDefinition:hox3Timer(instance, unit_id, unit_data, unit)
         unit:digital_gui():SetIcons({ EHI.Icons.Vault })
     else
         unit:digital_gui():SetIcons({ "faster" })
-        unit:digital_gui():SetClass("EHIWarningTracker")
+        unit:digital_gui():SetClass(TT.Warning)
     end
     unit:digital_gui():SetOnAlarm()
     unit:digital_gui():SetRemoveOnPause(true)

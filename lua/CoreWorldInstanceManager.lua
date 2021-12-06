@@ -9,19 +9,7 @@ local client = Network:is_client()
 local debug_instance = false
 local debug_unit = false
 local SF = EHI.SpecialFunctions
-local TT = -- Tracker Type
-{
-    MallcrasherMoney = "EHIMoneyCounterTracker",
-    Warning = "EHIWarningTracker",
-    Pausable = "EHIPausableTracker",
-    Chance = "EHIChanceTracker",
-    Progress = "EHIProgressTracker",
-    Achievement = "EHIAchievementTracker",
-    AchievementProgress = "EHIAchievementProgressTracker",
-    AchievementNotification = "EHIAchievementNotificationTracker",
-    Inaccurate = "EHIInaccurateTracker",
-    InaccurateWarning = "EHIInaccurateWarningTracker"
-}
+local TT = EHI.Trackers -- Tracker Type
 local instance_index = 1
 local used_start_indexes = {}
 local instances =
@@ -150,8 +138,6 @@ elseif level_id == "sand" then -- Dragon Heist
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { EHI.Icons.Vault }, remove_on_pause = true, remove_on_alarm = true }
 end
 
-local chasC4 = {}
-
 function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ...)
     local instance_data = original.prepare_unit_data(self, instance, continent_data, ...)
     for _, entry in ipairs(instance_data.statics or {}) do
@@ -167,138 +153,11 @@ function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ..
     return instance_data
 end
 
-function CoreWorldInstanceManager:chasC4(instance, unit_id, unit_data, unit)
-    if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100054 then
-        unit:digital_gui():SetIcons(unit_data.icons)
-    else
-        unit:digital_gui():SetIgnore(true)
-    end
-end
-
-function CoreWorldInstanceManager:chasC4Finalize()
-    for instance_name, instance_c4 in pairs(chasC4) do
-        if table.size(instance_c4) == 3 then
-            local max, min, middle, unit_data = -math.huge, math.huge, 0, nil
-            for id, u_data in pairs(instance_c4) do
-                if max < id then
-                    middle = max
-                    max = id
-                end
-                if min > id then
-                    min = id
-                end
-                unit_data = u_data
-            end
-            local unit_max = managers.worlddefinition:get_unit(max)
-            if unit_max and unit_max:digital_gui() then
-                unit_max:digital_gui():SetIgnore(true)
-            end
-            local unit_min = managers.worlddefinition:get_unit(min)
-            if unit_min and unit_min:digital_gui() then
-                unit_min:digital_gui():SetIgnore(true)
-            end
-            local unit_middle = managers.worlddefinition:get_unit(middle)
-            if unit_middle and unit_middle:digital_gui() then
-                unit_middle:digital_gui():SetIcons(unit_data.icons)
-            end
-            if unit_max and unit_min and unit_middle then
-                chasC4[instance_name] = nil
-            end
-        else
-            self:FinalizeUnits(instance_c4)
-        end
-    end
-end
-
-function CoreWorldInstanceManager:hox3Timer(instance, unit_id, unit_data, unit)
-    if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100090 then -- "hox_estate_panic_room" instance
-        unit:digital_gui():SetIcons({ EHI.Icons.Vault })
-    else
-        unit:digital_gui():SetIcons({ "faster" })
-        unit:digital_gui():SetClass("EHIWarningTracker")
-    end
-    unit:digital_gui():SetOnAlarm()
-    unit:digital_gui():SetRemoveOnPause(true)
-end
-
-function CoreWorldInstanceManager:hvhSafeTimer(instance, unit_id, unit_data, unit)
-    if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100029 then
-        unit:digital_gui():SetIcons(unit_data.icons)
-    else
-        unit:digital_gui():SetIgnore(true)
-    end
-end
-
-function CoreWorldInstanceManager:nailSafeTimer(instance, unit_id, unit_data, unit)
-    if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100227 then
-        unit:digital_gui():SetIcons(unit_data.icons)
-        unit:digital_gui():SetRemoveOnPause(true)
-    else
-        unit:digital_gui():SetIgnore(true)
-    end
-end
-
-function CoreWorldInstanceManager:caneSafeTimer(instance, unit_id, unit_data, unit)
-    if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100014 then
-        unit:digital_gui():SetIcons(unit_data.icons)
-        unit:digital_gui():SetRemoveOnPause(true)
-        unit:digital_gui():SetIgnoreVisibility(true)
-    else
-        unit:digital_gui():SetIgnore(true)
-    end
-end
-
 function CoreWorldInstanceManager:custom_create_instance(instance_name, custom_data, ...)
     original.custom_create_instance(self, instance_name, custom_data, ...)
 	local instance = self:get_instance_data_by_name(instance_name)
 	if not instance then
 		return
 	end
-    self:Finalize()
-end
-
-function CoreWorldInstanceManager:Finalize()
-    self:FinalizeUnits(EHI._cache.InstanceUnits)
-end
-
-function CoreWorldInstanceManager:FinalizeUnits(tbl)
-    -- Finalize found units
-    for id, unit_data in pairs(tbl) do
-        local unit = managers.worlddefinition:get_unit(id)
-        if unit then
-            if unit_data.f then
-                self[unit_data.f](self, unit_data.instance_name, id, unit_data, unit)
-            else
-                if unit:timer_gui() then
-                    unit:timer_gui():SetIcons(unit_data.icons)
-                    unit:timer_gui():SetRemoveOnPowerOff(unit_data.remove_on_power_off)
-                    if unit_data.disable_set_visible then
-                        unit:timer_gui():DisableOnSetVisible()
-                    end
-                    if unit_data.remove_on_alarm then
-                        unit:timer_gui():SetOnAlarm()
-                    end
-                    unit:timer_gui():Finalize()
-                end
-                if unit:digital_gui() then
-                    unit:digital_gui():SetIcons(unit_data.icons)
-                    unit:digital_gui():SetIgnore(unit_data.ignore)
-                    unit:digital_gui():SetRemoveOnPause(unit_data.remove_on_pause)
-                    unit:digital_gui():SetClass(unit_data.class)
-                    unit:digital_gui():SetWarning(unit_data.warning)
-                    if unit_data.remove_on_alarm then
-                        unit:digital_gui():SetOnAlarm()
-                    end
-                    if unit_data.custom_callback then
-                        unit:digital_gui():SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
-                    end
-                    if unit_data.icon_on_pause then
-                        unit:digital_gui():SetIconOnPause(unit_data.icon_on_pause[1])
-                    end
-                    unit:digital_gui():Finalize()
-                end
-            end
-            tbl[id] = nil
-        end
-    end
+    EHI:FinalizeUnits(EHI._cache.InstanceUnits)
 end
