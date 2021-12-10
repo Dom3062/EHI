@@ -194,7 +194,7 @@ function IngameWaitingForPlayersState:at_exit(...)
     if EHI:IsAchievementLocked2("halloween_6") and mask_id == tweak_data.achievement.pump_action.mask and HasWeaponTypeEquipped("shotgun") then -- "Pump-Action" achievement
         CreateProgressTracker("halloween_6", EHI:GetAchievementProgress("halloween_6_stats"), 666, false, true)
         EHI:HookWithID(StatisticsManager, "killed", "EHI_halloween_6_killed", function (_, data)
-            if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base():is_category("shotgun") and not CopDamage.is_civilian(data.name) then
+            if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("shotgun") and not CopDamage.is_civilian(data.name) then
                 managers.ehi:IncreaseTrackerProgress("halloween_6")
             end
         end)
@@ -309,7 +309,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         local function f()
             CreateProgressTracker("gage2_5", 0, 220, false, true)
             EHI:HookWithID(StatisticsManager, "killed", "EHI_gage2_5_killed", function (self, data)
-                if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base():is_category("lmg") and not CopDamage.is_civilian(data.name) then
+                if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("lmg") and not CopDamage.is_civilian(data.name) then
                     managers.ehi:IncreaseTrackerProgress("gage2_5")
                 end
             end)
@@ -356,7 +356,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         CreateProgressTracker("gage3_6", EHI:GetAchievementProgress("gage3_6_stats"), 500, false, true) -- "Seer of Death" achievement
         EHI:HookWithID(StatisticsManager, "killed", "EHI_gage3_3-6_killed", function (self, data)
-            if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base():is_category("snp") and not CopDamage.is_civilian(data.name) and data.head_shot then
+            if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("snp") and not CopDamage.is_civilian(data.name) and data.head_shot then
                 managers.ehi:IncreaseTrackerProgress("gage3_3")
                 managers.ehi:IncreaseTrackerProgress("gage3_4")
                 managers.ehi:IncreaseTrackerProgress("gage3_5")
@@ -890,7 +890,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             class = "EHIChanceTracker"
         })
         EHI:HookWithID(StatisticsManager, "killed", "EHI_sand_11_killed", function (_, data)
-            if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base():is_category("snp") then
+            if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("snp") then
                 managers.ehi:IncreaseTrackerProgress("sand_11_kills")
             end
         end)

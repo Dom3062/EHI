@@ -1,3 +1,6 @@
+r39 (10. 12. 2021):
+Fixed a crash when a weapon did not have a "is_category" function
+
 r38 (06. 12. 2021):
 C4 trackers now also work on client
 Fixed a client crash when a heist used PEOC computer
