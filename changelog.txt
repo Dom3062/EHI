@@ -1,3 +1,6 @@
+r40 (12. 12. 2021):
+Fixed a client crash when teargas ended prematurely
+
 r39 (10. 12. 2021):
 Fixed a crash when a weapon did not have a "is_category" function
 
