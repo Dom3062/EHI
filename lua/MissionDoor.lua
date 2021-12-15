@@ -15,7 +15,7 @@ local function StartC4Sequence(unit)
     managers.ehi_waypoint:AddWaypoint(key, {
         time = 5,
         icon = "pd2_c4",
-        unit = unit
+        position = unit:position()
     })
 end
 

@@ -1,6 +1,7 @@
 EHICiviliansKilledTracker = EHICiviliansKilledTracker or class(EHITracker)
 EHICiviliansKilledTracker._update = false
 function EHICiviliansKilledTracker:init(panel, params)
+    self._pause_t = 0
     self._n_of_peers_in_custody = 0
     self._panel_size = 2
     self._icon_remove = 0
@@ -163,6 +164,10 @@ function EHICiviliansKilledTracker:SetTick(t)
     self._tick = t
 end
 
+function EHICiviliansKilledTracker:SetTradePause(t)
+    self._pause_t = t
+end
+
 function EHICiviliansKilledTracker:RemovePeerFromCustody(peer_id)
     if not self._peer_custody_time[peer_id] then
         return
@@ -266,6 +271,10 @@ end
 function EHICiviliansKilledTracker:update(t, dt)
     if self._tick > 0 then
         self._tick = self._tick - dt
+        return
+    end
+    if self._pause_t > 0 then
+        self._pause_t = self._pause_t - dt
         return
     end
     for peer_id, time in pairs(self._peer_custody_time) do

@@ -1,3 +1,9 @@
+if EHI._hooks.MissionEndState then
+    return
+else
+    EHI._hooks.MissionEndState = true
+end
+
 local original =
 {
     at_enter = MissionEndState.at_enter

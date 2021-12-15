@@ -425,7 +425,11 @@ function EHI:HookWithID(object, func, id, post_call)
 end
 
 function EHI:PreHook(object, func, pre_call)
-    Hooks:PreHook(object, func, "EHI_Pre_" .. func, pre_call)
+    self:PreHookWithID(object, func, "EHI_Pre_" .. func, pre_call)
+end
+
+function EHI:PreHookWithID(object, func, id, pre_call)
+    Hooks:PreHook(object, func, id, pre_call)
 end
 
 function EHI:HookElement(object, func, id, post_call)

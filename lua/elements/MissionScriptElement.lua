@@ -2208,7 +2208,7 @@ elseif level_id == "chca" then -- Black Cat Heist
         -- They pause the timer when it reaches zero for no reason. But the timer is already stopped via Lua...
         [EHI:GetInstanceElementID(100101, 21420)] = { id = "Winch", special_function = SF.RemoveTracker },
 
-        [EHI:GetInstanceElementID(100096, 21420)] = { time = 5 + 15, id = "HeliRise", icons = { Icon.Heli, "faster" } },
+        [EHI:GetInstanceElementID(100096, 21420)] = { time = 5 + 15, id = "HeliRaise", icons = { Icon.Heli, "faster" } },
 
         [102675] = { additional_time = 5 + 10 + 14, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.GetElementTimerAccurate, element = 102674 },
 

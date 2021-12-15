@@ -16,6 +16,7 @@ local suppress_in_stealth = EHI:GetOption("show_trade_delay_suppress_in_stealth"
 local original =
 {
     init = TradeManager.init,
+    pause_trade = TradeManager.pause_trade,
     on_player_criminal_death = TradeManager.on_player_criminal_death,
     _set_auto_assault_ai_trade = TradeManager._set_auto_assault_ai_trade,
     sync_set_auto_assault_ai_trade = TradeManager.sync_set_auto_assault_ai_trade
@@ -57,6 +58,11 @@ function TradeManager:init(...)
     EHI:Hook(self, "set_trade_countdown", function(s, enabled)
         managers.ehi:SetTrade("normal", enabled, self._trade_counter_tick)
     end)
+end
+
+function TradeManager:pause_trade(time, ...)
+    original.pause_trade(self, time, ...)
+    managers.ehi:CallFunction(TrackerID, "SetTradePause", time)
 end
 
 function TradeManager:GetTradeCounterTick()

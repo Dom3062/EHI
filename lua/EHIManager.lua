@@ -452,6 +452,21 @@ function EHIManager:AddAchievementNotificationTracker(id, status, icon)
     })
 end
 
+function EHIManager:AddAchievementBagValueCounter(id, to_secure, exclude_from_sync, remove_after_reaching_target, icon)
+    if EHI:IsAchievementUnlocked(id) then
+        return
+    end
+    icon = icon or self:GetAchievementIcon(id)
+    self:AddTracker({
+        id = id,
+        to_secure = to_secure,
+        icons = { icon },
+        exclude_from_sync = exclude_from_sync,
+        remove_after_reaching_target = remove_after_reaching_target,
+        class = "EHIAchievementBagValueTracker"
+    })
+end
+
 function EHIManager:AddEscapeChanceTracker(dropin, chance, civilian_killed_multiplier)
     if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
         return

@@ -11,7 +11,7 @@ end
 local check_types = {
     AllLoot = 1, -- Currently unused
     BagsOnly = 2,
-    ValueOfBags = 3, -- Currently unused
+    ValueOfBags = 3,
     SmallLootOnly = 4, -- Currently unused
     ValueOfSmallLoot = 5,
     OneTypeOfLoot = 6,
@@ -123,6 +123,9 @@ elseif level_id == "big" then -- The Big Bank
 elseif level_id == "mallcrasher" and EHI:IsDifficulty("overkill") then -- Mallcrasher
     check_type = check_types.ValueOfSmallLoot
     tracker_id = "ameno_3_counter"
+--[[elseif level_id == "branchbank" or level_id == "branchbank_gold" or level_id == "branchbank_cash" or level_id == "branchbank_deposit" then
+    check_type = check_types.ValueOfBags
+    tracker_id = "uno_1"]]
 elseif LootCounter[level_id] then
     check_type = check_types.BagsOnly
     tracker_id = "LootCounter"
@@ -158,6 +161,7 @@ function LootManager:EHIReportProgress(tid, ct, lt)
     elseif ct == check_types.BagsOnly then
         managers.ehi:SetTrackerProgress(tid, self:GetSecuredBagsAmount())
     elseif ct == check_types.ValueOfBags then
+        managers.ehi:SetTrackerProgress(tid, self:get_real_total_loot_value())
     elseif ct == check_types.SmallLootOnly then
     elseif ct == check_types.ValueOfSmallLoot then
         managers.ehi:SetTrackerProgress(tid, self:get_real_total_small_loot_value())
