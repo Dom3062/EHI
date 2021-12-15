@@ -1,3 +1,7 @@
+r42 (15. 12. 2021):
+Added tracker for achievement "A Good Haul"
+Fixed an issue where counter for achievement "Gift Giver" did not count up when you had correct throwable
+
 r41 (15. 12. 2021):
 Added tracker for achievement "Gift Giver"
 Fixed a client crash when C4 waypoint timer ended prematurely

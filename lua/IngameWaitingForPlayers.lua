@@ -31,6 +31,19 @@ local function HasGrenadeEquipped(grenade_id)
     return managers.blackmarket:equipped_grenade() == grenade_id
 end
 
+local function HasNonExplosiveGrenadeEquipped()
+    local equipped_grenade = managers.blackmarket:equipped_grenade()
+    local tweak = tweak_data.blackmarket.projectiles[equipped_grenade]
+    if tweak then
+        if tweak.ability then
+            return false
+        elseif not tweak.is_explosive then
+            return true
+        end
+    end
+    return false
+end
+
 local function HasPlayerStyleEquipped(player_style_id)
     return managers.blackmarket:equipped_player_style() == player_style_id
 end
@@ -586,10 +599,10 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end
-    if EHI:IsAchievementLocked2("dec21_02") and HasGrenadeEquipped("xmas_snowball") then -- "Gift Giver" achievement
+    if EHI:IsAchievementLocked2("dec21_02") and HasNonExplosiveGrenadeEquipped() then -- "Gift Giver" achievement
         CreateProgressTracker("dec21_02", EHI:GetAchievementProgress("dec21_02_stat"), 75, false, true)
         EHI:HookWithID(StatisticsManager, "killed", "EHI_dec21_02_killed", function (self, data)
-            if data.variant == "explosion" and not CopDamage.is_civilian(data.name) and alive(data.weapon_unit) and data.weapon_unit:base().projectile_entry and data.weapon_unit:base():projectile_entry() == "xmas_snowball" then
+            if (data.variant == "explosion" or data.variant == "projectile") and not CopDamage.is_civilian(data.name) and alive(data.weapon_unit) and data.weapon_unit:base().projectile_entry and not tweak_data.blackmarket.projectiles[data.weapon_unit:base():projectile_entry()].is_explosive then
                 managers.ehi:IncreaseTrackerProgress("dec21_02")
             end
         end)

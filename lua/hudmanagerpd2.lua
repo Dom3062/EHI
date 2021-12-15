@@ -165,11 +165,11 @@ function HUDManager:ShowAchievements()
     if level_id == "big" then -- The Big Bank
         self.ehi:AddAchievementProgressTracker("bigbank_3", 16, true, false)
     end
-    --[[if level_id == "branchbank" or level_id == "branchbank_gold" or level_id == "branchbank_cash" or level_id == "branchbank_deposit" then
+    if level_id == "branchbank" or level_id == "branchbank_gold" or level_id == "branchbank_cash" or level_id == "branchbank_deposit" then
         -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
         local value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value
         self.ehi:AddAchievementBagValueCounter("uno_1", value, true, false)
-    end]]
+    end
 end
 
 function HUDManager:ShowLootCounter()
