@@ -394,6 +394,16 @@ function EHI:GetColor(color)
     return Color.white
 end
 
+function EHI:IsXPTrackerDisabled()
+    if not self:GetOption("show_gained_xp") then
+        return true
+    end
+    if Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree" then
+        return true
+    end
+    return false
+end
+
 function EHI:AddCallback(id, f)
     self.Callback[id] = self.Callback[id] or {}
     self.Callback[id][#self.Callback[id] + 1] = f
@@ -591,6 +601,7 @@ function EHI:IsOneXPElementHeist(level_id)
             "alex_1",
             "alex_2",
             "alex_3",
+            "firestarter_1",
             "firestarter_2",
             "firestarter_3",
             "branchbank",
@@ -622,6 +633,13 @@ function EHI:GetAchievementIcon(id)
     local achievement = tweak_data.achievement.visual[id]
     if achievement then
         return { achievement.icon_id }
+    end
+end
+
+function EHI:GetAchievementIconString(id)
+    local achievement = tweak_data.achievement.visual[id]
+    if achievement then
+        return achievement.icon_id
     end
 end
 

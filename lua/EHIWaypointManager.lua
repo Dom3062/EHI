@@ -60,7 +60,7 @@ function EHIWaypointManager:LoadTime(t)
     self._t = t
 end
 
-function EHIWaypointManager:SetPlayerHUD(hud, saferect)
+function EHIWaypointManager:SetPlayerHUD(hud, saferect, gui)
     self._hud = hud
     self._hud_panel = hud.panel
     self._saferect = saferect
@@ -300,7 +300,7 @@ function EHIWaypointManager:SetTimerVaultWaypointTime(id, time)
         else
             local new_tick = time - wp.init_data.synced_time
             if new_tick ~= wp.init_data.tick then
-                wp.timer= ((50 - time) / (new_tick * 10)) * 10
+                wp.timer = ((50 - time) / (new_tick * 10)) * 10
                 wp.init_data.tick = new_tick
             end
         end
@@ -338,9 +338,7 @@ function EHIWaypointManager:SetTimerWaypointColor(id)
     if wp._jammed or wp._not_powered then
         final_color = Color.red
     end
-    wp.bitmap:set_color(final_color)
-    wp.timer_gui:set_color(final_color)
-    wp.arrow:set_color(final_color)
+    self:SetWaypointColor(id, final_color)
 end
 
 function EHIWaypointManager:SetWaypointPause(id, pause)
@@ -353,9 +351,7 @@ function EHIWaypointManager:SetWaypointPause(id, pause)
         final_color = Color.red
     end
     wp.pause_timer = pause and 1 or 0
-    wp.bitmap:set_color(final_color)
-    wp.timer_gui:set_color(final_color)
-    wp.arrow:set_color(final_color)
+    self:SetWaypointColor(id, final_color)
 end
 
 function EHIWaypointManager:PauseWaypoint(id)
@@ -366,12 +362,14 @@ function EHIWaypointManager:UnpauseWaypoint(id)
     self:SetWaypointPause(id, false)
 end
 
-function EHIWaypointManager:SetWaypointColor(id, color)
+function EHIWaypointManager:SetWaypointColor(id, color, override_base_color)
     if not (id and self._waypoints[id]) then
         return
     end
     local wp = self._waypoints[id]
-    wp.color = color
+    if override_base_color then
+        wp.color = color
+    end
     wp.bitmap:set_color(color)
     wp.timer_gui:set_color(color)
     wp.arrow:set_color(color)
@@ -381,13 +379,10 @@ function EHIWaypointManager:SetPagerWaypointAnswered(id)
     if not self:WaypointExistsAndType(id, "pager_timer") then
         return
     end
-    local c = Color.green
     local wp = self._waypoints[id]
     wp.pause_timer = 1
     wp.timer_gui:stop()
-    wp.bitmap:set_color(c)
-    wp.timer_gui:set_color(c)
-    wp.arrow:set_color(c)
+    self:SetWaypointColor(id, Color.green)
 end
 
 function EHIWaypointManager:RemoveAllPagerWaypoints()

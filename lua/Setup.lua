@@ -15,8 +15,8 @@ function Setup:init_managers(managers, ...)
     original.init_managers(self, managers, ...)
     managers.ehi = EHIManager:new()
     managers.ehi_waypoint = EHIWaypointManager:new()
-    if managers.player.SetInfamyBonus then
-        managers.player:SetInfamyBonus()
+    if managers.player.SetPlayerData then
+        managers.player:SetPlayerData()
     end
 end
 

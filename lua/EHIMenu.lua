@@ -144,7 +144,9 @@ function EHIMenu:init()
         self._button_legends:set_top(self._options_panel:bottom())
     end
     if _G.IS_VR then
-        self._ws_vr = managers.gui_data:create_fullscreen_workspace(nil, MenuRoom:gui())
+        self._gui_vr = World:newgui()
+        --self._ws_vr = managers.gui_data:create_fullscreen_workspace(nil, MenuRoom:gui())
+        self._ws_vr = self._gui_vr:create_world_workspace(1280, 720, Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0))
         self._vr_panel = self._ws_vr:panel():panel({
             name = "vr_panel",
             layer = 500,
@@ -306,6 +308,14 @@ function EHIMenu:Close()
         end
     end)
     self:SetFocus(false, "")
+end
+
+function EHIMenu:destroy()
+    if _G.IS_VR then
+        self._gui_vr:destroy_workspace(self._ws_vr)
+        self._ws_vr = nil
+        self._gui_vr = nil
+    end
 end
 
 -- Mouse Functions

@@ -8,22 +8,24 @@ else
     EHI._hooks.JobManager = true
 end
 
-if not EHI:GetOption("show_gained_xp") then
-    return
-end
-
-if Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree" then
+if EHI:IsXPTrackerDisabled() then
     return
 end
 
 local _f_init = JobManager.init
 function JobManager:init(...)
     _f_init(self, ...)
-    managers.experience:SetStealthBonus(self:get_ghost_bonus() or 0)
-    local projob_multiplier = 1
+    local data = {}
+    data.job_stars = self:current_job_stars() or 1
+    data.difficulty_stars = self:current_difficulty_stars() or 0
+    data.stealth_bonus = self:get_ghost_bonus() or 0
+    data.level_id = self:current_level_id()
+    data.projob_multiplier = 1
     if self:is_current_job_professional() then
-        projob_multiplier = tweak_data:get_value("experience_manager", "pro_job_multiplier") or 1
+        data.is_projob = true
+        data.projob_multiplier = tweak_data:get_value("experience_manager", "pro_job_multiplier") or 1
     end
-    managers.experience:SetProJobMultiplier(projob_multiplier)
-    managers.experience:SetJobHeat(self:heat_to_experience_multiplier(self:current_job_heat() or 0))
+    local heat = self:get_job_heat_multipliers(self:current_job_id())
+    data.heat = heat and heat ~= 0 and heat or 1
+    managers.experience:SetJobData(data)
 end

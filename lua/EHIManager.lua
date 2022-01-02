@@ -1,21 +1,7 @@
 local EHI = EHI
-local panel_size = 32
-local panel_offset = 6
 EHIManager = EHIManager or class()
 function EHIManager:init()
-    if _G.IS_VR then
-        self._ws = Overlay:gui():create_screen_workspace()
-        self._ws:set_pinned_screen(true)
-        self._scale = EHI:GetOption("vr_scale")
-    else
-        self._ws = managers.gui_data:create_fullscreen_workspace()
-        self._scale = EHI:GetOption("scale")
-    end
-    self._ws:hide()
-    self._hud_panel = self._ws:panel():panel({
-        name = "ehi_panel",
-        layer = -10
-    })
+    self:CreateWorkspace()
     self._t = 0
     self._trackers = {}
     setmetatable(self._trackers, {__mode = "k"})
@@ -38,8 +24,18 @@ function EHIManager:init()
     self._last_x = self._x
     self._text_scale = EHI:GetOption("text_scale")
     self._level_started_from_beginning = true
-    panel_size = panel_size * self._scale
-    panel_offset = panel_offset * self._scale
+    self._panel_size = 32 * self._scale
+    self._panel_offset = 6 * self._scale
+end
+
+function EHIManager:CreateWorkspace()
+    self._ws = managers.gui_data:create_fullscreen_workspace()
+    self._ws:hide()
+    self._scale = EHI:GetOption("scale")
+    self._hud_panel = self._ws:panel():panel({
+        name = "ehi_panel",
+        layer = -10
+    })
 end
 
 function EHIManager:init_finalize()
@@ -97,9 +93,6 @@ function EHIManager:GetUnits(path, slotmask)
     return tbl
 end
 
---[[
-    Returns unit on provided (or first pos if not) position
-]]
 function EHIManager:GetUnit(path, slotmask, pos)
     return self:GetUnits(path, slotmask)[pos or 1]
 end
@@ -337,11 +330,7 @@ function EHIManager:destroy()
         tracker:destroy(true)
     end
     if self._ws and alive(self._ws) then
-        if _G.IS_VR then
-            Overlay:gui():destroy_workspace(self._ws)
-        else
-            managers.gui_data:destroy_workspace(self._ws)
-        end
+        managers.gui_data:destroy_workspace(self._ws)
         self._ws = nil
     end
 end
@@ -384,8 +373,7 @@ function EHIManager:Sync(id, delay)
 end
 
 if Global.game_settings and Global.game_settings.single_player then
-    EHIManager.Sync = function(self, id, delay)
-    end
+    EHIManager.Sync = function(...) end
 end
 
 function EHIManager:AddPagerTracker(params)
@@ -509,7 +497,7 @@ if EHI:GetOption("tracker_alignment") == 1 then -- Vertical
 
     function EHIManager:GetY(pos)
         pos = pos or self._n_of_trackers
-        return self._y + (pos * (panel_size + panel_offset))
+        return self._y + (pos * (self._panel_size + self._panel_offset))
     end
 
     function EHIManager:MoveTracker(pos, icons)
@@ -565,7 +553,7 @@ else -- Horizontal
         local pos_create = pos or (self._n_of_trackers - 1)
         for _, value in pairs(self._trackers_pos) do
             if value.pos == pos_create then
-                x = value.x + value.w + panel_offset
+                x = value.x + value.w + self._panel_offset
                 break
             end
         end
@@ -594,7 +582,7 @@ else -- Horizontal
                 end
                 for id, tbl in pairs(self._trackers_pos) do
                     if tbl.pos >= pos then
-                        local final_x = tbl.x + w + panel_offset
+                        local final_x = tbl.x + w + self._panel_offset
                         tbl.tracker:SetLeft(tbl.x, final_x)
                         self._trackers_pos[id].x = final_x
                         self._trackers_pos[id].pos = tbl.pos + 1
@@ -617,7 +605,7 @@ else -- Horizontal
             return
         end
         pos_move = pos_move or 1
-        panel_offset_move = panel_offset_move or panel_offset
+        panel_offset_move = panel_offset_move or self._panel_offset
         for id, value in pairs(self._trackers_pos) do
             if value.pos > pos then
                 local final_x = value.x - w - panel_offset_move
@@ -709,6 +697,13 @@ function EHIManager:AddXPToTracker(id, amount)
     local tracker = self._trackers[id]
     if tracker and tracker.AddXP then
         tracker:AddXP(amount)
+    end
+end
+
+function EHIManager:SetXPInTracker(id, amount)
+    local tracker = self._trackers[id]
+    if tracker and tracker.SetXP then
+        tracker:SetXP(amount)
     end
 end
 

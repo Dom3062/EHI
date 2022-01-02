@@ -52,6 +52,13 @@ local function HasSuitVariationEquipped(variation_id)
     return managers.blackmarket:equipped_suit_variation() == variation_id
 end
 
+local function WeaponsContainBlueprint(blueprint)
+    local function CheckWeaponBlueprint(weapon_data)
+        return table.contains(weapon_data.blueprint or {}, blueprint)
+    end
+    return CheckWeaponBlueprint(primary) or CheckWeaponBlueprint(secondary)
+end
+
 local function CheckWeaponsBlueprint(blueprint)
     local function CheckWeaponBlueprint(weapon_data)
         --_G.PrintTable(weapon_data.blueprint or {})
@@ -166,7 +173,10 @@ function IngameWaitingForPlayersState:at_exit(...)
             class = "EHIChanceTracker"
         })
     else]]
-    if not EHI:GetOption("show_achievement") or EHI._cache.AreAchievementsDisabled then
+    if managers.experience.RecalculateSkillXPMultiplier then
+        managers.experience:RecalculateSkillXPMultiplier()
+    end
+    if not EHI:GetOption("show_achievement") or EHI._cache.AreAchievementsDisabled or GunGameGame then
         return
     end
     primary = managers.blackmarket:equipped_primary()
@@ -767,5 +777,12 @@ function IngameWaitingForPlayersState:at_exit(...)
                 managers.ehi:IncreaseTrackerProgress("pig_3")
             end
         end)
+    end
+    if level == "dark" and EHI:IsAchievementLocked("pim_2") and HasGrenadeEquipped("wpn_prj_target") then -- Crouched and Hidden, Flying Dagger
+        managers.ehi:AddTracker({
+            id = "pim_2",
+            icons = EHI:GetAchievementIcon("pim_2"),
+            class = "EHIpim2AchievementTracker"
+        })
     end
 end

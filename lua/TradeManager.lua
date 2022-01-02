@@ -5,6 +5,18 @@ else
     EHI._hooks.TradeManager = true
 end
 
+if not EHI:IsXPTrackerDisabled() then
+    if BB and BB.grace_period and Global.game_settings.single_player and Global.game_settings.team_ai then
+        EHI:HookWithID(TradeManager, "on_AI_criminal_death", "EHI_ExperienceManager_AICriminalDeath", function(self, ...)
+            managers.experience:DecreaseAlivePlayers()
+        end)
+    elseif not Global.game_settings.single_player then
+        EHI:HookWithID(TradeManager, "on_player_criminal_death", "EHI_ExperienceManager_PlayerCriminalDeath", function(self, ...)
+            managers.experience:DecreaseAlivePlayers(true)
+        end)
+    end
+end
+
 if not EHI:GetOption("show_trade_delay") then
     return
 end

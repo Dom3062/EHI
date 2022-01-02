@@ -46,6 +46,13 @@ Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_EHI", func
 				EHI.Menu:update(t, dt)
 			end
 		end)
+
+		Hooks:PostHook(MenuManager, "destroy", "destroy_menu_EHI", function(self)
+			if EHI.Menu then
+				EHI.Menu:destroy()
+				EHI.Menu = nil
+			end
+		end)
 	end
 
 	local node = nodes["blt_options"]

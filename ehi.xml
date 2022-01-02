@@ -5,6 +5,7 @@
         <pre hook_id="core/lib/utils/coreapp" :script_path="core.lua"/>
 
         <group hook_id="lib/managers/">
+            <post :hook_id="criminalsmanager" :script_path="CriminalsManager.lua" />
             <post :hook_id="group_ai_states/groupaistatebase" :script_path="GroupAIStateBase.lua" />
             <post :hook_id="group_ai_states/groupaistatebesiege" :script_path="GroupAIStateBesiege.lua" />
 
@@ -56,23 +57,19 @@
             <post :hook_id="menumanager" :script_path="EHIMenu.lua" />
             <post :hook_id="menumanager" :script_path="EHIMenuCallbacks.lua" />
             <post :hook_id="menumanager" :script_path="menu.lua" />
-            <!--<post :hook_id="menu/menunodegui" :script_path="menunodemaingui.lua" />
 
-            <post :hook_id="objectivesmanager" :script_path="ObjectivesManager.lua" />-->
-
+            <post :hook_id="mutatorsmanager" :script_path="MutatorsManager.lua" />
             <post :hook_id="playermanager" :script_path="PlayerManager.lua" />
             <post :hook_id="preplanningmanager" :script_path = "PrePlanningManager.lua" />
-
-            <!--<post :hook_id="objectinteractionmanager" :script_path="Debug.lua" />-->
-
             <post :hook_id="trademanager" :script_path="TradeManager.lua" />
         </group>
 
         <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
 
         <post hook_id="lib/setups/setup" :script_path="EHIManager.lua" />
-        <!--<post hook_id="lib/setups/setup" :script_path="EHIManagerVR.lua" />-->
+        <post hook_id="lib/setups/setup" :script_path="EHIManagerVR.lua" />
         <post hook_id="lib/setups/setup" :script_path="EHIWaypointManager.lua" />
+        <post hook_id="lib/setups/setup" :script_path="EHIWaypointManagerVR.lua" />
         <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
 
@@ -80,6 +77,7 @@
         <post hook_id="lib/network/handlers/unitnetworkhandler" :script_path="UnitNetworkHandler.lua" />
 
         <post hook_id="lib/states/ingamewaitingforplayers" :script_path="IngameWaitingForPlayers.lua" />
+        <post hook_id="lib/states/ingamewaitingforrespawn" :script_path="IngameWaitingForRespawn.lua" />
         <post hook_id="lib/states/missionendstate" :script_path="MissionEndState.lua" />
 
         <post hook_id="lib/units/beings/player/playerinventory" :script_path="PlayerInventory.lua" />

@@ -14,8 +14,8 @@ local level_id = Global.game_settings.level_id
 local original =
 {
     _setup_player_info_hud_pd2 = HUDManager._setup_player_info_hud_pd2,
-    sync_set_assault_mode = HUDManager.sync_set_assault_mode,
     destroy = HUDManager.destroy,
+    mark_cheater = HUDManager.mark_cheater,
     set_disabled = HUDManager.set_disabled,
     set_enabled = HUDManager.set_enabled
 }
@@ -27,10 +27,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
     self.ehi = managers.ehi
     local ehi_waypoint = managers.ehi_waypoint
-    ehi_waypoint:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2), self._workspaces.overlay.saferect)
-    if _G.IS_VR and false then
-        self.ehi:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2))
-    end
+    ehi_waypoint:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2), self._workspaces.overlay.saferect, self._gui)
     self._tracker_waypoints = {}
     if server or level_id == "hvh" then
         self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
@@ -93,13 +90,9 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" and not EHI:IsOneXPElementHeist(level_id) then
         self:AddTracker({
             id = "XPTotal",
-            heat = managers.experience:GetJobHeat(),
             exclude_from_sync = true,
             class = "EHITotalXPTracker"
         })
-    end
-    if managers.experience.SetMutatorXPReduction then
-        managers.experience:SetMutatorXPReduction(managers.mutators:get_experience_multiplier())
     end
     local disabled_achievements = managers.mutators:are_achievements_disabled()
     EHI._cache.AreAchievementsDisabled = disabled_achievements
@@ -214,17 +207,27 @@ function HUDManager:ShowLootCounter()
     })
 end
 
-function HUDManager:sync_set_assault_mode(mode, ...)
-    original.sync_set_assault_mode(self, mode, ...)
-    if mode == "phalanx" and EHI:GetOption("show_captain_damage_reduction") then
-        self:AddTracker({
-            id = "PhalanxDamageReduction",
-            icons = { "buff_shield" },
-            exclude_from_sync = true,
-            class = "EHIChanceTracker",
-        })
-    else
-        self.ehi:RemoveTracker("PhalanxDamageReduction")
+if EHI:GetOption("show_captain_damage_reduction") then
+    original.sync_set_assault_mode = HUDManager.sync_set_assault_mode
+    function HUDManager:sync_set_assault_mode(mode, ...)
+        original.sync_set_assault_mode(self, mode, ...)
+        if mode == "phalanx" then
+            self:AddTracker({
+                id = "PhalanxDamageReduction",
+                icons = { "buff_shield" },
+                exclude_from_sync = true,
+                class = "EHIChanceTracker",
+            })
+        else
+            self.ehi:RemoveTracker("PhalanxDamageReduction")
+        end
+    end
+end
+
+function HUDManager:mark_cheater(peer_id, ...)
+    original.mark_cheater(self, peer_id, ...)
+    if managers.experience.RecalculateSkillXPMultiplier then
+        managers.experience:RecalculateSkillXPMultiplier()
     end
 end
 

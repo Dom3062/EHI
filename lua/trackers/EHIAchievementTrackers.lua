@@ -258,3 +258,34 @@ function EHIAchievementBagValueTracker:SetFailed()
     self:AnimateBG()
     self._disable_counting = true
 end
+
+--[[
+    pim2
+    Crouched and Hidden, Flying Dagger
+    Kill 8 guards with the Throwing Knife while crouching on the Murky Station job.
+    The heist must be finished for any kills to count.
+    Unlocks the "Hotelier" mask, "Club Lights" material and "Piety" pattern.
+]]
+EHIpim2AchievementTracker = EHIpim2AchievementTracker or class(EHIProgressTracker)
+function EHIpim2AchievementTracker:init(panel, params)
+    local function on_heist_end(mes_self)
+        if mes_self._success and self._progress < self._max then
+            managers.hud:custom_ingame_popup_text("Saved", "Progress Saved: " .. tostring(self._progress) .. "/" .. tostring(self._max), "C_Jimmy_H_MurkyStation_CrouchedandHidden")
+        elseif not mes_self._success then
+            managers.hud:custom_ingame_popup_text("Lost", "Progress Lost: " .. tostring(self._progress) .. "/" .. tostring(self._max), "C_Jimmy_H_MurkyStation_CrouchedandHidden")
+        end
+    end
+    EHI:HookWithID(MissionEndState, "chk_complete_heist_achievements", "EHI_pim_2_on_heist_end", on_heist_end)
+    local function on_kill(sm_self, data)
+        local is_crouching = alive(managers.player:player_unit()) and managers.player:player_unit():movement() and managers.player:player_unit():movement():crouching()
+        if data.variant == "projectile" and alive(data.weapon_unit) and data.weapon_unit:base().projectile_entry and data.weapon_unit:base():projectile_entry() == "wpn_prj_target" and is_crouching then
+            self:IncreaseProgress()
+        end
+    end
+    EHI:HookWithID(StatisticsManager, "killed", "EHI_pim_2_killed", on_kill)
+    params.progress = EHI:GetAchievementProgress("pim_2_stats") or 0
+    params.max = 8
+    params.remove_after_reaching_target = false
+    params.status_is_overridable = true
+    EHIpim2AchievementTracker.super.init(self, panel, params)
+end

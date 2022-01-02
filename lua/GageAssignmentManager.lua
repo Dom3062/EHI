@@ -34,10 +34,8 @@ local function UpdateTracker(self, client_sync_load)
 		end
 	end
 	managers.ehi:SetTrackerProgress("Gage", picked_up)
-	local xp_bonus_multiplier = GetGageXPRatio(self, picked_up, max_units)
-	managers.ehi:CallFunction("XPTotal", "SetGageBonusRatio", xp_bonus_multiplier)
 	if managers.experience.SetGagePackageBonus then
-		managers.experience:SetGagePackageBonus(xp_bonus_multiplier)
+		managers.experience:SetGagePackageBonus(GetGageXPRatio(self, picked_up, max_units)) -- Don't use in-game function because it is inaccurate by one package
 	end
 end
 

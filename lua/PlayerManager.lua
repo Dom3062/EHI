@@ -10,8 +10,11 @@ local original =
 }
 
 if EHI:GetOption("show_gained_xp") and Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode ~= "crime_spree" and Global.load_level then
-    function PlayerManager:SetInfamyBonus()
-        managers.experience:SetInfamyBonus(math.max(0, self:get_infamy_exp_multiplier() - 1))
+    function PlayerManager:SetPlayerData()
+        local data = {}
+        data.infamy_bonus = self:get_infamy_exp_multiplier()
+        data.skill_xp_multiplier = 1 + (self:upgrade_value("player", "xp_multiplier", 1) - 1) + (self:upgrade_value("player", "passive_xp_multiplier", 1) - 1) + (self:team_upgrade_value("xp", "multiplier", 1) - 1) + (self:team_upgrade_value("xp", "stealth_multiplier", 1) - 1)
+        managers.experience:SetPlayerData(data)
     end
 end
 
