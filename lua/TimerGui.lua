@@ -84,6 +84,15 @@ function TimerGui:StartTimer()
                 color = autorepair and tweak_data.ehi.color.DrillAutorepair or Color.white
             })
         end
+        self:PostStartTimer()
+    end
+end
+
+function TimerGui:PostStartTimer()
+    if self._remove_vanilla_waypoint and show_waypoint then
+        managers.hud:SoftRemoveWaypoint(self._waypoint_id)
+        EHI._cache.IgnoreWaypoints[self._waypoint_id] = true
+        EHI:DisableElementWaypoint(self._waypoint_id)
     end
 end
 
@@ -175,6 +184,11 @@ end
 
 function TimerGui:SetOnAlarm()
 	EHI:AddOnAlarmCallback(callback(self, self, "OnAlarm"))
+end
+
+function TimerGui:RemoveVanillaWaypoint(waypoint_id)
+    self._remove_vanilla_waypoint = true
+    self._waypoint_id = waypoint_id
 end
 
 function TimerGui:Finalize()

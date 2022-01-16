@@ -98,7 +98,7 @@ local level_id = Global.game_settings.level_id
 local units =
 {
     ["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics"] = { icons = { "equipment_evidence" } },
-    ["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security"] = { icons = { "equipment_harddrive" } },
+    ["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security"] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = true, waypoint_id = 100019 },
     ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { "pd2_drill" } },
     ["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" } },
     ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { "faster" }, class = "EHIWarningTracker" },
@@ -134,6 +134,9 @@ elseif level_id == "pbr" then -- Beneath the Mountain
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { "pd2_c4" } }
 elseif level_id == "shoutout_raid" then -- Meltdown
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { ignore = true }
+elseif level_id == "red2" then -- First World Bank
+    units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 100014 }
+    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100018 }
 elseif level_id == "sand" then -- Dragon Heist
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { EHI.Icons.Vault }, remove_on_pause = true, remove_on_alarm = true }
 end
@@ -147,6 +150,9 @@ function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ..
             unit_data.instance_name = instance.name
             unit_data.instance_index = instance.start_index
             unit_data.continent_index = continent_data.base_id
+            if unit_data.remove_vanilla_waypoint then
+                unit_data.waypoint_id = EHI:GetInstanceElementID(unit_data.waypoint_id, instance.start_index, continent_data.base_id)
+            end
             EHI._cache.InstanceUnits[entry.unit_data.unit_id] = unit_data
         end
     end

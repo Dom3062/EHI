@@ -1,20 +1,21 @@
-local _f_set_autorepair = Drill.set_autorepair
-function Drill:set_autorepair(state, ...)
-    _f_set_autorepair(self, state, ...)
-    if self._autorepair == nil then
-        return
-    end
-    local key = tostring(self._unit:key())
-    managers.ehi:CallFunction(key, "SetAutorepair", self._autorepair)
-    managers.ehi_waypoint:SetWaypointColor(key, tweak_data.ehi.color.DrillAutorepair, true)
+local function SetAutorepair(unit_key)
+    managers.ehi:CallFunction(unit_key, "SetAutorepair", self._autorepair)
+    managers.ehi_waypoint:SetWaypointColor(unit_key, tweak_data.ehi.color.DrillAutorepair, true)
 end
 
-if Network:is_client() then
+if Network:is_server() then
+    local _f_set_autorepair = Drill.set_autorepair
+    function Drill:set_autorepair(state, ...)
+        _f_set_autorepair(self, state, ...)
+        if self._autorepair == nil then
+            return
+        end
+        SetAutorepair(tostring(self._unit:key()))
+    end
+else
     local  _f_on_autorepair = Drill.on_autorepair
     function Drill:on_autorepair(...)
         _f_on_autorepair(self, ...)
-        local key = tostring(self._unit:key())
-        managers.ehi:CallFunction(key, "SetAutorepair", true)
-        managers.ehi_waypoint:SetWaypointColor(key, tweak_data.ehi.color.DrillAutorepair, true)
+        SetAutorepair(tostring(self._unit:key()))
     end
 end

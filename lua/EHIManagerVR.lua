@@ -1,4 +1,4 @@
-if not _G.IS_VR then
+if not _G.IS_VR or true then
     return
 end
 

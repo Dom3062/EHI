@@ -27,6 +27,7 @@ function GameSetup:init_finalize(...)
         dofile(EHI.LuaPath .. "levels/" .. level_id .. ".lua")
     end
     EHI:InitElements()
+    EHI:DisableWaypointsOnInit()
 end
 
 function GameSetup:save(data, ...)

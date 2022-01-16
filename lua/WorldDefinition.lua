@@ -27,6 +27,9 @@ function EHI:FinalizeUnits(tbl)
                     if unit_data.remove_on_alarm then
                         unit:timer_gui():SetOnAlarm()
                     end
+                    if unit_data.remove_vanilla_waypoint then
+                        unit:timer_gui():RemoveVanillaWaypoint(unit_data.waypoint_id)
+                    end
                     unit:timer_gui():Finalize()
                 end
                 if unit:digital_gui() then
@@ -93,6 +96,7 @@ local units =
 }
 
 if level_id == "roberts" then -- GO Bank
+    units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 102899 }
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { EHI.Icons.Vault }, remove_on_pause = true }
 elseif level_id == "big" then -- The Big Bank
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { "faster" } }

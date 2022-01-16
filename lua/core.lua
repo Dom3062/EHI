@@ -13,11 +13,13 @@ _G.EHI =
     _sync_triggers = {},
 
     HookOnLoad = {},
+    DisableOnLoad = {},
 
     _cache =
     {
         MissionUnits = {},
-        InstanceUnits = {}
+        InstanceUnits = {},
+        IgnoreWaypoints = {}
     },
 
     Callback = {},
@@ -86,6 +88,7 @@ _G.EHI =
         IncreaseChanceFromElementSpecify = 50,
         ShowWaypoint = 51,
         ShowEHIWaypoint = 52,
+        RemoveTriggerAndStartAchievementCountdown = 53,
 
         AddToGlobalAndExecute = 99998, -- REMOVE ME
         Debug = 100000,
@@ -149,6 +152,8 @@ _G.EHI =
         AchievementProgress = "EHIAchievementProgressTracker",
         AchievementNotification = "EHIAchievementNotificationTracker",
         AchievementBagValueTracker = "EHIAchievementBagValueTracker",
+        AchievementTimedProgressTracker = "EHIAchievementTimedProgressTracker",
+        AchievementTimedMoneyCounterTracker = "EHIAchievementTimedMoneyCounterTracker",
         Inaccurate = "EHIInaccurateTracker",
         InaccurateWarning = "EHIInaccurateWarningTracker"
     },
@@ -713,6 +718,7 @@ local function AddTracker(id, trigger)
         status_is_overridable = trigger.status_is_overridable,
         status = trigger.status,
         to_secure = trigger.to_secure,
+        start_counting = trigger.start_counting,
         icons = trigger.icons,
         class = trigger.class
     })
@@ -1042,6 +1048,9 @@ function EHI:Trigger(id, element, enabled)
                     return
                 end
                 managers.hud:add_waypoint(triggers[id].id, triggers[id].data)
+            elseif f == SF.RemoveTriggerAndStartAchievementCountdown then
+                managers.ehi:StartTrackerCountdown(triggers[id].id)
+                UnhookTrigger(self, id)
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
@@ -1251,6 +1260,8 @@ function EHI:SyncLoad()
         end
     end
     self.HookOnLoad = {}
+    self:DisableWaypoints(self.DisableOnLoad)
+    self.DisableOnLoad = {}
 end
 
 Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", function(peer, peer_id, reason)
@@ -1265,6 +1276,61 @@ Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id,
         EHI:AddTrackerSynced(tonumber(tbl.id), tonumber(tbl.delay))
     end
 end)
+
+function EHI:ShouldDisableWaypoints()
+    return self:GetOption("show_timers") and self:GetWaypointOption("show_waypoints_timers")
+end
+
+function EHI:DisableElementWaypoint(id)
+    local function Host(self, ...)
+        if not self._values.enabled then
+            return
+        end
+        if self._values.only_on_instigator and instigator ~= managers.player:player_unit() then
+            ElementWaypoint.super.on_executed(self, instigator)
+            return
+        end
+        if not self._values.only_in_civilian or managers.player:current_state() == "civilian" then
+            local text = managers.localization:text(self._values.text_id)
+            managers.hud:AddWaypointSoft(self._id, {
+                distance = true,
+                state = "sneak_present",
+                present_timer = 0,
+                text = text,
+                icon = self._values.icon,
+                position = self._values.position
+            })
+        elseif managers.hud:get_waypoint_data(self._id) then
+            managers.hud:remove_waypoint(self._id)
+        end
+        ElementWaypoint.super.on_executed(self, instigator)
+    end
+    local element = managers.mission:get_element_by_id(id)
+    if not element then
+        return
+    end
+    if Network:is_server() then
+        element.on_executed = Host
+    else
+        element.client_on_executed = function(...) end
+    end
+end
+
+function EHI:DisableWaypoints(waypoints)
+    if not self:ShouldDisableWaypoints() then
+        return
+    end
+    self.DisableOnLoad = waypoints
+    for id, _ in pairs(waypoints) do
+        self._cache.IgnoreWaypoints[id] = true
+    end
+end
+
+function EHI:DisableWaypointsOnInit()
+    for id, _ in pairs(self.DisableOnLoad) do
+        self:DisableElementWaypoint(id)
+    end
+end
 
 EHI:Load()
 

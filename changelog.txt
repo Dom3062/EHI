@@ -1,3 +1,9 @@
+r44 (16. 01. 2022):
+Added more achievement trackers
+Removed most of the code for achievement tracking => the achievement progress is now taken directly from the game
+Safehouse Raid: Fixed an issue where Ammo Shelves in Wick's Room were tracked when they are inaccessible
+Hoxton Breakout Day 1: Fixed an issue where tracker for Police Car/SWAT Van roadblocks was not visible in Xmas version
+
 r43 (02. 01. 2022):
 Added tracker for achievement "Crouched and Hidden, Flying Dagger"
 Total XP: XP counter should be accurate now

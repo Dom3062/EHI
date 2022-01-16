@@ -17,9 +17,20 @@ local ignore = {}
 if level_id == "chill_combat" then -- Safehouse Raid
     ignore =
     {
-        [100751] = true, -- 2x Ammo shelves
-		[101242] = true
+        [1] = Vector3(-225, -2300, -800), -- 2x Ammo shelves
+		[2] = Vector3(-100, -1500, -400)
     }
+end
+
+local function CheckIgnore(unit_pos)
+    local result = false
+    for _, pos in pairs(ignore) do
+        if pos == unit_pos then
+            result = true
+            break
+        end
+    end
+    return result
 end
 
 local correction =
@@ -64,7 +75,7 @@ function AmmoBagBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._offset = correction[tostring(unit:name())] or 0
-    self._ignore = ignore[unit:editor_id()] or false
+    self._ignore = CheckIgnore(unit:position())
 end
 
 function AmmoBagBase:GetEHIKey()

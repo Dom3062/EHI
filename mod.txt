@@ -3,7 +3,7 @@
     "description": "",
     "author": "Dom",
     "contact": "http://steamcommunity.com/profiles/76561198078556212/",
-    "version": "43",
+    "version": "44",
     "blt_version" : 2,
     "priority" : -25,
     "supermod_definition" : "ehi.xml",
@@ -17,18 +17,6 @@
             {
                 "meta": "https://www.dropbox.com/s/cs301vm4awt3o7i/meta.json?raw=1"
             }
-        }
-    ],
-    "updates+" :
-    [
-        {
-            "identifier" : "EHI",
-            "host": {
-                "meta": "https://www.dropbox.com/s/o0h95jted3qnr2u/meta_plus.json?raw=1",
-                "download": "https://www.dropbox.com/s/nh7cg24cc939a44/EHI.zip?raw=1",
-                "patchnotes": "https://modworkshop.net/mod/31915#changelog"
-            },
-            "no_hash": true
         }
     ]
 }

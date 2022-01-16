@@ -78,9 +78,13 @@ function EHITracker:init(panel, params)
     if number_of_icons > 0 then
         self:CreateIcons()
     end
+    self:OverridePanel(params)
     self._id = params.id
     self._parent_class = params.parent_class
     self:SetPanelVisible()
+end
+
+function EHITracker:OverridePanel(params)
 end
 
 function EHITracker:SetPanelVisible()
@@ -280,6 +284,11 @@ end
 
 function EHITracker:ResetTime()
     self:SetTime(self._former_time)
+end
+
+function EHITracker:ResetFadeTime()
+    self._fade = nil
+    self._fade_time = nil
 end
 
 function EHITracker:AddDelay(delay)

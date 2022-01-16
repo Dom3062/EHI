@@ -289,14 +289,15 @@ function EHIManager:LoadSync()
         local tracker_id = EHI:IsAchievementUnlocked("lord_of_war") and "LootCounter" or "lord_of_war"
         self:SetTrackerProgress(tracker_id, managers.loot:GetSecuredBagsAmount())
     elseif level_id == "mallcrasher" then
-        if show_achievement and EHI:IsDifficulty("overkill") and self._t <= 50 then
+        if show_achievement and EHI:IsDifficulty("overkill") and EHI:IsAchievementLocked("ameno_3") and self._t <= 50 then
             self:AddTracker({
-                id = "ameno_3_counter",
+                time = 50 - self._t,
+                id = "ameno_3",
                 to_secure = 1800000,
-                icons = { "C_Vlad_H_Mallcrasher_OnePointEight" },
-                class = "EHIAchievementBagValueTracker"
+                icons = EHI:GetAchievementIcon("ameno_3"),
+                class = "EHIAchievementTimedMoneyCounterTracker"
             })
-            self:SetTrackerProgress("ameno_3_counter", managers.loot:get_real_total_small_loot_value())
+            self:SetTrackerProgress("ameno_3", managers.loot:get_real_total_small_loot_value())
         end
     end
 end
@@ -340,7 +341,7 @@ function EHIManager:AddInvisibleTracker(params)
     self:AddTracker(params)
 end
 
-function EHIManager:AddTracker(params, pos)
+function EHIManager:AddTracker(params, pos, remove)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
         EHI:LogTraceback()
@@ -756,6 +757,13 @@ function EHIManager:ResetTrackerTime(id)
     end
 end
 
+function EHIManager:ResetTrackerFadeTime(id)
+    local tracker = self._trackers[id]
+    if tracker then
+        tracker:ResetFadeTime()
+    end
+end
+
 function EHIManager:AddDelayToTracker(id, delay)
     local tracker = self._trackers[id]
     if tracker then
@@ -974,10 +982,10 @@ function EHIManager:SetTrackerProgress(id, progress)
     end
 end
 
-function EHIManager:IncreaseTrackerProgress(id)
+function EHIManager:IncreaseTrackerProgress(id, value)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseProgress then
-        tracker:IncreaseProgress()
+        tracker:IncreaseProgress(value)
     end
 end
 
@@ -1013,6 +1021,13 @@ function EHIManager:SetTrackerAccurate(id, time)
     local tracker = self._trackers[id]
     if tracker then
         tracker:SetTrackerAccurate(time)
+    end
+end
+
+function EHIManager:StartTrackerCountdown(id)
+    local tracker = self._trackers[id]
+    if tracker then
+        self:AddTrackerToUpdate(id, tracker)
     end
 end
 
