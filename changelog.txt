@@ -1,3 +1,7 @@
+r45 (17. 01. 2022):
+Fixed a crash when a drill/saw had autorestart
+Dragon Heist: Added tracker for achievement "Keep Breathing that Fresh Air"
+
 r44 (16. 01. 2022):
 Added more achievement trackers
 Removed most of the code for achievement tracking => the achievement progress is now taken directly from the game

@@ -2056,26 +2056,40 @@ elseif level_id == "bex" then -- San Martín Bank
     end
 elseif level_id == "pex" then -- Breakfast in Tijuana
     triggers = {
-        [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, "equipment_winch_hook" } },
-
         [101392] = { time = 120, id = "FireEvidence", icons = { "pd2_fire" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
         [101588] = { id = "FireEvidence", special_function = SF.PauseTracker },
 
         [103735] = { id = "pex_11", special_function = SF.IncreaseProgress },
 
-        [101460] = { time = 18, id = "DoorBreach", icons = { "pd2_door" } }
+        [101460] = { time = 18, id = "DoorBreach", icons = { "pd2_door" } },
+
+        [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, "equipment_winch_hook" } }
     }
     for _, index in ipairs({ 5300, 6300, 7300 }) do
         triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { "wp_hack" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists }
         triggers[EHI:GetInstanceElementID(100026, index)] = { id = "ArmoryHack", special_function = SF.PauseTracker }
     end
-elseif level_id == "fex" then -- Buluc's Mansion
+    if client then
+        triggers[100233] = { time = 20 + 4, id = "HeliEscape", icons = { Icon.Heli, "equipment_winch_hook" }, special_function = SF.AddTrackerIfDoesNotExist }
+    end
+    DisableWaypoints =
+    {
+        -- pex_evidence_room_1
+        [EHI:GetInstanceElementID(100080, 13300)] = true, -- Defend
+        [EHI:GetInstanceElementID(100084, 13300)] = true, -- Fix
+        -- pex_evidence_room_2
+        [EHI:GetInstanceElementID(100072, 14300)] = true, -- Defend
+        [EHI:GetInstanceElementID(100079, 14300)] = true -- Fix
+        -- Why they use 2 instances for one objective ???
+    }
+elseif level_id == "fex" and false then -- Buluc's Mansion
+    EHI:Log("Should not load here!")
     triggers = {
         -- Van Escape, 2 possible car escape scenarions here, the longer is here, the shorter is in WankerCar
         [101638] = { time = 1 + 60 + 900/30 + 5, id = "CarEscape", icons = CarEscape },
         [EHI:GetInstanceElementID(100358, 10130)] = { time = 1 + 210/30, id = "MayanDoorOpen", icons = { "pd2_door" } },
 
-        [102943] = { time = 180 + 2, id = "HeliEscape", icons = HeliEscape },
+        [EHI:GetInstanceElementID(100016, 26980)] = { time = 180 + 2, id = "HeliEscape", icons = HeliEscape },
 
         [EHI:GetInstanceElementID(100007, 25580)] = { time = 6, id = "ThermiteWineCellarDoor1", icons = { Icon.Fire } },
         [EHI:GetInstanceElementID(100007, 25780)] = { time = 6, id = "ThermiteWineCellarDoor2", icons = { Icon.Fire } },
@@ -2089,7 +2103,22 @@ elseif level_id == "fex" then -- Buluc's Mansion
 
         [EHI:GetInstanceElementID(100016, 23480)] = { time = 45, id = "SafeHackStealth", icons = { Icon.Vault } }
     }
-elseif level_id == "chas" then -- Dragon Heist
+    if client then
+        triggers[EHI:GetInstanceElementID(100024, 26980)] = { time = 60 + 2, id = "HeliEscape", icons = HeliEscape, special_function = SF.SetTimeOrCreateTracker }
+        triggers[EHI:GetInstanceElementID(100030, 26980)] = { time = 25 + 2, id = "HeliEscape", icons = HeliEscape, special_function = SF.SetTimeOrCreateTracker }
+        triggers[EHI:GetInstanceElementID(100035, 26980)] = { time = 38 + 2, id = "HeliEscape", icons = HeliEscape, special_function = SF.SetTimeOrCreateTracker }
+        triggers[EHI:GetInstanceElementID(100036, 26980)] = { time = 120 + 2, id = "HeliEscape", icons = HeliEscape, special_function = SF.SetTimeOrCreateTracker }
+    end
+    DisableWaypoints =
+    {
+        -- fex_saw_reinforced_door
+        [EHI:GetInstanceElementID(100015, 27280)] = true, -- Defend
+        [EHI:GetInstanceElementID(100068, 27280)] = true, -- Fix
+        -- fex_safe
+        [EHI:GetInstanceElementID(100029, 23480)] = true, -- Defend
+        [EHI:GetInstanceElementID(100022, 23480)] = true -- Fix
+    }
+elseif level_id == "chas" and false then -- Dragon Heist
     local element_sync_triggers = {
         [100209] = { time = 5, id = "LoudEscape", icons = { Icon.Car, Icon.Escape, Icon.LootDrop }, special_function = SF.AddTrackerIfDoesNotExist, client_on_executed = SF.RemoveTriggerWhenExecuted, hook_element = 100602, remove_trigger_when_executed = true },
         [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = { Icon.Heli, "pd2_drill", "pd2_goto" }, hook_element = 102453, remove_trigger_when_executed = true }
@@ -2108,7 +2137,7 @@ elseif level_id == "chas" then -- Dragon Heist
     else
         EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
     end
-elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
+elseif level_id == "sand" and false then -- The Ukrainian Prisoner Heist
     local boat_anim = 614/30
     local skid = { { icon = Icon.Car, color = Color("1E90FF") } }
     local sand_9_buttons = { id = "sand_9_buttons", special_function = SF.IncreaseProgress }
@@ -2177,7 +2206,7 @@ elseif level_id == "sand" then -- The Ukrainian Prisoner Heist
     for i = 16580, 16780, 100 do
         triggers[EHI:GetInstanceElementID(100057, i)] = { amount = 33, id = "ReviveVlad", special_function = SF.IncreaseChance }
     end
-elseif level_id == "chca" then -- Black Cat Heist
+elseif level_id == "chca" and false then -- Black Cat Heist
     local vault_reset_time = 5 -- Normal
     if EHI:IsBetweenDifficulties("hard", "very_hard") then -- Hard + Very Hard
         vault_reset_time = 15

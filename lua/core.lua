@@ -14,6 +14,7 @@ _G.EHI =
 
     HookOnLoad = {},
     DisableOnLoad = {},
+    AchievementsToDisable = {},
 
     _cache =
     {
@@ -155,7 +156,21 @@ _G.EHI =
         AchievementTimedProgressTracker = "EHIAchievementTimedProgressTracker",
         AchievementTimedMoneyCounterTracker = "EHIAchievementTimedMoneyCounterTracker",
         Inaccurate = "EHIInaccurateTracker",
-        InaccurateWarning = "EHIInaccurateWarningTracker"
+        InaccurateWarning = "EHIInaccurateWarningTracker",
+        InaccuratePausable = "EHIInaccuratePausableTracker",
+    },
+
+    AchievementTrackers =
+    {
+        EHIAchievementTracker = true,
+        EHIAchievementDoneTracker = true,
+        EHIAchievementUnlockTracker = true,
+        EHIAchievementProgressTracker = true,
+        EHIAchievementObtainableTracker = true,
+        EHIAchievementNotificationTracker = true,
+        EHIAchievementBagValueTracker = true,
+        EHIAchievementTimedProgressTracker = true,
+        EHIAchievementTimedMoneyCounterTracker = true
     },
 
     difficulties = {
@@ -225,6 +240,7 @@ end
 function EHI:Init()
     self._cache.Difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
     self._cache.DifficultyIndex = self:DifficultyToIndex(self._cache.Difficulty)
+    self:AddOnAlarmCallback(callback(self, self, "Loud"))
 end
 
 function EHI:Log(s)
@@ -1277,6 +1293,40 @@ Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id,
     end
 end)
 
+function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
+    local show_achievement = self:GetOption("show_achievement")
+    for id, data in pairs(mission_triggers) do
+        -- Mark every tracker, that has random time, as inaccurate
+        if data.random_time then
+            if not data.class then
+                mission_triggers[id].class = self.Trackers.Inaccurate
+            elseif data.class ~= "EHIInaccuratePausableTracker" and data.class == self.Trackers.Warning then
+                mission_triggers[id].class = self.Trackers.InaccurateWarning
+            end
+        end
+        -- Fill the rest table properties for Achievement trackers
+        if data.class and self.AchievementTrackers[data.class] then
+            if not data.special_function then
+                mission_triggers[id].special_function = SF.ShowAchievement
+            end
+            if data.condition == nil then
+                mission_triggers[id].condition = show_achievement
+            end
+            if not data.icons then
+                mission_triggers[id].icons = self:GetAchievementIcon(mission_triggers[id].id)
+            end
+        end
+        -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
+        if data.special_function == SF.ShowWaypoint then
+            mission_triggers[id].data.distance = true
+            mission_triggers[id].data.state = "sneak_present"
+            mission_triggers[id].data.present_timer = 0
+            mission_triggers[id].data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
+        end
+    end
+    self:AddTriggers(mission_triggers, trigger_id_all or "Trigger", trigger_icons_all or {})
+end
+
 function EHI:ShouldDisableWaypoints()
     return self:GetOption("show_timers") and self:GetWaypointOption("show_waypoints_timers")
 end
@@ -1329,6 +1379,15 @@ end
 function EHI:DisableWaypointsOnInit()
     for id, _ in pairs(self.DisableOnLoad) do
         self:DisableElementWaypoint(id)
+    end
+end
+
+function EHI:DisableAchievementInLoud(...)
+    local tbl = { achievements = ... }
+end
+
+function EHI:Loud()
+    for key, value in pairs({}) do
     end
 end
 

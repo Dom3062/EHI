@@ -16,9 +16,11 @@ function HUDManager:AddWaypointSoft(id, data)
 end
 
 function HUDManager:SoftRemoveWaypoint(id)
-    local init_data = self._hud.waypoints[id].init_data
-    self:remove_waypoint(id)
-    self:AddWaypointSoft(id, init_data)
+    local init_data = self._hud.waypoints[id] and self._hud.waypoints[id].init_data
+    if init_data then
+        self:remove_waypoint(id)
+        self:AddWaypointSoft(id, init_data)
+    end
 end
 
 local _f_save = HUDManager.save
