@@ -1,3 +1,7 @@
+r46 (27. 01. 2022):
+Added tracker for achievements "I Do What I Do Best, I Take Scores" and "From Russia With Love"
+Black Cat: Stealth only achievements will not show up when Loud entry is selected
+
 r45 (17. 01. 2022):
 Fixed a crash when a drill/saw had autorestart
 Dragon Heist: Added tracker for achievement "Keep Breathing that Fresh Air"

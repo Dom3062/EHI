@@ -3,12 +3,9 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
-local HeliDropDrill = { Icon.Heli, "pd2_drill", "pd2_goto" }
-local CarEscape = { Icon.Car, Icon.Escape, Icon.LootDrop }
-
 local element_sync_triggers = {
-    [100209] = { time = 5, id = "LoudEscape", icons = CarEscape, special_function = SF.AddTrackerIfDoesNotExist, client_on_executed = SF.RemoveTriggerWhenExecuted, hook_element = 100602, remove_trigger_when_executed = true },
-    [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = HeliDropDrill, hook_element = 102453, remove_trigger_when_executed = true }
+    [100209] = { time = 5, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, client_on_executed = SF.RemoveTriggerWhenExecuted, hook_element = 100602, remove_trigger_when_executed = true },
+    [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, hook_element = 102453, remove_trigger_when_executed = true }
 }
 local triggers = {
     [100107] = { time = 360, id = "chas_11", class = TT.Achievement, condition = ovk_and_up and show_achievement },
@@ -22,8 +19,8 @@ local triggers = {
     [100906] = { id = "chas_9", special_function = SF.SetAchievementComplete }
 }
 if Network:is_client() then
-    triggers[100602] = { time = 90 + 5, random_time = 20, id = "LoudEscape", icons = CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[102453] = { time = 60 + 12.5, random_time = 20, id = "HeliArrivesWithDrill", icons = HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100602] = { time = 90 + 5, random_time = 20, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[102453] = { time = 60 + 12.5, random_time = 20, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")

@@ -22,3 +22,19 @@ for _, unit_id in pairs(unit_ids) do
         end)
     end
 end
+
+local Icon = EHI.Icons
+local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
+local triggers = {
+    [100241] = { time = 19, id = "HeliEscape", icons = Icon.HeliEscape },
+    [EHI:GetInstanceElementID(100069, 4900)] = { id = "PressSequence", special_function = SF.RemoveTracker },
+    [EHI:GetInstanceElementID(100090, 4900)] = { id = "PressSequence", special_function = SF.RemoveTracker },
+
+    [EHI:GetInstanceElementID(100166, 4900)] = { time = 5, id = "WaitTime", icons = { "faster" } },
+    [EHI:GetInstanceElementID(100128, 4900)] = { time = 10, id = "PressSequence", icons = { "pd2_generic_interact" }, class = TT.Warning },
+
+    [100304] = { time = 5, id = "live_3", icons = { "C_Bain_H_Arena_Even" }, class = TT.AchievementUnlock }
+}
+
+EHI:ParseTriggers(triggers)

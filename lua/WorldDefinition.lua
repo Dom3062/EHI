@@ -92,10 +92,13 @@ local units =
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"] = { disable_set_visible = true },
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { disable_set_visible = true },
     ["units/pd2_dlc_sand/equipment/sand_interactable_rotating_code_computer/sand_interactable_rotating_code_computer"] = { remove_on_pause = true, remove_on_alarm = true },
-    ["units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator"] = { icons = { "pd2_power" } }
+    ["units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator"] = { icons = { "pd2_power" } },
+    ["units/pd2_dlc_sand/equipment/sand_interactable_hack_computer/sand_interactable_hack_computer"] = { remove_vanilla_waypoint = true, waypoint_id = 100034 }
 }
 
-if level_id == "roberts" then -- GO Bank
+if level_id == "firestarter_3" then -- Firestarter Day 3
+    units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { f = "firestarter_3_WP" }
+elseif level_id == "roberts" then -- GO Bank
     units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 102899 }
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { EHI.Icons.Vault }, remove_on_pause = true }
 elseif level_id == "big" then -- The Big Bank
@@ -126,6 +129,14 @@ function WorldDefinition:create(layer, offset, ...)
         end
     end
     return return_data
+end
+
+function WorldDefinition:firestarter_3_WP(instance, unit_id, unit_data, unit)
+    if unit_id == 104674 then
+        unit:timer_gui():RemoveVanillaWaypoint(102633)
+    else
+        unit:timer_gui():RemoveVanillaWaypoint(102752)
+    end
 end
 
 function WorldDefinition:chasC4(instance, unit_id, unit_data, unit)

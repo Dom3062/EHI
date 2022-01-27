@@ -19,3 +19,14 @@ function EHI:LordOfWarAchievement()
         class = "EHIProgressTracker"
     })
 end
+
+local triggers = {
+    [103240] = { special_function = EHI.SpecialFunctions.CustomCode, f = function()
+        -- This needs to be delayed because the number of required weapons are decided upon spawn
+        EHI:DelayCall("LordOfWarAchievement", 5, function()
+            EHI:LordOfWarAchievement()
+        end)
+    end}
+}
+
+EHI:ParseTriggers(triggers)

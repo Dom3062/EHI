@@ -4,8 +4,7 @@ local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
 local mayhem_and_up = EHI:IsDifficultyOrAbove("mayhem")
-local HeliEscape = { Icon.Heli, Icon.Escape, Icon.LootDrop }
-
+local dw_and_above = EHI:IsDifficultyOrAbove("death_wish")
 local vault_reset_time = 5 -- Normal
 if EHI:IsBetweenDifficulties("hard", "very_hard") then -- Hard + Very Hard
     vault_reset_time = 15
@@ -16,11 +15,13 @@ elseif EHI:IsBetweenDifficulties("mayhem", "death_wish") then -- Mayhem + Death 
 elseif EHI:IsDifficulty("death_sentence") then
     vault_reset_time = 40
 end
+local Achievements = { special_function = SF.Trigger, data = { 1, 2, 3 } }
 local triggers = {
     -- Players spawned
-    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
-    [1001071] = { id = "chca_9", status = "ok", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
-    [1001072] = { special_function = SF.CustomCode, f = function()
+    [100264] = Achievements, -- Guest Rooms (civilian mode)
+    [102955] = Achievements, -- Crew Deck
+    [1] = { id = "chca_9", status = "ok", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+    [2] = { special_function = SF.CustomCode, f = function()
         if EHI:IsAchievementLocked("chca_9") and show_achievement and ovk_and_up then
             local function check(self, data)
                 if data.variant ~= "melee" then
@@ -36,7 +37,7 @@ local triggers = {
             end)
         end
     end },
-    [1001073] = { max = 8, id = "chca_10", class = TT.AchievementProgress, remove_after_reaching_target = false, condition = show_achievement and mayhem_and_up },
+    [3] = { max = 8, id = "chca_10", class = TT.AchievementProgress, remove_after_reaching_target = false, condition = show_achievement and mayhem_and_up },
     [102944] = { id = "chca_10", special_function = SF.IncreaseProgress }, -- Bodybag thrown
     [103371] = { id = "chca_10", special_function = SF.SetAchievementFailed }, -- Civie killed
 
@@ -50,7 +51,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100137, 20420)] = { time = 10 + 1 + 52/30, id = "Swing", icons = { "faster" } },
 
     -- Heli Extraction
-    [101432] = { id = "HeliEscape", icons = HeliEscape, special_function = SF.GetElementTimerAccurate, element = 101362 },
+    [101432] = { id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 101362 },
 
     [EHI:GetInstanceElementID(100210, 14670)] = { time = 3 + vault_reset_time, id = "KeypadReset", icons = { "faster" } },
     [EHI:GetInstanceElementID(100176, 14670)] = { time = 30, id = "KeypadResetECMJammer", icons = { "faster" } },
@@ -71,7 +72,7 @@ local triggers = {
 
     [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = { Icon.Boat, Icon.Escape } },
 }
-if client then
+if Network:is_client() then
     local wait_time = 90 -- Very Hard and below
     local pickup_wait_time = 25 -- Normal and Hard
     if EHI:IsBetweenDifficulties("very_hard", "mayhem") then -- Very Hard to Mayhem
@@ -93,12 +94,12 @@ if client then
     triggers[102675].delay_only = true
     EHI:AddSyncTrigger(102675, triggers[102675])
     if ovk_and_up then -- OVK and up
-        triggers[101456] = { time = 120, id = "HeliEscape", icons = HeliEscape, special_function = SF.SetTrackerAccurate }
+        triggers[101456] = { time = 120, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate }
     end
-    triggers[101366] = { time = 60, id = "HeliEscape", icons = HeliEscape, special_function = SF.SetTrackerAccurate }
-    triggers[101463] = { time = 45, id = "HeliEscape", icons = HeliEscape, special_function = SF.SetTrackerAccurate }
-    triggers[101367] = { time = 30, id = "HeliEscape", icons = HeliEscape, special_function = SF.SetTrackerAccurate }
-    triggers[101372] = { time = 15, id = "HeliEscape", icons = HeliEscape, special_function = SF.SetTrackerAccurate }
+    triggers[101366] = { time = 60, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate }
+    triggers[101463] = { time = 45, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate }
+    triggers[101367] = { time = 30, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate }
+    triggers[101372] = { time = 15, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate }
     triggers[102678] = { time = 45, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate }
     triggers[102679] = { time = 15, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate }
     -- "pulling_timer_trigger_120sec" but the time is set to 80s...
@@ -107,4 +108,23 @@ if client then
     triggers[EHI:GetInstanceElementID(100060, 21420)] = { time = 20, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
+local DisableWaypoints =
+{
+    -- chca_spa
+    -- chca_spa_1
+    [EHI:GetInstanceElementID(100125, 11970)] = true, -- Defend
+    [EHI:GetInstanceElementID(100126, 11970)] = true, -- Fix
+    -- chca_spa_2
+    [EHI:GetInstanceElementID(100128, 12470)] = true, -- Defend
+    [EHI:GetInstanceElementID(100129, 12470)] = true, -- Fix
+    -- chca_casino_hack
+    -- chca_casino_hack/001
+    [EHI:GetInstanceElementID(100034, 20620)] = true, -- Defend
+    [EHI:GetInstanceElementID(100060, 20620)] = true, -- Fix
+    -- chca_casino_hack/002
+    [EHI:GetInstanceElementID(100034, 20820)] = true, -- Defend
+    [EHI:GetInstanceElementID(100060, 20820)] = true -- Fix
+}
+
 EHI:ParseTriggers(triggers)
+EHI:DisableWaypoints(DisableWaypoints)

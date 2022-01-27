@@ -91,6 +91,22 @@ _G.EHI =
         ShowEHIWaypoint = 52,
         RemoveTriggerAndStartAchievementCountdown = 53,
 
+        WATCHDOGS_2_AddToCache = 90,
+        WATCHDOGS_2_GetFromCache = 91,
+        HOX2_CheckOkValueHostCheckOnly = 92,
+        KOSUGI_DisableTriggerAndExecute = 93,
+        MEX_CheckIfLoud = 98,
+        FRIEND_ExecuteIfElementIsEnabledAndRemoveTrigger = 99,
+        NMH_LowerFloor = 191,
+        ED3_SetWhiteColorWhenUnpaused = 192,
+        ED3_SetPausedColor = 193,
+        PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = 194,
+        WD2_SetTrackerAccurate = 199,
+        ALEX_1_SetTimeIfMoreThanOrCreateTracker = 497,
+        KOSUGI_ExecuteAndDisableTriggers = 498,
+        MeltdownAddCrowbar = 999,
+        SAND_ExecuteIfProgressMatch = 1099,
+
         AddToGlobalAndExecute = 99998, -- REMOVE ME
         Debug = 100000,
         CustomCode = 100001,
@@ -137,7 +153,21 @@ _G.EHI =
         Lasers = "C_Dentist_H_BigBank_Entrapment",
         Money = "equipment_plates",
         Phone = "pd2_phone",
-        Keycard = "equipment_bank_manager_key"
+        Keycard = "equipment_bank_manager_key",
+
+        FirstAssaultDelay = { { icon = "assaultbox", color = Color(1, 1, 0) } },
+        EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
+        CarLootDrop = { "pd2_car", "pd2_lootdrop" },
+        CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
+        CarEscapeNoLoot = { "pd2_car", "pd2_escape" },
+        CarWait = { "pd2_car", "pd2_escape", "pd2_lootdrop", "faster" },
+        HeliEscape = { "heli", "pd2_escape", "pd2_lootdrop" },
+        HeliEscapeNoLoot = { "heli", "pd2_escape" },
+        HeliLootDrop = { "heli", "pd2_lootdrop" },
+        HeliDropDrill = { "heli", "pd2_drill", "pd2_goto" },
+        HeliDropBag = { "heli", "wp_bag", "pd2_goto" },
+        HeliDropC4 = { "heli", "pd2_c4", "pd2_goto" },
+        BoatEscape = { "boat", "pd2_escape", "pd2_lootdrop" }
     },
 
     Trackers =
@@ -1300,7 +1330,7 @@ function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
         if data.random_time then
             if not data.class then
                 mission_triggers[id].class = self.Trackers.Inaccurate
-            elseif data.class ~= "EHIInaccuratePausableTracker" and data.class == self.Trackers.Warning then
+            elseif data.class ~= self.Trackers.InaccuratePausable and data.class == self.Trackers.Warning then
                 mission_triggers[id].class = self.Trackers.InaccurateWarning
             end
         end

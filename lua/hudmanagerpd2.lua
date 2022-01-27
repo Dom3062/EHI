@@ -131,7 +131,7 @@ function HUDManager:ShowAchievements()
     if level_id == "dah" and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("dah_8", 12)
     end
-    if (level_id == "alex_1" or level_id == "rat") and EHI:IsDifficultyOrAbove("overkill") then
+    if (level_id == "alex_1" or level_id == "rat" or level_id == "ratdaylight") and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("halloween_2", 7, true)
     end
     if level_id == "chas" and EHI:IsDifficultyOrAbove("overkill") then

@@ -56,7 +56,7 @@ elseif level_id == "dah" then -- Diamond Heist
     loot_type = "diamondheist_big_diamond"
     tracker_id = "dah_8"
     sync_only = true
-elseif level_id == "alex_1" or level_id == "rat" then -- Rats Day 1 / Cook Off
+elseif level_id == "alex_1" or level_id == "rat" or level_id == "ratdaylight" then -- Rats Day 1 / Cook Off / Cook Off (Daylight)
     check_type = check_types.BagsOnly
     tracker_id = "halloween_2"
 elseif level_id == "chas" then -- Dragon Heist

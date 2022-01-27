@@ -606,11 +606,20 @@ function IngameWaitingForPlayersState:at_exit(...)
                 stats.sawp_stat = "sawp_1"
             end
         end
+        if (level == "arm_cro" or level == "arm_und" or level == "arm_hcm" or level == "arm_par" or level == "arm_fac") and EHI:IsAchievementLocked2("armored_4") and mask_id == tweak_data.achievement.complete_heist_achievements.i_take_scores.mask and managers.ehi:GetStartedFromBeginning() then -- I Do What I Do Best, I Take Scores
+            local progress = EHI:GetAchievementProgress("armored_4_stat") or 0
+            local function on_heist_end(mes_self)
+                if mes_self._success and (progress + 1) < 15 and managers.job:on_last_stage() then
+                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_armored_4"), tostring(progress + 1) .. "/15", "C_Bain_H_TransportVarious_IDoWhat")
+                end
+            end
+            EHI:HookWithID(MissionEndState, "chk_complete_heist_achievements", "EHI_armored_4_on_heist_end", on_heist_end)
+        end
         if level == "mad" and EHI:IsAchievementLocked2("pim_3") and HasWeaponEquipped("schakal") then -- "UMP for Me, UMP for You" achievement
             CreateProgressTracker("pim_3", EHI:GetAchievementProgress("pim_3_stats"), 45, false, true)
             stats.pim_3_stats = "pim_3"
         end
-        if (level == "rvd1" or level == "rvd2") and EHI:IsAchievementLocked2("rvd_12") and HasMeleeEquipped("clean") then
+        if (level == "rvd1" or level == "rvd2") and EHI:IsAchievementLocked2("rvd_12") and HasMeleeEquipped("clean") then -- "Close Shave" achievement
             CreateProgressTracker("rvd_12", EHI:GetAchievementProgress("rvd_12_stats"), 92, false, true)
             stats.rvd_12_stats = "rvd_12"
         end
@@ -635,6 +644,15 @@ function IngameWaitingForPlayersState:at_exit(...)
             EHI:HookWithID(StatisticsManager, "shot_fired", "EHI_sand_11_accuracy", function(self, data)
                 managers.ehi:SetChance("sand_11_accuracy", self:session_hit_accuracy())
             end)
+        end
+        if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and managers.ehi:GetStartedFromBeginning() then -- From Russia With Love
+            local progress = EHI:GetAchievementProgress("halloween_10_stats") or 0
+            local function on_heist_end(mes_self)
+                if mes_self._success and (progress + 1) < 25 and managers.job:on_last_stage() then
+                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_halloween_10"), tostring(progress + 1) .. "/25", "Other_H_Any_FromRussia")
+                end
+            end
+            EHI:HookWithID(MissionEndState, "chk_complete_heist_achievements", "EHI_halloween_10_on_heist_end", on_heist_end)
         end
     end
     if EHI:IsDifficultyOrAbove("mayhem") and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
