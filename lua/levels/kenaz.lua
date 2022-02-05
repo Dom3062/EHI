@@ -6,8 +6,16 @@ local heli_icon = { Icon.Heli, "equipment_winch_hook", "pd2_goto" }
 local refill_icon = { "pd2_water_tap", "pd2_goto" }
 local heli_60 = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
 local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
+local kenaz_5 = { id = "kenaz_5", class = TT.AchievementNotification }
 local triggers = {
     [100282] = { time = 840, id = "kenaz_4", class = TT.Achievement },
+
+    [EHI:GetInstanceElementID(100008, 12500)] = kenaz_5,
+    [EHI:GetInstanceElementID(100008, 12580)] = kenaz_5,
+    [EHI:GetInstanceElementID(100008, 12660)] = kenaz_5,
+    [EHI:GetInstanceElementID(100008, 18700)] = kenaz_5,
+    [102806] = { status = "finish", id = "kenaz_5", special_function = SF.SetAchievementStatus },
+    [102808] = { id = "kenaz_5", special_function = SF.SetAchievementFailed },
 
     [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { "faster" }, waypoint = { time = 5 + 25, position = Vector3(9823.0, -40877.0, -2987.0) + Vector3(0, 0, 0):rotate_with(Rotation()) } },
 
@@ -32,6 +40,10 @@ local triggers = {
     [EHI:GetInstanceElementID(100167, 37575)] = { id = "DrillDrop", special_function = SF.PauseTracker },
     [EHI:GetInstanceElementID(100166, 44535)] = { id = "DrillDrop", icons = { "equipment_winch_hook", "pd2_drill", "pd2_goto" }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101854, yes = 900/30, no = 1800/30 } },
     [EHI:GetInstanceElementID(100167, 44535)] = { id = "DrillDrop", special_function = SF.PauseTracker },
+
+    [102807] = { id = "kenaz_3", class = TT.AchievementNotification },
+    [102809] = { id = "kenaz_3", special_function = SF.SetAchievementFailed },
+    [103163] = { status = "finish", id = "kenaz_3", special_function = SF.SetAchievementStatus },
 
     -- Water during drilling
     [EHI:GetInstanceElementID(100148, 37575)] = { id = "WaterTimer1", icons = { "pd2_water_tap" }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60, cache_id = "Water1" } },

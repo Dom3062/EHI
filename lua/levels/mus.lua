@@ -20,3 +20,13 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers, "Escape", Icon.HeliEscape)
+EHI:ShowAchievementLootCounter({
+    achievement = "bat_3",
+    max = 10,
+    exclude_from_sync = true,
+    counter =
+    {
+        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+        loot_type = { "mus_artifact_paint", "mus_artifact" }
+    }
+})

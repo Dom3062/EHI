@@ -4,7 +4,7 @@ local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
 local triggers = {
-    [100073] = { id = "ameno_7", status = "ready", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+    [100073] = { id = "ameno_7", status = "loud", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
     [100624] = { id = "ameno_7", special_function = SF.SetAchievementFailed },
     [100634] = { id = "ameno_7", special_function = SF.SetAchievementComplete },
     [101541] = { time = 2, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },

@@ -1,0 +1,47 @@
+local Icon = EHI.Icons
+local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
+local show_achievement = EHI:GetOption("show_achievement")
+local hard_and_above = EHI:IsDifficultyOrAbove("hard")
+local triggers = {
+    [100120] = { time = 1800, id = "run_9", class = TT.AchievementDone },
+    [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = TT.Achievement, condition = true }, -- Not really an achievement, but I want to use "SetCompleted" function :p
+    [101550] = { id = "ClearPickupZone", special_function = SF.SetAchievementComplete },
+
+    -- Parking lot
+    [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { "faster" } },
+
+    [101521] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, "pd2_escape" }, special_function = SF.RemoveTriggerWhenExecuted },
+
+    [100144] = { special_function = SF.Trigger, data = { 1001441, 1001442, 1001443 } },
+    [1001441] = { id = "run_9", special_function = SF.SetAchievementFailed },
+    [1001442] = { id = "GasAmount", class = "EHIrunGasTracker" },
+    [1001443] = { special_function = SF.RemoveTriggers, data = { 100144 } },
+    [102426] = { special_function = SF.Trigger, data = { 1024261, 1024262 } },
+    [1024261] = { max = 8, id = "run_8", class = TT.AchievementProgress, exclude_from_sync = true },
+    [1024262] = { id = "run_10", class = TT.AchievementNotification, condition = show_achievement and hard_and_above },
+    [100658] = { id = "run_8", special_function = SF.IncreaseProgress },
+    [100111] = { id = "run_10", special_function = SF.SetAchievementFailed },
+    [100664] = { id = "run_10", special_function = SF.SetAchievementComplete },
+
+    [1] = { id = "GasAmount", special_function = SF.IncreaseProgress },
+    [2] = { special_function = SF.RemoveTriggers, data = { 102775, 102776, 102868 } }, -- Don't blink twice, just set the max once and remove the triggers
+
+    [102876] = { special_function = SF.Trigger, data = { 1028761, 1 } },
+    [1028761] = { time = 60, id = "Gas1", icons = { Icon.Fire } },
+    [102875] = { special_function = SF.Trigger, data = { 1028751, 1 } },
+    [1028751] = { time = 60, id = "Gas2", icons = { Icon.Fire } },
+    [102874] = { special_function = SF.Trigger, data = { 1028741, 1 } },
+    [1028741] = { time = 60, id = "Gas3", icons = { Icon.Fire } },
+    [102873] = { special_function = SF.Trigger, data = { 1028731, 1 } },
+    [1028731] = { time = 80, id = "Gas4", icons = { Icon.Fire, Icon.Escape } },
+
+    [102775] = { special_function = SF.Trigger, data = { 1027751, 2 } },
+    [1027751] = { max = 4, id = "GasAmount", special_function = SF.SetProgressMax },
+    [102776] = { special_function = SF.Trigger, data = { 1027761, 2 } },
+    [1027761] = { max = 3, id = "GasAmount", special_function = SF.SetProgressMax },
+    [102868] = { special_function = SF.Trigger, data = { 1028681, 2 } },
+    [1028681] = { max = 2, id = "GasAmount", special_function = SF.SetProgressMax }
+}
+
+EHI:ParseTriggers(triggers)

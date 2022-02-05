@@ -50,3 +50,4 @@ else
 end
 
 EHI:ParseTriggers(triggers)
+EHI:ShowLootCounter(16)

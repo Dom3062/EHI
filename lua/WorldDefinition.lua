@@ -36,7 +36,6 @@ function EHI:FinalizeUnits(tbl)
                     unit:digital_gui():SetIcons(unit_data.icons)
                     unit:digital_gui():SetIgnore(unit_data.ignore)
                     unit:digital_gui():SetRemoveOnPause(unit_data.remove_on_pause)
-                    unit:digital_gui():SetClass(unit_data.class)
                     unit:digital_gui():SetWarning(unit_data.warning)
                     if unit_data.remove_on_alarm then
                         unit:digital_gui():SetOnAlarm()
@@ -84,7 +83,7 @@ local units =
     -- Copied from CoreWorldInstanceManager.lua
     ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { "pd2_drill" } },
     ["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" } },
-    ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { "faster" }, class = TT.Warning },
+    ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { "faster" }, warning = true },
     ["units/pd2_dlc_help/props/hlp_interactable_wheel_timer/hlp_interactable_wheel_timer"] = { icons = { "faster" }, icon_on_pause = { "restarter" } },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { "pd2_c4" }, warning = true },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { "pd2_c4" }, f = "chasC4" },
@@ -96,7 +95,7 @@ local units =
     ["units/pd2_dlc_sand/equipment/sand_interactable_hack_computer/sand_interactable_hack_computer"] = { remove_vanilla_waypoint = true, waypoint_id = 100034 }
 }
 
-if level_id == "firestarter_3" then -- Firestarter Day 3
+if level_id == "firestarter_3" or level_id == "branchbank" or level_id == "branchbank_gold" or level_id == "branchbank_cash" or level_id == "branchbank_deposit" then -- Firestarter Day 3 or Branchbank heist
     units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { f = "firestarter_3_WP" }
 elseif level_id == "roberts" then -- GO Bank
     units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 102899 }
@@ -187,7 +186,7 @@ function WorldDefinition:hox3Timer(instance, unit_id, unit_data, unit)
         unit:digital_gui():SetIcons({ EHI.Icons.Vault })
     else
         unit:digital_gui():SetIcons({ "faster" })
-        unit:digital_gui():SetClass(TT.Warning)
+        unit:digital_gui():SetWarning(true)
     end
     unit:digital_gui():SetOnAlarm()
     unit:digital_gui():SetRemoveOnPause(true)
@@ -223,7 +222,6 @@ function WorldDefinition:caneSafeTimer(instance, unit_id, unit_data, unit)
     if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100014 then
         unit:digital_gui():SetIcons(unit_data.icons)
         unit:digital_gui():SetRemoveOnPause(true)
-        unit:digital_gui():SetIgnoreVisibility(true)
     else
         unit:digital_gui():SetIgnore(true)
     end

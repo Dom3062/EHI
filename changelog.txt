@@ -1,3 +1,14 @@
+r47 (05. 02. 2022):
+Rewrote achievement "Denied" to show progress in-game in popup instead of in tracker
+Fixed an issue where ignored units were not ignored after sync
+Fixed an issue where digital timer trackers were not visible in some heists when they are visible in the game world
+Beneath the Mountain: Added tracker for achievement "Juggernauts"
+Border Crystals: Fixed an issue where Methlab restart tracker was not visible (host only)
+Election Day 2 Plan C: Fixed trackers when you are scrambling the votes
+Golden Grin Casino: Added trackers for achievement "City of Sin and Well-Oiled Gears" and "Hail to the King, Baby"
+Santa's Workshop: Add tracker for achievement "Santa Slays Slackers"
+San Martín Bank: Added tracker for achievement "Gunpowder Glory"
+
 r46 (27. 01. 2022):
 Added tracker for achievements "I Do What I Do Best, I Take Scores" and "From Russia With Love"
 Black Cat: Stealth only achievements will not show up when Loud entry is selected

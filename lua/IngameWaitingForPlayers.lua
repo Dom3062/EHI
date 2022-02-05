@@ -170,7 +170,7 @@ function IngameWaitingForPlayersState:at_exit(...)
     if managers.experience.RecalculateSkillXPMultiplier then
         managers.experience:RecalculateSkillXPMultiplier()
     end
-    if not EHI:GetOption("show_achievement") or EHI._cache.AreAchievementsDisabled or GunGameGame then
+    if not EHI:GetOption("show_achievement") or EHI._cache.AchievementsAreDisabled or GunGameGame then
         return
     end
     primary = managers.blackmarket:equipped_primary()
@@ -531,11 +531,20 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
     end
     if EHI:IsAchievementLocked2("cac_3") then -- "Denied" achievement
-        local function f()
-            CreateProgressTracker("cac_3", EHI:GetAchievementProgress("cac_3_stats"), 30, false, true)
+        local progress = EHI:GetAchievementProgress("cac_3_stats") or 0
+        local function on_flash_grenade_destroyed(attacker_unit)
+            local local_player = managers.player:player_unit()
+            if local_player and attacker_unit == local_player then
+                progress = progress + 1
+                if progress < 30 then
+                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_cac_3"), tostring(progress) .. "/30", "Other_H_Any_Denied")
+                end
+            end
         end
-        ShowTrackerInLoud(f)
-        stats.cac_3_stats = "cac_3"
+        managers.player:register_message("flash_grenade_destroyed", "EHI_cac_3_listener", on_flash_grenade_destroyed)
+        ShowTrackerInLoud(function() -- Show progress when alarm went off
+            managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_cac_3"), tostring(progress) .. "/30", "Other_H_Any_Denied")
+        end)
     end
     if EHI:IsAchievementLocked2("gsu_01") and HasMeleeEquipped("spoon") then -- "For all you legends" achievement
         CreateProgressTracker("gsu_01", EHI:GetAchievementProgress("gsu_stat"), 100, false, true)

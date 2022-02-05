@@ -99,9 +99,9 @@ local units =
 {
     ["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics"] = { icons = { "equipment_evidence" } },
     ["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security"] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = true, waypoint_id = 100019 },
-    ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { "pd2_drill" } },
+    ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { "pd2_drill" }, ignore_visibility = true },
     ["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" } },
-    ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { "faster" }, class = "EHIWarningTracker" },
+    ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { "faster" }, warning = true },
     ["units/pd2_dlc_help/props/hlp_interactable_wheel_timer/hlp_interactable_wheel_timer"] = { icons = { "faster" }, icon_on_pause = { "restarter" } },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { "pd2_c4" }, warning = true },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { "pd2_c4" }, f = "chasC4" },
@@ -113,10 +113,10 @@ local units =
     ["units/pd2_dlc_sand/equipment/sand_interactable_hack_computer/sand_interactable_hack_computer"] = { remove_vanilla_waypoint = true, waypoint_id = 100034 }
 }
 if level_id == "arm_for" or level_id == "hox_3" then -- Transport: Train Heist or Hoxton Revenge
-    local class = level_id == "hox_3" and "EHIWarningTracker" or nil
+    local warning = level_id == "hox_3" and true or nil
     local f = level_id == "hox_3" and "hox3Timer" or nil
     local icons = level_id == "arm_for" and { EHI.Icons.Vault } or nil
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = icons, remove_on_alarm = true, remove_on_pause = level_id == "hox_3", class = class, f = f }
+    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = icons, remove_on_alarm = true, remove_on_pause = level_id == "hox_3", warning = warning, f = f }
 elseif level_id == "mus" then -- The Diamond
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { "faster" }, remove_on_pause = true }
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { EHI.Icons.Keycard } }
@@ -138,6 +138,8 @@ elseif level_id == "shoutout_raid" then -- Meltdown
 elseif level_id == "red2" then -- First World Bank
     units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 100014 }
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100018 }
+elseif level_id == "mex" then
+    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { "pd2_c4" } }
 elseif level_id == "chas" then -- Dragon Heist
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100017 }
 elseif level_id == "sand" then -- Ukrainian Prisoner Heist

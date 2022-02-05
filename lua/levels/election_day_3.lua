@@ -3,8 +3,8 @@ local TT = EHI.Trackers
 local drill_spawn_delay = { time = 30, id = "DrillSpawnDelay", icons = { "pd2_drill", "pd2_goto" } }
 local triggers = {
     [101284] = { chance = 50, id = "CrashChance", icons = { "wp_hack", "pd2_fix" }, class = TT.Chance },
-    [103568] = { time = 60, id = "Hack", icons = { "wp_hack" }, special_function = SF.ED3_SetWhiteColorWhenUnpaused },
-    [103585] = { id = "Hack", special_function = SF.ED3_SetPausedColor },
+    [103568] = { time = 60, id = "Hack", icons = { "wp_hack" } },
+    [103585] = { id = "Hack", special_function = SF.RemoveTracker },
     [103579] = { amount = 25, id = "CrashChance", special_function = SF.DecreaseChance },
     [100741] = { id = "CrashChance", special_function = SF.RemoveTracker },
     [103572] = { time = 50, id = "CrashChanceTime", icons = { "wp_hack", "pd2_fix", "pd2_question" } },

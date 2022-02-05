@@ -260,7 +260,7 @@ function EHIManager:LoadSync()
                     id = "EscapeElevator",
                     floors = o._timer - 4,
                     icons = { "pd2_door" },
-                    class = "EHIElevatorTimerTracker"
+                    class = "EHInmhElevatorTimerTracker"
                 })
                 if o._timer_paused then
                     self:CallFunction("EscapeElevator", "SetPause", true)
@@ -323,7 +323,7 @@ end
 function EHIManager:update_client(t)
     local dt = t - self._t
     self._t = t
-    self:update(self._t, dt)
+    self:update(t, dt)
 end
 
 function EHIManager:destroy()
@@ -413,8 +413,12 @@ function EHIManager:AddTimedAchievementTracker(id, time_max, icon)
     })
 end
 
-function EHIManager:AddAchievementProgressTracker(id, max, exclude_from_sync, remove_after_reaching_target, icon)
+function EHIManager:AddAchievementProgressTracker(id, max, exclude_from_sync, remove_after_reaching_target, show_loot_counter, icon)
     if EHI:IsAchievementUnlocked(id) then
+        if show_loot_counter then
+            -- TODO: Fix the redirection to EHI
+            EHI:ShowLootCounter(max)
+        end
         return
     end
     icon = icon or self:GetAchievementIcon(id)
@@ -453,6 +457,16 @@ function EHIManager:AddAchievementBagValueCounter(id, to_secure, exclude_from_sy
         exclude_from_sync = exclude_from_sync,
         remove_after_reaching_target = remove_after_reaching_target,
         class = "EHIAchievementBagValueTracker"
+    })
+end
+
+function EHIManager:ShowLootCounter(max)
+    self:AddTracker({
+        id = "LootCounter",
+        max = max,
+        icons = { "pd2_loot" },
+        exclude_from_sync = true,
+        class = EHI.Trackers.Progress
     })
 end
 

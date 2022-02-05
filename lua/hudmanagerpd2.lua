@@ -94,50 +94,26 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             class = "EHITotalXPTracker"
         })
     end
-    local disabled_achievements = managers.mutators:are_achievements_disabled()
-    EHI._cache.AreAchievementsDisabled = disabled_achievements
-    if EHI:GetOption("show_achievement") and not disabled_achievements then
+    if EHI:GetOption("show_achievement") and not EHI._cache.AchievementsAreDisabled then
         self:ShowAchievements()
     end
     self:ShowLootCounter()
 end
 
 function HUDManager:ShowAchievements()
-    if level_id == "cane" and EHI:IsDifficultyOrAbove("overkill") then
-        self.ehi:AddAchievementProgressTracker("cane_3", 100, true)
-    end
     if level_id == "mex_cooking" and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("mex2_9", 25, true)
-    end
-    if level_id == "crojob2" then
-        self.ehi:AddAchievementProgressTracker("voff_2", 2, true)
-    end
-    if level_id == "pal" then
-        local value_max = tweak_data.achievement.loot_cash_achievements.pal_2.secured.value
-        local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)
-        local max = math.ceil(value_max / loot_value)
-        self.ehi:AddAchievementProgressTracker("pal_2", max, true)
-    end
-    if level_id == "pbr" then
-        self.ehi:AddAchievementProgressTracker("berry_2", 10, true)
-    end
-    if level_id == "pbr2" then
-        self.ehi:AddAchievementProgressTracker("voff_4", 9)
-    end
-    if level_id == "pex" then
-        self.ehi:AddAchievementProgressTracker("pex_10", 6, true)
-        self.ehi:AddAchievementProgressTracker("pex_11", 7)
     end
     if level_id == "dah" and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("dah_8", 12)
     end
-    if (level_id == "alex_1" or level_id == "rat" or level_id == "ratdaylight") and EHI:IsDifficultyOrAbove("overkill") then
+    --[[if (level_id == "alex_1" or level_id == "rat" or level_id == "ratdaylight") and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("halloween_2", 7, true)
-    end
+    end]]
     if level_id == "chas" and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("chas_10", 15, true)
     end
-    if level_id == "rvd2" then
+    --[[if level_id == "rvd2" then
         self.ehi:AddAchievementProgressTracker("rvd_11", 19, true)
     end
     if level_id == "mus" then
@@ -145,54 +121,33 @@ function HUDManager:ShowAchievements()
     end
     if level_id == "shoutout_raid" then
         self.ehi:AddAchievementProgressTracker("melt_3", 8, true)
-    end
-    if level_id == "dinner" and EHI:IsDifficultyOrAbove("overkill") then
-        self.ehi:AddAchievementProgressTracker("farm_6", 1, true, false)
-    end
-    if level_id == "man" then
-        self.ehi:AddAchievementProgressTracker("man_4", 10)
-    end
+    end]]
     if level_id == "arm_for" then -- Transport: Train Heist
         self.ehi:AddAchievementProgressTracker("armored_1", 20, true)
     end
-    if level_id == "big" then -- The Big Bank
+    --[[if level_id == "big" then -- The Big Bank
         self.ehi:AddAchievementProgressTracker("bigbank_3", 16, true, false)
-    end
-    if level_id == "branchbank" or level_id == "branchbank_gold" or level_id == "branchbank_cash" or level_id == "branchbank_deposit" then
-        -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
-        local value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value
-        self.ehi:AddAchievementBagValueCounter("uno_1", value, true, false)
-    end
+    end]]
 end
 
 function HUDManager:ShowLootCounter()
     local max = 0
-    if level_id == "spa" then
-        max = 4
-    elseif level_id == "friend" or level_id == "dark" then
-        max = 16
-    elseif level_id == "wwh" then
-        max = 8
-    elseif level_id == "shoutout_raid" then
+    --[[if level_id == "shoutout_raid" then
+    --elseif level_id == "shoutout_raid" then
         max = EHI:IsDifficultyOrAbove("overkill") and 8 or 6
         if self.ehi:TrackerDoesNotExist("melt_3") then
             max = max + 8
-        end
+        end]]
     --[[elseif level_id == "rvd1" then
         max = 6
     elseif level_id == "alex_3" then
         max = 14]]
-    elseif level_id == "dinner" then
-        max = self.ehi:TrackerDoesNotExist("farm_6") and 11 or 10
-    elseif level_id == "pbr" then
-        if self.ehi:TrackerDoesNotExist("berry_2") then
-            max = 10
-        end
-    elseif level_id == "arm_for" then
+    if level_id == "arm_for" then
+    --elseif level_id == "arm_for" then
         max = 3 + (self.ehi:TrackerDoesNotExist("armored_1") and 20 or 0)
     elseif level_id == "rusdl" then -- Cold Stones Custom Heist
         max = 20
-    elseif level_id == "hunter_departure" and not (EHI:GetOption("show_achievement") or EHI._cache.AreAchievementsDisabled) then -- Hunter and Hunted (Departure) Day 2 Custom Heist
+    elseif level_id == "hunter_departure" and not (EHI:GetOption("show_achievement") or EHI._cache.AchievementsAreDisabled) then -- Hunter and Hunted (Departure) Day 2 Custom Heist
         max = 21
     end
     if max == 0 then
@@ -216,7 +171,7 @@ if EHI:GetOption("show_captain_damage_reduction") then
                 id = "PhalanxDamageReduction",
                 icons = { "buff_shield" },
                 exclude_from_sync = true,
-                class = "EHIChanceTracker",
+                class = EHI.Trackers.Chance,
             })
         else
             self.ehi:RemoveTracker("PhalanxDamageReduction")

@@ -14,7 +14,20 @@ _G.EHI =
 
     HookOnLoad = {},
     DisableOnLoad = {},
-    AchievementsToDisable = {},
+
+    LootCounter =
+    {
+        CheckType =
+        {
+            AllLoot = 1, -- Currently unused
+            BagsOnly = 2,
+            ValueOfBags = 3,
+            SmallLootOnly = 4, -- Currently unused
+            ValueOfSmallLoot = 5,
+            OneTypeOfLoot = 6,
+            MultipleTriggers = 7
+        }
+    },
 
     _cache =
     {
@@ -26,6 +39,7 @@ _G.EHI =
     Callback = {},
 
     OnAlarmCallback = {},
+    AchievementCounter = {},
 
     _base_delay = {},
     _element_delay = {},
@@ -98,8 +112,6 @@ _G.EHI =
         MEX_CheckIfLoud = 98,
         FRIEND_ExecuteIfElementIsEnabledAndRemoveTrigger = 99,
         NMH_LowerFloor = 191,
-        ED3_SetWhiteColorWhenUnpaused = 192,
-        ED3_SetPausedColor = 193,
         PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = 194,
         WD2_SetTrackerAccurate = 199,
         ALEX_1_SetTimeIfMoreThanOrCreateTracker = 497,
@@ -270,7 +282,6 @@ end
 function EHI:Init()
     self._cache.Difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
     self._cache.DifficultyIndex = self:DifficultyToIndex(self._cache.Difficulty)
-    self:AddOnAlarmCallback(callback(self, self, "Loud"))
 end
 
 function EHI:Log(s)
@@ -674,6 +685,7 @@ function EHI:IsOneXPElementHeist(level_id)
             "escape_cafe_day",
             "escape_garage",
             "escape_overpass",
+            "escape_overpass_night",
             "escape_park",
             "escape_park_day",
             "escape_street"
@@ -788,12 +800,9 @@ function EHI:AddTrackerWithRandomTime(id)
     end
 end
 
-function EHI:AddTracker(id, sync)
+function EHI:AddTracker(id)
     local trigger = triggers[id]
     AddTracker(id, trigger)
-    if sync then
-        managers.ehi:Sync(id, self:GetTime(id))
-    end
     if trigger.waypoint then
         managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
     end
@@ -811,23 +820,23 @@ function EHI:AddTrackerAndSync(id, delay)
     end
 end
 
-function EHI:CheckConditionFunction(id, sync)
+function EHI:CheckConditionFunction(id)
     if triggers[id].condition_function then
         if triggers[id].condition_function() then
-            self:AddTracker(id, sync)
+            self:AddTracker(id)
         end
     else
-        self:AddTracker(id, sync)
+        self:AddTracker(id)
     end
 end
 
-function EHI:CheckCondition(id, sync)
+function EHI:CheckCondition(id)
     if triggers[id].condition ~= nil then
         if triggers[id].condition == true then
-            self:CheckConditionFunction(id, sync)
+            self:CheckConditionFunction(id)
         end
     else
-        self:CheckConditionFunction(id, sync)
+        self:CheckConditionFunction(id)
     end
 end
 
@@ -837,7 +846,8 @@ local function GetElementTimer(self, id)
         if element then
             local t = (element._timer or 0) + (triggers[id].additional_time or 0)
             triggers[id].time = t
-            self:CheckCondition(id, true)
+            self:CheckCondition(id)
+            managers.ehi:Sync(id, t)
         end
     else
         self:CheckCondition(id)
@@ -1111,14 +1121,6 @@ function EHI:Trigger(id, element, enabled)
                 if enabled then
                     managers.ehi:CallFunction(triggers[id].id, "LowerFloor")
                 end
-            elseif f == SF.ED3_SetWhiteColorWhenUnpaused then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:SetTrackerTextColor(triggers[id].id, Color.white)
-                else
-                    self:CheckCondition(id)
-                end
-            elseif f == SF.ED3_SetPausedColor then
-                managers.ehi:SetTrackerTextColor(triggers[id].id, Color.red)
             elseif f == SF.PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists then
                 managers.ehi:RemoveTracker(triggers[id].data.id)
                 if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
@@ -1412,27 +1414,97 @@ function EHI:DisableWaypointsOnInit()
     end
 end
 
-function EHI:DisableAchievementInLoud(...)
-    local tbl = { achievements = ... }
+function EHI:ShowLootCounter(max, check_type, loot_type)
+    managers.ehi:ShowLootCounter(max)
+    if not self._cache.LootCounter then
+        local function Hook(self, ...)
+            self:EHIReportProgress("LootCounter", check_type or EHI.LootCounter.CheckType.BagsOnly, loot_type)
+        end
+        self:HookWithID(LootManager, "sync_secure_loot", "EHI_LootCounter_sync_secure_loot", Hook)
+        self:HookWithID(LootManager, "sync_load", "EHI_LootCounter_sync_load", Hook)
+        --[[function LootManager:sync_secure_loot(...)
+            original.sync_secure_loot(self, ...)
+            if not sync_only then
+                self:EHIReportProgress()
+            end
+        end
+        function LootManager:sync_load(...)
+            original.sync_load(self, ...)
+            self:EHIReportProgress()
+        end]]
+        self._cache.LootCounter = true
+        EHI:Log("Loot Counter tracker added")
+    end
 end
 
-function EHI:Loud()
-    for key, value in pairs({}) do
+local show_achievement = false
+function EHI:ShowAchievementLootCounter(params)
+    if self._cache.AchievementsAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
+        if params.show_loot_counter then
+            self:ShowLootCounter(params.max)
+        end
+        return
+    end
+    managers.ehi:AddAchievementProgressTracker(params.achievement, params.max, params.exclude_from_sync, params.remove_after_reaching_target, params.show_loot_counter)
+    if params.no_counting then
+        return
+    end
+    self.AchievementCounter[#self.AchievementCounter + 1] =
+    {
+        id = params.achievement,
+        check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly,
+        loot_type = params.counter and params.counter.loot_type,
+        sync_only = params.counter and params.sync_only
+    }
+    self:HookAchievementCounter()
+end
+
+function EHI:ShowAchievementBagValueCounter(params)
+    if self._cache.AchievementsAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
+        return
+    end
+    managers.ehi:AddAchievementBagValueCounter(params.achievement, params.value, params.exclude_from_sync, params.remove_after_reaching_target)
+    self.AchievementCounter[#self.AchievementCounter + 1] =
+    {
+        id = params.achievement,
+        check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly,
+        loot_type = params.counter and params.counter.loot_type,
+        sync_only = params.counter and params.sync_only
+    }
+    self:HookAchievementCounter()
+end
+
+function EHI:HookAchievementCounter()
+    if not self.AchievementCounterHook then
+        local function Hook(self, sync_load)
+            for _, achievement in pairs(EHI.AchievementCounter) do
+                if not achievement.sync_only or (achievement.sync_only and sync_load) then
+                    self:EHIReportProgress(achievement.id, achievement.check_type, achievement.loot_type)
+                end
+            end
+        end
+        self:HookWithID(LootManager, "sync_secure_loot", "EHI_AchievementCounter_sync_secure_loot", function(self, ...)
+            Hook(self, false)
+        end)
+        self:HookWithID(LootManager, "sync_load", "EHI_AchievementCounter_sync_load", function(self, ...)
+            Hook(self, true)
+        end)
+        self.AchievementCounterHook = true
     end
 end
 
 EHI:Load()
 
+-- Hack
+show_achievement = EHI:GetOption("show_achievement")
+
 if EHI:GetWaypointOption("show_waypoints_only") then
-    function EHI:AddTracker(id, sync)
+    function EHI:AddTracker(id)
         local trigger = triggers[id]
         if trigger.waypoint then
             managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
         else
             AddTracker(id, trigger)
-        end
-        if sync then
-            managers.ehi:Sync(id, self:GetTime(id))
         end
     end
 end
@@ -1450,7 +1522,7 @@ else -- Always show trackers for achievements
 end
 
 function EHI:IsAchievementLocked(achievement)
-    return not self:IsAchievementUnlocked(achievement) and not self._cache.AreAchievementsDisabled
+    return not self:IsAchievementUnlocked(achievement) and not self._cache.AchievementsAreDisabled
 end
 
 function EHI:GetAchievementProgress(achievement)

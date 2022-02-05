@@ -72,3 +72,8 @@ else
 end
 
 EHI:ParseTriggers(triggers, "Van", Icon.CarEscape)
+EHI:ShowAchievementLootCounter({
+    achievement = "halloween_2",
+    max = 7,
+    exclude_from_sync = true
+})

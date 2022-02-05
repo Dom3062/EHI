@@ -49,3 +49,9 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
+EHI:ShowAchievementLootCounter({
+    achievement = "bigbank_3",
+    max = 16,
+    exclude_from_sync = true,
+    remove_after_reaching_target = false
+})

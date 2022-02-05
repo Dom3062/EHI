@@ -15,3 +15,15 @@ for _, index in pairs(start_index) do
         })
     end)
 end
+
+local Icon = EHI.Icons
+local TT = EHI.Trackers
+local triggers = {
+    [100296] = { time = 420, id = "dark_2", class = TT.Achievement },
+    [106026] = { time = 10, id = "Van", icons = Icon.CarEscape },
+
+    [106036] = { time = 410/30, id = "Boat", icons = Icon.BoatEscape }
+}
+
+EHI:ParseTriggers(triggers)
+EHI:ShowLootCounter(16)

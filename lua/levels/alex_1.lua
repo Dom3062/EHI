@@ -14,7 +14,7 @@ local triggers = {
     [101001] = { special_function = SF.Trigger, data = { 1010011, 1010012 } },
     [1010011] = { id = "CookChance", special_function = SF.RemoveTracker },
     [1010012] = { id = "halloween_2", special_function = SF.SetAchievementFailed },
-    [101970] = { time = (240 + 12) - 3, id = "Van", icons = CarEscape },
+    [101970] = { time = (240 + 12) - 3, id = "Van", icons = Icon.CarEscape },
     [100721] = { time = 1, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
     [1007211] = { chance = 5, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists },
     [100724] = { time = 25, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop } },
@@ -39,3 +39,8 @@ EHI:AddOnAlarmCallback(function(dropin)
 end)
 
 EHI:ParseTriggers(triggers, "Van", Icon.CarEscape)
+EHI:ShowAchievementLootCounter({
+    achievement = "halloween_2",
+    max = 7,
+    exclude_from_sync = true
+})

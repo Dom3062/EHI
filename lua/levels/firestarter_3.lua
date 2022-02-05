@@ -4,7 +4,8 @@ local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
 local dw_and_above = EHI:IsDifficultyOrAbove("death_wish")
 local triggers = {}
-if Global.game_settings.level_id == "firestarter_3" then
+local level_id = Global.game_settings.level_id
+if level_id == "firestarter_3" then
     triggers = {
         [102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1021441 } },
         [1021441] = { status = "ok", id = "slakt_5", icons = { "C_Hector_H_Firestarter_ItsGettingHot" }, class = TT.AchievementNotification, condition = dw_and_above and show_achievement },
@@ -24,3 +25,16 @@ EHI:AddOnAlarmCallback(function(dropin)
 end)
 
 EHI:ParseTriggers(triggers)
+if level_id ~= "firestarter_3" then
+    -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
+    EHI:ShowAchievementBagValueCounter({
+        achievement = "uno_1",
+        value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value,
+        exclude_from_sync = true,
+        remove_after_reaching_target = false,
+        counter =
+        {
+            check_type = EHI.LootCounter.CheckType.ValueOfBags
+        }
+    })
+end

@@ -35,14 +35,10 @@ function DigitalGui:init(unit, ...)
     self._ehi_key = tostring(unit:key())
 end
 
-function DigitalGui:Visible()
-    if self._ignore_visibility then
-        return true
-    end
-    return self._visible
-end
-
 function DigitalGui:TimerStartCountDown()
+    if self._ignore or not self._visible then
+        return
+    end
     if managers.ehi:TrackerExists(self._ehi_key) then
         managers.ehi:SetTimerJammed(self._ehi_key, false)
         managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
@@ -54,7 +50,7 @@ function DigitalGui:TimerStartCountDown()
                 icons = self._icons or { "wp_hack" },
                 exclude_from_sync = true,
                 warning = self._warning,
-                class = self._class or "EHITimerTracker"
+                class = "EHITimerTracker"
             })
         end
         if show_waypoint then
@@ -64,7 +60,7 @@ function DigitalGui:TimerStartCountDown()
                 pause_timer = 1,
                 type = "timer",
                 position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
-                warning = self._class and self._class == "EHIWarningTracker" or self._warning
+                warning = self._warning
             })
         end
     end
@@ -72,9 +68,6 @@ end
 
 function DigitalGui:timer_start_count_down(...)
     original.timer_start_count_down(self, ...)
-    if self._ignore or not self:Visible() then
-        return
-    end
     self:TimerStartCountDown()
 end
 
@@ -160,7 +153,7 @@ if level_id == "shoutout_raid" then
                     })
                 end
                 if show_waypoint then
-                    managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+                    managers.ehi_waypoint:AddWaypoint(key, {
                         time = 500,
                         synced_time = 0,
                         tick = 0.1,
@@ -201,6 +194,8 @@ function DigitalGui:set_visible(visible, ...)
     if not visible then
         managers.ehi:RemoveTracker(self._ehi_key)
         managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    elseif self._timer_count_down then
+        self:TimerStartCountDown()
     end
 end
 
@@ -245,10 +240,6 @@ function DigitalGui:SetRemoveOnPause(remove_on_pause)
     self._remove_on_pause = remove_on_pause
 end
 
-function DigitalGui:SetClass(class)
-    self._class = class
-end
-
 function DigitalGui:SetOnAlarm()
     EHI:AddOnAlarmCallback(callback(self, self, "OnAlarm"))
 end
@@ -257,10 +248,6 @@ function DigitalGui:SetCustomCallback(id, operation)
     if operation == "remove" then
         EHI:AddCallback(id, callback(self, self, "OnAlarm"))
     end
-end
-
-function DigitalGui:SetIgnoreVisibility(value)
-    self._ignore_visibility = value
 end
 
 function DigitalGui:SetWarning(warning)
