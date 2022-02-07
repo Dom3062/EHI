@@ -388,7 +388,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         ShowTrackerInLoud(f)
         stats.gage5_1_stats = "gage5_1"
     end
-    if EHI:IsAchievementLocked2("gage5_5") and HasWeaponEquipped("gre_m79") then -- "Precision Aiming" achievement
+    if EHI:IsAchievementLocked2("gage5_5") and HasWeaponEquipped("gre_m79") then -- "Artillery Barrage" achievement
         CreateProgressTracker("gage5_5", EHI:GetAchievementProgress("gage5_5_stats"), 25, false, true)
         stats.gage5_1_stats = "gage5_5"
     end

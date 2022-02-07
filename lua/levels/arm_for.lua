@@ -34,3 +34,22 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
+if EHI:GetOption("show_achievement") then
+    EHI:ShowAchievementLootCounter({
+        achievement = "armored_1",
+        max = 20,
+        exclude_from_sync = true,
+        counter =
+        {
+            check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+            loot_type = "ammo"
+        }
+    })
+    if managers.ehi:TrackerExists("armored_1") then
+        EHI:ShowLootCounter(3, EHI.LootCounter.CheckType.OneTypeOfLoot, "turret")
+    else
+        EHI:ShowLootCounter(23)
+    end
+else
+    EHI:ShowLootCounter(23)
+end

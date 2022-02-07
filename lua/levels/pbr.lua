@@ -30,6 +30,9 @@ local triggers = {
         end
     end },
 
+    [EHI:GetInstanceElementID(100108, 3200)] = { time = 45, id = "LockOpen", icons = { "faster" } },
+    [EHI:GetInstanceElementID(100124, 3200)] = { id = "LockOpen", special_function = SF.RemoveTracker },
+
     [101774] = { time = 90, id = "EscapeHeli", icons = { "pd2_escape" } }
 }
 

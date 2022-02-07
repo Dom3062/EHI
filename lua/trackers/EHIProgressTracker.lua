@@ -45,10 +45,12 @@ function EHIProgressTracker:SetProgress(progress)
         if self._flash then
             self:AnimateBG(self._flash_times)
         end
-        if self._set_color_bad_when_reached then
-            self:SetBad()
-        else
-            self:SetCompleted()
+        if self._progress == self._max then
+            if self._set_color_bad_when_reached then
+                self:SetBad()
+            else
+                self:SetCompleted()
+            end
         end
     end
 end
@@ -57,12 +59,16 @@ function EHIProgressTracker:IncreaseProgress(progress)
     self:SetProgress(self._progress + (progress or 1))
 end
 
+function EHIProgressTracker:DecreaseProgress(progress)
+    self:SetProgress(self._progress - (progress or 1))
+end
+
 function EHIProgressTracker:SetProgressRemaining(remaining)
     self:SetProgress(self._max - remaining)
 end
 
 function EHIProgressTracker:SetCompleted(force)
-    if (self._progress == self._max and not self._status) or force then
+    if not self._status or force then
         self._exclude_from_sync = true
         self._status = "completed"
         self:SetTextColor(Color.green)
@@ -77,9 +83,7 @@ function EHIProgressTracker:SetCompleted(force)
 end
 
 function EHIProgressTracker:SetBad()
-    if self._progress == self._max then
-        self:SetTextColor(tweak_data.ehi.color.Inaccurate)
-    end
+    self:SetTextColor(tweak_data.ehi.color.Inaccurate)
 end
 
 function EHIProgressTracker:Finalize()

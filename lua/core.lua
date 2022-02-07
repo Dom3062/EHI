@@ -104,11 +104,14 @@ _G.EHI =
         ShowWaypoint = 51,
         ShowEHIWaypoint = 52,
         RemoveTriggerAndStartAchievementCountdown = 53,
+        DecreaseProgress = 54,
 
         WATCHDOGS_2_AddToCache = 90,
         WATCHDOGS_2_GetFromCache = 91,
         HOX2_CheckOkValueHostCheckOnly = 92,
         KOSUGI_DisableTriggerAndExecute = 93,
+        DARK_AddBodyBag = 94,
+        DARK_RemoveBodyBag = 95,
         MEX_CheckIfLoud = 98,
         FRIEND_ExecuteIfElementIsEnabledAndRemoveTrigger = 99,
         NMH_LowerFloor = 191,
@@ -1107,6 +1110,8 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.RemoveTriggerAndStartAchievementCountdown then
                 managers.ehi:StartTrackerCountdown(triggers[id].id)
                 UnhookTrigger(self, id)
+            elseif f == SF.DecreaseProgress then
+                managers.ehi:DecreaseTrackerProgress(triggers[id].id)
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
@@ -1208,6 +1213,13 @@ function EHI:Trigger(id, element, enabled)
                     managers.ehi:RemoveTracker("sand_9_buttons")
                     managers.ehi:SetAchievementFailed("sand_9")
                 end
+
+
+            -- ElementCounterOperator
+            elseif f == SF.DARK_AddBodyBag then
+                managers.ehi:CallFunction(triggers[id].id, "IncreaseProgress", triggers[id].element)
+            elseif f == SF.DARK_RemoveBodyBag then
+                managers.ehi:CallFunction(triggers[id].id, "DecreaseProgress", triggers[id].element)
             end
         else
             self:CheckCondition(id)
@@ -1422,16 +1434,6 @@ function EHI:ShowLootCounter(max, check_type, loot_type)
         end
         self:HookWithID(LootManager, "sync_secure_loot", "EHI_LootCounter_sync_secure_loot", Hook)
         self:HookWithID(LootManager, "sync_load", "EHI_LootCounter_sync_load", Hook)
-        --[[function LootManager:sync_secure_loot(...)
-            original.sync_secure_loot(self, ...)
-            if not sync_only then
-                self:EHIReportProgress()
-            end
-        end
-        function LootManager:sync_load(...)
-            original.sync_load(self, ...)
-            self:EHIReportProgress()
-        end]]
         self._cache.LootCounter = true
         EHI:Log("Loot Counter tracker added")
     end

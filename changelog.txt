@@ -1,3 +1,10 @@
+r48 (07. 02. 2022):
+Fixed a crash when XP Tracker was disabled
+Fixed an issue where in Aggregated Health Tracker when there was a gap between trackers
+Cook Off: Fixed an issue where achievement tracker for "Kiss the Chef" showed on difficulties lower than OVERKILL
+Rats Day 1/Cook Off: Fixed an issue where achievement tracker for "Full Measure" showed on difficulties lower than OVERKILL
+Murky Station: Added tracker for achievement "Janitor"
+
 r47 (05. 02. 2022):
 Rewrote achievement "Denied" to show progress in-game in popup instead of in tracker
 Fixed an issue where ignored units were not ignored after sync

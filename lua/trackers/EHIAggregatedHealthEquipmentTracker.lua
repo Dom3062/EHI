@@ -108,17 +108,19 @@ function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
         end
     end
     local move_x = 1
+    local icons = 0
     for _, i in pairs(visibility) do
         local s_i = tostring(i)
         local icon = self["_icon" .. s_i]
         if icon then
+            icons = icons + 1
             icon:set_visible(true)
             icon:set_x(self:GetIconPosition(move_x - 1))
         end
         move_x = move_x + 1
     end
-    local n = #visibility
-    local panel_w = self._panel:w()
+    local n = icons
+    local panel_w = self._time_bg_box:w()
     local icon_size = 32 * self._scale
     local gap = 5 * self._scale
     self._parent_class:ChangeTrackerWidth(self._id, panel_w + ((icon_size + gap) * n))

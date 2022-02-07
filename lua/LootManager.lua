@@ -45,7 +45,8 @@ local Force = -- To be removed when every heist moved from HUDManagerPD2
     alex_1 = true,
     rat = true,
     ratdaylight = true,
-    mus = true
+    mus = true,
+    arm_for = true
 }
 local level_id = Global.game_settings.level_id
 local tracker_id = nil
@@ -62,9 +63,6 @@ elseif level_id == "dah" then -- Diamond Heist
     loot_type = "diamondheist_big_diamond"
     tracker_id = "dah_8"
     sync_only = true
---[[elseif level_id == "alex_1" or level_id == "rat" or level_id == "ratdaylight" then -- Rats Day 1 / Cook Off / Cook Off (Daylight)
-    check_type = check_types.BagsOnly
-    tracker_id = "halloween_2"]]
 elseif level_id == "chas" then -- Dragon Heist
     check_type = check_types.BagsOnly
     tracker_id = "chas_10"
@@ -90,7 +88,7 @@ elseif level_id == "shoutout_raid" then -- Meltdown
         check_type = check_types.BagsOnly
         tracker_id = "LootCounter"
     end
-elseif level_id == "arm_for" then -- Transport: Train Heist
+--[[elseif level_id == "arm_for" then -- Transport: Train Heist
     if EHI:IsAchievementLocked("armored_1") then
         check_type = check_types.MultipleTriggers
         multiple_check_type = { check_types.OneTypeOfLoot, check_types.OneTypeOfLoot }
@@ -99,7 +97,7 @@ elseif level_id == "arm_for" then -- Transport: Train Heist
     else
         check_type = check_types.BagsOnly
         tracker_id = "LootCounter"
-    end
+    end]]
 elseif level_id == "sand" then -- Ukrainian Prisoner Heist
     check_type = check_types.BagsOnly
     tracker_id = "sand_9"

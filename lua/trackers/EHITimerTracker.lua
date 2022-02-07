@@ -112,6 +112,10 @@ function EHITimerTracker:SetJammed(jammed)
 end
 
 function EHITimerTracker:SetPowered(powered)
+    if self._warning_started then
+        self._text:stop()
+        self._warning_started = false
+    end
     self._not_powered = not powered
     self:SetTextColor()
 end

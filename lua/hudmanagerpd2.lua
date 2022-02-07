@@ -107,9 +107,6 @@ function HUDManager:ShowAchievements()
     if level_id == "dah" and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("dah_8", 12)
     end
-    --[[if (level_id == "alex_1" or level_id == "rat" or level_id == "ratdaylight") and EHI:IsDifficultyOrAbove("overkill") then
-        self.ehi:AddAchievementProgressTracker("halloween_2", 7, true)
-    end]]
     if level_id == "chas" and EHI:IsDifficultyOrAbove("overkill") then
         self.ehi:AddAchievementProgressTracker("chas_10", 15, true)
     end
@@ -122,9 +119,9 @@ function HUDManager:ShowAchievements()
     if level_id == "shoutout_raid" then
         self.ehi:AddAchievementProgressTracker("melt_3", 8, true)
     end]]
-    if level_id == "arm_for" then -- Transport: Train Heist
+    --[[if level_id == "arm_for" then -- Transport: Train Heist
         self.ehi:AddAchievementProgressTracker("armored_1", 20, true)
-    end
+    end]]
     --[[if level_id == "big" then -- The Big Bank
         self.ehi:AddAchievementProgressTracker("bigbank_3", 16, true, false)
     end]]
@@ -142,10 +139,10 @@ function HUDManager:ShowLootCounter()
         max = 6
     elseif level_id == "alex_3" then
         max = 14]]
-    if level_id == "arm_for" then
     --elseif level_id == "arm_for" then
-        max = 3 + (self.ehi:TrackerDoesNotExist("armored_1") and 20 or 0)
-    elseif level_id == "rusdl" then -- Cold Stones Custom Heist
+        --max = 3 + (self.ehi:TrackerDoesNotExist("armored_1") and 20 or 0)
+    if level_id == "rusdl" then -- Cold Stones Custom Heist
+    --elseif level_id == "rusdl" then -- Cold Stones Custom Heist
         max = 20
     elseif level_id == "hunter_departure" and not (EHI:GetOption("show_achievement") or EHI._cache.AchievementsAreDisabled) then -- Hunter and Hunted (Departure) Day 2 Custom Heist
         max = 21
