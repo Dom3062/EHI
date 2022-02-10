@@ -25,17 +25,16 @@ local original =
 function SecurityLockGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    self._ehi_bar_key = self._ehi_key .. "_bar"
 end
 
 function SecurityLockGui:_start(bar, ...)
     original._start(self, bar, ...)
     if self._bars > 1 then
-        if managers.ehi:TrackerExists(self._ehi_bar_key) then
-            managers.ehi:IncreaseTrackerProgress(self._ehi_bar_key)
+        if managers.ehi:TrackerExists(self._ehi_key) then
+            managers.ehi:IncreaseTrackerProgress(self._ehi_key)
         else
             managers.ehi:AddTracker({
-                id = self._ehi_bar_key,
+                id = self._ehi_key,
                 icons = { "wp_hack" },
                 class = "EHIProgressTracker",
                 remove_after_reaching_target = false,
@@ -44,24 +43,44 @@ function SecurityLockGui:_start(bar, ...)
                 max = self._bars
             })
         end
-    end
-    if not show_waypoint_only then
-        managers.ehi:AddTracker({
-            id = self._ehi_key,
-            time = self._current_timer,
-            icons = { { icon = "wp_hack" } },
-            exclude_from_sync = true,
-            class = "EHITimerTracker"
-        })
-    end
-    if show_waypoint then
-        managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
-            time = self._current_timer,
-            icon = "wp_hack",
-            pause_timer = 1,
-            type = "timer",
-            position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
-        })
+        if not show_waypoint_only then
+            managers.ehi:CallFunction(self._ehi_key, "SetHackTime", self._current_timer)
+            --[[managers.ehi:AddTracker({
+                id = self._ehi_key,
+                time = self._current_timer,
+                icons = { { icon = "wp_hack" } },
+                exclude_from_sync = true,
+                class = "EHITimerTracker"
+            })]]
+        end
+        if show_waypoint then
+            managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+                time = self._current_timer,
+                icon = "wp_hack",
+                pause_timer = 1,
+                type = "timer",
+                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
+            })
+        end
+    else
+        if not show_waypoint_only then
+            managers.ehi:AddTracker({
+                id = self._ehi_key,
+                time = self._current_timer,
+                icons = { { icon = "wp_hack" } },
+                exclude_from_sync = true,
+                class = "EHITimerTracker"
+            })
+        end
+        if show_waypoint then
+            managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+                time = self._current_timer,
+                icon = "wp_hack",
+                pause_timer = 1,
+                type = "timer",
+                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
+            })
+        end
     end
 end
 
@@ -100,7 +119,6 @@ end
 
 function SecurityLockGui:destroy(...)
     managers.ehi:RemoveTracker(self._ehi_key)
-    managers.ehi:RemoveTracker(self._ehi_bar_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     original.destroy(self, ...)
 end

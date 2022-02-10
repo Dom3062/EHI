@@ -671,6 +671,46 @@ function IngameWaitingForPlayersState:at_exit(...)
         ShowTrackerInLoud(f)
         stats.gage3_2_stats = "gage3_2"
     end
+    if level == "branchbank" or level == "branchbank_gold" or level == "branchbank_cash" or level == "branchbank_deposit" or level == "jewelry_store" then
+        if EHI:IsAchievementLocked2("eng_1") then -- "The only one that is true" achievement
+            local progress = (EHI:GetAchievementProgress("eng_1_stats") or 0) + 1
+            EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_1_award_progress", function(am, stat, value)
+                if stat == "eng_1_stats" and progress < 5 then
+                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_1"), tostring(progress) .. "/5", "Other_H_Any_TheOnlyOne")
+                end
+            end)
+        end
+    end
+    if level == "kosugi" or level == "red2" then
+        if EHI:IsAchievementLocked2("eng_2") then -- "The one that had many names" achievement
+            local progress = (EHI:GetAchievementProgress("eng_2_stats") or 0) + 1
+            EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_2_award_progress", function(am, stat, value)
+                if stat == "eng_2_stats" and progress < 5 then
+                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_2"), tostring(progress) .. "/5", "Other_H_Any_TheOneThatHad")
+                end
+            end)
+        end
+    end
+    if level == "roberts" or level == "four_stores" then
+        if EHI:IsAchievementLocked2("eng_3") then -- "The one that survived" achievement
+            local progress = (EHI:GetAchievementProgress("eng_3_stats") or 0) + 1
+            EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_3_award_progress", function(am, stat, value)
+                if stat == "eng_3_stats" and progress < 5 then
+                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_3"), tostring(progress) .. "/5", "Other_H_Any_TheOneThatSur")
+                end
+            end)
+        end
+    end
+    if level == "family" or level == "hox_1" then
+        if EHI:IsAchievementLocked2("eng_4") then -- "The one who declared himself the hero" achievement
+            local progress = (EHI:GetAchievementProgress("eng_4_stats") or 0) + 1
+            EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_4_award_progress", function(am, stat, value)
+                if stat == "eng_4_stats" and progress < 5 then
+                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_4"), tostring(progress) .. "/5", "Other_H_Any_TheOneWho")
+                end
+            end)
+        end
+    end
     if level == "nightclub" then
         if EHI:IsAchievementLocked2("gage2_3") and HasMeleeEquipped("fists") then -- "The Eighth and Final Rule" achievement
             local function f()

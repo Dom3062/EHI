@@ -724,14 +724,14 @@ end
 
 function EHIManager:SetTrackerTime(id, time)
     local tracker = self._trackers[id]
-    if tracker and tracker.SetTime then
+    if tracker then
         tracker:SetTime(time)
     end
 end
 
 function EHIManager:SetTrackerTimeNoAnim(id, time)
     local tracker = self._trackers[id]
-    if tracker and tracker.SetTimeNoAnim then
+    if tracker then
         tracker:SetTimeNoAnim(time)
     end
 end

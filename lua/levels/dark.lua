@@ -36,6 +36,7 @@ function EHIdark5Tracker:SetCompleted(force)
 end
 
 local EHI = EHI
+EHI.AchievementTrackers.EHIdark5Tracker = true
 
 local start_index =
 {
@@ -59,7 +60,7 @@ local TT = EHI.Trackers
 local triggers = {
     [100296] = { special_function = SF.Trigger, data = { 1002961, 1002962 } },
     [1002961] = { time = 420, id = "dark_2", class = TT.Achievement },
-    [1002962] = { max = 4, id = "dark_5", icons = EHI:GetAchievementIcon("dark_5"), remove_after_reaching_target = false, class = "EHIdark5Tracker" },
+    [1002962] = { max = 4, id = "dark_5", remove_after_reaching_target = false, class = "EHIdark5Tracker" },
     [106026] = { time = 10, id = "Van", icons = Icon.CarEscape },
 
     [106036] = { time = 410/30, id = "Boat", icons = Icon.BoatEscape }

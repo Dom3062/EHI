@@ -35,5 +35,6 @@ EHI:ParseTriggers(triggers)
 EHI:ShowAchievementLootCounter({
     achievement = "voff_4",
     max = 9,
-    exclude_from_sync = true
+    exclude_from_sync = true,
+    no_counting = true
 })
