@@ -33,7 +33,8 @@ _G.EHI =
     {
         MissionUnits = {},
         InstanceUnits = {},
-        IgnoreWaypoints = {}
+        IgnoreWaypoints = {},
+        ElementWaypointFunction = {}
     },
 
     Callback = {},
@@ -112,6 +113,7 @@ _G.EHI =
         KOSUGI_DisableTriggerAndExecute = 93,
         DARK_AddBodyBag = 94,
         DARK_RemoveBodyBag = 95,
+        RUN_SetProgressMax = 96,
         MEX_CheckIfLoud = 98,
         FRIEND_ExecuteIfElementIsEnabledAndRemoveTrigger = 99,
         NMH_LowerFloor = 191,
@@ -1142,6 +1144,17 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(id)
                     UnhookTrigger(self, id)
                 end
+            elseif f == SF.RUN_SetProgressMax then
+                if managers.ehi:TrackerExists(triggers[id].id) then
+                    managers.ehi:SetTrackerProgressMax(triggers[id].id, triggers[id].max)
+                else
+                    managers.ehi:AddTracker({
+                        id = triggers[id].id,
+                        progress = 1,
+                        max = triggers[id].max,
+                        class = self.Trackers.Progress
+                    })
+                end
 
             -- ElementCounterFilter
             elseif f == SF.HOX2_CheckOkValueHostCheckOnly then
@@ -1404,9 +1417,23 @@ function EHI:DisableElementWaypoint(id)
         return
     end
     if Network:is_server() then
+        self._cache.ElementWaypointFunction[id] = element.on_executed
         element.on_executed = Host
     else
+        self._cache.ElementWaypointFunction[id] = element.client_on_executed
         element.client_on_executed = function(...) end
+    end
+end
+
+function EHI:RestoreElementWaypoint(id)
+    local element = managers.mission:get_element_by_id(id)
+    if not (element and self._cache.ElementWaypointFunction[id]) then
+        return
+    end
+    if Network:is_server() then
+        element.on_executed = self._cache.ElementWaypointFunction[id]
+    else
+        element.client_on_executed = self._cache.ElementWaypointFunction[id]
     end
 end
 
@@ -1426,8 +1453,8 @@ function EHI:DisableWaypointsOnInit()
     end
 end
 
-function EHI:ShowLootCounter(max, check_type, loot_type)
-    managers.ehi:ShowLootCounter(max)
+function EHI:ShowLootCounter(max, additional_loot, check_type, loot_type)
+    managers.ehi:ShowLootCounter(max, additional_loot)
     if not self._cache.LootCounter then
         local function Hook(self, ...)
             self:EHIReportProgress("LootCounter", check_type or EHI.LootCounter.CheckType.BagsOnly, loot_type)
@@ -1435,7 +1462,6 @@ function EHI:ShowLootCounter(max, check_type, loot_type)
         self:HookWithID(LootManager, "sync_secure_loot", "EHI_LootCounter_sync_secure_loot", Hook)
         self:HookWithID(LootManager, "sync_load", "EHI_LootCounter_sync_load", Hook)
         self._cache.LootCounter = true
-        EHI:Log("Loot Counter tracker added")
     end
 end
 
@@ -1443,11 +1469,11 @@ local show_achievement = false
 function EHI:ShowAchievementLootCounter(params)
     if self._cache.AchievementsAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
         if params.show_loot_counter then
-            self:ShowLootCounter(params.max)
+            self:ShowLootCounter(params.max, params.additional_loot)
         end
         return
     end
-    managers.ehi:AddAchievementProgressTracker(params.achievement, params.max, params.exclude_from_sync, params.remove_after_reaching_target, params.show_loot_counter)
+    managers.ehi:AddAchievementProgressTracker(params.achievement, params.max, params.additional_loot, params.exclude_from_sync, params.remove_after_reaching_target, params.show_loot_counter)
     if params.no_counting then
         return
     end

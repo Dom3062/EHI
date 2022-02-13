@@ -24,7 +24,7 @@ if show_achievement then
         if ovk_and_up then
             max = 8
         end
-        EHI:ShowLootCounter(max, EHI.LootCounter.CheckType.OneTypeOfLoot, "warhead")
+        EHI:ShowLootCounter(max, 0, EHI.LootCounter.CheckType.OneTypeOfLoot, "warhead")
     else
         show_loot_counter = true
     end

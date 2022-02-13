@@ -74,7 +74,6 @@
         <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
 
-        <post hook_id="lib/network/base/hostnetworksession" :script_path="HostNetworkSession.lua" />
         <post hook_id="lib/network/handlers/unitnetworkhandler" :script_path="UnitNetworkHandler.lua" />
 
         <post hook_id="lib/states/ingamewaitingforplayers" :script_path="IngameWaitingForPlayers.lua" />

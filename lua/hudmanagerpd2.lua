@@ -102,28 +102,19 @@ end
 
 function HUDManager:ShowAchievements()
     if level_id == "mex_cooking" and EHI:IsDifficultyOrAbove("overkill") then
-        self.ehi:AddAchievementProgressTracker("mex2_9", 25, true)
+        self.ehi:AddAchievementProgressTracker("mex2_9", 25, 0, true)
     end
     if level_id == "dah" and EHI:IsDifficultyOrAbove("overkill") then
-        self.ehi:AddAchievementProgressTracker("dah_8", 12)
+        self.ehi:AddAchievementProgressTracker("dah_8", 12, 0)
     end
     if level_id == "chas" and EHI:IsDifficultyOrAbove("overkill") then
-        self.ehi:AddAchievementProgressTracker("chas_10", 15, true)
+        self.ehi:AddAchievementProgressTracker("chas_10", 15, 0, true)
     end
-    --[[if level_id == "rvd2" then
-        self.ehi:AddAchievementProgressTracker("rvd_11", 19, true)
-    end
-    if level_id == "mus" then
-        self.ehi:AddAchievementProgressTracker("bat_3", 10, true)
-    end
-    if level_id == "shoutout_raid" then
+    --[[if level_id == "shoutout_raid" then
         self.ehi:AddAchievementProgressTracker("melt_3", 8, true)
     end]]
     --[[if level_id == "arm_for" then -- Transport: Train Heist
         self.ehi:AddAchievementProgressTracker("armored_1", 20, true)
-    end]]
-    --[[if level_id == "big" then -- The Big Bank
-        self.ehi:AddAchievementProgressTracker("bigbank_3", 16, true, false)
     end]]
 end
 

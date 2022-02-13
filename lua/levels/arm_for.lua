@@ -46,7 +46,7 @@ if EHI:GetOption("show_achievement") then
         }
     })
     if managers.ehi:TrackerExists("armored_1") then
-        EHI:ShowLootCounter(3, EHI.LootCounter.CheckType.OneTypeOfLoot, "turret")
+        EHI:ShowLootCounter(3, 0, EHI.LootCounter.CheckType.OneTypeOfLoot, "turret")
     else
         EHI:ShowLootCounter(23)
     end

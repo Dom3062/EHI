@@ -413,11 +413,11 @@ function EHIManager:AddTimedAchievementTracker(id, time_max, icon)
     })
 end
 
-function EHIManager:AddAchievementProgressTracker(id, max, exclude_from_sync, remove_after_reaching_target, show_loot_counter, icon)
+function EHIManager:AddAchievementProgressTracker(id, max, additional_loot, exclude_from_sync, remove_after_reaching_target, show_loot_counter, icon)
     if EHI:IsAchievementUnlocked(id) then
         if show_loot_counter then
             -- TODO: Fix the redirection to EHI
-            EHI:ShowLootCounter(max)
+            EHI:ShowLootCounter(max, additional_loot)
         end
         return
     end
@@ -460,10 +460,10 @@ function EHIManager:AddAchievementBagValueCounter(id, to_secure, exclude_from_sy
     })
 end
 
-function EHIManager:ShowLootCounter(max)
+function EHIManager:ShowLootCounter(max, additional_loot)
     self:AddTracker({
         id = "LootCounter",
-        max = max,
+        max = max + (additional_loot or 0),
         icons = { "pd2_loot" },
         exclude_from_sync = true,
         class = EHI.Trackers.Progress

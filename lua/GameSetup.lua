@@ -72,8 +72,8 @@ local levels =
     -- framing_frame_1 == true, -- Framing Frame Day 1; Drill security door waypoint; removal needed (MissionDoor)
     framing_frame_2 = true, -- Framing Frame Day 2
     framing_frame_3 = true, -- Framing Frame Day 3; PC Hack waypoint; removal needed
-    election_day_1 = true, -- Election Day 1
-    election_day_3 = true, -- Election Day 2 Plan C
+    election_day_1 = true, -- Election Day D1
+    election_day_3 = true, -- Election Day D2 Plan C
     election_day_3_skip1 = true,
     election_day_3_skip2 = true,
     escape_cafe = true, -- Escape: Cafe

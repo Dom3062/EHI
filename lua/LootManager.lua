@@ -46,7 +46,9 @@ local Force = -- To be removed when every heist moved from HUDManagerPD2
     rat = true,
     ratdaylight = true,
     mus = true,
-    arm_for = true
+    arm_for = true,
+    moon = true,
+    rvd2 = true
 }
 local level_id = Global.game_settings.level_id
 local tracker_id = nil
@@ -70,14 +72,6 @@ elseif level_id == "brb" then -- Brooklyn Bank
     check_type = check_types.OneTypeOfLoot
     loot_type = "gold"
     tracker_id = "brb_8"
---[[elseif level_id == "rvd2" then -- Reservoir Dogs Heist Day 1
-    check_type = check_types.OneTypeOfLoot
-    loot_type = { "diamonds_dah", "diamonds" }
-    tracker_id = "rvd_11"
-elseif level_id == "mus" then -- The Diamond
-    check_type = check_types.OneTypeOfLoot
-    loot_type = { "mus_artifact_paint", "mus_artifact" }
-    tracker_id = "bat_3"]]
 elseif level_id == "shoutout_raid" then -- Meltdown
     if EHI:IsAchievementLocked("melt_3") then
         check_type = check_types.MultipleTriggers
@@ -108,9 +102,6 @@ elseif level_id == "firestarter_1" then -- Firestarter Day 1
     else
         tracker_id = "LootCounter"
     end
---[[elseif level_id == "big" then -- The Big Bank
-    check_type = check_types.BagsOnly
-    tracker_id = "bigbank_3"]]
 elseif level_id == "mallcrasher" and EHI:IsDifficulty("overkill") and EHI:IsAchievementLocked("ameno_3") then -- Mallcrasher
     check_type = check_types.ValueOfSmallLoot
     tracker_id = "ameno_3"

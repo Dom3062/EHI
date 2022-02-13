@@ -16,7 +16,6 @@ local original =
 {
     init = TimerGui.init,
     set_background_icons = TimerGui.set_background_icons,
-    set_timer_multiplier = TimerGui.set_timer_multiplier,
     _start = TimerGui._start,
     update = TimerGui.update,
     _set_done = TimerGui._set_done,
@@ -126,6 +125,11 @@ function TimerGui:_set_done(...)
     managers.ehi:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     original._set_done(self, ...)
+    if self._restore_vanilla_waypoint_on_done then
+        EHI._cache.IgnoreWaypoints[self._waypoint_id] = nil
+        managers.hud:RestoreWaypoint(self._waypoint_id)
+        EHI:RestoreElementWaypoint(self._waypoint_id)
+    end
 end
 
 function TimerGui:_set_jammed(jammed, ...)
@@ -145,11 +149,14 @@ function TimerGui:_set_powered(powered, ...)
 end
 
 function TimerGui:set_visible(visible, ...)
+    original.set_visible(self, visible, ...)
+    if self._ignore_visibility then
+        return
+    end
     if visible == false then
         managers.ehi:RemoveTracker(self._ehi_key)
         managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     end
-    original.set_visible(self, visible, ...)
 end
 
 function TimerGui:hide(...)
@@ -189,6 +196,14 @@ end
 function TimerGui:RemoveVanillaWaypoint(waypoint_id)
     self._remove_vanilla_waypoint = true
     self._waypoint_id = waypoint_id
+end
+
+function TimerGui:SetIgnoreVisibility()
+    self._ignore_visibility = true
+end
+
+function TimerGui:SetRestoreVanillaWaypointOnDone()
+    self._restore_vanilla_waypoint_on_done = true
 end
 
 function TimerGui:Finalize()

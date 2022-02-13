@@ -37,7 +37,7 @@ if show_achievement then
             }
         })
         if managers.ehi:TrackerExists("farm_6") then
-            EHI:ShowLootCounter(10, EHI.LootCounter.CheckType.OneTypeOfLoot, "gold")
+            EHI:ShowLootCounter(10, 0, EHI.LootCounter.CheckType.OneTypeOfLoot, "gold")
         else
             EHI:ShowLootCounter(11)
         end

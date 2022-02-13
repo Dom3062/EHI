@@ -1,3 +1,17 @@
+EHIGasTracker = EHIGasTracker or class(EHIProgressTracker)
+function EHIGasTracker:init(panel, params)
+    params.max = params.max or 0
+    params.icons = { "pd2_fire" }
+    EHIGasTracker.super.init(self, panel, params)
+end
+
+function EHIGasTracker:Format()
+    if self._max == 0 then
+        return self._progress .. "/?"
+    end
+    return EHIGasTracker.super.Format(self)
+end
+
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -15,8 +29,9 @@ local triggers = {
 
     [100144] = { special_function = SF.Trigger, data = { 1001441, 1001442, 1001443 } },
     [1001441] = { id = "run_9", special_function = SF.SetAchievementFailed },
-    [1001442] = { id = "GasAmount", class = "EHIrunGasTracker" },
+    [1001442] = { id = "GasAmount", class = "EHIGasTracker" },
     [1001443] = { special_function = SF.RemoveTriggers, data = { 100144 } },
+    [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins
     [102426] = { special_function = SF.Trigger, data = { 1024261, 1024262 } },
     [1024261] = { max = 8, id = "run_8", class = TT.AchievementProgress, exclude_from_sync = true },
     [1024262] = { id = "run_10", class = TT.AchievementNotification, condition = show_achievement and hard_and_above },
@@ -37,11 +52,11 @@ local triggers = {
     [1028731] = { time = 80, id = "Gas4", icons = { Icon.Fire, Icon.Escape } },
 
     [102775] = { special_function = SF.Trigger, data = { 1027751, 2 } },
-    [1027751] = { max = 4, id = "GasAmount", special_function = SF.SetProgressMax },
+    [1027751] = { max = 4, id = "GasAmount", special_function = SF.RUN_SetProgressMax },
     [102776] = { special_function = SF.Trigger, data = { 1027761, 2 } },
-    [1027761] = { max = 3, id = "GasAmount", special_function = SF.SetProgressMax },
+    [1027761] = { max = 3, id = "GasAmount", special_function = SF.RUN_SetProgressMax },
     [102868] = { special_function = SF.Trigger, data = { 1028681, 2 } },
-    [1028681] = { max = 2, id = "GasAmount", special_function = SF.SetProgressMax }
+    [1028681] = { max = 2, id = "GasAmount", special_function = SF.RUN_SetProgressMax }
 }
 
 EHI:ParseTriggers(triggers)

@@ -1,3 +1,9 @@
+r50 (13. 02. 2022):
+Units using "SecurityLockGui" class will show one tracker with progress and hack time remaining
+Election Day D1: Fixed an issue where PC hack tracker was removed when enemies pulled out the power
+Stealing Xmas: Added tracker for achievement "The Grinch"
+Reservoir Dogs Day 1: Fixed a broken achievement tracker for "Waste Not, Want Not"
+
 r49 (10. 02. 2022):
 Added tracker for achievements "The only one that is true", "The one that had many names", "The one that survived" and "The one who declared himself the hero"
 Birth of Sky: Fixed a load crash (client only)

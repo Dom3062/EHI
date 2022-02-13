@@ -1,17 +1,3 @@
-EHIrunGasTracker = EHIrunGasTracker or class(EHIProgressTracker)
-function EHIrunGasTracker:init(panel, params)
-    params.max = params.max or 0
-    params.icons = { "pd2_fire" }
-    EHIrunGasTracker.super.init(self, panel, params)
-end
-
-function EHIrunGasTracker:Format()
-    if self._max == 0 then
-        return self._progress .. "/?"
-    end
-    return EHIrunGasTracker.super.Format(self)
-end
-
 EHInmhElevatorTimerTracker = EHInmhElevatorTimerTracker or class(EHITracker)
 function EHInmhElevatorTimerTracker:init(panel, params)
     self._floors = params.floors or 26

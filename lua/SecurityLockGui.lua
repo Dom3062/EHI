@@ -31,12 +31,12 @@ function SecurityLockGui:_start(bar, ...)
     original._start(self, bar, ...)
     if self._bars > 1 then
         if managers.ehi:TrackerExists(self._ehi_key) then
-            managers.ehi:IncreaseTrackerProgress(self._ehi_key)
+            managers.ehi:SetTrackerProgress(self._ehi_key, bar)
         else
             managers.ehi:AddTracker({
                 id = self._ehi_key,
                 icons = { "wp_hack" },
-                class = "EHIProgressTracker",
+                class = "EHISecurityLockGuiTracker",
                 remove_after_reaching_target = false,
                 exclude_from_sync = true,
                 progress = bar,
@@ -45,13 +45,6 @@ function SecurityLockGui:_start(bar, ...)
         end
         if not show_waypoint_only then
             managers.ehi:CallFunction(self._ehi_key, "SetHackTime", self._current_timer)
-            --[[managers.ehi:AddTracker({
-                id = self._ehi_key,
-                time = self._current_timer,
-                icons = { { icon = "wp_hack" } },
-                exclude_from_sync = true,
-                class = "EHITimerTracker"
-            })]]
         end
         if show_waypoint then
             managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
@@ -110,10 +103,11 @@ end
 
 function SecurityLockGui:_set_done(bar, ...)
     original._set_done(self, bar, ...)
-    managers.ehi:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     if self._started then
-        managers.ehi:RemoveTracker(self._ehi_bar_key)
+        managers.ehi:RemoveTracker(self._ehi_key)
+    else
+        managers.ehi:CallFunction(self._ehi_key, "RemoveHack")
     end
 end
 

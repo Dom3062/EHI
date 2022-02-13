@@ -100,6 +100,10 @@ if level_id == "firestarter_3" or level_id == "branchbank" or level_id == "branc
 elseif level_id == "roberts" then -- GO Bank
     units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 102899 }
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { EHI.Icons.Vault }, remove_on_pause = true }
+elseif level_id == "election_day_1" then -- Election Day D1
+    units["units/payday2/props/off_prop_eday_shipping_computer/off_prop_eday_shipping_computer"] = { f = "election_day_1" }
+elseif level_id == "election_day_2" then -- Election Day D2
+    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "election_day_2" }
 elseif level_id == "big" then -- The Big Bank
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { "faster" } }
 elseif level_id == "hvh" then -- Cursed Kill Room
@@ -135,6 +139,34 @@ function WorldDefinition:firestarter_3_WP(instance, unit_id, unit_data, unit)
         unit:timer_gui():RemoveVanillaWaypoint(102633)
     else
         unit:timer_gui():RemoveVanillaWaypoint(102752)
+    end
+end
+
+function WorldDefinition:election_day_1(instance, unit_id, unit_data, unit)
+    unit:timer_gui():SetIgnoreVisibility()
+    unit:timer_gui():SetRestoreVanillaWaypointOnDone()
+    if unit_id == 101210 then
+        unit:timer_gui():RemoveVanillaWaypoint(101887)
+    elseif unit_id == 101289 then
+        unit:timer_gui():RemoveVanillaWaypoint(101910)
+    elseif unit_id == 101316 then
+        unit:timer_gui():RemoveVanillaWaypoint(101913)
+    elseif unit_id == 101317 then
+        unit:timer_gui():RemoveVanillaWaypoint(101914)
+    elseif unit_id == 101318 then
+        unit:timer_gui():RemoveVanillaWaypoint(101922)
+    else -- 101320
+        unit:timer_gui():RemoveVanillaWaypoint(101923)
+    end
+end
+
+function WorldDefinition:election_day_2(instance, unit_id, unit_data, unit)
+    if unit_id == 103064 then
+        unit:timer_gui():RemoveVanillaWaypoint(103082)
+    elseif unit_id == 103065 then
+        unit:timer_gui():RemoveVanillaWaypoint(103083)
+    else -- 103066
+        unit:timer_gui():RemoveVanillaWaypoint(103084)
     end
 end
 

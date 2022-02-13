@@ -19,7 +19,7 @@ end
 
 EHI:ParseTriggers(triggers)
 EHI:ShowAchievementLootCounter({
-    achievment = "rvd_11",
+    achievement = "rvd_11",
     max = 19,
     exclude_from_sync = true,
     counter =
