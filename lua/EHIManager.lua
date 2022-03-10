@@ -192,6 +192,9 @@ function EHIManager:LoadSync()
     if self._level_started_from_beginning or self._synced_from_host then
         return
     end
+    for _, f in pairs(self._load_sync or {}) do
+        f(self)
+    end
     local level_id = Global.game_settings.level_id
     local show_achievement = EHI:GetOption("show_achievement")
     if level_id == "pbr2" then -- Birth of Sky
@@ -259,8 +262,7 @@ function EHIManager:LoadSync()
                 self:AddTracker({
                     id = "EscapeElevator",
                     floors = o._timer - 4,
-                    icons = { "pd2_door" },
-                    class = "EHInmhElevatorTimerTracker"
+                    class = "EHIElevatorTimerTracker"
                 })
                 if o._timer_paused then
                     self:CallFunction("EscapeElevator", "SetPause", true)
@@ -284,10 +286,10 @@ function EHIManager:LoadSync()
             self:IncreaseChance("EscapeChance", 70)
             EHI:UnhookElement(101863)
         end
-    elseif level_id == "firestarter_1" then
+    --[[elseif level_id == "firestarter_1" then
         EHI:LordOfWarAchievement()
         local tracker_id = EHI:IsAchievementUnlocked("lord_of_war") and "LootCounter" or "lord_of_war"
-        self:SetTrackerProgress(tracker_id, managers.loot:GetSecuredBagsAmount())
+        self:SetTrackerProgress(tracker_id, managers.loot:GetSecuredBagsAmount())]]
     elseif level_id == "mallcrasher" then
         if show_achievement and EHI:IsDifficulty("overkill") and EHI:IsAchievementLocked("ameno_3") and self._t <= 50 then
             self:AddTracker({
@@ -300,6 +302,11 @@ function EHIManager:LoadSync()
             self:SetTrackerProgress("ameno_3", managers.loot:get_real_total_small_loot_value())
         end
     end
+end
+
+function EHIManager:AddLoadSyncFunction(f)
+    self._load_sync = self._load_sync or {}
+    self._load_sync[#self._load_sync + 1] = f
 end
 
 function EHIManager:DisableStartFromBeginning()
@@ -854,7 +861,7 @@ function EHIManager:CachedPeerInCustodyExists(peer_id)
 end
 
 function EHIManager:LoadFromTradeDelayCache()
-    if #self._cache.TradeDelay == 0 then
+    if table.size(self._cache.TradeDelay) == 0 then
         self._cache.TradeDelayShowed = true
         return
     end
@@ -1101,6 +1108,20 @@ function EHIManager:SetTrackerCount(id, count)
     local tracker = self._trackers[id]
     if tracker and tracker.SetCount then
         tracker:SetCount(count)
+    end
+end
+
+function EHIManager:IncreaseTrackerCount(id)
+    local tracker = self._trackers[id]
+    if tracker and tracker.IncreaseCount then
+        tracker:IncreaseCount()
+    end
+end
+
+function EHIManager:DecreaseTrackerCount(id)
+    local tracker = self._trackers[id]
+    if tracker and tracker.DecreaseCount then
+        tracker:DecreaseCount()
     end
 end
 

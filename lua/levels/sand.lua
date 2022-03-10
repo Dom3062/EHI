@@ -8,10 +8,15 @@ local skid = { { icon = Icon.Car, color = Color("1E90FF") } }
 local sand_9_buttons = { id = "sand_9_buttons", special_function = SF.IncreaseProgress }
 local triggers = {
     -- Players spawned
-    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
+    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073, 1001074 } },
     [1001071] = { max = 10, id = "sand_9", remove_after_reaching_target = false, class = TT.AchievementProgress },
     [1001072] = { max = 3, id = "sand_9_buttons", icons = { "pd2_generic_interact" }, class = TT.Progress, special_function = SF.ShowAchievementCustom, data = "sand_9" },
-    [1001073] = { max = 8, id = "sand_10", class = TT.AchievementProgress },
+    [1001073] = { special_function = SF.CustomCode, f = function()
+        EHI:AddAchievementToCounter({
+            achievement = "sand_9"
+        })
+    end },
+    [1001074] = { max = 8, id = "sand_10", class = TT.AchievementProgress },
     [103161] = sand_9_buttons,
     [101369] = { special_function = SF.SAND_ExecuteIfProgressMatch, data = 0 },
     [103167] = sand_9_buttons,

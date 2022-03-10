@@ -1,3 +1,36 @@
+EHIElevatorTimerTracker = EHIElevatorTimerTracker or class(EHITracker)
+function EHIElevatorTimerTracker:init(panel, params)
+    self._floors = params.floors or 26
+    params.icons = { "pd2_door" }
+    params.time = self:GetElevatorTime()
+    EHIElevatorTimerTracker.super.init(self, panel, params)
+end
+
+function EHIElevatorTimerTracker:GetElevatorTime()
+    return self._floors * 8
+end
+
+function EHIElevatorTimerTracker:SetFloors(floors)
+    self._floors = floors
+    local new_time = self:GetElevatorTime()
+    if math.abs(self._time - new_time) >= 1 then -- If the difference in the new time is higher than 1s, use the new time to stay accurate
+        self._time = new_time
+    end
+end
+
+function EHIElevatorTimerTracker:LowerFloor()
+    self:SetFloors(self._floors - 1)
+end
+
+function EHIElevatorTimerTracker:SetPause(pause)
+    if pause then
+        self:RemoveTrackerFromUpdate()
+    else
+        self:AddTrackerToUpdate()
+    end
+    self:SetTextColor(pause and Color.red or Color.white)
+end
+
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -12,7 +45,7 @@ local triggers = {
 
     [103460] = { id = "nmh_11", special_function = SF.SetAchievementComplete },
 
-    [103443] = { id = "EscapeElevator", icons = { "pd2_door" }, class = "EHInmhElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists },
+    [103443] = { id = "EscapeElevator", class = "EHIElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists },
     [104072] = { id = "EscapeElevator", special_function = SF.UnpauseTracker },
 
     [102682] = { time = 20, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
@@ -37,14 +70,9 @@ local outcome =
     [100017] = { time = 30, id = "VialSuccess", icons = { "equipment_bloodvialok" } }
 }
 
-local start_index_table =
-{
-    2100, 2200, 2300, 2400, 2500, 2600, 2700
-}
-
 for id, value in pairs(outcome) do
-    for _, index in ipairs(start_index_table) do
-        local element = EHI:GetInstanceElementID(id, index)
+    for i = 2100, 2700, 100 do
+        local element = EHI:GetInstanceElementID(id, i)
         triggers[element] = EHI:DeepClone(value)
         triggers[element].id = triggers[element].id .. tostring(element)
     end

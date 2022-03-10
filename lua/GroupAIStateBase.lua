@@ -5,40 +5,9 @@ else
 	EHI._hooks.GroupAIStateBase = true
 end
 
-local achievements_to_remove =
-{
-    "dah_8",
-    "sah_9",
-    "friend_6",
-    "chas_10",
-    "chca_10"
-}
-
 local trackers_to_remove =
 {
-    "BodyBags",
-    "pagers", -- Removes pager tracker
-    "pagers_chance" -- Removes pager chance tracker (if using mods)
-}
-
-local achievements_to_toggle =
-{
-    "uno_7"
-}
-
-local unhook =
-{
-    -- Pager stuff
-    "PagerInit",
-    "set_tweak_data",
-    "sync_interacted",
-    "interact",
-    "_at_interact_start"
-}
-
-local set_ok_state =
-{
-    "ameno_7"
+    "BodyBags"
 }
 
 local show_trackers = {}
@@ -51,37 +20,13 @@ if level_id == "alex_2" then
 end
 
 local function Execute()
-    if managers.trade.GetTradeCounterTick then
-        managers.ehi:LoadFromTradeDelayCache()
-        if not dropin then
-            managers.ehi:SetTrade("normal", true, managers.trade:GetTradeCounterTick())
-        end
-    end
-    for _, achievement in ipairs(achievements_to_remove) do
-        managers.ehi:SetAchievementFailed(achievement)
-    end
     for _, tracker in ipairs(trackers_to_remove) do
         managers.ehi:RemoveTracker(tracker)
     end
-    for _, achievement in ipairs(achievements_to_toggle) do
-        managers.ehi:CallFunction(achievement, "ToggleObtainable")
-    end
-    for _, achievement in ipairs(set_ok_state) do
-        managers.ehi:CallFunction(achievement, "SetStatus", "ok")
-    end
     EHI:RunOnAlarmCallbacks(dropin)
-    for _, hook in ipairs(unhook) do
-        EHI:Unhook(hook)
-    end
     if not dropin then
         for _, tracker in pairs(show_trackers) do
-            managers.ehi:AddTracker({
-                id = tracker.id,
-                time = tracker.time,
-                icons = tracker.icons,
-                dont_flash = tracker.dont_flash,
-                class = tracker.class
-            }, tracker.pos)
+            managers.ehi:AddTracker(tracker, tracker.pos)
         end
     end
 end
@@ -129,27 +74,82 @@ if EHI:ShowDramaTracker() then
     original._add_drama = GroupAIStateBase._add_drama
     function GroupAIStateBase:_add_drama(...)
         original._add_drama(self, ...)
-        managers.ehi:SetChance("Drama", (EHI:RoundChanceNumber(self._drama_data.amount)))
+        managers.ehi:SetChance("Drama", EHI:RoundChanceNumber(self._drama_data.amount))
     end
 end
 
 if EHI:GetOption("show_minion_tracker") then
-    local function UpdateTracker(unit, key, amount)
-        if managers.ehi:TrackerDoesNotExist("Converts") then
-            managers.ehi:AddTracker({
-                id = "Converts",
-                dont_show_placed = true,
-                icons = { "minion" },
-                exclude_from_sync = true,
-                class = "EHIEquipmentTracker"
-            })
+    local UpdateTracker
+    if EHI:GetOption("show_minion_per_player") then
+        UpdateTracker = function(unit, key, amount, peer_id)
+            if managers.ehi:TrackerDoesNotExist("Converts") then
+                managers.ehi:AddTracker({
+                    id = "Converts",
+                    exclude_from_sync = true,
+                    class = "EHIMinionTracker"
+                })
+            end
+            if amount == 0 then -- Removal
+                managers.ehi:CallFunction("Converts", "RemoveMinion", key)
+            else
+                managers.ehi:CallFunction("Converts", "AddMinion", unit, key, amount, peer_id)
+            end
         end
-        managers.ehi:CallFunction("Converts", "UpdateAmount", unit, key, amount)
+    else
+        UpdateTracker = function(unit, key, amount, peer_id)
+            if managers.ehi:TrackerDoesNotExist("Converts") then
+                managers.ehi:AddTracker({
+                    id = "Converts",
+                    dont_show_placed = true,
+                    icons = { "minion" },
+                    exclude_from_sync = true,
+                    class = "EHIEquipmentTracker"
+                })
+            end
+            managers.ehi:CallFunction("Converts", "UpdateAmount", unit, key, amount)
+        end
     end
+
+    original.convert_hostage_to_criminal = GroupAIStateBase.convert_hostage_to_criminal
+    function GroupAIStateBase:convert_hostage_to_criminal(unit, peer_unit, ...)
+		original.convert_hostage_to_criminal(self, unit, peer_unit, ...)
+		if unit:brain()._logic_data.is_converted then
+			local peer_id = peer_unit and managers.network:session():peer_by_unit(peer_unit):id() or managers.network:session():local_peer():id()
+            UpdateTracker(unit, tostring(unit:key()), 1, peer_id)
+		end
+	end
+
+    --[[original.remove_minion = GroupAIStateBase.remove_minion
+    function GroupAIStateBase:remove_minion(minion_key, player_key, ...)
+        if self._converted_police[minion_key] then
+            local p_key = player_key
+            if not p_key then
+                for u_key, u_data in pairs(self._player_criminals) do
+                    if u_data.minions and u_data.minions[minion_key] then
+                        p_key = u_key
+                        break
+                    end
+                end
+            end
+            local peer_id = p_key and managers.network:session():peer_by_unit_key(p_key) or 0
+            UpdateTracker(nil, minion_key, 0, peer_id)
+        end
+		original.remove_minion(self, minion_key, player_key, ...)
+	end]]
+
+    original.sync_converted_enemy = GroupAIStateBase.sync_converted_enemy
+	function GroupAIStateBase:sync_converted_enemy(converted_enemy, owner_peer_id, ...)
+		if self._police[converted_enemy:key()] or not owner_peer_id then
+            UpdateTracker(converted_enemy, tostring(converted_enemy:key()), 1, owner_peer_id or 0)
+		end
+		return original.sync_converted_enemy(self, converted_enemy, owner_peer_id, ...)
+	end
 
     original._set_converted_police = GroupAIStateBase._set_converted_police
     function GroupAIStateBase:_set_converted_police(u_key, unit, ...)
         original._set_converted_police(self, u_key, unit, ...)
-        UpdateTracker(unit, tostring(u_key), unit and 1 or 0)
+        if not unit then
+            UpdateTracker(nil, tostring(u_key), 0)
+        end
     end
 end

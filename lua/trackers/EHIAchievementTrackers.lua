@@ -43,7 +43,7 @@ function EHIAchievementDoneTracker:update(t, dt)
     self._text:set_text(self:Format())
     if self._time <= 0 then
         self:SetCompleted()
-        self._text:set_text("DONE")
+        self._text:set_text("FINISH")
         self:FitTheText()
         self:RemoveTrackerFromUpdate()
     end
@@ -425,19 +425,6 @@ end
 function EHIAchievementTimedProgressTracker:SetTextColor(color)
     EHIAchievementTimedProgressTracker.super.SetTextColor(self, color)
     self._progress_text:set_color(color)
-end
-
-function EHIAchievementTimedProgressTracker:ResetFontSize(text)
-    text:set_font_size(self._panel:h() * self._text_scale)
-end
-
-function EHIAchievementTimedProgressTracker:FitTheText(text)
-    text = text or self._text
-    self:ResetFontSize(text)
-    local w = select(3, text:text_rect())
-    if w > text:w() then
-        text:set_font_size(text:font_size() * (text:w() / w) * self._text_scale)
-    end
 end
 
 EHIAchievementTimedMoneyCounterTracker = EHIAchievementTimedMoneyCounterTracker or class(EHIWarningTracker)

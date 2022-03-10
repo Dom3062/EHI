@@ -33,10 +33,11 @@ local level_id = Global.game_settings.level_id
 function DigitalGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
+    self._ignore_visibility = false
 end
 
 function DigitalGui:TimerStartCountDown()
-    if self._ignore or not self._visible then
+    if (self._ignore or not self._visible) and not self._ignore_visibility then
         return
     end
     if managers.ehi:TrackerExists(self._ehi_key) then
@@ -207,13 +208,11 @@ end
 
 function DigitalGui:load(data, ...)
     local state = data.DigitalGui
-    if self:is_timer() then
-        if state.visible and state.timer_count_down then
-            self:TimerStartCountDown()
-            if state.timer_paused then
-                managers.ehi:SetTimerJammed(self._ehi_key, true)
-                managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, true)
-            end
+    if self:is_timer() and state.timer_count_down then
+        self:TimerStartCountDown()
+        if state.timer_paused then
+            managers.ehi:SetTimerJammed(self._ehi_key, true)
+            managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, true)
         end
     end
     original.load(self, data, ...)
@@ -252,6 +251,10 @@ end
 
 function DigitalGui:SetWarning(warning)
     self._warning = warning
+end
+
+function DigitalGui:SetIgnoreVisibility()
+    self._ignore_visibility = true
 end
 
 function DigitalGui:Finalize()

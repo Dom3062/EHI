@@ -19,7 +19,7 @@ function EHISecurityLockGuiTracker:SetHackTime(time)
     local new_w = self._panel:w() * 3
     self:SetPanelW(new_w)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
-    self:FitTheTime()
+    self:FitTheText(self._time_text)
     self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
     self:SetIconX(self._time_bg_box:w() + (5 * self._scale))
 end

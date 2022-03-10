@@ -64,3 +64,11 @@ function EHIMenu:fcc_equipment_tracker_menu(focus, ...)
     end
     EHI:DelayCall("HighlightDelay", 0.5, f)
 end
+
+function EHIMenu:UpdateMinionTracker(value)
+    self._preview_panel:UpdateMinionTracker(value)
+end
+
+function EHIMenu:fcc_show_minion_per_player(focus, ...)
+    self:SetFocus(focus, focus and "show_minion_tracker" or "")
+end

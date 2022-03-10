@@ -24,8 +24,7 @@ _G.EHI =
             ValueOfBags = 3,
             SmallLootOnly = 4, -- Currently unused
             ValueOfSmallLoot = 5,
-            OneTypeOfLoot = 6,
-            MultipleTriggers = 7
+            OneTypeOfLoot = 6
         }
     },
 
@@ -57,7 +56,7 @@ _G.EHI =
         PauseTracker = 3,
         UnpauseTracker = 4,
         UnpauseTrackerIfExists = 5,
-        ResetTrackerTimeWhenUnpaused = 6,
+        ResetTrackerTimeWhenUnpaused = 6, -- REMOVE ME
         AddTrackerIfDoesNotExist = 7,
         SetAchievementComplete = 8,
         AddToCache = 9,
@@ -100,7 +99,7 @@ _G.EHI =
         PauseTrackerWithTime = 46,
         RemoveTriggerAndShowAchievementCustom = 47,
         IncreaseProgressMax = 48,
-        AddTrackerIfDoesNotExistElementHostCheckOnly = 49,
+        AddTrackerIfDoesNotExistElementHostCheckOnly = 49, -- REMOVE ME
         IncreaseChanceFromElementSpecify = 50,
         ShowWaypoint = 51,
         ShowEHIWaypoint = 52,
@@ -114,6 +113,7 @@ _G.EHI =
         DARK_AddBodyBag = 94,
         DARK_RemoveBodyBag = 95,
         RUN_SetProgressMax = 96,
+        FLAT_ExecuteIfElementIsEnabled = 97,
         MEX_CheckIfLoud = 98,
         FRIEND_ExecuteIfElementIsEnabledAndRemoveTrigger = 99,
         NMH_LowerFloor = 191,
@@ -124,7 +124,6 @@ _G.EHI =
         MeltdownAddCrowbar = 999,
         SAND_ExecuteIfProgressMatch = 1099,
 
-        AddToGlobalAndExecute = 99998, -- REMOVE ME
         Debug = 100000,
         CustomCode = 100001,
         CustomCodeIfEnabled = 100002
@@ -133,16 +132,10 @@ _G.EHI =
     ConditionFunctions =
     {
         IsLoud = function()
-            if managers.groupai and not managers.groupai:state():whisper_mode() then
-                return true
-            end
-            return false
+            return managers.groupai and not managers.groupai:state():whisper_mode()
         end,
         IsStealth = function()
-            if managers.groupai and managers.groupai:state():whisper_mode() then
-                return true
-            end
-            return false
+            return managers.groupai and managers.groupai:state():whisper_mode()
         end
     },
 
@@ -287,6 +280,8 @@ end
 function EHI:Init()
     self._cache.Difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
     self._cache.DifficultyIndex = self:DifficultyToIndex(self._cache.Difficulty)
+    self._cache.Host = Network:is_server()
+    self._cache.Client = not self._cache.Host
 end
 
 function EHI:Log(s)
@@ -418,6 +413,7 @@ function EHI:LoadDefaultValues()
             }
         },
         show_minion_tracker = true,
+        show_minion_per_player = true,
         show_difficulty_tracker = true,
         show_drama_tracker = true,
         show_pager_tracker = true,
@@ -622,7 +618,7 @@ function EHI:AddTrackerSynced(id, delay)
     end
 end
 
-function EHI:DebugEquipment(tracker_id, unit, key, amount)
+function EHI:DebugEquipment(tracker_id, unit, key, amount, peer_id)
     self:Log("Received garbage. Key is nil. Tracker ID: " .. tostring(tracker_id))
     self:Log("unit: " .. tostring(unit))
     if unit and alive(unit) then
@@ -631,6 +627,9 @@ function EHI:DebugEquipment(tracker_id, unit, key, amount)
     end
     self:Log("key: " .. tostring(key))
     self:Log("amount: " .. tostring(amount))
+    if peer_id then
+        self:Log("Peer ID: " .. tostring(peer_id))
+    end
     self:Log(debug.traceback())
 end
 
@@ -919,9 +918,6 @@ function EHI:Trigger(id, element, enabled)
                 self:CheckCondition(id)
             elseif f == SF.ReplaceTrackerWithTracker then
                 RemoveTracker(triggers[id].data.id)
-                if triggers[id].data.trigger then
-                    UnhookTrigger(self, triggers[id].data.trigger) -- Removes trigger from the list, used in The White House
-                end
                 self:CheckCondition(id)
             elseif f == SF.IncreaseChance then
                 local trigger = triggers[id]
@@ -987,7 +983,7 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.SetTimeNoAnimOrCreateTrackerClient then
                 local value = managers.ehi:ReturnValue(triggers[id].id, "GetTrackerType")
                 if value ~= "accurate" then
-                    if value then
+                    if managers.ehi:TrackerExists(triggers[id].id) then
                         managers.ehi:SetTrackerTimeNoAnim(triggers[id].id, self:GetTime(id))
                     else
                         self:CheckCondition(id)
@@ -1102,12 +1098,6 @@ function EHI:Trigger(id, element, enabled)
                     managers.ehi:IncreaseChance(triggers[id].id, e._values.chance)
                 end
             elseif f == SF.ShowWaypoint then
-                if triggers[id].delay then
-                    EHI:DelayCall("EHI_" .. triggers[id].id, triggers[id].delay, function()
-                        managers.hud:add_waypoint(triggers[id].id, triggers[id].data)
-                    end)
-                    return
-                end
                 managers.hud:add_waypoint(triggers[id].id, triggers[id].data)
             elseif f == SF.RemoveTriggerAndStartAchievementCountdown then
                 managers.ehi:StartTrackerCountdown(triggers[id].id)
@@ -1155,11 +1145,19 @@ function EHI:Trigger(id, element, enabled)
                         class = self.Trackers.Progress
                     })
                 end
+            elseif f == SF.FLAT_ExecuteIfElementIsEnabled then
+                if enabled then
+                    if managers.ehi:TrackerExists(triggers[id].id) then
+                        managers.ehi:SetTrackerTime(triggers[id].id, triggers[id].time)
+                    else
+                        self:CheckCondition(id)
+                    end
+                end
 
             -- ElementCounterFilter
             elseif f == SF.HOX2_CheckOkValueHostCheckOnly then
                 local continue = false
-                if Network:is_server() then
+                if self._cache.Host then
                     if element:_values_ok() then
                         continue = true
                     end
@@ -1227,7 +1225,6 @@ function EHI:Trigger(id, element, enabled)
                     managers.ehi:SetAchievementFailed("sand_9")
                 end
 
-
             -- ElementCounterOperator
             elseif f == SF.DARK_AddBodyBag then
                 managers.ehi:CallFunction(triggers[id].id, "IncreaseProgress", triggers[id].element)
@@ -1241,37 +1238,9 @@ function EHI:Trigger(id, element, enabled)
 end
 
 function EHI:InitElements()
-    local function Client(element, ...)
-        self:Trigger(element._id, element, true)
-    end
-    local function Host(element, ...)
-        self:Trigger(element._id, element, element._values.enabled)
-    end
-    local client = Network:is_client()
-    local func = client and self.ClientElement or self.HostElement
-    local f = client and Client or Host
-    local scripts = managers.mission._scripts or {}
-    for id, _ in pairs(triggers) do
-        if id >= 100000 and id <= 999999 then
-            for _, script in pairs(scripts) do
-                local element = script:element(id)
-                if element then
-                    self:HookElement(element, func, id, f)
-                elseif client then
-                    --[[
-                        On client, the element was not found
-                        This is because the element is from an instance that is mission placed
-                        Mission Placed instances are preloaded and all elements are not cached until
-                        ElementInstancePoint is called
-                        These instances are synced when you join
-                        Delay the hook until the sync is complete (see: EHI:SyncLoad())
-                    ]]
-                    self.HookOnLoad[#self.HookOnLoad + 1] = id
-                end
-            end
-        end
-    end
-    if not client then
+    self:HookElements(triggers)
+    if self._cache.Host then
+        local scripts = managers.mission._scripts or {}
         for id, _ in pairs(base_delay_triggers) do
             for _, script in pairs(scripts) do
                 local element = script:element(id)
@@ -1319,19 +1288,41 @@ function EHI:InitElements()
     end
 end
 
-function EHI:SyncLoad()
+function EHI:HookElements(elements_to_hook)
     local function Client(element, ...)
         self:Trigger(element._id, element, true)
     end
+    local function Host(element, ...)
+        self:Trigger(element._id, element, element._values.enabled)
+    end
+    local client = self._cache.Client
+    local func = client and self.ClientElement or self.HostElement
+    local f = client and Client or Host
     local scripts = managers.mission._scripts or {}
-    for _, id in pairs(self.HookOnLoad) do
-        for _, script in pairs(scripts) do
-            local element = script:element(id)
-            if element then
-                self:HookElement(element, self.ClientElement, id, Client)
+    for id, _ in pairs(elements_to_hook) do
+        if id >= 100000 and id <= 999999 then
+            for _, script in pairs(scripts) do
+                local element = script:element(id)
+                if element then
+                    self:HookElement(element, func, id, f)
+                elseif client then
+                    --[[
+                        On client, the element was not found
+                        This is because the element is from an instance that is mission placed
+                        Mission Placed instances are preloaded and all elements are not cached until
+                        ElementInstancePoint is called
+                        These instances are synced when you join
+                        Delay the hook until the sync is complete (see: EHI:SyncLoad())
+                    ]]
+                    self.HookOnLoad[#self.HookOnLoad + 1] = id
+                end
             end
         end
     end
+end
+
+function EHI:SyncLoad()
+    self:HookElements(self.HookOnLoad)
     self.HookOnLoad = {}
     self:DisableWaypoints(self.DisableOnLoad)
     self.DisableOnLoad = {}
@@ -1416,7 +1407,7 @@ function EHI:DisableElementWaypoint(id)
     if not element then
         return
     end
-    if Network:is_server() then
+    if self._cache.Host then
         self._cache.ElementWaypointFunction[id] = element.on_executed
         element.on_executed = Host
     else
@@ -1430,7 +1421,7 @@ function EHI:RestoreElementWaypoint(id)
     if not (element and self._cache.ElementWaypointFunction[id]) then
         return
     end
-    if Network:is_server() then
+    if self._cache.Host then
         element.on_executed = self._cache.ElementWaypointFunction[id]
     else
         element.client_on_executed = self._cache.ElementWaypointFunction[id]
@@ -1477,14 +1468,7 @@ function EHI:ShowAchievementLootCounter(params)
     if params.no_counting then
         return
     end
-    self.AchievementCounter[#self.AchievementCounter + 1] =
-    {
-        id = params.achievement,
-        check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly,
-        loot_type = params.counter and params.counter.loot_type,
-        sync_only = params.counter and params.sync_only
-    }
-    self:HookAchievementCounter()
+    self:AddAchievementToCounter(params)
 end
 
 function EHI:ShowAchievementBagValueCounter(params)
@@ -1492,14 +1476,7 @@ function EHI:ShowAchievementBagValueCounter(params)
         return
     end
     managers.ehi:AddAchievementBagValueCounter(params.achievement, params.value, params.exclude_from_sync, params.remove_after_reaching_target)
-    self.AchievementCounter[#self.AchievementCounter + 1] =
-    {
-        id = params.achievement,
-        check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly,
-        loot_type = params.counter and params.counter.loot_type,
-        sync_only = params.counter and params.sync_only
-    }
-    self:HookAchievementCounter()
+    self:AddAchievementToCounter(params)
 end
 
 function EHI:HookAchievementCounter()
@@ -1519,6 +1496,24 @@ function EHI:HookAchievementCounter()
         end)
         self.AchievementCounterHook = true
     end
+end
+
+function EHI:AddAchievementToCounter(params)
+    self.AchievementCounter[#self.AchievementCounter + 1] =
+    {
+        id = params.achievement,
+        check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly,
+        loot_type = params.counter and params.counter.loot_type,
+        sync_only = params.sync_only
+    }
+    self:HookAchievementCounter()
+end
+
+function EHI:AddLoadSyncFunction(f)
+    if self._cache.Host then
+        return
+    end
+    managers.ehi:AddLoadSyncFunction(f)
 end
 
 EHI:Load()

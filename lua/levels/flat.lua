@@ -1,3 +1,87 @@
+EHIHeliTracker = EHIHeliTracker or class(EHICountTracker)
+function EHIHeliTracker:update(t, dt)
+    self._time = self._time - dt
+    self._time_text:set_text(EHIHeliTracker.super.super.Format(self))
+    if self._time <= 10 and not self._time_warning then
+        self._time_warning = true
+        self:AnimateWarning()
+    end
+    if self._time <= 0 then
+        self:ObjectiveComplete("time")
+    end
+end
+
+function EHIHeliTracker:AnimateWarning()
+    self._time_text:animate(function(o)
+        while true do
+            local t = 0
+            while t < 1 do
+                t = t + coroutine.yield()
+                local n = 1 - math.sin(t * 180)
+                --local r = math.lerp(1, 0, n)
+                local g = math.lerp(1, 0, n)
+                o:set_color(Color(g, 1, g))
+            end
+        end
+    end)
+end
+
+function EHIHeliTracker:OverridePanel(params)
+    self._time_text = self._time_bg_box:text({
+        name = "time_text",
+        text = EHIHeliTracker.super.super.Format(self),
+        align = "center",
+        vertical = "center",
+        w = self._time_bg_box:w(),
+        h = self._time_bg_box:h(),
+        font = tweak_data.menu.pd2_large_font,
+        font_size = self._panel:h() * self._text_scale,
+        color = params.text_color or Color.white
+    })
+    self._time_text:set_left(self._time_bg_box:right())
+    self._panel_override_w = self._time_bg_box:w() + (37 * self._scale)
+end
+
+function EHIHeliTracker:EnableUpdate()
+    self._time = 600 -- See element ´heli_is_ready_timer´ MissionScriptElement 103869
+    local new_w = self._panel:w() * 3
+    self:SetPanelW(new_w)
+    self._time_bg_box:set_w(self._time_bg_box:w() * 2)
+    self:FitTheText(self._time_text)
+    self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
+    self:SetIconX(self._time_bg_box:w() + (5 * self._scale))
+    self._icon2:set_x(self:GetPanelSize() - (37 * self._scale))
+    self._icon2:set_visible(true)
+    self:AddTrackerToUpdate()
+end
+
+function EHIHeliTracker:GetPanelSize()
+    return self._time_bg_box:w() + (74 * self._scale) -- 32 + 5 (gap)
+end
+
+function EHIHeliTracker:ObjectiveComplete(objective)
+    if objective == "count" then
+        self._text:set_color(Color.green)
+    elseif objective == "time" then
+        self._time_text:set_text("DONE")
+        self._time_text:stop()
+        self._time_text:set_color(Color.green)
+    else -- Assault end
+        self._text:set_color(Color.green)
+        self._time_text:stop()
+        self._time_text:set_color(Color.green)
+    end
+    self:AnimateBG()
+    self:RemoveTrackerFromUpdate()
+end
+
+function EHIHeliTracker:destroy()
+    if self._time_text and alive(self._time_text) then
+        self._time_text:stop()
+    end
+    EHIHeliTracker.super.destroy(self)
+end
+
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -15,7 +99,7 @@ local triggers = {
     [100001] = { time = 30, id = "BileArrival", icons = { Icon.Heli, Icon.C4 } },
     [100182] = { id = "SniperDeath", special_function = SF.RemoveTracker },
     [104555] = { id = "SniperDeath", special_function = SF.IncreaseProgress },
-    [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, "equipment_winch_hook", Icon.Loop }, special_function = SF.ExecuteIfElementIsEnabled },
+    [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, "equipment_winch_hook", Icon.Loop }, special_function = SF.FLAT_ExecuteIfElementIsEnabled },
     [102181] = { id = "HeliWinchLoop", special_function = SF.RemoveTracker },
 
     [100809] = { time = 60, id = "cac_9", class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.RemoveTriggerAndShowAchievement, exclude_from_sync = true },
@@ -30,7 +114,64 @@ local triggers = {
     [100206] = { time = 30, id = "LoweringTheWinch", icons = { Icon.Heli, "equipment_winch_hook", "pd2_goto" } },
 
     [100049] = { time = 20, id = "flat_2", class = TT.Achievement },
-    [102001] = { time = 5, id = "C4Explosion", icons = { "pd2_c4" } }
+    [102001] = { time = 5, id = "C4Explosion", icons = { "pd2_c4" } },
+
+    [100060] = { special_function = SF.Trigger, data = { 1000601, 1000602 } },
+    [1000601] = { id = "PanicRoomTakeoff", icons = { "enemy", { icon = "faster", visible = false } }, class = "EHIHeliTracker" },
+    [1000602] = { special_function = SF.CustomCode, f = function()
+        local count = 0
+        if EHI._cache.Host then
+            local element_area_counter = managers.mission:get_element_by_id(103832) -- ´enemies alive in volume´ ElementCounter 103832
+            if not element_area_counter then
+                EHI:DelayCall("RemovePanicRoomTakeoff", 1, function()
+                    managers.ehi:RemoveTracker("PanicRoomTakeoff")
+                end)
+                return
+            end
+            count = element_area_counter:counter_value()
+        else
+            local element_area = managers.mission:get_element_by_id(100216) -- ´on enter´ ElementAreaReportTrigger 100216
+            if not element_area then
+                EHI:DelayCall("RemovePanicRoomTakeoff", 1, function()
+                    managers.ehi:RemoveTracker("PanicRoomTakeoff")
+                end)
+                return
+            end
+            local all_enemies = managers.enemy:all_enemies()
+            local client_count = 0
+            for _, enemy_data in pairs(all_enemies) do
+                if not enemy_data.death_t and enemy_data.unit and alive(enemy_data.unit) then
+                    if element_area:_is_inside(enemy_data.unit:position()) then
+                        client_count = client_count + 1
+                    end
+                end
+            end
+            count = client_count
+        end
+        managers.ehi:SetTrackerCount("PanicRoomTakeoff", count)
+        EHI:AddTriggers({
+            [103700] = { special_function = SF.CustomCode, f = function()
+                managers.ehi:IncreaseTrackerCount("PanicRoomTakeoff")
+            end},
+            [103701] = { special_function = SF.CustomCode, f = function()
+                managers.ehi:DecreaseTrackerCount("PanicRoomTakeoff")
+            end}
+        }, "Trigger", {})
+        EHI:HookElements({ [103700] = true, [103701] = true })
+    end},
+    [103869] = { special_function = SF.CustomCode, f = function()
+        managers.ehi:CallFunction("PanicRoomTakeoff", "EnableUpdate")
+    end},
+    [1] = { special_function = SF.Trigger, data = { 2, 3 } },
+    [2] = { special_function = SF.RemoveTriggers, data = { 103700, 103701 } },
+    [3] = { id = "PanicRoomTakeoff", special_function = SF.RemoveTracker },
+    [103901] = { special_function = SF.CustomCode, f = function()
+        managers.ehi:CallFunction("PanicRoomTakeoff", "ObjectiveComplete", "count")
+    end },
+    [104661] = { special_function = SF.CustomCode, f = function()
+        managers.ehi:CallFunction("PanicRoomTakeoff", "ObjectiveComplete", "assault_end")
+    end },
+    [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, "faster" }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } }
 }
 
 EHI:ParseTriggers(triggers)

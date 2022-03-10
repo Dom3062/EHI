@@ -4,3 +4,4 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
+EHI:ShowLootCounter(20)

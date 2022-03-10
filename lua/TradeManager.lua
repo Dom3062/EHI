@@ -70,6 +70,13 @@ function TradeManager:init(...)
     EHI:Hook(self, "set_trade_countdown", function(s, enabled)
         managers.ehi:SetTrade("normal", enabled, self._trade_counter_tick)
     end)
+    local function alarm(dropin)
+        managers.ehi:LoadFromTradeDelayCache()
+        if not dropin then
+            managers.ehi:SetTrade("normal", true, self:GetTradeCounterTick())
+        end
+    end
+    EHI:AddOnAlarmCallback(alarm)
 end
 
 function TradeManager:pause_trade(time, ...)

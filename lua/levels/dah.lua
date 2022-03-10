@@ -24,3 +24,19 @@ else
 end
 
 EHI:ParseTriggers(triggers)
+if EHI:IsDifficultyOrAbove("overkill") then
+    EHI:ShowAchievementLootCounter({
+        achievement = "dah_8",
+        max = 12,
+        exclude_from_sync = true,
+        counter =
+        {
+            check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+            loot_type = "diamondheist_big_diamond"
+        },
+        sync_only = true
+    })
+    EHI:AddOnAlarmCallback(function()
+        managers.ehi:SetAchievementFailed("dah_8")
+    end)
+end

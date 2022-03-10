@@ -67,6 +67,14 @@ if EHI:GetOption("show_pager_callback") then
             end
         end
     end)
+
+    EHI:AddOnAlarmCallback(function()
+        EHI:Unhook("PagerInit")
+        EHI:Unhook("set_tweak_data")
+        EHI:Unhook("interact")
+        EHI:Unhook("_at_interact_start")
+        EHI:Unhook("sync_interacted")
+    end)
 end
 
 if not EHI:GetOption("show_equipment_tracker") then

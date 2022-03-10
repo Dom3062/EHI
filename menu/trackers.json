@@ -214,16 +214,34 @@
             ]
         },
         {
-            "type": "toggle",
-            "id": "ehi_show_minion_tracker_choice",
-            "title": "ehi_show_minion_tracker",
-            "description": "ehi_show_minion_tracker_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_minion_tracker",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_minion_tracker",
-            "default_value": true,
-            "ehi_ver" : 16
+            "table" : [
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_minion_tracker_choice",
+                    "title": "ehi_show_minion_tracker",
+                    "description": "ehi_show_minion_tracker_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_minion_tracker",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_minion_tracker",
+                    "is_parent" : true,
+                    "default_value": true,
+                    "ehi_ver" : 16
+                },
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_minion_per_player_choice",
+                    "title": "ehi_show_minion_per_player",
+                    "description": "ehi_show_minion_per_player_desc",
+                    "callback": ["SetOption", "UpdateMinionTracker"],
+                    "callback_arguments": "show_minion_per_player",
+                    "value": "show_minion_per_player",
+                    "focus_changed_callback" : "fcc_show_minion_per_player",
+                    "parent": "ehi_show_minion_tracker_choice",
+                    "default_value": true,
+                    "ehi_ver" : 51
+                }
+            ]
         },
         {
             "table" : [

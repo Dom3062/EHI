@@ -146,6 +146,9 @@
     "ehi_show_minion_tracker" : "Show Converts Tracker",
     "ehi_show_minion_tracker_desc" : "Shows tracker for how much converted enemies are on the map",
 
+    "ehi_show_minion_per_player" : "Show Number of Converts Per Player",
+    "ehi_show_minion_per_player_desc" : "Shows in the tracker colored player number of converts",
+
     "ehi_show_difficulty_tracker" : "Show Difficulty Tracker",
     "ehi_show_difficulty_tracker_desc" : "Shows a tracker for how much difficult the wave is",
 

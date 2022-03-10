@@ -138,7 +138,7 @@ elseif level_id == "shoutout_raid" then -- Meltdown
 elseif level_id == "red2" then -- First World Bank
     units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 100014 }
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100018 }
-elseif level_id == "mex" then
+elseif level_id == "mex" then -- Border Crossing
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { "pd2_c4" } }
 elseif level_id == "chas" then -- Dragon Heist
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100017 }

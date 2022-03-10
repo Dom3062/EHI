@@ -259,15 +259,16 @@ function EHITracker:update(t, dt)
     end
 end
 
-function EHITracker:ResetFontSize()
-    self._text:set_font_size(self._panel:h() * self._text_scale)
+function EHITracker:ResetFontSize(text)
+    text:set_font_size(self._panel:h() * self._text_scale)
 end
 
-function EHITracker:FitTheText()
-    self:ResetFontSize()
-    local w = select(3, self._text:text_rect())
-    if w > self._text:w() then
-        self._text:set_font_size(self._text:font_size() * (self._text:w() / w) * self._text_scale)
+function EHITracker:FitTheText(text)
+    text = text or self._text
+    self:ResetFontSize(text)
+    local w = select(3, text:text_rect())
+    if w > text:w() then
+        text:set_font_size(text:font_size() * (text:w() / w) * self._text_scale)
     end
 end
 

@@ -39,7 +39,7 @@ function FakeEHIManager:AddFakeTrackers()
         self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, class = "FakeEHIXPTracker" } )
     end
     if EHI:GetOption("show_trade_delay") then
-        self:AddFakeTracker({ id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = tweak_data.chat_colors[1] or tweak_data.chat_colors[#tweak_data.chat_colors] or Color.white, visible = true } } } )
+        self:AddFakeTracker({ id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = self:GetPeerColor(), visible = true } } } )
     end
     if EHI:GetOption("show_timers") then
         self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { "pd2_drill", "faster", "silent", "restarter" } } )
@@ -60,7 +60,7 @@ function FakeEHIManager:AddFakeTrackers()
         self:AddFakeTracker({ id = "show_equipment_tracker", show_placed = true, icons = { "doctor_bag" }, class = "FakeEHIEquipmentTracker" } )
     end
     if EHI:GetOption("show_minion_tracker") then
-        self:AddFakeTracker({ id = "show_minion_tracker", min = 1, charges = 4, icons = { "minion" }, class = "FakeEHIEquipmentTracker" } )
+        self:AddFakeTracker({ id = "show_minion_tracker", min = 1, charges = 4, icons = { "minion" }, class = "FakeEHIMinionCounterTracker" } )
     end
     if EHI:GetOption("show_difficulty_tracker") then
         self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "enemy" }, class = "FakeEHIChanceTracker" } )
@@ -103,6 +103,19 @@ function FakeEHIManager:make_fine_text(text)
 
 	text:set_size(w, h)
 	text:set_position(math.round(text:x()), math.round(text:y()))
+end
+
+function FakeEHIManager:GetPeerColor()
+    if CustomNameColor and CustomNameColor.GetOwnColor then
+        return CustomNameColor:GetOwnColor()
+    else
+        local i = 1
+        local session = managers.network and managers.network:session() and managers.network:session()
+        if session and session:local_peer() then
+            i = session:local_peer():id() or 1
+        end
+        return tweak_data.chat_colors[i] or tweak_data.chat_colors[#tweak_data.chat_colors] or Color.white
+    end
 end
 
 function FakeEHIManager:AddPreviewText()
@@ -219,6 +232,22 @@ function FakeEHIManager:Redraw()
     end
     self._hud_panel:remove(self._preview_text)
     self:AddFakeTrackers()
+end
+
+function FakeEHIManager:UpdateMinionTracker(value)
+    local tracker = self:GetTracker("show_minion_tracker")
+    if not tracker then
+        return
+    end
+    tracker:UpdateFormat(value)
+end
+
+function FakeEHIManager:GetTracker(id)
+    for _, tracker in pairs(self._fake_trackers) do
+        if tracker:GetID() == id then
+            return tracker
+        end
+    end
 end
 
 local icons = tweak_data.ehi.icons
@@ -569,8 +598,22 @@ end
 
 function FakeEHIEquipmentTracker:UpdateEquipmentFormat(format)
     self._text:set_font_size(self._panel:h() * self._text_scale)
-    self._text:set_text(self:Format(format))
+    self._text:set_text(self:EquipmentFormat(format))
     self:FitTheText()
+end
+
+FakeEHIMinionCounterTracker = FakeEHIMinionCounterTracker or class(FakeEHIEquipmentTracker)
+function FakeEHIMinionCounterTracker:init(panel, params)
+    FakeEHIMinionCounterTracker.super.init(self, panel, params)
+    self:UpdateFormat(EHI:GetOption("show_minion_per_player"))
+end
+
+function FakeEHIMinionCounterTracker:UpdateFormat(value)
+    if value then -- "Show Minions Per Player" option is enabled
+        self._icon1:set_color(FakeEHIManager:GetPeerColor()) -- Very bad
+    else -- Disabled
+        self._icon1:set_color(Color.white)
+    end
 end
 
 FakeEHICountTracker = FakeEHICountTracker or class(FakeEHITracker)

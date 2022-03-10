@@ -15,7 +15,7 @@ local triggers = {
     [1022921] = { time = 600, id = "berry_3", class = TT.Achievement, condition = ovk_and_up and show_achievement },
     [1022922] = { status = "ok", id = "berry_4", class = TT.AchievementNotification, condition = ovk_and_up and show_achievement },
     [1022923] = { special_function = SF.CustomCode, f = function()
-        if ovk_and_up and show_achievement then
+        if EHI:IsAchievementLocked("berry_4") and ovk_and_up and show_achievement then
             -- Player
             managers.player:add_listener("EHI_berry_4_bleedout", {"bleed_out"}, berry_4_fail)
             managers.player:add_listener("EHI_berry_4_incapacitated", {"incapacitated"}, berry_4_fail)

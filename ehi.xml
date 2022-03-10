@@ -33,7 +33,7 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIECMTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIStopwatchTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHISecurityLockGuiTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIMissionSpecificTrackers.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIMinionTracker.lua"/>
             </group>
             <post :hook_id="hudmanager" :script_path="HUDManager.lua" />
             <post :hook_id="hudmanagerpd2" :script_path="hudmanagerpd2.lua" />

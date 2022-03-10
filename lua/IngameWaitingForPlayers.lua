@@ -747,6 +747,40 @@ function IngameWaitingForPlayersState:at_exit(...)
             managers.ehi:SetTrackerProgress("pim_2", progress)
         end)
     end
+    if EHI:IsAchievementLocked("xm20_1") and (level == "mex" or level == "bex" or level == "pex" or level == "fex") then
+        EHI:PreHookWithID(MissionManager, "on_set_saved_job_value", "EHI_pent_11_achievement", function(mm, key, value)
+            if (key == "present_mex" or key == "present_bex" or key == "present_pex" or key == "present_bex") and value == 1 then
+                local progress = 0
+                local to_secure = tweak_data.achievement.collection_achievements.xm20_1.collection
+                for _, item in pairs(to_secure) do
+                    if Global.mission_manager.saved_job_values[item] then
+                        progress = progress + 1
+                    end
+                end
+                if progress == 4 then
+                    return
+                end
+                managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_xm20_1"), tostring(progress) .. "/4", "C_Vlad_Xmas_OnlyForUs")
+            end
+        end)
+    end
+    if EHI:IsAchievementLocked("pent_11") and (level == "chas" or level == "sand" or level == "chca" or level == "pent") then
+        EHI:PreHookWithID(MissionManager, "on_set_saved_job_value", "EHI_pent_11_achievement", function(mm, key, value)
+            if (key == "tea_chas" or key == "tea_sand" or key == "tea_chca" or key == "tea_pent") and value == 1 then
+                local progress = 0
+                local to_secure = tweak_data.achievement.collection_achievements.pent_11.collection
+                for _, item in pairs(to_secure) do
+                    if Global.mission_manager.saved_job_values[item] then
+                        progress = progress + 1
+                    end
+                end
+                if progress == 4 then
+                    return
+                end
+                managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_pent_11"), tostring(progress) .. "/4", "C_JiuFeng_H_CityofGold_ForTheMad")
+            end
+        end)
+    end
     if table.size(stats) > 0 then
         EHI:Hook(AchievmentManager, "award_progress", function(am, stat, value)
             if stats[stat] then

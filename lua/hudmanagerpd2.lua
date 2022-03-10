@@ -51,22 +51,21 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     if EHI:GetOption("show_pager_tracker") then
         local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
         if server then
-            local random_chance = false
             for _, value in pairs(base) do
                 if value > 0 and value < 1 then
-                    random_chance = true
-                    break
+                    -- Random Chance
+                    self:AddTracker({
+                        id = "pagers_chance",
+                        chance = EHI:RoundChanceNumber(base[1] or 0),
+                        icons = { "pagers_used" },
+                        exclude_from_sync = true,
+                        class = "EHIChanceTracker"
+                    })
+                    EHI:AddOnAlarmCallback(function()
+                        managers.ehi:RemoveTracker("pagers_chance")
+                    end)
+                    return
                 end
-            end
-            if random_chance then
-                self:AddTracker({
-                    id = "pagers_chance",
-                    chance = EHI:RoundChanceNumber(base[1] or 0),
-                    icons = { "pagers_used" },
-                    exclude_from_sync = true,
-                    class = "EHIChanceTracker"
-                })
-                return
             end
         end
         local max = 0
@@ -86,6 +85,9 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         if max == 0 then
             self.ehi:CallFunction("pagers", "SetBad")
         end
+        EHI:AddOnAlarmCallback(function()
+            managers.ehi:RemoveTracker("pagers")
+        end)
     end
     if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" and not EHI:IsOneXPElementHeist(level_id) then
         self:AddTracker({
@@ -94,50 +96,14 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             class = "EHITotalXPTracker"
         })
     end
-    if EHI:GetOption("show_achievement") and not EHI._cache.AchievementsAreDisabled then
-        self:ShowAchievements()
-    end
-    self:ShowLootCounter()
-end
-
-function HUDManager:ShowAchievements()
-    if level_id == "mex_cooking" and EHI:IsDifficultyOrAbove("overkill") then
-        self.ehi:AddAchievementProgressTracker("mex2_9", 25, 0, true)
-    end
-    if level_id == "dah" and EHI:IsDifficultyOrAbove("overkill") then
-        self.ehi:AddAchievementProgressTracker("dah_8", 12, 0)
-    end
-    if level_id == "chas" and EHI:IsDifficultyOrAbove("overkill") then
-        self.ehi:AddAchievementProgressTracker("chas_10", 15, 0, true)
-    end
-    --[[if level_id == "shoutout_raid" then
-        self.ehi:AddAchievementProgressTracker("melt_3", 8, true)
-    end]]
-    --[[if level_id == "arm_for" then -- Transport: Train Heist
-        self.ehi:AddAchievementProgressTracker("armored_1", 20, true)
-    end]]
 end
 
 function HUDManager:ShowLootCounter()
     local max = 0
-    --[[if level_id == "shoutout_raid" then
-    --elseif level_id == "shoutout_raid" then
-        max = EHI:IsDifficultyOrAbove("overkill") and 8 or 6
-        if self.ehi:TrackerDoesNotExist("melt_3") then
-            max = max + 8
-        end]]
     --[[elseif level_id == "rvd1" then
         max = 6
     elseif level_id == "alex_3" then
         max = 14]]
-    --elseif level_id == "arm_for" then
-        --max = 3 + (self.ehi:TrackerDoesNotExist("armored_1") and 20 or 0)
-    if level_id == "rusdl" then -- Cold Stones Custom Heist
-    --elseif level_id == "rusdl" then -- Cold Stones Custom Heist
-        max = 20
-    elseif level_id == "hunter_departure" and not (EHI:GetOption("show_achievement") or EHI._cache.AchievementsAreDisabled) then -- Hunter and Hunted (Departure) Day 2 Custom Heist
-        max = 21
-    end
     if max == 0 then
         return
     end

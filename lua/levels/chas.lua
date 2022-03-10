@@ -8,7 +8,16 @@ local element_sync_triggers = {
     [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, hook_element = 102453, remove_trigger_when_executed = true }
 }
 local triggers = {
-    [100107] = { time = 360, id = "chas_11", class = TT.Achievement, condition = ovk_and_up and show_achievement },
+    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
+    [1001071] = { max = 15, id = "chas_10", class = TT.AchievementProgress, remove_after_reaching_target = false, exclude_from_sync = true, condition = ovk_and_up and show_achievement },
+    [1001072] = { special_function = SF.CustomCode, f = function ()
+        if managers.ehi:TrackerExists("chas_10") then
+            EHI:AddAchievementToCounter({
+                achievement = "chas_10"
+            })
+        end
+    end },
+    [1001073] = { time = 360, id = "chas_11", class = TT.Achievement, condition = ovk_and_up and show_achievement },
     [EHI:GetInstanceElementID(100017, 11325)] = { id = "Gas", special_function = SF.RemoveTracker },
 
     [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { "pd2_question", "pd2_drill", "pd2_goto" } },
@@ -37,3 +46,19 @@ local DisableWaypoints =
 
 EHI:ParseTriggers(triggers)
 EHI:DisableWaypoints(DisableWaypoints)
+if show_achievement then
+    EHI:AddLoadSyncFunction(function(self)
+        if managers.groupai:state():whisper_mode() and ovk_and_up then
+            EHI:ShowAchievementLootCounter({
+                achievement = "chas_10",
+                max = 15,
+                exclude_from_sync = true,
+                remove_after_reaching_target = false
+            })
+            self:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())
+        end
+    end)
+    EHI:AddOnAlarmCallback(function()
+        managers.ehi:SetAchievementFailed("chas_10")
+    end)
+end

@@ -14,3 +14,6 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
+EHI:AddOnAlarmCallback(function()
+    managers.ehi:SetAchievementFailed("sah_9")
+end)

@@ -1,7 +1,4 @@
 function EHI:LordOfWarAchievement()
-    local achievement_locked = self:IsAchievementLocked("lord_of_war")
-    local tracker_id = achievement_locked and "lord_of_war" or "LootCounter"
-    local icon = achievement_locked and "C_Hector_H_Firestarter_Lord" or "pd2_loot"
     local weapons = managers.ehi:GetUnits("units/payday2/equipment/gen_interactable_weapon_case_2x1/gen_interactable_weapon_case_2x1", 1)
     local n_of_weapons = 0
     for _, weapon in pairs(weapons) do
@@ -12,12 +9,16 @@ function EHI:LordOfWarAchievement()
             end
         end
     end
-    managers.ehi:AddTracker({
-        id = tracker_id,
-        max = n_of_weapons + (achievement_locked and 0 or 1),
-        icons = { icon },
-        class = "EHIProgressTracker"
+    self:ShowAchievementLootCounter({
+        achievement = "lord_of_war",
+        max = n_of_weapons,
+        additional_loot = 1,
+        show_loot_counter = true,
+        exclude_from_sync = true
     })
+    if managers.ehi:TrackerDoesNotExist("LootCounter") then
+        self:ShowLootCounter(1, 0, self.LootCounter.CheckType.OneTypeOfLoot, "money")
+    end
 end
 
 local triggers = {
@@ -30,3 +31,14 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
+EHI:AddLoadSyncFunction(function(self)
+    EHI:LordOfWarAchievement()
+    if self:TrackerExists("lord_of_war") then
+        self:SetTrackerProgress("lord_of_war", managers.loot:GetSecuredBagsAmount())
+        if self:TrackerExists("LootCounter") then
+            self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsTypeAmount("money"))
+        end
+    else
+        self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
+    end
+end)

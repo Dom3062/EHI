@@ -26,6 +26,7 @@ local redirect =
     escape_cafe_day = "escape_cafe",
     escape_overpass_night = "escape_overpass",
     escape_park_day = "escape_park",
+    gallery = "framing_frame_1",
     crojob3_night = "crojob3",
     -- Custom Missions
     ratdaylight = "levels/rat"
@@ -47,7 +48,7 @@ local levels =
     arm_hcm = true, -- Transport: Downtown
     arm_par = true, -- Transport: Park -- Missing wps
     arm_und = true, -- Transport: Underpass -- Missing wps
-    arm_for = true, -- Transport: Train Heist -- Additional wps; removal needed
+    arm_for = true, -- Transport: Train Heist -- Additional wps; removal needed; MissionDoor
     mallcrasher = true, -- Mallcrasher
     four_stores = true, -- Four Stores
     pines = true, -- White Xmas; missing wps
@@ -69,7 +70,7 @@ local levels =
     welcome_to_the_jungle_1 = true, -- Big Oil Day 1
     welcome_to_the_jungle_1_night = true, -- Big Oil Day 1 (Night)
     welcome_to_the_jungle_2 = true, -- Big Oil Day 2; PC Hack waypoint; remove
-    -- framing_frame_1 == true, -- Framing Frame Day 1; Drill security door waypoint; removal needed (MissionDoor)
+    framing_frame_1 = true, -- Framing Frame Day 1; Drill security door waypoint; removal needed (MissionDoor)
     framing_frame_2 = true, -- Framing Frame Day 2
     framing_frame_3 = true, -- Framing Frame Day 3; PC Hack waypoint; removal needed
     election_day_1 = true, -- Election Day D1
@@ -92,6 +93,7 @@ local levels =
     mus = true, -- The Diamond; Defend + Fix wp when hacking the barrier
     arena = true, -- The Alesso Heist; Hacking PC wp, needs removal
     kenaz = true, -- Golden Grin Casino; Defend BFD wp, needs removal + add C4 timer
+    gallery = true, -- Art Gallery
     crojob2 = true, -- The Bomb: Dockyard
     crojob3 = true, -- The Bomb: Forest
     crojob3_night = true, -- The Bomb: Forest (Night)
@@ -131,15 +133,22 @@ local levels =
     bph = true, -- Hell's Island
     nmh = true, -- No Mercy; Remove saw door wp
     vit = true, -- The White House
+    -- Silkroad campaign
     mex = true, -- Border Crossing
     mex_cooking = true, -- Border Crystals
     bex = true, -- San Martín Bank; Remove vault wp; Add "Silencioso y Codicioso" achievement
     pex = true, -- Breakfast in Tijuana
     fex = true, -- Buluc's Mansion
+    -- City of Gold campaign
     chas = true, -- Dragon Heist
     sand = true, -- Ukrainian Prisoner Heist
     chca = true, -- Black Cat Heist
-    Fourth_and_last_heist_in_City_of_Gold_campaign = true
+    pent = true, -- Mountain Master Heist
+    -- Texas Heat campaign
+    first_heist_of_the_Texas_Heat_campaign = true,
+    second_heist_of_the_Texas_Heat_campaign = true,
+    third_heist_of_the_Texas_Heat_campaign = true,
+    fourth_and_last_heist_of_the_Texas_Heat_campaign = true
 }
 
 local custom_levels =

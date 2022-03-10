@@ -46,6 +46,9 @@ function EHI:FinalizeUnits(tbl)
                     if unit_data.icon_on_pause then
                         unit:digital_gui():SetIconOnPause(unit_data.icon_on_pause[1])
                     end
+                    if unit_data.ignore_visibility then
+                        unit:digital_gui():SetIgnoreVisibility()
+                    end
                     unit:digital_gui():Finalize()
                 end
             end
@@ -81,7 +84,7 @@ local units =
     ["units/pd2_dlc_dah/props/dah_prop_hack_box/dah_prop_hack_ipad_unit"] = { remove_on_power_off = true },
 
     -- Copied from CoreWorldInstanceManager.lua
-    ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { "pd2_drill" } },
+    ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { "pd2_drill" }, ignore_visibility = true },
     ["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" } },
     ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { "faster" }, warning = true },
     ["units/pd2_dlc_help/props/hlp_interactable_wheel_timer/hlp_interactable_wheel_timer"] = { icons = { "faster" }, icon_on_pause = { "restarter" } },
@@ -111,6 +114,8 @@ elseif level_id == "hvh" then -- Cursed Kill Room
     units["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" }, f = "hvhTimer", custom_callback = { id = "hvhCleanUp", f = "remove" } }
 elseif level_id == "help" then -- Prison Nightmare
     units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
+elseif level_id == "pent" then -- Mountain Master
+    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = EHI:GetAchievementIcon("pent_10"), remove_on_pause = true }
 end
 
 function WorldDefinition:create(layer, offset, ...)

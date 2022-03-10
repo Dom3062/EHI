@@ -96,7 +96,7 @@ function EHICiviliansKilledTracker:Reorganize()
     if self._n_of_peers_in_custody > self._panel_size then
         self._panel_size = self._panel_size * 2
         self._panel_w = self._panel_w * 3 -- Fixes text being cut off after animation
-        self:SetPanelW(self._panel_w) 
+        self:SetPanelW(self._panel_w)
         self._time_bg_box:set_w(self._time_bg_box:w() * 2)
         self._icon_remove = self._icon_remove + 1
     end

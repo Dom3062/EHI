@@ -1,3 +1,10 @@
+r51 (09. 03. 2022):
+Added trackers for Mountain Master Heist
+"Don't Show Trade Delay Tracker in Stealth": Fixed an issue where the option did not work corrently once the alarm went off
+Art Gallery / Framing Frame Day 1: Added tracker for achievement "Painting Yourself Into a Corner"
+Panic Room: Fixed a log spam
+Prison Nightmare: Fixed wrong heli icon
+
 r50 (13. 02. 2022):
 Units using "SecurityLockGui" class will show one tracker with progress and hack time remaining
 Election Day D1: Fixed an issue where PC hack tracker was removed when enemies pulled out the power

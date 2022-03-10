@@ -51,3 +51,9 @@ end
 
 EHI:ParseTriggers(triggers)
 EHI:ShowLootCounter(16)
+if mayhem_and_up then
+    EHI:AddOnAlarmCallback(function()
+        managers.ehi:SetAchievementFailed("friend_6")
+        managers.ehi:CallFunction("uno_7", "ToggleObtainable")
+    end)
+end

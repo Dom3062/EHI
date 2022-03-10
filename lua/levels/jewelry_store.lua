@@ -35,6 +35,7 @@ EHI:AddOnAlarmCallback(function(dropin)
         start_chance = 36
     end
     managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
+    managers.ehi:CallFunction("ameno_7", "SetStatus", "ok")
 end)
 
 EHI:ParseTriggers(triggers)

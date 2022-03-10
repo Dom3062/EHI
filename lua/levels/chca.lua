@@ -5,6 +5,11 @@ local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
 local mayhem_and_up = EHI:IsDifficultyOrAbove("mayhem")
 local dw_and_above = EHI:IsDifficultyOrAbove("death_wish")
+local function chca_9_fail()
+    managers.ehi:SetAchievementFailed("chca_9")
+    EHI:Unhook("chca_9_killed")
+    EHI:Unhook("chca_9_killed_by_anyone")
+end
 local vault_reset_time = 5 -- Normal
 if EHI:IsBetweenDifficulties("hard", "very_hard") then -- Hard + Very Hard
     vault_reset_time = 15
@@ -25,16 +30,12 @@ local triggers = {
         if EHI:IsAchievementLocked("chca_9") and show_achievement and ovk_and_up then
             local function check(self, data)
                 if data.variant ~= "melee" then
-                    managers.ehi:SetAchievementFailed("chca_9")
+                    chca_9_fail()
                 end
             end
             EHI:HookWithID(StatisticsManager, "killed", "EHI_chca_9_killed", check)
             EHI:HookWithID(StatisticsManager, "killed_by_anyone", "EHI_chca_9_killed_by_anyone", check)
-            EHI:AddOnAlarmCallback(function()
-                managers.ehi:SetAchievementFailed("chca_9")
-                EHI:Unhook("chca_9_killed")
-                EHI:Unhook("chca_9_killed_by_anyone")
-            end)
+            EHI:AddOnAlarmCallback(chca_9_fail)
         end
     end },
     [3] = { max = 8, id = "chca_10", class = TT.AchievementProgress, remove_after_reaching_target = false, condition = show_achievement and mayhem_and_up },
@@ -128,3 +129,6 @@ local DisableWaypoints =
 
 EHI:ParseTriggers(triggers)
 EHI:DisableWaypoints(DisableWaypoints)
+EHI:AddOnAlarmCallback(function()
+    managers.ehi:SetAchievementFailed("chca_10")
+end)

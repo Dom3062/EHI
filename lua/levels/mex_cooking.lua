@@ -34,4 +34,11 @@ else
 end
 
 EHI:ParseTriggers(triggers)
+if EHI:IsDifficultyOrAbove("overkill") then
+    EHI:ShowAchievementLootCounter({
+        achievement = "mex2_9",
+        max = 25,
+        exclude_from_sync = true
+    })
+end
 EHI:ShowLootCounter(50)

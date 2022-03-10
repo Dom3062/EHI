@@ -1,10 +1,22 @@
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local very_hard_and_up = EHI:IsDifficultyOrAbove("very_hard")
 local triggers = {
-    [101136] = { max = 12, id = "brb_8", remove_after_reaching_target = false, class = TT.AchievementProgress, condition = show_achievement and very_hard_and_up, exclude_from_sync = true },
+    [101136] = { special_function = SF.CustomCode, f = function()
+        if EHI:IsDifficultyOrAbove("very_hard") then
+            EHI:ShowAchievementLootCounter({
+                achievement = "brb_8",
+                max = 12,
+                exclude_from_sync = true,
+                remove_after_reaching_target = false,
+                counter =
+                {
+                    check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+                    loot_type = "gold"
+                }
+            })
+        end
+    end },
     [100128] = { time = 38, id = "WinchDropTrainA", icons = { "equipment_winch_hook", "pd2_goto" } },
     [100164] = { time = 38, id = "WinchDropTrainB", icons = { "equipment_winch_hook", "pd2_goto" } },
 

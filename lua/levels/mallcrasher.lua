@@ -25,9 +25,21 @@ local triggers =
     --[300870] = { amount = 5600, id = "MallDestruction", special_function = true },
     --[300830] = { amount = 8000, id = "MallDestruction", special_function = true },
 
-    [301148] = { special_function = SF.Trigger, data = { 3011481, 3011482 } },
+    [301148] = { special_function = SF.Trigger, data = { 3011481, 3011482, 3011483 } },
     [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = TT.AchievementTimedMoneyCounterTracker, condition = show_achievement and EHI:IsDifficulty("overkill"), exclude_from_sync = true },
     [3011482] = { time = 180, id = "uno_3", class = TT.Achievement, exclude_from_sync = true },
+    [3011483] = { special_function = SF.CustomCode, f = function()
+        if managers.ehi:TrackerDoesNotExist("ameno_3") then
+            return
+        end
+        EHI:AddAchievementToCounter({
+            achievement = "ameno_3",
+            counter =
+            {
+                check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
+            }
+        })
+    end },
     [300241] = { id = "uno_3", special_function = SF.SetAchievementComplete },
 
     [301056] = { max = 171, id = "window_cleaner", flash_times = 1, class = TT.AchievementProgress },
