@@ -1,3 +1,8 @@
+r52 (10. 03. 2022):
+Mountain Master Heist: Added more trackers
+Mountain Master Heist: Removed duplicate achievement tracker
+Mountain Master Heist: Fixed an issue where Heli Arrival Delay tracker is not accurate (Vanilla issue)
+
 r51 (09. 03. 2022):
 Added trackers for Mountain Master Heist
 "Don't Show Trade Delay Tracker in Stealth": Fixed an issue where the option did not work corrently once the alarm went off

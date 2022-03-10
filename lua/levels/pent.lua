@@ -1,31 +1,36 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local very_hard_and_up = EHI:IsDifficultyOrAbove("very_hard")
 local heli_element_timer = 102292
 local heli_delay = 60 -- Normal -> Very Hard
-local heli_delay_icon = { "faster" }
-if EHI:IsDifficulty("overkill") then -- OVERKILL
+-- Bugged because of braindead use of ElementTimerTrigger...
+--[[if EHI:IsDifficulty("overkill") then -- OVERKILL
     heli_element_timer = 102293
     heli_delay = 80
 elseif EHI:IsDifficultyOrAbove("mayhem") then -- Mayhem+
     heli_element_timer = 102294
     heli_delay = 100
-end
+end]]
 local triggers = {
-    [104453] = { id = "pent_12", special_function = SF.IncreaseProgress },
-
     -- Loud Heli Escape
-    [102295] = { id = "HeliEscapeDelay", icons = heli_delay_icon, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = heli_element_timer },
-    [102296] = { id = "HeliEscapeDelay", special_function = SF.PauseTracker },
-    [102297] = { id = "HeliEscapeDelay", special_function = SF.UnpauseTracker },
-    [102303] = { special_function = SF.Trigger, data = { 1023031, 1023032 } },
-    [1023031] = { }, -- Trigger populated down below
-    [1023032] = { time = 40, id = "HeliEscape", icons = Icon.HeliEscape },
+    [101539] = { time = 5, id = "EndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning },
+    [102295] = { additional_time = 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = heli_element_timer },
+    [102296] = { id = "HeliEscape", special_function = SF.PauseTracker },
+    [102297] = { id = "HeliEscape", special_function = SF.UnpauseTracker },
+
+    -- Window Cleaning Platform
+    [EHI:GetInstanceElementID(100047, 9280)] = { time = 20, id = "PlatformLoweringDown", icons = { "faster" } },
 
     -- Elevator
     [101277] = { time = 12, id = "ElevatorDown", icons = { "faster" } },
     [102061] = { time = 900/30, id = "ElevatorUp", icons = { "faster" } },
+
+    -- Elevator Generator
+    [EHI:GetInstanceElementID(100066, 13930)] = { chance = 0, id = "GeneratorStartChance", icons = { "pd2_power" }, class = TT.Chance },
+    [EHI:GetInstanceElementID(100018, 13930)] = { id = "GeneratorStartChance", special_function = SF.IncreaseChanceFromElement }, -- +33%
+    [EHI:GetInstanceElementID(100016, 13930)] = { id = "GeneratorStartChance", special_function = SF.RemoveTracker },
 
     -- Thermite
     [EHI:GetInstanceElementID(100035, 9930)] = { time = 22.5 * 3, id = "Thermite", icons = { Icon.Fire } },
@@ -44,27 +49,23 @@ local triggers = {
 if Network:is_client() then
     -- FOR THE LOVE OF GOD
     -- OVERKILL
-    -- STOP. USING. F... DELAY, it's not funny
-    triggers[102295].time = heli_delay
+    -- STOP. USING. F... RANDOM DELAY, it's not funny
+    triggers[102295].time = heli_delay + triggers[102295].additional_time
     triggers[102295].random_time = 20
     triggers[102295].class = TT.InaccuratePausable
     triggers[102295].delay_only = true
     EHI:AddSyncTrigger(102295, triggers[102295])
-    triggers[1023031].id = "HeliEscapeDelay"
-    triggers[1023031].special_function = SF.RemoveTracker
+    triggers[102303] = { time = 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
     if EHI:IsDifficultyOrBelow("overkill") then
-        triggers[103584] = { time = 70, id = "HeliEscapeDelay", icons = heli_delay_icon, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
+        triggers[103584] = { time = 70 + 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
     else
-        triggers[103585] = { time = 90, id = "HeliEscapeDelay", icons = heli_delay_icon, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
+        triggers[103585] = { time = 90 + 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
     end
 
     -- Thermite
     triggers[EHI:GetInstanceElementID(100036, 9930)] = { time = 22.5 * 2, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist }
     -- 100037 has 0s delay for some reason...
     triggers[EHI:GetInstanceElementID(100038, 9930)] = { time = 22.5, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist }
-else
-    triggers[1023031].special_function = SF.CustomCode
-    triggers[1023031].f = function () end
 end
 
 local DisableWaypoints =
@@ -97,7 +98,11 @@ if very_hard_and_up then
             max = 1,
             remove_after_reaching_target = false,
             exclude_from_sync = true,
-            no_counting = true
+            counter =
+            {
+                check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+                loot_type = "gnome"
+            }
         })
     end)
 end

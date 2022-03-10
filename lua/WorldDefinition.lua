@@ -115,7 +115,7 @@ elseif level_id == "hvh" then -- Cursed Kill Room
 elseif level_id == "help" then -- Prison Nightmare
     units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
 elseif level_id == "pent" then -- Mountain Master
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = EHI:GetAchievementIcon("pent_10"), remove_on_pause = true }
+    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { f = "pentAchievementTimer" }
 end
 
 function WorldDefinition:create(layer, offset, ...)
@@ -261,5 +261,15 @@ function WorldDefinition:caneSafeTimer(instance, unit_id, unit_data, unit)
         unit:digital_gui():SetRemoveOnPause(true)
     else
         unit:digital_gui():SetIgnore(true)
+    end
+end
+
+function WorldDefinition:pentAchievementTimer(instance, unit_id, unit_data, unit)
+    if unit_id == 103872 then -- 002
+        unit:digital_gui():SetIgnore(true)
+    else
+        unit:digital_gui():SetIcons(EHI:GetAchievementIcon("pent_10"))
+        unit:digital_gui():SetRemoveOnPause(true)
+        unit:digital_gui():SetWarning(true)
     end
 end
