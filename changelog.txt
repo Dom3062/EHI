@@ -1,3 +1,9 @@
+r53 (12. 03. 2022):
+Added in-game popup for achievement "Lieutenant Colonel"
+Changed achievement tracker "Gift Giver" to show only when you have a throwable which have damage higher than 0
+Gage Tracker: Added option to show progress in popup
+XP Tracker: Added option to show XP in popup and hint panels
+
 r52 (10. 03. 2022):
 Mountain Master Heist: Added more trackers
 Mountain Master Heist: Removed duplicate achievement tracker

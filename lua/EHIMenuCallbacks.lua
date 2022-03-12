@@ -2,6 +2,18 @@ function EHIMenu:SetOption(value, option)
     EHI.settings[option] = value
 end
 
+function EHIMenu:SetXPPanelOption(value, option)
+    self:UpdateTracker(option, value <= 2)
+end
+
+function EHIMenu:SetGagePanelOption(value, option)
+    self:UpdateTracker(option, value == 1)
+end
+
+function EHIMenu:UpdateTracker(option, value)
+    self._preview_panel:UpdateTracker(option, value)
+end
+
 function EHIMenu:SetEquipmentColor(color, option)
     local c = EHI.settings.equipment_color[option]
     c.r = color.red

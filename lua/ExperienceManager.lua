@@ -17,7 +17,7 @@ local TotalXP = 0
 local OldTotalXP = 0
 local xp_format = EHI:GetOption("xp_format")
 local xp_panel = EHI:GetOption("xp_panel")
-if EHI:IsOneXPElementHeist(Global.game_settings.level_id) then
+if EHI:IsOneXPElementHeist(Global.game_settings.level_id) and xp_panel == 2 then
     xp_panel = 1 -- Force one XP panel when the heist gives you the XP at the escape zone -> less screen clutter
 end
 
@@ -123,12 +123,9 @@ function ExperienceManager:DecreaseAlivePlayers(human_player)
     end
 end
 
-function ExperienceManager:ShowGainedXP(base_xp, xp_gained, xp_force)
-    BaseXP = BaseXP + base_xp
-    TotalXP = xp_force or (TotalXP + (xp_gained or base_xp))
-    if OldTotalXP ~= TotalXP then
-        local diff = TotalXP - OldTotalXP
-        OldTotalXP = TotalXP
+local Show = function() end
+if xp_panel == 1 then
+    Show = function(self, diff)
         if managers.ehi:TrackerExists("XP") then
             managers.ehi:AddXPToTracker("XP", diff)
         else
@@ -140,30 +137,60 @@ function ExperienceManager:ShowGainedXP(base_xp, xp_gained, xp_force)
             })
         end
     end
-end
-
-local f
-if xp_panel == 1 then
-    if xp_format == 1 then
-        f = function(self, amount)
-            if amount > 0 then
-                self:ShowGainedXP(amount)
+elseif xp_panel == 3 then
+    if xp_format == 1 then -- Base
+        Show = function(self, diff)
+            if managers.hud then
+                managers.hud:custom_ingame_popup_text("Experience", "Base XP Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
             end
         end
-    elseif xp_format == 2 then
-        f = function(self, amount)
-            if amount > 0 then
-                self:ShowGainedXP(amount, amount * self._xp.difficulty_multiplier)
+    elseif xp_format == 2 then -- Base * Diff
+        Show = function(self, diff)
+            if managers.hud then
+                managers.hud:custom_ingame_popup_text("Experience", "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
             end
         end
-    else
-        f = function(self, amount)
-            if amount > 0 then
-                self:ShowGainedXP(amount, self:MultiplyXPWithAllBonuses(amount))
+    else -- Multiply all
+        Show = function(self, diff)
+            if managers.hud then
+                managers.hud:custom_ingame_popup_text("Experience", "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
             end
         end
     end
-else
+elseif xp_panel == 4 then
+    if xp_format == 1 then -- Base
+        Show = function(self, diff)
+            if managers.hud then
+                managers.hud:show_hint({ text = "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. " XP; Total: " .. self:cash_string(TotalXP, "+") .. " XP" })
+            end
+        end
+    elseif xp_format == 2 then -- Base * Diff
+        Show = function(self, diff)
+            if managers.hud then
+                managers.hud:show_hint({ text = "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. " XP; Total: " .. self:cash_string(TotalXP, "+") .. " XP" })
+            end
+        end
+    else -- Multiply all
+        Show = function(self, diff)
+            if managers.hud then
+                managers.hud:show_hint({ text = "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. " XP; Total: " .. self:cash_string(TotalXP, "+") .. " XP" })
+            end
+        end
+    end
+end
+
+function ExperienceManager:ShowGainedXP(base_xp, xp_gained, xp_force)
+    BaseXP = BaseXP + base_xp
+    TotalXP = xp_force or (TotalXP + (xp_gained or base_xp))
+    if OldTotalXP ~= TotalXP then
+        local diff = TotalXP - OldTotalXP
+        OldTotalXP = TotalXP
+        Show(self, diff)
+    end
+end
+
+local f
+if xp_panel == 2 then
     if xp_format == 1 then
         f = function(self, amount)
             if amount > 0 then
@@ -181,6 +208,26 @@ else
             if amount > 0 then
                 BaseXP = BaseXP + amount
                 managers.ehi:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
+            end
+        end
+    end
+else
+    if xp_format == 1 then
+        f = function(self, amount)
+            if amount > 0 then
+                self:ShowGainedXP(amount)
+            end
+        end
+    elseif xp_format == 2 then
+        f = function(self, amount)
+            if amount > 0 then
+                self:ShowGainedXP(amount, amount * self._xp.difficulty_multiplier)
+            end
+        end
+    else
+        f = function(self, amount)
+            if amount > 0 then
+                self:ShowGainedXP(amount, self:MultiplyXPWithAllBonuses(amount))
             end
         end
     end
@@ -270,10 +317,10 @@ function ExperienceManager:RecalculateXP()
         return
     end
     if xp_format == 3 then
-        if xp_panel == 1 then
-            self:ShowGainedXP(0, 0, self:MultiplyXPWithAllBonuses(BaseXP))
-        else
+        if xp_panel == 2 then
             managers.ehi:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
+        else
+            self:ShowGainedXP(0, 0, self:MultiplyXPWithAllBonuses(BaseXP))
         end
     end
 end

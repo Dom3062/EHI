@@ -8,6 +8,35 @@ end
 local primary, secondary, melee, is_stealth = nil, nil, nil, false
 local stats = {}
 
+local AddGageTracker
+if EHI:GetOption("gage_tracker_panel") == 1 then
+    AddGageTracker = function()
+        if EHI:GetOption("show_gage_tracker") and managers.ehi:TrackerDoesNotExist("Gage") and EHI._cache.GagePackages and EHI._cache.GagePackages > 0 then
+            local max = tweak_data.gage_assignment:get_num_assignment_units() or 1
+            managers.ehi:AddTracker({
+                id = "Gage",
+                icons = { "gage" },
+                progress = EHI._cache.GagePackagesProgress or 0,
+                exclude_from_sync = true,
+                max = max,
+                class = "EHIProgressTracker"
+            })
+        end
+    end
+else
+    AddGageTracker = function()
+        if not EHI:GetOption("show_gage_tracker") then
+            return
+        end
+        if EHI._cache.GagePackages and EHI._cache.GagePackages > 0 then
+            if EHI._cache.Host or not managers.ehi:GetDropin() then
+                local max = tweak_data.gage_assignment:get_num_assignment_units() or 1
+                managers.hud:custom_ingame_popup_text("Gage Packages", "0/" .. tostring(max), "EHI_Gage")
+            end
+        end
+    end
+end
+
 local function HasWeaponEquipped(weapon_id)
     return primary.weapon_id == weapon_id or secondary.weapon_id == weapon_id
 end
@@ -33,12 +62,13 @@ end
 
 local function HasNonExplosiveGrenadeEquipped()
     local equipped_grenade = managers.blackmarket:equipped_grenade()
-    local tweak = tweak_data.blackmarket.projectiles[equipped_grenade]
-    if tweak then
-        if tweak.ability then
+    local projectile = tweak_data.blackmarket.projectiles[equipped_grenade]
+    local tweak = tweak_data.projectiles[equipped_grenade]
+    if projectile and tweak then
+        if projectile.ability then
             return false
-        elseif not tweak.is_explosive then
-            return true
+        elseif not projectile.is_explosive then
+            return tweak.damage and tweak.damage > 0
         end
     end
     return false
@@ -88,20 +118,6 @@ local function ArbiterHasStandardAmmo()
         return WeaponHasStandardAmmo(secondary.factory_id, secondary.blueprint)
     end
     return false
-end
-
-local function AddGageTracker()
-    if EHI:GetOption("show_gage_tracker") and managers.ehi:TrackerDoesNotExist("Gage") and EHI._cache.GagePackages and EHI._cache.GagePackages > 0 then
-        local max = tweak_data.gage_assignment:get_num_assignment_units() or 1
-        managers.ehi:AddTracker({
-            id = "Gage",
-            icons = { "gage" },
-            progress = EHI._cache.GagePackagesProgress or 0,
-            exclude_from_sync = true,
-            max = max,
-            class = "EHIProgressTracker"
-        })
-    end
 end
 
 local function CreateProgressTracker(id, progress, max, dont_flash, remove_after_reaching_target, status_is_overridable, icons)
@@ -531,7 +547,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
     end
     if EHI:IsAchievementLocked2("cac_3") then -- "Denied" achievement
-        local progress = EHI:GetAchievementProgress("cac_3_stats") or 0
+        local progress = EHI:GetAchievementProgress("cac_3_stats")
         local function on_flash_grenade_destroyed(attacker_unit)
             local local_player = managers.player:player_unit()
             if local_player and attacker_unit == local_player then
@@ -545,6 +561,22 @@ function IngameWaitingForPlayersState:at_exit(...)
         ShowTrackerInLoud(function() -- Show progress when alarm went off
             managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_cac_3"), tostring(progress) .. "/30", "Other_H_Any_Denied")
         end)
+    end
+    if EHI:IsAchievementLocked("cac_34") then -- "Lieutenant Colonel" achievement
+        local listener_key = "EHI_cac_34_listener_key"
+        local progress = EHI:GetAchievementProgress("cac_34_stats")
+        local function on_cop_converted(converted_unit, converting_unit)
+            if not alive(converting_unit) then
+                return
+            end
+            progress = progress + 1
+            if progress >= 300 then
+                managers.player:unregister_message("cop_converted", listener_key)
+                return
+            end
+            managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_cac_34"), tostring(progress) .. "/300", "Other_H_Any_Lieutenant")
+        end
+        managers.player:register_message("cop_converted", listener_key, on_cop_converted)
     end
     if EHI:IsAchievementLocked2("gsu_01") and HasMeleeEquipped("spoon") then -- "For all you legends" achievement
         CreateProgressTracker("gsu_01", EHI:GetAchievementProgress("gsu_stat"), 100, false, true)
@@ -616,7 +648,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end
         if (level == "arm_cro" or level == "arm_und" or level == "arm_hcm" or level == "arm_par" or level == "arm_fac") and EHI:IsAchievementLocked2("armored_4") and mask_id == tweak_data.achievement.complete_heist_achievements.i_take_scores.mask and managers.ehi:GetStartedFromBeginning() then -- I Do What I Do Best, I Take Scores
-            local progress = EHI:GetAchievementProgress("armored_4_stat") or 0
+            local progress = EHI:GetAchievementProgress("armored_4_stat")
             local function on_heist_end(mes_self)
                 if mes_self._success and (progress + 1) < 15 and managers.job:on_last_stage() then
                     managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_armored_4"), tostring(progress + 1) .. "/15", "C_Bain_H_TransportVarious_IDoWhat")
@@ -655,7 +687,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end)
         end
         if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and managers.ehi:GetStartedFromBeginning() then -- From Russia With Love
-            local progress = EHI:GetAchievementProgress("halloween_10_stats") or 0
+            local progress = EHI:GetAchievementProgress("halloween_10_stats")
             local function on_heist_end(mes_self)
                 if mes_self._success and (progress + 1) < 25 and managers.job:on_last_stage() then
                     managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_halloween_10"), tostring(progress + 1) .. "/25", "Other_H_Any_FromRussia")
@@ -673,7 +705,7 @@ function IngameWaitingForPlayersState:at_exit(...)
     end
     if level == "branchbank" or level == "branchbank_gold" or level == "branchbank_cash" or level == "branchbank_deposit" or level == "jewelry_store" then
         if EHI:IsAchievementLocked2("eng_1") then -- "The only one that is true" achievement
-            local progress = (EHI:GetAchievementProgress("eng_1_stats") or 0) + 1
+            local progress = EHI:GetAchievementProgress("eng_1_stats") + 1
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_1_award_progress", function(am, stat, value)
                 if stat == "eng_1_stats" and progress < 5 then
                     managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_1"), tostring(progress) .. "/5", "Other_H_Any_TheOnlyOne")
@@ -683,7 +715,7 @@ function IngameWaitingForPlayersState:at_exit(...)
     end
     if level == "kosugi" or level == "red2" then
         if EHI:IsAchievementLocked2("eng_2") then -- "The one that had many names" achievement
-            local progress = (EHI:GetAchievementProgress("eng_2_stats") or 0) + 1
+            local progress = EHI:GetAchievementProgress("eng_2_stats") + 1
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_2_award_progress", function(am, stat, value)
                 if stat == "eng_2_stats" and progress < 5 then
                     managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_2"), tostring(progress) .. "/5", "Other_H_Any_TheOneThatHad")
@@ -693,7 +725,7 @@ function IngameWaitingForPlayersState:at_exit(...)
     end
     if level == "roberts" or level == "four_stores" then
         if EHI:IsAchievementLocked2("eng_3") then -- "The one that survived" achievement
-            local progress = (EHI:GetAchievementProgress("eng_3_stats") or 0) + 1
+            local progress = EHI:GetAchievementProgress("eng_3_stats") + 1
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_3_award_progress", function(am, stat, value)
                 if stat == "eng_3_stats" and progress < 5 then
                     managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_3"), tostring(progress) .. "/5", "Other_H_Any_TheOneThatSur")
@@ -703,7 +735,7 @@ function IngameWaitingForPlayersState:at_exit(...)
     end
     if level == "family" or level == "hox_1" then
         if EHI:IsAchievementLocked2("eng_4") then -- "The one who declared himself the hero" achievement
-            local progress = (EHI:GetAchievementProgress("eng_4_stats") or 0) + 1
+            local progress = EHI:GetAchievementProgress("eng_4_stats") + 1
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_4_award_progress", function(am, stat, value)
                 if stat == "eng_4_stats" and progress < 5 then
                     managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_4"), tostring(progress) .. "/5", "Other_H_Any_TheOneWho")
@@ -732,7 +764,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         stats.pig_3_stats = "pig_3"
     end
     if level == "dark" and EHI:IsAchievementLocked("pim_2") and HasGrenadeEquipped("wpn_prj_target") then -- Crouched and Hidden, Flying Dagger
-        local progress = EHI:GetAchievementProgress("pim_2_stats") or 0
+        local progress = EHI:GetAchievementProgress("pim_2_stats")
         local function on_heist_end(mes_self)
             if mes_self._success and progress < 8 then
                 managers.hud:custom_ingame_popup_text("Saved", "Progress Saved: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")

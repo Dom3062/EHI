@@ -55,3 +55,6 @@ tweak_data.ehi =
         hoxton_character = { texture = "guis/dlcs/trk/textures/pd2/old_hoxton_unlock_icon" }
     }
 }
+
+tweak_data.hud_icons.EHI_XP = { texture = tweak_data.ehi.icons.xp.texture }
+tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }

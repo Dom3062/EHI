@@ -35,7 +35,7 @@ function FakeEHIManager:AddFakeTrackers()
     if EHI:GetOption("show_achievement") then
         self:AddFakeTracker({ id = "show_achievement", time = math.random(60, 180), icons = { "milestone_trophy" } } )
     end
-    if EHI:GetOption("show_gained_xp") then
+    if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") <= 2 then
         self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, class = "FakeEHIXPTracker" } )
     end
     if EHI:GetOption("show_trade_delay") then
@@ -50,7 +50,7 @@ function FakeEHIManager:AddFakeTrackers()
         self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { "equipment_winch_hook", "wp_bag", "pd2_goto" } } )
         self:AddFakeTracker({ id = "show_zipline_timer", time = time * 2, icons = { "equipment_winch_hook", "restarter" } } )
     end
-    if EHI:GetOption("show_gage_tracker") then
+    if EHI:GetOption("show_gage_tracker") and EHI:GetOption("gage_tracker_panel") == 1 then
         self:AddFakeTracker({ id = "show_gage_tracker", icons = { "gage" }, class = "FakeEHIProgressTracker" } )
     end
     if EHI:GetOption("show_captain_damage_reduction") then
@@ -110,7 +110,7 @@ function FakeEHIManager:GetPeerColor()
         return CustomNameColor:GetOwnColor()
     else
         local i = 1
-        local session = managers.network and managers.network:session() and managers.network:session()
+        local session = managers.network and managers.network:session()
         if session and session:local_peer() then
             i = session:local_peer():id() or 1
         end
@@ -146,6 +146,22 @@ end
 
 function FakeEHIManager:GetY(pos)
     return self._y + (pos * (panel_size + panel_offset))
+end
+
+function FakeEHIManager:UpdateTracker(id, value)
+    local correct_id = ""
+    if id == "xp_panel" then
+        correct_id = "show_gained_xp"
+    elseif id == "gage_tracker_panel" then
+        correct_id = "show_gage_tracker"
+    end
+    if correct_id == "" then
+        return
+    end
+    local tracker = self:GetTracker(correct_id)
+    if not not tracker ~= value then
+        self:Redraw()
+    end
 end
 
 function FakeEHIManager:UpdateFormat(format)

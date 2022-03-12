@@ -58,10 +58,10 @@ end
 function GroupAIStateBase:load(...)
     dropin = managers.ehi:GetDropin()
     original.load(self, ...)
-    if not self._enemy_weapons_hot then
-        managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
-    else
+    if self._enemy_weapons_hot then
         Execute()
+    else
+        managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 	end
     local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
     if law1team and law1team.damage_reduction then

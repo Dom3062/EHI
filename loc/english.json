@@ -65,6 +65,8 @@
     "ehi_xp_panel_desc" : "",
     "ehi_xp_panel_1" : "Show panel for every XP gained",
     "ehi_xp_panel_2" : "Show total XP gained from the heist",
+    "ehi_xp_panel_3" : "Show popup for every XP gained and total XP",
+    "ehi_xp_panel_4" : "Show hint for every XP gained and total XP",
 
     "ehi_total_xp_show_difference" : "Show XP difference",
     "ehi_total_xp_show_difference_desc" : "[Show total XP gained from the heist] option only!\nShows how much you gained XP in a standalone tracker",
@@ -91,6 +93,11 @@
 
     "ehi_show_gage_tracker" : "Show Gage Tracker",
     "ehi_show_gage_tracker_desc" : "Shows tracker for Gage Packages on the map.\nIf the map does not allow Gage Packages, the tracker will not show",
+
+    "ehi_gage_tracker_panel" : "Show Progress for Gage Packages",
+    "ehi_gage_tracker_panel_desc" : "",
+    "ehi_gage_tracker_panel_1" : "In tracker",
+    "ehi_gage_tracker_panel_2" : "In popup",
 
     "ehi_show_captain_damage_reduction" : "Show Enemy Damage Reduction",
     "ehi_show_captain_damage_reduction_desc" : "Shows tracker for damage reduction when Captain is present",

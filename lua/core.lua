@@ -367,6 +367,7 @@ function EHI:LoadDefaultValues()
         show_timers = true,
         show_zipline_timer = true,
         show_gage_tracker = true,
+        gage_tracker_panel = 1,
         show_captain_damage_reduction = true,
         show_equipment_tracker = true,
         equipment_format = 1,
@@ -518,7 +519,7 @@ function EHI:UnhookElement(id)
 end
 
 function EHI:ShowDramaTracker()
-    return self:GetOption("show_drama_tracker") and Network:is_server()
+    return self:GetOption("show_drama_tracker") and self._cache.Host
 end
 
 function EHI:GetPeerColor(unit)
@@ -845,7 +846,7 @@ function EHI:CheckCondition(id)
 end
 
 local function GetElementTimer(self, id)
-    if Network:is_server() then
+    if self._cache.Host then
         local element = managers.mission:get_element_by_id(triggers[id].element)
         if element then
             local t = (element._timer or 0) + (triggers[id].additional_time or 0)
@@ -1083,7 +1084,7 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.IncreaseProgressMax then
                 managers.ehi:IncreaseTrackerProgressMax(triggers[id].id)
             elseif f == SF.AddTrackerIfDoesNotExistElementHostCheckOnly then
-                if Network:is_server() and element._values.counter_target == 0 then
+                if self._cache.Host and element._values.counter_target == 0 then
                     if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
                         self:CheckCondition(id)
                     end
@@ -1426,6 +1427,7 @@ function EHI:RestoreElementWaypoint(id)
     else
         element.client_on_executed = self._cache.ElementWaypointFunction[id]
     end
+    self._cache.ElementWaypointFunction[id] = nil
 end
 
 function EHI:DisableWaypoints(waypoints)

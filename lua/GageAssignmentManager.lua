@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.GageAssignmentManager then
 	return
 else
@@ -9,6 +10,21 @@ local original =
 	sync_load = GageAssignmentManager.sync_load,
 	present_progress = GageAssignmentManager.present_progress
 }
+
+local ShowProgress
+if EHI:GetOption("gage_tracker_panel") == 1 then
+	ShowProgress = function(picked_up, max)
+		managers.ehi:SetTrackerProgress("Gage", picked_up)
+	end
+else
+	if EHI:GetOption("show_gage_tracker") then
+		ShowProgress = function(picked_up, max)
+			managers.hud:custom_ingame_popup_text("Gage Packages", tostring(picked_up) .. "/" .. tostring(max), "EHI_Gage")
+		end
+	else
+		ShowProgress = function(picked_up, max) end
+	end
+end
 
 local function GetGageXPRatio(self, picked_up, max_units)
 	if picked_up > 0 then
@@ -33,7 +49,7 @@ local function UpdateTracker(self, client_sync_load)
 			EHI._cache.GagePackagesProgress = picked_up
 		end
 	end
-	managers.ehi:SetTrackerProgress("Gage", picked_up)
+	ShowProgress(picked_up, max_units)
 	if managers.experience.SetGagePackageBonus then
 		managers.experience:SetGagePackageBonus(GetGageXPRatio(self, picked_up, max_units)) -- Don't use in-game function because it is inaccurate by one package
 	end

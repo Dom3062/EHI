@@ -1,5 +1,5 @@
 local EHI = rawget(_G, "EHI")
-if not EHI:GetOption("show_gage_tracker") then
+if not EHI:GetOption("show_gage_tracker") or EHI:GetOption("gage_tracker_panel") ~= 1 then
     return
 end
 
