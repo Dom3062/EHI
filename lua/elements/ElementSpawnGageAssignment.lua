@@ -1,12 +1,13 @@
 local EHI = rawget(_G, "EHI")
-if not EHI:GetOption("show_gage_tracker") or EHI:GetOption("gage_tracker_panel") ~= 1 then
-    return
-end
 
 if EHI._hooks.ElementSpawnGageAssignment then -- Don't hook multiple times, pls
     return
 else
     EHI._hooks.ElementSpawnGageAssignment = true
+end
+
+if not EHI:GetOption("show_gage_tracker") or EHI:GetOption("gage_tracker_panel") ~= 1 then
+    return
 end
 
 local function CreateTracker()

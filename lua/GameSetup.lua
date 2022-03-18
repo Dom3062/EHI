@@ -131,7 +131,7 @@ local levels =
     des = true, -- Henry's Rock; Remove defend+fix (probably too) wp on hacking objective, Add red button achievement
     sah = true, -- Shacklethorne Auction; Remove defend+fix (probably too) wp on hacking objective, Add heli wp
     bph = true, -- Hell's Island
-    nmh = true, -- No Mercy; Remove saw door wp
+    nmh = true, -- No Mercy
     vit = true, -- The White House
     -- Silkroad campaign
     mex = true, -- Border Crossing

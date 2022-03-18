@@ -1,3 +1,8 @@
+--[[
+    TODO:
+    Think of a system callable from the individual level files
+]]
+
 local EHI = EHI
 if EHI._hooks.WorldDefinition then
     return
@@ -114,6 +119,8 @@ elseif level_id == "hvh" then -- Cursed Kill Room
     units["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" }, f = "hvhTimer", custom_callback = { id = "hvhCleanUp", f = "remove" } }
 elseif level_id == "help" then -- Prison Nightmare
     units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
+elseif level_id == "nmh" then -- No Mercy
+    units["units/pd2_dlc_nmh/props/nmh_interactable_teddy_saw/nmh_interactable_teddy_saw"] = { f = "nmh_WP" }
 elseif level_id == "pent" then -- Mountain Master
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { f = "pentAchievementTimer" }
 end
@@ -261,6 +268,12 @@ function WorldDefinition:caneSafeTimer(instance, unit_id, unit_data, unit)
         unit:digital_gui():SetRemoveOnPause(true)
     else
         unit:digital_gui():SetIgnore(true)
+    end
+end
+
+function WorldDefinition:nmh_WP(instance, unit_id, unit_data, unit)
+    if unit_id == 101387 then
+        unit:timer_gui():RemoveVanillaWaypoint(104494)
     end
 end
 

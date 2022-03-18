@@ -50,13 +50,16 @@ function EHIHeliTracker:EnableUpdate()
     self:FitTheText(self._time_text)
     self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
     self:SetIconX(self._time_bg_box:w() + (5 * self._scale))
-    self._icon2:set_x(self:GetPanelSize() - (37 * self._scale))
-    self._icon2:set_visible(true)
+    if self._icon2 then
+        self._icon2:set_x(self:GetPanelSize() - (37 * self._scale))
+        self._icon2:set_visible(true)
+    end
     self:AddTrackerToUpdate()
 end
 
 function EHIHeliTracker:GetPanelSize()
-    return self._time_bg_box:w() + (74 * self._scale) -- 32 + 5 (gap)
+    local icons = self._icon2 and 74 or 37 -- 32 + 5 (gap)
+    return self._time_bg_box:w() + (icons * self._scale)
 end
 
 function EHIHeliTracker:ObjectiveComplete(objective)
@@ -138,15 +141,13 @@ local triggers = {
                 return
             end
             local all_enemies = managers.enemy:all_enemies()
-            local client_count = 0
             for _, enemy_data in pairs(all_enemies) do
                 if not enemy_data.death_t and enemy_data.unit and alive(enemy_data.unit) then
                     if element_area:_is_inside(enemy_data.unit:position()) then
-                        client_count = client_count + 1
+                        count = count + 1
                     end
                 end
             end
-            count = client_count
         end
         managers.ehi:SetTrackerCount("PanicRoomTakeoff", count)
         EHI:AddTriggers({

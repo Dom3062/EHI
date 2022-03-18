@@ -1,3 +1,7 @@
+r54 (18. 03. 2022):
+Added Italian translation
+Panic Room: Fixed a client crash after connecting the magnet
+
 r53 (12. 03. 2022):
 Added in-game popup for achievement "Lieutenant Colonel"
 Changed achievement tracker "Gift Giver" to show only when you have a throwable which have damage higher than 0
