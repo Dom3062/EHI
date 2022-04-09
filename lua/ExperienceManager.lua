@@ -313,7 +313,7 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 end
 
 function ExperienceManager:RecalculateXP()
-    if BaseXP == 0 then
+    if BaseXP == 0 or self._xp_update_blocked then
         return
     end
     if xp_format == 3 then
@@ -323,4 +323,8 @@ function ExperienceManager:RecalculateXP()
             self:ShowGainedXP(0, 0, self:MultiplyXPWithAllBonuses(BaseXP))
         end
     end
+end
+
+function ExperienceManager:BlockXPUpdate()
+    self._xp_update_blocked = true
 end

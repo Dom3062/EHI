@@ -7,7 +7,10 @@ local triggers = {
     [104488] = { time = assault_delay, id = "FirstAssaultDelay", icons = Icon.FirstAssaultDelay, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker },
     [104489] = { time = assault_delay, id = "FirstAssaultDelay", icons = Icon.FirstAssaultDelay, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
 
-    [100342] = { chance = 25, id = "EscapeChance", icons = VanCrashChance, class = TT.Chance }
+    [100342] = { chance = 25, id = "EscapeChance", icons = VanCrashChance, class = TT.Chance },
+
+    -- Police ambush
+    [104535] = { time = 30, id = "FirstAssaultDelay", icons = Icon.FirstAssaultDelay, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker }
 }
 
 EHI:ParseTriggers(triggers)

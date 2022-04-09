@@ -11,4 +11,7 @@ local original =
 function MissionEndState:at_enter(...)
     original.at_enter(self, ...)
     managers.ehi:HidePanel()
+    if managers.experience.BlockXPUpdate then
+        managers.experience:BlockXPUpdate()
+    end
 end

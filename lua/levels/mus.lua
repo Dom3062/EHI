@@ -19,7 +19,15 @@ local triggers = {
     [102072] = { time = 140 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } }
 }
 
+local DisableWaypoints = {}
+
+for i = 300, 375, 75 do
+    DisableWaypoints[EHI:GetInstanceElementID(100033, i)] = true -- Fix
+    DisableWaypoints[EHI:GetInstanceElementID(100034, i)] = true -- Defend
+end
+
 EHI:ParseTriggers(triggers, "Escape", Icon.HeliEscape)
+EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowAchievementLootCounter({
     achievement = "bat_3",
     max = 10,

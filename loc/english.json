@@ -196,5 +196,8 @@
     "ehi_show_waypoints_pager_desc" : "Shows a waypoint on a pager that needs to be answered\n\nOption 'Show Pager Callback Timers' must be enabled in order to work",
 
     "ehi_show_waypoints_cameras" : "Show Waypoints for Looped Cameras",
-    "ehi_show_waypoints_cameras_desc" : "Shows a waypoint on a camera that is currently being looped"
+    "ehi_show_waypoints_cameras_desc" : "Shows a waypoint on a camera that is currently being looped",
+
+    "ehi_show_waypoints_zipline" : "Show Waypoints for Ziplines",
+    "ehi_show_waypoints_zipline_desc" : "Shows a waypoint on a zipline that is in motion\nOnly the reset time is shown\n\nOption 'Show Zipline Tracker' must be enabled in order to work"
 }

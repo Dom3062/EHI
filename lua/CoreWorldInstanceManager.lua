@@ -118,8 +118,11 @@ if level_id == "arm_for" or level_id == "hox_3" then -- Transport: Train Heist o
     local icons = level_id == "arm_for" and { EHI.Icons.Vault } or nil
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = icons, remove_on_alarm = true, remove_on_pause = level_id == "hox_3", warning = warning, f = f }
 elseif level_id == "mus" then -- The Diamond
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { "faster" }, remove_on_pause = true }
+    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { "faster" }, remove_on_pause = true, warning = true }
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { EHI.Icons.Keycard } }
+    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100050 }
+elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
+    units["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics"].f = "hox_2_forensics"
 elseif level_id == "sah" then -- Shacklethorne Auction
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { EHI.Icons.Vault } }
 elseif level_id == "hvh" then -- Cursed Kill Room
@@ -138,6 +141,8 @@ elseif level_id == "shoutout_raid" then -- Meltdown
 elseif level_id == "red2" then -- First World Bank
     units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 100014 }
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100018 }
+elseif level_id == "jolly" then -- Aftershock
+    units["units/pd2_dlc_jolly/equipment/gen_interactable_saw/gen_interactable_saw"] = { remove_vanilla_waypoint = true, waypoint_id = 100070 }
 elseif level_id == "mex" then -- Border Crossing
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { "pd2_c4" } }
 elseif level_id == "chas" then -- Dragon Heist

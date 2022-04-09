@@ -114,6 +114,10 @@ elseif level_id == "election_day_2" then -- Election Day D2
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "election_day_2" }
 elseif level_id == "big" then -- The Big Bank
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { "faster" } }
+elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
+    units["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_director/stn_interactable_computer_director"] = { f = "hox_2" }
+elseif level_id == "dinner" then -- Slaughterhouse
+    units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small"] = { f = "dinner_WP" }
 elseif level_id == "hvh" then -- Cursed Kill Room
     units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
     units["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" }, f = "hvhTimer", custom_callback = { id = "hvhCleanUp", f = "remove" } }
@@ -180,6 +184,17 @@ function WorldDefinition:election_day_2(instance, unit_id, unit_data, unit)
     else -- 103066
         unit:timer_gui():RemoveVanillaWaypoint(103084)
     end
+end
+
+function WorldDefinition:hox_2(instance, unit_id, unit_data, unit)
+    unit:timer_gui():SetRestoreVanillaWaypointOnDone()
+    unit:timer_gui():RemoveVanillaWaypoint(104571)
+end
+
+function WorldDefinition:hox_2_forensics(instance, unit_id, unit_data, unit)
+    unit:timer_gui():SetIcons(unit_data.icons)
+    unit:timer_gui():SetRestoreVanillaWaypointOnDone()
+    unit:timer_gui():RemoveVanillaWaypoint(101559)
 end
 
 function WorldDefinition:chasC4(instance, unit_id, unit_data, unit)
@@ -284,5 +299,13 @@ function WorldDefinition:pentAchievementTimer(instance, unit_id, unit_data, unit
         unit:digital_gui():SetIcons(EHI:GetAchievementIcon("pent_10"))
         unit:digital_gui():SetRemoveOnPause(true)
         unit:digital_gui():SetWarning(true)
+    end
+end
+
+function WorldDefinition:dinner_WP(instance, unit_id, unit_data, unit)
+    if unit_id == 100949 then
+        unit:timer_gui():RemoveVanillaWaypoint(103174)
+    else
+        unit:timer_gui():RemoveVanillaWaypoint(103175)
     end
 end

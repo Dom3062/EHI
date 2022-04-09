@@ -101,6 +101,18 @@
             "default_value": true,
             "parent" : "ehi_show_waypoints_choice",
             "ehi_ver" : 35
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_waypoints_zipline_choice",
+            "title": "ehi_show_waypoints_zipline",
+            "description": "ehi_show_waypoints_zipline_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints_zipline",
+            "value": "show_waypoints_zipline",
+            "default_value": true,
+            "parent" : "ehi_show_waypoints_choice",
+            "ehi_ver" : 55
         }
     ]
 }

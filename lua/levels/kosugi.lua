@@ -13,9 +13,11 @@ for _, unit_id in pairs(unit_ids) do
     end)
 end
 
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local DisableTriggerAndExecute = EHI:GetFreeCustomSpecialFunctionID()
 local trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local triggers = {
     [1] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, "pd2_goto" } },
@@ -23,9 +25,13 @@ local triggers = {
     [101131] = trigger,
     [100900] = trigger,
 
-    [100955] = { time = 10, id = "KeycardLeft", icons = { Icon.Keycard }, class = TT.Warning, special_function = SF.KOSUGI_DisableTriggerAndExecute, data = { id = 100957 } },
-    [100957] = { time = 10, id = "KeycardRight", icons = { Icon.Keycard  }, class = TT.Warning, special_function = SF.KOSUGI_DisableTriggerAndExecute, data = { id = 100955 } },
+    [100955] = { time = 10, id = "KeycardLeft", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100957 } },
+    [100957] = { time = 10, id = "KeycardRight", icons = { Icon.Keycard  }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100955 } },
     [100967] = { special_function = SF.RemoveTrackers, data = { "KeycardLeft", "KeycardRight" } }
 }
 
 EHI:ParseTriggers(triggers)
+EHI:RegisterCustomSpecialFunction(DisableTriggerAndExecute, function(id, t, ...)
+    EHI:UnhookTrigger(t.data.id)
+    EHI:CheckCondition(id)
+end)

@@ -4,7 +4,6 @@ function EHIMinionTracker:init(panel, params)
     self._n_of_peers = 0
     self._panel_size = 2
     self._icon_remove = 0
-    self._peer_pos = {}
     self._peers = {}
     params.icons = { "minion" }
     EHIMinionTracker.super.init(self, panel, params)
@@ -29,9 +28,13 @@ function EHIMinionTracker:SetIconColor()
     if self._n_of_peers >= 2 then
         self._icon1:set_color(Color.white)
     else
-        local peer_id = self._peer_pos[1]
-        local color = tweak_data.chat_colors[peer_id] or Color.white
-        self._icon1:set_color(color)
+        for i = 0, HUDManager.PLAYER_PANEL, 1 do
+            if self._time_bg_box:child("text" .. i) then
+                local color = tweak_data.chat_colors[i] or Color.white
+                self._icon1:set_color(color)
+                break
+            end
+        end
     end
 end
 
@@ -106,12 +109,6 @@ function EHIMinionTracker:RemovePeer(peer_id)
         return
     end
     self._peers[peer_id] = nil
-    for i = 1, #self._peer_pos, 1 do
-        if self._peer_pos[i] == peer_id then
-            table.remove(self._peer_pos, i)
-            break
-        end
-    end
     self._time_bg_box:remove(self._time_bg_box:child("text" .. peer_id))
     if self._n_of_peers == 1 then
         for i = 0, HUDManager.PLAYER_PANEL, 1 do
@@ -127,9 +124,7 @@ function EHIMinionTracker:RemovePeer(peer_id)
     else
         --self:SetTextSize()
     end
-    if self._n_of_peers > 0 then
-        self:AnimateBG()
-    end
+    self:AnimateBG()
     self:SetIconColor()
     self:SetTextPeerColor()
     self:Reorganize()
@@ -171,7 +166,6 @@ function EHIMinionTracker:AddMinion(unit, key, amount, peer_id)
         return
     end
     self._peers[peer_id] = { [key] = amount }
-    self._peer_pos[#self._peer_pos + 1] = peer_id
     self._time_bg_box:text({
         name = "text" .. peer_id,
         text = "",
@@ -184,7 +178,7 @@ function EHIMinionTracker:AddMinion(unit, key, amount, peer_id)
         color = Color.white
     })
     self._n_of_peers = self._n_of_peers + 1
-    if self._n_of_peers > 1 then
+    if self._n_of_peers >= 2 then
         self:AnimateBG()
     end
     self:SetTextSize()
@@ -201,7 +195,7 @@ function EHIMinionTracker:RemoveMinion(key)
     end
     for peer, tbl in pairs(self._peers) do
         if tbl[key] then
-            self._peers[peer][key] = nil
+            self._peers[peer][key] = 0
             if self:GetNumberOfMinions(peer) == 0 then
                 self:RemovePeer(peer)
             else
@@ -209,6 +203,15 @@ function EHIMinionTracker:RemoveMinion(key)
                 self:AnimateBG()
             end
             break
+        end
+    end
+end
+
+function EHIMinionTracker:UpdatePeerColors()
+    for i = 0, HUDManager.PLAYER_PANEL, 1 do
+        if self._time_bg_box:child("text" .. i) then
+            local color = tweak_data.chat_colors[i] or Color.white
+            self._time_bg_box:child("text" .. i):set_color(color)
         end
     end
 end

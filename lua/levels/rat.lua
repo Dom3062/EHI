@@ -21,9 +21,10 @@ local triggers = {
     [101780] = { max = 25, id = "voff_5", class = TT.AchievementProgress, condition = show_achievement and ovk_and_up },
     [102318] = { time = 60 + 60 + 30 + 15 + anim_delay, id = "Van", icons = Icon.CarEscape },
     [102319] = { time = 60 + 60 + 60 + 30 + 15 + anim_delay, id = "Van", icons = Icon.CarEscape },
-    [101001] = { special_function = SF.Trigger, data = { 1010011, 1010012 } },
+    [101001] = { special_function = SF.Trigger, data = { 1010011, 1010012, 1010013 } },
     [1010011] = { special_function = SF.RemoveTrackers, data = { "CookChance", "VanStayDelay" } },
-    [1010012] = { id = "voff_5", special_function = SF.SetAchievementFailed },
+    [1010012] = { special_function = SF.RemoveTriggers, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238 } },
+    [1010013] = { id = "voff_5", special_function = SF.SetAchievementFailed },
 
     [102383] = { time = 2 + 5, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1023831 } },
     [1023831] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30, id = "FirstAssaultDelay", icons = Icon.FirstAssaultDelay, class = TT.Warning },

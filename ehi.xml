@@ -49,7 +49,6 @@
             <post :hook_id="mission/elementdifficulty" :script_path="elements/ElementDifficulty.lua" />
             <post :hook_id="mission/elementlasertrigger" :script_path="elements/ElementLaserTrigger.lua" />
             <post :hook_id="mission/elementspawngageassignment" :script_path="elements/ElementSpawnGageAssignment.lua" />
-            <post :hook_id="mission/missionscriptelement" :script_path="elements/MissionScriptElement.lua" />
 
             <post :hook_id="missionassetsmanager" :script_path="MissionAssetsManager.lua" />   
     

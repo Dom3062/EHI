@@ -12,11 +12,13 @@ function EHIGasTracker:Format()
     return EHIGasTracker.super.Format(self)
 end
 
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
 local hard_and_above = EHI:IsDifficultyOrAbove("hard")
+local SetProgressMax = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [100120] = { time = 1800, id = "run_9", class = TT.AchievementDone },
     [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = TT.Achievement, condition = true }, -- Not really an achievement, but I want to use "SetCompleted" function :p
@@ -52,11 +54,23 @@ local triggers = {
     [1028731] = { time = 80, id = "Gas4", icons = { Icon.Fire, Icon.Escape } },
 
     [102775] = { special_function = SF.Trigger, data = { 1027751, 2 } },
-    [1027751] = { max = 4, id = "GasAmount", special_function = SF.RUN_SetProgressMax },
+    [1027751] = { max = 4, id = "GasAmount", special_function = SetProgressMax },
     [102776] = { special_function = SF.Trigger, data = { 1027761, 2 } },
-    [1027761] = { max = 3, id = "GasAmount", special_function = SF.RUN_SetProgressMax },
+    [1027761] = { max = 3, id = "GasAmount", special_function = SetProgressMax },
     [102868] = { special_function = SF.Trigger, data = { 1028681, 2 } },
-    [1028681] = { max = 2, id = "GasAmount", special_function = SF.RUN_SetProgressMax }
+    [1028681] = { max = 2, id = "GasAmount", special_function = SetProgressMax }
 }
 
 EHI:ParseTriggers(triggers)
+EHI:RegisterCustomSpecialFunction(SetProgressMax, function(id, trigger, element, enabled)
+    if managers.ehi:TrackerExists(trigger.id) then
+        managers.ehi:SetTrackerProgressMax(trigger.id, trigger.max)
+    else
+        managers.ehi:AddTracker({
+            id = trigger.id,
+            progress = 1,
+            max = trigger.max,
+            class = EHI.Trackers.Progress
+        })
+    end
+end)

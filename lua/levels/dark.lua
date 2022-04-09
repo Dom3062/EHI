@@ -37,6 +37,8 @@ end
 
 local EHI = EHI
 EHI.AchievementTrackers.EHIdark5Tracker = true
+local AddBodyBag = EHI:GetFreeCustomSpecialFunctionID()
+local RemoveBodyBag = EHI:GetFreeCustomSpecialFunctionID()
 
 local start_index =
 {
@@ -67,9 +69,15 @@ local triggers = {
 }
 for i = 12850, 13600, 250 do
     local inc = EHI:GetInstanceElementID(100011, i)
-    triggers[inc] = { id = "dark_5", special_function = SF.DARK_AddBodyBag, element = i }
-    triggers[inc + 1] = { id = "dark_5", special_function = SF.DARK_RemoveBodyBag, element = i }
+    triggers[inc] = { id = "dark_5", special_function = AddBodyBag, element = i }
+    triggers[inc + 1] = { id = "dark_5", special_function = RemoveBodyBag, element = i }
 end
 
 EHI:ParseTriggers(triggers)
 EHI:ShowLootCounter(16)
+EHI:RegisterCustomSpecialFunction(AddBodyBag, function(id, trigger, ...)
+    managers.ehi:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
+end)
+EHI:RegisterCustomSpecialFunction(RemoveBodyBag, function(id, trigger, ...)
+    managers.ehi:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
+end)

@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -6,6 +7,8 @@ local boat_delay = 60 + 30 + 30 + 450/30
 local boat_icon = { Icon.Boat, Icon.LootDrop }
 local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local AddToCache = EHI:GetFreeCustomSpecialFunctionID()
+local GetFromCache = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [101560] = { time = 35 + 75 + 30 + boat_delay, id = "BoatLootFirst" },
     -- 101127 tracked in 101560
@@ -15,13 +18,13 @@ local triggers = {
 
     [100323] = { time = 50 + 23, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot },
 
-    [101129] = { time = 180 + anim_delay, special_function = SF.WATCHDOGS_2_AddToCache },
-    [101134] = { time = 150 + anim_delay, special_function = SF.WATCHDOGS_2_AddToCache },
-    [101144] = { time = 130 + anim_delay, special_function = SF.WATCHDOGS_2_AddToCache },
+    [101129] = { time = 180 + anim_delay, special_function = AddToCache },
+    [101134] = { time = 150 + anim_delay, special_function = AddToCache },
+    [101144] = { time = 130 + anim_delay, special_function = AddToCache },
 
-    [101148] = { icons = boat_icon, special_function = SF.WATCHDOGS_2_GetFromCache },
-    [101149] = { icons = boat_icon, special_function = SF.WATCHDOGS_2_GetFromCache },
-    [101150] = { icons = boat_icon, special_function = SF.WATCHDOGS_2_GetFromCache },
+    [101148] = { icons = boat_icon, special_function = GetFromCache },
+    [101149] = { icons = boat_icon, special_function = GetFromCache },
+    [101150] = { icons = boat_icon, special_function = GetFromCache },
 
     [1011480] = { time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate },
 
@@ -30,10 +33,32 @@ local triggers = {
     [102379] = { id = "uno_8", special_function = SF.SetAchievementComplete }
 }
 if Network:is_client() then
-    local boat_return = { time = 450/30, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = SF.WD2_SetTrackerAccurate }
+    local SetTrackerAccurate = EHI:GetFreeCustomSpecialFunctionID()
+    local boat_return = { time = 450/30, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = SetTrackerAccurate }
     triggers[100470] = boat_return
     triggers[100472] = boat_return
     triggers[100474] = boat_return
+    EHI:RegisterCustomSpecialFunction(SetTrackerAccurate, function(id, trigger, ...)
+        if managers.ehi:TrackerExists(trigger.id) then
+            managers.ehi:SetTrackerAccurate(trigger.id, trigger.time)
+        elseif not (managers.ehi:TrackerExists(trigger.id2) or managers.ehi:TrackerExists(trigger.id3)) then
+            EHI:CheckCondition(id)
+        end
+    end)
 end
 
 EHI:ParseTriggers(triggers, "BoatLootDropReturn", boat_icon)
+EHI:RegisterCustomSpecialFunction(AddToCache, function(id, trigger, ...)
+    EHI._cache[trigger.id] = trigger.time
+end)
+EHI:RegisterCustomSpecialFunction(GetFromCache, function(id, trigger, ...)
+    local data = EHI._cache[trigger.id]
+    EHI._cache[trigger.id] = nil
+    if data then
+        trigger.time = data
+        EHI:CheckCondition(id)
+        trigger.time = nil
+    else
+        EHI:CheckCondition(1011480)
+    end
+end)

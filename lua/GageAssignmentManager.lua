@@ -13,16 +13,19 @@ local original =
 
 local ShowProgress
 if EHI:GetOption("gage_tracker_panel") == 1 then
-	ShowProgress = function(picked_up, max)
+	ShowProgress = function(picked_up, max, client_sync_load)
 		managers.ehi:SetTrackerProgress("Gage", picked_up)
 	end
 else
 	if EHI:GetOption("show_gage_tracker") then
-		ShowProgress = function(picked_up, max)
+		ShowProgress = function(picked_up, max, client_sync_load)
+			if client_sync_load and Global.statistics_manager.playing_from_start then
+				return
+			end
 			managers.hud:custom_ingame_popup_text("Gage Packages", tostring(picked_up) .. "/" .. tostring(max), "EHI_Gage")
 		end
 	else
-		ShowProgress = function(picked_up, max) end
+		ShowProgress = function(picked_up, max, client_sync_load) end
 	end
 end
 
@@ -49,7 +52,7 @@ local function UpdateTracker(self, client_sync_load)
 			EHI._cache.GagePackagesProgress = picked_up
 		end
 	end
-	ShowProgress(picked_up, max_units)
+	ShowProgress(picked_up, max_units, client_sync_load)
 	if managers.experience.SetGagePackageBonus then
 		managers.experience:SetGagePackageBonus(GetGageXPRatio(self, picked_up, max_units)) -- Don't use in-game function because it is inaccurate by one package
 	end

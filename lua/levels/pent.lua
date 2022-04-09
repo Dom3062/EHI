@@ -68,26 +68,21 @@ if Network:is_client() then
     triggers[EHI:GetInstanceElementID(100038, 9930)] = { time = 22.5, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
-local DisableWaypoints =
-{
-    -- pent_editing_room -> MissionDoor class
+local DisableWaypoints = {}
 
-    -- pent_security_box
-    [EHI:GetInstanceElementID(100081, 17930)] = true, -- Defend
-    [EHI:GetInstanceElementID(100082, 17930)] = true, -- Fix
-    [EHI:GetInstanceElementID(100081, 18330)] = true, -- Defend
-    [EHI:GetInstanceElementID(100082, 18330)] = true, -- Fix
-    [EHI:GetInstanceElementID(100081, 18830)] = true, -- Defend
-    [EHI:GetInstanceElementID(100082, 18830)] = true, -- Fix
-    [EHI:GetInstanceElementID(100081, 19230)] = true, -- Defend
-    [EHI:GetInstanceElementID(100082, 19230)] = true, -- Fix
-    [EHI:GetInstanceElementID(100081, 19630)] = true, -- Defend
-    [EHI:GetInstanceElementID(100082, 19630)] = true, -- Fix
-    [EHI:GetInstanceElementID(100081, 20030)] = true, -- Defend
-    [EHI:GetInstanceElementID(100082, 20030)] = true, -- Fix
-    [EHI:GetInstanceElementID(100081, 20430)] = true, -- Defend
-    [EHI:GetInstanceElementID(100082, 20430)] = true -- Fix
-}
+-- pent_editing_room
+for i = 11680, 12680, 500 do
+    DisableWaypoints[EHI:GetInstanceElementID(100016, i)] = true -- Defend
+    DisableWaypoints[EHI:GetInstanceElementID(100093, i)] = true -- Defend
+    DisableWaypoints[EHI:GetInstanceElementID(100044, i)] = true -- Fix
+    DisableWaypoints[EHI:GetInstanceElementID(100107, i)] = true -- Fix
+end
+
+-- pent_security_box
+for _, index in pairs({17930, 18330, 18830, 19230, 19630, 20030, 20430}) do
+    DisableWaypoints[EHI:GetInstanceElementID(100081, index)] = true -- Defend
+    DisableWaypoints[EHI:GetInstanceElementID(100082, index)] = true -- Fix
+end
 
 EHI:ParseTriggers(triggers)
 EHI:DisableWaypoints(DisableWaypoints)

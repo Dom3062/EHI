@@ -82,7 +82,7 @@ if EHI:GetOption("show_minion_tracker") then
     local UpdateTracker
     if EHI:GetOption("show_minion_per_player") then
         UpdateTracker = function(unit, key, amount, peer_id)
-            if managers.ehi:TrackerDoesNotExist("Converts") then
+            if managers.ehi:TrackerDoesNotExist("Converts") and amount ~= 0 then
                 managers.ehi:AddTracker({
                     id = "Converts",
                     exclude_from_sync = true,
@@ -97,7 +97,7 @@ if EHI:GetOption("show_minion_tracker") then
         end
     else
         UpdateTracker = function(unit, key, amount, peer_id)
-            if managers.ehi:TrackerDoesNotExist("Converts") then
+            if managers.ehi:TrackerDoesNotExist("Converts") and amount ~= 0 then
                 managers.ehi:AddTracker({
                     id = "Converts",
                     dont_show_placed = true,
@@ -110,46 +110,42 @@ if EHI:GetOption("show_minion_tracker") then
         end
     end
 
+    function GroupAIStateBase:EHIRemoveConvert(unit)
+        UpdateTracker(nil, tostring(unit:key()), 0)
+        local callback_key = "EHIConvert" .. tostring(unit:key())
+        unit:character_damage():remove_listener(callback_key)
+        unit:base():remove_destroy_listener(callback_key)
+    end
+
+    function GroupAIStateBase:EHIAddListener(unit)
+        local callback_key = "EHIConvert" .. tostring(unit:key())
+        local clbk = callback(self, self, "EHIRemoveConvert")
+        unit:base():add_destroy_listener(callback_key, clbk)
+        unit:character_damage():add_listener(callback_key, { "death" }, clbk)
+    end
+
     original.convert_hostage_to_criminal = GroupAIStateBase.convert_hostage_to_criminal
     function GroupAIStateBase:convert_hostage_to_criminal(unit, peer_unit, ...)
 		original.convert_hostage_to_criminal(self, unit, peer_unit, ...)
 		if unit:brain()._logic_data.is_converted then
+            self:EHIAddListener(unit)
 			local peer_id = peer_unit and managers.network:session():peer_by_unit(peer_unit):id() or managers.network:session():local_peer():id()
             UpdateTracker(unit, tostring(unit:key()), 1, peer_id)
 		end
 	end
 
-    --[[original.remove_minion = GroupAIStateBase.remove_minion
-    function GroupAIStateBase:remove_minion(minion_key, player_key, ...)
-        if self._converted_police[minion_key] then
-            local p_key = player_key
-            if not p_key then
-                for u_key, u_data in pairs(self._player_criminals) do
-                    if u_data.minions and u_data.minions[minion_key] then
-                        p_key = u_key
-                        break
-                    end
-                end
-            end
-            local peer_id = p_key and managers.network:session():peer_by_unit_key(p_key) or 0
-            UpdateTracker(nil, minion_key, 0, peer_id)
-        end
-		original.remove_minion(self, minion_key, player_key, ...)
-	end]]
-
     original.sync_converted_enemy = GroupAIStateBase.sync_converted_enemy
 	function GroupAIStateBase:sync_converted_enemy(converted_enemy, owner_peer_id, ...)
-		if self._police[converted_enemy:key()] or not owner_peer_id then
+		if self._police[converted_enemy:key()] then
+            self:EHIAddListener(converted_enemy)
             UpdateTracker(converted_enemy, tostring(converted_enemy:key()), 1, owner_peer_id or 0)
 		end
 		return original.sync_converted_enemy(self, converted_enemy, owner_peer_id, ...)
 	end
 
-    original._set_converted_police = GroupAIStateBase._set_converted_police
-    function GroupAIStateBase:_set_converted_police(u_key, unit, ...)
-        original._set_converted_police(self, u_key, unit, ...)
-        if not unit then
-            UpdateTracker(nil, tostring(u_key), 0)
-        end
+    original.remove_minion = GroupAIStateBase.remove_minion
+    function GroupAIStateBase:remove_minion(minion_key, ...)
+        original.remove_minion(self, minion_key, ...)
+        UpdateTracker(nil, tostring(minion_key), 0)
     end
 end

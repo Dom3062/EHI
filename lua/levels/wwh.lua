@@ -12,5 +12,13 @@ local triggers = {
     [101226] = { id = "wwh_10", special_function = SF.IncreaseProgress }
 }
 
+local DisableWaypoints = {}
+
+for i = 6850, 7525, 225 do
+    DisableWaypoints[EHI:GetInstanceElementID(100021, i)] = true -- Defend
+    DisableWaypoints[EHI:GetInstanceElementID(100022, i)] = true -- Fix
+end
+
 EHI:ParseTriggers(triggers)
+EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter(8)

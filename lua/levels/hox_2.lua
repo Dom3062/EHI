@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -12,6 +13,7 @@ local element_sync_triggers =
 }
 local request = { "wp_hack", Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
+local CheckOkValueHostCheckOnly = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072 } },
     [1001071] = { id = "slakt_3", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
@@ -37,10 +39,14 @@ local triggers = {
     [104591] = { id = "RequestCounter", special_function = SF.IncreaseProgress },
 
     [104472] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress },
-    [104478] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = SF.HOX2_CheckOkValueHostCheckOnly, data = { progress = 1 } },
-    [104480] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = SF.HOX2_CheckOkValueHostCheckOnly, data = { progress = 2 } },
-    [104481] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = SF.HOX2_CheckOkValueHostCheckOnly, data = { progress = 3 } },
-    [104482] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = SF.HOX2_CheckOkValueHostCheckOnly, data = { progress = 4, dont_create = true } },
+    [104478] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 1 } },
+    [104480] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 2 } },
+    [104481] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 3 } },
+    [104482] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 4, dont_create = true } },
+
+    [105113] = { chance = 25, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Chance },
+    [102257] = { amount = 25, id = "ForensicsMatchChance", special_function = SF.IncreaseChance },
+    [105137] = { id = "ForensicsMatchChance", special_function = SF.RemoveTracker }
 }
 if Network:is_client() then
     triggers[EHI:GetInstanceElementID(100055, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 45, 55, 65 } }
@@ -50,3 +56,21 @@ else
 end
 
 EHI:ParseTriggers(triggers)
+EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(id, trigger, element, enabled)
+    local continue = false
+    if EHI._cache.Host then
+        if element:_values_ok() then
+            continue = true
+        end
+    else
+        continue = true
+    end
+    if continue then
+        if managers.ehi:TrackerExists(trigger.id) then
+            managers.ehi:SetTrackerProgress(trigger.id, trigger.data.progress)
+        elseif not trigger.data.dont_create then
+            EHI:CheckCondition(id)
+            managers.ehi:SetTrackerProgress(trigger.id, trigger.data.progress)
+        end
+    end
+end)

@@ -85,9 +85,9 @@ function EHIManager:GetUnits(path, slotmask)
     local tbl = {}
     local idstring = Idstring(path)
     local units = World:find_units_quick("all", slotmask)
-    for _, unit in pairs(units) do
+    for i, unit in ipairs(units) do
         if unit and unit:name() == idstring then
-            tbl[#tbl + 1] = unit
+            tbl[i] = unit
         end
     end
     return tbl
@@ -302,6 +302,9 @@ function EHIManager:LoadSync()
             self:SetTrackerProgress("ameno_3", managers.loot:get_real_total_small_loot_value())
         end
     end
+    EHI:DelayCall("EHI_Converts_UpdatePeerColors", 2, function()
+        managers.ehi:CallFunction("Converts", "UpdatePeerColors")
+    end)
 end
 
 function EHIManager:AddLoadSyncFunction(f)

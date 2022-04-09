@@ -31,19 +31,24 @@ function EHIElevatorTimerTracker:SetPause(pause)
     self:SetTextColor(pause and Color.red or Color.white)
 end
 
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
 local hard_and_above = EHI:IsDifficultyOrAbove("hard")
+local LowerFloor = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [102460] = { time = 7, id = "Countdown", icons = { "pd2_generic_look" }, class = TT.Warning },
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
     [102701] = { time = 13, id = "Patrol", icons = { "pd2_generic_look" }, class = TT.Warning },
     [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
+    -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before restart
+    -- Reported in:
+    -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
     [103456] = { time = 5, id = "nmh_11", class = TT.Achievement, special_function = SF.RemoveTriggerAndShowAchievementFromStart, condition = hard_and_above and show_achievement, exclude_from_sync = true },
     [103439] = { id = "EscapeElevator", special_function = SF.RemoveTracker },
-    [102619] = { id = "EscapeElevator", special_function = SF.NMH_LowerFloor },
+    [102619] = { id = "EscapeElevator", special_function = LowerFloor },
 
     [103460] = { id = "nmh_11", special_function = SF.SetAchievementComplete },
 
@@ -93,3 +98,8 @@ EHI:AddOnAlarmCallback(function()
 end)
 
 EHI:ParseTriggers(triggers)
+EHI:RegisterCustomSpecialFunction(LowerFloor, function(id, trigger, element, enabled)
+    if enabled then
+        managers.ehi:CallFunction(trigger.id, "LowerFloor")
+    end
+end)

@@ -85,11 +85,14 @@ function EHIHeliTracker:destroy()
     EHIHeliTracker.super.destroy(self)
 end
 
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ExecuteIfElementIsEnabled = EHI:GetFreeCustomSpecialFunctionID()
+local DelayExecution = EHI:GetFreeCustomSpecialFunctionID()
 local kills = 7 -- Normal + Hard
 if EHI:IsBetweenDifficulties("very_hard", "overkill") then
     -- Very Hard + OVERKILL
@@ -102,7 +105,7 @@ local triggers = {
     [100001] = { time = 30, id = "BileArrival", icons = { Icon.Heli, Icon.C4 } },
     [100182] = { id = "SniperDeath", special_function = SF.RemoveTracker },
     [104555] = { id = "SniperDeath", special_function = SF.IncreaseProgress },
-    [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, "equipment_winch_hook", Icon.Loop }, special_function = SF.FLAT_ExecuteIfElementIsEnabled },
+    [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, "equipment_winch_hook", Icon.Loop }, special_function = ExecuteIfElementIsEnabled },
     [102181] = { id = "HeliWinchLoop", special_function = SF.RemoveTracker },
 
     [100809] = { time = 60, id = "cac_9", class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.RemoveTriggerAndShowAchievement, exclude_from_sync = true },
@@ -165,7 +168,8 @@ local triggers = {
     end},
     [1] = { special_function = SF.Trigger, data = { 2, 3 } },
     [2] = { special_function = SF.RemoveTriggers, data = { 103700, 103701 } },
-    [3] = { id = "PanicRoomTakeoff", special_function = SF.RemoveTracker },
+    [3] = { id = "PanicRoomTakeoff", special_function = DelayExecution },
+    [4] = { id = "PanicRoomTakeoff", special_function = SF.RemoveTracker },
     [103901] = { special_function = SF.CustomCode, f = function()
         managers.ehi:CallFunction("PanicRoomTakeoff", "ObjectiveComplete", "count")
     end },
@@ -176,3 +180,17 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
+EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(id, trigger, element, enabled)
+    if enabled then
+        if managers.ehi:TrackerExists(trigger.id) then
+            managers.ehi:SetTrackerTime(trigger.id, trigger.time)
+        else
+            EHI:CheckCondition(id)
+        end
+    end
+end)
+EHI:RegisterCustomSpecialFunction(DelayExecution, function(id, trigger, ...)
+    EHI:DelayCall("Remove" .. trigger.id, 10, function()
+        EHI:Trigger(4)
+    end)
+end)

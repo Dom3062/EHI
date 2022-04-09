@@ -108,26 +108,26 @@ _G.EHI =
 
         WATCHDOGS_2_AddToCache = 90,
         WATCHDOGS_2_GetFromCache = 91,
-        HOX2_CheckOkValueHostCheckOnly = 92,
         KOSUGI_DisableTriggerAndExecute = 93,
-        DARK_AddBodyBag = 94,
-        DARK_RemoveBodyBag = 95,
-        RUN_SetProgressMax = 96,
         FLAT_ExecuteIfElementIsEnabled = 97,
         MEX_CheckIfLoud = 98,
-        FRIEND_ExecuteIfElementIsEnabledAndRemoveTrigger = 99,
         NMH_LowerFloor = 191,
         PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = 194,
         WD2_SetTrackerAccurate = 199,
         ALEX_1_SetTimeIfMoreThanOrCreateTracker = 497,
         KOSUGI_ExecuteAndDisableTriggers = 498,
-        MeltdownAddCrowbar = 999,
+        JOLLY_HeliTimer = 499,
         SAND_ExecuteIfProgressMatch = 1099,
 
         Debug = 100000,
         CustomCode = 100001,
-        CustomCodeIfEnabled = 100002
+        CustomCodeIfEnabled = 100002,
+
+        -- Don't use it directly! Instead, call "EHI:GetFreeCustomSpecialFunctionID()" and "EHI:RegisterCustomSpecialFunction()" respectively
+        CustomSF = 1000
     },
+
+    SFF = {},
 
     ConditionFunctions =
     {
@@ -429,7 +429,8 @@ function EHI:LoadDefaultValues()
         show_waypoints_enemy_turret = true,
         show_waypoints_timers = true,
         show_waypoints_pager = true,
-        show_waypoints_cameras = true
+        show_waypoints_cameras = true,
+        show_waypoints_zipline = true
     }
     self:Log("Default values loaded")
 end
@@ -474,7 +475,7 @@ function EHI:AddCallback(id, f)
 end
 
 function EHI:CallCallback(id)
-    for _, callback in pairs(self.Callback[id] or {}) do
+    for _, callback in ipairs(self.Callback[id] or {}) do
         callback()
     end
 end
@@ -484,7 +485,7 @@ function EHI:AddOnAlarmCallback(f)
 end
 
 function EHI:RunOnAlarmCallbacks(dropin)
-    for _, callback in pairs(self.OnAlarmCallback) do
+    for _, callback in ipairs(self.OnAlarmCallback) do
         callback(dropin)
     end
     self.OnAlarmCallback = {}
@@ -678,9 +679,9 @@ function EHI:IsOneXPElementHeist(level_id)
             "haunted",
             "safehouse",
             "short1_stage1",
-			"short1_stage2",
+            "short1_stage2",
             "short2_stage1",
-			"short2_stage2b",
+            "short2_stage2b",
             "arm_cro",
             "arm_fac",
             "arm_hcm",
@@ -859,7 +860,7 @@ local function GetElementTimer(self, id)
     end
 end
 
-local function UnhookTrigger(self, id)
+function EHI:UnhookTrigger(id)
     self:UnhookElement(id)
     triggers[id] = nil
 end
@@ -941,13 +942,13 @@ function EHI:Trigger(id, element, enabled)
                 end
             elseif f == SF.RemoveTriggerWhenExecuted then
                 self:CheckCondition(id)
-                UnhookTrigger(self, id)
+                self:UnhookTrigger(id)
             elseif f == SF.Trigger then
                 for _, trigger in pairs(triggers[id].data) do
                     self:Trigger(trigger)
                 end
             elseif f == SF.RemoveTrigger then
-                UnhookTrigger(self, id)
+                self:UnhookTrigger(id)
             elseif f == SF.SetTimeOrCreateTracker then
                 if managers.ehi:TrackerExists(triggers[id].id) then
                     managers.ehi:SetTrackerTime(triggers[id].id, triggers[id].time)
@@ -970,7 +971,7 @@ function EHI:Trigger(id, element, enabled)
                 if self:IsAchievementLocked(triggers[id].id) then
                     self:CheckCondition(id)
                 end
-                UnhookTrigger(self, id)
+                self:UnhookTrigger(id)
             elseif f == SF.SetTimeByPreplanning then
                 if managers.preplanning:IsAssetBought(triggers[id].data.id) then
                     triggers[id].time = triggers[id].data.yes
@@ -998,7 +999,7 @@ function EHI:Trigger(id, element, enabled)
                 end
             elseif f == SF.RemoveTriggers then
                 for _, trigger_id in pairs(triggers[id].data) do
-                    UnhookTrigger(self, trigger_id)
+                    self:UnhookTrigger(trigger_id)
                 end
             elseif f == SF.SetAchievementStatus then
                 managers.ehi:SetAchievementStatus(triggers[id].id, triggers[id].status or "ok")
@@ -1053,7 +1054,7 @@ function EHI:Trigger(id, element, enabled)
                 if Global.statistics_manager.playing_from_start and self:IsAchievementLocked(triggers[id].id) then
                     self:CheckCondition(id)
                 end
-                UnhookTrigger(self, id)
+                self:UnhookTrigger(id)
             elseif f == SF.ExecuteAchievementIfInteractionExists then
                 if self:IsAchievementLocked(triggers[id].id) and managers.ehi:InteractionExists(triggers[id].data) then
                     self:CheckCondition(id)
@@ -1080,7 +1081,7 @@ function EHI:Trigger(id, element, enabled)
                 if self:IsAchievementLocked(triggers[id].data) then
                     self:CheckCondition(id)
                 end
-                UnhookTrigger(self, id)
+                self:UnhookTrigger(id)
             elseif f == SF.IncreaseProgressMax then
                 managers.ehi:IncreaseTrackerProgressMax(triggers[id].id)
             elseif f == SF.AddTrackerIfDoesNotExistElementHostCheckOnly then
@@ -1102,7 +1103,7 @@ function EHI:Trigger(id, element, enabled)
                 managers.hud:add_waypoint(triggers[id].id, triggers[id].data)
             elseif f == SF.RemoveTriggerAndStartAchievementCountdown then
                 managers.ehi:StartTrackerCountdown(triggers[id].id)
-                UnhookTrigger(self, id)
+                self:UnhookTrigger(id)
             elseif f == SF.DecreaseProgress then
                 managers.ehi:DecreaseTrackerProgress(triggers[id].id)
             elseif f == SF.Debug then
@@ -1115,81 +1116,12 @@ function EHI:Trigger(id, element, enabled)
                 end
 
             -- MissionScriptElement
-            elseif f == SF.NMH_LowerFloor then
-                if enabled then
-                    managers.ehi:CallFunction(triggers[id].id, "LowerFloor")
-                end
-            elseif f == SF.PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists then
+            --[[elseif f == SF.PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists then
                 managers.ehi:RemoveTracker(triggers[id].data.id)
                 if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
                     self:CheckCondition(id)
-                end
-            elseif f == SF.WD2_SetTrackerAccurate then -- Used in Watchdogs D2
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:SetTrackerAccurate(triggers[id].id, triggers[id].time)
-                elseif not (managers.ehi:TrackerExists(triggers[id].id2) or managers.ehi:TrackerExists(triggers[id].id3)) then
-                    self:CheckCondition(id)
-                end
-            elseif f == SF.FRIEND_ExecuteIfElementIsEnabledAndRemoveTrigger then
-                if enabled then
-                    self:CheckCondition(id)
-                    UnhookTrigger(self, id)
-                end
-            elseif f == SF.RUN_SetProgressMax then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:SetTrackerProgressMax(triggers[id].id, triggers[id].max)
-                else
-                    managers.ehi:AddTracker({
-                        id = triggers[id].id,
-                        progress = 1,
-                        max = triggers[id].max,
-                        class = self.Trackers.Progress
-                    })
-                end
-            elseif f == SF.FLAT_ExecuteIfElementIsEnabled then
-                if enabled then
-                    if managers.ehi:TrackerExists(triggers[id].id) then
-                        managers.ehi:SetTrackerTime(triggers[id].id, triggers[id].time)
-                    else
-                        self:CheckCondition(id)
-                    end
-                end
+                end]]
 
-            -- ElementCounterFilter
-            elseif f == SF.HOX2_CheckOkValueHostCheckOnly then
-                local continue = false
-                if self._cache.Host then
-                    if element:_values_ok() then
-                        continue = true
-                    end
-                else
-                    continue = true
-                end
-                if continue then
-                    if managers.ehi:TrackerExists(triggers[id].id) then
-                        managers.ehi:SetTrackerProgress(triggers[id].id, triggers[id].data.progress)
-                    elseif not triggers[id].data.dont_create then
-                        self:CheckCondition(id)
-                        managers.ehi:SetTrackerProgress(triggers[id].id, triggers[id].data.progress)
-                    end
-                end
-
-            -- ElementTimerOperator
-            elseif f == SF.WATCHDOGS_2_AddToCache then
-                self._cache[triggers[id].id] = triggers[id].time
-            elseif f == SF.WATCHDOGS_2_GetFromCache then
-                local data = self._cache[triggers[id].id]
-                self._cache[triggers[id].id] = nil
-                if data then
-                    triggers[id].time = data
-                    self:CheckCondition(id)
-                    triggers[id].time = nil
-                else
-                    self:CheckCondition(1011480)
-                end
-            elseif f == SF.KOSUGI_DisableTriggerAndExecute then
-                UnhookTrigger(self, triggers[id].data.id)
-                self:CheckCondition(id)
             elseif f == SF.MEX_CheckIfLoud then
                 if managers.groupai then
                     if managers.groupai:state():whisper_mode() then -- Stealth
@@ -1200,42 +1132,31 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(id)
                 end
 
-            -- ElementInstanceOutputEvent
-            elseif f == SF.MeltdownAddCrowbar then
-                managers.ehi:CallFunction(triggers[id].id, "AddCrowbar")
-
-            -- ElementAreaTrigger
-            elseif f == SF.ALEX_1_SetTimeIfMoreThanOrCreateTracker then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    local tracker = managers.ehi:GetTracker(triggers[id].id)
-                    if tracker then
-                        if tracker._time >= triggers[id].time then
-                            managers.ehi:SetTrackerTime(triggers[id].id, triggers[id].time)
-                        end
-                    else
-                        self:CheckCondition(id)
-                    end
-                else
-                    self:CheckCondition(id)
-                end
-                UnhookTrigger(self, id)
-            elseif f == SF.SAND_ExecuteIfProgressMatch then
-                local tracker = managers.ehi:GetTracker("sand_9_buttons")
-                if tracker and tracker:GetProgress() == triggers[id].data then
-                    managers.ehi:RemoveTracker("sand_9_buttons")
-                    managers.ehi:SetAchievementFailed("sand_9")
-                end
-
-            -- ElementCounterOperator
-            elseif f == SF.DARK_AddBodyBag then
-                managers.ehi:CallFunction(triggers[id].id, "IncreaseProgress", triggers[id].element)
-            elseif f == SF.DARK_RemoveBodyBag then
-                managers.ehi:CallFunction(triggers[id].id, "DecreaseProgress", triggers[id].element)
+            elseif f >= SF.CustomSF then
+                self.SFF[f](id, triggers[id], element, enabled)
             end
         else
             self:CheckCondition(id)
         end
     end
+end
+
+function EHI:RegisterCustomSpecialFunction(id, f)
+    self.SFF[id] = f
+end
+
+function EHI:GetFreeCustomSpecialFunctionID()
+    local id = self.SpecialFunctions.CustomSF
+    self._cache.SFFUsed = self._cache.SFFUsed or {}
+    while true do
+        if self._cache.SFFUsed[id] then
+            id = id + 1
+        else
+            self._cache.SFFUsed[id] = true
+            break
+        end
+    end
+    return id
 end
 
 function EHI:InitElements()
@@ -1315,7 +1236,7 @@ function EHI:HookElements(elements_to_hook)
                         These instances are synced when you join
                         Delay the hook until the sync is complete (see: EHI:SyncLoad())
                     ]]
-                    self.HookOnLoad[#self.HookOnLoad + 1] = id
+                    self.HookOnLoad[id] = true
                 end
             end
         end
@@ -1565,5 +1486,34 @@ end
 if EHI.debug then -- For testing purposes
     function EHI:IsAchievementLocked2(achievement)
         return true
+    end
+
+    function EHI:DebugInstance(instance_name)
+        if self._cache.Client then
+            self:Log("Instance debugging is only available when you are the host")
+            return
+        end
+        local scripts = managers.mission._scripts or {}
+        local instances = managers.world_instance:instance_data()
+        for _, instance in ipairs(instances) do
+            if instance.name == instance_name then
+                PrintTableDeep(instance or {}, 5000, true, "[EHI]")
+                local start = self:GetInstanceElementID(100000, instance.start_index)
+                local _end = start + instance.index_size - 1
+                local f = function(e, ...)
+                    managers.hud:DebugBaseElement(e._id, instance.start_index, nil, e:editor_name())
+                end
+                EHI:Log(string.format("Hooking elements in instance '%s'", instance_name))
+                for _, script in pairs(scripts) do
+                    for i = start, _end, 1 do
+                        local element = script:element(i)
+                        if element then
+                            self:HookWithID(element, self.HostElement, "EHI_Debug_Element_" .. tostring(i), f)
+                        end
+                    end
+                end
+                EHI:Log("Hooking done")
+            end
+        end
     end
 end

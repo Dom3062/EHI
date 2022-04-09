@@ -1,10 +1,17 @@
+r55 (09. 04. 2022):
+Fixed an issue where some trackers are not visible on client
+Converts Tracker: Fixed an issue where killed converts did not update the counter (client only)
+Converts Tracker: Fixed an issue where converts killed by mission script were not removed from the counter
+The Big Bank: Fixed an issue with achievement tracker "Matrix with Lasers" where it did not update correctly
+Rats Day 2: Fixed an issue where "First Assault Delay" tracker did not update correctly when ambushed by police
+
 r54 (18. 03. 2022):
 Added Italian translation
 Panic Room: Fixed a client crash after connecting the magnet
 
 r53 (12. 03. 2022):
 Added in-game popup for achievement "Lieutenant Colonel"
-Changed achievement tracker "Gift Giver" to show only when you have a throwable which have damage higher than 0
+Changed achievement tracker "Gift Giver" to show only when you have a throwable which does damage more than 0
 Gage Tracker: Added option to show progress in popup
 XP Tracker: Added option to show XP in popup and hint panels
 
@@ -282,7 +289,6 @@ The Bomb: Forest: Achievement "Beaver Team" will blink green when achieved
 Watchdogs Day 1: Fixed an issue where Car Pickup timer was not accurate
 
 r7 (28. 05. 2021):
-Heat Street: Achievement "Zookeeper" also works when you drop-in
 Heat Street: Achievement "Patience is Key" will blink red when failed
 Possible fix for "Trade Delay" tracker not accurate
 Fixed a crash during game start-up

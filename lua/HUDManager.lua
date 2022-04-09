@@ -28,9 +28,9 @@ function HUDManager:RestoreWaypoint(id)
     if data then
         self:add_waypoint(id, data)
         self._hud.stored_waypoints[id] = nil
-        if self._hud.ehi_removed_waypoints and type(self._hud.ehi_removed_waypoints) == "table" then
-            self._hud.ehi_removed_waypoints[id] = nil
-        end
+    end
+    if self._hud.ehi_removed_waypoints and type(self._hud.ehi_removed_waypoints) == "table" then
+        self._hud.ehi_removed_waypoints[id] = nil
     end
 end
 

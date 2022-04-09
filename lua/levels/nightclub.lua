@@ -23,7 +23,7 @@ local triggers = {
     [104285] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 EHI:AddOnAlarmCallback(function(dropin)
-    managers.ehi:AddEscapeChanceTracker(false, 25) -- Civilian kills do not count towards escape chance
+    managers.ehi:AddEscapeChanceTracker(false, 25) -- Civilian kills do not count towards escape chance -> https://steamcommunity.com/app/218620/discussions/14/5487063042655462839/
 end)
 
 EHI:ParseTriggers(triggers, "Escape", Icon.CarEscape)

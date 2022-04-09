@@ -208,6 +208,10 @@ function HUDManager:DebugElement(id, element)
     managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; Element: " .. tostring(element), Color.white)
 end
 
+function HUDManager:DebugBaseElement(id, instance_index, continent_index, element)
+    managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(EHI:GetBaseUnitID(id, instance_index, continent_index or 100000)) .. "; Element: " .. tostring(element), Color.white)
+end
+
 local animation = { start_t = {}, end_t = {} }
 function HUDManager:DebugAnimation(id, type)
     if type == "start" then

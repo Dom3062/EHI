@@ -144,7 +144,7 @@ function EHIWaypointManagerVR:AddWaypoint(id, params)
         move_speed = 1,
         init_data = params,
         state = params.state or "present",
-        present_timer = self._present_timer,
+        present_timer = params.present_timer or self._present_timer,
         bitmap = bitmap,
         arrow = arrow,
         size = Vector3(w, h, 0),
