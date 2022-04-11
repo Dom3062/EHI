@@ -5,10 +5,6 @@ else
     EHI._hooks.HUDManager = true
 end
 
-if not EHI:ShouldDisableWaypoints() then
-    return
-end
-
 function HUDManager:AddWaypointSoft(id, data)
     self._hud.stored_waypoints[id] = data
     self._hud.ehi_removed_waypoints = self._hud.ehi_removed_waypoints or {}

@@ -1,3 +1,6 @@
+r56 (11. 04. 2022):
+Fixed a crash when EHI Waypoints are disabled
+
 r55 (09. 04. 2022):
 Fixed an issue where some trackers are not visible on client
 Converts Tracker: Fixed an issue where killed converts did not update the counter (client only)
