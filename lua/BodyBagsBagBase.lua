@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.BodyBagsBagBase then
     return
 else
@@ -32,6 +33,9 @@ else
         end
         managers.ehi:CallFunction("BodyBags", "UpdateAmount", unit, key, amount)
     end
+    EHI:AddOnAlarmCallback(function()
+        managers.ehi:RemoveTracker("BodyBags")
+    end)
 end
 
 local original =

@@ -3,7 +3,6 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local BoatEscape = { Icon.Boat, Icon.Escape, Icon.LootDrop }
---local FirstAssaultDelay = { { icon = "assaultbox", color = Color(1, 1, 0) } }
 local boat_anim = 614/30
 local skid = { { icon = Icon.Car, color = Color("1E90FF") } }
 local sand_9_buttons = { id = "sand_9_buttons", special_function = SF.IncreaseProgress }
@@ -28,7 +27,7 @@ local triggers = {
     [103175] = sand_9_buttons,
     [103208] = { id = "sand_9", special_function = SF.FinalizeAchievement },
 
-    --[100129] = { time = 30, id = "FirstAssaultDelay", icons = FirstAssaultDelay, class = TT.Warning },
+    --[100129] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay },
 
     [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { "wp_hack" } },
 
@@ -57,7 +56,7 @@ local triggers = {
     [103870] = { chance = 34, id = "ReviveVlad", icons = { "equipment_defibrillator" }, class = TT.Chance, special_function = SF.AddTrackerIfDoesNotExist },
     [103871] = { id = "ReviveVlad", special_function = SF.RemoveTracker },
 
-    [103925] = { id = "BoatEscape", icons = BoatEscape, special_function = SF.MEX_CheckIfLoud, data = { yes = 30 + boat_anim + 12 + 1, no = 19 + boat_anim + 12 + 1 } }
+    [103925] = { id = "BoatEscape", icons = BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 30 + boat_anim + 12 + 1, no = 19 + boat_anim + 12 + 1 } }
 }
 local time = 5 -- Normal
 if EHI:IsBetweenDifficulties("hard", "very_hard") then

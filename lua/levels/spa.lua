@@ -5,12 +5,12 @@ local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
 local triggers = {
     -- First Assault Delay
-    --[[[EHI:GetInstanceElementID(100003, 7950)] = { time = 3 + 12 + 12 + 4 + 20 + 30, id = "FirstAssaultDelay", icons = FirstAssaultDelay, class = TT.Warning, special_function = SF.RemoveTriggerWhenExecuted },
-    [EHI:GetInstanceElementID(100024, 7950)] = { time = 12 + 12 + 4 + 20 + 30, id = "FirstAssaultDelay", icons = FirstAssaultDelay, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
-    [EHI:GetInstanceElementID(100053, 7950)] = { time = 12 + 4 + 20 + 30, id = "FirstAssaultDelay", icons = FirstAssaultDelay, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
-    [EHI:GetInstanceElementID(100026, 7950)] = { time = 4 + 20 + 30, id = "FirstAssaultDelay", icons = FirstAssaultDelay, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
-    [EHI:GetInstanceElementID(100179, 7950)] = { time = 20 + 30, id = "FirstAssaultDelay", icons = FirstAssaultDelay, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },
-    [EHI:GetInstanceElementID(100295, 7950)] = { time = 30, id = "FirstAssaultDelay", icons = FirstAssaultDelay, class = TT.Warning, special_function = SF.AddTrackerIfDoesNotExist },]]
+    --[[[EHI:GetInstanceElementID(100003, 7950)] = { time = 3 + 12 + 12 + 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.RemoveTriggerWhenExecuted },
+    [EHI:GetInstanceElementID(100024, 7950)] = { time = 12 + 12 + 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
+    [EHI:GetInstanceElementID(100053, 7950)] = { time = 12 + 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
+    [EHI:GetInstanceElementID(100026, 7950)] = { time = 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
+    [EHI:GetInstanceElementID(100179, 7950)] = { time = 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
+    [EHI:GetInstanceElementID(100295, 7950)] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },]]
 
     [101989] = { special_function = SF.Trigger, data = { 1019891, 1019892 } },
     -- It was 7 minutes before the change

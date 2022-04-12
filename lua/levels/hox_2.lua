@@ -14,10 +14,15 @@ local element_sync_triggers =
 local request = { "wp_hack", Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
 local CheckOkValueHostCheckOnly = EHI:GetFreeCustomSpecialFunctionID()
+local AssaultDelay = 30
+if EHI._cache.Client then
+    AssaultDelay = AssaultDelay + 5
+end
 local triggers = {
-    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072 } },
+    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072--[[, 1001073]] } },
     [1001071] = { id = "slakt_3", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
     [1001072] = { id = "cac_26", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up, exclude_from_sync = true },
+    --[1001073] = { time = 30, id = "AssaultDelay", stop_counting = EHI._cache.Host, class = TT.AssaultDelay },
     [100256] = { id = "slakt_3", special_function = SF.SetAchievementFailed },
     [100258] = { id = "slakt_3", special_function = SF.SetAchievementComplete },
     [101884] = { id = "cac_26", status = "finish", special_function = SF.SetAchievementStatus },

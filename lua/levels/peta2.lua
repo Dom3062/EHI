@@ -6,7 +6,7 @@ local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
 local mayhem_and_up = EHI:IsDifficultyOrAbove("mayhem")
 local goat_pick_up = { Icon.Heli, Icon.Interact }
 local triggers = {
-    [100109] = { time = 100 + 30, id = "FirstAssaultDelay", icons = Icon.FirstAssaultDelay, class = TT.Warning },
+    [100109] = { time = 100 + 30, id = "AssaultDelay", class = TT.AssaultDelay },
 
     [100002] = { max = (mayhem_and_up and 15 or 13), id = "peta_5", class = TT.AchievementProgress, condition = show_achievement and ovk_and_up },
     [102211] = { id = "peta_5", special_function = SF.IncreaseProgress },

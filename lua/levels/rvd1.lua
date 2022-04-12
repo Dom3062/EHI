@@ -9,7 +9,7 @@ local triggers = {
     [100839] = { id = "rvd_9", special_function = SF.SetAchievementFailed },
     [100869] = { id = "rvd_9", special_function = SF.SetAchievementComplete },
 
-    [100179] = { time = 1 + 9.5 + 11 + 1 + 30, id = "FirstAssaultDelay", icons = Icon.FirstAssaultDelay, class = TT.Warning },
+    [100179] = { time = 1 + 9.5 + 11 + 1 + 30, id = "AssaultDelay", class = TT.AssaultDelay },
 
     [100727] = { time = 6 + 18 + 8.5 + 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape },
     [100057] = { time = 60, id = "rvd_10", class = TT.Achievement, condition = dw_and_above and show_achievement, special_function = SF.ShowAchievementFromStart, exclude_from_sync = true },

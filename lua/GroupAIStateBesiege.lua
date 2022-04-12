@@ -1,11 +1,27 @@
+local EHI = EHI
 if EHI._hooks.GroupAIStateBesiege then
 	return
 else
 	EHI._hooks.GroupAIStateBesiege = true
 end
 
-local _f_set_phalanx_damage_reduction_buff = GroupAIStateBesiege.set_phalanx_damage_reduction_buff
+local original =
+{
+    set_phalanx_damage_reduction_buff = GroupAIStateBesiege.set_phalanx_damage_reduction_buff
+}
+
 function GroupAIStateBesiege:set_phalanx_damage_reduction_buff(damage_reduction, ...)
-    _f_set_phalanx_damage_reduction_buff(self, damage_reduction, ...)
+    original.set_phalanx_damage_reduction_buff(self, damage_reduction, ...)
     managers.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(damage_reduction or 0)))
+end
+
+if false then
+    original._begin_assault_task = GroupAIStateBesiege._begin_assault_task
+    function GroupAIStateBesiege:_begin_assault_task(assault_areas, ...)
+        original._begin_assault_task(self, assault_areas, ...)
+        local end_t = self._task_data.assault.phase_end_t
+        if end_t ~= 0 then
+            managers.ehi:CallFunction("AssaultDelay", "StartAnticipation", end_t - self._t)
+        end
+    end
 end

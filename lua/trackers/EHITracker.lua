@@ -27,6 +27,7 @@ EHITracker = EHITracker or class()
 EHITracker._update = true
 EHITracker._tracker_type = "accurate"
 function EHITracker:init(panel, params)
+    self._id = params.id
     self._exclude_from_sync = params.exclude_from_sync
     self._icons = params.icons
     self._class = params.class
@@ -39,6 +40,8 @@ function EHITracker:init(panel, params)
         gap = 5 * number_of_icons
     end
     self._parent_panel = panel
+    self._time = params.time or 0
+    self._former_time = self._time -- Time to reset the tracker to default
     self._panel = panel:panel({
         name = params.id,
         x = params.x,
@@ -48,8 +51,6 @@ function EHITracker:init(panel, params)
         alpha = 0,
         visible = true
     })
-    self._time = params.time or 0
-    self._former_time = self._time -- Time to reset the tracker to default
     self._time_bg_box = HUDBGBox_create(self._panel, {
         x = 0,
         y = 0,
@@ -79,7 +80,6 @@ function EHITracker:init(panel, params)
         self:CreateIcons()
     end
     self:OverridePanel(params)
-    self._id = params.id
     self._parent_class = params.parent_class
     self:SetPanelVisible()
 end
@@ -379,5 +379,5 @@ end
 
 function EHITracker:delete()
     self:destroy()
-    self._parent_class:RemoveTracker(self._id, true)
+    self._parent_class:DestroyTracker(self._id)
 end

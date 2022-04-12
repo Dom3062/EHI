@@ -1,0 +1,200 @@
+{
+    "ehi_mod_title" : "Extra Heist Info",
+    "ehi_mod_desc" : "",
+
+    "ehi_r" : "赤",
+    "ehi_g" : "緑",
+    "ehi_b" : "青",
+    "ehi_button_ok" : "OK",
+    "ehi_color_reset" : "色をリセット",
+
+    "ehi_preview" : "プレビュー（反映にはマップの再起動が必要です）\n赤い角は最初のトラッカーが表示される場所を示します",
+
+    "ehi_x_offset" : "X オフセット",
+    "ehi_x_offset_desc" : "X オフセット",
+    "ehi_y_offset" : "Y オフセット",
+    "ehi_y_offset_desc" : "Y オフセット",
+
+    "ehi_text_scale" : "テキストのスケール",
+    "ehi_text_scale_desc" : "テキストの大きさを設定\nこの機能は、ゲーム内フォントを変更している場合に便利です。",
+
+    "ehi_scale" : "スケール",
+    "ehi_scale_desc" : "トラッカーの大きさを設定します。\nトラッカーは、値が大きい程大きくなります。",
+
+    "ehi_vr_scale": "VRのスケール",
+    "ehi_vr_scale_desc": "VRモードでのトラッカーの大きさを設定します。\nトラッカーは、値が大きい程大きくなります。",
+
+    "ehi_time_format" : "時間のフォーマット",
+    "ehi_time_format_desc" : "トラッカーで使用される時計の形式を定義します。",
+    "ehi_time_format_1" : "秒数のみ",
+    "ehi_time_format_2" : "分と秒",
+
+    "ehi_tracker_alignment" : "トラッカーの整列",
+    "ehi_tracker_alignment_desc" : "トラッカーの位置合わせを定義します。",
+    "ehi_tracker_alignment_1" : "縦",
+    "ehi_tracker_alignment_2" : "横",
+
+    "ehi_visuals_menu" : "ビジュアル",
+    "ehi_visuals_menu_desc" : "",
+
+    "ehi_show_tracker_bg" : "トラッカーの背景を表示",
+    "ehi_show_tracker_bg_desc" : "トラッカーの背景を表示します。\n無効にすると背景は非表示になり、アニメーションが無効化されます",
+
+    "ehi_show_one_icon" : "トラッカーアイコンを1つ表示",
+    "ehi_show_one_icon_desc" : "有効化するとトラッカー1つにつき1つのアイコンしか表示されなくなります。\n無効化すると全てのアイコンが表示されるようになります。",
+
+    "ehi_trackers_menu" : "トラッカー",
+    "ehi_trackers_menu_desc" : "",
+
+    "ehi_show_achievement" : "実績トラッカーを表示",
+    "ehi_show_achievement_desc" : "実績のトラッカーを表示します。\n一部のHeistでは使用できない場合があります。",
+
+    "ehi_hide_unlocked_achievements" : "解除済み実績は表示しない",
+    "ehi_hide_unlocked_achievements_desc" : "有効化すると解除済み実績のトラッカーを表示しなくなります。\n無効の場合、EHIは全実績のトラッカーを表示します。",
+
+    "ehi_show_gained_xp" : "取得したXPを表示",
+    "ehi_show_gained_xp_desc" : "ミッション中に取得したXPを表示します。\nCrime Spreeではこのトラッカーは無効化されます。",
+
+    "ehi_xp_format" : "XPのフォーマット方法",
+    "ehi_xp_format_desc" : "例: 基本値: 1000, 難易度Death Wish\n基本値のみ: 1000\n難易度別乗算値: 13000\n全XPボーナスと掛けた値: 13000+",
+    "ehi_xp_format_base" : "基本値のみを表示",
+    "ehi_xp_format_difficulty_multiplier" : "難易度別乗算値を表示",
+    "ehi_xp_format_all_bonuses" : "全XPボーナスと掛けた値を表示",
+
+    "ehi_xp_panel" : "取得したXPの表示方法",
+    "ehi_xp_panel_desc" : "",
+    "ehi_xp_panel_1" : "取得するごとにパネルを表示",
+    "ehi_xp_panel_2" : "Heistで得たXPの合計を表示",
+    "ehi_xp_panel_3" : "取得するごとにポップアップを表示し、合計XPを表示する",
+    "ehi_xp_panel_4" : "取得するごとにヒントを表示し、合計XPを表示する",
+
+    "ehi_total_xp_show_difference" : "XPの差を表示",
+    "ehi_total_xp_show_difference_desc" : "[Heistで得たXPの合計を表示する]オプション限定！\nスタンドアロントラッカーでXPをどれだけ獲得したか表示します。",
+
+    "ehi_show_trade_delay" : "取引遅延トラッカー",
+    "ehi_show_trade_delay_desc" : "自分かチームメイトが市民を殺害した際に発生する取引の遅延トラッカーを表示します。",
+
+    "ehi_show_trade_delay_option" : "取引遅延トラッカーの表示タイミング",
+    "ehi_show_trade_delay_option_desc": "常に: 自分またはチームメイトが市民を殺害した際、常にトラッカーを表示します。\n拘留中: 自分かチームメイトが拘留状態になり、なおかつ少なくとも1人の市民を殺害した際にトラッカーを表示します。",
+    "ehi_show_trade_delay_option_1" : "常に",
+    "ehi_show_trade_delay_option_2" : "拘留中",
+
+    "ehi_show_trade_delay_other_players_only": "他のプレイヤーの取引遅延トラッカーのみ表示する",
+    "ehi_show_trade_delay_other_players_only_desc": "有効化すると自分が市民を殺害した際はトラッカーが表示されず、チームメイトが殺害した際のみ表示されます。",
+
+    "ehi_show_trade_delay_suppress_in_stealth" : "ステルスで取引遅延トラッカーを表示しない",
+    "ehi_show_trade_delay_suppress_in_stealth_desc" : "有効化すると取引遅延トラッカーがステルス状態では表示されなくなります。\nアラームが鳴ると蓄積された遅延が全て表示されます。",
+
+    "ehi_show_timers" : "タイマーを表示",
+    "ehi_show_timers_desc" : "ハッキングやドリル等のタイマーを表示します。",
+
+    "ehi_show_zipline_timer" : "ジップライントラッカーを表示",
+    "ehi_show_zipline_timer_desc" : "ジップラインのタイマーを2つ表示します。\n1つ目のタイマーはバッグやプレイヤーを落とすまでの時間で、\n2つ目のタイマーはジップラインのリセット時間を表示します。",
+
+    "ehi_show_gage_tracker" : "Gageトラッカーを表示",
+    "ehi_show_gage_tracker_desc" : "マップ上のGageパッケージのトラッカーを表示します。\nマップ上にパッケージが存在していない場合はトラッカーは表示されません。",
+
+    "ehi_gage_tracker_panel" : "パッケージの進捗",
+    "ehi_gage_tracker_panel_desc" : "",
+    "ehi_gage_tracker_panel_1" : "トラッカー内",
+    "ehi_gage_tracker_panel_2" : "ポップアップ内",
+
+    "ehi_show_captain_damage_reduction" : "敵のダメージ軽減率を表示",
+    "ehi_show_captain_damage_reduction_desc" : "Captain Winterの展開中、敵のダメージ軽減率のトラッカーを表示します。",
+
+    "ehi_show_equipment_tracker" : "携帯アイテムトラッカーを表示",
+    "ehi_show_equipment_tracker_desc" : "Doctor Bag、Ammo Bag、Grenade Case、Body Bag Case、First Aid Kitの配置状況を個別に表示します。",
+
+    "ehi_equipment_menu" : "携帯アイテムメニュー",
+    "ehi_equipment_menu_desc" : "",
+
+    "ehi_equipment_format" : "携帯アイテムフォーマット",
+    "ehi_equipment_format_desc" : "携帯アイテムのフォーマットを定義します。",
+    "ehi_equipment_format_1" : "使用可能回数 (配置数)",
+    "ehi_equipment_format_2" : "(配置数) 使用可能回数",
+    "ehi_equipment_format_3" : "(使用可能回数) 配置数",
+    "ehi_equipment_format_4" : "配置数 (使用可能回数)",
+    "ehi_equipment_format_5" : "使用可能回数",
+    "ehi_equipment_format_6" : "配置数",
+
+    "ehi_show_equipment_doctorbag" : "Doctor Bagのトラッカーを表示",
+    "ehi_show_equipment_doctorbag_desc" : "Doctor Bagのトラッカーを表示します。",
+
+    "ehi_show_equipment_ammobag" : "Ammo Bagのトラッカーを表示",
+    "ehi_show_equipment_ammobag_desc" : "Ammo Bagのトラッカーを表示します。",
+
+    "ehi_show_equipment_grenadecases" : "Grenade Crateのトラッカーを表示",
+    "ehi_show_equipment_grenadecases_desc" : "Grenade Crateのトラッカーを表示します。",
+
+    "ehi_show_equipment_bodybags": "Body Bagのトラッカーを表示",
+    "ehi_show_equipment_bodybags_desc": "Body Bagのトラッカーを表示します。\nアラームが鳴るとトラッカーは表示されなくなります。",
+
+    "ehi_show_equipment_firstaidkit": "First Aid Kitのトラッカーを表示",
+    "ehi_show_equipment_firstaidkit_desc": "First Aid Kitのトラッカーを表示します。",
+
+    "ehi_show_equipment_ecmjammer" : "ECM Jammerの効果時間を表示",
+    "ehi_show_equipment_ecmjammer_desc" : "ECM Jammerの効果時間のトラッカーを表示します。\n最も効果時間の長い物がトラッカーに表示されます。",
+
+    "ehi_show_equipment_ecmfeedback" : "ECM Feedbackの効果時間を表示",
+    "ehi_show_equipment_ecmfeedback_desc" : "ECM Feedbackの効果時間のトラッカーを表示します。\n最も効果時間の長い物がトラッカーに表示されます。(ホストのみ)\nポケットECMフィードバックはクライアント側でも動作します。",
+
+    "ehi_show_equipment_aggregate_health" : "Doctor BagとFirst Aid Kitを集約",
+    "ehi_show_equipment_aggregate_health_desc" : "Doctor BagとFirst Aid Kitを1つのトラッカーに集約します。",
+
+    "ehi_show_equipment_aggregate_all" : "全携帯アイテムを集約",
+    "ehi_show_equipment_aggregate_all_desc" : "全ての携帯アイテムを1つのトラッカーに集約します。",
+
+    "ehi_doctor_bag" : "Doctor Bag",
+    "ehi_ammo_bag" : "Ammo Bag",
+    "ehi_grenade_crate" : "Grenade Crate",
+    "ehi_first_aid_kit" : "First Aid Kit",
+    "ehi_bodybags_bag" : "BodybagのBag",
+
+    "ehi_show_minion_tracker" : "コンバートトラッカーを表示",
+    "ehi_show_minion_tracker_desc" : "マップ上に存在するコンバートされた敵のトラッカーを表示します。",
+
+    "ehi_show_minion_per_player" : "プレイヤーごとのコンバート数を表示",
+    "ehi_show_minion_per_player_desc" : "コンバート数のトラッカーを着色して表示します。",
+
+    "ehi_show_difficulty_tracker" : "難易度トラッカーを表示",
+    "ehi_show_difficulty_tracker_desc" : "Waveの難易度のトラッカーを表示します。",
+
+    "ehi_show_drama_tracker" : "Dramaトラッカーを表示",
+    "ehi_show_drama_tracker_desc" : "蓄積されたDramaトラッカーを表示します。（ホストのみ)",
+
+    "ehi_show_pager_tracker" : "Pagerトラッカーを表示",
+    "ehi_show_pager_tracker_desc" : "Pagerの残数のトラッカーを表示します。",
+
+    "ehi_show_pager_callback_trackers" : "Pager応答タイマーを表示",
+    "ehi_show_pager_callback_trackers_desc" : "応答が必要なPagerのトラッカーを表示します。",
+
+    "ehi_show_enemy_count_tracker" : "敵の数を表示",
+    "ehi_show_enemy_count_tracker_desc" : "マップ上の敵の数のトラッカーを表示します。",
+
+    "ehi_show_laser_tracker" : "レーザーのトラッカーを表示",
+    "ehi_show_laser_tracker_desc" : "数秒ごとに周期を変えるレーザーのトラッカーを表示します。",
+
+    "ehi_waypoints_menu" : "ウェイポイント",
+    "ehi_waypoints_menu_desc" : "",
+
+    "ehi_show_waypoints" : "ウェイポイントを表示",
+    "ehi_show_waypoints_desc" : "ゲーム内ワールドにウェイポイントを表示します。",
+
+    "ehi_show_waypoints_only" : "ウェイポイントのみ表示",
+    "ehi_show_waypoints_only_desc" : "有効化すると要素にトラッカーとウェイポイントの両方が定義されている場合、ウェイポイントのみが表示されます。\nそれ以外はトラッカーが表示されます。",
+
+    "ehi_show_waypoints_present_timer" : "プレゼントタイマー",
+    "ehi_show_waypoints_present_timer_desc" : "ウェイポイントが目的地に「移動」するまでに、画面上に存在する時間を設定します。",
+
+    "ehi_show_waypoints_enemy_turret" : "敵のタレットにウェイポイントを表示",
+    "ehi_show_waypoints_enemy_turret_desc" : "リロード中や修理中の敵のタレットにウェイポイントを表示します。",
+
+    "ehi_show_waypoints_timers" : "タイマーにウェイポイントを表示",
+    "ehi_show_waypoints_timers_desc" : "ウェイポイントにタイマーを表示します。(ハッキングやドリル等)\n\nオプション「タイマーを表示」を有効化する必要があります。",
+
+    "ehi_show_waypoints_pager" : "Pagerにウェイポイントを表示",
+    "ehi_show_waypoints_pager_desc" : "ウェイポイントにPagerタイマーを表示します。\n\nオプション「Pager応答タイマーを表示」を有効化する必要があります。",
+
+    "ehi_show_waypoints_cameras" : "ループされたカメラにウェイポイントを表示",
+    "ehi_show_waypoints_cameras_desc" : "ループ中のカメラにウェイポイントを表示します。"
+}

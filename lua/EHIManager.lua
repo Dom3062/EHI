@@ -664,14 +664,14 @@ function EHIManager:GetTracker(id)
     return id and self._trackers[id]
 end
 
-function EHIManager:RemoveTracker(id, remove_ref_only)
-    if not remove_ref_only then
-        local tracker = self._trackers[id]
-        if tracker then
-            tracker:delete()
-        end
-        return
+function EHIManager:RemoveTracker(id)
+    local tracker = self._trackers[id]
+    if tracker then
+        tracker:delete()
     end
+end
+
+function EHIManager:DestroyTracker(id)
     self._trackers[id] = nil
     self._trackers_to_update[id] = nil
     local pos = self._trackers_pos[id].pos

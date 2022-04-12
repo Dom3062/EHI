@@ -1,7 +1,4 @@
-if not EHI:GetOption("show_difficulty_tracker") then
-    return
-end
-
+local EHI = EHI
 if EHI._hooks.ElementDifficulty then -- Don't hook multiple times, pls
     return
 else
@@ -17,26 +14,35 @@ if level_tweak and level_tweak.ai_group_type and level_tweak.ai_group_type == "s
     return
 end
 
-local id = "Difficulty"
+local function AssaultDelay(value)
+    EHI._cache.diff = value
+end
 
-local function Trigger(value)
-    local diff = EHI:RoundChanceNumber(value)
-    if managers.ehi:TrackerExists(id) then
-        managers.ehi:SetChance(id, diff)
-    else
-        managers.ehi:AddTracker({
-            id = id,
-            icons = { "enemy" },
-            chance = diff,
-            class = "EHIChanceTracker"
-        })
+local Trigger
+if EHI:GetOption("show_difficulty_tracker") then
+    local id = "Difficulty"
+    Trigger = function(value)
+        local diff = EHI:RoundChanceNumber(value)
+        if managers.ehi:TrackerExists(id) then
+            managers.ehi:SetChance(id, diff)
+        else
+            managers.ehi:AddTracker({
+                id = id,
+                icons = { "enemy" },
+                chance = diff,
+                class = "EHIChanceTracker"
+            })
+        end
     end
+else
+    Trigger = function(value) end
 end
 
 local _f_client_on_executed = ElementDifficulty.client_on_executed
 function ElementDifficulty:client_on_executed(...)
     _f_client_on_executed(self, ...)
     Trigger(self._values.difficulty)
+    AssaultDelay(self._values.difficulty)
 end
 
 local _f_on_executed = ElementDifficulty.on_executed
@@ -46,4 +52,5 @@ function ElementDifficulty:on_executed(...)
         return
     end
     Trigger(self._values.difficulty)
+    AssaultDelay(self._values.difficulty)
 end

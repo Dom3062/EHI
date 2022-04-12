@@ -48,7 +48,8 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             class = "EHICountTracker"
         })
     end
-    if EHI:GetOption("show_pager_tracker") then
+    if EHI:GetOption("show_pager_tracker") and (level_tweak_data.ghost_bonus or level_tweak_data.ghost_required or level_tweak_data.ghost_required_visual) then
+        -- In case the heist will require stealth completion but does not have XP bonus
         local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
         if server then
             for _, value in pairs(base) do
@@ -190,6 +191,49 @@ end
 
 function HUDManager:IncreaseTrackerWaypointProgress(id, increase)
     self:UpdateTrackerWaypointProgress(id, increase or 1)
+end
+
+local SyncFunction = EHI._cache.Host and "SyncAnticipationColor" or "SyncAnticipation"
+local anticipation_delay = 30 -- Get it from tweak_data
+original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
+function HUDManager:sync_start_anticipation_music(...)
+    original.sync_start_anticipation_music(self, ...)
+    self.ehi:CallFunction("AssaultDelay", SyncFunction, anticipation_delay)
+    --EHI:Unhook("AssaultDelay_set_control_info")
+end
+
+if false then
+    local function set_assault_delay(self, data)
+        self.ehi:CallFunction("AssaultDelay", "SetHostages", data.nr_hostages > 0)
+    end
+    local SyncFunction = EHI._cache.Host and "SyncAnticipationColor" or "SyncAnticipation"
+    local anticipation_delay = 30 -- Get it from tweak_data
+    original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
+    function HUDManager:sync_start_anticipation_music(...)
+        original.sync_start_anticipation_music(self, ...)
+        self.ehi:CallFunction("AssaultDelay", SyncFunction, anticipation_delay)
+        EHI:Unhook("AssaultDelay_set_control_info")
+    end
+    original.sync_start_assault = HUDManager.sync_start_assault
+    function HUDManager:sync_start_assault(assault_number, ...)
+        original.sync_start_assault(self, assault_number, ...)
+        self.ehi:RemoveTracker("AssaultDelay")
+        EHI:Unhook("AssaultDelay_set_control_info")
+    end
+    original.sync_end_assault = HUDManager.sync_end_assault
+    function HUDManager:sync_end_assault(result, ...)
+        original.sync_end_assault(self, result, ...)
+        if EHI._cache.diff then
+            self.ehi:AddTracker({
+                id = "AssaultDelay",
+                compute_time = true,
+                diff = EHI._cache.diff,
+                class = EHI.Trackers.AssaultDelay
+            })
+            EHI:HookWithID(HUDManager, "set_control_info", "EHI_AssaultDelay_set_control_info", set_assault_delay)
+        end
+    end
+    EHI:HookWithID(HUDManager, "set_control_info", "EHI_AssaultDelay_set_control_info", set_assault_delay)
 end
 
 function HUDManager:Debug(id)

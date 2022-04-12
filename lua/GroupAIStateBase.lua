@@ -5,30 +5,9 @@ else
 	EHI._hooks.GroupAIStateBase = true
 end
 
-local trackers_to_remove =
-{
-    "BodyBags"
-}
-
-local show_trackers = {}
-
 local dropin = false
-
-local level_id = Global.game_settings.level_id
-if level_id == "alex_2" then
-    show_trackers[#show_trackers + 1] = { time = 75 + 15 + 30, id = "FirstAssaultDelay", icons = { { icon = "assaultbox", color = Color(1, 1, 0) } }, class = "EHIWarningTracker" }
-end
-
 local function Execute()
-    for _, tracker in ipairs(trackers_to_remove) do
-        managers.ehi:RemoveTracker(tracker)
-    end
     EHI:RunOnAlarmCallbacks(dropin)
-    if not dropin then
-        for _, tracker in pairs(show_trackers) do
-            managers.ehi:AddTracker(tracker, tracker.pos)
-        end
-    end
 end
 
 local original =
@@ -59,7 +38,7 @@ function GroupAIStateBase:load(...)
     dropin = managers.ehi:GetDropin()
     original.load(self, ...)
     if self._enemy_weapons_hot then
-        Execute()
+        EHI:RunOnAlarmCallbacks(dropin)
     else
         managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 	end
@@ -70,11 +49,22 @@ function GroupAIStateBase:load(...)
 end
 
 if EHI:ShowDramaTracker() then
-    show_trackers[#show_trackers + 1] = { id = "Drama", icons = { "C_Escape_H_Street_Bullet" }, class = "EHIChanceTracker", dont_flash = true, pos = 0 }
-    original._add_drama = GroupAIStateBase._add_drama
-    function GroupAIStateBase:_add_drama(...)
-        original._add_drama(self, ...)
-        managers.ehi:SetChance("Drama", EHI:RoundChanceNumber(self._drama_data.amount))
+    local level_id = Global.game_settings.level_id
+    local level_data = tweak_data.levels[level_id]
+    if not (level_data.ghost_required or level_data.ghost_required_visual) then
+        original._add_drama = GroupAIStateBase._add_drama
+        function GroupAIStateBase:_add_drama(...)
+            original._add_drama(self, ...)
+            managers.ehi:SetChance("Drama", EHI:RoundChanceNumber(self._drama_data.amount))
+        end
+        EHI:AddOnAlarmCallback(function()
+            managers.ehi:AddTracker({
+                id = "Drama",
+                icons = { "C_Escape_H_Street_Bullet" },
+                class = "EHIChanceTracker",
+                dont_flash = true
+            }, 0)
+        end)
     end
 end
 

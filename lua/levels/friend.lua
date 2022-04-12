@@ -10,7 +10,7 @@ local element_sync_triggers =
 local random_car = { time = 18, id = "RandomCar", icons = { Icon.Heli, "pd2_goto" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" } }
 local caddilac = { time = 18, id = "Caddilac", icons = { Icon.Heli, "pd2_goto" } }
 local triggers = {
-    [100109] = { time = 30 + 1 + 30, id = "FirstAssaultDelay", icons = Icon.FirstAssaultDelay, class = TT.Warning, special_function = SF.RemoveTriggerWhenExecuted },
+    [100109] = { time = 30 + 1 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.RemoveTriggerWhenExecuted },
 
     [100107] = { time = 901, id = "uno_7", class = "EHIAchievementObtainableTracker", condition = mayhem_and_up and show_achievement, exclude_from_sync = true },
     [102291] = { max = 2, id = "friend_5", class = TT.AchievementProgress },

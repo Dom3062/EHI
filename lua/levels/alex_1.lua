@@ -11,8 +11,8 @@ local triggers = {
     [101907] = { id = "halloween_1", status = "ok", special_function = SF.SetAchievementStatus },
     [101917] = { id = "halloween_1", special_function = SF.SetAchievementComplete },
     [101914] = { id = "halloween_1", special_function = SF.SetAchievementFailed },
-    [100378] = { time = 42 + 50 + assault_delay, id = "FirstAssaultDelay", icons = Icon.FirstAssaultDelay, class = TT.Warning },
-    [100380] = { time = 45 + 40 + assault_delay, id = "FirstAssaultDelay", icons = Icon.FirstAssaultDelay, class = TT.Warning },
+    [100378] = { time = 42 + 50 + assault_delay, id = "AssaultDelay", class = TT.AssaultDelay },
+    [100380] = { time = 45 + 40 + assault_delay, id = "AssaultDelay", class = TT.AssaultDelay },
     [101001] = { special_function = SF.Trigger, data = { 1010011, 1010012 } },
     [1010011] = { id = "CookChance", special_function = SF.RemoveTracker },
     [1010012] = { id = "halloween_2", special_function = SF.SetAchievementFailed },
@@ -29,7 +29,7 @@ local triggers = {
     [101975] = { special_function = SF.Trigger, data = { 1019751, 1 } },
     [1019751] = { time = 30 + anim_delay, special_function = SF.AddTrackerIfDoesNotExist },
 
-    [100707] = { time = assault_delay_methlab, id = "FirstAssaultDelay", icons = Icon.FirstAssaultDelay, class = TT.Warning, special_function = SetTimeIfMoreThanOrCreateTracker },
+    [100707] = { time = assault_delay_methlab, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SetTimeIfMoreThanOrCreateTracker },
 
     [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", "pd2_goto" }, class = TT.Warning },
 

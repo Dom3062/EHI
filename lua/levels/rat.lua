@@ -27,7 +27,7 @@ local triggers = {
     [1010013] = { id = "voff_5", special_function = SF.SetAchievementFailed },
 
     [102383] = { time = 2 + 5, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1023831 } },
-    [1023831] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30, id = "FirstAssaultDelay", icons = Icon.FirstAssaultDelay, class = TT.Warning },
+    [1023831] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30, id = "AssaultDelay", class = TT.AssaultDelay },
     [100721] = { time = 1, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
     [1007211] = { chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists },
 

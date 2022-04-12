@@ -6,7 +6,7 @@ local triggers = {
     [101722] = { id = "C4Trap", special_function = SF.RemoveTracker },
 
     [102685] = { special_function = SF.Trigger, data = { 1026851, 1026852 } },
-    [1026851] = { id = "Refueling", icons = { "pd2_water_tap" }, class = TT.Pausable, special_function = SF.MEX_CheckIfLoud, data = { yes = 121, no = 91 } },
+    [1026851] = { id = "Refueling", icons = { "pd2_water_tap" }, class = TT.Pausable, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 121, no = 91 } },
     [1026852] = { special_function = SF.RemoveTriggers, data = { 102685 } },
     [102678] = { id = "Refueling", special_function = SF.UnpauseTracker },
     [102684] = { id = "Refueling", special_function = SF.PauseTracker }

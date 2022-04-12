@@ -269,10 +269,7 @@ function EHIWaypointManager:WaypointDoesNotExist(id)
 end
 
 function EHIWaypointManager:WaypointExistsAndType(id, type)
-    if id and self._waypoints[id] and self._waypoints[id].type == type then
-        return true
-    end
-    return false
+    return id and self._waypoints[id] and self._waypoints[id].type == type
 end
 
 function EHIWaypointManager:SetWaypointTime(id, time)
@@ -678,4 +675,12 @@ function EHIWaypointManager:destroy()
     for key, _ in pairs(self._waypoints) do
         self._waypoints[key] = nil
     end
+end
+
+if _G.IS_VR then
+    return
+end
+
+if VoidUI and VoidUI.options.enable_waypoints then
+    dofile(EHI.LuaPath .. "hud/waypoint/void_ui.lua")
 end

@@ -99,25 +99,12 @@ _G.EHI =
         PauseTrackerWithTime = 46,
         RemoveTriggerAndShowAchievementCustom = 47,
         IncreaseProgressMax = 48,
-        AddTrackerIfDoesNotExistElementHostCheckOnly = 49, -- REMOVE ME
+        SetTimeIfLoudOrStealth = 49,
         IncreaseChanceFromElementSpecify = 50,
         ShowWaypoint = 51,
         ShowEHIWaypoint = 52,
         RemoveTriggerAndStartAchievementCountdown = 53,
         DecreaseProgress = 54,
-
-        WATCHDOGS_2_AddToCache = 90,
-        WATCHDOGS_2_GetFromCache = 91,
-        KOSUGI_DisableTriggerAndExecute = 93,
-        FLAT_ExecuteIfElementIsEnabled = 97,
-        MEX_CheckIfLoud = 98,
-        NMH_LowerFloor = 191,
-        PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = 194,
-        WD2_SetTrackerAccurate = 199,
-        ALEX_1_SetTimeIfMoreThanOrCreateTracker = 497,
-        KOSUGI_ExecuteAndDisableTriggers = 498,
-        JOLLY_HeliTimer = 499,
-        SAND_ExecuteIfProgressMatch = 1099,
 
         Debug = 100000,
         CustomCode = 100001,
@@ -165,7 +152,6 @@ _G.EHI =
         Phone = "pd2_phone",
         Keycard = "equipment_bank_manager_key",
 
-        FirstAssaultDelay = { { icon = "assaultbox", color = Color(1, 1, 0) } },
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarLootDrop = { "pd2_car", "pd2_lootdrop" },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
@@ -195,6 +181,7 @@ _G.EHI =
         AchievementBagValueTracker = "EHIAchievementBagValueTracker",
         AchievementTimedProgressTracker = "EHIAchievementTimedProgressTracker",
         AchievementTimedMoneyCounterTracker = "EHIAchievementTimedMoneyCounterTracker",
+        AssaultDelay = "EHIAssaultDelayTracker",
         Inaccurate = "EHIInaccurateTracker",
         InaccurateWarning = "EHIInaccurateWarningTracker",
         InaccuratePausable = "EHIInaccuratePausableTracker",
@@ -484,6 +471,7 @@ function EHI:AddOnAlarmCallback(f)
     self.OnAlarmCallback[#self.OnAlarmCallback + 1] = f
 end
 
+---@param dropin boolean
 function EHI:RunOnAlarmCallbacks(dropin)
     for _, callback in ipairs(self.OnAlarmCallback) do
         callback(dropin)
@@ -491,34 +479,55 @@ function EHI:RunOnAlarmCallbacks(dropin)
     self.OnAlarmCallback = {}
 end
 
+---@param object table
+---@param func string
+---@param post_call function
 function EHI:Hook(object, func, post_call)
     self:HookWithID(object, func, "EHI_" .. func, post_call)
 end
 
+---@param object table
+---@param func string
+---@param id string
+---@param post_call function
 function EHI:HookWithID(object, func, id, post_call)
     Hooks:PostHook(object, func, id, post_call)
 end
 
+---@param object table
+---@param func string
+---@param pre_call function
 function EHI:PreHook(object, func, pre_call)
     self:PreHookWithID(object, func, "EHI_Pre_" .. func, pre_call)
 end
 
+---@param object table
+---@param func string
+---@param id string
+---@param pre_call function
 function EHI:PreHookWithID(object, func, id, pre_call)
     Hooks:PreHook(object, func, id, pre_call)
 end
 
+---@param object table
+---@param func string
+---@param id string
+---@param post_call function
 function EHI:HookElement(object, func, id, post_call)
     Hooks:PostHook(object, func, "EHI_Element_" .. id, post_call)
 end
 
+---@param id string
 function EHI:Unhook(id)
     Hooks:RemovePostHook("EHI_" .. id)
 end
 
+---@param id string
 function EHI:UnhookElement(id)
     Hooks:RemovePostHook("EHI_Element_" .. id)
 end
 
+---@return boolean
 function EHI:ShowDramaTracker()
     return self:GetOption("show_drama_tracker") and self._cache.Host
 end
@@ -554,10 +563,11 @@ function EHI:GetBaseUnitID(final_index, start_index, continent_index)
     return (final_index - 30000 - start_index - continent_index) + 100000
 end
 
+local math_floor = math.floor
 function EHI:RoundNumber(n, bracket)
     bracket = bracket or 1
     local sign = n >= 0 and 1 or -1
-    return math.floor(n / bracket + sign * 0.5) * bracket
+    return math_floor(n / bracket + sign * 0.5) * bracket
 end
 
 function EHI:RoundChanceNumber(n)
@@ -655,6 +665,8 @@ function EHI:DeepClone(o) -- Copy of OVK's function deep_clone
 	return res
 end
 
+---@param level_id string
+---@return boolean
 function EHI:IsOneXPElementHeist(level_id)
     return table.contains({
             "four_stores",
@@ -698,6 +710,8 @@ function EHI:IsOneXPElementHeist(level_id)
         }, level_id)
 end
 
+---@param id string
+---@return table
 function EHI:GetAchievementIcon(id)
     local achievement = tweak_data.achievement.visual[id]
     if achievement then
@@ -705,6 +719,8 @@ function EHI:GetAchievementIcon(id)
     end
 end
 
+---@param id string
+---@return string
 function EHI:GetAchievementIconString(id)
     local achievement = tweak_data.achievement.visual[id]
     if achievement then
@@ -769,31 +785,23 @@ function EHI:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, ty
     end
 end
 
+---@param id number
+---@param trigger table
 local function AddTracker(id, trigger)
-    managers.ehi:AddTracker({
-        id = trigger.id,
-        time = EHI:GetTime(id),
-        chance = trigger.chance,
-        max = trigger.max,
-        dont_flash = trigger.dont_flash,
-        dont_flash_max = trigger.dont_flash_max,
-        flash_times = trigger.flash_times,
-        remove_after_reaching_target = trigger.remove_after_reaching_target,
-        status_is_overridable = trigger.status_is_overridable,
-        status = trigger.status,
-        to_secure = trigger.to_secure,
-        start_counting = trigger.start_counting,
-        icons = trigger.icons,
-        class = trigger.class
-    })
+    local trigger_table = trigger
+    trigger_table.time = EHI:GetTime(id)
+    managers.ehi:AddTracker(trigger_table)
 end
 
+---@param id number
+---@return number
 function EHI:GetTime(id)
     local full_time = triggers[id].time or 0
     full_time = full_time + (triggers[id].random_time and math.rand(triggers[id].random_time) or 0)
     return full_time
 end
 
+---@param id number
 function EHI:AddTrackerWithRandomTime(id)
     managers.ehi:AddTracker({
         id = triggers[id].id,
@@ -806,6 +814,7 @@ function EHI:AddTrackerWithRandomTime(id)
     end
 end
 
+---@param id number
 function EHI:AddTracker(id)
     local trigger = triggers[id]
     AddTracker(id, trigger)
@@ -814,6 +823,8 @@ function EHI:AddTracker(id)
     end
 end
 
+---@param id number
+---@param delay number
 function EHI:AddTrackerAndSync(id, delay)
     managers.ehi:AddTrackerAndSync({
         id = host_triggers[id].id,
@@ -826,6 +837,7 @@ function EHI:AddTrackerAndSync(id, delay)
     end
 end
 
+---@param id number
 function EHI:CheckConditionFunction(id)
     if triggers[id].condition_function then
         if triggers[id].condition_function() then
@@ -836,6 +848,7 @@ function EHI:CheckConditionFunction(id)
     end
 end
 
+---@param id number
 function EHI:CheckCondition(id)
     if triggers[id].condition ~= nil then
         if triggers[id].condition == true then
@@ -860,26 +873,33 @@ local function GetElementTimer(self, id)
     end
 end
 
+---@param id number
 function EHI:UnhookTrigger(id)
     self:UnhookElement(id)
     triggers[id] = nil
 end
 
+---@param id string
 local function PauseTracker(id)
     managers.ehi:PauseTracker(id)
     managers.ehi_waypoint:PauseWaypoint(id)
 end
 
+---@param id string
 local function UnpauseTracker(id)
     managers.ehi:UnpauseTracker(id)
     managers.ehi_waypoint:UnpauseWaypoint(id)
 end
 
+---@param id string
 local function RemoveTracker(id)
     managers.ehi:RemoveTracker(id)
     managers.ehi_waypoint:RemoveWaypoint(id)
 end
 
+---@param id number
+---@param element table
+---@param enabled boolean
 function EHI:Trigger(id, element, enabled)
     if triggers[id] then
         if triggers[id].special_function then
@@ -1084,15 +1104,14 @@ function EHI:Trigger(id, element, enabled)
                 self:UnhookTrigger(id)
             elseif f == SF.IncreaseProgressMax then
                 managers.ehi:IncreaseTrackerProgressMax(triggers[id].id)
-            elseif f == SF.AddTrackerIfDoesNotExistElementHostCheckOnly then
-                if self._cache.Host and element._values.counter_target == 0 then
-                    if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
-                        self:CheckCondition(id)
+            elseif f == SF.SetTimeIfLoudOrStealth then
+                if managers.groupai then
+                    if managers.groupai:state():whisper_mode() then -- Stealth
+                        triggers[id].time = triggers[id].data.no
+                    else -- Loud
+                        triggers[id].time = triggers[id].data.yes
                     end
-                else
-                    if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
-                        self:CheckCondition(id)
-                    end
+                    self:CheckCondition(id)
                 end
             elseif f == SF.IncreaseChanceFromElementSpecify then
                 local e = managers.mission:get_element_by_id(triggers[id].element)
@@ -1115,23 +1134,6 @@ function EHI:Trigger(id, element, enabled)
                     triggers[id].f()
                 end
 
-            -- MissionScriptElement
-            --[[elseif f == SF.PAL_ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists then
-                managers.ehi:RemoveTracker(triggers[id].data.id)
-                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
-                    self:CheckCondition(id)
-                end]]
-
-            elseif f == SF.MEX_CheckIfLoud then
-                if managers.groupai then
-                    if managers.groupai:state():whisper_mode() then -- Stealth
-                        triggers[id].time = triggers[id].data.no
-                    else -- Loud
-                        triggers[id].time = triggers[id].data.yes
-                    end
-                    self:CheckCondition(id)
-                end
-
             elseif f >= SF.CustomSF then
                 self.SFF[f](id, triggers[id], element, enabled)
             end
@@ -1141,6 +1143,8 @@ function EHI:Trigger(id, element, enabled)
     end
 end
 
+---@param id number
+---@param f function
 function EHI:RegisterCustomSpecialFunction(id, f)
     self.SFF[id] = f
 end
