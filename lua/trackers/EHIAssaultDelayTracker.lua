@@ -5,7 +5,7 @@ if BAI then
     Control = BAI:GetColor("control")
     Anticipation = BAI:GetColor("anticipation")
 end
-local level_id = Global.game_settings.level_id
+local level_id = Global.game_settings and Global.game_settings.level_id or "branchbank"
 local level_data = tweak_data.levels[level_id]
 local ai_group = level_data and level_data.group_ai_state or "besiege"
 local tweak_values = tweak_data.group_ai[ai_group].assault.delay

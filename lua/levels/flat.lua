@@ -183,7 +183,7 @@ EHI:ParseTriggers(triggers)
 EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(id, trigger, element, enabled)
     if enabled then
         if managers.ehi:TrackerExists(trigger.id) then
-            managers.ehi:SetTrackerTime(trigger.id, trigger.time)
+            managers.ehi:SetTrackerTimeNoAnim(trigger.id, trigger.time)
         else
             EHI:CheckCondition(id)
         end

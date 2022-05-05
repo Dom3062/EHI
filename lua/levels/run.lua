@@ -1,4 +1,4 @@
-EHIGasTracker = EHIGasTracker or class(EHIProgressTracker)
+EHIGasTracker = class(EHIProgressTracker)
 function EHIGasTracker:init(panel, params)
     params.max = params.max or 0
     params.icons = { "pd2_fire" }
@@ -12,6 +12,27 @@ function EHIGasTracker:Format()
     return EHIGasTracker.super.Format(self)
 end
 
+EHIZoneTracker = class(EHIWarningTracker)
+function EHIZoneTracker:update(t, dt)
+    if self._fade then
+        self._fade_time = self._fade_time - dt
+        if self._fade_time <= 0 then
+            self:delete()
+        end
+        return
+    end
+    EHIZoneTracker.super.update(self, t, dt)
+end
+
+function EHIZoneTracker:SetCompleted()
+    self._exclude_from_sync = true
+    self._text:stop()
+    self._fade_time = 5
+    self._fade = true
+    self:SetTextColor(Color.green)
+    self:AnimateBG()
+end
+
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -19,10 +40,11 @@ local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
 local hard_and_above = EHI:IsDifficultyOrAbove("hard")
 local SetProgressMax = EHI:GetFreeCustomSpecialFunctionID()
+local SetZoneComplete = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [100120] = { time = 1800, id = "run_9", class = TT.AchievementDone },
-    [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = TT.Achievement, condition = true }, -- Not really an achievement, but I want to use "SetCompleted" function :p
-    [101550] = { id = "ClearPickupZone", special_function = SF.SetAchievementComplete },
+    [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = "EHIZoneTracker", condition = true },
+    [101550] = { id = "ClearPickupZone", special_function = SetZoneComplete },
 
     -- Parking lot
     [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { "faster" } },
@@ -73,4 +95,7 @@ EHI:RegisterCustomSpecialFunction(SetProgressMax, function(id, trigger, element,
             class = EHI.Trackers.Progress
         })
     end
+end)
+EHI:RegisterCustomSpecialFunction(SetZoneComplete, function(id, trigger, ...)
+    managers.ehi:CallFunction(trigger.id, "SetCompleted")
 end)

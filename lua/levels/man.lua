@@ -49,3 +49,11 @@ EHI:ShowAchievementLootCounter({ -- Synced via EHIManager
     exclude_from_sync = true,
     no_counting = true
 })
+EHI:AddLoadSyncFunction(function(self)
+    -- Achievement count used planks on windows, vents, ...
+    -- There are total 49 positions and 10 planks
+    self:SetTrackerProgressRemaining("man_4", 49 - self:CountInteractionAvailable("stash_planks"))
+    if managers.groupai:state():whisper_mode() then
+        self:AddAchievementNotificationTracker("man_3")
+    end
+end)

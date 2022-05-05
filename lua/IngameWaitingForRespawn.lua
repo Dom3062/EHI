@@ -4,10 +4,6 @@ else
     EHI._hooks.IngameWaitingForRespawnState = true
 end
 
-if EHI:IsXPTrackerDisabled() then
-    return
-end
-
 local original =
 {
     at_enter = IngameWaitingForRespawnState.at_enter,
@@ -16,10 +12,11 @@ local original =
 
 function IngameWaitingForRespawnState:at_enter()
     original.at_enter(self)
-    managers.experience:SetInCustody(true)
+    EHI:RunOnCustodyCallback(true)
+    managers.ehi_buff:RemoveAbilityCooldown()
 end
 
 function IngameWaitingForRespawnState:at_exit()
     original.at_exit(self)
-    managers.experience:SetInCustody(false)
+    EHI:RunOnCustodyCallback(false)
 end

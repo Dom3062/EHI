@@ -1,4 +1,5 @@
-EHIECMTracker = EHIECMTracker or class(EHIWarningTracker)
+local EHI = EHI
+EHIECMTracker = class(EHIWarningTracker)
 function EHIECMTracker:SetTime(time)
     self._text:stop()
     self._time_warning = false
@@ -11,5 +12,9 @@ function EHIECMTracker:SetTimeIfLower(time, owner_id)
         return
     end
     self:SetTime(time)
+    self:UpdateOwnerID(owner_id)
+end
+
+function EHIECMTracker:UpdateOwnerID(owner_id)
     self:SetIconColor(EHI:GetPeerColorByPeerID(owner_id))
 end

@@ -154,6 +154,7 @@ function EHIMenu:init()
         })
     end
     self._preview_panel = FakeEHIManager:new(self._vr_panel or self._panel)
+    self._buffs_preview_panel = FakeEHIBuffsManager:new(self._vr_panel or self._panel)
 
     self._menu_ver = 1
     if EHI.settings.ModVersion and EHI.settings.ModVersion ~= "N/A" then
@@ -167,6 +168,7 @@ function EHIMenu:init()
     self:GetMenuFromJson(EHI.MenuPath .. "trackers.json")
     self:GetMenuFromJson(EHI.MenuPath .. "equipment.json")
     self:GetMenuFromJson(EHI.MenuPath .. "waypoints.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "buffs.json")
 
     self:OpenMenu("ehi_menu")
 end

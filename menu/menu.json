@@ -14,7 +14,7 @@
             "default_value": 0,
             "max": 1280,
             "min": 0,
-            "step": 2
+            "step": 0
         },
         {
             "type": "slider",
@@ -27,7 +27,7 @@
             "default_value": 150,
             "max": 720,
             "min": 0,
-            "step": 2
+            "step": 0
         },
         {
             "type": "slider",
@@ -124,6 +124,34 @@
             "description": "ehi_waypoints_menu_desc",
             "next_menu": "ehi_waypoints_menu",
             "ehi_ver" : 21
+        },
+        {
+            "type": "button",
+            "id": "ehi_buffs_menu",
+            "title": "ehi_buffs_menu",
+            "description": "ehi_buffs_menu_desc",
+            "next_menu": "ehi_buffs_menu",
+            "ehi_ver" : 58
+        },
+        {
+            "type" : "divider",
+            "size" : 20
+        },
+        {
+            "type" : "label",
+            "id" : "ehi_menu_only",
+            "title" : "ehi_menu_only"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_preview_text_choice",
+            "title": "ehi_show_preview_text",
+            "description": "ehi_show_preview_text_desc",
+            "callback": ["SetOption", "UpdatePreviewTextVisibility"],
+            "callback_arguments": "show_preview_text",
+            "value": "show_preview_text",
+            "default_value": true,
+            "ehi_ver" : 58
         }
     ]
 }

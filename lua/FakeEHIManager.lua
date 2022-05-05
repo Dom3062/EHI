@@ -30,71 +30,58 @@ end
 function FakeEHIManager:AddFakeTrackers()
     self._n_of_trackers = 0
     self._fake_trackers = {}
-    self:AddFirstFakeTracker({ id = "Default", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { "faster" } } )
-    self:AddFakeTracker({ id = "Default", time = math.random(60, 180), icons = { EHI.Icons.Car, EHI.Icons.Escape } } )
-    if EHI:GetOption("show_achievement") then
-        self:AddFakeTracker({ id = "show_achievement", time = math.random(60, 180), icons = { "milestone_trophy" } } )
-    end
-    if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") <= 2 then
+    self:AddFakeTracker({ id = "show_mission_trackers", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { "faster" } } )
+    self:AddFakeTracker({ id = "show_mission_trackers", time = math.random(60, 180), icons = { EHI.Icons.Car, EHI.Icons.Escape } } )
+    self:AddFakeTracker({ id = "show_achievement", time = math.random(60, 180), icons = { "milestone_trophy" } } )
+    if EHI:GetOption("xp_panel") <= 2 then
         self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, class = "FakeEHIXPTracker" } )
     end
-    if EHI:GetOption("show_trade_delay") then
-        self:AddFakeTracker({ id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = self:GetPeerColor(), visible = true } } } )
-    end
-    if EHI:GetOption("show_timers") then
-        self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { "pd2_drill", "faster", "silent", "restarter" } } )
-        self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { "wp_hack" } } )
-    end
-    if EHI:GetOption("show_zipline_timer") then
+    self:AddFakeTracker({ id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = self:GetPeerColor(), visible = true } } } )
+    self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { "pd2_drill", "faster", "silent", "restarter" } } )
+    self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { "wp_hack" } } )
+    do
         local time = math.random() * (8 - 1) + 1
         self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { "equipment_winch_hook", "wp_bag", "pd2_goto" } } )
         self:AddFakeTracker({ id = "show_zipline_timer", time = time * 2, icons = { "equipment_winch_hook", "restarter" } } )
     end
-    if EHI:GetOption("show_gage_tracker") and EHI:GetOption("gage_tracker_panel") == 1 then
+    if EHI:GetOption("gage_tracker_panel") == 1 then
         self:AddFakeTracker({ id = "show_gage_tracker", icons = { "gage" }, class = "FakeEHIProgressTracker" } )
     end
-    if EHI:GetOption("show_captain_damage_reduction") then
-        self:AddFakeTracker({ id = "show_captain_damage_reduction", icons = { "buff_shield" }, class = "FakeEHIChanceTracker" } )
-    end
-    if EHI:GetOption("show_equipment_tracker") then
-        self:AddFakeTracker({ id = "show_equipment_tracker", show_placed = true, icons = { "doctor_bag" }, class = "FakeEHIEquipmentTracker" } )
-    end
-    if EHI:GetOption("show_minion_tracker") then
-        self:AddFakeTracker({ id = "show_minion_tracker", min = 1, charges = 4, icons = { "minion" }, class = "FakeEHIMinionCounterTracker" } )
-    end
-    if EHI:GetOption("show_difficulty_tracker") then
-        self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "enemy" }, class = "FakeEHIChanceTracker" } )
-    end
-    if EHI:GetOption("show_drama_tracker") then
-        self:AddFakeTracker({ id = "show_drama_tracker", chance = math.random(100), icons = { "C_Escape_H_Street_Bullet" }, class = "FakeEHIChanceTracker" })
-    end
-    if EHI:GetOption("show_pager_tracker") then
-        self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { "pagers_used" }, class = "FakeEHIProgressTracker" } )
-    end
-    if EHI:GetOption("show_pager_callback") then
-        self:AddFakeTracker({ id = "show_pager_callback", time = math.random() * (12 - 0.5) + 0.5, icons = { "pager_icon" } })
-    end
-    if EHI:GetOption("show_enemy_count_tracker") then
-        self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "enemy" }, class = "FakeEHICountTracker" } )
-    end
-    if EHI:GetOption("show_laser_tracker") then
-        self:AddFakeTracker({ id = "show_laser_tracker", time = math.random() * (4 - 0.5) + 0.5, icons = { EHI.Icons.Lasers } })
-    end
+    self:AddFakeTracker({ id = "show_captain_damage_reduction", icons = { "buff_shield" }, class = "FakeEHIChanceTracker" } )
+    self:AddFakeTracker({ id = "show_equipment_tracker", show_placed = true, icons = { "doctor_bag" }, class = "FakeEHIEquipmentTracker" } )
+    self:AddFakeTracker({ id = "show_minion_tracker", min = 1, charges = 4, icons = { "minion" }, class = "FakeEHIMinionCounterTracker" } )
+    self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "enemy" }, class = "FakeEHIChanceTracker" } )
+    self:AddFakeTracker({ id = "show_drama_tracker", chance = math.random(100), icons = { "C_Escape_H_Street_Bullet" }, class = "FakeEHIChanceTracker" })
+    self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { "pagers_used" }, class = "FakeEHIProgressTracker" } )
+    self:AddFakeTracker({ id = "show_pager_callback", time = math.random() * (12 - 0.5) + 0.5, icons = { "pager_icon" } })
+    self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "enemy" }, class = "FakeEHICountTracker" } )
+    self:AddFakeTracker({ id = "show_laser_tracker", time = math.random() * (4 - 0.5) + 0.5, icons = { EHI.Icons.Lasers } })
     self:AddPreviewText()
 end
 
 function FakeEHIManager:AddFakeTracker(params)
+    if not EHI:GetOption(params.id) then
+        return
+    end
+    if self._n_of_trackers == 0 then
+        self:CreateFirstFakeTracker(params)
+    else
+        self:CreateFakeTracker(params)
+    end
+end
+
+function FakeEHIManager:CreateFakeTracker(params)
     params.x, params.y = self:GetPos(self._n_of_trackers)
     params.scale = self._scale
     params.text_scale = self._text_scale
     params.bg = self._bg_visibility
     params.one_icon = self._icons_visibility
     self._n_of_trackers = self._n_of_trackers + 1
-    self._fake_trackers[#self._fake_trackers + 1] = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params)
+    self._fake_trackers[self._n_of_trackers] = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params)
 end
 
-function FakeEHIManager:AddFirstFakeTracker(params)
-    self:AddFakeTracker(params)
+function FakeEHIManager:CreateFirstFakeTracker(params)
+    self:CreateFakeTracker(params)
     self._fake_trackers[1]._time_bg_box:child("left_top"):set_color(Color.red)
 end
 
@@ -119,6 +106,9 @@ function FakeEHIManager:GetPeerColor()
 end
 
 function FakeEHIManager:AddPreviewText()
+    if self._n_of_trackers == 0 then
+        return
+    end
     self._preview_text = self._hud_panel:text({
         name = "preview_text",
         text = managers.localization:text("ehi_preview"),
@@ -126,11 +116,18 @@ function FakeEHIManager:AddPreviewText()
         font = tweak_data.menu.pd2_large_font,
         align = "center",
         vertical = "center",
-        layer = 401
+        layer = 401,
+        visible = EHI:GetOption("show_preview_text")
     })
     self:make_fine_text(self._preview_text)
     self._preview_text:set_bottom(self:GetY(0) - panel_offset)
     self._preview_text:set_x(self._x)
+end
+
+function FakeEHIManager:UpdatePreviewTextVisibility(visibility)
+    if self._preview_text then
+        self._preview_text:set_visible(visibility)
+    end
 end
 
 function FakeEHIManager:GetPos(pos)
@@ -194,7 +191,9 @@ function FakeEHIManager:UpdateYOffset(y)
         local _, y_new = self:GetPos(i - 1)
         tracker:SetY(y_new)
     end
-    self._preview_text:set_bottom(self:GetY(0) - panel_offset)
+    if self._preview_text then
+        self._preview_text:set_bottom(self:GetY(0) - panel_offset)
+    end
 end
 
 function FakeEHIManager:SetSelected(id)
@@ -246,7 +245,9 @@ function FakeEHIManager:Redraw()
     for _, tracker in pairs(self._fake_trackers) do
         tracker:destroy()
     end
-    self._hud_panel:remove(self._preview_text)
+    if self._preview_text then
+        self._hud_panel:remove(self._preview_text)
+    end
     self:AddFakeTrackers()
 end
 

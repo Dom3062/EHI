@@ -22,7 +22,7 @@ local triggers = {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072--[[, 1001073]] } },
     [1001071] = { id = "slakt_3", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
     [1001072] = { id = "cac_26", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up, exclude_from_sync = true },
-    --[1001073] = { time = 30, id = "AssaultDelay", stop_counting = EHI._cache.Host, class = TT.AssaultDelay },
+    --[1001073] = { time = AssaultDelay, id = "AssaultDelay", stop_counting = EHI._cache.Host, class = TT.AssaultDelay },
     [100256] = { id = "slakt_3", special_function = SF.SetAchievementFailed },
     [100258] = { id = "slakt_3", special_function = SF.SetAchievementComplete },
     [101884] = { id = "cac_26", status = "finish", special_function = SF.SetAchievementStatus },
@@ -78,4 +78,46 @@ EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(id, trigge
             managers.ehi:SetTrackerProgress(trigger.id, trigger.data.progress)
         end
     end
+end)
+EHI:AddLoadSyncFunction(function(self) -- Works only when the hack is running
+    local pc = managers.worlddefinition:get_unit(104418) -- 1
+    if pc then
+        EHI:Log("Checking PC Unit 104418")
+        local timer = pc:timer_gui()
+        if timer._started and not timer._done then
+            EHI:Log("PC Unit 104418 condition is true -> progress 1/4")
+            EHI:CheckCondition(104478)
+            return
+        end
+    else -- Just in case, but the PC should exists
+        EHI:Log("PC Unit 104418 is nil")
+        return
+    end
+    local pc = managers.worlddefinition:get_unit(102413) -- 2
+    if pc then
+        EHI:Log("Checking PC Unit 102413")
+        local timer = pc:timer_gui()
+        if timer._started and not timer._done then
+            EHI:Log("PC Unit 102413 condition is true -> progress 2/4")
+            EHI:CheckCondition(104480)
+            return
+        end
+    else -- Just in case, but the PC should exists
+        EHI:Log("PC Unit 102413 is nil")
+        return
+    end
+    local pc = managers.worlddefinition:get_unit(102414) -- 3
+    if pc then
+        EHI:Log("Checking PC Unit 102414")
+        local timer = pc:timer_gui()
+        if timer._started and not timer._done then
+            EHI:Log("PC Unit 102414 condition is true -> progress 3/4")
+            EHI:CheckCondition(104481)
+            return
+        end
+    else -- Just in case, but the PC should exists
+        EHI:Log("PC Unit 102414 is nil")
+        return
+    end
+    -- Pointless to query the last PC
 end)

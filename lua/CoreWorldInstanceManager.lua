@@ -97,6 +97,9 @@ end
 local level_id = Global.game_settings.level_id
 local units =
 {
+    ["units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
+    ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
+
     ["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics"] = { icons = { "equipment_evidence" } },
     ["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security"] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = true, waypoint_id = 100019 },
     ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { "pd2_drill" }, ignore_visibility = true },
@@ -121,6 +124,9 @@ elseif level_id == "mus" then -- The Diamond
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { "faster" }, remove_on_pause = true, warning = true }
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { EHI.Icons.Keycard } }
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100050 }
+elseif level_id == "hox_1" then -- Hoxton Breakout Day 1
+    units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small"] = { remove_vanilla_waypoint = true, waypoint_id = 100090 }
+    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "hox_1" }
 elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
     units["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics"].f = "hox_2_forensics"
 elseif level_id == "sah" then -- Shacklethorne Auction
@@ -132,7 +138,7 @@ elseif level_id == "nail" then -- Lab Rats
 elseif level_id == "cane" then -- Santa's Workshop
     -- OVK decided to use one timer for fire and fire recharge
 	-- This class ignores them and that timer is implemented
-	-- in MissionScriptElement.lua
+	-- in cane.lua
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { EHI.Icons.Vault }, f = "caneSafeTimer" }
 elseif level_id == "pbr" then -- Beneath the Mountain
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { "pd2_c4" } }

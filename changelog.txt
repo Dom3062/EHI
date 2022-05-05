@@ -1,3 +1,12 @@
+r58 (05. 05. 2022):
+Added buffs
+Added "Show Mission Trackers" option
+Added tracker for achievement "Masterpiece"
+Fixed an issue where Pager Waypoints are still visible on the screen after alarm has been raised
+Fixed an issue where "Assault Delay" tracker did not hide when assault started
+Fixed a log spam if certain mods are installed
+ECM Tracker: Fixed an issue where ECM icon did not correctly show peer color (client only)
+
 r57 (12. 04. 2022):
 Added Japanese translation
 Drama Tracker will show only on heists when loud option is possible

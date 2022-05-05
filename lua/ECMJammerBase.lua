@@ -11,13 +11,33 @@ end
 
 local original =
 {
-    spawn = ECMJammerBase.spawn
+    spawn = ECMJammerBase.spawn,
+    set_server_information = ECMJammerBase.set_server_information,
+    set_owner = ECMJammerBase.set_owner,
+    sync_setup = ECMJammerBase.sync_setup
 }
 
 function ECMJammerBase.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
     local unit = original.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
     unit:base():SetPeerID(peer_id or 0)
 	return unit
+end
+
+function ECMJammerBase:set_server_information(peer_id, ...)
+    original.set_server_information(self, peer_id, ...)
+    self:SetPeerID(peer_id)
+end
+
+function ECMJammerBase:sync_setup(upgrade_lvl, peer_id, ...)
+    original.sync_setup(self, upgrade_lvl, peer_id, ...)
+    self:SetPeerID(peer_id)
+end
+
+function ECMJammerBase:set_owner(owner, ...)
+    original.set_owner(self, owner, ...)
+    self:SetPeerID(self._owner_id or 0)
+    managers.ehi:CallFunction("ECMJammer", "UpdateOwnerID", self._ehi_peer_id)
+    managers.ehi:CallFunction("ECMFeedback", "UpdateOwnerID", self._ehi_peer_id)
 end
 
 function ECMJammerBase:SetPeerID(peer_id)

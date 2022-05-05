@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -10,8 +11,8 @@ local triggers = {
     -- Random logic has defined 2 heli fly ins
     -- First is shorter (6.5 + 76/30) 76/30 => 2.533333 (rounded to 2.5 in Mission Script)
     -- Second is longer (15 + 76/30)
-    -- Second animation is counted in this trigger, the first is in CoreElementUnitSequence.lua.
-    -- If the first fly in is selected, the tracker is updated to reflect that
+    -- Second animation is counted in this trigger, the first is in trigger 100578.
+    -- If the first fly-in is selected, the tracker is updated to reflect that
 
     [100107] = { max = 2, id = "moon_4", class = TT.AchievementProgress, special_function = SF.RemoveTriggerAndShowAchievement },
 
@@ -24,7 +25,17 @@ local triggers = {
     [100578] = { time = 9, id = "C4", icons = { Icon.Heli, Icon.C4, "pd2_goto" }, special_function = SF.SetTimeOrCreateTracker }
 }
 
+local DisableWaypoints =
+{
+    -- Drill WP in the tech store
+    [100241] = true,
+
+    -- Fix Jewelry Store PC hack WP
+    [100828] = true
+}
+
 EHI:ParseTriggers(triggers)
+EHI:DisableWaypoints(DisableWaypoints)
 if EHI:GetOption("show_achievement") then
     if EHI:IsDifficultyOrAbove("overkill") then
         EHI:ShowAchievementLootCounter({

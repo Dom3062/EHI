@@ -1,29 +1,30 @@
+local EHI = EHI
+local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
+local AddMoney = EHI:GetFreeCustomSpecialFunctionID()
+local MoneyTrigger = { id = "MallDestruction", special_function = AddMoney }
+local OverkillOrBelow = EHI:IsDifficultyOrBelow("overkill")
 local triggers =
 {
     -- Time before escape vehicle arrives
-    [300248] = { time = (EHI:IsDifficultyOrBelow("overkill") and 120 or 300) + 25, id = "EscapeHeli", icons = EHI.Icons.HeliEscapeNoLoot },
+    [300248] = { time = (OverkillOrBelow and 120 or 300) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot },
     -- 120: Base Delay on OVK or below
     -- 300: Base Delay on Mayhem or above
     -- 25: Escape zone activation delay
 
     [300043] = { id = "MallDestruction", class = TT.MallcrasherMoney, icons = { "C_Vlad_H_Mallcrasher_Shoot" } },
-    [300852] = { amount = 40, id = "MallDestruction", special_function = SF.AddMoney },
-    [300853] = { amount = 80, id = "MallDestruction", special_function = SF.AddMoney },
-    [300854] = { amount = 250, id = "MallDestruction", special_function = SF.AddMoney },
-    [300855] = { amount = 500, id = "MallDestruction", special_function = SF.AddMoney },
-    [300856] = { amount = 800, id = "MallDestruction", special_function = SF.AddMoney },
-    [300857] = { amount = 2000, id = "MallDestruction", special_function = SF.AddMoney },
-    [300858] = { amount = 2800, id = "MallDestruction", special_function = SF.AddMoney },
-    [300859] = { amount = 4000, id = "MallDestruction", special_function = SF.AddMoney },
-    [300873] = { amount = 5600, id = "MallDestruction", special_function = SF.AddMoney },
-    --[300863] = { amount = 5600, id = "MallDestruction", special_function = true },
-    --[300867] = { amount = 5600, id = "MallDestruction", special_function = true },
-    --[300869] = { amount = 5600, id = "MallDestruction", special_function = true },
-    --[300870] = { amount = 5600, id = "MallDestruction", special_function = true },
-    --[300830] = { amount = 8000, id = "MallDestruction", special_function = true },
+    [300843] = MoneyTrigger, -- +40
+    [300844] = MoneyTrigger, -- +80
+    [300845] = MoneyTrigger, -- +250
+    [300846] = MoneyTrigger, -- +500
+    [300847] = MoneyTrigger, -- +800
+    [300848] = MoneyTrigger, -- +2000
+    [300850] = MoneyTrigger, -- +2800
+    [300849] = MoneyTrigger, -- +4000
+    [300872] = MoneyTrigger, -- +5600
+    [300851] = MoneyTrigger, -- +8000, appears to be unused
 
     [301148] = { special_function = SF.Trigger, data = { 3011481, 3011482, 3011483 } },
     [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = TT.AchievementTimedMoneyCounterTracker, condition = show_achievement and EHI:IsDifficulty("overkill"), exclude_from_sync = true },
@@ -46,4 +47,14 @@ local triggers =
     [300791] = { id = "window_cleaner", special_function = SF.IncreaseProgress }
 }
 
+if EHI._cache.Client then
+    triggers[302287] = { time = (OverkillOrBelow and 115 or 120) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[300223] = { time = 60 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[302289] = { time = 30 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[300246] = { time = 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
+end
+
 EHI:ParseTriggers(triggers)
+EHI:RegisterCustomSpecialFunction(AddMoney, function(id, trigger, element, enabled)
+    managers.ehi:AddMoneyToTracker(trigger.id, element._values.amount)
+end)

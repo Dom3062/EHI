@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.AmmoBagBase then
     return
 else
@@ -33,23 +34,17 @@ local function CheckIgnore(unit_pos)
     return result
 end
 
-local correction =
-{
-    [tostring(Idstring("units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"))] = 1,	--CustomAmmoBagBase / shelf 1
-	[tostring(Idstring("units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"))] = 1,	--CustomAmmoBagBase / shelf 2
-}
-
 local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(unit, key, amount)
-        if managers.ehi:TrackerDoesNotExist("Deployables") then
+        if managers.ehi:TrackerDoesNotExist("Deployables") and amount ~= 0 then
             managers.ehi:AddAggregatedDeployablesTracker()
         end
         managers.ehi:CallFunction("Deployables", "UpdateAmount", "ammo_bag", unit, key, amount)
     end
 else
     UpdateTracker = function(unit, key, amount)
-        if managers.ehi:TrackerDoesNotExist("AmmoBags") then
+        if managers.ehi:TrackerDoesNotExist("AmmoBags") and amount ~= 0 then
             managers.ehi:AddTracker({
                 id = "AmmoBags",
                 format = "percent",
@@ -74,7 +69,7 @@ local original =
 function AmmoBagBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    self._offset = correction[tostring(unit:name())] or 0
+    self._offset = 0
     self._ignore = CheckIgnore(unit:position())
 end
 
@@ -84,6 +79,18 @@ end
 
 function AmmoBagBase:GetRealAmount()
     return (self._ammo_amount or self._max_ammo_amount) - self._offset
+end
+
+function AmmoBagBase:SetOffset(offset)
+    self._offset = offset
+    if not self._ignore and self._unit:interaction():active() then
+        UpdateTracker(self._unit, self._ehi_key, self._ammo_amount - self._offset)
+    end
+end
+
+function AmmoBagBase:SetIgnore()
+    self._ignore = true
+    UpdateTracker(self._unit, self._ehi_key, 0)
 end
 
 function AmmoBagBase:_set_visual_stage(...)

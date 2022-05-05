@@ -1,18 +1,4 @@
--- MissionDoor class; figure out a solution
---[[if EHI:ShouldDisableWaypoints() then
-    local vault_ids = {
-        [0] = { waypoint_id = 0 }
-    }
-    for _, vault_id in pairs(vault_ids) do
-        managers.mission:add_runned_unit_sequence_trigger(vault_id, "drill_placed", function(unit)
-            for _, waypoint_id in pairs(waypoint_ids) do
-                managers.hud:SoftRemoveWaypoint(waypoint_id)
-                EHI._cache.IgnoreWaypoints[waypoint_id] = true
-            end
-        end)
-    end
-end]]
-
+local EHI = EHI
 local Icon = EHI.Icons
 local TT = EHI.Trackers
 local SF = EHI.SpecialFunctions

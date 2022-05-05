@@ -5,6 +5,27 @@ else
     EHI._hooks.PlayerInventory = true
 end
 
+if EHI:GetOption("show_buffs") then
+    local buff_original =
+    {
+        _start_jammer_effect = PlayerInventory._start_jammer_effect,
+        _start_feedback_effect = PlayerInventory._start_feedback_effect
+    }
+    function PlayerInventory:_start_jammer_effect(end_time, ...)
+        buff_original._start_jammer_effect(self, end_time, ...)
+        if not end_time and managers.player:player_unit() == self._unit then
+            managers.ehi_buff:AddBuff("HackerJammerEffect", self:get_jammer_time())
+        end
+    end
+
+    function PlayerInventory:_start_feedback_effect(end_time, ...)
+        buff_original._start_feedback_effect(self, end_time, ...)
+        if not end_time and managers.player:player_unit() == self._unit then
+            managers.ehi_buff:AddBuff("HackerFeedbackEffect", self:get_jammer_time())
+        end
+    end
+end
+
 if not EHI:GetOption("show_equipment_tracker") then
     return
 end

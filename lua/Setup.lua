@@ -15,6 +15,7 @@ function Setup:init_managers(managers, ...)
     original.init_managers(self, managers, ...)
     managers.ehi = EHIManager:new()
     managers.ehi_waypoint = EHIWaypointManager:new()
+    managers.ehi_buff = EHIBuffManager:new()
     if managers.player.SetPlayerData then
         managers.player:SetPlayerData()
     end

@@ -197,12 +197,7 @@ function EHIManager:LoadSync()
     end
     local level_id = Global.game_settings.level_id
     local show_achievement = EHI:GetOption("show_achievement")
-    if level_id == "pbr2" then -- Birth of Sky
-        self:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
-        --[[if show_achievement and EHI:IsDifficultyOrAbove("overkill") then
-            self:AddTimedAchievementTracker("jerry_4", 83)
-        end]]
-    elseif level_id == "pex" then -- Breakfast in Tijuana
+    if level_id == "pex" then -- Breakfast in Tijuana
         --[[
             There are total 12 places where medals can appears
             -- 11 places are on the first floor (6 randomly selected)
@@ -270,13 +265,6 @@ function EHIManager:LoadSync()
                 break
             end
         end
-    elseif level_id == "man" then -- Undercover
-        -- Achievement count used planks on windows, vents, ...
-        -- There are total 49 positions and 10 planks
-        self:SetTrackerProgressRemaining("man_4", 49 - self:CountInteractionAvailable("stash_planks"))
-        if managers.groupai:state():whisper_mode() then
-            self:AddAchievementNotificationTracker("man_3")
-        end
     elseif level_id == "arm_for" then -- Transport: Train Heist
         if managers.groupai:state():whisper_mode() then
             self:AddAchievementNotificationTracker("armored_6")
@@ -300,6 +288,13 @@ function EHIManager:LoadSync()
                 class = "EHIAchievementTimedMoneyCounterTracker"
             })
             self:SetTrackerProgress("ameno_3", managers.loot:get_real_total_small_loot_value())
+            EHI:AddAchievementToCounter({
+                achievement = "ameno_3",
+                counter =
+                {
+                    check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
+                }
+            })
         end
     end
     EHI:DelayCall("EHI_Converts_UpdatePeerColors", 2, function()
@@ -351,7 +346,7 @@ function EHIManager:AddInvisibleTracker(params)
     self:AddTracker(params)
 end
 
-function EHIManager:AddTracker(params, pos, remove)
+function EHIManager:AddTracker(params, pos)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
         EHI:LogTraceback()

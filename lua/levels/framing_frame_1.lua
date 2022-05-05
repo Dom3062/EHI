@@ -19,14 +19,19 @@ function EHI:PaintingCount()
     })
 end
 
---[[local SF = EHI.SpecialFunctions
-local triggers = {
-    [100789] = { special_function = SF.CustomCode, f = function()
-        EHI:PaintingCount()
-    end}
-}
+if Global.game_settings.level_id == "gallery" then
+    local EHI = EHI
+    local SF = EHI.SpecialFunctions
+    local TT = EHI.Trackers
+    local triggers = {
+        [100789] = { id = "cac_19", class = TT.AchievementNotification },
+        [104288] = { id = "cac_19", special_function = SF.SetAchievementComplete },
+        [104290] = { id = "cac_19", special_function = SF.SetAchievementFailed }
+    }
 
-EHI:ParseTriggers(triggers)]]
+    EHI:ParseTriggers(triggers)
+end
+
 EHI:ShowLootCounter(9)
 EHI:ShowAchievementLootCounter({
     achievement = "pink_panther",

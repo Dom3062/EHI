@@ -31,7 +31,7 @@ else
         if EHI._cache.GagePackages and EHI._cache.GagePackages > 0 then
             if EHI._cache.Host or not managers.ehi:GetDropin() then
                 local max = tweak_data.gage_assignment:get_num_assignment_units() or 1
-                managers.hud:custom_ingame_popup_text("Gage Packages", "0/" .. tostring(max), "EHI_Gage")
+                managers.hud:custom_ingame_popup_text("GAGE PACKAGES", "0/" .. tostring(max), "EHI_Gage")
             end
         end
     end
@@ -185,6 +185,10 @@ function IngameWaitingForPlayersState:at_exit(...)
     else]]
     if managers.experience.RecalculateSkillXPMultiplier then
         managers.experience:RecalculateSkillXPMultiplier()
+    end
+    if managers.player.EHICheckAbility then
+        managers.player:EHICheckAbility()
+        managers.ehi_buff:ActivateUpdatingBuffs()
     end
     if not EHI:GetOption("show_achievement") or EHI._cache.AchievementsAreDisabled or GunGameGame then
         return

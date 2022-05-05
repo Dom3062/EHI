@@ -17,7 +17,12 @@ function PrePlanningManager:on_execute_preplanning(...)
             preplan_voted = {}
             for _, data in pairs(winners) do
                 local type, index = unpack(data)
-                preplan_voted[self:get_mission_element_id(type, index)] = true
+                if type and index then
+                    local element_id = self:get_mission_element_id(type, index)
+                    if element_id then
+                        preplan_voted[element_id] = true
+                    end
+                end
             end
         end
     end

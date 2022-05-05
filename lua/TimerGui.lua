@@ -11,6 +11,73 @@ end
 
 local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")
 local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
+local level_id = Global.game_settings.level_id
+-- [index] = Vector3(x, y, z)
+local MissionDoorPositions = {}
+-- [index] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes" }
+---- See MissionDoor class how to get Drill position
+---- Indexes must match or it won't work
+local MissionDoorIndex = {}
+if level_id == "framing_frame_1" or level_id == "gallery" then -- Framing Frame Day 1 / Art Gallery
+    MissionDoorPositions =
+    {
+        -- Security doors
+        [1] = Vector3(-827.08, 115.886, 92.4429),
+        [2] = Vector3(-60.1138, 802.08, 92.4429),
+        [3] = Vector3(-140.886, -852.08, 92.4429)
+    }
+    MissionDoorIndex =
+    {
+        [1] = { w_id = 103191 },
+        [2] = { w_id = 103188 },
+        [3] = { w_id = 103202 }
+    }
+elseif level_id == "arm_for" then -- Transport: Train Heist
+    MissionDoorPositions =
+    {
+        -- Vaults
+        [1] = Vector3(-150, -1100, 685),
+        [2] = Vector3(-1750, -1200, 685),
+        [3] = Vector3(750, -1200, 685),
+        [4] = Vector3(2350, -1100, 685),
+        [5] = Vector3(-2650, -1100, 685),
+        [6] = Vector3(3250, -1200, 685)
+    }
+    MissionDoorIndex =
+    {
+        [1] = { w_id = 100835 },
+        [2] = { w_id = 100253 },
+        [3] = { w_id = 100838 },
+        [4] = { w_id = 100840 },
+        [5] = { w_id = 102288 },
+        [6] = { w_id = 102593 }
+    }
+elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
+    local SecurityOffice = { w_id = EHI:GetInstanceElementID(100026, 6690) }
+    MissionDoorPositions =
+    {
+        -- Evidence
+        [1] = Vector3(-1552.84, 816.472, -9.11819),
+
+        -- Basement (Escape)
+        [2] = Vector3(-744.305, 5042.19, -409.118),
+
+        -- Archives
+        [3] = Vector3(817.472, 2884.84, -809.118),
+
+        -- Security Office
+        [4] = Vector3(-1207.53, 4234.84, -409.118),
+        [5] = Vector3(807.528, 4265.16, -9.11819)
+    }
+    MissionDoorIndex =
+    {
+        [1] = { w_id = 101562 },
+        [2] = { w_id = 102017 },
+        [3] = { w_id = 101345 },
+        [4] = SecurityOffice,
+        [5] = SecurityOffice
+    }
+end
 
 local original =
 {
@@ -88,10 +155,31 @@ function TimerGui:StartTimer()
 end
 
 function TimerGui:PostStartTimer()
+    if self._unit:mission_door_device() then
+        local data = self:GetMissionDoorData()
+        if data then
+            self._waypoint_id = data.w_id
+            self._remove_vanilla_waypoint = true
+            self._restore_vanilla_waypoint_on_done = data.restore
+        end
+    end
     if self._remove_vanilla_waypoint and show_waypoint then
         managers.hud:SoftRemoveWaypoint(self._waypoint_id)
         EHI._cache.IgnoreWaypoints[self._waypoint_id] = true
         EHI:DisableElementWaypoint(self._waypoint_id)
+    end
+end
+
+function TimerGui:GetMissionDoorData()
+    -- No clue on what I can't compare the vectors directly via == and I have to do string comparison
+    -- What changed that the comparison is not valid ? Constellation ? Game had a bad sleep ?
+    -- This should be changed in the future...
+    -- Saving grace here is that this function only runs when the drill is from MissionDoor class, which heists rarely use.
+    local pos = tostring(self._unit:position())
+    for i, p in ipairs(MissionDoorPositions) do
+        if tostring(p) == pos then
+            return MissionDoorIndex[i]
+        end
     end
 end
 

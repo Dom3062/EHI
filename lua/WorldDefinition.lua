@@ -89,6 +89,9 @@ local units =
     ["units/pd2_dlc_dah/props/dah_prop_hack_box/dah_prop_hack_ipad_unit"] = { remove_on_power_off = true },
 
     -- Copied from CoreWorldInstanceManager.lua
+    ["units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
+    ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
+
     ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { "pd2_drill" }, ignore_visibility = true },
     ["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" } },
     ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { "faster" }, warning = true },
@@ -118,6 +121,8 @@ elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
     units["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_director/stn_interactable_computer_director"] = { f = "hox_2" }
 elseif level_id == "dinner" then -- Slaughterhouse
     units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small"] = { f = "dinner_WP" }
+elseif level_id == "moon" then -- Stealing Xmas
+    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100776 }
 elseif level_id == "hvh" then -- Cursed Kill Room
     units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
     units["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" }, f = "hvhTimer", custom_callback = { id = "hvhCleanUp", f = "remove" } }
@@ -186,17 +191,6 @@ function WorldDefinition:election_day_2(instance, unit_id, unit_data, unit)
     end
 end
 
-function WorldDefinition:hox_2(instance, unit_id, unit_data, unit)
-    unit:timer_gui():SetRestoreVanillaWaypointOnDone()
-    unit:timer_gui():RemoveVanillaWaypoint(104571)
-end
-
-function WorldDefinition:hox_2_forensics(instance, unit_id, unit_data, unit)
-    unit:timer_gui():SetIcons(unit_data.icons)
-    unit:timer_gui():SetRestoreVanillaWaypointOnDone()
-    unit:timer_gui():RemoveVanillaWaypoint(101559)
-end
-
 function WorldDefinition:chasC4(instance, unit_id, unit_data, unit)
     if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100054 then
         unit:digital_gui():SetIcons(unit_data.icons)
@@ -238,6 +232,22 @@ function WorldDefinition:chasC4Finalize()
             self:FinalizeUnits(instance_c4)
         end
     end
+end
+
+function WorldDefinition:hox_1(instance, unit_id, unit_data, unit)
+    unit:timer_gui():SetRestoreVanillaWaypointOnDone()
+    unit:timer_gui():RemoveVanillaWaypoint(EHI:GetInstanceElementID(100072, unit_data.instance_index, unit_data.continent_index))
+end
+
+function WorldDefinition:hox_2(instance, unit_id, unit_data, unit)
+    unit:timer_gui():SetRestoreVanillaWaypointOnDone()
+    unit:timer_gui():RemoveVanillaWaypoint(104571)
+end
+
+function WorldDefinition:hox_2_forensics(instance, unit_id, unit_data, unit)
+    unit:timer_gui():SetIcons(unit_data.icons)
+    unit:timer_gui():SetRestoreVanillaWaypointOnDone()
+    unit:timer_gui():RemoveVanillaWaypoint(101559)
 end
 
 function WorldDefinition:hox3Timer(instance, unit_id, unit_data, unit)
@@ -307,5 +317,11 @@ function WorldDefinition:dinner_WP(instance, unit_id, unit_data, unit)
         unit:timer_gui():RemoveVanillaWaypoint(103174)
     else
         unit:timer_gui():RemoveVanillaWaypoint(103175)
+    end
+end
+
+function WorldDefinition:SetAmmoOffset(instance, unit_id, unit_data, unit)
+    if unit:base().SetOffset then
+        unit:base():SetOffset(1)
     end
 end

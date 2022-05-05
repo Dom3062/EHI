@@ -39,6 +39,7 @@ _G.EHI =
     Callback = {},
 
     OnAlarmCallback = {},
+    OnCustodyCallback = {},
     AchievementCounter = {},
 
     _base_delay = {},
@@ -51,12 +52,10 @@ _G.EHI =
 
     SpecialFunctions =
     {
-        AddMoney = 1,
         RemoveTracker = 2,
         PauseTracker = 3,
         UnpauseTracker = 4,
         UnpauseTrackerIfExists = 5,
-        ResetTrackerTimeWhenUnpaused = 6, -- REMOVE ME
         AddTrackerIfDoesNotExist = 7,
         SetAchievementComplete = 8,
         AddToCache = 9,
@@ -287,7 +286,6 @@ function EHI:Load()
         file:close()
         if table.SaveDataVer and table.SaveDataVer == self.SaveDataVer then
             self:LoadValues(self.settings, table)
-            self:Log("Loaded user settings")
         else
             self.SaveDataNotCompatible = true
             self:Save()
@@ -327,13 +325,16 @@ end
 function EHI:LoadDefaultValues()
     self.settings =
     {
+        -- Menu Only
+        show_preview_text = true,
+
         -- Common
         x_offset = 0,
         y_offset = 150,
         text_scale = 1,
         scale = 1,
         vr_scale = 2.5,
-        time_format = 2,
+        time_format = 2, -- 1 = Seconds only, 2 = Minutes and seconds
         tracker_alignment = 1, -- 1 = Vertical, 2 = Horizontal
 
         -- Visuals
@@ -341,6 +342,7 @@ function EHI:LoadDefaultValues()
         show_one_icon = false,
 
         -- Trackers
+        show_mission_trackers = true,
         show_achievement = true,
         hide_unlocked_achievements = true,
         show_gained_xp = true,
@@ -417,9 +419,18 @@ function EHI:LoadDefaultValues()
         show_waypoints_timers = true,
         show_waypoints_pager = true,
         show_waypoints_cameras = true,
-        show_waypoints_zipline = true
+        show_waypoints_zipline = true,
+
+        -- Buffs
+        show_buffs = true,
+        buffs_x_offset = 0,
+        buffs_y_offset = 80,
+        buffs_alignment = 2, -- 1 = Left; 2 = Center; 3 = Right
+        buffs_scale = 1,
+        buffs_shape = 1, -- 1 = Square; 2 = Circle
+        buffs_show_progress = true,
+        buffs_invert_progress = false
     }
-    self:Log("Default values loaded")
 end
 
 function EHI:GetOption(option)
@@ -477,6 +488,16 @@ function EHI:RunOnAlarmCallbacks(dropin)
         callback(dropin)
     end
     self.OnAlarmCallback = {}
+end
+
+function EHI:AddOnCustodyCallback(f)
+    self.OnCustodyCallback[#self.OnCustodyCallback + 1] = f
+end
+
+function EHI:RunOnCustodyCallback(state)
+    for _, callback in ipairs(self.OnCustodyCallback) do
+        callback(state)
+    end
 end
 
 ---@param object table
@@ -904,9 +925,7 @@ function EHI:Trigger(id, element, enabled)
     if triggers[id] then
         if triggers[id].special_function then
             local f = triggers[id].special_function
-            if f == SF.AddMoney then
-                managers.ehi:AddMoneyToTracker(triggers[id].id, triggers[id].amount)
-            elseif f == SF.RemoveTracker then
+            if f == SF.RemoveTracker then
                 RemoveTracker(triggers[id].id)
             elseif f == SF.PauseTracker then
                 PauseTracker(triggers[id].id)
@@ -914,13 +933,6 @@ function EHI:Trigger(id, element, enabled)
                 UnpauseTracker(triggers[id].id)
             elseif f == SF.UnpauseTrackerIfExists then
                 if managers.ehi:TrackerExists(triggers[id].id) then
-                    UnpauseTracker(triggers[id].id)
-                else
-                    self:CheckCondition(id)
-                end
-            elseif f == SF.ResetTrackerTimeWhenUnpaused then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:ResetTrackerTime(triggers[id].id)
                     UnpauseTracker(triggers[id].id)
                 else
                     self:CheckCondition(id)
@@ -1268,6 +1280,9 @@ Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id,
 end)
 
 function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
+    if not self:GetOption("show_mission_trackers") then
+        return
+    end
     local show_achievement = self:GetOption("show_achievement")
     for id, data in pairs(mission_triggers) do
         -- Mark every tracker, that has random time, as inaccurate
@@ -1507,7 +1522,7 @@ if EHI.debug then -- For testing purposes
                 local f = function(e, ...)
                     managers.hud:DebugBaseElement(e._id, instance.start_index, nil, e:editor_name())
                 end
-                EHI:Log(string.format("Hooking elements in instance '%s'", instance_name))
+                self:Log(string.format("Hooking elements in instance '%s'", instance_name))
                 for _, script in pairs(scripts) do
                     for i = start, _end, 1 do
                         local element = script:element(i)
@@ -1516,7 +1531,7 @@ if EHI.debug then -- For testing purposes
                         end
                     end
                 end
-                EHI:Log("Hooking done")
+                self:Log("Hooking done")
             end
         end
     end

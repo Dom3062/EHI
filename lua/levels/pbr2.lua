@@ -38,3 +38,6 @@ EHI:ShowAchievementLootCounter({
     exclude_from_sync = true,
     no_counting = true
 })
+EHI:AddLoadSyncFunction(function(self)
+    self:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
+end)

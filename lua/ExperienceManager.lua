@@ -43,6 +43,10 @@ function ExperienceManager:EHIInitFinalize()
             self:RecalculateSkillXPMultiplier()
         end
         EHI:AddOnAlarmCallback(f)
+        local function f2(state)
+            self:SetInCustody(state)
+        end
+        EHI:AddOnCustodyCallback(f2)
     end
 end
 
@@ -141,19 +145,19 @@ elseif xp_panel == 3 then
     if xp_format == 1 then -- Base
         Show = function(self, diff)
             if managers.hud then
-                managers.hud:custom_ingame_popup_text("Experience", "Base XP Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
+                managers.hud:custom_ingame_popup_text("EXPERIENCE", "Base XP Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
             end
         end
     elseif xp_format == 2 then -- Base * Diff
         Show = function(self, diff)
             if managers.hud then
-                managers.hud:custom_ingame_popup_text("Experience", "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
+                managers.hud:custom_ingame_popup_text("EXPERIENCE", "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
             end
         end
     else -- Multiply all
         Show = function(self, diff)
             if managers.hud then
-                managers.hud:custom_ingame_popup_text("Experience", "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
+                managers.hud:custom_ingame_popup_text("EXPERIENCE", "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
             end
         end
     end
@@ -235,9 +239,9 @@ end
 
 EHI:Hook(ExperienceManager, "mission_xp_award", f)
 
+local math_round = math.round
 function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 	local job_stars = self._xp.job_stars
-	local success = true
 	local num_winners = self._xp.alive_players
 	local player_stars = self._xp.level_to_stars
 	local pro_job_multiplier = self._xp.pro_job_multiplier
@@ -262,50 +266,48 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 	local bonus_xp = 0
 
 	base_xp = job_xp_dissect + stage_xp_dissect + mission_xp_dissect
-	pro_job_xp_dissect = math.round(base_xp * pro_job_multiplier - base_xp)
+	pro_job_xp_dissect = math_round(base_xp * pro_job_multiplier - base_xp)
 	base_xp = base_xp + pro_job_xp_dissect
 
 	if self._xp.is_level_limited then
 		local diff_in_stars = job_stars - player_stars
 		local tweak_multiplier = tweak_data:get_value("experience_manager", "level_limit", "pc_difference_multipliers", diff_in_stars) or 0
-		base_xp = math.round(base_xp * tweak_multiplier)
+		base_xp = math_round(base_xp * tweak_multiplier)
 	end
 
 	contract_xp = base_xp
-	risk_dissect = math.round(contract_xp * xp_multiplier)
+	risk_dissect = math_round(contract_xp * xp_multiplier)
 	contract_xp = contract_xp + risk_dissect
 
 	if self._xp.in_custody then
 		local multiplier = tweak_data:get_value("experience_manager", "in_custody_multiplier") or 1
-		personal_win_dissect = math.round(contract_xp * multiplier - contract_xp)
+		personal_win_dissect = math_round(contract_xp * multiplier - contract_xp)
 		contract_xp = contract_xp + personal_win_dissect
 	end
 
 	total_xp = contract_xp
 	local total_contract_xp = total_xp
 	bonus_xp = self._xp.skill_xp_multiplier
-	skill_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
+	skill_dissect = math_round(total_contract_xp * bonus_xp - total_contract_xp)
 	total_xp = total_xp + skill_dissect
 	bonus_xp = self._xp.infamy_bonus
-	infamy_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
+	infamy_dissect = math_round(total_contract_xp * bonus_xp - total_contract_xp)
 	total_xp = total_xp + infamy_dissect
 
-	if success then
-		local num_players_bonus = num_winners and tweak_data:get_value("experience_manager", "alive_humans_multiplier", num_winners) or 1
-		alive_crew_dissect = math.round(total_contract_xp * num_players_bonus - total_contract_xp)
-		total_xp = total_xp + alive_crew_dissect
-	end
+    local num_players_bonus = num_winners and tweak_data:get_value("experience_manager", "alive_humans_multiplier", num_winners) or 1
+    alive_crew_dissect = math_round(total_contract_xp * num_players_bonus - total_contract_xp)
+    total_xp = total_xp + alive_crew_dissect
 
 	bonus_xp = self._xp.gage_bonus
-	gage_assignment_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
+	gage_assignment_dissect = math_round(total_contract_xp * bonus_xp - total_contract_xp)
 	total_xp = total_xp + gage_assignment_dissect
-	ghost_dissect = math.round(total_xp * ghost_multiplier - total_xp)
+	ghost_dissect = math_round(total_xp * ghost_multiplier - total_xp)
 	total_xp = total_xp + ghost_dissect
 	local heat_xp_mul = self._xp.heat
-	job_heat_dissect = math.round(total_xp * heat_xp_mul - total_xp)
+	job_heat_dissect = math_round(total_xp * heat_xp_mul - total_xp)
 	total_xp = total_xp + job_heat_dissect
 	bonus_xp = self._xp.limited_xp_bonus
-	extra_bonus_dissect = math.round(total_xp * bonus_xp - total_xp)
+	extra_bonus_dissect = math_round(total_xp * bonus_xp - total_xp)
 	total_xp = total_xp + extra_bonus_dissect
 	local bonus_mutators_dissect = total_xp * self._xp.mutator_xp_reduction
 	total_xp = total_xp + bonus_mutators_dissect

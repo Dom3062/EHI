@@ -5,6 +5,21 @@
     "items": [
         {
             "type": "toggle",
+            "id": "ehi_show_mission_trackers_choice",
+            "title": "ehi_show_mission_trackers",
+            "description": "ehi_show_mission_trackers_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_mission_trackers",
+            "focus_changed_callback" : "SetFocus",
+            "value": "show_mission_trackers",
+            "default_value": true
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
             "id": "ehi_show_achievement_choice",
             "title": "ehi_show_achievement",
             "description": "ehi_show_achievement_desc",
@@ -32,16 +47,32 @@
             "size": 20
         },
         {
-            "type": "toggle",
-            "id": "ehi_show_gained_xp_choice",
-            "title": "ehi_show_gained_xp",
-            "description": "ehi_show_gained_xp_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_gained_xp",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_gained_xp",
-            "is_parent" : true,
-            "default_value": true
+            "table":[
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_gained_xp_choice",
+                    "title": "ehi_show_gained_xp",
+                    "description": "ehi_show_gained_xp_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_gained_xp",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_gained_xp",
+                    "is_parent" : true,
+                    "default_value": true
+                },
+                {
+                    "type": "toggle",
+                    "id": "ehi_total_xp_show_difference_choice",
+                    "title": "ehi_total_xp_show_difference",
+                    "description": "ehi_total_xp_show_difference_desc",
+                    "callback": "SetOption",
+                    "callback_arguments": "total_xp_show_difference",
+                    "value": "total_xp_show_difference",
+                    "parent": "ehi_show_gained_xp_choice",
+                    "default_value": true,
+                    "ehi_ver" : 35
+                }
+            ]
         },
         {
             "type": "multiple_choice",
@@ -76,18 +107,6 @@
             "parent": "ehi_show_gained_xp_choice",
             "default_value": 1,
             "ehi_ver" : 53
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_total_xp_show_difference_choice",
-            "title": "ehi_total_xp_show_difference",
-            "description": "ehi_total_xp_show_difference_desc",
-            "callback": "SetOption",
-            "callback_arguments": "total_xp_show_difference",
-            "value": "total_xp_show_difference",
-            "parent": "ehi_show_gained_xp_choice",
-            "default_value": true,
-            "ehi_ver" : 35
         },
         {
             "type": "divider",
@@ -148,26 +167,30 @@
             "size": 20
         },
         {
-            "type": "toggle",
-            "id": "ehi_show_timers_choice",
-            "title": "ehi_show_timers",
-            "description": "ehi_show_timers_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_timers",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_timers",
-            "default_value": true
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_zipline_timer_choice",
-            "title": "ehi_show_zipline_timer",
-            "description": "ehi_show_zipline_timer_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_zipline_timer",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_zipline_timer",
-            "default_value": true
+            "table":[
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_timers_choice",
+                    "title": "ehi_show_timers",
+                    "description": "ehi_show_timers_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_timers",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_timers",
+                    "default_value": true
+                },
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_zipline_timer_choice",
+                    "title": "ehi_show_zipline_timer",
+                    "description": "ehi_show_zipline_timer_desc",
+                    "callback": ["SetOption", "UpdateTrackerVisibility"],
+                    "callback_arguments": "show_zipline_timer",
+                    "focus_changed_callback": "SetFocus",
+                    "value": "show_zipline_timer",
+                    "default_value": true
+                }
+            ]
         },
         {
             "type": "toggle",

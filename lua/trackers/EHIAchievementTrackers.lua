@@ -1,4 +1,18 @@
-EHIAchievementTracker = EHIAchievementTracker or class(EHIWarningTracker)
+local EHI = EHI
+local show_failed = false
+local function ShowPopup(tracker)
+    if tracker._failed_popup_showed or tracker._achieved_popup_showed then
+        return
+    end
+    tracker._failed_popup_showed = true
+    local id = tracker._id
+    managers.hud:custom_ingame_popup_text("ACHIEVEMENT FAILED", managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+end
+local lerp = math.lerp
+local sin = math.sin
+local Color = Color
+
+EHIAchievementTracker = class(EHIWarningTracker)
 function EHIAchievementTracker:update(t, dt)
     if self._fade then
         self._fade_time = self._fade_time - dt
@@ -15,6 +29,7 @@ function EHIAchievementTracker:SetCompleted()
     self._text:stop()
     self._fade_time = 5
     self._fade = true
+    self._achieved_popup_showed = true
     self:SetTextColor(Color.green)
     self:AnimateBG()
 end
@@ -26,11 +41,32 @@ function EHIAchievementTracker:SetFailed()
     self._fade = true
     self:SetTextColor(Color.red)
     self:AnimateBG()
+    if show_failed then
+        ShowPopup(self)
+    end
 end
 
-EHIAchievementProgressTracker = EHIAchievementProgressTracker or class(EHIProgressTracker)
+if show_failed then
+    function EHIAchievementTracker:delete()
+        ShowPopup(self)
+        EHIAchievementTracker.super.delete(self)
+    end
+end
 
-EHIAchievementDoneTracker = EHIAchievementDoneTracker or class(EHIAchievementTracker)
+EHIAchievementProgressTracker = class(EHIProgressTracker)
+if show_failed then
+    function EHIAchievementProgressTracker:SetCompleted(force)
+        self._achieved_popup_showed = true
+        EHIAchievementProgressTracker.super.SetCompleted(self, force)
+    end
+
+    function EHIAchievementProgressTracker:SetFailed()
+        EHIAchievementProgressTracker.super.SetFailed(self)
+        ShowPopup(self)
+    end
+end
+
+EHIAchievementDoneTracker = class(EHIAchievementTracker)
 function EHIAchievementDoneTracker:update(t, dt)
     if self._fade then
         self._fade_time = self._fade_time - dt
@@ -49,7 +85,7 @@ function EHIAchievementDoneTracker:update(t, dt)
     end
 end
 
-EHIAchievementObtainableTracker = EHIAchievementObtainableTracker or class(EHIAchievementTracker)
+EHIAchievementObtainableTracker = class(EHIAchievementTracker)
 function EHIAchievementObtainableTracker:init(panel, params)
     EHIAchievementTracker.super.init(self, panel, params)
     self._not_obtainable = not params.obtainable
@@ -89,11 +125,14 @@ function EHIAchievementObtainableTracker:SetTextColor(color)
     end
 end
 
-EHIAchievementUnlockTracker = EHIAchievementUnlockTracker or class(EHIWarningTracker)
+EHIAchievementUnlockTracker = class(EHIWarningTracker)
 function EHIAchievementUnlockTracker:update(t, dt)
     if self._fade then
         self._fade_time = self._fade_time - dt
         if self._fade_time <= 0 then
+            if show_failed then
+                ShowPopup(self)
+            end
             self:delete()
         end
         return
@@ -109,8 +148,8 @@ function EHIAchievementUnlockTracker:AnimateWarning()
             while t < 1 do
                 t = t + coroutine.yield()
                 local n = 1 - math.sin(t * 180)
-                --local r = math.lerp(1, 0, n)
-                local g = math.lerp(1, 0, n)
+                --local r = lerp(1, 0, n)
+                local g = lerp(1, 0, n)
 
                 o:set_color(Color(g, 1, g))
             end
@@ -124,9 +163,12 @@ function EHIAchievementUnlockTracker:SetFailed()
     self._fade = true
     self:SetTextColor(Color.red)
     self:AnimateBG()
+    if show_failed then
+        ShowPopup(self)
+    end
 end
 
-EHIAchievementNotificationTracker = EHIAchievementNotificationTracker or class(EHIAchievementTracker)
+EHIAchievementNotificationTracker = class(EHIAchievementTracker)
 EHIAchievementNotificationTracker._update = false
 function EHIAchievementNotificationTracker:init(panel, params)
     self._status = params.status or "ok"
@@ -180,6 +222,7 @@ function EHIAchievementNotificationTracker:SetCompleted()
     self:SetStatus("done")
     self:AddTrackerToUpdate()
     self._dont_override_status = true
+    self._achieved_popup_showed = true
 end
 
 function EHIAchievementNotificationTracker:SetFailed()
@@ -187,9 +230,12 @@ function EHIAchievementNotificationTracker:SetFailed()
     self:SetStatus("fail")
     self:AddTrackerToUpdate()
     self._dont_override_status = true
+    if show_failed then
+        ShowPopup(self)
+    end
 end
 
-EHIAchievementBagValueTracker = EHIAchievementBagValueTracker or class(EHIProgressTracker)
+EHIAchievementBagValueTracker = class(EHIProgressTracker)
 EHIAchievementBagValueTracker._update = false
 function EHIAchievementBagValueTracker:init(panel, params)
     self._secured = 0
@@ -244,6 +290,7 @@ function EHIAchievementBagValueTracker:SetCompleted(force)
             self:FitTheText()
         end
         self._disable_counting = true
+        self._achieved_popup_showed = true
     end
 end
 
@@ -257,9 +304,12 @@ function EHIAchievementBagValueTracker:SetFailed()
     self._parent_class:AddTrackerToUpdate(self._id, self)
     self:AnimateBG()
     self._disable_counting = true
+    if show_failed then
+        ShowPopup(self)
+    end
 end
 
-EHIAchievementTimedProgressTracker = EHIAchievementTimedProgressTracker or class(EHIWarningTracker)
+EHIAchievementTimedProgressTracker = class(EHIWarningTracker)
 EHIAchievementTimedProgressTracker._update = false
 function EHIAchievementTimedProgressTracker:init(panel, params)
     self._max = params.max or 0
@@ -307,6 +357,9 @@ function EHIAchievementTimedProgressTracker:update(t, dt)
     if self._fade_time then
         self._fade_time = self._fade_time - dt
         if self._fade_time <= 0 then
+            if show_failed then
+                ShowPopup(self)
+            end
             self:delete()
         end
         return
@@ -321,9 +374,9 @@ function EHIAchievementTimedProgressTracker:AnimateWarning()
                 local t = 0
                 while t < 1 do
                     t = t + coroutine.yield()
-                    local n = 1 - math.sin(t * 180)
-                    --local r = math.lerp(1, 0, n)
-                    local g = math.lerp(1, 0, n)
+                    local n = 1 - sin(t * 180)
+                    --local r = lerp(1, 0, n)
+                    local g = lerp(1, 0, n)
                     local c = Color(1, g, g)
                     o:set_color(c)
                     self._progress_text:set_color(c)
@@ -385,6 +438,7 @@ function EHIAchievementTimedProgressTracker:SetCompleted(force)
             self:FitTheText(self._progress_text)
         end
         self._disable_counting = true
+        self._achieved_popup_showed = true
     end
 end
 
@@ -416,6 +470,9 @@ function EHIAchievementTimedProgressTracker:SetFailed()
     self:AnimateBG()
     self._disable_counting = true
     self._fade_time = 5
+    if show_failed then
+        ShowPopup(self)
+    end
 end
 
 function EHIAchievementTimedProgressTracker:GetProgress()
@@ -427,7 +484,7 @@ function EHIAchievementTimedProgressTracker:SetTextColor(color)
     self._progress_text:set_color(color)
 end
 
-EHIAchievementTimedMoneyCounterTracker = EHIAchievementTimedMoneyCounterTracker or class(EHIWarningTracker)
+EHIAchievementTimedMoneyCounterTracker = class(EHIWarningTracker)
 function EHIAchievementTimedMoneyCounterTracker:init(panel, params)
     self._secured = 0
     self._secured_formatted = "0"
@@ -462,6 +519,9 @@ function EHIAchievementTimedMoneyCounterTracker:update(t, dt)
     if self._fade_time then
         self._fade_time = self._fade_time - dt
         if self._fade_time <= 0 then
+            if show_failed then
+                ShowPopup(self)
+            end
             self:delete()
         end
         return
@@ -493,9 +553,9 @@ function EHIAchievementTimedMoneyCounterTracker:AnimateWarning()
                 local t = 0
                 while t < 1 do
                     t = t + coroutine.yield()
-                    local n = 1 - math.sin(t * 180)
-                    --local r = math.lerp(1, 0, n)
-                    local g = math.lerp(1, 0, n)
+                    local n = 1 - sin(t * 180)
+                    --local r = lerp(1, 0, n)
+                    local g = lerp(1, 0, n)
                     local c = Color(1, g, g)
                     o:set_color(c)
                     self._money_text:set_color(c)
@@ -537,6 +597,7 @@ function EHIAchievementTimedMoneyCounterTracker:SetCompleted(force)
             self:FitTheText(self._money_text)
         end
         self._disable_counting = true
+        self._achieved_popup_showed = true
     end
 end
 
@@ -554,6 +615,9 @@ function EHIAchievementTimedMoneyCounterTracker:SetFailed()
     end
     self:AnimateBG()
     self._disable_counting = true
+    if show_failed then
+        ShowPopup(self)
+    end
 end
 
 function EHIAchievementTimedMoneyCounterTracker:SetTextColor(color)

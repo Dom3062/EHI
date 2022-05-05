@@ -36,7 +36,17 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIMinionTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAssaultDelayTracker.lua"/>
             </group>
+            <group :script_path="buffs/">
+                <post :hook_id="hudmanagerpd2" :script_path="EHIBuffTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIGaugeBuffTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIDodgeChanceTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIStoicTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIBikerBuffTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIHostageTakerMuscleRegenBuffTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIMeleeChargeBuffTracker.lua"/>
+            </group>
             <post :hook_id="hudmanager" :script_path="HUDManager.lua" />
+            <post :hook_id="hudmanagervr" :script_path="HUDManagerVR.lua" />
             <post :hook_id="hudmanagerpd2" :script_path="hudmanagerpd2.lua" />
             <post :hook_id="gameplaycentralmanager" :script_path="GamePlayCentralManager.lua"/>
             <post :hook_id="gageassignmentmanager" :script_path="GageAssignmentManager.lua" />
@@ -55,6 +65,7 @@
     
             <!-- Menu code -->
             <post :hook_id="menumanager" :script_path="FakeEHIManager.lua" />
+            <post :hook_id="menumanager" :script_path="FakeEHIBuffsManager.lua" />
             <post :hook_id="menumanager" :script_path="EHIMenu.lua" />
             <post :hook_id="menumanager" :script_path="EHIMenuCallbacks.lua" />
             <post :hook_id="menumanager" :script_path="menu.lua" />
@@ -71,6 +82,7 @@
         <post hook_id="lib/setups/setup" :script_path="EHIManagerVR.lua" />
         <post hook_id="lib/setups/setup" :script_path="EHIWaypointManager.lua" />
         <post hook_id="lib/setups/setup" :script_path="EHIWaypointManagerVR.lua" />
+        <post hook_id="lib/setups/setup" :script_path="EHIBuffManager.lua" />
         <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
 
@@ -80,7 +92,11 @@
         <post hook_id="lib/states/ingamewaitingforrespawn" :script_path="IngameWaitingForRespawn.lua" />
         <post hook_id="lib/states/missionendstate" :script_path="MissionEndState.lua" />
 
+        <post hook_id="lib/player_actions/skills/playeractionaamoefficiency" :script_path="PlayerActionAmmoEfficiency.lua" />
+
+        <post hook_id="lib/units/beings/player/playerdamage" :script_path="PlayerDamage.lua" />
         <post hook_id="lib/units/beings/player/playerinventory" :script_path="PlayerInventory.lua" />
+        <post hook_id="lib/units/beings/player/states/playerstandard" :script_path="PlayerStandard.lua" />
         <post hook_id="lib/units/enemies/cop/copbrain" :script_path="CopBrain.lua" />
         <post hook_id="lib/units/civilians/civiliandamage" :script_path="CivilianDamage.lua" />
         <post hook_id="lib/units/interactions/interactionext" :script_path="InteractionExt.lua" />

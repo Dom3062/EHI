@@ -1,3 +1,7 @@
+function EHIMenu:UpdatePreviewTextVisibility(value)
+    self._preview_panel:UpdatePreviewTextVisibility(value)
+end
+
 function EHIMenu:SetOption(value, option)
     EHI.settings[option] = value
 end
@@ -83,4 +87,36 @@ end
 
 function EHIMenu:fcc_show_minion_per_player(focus, ...)
     self:SetFocus(focus, focus and "show_minion_tracker" or "")
+end
+
+function EHIMenu:UpdateBuffsVisibility(visibility)
+    self._buffs_preview_panel:UpdateBuffs("SetVisibility", visibility)
+end
+
+function EHIMenu:UpdateBuffsXOffset(x)
+    self._buffs_preview_panel:UpdateXOffset(x)
+end
+
+function EHIMenu:UpdateBuffsYOffset(y)
+    self._buffs_preview_panel:UpdateYOffset(y)
+end
+
+function EHIMenu:UpdateBuffsScale(scale)
+    self._buffs_preview_panel:UpdateScale(scale)
+end
+
+function EHIMenu:UpdateBuffsAlignment(alignment)
+    self._buffs_preview_panel:UpdateAlignment(alignment)
+end
+
+function EHIMenu:UpdateBuffsShape(value)
+    self._buffs_preview_panel:UpdateBuffs("UpdateBuffShape", value)
+end
+
+function EHIMenu:UpdateBuffsProgressVisibility(visibility)
+    self._buffs_preview_panel:UpdateBuffs("UpdateProgressVisibility", visibility)
+end
+
+function EHIMenu:UpdateBuffsInvertProgress()
+    self._buffs_preview_panel:UpdateBuffs("InvertProgress")
 end

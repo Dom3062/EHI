@@ -2,6 +2,10 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "",
 
+    "ehi_menu_only" : "Menu only",
+    "ehi_show_preview_text" : "Show Preview Text",
+    "ehi_show_preview_text_desc" : "Hides or shows preview text",
+
     "ehi_r" : "Red",
     "ehi_g" : "Green",
     "ehi_b" : "Blue",
@@ -45,6 +49,9 @@
 
     "ehi_trackers_menu" : "Trackers",
     "ehi_trackers_menu_desc" : "",
+
+    "ehi_show_mission_trackers": "Show Mission Trackers",
+    "ehi_show_mission_trackers_desc": "Shows mission trackers on the screen (e.g.: Van/Heli arrival time, Next objective wait time, etc...)\n\nThis option also applies to custom missions\nIf supported in EHI",
 
     "ehi_show_achievement" : "Show Achievement Tracker",
     "ehi_show_achievement_desc" : "Shows on the screen achievements\nSome heists may not have any achievements available",
@@ -199,5 +206,30 @@
     "ehi_show_waypoints_cameras_desc" : "Shows a waypoint on a camera that is currently being looped",
 
     "ehi_show_waypoints_zipline" : "Show Waypoints for Ziplines",
-    "ehi_show_waypoints_zipline_desc" : "Shows a waypoint on a zipline that is in motion\nOnly the reset time is shown\n\nOption 'Show Zipline Tracker' must be enabled in order to work"
+    "ehi_show_waypoints_zipline_desc" : "Shows a waypoint on a zipline that is in motion\nOnly the reset time is shown\n\nOption 'Show Zipline Tracker' must be enabled in order to work",
+
+    "ehi_buffs_menu" : "Buffs",
+    "ehi_buffs_menu_desc" : "",
+
+    "ehi_show_buffs" : "Show Buffs",
+    "ehi_show_buffs_desc": "Shows on the screen buffs and cooldowns from skills and perks",
+
+    "ehi_buffs_scale_desc" : "Sets scale of buffs. The higher number the bigger buffs are and vice versa",
+
+    "ehi_buffs_alignment" : "Alignment",
+    "ehi_buffs_alignment_desc" : "Defines how buffs should be alignment on the screen",
+    "ehi_buffs_alignment_1" : "Left",
+    "ehi_buffs_alignment_2" : "Center",
+    "ehi_buffs_alignment_3" : "Right",
+
+    "ehi_buffs_shape" : "Shape",
+    "ehi_buffs_shape_desc" : "Defines what shape the buffs should have on the screen",
+    "ehi_buffs_shape_1" : "Square",
+    "ehi_buffs_shape_2" : "Circle",
+
+    "ehi_buffs_show_progress" : "Show Progress",
+    "ehi_buffs_show_progress_desc" : "Defines if the progress in the buff should be visible or not\nBy default, the progress will go clockwise",
+
+    "ehi_buffs_invert_progress" : "Invert Progress",
+    "ehi_buffs_invert_progress_desc" : "When enabled, the progress will go counterclockwise\nWhen disabled, the progress will go clockwise"
 }

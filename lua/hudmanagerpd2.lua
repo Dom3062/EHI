@@ -26,6 +26,7 @@ local server = Network:is_server()
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
     self.ehi = managers.ehi
+    self.ehi_buff = managers.ehi_buff
     local ehi_waypoint = managers.ehi_waypoint
     ehi_waypoint:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2), self._workspaces.overlay.saferect, self._gui)
     self._tracker_waypoints = {}
@@ -36,6 +37,10 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         end
     elseif EHIWaypoints then
         self:add_updator("EHI_Waypoint_dt_update", callback(ehi_waypoint, ehi_waypoint, "update_dt"))
+    end
+    if EHI:GetOption("show_buffs") then
+        self:add_updator("EHI_Buff_Update", callback(self.ehi_buff, self.ehi_buff, "update"))
+        self.ehi_buff:init_finalize(self:script(PlayerBase.PLAYER_INFO_HUD_PD2))
     end
     local level_tweak_data = tweak_data.levels[level_id]
     if level_tweak_data and level_tweak_data.team_ai_off then
@@ -60,7 +65,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                         chance = EHI:RoundChanceNumber(base[1] or 0),
                         icons = { "pagers_used" },
                         exclude_from_sync = true,
-                        class = "EHIChanceTracker"
+                        class = EHI.Trackers.Chance
                     })
                     EHI:AddOnAlarmCallback(function()
                         managers.ehi:RemoveTracker("pagers_chance")
@@ -81,7 +86,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             icons = { "pagers_used" },
             set_color_bad_when_reached = true,
             exclude_from_sync = true,
-            class = "EHIProgressTracker"
+            class = EHI.Trackers.Progress
         })
         if max == 0 then
             self.ehi:CallFunction("pagers", "SetBad")
@@ -113,7 +118,7 @@ function HUDManager:ShowLootCounter()
         max = max,
         icons = { "pd2_loot" },
         exclude_from_sync = true,
-        class = "EHIProgressTracker"
+        class = EHI.Trackers.Progress
     })
 end
 
@@ -143,12 +148,12 @@ end
 
 function HUDManager:set_disabled(...)
     original.set_disabled(self, ...)
-    managers.ehi:HidePanel()
+    self.ehi:HidePanel()
 end
 
 function HUDManager:set_enabled(...)
     original.set_enabled(self, ...)
-    managers.ehi:ShowPanel()
+    self.ehi:ShowPanel()
 end
 
 function HUDManager:destroy(...)
@@ -166,13 +171,13 @@ if Network:is_client() and level_id ~= "hvh" then
     if EHIWaypoints then
         function HUDManager:feed_heist_time(time, ...)
             original.feed_heist_time(self, time, ...)
-            managers.ehi:update_client(time)
+            self.ehi:update_client(time)
             managers.ehi_waypoint:update_client(time)
         end
     else
         function HUDManager:feed_heist_time(time, ...)
             original.feed_heist_time(self, time, ...)
-            managers.ehi:update_client(time)
+            self.ehi:update_client(time)
         end
     end
 end
@@ -199,6 +204,13 @@ original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_musi
 function HUDManager:sync_start_anticipation_music(...)
     original.sync_start_anticipation_music(self, ...)
     self.ehi:CallFunction("AssaultDelay", SyncFunction, anticipation_delay)
+    --EHI:Unhook("AssaultDelay_set_control_info")
+end
+
+original.sync_start_assault = HUDManager.sync_start_assault
+function HUDManager:sync_start_assault(assault_number, ...)
+    original.sync_start_assault(self, assault_number, ...)
+    self.ehi:RemoveTracker("AssaultDelay")
     --EHI:Unhook("AssaultDelay_set_control_info")
 end
 

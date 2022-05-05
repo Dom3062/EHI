@@ -1,18 +1,23 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local car = { { icon = Icon.Car, color = Color("1E90FF") } }
 local move = { time = 10, id = "MoveVehicle", icons = { Icon.Wait } }
+local RoadBlockVehicleIndex1 = 550
+local RoadBlockVehicleIndex2 = 950
+if managers.job:is_level_christmas("hox_1") then
+    RoadBlockVehicleIndex1 = 7150
+    RoadBlockVehicleIndex2 = 7350
+end
+EHI:Log("RoadBlockVehicleIndex1: " .. tostring(RoadBlockVehicleIndex1))
+EHI:Log("RoadBlockVehicleIndex2: " .. tostring(RoadBlockVehicleIndex2))
 local triggers = {
     [101595] = { time = 6, id = "Wait", icons = { Icon.Wait } },
 
     [102191] = move, -- First Police Car
-    [EHI:GetInstanceElementID(100000, 550)] = move, -- Police Car
-    [EHI:GetInstanceElementID(100000, 950)] = move, -- Police Car
-    [EHI:GetInstanceElementID(100056, 550)] = move, -- SWAT Van
-    [EHI:GetInstanceElementID(100056, 950)] = move, -- SWAT Van
-    [EHI:GetInstanceElementID(100000, 7150)] = move, -- Police Car (Xmas Version)
-    [EHI:GetInstanceElementID(100000, 7150)] = move, -- Police Car (Xmas Version)
-    [EHI:GetInstanceElementID(100056, 7350)] = move, -- SWAT Van (Xmas Version)
-    [EHI:GetInstanceElementID(100056, 7350)] = move, -- SWAT Van (Xmas Version)
+    [EHI:GetInstanceElementID(100000, RoadBlockVehicleIndex1)] = move, -- Police Car
+    [EHI:GetInstanceElementID(100000, RoadBlockVehicleIndex2)] = move, -- Police Car
+    [EHI:GetInstanceElementID(100056, RoadBlockVehicleIndex1)] = move, -- SWAT Van
+    [EHI:GetInstanceElementID(100056, RoadBlockVehicleIndex2)] = move, -- SWAT Van
 
     -- Time for animated car (nothing in the mission script, time was debugged with custom code => using rounded number, which should be accurate enough)
     [102626] = { time = 36.2, id = "CarMoveForward", icons = car },

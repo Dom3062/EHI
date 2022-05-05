@@ -1,6 +1,10 @@
 {
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "更多劫案信息",
+
+    "ehi_menu_only" : "Menu only",
+    "ehi_show_preview_text" : "Show Preview Text",
+    "ehi_show_preview_text_desc" : "Hides or shows preview text",
     
     "ehi_r" : "红色",
     "ehi_g" : "绿色",
@@ -46,6 +50,9 @@
     "ehi_trackers_menu" : "追踪器",
     "ehi_trackers_menu_desc" : "",
 
+    "ehi_show_mission_trackers": "Show Mission Trackers",
+    "ehi_show_mission_trackers_desc": "Shows mission trackers on the screen (e.g.: Van/Heli arrival time, Next objective wait time, etc...)\n\nThis option also applies to custom missions\nIf supported in EHI",
+
     "ehi_show_achievement" : "显示成就追踪器",
     "ehi_show_achievement_desc" : "在屏幕上显示可追踪的成就\n某些劫案中没有可追踪的成就",
     
@@ -65,6 +72,8 @@
     "ehi_xp_panel_desc" : "何时显示经验追踪器",
     "ehi_xp_panel_1" : "当获得经验时显示",
     "ehi_xp_panel_2" : "在劫案中常态显示",
+    "ehi_xp_panel_3" : "Show popup for every XP gained and total XP",
+    "ehi_xp_panel_4" : "Show hint for every XP gained and total XP",
 
     "ehi_total_xp_show_difference" : "显示经验值差异",
     "ehi_total_xp_show_difference_desc" : "必须选择[在劫案中常态显示]选项 ！\n显示一个独立的追踪器来显示你获得的经验量",
@@ -197,5 +206,30 @@
     "ehi_show_waypoints_cameras_desc" : "当摄像头被设置摄像头回路时显示导航点",
 
     "ehi_show_waypoints_zipline" : "显示滑索导航点",
-    "ehi_show_waypoints_zipline_desc" : "在使用中的滑索上显示导航点\n仅显示滑索重新可用时间\n\n需要勾选'显示滑索追踪器'选项以正常使用"
+    "ehi_show_waypoints_zipline_desc" : "在使用中的滑索上显示导航点\n仅显示滑索重新可用时间\n\n需要勾选'显示滑索追踪器'选项以正常使用",
+
+    "ehi_buffs_menu" : "Buffs",
+    "ehi_buffs_menu_desc" : "",
+
+    "ehi_show_buffs" : "Show Buffs",
+    "ehi_show_buffs_desc": "Shows on the screen buffs and cooldowns from skills and perks",
+
+    "ehi_buffs_scale_desc" : "Sets scale of buffs. The higher number the bigger buffs are and vice versa",
+
+    "ehi_buffs_alignment" : "Alignment",
+    "ehi_buffs_alignment_desc" : "Defines how buffs should be alignment on the screen",
+    "ehi_buffs_alignment_1" : "Left",
+    "ehi_buffs_alignment_2" : "Center",
+    "ehi_buffs_alignment_3" : "Right",
+
+    "ehi_buffs_shape" : "Shape",
+    "ehi_buffs_shape_desc" : "Defines what shape the buffs should have on the screen",
+    "ehi_buffs_shape_1" : "Square",
+    "ehi_buffs_shape_2" : "Circle",
+
+    "ehi_buffs_show_progress" : "Show Progress",
+    "ehi_buffs_show_progress_desc" : "Defines if the progress in the buff should be visible or not\nBy default, the progress will go clockwise",
+
+    "ehi_buffs_invert_progress" : "Invert Progress",
+    "ehi_buffs_invert_progress_desc" : "When enabled, the progress will go counterclockwise\nWhen disabled, the progress will go clockwise"
 }
