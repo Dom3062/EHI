@@ -21,7 +21,11 @@ function EHI:FinalizeUnits(tbl)
         local unit = wd:get_unit(id)
         if unit then
             if unit_data.f then
-                wd[unit_data.f](wd, unit_data.instance, id, unit_data, unit)
+                if type(unit_data.f) == "string" then
+                    wd[unit_data.f](wd, unit_data.instance, id, unit_data, unit)
+                else
+                    unit_data.f(unit_data.instance, id, unit_data, unit)
+                end
             else
                 if unit:timer_gui() then
                     unit:timer_gui():SetIcons(unit_data.icons)
@@ -119,8 +123,6 @@ elseif level_id == "big" then -- The Big Bank
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { "faster" } }
 elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
     units["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_director/stn_interactable_computer_director"] = { f = "hox_2" }
-elseif level_id == "dinner" then -- Slaughterhouse
-    units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small"] = { f = "dinner_WP" }
 elseif level_id == "moon" then -- Stealing Xmas
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100776 }
 elseif level_id == "hvh" then -- Cursed Kill Room
@@ -128,6 +130,8 @@ elseif level_id == "hvh" then -- Cursed Kill Room
     units["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" }, f = "hvhTimer", custom_callback = { id = "hvhCleanUp", f = "remove" } }
 elseif level_id == "help" then -- Prison Nightmare
     units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
+elseif level_id == "des" then -- Henry's Rock
+    units["units/pd2_dlc_des/props/des_prop_inter_hack_computer/des_inter_hack_computer"] = { icons = { "pd2_power" } }
 elseif level_id == "nmh" then -- No Mercy
     units["units/pd2_dlc_nmh/props/nmh_interactable_teddy_saw/nmh_interactable_teddy_saw"] = { f = "nmh_WP" }
 elseif level_id == "pent" then -- Mountain Master

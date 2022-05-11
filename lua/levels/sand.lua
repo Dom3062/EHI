@@ -1,3 +1,45 @@
+local Color = Color
+EHIsand11Tracker = class(EHIProgressTracker)
+function EHIsand11Tracker:init(panel, params)
+    params.icons = EHI:GetAchievementIcon("sand_11")
+    params.max = 100
+    params.remove_after_reaching_target = false
+    self._chance = 0
+    EHIsand11Tracker.super.init(self, panel, params)
+end
+
+function EHIsand11Tracker:OverridePanel(params)
+    self._panel:set_w(self._panel:w() * 2)
+    self._time_bg_box:set_w(self._time_bg_box:w() * 2)
+    self._text_chance = self._time_bg_box:text({
+        name = "time_text",
+        text = self:FormatChance(),
+        align = "center",
+        vertical = "center",
+        w = self._time_bg_box:w() / 2,
+        h = self._time_bg_box:h(),
+        font = tweak_data.menu.pd2_large_font,
+        font_size = self._panel:h() * self._text_scale,
+        color = params.text_color or Color.white
+    })
+    self._text_chance:set_right(self._time_bg_box:right())
+    if self._icon1 then
+        self._icon1:set_x(self._icon1:x() * 2)
+    end
+end
+
+EHIsand11Tracker.FormatChance = EHIChanceTracker.Format
+
+function EHIsand11Tracker:SetChance(amount)
+    self._chance = amount
+    self._text_chance:set_text(self:FormatChance())
+    if amount >= 100 then
+        self._text_chance:set_color(Color.green)
+    else
+        self._text_chance:set_color(Color.white)
+    end
+end
+
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions

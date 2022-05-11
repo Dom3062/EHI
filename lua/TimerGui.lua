@@ -163,6 +163,10 @@ function TimerGui:PostStartTimer()
             self._restore_vanilla_waypoint_on_done = data.restore
         end
     end
+    self:HideWaypoint()
+end
+
+function TimerGui:HideWaypoint()
     if self._remove_vanilla_waypoint and show_waypoint then
         managers.hud:SoftRemoveWaypoint(self._waypoint_id)
         EHI._cache.IgnoreWaypoints[self._waypoint_id] = true
@@ -284,6 +288,9 @@ end
 function TimerGui:RemoveVanillaWaypoint(waypoint_id)
     self._remove_vanilla_waypoint = true
     self._waypoint_id = waypoint_id
+    if self._started then
+        self:HideWaypoint()
+    end
 end
 
 function TimerGui:SetIgnoreVisibility()

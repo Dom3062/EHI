@@ -345,6 +345,7 @@ function EHI:LoadDefaultValues()
         show_mission_trackers = true,
         show_achievement = true,
         hide_unlocked_achievements = true,
+        show_achievement_failed_popup = true,
         show_gained_xp = true,
         xp_format = 3,
         xp_panel = 1,
@@ -572,14 +573,26 @@ function EHI:GetPeerColorByPeerID(peer_id)
     return color
 end
 
+---@param id number
+---@param start_index number
+---@param continent_index number
+---@return number
 function EHI:GetInstanceElementID(id, start_index, continent_index)
     return (continent_index or 100000) + math.mod(id, 100000) + 30000 + start_index
 end
 
+---@param id number
+---@param start_index number
+---@param continent_index number
+---@return number
 function EHI:GetInstanceUnitID(id, start_index, continent_index)
     return self:GetInstanceElementID(id, start_index, continent_index)
 end
 
+---@param final_index number
+---@param start_index number
+---@param continent_index number
+---@return number
 function EHI:GetBaseUnitID(final_index, start_index, continent_index)
     return (final_index - 30000 - start_index - continent_index) + 100000
 end
@@ -1458,6 +1471,41 @@ function EHI:AddLoadSyncFunction(f)
     managers.ehi:AddLoadSyncFunction(f)
 end
 
+--[[
+    This is bad, rethink the call flow with parameters
+]]
+function EHI:UpdateUnits(tbl)
+    if not self:GetOption("show_timers") then
+        return
+    end
+    self:FinalizeUnits(tbl)
+    for id, data in pairs(tbl) do
+        self._cache.MissionUnits[id] = data
+    end
+end
+
+---@param tbl table
+---@param instance_start_index number
+---@param instance_continent_index? number
+function EHI:UpdateInstanceUnits(tbl, instance_start_index, instance_continent_index)
+    if not self:GetOption("show_timers") then
+        return
+    end
+    local new_tbl = {}
+    for id, data in pairs(tbl) do
+        local computed_id = self:GetInstanceElementID(id, instance_start_index, instance_continent_index)
+        new_tbl[computed_id] = self:DeepClone(data)
+        if new_tbl[computed_id].remove_vanilla_waypoint then
+            new_tbl[computed_id].waypoint_id = self:GetInstanceElementID(new_tbl[computed_id].waypoint_id, instance_start_index, instance_continent_index)
+        end
+        new_tbl[computed_id].base_index = id
+    end
+    self:FinalizeUnits(new_tbl)
+    for id, data in pairs(new_tbl) do
+        self._cache.InstanceUnits[id] = data
+    end
+end
+
 EHI:Load()
 
 -- Hack
@@ -1534,5 +1582,13 @@ if EHI.debug then -- For testing purposes
                 self:Log("Hooking done")
             end
         end
+    end
+end
+
+function EHI:PrintTable(tbl)
+    if _G.PrintTableDeep then
+        _G.PrintTableDeep(tbl, 5000, true, "[EHI]")
+    else
+        _G.PrintTable(tbl)
     end
 end

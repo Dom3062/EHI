@@ -120,6 +120,17 @@ local function ArbiterHasStandardAmmo()
     return false
 end
 
+local function HasViperGrenadesOnLauncherEquipped()
+    local function HasViperAmmo(factory_id, blueprint)
+        local t = managers.weapon_factory:get_ammo_data_from_weapon(factory_id, blueprint)
+        if table.size(t or {}) ~= 0 then
+            return table.contains(t, "launcher_poison") or table.contains(t, "launcher_poison_ms3gl_conversion")
+        end
+        return false
+    end
+    return HasViperAmmo(primary.factory_id, primary.blueprint) or HasViperAmmo(secondary.factory_id, secondary.blueprint)
+end
+
 local function CreateProgressTracker(id, progress, max, dont_flash, remove_after_reaching_target, status_is_overridable, icons)
     managers.ehi:AddTracker({
         id = id,
@@ -673,21 +684,19 @@ function IngameWaitingForPlayersState:at_exit(...)
             stats.bph_9_stat = "bph_9"
         end
         if level == "sand" and EHI:IsAchievementLocked2("sand_11") and HasWeaponTypeEquipped("snp") then -- "This Calls for a Round of Sputniks!" achievement
-            CreateProgressTracker("sand_11_kills", 0, 100, true, false, false, { "C_JiuFeng_H_UkrainianPrisoner_ThisCallForARound", "C_All_H_All_AllJobs_D0" })
             managers.ehi:AddTracker({
-                id = "sand_11_accuracy",
-                icons = { "C_JiuFeng_H_UkrainianPrisoner_ThisCallForARound", "pd2_kill" },
+                id = "sand_11",
                 exclude_from_sync = true,
-                dont_flash = true,
-                class = "EHIChanceTracker"
+                flash_times = 1,
+                class = "EHIsand11Tracker"
             })
             EHI:HookWithID(StatisticsManager, "killed", "EHI_sand_11_killed", function (_, data)
                 if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("snp") then
-                    managers.ehi:IncreaseTrackerProgress("sand_11_kills")
+                    managers.ehi:IncreaseTrackerProgress("sand_11")
                 end
             end)
             EHI:HookWithID(StatisticsManager, "shot_fired", "EHI_sand_11_accuracy", function(self, data)
-                managers.ehi:SetChance("sand_11_accuracy", self:session_hit_accuracy())
+                managers.ehi:SetChance("sand_11", self:session_hit_accuracy())
             end)
         end
         if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and managers.ehi:GetStartedFromBeginning() then -- From Russia With Love
@@ -698,6 +707,19 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end
             end
             EHI:HookWithID(MissionEndState, "chk_complete_heist_achievements", "EHI_halloween_10_on_heist_end", on_heist_end)
+        end
+        if EHI:IsAchievementLocked2("pxp1_1") then -- "Plague Doctor" achievement
+            local grenade_data = tweak_data.achievement.grenade_achievements.pxp1_1
+            local grenade_pass = table.index_of(grenade_data.grenade_types, managers.blackmarket:equipped_grenade()) ~= -1
+            local enemy_kills_data = tweak_data.achievement.enemy_kill_achievements.pxp1_1
+            local parts_pass, _, _ = CheckWeaponsBlueprint(enemy_kills_data.parts)
+            local melee_pass = table.index_of(tweak_data.achievement.enemy_melee_hit_achievements.pxp1_1.melee_weapons, melee) ~= 1
+            local player_style_pass = HasPlayerStyleEquipped(grenade_data.player_style.style)
+            local variation_pass = HasSuitVariationEquipped(grenade_data.player_style.variation)
+            if (grenade_pass or HasViperGrenadesOnLauncherEquipped() or parts_pass or melee_pass) and player_style_pass and variation_pass then
+                CreateProgressTracker("pxp1_1", EHI:GetAchievementProgress("pxp1_1_stats"), 200, false)
+                stats.pxp1_1_stats = "pxp1_1"
+            end
         end
     end
     if EHI:IsDifficultyOrAbove("mayhem") and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
@@ -771,9 +793,9 @@ function IngameWaitingForPlayersState:at_exit(...)
         local progress = EHI:GetAchievementProgress("pim_2_stats")
         local function on_heist_end(mes_self)
             if mes_self._success and progress < 8 then
-                managers.hud:custom_ingame_popup_text("Saved", "Progress Saved: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
+                managers.hud:custom_ingame_popup_text("SAVED", "Progress Saved: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
             elseif not mes_self._success then
-                managers.hud:custom_ingame_popup_text("Lost", "Progress Lost: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
+                managers.hud:custom_ingame_popup_text("LOST", "Progress Lost: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
             end
         end
         EHI:HookWithID(MissionEndState, "chk_complete_heist_achievements", "EHI_pim_2_on_heist_end", on_heist_end)

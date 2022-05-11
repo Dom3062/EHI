@@ -31,11 +31,12 @@ function EHITimerTracker:SetTimeNoAnim(time) -- No fit text function needed, the
     end
 end
 
-function EHITimerTracker:AnimateWarning()
+function EHITimerTracker:AnimateWarning(check_progress)
     if self._text and alive(self._text) then
+        local start_t = check_progress and (math.ceil(self._time) - self._time) or 0
         self._text:animate(function(o)
             while true do
-                local t = 0
+                local t = start_t
                 while t < 1 do
                     t = t + coroutine.yield()
                     local n = 1 - math.sin(t * 180)
@@ -125,6 +126,10 @@ function EHITimerTracker:SetTextColor()
         self._text:set_color(Color.red)
     else
         self._text:set_color(Color.white)
+        if self._time <= 10 and self._animate_warning and not self._warning_started then
+            self._warning_started = true
+            self:AnimateWarning(true)
+        end
     end
 end
 

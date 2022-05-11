@@ -161,7 +161,8 @@ function EHIBuffManager:AddBuff(id, t)
 end
 
 function EHIBuffManager:AddBuff2(id, start_t, end_t)
-    self:AddBuff(id, end_t - start_t)
+    local t = end_t - start_t
+    self:AddBuff(id, t)
 end
 
 function EHIBuffManager:AddGauge(id, ratio)

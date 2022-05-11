@@ -1,3 +1,11 @@
+r59 (11. 05. 2022):
+Added tracker for achievement "The Red Button"
+Added tracker for achievement "Plague Doctor"
+Added option "Show 'Achievement Failed' Popup"
+Fixed an issue where hidden waypoints are visible when dropped-in
+Fixed a crash when you were tagged by a player with Tag Team
+The Ukrainian Prisoner Heist: Tracker for achievement "This Calls for a Round of Sputniks!" now shows both kills and accuracy in one tracker
+
 r58 (05. 05. 2022):
 Added buffs
 Added "Show Mission Trackers" option

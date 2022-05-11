@@ -5,6 +5,12 @@ else
     EHI._hooks.HUDManager = true
 end
 
+local original =
+{
+    save = HUDManager.save,
+    load = HUDManager.load
+}
+
 function HUDManager:AddWaypointSoft(id, data)
     self._hud.stored_waypoints[id] = data
     self._hud.ehi_removed_waypoints = self._hud.ehi_removed_waypoints or {}
@@ -30,10 +36,10 @@ function HUDManager:RestoreWaypoint(id)
     end
 end
 
-local _f_save = HUDManager.save
 function HUDManager:save(data, ...)
-    _f_save(self, data, ...)
+    original.save(self, data, ...)
     local state = data.HUDManager
+    -- Sync hidden waypoints to ensure that unmodified clients will see them correctly
     for id, _ in pairs(self._hud.ehi_removed_waypoints or {}) do
         if self._hud.stored_waypoints[id] then
             state.waypoints[id] = self._hud.stored_waypoints[id]
@@ -41,13 +47,11 @@ function HUDManager:save(data, ...)
     end
 end
 
-local _f_load = HUDManager.load
 function HUDManager:load(data, ...)
-    local state = data.HUDManager
-    for id, _ in pairs(state.waypoints) do
+    original.load(self, data, ...)
+    for id, _ in pairs(self._hud.waypoints or {}) do
         if EHI._cache.IgnoreWaypoints[id] then
-            data.HUDManager.waypoints[id] = nil
+            self:SoftRemoveWaypoint(id)
         end
     end
-    _f_load(self, data, ...)
 end

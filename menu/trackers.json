@@ -31,16 +31,32 @@
             "is_parent" : true
         },
         {
-            "type": "toggle",
-            "id": "ehi_hide_unlocked_achievements_choice",
-            "title": "ehi_hide_unlocked_achievements",
-            "description": "ehi_hide_unlocked_achievements_desc",
-            "callback": "SetOption",
-            "callback_arguments": "hide_unlocked_achievements",
-            "value": "hide_unlocked_achievements",
-            "default_value": true,
-            "parent" : "ehi_show_achievement_choice",
-            "ehi_ver" : 10
+            "table":[
+                {
+                    "type": "toggle",
+                    "id": "ehi_hide_unlocked_achievements_choice",
+                    "title": "ehi_hide_unlocked_achievements",
+                    "description": "ehi_hide_unlocked_achievements_desc",
+                    "callback": "SetOption",
+                    "callback_arguments": "hide_unlocked_achievements",
+                    "value": "hide_unlocked_achievements",
+                    "default_value": true,
+                    "parent" : "ehi_show_achievement_choice",
+                    "ehi_ver" : 10
+                },
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_achievement_failed_popup_choice",
+                    "title": "ehi_show_achievement_failed_popup",
+                    "description": "ehi_show_achievement_failed_popup_desc",
+                    "callback": "SetOption",
+                    "callback_arguments": "show_achievement_failed_popup",
+                    "value": "show_achievement_failed_popup",
+                    "default_value": true,
+                    "parent" : "ehi_show_achievement_choice",
+                    "ehi_ver" : 59
+                }
+            ]
         },
         {
             "type": "divider",

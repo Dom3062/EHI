@@ -51,3 +51,19 @@ else
     end
     EHI:ShowLootCounter(max)
 end
+
+local function WP(instance, unit_id, unit_data, unit)
+    if unit_id == 100949 then
+        unit:timer_gui():RemoveVanillaWaypoint(103174)
+    else
+        unit:timer_gui():RemoveVanillaWaypoint(103175)
+    end
+end
+
+local tbl =
+{
+    -- Drills
+    [100035] = { f = WP },
+    [100949] = { f = WP }
+}
+EHI:UpdateUnits(tbl)

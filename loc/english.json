@@ -59,6 +59,9 @@
     "ehi_hide_unlocked_achievements" : "Don't Show Unlocked Achievements",
     "ehi_hide_unlocked_achievements_desc" : "When enabled, EHI will not show trackers for unlocked achievements\nWhen disabled, EHI will show all trackers for achievements",
 
+    "ehi_show_achievement_failed_popup" : "Show 'Achievement Failed' Popup",
+    "ehi_show_achievement_failed_popup_desc" : "Failed achievements will show as red in the popup",
+
     "ehi_show_gained_xp" : "Show gained XP",
     "ehi_show_gained_xp_desc" : "Shows earned XP in a mission.\nThis tracker is disabled in Crime Spree.",
 

@@ -8,8 +8,6 @@ if managers.job:is_level_christmas("hox_1") then
     RoadBlockVehicleIndex1 = 7150
     RoadBlockVehicleIndex2 = 7350
 end
-EHI:Log("RoadBlockVehicleIndex1: " .. tostring(RoadBlockVehicleIndex1))
-EHI:Log("RoadBlockVehicleIndex2: " .. tostring(RoadBlockVehicleIndex2))
 local triggers = {
     [101595] = { time = 6, id = "Wait", icons = { Icon.Wait } },
 

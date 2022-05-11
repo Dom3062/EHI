@@ -247,7 +247,7 @@ local TagTeam =
                 local owner_match = owner == end_owner
                 ended_by_owner = tagged_match and owner_match
                 if ended_by_owner then
-                    me:RemoveBuff(BuffKey)
+                    managers.ehi_buff:RemoveBuff(BuffKey)
                 end
             end
             managers.player:add_listener(on_end_key, { "tag_team_end" }, on_action_end)
@@ -402,7 +402,6 @@ end
 --//  Maniac  //--
 --//////////////--
 local next_maniac_stack_poll = 0
-local maniac_stack_text_tbl = {{}, {}}
 local ShowManiacStackTicks = true--O:get("buff", "showManiacStackTicks")
 local ShowManiacDecayTicks = true--O:get("buff", "showManiacDecayTicks")
 local ShowManiacAccumulatedStacks = true--O:get("buff", "showManiacAccumulatedStacks")

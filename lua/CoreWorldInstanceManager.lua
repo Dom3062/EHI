@@ -34,14 +34,14 @@ local instances =
     },
     ["levels/instances/unique/sand/sand_helicopter_turret/world"] =
     {
-        [100027] = { id = "SandTurretTimer", icons = { EHI.Icons.Heli, "wp_sentry", "faster" }, special_function = SF.GetElementTimerAccurate, element = 100012, sync = true },
-        [100024] = { id = "SandTurretTimer", special_function = SF.RemoveTracker }
+        [100027] = { id = "SandTurretTimer", icons = { EHI.Icons.Heli, "wp_sentry", "faster" }, special_function = SF.GetElementTimerAccurate, element = 100012, sync = true }
     }
 }
 
 if client then
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].time = EHI:IsDifficulty("death_sentence") and 90 or 60
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].random_time = 30
+    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100024] = { id = "SandTurretTimer", special_function = SF.RemoveTracker }
 end
 
 local original =
@@ -149,6 +149,8 @@ elseif level_id == "red2" then -- First World Bank
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100018 }
 elseif level_id == "jolly" then -- Aftershock
     units["units/pd2_dlc_jolly/equipment/gen_interactable_saw/gen_interactable_saw"] = { remove_vanilla_waypoint = true, waypoint_id = 100070 }
+elseif level_id == "des" then -- Henry's Rock
+    units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam"] = { remove_vanilla_waypoint = true, waypoint_id = 100009 }
 elseif level_id == "mex" then -- Border Crossing
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { "pd2_c4" } }
 elseif level_id == "chas" then -- Dragon Heist

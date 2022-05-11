@@ -1,16 +1,47 @@
 local EHI = EHI
-local show_failed = false
+local show_failed = EHI:GetOption("show_achievement_failed_popup")
+local AchievementFailed = "ACHIEVEMENT FAILED"
 local function ShowPopup(tracker)
     if tracker._failed_popup_showed or tracker._achieved_popup_showed then
         return
     end
     tracker._failed_popup_showed = true
     local id = tracker._id
-    managers.hud:custom_ingame_popup_text("ACHIEVEMENT FAILED", managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+    managers.hud:custom_ingame_popup_text(AchievementFailed, managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
 end
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
+if show_failed then
+    local _f_init = HudChallengeNotification.init
+    if VoidUI and VoidUI.options.enable_challanges then
+        function HudChallengeNotification:init(title, ...)
+            _f_init(self, title, ...)
+            if title and title == AchievementFailed then
+                for i, d in ipairs(self._hud:children()) do
+                    if d.panel then
+                        for ii, dd in ipairs(d:children()) do
+                            if dd.set_image then
+                                dd:set_color(Color.red)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    else
+        function HudChallengeNotification:init(title, ...)
+            _f_init(self, title, ...)
+            if title and title == AchievementFailed and self._box then
+                for i, d in ipairs(self._box:children()) do
+                    if d.set_image then
+                        d:set_color(Color.red)
+                    end
+                end
+            end
+        end
+    end
+end
 
 EHIAchievementTracker = class(EHIWarningTracker)
 function EHIAchievementTracker:update(t, dt)
@@ -188,8 +219,8 @@ function EHIAchievementNotificationTracker:Format()
     return string.upper(self._status)
 end
 
-function EHIAchievementNotificationTracker:SetText(text)
-    self._text:set_text(string.upper(text))
+function EHIAchievementNotificationTracker:SetText()
+    self._text:set_text(self:Format())
     self:FitTheText()
 end
 
@@ -199,7 +230,7 @@ function EHIAchievementNotificationTracker:SetTextColor(color)
         c = color
     elseif self._status == "ok" or self._status == "done" or self._status == "pass" or self._status == "finish" then
         c = Color.green
-    elseif self._status == "ready" or self._status == "loud" then
+    elseif self._status == "ready" or self._status == "loud" or self._status == "push" then
         c = Color.yellow
     else
         c = Color.red
@@ -212,7 +243,7 @@ function EHIAchievementNotificationTracker:SetStatus(status)
         return
     end
     self._status = status
-    self:SetText(status)
+    self:SetText()
     self:SetTextColor()
     self:AnimateBG()
 end
