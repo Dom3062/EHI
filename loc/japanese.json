@@ -2,6 +2,10 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "",
 
+    "ehi_menu_only" : "メニューのみ",
+    "ehi_show_preview_text" : "プレビューテキストを表示",
+    "ehi_show_preview_text_desc" : "プレビューテキストの表示/非表示",
+
     "ehi_r" : "赤",
     "ehi_g" : "緑",
     "ehi_b" : "青",
@@ -38,7 +42,7 @@
     "ehi_visuals_menu_desc" : "",
 
     "ehi_show_tracker_bg" : "トラッカーの背景を表示",
-    "ehi_show_tracker_bg_desc" : "トラッカーの背景を表示します。\n無効にすると背景は非表示になり、アニメーションが無効化されます",
+    "ehi_show_tracker_bg_desc" : "トラッカーの背景を表示します。\n無効化すると背景は非表示になり、アニメーションが無効化されます",
 
     "ehi_show_one_icon" : "トラッカーアイコンを1つ表示",
     "ehi_show_one_icon_desc" : "有効化するとトラッカー1つにつき1つのアイコンしか表示されなくなります。\n無効化すると全てのアイコンが表示されるようになります。",
@@ -46,12 +50,18 @@
     "ehi_trackers_menu" : "トラッカー",
     "ehi_trackers_menu_desc" : "",
 
+    "ehi_show_mission_trackers": "ミッショントラッカーを表示",
+    "ehi_show_mission_trackers_desc": "ミッショントラッカーを表示します。（例: バン/ヘリ到着時間、次の目的地待ち時間等）\n\nこのオプションはEHIでサポートされている場合に限り、\nカスタムミッションにも適用されます。",
+
     "ehi_show_achievement" : "実績トラッカーを表示",
     "ehi_show_achievement_desc" : "実績のトラッカーを表示します。\n一部のHeistでは使用できない場合があります。",
 
     "ehi_hide_unlocked_achievements" : "解除済み実績は表示しない",
     "ehi_hide_unlocked_achievements_desc" : "有効化すると解除済み実績のトラッカーを表示しなくなります。\n無効の場合、EHIは全実績のトラッカーを表示します。",
 
+    "ehi_show_achievement_failed_popup" : "実績達成失敗ポップアップを表示",
+    "ehi_show_achievement_failed_popup_desc" : "達成失敗した実績は赤いポップアップで表示されるようになります。",
+    
     "ehi_show_gained_xp" : "取得したXPを表示",
     "ehi_show_gained_xp_desc" : "ミッション中に取得したXPを表示します。\nCrime Spreeではこのトラッカーは無効化されます。",
 
@@ -196,5 +206,33 @@
     "ehi_show_waypoints_pager_desc" : "ウェイポイントにPagerタイマーを表示します。\n\nオプション「Pager応答タイマーを表示」を有効化する必要があります。",
 
     "ehi_show_waypoints_cameras" : "ループされたカメラにウェイポイントを表示",
-    "ehi_show_waypoints_cameras_desc" : "ループ中のカメラにウェイポイントを表示します。"
+    "ehi_show_waypoints_cameras_desc" : "ループ中のカメラにウェイポイントを表示します。",
+
+    "ehi_show_waypoints_zipline" : "ジップラインにウェイポイントを表示",
+    "ehi_show_waypoints_zipline_desc" : "動作中のジップラインのリセット時間のウェイポイントを表示します。\n\nオプション「ジップライントラッカーを表示」を有効化する必要があります。",
+
+    "ehi_buffs_menu" : "バフ",
+    "ehi_buffs_menu_desc" : "",
+
+    "ehi_show_buffs" : "バフを表示",
+    "ehi_show_buffs_desc": "スキルやPerkのバフやクールダウンを表示します。",
+
+    "ehi_buffs_scale_desc" : "バフの大きさを設定します。\nバフは、値が大きい程大きくなります。",
+
+    "ehi_buffs_alignment" : "バフの整列",
+    "ehi_buffs_alignment_desc" : "バフの位置合わせを定義します。",
+    "ehi_buffs_alignment_1" : "左",
+    "ehi_buffs_alignment_2" : "中央",
+    "ehi_buffs_alignment_3" : "右",
+
+    "ehi_buffs_shape" : "形状",
+    "ehi_buffs_shape_desc" : "バフの形状を定義します。",
+    "ehi_buffs_shape_1" : "正方形",
+    "ehi_buffs_shape_2" : "円形",
+
+    "ehi_buffs_show_progress" : "プログレスを表示",
+    "ehi_buffs_show_progress_desc" : "バフのプログレスを表示します。\nデフォルトでは、プログレスは時計回りに進みます。",
+
+    "ehi_buffs_invert_progress" : "プログレスを反転",
+    "ehi_buffs_invert_progress_desc" : "有効化するとプログレスは反時計回りに進みます。\n無効化すると時計回りに進みます。"
 }

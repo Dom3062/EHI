@@ -2,7 +2,26 @@ local progress = EHI:GetOption("buffs_show_progress")
 local circle_shape = EHI:GetOption("buffs_shape") == 2
 local invert = EHI:GetOption("buffs_invert_progress")
 local Color = Color
-EHIBuffTracker = EHIBuffTracker or class()
+local lerp = math.lerp
+local function show(o)
+    local t = 0
+    local total = 0.15
+    while t < total do
+        t = t + coroutine.yield()
+        o:set_alpha(t / total)
+    end
+    o:set_alpha(1)
+end
+local function hide(o)
+    local t = 0
+    local total = 0.15
+    while t < total do
+        t = t + coroutine.yield()
+        o:set_alpha(1 - (t / total))
+    end
+    o:set_alpha(0)
+end
+EHIBuffTracker = class()
 EHIBuffTracker._inverted_progress = false
 function EHIBuffTracker:init(panel, params)
     local w_half = params.w / 2
@@ -15,7 +34,8 @@ function EHIBuffTracker:init(panel, params)
         h = params.h,
         x = params.x,
         y = panel:bottom() - params.h - params.y,
-        visible = false
+        alpha = 0,
+        visible = true
     })
     local icon = self._panel:bitmap({
         name = "icon",
@@ -176,11 +196,30 @@ function EHIBuffTracker:MovePanelRight(x)
 end
 
 function EHIBuffTracker:SetX(x)
-    self._panel:set_x(x)
+    local from_x = self._panel:x()
+    if self._move_panel_x then
+        self._panel:stop(self._move_panel_x)
+    end
+    self._move_panel_x = self._panel:animate(function(o)
+        over(0.15, function(p, t)
+            local target_x = lerp(from_x, x, p)
+            o:set_x(target_x)
+        end)
+    end)
 end
 
 function EHIBuffTracker:SetRight(x)
-    self._panel:set_right(self._panel:parent():w() - x)
+    local from_right = self._panel:right()
+    local target_right = self._panel:parent():w() - x
+    if self._move_panel_x then
+        self._panel:stop(self._move_panel_x)
+    end
+    self._move_panel_x = self._panel:animate(function(o)
+        over(0.15, function(p, t)
+            local target_x = lerp(from_right, target_right, p)
+            o:set_right(target_x)
+        end)
+    end)
 end
 
 function EHIBuffTracker:IsActive()
@@ -192,7 +231,8 @@ function EHIBuffTracker:Activate(t, pos)
     self._time = t
     self._time_set = t
     self._parent_class:AddBuffToUpdate(self._id, self)
-    self._panel:set_visible(true)
+    self._panel:stop()
+    self._panel:animate(show)
     self._pos = pos
 end
 
@@ -214,7 +254,8 @@ end
 function EHIBuffTracker:Deactivate()
     self._parent_class:RemoveBuffFromUpdate(self._id)
     self._parent_class:RemoveVisibleBuff(self._id, self._pos)
-    self._panel:set_visible(false)
+    self._panel:stop()
+    self._panel:animate(hide)
     self._active = false
 end
 

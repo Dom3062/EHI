@@ -15,7 +15,7 @@ local triggers = {
     [100214] = { id = 100233, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(2316.1, 6102.57, 1500.15) } },
 
     [101620] = { special_function = SF.Trigger, data = { 1016201, 1016202 } },
-    [1016201] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElementSpecify, element = 101620 },
+    [1016201] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
     [1016202] = { special_function = SF.RemoveTriggers, data = { 101620 } }
 }
 EHI:AddOnAlarmCallback(function(dropin)

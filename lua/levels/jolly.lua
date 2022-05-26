@@ -28,7 +28,7 @@ local triggers = {
     [101644] = { time = 60, id = "BainWait", icons = { Icon.Wait } },
     [EHI:GetInstanceElementID(100075, 21250)] = { time = 60 + 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF_HeliTimer, dialog = 1 },
     [EHI:GetInstanceElementID(100076, 21250)] = { time = 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF_HeliTimer, dialog = 2 },
-    [100795] = { time = 5, id = "C4", icons = { "pd2_c4" } },
+    [100795] = { time = 5, id = "C4", icons = { Icon.C4 } },
 
     [101240] = c4_drop,
     [101241] = c4_drop,
@@ -37,7 +37,7 @@ local triggers = {
     [101249] = c4_drop,
 }
 for i = 26550, 26950, 100 do
-    triggers[EHI:GetInstanceElementID(100003, i)] = { id = EHI:GetInstanceElementID(100021, i), special_function = SF.ShowWaypoint, data = { icon = "pd2_c4", position = vectors[i] }}
+    triggers[EHI:GetInstanceElementID(100003, i)] = { id = EHI:GetInstanceElementID(100021, i), special_function = SF.ShowWaypoint, data = { icon = Icon.C4, position = vectors[i] } }
 end
 
 if Network:is_client() then

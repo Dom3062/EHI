@@ -77,6 +77,22 @@ elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
         [4] = SecurityOffice,
         [5] = SecurityOffice
     }
+elseif level_id == "born" then -- The Biker Heist Day 1
+    MissionDoorPositions =
+    {
+        -- Workshop
+        [1] = Vector3(-3798.92, -1094.9, -6.52779),
+
+        -- Safe with bike mask
+        [2] = Vector3(1570.02, -419.693, 185.724)
+    }
+    MissionDoorIndex =
+    {
+        [1] = { w_id = 101580 },
+        [2] = { w_ids = { EHI:GetInstanceElementID(100007, 4850), EHI:GetInstanceElementID(100007, 5350) } }
+    }
+    EHI:PrintTable(MissionDoorPositions)
+    EHI:PrintTable(MissionDoorIndex)
 end
 
 local original =
@@ -96,7 +112,8 @@ local original =
 function TimerGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    self._ehi_icon = unit:base().is_drill and "pd2_drill" or unit:base().is_hacking_device and "wp_hack" or unit:base().is_saw and "pd2_generic_saw" or "faster"
+    local icon = unit:base().is_drill and "pd2_drill" or unit:base().is_hacking_device and "wp_hack" or unit:base().is_saw and "pd2_generic_saw" or "faster"
+    self._ehi_icon = { { icon = icon } }
 end
 
 function TimerGui:set_background_icons(background_icons, ...)
@@ -128,11 +145,13 @@ function TimerGui:StartTimer()
         managers.ehi_waypoint:SetTimerWaypointPowered(self._ehi_key, true)
     else
         local autorepair = self._unit:base()._autorepair
+        -- In case the conversion fails, fallback to "self._time_left" which is a number
+        local t = tonumber(self._current_timer) or self._time_left
         if not show_waypoint_only then
             managers.ehi:AddTracker({
                 id = self._ehi_key,
-                time = self._current_timer,
-                icons = self._icons or { { icon = self._ehi_icon } },
+                time = t,
+                icons = self._icons or self._ehi_icon,
                 theme = self.THEME,
                 exclude_from_sync = true,
                 class = "EHITimerTracker",
@@ -142,8 +161,8 @@ function TimerGui:StartTimer()
         end
         if show_waypoint then
             managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
-                time = self._current_timer,
-                icon = self._icons or self._ehi_icon,
+                time = t,
+                icon = self._icons or self._ehi_icon[1].icon,
                 pause_timer = 1,
                 type = "timer",
                 position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
@@ -158,9 +177,17 @@ function TimerGui:PostStartTimer()
     if self._unit:mission_door_device() then
         local data = self:GetMissionDoorData()
         if data then
-            self._waypoint_id = data.w_id
             self._remove_vanilla_waypoint = true
             self._restore_vanilla_waypoint_on_done = data.restore
+            if data.w_ids then
+                for _, id in ipairs(data.w_ids) do
+                    self._waypoint_id = id
+                    self:HideWaypoint()
+                end
+                return
+            else
+                self._waypoint_id = data.w_id
+            end
         end
     end
     self:HideWaypoint()

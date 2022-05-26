@@ -1,3 +1,4 @@
+local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")

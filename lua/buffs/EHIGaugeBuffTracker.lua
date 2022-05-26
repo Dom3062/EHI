@@ -1,4 +1,13 @@
 local Color = Color
+local function show(o)
+    local t = 0
+    local total = 0.15
+    while t < total do
+        t = t + coroutine.yield()
+        o:set_alpha(t / total)
+    end
+    o:set_alpha(1)
+end
 EHIGaugeBuffTracker = class(EHIBuffTracker)
 EHIGaugeBuffTracker._inverted_progress = true
 function EHIGaugeBuffTracker:init(panel, params)
@@ -11,7 +20,8 @@ end
 function EHIGaugeBuffTracker:Activate(ratio, pos)
     self._active = true
     self:SetRatio(ratio)
-    self._panel:set_visible(true)
+    self._panel:stop()
+    self._panel:animate(show)
     self._pos = pos
 end
 

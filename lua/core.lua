@@ -58,8 +58,6 @@ _G.EHI =
         UnpauseTrackerIfExists = 5,
         AddTrackerIfDoesNotExist = 7,
         SetAchievementComplete = 8,
-        AddToCache = 9,
-        GetFromCache = 10,
         ReplaceTrackerWithTracker = 11,
         IncreaseChance = 12,
         TriggerIfEnabled = 13,
@@ -82,7 +80,6 @@ _G.EHI =
         ShowAchievementFromStart = 30,
         SetAchievementFailed = 31,
         SetRandomTime = 32,
-        SetProgressMax = 33,
         DecreaseChance = 34,
         GetElementTimerAccurate = 35,
         UnpauseOrSetTimeByPreplanning = 36,
@@ -90,7 +87,6 @@ _G.EHI =
         ShowAchievementCustom = 38,
         FinalizeAchievement = 39,
         RemoveTriggerAndShowAchievementFromStart = 40,
-        ExecuteAchievementIfInteractionExists = 41,
         IncreaseChanceFromElement = 42,
         DecreaseChanceFromElement = 43,
         SetChanceFromElement = 44,
@@ -99,7 +95,6 @@ _G.EHI =
         RemoveTriggerAndShowAchievementCustom = 47,
         IncreaseProgressMax = 48,
         SetTimeIfLoudOrStealth = 49,
-        IncreaseChanceFromElementSpecify = 50,
         ShowWaypoint = 51,
         ShowEHIWaypoint = 52,
         RemoveTriggerAndStartAchievementCountdown = 53,
@@ -150,6 +145,10 @@ _G.EHI =
         Money = "equipment_plates",
         Phone = "pd2_phone",
         Keycard = "equipment_bank_manager_key",
+        Power = "pd2_power",
+        Drill = "pd2_drill",
+        Alarm = "C_Bain_H_GOBank_IsEverythingOK",
+        Water = "pd2_water_tap",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarLootDrop = { "pd2_car", "pd2_lootdrop" },
@@ -162,7 +161,13 @@ _G.EHI =
         HeliDropDrill = { "heli", "pd2_drill", "pd2_goto" },
         HeliDropBag = { "heli", "wp_bag", "pd2_goto" },
         HeliDropC4 = { "heli", "pd2_c4", "pd2_goto" },
-        BoatEscape = { "boat", "pd2_escape", "pd2_lootdrop" }
+        BoatEscape = { "boat", "pd2_escape", "pd2_lootdrop" },
+
+        Redirect =
+        {
+            Boat = "EHI_Boat",
+            Heli = "EHI_Heli"
+        }
     },
 
     Trackers =
@@ -956,13 +961,6 @@ function EHI:Trigger(id, element, enabled)
                 end
             elseif f == SF.SetAchievementComplete then
                 managers.ehi:SetAchievementComplete(triggers[id].id, true)
-            elseif f == SF.AddToCache then
-                self._cache[triggers[id].id] = triggers[id].data
-            elseif f == SF.GetFromCache then
-                local data = self._cache[triggers[id].id]
-                self._cache[triggers[id].id] = nil
-                triggers[id].icons[1] = data.icon
-                self:CheckCondition(id)
             elseif f == SF.ReplaceTrackerWithTracker then
                 RemoveTracker(triggers[id].data.id)
                 self:CheckCondition(id)
@@ -990,7 +988,7 @@ function EHI:Trigger(id, element, enabled)
                 self:UnhookTrigger(id)
             elseif f == SF.Trigger then
                 for _, trigger in pairs(triggers[id].data) do
-                    self:Trigger(trigger)
+                    self:Trigger(trigger, element, enabled)
                 end
             elseif f == SF.RemoveTrigger then
                 self:UnhookTrigger(id)
@@ -1026,7 +1024,7 @@ function EHI:Trigger(id, element, enabled)
                 self:CheckCondition(id)
             elseif f == SF.IncreaseProgress then
                 managers.ehi:IncreaseTrackerProgress(triggers[id].id)
-                managers.hud:IncreaseTrackerWaypointProgress(triggers[id].id)
+                --managers.hud:IncreaseTrackerWaypointProgress(triggers[id].id)
             elseif f == SF.SetTimeNoAnimOrCreateTrackerClient then
                 local value = managers.ehi:ReturnValue(triggers[id].id, "GetTrackerType")
                 if value ~= "accurate" then
@@ -1058,8 +1056,6 @@ function EHI:Trigger(id, element, enabled)
                 if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
                     self:AddTrackerWithRandomTime(id)
                 end
-            elseif f == SF.SetProgressMax then
-                managers.ehi:SetTrackerProgressMax(triggers[id].id, triggers[id].max)
             elseif f == SF.DecreaseChance then
                 local trigger = triggers[id]
                 managers.ehi:DecreaseChance(trigger.id, trigger.amount)
@@ -1100,10 +1096,6 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(id)
                 end
                 self:UnhookTrigger(id)
-            elseif f == SF.ExecuteAchievementIfInteractionExists then
-                if self:IsAchievementLocked(triggers[id].id) and managers.ehi:InteractionExists(triggers[id].data) then
-                    self:CheckCondition(id)
-                end
             elseif f == SF.IncreaseChanceFromElement then
                 managers.ehi:IncreaseChance(triggers[id].id, element._values.chance)
             elseif f == SF.DecreaseChanceFromElement then
@@ -1137,11 +1129,6 @@ function EHI:Trigger(id, element, enabled)
                         triggers[id].time = triggers[id].data.yes
                     end
                     self:CheckCondition(id)
-                end
-            elseif f == SF.IncreaseChanceFromElementSpecify then
-                local e = managers.mission:get_element_by_id(triggers[id].element)
-                if e then
-                    managers.ehi:IncreaseChance(triggers[id].id, e._values.chance)
                 end
             elseif f == SF.ShowWaypoint then
                 managers.hud:add_waypoint(triggers[id].id, triggers[id].data)
@@ -1276,6 +1263,7 @@ function EHI:SyncLoad()
     self:HookElements(self.HookOnLoad)
     self.HookOnLoad = {}
     self:DisableWaypoints(self.DisableOnLoad)
+    self:DisableWaypointsOnInit()
     self.DisableOnLoad = {}
 end
 
@@ -1333,37 +1321,37 @@ function EHI:ShouldDisableWaypoints()
     return self:GetOption("show_timers") and self:GetWaypointOption("show_waypoints_timers")
 end
 
-function EHI:DisableElementWaypoint(id)
-    local function Host(self, ...)
-        if not self._values.enabled then
-            return
-        end
-        if self._values.only_on_instigator and instigator ~= managers.player:player_unit() then
-            ElementWaypoint.super.on_executed(self, instigator)
-            return
-        end
-        if not self._values.only_in_civilian or managers.player:current_state() == "civilian" then
-            local text = managers.localization:text(self._values.text_id)
-            managers.hud:AddWaypointSoft(self._id, {
-                distance = true,
-                state = "sneak_present",
-                present_timer = 0,
-                text = text,
-                icon = self._values.icon,
-                position = self._values.position
-            })
-        elseif managers.hud:get_waypoint_data(self._id) then
-            managers.hud:remove_waypoint(self._id)
-        end
-        ElementWaypoint.super.on_executed(self, instigator)
+local function HostWaypoint(self, instigator, ...)
+    if not self._values.enabled then
+        return
     end
+    if self._values.only_on_instigator and instigator ~= managers.player:player_unit() then
+        ElementWaypoint.super.on_executed(self, instigator)
+        return
+    end
+    if not self._values.only_in_civilian or managers.player:current_state() == "civilian" then
+        local text = managers.localization:text(self._values.text_id)
+        managers.hud:AddWaypointSoft(self._id, {
+            distance = true,
+            state = "sneak_present",
+            present_timer = 0,
+            text = text,
+            icon = self._values.icon,
+            position = self._values.position
+        })
+    elseif managers.hud:get_waypoint_data(self._id) then
+        managers.hud:remove_waypoint(self._id)
+    end
+    ElementWaypoint.super.on_executed(self, instigator)
+end
+function EHI:DisableElementWaypoint(id)
     local element = managers.mission:get_element_by_id(id)
-    if not element then
+    if not element or self._cache.ElementWaypointFunction[id] then
         return
     end
     if self._cache.Host then
         self._cache.ElementWaypointFunction[id] = element.on_executed
-        element.on_executed = Host
+        element.on_executed = HostWaypoint
     else
         self._cache.ElementWaypointFunction[id] = element.client_on_executed
         element.client_on_executed = function(...) end
@@ -1434,6 +1422,17 @@ function EHI:ShowAchievementBagValueCounter(params)
     self:AddAchievementToCounter(params)
 end
 
+function EHI:AddAchievementToCounter(params)
+    self.AchievementCounter[#self.AchievementCounter + 1] =
+    {
+        id = params.achievement,
+        check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly,
+        loot_type = params.counter and params.counter.loot_type,
+        sync_only = params.sync_only
+    }
+    self:HookAchievementCounter()
+end
+
 function EHI:HookAchievementCounter()
     if not self.AchievementCounterHook then
         local function Hook(self, sync_load)
@@ -1451,17 +1450,6 @@ function EHI:HookAchievementCounter()
         end)
         self.AchievementCounterHook = true
     end
-end
-
-function EHI:AddAchievementToCounter(params)
-    self.AchievementCounter[#self.AchievementCounter + 1] =
-    {
-        id = params.achievement,
-        check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly,
-        loot_type = params.counter and params.counter.loot_type,
-        sync_only = params.sync_only
-    }
-    self:HookAchievementCounter()
 end
 
 function EHI:AddLoadSyncFunction(f)

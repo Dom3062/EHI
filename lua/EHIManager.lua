@@ -58,7 +58,7 @@ end
 
 function EHIManager:InteractionExists(tweak_data)
     local interactions = managers.interaction._interactive_units or {}
-    for _, unit in pairs(interactions) do
+    for _, unit in ipairs(interactions) do
         if unit:interaction().tweak_data == tweak_data then
             return true
         end
@@ -209,10 +209,6 @@ function EHIManager:LoadSync()
             This is more accurate and reliable
         ]]
         self:SetTrackerProgressRemaining("pex_11", self:CountUnitAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5)
-    elseif level_id == "mus" then -- The Diamond
-        if show_achievement then
-            self:AddTimedAchievementTracker("bat_4", 600)
-        end
     elseif level_id == "dark" then -- Murky Station
         if show_achievement then
             self:AddTimedAchievementTracker("dark_2", 420)
@@ -266,7 +262,7 @@ function EHIManager:LoadSync()
             end
         end
     elseif level_id == "arm_for" then -- Transport: Train Heist
-        if managers.groupai:state():whisper_mode() then
+        if show_achievement and managers.groupai:state():whisper_mode() then
             self:AddAchievementNotificationTracker("armored_6")
         end
     elseif level_id == "alex_1" then
@@ -358,6 +354,7 @@ function EHIManager:AddTracker(params, pos)
     params.y = self:GetY(pos)
     params.scale = self._scale
     params.text_scale = self._text_scale
+    params.dynamic = true
     local class = params.class or "EHITracker"
     local tracker = _G[class]:new(self._hud_panel, params)
     if tracker._update then
@@ -365,6 +362,44 @@ function EHIManager:AddTracker(params, pos)
     end
     self._trackers[params.id] = tracker
     self._trackers_pos[params.id] = { tracker = tracker, pos = pos or self._n_of_trackers, x = params.x, y = params.y, w = tracker:GetPanelW() }
+    self._n_of_trackers = self._n_of_trackers + 1
+end
+
+function EHIManager:AddStaticTracker(params)
+    if self._trackers[params.id] then
+        EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
+        EHI:LogTraceback()
+        self._trackers[params.id]:delete()
+    end
+    params.parent_class = self
+    params.x = 0
+    params.y = 0
+    params.scale = self._scale
+    params.text_scale = self._text_scale
+    local class = params.class or "EHITracker"
+    local tracker = _G[class]:new(self._hud_panel, params)
+    self._trackers[params.id] = tracker
+    self._trackers_pos[params.id] = { tracker = tracker, pos = 0, x = 0, y = 0, w = tracker:GetPanelW() }
+end
+
+function EHIManager:RunStaticTracker(id, ...)
+    local tracker = self._trackers[id]
+    if not tracker then
+        return
+    end
+    local x = self:GetX()
+    local y = self:GetY()
+    tracker._panel:set_x(x)
+    tracker._panel:set_y(y)
+    tracker:Run(...)
+    tracker:SetPanelVisible()
+    local tracker_pos = self._trackers_pos[id]
+    tracker_pos.pos = self._n_of_trackers
+    tracker_pos.x = x
+    tracker_pos.y = y
+    if tracker._update then
+        self:AddTrackerToUpdate(id, tracker)
+    end
     self._n_of_trackers = self._n_of_trackers + 1
 end
 
@@ -530,11 +565,11 @@ if EHI:GetOption("tracker_alignment") == 1 then -- Vertical
                 end
             end
             if move then
-                for id, tbl in pairs(self._trackers_pos) do
+                for _, tbl in pairs(self._trackers_pos) do
                     if tbl.pos >= pos then
                         local final_pos = tbl.pos + 1
                         tbl.tracker:SetTop(self:GetY(tbl.pos), self:GetY(final_pos))
-                        self._trackers_pos[id].pos = final_pos
+                        tbl.pos = final_pos
                     end
                 end
             else
@@ -553,11 +588,11 @@ if EHI:GetOption("tracker_alignment") == 1 then -- Vertical
         if not pos then
             return
         end
-        for id, value in pairs(self._trackers_pos) do
+        for _, value in pairs(self._trackers_pos) do
             if value.pos > pos then
                 local final_pos = value.pos - 1
                 value.tracker:SetTop(self:GetY(value.pos), self:GetY(final_pos))
-                self._trackers_pos[id].pos = final_pos
+                value.pos = final_pos
             end
         end
     end
@@ -825,7 +860,7 @@ function EHIManager:SetCachedPeerInCustody(peer_id)
     end
     if self._cache.TradeDelayShowed then
         local data = self._cache.TradeDelay[peer_id]
-        self:PostPeerCustodyTime(peer_id, data.respawn_t, data.in_custody)
+        self:PostPeerCustodyTime(peer_id, data.respawn_t, true)
         return
     end
     self._cache.TradeDelay[peer_id].in_custody = true

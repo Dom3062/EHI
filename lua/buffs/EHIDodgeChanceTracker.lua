@@ -1,7 +1,25 @@
 local persistent = false
 local player_manager
 local DODGE_INIT = tweak_data.player.damage.DODGE_INIT or 0
-EHIDodgeChanceTracker = EHIDodgeChanceTracker or class(EHIGaugeBuffTracker)
+local function show(o)
+    local t = 0
+    local total = 0.15
+    while t < total do
+        t = t + coroutine.yield()
+        o:set_alpha(t / total)
+    end
+    o:set_alpha(1)
+end
+local function hide(o)
+    local t = 0
+    local total = 0.15
+    while t < total do
+        t = t + coroutine.yield()
+        o:set_alpha(1 - (t / total))
+    end
+    o:set_alpha(0)
+end
+EHIDodgeChanceTracker = class(EHIGaugeBuffTracker)
 function EHIDodgeChanceTracker:init(panel, params)
     params.format = "percent"
     EHIDodgeChanceTracker.super.init(self, panel, params)
@@ -54,12 +72,11 @@ end
 
 function EHIDodgeChanceTracker:SetCustody(state)
     if state then
-        self:Deactivate()
         self._parent_class:RemoveBuffFromUpdate(self._id)
         self._dodge = 0
+        self:Deactivate() 
     else
         self._time = 1
-        self:Activate()
         self._parent_class:AddBuffToUpdate(self._id, self)
     end
 end
@@ -77,7 +94,8 @@ function EHIDodgeChanceTracker:Activate()
         return
     end
     self._active = true
-    self._panel:set_visible(true)
+    self._panel:stop()
+    self._panel:animate(show)
     self._parent_class:AddVisibleBuff(self._id)
 end
 
@@ -86,6 +104,7 @@ function EHIDodgeChanceTracker:Deactivate()
         return
     end
     self._parent_class:RemoveVisibleBuff(self._id, self._pos)
-    self._panel:set_visible(false)
+    self._panel:stop()
+    self._panel:animate(hide)
     self._active = false
 end

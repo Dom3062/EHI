@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local element_sync_triggers =
@@ -9,10 +10,34 @@ local triggers = {
     [1009031] = { time = 63 + 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4 },
 
     [100699] = { time = 8 + 25 + 13, id = "ObjectiveWait", icons = { "faster" } },
+
+    [100939] = { time = 5, id = "C4Vault", icons = { Icon.C4 } },
+    [EHI:GetInstanceElementID(100020, 6700)] = { time = 5, id = "C4Escape", icons = { Icon.C4 } }
 }
 if Network:is_client() then
     triggers[101366] = { time = 5 + 40, random_time = 10, id = "VaultTeargas", icons = { Icon.Teargas } }
     EHI:SetSyncTriggers(element_sync_triggers)
+    local LiquidNitrogen = EHI:GetFreeCustomSpecialFunctionID()
+    triggers[101498] = { time = 6 + 4 + 30 + 24 + 3, special_function = LiquidNitrogen }
+    triggers[100035] = { time = 4 + 30 + 24 + 3, special_function = LiquidNitrogen }
+    triggers[101630] = { time = 30 + 24 + 3, special_function = LiquidNitrogen }
+    triggers[101629] = { time = 24 + 3, special_function = LiquidNitrogen }
+    EHI:RegisterCustomSpecialFunction(LiquidNitrogen, function(id, trigger, element, enabled)
+        if managers.ehi:TrackerDoesNotExist("LiquidNitrogen") then
+            managers.ehi:AddTracker({
+                id = "LiquidNitrogen",
+                time = trigger.time - 10,
+                icons = { "equipment_liquid_nitrogen_canister" }
+            })
+        end
+        if managers.ehi:TrackerDoesNotExist("HeliC4") then
+            managers.ehi:AddTracker({
+                id = "HeliC4",
+                time = trigger.time,
+                icons = Icon.HeliDropC4
+            })
+        end
+    end)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end

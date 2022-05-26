@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -13,19 +14,7 @@ if level_id == "firestarter_3" then
         [105237] = { id = "slakt_5", special_function = SF.SetAchievementComplete },
         [105235] = { id = "slakt_5", special_function = SF.SetAchievementFailed }
     }
-end
-triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning }
-triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning }
-EHI:AddOnAlarmCallback(function(dropin)
-    local start_chance = 5
-    if managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3) then -- Cash or Gold
-        start_chance = 15 -- 5 (start_chance) + 10
-    end
-    managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
-end)
-
-EHI:ParseTriggers(triggers)
-if level_id ~= "firestarter_3" then
+else
     -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
     EHI:ShowAchievementBagValueCounter({
         achievement = "uno_1",
@@ -38,3 +27,14 @@ if level_id ~= "firestarter_3" then
         }
     })
 end
+triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning }
+triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { "teargas", "pd2_generic_look" }, class = TT.Warning }
+EHI:AddOnAlarmCallback(function(dropin)
+    local start_chance = 5
+    if managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3) then -- Cash or Gold
+        start_chance = 15 -- 5 (start_chance) + 10
+    end
+    managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
+end)
+
+EHI:ParseTriggers(triggers)

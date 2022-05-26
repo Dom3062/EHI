@@ -1,8 +1,10 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local zone_delay = 12
 local cac_12_disable = { id = "cac_12", special_function = SF.SetAchievementFailed }
+local ExecuteAchievementIfInteractionExists = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
     [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
@@ -20,7 +22,8 @@ local triggers = {
     [1017702] = { id = 101776, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-2341.0, 4437.0, 150.0) } },
 
     [100073] = { time = 36, id = "lets_do_this", class = TT.Achievement },
-    [100074] = { id = "cac_12", status = "ready", class = TT.AchievementNotification, special_function = SF.ExecuteAchievementIfInteractionExists, data = "circuit_breaker_off", exclude_from_sync = true },
+    [101784] = { id = "lets_do_this", special_function = SF.SetAchievementComplete },
+    [100074] = { id = "cac_12", status = "ready", class = TT.AchievementNotification, special_function = ExecuteAchievementIfInteractionExists, exclude_from_sync = true },
     [104406] = { id = "cac_12", status = "finish", special_function = SF.SetAchievementStatus },
     [104408] = { id = "cac_12", special_function = SF.SetAchievementComplete },
     [104409] = cac_12_disable,
@@ -41,3 +44,8 @@ EHI:AddOnAlarmCallback(function(dropin)
 end)
 
 EHI:ParseTriggers(triggers)
+EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, function(id, ...)
+    if EHI:IsAchievementLocked("cac_12") and managers.ehi:InteractionExists("circuit_breaker_off") then
+        EHI:CheckCondition(id)
+    end
+end)

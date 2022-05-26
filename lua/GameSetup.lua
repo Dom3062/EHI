@@ -8,7 +8,7 @@ end
 local original =
 {
     init_finalize = GameSetup.init_finalize,
-    save = GameSetup.save,
+    --save = GameSetup.save,
     load = GameSetup.load
 }
 
@@ -44,10 +44,10 @@ local levels =
     roberts = true, -- GO Bank
     family = true, -- Diamond Store
     arm_cro = true, -- Transport: Crossroads
-    arm_fac = true, -- Transport: Harbor -- Missing wps
+    arm_fac = true, -- Transport: Harbor
     arm_hcm = true, -- Transport: Downtown
-    arm_par = true, -- Transport: Park -- Missing wps
-    arm_und = true, -- Transport: Underpass -- Missing wps
+    arm_par = true, -- Transport: Park
+    arm_und = true, -- Transport: Underpass
     arm_for = true, -- Transport: Train Heist
     mallcrasher = true, -- Mallcrasher
     four_stores = true, -- Four Stores
@@ -62,14 +62,14 @@ local levels =
     watchdogs_2_day = true, -- Watchdogs Day 2 (Day)
     watchdogs_2 = true, -- Watchdogs Day 2
     firestarter_1 = true, -- Firestarter Day 1
-    firestarter_2 = true, -- Firestarter Day 2
+    firestarter_2 = true, -- Firestarter Day 2; Redo the waypoint hiding system, the current one is garbage and it won't work properly on drop-in
     firestarter_3 = true, -- Firestarter Day 3
     alex_1 = true, -- Rats Day 1
     alex_2 = true, -- Rats Day 2
     alex_3 = true, -- Rats Day 3
     welcome_to_the_jungle_1 = true, -- Big Oil Day 1
     welcome_to_the_jungle_1_night = true, -- Big Oil Day 1 (Night)
-    welcome_to_the_jungle_2 = true, -- Big Oil Day 2; PC Hack waypoint; remove
+    welcome_to_the_jungle_2 = true, -- Big Oil Day 2; PC Hack waypoint; remove -> retest
     framing_frame_1 = true, -- Framing Frame Day 1
     framing_frame_2 = true, -- Framing Frame Day 2
     framing_frame_3 = true, -- Framing Frame Day 3; PC Hack waypoint; removal needed
@@ -89,33 +89,33 @@ local levels =
     mia_2 = true, -- Hotline Miami Day 2
     hox_1 = true, -- Hoxton Breakout Day 1
     hox_2 = true, -- Hoxton Breakout Day 2
-    hox_3 = true, -- Hoxton Revenge; Drill vault wp; removal needed + add heli wps
+    hox_3 = true, -- Hoxton Revenge
     mus = true, -- The Diamond
-    arena = true, -- The Alesso Heist; Hacking PC wp, needs removal
-    kenaz = true, -- Golden Grin Casino; Defend BFD wp, needs removal + add C4 timer
+    arena = true, -- The Alesso Heist
+    kenaz = true, -- Golden Grin Casino; Defend BFD wp, needs removal + add C4 timer -> retest
     gallery = true, -- Art Gallery
     crojob2 = true, -- The Bomb: Dockyard
     crojob3 = true, -- The Bomb: Forest
     crojob3_night = true, -- The Bomb: Forest (Night)
     friend = true, -- Scarface Mansion
-    pal = true, -- Counterfeit; Objective waypoints, needs removal
+    pal = true, -- Counterfeit
     red2 = true, -- First World Bank
     rat = true, -- Cook Off
     dark = true, -- Murky Station
     mad = true, -- Boiling Point
-    peta = true, -- Goat Simulator Heist Day 1; Drill door (saw most likely too) wp; needs removal
-    peta2 = true, -- Goat Simulator Heist Day 2; Drill door wp; needs removal -> MissionDoor class
+    peta = true, -- Goat Simulator Heist Day 1; Add escape car waypoints
+    peta2 = true, -- Goat Simulator Heist Day 2
     cane = true, -- Santa's Workshop
     cage = true, -- Car Shop
-    born = true, -- The Biker Heist Day 1; Door drill/safe wps; removal needed -> MissionDoor class
+    born = true, -- The Biker Heist Day 1
     chew = true, -- The Biker Heist Day 2
     chill_combat = true, -- Safehouse Raid
     flat = true, -- Panic Room
-    help = true, -- Prison Nightmare; Drill defend wp, needs removal; add C4 drop-off location wp
-    spa = true, -- Brooklyn 10-10; Drill objective wp, needs removal
+    help = true, -- Prison Nightmare
+    spa = true, -- Brooklyn 10-10
     fish = true, -- The Yacht Heist
-    man = true, -- Undercover; Saw car objective wp, needs removal
-    dinner = true, -- Slaughterhouse; Safe drill objective wp, needs removal
+    man = true, -- Undercover
+    dinner = true, -- Slaughterhouse
     nail = true, -- Lab Rats
     pbr = true, -- Beneath the Mountain
     pbr2 = true, -- Birth of Sky
@@ -124,12 +124,12 @@ local levels =
     wwh = true, -- Alaskan Deal
     dah = true, -- Diamond Heist
     hvh = true, -- Cursed Kill Room
-    rvd1 = true, -- Reservoir Dogs Heist Day 2; Add pink car wps; Add escape car wps; Fix the longer escape duration
-    rvd2 = true, -- Reservoir Dogs Heist Day 1; Add C4 timer (vault + escape)
-    brb = true, -- Brooklyn Bank; Add C4 timer (2nd floor + in vault); Remove defend the drill wp
+    rvd1 = true, -- Reservoir Dogs Heist Day 2; Add escape car wps
+    rvd2 = true, -- Reservoir Dogs Heist Day 1
+    brb = true, -- Brooklyn Bank
     tag = true, -- Breakin' Feds
-    des = true, -- Henry's Rock; Remove defend+fix (probably too) wp on hacking objective, Add red button achievement
-    sah = true, -- Shacklethorne Auction; Remove defend+fix (probably too) wp on hacking objective, Add heli wp
+    des = true, -- Henry's Rock
+    sah = true, -- Shacklethorne Auction
     bph = true, -- Hell's Island
     nmh = true, -- No Mercy
     vit = true, -- The White House
@@ -183,14 +183,14 @@ function GameSetup:init_finalize(...)
     EHI:DisableWaypointsOnInit()
 end
 
-function GameSetup:save(data, ...)
+--[[function GameSetup:save(data, ...)
     original.save(self, data, ...)
     managers.ehi:save(data)
-end
+end]]
 
 function GameSetup:load(data, ...)
     EHI:FinalizeUnitsClient()
-    managers.ehi:load(data)
+    --managers.ehi:load(data)
     original.load(self, data, ...)
     managers.ehi:LoadSync()
     EHI:SyncLoad()

@@ -2,6 +2,14 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local LootDropWP = Vector3(0, 0, 152.5)
+local vectors =
+{
+    [4700] = EHI:GetInstanceElementPosition(Vector3(-5091.17, 2221.32, 36.5), LootDropWP, Rotation(0, 0, -0)),
+    [4750] = EHI:GetInstanceElementPosition(Vector3(-791.169, -2078.68, 16.5), LootDropWP, Rotation(0, 0, -0)),
+    [4800] = EHI:GetInstanceElementPosition(Vector3(-2391.17, 5821.32, 16.5), LootDropWP, Rotation(44.9999, 0, -0)),
+    [4850] = EHI:GetInstanceElementPosition(Vector3(-7643.86, 3668.63, 16.5), LootDropWP, Rotation(0, 0, -0))
+}
 local HeliLootDropWait = { Icon.Heli, Icon.LootDrop, "faster" }
 local element_sync_triggers =
 {
@@ -16,12 +24,21 @@ local triggers = {
     [102744] = { id = "PAL", special_function = SF.UnpauseTracker },
     [102826] = { id = "PAL", special_function = SF.RemoveTracker },
 
-    [102301] = { time = 15, id = "Trap", icons = { "pd2_c4" }, class = TT.Warning },
+    [102301] = { special_function = SF.Trigger, data = { 1023011, 1023012 } },
+    [1023011] = { time = 15, id = "Trap", icons = { "pd2_c4" }, class = TT.Warning },
+    [1023012] = { id = "pal_3", class = TT.AchievementNotification, condition = EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove("overkill") },
     [101566] = { id = "Trap", special_function = SF.RemoveTracker },
+    [101976] = { id = "pal_3", special_function = SF.SetAchievementComplete },
+    [101571] = { id = "pal_3", special_function = SF.SetAchievementFailed },
 
     [101230] = { time = 120, id = "Water", icons = { "pd2_water_tap" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [101231] = { id = "Water", special_function = SF.PauseTracker }
 }
+
+for i = 4700, 4850, 50 do
+    triggers[EHI:GetInstanceElementID(100004, i)] = { id = EHI:GetInstanceElementID(100019, i), special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position = vectors[i] } }
+end
+
 local heli = { id = "HeliCageDelay", icons = HeliLootDropWait, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning }
 local sync_triggers = {
     [EHI:GetInstanceElementID(100013, 4700)] = heli,
@@ -58,3 +75,21 @@ EHI:ShowAchievementLootCounter({
     max = max,
     exclude_from_sync = true
 })
+
+local DisableWaypoints =
+{
+    -- Defend
+    [100912] = true,
+    [100913] = true,
+    -- Fix
+    [100916] = true,
+    [100917] = true
+}
+EHI:DisableWaypoints(DisableWaypoints)
+
+local tbl =
+{
+    -- Drill
+    [102192] = { remove_vanilla_waypoint = true, waypoint_id = 100943 }
+}
+EHI:UpdateUnits(tbl)

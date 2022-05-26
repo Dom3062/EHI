@@ -116,7 +116,7 @@ function EHIBuffManager:AddDebugBuffs()
     for i = 1, 5, 1 do
         local buff = self._buffs["debug_" .. i]
         if buff then
-            EHI:DelayCall("Buff_Debug_" .. i, 1 * i, function()
+            EHI:DelayCall("Buff_Debug_" .. i, i, function()
                 buff._time = c[i] or 6
                 buff._text:set_text(buff:Format())
                 buff._panel:set_visible(true)
@@ -155,7 +155,7 @@ function EHIBuffManager:AddBuff(id, t)
             buff:Activate(t, self._n_visible)
             self._visible_buffs[id] = true
             self._n_visible = self._n_visible + 1
-            self:Reorganize()
+            self:ReorganizeFast(buff)
         end
     end
 end
@@ -174,7 +174,7 @@ function EHIBuffManager:AddGauge(id, ratio)
             buff:Activate(ratio, self._n_visible)
             self._visible_buffs[id] = true
             self._n_visible = self._n_visible + 1
-            self:Reorganize()
+            self:ReorganizeFast(buff)
         end
     end
 end
@@ -209,9 +209,10 @@ end
 
 function EHIBuffManager:AddVisibleBuff(id)
     self._visible_buffs[id] = true
-    self._buffs[id]:SetPos(self._n_visible)
+    local buff = self._buffs[id]
+    buff:SetPos(self._n_visible)
     self._n_visible = self._n_visible + 1
-    self:Reorganize()
+    self:ReorganizeFast(buff)
 end
 
 function EHIBuffManager:RemoveVisibleBuff(id, pos)
@@ -232,6 +233,10 @@ do
                 local buff = self._buffs[key]
                 buff:SetLeftXByPos(self._x, pos)
             end
+        end
+
+        function EHIBuffManager:ReorganizeFast(buff)
+            buff:SetLeftXByPos(self._x, self._n_visible)
         end
     elseif alignment == 2 then -- Center
         local ceil = math.ceil
@@ -256,6 +261,41 @@ do
                 end
             end
         end
+
+        function EHIBuffManager:AddBuff(id, t)
+            local buff = self._buffs[id]
+            if buff then
+                if buff:IsActive() then
+                    buff:Extend(t)
+                else
+                    buff:Activate(t, self._n_visible)
+                    self._visible_buffs[id] = true
+                    self._n_visible = self._n_visible + 1
+                    self:Reorganize()
+                end
+            end
+        end
+
+        function EHIBuffManager:AddGauge(id, ratio)
+            local buff = self._buffs[id]
+            if buff then
+                if buff:IsActive() then
+                    buff:SetRatio(ratio)
+                else
+                    buff:Activate(ratio, self._n_visible)
+                    self._visible_buffs[id] = true
+                    self._n_visible = self._n_visible + 1
+                    self:Reorganize()
+                end
+            end
+        end
+
+        function EHIBuffManager:AddVisibleBuff(id)
+            self._visible_buffs[id] = true
+            self._buffs[id]:SetPos(self._n_visible)
+            self._n_visible = self._n_visible + 1
+            self:Reorganize()
+        end
     else -- Right
         function EHIBuffManager:Reorganize(pos)
             if self._n_visible == 0 then
@@ -266,6 +306,10 @@ do
                 local buff = self._buffs[key]
                 buff:SetRightXByPos(self._x, pos)
             end
+        end
+
+        function EHIBuffManager:ReorganizeFast(buff)
+            buff:SetRightXByPos(self._x, self._n_visible)
         end
     end
 end

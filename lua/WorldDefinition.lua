@@ -66,7 +66,7 @@ function EHI:FinalizeUnits(tbl)
     end
 end
 
-if not EHI:GetOption("show_timers") then
+if not EHI:ShouldDisableWaypoints() then
     return
 end
 
@@ -77,6 +77,7 @@ local original =
 }
 
 local TT = EHI.Trackers
+local Icon = EHI.Icons
 
 local chasC4 = {}
 
@@ -96,42 +97,44 @@ local units =
     ["units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
     ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
 
-    ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { "pd2_drill" }, ignore_visibility = true },
-    ["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" } },
-    ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { "faster" }, warning = true },
-    ["units/pd2_dlc_help/props/hlp_interactable_wheel_timer/hlp_interactable_wheel_timer"] = { icons = { "faster" }, icon_on_pause = { "restarter" } },
-    ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { "pd2_c4" }, warning = true },
-    ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { "pd2_c4" }, f = "chasC4" },
+    ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { Icon.Drill }, ignore_visibility = true },
+    ["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { Icon.Wait } },
+    ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { Icon.Wait }, warning = true },
+    ["units/pd2_dlc_help/props/hlp_interactable_wheel_timer/hlp_interactable_wheel_timer"] = { icons = { Icon.Wait }, icon_on_pause = { "restarter" } },
+    ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { Icon.C4 }, warning = true },
+    ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { Icon.C4 }, f = "chasC4" },
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_01"] = { disable_set_visible = true },
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"] = { disable_set_visible = true },
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { disable_set_visible = true },
     ["units/pd2_dlc_sand/equipment/sand_interactable_rotating_code_computer/sand_interactable_rotating_code_computer"] = { remove_on_pause = true, remove_on_alarm = true },
-    ["units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator"] = { icons = { "pd2_power" } },
+    ["units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator"] = { icons = { Icon.Power } },
     ["units/pd2_dlc_sand/equipment/sand_interactable_hack_computer/sand_interactable_hack_computer"] = { remove_vanilla_waypoint = true, waypoint_id = 100034 }
 }
 
 if level_id == "firestarter_3" or level_id == "branchbank" or level_id == "branchbank_gold" or level_id == "branchbank_cash" or level_id == "branchbank_deposit" then -- Firestarter Day 3 or Branchbank heist
     units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { f = "firestarter_3_WP" }
+elseif level_id == "welcome_to_the_jungle_2" then -- Big Oil Day 2
+    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "big_oil_day2_WP" }
 elseif level_id == "roberts" then -- GO Bank
     units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 102899 }
-    units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { EHI.Icons.Vault }, remove_on_pause = true }
+    units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { Icon.Vault }, remove_on_pause = true }
 elseif level_id == "election_day_1" then -- Election Day D1
     units["units/payday2/props/off_prop_eday_shipping_computer/off_prop_eday_shipping_computer"] = { f = "election_day_1" }
 elseif level_id == "election_day_2" then -- Election Day D2
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "election_day_2" }
 elseif level_id == "big" then -- The Big Bank
-    units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { "faster" } }
+    units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { Icon.Wait } }
 elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
     units["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_director/stn_interactable_computer_director"] = { f = "hox_2" }
 elseif level_id == "moon" then -- Stealing Xmas
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100776 }
 elseif level_id == "hvh" then -- Cursed Kill Room
     units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
-    units["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { "faster" }, f = "hvhTimer", custom_callback = { id = "hvhCleanUp", f = "remove" } }
+    units["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { Icon.Wait }, f = "hvhTimer", custom_callback = { id = "hvhCleanUp", f = "remove" } }
 elseif level_id == "help" then -- Prison Nightmare
     units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
 elseif level_id == "des" then -- Henry's Rock
-    units["units/pd2_dlc_des/props/des_prop_inter_hack_computer/des_inter_hack_computer"] = { icons = { "pd2_power" } }
+    units["units/pd2_dlc_des/props/des_prop_inter_hack_computer/des_inter_hack_computer"] = { icons = { Icon.Power } }
 elseif level_id == "nmh" then -- No Mercy
     units["units/pd2_dlc_nmh/props/nmh_interactable_teddy_saw/nmh_interactable_teddy_saw"] = { f = "nmh_WP" }
 elseif level_id == "pent" then -- Mountain Master
@@ -164,6 +167,16 @@ function WorldDefinition:firestarter_3_WP(instance, unit_id, unit_data, unit)
         unit:timer_gui():RemoveVanillaWaypoint(102633)
     else
         unit:timer_gui():RemoveVanillaWaypoint(102752)
+    end
+end
+
+function WorldDefinition:big_oil_day2_WP(instance, unit_id, unit_data, unit)
+    if unit_id == 103320 then
+        unit:timer_gui():RemoveVanillaWaypoint(100309)
+    elseif unit_id == 101365 then
+        unit:timer_gui():RemoveVanillaWaypoint(102499)
+    else -- 101863
+        unit:timer_gui():RemoveVanillaWaypoint(102498)
     end
 end
 
@@ -258,7 +271,7 @@ function WorldDefinition:hox3Timer(instance, unit_id, unit_data, unit)
     if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100090 then -- "hox_estate_panic_room" instance
         unit:digital_gui():SetIcons({ EHI.Icons.Vault })
     else
-        unit:digital_gui():SetIcons({ "faster" })
+        unit:digital_gui():SetIcons({ Icon.Wait })
         unit:digital_gui():SetWarning(true)
     end
     unit:digital_gui():SetOnAlarm()

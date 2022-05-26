@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.tweak_data then
 	return
 else
@@ -122,6 +123,14 @@ tweak_data.ehi =
             text = "Dmg-",
             x = 1,
             y = 11
+        },
+        UppersRangeGauge =
+        {
+            u100skill = true,
+            x = 2,
+            y = 11,
+            check_after_spawn = true,
+            class = "EHIUppersRangeTracker"
         },
         fast_learner =
         {
@@ -401,6 +410,8 @@ tweak_data.ehi.buff.tag_team_cooldown = EHI:DeepClone(tweak_data.ehi.buff.chico_
 tweak_data.ehi.buff.tag_team_cooldown.folder = "ecp"
 tweak_data.ehi.buff.pocket_ecm_jammer_cooldown = EHI:DeepClone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.folder = "joy"
+tweak_data.ehi.buff.copr_ability_cooldown = EHI:DeepClone(tweak_data.ehi.buff.chico_injector_cooldown)
+tweak_data.ehi.buff.copr_ability_cooldown.folder = "copr"
 
 -- Debug
 tweak_data.ehi.buff.debug_1 = EHI:DeepClone(tweak_data.ehi.buff.chico_injector)
@@ -410,3 +421,5 @@ tweak_data.ehi.buff.debug_4 = EHI:DeepClone(tweak_data.ehi.buff.team_crew_inspir
 
 tweak_data.hud_icons.EHI_XP = { texture = tweak_data.ehi.icons.xp.texture }
 tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }
+tweak_data.hud_icons.EHI_Boat = { texture = tweak_data.ehi.icons.boat.texture .. "_waypoint", texture_rect = { 0, 0, 32, 32 } }
+tweak_data.hud_icons.EHI_Heli = { texture = tweak_data.ehi.icons.heli.texture .. "_waypoint", texture_rect = { 0, 0, 32, 32 } }

@@ -1,3 +1,18 @@
+local Color = Color
+local math_abs = math.abs
+local math_min = math.min
+local math_sin = math.sin
+local math_lerp = math.lerp
+local function show(o) -- This is actually faster than manually re-typing optimized "over" function
+    local TOTAL_T = 0.18
+    local t = 0
+    while TOTAL_T > t do
+        local dt = coroutine.yield()
+        t = math_min(t + dt, TOTAL_T)
+        local lerp = t / TOTAL_T
+        o:set_alpha(math_lerp(0, 1, lerp))
+    end
+end
 local icons = tweak_data.ehi.icons
 
 local function GetIcon(icon)
@@ -81,23 +96,16 @@ function EHITracker:init(panel, params)
     end
     self:OverridePanel(params)
     self._parent_class = params.parent_class
-    self:SetPanelVisible()
+    if params.dynamic then
+        self:SetPanelVisible()
+    end
 end
 
 function EHITracker:OverridePanel(params)
 end
 
 function EHITracker:SetPanelVisible()
-    self._panel:animate(function(o)
-        local TOTAL_T = 0.18
-        local t = 0
-        while TOTAL_T > t do
-            local dt = coroutine.yield()
-            t = math.min(t + dt, TOTAL_T)
-            local lerp = t / TOTAL_T
-            o:set_alpha(math.lerp(0, 1, lerp))
-        end
-    end)
+    self._panel:animate(show)
 end
 
 if EHI:GetOption("show_one_icon") then
@@ -144,12 +152,12 @@ function EHITracker:SetTop(from_y, target_y)
     end
     self._anim_move = self._panel:animate(function(o)
         local TOTAL_T = 0.18
-        local t = (1 - math.abs(from_y - target_y) / math.abs(from_y - target_y)) * TOTAL_T
+        local t = (1 - math_abs(from_y - target_y) / math_abs(from_y - target_y)) * TOTAL_T
         while TOTAL_T > t do
             local dt = coroutine.yield()
-            t = math.min(t + dt, TOTAL_T)
+            t = math_min(t + dt, TOTAL_T)
             local lerp = t / TOTAL_T
-            o:set_y(math.lerp(from_y, target_y, lerp))
+            o:set_y(math_lerp(from_y, target_y, lerp))
         end
     end)
 end
@@ -161,12 +169,12 @@ function EHITracker:SetLeft(from_x, target_x)
     end
     self._anim_move = self._panel:animate(function(o)
         local TOTAL_T = 0.18
-        local t = (1 - math.abs(from_x - target_x) / math.abs(from_x - target_x)) * TOTAL_T
+        local t = (1 - math_abs(from_x - target_x) / math_abs(from_x - target_x)) * TOTAL_T
         while TOTAL_T > t do
             local dt = coroutine.yield()
-            t = math.min(t + dt, TOTAL_T)
+            t = math_min(t + dt, TOTAL_T)
             local lerp = t / TOTAL_T
-            o:set_x(math.lerp(from_x, target_x, lerp))
+            o:set_x(math_lerp(from_x, target_x, lerp))
         end
     end)
 end
@@ -183,9 +191,9 @@ function EHITracker:SetPanelW(target_w)
         local t = (1 - abs / abs) * TOTAL_T
         while TOTAL_T > t do
             local dt = coroutine.yield()
-            t = math.min(t + dt, TOTAL_T)
+            t = math_min(t + dt, TOTAL_T)
             local lerp = t / TOTAL_T
-            o:set_w(math.lerp(from_w, target_w, lerp))
+            o:set_w(math_lerp(from_w, target_w, lerp))
         end
     end)
 end
@@ -201,12 +209,12 @@ function EHITracker:SetIconX(target_x)
     self._anim_icon1_x = self._icon1:animate(function(o)
         local TOTAL_T = 0.18
         local from_x = o:x()
-        local t = (1 - math.abs(from_x - target_x) / math.abs(from_x - target_x)) * TOTAL_T
+        local t = (1 - math_abs(from_x - target_x) / math_abs(from_x - target_x)) * TOTAL_T
         while TOTAL_T > t do
             local dt = coroutine.yield()
-            t = math.min(t + dt, TOTAL_T)
+            t = math_min(t + dt, TOTAL_T)
             local lerp = t / TOTAL_T
-            o:set_x(math.lerp(from_x, target_x, lerp))
+            o:set_x(math_lerp(from_x, target_x, lerp))
         end
     end)
 end
@@ -292,6 +300,10 @@ function EHITracker:ResetFadeTime()
     self._fade_time = nil
 end
 
+function EHITracker:Run(t)
+    self:SetTimeNoAnim(t)
+end
+
 function EHITracker:AddDelay(delay)
     self:SetTime(self._time + delay)
 end
@@ -311,7 +323,7 @@ function EHITracker:HUDBGBox_animate_bg_attention(bg, total_t)
 	while t > 0 do
 		local dt = coroutine.yield()
 		t = t - dt
-		local cv = math.abs(math.sin(t * 180 * 1))
+		local cv = math_abs(math_sin(t * 180 * 1))
 
 		bg:set_color(Color(1, color.red * cv, color.green * cv, color.blue * cv))
 	end
@@ -366,9 +378,9 @@ function EHITracker:destroy(skip)
                 local t = 0
                 while TOTAL_T > t do
                     local dt = coroutine.yield()
-                    t = math.min(t + dt, TOTAL_T)
+                    t = math_min(t + dt, TOTAL_T)
                     local lerp = t / TOTAL_T
-                    o:set_alpha(math.lerp(1, 0, lerp))
+                    o:set_alpha(math_lerp(1, 0, lerp))
                 end
             end
             self._time_bg_box:child("bg"):stop()

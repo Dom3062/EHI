@@ -1,6 +1,7 @@
-local trigger_icon_all = { "pd2_defend" }
+local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local trigger_icon_all = { "pd2_defend" }
 local triggers = {
     [101034] = { id = "MikeDefendTruck", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033 },
     [101038] = { id = "MikeDefendTruck", special_function = SF.PauseTracker },
@@ -30,3 +31,4 @@ if Network:is_client() then
 end
 
 EHI:ParseTriggers(triggers, nil, trigger_icon_all)
+EHI:ShowLootCounter(9)

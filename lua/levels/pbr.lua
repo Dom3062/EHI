@@ -11,7 +11,7 @@ local function berry_4_fail()
 end
 local triggers = {
     [102290] = { id = "berry_3", special_function = SF.SetAchievementComplete },
-    [102292] = { special_function = SF.Trigger, data = { 1022921, 1022922, 1022923 } },
+    [102292] = { special_function = SF.Trigger, data = { 1022921, 1022922, 1022923, --[[1022924]] } },
     [1022921] = { time = 600, id = "berry_3", class = TT.Achievement, condition = ovk_and_up and show_achievement },
     [1022922] = { status = "ok", id = "berry_4", class = TT.AchievementNotification, condition = ovk_and_up and show_achievement },
     [1022923] = { special_function = SF.CustomCode, f = function()
@@ -29,6 +29,7 @@ local triggers = {
             end)
         end
     end },
+    --[1022924] = { time = 75 + 30, id = "AssaultDelay", class = TT.AssaultDelay },
 
     [EHI:GetInstanceElementID(100108, 3200)] = { time = 45, id = "LockOpen", icons = { "faster" } },
     [EHI:GetInstanceElementID(100124, 3200)] = { id = "LockOpen", special_function = SF.RemoveTracker },

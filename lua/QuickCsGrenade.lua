@@ -15,8 +15,7 @@ function QuickCsGrenade:detonate(...)
     })
     managers.ehi_waypoint:AddWaypoint(key, {
         time = self._duration,
-        texture = "guis/dlcs/drm/textures/pd2/crime_spree/modifiers_atlas_2",
-        text_rect = {128, 256, 128, 128},
+        icon = "teargas",
         position = self._unit:position()
     })
 end

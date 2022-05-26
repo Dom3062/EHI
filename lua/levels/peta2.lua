@@ -6,6 +6,14 @@ local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
 local mayhem_and_up = EHI:IsDifficultyOrAbove("mayhem")
 local goat_pick_up = { Icon.Heli, Icon.Interact }
+local function f_PilotComingInAgain(id, trigger, ...)
+    managers.ehi:RemoveTracker("PilotComingIn")
+    if managers.ehi:TrackerExists(trigger.id) then
+        managers.ehi:SetTrackerTime(trigger.id, trigger.time)
+    else
+        EHI:CheckCondition(id)
+    end
+end
 local PilotComingInAgain = EHI:GetFreeCustomSpecialFunctionID()
 local PilotComingInAgain2 = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
@@ -44,20 +52,15 @@ local triggers = {
 
 EHI:ParseTriggers(triggers)
 EHI:RegisterCustomSpecialFunction(PilotComingInAgain, function(id, trigger, element, enabled)
-    managers.ehi:RemoveTracker("PilotComingIn")
     if enabled then
-        if managers.ehi:TrackerExists(trigger.id) then
-            managers.ehi:SetTrackerTime(trigger.id, trigger.time)
-        else
-            EHI:CheckCondition(id)
-        end
+        f_PilotComingInAgain(id, trigger)
     end
 end)
-EHI:RegisterCustomSpecialFunction(PilotComingInAgain2, function(id, trigger, ...)
-    managers.ehi:RemoveTracker("PilotComingIn")
-    if managers.ehi:TrackerExists(trigger.id) then
-        managers.ehi:SetTrackerTime(trigger.id, trigger.time)
-    else
-        EHI:CheckCondition(id)
-    end
-end)
+EHI:RegisterCustomSpecialFunction(PilotComingInAgain2, f_PilotComingInAgain)
+
+local DisableWaypoints =
+{
+    -- Drill waypoint on mission door
+    [101738] = true
+}
+EHI:DisableWaypoints(DisableWaypoints)

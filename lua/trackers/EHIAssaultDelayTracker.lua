@@ -1,3 +1,6 @@
+local lerp = math.lerp
+local sin = math.sin
+local Color = Color
 local IsOverkillOrBelow = EHI:IsDifficultyOrBelow("overkill")
 local Control = Color.white
 local Anticipation = Color(255, 186, 204, 28) / 255
@@ -10,7 +13,7 @@ local level_data = tweak_data.levels[level_id]
 local ai_group = level_data and level_data.group_ai_state or "besiege"
 local tweak_values = tweak_data.group_ai[ai_group].assault.delay
 local anticipation_values = tweak_data.group_ai[ai_group].assault.hostage_hesitation_delay
-EHIAssaultDelayTracker = EHIAssaultDelayTracker or class(EHIWarningTracker)
+EHIAssaultDelayTracker = class(EHIWarningTracker)
 EHIAssaultDelayTracker.IsClient = EHI._cache.Client
 function EHIAssaultDelayTracker:init(panel, params)
     params.icons = { { icon = "assaultbox", color = Control } }
@@ -34,9 +37,9 @@ function EHIAssaultDelayTracker:AnimateNegative()
             local t = 0
             while t < 1 do
                 t = t + coroutine.yield()
-                local n = 1 - math.sin(t * 180)
-                --local r = math.lerp(1, 0, n)
-                local g = math.lerp(1, 0, n)
+                local n = 1 - sin(t * 180)
+                --local r = lerp(1, 0, n)
+                local g = lerp(1, 0, n)
                 o:set_color(Color(g, 1, g))
             end
         end

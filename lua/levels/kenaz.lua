@@ -1,9 +1,10 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local heli_delay = 22 + 1 + 1.5
-local heli_icon = { Icon.Heli, "equipment_winch_hook", "pd2_goto" }
-local refill_icon = { "pd2_water_tap", "pd2_goto" }
+local heli_icon = { Icon.Heli, Icon.Winch, "pd2_goto" }
+local refill_icon = { Icon.Water, Icon.Loop }
 local heli_60 = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
 local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
 local kenaz_5 = { id = "kenaz_5", class = TT.AchievementNotification }
@@ -17,7 +18,10 @@ local triggers = {
     [102806] = { status = "finish", id = "kenaz_5", special_function = SF.SetAchievementStatus },
     [102808] = { id = "kenaz_5", special_function = SF.SetAchievementFailed },
 
-    [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { "faster" }, waypoint = { time = 5 + 25, position = Vector3(9823.0, -40877.0, -2987.0) + Vector3(0, 0, 0):rotate_with(Rotation()) } },
+    [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { time = 5 + 25, position = Vector3(9823.0, -40877.0, -2987.0) + Vector3(0, 0, 0):rotate_with(Rotation()) } },
+
+    [EHI:GetInstanceElementID(100030, 11750)] = { time = 5, id = "C4Lower", icons = { Icon.C4 } },
+    [EHI:GetInstanceElementID(100030, 11850)] = { time = 5, id = "C4Top", icons = { Icon.C4 } },
 
     [EHI:GetInstanceElementID(100021, 29150)] = heli_60,
     [EHI:GetInstanceElementID(100042, 29150)] = heli_30,
@@ -36,9 +40,9 @@ local triggers = {
 
     [100489] = { special_function = SF.RemoveTrackers, data = { "WaterTimer1", "WaterTimer2" } },
 
-    [EHI:GetInstanceElementID(100166, 37575)] = { id = "DrillDrop", icons = { "equipment_winch_hook", "pd2_drill", "pd2_goto" }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101854, yes = 900/30, no = 1800/30 } },
+    [EHI:GetInstanceElementID(100166, 37575)] = { id = "DrillDrop", icons = { Icon.Winch, Icon.Drill, "pd2_goto" }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101854, yes = 900/30, no = 1800/30 } },
     [EHI:GetInstanceElementID(100167, 37575)] = { id = "DrillDrop", special_function = SF.PauseTracker },
-    [EHI:GetInstanceElementID(100166, 44535)] = { id = "DrillDrop", icons = { "equipment_winch_hook", "pd2_drill", "pd2_goto" }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101854, yes = 900/30, no = 1800/30 } },
+    [EHI:GetInstanceElementID(100166, 44535)] = { id = "DrillDrop", icons = { Icon.Winch, Icon.Drill, "pd2_goto" }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101854, yes = 900/30, no = 1800/30 } },
     [EHI:GetInstanceElementID(100167, 44535)] = { id = "DrillDrop", special_function = SF.PauseTracker },
 
     [102807] = { id = "kenaz_3", class = TT.AchievementNotification },
@@ -46,19 +50,27 @@ local triggers = {
     [103163] = { status = "finish", id = "kenaz_3", special_function = SF.SetAchievementStatus },
 
     -- Water during drilling
-    [EHI:GetInstanceElementID(100148, 37575)] = { id = "WaterTimer1", icons = { "pd2_water_tap" }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60, cache_id = "Water1" } },
+    [EHI:GetInstanceElementID(100148, 37575)] = { id = "WaterTimer1", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60, cache_id = "Water1" } },
     [EHI:GetInstanceElementID(100146, 37575)] = { id = "WaterTimer1", special_function = SF.PauseTracker },
-    [EHI:GetInstanceElementID(100149, 37575)] = { id = "WaterTimer2", icons = { "pd2_water_tap" }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60, cache_id = "Water2" } },
+    [EHI:GetInstanceElementID(100149, 37575)] = { id = "WaterTimer2", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60, cache_id = "Water2" } },
     [EHI:GetInstanceElementID(100147, 37575)] = { id = "WaterTimer2", special_function = SF.PauseTracker },
 
     -- Skylight Hack
     [EHI:GetInstanceElementID(100018, 29650)] = { time = 30, id = "SkylightHack", icons = { "wp_hack" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [EHI:GetInstanceElementID(100037, 29650)] = { id = "SkylightHack", special_function = SF.PauseTracker },
 
-    [100159] = { id = "BlimpWithTheDrill", icons = { "pd2_question", "pd2_drill" }, special_function = SF.SetTimeByPreplanning, data = { id = 101854, yes = 976/30, no = 1952/30 } },
-    [100426] = { time = 1000/30, id = "BlimpLowerTheDrill", icons = { "pd2_question", "pd2_drill", "pd2_goto" } },
+    [100159] = { id = "BlimpWithTheDrill", icons = { "pd2_question", Icon.Drill }, special_function = SF.SetTimeByPreplanning, data = { id = 101854, yes = 976/30, no = 1952/30 } },
+    [100426] = { time = 1000/30, id = "BlimpLowerTheDrill", icons = { "pd2_question", Icon.Drill, "pd2_goto" } },
 
-    [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { "restarter" } }
+    [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { Icon.Loop } }
 }
 
 EHI:ParseTriggers(triggers)
+
+local DisableWaypoints =
+{
+    -- Defend
+    [EHI:GetInstanceElementID(100347, 37575)] = true,
+    [EHI:GetInstanceElementID(100347, 44535)] = true
+}
+EHI:DisableWaypoints(DisableWaypoints)

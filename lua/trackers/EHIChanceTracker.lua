@@ -1,4 +1,4 @@
-EHIChanceTracker = EHIChanceTracker or class(EHITracker)
+EHIChanceTracker = class(EHITracker)
 EHIChanceTracker._update = false
 function EHIChanceTracker:init(panel, params)
     self._flash = params.dont_flash ~= true

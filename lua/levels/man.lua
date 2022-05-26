@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -30,7 +31,7 @@ local triggers = {
     [102016] = CodeChance, -- Second and Third Hack
     [102121] = { time = 10, id = "Escape", icons = { Icon.Escape } },
 
-    [103163] = { time = 1.5 + 25, random_time = 10, id = "Faint", icons = { "hostage", "faster" }, class = "EHIInaccurateTracker" },
+    [103163] = { time = 1.5 + 25, random_time = 10, id = "Faint", icons = { "hostage", "faster" }, class = TT.Inaccurate },
 
     [102866] = { time = 5, id = "GotCode", icons = { "faster" } },
 
@@ -43,7 +44,7 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
-EHI:ShowAchievementLootCounter({ -- Synced via EHIManager
+EHI:ShowAchievementLootCounter({
     achievement = "man_4",
     max = 10,
     exclude_from_sync = true,
@@ -53,7 +54,30 @@ EHI:AddLoadSyncFunction(function(self)
     -- Achievement count used planks on windows, vents, ...
     -- There are total 49 positions and 10 planks
     self:SetTrackerProgressRemaining("man_4", 49 - self:CountInteractionAvailable("stash_planks"))
-    if managers.groupai:state():whisper_mode() then
+    if EHI.ConditionFunctions.IsStealth() then
         self:AddAchievementNotificationTracker("man_3")
     end
 end)
+
+local function man_WP(instance, unit_id, unit_data, unit)
+    if unit_id == 102034 then
+        unit:timer_gui():RemoveVanillaWaypoint(102303)
+    elseif unit_id == 102035 then
+        unit:timer_gui():RemoveVanillaWaypoint(102301)
+    elseif unit_id == 102040 then
+        unit:timer_gui():RemoveVanillaWaypoint(101837)
+    else -- 102041
+        unit:timer_gui():RemoveVanillaWaypoint(101992)
+    end
+end
+
+local tbl =
+{
+    -- Saws
+    [102034] = { f = man_WP },
+    [102035] = { f = man_WP },
+    [102040] = { f = man_WP },
+    [102041] = { f = man_WP }
+}
+
+EHI:UpdateUnits(tbl)

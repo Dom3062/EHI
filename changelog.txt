@@ -1,3 +1,11 @@
+r60 (26. 05. 2022):
+Added Uppers Range Buff
+Added Leech cooldown
+Fixed a crash when PC hack had "string" value instead of a "number" value
+Goat Simulator Heist Day 1: Fixed an issue where the escape duration tracker is inaccurate
+Goat Simulator Heist Day 2: Fixed an issue where the first goat pickup timer hide after a second
+Reservoir Dogs Day 2: Fixed an issue where the escape duration tracker is inaccurate
+
 r59 (11. 05. 2022):
 Added tracker for achievement "The Red Button"
 Added tracker for achievement "Plague Doctor"

@@ -5,11 +5,11 @@ else
 	EHI._hooks.LootManager = true
 end
 local check_types = EHI.LootCounter.CheckType
-local LootCounter =
+--[[local LootCounter =
 {
     --alex_3 = true, -- Rats Day 3
     --rvd1 = true -- Reservoir Dogs Heist Day 2
-}
+}]]
 
 function LootManager:GetSecuredBagsAmount()
     local mandatory = self:get_secured_mandatory_bags_amount()
@@ -40,7 +40,7 @@ end
 
 function LootManager:GetSecuredBagsValueAmount()
     local value = 0
-    for _, data in pairs(self._global.secured) do
+    for _, data in ipairs(self._global.secured) do
         if not tweak_data.carry.small_loot[data.carry_id] then
             value = value + managers.money:get_secured_bonus_bag_value(data.carry_id, data.multiplier)
         end
@@ -48,16 +48,16 @@ function LootManager:GetSecuredBagsValueAmount()
     return value
 end
 
-function LootManager:EHIReportProgress(tid, ct, lt)
-    if ct == check_types.AllLoot then
-    elseif ct == check_types.BagsOnly then
-        managers.ehi:SetTrackerProgress(tid, self:GetSecuredBagsAmount())
-    elseif ct == check_types.ValueOfBags then
-        managers.ehi:SetTrackerProgress(tid, self:GetSecuredBagsValueAmount())
-    elseif ct == check_types.SmallLootOnly then
-    elseif ct == check_types.ValueOfSmallLoot then
-        managers.ehi:SetTrackerProgress(tid, self:get_real_total_small_loot_value())
-    elseif ct == check_types.OneTypeOfLoot then
-        managers.ehi:SetTrackerProgress(tid, self:GetSecuredBagsTypeAmount(lt))
+function LootManager:EHIReportProgress(tracker_id, check_type, loot_type)
+    if check_type == check_types.AllLoot then
+    elseif check_type == check_types.BagsOnly then
+        managers.ehi:SetTrackerProgress(tracker_id, self:GetSecuredBagsAmount())
+    elseif check_type == check_types.ValueOfBags then
+        managers.ehi:SetTrackerProgress(tracker_id, self:GetSecuredBagsValueAmount())
+    elseif check_type == check_types.SmallLootOnly then
+    elseif check_type == check_types.ValueOfSmallLoot then
+        managers.ehi:SetTrackerProgress(tracker_id, self:get_real_total_small_loot_value())
+    elseif check_type == check_types.OneTypeOfLoot then
+        managers.ehi:SetTrackerProgress(tracker_id, self:GetSecuredBagsTypeAmount(loot_type))
     end
 end

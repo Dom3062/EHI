@@ -1,5 +1,8 @@
 local color = tweak_data.ehi.color.Inaccurate
-EHIInaccurateWarningTracker = EHIInaccurateWarningTracker or class(EHIWarningTracker)
+local lerp = math.lerp
+local sin = math.sin
+local Color = Color
+EHIInaccurateWarningTracker = class(EHIWarningTracker)
 function EHIInaccurateWarningTracker:init(panel, params)
     params.text_color = color
     EHIInaccurateWarningTracker.super.init(self, panel, params)
@@ -14,9 +17,9 @@ function EHIInaccurateWarningTracker:AnimateWarning()
 
                 while t < 1 do
                     t = t + coroutine.yield()
-                    local n = 1 - math.sin(t * 180)
-                    --local r = math.lerp(1, 0, n)
-                    local g = math.lerp(1, 0, n)
+                    local n = 1 - sin(t * 180)
+                    --local r = lerp(1, 0, n)
+                    local g = lerp(1, 0, n)
 
                     o:set_color(Color(1, g, g))
                 end
@@ -29,8 +32,8 @@ function EHIInaccurateWarningTracker:AnimateWarning()
 
                 while t < 1 do
                     t = t + coroutine.yield()
-                    local n = 1 - math.sin(t * 180)
-                    local g = math.lerp(color.g, 0, n)
+                    local n = 1 - sin(t * 180)
+                    local g = lerp(color.g, 0, n)
 
                     o:set_color(Color(1, g, 0))
                 end

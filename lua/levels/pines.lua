@@ -2,11 +2,12 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
+local very_hard_and_up = EHI:IsDifficultyOrAbove("very_hard")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
 local HeliWait = { Icon.Heli, Icon.Escape, Icon.LootDrop, Icon.Wait }
 local chance = { id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = TT.Chance, special_function = SF.SetChanceFromElementWhenTrackerExists }
 local triggers = {
-    [103707] = { time = 1800, id = "BulldozerSpawn", icons = { "heavy" }, class = TT.Warning, condition = very_hard_and_up },
+    [103707] = { time = 1800, id = "BulldozerSpawn", icons = { "heavy" }, class = TT.Warning, condition = very_hard_and_up, special_function = SF.SetTimeOrCreateTracker },
     [103367] = { chance = 100, id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = TT.Chance },
     [101001] = { time = 1200, id = "PresentDropChance50", icons = { "C_Vlad_H_XMas_Impossible", Icon.Wait }, class = TT.Warning },
     [101002] = { time = 600, id = "PresentDropChance40", icons = { "C_Vlad_H_XMas_Impossible", Icon.Wait }, class = TT.Warning },

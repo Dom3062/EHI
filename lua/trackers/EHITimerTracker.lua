@@ -1,4 +1,7 @@
-EHITimerTracker = EHITimerTracker or class(EHITracker)
+local lerp = math.lerp
+local sin = math.sin
+local Color = Color
+EHITimerTracker = class(EHITracker)
 EHITimerTracker._update = false
 function EHITimerTracker:init(panel, params)
     if params.icons[1].icon then
@@ -16,7 +19,7 @@ function EHITimerTracker:init(panel, params)
         self:SetUpgradeable(true)
         self:SetUpgrades(params.upgrades)
     end
-    if params.autorepair ~= nil then
+    if params.autorepair then
         self:SetAutorepair(params.autorepair)
     end
     self._animate_warning = params.warning
@@ -33,15 +36,15 @@ end
 
 function EHITimerTracker:AnimateWarning(check_progress)
     if self._text and alive(self._text) then
-        local start_t = check_progress and (math.ceil(self._time) - self._time) or 0
+        local start_t = check_progress and (EHI:RoundNumber(self._time, 0.1) - math.floor(self._time)) or 0
         self._text:animate(function(o)
             while true do
                 local t = start_t
                 while t < 1 do
                     t = t + coroutine.yield()
-                    local n = 1 - math.sin(t * 180)
-                    --local r = math.lerp(1, 0, n)
-                    local g = math.lerp(1, 0, n)
+                    local n = 1 - sin(t * 180)
+                    --local r = lerp(1, 0, n)
+                    local g = lerp(1, 0, n)
                     o:set_color(Color(1, g, g))
                 end
             end
@@ -63,10 +66,8 @@ function EHITimerTracker:SetUpgradeable(upgradeable)
     end
     if upgradeable then
         self._panel_override_w = self._panel:w()
-        self._parent_class:ChangeTrackerWidth(self._id, self._panel_override_w)
     else
-        self._panel_override_w = self._time_bg_box:w() + (38 * self._scale) -- 32 (icon size) + 6 (gap)
-        self._parent_class:ChangeTrackerWidth(self._id, self._panel_override_w)
+        self._panel_override_w = self._time_bg_box:w() + (37 * self._scale) -- 32 (icon size) + 5 (gap)
     end
 end
 

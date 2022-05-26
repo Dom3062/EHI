@@ -45,7 +45,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local BoatEscape = { Icon.Boat, Icon.Escape, Icon.LootDrop }
-local boat_anim = 614/30
+local boat_anim = 614/30 + 12 + 1
 local skid = { { icon = Icon.Car, color = Color("1E90FF") } }
 local sand_9_buttons = { id = "sand_9_buttons", special_function = SF.IncreaseProgress }
 local ExecuteIfProgressMatch = EHI:GetFreeCustomSpecialFunctionID()
@@ -98,7 +98,7 @@ local triggers = {
     [103870] = { chance = 34, id = "ReviveVlad", icons = { "equipment_defibrillator" }, class = TT.Chance, special_function = SF.AddTrackerIfDoesNotExist },
     [103871] = { id = "ReviveVlad", special_function = SF.RemoveTracker },
 
-    [103925] = { id = "BoatEscape", icons = BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 30 + boat_anim + 12 + 1, no = 19 + boat_anim + 12 + 1 } }
+    [103925] = { id = "BoatEscape", icons = BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 30 + boat_anim, no = 19 + boat_anim } }
 }
 local time = 5 -- Normal
 if EHI:IsBetweenDifficulties("hard", "very_hard") then

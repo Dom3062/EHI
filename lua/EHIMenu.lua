@@ -26,10 +26,11 @@ local function do_animation(TOTAL_T, clbk)
     clbk(1, TOTAL_T)
 end
 
-EHIMenu = EHIMenu or class()
+EHIMenu = class()
 function EHIMenu:init()
     local aspect_ratio = RenderSettings.resolution.x / RenderSettings.resolution.y
-    if aspect_ratio == 1.6 then -- 16:10
+    --local _1_33 = 4 / 3
+    if aspect_ratio == 1.6 then-- or aspect_ratio == _1_33 then -- 16:10 or 4:3
         self._ws = managers.gui_data:create_fullscreen_16_9_workspace()
         self._convert_mouse_pos = function(menu, x, y)
             return managers.mouse_pointer:convert_fullscreen_16_9_mouse_pos(x, y)

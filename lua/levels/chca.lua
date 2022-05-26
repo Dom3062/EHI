@@ -42,6 +42,22 @@ local triggers = {
     [102944] = { id = "chca_10", special_function = SF.IncreaseProgress }, -- Bodybag thrown
     [103371] = { id = "chca_10", special_function = SF.SetAchievementFailed }, -- Civie killed
 
+    [103030] = { time = 19, id = "InsideManTalk", icons = { "pd2_talk" } },
+
+    --[[[103211] = { special_function = SF.Trigger, data = { 1032111, 1032112 } },
+    [1032111] = { time = 20, id = "MeetingTalk", icons = { "pd2_talk" } },
+    [1032112] = { special_function = SF.CustomCode, f = function()
+        EHI:Log("Current game time: " .. TimerManager:game():time())
+        local dialog = managers.mission:get_element_by_id(103212)
+        if dialog then
+            local f = dialog._done_callback
+            function dialog:_done_callback(...)
+                EHI:Log("Dialog finished. Current game time: " .. TimerManager:game():time())
+                f(dialog, ...)
+            end
+        end
+    end },]]
+
     -- C4 in the meeting room
     [EHI:GetInstanceElementID(100025, 20420)] = { time = 5, id = "C4MeetingRoom", icons = { "pd2_c4" } },
 

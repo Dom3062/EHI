@@ -12,13 +12,12 @@ local AddGageTracker
 if EHI:GetOption("gage_tracker_panel") == 1 then
     AddGageTracker = function()
         if EHI:GetOption("show_gage_tracker") and managers.ehi:TrackerDoesNotExist("Gage") and EHI._cache.GagePackages and EHI._cache.GagePackages > 0 then
-            local max = tweak_data.gage_assignment:get_num_assignment_units() or 1
             managers.ehi:AddTracker({
                 id = "Gage",
                 icons = { "gage" },
                 progress = EHI._cache.GagePackagesProgress or 0,
                 exclude_from_sync = true,
-                max = max,
+                max = tweak_data.gage_assignment:get_num_assignment_units(),
                 class = "EHIProgressTracker"
             })
         end
@@ -30,7 +29,7 @@ else
         end
         if EHI._cache.GagePackages and EHI._cache.GagePackages > 0 then
             if EHI._cache.Host or not managers.ehi:GetDropin() then
-                local max = tweak_data.gage_assignment:get_num_assignment_units() or 1
+                local max = tweak_data.gage_assignment:get_num_assignment_units()
                 managers.hud:custom_ingame_popup_text("GAGE PACKAGES", "0/" .. tostring(max), "EHI_Gage")
             end
         end
@@ -201,6 +200,71 @@ function IngameWaitingForPlayersState:at_exit(...)
         managers.player:EHICheckAbility()
         managers.ehi_buff:ActivateUpdatingBuffs()
     end
+    --[[EHI:DelayCall("EHI_Debug", 7.5, function()
+        for i = 1, 99, 1 do
+            managers.ehi:RunStaticTracker(tostring(i), 10)
+            managers.ehi:RunStaticTracker(tostring(i * 100), 15)
+            managers.ehi:RunStaticTracker(tostring(i * 10000), 25)
+            managers.ehi:RunStaticTracker(tostring(i * 1000000), 35)
+            managers.ehi:RunStaticTracker(tostring(i * 100000000), 45)
+            --[[managers.ehi:AddTracker({
+                id = tostring(i),
+                icons = { "pd2_power" },
+                time = 10
+            })
+            managers.ehi:AddTracker({
+                id = tostring(i * 100),
+                icons = Icon.CarEscapeNoLoot,
+                time = 15
+            })
+            managers.ehi:AddTracker({
+                id = tostring(i * 10000),
+                icons = Icon.CarEscape,
+                time = 25
+            })
+            managers.ehi:AddTracker({
+                id = tostring(i * 1000000),
+                icons = Icon.CarWait,
+                time = 35
+            })
+            managers.ehi:AddTracker({
+                id = tostring(i * 100000000),
+                icons = { "pd2_car", "pd2_escape", "pd2_lootdrop", "faster", "pd2_power" },
+                time = 45
+            })]]
+        --[[end
+        EHI:Log("Delayed function called")
+    end)
+    --[[EHI:DelayCall("EHI_Debug", 5, function()
+        local Icon = EHI.Icons
+        for i = 1, 99, 1 do
+            managers.ehi:AddTracker({
+                id = tostring(i),
+                icons = { "pd2_power" },
+                time = 10
+            })
+            managers.ehi:AddTracker({
+                id = tostring(i * 100),
+                icons = Icon.CarEscapeNoLoot,
+                time = 15
+            })
+            managers.ehi:AddTracker({
+                id = tostring(i * 10000),
+                icons = Icon.CarEscape,
+                time = 25
+            })
+            managers.ehi:AddTracker({
+                id = tostring(i * 1000000),
+                icons = Icon.CarWait,
+                time = 35
+            })
+            managers.ehi:AddTracker({
+                id = tostring(i * 100000000),
+                icons = { "pd2_car", "pd2_escape", "pd2_lootdrop", "faster", "pd2_power" },
+                time = 45
+            })
+        end
+    end)]]
     if not EHI:GetOption("show_achievement") or EHI._cache.AchievementsAreDisabled or GunGameGame then
         return
     end
@@ -716,7 +780,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             local melee_pass = table.index_of(tweak_data.achievement.enemy_melee_hit_achievements.pxp1_1.melee_weapons, melee) ~= 1
             local player_style_pass = HasPlayerStyleEquipped(grenade_data.player_style.style)
             local variation_pass = HasSuitVariationEquipped(grenade_data.player_style.variation)
-            if (grenade_pass or HasViperGrenadesOnLauncherEquipped() or parts_pass or melee_pass) and player_style_pass and variation_pass then
+            if (grenade_pass or parts_pass or melee_pass or HasViperGrenadesOnLauncherEquipped()) and player_style_pass and variation_pass then
                 CreateProgressTracker("pxp1_1", EHI:GetAchievementProgress("pxp1_1_stats"), 200, false)
                 stats.pxp1_1_stats = "pxp1_1"
             end
