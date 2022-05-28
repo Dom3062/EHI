@@ -103,3 +103,7 @@ EHI:RegisterCustomSpecialFunction(LowerFloor, function(id, trigger, element, ena
         managers.ehi:CallFunction(trigger.id, "LowerFloor")
     end
 end)
+
+--units/pd2_dlc_nmh/props/nmh_interactable_teddy_saw/nmh_interactable_teddy_saw
+local tbl = { [101387] = { remove_vanilla_waypoint = true, waypoint_id = 104494 } }
+EHI:UpdateUnits(tbl)

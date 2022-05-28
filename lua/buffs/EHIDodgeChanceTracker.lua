@@ -54,6 +54,11 @@ function EHIDodgeChanceTracker:UpdateDodge()
     self._dodge = total
 end
 
+function EHIDodgeChanceTracker:ForceUpdate()
+    self:UpdateDodge()
+    self._time = 1
+end
+
 function EHIDodgeChanceTracker:PreUpdate()
     player_manager = managers.player
     local function f(state)
@@ -74,7 +79,7 @@ function EHIDodgeChanceTracker:SetCustody(state)
     if state then
         self._parent_class:RemoveBuffFromUpdate(self._id)
         self._dodge = 0
-        self:Deactivate() 
+        self:Deactivate()
     else
         self._time = 1
         self._parent_class:AddBuffToUpdate(self._id, self)

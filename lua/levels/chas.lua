@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -20,8 +21,8 @@ local triggers = {
     [1001073] = { time = 360, id = "chas_11", class = TT.Achievement, condition = ovk_and_up and show_achievement },
     [EHI:GetInstanceElementID(100017, 11325)] = { id = "Gas", special_function = SF.RemoveTracker },
 
-    [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { "pd2_question", "pd2_drill", "pd2_goto" } },
-    [101660] = { time = 120, id = "Gas", icons = { "teargas" } },
+    [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { "pd2_question", Icon.Drill, "pd2_goto" } },
+    [101660] = { time = 120, id = "Gas", icons = { Icon.Teargas } },
 
     [100781] = { id = "chas_9", class = TT.AchievementNotification },
     [100907] = { id = "chas_9", special_function = SF.SetAchievementFailed },
@@ -48,7 +49,7 @@ EHI:ParseTriggers(triggers)
 EHI:DisableWaypoints(DisableWaypoints)
 if show_achievement then
     EHI:AddLoadSyncFunction(function(self)
-        if managers.groupai:state():whisper_mode() and ovk_and_up then
+        if EHI.ConditionFunctions.IsStealth() and ovk_and_up then
             EHI:ShowAchievementLootCounter({
                 achievement = "chas_10",
                 max = 15,
@@ -62,3 +63,4 @@ if show_achievement then
         managers.ehi:SetAchievementFailed("chas_10")
     end)
 end
+EHI:ShowLootCounter(15)

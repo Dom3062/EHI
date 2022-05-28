@@ -23,6 +23,10 @@ function EHITimerTracker:init(panel, params)
         self:SetAutorepair(params.autorepair)
     end
     self._animate_warning = params.warning
+    if params.completion then
+        self._animate_warning = true
+        self.AnimateWarning = self.AnimateCompletion
+    end
 end
 
 function EHITimerTracker:SetTimeNoAnim(time) -- No fit text function needed, these timers just run down
@@ -46,6 +50,24 @@ function EHITimerTracker:AnimateWarning(check_progress)
                     --local r = lerp(1, 0, n)
                     local g = lerp(1, 0, n)
                     o:set_color(Color(1, g, g))
+                end
+            end
+        end)
+    end
+end
+
+function EHITimerTracker:AnimateCompletion(check_progress)
+    if self._text and alive(self._text) then
+        local start_t = check_progress and (EHI:RoundNumber(self._time, 0.1) - math.floor(self._time)) or 0
+        self._text:animate(function(o)
+            while true do
+                local t = start_t
+                while t < 1 do
+                    t = t + coroutine.yield()
+                    local n = 1 - sin(t * 180)
+                    --local r = lerp(1, 0, n)
+                    local g = lerp(1, 0, n)
+                    o:set_color(Color(g, 1, g))
                 end
             end
         end)

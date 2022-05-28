@@ -21,7 +21,6 @@ tweak_data.ehi =
         restarter = { texture = "guis/textures/pd2/skilltree/drillgui_icon_restarter" },
         xp = { texture = "guis/textures/pd2/blackmarket/xp_drop" },
 
-        heli = { texture = "guis/textures/pd2_mod_ehi/heli" },
         mad_scan = { texture = "guis/textures/pd2_mod_ehi/mad_scan" },
         boat = { texture = "guis/textures/pd2_mod_ehi/boat" },
         enemy = { texture = "guis/textures/pd2_mod_ehi/enemy" },
@@ -29,7 +28,6 @@ tweak_data.ehi =
         assaultbox = { texture = "guis/textures/pd2_mod_ehi/assaultbox" },
         deployables = { texture = "guis/textures/pd2_mod_ehi/deployables" },
         padlock = { texture = "guis/textures/pd2_mod_ehi/padlock" },
-        arrow_up = { texture = "guis/textures/pd2_mod_ehi/arrow_up" },
 
         reload = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {0, 576, 64, 64} },
         smoke = { texture = "guis/dlcs/max/textures/pd2/specialization/icons_atlas", texture_rect = {0, 0, 64, 64} },
@@ -372,7 +370,8 @@ tweak_data.ehi =
         {
             deck = true,
             folder = "joy",
-            x = 3
+            x = 3,
+            class = "EHIHackerTemporaryDodgeTracker"
         },
         TagTeamEffect =
         {
@@ -421,5 +420,14 @@ tweak_data.ehi.buff.debug_4 = EHI:DeepClone(tweak_data.ehi.buff.team_crew_inspir
 
 tweak_data.hud_icons.EHI_XP = { texture = tweak_data.ehi.icons.xp.texture }
 tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }
-tweak_data.hud_icons.EHI_Boat = { texture = tweak_data.ehi.icons.boat.texture .. "_waypoint", texture_rect = { 0, 0, 32, 32 } }
-tweak_data.hud_icons.EHI_Heli = { texture = tweak_data.ehi.icons.heli.texture .. "_waypoint", texture_rect = { 0, 0, 32, 32 } }
+
+do
+    local preplanning = tweak_data.preplanning
+    local path = preplanning.gui.type_icons_path
+    local text_rect_blimp = preplanning:get_type_texture_rect(preplanning.types.kenaz_faster_blimp.icon)
+    text_rect_blimp[1] = text_rect_blimp[1] + text_rect_blimp[3] -- Add the negated "w" value so it will correctly show blimp
+    text_rect_blimp[3] = -text_rect_blimp[3] -- Flip the image so it will face correctly
+    local text_rect_heli = preplanning:get_type_texture_rect(preplanning.types.kenaz_ace_pilot.icon)
+    tweak_data.ehi.icons.blimp = { texture = path, texture_rect = text_rect_blimp }
+    tweak_data.ehi.icons.heli = { texture = path, texture_rect = text_rect_heli }
+end

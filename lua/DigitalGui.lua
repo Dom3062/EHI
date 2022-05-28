@@ -51,6 +51,7 @@ function DigitalGui:TimerStartCountDown()
                 icons = self._icons or { "wp_hack" },
                 exclude_from_sync = true,
                 warning = self._warning,
+                completion = self._completion,
                 class = "EHITimerTracker"
             })
         end
@@ -61,7 +62,8 @@ function DigitalGui:TimerStartCountDown()
                 pause_timer = 1,
                 type = "timer",
                 position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
-                warning = self._warning
+                warning = self._warning or self._completion,
+                completion = self._completion
             })
         end
     end
@@ -251,6 +253,10 @@ end
 
 function DigitalGui:SetWarning(warning)
     self._warning = warning
+end
+
+function DigitalGui:SetCompletion(completion)
+    self._completion = completion
 end
 
 function DigitalGui:SetIgnoreVisibility()

@@ -12,7 +12,6 @@
         <file :name="boat.texture" :path="boat.texture"/>
         <file :name="enemy.texture" :path="enemy.texture"/>
         <file :name="deployables.texture" :path="deployables.texture"/>
-        <file :name="heli.texture" :path="heli.texture"/>
         <file :name="mad_scan.texture" :path="mad_scan.texture"/>
         <file :name="padlock.texture" :path="padlock.texture"/>
         <file :name="piggy.texture" :path="piggy.texture"/>

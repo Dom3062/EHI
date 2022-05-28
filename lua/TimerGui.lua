@@ -14,11 +14,28 @@ local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoin
 local level_id = Global.game_settings.level_id
 -- [index] = Vector3(x, y, z)
 local MissionDoorPositions = {}
--- [index] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes" }
+-- [index] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes", w_ids = "Table of waypoints and their ID" }
 ---- See MissionDoor class how to get Drill position
 ---- Indexes must match or it won't work
+---- "w_ids" has a higher priority than "w_id"
 local MissionDoorIndex = {}
-if level_id == "framing_frame_1" or level_id == "gallery" then -- Framing Frame Day 1 / Art Gallery
+if level_id == "firestarter_2" then -- Firestarter Day 2
+    MissionDoorPositions =
+    {
+        -- Security doors
+        [1] = Vector3(-2357.87, -3621.42, 489.107),
+        [2] = Vector3(1221.42, -2957.87, 489.107),
+        [3] = Vector3(1342.13, -2621.42, 89.1069), --101867
+        [4] = Vector3(-2830.08, 341.886, 492.443) --102199
+    }
+    MissionDoorIndex =
+    {
+        [1] = { w_id = 101899 },
+        [2] = { w_id = 101834 },
+        [3] = { w_id = 101782 },
+        [4] = { w_id = 101783 }
+    }
+elseif level_id == "framing_frame_1" or level_id == "gallery" then -- Framing Frame Day 1 / Art Gallery
     MissionDoorPositions =
     {
         -- Security doors
@@ -91,8 +108,6 @@ elseif level_id == "born" then -- The Biker Heist Day 1
         [1] = { w_id = 101580 },
         [2] = { w_ids = { EHI:GetInstanceElementID(100007, 4850), EHI:GetInstanceElementID(100007, 5350) } }
     }
-    EHI:PrintTable(MissionDoorPositions)
-    EHI:PrintTable(MissionDoorIndex)
 end
 
 local original =

@@ -59,8 +59,8 @@ local triggers = {
     [EHI:GetInstanceElementID(100018, 29650)] = { time = 30, id = "SkylightHack", icons = { "wp_hack" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [EHI:GetInstanceElementID(100037, 29650)] = { id = "SkylightHack", special_function = SF.PauseTracker },
 
-    [100159] = { id = "BlimpWithTheDrill", icons = { "pd2_question", Icon.Drill }, special_function = SF.SetTimeByPreplanning, data = { id = 101854, yes = 976/30, no = 1952/30 } },
-    [100426] = { time = 1000/30, id = "BlimpLowerTheDrill", icons = { "pd2_question", Icon.Drill, "pd2_goto" } },
+    [100159] = { id = "BlimpWithTheDrill", icons = { Icon.Blimp, Icon.Drill }, special_function = SF.SetTimeByPreplanning, data = { id = 101854, yes = 976/30, no = 1952/30 } },
+    [100426] = { time = 1000/30, id = "BlimpLowerTheDrill", icons = { Icon.Blimp, Icon.Drill, "pd2_goto" } },
 
     [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { Icon.Loop } }
 }

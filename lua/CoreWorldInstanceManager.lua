@@ -134,8 +134,6 @@ elseif level_id == "hox_1" then -- Hoxton Breakout Day 1
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "hox_1" }
 elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
     units["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics"].f = "hox_2_forensics"
-elseif level_id == "hvh" then -- Cursed Kill Room
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { Icon.Vault }, f = "hvhSafeTimer" }
 elseif level_id == "nail" then -- Lab Rats
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { Icon.Vault }, f = "nailSafeTimer" }
 elseif level_id == "cane" then -- Santa's Workshop

@@ -1,3 +1,5 @@
+local EHI = EHI
+local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
@@ -7,7 +9,39 @@ local triggers = {
     [100224] = { id = "cac_21", special_function = SF.IncreaseProgress },
     [100181] = { special_function = SF.CustomCode, f = function()
         EHI:CallCallback("hvhCleanUp")
+        EHI:DelayCall("EHI_cac_21_fail", 2, function()
+            managers.ehi:SetAchievementFailed("cac_21")
+        end)
     end}
 }
 
 EHI:ParseTriggers(triggers)
+
+local tbl =
+{
+    --units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large
+    [100007] = { ignore = true },
+    [100827] = { ignore = true },
+    [100888] = { ignore = true },
+    [100889] = { ignore = true },
+    [100891] = { ignore = true },
+    [100892] = { ignore = true },
+    [100176] = { ignore = true },
+    [100177] = { ignore = true },
+
+    --units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small
+    [100029] = { ignore = true },
+    [100878] = { icons = { Icon.Wait }, custom_callback = { id = "hvhCleanUp", f = "remove" } }
+}
+--levels/instances/unique/hvh/hvh_event
+for i = 9794, 11794, 500 do
+    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
+    for u = 100027, 100029, 1 do
+        if u == 100029 then
+            tbl[EHI:GetInstanceElementID(u, i)] = { icons = { Icon.Vault }, completion = true }
+        else
+            tbl[EHI:GetInstanceElementID(u, i)] = { ignore = true }
+        end
+    end
+end
+EHI:UpdateUnits(tbl)

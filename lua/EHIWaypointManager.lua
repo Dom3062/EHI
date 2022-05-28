@@ -284,7 +284,11 @@ function EHIWaypointManager:SetTimerWaypointTime(id, time)
         wp.timer_gui:set_text(self:WaypointFormat(time))
         if time <= 10 and wp.init_data.warning and not wp.init_data.warning_started then
             wp.init_data.warning_started = true
-            self:AnimateWarning(wp)
+            if wp.init_data.completion then
+                self:AnimateCompletion(wp)
+            else
+                self:AnimateWarning(wp)
+            end
         end
     end
 end
@@ -407,11 +411,14 @@ local mvector3_set_static = mvector3.set_static
 local mrotation = mrotation
 local mrotation_y = mrotation.y
 local math = math
+local math_sin = math.sin
 local math_sign = math.sign
+local math_lerp = math.lerp
 local math_clamp = math.clamp
 local math_bezier = math.bezier
 local tweak_data = tweak_data
 local tweak_data_scale = tweak_data.scale
+local Color = Color
 function EHIWaypointManager:update(t, dt, dt_actual)
     local cam = managers.viewport:get_current_camera()
 
@@ -631,7 +638,11 @@ function EHIWaypointManager:update(t, dt, dt_actual)
                     data.timer_gui:set_text(self:WaypointFormat(data.timer))
                     if data.timer <= 10 and data.init_data.warning and not data.init_data.warning_started then
                         data.init_data.warning_started = true
-                        self:AnimateWarning(data)
+                        if data.init_data.completion then
+                            self:AnimateCompletion(data)
+                        else
+                            self:AnimateWarning(data)
+                        end
                     end
                 else
                     self:RemoveWaypoint(id)
@@ -659,10 +670,30 @@ function EHIWaypointManager:AnimateWarning(waypoint)
             local t = 0
             while t < 1 do
                 t = t + coroutine.yield()
-                local n = 1 - math.sin(t * 180)
+                local n = 1 - math_sin(t * 180)
                 --local r = math.lerp(1, 0, n)
-                local g = math.lerp(1, 0, n)
+                local g = math_lerp(1, 0, n)
                 local c = Color(1, g, g)
+                o:set_color(c)
+                icon:set_color(c)
+                arrow:set_color(c)
+            end
+        end
+    end)
+end
+
+function EHIWaypointManager:AnimateCompletion(waypoint)
+    local icon = waypoint.bitmap
+    local arrow = waypoint.arrow
+    waypoint.timer_gui:animate(function(o)
+        while true do
+            local t = 0
+            while t < 1 do
+                t = t + coroutine.yield()
+                local n = 1 - math_sin(t * 180)
+                --local r = lerp(1, 0, n)
+                local g = math_lerp(1, 0, n)
+                local c = Color(g, 1, g)
                 o:set_color(c)
                 icon:set_color(c)
                 arrow:set_color(c)

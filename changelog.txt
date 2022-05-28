@@ -1,3 +1,7 @@
+r61 (28. 05. 2022):
+Updated Heli icon
+Cursed Kill Room: Fixed tracker spam
+
 r60 (26. 05. 2022):
 Added Uppers Range Buff
 Added Leech cooldown

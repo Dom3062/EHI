@@ -178,7 +178,7 @@ function EHIAchievementUnlockTracker:AnimateWarning()
 
             while t < 1 do
                 t = t + coroutine.yield()
-                local n = 1 - math.sin(t * 180)
+                local n = 1 - sin(t * 180)
                 --local r = lerp(1, 0, n)
                 local g = lerp(1, 0, n)
 
@@ -228,7 +228,7 @@ function EHIAchievementNotificationTracker:SetTextColor(color)
     local c
     if color then
         c = color
-    elseif self._status == "ok" or self._status == "done" or self._status == "pass" or self._status == "finish" then
+    elseif self._status == "ok" or self._status == "done" or self._status == "pass" or self._status == "finish" or self._status == "destroy" then
         c = Color.green
     elseif self._status == "ready" or self._status == "loud" or self._status == "push" or self._status == "hack" then
         c = Color.yellow

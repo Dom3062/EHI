@@ -20,7 +20,7 @@ local function StartC4Sequence(unit)
     })
 end
 
-if Network:is_server() then
+if EHI._cache.Host then
     local _f_initiate_c4_sequence = MissionDoor._initiate_c4_sequence
     function MissionDoor:_initiate_c4_sequence(...)
         _f_initiate_c4_sequence(self, ...)

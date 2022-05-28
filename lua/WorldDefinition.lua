@@ -46,6 +46,7 @@ function EHI:FinalizeUnits(tbl)
                     unit:digital_gui():SetIgnore(unit_data.ignore)
                     unit:digital_gui():SetRemoveOnPause(unit_data.remove_on_pause)
                     unit:digital_gui():SetWarning(unit_data.warning)
+                    unit:digital_gui():SetCompletion(unit_data.completion)
                     if unit_data.remove_on_alarm then
                         unit:digital_gui():SetOnAlarm()
                     end
@@ -76,7 +77,6 @@ local original =
     create = WorldDefinition.create
 }
 
-local TT = EHI.Trackers
 local Icon = EHI.Icons
 
 local chasC4 = {}
@@ -111,9 +111,7 @@ local units =
     ["units/pd2_dlc_sand/equipment/sand_interactable_hack_computer/sand_interactable_hack_computer"] = { remove_vanilla_waypoint = true, waypoint_id = 100034 }
 }
 
-if level_id == "firestarter_3" or level_id == "branchbank" or level_id == "branchbank_gold" or level_id == "branchbank_cash" or level_id == "branchbank_deposit" then -- Firestarter Day 3 or Branchbank heist
-    units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { f = "firestarter_3_WP" }
-elseif level_id == "welcome_to_the_jungle_2" then -- Big Oil Day 2
+if level_id == "welcome_to_the_jungle_2" then -- Big Oil Day 2
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "big_oil_day2_WP" }
 elseif level_id == "roberts" then -- GO Bank
     units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 102899 }
@@ -128,15 +126,8 @@ elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
     units["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_director/stn_interactable_computer_director"] = { f = "hox_2" }
 elseif level_id == "moon" then -- Stealing Xmas
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100776 }
-elseif level_id == "hvh" then -- Cursed Kill Room
-    units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
-    units["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { Icon.Wait }, f = "hvhTimer", custom_callback = { id = "hvhCleanUp", f = "remove" } }
 elseif level_id == "help" then -- Prison Nightmare
     units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
-elseif level_id == "des" then -- Henry's Rock
-    units["units/pd2_dlc_des/props/des_prop_inter_hack_computer/des_inter_hack_computer"] = { icons = { Icon.Power } }
-elseif level_id == "nmh" then -- No Mercy
-    units["units/pd2_dlc_nmh/props/nmh_interactable_teddy_saw/nmh_interactable_teddy_saw"] = { f = "nmh_WP" }
 elseif level_id == "pent" then -- Mountain Master
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { f = "pentAchievementTimer" }
 end
@@ -160,14 +151,6 @@ function WorldDefinition:create(layer, offset, ...)
         end
     end
     return return_data
-end
-
-function WorldDefinition:firestarter_3_WP(instance, unit_id, unit_data, unit)
-    if unit_id == 104674 then
-        unit:timer_gui():RemoveVanillaWaypoint(102633)
-    else
-        unit:timer_gui():RemoveVanillaWaypoint(102752)
-    end
 end
 
 function WorldDefinition:big_oil_day2_WP(instance, unit_id, unit_data, unit)
@@ -278,23 +261,6 @@ function WorldDefinition:hox3Timer(instance, unit_id, unit_data, unit)
     unit:digital_gui():SetRemoveOnPause(true)
 end
 
-function WorldDefinition:hvhTimer(instance, unit_id, unit_data, unit)
-    if unit_id == 100029 then
-        unit:digital_gui():SetIgnore(true)
-    else
-        unit:digital_gui():SetIcons(unit_data.icons)
-        unit:digital_gui():SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
-    end
-end
-
-function WorldDefinition:hvhSafeTimer(instance, unit_id, unit_data, unit)
-    if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100029 then
-        unit:digital_gui():SetIcons(unit_data.icons)
-    else
-        unit:digital_gui():SetIgnore(true)
-    end
-end
-
 function WorldDefinition:nailSafeTimer(instance, unit_id, unit_data, unit)
     if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100227 then
         unit:digital_gui():SetIcons(unit_data.icons)
@@ -313,12 +279,6 @@ function WorldDefinition:caneSafeTimer(instance, unit_id, unit_data, unit)
     end
 end
 
-function WorldDefinition:nmh_WP(instance, unit_id, unit_data, unit)
-    if unit_id == 101387 then
-        unit:timer_gui():RemoveVanillaWaypoint(104494)
-    end
-end
-
 function WorldDefinition:pentAchievementTimer(instance, unit_id, unit_data, unit)
     if unit_id == 103872 then -- 002
         unit:digital_gui():SetIgnore(true)
@@ -326,14 +286,6 @@ function WorldDefinition:pentAchievementTimer(instance, unit_id, unit_data, unit
         unit:digital_gui():SetIcons(EHI:GetAchievementIcon("pent_10"))
         unit:digital_gui():SetRemoveOnPause(true)
         unit:digital_gui():SetWarning(true)
-    end
-end
-
-function WorldDefinition:dinner_WP(instance, unit_id, unit_data, unit)
-    if unit_id == 100949 then
-        unit:timer_gui():RemoveVanillaWaypoint(103174)
-    else
-        unit:timer_gui():RemoveVanillaWaypoint(103175)
     end
 end
 

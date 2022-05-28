@@ -149,6 +149,7 @@ _G.EHI =
         Drill = "pd2_drill",
         Alarm = "C_Bain_H_GOBank_IsEverythingOK",
         Water = "pd2_water_tap",
+        Blimp = "blimp",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarLootDrop = { "pd2_car", "pd2_lootdrop" },
@@ -161,13 +162,7 @@ _G.EHI =
         HeliDropDrill = { "heli", "pd2_drill", "pd2_goto" },
         HeliDropBag = { "heli", "wp_bag", "pd2_goto" },
         HeliDropC4 = { "heli", "pd2_c4", "pd2_goto" },
-        BoatEscape = { "boat", "pd2_escape", "pd2_lootdrop" },
-
-        Redirect =
-        {
-            Boat = "EHI_Boat",
-            Heli = "EHI_Heli"
-        }
+        BoatEscape = { "boat", "pd2_escape", "pd2_lootdrop" }
     },
 
     Trackers =

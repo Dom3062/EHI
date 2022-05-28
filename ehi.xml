@@ -40,11 +40,11 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIBuffTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIGaugeBuffTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIDodgeChanceTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIStoicTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIBikerBuffTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIHostageTakerMuscleRegenBuffTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIMeleeChargeBuffTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIUppersRangeTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="SimpleBuffEdits.lua"/>
             </group>
             <post :hook_id="hudmanager" :script_path="HUDManager.lua" />
             <post :hook_id="hudmanagervr" :script_path="HUDManagerVR.lua" />
