@@ -121,3 +121,10 @@ EHI:AddLoadSyncFunction(function(self) -- Works only when the hack is running
     end
     -- Pointless to query the last PC
 end)
+
+local tbl =
+{
+    --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_director/stn_interactable_computer_director
+    [102104] = { remove_vanilla_waypoint = true, waypoint_id = 104571, restore_waypoint_on_done = true }
+}
+EHI:UpdateUnits(tbl)

@@ -1,4 +1,4 @@
-EHIElevatorTimerTracker = EHIElevatorTimerTracker or class(EHITracker)
+EHIElevatorTimerTracker = class(EHITracker)
 function EHIElevatorTimerTracker:init(panel, params)
     self._floors = params.floors or 26
     params.icons = { "pd2_door" }
@@ -39,7 +39,7 @@ local show_achievement = EHI:GetOption("show_achievement")
 local hard_and_above = EHI:IsDifficultyOrAbove("hard")
 local LowerFloor = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [102460] = { time = 7, id = "Countdown", icons = { "pd2_generic_look" }, class = TT.Warning },
+    [102460] = { time = 7, id = "Countdown", icons = { Icon.Alarm }, class = TT.Warning },
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
     [102701] = { time = 13, id = "Patrol", icons = { "pd2_generic_look" }, class = TT.Warning },
     [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },

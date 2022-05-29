@@ -31,7 +31,10 @@ local DisableWaypoints =
     [100241] = true,
 
     -- Fix Jewelry Store PC hack WP
-    [100828] = true
+    [100828] = true,
+
+    -- Drill WP in the cage (shoe objective)
+    [100664] = true
 }
 
 EHI:ParseTriggers(triggers)
@@ -56,3 +59,11 @@ if EHI:GetOption("show_achievement") then
 else
     EHI:ShowLootCounter(12)
 end
+
+local tbl =
+{
+    --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
+    --Jewelry Store
+    [105874] = { remove_vanilla_waypoint = true, waypoint_id = 100776 }
+}
+EHI:UpdateUnits(tbl)

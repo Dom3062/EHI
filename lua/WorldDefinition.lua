@@ -1,14 +1,15 @@
---[[
-    TODO:
-    Think of a system callable from the individual level files
-]]
-
 local EHI = EHI
 if EHI._hooks.WorldDefinition then
     return
 else
     EHI._hooks.WorldDefinition = true
 end
+
+local original =
+{
+    init_done = WorldDefinition.init_done,
+    create = WorldDefinition.create
+}
 
 function EHI:FinalizeUnitsClient()
     self:FinalizeUnits(self._cache.MissionUnits)
@@ -27,7 +28,7 @@ function EHI:FinalizeUnits(tbl)
                     unit_data.f(unit_data.instance, id, unit_data, unit)
                 end
             else
-                if unit:timer_gui() then
+                if unit:timer_gui() and unit:timer_gui()._ehi_key then
                     unit:timer_gui():SetIcons(unit_data.icons)
                     unit:timer_gui():SetRemoveOnPowerOff(unit_data.remove_on_power_off)
                     if unit_data.disable_set_visible then
@@ -38,10 +39,16 @@ function EHI:FinalizeUnits(tbl)
                     end
                     if unit_data.remove_vanilla_waypoint then
                         unit:timer_gui():RemoveVanillaWaypoint(unit_data.waypoint_id)
+                        if unit_data.restore_waypoint_on_done then
+                            unit:timer_gui():SetRestoreVanillaWaypointOnDone()
+                        end
+                    end
+                    if unit_data.ignore_visibility then
+                        unit:timer_gui():SetIgnoreVisibility()
                     end
                     unit:timer_gui():Finalize()
                 end
-                if unit:digital_gui() then
+                if unit:digital_gui() and unit:digital_gui()._ehi_key then
                     unit:digital_gui():SetIcons(unit_data.icons)
                     unit:digital_gui():SetIgnore(unit_data.ignore)
                     unit:digital_gui():SetRemoveOnPause(unit_data.remove_on_pause)
@@ -67,32 +74,9 @@ function EHI:FinalizeUnits(tbl)
     end
 end
 
-if not EHI:ShouldDisableWaypoints() then
-    return
-end
-
-local original =
-{
-    init_done = WorldDefinition.init_done,
-    create = WorldDefinition.create
-}
-
 local Icon = EHI.Icons
-
-local chasC4 = {}
-
-local _f_init_done = WorldDefinition.init_done
-function WorldDefinition:init_done(...)
-    EHI:FinalizeUnits(EHI._cache.MissionUnits)
-    EHI:FinalizeUnits(EHI._cache.InstanceUnits)
-    _f_init_done(self, ...)
-end
-
-local level_id = Global.game_settings.level_id
 local units =
 {
-    ["units/pd2_dlc_dah/props/dah_prop_hack_box/dah_prop_hack_ipad_unit"] = { remove_on_power_off = true },
-
     -- Copied from CoreWorldInstanceManager.lua
     ["units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
     ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
@@ -110,27 +94,6 @@ local units =
     ["units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator"] = { icons = { Icon.Power } },
     ["units/pd2_dlc_sand/equipment/sand_interactable_hack_computer/sand_interactable_hack_computer"] = { remove_vanilla_waypoint = true, waypoint_id = 100034 }
 }
-
-if level_id == "welcome_to_the_jungle_2" then -- Big Oil Day 2
-    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "big_oil_day2_WP" }
-elseif level_id == "roberts" then -- GO Bank
-    units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 102899 }
-    units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { Icon.Vault }, remove_on_pause = true }
-elseif level_id == "election_day_1" then -- Election Day D1
-    units["units/payday2/props/off_prop_eday_shipping_computer/off_prop_eday_shipping_computer"] = { f = "election_day_1" }
-elseif level_id == "election_day_2" then -- Election Day D2
-    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "election_day_2" }
-elseif level_id == "big" then -- The Big Bank
-    units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { Icon.Wait } }
-elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
-    units["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_director/stn_interactable_computer_director"] = { f = "hox_2" }
-elseif level_id == "moon" then -- Stealing Xmas
-    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100776 }
-elseif level_id == "help" then -- Prison Nightmare
-    units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
-elseif level_id == "pent" then -- Mountain Master
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { f = "pentAchievementTimer" }
-end
 
 function WorldDefinition:create(layer, offset, ...)
     local return_data = original.create(self, layer, offset, ...)
@@ -151,6 +114,41 @@ function WorldDefinition:create(layer, offset, ...)
         end
     end
     return return_data
+end
+
+function WorldDefinition:init_done(...)
+    EHI:FinalizeUnits(EHI._cache.MissionUnits)
+    EHI:FinalizeUnits(EHI._cache.InstanceUnits)
+    original.init_done(self, ...)
+end
+
+function WorldDefinition:SetAmmoOffset(instance, unit_id, unit_data, unit)
+    if unit:base().SetOffset then
+        unit:base():SetOffset(1)
+    end
+end
+
+if not EHI:ShouldDisableWaypoints() then
+    return
+end
+
+local chasC4 = {}
+local level_id = Global.game_settings.level_id
+if level_id == "welcome_to_the_jungle_2" then -- Big Oil Day 2
+    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "big_oil_day2_WP" }
+elseif level_id == "roberts" then -- GO Bank
+    units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 102899 }
+    units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { Icon.Vault }, remove_on_pause = true }
+elseif level_id == "election_day_1" then -- Election Day D1
+    units["units/payday2/props/off_prop_eday_shipping_computer/off_prop_eday_shipping_computer"] = { f = "election_day_1" }
+elseif level_id == "election_day_2" then -- Election Day D2
+    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "election_day_2" }
+elseif level_id == "big" then -- The Big Bank
+    units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { Icon.Wait } }
+elseif level_id == "help" then -- Prison Nightmare
+    units["units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large"] = { ignore = true }
+elseif level_id == "pent" then -- Mountain Master
+    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { f = "pentAchievementTimer" }
 end
 
 function WorldDefinition:big_oil_day2_WP(instance, unit_id, unit_data, unit)
@@ -286,11 +284,5 @@ function WorldDefinition:pentAchievementTimer(instance, unit_id, unit_data, unit
         unit:digital_gui():SetIcons(EHI:GetAchievementIcon("pent_10"))
         unit:digital_gui():SetRemoveOnPause(true)
         unit:digital_gui():SetWarning(true)
-    end
-end
-
-function WorldDefinition:SetAmmoOffset(instance, unit_id, unit_data, unit)
-    if unit:base().SetOffset then
-        unit:base():SetOffset(1)
     end
 end

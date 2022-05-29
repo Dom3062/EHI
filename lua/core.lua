@@ -274,6 +274,12 @@ function EHI:Log(s)
     log("[EHI] " .. (s or "nil"))
 end
 
+---Works the same way as EHI:Log(), but the string is not saved on HDD
+---@param s any
+function EHI:LogFast(s)
+    io.stdout:write("[EHI] " .. (s or "nil") .. "\n")
+end
+
 function EHI:LogTraceback()
     log("[EHI] " .. debug.traceback())
 end

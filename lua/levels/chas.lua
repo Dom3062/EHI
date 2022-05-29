@@ -42,7 +42,12 @@ local DisableWaypoints =
     -- Fix is in CoreWorldInstanceManager.lua
     -- chas_vault_door
     [EHI:GetInstanceElementID(100029, 5950)] = true, -- Defend
-    [EHI:GetInstanceElementID(100030, 5950)] = true -- Fix
+    [EHI:GetInstanceElementID(100030, 5950)] = true, -- Fix
+    -- chas_auction_room_door_hack
+    [EHI:GetInstanceElementID(100031, 5550)] = true, -- Defend
+    [EHI:GetInstanceElementID(100056, 5550)] = true, -- Fix
+    [EHI:GetInstanceElementID(100031, 11900)] = true, -- Defend
+    [EHI:GetInstanceElementID(100056, 11900)] = true -- Fix
 }
 
 EHI:ParseTriggers(triggers)

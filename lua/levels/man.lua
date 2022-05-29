@@ -59,25 +59,13 @@ EHI:AddLoadSyncFunction(function(self)
     end
 end)
 
-local function man_WP(instance, unit_id, unit_data, unit)
-    if unit_id == 102034 then
-        unit:timer_gui():RemoveVanillaWaypoint(102303)
-    elseif unit_id == 102035 then
-        unit:timer_gui():RemoveVanillaWaypoint(102301)
-    elseif unit_id == 102040 then
-        unit:timer_gui():RemoveVanillaWaypoint(101837)
-    else -- 102041
-        unit:timer_gui():RemoveVanillaWaypoint(101992)
-    end
-end
-
 local tbl =
 {
     -- Saws
-    [102034] = { f = man_WP },
-    [102035] = { f = man_WP },
-    [102040] = { f = man_WP },
-    [102041] = { f = man_WP }
+    [102034] = { remove_vanilla_waypoint = true, waypoint_id = 102303 },
+    [102035] = { remove_vanilla_waypoint = true, waypoint_id = 102301 },
+    [102040] = { remove_vanilla_waypoint = true, waypoint_id = 101837 },
+    [102041] = { remove_vanilla_waypoint = true, waypoint_id = 101992 }
 }
 
 EHI:UpdateUnits(tbl)

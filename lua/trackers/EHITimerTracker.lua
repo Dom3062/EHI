@@ -1,5 +1,7 @@
 local lerp = math.lerp
 local sin = math.sin
+local min = math.min
+local floor = math.floor
 local Color = Color
 EHITimerTracker = class(EHITracker)
 EHITimerTracker._update = false
@@ -40,7 +42,7 @@ end
 
 function EHITimerTracker:AnimateWarning(check_progress)
     if self._text and alive(self._text) then
-        local start_t = check_progress and (EHI:RoundNumber(self._time, 0.1) - math.floor(self._time)) or 0
+        local start_t = check_progress and (min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 0
         self._text:animate(function(o)
             while true do
                 local t = start_t
@@ -51,6 +53,7 @@ function EHITimerTracker:AnimateWarning(check_progress)
                     local g = lerp(1, 0, n)
                     o:set_color(Color(1, g, g))
                 end
+                start_t = 0
             end
         end)
     end
@@ -58,7 +61,7 @@ end
 
 function EHITimerTracker:AnimateCompletion(check_progress)
     if self._text and alive(self._text) then
-        local start_t = check_progress and (EHI:RoundNumber(self._time, 0.1) - math.floor(self._time)) or 0
+        local start_t = check_progress and (min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 0
         self._text:animate(function(o)
             while true do
                 local t = start_t
@@ -69,6 +72,7 @@ function EHITimerTracker:AnimateCompletion(check_progress)
                     local g = lerp(1, 0, n)
                     o:set_color(Color(g, 1, g))
                 end
+                start_t = 0
             end
         end)
     end

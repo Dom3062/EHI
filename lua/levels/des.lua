@@ -66,6 +66,13 @@ local DisableWaypoints =
 EHI:ParseTriggers(triggers)
 EHI:DisableWaypoints(DisableWaypoints)
 
---units/pd2_dlc_des/props/des_prop_inter_hack_computer/des_inter_hack_computer
-local tbl = { [103009] = { icons = { Icon.Power } } }
+local tbl =
+{
+    --units/pd2_dlc_des/props/des_prop_inter_hack_computer/des_inter_hack_computer
+    [103009] = { icons = { Icon.Power } },
+
+    --units/pd2_dlc_dah/props/dah_prop_hack_box/dah_prop_hack_ipad_unit
+    [101323] = { remove_on_power_off = true },
+    [101324] = { remove_on_power_off = true }
+}
 EHI:UpdateUnits(tbl)

@@ -1,3 +1,6 @@
+r62 (29. 05. 2022):
+Dragon Heist: Fixed a game freeze
+
 r61 (28. 05. 2022):
 Updated Heli icon
 Cursed Kill Room: Fixed tracker spam
