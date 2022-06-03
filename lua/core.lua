@@ -97,7 +97,6 @@ _G.EHI =
         SetTimeIfLoudOrStealth = 49,
         ShowWaypoint = 51,
         ShowEHIWaypoint = 52,
-        RemoveTriggerAndStartAchievementCountdown = 53,
         DecreaseProgress = 54,
 
         Debug = 100000,
@@ -277,7 +276,8 @@ end
 ---Works the same way as EHI:Log(), but the string is not saved on HDD
 ---@param s any
 function EHI:LogFast(s)
-    io.stdout:write("[EHI] " .. (s or "nil") .. "\n")
+    local prefix = os.date("%I:%M:%S %p")
+    io.stdout:write(prefix .. " Lua: [EHI] " .. (s or "nil") .. "\n")
 end
 
 function EHI:LogTraceback()
@@ -1048,7 +1048,7 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.SetAchievementStatus then
                 managers.ehi:SetAchievementStatus(triggers[id].id, triggers[id].status or "ok")
             elseif f == SF.ShowAchievementFromStart then
-                if Global.statistics_manager.playing_from_start then
+                if not managers.statistics:is_dropin() then
                     self:CheckCondition(id)
                 end
             elseif f == SF.SetAchievementFailed then
@@ -1133,9 +1133,6 @@ function EHI:Trigger(id, element, enabled)
                 end
             elseif f == SF.ShowWaypoint then
                 managers.hud:add_waypoint(triggers[id].id, triggers[id].data)
-            elseif f == SF.RemoveTriggerAndStartAchievementCountdown then
-                managers.ehi:StartTrackerCountdown(triggers[id].id)
-                self:UnhookTrigger(id)
             elseif f == SF.DecreaseProgress then
                 managers.ehi:DecreaseTrackerProgress(triggers[id].id)
             elseif f == SF.Debug then

@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -28,10 +29,22 @@ local triggers = {
     [102266] = { max = 6, id = "SniperDeath", icons = { "sniper", "pd2_kill" }, class = "EHIProgressTracker" },
     [100833] = { id = "SniperDeath", special_function = SF.RemoveTracker },
 
-    [100549] = { time = 20, id = "ObjectiveWait", icons = { "faster" } },
+    [100549] = { time = 20, id = "ObjectiveWait", icons = { Icon.Wait } },
     [101202] = { time = 15, id = "Escape", icons = Icon.CarEscape },
     [101313] = { time = 75, id = "Escape", icons = Icon.CarEscape }
 }
 
 EHI:ParseTriggers(triggers)
 EHI:ShowLootCounter(4)
+
+local tbl =
+{
+    --levels/instances/unique/spa/spa_storage (6-10)
+    --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small
+    [EHI:GetInstanceElementID(100063, 7800)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100061, 7800) },
+    [EHI:GetInstanceElementID(100063, 2850)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100061, 2850) },
+    [EHI:GetInstanceElementID(100063, 3000)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100061, 3000) },
+    [EHI:GetInstanceElementID(100063, 3750)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100061, 3750) },
+    [EHI:GetInstanceElementID(100063, 4050)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100061, 4050) }
+}
+EHI:UpdateUnits(tbl)

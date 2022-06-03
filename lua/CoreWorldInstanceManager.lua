@@ -88,7 +88,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
     return instance_data
 end
 
-if not EHI:ShouldDisableWaypoints() then
+if not EHI:GetOption("show_timers") then
     return
 end
 
@@ -102,71 +102,32 @@ local units =
     ["units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
     ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
 
-    ["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics"] = { icons = { "equipment_evidence" } },
-    ["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security"] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = true, waypoint_id = 100019 },
     ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { Icon.Drill }, ignore_visibility = true },
     ["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { Icon.Wait } },
-    ["units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch"] = { icons = { Icon.Wait }, warning = true },
-    ["units/pd2_dlc_help/props/hlp_interactable_wheel_timer/hlp_interactable_wheel_timer"] = { icons = { Icon.Wait }, icon_on_pause = { "restarter" } },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { Icon.C4 }, warning = true },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { Icon.C4 }, f = "chasC4" },
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_01"] = { disable_set_visible = true },
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"] = { disable_set_visible = true },
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { disable_set_visible = true },
     ["units/pd2_dlc_sand/equipment/sand_interactable_rotating_code_computer/sand_interactable_rotating_code_computer"] = { remove_on_pause = true, remove_on_alarm = true },
-    ["units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator"] = { icons = { Icon.Power } },
-    ["units/pd2_dlc_sand/equipment/sand_interactable_hack_computer/sand_interactable_hack_computer"] = { remove_vanilla_waypoint = true, waypoint_id = 100034 }
+    ["units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator"] = { icons = { Icon.Power } }
 }
-if level_id == "arm_for" or level_id == "hox_3" then -- Transport: Train Heist or Hoxton Revenge
-    local warning = level_id == "hox_3" and true or nil
-    local f = level_id == "hox_3" and "hox3Timer" or nil
-    local icons = level_id == "arm_for" and { EHI.Icons.Vault } or nil
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = icons, remove_on_alarm = true, remove_on_pause = level_id == "hox_3", warning = warning, f = f }
-    if level_id == "hox_3" then
-        units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 100089 }
-    end
+if level_id == "hox_3" then -- Hoxton Revenge
+    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { Icon.Alarm }, remove_on_pause = true, warning = true, f = "hox3Timer" }
+    units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 100089 }
 elseif level_id == "mus" then -- The Diamond
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { Icon.Wait }, remove_on_pause = true, warning = true }
-    units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { Icon.Keycard } }
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100050 }
 elseif level_id == "hox_1" then -- Hoxton Breakout Day 1
     units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small"] = { remove_vanilla_waypoint = true, waypoint_id = 100090 }
-    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { f = "hox_1" }
-elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
-    units["units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics"].f = "hox_2_forensics"
-elseif level_id == "nail" then -- Lab Rats
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { Icon.Vault }, f = "nailSafeTimer" }
-elseif level_id == "cane" then -- Santa's Workshop
-    -- OVK decided to use one timer for fire and fire recharge
-	-- This class ignores them and that timer is implemented
-	-- in cane.lua
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { Icon.Vault }, f = "caneSafeTimer" }
 elseif level_id == "pbr" then -- Beneath the Mountain
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { Icon.C4 } }
 elseif level_id == "shoutout_raid" then -- Meltdown
     units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { ignore = true }
-elseif level_id == "red2" then -- First World Bank
-    units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 100014 }
-    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100018 }
-elseif level_id == "jolly" then -- Aftershock
-    units["units/pd2_dlc_jolly/equipment/gen_interactable_saw/gen_interactable_saw"] = { remove_vanilla_waypoint = true, waypoint_id = 100070 }
-elseif level_id == "spa" then -- Brooklyn 10-10
-    units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small"] = { remove_vanilla_waypoint = true, waypoint_id = 100061 }
-elseif level_id == "des" then -- Henry's Rock
-    units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam"] = { remove_vanilla_waypoint = true, waypoint_id = 100009 }
-elseif level_id == "brb" then -- Brooklyn Bank
-    units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 100003 }
 elseif level_id == "sah" then -- Shacklethorne Auction
     units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { Icon.Vault } }
     units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam"] = { remove_vanilla_waypoint = true, waypoint_id = 100068 }
     units["units/pd2_dlc_sah/props/sah_interactable_hack_computer/sah_interactable_hack_computer"] = { remove_vanilla_waypoint = true, waypoint_id = 100084 }
-elseif level_id == "mex" then -- Border Crossing
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { Icon.C4 } }
-elseif level_id == "chas" then -- Dragon Heist
-    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100017 }
 elseif level_id == "sand" then -- Ukrainian Prisoner Heist
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { Icon.Vault }, remove_on_pause = true, remove_on_alarm = true }
-    units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam"] = { remove_vanilla_waypoint = true, waypoint_id = 100023 }
     -- Also includes a server hack objective (loud only)
     units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100017 }
 end

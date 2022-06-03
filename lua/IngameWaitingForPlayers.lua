@@ -18,7 +18,7 @@ if EHI:GetOption("gage_tracker_panel") == 1 then
                 progress = EHI._cache.GagePackagesProgress or 0,
                 exclude_from_sync = true,
                 max = tweak_data.gage_assignment:get_num_assignment_units(),
-                class = "EHIProgressTracker"
+                class = EHI.Trackers.Progress
             })
         end
     end
@@ -870,7 +870,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end)
     end
     if EHI:IsAchievementLocked("xm20_1") and (level == "mex" or level == "bex" or level == "pex" or level == "fex") then
-        EHI:PreHookWithID(MissionManager, "on_set_saved_job_value", "EHI_pent_11_achievement", function(mm, key, value)
+        EHI:PreHookWithID(MissionManager, "on_set_saved_job_value", "EHI_xm20_1_achievement", function(mm, key, value)
             if (key == "present_mex" or key == "present_bex" or key == "present_pex" or key == "present_bex") and value == 1 then
                 local progress = 0
                 local to_secure = tweak_data.achievement.collection_achievements.xm20_1.collection

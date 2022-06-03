@@ -44,7 +44,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local BoatEscape = { Icon.Boat, Icon.Escape, Icon.LootDrop }
 local boat_anim = 614/30 + 12 + 1
 local skid = { { icon = Icon.Car, color = Color("1E90FF") } }
 local sand_9_buttons = { id = "sand_9_buttons", special_function = SF.IncreaseProgress }
@@ -98,7 +97,7 @@ local triggers = {
     [103870] = { chance = 34, id = "ReviveVlad", icons = { "equipment_defibrillator" }, class = TT.Chance, special_function = SF.AddTrackerIfDoesNotExist },
     [103871] = { id = "ReviveVlad", special_function = SF.RemoveTracker },
 
-    [103925] = { id = "BoatEscape", icons = BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 30 + boat_anim, no = 19 + boat_anim } }
+    [103925] = { id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 30 + boat_anim, no = 19 + boat_anim } }
 }
 local time = 5 -- Normal
 if EHI:IsBetweenDifficulties("hard", "very_hard") then
@@ -114,7 +113,7 @@ elseif EHI:IsDifficulty("death_sentence") then
     -- Death Sentence
     time = 40
 end
-for _, index in pairs({8530, 9180, 9680}) do
+for _, index in ipairs({8530, 9180, 9680}) do
     triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { "restarter" } } -- ECM Jammer
     triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + time, id = "KeypadReboot", icons = { "restarter" } }
 end
@@ -149,3 +148,15 @@ EHI:RegisterCustomSpecialFunction(ExecuteIfProgressMatch, function(...)
         managers.ehi:SetAchievementFailed("sand_9")
     end
 end)
+
+local tbl =
+{
+    --levels/instances/unique/sand/sand_computer_hackable
+    --units/pd2_dlc_sand/equipment/sand_interactable_hack_computer/sand_interactable_hack_computer
+    [EHI:GetInstanceElementID(100140, 18680)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100034, 18680) },
+
+    --levels/instances/unique/sand/sand_swat_van_drillable
+    --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
+    [EHI:GetInstanceElementID(100022, 15380)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100023, 15380) }
+}
+EHI:UpdateUnits(tbl)

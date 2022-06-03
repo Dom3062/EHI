@@ -73,6 +73,10 @@ local tbl =
 
     --units/pd2_dlc_dah/props/dah_prop_hack_box/dah_prop_hack_ipad_unit
     [101323] = { remove_on_power_off = true },
-    [101324] = { remove_on_power_off = true }
+    [101324] = { remove_on_power_off = true },
+
+    --levels/instances/unique/des/des_drill
+    --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
+    [EHI:GetInstanceElementID(100030, 21000)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100009, 21000) }
 }
 EHI:UpdateUnits(tbl)

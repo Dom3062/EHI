@@ -520,7 +520,7 @@ function EHIManager:AddEscapeChanceTracker(dropin, chance, civilian_killed_multi
         id = "EscapeChance",
         chance = chance + (self:GetAndRemoveFromCache("CiviliansKilled") or 0) * civilian_killed_multiplier,
         icons = { EHI.Icons.Car, EHI.Icons.Fire },
-        class = "EHIChanceTracker"
+        class = EHI.Trackers.Chance
     })
 end
 

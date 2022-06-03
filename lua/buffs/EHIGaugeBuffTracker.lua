@@ -55,6 +55,8 @@ end
 function EHIGaugeBuffTracker:Format()
     if self._format == "percent" then
         return tostring(self._ratio * 100) .. "%"
+    elseif self._format == "multiplier" then
+        return self._ratio .. "x"
     end
     return tostring(self._ratio)
 end

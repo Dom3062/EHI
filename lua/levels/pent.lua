@@ -101,3 +101,11 @@ if very_hard_and_up then
         })
     end)
 end
+
+local tbl =
+{
+    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
+    [102452] = { icons = EHI:GetAchievementIcon("pent_10"), remove_on_pause = true, warning = true },
+    [103872] = { ignore = true }
+}
+EHI:UpdateUnits(tbl)

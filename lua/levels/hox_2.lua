@@ -21,7 +21,7 @@ end
 local triggers = {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072--[[, 1001073]] } },
     [1001071] = { id = "slakt_3", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
-    [1001072] = { id = "cac_26", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up, exclude_from_sync = true },
+    [1001072] = { id = "cac_26", class = TT.AchievementNotification, special_function = SF.ShowAchievementFromStart, condition = show_achievement and ovk_and_up, exclude_from_sync = true },
     --[1001073] = { time = AssaultDelay, id = "AssaultDelay", stop_counting = EHI._cache.Host, class = TT.AssaultDelay },
     [100256] = { id = "slakt_3", special_function = SF.SetAchievementFailed },
     [100258] = { id = "slakt_3", special_function = SF.SetAchievementComplete },
@@ -125,6 +125,14 @@ end)
 local tbl =
 {
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_director/stn_interactable_computer_director
-    [102104] = { remove_vanilla_waypoint = true, waypoint_id = 104571, restore_waypoint_on_done = true }
+    [102104] = { remove_vanilla_waypoint = true, waypoint_id = 104571, restore_waypoint_on_done = true },
+
+    --levels/instances/unique/hox_fbi_forensic_device
+    --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics
+    [EHI:GetInstanceElementID(100018, 2650)] = { icons = { "equipment_evidence" }, remove_vanilla_waypoint = true, waypoint_id = 101559, restore_waypoint_on_done = true },
+
+    --levels/instances/unique/hox_fbi_security_office
+    --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security
+    [EHI:GetInstanceElementID(100068, 6690)] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100019, 6690) }
 }
 EHI:UpdateUnits(tbl)

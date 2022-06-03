@@ -77,20 +77,21 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         return
     end
     if EHI:GetOption("show_enemy_count_tracker") then
-        self:AddTracker({
+        self.ehi:AddTracker({
             id = "EnemyCount",
             exclude_from_sync = true,
             class = "EHICountTracker"
         })
     end
-    if EHI:GetOption("show_pager_tracker") and (level_tweak_data.ghost_bonus or level_tweak_data.ghost_required or level_tweak_data.ghost_required_visual) then
+    if EHI:GetOption("show_pager_tracker") and (level_tweak_data.ghost_bonus or level_tweak_data.ghost_required or level_tweak_data.ghost_required_visual or level_id == "welcome_to_the_jungle_2") then
         -- In case the heist will require stealth completion but does not have XP bonus
+        -- Big Oil Day 2 is exception to this rule because guards have pagers
         local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
         if server then
             for _, value in pairs(base) do
                 if value > 0 and value < 1 then
                     -- Random Chance
-                    self:AddTracker({
+                    self.ehi:AddTracker({
                         id = "pagers_chance",
                         chance = EHI:RoundChanceNumber(base[1] or 0),
                         icons = { "pagers_used" },
@@ -110,7 +111,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 max = max + 1
             end
         end
-        self:AddTracker({
+        self.ehi:AddTracker({
             id = "pagers",
             max = max,
             icons = { "pagers_used" },
@@ -126,7 +127,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         end)
     end
     if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" and not EHI:IsOneXPElementHeist(level_id) then
-        self:AddTracker({
+        self.ehi:AddTracker({
             id = "XPTotal",
             exclude_from_sync = true,
             class = "EHITotalXPTracker"
@@ -143,7 +144,7 @@ function HUDManager:ShowLootCounter()
     if max == 0 then
         return
     end
-    self:AddTracker({
+    self.ehi:AddTracker({
         id = "LootCounter",
         max = max,
         icons = { "pd2_loot" },
@@ -157,7 +158,7 @@ if EHI:GetOption("show_captain_damage_reduction") then
     function HUDManager:sync_set_assault_mode(mode, ...)
         original.sync_set_assault_mode(self, mode, ...)
         if mode == "phalanx" then
-            self:AddTracker({
+            self.ehi:AddTracker({
                 id = "PhalanxDamageReduction",
                 icons = { "buff_shield" },
                 exclude_from_sync = true,
@@ -190,10 +191,6 @@ function HUDManager:destroy(...)
     self.ehi:destroy()
     managers.ehi_waypoint:destroy()
     original.destroy(self, ...)
-end
-
-function HUDManager:AddTracker(params)
-    self.ehi:AddTracker(params)
 end
 
 if Network:is_client() and level_id ~= "hvh" then

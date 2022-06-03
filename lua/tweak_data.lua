@@ -203,7 +203,7 @@ tweak_data.ehi =
             u100skill = true,
             x = 11,
             y = 6,
-            format = "percent",
+            format = "multiplier",
             class = "EHIGaugeBuffTracker"
         },
         standstill_omniscience_initial =

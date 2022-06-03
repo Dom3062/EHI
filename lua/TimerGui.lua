@@ -14,7 +14,7 @@ local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoin
 local level_id = Global.game_settings.level_id
 -- [index] = Vector3(x, y, z)
 local MissionDoorPositions = {}
--- [index] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes", w_ids = "Table of waypoints and their ID" }
+-- [index] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes", w_ids = "Table of waypoints and their ID", unit_id = "ID of the door" }
 ---- See MissionDoor class how to get Drill position
 ---- Indexes must match or it won't work
 ---- "w_ids" has a higher priority than "w_id"
@@ -68,6 +68,30 @@ elseif level_id == "arm_for" then -- Transport: Train Heist
         [4] = { w_id = 100840 },
         [5] = { w_id = 102288 },
         [6] = { w_id = 102593 }
+    }
+elseif level_id == "big" then -- Big Bank
+    MissionDoorPositions =
+    {
+        -- Server Room
+        [1] = Vector3(733.114, 1096.92, -907.557),
+        [2] = Vector3(1419.89, -1897.92, -907.557),
+        [3] = Vector3(402.08, -1266.89, -507.56),
+
+        -- Roof
+        [4] = Vector3(503.08, 1067.11, 327.432),
+        [5] = Vector3(503.08, -1232.89, 327.432),
+        [6] = Vector3(3446.92, -1167.11, 327.432),
+        [7] = Vector3(3466.11, 1296.92, 327.432)
+    }
+    MissionDoorIndex =
+    {
+        [1] = { w_id = 103457, restore = true, unit_id = 104582 },
+        [2] = { w_id = 103461, restore = true, unit_id = 104584 },
+        [3] = { w_id = 103465, restore = true, unit_id = 104585 },
+        [4] = { w_id = 101306, restore = true, unit_id = 100311 },
+        [5] = { w_id = 106362, restore = true, unit_id = 103322 },
+        [6] = { w_id = 106372, restore = true, unit_id = 105317 },
+        [7] = { w_id = 106382, restore = true, unit_id = 106336 },
     }
 elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
     local SecurityOffice = { w_id = EHI:GetInstanceElementID(100026, 6690) }
@@ -202,6 +226,16 @@ function TimerGui:PostStartTimer()
                 return
             else
                 self._waypoint_id = data.w_id
+                if data.restore and data.unit_id then
+                    local restore = callback(self, self, "RestoreWaypoint")
+                    local m = managers.mission
+                    local add_trigger = m.add_runned_unit_sequence_trigger
+                    add_trigger(m, data.unit_id, "explode_door", restore)
+                    add_trigger(m, data.unit_id, "open_door_keycard", restore)
+                    add_trigger(m, data.unit_id, "open_door_ecm", restore)
+                    add_trigger(m, data.unit_id, "open_door", restore) -- In case the drill finishes first host side than client-side
+                    -- Drill finish is covered in TimerGui:_set_done()
+                end
             end
         end
     end
@@ -259,7 +293,11 @@ function TimerGui:_set_done(...)
     managers.ehi:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     original._set_done(self, ...)
-    if self._restore_vanilla_waypoint_on_done then
+    self:RestoreWaypoint()
+end
+
+function TimerGui:RestoreWaypoint()
+    if self._restore_vanilla_waypoint_on_done and self._waypoint_id then
         EHI._cache.IgnoreWaypoints[self._waypoint_id] = nil
         managers.hud:RestoreWaypoint(self._waypoint_id)
         EHI:RestoreElementWaypoint(self._waypoint_id)

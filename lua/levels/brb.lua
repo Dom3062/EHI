@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -33,7 +34,7 @@ local triggers = {
 
     [100142] = { time = 5, id = "C4Vault", icons = { Icon.C4 } }
 
-    -- Will fix that later when OVK pulls out their head from their asses and fix the elements; won't probably happen anytime soon
+    -- Will fix that later when OVK pulls out their heads from their asses and fix the elements; won't probably happen anytime soon
     --[100837] = { time = 50, delay = 10, id = "VaultThermite", icons = { "pd2_fire" }, class = "EHIInaccurateTracker", trigger_at = 4, trigger_count = 0 }
 }
 
@@ -45,3 +46,12 @@ end
 
 EHI:ParseTriggers(triggers)
 EHI:DisableWaypoints(DisableWaypoints)
+
+local tbl =
+{
+    --levels/instances/unique/brb/brb_vault
+    --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
+    [EHI:GetInstanceElementID(100058, 1900)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100003, 1900) },
+    [EHI:GetInstanceElementID(100058, 2400)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100003, 2400) }
+}
+EHI:UpdateUnits(tbl)

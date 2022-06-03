@@ -1,10 +1,22 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local triggers = {
     [101505] = { time = 10, id = "TruckDoorOpens", icons = { "pd2_door" } },
     -- There are a lot of delays in the ID. Using average instead (5.2)
-    [101806] = { time = 20 + 5.2, id = "ChemicalsDrop", icons = { Icon.Heli, "pd2_methlab", "pd2_goto" } },
+    [101806] = { time = 20 + 5.2, id = "ChemicalsDrop", icons = { Icon.Heli, Icon.Methlab, "pd2_goto" } },
 
     [101936] = { time = 30 + 12, id = "Escape", icons = Icon.HeliEscapeNoLoot }
 }
 
 EHI:ParseTriggers(triggers)
+
+local tbl =
+{
+    --levels/instances/unique/nail_cloaker_safe
+    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
+    [EHI:GetInstanceElementID(100014, 5020)] = { ignore = true },
+    [EHI:GetInstanceElementID(100056, 5020)] = { ignore = true },
+    [EHI:GetInstanceElementID(100226, 5020)] = { ignore = true },
+    [EHI:GetInstanceElementID(100227, 5020)] = { icons = { Icon.Vault }, remove_on_pause = true, completion = true }
+}
+EHI:UpdateUnits(tbl)

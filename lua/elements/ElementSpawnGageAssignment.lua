@@ -6,18 +6,24 @@ else
     EHI._hooks.ElementSpawnGageAssignment = true
 end
 
-if not EHI:GetOption("show_gage_tracker") or EHI:GetOption("gage_tracker_panel") ~= 1 then
+if not EHI:GetOption("show_gage_tracker") then
     return
 end
 
-local function CreateTracker()
-    local max = tweak_data.gage_assignment:get_num_assignment_units() or 1
-    managers.ehi:AddTracker({
-        id = "Gage",
-        icons = { "gage" },
-        max = max,
-        class = "EHIProgressTracker"
-    })
+local CreateTracker
+if EHI:GetOption("gage_tracker_panel") == 1 then -- Tracker
+    CreateTracker = function()
+        local max = tweak_data.gage_assignment:get_num_assignment_units()
+        managers.ehi:AddTracker({
+            id = "Gage",
+            icons = { "gage" },
+            max = max,
+            class = EHI.Trackers.Progress
+        })
+    end
+else -- Popup
+    CreateTracker = function()
+    end
 end
 
 local _f_client_on_executed = ElementSpawnGageAssignment.client_on_executed
@@ -29,5 +35,8 @@ end
 local _f_on_executed = ElementSpawnGageAssignment.on_executed
 function ElementSpawnGageAssignment:on_executed(...)
     _f_on_executed(self, ...)
+    if not self._values.enabled then
+        return
+    end
     CreateTracker()
 end

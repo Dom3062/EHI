@@ -1,3 +1,4 @@
+local EHI = EHI
 function EHI:LordOfWarAchievement()
     local weapons = managers.ehi:GetUnits("units/payday2/equipment/gen_interactable_weapon_case_2x1/gen_interactable_weapon_case_2x1", 1)
     local n_of_weapons = 0

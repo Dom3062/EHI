@@ -21,7 +21,7 @@ local triggers = {
     [101960] = { time = 120 + start_delay, id = "Plane", icons = { Icon.Heli, Icon.Wait }, special_function = SF.SetTimeOrCreateTracker },
     [101961] = { time = 150 + start_delay, id = "Plane", icons = { Icon.Heli, Icon.Wait }, special_function = SF.SetTimeOrCreateTracker },
 
-    [102796] = { time = 10, id = "ObjectiveWait", icons = { "faster" } },
+    [102796] = { time = 10, id = "ObjectiveWait", icons = { Icon.Wait } },
 
     [102975] = { special_function = SF.Trigger, data = { 1029751, 1029752 } },
     [1029751] = { chance = 5, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance },
@@ -30,9 +30,9 @@ local triggers = {
     [102985] = { amount = 25, id = "CorrectPaperChance", special_function = SF.IncreaseChance },
     [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, special_function = SF.RemoveTriggerWhenExecuted },
 
-    [102995] = { time = 30, id = "CallAgain", icons = { Icon.Phone, "restarter" } },
-    [102996] = { time = 50, id = "CallAgain", icons = { Icon.Phone, "restarter" } },
-    [102997] = { time = 60, id = "CallAgain", icons = { Icon.Phone, "restarter" } },
+    [102995] = { time = 30, id = "CallAgain", icons = { Icon.Phone, Icon.Loop } },
+    [102996] = { time = 50, id = "CallAgain", icons = { Icon.Phone, Icon.Loop } },
+    [102997] = { time = 60, id = "CallAgain", icons = { Icon.Phone, Icon.Loop } },
     [102940] = { time = 10, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning },
     [102945] = { id = "AnswerPhone", special_function = SF.RemoveTracker }
 }
@@ -44,7 +44,7 @@ EHI:AddOnAlarmCallback(function()
         "CallAgain",
         "AnswerPhone"
     }
-    for _, tracker in pairs(remove) do
+    for _, tracker in ipairs(remove) do
         managers.ehi:RemoveTracker(tracker)
     end
 end)
@@ -60,3 +60,12 @@ if EHI:GetOption("show_achievement") then
         end
     end)
 end
+
+local tbl =
+{
+    --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
+    [101570] = { remove_vanilla_waypoint = true, waypoint_id = 102899 },
+    --units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock
+    [101936] = { icons = { Icon.Vault }, remove_on_pause = true, remove_vanilla_waypoint = true, waypoint_id = 102901 }
+}
+EHI:UpdateUnits(tbl)

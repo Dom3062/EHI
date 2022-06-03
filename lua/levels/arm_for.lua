@@ -41,3 +41,11 @@ if EHI:GetOption("show_achievement") then
 else
     EHI:ShowLootCounter(23)
 end
+
+local tbl = {}
+for i = 0, 500, 100 do
+    --levels/instances/unique/train_cam_computer
+    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
+    tbl[EHI:GetInstanceElementID(100022, i)] = { icons = { Icon.Vault }, remove_on_alarm = true }
+end
+EHI:UpdateUnits(tbl)

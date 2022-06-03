@@ -83,3 +83,11 @@ if show_achievement and EHI:IsDifficultyOrAbove("death_wish") then
         })
     end)
 end
+
+local tbl =
+{
+    --units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock
+    [101457] = { icons = { Icon.Wait } },
+    [104671] = { icons = { Icon.Wait } }
+}
+EHI:UpdateUnits(tbl)
