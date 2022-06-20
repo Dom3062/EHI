@@ -24,10 +24,7 @@ if EHI:GetOption("gage_tracker_panel") == 1 then
     end
 else
     AddGageTracker = function()
-        if not EHI:GetOption("show_gage_tracker") then
-            return
-        end
-        if EHI._cache.GagePackages and EHI._cache.GagePackages > 0 then
+        if EHI:GetOption("show_gage_tracker") and EHI._cache.GagePackages and EHI._cache.GagePackages > 0 then
             if EHI._cache.Host or not managers.ehi:GetDropin() then
                 local max = tweak_data.gage_assignment:get_num_assignment_units()
                 managers.hud:custom_ingame_popup_text("GAGE PACKAGES", "0/" .. tostring(max), "EHI_Gage")
@@ -141,7 +138,7 @@ local function CreateProgressTracker(id, progress, max, dont_flash, remove_after
         flash_times = 1,
         remove_after_reaching_target = remove_after_reaching_target,
         status_is_overridable = status_is_overridable,
-        class = "EHIProgressTracker"
+        class = EHI.Trackers.Progress
     })
 end
 
@@ -363,6 +360,27 @@ function IngameWaitingForPlayersState:at_exit(...)
     if EHI:IsAchievementLocked2("gage_7") and HasWeaponEquipped("p226") then -- "Above the Law" achievement
         CreateProgressTracker("gage_7", EHI:GetAchievementProgress("gage_7_stats"), 100, false, true)
         stats.gage_7_stats = "gage_7"
+    end
+    if EHI:IsAchievementLocked2("gage_9") then -- "Fire in the Hole!" achievement
+        local equipped_grenade = managers.blackmarket:equipped_grenade()
+        local eligible_grenades = tweak_data.achievement.fire_in_the_hole.grenade
+        for _, grenade in ipairs(eligible_grenades) do
+            if grenade == equipped_grenade then
+                local progress = EHI:GetAchievementProgress("gage_9_stats")
+                EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gage_9_achievement", function(am, stat, value)
+                    if stat == "gage_9_stats" then
+                        progress = progress + (value or 1)
+                        if progress >= 100 then
+                            EHI:Unhook("gage_9_achievement")
+                            return
+                        end
+                        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_gage_9"), tostring(progress) .. "/100", "Other_H_Any_FireInTheHole")
+                    end
+                end)
+                managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_gage_9"), tostring(progress) .. "/100", "Other_H_Any_FireInTheHole")
+                break
+            end
+        end
     end
     if EHI:IsAchievementLocked2("gage2_5") and HasWeaponTypeEquipped("lmg") then -- "The Eighth and Final Rule" achievement
         CreateProgressTracker("gage2_5", 0, 220, false, true)
@@ -641,7 +659,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_cac_3"), tostring(progress) .. "/30", "Other_H_Any_Denied")
         end)
     end
-    if EHI:IsAchievementLocked("cac_34") then -- "Lieutenant Colonel" achievement
+    if EHI:IsAchievementLocked2("cac_34") then -- "Lieutenant Colonel" achievement
         local listener_key = "EHI_cac_34_listener_key"
         local progress = EHI:GetAchievementProgress("cac_34_stats")
         local function on_cop_converted(converted_unit, converting_unit)
@@ -656,6 +674,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_cac_34"), tostring(progress) .. "/300", "Other_H_Any_Lieutenant")
         end
         managers.player:register_message("cop_converted", listener_key, on_cop_converted)
+        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_cac_34"), tostring(progress) .. "/300", "Other_H_Any_Lieutenant")
     end
     if EHI:IsAchievementLocked2("gsu_01") and HasMeleeEquipped("spoon") then -- "For all you legends" achievement
         CreateProgressTracker("gsu_01", EHI:GetAchievementProgress("gsu_stat"), 100, false, true)
@@ -666,7 +685,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         stats.dec21_02_stat = "dec21_02"
     end
     if EHI:IsDifficultyOrAbove("very_hard") then
-        if EHI:IsAchievementLocked2("tango_achieve_3") then -- "The Reckoning" achievement
+        if EHI:IsAchievementLocked2("tango_achieve_3") and managers.ehi:GetStartedFromBeginning() then -- "The Reckoning" achievement
             local pass, primary_index, secondary_index = CheckWeaponsBlueprint(tweak_data.achievement.complete_heist_achievements.tango_3.killed_by_blueprint.blueprint)
             if pass then
                 CreateProgressTracker("tango_achieve_3", 0, 200, false, false)

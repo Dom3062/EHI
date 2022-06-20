@@ -39,26 +39,21 @@ local DisableWaypoints =
 
 EHI:ParseTriggers(triggers)
 EHI:DisableWaypoints(DisableWaypoints)
-if EHI:GetOption("show_achievement") then
-    if EHI:IsDifficultyOrAbove("overkill") then
-        EHI:ShowAchievementLootCounter({
-            achievement = "moon_5",
-            max = 9,
-            additional_loot = 3,
-            show_loot_counter = true,
-            exclude_from_sync = true,
-            counter =
-            {
-                check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
-                loot_type = { "money", "diamonds" }
-            }
-        })
-    else
-        EHI:ShowLootCounter(12)
-    end
-else
-    EHI:ShowLootCounter(12)
+if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove("overkill") then
+    EHI:ShowAchievementLootCounter({
+        achievement = "moon_5",
+        max = 9,
+        additional_loot = 3,
+        show_loot_counter = true,
+        exclude_from_sync = true,
+        counter =
+        {
+            check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+            loot_type = { "money", "diamonds" }
+        }
+    })
 end
+EHI:ShowLootCounter(12)
 
 local tbl =
 {

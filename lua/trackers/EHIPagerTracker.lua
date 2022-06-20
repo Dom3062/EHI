@@ -1,8 +1,14 @@
-EHIPagerTracker = EHIPagerTracker or class(EHIWarningTracker)
+EHIPagerTracker = class(EHIWarningTracker)
 function EHIPagerTracker:init(panel, params)
     params.time = 12
     params.icons = { "pager_icon" }
     EHIPagerTracker.super.init(self, panel, params)
+end
+
+function EHIPagerTracker:FixTime()
+    if self._time >= 12 then
+        self:SetTimeNoAnim(12)
+    end
 end
 
 function EHIPagerTracker:SetAnswered()

@@ -42,7 +42,17 @@ local triggers = {
     [102460] = { time = 7, id = "Countdown", icons = { Icon.Alarm }, class = TT.Warning },
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
     [102701] = { time = 13, id = "Patrol", icons = { "pd2_generic_look" }, class = TT.Warning },
-    [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
+    [102620] = { special_function = SF.Trigger, data = { 1026201, 1026202 } },
+    --[102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
+    [1026201] = { id = "EscapeElevator", special_function = SF.PauseTracker },
+    [1026202] = { special_function = SF.CustomCode, f = function()
+        EHI:DelayCall("nmh_check_state", 2, function(...)
+            local light = managers.worlddefinition:get_unit(100019)
+            local category = Idstring("g_light_cone")
+            EHI:Log("Category: " .. tostring(category))
+            EHI:PrintTable(light:damage())
+        end)
+    end },
     -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before restart
     -- Reported in:
     -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
@@ -73,7 +83,7 @@ local triggers = {
 }
 local outcome =
 {
-    [100013] = { time = 25 + 40/30 + 15, random_time = 5, id = "VialFail", icons = { "equipment_bloodvial", "restarter" } },
+    [100013] = { time = 15 + 15 + 10 + 40/30, random_time = 5, id = "VialFail", icons = { "equipment_bloodvial", "restarter" } },
     [100017] = { time = 30, id = "VialSuccess", icons = { "equipment_bloodvialok" } }
 }
 
@@ -82,6 +92,12 @@ for id, value in pairs(outcome) do
         local element = EHI:GetInstanceElementID(id, i)
         triggers[element] = EHI:DeepClone(value)
         triggers[element].id = triggers[element].id .. tostring(element)
+        if id == 100013 then
+            local tracker_id = triggers[element].id .. tostring(element)
+            managers.mission:add_runned_unit_sequence_trigger(EHI:GetInstanceUnitID(100008, i), "done_cleaning", function(unit)
+                managers.ehi:RemoveTracker(tracker_id)
+            end)
+        end
     end
 end
 EHI:AddOnAlarmCallback(function()
@@ -101,6 +117,23 @@ EHI:ParseTriggers(triggers)
 EHI:RegisterCustomSpecialFunction(LowerFloor, function(id, trigger, element, enabled)
     if enabled then
         managers.ehi:CallFunction(trigger.id, "LowerFloor")
+    end
+end)
+EHI:AddLoadSyncFunction(function(self)
+    local elevator_counter = managers.worlddefinition:get_unit(102296)
+    local light = managers.worlddefinition:get_unit(100019)
+    if elevator_counter and light then
+        local o = elevator_counter:digital_gui()
+        if o and o._timer and o._timer ~= 30 then
+            self:AddTracker({
+                id = "EscapeElevator",
+                floors = o._timer - 4,
+                class = "EHIElevatorTimerTracker"
+            })
+            if self:InteractionExists("circuit_breaker") or self:InteractionExists("press_call_elevator") then
+                self:CallFunction("EscapeElevator", "SetPause", true)
+            end
+        end
     end
 end)
 

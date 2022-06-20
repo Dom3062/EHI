@@ -51,12 +51,12 @@ EHI:ShowAchievementLootCounter({
     no_counting = true
 })
 EHI:AddLoadSyncFunction(function(self)
-    -- Achievement count used planks on windows, vents, ...
-    -- There are total 49 positions and 10 planks
-    self:SetTrackerProgressRemaining("man_4", 49 - self:CountInteractionAvailable("stash_planks"))
     if EHI.ConditionFunctions.IsStealth() then
         self:AddAchievementNotificationTracker("man_3")
     end
+    -- Achievement count used planks on windows, vents, ...
+    -- There are total 49 positions and 10 planks
+    self:SetTrackerProgress("man_4", 49 - self:CountInteractionAvailable("stash_planks"))
 end)
 
 local tbl =

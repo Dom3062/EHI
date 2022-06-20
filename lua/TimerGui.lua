@@ -157,7 +157,7 @@ end
 
 function TimerGui:set_background_icons(background_icons, ...)
     original.set_background_icons(self, background_icons, ...)
-    managers.ehi:SetTimerUpgrades(self._ehi_key, self:GetUpgrades())
+    managers.ehi:CallFunction(self._ehi_key, "SetUpgrades", self:GetUpgrades())
 end
 
 function TimerGui:GetUpgrades()
@@ -177,7 +177,7 @@ function TimerGui:GetUpgrades()
 end
 
 function TimerGui:StartTimer()
-    if managers.ehi:TrackerExists(self._ehi_key) then
+    if managers.ehi:TrackerExists(self._ehi_key) or managers.ehi_waypoint:WaypointExists(self._ehi_key) then
         managers.ehi:SetTimerJammed(self._ehi_key, false)
         managers.ehi:SetTimerPowered(self._ehi_key, true)
         managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
@@ -290,8 +290,7 @@ else
 end
 
 function TimerGui:_set_done(...)
-    managers.ehi:RemoveTracker(self._ehi_key)
-    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    self:RemoveTracker()
     original._set_done(self, ...)
     self:RestoreWaypoint()
 end
@@ -312,8 +311,7 @@ end
 
 function TimerGui:_set_powered(powered, ...)
     if powered == false and self._remove_on_power_off then
-        managers.ehi:RemoveTracker(self._ehi_key)
-        managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+        self:RemoveTracker()
     end
     managers.ehi:SetTimerPowered(self._ehi_key, powered)
     managers.ehi_waypoint:SetTimerWaypointPowered(self._ehi_key, powered)
@@ -326,27 +324,28 @@ function TimerGui:set_visible(visible, ...)
         return
     end
     if visible == false then
-        managers.ehi:RemoveTracker(self._ehi_key)
-        managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+        self:RemoveTracker()
     end
 end
 
 function TimerGui:hide(...)
-    managers.ehi:RemoveTracker(self._ehi_key)
-    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    self:RemoveTracker()
     original.hide(self, ...)
 end
 
 function TimerGui:destroy(...)
+    self:RemoveTracker()
+    original.destroy(self, ...)
+end
+
+function TimerGui:RemoveTracker()
     managers.ehi:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
-    original.destroy(self, ...)
 end
 
 function TimerGui:OnAlarm()
     self._ignore = true
-    managers.ehi:RemoveTracker(self._ehi_key)
-    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    self:RemoveTracker()
 end
 
 function TimerGui:DisableOnSetVisible()
@@ -383,8 +382,7 @@ end
 
 function TimerGui:Finalize()
     if self._ignore or (self._remove_on_power_off and not self._powered) then
-        managers.ehi:RemoveTracker(self._ehi_key)
-        managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+        self:RemoveTracker()
     elseif self._icons then
 		managers.ehi:SetTrackerIcon(self._ehi_key, self._icons[1])
 		managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icons[1])

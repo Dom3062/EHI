@@ -31,13 +31,24 @@ EHI:RegisterCustomSpecialFunction(ShowWaypoint, function(id, trigger, element, e
     trigger.data.present_timer = 0
     trigger.data.no_sync = true
     local e = managers.mission:get_element_by_id(trigger.id)
-    if e then
-        trigger.data.position = e._values.position
-    else
-        trigger.data.position = Vector3()
-    end
+    trigger.data.position = e and e._values.position or Vector3()
     managers.hud:add_waypoint(trigger.id, trigger.data)
 end)
 EHI:AddOnAlarmCallback(function(dropin)
     managers.ehi:RemoveTracker("ForcedAlarm")
 end)
+EHI:ShowLootCounter(8)
+
+local tbl =
+{
+    --levels/instances/unique/hox_estate_panic_room
+    --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
+    [EHI:GetInstanceElementID(100068, 2585)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100089, 2585) },
+    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
+    [EHI:GetInstanceElementID(100090, 2585)] = { icons = { Icon.Vault }, remove_on_pause = true },
+
+    --levels/instances/unique/hox_estate_alarmbox
+    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
+    [EHI:GetInstanceElementID(100021, 9685)] = { icons = { Icon.Alarm }, warning = true, remove_on_pause = true }
+}
+EHI:UpdateUnits(tbl)

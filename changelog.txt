@@ -1,3 +1,13 @@
+r64 (20. 06. 2022):
+Minor optimization in tracker reorganization
+Fixed a regression that caused some progress trackers to miscalculate the current progress after dropin
+Fixed an issue where "The Reckoning" achievement tracker is visible when you dropped-in
+Show Timers: Fixed a possible tracker and waypoint icon corruption after dropin
+Minion Tracker: Fixed reorganization issues
+Trade Delay Tracker: Fixed reorganization issues
+Birth of Sky: "Expert Landing" achievement will now show 1 tracker, not 2
+Undercover: Fixed an issue with "The Saviour" achievement tracker where it showed wrong progress after dropin
+
 r63 (03. 06. 2022):
 Big Oil Day 2: Fixed an issue where "Pager Count Tracker" is not visible
 

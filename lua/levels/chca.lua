@@ -88,6 +88,9 @@ local triggers = {
     [102675] = { additional_time = 5 + 10 + 14, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.GetElementTimerAccurate, element = 102674 },
 
     [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = { Icon.Boat, Icon.Escape } },
+
+    --[[[EHI:GetInstanceElementID(100041, 11770)] = { id = "chca_12", special_function = SF.ShowAchievementFromStart, class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+    [103584] = { id = "chca_12", status = "finish", special_function = SF.SetAchievementStatus }]]
 }
 if Network:is_client() then
     local wait_time = 90 -- Very Hard and below
@@ -148,3 +151,30 @@ EHI:DisableWaypoints(DisableWaypoints)
 EHI:AddOnAlarmCallback(function()
     managers.ehi:SetAchievementFailed("chca_10")
 end)
+
+if show_achievement and ovk_and_up and false then
+    local function chca_12(instance, unit_id, unit_data, unit)
+        unit:timer_gui():chca_12()
+    end
+    local function check(...)
+        if Drill.active_drills > 1 then
+            managers.ehi:SetAchievementFailed("chca_12")
+        end
+    end
+    function TimerGui:chca_12()
+        if self.PostStartTimer then
+            EHI:HookWithID(self, "PostStartTimer", "EHI_saw_" .. self._ehi_key, check)
+        else
+            EHI:HookWithID(self, "_start", "EHI_saw_" .. tostring(self._unit:key()), check)
+        end
+    end
+
+    local tbl =
+    {
+        [100122] = { f = chca_12 },
+        [100011] = { f = chca_12 },
+        [100079] = { f = chca_12 },
+        [100080] = { f = chca_12 }
+    }
+    EHI:UpdateInstanceUnitsNoCheck(tbl, 15470, 100000)
+end

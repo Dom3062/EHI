@@ -81,3 +81,8 @@ local tbl =
     [EHI:GetInstanceElementID(100065, 5950)] = { icons = { Icon.Vault }, remove_on_pause = true }
 }
 EHI:UpdateUnits(tbl)
+if show_achievement and ovk_and_up then
+    EHI:AddLoadSyncFunction(function(self)
+        self:AddTimedAchievementTracker("chas_11", 360)
+    end)
+end

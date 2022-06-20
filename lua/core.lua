@@ -177,7 +177,6 @@ _G.EHI =
         AchievementProgress = "EHIAchievementProgressTracker",
         AchievementNotification = "EHIAchievementNotificationTracker",
         AchievementBagValueTracker = "EHIAchievementBagValueTracker",
-        AchievementTimedProgressTracker = "EHIAchievementTimedProgressTracker",
         AchievementTimedMoneyCounterTracker = "EHIAchievementTimedMoneyCounterTracker",
         AssaultDelay = "EHIAssaultDelayTracker",
         Inaccurate = "EHIInaccurateTracker",
@@ -194,7 +193,6 @@ _G.EHI =
         EHIAchievementObtainableTracker = true,
         EHIAchievementNotificationTracker = true,
         EHIAchievementBagValueTracker = true,
-        EHIAchievementTimedProgressTracker = true,
         EHIAchievementTimedMoneyCounterTracker = true
     },
 
@@ -1121,7 +1119,7 @@ function EHI:Trigger(id, element, enabled)
                 end
                 self:UnhookTrigger(id)
             elseif f == SF.IncreaseProgressMax then
-                managers.ehi:IncreaseTrackerProgressMax(triggers[id].id)
+                managers.ehi:IncreaseTrackerProgressMax(triggers[id].id, triggers[id].max)
             elseif f == SF.SetTimeIfLoudOrStealth then
                 if managers.groupai then
                     if managers.groupai:state():whisper_mode() then -- Stealth
@@ -1477,6 +1475,10 @@ function EHI:UpdateInstanceUnits(tbl, instance_start_index, instance_continent_i
     if not self:GetOption("show_timers") then
         return
     end
+    self:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
+end
+
+function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
     local new_tbl = {}
     for id, data in pairs(tbl) do
         local computed_id = self:GetInstanceElementID(id, instance_start_index, instance_continent_index)

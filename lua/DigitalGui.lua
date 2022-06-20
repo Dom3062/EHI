@@ -40,7 +40,7 @@ function DigitalGui:TimerStartCountDown()
     if (self._ignore or not self._visible) and not self._ignore_visibility then
         return
     end
-    if managers.ehi:TrackerExists(self._ehi_key) then
+    if managers.ehi:TrackerExists(self._ehi_key) or managers.ehi_waypoint:WaypointExists(self._ehi_key) then
         managers.ehi:SetTimerJammed(self._ehi_key, false)
         managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
     else
@@ -128,8 +128,7 @@ else
     function DigitalGui:timer_pause(...)
         original.timer_pause(self, ...)
         if self._remove_on_pause then
-            managers.ehi:RemoveTracker(self._ehi_key)
-            managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+            self:RemoveTracker()
         else
             managers.ehi:SetTimerJammed(self._ehi_key, true)
             managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, true)
@@ -197,22 +196,19 @@ end
 
 function DigitalGui:_timer_stop(...)
     original._timer_stop(self, ...)
-    managers.ehi:RemoveTracker(self._ehi_key)
-    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    self:RemoveTracker()
 end
 
 function DigitalGui:set_visible(visible, ...)
     original.set_visible(self, visible, ...)
     if not visible then
-        managers.ehi:RemoveTracker(self._ehi_key)
-        managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+        self:RemoveTracker()
     elseif self._timer_count_down then
         self:TimerStartCountDown()
     end
 end
 
-function DigitalGui:OnAlarm()
-    self._ignore = true
+function DigitalGui:RemoveTracker()
     managers.ehi:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
@@ -229,6 +225,11 @@ function DigitalGui:load(data, ...)
     original.load(self, data, ...)
 end
 
+function DigitalGui:OnAlarm()
+    self._ignore = true
+    self:RemoveTracker()
+end
+
 function DigitalGui:SetIcons(icons)
     self._icons = icons
 end
@@ -237,8 +238,6 @@ function DigitalGui:SetIconOnPause(icon)
     if icon then
         self._icon_on_pause = icon
         self._change_icon_on_pause = true
-    else
-        self._change_icon_on_pause = false
     end
 end
 
@@ -270,10 +269,16 @@ end
 
 function DigitalGui:SetWarning(warning)
     self._warning = warning
+    if self._timer_count_down and warning then
+        managers.ehi:CallFunction(self._ehi_key, "SetAnimateWarning")
+    end
 end
 
 function DigitalGui:SetCompletion(completion)
     self._completion = completion
+    if self._timer_count_down and completion then
+        managers.ehi:CallFunction(self._ehi_key, "SetAnimateWarning", true)
+    end
 end
 
 function DigitalGui:SetIgnoreVisibility()
@@ -282,8 +287,7 @@ end
 
 function DigitalGui:Finalize()
     if self._ignore or (self._remove_on_pause and self._timer_paused) then
-        managers.ehi:RemoveTracker(self._ehi_key)
-        managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+        self:RemoveTracker()
     elseif self._change_icon_on_pause and self._timer_paused then
         managers.ehi:SetTrackerIcon(self._ehi_key, self._icon_on_pause)
         managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icon_on_pause)

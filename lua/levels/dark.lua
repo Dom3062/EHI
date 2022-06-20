@@ -1,4 +1,4 @@
-EHIdark5Tracker = EHIdark5Tracker or class(EHIProgressTracker)
+EHIdark5Tracker = class(EHIProgressTracker)
 function EHIdark5Tracker:init(panel, params)
     self._bodies = {}
     EHIdark5Tracker.super.init(self, panel, params)
@@ -81,3 +81,8 @@ end)
 EHI:RegisterCustomSpecialFunction(RemoveBodyBag, function(id, trigger, ...)
     managers.ehi:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
 end)
+if EHI:GetOption("show_achievement") then
+    EHI:AddLoadSyncFunction(function(self)
+        self:AddTimedAchievementTracker("dark_2", 420)
+    end)
+end

@@ -17,10 +17,7 @@ if EHI:GetOption("show_pager_callback") then
     EHI:Hook(IntimitateInteractionExt, "set_tweak_data", function(self, id)
         if id == "corpse_alarm_pager" and not self._pager_has_run then
             if not show_waypoint_only then
-                managers.ehi:AddPagerTracker({
-                    id = self._ehi_key,
-                    class = "EHIPagerTracker"
-                })
+                managers.ehi:AddPagerTracker(self._ehi_key)
             end
             if show_waypoint then
                 managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
@@ -95,7 +92,7 @@ if EHI:GetOption("show_equipment_ammobag") then
 
     EHI:PreHook(AmmoBagInteractionExt, "set_active", set_active)
 
-    EHI:Hook(AmmoBagInteractionExt, "set_active", function(self, active, ...)
+    EHI:Hook(AmmoBagInteractionExt, "set_active", function(self, ...)
         if self._ehi_active ~= self._active then
             if self._active then -- Active
                 if self._unit:base():GetRealAmount() > 0 then -- The unit is active now, load it from cache and show it on screen
@@ -127,7 +124,7 @@ if EHI:GetOption("show_equipment_bodybags") then
 
     EHI:PreHook(BodyBagsBagInteractionExt, "set_active", set_active)
 
-    EHI:Hook(BodyBagsBagInteractionExt, "set_active", function(self, active, ...)
+    EHI:Hook(BodyBagsBagInteractionExt, "set_active", function(self, ...)
         if self._ehi_active ~= self._active then
             if self._active then -- Active
                 if self._unit:base():GetRealAmount() > 0 and managers.groupai:state():whisper_mode() then -- The unit is active now, load it from cache and show it on screen
@@ -168,7 +165,7 @@ if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_fi
 
     EHI:PreHook(DoctorBagBaseInteractionExt, "set_active", set_active)
 
-    EHI:Hook(DoctorBagBaseInteractionExt, "set_active", function(self, active, ...)
+    EHI:Hook(DoctorBagBaseInteractionExt, "set_active", function(self, ...)
         if self._ehi_active ~= self._active then
             if self._active then -- Active
                 if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 then -- The unit is active now, load it from cache and show it on screen

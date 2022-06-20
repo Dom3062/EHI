@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -81,6 +82,11 @@ if show_achievement and EHI:IsDifficultyOrAbove("death_wish") then
             class = TT.AchievementNotification,
             exclude_from_sync = true
         })
+    end)
+end
+if show_achievement and EHI:IsDifficultyOrAbove("hard") then
+    EHI:AddLoadSyncFunction(function(self)
+        self:AddTimedAchievementTracker("bigbank_4", 720)
     end)
 end
 

@@ -3,7 +3,6 @@ EHIProgressTracker._update = false
 function EHIProgressTracker:init(panel, params)
     self._max = params.max or 0
     self._progress = params.progress or 0
-    self._previous_progress = self._progress
     self._flash = not params.dont_flash
     self._flash_max = not params.dont_flash_max
     self._remove_after_reaching_counter_target = params.remove_after_reaching_target ~= false
@@ -45,7 +44,7 @@ function EHIProgressTracker:SetProgress(progress)
         if self._flash then
             self:AnimateBG(self._flash_times)
         end
-        if self._progress == self._max then
+        if self._progress >= self._max then
             if self._set_color_bad_when_reached then
                 self:SetBad()
             else
@@ -61,6 +60,8 @@ end
 
 function EHIProgressTracker:DecreaseProgress(progress)
     self:SetProgress(self._progress - (progress or 1))
+    self:SetTextColor(Color.white)
+    self._disable_counting = false
 end
 
 function EHIProgressTracker:SetProgressRemaining(remaining)

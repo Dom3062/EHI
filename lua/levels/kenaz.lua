@@ -66,6 +66,11 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
+if EHI:GetOption("show_achievement") then
+    EHI:AddLoadSyncFunction(function(self)
+        self:AddTimedAchievementTracker("kenaz_4", 840)
+    end)
+end
 
 local DisableWaypoints =
 {
@@ -74,3 +79,12 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100347, 44535)] = true
 }
 EHI:DisableWaypoints(DisableWaypoints)
+
+local tbl =
+{
+    --levels/instances/unique/kenaz/the_drill
+    --units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill
+    [EHI:GetInstanceElementID(100000, 37575)] = { icons = { Icon.Drill }, ignore_visibility = true },
+    [EHI:GetInstanceElementID(100000, 44535)] = { icons = { Icon.Drill }, ignore_visibility = true }
+}
+EHI:UpdateUnits(tbl)

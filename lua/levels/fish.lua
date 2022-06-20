@@ -13,3 +13,8 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
+if show_achievement and ovk_and_up then
+    EHI:AddLoadSyncFunction(function(self)
+        self:AddTimedAchievementTracker("fish_4", 360)
+    end)
+end

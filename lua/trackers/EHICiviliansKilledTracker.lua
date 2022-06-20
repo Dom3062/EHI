@@ -1,4 +1,4 @@
-EHICiviliansKilledTracker = EHICiviliansKilledTracker or class(EHITracker)
+EHICiviliansKilledTracker = class(EHITracker)
 EHICiviliansKilledTracker._update = false
 function EHICiviliansKilledTracker:init(panel, params)
     self._pause_t = 0
@@ -118,6 +118,24 @@ function EHICiviliansKilledTracker:Reorganize()
         if self._time_bg_box:child("text" .. i) then
             self._time_bg_box:child("text" .. i):set_x(half * pos)
             pos = pos + 1
+        end
+    end
+    if old_panel_size > self._panel_size then
+        for i = HUDManager.PLAYER_PANEL, 0, -1 do
+            if self._time_bg_box:child("text" .. i) then
+                self._time_bg_box:child("text" .. i):set_w(32 * self._scale)
+                self:FitTheTextUnique(i)
+                break
+            end
+        end
+    elseif old_panel_size == self._panel_size and self._n_of_peers_in_custody % 2 ~= 0 then
+        for i = HUDManager.PLAYER_PANEL, 0, -1 do
+            if self._time_bg_box:child("text" .. i) then
+                self._time_bg_box:child("text" .. i):set_font_size(self._panel:h() * self._text_scale)
+                self._time_bg_box:child("text" .. i):set_w(half + half)
+                self:FitTheTextUnique(i)
+                break
+            end
         end
     end
 end

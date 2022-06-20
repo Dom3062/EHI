@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove("death_wish") then
     local SF = EHI.SpecialFunctions
     local TT = EHI.Trackers

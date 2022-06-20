@@ -84,15 +84,11 @@ local units =
     ["units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
     ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
 
-    ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { Icon.Drill }, ignore_visibility = true },
-    ["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { Icon.Wait } },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { Icon.C4 }, warning = true },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { Icon.C4 }, f = "chasC4" },
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_01"] = { disable_set_visible = true },
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"] = { disable_set_visible = true },
-    ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { disable_set_visible = true },
-    ["units/pd2_dlc_sand/equipment/sand_interactable_rotating_code_computer/sand_interactable_rotating_code_computer"] = { remove_on_pause = true, remove_on_alarm = true },
-    ["units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator"] = { icons = { Icon.Power } }
+    ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { disable_set_visible = true }
 }
 
 function WorldDefinition:create(layer, offset, ...)
@@ -129,24 +125,16 @@ function WorldDefinition:SetAmmoOffset(instance, unit_id, unit_data, unit)
 end
 
 function WorldDefinition:chasC4(instance, unit_id, unit_data, unit)
+    if not unit:digital_gui()._ehi_key then
+        return
+    end
+    if not instance then
+        unit:digital_gui():SetIcons(unit_data.icons)
+        return
+    end
     if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100054 then
         unit:digital_gui():SetIcons(unit_data.icons)
     else
         unit:digital_gui():SetIgnore(true)
     end
-end
-
-if not EHI:GetOption("show_timers") then
-    return
-end
-
-function WorldDefinition:hox3Timer(instance, unit_id, unit_data, unit)
-    if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100090 then -- "hox_estate_panic_room" instance
-        unit:digital_gui():SetIcons({ EHI.Icons.Vault })
-    else
-        unit:digital_gui():SetIcons({ Icon.Wait })
-        unit:digital_gui():SetWarning(true)
-    end
-    unit:digital_gui():SetOnAlarm()
-    unit:digital_gui():SetRemoveOnPause(true)
 end

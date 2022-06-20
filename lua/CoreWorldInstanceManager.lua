@@ -5,7 +5,7 @@ else
     EHI._hooks.CoreWorldInstanceManager = true
 end
 EHI:Init()
-local client = Network:is_client()
+local client = EHI._cache.Client
 local debug_instance = false
 local debug_unit = false
 local Icon = EHI.Icons
@@ -58,8 +58,8 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
     if instances[folder] then
         local start_index = instance.start_index
         if not used_start_indexes[start_index] then
-        -- Don't compute the indexes again if the instance on this start_index has been computed already
-        -- start_index is unique for instance in a heist, so this shouldn't break anything
+            -- Don't compute the indexes again if the instance on this start_index has been computed already
+            -- start_index is unique for instance in a heist, so this shouldn't break anything
             local instance_elements = instances[folder]
             local continent_data = managers.worlddefinition._continents[instance.continent]
             local triggers = {}
@@ -88,49 +88,17 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
     return instance_data
 end
 
-if not EHI:GetOption("show_timers") then
-    return
-end
-
-if not Global.game_settings then
-    return
-end
-
-local level_id = Global.game_settings.level_id
 local units =
 {
     ["units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
     ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
 
-    ["units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill"] = { icons = { Icon.Drill }, ignore_visibility = true },
-    ["units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small"] = { icons = { Icon.Wait } },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { Icon.C4 }, warning = true },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { Icon.C4 }, f = "chasC4" },
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_01"] = { disable_set_visible = true },
     ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"] = { disable_set_visible = true },
-    ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { disable_set_visible = true },
-    ["units/pd2_dlc_sand/equipment/sand_interactable_rotating_code_computer/sand_interactable_rotating_code_computer"] = { remove_on_pause = true, remove_on_alarm = true },
-    ["units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator"] = { icons = { Icon.Power } }
+    ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { disable_set_visible = true }
 }
-if level_id == "hox_3" then -- Hoxton Revenge
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { Icon.Alarm }, remove_on_pause = true, warning = true, f = "hox3Timer" }
-    units["units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large"] = { remove_vanilla_waypoint = true, waypoint_id = 100089 }
-elseif level_id == "mus" then -- The Diamond
-    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100050 }
-elseif level_id == "hox_1" then -- Hoxton Breakout Day 1
-    units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small"] = { remove_vanilla_waypoint = true, waypoint_id = 100090 }
-elseif level_id == "pbr" then -- Beneath the Mountain
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { icons = { Icon.C4 } }
-elseif level_id == "shoutout_raid" then -- Meltdown
-    units["units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer"] = { ignore = true }
-elseif level_id == "sah" then -- Shacklethorne Auction
-    units["units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock"] = { icons = { Icon.Vault } }
-    units["units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam"] = { remove_vanilla_waypoint = true, waypoint_id = 100068 }
-    units["units/pd2_dlc_sah/props/sah_interactable_hack_computer/sah_interactable_hack_computer"] = { remove_vanilla_waypoint = true, waypoint_id = 100084 }
-elseif level_id == "sand" then -- Ukrainian Prisoner Heist
-    -- Also includes a server hack objective (loud only)
-    units["units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b"] = { remove_vanilla_waypoint = true, waypoint_id = 100017 }
-end
 
 function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ...)
     local instance_data = original.prepare_unit_data(self, instance, continent_data, ...)

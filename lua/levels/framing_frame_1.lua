@@ -1,3 +1,4 @@
+local EHI = EHI
 function EHI:PaintingCount()
     --[[local paintings = managers.ehi:GetUnits("units/payday2/architecture/com_int_gallery/com_int_gallery_wall_painting_bars", 1)
     local n_of_paintings = 0
@@ -20,14 +21,28 @@ function EHI:PaintingCount()
 end
 
 if Global.game_settings.level_id == "gallery" then
-    local EHI = EHI
     local SF = EHI.SpecialFunctions
     local TT = EHI.Trackers
     local triggers = {
-        [100789] = { id = "cac_19", class = TT.AchievementNotification },
-        [104288] = { id = "cac_19", special_function = SF.SetAchievementComplete },
-        [104290] = { id = "cac_19", special_function = SF.SetAchievementFailed }
+        [100789] = { id = "cac_19", class = TT.AchievementNotification }
     }
+    if TheFixes then
+        if TheFixesPreventer and TheFixesPreventer.achi_masterpiece then -- Unfixed, assume Vanilla "broken" behavior
+            triggers[104288] = { id = "cac_19", special_function = SF.SetAchievementComplete }
+            triggers[104290] = { id = "cac_19", special_function = SF.SetAchievementFailed }
+        else -- Fixed
+            local key = "EHI_ArtGallery_TheFixes"
+            CopDamage.register_listener(key, { "on_damage" }, function(damage_info)
+                if damage_info.result.type == "death" then
+                    managers.ehi:SetAchievementFailed("cac_19")
+                    CopDamage.unregister_listener(key)
+                end
+            end)
+        end
+    else
+        triggers[104288] = { id = "cac_19", special_function = SF.SetAchievementComplete }
+        triggers[104290] = { id = "cac_19", special_function = SF.SetAchievementFailed }
+    end
 
     EHI:ParseTriggers(triggers)
 end

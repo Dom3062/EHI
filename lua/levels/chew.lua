@@ -20,3 +20,8 @@ end
 
 EHI:ParseTriggers(triggers)
 EHI:ShowLootCounter(9)
+if show_achievement and ovk_and_up then
+    EHI:AddLoadSyncFunction(function(self)
+        self:AddTimedAchievementTracker("born_5", 120)
+    end)
+end

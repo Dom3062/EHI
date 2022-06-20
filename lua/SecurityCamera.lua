@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.SecurityCamera then
 	return
 else
@@ -21,10 +22,11 @@ end
 
 function SecurityCamera:_start_tape_loop(tape_loop_t, ...)
     original._start_tape_loop(self, tape_loop_t, ...)
+    local t = tape_loop_t + 5
     if not show_waypoint_only then
         managers.ehi:AddTracker({
             id = self._ehi_key,
-            time = tape_loop_t + 5,
+            time = t,
             icons = { "camera_loop" },
             exclude_from_sync = true,
             class = "EHIWarningTracker"
@@ -32,7 +34,7 @@ function SecurityCamera:_start_tape_loop(tape_loop_t, ...)
     end
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
-            time = tape_loop_t + 5,
+            time = t,
             icon = { "camera_loop" },
             unit = self._unit,
             warning = true

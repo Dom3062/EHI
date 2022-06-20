@@ -78,6 +78,17 @@ function EHITimerTracker:AnimateCompletion(check_progress)
     end
 end
 
+function EHITimerTracker:SetAnimateWarning(completion)
+    self._animate_warning = true
+    if completion then
+        self.AnimateWarning = self.AnimateCompletion
+    end
+    if self._time <= 10 and not self._warning_started then
+        self._warning_started = true
+        self:AnimateWarning(true)
+    end
+end
+
 function EHITimerTracker:SetDone()
     self._text:set_text("DONE")
     self:FitTheText()

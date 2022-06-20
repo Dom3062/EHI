@@ -21,6 +21,27 @@ local function hide(o)
     end
     o:set_alpha(0)
 end
+local function set_x(o, target_x)
+    local t = 0
+    local total = 0.15
+    local from_x = o:x()
+    while t < total do
+        t = t + coroutine.yield()
+        o:set_x(lerp(from_x, target_x, t / total))
+    end
+    o:set_x(target_x)
+end
+local function set_right(o, x)
+    local t = 0
+    local total = 0.15
+    local from_right = o:right()
+    local target_right = o:parent():w() - x
+    while t < total do
+        t = t + coroutine.yield()
+        o:set_right(lerp(from_right, target_right, t / total))
+    end
+    o:set_right(target_right)
+end
 EHIBuffTracker = class()
 EHIBuffTracker._inverted_progress = false
 function EHIBuffTracker:init(panel, params)
@@ -196,30 +217,17 @@ function EHIBuffTracker:MovePanelRight(x)
 end
 
 function EHIBuffTracker:SetX(x)
-    local from_x = self._panel:x()
     if self._move_panel_x then
         self._panel:stop(self._move_panel_x)
     end
-    self._move_panel_x = self._panel:animate(function(o)
-        over(0.15, function(p, t)
-            local target_x = lerp(from_x, x, p)
-            o:set_x(target_x)
-        end)
-    end)
+    self._move_panel_x = self._panel:animate(set_x, x)
 end
 
 function EHIBuffTracker:SetRight(x)
-    local from_right = self._panel:right()
-    local target_right = self._panel:parent():w() - x
     if self._move_panel_x then
         self._panel:stop(self._move_panel_x)
     end
-    self._move_panel_x = self._panel:animate(function(o)
-        over(0.15, function(p, t)
-            local target_x = lerp(from_right, target_right, p)
-            o:set_right(target_x)
-        end)
-    end)
+    self._move_panel_x = self._panel:animate(set_right, x)
 end
 
 function EHIBuffTracker:IsActive()

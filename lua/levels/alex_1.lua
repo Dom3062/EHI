@@ -38,7 +38,7 @@ local triggers = {
     [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 EHI:AddOnAlarmCallback(function(dropin)
-    managers.ehi:AddEscapeChanceTracker(false, 35)
+    managers.ehi:AddEscapeChanceTracker(dropin, 25)
 end)
 
 EHI:ParseTriggers(triggers, "Van", Icon.CarEscape)
@@ -48,6 +48,8 @@ if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove("overkill") the
         max = 7,
         exclude_from_sync = true
     })
+else
+    EHI:ShowLootCounter(7)
 end
 EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(id, trigger, ...)
     if managers.ehi:TrackerExists(trigger.id) then
@@ -63,4 +65,16 @@ EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(id,
         EHI:CheckCondition(id)
     end
     EHI:UnhookTrigger(id)
+end)
+EHI:AddLoadSyncFunction(function(self)
+    if managers.environment_effects._mission_effects[101437] then
+        self:AddEscapeChanceTracker(false, 105)
+        EHI:UnhookElement(101863)
+    else
+        self:AddEscapeChanceTracker(false, 35)
+        -- Disable increase when the cooks got killed by gangster in case the player dropins
+        -- after Escape Chance is shown on screen and before they get killed by mission script
+        self.IncreaseCivilianKilled = function(...)
+        end
+    end
 end)

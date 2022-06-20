@@ -31,9 +31,11 @@ if Network:is_client() then
 end
 
 EHI:ParseTriggers(triggers)
-EHI:AddOnAlarmCallback(function()
-    managers.ehi:SetAchievementFailed("sah_9")
-end)
+if show_achievement and ovk_and_up then
+    EHI:AddOnAlarmCallback(function()
+        managers.ehi:SetAchievementFailed("sah_9")
+    end)
+end
 
 local DisableWaypoints = {}
 -- Hackboxes
@@ -57,3 +59,18 @@ for i = 18200, 19400, 600 do
     DisableWaypoints[EHI:GetInstanceElementID(100087, i)] = true -- Fix
 end
 EHI:DisableWaypoints(DisableWaypoints)
+
+local tbl = {}
+for i = 4900, 5100, 100 do
+    --levels/instances/unique/sah/sah_vault_door
+    --units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock
+    tbl[EHI:GetInstanceElementID(100001, i)] = { icons = { Icon.Vault } }
+end
+for i = 18200, 19400, 600 do
+    --levels/instances/unique/sah/sah_office
+    --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
+    tbl[EHI:GetInstanceElementID(100064, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100068, i) }
+    --units/pd2_dlc_sah/props/sah_interactable_hack_computer/sah_interactable_hack_computer
+    tbl[EHI:GetInstanceElementID(100168, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100084, i) }
+end
+EHI:UpdateUnits(tbl)

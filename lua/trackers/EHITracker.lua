@@ -13,6 +13,38 @@ local function show(o) -- This is actually faster than manually re-typing optimi
         o:set_alpha(math_lerp(0, 1, lerp))
     end
 end
+local function top(o, target_y)
+    local t = 0
+    local total = 0.18
+    local from_y = o:y()
+    while t < total do
+        t = t + coroutine.yield()
+        o:set_y(math_lerp(from_y, target_y, t / total))
+    end
+    o:set_y(target_y)
+end
+local function left(o, target_x)
+    local t = 0
+    local total = 0.18
+    local from_x = o:x()
+    while t < total do
+        t = t + coroutine.yield()
+        o:set_x(math_lerp(from_x, target_x, t / total))
+    end
+    o:set_x(target_x)
+end
+local function panel_w(o, target_w)
+    local TOTAL_T = 0.18
+    local from_w = o:w()
+    local abs = -(from_w - target_w)
+    local t = (1 - abs / abs) * TOTAL_T
+    while TOTAL_T > t do
+        local dt = coroutine.yield()
+        t = math_min(t + dt, TOTAL_T)
+        local lerp = t / TOTAL_T
+        o:set_w(math_lerp(from_w, target_w, lerp))
+    end
+end
 local icons = tweak_data.ehi.icons
 
 local function GetIcon(icon)
@@ -38,7 +70,7 @@ end
 
 local bg_visibility = EHI:GetOption("show_tracker_bg")
 
-EHITracker = EHITracker or class()
+EHITracker = class()
 EHITracker._update = true
 EHITracker._tracker_type = "accurate"
 function EHITracker:init(panel, params)
@@ -145,38 +177,20 @@ else
     end
 end
 
-function EHITracker:SetTop(from_y, target_y)
+function EHITracker:SetTop(target_y)
     if self._anim_move then
         self._panel:stop(self._anim_move)
         self._anim_move = nil
     end
-    self._anim_move = self._panel:animate(function(o)
-        local TOTAL_T = 0.18
-        local t = (1 - math_abs(from_y - target_y) / math_abs(from_y - target_y)) * TOTAL_T
-        while TOTAL_T > t do
-            local dt = coroutine.yield()
-            t = math_min(t + dt, TOTAL_T)
-            local lerp = t / TOTAL_T
-            o:set_y(math_lerp(from_y, target_y, lerp))
-        end
-    end)
+    self._anim_move = self._panel:animate(top, target_y)
 end
 
-function EHITracker:SetLeft(from_x, target_x)
+function EHITracker:SetLeft(target_x)
     if self._anim_move then
         self._panel:stop(self._anim_move)
         self._anim_move = nil
     end
-    self._anim_move = self._panel:animate(function(o)
-        local TOTAL_T = 0.18
-        local t = (1 - math_abs(from_x - target_x) / math_abs(from_x - target_x)) * TOTAL_T
-        while TOTAL_T > t do
-            local dt = coroutine.yield()
-            t = math_min(t + dt, TOTAL_T)
-            local lerp = t / TOTAL_T
-            o:set_x(math_lerp(from_x, target_x, lerp))
-        end
-    end)
+    self._anim_move = self._panel:animate(left, target_x)
 end
 
 function EHITracker:SetPanelW(target_w)
@@ -184,18 +198,7 @@ function EHITracker:SetPanelW(target_w)
         self._panel:stop(self._anim_set_w)
         self._anim_set_w = nil
     end
-    self._anim_set_w = self._panel:animate(function(o)
-        local TOTAL_T = 0.18
-        local from_w = o:w()
-        local abs = -(from_w - target_w)
-        local t = (1 - abs / abs) * TOTAL_T
-        while TOTAL_T > t do
-            local dt = coroutine.yield()
-            t = math_min(t + dt, TOTAL_T)
-            local lerp = t / TOTAL_T
-            o:set_w(math_lerp(from_w, target_w, lerp))
-        end
-    end)
+    self._anim_set_w = self._panel:animate(panel_w, target_w)
 end
 
 function EHITracker:SetIconX(target_x)
@@ -319,15 +322,12 @@ function EHITracker:HUDBGBox_animate_bg_attention(bg, total_t)
 	local color = Color.white
 	local TOTAL_T = total_t or 3
 	local t = TOTAL_T
-
 	while t > 0 do
 		local dt = coroutine.yield()
 		t = t - dt
 		local cv = math_abs(math_sin(t * 180 * 1))
-
 		bg:set_color(Color(1, color.red * cv, color.green * cv, color.blue * cv))
 	end
-
 	bg:set_color(Color(1, 0, 0, 0))
 end
 
@@ -337,7 +337,11 @@ end
 
 function EHITracker:SetIcon(new_icon)
     local icon, texture_rect = GetIcon(new_icon)
-    self._icon1:set_image(icon, texture_rect)
+    if texture_rect then
+        self._icon1:set_image(icon, unpack(texture_rect))
+    else
+        self._icon1:set_image(icon)
+    end
 end
 
 function EHITracker:SetIconColor(color)

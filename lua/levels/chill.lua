@@ -1,4 +1,5 @@
-EHIStopwatchTracker = EHIStopwatchTracker or class(EHITracker)
+local EHI = EHI
+EHIStopwatchTracker = class(EHITracker)
 function EHIStopwatchTracker:update(t, dt)
 	if self._fade_time then
 		self._fade_time = self._fade_time - dt
@@ -56,3 +57,11 @@ function EHIStopwatchTracker:Reset()
 	self._time = 0
 	self._fade_time = nil
 end
+
+local tbl =
+{
+    --levels/instances/unique/chill/hockey_game
+    --units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small
+    [EHI:GetInstanceElementID(100056, 15620)] = { ignore = true }
+}
+EHI:UpdateUnits(tbl)

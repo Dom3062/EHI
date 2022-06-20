@@ -31,10 +31,10 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHILaserTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementTrackers.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIECMTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIStopwatchTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHISecurityLockGuiTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIMinionTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAssaultDelayTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="StaticTrackers.lua"/>
             </group>
             <group :script_path="buffs/">
                 <post :hook_id="hudmanagerpd2" :script_path="EHIBuffTracker.lua"/>
@@ -48,7 +48,7 @@
             </group>
             <post :hook_id="hudmanager" :script_path="HUDManager.lua" />
             <post :hook_id="hudmanagervr" :script_path="HUDManagerVR.lua" />
-            <post :hook_id="hudmanagerpd2" :script_path="hudmanagerpd2.lua" />
+            <post :hook_id="hudmanagerpd2" :script_path="HUDManagerPD2.lua" />
             <post :hook_id="gameplaycentralmanager" :script_path="GamePlayCentralManager.lua"/>
             <post :hook_id="gageassignmentmanager" :script_path="GageAssignmentManager.lua" />
             <post :hook_id="enemymanager" :script_path="EnemyManager.lua" />

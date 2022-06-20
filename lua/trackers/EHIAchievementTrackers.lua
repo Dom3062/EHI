@@ -230,7 +230,7 @@ function EHIAchievementNotificationTracker:SetTextColor(color)
         c = color
     elseif self._status == "ok" or self._status == "done" or self._status == "pass" or self._status == "finish" or self._status == "destroy" then
         c = Color.green
-    elseif self._status == "ready" or self._status == "loud" or self._status == "push" or self._status == "hack" then
+    elseif self._status == "ready" or self._status == "loud" or self._status == "push" or self._status == "hack" or self._status == "land" then
         c = Color.yellow
     else
         c = Color.red
@@ -340,182 +340,10 @@ function EHIAchievementBagValueTracker:SetFailed()
     end
 end
 
-EHIAchievementTimedProgressTracker = class(EHIWarningTracker)
-EHIAchievementTimedProgressTracker._update = false
-function EHIAchievementTimedProgressTracker:init(panel, params)
-    self._max = params.max or 0
-    self._progress = params.progress or 0
-    self._previous_progress = self._progress
-    self._flash = not params.dont_flash
-    self._flash_max = not params.dont_flash_max
-    self._remove_after_reaching_counter_target = params.remove_after_reaching_target ~= false
-    --self._set_color_bad_when_reached = params.set_color_bad_when_reached
-    self._flash_times = params.flash_times or 3
-    self._status_is_overridable = params.status_is_overridable
-    if params.start_counting then
-        self._update = true
-    end
-    EHIAchievementTimedProgressTracker.super.init(self, panel, params)
-end
-
-function EHIAchievementTimedProgressTracker:OverridePanel(params)
-    self._panel:set_w(self._panel:w() * 2)
-    self._time_bg_box:set_w(self._time_bg_box:w() * 2)
-    self._progress_text = self._time_bg_box:text({
-        name = "text2",
-        text = self:FormatProgress(),
-        align = "center",
-        vertical = "center",
-        w = self._time_bg_box:w() / 2,
-        h = self._time_bg_box:h(),
-        font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
-    })
-    self:FitTheText(self._progress_text)
-    self._progress_text:set_left(0)
-    self._text:set_left(self._progress_text:right())
-    if self._icon1 then
-        self._icon1:set_x(self._icon1:x() * 2)
-    end
-end
-
-function EHIAchievementTimedProgressTracker:FormatProgress()
-    return self._progress .. "/" .. self._max
-end
-
-function EHIAchievementTimedProgressTracker:update(t, dt)
-    if self._fade_time then
-        self._fade_time = self._fade_time - dt
-        if self._fade_time <= 0 then
-            if show_failed then
-                ShowPopup(self)
-            end
-            self:delete()
-        end
-        return
-    end
-    EHIAchievementTimedProgressTracker.super.update(self, t, dt)
-end
-
-function EHIAchievementTimedProgressTracker:AnimateWarning()
-    if self._text and alive(self._text) then
-        self._text:animate(function(o)
-            while true do
-                local t = 0
-                while t < 1 do
-                    t = t + coroutine.yield()
-                    local n = 1 - sin(t * 180)
-                    --local r = lerp(1, 0, n)
-                    local g = lerp(1, 0, n)
-                    local c = Color(1, g, g)
-                    o:set_color(c)
-                    self._progress_text:set_color(c)
-                end
-            end
-        end)
-    end
-end
-
-function EHIAchievementTimedProgressTracker:SetProgressMax(max)
-    self._max = max
-    self._progress_text:set_text(self:FormatProgress())
-    if self._flash_max then
-        self:AnimateBG(self._flash_times)
-    end
-end
-
-function EHIAchievementTimedProgressTracker:IncreaseProgressMax(progress)
-    self:SetProgressMax(self._max + (progress or 1))
-end
-
-function EHIAchievementTimedProgressTracker:SetProgress(progress)
-    if self._progress ~= progress and not self._disable_counting then
-        self._progress = progress
-        self._progress_text:set_text(self:FormatProgress())
-        self:FitTheText(self._progress_text)
-        if self._flash then
-            self:AnimateBG(self._flash_times)
-        end
-        --[[if self._set_color_bad_when_reached then
-            self:SetBad()
-        else
-            self:SetCompleted()
-        end]]
-    end
-end
-
-function EHIAchievementTimedProgressTracker:IncreaseProgress(progress)
-    self:SetProgress(self._progress + (progress or 1))
-end
-
-function EHIAchievementTimedProgressTracker:SetProgressRemaining(remaining)
-    self:SetProgress(self._max - remaining)
-end
-
-function EHIAchievementTimedProgressTracker:SetCompleted(force)
-    if (self._progress == self._max and not self._status) or force then
-        self._exclude_from_sync = true
-        self._status = "completed"
-        self._text:stop()
-        self:SetTextColor(Color.green)
-        if self._remove_after_reaching_counter_target or force then
-            self._fade_time = 5
-            if not self._update then
-                self._parent_class:AddTrackerToUpdate(self._id, self)
-            end
-        else
-            self._progress_text:set_text("FINISH")
-            self:FitTheText(self._progress_text)
-        end
-        self._disable_counting = true
-        self._achieved_popup_showed = true
-    end
-end
-
-function EHIAchievementTimedProgressTracker:SetBad()
-    if self._progress == self._max then
-        self:SetTextColor(tweak_data.ehi.color.Inaccurate)
-    end
-end
-
-function EHIAchievementTimedProgressTracker:Finalize()
-    if self._progress == self._max then
-        self:SetCompleted(true)
-    else
-        self:SetFailed()
-    end
-end
-
-function EHIAchievementTimedProgressTracker:SetFailed()
-    if self._status and not self._status_is_overridable then
-        return
-    end
-    self._exclude_from_sync = true
-    self._text:stop()
-    self:SetTextColor(Color.red)
-    self._status = "failed"
-    if not self._update then
-        self._parent_class:AddTrackerToUpdate(self._id, self)
-    end
-    self:AnimateBG()
-    self._disable_counting = true
-    self._fade_time = 5
-    if show_failed then
-        ShowPopup(self)
-    end
-end
-
-function EHIAchievementTimedProgressTracker:GetProgress()
-    return self._progress
-end
-
-function EHIAchievementTimedProgressTracker:SetTextColor(color)
-    EHIAchievementTimedProgressTracker.super.SetTextColor(self, color)
-    self._progress_text:set_color(color)
-end
-
 EHIAchievementTimedMoneyCounterTracker = class(EHIWarningTracker)
+EHIAchievementTimedMoneyCounterTracker.FormatNumber = EHIAchievementBagValueTracker.Format
+EHIAchievementTimedMoneyCounterTracker.FormatNumber2 = EHIAchievementBagValueTracker.FormatNumber
+EHIAchievementTimedMoneyCounterTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 function EHIAchievementTimedMoneyCounterTracker:init(panel, params)
     self._secured = 0
     self._secured_formatted = "0"
@@ -560,23 +388,6 @@ function EHIAchievementTimedMoneyCounterTracker:update(t, dt)
     EHIAchievementTimedMoneyCounterTracker.super.update(self, t, dt)
 end
 
-function EHIAchievementTimedMoneyCounterTracker:FormatNumber2(n)
-    local divisor = 1
-    local post_fix = ""
-    if n >= 1000000 then
-        divisor = 1000000
-        post_fix = "M"
-    elseif n >= 1000 then
-        divisor = 1000
-        post_fix = "K"
-    end
-    return tostring(n / divisor) .. post_fix
-end
-
-function EHIAchievementTimedMoneyCounterTracker:FormatNumber()
-    return "$" .. self._secured_formatted .. "/$" .. self._to_secure_formatted
-end
-
 function EHIAchievementTimedMoneyCounterTracker:AnimateWarning()
     if self._text and alive(self._text) then
         self._text:animate(function(o)
@@ -607,10 +418,6 @@ function EHIAchievementTimedMoneyCounterTracker:SetProgress(progress)
         end
         self:SetCompleted()
     end
-end
-
-function EHIAchievementTimedMoneyCounterTracker:IncreaseProgress(progress)
-    self:SetProgress(self._secured + (progress or 1))
 end
 
 function EHIAchievementTimedMoneyCounterTracker:SetCompleted(force)
@@ -654,17 +461,4 @@ end
 function EHIAchievementTimedMoneyCounterTracker:SetTextColor(color)
     EHIAchievementBagValueTracker.super.SetTextColor(self, color)
     self._money_text:set_color(color)
-end
-
-function EHIAchievementTimedMoneyCounterTracker:ResetFontSize(text)
-    text:set_font_size(self._panel:h() * self._text_scale)
-end
-
-function EHIAchievementTimedMoneyCounterTracker:FitTheText(text)
-    text = text or self._text
-    self:ResetFontSize(text)
-    local w = select(3, text:text_rect())
-    if w > text:w() then
-        text:set_font_size(text:font_size() * (text:w() / w) * self._text_scale)
-    end
 end

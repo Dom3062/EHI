@@ -256,7 +256,11 @@ function EHIWaypointManager:SetWaypointIcon(id, new_icon)
         else
             icon, texture_rect = tweak_data.hud_icons:get_icon_or(new_icon, icons.default.texture, icons.default.texture_rect)
         end
-        self._waypoints[id].bitmap:set_image(icon, texture_rect)
+        if texture_rect then
+            self._waypoints[id].bitmap:set_image(icon, unpack(texture_rect))
+        else
+            self._waypoints[id].bitmap:set_image(icon)
+        end
     end
 end
 
@@ -384,6 +388,15 @@ function EHIWaypointManager:SetPagerWaypointAnswered(id)
     wp.pause_timer = 1
     wp.timer_gui:stop()
     self:SetWaypointColor(id, Color.green)
+end
+
+function EHIWaypointManager:FixPagersWaypointTime()
+    for _, data in pairs(self._waypoints) do
+        if data.type == "pager_timer" and data.timer >= 12 then
+            data.timer = 12
+            data.timer_gui:set_text(self:WaypointFormat(data.timer))
+        end
+    end
 end
 
 function EHIWaypointManager:RemoveAllPagerWaypoints()

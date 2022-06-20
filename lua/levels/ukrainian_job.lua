@@ -49,3 +49,8 @@ EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, functio
         EHI:CheckCondition(id)
     end
 end)
+if EHI:GetOption("show_achievement") then
+    EHI:AddLoadSyncFunction(function(self)
+        self:AddTimedAchievementTracker("lets_do_this", 36)
+    end)
+end

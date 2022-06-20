@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
@@ -7,7 +8,6 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
-local show_loot_counter = false
 if show_achievement then
     EHI:ShowAchievementLootCounter({
         achievement = "melt_3",
@@ -19,24 +19,18 @@ if show_achievement then
             loot_type = { "coke", "gold", "money", "weapon", "weapons" }
         }
     })
-    if managers.ehi:TrackerExists("melt_3") then
-        local max = 6 -- Normal to Very Hard; Mission Loot
-        if ovk_and_up then
-            max = 8
-        end
-        EHI:ShowLootCounter(max, 0, EHI.LootCounter.CheckType.OneTypeOfLoot, "warhead")
-    else
-        show_loot_counter = true
-    end
-else
-    show_loot_counter = true
 end
 
-if show_loot_counter then
-    local max = 6 -- Normal to Very Hard; Mission Loot
-    if ovk_and_up then
-        max = 8
-    end
-    max = max + 8 -- Loot
-    EHI:ShowLootCounter(max) -- 14/16
+local max = 6 -- Normal to Very Hard; Mission Loot
+if ovk_and_up then
+    max = 8
 end
+EHI:ShowLootCounter(max, 8) -- 14/16
+
+local tbl =
+{
+    --levels/instances/unique/shout_container_vault
+    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
+    [EHI:GetInstanceElementID(100014, 2850)] = { ignore = true }
+}
+EHI:UpdateUnits(tbl)

@@ -21,7 +21,6 @@ function EHIManager:init()
     local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
     self._x = x
     self._y = y
-    self._last_x = self._x
     self._text_scale = EHI:GetOption("text_scale")
     self._level_started_from_beginning = true
     self._panel_size = 32 * self._scale
@@ -83,11 +82,13 @@ end
 
 function EHIManager:GetUnits(path, slotmask)
     local tbl = {}
+    local tbl_i = 1
     local idstring = Idstring(path)
     local units = World:find_units_quick("all", slotmask)
-    for i, unit in ipairs(units) do
+    for _, unit in pairs(units) do
         if unit and unit:name() == idstring then
-            tbl[i] = unit
+            tbl[tbl_i] = unit
+            tbl_i = tbl_i + 1
         end
     end
     return tbl
@@ -195,104 +196,6 @@ function EHIManager:LoadSync()
     for _, f in pairs(self._load_sync or {}) do
         f(self)
     end
-    local level_id = Global.game_settings.level_id
-    local show_achievement = EHI:GetOption("show_achievement")
-    if level_id == "pex" then -- Breakfast in Tijuana
-        --[[
-            There are total 12 places where medals can appears
-            -- 11 places are on the first floor (6 randomly selected)
-            -- last place is in the locker room (instance)
-            Game sync all used places. When a medal is picked up, it is removed from the world
-            and not synced to other drop-in players
-
-            Can't use function "CountInteractionAvailable" because the medal in the locker room is not interactable first
-            This is more accurate and reliable
-        ]]
-        self:SetTrackerProgressRemaining("pex_11", self:CountUnitAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5)
-    elseif level_id == "dark" then -- Murky Station
-        if show_achievement then
-            self:AddTimedAchievementTracker("dark_2", 420)
-        end
-    elseif level_id == "chew" then -- The Biker Heist Day 2
-        if show_achievement then
-            self:AddTimedAchievementTracker("born_5", 120)
-        end
-    elseif level_id == "big" then -- The Big Bank
-        if show_achievement and EHI:IsDifficultyOrAbove("hard") then -- Hard or above
-            self:AddTimedAchievementTracker("bigbank_4", 720)
-        end
-    elseif level_id == "red2" then -- First World Bank
-        if show_achievement and managers.groupai:state():whisper_mode() then
-            self:AddTimedAchievementTracker("green_3", 817)
-        end
-    elseif level_id == "fish" then -- The Yacht Heist
-        if show_achievement and EHI:IsDifficultyOrAbove("overkill") then
-            self:AddTimedAchievementTracker("fish_4", 360)
-        end
-    elseif level_id == "kenaz" then -- Golden Grin Casino
-        if show_achievement then
-            self:AddTimedAchievementTracker("kenaz_4", 840)
-        end
-    elseif level_id == "cage" then -- Car Shop
-        if show_achievement then
-            self:AddTimedAchievementTracker("fort_4", 240)
-        end
-    elseif level_id == "ukrainian_job" then -- Ukrainian Job
-        if show_achievement then
-            self:AddTimedAchievementTracker("lets_do_this", 36)
-        end
-    elseif level_id == "chas" then -- Dragon Heist
-        if show_achievement and EHI:IsDifficultyOrAbove("overkill") then
-            self:AddTimedAchievementTracker("chas_11", 360)
-        end
-    elseif level_id == "nmh" then -- No Mercy
-        local units = self:GetUnits("units/pd2_dlc_nmh/props/nmh_prop_counter/nmh_prop_counter", 1)
-        for _, unit in ipairs(units or {}) do
-            local o = unit:digital_gui()
-            if o and (o._timer_count_down or o._timer_paused) then
-                self:AddTracker({
-                    id = "EscapeElevator",
-                    floors = o._timer - 4,
-                    class = "EHIElevatorTimerTracker"
-                })
-                if o._timer_paused then
-                    self:CallFunction("EscapeElevator", "SetPause", true)
-                end
-                break
-            end
-        end
-    elseif level_id == "arm_for" then -- Transport: Train Heist
-        if show_achievement and managers.groupai:state():whisper_mode() then
-            self:AddAchievementNotificationTracker("armored_6")
-        end
-    elseif level_id == "alex_1" then
-        if managers.environment_effects:effect(101437) then
-            self:IncreaseChance("EscapeChance", 70)
-            EHI:UnhookElement(101863)
-        end
-    --[[elseif level_id == "firestarter_1" then
-        EHI:LordOfWarAchievement()
-        local tracker_id = EHI:IsAchievementUnlocked("lord_of_war") and "LootCounter" or "lord_of_war"
-        self:SetTrackerProgress(tracker_id, managers.loot:GetSecuredBagsAmount())]]
-    elseif level_id == "mallcrasher" then
-        if show_achievement and EHI:IsDifficulty("overkill") and EHI:IsAchievementLocked("ameno_3") and self._t <= 50 then
-            self:AddTracker({
-                time = 50 - self._t,
-                id = "ameno_3",
-                to_secure = 1800000,
-                icons = EHI:GetAchievementIcon("ameno_3"),
-                class = "EHIAchievementTimedMoneyCounterTracker"
-            })
-            self:SetTrackerProgress("ameno_3", managers.loot:get_real_total_small_loot_value())
-            EHI:AddAchievementToCounter({
-                achievement = "ameno_3",
-                counter =
-                {
-                    check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
-                }
-            })
-        end
-    end
     EHI:DelayCall("EHI_Converts_UpdatePeerColors", 2, function()
         managers.ehi:CallFunction("Converts", "UpdatePeerColors")
     end)
@@ -393,6 +296,7 @@ function EHIManager:RunStaticTracker(id, ...)
     tracker._panel:set_y(y)
     tracker:Run(...)
     tracker:SetPanelVisible()
+    tracker._visible = true
     local tracker_pos = self._trackers_pos[id]
     tracker_pos.pos = self._n_of_trackers
     tracker_pos.x = x
@@ -417,8 +321,13 @@ if Global.game_settings and Global.game_settings.single_player then
     EHIManager.Sync = function(...) end
 end
 
-function EHIManager:AddPagerTracker(params)
-    self._stealth_trackers.pagers[params.id] = true
+function EHIManager:AddPagerTracker(id)
+    self._stealth_trackers.pagers[id] = true
+    local params =
+    {
+        id = id,
+        class = "EHIPagerTracker"
+    }
     self:AddTracker(params)
 end
 
@@ -519,7 +428,7 @@ function EHIManager:AddEscapeChanceTracker(dropin, chance, civilian_killed_multi
     self:AddTracker({
         id = "EscapeChance",
         chance = chance + (self:GetAndRemoveFromCache("CiviliansKilled") or 0) * civilian_killed_multiplier,
-        icons = { EHI.Icons.Car, EHI.Icons.Fire },
+        icons = { { icon = EHI.Icons.Car, color = Color.red } },
         class = EHI.Trackers.Chance
     })
 end
@@ -568,7 +477,7 @@ if EHI:GetOption("tracker_alignment") == 1 then -- Vertical
                 for _, tbl in pairs(self._trackers_pos) do
                     if tbl.pos >= pos then
                         local final_pos = tbl.pos + 1
-                        tbl.tracker:SetTop(self:GetY(tbl.pos), self:GetY(final_pos))
+                        tbl.tracker:SetTop(self:GetY(final_pos))
                         tbl.pos = final_pos
                     end
                 end
@@ -591,7 +500,7 @@ if EHI:GetOption("tracker_alignment") == 1 then -- Vertical
         for _, value in pairs(self._trackers_pos) do
             if value.pos > pos then
                 local final_pos = value.pos - 1
-                value.tracker:SetTop(self:GetY(value.pos), self:GetY(final_pos))
+                value.tracker:SetTop(self:GetY(final_pos))
                 value.pos = final_pos
             end
         end
@@ -638,9 +547,9 @@ else -- Horizontal
                 for id, tbl in pairs(self._trackers_pos) do
                     if tbl.pos >= pos then
                         local final_x = tbl.x + w + self._panel_offset
-                        tbl.tracker:SetLeft(tbl.x, final_x)
-                        self._trackers_pos[id].x = final_x
-                        self._trackers_pos[id].pos = tbl.pos + 1
+                        tbl.tracker:SetLeft(final_x)
+                        tbl.x = final_x
+                        tbl.pos = tbl.pos + 1
                     end
                 end
             else
@@ -664,9 +573,9 @@ else -- Horizontal
         for id, value in pairs(self._trackers_pos) do
             if value.pos > pos then
                 local final_x = value.x - w - panel_offset_move
-                value.tracker:SetLeft(value.x, final_x)
-                self._trackers_pos[id].x = final_x
-                self._trackers_pos[id].pos = value.pos - pos_move
+                value.tracker:SetLeft(final_x)
+                value.x = final_x
+                value.pos = value.pos - pos_move
             end
         end
     end
@@ -699,6 +608,26 @@ function EHIManager:RemoveTracker(id)
     if tracker then
         tracker:delete()
     end
+end
+
+function EHIManager:RemoveAndDestroyTracker(id)
+    local tracker = self._trackers[id]
+    if tracker then
+        if not tracker._visible then
+            self._n_of_trackers = self._n_of_trackers + 1
+        end
+        tracker:destroy(nil, true)
+        self._trackers_pos[id].pos = self._n_of_trackers
+        self:DestroyTracker(id)
+    end
+end
+
+function EHIManager:RemoveStaticTracker(id)
+    self._trackers_to_update[id] = nil
+    local pos = self._trackers_pos[id].pos
+    local w = self._trackers_pos[id].w
+    self._n_of_trackers = self._n_of_trackers - 1
+    self:RearrangeTrackers(pos, w)
 end
 
 function EHIManager:DestroyTracker(id)
@@ -780,13 +709,6 @@ function EHIManager:SetTimerDone(id)
     local tracker = self._trackers[id]
     if tracker and tracker.SetDone then
         tracker:SetDone()
-    end
-end
-
-function EHIManager:SetTimerUpgrades(id, upgrades)
-    local tracker = self._trackers[id]
-    if tracker and tracker.SetUpgrades then
-        tracker:SetUpgrades(upgrades)
     end
 end
 

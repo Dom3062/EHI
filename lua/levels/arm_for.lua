@@ -38,6 +38,11 @@ if EHI:GetOption("show_achievement") then
     else
         EHI:ShowLootCounter(23)
     end
+    EHI:AddLoadSyncFunction(function(self)
+        if EHI.ConditionFunctions.IsStealth() then
+            self:AddAchievementNotificationTracker("armored_6")
+        end
+    end)
 else
     EHI:ShowLootCounter(23)
 end

@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
+local overkill = EHI:IsDifficulty("overkill")
 local AddMoney = EHI:GetFreeCustomSpecialFunctionID()
 local MoneyTrigger = { id = "MallDestruction", special_function = AddMoney }
 local OverkillOrBelow = EHI:IsDifficultyOrBelow("overkill")
@@ -27,7 +28,7 @@ local triggers =
     [300851] = MoneyTrigger, -- +8000, appears to be unused
 
     [301148] = { special_function = SF.Trigger, data = { 3011481, 3011482, 3011483 } },
-    [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = TT.AchievementTimedMoneyCounterTracker, condition = show_achievement and EHI:IsDifficulty("overkill"), exclude_from_sync = true },
+    [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = TT.AchievementTimedMoneyCounterTracker, condition = show_achievement and overkill, exclude_from_sync = true },
     [3011482] = { time = 180, id = "uno_3", class = TT.Achievement, exclude_from_sync = true },
     [3011483] = { special_function = SF.CustomCode, f = function()
         if managers.ehi:TrackerDoesNotExist("ameno_3") then
@@ -58,3 +59,24 @@ EHI:ParseTriggers(triggers)
 EHI:RegisterCustomSpecialFunction(AddMoney, function(id, trigger, element, enabled)
     managers.ehi:AddMoneyToTracker(trigger.id, element._values.amount)
 end)
+if show_achievement and overkill and EHI:IsAchievementLocked("ameno_3") then
+    EHI:AddLoadSyncFunction(function(self)
+        if self._t <= 50 then
+            self:AddTracker({
+                time = 50 - self._t,
+                id = "ameno_3",
+                to_secure = 1800000,
+                icons = EHI:GetAchievementIcon("ameno_3"),
+                class = "EHIAchievementTimedMoneyCounterTracker"
+            })
+            self:SetTrackerProgress("ameno_3", managers.loot:get_real_total_small_loot_value())
+            EHI:AddAchievementToCounter({
+                achievement = "ameno_3",
+                counter =
+                {
+                    check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
+                }
+            })
+        end
+    end)
+end

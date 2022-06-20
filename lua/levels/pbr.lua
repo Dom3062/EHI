@@ -1,3 +1,5 @@
+local EHI = EHI
+local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
@@ -31,10 +33,11 @@ local triggers = {
     end },
     --[1022924] = { time = 75 + 30, id = "AssaultDelay", class = TT.AssaultDelay },
 
-    [EHI:GetInstanceElementID(100108, 3200)] = { time = 45, id = "LockOpen", icons = { "faster" } },
+    [EHI:GetInstanceElementID(100108, 3200)] = { time = 45, id = "LockOpen", icons = { Icon.Wait } },
     [EHI:GetInstanceElementID(100124, 3200)] = { id = "LockOpen", special_function = SF.RemoveTracker },
 
-    [101774] = { time = 90, id = "EscapeHeli", icons = { "pd2_escape" } }
+    [101774] = { time = 90, id = "EscapeHeli", icons = { Icon.Escape } },
+    [EHI:GetInstanceElementID(100041, 20050)] = { id = "berry_2", special_function = SF.FinalizeAchievement }
 }
 
 EHI:ParseTriggers(triggers)
@@ -44,3 +47,9 @@ EHI:ShowAchievementLootCounter({
     exclude_from_sync = true,
     show_loot_counter = true
 })
+
+local tbl =
+{
+    [EHI:GetInstanceElementID(100113, 0)] = { icons = { Icon.C4 } }
+}
+EHI:UpdateUnits(tbl)

@@ -1,8 +1,9 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {
-    [101392] = { time = 120, id = "FireEvidence", icons = { "pd2_fire" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [101392] = { time = 120, id = "FireEvidence", icons = { Icon.Fire }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [101588] = { id = "FireEvidence", special_function = SF.PauseTracker },
 
     [103735] = { id = "pex_11", special_function = SF.IncreaseProgress },
@@ -15,7 +16,7 @@ for _, index in ipairs({ 5300, 6300, 7300 }) do
     triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { "wp_hack" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists }
     triggers[EHI:GetInstanceElementID(100026, index)] = { id = "ArmoryHack", special_function = SF.PauseTracker }
 end
-if Network:is_client() then
+if EHI._cache.Client then
     triggers[100233] = { time = 20 + 4, id = "HeliEscape", icons = { Icon.Heli, "equipment_winch_hook" }, special_function = SF.AddTrackerIfDoesNotExist }
 end
 local DisableWaypoints =
@@ -43,3 +44,16 @@ EHI:ShowAchievementLootCounter({ -- Medals
     exclude_from_sync = true,
     no_counting = true
 })
+EHI:AddLoadSyncFunction(function(self)
+    --[[
+        There are total 12 places where medals can appears
+        -- 11 places are on the first floor (6 randomly selected)
+        -- last place is in the locker room (instance)
+        Game sync all used places. When a medal is picked up, it is removed from the world
+        and not synced to other drop-in players
+
+        Can't use function "CountInteractionAvailable" because the medal in the locker room is not interactable first
+        This is more accurate and reliable
+    ]]
+    self:SetTrackerProgressRemaining("pex_11", self:CountUnitAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5)
+end)
