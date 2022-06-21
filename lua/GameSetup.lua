@@ -147,7 +147,7 @@ local levels =
     chca = true, -- Black Cat Heist
     pent = true, -- Mountain Master Heist
     -- Texas Heat campaign
-    first_heist_of_the_Texas_Heat_campaign = true, -- The Midland Ranch Heist
+    ranc = true, -- Midland Ranch
     second_heist_of_the_Texas_Heat_campaign = true,
     third_heist_of_the_Texas_Heat_campaign = true,
     fourth_and_last_heist_of_the_Texas_Heat_campaign = true

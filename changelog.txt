@@ -1,3 +1,6 @@
+r65 (21. 06. 2022):
+Added trackers for Midland Ranch Heist
+
 r64 (20. 06. 2022):
 Minor optimization in tracker reorganization
 Fixed a regression that caused some progress trackers to miscalculate the current progress after dropin

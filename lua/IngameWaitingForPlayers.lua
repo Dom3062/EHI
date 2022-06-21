@@ -804,6 +804,14 @@ function IngameWaitingForPlayersState:at_exit(...)
                 stats.pxp1_1_stats = "pxp1_1"
             end
         end
+        if level == "ranc" and EHI:IsAchievementLocked2("ranc_9") then -- "Caddyshacked" achievemet
+            CreateProgressTracker("ranc_9", EHI:GetAchievementProgress("ranc_9_stat"), 100, false, true)
+            stats.ranc_9_stat = "ranc_9"
+        end
+        if level == "ranc" and EHI:IsAchievementLocked2("ranc_11") then -- "Marshal Law" achievement
+            CreateProgressTracker("ranc_11", EHI:GetAchievementProgress("ranc_11_stat"), 4, false, true)
+            stats.ranc_11_stat = "ranc_11"
+        end
     end
     if EHI:IsDifficultyOrAbove("mayhem") and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
         local function f()
