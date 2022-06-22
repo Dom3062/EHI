@@ -13,6 +13,18 @@ if EHI:GetOption("show_trade_delay_option") == 2 then
     return
 end
 
+local original =
+{
+	init = VehicleDrivingExt.init,
+	_detect_npc_collisions = VehicleDrivingExt._detect_npc_collisions
+}
+
+function VehicleDrivingExt:init(...)
+	original.init(self, ...)
+	self._ehi_flesh_slotmask = managers.slot:get_mask("flesh")
+	self._ehi_all_criminals_slotmask = managers.slot:get_mask("all_criminals")
+end
+
 local _f_detect_npc_collisions = VehicleDrivingExt._detect_npc_collisions
 function VehicleDrivingExt:_detect_npc_collisions(...)
 	local vel = self._vehicle:velocity()
@@ -20,10 +32,9 @@ function VehicleDrivingExt:_detect_npc_collisions(...)
 		return
 	end
 	local oobb = self._unit:oobb()
-	local slotmask = managers.slot:get_mask("flesh")
-	local units = World:find_units("intersect", "obb", oobb:center(), oobb:x(), oobb:y(), oobb:z(), slotmask)
+	local units = World:find_units("intersect", "obb", oobb:center(), oobb:x(), oobb:y(), oobb:z(), self._ehi_flesh_slotmask)
 	for _, unit in pairs(units) do
-		if not unit:in_slot(managers.slot:get_mask("all_criminals")) and unit:character_damage() and not unit:character_damage():dead() and unit:base():has_tag("civilian") then
+		if not unit:in_slot(self._ehi_all_criminals_slotmask) and unit:character_damage() and not unit:character_damage():dead() and unit:base():has_tag("civilian") then
             --EHI:Log("Unit found: " .. tostring(unit))
             local attacker_unit = nil
             if self._seats.driver.occupant ~= managers.player:local_player() then

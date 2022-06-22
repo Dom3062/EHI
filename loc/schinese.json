@@ -59,8 +59,8 @@
     "ehi_hide_unlocked_achievements" : "隐藏已解锁的成就追踪器",
     "ehi_hide_unlocked_achievements_desc" : "勾选后，本模组将隐藏您已经解锁过的成就追踪器\n取消勾选后，本模组依然会为您显示当前所有可用的成就追踪器",
 
-    "ehi_show_achievement_failed_popup" : "Show 'Achievement Failed' Popup",
-    "ehi_show_achievement_failed_popup_desc" : "Failed achievements will show as red in the popup",
+    "ehi_show_achievement_failed_popup" : "显示 '完成成就失败'提示 ",
+    "ehi_show_achievement_failed_popup_desc" : "在成就的条件无法完成时在窗口中显示红色的'Failed'字样提示",
 
     "ehi_show_gained_xp" : "显示获得的经验",
     "ehi_show_gained_xp_desc" : "显示当前获得的经验\n此追踪器将在罪无止境模式下禁用",

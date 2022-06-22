@@ -11,7 +11,7 @@ if EHI:IsDifficultyOrAbove("overkill") then
     ElementTimerPickup = 102076
 end
 local SF_FultonCatchSuccess = EHI:GetFreeCustomSpecialFunctionID()
-local FultonCatchAgain = { id = "FultonCatch", icons = WeaponsPickUp }
+local FultonCatchAgain = { id = "FultonCatch", icons = WeaponsPickUp, special_function = SF.AddTrackerIfDoesNotExist }
 local FultonCatchSuccess = { time = 6.8, id = "FultonCatchSuccess", icons = WeaponsPickUp, special_function = SF_FultonCatchSuccess }
 local FultonCatchIncreaseChance = { id = "FultonCatchChance", special_function = SF.IncreaseChanceFromElement }
 local FultonRemoveCatch = { id = "FultonCatch", special_function = SF.RemoveTracker }
@@ -78,7 +78,8 @@ EHI:ParseTriggers(triggers)
 EHI:ShowAchievementLootCounter({
     achievement = "ranc_10",
     max = 5,
-    exclude_from_sync = true
+    exclude_from_sync = true,
+    no_counting = true
 })
 EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(id, ...)
     if managers.ehi:TrackerDoesNotExist("FultonCatch") then

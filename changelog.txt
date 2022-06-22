@@ -1,3 +1,7 @@
+r66 (22. 06. 2022):
+Midland Ranch: Fixed a log spam after Fulton missed
+Midland Ranch: Fixed an issue where achievement tracker for "Lucky Streak" also counted loot bags when it shouldn't
+
 r65 (21. 06. 2022):
 Added trackers for Midland Ranch Heist
 
