@@ -116,3 +116,29 @@ local tbl =
     [EHI:GetInstanceElementID(100068, 6690)] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100019, 6690) }
 }
 EHI:UpdateUnits(tbl)
+
+--[[local SecurityOffice = { w_id = EHI:GetInstanceElementID(100026, 6690) }
+local MissionDoorPositions =
+{
+    -- Evidence
+    [1] = Vector3(-1552.84, 816.472, -9.11819),
+
+    -- Basement (Escape)
+    [2] = Vector3(-744.305, 5042.19, -409.118),
+
+    -- Archives
+    [3] = Vector3(817.472, 2884.84, -809.118),
+
+    -- Security Office
+    [4] = Vector3(-1207.53, 4234.84, -409.118),
+    [5] = Vector3(807.528, 4265.16, -9.11819)
+}
+local MissionDoorIndex =
+{
+    [1] = { w_id = 101562 },
+    [2] = { w_id = 102017 },
+    [3] = { w_id = 101345 },
+    [4] = SecurityOffice,
+    [5] = SecurityOffice
+}
+EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)]]

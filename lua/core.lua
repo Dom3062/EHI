@@ -86,7 +86,6 @@ _G.EHI =
         UnpauseTrackerIfExistsAccurate = 37,
         ShowAchievementCustom = 38,
         FinalizeAchievement = 39,
-        RemoveTriggerAndShowAchievementFromStart = 40,
         IncreaseChanceFromElement = 42,
         DecreaseChanceFromElement = 43,
         SetChanceFromElement = 44,
@@ -444,7 +443,11 @@ function EHI:GetOption(option)
     end
 end
 
-function EHI:GetEquipmentOption(equipment)
+function EHI:GetEquipmentOption(option)
+    return self:GetOption("show_equipment_tracker") and self:GetOption(option)
+end
+
+function EHI:GetEquipmentColor(equipment)
     if equipment and self.settings.equipment_color[equipment] then
         return self:GetColor(self.settings.equipment_color[equipment])
     end
@@ -499,9 +502,9 @@ function EHI:AddOnCustodyCallback(f)
     self.OnCustodyCallback[#self.OnCustodyCallback + 1] = f
 end
 
-function EHI:RunOnCustodyCallback(state)
+function EHI:RunOnCustodyCallback(custody_state)
     for _, callback in ipairs(self.OnCustodyCallback) do
-        callback(state)
+        callback(custody_state)
     end
 end
 
@@ -548,7 +551,7 @@ function EHI:Unhook(id)
     Hooks:RemovePostHook("EHI_" .. id)
 end
 
----@param id string
+---@param id string|number
 function EHI:UnhookElement(id)
     Hooks:RemovePostHook("EHI_Element_" .. id)
 end
@@ -1090,11 +1093,6 @@ function EHI:Trigger(id, element, enabled)
                 end
             elseif f == SF.FinalizeAchievement then
                 managers.ehi:CallFunction(triggers[id].id, "Finalize")
-            elseif f == SF.RemoveTriggerAndShowAchievementFromStart then
-                if Global.statistics_manager.playing_from_start and self:IsAchievementLocked(triggers[id].id) then
-                    self:CheckCondition(id)
-                end
-                self:UnhookTrigger(id)
             elseif f == SF.IncreaseChanceFromElement then
                 managers.ehi:IncreaseChance(triggers[id].id, element._values.chance)
             elseif f == SF.DecreaseChanceFromElement then
@@ -1293,21 +1291,29 @@ function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
         -- Fill the rest table properties for Achievement trackers
         if data.class and self.AchievementTrackers[data.class] then
             if not data.special_function then
-                mission_triggers[id].special_function = SF.ShowAchievement
+                data.special_function = SF.ShowAchievement
             end
-            if data.condition == nil then
-                mission_triggers[id].condition = show_achievement
+            if data.difficulty_pass ~= nil then
+                data.condition = data.difficulty_pass and show_achievement
+            elseif data.condition == nil then
+                data.condition = show_achievement
             end
             if not data.icons then
-                mission_triggers[id].icons = self:GetAchievementIcon(mission_triggers[id].id)
+                data.icons = self:GetAchievementIcon(data.id)
             end
+            self:PrintTable(data)
         end
         -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
         if data.special_function == SF.ShowWaypoint then
-            mission_triggers[id].data.distance = true
-            mission_triggers[id].data.state = "sneak_present"
-            mission_triggers[id].data.present_timer = 0
-            mission_triggers[id].data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
+            data.data.distance = true
+            data.data.state = "sneak_present"
+            data.data.present_timer = 0
+            data.data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
+        end
+        -- Fill the rest table properties for EHI Waypoints
+        if data.waypoint then
+            data.waypoint.time = data.waypoint.time or data.time
+            data.waypoint.icon = data.waypoint.icon or data.icons and data.icons[1]
         end
     end
     self:AddTriggers(mission_triggers, trigger_id_all or "Trigger", trigger_icons_all or {})
@@ -1491,6 +1497,12 @@ function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_cont
     self:FinalizeUnits(new_tbl)
     for id, data in pairs(new_tbl) do
         self._cache.InstanceUnits[id] = data
+    end
+end
+
+function EHI:SetMissionDoorPosAndIndex(pos, index)
+    if TimerGui.SetMissionDoorPosAndIndex then
+        TimerGui.SetMissionDoorPosAndIndex(pos, index)
     end
 end
 

@@ -35,28 +35,18 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local hard_and_above = EHI:IsDifficultyOrAbove("hard")
 local LowerFloor = EHI:GetFreeCustomSpecialFunctionID()
+local RemoveTriggerAndShowAchievementFromStart = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [102460] = { time = 7, id = "Countdown", icons = { Icon.Alarm }, class = TT.Warning },
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
     [102701] = { time = 13, id = "Patrol", icons = { "pd2_generic_look" }, class = TT.Warning },
-    [102620] = { special_function = SF.Trigger, data = { 1026201, 1026202 } },
-    --[102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
-    [1026201] = { id = "EscapeElevator", special_function = SF.PauseTracker },
-    [1026202] = { special_function = SF.CustomCode, f = function()
-        EHI:DelayCall("nmh_check_state", 2, function(...)
-            local light = managers.worlddefinition:get_unit(100019)
-            local category = Idstring("g_light_cone")
-            EHI:Log("Category: " .. tostring(category))
-            EHI:PrintTable(light:damage())
-        end)
-    end },
+    [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
     -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before restart
     -- Reported in:
     -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
-    [103456] = { time = 5, id = "nmh_11", class = TT.Achievement, special_function = SF.RemoveTriggerAndShowAchievementFromStart, condition = hard_and_above and show_achievement, exclude_from_sync = true },
+    [103456] = { time = 5, id = "nmh_11", class = TT.Achievement, special_function = RemoveTriggerAndShowAchievementFromStart, difficulty_pass = hard_and_above, exclude_from_sync = true },
     [103439] = { id = "EscapeElevator", special_function = SF.RemoveTracker },
     [102619] = { id = "EscapeElevator", special_function = LowerFloor },
 
@@ -119,10 +109,15 @@ EHI:RegisterCustomSpecialFunction(LowerFloor, function(id, trigger, element, ena
         managers.ehi:CallFunction(trigger.id, "LowerFloor")
     end
 end)
+EHI:RegisterCustomSpecialFunction(RemoveTriggerAndShowAchievementFromStart, function(id, trigger, ...)
+    if EHI:IsAchievementLocked(trigger.id) and not managers.statistics:is_dropin() then
+        EHI:CheckCondition(id)
+    end
+    EHI:UnhookTrigger(id)
+end)
 EHI:AddLoadSyncFunction(function(self)
     local elevator_counter = managers.worlddefinition:get_unit(102296)
-    local light = managers.worlddefinition:get_unit(100019)
-    if elevator_counter and light then
+    if elevator_counter then
         local o = elevator_counter:digital_gui()
         if o and o._timer and o._timer ~= 30 then
             self:AddTracker({

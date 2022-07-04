@@ -5,6 +5,11 @@
     "ehi_menu_only" : "仅显示菜单",
     "ehi_show_preview_text" : "显示预览文本",
     "ehi_show_preview_text_desc" : "隐藏/显示预览文本",
+
+    "ehi_popup_experience" : "EXPERIENCE",
+    "ehi_popup_experience_base_gained" : "Base XP Gained: ",
+    "ehi_popup_experience_gained" : "Gained: ",
+    "ehi_popup_experience_total" : "Total: ",
     
     "ehi_r" : "红色",
     "ehi_g" : "绿色",
@@ -12,7 +17,7 @@
     "ehi_button_ok" : "确认",
     "ehi_color_reset" : "重置颜色",
 
-    "ehi_preview" : "预览 (重启劫案以应用更改)\n红色角标为第一个追踪器出现的位置",
+    "ehi_preview" : "预览 (重启劫案以应用更改)\n带有红色角标的窗口为第一个追踪器出现的位置",
 
     "ehi_x_offset" : "X轴偏移",
     "ehi_x_offset_desc" : "X轴偏移设置（数值越小追踪器越靠左）",
@@ -60,7 +65,7 @@
     "ehi_hide_unlocked_achievements_desc" : "勾选后，本模组将隐藏您已经解锁过的成就追踪器\n取消勾选后，本模组依然会为您显示当前所有可用的成就追踪器",
 
     "ehi_show_achievement_failed_popup" : "显示 '完成成就失败'提示 ",
-    "ehi_show_achievement_failed_popup_desc" : "在成就的条件无法完成时在窗口中显示红色的'Failed'字样提示",
+    "ehi_show_achievement_failed_popup_desc" : "在成就的条件无法完成时弹出标题为红色字体的窗口提示",
 
     "ehi_show_gained_xp" : "显示获得的经验",
     "ehi_show_gained_xp_desc" : "显示当前获得的经验\n此追踪器将在罪无止境模式下禁用",
@@ -72,14 +77,14 @@
     "ehi_xp_format_all_bonuses" : "计算所有经验加成",
 
     "ehi_xp_panel" : "经验显示模式",
-    "ehi_xp_panel_desc" : "何时显示经验追踪器",
-    "ehi_xp_panel_1" : "当获得经验时显示",
-    "ehi_xp_panel_2" : "在劫案中常态显示",
+    "ehi_xp_panel_desc" : "",
+    "ehi_xp_panel_1" : "在每次获得经验时显示面板",
+    "ehi_xp_panel_2" : "显示劫案中总共获得的经验",
     "ehi_xp_panel_3" : "获得经验时弹出窗口",
     "ehi_xp_panel_4" : "获得经验时显示提示",
 
     "ehi_total_xp_show_difference" : "显示经验值差异",
-    "ehi_total_xp_show_difference_desc" : "必须选择[在劫案中常态显示]选项 ！\n显示一个独立的追踪器来显示你获得的经验量",
+    "ehi_total_xp_show_difference_desc" : "必须选择[显示劫案中总共获得的经验]选项 ！\n显示一个独立的追踪器用来显示你获得的经验量",
 
     "ehi_show_trade_delay" : "显示交易延迟",
     "ehi_show_trade_delay_desc" : "当您或您的队友杀死人质时显示交易延迟",
@@ -107,7 +112,7 @@
     "ehi_gage_tracker_panel" : "显示盖奇包收集进度方式",
     "ehi_gage_tracker_panel_desc" : "",
     "ehi_gage_tracker_panel_1" : "追踪器",
-    "ehi_gage_tracker_panel_2" : "弹出消息",
+    "ehi_gage_tracker_panel_2" : "弹出窗口",
 
     "ehi_show_captain_damage_reduction" : "显示敌人伤害减免",
     "ehi_show_captain_damage_reduction_desc" : "显示冬日队长列阵后为敌人提供的伤害减免效果",

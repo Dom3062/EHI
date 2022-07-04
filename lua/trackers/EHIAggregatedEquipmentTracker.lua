@@ -1,10 +1,10 @@
 local color =
 {
-    doctor_bag = EHI:GetEquipmentOption("doctor_bag"),
-    ammo_bag = EHI:GetEquipmentOption("ammo_bag"),
-    grenade_crate = EHI:GetEquipmentOption("grenade_crate"),
-    first_aid_kit = EHI:GetEquipmentOption("first_aid_kit"),
-    bodybags_bag = EHI:GetEquipmentOption("bodybags_bag")
+    doctor_bag = EHI:GetEquipmentColor("doctor_bag"),
+    ammo_bag = EHI:GetEquipmentColor("ammo_bag"),
+    grenade_crate = EHI:GetEquipmentColor("grenade_crate"),
+    first_aid_kit = EHI:GetEquipmentColor("first_aid_kit"),
+    bodybags_bag = EHI:GetEquipmentColor("bodybags_bag")
 }
 
 local text_i =
@@ -16,7 +16,7 @@ local text_i =
     [5] = "bodybags_bag"
 }
 
-EHIAggregatedEquipmentTracker = EHIAggregatedEquipmentTracker or class(EHITracker)
+EHIAggregatedEquipmentTracker = class(EHITracker)
 EHIAggregatedEquipmentTracker._update = false
 function EHIAggregatedEquipmentTracker:init(panel, params)
     self._dont_show_placed = {}

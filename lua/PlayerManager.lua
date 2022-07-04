@@ -418,11 +418,11 @@ function PlayerManager:_update_damage_dealt(t, dt, ...)
 
     -- t here is identical to the timestamp returned by PlayerManager:player_timer():time() so do not bother calling the latter
     if t >= previousstack and ShowManiacStackTicks then
-        managers.ehi_buff:AddBuff("ManiacStackTicks", t, self._damage_dealt_to_cops_t)
+        managers.ehi_buff:AddBuff3("ManiacStackTicks", t, self._damage_dealt_to_cops_t)
     end
 
     if t >= previousdecay and ShowManiacDecayTicks then
-        managers.ehi_buff:AddBuff("ManiacDecayTicks", t, self._damage_dealt_to_cops_decay_t)
+        managers.ehi_buff:AddBuff3("ManiacDecayTicks", t, self._damage_dealt_to_cops_decay_t)
     end
 
     -- Poll accumulated hysteria stacks, but not every frame
@@ -435,7 +435,7 @@ function PlayerManager:_update_damage_dealt(t, dt, ...)
             end
             local ratio = newstacks / maxstacks
             if ratio > 0 then
-                managers.ehi_buff:AddGauge("ManiacAccumulatedStacks", ratio)
+                managers.ehi_buff:AddGauge("ManiacAccumulatedStacks", EHI:RoundNumber(ratio, 0.01))
             else
                 managers.ehi_buff:RemoveBuff("ManiacAccumulatedStacks")
             end

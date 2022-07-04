@@ -7,16 +7,16 @@ end
 local original =
 {
     at_enter = IngameWaitingForRespawnState.at_enter,
-    at_exit = IngameWaitingForRespawnState.at_exit
+    finish_trade = IngameWaitingForRespawnState.finish_trade
 }
 
-function IngameWaitingForRespawnState:at_enter()
-    original.at_enter(self)
+function IngameWaitingForRespawnState:at_enter(...)
+    original.at_enter(self, ...)
     EHI:RunOnCustodyCallback(true)
     managers.ehi_buff:RemoveAbilityCooldown()
 end
 
-function IngameWaitingForRespawnState:at_exit()
-    original.at_exit(self)
+function IngameWaitingForRespawnState:finish_trade(...)
+    original.finish_trade(self, ...)
     EHI:RunOnCustodyCallback(false)
 end

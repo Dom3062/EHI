@@ -50,7 +50,7 @@ function PlayerDamage:_upd_health_regen(t, dt, ...)
         icon = "hostage_taker"
     end
     managers.ehi_buff:CallBuffFunction("HealthRegen", "SetIcon", icon)
-    managers.ehi_buff:AddBuff("HealthRegen", self._health_regen_update_timer)
+    managers.ehi_buff:AddBuff("HealthRegen", self._health_regen_update_timer + 0.2)
 end
 
 --/////////////////--
@@ -127,9 +127,6 @@ function PlayerDamage:_check_bleed_out(...)
     original._check_bleed_out(self, ...)
     if previous < self._uppers_elapsed then
         managers.ehi_buff:AddBuff("UppersCooldown", self._UPPERS_COOLDOWN)
-        -- It is possible to ping PollUppersRange instead, but this method is much simpler (and a bit
-        -- less expensive) since no extra poll is incurred (after all, it will tick again soon after this)
-        --me:RemoveBuff("UppersRangeGauge")
     end
 end
 

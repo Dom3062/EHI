@@ -5,11 +5,7 @@ else
     EHI._hooks.BodyBagsBagBase = true
 end
 
-if not EHI:GetOption("show_equipment_tracker") then
-    return
-end
-
-if not EHI:GetOption("show_equipment_bodybags") then
+if not EHI:GetEquipmentOption("show_equipment_bodybags") then
     return
 end
 

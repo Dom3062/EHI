@@ -1,4 +1,104 @@
+local lerp = math.lerp
+local sin = math.sin
+local Color = Color
+EHIameno3Tracker = class(EHIWarningTracker)
+EHIameno3Tracker.FormatNumber = EHIAchievementBagValueTracker.Format
+EHIameno3Tracker.FormatNumber2 = EHIAchievementBagValueTracker.FormatNumber
+EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+EHIameno3Tracker.delete = EHIAchievementTracker.delete
+function EHIameno3Tracker:init(panel, params)
+    self._secured = 0
+    self._secured_formatted = "0"
+    self._to_secure = params.to_secure or 0
+    self._to_secure_formatted = self:FormatNumber2(self._to_secure)
+    EHIameno3Tracker.super.init(self, panel, params)
+end
+
+function EHIameno3Tracker:update_done(t, dt)
+    self._fade_time = self._fade_time - dt
+    if self._fade_time <= 0 then
+        self:delete()
+    end
+end
+
+function EHIameno3Tracker:OverridePanel(params)
+    self._panel:set_w(self._panel:w() * 2)
+    self._time_bg_box:set_w(self._time_bg_box:w() * 2)
+    self._money_text = self._time_bg_box:text({
+        name = "text2",
+        text = self:FormatNumber(),
+        align = "center",
+        vertical = "center",
+        w = self._time_bg_box:w() / 2,
+        h = self._time_bg_box:h(),
+        font = tweak_data.menu.pd2_large_font,
+		font_size = self._panel:h() * self._text_scale,
+        color = params.text_color or Color.white
+    })
+    self:FitTheText(self._money_text)
+    self._money_text:set_left(0)
+    self._text:set_left(self._money_text:right())
+    if self._icon1 then
+        self._icon1:set_x(self._icon1:x() * 2)
+    end
+end
+
+function EHIameno3Tracker:AnimateWarning()
+    if self._text and alive(self._text) then
+        self._text:animate(function(o)
+            while true do
+                local t = 0
+                while t < 1 do
+                    t = t + coroutine.yield()
+                    local n = 1 - sin(t * 180)
+                    --local r = lerp(1, 0, n)
+                    local g = lerp(1, 0, n)
+                    local c = Color(1, g, g)
+                    o:set_color(c)
+                    self._money_text:set_color(c)
+                end
+            end
+        end)
+    end
+end
+
+function EHIameno3Tracker:SetProgress(progress)
+    if self._secured ~= progress and not self._disable_counting then
+        self._secured = progress
+        self._secured_formatted = self:FormatNumber2(progress)
+        self._money_text:set_text(self:FormatNumber())
+        self:FitTheText(self._money_text)
+        if self._flash then
+            self:AnimateBG(self._flash_times)
+        end
+        self:SetCompleted()
+    end
+end
+
+function EHIameno3Tracker:SetCompleted(force)
+    if (self._secured >= self._to_secure and not self._status) or force then
+        self._status = "completed"
+        self._text:stop()
+        self:SetTextColor(Color.green)
+        if self._remove_after_reaching_counter_target or force then
+            self._fade_time = 5
+            self.update = self.update_done
+        else
+            self._money_text:set_text("FINISH")
+            self:FitTheText(self._money_text)
+        end
+        self._disable_counting = true
+        self._achieved_popup_showed = true
+    end
+end
+
+function EHIameno3Tracker:SetTextColor(color)
+    EHIAchievementBagValueTracker.super.SetTextColor(self, color)
+    self._money_text:set_color(color)
+end
+
 local EHI = EHI
+EHI.AchievementTrackers.EHIameno3Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -28,7 +128,7 @@ local triggers =
     [300851] = MoneyTrigger, -- +8000, appears to be unused
 
     [301148] = { special_function = SF.Trigger, data = { 3011481, 3011482, 3011483 } },
-    [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = TT.AchievementTimedMoneyCounterTracker, condition = show_achievement and overkill, exclude_from_sync = true },
+    [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = "EHIameno3Tracker", condition = show_achievement and overkill, exclude_from_sync = true },
     [3011482] = { time = 180, id = "uno_3", class = TT.Achievement, exclude_from_sync = true },
     [3011483] = { special_function = SF.CustomCode, f = function()
         if managers.ehi:TrackerDoesNotExist("ameno_3") then
@@ -67,7 +167,7 @@ if show_achievement and overkill and EHI:IsAchievementLocked("ameno_3") then
                 id = "ameno_3",
                 to_secure = 1800000,
                 icons = EHI:GetAchievementIcon("ameno_3"),
-                class = "EHIAchievementTimedMoneyCounterTracker"
+                class = "EHIameno3Tracker"
             })
             self:SetTrackerProgress("ameno_3", managers.loot:get_real_total_small_loot_value())
             EHI:AddAchievementToCounter({

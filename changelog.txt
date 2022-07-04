@@ -1,3 +1,10 @@
+r67 (04. 07. 2022):
+Fixed Maniac buffs
+Fixed an issue where after finishing or losing a heist in custody increased XP in tracker/popup
+Heat Street: Fixed a tracker with no icon
+Heat Street: Fixed an issue where gas counter tracker hide itself after shooting first gas canister
+Slaughterhouse: Added achievement tracker for "Not hard enough"
+
 r66 (22. 06. 2022):
 Midland Ranch: Fixed a log spam after Fulton missed
 Midland Ranch: Fixed an issue where achievement tracker for "Lucky Streak" also counted loot bags when it shouldn't

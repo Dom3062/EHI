@@ -2,11 +2,10 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
 local LootDropWP = Vector3(0, -341, 253)
 local triggers = {
-    [100107] = { time = 300, id = "sah_9", class = TT.Achievement, condition = ovk_and_up and show_achievement, exclude_from_sync = true },
+    [100107] = { time = 300, id = "sah_9", class = TT.Achievement, difficulty_pass = ovk_and_up, exclude_from_sync = true },
     [101878] = { id = "sah_9", special_function = SF.SetAchievementComplete },
 
     [100643] = { time = 30, id = "CrowdAlert", icons = { Icon.Alarm }, class = TT.Warning },
@@ -31,7 +30,7 @@ if Network:is_client() then
 end
 
 EHI:ParseTriggers(triggers)
-if show_achievement and ovk_and_up then
+if EHI:GetOption("show_achievement") and ovk_and_up then
     EHI:AddOnAlarmCallback(function()
         managers.ehi:SetAchievementFailed("sah_9")
     end)
@@ -60,7 +59,15 @@ for i = 18200, 19400, 600 do
 end
 EHI:DisableWaypoints(DisableWaypoints)
 
-local tbl = {}
+local tbl =
+{
+    -- Unused Grenade case
+    [400178] = { f = function(instance, id, unit_data, unit)
+        if unit:base() and unit:base().SetIgnore then
+            unit:base():SetIgnore()
+        end
+    end}
+}
 for i = 4900, 5100, 100 do
     --levels/instances/unique/sah/sah_vault_door
     --units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock

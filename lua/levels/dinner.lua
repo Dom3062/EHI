@@ -4,15 +4,15 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
-local c4 = { time = 5, id = "C4", icons = { "pd2_c4" } }
+local c4 = { time = 5, id = "C4", icons = { Icon.C4 } }
 local triggers = {
     [100484] = { time = 300, id = "farm_2", class = TT.AchievementUnlock },
     [100485] = { time = 30, id = "farm_4", class = TT.Achievement },
-    [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { "equipment_winch_hook", Icon.Fire, "pd2_goto" } },
+    [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, "pd2_goto" }, waypoint = { position = Vector3(-17900, 7800, 56.6182) } },
     [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape } },
     [100319] = { id = "farm_2", special_function = SF.SetAchievementFailed },
     [102841] = { id = "farm_4", special_function = SF.SetAchievementComplete },
-    [101553] = { id = "farm_3", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+    [101553] = { id = "farm_3", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
     [103394] = { id = "farm_3", special_function = SF.SetAchievementFailed },
     [102880] = { id = "farm_3", special_function = SF.SetAchievementComplete },
     -- C4 (Doors)
@@ -42,6 +42,19 @@ if show_achievement then
         else
             EHI:ShowLootCounter(11)
         end
+        EHI:HookWithID(HUDManager, "sync_set_assault_mode", "EHI_farm_1_achievement", function(self, mode, ...)
+            if mode == "phalanx" then
+                self.ehi:AddTracker({
+                    id = "farm_1",
+                    status = "finish",
+                    icons = EHI:GetAchievementIcon("farm_1"),
+                    exclude_from_sync = true,
+                    class = EHI.Trackers.AchievementNotification,
+                })
+            else
+                self.ehi:SetAchievementFailed("farm_1")
+            end
+        end)
     else
         EHI:ShowLootCounter(10)
     end

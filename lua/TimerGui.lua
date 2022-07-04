@@ -134,6 +134,13 @@ elseif level_id == "born" then -- The Biker Heist Day 1
     }
 end
 
+function TimerGui.SetMissionDoorPosAndIndex(pos, index)
+    MissionDoorPositions = pos
+    MissionDoorIndex = index
+    EHI:PrintTable(MissionDoorPositions)
+    EHI:PrintTable(MissionDoorIndex)
+end
+
 local original =
 {
     init = TimerGui.init,

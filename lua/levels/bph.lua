@@ -1,13 +1,13 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
 local triggers = {
     [100109] = { max = (ovk_and_up and 40 or 30), id = "EnemyDeathShowers", icons = { "pd2_kill" }, flash_times = 1, class = TT.Progress },
     [101433] = { id = "EnemyDeathShowers", special_function = SF.RemoveTracker },
 
-    [101742] = { max = 3, id = "bph_10", class = TT.AchievementProgress, special_function = SF.RemoveTriggerAndShowAchievement, condition = ovk_and_up and show_achievement },
+    [101742] = { max = 3, id = "bph_10", class = TT.AchievementProgress, special_function = SF.RemoveTriggerAndShowAchievement, difficulty_pass = ovk_and_up },
     [101885] = { id = "bph_10", special_function = SF.SetAchievementFailed },
 
     [101815] = { time = 10, id = "MoveWalkway", icons = { Icon.Wait } },

@@ -5,33 +5,8 @@ else
     EHI._hooks.AmmoBagBase = true
 end
 
-if not EHI:GetOption("show_equipment_tracker") then
+if not EHI:GetEquipmentOption("show_equipment_ammobag") then
     return
-end
-
-if not EHI:GetOption("show_equipment_ammobag") then
-    return
-end
-
-local level_id = Global.game_settings.level_id
-local ignore = {}
-if level_id == "chill_combat" then -- Safehouse Raid
-    ignore =
-    {
-        [1] = Vector3(-225, -2300, -800), -- 2x Ammo shelves
-		[2] = Vector3(-100, -1500, -400)
-    }
-end
-
-local function CheckIgnore(unit_pos)
-    local result = false
-    for _, pos in pairs(ignore) do
-        if pos == unit_pos then
-            result = true
-            break
-        end
-    end
-    return result
 end
 
 local UpdateTracker
@@ -70,7 +45,6 @@ function AmmoBagBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._offset = 0
-    self._ignore = CheckIgnore(unit:position())
 end
 
 function AmmoBagBase:GetEHIKey()
@@ -83,7 +57,7 @@ end
 
 function AmmoBagBase:SetOffset(offset)
     self._offset = offset
-    if not self._ignore and self._unit:interaction():active() then
+    if self._unit:interaction():active() and not self._ignore then
         UpdateTracker(self._unit, self._ehi_key, self._ammo_amount - self._offset)
     end
 end

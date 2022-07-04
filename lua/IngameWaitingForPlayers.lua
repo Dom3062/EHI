@@ -5,9 +5,6 @@ else
     EHI._hooks.IngameWaitingForPlayersState = true
 end
 
-local primary, secondary, melee, is_stealth = nil, nil, nil, false
-local stats = {}
-
 local AddGageTracker
 if EHI:GetOption("gage_tracker_panel") == 1 then
     AddGageTracker = function()
@@ -32,6 +29,9 @@ else
         end
     end
 end
+
+local primary, secondary, melee, is_stealth = nil, nil, nil, false
+local stats = {}
 
 local function HasWeaponEquipped(weapon_id)
     return primary.weapon_id == weapon_id or secondary.weapon_id == weapon_id
@@ -169,6 +169,10 @@ local function ShowTrackerInLoud(f)
     else
         f()
     end
+end
+
+local function ShowPopup(id, progress, max)
+    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_" .. id), tostring(progress) .. "/" .. tostring(max), EHI:GetAchievementIconString(id))
 end
 
 local original =
@@ -327,11 +331,16 @@ function IngameWaitingForPlayersState:at_exit(...)
         stats.armored_9_stat = "armored_9"
     end
     if EHI:IsAchievementLocked2("armored_10") and mask_id == tweak_data.achievement.no_we_cant.mask then -- "Affordable Healthcare" achievement
-        local function f()
-            CreateProgressTracker("armored_10", EHI:GetAchievementProgress("armored_10_stat"), 61, false, true)
-        end
-        ShowTrackerInLoud(f)
-        stats.armored_10_stat = "armored_10"
+        local progress = EHI:GetAchievementProgress("armored_10_stat")
+        ShowTrackerInLoud(function()
+            ShowPopup("armored_10", progress, 61)
+        end)
+        EHI:HookWithID(AchievmentManager, "award_progress", "EHI_armored_10_award_progress", function(am, stat, value)
+            if stat == "armored_10_stat" and progress < 61 then
+                progress = progress + (value or 1)
+                ShowPopup("armored_10", progress, 61)
+            end
+        end)
     end
     if EHI:IsAchievementLocked2("gage_1") and HasWeaponEquipped("ak5") and mask_id == tweak_data.achievement.enemy_kill_achievements.wanted.mask then -- "Wanted" achievement
         CreateProgressTracker("gage_1", EHI:GetAchievementProgress("gage_1_stats"), 100, false, true)
@@ -374,10 +383,10 @@ function IngameWaitingForPlayersState:at_exit(...)
                             EHI:Unhook("gage_9_achievement")
                             return
                         end
-                        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_gage_9"), tostring(progress) .. "/100", "Other_H_Any_FireInTheHole")
+                        ShowPopup("gage_9", progress, 100)
                     end
                 end)
-                managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_gage_9"), tostring(progress) .. "/100", "Other_H_Any_FireInTheHole")
+                ShowPopup("gage_9", progress, 100)
                 break
             end
         end
@@ -547,7 +556,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             stats.ameno_08_stats = "ameno_8"
         end
     end
-    if EHI:IsAchievementLocked("ovk_3") and HasWeaponEquipped("m134") and (level == "chill" or level == "safehouse") then -- "Oh, That's How You Do It"
+    if EHI:IsAchievementLocked("ovk_3") and HasWeaponEquipped("m134") and (level == "chill" or level == "safehouse") then -- "Oh, That's How You Do It" achievement
         -- Only tracked in Safehouse to prevent tracker spam in heists
         EHI:HookWithID(RaycastWeaponBase, "start_shooting", "EHI_ovk_3_start_shooting", function(self, ...)
             if self._shooting and self:get_name_id() == "m134" then
@@ -650,13 +659,13 @@ function IngameWaitingForPlayersState:at_exit(...)
             if local_player and attacker_unit == local_player then
                 progress = progress + 1
                 if progress < 30 then
-                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_cac_3"), tostring(progress) .. "/30", "Other_H_Any_Denied")
+                    ShowPopup("cac_3", progress, 30)
                 end
             end
         end
         managers.player:register_message("flash_grenade_destroyed", "EHI_cac_3_listener", on_flash_grenade_destroyed)
         ShowTrackerInLoud(function() -- Show progress when alarm went off
-            managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_cac_3"), tostring(progress) .. "/30", "Other_H_Any_Denied")
+            ShowPopup("cac_3", progress, 30)
         end)
     end
     if EHI:IsAchievementLocked2("cac_34") then -- "Lieutenant Colonel" achievement
@@ -671,10 +680,10 @@ function IngameWaitingForPlayersState:at_exit(...)
                 managers.player:unregister_message("cop_converted", listener_key)
                 return
             end
-            managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_cac_34"), tostring(progress) .. "/300", "Other_H_Any_Lieutenant")
+            ShowPopup("cac_34", progress, 300)
         end
         managers.player:register_message("cop_converted", listener_key, on_cop_converted)
-        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_cac_34"), tostring(progress) .. "/300", "Other_H_Any_Lieutenant")
+        ShowPopup("cac_34", progress, 300)
     end
     if EHI:IsAchievementLocked2("gsu_01") and HasMeleeEquipped("spoon") then -- "For all you legends" achievement
         CreateProgressTracker("gsu_01", EHI:GetAchievementProgress("gsu_stat"), 100, false, true)
@@ -748,8 +757,9 @@ function IngameWaitingForPlayersState:at_exit(...)
         if (level == "arm_cro" or level == "arm_und" or level == "arm_hcm" or level == "arm_par" or level == "arm_fac") and EHI:IsAchievementLocked2("armored_4") and mask_id == tweak_data.achievement.complete_heist_achievements.i_take_scores.mask and managers.ehi:GetStartedFromBeginning() then -- I Do What I Do Best, I Take Scores
             local progress = EHI:GetAchievementProgress("armored_4_stat")
             local function on_heist_end(mes_self)
-                if mes_self._success and (progress + 1) < 15 and managers.job:on_last_stage() then
-                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_armored_4"), tostring(progress + 1) .. "/15", "C_Bain_H_TransportVarious_IDoWhat")
+                progress = progress + 1
+                if mes_self._success and progress < 15 and managers.job:on_last_stage() then
+                    ShowPopup("armored_4", progress, 15)
                 end
             end
             EHI:HookWithID(MissionEndState, "chk_complete_heist_achievements", "EHI_armored_4_on_heist_end", on_heist_end)
@@ -782,11 +792,22 @@ function IngameWaitingForPlayersState:at_exit(...)
                 managers.ehi:SetChance("sand_11", self:session_hit_accuracy())
             end)
         end
+        if level == "ranc" then
+            if EHI:IsAchievementLocked2("ranc_9") then -- "Caddyshacked" achievement
+                CreateProgressTracker("ranc_9", EHI:GetAchievementProgress("ranc_9_stat"), 100, false, true)
+                stats.ranc_9_stat = "ranc_9"
+            end
+            if EHI:IsAchievementLocked2("ranc_11") then -- "Marshal Law" achievement
+                CreateProgressTracker("ranc_11", EHI:GetAchievementProgress("ranc_11_stat"), 4, false, true)
+                stats.ranc_11_stat = "ranc_11"
+            end
+        end
         if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and managers.ehi:GetStartedFromBeginning() then -- From Russia With Love
             local progress = EHI:GetAchievementProgress("halloween_10_stats")
             local function on_heist_end(mes_self)
-                if mes_self._success and (progress + 1) < 25 and managers.job:on_last_stage() then
-                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_halloween_10"), tostring(progress + 1) .. "/25", "Other_H_Any_FromRussia")
+                progress = progress + 1
+                if mes_self._success and progress < 25 and managers.job:on_last_stage() then
+                    ShowPopup("halloween_10", progress, 25)
                 end
             end
             EHI:HookWithID(MissionEndState, "chk_complete_heist_achievements", "EHI_halloween_10_on_heist_end", on_heist_end)
@@ -804,14 +825,6 @@ function IngameWaitingForPlayersState:at_exit(...)
                 stats.pxp1_1_stats = "pxp1_1"
             end
         end
-        if level == "ranc" and EHI:IsAchievementLocked2("ranc_9") then -- "Caddyshacked" achievemet
-            CreateProgressTracker("ranc_9", EHI:GetAchievementProgress("ranc_9_stat"), 100, false, true)
-            stats.ranc_9_stat = "ranc_9"
-        end
-        if level == "ranc" and EHI:IsAchievementLocked2("ranc_11") then -- "Marshal Law" achievement
-            CreateProgressTracker("ranc_11", EHI:GetAchievementProgress("ranc_11_stat"), 4, false, true)
-            stats.ranc_11_stat = "ranc_11"
-        end
     end
     if EHI:IsDifficultyOrAbove("mayhem") and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
         local function f()
@@ -825,7 +838,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             local progress = EHI:GetAchievementProgress("eng_1_stats") + 1
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_1_award_progress", function(am, stat, value)
                 if stat == "eng_1_stats" and progress < 5 then
-                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_1"), tostring(progress) .. "/5", "Other_H_Any_TheOnlyOne")
+                    ShowPopup("eng_1", progress, 5)
                 end
             end)
         end
@@ -835,7 +848,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             local progress = EHI:GetAchievementProgress("eng_2_stats") + 1
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_2_award_progress", function(am, stat, value)
                 if stat == "eng_2_stats" and progress < 5 then
-                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_2"), tostring(progress) .. "/5", "Other_H_Any_TheOneThatHad")
+                    ShowPopup("eng_2", progress, 5)
                 end
             end)
         end
@@ -845,7 +858,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             local progress = EHI:GetAchievementProgress("eng_3_stats") + 1
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_3_award_progress", function(am, stat, value)
                 if stat == "eng_3_stats" and progress < 5 then
-                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_3"), tostring(progress) .. "/5", "Other_H_Any_TheOneThatSur")
+                    ShowPopup("eng_3", progress, 5)
                 end
             end)
         end
@@ -855,7 +868,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             local progress = EHI:GetAchievementProgress("eng_4_stats") + 1
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_4_award_progress", function(am, stat, value)
                 if stat == "eng_4_stats" and progress < 5 then
-                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_eng_4"), tostring(progress) .. "/5", "Other_H_Any_TheOneWho")
+                    ShowPopup("eng_4", progress, 5)
                 end
             end)
         end
@@ -909,7 +922,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 if progress == 4 then
                     return
                 end
-                managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_xm20_1"), tostring(progress) .. "/4", "C_Vlad_Xmas_OnlyForUs")
+                ShowPopup("xm20_1", progress, 4)
             end
         end)
     end
@@ -926,7 +939,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 if progress == 4 then
                     return
                 end
-                managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_pent_11"), tostring(progress) .. "/4", "C_JiuFeng_H_CityofGold_ForTheMad")
+                ShowPopup("pent_11", progress, 4)
             end
         end)
     end

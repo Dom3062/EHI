@@ -13,37 +13,18 @@ function EHIGasTracker:Format()
 end
 
 EHIZoneTracker = class(EHIWarningTracker)
-function EHIZoneTracker:update(t, dt)
-    if self._fade then
-        self._fade_time = self._fade_time - dt
-        if self._fade_time <= 0 then
-            self:delete()
-        end
-        return
-    end
-    EHIZoneTracker.super.update(self, t, dt)
-end
-
-function EHIZoneTracker:SetCompleted()
-    self._exclude_from_sync = true
-    self._text:stop()
-    self._fade_time = 5
-    self._fade = true
-    self:SetTextColor(Color.green)
-    self:AnimateBG()
-end
+EHIZoneTracker.update = EHIAchievementTracker.update
+EHIZoneTracker.SetCompleted = EHIAchievementTracker.SetCompleted
 
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local hard_and_above = EHI:IsDifficultyOrAbove("hard")
 local SetProgressMax = EHI:GetFreeCustomSpecialFunctionID()
 local SetZoneComplete = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [100120] = { time = 1800, id = "run_9", class = TT.AchievementDone },
-    [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = "EHIZoneTracker", condition = true },
+    [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = "EHIZoneTracker" },
     [101550] = { id = "ClearPickupZone", special_function = SetZoneComplete },
 
     -- Parking lot
@@ -58,7 +39,7 @@ local triggers = {
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins
     [102426] = { special_function = SF.Trigger, data = { 1024261, 1024262 } },
     [1024261] = { max = 8, id = "run_8", class = TT.AchievementProgress, exclude_from_sync = true },
-    [1024262] = { id = "run_10", class = TT.AchievementNotification, condition = show_achievement and hard_and_above },
+    [1024262] = { id = "run_10", class = TT.AchievementNotification, condition = EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove("hard") },
     [100658] = { id = "run_8", special_function = SF.IncreaseProgress },
     [100111] = { id = "run_10", special_function = SF.SetAchievementFailed },
     [100664] = { id = "run_10", special_function = SF.SetAchievementComplete },
@@ -92,7 +73,7 @@ EHI:RegisterCustomSpecialFunction(SetProgressMax, function(id, trigger, element,
             id = trigger.id,
             progress = 1,
             max = trigger.max,
-            class = EHI.Trackers.Progress
+            class = "EHIGasTracker"
         })
     end
 end)

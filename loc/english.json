@@ -6,6 +6,11 @@
     "ehi_show_preview_text" : "Show Preview Text",
     "ehi_show_preview_text_desc" : "Hides or shows preview text",
 
+    "ehi_popup_experience" : "EXPERIENCE",
+    "ehi_popup_experience_base_gained" : "Base XP Gained: ",
+    "ehi_popup_experience_gained" : "Gained: ",
+    "ehi_popup_experience_total" : "Total: ",
+
     "ehi_r" : "Red",
     "ehi_g" : "Green",
     "ehi_b" : "Blue",

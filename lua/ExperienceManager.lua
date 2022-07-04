@@ -17,6 +17,9 @@ local TotalXP = 0
 local OldTotalXP = 0
 local xp_format = EHI:GetOption("xp_format")
 local xp_panel = EHI:GetOption("xp_panel")
+local EXPERIENCE = ""
+local EXPERIENCE_GAINED = ""
+local EXPERIENCE_TOTAL = ""
 if EHI:IsOneXPElementHeist(Global.game_settings.level_id) and xp_panel == 2 then
     xp_panel = 1 -- Force one XP panel when the heist gives you the XP at the escape zone -> less screen clutter
 end
@@ -48,6 +51,13 @@ function ExperienceManager:EHIInitFinalize()
         end
         EHI:AddOnCustodyCallback(f2)
     end
+    EXPERIENCE = managers.localization:text("ehi_popup_experience")
+    local gained = xp_format == 1 and "ehi_popup_experience_base_gained" or "ehi_popup_experience_gained"
+    if xp_panel == 4 then
+        gained = "ehi_popup_experience_gained"
+    end
+    EXPERIENCE_GAINED = managers.localization:text(gained)
+    EXPERIENCE_TOTAL = managers.localization:text("ehi_popup_experience_total")
 end
 
 function ExperienceManager:SetJobData(data)
@@ -58,7 +68,6 @@ function ExperienceManager:SetJobData(data)
     self._xp.projob_multiplier = data.projob_multiplier
     self._xp.heat = data.heat
     self._xp.contract_difficulty_multiplier = self:get_contract_difficulty_multiplier(data.difficulty_stars)
-    self._xp.pro_job_multiplier = data.is_projob and tweak_data:get_value("experience_manager", "pro_job_multiplier") or 1
     self._xp.is_level_limited = self._xp.level_to_stars < data.job_stars
     if xp_format ~= 1 then
         self._xp.difficulty_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", data.difficulty_stars) or 1
@@ -104,13 +113,9 @@ function ExperienceManager:SetInCustody(in_custody)
     self:RecalculateXP()
 end
 
-function ExperienceManager:IncreaseAlivePlayers(human_player)
+function ExperienceManager:IncreaseAlivePlayers()
     self._xp.alive_players = self._xp.alive_players + 1
-    if human_player then
-        self:RecalculateSkillXPMultiplier()
-    else
-        self:RecalculateXP()
-    end
+    self:RecalculateXP()
 end
 
 function ExperienceManager:QueryAmountOfAlivePlayers()
@@ -142,43 +147,15 @@ if xp_panel == 1 then
         end
     end
 elseif xp_panel == 3 then
-    if xp_format == 1 then -- Base
-        Show = function(self, diff)
-            if managers.hud then
-                managers.hud:custom_ingame_popup_text("EXPERIENCE", "Base XP Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
-            end
-        end
-    elseif xp_format == 2 then -- Base * Diff
-        Show = function(self, diff)
-            if managers.hud then
-                managers.hud:custom_ingame_popup_text("EXPERIENCE", "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
-            end
-        end
-    else -- Multiply all
-        Show = function(self, diff)
-            if managers.hud then
-                managers.hud:custom_ingame_popup_text("EXPERIENCE", "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\nTotal: " .. self:cash_string(TotalXP, "+"), "EHI_XP")
-            end
+    Show = function(self, diff)
+        if managers.hud then
+            managers.hud:custom_ingame_popup_text(EXPERIENCE, EXPERIENCE_GAINED .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\n" .. EXPERIENCE_TOTAL .. self:cash_string(TotalXP, "+"), "EHI_XP")
         end
     end
 elseif xp_panel == 4 then
-    if xp_format == 1 then -- Base
-        Show = function(self, diff)
-            if managers.hud then
-                managers.hud:show_hint({ text = "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. " XP; Total: " .. self:cash_string(TotalXP, "+") .. " XP" })
-            end
-        end
-    elseif xp_format == 2 then -- Base * Diff
-        Show = function(self, diff)
-            if managers.hud then
-                managers.hud:show_hint({ text = "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. " XP; Total: " .. self:cash_string(TotalXP, "+") .. " XP" })
-            end
-        end
-    else -- Multiply all
-        Show = function(self, diff)
-            if managers.hud then
-                managers.hud:show_hint({ text = "Gained: " .. self:cash_string(diff, diff >= 0 and "+" or "") .. " XP; Total: " .. self:cash_string(TotalXP, "+") .. " XP" })
-            end
+    Show = function(self, diff)
+        if managers.hud then
+            managers.hud:show_hint({ text = EXPERIENCE_GAINED .. self:cash_string(diff, diff >= 0 and "+" or "") .. " XP; ".. EXPERIENCE_TOTAL .. self:cash_string(TotalXP, "+") .. " XP" })
         end
     end
 end
@@ -244,7 +221,7 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 	local job_stars = self._xp.job_stars
 	local num_winners = self._xp.alive_players
 	local player_stars = self._xp.level_to_stars
-	local pro_job_multiplier = self._xp.pro_job_multiplier
+	local pro_job_multiplier = self._xp.projob_multiplier
 	local ghost_multiplier = 1 + self._xp.stealth_bonus
 	local xp_multiplier = self._xp.contract_difficulty_multiplier
 	local contract_xp = 0

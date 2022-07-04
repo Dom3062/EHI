@@ -22,7 +22,6 @@ function JobManager:init(...)
     data.level_id = self:current_level_id()
     data.projob_multiplier = 1
     if self:is_current_job_professional() then
-        data.is_projob = true
         data.projob_multiplier = tweak_data:get_value("experience_manager", "pro_job_multiplier") or 1
     end
     local heat = self:get_job_heat_multipliers(self:current_job_id())

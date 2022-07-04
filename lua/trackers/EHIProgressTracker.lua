@@ -44,7 +44,7 @@ function EHIProgressTracker:SetProgress(progress)
         if self._flash then
             self:AnimateBG(self._flash_times)
         end
-        if self._progress >= self._max then
+        if self._progress == self._max then
             if self._set_color_bad_when_reached then
                 self:SetBad()
             else
