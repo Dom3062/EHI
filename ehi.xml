@@ -49,6 +49,7 @@
             <post :hook_id="hudmanager" :script_path="HUDManager.lua" />
             <post :hook_id="hudmanagervr" :script_path="HUDManagerVR.lua" />
             <post :hook_id="hudmanagerpd2" :script_path="HUDManagerPD2.lua" />
+            <post :hook_id="hud/hudchallengenotification" :script_path="HudChallengeNotification.lua" />
             <post :hook_id="gameplaycentralmanager" :script_path="GamePlayCentralManager.lua"/>
             <post :hook_id="gageassignmentmanager" :script_path="GageAssignmentManager.lua" />
             <post :hook_id="enemymanager" :script_path="EnemyManager.lua" />

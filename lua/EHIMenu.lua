@@ -167,6 +167,7 @@ function EHIMenu:init()
     self:GetMenuFromJson(EHI.MenuPath .. "menu.json")
     self:GetMenuFromJson(EHI.MenuPath .. "visuals.json")
     self:GetMenuFromJson(EHI.MenuPath .. "trackers.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "trackers_2.json")
     self:GetMenuFromJson(EHI.MenuPath .. "equipment.json")
     self:GetMenuFromJson(EHI.MenuPath .. "waypoints.json")
     self:GetMenuFromJson(EHI.MenuPath .. "buffs.json")
@@ -907,12 +908,12 @@ end
 
 function EHIMenu:CreateOneLineItems(item, items, menu_id)
     local offset = {
-        ["label"] = 5,
-        ["button"] = 10,
-        ["toggle"] = 34,
-        ["slider"] = 110,
-        ["multiple_choice"] = 215,
-        ["color_select"] = 64
+        label = 5,
+        button = 10,
+        toggle = 34,
+        slider = 110,
+        multiple_choice = 215,
+        color_select = 64
     }
     local n = table.getn(item.table)
     local previous_item
@@ -937,7 +938,7 @@ end
 
 function EHIMenu:CreateMenu(params)
     if self._options_panel:child("menu_"..tostring(params.menu_id)) or self._menus[params.menu_id] then
-        return
+        return self._menus[params.menu_id]
     end
 
     local menu_panel = self._options_panel:panel({
@@ -1123,7 +1124,7 @@ function EHIMenu:CreateButton(params)
         align = "right",
         vertical = "center",
         layer = 1,
-        colors = params.new and Color.yellow or Color.white
+        color = params.new and Color.yellow or Color.white
     })
     local w = select(3, title:text_rect())
     if w > title:w() then

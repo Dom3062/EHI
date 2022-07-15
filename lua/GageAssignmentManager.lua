@@ -22,7 +22,7 @@ else
 			if client_sync_load and Global.statistics_manager.playing_from_start then
 				return
 			end
-			managers.hud:custom_ingame_popup_text("GAGE PACKAGES", tostring(picked_up) .. "/" .. tostring(max), "EHI_Gage")
+			managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), tostring(picked_up) .. "/" .. tostring(max), "EHI_Gage")
 		end
 	else
 		ShowProgress = function(picked_up, max, client_sync_load) end

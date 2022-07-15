@@ -1,8 +1,41 @@
+EHIuno7Tracker = class(EHIAchievementTracker)
+function EHIuno7Tracker:init(panel, params)
+    EHIuno7Tracker.super.init(self, panel, params)
+    self._obtainable = false
+    self._blocked_warning = true
+    self:SetTextColor()
+end
+
+function EHIuno7Tracker:SetObtainable()
+    self._obtainable = true
+    self._blocked_warning = false
+    self:SetTextColor()
+end
+
+function EHIuno7Tracker:SetTextColor()
+    if self._obtainable then
+        self._text:set_color(Color.white)
+        if self._time <= 10 then
+            self:AnimateWarning(true)
+        end
+    else
+        self._text:stop()
+        self._text:set_color(Color.red)
+    end
+end
+
+function EHIuno7Tracker:AnimateWarning(check_progress)
+    if self._blocked_warning then
+        return
+    end
+    EHITimerTracker.AnimateWarning(self, check_progress)
+end
+
 local EHI = EHI
+EHI.AchievementTrackers.EHIuno7Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local mayhem_and_up = EHI:IsDifficultyOrAbove("mayhem")
 local element_sync_triggers =
 {
@@ -13,9 +46,9 @@ local caddilac = { time = 18, id = "Caddilac", icons = { Icon.Heli, "pd2_goto" }
 local triggers = {
     [100109] = { time = 30 + 1 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.RemoveTriggerWhenExecuted },
 
-    [100107] = { time = 901, id = "uno_7", class = "EHIAchievementObtainableTracker", condition = mayhem_and_up and show_achievement, exclude_from_sync = true },
+    [100107] = { time = 901, id = "uno_7", class = "EHIuno7Tracker", difficulty_pass = mayhem_and_up, exclude_from_sync = true },
     [102291] = { max = 2, id = "friend_5", class = TT.AchievementProgress },
-    [102430] = { time = 780, id = "friend_6", class = TT.Achievement, condition = mayhem_and_up and show_achievement, exclude_from_sync = true },
+    [102430] = { time = 780, id = "friend_6", class = TT.Achievement, difficulty_pass = mayhem_and_up, exclude_from_sync = true },
 
     [100103] = { time = 15 + 5, random_time = 10, id = "BileArrival", icons = { Icon.Heli } },
 
@@ -52,9 +85,9 @@ end
 
 EHI:ParseTriggers(triggers)
 EHI:ShowLootCounter(16)
-if mayhem_and_up then
+if EHI:GetOption("show_achievement") and mayhem_and_up then
     EHI:AddOnAlarmCallback(function()
         managers.ehi:SetAchievementFailed("friend_6")
-        managers.ehi:CallFunction("uno_7", "ToggleObtainable")
+        managers.ehi:CallFunction("uno_7", "SetObtainable")
     end)
 end

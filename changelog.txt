@@ -1,3 +1,8 @@
+r68 (15. 07. 2022):
+Added "Show 'Achievement Started' Popup" option
+Added "Show 'CONVERT KILLED' Message" option
+Possible fix for a very rare crash after a convert died
+
 r67 (04. 07. 2022):
 Fixed Maniac buffs
 Fixed an issue where after finishing or losing a heist in custody increased XP in tracker/popup
@@ -6,7 +11,7 @@ Heat Street: Fixed an issue where gas counter tracker hide itself after shooting
 Slaughterhouse: Added achievement tracker for "Not hard enough"
 
 r66 (22. 06. 2022):
-Midland Ranch: Fixed a log spam after Fulton missed
+Midland Ranch: Fixed a log spam after plane missed fulton cage
 Midland Ranch: Fixed an issue where achievement tracker for "Lucky Streak" also counted loot bags when it shouldn't
 
 r65 (21. 06. 2022):

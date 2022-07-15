@@ -4,6 +4,17 @@
     "title": "ehi_trackers_menu",
     "items": [
         {
+            "type": "button",
+            "id": "ehi_trackers_next_menu",
+            "title": "ehi_menu_next_page",
+            "next_menu": "ehi_trackers_2_menu",
+            "ehi_ver" : 68
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
             "type": "toggle",
             "id": "ehi_show_mission_trackers_choice",
             "title": "ehi_show_mission_trackers",
@@ -31,64 +42,68 @@
             "is_parent" : true
         },
         {
-            "table":[
-                {
-                    "type": "toggle",
-                    "id": "ehi_hide_unlocked_achievements_choice",
-                    "title": "ehi_hide_unlocked_achievements",
-                    "description": "ehi_hide_unlocked_achievements_desc",
-                    "callback": "SetOption",
-                    "callback_arguments": "hide_unlocked_achievements",
-                    "value": "hide_unlocked_achievements",
-                    "default_value": true,
-                    "parent" : "ehi_show_achievement_choice",
-                    "ehi_ver" : 10
-                },
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_achievement_failed_popup_choice",
-                    "title": "ehi_show_achievement_failed_popup",
-                    "description": "ehi_show_achievement_failed_popup_desc",
-                    "callback": "SetOption",
-                    "callback_arguments": "show_achievement_failed_popup",
-                    "value": "show_achievement_failed_popup",
-                    "default_value": true,
-                    "parent" : "ehi_show_achievement_choice",
-                    "ehi_ver" : 59
-                }
-            ]
+            "type": "toggle",
+            "id": "ehi_hide_unlocked_achievements_choice",
+            "title": "ehi_hide_unlocked_achievements",
+            "description": "ehi_hide_unlocked_achievements_desc",
+            "callback": "SetOption",
+            "callback_arguments": "hide_unlocked_achievements",
+            "value": "hide_unlocked_achievements",
+            "default_value": true,
+            "parent" : "ehi_show_achievement_choice",
+            "ehi_ver" : 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_achievement_failed_popup_choice",
+            "title": "ehi_show_achievement_failed_popup",
+            "description": "ehi_show_achievement_failed_popup_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_achievement_failed_popup",
+            "value": "show_achievement_failed_popup",
+            "default_value": true,
+            "parent" : "ehi_show_achievement_choice",
+            "ehi_ver" : 59
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_achievement_started_popup_choice",
+            "title": "ehi_show_achievement_started_popup",
+            "description": "ehi_show_achievement_started_popup_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_achievement_started_popup",
+            "value": "show_achievement_started_popup",
+            "default_value": true,
+            "parent" : "ehi_show_achievement_choice",
+            "ehi_ver" : 68
         },
         {
             "type": "divider",
             "size": 20
         },
         {
-            "table":[
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_gained_xp_choice",
-                    "title": "ehi_show_gained_xp",
-                    "description": "ehi_show_gained_xp_desc",
-                    "callback": ["SetOption", "UpdateTrackerVisibility"],
-                    "callback_arguments": "show_gained_xp",
-                    "focus_changed_callback": "SetFocus",
-                    "value": "show_gained_xp",
-                    "is_parent" : true,
-                    "default_value": true
-                },
-                {
-                    "type": "toggle",
-                    "id": "ehi_total_xp_show_difference_choice",
-                    "title": "ehi_total_xp_show_difference",
-                    "description": "ehi_total_xp_show_difference_desc",
-                    "callback": "SetOption",
-                    "callback_arguments": "total_xp_show_difference",
-                    "value": "total_xp_show_difference",
-                    "parent": "ehi_show_gained_xp_choice",
-                    "default_value": true,
-                    "ehi_ver" : 35
-                }
-            ]
+            "type": "toggle",
+            "id": "ehi_show_gained_xp_choice",
+            "title": "ehi_show_gained_xp",
+            "description": "ehi_show_gained_xp_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_gained_xp",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_gained_xp",
+            "is_parent" : true,
+            "default_value": true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_total_xp_show_difference_choice",
+            "title": "ehi_total_xp_show_difference",
+            "description": "ehi_total_xp_show_difference_desc",
+            "callback": "SetOption",
+            "callback_arguments": "total_xp_show_difference",
+            "value": "total_xp_show_difference",
+            "parent": "ehi_show_gained_xp_choice",
+            "default_value": true,
+            "ehi_ver" : 35
         },
         {
             "type": "multiple_choice",
@@ -183,202 +198,30 @@
             "size": 20
         },
         {
-            "table":[
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_timers_choice",
-                    "title": "ehi_show_timers",
-                    "description": "ehi_show_timers_desc",
-                    "callback": ["SetOption", "UpdateTrackerVisibility"],
-                    "callback_arguments": "show_timers",
-                    "focus_changed_callback": "SetFocus",
-                    "value": "show_timers",
-                    "default_value": true
-                },
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_zipline_timer_choice",
-                    "title": "ehi_show_zipline_timer",
-                    "description": "ehi_show_zipline_timer_desc",
-                    "callback": ["SetOption", "UpdateTrackerVisibility"],
-                    "callback_arguments": "show_zipline_timer",
-                    "focus_changed_callback": "SetFocus",
-                    "value": "show_zipline_timer",
-                    "default_value": true
-                }
-            ]
-        },
-        {
             "type": "toggle",
-            "id": "ehi_show_gage_tracker_choice",
-            "title": "ehi_show_gage_tracker",
-            "description": "ehi_show_gage_tracker_desc",
+            "id": "ehi_show_timers_choice",
+            "title": "ehi_show_timers",
+            "description": "ehi_show_timers_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_gage_tracker",
+            "callback_arguments": "show_timers",
             "focus_changed_callback": "SetFocus",
-            "value": "show_gage_tracker",
-            "default_value": true,
-            "is_parent" : true
-        },
-        {
-            "type": "multiple_choice",
-            "id": "ehi_gage_tracker_panel_choice",
-            "title": "ehi_gage_tracker_panel",
-            "description": "ehi_gage_tracker_panel_desc",
-            "callback": ["SetOption", "SetGagePanelOption"],
-            "callback_arguments": "gage_tracker_panel",
-            "items": [
-                "ehi_gage_tracker_panel_1",
-                "ehi_gage_tracker_panel_2"
-            ],
-            "value": "gage_tracker_panel",
-            "parent": "ehi_show_gage_tracker_choice",
-            "default_value": 1,
-            "ehi_ver" : 53
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_captain_damage_reduction_choice",
-            "title": "ehi_show_captain_damage_reduction",
-            "description": "ehi_show_captain_damage_reduction_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_captain_damage_reduction",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_captain_damage_reduction",
+            "value": "show_timers",
             "default_value": true
         },
         {
-            "table" : [
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_equipment_tracker_choice",
-                    "title": "ehi_show_equipment_tracker",
-                    "description": "ehi_show_equipment_tracker_desc",
-                    "callback": ["SetOption", "UpdateTrackerVisibility"],
-                    "callback_arguments": "show_equipment_tracker",
-                    "value": "show_equipment_tracker",
-                    "focus_changed_callback": "SetFocus",
-                    "is_parent": true,
-                    "default_value": true
-                },
-                {
-                    "type": "button",
-                    "id": "ehi_equipment_menu",
-                    "title": "ehi_equipment_menu",
-                    "description": "ehi_equipment_menu_desc",
-                    "next_menu": "ehi_equipment_menu",
-                    "parent": "ehi_show_equipment_tracker_choice",
-                    "focus_changed_callback" : "fcc_equipment_tracker"
-                }
-            ]
-        },
-        {
-            "table" : [
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_minion_tracker_choice",
-                    "title": "ehi_show_minion_tracker",
-                    "description": "ehi_show_minion_tracker_desc",
-                    "callback": ["SetOption", "UpdateTrackerVisibility"],
-                    "callback_arguments": "show_minion_tracker",
-                    "focus_changed_callback": "SetFocus",
-                    "value": "show_minion_tracker",
-                    "is_parent" : true,
-                    "default_value": true,
-                    "ehi_ver" : 16
-                },
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_minion_per_player_choice",
-                    "title": "ehi_show_minion_per_player",
-                    "description": "ehi_show_minion_per_player_desc",
-                    "callback": ["SetOption", "UpdateMinionTracker"],
-                    "callback_arguments": "show_minion_per_player",
-                    "value": "show_minion_per_player",
-                    "focus_changed_callback" : "fcc_show_minion_per_player",
-                    "parent": "ehi_show_minion_tracker_choice",
-                    "default_value": true,
-                    "ehi_ver" : 51
-                }
-            ]
-        },
-        {
-            "table" : [
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_difficulty_tracker_choice",
-                    "title": "ehi_show_difficulty_tracker",
-                    "description": "ehi_show_difficulty_tracker_desc",
-                    "callback": ["SetOption", "UpdateTrackerVisibility"],
-                    "callback_arguments": "show_difficulty_tracker",
-                    "focus_changed_callback": "SetFocus",
-                    "value": "show_difficulty_tracker",
-                    "default_value": true
-                },
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_drama_tracker_choice",
-                    "title": "ehi_show_drama_tracker",
-                    "description": "ehi_show_drama_tracker_desc",
-                    "callback": ["SetOption", "UpdateTrackerVisibility"],
-                    "callback_arguments": "show_drama_tracker",
-                    "focus_changed_callback": "SetFocus",
-                    "value": "show_drama_tracker",
-                    "default_value": true,
-                    "ehi_ver" : 10
-                }
-            ]
-        },
-        {
-            "table" : [
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_pager_tracker_choice",
-                    "title": "ehi_show_pager_tracker",
-                    "description": "ehi_show_pager_tracker_desc",
-                    "callback": ["SetOption", "UpdateTrackerVisibility"],
-                    "callback_arguments": "show_pager_tracker",
-                    "focus_changed_callback": "SetFocus",
-                    "value": "show_pager_tracker",
-                    "default_value": true
-                },
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_pager_callback_trackers_choice",
-                    "title": "ehi_show_pager_callback_trackers",
-                    "description": "ehi_show_pager_callback_trackers_desc",
-                    "callback": ["SetOption", "UpdateTrackerVisibility"],
-                    "callback_arguments": "show_pager_callback",
-                    "focus_changed_callback": "SetFocus",
-                    "value": "show_pager_callback",
-                    "default_value": true,
-                    "ehi_ver" : 13
-                }
-            ]
+            "type": "divider",
+            "size": 20
         },
         {
             "type": "toggle",
-            "id": "ehi_show_enemy_count_tracker_choice",
-            "title": "ehi_show_enemy_count_tracker",
-            "description": "ehi_show_enemy_count_tracker_desc",
+            "id": "ehi_show_zipline_timer_choice",
+            "title": "ehi_show_zipline_timer",
+            "description": "ehi_show_zipline_timer_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_enemy_count_tracker",
+            "callback_arguments": "show_zipline_timer",
             "focus_changed_callback": "SetFocus",
-            "value": "show_enemy_count_tracker",
-            "default_value": true,
-            "ehi_ver" : 6
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_laser_tracker_choice",
-            "title": "ehi_show_laser_tracker",
-            "description": "ehi_show_laser_tracker_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_laser_tracker",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_laser_tracker",
-            "default_value": false,
-            "ehi_ver" : 10
+            "value": "show_zipline_timer",
+            "default_value": true
         }
     ]
 }

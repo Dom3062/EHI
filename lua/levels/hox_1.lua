@@ -33,7 +33,26 @@ local tbl =
     --levels/instances/unique/hox_breakout_road001
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small
     [EHI:GetInstanceElementID(100058, RoadBlockVehicleIndex1)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100090, RoadBlockVehicleIndex1) },
-    [EHI:GetInstanceElementID(100058, RoadBlockVehicleIndex2)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100090, RoadBlockVehicleIndex2) }
+    [EHI:GetInstanceElementID(100058, RoadBlockVehicleIndex2)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100090, RoadBlockVehicleIndex2) },
+
+    --units/payday2/vehicles/anim_vehicle_pickup_sportcab_armored/anim_vehicle_pickup_sportcab_armored/the_car
+    [102482] = { f = function(instance, id, unit_data, unit)
+        if not EHI:GetOption("show_waypoints") then
+            return
+        end
+        EHI:AddWaypointToTrigger(102626, { time = 36.2, icon = Icon.Car, unit = unit } )
+        EHI:AddWaypointToTrigger(102627, { time = 34.5, icon = Icon.Car, unit = unit } )
+        EHI:AddWaypointToTrigger(102628, { time = 34.5, icon = Icon.Car, unit = unit } )
+        EHI:AddWaypointToTrigger(101383, { time = 44.3, icon = Icon.Car, unit = unit } )
+        EHI:AddWaypointToTrigger(101397, { time = 22.6, icon = Icon.Car, unit = unit } )
+        EHI:HookWithID(unit:base(), "destroy", "EHI_102482_Destroy", function(...)
+            managers.ehi_waypoint:RemoveWaypoint("CarMoveForward")
+            managers.ehi_waypoint:RemoveWaypoint("CarMoveLeft")
+            managers.ehi_waypoint:RemoveWaypoint("CarMoveRight")
+            managers.ehi_waypoint:RemoveWaypoint("CarGoingIntoGarage")
+            managers.ehi_waypoint:RemoveWaypoint("CarMoveRightFinal")
+        end)
+    end}
 }
 for i = 1350, 4950, 400 do
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b

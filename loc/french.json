@@ -2,6 +2,9 @@
     "ehi_mod_title": "Extra infos de braquage",
     "ehi_mod_desc": "",
 
+    "ehi_menu_next_page" : "Page suivante -->",
+    "ehi_menu_previous_page" : "<-- Page précédente",
+
     "ehi_r" : "Rouge",
     "ehi_g" : "Vert",
     "ehi_b" : "Bleu",

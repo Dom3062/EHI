@@ -2,6 +2,9 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "",
 
+    "ehi_menu_next_page" : "Next Page -->",
+    "ehi_menu_previous_page" : "<-- Previous Page",
+
     "ehi_menu_only" : "Menu only",
     "ehi_show_preview_text" : "Show Preview Text",
     "ehi_show_preview_text_desc" : "Hides or shows preview text",
@@ -10,6 +13,9 @@
     "ehi_popup_experience_base_gained" : "Base XP Gained: ",
     "ehi_popup_experience_gained" : "Gained: ",
     "ehi_popup_experience_total" : "Total: ",
+    "ehi_popup_gage_packages" : "GAGE PACKAGES",
+    "ehi_popup_minion" : "CONVERT",
+    "ehi_popup_minion_killed" : "Your convert has been killed",
 
     "ehi_r" : "Red",
     "ehi_g" : "Green",
@@ -66,6 +72,9 @@
 
     "ehi_show_achievement_failed_popup" : "Show 'Achievement Failed' Popup",
     "ehi_show_achievement_failed_popup_desc" : "Failed achievements will show as red in the popup",
+
+    "ehi_show_achievement_started_popup" : "Show 'Achievement Started' Popup",
+    "ehi_show_achievement_started_popup_desc" : "Achievements that can be earned after meeting criteria will show as green in the popup",
 
     "ehi_show_gained_xp" : "Show gained XP",
     "ehi_show_gained_xp_desc" : "Shows earned XP in a mission.\nThis tracker is disabled in Crime Spree.",
@@ -166,10 +175,16 @@
     "ehi_bodybags_bag" : "Bodybags Bag",
 
     "ehi_show_minion_tracker" : "Show Converts Tracker",
-    "ehi_show_minion_tracker_desc" : "Shows tracker for how much converted enemies are on the map",
+    "ehi_show_minion_tracker_desc" : "Shows tracker for how many converted enemies are on the map",
 
     "ehi_show_minion_per_player" : "Show Number of Converts Per Player",
     "ehi_show_minion_per_player_desc" : "Shows in the tracker colored player number of converts",
+
+    "ehi_show_minion_killed_message" : "Show 'CONVERT KILLED' Message",
+    "ehi_show_minion_killed_message_desc" : "Shows a message when your convert has been killed",
+
+    "ehi_show_minion_killed_message_type" : "'CONVERT KILLED' Message Type",
+    "ehi_show_minion_killed_message_type_2" : "In hint panel",
 
     "ehi_show_difficulty_tracker" : "Show Difficulty Tracker",
     "ehi_show_difficulty_tracker_desc" : "Shows a tracker for how much difficult the wave is",

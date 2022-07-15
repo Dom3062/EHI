@@ -189,7 +189,6 @@ _G.EHI =
         EHIAchievementDoneTracker = true,
         EHIAchievementUnlockTracker = true,
         EHIAchievementProgressTracker = true,
-        EHIAchievementObtainableTracker = true,
         EHIAchievementNotificationTracker = true,
         EHIAchievementBagValueTracker = true,
         EHIAchievementTimedMoneyCounterTracker = true
@@ -349,6 +348,7 @@ function EHI:LoadDefaultValues()
         show_achievement = true,
         hide_unlocked_achievements = true,
         show_achievement_failed_popup = true,
+        show_achievement_started_popup = true,
         show_gained_xp = true,
         xp_format = 3,
         xp_panel = 1,
@@ -408,6 +408,8 @@ function EHI:LoadDefaultValues()
         },
         show_minion_tracker = true,
         show_minion_per_player = true,
+        show_minion_killed_message = true,
+        show_minion_killed_message_type = 1, -- 1 = Popup; 2 = Hint
         show_difficulty_tracker = true,
         show_drama_tracker = true,
         show_pager_tracker = true,
@@ -480,9 +482,9 @@ function EHI:AddCallback(id, f)
     self.Callback[id][#self.Callback[id] + 1] = f
 end
 
-function EHI:CallCallback(id)
+function EHI:CallCallback(id, ...)
     for _, callback in ipairs(self.Callback[id] or {}) do
-        callback()
+        callback(...)
     end
 end
 
@@ -826,6 +828,13 @@ function EHI:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, ty
     end
 end
 
+function EHI:AddWaypointToTrigger(id, waypoint)
+    if not triggers[id] then
+        return
+    end
+    triggers[id].waypoint = waypoint
+end
+
 ---@param id number
 ---@param trigger table
 local function AddTracker(id, trigger)
@@ -844,14 +853,15 @@ end
 
 ---@param id number
 function EHI:AddTrackerWithRandomTime(id)
+    local trigger = triggers[id]
     managers.ehi:AddTracker({
-        id = triggers[id].id,
-        time = triggers[id].data[math.random(#triggers[id].data)],
-        icons = triggers[id].icons,
-        class = triggers[id].class
+        id = trigger.id,
+        time = trigger.data[math.random(#trigger.data)],
+        icons = trigger.icons,
+        class = trigger.class
     })
-    if triggers[id].waypoint then
-        managers.ehi_waypoint:AddWaypoint(triggers[id].id, triggers[id].waypoint)
+    if trigger.waypoint then
+        managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
     end
 end
 
@@ -1301,7 +1311,6 @@ function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
             if not data.icons then
                 data.icons = self:GetAchievementIcon(data.id)
             end
-            self:PrintTable(data)
         end
         -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
         if data.special_function == SF.ShowWaypoint then
@@ -1313,7 +1322,11 @@ function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
         -- Fill the rest table properties for EHI Waypoints
         if data.waypoint then
             data.waypoint.time = data.waypoint.time or data.time
-            data.waypoint.icon = data.waypoint.icon or data.icons and data.icons[1]
+            if not data.waypoint.icon then
+                --data.waypoint.icon = data.waypoint.icon or data.icons and data.icons[1]
+                data.waypoint.icon = data.icons and data.icons[1] and data.icons[1].icon or data.icons[1]
+                --local tracker_icon = data.icons and data.icons[1]
+            end
         end
     end
     self:AddTriggers(mission_triggers, trigger_id_all or "Trigger", trigger_icons_all or {})
@@ -1564,7 +1577,7 @@ if EHI.debug then -- For testing purposes
         local instances = managers.world_instance:instance_data()
         for _, instance in ipairs(instances) do
             if instance.name == instance_name then
-                PrintTableDeep(instance or {}, 5000, true, "[EHI]")
+                self:PrintTable(instance or {})
                 local start = self:GetInstanceElementID(100000, instance.start_index)
                 local _end = start + instance.index_size - 1
                 local f = function(e, ...)

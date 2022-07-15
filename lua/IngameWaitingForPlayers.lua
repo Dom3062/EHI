@@ -24,7 +24,7 @@ else
         if EHI:GetOption("show_gage_tracker") and EHI._cache.GagePackages and EHI._cache.GagePackages > 0 then
             if EHI._cache.Host or not managers.ehi:GetDropin() then
                 local max = tweak_data.gage_assignment:get_num_assignment_units()
-                managers.hud:custom_ingame_popup_text("GAGE PACKAGES", "0/" .. tostring(max), "EHI_Gage")
+                managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), "0/" .. tostring(max), "EHI_Gage")
             end
         end
     end
@@ -138,7 +138,8 @@ local function CreateProgressTracker(id, progress, max, dont_flash, remove_after
         flash_times = 1,
         remove_after_reaching_target = remove_after_reaching_target,
         status_is_overridable = status_is_overridable,
-        class = EHI.Trackers.Progress
+        no_failure = true,
+        class = "EHIAchievementProgressTracker"
     })
 end
 
@@ -201,6 +202,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         managers.player:EHICheckAbility()
         managers.ehi_buff:ActivateUpdatingBuffs()
     end
+    EHI:CallCallback("DelayAchievementStartedPopup")
     --[[EHI:DelayCall("EHI_Debug", 7.5, function()
         for i = 1, 99, 1 do
             managers.ehi:RunStaticTracker(tostring(i), 10)
@@ -653,6 +655,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
     end
     if EHI:IsAchievementLocked2("cac_3") then -- "Denied" achievement
+        local listener_key = "EHI_cac_3_listener"
         local progress = EHI:GetAchievementProgress("cac_3_stats")
         local function on_flash_grenade_destroyed(attacker_unit)
             local local_player = managers.player:player_unit()
@@ -660,10 +663,12 @@ function IngameWaitingForPlayersState:at_exit(...)
                 progress = progress + 1
                 if progress < 30 then
                     ShowPopup("cac_3", progress, 30)
+                else
+                    managers.player:unregister_message("flash_grenade_destroyed", listener_key)
                 end
             end
         end
-        managers.player:register_message("flash_grenade_destroyed", "EHI_cac_3_listener", on_flash_grenade_destroyed)
+        managers.player:register_message("flash_grenade_destroyed", listener_key, on_flash_grenade_destroyed)
         ShowTrackerInLoud(function() -- Show progress when alarm went off
             ShowPopup("cac_3", progress, 30)
         end)

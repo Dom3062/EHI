@@ -55,6 +55,14 @@ function EHIManager:LoadTime(t)
     self._t = t
 end
 
+function EHIManager:IsMissionElementEnabled(id)
+    local element = managers.mission:get_element_by_id(id)
+    if not element then
+        return false
+    end
+    return element:enabled()
+end
+
 function EHIManager:InteractionExists(tweak_data)
     local interactions = managers.interaction._interactive_units or {}
     for _, unit in ipairs(interactions) do
@@ -375,6 +383,7 @@ function EHIManager:AddAchievementProgressTracker(id, max, additional_loot, excl
         id = id,
         max = max,
         icons = { icon },
+        delay_popup = true,
         exclude_from_sync = exclude_from_sync,
         remove_after_reaching_target = remove_after_reaching_target,
         class = "EHIAchievementProgressTracker"

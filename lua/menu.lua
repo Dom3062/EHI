@@ -33,6 +33,7 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
 		loc:load_localization_file(EHI.ModPath .. "loc/" .. language_filename .. ".json")
 	end
 	loc:load_localization_file(EHI.ModPath .. "loc/english.json", false)
+	EHI:CallCallback("LocalizationLoaded", loc)
 end)
 
 Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_EHI", function(menu_manager, nodes)

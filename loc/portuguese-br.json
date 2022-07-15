@@ -2,6 +2,9 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "",
 
+    "ehi_menu_next_page" : "Próxima página -->",
+    "ehi_menu_previous_page" : "<-- Página anterior",
+
     "ehi_r" : "Vermelho",
     "ehi_g" : "Verde",
     "ehi_b" : "Azul",

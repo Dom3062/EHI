@@ -2,6 +2,9 @@
     "ehi_mod_title" : "Información Adicional para Atracos",
     "ehi_mod_desc" : "",
 
+    "ehi_menu_next_page" : "Página Siguiente -->",
+    "ehi_menu_previous_page" : "<-- Página Anterior",
+
     "ehi_r" : "Rojo",
     "ehi_g" : "Verde",
     "ehi_b" : "Azul",

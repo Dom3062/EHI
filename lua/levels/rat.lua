@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -7,7 +8,6 @@ local heli_delay = 19
 local anim_delay = 743/30 -- 743/30 is a animation duration; 3s is zone activation delay (never used when van is coming back)
 local heli_delay_full = 13 + 19 -- 13 = Base Delay; 19 = anim delay
 local heli_icon = { Icon.Heli, "pd2_methlab", "pd2_goto" }
-local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
 local element_sync_triggers =
 {
@@ -18,7 +18,7 @@ local triggers = {
     [101907] = { id = "halloween_1", status = "ok", special_function = SF.SetAchievementStatus },
     [101917] = { id = "halloween_1", special_function = SF.SetAchievementComplete },
     [101914] = { id = "halloween_1", special_function = SF.SetAchievementFailed },
-    [101780] = { max = 25, id = "voff_5", class = TT.AchievementProgress, condition = show_achievement and ovk_and_up },
+    [101780] = { max = 25, id = "voff_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up },
     [102318] = { time = 60 + 60 + 30 + 15 + anim_delay, id = "Van", icons = Icon.CarEscape },
     [102319] = { time = 60 + 60 + 60 + 30 + 15 + anim_delay, id = "Van", icons = Icon.CarEscape },
     [101001] = { special_function = SF.Trigger, data = { 1010011, 1010012, 1010013 } },
@@ -75,7 +75,7 @@ else
 end
 
 EHI:ParseTriggers(triggers, "Van", Icon.CarEscape)
-if show_achievement and ovk_and_up then
+if EHI:GetOption("show_achievement") and ovk_and_up then
     EHI:ShowAchievementLootCounter({
         achievement = "halloween_2",
         max = 7,

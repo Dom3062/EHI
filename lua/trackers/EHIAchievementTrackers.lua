@@ -1,49 +1,41 @@
 local EHI = EHI
 local show_failed = EHI:GetOption("show_achievement_failed_popup")
+local show_started = EHI:GetOption("show_achievement_started_popup")
 local AchievementFailed = "ACHIEVEMENT FAILED!"
-local function ShowPopup(tracker)
-    if tracker._failed_popup_showed or tracker._achieved_popup_showed then
+local AchievementStarted = "ACHIEVEMENT STARTED!"
+local function ShowFailedPopup(tracker)
+    if tracker._failed_popup_showed or tracker._achieved_popup_showed or tracker._no_failure then
         return
     end
     tracker._failed_popup_showed = true
     local id = tracker._id
     managers.hud:custom_ingame_popup_text(AchievementFailed, managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
 end
+local function ShowStartedPopup(tracker)
+    if tracker._delay_popup then
+        EHI:AddCallback("DelayAchievementStartedPopup", callback(tracker, tracker, "ShowStartedPopup"))
+        return
+    end
+    local id = tracker._id
+    managers.hud:custom_ingame_popup_text(AchievementStarted, managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+end
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
 if show_failed then
-    local _f_init = HudChallengeNotification.init
-    if VoidUI and VoidUI.options.enable_challanges then
-        function HudChallengeNotification:init(title, ...)
-            _f_init(self, title, ...)
-            if title and title == AchievementFailed then
-                for i, d in ipairs(self._hud:children()) do
-                    if d.panel then
-                        for ii, dd in ipairs(d:children()) do
-                            if dd.set_image then
-                                dd:set_color(Color.red)
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    else
-        function HudChallengeNotification:init(title, ...)
-            _f_init(self, title, ...)
-            if title and title == AchievementFailed and self._box then
-                for i, d in ipairs(self._box:children()) do
-                    if d.set_image then
-                        d:set_color(Color.red)
-                    end
-                end
-            end
-        end
-    end
+    EHI:SetNotificationAlert(AchievementFailed)
+end
+if show_started then
+    EHI:SetNotificationAlert(AchievementStarted, nil, Color.green)
 end
 
 EHIAchievementTracker = class(EHIWarningTracker)
+if show_started then
+    function EHIAchievementTracker:init(panel, params)
+        EHIAchievementTracker.super.init(self, panel, params)
+        ShowStartedPopup(self)
+    end
+end
 function EHIAchievementTracker:update(t, dt)
     if self._fade then
         self._fade_time = self._fade_time - dt
@@ -73,18 +65,26 @@ function EHIAchievementTracker:SetFailed()
     self:SetTextColor(Color.red)
     self:AnimateBG()
     if show_failed then
-        ShowPopup(self)
+        ShowFailedPopup(self)
     end
 end
 
 if show_failed then
     function EHIAchievementTracker:delete()
-        ShowPopup(self)
+        ShowFailedPopup(self)
         EHIAchievementTracker.super.delete(self)
     end
 end
 
 EHIAchievementProgressTracker = class(EHIProgressTracker)
+function EHIAchievementProgressTracker:init(panel, params)
+    self._no_failure = params.no_failure
+    self._delay_popup = params.delay_popup
+    EHIAchievementProgressTracker.super.init(self, panel, params)
+    if show_started then
+        ShowStartedPopup(self)
+    end
+end
 if show_failed then
     function EHIAchievementProgressTracker:SetCompleted(force)
         self._achieved_popup_showed = true
@@ -93,8 +93,12 @@ if show_failed then
 
     function EHIAchievementProgressTracker:SetFailed()
         EHIAchievementProgressTracker.super.SetFailed(self)
-        ShowPopup(self)
+        ShowFailedPopup(self)
     end
+end
+function EHIAchievementProgressTracker:ShowStartedPopup()
+    self._delay_popup = false
+    ShowStartedPopup(self)
 end
 
 EHIAchievementDoneTracker = class(EHIAchievementTracker)
@@ -116,53 +120,19 @@ function EHIAchievementDoneTracker:update(t, dt)
     end
 end
 
-EHIAchievementObtainableTracker = class(EHIAchievementTracker)
-function EHIAchievementObtainableTracker:init(panel, params)
-    EHIAchievementTracker.super.init(self, panel, params)
-    self._not_obtainable = not params.obtainable
-    self:SetTextColor()
-end
-
-function EHIAchievementObtainableTracker:update(t, dt)
-    if self._not_obtainable then
-        self._time = self._time - dt
-        self._text:set_text(self:Format())
-        if self._time <= 0 then
-            self:delete()
-        end
-        return
-    end
-    EHIAchievementObtainableTracker.super.update(self, t, dt)
-end
-
-function EHIAchievementObtainableTracker:ToggleObtainable()
-    self:SetObtainable(self._not_obtainable)
-end
-
-function EHIAchievementObtainableTracker:SetObtainable(obtainable)
-    self._not_obtainable = not obtainable
-    self:SetTextColor()
-end
-
-function EHIAchievementObtainableTracker:SetTextColor(color)
-    if self._not_obtainable then
-        self._text:stop()
-        self._text:set_color(Color.red)
-    else
-        self._text:set_color(color or Color.white)
-        if self._time <= 10 then
-            self:AnimateWarning()
-        end
-    end
-end
-
 EHIAchievementUnlockTracker = class(EHIWarningTracker)
+if show_started then
+    function EHIAchievementUnlockTracker:init(panel, params)
+        EHIAchievementUnlockTracker.super.init(self, panel, params)
+        ShowStartedPopup(self)
+    end
+end
 function EHIAchievementUnlockTracker:update(t, dt)
     if self._fade then
         self._fade_time = self._fade_time - dt
         if self._fade_time <= 0 then
             if show_failed then
-                ShowPopup(self)
+                ShowFailedPopup(self)
             end
             self:delete()
         end
@@ -195,7 +165,7 @@ function EHIAchievementUnlockTracker:SetFailed()
     self:SetTextColor(Color.red)
     self:AnimateBG()
     if show_failed then
-        ShowPopup(self)
+        ShowFailedPopup(self)
     end
 end
 
@@ -262,7 +232,7 @@ function EHIAchievementNotificationTracker:SetFailed()
     self:AddTrackerToUpdate()
     self._dont_override_status = true
     if show_failed then
-        ShowPopup(self)
+        ShowFailedPopup(self)
     end
 end
 
@@ -274,6 +244,9 @@ function EHIAchievementBagValueTracker:init(panel, params)
     self._to_secure = params.to_secure or 0
     self._to_secure_formatted = self:FormatNumber(self._to_secure)
     EHIAchievementBagValueTracker.super.init(self, panel, params)
+    if show_started then
+        ShowStartedPopup(self)
+    end
 end
 
 function EHIAchievementBagValueTracker:OverridePanel(params)
@@ -346,6 +319,6 @@ function EHIAchievementBagValueTracker:SetFailed()
     self:AnimateBG()
     self._disable_counting = true
     if show_failed then
-        ShowPopup(self)
+        ShowFailedPopup(self)
     end
 end

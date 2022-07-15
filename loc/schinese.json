@@ -2,6 +2,9 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "更多劫案信息",
 
+    "ehi_menu_next_page" : "下一页 -->",
+    "ehi_menu_previous_page" : "<-- 上一页",
+
     "ehi_menu_only" : "仅显示菜单",
     "ehi_show_preview_text" : "显示预览文本",
     "ehi_show_preview_text_desc" : "隐藏/显示预览文本",
@@ -10,6 +13,9 @@
     "ehi_popup_experience_base_gained" : "Base XP Gained: ",
     "ehi_popup_experience_gained" : "Gained: ",
     "ehi_popup_experience_total" : "Total: ",
+    "ehi_popup_gage_packages" : "GAGE PACKAGES",
+    "ehi_popup_minion" : "CONVERT",
+    "ehi_popup_minion_killed" : "Your convert has been killed",
     
     "ehi_r" : "红色",
     "ehi_g" : "绿色",
@@ -66,6 +72,9 @@
 
     "ehi_show_achievement_failed_popup" : "显示 '完成成就失败'提示 ",
     "ehi_show_achievement_failed_popup_desc" : "在成就的条件无法完成时弹出标题为红色字体的窗口提示",
+
+    "ehi_show_achievement_started_popup" : "Show 'Achievement Started' Popup",
+    "ehi_show_achievement_started_popup_desc" : "Achievements that can be earned after meeting criteria will show as green in the popup",
 
     "ehi_show_gained_xp" : "显示获得的经验",
     "ehi_show_gained_xp_desc" : "显示当前获得的经验\n此追踪器将在罪无止境模式下禁用",
@@ -170,6 +179,12 @@
 
     "ehi_show_minion_per_player" : "单独显示每位玩家的变节警察",
     "ehi_show_minion_per_player_desc" : "在追踪器中用玩家颜色单独显示玩家的变节警察数",
+
+    "ehi_show_minion_killed_message" : "Show 'CONVERT KILLED' Message",
+    "ehi_show_minion_killed_message_desc" : "Shows a message when your convert has been killed",
+
+    "ehi_show_minion_killed_message_type" : "'CONVERT KILLED' Message Type",
+    "ehi_show_minion_killed_message_type_2" : "In hint panel",
 
     "ehi_show_difficulty_tracker" : "显示难度追踪器",
     "ehi_show_difficulty_tracker_desc" : "显示当前突击波次的难度追踪器\n难度：一个介于0%~100%的数值，其大小决定了本次突击人数的多寡与突击持续时间的长短\n每个地图都有自己预设的难度，多数地图警报触发后一段时间由0%提升至最高50%，在第一波突击结束后一般会达到75%，第二波结束后会达到100%",

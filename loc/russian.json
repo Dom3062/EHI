@@ -2,8 +2,11 @@
     "ehi_mod_title" : "Расширенное инфо при ограблении",
     "ehi_mod_desc" : "Extra Heist Info(EHI): Показывает дополнительную информацию во время миссии",
 
+    "ehi_menu_next_page" : "След. Страница -->",
+    "ehi_menu_previous_page" : "<-- Пред. Страница",
+
     "ehi_r" : "Красный",
-    "ehii_g" : "Зеленый",
+    "ehi_g" : "Зеленый",
     "ehi_b" : "Синий",
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Сбросить цвет",

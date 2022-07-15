@@ -2,9 +2,20 @@
     "ehi_mod_title" : "ข้อมูลเพื่มเติมในแต่ละด่านที่เจ๋งที่สุด",
     "ehi_mod_desc" : "Extra Heist Info(EHI): คลิกเพื่อปรับเปลี่ยนตัวเลือก",
 
+    "ehi_menu_next_page" : "ไปที่หน้าถัดไป -->",
+    "ehi_menu_previous_page" : "<-- ย้อนกลับไปหน้าที่แล้ว",
+
     "ehi_menu_only" : "สำหรับเมนูเท่านั้น",
     "ehi_show_preview_text" : "แสดงข้อความตัวอย่าง",
     "ehi_show_preview_text_desc" : "แสดงหรือซ่อนข้อความและไอคอนตัวอย่างในหน้าเมนู",
+
+    "ehi_popup_experience" : "ประสบการณ์",
+    "ehi_popup_experience_base_gained" : "ค่าประสบการณ์เริ่มต้น: ",
+    "ehi_popup_experience_gained" : "ได้รับ: ",
+    "ehi_popup_experience_total" : "ทั้งหมด: ",
+    "ehi_popup_gage_packages" : "บรรจุุภัณฑ์เกจ",
+    "ehi_popup_minion" : "ลูกน้อง",
+    "ehi_popup_minion_killed" : "ลูกน้องของคุณเสียชีวิต",
 
     "ehi_r": "แดง",
     "ehi_g": "เขียว",
@@ -61,6 +72,9 @@
 
     "ehi_show_achievement_failed_popup" : "แสดงหน้าต่าง 'ทำรางวัลความสำเร็จล้มเหลว' ",
     "ehi_show_achievement_failed_popup_desc" : "หน้าต่างทำรางวัลความสำเร็จล้มเหลวจะแสดงเป็นข้อความสีแดง",
+
+    "ehi_show_achievement_started_popup" : "Show 'Achievement Started' Popup",
+    "ehi_show_achievement_started_popup_desc" : "Achievements that can be earned after meeting criteria will show as green in the popup",
 
     "ehi_show_gained_xp" : "แสดงค่าประสบการณ์ที่ได้รับ",
     "ehi_show_gained_xp_desc" : "Show gained XP แสดงค่าประสบการณ์ที่ได้รับในด่านที่กำลังเล่นอยู่\nไอคอนติดตามจะถูกปิดการแสดงผลอัตโนมัติหากโหมดที่เลือก คือ Crime Spree",
@@ -165,6 +179,12 @@
 
     "ehi_show_minion_per_player" : "แสดงไอคอนจำนวนพันธมิตรของแต่ละบุคคล",
     "ehi_show_minion_per_player_desc" : "แสดงไอคอนจำนวนพันธมิตรแยกตามสีของแต่ละบุคคล",
+
+    "ehi_show_minion_killed_message" : "Show 'CONVERT KILLED' Message",
+    "ehi_show_minion_killed_message_desc" : "Shows a message when your convert has been killed",
+
+    "ehi_show_minion_killed_message_type" : "'CONVERT KILLED' Message Type",
+    "ehi_show_minion_killed_message_type_2" : "In hint panel",
 
     "ehi_show_difficulty_tracker" : "แสดงไอคอนความยาก",
     "ehi_show_difficulty_tracker_desc" : "แสดงไอคอนความยากของการจู่โจมในแต่ละรอบ มีค่าเป็นเปอร์เซ็นต์",

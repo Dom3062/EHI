@@ -18,9 +18,10 @@ local AssaultDelay = 30
 if EHI._cache.Client then
     AssaultDelay = AssaultDelay + 5
 end
+local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
 local triggers = {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072--[[, 1001073]] } },
-    [1001071] = { id = "slakt_3", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+    [1001071] = { id = "slakt_3", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
     [1001072] = { id = "cac_26", class = TT.AchievementNotification, special_function = SF.ShowAchievementFromStart, condition = show_achievement and ovk_and_up, exclude_from_sync = true },
     --[1001073] = { time = AssaultDelay, id = "AssaultDelay", stop_counting = EHI._cache.Host, class = TT.AssaultDelay },
     [100256] = { id = "slakt_3", special_function = SF.SetAchievementFailed },
@@ -30,10 +31,10 @@ local triggers = {
     [100322] = { id = "cac_26", special_function = SF.SetAchievementFailed },
     [102016] = { time = 7, id = "Endless", icons = Icon.EndlessAssault, class = TT.Warning },
 
-    [104579] = { time = 15, id = "Request", icons = request },
-    [104580] = { time = 25, id = "Request", icons = request },
-    [104581] = { time = 20, id = "Request", icons = request },
-    [104582] = { time = 30, id = "Request", icons = request }, -- Disabled in the mission script
+    [104579] = { time = 15, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) },
+    [104580] = { time = 25, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) },
+    [104581] = { time = 20, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) },
+    [104582] = { time = 30, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) }, -- Disabled in the mission script
 
     [104509] = { time = 30, id = "HackRestartWait", icons = { "wp_hack", "restarter" } },
 
@@ -79,7 +80,10 @@ EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(id, trigge
         end
     end
 end)
-EHI:AddLoadSyncFunction(function(self) -- Works only when the hack is running
+EHI:AddLoadSyncFunction(function(self)
+    if self:IsMissionElementEnabled(100270) then -- No keycard
+        EHI:Trigger(1001071)
+    end
     local pc = managers.worlddefinition:get_unit(104418) -- 1
     local pc2 = managers.worlddefinition:get_unit(102413) -- 2
     local pc3 = managers.worlddefinition:get_unit(102414) -- 3

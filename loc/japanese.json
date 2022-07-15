@@ -2,6 +2,9 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "",
 
+    "ehi_menu_next_page" : "次のページ -->",
+    "ehi_menu_previous_page" : "<-- 前のページ",
+
     "ehi_menu_only" : "メニューのみ",
     "ehi_show_preview_text" : "プレビューテキストを表示",
     "ehi_show_preview_text_desc" : "プレビューテキストの表示/非表示",
