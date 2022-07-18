@@ -48,7 +48,7 @@ function LootManager:GetSecuredBagsValueAmount()
     return value
 end
 
-function LootManager:EHIReportProgress(tracker_id, check_type, loot_type)
+function LootManager:EHIReportProgress(tracker_id, check_type, loot_type, f)
     if check_type == check_types.AllLoot then
     elseif check_type == check_types.BagsOnly then
         managers.ehi:SetTrackerProgress(tracker_id, self:GetSecuredBagsAmount())
@@ -59,5 +59,18 @@ function LootManager:EHIReportProgress(tracker_id, check_type, loot_type)
         managers.ehi:SetTrackerProgress(tracker_id, self:get_real_total_small_loot_value())
     elseif check_type == check_types.OneTypeOfLoot then
         managers.ehi:SetTrackerProgress(tracker_id, self:GetSecuredBagsTypeAmount(loot_type))
+    elseif check_type == check_types.CustomCheck then
+        if f then
+            f(self, tracker_id, loot_type)
+        end
+    elseif check_type == check_types.Debug then
+        local tweak = tweak_data.carry
+        local loot_name = "<Unknown>"
+        if tweak[loot_type] then
+            loot_name = tweak[loot_type].name_id and managers.localization:text(tweak[loot_type].name_id) or "<Unknown Bag>"
+        elseif tweak.small_loot[loot_type] then
+            loot_name = "Small Loot"
+        end
+        managers.chat:_receive_message(1, "[EHI]", "Secured: " .. loot_name .. "; Carry ID: " .. tostring(loot_type))
     end
 end

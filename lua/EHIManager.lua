@@ -981,10 +981,10 @@ function EHIManager:DecreaseTrackerProgress(id, value)
     end
 end
 
-function EHIManager:IncreaseTrackerProgressMax(id)
+function EHIManager:IncreaseTrackerProgressMax(id, max)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseProgressMax then
-        tracker:IncreaseProgressMax()
+        tracker:IncreaseProgressMax(max)
     end
 end
 

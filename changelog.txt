@@ -1,3 +1,7 @@
+r69 (18. 07. 2022):
+Added inspire boost cooldown buff
+Shadow Raid: Added trackers for achievements
+
 r68 (15. 07. 2022):
 Added "Show 'Achievement Started' Popup" option
 Added "Show 'CONVERT KILLED' Message" option

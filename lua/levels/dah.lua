@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local heli_delay = 26 + 6
@@ -8,14 +9,13 @@ local element_sync_triggers =
 local triggers = {
     [100276] = { time = 25 + 3 + 11, id = "CFOInChopper", icons = { Icon.Heli, "pd2_goto" } },
 
-    [101343] = { time = 30, id = "KeypadReset", icons = { "restarter" } },
+    [101343] = { time = 30, id = "KeypadReset", icons = { "restarter" }, waypoint = { position_by_element = EHI:GetInstanceElementID(100179, 9100) } },
 
     [102259] = { id = "dah_8", special_function = SF.SetAchievementComplete },
+    [102261] = { id = "dah_8", special_function = SF.IncreaseProgress },
 
-    [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot },
-    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot },
-
-    [102261] = { id = "dah_8", special_function = SF.IncreaseProgress }
+    [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position = Vector3(-5621, -2352, 1463.66) } },
+    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position = Vector3(-5186, 1188, 1290.66) } }
 }
 if Network:is_client() then
     EHI:SetSyncTriggers(element_sync_triggers)
@@ -40,3 +40,14 @@ if EHI:IsDifficultyOrAbove("overkill") then
         managers.ehi:SetAchievementFailed("dah_8")
     end)
 end
+local DisableWaypoints = {}
+if EHI:MissionTrackersAndWaypointEnabled() then
+    DisableWaypoints[104882] = true -- Defend during loud escape
+    DisableWaypoints[103163] = true -- Exclamation mark during loud escape
+end
+DisableWaypoints[101368] = true -- Drill waypoint for vault with red diamond
+for i = 2500, 2700, 200 do
+    DisableWaypoints[EHI:GetInstanceElementID(100011, i)] = true -- Defend
+    DisableWaypoints[EHI:GetInstanceElementID(100036, i)] = true -- Fix
+end
+EHI:DisableWaypoints(DisableWaypoints)

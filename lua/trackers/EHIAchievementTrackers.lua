@@ -23,10 +23,10 @@ local lerp = math.lerp
 local sin = math.sin
 local Color = Color
 if show_failed then
-    EHI:SetNotificationAlert(AchievementFailed)
+    EHI:SetNotificationAlert(AchievementFailed, "ehi_popup_achievement_failed")
 end
 if show_started then
-    EHI:SetNotificationAlert(AchievementStarted, nil, Color.green)
+    EHI:SetNotificationAlert(AchievementStarted, "ehi_popup_achievement_started", Color.green)
 end
 
 EHIAchievementTracker = class(EHIWarningTracker)
@@ -186,7 +186,12 @@ function EHIAchievementNotificationTracker:update(t, dt)
 end
 
 function EHIAchievementNotificationTracker:Format()
-    return string.upper(self._status)
+    local status = "ehi_achievement_" .. self._status
+    if LocalizationManager._custom_localizations[status] then
+        return managers.localization:text(status)
+    else
+        return string.upper(self._status)
+    end
 end
 
 function EHIAchievementNotificationTracker:SetText()
@@ -200,7 +205,7 @@ function EHIAchievementNotificationTracker:SetTextColor(color)
         c = color
     elseif self._status == "ok" or self._status == "done" or self._status == "pass" or self._status == "finish" or self._status == "destroy" then
         c = Color.green
-    elseif self._status == "ready" or self._status == "loud" or self._status == "push" or self._status == "hack" or self._status == "land" or self._status ==  "find" then
+    elseif self._status == "ready" or self._status == "loud" or self._status == "push" or self._status == "hack" or self._status == "land" or self._status == "find" then
         c = Color.yellow
     else
         c = Color.red

@@ -98,6 +98,7 @@
 
         <post hook_id="lib/units/beings/player/playerdamage" :script_path="PlayerDamage.lua" />
         <post hook_id="lib/units/beings/player/playerinventory" :script_path="PlayerInventory.lua" />
+        <post hook_id="lib/units/beings/player/playermovement" :script_path="PlayerMovement.lua" />
         <post hook_id="lib/units/beings/player/states/playerstandard" :script_path="PlayerStandard.lua" />
         <post hook_id="lib/units/enemies/cop/copbrain" :script_path="CopBrain.lua" />
         <post hook_id="lib/units/civilians/civiliandamage" :script_path="CivilianDamage.lua" />

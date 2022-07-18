@@ -81,7 +81,7 @@ EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(id, trigge
     end
 end)
 EHI:AddLoadSyncFunction(function(self)
-    if self:IsMissionElementEnabled(100270) then -- No keycard
+    if self:IsMissionElementEnabled(100270) then -- No keycard achievement
         EHI:Trigger(1001071)
     end
     local pc = managers.worlddefinition:get_unit(104418) -- 1

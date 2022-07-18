@@ -24,7 +24,9 @@ _G.EHI =
             ValueOfBags = 3,
             SmallLootOnly = 4, -- Currently unused
             ValueOfSmallLoot = 5,
-            OneTypeOfLoot = 6
+            OneTypeOfLoot = 6,
+            CustomCheck = 7,
+            Debug = 8
         }
     },
 
@@ -467,6 +469,10 @@ function EHI:GetColor(color)
     return Color.white
 end
 
+function EHI:MissionTrackersAndWaypointEnabled()
+    return self:GetOption("show_mission_trackers") and self:GetOption("show_waypoints")
+end
+
 function EHI:IsXPTrackerDisabled()
     if not self:GetOption("show_gained_xp") then
         return true
@@ -624,6 +630,14 @@ end
 ]]
 function EHI:GetInstanceElementPosition(instance_vector, element_vector, rotation)
     return instance_vector + element_vector:rotate_with(rotation)
+end
+
+function EHI:GetInstanceElementPosition2(id)
+    local element = managers.mission:get_element_by_id(id)
+    if not element then
+        return nil
+    end
+    return element:value("position")
 end
 
 function EHI:Sync(message, data)
@@ -1264,6 +1278,18 @@ function EHI:HookElements(elements_to_hook)
 end
 
 function EHI:SyncLoad()
+    for id, _ in pairs(self.HookOnLoad) do
+        local trigger = triggers[id]
+        if trigger and trigger.waypoint and trigger.waypoint.position_by_element then
+            local vector = self:GetInstanceElementPosition2(trigger.waypoint.position_by_element)
+            if vector then
+                trigger.waypoint.position = vector
+                trigger.waypoint.position_by_element = nil
+            else
+                self:Log("Element with ID " .. tostring(trigger.waypoint.position_by_element) .. " has not been found. Element ID to hook: " .. tostring(id))
+            end
+        end
+    end
     self:HookElements(self.HookOnLoad)
     self.HookOnLoad = {}
     self:DisableWaypoints(self.DisableOnLoad)
@@ -1289,6 +1315,7 @@ function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
         return
     end
     local show_achievement = self:GetOption("show_achievement")
+    local host = self._cache.Host
     for id, data in pairs(mission_triggers) do
         -- Mark every tracker, that has random time, as inaccurate
         if data.random_time then
@@ -1323,9 +1350,16 @@ function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
         if data.waypoint then
             data.waypoint.time = data.waypoint.time or data.time
             if not data.waypoint.icon then
-                --data.waypoint.icon = data.waypoint.icon or data.icons and data.icons[1]
                 data.waypoint.icon = data.icons and data.icons[1] and data.icons[1].icon or data.icons[1]
-                --local tracker_icon = data.icons and data.icons[1]
+            end
+            if data.waypoint.position_by_element then
+                local vector = self:GetInstanceElementPosition2(data.waypoint.position_by_element)
+                if vector then
+                    data.waypoint.position = vector
+                    data.waypoint.position_by_element = nil
+                elseif host then
+                    self:Log("Element with ID " .. tostring(trigger.waypoint.position_by_element) .. " has not been found. Element ID to hook: " .. tostring(id))
+                end
             end
         end
     end
@@ -1443,7 +1477,8 @@ function EHI:AddAchievementToCounter(params)
         id = params.achievement,
         check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly,
         loot_type = params.counter and params.counter.loot_type,
-        sync_only = params.sync_only
+        sync_only = params.sync_only,
+        f = params.counter and params.counter.f
     }
     self:HookAchievementCounter()
 end
@@ -1451,9 +1486,9 @@ end
 function EHI:HookAchievementCounter()
     if not self.AchievementCounterHook then
         local function Hook(self, sync_load)
-            for _, achievement in pairs(EHI.AchievementCounter) do
+            for _, achievement in ipairs(EHI.AchievementCounter) do
                 if not achievement.sync_only or (achievement.sync_only and sync_load) then
-                    self:EHIReportProgress(achievement.id, achievement.check_type, achievement.loot_type)
+                    self:EHIReportProgress(achievement.id, achievement.check_type, achievement.loot_type, achievement.f)
                 end
             end
         end

@@ -306,6 +306,13 @@ tweak_data.ehi =
             x = 3,
             y = 2
         },
+        morale_boost =
+        {
+            skills = true,
+            bad = true,
+            x = 4,
+            y = 9
+        },
         long_dis_revive =
         {
             u100skill = true,
