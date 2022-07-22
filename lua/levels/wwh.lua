@@ -1,10 +1,10 @@
+local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [100946] = { max = 4, id = "wwh_10", class = TT.AchievementProgress },
-    [100944] = { id = "wwh_9", class = TT.AchievementNotification, contidition = show_achievement and ovk_and_up },
+    [100944] = { id = "wwh_9", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
     [101250] = { id = "wwh_9", special_function = SF.SetAchievementFailed },
     [100082] = { id = "wwh_9", special_function = SF.SetAchievementComplete },
     [100322] = { time = 120, id = "Fuel", icons = { "pd2_water_tap" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },

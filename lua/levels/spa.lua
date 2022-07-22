@@ -2,8 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     -- First Assault Delay
     --[[[EHI:GetInstanceElementID(100003, 7950)] = { time = 3 + 12 + 12 + 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.RemoveTriggerWhenExecuted },
@@ -15,9 +14,9 @@ local triggers = {
 
     [101989] = { special_function = SF.Trigger, data = { 1019891, 1019892 } },
     -- It was 7 minutes before the change
-    [1019891] = { time = 360, id = "spa_5", class = TT.Achievement, condition = ovk_and_up and show_achievement, exclude_from_sync = true },
+    [1019891] = { time = 360, id = "spa_5", class = TT.Achievement, difficulty_pass = ovk_and_up, exclude_from_sync = true },
     [101997] = { id = "spa_5", special_function = SF.SetAchievementComplete },
-    [1019892] = { max = 8, id = "spa_6", class = TT.AchievementProgress, remove_after_reaching_target = false, condition = ovk_and_up and show_achievement, exclude_from_sync = true },
+    [1019892] = { max = 8, id = "spa_6", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = ovk_and_up, exclude_from_sync = true },
     [101999] = { id = "spa_6", special_function = SF.IncreaseProgress },
     [102002] = { id = "spa_6", special_function = SF.FinalizeAchievement },
 

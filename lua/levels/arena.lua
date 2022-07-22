@@ -26,13 +26,12 @@ end
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [100693] = { id = "live_2", class = TT.AchievementNotification },
     [102704] = { id = "live_2", special_function = SF.SetAchievementFailed },
     [100246] = { id = "live_2", special_function = SF.SetAchievementComplete },
-    [102785] = { id = "live_4", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+    [102785] = { id = "live_4", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
     [100249] = { id = "live_4", special_function = SF.SetAchievementComplete },
     [102694] = { id = "live_4", special_function = SF.SetAchievementFailed },
 
@@ -46,7 +45,7 @@ local triggers = {
     [100265] = { id = "live_5", special_function = SF.SetAchievementComplete },
     [2] = { max = 3, id = "C4Progress", icons = { Icon.C4 }, class = TT.Progress },
     [EHI:GetInstanceElementID(100177, 4900)] = { id = "C4Progress", special_function = SF.IncreaseProgress },
-    [EHI:GetInstanceElementID(100166, 4900)] = { time = 5, id = "WaitTime", icons = { "faster" } },
+    [EHI:GetInstanceElementID(100166, 4900)] = { time = 5, id = "WaitTime", icons = { Icon.Wait } },
     [EHI:GetInstanceElementID(100128, 4900)] = { time = 10, id = "PressSequence", icons = { "pd2_generic_interact" }, class = TT.Warning },
 
     [100304] = { time = 5, id = "live_3", class = TT.AchievementUnlock }

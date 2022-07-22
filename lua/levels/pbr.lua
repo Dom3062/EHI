@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local function berry_4_fail()
     managers.player:remove_listener("EHI_berry_4_bleedout")
     managers.player:remove_listener("EHI_berry_4_incapacitated")
@@ -14,8 +14,8 @@ end
 local triggers = {
     [102290] = { id = "berry_3", special_function = SF.SetAchievementComplete },
     [102292] = { special_function = SF.Trigger, data = { 1022921, 1022922, 1022923, --[[1022924]] } },
-    [1022921] = { time = 600, id = "berry_3", class = TT.Achievement, condition = ovk_and_up and show_achievement },
-    [1022922] = { status = "ok", id = "berry_4", class = TT.AchievementNotification, condition = ovk_and_up and show_achievement },
+    [1022921] = { time = 600, id = "berry_3", class = TT.Achievement, difficulty_pass = ovk_and_up },
+    [1022922] = { status = "ok", id = "berry_4", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
     [1022923] = { special_function = SF.CustomCode, f = function()
         if EHI:IsAchievementLocked("berry_4") and ovk_and_up and show_achievement then
             -- Player

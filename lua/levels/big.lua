@@ -5,8 +5,9 @@ local TT = EHI.Trackers
 local pc_hack = { time = 20, id = "PCHack", icons = { "wp_hack" } }
 local bigbank_4 = { special_function = SF.Trigger, data = { 1, 2 } }
 local show_achievement = EHI:GetOption("show_achievement")
+local hard_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard)
 local triggers = {
-    [1] = { time = 720, id = "bigbank_4", class = TT.Achievement, condition = show_achievement and EHI:IsDifficultyOrAbove("hard") },
+    [1] = { time = 720, id = "bigbank_4", class = TT.Achievement, difficulty_pass = hard_and_above },
     [2] = { special_function = SF.RemoveTriggers, data = { 100107, 106140, 106150 } },
     [100107] = bigbank_4,
     [106140] = bigbank_4,
@@ -71,23 +72,25 @@ EHI:ShowAchievementLootCounter({
     exclude_from_sync = true,
     remove_after_reaching_target = false
 })
-if show_achievement and EHI:IsDifficultyOrAbove("death_wish") then
-    EHI:AddOnAlarmCallback(function(dropin)
-        if dropin or not managers.preplanning:IsAssetBought(106594) then -- C4 Escape
-            return
-        end
-        managers.ehi:AddTracker({
-            id = "cac_22",
-            icons = EHI:GetAchievementIcon("cac_22"),
-            class = TT.AchievementNotification,
-            exclude_from_sync = true
-        })
-    end)
-end
-if show_achievement and EHI:IsDifficultyOrAbove("hard") then
-    EHI:AddLoadSyncFunction(function(self)
-        self:AddTimedAchievementTracker("bigbank_4", 720)
-    end)
+if show_achievement then
+    if hard_and_above then
+        EHI:AddLoadSyncFunction(function(self)
+            self:AddTimedAchievementTracker("bigbank_4", 720)
+        end)
+    end
+    if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
+        EHI:AddOnAlarmCallback(function(dropin)
+            if dropin or not managers.preplanning:IsAssetBought(106594) then -- C4 Escape
+                return
+            end
+            managers.ehi:AddTracker({
+                id = "cac_22",
+                icons = EHI:GetAchievementIcon("cac_22"),
+                class = TT.AchievementNotification,
+                exclude_from_sync = true
+            })
+        end)
+    end
 end
 
 local tbl =

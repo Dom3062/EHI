@@ -5,8 +5,8 @@ local TT = EHI.Trackers
 local Methlab = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } }
 local element_sync_triggers = {}
 local start_index = { 7800, 8200, 8600 }
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
-local very_hard_and_below = EHI:IsDifficultyOrBelow("very_hard")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+local very_hard_and_below = EHI:IsDifficultyOrBelow(EHI.Difficulties.VeryHard)
 local client = Network:is_client()
 for _, index in ipairs(start_index) do
     -- Cooking restart

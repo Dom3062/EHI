@@ -698,7 +698,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         CreateProgressTracker("dec21_02", EHI:GetAchievementProgress("dec21_02_stat"), 75, false, true)
         stats.dec21_02_stat = "dec21_02"
     end
-    if EHI:IsDifficultyOrAbove("very_hard") then
+    if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
         if EHI:IsAchievementLocked2("tango_achieve_3") and managers.ehi:GetStartedFromBeginning() then -- "The Reckoning" achievement
             local pass, primary_index, secondary_index = CheckWeaponsBlueprint(tweak_data.achievement.complete_heist_achievements.tango_3.killed_by_blueprint.blueprint)
             if pass then
@@ -734,7 +734,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end)
         end
     end
-    if EHI:IsDifficultyOrAbove("overkill") then
+    if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
         if EHI:IsAchievementLocked2("gage2_9") and HasMeleeTypeEquipped("knife") then -- "I Ain't Got Time to Bleed" achievement
             local function f()
                 CreateProgressTracker("gage2_9", EHI:GetAchievementProgress("gage2_9_stats"), 15, false, true)
@@ -831,7 +831,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end
     end
-    if EHI:IsDifficultyOrAbove("mayhem") and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
+    if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
         local function f()
             CreateProgressTracker("gage3_2", EHI:GetAchievementProgress("gage3_2_stats"), 6, false, true)
         end

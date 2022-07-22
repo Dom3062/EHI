@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove("death_wish") then
+if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
     local SF = EHI.SpecialFunctions
     local TT = EHI.Trackers
     local triggers = {

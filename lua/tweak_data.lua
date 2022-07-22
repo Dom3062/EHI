@@ -369,6 +369,7 @@ tweak_data.ehi =
         },
         damage_control_cooldown =
         {
+            bad = true,
             deck = true,
             folder = "myh",
             y = 1

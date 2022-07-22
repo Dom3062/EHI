@@ -1,6 +1,7 @@
+local EHI = EHI
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local ObjectiveWait = { time = 90, id = "ObjectiveWait", icons = { "faster" } }
 local triggers = {
     --[100824] = { time = 360, id = "RC_Achieve_speedrun", icons = { "ehi_rc_6mins" }, class = TT.Achievement, condition = show_achievement and ovk_and_up }

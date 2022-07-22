@@ -1,15 +1,15 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers =
 {
     [100428] = { time = 24, id = "HeliDropDrill", icons = Icon.HeliDropDrill, hook_element = 100427 }, -- 20s
     [100430] = { time = 24, id = "HeliDropDrill", icons = Icon.HeliDropDrill, hook_element = 100427 } -- 30s
 }
 local triggers = {
-    [101228] = { time = 210, id = "pig_2", class = TT.Achievement, condition = ovk_and_up and show_achievement },
+    [101228] = { time = 210, id = "pig_2", class = TT.Achievement, difficulty_pass = ovk_and_up },
     [100788] = { id = "pig_2", special_function = SF.SetAchievementComplete },
 
     [100225] = { time = 5 + 5 + 22, id = Icon.Heli, icons = Icon.HeliEscape },

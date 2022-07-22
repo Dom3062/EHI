@@ -1,14 +1,14 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    [100296] = { max = 2, id = "uno_5", class = TT.AchievementProgress, condition = show_achievement and ovk_and_up },
+    [100296] = { max = 2, id = "uno_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up },
     [103391] = { id = "uno_5", special_function = SF.IncreaseProgress },
     [103395] = { id = "uno_5", special_function = SF.SetAchievementFailed },
 
-    [100107] = { id = "des_9", status = "push", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+    [100107] = { id = "des_9", status = "push", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
     [102480] = { special_function = SF.Trigger, data = { 1024801, 1024802 } },
     [1024801] = { id = "des_9", status = "finish", special_function = SF.SetAchievementStatus },
     [1024802] = { special_function = SF.RemoveTriggers, data = { 102486 } },

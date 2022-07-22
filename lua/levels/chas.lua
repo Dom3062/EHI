@@ -2,15 +2,14 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers = {
     [100209] = { time = 5, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, client_on_executed = SF.RemoveTriggerWhenExecuted, hook_element = 100602, remove_trigger_when_executed = true },
     [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, hook_element = 102453, remove_trigger_when_executed = true }
 }
 local triggers = {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
-    [1001071] = { max = 15, id = "chas_10", class = TT.AchievementProgress, remove_after_reaching_target = false, exclude_from_sync = true, condition = ovk_and_up and show_achievement },
+    [1001071] = { max = 15, id = "chas_10", class = TT.AchievementProgress, remove_after_reaching_target = false, exclude_from_sync = true, difficulty_pass = ovk_and_up },
     [1001072] = { special_function = SF.CustomCode, f = function ()
         if managers.ehi:TrackerExists("chas_10") then
             EHI:AddAchievementToCounter({
@@ -18,7 +17,7 @@ local triggers = {
             })
         end
     end },
-    [1001073] = { time = 360, id = "chas_11", class = TT.Achievement, condition = ovk_and_up and show_achievement },
+    [1001073] = { time = 360, id = "chas_11", class = TT.Achievement, difficulty_pass = ovk_and_up },
     [EHI:GetInstanceElementID(100017, 11325)] = { id = "Gas", special_function = SF.RemoveTracker },
 
     [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { "pd2_question", Icon.Drill, "pd2_goto" } },
@@ -52,9 +51,9 @@ local DisableWaypoints =
 
 EHI:ParseTriggers(triggers)
 EHI:DisableWaypoints(DisableWaypoints)
-if show_achievement then
+if EHI:GetOption("show_achievement") and ovk_and_up then
     EHI:AddLoadSyncFunction(function(self)
-        if EHI.ConditionFunctions.IsStealth() and ovk_and_up then
+        if EHI.ConditionFunctions.IsStealth() then
             EHI:ShowAchievementLootCounter({
                 achievement = "chas_10",
                 max = 15,
@@ -63,6 +62,7 @@ if show_achievement then
             })
             self:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())
         end
+        self:AddTimedAchievementTracker("chas_11", 360)
     end)
     EHI:AddOnAlarmCallback(function()
         managers.ehi:SetAchievementFailed("chas_10")
@@ -81,8 +81,3 @@ local tbl =
     [EHI:GetInstanceElementID(100065, 5950)] = { icons = { Icon.Vault }, remove_on_pause = true }
 }
 EHI:UpdateUnits(tbl)
-if show_achievement and ovk_and_up then
-    EHI:AddLoadSyncFunction(function(self)
-        self:AddTimedAchievementTracker("chas_11", 360)
-    end)
-end

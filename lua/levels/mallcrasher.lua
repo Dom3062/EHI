@@ -103,10 +103,10 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
-local overkill = EHI:IsDifficulty("overkill")
+local overkill = EHI:IsDifficulty(EHI.Difficulties.OVERKILL)
 local AddMoney = EHI:GetFreeCustomSpecialFunctionID()
 local MoneyTrigger = { id = "MallDestruction", special_function = AddMoney }
-local OverkillOrBelow = EHI:IsDifficultyOrBelow("overkill")
+local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
 local triggers =
 {
     -- Time before escape vehicle arrives
@@ -128,7 +128,7 @@ local triggers =
     [300851] = MoneyTrigger, -- +8000, appears to be unused
 
     [301148] = { special_function = SF.Trigger, data = { 3011481, 3011482, 3011483 } },
-    [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = "EHIameno3Tracker", condition = show_achievement and overkill, exclude_from_sync = true },
+    [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = "EHIameno3Tracker", difficulty_pass = overkill, exclude_from_sync = true },
     [3011482] = { time = 180, id = "uno_3", class = TT.Achievement, exclude_from_sync = true },
     [3011483] = { special_function = SF.CustomCode, f = function()
         if managers.ehi:TrackerDoesNotExist("ameno_3") then

@@ -1,10 +1,10 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    [100073] = { id = "ameno_7", status = "loud", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+    [100073] = { id = "ameno_7", status = "loud", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
     [100624] = { id = "ameno_7", special_function = SF.SetAchievementFailed },
     [100634] = { id = "ameno_7", special_function = SF.SetAchievementComplete },
     [101541] = { time = 2, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
@@ -27,11 +27,11 @@ local triggers = {
 }
 EHI:AddOnAlarmCallback(function(dropin)
     local start_chance = 25 -- Normal
-    if EHI:IsDifficulty("hard") then -- Hard
+    if EHI:IsDifficulty(EHI.Difficulties.Hard) then
         start_chance = 27
-    elseif EHI:IsDifficulty("very_hard") then -- Very Hard
+    elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
         start_chance = 32
-    elseif EHI:IsDifficultyOrAbove("overkill") then
+    elseif ovk_and_up then
         start_chance = 36
     end
     managers.ehi:AddEscapeChanceTracker(dropin, start_chance)

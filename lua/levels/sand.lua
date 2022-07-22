@@ -89,8 +89,8 @@ local triggers = {
     [100782] = { time = 18, id = "SkidDriving11", icons = skid }, -- More accurate
     [104227] = { time = 37, id = "SkidDriving12", icons = skid }, -- More accurate
     [104305] = { time = 25, id = "SkidDriving13", icons = skid }, -- More accurate
-    [101009] = { time = 210/30, id = "RampRaise", icons = { "faster" } },
-    [101799] = { time = 181/30, id = "RampLower", icons = { "faster" } },
+    [101009] = { time = 210/30, id = "RampRaise", icons = { Icon.Wait } },
+    [101799] = { time = 181/30, id = "RampLower", icons = { Icon.Wait } },
 
     [104528] = { time = 22, id = "Crane", icons = { "equipment_winch_hook" } }, -- 104528 -> 100703
 
@@ -100,22 +100,22 @@ local triggers = {
     [103925] = { id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 30 + boat_anim, no = 19 + boat_anim } }
 }
 local time = 5 -- Normal
-if EHI:IsBetweenDifficulties("hard", "very_hard") then
+if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
     -- Hard + Very Hard
     time = 15
-elseif EHI:IsDifficulty("overkill") then
+elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
     -- OVERKILL
     time = 20
-elseif EHI:IsBetweenDifficulties("mayhem", "death_wish") then
+elseif EHI:IsBetweenDifficulties(EHI.Difficulties.Mayhem, EHI.Difficulties.DeathWish) then
     -- Mayhem + Death Wish
     time = 30
-elseif EHI:IsDifficulty("death_sentence") then
+elseif EHI:IsDifficulty(EHI.Difficulties.DeathSentence) then
     -- Death Sentence
     time = 40
 end
 for _, index in ipairs({8530, 9180, 9680}) do
-    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { "restarter" } } -- ECM Jammer
-    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + time, id = "KeypadReboot", icons = { "restarter" } }
+    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop } } -- ECM Jammer
+    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + time, id = "KeypadReboot", icons = { Icon.Loop } }
 end
 for i = 105290, 105329, 1 do
     triggers[i] = { id = "sand_10", special_function = SF.IncreaseProgress }

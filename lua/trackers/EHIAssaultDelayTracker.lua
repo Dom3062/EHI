@@ -1,7 +1,7 @@
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
-local IsOverkillOrBelow = EHI:IsDifficultyOrBelow("overkill")
+local IsOverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
 local Control = Color.white
 local Anticipation = Color(255, 186, 204, 28) / 255
 if BAI then

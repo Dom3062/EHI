@@ -5,11 +5,10 @@ local triggers = {}
 local level_id = Global.game_settings.level_id
 if level_id == "firestarter_3" then
     local SF = EHI.SpecialFunctions
-    local show_achievement = EHI:GetOption("show_achievement")
-    local dw_and_above = EHI:IsDifficultyOrAbove("death_wish")
+    local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
     triggers = {
         [102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1021441 } },
-        [1021441] = { status = "ok", id = "slakt_5", class = TT.AchievementNotification, condition = dw_and_above and show_achievement },
+        [1021441] = { status = "ok", id = "slakt_5", class = TT.AchievementNotification, difficulty_pass = dw_and_above },
         [102146] = { status = "finish", id = "slakt_5", special_function = SF.SetAchievementStatus },
         [105237] = { id = "slakt_5", special_function = SF.SetAchievementComplete },
         [105235] = { id = "slakt_5", special_function = SF.SetAchievementFailed }

@@ -1,9 +1,10 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
-local very_hard_and_up = EHI:IsDifficultyOrAbove("very_hard")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local very_hard_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local HeliWait = { Icon.Heli, Icon.Escape, Icon.LootDrop, Icon.Wait }
 local chance = { id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = TT.Chance, special_function = SF.SetChanceFromElementWhenTrackerExists }
 local triggers = {

@@ -1,4 +1,4 @@
-EHIHeliTracker = EHIHeliTracker or class(EHICountTracker)
+EHIHeliTracker = class(EHICountTracker)
 function EHIHeliTracker:update(t, dt)
     self._time = self._time - dt
     self._time_text:set_text(EHIHeliTracker.super.super.Format(self))
@@ -89,15 +89,14 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local ExecuteIfElementIsEnabled = EHI:GetFreeCustomSpecialFunctionID()
 local DelayExecution = EHI:GetFreeCustomSpecialFunctionID()
 local kills = 7 -- Normal + Hard
-if EHI:IsBetweenDifficulties("very_hard", "overkill") then
+if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
     -- Very Hard + OVERKILL
     kills = 10
-elseif EHI:IsDifficultyOrAbove("mayhem") then
+elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
     -- Mayhem+
     kills = 15
 end
@@ -108,7 +107,7 @@ local triggers = {
     [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, "equipment_winch_hook", Icon.Loop }, special_function = ExecuteIfElementIsEnabled },
     [102181] = { id = "HeliWinchLoop", special_function = SF.RemoveTracker },
 
-    [100809] = { time = 60, id = "cac_9", class = TT.Achievement, condition = ovk_and_up and show_achievement, special_function = SF.RemoveTriggerAndShowAchievement, exclude_from_sync = true },
+    [100809] = { time = 60, id = "cac_9", class = TT.Achievement, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement, exclude_from_sync = true },
 
     [100068] = { max = kills, id = "SniperDeath", icons = { "sniper", "pd2_kill" }, class = TT.Progress },
     [103446] = { time = 20 + 6 + 4, id = "HeliDropsC4", icons = { Icon.Heli, "pd2_c4", "pd2_goto" } },
@@ -123,7 +122,7 @@ local triggers = {
     [102001] = { time = 5, id = "C4Explosion", icons = { "pd2_c4" } },
 
     [100060] = { special_function = SF.Trigger, data = { 1000601, 1000602 } },
-    [1000601] = { id = "PanicRoomTakeoff", icons = { "enemy", { icon = "faster", visible = false } }, class = "EHIHeliTracker" },
+    [1000601] = { id = "PanicRoomTakeoff", icons = { "enemy", { icon = Icon.Wait, visible = false } }, class = "EHIHeliTracker" },
     [1000602] = { special_function = SF.CustomCode, f = function()
         local count = 0
         if EHI._cache.Host then
@@ -176,7 +175,7 @@ local triggers = {
     [104661] = { special_function = SF.CustomCode, f = function()
         managers.ehi:CallFunction("PanicRoomTakeoff", "ObjectiveComplete", "assault_end")
     end },
-    [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, "faster" }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } }
+    [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } }
 }
 
 EHI:ParseTriggers(triggers)

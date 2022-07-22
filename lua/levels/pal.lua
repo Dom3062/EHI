@@ -10,7 +10,7 @@ local vectors =
     [4800] = EHI:GetInstanceElementPosition(Vector3(-2391.17, 5821.32, 16.5), LootDropWP, Rotation(44.9999, 0, -0)),
     [4850] = EHI:GetInstanceElementPosition(Vector3(-7643.86, 3668.63, 16.5), LootDropWP, Rotation(0, 0, -0))
 }
-local HeliLootDropWait = { Icon.Heli, Icon.LootDrop, "faster" }
+local HeliLootDropWait = { Icon.Heli, Icon.LootDrop, Icon.Wait }
 local element_sync_triggers =
 {
     [102887] = { time = 1800/30, id = "HeliCage", icons = { Icon.Heli, Icon.LootDrop }, hook_element = 102892 }
@@ -25,13 +25,13 @@ local triggers = {
     [102826] = { id = "PAL", special_function = SF.RemoveTracker },
 
     [102301] = { special_function = SF.Trigger, data = { 1023011, 1023012 } },
-    [1023011] = { time = 15, id = "Trap", icons = { "pd2_c4" }, class = TT.Warning },
-    [1023012] = { id = "pal_3", class = TT.AchievementNotification, condition = EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove("overkill") },
+    [1023011] = { time = 15, id = "Trap", icons = { Icon.C4 }, class = TT.Warning },
+    [1023012] = { id = "pal_3", class = TT.AchievementNotification, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
     [101566] = { id = "Trap", special_function = SF.RemoveTracker },
     [101976] = { id = "pal_3", special_function = SF.SetAchievementComplete },
     [101571] = { id = "pal_3", special_function = SF.SetAchievementFailed },
 
-    [101230] = { time = 120, id = "Water", icons = { "pd2_water_tap" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [101230] = { time = 120, id = "Water", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [101231] = { id = "Water", special_function = SF.PauseTracker }
 }
 

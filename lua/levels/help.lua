@@ -10,8 +10,7 @@ EHI.AchievementTrackers.EHIorange5Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local mayhem_and_up = EHI:IsDifficultyOrAbove("mayhem")
+local mayhem_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
 local c4_wp = Vector3(0, 0, 50)
 local vectors =
 { -- The rotation is taken directly from the game by Lua (it is not the same as in the decompiled mission script)
@@ -20,10 +19,10 @@ local vectors =
     [10700] = EHI:GetInstanceElementPosition(Vector3(-3127, 3312, 1887.84), c4_wp, Rotation(0, 0, -0))
 }
 local triggers = {
-    [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, id = "orange_4", class = TT.Achievement, condition = mayhem_and_up and show_achievement, exclude_from_sync = true },
+    [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, id = "orange_4", class = TT.Achievement, difficulty_pass = mayhem_and_up, exclude_from_sync = true },
     [EHI:GetInstanceElementID(100461, 21700)] = { id = "orange_4", special_function = SF.SetAchievementComplete },
 
-    [100279] = { max = 15, id = "orange_5", class = "EHIorange5Tracker", status_is_overridable = true, remove_after_reaching_target = false, condition = mayhem_and_up and show_achievement, exclude_from_sync = true },
+    [100279] = { max = 15, id = "orange_5", class = "EHIorange5Tracker", status_is_overridable = true, remove_after_reaching_target = false, difficulty_pass = mayhem_and_up, exclude_from_sync = true },
     [EHI:GetInstanceElementID(100471, 21700)] = { id = "orange_5", special_function = SF.SetAchievementFailed },
     [EHI:GetInstanceElementID(100474, 21700)] = { id = "orange_5", special_function = SF.IncreaseProgress },
     [EHI:GetInstanceElementID(100005, 12200)] = { id = "orange_5", special_function = SF.FinalizeAchievement },

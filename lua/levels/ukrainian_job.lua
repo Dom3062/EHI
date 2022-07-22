@@ -5,9 +5,18 @@ local TT = EHI.Trackers
 local zone_delay = 12
 local cac_12_disable = { id = "cac_12", special_function = SF.SetAchievementFailed }
 local ExecuteAchievementIfInteractionExists = EHI:GetFreeCustomSpecialFunctionID()
+local LootDropWaypoint = { icon = Icon.LootDrop, position_by_element = 104215, warning = true }
+--104215 Vector3(1400, 3125, 125) pd2_lootdrop
 local triggers = {
-    [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
-    [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
+    [1] = { special_function = SF.CustomCode, f = function()
+        if not EHI:GetOption("show_waypoints") then
+            return
+        end
+        managers.hud:SoftRemoveWaypoint(104215)
+        EHI:DisableElementWaypoint(104215)
+    end},
+    [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 }, waypoint = EHI:DeepClone(LootDropWaypoint) },
+    [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 }, waypoint = EHI:DeepClone(LootDropWaypoint) },
 
     [103172] = { time = 2 + 830/30, id = "Van", icons = Icon.CarEscape },
     [103183] = { id = 103194, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(1600.0, 5700.0, 167.0) } },
@@ -33,11 +42,11 @@ local triggers = {
 }
 EHI:AddOnAlarmCallback(function(dropin)
     local start_chance = 30 -- Normal
-    if EHI:IsDifficulty("hard") then -- Hard
+    if EHI:IsDifficulty(EHI.Difficulties.Hard) then
         start_chance = 33
-    elseif EHI:IsDifficulty("very_hard") then -- Very Hard
+    elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
         start_chance = 35
-    elseif EHI:IsDifficultyOrAbove("overkill") then
+    elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
         start_chance = 37
     end
     managers.ehi:AddEscapeChanceTracker(dropin, start_chance)

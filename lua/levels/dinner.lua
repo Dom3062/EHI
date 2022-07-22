@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local c4 = { time = 5, id = "C4", icons = { Icon.C4 } }
 local triggers = {
     [100484] = { time = 300, id = "farm_2", class = TT.AchievementUnlock },

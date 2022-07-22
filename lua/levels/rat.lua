@@ -8,7 +8,7 @@ local heli_delay = 19
 local anim_delay = 743/30 -- 743/30 is a animation duration; 3s is zone activation delay (never used when van is coming back)
 local heli_delay_full = 13 + 19 -- 13 = Base Delay; 19 = anim delay
 local heli_icon = { Icon.Heli, "pd2_methlab", "pd2_goto" }
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers =
 {
     [100494] = { id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100724, set_time_when_tracker_exists = true }
@@ -62,9 +62,9 @@ local triggers = {
 
     [100723] = { amount = 15, id = "CookChance", special_function = SF.IncreaseChance }
 }
-if EHI:IsDifficultyOrAbove("mayhem") then
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
     triggers[102197] = { time = 180 + heli_delay_full, id = "HeliMeth", icons = heli_icon }
-elseif EHI:IsBetweenDifficulties("very_hard", "overkill") then -- OVK or Very Hard
+elseif EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
     triggers[102197] = { time = 120 + heli_delay_full, id = "HeliMeth", icons = heli_icon }
 end
 if Network:is_client() then

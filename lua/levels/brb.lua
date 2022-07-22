@@ -4,7 +4,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {
     [101136] = { special_function = SF.CustomCode, f = function()
-        if EHI:IsDifficultyOrAbove("very_hard") then
+        if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
             EHI:ShowAchievementLootCounter({
                 achievement = "brb_8",
                 max = 12,

@@ -24,7 +24,7 @@ else
 end
 
 EHI:ParseTriggers(triggers)
-if EHI:IsDifficultyOrAbove("overkill") then
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "dah_8",
         max = 12,

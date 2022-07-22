@@ -24,11 +24,11 @@ local SetProgressMax = EHI:GetFreeCustomSpecialFunctionID()
 local SetZoneComplete = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [100120] = { time = 1800, id = "run_9", class = TT.AchievementDone },
-    [100377] = { time = 90, id = "ClearPickupZone", icons = { "faster" }, class = "EHIZoneTracker" },
+    [100377] = { time = 90, id = "ClearPickupZone", icons = { Icon.Wait }, class = "EHIZoneTracker" },
     [101550] = { id = "ClearPickupZone", special_function = SetZoneComplete },
 
     -- Parking lot
-    [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { "faster" } },
+    [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { Icon.Wait } },
 
     [101521] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, "pd2_escape" }, special_function = SF.RemoveTriggerWhenExecuted },
 
@@ -39,7 +39,7 @@ local triggers = {
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins
     [102426] = { special_function = SF.Trigger, data = { 1024261, 1024262 } },
     [1024261] = { max = 8, id = "run_8", class = TT.AchievementProgress, exclude_from_sync = true },
-    [1024262] = { id = "run_10", class = TT.AchievementNotification, condition = EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove("hard") },
+    [1024262] = { id = "run_10", class = TT.AchievementNotification, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard) },
     [100658] = { id = "run_8", special_function = SF.IncreaseProgress },
     [100111] = { id = "run_10", special_function = SF.SetAchievementFailed },
     [100664] = { id = "run_10", special_function = SF.SetAchievementComplete },

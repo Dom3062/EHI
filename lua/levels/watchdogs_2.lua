@@ -5,8 +5,6 @@ local TT = EHI.Trackers
 local anim_delay = 450/30
 local boat_delay = 60 + 30 + 30 + 450/30
 local boat_icon = { Icon.Boat, Icon.LootDrop }
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
 local AddToCache = EHI:GetFreeCustomSpecialFunctionID()
 local GetFromCache = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
@@ -28,7 +26,7 @@ local triggers = {
 
     [1011480] = { time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate },
 
-    [100124] = { id = "uno_8", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+    [100124] = { id = "uno_8", class = TT.AchievementNotification, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
     [102382] = { id = "uno_8", special_function = SF.SetAchievementFailed },
     [102379] = { id = "uno_8", special_function = SF.SetAchievementComplete }
 }

@@ -2,7 +2,7 @@ local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local repair = { time = 90, id = "RepairWait", icons = { "pd2_fix" } }
 local triggers = {
     [100132] = { special_function = SF.Trigger, data = { 1001321, 1001322 } },

@@ -40,7 +40,7 @@ local instances =
 }
 
 if client then
-    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].time = EHI:IsDifficulty("death_sentence") and 90 or 60
+    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].time = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and 90 or 60
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].random_time = 30
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100024] = { id = "SandTurretTimer", special_function = SF.RemoveTracker }
 end

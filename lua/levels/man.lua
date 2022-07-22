@@ -2,12 +2,11 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local deal = { "pd2_car", "pd2_goto" }
 local delay = 4 + 356/30
 local start_chance = 15 -- Normal
-if EHI:IsBetweenDifficulties("hard", "very_hard") then
+if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
     -- Hard + Very Hard
     start_chance = 10
 elseif ovk_and_up then
@@ -17,7 +16,7 @@ end
 local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, "wp_hack" }, flash_times = 1, class = TT.Chance }
 local triggers = {
     [100698] = { special_function = SF.Trigger, data = { 1006981, 1006982 } },
-    [1006981] = { id = "man_2", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement },
+    [1006981] = { id = "man_2", class = TT.AchievementNotification, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement },
     [1006982] = { id = "man_3", class = TT.AchievementNotification, special_function = SF.RemoveTriggerAndShowAchievement },
     [101587] = { time = 30 + delay, id = "DealGoingDown", icons = deal },
     [101588] = { time = 40 + delay, id = "DealGoingDown", icons = deal },
@@ -31,9 +30,9 @@ local triggers = {
     [102016] = CodeChance, -- Second and Third Hack
     [102121] = { time = 10, id = "Escape", icons = { Icon.Escape } },
 
-    [103163] = { time = 1.5 + 25, random_time = 10, id = "Faint", icons = { "hostage", "faster" }, class = TT.Inaccurate },
+    [103163] = { time = 1.5 + 25, random_time = 10, id = "Faint", icons = { "hostage", Icon.Wait }, class = TT.Inaccurate },
 
-    [102866] = { time = 5, id = "GotCode", icons = { "faster" } },
+    [102866] = { time = 5, id = "GotCode", icons = { Icon.Wait } },
 
     [102887] = { amount = 5, id = "CodeChance", special_function = SF.IncreaseChance },
 
@@ -50,14 +49,16 @@ EHI:ShowAchievementLootCounter({
     exclude_from_sync = true,
     no_counting = true
 })
-EHI:AddLoadSyncFunction(function(self)
-    if EHI.ConditionFunctions.IsStealth() then
-        self:AddAchievementNotificationTracker("man_3")
-    end
-    -- Achievement count used planks on windows, vents, ...
-    -- There are total 49 positions and 10 planks
-    self:SetTrackerProgress("man_4", 49 - self:CountInteractionAvailable("stash_planks"))
-end)
+if EHI:GetOption("show_achievement") then
+    EHI:AddLoadSyncFunction(function(self)
+        if EHI.ConditionFunctions.IsStealth() then
+            self:AddAchievementNotificationTracker("man_3")
+        end
+        -- Achievement count used planks on windows, vents, ...
+        -- There are total 49 positions and 10 planks
+        self:SetTrackerProgress("man_4", 49 - self:CountInteractionAvailable("stash_planks"))
+    end)
+end
 
 local tbl =
 {

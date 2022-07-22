@@ -2,8 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local dw_and_above = EHI:IsDifficultyOrAbove("death_wish")
+local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
 local pink_car = { { icon = Icon.Car, color = Color("D983D1") }, "pd2_goto" }
 local ExecuteIfEnabled = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
@@ -13,7 +12,7 @@ local triggers = {
 
     [100179] = { time = 1 + 9.5 + 11 + 1 + 30, id = "AssaultDelay", class = TT.AssaultDelay },
 
-    [100057] = { time = 60, id = "rvd_10", class = TT.Achievement, condition = dw_and_above and show_achievement, special_function = SF.ShowAchievementFromStart, exclude_from_sync = true },
+    [100057] = { time = 60, id = "rvd_10", class = TT.Achievement, difficulty_pass = dw_and_above, special_function = SF.ShowAchievementFromStart, exclude_from_sync = true },
     [100247] = { id = "rvd_10", special_function = SF.SetAchievementComplete },
 
     [100727] = { time = 6 + 18 + 8.5 + 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape },

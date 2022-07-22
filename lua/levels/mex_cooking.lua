@@ -1,7 +1,8 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
-local MethlabStart = { Icon.Methlab, "faster" }
-local MethlabRestart = { Icon.Methlab, "restarter" }
+local MethlabStart = { Icon.Methlab, Icon.Wait }
+local MethlabRestart = { Icon.Methlab, Icon.Loop }
 local MethlabPickup = { Icon.Methlab, "pd2_generic_interact" }
 local element_sync_triggers =
 {
@@ -34,7 +35,7 @@ else
 end
 
 EHI:ParseTriggers(triggers)
-if EHI:IsDifficultyOrAbove("overkill") then
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "mex2_9",
         max = 25,

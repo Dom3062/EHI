@@ -42,7 +42,7 @@ EHI:AddOnAlarmCallback(function(dropin)
 end)
 
 EHI:ParseTriggers(triggers, "Van", Icon.CarEscape)
-if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove("overkill") then
+if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "halloween_2",
         max = 7,

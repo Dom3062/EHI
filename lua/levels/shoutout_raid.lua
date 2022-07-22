@@ -1,7 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local TT = EHI.Trackers
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local show_achievement = EHI:GetOption("show_achievement")
 local triggers = {
     [100107] = { time = 420, id = "trophy_longfellow", icons = { Icon.Trophy }, class = TT.Warning, condition = ovk_and_up }

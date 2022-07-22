@@ -201,7 +201,7 @@ function EHIBuffTracker:CalculateMoveOffset()
 end
 
 function EHIBuffTracker:UpdateIcon(texture, texture_rect)
-    self._panel:child("icon"):set_image(texture, texture_rect)
+    self._panel:child("icon"):set_image(texture, unpack(texture_rect))
 end
 
 function EHIBuffTracker:SetCenterX(center_x)

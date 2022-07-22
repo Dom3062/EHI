@@ -60,13 +60,12 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Activate_cac_33 = EHI:GetFreeCustomSpecialFunctionID()
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
-local dw_and_above = EHI:IsDifficultyOrAbove("death_wish")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
 local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } }
 local ring = { id = "voff_4", special_function = SF.IncreaseProgress }
 local triggers = {
-    [102504] = { id = "cac_33", status = "land", class = "EHIcac33Tracker", condition = show_achievement and dw_and_above, exclude_from_sync = true },
+    [102504] = { id = "cac_33", status = "land", class = "EHIcac33Tracker", difficulty_pass = dw_and_above, exclude_from_sync = true },
     [103486] = { id = "cac_33", status = "ok", special_function = SF.SetAchievementStatus },
     [103479] = { id = "cac_33", special_function = SF.SetAchievementComplete },
     [103475] = { id = "cac_33", special_function = SF.SetAchievementFailed },
@@ -75,8 +74,8 @@ local triggers = {
     [101897] = { time = 60, id = "LockeSecureHeli", icons = { Icon.Heli, Icon.Winch } }, -- Time before Locke arrives with heli to pickup the money
     [102452] = { id = "jerry_4", special_function = SF.SetAchievementComplete },
     [102453] = { special_function = SF.Trigger, data = { 1024531, 1024532 } },
-    [1024531] = { id = "jerry_3", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
-    [1024532] = { time = 83, id = "jerry_4", class = TT.Achievement, condition = show_achievement and ovk_and_up },
+    [1024531] = { id = "jerry_3", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
+    [1024532] = { time = 83, id = "jerry_4", class = TT.Achievement, difficulty_pass = ovk_and_up },
     [102816] = { id = "jerry_3", special_function = SF.SetAchievementFailed },
     [101314] = { id = "jerry_3", special_function = SF.SetAchievementComplete },
 
@@ -99,7 +98,7 @@ EHI:ShowAchievementLootCounter({
 EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(id, trigger, element, enabled)
     managers.ehi:CallFunction(trigger.id, "Activate")
 end)
-if show_achievement then
+if EHI:GetOption("show_achievement") then
     EHI:AddLoadSyncFunction(function(self)
         self:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
     end)

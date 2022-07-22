@@ -9,7 +9,7 @@ local triggers = {
     [100903] = { time = 120, id = "LiquidNitrogen", icons = { "equipment_liquid_nitrogen_canister" }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1009031 } },
     [1009031] = { time = 63 + 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4 },
 
-    [100699] = { time = 8 + 25 + 13, id = "ObjectiveWait", icons = { "faster" } },
+    [100699] = { time = 8 + 25 + 13, id = "ObjectiveWait", icons = { Icon.Wait } },
 
     [100939] = { time = 5, id = "C4Vault", icons = { Icon.C4 } },
     [EHI:GetInstanceElementID(100020, 6700)] = { time = 5, id = "C4Escape", icons = { Icon.C4 } }

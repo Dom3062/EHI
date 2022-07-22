@@ -1,14 +1,14 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local escape_fly_in = 30 + 35 + 24
-local fire_wait = { time = 20, id = "FireWait", icons = { "pd2_fire", "faster" } }
+local fire_wait = { time = 20, id = "FireWait", icons = { Icon.Fire, Icon.Wait } }
 local triggers = {
-    [100045] = { id = "hunter_party", status = "ok", icons = { "ehi_hunter_no_civie_kills" }, class = TT.AchievementNotification, condition = show_achievement and ovk_and_up, special_function = SF.ShowAchievementFromStart },
+    [100045] = { id = "hunter_party", status = "ok", icons = { "ehi_hunter_no_civie_kills" }, class = TT.AchievementNotification, difficulty_pass = ovk_and_up, special_function = SF.ShowAchievementFromStart },
     [100679] = { id = "hunter_party", special_function = SF.SetAchievementFailed },
-    [100201] = { time = 99, id = "AmbushWait", icons = { "faster" } },
+    [100201] = { time = 99, id = "AmbushWait", icons = { Icon.Wait } },
     [100218] = fire_wait,
     [100364] = fire_wait,
     [100417] = { time = 78 + 25 + escape_fly_in, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, class = TT.Pausable },

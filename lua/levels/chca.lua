@@ -1,23 +1,24 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
-local mayhem_and_up = EHI:IsDifficultyOrAbove("mayhem")
-local dw_and_above = EHI:IsDifficultyOrAbove("death_wish")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+local mayhem_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
+local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
 local function chca_9_fail()
     managers.ehi:SetAchievementFailed("chca_9")
     EHI:Unhook("chca_9_killed")
     EHI:Unhook("chca_9_killed_by_anyone")
 end
 local vault_reset_time = 5 -- Normal
-if EHI:IsBetweenDifficulties("hard", "very_hard") then -- Hard + Very Hard
+if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
     vault_reset_time = 15
-elseif EHI:IsDifficulty("overkill") then -- OVERKILL
+elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then -- OVERKILL
     vault_reset_time = 20
-elseif EHI:IsBetweenDifficulties("mayhem", "death_wish") then -- Mayhem + Death Wish
+elseif EHI:IsBetweenDifficulties(EHI.Difficulties.Mayhem, EHI.Difficulties.DeathWish) then
     vault_reset_time = 30
-elseif EHI:IsDifficulty("death_sentence") then
+elseif EHI:IsDifficulty(EHI.Difficulties.DeathSentence) then
     vault_reset_time = 40
 end
 local Achievements = { special_function = SF.Trigger, data = { 1, 2, 3 } }
@@ -25,7 +26,7 @@ local triggers = {
     -- Players spawned
     [100264] = Achievements, -- Guest Rooms (civilian mode)
     [102955] = Achievements, -- Crew Deck
-    [1] = { id = "chca_9", status = "ok", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+    [1] = { id = "chca_9", status = "ok", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
     [2] = { special_function = SF.CustomCode, f = function()
         if EHI:IsAchievementLocked("chca_9") and show_achievement and ovk_and_up then
             local function check(self, data)
@@ -38,7 +39,7 @@ local triggers = {
             EHI:AddOnAlarmCallback(chca_9_fail)
         end
     end },
-    [3] = { max = 8, id = "chca_10", class = TT.AchievementProgress, remove_after_reaching_target = false, condition = show_achievement and mayhem_and_up },
+    [3] = { max = 8, id = "chca_10", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = mayhem_and_up },
     [102944] = { id = "chca_10", special_function = SF.IncreaseProgress }, -- Bodybag thrown
     [103371] = { id = "chca_10", special_function = SF.SetAchievementFailed }, -- Civie killed
 
@@ -59,19 +60,19 @@ local triggers = {
     end },]]
 
     -- C4 in the meeting room
-    [EHI:GetInstanceElementID(100025, 20420)] = { time = 5, id = "C4MeetingRoom", icons = { "pd2_c4" } },
+    [EHI:GetInstanceElementID(100025, 20420)] = { time = 5, id = "C4MeetingRoom", icons = { Icon.C4 } },
 
     -- C4 in the vault room
-    [EHI:GetInstanceElementID(100022, 11770)] = { time = 5, id = "C4VaultWall", icons = { "pd2_c4" } },
+    [EHI:GetInstanceElementID(100022, 11770)] = { time = 5, id = "C4VaultWall", icons = { Icon.C4 } },
 
     -- Chandelier swing
-    [EHI:GetInstanceElementID(100137, 20420)] = { time = 10 + 1 + 52/30, id = "Swing", icons = { "faster" } },
+    [EHI:GetInstanceElementID(100137, 20420)] = { time = 10 + 1 + 52/30, id = "Swing", icons = { Icon.Wait } },
 
     -- Heli Extraction
     [101432] = { id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 101362 },
 
-    [EHI:GetInstanceElementID(100210, 14670)] = { time = 3 + vault_reset_time, id = "KeypadReset", icons = { "faster" } },
-    [EHI:GetInstanceElementID(100176, 14670)] = { time = 30, id = "KeypadResetECMJammer", icons = { "faster" } },
+    [EHI:GetInstanceElementID(100210, 14670)] = { time = 3 + vault_reset_time, id = "KeypadReset", icons = { Icon.Wait } },
+    [EHI:GetInstanceElementID(100176, 14670)] = { time = 30, id = "KeypadResetECMJammer", icons = { Icon.Wait } },
 
     [102571] = { time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = { Icon.Heli, Icon.Winch, "pd2_goto" } },
 
@@ -83,23 +84,22 @@ local triggers = {
     -- They pause the timer when it reaches zero for no reason. But the timer is already stopped via Lua...
     [EHI:GetInstanceElementID(100101, 21420)] = { id = "Winch", special_function = SF.RemoveTracker },
 
-    [EHI:GetInstanceElementID(100096, 21420)] = { time = 5 + 15, id = "HeliRaise", icons = { Icon.Heli, "faster" } },
+    [EHI:GetInstanceElementID(100096, 21420)] = { time = 5 + 15, id = "HeliRaise", icons = { Icon.Heli, Icon.Wait } },
 
     [102675] = { additional_time = 5 + 10 + 14, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.GetElementTimerAccurate, element = 102674 },
 
-    [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = { Icon.Boat, Icon.Escape } },
+    [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot },
 
-    --[[[EHI:GetInstanceElementID(100041, 11770)] = { id = "chca_12", special_function = SF.ShowAchievementFromStart, class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
-    [103584] = { id = "chca_12", status = "finish", special_function = SF.SetAchievementStatus }]]
+    [EHI:GetInstanceElementID(100041, 11770)] = { id = "chca_12", special_function = SF.ShowAchievementFromStart, class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
+    [103584] = { id = "chca_12", status = "finish", special_function = SF.SetAchievementStatus }
 }
 if Network:is_client() then
     local wait_time = 90 -- Very Hard and below
     local pickup_wait_time = 25 -- Normal and Hard
-    if EHI:IsBetweenDifficulties("very_hard", "mayhem") then -- Very Hard to Mayhem
+    if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.Mayhem) then -- Very Hard to Mayhem
         pickup_wait_time = 40
     end
-    if EHI:IsBetweenDifficulties("overkill", "mayhem") then
-        -- OVERKILL or Mayhem
+    if EHI:IsBetweenDifficulties(EHI.Difficulties.OVERKILL, EHI.Difficulties.Mayhem) then -- OVERKILL or Mayhem
         wait_time = 120
     elseif dw_and_above then
         wait_time = 150
@@ -128,6 +128,44 @@ if Network:is_client() then
     triggers[EHI:GetInstanceElementID(100060, 21420)] = { time = 20, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
+if show_achievement and ovk_and_up then
+    local active_saws = 0
+    local function chca_12(instance, unit_id, unit_data, unit)
+        unit:timer_gui():chca_12()
+    end
+    local function check(...)
+        active_saws = active_saws + 1
+        if active_saws > 1 then
+            managers.ehi:SetAchievementFailed("chca_12")
+        end
+    end
+    local function saw_done()
+        active_saws = active_saws - 1
+    end
+    function TimerGui:chca_12()
+        local key = self._ehi_key or tostring(self._unit:key())
+        local hook_key = "EHI_saw_start_" .. key
+        if self.PostStartTimer then
+            EHI:HookWithID(self, "PostStartTimer", hook_key, check)
+        else
+            EHI:HookWithID(self, "_start", hook_key, check)
+        end
+    end
+    local tbl =
+    {
+        [100122] = { f = chca_12 },
+        [100011] = { f = chca_12 },
+        [100079] = { f = chca_12 },
+        [100080] = { f = chca_12 }
+    }
+    EHI:UpdateInstanceUnitsNoCheck(tbl, 15470, 100000)
+    local trigger = { special_function = SF.CustomCode, f = saw_done }
+    triggers[EHI:GetInstanceElementID(100082, 15470)] = trigger
+    triggers[EHI:GetInstanceElementID(100083, 15470)] = trigger
+    triggers[EHI:GetInstanceElementID(100084, 15470)] = trigger
+    triggers[EHI:GetInstanceElementID(100085, 15470)] = trigger
+end
+
 local DisableWaypoints =
 {
     -- chca_spa
@@ -151,30 +189,3 @@ EHI:DisableWaypoints(DisableWaypoints)
 EHI:AddOnAlarmCallback(function()
     managers.ehi:SetAchievementFailed("chca_10")
 end)
-
-if show_achievement and ovk_and_up and false then
-    local function chca_12(instance, unit_id, unit_data, unit)
-        unit:timer_gui():chca_12()
-    end
-    local function check(...)
-        if Drill.active_drills > 1 then
-            managers.ehi:SetAchievementFailed("chca_12")
-        end
-    end
-    function TimerGui:chca_12()
-        if self.PostStartTimer then
-            EHI:HookWithID(self, "PostStartTimer", "EHI_saw_" .. self._ehi_key, check)
-        else
-            EHI:HookWithID(self, "_start", "EHI_saw_" .. tostring(self._unit:key()), check)
-        end
-    end
-
-    local tbl =
-    {
-        [100122] = { f = chca_12 },
-        [100011] = { f = chca_12 },
-        [100079] = { f = chca_12 },
-        [100080] = { f = chca_12 }
-    }
-    EHI:UpdateInstanceUnitsNoCheck(tbl, 15470, 100000)
-end

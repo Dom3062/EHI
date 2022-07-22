@@ -162,7 +162,8 @@ _G.EHI =
         HeliDropDrill = { "heli", "pd2_drill", "pd2_goto" },
         HeliDropBag = { "heli", "wp_bag", "pd2_goto" },
         HeliDropC4 = { "heli", "pd2_c4", "pd2_goto" },
-        BoatEscape = { "boat", "pd2_escape", "pd2_lootdrop" }
+        BoatEscape = { "boat", "pd2_escape", "pd2_lootdrop" },
+        BoatEscapeNoLoot = { "boat", "pd2_escape" }
     },
 
     Trackers =
@@ -196,23 +197,15 @@ _G.EHI =
         EHIAchievementTimedMoneyCounterTracker = true
     },
 
-    difficulties = {
-        "easy", -- Leftover from PD:TH
-        "normal",
-        "hard",
-        "overkill",
-        "overkill_145",
-        "easy_wish",
-        "overkill_290",
-        "sm_wish"
-    },
-
-    difficulty_remap = {
-        very_hard = "overkill",
-        overkill = "overkill_145",
-        mayhem = "easy_wish",
-        death_wish = "overkill_290",
-        death_sentence = "sm_wish"
+    Difficulties =
+    {
+        Normal = 0,
+        Hard = 1,
+        VeryHard = 2,
+        OVERKILL = 3,
+        Mayhem = 4,
+        DeathWish = 5,
+        DeathSentence = 6
     },
 
     HostElement = "on_executed",
@@ -230,34 +223,38 @@ local EHI = _G.EHI
 local SF = EHI.SpecialFunctions
 
 function EHI:DifficultyToIndex(difficulty)
-    return table.index_of(self.difficulties, difficulty) - 2
+    local difficulties = {
+        "easy", -- Leftover from PD:TH
+        "normal",
+        "hard",
+        "overkill",
+        "overkill_145",
+        "easy_wish",
+        "overkill_290",
+        "sm_wish"
+    }
+    return table.index_of(difficulties, difficulty) - 2
 end
 
 function EHI:IsDifficultyOrAbove(difficulty)
-    return self:DifficultyToIndex(self:DifficultyName(difficulty)) <= self._cache.DifficultyIndex
+    return difficulty <= self._cache.DifficultyIndex
 end
 
 function EHI:IsDifficultyOrBelow(difficulty)
-    return self:DifficultyToIndex(self:DifficultyName(difficulty)) >= self._cache.DifficultyIndex
-end
-
-function EHI:DifficultyName(difficulty)
-    return self.difficulty_remap[difficulty] or difficulty
+    return difficulty >= self._cache.DifficultyIndex
 end
 
 function EHI:IsDifficulty(difficulty)
-    return self._cache.Difficulty == self:DifficultyName(difficulty)
+    return self._cache.Difficulty == difficulty
 end
 
 function EHI:IsBetweenDifficulties(diff_1, diff_2)
-    local diff_1_index = self:DifficultyToIndex(self:DifficultyName(diff_1))
-    local diff_2_index = self:DifficultyToIndex(self:DifficultyName(diff_2))
-    if diff_1_index > diff_2_index then
-        diff_1_index = diff_1_index - diff_2_index
-        diff_2_index = diff_1_index + diff_2_index
-        diff_1_index = diff_2_index - diff_1_index
+    if diff_1 > diff_2 then
+        diff_1 = diff_1 - diff_2
+        diff_2 = diff_1 + diff_2
+        diff_1 = diff_2 - diff_1
     end
-    return self._cache.DifficultyIndex >= diff_1_index and self._cache.DifficultyIndex <= diff_2_index
+    return self._cache.DifficultyIndex >= diff_1 and self._cache.DifficultyIndex <= diff_2
 end
 
 function EHI:Init()
@@ -302,7 +299,7 @@ function EHI:Save()
     self.settings.ModVersion = self.ModVersion
     local file = io.open(self.SettingsSaveFilePath, "w+")
     if file then
-        file:write(json.encode(self.settings) or {})
+        file:write(json.encode(self.settings) or "{}")
         file:close()
     end
 end
@@ -590,7 +587,7 @@ end
 
 ---@param id number
 ---@param start_index number
----@param continent_index number
+---@param continent_index number?
 ---@return number
 function EHI:GetInstanceElementID(id, start_index, continent_index)
     return (continent_index or 100000) + math.mod(id, 100000) + 30000 + start_index
@@ -996,12 +993,12 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.TriggerIfEnabled then
                 if enabled then
                     for _, trigger in pairs(triggers[id].data) do
-                        self:Trigger(trigger)
+                        self:Trigger(trigger, element, enabled)
                     end
                 end
             elseif f == SF.CreateAnotherTrackerWithTracker then
                 self:CheckCondition(id)
-                self:Trigger(triggers[id].data.fake_id)
+                self:Trigger(triggers[id].data.fake_id, element, enabled)
             elseif f == SF.SetChanceWhenTrackerExists then
                 local trigger = triggers[id]
                 if managers.ehi:TrackerExists(trigger.id) then
@@ -1088,20 +1085,18 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.GetElementTimerAccurate then
                 GetElementTimer(self, id)
             elseif f == SF.UnpauseOrSetTimeByPreplanning then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:UnpauseTracker(triggers[id].id)
+                local trigger = triggers[id]
+                if managers.ehi:TrackerExists(trigger.id) then
+                    managers.ehi:UnpauseTracker(trigger.id)
                 else
-                    if triggers[id].data.cache_id and self._cache[triggers[id].data.cache_id] then
+                    if trigger.time then
                         self:CheckCondition(id)
                         return
                     end
-                    if managers.preplanning:IsAssetBought(triggers[id].data.id) then
-                        triggers[id].time = triggers[id].data.yes
+                    if managers.preplanning:IsAssetBought(trigger.data.id) then
+                        trigger.time = trigger.data.yes
                     else
-                        triggers[id].time = triggers[id].data.no
-                    end
-                    if triggers[id].data.cache_id then
-                        self._cache[triggers[id].data.cache_id] = true
+                        trigger.time = trigger.data.no
                     end
                     self:CheckCondition(id)
                 end
@@ -1132,9 +1127,11 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(id)
                 end
             elseif f == SF.PauseTrackerWithTime then
-                PauseTracker(triggers[id].id)
-                managers.ehi:SetTrackerTimeNoAnim(triggers[id].id, triggers[id].time)
-                managers.ehi_waypoint:SetWaypointTime(triggers[id].id, triggers[id].time)
+                local t_id = triggers[id].id
+                local t_time = triggers[id].time
+                PauseTracker(t_id)
+                managers.ehi:SetTrackerTimeNoAnim(t_id, t_time)
+                managers.ehi_waypoint:SetWaypointTime(t_id, t_time)
             elseif f == SF.RemoveTriggerAndShowAchievementCustom then
                 if self:IsAchievementLocked(triggers[id].data) then
                     self:CheckCondition(id)

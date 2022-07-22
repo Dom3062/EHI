@@ -1,3 +1,7 @@
+r70 (22. 07. 2022):
+Fixed Stoic buffs
+Black Cat: Added achievement tracker for "One Claw Beam Cutter"
+
 r69 (18. 07. 2022):
 Added inspire boost cooldown buff
 Shadow Raid: Added trackers for achievements

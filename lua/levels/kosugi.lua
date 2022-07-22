@@ -191,9 +191,9 @@ local base_amount = 2 + 1 + 2 + 4 + 4
 local random_weapons = 2
 local random_paintings = 2
 local crates = 4 -- (Normal + Hard)
-if EHI:IsBetweenDifficulties("very_hard", "overkill") then
+if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
     crates = 5
-elseif EHI:IsDifficultyOrAbove("mayhem") then
+elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
     crates = 6
     random_weapons = 1
     random_paintings = 1

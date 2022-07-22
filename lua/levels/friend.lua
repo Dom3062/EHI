@@ -36,7 +36,7 @@ EHI.AchievementTrackers.EHIuno7Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local mayhem_and_up = EHI:IsDifficultyOrAbove("mayhem")
+local mayhem_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
 local element_sync_triggers =
 {
     [100241] = { time = 662/30, id = "EscapeBoat", icons = Icon.BoatEscape, hook_element = 100216 },

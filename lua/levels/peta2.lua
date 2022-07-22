@@ -2,9 +2,8 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
-local mayhem_and_up = EHI:IsDifficultyOrAbove("mayhem")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+local mayhem_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
 local goat_pick_up = { Icon.Heli, Icon.Interact }
 local function f_PilotComingInAgain(id, trigger, ...)
     managers.ehi:RemoveTracker("PilotComingIn")
@@ -19,7 +18,7 @@ local PilotComingInAgain2 = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [100109] = { time = 100 + 30, id = "AssaultDelay", class = TT.AssaultDelay },
 
-    [100002] = { max = (mayhem_and_up and 15 or 13), id = "peta_5", class = TT.AchievementProgress, condition = show_achievement and ovk_and_up },
+    [100002] = { max = (mayhem_and_up and 15 or 13), id = "peta_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up },
     [102211] = { id = "peta_5", special_function = SF.IncreaseProgress },
     [100580] = { special_function = SF.CustomCode, f = function()
         EHI:DelayCall("peta_5_finalize", 2, function()
@@ -42,7 +41,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100099, 4250)] = { time = 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain },
     [EHI:GetInstanceElementID(100099, 4750)] = { time = 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain },
 
-    [101720] = { time = 80, id = "Bridge", icons = { "faster" }, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable },
+    [101720] = { time = 80, id = "Bridge", icons = { Icon.Wait }, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable },
     [101718] = { id = "Bridge", special_function = SF.PauseTracker },
 
     [EHI:GetInstanceElementID(100011, 3750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain2 },

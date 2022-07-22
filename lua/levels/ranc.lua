@@ -6,7 +6,7 @@ local WinchCar = { { icon = Icon.Car, color = Color("1E90FF") } }
 local ElementTimer = 102059
 local ElementTimerPickup = 102075
 local WeaponsPickUp = { Icon.Heli, Icon.Interact }
-if EHI:IsDifficultyOrAbove("overkill") then
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     ElementTimer = 102063
     ElementTimerPickup = 102076
 end

@@ -102,7 +102,7 @@ local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local RemoveTriggerAndStartAchievementCountdown = EHI:GetFreeCustomSpecialFunctionID()
 local green_1_decrease = { id = "green_1", special_function = SF.DecreaseProgress }
 local triggers = {
@@ -116,7 +116,7 @@ local triggers = {
     [1033732] = { time = 817, id = "green_3", class = TT.Achievement },
     [107072] = { id = "cac_10", special_function = SF.SetAchievementComplete },
     [101544] = { id = "cac_10", special_function = RemoveTriggerAndStartAchievementCountdown },
-    [101341] = { time = 30, id = "cac_10", class = "EHIcac10Tracker", condition = show_achievement and ovk_and_up, condition_function = CF.IsLoud },
+    [101341] = { time = 30, id = "cac_10", class = "EHIcac10Tracker", difficulty_pass = ovk_and_up, condition_function = CF.IsLoud },
     [107066] = { id = "cac_10", special_function = SF.IncreaseProgressMax },
     [107067] = { id = "cac_10", special_function = SF.IncreaseProgress },
     [101684] = { time = 5.1, id = "C4", icons = { Icon.C4 } },

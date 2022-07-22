@@ -2,7 +2,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
-local ovk_and_up = EHI:IsDifficultyOrAbove("overkill")
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [100595] = { time = 120, id = "born_5", class = TT.Achievement, condition = ovk_and_up and show_achievement },
     [101170] = { id = "born_5", special_function = SF.SetAchievementComplete }
