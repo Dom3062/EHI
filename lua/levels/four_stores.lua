@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local van_anim_delay = 320 / 30
@@ -21,8 +22,8 @@ local triggers = { -- Time before escape vehicle arrives
 
     [103501] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
 
-    [102505] = { id = 101006, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(120, -7323, 125) } },
-    [103200] = { id = 103234, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-2150, -475, 150) } }
+    [102505] = { id = 101006, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101006 } },
+    [103200] = { id = 103234, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103234 } }
 }
 EHI:AddOnAlarmCallback(function(dropin)
     managers.ehi:AddEscapeChanceTracker(dropin, 30)

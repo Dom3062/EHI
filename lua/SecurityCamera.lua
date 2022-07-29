@@ -12,6 +12,7 @@ local original =
 {
     init = SecurityCamera.init,
     _start_tape_loop = SecurityCamera._start_tape_loop,
+    _deactivate_tape_loop = SecurityCamera._deactivate_tape_loop,
     destroy = SecurityCamera.destroy
 }
 
@@ -40,6 +41,12 @@ function SecurityCamera:_start_tape_loop(tape_loop_t, ...)
             warning = true
         })
     end
+end
+
+function SecurityCamera:_deactivate_tape_loop(...)
+    original._deactivate_tape_loop(self, ...)
+    managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
 function SecurityCamera:destroy(unit, ...)

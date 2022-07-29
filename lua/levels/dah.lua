@@ -9,7 +9,7 @@ local element_sync_triggers =
 local triggers = {
     [100276] = { time = 25 + 3 + 11, id = "CFOInChopper", icons = { Icon.Heli, "pd2_goto" } },
 
-    [101343] = { time = 30, id = "KeypadReset", icons = { "restarter" }, waypoint = { position_by_element = EHI:GetInstanceElementID(100179, 9100) } },
+    [101343] = { time = 30, id = "KeypadReset", icons = { Icon.Loop }, waypoint = { position_by_element = EHI:GetInstanceElementID(100179, 9100) } },
 
     [102259] = { id = "dah_8", special_function = SF.SetAchievementComplete },
     [102261] = { id = "dah_8", special_function = SF.IncreaseProgress },
@@ -40,12 +40,14 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
         managers.ehi:SetAchievementFailed("dah_8")
     end)
 end
-local DisableWaypoints = {}
+local DisableWaypoints =
+{
+    [101368] = true -- Drill waypoint for vault with red diamond
+}
 if EHI:MissionTrackersAndWaypointEnabled() then
     DisableWaypoints[104882] = true -- Defend during loud escape
     DisableWaypoints[103163] = true -- Exclamation mark during loud escape
 end
-DisableWaypoints[101368] = true -- Drill waypoint for vault with red diamond
 for i = 2500, 2700, 200 do
     DisableWaypoints[EHI:GetInstanceElementID(100011, i)] = true -- Defend
     DisableWaypoints[EHI:GetInstanceElementID(100036, i)] = true -- Fix

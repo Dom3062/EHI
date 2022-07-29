@@ -97,7 +97,6 @@ _G.EHI =
         IncreaseProgressMax = 48,
         SetTimeIfLoudOrStealth = 49,
         ShowWaypoint = 51,
-        ShowEHIWaypoint = 52,
         DecreaseProgress = 54,
 
         Debug = 100000,
@@ -888,14 +887,15 @@ end
 ---@param id number
 ---@param delay number
 function EHI:AddTrackerAndSync(id, delay)
+    local trigger = host_triggers[id]
     managers.ehi:AddTrackerAndSync({
-        id = host_triggers[id].id,
-        time = (host_triggers[id].time or 0) + (delay or 0),
-        icons = host_triggers[id].icons,
-        class = host_triggers[id].class
+        id = trigger.id,
+        time = (trigger.time or 0) + (delay or 0),
+        icons = trigger.icons,
+        class = trigger.class
     }, id, delay)
-    if host_triggers[id].waypoint then
-        managers.ehi_waypoint:AddWaypoint(host_triggers[id].id, host_triggers[id].data)
+    if trigger.waypoint then
+        managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
     end
 end
 
@@ -1199,7 +1199,7 @@ function EHI:InitElements()
                 local element = script:element(id)
                 if element then
                     self._base_delay[id] = element._calc_base_delay
-                    element._calc_base_delay = function (e, ...)
+                    element._calc_base_delay = function(e, ...)
                         local delay = self._base_delay[e._id](e, ...)
                         self:AddTrackerAndSync(e._id, delay)
                         return delay
@@ -1212,7 +1212,7 @@ function EHI:InitElements()
                 local element = script:element(id)
                 if element then
                     self._element_delay[id] = element._calc_element_delay
-                    element._calc_element_delay = function (e, params, ...)
+                    element._calc_element_delay = function(e, params, ...)
                         local delay = self._element_delay[e._id](e, params, ...)
                         if element_delay_triggers[e._id][params.id] then
                             if host_triggers[params.id] then
@@ -1277,13 +1277,11 @@ end
 function EHI:SyncLoad()
     for id, _ in pairs(self.HookOnLoad) do
         local trigger = triggers[id]
-        if trigger and trigger.waypoint and trigger.waypoint.position_by_element then
-            local vector = self:GetInstanceElementPosition2(trigger.waypoint.position_by_element)
-            if vector then
-                trigger.waypoint.position = vector
-                trigger.waypoint.position_by_element = nil
-            else
-                self:Log("Element with ID " .. tostring(trigger.waypoint.position_by_element) .. " has not been found. Element ID to hook: " .. tostring(id))
+        if trigger then
+            if trigger.special_function == SF.ShowWaypoint and trigger.data and trigger.data.position_by_element then
+                self:AddPositionFromElement(trigger.data, true)
+            elseif trigger.waypoint and trigger.waypoint.position_by_element then
+                self:AddPositionFromElement(trigger.waypoint, true)
             end
         end
     end
@@ -1306,6 +1304,16 @@ Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id,
         EHI:AddTrackerSynced(tonumber(tbl.id), tonumber(tbl.delay))
     end
 end)
+
+function EHI:AddPositionFromElement(data, check)
+    local vector = self:GetInstanceElementPosition2(data.position_by_element)
+    if vector then
+        data.position = vector
+        data.position_by_element = nil
+    elseif check then
+        self:Log("Element with ID " .. tostring(element) .. " has not been found. Element ID to hook: " .. tostring(id))
+    end
+end
 
 function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
     if not self:GetOption("show_mission_trackers") then
@@ -1342,6 +1350,9 @@ function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
             data.data.state = "sneak_present"
             data.data.present_timer = 0
             data.data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
+            if data.data.position_by_element then
+                self:AddPositionFromElement(data.data, host)
+            end
         end
         -- Fill the rest table properties for EHI Waypoints
         if data.waypoint then
@@ -1350,13 +1361,7 @@ function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
                 data.waypoint.icon = data.icons and data.icons[1] and data.icons[1].icon or data.icons[1]
             end
             if data.waypoint.position_by_element then
-                local vector = self:GetInstanceElementPosition2(data.waypoint.position_by_element)
-                if vector then
-                    data.waypoint.position = vector
-                    data.waypoint.position_by_element = nil
-                elseif host then
-                    self:Log("Element with ID " .. tostring(trigger.waypoint.position_by_element) .. " has not been found. Element ID to hook: " .. tostring(id))
-                end
+                self:AddPositionFromElement(data.waypoint, host)
             end
         end
     end
@@ -1545,6 +1550,7 @@ function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_cont
     end
 end
 
+-- Unused, probably won't work
 function EHI:SetMissionDoorPosAndIndex(pos, index)
     if TimerGui.SetMissionDoorPosAndIndex then
         TimerGui.SetMissionDoorPosAndIndex(pos, index)

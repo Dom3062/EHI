@@ -8,6 +8,9 @@ local refill_icon = { Icon.Water, Icon.Loop }
 local heli_60 = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
 local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
 local kenaz_5 = { id = "kenaz_5", class = TT.AchievementNotification }
+if EHI:GetOption("show_one_icon") then
+    refill_icon = { { icon = Icon.Water, color = Color("D4F1F9") } }
+end
 local triggers = {
     [100282] = { time = 840, id = "kenaz_4", class = TT.Achievement },
 
@@ -18,7 +21,7 @@ local triggers = {
     [102806] = { status = "finish", id = "kenaz_5", special_function = SF.SetAchievementStatus },
     [102808] = { id = "kenaz_5", special_function = SF.SetAchievementFailed },
 
-    [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { time = 5 + 25, position = Vector3(9823.0, -40877.0, -2987.0) + Vector3(0, 0, 0):rotate_with(Rotation()) } },
+    [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { position = Vector3(9823.0, -40877.0, -2987.0) + Vector3(0, 0, 0):rotate_with(Rotation()) } },
 
     [EHI:GetInstanceElementID(100030, 11750)] = { time = 5, id = "C4Lower", icons = { Icon.C4 } },
     [EHI:GetInstanceElementID(100030, 11850)] = { time = 5, id = "C4Top", icons = { Icon.C4 } },

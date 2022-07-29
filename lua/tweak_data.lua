@@ -64,6 +64,14 @@ tweak_data.ehi =
             class = "EHIDodgeChanceTracker",
             activate_after_spawn = true
         },
+        Berserker =
+        {
+            skills = true,
+            x = 2,
+            y = 2,
+            class = "EHIBerserkerBuffTracker",
+            check_after_spawn = true
+        },
         Reload =
         {
             skills = true,

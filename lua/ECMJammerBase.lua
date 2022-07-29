@@ -14,7 +14,8 @@ local original =
     spawn = ECMJammerBase.spawn,
     set_server_information = ECMJammerBase.set_server_information,
     set_owner = ECMJammerBase.set_owner,
-    sync_setup = ECMJammerBase.sync_setup
+    sync_setup = ECMJammerBase.sync_setup,
+    destroy = ECMJammerBase.destroy
 }
 
 function ECMJammerBase.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
@@ -54,12 +55,13 @@ if EHI:GetOption("show_equipment_ecmjammer") then
                 return
             end
             if managers.ehi:TrackerExists("ECMJammer") then
-                managers.ehi:CallFunction("ECMJammer", "SetTimeIfLower", battery_life, self._ehi_peer_id)
+                managers.ehi:CallFunction("ECMJammer", "SetTimeIfLower", battery_life, self._ehi_peer_id, self._unit)
             else
                 managers.ehi:AddTracker({
                     id = "ECMJammer",
                     time = battery_life,
                     icons = { { icon = "ecm_jammer", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
+                    unit = self._unit,
                     exclude_from_sync = true,
                     class = "EHIECMTracker"
                 })
@@ -74,16 +76,23 @@ if EHI:GetOption("show_equipment_ecmfeedback") then
         original._set_feedback_active(self, state, ...)
         if state and self._feedback_duration then
             if managers.ehi:TrackerExists("ECMFeedback") then
-                managers.ehi:CallFunction("ECMFeedback", "SetTimeIfLower", self._feedback_duration, self._ehi_peer_id)
+                managers.ehi:CallFunction("ECMFeedback", "SetTimeIfLower", self._feedback_duration, self._ehi_peer_id, self._unit)
             else
                 managers.ehi:AddTracker({
                     id = "ECMFeedback",
                     time = self._feedback_duration,
                     icons = { { icon = "ecm_feedback", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
+                    unit = self._unit,
                     exclude_from_sync = true,
                     class = "EHIECMTracker"
                 })
             end
         end
     end
+end
+
+function ECMJammerBase:destroy(...)
+    original.destroy(self, ...)
+    managers.ehi:CallFunction("ECMJammer", "Destroyed", self._unit)
+    managers.ehi:CallFunction("ECMFeedback", "Destroyed", self._unit)
 end

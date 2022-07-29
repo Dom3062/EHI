@@ -44,6 +44,7 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIHostageTakerMuscleRegenBuffTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIMeleeChargeBuffTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIUppersRangeTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIBerserkerBuffTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="SimpleBuffEdits.lua"/>
             </group>
             <post :hook_id="hudmanager" :script_path="HUDManager.lua" />

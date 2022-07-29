@@ -19,7 +19,7 @@ local triggers = {
     [101970] = { time = (240 + 12) - 3, id = "Van", icons = Icon.CarEscape },
     [100721] = { time = 1, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
     [1007211] = { chance = 5, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists },
-    [100724] = { time = 25, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop } },
+    [100724] = { time = 25, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeOrCreateTracker },
     [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, "pd2_generic_interact" } },
 
     [1] = { special_function = SF.RemoveTriggers, data = { 101974, 101975 } },

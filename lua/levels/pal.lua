@@ -2,14 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local LootDropWP = Vector3(0, 0, 152.5)
-local vectors =
-{
-    [4700] = EHI:GetInstanceElementPosition(Vector3(-5091.17, 2221.32, 36.5), LootDropWP, Rotation(0, 0, -0)),
-    [4750] = EHI:GetInstanceElementPosition(Vector3(-791.169, -2078.68, 16.5), LootDropWP, Rotation(0, 0, -0)),
-    [4800] = EHI:GetInstanceElementPosition(Vector3(-2391.17, 5821.32, 16.5), LootDropWP, Rotation(44.9999, 0, -0)),
-    [4850] = EHI:GetInstanceElementPosition(Vector3(-7643.86, 3668.63, 16.5), LootDropWP, Rotation(0, 0, -0))
-}
 local HeliLootDropWait = { Icon.Heli, Icon.LootDrop, Icon.Wait }
 local element_sync_triggers =
 {
@@ -36,7 +28,8 @@ local triggers = {
 }
 
 for i = 4700, 4850, 50 do
-    triggers[EHI:GetInstanceElementID(100004, i)] = { id = EHI:GetInstanceElementID(100019, i), special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position = vectors[i] } }
+    local waypoint_id = EHI:GetInstanceElementID(100019, i)
+    triggers[EHI:GetInstanceElementID(100004, i)] = { id = waypoint_id, special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = waypoint_id } }
 end
 
 local heli = { id = "HeliCageDelay", icons = HeliLootDropWait, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning }

@@ -1,3 +1,8 @@
+r71 (29. 07. 2022):
+Added Berserker buff
+Fixed an issue where camera loop tracker is still visible after the looped camera was destroyed
+Buluc's Mansion: Added achievement tracker for "Everything but the Patio Furniture"
+
 r70 (22. 07. 2022):
 Fixed Stoic buffs
 Black Cat: Added achievement tracker for "One Claw Beam Cutter"

@@ -46,6 +46,12 @@ local triggers = {
 
     [1] = { id = "GasAmount", special_function = SF.IncreaseProgress },
     [2] = { special_function = SF.RemoveTriggers, data = { 102775, 102776, 102868 } }, -- Don't blink twice, just set the max once and remove the triggers
+    [3] = { special_function = SF.CustomCode, f = function()
+        managers.hud:SoftRemoveWaypoint(101290)
+    end }, -- Hide "exclamation" waypoint
+    [4] = { special_function = SF.CustomCode, f = function()
+        managers.hud:RestoreWaypoint(101290)
+    end }, -- Show "exclamation" waypoint
 
     [102876] = { special_function = SF.Trigger, data = { 1028761, 1 } },
     [1028761] = { time = 60, id = "Gas1", icons = { Icon.Fire } },
@@ -63,9 +69,26 @@ local triggers = {
     [102868] = { special_function = SF.Trigger, data = { 1028681, 2 } },
     [1028681] = { max = 2, id = "GasAmount", special_function = SetProgressMax }
 }
+if EHI:MissionTrackersAndWaypointEnabled() then
+    triggers[102876].data[3] = 3
+    triggers[1028761].waypoint = { position_by_element = 101290 }
+    triggers[102875].data[3] = 3
+    triggers[1028751].waypoint = { position_by_element = 101290 }
+    triggers[102874].data[3] = 3
+    triggers[1028741].waypoint = { position_by_element = 101290 }
+    triggers[102873].data[3] = 3
+    triggers[1028731].waypoint = { icon = Icon.Escape, position_by_element = 101290 }
+    triggers[102775].data[2] = 4
+    triggers[102776].data[2] = 4
+    triggers[102868].data[2] = 4
+end
 
 EHI:ParseTriggers(triggers)
+local ProgressMaxSet = false
 EHI:RegisterCustomSpecialFunction(SetProgressMax, function(id, trigger, element, enabled)
+    if ProgressMaxSet then
+        return
+    end
     if managers.ehi:TrackerExists(trigger.id) then
         managers.ehi:SetTrackerProgressMax(trigger.id, trigger.max)
     else
@@ -76,6 +99,7 @@ EHI:RegisterCustomSpecialFunction(SetProgressMax, function(id, trigger, element,
             class = "EHIGasTracker"
         })
     end
+    ProgressMaxSet = true
 end)
 EHI:RegisterCustomSpecialFunction(SetZoneComplete, function(id, trigger, ...)
     managers.ehi:CallFunction(trigger.id, "SetCompleted")
