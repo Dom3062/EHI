@@ -7,3 +7,9 @@ local tbl =
     [103066] = { remove_vanilla_waypoint = true, waypoint_id = 103084 }
 }
 EHI:UpdateUnits(tbl)
+EHI:ShowAchievementLootCounter({
+    achievement = "bob_4",
+    max = 6,
+    exclude_from_sync = true,
+    show_loot_counter = true
+})

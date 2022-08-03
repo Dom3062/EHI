@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local bag_delay = 24.700000762939 -- I'm not even kidding
 local triggers = {

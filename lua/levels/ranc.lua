@@ -57,7 +57,7 @@ for i = 28600, 29300, 50 do
 end
 
 if Network:is_client() then
-    triggers[102053].time = (ElementTimer == 102063 and 60 or 30) + triggers[102054].additional_time
+    triggers[102053].time = (ElementTimer == 102063 and 60 or 30) + triggers[102053].additional_time
     triggers[102053].random_time = 5
     triggers[102053].delay_only = true
     EHI:AddSyncTrigger(102053, triggers[102053])

@@ -9,7 +9,7 @@ local triggers = {
 
     [100154] = { id = 100318, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-3900, -2200, 650) } },
     [100157] = { id = 100314, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(2800, 2750, 623) } },
-    [100156] = { id = 100367, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-1450, -3850, 650) } },
+    [100156] = { id = 100367, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-1450, -3850, 650) } }
 }
 
 EHI:ParseTriggers(triggers, "Escape", Icon.CarEscape)

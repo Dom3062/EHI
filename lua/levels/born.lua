@@ -1,4 +1,5 @@
 local EHI = EHI
+local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local trigger_icon_all = { "pd2_defend" }
@@ -9,7 +10,14 @@ local triggers = {
 
     [101535] = { id = "MikeDefendGarage", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101532 },
     [101534] = { id = "MikeDefendGarage", special_function = SF.UnpauseTracker },
-    [101533] = { id = "MikeDefendGarage", special_function = SF.PauseTracker }
+    [101533] = { id = "MikeDefendGarage", special_function = SF.PauseTracker },
+
+    [101048] = { special_function = SF.Trigger, data = { 1010481, 1010482 } },
+    [1010481] = { time = 12, id = "ObjectiveDelay", icons = { Icon.Wait } },
+    [1010482] = { status = "defend", id = "born_3", class = TT.AchievementNotification, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
+    [101001] = { status = "finish", id = "born_3", special_function = SF.SetAchievementStatus },
+    [102777] = { id = "born_3", special_function = SF.SetAchievementComplete },
+    [102779] = { id = "born_3", special_function = SF.SetAchievementFailed }
 }
 if Network:is_client() then
     triggers[101034].time = 80

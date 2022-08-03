@@ -12,6 +12,26 @@ local original =
     spawn_smoke_screen = PlayerManager.spawn_smoke_screen
 }
 
+if buffs and false then
+    original.init = PlayerManager.init
+    function PlayerManager:init(...)
+        original.init(self, ...)
+        local _t = self._damage_absorption
+        self._damage_absorption = {}
+        local _mt = {
+            __index = function(table, key)
+                return _t[key]
+            end,
+            __newindex = function(table, key, value)
+                _t[key] = value
+                if key == "hostage_absorption" then
+                end
+            end
+        }
+        setmetatable(self._damage_absorption, _mt)
+    end
+end
+
 if EHI:GetOption("show_gained_xp") and Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode ~= "crime_spree" and Global.load_level then
     function PlayerManager:SetPlayerData()
         local data = {}

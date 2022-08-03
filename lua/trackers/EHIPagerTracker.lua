@@ -5,12 +5,6 @@ function EHIPagerTracker:init(panel, params)
     EHIPagerTracker.super.init(self, panel, params)
 end
 
-function EHIPagerTracker:FixTime()
-    if self._time >= 12 then
-        self:SetTimeNoAnim(12)
-    end
-end
-
 function EHIPagerTracker:SetAnswered()
     self:RemoveTrackerFromUpdate()
     self._text:stop()

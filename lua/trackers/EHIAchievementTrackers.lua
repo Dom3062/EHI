@@ -203,7 +203,7 @@ function EHIAchievementNotificationTracker:SetTextColor(color)
     local c
     if color then
         c = color
-    elseif self._status == "ok" or self._status == "done" or self._status == "pass" or self._status == "finish" or self._status == "destroy" then
+    elseif self._status == "ok" or self._status == "done" or self._status == "pass" or self._status == "finish" or self._status == "destroy" or self._status == "defend" then
         c = Color.green
     elseif self._status == "ready" or self._status == "loud" or self._status == "push" or self._status == "hack" or self._status == "land" or self._status == "find" then
         c = Color.yellow

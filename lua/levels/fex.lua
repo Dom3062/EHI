@@ -9,10 +9,10 @@ local function fex_10()
 end
 local spawn_trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local triggers = {
-    -- Van Escape, 2 possible car escape scenarions here, the longer is here, the shorter is in WankerCar
     [1] = { max = 21, id = "fex_10", class = TT.AchievementProgress },
     [2] = { special_function = SF.CustomCode, f = fex_10 },
 
+    -- Van Escape, 2 possible car escape scenarions here, the longer is here, the shorter is in WankerCar
     [101638] = { time = 1 + 60 + 900/30 + 5, id = "CarEscape", icons = Icon.CarEscape },
     -- Wanker car
     [EHI:GetInstanceElementID(100029, 27580)] = { time = 610/30 + 2, id = "CarEscape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },

@@ -1,3 +1,10 @@
+r72 (xx. 08. 2022):
+Added popups for achievements related to Gage Packages
+Biker Heist: Added achievement tracker for "Let the Man Work"
+Election Day: Added achievement tracker for "Storage Hunter"
+Escape: Garage: Added achievement tracker for "They See Me Baggin', They Hatin'"
+Midland Ranch Heist: Fixed an issue where trackers were not visible on client
+
 r71 (29. 07. 2022):
 Added Berserker buff
 Fixed an issue where camera loop tracker is still visible after the looped camera was destroyed

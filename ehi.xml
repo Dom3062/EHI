@@ -110,6 +110,7 @@
         <post hook_id="lib/units/equipment/ecm_jammer/ecmjammerbase" :script_path="ECMJammerBase.lua" />
         <post hook_id="lib/units/equipment/grenade_crate/grenadecratebase" :script_path="GrenadeCrateBase.lua" />
         <post hook_id="lib/units/equipment/first_aid_kit/firstaidkitbase" :script_path="FirstAidKitBase.lua" />
+        <!--<post hook_id="lib/units/equipment/sentry_gun/sentrygundamage" :script_path="SentryGunDamage.lua" />-->
         <post hook_id="lib/units/equipment/sentry_gun/sentrygunmovement" :script_path="SentryGunMovement.lua" />
         <post hook_id="lib/units/pickups/gageassignmentbase" :script_path="GageAssignmentBase.lua" />
         <post hook_id="lib/units/props/drill" :script_path="Drill.lua" />

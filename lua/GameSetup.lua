@@ -85,6 +85,7 @@ local levels =
     escape_park = true, -- Escape: Park
     escape_park_day = true, -- Escape: Park (Day)
     escape_street = true, -- Escape: Street
+    escape_garage = true, -- Escape: Garage
     big = true, -- Big Bank
     mia_1 = true, -- Hotline Miami Day 1
     mia_2 = true, -- Hotline Miami Day 2

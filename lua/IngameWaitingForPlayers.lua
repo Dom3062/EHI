@@ -401,6 +401,74 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end
+    if EHI:IsAchievementLocked2("gmod_1") then -- Praying Mantis
+        local progress = EHI:GetAchievementProgress("gmod_1_stats")
+        EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gmod_1_achievement", function(am, stat, value)
+            if stat == "gmod_1_stats" then
+                progress = progress + value
+                if progress < 5 then
+                    ShowPopup("gmod_1", progress, 5)
+                end
+            end
+        end)
+    end
+    if EHI:IsAchievementLocked2("gmod_2") then -- Bullseye
+        local progress = EHI:GetAchievementProgress("gmod_2_stats")
+        EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gmod_2_achievement", function(am, stat, value)
+            if stat == "gmod_2_stats" then
+                progress = progress + value
+                if progress < 10 then
+                    ShowPopup("gmod_2", progress, 10)
+                end
+            end
+        end)
+    end
+    if EHI:IsAchievementLocked2("gmod_3") then -- My Spider Sense is Tingling
+        local progress = EHI:GetAchievementProgress("gmod_3_stats")
+        EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gmod_3_achievement", function(am, stat, value)
+            if stat == "gmod_3_stats" then
+                progress = progress + value
+                if progress < 15 then
+                    ShowPopup("gmod_3", progress, 15)
+                end
+            end
+        end)
+    end
+    if EHI:IsAchievementLocked2("gmod_4") then -- Eagle Eyes
+        local progress = EHI:GetAchievementProgress("gmod_4_stats")
+        EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gmod_4_achievement", function(am, stat, value)
+            if stat == "gmod_4_stats" then
+                progress = progress + value
+                if progress < 20 then
+                    ShowPopup("gmod_4", progress, 20)
+                end
+            end
+        end)
+    end
+    if EHI:IsAchievementLocked2("gmod_5") then -- Like A Boy Killing Snakes
+        local progress = EHI:GetAchievementProgress("gmod_5_stats")
+        EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gmod_5_achievement", function(am, stat, value)
+            if stat == "gmod_5_stats" then
+                progress = progress + value
+                if progress < 25 then
+                    ShowPopup("gmod_5", progress, 25)
+                end
+            end
+        end)
+    end
+    if EHI:IsAchievementLocked2("gmod_6") then -- There and Back Again
+        EHI:HookWithID(GageAssignmentManager, "_give_rewards", "EHI_gmod_6_achievement", function(gam, assignment, ...)
+            local progress = 0
+            for i, dvalue in pairs(gam._global.completed_assignments) do
+                if Application:digest_value(dvalue, false) >= tweak_data.achievement.gonna_find_them_all then
+                    progress = progress + 1
+                end
+            end
+            if progress < 5 then
+                ShowPopup("gmod_6", progress, 5)
+            end
+        end)
+    end
     if EHI:IsAchievementLocked2("gage3_6") and HasWeaponTypeEquipped("snp") then
         if EHI:IsAchievementLocked2("gage3_3") then -- "Lord of the Flies" achievement
             CreateProgressTracker("gage3_3", EHI:GetAchievementProgress("gage3_3_stats"), 50, false, true)
@@ -910,8 +978,10 @@ function IngameWaitingForPlayersState:at_exit(...)
         EHI:HookWithID(MissionEndState, "chk_complete_heist_achievements", "EHI_pim_2_on_heist_end", on_heist_end)
         CreateProgressTracker("pim_2", progress, 8, false, false, true)
         EHI:Hook(AchievmentManager, "add_heist_success_award_progress", function(am, id)
-            progress = progress + 1
-            managers.ehi:SetTrackerProgress("pim_2", progress)
+            if id == "pim_2_stats" then
+                progress = progress + 1
+                managers.ehi:SetTrackerProgress("pim_2", progress)
+            end
         end)
     end
     if EHI:IsAchievementLocked("xm20_1") and (level == "mex" or level == "bex" or level == "pex" or level == "fex") then

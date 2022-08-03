@@ -84,6 +84,24 @@ function EHIManager:CountInteractionAvailable(tweak_data)
     return count
 end
 
+function EHIManager:CountLootbagsOnTheGround()
+    local excluded = { value_multiplier = true, dye = true, types = true, small_loot = true }
+    local lootbags = {}
+    for key, data in pairs(tweak_data.carry) do
+        if not (excluded[key] or data.is_unique_loot or data.skip_exit_secure) then
+            lootbags[key] = true
+        end
+    end
+    local interactions = managers.interaction._interactive_units or {}
+    local count = 0
+    for _, unit in pairs(interactions) do
+        if unit:carry_data() and lootbags[unit:carry_data():carry_id()] then
+            count = count + 1
+        end
+    end
+    return count
+end
+
 function EHIManager:CountUnitAvailable(path, slotmask)
     return #self:GetUnits(path, slotmask)
 end

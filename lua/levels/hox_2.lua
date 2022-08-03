@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local SecurityTearGasRandomElement = EHI:GetInstanceElementID(100061, 6690)
 local element_sync_triggers =
@@ -22,7 +21,7 @@ local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) 
 local triggers = {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072--[[, 1001073]] } },
     [1001071] = { id = "slakt_3", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
-    [1001072] = { id = "cac_26", class = TT.AchievementNotification, special_function = SF.ShowAchievementFromStart, condition = show_achievement and ovk_and_up, exclude_from_sync = true },
+    [1001072] = { id = "cac_26", status = "defend", class = TT.AchievementNotification, special_function = SF.ShowAchievementFromStart, difficulty_pass = ovk_and_up, exclude_from_sync = true },
     --[1001073] = { time = AssaultDelay, id = "AssaultDelay", stop_counting = EHI._cache.Host, class = TT.AssaultDelay },
     [100256] = { id = "slakt_3", special_function = SF.SetAchievementFailed },
     [100258] = { id = "slakt_3", special_function = SF.SetAchievementComplete },
