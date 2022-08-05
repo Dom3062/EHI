@@ -1,3 +1,4 @@
+local EHI = EHI
 local SF = EHI.SpecialFunctions
 local delay = 2
 local triggers = {
@@ -8,3 +9,7 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers, "HeliLootDrop", EHI.Icons.HeliLootDrop)
+EHI:ShowLootCounter({
+    max = 14,
+    offset = true
+})

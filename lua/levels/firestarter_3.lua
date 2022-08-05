@@ -1,10 +1,10 @@
 local EHI = EHI
 local Icon = EHI.Icons
+local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {}
 local level_id = Global.game_settings.level_id
 if level_id == "firestarter_3" then
-    local SF = EHI.SpecialFunctions
     local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
     triggers = {
         [102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1021441 } },
@@ -14,6 +14,9 @@ if level_id == "firestarter_3" then
         [105235] = { id = "slakt_5", special_function = SF.SetAchievementFailed }
     }
 else
+    triggers = {
+        [103306] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    }
     -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
     EHI:ShowAchievementBagValueCounter({
         achievement = "uno_1",
@@ -36,6 +39,13 @@ end
 triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
 triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
 
+triggers[101539] = { status = "bring", id = "voff_1", class = TT.AchievementNotification, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) }
+triggers[105686] = { id = "voff_1", special_function = SF.SetAchievementComplete }
+triggers[105691] = { status = "finish", id = "voff_1", special_function = SF.SetAchievementStatus } -- Entered area again
+triggers[105694] = { status = "finish", id = "voff_1", special_function = SF.SetAchievementStatus } -- Both secured
+triggers[105698] = { status = "bring", id = "voff_1", special_function = SF.SetAchievementStatus } -- Left the area
+triggers[105704] = { id = "voff_1", special_function = SF.SetAchievementFailed } -- Killed
+
 EHI:ParseTriggers(triggers)
 
 local tbl =
@@ -45,3 +55,42 @@ local tbl =
     [104466] = { remove_vanilla_waypoint = true, waypoint_id = 102752 }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddLoadSyncFunction(function(self)
+    local dog_haters =
+    {
+        [Idstring("units/payday2/characters/civ_male_dog_abuser_1/civ_male_dog_abuser_1"):key()] = true,
+        [Idstring("units/payday2/characters/civ_male_dog_abuser_2/civ_male_dog_abuser_2"):key()] = true
+    }
+    local dog_haters_unit = {}
+    local count = 0
+    local civies = managers.enemy:all_civilians()
+    for _, data in pairs(civies or {}) do
+        local name_key = data.unit:name():key()
+        if dog_haters[name_key] then
+            count = count + 1
+            dog_haters_unit[count] = data.unit
+            dog_haters[name_key] = nil
+        end
+        if count == 2 then
+            break
+        end
+    end
+    if count ~= 2 then
+        return
+    end
+    -- Exit areas share the same space
+    local secure_area_1 = managers.mission:get_element_by_id(105674) -- ´dog_abuse_trigger_enter_001´ ElementAreaTrigger 105674
+    local secure_area_2 = managers.mission:get_element_by_id(105678) -- ´dog_abuse_trigger_enter_002´ ElementAreaTrigger 105678
+    local secure_area_3 = managers.mission:get_element_by_id(105679) -- ´dog_abuse_trigger_enter_003´ ElementAreaTrigger 105679
+    if not (secure_area_1 and secure_area_2 and secure_area_3) then
+        return
+    end
+    EHI:Trigger(101177)
+    local pos_1 = dog_haters_unit[1]:position()
+    local pos_2 = dog_haters_unit[2]:position()
+    if (secure_area_1:_is_inside(pos_1) and secure_area_1:_is_inside(pos_2)) or
+        (secure_area_2:_is_inside(pos_1) and secure_area_2:_is_inside(pos_2)) or
+        (secure_area_3:_is_inside(pos_1) and secure_area_3:_is_inside(pos_2)) then
+        self:SetAchievementStatus("voff_1", "finish")
+    end
+end)

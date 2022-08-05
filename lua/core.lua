@@ -40,6 +40,11 @@ _G.EHI =
 
     Callback = {},
 
+    CallbackMessage =
+    {
+        Spawned = "PlayerSpawned"
+    },
+
     OnAlarmCallback = {},
     OnCustodyCallback = {},
     AchievementCounter = {},
@@ -1438,8 +1443,35 @@ function EHI:DisableWaypointsOnInit()
     end
 end
 
-function EHI:ShowLootCounter(max, additional_loot, check_type, loot_type)
-    managers.ehi:ShowLootCounter(max, additional_loot)
+-- Used on clients when offset is required
+-- Do not call it directly!
+function EHI:ShowLootCounterOffset(params, manager)
+    local offset = managers.loot:GetSecuredBagsAmount()
+    manager:ShowLootCounter(params.max, params.additional_loot, offset)
+    if params.no_counting then
+        return
+    end
+    self:HookLootCounter()
+end
+
+function EHI:ShowLootCounter(params)
+    local n_offset = 0
+    if params.offset then
+        if self._cache.Host then
+            n_offset = managers.loot:GetSecuredBagsAmount()
+        else
+            managers.ehi:AddFullSyncFunction(callback(self, self, "ShowLootCounterOffset", params))
+            return
+        end
+    end
+    managers.ehi:ShowLootCounter(params.max, params.additional_loot, n_offset)
+    if params.no_counting then
+        return
+    end
+    self:HookLootCounter()
+end
+
+function EHI:HookLootCounter(check_type, loot_type)
     if not self._cache.LootCounter then
         local function Hook(self, ...)
             self:EHIReportProgress("LootCounter", check_type or EHI.LootCounter.CheckType.BagsOnly, loot_type)
@@ -1454,7 +1486,7 @@ local show_achievement = false
 function EHI:ShowAchievementLootCounter(params)
     if self._cache.AchievementsAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
         if params.show_loot_counter then
-            self:ShowLootCounter(params.max, params.additional_loot)
+            self:ShowLootCounter({ max = params.max, additional_loot = params.additional_loot })
         end
         return
     end

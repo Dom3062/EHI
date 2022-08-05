@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.MissionEndState then
     return
 else

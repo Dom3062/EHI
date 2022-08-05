@@ -241,6 +241,14 @@ tweak_data.ehi =
             x = 4,
             y = 5
         },
+        hostage_absorption =
+        {
+            u100skill = true,
+            x = 4,
+            y = 7,
+            class = "EHIGaugeBuffTracker",
+            format = "percent"
+        },
         ManiacStackTicks =
         {
             deck = true,

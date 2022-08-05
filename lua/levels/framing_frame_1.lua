@@ -13,7 +13,7 @@ function EHI:PaintingCount()
             end
         end
     end]]
-    self:ShowLootCounter(9)
+    self:ShowLootCounter({ max = 9 })
     self:ShowAchievementLootCounter({
         achievement = "pink_panther",
         max = 9
@@ -47,7 +47,7 @@ if Global.game_settings.level_id == "gallery" then
     EHI:ParseTriggers(triggers)
 end
 
-EHI:ShowLootCounter(9)
+EHI:ShowLootCounter({ max = 9 })
 EHI:ShowAchievementLootCounter({
     achievement = "pink_panther",
     max = 9,

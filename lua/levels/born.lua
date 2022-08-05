@@ -39,4 +39,4 @@ if Network:is_client() then
 end
 
 EHI:ParseTriggers(triggers, nil, trigger_icon_all)
-EHI:ShowLootCounter(9)
+EHI:ShowLootCounter({ max = 9 })

@@ -4,7 +4,7 @@ local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [100946] = { max = 4, id = "wwh_10", class = TT.AchievementProgress },
-    [100944] = { id = "wwh_9", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
+    [100944] = { id = "wwh_9", status = "defend", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
     [101250] = { id = "wwh_9", special_function = SF.SetAchievementFailed },
     [100082] = { id = "wwh_9", special_function = SF.SetAchievementComplete },
     [100322] = { time = 120, id = "Fuel", icons = { "pd2_water_tap" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
@@ -21,4 +21,4 @@ end
 
 EHI:ParseTriggers(triggers)
 EHI:DisableWaypoints(DisableWaypoints)
-EHI:ShowLootCounter(8)
+EHI:ShowLootCounter({ max = 8 })

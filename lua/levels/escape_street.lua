@@ -14,3 +14,28 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers, "Escape", Icon.HeliEscape)
+
+local function IsBranchbankJobActive()
+    local jobs = tweak_data.achievement.complete_heist_achievements.uno_1.jobs
+    for _, job in ipairs(jobs) do
+        if managers.job:current_job_id() == job then
+            return true
+        end
+    end
+    return false
+end
+
+if IsBranchbankJobActive() then
+    EHI:ShowAchievementBagValueCounter({
+        achievement = "uno_1",
+        value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value,
+        exclude_from_sync = true,
+        remove_after_reaching_target = false,
+        counter =
+        {
+            check_type = EHI.LootCounter.CheckType.ValueOfBags
+        }
+    })
+--[[elseif managers.job:current_job_id() == "family" then -- Diamond Store
+    EHI:ShowLootCounter({ max = 18 })]]
+end

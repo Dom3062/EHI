@@ -138,7 +138,7 @@ EHI:RegisterCustomSpecialFunction(RemoveTriggerAndStartAchievementCountdown, fun
     managers.ehi:StartTrackerCountdown("cac_10")
     EHI:UnhookTrigger(id)
 end)
-EHI:ShowLootCounter(14)
+EHI:ShowLootCounter({ max = 14 })
 if show_achievement then
     EHI:AddLoadSyncFunction(function(self)
         if EHI.ConditionFunctions.IsStealth() then

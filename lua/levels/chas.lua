@@ -68,7 +68,7 @@ if EHI:GetOption("show_achievement") and ovk_and_up then
         managers.ehi:SetAchievementFailed("chas_10")
     end)
 end
-EHI:ShowLootCounter(15)
+EHI:ShowLootCounter({ max = 15 })
 
 local tbl =
 {

@@ -52,7 +52,7 @@ local DisableWaypoints =
 
 EHI:ParseTriggers(triggers)
 EHI:DisableWaypoints(DisableWaypoints)
-EHI:ShowLootCounter(21)
+EHI:ShowLootCounter({ max = 21 })
 EHI:AddLoadSyncFunction(function(self)
     if EHI.ConditionFunctions.IsStealth() then
         self:AddAchievementProgressTracker("fex_10", 21)

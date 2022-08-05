@@ -202,7 +202,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         managers.player:EHICheckAbility()
         managers.ehi_buff:ActivateUpdatingBuffs()
     end
-    EHI:CallCallback("DelayAchievementStartedPopup")
+    EHI:CallCallback(EHI.CallbackMessage.Spawned)
     --[[EHI:DelayCall("EHI_Debug", 7.5, function()
         for i = 1, 99, 1 do
             managers.ehi:RunStaticTracker(tostring(i), 10)

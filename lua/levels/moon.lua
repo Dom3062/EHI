@@ -51,7 +51,7 @@ if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficultie
         }
     })
 end
-EHI:ShowLootCounter(12)
+EHI:ShowLootCounter({ max = 12 })
 
 local tbl =
 {

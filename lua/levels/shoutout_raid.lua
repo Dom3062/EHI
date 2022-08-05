@@ -25,7 +25,10 @@ local max = 6 -- Normal to Very Hard; Mission Loot
 if ovk_and_up then
     max = 8
 end
-EHI:ShowLootCounter(max, 8) -- 14/16
+EHI:ShowLootCounter({
+    max = max,
+    additional_loot = 8
+}) -- 14/16
 
 local tbl =
 {

@@ -13,13 +13,12 @@ function EHI:LordOfWarAchievement()
     self:ShowAchievementLootCounter({
         achievement = "lord_of_war",
         max = n_of_weapons,
-        additional_loot = 1,
-        show_loot_counter = true,
         exclude_from_sync = true
     })
-    if managers.ehi:TrackerDoesNotExist("LootCounter") then
-        self:ShowLootCounter(1, 0, self.LootCounter.CheckType.OneTypeOfLoot, "money")
-    end
+    self:ShowLootCounter({
+        max = n_of_weapons,
+        additional_loot = 1 -- 1 bag of money
+    })
 end
 
 local triggers = {

@@ -199,7 +199,7 @@ elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
     random_paintings = 1
 end
 local total = base_amount + crates + random_weapons + random_paintings
-EHI:ShowLootCounter(total)
+EHI:ShowLootCounter({ max = total })
 -- Not included bugged loot, this is checked after spawn -> 1027003
 -- Reported here:
 -- https://steamcommunity.com/app/218620/discussions/14/5710018482972011532/

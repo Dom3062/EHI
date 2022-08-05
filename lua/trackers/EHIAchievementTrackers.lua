@@ -13,7 +13,7 @@ local function ShowFailedPopup(tracker)
 end
 local function ShowStartedPopup(tracker)
     if tracker._delay_popup then
-        EHI:AddCallback("DelayAchievementStartedPopup", callback(tracker, tracker, "ShowStartedPopup"))
+        EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(tracker, tracker, "ShowStartedPopup"))
         return
     end
     local id = tracker._id
@@ -205,7 +205,7 @@ function EHIAchievementNotificationTracker:SetTextColor(color)
         c = color
     elseif self._status == "ok" or self._status == "done" or self._status == "pass" or self._status == "finish" or self._status == "destroy" or self._status == "defend" then
         c = Color.green
-    elseif self._status == "ready" or self._status == "loud" or self._status == "push" or self._status == "hack" or self._status == "land" or self._status == "find" then
+    elseif self._status == "ready" or self._status == "loud" or self._status == "push" or self._status == "hack" or self._status == "land" or self._status == "find" or self._status == "bring" then
         c = Color.yellow
     else
         c = Color.red
@@ -214,7 +214,7 @@ function EHIAchievementNotificationTracker:SetTextColor(color)
 end
 
 function EHIAchievementNotificationTracker:SetStatus(status)
-    if self._dont_override_status then
+    if self._dont_override_status or self._status == status then
         return
     end
     self._status = status
@@ -250,8 +250,14 @@ function EHIAchievementBagValueTracker:init(panel, params)
     self._to_secure_formatted = self:FormatNumber(self._to_secure)
     EHIAchievementBagValueTracker.super.init(self, panel, params)
     if show_started then
+        self._delay_popup = params.delay_popup
         ShowStartedPopup(self)
     end
+end
+
+function EHIAchievementBagValueTracker:ShowStartedPopup()
+    self._delay_popup = false
+    ShowStartedPopup(self)
 end
 
 function EHIAchievementBagValueTracker:OverridePanel(params)

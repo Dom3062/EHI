@@ -9,7 +9,7 @@ local triggers = {
     [1001321] = { max = 21, id = "hunter_loot", icons = { "ehi_hunter_departure_all_loot" }, class = TT.AchievementProgress, special_function = SF.ShowAchievementFromStart, condition = show_achievement and ovk_and_up },
     [1001322] = { special_function = SF.CustomCode, f = function ()
         if managers.ehi:TrackerDoesNotExist("hunter_loot") then
-            EHI:ShowLootCounter(21)
+            EHI:ShowLootCounter({ max = 21 })
             EHI:UnhookElement(100416)
         end
     end },
@@ -23,7 +23,7 @@ tweak_data.hud_icons.ehi_hunter_departure_all_loot = { texture = "textures/hunte
 
 EHI:ParseTriggers(triggers)
 EHI:AddLoadSyncFunction(function(self)
-    EHI:ShowLootCounter(21)
+    EHI:ShowLootCounter({ max = 21 })
     EHI:UnhookElement(100416)
     self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
 end)

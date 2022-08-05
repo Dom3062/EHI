@@ -9,6 +9,8 @@ if managers.job:is_level_christmas("hox_1") then
     RoadBlockVehicleIndex2 = 7350
 end
 local triggers = {
+    [100562] = { time = 1 + 5, id = "C4", icons = { Icon.C4 } },
+
     [101595] = { time = 6, id = "Wait", icons = { Icon.Wait } },
 
     [102191] = move, -- First Police Car

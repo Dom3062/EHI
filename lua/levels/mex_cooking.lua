@@ -42,4 +42,4 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
         exclude_from_sync = true
     })
 end
-EHI:ShowLootCounter(50)
+EHI:ShowLootCounter({ max = 50 })

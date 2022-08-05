@@ -85,7 +85,7 @@ local function set_active(self, ...)
 end
 
 if EHI:GetOption("show_equipment_ammobag") then
-    EHI:PreHook(AmmoBagInteractionExt, "init", function (self, unit)
+    EHI:PreHook(AmmoBagInteractionExt, "init", function(self, unit, ...)
         self._ehi_key = unit:base():GetEHIKey()
         self._tracker_id = all and "Deployables" or "AmmoBags"
     end)
@@ -111,13 +111,13 @@ if EHI:GetOption("show_equipment_ammobag") then
         end
     end)
 
-    EHI:Hook(AmmoBagInteractionExt, "destroy", function(self)
+    EHI:Hook(AmmoBagInteractionExt, "destroy", function(self, ...)
         managers.ehi:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
     end)
 end
 
 if EHI:GetOption("show_equipment_bodybags") then
-    EHI:PreHook(BodyBagsBagInteractionExt, "init", function (self, unit)
+    EHI:PreHook(BodyBagsBagInteractionExt, "init", function(self, unit, ...)
         self._ehi_key = unit:base():GetEHIKey()
         self._tracker_id = all and "Deployables" or "BodyBags"
     end)
@@ -143,14 +143,14 @@ if EHI:GetOption("show_equipment_bodybags") then
         end
     end)
 
-    EHI:Hook(BodyBagsBagInteractionExt, "destroy", function(self)
+    EHI:Hook(BodyBagsBagInteractionExt, "destroy", function(self, ...)
         managers.ehi:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
     end)
 end
 
 if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_firstaidkit") then
     local aggregate = EHI:GetOption("show_equipment_aggregate_health")
-    EHI:PreHook(DoctorBagBaseInteractionExt, "init", function (self, unit)
+    EHI:PreHook(DoctorBagBaseInteractionExt, "init", function(self, unit, ...)
         self._ehi_key = unit:base().GetEHIKey and unit:base():GetEHIKey()
         self._ehi_tweak = self.tweak_data == "first_aid_kit" and "FirstAidKits" or "DoctorBags"
         self._ehi_unit_tweak = self.tweak_data == "first_aid_kit" and "first_aid_kit" or "doctor_bag"
@@ -184,7 +184,7 @@ if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_fi
         end
     end)
 
-    EHI:Hook(DoctorBagBaseInteractionExt, "destroy", function(self)
+    EHI:Hook(DoctorBagBaseInteractionExt, "destroy", function(self, ...)
         managers.ehi:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
     end)
 end

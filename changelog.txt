@@ -1,4 +1,10 @@
-r72 (xx. 08. 2022):
+r73 (05. 08. 2022):
+Added Forced Friendship Absorption buff
+Fixed an issue where achievement tracker "A Good Haul" is not visible in Escapes if active mission is Branchbank
+Branchbank: Added tracker for achievement "Saint Francis"
+Goat Simulator Day 1: Fixed a load crash when "Show hint for every XP" option is selected
+
+r72 (03. 08. 2022):
 Added popups for achievements related to Gage Packages
 Biker Heist: Added achievement tracker for "Let the Man Work"
 Election Day: Added achievement tracker for "Storage Hunter"

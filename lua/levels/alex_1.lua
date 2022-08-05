@@ -49,7 +49,7 @@ if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficultie
         exclude_from_sync = true
     })
 else
-    EHI:ShowLootCounter(7)
+    EHI:ShowLootCounter({ max = 7 })
 end
 EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(id, trigger, ...)
     if managers.ehi:TrackerExists(trigger.id) then

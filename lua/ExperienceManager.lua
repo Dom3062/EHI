@@ -154,7 +154,7 @@ elseif xp_panel == 3 then
     end
 elseif xp_panel == 4 then
     Show = function(self, diff)
-        if managers.hud then
+        if managers.hud and managers.hud._hud_hint then
             managers.hud:show_hint({ text = EXPERIENCE_GAINED .. self:cash_string(diff, diff >= 0 and "+" or "") .. " XP; ".. EXPERIENCE_TOTAL .. self:cash_string(TotalXP, "+") .. " XP" })
         end
     end

@@ -1,3 +1,4 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local TT = EHI.Trackers
 local SF = EHI.SpecialFunctions
@@ -19,3 +20,4 @@ EHI:AddOnAlarmCallback(function(dropin)
 end)
 
 EHI:ParseTriggers(triggers)
+--EHI:ShowLootCounter({ max = 18 })

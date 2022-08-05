@@ -74,7 +74,7 @@ for i = 12850, 13600, 250 do
 end
 
 EHI:ParseTriggers(triggers)
-EHI:ShowLootCounter(16)
+EHI:ShowLootCounter({ max = 16 })
 EHI:RegisterCustomSpecialFunction(AddBodyBag, function(id, trigger, ...)
     managers.ehi:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
 end)

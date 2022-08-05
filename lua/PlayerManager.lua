@@ -12,26 +12,6 @@ local original =
     spawn_smoke_screen = PlayerManager.spawn_smoke_screen
 }
 
-if buffs and false then
-    original.init = PlayerManager.init
-    function PlayerManager:init(...)
-        original.init(self, ...)
-        local _t = self._damage_absorption
-        self._damage_absorption = {}
-        local _mt = {
-            __index = function(table, key)
-                return _t[key]
-            end,
-            __newindex = function(table, key, value)
-                _t[key] = value
-                if key == "hostage_absorption" then
-                end
-            end
-        }
-        setmetatable(self._damage_absorption, _mt)
-    end
-end
-
 if EHI:GetOption("show_gained_xp") and Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode ~= "crime_spree" and Global.load_level then
     function PlayerManager:SetPlayerData()
         local data = {}
@@ -73,6 +53,34 @@ end
 
 if not buffs then
     return
+end
+
+original.init = PlayerManager.init
+function PlayerManager:init(...)
+    original.init(self, ...)
+    local hostage_limit = tweak_data.upgrades.values.team.damage.hostage_absorption_limit
+    local absorption_gain = tweak_data.upgrades.values.team.damage.hostage_absorption[1]
+    local max_absorption = hostage_limit * absorption_gain
+    local _t = self._damage_absorption
+    self._damage_absorption = {}
+    local _mt = {
+        __index = function(table, key)
+            return _t[key]
+        end,
+        __newindex = function(table, key, value)
+            _t[key] = value
+            if key == "hostage_absorption" and value then
+                local raw = Application:digest_value(value, false)
+                if raw > 0 then
+                    local ratio = raw / max_absorption
+                    managers.ehi_buff:AddGauge("hostage_absorption", ratio)
+                else
+                    managers.ehi_buff:RemoveBuff("hostage_absorption")
+                end
+            end
+        end
+    }
+    setmetatable(self._damage_absorption, _mt)
 end
 
 local AbilityKey, AbilitySpeedUp

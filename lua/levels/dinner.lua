@@ -38,9 +38,13 @@ if show_achievement then
             }
         })
         if managers.ehi:TrackerExists("farm_6") then
-            EHI:ShowLootCounter(10, 0, EHI.LootCounter.CheckType.OneTypeOfLoot, "gold")
+            EHI:ShowLootCounter({
+                max = 10,
+                no_counting = true
+            })
+            EHI:HookLootCounter(EHI.LootCounter.CheckType.OneTypeOfLoot, "gold")
         else
-            EHI:ShowLootCounter(11)
+            EHI:ShowLootCounter({ max = 11 })
         end
         EHI:HookWithID(HUDManager, "sync_set_assault_mode", "EHI_farm_1_achievement", function(self, mode, ...)
             if mode == "phalanx" then
@@ -56,14 +60,14 @@ if show_achievement then
             end
         end)
     else
-        EHI:ShowLootCounter(10)
+        EHI:ShowLootCounter({ max = 10 })
     end
 else
     local max = 10
     if ovk_and_up then
         max = 11
     end
-    EHI:ShowLootCounter(max)
+    EHI:ShowLootCounter({ max = max })
 end
 
 local tbl =

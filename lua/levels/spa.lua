@@ -34,7 +34,7 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
-EHI:ShowLootCounter(4)
+EHI:ShowLootCounter({ max = 4 })
 
 local tbl =
 {

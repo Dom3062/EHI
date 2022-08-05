@@ -217,6 +217,9 @@ end
 
 function EHIManager:LoadSync()
     if self._level_started_from_beginning or self._synced_from_host then
+        for _, f in pairs(self._full_sync or {}) do
+            f(self)
+        end
         return
     end
     for _, f in pairs(self._load_sync or {}) do
@@ -230,6 +233,11 @@ end
 function EHIManager:AddLoadSyncFunction(f)
     self._load_sync = self._load_sync or {}
     self._load_sync[#self._load_sync + 1] = f
+end
+
+function EHIManager:AddFullSyncFunction(f)
+    self._full_sync = self._full_sync or {}
+    self._full_sync[#self._full_sync + 1] = f
 end
 
 function EHIManager:DisableStartFromBeginning()
@@ -391,8 +399,8 @@ end
 function EHIManager:AddAchievementProgressTracker(id, max, additional_loot, exclude_from_sync, remove_after_reaching_target, show_loot_counter, icon)
     if EHI:IsAchievementUnlocked(id) then
         if show_loot_counter then
-            -- TODO: Fix the redirection to EHI
-            EHI:ShowLootCounter(max, additional_loot)
+            self:ShowLootCounter(max, additional_loot)
+            EHI:HookLootCounter()
         end
         return
     end
@@ -430,19 +438,22 @@ function EHIManager:AddAchievementBagValueCounter(id, to_secure, exclude_from_sy
         id = id,
         to_secure = to_secure,
         icons = { icon },
+        delay_popup = true,
         exclude_from_sync = exclude_from_sync,
         remove_after_reaching_target = remove_after_reaching_target,
         class = "EHIAchievementBagValueTracker"
     })
 end
 
-function EHIManager:ShowLootCounter(max, additional_loot)
+function EHIManager:ShowLootCounter(max, additional_loot, offset, stay_on_screen)
     self:AddTracker({
         id = "LootCounter",
         max = max + (additional_loot or 0),
+        offset = offset,
+        stay_on_screen = stay_on_screen,
         icons = { "pd2_loot" },
         exclude_from_sync = true,
-        class = EHI.Trackers.Progress
+        class = "EHILootTracker"
     })
 end
 

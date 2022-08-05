@@ -4,4 +4,4 @@ local triggers = {
 }
 
 EHI:ParseTriggers(triggers)
-EHI:ShowLootCounter(20)
+EHI:ShowLootCounter({ max = 20 })

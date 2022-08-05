@@ -34,6 +34,7 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHISecurityLockGuiTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIMinionTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAssaultDelayTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHILootTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="StaticTrackers.lua"/>
             </group>
             <group :script_path="buffs/">

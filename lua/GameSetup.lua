@@ -34,7 +34,9 @@ local redirect =
 
 local levels =
 {
+    -- Tutorial
     short2_stage2b = true, -- Basic Mission: Loud - Plan B
+    -- Chapter 1: Just getting started
     jewelry_store = true, -- Jewelry Store
     branchbank = true, -- Branchbank: Random
     branchbank_gold = true, -- Branchbank: Gold
@@ -67,6 +69,7 @@ local levels =
     alex_1 = true, -- Rats Day 1
     alex_2 = true, -- Rats Day 2
     alex_3 = true, -- Rats Day 3
+    -- Chapter 2: The Kings of CrimeNet
     welcome_to_the_jungle_1 = true, -- Big Oil Day 1
     welcome_to_the_jungle_1_night = true, -- Big Oil Day 1 (Night)
     welcome_to_the_jungle_2 = true, -- Big Oil Day 2
@@ -108,6 +111,7 @@ local levels =
     peta = true, -- Goat Simulator Heist Day 1
     peta2 = true, -- Goat Simulator Heist Day 2
     cane = true, -- Santa's Workshop
+    -- Chapter 3: Endgame
     cage = true, -- Car Shop
     born = true, -- The Biker Heist Day 1
     chew = true, -- The Biker Heist Day 2

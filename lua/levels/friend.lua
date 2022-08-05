@@ -84,7 +84,7 @@ else
 end
 
 EHI:ParseTriggers(triggers)
-EHI:ShowLootCounter(16)
+EHI:ShowLootCounter({ max = 16 })
 if EHI:GetOption("show_achievement") and mayhem_and_up then
     EHI:AddOnAlarmCallback(function()
         managers.ehi:SetAchievementFailed("friend_6")

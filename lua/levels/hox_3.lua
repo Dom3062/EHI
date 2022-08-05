@@ -37,7 +37,7 @@ end)
 EHI:AddOnAlarmCallback(function(dropin)
     managers.ehi:RemoveTracker("ForcedAlarm")
 end)
-EHI:ShowLootCounter(8)
+EHI:ShowLootCounter({ max = 8 })
 
 local tbl =
 {
