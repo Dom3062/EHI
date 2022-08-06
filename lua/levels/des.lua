@@ -8,7 +8,7 @@ local triggers = {
     [103391] = { id = "uno_5", special_function = SF.IncreaseProgress },
     [103395] = { id = "uno_5", special_function = SF.SetAchievementFailed },
 
-    [100107] = { id = "des_9", status = "push", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
+    [100107] = { id = "des_9", status = "push", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [102480] = { special_function = SF.Trigger, data = { 1024801, 1024802 } },
     [1024801] = { id = "des_9", status = "finish", special_function = SF.SetAchievementStatus },
     [1024802] = { special_function = SF.RemoveTriggers, data = { 102486 } },

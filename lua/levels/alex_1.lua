@@ -7,7 +7,7 @@ local assault_delay_methlab = 20 + 4 + 3 + 3 + 3 + 5 + 1 + 30
 local assault_delay = 4 + 3 + 3 + 3 + 5 + 1 + 30
 local SetTimeIfMoreThanOrCreateTracker = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [101088] = { id = "halloween_1", status = "ready", class = TT.AchievementNotification },
+    [101088] = { id = "halloween_1", status = "ready", class = TT.AchievementStatus },
     [101907] = { id = "halloween_1", status = "ok", special_function = SF.SetAchievementStatus },
     [101917] = { id = "halloween_1", special_function = SF.SetAchievementComplete },
     [101914] = { id = "halloween_1", special_function = SF.SetAchievementFailed },

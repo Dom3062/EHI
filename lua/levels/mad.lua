@@ -10,8 +10,8 @@ local triggers = {
     [100958] = { time = 1221/30, id = "emp_bomp_drop", icons = { "pd2_goto" } },
     [101906] = { time = 1200, id = "daily_cake", icons = { Icon.Trophy }, class = TT.Warning, difficulty_pass = ovk_and_up, exclude_from_sync = true },
     [100547] = { special_function = SF.Trigger, data = { 1005471, 1005472 } },
-    [1005471] = { id = "mad_2", class = TT.AchievementNotification, difficulty_pass = ovk_and_up, exclude_from_sync = true },
-    [1005472] = { id = "cac_13", class = TT.AchievementNotification, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+    [1005471] = { id = "mad_2", status = "no_down", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+    [1005472] = { id = "cac_13", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, exclude_from_sync = true },
 
     [EHI:GetInstanceElementID(100019, 3150)] = { time = 90, id = "Scan", icons = { "mad_scan" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [EHI:GetInstanceElementID(100049, 3150)] = { id = "Scan", special_function = SF.PauseTracker },

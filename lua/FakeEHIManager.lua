@@ -39,6 +39,7 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = self:GetPeerColor(), visible = true } } } )
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { "pd2_drill", "faster", "silent", "restarter" } } )
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { "wp_hack" } } )
+    self:AddFakeTracker({ id = "show_camera_loop", time = math.random(10, 25), icons = { "camera_loop" } })
     do
         local time = math.random() * (8 - 1) + 1
         self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { "equipment_winch_hook", "wp_bag", "pd2_goto" } } )

@@ -22,8 +22,8 @@ elseif EHI:IsDifficulty(EHI.Difficulties.DeathSentence) then
 end
 local triggers = {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
-    [1001071] = { id = "tag_9", class = TT.AchievementNotification, difficulty_pass = ovk_and_up, exclude_from_sync = true },
-    [1001072] = { id = "tag_10", status = "ready", class = TT.AchievementNotification, exclude_from_sync = true },
+    [1001071] = { id = "tag_9", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+    [1001072] = { id = "tag_10", status = "ready", class = TT.AchievementStatus, exclude_from_sync = true },
     [101335] = { time = 7, id = "C4BasementWall", icons = { Icon.C4 } },
     [101968] = { time = 10, id = "LureDelay", icons = { Icon.Wait } },
 

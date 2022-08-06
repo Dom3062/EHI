@@ -5,7 +5,7 @@ local TT = EHI.Trackers
 local AddToCache = EHI:GetFreeCustomSpecialFunctionID()
 local GetFromCache = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [101148] = { id = "you_shall_not_pass", class = TT.AchievementNotification },
+    [101148] = { id = "you_shall_not_pass", class = TT.AchievementStatus },
     [102471] = { id = "you_shall_not_pass", special_function = SF.SetAchievementFailed },
     [100426] = { id = "you_shall_not_pass", special_function = SF.SetAchievementComplete },
     [101145] = { time = 180, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop } },

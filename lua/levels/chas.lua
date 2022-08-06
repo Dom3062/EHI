@@ -23,7 +23,7 @@ local triggers = {
     [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { "pd2_question", Icon.Drill, "pd2_goto" } },
     [101660] = { time = 120, id = "Gas", icons = { Icon.Teargas } },
 
-    [100781] = { id = "chas_9", class = TT.AchievementNotification },
+    [100781] = { id = "chas_9", class = TT.AchievementStatus },
     [100907] = { id = "chas_9", special_function = SF.SetAchievementFailed },
     [100906] = { id = "chas_9", special_function = SF.SetAchievementComplete }
 }

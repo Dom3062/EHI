@@ -18,7 +18,7 @@ local triggers = {
 
     [102301] = { special_function = SF.Trigger, data = { 1023011, 1023012 } },
     [1023011] = { time = 15, id = "Trap", icons = { Icon.C4 }, class = TT.Warning },
-    [1023012] = { id = "pal_3", class = TT.AchievementNotification, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
+    [1023012] = { id = "pal_3", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
     [101566] = { id = "Trap", special_function = SF.RemoveTracker },
     [101976] = { id = "pal_3", special_function = SF.SetAchievementComplete },
     [101571] = { id = "pal_3", special_function = SF.SetAchievementFailed },

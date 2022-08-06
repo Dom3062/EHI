@@ -199,5 +199,5 @@
     "ehi_show_waypoints_pager_desc" : "Mostra un punto di riferimento sui cercapersone a cui è necessario rispondere\n\nL'opzione 'Mostra Timer di Risposta al Cercapersone' deve essere abilitata per funzionare",
  
     "ehi_show_waypoints_cameras" : "Mostra Punto di Riferimento per le Telecamere in Loop",
-    "ehi_show_waypoints_cameras_desc" : "Mostra un punto di riferimento su una telecamera che è attualmente in loop"
+    "ehi_show_waypoints_cameras_desc" : "Mostra un punto di riferimento su una telecamera che è attualmente in loop\n\nOption 'Show Camera Loop' must be enabled in order to work"
 }

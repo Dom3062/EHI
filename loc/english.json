@@ -21,16 +21,19 @@
     "ehi_achievement_ok" : "OK",
     "ehi_achievement_done" : "DONE",
     "ehi_achievement_pass" : "PASS",
-    "ehi_achievement_bring" : "BRING",
-    "ehi_achievement_finish" : "FINISH",
-    "ehi_achievement_destroy" : "DESTROY",
     "ehi_achievement_defend" : "DEFEND",
+    "ehi_achievement_finish" : "FINISH",
+    "ehi_achievement_secure" : "SECURE",
+    "ehi_achievement_no_down" : "NO DOWN",
+    "ehi_achievement_destroy" : "DESTROY",
+    "ehi_achievement_alarm" : "ALARM",
     "ehi_achievement_ready" : "READY",
     "ehi_achievement_loud" : "LOUD",
     "ehi_achievement_push" : "PUSH",
     "ehi_achievement_hack" : "HACK",
     "ehi_achievement_land" : "LAND",
     "ehi_achievement_find" : "FIND",
+    "ehi_achievement_bring" : "BRING",
     "ehi_achievement_fail" : "FAIL",
 
     "ehi_r" : "Red",
@@ -127,6 +130,9 @@
 
     "ehi_show_timers" : "Show Timers",
     "ehi_show_timers_desc" : "Shows timers for hacking, drilling, sawing, etc...",
+
+    "ehi_show_camera_loop" : "Show Camera Loop",
+    "ehi_show_camera_loop_desc" : "Shows a tracker when a security camera is looped",
 
     "ehi_show_zipline_timer" : "Show Zipline Tracker",
     "ehi_show_zipline_timer_desc" : "Shows 2 timers for zipline.\nFirst timer shows how long it takes to drop a bag/player, second timer shows zipline reset",
@@ -242,7 +248,7 @@
     "ehi_show_waypoints_pager_desc" : "Shows a waypoint on a pager that needs to be answered\n\nOption 'Show Pager Callback Timers' must be enabled in order to work",
 
     "ehi_show_waypoints_cameras" : "Show Waypoints for Looped Cameras",
-    "ehi_show_waypoints_cameras_desc" : "Shows a waypoint on a camera that is currently being looped",
+    "ehi_show_waypoints_cameras_desc" : "Shows a waypoint on a camera that is currently being looped\n\nOption 'Show Camera Loop' must be enabled in order to work",
 
     "ehi_show_waypoints_zipline" : "Show Waypoints for Ziplines",
     "ehi_show_waypoints_zipline_desc" : "Shows a waypoint on a zipline that is in motion\nOnly the reset time is shown\n\nOption 'Show Zipline Tracker' must be enabled in order to work",

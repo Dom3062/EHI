@@ -14,7 +14,7 @@ local element_sync_triggers =
     [100494] = { id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100724, set_time_when_tracker_exists = true }
 }
 local triggers = {
-    [101081] = { id = "halloween_1", status = "ready", class = TT.AchievementNotification },
+    [101081] = { id = "halloween_1", status = "ready", class = TT.AchievementStatus },
     [101907] = { id = "halloween_1", status = "ok", special_function = SF.SetAchievementStatus },
     [101917] = { id = "halloween_1", special_function = SF.SetAchievementComplete },
     [101914] = { id = "halloween_1", special_function = SF.SetAchievementFailed },

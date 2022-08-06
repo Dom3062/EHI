@@ -26,7 +26,7 @@ local triggers = {
 
     [1011480] = { time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate },
 
-    [100124] = { id = "uno_8", class = TT.AchievementNotification, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
+    [100124] = { id = "uno_8", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
     [102382] = { id = "uno_8", special_function = SF.SetAchievementFailed },
     [102379] = { id = "uno_8", special_function = SF.SetAchievementComplete }
 }

@@ -4,7 +4,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    [100073] = { id = "ameno_7", status = "loud", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
+    [100073] = { id = "ameno_7", status = "loud", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [100624] = { id = "ameno_7", special_function = SF.SetAchievementFailed },
     [100634] = { id = "ameno_7", special_function = SF.SetAchievementComplete },
     [101541] = { time = 2, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
@@ -35,7 +35,7 @@ EHI:AddOnAlarmCallback(function(dropin)
         start_chance = 36
     end
     managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
-    managers.ehi:CallFunction("ameno_7", "SetStatus", "ok")
+    managers.ehi:CallFunction("ameno_7", "SetStatus", "defend")
 end)
 
 EHI:ParseTriggers(triggers)

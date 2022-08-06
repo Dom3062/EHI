@@ -15,7 +15,7 @@ local triggers = {
     [102290] = { id = "berry_3", special_function = SF.SetAchievementComplete },
     [102292] = { special_function = SF.Trigger, data = { 1022921, 1022922, 1022923, --[[1022924]] } },
     [1022921] = { time = 600, id = "berry_3", class = TT.Achievement, difficulty_pass = ovk_and_up },
-    [1022922] = { status = "ok", id = "berry_4", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
+    [1022922] = { status = "no_down", id = "berry_4", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [1022923] = { special_function = SF.CustomCode, f = function()
         if EHI:IsAchievementLocked("berry_4") and ovk_and_up and show_achievement then
             -- Player

@@ -14,7 +14,7 @@ for _, index in pairs(start_index) do
 end
 local chopper_delay = 25 + 1 + 2.5
 local triggers = {
-    [104086] = { id = "cow_10", status = "ok", class = TT.AchievementNotification },
+    [104086] = { id = "cow_10", status = "defend", class = TT.AchievementStatus },
     [102480] = { id = "cow_10", special_function = SF.SetAchievementFailed },
     [106581] = { id = "cow_10", special_function = SF.SetAchievementComplete },
 

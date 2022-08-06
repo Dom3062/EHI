@@ -9,9 +9,7 @@ local triggers = {
     [102441] = { time = 120 + delay, special_function = SF.AddTrackerIfDoesNotExist },
     [102434] = { time = 110 + delay, special_function = SF.AddTrackerIfDoesNotExist },
     [102433] = { time = 80 + delay, special_function = SF.AddTrackerIfDoesNotExist },
-    [100840] = { special_function = SF.Trigger, data = { 1008401, 1008402 } },
-    [1008401] = { id = "bat_2", class = TT.AchievementNotification },
-    [1008402] = { time = 600, id = "bat_4", class = TT.Achievement },
+    [100840] = { time = 600, id = "bat_4", class = TT.Achievement },
 
     [102065] = { time = 50 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
     [102067] = { time = 65 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
@@ -45,13 +43,7 @@ EHI:ShowAchievementLootCounter({
     }
 })
 if EHI:GetOption("show_achievement") then
-    EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi:SetAchievementFailed("bat_2")
-    end)
     EHI:AddLoadSyncFunction(function(self)
-        if EHI.ConditionFunctions.IsStealth() then
-            self:AddAchievementNotificationTracker("bat_2")
-        end
         self:AddTimedAchievementTracker("bat_4", 600)
     end)
 end

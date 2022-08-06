@@ -1,4 +1,4 @@
-EHIcac33Tracker = class(EHIAchievementNotificationTracker)
+EHIcac33Tracker = class(EHIAchievementStatusTracker)
 EHIcac33Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac33Tracker.FormatProgress = EHIProgressTracker.Format
 function EHIcac33Tracker:init(panel, params)
@@ -74,7 +74,7 @@ local triggers = {
     [101897] = { time = 60, id = "LockeSecureHeli", icons = { Icon.Heli, Icon.Winch } }, -- Time before Locke arrives with heli to pickup the money
     [102452] = { id = "jerry_4", special_function = SF.SetAchievementComplete },
     [102453] = { special_function = SF.Trigger, data = { 1024531, 1024532 } },
-    [1024531] = { id = "jerry_3", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
+    [1024531] = { id = "jerry_3", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [1024532] = { time = 83, id = "jerry_4", class = TT.Achievement, difficulty_pass = ovk_and_up },
     [102816] = { id = "jerry_3", special_function = SF.SetAchievementFailed },
     [101314] = { id = "jerry_3", special_function = SF.SetAchievementComplete },

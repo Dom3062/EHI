@@ -26,7 +26,7 @@ local triggers = {
     -- Players spawned
     [100264] = Achievements, -- Guest Rooms (civilian mode)
     [102955] = Achievements, -- Crew Deck
-    [1] = { id = "chca_9", status = "ok", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
+    [1] = { id = "chca_9", status = "ok", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [2] = { special_function = SF.CustomCode, f = function()
         if EHI:IsAchievementLocked("chca_9") and show_achievement and ovk_and_up then
             local function check(self, data)
@@ -90,7 +90,7 @@ local triggers = {
 
     [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot },
 
-    [EHI:GetInstanceElementID(100041, 11770)] = { id = "chca_12", special_function = SF.ShowAchievementFromStart, class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
+    [EHI:GetInstanceElementID(100041, 11770)] = { id = "chca_12", special_function = SF.ShowAchievementFromStart, class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [103584] = { id = "chca_12", status = "finish", special_function = SF.SetAchievementStatus }
 }
 if Network:is_client() then

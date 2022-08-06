@@ -177,13 +177,13 @@ _G.EHI =
         Pausable = "EHIPausableTracker",
         Chance = "EHIChanceTracker",
         Progress = "EHIProgressTracker",
+        NeededValue = "EHINeededValueTracker",
         Achievement = "EHIAchievementTracker",
         AchievementDone = "EHIAchievementDoneTracker",
         AchievementUnlock = "EHIAchievementUnlockTracker",
+        AchievementStatus = "EHIAchievementStatusTracker",
         AchievementProgress = "EHIAchievementProgressTracker",
-        AchievementNotification = "EHIAchievementNotificationTracker",
-        AchievementBagValueTracker = "EHIAchievementBagValueTracker",
-        AchievementTimedMoneyCounterTracker = "EHIAchievementTimedMoneyCounterTracker",
+        AchievementBagValue = "EHIAchievementBagValueTracker",
         AssaultDelay = "EHIAssaultDelayTracker",
         Inaccurate = "EHIInaccurateTracker",
         InaccurateWarning = "EHIInaccurateWarningTracker",
@@ -196,9 +196,8 @@ _G.EHI =
         EHIAchievementDoneTracker = true,
         EHIAchievementUnlockTracker = true,
         EHIAchievementProgressTracker = true,
-        EHIAchievementNotificationTracker = true,
-        EHIAchievementBagValueTracker = true,
-        EHIAchievementTimedMoneyCounterTracker = true
+        EHIAchievementStatusTracker = true,
+        EHIAchievementBagValueTracker = true
     },
 
     Difficulties =
@@ -361,6 +360,7 @@ function EHI:LoadDefaultValues()
         show_trade_delay_other_players_only = true,
         show_trade_delay_suppress_in_stealth = true,
         show_timers = true,
+        show_camera_loop = true,
         show_zipline_timer = true,
         show_gage_tracker = true,
         gage_tracker_panel = 1,
@@ -772,18 +772,14 @@ end
 ---@return table
 function EHI:GetAchievementIcon(id)
     local achievement = tweak_data.achievement.visual[id]
-    if achievement then
-        return { achievement.icon_id }
-    end
+    return achievement and { achievement.icon_id }
 end
 
 ---@param id string
 ---@return string
 function EHI:GetAchievementIconString(id)
     local achievement = tweak_data.achievement.visual[id]
-    if achievement then
-        return achievement.icon_id
-    end
+    return achievement and achievement.icon_id
 end
 
 local triggers = {}

@@ -8,7 +8,7 @@ if level_id == "firestarter_3" then
     local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
     triggers = {
         [102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1021441 } },
-        [1021441] = { status = "ok", id = "slakt_5", class = TT.AchievementNotification, difficulty_pass = dw_and_above },
+        [1021441] = { status = "ok", id = "slakt_5", class = TT.AchievementStatus, difficulty_pass = dw_and_above },
         [102146] = { status = "finish", id = "slakt_5", special_function = SF.SetAchievementStatus },
         [105237] = { id = "slakt_5", special_function = SF.SetAchievementComplete },
         [105235] = { id = "slakt_5", special_function = SF.SetAchievementFailed }
@@ -39,7 +39,7 @@ end
 triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
 triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
 
-triggers[101539] = { status = "bring", id = "voff_1", class = TT.AchievementNotification, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) }
+triggers[101539] = { status = "bring", id = "voff_1", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) }
 triggers[105686] = { id = "voff_1", special_function = SF.SetAchievementComplete }
 triggers[105691] = { status = "finish", id = "voff_1", special_function = SF.SetAchievementStatus } -- Entered area again
 triggers[105694] = { status = "finish", id = "voff_1", special_function = SF.SetAchievementStatus } -- Both secured
@@ -55,12 +55,16 @@ local tbl =
     [104466] = { remove_vanilla_waypoint = true, waypoint_id = 102752 }
 }
 EHI:UpdateUnits(tbl)
+
+if not EHI:GetOption("show_achievement") then
+    return
+end
+local dog_haters =
+{
+    [Idstring("units/payday2/characters/civ_male_dog_abuser_1/civ_male_dog_abuser_1"):key()] = true,
+    [Idstring("units/payday2/characters/civ_male_dog_abuser_2/civ_male_dog_abuser_2"):key()] = true
+}
 EHI:AddLoadSyncFunction(function(self)
-    local dog_haters =
-    {
-        [Idstring("units/payday2/characters/civ_male_dog_abuser_1/civ_male_dog_abuser_1"):key()] = true,
-        [Idstring("units/payday2/characters/civ_male_dog_abuser_2/civ_male_dog_abuser_2"):key()] = true
-    }
     local dog_haters_unit = {}
     local count = 0
     local civies = managers.enemy:all_civilians()
@@ -92,5 +96,19 @@ EHI:AddLoadSyncFunction(function(self)
         (secure_area_2:_is_inside(pos_1) and secure_area_2:_is_inside(pos_2)) or
         (secure_area_3:_is_inside(pos_1) and secure_area_3:_is_inside(pos_2)) then
         self:SetAchievementStatus("voff_1", "finish")
+    end
+end)
+EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+    if EHI._cache.Host or managers.ehi:GetStartedFromBeginning() then
+        local function fail(...)
+            managers.ehi:SetAchievementFailed("voff_1")
+        end
+        local civies = managers.enemy:all_civilians()
+        for _, data in pairs(civies or {}) do
+            local name_key = data.unit:name():key()
+            if dog_haters[name_key] then
+                data.unit:base():add_destroy_listener("EHI_" .. tostring(name_key), fail)
+            end
+        end
     end
 end)

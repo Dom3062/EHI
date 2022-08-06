@@ -21,14 +21,19 @@
     "ehi_achievement_ok" : "OK",
     "ehi_achievement_done" : "DONE",
     "ehi_achievement_pass" : "PASS",
+    "ehi_achievement_defend" : "DEFEND",
     "ehi_achievement_finish" : "FINISH",
+    "ehi_achievement_secure" : "SECURE",
+    "ehi_achievement_no_down" : "NO DOWN",
     "ehi_achievement_destroy" : "DESTROY",
+    "ehi_achievement_alarm" : "ALARM",
     "ehi_achievement_ready" : "READY",
     "ehi_achievement_loud" : "LOUD",
     "ehi_achievement_push" : "PUSH",
     "ehi_achievement_hack" : "HACK",
     "ehi_achievement_land" : "LAND",
     "ehi_achievement_find" : "FIND",
+    "ehi_achievement_bring" : "BRING",
     "ehi_achievement_fail" : "FAIL",
     
     "ehi_r" : "红色",
@@ -125,6 +130,9 @@
 
     "ehi_show_timers" : "显示计时器",
     "ehi_show_timers_desc" : "显示地图上正在进行的黑入，钻机，电锯等进程的剩余时间",
+
+    "ehi_show_camera_loop" : "Show Camera Loop",
+    "ehi_show_camera_loop_desc" : "Shows a tracker when a security camera is looped",
 
     "ehi_show_zipline_timer" : "显示滑索追踪器",
     "ehi_show_zipline_timer_desc" : "显示2个滑索计时器\n第一个表示运送战利品/玩家的时间, 第二个表示滑索再次可用的冷却时间",
@@ -240,7 +248,7 @@
     "ehi_show_waypoints_pager_desc" : "当有待回复的对讲机时显示导航点\n\n需要勾选'显示对讲机剩余时间追踪器'选项以正常使用",
 
     "ehi_show_waypoints_cameras" : "显示已设置回路的摄像头导航点",
-    "ehi_show_waypoints_cameras_desc" : "当摄像头被设置摄像头回路时显示导航点",
+    "ehi_show_waypoints_cameras_desc" : "当摄像头被设置摄像头回路时显示导航点\n\nOption 'Show Camera Loop' must be enabled in order to work",
 
     "ehi_show_waypoints_zipline" : "显示滑索导航点",
     "ehi_show_waypoints_zipline_desc" : "在使用中的滑索上显示导航点\n仅显示滑索重新可用时间\n\n需要勾选'显示滑索追踪器'选项以正常使用",

@@ -392,7 +392,7 @@ function EHIManager:AddTimedAchievementTracker(id, time_max, icon)
         id = id,
         time = t,
         icons = { icon },
-        class = "EHIAchievementTracker"
+        class = EHI.Trackers.Achievement
     })
 end
 
@@ -412,11 +412,11 @@ function EHIManager:AddAchievementProgressTracker(id, max, additional_loot, excl
         delay_popup = true,
         exclude_from_sync = exclude_from_sync,
         remove_after_reaching_target = remove_after_reaching_target,
-        class = "EHIAchievementProgressTracker"
+        class = EHI.Trackers.AchievementProgress
     })
 end
 
-function EHIManager:AddAchievementNotificationTracker(id, status, icon)
+function EHIManager:AddAchievementStatusTracker(id, status, icon)
     if EHI:IsAchievementUnlocked(id) then
         return
     end
@@ -425,7 +425,7 @@ function EHIManager:AddAchievementNotificationTracker(id, status, icon)
         id = id,
         status = status,
         icons = { icon },
-        class = "EHIAchievementNotificationTracker"
+        class = EHI.Trackers.AchievementStatus
     })
 end
 
@@ -441,7 +441,7 @@ function EHIManager:AddAchievementBagValueCounter(id, to_secure, exclude_from_sy
         delay_popup = true,
         exclude_from_sync = exclude_from_sync,
         remove_after_reaching_target = remove_after_reaching_target,
-        class = "EHIAchievementBagValueTracker"
+        class = EHI.Trackers.AchievementBagValue
     })
 end
 

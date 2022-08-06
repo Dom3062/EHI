@@ -14,7 +14,7 @@ local triggers = {
 
     [101048] = { special_function = SF.Trigger, data = { 1010481, 1010482 } },
     [1010481] = { time = 12, id = "ObjectiveDelay", icons = { Icon.Wait } },
-    [1010482] = { status = "defend", id = "born_3", class = TT.AchievementNotification, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
+    [1010482] = { status = "defend", id = "born_3", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
     [101001] = { status = "finish", id = "born_3", special_function = SF.SetAchievementStatus },
     [102777] = { id = "born_3", special_function = SF.SetAchievementComplete },
     [102779] = { id = "born_3", special_function = SF.SetAchievementFailed }

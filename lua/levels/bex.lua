@@ -1,7 +1,7 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers =
 {
@@ -22,7 +22,7 @@ local triggers = {
     [103702] = bex_10_fail,
     [103704] = bex_10_fail,
     [102602] = { id = "bex_10", special_function = SF.SetAchievementComplete },
-    [100107] = { id = "bex_10", status = "loud", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up },
+    [100107] = { id = "bex_10", status = "loud", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
 
     [102302] = { time = 28.05 + 418/30, id = "Suprise", icons = { "pd2_question" } },
 

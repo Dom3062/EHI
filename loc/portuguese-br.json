@@ -186,7 +186,7 @@
     "ehi_show_waypoints_pager_desc" : "Mostra um Tracker de Pagers que precisam ser respondidas\n\nA opção 'Mostrar Tracker de Pagers' deve estar ativo para que possa funcionar",
 
     "ehi_show_waypoints_cameras" : "Mostrar waypoints para câmeras afetadas pelo Loop",
-    "ehi_show_waypoints_cameras_desc" : "Mostra um waypoint em uma câmera que está sendo afetada por um Loop",
+    "ehi_show_waypoints_cameras_desc" : "Mostra um waypoint em uma câmera que está sendo afetada por um Loop\n\nOption 'Show Camera Loop' must be enabled in order to work",
 
     "ehi_text_scale" : "Tamanho do Texto",
     "ehi_text_scale_desc" : "Definie o tamanho do texto.\nEssa opção é útil para jogadores que tem mods de fontes"

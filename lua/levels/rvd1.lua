@@ -6,7 +6,7 @@ local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
 local pink_car = { { icon = Icon.Car, color = Color("D983D1") }, "pd2_goto" }
 local ExecuteIfEnabled = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [100107] = { id = "rvd_9", class = TT.AchievementNotification, exclude_from_sync = true },
+    [100107] = { id = "rvd_9", status = "defend", class = TT.AchievementStatus, exclude_from_sync = true },
     [100839] = { id = "rvd_9", special_function = SF.SetAchievementFailed },
     [100869] = { id = "rvd_9", special_function = SF.SetAchievementComplete },
 

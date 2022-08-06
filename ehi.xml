@@ -29,12 +29,13 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIVaultTemperatureTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHICountTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHILaserTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementTrackers.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIECMTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHISecurityLockGuiTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIMinionTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAssaultDelayTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHILootTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHINeededValueTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementTrackers.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="StaticTrackers.lua"/>
             </group>
             <group :script_path="buffs/">

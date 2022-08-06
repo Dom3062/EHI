@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {
-    [101959] = { id = "bullet_dodger", class = TT.AchievementNotification },
+    [101959] = { id = "bullet_dodger", class = TT.AchievementStatus },
     [101872] = { id = "bullet_dodger", special_function = SF.SetAchievementFailed },
     [101874] = { id = "bullet_dodger", special_function = SF.SetAchievementComplete },
     [101961] = { time = 120 },

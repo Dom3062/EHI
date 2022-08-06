@@ -28,10 +28,10 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    [100693] = { id = "live_2", class = TT.AchievementNotification },
+    [100693] = { id = "live_2", class = TT.AchievementStatus },
     [102704] = { id = "live_2", special_function = SF.SetAchievementFailed },
     [100246] = { id = "live_2", special_function = SF.SetAchievementComplete },
-    [102785] = { id = "live_4", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
+    [102785] = { id = "live_4", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [100249] = { id = "live_4", special_function = SF.SetAchievementComplete },
     [102694] = { id = "live_4", special_function = SF.SetAchievementFailed },
 
@@ -40,7 +40,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100090, 4900)] = { id = "PressSequence", special_function = SF.RemoveTracker },
 
     [EHI:GetInstanceElementID(100116, 4900)] = { special_function = SF.Trigger, data = { 1, 2 } },
-    [1] = { id = "live_5", class = TT.AchievementNotification },
+    [1] = { id = "live_5", class = TT.AchievementStatus },
     [102702] = { id = "live_5", special_function = SF.SetAchievementFailed },
     [100265] = { id = "live_5", special_function = SF.SetAchievementComplete },
     [2] = { max = 3, id = "C4Progress", icons = { Icon.C4 }, class = TT.Progress },

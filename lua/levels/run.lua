@@ -39,7 +39,7 @@ local triggers = {
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins
     [102426] = { special_function = SF.Trigger, data = { 1024261, 1024262 } },
     [1024261] = { max = 8, id = "run_8", class = TT.AchievementProgress, exclude_from_sync = true },
-    [1024262] = { id = "run_10", class = TT.AchievementNotification, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard) },
+    [1024262] = { id = "run_10", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard) },
     [100658] = { id = "run_8", special_function = SF.IncreaseProgress },
     [100111] = { id = "run_10", special_function = SF.SetAchievementFailed },
     [100664] = { id = "run_10", special_function = SF.SetAchievementComplete },

@@ -24,7 +24,7 @@ if Global.game_settings.level_id == "gallery" then
     local SF = EHI.SpecialFunctions
     local TT = EHI.Trackers
     local triggers = {
-        [100789] = { id = "cac_19", class = TT.AchievementNotification }
+        [100789] = { id = "cac_19", class = TT.AchievementStatus }
     }
     if TheFixes then
         if TheFixesPreventer and TheFixesPreventer.achi_masterpiece then -- Unfixed, assume Vanilla "broken" behavior

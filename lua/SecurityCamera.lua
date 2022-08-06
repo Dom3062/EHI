@@ -5,6 +5,10 @@ else
 	EHI._hooks.SecurityCamera = true
 end
 
+if not EHI:GetOption("show_camera_loop") then
+    return
+end
+
 local show_waypoint = EHI:GetWaypointOption("show_waypoints_cameras")
 local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
 

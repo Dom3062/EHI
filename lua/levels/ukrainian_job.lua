@@ -32,7 +32,7 @@ local triggers = {
 
     [100073] = { time = 36, id = "lets_do_this", class = TT.Achievement },
     [101784] = { id = "lets_do_this", special_function = SF.SetAchievementComplete },
-    [100074] = { id = "cac_12", status = "ready", class = TT.AchievementNotification, special_function = ExecuteAchievementIfInteractionExists, exclude_from_sync = true },
+    [100074] = { id = "cac_12", status = "alarm", class = TT.AchievementStatus, special_function = ExecuteAchievementIfInteractionExists, exclude_from_sync = true },
     [104406] = { id = "cac_12", status = "finish", special_function = SF.SetAchievementStatus },
     [104408] = { id = "cac_12", special_function = SF.SetAchievementComplete },
     [104409] = cac_12_disable,

@@ -1,3 +1,9 @@
+r74 (06. 08. 2022):
+Added trackers for Smackdown custom heist
+Added trackers for Truck Hustle custom heist
+Added "Show Camera Loop" option
+Branchbank: Fixed an issue where achievement tracker "Saint Francis" did not fail when one of punks despawned
+
 r73 (05. 08. 2022):
 Added Forced Friendship Absorption buff
 Fixed an issue where achievement tracker "A Good Haul" is not visible in Escapes if active mission is Branchbank

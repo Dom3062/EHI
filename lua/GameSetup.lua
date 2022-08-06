@@ -69,6 +69,14 @@ local levels =
     alex_1 = true, -- Rats Day 1
     alex_2 = true, -- Rats Day 2
     alex_3 = true, -- Rats Day 3
+    escape_cafe = true, -- Escape: Cafe
+    escape_cafe_day = true, -- Escape: Cafe (Day)
+    escape_overpass = true, -- Escape: Overpass; Appears to be unused
+    escape_overpass_night = true, -- Escape: Overpass (Night)
+    escape_park = true, -- Escape: Park
+    escape_park_day = true, -- Escape: Park (Day)
+    escape_street = true, -- Escape: Street
+    escape_garage = true, -- Escape: Garage
     -- Chapter 2: The Kings of CrimeNet
     welcome_to_the_jungle_1 = true, -- Big Oil Day 1
     welcome_to_the_jungle_1_night = true, -- Big Oil Day 1 (Night)
@@ -81,14 +89,6 @@ local levels =
     election_day_3 = true, -- Election Day D2 Plan C
     election_day_3_skip1 = true,
     election_day_3_skip2 = true,
-    escape_cafe = true, -- Escape: Cafe
-    escape_cafe_day = true, -- Escape: Cafe (Day)
-    escape_overpass = true, -- Escape: Overpass; Appears to be unused
-    escape_overpass_night = true, -- Escape: Overpass (Night)
-    escape_park = true, -- Escape: Park
-    escape_park_day = true, -- Escape: Park (Day)
-    escape_street = true, -- Escape: Street
-    escape_garage = true, -- Escape: Garage
     big = true, -- Big Bank
     mia_1 = true, -- Hotline Miami Day 1
     mia_2 = true, -- Hotline Miami Day 2
@@ -172,7 +172,10 @@ local custom_levels =
     hunter_fall = true, -- Hunter and Hunted (Fall) Day 3
     constantine_harbor_lvl = true, -- Harboring a Grudge
     lit1 = true, -- California Heat
-    lit2 = true -- California Heat (Bonus Mission)
+    lit2 = true, -- California Heat (Bonus Mission)
+    -- Constantine Scores
+    constantine_smackdown_lvl = true, -- Smackdown
+    constantine_smackdown2_lvl = true -- Truck Hustle; No triggers, only MissionDoor
 }
 
 function GameSetup:init_finalize(...)

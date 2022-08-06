@@ -6,8 +6,6 @@ local start_delay = 1
 local delay = 20 + (math.random() * (7.5 - 6.2) + 6.2)
 local HeliDropLootZone = { Icon.Heli, Icon.LootDrop, "pd2_goto" }
 local triggers = {
-    [100107] = { id = "charliesierra_2", class = TT.AchievementNotification },
-
     [101931] = { time = 90 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker },
     [101932] = { time = 120 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker },
     [101929] = { time = 30 + 150 + delay, id = "CageDrop", icons = HeliDropLootZone },
@@ -50,16 +48,6 @@ EHI:AddOnAlarmCallback(function()
 end)
 
 EHI:ParseTriggers(triggers)
-if EHI:GetOption("show_achievement") then
-    EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi:SetAchievementFailed("charliesierra_2")
-    end)
-    EHI:AddLoadSyncFunction(function(self)
-        if EHI.ConditionFunctions.IsStealth() then
-            self:AddAchievementNotificationTracker("charliesierra_2")
-        end
-    end)
-end
 
 local tbl =
 {

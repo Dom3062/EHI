@@ -1,7 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
-local ranc_10 = { id = "ranc_10", special_function = SF.IncreaseProgress }
 local WinchCar = { { icon = Icon.Car, color = Color("1E90FF") } }
 local ElementTimer = 102059
 local ElementTimerPickup = 102075
@@ -51,6 +50,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100056, 25650)] = FultonRemoveCatch
 }
 
+local ranc_10 = { id = "ranc_10", special_function = SF.IncreaseProgress }
 triggers[EHI:GetInstanceElementID(100015, 28400)] = ranc_10
 for i = 28600, 29300, 50 do
     triggers[EHI:GetInstanceElementID(100015, i)] = ranc_10

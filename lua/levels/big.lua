@@ -86,7 +86,7 @@ if show_achievement then
             managers.ehi:AddTracker({
                 id = "cac_22",
                 icons = EHI:GetAchievementIcon("cac_22"),
-                class = TT.AchievementNotification,
+                class = TT.AchievementStatus,
                 exclude_from_sync = true
             })
         end)

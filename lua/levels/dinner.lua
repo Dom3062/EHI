@@ -12,7 +12,7 @@ local triggers = {
     [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape } },
     [100319] = { id = "farm_2", special_function = SF.SetAchievementFailed },
     [102841] = { id = "farm_4", special_function = SF.SetAchievementComplete },
-    [101553] = { id = "farm_3", class = TT.AchievementNotification, difficulty_pass = ovk_and_up },
+    [101553] = { id = "farm_3", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [103394] = { id = "farm_3", special_function = SF.SetAchievementFailed },
     [102880] = { id = "farm_3", special_function = SF.SetAchievementComplete },
     -- C4 (Doors)
@@ -53,7 +53,7 @@ if show_achievement then
                     status = "finish",
                     icons = EHI:GetAchievementIcon("farm_1"),
                     exclude_from_sync = true,
-                    class = EHI.Trackers.AchievementNotification,
+                    class = EHI.Trackers.AchievementStatus,
                 })
             else
                 self.ehi:SetAchievementFailed("farm_1")

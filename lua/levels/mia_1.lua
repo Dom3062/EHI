@@ -29,7 +29,7 @@ local triggers = {
     --,[105967] = { time = 60 + 23 + 5 }
     --,[103808] = { time = 30 + 23 + 5 }
 
-    [106013] = { time = (very_hard_and_below and 40 or 60), id = "Truck", icons = { "pd2_car" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [106013] = { time = (very_hard_and_below and 40 or 60), id = "Truck", icons = { Icon.Car }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [106017] = { id = "Truck", special_function = SF.PauseTracker },
     [EHI:GetInstanceElementID(100038, 1300)] = { time = 90 + delay, id = "reader", icons = { "wp_hack" }, class = TT.Pausable },
     [EHI:GetInstanceElementID(100039, 1300)] = { time = 120 + delay, id = "reader", icons = { "wp_hack" }, class = TT.Pausable },

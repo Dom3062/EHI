@@ -226,7 +226,7 @@
   "ehi_show_waypoints_pager_desc": "ウェイポイントにPagerタイマーを表示します。\n\nオプション「Pager応答タイマーを表示」を有効化する必要があります。",
 
   "ehi_show_waypoints_cameras": "ループされたカメラにウェイポイントを表示",
-  "ehi_show_waypoints_cameras_desc": "ループ中のカメラにウェイポイントを表示します。",
+  "ehi_show_waypoints_cameras_desc": "ループ中のカメラにウェイポイントを表示します。\n\nOption 'Show Camera Loop' must be enabled in order to work",
 
   "ehi_show_waypoints_zipline": "ジップラインにウェイポイントを表示",
   "ehi_show_waypoints_zipline_desc": "動作中のジップラインのリセット時間のウェイポイントを表示します。\n\nオプション「ジップライントラッカーを表示」を有効化する必要があります。",

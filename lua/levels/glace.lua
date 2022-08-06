@@ -12,7 +12,7 @@ local triggers = {
     [102370] = { id = "PickUpBalloonSecondTry", icons = { Icon.Escape }, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = 100732 },
 
     [101732] = { special_function = SF.Trigger, data = { 1017321, 1017322 } },
-    [1017321] = { id = "glace_9", status = "find", class = TT.AchievementNotification, condition = show_achievement and ovk_and_up, exclude_from_sync = true },
+    [1017321] = { id = "glace_9", status = "find", class = TT.AchievementStatus, condition = show_achievement and ovk_and_up, exclude_from_sync = true },
     [1017322] = { max = 6, id = "glace_10", class = TT.AchievementProgress, exclude_from_sync = true },
     [105758] = { id = "glace_9", special_function = SF.SetAchievementFailed },
     [105756] = { id = "glace_9", status = "ok", special_function = SF.SetAchievementStatus },
@@ -20,7 +20,7 @@ local triggers = {
     [105761] = { id = "glace_10", special_function = SF.IncreaseProgress }, -- ElementInstanceOutputEvent
     [105721] = { id = "glace_10", special_function = SF.IncreaseProgress }, -- ElementEnemyDummyTrigger
 
-    [100765] = { status = "destroy", id = "uno_4", class = TT.AchievementNotification },
+    [100765] = { status = "destroy", id = "uno_4", class = TT.AchievementStatus },
     -- Very Hard or above check in the mission script
     -- Reported here: https://steamcommunity.com/app/218620/discussions/14/3386156547847005343/
     [103397] = { id = "uno_4", special_function = SF.SetAchievementComplete },

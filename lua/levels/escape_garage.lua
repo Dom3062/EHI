@@ -27,7 +27,7 @@ local triggers =
 }
 
 EHI:ParseTriggers(triggers)
-EHI:AddLoadSyncFunction(function(self)
+--[[EHI:AddLoadSyncFunction(function(self)
     bilbo_baggin()
     self:SetTrackerProgress("bilbo_baggin", managers.loot:GetSecuredBagsAmount())
-end)
+end)]]

@@ -2,8 +2,8 @@ local lerp = math.lerp
 local sin = math.sin
 local Color = Color
 EHIameno3Tracker = class(EHIWarningTracker)
-EHIameno3Tracker.FormatNumber = EHIAchievementBagValueTracker.Format
-EHIameno3Tracker.FormatNumber2 = EHIAchievementBagValueTracker.FormatNumber
+EHIameno3Tracker.FormatNumber = EHINeededValueTracker.Format
+EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumber
 EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIameno3Tracker.delete = EHIAchievementTracker.delete
 function EHIameno3Tracker:init(panel, params)
@@ -93,7 +93,7 @@ function EHIameno3Tracker:SetCompleted(force)
 end
 
 function EHIameno3Tracker:SetTextColor(color)
-    EHIAchievementBagValueTracker.super.SetTextColor(self, color)
+    EHINeededValueTracker.super.SetTextColor(self, color)
     self._money_text:set_color(color)
 end
 
@@ -102,7 +102,6 @@ EHI.AchievementTrackers.EHIameno3Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local overkill = EHI:IsDifficulty(EHI.Difficulties.OVERKILL)
 local AddMoney = EHI:GetFreeCustomSpecialFunctionID()
 local MoneyTrigger = { id = "MallDestruction", special_function = AddMoney }
@@ -159,7 +158,7 @@ EHI:ParseTriggers(triggers)
 EHI:RegisterCustomSpecialFunction(AddMoney, function(id, trigger, element, enabled)
     managers.ehi:AddMoneyToTracker(trigger.id, element._values.amount)
 end)
-if show_achievement and overkill and EHI:IsAchievementLocked("ameno_3") then
+if EHI:GetOption("show_achievement") and overkill and EHI:IsAchievementLocked("ameno_3") then
     EHI:AddLoadSyncFunction(function(self)
         if self._t <= 50 then
             self:AddTracker({

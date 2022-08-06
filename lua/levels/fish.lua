@@ -7,7 +7,7 @@ local triggers = {
     [100244] = { special_function = SF.Trigger, data = { 1002441, 1002442 } },
     -- "fish_4" achievement is not in the Mission Script
     [1002441] = { time = 360, id = "fish_4", class = TT.Achievement, difficulty_pass = ovk_and_up },
-    [1002442] = { id = "fish_5", class = TT.AchievementNotification, exclude_from_sync = true },
+    [1002442] = { id = "fish_5", class = TT.AchievementStatus, exclude_from_sync = true },
     [100395] = { id = "fish_5", special_function = SF.SetAchievementFailed },
     [100842] = { id = "fish_5", special_function = SF.SetAchievementComplete }
 }

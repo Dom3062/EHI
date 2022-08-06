@@ -7,7 +7,7 @@ local heli_icon = { Icon.Heli, Icon.Winch, "pd2_goto" }
 local refill_icon = { Icon.Water, Icon.Loop }
 local heli_60 = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
 local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
-local kenaz_5 = { id = "kenaz_5", class = TT.AchievementNotification }
+local kenaz_5 = { id = "kenaz_5", class = TT.AchievementStatus }
 if EHI:GetOption("show_one_icon") then
     refill_icon = { { icon = Icon.Water, color = Color("D4F1F9") } }
 end
@@ -48,7 +48,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100166, 44535)] = { id = "DrillDrop", icons = { Icon.Winch, Icon.Drill, "pd2_goto" }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101854, yes = 900/30, no = 1800/30 } },
     [EHI:GetInstanceElementID(100167, 44535)] = { id = "DrillDrop", special_function = SF.PauseTracker },
 
-    [102807] = { id = "kenaz_3", class = TT.AchievementNotification },
+    [102807] = { id = "kenaz_3", class = TT.AchievementStatus },
     [102809] = { id = "kenaz_3", special_function = SF.SetAchievementFailed },
     [103163] = { status = "finish", id = "kenaz_3", special_function = SF.SetAchievementStatus },
 

@@ -169,23 +169,49 @@ function EHIAchievementUnlockTracker:SetFailed()
     end
 end
 
-EHIAchievementNotificationTracker = class(EHIAchievementTracker)
-EHIAchievementNotificationTracker._update = false
-function EHIAchievementNotificationTracker:init(panel, params)
+EHIAchievementBagValueTracker = class(EHINeededValueTracker)
+if show_started then
+    function EHIAchievementBagValueTracker:init(panel, params)
+        EHIAchievementBagValueTracker.super.init(self, panel, params)
+        self._delay_popup = params.delay_popup
+        ShowStartedPopup(self)
+    end
+
+    function EHIAchievementBagValueTracker:ShowStartedPopup()
+        self._delay_popup = false
+        ShowStartedPopup(self)
+    end
+end
+
+function EHIAchievementBagValueTracker:SetCompleted(force)
+    EHIAchievementBagValueTracker.super.SetCompleted(self, force)
+    self._achieved_popup_showed = true
+end
+
+if show_failed then
+    function EHIAchievementBagValueTracker:SetFailed()
+        EHIAchievementBagValueTracker.super.SetFailed(self)
+        ShowFailedPopup(self)
+    end
+end
+
+EHIAchievementStatusTracker = class(EHIAchievementTracker)
+EHIAchievementStatusTracker._update = false
+function EHIAchievementStatusTracker:init(panel, params)
     self._status = params.status or "ok"
     self._fade_time = 5
-    EHIAchievementNotificationTracker.super.init(self, panel, params)
+    EHIAchievementStatusTracker.super.init(self, panel, params)
     self:SetTextColor()
 end
 
-function EHIAchievementNotificationTracker:update(t, dt)
+function EHIAchievementStatusTracker:update(t, dt)
     self._fade_time = self._fade_time - dt
     if self._fade_time <= 0 then
         self:delete()
     end
 end
 
-function EHIAchievementNotificationTracker:Format()
+function EHIAchievementStatusTracker:Format()
     local status = "ehi_achievement_" .. self._status
     if LocalizationManager._custom_localizations[status] then
         return managers.localization:text(status)
@@ -194,26 +220,12 @@ function EHIAchievementNotificationTracker:Format()
     end
 end
 
-function EHIAchievementNotificationTracker:SetText()
+function EHIAchievementStatusTracker:SetText()
     self._text:set_text(self:Format())
     self:FitTheText()
 end
 
-function EHIAchievementNotificationTracker:SetTextColor(color)
-    local c
-    if color then
-        c = color
-    elseif self._status == "ok" or self._status == "done" or self._status == "pass" or self._status == "finish" or self._status == "destroy" or self._status == "defend" then
-        c = Color.green
-    elseif self._status == "ready" or self._status == "loud" or self._status == "push" or self._status == "hack" or self._status == "land" or self._status == "find" or self._status == "bring" then
-        c = Color.yellow
-    else
-        c = Color.red
-    end
-    EHIAchievementNotificationTracker.super.SetTextColor(self, c)
-end
-
-function EHIAchievementNotificationTracker:SetStatus(status)
+function EHIAchievementStatusTracker:SetStatus(status)
     if self._dont_override_status or self._status == status then
         return
     end
@@ -223,7 +235,7 @@ function EHIAchievementNotificationTracker:SetStatus(status)
     self:AnimateBG()
 end
 
-function EHIAchievementNotificationTracker:SetCompleted()
+function EHIAchievementStatusTracker:SetCompleted()
     self._exclude_from_sync = true
     self:SetStatus("done")
     self:AddTrackerToUpdate()
@@ -231,7 +243,7 @@ function EHIAchievementNotificationTracker:SetCompleted()
     self._achieved_popup_showed = true
 end
 
-function EHIAchievementNotificationTracker:SetFailed()
+function EHIAchievementStatusTracker:SetFailed()
     self._exclude_from_sync = true
     self:SetStatus("fail")
     self:AddTrackerToUpdate()
@@ -241,95 +253,38 @@ function EHIAchievementNotificationTracker:SetFailed()
     end
 end
 
-EHIAchievementBagValueTracker = class(EHIProgressTracker)
-EHIAchievementBagValueTracker._update = false
-function EHIAchievementBagValueTracker:init(panel, params)
-    self._secured = 0
-    self._secured_formatted = "0"
-    self._to_secure = params.to_secure or 0
-    self._to_secure_formatted = self:FormatNumber(self._to_secure)
-    EHIAchievementBagValueTracker.super.init(self, panel, params)
-    if show_started then
-        self._delay_popup = params.delay_popup
-        ShowStartedPopup(self)
+local green_status =
+{
+    ok = true,
+    done = true,
+    pass = true,
+    finish = true,
+    destroy = true,
+    defend = true,
+    no_down = true,
+    secure = true
+}
+local yellow_status =
+{
+    alarm = true,
+    ready = true,
+    loud = true,
+    push = true,
+    hack = true,
+    land = true,
+    find = true,
+    bring = true
+}
+function EHIAchievementStatusTracker:SetTextColor(color)
+    local c
+    if color then
+        c = color
+    elseif green_status[self._status] then
+        c = Color.green
+    elseif yellow_status[self._status] then
+        c = Color.yellow
+    else
+        c = Color.red
     end
-end
-
-function EHIAchievementBagValueTracker:ShowStartedPopup()
-    self._delay_popup = false
-    ShowStartedPopup(self)
-end
-
-function EHIAchievementBagValueTracker:OverridePanel(params)
-    self._panel:set_w(self._panel:w() * 2)
-    self._time_bg_box:set_w(self._time_bg_box:w() * 2)
-    self._text:set_w(self._time_bg_box:w())
-    self:FitTheText()
-    if self._icon1 then
-        self._icon1:set_x(self._icon1:x() * 2)
-    end
-end
-
-function EHIAchievementBagValueTracker:Format()
-    return "$" .. self._secured_formatted .. "/$" .. self._to_secure_formatted
-end
-
-function EHIAchievementBagValueTracker:FormatNumber(n)
-    local divisor = 1
-    local post_fix = ""
-    if n >= 1000000 then
-        divisor = 1000000
-        post_fix = "M"
-    elseif n >= 1000 then
-        divisor = 1000
-        post_fix = "K"
-    end
-    return tostring(n / divisor) .. post_fix
-end
-
-function EHIAchievementBagValueTracker:SetProgress(progress)
-    if self._secured ~= progress and not self._disable_counting then
-        self._secured = progress
-        self._secured_formatted = self:FormatNumber(progress)
-        self._text:set_text(self:Format())
-        self:FitTheText()
-        if self._flash then
-            self:AnimateBG(self._flash_times)
-        end
-        self:SetCompleted()
-    end
-end
-
-function EHIAchievementBagValueTracker:IncreaseProgress(progress)
-    self:SetProgress(self._secured + (progress or 1))
-end
-
-function EHIAchievementBagValueTracker:SetCompleted(force)
-    if (self._secured >= self._to_secure and not self._status) or force then
-        self._status = "completed"
-        self:SetTextColor(Color.green)
-        if self._remove_after_reaching_counter_target or force then
-            self._parent_class:AddTrackerToUpdate(self._id, self)
-        else
-            self._text:set_text("FINISH")
-            self:FitTheText()
-        end
-        self._disable_counting = true
-        self._achieved_popup_showed = true
-    end
-end
-
-function EHIAchievementBagValueTracker:SetFailed()
-    if self._status and not self._status_is_overridable then
-        return
-    end
-    self._exclude_from_sync = true
-    self:SetTextColor(Color.red)
-    self._status = "failed"
-    self._parent_class:AddTrackerToUpdate(self._id, self)
-    self:AnimateBG()
-    self._disable_counting = true
-    if show_failed then
-        ShowFailedPopup(self)
-    end
+    EHIAchievementStatusTracker.super.SetTextColor(self, c)
 end

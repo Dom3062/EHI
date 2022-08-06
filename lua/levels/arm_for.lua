@@ -17,7 +17,7 @@ local triggers = {
 
     -- Achievement bugged, can be achieved in stealth
     -- Reported in: https://steamcommunity.com/app/218620/discussions/14/3048357185566603324/
-    [104716] = { id = "armored_6", class = TT.AchievementNotification },
+    [104716] = { id = "armored_6", class = TT.AchievementStatus },
     [103311] = { id = "armored_6", special_function = SF.SetAchievementFailed }
 }
 
@@ -35,7 +35,7 @@ if EHI:GetOption("show_achievement") then
     })
     EHI:AddLoadSyncFunction(function(self)
         if EHI.ConditionFunctions.IsStealth() then
-            self:AddAchievementNotificationTracker("armored_6")
+            self:AddAchievementStatusTracker("armored_6")
         end
     end)
 end

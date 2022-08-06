@@ -16,8 +16,8 @@ end
 local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, "wp_hack" }, flash_times = 1, class = TT.Chance }
 local triggers = {
     [100698] = { special_function = SF.Trigger, data = { 1006981, 1006982 } },
-    [1006981] = { id = "man_2", class = TT.AchievementNotification, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement },
-    [1006982] = { id = "man_3", class = TT.AchievementNotification, special_function = SF.RemoveTriggerAndShowAchievement },
+    [1006981] = { id = "man_2", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement },
+    [1006982] = { id = "man_3", class = TT.AchievementStatus, special_function = SF.RemoveTriggerAndShowAchievement },
     [101587] = { time = 30 + delay, id = "DealGoingDown", icons = deal },
     [101588] = { time = 40 + delay, id = "DealGoingDown", icons = deal },
     [101589] = { time = 50 + delay, id = "DealGoingDown", icons = deal },
@@ -52,7 +52,7 @@ EHI:ShowAchievementLootCounter({
 if EHI:GetOption("show_achievement") then
     EHI:AddLoadSyncFunction(function(self)
         if EHI.ConditionFunctions.IsStealth() then
-            self:AddAchievementNotificationTracker("man_3")
+            self:AddAchievementStatusTracker("man_3")
         end
         -- Achievement count used planks on windows, vents, ...
         -- There are total 49 positions and 10 planks

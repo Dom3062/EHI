@@ -214,6 +214,22 @@
         },
         {
             "type": "toggle",
+            "id": "ehi_show_camera_loop_choice",
+            "title": "ehi_show_camera_loop",
+            "description": "ehi_show_camera_loop_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_camera_loop",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_camera_loop",
+            "default_value": true,
+            "ehi_ver" : 74
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
             "id": "ehi_show_zipline_timer_choice",
             "title": "ehi_show_zipline_timer",
             "description": "ehi_show_zipline_timer_desc",
