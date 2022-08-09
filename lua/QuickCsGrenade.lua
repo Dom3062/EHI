@@ -3,6 +3,7 @@ if EHI._hooks.QuickCsGrenade then
 else
 	EHI._hooks.QuickCsGrenade = true
 end
+local Icon = EHI.Icons
 
 local _f_detonate = QuickCsGrenade.detonate
 function QuickCsGrenade:detonate(...)
@@ -11,7 +12,7 @@ function QuickCsGrenade:detonate(...)
     managers.ehi:AddTracker({
         id = key,
         time = self._duration,
-        icons = { "wp_sentry", "teargas" }
+        icons = { Icon.Sentry, "teargas" }
     })
     managers.ehi_waypoint:AddWaypoint(key, {
         time = self._duration,

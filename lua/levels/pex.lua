@@ -6,18 +6,16 @@ local triggers = {
     [101392] = { time = 120, id = "FireEvidence", icons = { Icon.Fire }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [101588] = { id = "FireEvidence", special_function = SF.PauseTracker },
 
-    [103735] = { id = "pex_11", special_function = SF.IncreaseProgress },
-
     [101460] = { time = 18, id = "DoorBreach", icons = { "pd2_door" } },
 
-    [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, "equipment_winch_hook" } }
+    [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch } }
 }
 for _, index in ipairs({ 5300, 6300, 7300 }) do
-    triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { "wp_hack" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists }
+    triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists }
     triggers[EHI:GetInstanceElementID(100026, index)] = { id = "ArmoryHack", special_function = SF.PauseTracker }
 end
 if EHI._cache.Client then
-    triggers[100233] = { time = 20 + 4, id = "HeliEscape", icons = { Icon.Heli, "equipment_winch_hook" }, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100233] = { time = 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist }
 end
 local DisableWaypoints =
 {
@@ -42,7 +40,10 @@ EHI:ShowAchievementLootCounter({ -- Medals
     achievement = "pex_11",
     max = 7,
     exclude_from_sync = true,
-    no_counting = true
+    triggers =
+    {
+        [103735] = { id = "pex_11", special_function = SF.IncreaseProgress }
+    }
 })
 EHI:AddLoadSyncFunction(function(self)
     --[[

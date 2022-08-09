@@ -10,7 +10,7 @@ local element_sync_triggers =
     [EHI:GetInstanceElementID(100063, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, hook_element = SecurityTearGasRandomElement }, -- 55s
     [EHI:GetInstanceElementID(100064, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, hook_element = SecurityTearGasRandomElement } -- 65s
 }
-local request = { "wp_hack", Icon.Wait }
+local request = { Icon.PCHack, Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
 local CheckOkValueHostCheckOnly = EHI:GetFreeCustomSpecialFunctionID()
 local AssaultDelay = 30
@@ -35,9 +35,9 @@ local triggers = {
     [104581] = { time = 20, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) },
     [104582] = { time = 30, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) }, -- Disabled in the mission script
 
-    [104509] = { time = 30, id = "HackRestartWait", icons = { "wp_hack", "restarter" } },
+    [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop } },
 
-    [104314] = { max = 4, id = "RequestCounter", icons = { "wp_hack" }, class = TT.Progress, special_function = SF.AddTrackerIfDoesNotExist },
+    [104314] = { max = 4, id = "RequestCounter", icons = { Icon.PCHack }, class = TT.Progress, special_function = SF.AddTrackerIfDoesNotExist },
 
     [104599] = { id = "RequestCounter", special_function = SF.RemoveTracker },
 

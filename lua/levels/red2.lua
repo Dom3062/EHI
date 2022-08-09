@@ -123,8 +123,7 @@ local triggers = {
     [102567] = { id = "green_3", special_function = SF.SetAchievementFailed },
     [102153] = { id = "green_1", special_function = SF.IncreaseProgress },
     [102333] = green_1_decrease,
-    [102539] = green_1_decrease,
-    [106684] = { max = 70, id = "LootCounter", special_function = SF.IncreaseProgressMax }
+    [102539] = green_1_decrease
 }
 local DisableWaypoints = {}
 for i = 0, 300, 100 do
@@ -138,7 +137,13 @@ EHI:RegisterCustomSpecialFunction(RemoveTriggerAndStartAchievementCountdown, fun
     managers.ehi:StartTrackerCountdown("cac_10")
     EHI:UnhookTrigger(id)
 end)
-EHI:ShowLootCounter({ max = 14 })
+EHI:ShowLootCounter({
+    max = 14,
+    triggers =
+    {
+        [106684] = { max = 70, id = "LootCounter", special_function = SF.IncreaseProgressMax }
+    }
+})
 if show_achievement then
     EHI:AddLoadSyncFunction(function(self)
         if EHI.ConditionFunctions.IsStealth() then

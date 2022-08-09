@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local deal = { "pd2_car", "pd2_goto" }
+local deal = { Icon.Car, "pd2_goto" }
 local delay = 4 + 356/30
 local start_chance = 15 -- Normal
 if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
@@ -13,7 +13,7 @@ elseif ovk_and_up then
     -- OVERKILL+
     start_chance = 5
 end
-local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, "wp_hack" }, flash_times = 1, class = TT.Chance }
+local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, Icon.PCHack }, flash_times = 1, class = TT.Chance }
 local triggers = {
     [100698] = { special_function = SF.Trigger, data = { 1006981, 1006982 } },
     [1006981] = { id = "man_2", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement },
@@ -36,8 +36,6 @@ local triggers = {
 
     [102887] = { amount = 5, id = "CodeChance", special_function = SF.IncreaseChance },
 
-    [103989] = { id = "man_4", special_function = SF.IncreaseProgress },
-
     [103963] = { id = "man_2", special_function = SF.SetAchievementFailed },
     [103957] = { id = "man_3", special_function = SF.SetAchievementFailed }
 }
@@ -47,7 +45,10 @@ EHI:ShowAchievementLootCounter({
     achievement = "man_4",
     max = 10,
     exclude_from_sync = true,
-    no_counting = true
+    triggers =
+    {
+        [103989] = { id = "man_4", special_function = SF.IncreaseProgress }
+    }
 })
 if EHI:GetOption("show_achievement") then
     EHI:AddLoadSyncFunction(function(self)

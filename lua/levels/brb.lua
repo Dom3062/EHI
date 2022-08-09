@@ -18,10 +18,10 @@ local triggers = {
             })
         end
     end },
-    [100128] = { time = 38, id = "WinchDropTrainA", icons = { "equipment_winch_hook", "pd2_goto" } },
-    [100164] = { time = 38, id = "WinchDropTrainB", icons = { "equipment_winch_hook", "pd2_goto" } },
+    [100128] = { time = 38, id = "WinchDropTrainA", icons = { Icon.Winch, "pd2_goto" } },
+    [100164] = { time = 38, id = "WinchDropTrainB", icons = { Icon.Winch, "pd2_goto" } },
 
-    [100654] = { time = 120, id = "Winch", icons = { "equipment_winch_hook" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [100654] = { time = 120, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [100655] = { id = "Winch", special_function = SF.PauseTracker },
     [100656] = { id = "Winch", special_function = SF.UnpauseTracker },
     [EHI:GetInstanceElementID(100077, 2900)] = { time = 90, id = "Cutter", icons = { "equipment_glasscutter" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },

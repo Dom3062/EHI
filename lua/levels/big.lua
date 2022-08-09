@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local pc_hack = { time = 20, id = "PCHack", icons = { "wp_hack" } }
+local pc_hack = { time = 20, id = "PCHack", icons = { Icon.PCHack } }
 local bigbank_4 = { special_function = SF.Trigger, data = { 1, 2 } }
 local show_achievement = EHI:GetOption("show_achievement")
 local hard_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard)

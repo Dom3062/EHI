@@ -63,7 +63,6 @@ local Activate_cac_33 = EHI:GetFreeCustomSpecialFunctionID()
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
 local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } }
-local ring = { id = "voff_4", special_function = SF.IncreaseProgress }
 local triggers = {
     [102504] = { id = "cac_33", status = "land", class = "EHIcac33Tracker", difficulty_pass = dw_and_above, exclude_from_sync = true },
     [103486] = { id = "cac_33", status = "ok", special_function = SF.SetAchievementStatus },
@@ -79,21 +78,24 @@ local triggers = {
     [102816] = { id = "jerry_3", special_function = SF.SetAchievementFailed },
     [101314] = { id = "jerry_3", special_function = SF.SetAchievementComplete },
 
-    [103248] = ring,
-
     [101985] = thermite, -- First grate
     [101984] = thermite -- Second grate
 }
-for i = 103252, 103339, 3 do
-    triggers[i] = ring
-end
 
 EHI:ParseTriggers(triggers)
+local ring = { id = "voff_4", special_function = SF.IncreaseProgress }
+local voff_4_triggers =
+{
+    [103248] = ring
+}
+for i = 103252, 103339, 3 do
+    voff_4_triggers[i] = ring
+end
 EHI:ShowAchievementLootCounter({
     achievement = "voff_4",
     max = 9,
     exclude_from_sync = true,
-    no_counting = true
+    triggers = voff_4_triggers
 })
 EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(id, trigger, element, enabled)
     managers.ehi:CallFunction(trigger.id, "Activate")

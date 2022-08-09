@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local Methlab = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" } }
+local Methlab = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop } }
 local element_sync_triggers = {}
 local start_index = { 7800, 8200, 8600 }
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
@@ -31,9 +31,9 @@ local triggers = {
 
     [106013] = { time = (very_hard_and_below and 40 or 60), id = "Truck", icons = { Icon.Car }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [106017] = { id = "Truck", special_function = SF.PauseTracker },
-    [EHI:GetInstanceElementID(100038, 1300)] = { time = 90 + delay, id = "reader", icons = { "wp_hack" }, class = TT.Pausable },
-    [EHI:GetInstanceElementID(100039, 1300)] = { time = 120 + delay, id = "reader", icons = { "wp_hack" }, class = TT.Pausable },
-    [EHI:GetInstanceElementID(100040, 1300)] = { time = 180 + delay, id = "reader", icons = { "wp_hack" }, class = TT.Pausable },
+    [EHI:GetInstanceElementID(100038, 1300)] = { time = 90 + delay, id = "reader", icons = { Icon.PCHack }, class = TT.Pausable },
+    [EHI:GetInstanceElementID(100039, 1300)] = { time = 120 + delay, id = "reader", icons = { Icon.PCHack }, class = TT.Pausable },
+    [EHI:GetInstanceElementID(100040, 1300)] = { time = 180 + delay, id = "reader", icons = { Icon.PCHack }, class = TT.Pausable },
     [EHI:GetInstanceElementID(100045, 1300)] = { id = "reader", special_function = SF.PauseTracker },
     [EHI:GetInstanceElementID(100051, 1300)] = { id = "reader", special_function = SF.UnpauseTracker },
 
@@ -47,13 +47,14 @@ local triggers = {
     [101389] = { time = 10.5 + 8, id = "SecondCall", icons = { Icon.Phone } },
     [103385] = { time = 8.5 + 5, id = "LastCall", icons = { Icon.Phone } }
 }
-local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, "restarter" }, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
+local random_time = { id = Methlab.id, icons = Methlab.icons, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
 for _, index in ipairs(start_index) do
     triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethPickUp", icons = { Icon.Methlab, "pd2_generic_interact" } }
     if client then
+        triggers[EHI:GetInstanceElementID(100118, index)] = { id = Methlab.id, icons = Methlab.icons, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 5, 25, 40 } }
         triggers[EHI:GetInstanceElementID(100149, index)] = random_time
         triggers[EHI:GetInstanceElementID(100150, index)] = random_time
-        triggers[EHI:GetInstanceElementID(100184, index)] = { id = "MethlabInteract", special_function = SF.RemoveTracker }
+        triggers[EHI:GetInstanceElementID(100184, index)] = { id = Methlab.id, special_function = SF.RemoveTracker }
     end
 end
 if client then

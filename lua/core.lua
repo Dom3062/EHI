@@ -112,6 +112,12 @@ _G.EHI =
         CustomSF = 1000
     },
 
+    SyncFunctions =
+    {
+        [35] = true, -- GetElementTimerAccurate
+        [37] = true -- UnpauseTrackerIfExistsAccurate
+    },
+
     SFF = {},
 
     ConditionFunctions =
@@ -154,6 +160,8 @@ _G.EHI =
         Alarm = "C_Bain_H_GOBank_IsEverythingOK",
         Water = "pd2_water_tap",
         Blimp = "blimp",
+        Sentry = "wp_sentry",
+        PCHack = "wp_hack",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarLootDrop = { "pd2_car", "pd2_lootdrop" },
@@ -1317,10 +1325,76 @@ function EHI:AddPositionFromElement(data, check)
 end
 
 function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
+    local show_achievement = self:GetOption("show_achievement")
+    local function FillAchievementTrigger(data)
+        if not data.special_function then
+            data.special_function = SF.ShowAchievement
+        end
+        if data.difficulty_pass ~= nil then
+            data.condition = data.difficulty_pass and show_achievement
+        elseif data.condition == nil then
+            data.condition = show_achievement
+        end
+        if not data.icons then
+            data.icons = self:GetAchievementIcon(data.id)
+        end
+    end
     if not self:GetOption("show_mission_trackers") then
+        --[[local function AchievementCanTrigger(data)
+            if data.difficulty_pass == false then
+                return false
+            end
+            return show_achievement
+        end
+        local function ReorganizeHooks(t, id, data, sf)
+            -- This trigger with the same ID already exists
+            -- The trigger will be reorganized to allow more than 1 element to be called
+            if t[id] then
+                if t[id].special_function and (t[id].special_function == SF.Trigger or t[id].special_function == SF.TriggerIfEnabled) then
+                else
+
+                end
+            else
+                t[id] = data
+            end
+        end]]
+        for id, data in pairs(mission_triggers) do
+            if data.special_function and self.SyncFunctions[data.special_function] then
+                self:AddTriggers({ [id] = data }, trigger_id_all or "Trigger", trigger_icons_all or {})
+            end
+            -- Hook only achievements that can be really earned in this playthrough
+            -- Don't show achievements if the player selected wrong difficulty or achievement trackers are disabled
+            --[[if data.class and self.AchievementTrackers[data.class] and AchievementCanTrigger(data) then
+                FillAchievementTrigger(data)
+                local _t = { [id] = data }
+                local trigger_id = data.id
+                -- Look for every trigger that has the same achievement ID; except the same Element ID, this one is above
+                for id2, data2 in pairs(mission_triggers) do
+                    if data2.id == trigger_id and id ~= id2 then
+                        -- Check what ID the achievement trigger has
+                        if id2 < 100000 or id2 > 999999 then -- Achievement is part of one or many SF.Trigger special function(s)
+                            for id3, data3 in pairs(mission_triggers) do
+                                if data3.special_function and (data3.special_function == SF.Trigger or data3.special_function == SF.TriggerIfEnabled) then
+                                    -- Check triggers if they have the achievement
+                                    for _, value in ipairs(data3.data or {}) do
+                                        if value == id2 then
+                                            ReorganizeHooks(_t, id3, data2, data3.special_function)
+                                        end
+                                    end
+                                end
+                            end
+                        else -- Achievement has it's own ID; this makes the checking easier
+                            _t[id2] = data
+                        end
+                    end
+                end
+                self:Log("Done checking achievement ID: " .. tostring(trigger_id))
+                self:PrintTable(_t)
+                self:AddTriggers(_t, trigger_id_all or "Trigger", trigger_icons_all or {})
+            end]]
+        end
         return
     end
-    local show_achievement = self:GetOption("show_achievement")
     local host = self._cache.Host
     for id, data in pairs(mission_triggers) do
         -- Mark every tracker, that has random time, as inaccurate
@@ -1333,7 +1407,8 @@ function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
         end
         -- Fill the rest table properties for Achievement trackers
         if data.class and self.AchievementTrackers[data.class] then
-            if not data.special_function then
+            FillAchievementTrigger(data)
+            --[[if not data.special_function then
                 data.special_function = SF.ShowAchievement
             end
             if data.difficulty_pass ~= nil then
@@ -1343,7 +1418,7 @@ function EHI:ParseTriggers(mission_triggers, trigger_id_all, trigger_icons_all)
             end
             if not data.icons then
                 data.icons = self:GetAchievementIcon(data.id)
-            end
+            end]]
         end
         -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
         if data.special_function == SF.ShowWaypoint then
@@ -1444,6 +1519,9 @@ end
 function EHI:ShowLootCounterOffset(params, manager)
     local offset = managers.loot:GetSecuredBagsAmount()
     manager:ShowLootCounter(params.max, params.additional_loot, offset)
+    if params.triggers then
+        self:AddTriggers(params.triggers, "Trigger", {})
+    end
     if params.no_counting then
         return
     end
@@ -1461,6 +1539,9 @@ function EHI:ShowLootCounter(params)
         end
     end
     managers.ehi:ShowLootCounter(params.max, params.additional_loot, n_offset)
+    if params.triggers then
+        self:AddTriggers(params.triggers, "Trigger", {})
+    end
     if params.no_counting then
         return
     end
@@ -1487,7 +1568,10 @@ function EHI:ShowAchievementLootCounter(params)
         return
     end
     managers.ehi:AddAchievementProgressTracker(params.achievement, params.max, params.additional_loot, params.exclude_from_sync, params.remove_after_reaching_target, params.show_loot_counter)
-    if params.no_counting then
+    if params.triggers then
+        self:AddTriggers(params.triggers, "Trigger", {})
+        return
+    elseif params.no_counting then
         return
     end
     self:AddAchievementToCounter(params)
@@ -1597,6 +1681,22 @@ if EHI:GetWaypointOption("show_waypoints_only") then
             managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
         else
             AddTracker(id, trigger)
+        end
+    end
+end
+
+if not EHI:GetOption("show_mission_trackers") then
+    function EHI:AddTrackerAndSync(id, delay)
+        managers.ehi:Sync(id, delay)
+    end
+
+    GetElementTimer = function(self, id)
+        if self._cache.Host then
+            local element = managers.mission:get_element_by_id(triggers[id].element)
+            if element then
+                local t = (element._timer or 0) + (triggers[id].additional_time or 0)
+                managers.ehi:Sync(id, t)
+            end
         end
     end
 end

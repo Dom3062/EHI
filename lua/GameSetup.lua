@@ -175,7 +175,15 @@ local custom_levels =
     lit2 = true, -- California Heat (Bonus Mission)
     -- Constantine Scores
     constantine_smackdown_lvl = true, -- Smackdown
-    constantine_smackdown2_lvl = true -- Truck Hustle; No triggers, only MissionDoor
+    constantine_smackdown2_lvl = true, -- Truck Hustle; No triggers, only MissionDoor
+    --On Display (Stealth only)
+    constantine_apartment_lvl = true -- Concrete Jungle
+    --[[Smugglers Den (Loud and Stealth)
+    Aurora Club (Loud and Stealth)
+    Butchers Bay (Loud only)
+    Gunrunners Clubhouse (Loud Only)
+    Precinct Raid (Loud Only)
+    Kozlov Mansion]]
 }
 
 function GameSetup:init_finalize(...)

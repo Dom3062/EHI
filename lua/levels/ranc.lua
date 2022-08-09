@@ -50,12 +50,6 @@ local triggers = {
     [EHI:GetInstanceElementID(100056, 25650)] = FultonRemoveCatch
 }
 
-local ranc_10 = { id = "ranc_10", special_function = SF.IncreaseProgress }
-triggers[EHI:GetInstanceElementID(100015, 28400)] = ranc_10
-for i = 28600, 29300, 50 do
-    triggers[EHI:GetInstanceElementID(100015, i)] = ranc_10
-end
-
 if Network:is_client() then
     triggers[102053].time = (ElementTimer == 102063 and 60 or 30) + triggers[102053].additional_time
     triggers[102053].random_time = 5
@@ -75,11 +69,19 @@ else
 end
 
 EHI:ParseTriggers(triggers)
+local ranc_10 = { id = "ranc_10", special_function = SF.IncreaseProgress }
+local ranc_10_triggers =
+{
+    [EHI:GetInstanceElementID(100015, 28400)] = ranc_10
+}
+for i = 28600, 29300, 50 do
+    ranc_10_triggers[EHI:GetInstanceElementID(100015, i)] = ranc_10
+end
 EHI:ShowAchievementLootCounter({
     achievement = "ranc_10",
     max = 5,
     exclude_from_sync = true,
-    no_counting = true
+    triggers = ranc_10_triggers
 })
 EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(id, ...)
     if managers.ehi:TrackerDoesNotExist("FultonCatch") then

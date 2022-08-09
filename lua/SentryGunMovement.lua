@@ -4,6 +4,8 @@ if EHI._hooks.SentryGunMovement then
 else
 	EHI._hooks.SentryGunMovement = true
 end
+local Icon = EHI.Icons
+local Warning = EHI.Trackers.Warning
 
 local show_waypoints = EHI:GetOption("show_waypoints_enemy_turret")
 local show_waypoint_only = show_waypoints and EHI:GetWaypointOption("show_waypoints_only")
@@ -30,8 +32,8 @@ function SentryGunMovement:rearm(...)
         managers.ehi:AddTracker({
             id = self._ehi_key_reload,
             time = self._tweak.AUTO_RELOAD_DURATION,
-            icons = { "wp_sentry", "reload" },
-            class = "EHIWarningTracker"
+            icons = { Icon.Sentry, "reload" },
+            class = Warning
         })
     end
     if show_waypoints then
@@ -53,8 +55,8 @@ function SentryGunMovement:repair(...)
         managers.ehi:AddTracker({
             id = self._ehi_key_repair,
             time = self._tweak.AUTO_REPAIR_DURATION,
-            icons = { "wp_sentry", "pd2_fix" },
-            class = "EHIWarningTracker"
+            icons = { Icon.Sentry, "pd2_fix" },
+            class = Warning
         })
     end
     if show_waypoints then

@@ -3,13 +3,13 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local drill_spawn_delay = { time = 30, id = "DrillSpawnDelay", icons = { Icon.Drill, "pd2_goto" } }
-local CrashIcons = { "wp_hack", Icon.Fix, "pd2_question" }
+local CrashIcons = { Icon.PCHack, Icon.Fix, "pd2_question" }
 if EHI:GetOption("show_one_icon") then
     CrashIcons = { Icon.Fix }
 end
 local triggers = {
-    [101284] = { chance = 50, id = "CrashChance", icons = { "wp_hack", Icon.Fix }, class = TT.Chance },
-    [103568] = { time = 60, id = "Hack", icons = { "wp_hack" } },
+    [101284] = { chance = 50, id = "CrashChance", icons = { Icon.PCHack, Icon.Fix }, class = TT.Chance },
+    [103568] = { time = 60, id = "Hack", icons = { Icon.PCHack } },
     [103585] = { id = "Hack", special_function = SF.RemoveTracker },
     [103579] = { amount = 25, id = "CrashChance", special_function = SF.DecreaseChance },
     [100741] = { id = "CrashChance", special_function = SF.RemoveTracker },

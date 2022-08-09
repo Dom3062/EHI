@@ -30,19 +30,23 @@ local instances =
     },
     ["levels/instances/unique/fex/fex_explosives/world"] =
     {
-        [100008] = { time = 60, id = "FexExplosivesTimer", icons = { "equipment_timer" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
-        [100007] = { id = "FexExplosivesTimer", special_function = SF.PauseTracker }
+        [100008] = { time = 60, id = "fexExplosivesTimer", icons = { "equipment_timer" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+        [100007] = { id = "fexExplosivesTimer", special_function = SF.PauseTracker }
     },
     ["levels/instances/unique/sand/sand_helicopter_turret/world"] =
     {
-        [100027] = { id = "SandTurretTimer", icons = { Icon.Heli, "wp_sentry", Icon.Wait }, special_function = SF.GetElementTimerAccurate, element = 100012, sync = true }
+        [100027] = { id = "sandTurretTimer", icons = { Icon.Heli, Icon.Sentry, Icon.Wait }, special_function = SF.GetElementTimerAccurate, element = 100012, sync = true }
     }
 }
 
 if client then
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].time = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and 90 or 60
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].random_time = 30
-    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100024] = { id = "SandTurretTimer", special_function = SF.RemoveTracker }
+    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100024] = { id = "sandTurretTimer", special_function = SF.RemoveTracker }
+end
+
+if EHI:GetOption("show_waypoints") then
+    --instances["levels/instances/shared/obj_skm/world"][100032].waypoint = { position_by_element = 0, warning = true }
 end
 
 local original =
@@ -70,11 +74,15 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                 if trigger.element then
                     triggers[final_index].element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
                 end
+                if trigger.waypoint and trigger.waypoint.position_by_element then
+                    triggers[final_index].waypoint.position_by_element = EHI:GetInstanceElementID(trigger.waypoint.position_by_element, start_index, continent_data.base_id)
+                    triggers[final_index].waypoint.position = EHI:AddPositionFromElement(triggers[final_index].waypoint, true)
+                end
                 if trigger.sync and client then
                     EHI:AddSyncTrigger(final_index, triggers[final_index])
                 end
             end
-            EHI:AddTriggers(triggers, "Trigger", {})
+            EHI:ParseTriggers(triggers)
             used_start_indexes[start_index] = true
         end
         instance_index = instance_index + 1
@@ -92,6 +100,7 @@ local units =
 {
     ["units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
     ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
+    ["units/pd2_dlc_hvh/props/hvh_prop_armory_shelf_ammo/hvh_prop_armory_shelf_ammo"] = { f = "SetAmmoOffset" },
 
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { Icon.C4 }, warning = true },
     ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { Icon.C4 }, f = "chasC4" },

@@ -70,7 +70,7 @@ local triggers = {
 
     --[100129] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay },
 
-    [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { "wp_hack" } },
+    [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { Icon.PCHack } },
 
     [EHI:GetInstanceElementID(100043, 4800)] = { special_function = SF.Trigger, data = { 1000431, 1000432 } },
     [1000431] = { time = 15, id = "DoorOpenGas", icons = { "pd2_door" } },
