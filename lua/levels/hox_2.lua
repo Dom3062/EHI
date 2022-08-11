@@ -19,15 +19,7 @@ if EHI._cache.Client then
 end
 local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
 local triggers = {
-    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072--[[, 1001073]] } },
-    [1001071] = { id = "slakt_3", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [1001072] = { id = "cac_26", status = "defend", class = TT.AchievementStatus, special_function = SF.ShowAchievementFromStart, difficulty_pass = ovk_and_up, exclude_from_sync = true },
-    --[1001073] = { time = AssaultDelay, id = "AssaultDelay", stop_counting = EHI._cache.Host, class = TT.AssaultDelay },
-    [100256] = { id = "slakt_3", special_function = SF.SetAchievementFailed },
-    [100258] = { id = "slakt_3", special_function = SF.SetAchievementComplete },
-    [101884] = { id = "cac_26", status = "finish", special_function = SF.SetAchievementStatus },
-    [100320] = { id = "cac_26", special_function = SF.SetAchievementComplete },
-    [100322] = { id = "cac_26", special_function = SF.SetAchievementFailed },
+    --[100107] = { time = AssaultDelay, id = "AssaultDelay", stop_counting = EHI._cache.Host, class = TT.AssaultDelay },
     [102016] = { time = 7, id = "Endless", icons = Icon.EndlessAssault, class = TT.Warning },
 
     [104579] = { time = 15, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) },
@@ -60,7 +52,19 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072 } },
+    [1001071] = { id = "slakt_3", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
+    [1001072] = { id = "cac_26", status = "defend", class = TT.AchievementStatus, special_function = SF.ShowAchievementFromStart, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+    [100256] = { id = "slakt_3", special_function = SF.SetAchievementFailed },
+    [100258] = { id = "slakt_3", special_function = SF.SetAchievementComplete },
+    [101884] = { id = "cac_26", status = "finish", special_function = SF.SetAchievementStatus },
+    [100320] = { id = "cac_26", special_function = SF.SetAchievementComplete },
+    [100322] = { id = "cac_26", special_function = SF.SetAchievementFailed },
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(id, trigger, element, enabled)
     local continue = false
     if EHI._cache.Host then

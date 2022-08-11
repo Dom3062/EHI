@@ -62,6 +62,17 @@ tweak_data.ehi =
             x = 1,
             y = 12,
             class = "EHIDodgeChanceTracker",
+            format = "percent",
+            activate_after_spawn = true
+        },
+        CritChance =
+        {
+            u100skill = true,
+            x = 0,
+            y = 12,
+            text = "Crit",
+            class = "EHICritChanceTracker",
+            format = "percent",
             activate_after_spawn = true
         },
         Berserker =
@@ -205,6 +216,7 @@ tweak_data.ehi =
             text = "Crit+",
             x = 10,
             y = 11,
+            --class = "EHIUnseenStrikeTracker"
         },
         melee_damage_stacking =
         {

@@ -64,26 +64,29 @@ local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
 local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } }
 local triggers = {
+    [101897] = { time = 60, id = "LockeSecureHeli", icons = { Icon.Heli, Icon.Winch } }, -- Time before Locke arrives with heli to pickup the money
+    [101985] = thermite, -- First grate
+    [101984] = thermite -- Second grate
+}
+
+local achievements =
+{
     [102504] = { id = "cac_33", status = "land", class = "EHIcac33Tracker", difficulty_pass = dw_and_above, exclude_from_sync = true },
     [103486] = { id = "cac_33", status = "ok", special_function = SF.SetAchievementStatus },
     [103479] = { id = "cac_33", special_function = SF.SetAchievementComplete },
     [103475] = { id = "cac_33", special_function = SF.SetAchievementFailed },
     [103487] = { id = "cac_33", special_function = Activate_cac_33 },
     [103477] = { id = "cac_33", special_function = SF.IncreaseProgress },
-    [101897] = { time = 60, id = "LockeSecureHeli", icons = { Icon.Heli, Icon.Winch } }, -- Time before Locke arrives with heli to pickup the money
     [102452] = { id = "jerry_4", special_function = SF.SetAchievementComplete },
     [102453] = { special_function = SF.Trigger, data = { 1024531, 1024532 } },
     [1024531] = { id = "jerry_3", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [1024532] = { time = 83, id = "jerry_4", class = TT.Achievement, difficulty_pass = ovk_and_up },
     [102816] = { id = "jerry_3", special_function = SF.SetAchievementFailed },
     [101314] = { id = "jerry_3", special_function = SF.SetAchievementComplete },
-
-    [101985] = thermite, -- First grate
-    [101984] = thermite -- Second grate
 }
 
-EHI:ParseTriggers(triggers)
-local ring = { id = "voff_4", special_function = SF.IncreaseProgress }
+EHI:ParseTriggers(triggers, achievements)
+local ring = { special_function = SF.IncreaseProgress }
 local voff_4_triggers =
 {
     [103248] = ring

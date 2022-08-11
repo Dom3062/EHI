@@ -7,20 +7,10 @@ local heli_icon = { Icon.Heli, Icon.Winch, "pd2_goto" }
 local refill_icon = { Icon.Water, Icon.Loop }
 local heli_60 = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
 local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
-local kenaz_5 = { id = "kenaz_5", class = TT.AchievementStatus }
 if EHI:GetOption("show_one_icon") then
     refill_icon = { { icon = Icon.Water, color = Color("D4F1F9") } }
 end
 local triggers = {
-    [100282] = { time = 840, id = "kenaz_4", class = TT.Achievement },
-
-    [EHI:GetInstanceElementID(100008, 12500)] = kenaz_5,
-    [EHI:GetInstanceElementID(100008, 12580)] = kenaz_5,
-    [EHI:GetInstanceElementID(100008, 12660)] = kenaz_5,
-    [EHI:GetInstanceElementID(100008, 18700)] = kenaz_5,
-    [102806] = { status = "finish", id = "kenaz_5", special_function = SF.SetAchievementStatus },
-    [102808] = { id = "kenaz_5", special_function = SF.SetAchievementFailed },
-
     [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { position = Vector3(9823.0, -40877.0, -2987.0) + Vector3(0, 0, 0):rotate_with(Rotation()) } },
 
     [EHI:GetInstanceElementID(100030, 11750)] = { time = 5, id = "C4Lower", icons = { Icon.C4 } },
@@ -48,10 +38,6 @@ local triggers = {
     [EHI:GetInstanceElementID(100166, 44535)] = { id = "DrillDrop", icons = { Icon.Winch, Icon.Drill, "pd2_goto" }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101854, yes = 900/30, no = 1800/30 } },
     [EHI:GetInstanceElementID(100167, 44535)] = { id = "DrillDrop", special_function = SF.PauseTracker },
 
-    [102807] = { id = "kenaz_3", class = TT.AchievementStatus },
-    [102809] = { id = "kenaz_3", special_function = SF.SetAchievementFailed },
-    [103163] = { status = "finish", id = "kenaz_3", special_function = SF.SetAchievementStatus },
-
     -- Water during drilling
     [EHI:GetInstanceElementID(100148, 37575)] = { id = "WaterTimer1", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60 } },
     [EHI:GetInstanceElementID(100146, 37575)] = { id = "WaterTimer1", special_function = SF.PauseTracker },
@@ -68,7 +54,28 @@ local triggers = {
     [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { Icon.Loop } }
 }
 
-EHI:ParseTriggers(triggers)
+local kenaz_5 = { id = "kenaz_5", class = TT.AchievementStatus }
+local achievements =
+{
+    [100282] = { time = 840, id = "kenaz_4", class = TT.Achievement },
+
+    [EHI:GetInstanceElementID(100008, 12500)] = kenaz_5,
+    [EHI:GetInstanceElementID(100008, 12580)] = kenaz_5,
+    [EHI:GetInstanceElementID(100008, 12660)] = kenaz_5,
+    [EHI:GetInstanceElementID(100008, 18700)] = kenaz_5,
+    [102806] = { status = "finish", id = "kenaz_5", special_function = SF.SetAchievementStatus },
+    [102808] = { id = "kenaz_5", special_function = SF.SetAchievementFailed },
+
+    [102807] = { id = "kenaz_3", class = TT.AchievementStatus },
+    [102809] = { id = "kenaz_3", special_function = SF.SetAchievementFailed },
+    [103163] = { status = "finish", id = "kenaz_3", special_function = SF.SetAchievementStatus },
+}
+EHI:ParseTriggers(triggers, achievements)
+EHI:HookWithID(MissionEndState, "at_enter", function(self, ...)
+    if self._success then
+        managers.ehi:SetAchievementComplete("kenaz_4", true)
+    end
+end)
 if EHI:GetOption("show_achievement") then
     EHI:AddLoadSyncFunction(function(self)
         self:AddTimedAchievementTracker("kenaz_4", 840)

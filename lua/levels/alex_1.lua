@@ -7,20 +7,15 @@ local assault_delay_methlab = 20 + 4 + 3 + 3 + 3 + 5 + 1 + 30
 local assault_delay = 4 + 3 + 3 + 3 + 5 + 1 + 30
 local SetTimeIfMoreThanOrCreateTracker = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [101088] = { id = "halloween_1", status = "ready", class = TT.AchievementStatus },
-    [101907] = { id = "halloween_1", status = "ok", special_function = SF.SetAchievementStatus },
-    [101917] = { id = "halloween_1", special_function = SF.SetAchievementComplete },
-    [101914] = { id = "halloween_1", special_function = SF.SetAchievementFailed },
     [100378] = { time = 42 + 50 + assault_delay, id = "AssaultDelay", class = TT.AssaultDelay },
     [100380] = { time = 45 + 40 + assault_delay, id = "AssaultDelay", class = TT.AssaultDelay },
-    [101001] = { special_function = SF.Trigger, data = { 1010011, 1010012 } },
-    [1010011] = { id = "CookChance", special_function = SF.RemoveTracker },
-    [1010012] = { id = "halloween_2", special_function = SF.SetAchievementFailed },
+    [101001] = { id = "CookChance", special_function = SF.RemoveTracker },
+
     [101970] = { time = (240 + 12) - 3, id = "Van", icons = Icon.CarEscape },
     [100721] = { time = 1, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
     [1007211] = { chance = 5, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists },
     [100724] = { time = 25, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeOrCreateTracker },
-    [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, "pd2_generic_interact" } },
+    [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact } },
 
     [1] = { special_function = SF.RemoveTriggers, data = { 101974, 101975 } },
     [101974] = { special_function = SF.Trigger, data = { 1019741, 1 } },
@@ -33,15 +28,25 @@ local triggers = {
 
     [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", "pd2_goto" }, class = TT.Warning },
 
-    [100723] = { amount = 10, id = "CookChance", special_function = SF.IncreaseChance },
-
+    [100723] = { amount = 10, id = "CookChance", special_function = SF.IncreaseChance }
+}
+local achievements =
+{
+    [101088] = { id = "halloween_1", status = "ready", class = TT.AchievementStatus },
+    [101907] = { id = "halloween_1", status = "defend", special_function = SF.SetAchievementStatus },
+    [101917] = { id = "halloween_1", special_function = SF.SetAchievementComplete },
+    [101914] = { id = "halloween_1", special_function = SF.SetAchievementFailed },
+    [101001] = { id = "halloween_2", special_function = SF.SetAchievementFailed },
+}
+local other =
+{
     [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 EHI:AddOnAlarmCallback(function(dropin)
     managers.ehi:AddEscapeChanceTracker(dropin, 25)
 end)
 
-EHI:ParseTriggers(triggers, "Van", Icon.CarEscape)
+EHI:ParseTriggers(triggers, achievements, other, "Van", Icon.CarEscape)
 if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "halloween_2",

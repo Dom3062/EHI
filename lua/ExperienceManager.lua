@@ -38,7 +38,9 @@ function ExperienceManager:EHIInitFinalize()
         in_custody = false,
         alive_players = Global.game_settings.single_player and 1 or 0,
         gage_bonus = 1,
-        stealth = true
+        stealth = true,
+        pda9_rewards = tweak_data.mutators.piggybank.rewards,
+        current_difficulty = Global.game_settings.difficulty
     }
     if xp_format == 3 then -- Multiply
         local function f()
@@ -94,8 +96,9 @@ function ExperienceManager:RecalculateSkillXPMultiplier()
     self:UpdateSkillXPMultiplier(managers.player:get_skill_exp_multiplier(self._xp.stealth))
 end
 
-function ExperienceManager:SetMutatorData(reduction)
-    self._xp.mutator_xp_reduction = reduction * -1
+function ExperienceManager:SetMutatorData(data)
+    self._xp.mutator_xp_reduction = data.xp_reduction * -1
+    self._xp.pda9_event_active = data.pda9_event_active
 end
 
 function ExperienceManager:SetGagePackageBonus(bonus)
@@ -285,9 +288,17 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 	total_xp = total_xp + job_heat_dissect
 	bonus_xp = self._xp.limited_xp_bonus
 	extra_bonus_dissect = math_round(total_xp * bonus_xp - total_xp)
+    if self._xp.pda9_event_active then
+        local pig_level = self._xp.pda9_event_exploded_level or false
+        local bonus_piggybank_dissect = math_round(pig_level and (self._xp.pda9_rewards[self._xp.current_difficulty] or self._xp.pda9_rewards.default) * tweak_data.mutators.piggybank.pig_levels[pig_level].bag_requirement or 0)
+	    total_xp = total_xp + bonus_piggybank_dissect
+    end
 	total_xp = total_xp + extra_bonus_dissect
 	local bonus_mutators_dissect = total_xp * self._xp.mutator_xp_reduction
 	total_xp = total_xp + bonus_mutators_dissect
+    if self._xp.pda9_event_active then
+	    total_xp = total_xp * 2
+    end
 	return total_xp
 end
 
@@ -306,4 +317,9 @@ end
 
 function ExperienceManager:BlockXPUpdate()
     self._xp_update_blocked = true
+end
+
+function ExperienceManager:SetPiggyBankExplodedLevel(level)
+    self._xp.pda9_event_exploded_level = level
+    self:RecalculateXP()
 end

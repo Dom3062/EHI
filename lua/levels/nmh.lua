@@ -43,14 +43,9 @@ local triggers = {
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
     [102701] = { time = 13, id = "Patrol", icons = { "pd2_generic_look" }, class = TT.Warning },
     [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
-    -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before restart
-    -- Reported in:
-    -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
-    [103456] = { time = 5, id = "nmh_11", class = TT.Achievement, special_function = RemoveTriggerAndShowAchievementFromStart, difficulty_pass = hard_and_above, exclude_from_sync = true },
+
     [103439] = { id = "EscapeElevator", special_function = SF.RemoveTracker },
     [102619] = { id = "EscapeElevator", special_function = LowerFloor },
-
-    [103460] = { id = "nmh_11", special_function = SF.SetAchievementComplete },
 
     [103443] = { id = "EscapeElevator", class = "EHIElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists },
     [104072] = { id = "EscapeElevator", special_function = SF.UnpauseTracker },
@@ -73,7 +68,7 @@ local triggers = {
 }
 local outcome =
 {
-    [100013] = { time = 15 + 15 + 10 + 40/30, random_time = 5, id = "VialFail", icons = { "equipment_bloodvial", "restarter" } },
+    [100013] = { time = 15 + 15 + 10 + 40/30, random_time = 5, id = "VialFail", icons = { "equipment_bloodvial", Icon.Loop } },
     [100017] = { time = 30, id = "VialSuccess", icons = { "equipment_bloodvialok" } }
 }
 
@@ -103,7 +98,16 @@ EHI:AddOnAlarmCallback(function()
     end
 end)
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before restart
+    -- Reported in:
+    -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
+    [103456] = { time = 5, id = "nmh_11", class = TT.Achievement, special_function = RemoveTriggerAndShowAchievementFromStart, difficulty_pass = hard_and_above, exclude_from_sync = true },
+    [103460] = { id = "nmh_11", special_function = SF.SetAchievementComplete }
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:RegisterCustomSpecialFunction(LowerFloor, function(id, trigger, element, enabled)
     if enabled then
         managers.ehi:CallFunction(trigger.id, "LowerFloor")

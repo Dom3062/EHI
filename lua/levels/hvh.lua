@@ -3,17 +3,22 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {
+    [100181] = { special_function = SF.CustomCode, f = function()
+        EHI:CallCallback("hvhCleanUp")
+    end}
+}
+
+local achievements =
+{
     [100212] = { max = 6, id = "cac_21", class = TT.AchievementProgress, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), special_function = SF.ShowAchievementFromStart, exclude_from_sync = true },
     [100224] = { id = "cac_21", special_function = SF.IncreaseProgress },
     [100181] = { special_function = SF.CustomCode, f = function()
-        EHI:CallCallback("hvhCleanUp")
         EHI:DelayCall("EHI_cac_21_fail", 2, function()
             managers.ehi:SetAchievementFailed("cac_21")
         end)
     end}
 }
-
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers(triggers, achievements)
 
 local tbl =
 {

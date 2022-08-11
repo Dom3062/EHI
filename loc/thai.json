@@ -2,6 +2,9 @@
     "ehi_mod_title" : "ข้อมูลเพื่มเติมในแต่ละด่านที่เจ๋งที่สุด",
     "ehi_mod_desc" : "Extra Heist Info(EHI): คลิกเพื่อปรับเปลี่ยนตัวเลือก",
 
+    "ehi_save_data_corrupted" : "EHI's Save File Corrupted",
+    "ehi_save_data_corrupted_desc" : "EHI's Save File got corrupted and cannot be loaded\nEHI will use default values to avoid crashing",
+
     "ehi_menu_next_page" : "ไปที่หน้าถัดไป -->",
     "ehi_menu_previous_page" : "<-- ย้อนกลับไปหน้าที่แล้ว",
 

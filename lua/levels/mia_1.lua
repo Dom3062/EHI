@@ -49,7 +49,7 @@ local triggers = {
 }
 local random_time = { id = Methlab.id, icons = Methlab.icons, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
 for _, index in ipairs(start_index) do
-    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethPickUp", icons = { Icon.Methlab, "pd2_generic_interact" } }
+    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethPickUp", icons = { Icon.Methlab, Icon.Interact } }
     if client then
         triggers[EHI:GetInstanceElementID(100118, index)] = { id = Methlab.id, icons = Methlab.icons, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 5, 25, 40 } }
         triggers[EHI:GetInstanceElementID(100149, index)] = random_time

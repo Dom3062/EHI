@@ -21,3 +21,14 @@ function EHIHackerTemporaryDodgeTracker:Deactivate(...)
     EHIHackerTemporaryDodgeTracker.super.Deactivate(self, ...)
     self._parent_class:CallBuffFunction("DodgeChance", "ForceUpdate")
 end
+
+EHIUnseenStrikeTracker = class(EHIBuffTracker)
+function EHIUnseenStrikeTracker:Activate(...)
+    EHIUnseenStrikeTracker.super.Activate(self, ...)
+    self._parent_class:CallBuffFunction("CritChance", "ForceUpdate")
+end
+
+function EHIUnseenStrikeTracker:Deactivate(...)
+    EHIUnseenStrikeTracker.super.Deactivate(self, ...)
+    self._parent_class:CallBuffFunction("CritChance", "ForceUpdate")
+end

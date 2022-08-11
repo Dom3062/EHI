@@ -11,9 +11,6 @@ local triggers = {
 
     [101343] = { time = 30, id = "KeypadReset", icons = { Icon.Loop }, waypoint = { position_by_element = EHI:GetInstanceElementID(100179, 9100) } },
 
-    [102259] = { id = "dah_8", special_function = SF.SetAchievementComplete },
-    [102261] = { id = "dah_8", special_function = SF.IncreaseProgress },
-
     [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position = Vector3(-5621, -2352, 1463.66) } },
     [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position = Vector3(-5186, 1188, 1290.66) } }
 }
@@ -23,7 +20,13 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [102259] = { id = "dah_8", special_function = SF.SetAchievementComplete },
+    [102261] = { id = "dah_8", special_function = SF.IncreaseProgress }
+}
+
+EHI:ParseTriggers(triggers, achievements)
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "dah_8",

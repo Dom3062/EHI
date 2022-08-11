@@ -1,3 +1,9 @@
+r76 (11. 08. 2022):
+Added Crit Chance Buff
+Added tracker for the Piggy Bank Anniversary Event
+Fixed an issue where achievements and other non-mission trackers did not work correctly when "Mission Trackers" option is disabled
+Watchdogs Day 2: Fixed an issue where achievement "Out Of Bounds" showed when the number of secured bags is not 12
+
 r75 (09. 08. 2022):
 Fixed an issue where syncing does not work correctly when "Show Mission Trackers" option is disabled
 Fixed an issue where some mission trackers were still visible when "Show Mission Trackers" option is disabled

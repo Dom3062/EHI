@@ -16,12 +16,8 @@ local triggers = {
     [102744] = { id = "PAL", special_function = SF.UnpauseTracker },
     [102826] = { id = "PAL", special_function = SF.RemoveTracker },
 
-    [102301] = { special_function = SF.Trigger, data = { 1023011, 1023012 } },
-    [1023011] = { time = 15, id = "Trap", icons = { Icon.C4 }, class = TT.Warning },
-    [1023012] = { id = "pal_3", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
+    [102301] = { time = 15, id = "Trap", icons = { Icon.C4 }, class = TT.Warning },
     [101566] = { id = "Trap", special_function = SF.RemoveTracker },
-    [101976] = { id = "pal_3", special_function = SF.SetAchievementComplete },
-    [101571] = { id = "pal_3", special_function = SF.SetAchievementFailed },
 
     [101230] = { time = 120, id = "Water", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [101231] = { id = "Water", special_function = SF.PauseTracker }
@@ -59,7 +55,14 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [102301] = { id = "pal_3", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
+    [101976] = { id = "pal_3", special_function = SF.SetAchievementComplete },
+    [101571] = { id = "pal_3", special_function = SF.SetAchievementFailed },
+}
+
+EHI:ParseTriggers(triggers, achievements)
 local value_max = tweak_data.achievement.loot_cash_achievements.pal_2.secured.value
 local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)
 local max = math.ceil(value_max / loot_value)

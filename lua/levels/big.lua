@@ -7,15 +7,7 @@ local bigbank_4 = { special_function = SF.Trigger, data = { 1, 2 } }
 local show_achievement = EHI:GetOption("show_achievement")
 local hard_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard)
 local triggers = {
-    [1] = { time = 720, id = "bigbank_4", class = TT.Achievement, difficulty_pass = hard_and_above },
-    [2] = { special_function = SF.RemoveTriggers, data = { 100107, 106140, 106150 } },
-    [100107] = bigbank_4,
-    [106140] = bigbank_4,
-    [106150] = bigbank_4,
     [105842] = { time = 16.7 * 18, id = "Thermite", icons = { Icon.Fire } },
-
-    [106250] = { id = "cac_22", special_function = SF.SetAchievementFailed },
-    [106247] = { id = "cac_22", special_function = SF.SetAchievementComplete },
 
     [101377] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
     [104532] = pc_hack,
@@ -65,7 +57,19 @@ if Network:is_client() then
     end
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [1] = { time = 720, id = "bigbank_4", class = TT.Achievement, difficulty_pass = hard_and_above },
+    [2] = { special_function = SF.RemoveTriggers, data = { 100107, 106140, 106150 } },
+    [100107] = bigbank_4,
+    [106140] = bigbank_4,
+    [106150] = bigbank_4,
+
+    [106250] = { id = "cac_22", special_function = SF.SetAchievementFailed },
+    [106247] = { id = "cac_22", special_function = SF.SetAchievementComplete },
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:ShowAchievementLootCounter({
     achievement = "bigbank_3",
     max = 16,

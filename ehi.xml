@@ -11,11 +11,8 @@
 
             <group :script_path="trackers/">
                 <post :hook_id="hudmanagerpd2" :script_path="EHITracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIInaccurateTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIWarningTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIInaccurateWarningTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIPausableTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIInaccuratePausableTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHICiviliansKilledTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHITimerTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIMoneyCounterTracker.lua"/>
@@ -36,7 +33,10 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHILootTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHINeededValueTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementTrackers.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIInaccurateTrackers.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="StaticTrackers.lua"/>
+
+                <post :hook_id="hudmanagerpd2" :script_path="EHIPiggyBankMutatorTracker.lua"/>
             </group>
             <group :script_path="buffs/">
                 <post :hook_id="hudmanagerpd2" :script_path="EHIBuffTracker.lua"/>
@@ -47,6 +47,7 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIMeleeChargeBuffTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIUppersRangeTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIBerserkerBuffTracker.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHICritChanceTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="SimpleBuffEdits.lua"/>
             </group>
             <post :hook_id="hudmanager" :script_path="HUDManager.lua" />
@@ -66,7 +67,7 @@
             <post :hook_id="mission/elementlasertrigger" :script_path="elements/ElementLaserTrigger.lua" />
             <post :hook_id="mission/elementspawngageassignment" :script_path="elements/ElementSpawnGageAssignment.lua" />
 
-            <post :hook_id="missionassetsmanager" :script_path="MissionAssetsManager.lua" />   
+            <post :hook_id="missionassetsmanager" :script_path="MissionAssetsManager.lua" />
     
             <!-- Menu code -->
             <post :hook_id="menumanager" :script_path="FakeEHIManager.lua" />
@@ -74,6 +75,7 @@
             <post :hook_id="menumanager" :script_path="EHIMenu.lua" />
             <post :hook_id="menumanager" :script_path="EHIMenuCallbacks.lua" />
             <post :hook_id="menumanager" :script_path="menu.lua" />
+            <post :hook_id="menu/menunodegui" :script_path="MenuNodeMainGui.lua" />
 
             <post :hook_id="mutatorsmanager" :script_path="MutatorsManager.lua" />
             <post :hook_id="playermanager" :script_path="PlayerManager.lua" />
@@ -82,6 +84,8 @@
         </group>
 
         <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
+
+        <post hook_id="lib/mutators/mutatorpiggybank" :script_path="MutatorPiggyBank.lua" />
 
         <post hook_id="lib/setups/setup" :script_path="EHIManager.lua" />
         <post hook_id="lib/setups/setup" :script_path="EHIManagerVR.lua" />

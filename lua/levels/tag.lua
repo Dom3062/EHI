@@ -21,25 +21,29 @@ elseif EHI:IsDifficulty(EHI.Difficulties.DeathSentence) then
     ovk_and_up = true
 end
 local triggers = {
-    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
-    [1001071] = { id = "tag_9", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, exclude_from_sync = true },
-    [1001072] = { id = "tag_10", status = "ready", class = TT.AchievementStatus, exclude_from_sync = true },
     [101335] = { time = 7, id = "C4BasementWall", icons = { Icon.C4 } },
     [101968] = { time = 10, id = "LureDelay", icons = { Icon.Wait } },
 
-    [101282] = { time = 5 + time, id = "KeypadReset", icons = { Icon.Wait } },
-
-    [100609] = { id = "tag_9", special_function = SF.SetAchievementComplete },
-    [100617] = { id = "tag_9", special_function = SF.SetAchievementFailed }
+    [101282] = { time = 5 + time, id = "KeypadReset", icons = { Icon.Wait } }
 }
 for _, index in pairs({13350, 14450, 14950, 15450, 15950, 16450, 16950, 17450}) do
     --, waypoint = { icon = Icon.Loop, position_by_element = EHI:GetInstanceElementID(100179, index) }
     triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop } }
 end
+
+local achievements =
+{
+    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
+    [1001071] = { id = "tag_9", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+    [1001072] = { id = "tag_10", status = "mark", class = TT.AchievementStatus, exclude_from_sync = true },
+
+    [100609] = { id = "tag_9", special_function = SF.SetAchievementComplete },
+    [100617] = { id = "tag_9", special_function = SF.SetAchievementFailed }
+}
 for _, index in pairs({4550, 5450}) do
-    triggers[EHI:GetInstanceElementID(100319, index)] = { id = "tag_10", special_function = SF.SetAchievementFailed }
-    triggers[EHI:GetInstanceElementID(100321, index)] = { id = "tag_10", status = "ok", special_function = SF.SetAchievementStatus }
-    triggers[EHI:GetInstanceElementID(100282, index)] = { id = "tag_10", special_function = SF.SetAchievementComplete }
+    achievements[EHI:GetInstanceElementID(100319, index)] = { id = "tag_10", special_function = SF.SetAchievementFailed }
+    achievements[EHI:GetInstanceElementID(100321, index)] = { id = "tag_10", status = "ok", special_function = SF.SetAchievementStatus }
+    achievements[EHI:GetInstanceElementID(100282, index)] = { id = "tag_10", special_function = SF.SetAchievementComplete }
 end
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers(triggers, achievements)

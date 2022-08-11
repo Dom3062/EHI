@@ -19,14 +19,14 @@ local function bilbo_baggin()
         })
     end
 end
-local triggers =
+local achievements =
 {
     [102414] = { special_function = SF.CustomCode, f = function()
         bilbo_baggin()
     end }
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({}, achievements)
 --[[EHI:AddLoadSyncFunction(function(self)
     bilbo_baggin()
     self:SetTrackerProgress("bilbo_baggin", managers.loot:GetSecuredBagsAmount())

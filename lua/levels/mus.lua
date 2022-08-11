@@ -9,7 +9,6 @@ local triggers = {
     [102441] = { time = 120 + delay, special_function = SF.AddTrackerIfDoesNotExist },
     [102434] = { time = 110 + delay, special_function = SF.AddTrackerIfDoesNotExist },
     [102433] = { time = 80 + delay, special_function = SF.AddTrackerIfDoesNotExist },
-    [100840] = { time = 600, id = "bat_4", class = TT.Achievement },
 
     [102065] = { time = 50 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
     [102067] = { time = 65 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
@@ -29,7 +28,12 @@ for i = 300, 375, 75 do
     DisableWaypoints[EHI:GetInstanceElementID(100034, i)] = true -- Defend
 end
 
-EHI:ParseTriggers(triggers, "Escape", Icon.HeliEscape)
+local achievements =
+{
+    [100840] = { time = 600, id = "bat_4", class = TT.Achievement },
+}
+
+EHI:ParseTriggers(triggers, achievements, nil, "Escape", Icon.HeliEscape)
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowAchievementLootCounter({
     achievement = "bat_3",

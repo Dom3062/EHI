@@ -16,16 +16,20 @@ local triggers = {
     [105792] = { time = 20, id = "FireApartment1", icons = { Icon.Fire, Icon.Wait } },
     [105804] = { time = 20, id = "FireApartment2", icons = { Icon.Fire, Icon.Wait } },
     [105824] = { time = 20, id = "FireApartment3", icons = { Icon.Fire, Icon.Wait } },
-    [105840] = { time = 20, id = "FireApartment4", icons = { Icon.Fire, Icon.Wait } },
-    [EHI:GetInstanceElementID(100010, 2900)] = { time = 60, id = "peta_2", class = TT.Achievement },
-    [EHI:GetInstanceElementID(100080, 2900)] = { id = "peta_2", special_function = SF.SetAchievementComplete }
+    [105840] = { time = 20, id = "FireApartment4", icons = { Icon.Fire, Icon.Wait } }
 }
 
 if Network:is_client() then
     triggers[101748] = { time = 1330/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker }
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [EHI:GetInstanceElementID(100010, 2900)] = { time = 60, id = "peta_2", class = TT.Achievement },
+    [EHI:GetInstanceElementID(100080, 2900)] = { id = "peta_2", special_function = SF.SetAchievementComplete }
+}
+
+EHI:ParseTriggers(triggers, achievements)
 
 local DisableWaypoints = {}
 for i = 3300, 3525, 75 do

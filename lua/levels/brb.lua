@@ -3,28 +3,13 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {
-    [101136] = { special_function = SF.CustomCode, f = function()
-        if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
-            EHI:ShowAchievementLootCounter({
-                achievement = "brb_8",
-                max = 12,
-                exclude_from_sync = true,
-                remove_after_reaching_target = false,
-                counter =
-                {
-                    check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
-                    loot_type = "gold"
-                }
-            })
-        end
-    end },
     [100128] = { time = 38, id = "WinchDropTrainA", icons = { Icon.Winch, "pd2_goto" } },
     [100164] = { time = 38, id = "WinchDropTrainB", icons = { Icon.Winch, "pd2_goto" } },
 
     [100654] = { time = 120, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [100655] = { id = "Winch", special_function = SF.PauseTracker },
     [100656] = { id = "Winch", special_function = SF.UnpauseTracker },
-    [EHI:GetInstanceElementID(100077, 2900)] = { time = 90, id = "Cutter", icons = { "equipment_glasscutter" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [EHI:GetInstanceElementID(100077, 2900)] = { time = 90, id = "Cutter", icons = { Icon.Glasscutter }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [EHI:GetInstanceElementID(100078, 2900)] = { id = "Cutter", special_function = SF.PauseTracker },
     [EHI:GetInstanceElementID(100103, 2900)] = { time = 5, id = "C4OfficeFloor", icons = { Icon.C4 } },
 
@@ -44,7 +29,26 @@ for _, index in ipairs({ 900, 1100, 1500, 3200 }) do -- brb/single_door + brb/si
     DisableWaypoints[EHI:GetInstanceElementID(100022, index)] = true -- Fix
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [101136] = { special_function = SF.CustomCode, f = function()
+        if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
+            EHI:ShowAchievementLootCounter({
+                achievement = "brb_8",
+                max = 12,
+                exclude_from_sync = true,
+                remove_after_reaching_target = false,
+                counter =
+                {
+                    check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+                    loot_type = "gold"
+                }
+            })
+        end
+    end }
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:DisableWaypoints(DisableWaypoints)
 
 local tbl =

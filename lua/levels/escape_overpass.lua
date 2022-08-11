@@ -5,9 +5,6 @@ local TT = EHI.Trackers
 local AddToCache = EHI:GetFreeCustomSpecialFunctionID()
 local GetFromCache = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [101148] = { id = "you_shall_not_pass", class = TT.AchievementStatus },
-    [102471] = { id = "you_shall_not_pass", special_function = SF.SetAchievementFailed },
-    [100426] = { id = "you_shall_not_pass", special_function = SF.SetAchievementComplete },
     [101145] = { time = 180, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop } },
     [101158] = { time = 240, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop } },
     [101977] = { special_function = AddToCache, data = { icon = Icon.Heli } },
@@ -26,7 +23,14 @@ if Network:is_client() then
     triggers[101571] = { time = 30, icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
-EHI:ParseTriggers(triggers, "Escape")
+local achievements =
+{
+    [101148] = { id = "you_shall_not_pass", class = TT.AchievementStatus },
+    [102471] = { id = "you_shall_not_pass", special_function = SF.SetAchievementFailed },
+    [100426] = { id = "you_shall_not_pass", special_function = SF.SetAchievementComplete }
+}
+
+EHI:ParseTriggers(triggers, achievements, nil, "Escape")
 EHI:RegisterCustomSpecialFunction(AddToCache, function(id, trigger, ...)
     EHI._cache[trigger.id] = trigger.data
 end)

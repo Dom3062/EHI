@@ -9,7 +9,7 @@ local triggers = {
 
     [101218] = { time = 60 + 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot },
     [101219] = { time = 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot },
-    [101221] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot },
+    [101221] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot }
 }
 
 -- Not possible to include Van location waypoint as this is selected randomly
@@ -32,3 +32,8 @@ if Network:is_client() then
 end
 
 EHI:ParseTriggers(triggers)
+local max = 8
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
+    max = 12
+end
+EHI:ShowLootCounter({ max = max })

@@ -2,6 +2,9 @@
   "ehi_mod_title": "Extra Heist Info",
   "ehi_mod_desc": "",
 
+  "ehi_save_data_corrupted" : "EHI's Save File Corrupted",
+  "ehi_save_data_corrupted_desc" : "EHI's Save File got corrupted and cannot be loaded\nEHI will use default values to avoid crashing",
+
   "ehi_menu_next_page": "次のページ -->",
   "ehi_menu_previous_page": "<-- 前のページ",
 
@@ -29,6 +32,7 @@
   "ehi_achievement_alarm": "ALARM",
   "ehi_achievement_ready": "READY",
   "ehi_achievement_loud": "LOUD",
+  "ehi_achievement_mark": "MARK",
   "ehi_achievement_push": "PUSH",
   "ehi_achievement_hack": "HACK",
   "ehi_achievement_land": "LAND",

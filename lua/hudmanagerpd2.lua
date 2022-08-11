@@ -242,6 +242,8 @@ function HUDManager:sync_start_assault(assault_number, ...)
 end
 
 if false then
+    local function VerifyHostageHesitationDelay()
+    end
     local function set_assault_delay(self, data)
         self.ehi:CallFunction("AssaultDelay", "SetHostages", data.nr_hostages > 0)
     end

@@ -46,10 +46,6 @@ local caddilac = { time = 18, id = "Caddilac", icons = { Icon.Heli, "pd2_goto" }
 local triggers = {
     [100109] = { time = 30 + 1 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.RemoveTriggerWhenExecuted },
 
-    [100107] = { time = 901, id = "uno_7", class = "EHIuno7Tracker", difficulty_pass = mayhem_and_up, exclude_from_sync = true },
-    [102291] = { max = 2, id = "friend_5", class = TT.AchievementProgress },
-    [102430] = { time = 780, id = "friend_6", class = TT.Achievement, difficulty_pass = mayhem_and_up, exclude_from_sync = true },
-
     [100103] = { time = 15 + 5, random_time = 10, id = "BileArrival", icons = { Icon.Heli } },
 
     [100238] = random_car,
@@ -71,10 +67,8 @@ local triggers = {
     [100213] = { time = 450/30, id = "EscapeCar1", icons = Icon.CarEscape },
     [100214] = { time = 160/30, id = "EscapeCar2", icons = Icon.CarEscape },
 
-    [102814] = { time = 180, id = "Safe", icons = { "equipment_winch_hook" }, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable },
-    [102815] = { id = "Safe", special_function = SF.PauseTracker },
-
-    [102280] = { id = "friend_5", special_function = SF.IncreaseProgress }
+    [102814] = { time = 180, id = "Safe", icons = { Icon.Winch }, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable },
+    [102815] = { id = "Safe", special_function = SF.PauseTracker }
 }
 if Network:is_client() then
     triggers[100216] = { time = 662/30, random_time = 10, id = "EscapeBoat", icons = Icon.BoatEscape, special_function = SF.AddTrackerIfDoesNotExist }
@@ -83,7 +77,15 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [100107] = { time = 901, id = "uno_7", class = "EHIuno7Tracker", difficulty_pass = mayhem_and_up, exclude_from_sync = true },
+    [102291] = { max = 2, id = "friend_5", class = TT.AchievementProgress },
+    [102430] = { time = 780, id = "friend_6", class = TT.Achievement, difficulty_pass = mayhem_and_up, exclude_from_sync = true },
+    [102280] = { id = "friend_5", special_function = SF.IncreaseProgress }
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:ShowLootCounter({ max = 16 })
 if EHI:GetOption("show_achievement") and mayhem_and_up then
     EHI:AddOnAlarmCallback(function()

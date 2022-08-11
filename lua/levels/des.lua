@@ -4,17 +4,6 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    [100296] = { max = 2, id = "uno_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up },
-    [103391] = { id = "uno_5", special_function = SF.IncreaseProgress },
-    [103395] = { id = "uno_5", special_function = SF.SetAchievementFailed },
-
-    [100107] = { id = "des_9", status = "push", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [102480] = { special_function = SF.Trigger, data = { 1024801, 1024802 } },
-    [1024801] = { id = "des_9", status = "finish", special_function = SF.SetAchievementStatus },
-    [1024802] = { special_function = SF.RemoveTriggers, data = { 102486 } },
-    [102710] = { id = "des_9", special_function = SF.SetAchievementComplete },
-    [102486] = { id = "des_9", special_function = SF.SetAchievementFailed },
-
     [108538] = { time = 60, id = "Gas", icons = { Icon.Teargas } },
 
     [103025] = { special_function = SF.Trigger, data = { 1030251, 1030252 } },
@@ -63,7 +52,21 @@ local DisableWaypoints =
     [102927] = true -- Fix
 }
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [100296] = { max = 2, id = "uno_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up },
+    [103391] = { id = "uno_5", special_function = SF.IncreaseProgress },
+    [103395] = { id = "uno_5", special_function = SF.SetAchievementFailed },
+
+    [100107] = { id = "des_9", status = "push", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
+    [102480] = { special_function = SF.Trigger, data = { 1024801, 1024802 } },
+    [1024801] = { id = "des_9", status = "finish", special_function = SF.SetAchievementStatus },
+    [1024802] = { special_function = SF.RemoveTriggers, data = { 102486 } },
+    [102710] = { id = "des_9", special_function = SF.SetAchievementComplete },
+    [102486] = { id = "des_9", special_function = SF.SetAchievementFailed },
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:DisableWaypoints(DisableWaypoints)
 
 local tbl =

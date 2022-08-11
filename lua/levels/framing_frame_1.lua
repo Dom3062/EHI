@@ -23,13 +23,13 @@ end
 if Global.game_settings.level_id == "gallery" then
     local SF = EHI.SpecialFunctions
     local TT = EHI.Trackers
-    local triggers = {
+    local achievements = {
         [100789] = { id = "cac_19", class = TT.AchievementStatus }
     }
     if TheFixes then
         if TheFixesPreventer and TheFixesPreventer.achi_masterpiece then -- Unfixed, assume Vanilla "broken" behavior
-            triggers[104288] = { id = "cac_19", special_function = SF.SetAchievementComplete }
-            triggers[104290] = { id = "cac_19", special_function = SF.SetAchievementFailed }
+            achievements[104288] = { id = "cac_19", special_function = SF.SetAchievementComplete }
+            achievements[104290] = { id = "cac_19", special_function = SF.SetAchievementFailed }
         else -- Fixed
             local key = "EHI_ArtGallery_TheFixes"
             CopDamage.register_listener(key, { "on_damage" }, function(damage_info)
@@ -40,11 +40,11 @@ if Global.game_settings.level_id == "gallery" then
             end)
         end
     else
-        triggers[104288] = { id = "cac_19", special_function = SF.SetAchievementComplete }
-        triggers[104290] = { id = "cac_19", special_function = SF.SetAchievementFailed }
+        achievements[104288] = { id = "cac_19", special_function = SF.SetAchievementComplete }
+        achievements[104290] = { id = "cac_19", special_function = SF.SetAchievementFailed }
     end
 
-    EHI:ParseTriggers(triggers)
+    EHI:ParseTriggers({}, achievements)
 end
 
 EHI:ShowLootCounter({ max = 9 })

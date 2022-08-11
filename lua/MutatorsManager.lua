@@ -23,7 +23,10 @@ function MutatorsManager:init()
         return false
     end
     EHI._cache.AchievementsAreDisabled = check()
+    local data = {}
+    data.xp_reduction = self:get_experience_reduction()
+    data.pda9_event_active = self:is_mutator_active(MutatorPiggyBank)
     if managers.experience.SetMutatorData then
-        managers.experience:SetMutatorData(self:get_experience_reduction())
+        managers.experience:SetMutatorData(data)
     end
 end

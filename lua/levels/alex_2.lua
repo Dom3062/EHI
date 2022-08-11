@@ -8,13 +8,15 @@ local triggers = {
     [104488] = { time = assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker },
     [104489] = { time = assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
 
-    [100342] = { chance = 25, id = "EscapeChance", icons = VanCrashChance, class = TT.Chance },
-
     -- Police ambush
     [104535] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker }
 }
+local other =
+{
+    [100342] = { chance = 25, id = "EscapeChance", icons = VanCrashChance, class = TT.Chance }
+}
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers(triggers, nil, other)
 EHI:AddOnAlarmCallback(function(dropin)
     if dropin then
         return

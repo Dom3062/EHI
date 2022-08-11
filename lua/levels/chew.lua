@@ -2,12 +2,8 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local triggers = {
-    [100595] = { time = 120, id = "born_5", class = TT.Achievement, condition = ovk_and_up and show_achievement },
-    [101170] = { id = "born_5", special_function = SF.SetAchievementComplete }
-}
+local triggers = {}
 local sync_triggers =
 {
     [100558] = { id = "BileReturn", icons = Icon.HeliEscape }
@@ -19,12 +15,18 @@ else
     EHI:AddHostTriggers(sync_triggers, nil, nil, "base")
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [100595] = { time = 120, id = "born_5", class = TT.Achievement, difficulty_pass = ovk_and_up },
+    [101170] = { id = "born_5", special_function = SF.SetAchievementComplete }
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:ShowLootCounter({
     max = 9,
-    offset = true
+    offset = Global.game_settings.gamemode ~= "crime_spree"
 })
-if show_achievement and ovk_and_up then
+if EHI:GetOption("show_achievement") and ovk_and_up then
     EHI:AddLoadSyncFunction(function(self)
         self:AddTimedAchievementTracker("born_5", 120)
     end)

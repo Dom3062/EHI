@@ -8,7 +8,6 @@ local element_sync_triggers =
     [102290] = { id = "VaultGas", icons = { Icon.Teargas }, hook_element = 102157 }
 }
 local hack_start = EHI:GetInstanceElementID(100015, 20450)
-local bex_10_fail = { id = "bex_10", special_function = SF.SetAchievementFailed }
 local triggers = {
     [EHI:GetInstanceElementID(100108, 35450)] = { time = 4.8, id = "SuprisePull", icons = { Icon.Wait } },
     [103919] = { time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape },
@@ -17,12 +16,6 @@ local triggers = {
     [101818] = { time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill, class = TT.Inaccurate },
     [hack_start] = { id = "ServerHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = EHI:GetInstanceElementID(100014, 20450) },
     [EHI:GetInstanceElementID(100016, 20450)] = { id = "ServerHack", special_function = SF.PauseTracker },
-
-    [103701] = { id = "bex_10", status = "ok", special_function = SF.SetAchievementStatus },
-    [103702] = bex_10_fail,
-    [103704] = bex_10_fail,
-    [102602] = { id = "bex_10", special_function = SF.SetAchievementComplete },
-    [100107] = { id = "bex_10", status = "loud", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
 
     [102302] = { time = 28.05 + 418/30, id = "Suprise", icons = { "pd2_question" } },
 
@@ -43,4 +36,14 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers(triggers)
+local bex_10_fail = { id = "bex_10", special_function = SF.SetAchievementFailed }
+local achievements =
+{
+    [103701] = { id = "bex_10", status = "ok", special_function = SF.SetAchievementStatus },
+    [103702] = bex_10_fail,
+    [103704] = bex_10_fail,
+    [102602] = { id = "bex_10", special_function = SF.SetAchievementComplete },
+    [100107] = { id = "bex_10", status = "loud", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
+}
+
+EHI:ParseTriggers(triggers, achievements)

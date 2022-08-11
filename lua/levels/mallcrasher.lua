@@ -124,8 +124,18 @@ local triggers =
     [300850] = MoneyTrigger, -- +2800
     [300849] = MoneyTrigger, -- +4000
     [300872] = MoneyTrigger, -- +5600
-    [300851] = MoneyTrigger, -- +8000, appears to be unused
+    [300851] = MoneyTrigger -- +8000, appears to be unused
+}
 
+if EHI._cache.Client then
+    triggers[302287] = { time = (OverkillOrBelow and 115 or 120) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[300223] = { time = 60 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[302289] = { time = 30 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[300246] = { time = 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
+end
+
+local achievements =
+{
     [301148] = { special_function = SF.Trigger, data = { 3011481, 3011482, 3011483 } },
     [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = "EHIameno3Tracker", difficulty_pass = overkill, exclude_from_sync = true },
     [3011482] = { time = 180, id = "uno_3", class = TT.Achievement, exclude_from_sync = true },
@@ -147,14 +157,7 @@ local triggers =
     [300791] = { id = "window_cleaner", special_function = SF.IncreaseProgress }
 }
 
-if EHI._cache.Client then
-    triggers[302287] = { time = (OverkillOrBelow and 115 or 120) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[300223] = { time = 60 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[302289] = { time = 30 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[300246] = { time = 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
-end
-
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers(triggers, achievements)
 EHI:RegisterCustomSpecialFunction(AddMoney, function(id, trigger, element, enabled)
     managers.ehi:AddMoneyToTracker(trigger.id, element._values.amount)
 end)

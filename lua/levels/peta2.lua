@@ -3,7 +3,6 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local mayhem_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
 local goat_pick_up = { Icon.Heli, Icon.Interact }
 local function f_PilotComingInAgain(id, trigger, ...)
     managers.ehi:RemoveTracker("PilotComingIn")
@@ -17,18 +16,6 @@ local PilotComingInAgain = EHI:GetFreeCustomSpecialFunctionID()
 local PilotComingInAgain2 = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [100109] = { time = 100 + 30, id = "AssaultDelay", class = TT.AssaultDelay },
-
-    [100002] = { max = (mayhem_and_up and 15 or 13), id = "peta_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up },
-    [102211] = { id = "peta_5", special_function = SF.IncreaseProgress },
-    [100580] = { special_function = SF.CustomCode, f = function()
-        EHI:DelayCall("peta_5_finalize", 2, function()
-            managers.ehi:CallFunction("peta_5", "Finalize")
-        end)
-    end},
-
-    -- Formerly 5 minutes
-    [101540] = { time = 240, id = "peta_3", class = TT.Achievement },
-    [101533] = { id = "peta_3", special_function = SF.SetAchievementComplete },
 
     [EHI:GetInstanceElementID(100022, 2850)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag },
     [EHI:GetInstanceElementID(100022, 3150)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag },
@@ -49,7 +36,22 @@ local triggers = {
     [EHI:GetInstanceElementID(100011, 4750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain2 }
 }
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [100002] = { max = (EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 15 or 13), id = "peta_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up },
+    [102211] = { id = "peta_5", special_function = SF.IncreaseProgress },
+    [100580] = { special_function = SF.CustomCode, f = function()
+        EHI:DelayCall("peta_5_finalize", 2, function()
+            managers.ehi:CallFunction("peta_5", "Finalize")
+        end)
+    end},
+
+    -- Formerly 5 minutes
+    [101540] = { time = 240, id = "peta_3", class = TT.Achievement },
+    [101533] = { id = "peta_3", special_function = SF.SetAchievementComplete },
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:RegisterCustomSpecialFunction(PilotComingInAgain, function(id, trigger, element, enabled)
     if enabled then
         f_PilotComingInAgain(id, trigger)

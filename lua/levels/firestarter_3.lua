@@ -3,18 +3,23 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {}
+local achievements = {}
+local other = {}
 local level_id = Global.game_settings.level_id
 if level_id == "firestarter_3" then
     local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
     triggers = {
-        [102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1021441 } },
-        [1021441] = { status = "ok", id = "slakt_5", class = TT.AchievementStatus, difficulty_pass = dw_and_above },
+        [102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money } }
+    }
+    achievements =
+    {
+        [102144] = { status = "ok", id = "slakt_5", class = TT.AchievementStatus, difficulty_pass = dw_and_above },
         [102146] = { status = "finish", id = "slakt_5", special_function = SF.SetAchievementStatus },
         [105237] = { id = "slakt_5", special_function = SF.SetAchievementComplete },
         [105235] = { id = "slakt_5", special_function = SF.SetAchievementFailed }
     }
 else
-    triggers = {
+    other = {
         [103306] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     }
     -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
@@ -39,14 +44,14 @@ end
 triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
 triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
 
-triggers[101539] = { status = "bring", id = "voff_1", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) }
-triggers[105686] = { id = "voff_1", special_function = SF.SetAchievementComplete }
-triggers[105691] = { status = "finish", id = "voff_1", special_function = SF.SetAchievementStatus } -- Entered area again
-triggers[105694] = { status = "finish", id = "voff_1", special_function = SF.SetAchievementStatus } -- Both secured
-triggers[105698] = { status = "bring", id = "voff_1", special_function = SF.SetAchievementStatus } -- Left the area
-triggers[105704] = { id = "voff_1", special_function = SF.SetAchievementFailed } -- Killed
+achievements[101539] = { status = "bring", id = "voff_1", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) }
+achievements[105686] = { id = "voff_1", special_function = SF.SetAchievementComplete }
+achievements[105691] = { status = "finish", id = "voff_1", special_function = SF.SetAchievementStatus } -- Entered area again
+achievements[105694] = { status = "finish", id = "voff_1", special_function = SF.SetAchievementStatus } -- Both secured
+achievements[105698] = { status = "bring", id = "voff_1", special_function = SF.SetAchievementStatus } -- Left the area
+achievements[105704] = { id = "voff_1", special_function = SF.SetAchievementFailed } -- Killed
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers(triggers, achievements, other)
 
 local tbl =
 {

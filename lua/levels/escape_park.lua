@@ -3,9 +3,6 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {
-    [102444] = { id = "king_of_the_hill", class = TT.AchievementStatus },
-    [101297] = { id = "king_of_the_hill", special_function = SF.SetAchievementFailed },
-    [101343] = { id = "king_of_the_hill", special_function = SF.SetAchievementComplete },
     [102449] = { time = 240 },
     [102450] = { time = 180 },
     [102451] = { time = 300 },
@@ -24,7 +21,14 @@ if EHI._cache.Client then
     triggers[100602] = { time = 30, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
-EHI:ParseTriggers(triggers, "Escape", Icon.CarEscape)
+local achievements =
+{
+    [102444] = { id = "king_of_the_hill", class = TT.AchievementStatus },
+    [101297] = { id = "king_of_the_hill", special_function = SF.SetAchievementFailed },
+    [101343] = { id = "king_of_the_hill", special_function = SF.SetAchievementComplete },
+}
+
+EHI:ParseTriggers(triggers, achievements, nil, "Escape", Icon.CarEscape)
 
 local function IsBranchbankJobActive()
     local jobs = tweak_data.achievement.complete_heist_achievements.uno_1.jobs

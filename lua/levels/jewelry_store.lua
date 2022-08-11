@@ -4,9 +4,6 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    [100073] = { id = "ameno_7", status = "loud", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [100624] = { id = "ameno_7", special_function = SF.SetAchievementFailed },
-    [100634] = { id = "ameno_7", special_function = SF.SetAchievementComplete },
     [101541] = { time = 2, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
     [101558] = { time = 5, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
     [101601] = { time = 7, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
@@ -38,4 +35,10 @@ EHI:AddOnAlarmCallback(function(dropin)
     managers.ehi:CallFunction("ameno_7", "SetStatus", "defend")
 end)
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [100073] = { id = "ameno_7", status = "loud", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
+    [100624] = { id = "ameno_7", special_function = SF.SetAchievementFailed },
+    [100634] = { id = "ameno_7", special_function = SF.SetAchievementComplete }
+}
+EHI:ParseTriggers(triggers, achievements)

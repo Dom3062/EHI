@@ -7,6 +7,7 @@ local boat_delay = 60 + 30 + 30 + 450/30
 local boat_icon = { Icon.Boat, Icon.LootDrop }
 local AddToCache = EHI:GetFreeCustomSpecialFunctionID()
 local GetFromCache = EHI:GetFreeCustomSpecialFunctionID()
+local uno_8 = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [101560] = { time = 35 + 75 + 30 + boat_delay, id = "BoatLootFirst" },
     -- 101127 tracked in 101560
@@ -26,9 +27,10 @@ local triggers = {
 
     [1011480] = { time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate },
 
-    [100124] = { id = "uno_8", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
-    [102382] = { id = "uno_8", special_function = SF.SetAchievementFailed },
-    [102379] = { id = "uno_8", special_function = SF.SetAchievementComplete }
+    [100124] = { special_function = SF.CustomCode, f = function()
+        local bags = managers.ehi:CountLootbagsOnTheGround()
+        EHI:ShowLootCounter({ max = bags })
+    end}
 }
 if Network:is_client() then
     local SetTrackerAccurate = EHI:GetFreeCustomSpecialFunctionID()
@@ -45,7 +47,13 @@ if Network:is_client() then
     end)
 end
 
-EHI:ParseTriggers(triggers, "BoatLootDropReturn", boat_icon)
+local achievements =
+{
+    [100124] = { id = "uno_8", status = "defend", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL), special_function = uno_8 },
+    [102382] = { id = "uno_8", special_function = SF.SetAchievementFailed },
+    [102379] = { id = "uno_8", special_function = SF.SetAchievementComplete }
+}
+EHI:ParseTriggers(triggers, achievements, nil, "BoatLootDropReturn", boat_icon)
 EHI:RegisterCustomSpecialFunction(AddToCache, function(id, trigger, ...)
     EHI._cache[trigger.id] = trigger.time
 end)
@@ -58,5 +66,11 @@ EHI:RegisterCustomSpecialFunction(GetFromCache, function(id, trigger, ...)
         trigger.time = nil
     else
         EHI:CheckCondition(1011480)
+    end
+end)
+EHI:RegisterCustomSpecialFunction(uno_8, function(id, ...)
+    local bags = managers.ehi:CountLootbagsOnTheGround()
+    if bags == 12 then
+        EHI:CheckCondition(id)
     end
 end)

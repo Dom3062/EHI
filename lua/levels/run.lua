@@ -23,26 +23,18 @@ local TT = EHI.Trackers
 local SetProgressMax = EHI:GetFreeCustomSpecialFunctionID()
 local SetZoneComplete = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [100120] = { time = 1800, id = "run_9", class = TT.AchievementDone },
     [100377] = { time = 90, id = "ClearPickupZone", icons = { Icon.Wait }, class = "EHIZoneTracker" },
     [101550] = { id = "ClearPickupZone", special_function = SetZoneComplete },
 
     -- Parking lot
     [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { Icon.Wait } },
 
-    [101521] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, "pd2_escape" }, special_function = SF.RemoveTriggerWhenExecuted },
+    [101521] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, special_function = SF.RemoveTriggerWhenExecuted },
 
-    [100144] = { special_function = SF.Trigger, data = { 1001441, 1001442, 1001443 } },
-    [1001441] = { id = "run_9", special_function = SF.SetAchievementFailed },
-    [1001442] = { id = "GasAmount", class = "EHIGasTracker" },
-    [1001443] = { special_function = SF.RemoveTriggers, data = { 100144 } },
+    [100144] = { special_function = SF.Trigger, data = { 1001441, 1001442 } },
+    [1001441] = { id = "GasAmount", class = "EHIGasTracker" },
+    [1001442] = { special_function = SF.RemoveTriggers, data = { 100144 } },
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins
-    [102426] = { special_function = SF.Trigger, data = { 1024261, 1024262 } },
-    [1024261] = { max = 8, id = "run_8", class = TT.AchievementProgress, exclude_from_sync = true },
-    [1024262] = { id = "run_10", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard) },
-    [100658] = { id = "run_8", special_function = SF.IncreaseProgress },
-    [100111] = { id = "run_10", special_function = SF.SetAchievementFailed },
-    [100664] = { id = "run_10", special_function = SF.SetAchievementComplete },
 
     [1] = { id = "GasAmount", special_function = SF.IncreaseProgress },
     [2] = { special_function = SF.RemoveTriggers, data = { 102775, 102776, 102868 } }, -- Don't blink twice, just set the max once and remove the triggers
@@ -83,7 +75,20 @@ if EHI:MissionTrackersAndWaypointEnabled() then
     triggers[102868].data[2] = 4
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [100120] = { time = 1800, id = "run_9", class = TT.AchievementDone },
+    [100144] = { id = "run_9", special_function = SF.SetAchievementFailed },
+
+    [102426] = { special_function = SF.Trigger, data = { 1024261, 1024262 } },
+    [1024261] = { max = 8, id = "run_8", class = TT.AchievementProgress, exclude_from_sync = true },
+    [1024262] = { id = "run_10", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard) },
+    [100658] = { id = "run_8", special_function = SF.IncreaseProgress },
+    [100111] = { id = "run_10", special_function = SF.SetAchievementFailed },
+    [100664] = { id = "run_10", special_function = SF.SetAchievementComplete }
+}
+
+EHI:ParseTriggers(triggers, achievements)
 local ProgressMaxSet = false
 EHI:RegisterCustomSpecialFunction(SetProgressMax, function(id, trigger, element, enabled)
     if ProgressMaxSet then

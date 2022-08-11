@@ -2,13 +2,13 @@ local EHI = EHI
 if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
     local SF = EHI.SpecialFunctions
     local TT = EHI.Trackers
-    local triggers = {
+    local achievements = {
         [100979] = { id = "cac_30", status = "defend", class = TT.AchievementStatus, exclude_from_sync = true },
         [102831] = { id = "cac_30", special_function = SF.SetAchievementComplete },
         [102829] = { id = "cac_30", special_function = SF.SetAchievementFailed }
     }
 
-    EHI:ParseTriggers(triggers)
+    EHI:ParseTriggers({}, achievements)
 end
 
 local function ignore(instance, id, unit_data, unit)

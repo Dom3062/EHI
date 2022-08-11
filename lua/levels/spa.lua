@@ -12,20 +12,12 @@ local triggers = {
     [EHI:GetInstanceElementID(100179, 7950)] = { time = 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
     [EHI:GetInstanceElementID(100295, 7950)] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },]]
 
-    [101989] = { special_function = SF.Trigger, data = { 1019891, 1019892 } },
-    -- It was 7 minutes before the change
-    [1019891] = { time = 360, id = "spa_5", class = TT.Achievement, difficulty_pass = ovk_and_up, exclude_from_sync = true },
-    [101997] = { id = "spa_5", special_function = SF.SetAchievementComplete },
-    [1019892] = { max = 8, id = "spa_6", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = ovk_and_up, exclude_from_sync = true },
-    [101999] = { id = "spa_6", special_function = SF.IncreaseProgress },
-    [102002] = { id = "spa_6", special_function = SF.FinalizeAchievement },
-
     [103419] = { id = "SniperDeath", special_function = SF.IncreaseProgress },
 
     [100681] = { time = 60, id = "CharonPickLock", icons = { "pd2_door" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [101430] = { id = "CharonPickLock", special_function = SF.PauseTracker },
 
-    [102266] = { max = 6, id = "SniperDeath", icons = { "sniper", "pd2_kill" }, class = "EHIProgressTracker" },
+    [102266] = { max = 6, id = "SniperDeath", icons = { "sniper", "pd2_kill" }, class = TT.Progress },
     [100833] = { id = "SniperDeath", special_function = SF.RemoveTracker },
 
     [100549] = { time = 20, id = "ObjectiveWait", icons = { Icon.Wait } },
@@ -33,7 +25,18 @@ local triggers = {
     [101313] = { time = 75, id = "Escape", icons = Icon.CarEscape }
 }
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [101989] = { special_function = SF.Trigger, data = { 1019891, 1019892 } },
+    -- It was 7 minutes before the change
+    [1019891] = { time = 360, id = "spa_5", class = TT.Achievement, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+    [101997] = { id = "spa_5", special_function = SF.SetAchievementComplete },
+    [1019892] = { max = 8, id = "spa_6", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+    [101999] = { id = "spa_6", special_function = SF.IncreaseProgress },
+    [102002] = { id = "spa_6", special_function = SF.FinalizeAchievement },
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:ShowLootCounter({ max = 4 })
 
 local tbl =

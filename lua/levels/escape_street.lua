@@ -3,9 +3,6 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {
-    [101959] = { id = "bullet_dodger", class = TT.AchievementStatus },
-    [101872] = { id = "bullet_dodger", special_function = SF.SetAchievementFailed },
-    [101874] = { id = "bullet_dodger", special_function = SF.SetAchievementComplete },
     [101961] = { time = 120 },
     [101962] = { time = 90 },
 
@@ -13,7 +10,14 @@ local triggers = {
     [102080] = { id = 102674, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position = Vector3(-2512, -2344, 900) }}
 }
 
-EHI:ParseTriggers(triggers, "Escape", Icon.HeliEscape)
+local achievements =
+{
+    [101959] = { id = "bullet_dodger", class = TT.AchievementStatus },
+    [101872] = { id = "bullet_dodger", special_function = SF.SetAchievementFailed },
+    [101874] = { id = "bullet_dodger", special_function = SF.SetAchievementComplete },
+}
+
+EHI:ParseTriggers(triggers, achievements, nil, "Escape", Icon.HeliEscape)
 
 local function IsBranchbankJobActive()
     local jobs = tweak_data.achievement.complete_heist_achievements.uno_1.jobs

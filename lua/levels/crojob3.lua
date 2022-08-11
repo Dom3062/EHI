@@ -4,8 +4,8 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local heli_anim = 35
 local heli_anim_full = 35 + 10 -- 10 seconds is hose lifting up animation when chopper goes refilling
-local thermite_right = { time = 86, id = "Thermite", icons = { "pd2_fire" } }
-local thermite_left_top = { time = 90, id = "Thermite", icons = { "pd2_fire" } }
+local thermite_right = { time = 86, id = "Thermite", icons = { Icon.Fire } }
+local thermite_left_top = { time = 90, id = "Thermite", icons = { Icon.Fire } }
 local heli_20 = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled }
 local heli_65 = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled }
 local triggers = {
@@ -30,9 +30,6 @@ local triggers = {
     [1] = { id = "HeliWaterFill", special_function = SF.PauseTracker },
     [2] = { id = "HeliWaterReset", icons = { Icon.Heli, Icon.Water, "restarter" }, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 62 + heli_anim_full, no = 122 + heli_anim_full } },
 
-    [103461] = { time = 5, id = "cow_3", class = TT.Achievement, special_function = SF.RemoveTriggerAndShowAchievement },
-    [103458] = { id = "cow_3", special_function = SF.SetAchievementComplete },
-
     -- Right
     [100283] = thermite_right,
     [100284] = thermite_right,
@@ -55,4 +52,10 @@ for _, index in pairs({ 100, 150, 250, 300 }) do
     triggers[EHI:GetInstanceElementID(100037, index)] = { special_function = SF.Trigger, data = { 1, 2 } }
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [103461] = { time = 5, id = "cow_3", class = TT.Achievement, special_function = SF.RemoveTriggerAndShowAchievement },
+    [103458] = { id = "cow_3", special_function = SF.SetAchievementComplete },
+}
+
+EHI:ParseTriggers(triggers, achievements)

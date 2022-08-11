@@ -21,7 +21,7 @@ function EHI:LordOfWarAchievement()
     })
 end
 
-local triggers = {
+local achievements = {
     [103240] = { special_function = EHI.SpecialFunctions.CustomCode, f = function()
         -- This needs to be delayed because the number of required weapons are decided upon spawn
         EHI:DelayCall("LordOfWarAchievement", 5, function()
@@ -30,13 +30,13 @@ local triggers = {
     end}
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({}, achievements)
 EHI:AddLoadSyncFunction(function(self)
     EHI:LordOfWarAchievement()
     if self:TrackerExists("lord_of_war") then
-        self:SetTrackerProgress("lord_of_war", managers.loot:GetSecuredBagsAmount())
+        self:SetTrackerProgress("lord_of_war", managers.loot:GetSecuredBagsTypeAmount("weapon"))
         if self:TrackerExists("LootCounter") then
-            self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsTypeAmount("money"))
+            self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
         end
     else
         self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())

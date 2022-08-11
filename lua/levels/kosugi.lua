@@ -121,6 +121,18 @@ local DisableTriggerAndExecute = EHI:GetFreeCustomSpecialFunctionID()
 local trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local kosugi_3 = { id = "kosugi_3", special_function = SF.IncreaseProgress }
 local triggers = {
+    [1] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, "pd2_goto" } },
+    [2] = { special_function = SF.RemoveTriggers, data = { 101131, 100900 } },
+    [101131] = trigger,
+    [100900] = trigger,
+
+    [100955] = { time = 10, id = "KeycardLeft", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100957 } },
+    [100957] = { time = 10, id = "KeycardRight", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100955 } },
+    [100967] = { special_function = SF.RemoveTrackers, data = { "KeycardLeft", "KeycardRight" } }
+}
+
+local achievements =
+{
     [102700] = { special_function = SF.Trigger, data = { 1027001, 1027002, 1027003, 1027004 } },
     [1027001] = { max = 6, id = "kosugi_2", class = TT.AchievementProgress, remove_after_reaching_target = false },
     [1027002] = { max = 7, id = "kosugi_3", class = TT.AchievementProgress },
@@ -139,16 +151,6 @@ local triggers = {
     [104047] = kosugi_3, -- Gold
     [104048] = kosugi_3, -- Weapon
     [104049] = kosugi_3, -- Painting
-
-    [1] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, "pd2_goto" } },
-    [2] = { special_function = SF.RemoveTriggers, data = { 101131, 100900 } },
-    [101131] = trigger,
-    [100900] = trigger,
-    [103396] = { id = "LootCounter", special_function = SF.IncreaseProgressMax },
-
-    [100955] = { time = 10, id = "KeycardLeft", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100957 } },
-    [100957] = { time = 10, id = "KeycardRight", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100955 } },
-    [100967] = { special_function = SF.RemoveTrackers, data = { "KeycardLeft", "KeycardRight" } }
 }
 
 EHI:ParseTriggers(triggers)
@@ -199,7 +201,13 @@ elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
     random_paintings = 1
 end
 local total = base_amount + crates + random_weapons + random_paintings
-EHI:ShowLootCounter({ max = total })
+EHI:ShowLootCounter({
+    max = total,
+    triggers =
+    {
+        [103396] = { special_function = SF.IncreaseProgressMax }
+    }
+})
 -- Not included bugged loot, this is checked after spawn -> 1027003
 -- Reported here:
 -- https://steamcommunity.com/app/218620/discussions/14/5710018482972011532/

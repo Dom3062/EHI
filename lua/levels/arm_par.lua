@@ -24,4 +24,4 @@ if Network:is_client() then
     triggers[102379] = { time = 30 + van_delay, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
-EHI:ParseTriggers(triggers, "Escape", Icon.CarEscape)
+EHI:ParseTriggers(triggers, nil, nil, "Escape", Icon.CarEscape)

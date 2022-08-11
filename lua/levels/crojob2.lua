@@ -14,14 +14,6 @@ for _, index in pairs(start_index) do
 end
 local chopper_delay = 25 + 1 + 2.5
 local triggers = {
-    [104086] = { id = "cow_10", status = "defend", class = TT.AchievementStatus },
-    [102480] = { id = "cow_10", special_function = SF.SetAchievementFailed },
-    [106581] = { id = "cow_10", special_function = SF.SetAchievementComplete },
-
-    [101737] = { time = 60, id = "cow_11", class = TT.Achievement },
-    [102466] = { id = "cow_11", special_function = SF.RemoveTracker },
-    [102479] = { id = "cow_11", special_function = SF.SetAchievementComplete },
-
     [102120] = { time = 5400/30, id = "ShipMove", icons = { Icon.Boat, Icon.Wait }, special_function = SF.RemoveTriggerWhenExecuted },
 
     [101545] = { time = 100 + chopper_delay, id = "C4FasterPilot", icons = Icon.HeliDropC4 },
@@ -33,7 +25,7 @@ local triggers = {
 }
 for _, index in pairs(start_index) do
     triggers[EHI:GetInstanceElementID(100118, index)] = { time = 1, id = "MethlabRestart", icons = { Icon.Methlab, Icon.Loop } }
-    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, "pd2_generic_interact" } }
+    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, Icon.Interact } }
 end
 if Network:is_client() then
     local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
@@ -47,7 +39,18 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [104086] = { id = "cow_10", status = "defend", class = TT.AchievementStatus },
+    [102480] = { id = "cow_10", special_function = SF.SetAchievementFailed },
+    [106581] = { id = "cow_10", special_function = SF.SetAchievementComplete },
+
+    [101737] = { time = 60, id = "cow_11", class = TT.Achievement },
+    [102466] = { id = "cow_11", special_function = SF.RemoveTracker },
+    [102479] = { id = "cow_11", special_function = SF.SetAchievementComplete }
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:ShowAchievementLootCounter({
     achievement = "voff_2",
     max = 2,

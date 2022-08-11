@@ -69,7 +69,7 @@ else
 end
 
 EHI:ParseTriggers(triggers)
-local ranc_10 = { id = "ranc_10", special_function = SF.IncreaseProgress }
+local ranc_10 = { special_function = SF.IncreaseProgress }
 local ranc_10_triggers =
 {
     [EHI:GetInstanceElementID(100015, 28400)] = ranc_10

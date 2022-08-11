@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local MethlabStart = { Icon.Methlab, Icon.Wait }
 local MethlabRestart = { Icon.Methlab, Icon.Loop }
-local MethlabPickup = { Icon.Methlab, "pd2_generic_interact" }
+local MethlabPickup = { Icon.Methlab, Icon.Interact }
 local element_sync_triggers =
 {
     [103575] = { id = "CookingStartDelay", icons = MethlabStart, hook_element = 103573 },

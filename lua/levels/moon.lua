@@ -14,13 +14,8 @@ local triggers = {
     -- Second animation is counted in this trigger, the first is in trigger 100578.
     -- If the first fly-in is selected, the tracker is updated to reflect that
 
-    [100107] = { max = 2, id = "moon_4", class = TT.AchievementProgress, special_function = SF.RemoveTriggerAndShowAchievement },
-
     [100647] = { time = 10, id = "SantaTalk", icons = { "pd2_talk" }, special_function = SF.ExecuteIfElementIsEnabled },
-    [100159] = { time = 5 + 7 + 7.3, id = "Escape", icons = { "pd2_escape" }, special_function = SF.ExecuteIfElementIsEnabled },
-
-    [104219] = { id = "moon_4", special_function = SF.IncreaseProgress }, -- Chains
-    [104220] = { id = "moon_4", special_function = SF.IncreaseProgress }, -- Dallas
+    [100159] = { time = 5 + 7 + 7.3, id = "Escape", icons = { Icon.Escape }, special_function = SF.ExecuteIfElementIsEnabled },
 
     [100578] = { time = 9, id = "C4", icons = { Icon.Heli, Icon.C4, "pd2_goto" }, special_function = SF.SetTimeOrCreateTracker }
 }
@@ -37,7 +32,14 @@ local DisableWaypoints =
     [100664] = true
 }
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [100107] = { max = 2, id = "moon_4", class = TT.AchievementProgress, special_function = SF.RemoveTriggerAndShowAchievement },
+    [104219] = { id = "moon_4", special_function = SF.IncreaseProgress }, -- Chains
+    [104220] = { id = "moon_4", special_function = SF.IncreaseProgress } -- Dallas
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:DisableWaypoints(DisableWaypoints)
 if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({

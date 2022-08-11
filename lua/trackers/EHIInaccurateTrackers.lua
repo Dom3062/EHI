@@ -2,6 +2,31 @@ local color = tweak_data.ehi.color.Inaccurate
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
+EHIInaccurateTracker = class(EHITracker)
+EHIInaccurateTracker._tracker_type = "inaccurate"
+function EHIInaccurateTracker:init(panel, params)
+    params.text_color = color
+    EHIInaccurateTracker.super.init(self, panel, params)
+end
+
+EHIInaccuratePausableTracker = class(EHIPausableTracker)
+EHIInaccuratePausableTracker._tracker_type = "inaccurate"
+function EHIInaccuratePausableTracker:init(panel, params)
+    self._text_color = color
+    params.text_color = color
+    EHIInaccuratePausableTracker.super.init(self, panel, params)
+end
+
+function EHIInaccuratePausableTracker:SetTextColor()
+    self._text:set_color(self._paused and Color.red or self._text_color)
+end
+
+function EHIInaccuratePausableTracker:SetTrackerAccurate(time)
+    self._text_color = Color.white
+    self:SetTextColor()
+    self:SetTimeNoAnim(time)
+end
+
 EHIInaccurateWarningTracker = class(EHIWarningTracker)
 function EHIInaccurateWarningTracker:init(panel, params)
     params.text_color = color

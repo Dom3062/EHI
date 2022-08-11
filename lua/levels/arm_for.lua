@@ -13,15 +13,17 @@ local triggers = {
 
     -- Truck
     [105055] = { time = 15 + truck_delay, id = "TruckSecureTurret", icons = { Icon.Car, Icon.LootDrop } },
-    [105183] = { time = 30 + 524/30, id = "TruckSecureAmmo", icons = { Icon.Car, Icon.LootDrop } },
-
-    -- Achievement bugged, can be achieved in stealth
+    [105183] = { time = 30 + 524/30, id = "TruckSecureAmmo", icons = { Icon.Car, Icon.LootDrop } }
+}
+local achievements =
+{
+-- Achievement bugged, can be achieved in stealth
     -- Reported in: https://steamcommunity.com/app/218620/discussions/14/3048357185566603324/
     [104716] = { id = "armored_6", class = TT.AchievementStatus },
     [103311] = { id = "armored_6", special_function = SF.SetAchievementFailed }
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers(triggers, achievements)
 if EHI:GetOption("show_achievement") then
     EHI:ShowAchievementLootCounter({
         achievement = "armored_1",

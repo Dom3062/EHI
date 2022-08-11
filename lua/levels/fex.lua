@@ -2,16 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local function fex_10()
-    EHI:AddAchievementToCounter({
-        achievement = "fex_10"
-    })
-end
-local spawn_trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local triggers = {
-    [1] = { max = 21, id = "fex_10", class = TT.AchievementProgress },
-    [2] = { special_function = SF.CustomCode, f = fex_10 },
-
     -- Van Escape, 2 possible car escape scenarions here, the longer is here, the shorter is in WankerCar
     [101638] = { time = 1 + 60 + 900/30 + 5, id = "CarEscape", icons = Icon.CarEscape },
     -- Wanker car
@@ -30,8 +21,6 @@ local triggers = {
 
     [EHI:GetInstanceElementID(100016, 23480)] = { time = 45, id = "SafeHackStealth", icons = { Icon.Vault } },
 
-    [100185] = spawn_trigger, -- Default entry
-    [102665] = spawn_trigger, -- Cave spawn
     [103553] = { id = "fex_10", special_function = SF.SetAchievementFailed }
 }
 if Network:is_client() then
@@ -48,6 +37,20 @@ local DisableWaypoints =
     -- fex_safe
     [EHI:GetInstanceElementID(100029, 23480)] = true, -- Defend
     [EHI:GetInstanceElementID(100022, 23480)] = true -- Fix
+}
+
+local function fex_10()
+    EHI:AddAchievementToCounter({
+        achievement = "fex_10"
+    })
+end
+local spawn_trigger = { special_function = SF.Trigger, data = { 1, 2 } }
+local achievements =
+{
+    [1] = { max = 21, id = "fex_10", class = TT.AchievementProgress },
+    [2] = { special_function = SF.CustomCode, f = fex_10 },
+    [100185] = spawn_trigger, -- Default entry
+    [102665] = spawn_trigger -- Cave spawn
 }
 
 EHI:ParseTriggers(triggers)

@@ -8,8 +8,6 @@ local triggers = {
     [100257] = { time = 80 + delay },
     [100209] = { time = 60 + delay },
 
-    [104800] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
-
     [100214] = { id = 100233, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position = Vector3(-2274.11, -4387.6, 207.39) } },
     [100215] = { special_function = SF.Trigger, data = { 1002151, 1002152 } },
     [1002151] = { time = 674/30, special_function = SF.SetTimeOrCreateTracker },
@@ -22,4 +20,9 @@ EHI:AddOnAlarmCallback(function(dropin)
     managers.ehi:AddEscapeChanceTracker(dropin, 15)
 end)
 
-EHI:ParseTriggers(triggers, "Escape", { Icon.Escape, Icon.LootDrop })
+local other =
+{
+    [104800] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
+}
+
+EHI:ParseTriggers(triggers, nil, other, "Escape", { Icon.Escape, Icon.LootDrop })

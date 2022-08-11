@@ -8,7 +8,7 @@ local triggers = {
     [100670] = { time = 120 + delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } }
 }
 
-EHI:ParseTriggers(triggers, "HeliLootDrop", EHI.Icons.HeliLootDrop)
+EHI:ParseTriggers(triggers, nil, nil, "HeliLootDrop", EHI.Icons.HeliLootDrop)
 EHI:ShowLootCounter({
     max = 14,
     offset = true

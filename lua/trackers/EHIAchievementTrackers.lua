@@ -273,7 +273,8 @@ local yellow_status =
     hack = true,
     land = true,
     find = true,
-    bring = true
+    bring = true,
+    mark = true
 }
 function EHIAchievementStatusTracker:SetTextColor(color)
     local c

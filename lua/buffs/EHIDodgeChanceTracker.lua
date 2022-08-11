@@ -21,7 +21,6 @@ local function hide(o)
 end
 EHIDodgeChanceTracker = class(EHIGaugeBuffTracker)
 function EHIDodgeChanceTracker:init(panel, params)
-    params.format = "percent"
     EHIDodgeChanceTracker.super.init(self, panel, params)
     self._time = 1
     self._dodge = 0

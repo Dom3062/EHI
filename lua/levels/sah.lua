@@ -5,9 +5,6 @@ local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local LootDropWP = Vector3(0, -341, 253)
 local triggers = {
-    [100107] = { time = 300, id = "sah_9", class = TT.Achievement, difficulty_pass = ovk_and_up, exclude_from_sync = true },
-    [101878] = { id = "sah_9", special_function = SF.SetAchievementComplete },
-
     [100643] = { time = 30, id = "CrowdAlert", icons = { Icon.Alarm }, class = TT.Warning },
     [100645] = { id = "CrowdAlert", special_function = SF.RemoveTracker },
 
@@ -29,7 +26,13 @@ if Network:is_client() then
     triggers[EHI:GetInstanceElementID(100035, 6200)] = { time = 17 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [100107] = { time = 300, id = "sah_9", class = TT.Achievement, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+    [101878] = { id = "sah_9", special_function = SF.SetAchievementComplete }
+}
+
+EHI:ParseTriggers(triggers, achievements)
 if EHI:GetOption("show_achievement") and ovk_and_up then
     EHI:AddOnAlarmCallback(function()
         managers.ehi:SetAchievementFailed("sah_9")

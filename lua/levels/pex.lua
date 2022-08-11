@@ -42,7 +42,7 @@ EHI:ShowAchievementLootCounter({ -- Medals
     exclude_from_sync = true,
     triggers =
     {
-        [103735] = { id = "pex_11", special_function = SF.IncreaseProgress }
+        [103735] = { special_function = SF.IncreaseProgress }
     }
 })
 EHI:AddLoadSyncFunction(function(self)

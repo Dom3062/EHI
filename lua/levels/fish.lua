@@ -2,7 +2,7 @@ local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local triggers = {
+local achievements = {
     -- 100244 is ´Players_spawned´
     [100244] = { special_function = SF.Trigger, data = { 1002441, 1002442 } },
     -- "fish_4" achievement is not in the Mission Script
@@ -12,7 +12,7 @@ local triggers = {
     [100842] = { id = "fish_5", special_function = SF.SetAchievementComplete }
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({}, achievements)
 if EHI:GetOption("show_achievement") and ovk_and_up then
     EHI:AddLoadSyncFunction(function(self)
         self:AddTimedAchievementTracker("fish_4", 360)

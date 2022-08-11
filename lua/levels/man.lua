@@ -15,9 +15,6 @@ elseif ovk_and_up then
 end
 local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, Icon.PCHack }, flash_times = 1, class = TT.Chance }
 local triggers = {
-    [100698] = { special_function = SF.Trigger, data = { 1006981, 1006982 } },
-    [1006981] = { id = "man_2", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement },
-    [1006982] = { id = "man_3", class = TT.AchievementStatus, special_function = SF.RemoveTriggerAndShowAchievement },
     [101587] = { time = 30 + delay, id = "DealGoingDown", icons = deal },
     [101588] = { time = 40 + delay, id = "DealGoingDown", icons = deal },
     [101589] = { time = 50 + delay, id = "DealGoingDown", icons = deal },
@@ -30,24 +27,31 @@ local triggers = {
     [102016] = CodeChance, -- Second and Third Hack
     [102121] = { time = 10, id = "Escape", icons = { Icon.Escape } },
 
-    [103163] = { time = 1.5 + 25, random_time = 10, id = "Faint", icons = { "hostage", Icon.Wait }, class = TT.Inaccurate },
+    [103163] = { time = 1.5 + 25, random_time = 10, id = "Faint", icons = { "hostage", Icon.Wait } },
 
     [102866] = { time = 5, id = "GotCode", icons = { Icon.Wait } },
 
-    [102887] = { amount = 5, id = "CodeChance", special_function = SF.IncreaseChance },
+    [102887] = { amount = 5, id = "CodeChance", special_function = SF.IncreaseChance }
+}
+
+local achievements =
+{
+    [100698] = { special_function = SF.Trigger, data = { 1006981, 1006982 } },
+    [1006981] = { id = "man_2", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement },
+    [1006982] = { id = "man_3", class = TT.AchievementStatus, special_function = SF.RemoveTriggerAndShowAchievement },
 
     [103963] = { id = "man_2", special_function = SF.SetAchievementFailed },
     [103957] = { id = "man_3", special_function = SF.SetAchievementFailed }
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers(triggers, achievements)
 EHI:ShowAchievementLootCounter({
     achievement = "man_4",
     max = 10,
     exclude_from_sync = true,
     triggers =
     {
-        [103989] = { id = "man_4", special_function = SF.IncreaseProgress }
+        [103989] = { special_function = SF.IncreaseProgress }
     }
 })
 if EHI:GetOption("show_achievement") then

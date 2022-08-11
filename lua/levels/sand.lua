@@ -46,28 +46,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local boat_anim = 614/30 + 12 + 1
 local skid = { { icon = Icon.Car, color = Color("1E90FF") } }
-local sand_9_buttons = { id = "sand_9_buttons", special_function = SF.IncreaseProgress }
-local ExecuteIfProgressMatch = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    -- Players spawned
-    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073, 1001074 } },
-    [1001071] = { max = 10, id = "sand_9", remove_after_reaching_target = false, class = TT.AchievementProgress },
-    [1001072] = { max = 3, id = "sand_9_buttons", icons = { "pd2_generic_interact" }, class = TT.Progress, special_function = SF.ShowAchievementCustom, data = "sand_9" },
-    -- Counter is bugged. Teaset is counted too.
-    -- Reported in:
-    -- https://steamcommunity.com/app/218620/discussions/14/3182363463067457019/
-    [1001073] = { special_function = SF.CustomCode, f = function()
-        EHI:AddAchievementToCounter({
-            achievement = "sand_9"
-        })
-    end },
-    [1001074] = { max = 8, id = "sand_10", class = TT.AchievementProgress },
-    [103161] = sand_9_buttons,
-    [101369] = { special_function = ExecuteIfProgressMatch },
-    [103167] = sand_9_buttons,
-    [103175] = sand_9_buttons,
-    [103208] = { id = "sand_9", special_function = SF.FinalizeAchievement },
-
     --[100129] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay },
 
     [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { Icon.PCHack } },
@@ -139,7 +118,31 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100051, 16780)] = true -- Wait
 }
 
-EHI:ParseTriggers(triggers)
+local sand_9_buttons = { id = "sand_9_buttons", special_function = SF.IncreaseProgress }
+local ExecuteIfProgressMatch = EHI:GetFreeCustomSpecialFunctionID()
+local achievements =
+{
+    -- Players spawned
+    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073, 1001074 } },
+    [1001071] = { max = 10, id = "sand_9", remove_after_reaching_target = false, class = TT.AchievementProgress },
+    [1001072] = { max = 3, id = "sand_9_buttons", icons = { Icon.Interact }, class = TT.Progress, special_function = SF.ShowAchievementCustom, data = "sand_9" },
+    -- Counter is bugged. Teaset is counted too.
+    -- Reported in:
+    -- https://steamcommunity.com/app/218620/discussions/14/3182363463067457019/
+    [1001073] = { special_function = SF.CustomCode, f = function()
+        EHI:AddAchievementToCounter({
+            achievement = "sand_9"
+        })
+    end },
+    [1001074] = { max = 8, id = "sand_10", class = TT.AchievementProgress },
+    [103161] = sand_9_buttons,
+    [101369] = { special_function = ExecuteIfProgressMatch },
+    [103167] = sand_9_buttons,
+    [103175] = sand_9_buttons,
+    [103208] = { id = "sand_9", special_function = SF.FinalizeAchievement }
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:RegisterCustomSpecialFunction(ExecuteIfProgressMatch, function(...)
     local tracker = managers.ehi:GetTracker("sand_9_buttons")

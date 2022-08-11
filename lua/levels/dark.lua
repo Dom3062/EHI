@@ -60,20 +60,23 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {
-    [100296] = { special_function = SF.Trigger, data = { 1002961, 1002962 } },
-    [1002961] = { time = 420, id = "dark_2", class = TT.Achievement },
-    [1002962] = { max = 4, id = "dark_5", remove_after_reaching_target = false, class = "EHIdark5Tracker" },
     [106026] = { time = 10, id = "Van", icons = Icon.CarEscape },
 
     [106036] = { time = 410/30, id = "Boat", icons = Icon.BoatEscape }
 }
+
+local achievements =
+{
+    [100296] = { special_function = SF.Trigger, data = { 1002961, 1002962 } },
+    [1002961] = { time = 420, id = "dark_2", class = TT.Achievement },
+    [1002962] = { max = 4, id = "dark_5", remove_after_reaching_target = false, class = "EHIdark5Tracker" },
+}
 for i = 12850, 13600, 250 do
     local inc = EHI:GetInstanceElementID(100011, i)
-    triggers[inc] = { id = "dark_5", special_function = AddBodyBag, element = i }
-    triggers[inc + 1] = { id = "dark_5", special_function = RemoveBodyBag, element = i }
+    achievements[inc] = { id = "dark_5", special_function = AddBodyBag, element = i }
+    achievements[inc + 1] = { id = "dark_5", special_function = RemoveBodyBag, element = i }
 end
-
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers(triggers, achievements)
 EHI:ShowLootCounter({ max = 16 })
 EHI:RegisterCustomSpecialFunction(AddBodyBag, function(id, trigger, ...)
     managers.ehi:CallFunction(trigger.id, "IncreaseProgress", trigger.element)

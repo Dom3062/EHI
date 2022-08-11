@@ -12,12 +12,7 @@ local triggers = {
     [101534] = { id = "MikeDefendGarage", special_function = SF.UnpauseTracker },
     [101533] = { id = "MikeDefendGarage", special_function = SF.PauseTracker },
 
-    [101048] = { special_function = SF.Trigger, data = { 1010481, 1010482 } },
-    [1010481] = { time = 12, id = "ObjectiveDelay", icons = { Icon.Wait } },
-    [1010482] = { status = "defend", id = "born_3", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
-    [101001] = { status = "finish", id = "born_3", special_function = SF.SetAchievementStatus },
-    [102777] = { id = "born_3", special_function = SF.SetAchievementComplete },
-    [102779] = { id = "born_3", special_function = SF.SetAchievementFailed }
+    [101048] = { time = 12, id = "ObjectiveDelay", icons = { Icon.Wait } }
 }
 if Network:is_client() then
     triggers[101034].time = 80
@@ -38,7 +33,15 @@ if Network:is_client() then
     EHI:AddSyncTrigger(101535, triggers[101535])
 end
 
-EHI:ParseTriggers(triggers, nil, trigger_icon_all)
+local achievements =
+{
+    [101048] = { status = "defend", id = "born_3", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
+    [101001] = { status = "finish", id = "born_3", special_function = SF.SetAchievementStatus },
+    [102777] = { id = "born_3", special_function = SF.SetAchievementComplete },
+    [102779] = { id = "born_3", special_function = SF.SetAchievementFailed }
+}
+
+EHI:ParseTriggers(triggers, achievements, nil, nil, trigger_icon_all)
 EHI:ShowLootCounter({ max = 9 })
 
 local tbl =

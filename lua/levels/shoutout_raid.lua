@@ -3,11 +3,11 @@ local Icon = EHI.Icons
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local show_achievement = EHI:GetOption("show_achievement")
-local triggers = {
+local achievements = {
     [100107] = { time = 420, id = "trophy_longfellow", icons = { Icon.Trophy }, class = TT.Warning, condition = ovk_and_up }
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({}, achievements)
 if show_achievement then
     EHI:ShowAchievementLootCounter({
         achievement = "melt_3",

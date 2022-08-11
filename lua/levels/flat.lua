@@ -104,22 +104,16 @@ local triggers = {
     [100001] = { time = 30, id = "BileArrival", icons = { Icon.Heli, Icon.C4 } },
     [100182] = { id = "SniperDeath", special_function = SF.RemoveTracker },
     [104555] = { id = "SniperDeath", special_function = SF.IncreaseProgress },
-    [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, "equipment_winch_hook", Icon.Loop }, special_function = ExecuteIfElementIsEnabled },
+    [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = ExecuteIfElementIsEnabled },
     [102181] = { id = "HeliWinchLoop", special_function = SF.RemoveTracker },
 
-    [100809] = { time = 60, id = "cac_9", class = TT.Achievement, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement, exclude_from_sync = true },
-
     [100068] = { max = kills, id = "SniperDeath", icons = { "sniper", "pd2_kill" }, class = TT.Progress },
-    [103446] = { time = 20 + 6 + 4, id = "HeliDropsC4", icons = { Icon.Heli, "pd2_c4", "pd2_goto" } },
-    [100082] = { time = 40, id = "HeliComesWithMagnet", icons = { Icon.Heli, "equipment_winch_hook" } },
+    [103446] = { time = 20 + 6 + 4, id = "HeliDropsC4", icons = { Icon.Heli, Icon.C4, "pd2_goto" } },
+    [100082] = { time = 40, id = "HeliComesWithMagnet", icons = { Icon.Heli, Icon.Winch } },
 
-    [104859] = { id = "flat_2", special_function = SF.SetAchievementComplete },
-    [100805] = { id = "cac_9", special_function = SF.SetAchievementComplete },
+    [100206] = { time = 30, id = "LoweringTheWinch", icons = { Icon.Heli, Icon.Winch, "pd2_goto" } },
 
-    [100206] = { time = 30, id = "LoweringTheWinch", icons = { Icon.Heli, "equipment_winch_hook", "pd2_goto" } },
-
-    [100049] = { time = 20, id = "flat_2", class = TT.Achievement },
-    [102001] = { time = 5, id = "C4Explosion", icons = { "pd2_c4" } },
+    [102001] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
 
     [100060] = { special_function = SF.Trigger, data = { 1000601, 1000602 } },
     [1000601] = { id = "PanicRoomTakeoff", icons = { "enemy", { icon = Icon.Wait, visible = false } }, class = "EHIHeliTracker" },
@@ -178,7 +172,17 @@ local triggers = {
     [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } }
 }
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [100809] = { time = 60, id = "cac_9", class = TT.Achievement, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement, exclude_from_sync = true },
+
+    [104859] = { id = "flat_2", special_function = SF.SetAchievementComplete },
+    [100805] = { id = "cac_9", special_function = SF.SetAchievementComplete },
+
+    [100049] = { time = 20, id = "flat_2", class = TT.Achievement }
+}
+
+EHI:ParseTriggers(triggers, achievements)
 EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(id, trigger, element, enabled)
     if enabled then
         if managers.ehi:TrackerExists(trigger.id) then

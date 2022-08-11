@@ -2,10 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local very_hard_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local HeliWait = { Icon.Heli, Icon.Escape, Icon.LootDrop, Icon.Wait }
 local chance = { id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = TT.Chance, special_function = SF.SetChanceFromElementWhenTrackerExists }
 local triggers = {
     [103707] = { time = 1800, id = "BulldozerSpawn", icons = { "heavy" }, class = TT.Warning, condition = very_hard_and_up, special_function = SF.SetTimeOrCreateTracker },
@@ -18,16 +15,17 @@ local triggers = {
     [100024] = { time = 23, id = "HeliSanta", icons = { Icon.Heli, "Other_H_None_Merry", "pd2_goto" }, special_function = SF.RemoveTriggerWhenExecuted },
     [105102] = { time = 30, id = "HeliLoot", icons = { Icon.Heli, Icon.Escape, Icon.LootDrop, "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled },
     -- Hooked to 105072 instead of 105076 to track the take off accurately
-    [105072] = { time = 82, id = "HeliLootTakeOff", icons = HeliWait, class = TT.Warning },
+    [105072] = { time = 82, id = "HeliLootTakeOff", icons = Icon.HeliWait, class = TT.Warning },
 
     [101005] = chance,
     [101006] = chance,
     [101007] = chance,
     [101008] = chance
 }
-if show_achievement and ovk_and_up then
-    triggers[104385] = { id = "uno_9", special_function = SF.IncreaseProgress }
-    triggers[101471] = { max = 40, id = "uno_9", class = TT.AchievementProgress }
+local achievements = {}
+if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+    achievements[104385] = { id = "uno_9", special_function = SF.IncreaseProgress }
+    achievements[101471] = { max = 40, id = "uno_9", class = TT.AchievementProgress }
 end
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers(triggers, achievements)
