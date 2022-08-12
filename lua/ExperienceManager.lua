@@ -31,6 +31,13 @@ function ExperienceManager:init(...)
 end
 
 function ExperienceManager:EHIInitFinalize()
+    local pda9_rewards = tweak_data.mutators and tweak_data.mutators.piggybank and tweak_data.mutators.piggybank.rewards or { default = 1000 }
+    local pda9_levels = tweak_data.mutators and tweak_data.mutators.piggybank and tweak_data.mutators.piggybank.pig_levels
+    if not pda9_levels then
+        for i = 1, 10, 1 do
+            pda9_levels[i] = { bag_requirement = 0 }
+        end
+    end
     self._xp =
     {
         mutator_xp_reduction = 0,
@@ -39,8 +46,12 @@ function ExperienceManager:EHIInitFinalize()
         alive_players = Global.game_settings.single_player and 1 or 0,
         gage_bonus = 1,
         stealth = true,
-        pda9_rewards = tweak_data.mutators.piggybank.rewards,
-        current_difficulty = Global.game_settings.difficulty
+        pda9 =
+        {
+            rewards = pda9_rewards,
+            levels = pda9_levels
+        },
+        current_difficulty = Global and Global.game_settings and Global.game_settings.difficulty or "normal"
     }
     if xp_format == 3 then -- Multiply
         local function f()
@@ -163,9 +174,9 @@ elseif xp_panel == 4 then
     end
 end
 
-function ExperienceManager:ShowGainedXP(base_xp, xp_gained, xp_force)
+function ExperienceManager:ShowGainedXP(base_xp, xp_gained)
     BaseXP = BaseXP + base_xp
-    TotalXP = xp_force or (TotalXP + (xp_gained or base_xp))
+    TotalXP = xp_gained and (TotalXP + xp_gained) or self:MultiplyXPWithAllBonuses(BaseXP)
     if OldTotalXP ~= TotalXP then
         local diff = TotalXP - OldTotalXP
         OldTotalXP = TotalXP
@@ -199,7 +210,7 @@ else
     if xp_format == 1 then
         f = function(self, amount)
             if amount > 0 then
-                self:ShowGainedXP(amount)
+                self:ShowGainedXP(amount, amount)
             end
         end
     elseif xp_format == 2 then
@@ -211,7 +222,7 @@ else
     else
         f = function(self, amount)
             if amount > 0 then
-                self:ShowGainedXP(amount, self:MultiplyXPWithAllBonuses(amount))
+                self:ShowGainedXP(amount)
             end
         end
     end
@@ -288,16 +299,17 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 	total_xp = total_xp + job_heat_dissect
 	bonus_xp = self._xp.limited_xp_bonus
 	extra_bonus_dissect = math_round(total_xp * bonus_xp - total_xp)
+    total_xp = total_xp + extra_bonus_dissect
     if self._xp.pda9_event_active then
         local pig_level = self._xp.pda9_event_exploded_level or false
-        local bonus_piggybank_dissect = math_round(pig_level and (self._xp.pda9_rewards[self._xp.current_difficulty] or self._xp.pda9_rewards.default) * tweak_data.mutators.piggybank.pig_levels[pig_level].bag_requirement or 0)
-	    total_xp = total_xp + bonus_piggybank_dissect
+        local bonus_piggybank_dissect = math_round(pig_level and (self._xp.pda9.rewards[self._xp.current_difficulty] or self._xp.pda9.rewards.default) * self._xp.pda9.levels[pig_level].bag_requirement or 0)
+        total_xp = total_xp + bonus_piggybank_dissect
     end
-	total_xp = total_xp + extra_bonus_dissect
 	local bonus_mutators_dissect = total_xp * self._xp.mutator_xp_reduction
 	total_xp = total_xp + bonus_mutators_dissect
     if self._xp.pda9_event_active then
-	    total_xp = total_xp * 2
+        local bonus_event_double_dissect = total_xp
+	    total_xp = total_xp + bonus_event_double_dissect
     end
 	return total_xp
 end
@@ -310,7 +322,7 @@ function ExperienceManager:RecalculateXP()
         if xp_panel == 2 then
             managers.ehi:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
         else
-            self:ShowGainedXP(0, 0, self:MultiplyXPWithAllBonuses(BaseXP))
+            self:ShowGainedXP(0)
         end
     end
 end

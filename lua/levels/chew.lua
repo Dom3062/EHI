@@ -24,7 +24,7 @@ local achievements =
 EHI:ParseTriggers(triggers, achievements)
 EHI:ShowLootCounter({
     max = 9,
-    offset = Global.game_settings.gamemode ~= "crime_spree"
+    offset = true
 })
 if EHI:GetOption("show_achievement") and ovk_and_up then
     EHI:AddLoadSyncFunction(function(self)

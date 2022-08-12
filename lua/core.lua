@@ -1549,6 +1549,9 @@ function EHI:ShowLootCounterOffset(params, manager)
 end
 
 function EHI:ShowLootCounter(params)
+    if Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree" then
+        return
+    end
     local n_offset = 0
     if params.offset then
         if self._cache.Host then

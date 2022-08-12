@@ -1,3 +1,9 @@
+r77 (12. 08. 2022):
+Disabled "Loot Counter" tracker in Crime Spree
+Fixed issues with Piggy Bank tracker
+XP Tracker: Fixed an issue where destroyed Piggy Bank did not increase XP counter
+XP Tracker: Fixed an issue with counting XP that could cause higher XP count than you got in Mission End screen
+
 r76 (11. 08. 2022):
 Added Crit Chance Buff
 Added tracker for the Piggy Bank Anniversary Event
