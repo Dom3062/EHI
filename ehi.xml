@@ -35,8 +35,6 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementTrackers.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIInaccurateTrackers.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="StaticTrackers.lua"/>
-
-                <post :hook_id="hudmanagerpd2" :script_path="EHIPiggyBankMutatorTracker.lua"/>
             </group>
             <group :script_path="buffs/">
                 <post :hook_id="hudmanagerpd2" :script_path="EHIBuffTracker.lua"/>
@@ -84,8 +82,6 @@
         </group>
 
         <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
-
-        <post hook_id="lib/mutators/mutatorpiggybank" :script_path="MutatorPiggyBank.lua" />
 
         <post hook_id="lib/setups/setup" :script_path="EHIManager.lua" />
         <post hook_id="lib/setups/setup" :script_path="EHIManagerVR.lua" />

@@ -26,21 +26,21 @@ local server = Network:is_server()
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
     self.ehi = managers.ehi
-    self.ehi_buff = managers.ehi_buff
-    local ehi_waypoint = managers.ehi_waypoint
-    ehi_waypoint:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2), self._workspaces.overlay.saferect, self._gui)
+    self.ehi_waypoint = managers.ehi_waypoint
+    self.ehi_waypoint:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2), self._workspaces.overlay.saferect, self._gui)
     self._tracker_waypoints = {}
     if server or level_id == "hvh" then
         self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
         if EHIWaypoints then
-            self:add_updator("EHI_Waypoint_Update", callback(ehi_waypoint, ehi_waypoint, "update"))
+            self:add_updator("EHI_Waypoint_Update", callback(self.ehi_waypoint, self.ehi_waypoint, "update"))
         end
     elseif EHIWaypoints then
-        self:add_updator("EHI_Waypoint_dt_update", callback(ehi_waypoint, ehi_waypoint, "update_dt"))
+        self:add_updator("EHI_Waypoint_dt_update", callback(self.ehi_waypoint, self.ehi_waypoint, "update_dt"))
     end
     if EHI:GetOption("show_buffs") then
-        self:add_updator("EHI_Buff_Update", callback(self.ehi_buff, self.ehi_buff, "update"))
-        self.ehi_buff:init_finalize(self:script(PlayerBase.PLAYER_INFO_HUD_PD2))
+        local buff = managers.ehi_buff
+        self:add_updator("EHI_Buff_Update", callback(buff, buff, "update"))
+        buff:init_finalize(self:script(PlayerBase.PLAYER_INFO_HUD_PD2))
     end
     --[[EHI:DelayCall("EHI_Debug", 5, function()
         local Icon = EHI.Icons
@@ -88,6 +88,9 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         -- Big Oil Day 2 is exception to this rule because guards have pagers
         local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
         if server then
+            local function remove_chance()
+                self.ehi:RemoveTracker("pagers_chance")
+            end
             for _, value in pairs(base) do
                 if value > 0 and value < 1 then
                     -- Random Chance
@@ -98,12 +101,13 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                         exclude_from_sync = true,
                         class = EHI.Trackers.Chance
                     })
-                    EHI:AddOnAlarmCallback(function()
-                        managers.ehi:RemoveTracker("pagers_chance")
-                    end)
+                    EHI:AddOnAlarmCallback(remove_chance)
                     return
                 end
             end
+        end
+        local function remove()
+            self.ehi:RemoveTracker("pagers")
         end
         local max = 0
         for _, value in pairs(base) do
@@ -122,9 +126,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         if max == 0 then
             self.ehi:CallFunction("pagers", "SetBad")
         end
-        EHI:AddOnAlarmCallback(function()
-            managers.ehi:RemoveTracker("pagers")
-        end)
+        EHI:AddOnAlarmCallback(remove)
     end
     if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" and not EHI:IsOneXPElementHeist(level_id) then
         self.ehi:AddTracker({
@@ -133,24 +135,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             class = "EHITotalXPTracker"
         })
     end
-end
-
-function HUDManager:ShowLootCounter()
-    local max = 0
-    --[[elseif level_id == "rvd1" then
-        max = 6
-    elseif level_id == "alex_3" then
-        max = 14]]
-    if max == 0 then
-        return
-    end
-    self.ehi:AddTracker({
-        id = "LootCounter",
-        max = max,
-        icons = { "pd2_loot" },
-        exclude_from_sync = true,
-        class = EHI.Trackers.Progress
-    })
 end
 
 if EHI:GetOption("show_captain_damage_reduction") then
@@ -189,7 +173,7 @@ end
 
 function HUDManager:destroy(...)
     self.ehi:destroy()
-    managers.ehi_waypoint:destroy()
+    self.ehi_waypoint:destroy()
     original.destroy(self, ...)
 end
 
@@ -199,7 +183,7 @@ if Network:is_client() and level_id ~= "hvh" then
         function HUDManager:feed_heist_time(time, ...)
             original.feed_heist_time(self, time, ...)
             self.ehi:update_client(time)
-            managers.ehi_waypoint:update_client(time)
+            self.ehi_waypoint:update_client(time)
         end
     else
         function HUDManager:feed_heist_time(time, ...)
@@ -225,30 +209,14 @@ function HUDManager:IncreaseTrackerWaypointProgress(id, increase)
     self:UpdateTrackerWaypointProgress(id, increase or 1)
 end
 
-local SyncFunction = EHI._cache.Host and "SyncAnticipationColor" or "SyncAnticipation"
-local anticipation_delay = 30 -- Get it from tweak_data
-original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
-function HUDManager:sync_start_anticipation_music(...)
-    original.sync_start_anticipation_music(self, ...)
-    self.ehi:CallFunction("AssaultDelay", SyncFunction, anticipation_delay)
-    --EHI:Unhook("AssaultDelay_set_control_info")
-end
-
-original.sync_start_assault = HUDManager.sync_start_assault
-function HUDManager:sync_start_assault(assault_number, ...)
-    original.sync_start_assault(self, assault_number, ...)
-    self.ehi:RemoveTracker("AssaultDelay")
-    --EHI:Unhook("AssaultDelay_set_control_info")
-end
-
-if false then
+if EHI:GetOption("show_assault_delay_tracker") then
+    local SyncFunction = EHI._cache.Host and "SyncAnticipationColor" or "SyncAnticipation"
+    local anticipation_delay = 30 -- Get it from tweak_data
     local function VerifyHostageHesitationDelay()
     end
     local function set_assault_delay(self, data)
         self.ehi:CallFunction("AssaultDelay", "SetHostages", data.nr_hostages > 0)
     end
-    local SyncFunction = EHI._cache.Host and "SyncAnticipationColor" or "SyncAnticipation"
-    local anticipation_delay = 30 -- Get it from tweak_data
     original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
     function HUDManager:sync_start_anticipation_music(...)
         original.sync_start_anticipation_music(self, ...)
@@ -275,6 +243,15 @@ if false then
         end
     end
     EHI:HookWithID(HUDManager, "set_control_info", "EHI_AssaultDelay_set_control_info", set_assault_delay)
+    VerifyHostageHesitationDelay()
+end
+
+function HUDManager:ShowAchievementStartedPopup(id)
+    self:custom_ingame_popup_text("ACHIEVEMENT STARTED!", managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+end
+
+function HUDManager:ShowAchievementFailedPopup(id)
+    self:custom_ingame_popup_text("ACHIEVEMENT FAILED!", managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
 end
 
 function HUDManager:Debug(id)

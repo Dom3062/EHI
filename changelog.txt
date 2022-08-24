@@ -1,3 +1,9 @@
+r78 (24. 08. 2022):
+Added "Show Assault Delay Tracker" option
+Added "Show Tracker Corners" option
+Removed tracker for the Piggy Bank as the event ended
+Rewrote achievement tracking of "The Reckoning" when both your weapons have the required sight
+
 r77 (12. 08. 2022):
 Disabled "Loot Counter" tracker in Crime Spree
 Fixed issues with Piggy Bank tracker

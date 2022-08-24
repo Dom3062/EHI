@@ -1,4 +1,4 @@
-EHIXPTracker = EHIXPTracker or class(EHITracker)
+EHIXPTracker = class(EHITracker)
 function EHIXPTracker:init(panel, params)
     params.icons = { "xp" }
     params.time = 5
@@ -25,7 +25,7 @@ function EHIXPTracker:AddXP(amount)
     self:AnimateBG()
 end
 
-EHITotalXPTracker = EHITotalXPTracker or class(EHIXPTracker)
+EHITotalXPTracker = class(EHIXPTracker)
 EHITotalXPTracker._update = false
 EHITotalXPTracker._show_diff = EHI:GetOption("total_xp_show_difference")
 function EHITotalXPTracker:init(panel, params)

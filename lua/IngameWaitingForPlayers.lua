@@ -770,19 +770,64 @@ function IngameWaitingForPlayersState:at_exit(...)
         if EHI:IsAchievementLocked2("tango_achieve_3") and managers.ehi:GetStartedFromBeginning() then -- "The Reckoning" achievement
             local pass, primary_index, secondary_index = CheckWeaponsBlueprint(tweak_data.achievement.complete_heist_achievements.tango_3.killed_by_blueprint.blueprint)
             if pass then
-                CreateProgressTracker("tango_achieve_3", 0, 200, false, false)
                 if primary_index and secondary_index then
+                    do
+                        EHItango_achieve_3Tracker = class(EHIAchievementProgressTracker)
+                        function EHItango_achieve_3Tracker:init(panel, params)
+                            self._kills =
+                            {
+                                primary = 0,
+                                secondary = 0
+                            }
+                            self._weapon_id = 0
+                            EHItango_achieve_3Tracker.super.init(self, panel, params)
+                        end
+                        function EHItango_achieve_3Tracker:WeaponSwitched(id)
+                            if self._weapon_id == id then
+                                return
+                            end
+                            local previous_weapon_id = self._weapon_id
+                            self._weapon_id = id
+                            local current_selection = id == 0 and "secondary" or "primary"
+                            local previous_selection = previous_weapon_id == 0 and "secondary" or "primary"
+                            self._kills[previous_selection] = self._progress
+                            self._progress = self._kills[current_selection]
+                            if self._progress >= self._max then
+                                self._progress:set_text("FINISH")
+                                self._disable_counting = true
+                            else
+                                self._progress:set_text(self:Format())
+                                self._disable_counting = false
+                            end
+                            self:AnimateBG()
+                        end
+                    end
+                    managers.ehi:AddTracker({
+                        id = "tango_achieve_3",
+                        progress = 0,
+                        max = 200,
+                        icons = EHI:GetAchievementIcon("tango_achieve_3"),
+                        flash_times = 1,
+                        emove_after_reaching_target = false,
+                        class = "EHItango_achieve_3Tracker"
+                    })
                     local primary_weapon = primary.weapon_id
                     local secondary_weapon = secondary.weapon_id
-                    EHI:HookWithID(StatisticsManager, "killed", "EHI_tango_achieve_3_killed", function (self, data)
-                        if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
-                            local name_id, _ = self:_get_name_id_and_throwable_id(data.weapon_unit)
-                            if name_id == primary_weapon or name_id == secondary_weapon then
-                                managers.ehi:IncreaseTrackerProgress("tango_achieve_3")
-                            end
+                    HookKillFunctionNoCivilian("tango_achieve_3", primary_weapon)
+                    HookKillFunctionNoCivilian("tango_achieve_3", secondary_weapon)
+                    local function switch()
+                        local player = managers.player:local_player()
+                        if not player then
+                            return
                         end
-                    end)
+                        local weapon = player:inventory():equipped_unit():base():selection_index()
+                        if weapon and (weapon == 1 or weapon == 2) then
+                            managers.ehi:CallFunction("tango_achieve_3", "WeaponSwitched", weapon - 1)
+                        end
+                    end
+                    managers.player:register_message(Message.OnSwitchWeapon, "tango_achieve_3", switch)
                 else
+                    CreateProgressTracker("tango_achieve_3", 0, 200, false, false)
                     local weapon_required = nil
                     if primary_index then
                         weapon_required = primary.weapon_id
@@ -864,16 +909,6 @@ function IngameWaitingForPlayersState:at_exit(...)
             EHI:HookWithID(StatisticsManager, "shot_fired", "EHI_sand_11_accuracy", function(self, data)
                 managers.ehi:SetChance("sand_11", self:session_hit_accuracy())
             end)
-        end
-        if level == "ranc" then
-            if EHI:IsAchievementLocked2("ranc_9") then -- "Caddyshacked" achievement
-                CreateProgressTracker("ranc_9", EHI:GetAchievementProgress("ranc_9_stat"), 100, false, true)
-                stats.ranc_9_stat = "ranc_9"
-            end
-            if EHI:IsAchievementLocked2("ranc_11") then -- "Marshal Law" achievement
-                CreateProgressTracker("ranc_11", EHI:GetAchievementProgress("ranc_11_stat"), 4, false, true)
-                stats.ranc_11_stat = "ranc_11"
-            end
         end
         if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and managers.ehi:GetStartedFromBeginning() then -- From Russia With Love
             local progress = EHI:GetAchievementProgress("halloween_10_stats")
@@ -966,7 +1001,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         CreateProgressTracker("pig_3", EHI:GetAchievementProgress("pig_3_stats"), 30, false, true)
         stats.pig_3_stats = "pig_3"
     end
-    if level == "dark" and EHI:IsAchievementLocked("pim_2") and HasGrenadeEquipped("wpn_prj_target") then -- Crouched and Hidden, Flying Dagger
+    if level == "dark" and EHI:IsAchievementLocked2("pim_2") and HasGrenadeEquipped("wpn_prj_target") then -- Crouched and Hidden, Flying Dagger
         local progress = EHI:GetAchievementProgress("pim_2_stats")
         local function on_heist_end(mes_self)
             if mes_self._success and progress < 8 then
@@ -984,7 +1019,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end
-    if EHI:IsAchievementLocked("xm20_1") and (level == "mex" or level == "bex" or level == "pex" or level == "fex") then
+    if EHI:IsAchievementLocked2("xm20_1") and (level == "mex" or level == "bex" or level == "pex" or level == "fex") then
         EHI:PreHookWithID(MissionManager, "on_set_saved_job_value", "EHI_xm20_1_achievement", function(mm, key, value)
             if (key == "present_mex" or key == "present_bex" or key == "present_pex" or key == "present_bex") and value == 1 then
                 local progress = 0
@@ -1001,7 +1036,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end
-    if EHI:IsAchievementLocked("pent_11") and (level == "chas" or level == "sand" or level == "chca" or level == "pent") then
+    if EHI:IsAchievementLocked2("pent_11") and (level == "chas" or level == "sand" or level == "chca" or level == "pent") then
         EHI:PreHookWithID(MissionManager, "on_set_saved_job_value", "EHI_pent_11_achievement", function(mm, key, value)
             if (key == "tea_chas" or key == "tea_sand" or key == "tea_chca" or key == "tea_pent") and value == 1 then
                 local progress = 0

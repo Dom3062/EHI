@@ -24,3 +24,4 @@ local tbl =
     [101242] = { f = ignore }
 }
 EHI:UpdateUnits(tbl)
+EHI._cache.diff = 1

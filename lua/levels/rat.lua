@@ -7,7 +7,7 @@ local van_delay_ovk = 6 -- 1 second before setting up the timer and 5 seconds af
 local heli_delay = 19
 local anim_delay = 743/30 -- 743/30 is a animation duration; 3s is zone activation delay (never used when van is coming back)
 local heli_delay_full = 13 + 19 -- 13 = Base Delay; 19 = anim delay
-local heli_icon = { Icon.Heli, Icon.Methlab, "pd2_goto" }
+local heli_icon = { Icon.Heli, Icon.Methlab, Icon.Goto }
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers =
 {
@@ -44,7 +44,7 @@ local triggers = {
     [101974] = { time = 60 + 30 + 15 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
     [101975] = { time = 30 + 15 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
 
-    [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", "pd2_goto" }, class = TT.Warning },
+    [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", Icon.Goto }, class = TT.Warning },
 
     [101982] = { special_function = SF.Trigger, data = { 1019821, 1019822 } },
     [1019821] = { time = 589/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },

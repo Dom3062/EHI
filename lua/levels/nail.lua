@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local triggers = {
     [101505] = { time = 10, id = "TruckDoorOpens", icons = { "pd2_door" } },
     -- There are a lot of delays in the ID. Using average instead (5.2)
-    [101806] = { time = 20 + 5.2, id = "ChemicalsDrop", icons = { Icon.Heli, Icon.Methlab, "pd2_goto" } },
+    [101806] = { time = 20 + 5.2, id = "ChemicalsDrop", icons = { Icon.Heli, Icon.Methlab, Icon.Goto } },
 
     [101936] = { time = 30 + 12, id = "Escape", icons = Icon.HeliEscapeNoLoot }
 }

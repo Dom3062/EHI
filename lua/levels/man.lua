@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local deal = { Icon.Car, "pd2_goto" }
+local deal = { Icon.Car, Icon.Goto }
 local delay = 4 + 356/30
 local start_chance = 15 -- Normal
 if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then

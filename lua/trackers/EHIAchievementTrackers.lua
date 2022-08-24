@@ -1,32 +1,28 @@
 local EHI = EHI
 local show_failed = EHI:GetOption("show_achievement_failed_popup")
 local show_started = EHI:GetOption("show_achievement_started_popup")
-local AchievementFailed = "ACHIEVEMENT FAILED!"
-local AchievementStarted = "ACHIEVEMENT STARTED!"
 local function ShowFailedPopup(tracker)
     if tracker._failed_popup_showed or tracker._achieved_popup_showed or tracker._no_failure then
         return
     end
     tracker._failed_popup_showed = true
-    local id = tracker._id
-    managers.hud:custom_ingame_popup_text(AchievementFailed, managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+    managers.hud:ShowAchievementFailedPopup(tracker._id)
 end
 local function ShowStartedPopup(tracker)
     if tracker._delay_popup then
         EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(tracker, tracker, "ShowStartedPopup"))
         return
     end
-    local id = tracker._id
-    managers.hud:custom_ingame_popup_text(AchievementStarted, managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+    managers.hud:ShowAchievementStartedPopup(tracker._id)
 end
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
 if show_failed then
-    EHI:SetNotificationAlert(AchievementFailed, "ehi_popup_achievement_failed")
+    EHI:SetNotificationAlert("ACHIEVEMENT FAILED!", "ehi_popup_achievement_failed")
 end
 if show_started then
-    EHI:SetNotificationAlert(AchievementStarted, "ehi_popup_achievement_started", Color.green)
+    EHI:SetNotificationAlert("ACHIEVEMENT STARTED!", "ehi_popup_achievement_started", Color.green)
 end
 
 EHIAchievementTracker = class(EHIWarningTracker)

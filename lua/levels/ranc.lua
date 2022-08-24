@@ -5,7 +5,8 @@ local WinchCar = { { icon = Icon.Car, color = Color("1E90FF") } }
 local ElementTimer = 102059
 local ElementTimerPickup = 102075
 local WeaponsPickUp = { Icon.Heli, Icon.Interact }
-if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+if OVKorAbove then
     ElementTimer = 102063
     ElementTimerPickup = 102076
 end
@@ -83,6 +84,10 @@ EHI:ShowAchievementLootCounter({
     exclude_from_sync = true,
     triggers = ranc_10_triggers
 })
+if OVKorAbove then
+    EHI:ShowAchievementKillCounter("ranc_9", "ranc_9_stat") -- "Caddyshacked" achievement
+    EHI:ShowAchievementKillCounter("ranc_11", "ranc_11_stat") -- "Marshal Law" achievement
+end
 EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(id, ...)
     if managers.ehi:TrackerDoesNotExist("FultonCatch") then
         EHI:CheckCondition(id)

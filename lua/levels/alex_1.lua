@@ -6,9 +6,8 @@ local anim_delay = 2 + 727/30 + 2 -- 2s is function delay; 727/30 is a animation
 local assault_delay_methlab = 20 + 4 + 3 + 3 + 3 + 5 + 1 + 30
 local assault_delay = 4 + 3 + 3 + 3 + 5 + 1 + 30
 local SetTimeIfMoreThanOrCreateTracker = EHI:GetFreeCustomSpecialFunctionID()
+local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker")
 local triggers = {
-    [100378] = { time = 42 + 50 + assault_delay, id = "AssaultDelay", class = TT.AssaultDelay },
-    [100380] = { time = 45 + 40 + assault_delay, id = "AssaultDelay", class = TT.AssaultDelay },
     [101001] = { id = "CookChance", special_function = SF.RemoveTracker },
 
     [101970] = { time = (240 + 12) - 3, id = "Van", icons = Icon.CarEscape },
@@ -24,9 +23,7 @@ local triggers = {
     [101975] = { special_function = SF.Trigger, data = { 1019751, 1 } },
     [1019751] = { time = 30 + anim_delay, special_function = SF.AddTrackerIfDoesNotExist },
 
-    [100707] = { time = assault_delay_methlab, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SetTimeIfMoreThanOrCreateTracker },
-
-    [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", "pd2_goto" }, class = TT.Warning },
+    [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", Icon.Goto }, class = TT.Warning },
 
     [100723] = { amount = 10, id = "CookChance", special_function = SF.IncreaseChance }
 }
@@ -40,6 +37,9 @@ local achievements =
 }
 local other =
 {
+    [100378] = { time = 42 + 50 + assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, condition = ShowAssaultDelay },
+    [100380] = { time = 45 + 40 + assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, condition = ShowAssaultDelay },
+    [100707] = { time = assault_delay_methlab, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SetTimeIfMoreThanOrCreateTracker, condition = ShowAssaultDelay },
     [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 EHI:AddOnAlarmCallback(function(dropin)

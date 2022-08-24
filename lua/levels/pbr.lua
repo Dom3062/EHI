@@ -5,8 +5,6 @@ local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    --[102292] = { time = 75 + 30, id = "AssaultDelay", class = TT.AssaultDelay },
-
     [EHI:GetInstanceElementID(100108, 3200)] = { time = 45, id = "LockOpen", icons = { Icon.Wait } },
     [EHI:GetInstanceElementID(100124, 3200)] = { id = "LockOpen", special_function = SF.RemoveTracker },
 
@@ -44,7 +42,12 @@ local achievements =
     [EHI:GetInstanceElementID(100041, 20050)] = { id = "berry_2", special_function = SF.FinalizeAchievement }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+local other =
+{
+    --[102292] = { time = 75 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") },
+}
+
+EHI:ParseTriggers(triggers, achievements, other)
 EHI:ShowAchievementLootCounter({
     achievement = "berry_2",
     max = 10,

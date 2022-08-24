@@ -6,8 +6,8 @@ local heli_anim = 35
 local heli_anim_full = 35 + 10 -- 10 seconds is hose lifting up animation when chopper goes refilling
 local thermite_right = { time = 86, id = "Thermite", icons = { Icon.Fire } }
 local thermite_left_top = { time = 90, id = "Thermite", icons = { Icon.Fire } }
-local heli_20 = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled }
-local heli_65 = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, "pd2_goto" }, special_function = SF.ExecuteIfElementIsEnabled }
+local heli_20 = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled }
+local heli_65 = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled }
 local triggers = {
     [101499] = { time = 155 + 25, id = "EscapeHeli", icons = Icon.HeliEscape },
     [101253] = heli_65,
@@ -28,7 +28,7 @@ local triggers = {
     [102920] = { id = "WaterFill", special_function = SF.UnpauseTracker },
 
     [1] = { id = "HeliWaterFill", special_function = SF.PauseTracker },
-    [2] = { id = "HeliWaterReset", icons = { Icon.Heli, Icon.Water, "restarter" }, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 62 + heli_anim_full, no = 122 + heli_anim_full } },
+    [2] = { id = "HeliWaterReset", icons = { Icon.Heli, Icon.Water, Icon.Loop }, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 62 + heli_anim_full, no = 122 + heli_anim_full } },
 
     -- Right
     [100283] = thermite_right,

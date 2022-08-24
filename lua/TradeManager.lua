@@ -41,11 +41,9 @@ local function OnPlayerCriminalDeath(peer_id, respawn_penalty)
         managers.ehi:AddToTradeDelayCache(peer_id, respawn_penalty, true)
         return
     end
-    if managers.ehi:TrackerExists(TrackerID) then
-        local tracker = managers.ehi:GetTracker(TrackerID)
-        if tracker and not tracker:PeerExists(peer_id) then
-            tracker:AddPeerCustodyTime(peer_id, respawn_penalty)
-        end
+    local tracker = managers.ehi:GetTracker(TrackerID)
+    if tracker and not tracker:PeerExists(peer_id) then
+        tracker:AddPeerCustodyTime(peer_id, respawn_penalty)
     else
         managers.ehi:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, respawn_penalty)
     end

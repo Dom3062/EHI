@@ -11,8 +11,21 @@
             "callback": ["SetOption", "UpdateBGVisibility"],
             "callback_arguments": "show_tracker_bg",
             "value": "show_tracker_bg",
+            "is_parent" : true,
             "default_value": true,
             "ehi_ver" : 6
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_tracker_corners_choice",
+            "title": "ehi_show_tracker_corners",
+            "description": "ehi_show_tracker_corners_desc",
+            "callback": ["SetOption", "UpdateCornerVisibility"],
+            "callback_arguments": "show_tracker_corners",
+            "parent": "ehi_show_tracker_bg_choice",
+            "value": "show_tracker_corners",
+            "default_value": true,
+            "ehi_ver" : 78
         },
         {
             "type": "toggle",

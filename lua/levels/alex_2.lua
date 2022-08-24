@@ -4,21 +4,20 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local VanCrashChance = { Icon.Car, Icon.Fire }
 local assault_delay = 15 + 1 + 30
-local triggers = {
-    [104488] = { time = assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker },
-    [104489] = { time = assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
-
-    -- Police ambush
-    [104535] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker }
-}
+local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker")
 local other =
 {
+    [104488] = { time = assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = ShowAssaultDelay },
+    [104489] = { time = assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist, condition = ShowAssaultDelay },
+    -- Police ambush
+    [104535] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = ShowAssaultDelay },
+
     [100342] = { chance = 25, id = "EscapeChance", icons = VanCrashChance, class = TT.Chance }
 }
 
-EHI:ParseTriggers(triggers, nil, other)
+EHI:ParseTriggers({}, nil, other)
 EHI:AddOnAlarmCallback(function(dropin)
-    if dropin then
+    if dropin or not ShowAssaultDelay then
         return
     end
     managers.ehi:AddTracker({

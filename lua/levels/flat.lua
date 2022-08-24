@@ -108,10 +108,10 @@ local triggers = {
     [102181] = { id = "HeliWinchLoop", special_function = SF.RemoveTracker },
 
     [100068] = { max = kills, id = "SniperDeath", icons = { "sniper", "pd2_kill" }, class = TT.Progress },
-    [103446] = { time = 20 + 6 + 4, id = "HeliDropsC4", icons = { Icon.Heli, Icon.C4, "pd2_goto" } },
+    [103446] = { time = 20 + 6 + 4, id = "HeliDropsC4", icons = { Icon.Heli, Icon.C4, Icon.Goto } },
     [100082] = { time = 40, id = "HeliComesWithMagnet", icons = { Icon.Heli, Icon.Winch } },
 
-    [100206] = { time = 30, id = "LoweringTheWinch", icons = { Icon.Heli, Icon.Winch, "pd2_goto" } },
+    [100206] = { time = 30, id = "LoweringTheWinch", icons = { Icon.Heli, Icon.Winch, Icon.Goto } },
 
     [102001] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
 

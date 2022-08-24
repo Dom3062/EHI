@@ -15,8 +15,6 @@ end
 local PilotComingInAgain = EHI:GetFreeCustomSpecialFunctionID()
 local PilotComingInAgain2 = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [100109] = { time = 100 + 30, id = "AssaultDelay", class = TT.AssaultDelay },
-
     [EHI:GetInstanceElementID(100022, 2850)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag },
     [EHI:GetInstanceElementID(100022, 3150)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag },
     [EHI:GetInstanceElementID(100022, 3450)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag },
@@ -51,7 +49,12 @@ local achievements =
     [101533] = { id = "peta_3", special_function = SF.SetAchievementComplete },
 }
 
-EHI:ParseTriggers(triggers, achievements)
+local other =
+{
+    [100109] = { time = 100 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") },
+}
+
+EHI:ParseTriggers(triggers, achievements, other)
 EHI:RegisterCustomSpecialFunction(PilotComingInAgain, function(id, trigger, element, enabled)
     if enabled then
         f_PilotComingInAgain(id, trigger)

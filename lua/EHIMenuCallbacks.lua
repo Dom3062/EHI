@@ -58,6 +58,10 @@ function EHIMenu:UpdateBGVisibility(visibility)
     self._preview_panel:UpdateBGVisibility(visibility)
 end
 
+function EHIMenu:UpdateCornerVisibility(visibility)
+    self._preview_panel:UpdateCornerVisibility(visibility)
+end
+
 function EHIMenu:UpdateIconsVisibility(visibility)
     self._preview_panel:UpdateIconsVisibility(visibility)
 end

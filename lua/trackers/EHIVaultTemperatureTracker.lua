@@ -1,4 +1,4 @@
-EHIVaultTemperatureTracker = EHIVaultTemperatureTracker or class(EHITracker)
+EHIVaultTemperatureTracker = class(EHITracker)
 function EHIVaultTemperatureTracker:init(panel, params)
     params.time = 500
     params.icons = { EHI.Icons.Vault }

@@ -16,9 +16,7 @@ local triggers = {
     [102069] = { time = 95 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
     [102070] = { time = 110 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
     [102071] = { time = 125 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
-    [102072] = { time = 140 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
-
-    --[100109] = { time = 35 + 30, id = "AssaultDelay", class = TT.AssaultDelay }
+    [102072] = { time = 140 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } }
 }
 
 local DisableWaypoints = {}
@@ -33,7 +31,12 @@ local achievements =
     [100840] = { time = 600, id = "bat_4", class = TT.Achievement },
 }
 
-EHI:ParseTriggers(triggers, achievements, nil, "Escape", Icon.HeliEscape)
+local other =
+{
+    [100109] = { time = 35 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
+}
+
+EHI:ParseTriggers(triggers, achievements, other, "Escape", Icon.HeliEscape)
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowAchievementLootCounter({
     achievement = "bat_3",

@@ -124,7 +124,7 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
---[[local SecurityOffice = { w_id = EHI:GetInstanceElementID(100026, 6690) }
+local SecurityOffice = { w_id = EHI:GetInstanceElementID(100026, 6690) }
 local MissionDoorPositions =
 {
     -- Evidence
@@ -148,4 +148,4 @@ local MissionDoorIndex =
     [4] = SecurityOffice,
     [5] = SecurityOffice
 }
-EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)]]
+EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)

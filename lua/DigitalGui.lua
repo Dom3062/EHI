@@ -13,6 +13,8 @@ if not EHI:GetOption("show_timers") then
     return
 end
 
+local Icon = EHI.Icons
+
 local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")
 local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
 
@@ -48,7 +50,7 @@ function DigitalGui:TimerStartCountDown()
             managers.ehi:AddTracker({
                 id = self._ehi_key,
                 time = self._timer,
-                icons = self._icons or { "wp_hack" },
+                icons = self._icons or { Icon.PCHack },
                 exclude_from_sync = true,
                 warning = self._warning,
                 completion = self._completion,
@@ -58,7 +60,7 @@ function DigitalGui:TimerStartCountDown()
         if show_waypoint then
             managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
                 time = self._timer,
-                icon = self._icons or "wp_hack",
+                icon = self._icons or Icon.PCHack,
                 pause_timer = 1,
                 type = "timer",
                 position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
@@ -113,7 +115,7 @@ if level_id == "chill" then
             managers.ehi:AddTracker({
                 id = self._ehi_key,
                 time = 0,
-                icons = { "faster" },
+                icons = { Icon.Wait },
                 exclude_from_sync = true,
                 class = "EHIStopwatchTracker"
             })
@@ -168,7 +170,7 @@ if level_id == "shoutout_raid" then
                         time = 500,
                         synced_time = 0,
                         tick = 0.1,
-                        icon = EHI.Icons.Vault,
+                        icon = Icon.Vault,
                         type = "timer",
                         position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
                     })

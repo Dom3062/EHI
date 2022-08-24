@@ -2,8 +2,8 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "更多劫案信息",
 
-    "ehi_save_data_corrupted" : "EHI's Save File Corrupted",
-    "ehi_save_data_corrupted_desc" : "EHI's Save File got corrupted and cannot be loaded\nEHI will use default values to avoid crashing",
+    "ehi_save_data_corrupted" : "EHI设置存档已损坏",
+    "ehi_save_data_corrupted_desc" : "EHI的模组设置的保存文件已经损毁并无法读取\nEHI已将所有设置恢复默认值以避免引起崩溃",
 
     "ehi_menu_next_page" : "下一页 -->",
     "ehi_menu_previous_page" : "<-- 上一页",
@@ -19,26 +19,26 @@
     "ehi_popup_gage_packages" : "盖奇包裹",
     "ehi_popup_minion" : "变节警察",
     "ehi_popup_minion_killed" : "你的变节警察已阵亡",
-    "ehi_popup_achievement_failed" : "ACHIEVEMENT FAILED!",
-    "ehi_popup_achievement_started" : "ACHIEVEMENT STARTED!",
+    "ehi_popup_achievement_failed" : "挑战成就失败！",
+    "ehi_popup_achievement_started" : "开始挑战成就!",
     "ehi_achievement_ok" : "OK",
-    "ehi_achievement_done" : "DONE",
-    "ehi_achievement_pass" : "PASS",
-    "ehi_achievement_defend" : "DEFEND",
-    "ehi_achievement_finish" : "FINISH",
-    "ehi_achievement_secure" : "SECURE",
-    "ehi_achievement_no_down" : "NO DOWN",
-    "ehi_achievement_destroy" : "DESTROY",
-    "ehi_achievement_alarm" : "ALARM",
-    "ehi_achievement_ready" : "READY",
-    "ehi_achievement_loud" : "LOUD",
-    "ehi_achievement_mark" : "MARK",
-    "ehi_achievement_push" : "PUSH",
-    "ehi_achievement_hack" : "HACK",
-    "ehi_achievement_land" : "LAND",
-    "ehi_achievement_find" : "FIND",
-    "ehi_achievement_bring" : "BRING",
-    "ehi_achievement_fail" : "FAIL",
+    "ehi_achievement_done" : "完成",
+    "ehi_achievement_pass" : "通过",
+    "ehi_achievement_defend" : "坚守",
+    "ehi_achievement_finish" : "达成",
+    "ehi_achievement_secure" : "劫获",
+    "ehi_achievement_no_down" : "0倒",
+    "ehi_achievement_destroy" : "摧毁",
+    "ehi_achievement_alarm" : "警报",
+    "ehi_achievement_ready" : "准备",
+    "ehi_achievement_loud" : "强袭",
+    "ehi_achievement_mark" : "标记",
+    "ehi_achievement_push" : "按下",
+    "ehi_achievement_hack" : "黑入",
+    "ehi_achievement_land" : "着陆",
+    "ehi_achievement_find" : "找到",
+    "ehi_achievement_bring" : "带走",
+    "ehi_achievement_fail" : "失败",
     
     "ehi_r" : "红色",
     "ehi_g" : "绿色",
@@ -78,6 +78,9 @@
     "ehi_show_tracker_bg" : "追踪器背景",
     "ehi_show_tracker_bg_desc" : "显示追踪器的底色与边框\n取消勾选后，追踪器的底色与边框将被隐藏且动画不会生效",
 
+    "ehi_show_tracker_corners" : "Show Tracker Corners",
+    "ehi_show_tracker_corners_desc" : "Shows white corners in tracker",
+
     "ehi_show_one_icon" : "精简追踪器",
     "ehi_show_one_icon_desc" : "每个追踪器仅显示1个图标\n如果取消勾选将显示该追踪器的所有图标",
 
@@ -96,8 +99,8 @@
     "ehi_show_achievement_failed_popup" : "显示 '挑战成就失败'提示",
     "ehi_show_achievement_failed_popup_desc" : "在成就条件无法完成时弹出标题为红色字体的窗口提示",
 
-    "ehi_show_achievement_started_popup" : "Show 'Achievement Started' Popup",
-    "ehi_show_achievement_started_popup_desc" : "Achievements that are now being tracked will show as green in the popup",
+    "ehi_show_achievement_started_popup" : "显示'开始挑战成就' 弹出窗口",
+    "ehi_show_achievement_started_popup_desc" : "正在跟踪的成就会弹出以绿色字体为标题的弹窗",
 
     "ehi_show_gained_xp" : "显示获得的经验",
     "ehi_show_gained_xp_desc" : "显示当前获得的经验\n此追踪器将在罪无止境模式下禁用",
@@ -135,8 +138,8 @@
     "ehi_show_timers" : "显示计时器",
     "ehi_show_timers_desc" : "显示地图上正在进行的黑入，钻机，电锯等进程的剩余时间",
 
-    "ehi_show_camera_loop" : "Show Camera Loop",
-    "ehi_show_camera_loop_desc" : "Shows a tracker when a security camera is looped",
+    "ehi_show_camera_loop" : "显示摄像头回路追踪器",
+    "ehi_show_camera_loop_desc" : "显示地图上已被设置回路的摄像头的回路持续时间",
 
     "ehi_show_zipline_timer" : "显示滑索追踪器",
     "ehi_show_zipline_timer_desc" : "显示2个滑索计时器\n第一个表示运送战利品/玩家的时间, 第二个表示滑索再次可用的冷却时间",
@@ -229,6 +232,9 @@
 
     "ehi_show_laser_tracker" : "显示镭射循环追踪器",
     "ehi_show_laser_tracker_desc" : "显示地图上传感器镭射的循环时间追踪器",
+
+    "ehi_show_assault_delay_tracker" : "Show Assault Delay Tracker",
+    "ehi_show_assault_delay_tracker_desc" : "Shows a tracker for how long the assault delay will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
     
     "ehi_waypoints_menu" : "路径导航",
     "ehi_waypoints_menu_desc" : "",
@@ -252,7 +258,7 @@
     "ehi_show_waypoints_pager_desc" : "当有待回复的对讲机时显示导航点\n\n需要勾选'显示对讲机剩余时间追踪器'选项以正常使用",
 
     "ehi_show_waypoints_cameras" : "显示已设置回路的摄像头导航点",
-    "ehi_show_waypoints_cameras_desc" : "当摄像头被设置摄像头回路时显示导航点\n\nOption 'Show Camera Loop' must be enabled in order to work",
+    "ehi_show_waypoints_cameras_desc" : "当摄像头被设置摄像头回路时显示导航点\n\n需要勾选'显示摄像头回路追踪器'选项以正常使用",
 
     "ehi_show_waypoints_zipline" : "显示滑索导航点",
     "ehi_show_waypoints_zipline_desc" : "在使用中的滑索上显示导航点\n仅显示滑索重新可用时间\n\n需要勾选'显示滑索追踪器'选项以正常使用",

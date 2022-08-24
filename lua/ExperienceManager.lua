@@ -31,13 +31,6 @@ function ExperienceManager:init(...)
 end
 
 function ExperienceManager:EHIInitFinalize()
-    local pda9_rewards = tweak_data.mutators and tweak_data.mutators.piggybank and tweak_data.mutators.piggybank.rewards or { default = 1000 }
-    local pda9_levels = tweak_data.mutators and tweak_data.mutators.piggybank and tweak_data.mutators.piggybank.pig_levels
-    if not pda9_levels then
-        for i = 1, 10, 1 do
-            pda9_levels[i] = { bag_requirement = 0 }
-        end
-    end
     self._xp =
     {
         mutator_xp_reduction = 0,
@@ -45,13 +38,7 @@ function ExperienceManager:EHIInitFinalize()
         in_custody = false,
         alive_players = Global.game_settings.single_player and 1 or 0,
         gage_bonus = 1,
-        stealth = true,
-        pda9 =
-        {
-            rewards = pda9_rewards,
-            levels = pda9_levels
-        },
-        current_difficulty = Global and Global.game_settings and Global.game_settings.difficulty or "normal"
+        stealth = true
     }
     if xp_format == 3 then -- Multiply
         local function f()
@@ -109,7 +96,6 @@ end
 
 function ExperienceManager:SetMutatorData(data)
     self._xp.mutator_xp_reduction = data.xp_reduction * -1
-    self._xp.pda9_event_active = data.pda9_event_active
 end
 
 function ExperienceManager:SetGagePackageBonus(bonus)
@@ -300,17 +286,8 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 	bonus_xp = self._xp.limited_xp_bonus
 	extra_bonus_dissect = math_round(total_xp * bonus_xp - total_xp)
     total_xp = total_xp + extra_bonus_dissect
-    if self._xp.pda9_event_active then
-        local pig_level = self._xp.pda9_event_exploded_level or false
-        local bonus_piggybank_dissect = math_round(pig_level and (self._xp.pda9.rewards[self._xp.current_difficulty] or self._xp.pda9.rewards.default) * self._xp.pda9.levels[pig_level].bag_requirement or 0)
-        total_xp = total_xp + bonus_piggybank_dissect
-    end
 	local bonus_mutators_dissect = total_xp * self._xp.mutator_xp_reduction
 	total_xp = total_xp + bonus_mutators_dissect
-    if self._xp.pda9_event_active then
-        local bonus_event_double_dissect = total_xp
-	    total_xp = total_xp + bonus_event_double_dissect
-    end
 	return total_xp
 end
 
@@ -329,9 +306,4 @@ end
 
 function ExperienceManager:BlockXPUpdate()
     self._xp_update_blocked = true
-end
-
-function ExperienceManager:SetPiggyBankExplodedLevel(level)
-    self._xp.pda9_event_exploded_level = level
-    self:RecalculateXP()
 end

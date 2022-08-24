@@ -24,14 +24,20 @@
     "ehi_achievement_ok" : "โอเค",
     "ehi_achievement_done" : "เสร็จสิ้น",
     "ehi_achievement_pass" : "อนุมัติ",
+    "ehi_achievement_defend" : "DEFEND",
     "ehi_achievement_finish" : "จบด่าน",
+    "ehi_achievement_secure" : "SECURE",
+    "ehi_achievement_no_down" : "NO DOWN",
     "ehi_achievement_destroy" : "ทำลาย",
+    "ehi_achievement_alarm" : "ALARM",
     "ehi_achievement_ready" : "พร้อม",
     "ehi_achievement_loud" : "โหมดบู๊",
+    "ehi_achievement_mark" : "MARK",
     "ehi_achievement_push" : "กดปุ่ม",
     "ehi_achievement_hack" : "แฮ็ก",
     "ehi_achievement_land" : "ลงจอด",
     "ehi_achievement_find" : "ค้นหา",
+    "ehi_achievement_bring" : "BRING",
     "ehi_achievement_fail" : "ล้มเหลว",
 
     "ehi_r": "แดง",
@@ -71,6 +77,9 @@
 
     "ehi_show_tracker_bg" : "แสดงพื้นหลังไอคอนติดตาม",
     "ehi_show_tracker_bg_desc" : "Shows tracker background:\nเมื่อปิดตัวเลือกนี้ พื้นหลังของไอคอนติดตามจะถูกซ่อนและไม่มีการแสดงแอนิเมชันใดๆ ",
+    
+    "ehi_show_tracker_corners" : "Show Tracker Corners",
+    "ehi_show_tracker_corners_desc" : "Shows white corners in tracker",
 
     "ehi_show_one_icon" : "แสดงรูปภาพของไอคอนติดตามเพียง 1 รูป",
     "ehi_show_one_icon_desc" : "เมื่อเลือกตัวเลือกนี้ ขณะเล่นเกม จะแสดงรูปภาพของไอคอนติดตามเพียง 1 รูปเท่านั้น\nรูปภาพแสดงไอคอนอธิบายถัดจากนั้นจะถูกซ่อน",
@@ -128,6 +137,9 @@
 
     "ehi_show_timers" : "แสดงไอคอนติดตามเกี่ยวกับเวลา",
     "ehi_show_timers_desc" : "แสดงไอคอนติดตามเกี่ยวกับเวลา เช่น การแฮคระบบ, สว่าน, เลื่อย ฯลฯ",
+
+    "ehi_show_camera_loop" : "Show Camera Loop",
+    "ehi_show_camera_loop_desc" : "Shows a tracker when a security camera is looped",
 
     "ehi_show_zipline_timer" : "แสดงไอคอนติดตามการใช้โหนสลิง",
     "ehi_show_zipline_timer_desc" : "แสดงค่า 2 ไอคอนติดตามที่เกี่ยวข้องกับการใช้โหนสลิงหรือ Zipline\nไอคอนบรรทัดแรกแสดงเวลาที่ไอเท็มจะไปถึงผู้เล่นหรือตำแหน่งที่ปลายทาง, ไอคอนบรรทัดที่สองแสดงเวลาที่รอกจะกลับมาที่ตำแหน่งเริ่มต้นอีกครั้ง",
@@ -223,6 +235,9 @@
 
     "ehi_waypoints_menu" : "จุดอ้างอิง",
     "ehi_waypoints_menu_desc" : "จุดอ้างอิง (Waypoints) เป็นไอคอนในเกมที่แสดงที่วัตถุนั้นๆ โดยตรง",
+
+    "ehi_show_assault_delay_tracker" : "Show Assault Delay Tracker",
+    "ehi_show_assault_delay_tracker_desc" : "Shows a tracker for how long the assault delay will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
 
     "ehi_show_waypoints" : "แสดงจุดอ้างอิง",
     "ehi_show_waypoints_desc" : "แสดงจุดอ้างอิงในเกม",

@@ -6,7 +6,7 @@ local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local c4 = { time = 5, id = "C4", icons = { Icon.C4 } }
 local triggers = {
-    [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, "pd2_goto" }, waypoint = { position = Vector3(-17900, 7800, 56.6182) } },
+    [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position = Vector3(-17900, 7800, 56.6182) } },
     [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape } },
     -- C4 (Doors)
     [100985] = c4,

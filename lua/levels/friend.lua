@@ -41,11 +41,9 @@ local element_sync_triggers =
 {
     [100241] = { time = 662/30, id = "EscapeBoat", icons = Icon.BoatEscape, hook_element = 100216 },
 }
-local random_car = { time = 18, id = "RandomCar", icons = { Icon.Heli, "pd2_goto" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" } }
-local caddilac = { time = 18, id = "Caddilac", icons = { Icon.Heli, "pd2_goto" } }
+local random_car = { time = 18, id = "RandomCar", icons = { Icon.Heli, Icon.Goto }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" } }
+local caddilac = { time = 18, id = "Caddilac", icons = { Icon.Heli, Icon.Goto } }
 local triggers = {
-    [100109] = { time = 30 + 1 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.RemoveTriggerWhenExecuted },
-
     [100103] = { time = 15 + 5, random_time = 10, id = "BileArrival", icons = { Icon.Heli } },
 
     [100238] = random_car,
@@ -54,7 +52,7 @@ local triggers = {
     [100313] = random_car,
     [100314] = random_car,
 
-    [102231] = { time = 20, id = "BileDropCar", icons = { Icon.Heli, Icon.Car, "pd2_goto" } },
+    [102231] = { time = 20, id = "BileDropCar", icons = { Icon.Heli, Icon.Car, Icon.Goto } },
 
     [100718] = caddilac,
     [100720] = caddilac,
@@ -62,7 +60,7 @@ local triggers = {
     [100733] = caddilac,
     [100734] = caddilac,
 
-    [102253] = { time = 11, id = "BileDropCaddilac", icons = { Icon.Heli, { icon = Icon.Car, color = Color("FFFF00") }, "pd2_goto" } },
+    [102253] = { time = 11, id = "BileDropCaddilac", icons = { Icon.Heli, { icon = Icon.Car, color = Color("FFFF00") }, Icon.Goto } },
 
     [100213] = { time = 450/30, id = "EscapeCar1", icons = Icon.CarEscape },
     [100214] = { time = 160/30, id = "EscapeCar2", icons = Icon.CarEscape },
@@ -85,7 +83,12 @@ local achievements =
     [102280] = { id = "friend_5", special_function = SF.IncreaseProgress }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+local other =
+{
+    [100109] = { time = 30 + 1 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.RemoveTriggerWhenExecuted, condition = EHI:GetOption("show_assault_delay_tracker") },
+}
+
+EHI:ParseTriggers(triggers, achievements, other)
 EHI:ShowLootCounter({ max = 16 })
 if EHI:GetOption("show_achievement") and mayhem_and_up then
     EHI:AddOnAlarmCallback(function()

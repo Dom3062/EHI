@@ -213,6 +213,22 @@
             "value": "show_laser_tracker",
             "default_value": false,
             "ehi_ver" : 10
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_assault_delay_tracker_choice",
+            "title": "ehi_show_assault_delay_tracker",
+            "description": "ehi_show_assault_delay_tracker_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_assault_delay_tracker",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_assault_delay_tracker",
+            "default_value": false,
+            "ehi_ver" : 78
         }
     ]
 }

@@ -42,14 +42,12 @@ local function AddTracker(peer_id)
         end
         return
     end
-    if managers.ehi:TrackerExists("CustodyTime") then
-        local tracker = managers.ehi:GetTracker("CustodyTime")
-        if tracker then
-            if tracker:PeerExists(peer_id) then
-                tracker:IncreasePeerCustodyTime(peer_id, tweak_data.respawn_time_penalty)
-            else
-                tracker:AddPeerCustodyTime(peer_id, delay)
-            end
+    local tracker = managers.ehi:GetTracker("CustodyTime")
+    if tracker then
+        if tracker:PeerExists(peer_id) then
+            tracker:IncreasePeerCustodyTime(peer_id, tweak_data.respawn_time_penalty)
+        else
+            tracker:AddPeerCustodyTime(peer_id, delay)
         end
     else
         managers.ehi:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, delay)
@@ -72,7 +70,6 @@ function CopDamage:_on_car_damage_received(attacker_unit)
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
         if peer_id and not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
-            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 75)")
             AddTracker(peer_id)
         end
     end
@@ -82,7 +79,6 @@ function HuskCopDamage:_on_car_damage_received(attacker_unit)
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
         if peer_id and not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
-            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 85)")
             AddTracker(peer_id)
         end
     end
@@ -92,7 +88,6 @@ function CivilianDamage:_on_car_damage_received(attacker_unit)
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
         if peer_id and not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
-            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 95)")
             AddTracker(peer_id)
         end
     end
@@ -102,7 +97,6 @@ end
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
         if peer_id then
-            EHI:Log("Penalty added to peer_id: " .. tostring(peer_id) .. " (Line 105)")
             AddTracker(peer_id)
         end
     end

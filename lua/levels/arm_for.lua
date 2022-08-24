@@ -50,3 +50,24 @@ for i = 0, 500, 100 do
     tbl[EHI:GetInstanceElementID(100022, i)] = { icons = { Icon.Vault }, remove_on_alarm = true }
 end
 EHI:UpdateUnits(tbl)
+
+local MissionDoorPositions =
+{
+    -- Vaults
+    [1] = Vector3(-150, -1100, 685),
+    [2] = Vector3(-1750, -1200, 685),
+    [3] = Vector3(750, -1200, 685),
+    [4] = Vector3(2350, -1100, 685),
+    [5] = Vector3(-2650, -1100, 685),
+    [6] = Vector3(3250, -1200, 685)
+}
+local MissionDoorIndex =
+{
+    [1] = { w_id = 100835 },
+    [2] = { w_id = 100253 },
+    [3] = { w_id = 100838 },
+    [4] = { w_id = 100840 },
+    [5] = { w_id = 102288 },
+    [6] = { w_id = 102593 }
+}
+EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)

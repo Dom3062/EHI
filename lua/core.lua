@@ -48,6 +48,7 @@ _G.EHI =
     OnAlarmCallback = {},
     OnCustodyCallback = {},
     AchievementCounter = {},
+    KillCounter = {},
 
     _base_delay = {},
     _element_delay = {},
@@ -169,6 +170,8 @@ _G.EHI =
         Sentry = "wp_sentry",
         PCHack = "wp_hack",
         Glasscutter = "equipment_glasscutter",
+        Loot = "pd2_loot",
+        Goto = "pd2_goto",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarLootDrop = { "pd2_car", "pd2_lootdrop" },
@@ -367,6 +370,7 @@ function EHI:LoadDefaultValues()
 
         -- Visuals
         show_tracker_bg = true,
+        show_tracker_corners = true,
         show_one_icon = false,
 
         -- Trackers
@@ -443,6 +447,7 @@ function EHI:LoadDefaultValues()
         show_pager_callback = true,
         show_enemy_count_tracker = true,
         show_laser_tracker = false,
+        show_assault_delay_tracker = true,
 
         -- Waypoints
         show_waypoints = true,
@@ -1639,6 +1644,33 @@ function EHI:HookAchievementCounter()
     end
 end
 
+function EHI:ShowAchievementKillCounter(id, id_stat)
+    if self._cache.AchievementsAreDisabled or not show_achievement or self:IsAchievementUnlocked2(id) then
+        return
+    end
+    local progress = self:GetAchievementProgress(id_stat)
+    local tweak_data = tweak_data.achievement.persistent_stat_unlocks[id_stat]
+    if not tweak_data then
+        self:Log("No statistics found for achievement " .. tostring(id) .. "; Stat: " .. tostring(id_stat))
+        return
+    end
+    local max = tweak_data[1] and tweak_data[1].at or 0
+    if progress >= max then
+        return
+    end
+    managers.ehi:AddAchievementKillCounter(id, progress, max)
+    self.KillCounter[id_stat] = id
+    if not self.KillCounterHook then
+        EHI:Hook(AchievmentManager, "award_progress", function(am, stat, value)
+            local s = EHI.KillCounter[stat]
+            if s then
+                managers.ehi:IncreaseTrackerProgress(s, value)
+            end
+        end)
+        self.KillCounterHook = true
+    end
+end
+
 function EHI:AddLoadSyncFunction(f)
     if self._cache.Host then
         return
@@ -1649,10 +1681,15 @@ end
 --[[
     This is bad, rethink the call flow with parameters
 ]]
+---@param tbl table
 function EHI:UpdateUnits(tbl)
     if not self:GetOption("show_timers") then
         return
     end
+    self:UpdateUnitsNoCheck(tbl)
+end
+
+function EHI:UpdateUnitsNoCheck(tbl)
     self:FinalizeUnits(tbl)
     for id, data in pairs(tbl) do
         self._cache.MissionUnits[id] = data
@@ -1685,7 +1722,6 @@ function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_cont
     end
 end
 
--- Unused, probably won't work
 function EHI:SetMissionDoorPosAndIndex(pos, index)
     if TimerGui.SetMissionDoorPosAndIndex then
         TimerGui.SetMissionDoorPosAndIndex(pos, index)
@@ -1752,9 +1788,17 @@ function EHI:IsAchievementLocked2(achievement)
     return a and not a.awarded
 end
 
+function EHI:IsAchievementUnlocked2(achievement)
+    return not self:IsAchievementLocked2(achievement)
+end
+
 if EHI.debug then -- For testing purposes
     function EHI:IsAchievementLocked2(achievement)
         return true
+    end
+
+    function EHI:IsAchievementUnlocked2(achievement)
+        return false
     end
 
     function EHI:DebugInstance(instance_name)

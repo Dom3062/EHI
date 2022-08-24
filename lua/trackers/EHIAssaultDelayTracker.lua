@@ -12,7 +12,6 @@ local level_id = Global.game_settings and Global.game_settings.level_id or "bran
 local level_data = tweak_data.levels[level_id]
 local ai_group = level_data and level_data.group_ai_state or "besiege"
 local tweak_values = tweak_data.group_ai[ai_group].assault.delay
-local anticipation_values = tweak_data.group_ai[ai_group].assault.hostage_hesitation_delay
 EHIAssaultDelayTracker = class(EHIWarningTracker)
 EHIAssaultDelayTracker.IsClient = EHI._cache.Client
 function EHIAssaultDelayTracker:init(panel, params)
@@ -77,9 +76,8 @@ function EHIAssaultDelayTracker:CalculateBreakTime(diff)
     end
     local difficulty_point_index = i
     local difficulty_ramp = (diff - (ramp[i - 1] or 0)) / ((ramp[i] or 1) - (ramp[i - 1] or 0))
-    local base_delay = math.lerp(tweak_values[difficulty_point_index], tweak_values[difficulty_point_index + 1], difficulty_ramp)
-    local anticipation_delay = math.lerp(anticipation_values[difficulty_point_index], anticipation_values[difficulty_point_index + 1], difficulty_ramp)
-    return base_delay + anticipation_delay
+    local base_delay = lerp(tweak_values[difficulty_point_index], tweak_values[difficulty_point_index + 1], difficulty_ramp)
+    return base_delay + 30
 end
 
 function EHIAssaultDelayTracker:SetHostages(has_hostages)

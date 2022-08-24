@@ -37,9 +37,6 @@ local triggers = {
     [EHI:GetInstanceElementID(100045, 1300)] = { id = "reader", special_function = SF.PauseTracker },
     [EHI:GetInstanceElementID(100051, 1300)] = { id = "reader", special_function = SF.UnpauseTracker },
 
-    -- +30s anticipation
-    --[101937] = { time = 10 + 1 + 40 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 } },
-
     [104299] = { time = 5, id = "C4GasStation", icons = { Icon.C4 } },
 
     -- Calls with Commissar
@@ -63,7 +60,13 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers(triggers)
+local other =
+{
+    -- +30s anticipation
+    [101937] = { time = 10 + 1 + 40 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 }, condition = EHI:GetOption("show_assault_delay_tracker") },
+}
+
+EHI:ParseTriggers(triggers, nil, other)
 EHI:RegisterCustomSpecialFunction(AddTimeByPreplanning, function(id, trigger, element, enabled)
     local t = 0
     if managers.preplanning:IsAssetBought(trigger.data.id) then

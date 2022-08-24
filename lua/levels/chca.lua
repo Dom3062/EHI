@@ -4,7 +4,6 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local mayhem_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
 local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
 local vault_reset_time = 5 -- Normal
 if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
@@ -48,7 +47,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100210, 14670)] = { time = 3 + vault_reset_time, id = "KeypadReset", icons = { Icon.Wait } },
     [EHI:GetInstanceElementID(100176, 14670)] = { time = 30, id = "KeypadResetECMJammer", icons = { Icon.Wait } },
 
-    [102571] = { time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = { Icon.Heli, Icon.Winch, "pd2_goto" } },
+    [102571] = { time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = { Icon.Heli, Icon.Winch, Icon.Goto } },
 
     -- Winch (the element is actually in instance "chas_heli_drop")
     [EHI:GetInstanceElementID(100097, 21420)] = { time = 150, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable },
@@ -181,7 +180,7 @@ local achievements =
             EHI:AddOnAlarmCallback(chca_9_fail)
         end
     end },
-    [3] = { max = 8, id = "chca_10", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = mayhem_and_up },
+    [3] = { max = 8, id = "chca_10", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) },
     [102944] = { id = "chca_10", special_function = SF.IncreaseProgress }, -- Bodybag thrown
     [103371] = { id = "chca_10", special_function = SF.SetAchievementFailed }, -- Civie killed
 

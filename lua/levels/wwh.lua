@@ -8,6 +8,11 @@ local triggers = {
     [100323] = { id = "Fuel", special_function = SF.PauseTracker }
 }
 
+if Network:is_client() then
+    triggers[100047] = { time = 60, id = "Fuel", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100049] = { time = 30, id = "Fuel", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.AddTrackerIfDoesNotExist }
+end
+
 local DisableWaypoints = {}
 
 for i = 6850, 7525, 225 do
@@ -18,12 +23,18 @@ end
 local achievements =
 {
     [100946] = { max = 4, id = "wwh_10", class = TT.AchievementProgress },
-    [100944] = { id = "wwh_9", status = "defend", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
+    [100012] = { id = "wwh_9", status = "defend", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [101250] = { id = "wwh_9", special_function = SF.SetAchievementFailed },
     [100082] = { id = "wwh_9", special_function = SF.SetAchievementComplete },
     [101226] = { id = "wwh_10", special_function = SF.IncreaseProgress }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+local other =
+{
+    [100946] = { time = 10 + 5 + 3 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
+}
+
+EHI:ParseTriggers(triggers, achievements, other)
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 8 })
+EHI._cache.diff = 1

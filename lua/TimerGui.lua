@@ -9,9 +9,10 @@ if not EHI:GetOption("show_timers") then
     return
 end
 
+local Icon = EHI.Icons
+
 local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")
 local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
-local level_id = Global.game_settings.level_id
 -- [index] = Vector3(x, y, z)
 local MissionDoorPositions = {}
 -- [index] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes", w_ids = "Table of waypoints and their ID", unit_id = "ID of the door" }
@@ -19,145 +20,10 @@ local MissionDoorPositions = {}
 ---- Indexes must match or it won't work
 ---- "w_ids" has a higher priority than "w_id"
 local MissionDoorIndex = {}
-if level_id == "firestarter_2" then -- Firestarter Day 2
-    MissionDoorPositions =
-    {
-        -- Security doors
-        [1] = Vector3(-2357.87, -3621.42, 489.107),
-        [2] = Vector3(1221.42, -2957.87, 489.107),
-        [3] = Vector3(1342.13, -2621.42, 89.1069), --101867
-        [4] = Vector3(-2830.08, 341.886, 492.443) --102199
-    }
-    MissionDoorIndex =
-    {
-        [1] = { w_id = 101899 },
-        [2] = { w_id = 101834 },
-        [3] = { w_id = 101782 },
-        [4] = { w_id = 101783 }
-    }
-elseif level_id == "framing_frame_1" or level_id == "gallery" then -- Framing Frame Day 1 / Art Gallery
-    MissionDoorPositions =
-    {
-        -- Security doors
-        [1] = Vector3(-827.08, 115.886, 92.4429),
-        [2] = Vector3(-60.1138, 802.08, 92.4429),
-        [3] = Vector3(-140.886, -852.08, 92.4429)
-    }
-    MissionDoorIndex =
-    {
-        [1] = { w_id = 103191 },
-        [2] = { w_id = 103188 },
-        [3] = { w_id = 103202 }
-    }
-elseif level_id == "arm_for" then -- Transport: Train Heist
-    MissionDoorPositions =
-    {
-        -- Vaults
-        [1] = Vector3(-150, -1100, 685),
-        [2] = Vector3(-1750, -1200, 685),
-        [3] = Vector3(750, -1200, 685),
-        [4] = Vector3(2350, -1100, 685),
-        [5] = Vector3(-2650, -1100, 685),
-        [6] = Vector3(3250, -1200, 685)
-    }
-    MissionDoorIndex =
-    {
-        [1] = { w_id = 100835 },
-        [2] = { w_id = 100253 },
-        [3] = { w_id = 100838 },
-        [4] = { w_id = 100840 },
-        [5] = { w_id = 102288 },
-        [6] = { w_id = 102593 }
-    }
-elseif level_id == "big" then -- Big Bank
-    MissionDoorPositions =
-    {
-        -- Server Room
-        [1] = Vector3(733.114, 1096.92, -907.557),
-        [2] = Vector3(1419.89, -1897.92, -907.557),
-        [3] = Vector3(402.08, -1266.89, -507.56),
-
-        -- Roof
-        [4] = Vector3(503.08, 1067.11, 327.432),
-        [5] = Vector3(503.08, -1232.89, 327.432),
-        [6] = Vector3(3446.92, -1167.11, 327.432),
-        [7] = Vector3(3466.11, 1296.92, 327.432)
-    }
-    MissionDoorIndex =
-    {
-        [1] = { w_id = 103457, restore = true, unit_id = 104582 },
-        [2] = { w_id = 103461, restore = true, unit_id = 104584 },
-        [3] = { w_id = 103465, restore = true, unit_id = 104585 },
-        [4] = { w_id = 101306, restore = true, unit_id = 100311 },
-        [5] = { w_id = 106362, restore = true, unit_id = 103322 },
-        [6] = { w_id = 106372, restore = true, unit_id = 105317 },
-        [7] = { w_id = 106382, restore = true, unit_id = 106336 },
-    }
-elseif level_id == "hox_2" then -- Hoxton Breakout Day 2
-    local SecurityOffice = { w_id = EHI:GetInstanceElementID(100026, 6690) }
-    MissionDoorPositions =
-    {
-        -- Evidence
-        [1] = Vector3(-1552.84, 816.472, -9.11819),
-
-        -- Basement (Escape)
-        [2] = Vector3(-744.305, 5042.19, -409.118),
-
-        -- Archives
-        [3] = Vector3(817.472, 2884.84, -809.118),
-
-        -- Security Office
-        [4] = Vector3(-1207.53, 4234.84, -409.118),
-        [5] = Vector3(807.528, 4265.16, -9.11819)
-    }
-    MissionDoorIndex =
-    {
-        [1] = { w_id = 101562 },
-        [2] = { w_id = 102017 },
-        [3] = { w_id = 101345 },
-        [4] = SecurityOffice,
-        [5] = SecurityOffice
-    }
-elseif level_id == "born" then -- The Biker Heist Day 1
-    MissionDoorPositions =
-    {
-        -- Workshop
-        [1] = Vector3(-3798.92, -1094.9, -6.52779),
-
-        -- Safe with bike mask
-        [2] = Vector3(1570.02, -419.693, 185.724)
-    }
-    MissionDoorIndex =
-    {
-        [1] = { w_id = 101580 },
-        [2] = { w_ids = { EHI:GetInstanceElementID(100007, 4850), EHI:GetInstanceElementID(100007, 5350) } }
-    }
-elseif level_id == "constantine_smackdown2_lvl" then -- Truck Hustle
-    MissionDoorPositions =
-    {
-        [1] = Vector3(5636.56, 7026.42, -1877.75),
-        [2] = Vector3(5743.57, 5743.44, -1877.75),
-        [3] = Vector3(5260.62, 5334.95, -1890.75),
-        [4] = Vector3(-4420.84, -4693.55, -1877.75),
-        [5] = Vector3(-3930.91, -4684.99, -1877.75),
-        [6] = Vector3(-4313.83, -5976.53, -1877.75)
-    }
-    MissionDoorIndex =
-    {
-        [1] = { w_id = EHI:GetInstanceElementID(100006, 0) },
-        [2] = { w_id = EHI:GetInstanceElementID(100006, 250) },
-        [3] = { w_id = EHI:GetInstanceElementID(100006, 500) },
-        [4] = { w_id = EHI:GetInstanceElementID(100006, 750) },
-        [5] = { w_id = EHI:GetInstanceElementID(100006, 1000) },
-        [6] = { w_id = EHI:GetInstanceElementID(100006, 1250) }
-    }
-end
 
 function TimerGui.SetMissionDoorPosAndIndex(pos, index)
     MissionDoorPositions = pos
     MissionDoorIndex = index
-    EHI:PrintTable(MissionDoorPositions)
-    EHI:PrintTable(MissionDoorIndex)
 end
 
 local original =
@@ -177,7 +43,7 @@ local original =
 function TimerGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    local icon = unit:base().is_drill and "pd2_drill" or unit:base().is_hacking_device and "wp_hack" or unit:base().is_saw and "pd2_generic_saw" or "faster"
+    local icon = unit:base().is_drill and Icon.Drill or unit:base().is_hacking_device and Icon.PCHack or unit:base().is_saw and "pd2_generic_saw" or Icon.Wait
     self._ehi_icon = { { icon = icon } }
 end
 
@@ -409,8 +275,12 @@ end
 function TimerGui:Finalize()
     if self._ignore or (self._remove_on_power_off and not self._powered) then
         self:RemoveTracker()
+        return
     elseif self._icons then
 		managers.ehi:SetTrackerIcon(self._ehi_key, self._icons[1])
 		managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icons[1])
 	end
+    if self._started and not self._done and self._unit:mission_door_device() then
+        self:PostStartTimer()
+    end
 end

@@ -102,10 +102,45 @@ if very_hard_and_up then
     end)
 end
 
+local function pent_10(instance, unit_id, unit_data, unit)
+    unit:digital_gui():SetRemoveOnPause(true)
+    unit:digital_gui():SetWarning(true)
+    if EHI:GetOption("show_achievement") then
+        unit:digital_gui():SetIcons(EHI:GetAchievementIcon("pent_10"))
+        unit:digital_gui():pent_10()
+    end
+end
+
+function DigitalGui:pent_10()
+    local key = self._ehi_key or tostring(self._unit:key())
+    local hook_key = "EHI_pent_10_" .. key
+    if EHI:GetOption("show_achievement_started_popup") then
+        local function AchievementStarted(...)
+            managers.hud:ShowAchievementStartedPopup("pent_10")
+        end
+        if self.TimerStartCountDown then
+            EHI:HookWithID(self, "TimerStartCountDown", hook_key .. "_start", AchievementStarted)
+        else
+            EHI:HookWithID(self, "timer_start_count_down", hook_key .. "_start", AchievementStarted)
+        end
+    end
+    if EHI:GetOption("show_achievement_failed_popup") then
+        EHI:HookWithID(self, "_timer_stop", hook_key .. "_end", function(...)
+            managers.hud:ShowAchievementFailedPopup("pent_10")
+        end)
+    end
+end
+
 local tbl =
 {
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [102452] = { icons = EHI:GetAchievementIcon("pent_10"), remove_on_pause = true, warning = true },
+    [102452] = { f = pent_10 }
+}
+EHI:UpdateUnitsNoCheck(tbl)
+
+local tbl2 =
+{
+    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
     [103872] = { ignore = true }
 }
-EHI:UpdateUnits(tbl)
+EHI:UpdateUnits(tbl2)

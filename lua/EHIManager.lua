@@ -451,9 +451,22 @@ function EHIManager:ShowLootCounter(max, additional_loot, offset, stay_on_screen
         max = max + (additional_loot or 0),
         offset = offset,
         stay_on_screen = stay_on_screen,
-        icons = { "pd2_loot" },
+        icons = { EHI.Icons.Loot },
         exclude_from_sync = true,
         class = "EHILootTracker"
+    })
+end
+
+function EHIManager:AddAchievementKillCounter(id, progress, max)
+    local icon = self:GetAchievementIcon(id)
+    self:AddTracker({
+        id = id,
+        progress = progress,
+        max = max,
+        icons = { icon },
+        delay_popup = true,
+        exclude_from_sync = true,
+        class = EHI.Trackers.AchievementProgress
     })
 end
 

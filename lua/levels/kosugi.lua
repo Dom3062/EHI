@@ -121,7 +121,7 @@ local DisableTriggerAndExecute = EHI:GetFreeCustomSpecialFunctionID()
 local trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local kosugi_3 = { id = "kosugi_3", special_function = SF.IncreaseProgress }
 local triggers = {
-    [1] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, "pd2_goto" } },
+    [1] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto } },
     [2] = { special_function = SF.RemoveTriggers, data = { 101131, 100900 } },
     [101131] = trigger,
     [100900] = trigger,

@@ -15,7 +15,7 @@ function GroupAIStateBesiege:set_phalanx_damage_reduction_buff(damage_reduction,
     managers.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(damage_reduction or 0)))
 end
 
-if false then
+if EHI:GetOption("show_assault_delay_tracker") then
     original._begin_assault_task = GroupAIStateBesiege._begin_assault_task
     function GroupAIStateBesiege:_begin_assault_task(assault_areas, ...)
         original._begin_assault_task(self, assault_areas, ...)

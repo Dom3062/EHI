@@ -57,3 +57,18 @@ EHI:ShowAchievementLootCounter({
 EHI:AddOnAlarmCallback(function()
     managers.ehi:SetAchievementFailed("pink_panther")
 end)
+
+local MissionDoorPositions =
+{
+    -- Security doors
+    [1] = Vector3(-827.08, 115.886, 92.4429),
+    [2] = Vector3(-60.1138, 802.08, 92.4429),
+    [3] = Vector3(-140.886, -852.08, 92.4429)
+}
+local MissionDoorIndex =
+{
+    [1] = { w_id = 103191 },
+    [2] = { w_id = 103188 },
+    [3] = { w_id = 103202 }
+}
+EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)

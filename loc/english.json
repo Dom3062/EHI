@@ -78,6 +78,9 @@
     "ehi_show_tracker_bg" : "Show Tracker Background",
     "ehi_show_tracker_bg_desc" : "Shows tracker background\nWhen disabled, the background is hidden and animation is not visible",
 
+    "ehi_show_tracker_corners" : "Show Tracker Corners",
+    "ehi_show_tracker_corners_desc" : "Shows white corners in tracker",
+
     "ehi_show_one_icon" : "Show 1 Icon in Tracker",
     "ehi_show_one_icon_desc" : "Shows 1 icon in tracker when enabled\nAll icons are visible when this option is disabled",
 
@@ -229,6 +232,9 @@
 
     "ehi_show_laser_tracker" : "Show Laser Tracker",
     "ehi_show_laser_tracker_desc" : "Shows a tracker for lasers that cycle every few seconds",
+
+    "ehi_show_assault_delay_tracker" : "Show Assault Delay Tracker",
+    "ehi_show_assault_delay_tracker_desc" : "Shows a tracker for how long the assault delay will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
 
     "ehi_waypoints_menu" : "Waypoints",
     "ehi_waypoints_menu_desc" : "",

@@ -50,3 +50,18 @@ local tbl =
     [101086] = { remove_vanilla_waypoint = true, waypoint_id = 101562 }
 }
 EHI:UpdateUnits(tbl)
+
+local MissionDoorPositions =
+{
+    -- Workshop
+    [1] = Vector3(-3798.92, -1094.9, -6.52779),
+
+    -- Safe with bike mask
+    [2] = Vector3(1570.02, -419.693, 185.724)
+}
+local MissionDoorIndex =
+{
+    [1] = { w_id = 101580 },
+    [2] = { w_ids = { EHI:GetInstanceElementID(100007, 4850), EHI:GetInstanceElementID(100007, 5350) } }
+}
+EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)

@@ -17,7 +17,7 @@ local triggers = {
     [100647] = { time = 10, id = "SantaTalk", icons = { "pd2_talk" }, special_function = SF.ExecuteIfElementIsEnabled },
     [100159] = { time = 5 + 7 + 7.3, id = "Escape", icons = { Icon.Escape }, special_function = SF.ExecuteIfElementIsEnabled },
 
-    [100578] = { time = 9, id = "C4", icons = { Icon.Heli, Icon.C4, "pd2_goto" }, special_function = SF.SetTimeOrCreateTracker }
+    [100578] = { time = 9, id = "C4", icons = { Icon.Heli, Icon.C4, Icon.Goto }, special_function = SF.SetTimeOrCreateTracker }
 }
 
 local DisableWaypoints =

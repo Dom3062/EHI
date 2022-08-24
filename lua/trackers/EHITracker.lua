@@ -69,6 +69,7 @@ local function CreateIcon(self, i, texture, texture_rect, color, alpha, visible,
 end
 
 local bg_visibility = EHI:GetOption("show_tracker_bg")
+local corner_visibility = EHI:GetOption("show_tracker_corners")
 
 EHITracker = class()
 EHITracker._update = true
@@ -107,10 +108,10 @@ function EHITracker:init(panel, params)
         blend_mode = "add"
     })
     self._time_bg_box:child("bg"):set_visible(bg_visibility)
-    self._time_bg_box:child("left_top"):set_visible(bg_visibility)
-    self._time_bg_box:child("left_bottom"):set_visible(bg_visibility)
-    self._time_bg_box:child("right_top"):set_visible(bg_visibility)
-    self._time_bg_box:child("right_bottom"):set_visible(bg_visibility)
+    self._time_bg_box:child("left_top"):set_visible(bg_visibility and corner_visibility)
+    self._time_bg_box:child("left_bottom"):set_visible(bg_visibility and corner_visibility)
+    self._time_bg_box:child("right_top"):set_visible(bg_visibility and corner_visibility)
+    self._time_bg_box:child("right_bottom"):set_visible(bg_visibility and corner_visibility)
     self._text = self._time_bg_box:text({
         name = "text1",
         text = self:Format(),

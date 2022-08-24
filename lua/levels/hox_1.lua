@@ -61,3 +61,4 @@ for i = 1350, 4950, 400 do
     tbl[EHI:GetInstanceElementID(100025, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100072, i), restore_waypoint_on_done = true }
 end
 EHI:UpdateUnits(tbl)
+EHI._cache.diff = 1

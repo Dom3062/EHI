@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local drill_spawn_delay = { time = 30, id = "DrillSpawnDelay", icons = { Icon.Drill, "pd2_goto" } }
+local drill_spawn_delay = { time = 30, id = "DrillSpawnDelay", icons = { Icon.Drill, Icon.Goto } }
 local CrashIcons = { Icon.PCHack, Icon.Fix, "pd2_question" }
 if EHI:GetOption("show_one_icon") then
     CrashIcons = { Icon.Fix }
