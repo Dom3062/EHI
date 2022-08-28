@@ -9,6 +9,7 @@
     Color animation
 ]]
 
+local EHI = EHI
 local function make_fine_text(text_obj)
     local x, y, w, h = text_obj:text_rect()
 
@@ -80,16 +81,6 @@ function EHIMenu:init()
         wrap = true,
         word_wrap = true,
     })
-    self._tooltip_bottom = self._panel:text({
-        name = "tooltip_bottom",
-        font_size = 18,
-        font = tweak_data.menu.pd2_medium_font,
-        y = 10,
-        w = 500,
-        align = "right",
-        wrap = true,
-        word_wrap = true,
-    })
     local options_bg = self._panel:bitmap({
         name = "options_bg",
         texture = "guis/textures/pd2_mod_ehi/menu_background",
@@ -105,7 +96,6 @@ function EHIMenu:init()
     })
     self._options_panel:set_right(self._panel:w() - 10)
     self._tooltip:set_right(self._options_panel:x() - 20)
-    self._tooltip_bottom:set_right(self._options_panel:x() - 20)
     if managers.menu:is_pc_controller() then
         local back_button = self._panel:panel({
             name = "back_button",
@@ -125,7 +115,7 @@ function EHIMenu:init()
         back_button:set_size(title:w() + 16, title:h() + 2)
         title:set_center(back_button:w() / 2, back_button:h() / 2)
         back_button:set_righttop(self._options_panel:right(), self._options_panel:bottom() + 2)
-        local bg = back_button:bitmap({
+        back_button:bitmap({
             name = "bg",
             alpha = 0,
         })
@@ -164,6 +154,22 @@ function EHIMenu:init()
         self._menu_ver = tonumber(EHI.ModVersion)
     end
 
+    if Utils:IsInHeist() then
+        self._restart_required = self._panel:text({
+            name = "restart_required",
+            text = managers.localization:text("ehi_level_restart_required"),
+            font_size = 24,
+            font = tweak_data.menu.pd2_large_font,
+            y = 10,
+            w = 500,
+            align = "right",
+            wrap = true,
+            word_wrap = true
+        })
+        self._restart_required:set_right(self._options_panel:x() - 20)
+        self._restart_required:set_top(self._options_panel:bottom())
+    end
+
     self:GetMenuFromJson(EHI.MenuPath .. "menu.json")
     self:GetMenuFromJson(EHI.MenuPath .. "visuals.json")
     self:GetMenuFromJson(EHI.MenuPath .. "trackers.json")
@@ -171,6 +177,13 @@ function EHIMenu:init()
     self:GetMenuFromJson(EHI.MenuPath .. "equipment.json")
     self:GetMenuFromJson(EHI.MenuPath .. "waypoints.json")
     self:GetMenuFromJson(EHI.MenuPath .. "buffs.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills/mastermind.json", EHI.settings.buff_option)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills/enforcer.json", EHI.settings.buff_option)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills/ghost.json", EHI.settings.buff_option)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills/fugitive.json", EHI.settings.buff_option)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks.json", EHI.settings.buff_option)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/other.json", EHI.settings.buff_option)
 
     self:OpenMenu("ehi_menu")
 end
@@ -718,9 +731,10 @@ function EHIMenu:SetItem(item, value, menu)
 end
 
 --Menu Creation and activation
-function EHIMenu:GetMenuFromJson(path)
+function EHIMenu:GetMenuFromJson(path, settings_table)
     local file = io.open(path, "r")
     if file then
+        settings_table = settings_table or EHI.settings
         local file_content = file:read("*all")
         file:close()
 
@@ -743,9 +757,9 @@ function EHIMenu:GetMenuFromJson(path)
 
         for i, item in pairs(items) do
             if item.table then
-                self:CreateOneLineItems(item, items, menu_id)
+                self:CreateOneLineItems(item, items, menu_id, settings_table)
             else
-                self:CreateItem(item, items, menu_id)
+                self:CreateItem(item, items, menu_id, settings_table)
             end
         end
         menu.panel:set_h(content.h or menu.items[#menu.items].panel:bottom())
@@ -755,7 +769,7 @@ function EHIMenu:GetMenuFromJson(path)
     end
 end
 
-function EHIMenu:CreateItem(item, items, menu_id)
+function EHIMenu:CreateItem(item, items, menu_id, settings_table)
     local item_type = item.type
     local id = item.id
     local title = item.title
@@ -772,14 +786,14 @@ function EHIMenu:CreateItem(item, items, menu_id)
         if type(parents) == "string" then
             for _, pitem in pairs(items) do
                 if pitem.id == parents then
-                    enabled = EHI.settings[pitem.value]
+                    enabled = settings_table[pitem.value]
                     break
                 end
             end
         end
     end
 
-    value = EHI.settings[item.value]
+    value = settings_table[item.value]
 
     --[[if parents ~= nil and type(parents) == "string" and VoidUI.options[parents] ~= nil then
         enabled = VoidUI.options[parents]
@@ -881,10 +895,8 @@ function EHIMenu:CreateItem(item, items, menu_id)
         })
     elseif item_type == "color_select" then
         local stored_value = EHI.settings
-        if item.setting_value then
-            if item.setting_value == "equipment" then
-                stored_value = EHI.settings.equipment_color
-            end
+        if item.setting_value and item.setting_value == "equipment" then
+            stored_value = EHI.settings.equipment_color
         end
         value = EHI:GetColor(stored_value[item.value])
         itm = self:CreateColorSelect({
@@ -906,7 +918,7 @@ function EHIMenu:CreateItem(item, items, menu_id)
     return itm
 end
 
-function EHIMenu:CreateOneLineItems(item, items, menu_id)
+function EHIMenu:CreateOneLineItems(item, items, menu_id, settings_table)
     local offset = {
         label = 5,
         button = 10,
@@ -918,7 +930,7 @@ function EHIMenu:CreateOneLineItems(item, items, menu_id)
     local n = table.getn(item.table)
     local previous_item
     for _, v in pairs(item.table) do
-        local itm = self:CreateItem(v, items, menu_id)
+        local itm = self:CreateItem(v, items, menu_id, settings_table)
         itm.panel:set_w(itm.panel:w() / n)
         if itm.panel:child("title") then
             itm.panel:child("title"):set_w(itm.panel:w() - (offset[itm.type] or 0))

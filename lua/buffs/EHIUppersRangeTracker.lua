@@ -21,6 +21,7 @@ local function hide(o)
     o:set_alpha(0)
 end
 EHIUppersRangeTracker = class(EHIGaugeBuffTracker)
+EHIUppersRangeTracker._refresh_time = 1 / EHI:GetBuffOption("uppers_range_refresh")
 function EHIUppersRangeTracker:PreUpdate()
     pm = managers.player
     local function Check(...)
@@ -94,7 +95,7 @@ end
 function EHIUppersRangeTracker:update(t, dt)
     self._time = self._time - dt
     if self._time <= 0 then
-        self._time = 0.5
+        self._time = self._refresh_time
         local player_unit = pm:player_unit()
         if alive(player_unit) then
             local found, distance, min_distance = self:GetFirstAidKit(player_unit:position())

@@ -194,6 +194,11 @@ function EHIBuffTracker:InvertProgress()
     self._progress:set_texture_rect(unpack(rect))
 end
 
+function EHIBuffTracker:SetPersistent()
+    self._persistent = true
+    self:Activate()
+end
+
 function EHIBuffTracker:CalculateMoveOffset()
     self._panel_w = self._panel:w()
     self._panel_w_gap = self._panel_w + 6

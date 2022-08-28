@@ -119,28 +119,26 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local DisableTriggerAndExecute = EHI:GetFreeCustomSpecialFunctionID()
 local trigger = { special_function = SF.Trigger, data = { 1, 2 } }
-local kosugi_3 = { id = "kosugi_3", special_function = SF.IncreaseProgress }
 local triggers = {
     [1] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto } },
     [2] = { special_function = SF.RemoveTriggers, data = { 101131, 100900 } },
     [101131] = trigger,
     [100900] = trigger,
+    [101219] = { time = 27, id = "BlackhawkDropLoot", icons = { Icon.Heli, Icon.Loot, Icon.Goto } },
+    [100303] = { time = 30, id = "BlackhawkDropGuards", icons = { Icon.Heli, "pager_icon", Icon.Goto }, class = TT.Warning },
 
     [100955] = { time = 10, id = "KeycardLeft", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100957 } },
     [100957] = { time = 10, id = "KeycardRight", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100955 } },
     [100967] = { special_function = SF.RemoveTrackers, data = { "KeycardLeft", "KeycardRight" } }
 }
 
+local kosugi_3 = { id = "kosugi_3", special_function = SF.IncreaseProgress }
 local achievements =
 {
-    [102700] = { special_function = SF.Trigger, data = { 1027001, 1027002, 1027003, 1027004 } },
+    [102700] = { special_function = SF.Trigger, data = { 1027001, 1027002, 1027003 } },
     [1027001] = { max = 6, id = "kosugi_2", class = TT.AchievementProgress, remove_after_reaching_target = false },
     [1027002] = { max = 7, id = "kosugi_3", class = TT.AchievementProgress },
     [1027003] = { id = "kosugi_5", class = "EHIkosugi5Tracker" },
-    [1027004] = { special_function = SF.CustomCode, f = function()
-        CheckForBrokenWeapons()
-        CheckForBrokenCocaine()
-    end},
 
     [102796] = { id = "kosugi_2", special_function = SF.SetAchievementFailed },
     [100311] = { id = "kosugi_2", special_function = SF.IncreaseProgress },
@@ -153,7 +151,7 @@ local achievements =
     [104049] = kosugi_3, -- Painting
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers(triggers, achievements)
 EHI:RegisterCustomSpecialFunction(DisableTriggerAndExecute, function(id, t, ...)
     EHI:UnhookTrigger(t.data.id)
     EHI:CheckCondition(id)
@@ -187,7 +185,7 @@ end)
 -- 2 cocaine
 -- 1 server
 -- 2 random money bundles inside the warehouse
--- 4 random loot outside
+-- 4 random money bundles outside
 -- 4 pieces of armor
 local base_amount = 2 + 1 + 2 + 4 + 4
 local random_weapons = 2
@@ -205,10 +203,14 @@ EHI:ShowLootCounter({
     max = total,
     triggers =
     {
-        [103396] = { special_function = SF.IncreaseProgressMax }
+        [103396] = { special_function = SF.IncreaseProgressMax },
+        [102700] = { special_function = SF.CustomCode, f = function()
+            CheckForBrokenWeapons()
+            CheckForBrokenCocaine()
+        end}
     }
 })
--- Not included bugged loot, this is checked after spawn -> 1027003
+-- Not included bugged loot, this is checked after spawn -> 102700 in EHI:ShowLootCounter()
 -- Reported here:
 -- https://steamcommunity.com/app/218620/discussions/14/5710018482972011532/
 

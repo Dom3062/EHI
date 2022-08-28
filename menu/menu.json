@@ -132,7 +132,7 @@
             "title": "ehi_buffs_menu",
             "description": "ehi_buffs_menu_desc",
             "next_menu": "ehi_buffs_menu",
-            "ehi_ver" : 58
+            "ehi_ver" : 79
         },
         {
             "type" : "divider",

@@ -1,4 +1,4 @@
-local persistent = false
+local EHI = EHI
 local player_manager
 local DODGE_INIT = tweak_data.player.damage.DODGE_INIT or 0
 local function show(o)
@@ -22,11 +22,9 @@ end
 EHIDodgeChanceTracker = class(EHIGaugeBuffTracker)
 function EHIDodgeChanceTracker:init(panel, params)
     EHIDodgeChanceTracker.super.init(self, panel, params)
-    self._time = 1
+    self._refresh_time = 1 / EHI:GetBuffOption("dodge_refresh")
+    self._time = self._refresh_time
     self._dodge = 0
-    if persistent then
-        self:Activate()
-    end
 end
 
 function EHIDodgeChanceTracker:UpdateDodge()
@@ -44,7 +42,7 @@ function EHIDodgeChanceTracker:UpdateDodge()
     if self._dodge == total then
         return
     end
-    if persistent or total > 0 then
+    if self._persistent or total > 0 then
         self:SetRatio(total)
         self:Activate()
     else
@@ -55,7 +53,7 @@ end
 
 function EHIDodgeChanceTracker:ForceUpdate()
     self:UpdateDodge()
-    self._time = 1
+    self._time = self._refresh_time
 end
 
 function EHIDodgeChanceTracker:PreUpdate()
@@ -66,7 +64,7 @@ function EHIDodgeChanceTracker:PreUpdate()
     EHI:AddOnCustodyCallback(f)
     local function update()
         self:UpdateDodge()
-        self._time = 1
+        self._time = self._refresh_time
     end
     EHI:HookWithID(PlayerStandard, "_start_action_zipline", "EHI_DodgeBuff_start_action_zipline", update)
     EHI:HookWithID(PlayerStandard, "_end_action_zipline", "EHI_DodgeBuff_end_action_zipline", update)
@@ -80,7 +78,7 @@ function EHIDodgeChanceTracker:SetCustody(state)
         self._dodge = 0
         self:Deactivate()
     else
-        self._time = 1
+        self._time = self._refresh_time
         self._parent_class:AddBuffToUpdate(self._id, self)
     end
 end
@@ -89,7 +87,7 @@ function EHIDodgeChanceTracker:update(t, dt)
     self._time = self._time - dt
     if self._time <= 0 then
         self:UpdateDodge()
-        self._time = 1
+        self._time = self._refresh_time
     end
 end
 

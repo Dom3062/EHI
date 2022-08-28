@@ -42,9 +42,9 @@ function PlayerStandard:EHIInit()
     RecomputeContourDuration()
 end
 
-local DoNotTrackSixthSenseInitial = true--not O:get("buff", "showSixthSenseInitial")
-local TrackSixthSenseSubsequent = true--O:get("buff", "showSixthSenseSubsequent")
-local TrackSixthSenseHighlighted = true --O:get("buff", "showSixthSenseHighlighted")
+local DoNotTrackSixthSenseInitial = not EHI:GetBuffOption("sixth_sense_initial")
+local TrackSixthSenseSubsequent = EHI:GetBuffOption("sixth_sense_refresh")
+local TrackSixthSenseHighlighted = EHI:GetBuffOption("sixth_sense_marked")
 local latch_t = 0
 function PlayerStandard:_update_omniscience(t, dt, ...)
     local previoustime = self._state_data.omniscience_t
@@ -68,9 +68,9 @@ function PlayerStandard:_update_omniscience(t, dt, ...)
 
     if previoustime == nil and self._state_data.omniscience_t then
         -- Delay prior to initial poll
-        --[[if DoNotTrackSixthSenseInitial then
+        if DoNotTrackSixthSenseInitial then
             return
-        end]]
+        end
         managers.ehi_buff:AddBuff("standstill_omniscience_initial", tweak_data.player.omniscience.start_t)
     elseif previoustime ~= self._state_data.omniscience_t then
         -- Subsequent poll (called once every second)
@@ -110,60 +110,66 @@ function PlayerStandard:_update_omniscience(t, dt, ...)
     end
 end
 
-original._start_action_reload = PlayerStandard._start_action_reload
-function PlayerStandard:_start_action_reload(t, ...)
-    original._start_action_reload(self, t, ...)
-    if self._state_data.reload_expire_t then
-        managers.ehi_buff:AddBuff2("Reload", t, self._state_data.reload_expire_t)
+if EHI:GetBuffOption("reload") then
+    original._start_action_reload = PlayerStandard._start_action_reload
+    function PlayerStandard:_start_action_reload(t, ...)
+        original._start_action_reload(self, t, ...)
+        if self._state_data.reload_expire_t then
+            managers.ehi_buff:AddBuff2("Reload", t, self._state_data.reload_expire_t)
+        end
+    end
+
+    original._interupt_action_reload = PlayerStandard._interupt_action_reload
+    function PlayerStandard:_interupt_action_reload(t, ...)
+        original._interupt_action_reload(self, t, ...)
+        managers.ehi_buff:RemoveBuff("Reload")
     end
 end
 
-original._interupt_action_reload = PlayerStandard._interupt_action_reload
-function PlayerStandard:_interupt_action_reload(t, ...)
-    original._interupt_action_reload(self, t, ...)
-    managers.ehi_buff:RemoveBuff("Reload")
-end
+if EHI:GetBuffOption("interact") then
+    original._start_action_interact = PlayerStandard._start_action_interact
+    function PlayerStandard:_start_action_interact(t, input, timer, interact_object, ...)
+        original._start_action_interact(self, t, input, timer, interact_object, ...)
+        if self._interact_expire_t > 0 then
+            managers.ehi_buff:AddBuff("Interact", self._interact_expire_t)
+        end
+    end
 
-original._start_action_interact = PlayerStandard._start_action_interact
-function PlayerStandard:_start_action_interact(t, input, timer, interact_object, ...)
-    original._start_action_interact(self, t, input, timer, interact_object, ...)
-    if self._interact_expire_t > 0 then
-        managers.ehi_buff:AddBuff("Interact", self._interact_expire_t)
+    original._interupt_action_interact = PlayerStandard._interupt_action_interact
+    function PlayerStandard:_interupt_action_interact(t, input, complete, ...)
+        original._interupt_action_interact(self, t, input, complete, ...)
+        if not complete then
+            managers.ehi_buff:RemoveBuff("Interact")
+        end
     end
 end
 
-original._interupt_action_interact = PlayerStandard._interupt_action_interact
-function PlayerStandard:_interupt_action_interact(t, input, complete, ...)
-    original._interupt_action_interact(self, t, input, complete, ...)
-    if not complete then
-        managers.ehi_buff:RemoveBuff("Interact")
+if EHI:GetBuffOption("melee_charge") then
+    original._start_action_melee = PlayerStandard._start_action_melee
+    function PlayerStandard:_start_action_melee(t, input, instant, ...)
+        original._start_action_melee(self, t, input, instant, ...)
+        if instant then
+            return
+        end
+        local melee_entry = managers.blackmarket:equipped_melee_weapon()
+        local current_state_name = self._camera_unit:anim_state_machine():segment_state(self:get_animation("base"))
+        local attack_allowed_expire_t = tweak_data.blackmarket.melee_weapons[melee_entry].attack_allowed_expire_t or 0.15
+        local offset = current_state_name == self:get_animation("melee_attack_state") and 0 or attack_allowed_expire_t
+        local max_charge_time = tweak_data.blackmarket.melee_weapons[melee_entry].stats.charge_time
+        local t_charge = offset + max_charge_time
+        managers.ehi_buff:AddBuff("MeleeCharge", t_charge)
     end
-end
 
-original._start_action_melee = PlayerStandard._start_action_melee
-function PlayerStandard:_start_action_melee(t, input, instant, ...)
-    original._start_action_melee(self, t, input, instant, ...)
-    if instant then
-        return
+    original._do_melee_damage = PlayerStandard._do_melee_damage
+    function PlayerStandard:_do_melee_damage(...)
+        local col_ray = original._do_melee_damage(self, ...)
+        managers.ehi_buff:RemoveBuff("MeleeCharge")
+        return col_ray
     end
-    local melee_entry = managers.blackmarket:equipped_melee_weapon()
-    local current_state_name = self._camera_unit:anim_state_machine():segment_state(self:get_animation("base"))
-	local attack_allowed_expire_t = tweak_data.blackmarket.melee_weapons[melee_entry].attack_allowed_expire_t or 0.15
-    local offset = current_state_name == self:get_animation("melee_attack_state") and 0 or attack_allowed_expire_t
-    local max_charge_time = tweak_data.blackmarket.melee_weapons[melee_entry].stats.charge_time
-    local t_charge = offset + max_charge_time
-    managers.ehi_buff:AddBuff("MeleeCharge", t_charge)
-end
 
-original._do_melee_damage = PlayerStandard._do_melee_damage
-function PlayerStandard:_do_melee_damage(...)
-    local col_ray = original._do_melee_damage(self, ...)
-    managers.ehi_buff:RemoveBuff("MeleeCharge")
-    return col_ray
-end
-
-original._interupt_action_melee = PlayerStandard._interupt_action_melee
-function PlayerStandard:_interupt_action_melee(...)
-    original._interupt_action_melee(self, ...)
-    managers.ehi_buff:RemoveBuff("MeleeCharge")
+    original._interupt_action_melee = PlayerStandard._interupt_action_melee
+    function PlayerStandard:_interupt_action_melee(...)
+        original._interupt_action_melee(self, ...)
+        managers.ehi_buff:RemoveBuff("MeleeCharge")
+    end
 end

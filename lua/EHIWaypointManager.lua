@@ -1,7 +1,7 @@
 local icons = tweak_data.ehi.icons
 
 local EHI = EHI
-EHIWaypointManager = EHIWaypointManager or class()
+EHIWaypointManager = class()
 function EHIWaypointManager:init()
     self._enabled = EHI:GetOption("show_waypoints")
     self._present_timer = EHI:GetOption("show_waypoints_present_timer")
@@ -722,9 +722,18 @@ function EHIWaypointManager:destroy()
 end
 
 if _G.IS_VR then
+    if restoration and restoration.Options and restoration.Options:GetValue("HUD/Waypoints") then
+        -- Use Vanilla texture file because Restoration HUD does not have the icons
+        -- Reported here: https://modworkshop.net/mod/28118
+        -- Don't forget to remove it from Restoration Mod theme file too when it is fixed
+        tweak_data.hud_icons.pd2_car.texture = "guis/textures/pd2/pd2_waypoints"
+        tweak_data.hud_icons.pd2_water_tap.texture = "guis/textures/pd2/pd2_waypoints"
+    end
     return
 end
 
 if VoidUI and VoidUI.options.enable_waypoints then
     dofile(EHI.LuaPath .. "hud/waypoint/void_ui.lua")
+elseif restoration and restoration.Options and restoration.Options:GetValue("HUD/Waypoints") then
+    dofile(EHI.LuaPath .. "hud/waypoint/restoration_mod.lua")
 end

@@ -24,6 +24,7 @@ EHIBerserkerBuffTracker = class(EHIGaugeBuffTracker)
 function EHIBerserkerBuffTracker:init(panel, params)
     EHIBerserkerBuffTracker.super.init(self, panel, params)
     self._time = 0.2
+    self._refresh_time = 1 / EHI:GetBuffOption("berserker_refresh")
     self._damage_multiplier = 0
     self._melee_damage_multiplier = 0
     self._current_damage_multiplier = 0
@@ -50,7 +51,7 @@ function EHIBerserkerBuffTracker:SetCustody(state)
         self:Deactivate()
     else
         self:Activate()
-        self._time = 0.2
+        self._time = self._refresh_time
         self._parent_class:AddBuffToUpdate(self._id, self)
     end
 end
@@ -59,7 +60,7 @@ function EHIBerserkerBuffTracker:update(t, dt)
     self._time = self._time - dt
     if self._time <= 0 then
         self:UpdateMultipliers()
-        self._time = 0.2
+        self._time = self._refresh_time
     end
 end
 

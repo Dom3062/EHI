@@ -28,7 +28,7 @@ local triggers = {
     [102061] = { time = 900/30, id = "ElevatorUp", icons = { Icon.Wait } },
 
     -- Elevator Generator
-    [EHI:GetInstanceElementID(100066, 13930)] = { chance = 0, id = "GeneratorStartChance", icons = { "pd2_power" }, class = TT.Chance },
+    [EHI:GetInstanceElementID(100066, 13930)] = { chance = 0, id = "GeneratorStartChance", icons = { Icon.Power }, class = TT.Chance },
     [EHI:GetInstanceElementID(100018, 13930)] = { id = "GeneratorStartChance", special_function = SF.IncreaseChanceFromElement }, -- +33%
     [EHI:GetInstanceElementID(100016, 13930)] = { id = "GeneratorStartChance", special_function = SF.RemoveTracker },
 

@@ -1,4 +1,4 @@
-local persistent = false
+local EHI = EHI
 local player_manager
 local detection_risk = 0
 local function show(o)
@@ -22,12 +22,10 @@ end
 EHICritChanceTracker = class(EHIGaugeBuffTracker)
 function EHICritChanceTracker:init(panel, params)
     EHICritChanceTracker.super.init(self, panel, params)
-    self._time = 1
+    self._refresh_time = 1 / EHI:GetBuffOption("crit_refresh")
+    self._time = self._refresh_time
     self._crit = 0
     self._update_disabled = true
-    if persistent then
-        self:Activate()
-    end
 end
 
 function EHICritChanceTracker:UpdateCrit()
@@ -35,7 +33,7 @@ function EHICritChanceTracker:UpdateCrit()
     if self._crit == total then
         return
     end
-    if persistent or total > 0 then
+    if self._persistent or total > 0 then
         self:SetRatio(total)
         self:Activate()
     else
@@ -49,7 +47,7 @@ function EHICritChanceTracker:ForceUpdate()
         return
     end
     self:UpdateCrit()
-    self._time = 1
+    self._time = self._refresh_time
 end
 
 function EHICritChanceTracker:PreUpdate()
@@ -69,7 +67,7 @@ function EHICritChanceTracker:SetCustody(state)
         self._crit = 0
         self:Deactivate()
     else
-        self._time = 1
+        self._time = self._refresh_time
         self._parent_class:AddBuffToUpdate(self._id, self)
     end
     self._update_disabled = state
@@ -79,7 +77,7 @@ function EHICritChanceTracker:update(t, dt)
     self._time = self._time - dt
     if self._time <= 0 then
         self:UpdateCrit()
-        self._time = 1
+        self._time = self._refresh_time
     end
 end
 

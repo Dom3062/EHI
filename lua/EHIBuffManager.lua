@@ -1,3 +1,4 @@
+local EHI = EHI
 local function GetIcon(params)
     local texture = ""
     local texture_rect = {}
@@ -21,7 +22,7 @@ end
 
 local buff_w = 32
 local buff_h = 64
-EHIBuffManager = EHIBuffManager or class()
+EHIBuffManager = class()
 function EHIBuffManager:init()
     self._buffs = {}
     self._update_buffs = {}
@@ -46,33 +47,33 @@ end
 function EHIBuffManager:InitializeBuffs()
     local tweak = tweak_data.ehi.buff
     for id, buff in pairs(tweak) do
-        local params = {}
-        params.id = id
-        params.x = self._x
-        params.y = self._y
-        params.w = buff_w
-        params.h = buff_h
-        params.text = buff.text
-        params.texture, params.texture_rect = GetIcon(buff)
-        params.format = buff.format
-        params.good = not buff.bad
-        params.max = buff.max
-        params.class = buff.class
-        params.scale = self._scale
-        params.parent_class = self
-        self:CreateBuff(params)
+        if not buff.option or EHI:GetBuffOption(buff.option) then
+            local params = {}
+            params.id = id
+            params.x = self._x
+            params.y = self._y
+            params.w = buff_w
+            params.h = buff_h
+            params.text = buff.text
+            params.texture, params.texture_rect = GetIcon(buff)
+            params.format = buff.format
+            params.good = not buff.bad
+            params.max = buff.max
+            params.class = buff.class
+            params.scale = self._scale
+            params.persistent = buff.persistent
+            params.parent_class = self
+            self:CreateBuff(params)
+        end
     end
 end
 
 function EHIBuffManager:InitializeTagTeamBuffs()
+    if not EHI:GetBuffOption("tag_team") then
+        return
+    end
     local local_peer_id = managers.network:session():local_peer():id()
-    local icon =
-    {
-        deck = true,
-        folder = "ecp",
-        x = 0,
-        y = 1
-    }
+    local texture, texture_rect = GetIcon(tweak_data.ehi.buff.TagTeamEffect)
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
         if i ~= local_peer_id then
             local params = {}
@@ -81,7 +82,8 @@ function EHIBuffManager:InitializeTagTeamBuffs()
             params.y = self._y
             params.w = buff_w
             params.h = buff_h
-            params.texture, params.texture_rect = GetIcon(icon)
+            params.texture = texture
+            params.texture_rect = texture_rect
             params.icon_color = tweak_data.chat_colors[i] or Color.white
             params.scale = self._scale
             params.parent_class = self
@@ -93,6 +95,9 @@ end
 function EHIBuffManager:CreateBuff(params)
     local buff = _G[params.class or "EHIBuffTracker"]:new(self._panel, params)
     self._buffs[params.id] = buff
+    if params.persistent and EHI:GetBuffOption(params.persistent) then
+        buff:SetPersistent()
+    end
 end
 
 function EHIBuffManager:UpdateBuffIcon(id)
@@ -133,13 +138,13 @@ function EHIBuffManager:ActivateUpdatingBuffs()
     for id, buff in pairs(tweak) do
         if buff.activate_after_spawn then
             local b = self._buffs[id]
-            if b:PreUpdateCheck() then
+            if b and b:PreUpdateCheck() then
                 b:PreUpdate()
                 self:AddBuffToUpdate(id, b)
             end
         elseif buff.check_after_spawn then
             local b = self._buffs[id]
-            if b:PreUpdateCheck() then
+            if b and b:PreUpdateCheck() then
                 b:PreUpdate()
             end
         end

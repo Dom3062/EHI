@@ -63,7 +63,9 @@ tweak_data.ehi =
             y = 12,
             class = "EHIDodgeChanceTracker",
             format = "percent",
-            activate_after_spawn = true
+            activate_after_spawn = true,
+            option = "dodge",
+            persistent = "dodge_persistent"
         },
         CritChance =
         {
@@ -73,7 +75,9 @@ tweak_data.ehi =
             text = "Crit",
             class = "EHICritChanceTracker",
             format = "percent",
-            activate_after_spawn = true
+            activate_after_spawn = true,
+            option = "crit",
+            persistent = "crit_persistent"
         },
         Berserker =
         {
@@ -81,65 +85,75 @@ tweak_data.ehi =
             x = 2,
             y = 2,
             class = "EHIBerserkerBuffTracker",
-            check_after_spawn = true
+            check_after_spawn = true,
+            option = "berserker"
         },
         Reload =
         {
             skills = true,
             bad = true,
-            y = 9
+            y = 9,
+            option = "reload"
         },
         Interact =
         {
             texture = "guis/textures/pd2/pd2_waypoints",
-            texture_rect = {224, 32, 32, 32}
+            texture_rect = {224, 32, 32, 32},
+            option = "interact"
         },
         ArmorRegenDelay =
         {
             skills = true,
             bad = true,
             x = 6,
-            y = 4
+            y = 4,
+            option = "shield_regen"
         },
         MeleeCharge =
         {
             skills = true,
             x = 4,
             y = 12,
-            class = "EHIMeleeChargeBuffTracker"
+            class = "EHIMeleeChargeBuffTracker",
+            option = "melee_charge"
         },
         headshot_regen_armor_bonus =
         {
             skills = true,
             bad = true,
             x = 6,
-            y = 11
+            y = 11,
+            option = "bullseye"
         },
         combat_medic_damage_multiplier =
         {
             skills = true,
             x = 5,
-            y = 7
+            y = 7,
+            option = "combat_medic"
         },
         berserker_damage_multiplier =
         {
             skills = true,
             x = 5,
-            y = 12
+            y = 12,
+            option = "swan_song"
         },
         dmg_multiplier_outnumbered =
         {
             skills = true,
             text = "Dmg+",
             x = 2,
-            y = 1
+            y = 1,
+            option = "underdog"
         },
         first_aid_damage_reduction =
         {
             skills = true,
             text = "Dmg-",
             x = 1,
-            y = 11
+            y = 11,
+            option = "quick_fix"
         },
         UppersRangeGauge =
         {
@@ -147,40 +161,46 @@ tweak_data.ehi =
             x = 2,
             y = 11,
             check_after_spawn = true,
-            class = "EHIUppersRangeTracker"
+            class = "EHIUppersRangeTracker",
+            option = "uppers_range"
         },
         fast_learner =
         {
             u100skill = true,
             text = "Dmg-",
-            y = 10
+            y = 10,
+            option = "painkillers"
         },
         melee_life_leech =
         {
             deck = true,
             bad = true,
-            x = 5,
-            y = 4
+            x = 7,
+            y = 4,
+            option = "infiltrator"
         },
         dmg_dampener_close_contact =
         {
             deck = true,
             x = 5,
-            y = 4
+            y = 4,
+            option = "underdog"
         },
         loose_ammo_give_team =
         {
             deck = true,
             bad = true,
             x = 5,
-            y = 5
+            y = 5,
+            option = "gambler"
         },
         loose_ammo_restore_health =
         {
             deck = true,
             bad = true,
             x = 4,
-            y = 5
+            y = 5,
+            option = "gambler"
         },
         damage_speed_multiplier =
         {
@@ -188,6 +208,7 @@ tweak_data.ehi =
             text = "Mov+",
             x = 10,
             y = 9,
+            option = "second_wind"
         },
         revived_damage_resist =
         {
@@ -195,6 +216,7 @@ tweak_data.ehi =
             text = "Dmg-",
             x = 11,
             y = 4,
+            option = "up_you_go"
         },
         swap_weapon_faster =
         {
@@ -202,6 +224,7 @@ tweak_data.ehi =
             text = "Spd+",
             x = 11,
             y = 3,
+            option = "running_from_death_reload"
         },
         increased_movement_speed =
         {
@@ -209,6 +232,7 @@ tweak_data.ehi =
             text = "Mov+",
             x = 11,
             y = 3,
+            option = "running_from_death_movement"
         },
         unseen_strike =
         {
@@ -216,6 +240,7 @@ tweak_data.ehi =
             text = "Crit+",
             x = 10,
             y = 11,
+            option = "unseen_strike",
             --class = "EHIUnseenStrikeTracker"
         },
         melee_damage_stacking =
@@ -224,7 +249,16 @@ tweak_data.ehi =
             x = 11,
             y = 6,
             format = "multiplier",
-            class = "EHIGaugeBuffTracker"
+            class = "EHIGaugeBuffTracker",
+            option = "bloodthirst"
+        },
+        melee_kill_increase_reload_speed =
+        {
+            u100skill = true,
+            x = 11,
+            y = 6,
+            text = "Rld+",
+            option = "bloodthirst_reload"
         },
         standstill_omniscience_initial =
         {
@@ -251,7 +285,8 @@ tweak_data.ehi =
         {
             u100skill = true,
             x = 4,
-            y = 5
+            y = 5,
+            option = "bulletstorm"
         },
         hostage_absorption =
         {
@@ -264,13 +299,15 @@ tweak_data.ehi =
         ManiacStackTicks =
         {
             deck = true,
-            folder = "coco"
+            folder = "coco",
+            option = "maniac"
         },
         ManiacDecayTicks =
         {
             deck = true,
             folder = "coco",
-            x = 2
+            x = 2,
+            option = "maniac"
         },
         ManiacAccumulatedStacks =
         {
@@ -278,20 +315,23 @@ tweak_data.ehi =
             folder = "coco",
             x = 3,
             class = "EHIGaugeBuffTracker",
-            format = "percent"
+            format = "percent",
+            option = "maniac"
         },
         GrinderStackCooldown =
         {
             deck = true,
             bad = true,
             x = 5,
-            y = 6
+            y = 6,
+            option = "grinder"
         },
         GrinderRegenPeriod =
         {
             deck = true,
             x = 5,
-            y = 6
+            y = 6,
+            option = "grinder"
         },
         SicarioTwitchGauge =
         {
@@ -312,82 +352,95 @@ tweak_data.ehi =
         {
             u100skill = true,
             x = 8,
-            y = 4
+            y = 4,
+            option = "ammo_efficiency"
         },
         armor_break_invulnerable =
         {
             deck = true,
             bad = true,
             x = 6,
-            y = 1
+            y = 1,
+            option = "anarchist"
         },
         single_shot_fast_reload =
         {
             u100skill = true,
             x = 8,
-            y = 3
+            y = 3,
+            option = "aggressive_reload"
         },
         overkill_damage_multiplier =
         {
             skills = true,
             text = "Dmg+",
             x = 3,
-            y = 2
+            y = 2,
+            option = "overkill"
         },
         morale_boost =
         {
             skills = true,
             bad = true,
             x = 4,
-            y = 9
+            y = 9,
+            option = "inspire_basic"
         },
         long_dis_revive =
         {
             u100skill = true,
             bad = true,
             x = 4,
-            y = 9
+            y = 9,
+            option = "inspire_ace"
         },
         Immunity =
         {
             deck = true,
-            x = 6
+            x = 6,
+            option = "anarchist"
         },
         UppersCooldown =
         {
             u100skill = true,
             bad = true,
             x = 2,
-            y = 11
+            y = 11,
+            option = "uppers"
         },
         armor_grinding =
         {
             deck = true,
-            folder = "opera"
+            folder = "opera",
+            option = "anarchist"
         },
         HealthRegen =
         {
             skills = true,
             x = 2,
             y = 10,
-            class = "EHIHostageTakerMuscleRegenBuffTracker"
+            class = "EHIHostageTakerMuscleRegenBuffTracker",
+            option = "hostage_taker_muscle"
         },
         BikerBuff =
         {
             deck = true,
             folder = "wild",
             class = "EHIBikerBuffTracker",
-            check_after_spawn = true
+            check_after_spawn = true,
+            option = "biker"
         },
         chico_injector =
         {
             deck = true,
-            folder = "chico"
+            folder = "chico",
+            option = "kingpin"
         },
         SmokeScreen =
         {
             deck = true,
-            folder = "max"
+            folder = "max",
+            option = "sicario"
         },
         damage_control =
         {
@@ -402,18 +455,19 @@ tweak_data.ehi =
             folder = "myh",
             y = 1
         },
-        pocket_ecm_kill_dodge =
-        {
-            deck = true,
-            folder = "joy",
-            x = 3,
-            class = "EHIHackerTemporaryDodgeTracker"
-        },
         TagTeamEffect =
         {
             deck = true,
             folder = "ecp",
             y = 1
+        },
+        pocket_ecm_kill_dodge =
+        {
+            deck = true,
+            folder = "joy",
+            x = 3,
+            class = "EHIHackerTemporaryDodgeTracker",
+            option = "hacker"
         },
         HackerJammerEffect =
         {
@@ -430,29 +484,38 @@ tweak_data.ehi =
         copr_ability =
         {
             deck = true,
-            folder = "copr"
+            folder = "copr",
+            option = "leech"
         }
     }
 }
 
 tweak_data.ehi.buff.team_crew_inspire = EHI:DeepClone(tweak_data.ehi.buff.long_dis_revive)
 tweak_data.ehi.buff.team_crew_inspire.text = "AI"
+tweak_data.ehi.buff.team_crew_inspire.option = "inspire_ai"
 tweak_data.ehi.buff.reload_weapon_faster = EHI:DeepClone(tweak_data.ehi.buff.swap_weapon_faster)
 tweak_data.ehi.buff.reload_weapon_faster.text = "Rld+"
 tweak_data.ehi.buff.chico_injector_cooldown = EHI:DeepClone(tweak_data.ehi.buff.chico_injector)
 tweak_data.ehi.buff.chico_injector_cooldown.bad = true
 tweak_data.ehi.buff.tag_team_cooldown = EHI:DeepClone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.tag_team_cooldown.folder = "ecp"
+tweak_data.ehi.buff.tag_team_cooldown.option = "tag_team"
 tweak_data.ehi.buff.pocket_ecm_jammer_cooldown = EHI:DeepClone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.folder = "joy"
+tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.option = "hacker"
 tweak_data.ehi.buff.copr_ability_cooldown = EHI:DeepClone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.copr_ability_cooldown.folder = "copr"
+tweak_data.ehi.buff.copr_ability_cooldown.option = "leech"
 
 -- Debug
 tweak_data.ehi.buff.debug_1 = EHI:DeepClone(tweak_data.ehi.buff.chico_injector)
+tweak_data.ehi.buff.debug_1.option = nil
 tweak_data.ehi.buff.debug_2 = EHI:DeepClone(tweak_data.ehi.buff.pocket_ecm_jammer_cooldown)
+tweak_data.ehi.buff.debug_2.option = nil
 tweak_data.ehi.buff.debug_3 = EHI:DeepClone(tweak_data.ehi.buff.chico_injector_cooldown)
+tweak_data.ehi.buff.debug_3.option = nil
 tweak_data.ehi.buff.debug_4 = EHI:DeepClone(tweak_data.ehi.buff.team_crew_inspire)
+tweak_data.ehi.buff.debug_4.option = nil
 
 tweak_data.hud_icons.EHI_XP = { texture = tweak_data.ehi.icons.xp.texture }
 tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }

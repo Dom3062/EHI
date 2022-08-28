@@ -121,6 +121,34 @@
             "default_value": false,
             "parent": ["ehi_show_buffs_choice", "ehi_buffs_show_progress_choice"],
             "ehi_ver" : 58
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "button",
+            "id": "ehi_buffs_skills_menu",
+            "title": "ehi_buffs_skills_menu",
+            "next_menu": "ehi_buffs_skills_menu",
+            "parent": "ehi_show_buffs_choice",
+            "ehi_ver" : 79
+        },
+        {
+            "type": "button",
+            "id": "ehi_buffs_perks_menu",
+            "title": "ehi_buffs_perks_menu",
+            "next_menu": "ehi_buffs_perks_menu",
+            "parent": "ehi_show_buffs_choice",
+            "ehi_ver" : 79
+        },
+        {
+            "type": "button",
+            "id": "ehi_buffs_other_menu",
+            "title": "ehi_buffs_other_menu",
+            "next_menu": "ehi_buffs_other_menu",
+            "parent": "ehi_show_buffs_choice",
+            "ehi_ver" : 79
         }
     ]
 }

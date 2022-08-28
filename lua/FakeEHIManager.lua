@@ -44,7 +44,7 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_camera_loop", time = math.random(10, 25), icons = { "camera_loop" } })
     do
         local time = math.random() * (8 - 1) + 1
-        self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { Icon.Winch, "wp_bag", Icon.Goto } } )
+        self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { Icon.Winch, Icon.Bag, Icon.Goto } } )
         self:AddFakeTracker({ id = "show_zipline_timer", time = time * 2, icons = { Icon.Winch, Icon.Loop } } )
     end
     if EHI:GetOption("gage_tracker_panel") == 1 then
@@ -58,7 +58,8 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { "pagers_used" }, class = "FakeEHIProgressTracker" } )
     self:AddFakeTracker({ id = "show_pager_callback", time = math.random() * (12 - 0.5) + 0.5, icons = { "pager_icon" } })
     self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "enemy" }, class = "FakeEHICountTracker" } )
-    self:AddFakeTracker({ id = "show_laser_tracker", time = math.random() * (4 - 0.5) + 0.5, icons = { EHI.Icons.Lasers } })
+    self:AddFakeTracker({ id = "show_laser_tracker", time = math.random() * (4 - 0.5) + 0.5, icons = { EHI.Icons.Lasers } } )
+    self:AddFakeTracker({ id = "show_assault_delay_tracker", time = math.random(30, 120), icons = { "assaultbox" } } )
     self:AddPreviewText()
 end
 
@@ -656,7 +657,7 @@ function FakeEHIMinionCounterTracker:UpdateFormat(value)
     end
 end
 
-FakeEHICountTracker = FakeEHICountTracker or class(FakeEHITracker)
+FakeEHICountTracker = class(FakeEHITracker)
 function FakeEHICountTracker:init(panel, params)
     self._count = params.count
     FakeEHICountTracker.super.init(self, panel, params)

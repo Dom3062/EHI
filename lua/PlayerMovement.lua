@@ -10,6 +10,10 @@ if not EHI:GetOption("show_buffs") then
     return
 end
 
+if not EHI:GetBuffOption("inspire_basic") then
+    return
+end
+
 local original =
 {
     init = PlayerMovement.init

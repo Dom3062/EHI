@@ -1,4 +1,4 @@
-EHIHostageTakerMuscleRegenBuffTracker = EHIHostageTakerMuscleRegenBuffTracker or class(EHIBuffTracker)
+EHIHostageTakerMuscleRegenBuffTracker = class(EHIBuffTracker)
 function EHIHostageTakerMuscleRegenBuffTracker:init(panel, params)
     EHIHostageTakerMuscleRegenBuffTracker.super.init(self, panel, params)
     local icon = self._panel:child("icon") -- Hostage Taker regen

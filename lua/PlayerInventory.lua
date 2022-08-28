@@ -5,7 +5,7 @@ else
     EHI._hooks.PlayerInventory = true
 end
 
-if EHI:GetOption("show_buffs") then
+if EHI:GetOption("show_buffs") and EHI:GetBuffOption("hacker") then
     local buff_original =
     {
         _start_jammer_effect = PlayerInventory._start_jammer_effect,

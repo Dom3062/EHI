@@ -97,7 +97,7 @@ function TimerGui:StartTimer()
                 pause_timer = 1,
                 type = "timer",
                 position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
-                color = autorepair and tweak_data.ehi.color.DrillAutorepair or Color.white
+                color = autorepair and tweak_data.ehi.color.DrillAutorepair
             })
         end
         self:PostStartTimer()

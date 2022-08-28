@@ -309,8 +309,8 @@ function EHI:Load()
         local success, _ = pcall(function()
             table = json.decode(file:read('*all'))
         end)
+        file:close()
         if success then
-            file:close()
             if table.SaveDataVer and table.SaveDataVer == self.SaveDataVer then
                 self:LoadValues(self.settings, table)
             else
@@ -467,7 +467,71 @@ function EHI:LoadDefaultValues()
         buffs_scale = 1,
         buffs_shape = 1, -- 1 = Square; 2 = Circle
         buffs_show_progress = true,
-        buffs_invert_progress = false
+        buffs_invert_progress = false,
+        buff_option =
+        {
+            -- Skills
+            -- Mastermind
+            inspire_basic = true,
+            inspire_ace = true,
+            uppers = true,
+            uppers_range = true,
+            uppers_range_refresh = 2, -- 1 / value
+            quick_fix = true,
+            painkillers = true,
+            combat_medic = true,
+            hostage_taker_muscle = true,
+            forced_friendship = true,
+            ammo_efficiency = true,
+            aggressive_reload = true,
+            -- Enforcer
+            overkill = true,
+            underdog = true,
+            bullseye = true,
+            bulletstorm = true,
+            -- Ghost
+            sixth_sense_initial = true,
+            sixth_sense_marked = true,
+            sixth_sense_refresh = true,
+            second_wind = true,
+            unseen_strike = true,
+            -- Fugitive
+            running_from_death_reload = true,
+            running_from_death_movement = true,
+            up_you_go = true,
+            swan_song = true,
+            bloodthirst = true,
+            bloodthirst_reload = true,
+            berserker = true,
+            berserker_refresh = 4, -- 1 / value
+
+            -- Perks
+            infiltrator = true,
+            gambler = true,
+            grinder = true,
+            maniac = true,
+            anarchist = true, -- +Armorer
+            biker = true,
+            kingpin = true,
+            sicario = true,
+            stoic = true,
+            tag_team = true,
+            hacker = true,
+            leech = true,
+
+            -- Other
+            interact = true,
+            reload = true,
+            melee_charge = true,
+            shield_regen = true,
+            dodge = true,
+            dodge_refresh = 1, -- 1 / value
+            dodge_persistent = false,
+            crit = true,
+            crit_refresh = 1, -- 1 / value
+            crit_persistent = false,
+            inspire_ai = true
+        }
     }
 end
 
@@ -497,6 +561,12 @@ function EHI:GetColor(color)
         return Color(255, color.r, color.g, color.b) / 255
     end
     return Color.white
+end
+
+function EHI:GetBuffOption(option)
+    if option then
+        return self.settings.buff_option[option]
+    end
 end
 
 function EHI:MissionTrackersAndWaypointEnabled()
@@ -866,12 +936,6 @@ function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_al
         else
             triggers[key] = value
             FillTheRestOfProperties(key, value)
-            --[[if not value.id then
-                triggers[key].id = trigger_id_all
-            end
-            if not value.icons then
-                triggers[key].icons = trigger_icons_all
-            end]]
         end
     end
 end
@@ -1145,7 +1209,7 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.SetAchievementStatus then
                 managers.ehi:SetAchievementStatus(triggers[id].id, triggers[id].status or "ok")
             elseif f == SF.ShowAchievementFromStart then
-                if not managers.statistics:is_dropin() then
+                if self:IsAchievementLocked(triggers[id].id) and not managers.statistics:is_dropin() then
                     self:CheckCondition(id)
                 end
             elseif f == SF.SetAchievementFailed then
@@ -1545,7 +1609,7 @@ function EHI:ShowLootCounterOffset(params, manager)
     local offset = managers.loot:GetSecuredBagsAmount()
     manager:ShowLootCounter(params.max, params.additional_loot, offset)
     if params.triggers then
-        self:AddTriggers(params.triggers, "LootCounter")
+        self:AddTriggers2(params.triggers, "LootCounter")
     end
     if params.no_counting then
         return
@@ -1568,7 +1632,7 @@ function EHI:ShowLootCounter(params)
     end
     managers.ehi:ShowLootCounter(params.max, params.additional_loot, n_offset)
     if params.triggers then
-        self:AddTriggers(params.triggers, "LootCounter")
+        self:AddTriggers2(params.triggers, "LootCounter")
     end
     if params.no_counting then
         return

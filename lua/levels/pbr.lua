@@ -44,8 +44,14 @@ local achievements =
 
 local other =
 {
-    --[102292] = { time = 75 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") },
+    [102292] = { time = 75 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") },
 }
+if show_achievement then -- This needs to be fixed in core.lua
+    local temp = other[102292]
+    other[102292] = nil
+    other[1022924] = temp
+    achievements[102292].data[4] = 1022924
+end
 
 EHI:ParseTriggers(triggers, achievements, other)
 EHI:ShowAchievementLootCounter({

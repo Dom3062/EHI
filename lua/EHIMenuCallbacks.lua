@@ -1,9 +1,14 @@
+local EHI = EHI
 function EHIMenu:UpdatePreviewTextVisibility(value)
     self._preview_panel:UpdatePreviewTextVisibility(value)
 end
 
 function EHIMenu:SetOption(value, option)
     EHI.settings[option] = value
+end
+
+function EHIMenu:SetBuffOption(value, option)
+    EHI.settings.buff_option[option] = value
 end
 
 function EHIMenu:SetXPPanelOption(value, option)

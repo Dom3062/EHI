@@ -78,8 +78,8 @@
     "ehi_show_tracker_bg" : "追踪器背景",
     "ehi_show_tracker_bg_desc" : "显示追踪器的底色与边框\n取消勾选后，追踪器的底色与边框将被隐藏且动画不会生效",
 
-    "ehi_show_tracker_corners" : "Show Tracker Corners",
-    "ehi_show_tracker_corners_desc" : "Shows white corners in tracker",
+    "ehi_show_tracker_corners" : "显示追踪器边框",
+    "ehi_show_tracker_corners_desc" : "显示追踪器四周的白色边框",
 
     "ehi_show_one_icon" : "精简追踪器",
     "ehi_show_one_icon_desc" : "每个追踪器仅显示1个图标\n如果取消勾选将显示该追踪器的所有图标",
@@ -233,8 +233,8 @@
     "ehi_show_laser_tracker" : "显示镭射循环追踪器",
     "ehi_show_laser_tracker_desc" : "显示地图上传感器镭射的循环时间追踪器",
 
-    "ehi_show_assault_delay_tracker" : "Show Assault Delay Tracker",
-    "ehi_show_assault_delay_tracker_desc" : "Shows a tracker for how long the assault delay will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
+    "ehi_show_assault_delay_tracker" : "显示突击延迟追踪器",
+    "ehi_show_assault_delay_tracker_desc" : "显示突击延迟的时间追踪器\n\n当客机中途加入后难度增加时追踪器将自动隐藏",
     
     "ehi_waypoints_menu" : "路径导航",
     "ehi_waypoints_menu_desc" : "",

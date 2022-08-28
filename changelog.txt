@@ -1,3 +1,12 @@
+r79 (28. 08. 2022):
+Added buff for reload boost duration from Bloodthirst
+Added option to enable/disable specific buffs
+Added back Piggy Bank tracker as the event was moved to mutators
+Fixed an issue where achievements marked as "Show from start" are still visible when achievements are disabled in options
+Shadow Raid: Fixed an issue where achievements are not visible when they are enabled in options
+Shadow Raid: Fixed an issue with Loot Counter not counting maximum correctly
+Restoration Mod: Fixed missing car and water tap icons
+
 r78 (24. 08. 2022):
 Added "Show Assault Delay Tracker" option
 Added "Show Tracker Corners" option
