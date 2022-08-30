@@ -174,6 +174,7 @@ function EHIMenu:init()
     self:GetMenuFromJson(EHI.MenuPath .. "visuals.json")
     self:GetMenuFromJson(EHI.MenuPath .. "trackers.json")
     self:GetMenuFromJson(EHI.MenuPath .. "trackers_2.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "trackers_3.json")
     self:GetMenuFromJson(EHI.MenuPath .. "equipment.json")
     self:GetMenuFromJson(EHI.MenuPath .. "waypoints.json")
     self:GetMenuFromJson(EHI.MenuPath .. "buffs.json")
@@ -667,9 +668,9 @@ function EHIMenu:SetLegends(accept, reset, step)
     if self._button_legends then
         local text = managers.localization:text("menu_legend_back", {BTN_BACK = managers.localization:btn_macro("back")})
         local separator = "    "
-        if accept then text = managers.localization:text("menu_legend_select", {BTN_UPDATE  = managers.localization:btn_macro("menu_update")}).. separator ..text end
-        if reset then text = managers.localization:to_upper_text("VoidUI_tooltip_reset_cnt", {BTN_RESET  = managers.localization:btn_macro("menu_toggle_voice_message")}).. separator.. text end
-        if step then text = managers.localization:to_upper_text("VoidUI_tooltip_steps", {BTN_STEP  = managers.localization:btn_macro("previous_page")..managers.localization:btn_macro("next_page")}).. separator.. text end
+        if accept then text = managers.localization:text("menu_legend_select", {BTN_UPDATE  = managers.localization:btn_macro("menu_update")}) .. separator .. text end
+        if reset then text = managers.localization:to_upper_text("VoidUI_tooltip_reset_cnt", {BTN_RESET  = managers.localization:btn_macro("menu_toggle_voice_message")}) .. separator .. text end
+        if step then text = managers.localization:to_upper_text("VoidUI_tooltip_steps", {BTN_STEP  = managers.localization:btn_macro("previous_page") .. managers.localization:btn_macro("next_page")}) .. separator .. text end
         self._button_legends:set_text(text)
     end
 end
@@ -701,7 +702,7 @@ function EHIMenu:SetItem(item, value, menu)
                 local alpha = o:alpha()
                 local w, h = o:size()
                 local check = item.panel:child("check_bg")
-                do_animation(0.1, function (p)
+                do_animation(0.1, function(p)
                     o:set_alpha(math.lerp(alpha, value and 1 or 0, p))
                     o:set_size(math.lerp(w, value and check:w() or check:w() * 2, p), math.lerp(h, value and check:h() or check:h() * 2, p))
                     o:set_center(check:center())

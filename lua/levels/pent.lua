@@ -53,6 +53,7 @@ if Network:is_client() then
     triggers[102295].time = heli_delay + triggers[102295].additional_time
     triggers[102295].random_time = 20
     triggers[102295].class = TT.InaccuratePausable
+    triggers[102295].synced = { class = TT.Pausable }
     triggers[102295].delay_only = true
     EHI:AddSyncTrigger(102295, triggers[102295])
     triggers[102303] = { time = 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
@@ -134,13 +135,7 @@ end
 local tbl =
 {
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [102452] = { f = pent_10 }
-}
-EHI:UpdateUnitsNoCheck(tbl)
-
-local tbl2 =
-{
-    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
+    [102452] = { f = pent_10 },
     [103872] = { ignore = true }
 }
-EHI:UpdateUnits(tbl2)
+EHI:UpdateUnits(tbl)

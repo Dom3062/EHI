@@ -1,0 +1,35 @@
+{
+    "menu_id": "ehi_trackers_3_menu",
+    "parent_menu" : "ehi_trackers_2_menu",
+    "title": "ehi_trackers_menu",
+    "items": [
+        {
+            "type": "toggle",
+            "id": "ehi_show_assault_delay_tracker_choice",
+            "title": "ehi_show_assault_delay_tracker",
+            "description": "ehi_show_assault_delay_tracker_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_assault_delay_tracker",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_assault_delay_tracker",
+            "default_value": false,
+            "ehi_ver" : 78
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_loot_counter_choice",
+            "title": "ehi_show_loot_counter",
+            "description": "ehi_show_loot_counter_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_loot_counter",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_loot_counter",
+            "default_value": true,
+            "ehi_ver" : 80
+        }
+    ]
+}

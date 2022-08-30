@@ -1,4 +1,5 @@
 EHILootTracker = class(EHIProgressTracker)
+EHILootTracker._show_popup = false
 function EHILootTracker:init(panel, params)
     self._offset = params.offset or 0
     self._stay_on_screen = params.stay_on_screen
@@ -24,6 +25,8 @@ function EHILootTracker:SetCompleted(force)
         self._text:set_text(self:Format())
         self:FitTheText()
         self._status = nil
+    elseif self._show_popup then
+        managers.hud:custom_ingame_popup_text("LOOT COUNTER", "All loot bags have been secured", "EHI_Loot")
     end
 end
 
@@ -32,3 +35,5 @@ function EHILootTracker:SetProgressMax(max)
     self:SetTextColor(Color.white)
     self._disable_counting = nil
 end
+
+EHI:SetNotificationAlert("LOOT COUNTER", nil, Color.green)

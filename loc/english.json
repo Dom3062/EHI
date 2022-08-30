@@ -238,6 +238,9 @@
     "ehi_show_assault_delay_tracker" : "Show Assault Delay Tracker",
     "ehi_show_assault_delay_tracker_desc" : "Shows a tracker for how long the assault delay will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
 
+    "ehi_show_loot_counter" : "Show Loot Counter",
+    "ehi_show_loot_counter_desc" : "Shows a tracker for how much loot is in heist",
+    
     "ehi_waypoints_menu" : "Waypoints",
     "ehi_waypoints_menu_desc" : "",
 
@@ -301,6 +304,7 @@
     "ehi_buffs_skills_mastermind_inspire_basic_desc" : "Shows cooldown when you inspire someone",
     "ehi_buffs_skills_mastermind_inspire_ace" : "Inspire (Ace)",
     "ehi_buffs_skills_mastermind_inspire_ace_desc" : "Shows inspire cooldown when you revive someone",
+    "ehi_buffs_skills_mastermind_uppers" : "Uppers",
     "ehi_buffs_skills_mastermind_uppers_range" : "Uppers Range",
     "ehi_buffs_skills_mastermind_uppers_range_desc" : "Shows a gauge when you are in FAK's autoheal range",
     "ehi_buffs_skills_mastermind_uppers_range_refresh" : "Uppers Range Refresh",
@@ -313,6 +317,7 @@
     "ehi_buffs_skills_mastermind_forced_friendship" : "Forced Friendship (Absorption)",
     "ehi_buffs_skills_mastermind_forced_friendship_desc" : "Shows a gauge with current accumulated absorption from Forced Friendship",
     "ehi_buffs_skills_mastermind_sharpshooter_subclass" : "Sharpshooter",
+    "ehi_buffs_skills_mastermind_ammo_efficiency" : "Ammo Efficiency",
     "ehi_buffs_skills_mastermind_aggressive_reload" : "Aggressive Reload",
 
     "ehi_buffs_skills_enforcer_menu" : "Enforcer",

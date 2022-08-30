@@ -520,6 +520,7 @@ tweak_data.ehi.buff.debug_4.option = nil
 tweak_data.hud_icons.EHI_XP = { texture = tweak_data.ehi.icons.xp.texture }
 tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }
 tweak_data.hud_icons.EHI_Minion = EHI:DeepClone(tweak_data.ehi.icons.minion)
+tweak_data.hud_icons.EHI_Loot = EHI:DeepClone(tweak_data.hud_icons.pd2_loot)
 
 do
     local preplanning = tweak_data.preplanning

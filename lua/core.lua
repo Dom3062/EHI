@@ -448,6 +448,7 @@ function EHI:LoadDefaultValues()
         show_enemy_count_tracker = true,
         show_laser_tracker = false,
         show_assault_delay_tracker = true,
+        show_loot_counter = true,
 
         -- Waypoints
         show_waypoints = true,
@@ -1618,7 +1619,7 @@ function EHI:ShowLootCounterOffset(params, manager)
 end
 
 function EHI:ShowLootCounter(params)
-    if Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree" then
+    if (Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree") or not self:GetOption("show_loot_counter") then
         return
     end
     local n_offset = 0

@@ -36,6 +36,18 @@
         },
         {
             "type": "toggle",
+            "id": "ehi_buffs_skills_mastermind_uppers_choice",
+            "title": "ehi_buffs_skills_mastermind_uppers",
+            "description": "ehi_buffs_skills_cooldown",
+            "callback": "SetBuffOption",
+            "callback_arguments": "uppers",
+            "value": "uppers",
+            "is_parent" : true,
+            "default_value": true,
+            "ehi_ver" : 79
+        },
+        {
+            "type": "toggle",
             "id": "ehi_buffs_skills_mastermind_uppers_range_choice",
             "title": "ehi_buffs_skills_mastermind_uppers_range",
             "description": "ehi_buffs_skills_mastermind_uppers_range_desc",

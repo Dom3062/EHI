@@ -1,3 +1,9 @@
+r80 (30. 08. 2022):
+Added "Show Loot Counter" option
+Mountain Master: Fixed a load crash when "Show Timers" option is disabled
+Menu: Fixed missing string in Skills -> Mastermind
+Menu: Fixed missing corner texture
+
 r79 (28. 08. 2022):
 Added buff for reload boost duration from Bloodthirst
 Added option to enable/disable specific buffs
