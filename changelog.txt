@@ -1,3 +1,6 @@
+r81 (07. 09. 2022):
+Fixed a crash when you switched weapons and both of them have "Reconnaissance Sight"
+
 r80 (30. 08. 2022):
 Added "Show Loot Counter" option
 Mountain Master: Fixed a load crash when "Show Timers" option is disabled

@@ -793,10 +793,10 @@ function IngameWaitingForPlayersState:at_exit(...)
                             self._kills[previous_selection] = self._progress
                             self._progress = self._kills[current_selection]
                             if self._progress >= self._max then
-                                self._progress:set_text("FINISH")
+                                self._text:set_text("FINISH")
                                 self._disable_counting = true
                             else
-                                self._progress:set_text(self:Format())
+                                self._text:set_text(self:Format())
                                 self._disable_counting = false
                             end
                             self:AnimateBG()
