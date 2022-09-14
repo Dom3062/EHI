@@ -39,6 +39,7 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "mex2_9",
         max = 25,
+        remove_after_reaching_target = false,
         exclude_from_sync = true
     })
 end

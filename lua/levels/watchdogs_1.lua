@@ -1,6 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
 local escape_delay = 18
 local triggers = {
     [102873] = { time = 36 + 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop },
@@ -31,7 +32,22 @@ if Network:is_client() then
     triggers[101223] = { time = escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
-EHI:ParseTriggers(triggers)
+local achievements =
+{
+    [101137] = { id = "hot_wheels", status = "finish", class = TT.AchievementStatus },
+    [102487] = { id = "hot_wheels", special_function = SF.SetAchievementFailed },
+    [102470] = { id = "hot_wheels", special_function = SF.SetAchievementComplete }
+}
+
+local condition = EHI:GetOption("show_assault_delay_tracker")
+local other =
+{
+    [101244] = { time = 60 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = condition },
+    [101245] = { time = 45 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = condition },
+    [101249] = { time = 50 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = condition }
+}
+
+EHI:ParseTriggers(triggers, achievements, other)
 local max = 8
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     max = 12

@@ -23,6 +23,7 @@ function EHIManager:init()
     self._y = y
     self._text_scale = EHI:GetOption("text_scale")
     self._level_started_from_beginning = true
+    self._delay_popups = true
     self._panel_size = 32 * self._scale
     self._panel_offset = 6 * self._scale
 end
@@ -41,6 +42,11 @@ function EHIManager:init_finalize()
     managers.network:add_event_listener("EHIDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
     EHI:AddOnAlarmCallback(callback(self, self, "RemoveStealthTrackers"))
     EHI:AddOnAlarmCallback(callback(self, self, "DisableBodyBags"))
+    EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "Spawned"))
+end
+
+function EHIManager:Spawned()
+    self._delay_popups = false
 end
 
 function EHIManager:ShowPanel()
@@ -409,7 +415,7 @@ function EHIManager:AddAchievementProgressTracker(id, max, additional_loot, excl
         id = id,
         max = max,
         icons = { icon },
-        delay_popup = true,
+        delay_popup = self._delay_popups,
         exclude_from_sync = exclude_from_sync,
         remove_after_reaching_target = remove_after_reaching_target,
         class = EHI.Trackers.AchievementProgress
@@ -445,12 +451,12 @@ function EHIManager:AddAchievementBagValueCounter(id, to_secure, exclude_from_sy
     })
 end
 
-function EHIManager:ShowLootCounter(max, additional_loot, offset, stay_on_screen)
+function EHIManager:ShowLootCounter(max, additional_loot, max_random, offset)
     self:AddTracker({
         id = "LootCounter",
         max = max + (additional_loot or 0),
+        max_random = max_random or 0,
         offset = offset,
-        stay_on_screen = stay_on_screen,
         icons = { EHI.Icons.Loot },
         exclude_from_sync = true,
         class = "EHILootTracker"

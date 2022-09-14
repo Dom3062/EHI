@@ -59,6 +59,7 @@ function EHICritChanceTracker:PreUpdate()
     end
     EHI:AddOnCustodyCallback(f)
     self._update_disabled = false
+    self:SetRatio(0)
 end
 
 function EHICritChanceTracker:SetCustody(state)

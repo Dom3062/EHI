@@ -43,13 +43,13 @@ local achievements =
     [100693] = { id = "live_2", class = TT.AchievementStatus },
     [102704] = { id = "live_2", special_function = SF.SetAchievementFailed },
     [100246] = { id = "live_2", special_function = SF.SetAchievementComplete },
+    [100304] = { time = 5, id = "live_3", class = TT.AchievementUnlock },
     [102785] = { id = "live_4", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [100249] = { id = "live_4", special_function = SF.SetAchievementComplete },
     [102694] = { id = "live_4", special_function = SF.SetAchievementFailed },
     [EHI:GetInstanceElementID(100116, 4900)] = { id = "live_5", class = TT.AchievementStatus },
     [102702] = { id = "live_5", special_function = SF.SetAchievementFailed },
-    [100265] = { id = "live_5", special_function = SF.SetAchievementComplete },
-    [100304] = { time = 5, id = "live_3", class = TT.AchievementUnlock }
+    [100265] = { id = "live_5", special_function = SF.SetAchievementComplete }
 }
 
 EHI:ParseTriggers(triggers, achievements)
@@ -59,3 +59,11 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100050, 4700)] = true -- PC
 }
 EHI:DisableWaypoints(DisableWaypoints)
+
+local max = 6
+if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
+    max = 12
+elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+    max = 18
+end
+EHI:ShowLootCounter({ max = max })

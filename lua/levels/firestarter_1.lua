@@ -2,6 +2,10 @@ local EHI = EHI
 function EHI:LordOfWarAchievement()
     local weapons = managers.ehi:GetUnits("units/payday2/equipment/gen_interactable_weapon_case_2x1/gen_interactable_weapon_case_2x1", 1)
     local n_of_weapons = 0
+    if type(weapons) ~= "table" then
+        EHI:Log("Engine provided invalid data; aborted to avoid crash")
+        return
+    end
     for _, weapon in pairs(weapons) do
         if weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
             local state = weapon:damage()._state.graphic_group.grp_wpn
@@ -22,11 +26,9 @@ function EHI:LordOfWarAchievement()
 end
 
 local achievements = {
-    [103240] = { special_function = EHI.SpecialFunctions.CustomCode, f = function()
+    [103240] = { special_function = EHI.SpecialFunctions.CustomCodeDelayed, t = 5, f = function()
         -- This needs to be delayed because the number of required weapons are decided upon spawn
-        EHI:DelayCall("LordOfWarAchievement", 5, function()
-            EHI:LordOfWarAchievement()
-        end)
+        EHI:LordOfWarAchievement()
     end}
 }
 

@@ -13,6 +13,9 @@ end
 local CreateTracker
 if EHI:GetOption("gage_tracker_panel") == 1 then -- Tracker
     CreateTracker = function()
+        if _G.IS_VR and managers.ehi:IsLoading() then
+            return
+        end
         local max = tweak_data.gage_assignment:get_num_assignment_units()
         managers.ehi:AddTracker({
             id = "Gage",

@@ -1,9 +1,10 @@
 local Color = Color
-EHIsand11Tracker = class(EHIProgressTracker)
+EHIsand11Tracker = class(EHIAchievementProgressTracker)
 function EHIsand11Tracker:init(panel, params)
     params.icons = EHI:GetAchievementIcon("sand_11")
     params.max = 100
     params.remove_after_reaching_target = false
+    params.no_failure = true
     self._chance = 0
     EHIsand11Tracker.super.init(self, panel, params)
 end
@@ -71,7 +72,7 @@ local triggers = {
     [101009] = { time = 210/30, id = "RampRaise", icons = { Icon.Wait } },
     [101799] = { time = 181/30, id = "RampLower", icons = { Icon.Wait } },
 
-    [104528] = { time = 22, id = "Crane", icons = { "equipment_winch_hook" } }, -- 104528 -> 100703
+    [104528] = { time = 22, id = "Crane", icons = { Icon.Winch } }, -- 104528 -> 100703
 
     [103870] = { chance = 34, id = "ReviveVlad", icons = { "equipment_defibrillator" }, class = TT.Chance, special_function = SF.AddTrackerIfDoesNotExist },
     [103871] = { id = "ReviveVlad", special_function = SF.RemoveTracker },

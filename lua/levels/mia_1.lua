@@ -5,8 +5,12 @@ local TT = EHI.Trackers
 local Methlab = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop } }
 local element_sync_triggers = {}
 local start_index = { 7800, 8200, 8600 }
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local very_hard_and_below = EHI:IsDifficultyOrBelow(EHI.Difficulties.VeryHard)
+local Heli = 30 + 23 + 5
+local Truck = 40
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+    Heli = 3 + 60 + 23 + 5
+    Truck = 60
+end
 local client = Network:is_client()
 for _, index in ipairs(start_index) do
     -- Cooking restart
@@ -23,13 +27,10 @@ for _, index in ipairs(start_index) do
     end
 end
 local delay = 1.5
-local AddTimeByPreplanning = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [102177] = { time = (ovk_and_up and (3 + 60 + 23 + 5) or (30 + 23 + 5)), id = "Heli", icons = Icon.HeliDropBag }, -- Time before Bile arrives
-    --,[105967] = { time = 60 + 23 + 5 }
-    --,[103808] = { time = 30 + 23 + 5 }
+    [102177] = { time = Heli, id = "Heli", icons = Icon.HeliDropBag }, -- Time before Bile arrives
 
-    [106013] = { time = (very_hard_and_below and 40 or 60), id = "Truck", icons = { Icon.Car }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [106013] = { time = Truck, id = "Truck", icons = { Icon.Car }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [106017] = { id = "Truck", special_function = SF.PauseTracker },
     [EHI:GetInstanceElementID(100038, 1300)] = { time = 90 + delay, id = "reader", icons = { Icon.PCHack }, class = TT.Pausable },
     [EHI:GetInstanceElementID(100039, 1300)] = { time = 120 + delay, id = "reader", icons = { Icon.PCHack }, class = TT.Pausable },
@@ -63,17 +64,7 @@ end
 local other =
 {
     -- +30s anticipation
-    [101937] = { time = 10 + 1 + 40 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 }, condition = EHI:GetOption("show_assault_delay_tracker") },
+    [101937] = { time = 10 + 1 + 40 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 }, condition = EHI:GetOption("show_assault_delay_tracker") },
 }
 
 EHI:ParseTriggers(triggers, nil, other)
-EHI:RegisterCustomSpecialFunction(AddTimeByPreplanning, function(id, trigger, element, enabled)
-    local t = 0
-    if managers.preplanning:IsAssetBought(trigger.data.id) then
-        t = trigger.data.yes
-    else
-        t = trigger.data.no
-    end
-    trigger.time = trigger.time + t
-    EHI:CheckCondition(id)
-end)

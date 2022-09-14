@@ -20,8 +20,7 @@ local triggers = {
     [1010011] = { special_function = SF.RemoveTrackers, data = { "CookChance", "VanStayDelay" } },
     [1010012] = { special_function = SF.RemoveTriggers, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238 } },
 
-    [102383] = { time = 2 + 5, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1023831 } },
-    [1023831] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30, id = "AssaultDelay", class = TT.AssaultDelay },
+    [102383] = { time = 2 + 5, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait } },
     [100721] = { time = 1, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
     [1007211] = { chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists },
 
@@ -52,7 +51,7 @@ local triggers = {
 
     [101128] = { id = 101454, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-1374.0, -2388.0, 1135.0) } },
 
-    [100723] = { amount = 15, id = "CookChance", special_function = SF.IncreaseChance }
+    [100723] = { id = "CookChance", special_function = SF.IncreaseChanceFromElement }
 }
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
     triggers[102197] = { time = 180 + heli_delay_full, id = "HeliMeth", icons = heli_icon }
@@ -77,7 +76,18 @@ local achievements =
     [102611] = { id = "voff_5", special_function = SF.IncreaseProgress },
 }
 
-EHI:ParseTriggers(triggers, achievements, nil, "Van", Icon.CarEscape)
+local other = {}
+if EHI:GetOption("show_assault_delay_tracker") then
+    if EHI:GetOption("show_mission_trackers") then
+        triggers[102383].special_function = SF.CreateAnotherTrackerWithTracker
+        triggers[102383].data = { fake_id = 1023831 }
+        other[1023831] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30, id = "AssaultDelay", class = TT.AssaultDelay }
+    else
+        other[102383] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30, id = "AssaultDelay", class = TT.AssaultDelay }
+    end
+end
+
+EHI:ParseTriggers(triggers, achievements, other, "Van", Icon.CarEscape)
 if EHI:GetOption("show_achievement") and ovk_and_up then
     EHI:ShowAchievementLootCounter({
         achievement = "halloween_2",

@@ -70,6 +70,7 @@ function EHIDodgeChanceTracker:PreUpdate()
     EHI:HookWithID(PlayerStandard, "_end_action_zipline", "EHI_DodgeBuff_end_action_zipline", update)
     EHI:HookWithID(PlayerStandard, "_start_action_ducking", "EHI_DodgeBuff_start_action_ducking", update)
     EHI:HookWithID(PlayerStandard, "_end_action_ducking", "EHI_DodgeBuff_end_action_ducking", update)
+    self:SetRatio(0)
 end
 
 function EHIDodgeChanceTracker:SetCustody(state)

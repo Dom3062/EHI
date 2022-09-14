@@ -1,4 +1,5 @@
 local Color = Color
+local lerp = math.lerp
 local function show(o)
     local t = 0
     local total = 0.15
@@ -8,11 +9,17 @@ local function show(o)
     end
     o:set_alpha(1)
 end
+local function anim(o, ratio)
+    local r = o:color().red
+    over(0.25, function(p, t)
+        local l = lerp(r, ratio, p)
+        o:set_color(Color(1, l, 1, 1))
+    end)
+end
 EHIGaugeBuffTracker = class(EHIBuffTracker)
 EHIGaugeBuffTracker._inverted_progress = true
 function EHIGaugeBuffTracker:init(panel, params)
     self._ratio = 0
-    self._max = params.max or 1
     self._format = params.format or "standard"
     EHIGaugeBuffTracker.super.init(self, panel, params)
 end
@@ -30,19 +37,12 @@ function EHIGaugeBuffTracker:Deactivate()
     self._progress:set_color(Color(1, 0, 1, 1)) -- No need to animate this because the panel is no longer visible
 end
 
-local lerp = math.lerp
 function EHIGaugeBuffTracker:SetRatio(ratio)
     self._ratio = ratio
     self._text:set_text(self:Format())
     self:FitTheText()
     self._progress:stop()
-    self._progress:animate(function(o)
-        local r = o:color().red * self._max
-        over(0.25, function(p, t)
-            local l = lerp(r, self._ratio, p)
-            o:set_color(Color(1, l / self._max, 1, 1))
-        end)
-    end)
+    self._progress:animate(anim, self._ratio)
 end
 
 function EHIGaugeBuffTracker:FitTheText()

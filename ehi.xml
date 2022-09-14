@@ -51,7 +51,6 @@
                 <post :hook_id="hudmanagerpd2" :script_path="SimpleBuffEdits.lua"/>
             </group>
             <post :hook_id="hudmanager" :script_path="HUDManager.lua" />
-            <post :hook_id="hudmanagervr" :script_path="HUDManagerVR.lua" />
             <post :hook_id="hudmanagerpd2" :script_path="HUDManagerPD2.lua" />
             <post :hook_id="hud/hudchallengenotification" :script_path="HudChallengeNotification.lua" />
             <post :hook_id="gameplaycentralmanager" :script_path="GamePlayCentralManager.lua"/>

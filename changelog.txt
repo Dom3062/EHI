@@ -1,3 +1,14 @@
+r82 (14. 09. 2022):
+Loot Tracker: Added support for variable random loot
+Fixed an issue where Crit Chance buff shows "100s" after spawn
+Fixed an issue where Dodge Chance buff shows "100s" after spawn
+Fixed an issue where "GAGE PACKAGES" popup is visible after sync when a heist does not support them
+VR: Fixed trackers not visible
+Buluc's Mansion: Fixed achievement trackers not showing up
+The Bomb: Forest: Added achievement tracker for "Pump It Up"
+Watchdogs Day 1: Added achievement tracker for "Coming in Hot"
+Watchdogs Day 2: Fixed an issue where Loot Counter is off by 10 bags
+
 r81 (07. 09. 2022):
 Fixed a crash when you switched weapons and both of them have "Reconnaissance Sight"
 

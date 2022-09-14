@@ -76,7 +76,7 @@ function EHIProgressTracker:SetCompleted(force)
         if self._remove_after_reaching_counter_target or force then
             self._parent_class:AddTrackerToUpdate(self._id, self)
         else
-            self._text:set_text("FINISH")
+            self:SetStatusText("finish")
             self:FitTheText()
         end
         self._disable_counting = true

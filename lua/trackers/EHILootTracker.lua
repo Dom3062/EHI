@@ -1,10 +1,38 @@
+local format = EHI:GetOption("variable_random_loot_format")
 EHILootTracker = class(EHIProgressTracker)
-EHILootTracker._show_popup = false
+EHILootTracker._show_popup = EHI:GetOption("show_all_loot_secured_popup")
 function EHILootTracker:init(panel, params)
     self._offset = params.offset or 0
-    self._stay_on_screen = params.stay_on_screen
+    self._max_random = params.max_random or 0
+    self._stay_on_screen = self._max_random > 0
     EHILootTracker.super.init(self, panel, params)
     self._remove_after_reaching_counter_target = not self._stay_on_screen
+    self._loot_id = {}
+end
+
+if format == 1 then
+    function EHILootTracker:Format()
+        if self._max_random > 0 then
+            local max = self._max + self._max_random
+            return self._progress .. "/" .. self._max .. "-" .. max .. "?"
+        end
+        return EHILootTracker.super.Format(self)
+    end
+elseif format == 2 then
+    function EHILootTracker:Format()
+        if self._max_random > 0 then
+            local max = self._max + self._max_random
+            return self._progress .. "/" .. max .. "?"
+        end
+        return EHILootTracker.super.Format(self)
+    end
+else
+    function EHILootTracker:Format()
+        if self._max_random > 0 then
+            return self._progress .. "/" .. self._max .. "+" .. self._max_random .. "?"
+        end
+        return EHILootTracker.super.Format(self)
+    end
 end
 
 function EHILootTracker:SetProgress(progress)
@@ -26,7 +54,7 @@ function EHILootTracker:SetCompleted(force)
         self:FitTheText()
         self._status = nil
     elseif self._show_popup then
-        managers.hud:custom_ingame_popup_text("LOOT COUNTER", "All loot bags have been secured", "EHI_Loot")
+        managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_loot_secured"), "EHI_Loot")
     end
 end
 
@@ -36,4 +64,39 @@ function EHILootTracker:SetProgressMax(max)
     self._disable_counting = nil
 end
 
-EHI:SetNotificationAlert("LOOT COUNTER", nil, Color.green)
+function EHILootTracker:VerifyStatus()
+    self._stay_on_screen = self._max_random > 0
+    self._remove_after_reaching_counter_target = not self._stay_on_screen
+    if self._progress == self._max then
+        self:SetCompleted()
+    end
+end
+
+function EHILootTracker:RandomLootSpawned()
+    self._max_random = self._max_random - 1
+    self:IncreaseProgressMax(1)
+    self:FitTheText()
+    self:VerifyStatus()
+end
+
+function EHILootTracker:RandomLootDeclined()
+    self._max_random = self._max_random - 1
+    self:SetProgressMax(self._max)
+    self:FitTheText()
+    self:VerifyStatus()
+end
+
+-- crojob3.lua
+function EHILootTracker:RandomLootSpawned2(id)
+    self._loot_id[id] = true
+    self:RandomLootSpawned()
+end
+
+function EHILootTracker:RandomLootDeclined2(id)
+    if self._loot_id[id] then
+        return
+    end
+    self:RandomLootDeclined()
+end
+
+EHI:SetNotificationAlert("LOOT COUNTER", "ehi_popup_loot_counter", Color.green)

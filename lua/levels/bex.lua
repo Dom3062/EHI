@@ -47,3 +47,4 @@ local achievements =
 }
 
 EHI:ParseTriggers(triggers, achievements)
+EHI:ShowLootCounter({ max = 11 })

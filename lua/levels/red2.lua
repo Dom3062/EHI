@@ -135,6 +135,17 @@ local achievements =
     [102539] = green_1_decrease
 }
 
+--[[local AssaultTracker = EHI:GetOption("show_assault_delay_tracker")
+local other =
+{
+    [106046] = { time = 5 + 40 + 17, id = "AssaultDelay", class = TT.AssaultDelay, condition = AssaultTracker },
+    [102213] = { time = 0, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = AssaultTracker }
+}
+
+if Network:is_client() then
+    other[102212] = { time = 17, id = "AssaultDelay", class = TT.AssaultDelay, condition = AssaultTracker }
+end]]
+
 EHI:ParseTriggers(triggers, achievements)
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:RegisterCustomSpecialFunction(RemoveTriggerAndStartAchievementCountdown, function(id, ...)

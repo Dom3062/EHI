@@ -1,4 +1,4 @@
-EHISecurityLockGuiTracker = EHISecurityLockGuiTracker or class(EHIProgressTracker)
+EHISecurityLockGuiTracker = class(EHIProgressTracker)
 function EHISecurityLockGuiTracker:OverridePanel(params)
     self._time_text = self._time_bg_box:text({
         name = "time_text",
@@ -37,6 +37,9 @@ function EHISecurityLockGuiTracker:GetPanelSize()
 end
 
 function EHISecurityLockGuiTracker:SetTimeNoAnim(time) -- No fit text function needed, these timers just run down
+    if self._time == time then
+        return
+    end
     self._time = time
     self._time_text:set_text(EHISecurityLockGuiTracker.super.super.Format(self))
 end
@@ -51,17 +54,5 @@ function EHISecurityLockGuiTracker:SetTimeColor()
         self._time_text:set_color(Color.red)
     else
         self._time_text:set_color(Color.white)
-    end
-end
-
-function EHISecurityLockGuiTracker:ResetTimeFontSize()
-    self._time_text:set_font_size(self._panel:h() * self._text_scale)
-end
-
-function EHISecurityLockGuiTracker:FitTheTime()
-    self:ResetTimeFontSize()
-    local w = select(3, self._time_text:text_rect())
-    if w > self._time_text:w() then
-        self._time_text:set_font_size(self._time_text:font_size() * (self._time_text:w() / w) * self._text_scale)
     end
 end

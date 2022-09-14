@@ -17,19 +17,23 @@ local achievements =
     [101379] = { id = "frappucino_to_go_please", special_function = SF.SetAchievementComplete }
 }
 
-EHI:ParseTriggers(triggers, achievements, nil, "Escape", Icon.CarEscape)
-
-local function IsBranchbankJobActive()
-    local jobs = tweak_data.achievement.complete_heist_achievements.uno_1.jobs
-    for _, job in ipairs(jobs) do
-        if managers.job:current_job_id() == job then
-            return true
-        end
+local BagsCheck = function()
+    local max = managers.ehi:CountLootbagsOnTheGround()
+    if max == 0 then
+        return
     end
-    return false
+    EHI:ShowLootCounter({ max = max })
 end
+local other =
+{
+    [100968] = { special_function = SF.CustomCode, f = BagsCheck },
+    [100969] = { special_function = SF.CustomCode, f = BagsCheck },
+    [100970] = { special_function = SF.CustomCode, f = BagsCheck }
+}
 
-if IsBranchbankJobActive() then
+EHI:ParseTriggers(triggers, achievements, other, "Escape", Icon.CarEscape)
+
+if tweak_data.ehi.functions.IsBranchbankJobActive() then
     EHI:ShowAchievementBagValueCounter({
         achievement = "uno_1",
         value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value,
@@ -40,6 +44,4 @@ if IsBranchbankJobActive() then
             check_type = EHI.LootCounter.CheckType.ValueOfBags
         }
     })
---[[elseif managers.job:current_job_id() == "family" then -- Diamond Store
-    EHI:ShowLootCounter({ max = 18 })]]
 end

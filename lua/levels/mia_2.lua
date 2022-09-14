@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers =
 {
     [100428] = { time = 24, id = "HeliDropDrill", icons = Icon.HeliDropDrill, hook_element = 100427 }, -- 20s
@@ -15,11 +14,15 @@ local triggers = {
     -- 22 = Heli door anim delay
     -- Total: 32 s
     [100224] = { id = 100926, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 100926 } },
-    [101858] = { id = 101854, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101854 } }
+    [101858] = { id = 101854, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101854 } },
+
+    -- Bugged because of retarted use of ENABLED and ElementTimerTrigger
+    [101240] = { time = 540, id = "CokeTimer", icons = { { icon = Icon.Loot, color = Color.red } }, class = TT.Warning },
+    [101282] = { id = "CokeTimer", special_function = SF.RemoveTracker }
 }
 local achievements =
 {
-    [101228] = { time = 210, id = "pig_2", class = TT.Achievement, difficulty_pass = ovk_and_up },
+    [101228] = { time = 210, id = "pig_2", class = TT.Achievement, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
     [100788] = { id = "pig_2", special_function = SF.SetAchievementComplete }
 }
 local start_index = { 3500, 3750, 3900, 4450, 4900, 6100, 17600, 17650 }

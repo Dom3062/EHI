@@ -5,10 +5,11 @@ else
     EHI._hooks.IngameWaitingForPlayersState = true
 end
 
+local ShowGageTracker = EHI:GetOption("show_gage_tracker")
 local AddGageTracker
 if EHI:GetOption("gage_tracker_panel") == 1 then
     AddGageTracker = function()
-        if EHI:GetOption("show_gage_tracker") and managers.ehi:TrackerDoesNotExist("Gage") and EHI._cache.GagePackages and EHI._cache.GagePackages > 0 then
+        if ShowGageTracker and managers.ehi:TrackerDoesNotExist("Gage") and EHI:AreGagePackagesSpawned() then
             managers.ehi:AddTracker({
                 id = "Gage",
                 icons = { "gage" },
@@ -21,7 +22,7 @@ if EHI:GetOption("gage_tracker_panel") == 1 then
     end
 else
     AddGageTracker = function()
-        if EHI:GetOption("show_gage_tracker") and EHI._cache.GagePackages and EHI._cache.GagePackages > 0 then
+        if ShowGageTracker and EHI:AreGagePackagesSpawned() then
             if EHI._cache.Host or not managers.ehi:GetDropin() then
                 local max = tweak_data.gage_assignment:get_num_assignment_units()
                 managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), "0/" .. tostring(max), "EHI_Gage")
@@ -793,13 +794,19 @@ function IngameWaitingForPlayersState:at_exit(...)
                             self._kills[previous_selection] = self._progress
                             self._progress = self._kills[current_selection]
                             if self._progress >= self._max then
-                                self._text:set_text("FINISH")
+                                self:SetStatusText("finish")
                                 self._disable_counting = true
                             else
                                 self._text:set_text(self:Format())
                                 self._disable_counting = false
                             end
                             self:AnimateBG()
+                        end
+                        function EHItango_achieve_3Tracker:SetCompleted(force)
+                            EHItango_achieve_3Tracker.super.SetCompleted(self, force)
+                            if self._status == "completed" and self._icon1 then
+                                self:SetIconColor(Color.green)
+                            end
                         end
                     end
                     managers.ehi:AddTracker({
@@ -808,7 +815,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                         max = 200,
                         icons = EHI:GetAchievementIcon("tango_achieve_3"),
                         flash_times = 1,
-                        emove_after_reaching_target = false,
+                        remove_after_reaching_target = false,
                         class = "EHItango_achieve_3Tracker"
                     })
                     local primary_weapon = primary.weapon_id
@@ -825,7 +832,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                             managers.ehi:CallFunction("tango_achieve_3", "WeaponSwitched", weapon - 1)
                         end
                     end
-                    managers.player:register_message(Message.OnSwitchWeapon, "tango_achieve_3", switch)
+                    managers.player:register_message(Message.OnSwitchWeapon, "EHI_tango_achieve_3", switch)
                 else
                     CreateProgressTracker("tango_achieve_3", 0, 200, false, false)
                     local weapon_required = nil

@@ -5,6 +5,10 @@ else
 	EHI._hooks.GageAssignmentManager = true
 end
 
+if not EHI:GetOption("show_gage_tracker") then
+    return
+end
+
 local original =
 {
 	sync_load = GageAssignmentManager.sync_load,
@@ -19,7 +23,7 @@ if EHI:GetOption("gage_tracker_panel") == 1 then
 else
 	if EHI:GetOption("show_gage_tracker") then
 		ShowProgress = function(picked_up, max, client_sync_load)
-			if client_sync_load and Global.statistics_manager.playing_from_start then
+			if (client_sync_load and Global.statistics_manager.playing_from_start) or not EHI:AreGagePackagesSpawned() then
 				return
 			end
 			managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), tostring(picked_up) .. "/" .. tostring(max), "EHI_Gage")
@@ -45,10 +49,7 @@ local function UpdateTracker(self, client_sync_load)
 	local picked_up = max_units - remaining
 	if client_sync_load then
 		if not Global.statistics_manager.playing_from_start then
-			picked_up = picked_up - 1
-			if picked_up < 0 then
-				picked_up = 0
-			end
+			picked_up = math.max(picked_up - 1, 0)
 			EHI._cache.GagePackagesProgress = picked_up
 		end
 	end

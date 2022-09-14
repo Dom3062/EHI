@@ -29,7 +29,38 @@
             "focus_changed_callback": "SetFocus",
             "value": "show_loot_counter",
             "default_value": true,
+            "is_parent" : true,
             "ehi_ver" : 80
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_all_loot_secured_popup_choice",
+            "title": "ehi_show_all_loot_secured_popup",
+            "description": "ehi_show_all_loot_secured_popup_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_all_loot_secured_popup",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_all_loot_secured_popup",
+            "default_value": true,
+            "parent": "ehi_show_loot_counter_choice",
+            "ehi_ver" : 82
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_variable_random_loot_format_choice",
+            "title": "ehi_variable_random_loot_format",
+            "description": "ehi_variable_random_loot_format_desc",
+            "callback": "SetOption",
+            "callback_arguments": "variable_random_loot_format",
+            "items": [
+                "ehi_variable_random_loot_format_1",
+                "ehi_variable_random_loot_format_2",
+                "ehi_variable_random_loot_format_3"
+            ],
+            "value": "variable_random_loot_format",
+            "default_value": 3,
+            "parent": "ehi_show_loot_counter_choice",
+            "ehi_ver" : 82
         }
     ]
 }

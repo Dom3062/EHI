@@ -21,6 +21,8 @@
   "ehi_popup_minion_killed": "コンバートした敵が殺害されました",
   "ehi_popup_achievement_failed": "実績解除失敗！",
   "ehi_popup_achievement_started": "実績解除開始！",
+  "ehi_popup_loot_counter" : "LOOT COUNTER",
+  "ehi_popup_all_loot_secured" : "All loot bags have been secured",
   "ehi_achievement_ok": "OK",
   "ehi_achievement_done": "DONE",
   "ehi_achievement_pass": "PASS",

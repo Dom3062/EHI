@@ -1,9 +1,30 @@
+local function LootSafeIsVisible()
+    local unit = managers.worlddefinition:get_unit(101153)
+    if not unit then
+        return false
+    end
+    if not unit:damage() then
+        return false
+    end
+    if unit:damage()._state then
+        local group = unit:damage()._state.graphic_group
+        return not group.safe -- If the "safe" group does not exist, the safe is visible
+    else
+        return false
+    end
+end
+
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local van_anim_delay = 320 / 30
 local assault_delay = 0
 local triggers = { -- Time before escape vehicle arrives
+    [101890] = { special_function = SF.CustomCodeDelayed, t = 4, f = function()
+        if LootSafeIsVisible() then
+            EHI:ShowLootCounter({ max = 1 })
+        end
+    end},
     [102492] = { time = 40 + van_anim_delay },
     [102493] = { time = 30 + van_anim_delay },
     [102494] = { time = 20 + van_anim_delay },
@@ -33,3 +54,9 @@ local other =
 }
 
 EHI:ParseTriggers(triggers, nil, other, "Escape", Icon.CarEscape)
+EHI:AddLoadSyncFunction(function(self)
+    if LootSafeIsVisible() then
+        EHI:ShowLootCounter({ max = 1 })
+        self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
+    end
+end)

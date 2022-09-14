@@ -22,7 +22,7 @@ if Network:is_client() then
     triggers[100035] = { time = 4 + 30 + 24 + 3, special_function = LiquidNitrogen }
     triggers[101630] = { time = 30 + 24 + 3, special_function = LiquidNitrogen }
     triggers[101629] = { time = 24 + 3, special_function = LiquidNitrogen }
-    EHI:RegisterCustomSpecialFunction(LiquidNitrogen, function(id, trigger, element, enabled)
+    EHI:RegisterCustomSpecialFunction(LiquidNitrogen, function(id, trigger, ...)
         if managers.ehi:TrackerDoesNotExist("LiquidNitrogen") then
             managers.ehi:AddTracker({
                 id = "LiquidNitrogen",
@@ -53,3 +53,14 @@ EHI:ShowAchievementLootCounter({
         loot_type = { "diamonds_dah", "diamonds" }
     }
 })
+
+local DisableWaypoints =
+{
+    [101768] = true, -- Defend PC
+    [101765] = true, -- Fix PC
+
+    [EHI:GetInstanceElementID(100034, 7300)] = true, -- Defend Hackbox
+    [EHI:GetInstanceElementID(100031, 7300)] = true -- Fix Hackbox
+    -- Second instance is not used, no need to have the waypoints here
+}
+EHI:DisableWaypoints(DisableWaypoints)

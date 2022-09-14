@@ -23,6 +23,8 @@
     "ehi_popup_minion_killed" : "你的变节警察已阵亡",
     "ehi_popup_achievement_failed" : "挑战成就失败！",
     "ehi_popup_achievement_started" : "开始挑战成就!",
+    "ehi_popup_loot_counter" : "LOOT COUNTER",
+    "ehi_popup_all_loot_secured" : "All loot bags have been secured",
     "ehi_achievement_ok" : "OK",
     "ehi_achievement_done" : "完成",
     "ehi_achievement_pass" : "通过",
@@ -238,8 +240,14 @@
     "ehi_show_assault_delay_tracker" : "显示突击延迟追踪器",
     "ehi_show_assault_delay_tracker_desc" : "显示突击延迟的时间追踪器\n\n当客机中途加入后难度增加时追踪器将自动隐藏",
 
-    "ehi_show_loot_counter" : "Show Loot Counter",
-    "ehi_show_loot_counter_desc" : "Shows a tracker for how much loot is in heist",
+    "ehi_show_loot_counter" : "显示战利品追踪器",
+    "ehi_show_loot_counter_desc" : "显示你已经劫获多少战利品",
+
+    "ehi_variable_random_loot_format" : "Variable Random Loot Format",
+    "ehi_variable_random_loot_format_desc" : "Defines how additional random loot should be formatted\n\nExample:16 guaranteed bags with 4 safes that may or not have loot; 9 bags secured\n\nOption 1:\n9/16-20?\n\nOption 2:\n9/20?\n\nOption 3:\n9/16+4?",
+    "ehi_variable_random_loot_format_1" : "Progress / Max - (Max + Random)?",
+    "ehi_variable_random_loot_format_2" : "Progress / (Max + Random)?",
+    "ehi_variable_random_loot_format_3" : "Progress / Max + Random?",
     
     "ehi_waypoints_menu" : "路径导航",
     "ehi_waypoints_menu_desc" : "",
@@ -304,6 +312,7 @@
     "ehi_buffs_skills_mastermind_inspire_basic_desc" : "显示呼喊队友后激励战吼的冷却时间",
     "ehi_buffs_skills_mastermind_inspire_ace" : "激励战吼 (精通)",
     "ehi_buffs_skills_mastermind_inspire_ace_desc" : "显示救起队友后激励战吼的冷却时间",
+    "ehi_buffs_skills_mastermind_uppers" : "兴奋剂",
     "ehi_buffs_skills_mastermind_uppers_range" : "兴奋剂距离",
     "ehi_buffs_skills_mastermind_uppers_range_desc" : "当你在“兴奋剂”技能自动使用急救包的范围内显示",
     "ehi_buffs_skills_mastermind_uppers_range_refresh" : "距离刷新频率",
@@ -316,6 +325,7 @@
     "ehi_buffs_skills_mastermind_forced_friendship" : "强制友谊 (伤害吸收)",
     "ehi_buffs_skills_mastermind_forced_friendship_desc" : "显示”强制友谊“提供的伤害吸收量",
     "ehi_buffs_skills_mastermind_sharpshooter_subclass" : "神枪系",
+    "ehi_buffs_skills_mastermind_ammo_efficiency" : "节能弹药",
     "ehi_buffs_skills_mastermind_aggressive_reload" : "迅猛装填",
 
     "ehi_buffs_skills_enforcer_menu" : "暴徒",

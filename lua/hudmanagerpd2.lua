@@ -25,9 +25,10 @@ local server = Network:is_server()
 
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
+    local hud = self:script(PlayerBase.PLAYER_INFO_HUD_PD2)
     self.ehi = managers.ehi
     self.ehi_waypoint = managers.ehi_waypoint
-    self.ehi_waypoint:SetPlayerHUD(self:script(PlayerBase.PLAYER_INFO_HUD_PD2), self._workspaces.overlay.saferect, self._gui)
+    self.ehi_waypoint:SetPlayerHUD(hud, self._workspaces.overlay.saferect, self._gui)
     self._tracker_waypoints = {}
     if server or level_id == "hvh" then
         self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
@@ -37,10 +38,13 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     elseif EHIWaypoints then
         self:add_updator("EHI_Waypoint_dt_update", callback(self.ehi_waypoint, self.ehi_waypoint, "update_dt"))
     end
+    if _G.IS_VR then
+        self.ehi:SetPanel(hud.panel)
+    end
     if EHI:GetOption("show_buffs") then
         local buff = managers.ehi_buff
         self:add_updator("EHI_Buff_Update", callback(buff, buff, "update"))
-        buff:init_finalize(self:script(PlayerBase.PLAYER_INFO_HUD_PD2))
+        buff:init_finalize(hud)
     end
     --[[EHI:DelayCall("EHI_Debug", 5, function()
         local Icon = EHI.Icons

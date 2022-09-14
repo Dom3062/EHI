@@ -349,6 +349,16 @@ function EHITracker:SetIconColor(color)
     self._icon1:set_color(color)
 end
 
+function EHITracker:SetStatusText(status)
+    local txt = "ehi_achievement_" .. status
+    if LocalizationManager._custom_localizations[txt] then
+        self._text:set_text(managers.localization:text(txt))
+    else
+        self._text:set_text(string.upper(status))
+    end
+    self:FitTheText()
+end
+
 function EHITracker:SetTrackerAccurate(time)
     self._tracker_type = "accurate"
     self:SetTextColor(Color.white)

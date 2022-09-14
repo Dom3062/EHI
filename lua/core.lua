@@ -102,12 +102,14 @@ _G.EHI =
         RemoveTriggerAndShowAchievementCustom = 47,
         IncreaseProgressMax = 48,
         SetTimeIfLoudOrStealth = 49,
+        AddTimeByPreplanning = 50,
         ShowWaypoint = 51,
         DecreaseProgress = 54,
 
         Debug = 100000,
         CustomCode = 100001,
         CustomCodeIfEnabled = 100002,
+        CustomCodeDelayed = 100003,
 
         -- Don't use it directly! Instead, call "EHI:GetFreeCustomSpecialFunctionID()" and "EHI:RegisterCustomSpecialFunction()" respectively
         CustomSF = 1000
@@ -364,7 +366,7 @@ function EHI:LoadDefaultValues()
         y_offset = 150,
         text_scale = 1,
         scale = 1,
-        vr_scale = 2.5,
+        vr_scale = 1,
         time_format = 2, -- 1 = Seconds only, 2 = Minutes and seconds
         tracker_alignment = 1, -- 1 = Vertical, 2 = Horizontal
 
@@ -449,6 +451,8 @@ function EHI:LoadDefaultValues()
         show_laser_tracker = false,
         show_assault_delay_tracker = true,
         show_loot_counter = true,
+        show_all_loot_secured_popup = true,
+        variable_random_loot_format = 3, -- 1 = Max-(Max+Random)?; 2 = MaxRandom?; 3 = Max+Random?
 
         -- Waypoints
         show_waypoints = true,
@@ -582,6 +586,10 @@ function EHI:IsXPTrackerDisabled()
         return true
     end
     return false
+end
+
+function EHI:AreGagePackagesSpawned()
+    return self._cache.GagePackages and self._cache.GagePackages > 0
 end
 
 function EHI:AddCallback(id, f)
@@ -807,11 +815,8 @@ function EHI:DeepClone(o) -- Copy of OVK's function deep_clone
     if type(o) == "userdata" then
 		return o
 	end
-
 	local res = {}
-
 	setmetatable(res, getmetatable(o))
-
 	for k, v in pairs(o) do
 		if type(v) == "table" then
 			res[k] = self:DeepClone(v)
@@ -819,7 +824,6 @@ function EHI:DeepClone(o) -- Copy of OVK's function deep_clone
 			res[k] = v
 		end
 	end
-
 	return res
 end
 
@@ -927,6 +931,8 @@ function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_al
                     self:Log("key: " .. tostring(key) .. " does not have 'data' table, the trigger " .. tostring(new_key) .. " will not be called!")
                 end
             else
+                --self:PrintTable(value, key, "new_triggers")
+                --self:PrintTable(t, key, "triggers")
                 local new_key = (key * 10) + 1
                 local key2 = new_key + 1
                 triggers[key] = { special_function = params and params.SF or SF.Trigger, data = { new_key, key2 } }
@@ -1288,6 +1294,16 @@ function EHI:Trigger(id, element, enabled)
                     end
                     self:CheckCondition(id)
                 end
+            elseif f == SF.AddTimeByPreplanning then
+                local t = 0
+                local trigger = triggers[id]
+                if managers.preplanning:IsAssetBought(trigger.data.id) then
+                    t = trigger.data.yes
+                else
+                    t = trigger.data.no
+                end
+                trigger.time = trigger.time + t
+                self:CheckCondition(id)
             elseif f == SF.ShowWaypoint then
                 managers.hud:add_waypoint(triggers[id].id, triggers[id].data)
             elseif f == SF.DecreaseProgress then
@@ -1300,6 +1316,9 @@ function EHI:Trigger(id, element, enabled)
                 if enabled then
                     triggers[id].f()
                 end
+            elseif f == SF.CustomCodeDelayed then
+                local trigger = triggers[id]
+                self:DelayCall(tostring(id), trigger.t or 0, trigger.f)
 
             elseif f >= SF.CustomSF then
                 self.SFF[f](id, triggers[id], element, enabled)
@@ -1463,6 +1482,7 @@ function EHI:ParseTriggers(mission_triggers, achievement_triggers, other_trigger
         end
         if data.difficulty_pass ~= nil then
             data.condition = data.difficulty_pass and show_achievement
+            data.difficulty_pass = nil
         elseif data.condition == nil then
             data.condition = show_achievement
         end
@@ -1488,13 +1508,13 @@ function EHI:ParseTriggers(mission_triggers, achievement_triggers, other_trigger
         return
     end
     local host = self._cache.Host
-    for id, data in pairs(mission_triggers) do
+    for _, data in pairs(mission_triggers) do
         -- Mark every tracker, that has random time, as inaccurate
         if data.random_time then
             if not data.class then
-                mission_triggers[id].class = self.Trackers.Inaccurate
+                data.class = self.Trackers.Inaccurate
             elseif data.class ~= self.Trackers.InaccuratePausable and data.class == self.Trackers.Warning then
-                mission_triggers[id].class = self.Trackers.InaccurateWarning
+                data.class = self.Trackers.InaccurateWarning
             end
         end
         -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
@@ -1519,8 +1539,7 @@ function EHI:ParseTriggers(mission_triggers, achievement_triggers, other_trigger
         end
     end
     self:AddTriggers(mission_triggers, trigger_id_all or "Trigger", trigger_icons_all)
-    --self:Log("Before achievements:")
-    --self:PrintTable(triggers)
+    --self:PrintTable(triggers, "Before achievements:")
     if show_achievement and achievement_triggers then
         for _, data in pairs(achievement_triggers) do
             -- Fill the rest table properties for Achievement trackers
@@ -1530,8 +1549,7 @@ function EHI:ParseTriggers(mission_triggers, achievement_triggers, other_trigger
         end
         self:AddTriggers2(achievement_triggers, nil, trigger_id_all or "Trigger", trigger_icons_all)
     end
-    --self:Log("After achievements:")
-    --self:PrintTable(triggers)
+    --self:PrintTable(triggers, "After achievements:")
 end
 
 function EHI:ShouldDisableWaypoints()
@@ -1608,9 +1626,25 @@ end
 -- Do not call it directly!
 function EHI:ShowLootCounterOffset(params, manager)
     local offset = managers.loot:GetSecuredBagsAmount()
-    manager:ShowLootCounter(params.max, params.additional_loot, offset)
+    manager:ShowLootCounter(params.max, params.additional_loot, params.max_random, offset)
     if params.triggers then
         self:AddTriggers2(params.triggers, "LootCounter")
+    end
+    if params.sequence_triggers then
+        local function IncreaseMax(...)
+            managers.ehi:CallFunction("LootCounter", "RandomLootSpawned")
+        end
+        local function DecreaseRandom(...)
+            managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
+        end
+        for unit_id, sequences in pairs(params.sequence_triggers) do
+            for _, sequence in ipairs(sequences.loot) do
+                managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, IncreaseMax)
+            end
+            for _, sequence in ipairs(sequences.no_loot) do
+                managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, DecreaseRandom)
+            end
+        end
     end
     if params.no_counting then
         return
@@ -1631,9 +1665,25 @@ function EHI:ShowLootCounter(params)
             return
         end
     end
-    managers.ehi:ShowLootCounter(params.max, params.additional_loot, n_offset)
+    managers.ehi:ShowLootCounter(params.max, params.additional_loot, params.max_random, n_offset)
     if params.triggers then
         self:AddTriggers2(params.triggers, "LootCounter")
+    end
+    if params.sequence_triggers then
+        local function IncreaseMax(...)
+            managers.ehi:CallFunction("LootCounter", "RandomLootSpawned")
+        end
+        local function DecreaseRandom(...)
+            managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
+        end
+        for unit_id, sequences in pairs(params.sequence_triggers) do
+            for _, sequence in ipairs(sequences.loot) do
+                managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, IncreaseMax)
+            end
+            for _, sequence in ipairs(sequences.no_loot) do
+                managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, DecreaseRandom)
+            end
+        end
     end
     if params.no_counting then
         return
@@ -1896,10 +1946,20 @@ if EHI.debug then -- For testing purposes
     end
 end
 
-function EHI:PrintTable(tbl)
+function EHI:PrintTable(tbl, ...)
+    local s = ""
+    if ... then
+        local _tbl = { ... }
+        for _, _s in ipairs(_tbl) do
+            s = s .. " " .. tostring(_s)
+        end
+    end
     if _G.PrintTableDeep then
-        _G.PrintTableDeep(tbl, 5000, true, "[EHI]")
+        _G.PrintTableDeep(tbl, 5000, true, "[EHI]" .. s)
     else
+        if s ~= "" then
+            self:Log(s)
+        end
         _G.PrintTable(tbl)
     end
 end

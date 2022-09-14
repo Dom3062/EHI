@@ -39,27 +39,28 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100022, 23480)] = true -- Fix
 }
 
-local function fex_10()
-    EHI:AddAchievementToCounter({
-        achievement = "fex_10"
-    })
-end
 local spawn_trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local achievements =
 {
     [1] = { max = 21, id = "fex_10", class = TT.AchievementProgress },
-    [2] = { special_function = SF.CustomCode, f = fex_10 },
+    [2] = { special_function = SF.CustomCode, f = function()
+        EHI:AddAchievementToCounter({
+            achievement = "fex_10"
+        })
+    end },
     [100185] = spawn_trigger, -- Default entry
     [102665] = spawn_trigger -- Cave spawn
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers(triggers, achievements)
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 21 })
 EHI:AddLoadSyncFunction(function(self)
     if EHI.ConditionFunctions.IsStealth() then
-        self:AddAchievementProgressTracker("fex_10", 21)
+        EHI:ShowAchievementLootCounter({
+            achievement = "fex_10",
+            max = 21
+        })
         self:SetTrackerProgress("fex_10", managers.loot:GetSecuredBagsAmount())
-        fex_10()
     end
 end)

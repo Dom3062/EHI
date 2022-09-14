@@ -44,6 +44,20 @@ else
     end
 end
 
+if _G.IS_VR then
+    local old_UpdateTracker = UpdateTracker
+    local function Reload(key, data)
+        old_UpdateTracker(data.unit, key, data.amount)
+    end
+    UpdateTracker = function(unit, key, amount)
+        if managers.ehi:IsLoading() then
+            managers.ehi:AddToLoadQueue(key, { unit = unit, amount = amount }, Reload)
+            return
+        end
+        old_UpdateTracker(unit, key, amount)
+    end
+end
+
 local original =
 {
     init = DoctorBagBase.init,

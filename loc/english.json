@@ -23,6 +23,8 @@
     "ehi_popup_minion_killed" : "Your convert has been killed",
     "ehi_popup_achievement_failed" : "ACHIEVEMENT FAILED!",
     "ehi_popup_achievement_started" : "ACHIEVEMENT STARTED!",
+    "ehi_popup_loot_counter" : "LOOT COUNTER",
+    "ehi_popup_all_loot_secured" : "All loot bags have been secured",
     "ehi_achievement_ok" : "OK",
     "ehi_achievement_done" : "DONE",
     "ehi_achievement_pass" : "PASS",
@@ -240,6 +242,15 @@
 
     "ehi_show_loot_counter" : "Show Loot Counter",
     "ehi_show_loot_counter_desc" : "Shows a tracker for how much loot is in heist",
+
+    "ehi_show_all_loot_secured_popup" : "Show 'All Loot Secured' popup",
+    "ehi_show_all_loot_secured_popup_desc" : "Shows a popup when all loot on the map has been secured",
+
+    "ehi_variable_random_loot_format" : "Variable Random Loot Format",
+    "ehi_variable_random_loot_format_desc" : "Defines how additional random loot should be formatted\n\nExample:16 guaranteed bags with 4 safes that may or not have loot; 9 bags secured\n\nOption 1:\n9/16-20?\n\nOption 2:\n9/20?\n\nOption 3:\n9/16+4?",
+    "ehi_variable_random_loot_format_1" : "Progress / Max - (Max + Random)?",
+    "ehi_variable_random_loot_format_2" : "Progress / (Max + Random)?",
+    "ehi_variable_random_loot_format_3" : "Progress / Max + Random?",
     
     "ehi_waypoints_menu" : "Waypoints",
     "ehi_waypoints_menu_desc" : "",

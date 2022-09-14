@@ -109,7 +109,7 @@ local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
 local triggers =
 {
     -- Time before escape vehicle arrives
-    [300248] = { time = (OverkillOrBelow and 120 or 300) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot },
+    [300248] = { time = (OverkillOrBelow and 120 or 300) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 300322 } },
     -- 120: Base Delay on OVK or below
     -- 300: Base Delay on Mayhem or above
     -- 25: Escape zone activation delay

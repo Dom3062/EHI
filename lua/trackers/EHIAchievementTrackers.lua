@@ -191,6 +191,7 @@ if show_failed then
     end
 end
 
+local show_status_changed_popup = false
 EHIAchievementStatusTracker = class(EHIAchievementTracker)
 EHIAchievementStatusTracker._update = false
 function EHIAchievementStatusTracker:init(panel, params)
@@ -216,19 +217,17 @@ function EHIAchievementStatusTracker:Format()
     end
 end
 
-function EHIAchievementStatusTracker:SetText()
-    self._text:set_text(self:Format())
-    self:FitTheText()
-end
-
 function EHIAchievementStatusTracker:SetStatus(status)
     if self._dont_override_status or self._status == status then
         return
     end
     self._status = status
-    self:SetText()
+    self:SetStatusText(status)
     self:SetTextColor()
     self:AnimateBG()
+    if show_status_changed_popup and status ~= "done" and status ~= "fail" then
+        managers.hud:custom_ingame_popup_text("")
+    end
 end
 
 function EHIAchievementStatusTracker:SetCompleted()
@@ -284,4 +283,12 @@ function EHIAchievementStatusTracker:SetTextColor(color)
         c = Color.red
     end
     EHIAchievementStatusTracker.super.SetTextColor(self, c)
+end
+if show_status_changed_popup then
+    for status, _ in pairs(green_status) do
+        EHI:SetNotificationAlert("ACHIEVEMENT STATUS", "ehi_achievement_" .. status, Color.green)
+    end
+    for status, _ in pairs(yellow_status) do
+        EHI:SetNotificationAlert("ACHIEVEMENT STATUS", "ehi_achievement_" .. status, Color.yellow)
+    end
 end

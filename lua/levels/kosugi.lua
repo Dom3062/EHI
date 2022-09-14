@@ -148,7 +148,7 @@ local achievements =
     [104044] = kosugi_3, -- Server
     [104047] = kosugi_3, -- Gold
     [104048] = kosugi_3, -- Weapon
-    [104049] = kosugi_3, -- Painting
+    [104049] = kosugi_3 -- Painting
 }
 
 EHI:ParseTriggers(triggers, achievements)

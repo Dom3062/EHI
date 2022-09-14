@@ -38,10 +38,8 @@ local achievements =
 {
     [100002] = { max = (EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 15 or 13), id = "peta_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up },
     [102211] = { id = "peta_5", special_function = SF.IncreaseProgress },
-    [100580] = { special_function = SF.CustomCode, f = function()
-        EHI:DelayCall("peta_5_finalize", 2, function()
-            managers.ehi:CallFunction("peta_5", "Finalize")
-        end)
+    [100580] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
+        managers.ehi:CallFunction("peta_5", "Finalize")
     end},
 
     -- Formerly 5 minutes

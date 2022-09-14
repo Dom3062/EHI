@@ -64,7 +64,7 @@
             "callback": "SetOption",
             "callback_arguments": "vr_scale",
             "value": "vr_scale",
-            "default_value": 2.5,
+            "default_value": 1,
             "max": 5,
             "min": 0.5,
             "step": 2
@@ -116,7 +116,7 @@
             "title": "ehi_trackers_menu",
             "description": "ehi_trackers_menu_desc",
             "next_menu": "ehi_trackers_menu",
-            "ehi_ver" : 78
+            "ehi_ver" : 82
         },
         {
             "type": "button",

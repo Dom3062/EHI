@@ -487,6 +487,19 @@ tweak_data.ehi =
             folder = "copr",
             option = "leech"
         }
+    },
+    functions =
+    {
+        IsBranchbankJobActive = function()
+            local jobs = tweak_data.achievement.complete_heist_achievements.uno_1.jobs
+            local current_job = managers.job:current_job_id()
+            for _, job in ipairs(jobs) do
+                if current_job == job then
+                    return true
+                end
+            end
+            return false
+        end
     }
 }
 

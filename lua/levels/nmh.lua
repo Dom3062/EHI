@@ -93,7 +93,7 @@ EHI:AddOnAlarmCallback(function()
         "ExtraCivilianElevatorRight",
         "CorrectPaperChance"
     }
-    for _, tracker in pairs(remove) do
+    for _, tracker in ipairs(remove) do
         managers.ehi:RemoveTracker(tracker)
     end
 end)
