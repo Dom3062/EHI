@@ -86,8 +86,22 @@ function EHILootTracker:RandomLootDeclined()
     self:VerifyStatus()
 end
 
+function EHILootTracker:SetMaxRandom(max)
+    self._max_random = max
+    self:SetProgressMax(self._max)
+    self:FitTheText()
+    self:VerifyStatus()
+end
+
+function EHILootTracker:IncreaseMaxRandom(progress)
+    self:SetMaxRandom(self._max_random + (progress or 1))
+end
+
 -- crojob3.lua
 function EHILootTracker:RandomLootSpawned2(id)
+    if self._loot_id[id] then
+        return
+    end
     self._loot_id[id] = true
     self:RandomLootSpawned()
 end

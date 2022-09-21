@@ -251,6 +251,9 @@
     "ehi_variable_random_loot_format_1" : "Progress / Max - (Max + Random)?",
     "ehi_variable_random_loot_format_2" : "Progress / (Max + Random)?",
     "ehi_variable_random_loot_format_3" : "Progress / Max + Random?",
+
+    "ehi_show_bodybags_counter" : "Show Bodybags Counter",
+    "ehi_show_bodybags_counter_desc" : "Shows a tracker for how many bodybags you have",
     
     "ehi_waypoints_menu" : "Waypoints",
     "ehi_waypoints_menu_desc" : "",

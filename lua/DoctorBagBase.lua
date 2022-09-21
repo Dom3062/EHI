@@ -9,12 +9,6 @@ if not EHI:GetEquipmentOption("show_equipment_doctorbag") then
     return
 end
 
-local correction =
-{
-    [tostring(Idstring("units/payday2/props/stn_prop_medic_firstaid_box/stn_prop_medic_firstaid_box"))] = 1,	--CustomDoctorBagBase / cabinet 1
-	[tostring(Idstring("units/pd2_dlc_casino/props/cas_prop_medic_firstaid_box/cas_prop_medic_firstaid_box"))] = 1,	--CustomDoctorBagBase / cabinet 2
-}
-
 local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(unit, key, amount)
@@ -70,7 +64,7 @@ local original =
 function DoctorBagBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    self._offset = correction[tostring(unit:name())] or 0
+    self._offset = 0
 end
 
 function DoctorBagBase:_set_visual_stage(...)
@@ -84,6 +78,13 @@ end
 
 function DoctorBagBase:GetRealAmount()
     return (self._amount or self._max_amount) - self._offset
+end
+
+function DoctorBagBase:SetOffset(offset)
+    self._offset = offset
+    if self._unit:interaction():active() and not self._ignore then
+        UpdateTracker(self._unit, self._ehi_key, self._ammo_amount - self._offset)
+    end
 end
 
 function DoctorBagBase:destroy(...)

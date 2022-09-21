@@ -104,6 +104,7 @@ _G.EHI =
         SetTimeIfLoudOrStealth = 49,
         AddTimeByPreplanning = 50,
         ShowWaypoint = 51,
+        DecreaseProgressMax = 52,
         DecreaseProgress = 54,
 
         Debug = 100000,
@@ -197,6 +198,7 @@ _G.EHI =
         Warning = "EHIWarningTracker",
         Pausable = "EHIPausableTracker",
         Chance = "EHIChanceTracker",
+        Counter = "EHICountTracker",
         Progress = "EHIProgressTracker",
         NeededValue = "EHINeededValueTracker",
         Achievement = "EHIAchievementTracker",
@@ -453,6 +455,7 @@ function EHI:LoadDefaultValues()
         show_loot_counter = true,
         show_all_loot_secured_popup = true,
         variable_random_loot_format = 3, -- 1 = Max-(Max+Random)?; 2 = MaxRandom?; 3 = Max+Random?
+        show_bodybags_counter = false,
 
         -- Waypoints
         show_waypoints = true,
@@ -1111,42 +1114,41 @@ end
 function EHI:Trigger(id, element, enabled)
     if triggers[id] then
         if triggers[id].special_function then
-            local f = triggers[id].special_function
+            local trigger = triggers[id]
+            local f = trigger.special_function
             if f == SF.RemoveTracker then
-                RemoveTracker(triggers[id].id)
+                RemoveTracker(trigger.id)
             elseif f == SF.PauseTracker then
-                PauseTracker(triggers[id].id)
+                PauseTracker(trigger.id)
             elseif f == SF.UnpauseTracker then
-                UnpauseTracker(triggers[id].id)
+                UnpauseTracker(trigger.id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(trigger.id) then
+                    UnpauseTracker(trigger.id)
                 else
                     self:CheckCondition(id)
                 end
             elseif f == SF.AddTrackerIfDoesNotExist then
-                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
+                if managers.ehi:TrackerDoesNotExist(trigger.id) then
                     self:CheckCondition(id)
                 end
             elseif f == SF.SetAchievementComplete then
-                managers.ehi:SetAchievementComplete(triggers[id].id, true)
+                managers.ehi:SetAchievementComplete(trigger.id, true)
             elseif f == SF.ReplaceTrackerWithTracker then
-                RemoveTracker(triggers[id].data.id)
+                RemoveTracker(trigger.data.id)
                 self:CheckCondition(id)
             elseif f == SF.IncreaseChance then
-                local trigger = triggers[id]
                 managers.ehi:IncreaseChance(trigger.id, trigger.amount)
             elseif f == SF.TriggerIfEnabled then
                 if enabled then
-                    for _, trigger in pairs(triggers[id].data) do
-                        self:Trigger(trigger, element, enabled)
+                    for _, t in pairs(trigger.data) do
+                        self:Trigger(t, element, enabled)
                     end
                 end
             elseif f == SF.CreateAnotherTrackerWithTracker then
                 self:CheckCondition(id)
-                self:Trigger(triggers[id].data.fake_id, element, enabled)
+                self:Trigger(trigger.data.fake_id, element, enabled)
             elseif f == SF.SetChanceWhenTrackerExists then
-                local trigger = triggers[id]
                 if managers.ehi:TrackerExists(trigger.id) then
                     managers.ehi:SetChance(trigger.id, trigger.chance)
                 else
@@ -1156,14 +1158,14 @@ function EHI:Trigger(id, element, enabled)
                 self:CheckCondition(id)
                 self:UnhookTrigger(id)
             elseif f == SF.Trigger then
-                for _, trigger in pairs(triggers[id].data) do
-                    self:Trigger(trigger, element, enabled)
+                for _, t in pairs(trigger.data) do
+                    self:Trigger(t, element, enabled)
                 end
             elseif f == SF.RemoveTrigger then
                 self:UnhookTrigger(id)
             elseif f == SF.SetTimeOrCreateTracker then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:SetTrackerTime(triggers[id].id, triggers[id].time)
+                if managers.ehi:TrackerExists(trigger.id) then
+                    managers.ehi:SetTrackerTime(trigger.id, trigger.time)
                 else
                     self:CheckCondition(id)
                 end
@@ -1172,66 +1174,64 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(id)
                 end
             elseif f == SF.RemoveTrackers then
-                for _, tracker in ipairs(triggers[id].data) do
+                for _, tracker in ipairs(trigger.data) do
                     RemoveTracker(tracker)
                 end
             elseif f == SF.ShowAchievement then
-                if self:IsAchievementLocked(triggers[id].id) then
+                if self:IsAchievementLocked(trigger.id) then
                     self:CheckCondition(id)
                 end
             elseif f == SF.RemoveTriggerAndShowAchievement then
-                if self:IsAchievementLocked(triggers[id].id) then
+                if self:IsAchievementLocked(trigger.id) then
                     self:CheckCondition(id)
                 end
                 self:UnhookTrigger(id)
             elseif f == SF.SetTimeByPreplanning then
-                if managers.preplanning:IsAssetBought(triggers[id].data.id) then
-                    triggers[id].time = triggers[id].data.yes
+                if managers.preplanning:IsAssetBought(trigger.data.id) then
+                    trigger.time = trigger.data.yes
                 else
-                    triggers[id].time = triggers[id].data.no
+                    trigger.time = trigger.data.no
                 end
                 self:CheckCondition(id)
             elseif f == SF.IncreaseProgress then
-                managers.ehi:IncreaseTrackerProgress(triggers[id].id)
+                managers.ehi:IncreaseTrackerProgress(trigger.id)
                 --managers.hud:IncreaseTrackerWaypointProgress(triggers[id].id)
             elseif f == SF.SetTimeNoAnimOrCreateTrackerClient then
-                local value = managers.ehi:ReturnValue(triggers[id].id, "GetTrackerType")
+                local value = managers.ehi:ReturnValue(trigger.id, "GetTrackerType")
                 if value ~= "accurate" then
-                    if managers.ehi:TrackerExists(triggers[id].id) then
-                        managers.ehi:SetTrackerTimeNoAnim(triggers[id].id, self:GetTime(id))
+                    if managers.ehi:TrackerExists(trigger.id) then
+                        managers.ehi:SetTrackerTimeNoAnim(trigger.id, self:GetTime(id))
                     else
                         self:CheckCondition(id)
                     end
                 end
             elseif f == SF.SetTrackerAccurate then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    managers.ehi:SetTrackerAccurate(triggers[id].id, triggers[id].time)
+                if managers.ehi:TrackerExists(trigger.id) then
+                    managers.ehi:SetTrackerAccurate(trigger.id, trigger.time)
                 else
                     self:CheckCondition(id)
                 end
             elseif f == SF.RemoveTriggers then
-                for _, trigger_id in pairs(triggers[id].data) do
+                for _, trigger_id in pairs(trigger.data) do
                     self:UnhookTrigger(trigger_id)
                 end
             elseif f == SF.SetAchievementStatus then
-                managers.ehi:SetAchievementStatus(triggers[id].id, triggers[id].status or "ok")
+                managers.ehi:SetAchievementStatus(trigger.id, trigger.status or "ok")
             elseif f == SF.ShowAchievementFromStart then
-                if self:IsAchievementLocked(triggers[id].id) and not managers.statistics:is_dropin() then
+                if self:IsAchievementLocked(trigger.id) and not managers.statistics:is_dropin() then
                     self:CheckCondition(id)
                 end
             elseif f == SF.SetAchievementFailed then
-                managers.ehi:SetAchievementFailed(triggers[id].id)
+                managers.ehi:SetAchievementFailed(trigger.id)
             elseif f == SF.SetRandomTime then
-                if managers.ehi:TrackerDoesNotExist(triggers[id].id) then
+                if managers.ehi:TrackerDoesNotExist(trigger.id) then
                     self:AddTrackerWithRandomTime(id)
                 end
             elseif f == SF.DecreaseChance then
-                local trigger = triggers[id]
                 managers.ehi:DecreaseChance(trigger.id, trigger.amount)
             elseif f == SF.GetElementTimerAccurate then
                 GetElementTimer(self, id)
             elseif f == SF.UnpauseOrSetTimeByPreplanning then
-                local trigger = triggers[id]
                 if managers.ehi:TrackerExists(trigger.id) then
                     managers.ehi:UnpauseTracker(trigger.id)
                 else
@@ -1247,25 +1247,24 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(id)
                 end
             elseif f == SF.UnpauseTrackerIfExistsAccurate then
-                if managers.ehi:TrackerExists(triggers[id].id) then
-                    UnpauseTracker(triggers[id].id)
+                if managers.ehi:TrackerExists(trigger.id) then
+                    UnpauseTracker(trigger.id)
                 else
                     GetElementTimer(self, id)
                 end
             elseif f == SF.ShowAchievementCustom then
-                if self:IsAchievementLocked(triggers[id].data) then
+                if self:IsAchievementLocked(trigger.data) then
                     self:CheckCondition(id)
                 end
             elseif f == SF.FinalizeAchievement then
-                managers.ehi:CallFunction(triggers[id].id, "Finalize")
+                managers.ehi:CallFunction(trigger.id, "Finalize")
             elseif f == SF.IncreaseChanceFromElement then
-                managers.ehi:IncreaseChance(triggers[id].id, element._values.chance)
+                managers.ehi:IncreaseChance(trigger.id, element._values.chance)
             elseif f == SF.DecreaseChanceFromElement then
-                managers.ehi:DecreaseChance(triggers[id].id, element._values.chance)
+                managers.ehi:DecreaseChance(trigger.id, element._values.chance)
             elseif f == SF.SetChanceFromElement then
-                managers.ehi:SetChance(triggers[id].id, element._values.chance)
+                managers.ehi:SetChance(trigger.id, element._values.chance)
             elseif f == SF.SetChanceFromElementWhenTrackerExists then
-                local trigger = triggers[id]
                 if managers.ehi:TrackerExists(trigger.id) then
                     managers.ehi:SetChance(trigger.id, element._values.chance)
                 else
@@ -1273,30 +1272,29 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(id)
                 end
             elseif f == SF.PauseTrackerWithTime then
-                local t_id = triggers[id].id
-                local t_time = triggers[id].time
+                local t_id = trigger.id
+                local t_time = trigger.time
                 PauseTracker(t_id)
                 managers.ehi:SetTrackerTimeNoAnim(t_id, t_time)
                 managers.ehi_waypoint:SetWaypointTime(t_id, t_time)
             elseif f == SF.RemoveTriggerAndShowAchievementCustom then
-                if self:IsAchievementLocked(triggers[id].data) then
+                if self:IsAchievementLocked(trigger.data) then
                     self:CheckCondition(id)
                 end
                 self:UnhookTrigger(id)
             elseif f == SF.IncreaseProgressMax then
-                managers.ehi:IncreaseTrackerProgressMax(triggers[id].id, triggers[id].max)
+                managers.ehi:IncreaseTrackerProgressMax(trigger.id, trigger.max)
             elseif f == SF.SetTimeIfLoudOrStealth then
                 if managers.groupai then
                     if managers.groupai:state():whisper_mode() then -- Stealth
-                        triggers[id].time = triggers[id].data.no
+                        trigger.time = trigger.data.no
                     else -- Loud
-                        triggers[id].time = triggers[id].data.yes
+                        trigger.time = trigger.data.yes
                     end
                     self:CheckCondition(id)
                 end
             elseif f == SF.AddTimeByPreplanning then
                 local t = 0
-                local trigger = triggers[id]
                 if managers.preplanning:IsAssetBought(trigger.data.id) then
                     t = trigger.data.yes
                 else
@@ -1305,23 +1303,24 @@ function EHI:Trigger(id, element, enabled)
                 trigger.time = trigger.time + t
                 self:CheckCondition(id)
             elseif f == SF.ShowWaypoint then
-                managers.hud:add_waypoint(triggers[id].id, triggers[id].data)
+                managers.hud:add_waypoint(trigger.id, trigger.data)
+            elseif f == SF.DecreaseProgressMax then
+                managers.ehi:DecreaseTrackerProgressMax(trigger.id, trigger.max)
             elseif f == SF.DecreaseProgress then
-                managers.ehi:DecreaseTrackerProgress(triggers[id].id)
+                managers.ehi:DecreaseTrackerProgress(trigger.id, trigger.progress)
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
-                triggers[id].f()
+                trigger.f(trigger.arg)
             elseif f == SF.CustomCodeIfEnabled then
                 if enabled then
-                    triggers[id].f()
+                    trigger.f(trigger.arg)
                 end
             elseif f == SF.CustomCodeDelayed then
-                local trigger = triggers[id]
                 self:DelayCall(tostring(id), trigger.t or 0, trigger.f)
 
             elseif f >= SF.CustomSF then
-                self.SFF[f](id, triggers[id], element, enabled)
+                self.SFF[f](id, trigger, element, enabled)
             end
         else
             self:CheckCondition(id)
@@ -1653,7 +1652,14 @@ function EHI:ShowLootCounterOffset(params, manager)
 end
 
 function EHI:ShowLootCounter(params)
-    if (Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree") or not self:GetOption("show_loot_counter") then
+    if not self:GetOption("show_loot_counter") then
+        return
+    end
+    self:ShowLootCounterNoCheck(params)
+end
+
+function EHI:ShowLootCounterNoCheck(params)
+    if Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree" then
         return
     end
     local n_offset = 0
@@ -1793,9 +1799,6 @@ function EHI:AddLoadSyncFunction(f)
     managers.ehi:AddLoadSyncFunction(f)
 end
 
---[[
-    This is bad, rethink the call flow with parameters
-]]
 ---@param tbl table
 function EHI:UpdateUnits(tbl)
     if not self:GetOption("show_timers") then
@@ -1929,7 +1932,7 @@ if EHI.debug then -- For testing purposes
                 local start = self:GetInstanceElementID(100000, instance.start_index)
                 local _end = start + instance.index_size - 1
                 local f = function(e, ...)
-                    managers.hud:DebugBaseElement(e._id, instance.start_index, nil, e:editor_name())
+                    managers.hud:DebugBaseElement2(e._id, instance.start_index, nil, e:editor_name(), instance_name)
                 end
                 self:Log(string.format("Hooking elements in instance '%s'", instance_name))
                 for _, script in pairs(scripts) do

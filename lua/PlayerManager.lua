@@ -21,6 +21,14 @@ if EHI:GetOption("show_gained_xp") and Global.game_settings and Global.game_sett
     end
 end
 
+if EHI:GetOption("show_bodybags_counter") then
+    original._set_body_bags_amount = PlayerManager._set_body_bags_amount
+    function PlayerManager:_set_body_bags_amount(...)
+        original._set_body_bags_amount(self, ...)
+        managers.ehi:CallFunction("BodybagsCounter", "SetCount", self._local_player_body_bags)
+    end
+end
+
 function PlayerManager:spawn_smoke_screen(position, normal, grenade_unit, ...)
     original.spawn_smoke_screen(self, position, normal, grenade_unit, ...)
     if grenade_unit:base():thrower_unit() then

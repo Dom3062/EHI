@@ -61,6 +61,7 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_laser_tracker", time = math.random() * (4 - 0.5) + 0.5, icons = { EHI.Icons.Lasers } } )
     self:AddFakeTracker({ id = "show_assault_delay_tracker", time = math.random(30, 120), icons = { "assaultbox" } } )
     self:AddFakeTracker({ id = "show_loot_counter", icons = { Icon.Loot }, class = "FakeEHIProgressTracker" } )
+    self:AddFakeTracker({ id = "show_bodybags_counter", count = math.random(1, 3), icons = { "equipment_body_bag" }, class = "FakeEHICountTracker" })
     self:AddPreviewText()
 end
 

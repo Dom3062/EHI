@@ -1,3 +1,7 @@
+r83 (21. 09. 2022):
+Added trackers for achievements "Field Test", "Heister With A Shotgun" and "Snake Charmer"
+Added "Show Bodybags Counter" option
+
 r82 (14. 09. 2022):
 Loot Tracker: Added support for variable random loot
 Fixed an issue where Crit Chance buff shows "100s" after spawn

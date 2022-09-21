@@ -36,6 +36,10 @@ function EHIProgressTracker:IncreaseProgressMax(progress)
     self:SetProgressMax(self._max + (progress or 1))
 end
 
+function EHIProgressTracker:DecreaseProgressMax(progress)
+    self:SetProgressMax(self._max - (progress or 1))
+end
+
 function EHIProgressTracker:SetProgress(progress)
     if self._progress ~= progress and not self._disable_counting then
         self._progress = progress

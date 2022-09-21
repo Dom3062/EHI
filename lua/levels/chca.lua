@@ -188,8 +188,50 @@ local achievements =
     [103584] = { id = "chca_12", status = "finish", special_function = SF.SetAchievementStatus }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+local other =
+{
+    [100109] = { time = 45 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
+}
+
+EHI:ParseTriggers(triggers, achievements, other)
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:AddOnAlarmCallback(function()
     managers.ehi:SetAchievementFailed("chca_10")
 end)
+--[[local LootLeft = EHI:GetFreeCustomSpecialFunctionID()
+EHI:ShowLootCounter({
+    max = 16,
+    additional_loot = 2, -- Teaset and Money bundle
+    triggers =
+    {
+        [103761] = { max = 16, special_function = SF.DecreaseProgressMax }, -- C4 Plan
+        [EHI:GetInstanceElementID(100014, 15470)] = { special_function = LootLeft }, -- Ink (Stealth)
+        [EHI:GetInstanceElementID(100063, 15470)] = { special_function = LootLeft } -- Burn (Loud)
+    }
+})
+local units = {}
+for i = 100017, 100020, 1 do
+    units[EHI:GetInstanceElementID(i, 15470)] = true
+end
+for i = 100028, 100030, 1 do
+    units[EHI:GetInstanceElementID(i, 15470)] = true
+end
+for i = 100034, 100041, 1 do
+    units[EHI:GetInstanceElementID(i, 15470)] = true
+end
+EHI:RegisterCustomSpecialFunction(LootLeft, function(...)
+    local left_to_burn = 16
+    for unit_id, _ in pairs(units) do
+        local unit = managers.worlddefinition:get_unit(unit_id)
+        -- If the unit has "body" table, then players bagged it
+        if unit and unit:damage()._state and unit:damage()._state.body then
+            left_to_burn = left_to_burn - 1
+        end
+    end
+    managers.ehi:DecreaseTrackerProgressMax("LootCounter", left_to_burn)
+end)
+EHI:AddLoadSyncFunction(function(self)
+    if managers.game_play_central._mission_disabled_units[200942] then -- AI Vision Blocker; "editor_only" continent
+        self:DecreaseTrackerProgressMax("LootCounter", 16)
+    end
+end)]]

@@ -5,6 +5,7 @@ local TT = EHI.Trackers
 local VanCrashChance = { { icon = Icon.Car, color = Color.red } }
 local assault_delay = 15 + 1 + 30
 local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker")
+local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {
     [104488] = { time = assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = ShowAssaultDelay },
@@ -15,6 +16,9 @@ local other =
     [100342] = { chance = 25, id = "EscapeChance", icons = VanCrashChance, class = TT.Chance },
 
     [103696] = { special_function = SF.CustomCode, f = function()
+        if not LootCounter then
+            return
+        end
         local SafeTriggers =
         {
             -- gen_interactable_sec_safe_05x05 - 7
@@ -37,7 +41,7 @@ local other =
         }
         local spawned = managers.ehi:CountLootbagsOnTheGround()
         local additional_loot = math.max(0, spawned - 3)
-        EHI:ShowLootCounter({
+        EHI:ShowLootCounterNoCheck({
             max = spawned,
             additional_loot = additional_loot,
             max_random = 1,

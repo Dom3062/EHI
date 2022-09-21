@@ -61,6 +61,22 @@
             "default_value": 3,
             "parent": "ehi_show_loot_counter_choice",
             "ehi_ver" : 82
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_bodybags_counter_choice",
+            "title": "ehi_show_bodybags_counter",
+            "description": "ehi_show_bodybags_counter_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_bodybags_counter",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_bodybags_counter",
+            "default_value": false,
+            "ehi_ver" : 83
         }
     ]
 }

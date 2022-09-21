@@ -83,54 +83,70 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     if EHI:GetOption("show_enemy_count_tracker") then
         self.ehi:AddTracker({
             id = "EnemyCount",
+            icons = { "enemy" },
+            flash = false,
             exclude_from_sync = true,
-            class = "EHICountTracker"
+            class = EHI.Trackers.Counter
         })
     end
-    if EHI:GetOption("show_pager_tracker") and (level_tweak_data.ghost_bonus or level_tweak_data.ghost_required or level_tweak_data.ghost_required_visual or level_id == "welcome_to_the_jungle_2") then
+    if level_tweak_data.ghost_bonus or level_tweak_data.ghost_required or level_tweak_data.ghost_required_visual or level_id == "welcome_to_the_jungle_2" then
         -- In case the heist will require stealth completion but does not have XP bonus
         -- Big Oil Day 2 is exception to this rule because guards have pagers
-        local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
-        if server then
-            local function remove_chance()
-                self.ehi:RemoveTracker("pagers_chance")
-            end
-            for _, value in pairs(base) do
-                if value > 0 and value < 1 then
-                    -- Random Chance
-                    self.ehi:AddTracker({
-                        id = "pagers_chance",
-                        chance = EHI:RoundChanceNumber(base[1] or 0),
-                        icons = { "pagers_used" },
-                        exclude_from_sync = true,
-                        class = EHI.Trackers.Chance
-                    })
-                    EHI:AddOnAlarmCallback(remove_chance)
-                    return
+        if EHI:GetOption("show_pager_tracker") then
+            local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
+            if server then
+                local function remove_chance()
+                    self.ehi:RemoveTracker("pagers_chance")
+                end
+                for _, value in pairs(base) do
+                    if value > 0 and value < 1 then
+                        -- Random Chance
+                        self.ehi:AddTracker({
+                            id = "pagers_chance",
+                            chance = EHI:RoundChanceNumber(base[1] or 0),
+                            icons = { "pagers_used" },
+                            exclude_from_sync = true,
+                            class = EHI.Trackers.Chance
+                        })
+                        EHI:AddOnAlarmCallback(remove_chance)
+                        return
+                    end
                 end
             end
-        end
-        local function remove()
-            self.ehi:RemoveTracker("pagers")
-        end
-        local max = 0
-        for _, value in pairs(base) do
-            if value > 0 then
-                max = max + 1
+            local function remove()
+                self.ehi:RemoveTracker("pagers")
             end
+            local max = 0
+            for _, value in pairs(base) do
+                if value > 0 then
+                    max = max + 1
+                end
+            end
+            self.ehi:AddTracker({
+                id = "pagers",
+                max = max,
+                icons = { "pagers_used" },
+                set_color_bad_when_reached = true,
+                exclude_from_sync = true,
+                class = EHI.Trackers.Progress
+            })
+            if max == 0 then
+                self.ehi:CallFunction("pagers", "SetBad")
+            end
+            EHI:AddOnAlarmCallback(remove)
         end
-        self.ehi:AddTracker({
-            id = "pagers",
-            max = max,
-            icons = { "pagers_used" },
-            set_color_bad_when_reached = true,
-            exclude_from_sync = true,
-            class = EHI.Trackers.Progress
-        })
-        if max == 0 then
-            self.ehi:CallFunction("pagers", "SetBad")
+        if EHI:GetOption("show_bodybags_counter") then
+            self.ehi:AddTracker({
+                id = "BodybagsCounter",
+                icons = { "equipment_body_bag" },
+                exclude_from_sync = true,
+                class = EHI.Trackers.Counter
+            })
+            local function remove()
+                self.ehi:RemoveTracker("BodybagsCounter")
+            end
+            EHI:AddOnAlarmCallback(remove)
         end
-        EHI:AddOnAlarmCallback(remove)
     end
     if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" and not EHI:IsOneXPElementHeist(level_id) then
         self.ehi:AddTracker({
@@ -276,6 +292,10 @@ end
 
 function HUDManager:DebugBaseElement(id, instance_index, continent_index, element)
     managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(EHI:GetBaseUnitID(id, instance_index, continent_index or 100000)) .. "; Element: " .. tostring(element), Color.white)
+end
+
+function HUDManager:DebugBaseElement2(base_id, instance_index, continent_index, element, instance_name)
+    managers.chat:_receive_message(1, "[EHI]", "Base ID: " .. tostring(EHI:GetBaseUnitID(base_id, instance_index, continent_index or 100000)) .. "; ID: " .. tostring(base_id) .. "; Element: " .. tostring(element) .. "; Instance: " .. tostring(instance_name), Color.white)
 end
 
 local animation = { start_t = {}, end_t = {} }

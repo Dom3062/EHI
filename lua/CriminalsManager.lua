@@ -12,13 +12,14 @@ if EHI:IsXPTrackerDisabled() then
     return
 end
 
-local original =
-{
-    add_character = CriminalsManager.add_character,
-    set_unit = CriminalsManager.set_unit
-}
-
 if BB and BB.grace_period and Global.game_settings.single_player and Global.game_settings.team_ai then
+    local original =
+    {
+        add_character = CriminalsManager.add_character,
+        set_unit = CriminalsManager.set_unit,
+        _remove = CriminalsManager._remove
+    }
+
     function CriminalsManager:add_character(name, unit, peer_id, ai, ai_loadout, ...)
         original.add_character(self, name, unit,peer_id, ai, ai_loadout, ...)
         local character = self:character_by_name(name)
@@ -35,7 +36,6 @@ if BB and BB.grace_period and Global.game_settings.single_player and Global.game
         end
     end
 
-    original._remove = CriminalsManager._remove
     function CriminalsManager:_remove(id, ...)
         local char_data = self._characters[id]
         if char_data.data.ai then

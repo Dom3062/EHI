@@ -3,7 +3,7 @@ function EHI:LordOfWarAchievement()
     local weapons = managers.ehi:GetUnits("units/payday2/equipment/gen_interactable_weapon_case_2x1/gen_interactable_weapon_case_2x1", 1)
     local n_of_weapons = 0
     if type(weapons) ~= "table" then
-        EHI:Log("Engine provided invalid data; aborted to avoid crash")
+        EHI:Log("[firestarter_1.lua] Engine provided invalid data; aborted to avoid crash")
         return
     end
     for _, weapon in pairs(weapons) do

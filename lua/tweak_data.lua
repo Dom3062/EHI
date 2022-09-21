@@ -19,6 +19,7 @@ tweak_data.ehi =
         faster = { texture = "guis/textures/pd2/skilltree/drillgui_icon_faster" },
         silent = { texture = "guis/textures/pd2/skilltree/drillgui_icon_silent" },
         restarter = { texture = "guis/textures/pd2/skilltree/drillgui_icon_restarter" },
+
         xp = { texture = "guis/textures/pd2/blackmarket/xp_drop" },
 
         mad_scan = { texture = "guis/textures/pd2_mod_ehi/mad_scan" },

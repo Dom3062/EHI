@@ -454,7 +454,7 @@ end
 function EHIManager:ShowLootCounter(max, additional_loot, max_random, offset)
     self:AddTracker({
         id = "LootCounter",
-        max = max + (additional_loot or 0),
+        max = (max or 0) + (additional_loot or 0),
         max_random = max_random or 0,
         offset = offset,
         icons = { EHI.Icons.Loot },
@@ -1033,6 +1033,13 @@ function EHIManager:IncreaseTrackerProgressMax(id, max)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseProgressMax then
         tracker:IncreaseProgressMax(max)
+    end
+end
+
+function EHIManager:DecreaseTrackerProgressMax(id, max)
+    local tracker = self._trackers[id]
+    if tracker and tracker.DecreaseProgressMax then
+        tracker:DecreaseProgressMax(max)
     end
 end
 

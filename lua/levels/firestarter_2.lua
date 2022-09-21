@@ -26,4 +26,43 @@ local MissionDoorIndex =
     [3] = { w_id = 101782 },
     [4] = { w_id = 101783 }
 }
+--[[local function GetNumberOfVisibleWeapons()
+    local world = managers.worlddefinition
+    local n = 0
+    for _, index in ipairs({ 101473, 102717, 102718, 102720 }) do
+        local weapon = world:get_unit(index)
+        if weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
+            local state = weapon:damage()._state.graphic_group.grp_wpn
+            if state[1] == "set_visibility" and state[2] then
+                n = n + 1
+            end
+        end
+    end
+    EHI:Log("Number of weapons: " .. tostring(n))
+    return n
+end
+local function GetNumberOfVisibleOtherLoot()
+    local world = managers.worlddefinition
+    local n = 0
+    for _, index in ipairs({ 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }) do
+        local unit = world:get_unit(index)
+        if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_hidden == 0 then
+            n = n + 1
+        end
+    end
+    EHI:Log("Number of other loot: " .. tostring(n))
+    return n
+end
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+    if EHI._cache.Host or managers.ehi:GetStartedFromBeginning() then
+        local max = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 2 or 1
+        local goat = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) and 1 or 0
+        local random_loot = GetNumberOfVisibleWeapons() + GetNumberOfVisibleOtherLoot()
+        EHI:ShowLootCounter({
+            max = max,
+            -- Random Loot + Goat
+            additional_loot = random_loot + goat
+        })
+    end
+end)]]

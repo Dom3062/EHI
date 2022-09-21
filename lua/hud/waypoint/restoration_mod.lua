@@ -1,7 +1,4 @@
-local math_sin = math.sin
-local math_lerp = math.lerp
 local tweak_data = tweak_data
-local Color = Color
 local original =
 {
     AddWaypoint = EHIWaypointManager.AddWaypoint

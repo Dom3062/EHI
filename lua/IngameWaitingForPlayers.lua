@@ -767,6 +767,14 @@ function IngameWaitingForPlayersState:at_exit(...)
         CreateProgressTracker("dec21_02", EHI:GetAchievementProgress("dec21_02_stat"), 75, false, true)
         stats.dec21_02_stat = "dec21_02"
     end
+    if EHI:IsAchievementLocked2("pxp2_1") and HasWeaponEquipped("hailstorm") then -- "Field Test" achievement
+        CreateProgressTracker("pxp2_1", EHI:GetAchievementProgress("pxp2_1_stats"), 500, false, true)
+        stats.pxp2_1_stats = "pxp2_1"
+    end
+    if EHI:IsAchievementLocked2("pxp2_2") and (HasWeaponEquipped("sko12") or HasWeaponEquipped("x_sko12")) then -- "Heister With A Shotgun" achievement
+        CreateProgressTracker("pxp2_2", EHI:GetAchievementProgress("pxp2_2_stats"), 1000, false, true)
+        stats.pxp2_2_stats = "pxp2_2"
+    end
     if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
         if EHI:IsAchievementLocked2("tango_achieve_3") and managers.ehi:GetStartedFromBeginning() then -- "The Reckoning" achievement
             local pass, primary_index, secondary_index = CheckWeaponsBlueprint(tweak_data.achievement.complete_heist_achievements.tango_3.killed_by_blueprint.blueprint)
@@ -939,6 +947,10 @@ function IngameWaitingForPlayersState:at_exit(...)
                 CreateProgressTracker("pxp1_1", EHI:GetAchievementProgress("pxp1_1_stats"), 200, false)
                 stats.pxp1_1_stats = "pxp1_1"
             end
+        end
+        if EHI:IsAchievementLocked2("pxp2_3") and HasGrenadeEquipped("poison_gas_grenade") then -- "Snake Charmer" achievement
+            CreateProgressTracker("pxp2_3", EHI:GetAchievementProgress("pxp2_3_stats"), 100, false)
+            stats.pxp2_3_stats = "pxp2_3"
         end
     end
     if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement

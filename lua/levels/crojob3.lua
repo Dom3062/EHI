@@ -67,36 +67,66 @@ local achievements =
     [104357] = { id = "cow_4", special_function = SF.SetAchievementComplete }
 }
 
+local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {
-    --[[[101041] = { special_function = SF.CustomCode, f = function()
+    [101041] = { special_function = SF.CustomCode, f = function()
+        if not LootCounter then
+            return
+        end
         local LootTrigger = {}
-        local function DelayRejection(unit, ...) -- This will get very wonky with desync...
-            local id = unit:editor_id()
-            EHI:DelayCall(tostring(id), 2, function()
-                managers.ehi:CallFunction("LootCounter", "RandomLootDeclined2", id)
-            end)
+        local Trigger = { max = 1, special_function = SF.IncreaseProgressMax } -- Money spawned
+        for _, index in ipairs({580, 830, 3120, 3370, 3620, 3870}) do
+            LootTrigger[EHI:GetInstanceElementID(100197, index)] = Trigger
+            LootTrigger[EHI:GetInstanceElementID(100198, index)] = Trigger
+            LootTrigger[EHI:GetInstanceElementID(100201, index)] = Trigger
+            LootTrigger[EHI:GetInstanceElementID(100202, index)] = Trigger
         end
-        for _, index in ipairs({500, 520, 1080, 1100, 1120, 1140, 1160, 1300}) do
-            local crate = EHI:GetInstanceUnitID(100000, index)
-            local function LootSpawned()
-                managers.ehi:CallFunction("LootCounter", "RandomLootSpawned2", crate)
-            end
-            LootTrigger[EHI:GetInstanceElementID(100009, index)] = { special_function = SF.CustomCode, f = LootSpawned }
-            LootTrigger[EHI:GetInstanceElementID(100010, index)] = { special_function = SF.CustomCode, f = LootSpawned }
-            managers.mission:add_runned_unit_sequence_trigger(crate, "interact", DelayRejection)
-        end
-        EHI:ShowLootCounter({
+        EHI:ShowLootCounterNoCheck({
             max = 4,
-            -- 1 flipped wagon crate; guaranteed to have 1 bag of loot and C4
+            -- 1 flipped wagon crate; guaranteed to have gold or 2x money; 15% chance to spawn 2x money, otherwise gold
+            -- If second money bundle spawns, the maximum is increased in the Trigger above
             additional_loot = 1,
-            -- 4 regular wagon crates; random loot, 35% chance to spawn
-            max_random = 4,
             triggers = LootTrigger
         })
-    end},]]
+        EHI:HookElements(LootTrigger)
+    end},
     [101018] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 }, condition = EHI:GetOption("show_assault_delay_tracker") }
 }
+if LootCounter then
+    -- 1 random loot in train wagon, 35% chance to spawn
+    -- Wagons are selected randomly; sometimes 2 with possible loot spawns, sometimes 1
+    local IncreaseMaxRandomLoot = EHI:GetFreeCustomSpecialFunctionID()
+    other[104274] = { special_function = IncreaseMaxRandomLoot, index = 500 }
+    other[104275] = { special_function = IncreaseMaxRandomLoot, index = 520 }
+    other[104276] = { special_function = IncreaseMaxRandomLoot, index = 1080 }
+    other[104277] = { special_function = IncreaseMaxRandomLoot, index = 1100 }
+    other[104278] = { special_function = IncreaseMaxRandomLoot, index = 1120 }
+    other[104279] = { special_function = IncreaseMaxRandomLoot, index = 1140 }
+    other[104280] = { special_function = IncreaseMaxRandomLoot, index = 1160 }
+    other[104281] = { special_function = IncreaseMaxRandomLoot, index = 1300 }
+    local function DelayRejection(crate) -- This will get very wonky with desync...
+        EHI:DelayCall(tostring(crate), 2, function()
+            managers.ehi:CallFunction("LootCounter", "RandomLootDeclined2", crate)
+        end)
+    end
+    local function LootSpawned(crate)
+        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned2", crate)
+    end
+    EHI:RegisterCustomSpecialFunction(IncreaseMaxRandomLoot, function(id, trigger, ...)
+        local index = trigger.index
+        local crate = EHI:GetInstanceUnitID(100000, index)
+        local LootTrigger = {}
+        LootTrigger[EHI:GetInstanceElementID(100009, index)] = { special_function = SF.CustomCode, f = LootSpawned, arg = crate }
+        LootTrigger[EHI:GetInstanceElementID(100010, index)] = { special_function = SF.CustomCode, f = LootSpawned, arg = crate }
+        managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function()
+            DelayRejection(crate)
+        end)
+        EHI:AddTriggers2(LootTrigger, "LootCounter")
+        EHI:HookElements(LootTrigger)
+        managers.ehi:CallFunction("LootCounter", "IncreaseMaxRandom", 1)
+    end)
+end
 
 EHI:ParseTriggers(triggers, achievements, other)
 EHI:RegisterCustomSpecialFunction(cow_4, function(id, trigger, element, enabled)

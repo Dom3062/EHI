@@ -17,12 +17,16 @@ local triggers = {
     -- 25s to land
     -- 3s to open the heli doors
 
-    [102593] = { time = 30, id = "ChemSetReset", icons = { Icon.Methlab, "restarter" } },
-    [101217] = { time = 30, id = "ChemSetInterrupted", icons = { Icon.Methlab, "restarter" }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "ChemSetCooking" } },
+    [102593] = { time = 30, id = "ChemSetReset", icons = { Icon.Methlab, Icon.Loop } },
+    [101217] = { time = 30, id = "ChemSetInterrupted", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "ChemSetCooking" } },
     [102595] = { time = 30, id = "ChemSetCooking", icons = { Icon.Methlab } },
 
-    [102009] = { time = 60, id = "Crane", icons = { "equipment_winch_hook" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
-    [101702] = { id = "Crane", special_function = SF.PauseTracker }
+    [102009] = { time = 60, id = "Crane", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [101702] = { id = "Crane", special_function = SF.PauseTracker },
+
+    [100729] = { chance = 20, id = "HackChance", icons = { Icon.PCHack }, class = TT.Chance },
+    [108694] = { id = "HackChance", special_function = SF.IncreaseChanceFromElement }, -- +33%
+    [101485] = { id = "HackChance", special_function = SF.RemoveTracker }
 }
 if Network:is_client() then
     triggers[100564] = { time = 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
@@ -51,6 +55,27 @@ local DisableWaypoints =
     [102926] = true, -- Defend
     [102927] = true -- Fix
 }
+
+-- levels/instances/unique/des/des_computer/001-004
+for i = 3000, 4500, 500 do
+    DisableWaypoints[EHI:GetInstanceElementID(100025, i)] = true -- Defend
+    DisableWaypoints[EHI:GetInstanceElementID(100026, i)] = true -- Fix
+end
+
+-- levels/instances/unique/des/des_computer/012
+DisableWaypoints[EHI:GetInstanceElementID(100025, 8500)] = true -- Defend
+DisableWaypoints[EHI:GetInstanceElementID(100026, 8500)] = true -- Fix
+
+-- levels/instances/unique/des/des_computer_001/001
+-- levels/instances/unique/des/des_computer_002/001
+for i = 6000, 6500, 500 do
+    DisableWaypoints[EHI:GetInstanceElementID(100025, i)] = true -- Defend
+    DisableWaypoints[EHI:GetInstanceElementID(100026, i)] = true -- Fix
+end
+
+-- levels/instances/unique/des/des_computer_002/002
+DisableWaypoints[EHI:GetInstanceElementID(100025, 29550)] = true -- Defend
+DisableWaypoints[EHI:GetInstanceElementID(100026, 29550)] = true -- Fix
 
 local achievements =
 {
@@ -83,3 +108,7 @@ local tbl =
     [EHI:GetInstanceElementID(100030, 21000)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100009, 21000) }
 }
 EHI:UpdateUnits(tbl)
+EHI:ShowLootCounter({
+    max = 2,
+    additional_loot = 6
+})

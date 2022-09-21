@@ -26,10 +26,14 @@ local achievements =
     [102207] = { id = "uno_2", special_function = SF.SetAchievementComplete }
 }
 
+local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {
     [102622] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
     [100107] = { special_function = SF.CustomCode, f = function()
+        if not LootCounter then
+            return
+        end
         local SafeTriggers =
         {
             loot =
@@ -44,7 +48,7 @@ local other =
                 "spawn_loot_crap_c"
             }
         }
-        EHI:ShowLootCounter({
+        EHI:ShowLootCounterNoCheck({
             max = 18,
             max_random = 2,
             sequence_triggers =
