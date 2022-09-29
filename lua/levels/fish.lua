@@ -12,8 +12,11 @@ local achievements = {
     [100842] = { id = "fish_5", special_function = SF.SetAchievementComplete }
 }
 
-EHI:ParseTriggers({}, achievements)
-if EHI:GetOption("show_achievement") and ovk_and_up then
+EHI:ParseTriggers({
+    mission = {},
+    achievement = achievements
+})
+if EHI:ShowMissionAchievements() and ovk_and_up then
     EHI:AddLoadSyncFunction(function(self)
         self:AddTimedAchievementTracker("fish_4", 360)
     end)

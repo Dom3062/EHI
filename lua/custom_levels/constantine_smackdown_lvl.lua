@@ -35,7 +35,7 @@ if EHI:MissionTrackersAndWaypointEnabled() then
     EHI:DisableWaypoints(DisableWaypoints)
 end
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })
 EHI:RegisterCustomSpecialFunction(AddDestruction, function(id, trigger, element, enabled)
     managers.ehi:IncreaseTrackerProgress(trigger.id, element._values.amount)
 end)

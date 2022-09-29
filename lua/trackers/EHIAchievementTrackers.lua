@@ -1,6 +1,6 @@
 local EHI = EHI
-local show_failed = EHI:GetOption("show_achievement_failed_popup")
-local show_started = EHI:GetOption("show_achievement_started_popup")
+local show_failed = EHI:GetUnlockableOption("show_achievement_failed_popup")
+local show_started = EHI:GetUnlockableOption("show_achievement_started_popup")
 local function ShowFailedPopup(tracker)
     if tracker._failed_popup_showed or tracker._achieved_popup_showed or tracker._no_failure then
         return
@@ -110,8 +110,7 @@ function EHIAchievementDoneTracker:update(t, dt)
     self._text:set_text(self:Format())
     if self._time <= 0 then
         self:SetCompleted()
-        self._text:set_text("FINISH")
-        self:FitTheText()
+        self:SetStatusText("finish")
         self:RemoveTrackerFromUpdate()
     end
 end

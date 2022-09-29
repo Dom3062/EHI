@@ -46,4 +46,7 @@ for _, index in pairs({4550, 5450}) do
     achievements[EHI:GetInstanceElementID(100282, index)] = { id = "tag_10", special_function = SF.SetAchievementComplete }
 end
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})

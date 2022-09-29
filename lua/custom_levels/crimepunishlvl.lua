@@ -8,4 +8,4 @@ local triggers = {
     [101144] = { time = 43, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.UnpauseTrackerIfExists }
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })

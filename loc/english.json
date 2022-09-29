@@ -23,6 +23,10 @@
     "ehi_popup_minion_killed" : "Your convert has been killed",
     "ehi_popup_achievement_failed" : "ACHIEVEMENT FAILED!",
     "ehi_popup_achievement_started" : "ACHIEVEMENT STARTED!",
+    "ehi_popup_trophy_started" : "TROPHY STARTED!",
+    "ehi_popup_trophy_failed" : "TROPHY FAILED!",
+    "ehi_popup_daily_started" : "DAILY SIDE JOB STARTED!",
+    "ehi_popup_daily_failed" : "DAILY SIDE JOB FAILED!",
     "ehi_popup_loot_counter" : "LOOT COUNTER",
     "ehi_popup_all_loot_secured" : "All loot bags have been secured",
     "ehi_achievement_ok" : "OK",
@@ -94,17 +98,62 @@
     "ehi_show_mission_trackers": "Show Mission Trackers",
     "ehi_show_mission_trackers_desc": "Shows mission trackers on the screen (e.g.: Van/Heli arrival time, Next objective wait time, etc...)\n\nThis option also applies to custom missions\nIf supported in EHI",
 
-    "ehi_show_achievement" : "Show Achievement Tracker",
-    "ehi_show_achievement_desc" : "Shows on the screen achievements\nSome heists may not have any achievements available",
+    "ehi_show_unlockables" : "Show Unlockables",
+    "ehi_show_unlockables_desc" : "Shows on the screen tracker for achievements, trophies and daily mission",
 
-    "ehi_hide_unlocked_achievements" : "Don't Show Unlocked Achievements",
-    "ehi_hide_unlocked_achievements_desc" : "When enabled, EHI will not show trackers for unlocked achievements\nWhen disabled, EHI will show all trackers for achievements",
+    "ehi_unlockables_menu" : "Unlockables",
+    "ehi_unlockables_menu_desc" : "",
+
+    "ehi_show_achievements" : "Show Achievements",
+    "ehi_show_achievements_desc" : "Shows achievements on the screen\nSome heists may not have any achievements available",
+
+    "ehi_show_achievements_mission" : "Show Achievements (Heist)",
+    "ehi_show_achievements_mission_desc" : "Shows achievements that can be completed only in heists",
+
+    "ehi_hide_unlocked_achievements" : "Don't Show Unlocked Achievements (Heist)",
+    "ehi_hide_unlocked_achievements_desc" : "When enabled, EHI will not show trackers for unlocked achievements (heist)\nWhen disabled, EHI will show all trackers for achievements (heist)",
+
+    "ehi_show_achievements_weapon" : "Show Achievements (Weapons)",
+    "ehi_show_achievements_weapon_desc" : "Shows achievements that require you to kill enemies with weapons\n\nThe tracker will not be visible once the achievement is unlocked",
+
+    "ehi_show_achievements_melee" : "Show Achievements (Melee)",
+    "ehi_show_achievements_melee_desc" : "Shows achievements that require you to kill enemies with melee\n\nThe tracker will not be visible once the achievement is unlocked",
+
+    "ehi_show_achievements_grenade" : "Show Achievements (Throwables)",
+    "ehi_show_achievements_grenade_desc" : "Shows achievements that require you to kill enemies with throwables\n\nThe tracker will not be visible once the achievement is unlocked",
+
+    "ehi_show_achievements_vehicle" : "Show Achievements (Vehicle)",
+    "ehi_show_achievements_vehicle_desc" : "Shows achievements that require you to run over enemies with vehicles\n\nThe tracker will not be visible once the achievement is unlocked",
+
+    "ehi_show_achievements_other" : "Show Achievements (Other)",
+    "ehi_show_achievements_other_desc" : "Shows achievements that do not belong to any group above\n\nThe tracker will not be visible once the achievement is unlocked",
 
     "ehi_show_achievement_failed_popup" : "Show 'Achievement Failed' Popup",
     "ehi_show_achievement_failed_popup_desc" : "Failed achievements will show as red in the popup",
 
     "ehi_show_achievement_started_popup" : "Show 'Achievement Started' Popup",
     "ehi_show_achievement_started_popup_desc" : "Achievements that are now being tracked will show as green in the popup",
+
+    "ehi_show_trophies" : "Show Trophies",
+    "ehi_show_trophies_desc" : "Shows trophies on the screen\nSome heists may not have any trophies available",
+
+    "ehi_hide_unlocked_trophies" : "Don't Show Unlocked Trophies",
+    "ehi_hide_unlocked_trophies_desc" : "When enabled, EHI will not show trackers for unlocked trophies\nWhen disabled, EHI will show all trackers for trophies",
+
+    "ehi_show_trophy_failed_popup" : "Show 'Trophy Failed' Popup",
+    "ehi_show_trophy_failed_popup_desc" : "Failed trophies will show as red in the popup",
+
+    "ehi_show_trophy_started_popup" : "Show 'Trophy Started' Popup",
+    "ehi_show_trophy_started_popup_desc" : "Trophies that are now being tracked will show as green in the popup",
+
+    "ehi_show_dailies" : "Show Daily Side Jobs",
+    "ehi_show_dailies_desc" : "Shows dailies on the screen if the are active\n\nCompleted dailies won't appear on the screen",
+
+    "ehi_show_daily_failed_popup" : "Show 'Daily Side Job Failed' Popup",
+    "ehi_show_daily_failed_popup_desc" : "Failed dailies will show as red in the popup",
+
+    "ehi_show_daily_started_popup" : "Show 'Daily Side Job Started' Popup",
+    "ehi_show_daily_started_popup_desc" : "Dailies that are now being tracked will show as green in the popup",
 
     "ehi_show_gained_xp" : "Show gained XP",
     "ehi_show_gained_xp_desc" : "Shows earned XP in a mission.\nThis tracker is disabled in Crime Spree.",
@@ -254,6 +303,9 @@
 
     "ehi_show_bodybags_counter" : "Show Bodybags Counter",
     "ehi_show_bodybags_counter_desc" : "Shows a tracker for how many bodybags you have",
+
+    "ehi_show_escape_chance" : "Show Escape Chance",
+    "ehi_show_escape_chance_desc" : "Shows a tracker with possible escape chance",
     
     "ehi_waypoints_menu" : "Waypoints",
     "ehi_waypoints_menu_desc" : "",

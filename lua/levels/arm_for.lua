@@ -23,8 +23,11 @@ local achievements =
     [103311] = { id = "armored_6", special_function = SF.SetAchievementFailed }
 }
 
-EHI:ParseTriggers(triggers, achievements)
-if EHI:GetOption("show_achievement") then
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
+if EHI:ShowMissionAchievements() then
     EHI:ShowAchievementLootCounter({
         achievement = "armored_1",
         max = 20,

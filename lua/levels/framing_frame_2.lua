@@ -9,7 +9,12 @@ local other =
     [102557] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 
-EHI:ParseTriggers(triggers, nil, other)
-EHI:AddOnAlarmCallback(function(dropin)
-    managers.ehi:AddEscapeChanceTracker(dropin, 24)
-end)
+EHI:ParseTriggers({
+    mission = triggers,
+    other = other
+})
+if EHI:GetOption("show_escape_chance") then
+    EHI:AddOnAlarmCallback(function(dropin)
+        managers.ehi:AddEscapeChanceTracker(dropin, 24)
+    end)
+end

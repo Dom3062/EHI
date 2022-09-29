@@ -39,9 +39,12 @@ local achievements =
     [104220] = { id = "moon_4", special_function = SF.IncreaseProgress } -- Dallas
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:DisableWaypoints(DisableWaypoints)
-if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+if EHI:ShowMissionAchievements() and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "moon_5",
         max = 9,

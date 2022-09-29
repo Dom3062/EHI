@@ -873,7 +873,7 @@ function EHIManager:CachedPeerInCustodyExists(peer_id)
 end
 
 function EHIManager:LoadFromTradeDelayCache()
-    if table.size(self._cache.TradeDelay) == 0 then
+    if not next(self._cache.TradeDelay) then
         self._cache.TradeDelayShowed = true
         return
     end

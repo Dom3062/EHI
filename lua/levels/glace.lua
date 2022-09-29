@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [102368] = { id = "PickUpBalloonFirstTry", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = 102333 },
@@ -35,7 +34,7 @@ end
 local achievements =
 {
     [101732] = { special_function = SF.Trigger, data = { 1017321, 1017322 } },
-    [1017321] = { id = "glace_9", status = "find", class = TT.AchievementStatus, condition = show_achievement and ovk_and_up, exclude_from_sync = true },
+    [1017321] = { id = "glace_9", status = "find", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, exclude_from_sync = true },
     [1017322] = { max = 6, id = "glace_10", class = TT.AchievementProgress, exclude_from_sync = true },
     [105758] = { id = "glace_9", special_function = SF.SetAchievementFailed },
     [105756] = { id = "glace_9", status = "ok", special_function = SF.SetAchievementStatus },
@@ -50,4 +49,7 @@ local achievements =
     [102323] = { id = "uno_4", special_function = SF.SetAchievementFailed }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})

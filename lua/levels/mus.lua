@@ -36,7 +36,11 @@ local other =
     [100109] = { time = 35 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
 }
 
-EHI:ParseTriggers(triggers, achievements, other, "Escape", Icon.HeliEscape)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+}, "Escape", Icon.HeliEscape)
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowAchievementLootCounter({
     achievement = "bat_3",
@@ -49,7 +53,7 @@ EHI:ShowAchievementLootCounter({
         loot_type = { "mus_artifact_paint", "mus_artifact" }
     }
 })
-if EHI:GetOption("show_achievement") then
+if EHI:ShowMissionAchievements() then
     EHI:AddLoadSyncFunction(function(self)
         self:AddTimedAchievementTracker("bat_4", 600)
     end)

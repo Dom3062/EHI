@@ -62,7 +62,10 @@ local achievements =
     [101571] = { id = "pal_3", special_function = SF.SetAchievementFailed },
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 local value_max = tweak_data.achievement.loot_cash_achievements.pal_2.secured.value
 local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)
 local max = math.ceil(value_max / loot_value)

@@ -38,7 +38,10 @@ local achievements =
     [EHI:GetInstanceElementID(100179, 7950)] = { time = 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist }
 }]]
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:ShowLootCounter({ max = 4 })
 
 local tbl =

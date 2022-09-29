@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
+if EHI:ShowMissionAchievements() and EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
     local SF = EHI.SpecialFunctions
     local TT = EHI.Trackers
     local achievements = {
@@ -8,7 +8,10 @@ if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficultie
         [102829] = { id = "cac_30", special_function = SF.SetAchievementFailed }
     }
 
-    EHI:ParseTriggers({}, achievements)
+    EHI:ParseTriggers({
+        mission = {},
+        achievement = achievements
+    })
 end
 
 local function ignore(instance, id, unit_data, unit)

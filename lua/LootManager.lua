@@ -5,11 +5,6 @@ else
 	EHI._hooks.LootManager = true
 end
 local check_types = EHI.LootCounter.CheckType
---[[local LootCounter =
-{
-    --alex_3 = true, -- Rats Day 3
-    --rvd1 = true -- Reservoir Dogs Heist Day 2
-}]]
 
 function LootManager:GetSecuredBagsAmount()
     local mandatory = self:get_secured_mandatory_bags_amount()

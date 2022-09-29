@@ -82,7 +82,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                     EHI:AddSyncTrigger(final_index, triggers[final_index])
                 end
             end
-            EHI:ParseTriggers(triggers)
+            EHI:ParseMissionTriggers(triggers)
             used_start_indexes[start_index] = true
         end
         instance_index = instance_index + 1

@@ -143,7 +143,10 @@ local achievements =
     [103208] = { id = "sand_9", special_function = SF.FinalizeAchievement }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:RegisterCustomSpecialFunction(ExecuteIfProgressMatch, function(...)
     local tracker = managers.ehi:GetTracker("sand_9_buttons")

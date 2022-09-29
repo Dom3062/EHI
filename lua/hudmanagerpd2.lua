@@ -46,36 +46,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         self:add_updator("EHI_Buff_Update", callback(buff, buff, "update"))
         buff:init_finalize(hud)
     end
-    --[[EHI:DelayCall("EHI_Debug", 5, function()
-        local Icon = EHI.Icons
-        for i = 1, 99, 1 do
-            managers.ehi:AddStaticTracker({
-                id = tostring(i),
-                icons = { "pd2_power" },
-                time = 10
-            })
-            managers.ehi:AddStaticTracker({
-                id = tostring(i * 100),
-                icons = Icon.CarEscapeNoLoot,
-                time = 15
-            })
-            managers.ehi:AddStaticTracker({
-                id = tostring(i * 10000),
-                icons = Icon.CarEscape,
-                time = 25
-            })
-            managers.ehi:AddStaticTracker({
-                id = tostring(i * 1000000),
-                icons = Icon.CarWait,
-                time = 35
-            })
-            managers.ehi:AddStaticTracker({
-                id = tostring(i * 100000000),
-                icons = { "pd2_car", "pd2_escape", "pd2_lootdrop", "faster", "pd2_power" },
-                time = 45
-            })
-        end
-    end)]]
     local level_tweak_data = tweak_data.levels[level_id]
     if level_tweak_data and level_tweak_data.team_ai_off then
         return
@@ -272,6 +242,24 @@ end
 
 function HUDManager:ShowAchievementFailedPopup(id)
     self:custom_ingame_popup_text("ACHIEVEMENT FAILED!", managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+end
+
+function HUDManager:ShowTrophyStartedPopup(id)
+    self:custom_ingame_popup_text("TROPHY STARTED!", managers.localization:to_upper_text(id), "milestone_trophy")
+end
+
+function HUDManager:ShowTrophyFailedPopup(id)
+    self:custom_ingame_popup_text("TROPHY FAILED!", managers.localization:to_upper_text(id), "milestone_trophy")
+end
+
+function HUDManager:ShowDailyStartedPopup(id)
+    local icon = tweak_data.ehi.icons[id] and id or "milestone_trophy"
+    self:custom_ingame_popup_text("DAILY SIDE JOB STARTED!", managers.localization:to_upper_text(id), icon)
+end
+
+function HUDManager:ShowDailyFailedPopup(id)
+    local icon = tweak_data.ehi.icons[id] and id or "milestone_trophy"
+    self:custom_ingame_popup_text("DAILY SIDE JOB FAILED!", managers.localization:to_upper_text(id), icon)
 end
 
 function HUDManager:Debug(id)

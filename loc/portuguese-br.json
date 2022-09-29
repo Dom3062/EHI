@@ -131,8 +131,8 @@
     "ehi_tracker_alignment_1" : "Vertical",
     "ehi_tracker_alignment_2" : "Horizontal",
 
-    "ehi_show_achievement" : "Mostrar Tracker de Conquista",
-    "ehi_show_achievement_desc" : "Mostra as conquistas na tela\nAlgumas heists não tem conquistas disponíveis",
+    "ehi_show_achievements" : "Mostrar Tracker de Conquista",
+    "ehi_show_achievements_desc" : "Mostra as conquistas na tela\nAlgumas heists não tem conquistas disponíveis",
 
     "ehi_hide_unlocked_achievements" : "Não Mostrar Conquistas já Alcançadas",
     "ehi_hide_unlocked_achievements_desc" : "Quando ativado, EHI não vai mostrar Trackers para conquistas que já foram alcançadas\nQuando desativado, EHI vai mostrar os Trackers para conquistas que já foram alcançadas",

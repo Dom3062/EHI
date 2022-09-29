@@ -50,7 +50,10 @@ local achievements =
     [102479] = { id = "cow_11", special_function = SF.SetAchievementComplete }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:ShowAchievementLootCounter({
     achievement = "voff_2",
     max = 2,

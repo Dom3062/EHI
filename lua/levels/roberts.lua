@@ -47,7 +47,7 @@ EHI:AddOnAlarmCallback(function()
     end
 end)
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })
 
 local tbl =
 {

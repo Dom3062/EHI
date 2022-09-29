@@ -101,7 +101,6 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [101299] = { time = 300, id = "Thermite", icons = { Icon.Fire }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1012991 } },
@@ -146,7 +145,10 @@ if Network:is_client() then
     other[102212] = { time = 17, id = "AssaultDelay", class = TT.AssaultDelay, condition = AssaultTracker }
 end]]
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:RegisterCustomSpecialFunction(RemoveTriggerAndStartAchievementCountdown, function(id, ...)
     managers.ehi:StartTrackerCountdown("cac_10")
@@ -159,7 +161,7 @@ EHI:ShowLootCounter({
         [106684] = { max = 70, special_function = SF.IncreaseProgressMax }
     }
 })
-if show_achievement then
+if EHI:ShowMissionAchievements() then
     EHI:AddLoadSyncFunction(function(self)
         if EHI.ConditionFunctions.IsStealth() then
             self:AddTimedAchievementTracker("green_3", 817)

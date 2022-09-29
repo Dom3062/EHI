@@ -9,4 +9,4 @@ local triggers = {
     [101088] = { time = 84, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot }
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })

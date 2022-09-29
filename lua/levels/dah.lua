@@ -26,7 +26,10 @@ local achievements =
     [102261] = { id = "dah_8", special_function = SF.IncreaseProgress }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "dah_8",

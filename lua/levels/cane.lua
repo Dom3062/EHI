@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
+local show_achievement = EHI:ShowMissionAchievements()
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local fire_recharge = { time = 180, id = "FireRecharge", icons = { Icon.Fire, Icon.Loop } }
 local fire_t = { time = 60, id = "Fire", icons = { Icon.Fire }, class = TT.Warning }
@@ -29,7 +29,10 @@ local achievements =
     [101176] = { id = "cane_2", special_function = SF.SetAchievementFailed }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 if show_achievement and ovk_and_up then
     EHI:ShowAchievementLootCounter({
         achievement = "cane_3",

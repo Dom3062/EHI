@@ -22,7 +22,7 @@ function MutatorsManager:init()
         end
         return false
     end
-    EHI._cache.AchievementsAreDisabled = check()
+    EHI._cache.UnlockablesAreDisabled = check()
     local data = {}
     data.xp_reduction = self:get_experience_reduction()
     if managers.experience.SetMutatorData then

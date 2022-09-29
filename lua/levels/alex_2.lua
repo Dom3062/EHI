@@ -1,8 +1,6 @@
 local EHI = EHI
-local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local VanCrashChance = { { icon = Icon.Car, color = Color.red } }
 local assault_delay = 15 + 1 + 30
 local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker")
 local LootCounter = EHI:GetOption("show_loot_counter")
@@ -11,9 +9,9 @@ local other =
     [104488] = { time = assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = ShowAssaultDelay },
     [104489] = { time = assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist, condition = ShowAssaultDelay },
     -- Police ambush
-    [104535] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = ShowAssaultDelay },
-
-    [100342] = { chance = 25, id = "EscapeChance", icons = VanCrashChance, class = TT.Chance },
+    [104535] = { special_function = SF.Trigger, data = { 1045351, 1045352 } },
+    [1045351] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = ShowAssaultDelay },
+    [1045352] = { special_function = SF.RemoveTriggers, data = { 104488, 104489 } },
 
     [103696] = { special_function = SF.CustomCode, f = function()
         if not LootCounter then
@@ -67,8 +65,18 @@ local other =
         })
     end}
 }
+if EHI:GetOption("show_escape_chance") then
+    local ShowVanCrashChance = EHI:GetFreeCustomSpecialFunctionID()
+    other[100342] = { special_function = ShowVanCrashChance }
+    EHI:RegisterCustomSpecialFunction(ShowVanCrashChance, function(...)
+        managers.ehi:AddEscapeChanceTracker(false, 25)
+    end)
+end
 
-EHI:ParseTriggers({}, nil, other)
+EHI:ParseTriggers({
+    mission = {},
+    other = other
+})
 EHI:AddOnAlarmCallback(function(dropin)
     if dropin or not ShowAssaultDelay then
         return

@@ -21,6 +21,12 @@ local triggers = {
 
     [101820] = { time = 9.3, id = "HeliDropLance", icons = Icon.HeliDropDrill, special_function = SF.SetTrackerAccurate }
 }
+-- levels/instances/unique/bex/bex_computer
+for i = 7250, 9050, 150 do
+    local id = "PCHack" .. i
+    triggers[EHI:GetInstanceElementID(100006, i)] = { time = 30, id = id, icons = { Icon.PCHack }, waypoint = { position_by_unit = EHI:GetInstanceElementID(100000, i) } }
+    triggers[EHI:GetInstanceElementID(100138, i)] = { id = id, special_function = SF.RemoveTracker } -- Alarm
+end
 if Network:is_client() then
     triggers[hack_start].time = 90
     triggers[hack_start].random_time = 10
@@ -30,7 +36,7 @@ if Network:is_client() then
     triggers[hack_start].synced = { class = TT.Pausable }
     EHI:AddSyncTrigger(hack_start, triggers[hack_start])
     triggers[EHI:GetInstanceElementID(100011, 20450)] = { id = "ServerHack", special_function = SF.RemoveTracker }
-    triggers[102157] = { time = 60, random_time = 15, id = "VaultGas", icons = { "teargas" }, class = TT.Inaccurate, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[102157] = { time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, class = TT.Inaccurate, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
@@ -46,5 +52,8 @@ local achievements =
     [100107] = { id = "bex_10", status = "loud", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:ShowLootCounter({ max = 11 })

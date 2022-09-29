@@ -1,7 +1,7 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
+local show_achievement = EHI:ShowMissionAchievements()
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local repair = { time = 90, id = "RepairWait", icons = { "pd2_fix" } }
 local triggers = {
@@ -25,7 +25,10 @@ local achievements =
     [100416] = { id = "hunter_loot", special_function = SF.IncreaseProgress }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:AddLoadSyncFunction(function(self)
     EHI:ShowLootCounter({ max = 21 })
     EHI:UnhookElement(100416)

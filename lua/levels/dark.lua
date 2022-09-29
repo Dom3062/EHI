@@ -76,7 +76,10 @@ for i = 12850, 13600, 250 do
     achievements[inc] = { id = "dark_5", special_function = AddBodyBag, element = i }
     achievements[inc + 1] = { id = "dark_5", special_function = RemoveBodyBag, element = i }
 end
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:ShowLootCounter({ max = 16 })
 EHI:RegisterCustomSpecialFunction(AddBodyBag, function(id, trigger, ...)
     managers.ehi:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
@@ -84,7 +87,7 @@ end)
 EHI:RegisterCustomSpecialFunction(RemoveBodyBag, function(id, trigger, ...)
     managers.ehi:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
 end)
-if EHI:GetOption("show_achievement") then
+if EHI:ShowMissionAchievements() then
     EHI:AddLoadSyncFunction(function(self)
         self:AddTimedAchievementTracker("dark_2", 420)
     end)

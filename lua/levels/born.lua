@@ -41,7 +41,7 @@ local achievements =
     [102779] = { id = "born_3", special_function = SF.SetAchievementFailed }
 }
 
-EHI:ParseTriggers(triggers, achievements, nil, nil, trigger_icon_all)
+EHI:ParseTriggers({ mission = triggers, achievement = achievements }, nil, trigger_icon_all)
 EHI:ShowLootCounter({ max = 9 })
 
 local tbl =

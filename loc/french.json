@@ -49,8 +49,8 @@
     "ehi_trackers_menu": "Moniteurs",
     "ehi_trackers_menu_desc": "",
 
-    "ehi_show_achievement" : "Show Achievement Tracker",
-    "ehi_show_achievement_desc" : "Shows on the screen achievements\nSome heists may not have any achievements available",
+    "ehi_show_achievements" : "Show Achievement Tracker",
+    "ehi_show_achievements_desc" : "Shows on the screen achievements\nSome heists may not have any achievements available",
 
     "ehi_hide_unlocked_achievements" : "Don't Show Unlocked Achievements",
     "ehi_hide_unlocked_achievements_desc" : "When enabled, EHI will not show trackers for unlocked achievements\nWhen disabled, EHI will show all trackers for achievements",

@@ -7,4 +7,4 @@ local triggers = {
     [100842] = { time = 50, id = "Lasers", icons = { Icon.Lasers }, class = TT.Warning }
 }
 
-EHI:ParseTriggers(triggers, nil, nil, "Escape", Icon.HeliEscapeNoLoot)
+EHI:ParseTriggers({ mission = triggers }, "Escape", Icon.HeliEscapeNoLoot)

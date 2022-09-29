@@ -23,8 +23,12 @@
     "ehi_popup_minion_killed" : "你的变节警察已阵亡",
     "ehi_popup_achievement_failed" : "挑战成就失败！",
     "ehi_popup_achievement_started" : "开始挑战成就!",
-    "ehi_popup_loot_counter" : "LOOT COUNTER",
-    "ehi_popup_all_loot_secured" : "All loot bags have been secured",
+    "ehi_popup_trophy_started" : "TROPHY STARTED!",
+    "ehi_popup_trophy_failed" : "TROPHY FAILED!",
+    "ehi_popup_daily_started" : "DAILY SIDE JOB STARTED!",
+    "ehi_popup_daily_failed" : "DAILY SIDE JOB FAILED!",
+    "ehi_popup_loot_counter" : "战利品计数器",
+    "ehi_popup_all_loot_secured" : "所有战利品已被你收入囊中",
     "ehi_achievement_ok" : "OK",
     "ehi_achievement_done" : "完成",
     "ehi_achievement_pass" : "通过",
@@ -34,7 +38,7 @@
     "ehi_achievement_no_down" : "0倒",
     "ehi_achievement_destroy" : "摧毁",
     "ehi_achievement_alarm" : "警报",
-    "ehi_achievement_ready" : "准备",
+    "ehi_achievement_ready" : "就绪",
     "ehi_achievement_loud" : "强袭",
     "ehi_achievement_mark" : "标记",
     "ehi_achievement_push" : "按下",
@@ -94,18 +98,65 @@
     "ehi_show_mission_trackers": "显示任务追踪器",
     "ehi_show_mission_trackers_desc": "显示当前任务目标的追踪器 (例如: 撤离车/飞机抵达时间,距离下一个目标触发时间, 诸如此类。。。)\n\n此选项可兼容自定义劫案\n如果该地图支持EHI",
 
-    "ehi_show_achievement" : "显示成就追踪器",
-    "ehi_show_achievement_desc" : "在屏幕上显示可追踪的成就\n某些劫案中没有可追踪的成就",
-    
-    "ehi_hide_unlocked_achievements" : "隐藏已解锁的成就追踪器",
-    "ehi_hide_unlocked_achievements_desc" : "勾选后，本模组将隐藏您已经解锁过的成就追踪器\n取消勾选后，本模组依然会为您显示当前所有可用的成就追踪器",
+    "ehi_show_unlockables" : "Show Unlockables",
+    "ehi_show_unlockables_desc" : "Shows on the screen tracker for achievements, trophies and daily mission",
 
+    "ehi_unlockables_menu" : "Unlockables",
+    "ehi_unlockables_menu_desc" : "",
+    
+    "ehi_show_achievements" : "显示成就追踪器",
+    "ehi_show_achievements_desc" : "在屏幕上显示可追踪的成就\n某些劫案中没有可追踪的成就",
+
+    "ehi_show_achievements_mission" : "Show Achievements (Heist)",
+    "ehi_show_achievements_mission_desc" : "Shows achievements that can be completed only in heists",
+
+    "ehi_hide_unlocked_achievements" : "Don't Show Unlocked Achievements (Heist)",
+    "ehi_hide_unlocked_achievements_desc" : "When enabled, EHI will not show trackers for unlocked achievements (heist)\nWhen disabled, EHI will show all trackers for achievements (heist)",
+    "ehi_hide_unlocked_achievements_old" : "隐藏已解锁的成就追踪器",
+    "ehi_hide_unlocked_achievements_desc_old" : "勾选后，本模组将隐藏您已经解锁过的成就追踪器\n取消勾选后，本模组依然会为您显示当前所有可用的成就追踪器",
+    
+    "ehi_show_achievements_weapon" : "Show Achievements (Weapons)",
+    "ehi_show_achievements_weapon_desc" : "Shows achievements that require you to kill enemies with weapons\n\nThe tracker will not be visible once the achievement is unlocked",
+
+    "ehi_show_achievements_melee" : "Show Achievements (Melee)",
+    "ehi_show_achievements_melee_desc" : "Shows achievements that require you to kill enemies with melee\n\nThe tracker will not be visible once the achievement is unlocked",
+
+    "ehi_show_achievements_grenade" : "Show Achievements (Throwables)",
+    "ehi_show_achievements_grenade_desc" : "Shows achievements that require you to kill enemies with throwables\n\nThe tracker will not be visible once the achievement is unlocked",
+
+    "ehi_show_achievements_vehicle" : "Show Achievements (Vehicle)",
+    "ehi_show_achievements_vehicle_desc" : "Shows achievements that require you to run over enemies with vehicles\n\nThe tracker will not be visible once the achievement is unlocked",
+
+    "ehi_show_achievements_other" : "Show Achievements (Other)",
+    "ehi_show_achievements_other_desc" : "Shows achievements that do not belong to any group above\n\nThe tracker will not be visible once the achievement is unlocked",
+    
     "ehi_show_achievement_failed_popup" : "显示 '挑战成就失败'提示",
     "ehi_show_achievement_failed_popup_desc" : "在成就条件无法完成时弹出标题为红色字体的窗口提示",
 
     "ehi_show_achievement_started_popup" : "显示'开始挑战成就' 弹出窗口",
     "ehi_show_achievement_started_popup_desc" : "正在跟踪的成就会弹出以绿色字体为标题的弹窗",
 
+    "ehi_show_trophies" : "Show Trophies",
+    "ehi_show_trophies_desc" : "Shows trophies on the screen\nSome heists may not have any trophies available",
+
+    "ehi_hide_unlocked_trophies" : "Don't Show Unlocked Trophies",
+    "ehi_hide_unlocked_trophies_desc" : "When enabled, EHI will not show trackers for unlocked trophies\nWhen disabled, EHI will show all trackers for trophies",
+
+    "ehi_show_trophy_failed_popup" : "Show 'Trophy Failed' Popup",
+    "ehi_show_trophy_failed_popup_desc" : "Failed trophies will show as red in the popup",
+
+    "ehi_show_trophy_started_popup" : "Show 'Trophy Started' Popup",
+    "ehi_show_trophy_started_popup_desc" : "Trophies that are now being tracked will show as green in the popup",
+
+    "ehi_show_dailies" : "Show Daily Side Jobs",
+    "ehi_show_dailies_desc" : "Shows dailies on the screen if the are active\n\nCompleted dailies won't appear on the screen",
+
+    "ehi_show_daily_failed_popup" : "Show 'Daily Side Job Failed' Popup",
+    "ehi_show_daily_failed_popup_desc" : "Failed dailies will show as red in the popup",
+
+    "ehi_show_daily_started_popup" : "Show 'Daily Side Job Started' Popup",
+    "ehi_show_daily_started_popup_desc" : "Dailies that are now being tracked will show as green in the popup",
+    
     "ehi_show_gained_xp" : "显示获得的经验",
     "ehi_show_gained_xp_desc" : "显示当前获得的经验\n此追踪器将在罪无止境模式下禁用",
 
@@ -243,14 +294,20 @@
     "ehi_show_loot_counter" : "显示战利品追踪器",
     "ehi_show_loot_counter_desc" : "显示你已经劫获多少战利品",
 
-    "ehi_variable_random_loot_format" : "Variable Random Loot Format",
-    "ehi_variable_random_loot_format_desc" : "Defines how additional random loot should be formatted\n\nExample:16 guaranteed bags with 4 safes that may or not have loot; 9 bags secured\n\nOption 1:\n9/16-20?\n\nOption 2:\n9/20?\n\nOption 3:\n9/16+4?",
-    "ehi_variable_random_loot_format_1" : "Progress / Max - (Max + Random)?",
-    "ehi_variable_random_loot_format_2" : "Progress / (Max + Random)?",
-    "ehi_variable_random_loot_format_3" : "Progress / Max + Random?",
+    "ehi_show_all_loot_secured_popup" : "显示 '已劫获所有战利品'弹出窗口",
+    "ehi_show_all_loot_secured_popup_desc" : "显示劫获地图中所有战利品的弹出窗口",
 
-    "ehi_show_bodybags_counter" : "Show Bodybags Counter",
-    "ehi_show_bodybags_counter_desc" : "Shows a tracker for how many bodybags you have",
+    "ehi_variable_random_loot_format" : "随机战利品显示格式",
+    "ehi_variable_random_loot_format_desc" : "设置如何显示有可能获得的战利品\n\n例:地图中有16个固定刷新的战利品和4个可能空无一物的保险箱;你已经劫获9包战利品\n\n选项 1:\n9/16-20?\n\n选项 2:\n9/20?\n\n选项 3:\n9/16+4?",
+    "ehi_variable_random_loot_format_1" : "已劫获数 / 最大战利品数 - (最大战利品数 + 可能战利品数)?",
+    "ehi_variable_random_loot_format_2" : "已劫获数 / (最大战利品数 + 可能战利品数)?",
+    "ehi_variable_random_loot_format_3" : "已劫获数 / 最大战利品数 + 可能战利品数?",
+
+    "ehi_show_bodybags_counter" : "显示尸体袋追踪器",
+    "ehi_show_bodybags_counter_desc" : "显示你当前持有尸体袋数量追踪器",
+
+    "ehi_show_escape_chance" : "Show Escape Chance",
+    "ehi_show_escape_chance_desc" : "Shows a tracker with possible escape chance",
     
     "ehi_waypoints_menu" : "路径导航",
     "ehi_waypoints_menu_desc" : "",

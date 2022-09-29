@@ -33,6 +33,8 @@
                 <post :hook_id="hudmanagerpd2" :script_path="EHILootTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHINeededValueTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementTrackers.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHITrophyTrackers.lua"/>
+                <post :hook_id="hudmanagerpd2" :script_path="EHIDailyTrackers.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIInaccurateTrackers.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="StaticTrackers.lua"/>
 

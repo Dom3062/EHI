@@ -105,7 +105,8 @@ _G.EHI =
         AddTimeByPreplanning = 50,
         ShowWaypoint = 51,
         DecreaseProgressMax = 52,
-        DecreaseProgress = 54,
+        DecreaseProgress = 53,
+        ShowTrophy = 54,
 
         Debug = 100000,
         CustomCode = 100001,
@@ -211,6 +212,9 @@ _G.EHI =
         Inaccurate = "EHIInaccurateTracker",
         InaccurateWarning = "EHIInaccurateWarningTracker",
         InaccuratePausable = "EHIInaccuratePausableTracker",
+        Trophy = "EHITrophyTracker",
+        Daily = "EHIDailyTracker",
+        DailyProgress = "EHIDailyProgressTracker"
     },
 
     AchievementTrackers =
@@ -221,6 +225,17 @@ _G.EHI =
         EHIAchievementProgressTracker = true,
         EHIAchievementStatusTracker = true,
         EHIAchievementBagValueTracker = true
+    },
+
+    TrophyTrackers =
+    {
+        EHITrophyTracker = true
+    },
+
+    DailyTrackers =
+    {
+        EHIDailyTracker = true,
+        EHIDailyProgressTracker = true
     },
 
     Difficulties =
@@ -271,7 +286,7 @@ function EHI:IsDifficultyOrBelow(difficulty)
 end
 
 function EHI:IsDifficulty(difficulty)
-    return self._cache.Difficulty == difficulty
+    return self._cache.DifficultyIndex == difficulty
 end
 
 function EHI:IsBetweenDifficulties(diff_1, diff_2)
@@ -379,10 +394,32 @@ function EHI:LoadDefaultValues()
 
         -- Trackers
         show_mission_trackers = true,
-        show_achievement = true,
-        hide_unlocked_achievements = true,
-        show_achievement_failed_popup = true,
-        show_achievement_started_popup = true,
+        show_unlockables = true,
+        unlockables =
+        {
+            -- Achievements
+            show_achievements = true,
+            show_achievements_mission = true,
+            hide_unlocked_achievements = true,
+            show_achievements_weapon = true,
+            show_achievements_melee = true,
+            show_achievements_grenade = true,
+            show_achievements_vehicle = true,
+            show_achievements_other = true,
+            show_achievement_failed_popup = true,
+            show_achievement_started_popup = true,
+
+            -- Trophies
+            show_trophies = true,
+            hide_unlocked_trophies = true,
+            show_trophy_failed_popup = true,
+            show_trophy_started_popup = true,
+
+            -- Daily missions
+            show_dailies = true,
+            show_daily_failed_popup = true,
+            show_daily_started_popup = true
+        },
         show_gained_xp = true,
         xp_format = 3,
         xp_panel = 1,
@@ -456,6 +493,7 @@ function EHI:LoadDefaultValues()
         show_all_loot_secured_popup = true,
         variable_random_loot_format = 3, -- 1 = Max-(Max+Random)?; 2 = MaxRandom?; 3 = Max+Random?
         show_bodybags_counter = false,
+        show_escape_chance = true,
 
         -- Waypoints
         show_waypoints = true,
@@ -547,6 +585,20 @@ function EHI:GetOption(option)
     if option then
         return self.settings[option]
     end
+end
+
+function EHI:ShowMissionAchievements()
+    return self:GetUnlockableAndOption("show_achievements_mission")
+end
+
+function EHI:GetUnlockableOption(option)
+    if option then
+        return self.settings.unlockables[option]
+    end
+end
+
+function EHI:GetUnlockableAndOption(option)
+    return self:GetOption("show_unlockables") and self:GetUnlockableOption(option)
 end
 
 function EHI:GetEquipmentOption(option)
@@ -752,6 +804,17 @@ function EHI:GetInstanceElementPosition2(id)
     return element:value("position")
 end
 
+function EHI:GetInstanceUnitPosition(id)
+    local unit = managers.worlddefinition:get_unit(id)
+    if not unit then
+        return nil
+    end
+    if not unit.position then
+        return nil
+    end
+    return unit:position()
+end
+
 function EHI:Sync(message, data)
     LuaNetworking:SendToPeersExcept(1, message, data or "")
 end
@@ -910,7 +973,7 @@ function EHI:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
 end
 
 function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_all)
-    local function FillTheRestOfProperties(key, value)
+    local function FillRestOfProperties(key, value)
         if not value.id then
             triggers[key].id = trigger_id_all
         end
@@ -922,16 +985,32 @@ function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_al
         if triggers[key] then
             local t = triggers[key]
             if t.special_function and self.TriggerFunction[t.special_function] then
+                -- TODO:
+                -- This won't properly rearrange triggers when both of them are Trigger function
+                -- It may lead to endless loop, stucking the game
                 local new_key = (key * 10) + 1
                 while triggers[new_key] do
                     new_key = new_key + 1
                 end
                 triggers[new_key] = value
-                FillTheRestOfProperties(new_key, value)
+                FillRestOfProperties(new_key, value)
                 if t.data then
                     t.data[#t.data + 1] = new_key
                 else
                     self:Log("key: " .. tostring(key) .. " does not have 'data' table, the trigger " .. tostring(new_key) .. " will not be called!")
+                end
+            elseif value.special_function and self.TriggerFunction[value.special_function] then
+                if value.data then
+                    local new_key = (key * 10) + 1
+                    while table.contains(value.data, new_key) or new_triggers[new_key] or triggers[new_key] do
+                        new_key = new_key + 1
+                    end
+                    triggers[new_key] = t
+                    triggers[key] = value
+                    FillRestOfProperties(key, value)
+                    value.data[#value.data + 1] = new_key
+                else
+                    self:Log("key: " .. tostring(key) .. " with ID: " .. tostring(value.id) .. " does not have 'data' table, the former trigger won't be moved and triggers assigned to this one will not be called!")
                 end
             else
                 --self:PrintTable(value, key, "new_triggers")
@@ -941,11 +1020,11 @@ function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_al
                 triggers[key] = { special_function = params and params.SF or SF.Trigger, data = { new_key, key2 } }
                 triggers[new_key] = t
                 triggers[key2] = value
-                FillTheRestOfProperties(key2, value)
+                FillRestOfProperties(key2, value)
             end
         else
             triggers[key] = value
-            FillTheRestOfProperties(key, value)
+            FillRestOfProperties(key, value)
         end
     end
 end
@@ -1308,6 +1387,10 @@ function EHI:Trigger(id, element, enabled)
                 managers.ehi:DecreaseTrackerProgressMax(trigger.id, trigger.max)
             elseif f == SF.DecreaseProgress then
                 managers.ehi:DecreaseTrackerProgress(trigger.id, trigger.progress)
+            elseif f == SF.ShowTrophy then
+                if self:IsTrophyLocked(trigger.id) then
+                    self:CheckCondition(id)
+                end
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
@@ -1436,10 +1519,18 @@ function EHI:SyncLoad()
     for id, _ in pairs(self.HookOnLoad) do
         local trigger = triggers[id]
         if trigger then
-            if trigger.special_function == SF.ShowWaypoint and trigger.data and trigger.data.position_by_element then
-                self:AddPositionFromElement(trigger.data, true)
-            elseif trigger.waypoint and trigger.waypoint.position_by_element then
-                self:AddPositionFromElement(trigger.waypoint, true)
+            if trigger.special_function == SF.ShowWaypoint and trigger.data then
+                if trigger.data.position_by_element then
+                    self:AddPositionFromElement(trigger.data, trigger.id, true)
+                elseif trigger.data.position_by_unit then
+                    self:AddPositionFromUnit(trigger.data, trigger.id, true)
+                end
+            elseif trigger.waypoint then
+                if trigger.waypoint.position_by_element then
+                    self:AddPositionFromElement(trigger.data, trigger.id, true)
+                elseif trigger.waypoint.position_by_unit then
+                    self:AddPositionFromUnit(trigger.data, trigger.id, true)
+                end
             end
         end
     end
@@ -1463,18 +1554,30 @@ Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id,
     end
 end)
 
-function EHI:AddPositionFromElement(data, check)
+function EHI:AddPositionFromElement(data, id, check)
     local vector = self:GetInstanceElementPosition2(data.position_by_element)
     if vector then
         data.position = vector
         data.position_by_element = nil
     elseif check then
-        self:Log("Element with ID " .. tostring(element) .. " has not been found. Element ID to hook: " .. tostring(id))
+        self:Log("Element with ID " .. tostring(data.position_by_element) .. " has not been found. Element ID to hook: " .. tostring(id))
     end
 end
 
-function EHI:ParseTriggers(mission_triggers, achievement_triggers, other_triggers, trigger_id_all, trigger_icons_all)
-    local show_achievement = self:GetOption("show_achievement")
+function EHI:AddPositionFromUnit(data, id, check)
+    local vector = self:GetInstanceUnitPosition(data.position_by_unit)
+    if vector then
+        data.position = vector
+        data.position_by_unit = nil
+    elseif check then
+        self:Log("Unit with ID " .. tostring(data.position_by_unit) .. " has not been found. Element ID to hook: " .. tostring(id))
+    end
+end
+
+function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
+    new_triggers = new_triggers or {}
+    local show_achievement = self:ShowMissionAchievements()
+    local show_trophy = self:GetUnlockableAndOption("show_trophies")
     local function FillAchievementTrigger(data)
         if not data.special_function then
             data.special_function = SF.ShowAchievement
@@ -1489,25 +1592,66 @@ function EHI:ParseTriggers(mission_triggers, achievement_triggers, other_trigger
             data.icons = self:GetAchievementIcon(data.id)
         end
     end
-    self:AddTriggers(other_triggers or {}, trigger_icons_all or "Trigger", trigger_icons_all)
-    if not self:GetOption("show_mission_trackers") then
-        for id, data in pairs(mission_triggers) do
-            if data.special_function and self.SyncFunctions[data.special_function] then
-                self:AddTriggers({ [id] = data }, trigger_id_all or "Trigger", trigger_icons_all)
+    local function FillTrophyTrigger(data, sf, c)
+        if not data.special_function then
+            data.special_function = sf
+        end
+        if data.difficulty_pass ~= nil then
+            data.condition = data.difficulty_pass and c
+            data.difficulty_pass = nil
+        elseif data.condition == nil then
+            data.condition = c
+        end
+        if not data.icons then
+            data.icons = { self.Icons.Trophy }
+        end
+    end
+    self:AddTriggers(new_triggers.other or {}, trigger_icons_all or "Trigger", trigger_icons_all)
+    local trophy = new_triggers.trophy
+    if show_trophy and trophy then
+        for _, data in pairs(trophy) do
+            if data.class and self.TrophyTrackers[data.class] then
+                FillTrophyTrigger(data, SF.ShowTrophy, show_trophy)
             end
         end
-        if show_achievement and achievement_triggers then
-            for _, data in pairs(achievement_triggers) do
-                if data.class and self.AchievementTrackers[data.class] then
-                    FillAchievementTrigger(data)
-                end
+        self:AddTriggers2(trophy, nil, trigger_icons_all or "Trigger", trigger_icons_all)
+    end
+    -- Daily Side Jobs are checked before they are passed to this function
+    -- See EHI:IsDailyAvailable()
+    local daily = new_triggers.daily
+    if daily then
+        for _, data in pairs(daily) do
+            if data.class and self.DailyTrackers[data.class] then
+                FillTrophyTrigger(data, SF.ShowDaily, true)
             end
-            self:AddTriggers(achievement_triggers, trigger_icons_all or "Trigger", trigger_icons_all)
+        end
+        self:AddTriggers2(daily, nil, trigger_icons_all or "Trigger", trigger_icons_all)
+    end
+    --self:PrintTable(triggers, "Before achievements")
+    local achievement_triggers = new_triggers.achievement
+    if show_achievement and achievement_triggers then
+        for _, data in pairs(achievement_triggers) do
+            if data.class and self.AchievementTrackers[data.class] then
+                FillAchievementTrigger(data)
+            end
+        end
+        self:AddTriggers2(achievement_triggers, nil, trigger_icons_all or "Trigger", trigger_icons_all)
+    end
+    self:ParseMissionTriggers(new_triggers.mission, trigger_id_all, trigger_icons_all)
+    --self:PrintTable(triggers, "After achievements:")
+end
+
+function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all)
+    if not self:GetOption("show_mission_trackers") then
+        for id, data in pairs(new_triggers) do
+            if data.special_function and self.SyncFunctions[data.special_function] then
+                self:AddTriggers2({ [id] = data }, nil, trigger_id_all or "Trigger", trigger_icons_all)
+            end
         end
         return
     end
     local host = self._cache.Host
-    for _, data in pairs(mission_triggers) do
+    for _, data in pairs(new_triggers) do
         -- Mark every tracker, that has random time, as inaccurate
         if data.random_time then
             if not data.class then
@@ -1523,7 +1667,13 @@ function EHI:ParseTriggers(mission_triggers, achievement_triggers, other_trigger
             data.data.present_timer = 0
             data.data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
             if data.data.position_by_element then
-                self:AddPositionFromElement(data.data, host)
+                self:AddPositionFromElement(data.data, data.id, host)
+            elseif data.data.position_by_unit then
+                self:AddPositionFromUnit(data.data, data.id, host)
+            end
+            if not data.data.position then
+                data.data.position = Vector3()
+                self:Log("Waypoint in element with ID '" .. tostring(data.id) .. "' does not have valid waypoint position! Setting it to default vector to avoid crashing")
             end
         end
         -- Fill the rest table properties for EHI Waypoints
@@ -1533,22 +1683,17 @@ function EHI:ParseTriggers(mission_triggers, achievement_triggers, other_trigger
                 data.waypoint.icon = data.icons and data.icons[1] and data.icons[1].icon or data.icons[1]
             end
             if data.waypoint.position_by_element then
-                self:AddPositionFromElement(data.waypoint, host)
+                self:AddPositionFromElement(data.waypoint, data.id, host)
+            elseif data.waypoint.position_by_unit then
+                self:AddPositionFromUnit(data.waypoint, data.id, host)
+            end
+            if not data.waypoint.position then
+                data.waypoint.position = Vector3()
+                self:Log("Waypoint in element with ID '" .. tostring(data.id) .. "' does not have valid waypoint position! Setting it to default vector to avoid crashing")
             end
         end
     end
-    self:AddTriggers(mission_triggers, trigger_id_all or "Trigger", trigger_icons_all)
-    --self:PrintTable(triggers, "Before achievements:")
-    if show_achievement and achievement_triggers then
-        for _, data in pairs(achievement_triggers) do
-            -- Fill the rest table properties for Achievement trackers
-            if data.class and self.AchievementTrackers[data.class] then
-                FillAchievementTrigger(data)
-            end
-        end
-        self:AddTriggers2(achievement_triggers, nil, trigger_id_all or "Trigger", trigger_icons_all)
-    end
-    --self:PrintTable(triggers, "After achievements:")
+    self:AddTriggers2(new_triggers, nil, trigger_id_all or "Trigger", trigger_icons_all)
 end
 
 function EHI:ShouldDisableWaypoints()
@@ -1627,7 +1772,7 @@ function EHI:ShowLootCounterOffset(params, manager)
     local offset = managers.loot:GetSecuredBagsAmount()
     manager:ShowLootCounter(params.max, params.additional_loot, params.max_random, offset)
     if params.triggers then
-        self:AddTriggers2(params.triggers, "LootCounter")
+        self:AddTriggers2(params.triggers, nil, "LootCounter")
     end
     if params.sequence_triggers then
         local function IncreaseMax(...)
@@ -1673,7 +1818,7 @@ function EHI:ShowLootCounterNoCheck(params)
     end
     managers.ehi:ShowLootCounter(params.max, params.additional_loot, params.max_random, n_offset)
     if params.triggers then
-        self:AddTriggers2(params.triggers, "LootCounter")
+        self:AddTriggers2(params.triggers, nil, "LootCounter")
     end
     if params.sequence_triggers then
         local function IncreaseMax(...)
@@ -1710,7 +1855,7 @@ end
 
 local show_achievement = false
 function EHI:ShowAchievementLootCounter(params)
-    if self._cache.AchievementsAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
+    if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
         if params.show_loot_counter then
             self:ShowLootCounter({ max = params.max, additional_loot = params.additional_loot })
         end
@@ -1727,7 +1872,7 @@ function EHI:ShowAchievementLootCounter(params)
 end
 
 function EHI:ShowAchievementBagValueCounter(params)
-    if self._cache.AchievementsAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
+    if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
         return
     end
     managers.ehi:AddAchievementBagValueCounter(params.achievement, params.value, params.exclude_from_sync, params.remove_after_reaching_target)
@@ -1765,8 +1910,11 @@ function EHI:HookAchievementCounter()
     end
 end
 
-function EHI:ShowAchievementKillCounter(id, id_stat)
-    if self._cache.AchievementsAreDisabled or not show_achievement or self:IsAchievementUnlocked2(id) then
+function EHI:ShowAchievementKillCounter(id, id_stat, achievement_option)
+    if (achievement_option and not self:GetUnlockableOption(achievement_option)) or not show_achievement then
+        return
+    end
+    if self._cache.UnlockablesAreDisabled or self:IsAchievementUnlocked2(id) then
         return
     end
     local progress = self:GetAchievementProgress(id_stat)
@@ -1849,7 +1997,7 @@ end
 EHI:Load()
 
 -- Hack
-show_achievement = EHI:GetOption("show_achievement")
+show_achievement = EHI:ShowMissionAchievements()
 
 if EHI:GetWaypointOption("show_waypoints_only") then
     function EHI:AddTracker(id)
@@ -1890,8 +2038,53 @@ else -- Always show trackers for achievements
     end
 end
 
+if EHI:GetOption("hide_unlocked_trophies") then
+    function EHI:IsTrophyUnlocked(trophy)
+        return managers.custom_safehouse:is_trophy_unlocked(trophy)
+    end
+else
+    function EHI:IsTrophyUnlocked(trophy)
+        return false
+    end
+end
+
+function EHI:IsDailyAvailable(daily, skip_unlockables_check)
+    if not self:GetUnlockableAndOption("show_dailies") then
+        return false
+    end
+    local current_daily = managers.custom_safehouse:get_daily_challenge()
+    if current_daily and current_daily.id == daily then
+        if current_daily.state == "completed" or current_daily.state == "rewarded" then
+            return false
+        end
+        if skip_unlockables_check then
+            return true
+        end
+        return not self._cache.UnlockablesAreDisabled
+    end
+    return false
+end
+
+function EHI:IsDailyMissionAvailable(daily, skip_unlockables_check)
+    --[[local current_daily = managers.custom_safehouse:get_daily_challenge()
+    if current_daily and current_daily.id == daily then
+        if current_daily.state == "completed" or current_daily.state == "rewarded" then
+            return false
+        end
+        if skip_unlockables_check then
+            return true
+        end
+        return not self._cache.UnlockablesAreDisabled
+    end]]
+    return false
+end
+
+function EHI:IsTrophyLocked(trophy)
+    return not self:IsTrophyUnlocked(trophy) and not self._cache.UnlockablesAreDisabled
+end
+
 function EHI:IsAchievementLocked(achievement)
-    return not self:IsAchievementUnlocked(achievement) and not self._cache.AchievementsAreDisabled
+    return not self:IsAchievementUnlocked(achievement) and not self._cache.UnlockablesAreDisabled
 end
 
 function EHI:GetAchievementProgress(achievement)
@@ -1958,7 +2151,7 @@ function EHI:PrintTable(tbl, ...)
         end
     end
     if _G.PrintTableDeep then
-        _G.PrintTableDeep(tbl, 5000, true, "[EHI]" .. s)
+        _G.PrintTableDeep(tbl, 5000, true, "[EHI]" .. s, {}, false)
     else
         if s ~= "" then
             self:Log(s)

@@ -67,4 +67,7 @@ local other =
     [101937] = { time = 10 + 1 + 40 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 }, condition = EHI:GetOption("show_assault_delay_tracker") },
 }
 
-EHI:ParseTriggers(triggers, nil, other)
+EHI:ParseTriggers({
+    mission = triggers,
+    other = other
+})

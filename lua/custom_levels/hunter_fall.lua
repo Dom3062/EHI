@@ -6,4 +6,7 @@ local achievements = {
 }
 tweak_data.hud_icons.ehi_hunter_fall_60s = { texture = "textures/hunter_speedrun", texture_rect = nil }
 
-EHI:ParseTriggers({}, achievements)
+EHI:ParseTriggers({
+    mission = {},
+    achievement = achievements
+})

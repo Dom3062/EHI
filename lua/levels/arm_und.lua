@@ -16,13 +16,15 @@ local triggers = {
     [100216] = { special_function = SF.Trigger, data = { 1, 1002161 } },
     [1002161] = { id = 100008, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-6708, 2397, 392) } }
 }
-EHI:AddOnAlarmCallback(function(dropin)
-    managers.ehi:AddEscapeChanceTracker(dropin, 10)
-end)
+if EHI:GetOption("show_escape_chance") then
+    EHI:AddOnAlarmCallback(function(dropin)
+        managers.ehi:AddEscapeChanceTracker(dropin, 10)
+    end)
+end
 
 local other =
 {
     [100677] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
 }
 
-EHI:ParseTriggers(triggers, nil, other, "Escape", Icon.CarEscape)
+EHI:ParseTriggers({ mission = triggers, other = other }, "Escape", Icon.CarEscape)

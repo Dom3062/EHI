@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
+local show_achievement = EHI:ShowMissionAchievements()
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
 local vault_reset_time = 5 -- Normal
@@ -193,7 +193,11 @@ local other =
     [100109] = { time = 45 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
 }
 
-EHI:ParseTriggers(triggers, achievements, other)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+})
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:AddOnAlarmCallback(function()
     managers.ehi:SetAchievementFailed("chca_10")

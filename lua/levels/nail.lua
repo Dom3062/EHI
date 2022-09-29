@@ -8,7 +8,7 @@ local triggers = {
     [101936] = { time = 30 + 12, id = "Escape", icons = Icon.HeliEscapeNoLoot }
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })
 
 local tbl =
 {

@@ -29,7 +29,10 @@ local achievements =
     [EHI:GetInstanceElementID(100080, 2900)] = { id = "peta_2", special_function = SF.SetAchievementComplete }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 
 local DisableWaypoints = {}
 for i = 3300, 3525, 75 do

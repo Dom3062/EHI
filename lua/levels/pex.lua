@@ -28,7 +28,7 @@ local DisableWaypoints =
     -- Why they use 2 instances for one objective ???
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowAchievementLootCounter({ -- Loot
     achievement = "pex_10",

@@ -52,7 +52,10 @@ local achievements =
     [100265] = { id = "live_5", special_function = SF.SetAchievementComplete }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 
 local DisableWaypoints =
 {

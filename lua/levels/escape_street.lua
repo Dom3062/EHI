@@ -17,7 +17,20 @@ local achievements =
     [101874] = { id = "bullet_dodger", special_function = SF.SetAchievementComplete },
 }
 
-EHI:ParseTriggers(triggers, achievements, nil, "Escape", Icon.HeliEscape)
+local function BagsCheck()
+    local max = managers.ehi:CountLootbagsOnTheGround()
+    if max == 0 then
+        return
+    end
+    EHI:ShowLootCounter({ max = max })
+end
+local other =
+{
+    [102031] = { special_function = SF.CustomCode, f = BagsCheck },
+    [102030] = { special_function = SF.CustomCode, f = BagsCheck }
+}
+
+EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.HeliEscape)
 
 if tweak_data.ehi.functions.IsBranchbankJobActive() then
     EHI:ShowAchievementBagValueCounter({
@@ -30,6 +43,4 @@ if tweak_data.ehi.functions.IsBranchbankJobActive() then
             check_type = EHI.LootCounter.CheckType.ValueOfBags
         }
     })
---[[elseif managers.job:current_job_id() == "family" then -- Diamond Store
-    EHI:ShowLootCounter({ max = 18 })]]
 end

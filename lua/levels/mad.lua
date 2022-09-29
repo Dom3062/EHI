@@ -4,10 +4,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    --[100891] = { time = 15.33, id = "EMPBombDrop", icons = { Icon.Goto } },
-    [100239] = { time = 1542/30, id = "EMPBombDrop", icons = { Icon.Goto } },
-    [100925] = { time = 900/30, id = "EMPBombDrop", icons = { Icon.Goto } },
-    [100958] = { time = 1221/30, id = "EMPBombDrop", icons = { Icon.Goto } },
+    [100891] = { time = 320/30 + 5, random_time = 5, id = "EMPBombDrop", icons = { Icon.Goto } },
 
     [EHI:GetInstanceElementID(100019, 3150)] = { time = 90, id = "Scan", icons = { "mad_scan" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [EHI:GetInstanceElementID(100049, 3150)] = { id = "Scan", special_function = SF.PauseTracker },
@@ -22,7 +19,6 @@ end
 
 local achievements =
 {
-    [101906] = { time = 1200, id = "daily_cake", icons = { Icon.Trophy }, class = TT.Warning, difficulty_pass = ovk_and_up, exclude_from_sync = true },
     [100547] = { special_function = SF.Trigger, data = { 1005471, 1005472 } },
     [1005471] = { id = "mad_2", status = "no_down", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, exclude_from_sync = true },
     [1005472] = { id = "cac_13", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, exclude_from_sync = true },
@@ -34,10 +30,23 @@ local achievements =
     [101924] = { id = "cac_13", special_function = SF.SetAchievementComplete }
 }
 
+local dailies = nil
+if EHI:IsDailyAvailable("daily_cake") then
+    dailies =
+    {
+        [101906] = { time = 1200, id = "daily_cake", icons = { Icon.Escape }, class = TT.Daily, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+        [101898] = { id = "daily_cake", special_function = SF.SetAchievementComplete }
+    }
+end
+
 local DisableWaypoints =
 {
     [EHI:GetInstanceElementID(100112, 7315)] = true, -- Defend
     [EHI:GetInstanceElementID(100112, 7615)] = true -- Defend
 }
 EHI:DisableWaypoints(DisableWaypoints)
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    daily = dailies
+})

@@ -1,5 +1,5 @@
 local EHI = EHI
-if not EHI:GetOption("show_achievement") then
+if not EHI:ShowMissionAchievements() then
     return
 end
 local SF = EHI.SpecialFunctions
@@ -21,12 +21,25 @@ local function bilbo_baggin()
 end
 local achievements =
 {
+    [102414] = { special_function = SF.CustomCode, f = bilbo_baggin }
+}
+
+local other =
+{
     [102414] = { special_function = SF.CustomCode, f = function()
-        bilbo_baggin()
+        local max = managers.ehi:CountLootbagsOnTheGround()
+        if max == 0 then
+            return
+        end
+        EHI:ShowLootCounter({ max = max })
     end }
 }
 
-EHI:ParseTriggers({}, achievements)
+EHI:ParseTriggers({
+    mission = {},
+    achievement = achievements,
+    other = other
+})
 --[[EHI:AddLoadSyncFunction(function(self)
     bilbo_baggin()
     self:SetTrackerProgress("bilbo_baggin", managers.loot:GetSecuredBagsAmount())

@@ -28,17 +28,19 @@ local triggers = {
     [1017701] = { time = 650/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
     [1017702] = { id = 101776, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101776 } }
 }
-EHI:AddOnAlarmCallback(function(dropin)
-    local start_chance = 30 -- Normal
-    if EHI:IsDifficulty(EHI.Difficulties.Hard) then
-        start_chance = 33
-    elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
-        start_chance = 35
-    elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-        start_chance = 37
-    end
-    managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
-end)
+if EHI:GetOption("show_escape_chance") then
+    EHI:AddOnAlarmCallback(function(dropin)
+        local start_chance = 30 -- Normal
+        if EHI:IsDifficulty(EHI.Difficulties.Hard) then
+            start_chance = 33
+        elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
+            start_chance = 35
+        elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+            start_chance = 37
+        end
+        managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
+    end)
+end
 
 local cac_12_disable = { id = "cac_12", special_function = SF.SetAchievementFailed }
 local ExecuteAchievementIfInteractionExists = EHI:GetFreeCustomSpecialFunctionID()
@@ -58,13 +60,17 @@ local other =
     [101614] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 
-EHI:ParseTriggers(triggers, achievements, other)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+})
 EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, function(id, ...)
     if EHI:IsAchievementLocked("cac_12") and managers.ehi:InteractionExists("circuit_breaker_off") then
         EHI:CheckCondition(id)
     end
 end)
-if EHI:GetOption("show_achievement") then
+if EHI:ShowMissionAchievements() then
     EHI:AddLoadSyncFunction(function(self)
         self:AddTimedAchievementTracker("lets_do_this", 36)
     end)

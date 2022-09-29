@@ -28,7 +28,7 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })
 
 local DisableWaypoints =
 {

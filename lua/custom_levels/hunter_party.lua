@@ -21,4 +21,7 @@ local achievements =
     [100679] = { id = "hunter_party", special_function = SF.SetAchievementFailed }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})

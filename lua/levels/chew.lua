@@ -21,12 +21,15 @@ local achievements =
     [101170] = { id = "born_5", special_function = SF.SetAchievementComplete }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:ShowLootCounter({
     max = 9,
     offset = true
 })
-if EHI:GetOption("show_achievement") and ovk_and_up then
+if EHI:ShowMissionAchievements() and ovk_and_up then
     EHI:AddLoadSyncFunction(function(self)
         self:AddTimedAchievementTracker("born_5", 120)
     end)

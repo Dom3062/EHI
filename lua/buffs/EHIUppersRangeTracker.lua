@@ -56,7 +56,7 @@ function EHIUppersRangeTracker:CustodyState(state)
         self:Deactivate()
     else
         local list = FirstAidKitBase.List
-        if table.size(list) > 0 then
+        if next(list) then
             self:Activate()
         end
     end

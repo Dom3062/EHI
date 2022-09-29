@@ -52,7 +52,10 @@ local achievements =
     [102665] = spawn_trigger -- Cave spawn
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 21 })
 EHI:AddLoadSyncFunction(function(self)

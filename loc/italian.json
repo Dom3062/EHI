@@ -49,8 +49,8 @@
     "ehi_trackers_menu" : "Tracciatori",
     "ehi_trackers_menu_desc" : "",
  
-    "ehi_show_achievement" : "Mostra Tracciatore Achievement",
-    "ehi_show_achievement_desc" : "Mostra achievement sullo schermo\nAlcuni colpi potrebbero non essere disponibili",
+    "ehi_show_achievements" : "Mostra Tracciatore Achievement",
+    "ehi_show_achievements_desc" : "Mostra achievement sullo schermo\nAlcuni colpi potrebbero non essere disponibili",
  
     "ehi_hide_unlocked_achievements" : "Non Mostrare gli Achievement Sbloccati",
     "ehi_hide_unlocked_achievements_desc" : "Quando attivato, EHI non mostrerà il tracciatore per gli achievement sbloccati\nQuando disattivato, EHI mostrerà tutti i tracciatori per gli achievement",

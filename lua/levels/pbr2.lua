@@ -85,7 +85,10 @@ local achievements =
     [101314] = { id = "jerry_3", special_function = SF.SetAchievementComplete },
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 local ring = { special_function = SF.IncreaseProgress }
 local voff_4_triggers =
 {
@@ -103,7 +106,7 @@ EHI:ShowAchievementLootCounter({
 EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(id, trigger, element, enabled)
     managers.ehi:CallFunction(trigger.id, "Activate")
 end)
-if EHI:GetOption("show_achievement") then
+if EHI:ShowMissionAchievements() then
     EHI:AddLoadSyncFunction(function(self)
         self:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
     end)

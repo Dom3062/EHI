@@ -34,7 +34,11 @@ local other =
     [100946] = { time = 10 + 5 + 3 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
 }
 
-EHI:ParseTriggers(triggers, achievements, other)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+})
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 8 })
 EHI._cache.diff = 1

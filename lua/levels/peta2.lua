@@ -52,7 +52,11 @@ local other =
     [100109] = { time = 100 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") },
 }
 
-EHI:ParseTriggers(triggers, achievements, other)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+})
 EHI:RegisterCustomSpecialFunction(PilotComingInAgain, function(id, trigger, element, enabled)
     if enabled then
         f_PilotComingInAgain(id, trigger)

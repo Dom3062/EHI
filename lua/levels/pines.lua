@@ -23,9 +23,12 @@ local triggers = {
     [101008] = chance
 }
 local achievements = {}
-if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+if EHI:ShowMissionAchievements() and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     achievements[104385] = { id = "uno_9", special_function = SF.IncreaseProgress }
     achievements[101471] = { max = 40, id = "uno_9", class = TT.AchievementProgress }
 end
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})

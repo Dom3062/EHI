@@ -4,7 +4,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local pc_hack = { time = 20, id = "PCHack", icons = { Icon.PCHack } }
 local bigbank_4 = { special_function = SF.Trigger, data = { 1, 2 } }
-local show_achievement = EHI:GetOption("show_achievement")
+local show_achievement = EHI:ShowMissionAchievements()
 local hard_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard)
 local triggers = {
     [105842] = { time = 16.7 * 18, id = "Thermite", icons = { Icon.Fire } },
@@ -69,7 +69,10 @@ local achievements =
     [106247] = { id = "cac_22", special_function = SF.SetAchievementComplete },
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:ShowAchievementLootCounter({
     achievement = "bigbank_3",
     max = 16,

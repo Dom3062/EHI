@@ -37,7 +37,7 @@ if Network:is_client() then
     triggers[EHI:GetInstanceElementID(100051, 21250)] = { time = 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })
 EHI:RegisterCustomSpecialFunction(SF_HeliTimer, function(id, trigger, element, enabled)
     if not managers.user:get_setting("mute_heist_vo") then
         local delay_fix = triggers[1][trigger.dialog] or 0

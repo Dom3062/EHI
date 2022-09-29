@@ -26,7 +26,7 @@ local achievements =
     [100788] = { id = "pig_2", special_function = SF.SetAchievementComplete }
 }
 local start_index = { 3500, 3750, 3900, 4450, 4900, 6100, 17600, 17650 }
-if EHI:GetOption("show_achievement") and EHI:IsAchievementLocked("pig_7") then
+if EHI:ShowMissionAchievements() and EHI:IsAchievementLocked("pig_7") then
     for _, index in ipairs(start_index) do
         achievements[EHI:GetInstanceElementID(100024, index)] = { time = 5, id = "pig_7", class = TT.Achievement }
         achievements[EHI:GetInstanceElementID(100039, index)] = { id = "pig_7", special_function = SF.SetAchievementFailed } -- Hostage blew out
@@ -47,4 +47,7 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})

@@ -128,7 +128,11 @@ if LootCounter then
     end)
 end
 
-EHI:ParseTriggers(triggers, achievements, other)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+})
 EHI:RegisterCustomSpecialFunction(cow_4, function(id, trigger, element, enabled)
     if enabled then
         EHI:CheckCondition(id)

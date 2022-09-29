@@ -42,7 +42,7 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })
 EHI:ShowAchievementLootCounter({
     achievement = "rvd_11",
     max = 19,

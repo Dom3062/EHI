@@ -59,7 +59,10 @@ local achievements =
     end }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:DisableWaypoints(DisableWaypoints)
 
 local tbl =

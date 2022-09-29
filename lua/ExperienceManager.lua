@@ -61,11 +61,11 @@ function ExperienceManager:EHIInitFinalize()
 end
 
 function ExperienceManager:SetJobData(data)
-    self._xp.job_stars = data.job_stars
-    self._xp.difficulty_stars = data.difficulty_stars
-    self._xp.stealth_bonus = data.stealth_bonus
+    self._xp.job_stars = data.job_stars or 1
+    self._xp.difficulty_stars = data.difficulty_stars or 0
+    self._xp.stealth_bonus = data.stealth_bonus or 0
     self._xp.level_id = data.level_id
-    self._xp.projob_multiplier = data.projob_multiplier
+    self._xp.projob_multiplier = data.projob_multiplier or 1
     self._xp.heat = data.heat
     self._xp.contract_difficulty_multiplier = self:get_contract_difficulty_multiplier(data.difficulty_stars)
     self._xp.is_level_limited = self._xp.level_to_stars < data.job_stars

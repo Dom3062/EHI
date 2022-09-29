@@ -15,6 +15,7 @@
         <file :name="mad_scan.texture" :path="mad_scan.texture"/>
         <file :name="padlock.texture" :path="padlock.texture"/>
         <file :name="piggy.texture" :path="piggy.texture"/>
+        <file :name="daily_secret_identity.texture" :path="daily_secret_identity.texture"/>
 
         <file :name="buff_frame.texture" :path="buff_frame.texture"/>
         <file :name="buff_frame_debuff.texture" :path="buff_frame_debuff.texture"/>

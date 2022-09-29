@@ -44,7 +44,10 @@ if Global.game_settings.level_id == "gallery" then
         achievements[104290] = { id = "cac_19", special_function = SF.SetAchievementFailed }
     end
 
-    EHI:ParseTriggers({}, achievements)
+    EHI:ParseTriggers({
+        mission = {},
+        achievement = achievements
+    })
 end
 
 EHI:ShowLootCounter({ max = 9 })

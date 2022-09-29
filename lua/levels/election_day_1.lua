@@ -9,7 +9,10 @@ local achievements =
     [100469] = { id = "bob_8", special_function = SF.SetAchievementFailed }
 }
 
-EHI:ParseTriggers({}, achievements)
+EHI:ParseTriggers({
+    mission = {},
+    achievement = achievements
+})
 
 local tbl =
 {

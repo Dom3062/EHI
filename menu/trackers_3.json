@@ -77,6 +77,22 @@
             "value": "show_bodybags_counter",
             "default_value": false,
             "ehi_ver" : 83
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_escape_chance_choice",
+            "title": "ehi_show_escape_chance",
+            "description": "ehi_show_escape_chance_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_escape_chance",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_escape_chance",
+            "default_value": false,
+            "ehi_ver" : 84
         }
     ]
 }

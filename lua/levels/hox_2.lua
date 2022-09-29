@@ -64,7 +64,10 @@ local achievements =
     [100322] = { id = "cac_26", special_function = SF.SetAchievementFailed },
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(id, trigger, element, enabled)
     local continue = false
     if EHI._cache.Host then

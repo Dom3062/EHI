@@ -85,7 +85,7 @@ for _, index in pairs({17930, 18330, 18830, 19230, 19630, 20030, 20430}) do
     DisableWaypoints[EHI:GetInstanceElementID(100082, index)] = true -- Fix
 end
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })
 EHI:DisableWaypoints(DisableWaypoints)
 if very_hard_and_up then
     EHI:AddOnAlarmCallback(function()
@@ -103,10 +103,11 @@ if very_hard_and_up then
     end)
 end
 
+local ShowAchievements = EHI:ShowMissionAchievements()
 local function pent_10(instance, unit_id, unit_data, unit)
     unit:digital_gui():SetRemoveOnPause(true)
     unit:digital_gui():SetWarning(true)
-    if EHI:GetOption("show_achievement") then
+    if ShowAchievements then
         unit:digital_gui():SetIcons(EHI:GetAchievementIcon("pent_10"))
         unit:digital_gui():pent_10()
     end
@@ -115,7 +116,7 @@ end
 function DigitalGui:pent_10()
     local key = self._ehi_key or tostring(self._unit:key())
     local hook_key = "EHI_pent_10_" .. key
-    if EHI:GetOption("show_achievement_started_popup") then
+    if EHI:GetUnlockableOption("show_achievement_started_popup") then
         local function AchievementStarted(...)
             managers.hud:ShowAchievementStartedPopup("pent_10")
         end
@@ -125,7 +126,7 @@ function DigitalGui:pent_10()
             EHI:HookWithID(self, "timer_start_count_down", hook_key .. "_start", AchievementStarted)
         end
     end
-    if EHI:GetOption("show_achievement_failed_popup") then
+    if EHI:GetUnlockableOption("show_achievement_failed_popup") then
         EHI:HookWithID(self, "_timer_stop", hook_key .. "_end", function(...)
             managers.hud:ShowAchievementFailedPopup("pent_10")
         end)

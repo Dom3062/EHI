@@ -19,9 +19,6 @@ if level_id == "firestarter_3" then
         [105235] = { id = "slakt_5", special_function = SF.SetAchievementFailed }
     }
 else
-    other = {
-        [103306] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
-    }
     -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
     EHI:ShowAchievementBagValueCounter({
         achievement = "uno_1",
@@ -33,13 +30,18 @@ else
             check_type = EHI.LootCounter.CheckType.ValueOfBags
         }
     })
-    EHI:AddOnAlarmCallback(function(dropin)
-        local start_chance = 5
-        if managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3) then -- Cash or Gold
-            start_chance = 15 -- 5 (start_chance) + 10
-        end
-        managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
-    end)
+    if EHI:GetOption("show_escape_chance") then
+        other = {
+            [103306] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+        }
+        EHI:AddOnAlarmCallback(function(dropin)
+            local start_chance = 5
+            if managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3) then -- Cash or Gold
+                start_chance = 15 -- 5 (start_chance) + 10
+            end
+            managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
+        end)
+    end
 end
 triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
 triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
@@ -51,7 +53,11 @@ achievements[105694] = { status = "finish", id = "voff_1", special_function = SF
 achievements[105698] = { status = "bring", id = "voff_1", special_function = SF.SetAchievementStatus } -- Left the area
 achievements[105704] = { id = "voff_1", special_function = SF.SetAchievementFailed } -- Killed
 
-EHI:ParseTriggers(triggers, achievements, other)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+})
 
 local tbl =
 {
@@ -61,7 +67,7 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
-if not EHI:GetOption("show_achievement") then
+if not EHI:ShowMissionAchievements() then
     return
 end
 local dog_haters =

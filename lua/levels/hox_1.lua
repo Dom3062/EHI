@@ -28,7 +28,7 @@ local triggers = {
     [101397] = { time = 22.6, id = "CarMoveRightFinal", icons = car }
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })
 
 local tbl =
 {

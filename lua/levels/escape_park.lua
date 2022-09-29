@@ -28,7 +28,21 @@ local achievements =
     [101343] = { id = "king_of_the_hill", special_function = SF.SetAchievementComplete },
 }
 
-EHI:ParseTriggers(triggers, achievements, nil, "Escape", Icon.CarEscape)
+local function BagsCheck()
+    local max = managers.ehi:CountLootbagsOnTheGround()
+    if max == 0 then
+        return
+    end
+    EHI:ShowLootCounter({ max = max })
+end
+local other =
+{
+    [102394] = { special_function = SF.CustomCode, f = BagsCheck },
+    [102393] = { special_function = SF.CustomCode, f = BagsCheck },
+    [102368] = { special_function = SF.CustomCode, f = BagsCheck }
+}
+
+EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.CarEscape)
 
 if tweak_data.ehi.functions.IsBranchbankJobActive() then
     EHI:ShowAchievementBagValueCounter({
@@ -41,6 +55,4 @@ if tweak_data.ehi.functions.IsBranchbankJobActive() then
             check_type = EHI.LootCounter.CheckType.ValueOfBags
         }
     })
---[[elseif managers.job:current_job_id() == "family" then -- Diamond Store
-    EHI:ShowLootCounter({ max = 18 })]]
 end

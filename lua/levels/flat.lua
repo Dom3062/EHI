@@ -182,7 +182,10 @@ local achievements =
     [100049] = { time = 20, id = "flat_2", class = TT.Achievement }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(id, trigger, element, enabled)
     if enabled then
         if managers.ehi:TrackerExists(trigger.id) then

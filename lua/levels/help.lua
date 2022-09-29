@@ -36,7 +36,10 @@ local achievements =
     [EHI:GetInstanceElementID(100474, 21700)] = { id = "orange_5", special_function = SF.IncreaseProgress },
     [EHI:GetInstanceElementID(100005, 12200)] = { id = "orange_5", special_function = SF.FinalizeAchievement }
 }
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:DisableWaypoints(DisableWaypoints)
 local LotteryWheel = { icons = { Icon.Wait }, icon_on_pause = { "restarter" } }
 

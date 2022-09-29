@@ -16,7 +16,11 @@ local achievements =
         managers.ehi:SetAchievementFailed("cac_21")
     end}
 }
-EHI:ParseTriggers({}, achievements, other)
+EHI:ParseTriggers({
+    mission = {},
+    achievement = achievements,
+    other = other
+})
 
 local tbl =
 {

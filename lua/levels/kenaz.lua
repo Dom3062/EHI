@@ -70,13 +70,16 @@ local achievements =
     [102809] = { id = "kenaz_3", special_function = SF.SetAchievementFailed },
     [103163] = { status = "finish", id = "kenaz_3", special_function = SF.SetAchievementStatus },
 }
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:HookWithID(MissionEndState, "at_enter", function(self, ...)
     if self._success then
         managers.ehi:SetAchievementComplete("kenaz_4", true)
     end
 end)
-if EHI:GetOption("show_achievement") then
+if EHI:ShowMissionAchievements() then
     EHI:AddLoadSyncFunction(function(self)
         self:AddTimedAchievementTracker("kenaz_4", 840)
     end)

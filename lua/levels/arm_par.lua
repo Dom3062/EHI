@@ -16,12 +16,14 @@ local triggers = {
     [100216] = { special_function = SF.Trigger, data = { 1, 1002161 } },
     [1002161] = { id = 100020, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-3723, -3906, -100) } },
 }
-EHI:AddOnAlarmCallback(function(dropin)
-    managers.ehi:AddEscapeChanceTracker(false, 15)
-end)
+if EHI:GetOption("show_escape_chance") then
+    EHI:AddOnAlarmCallback(function(dropin)
+        managers.ehi:AddEscapeChanceTracker(false, 15)
+    end)
+end
 
 if Network:is_client() then
     triggers[102379] = { time = 30 + van_delay, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
-EHI:ParseTriggers(triggers, nil, nil, "Escape", Icon.CarEscape)
+EHI:ParseTriggers({ mission = triggers }, "Escape", Icon.CarEscape)

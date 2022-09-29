@@ -44,7 +44,10 @@ local achievements =
     [103957] = { id = "man_3", special_function = SF.SetAchievementFailed }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:ShowAchievementLootCounter({
     achievement = "man_4",
     max = 10,
@@ -54,7 +57,7 @@ EHI:ShowAchievementLootCounter({
         [103989] = { special_function = SF.IncreaseProgress }
     }
 })
-if EHI:GetOption("show_achievement") then
+if EHI:ShowMissionAchievements() then
     EHI:AddLoadSyncFunction(function(self)
         if EHI.ConditionFunctions.IsStealth() then
             self:AddAchievementStatusTracker("man_3")

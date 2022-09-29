@@ -44,16 +44,18 @@ local triggers = { -- Time before escape vehicle arrives
     [102505] = { id = 101006, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101006 } },
     [103200] = { id = 103234, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103234 } }
 }
-EHI:AddOnAlarmCallback(function(dropin)
-    managers.ehi:AddEscapeChanceTracker(dropin, 30)
-end)
+if EHI:GetOption("show_escape_chance") then
+    EHI:AddOnAlarmCallback(function(dropin)
+        managers.ehi:AddEscapeChanceTracker(dropin, 30)
+    end)
+end
 
 local other =
 {
     [103501] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 
-EHI:ParseTriggers(triggers, nil, other, "Escape", Icon.CarEscape)
+EHI:ParseTriggers({ mission = triggers, other = other }, "Escape", Icon.CarEscape)
 EHI:AddLoadSyncFunction(function(self)
     if LootSafeIsVisible() then
         EHI:ShowLootCounter({ max = 1 })

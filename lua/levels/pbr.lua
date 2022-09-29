@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
+local show_achievement = EHI:ShowMissionAchievements()
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [EHI:GetInstanceElementID(100108, 3200)] = { time = 45, id = "LockOpen", icons = { Icon.Wait } },
@@ -46,14 +46,12 @@ local other =
 {
     [102292] = { time = 75 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") },
 }
-if show_achievement then -- This needs to be fixed in core.lua
-    local temp = other[102292]
-    other[102292] = nil
-    other[1022924] = temp
-    achievements[102292].data[4] = 1022924
-end
 
-EHI:ParseTriggers(triggers, achievements, other)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+})
 EHI:ShowAchievementLootCounter({
     achievement = "berry_2",
     max = 10,

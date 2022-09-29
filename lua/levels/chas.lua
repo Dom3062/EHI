@@ -39,7 +39,7 @@ local achievements =
 {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
     [1001071] = { max = 15, id = "chas_10", class = TT.AchievementProgress, remove_after_reaching_target = false, exclude_from_sync = true, difficulty_pass = ovk_and_up },
-    [1001072] = { special_function = SF.CustomCode, f = function ()
+    [1001072] = { special_function = SF.CustomCode, f = function()
         if managers.ehi:TrackerExists("chas_10") then
             EHI:AddAchievementToCounter({
                 achievement = "chas_10"
@@ -53,9 +53,12 @@ local achievements =
     [100906] = { id = "chas_9", special_function = SF.SetAchievementComplete }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:DisableWaypoints(DisableWaypoints)
-if EHI:GetOption("show_achievement") and ovk_and_up then
+if EHI:ShowMissionAchievements() and ovk_and_up then
     EHI:AddLoadSyncFunction(function(self)
         if EHI.ConditionFunctions.IsStealth() then
             EHI:ShowAchievementLootCounter({

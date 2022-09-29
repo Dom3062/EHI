@@ -32,7 +32,10 @@ local achievements = {
     end}
 }
 
-EHI:ParseTriggers({}, achievements)
+EHI:ParseTriggers({
+    mission = mission,
+    achievement = achievements
+})
 EHI:AddLoadSyncFunction(function(self)
     EHI:LordOfWarAchievement()
     if self:TrackerExists("lord_of_war") then

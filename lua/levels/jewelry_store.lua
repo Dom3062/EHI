@@ -22,18 +22,20 @@ local triggers = {
 
     [101433] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
-EHI:AddOnAlarmCallback(function(dropin)
-    local start_chance = 25 -- Normal
-    if EHI:IsDifficulty(EHI.Difficulties.Hard) then
-        start_chance = 27
-    elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
-        start_chance = 32
-    elseif ovk_and_up then
-        start_chance = 36
-    end
-    managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
-    managers.ehi:CallFunction("ameno_7", "SetStatus", "defend")
-end)
+if EHI:GetOption("show_escape_chance") then
+    EHI:AddOnAlarmCallback(function(dropin)
+        local start_chance = 25 -- Normal
+        if EHI:IsDifficulty(EHI.Difficulties.Hard) then
+            start_chance = 27
+        elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
+            start_chance = 32
+        elseif ovk_and_up then
+            start_chance = 36
+        end
+        managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
+        managers.ehi:CallFunction("ameno_7", "SetStatus", "defend")
+    end)
+end
 
 local achievements =
 {
@@ -41,4 +43,7 @@ local achievements =
     [100624] = { id = "ameno_7", special_function = SF.SetAchievementFailed },
     [100634] = { id = "ameno_7", special_function = SF.SetAchievementComplete }
 }
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})

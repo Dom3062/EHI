@@ -157,11 +157,14 @@ local achievements =
     [300791] = { id = "window_cleaner", special_function = SF.IncreaseProgress }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:RegisterCustomSpecialFunction(AddMoney, function(id, trigger, element, enabled)
     managers.ehi:AddMoneyToTracker(trigger.id, element._values.amount)
 end)
-if EHI:GetOption("show_achievement") and overkill and EHI:IsAchievementLocked("ameno_3") then
+if EHI:ShowMissionAchievements() and overkill and EHI:IsAchievementLocked("ameno_3") then
     EHI:AddLoadSyncFunction(function(self)
         if self._t <= 50 then
             self:AddTracker({

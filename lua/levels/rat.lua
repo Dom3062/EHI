@@ -87,8 +87,12 @@ if EHI:GetOption("show_assault_delay_tracker") then
     end
 end
 
-EHI:ParseTriggers(triggers, achievements, other, "Van", Icon.CarEscape)
-if EHI:GetOption("show_achievement") and ovk_and_up then
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+}, "Van", Icon.CarEscape)
+if EHI:ShowMissionAchievements() and ovk_and_up then
     EHI:ShowAchievementLootCounter({
         achievement = "halloween_2",
         max = 7,

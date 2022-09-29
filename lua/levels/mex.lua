@@ -19,7 +19,10 @@ for i = 101502, 101509, 1 do
     achievements[i] = { id = "mex_9", special_function = SF.IncreaseProgress }
 end
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 
 local tbl =
 {

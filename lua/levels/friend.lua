@@ -88,9 +88,13 @@ local other =
     [100109] = { time = 30 + 1 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.RemoveTriggerWhenExecuted, condition = EHI:GetOption("show_assault_delay_tracker") },
 }
 
-EHI:ParseTriggers(triggers, achievements, other)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+})
 EHI:ShowLootCounter({ max = 16 })
-if EHI:GetOption("show_achievement") and mayhem_and_up then
+if EHI:ShowMissionAchievements() and mayhem_and_up then
     EHI:AddOnAlarmCallback(function()
         managers.ehi:SetAchievementFailed("friend_6")
         managers.ehi:CallFunction("uno_7", "SetObtainable")

@@ -190,6 +190,20 @@ function EHIBuffManager:AddGauge(id, ratio)
     end
 end
 
+function EHIBuffManager:AddGauge2(id, ratio, custom_value)
+    local buff = self._buffs[id]
+    if buff then
+        if buff:IsActive() then
+            buff:SetRatio2(ratio, custom_value)
+        else
+            buff:Activate2(ratio, custom_value, self._n_visible)
+            self._visible_buffs[id] = true
+            self._n_visible = self._n_visible + 1
+            self:ReorganizeFast(buff)
+        end
+    end
+end
+
 function EHIBuffManager:RemoveBuff(id)
     local buff = self._buffs[id]
     if buff and buff:IsActive() then
@@ -314,6 +328,20 @@ elseif alignment == 2 then -- Center
                 buff:SetRatio(ratio)
             else
                 buff:Activate(ratio, self._n_visible)
+                self._visible_buffs[id] = true
+                self._n_visible = self._n_visible + 1
+                self:Reorganize()
+            end
+        end
+    end
+
+    function EHIBuffManager:AddGauge2(id, ratio, custom_value)
+        local buff = self._buffs[id]
+        if buff then
+            if buff:IsActive() then
+                buff:SetRatio2(ratio, custom_value)
+            else
+                buff:Activate2(ratio, custom_value, self._n_visible)
                 self._visible_buffs[id] = true
                 self._n_visible = self._n_visible + 1
                 self:Reorganize()

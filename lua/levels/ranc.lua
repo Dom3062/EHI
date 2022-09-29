@@ -69,7 +69,7 @@ else
     EHI:AddHostTriggers(sync_triggers, nil, nil, "base")
 end
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })
 local ranc_10 = { special_function = SF.IncreaseProgress }
 local ranc_10_triggers =
 {
@@ -85,8 +85,8 @@ EHI:ShowAchievementLootCounter({
     triggers = ranc_10_triggers
 })
 if OVKorAbove then
-    EHI:ShowAchievementKillCounter("ranc_9", "ranc_9_stat") -- "Caddyshacked" achievement
-    EHI:ShowAchievementKillCounter("ranc_11", "ranc_11_stat") -- "Marshal Law" achievement
+    EHI:ShowAchievementKillCounter("ranc_9", "ranc_9_stat", "show_achievements_vehicle") -- "Caddyshacked" achievement
+    EHI:ShowAchievementKillCounter("ranc_11", "ranc_11_stat", "show_achievements_weapon") -- "Marshal Law" achievement
 end
 EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(id, ...)
     if managers.ehi:TrackerDoesNotExist("FultonCatch") then

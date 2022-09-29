@@ -153,7 +153,7 @@ local levels =
     pent = true, -- Mountain Master Heist
     -- Texas Heat campaign
     ranc = true, -- Midland Ranch
-    second_heist_of_the_Texas_Heat_campaign = true,
+    trai = true, -- Second heist of the Texas Heat campaign
     third_heist_of_the_Texas_Heat_campaign = true,
     fourth_and_last_heist_of_the_Texas_Heat_campaign = true
 }

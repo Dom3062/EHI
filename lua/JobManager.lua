@@ -16,9 +16,9 @@ local _f_init = JobManager.init
 function JobManager:init(...)
     _f_init(self, ...)
     local data = {}
-    data.job_stars = self:current_job_stars() or 1
-    data.difficulty_stars = self:current_difficulty_stars() or 0
-    data.stealth_bonus = self:get_ghost_bonus() or 0
+    data.job_stars = self:current_job_stars()
+    data.difficulty_stars = self:current_difficulty_stars()
+    data.stealth_bonus = self:get_ghost_bonus()
     data.level_id = self:current_level_id()
     data.projob_multiplier = 1
     if self:is_current_job_professional() then

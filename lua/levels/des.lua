@@ -91,7 +91,10 @@ local achievements =
     [102486] = { id = "des_9", special_function = SF.SetAchievementFailed },
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:DisableWaypoints(DisableWaypoints)
 
 local tbl =

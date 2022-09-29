@@ -107,7 +107,10 @@ local achievements =
     [103460] = { id = "nmh_11", special_function = SF.SetAchievementComplete }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 EHI:RegisterCustomSpecialFunction(LowerFloor, function(id, trigger, element, enabled)
     if enabled then
         managers.ehi:CallFunction(trigger.id, "LowerFloor")

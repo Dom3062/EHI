@@ -151,7 +151,34 @@ local achievements =
     [104049] = kosugi_3 -- Painting
 }
 
-EHI:ParseTriggers(triggers, achievements)
+local dailies = nil
+if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) and EHI:IsDailyAvailable("daily_secret_identity") then
+    local IncreaseProgress = { id = "daily_secret_identity", special_function = SF.IncreaseProgress }
+    dailies = {
+        [103427] = { max = 9, id = "daily_secret_identity", icons = { "daily_secret_identity" }, class = TT.DailyProgress, remove_after_reaching_target = false },
+        [100484] = IncreaseProgress,
+        [100515] = IncreaseProgress,
+        [100534] = IncreaseProgress,
+        [100536] = IncreaseProgress
+    }
+    for i = 100491, 100509, 2 do
+        dailies[i] = IncreaseProgress
+    end
+    for i = 100519, 100531, 2 do
+        dailies[i] = IncreaseProgress
+    end
+    for i = 100539, 100555, 2 do
+        dailies[i] = IncreaseProgress
+    end
+    tweak_data.ehi.icons.daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/daily_secret_identity" }
+    tweak_data.hud_icons.daily_secret_identity = tweak_data.ehi.icons.daily_secret_identity
+end
+
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    daily = dailies
+})
 EHI:RegisterCustomSpecialFunction(DisableTriggerAndExecute, function(id, t, ...)
     EHI:UnhookTrigger(t.data.id)
     EHI:CheckCondition(id)

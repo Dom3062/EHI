@@ -34,7 +34,7 @@ function FakeEHIManager:AddFakeTrackers()
     self._fake_trackers = {}
     self:AddFakeTracker({ id = "show_mission_trackers", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { Icon.Wait } } )
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.random(60, 180), icons = { Icon.Car, Icon.Escape } } )
-    self:AddFakeTracker({ id = "show_achievement", time = math.random(60, 180), icons = { "milestone_trophy" } } )
+    self:AddFakeTracker({ id = "show_unlockables", time = math.random(60, 180), icons = { "milestone_trophy" } } )
     if EHI:GetOption("xp_panel") <= 2 then
         self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, class = "FakeEHIXPTracker" } )
     end
@@ -62,6 +62,7 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_assault_delay_tracker", time = math.random(30, 120), icons = { "assaultbox" } } )
     self:AddFakeTracker({ id = "show_loot_counter", icons = { Icon.Loot }, class = "FakeEHIProgressTracker" } )
     self:AddFakeTracker({ id = "show_bodybags_counter", count = math.random(1, 3), icons = { "equipment_body_bag" }, class = "FakeEHICountTracker" })
+    self:AddFakeTracker({ id = "show_escape_chance", icons = { { icon = Icon.Car, color = Color.red, visible = true } }, math.random(100), class = "FakeEHIChanceTracker" })
     self:AddPreviewText()
 end
 

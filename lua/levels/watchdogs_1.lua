@@ -47,7 +47,11 @@ local other =
     [101249] = { time = 50 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = condition }
 }
 
-EHI:ParseTriggers(triggers, achievements, other)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+})
 local max = 8
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     max = 12

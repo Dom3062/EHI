@@ -17,7 +17,7 @@ local achievements =
     [101379] = { id = "frappucino_to_go_please", special_function = SF.SetAchievementComplete }
 }
 
-local BagsCheck = function()
+local function BagsCheck()
     local max = managers.ehi:CountLootbagsOnTheGround()
     if max == 0 then
         return
@@ -31,7 +31,11 @@ local other =
     [100970] = { special_function = SF.CustomCode, f = BagsCheck }
 }
 
-EHI:ParseTriggers(triggers, achievements, other, "Escape", Icon.CarEscape)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+}, "Escape", Icon.CarEscape)
 
 if tweak_data.ehi.functions.IsBranchbankJobActive() then
     EHI:ShowAchievementBagValueCounter({

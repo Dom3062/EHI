@@ -1,3 +1,11 @@
+r84 (29. 09. 2022):
+Added "Show Escape Chance" option
+Added option to show Trophies and Daily Side Jobs
+Achievement related options are now under "Unlockables" menu - Trophy and Daily Side Jobs options are there too
+Bloodthirst Buff: Fixed an issue where buff's progress is always full when you are still stacking kills
+Loot Counter: Fixed an issue where sometimes triggers do not have increase progress or maximum
+XP Counter: Fixed a very rare crash when game returned "nil" value instead of a number in how much stealth bonus you accumulated
+
 r83 (21. 09. 2022):
 Added trackers for achievements "Field Test", "Heister With A Shotgun" and "Snake Charmer"
 Added "Show Bodybags Counter" option

@@ -12,7 +12,7 @@ local original =
     spawn_smoke_screen = PlayerManager.spawn_smoke_screen
 }
 
-if EHI:GetOption("show_gained_xp") and Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode ~= "crime_spree" and Global.load_level then
+if Global.load_level and not EHI:IsXPTrackerDisabled() then
     function PlayerManager:SetPlayerData()
         local data = {}
         data.infamy_bonus = self:get_infamy_exp_multiplier()
@@ -174,7 +174,7 @@ local meele_boost_tweak = tweak_data.upgrades.values.player.melee_damage_stackin
 if meele_boost_tweak then
     local not_bloodthirst = not EHI:GetBuffOption("bloodthirst")
     local bloodthirst_reload = EHI:GetBuffOption("bloodthirst_reload")
-    local max_multiplier = meele_boost_tweak.max_multiplier
+    local max_multiplier = meele_boost_tweak.max_multiplier or 16
     local bloodthirst_max = false
     tweak_data.ehi.buff.melee_damage_stacking.max = max_multiplier
     original.set_melee_dmg_multiplier = PlayerManager.set_melee_dmg_multiplier
@@ -186,7 +186,7 @@ if meele_boost_tweak then
         local ratio = multiplier / max_multiplier
         if ratio > 0.34 then
             bloodthirst_max = ratio == 1
-            managers.ehi_buff:AddGauge("melee_damage_stacking", multiplier)
+            managers.ehi_buff:AddGauge2("melee_damage_stacking", ratio, multiplier)
         end
     end
     original.reset_melee_dmg_multiplier = PlayerManager.reset_melee_dmg_multiplier

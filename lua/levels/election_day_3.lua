@@ -25,4 +25,4 @@ local triggers = {
     [103535] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } }
 }
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })

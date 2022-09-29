@@ -42,12 +42,13 @@ local other =
     [100707] = { time = assault_delay_methlab, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SetTimeIfMoreThanOrCreateTracker, condition = ShowAssaultDelay },
     [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
-EHI:AddOnAlarmCallback(function(dropin)
-    managers.ehi:AddEscapeChanceTracker(dropin, 25)
-end)
 
-EHI:ParseTriggers(triggers, achievements, other, "Van", Icon.CarEscape)
-if EHI:GetOption("show_achievement") and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+}, "Van", Icon.CarEscape)
+if EHI:ShowMissionAchievements() and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "halloween_2",
         max = 7,
@@ -71,15 +72,20 @@ EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(id,
     end
     EHI:UnhookTrigger(id)
 end)
-EHI:AddLoadSyncFunction(function(self)
-    if managers.environment_effects._mission_effects[101437] then
-        self:AddEscapeChanceTracker(false, 105)
-        EHI:UnhookElement(101863)
-    else
-        self:AddEscapeChanceTracker(false, 35)
-        -- Disable increase when the cooks got killed by gangster in case the player dropins
-        -- after Escape Chance is shown on screen and before they get killed by mission script
-        self.IncreaseCivilianKilled = function(...)
+if EHI:GetOption("show_escape_chance") then
+    EHI:AddOnAlarmCallback(function(dropin)
+        managers.ehi:AddEscapeChanceTracker(dropin, 25)
+    end)
+    EHI:AddLoadSyncFunction(function(self)
+        if managers.environment_effects._mission_effects[101437] then
+            self:AddEscapeChanceTracker(false, 105)
+            EHI:UnhookElement(101863)
+        else
+            self:AddEscapeChanceTracker(false, 35)
+            -- Disable increase when the cooks got killed by gangster in case the player dropins
+            -- after Escape Chance is shown on screen and before they get killed by mission script
+            self.IncreaseCivilianKilled = function(...)
+            end
         end
-    end
-end)
+    end)
+end

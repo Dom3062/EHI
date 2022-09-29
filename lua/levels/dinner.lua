@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:GetOption("show_achievement")
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local c4 = { time = 5, id = "C4", icons = { Icon.C4 } }
 local triggers = {
@@ -27,9 +26,12 @@ local achievements =
     [102880] = { id = "farm_3", special_function = SF.SetAchievementComplete },
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
 
-if show_achievement then
+if EHI:ShowMissionAchievements() then
     if ovk_and_up then
         EHI:ShowAchievementLootCounter({
             achievement = "farm_6",

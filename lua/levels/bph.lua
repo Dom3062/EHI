@@ -28,4 +28,7 @@ local achievements =
     [102171] = { id = "bph_10", special_function = SF.IncreaseProgress }
 }
 
-EHI:ParseTriggers(triggers, achievements)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})

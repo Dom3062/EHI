@@ -16,8 +16,11 @@ local achievements =
     [100824] = { time = 360, id = "RC_Achieve_speedrun", icons = { "ehi_rc_6mins" }, class = TT.AchievementUnlock, difficulty_pass = ovk_and_up }
 }
 
-EHI:ParseTriggers(triggers, achievements)
-if EHI:GetOption("show_achievement") and ovk_and_up then
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
+if EHI:ShowMissionAchievements() and ovk_and_up then
     EHI:AddLoadSyncFunction(function(self)
         local t = 360 - self._t
         if t <= 0 then

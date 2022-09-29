@@ -34,7 +34,7 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers(triggers)
+EHI:ParseTriggers({ mission = triggers })
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "mex2_9",

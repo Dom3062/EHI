@@ -53,7 +53,10 @@ local achievements =
     [102382] = { id = "uno_8", special_function = SF.SetAchievementFailed },
     [102379] = { id = "uno_8", special_function = SF.SetAchievementComplete }
 }
-EHI:ParseTriggers(triggers, achievements, nil, "BoatLootDropReturn", boat_icon)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+}, "BoatLootDropReturn", boat_icon)
 EHI:RegisterCustomSpecialFunction(AddToCache, function(id, trigger, ...)
     EHI._cache[trigger.id] = trigger.time
 end)

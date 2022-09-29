@@ -32,8 +32,11 @@ local achievements =
     [101878] = { id = "sah_9", special_function = SF.SetAchievementComplete }
 }
 
-EHI:ParseTriggers(triggers, achievements)
-if EHI:GetOption("show_achievement") and ovk_and_up then
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements
+})
+if EHI:ShowMissionAchievements() and ovk_and_up then
     EHI:AddOnAlarmCallback(function()
         managers.ehi:SetAchievementFailed("sah_9")
     end)
