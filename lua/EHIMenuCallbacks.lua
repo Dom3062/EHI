@@ -7,6 +7,10 @@ function EHIMenu:SetOption(value, option)
     EHI.settings[option] = value
 end
 
+function EHIMenu:SetUnlockableOption(value, option)
+    EHI.settings.unlockables[option] = value
+end
+
 function EHIMenu:SetBuffOption(value, option)
     EHI.settings.buff_option[option] = value
 end

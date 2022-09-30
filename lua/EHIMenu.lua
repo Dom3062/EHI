@@ -10,13 +10,6 @@
 ]]
 
 local EHI = EHI
-local function make_fine_text(text_obj)
-    local x, y, w, h = text_obj:text_rect()
-
-    text_obj:set_size(w, h)
-    text_obj:set_position(math.round(text_obj:x()), math.round(text_obj:y()))
-end
-
 local function do_animation(TOTAL_T, clbk)
     local t = 0
     while t < TOTAL_T do
@@ -28,6 +21,7 @@ local function do_animation(TOTAL_T, clbk)
 end
 
 EHIMenu = class()
+EHIMenu.make_fine_text = BlackMarketGui.make_fine_text
 function EHIMenu:init()
     local aspect_ratio = RenderSettings.resolution.x / RenderSettings.resolution.y
     --local _1_33 = 4 / 3
@@ -111,7 +105,7 @@ function EHIMenu:init()
             align = "center",
             text = managers.localization:text("menu_back"):gsub(esc, "")
         })
-        make_fine_text(title)
+        self:make_fine_text(title)
         back_button:set_size(title:w() + 16, title:h() + 2)
         title:set_center(back_button:w() / 2, back_button:h() / 2)
         back_button:set_righttop(self._options_panel:right(), self._options_panel:bottom() + 2)
@@ -970,7 +964,7 @@ function EHIMenu:CreateMenu(params)
         text = params.title,
         vertical = "center"
     })
-    make_fine_text(title)
+    self:make_fine_text(title)
     if title:w() > menu_panel:w() - 5 then
         local menu_w = menu_panel:w() - 5
         title:set_font_size(title:font_size() * (menu_w/title:w()))

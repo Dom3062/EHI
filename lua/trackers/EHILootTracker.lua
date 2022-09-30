@@ -72,15 +72,16 @@ function EHILootTracker:VerifyStatus()
     end
 end
 
-function EHILootTracker:RandomLootSpawned()
-    self._max_random = self._max_random - 1
-    self:IncreaseProgressMax(1)
+function EHILootTracker:RandomLootSpawned(random)
+    local n = random or 1
+    self._max_random = self._max_random - n
+    self:IncreaseProgressMax(n)
     self:FitTheText()
     self:VerifyStatus()
 end
 
-function EHILootTracker:RandomLootDeclined()
-    self._max_random = self._max_random - 1
+function EHILootTracker:RandomLootDeclined(random)
+    self._max_random = self._max_random - (random or 1)
     self:SetProgressMax(self._max)
     self:FitTheText()
     self:VerifyStatus()

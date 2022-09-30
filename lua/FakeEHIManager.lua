@@ -5,6 +5,7 @@ local panel_offset_original = 6
 local panel_size = panel_size_original
 local panel_offset = panel_offset_original
 FakeEHIManager = class()
+FakeEHIManager.make_fine_text = BlackMarketGui.make_fine_text
 function FakeEHIManager:init(panel)
     self._hud_panel = panel:panel({
         name = "fake_ehi_panel",
@@ -38,7 +39,7 @@ function FakeEHIManager:AddFakeTrackers()
     if EHI:GetOption("xp_panel") <= 2 then
         self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, class = "FakeEHIXPTracker" } )
     end
-    self:AddFakeTracker({ id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = self:GetPeerColor(), visible = true } } } )
+    self:AddFakeTracker({ id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = self:GetPeerColor() } } } )
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { Icon.Drill, Icon.Wait, "silent", Icon.Loop } } )
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack } } )
     self:AddFakeTracker({ id = "show_camera_loop", time = math.random(10, 25), icons = { "camera_loop" } })
@@ -62,7 +63,7 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_assault_delay_tracker", time = math.random(30, 120), icons = { "assaultbox" } } )
     self:AddFakeTracker({ id = "show_loot_counter", icons = { Icon.Loot }, class = "FakeEHIProgressTracker" } )
     self:AddFakeTracker({ id = "show_bodybags_counter", count = math.random(1, 3), icons = { "equipment_body_bag" }, class = "FakeEHICountTracker" })
-    self:AddFakeTracker({ id = "show_escape_chance", icons = { { icon = Icon.Car, color = Color.red, visible = true } }, math.random(100), class = "FakeEHIChanceTracker" })
+    self:AddFakeTracker({ id = "show_escape_chance", icons = { { icon = Icon.Car, color = Color.red } }, math.random(100), class = "FakeEHIChanceTracker" })
     self:AddPreviewText()
 end
 
@@ -92,12 +93,6 @@ function FakeEHIManager:CreateFirstFakeTracker(params)
     params.first = true
     self:CreateFakeTracker(params)
     self._fake_trackers[1]._time_bg_box:child("left_top"):set_color(Color.red)
-end
-
-function FakeEHIManager:make_fine_text(text)
-	local x, y, w, h = text:text_rect()
-	text:set_size(w, h)
-	text:set_position(math.round(text:x()), math.round(text:y()))
 end
 
 function FakeEHIManager:GetPeerColor()
@@ -446,7 +441,7 @@ function FakeEHITracker:init(panel, params)
                 local texture, rect = GetIcon(v.icon)
                 CreateIcon(self, s_i, texture, rect, v.color,
                     v.alpha or 1,
-                    (not not v.visible),
+                    v.visible ~= false,
                     start + icon_gap)
             end
             start = start + (32 * self._scale)

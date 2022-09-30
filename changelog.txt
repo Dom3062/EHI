@@ -1,3 +1,6 @@
+r85 (30. 09. 2022):
+Unlockables: Fixed options not saving correctly
+
 r84 (29. 09. 2022):
 Added "Show Escape Chance" option
 Added option to show Trophies and Daily Side Jobs

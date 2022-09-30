@@ -1,5 +1,4 @@
 if _G.EHI then
-    _G.EHI = _G.EHI or {}
     return
 end
 

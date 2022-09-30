@@ -1,4 +1,36 @@
 local EHI = EHI
+local SF = EHI.SpecialFunctions
+local LootCounter = EHI:GetOption("show_loot_counter")
+local other =
+{
+    [101506] = { special_function = SF.CustomCode, f = function()
+        if not LootCounter then
+            return
+        end
+        EHI:ShowLootCounterNoCheck({
+            max = 6,
+            max_random = 18
+        })
+    end},
+    [100109] = { special_function = SF.CustomCode, f = function() -- Alarm
+        if not LootCounter then
+            return
+        end
+        managers.ehi:CallFunction("LootCounter", "RandomLootDeclined", 18)
+    end},
+    [107260] = { special_function = SF.CustomCode, f = function()
+        if not LootCounter then
+            return
+        end
+        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned", 18)
+    end}
+}
+
+EHI:ParseTriggers({
+    mission = {},
+    other = other
+})
+
 local tbl =
 {
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
@@ -11,5 +43,9 @@ EHI:ShowAchievementLootCounter({
     achievement = "bob_4",
     max = 6,
     exclude_from_sync = true,
-    show_loot_counter = true
+    counter =
+    {
+        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+        loot_type = "money"
+    }
 })
