@@ -250,7 +250,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         managers.ehi_buff:ActivateUpdatingBuffs()
     end
     EHI:CallCallback(EHI.CallbackMessage.Spawned)
-    if not EHI:GetOption("show_unlockables") or EHI._cache.UnlockablesAreDisabled or GunGameGame then
+    if not EHI:GetUnlockableAndOption("show_achievements") or EHI._cache.UnlockablesAreDisabled or GunGameGame then
         return
     end
     primary = managers.blackmarket:equipped_primary()

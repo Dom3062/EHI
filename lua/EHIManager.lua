@@ -108,6 +108,18 @@ function EHIManager:CountLootbagsOnTheGround()
     return count
 end
 
+function EHIManager:CountSpecificLootVisible(carry_id)
+    local interactions = managers.interaction._interactive_units or {}
+    local count = 0
+    for _, unit in pairs(interactions) do
+        if unit:carry_data() and unit:carry_data():carry_id() == carry_id then
+            count = count + 1
+        end
+    end
+    EHI:Log("Found: " .. tostring(count))
+    return count
+end
+
 function EHIManager:CountUnitAvailable(path, slotmask)
     return #self:GetUnits(path, slotmask)
 end

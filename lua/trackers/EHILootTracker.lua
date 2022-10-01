@@ -73,6 +73,9 @@ function EHILootTracker:VerifyStatus()
 end
 
 function EHILootTracker:RandomLootSpawned(random)
+    if self._max_random <= 0 then
+        return
+    end
     local n = random or 1
     self._max_random = self._max_random - n
     self:IncreaseProgressMax(n)
@@ -81,6 +84,9 @@ function EHILootTracker:RandomLootSpawned(random)
 end
 
 function EHILootTracker:RandomLootDeclined(random)
+    if self._max_random <= 0 then
+        return
+    end
     self._max_random = self._max_random - (random or 1)
     self:SetProgressMax(self._max)
     self:FitTheText()
@@ -98,7 +104,10 @@ function EHILootTracker:IncreaseMaxRandom(progress)
     self:SetMaxRandom(self._max_random + (progress or 1))
 end
 
--- crojob3.lua
+function EHILootTracker:DecreaseMaxRandom(progress)
+    self:SetMaxRandom(self._max_random - (progress or 1))
+end
+
 function EHILootTracker:RandomLootSpawned2(id)
     if self._loot_id[id] then
         return
@@ -112,6 +121,10 @@ function EHILootTracker:RandomLootDeclined2(id)
         return
     end
     self:RandomLootDeclined()
+end
+
+function EHILootTracker:BlockRandomLoot(id)
+    self._loot_id[id] = true
 end
 
 EHI:SetNotificationAlert("LOOT COUNTER", "ehi_popup_loot_counter", Color.green)

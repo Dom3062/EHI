@@ -587,7 +587,7 @@ function EHI:GetOption(option)
 end
 
 function EHI:ShowMissionAchievements()
-    return self:GetUnlockableAndOption("show_achievements_mission")
+    return self:GetUnlockableAndOption("show_achievements_mission") and self:GetUnlockableOption("show_achievements")
 end
 
 function EHI:GetUnlockableOption(option)
@@ -1772,6 +1772,9 @@ function EHI:ShowLootCounterOffset(params, manager)
     manager:ShowLootCounter(params.max, params.additional_loot, params.max_random, offset)
     if params.triggers then
         self:AddTriggers2(params.triggers, nil, "LootCounter")
+        if params.hook_triggers then
+            self:HookElements(params.triggers)
+        end
     end
     if params.sequence_triggers then
         local function IncreaseMax(...)
@@ -2025,7 +2028,7 @@ if not EHI:GetOption("show_mission_trackers") then
     end
 end
 
-if EHI:GetOption("hide_unlocked_achievements") then
+if EHI:GetUnlockableOption("hide_unlocked_achievements") then
     local G = Global
     function EHI:IsAchievementUnlocked(achievement)
         local a = G.achievment_manager.achievments[achievement]
@@ -2037,7 +2040,7 @@ else -- Always show trackers for achievements
     end
 end
 
-if EHI:GetOption("hide_unlocked_trophies") then
+if EHI:GetUnlockableOption("hide_unlocked_trophies") then
     function EHI:IsTrophyUnlocked(trophy)
         return managers.custom_safehouse:is_trophy_unlocked(trophy)
     end

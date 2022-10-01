@@ -87,9 +87,10 @@ local other =
             -- 1 flipped wagon crate; guaranteed to have gold or 2x money; 15% chance to spawn 2x money, otherwise gold
             -- If second money bundle spawns, the maximum is increased in the Trigger above
             additional_loot = 1,
-            triggers = LootTrigger
+            triggers = LootTrigger,
+            hook_triggers = true
         })
-        EHI:HookElements(LootTrigger)
+        --EHI:HookElements(LootTrigger)
     end},
     [101018] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 }, condition = EHI:GetOption("show_assault_delay_tracker") }
 }
@@ -122,7 +123,7 @@ if LootCounter then
         managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function()
             DelayRejection(crate)
         end)
-        EHI:AddTriggers2(LootTrigger, "LootCounter")
+        EHI:AddTriggers2(LootTrigger, nil, "LootCounter")
         EHI:HookElements(LootTrigger)
         managers.ehi:CallFunction("LootCounter", "IncreaseMaxRandom", 1)
     end)

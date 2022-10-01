@@ -1,3 +1,6 @@
+r86 (01. 10. 2022):
+Fixed an issue where unlocked achievements are still visible in tracker when an option to hide them is enabled
+
 r85 (30. 09. 2022):
 Unlockables: Fixed options not saving correctly
 

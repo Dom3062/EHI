@@ -235,7 +235,7 @@ EHI:RegisterCustomSpecialFunction(LootLeft, function(...)
     managers.ehi:DecreaseTrackerProgressMax("LootCounter", left_to_burn)
 end)
 EHI:AddLoadSyncFunction(function(self)
-    if managers.game_play_central._mission_disabled_units[200942] then -- AI Vision Blocker; "editor_only" continent
+    if managers.game_play_central:GetMissionDisabledUnit(200942) then -- AI Vision Blocker; "editor_only" continent
         self:DecreaseTrackerProgressMax("LootCounter", 16)
     end
 end)]]

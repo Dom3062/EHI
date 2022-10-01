@@ -203,7 +203,7 @@ EHI:AddLoadSyncFunction(function(self)
         self:CallFunction("kosugi_5", "SetProgressArmor", math.min(kosugi_5_counter_armor, 4))
     end
     CheckForBrokenWeapons()
-    if not managers.game_play_central._mission_disabled_units[103995] then
+    if not managers.game_play_central:GetMissionDisabledUnit(103995) then
         self:IncreaseTrackerProgressMax("LootCounter")
     end
 end)

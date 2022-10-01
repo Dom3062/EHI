@@ -16,3 +16,7 @@ function GamePlayCentralManager:load(data, ...)
     managers.ehi:LoadTime(heist_timer)
     managers.ehi_waypoint:LoadTime(heist_timer)
 end
+
+function GamePlayCentralManager:GetMissionDisabledUnit(id)
+    return self._mission_disabled_units[id]
+end

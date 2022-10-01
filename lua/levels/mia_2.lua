@@ -16,7 +16,7 @@ local triggers = {
     [100224] = { id = 100926, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 100926 } },
     [101858] = { id = 101854, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101854 } },
 
-    -- Bugged because of retarted use of ENABLED and ElementTimerTrigger
+    -- Bugged because of retarted use of ENABLED in ElementTimer and ElementTimerTrigger
     [101240] = { time = 540, id = "CokeTimer", icons = { { icon = Icon.Loot, color = Color.red } }, class = TT.Warning },
     [101282] = { id = "CokeTimer", special_function = SF.RemoveTracker }
 }
@@ -47,7 +47,20 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
+local LootCounter = EHI:GetOption("show_loot_counter")
+local other =
+{
+    [100043] = { special_function = SF.CustomCode, f = function()
+        if not LootCounter then
+            return
+        end
+    end}
+}
+if LootCounter then
+end
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
