@@ -104,7 +104,7 @@ function EHITimerTracker:SetUpgradeable(upgradeable)
     if upgradeable then
         self._panel_override_w = self._panel:w()
     else
-        self._panel_override_w = self._time_bg_box:w() + (37 * self._scale) -- 32 (icon size) + 5 (gap)
+        self._panel_override_w = self._time_bg_box:w() + self._icon_gap_size_scaled
     end
 end
 

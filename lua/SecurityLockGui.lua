@@ -38,7 +38,6 @@ function SecurityLockGui:_start(bar, ...)
                 icons = { "wp_hack" },
                 class = "EHISecurityLockGuiTracker",
                 remove_after_reaching_target = false,
-                exclude_from_sync = true,
                 progress = bar,
                 max = self._bars
             })
@@ -61,7 +60,6 @@ function SecurityLockGui:_start(bar, ...)
                 id = self._ehi_key,
                 time = self._current_timer,
                 icons = { { icon = "wp_hack" } },
-                exclude_from_sync = true,
                 class = "EHITimerTracker"
             })
         end

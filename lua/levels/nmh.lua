@@ -100,10 +100,10 @@ end)
 
 local achievements =
 {
-    -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before restart
+    -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before mission restart
     -- Reported in:
     -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
-    [103456] = { time = 5, id = "nmh_11", class = TT.Achievement, special_function = RemoveTriggerAndShowAchievementFromStart, difficulty_pass = hard_and_above, exclude_from_sync = true },
+    [103456] = { time = 5, id = "nmh_11", class = TT.Achievement, special_function = RemoveTriggerAndShowAchievementFromStart, difficulty_pass = hard_and_above },
     [103460] = { id = "nmh_11", special_function = SF.SetAchievementComplete }
 }
 

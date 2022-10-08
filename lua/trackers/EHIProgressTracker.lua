@@ -1,4 +1,4 @@
-EHIProgressTracker = EHIProgressTracker or class(EHITracker)
+EHIProgressTracker = class(EHITracker)
 EHIProgressTracker._update = false
 function EHIProgressTracker:init(panel, params)
     self._max = params.max or 0
@@ -27,6 +27,7 @@ end
 function EHIProgressTracker:SetProgressMax(max)
     self._max = max
     self._text:set_text(self:Format())
+    self:FitTheText()
     if self._flash_max then
         self:AnimateBG(self._flash_times)
     end
@@ -74,7 +75,6 @@ end
 
 function EHIProgressTracker:SetCompleted(force)
     if not self._status or force then
-        self._exclude_from_sync = true
         self._status = "completed"
         self:SetTextColor(Color.green)
         if self._remove_after_reaching_counter_target or force then
@@ -103,7 +103,6 @@ function EHIProgressTracker:SetFailed()
     if self._status and not self._status_is_overridable then
         return
     end
-    self._exclude_from_sync = true
     self:SetTextColor(Color.red)
     self._status = "failed"
     self._parent_class:AddTrackerToUpdate(self._id, self)

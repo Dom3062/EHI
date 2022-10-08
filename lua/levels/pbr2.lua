@@ -71,7 +71,7 @@ local triggers = {
 
 local achievements =
 {
-    [102504] = { id = "cac_33", status = "land", class = "EHIcac33Tracker", difficulty_pass = dw_and_above, exclude_from_sync = true },
+    [102504] = { id = "cac_33", status = "land", class = "EHIcac33Tracker", difficulty_pass = dw_and_above },
     [103486] = { id = "cac_33", status = "ok", special_function = SF.SetAchievementStatus },
     [103479] = { id = "cac_33", special_function = SF.SetAchievementComplete },
     [103475] = { id = "cac_33", special_function = SF.SetAchievementFailed },
@@ -100,7 +100,6 @@ end
 EHI:ShowAchievementLootCounter({
     achievement = "voff_4",
     max = 9,
-    exclude_from_sync = true,
     triggers = voff_4_triggers
 })
 EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(id, trigger, element, enabled)

@@ -10,8 +10,7 @@ local function StartC4Sequence(unit)
     managers.ehi:AddTracker({
         id = key,
         time = 5,
-        icons = { "pd2_c4" },
-        exclude_from_sync = true
+        icons = { "pd2_c4" }
     })
     managers.ehi_waypoint:AddWaypoint(key, {
         time = 5,
@@ -20,7 +19,7 @@ local function StartC4Sequence(unit)
     })
 end
 
-if EHI._cache.Host then
+if EHI:IsHost() then
     local _f_initiate_c4_sequence = MissionDoor._initiate_c4_sequence
     function MissionDoor:_initiate_c4_sequence(...)
         _f_initiate_c4_sequence(self, ...)
@@ -36,7 +35,7 @@ else
     end
 end
 
-if EHI.debug and EHI._cache.Host then
+if EHI.debug and EHI:IsHost() then
     EHI._cache.MissionDoor = {}
     local _f_init = MissionDoor.init
     function MissionDoor:init(...)

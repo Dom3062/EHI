@@ -27,7 +27,7 @@ for _, index in pairs(start_index) do
     triggers[EHI:GetInstanceElementID(100118, index)] = { time = 1, id = "MethlabRestart", icons = { Icon.Methlab, Icon.Loop } }
     triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, Icon.Interact } }
 end
-if Network:is_client() then
+if EHI:IsClient() then
     local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
     for _, index in pairs(start_index) do
         triggers[EHI:GetInstanceElementID(100149, index)] = random_time
@@ -57,7 +57,6 @@ EHI:ParseTriggers({
 EHI:ShowAchievementLootCounter({
     achievement = "voff_2",
     max = 2,
-    exclude_from_sync = true,
     counter =
     {
         check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,

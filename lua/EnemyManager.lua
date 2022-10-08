@@ -4,6 +4,10 @@ else
 	EHI._hooks.EnemyManager = true
 end
 
+function EnemyManager:GetNumberOfEnemies()
+    return self._enemy_data.nr_units
+end
+
 if not EHI:GetOption("show_enemy_count_tracker") then
     return
 end

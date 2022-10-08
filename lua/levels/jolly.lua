@@ -33,7 +33,7 @@ for i = 26550, 26950, 100 do
     triggers[EHI:GetInstanceElementID(100003, i)] = { id = waypoint_id, special_function = SF.ShowWaypoint, data = { icon = Icon.C4, position_by_element = waypoint_id } }
 end
 
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100051, 21250)] = { time = 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
 end
 

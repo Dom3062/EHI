@@ -28,7 +28,7 @@ local triggers = {
     [108694] = { id = "HackChance", special_function = SF.IncreaseChanceFromElement }, -- +33%
     [101485] = { id = "HackChance", special_function = SF.RemoveTracker }
 }
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[100564] = { time = 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
     -- Not worth adding the 3s delay here
 end

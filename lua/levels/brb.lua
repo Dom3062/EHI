@@ -47,7 +47,6 @@ local achievements =
             EHI:ShowAchievementLootCounter({
                 achievement = "brb_8",
                 max = 12,
-                exclude_from_sync = true,
                 remove_after_reaching_target = false,
                 counter =
                 {

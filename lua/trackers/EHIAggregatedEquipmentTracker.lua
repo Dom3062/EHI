@@ -18,8 +18,9 @@ local text_i =
 
 EHIAggregatedEquipmentTracker = class(EHITracker)
 EHIAggregatedEquipmentTracker._update = false
+EHIAggregatedEquipmentTracker._dont_show_placed = { first_aid_kit = true }
+EHIAggregatedEquipmentTracker._ids = { "doctor_bag", "ammo_bag", "grenade_crate", "first_aid_kit", "bodybags_bag" }
 function EHIAggregatedEquipmentTracker:init(panel, params)
-    self._dont_show_placed = {}
     self._amount = {}
     self._placed = {}
     self._deployables = {}
@@ -35,10 +36,9 @@ function EHIAggregatedEquipmentTracker:init(panel, params)
         first_aid_kit = false,
         bodybags_bag = false
     }
-    for _, id in pairs(params.ids) do
+    for _, id in pairs(self._ids) do
         self._amount[id] = 0
         self._placed[id] = 0
-        self._dont_show_placed[id] = params.dont_show_placed[id]
         self._deployables[id] = {}
         self._format[id] = params.format[id] or "charges"
     end
@@ -243,7 +243,7 @@ function EHIAggregatedEquipmentTracker:SetTextSize(n)
     end
     for id, _ in pairs(self.text) do
         if self._time_bg_box:child(id) then
-            self._time_bg_box:child(id):set_w(32 * self._scale)
+            self._time_bg_box:child(id):set_w(self._icon_size_scaled)
             self:FitTheTextUnique(id)
         end
     end
@@ -282,7 +282,7 @@ function EHIAggregatedEquipmentTracker:Reorganize(n)
     local bg_w = self._time_bg_box:w()
     if old_panel_size ~= self._panel_size then
         self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-        self:SetIconX(bg_w + (5 * self._scale))
+        self:SetIconX(bg_w + self._gap_scaled)
     end
     local half = bg_w / self._panel_size
     local pos = 0
@@ -295,7 +295,7 @@ function EHIAggregatedEquipmentTracker:Reorganize(n)
 end
 
 function EHIAggregatedEquipmentTracker:GetPanelSize()
-    return (self._default_panel_w * (self._panel_size / 2)) - (37 * self._scale * self._icon_remove) -- 32 + 5 (gap)
+    return (self._default_panel_w * (self._panel_size / 2)) - (self._icon_gap_size_scaled * self._icon_remove)
 end
 
 function EHIAggregatedEquipmentTracker:ResetFontSizeUnique(id)

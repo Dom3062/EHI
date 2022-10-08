@@ -1,7 +1,6 @@
 local max_kills = tweak_data.upgrades.wild_max_triggers_per_time or 10
 local pm
 local f
-local tostring = tostring
 EHIBikerBuffTracker = class(EHIBuffTracker)
 function EHIBikerBuffTracker:PreUpdateCheck()
     pm = managers.player

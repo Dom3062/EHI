@@ -23,7 +23,7 @@ local triggers = {
 
     [103553] = { id = "fex_10", special_function = SF.SetAchievementFailed }
 }
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100024, 26980)] = { time = 60 + 2, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTimeOrCreateTracker }
     triggers[EHI:GetInstanceElementID(100030, 26980)] = { time = 25 + 2, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTimeOrCreateTracker }
     triggers[EHI:GetInstanceElementID(100035, 26980)] = { time = 38 + 2, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTimeOrCreateTracker }

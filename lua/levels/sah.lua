@@ -15,7 +15,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100015, 6100)] = { id = EHI:GetInstanceElementID(100013, 6100), special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position = EHI:GetInstanceElementPosition(Vector3(2950, 2400, 499.838), LootDropWP, Rotation(0, 0, -0)) } } -- East
 }
 
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100030, 6100)] = { time = 113 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[EHI:GetInstanceElementID(100033, 6100)] = { time = 107 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[EHI:GetInstanceElementID(100034, 6100)] = { time = 47 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
@@ -28,7 +28,7 @@ end
 
 local achievements =
 {
-    [100107] = { time = 300, id = "sah_9", class = TT.Achievement, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+    [100107] = { time = 300, id = "sah_9", class = TT.Achievement, difficulty_pass = ovk_and_up },
     [101878] = { id = "sah_9", special_function = SF.SetAchievementComplete }
 }
 

@@ -82,7 +82,6 @@ if show_minion_tracker or show_popup then
                 if managers.ehi:TrackerDoesNotExist("Converts") and amount ~= 0 then
                     managers.ehi:AddTracker({
                         id = "Converts",
-                        exclude_from_sync = true,
                         class = "EHIMinionTracker"
                     })
                 end
@@ -99,7 +98,6 @@ if show_minion_tracker or show_popup then
                         id = "Converts",
                         dont_show_placed = true,
                         icons = { "minion" },
-                        exclude_from_sync = true,
                         class = "EHIEquipmentTracker"
                     })
                 end

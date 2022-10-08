@@ -36,7 +36,6 @@ if EHI:ShowMissionAchievements() then
         EHI:ShowAchievementLootCounter({
             achievement = "farm_6",
             max = 1,
-            exclude_from_sync = true,
             remove_after_reaching_target = false,
             counter =
             {
@@ -59,7 +58,6 @@ if EHI:ShowMissionAchievements() then
                     id = "farm_1",
                     status = "finish",
                     icons = EHI:GetAchievementIcon("farm_1"),
-                    exclude_from_sync = true,
                     class = EHI.Trackers.AchievementStatus,
                 })
             else

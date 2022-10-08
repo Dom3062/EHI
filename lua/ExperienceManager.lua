@@ -141,7 +141,6 @@ if xp_panel == 1 then
             managers.ehi:AddTracker({
                 id = "XP",
                 amount = diff,
-                exclude_from_sync = true,
                 class = "EHIXPTracker"
             })
         end

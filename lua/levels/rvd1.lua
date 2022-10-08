@@ -27,11 +27,11 @@ local triggers = {
 
 local achievements =
 {
-    [100107] = { id = "rvd_9", status = "defend", class = TT.AchievementStatus, exclude_from_sync = true },
+    [100107] = { id = "rvd_9", status = "defend", class = TT.AchievementStatus },
     [100839] = { id = "rvd_9", special_function = SF.SetAchievementFailed },
     [100869] = { id = "rvd_9", special_function = SF.SetAchievementComplete },
 
-    [100057] = { time = 60, id = "rvd_10", class = TT.Achievement, difficulty_pass = dw_and_above, special_function = SF.ShowAchievementFromStart, exclude_from_sync = true },
+    [100057] = { time = 60, id = "rvd_10", class = TT.Achievement, difficulty_pass = dw_and_above, special_function = SF.ShowAchievementFromStart },
     [100247] = { id = "rvd_10", special_function = SF.SetAchievementComplete }
 }
 

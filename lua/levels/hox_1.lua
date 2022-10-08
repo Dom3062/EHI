@@ -42,11 +42,12 @@ local tbl =
         if not EHI:GetOption("show_waypoints") then
             return
         end
-        EHI:AddWaypointToTrigger(102626, { time = 36.2, icon = Icon.Car, unit = unit } )
-        EHI:AddWaypointToTrigger(102627, { time = 34.5, icon = Icon.Car, unit = unit } )
-        EHI:AddWaypointToTrigger(102628, { time = 34.5, icon = Icon.Car, unit = unit } )
-        EHI:AddWaypointToTrigger(101383, { time = 44.3, icon = Icon.Car, unit = unit } )
-        EHI:AddWaypointToTrigger(101397, { time = 22.6, icon = Icon.Car, unit = unit } )
+        local t = { unit = unit }
+        EHI:AddWaypointToTrigger(102626, t)
+        EHI:AddWaypointToTrigger(102627, t)
+        EHI:AddWaypointToTrigger(102628, t)
+        EHI:AddWaypointToTrigger(101383, t)
+        EHI:AddWaypointToTrigger(101397, t)
         EHI:HookWithID(unit:base(), "destroy", "EHI_102482_Destroy", function(...)
             managers.ehi_waypoint:RemoveWaypoint("CarMoveForward")
             managers.ehi_waypoint:RemoveWaypoint("CarMoveLeft")

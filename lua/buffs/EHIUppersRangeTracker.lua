@@ -2,24 +2,6 @@ local pm
 local mvector3_distance = mvector3.distance
 local math_floor = math.floor
 local string_format = string.format
-local function show(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(t / total)
-    end
-    o:set_alpha(1)
-end
-local function hide(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(1 - (t / total))
-    end
-    o:set_alpha(0)
-end
 EHIUppersRangeTracker = class(EHIGaugeBuffTracker)
 EHIUppersRangeTracker._refresh_time = 1 / EHI:GetBuffOption("uppers_range_refresh")
 function EHIUppersRangeTracker:PreUpdate()
@@ -77,7 +59,7 @@ function EHIUppersRangeTracker:ActivateSoft()
         return
     end
     self._panel:stop()
-    self._panel:animate(show)
+    self._panel:animate(self._show)
     self._parent_class:AddVisibleBuff(self._id)
     self._visible = true
 end
@@ -88,7 +70,7 @@ function EHIUppersRangeTracker:DeactivateSoft()
     end
     self._parent_class:RemoveVisibleBuff(self._id, self._pos)
     self._panel:stop()
-    self._panel:animate(hide)
+    self._panel:animate(self._hide)
     self._visible = false
 end
 

@@ -31,7 +31,6 @@ if EHI:ShowMissionAchievements() then
     EHI:ShowAchievementLootCounter({
         achievement = "armored_1",
         max = 20,
-        exclude_from_sync = true,
         counter =
         {
             check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,

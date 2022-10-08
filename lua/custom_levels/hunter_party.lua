@@ -13,11 +13,10 @@ local triggers = {
     [100422] = { time = escape_fly_in, id = "EscapeHeli", special_function = SF.PauseTrackerWithTime },
     [100423] = { time = escape_fly_in, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable }
 }
-tweak_data.hud_icons.ehi_hunter_no_civie_kills = { texture = "textures/hunter_party", texture_rect = nil }
 
 local achievements =
 {
-    [100045] = { id = "hunter_party", status = "ok", icons = { "ehi_hunter_no_civie_kills" }, class = TT.AchievementStatus, difficulty_pass = ovk_and_up, special_function = SF.ShowAchievementFromStart },
+    [100045] = { id = "hunter_party", status = "ok", icons = { "ehi_hunter_party" }, class = TT.AchievementStatus, condition = EHI:IsBeardLibAchievementLocked("hunter_all", "hunter_party") and EHI:ShowMissionAchievements() and ovk_and_up, special_function = SF.ShowAchievementFromStart, beardlib = true },
     [100679] = { id = "hunter_party", special_function = SF.SetAchievementFailed }
 }
 

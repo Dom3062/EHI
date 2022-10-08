@@ -68,7 +68,7 @@ local triggers = {
     [102814] = { time = 180, id = "Safe", icons = { Icon.Winch }, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable },
     [102815] = { id = "Safe", special_function = SF.PauseTracker }
 }
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[100216] = { time = 662/30, random_time = 10, id = "EscapeBoat", icons = Icon.BoatEscape, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
@@ -77,9 +77,9 @@ end
 
 local achievements =
 {
-    [100107] = { time = 901, id = "uno_7", class = "EHIuno7Tracker", difficulty_pass = mayhem_and_up, exclude_from_sync = true },
+    [100107] = { time = 901, id = "uno_7", class = "EHIuno7Tracker", difficulty_pass = mayhem_and_up },
     [102291] = { max = 2, id = "friend_5", class = TT.AchievementProgress },
-    [102430] = { time = 780, id = "friend_6", class = TT.Achievement, difficulty_pass = mayhem_and_up, exclude_from_sync = true },
+    [102430] = { time = 780, id = "friend_6", class = TT.Achievement, difficulty_pass = mayhem_and_up },
     [102280] = { id = "friend_5", special_function = SF.IncreaseProgress }
 }
 

@@ -37,7 +37,6 @@ if show_achievement and ovk_and_up then
     EHI:ShowAchievementLootCounter({
         achievement = "cane_3",
         max = 100,
-        exclude_from_sync = true,
         remove_after_reaching_target = false
     })
 end

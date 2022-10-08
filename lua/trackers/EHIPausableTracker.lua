@@ -1,4 +1,4 @@
-EHIPausableTracker = EHIPausableTracker or class(EHITracker)
+EHIPausableTracker = class(EHITracker)
 function EHIPausableTracker:init(panel, params)
     EHIPausableTracker.super.init(self, panel, params)
     self._paused = params.paused

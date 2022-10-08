@@ -44,7 +44,7 @@ function EHICiviliansKilledTracker:SetTextSize()
     end
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
         if self._time_bg_box:child("text" .. i) then
-            self._time_bg_box:child("text" .. i):set_w(32 * self._scale)
+            self._time_bg_box:child("text" .. i):set_w(self._icon_size_scaled)
             self:FitTheTextUnique(i)
         end
     end
@@ -110,7 +110,7 @@ function EHICiviliansKilledTracker:Reorganize()
     local bg_w = self._time_bg_box:w()
     if old_panel_size ~= self._panel_size then
         self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-        self:SetIconX(bg_w + (5 * self._scale))
+        self:SetIconX(bg_w + self._gap_scaled)
     end
     local half = bg_w / self._panel_size
     local pos = 0
@@ -123,7 +123,7 @@ function EHICiviliansKilledTracker:Reorganize()
     if old_panel_size > self._panel_size then
         for i = HUDManager.PLAYER_PANEL, 0, -1 do
             if self._time_bg_box:child("text" .. i) then
-                self._time_bg_box:child("text" .. i):set_w(32 * self._scale)
+                self._time_bg_box:child("text" .. i):set_w(self._icon_size_scaled)
                 self:FitTheTextUnique(i)
                 break
             end
@@ -141,7 +141,7 @@ function EHICiviliansKilledTracker:Reorganize()
 end
 
 function EHICiviliansKilledTracker:GetPanelSize()
-    return (self._default_panel_w * (self._panel_size / 2)) - (37 * self._scale * self._icon_remove) -- 32 + 5 (gap)
+    return (self._default_panel_w * (self._panel_size / 2)) - (self._icon_gap_size_scaled * self._icon_remove)
 end
 
 function EHICiviliansKilledTracker:SetPeerCustodyTime(peer_id, time)

@@ -32,7 +32,6 @@ else
                 id = "FirstAidKits",
                 icons = { "first_aid_kit" },
                 dont_show_placed = true,
-                exclude_from_sync = true,
                 class = "EHIEquipmentTracker"
             })
         end

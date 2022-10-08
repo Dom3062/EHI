@@ -51,8 +51,7 @@ EHI:ParseTriggers({
 if EHI:ShowMissionAchievements() and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "halloween_2",
-        max = 7,
-        exclude_from_sync = true
+        max = 7
     })
 else
     EHI:ShowLootCounter({ max = 7 })

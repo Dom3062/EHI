@@ -65,7 +65,7 @@ local triggers = {
 
     
 }
-if Network:is_client() then
+if EHI:IsClient() then
     local wait_time = 90 -- Very Hard and below
     local pickup_wait_time = 25 -- Normal and Hard
     if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.Mayhem) then -- Very Hard to Mayhem

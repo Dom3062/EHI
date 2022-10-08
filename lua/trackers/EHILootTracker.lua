@@ -62,6 +62,7 @@ function EHILootTracker:SetProgressMax(max)
     EHILootTracker.super.SetProgressMax(self, max)
     self:SetTextColor(Color.white)
     self._disable_counting = nil
+    self:VerifyStatus()
 end
 
 function EHILootTracker:VerifyStatus()
@@ -79,8 +80,6 @@ function EHILootTracker:RandomLootSpawned(random)
     local n = random or 1
     self._max_random = self._max_random - n
     self:IncreaseProgressMax(n)
-    self:FitTheText()
-    self:VerifyStatus()
 end
 
 function EHILootTracker:RandomLootDeclined(random)
@@ -89,15 +88,11 @@ function EHILootTracker:RandomLootDeclined(random)
     end
     self._max_random = self._max_random - (random or 1)
     self:SetProgressMax(self._max)
-    self:FitTheText()
-    self:VerifyStatus()
 end
 
 function EHILootTracker:SetMaxRandom(max)
     self._max_random = max
     self:SetProgressMax(self._max)
-    self:FitTheText()
-    self:VerifyStatus()
 end
 
 function EHILootTracker:IncreaseMaxRandom(progress)
@@ -126,5 +121,3 @@ end
 function EHILootTracker:BlockRandomLoot(id)
     self._loot_id[id] = true
 end
-
-EHI:SetNotificationAlert("LOOT COUNTER", "ehi_popup_loot_counter", Color.green)

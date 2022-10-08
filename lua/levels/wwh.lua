@@ -8,7 +8,7 @@ local triggers = {
     [100323] = { id = "Fuel", special_function = SF.PauseTracker }
 }
 
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[100047] = { time = 60, id = "Fuel", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[100049] = { time = 30, id = "Fuel", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.AddTrackerIfDoesNotExist }
 end

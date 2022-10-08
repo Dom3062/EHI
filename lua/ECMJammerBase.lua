@@ -62,7 +62,6 @@ if EHI:GetOption("show_equipment_ecmjammer") then
                     time = battery_life,
                     icons = { { icon = "ecm_jammer", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
                     unit = self._unit,
-                    exclude_from_sync = true,
                     class = "EHIECMTracker"
                 })
             end
@@ -83,7 +82,6 @@ if EHI:GetOption("show_equipment_ecmfeedback") then
                     time = self._feedback_duration,
                     icons = { { icon = "ecm_feedback", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
                     unit = self._unit,
-                    exclude_from_sync = true,
                     class = "EHIECMTracker"
                 })
             end

@@ -11,7 +11,7 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     Heli = 3 + 60 + 23 + 5
     Truck = 60
 end
-local client = Network:is_client()
+local client = EHI:IsClient()
 for _, index in ipairs(MethlabIndex) do
     -- Cooking restart
     for i = 100120, 100122, 1 do
@@ -73,14 +73,14 @@ end
 local function GetNumberOfMethBags()
     for _, index in ipairs(MethlabIndex) do
         local unit_id = EHI:GetInstanceUnitID(100068, index) -- Acid 3
-        if not managers.game_play_central:GetMissionDisabledUnit(unit_id) then
+        if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
             -- Unit is enabled, return 3
             return 3
         end
     end
     for _, index in ipairs(MethlabIndex) do
         local unit_id = EHI:GetInstanceUnitID(100067, index) -- Acid 2
-        if not managers.game_play_central:GetMissionDisabledUnit(unit_id) then
+        if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
             -- Unit is enabled, return 2
             return 2
         end

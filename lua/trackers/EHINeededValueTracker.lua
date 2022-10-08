@@ -72,7 +72,6 @@ function EHINeededValueTracker:SetFailed()
     if self._status and not self._status_is_overridable then
         return
     end
-    self._exclude_from_sync = true
     self:SetTextColor(Color.red)
     self._status = "failed"
     self._parent_class:AddTrackerToUpdate(self._id, self)

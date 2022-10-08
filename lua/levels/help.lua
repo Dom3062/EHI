@@ -28,10 +28,10 @@ for _, index in ipairs({ 900, 1200, 1500, 4800, 13200 }) do
 end
 local achievements =
 {
-    [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, id = "orange_4", class = TT.Achievement, difficulty_pass = mayhem_and_up, exclude_from_sync = true },
+    [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, id = "orange_4", class = TT.Achievement, difficulty_pass = mayhem_and_up },
     [EHI:GetInstanceElementID(100461, 21700)] = { id = "orange_4", special_function = SF.SetAchievementComplete },
 
-    [100279] = { max = 15, id = "orange_5", class = "EHIorange5Tracker", status_is_overridable = true, remove_after_reaching_target = false, difficulty_pass = mayhem_and_up, exclude_from_sync = true },
+    [100279] = { max = 15, id = "orange_5", class = "EHIorange5Tracker", status_is_overridable = true, remove_after_reaching_target = false, difficulty_pass = mayhem_and_up },
     [EHI:GetInstanceElementID(100471, 21700)] = { id = "orange_5", special_function = SF.SetAchievementFailed },
     [EHI:GetInstanceElementID(100474, 21700)] = { id = "orange_5", special_function = SF.IncreaseProgress },
     [EHI:GetInstanceElementID(100005, 12200)] = { id = "orange_5", special_function = SF.FinalizeAchievement }
@@ -41,7 +41,7 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 EHI:DisableWaypoints(DisableWaypoints)
-local LotteryWheel = { icons = { Icon.Wait }, icon_on_pause = { "restarter" } }
+local LotteryWheel = { icons = { Icon.Wait }, icon_on_pause = { Icon.Loop } }
 
 local tbl =
 {

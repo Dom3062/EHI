@@ -7,6 +7,7 @@ local original =
 }
 function MutatorPiggyBank:on_game_started(...)
     original.on_game_started(self, ...)
+    dofile(EHI.LuaPath .. "trackers/EHIPiggyBankMutatorTracker.lua")
     managers.ehi:AddTracker({
         id = "pda9_event",
         class = "EHIPiggyBankMutatorTracker"

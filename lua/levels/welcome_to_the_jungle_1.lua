@@ -7,7 +7,7 @@ local other = {
 
 local achievements =
 {
-    [101282] = { time = 60, id = "cac_24", class = TT.Achievement, exclude_from_sync = true },
+    [101282] = { time = 60, id = "cac_24", class = TT.Achievement },
     [101285] = { id = "cac_24", special_function = SF.SetAchievementComplete }
 }
 

@@ -39,7 +39,7 @@ function EHIHeliTracker:OverridePanel(params)
         color = params.text_color or Color.white
     })
     self._time_text:set_left(self._time_bg_box:right())
-    self._panel_override_w = self._time_bg_box:w() + (37 * self._scale)
+    self._panel_override_w = self._time_bg_box:w() + self._icon_size_scaled
 end
 
 function EHIHeliTracker:EnableUpdate()
@@ -49,17 +49,17 @@ function EHIHeliTracker:EnableUpdate()
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self:FitTheText(self._time_text)
     self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-    self:SetIconX(self._time_bg_box:w() + (5 * self._scale))
+    self:SetIconX(self._time_bg_box:w() + self._gap_scaled)
     if self._icon2 then
-        self._icon2:set_x(self:GetPanelSize() - (37 * self._scale))
+        self._icon2:set_x(self:GetPanelSize() - self._icon_size_scaled)
         self._icon2:set_visible(true)
     end
     self:AddTrackerToUpdate()
 end
 
 function EHIHeliTracker:GetPanelSize()
-    local icons = self._icon2 and 74 or 37 -- 32 + 5 (gap)
-    return self._time_bg_box:w() + (icons * self._scale)
+    local n = self._icon2 and 2 or 1
+    return self._time_bg_box:w() + (self._icon_size_scaled * n)
 end
 
 function EHIHeliTracker:ObjectiveComplete(objective)
@@ -119,7 +119,7 @@ local triggers = {
     [1000601] = { id = "PanicRoomTakeoff", icons = { "enemy", { icon = Icon.Wait, visible = false } }, class = "EHIHeliTracker" },
     [1000602] = { special_function = SF.CustomCode, f = function()
         local count = 0
-        if EHI._cache.Host then
+        if EHI:IsHost() then
             local element_area_counter = managers.mission:get_element_by_id(103832) -- ´enemies alive in volume´ ElementCounter 103832
             if not element_area_counter then
                 EHI:DelayCall("RemovePanicRoomTakeoff", 1, function()
@@ -174,7 +174,7 @@ local triggers = {
 
 local achievements =
 {
-    [100809] = { time = 60, id = "cac_9", class = TT.Achievement, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement, exclude_from_sync = true },
+    [100809] = { time = 60, id = "cac_9", class = TT.Achievement, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement },
 
     [104859] = { id = "flat_2", special_function = SF.SetAchievementComplete },
     [100805] = { id = "cac_9", special_function = SF.SetAchievementComplete },

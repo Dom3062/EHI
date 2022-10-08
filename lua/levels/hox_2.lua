@@ -14,12 +14,12 @@ local request = { Icon.PCHack, Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
 local CheckOkValueHostCheckOnly = EHI:GetFreeCustomSpecialFunctionID()
 local AssaultDelay = 30
-if EHI._cache.Client then
+if EHI:IsClient() then
     AssaultDelay = AssaultDelay + 5
 end
 local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
 local triggers = {
-    --[100107] = { time = AssaultDelay, id = "AssaultDelay", stop_counting = EHI._cache.Host, class = TT.AssaultDelay },
+    --[100107] = { time = AssaultDelay, id = "AssaultDelay", stop_counting = EHI:IsHost(), class = TT.AssaultDelay },
     [102016] = { time = 7, id = "Endless", icons = Icon.EndlessAssault, class = TT.Warning },
 
     [104579] = { time = 15, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) },
@@ -45,7 +45,7 @@ local triggers = {
     [102257] = { amount = 25, id = "ForensicsMatchChance", special_function = SF.IncreaseChance },
     [105137] = { id = "ForensicsMatchChance", special_function = SF.RemoveTracker }
 }
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100055, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 45, 55, 65 } }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
@@ -56,7 +56,7 @@ local achievements =
 {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072 } },
     [1001071] = { id = "slakt_3", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [1001072] = { id = "cac_26", status = "defend", class = TT.AchievementStatus, special_function = SF.ShowAchievementFromStart, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+    [1001072] = { id = "cac_26", status = "defend", class = TT.AchievementStatus, special_function = SF.ShowAchievementFromStart, difficulty_pass = ovk_and_up },
     [100256] = { id = "slakt_3", special_function = SF.SetAchievementFailed },
     [100258] = { id = "slakt_3", special_function = SF.SetAchievementComplete },
     [101884] = { id = "cac_26", status = "finish", special_function = SF.SetAchievementStatus },
@@ -70,7 +70,7 @@ EHI:ParseTriggers({
 })
 EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(id, trigger, element, enabled)
     local continue = false
-    if EHI._cache.Host then
+    if EHI:IsHost() then
         if element:_values_ok() then
             continue = true
         end

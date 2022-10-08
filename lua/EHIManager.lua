@@ -21,7 +21,6 @@ function EHIManager:init()
     local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
     self._x = x
     self._y = y
-    self._text_scale = EHI:GetOption("text_scale")
     self._level_started_from_beginning = true
     self._delay_popups = true
     self._panel_size = 32 * self._scale
@@ -155,84 +154,6 @@ function EHIManager:CountLootbagsAvailable(path, loot_type, slotmask)
     return count
 end
 
-function EHIManager:save(data)
-    if true then
-        return
-    end
-    local state = {}
-    for key, tracker in pairs(self._trackers) do
-        -- Load all trackers not excluded from the sync
-        if not tracker._exclude_from_sync then
-            state[key] = {}
-            state[key].time = tracker._time
-            state[key].floors = tracker._floors
-            state[key].money = tracker._money
-            state[key].chance = tracker._chance
-            state[key].max = tracker._max
-            state[key].dont_flash = tracker._flash
-            state[key].flash_times = tracker._flash_times
-            state[key].remove_after_reaching_target = tracker._remove_after_reaching_counter_target
-            state[key].status_is_overridable = tracker._status_is_overridable
-            state[key].status = tracker._status
-            state[key].icons = tracker._icons
-            state[key].paused = tracker._paused
-            state[key].class = tracker._class
-        end
-    end
-    -- Custody Time is synced separately
-    if self:TrackerExists("CustodyTime") then
-        local tracker = self:GetTracker("CustodyTime")
-        state.CustodyTime = { peers = {} }
-        for peer_id, time in pairs(tracker._peer_custody_time) do
-            state.CustodyTime.peers[peer_id] = { time = time }
-        end
-        for peer_id, in_custody in pairs(tracker._peer_in_custody) do
-            state.CustodyTime.peers[peer_id].in_custody = in_custody
-        end
-        state.CustodyTime.ai_trade = tracker._ai_trade
-        state.CustodyTime.trade = tracker._trade
-    end
-    data.EHIManager = state
-end
-
-function EHIManager:load(data)
-    if data.EHIManager then
-        local state = data.EHIManager
-        if state.CustodyTime and EHI:GetOption("show_trade_delay") then
-            self:AddCustodyTimeTracker()
-            for peer_id, peer_info in pairs(state.CustodyTime.peers) do
-                self:CallFunction("CustodyTime", "AddPeerCustodyTime", peer_id, peer_info.time)
-                if peer_info.in_custody then
-                    self:CallFunction("CustodyTime", "SetPeerInCustody", peer_id)
-                end
-            end
-            local tick = managers.trade:GetTradeCounterTick()
-            self:SetTrade("ai", state.CustodyTime.ai_trade, tick)
-            self:SetTrade("normal", state.CustodyTime.trade, tick)
-        end
-        state.CustodyTime = nil
-        for key, tracker_data in pairs(state) do
-            self:AddTracker({
-                id = key,
-                time = tracker_data.time,
-                floors = tracker_data.floors,
-                money = tracker_data.money,
-                chance = tracker_data.chance,
-                max = tracker_data.max,
-                dont_flash = tracker_data.dont_flash,
-                flash_times = tracker_data.flash_times,
-                remove_after_reaching_target = tracker_data.remove_after_reaching_target,
-                status_is_overridable = tracker_data.status_is_overridable,
-                status = tracker_data.status,
-                icons = tracker_data.icons,
-                paused = tracker_data.paused,
-                class = tracker_data.class
-            })
-        end
-        self._synced_from_host = true
-    end
-end
-
 function EHIManager:LoadSync()
     if self._level_started_from_beginning or self._synced_from_host then
         for _, f in pairs(self._full_sync or {}) do
@@ -307,8 +228,6 @@ function EHIManager:AddTracker(params, pos)
     params.parent_class = self
     params.x = self:GetX(pos)
     params.y = self:GetY(pos)
-    params.scale = self._scale
-    params.text_scale = self._text_scale
     params.dynamic = true
     local class = params.class or "EHITracker"
     local tracker = _G[class]:new(self._hud_panel, params)
@@ -329,8 +248,6 @@ function EHIManager:AddStaticTracker(params)
     params.parent_class = self
     params.x = 0
     params.y = 0
-    params.scale = self._scale
-    params.text_scale = self._text_scale
     local class = params.class or "EHITracker"
     local tracker = _G[class]:new(self._hud_panel, params)
     self._trackers[params.id] = tracker
@@ -414,7 +331,7 @@ function EHIManager:AddTimedAchievementTracker(id, time_max, icon)
     })
 end
 
-function EHIManager:AddAchievementProgressTracker(id, max, additional_loot, exclude_from_sync, remove_after_reaching_target, show_loot_counter, icon)
+function EHIManager:AddAchievementProgressTracker(id, max, additional_loot, remove_after_reaching_target, show_loot_counter, icon)
     if EHI:IsAchievementUnlocked(id) then
         if show_loot_counter then
             self:ShowLootCounter(max, additional_loot)
@@ -428,7 +345,6 @@ function EHIManager:AddAchievementProgressTracker(id, max, additional_loot, excl
         max = max,
         icons = { icon },
         delay_popup = self._delay_popups,
-        exclude_from_sync = exclude_from_sync,
         remove_after_reaching_target = remove_after_reaching_target,
         class = EHI.Trackers.AchievementProgress
     })
@@ -447,7 +363,7 @@ function EHIManager:AddAchievementStatusTracker(id, status, icon)
     })
 end
 
-function EHIManager:AddAchievementBagValueCounter(id, to_secure, exclude_from_sync, remove_after_reaching_target, icon)
+function EHIManager:AddAchievementBagValueCounter(id, to_secure, remove_after_reaching_target, icon)
     if EHI:IsAchievementUnlocked(id) then
         return
     end
@@ -457,7 +373,6 @@ function EHIManager:AddAchievementBagValueCounter(id, to_secure, exclude_from_sy
         to_secure = to_secure,
         icons = { icon },
         delay_popup = true,
-        exclude_from_sync = exclude_from_sync,
         remove_after_reaching_target = remove_after_reaching_target,
         class = EHI.Trackers.AchievementBagValue
     })
@@ -470,7 +385,6 @@ function EHIManager:ShowLootCounter(max, additional_loot, max_random, offset)
         max_random = max_random or 0,
         offset = offset,
         icons = { EHI.Icons.Loot },
-        exclude_from_sync = true,
         class = "EHILootTracker"
     })
 end
@@ -483,7 +397,6 @@ function EHIManager:AddAchievementKillCounter(id, progress, max)
         max = max,
         icons = { icon },
         delay_popup = true,
-        exclude_from_sync = true,
         class = EHI.Trackers.AchievementProgress
     })
 end
@@ -977,7 +890,6 @@ function EHIManager:CreateDeployableTracker(type)
         self:AddTracker({
             id = "DoctorBags",
             icons = { "doctor_bag" },
-            exclude_from_sync = true,
             class = "EHIEquipmentTracker"
         })
     elseif type == "AmmoBags" then
@@ -985,7 +897,6 @@ function EHIManager:CreateDeployableTracker(type)
             id = "AmmoBags",
             format = "percent",
             icons = { "ammo_bag" },
-            exclude_from_sync = true,
             class = "EHIEquipmentTracker"
         })
     elseif type == "FirstAidKits" then
@@ -993,7 +904,6 @@ function EHIManager:CreateDeployableTracker(type)
             id = "FirstAidKits",
             icons = { "first_aid_kit" },
             dont_show_placed = true,
-            exclude_from_sync = true,
             class = "EHIEquipmentTracker"
         })
     end
@@ -1093,12 +1003,9 @@ end
 function EHIManager:AddAggregatedDeployablesTracker()
     self:AddTracker({
         id = "Deployables",
-        ids = { "doctor_bag", "ammo_bag", "grenade_crate", "first_aid_kit", "bodybags_bag" },
         icons = { "deployables" },
-        dont_show_placed = { first_aid_kit = true },
         ignore = self._deployables_ignore or {},
         format = { ammo_bag = "percent" },
-        exclude_from_sync = true,
         class = "EHIAggregatedEquipmentTracker"
     })
 end
@@ -1108,8 +1015,6 @@ function EHIManager:AddAggregatedHealthTracker()
         id = "Health",
         ids = { "doctor_bag", "first_aid_kit" },
         icons = { { icon = "doctor_bag", visible = false }, { icon = "first_aid_kit", visible = false } },
-        dont_show_placed = { first_aid_kit = true },
-        exclude_from_sync = true,
         class = "EHIAggregatedHealthEquipmentTracker"
     })
 end
@@ -1160,7 +1065,6 @@ function EHIManager:AddCustodyTimeTracker()
     self:AddTracker({
         id = "CustodyTime",
         icons = { "mugshot_in_custody" },
-        exclude_from_sync = true,
         class = "EHICiviliansKilledTracker"
     })
 end
@@ -1207,4 +1111,32 @@ function EHIManager:ReturnValue(id, f, ...)
     if tracker and tracker[f] then
         return tracker[f](tracker, ...)
     end
+end
+
+if Global.load_level then
+    local path = EHI.LuaPath .. "trackers/"
+    dofile(path .. "EHITracker.lua")
+    dofile(path .. "EHIWarningTracker.lua")
+    dofile(path .. "EHIPausableTracker.lua")
+    dofile(path .. "EHICiviliansKilledTracker.lua")
+    dofile(path .. "EHITimerTracker.lua")
+    dofile(path .. "EHIMoneyCounterTracker.lua")
+    dofile(path .. "EHIXPTracker.lua")
+    dofile(path .. "EHIChanceTracker.lua")
+    dofile(path .. "EHIProgressTracker.lua")
+    dofile(path .. "EHIEquipmentTracker.lua")
+    dofile(path .. "EHIAggregatedEquipmentTracker.lua")
+    dofile(path .. "EHIAggregatedHealthEquipmentTracker.lua")
+    dofile(path .. "EHICountTracker.lua")
+    dofile(path .. "EHIECMTracker.lua")
+    dofile(path .. "EHISecurityLockGuiTracker.lua")
+    dofile(path .. "EHIMinionTracker.lua")
+    dofile(path .. "EHIAssaultDelayTracker.lua")
+    dofile(path .. "EHILootTracker.lua")
+    dofile(path .. "EHINeededValueTracker.lua")
+    dofile(path .. "EHIAchievementTrackers.lua")
+    dofile(path .. "EHITrophyTrackers.lua")
+    dofile(path .. "EHIDailyTrackers.lua")
+    dofile(path .. "EHIInaccurateTrackers.lua")
+    dofile(path .. "StaticTrackers.lua")
 end

@@ -2,29 +2,11 @@ local EHI = EHI
 local player_manager
 local math_max = math.max
 local THRESHOLD = tweak_data.upgrades.player_damage_health_ratio_threshold or 0.5
-local function show(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(t / total)
-    end
-    o:set_alpha(1)
-end
-local function hide(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(1 - (t / total))
-    end
-    o:set_alpha(0)
-end
 EHIBerserkerBuffTracker = class(EHIGaugeBuffTracker)
+EHIBerserkerBuffTracker._refresh_time = 1 / EHI:GetBuffOption("berserker_refresh")
 function EHIBerserkerBuffTracker:init(panel, params)
     EHIBerserkerBuffTracker.super.init(self, panel, params)
     self._time = 0.2
-    self._refresh_time = 1 / EHI:GetBuffOption("berserker_refresh")
     self._damage_multiplier = 0
     self._melee_damage_multiplier = 0
     self._current_damage_multiplier = 0
@@ -106,7 +88,7 @@ function EHIBerserkerBuffTracker:ActivateSoft()
         return
     end
     self._panel:stop()
-    self._panel:animate(show)
+    self._panel:animate(self._show)
     self._parent_class:AddVisibleBuff(self._id)
     self._visible = true
 end
@@ -126,7 +108,7 @@ function EHIBerserkerBuffTracker:DeactivateSoft()
     end
     self._parent_class:RemoveVisibleBuff(self._id, self._pos)
     self._panel:stop()
-    self._panel:animate(hide)
+    self._panel:animate(self._hide)
     self._visible = false
 end
 

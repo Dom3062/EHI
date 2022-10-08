@@ -32,7 +32,7 @@ local triggers = {
         EHI:ShowLootCounter({ max = bags })
     end}
 }
-if Network:is_client() then
+if EHI:IsClient() then
     local SetTrackerAccurate = EHI:GetFreeCustomSpecialFunctionID()
     local boat_return = { time = 450/30, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = SetTrackerAccurate }
     triggers[100470] = boat_return

@@ -51,7 +51,6 @@ function DigitalGui:TimerStartCountDown()
                 id = self._ehi_key,
                 time = self._timer,
                 icons = self._icons or { Icon.PCHack },
-                exclude_from_sync = true,
                 warning = self._warning,
                 completion = self._completion,
                 class = "EHITimerTracker"
@@ -116,7 +115,6 @@ if level_id == "chill" then
                 id = self._ehi_key,
                 time = 0,
                 icons = { Icon.Wait },
-                exclude_from_sync = true,
                 class = "EHIStopwatchTracker"
             })
         end

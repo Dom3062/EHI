@@ -21,8 +21,8 @@ local achievements =
 {
     [101989] = { special_function = SF.Trigger, data = { 1019891, 1019892 } },
     -- It was 7 minutes before the change
-    [1019891] = { time = 360, id = "spa_5", class = TT.Achievement, difficulty_pass = ovk_and_up, exclude_from_sync = true },
-    [1019892] = { max = 8, id = "spa_6", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = ovk_and_up, exclude_from_sync = true },
+    [1019891] = { time = 360, id = "spa_5", class = TT.Achievement, difficulty_pass = ovk_and_up },
+    [1019892] = { max = 8, id = "spa_6", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = ovk_and_up },
     [101997] = { id = "spa_5", special_function = SF.SetAchievementComplete },
     [101999] = { id = "spa_6", special_function = SF.IncreaseProgress },
     [102002] = { id = "spa_6", special_function = SF.FinalizeAchievement },

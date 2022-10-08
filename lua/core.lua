@@ -202,7 +202,6 @@ _G.EHI =
         Progress = "EHIProgressTracker",
         NeededValue = "EHINeededValueTracker",
         Achievement = "EHIAchievementTracker",
-        AchievementDone = "EHIAchievementDoneTracker",
         AchievementUnlock = "EHIAchievementUnlockTracker",
         AchievementStatus = "EHIAchievementStatusTracker",
         AchievementProgress = "EHIAchievementProgressTracker",
@@ -219,7 +218,6 @@ _G.EHI =
     AchievementTrackers =
     {
         EHIAchievementTracker = true,
-        EHIAchievementDoneTracker = true,
         EHIAchievementUnlockTracker = true,
         EHIAchievementProgressTracker = true,
         EHIAchievementStatusTracker = true,
@@ -304,6 +302,14 @@ function EHI:Init()
     self._cache.Client = not self._cache.Host
 end
 
+function EHI:IsHost()
+    return self._cache.Host
+end
+
+function EHI:IsClient()
+    return self._cache.Client
+end
+
 function EHI:Log(s)
     log("[EHI] " .. (s or "nil"))
 end
@@ -325,7 +331,7 @@ function EHI:Load()
     if file then
         local table
         local success, _ = pcall(function()
-            table = json.decode(file:read('*all'))
+            table = json.decode(file:read("*all"))
         end)
         file:close()
         if success then
@@ -575,7 +581,8 @@ function EHI:LoadDefaultValues()
             crit = true,
             crit_refresh = 1, -- 1 / value
             crit_persistent = false,
-            inspire_ai = true
+            inspire_ai = true,
+            regen_throwable_ai = true
         }
     }
 end
@@ -626,6 +633,10 @@ function EHI:GetBuffOption(option)
     if option then
         return self.settings.buff_option[option]
     end
+end
+
+function EHI:GetBuffAndOption(option)
+    return self:GetOption("show_buffs") and self:GetBuffOption(option)
 end
 
 function EHI:MissionTrackersAndWaypointEnabled()
@@ -1066,10 +1077,25 @@ function EHI:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, ty
 end
 
 function EHI:AddWaypointToTrigger(id, waypoint)
-    if not triggers[id] then
+    local t = triggers[id]
+    if not t then
         return
     end
-    triggers[id].waypoint = waypoint
+    local w = self:DeepClone(waypoint)
+    if not w.time then
+        w.time = t.time
+    end
+    if not w.icon then
+        local icon = t.icons
+        if icon and icon[1] then
+            if type(icon[1]) == "table" then
+                w.icon = icon[1].icon
+            elseif type(icon[1]) == "string" then
+                w.icon = icon[1]
+            end
+        end
+    end
+    t.waypoint = w
 end
 
 ---@param id number
@@ -1150,10 +1176,11 @@ end
 
 local function GetElementTimer(self, id)
     if self._cache.Host then
-        local element = managers.mission:get_element_by_id(triggers[id].element)
+        local trigger = triggers[id]
+        local element = managers.mission:get_element_by_id(trigger.element)
         if element then
-            local t = (element._timer or 0) + (triggers[id].additional_time or 0)
-            triggers[id].time = t
+            local t = (element._timer or 0) + (trigger.additional_time or 0)
+            trigger.time = t
             self:CheckCondition(id)
             managers.ehi:Sync(id, t)
         end
@@ -1191,8 +1218,8 @@ end
 ---@param enabled boolean
 function EHI:Trigger(id, element, enabled)
     if triggers[id] then
-        if triggers[id].special_function then
-            local trigger = triggers[id]
+        local trigger = triggers[id]
+        if trigger.special_function then
             local f = trigger.special_function
             if f == SF.RemoveTracker then
                 RemoveTracker(trigger.id)
@@ -1269,6 +1296,9 @@ function EHI:Trigger(id, element, enabled)
                     trigger.time = trigger.data.yes
                 else
                     trigger.time = trigger.data.no
+                end
+                if trigger.waypoint then
+                    trigger.waypoint.time = trigger.time
                 end
                 self:CheckCondition(id)
             elseif f == SF.IncreaseProgress then
@@ -1407,6 +1437,13 @@ function EHI:Trigger(id, element, enabled)
         else
             self:CheckCondition(id)
         end
+        if trigger.trigger_times and trigger.trigger_times > 0 then
+            trigger.trigger_times = trigger.trigger_times - 1
+            if trigger.trigger_times == 0 then
+                self:Log("Hook " .. tostring(id) .. " disabled as it reached maximum amount of times it can run")
+                self:UnhookTrigger(id)
+            end
+        end
     end
 end
 
@@ -1526,9 +1563,9 @@ function EHI:SyncLoad()
                 end
             elseif trigger.waypoint then
                 if trigger.waypoint.position_by_element then
-                    self:AddPositionFromElement(trigger.data, trigger.id, true)
+                    self:AddPositionFromElement(trigger.waypoint, trigger.id, true)
                 elseif trigger.waypoint.position_by_unit then
-                    self:AddPositionFromUnit(trigger.data, trigger.id, true)
+                    self:AddPositionFromUnit(trigger.waypoint, trigger.id, true)
                 end
             end
         end
@@ -1821,6 +1858,9 @@ function EHI:ShowLootCounterNoCheck(params)
     managers.ehi:ShowLootCounter(params.max, params.additional_loot, params.max_random, n_offset)
     if params.triggers then
         self:AddTriggers2(params.triggers, nil, "LootCounter")
+        if params.hook_triggers then
+            self:HookElements(params.triggers)
+        end
     end
     if params.sequence_triggers then
         local function IncreaseMax(...)
@@ -1863,9 +1903,12 @@ function EHI:ShowAchievementLootCounter(params)
         end
         return
     end
-    managers.ehi:AddAchievementProgressTracker(params.achievement, params.max, params.additional_loot, params.exclude_from_sync, params.remove_after_reaching_target, params.show_loot_counter)
+    managers.ehi:AddAchievementProgressTracker(params.achievement, params.max, params.additional_loot, params.remove_after_reaching_target, params.show_loot_counter)
     if params.triggers then
-        self:AddTriggers(params.triggers, params.achievement)
+        self:AddTriggers2(params.triggers, nil, params.achievement)
+        if params.hook_triggers then
+            self:HookElements(params.triggers)
+        end
         return
     elseif params.no_counting then
         return
@@ -1877,7 +1920,7 @@ function EHI:ShowAchievementBagValueCounter(params)
     if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
         return
     end
-    managers.ehi:AddAchievementBagValueCounter(params.achievement, params.value, params.exclude_from_sync, params.remove_after_reaching_target)
+    managers.ehi:AddAchievementBagValueCounter(params.achievement, params.value, params.remove_after_reaching_target)
     self:AddAchievementToCounter(params)
 end
 
@@ -2034,8 +2077,15 @@ if EHI:GetUnlockableOption("hide_unlocked_achievements") then
         local a = G.achievment_manager.achievments[achievement]
         return a and a.awarded
     end
+    function EHI:IsBeardLibAchievementUnlocked(package_id, achievement_id)
+        return not self:IsBeardLibAchievementLocked(package_id, achievement_id)
+    end
 else -- Always show trackers for achievements
     function EHI:IsAchievementUnlocked(achievement)
+        return false
+    end
+    function EHI:IsBeardLibAchievementUnlocked(package_id, achievement_id)
+        self:IsBeardLibAchievementLocked(package_id, achievement_id, true)
         return false
     end
 end
@@ -2089,6 +2139,19 @@ function EHI:IsAchievementLocked(achievement)
     return not self:IsAchievementUnlocked(achievement) and not self._cache.UnlockablesAreDisabled
 end
 
+function EHI:IsBeardLibAchievementLocked(package_id, achievement_id, skip_check)
+    local Achievement = CustomAchievementPackage:new(package_id):Achievement(achievement_id)
+    if not Achievement then
+        return false
+    end
+    if Achievement:IsUnlocked() and not skip_check then
+        return false
+    end
+    self._cache[achievement_id] = Achievement:GetName()
+    tweak_data.hud_icons["ehi_" .. achievement_id] = { texture = Achievement:GetIcon() }
+    return true
+end
+
 function EHI:GetAchievementProgress(achievement)
     return managers.achievment:get_stat(achievement) or 0
 end
@@ -2108,10 +2171,6 @@ end
 if EHI.debug then -- For testing purposes
     function EHI:IsAchievementLocked2(achievement)
         return true
-    end
-
-    function EHI:IsAchievementUnlocked2(achievement)
-        return false
     end
 
     function EHI:DebugInstance(instance_name)

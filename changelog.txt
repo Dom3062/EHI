@@ -1,3 +1,10 @@
+r87 (08. 10. 2022):
+Added proper support for Beardlib achievements
+Added throwable regen AI buff
+Code cleanup and improvements
+Firestarter Day 1: Added achievement tracker for "Wasteful"
+The Yacht Heist: Added achievement tracker for "Blood in the Water"
+
 r86 (01. 10. 2022):
 Fixed an issue where unlocked achievements are still visible in tracker when an option to hide them is enabled
 

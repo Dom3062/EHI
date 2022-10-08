@@ -5,8 +5,32 @@ else
     EHI._hooks.ElementLaserTrigger = true
 end
 
-if not EHI:GetOption("show_laser_tracker") then
+if not (EHI:GetOption("show_laser_tracker") and Global.load_level) then
     return
+end
+
+EHILaserTracker = class(EHITracker)
+function EHILaserTracker:init(panel, params)
+    self._next_cycle_t = params.time
+    params.icons = { EHI.Icons.Lasers }
+    EHILaserTracker.super.init(self, panel, params)
+end
+
+function EHILaserTracker:update(t, dt)
+    self._time = self._time - dt
+    self._text:set_text(self:Format())
+    if self._time <= 0 then
+        self._time = self._next_cycle_t
+    end
+end
+
+function EHILaserTracker:UpdateInterval(t)
+    self._time = t
+end
+
+function EHILaserTracker:delete()
+    self._parent_class:RemoveLaser(self._id)
+    EHILaserTracker.super.delete(self)
 end
 
 local original =
@@ -27,7 +51,6 @@ function ElementLaserTrigger:add_callback(...)
         managers.ehi:AddLaserTracker({
             id = self._ehi_id,
             time = self._values.cycle_interval,
-            exclude_from_sync = true,
             class = "EHILaserTracker"
         })
     end

@@ -20,7 +20,7 @@ local triggers = {
     [102335] = { time = 60, id = "Thermite", icons = { Icon.Fire } }, -- units/pd2_dlc_vit/props/security_shutter/vit_prop_branch_security_shutter
     [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position = Vector3(150, -1958, 133) } } -- 30s delay + 26s escape zone delay
 }
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[102073] = { time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[103500] = { time = 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { icon = Icon.Escape, position = Vector3(150, -1958, 133) } }
     EHI:SetSyncTriggers(element_sync_triggers)

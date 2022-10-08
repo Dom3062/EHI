@@ -5,7 +5,7 @@ else
     EHI._hooks.PlayerInventory = true
 end
 
-if EHI:GetOption("show_buffs") and EHI:GetBuffOption("hacker") then
+if EHI:GetBuffAndOption("hacker") then
     local buff_original =
     {
         _start_jammer_effect = PlayerInventory._start_jammer_effect,
@@ -58,7 +58,6 @@ function PlayerInventory:load(data, ...)
                 id = "ECMJammer",
                 time = data._jammer_data.t,
                 icons = { { icon = "ecm_jammer", color = color } },
-                exclude_from_sync = true,
                 class = "EHIECMTracker"
             })
         end
@@ -88,7 +87,6 @@ function PlayerInventory:_start_jammer_effect(end_time, ...)
             id = "ECMJammer",
             time = jammer_time,
             icons = { { icon = "ecm_jammer", color = EHI:GetPeerColorByPeerID(peer_id) } },
-            exclude_from_sync = true,
             class = "EHIECMTracker"
         })
     end

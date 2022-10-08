@@ -7,13 +7,13 @@ local triggers = {
     [102450] = { time = 180 },
     [102451] = { time = 300 },
 
-    [101285] = { id = 100786, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-2758, -3798, -50) } },
-    [101286] = { id = 100783, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(3583, -3882, -50) } },
-    [101287] = { id = 100784, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(4023, 1027, -50) } },
-    [101284] = { id = 100785, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-3133, 1027, -50) } }
+    [101285] = { id = 100786, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100786 } },
+    [101286] = { id = 100783, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100783 } },
+    [101287] = { id = 100784, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100784 } },
+    [101284] = { id = 100785, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100785 } }
 }
 
-if EHI._cache.Client then
+if EHI:IsClient() then
     triggers[100606] = { time = 240, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[100593] = { time = 180, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[100607] = { time = 120, special_function = SF.AddTrackerIfDoesNotExist }
@@ -48,7 +48,6 @@ if tweak_data.ehi.functions.IsBranchbankJobActive() then
     EHI:ShowAchievementBagValueCounter({
         achievement = "uno_1",
         value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value,
-        exclude_from_sync = true,
         remove_after_reaching_target = false,
         counter =
         {

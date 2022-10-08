@@ -1,4 +1,4 @@
-EHIEquipmentTracker = EHIEquipmentTracker or class(EHITracker)
+EHIEquipmentTracker = class(EHITracker)
 EHIEquipmentTracker._update = false
 function EHIEquipmentTracker:init(panel, params)
     self._format = params.format or "charges"

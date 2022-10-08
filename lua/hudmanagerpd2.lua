@@ -21,7 +21,7 @@ local original =
 }
 
 local EHIWaypoints = EHI:GetOption("show_waypoints")
-local server = Network:is_server()
+local server = EHI:IsHost()
 
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
@@ -55,7 +55,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             id = "EnemyCount",
             icons = { "enemy" },
             flash = false,
-            exclude_from_sync = true,
             class = EHI.Trackers.Counter
         })
     end
@@ -75,7 +74,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                             id = "pagers_chance",
                             chance = EHI:RoundChanceNumber(base[1] or 0),
                             icons = { "pagers_used" },
-                            exclude_from_sync = true,
                             class = EHI.Trackers.Chance
                         })
                         EHI:AddOnAlarmCallback(remove_chance)
@@ -97,7 +95,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 max = max,
                 icons = { "pagers_used" },
                 set_color_bad_when_reached = true,
-                exclude_from_sync = true,
                 class = EHI.Trackers.Progress
             })
             if max == 0 then
@@ -109,7 +106,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             self.ehi:AddTracker({
                 id = "BodybagsCounter",
                 icons = { "equipment_body_bag" },
-                exclude_from_sync = true,
                 class = EHI.Trackers.Counter
             })
             local function remove()
@@ -121,7 +117,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" and not EHI:IsOneXPElementHeist(level_id) then
         self.ehi:AddTracker({
             id = "XPTotal",
-            exclude_from_sync = true,
             class = "EHITotalXPTracker"
         })
     end
@@ -135,7 +130,6 @@ if EHI:GetOption("show_captain_damage_reduction") then
             self.ehi:AddTracker({
                 id = "PhalanxDamageReduction",
                 icons = { "buff_shield" },
-                exclude_from_sync = true,
                 class = EHI.Trackers.Chance,
             })
         else
@@ -167,7 +161,7 @@ function HUDManager:destroy(...)
     original.destroy(self, ...)
 end
 
-if Network:is_client() and level_id ~= "hvh" then
+if EHI:IsClient() and level_id ~= "hvh" then
     original.feed_heist_time = HUDManager.feed_heist_time
     if EHIWaypoints then
         function HUDManager:feed_heist_time(time, ...)
@@ -200,7 +194,7 @@ function HUDManager:IncreaseTrackerWaypointProgress(id, increase)
 end
 
 if EHI:GetOption("show_assault_delay_tracker") then
-    local SyncFunction = EHI._cache.Host and "SyncAnticipationColor" or "SyncAnticipation"
+    local SyncFunction = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation"
     local anticipation_delay = 30 -- Get it from tweak_data
     local function VerifyHostageHesitationDelay()
     end
@@ -236,12 +230,20 @@ if EHI:GetOption("show_assault_delay_tracker") then
     VerifyHostageHesitationDelay()
 end
 
-function HUDManager:ShowAchievementStartedPopup(id)
-    self:custom_ingame_popup_text("ACHIEVEMENT STARTED!", managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+function HUDManager:ShowAchievementStartedPopup(id, beardlib)
+    if beardlib then
+        self:custom_ingame_popup_text("ACHIEVEMENT STARTED!", EHI._cache[id], "ehi_" .. id)
+    else
+        self:custom_ingame_popup_text("ACHIEVEMENT STARTED!", managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+    end
 end
 
-function HUDManager:ShowAchievementFailedPopup(id)
-    self:custom_ingame_popup_text("ACHIEVEMENT FAILED!", managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+function HUDManager:ShowAchievementFailedPopup(id, beardlib)
+    if beardlib then
+        self:custom_ingame_popup_text("ACHIEVEMENT FAILED!", EHI._cache[id], "ehi_" .. id)
+    else
+        self:custom_ingame_popup_text("ACHIEVEMENT FAILED!", managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+    end
 end
 
 function HUDManager:ShowTrophyStartedPopup(id)

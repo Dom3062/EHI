@@ -48,7 +48,6 @@ if EHI:ShowMissionAchievements() and EHI:IsDifficultyOrAbove(EHI.Difficulties.OV
     EHI:ShowAchievementLootCounter({
         achievement = "moon_5",
         max = 9,
-        exclude_from_sync = true,
         counter =
         {
             check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,

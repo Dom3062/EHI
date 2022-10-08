@@ -1,28 +1,10 @@
 local EHI = EHI
 local player_manager
 local DODGE_INIT = tweak_data.player.damage.DODGE_INIT or 0
-local function show(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(t / total)
-    end
-    o:set_alpha(1)
-end
-local function hide(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(1 - (t / total))
-    end
-    o:set_alpha(0)
-end
 EHIDodgeChanceTracker = class(EHIGaugeBuffTracker)
+EHIDodgeChanceTracker._refresh_time = 1 / EHI:GetBuffOption("dodge_refresh")
 function EHIDodgeChanceTracker:init(panel, params)
     EHIDodgeChanceTracker.super.init(self, panel, params)
-    self._refresh_time = 1 / EHI:GetBuffOption("dodge_refresh")
     self._time = self._refresh_time
     self._dodge = 0
 end
@@ -98,7 +80,7 @@ function EHIDodgeChanceTracker:Activate()
     end
     self._active = true
     self._panel:stop()
-    self._panel:animate(show)
+    self._panel:animate(self._show)
     self._parent_class:AddVisibleBuff(self._id)
 end
 
@@ -108,6 +90,6 @@ function EHIDodgeChanceTracker:Deactivate()
     end
     self._parent_class:RemoveVisibleBuff(self._id, self._pos)
     self._panel:stop()
-    self._panel:animate(hide)
+    self._panel:animate(self._hide)
     self._active = false
 end

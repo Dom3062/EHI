@@ -27,7 +27,7 @@ for i = 7250, 9050, 150 do
     triggers[EHI:GetInstanceElementID(100006, i)] = { time = 30, id = id, icons = { Icon.PCHack }, waypoint = { position_by_unit = EHI:GetInstanceElementID(100000, i) } }
     triggers[EHI:GetInstanceElementID(100138, i)] = { id = id, special_function = SF.RemoveTracker } -- Alarm
 end
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[hack_start].time = 90
     triggers[hack_start].random_time = 10
     triggers[hack_start].special_function = SF.UnpauseTrackerIfExists

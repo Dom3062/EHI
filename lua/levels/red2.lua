@@ -67,7 +67,6 @@ end
 
 function EHIcac10Tracker:SetCompleted(force)
     if (self._progress == self._max and not self._status) or force then
-        self._exclude_from_sync = true
         self._status = "completed"
         self._text:stop()
         self:SetTextColor(Color.green)
@@ -121,7 +120,7 @@ local green_1_decrease = { id = "green_1", special_function = SF.DecreaseProgres
 local achievements =
 {
     --[103373] = { special_function = SF.Trigger, data = { --[[1033731,]] 1033732 } },
-    --[1033731] = { max = 6, id = "green_1", class = "EHIgreen1Tracker", remove_after_reaching_target = false, exclude_from_sync = true },
+    --[1033731] = { max = 6, id = "green_1", class = "EHIgreen1Tracker", remove_after_reaching_target = false },
     [103373] = { time = 817, id = "green_3", class = TT.Achievement },
     [107072] = { id = "cac_10", special_function = SF.SetAchievementComplete },
     [101544] = { id = "cac_10", special_function = RemoveTriggerAndStartAchievementCountdown },
@@ -141,7 +140,7 @@ local other =
     [102213] = { time = 0, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = AssaultTracker }
 }
 
-if Network:is_client() then
+if EHI:IsClient() then
     other[102212] = { time = 17, id = "AssaultDelay", class = TT.AssaultDelay, condition = AssaultTracker }
 end]]
 

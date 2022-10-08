@@ -1,28 +1,10 @@
 local EHI = EHI
 local player_manager
 local detection_risk = 0
-local function show(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(t / total)
-    end
-    o:set_alpha(1)
-end
-local function hide(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(1 - (t / total))
-    end
-    o:set_alpha(0)
-end
 EHICritChanceTracker = class(EHIGaugeBuffTracker)
+EHICritChanceTracker._refresh_time = 1 / EHI:GetBuffOption("crit_refresh")
 function EHICritChanceTracker:init(panel, params)
     EHICritChanceTracker.super.init(self, panel, params)
-    self._refresh_time = 1 / EHI:GetBuffOption("crit_refresh")
     self._time = self._refresh_time
     self._crit = 0
     self._update_disabled = true
@@ -88,7 +70,7 @@ function EHICritChanceTracker:Activate()
     end
     self._active = true
     self._panel:stop()
-    self._panel:animate(show)
+    self._panel:animate(self._show)
     self._parent_class:AddVisibleBuff(self._id)
 end
 
@@ -98,6 +80,6 @@ function EHICritChanceTracker:Deactivate()
     end
     self._parent_class:RemoveVisibleBuff(self._id, self._pos)
     self._panel:stop()
-    self._panel:animate(hide)
+    self._panel:animate(self._hide)
     self._active = false
 end

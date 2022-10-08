@@ -35,7 +35,7 @@ local sync_triggers = {
     [EHI:GetInstanceElementID(100013, 4800)] = heli,
     [EHI:GetInstanceElementID(100013, 4850)] = heli
 }
-if Network:is_client() then
+if EHI:IsClient() then
     local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI:GetFreeCustomSpecialFunctionID()
     triggers[102892] = { time = 1800/30 + 120, random_time = 60, id = "HeliCage", icons = { Icon.Heli, Icon.LootDrop }, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[EHI:GetInstanceElementID(100013, 4700)] = { time = 180, random_time = 60, id = "HeliCageDelay", icons = HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning }
@@ -71,8 +71,7 @@ local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money
 local max = math.ceil(value_max / loot_value)
 EHI:ShowAchievementLootCounter({
     achievement = "pal_2",
-    max = max,
-    exclude_from_sync = true
+    max = max
 })
 
 local DisableWaypoints =

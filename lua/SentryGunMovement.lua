@@ -72,8 +72,8 @@ end
 function SentryGunMovement:on_death(...)
     original.on_death(self, ...)
     managers.ehi:RemoveTracker(self._ehi_key_reload)
-    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_reload)
     managers.ehi:RemoveTracker(self._ehi_key_repair)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_reload)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_repair)
 end
 

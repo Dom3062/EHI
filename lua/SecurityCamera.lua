@@ -33,8 +33,7 @@ function SecurityCamera:_start_tape_loop(tape_loop_t, ...)
             id = self._ehi_key,
             time = t,
             icons = { "camera_loop" },
-            exclude_from_sync = true,
-            class = "EHIWarningTracker"
+            class = EHI.Trackers.Warning
         })
     end
     if show_waypoint then

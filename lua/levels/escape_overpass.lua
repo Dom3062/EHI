@@ -12,7 +12,7 @@ local triggers = {
     [101979] = { special_function = AddToCache, data = { icon = Icon.Car } },
 }
 
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[101515] = { time = 175, icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[101532] = { time = 115, icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[102089] = { time = 60, icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }

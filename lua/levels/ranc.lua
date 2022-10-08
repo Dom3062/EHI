@@ -51,7 +51,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100056, 25650)] = FultonRemoveCatch
 }
 
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[102053].time = (ElementTimer == 102063 and 60 or 30) + triggers[102053].additional_time
     triggers[102053].random_time = 5
     triggers[102053].delay_only = true
@@ -81,7 +81,6 @@ end
 EHI:ShowAchievementLootCounter({
     achievement = "ranc_10",
     max = 5,
-    exclude_from_sync = true,
     triggers = ranc_10_triggers
 })
 if OVKorAbove then

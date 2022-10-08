@@ -127,7 +127,7 @@ local triggers =
     [300851] = MoneyTrigger -- +8000, appears to be unused
 }
 
-if EHI._cache.Client then
+if EHI:IsClient() then
     triggers[302287] = { time = (OverkillOrBelow and 115 or 120) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[300223] = { time = 60 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[302289] = { time = 30 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
@@ -137,8 +137,8 @@ end
 local achievements =
 {
     [301148] = { special_function = SF.Trigger, data = { 3011481, 3011482, 3011483 } },
-    [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = "EHIameno3Tracker", difficulty_pass = overkill, exclude_from_sync = true },
-    [3011482] = { time = 180, id = "uno_3", class = TT.Achievement, exclude_from_sync = true },
+    [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = "EHIameno3Tracker", difficulty_pass = overkill },
+    [3011482] = { time = 180, id = "uno_3", class = TT.Achievement },
     [3011483] = { special_function = SF.CustomCode, f = function()
         if managers.ehi:TrackerDoesNotExist("ameno_3") then
             return

@@ -42,7 +42,6 @@ EHI:UpdateUnits(tbl)
 EHI:ShowAchievementLootCounter({
     achievement = "bob_4",
     max = 6,
-    exclude_from_sync = true,
     counter =
     {
         check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,

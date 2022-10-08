@@ -46,7 +46,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100014, 14430)] = { time = 10 + 3, id = "PCHack3", icons = { Icon.PCHack } },
     [EHI:GetInstanceElementID(100014, 17830)] = { time = 10 + 3, id = "PCHack4", icons = { Icon.PCHack } }
 }
-if Network:is_client() then
+if EHI:IsClient() then
     -- FOR THE LOVE OF GOD
     -- OVERKILL
     -- STOP. USING. F... RANDOM DELAY, it's not funny
@@ -93,7 +93,6 @@ if very_hard_and_up then
             achievement = "pent_12",
             max = 1,
             remove_after_reaching_target = false,
-            exclude_from_sync = true,
             counter =
             {
                 check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,

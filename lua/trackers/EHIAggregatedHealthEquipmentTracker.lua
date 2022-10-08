@@ -1,7 +1,7 @@
-EHIAggregatedHealthEquipmentTracker = EHIAggregatedHealthEquipmentTracker or class(EHITracker)
+EHIAggregatedHealthEquipmentTracker = class(EHITracker)
 EHIAggregatedHealthEquipmentTracker._update = false
+EHIAggregatedHealthEquipmentTracker._dont_show_placed = { first_aid_kit = true }
 function EHIAggregatedHealthEquipmentTracker:init(panel, params)
-    self._dont_show_placed = {}
     self._amount = {}
     self._placed = {}
     self._deployables = {}
@@ -9,7 +9,6 @@ function EHIAggregatedHealthEquipmentTracker:init(panel, params)
     for _, id in pairs(params.ids) do
         self._amount[id] = 0
         self._placed[id] = 0
-        self._dont_show_placed[id] = params.dont_show_placed[id]
         self._deployables[id] = {}
     end
     EHIAggregatedHealthEquipmentTracker.super.init(self, panel, params)
@@ -87,9 +86,9 @@ end
 
 function EHIAggregatedHealthEquipmentTracker:GetIconPosition(i)
     local start = self._time_bg_box:w()
-    local gap = 5 * self._scale
-    start = start + ((32 * self._scale) * i)
-    gap = gap + ((5 * self._scale) * i)
+    local gap = self._gap_scaled
+    start = start + (self._icon_size_scaled * i)
+    gap = gap + (self._gap_scaled * i)
     return start + gap
 end
 
@@ -121,9 +120,7 @@ function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
     end
     local n = icons
     local panel_w = self._time_bg_box:w()
-    local icon_size = 32 * self._scale
-    local gap = 5 * self._scale
-    self._parent_class:ChangeTrackerWidth(self._id, panel_w + ((icon_size + gap) * n))
+    self._parent_class:ChangeTrackerWidth(self._id, panel_w + ((self._icon_size_scaled + self._gap_scaled) * n))
 end
 
 function EHIAggregatedHealthEquipmentTracker:UpdateAmount(id, unit, key, amount)

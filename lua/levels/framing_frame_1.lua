@@ -1,5 +1,5 @@
 local EHI = EHI
-function EHI:PaintingCount()
+--[[function EHI:PaintingCount()
     --[[local paintings = managers.ehi:GetUnits("units/payday2/architecture/com_int_gallery/com_int_gallery_wall_painting_bars", 1)
     local n_of_paintings = 0
     -- 3878622f45bc7dfe => Idstring("g_important") without ID and @ at the end
@@ -13,12 +13,12 @@ function EHI:PaintingCount()
             end
         end
     end]]
-    self:ShowLootCounter({ max = 9 })
+    --[[self:ShowLootCounter({ max = 9 })
     self:ShowAchievementLootCounter({
         achievement = "pink_panther",
         max = 9
     })
-end
+end]]
 
 if Global.game_settings.level_id == "gallery" then
     local SF = EHI.SpecialFunctions
@@ -54,7 +54,6 @@ EHI:ShowLootCounter({ max = 9 })
 EHI:ShowAchievementLootCounter({
     achievement = "pink_panther",
     max = 9,
-    exclude_from_sync = true,
     remove_after_reaching_target = false
 })
 EHI:AddOnAlarmCallback(function()

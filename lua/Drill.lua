@@ -1,9 +1,16 @@
+local EHI = EHI
+if EHI._hooks.Drill then
+    return
+else
+    EHI._hooks.Drill = true
+end
+
 local function SetAutorepair(unit_key, autorepair)
     managers.ehi:CallFunction(unit_key, "SetAutorepair", autorepair)
     managers.ehi_waypoint:SetWaypointColor(unit_key, tweak_data.ehi.color.DrillAutorepair, true)
 end
 
-if Network:is_server() then
+if EHI:IsHost() then
     local _f_set_autorepair = Drill.set_autorepair
     function Drill:set_autorepair(state, ...)
         _f_set_autorepair(self, state, ...)

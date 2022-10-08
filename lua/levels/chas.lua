@@ -13,7 +13,7 @@ local triggers = {
     [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { "pd2_question", Icon.Drill, Icon.Goto } },
     [101660] = { time = 120, id = "Gas", icons = { Icon.Teargas } }
 }
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[100602] = { time = 90 + 5, random_time = 20, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[102453] = { time = 60 + 12.5, random_time = 20, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(element_sync_triggers)
@@ -38,7 +38,7 @@ local DisableWaypoints =
 local achievements =
 {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
-    [1001071] = { max = 15, id = "chas_10", class = TT.AchievementProgress, remove_after_reaching_target = false, exclude_from_sync = true, difficulty_pass = ovk_and_up },
+    [1001071] = { max = 15, id = "chas_10", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = ovk_and_up },
     [1001072] = { special_function = SF.CustomCode, f = function()
         if managers.ehi:TrackerExists("chas_10") then
             EHI:AddAchievementToCounter({
@@ -64,7 +64,6 @@ if EHI:ShowMissionAchievements() and ovk_and_up then
             EHI:ShowAchievementLootCounter({
                 achievement = "chas_10",
                 max = 15,
-                exclude_from_sync = true,
                 remove_after_reaching_target = false
             })
             self:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())

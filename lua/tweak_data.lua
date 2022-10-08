@@ -423,6 +423,13 @@ tweak_data.ehi =
             class = "EHIHostageTakerMuscleRegenBuffTracker",
             option = "hostage_taker_muscle"
         },
+        crew_throwable_regen =
+        {
+            texture = tweak_data.hud_icons.skill_7.texture,
+            texture_rect = tweak_data.hud_icons.skill_7.texture_rect,
+            class = "EHIGaugeBuffTracker",
+            option = "regen_throwable_ai"
+        },
         BikerBuff =
         {
             deck = true,

@@ -45,7 +45,6 @@ EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowAchievementLootCounter({
     achievement = "bat_3",
     max = 10,
-    exclude_from_sync = true,
     remove_after_reaching_target = false,
     counter =
     {

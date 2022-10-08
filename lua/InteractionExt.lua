@@ -5,7 +5,7 @@ else
     EHI._hooks.InteractionExt = true
 end
 
-local server = Network:is_server()
+local server = EHI:IsHost()
 
 if EHI:GetOption("show_pager_callback") then
     local show_waypoint = EHI:GetWaypointOption("show_waypoints_pager")

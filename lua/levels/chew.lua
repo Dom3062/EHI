@@ -8,7 +8,7 @@ local sync_triggers =
 {
     [100558] = { id = "BileReturn", icons = Icon.HeliEscape }
 }
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[100558] = { time = 5, random_time = 5, id = "BileReturn", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(sync_triggers)
 else

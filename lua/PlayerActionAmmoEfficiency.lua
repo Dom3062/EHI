@@ -5,11 +5,7 @@ else
     EHI._hooks.PlayerActionAmmoEfficiency = true
 end
 
-if not EHI:GetOption("show_buffs") then
-    return
-end
-
-if not EHI:GetBuffOption("ammo_efficiency") then
+if not EHI:GetBuffAndOption("ammo_efficiency") then
     return
 end
 

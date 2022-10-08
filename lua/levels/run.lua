@@ -1,7 +1,27 @@
+local EHI = EHI
+local Icon = EHI.Icons
+EHIrun9Tracker = class(EHIAchievementTracker)
+function EHIrun9Tracker:update(t, dt)
+    if self._fade then
+        self._fade_time = self._fade_time - dt
+        if self._fade_time <= 0 then
+            self:delete()
+        end
+        return
+    end
+    self._time = self._time - dt
+    self._text:set_text(self:Format())
+    if self._time <= 0 then
+        self:SetCompleted()
+        self:SetStatusText("finish")
+        self:RemoveTrackerFromUpdate()
+    end
+end
+EHI.AchievementTrackers.EHIrun9Tracker = true
+
 EHIGasTracker = class(EHIProgressTracker)
 function EHIGasTracker:init(panel, params)
-    params.max = params.max or 0
-    params.icons = { "pd2_fire" }
+    params.icons = { Icon.Fire }
     EHIGasTracker.super.init(self, panel, params)
 end
 
@@ -16,8 +36,6 @@ EHIZoneTracker = class(EHIWarningTracker)
 EHIZoneTracker.update = EHIAchievementTracker.update
 EHIZoneTracker.SetCompleted = EHIAchievementTracker.SetCompleted
 
-local EHI = EHI
-local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local SetProgressMax = EHI:GetFreeCustomSpecialFunctionID()
@@ -31,9 +49,7 @@ local triggers = {
 
     [101521] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, special_function = SF.RemoveTriggerWhenExecuted },
 
-    [100144] = { special_function = SF.Trigger, data = { 1001441, 1001442 } },
-    [1001441] = { id = "GasAmount", class = "EHIGasTracker" },
-    [1001442] = { special_function = SF.RemoveTriggers, data = { 100144 } },
+    [100144] = { id = "GasAmount", class = "EHIGasTracker", trigger_times = 1 },
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins
 
     [1] = { id = "GasAmount", special_function = SF.IncreaseProgress },
@@ -74,11 +90,11 @@ end
 
 local achievements =
 {
-    [100120] = { time = 1800, id = "run_9", class = TT.AchievementDone },
+    [100120] = { time = 1800, id = "run_9", class = "EHIrun9Tracker" },
     [100144] = { id = "run_9", special_function = SF.SetAchievementFailed },
 
     [102426] = { special_function = SF.Trigger, data = { 1024261, 1024262 } },
-    [1024261] = { max = 8, id = "run_8", class = TT.AchievementProgress, exclude_from_sync = true },
+    [1024261] = { max = 8, id = "run_8", class = TT.AchievementProgress },
     [1024262] = { id = "run_10", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard) },
     [100658] = { id = "run_8", special_function = SF.IncreaseProgress },
     [100111] = { id = "run_10", special_function = SF.SetAchievementFailed },

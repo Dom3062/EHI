@@ -14,7 +14,6 @@ if EHI:GetOption("gage_tracker_panel") == 1 then
                 id = "Gage",
                 icons = { "gage" },
                 progress = EHI._cache.GagePackagesProgress or 0,
-                exclude_from_sync = true,
                 max = tweak_data.gage_assignment:get_num_assignment_units(),
                 class = EHI.Trackers.Progress
             })
@@ -23,7 +22,7 @@ if EHI:GetOption("gage_tracker_panel") == 1 then
 else
     AddGageTracker = function()
         if ShowGageTracker and EHI:AreGagePackagesSpawned() then
-            if EHI._cache.Host or not managers.ehi:GetDropin() then
+            if EHI:IsHost() or not managers.ehi:GetDropin() then
                 local max = tweak_data.gage_assignment:get_num_assignment_units()
                 managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), "0/" .. tostring(max), "EHI_Gage")
             end
@@ -159,7 +158,6 @@ local function CreateProgressTracker(id, progress, max, dont_flash, remove_after
         progress = progress,
         max = max,
         icons = icons or EHI:GetAchievementIcon(id),
-        exclude_from_sync = true,
         dont_flash = dont_flash,
         flash_times = 1,
         remove_after_reaching_target = remove_after_reaching_target,
@@ -203,11 +201,12 @@ local function ShowPopup(id, progress, max)
 end
 
 local pxp_1_checked = false
+ -- "Plague Doctor" achievement
 local function pxp_1()
     if pxp_1_checked then
         return
     end
-    if EHI:IsAchievementLocked2("pxp1_1") then -- "Plague Doctor" achievement
+    if EHI:IsAchievementLocked2("pxp1_1") then
         local grenade_data = tweak_data.achievement.grenade_achievements.pxp1_1
         local grenade_pass = table.index_of(grenade_data.grenade_types, managers.blackmarket:equipped_grenade()) ~= -1
         local enemy_kills_data = tweak_data.achievement.enemy_kill_achievements.pxp1_1
@@ -237,7 +236,6 @@ function IngameWaitingForPlayersState:at_exit(...)
         managers.ehi:AddTracker({
             id = "flat_5",
             icons = { "C_Classics_H_PanicRoom_DontYouDare" },
-            exclude_from_sync = true,
             dont_flash = true,
             class = "EHIChanceTracker"
         })
@@ -614,7 +612,6 @@ function IngameWaitingForPlayersState:at_exit(...)
             if level == "sand" and EHI:IsAchievementLocked2("sand_11") and HasWeaponTypeEquipped("snp") then -- "This Calls for a Round of Sputniks!" achievement
                 managers.ehi:AddTracker({
                     id = "sand_11",
-                    exclude_from_sync = true,
                     flash_times = 1,
                     class = "EHIsand11Tracker"
                 })

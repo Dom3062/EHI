@@ -26,7 +26,8 @@ local MissionDoorIndex =
     [3] = { w_id = 101782 },
     [4] = { w_id = 101783 }
 }
---[[local function GetNumberOfVisibleWeapons()
+EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+local function GetNumberOfVisibleWeapons()
     local world = managers.worlddefinition
     local n = 0
     for _, index in ipairs({ 101473, 102717, 102718, 102720 }) do
@@ -38,7 +39,6 @@ local MissionDoorIndex =
             end
         end
     end
-    EHI:Log("Number of weapons: " .. tostring(n))
     return n
 end
 local function GetNumberOfVisibleOtherLoot()
@@ -50,19 +50,28 @@ local function GetNumberOfVisibleOtherLoot()
             n = n + 1
         end
     end
-    EHI:Log("Number of other loot: " .. tostring(n))
     return n
 end
-EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
-EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
-    if EHI._cache.Host or managers.ehi:GetStartedFromBeginning() then
+
+local LootCounter = EHI:GetOption("show_loot_counter")
+local other =
+{
+    [107124] = { special_function = EHI.SpecialFunctions.CustomCode, f = function()
+        if not LootCounter then
+            return
+        end
         local max = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 2 or 1
         local goat = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) and 1 or 0
         local random_loot = GetNumberOfVisibleWeapons() + GetNumberOfVisibleOtherLoot()
-        EHI:ShowLootCounter({
+        EHI:ShowLootCounterNoCheck({
             max = max,
             -- Random Loot + Goat
-            additional_loot = random_loot + goat
+            additional_loot = random_loot + goat,
+            offset = true
         })
-    end
-end)]]
+    end}
+}
+EHI:ParseTriggers({
+    mission = {},
+    other = other
+})

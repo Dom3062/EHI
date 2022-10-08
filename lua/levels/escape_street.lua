@@ -6,8 +6,8 @@ local triggers = {
     [101961] = { time = 120 },
     [101962] = { time = 90 },
 
-    [102065] = { id = 102675, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position = Vector3(858, -1525, 525) }},
-    [102080] = { id = 102674, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position = Vector3(-2512, -2344, 900) }}
+    [102065] = { id = 102675, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102675 }},
+    [102080] = { id = 102674, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102674 }}
 }
 
 local achievements =
@@ -36,7 +36,6 @@ if tweak_data.ehi.functions.IsBranchbankJobActive() then
     EHI:ShowAchievementBagValueCounter({
         achievement = "uno_1",
         value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value,
-        exclude_from_sync = true,
         remove_after_reaching_target = false,
         counter =
         {

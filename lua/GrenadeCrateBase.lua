@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI._hooks.GrenadeCrateBase then
 	return
 else
@@ -22,7 +23,6 @@ else
             managers.ehi:AddTracker({
                 id = "GrenadeCases",
                 icons = { "frag_grenade" },
-                exclude_from_sync = true,
                 class = "EHIEquipmentTracker"
             })
         end

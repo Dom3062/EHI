@@ -55,7 +55,6 @@ EHI:ParseTriggers({
 EHI:ShowAchievementLootCounter({
     achievement = "berry_2",
     max = 10,
-    exclude_from_sync = true,
     show_loot_counter = true
 })
 

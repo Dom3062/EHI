@@ -21,7 +21,7 @@ function EHISecurityLockGuiTracker:SetHackTime(time)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self:FitTheText(self._time_text)
     self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-    self:SetIconX(self._time_bg_box:w() + (5 * self._scale))
+    self:SetIconX(self._time_bg_box:w() + self._gap_scaled)
 end
 
 function EHISecurityLockGuiTracker:RemoveHack()
@@ -29,11 +29,11 @@ function EHISecurityLockGuiTracker:RemoveHack()
     self:SetPanelW(new_w)
     self._time_bg_box:set_w(self._time_bg_box:w() / 2)
     self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-    self:SetIconX(self._time_bg_box:w() + (5 * self._scale))
+    self:SetIconX(self._time_bg_box:w() + self._gap_scaled)
 end
 
 function EHISecurityLockGuiTracker:GetPanelSize()
-    return self._time_bg_box:w() + (37 * self._scale) -- 32 + 5 (gap)
+    return self._time_bg_box:w() + self._icon_gap_size_scaled
 end
 
 function EHISecurityLockGuiTracker:SetTimeNoAnim(time) -- No fit text function needed, these timers just run down

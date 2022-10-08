@@ -38,7 +38,7 @@ local triggers = {
 
     [105623] = { time = 8, id = "Bus", icons = { Icon.Wait } }
 }
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[101605] = { time = 16.7 * 17, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist }
     local doesnotexists = {
         [101817] = true,
@@ -76,7 +76,6 @@ EHI:ParseTriggers({
 EHI:ShowAchievementLootCounter({
     achievement = "bigbank_3",
     max = 16,
-    exclude_from_sync = true,
     remove_after_reaching_target = false
 })
 if show_achievement then
@@ -93,8 +92,7 @@ if show_achievement then
             managers.ehi:AddTracker({
                 id = "cac_22",
                 icons = EHI:GetAchievementIcon("cac_22"),
-                class = TT.AchievementStatus,
-                exclude_from_sync = true
+                class = TT.AchievementStatus
             })
         end)
     end

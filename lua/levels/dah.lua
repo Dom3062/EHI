@@ -14,7 +14,7 @@ local triggers = {
     [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position = Vector3(-5621, -2352, 1463.66) } },
     [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position = Vector3(-5186, 1188, 1290.66) } }
 }
-if Network:is_client() then
+if EHI:IsClient() then
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
@@ -34,7 +34,6 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "dah_8",
         max = 12,
-        exclude_from_sync = true,
         counter =
         {
             check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,

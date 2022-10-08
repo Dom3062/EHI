@@ -16,7 +16,7 @@ local triggers = {
 -- Not possible to include Van location waypoint as this is selected randomly
 -- See ´LootVehicleArrived´ MissionScriptElement 100658
 
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[101307] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[101308] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[101309] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }

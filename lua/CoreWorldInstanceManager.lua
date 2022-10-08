@@ -5,7 +5,7 @@ else
     EHI._hooks.CoreWorldInstanceManager = true
 end
 EHI:Init()
-local client = EHI._cache.Client
+local client = EHI:IsClient()
 local debug_instance = false
 local debug_unit = false
 local Icon = EHI.Icons

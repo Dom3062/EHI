@@ -33,11 +33,11 @@ else
 	end
 end
 
+-- Don't use in-game function because it is inaccurate by one package
 local function GetGageXPRatio(self, picked_up, max_units)
 	if picked_up > 0 then
 		local ratio = 1 - (max_units - picked_up) / max_units
-		local final_ratio = self._tweak_data:get_experience_multiplier(ratio)
-		return final_ratio
+		return self._tweak_data:get_experience_multiplier(ratio)
 	else
 		return 1
 	end
@@ -55,7 +55,7 @@ local function UpdateTracker(self, client_sync_load)
 	end
 	ShowProgress(picked_up, max_units, client_sync_load)
 	if managers.experience.SetGagePackageBonus then
-		managers.experience:SetGagePackageBonus(GetGageXPRatio(self, picked_up, max_units)) -- Don't use in-game function because it is inaccurate by one package
+		managers.experience:SetGagePackageBonus(GetGageXPRatio(self, picked_up, max_units))
 	end
 end
 

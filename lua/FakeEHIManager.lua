@@ -290,6 +290,7 @@ local function GetIcon(icon)
 end
 
 local function CreateIcon(self, i, texture, texture_rect, color, alpha, visible, x)
+    local size = 32 * self._scale
     self["_icon" .. i] = self._panel:bitmap({
         name = "icon" .. i,
         texture = texture,
@@ -298,8 +299,8 @@ local function CreateIcon(self, i, texture, texture_rect, color, alpha, visible,
         alpha = alpha,
         visible = visible,
         x = x,
-        w = 32 * self._scale,
-        h = 32 * self._scale
+        w = size,
+        h = size
     })
 end
 

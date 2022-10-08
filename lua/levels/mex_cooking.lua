@@ -19,7 +19,7 @@ local triggers =
     [EHI:GetInstanceElementID(100056, 55850)] = { time = 15, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist },
     [EHI:GetInstanceElementID(100056, 56850)] = { time = 15, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist }
 }
-if Network:is_client() then
+if EHI:IsClient() then
     local cooking_start = { time = 30, delay = 10, id = "CookingStartDelay", icons = MethlabStart, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist }
     local meth_ready = { time = 10, delay = 5, id = "MethReady", icons = MethlabPickup, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist }
     local next_ingredient = { time = 40, delay = 5, id = "NextIngredient", icons = MethlabRestart, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist }
@@ -39,8 +39,7 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "mex2_9",
         max = 25,
-        remove_after_reaching_target = false,
-        exclude_from_sync = true
+        remove_after_reaching_target = false
     })
 end
 EHI:ShowLootCounter({ max = 50 })

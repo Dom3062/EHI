@@ -8,7 +8,6 @@ end
 local original =
 {
     init_finalize = GameSetup.init_finalize,
-    --save = GameSetup.save,
     load = GameSetup.load
 }
 
@@ -171,19 +170,22 @@ local custom_levels =
     hunter_departure = true, -- Hunter and Hunted (Departure) Day 2
     hunter_fall = true, -- Hunter and Hunted (Fall) Day 3
     constantine_harbor_lvl = true, -- Harboring a Grudge
-    lit1 = true, -- California Heat
-    lit2 = true, -- California Heat (Bonus Mission)
+    --lit1 = true, -- California Heat
+    --lit2 = true, -- California Heat (Bonus Mission)
     -- Constantine Scores
     constantine_smackdown_lvl = true, -- Smackdown
     constantine_smackdown2_lvl = true, -- Truck Hustle
     --On Display (Stealth only)
-    constantine_apartment_lvl = true -- Concrete Jungle
+    constantine_apartment_lvl = true, -- Concrete Jungle
     --[[Smugglers Den (Loud and Stealth)
-    Aurora Club (Loud and Stealth)
-    Butchers Bay (Loud only)
-    Gunrunners Clubhouse (Loud Only)
+    Aurora Club (Loud and Stealth)]]
+    constantine_butcher_lvl = true, --Butchers Bay (Loud only)
+    --[[Gunrunners Clubhouse (Loud Only)
     Precinct Raid (Loud Only)
     Kozlov Mansion]]
+    --Tonis2 = true, -- Triple Threat
+    --dwn1 = true -- Deep Inside
+    street_new = true -- Heat Street Rework (Heat Street True Classic in-game)
 }
 
 function GameSetup:init_finalize(...)
@@ -201,14 +203,8 @@ function GameSetup:init_finalize(...)
     EHI:DisableWaypointsOnInit()
 end
 
---[[function GameSetup:save(data, ...)
-    original.save(self, data, ...)
-    managers.ehi:save(data)
-end]]
-
 function GameSetup:load(data, ...)
     EHI:FinalizeUnitsClient()
-    --managers.ehi:load(data)
     original.load(self, data, ...)
     managers.ehi:LoadSync()
     EHI:SyncLoad()

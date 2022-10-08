@@ -13,7 +13,7 @@ local level_data = tweak_data.levels[level_id]
 local ai_group = level_data and level_data.group_ai_state or "besiege"
 local tweak_values = tweak_data.group_ai[ai_group].assault.delay
 EHIAssaultDelayTracker = class(EHIWarningTracker)
-EHIAssaultDelayTracker.IsClient = EHI._cache.Client
+EHIAssaultDelayTracker.IsClient = EHI:IsClient()
 function EHIAssaultDelayTracker:init(panel, params)
     params.icons = { { icon = "assaultbox", color = Control } }
     if params.compute_time then

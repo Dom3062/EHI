@@ -84,7 +84,6 @@ function TimerGui:StartTimer()
                 time = t,
                 icons = self._icons or self._ehi_icon,
                 theme = self.THEME,
-                exclude_from_sync = true,
                 class = "EHITimerTracker",
                 upgrades = self:GetUpgrades(),
                 autorepair = autorepair
@@ -136,10 +135,14 @@ end
 
 function TimerGui:HideWaypoint()
     if self._remove_vanilla_waypoint and show_waypoint then
-        managers.hud:SoftRemoveWaypoint(self._waypoint_id)
-        EHI._cache.IgnoreWaypoints[self._waypoint_id] = true
-        EHI:DisableElementWaypoint(self._waypoint_id)
+        self:_HideWaypoint(self._waypoint_id)
     end
+end
+
+function TimerGui:_HideWaypoint(waypoint)
+    managers.hud:SoftRemoveWaypoint(waypoint)
+    EHI._cache.IgnoreWaypoints[waypoint] = true
+    EHI:DisableElementWaypoint(waypoint)
 end
 
 function TimerGui:GetMissionDoorData()

@@ -3,24 +3,6 @@ local circle_shape = EHI:GetOption("buffs_shape") == 2
 local invert = EHI:GetOption("buffs_invert_progress")
 local Color = Color
 local lerp = math.lerp
-local function show(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(t / total)
-    end
-    o:set_alpha(1)
-end
-local function hide(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(1 - (t / total))
-    end
-    o:set_alpha(0)
-end
 local function set_x(o, target_x)
     local t = 0
     local total = 0.15
@@ -44,6 +26,24 @@ local function set_right(o, x)
 end
 EHIBuffTracker = class()
 EHIBuffTracker._inverted_progress = false
+EHIBuffTracker._show = function(o)
+    local t = 0
+    local total = 0.15
+    while t < total do
+        t = t + coroutine.yield()
+        o:set_alpha(t / total)
+    end
+    o:set_alpha(1)
+end
+EHIBuffTracker._hide = function(o)
+    local t = 0
+    local total = 0.15
+    while t < total do
+        t = t + coroutine.yield()
+        o:set_alpha(1 - (t / total))
+    end
+    o:set_alpha(0)
+end
 function EHIBuffTracker:init(panel, params)
     local w_half = params.w / 2
     local color = params.icon_color or params.good and Color.white or Color.red
@@ -245,7 +245,7 @@ function EHIBuffTracker:Activate(t, pos)
     self._time_set = t
     self._parent_class:AddBuffToUpdate(self._id, self)
     self._panel:stop()
-    self._panel:animate(show)
+    self._panel:animate(self._show)
     self._pos = pos
 end
 
@@ -268,7 +268,7 @@ function EHIBuffTracker:Deactivate()
     self._parent_class:RemoveBuffFromUpdate(self._id)
     self._parent_class:RemoveVisibleBuff(self._id, self._pos)
     self._panel:stop()
-    self._panel:animate(hide)
+    self._panel:animate(self._hide)
     self._active = false
 end
 

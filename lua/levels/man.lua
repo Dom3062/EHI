@@ -51,7 +51,6 @@ EHI:ParseTriggers({
 EHI:ShowAchievementLootCounter({
     achievement = "man_4",
     max = 10,
-    exclude_from_sync = true,
     triggers =
     {
         [103989] = { special_function = SF.IncreaseProgress }

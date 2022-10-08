@@ -40,7 +40,7 @@ else
     end
 end
 
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[100426] = { id = "HeliDropDrill", icons = Icon.HeliDropDrill, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 44, 54 } }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
@@ -54,6 +54,9 @@ local other =
         if not LootCounter then
             return
         end
+        --[[if EHI:IsHost() then
+        else
+        end]]
     end}
 }
 if LootCounter then

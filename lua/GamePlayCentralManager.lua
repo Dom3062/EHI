@@ -20,3 +20,7 @@ end
 function GamePlayCentralManager:GetMissionDisabledUnit(id)
     return self._mission_disabled_units[id]
 end
+
+function GamePlayCentralManager:GetMissionEnabledUnit(id)
+    return not self:GetMissionDisabledUnit(id)
+end

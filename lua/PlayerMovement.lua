@@ -6,11 +6,7 @@ else
     EHI._hooks.PlayerMovement = true
 end
 
-if not EHI:GetOption("show_buffs") then
-    return
-end
-
-if not EHI:GetBuffOption("inspire_basic") then
+if not EHI:GetBuffAndOption("inspire_basic") then
     return
 end
 

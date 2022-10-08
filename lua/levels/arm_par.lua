@@ -22,7 +22,7 @@ if EHI:GetOption("show_escape_chance") then
     end)
 end
 
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[102379] = { time = 30 + van_delay, special_function = SF.AddTrackerIfDoesNotExist }
 end
 

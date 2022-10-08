@@ -23,7 +23,6 @@ else
             managers.ehi:AddTracker({
                 id = "BodyBags",
                 icons = { "bodybags_bag" },
-                exclude_from_sync = true,
                 class = "EHIEquipmentTracker"
             })
         end

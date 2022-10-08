@@ -14,7 +14,7 @@ for _, index in ipairs({ 5300, 6300, 7300 }) do
     triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists }
     triggers[EHI:GetInstanceElementID(100026, index)] = { id = "ArmoryHack", special_function = SF.PauseTracker }
 end
-if EHI._cache.Client then
+if EHI:IsClient() then
     triggers[100233] = { time = 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist }
 end
 local DisableWaypoints =
@@ -33,13 +33,11 @@ EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowAchievementLootCounter({ -- Loot
     achievement = "pex_10",
     max = 6,
-    exclude_from_sync = true,
     show_loot_counter = true
 })
 EHI:ShowAchievementLootCounter({ -- Medals
     achievement = "pex_11",
     max = 7,
-    exclude_from_sync = true,
     triggers =
     {
         [103735] = { special_function = SF.IncreaseProgress }

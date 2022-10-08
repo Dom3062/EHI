@@ -11,8 +11,7 @@ end
 
 local original =
 {
-    init = GageAssignmentBase.init,
-    show_pickup_msg = GageAssignmentBase.show_pickup_msg
+    init = GageAssignmentBase.init
 }
 
 function GageAssignmentBase:init(unit, ...)

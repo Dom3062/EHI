@@ -23,7 +23,6 @@ else
     EHI:ShowAchievementBagValueCounter({
         achievement = "uno_1",
         value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value,
-        exclude_from_sync = true,
         remove_after_reaching_target = false,
         counter =
         {
@@ -110,7 +109,7 @@ EHI:AddLoadSyncFunction(function(self)
     end
 end)
 EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
-    if EHI._cache.Host or managers.ehi:GetStartedFromBeginning() then
+    if EHI:IsHost() or managers.ehi:GetStartedFromBeginning() then
         local function fail(...)
             managers.ehi:SetAchievementFailed("voff_1")
         end

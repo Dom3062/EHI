@@ -24,7 +24,6 @@ else
                 id = "AmmoBags",
                 format = "percent",
                 icons = { "ammo_bag" },
-                exclude_from_sync = true,
                 class = "EHIEquipmentTracker"
             })
         end

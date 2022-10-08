@@ -1,14 +1,5 @@
 local Color = Color
 local lerp = math.lerp
-local function show(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(t / total)
-    end
-    o:set_alpha(1)
-end
 local function anim(o, ratio)
     local r = o:color().red
     over(0.25, function(p, t)
@@ -28,7 +19,7 @@ function EHIGaugeBuffTracker:Activate(ratio, pos)
     self._active = true
     self:SetRatio(ratio)
     self._panel:stop()
-    self._panel:animate(show)
+    self._panel:animate(self._show)
     self._pos = pos
 end
 
@@ -36,7 +27,7 @@ function EHIGaugeBuffTracker:Activate2(ratio, custom_value, pos)
     self._active = true
     self:SetRatio2(ratio, custom_value)
     self._panel:stop()
-    self._panel:animate(show)
+    self._panel:animate(self._show)
     self._pos = pos
 end
 

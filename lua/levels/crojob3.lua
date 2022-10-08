@@ -90,7 +90,6 @@ local other =
             triggers = LootTrigger,
             hook_triggers = true
         })
-        --EHI:HookElements(LootTrigger)
     end},
     [101018] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 }, condition = EHI:GetOption("show_assault_delay_tracker") }
 }
@@ -135,7 +134,7 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:RegisterCustomSpecialFunction(cow_4, function(id, trigger, element, enabled)
-    if enabled then
+    if enabled and EHI:IsAchievementLocked(trigger.id) then
         EHI:CheckCondition(id)
     end
 end)

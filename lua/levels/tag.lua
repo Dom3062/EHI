@@ -34,8 +34,8 @@ end
 local achievements =
 {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
-    [1001071] = { id = "tag_9", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, exclude_from_sync = true },
-    [1001072] = { id = "tag_10", status = "mark", class = TT.AchievementStatus, exclude_from_sync = true },
+    [1001071] = { id = "tag_9", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
+    [1001072] = { id = "tag_10", status = "mark", class = TT.AchievementStatus },
 
     [100609] = { id = "tag_9", special_function = SF.SetAchievementComplete },
     [100617] = { id = "tag_9", special_function = SF.SetAchievementFailed }

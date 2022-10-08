@@ -45,6 +45,17 @@ local function panel_w(o, target_w)
         o:set_w(math_lerp(from_w, target_w, lerp))
     end
 end
+local function icon_x(o, target_x)
+    local TOTAL_T = 0.18
+    local from_x = o:x()
+    local t = (1 - math_abs(from_x - target_x) / math_abs(from_x - target_x)) * TOTAL_T
+    while TOTAL_T > t do
+        local dt = coroutine.yield()
+        t = math_min(t + dt, TOTAL_T)
+        local lerp = t / TOTAL_T
+        o:set_x(math_lerp(from_x, target_x, lerp))
+    end
+end
 local icons = tweak_data.ehi.icons
 
 local function GetIcon(icon)
@@ -63,8 +74,8 @@ local function CreateIcon(self, i, texture, texture_rect, color, alpha, visible,
         alpha = alpha,
         visible = visible,
         x = x,
-        w = 32 * self._scale,
-        h = 32 * self._scale
+        w = self._icon_size_scaled,
+        h = self._icon_size_scaled
     })
 end
 
@@ -74,18 +85,23 @@ local corner_visibility = EHI:GetOption("show_tracker_corners")
 EHITracker = class()
 EHITracker._update = true
 EHITracker._tracker_type = "accurate"
+EHITracker._gap = 5
+EHITracker._icon_size = 32
+EHITracker._scale = _G.IS_VR and EHI:GetOption("vr_scale") or EHI:GetOption("scale")
+EHITracker._text_scale = EHI:GetOption("text_scale")
+EHITracker._icon_gap_size_scaled = (EHITracker._icon_size + EHITracker._gap) * EHITracker._scale
+-- 32 * self._scale
+EHITracker._icon_size_scaled = EHITracker._icon_size * EHITracker._scale
+-- 5 * self._scale
+EHITracker._gap_scaled = EHITracker._gap * EHITracker._scale
 function EHITracker:init(panel, params)
     self._id = params.id
-    self._exclude_from_sync = params.exclude_from_sync
     self._icons = params.icons
-    self._class = params.class
-    self._scale = params.scale
-    self._text_scale = params.text_scale
     local number_of_icons = 0
     local gap = 0
     if type(self._icons) == "table" then
         number_of_icons = #self._icons
-        gap = 5 * number_of_icons
+        gap = self._gap * number_of_icons
     end
     self._parent_panel = panel
     self._time = params.time or 0
@@ -94,8 +110,8 @@ function EHITracker:init(panel, params)
         name = params.id,
         x = params.x,
         y = params.y,
-        w = (64 + gap + (32 * number_of_icons)) * self._scale,
-        h = 32 * self._scale,
+        w = (64 + gap + (self._icon_size * number_of_icons)) * self._scale,
+        h = self._icon_size_scaled,
         alpha = 0,
         visible = true
     })
@@ -103,7 +119,7 @@ function EHITracker:init(panel, params)
         x = 0,
         y = 0,
         w = 64 * self._scale,
-        h = 32 * self._scale
+        h = self._icon_size_scaled
     }, {
         blend_mode = "add"
     })
@@ -118,7 +134,7 @@ function EHITracker:init(panel, params)
         align = "center",
         vertical = "center",
         w = self._time_bg_box:w(),
-        h = self._time_bg_box:h(),
+        h = self._icon_size_scaled,
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
         color = params.text_color or Color.white
@@ -142,8 +158,8 @@ function EHITracker:SetPanelVisible()
 end
 
 if EHI:GetOption("show_one_icon") then
-    EHITracker.CreateIcons = function(self)
-        local icon_pos = self._time_bg_box:w() + (5 * self._scale)
+    function EHITracker:CreateIcons()
+        local icon_pos = self._time_bg_box:w() + self._gap_scaled
         local first_icon = self._icons[1]
         if type(first_icon) == "string" then
             local texture, rect = GetIcon(first_icon)
@@ -157,9 +173,9 @@ if EHI:GetOption("show_one_icon") then
         end
     end
 else
-    EHITracker.CreateIcons = function(self)
+    function EHITracker:CreateIcons()
         local start = self._time_bg_box:w()
-        local icon_gap = 5 * self._scale
+        local icon_gap = self._gap_scaled
         for i, v in ipairs(self._icons) do
             local s_i = tostring(i)
             if type(v) == "string" then
@@ -172,8 +188,8 @@ else
                     v.visible ~= false,
                     start + icon_gap)
             end
-            start = start + (32 * self._scale)
-            icon_gap = icon_gap + (5 * self._scale)
+            start = start + self._icon_size_scaled
+            icon_gap = icon_gap + self._gap_scaled
         end
     end
 end
@@ -210,17 +226,7 @@ function EHITracker:SetIconX(target_x)
         self._icon1:stop(self._anim_icon1_x)
         self._anim_icon1_x = nil
     end
-    self._anim_icon1_x = self._icon1:animate(function(o)
-        local TOTAL_T = 0.18
-        local from_x = o:x()
-        local t = (1 - math_abs(from_x - target_x) / math_abs(from_x - target_x)) * TOTAL_T
-        while TOTAL_T > t do
-            local dt = coroutine.yield()
-            t = math_min(t + dt, TOTAL_T)
-            local lerp = t / TOTAL_T
-            o:set_x(math_lerp(from_x, target_x, lerp))
-        end
-    end)
+    self._anim_icon1_x = self._icon1:animate(icon_x, target_x)
 end
 
 do

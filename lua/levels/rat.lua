@@ -58,7 +58,7 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
 elseif EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
     triggers[102197] = { time = 120 + heli_delay_full, id = "HeliMeth", icons = heli_icon }
 end
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[100724] = { time = 20, random_time = 5, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
@@ -95,7 +95,6 @@ EHI:ParseTriggers({
 if EHI:ShowMissionAchievements() and ovk_and_up then
     EHI:ShowAchievementLootCounter({
         achievement = "halloween_2",
-        max = 7,
-        exclude_from_sync = true
+        max = 7
     })
 end

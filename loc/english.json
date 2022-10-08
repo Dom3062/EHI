@@ -459,5 +459,6 @@
     "ehi_buffs_other_crit_refresh_desc" : "Sets how often 'Crit Chance' gauge should be updated per second",
     "ehi_buffs_other_crit_persistent" : "Persistent Crit Chance",
     "ehi_buffs_other_crit_persistent_desc" : "'Crit Chance' gauge will stay on your screen when your crit is lower than 0%",
-    "ehi_buffs_other_inspire_ai" : "Inspire (AI)"
+    "ehi_buffs_other_inspire_ai" : "Inspire (AI)",
+    "ehi_buffs_other_regen_throwable_ai" : "Regen Throwable (AI)"
 }

@@ -8,38 +8,6 @@
             <post :hook_id="criminalsmanager" :script_path="CriminalsManager.lua" />
             <post :hook_id="group_ai_states/groupaistatebase" :script_path="GroupAIStateBase.lua" />
             <post :hook_id="group_ai_states/groupaistatebesiege" :script_path="GroupAIStateBesiege.lua" />
-
-            <group :script_path="trackers/">
-                <post :hook_id="hudmanagerpd2" :script_path="EHITracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIWarningTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIPausableTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHICiviliansKilledTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHITimerTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIMoneyCounterTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIXPTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIChanceTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIProgressTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIEquipmentTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIAggregatedEquipmentTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIAggregatedHealthEquipmentTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIPagerTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIVaultTemperatureTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHICountTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHILaserTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIECMTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHISecurityLockGuiTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIMinionTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIAssaultDelayTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHILootTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHINeededValueTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIAchievementTrackers.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHITrophyTrackers.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIDailyTrackers.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIInaccurateTrackers.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="StaticTrackers.lua"/>
-
-                <post :hook_id="hudmanagerpd2" :script_path="EHIPiggyBankMutatorTracker.lua"/>
-            </group>
             <group :script_path="buffs/">
                 <post :hook_id="hudmanagerpd2" :script_path="EHIBuffTracker.lua"/>
                 <post :hook_id="hudmanagerpd2" :script_path="EHIGaugeBuffTracker.lua"/>
@@ -120,6 +88,7 @@
         <!--<post hook_id="lib/units/equipment/sentry_gun/sentrygundamage" :script_path="SentryGunDamage.lua" />-->
         <post hook_id="lib/units/equipment/sentry_gun/sentrygunmovement" :script_path="SentryGunMovement.lua" />
         <post hook_id="lib/units/pickups/gageassignmentbase" :script_path="GageAssignmentBase.lua" />
+        <post hook_id="lib/units/player_team/teamaibase" :script_path="TeamAIBase.lua" />
         <post hook_id="lib/units/props/drill" :script_path="Drill.lua" />
         <post hook_id="lib/units/props/digitalgui" :script_path="DigitalGui.lua" />
         <post hook_id="lib/units/props/missiondoor" :script_path="MissionDoor.lua" />

@@ -66,3 +66,25 @@ EHI:AddCallback("LocalizationLoaded", function(l)
     end
     to_localize = nil
 end)
+
+if EHI:GetUnlockableOption("show_achievement_failed_popup") then
+    EHI:SetNotificationAlert("ACHIEVEMENT FAILED!", "ehi_popup_achievement_failed")
+end
+if EHI:GetUnlockableOption("show_achievement_started_popup") then
+    EHI:SetNotificationAlert("ACHIEVEMENT STARTED!", "ehi_popup_achievement_started", Color.green)
+end
+if EHI:GetOption("show_all_loot_secured_popup") then
+    EHI:SetNotificationAlert("LOOT COUNTER", "ehi_popup_loot_counter", Color.green)
+end
+if EHI:GetUnlockableOption("show_trophy_failed_popup") then
+    EHI:SetNotificationAlert("TROPHY FAILED!", "ehi_popup_trophy_failed")
+end
+if EHI:GetUnlockableOption("show_trophy_started_popup") then
+    EHI:SetNotificationAlert("TROPHY STARTED!", "ehi_popup_trophy_started", Color.green)
+end
+if EHI:GetUnlockableOption("show_daily_failed_popup") then
+    EHI:SetNotificationAlert("DAILY SIDE JOB FAILED!", "ehi_popup_daily_failed")
+end
+if EHI:GetUnlockableOption("show_daily_started_popup") then
+    EHI:SetNotificationAlert("DAILY SIDE JOB STARTED!", "ehi_popup_daily_started", Color.green)
+end

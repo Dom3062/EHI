@@ -14,7 +14,7 @@ local triggers = {
     [100939] = { time = 5, id = "C4Vault", icons = { Icon.C4 } },
     [EHI:GetInstanceElementID(100020, 6700)] = { time = 5, id = "C4Escape", icons = { Icon.C4 } }
 }
-if Network:is_client() then
+if EHI:IsClient() then
     triggers[101366] = { time = 5 + 40, random_time = 10, id = "VaultTeargas", icons = { Icon.Teargas } }
     EHI:SetSyncTriggers(element_sync_triggers)
     local LiquidNitrogen = EHI:GetFreeCustomSpecialFunctionID()
@@ -46,7 +46,6 @@ EHI:ParseTriggers({ mission = triggers })
 EHI:ShowAchievementLootCounter({
     achievement = "rvd_11",
     max = 19,
-    exclude_from_sync = true,
     counter =
     {
         check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
