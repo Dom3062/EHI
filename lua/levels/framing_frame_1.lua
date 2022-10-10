@@ -1,4 +1,5 @@
 local EHI = EHI
+local SF = EHI.SpecialFunctions
 --[[function EHI:PaintingCount()
     --[[local paintings = managers.ehi:GetUnits("units/payday2/architecture/com_int_gallery/com_int_gallery_wall_painting_bars", 1)
     local n_of_paintings = 0
@@ -21,7 +22,6 @@ local EHI = EHI
 end]]
 
 if Global.game_settings.level_id == "gallery" then
-    local SF = EHI.SpecialFunctions
     local TT = EHI.Trackers
     local achievements = {
         [100789] = { id = "cac_19", class = TT.AchievementStatus }
@@ -50,6 +50,17 @@ if Global.game_settings.level_id == "gallery" then
     })
 end
 
+local other =
+{
+    [102437] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }, -- +5%
+    [103884] = { id = "EscapeChance", special_function = SF.SetChanceFromElement } -- 100 %
+}
+
+EHI:ParseTriggers({
+    mission = {},
+    other = other
+})
+
 EHI:ShowLootCounter({ max = 9 })
 EHI:ShowAchievementLootCounter({
     achievement = "pink_panther",
@@ -74,3 +85,8 @@ local MissionDoorIndex =
     [3] = { w_id = 103202 }
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+if EHI:GetOption("show_escape_chance") then
+    EHI:AddOnAlarmCallback(function(dropin)
+        managers.ehi:AddEscapeChanceTracker(dropin, 25)
+    end)
+end

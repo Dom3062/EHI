@@ -1,3 +1,7 @@
+r88 (10. 10. 2022):
+Fixed a very rare crash during mission load
+Murky Station: Added tracker for achievements "The Pacifist" and "Looting in the Dark"
+
 r87 (08. 10. 2022):
 Added proper support for Beardlib achievements
 Added throwable regen AI buff

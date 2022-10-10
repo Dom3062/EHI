@@ -153,7 +153,7 @@
     "ehi_show_daily_failed_popup_desc" : "每日挑战失败时将弹出主题为红色的窗口",
 
     "ehi_show_daily_started_popup" : "显示 '开始每日挑战' 弹出窗口",
-    "ehi_show_daily_started_popup_desc" : "开始每日跳槽时将弹出主题为绿色的窗口",
+    "ehi_show_daily_started_popup_desc" : "开始每日挑战时将弹出主题为绿色的窗口",
     
     "ehi_show_gained_xp" : "显示获得的经验",
     "ehi_show_gained_xp_desc" : "显示当前获得的经验\n此追踪器将在罪无止境模式下禁用",
@@ -459,5 +459,6 @@
     "ehi_buffs_other_crit_refresh_desc" : "设置每秒内刷新多少次暴击概率显示",
     "ehi_buffs_other_crit_persistent" : "常驻暴击概率显示",
     "ehi_buffs_other_crit_persistent_desc" : "即使你的暴击几率低于 0% 依旧会显示当前闪避几率",
-    "ehi_buffs_other_inspire_ai" : "鼓舞士气 (AI小队)"
+    "ehi_buffs_other_inspire_ai" : "鼓舞士气 (AI小队)",
+    "ehi_buffs_other_regen_throwable_ai" : "有备无患 (AI小队)"
 }

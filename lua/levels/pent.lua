@@ -87,6 +87,7 @@ end
 
 EHI:ParseTriggers({ mission = triggers })
 EHI:DisableWaypoints(DisableWaypoints)
+local loot_triggers = {}
 if very_hard_and_up then
     EHI:AddOnAlarmCallback(function()
         EHI:ShowAchievementLootCounter({
@@ -100,7 +101,15 @@ if very_hard_and_up then
             }
         })
     end)
+    loot_triggers[103616] = { special_function = SF.IncreaseProgressMax }
+    loot_triggers[103617] = { special_function = SF.IncreaseProgressMax }
 end
+
+local max = 8
+EHI:ShowLootCounter({
+    max = max,
+    triggers = loot_triggers
+})
 
 local ShowAchievements = EHI:ShowMissionAchievements()
 local function pent_10(instance, unit_id, unit_data, unit)

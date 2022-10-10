@@ -1440,7 +1440,6 @@ function EHI:Trigger(id, element, enabled)
         if trigger.trigger_times and trigger.trigger_times > 0 then
             trigger.trigger_times = trigger.trigger_times - 1
             if trigger.trigger_times == 0 then
-                self:Log("Hook " .. tostring(id) .. " disabled as it reached maximum amount of times it can run")
                 self:UnhookTrigger(id)
             end
         end

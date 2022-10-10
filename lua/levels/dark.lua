@@ -36,9 +36,8 @@ function EHIdark5Tracker:SetCompleted(force)
 end
 
 local EHI = EHI
+local Icon = EHI.Icons
 EHI.AchievementTrackers.EHIdark5Tracker = true
-local AddBodyBag = EHI:GetFreeCustomSpecialFunctionID()
-local RemoveBodyBag = EHI:GetFreeCustomSpecialFunctionID()
 
 local start_index =
 {
@@ -51,12 +50,11 @@ for _, index in pairs(start_index) do
         managers.ehi:AddTracker({
             id = tostring(unit_index),
             time = 10,
-            icons = { "pd2_fire" }
+            icons = { Icon.Fire }
         })
     end)
 end
 
-local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {
@@ -67,10 +65,26 @@ local triggers = {
 
 local achievements =
 {
-    [100296] = { special_function = SF.Trigger, data = { 1002961, 1002962 } },
+    [100296] = { special_function = SF.Trigger, data = { 1002961, 1002962, 1002963, 1002964, 1002965 } },
     [1002961] = { time = 420, id = "dark_2", class = TT.Achievement },
-    [1002962] = { max = 4, id = "dark_5", remove_after_reaching_target = false, class = "EHIdark5Tracker" },
+    [1002962] = { id = "dark_3", class = TT.AchievementStatus },
+    [1002963] = { max = 4, id = "dark_5", class = "EHIdark5Tracker", remove_after_reaching_target = false },
+    [1002964] = { max = 16, id = "voff_3", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
+    [1002965] = { special_function = SF.CustomCode, f = function()
+        if managers.ehi:TrackerDoesNotExist("voff_3") then
+            return
+        end
+        EHI:AddAchievementToCounter({ achievement = "voff_3" })
+    end },
+
+    [100470] = { special_function = SF.Trigger, data = { 1004701, 1004702 } },
+    [1004701] = { id = "dark_3", special_function = SF.SetAchievementFailed },
+    [1004702] = { id = "voff_3", special_function = SF.SetAchievementFailed },
+
+    [100290] = { id = "dark_2", special_function = SF.SetAchievementComplete }
 }
+local AddBodyBag = EHI:GetFreeCustomSpecialFunctionID()
+local RemoveBodyBag = EHI:GetFreeCustomSpecialFunctionID()
 for i = 12850, 13600, 250 do
     local inc = EHI:GetInstanceElementID(100011, i)
     achievements[inc] = { id = "dark_5", special_function = AddBodyBag, element = i }

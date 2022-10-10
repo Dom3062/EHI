@@ -1,4 +1,20 @@
 EHIHeliTracker = class(EHICountTracker)
+function EHIHeliTracker:OverridePanel(params)
+    self._time_text = self._time_bg_box:text({
+        name = "time_text",
+        text = EHIHeliTracker.super.super.Format(self),
+        align = "center",
+        vertical = "center",
+        w = self._time_bg_box:w(),
+        h = self._time_bg_box:h(),
+        font = tweak_data.menu.pd2_large_font,
+        font_size = self._panel:h() * self._text_scale,
+        color = params.text_color or Color.white
+    })
+    self._time_text:set_left(self._time_bg_box:right())
+    self._panel_override_w = self._time_bg_box:w() + self._icon_size_scaled
+end
+
 function EHIHeliTracker:update(t, dt)
     self._time = self._time - dt
     self._time_text:set_text(EHIHeliTracker.super.super.Format(self))
@@ -24,22 +40,6 @@ function EHIHeliTracker:AnimateWarning()
             end
         end
     end)
-end
-
-function EHIHeliTracker:OverridePanel(params)
-    self._time_text = self._time_bg_box:text({
-        name = "time_text",
-        text = EHIHeliTracker.super.super.Format(self),
-        align = "center",
-        vertical = "center",
-        w = self._time_bg_box:w(),
-        h = self._time_bg_box:h(),
-        font = tweak_data.menu.pd2_large_font,
-        font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
-    })
-    self._time_text:set_left(self._time_bg_box:right())
-    self._panel_override_w = self._time_bg_box:w() + self._icon_size_scaled
 end
 
 function EHIHeliTracker:EnableUpdate()

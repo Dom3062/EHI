@@ -17,18 +17,11 @@ local achievements =
     [101379] = { id = "frappucino_to_go_please", special_function = SF.SetAchievementComplete }
 }
 
-local function BagsCheck()
-    local max = managers.ehi:CountLootbagsOnTheGround()
-    if max == 0 then
-        return
-    end
-    EHI:ShowLootCounter({ max = max })
-end
 local other =
 {
-    [100968] = { special_function = SF.CustomCode, f = BagsCheck },
-    [100969] = { special_function = SF.CustomCode, f = BagsCheck },
-    [100970] = { special_function = SF.CustomCode, f = BagsCheck }
+    [100968] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
+    [100969] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
+    [100970] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround }
 }
 
 EHI:ParseTriggers({

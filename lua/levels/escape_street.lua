@@ -17,17 +17,10 @@ local achievements =
     [101874] = { id = "bullet_dodger", special_function = SF.SetAchievementComplete },
 }
 
-local function BagsCheck()
-    local max = managers.ehi:CountLootbagsOnTheGround()
-    if max == 0 then
-        return
-    end
-    EHI:ShowLootCounter({ max = max })
-end
 local other =
 {
-    [102031] = { special_function = SF.CustomCode, f = BagsCheck },
-    [102030] = { special_function = SF.CustomCode, f = BagsCheck }
+    [102031] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
+    [102030] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround }
 }
 
 EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.HeliEscape)

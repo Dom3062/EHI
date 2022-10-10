@@ -61,7 +61,7 @@ function EHI:SetNotificationAlert(ehi_title, localization, c)
 end
 
 EHI:AddCallback("LocalizationLoaded", function(l)
-    for title, loc in pairs(to_localize) do
+    for title, loc in pairs(to_localize or {}) do
         titles[title] = { localization = l:text(loc.localization), color = loc.color }
     end
     to_localize = nil

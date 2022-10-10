@@ -19,12 +19,13 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local van_anim_delay = 320 / 30
 local assault_delay = 0
-local triggers = { -- Time before escape vehicle arrives
+local triggers = {
     [101890] = { special_function = SF.CustomCodeDelayed, t = 4, f = function()
         if LootSafeIsVisible() then
             EHI:ShowLootCounter({ max = 1 })
         end
     end},
+    -- Time before escape vehicle arrives
     [102492] = { time = 40 + van_anim_delay },
     [102493] = { time = 30 + van_anim_delay },
     [102494] = { time = 20 + van_anim_delay },

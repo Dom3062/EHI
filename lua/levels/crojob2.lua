@@ -2,10 +2,10 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local start_index = { 1100, 1400, 1700, 2000, 2300, 2600, 2900, 3500, 3800, 4100, 4400, 4700 }
+local MethlabIndex = { 1100, 1400, 1700, 2000, 2300, 2600, 2900, 3500, 3800, 4100, 4400, 4700 }
 local interact = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop } }
 local element_sync_triggers = {}
-for _, index in pairs(start_index) do
+for _, index in ipairs(MethlabIndex) do
     for i = 100169, 100172, 1 do
         local element_id = EHI:GetInstanceElementID(i, index)
         element_sync_triggers[element_id] = EHI:DeepClone(interact)
@@ -23,13 +23,13 @@ local triggers = {
     [106294] = { time = 1200/30, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.ExecuteIfElementIsEnabled },
     [100339] = { time = 0.2 + 450/30, id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.ExecuteIfElementIsEnabled }
 }
-for _, index in pairs(start_index) do
+for _, index in ipairs(MethlabIndex) do
     triggers[EHI:GetInstanceElementID(100118, index)] = { time = 1, id = "MethlabRestart", icons = { Icon.Methlab, Icon.Loop } }
     triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, Icon.Interact } }
 end
 if EHI:IsClient() then
     local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
-    for _, index in pairs(start_index) do
+    for _, index in ipairs(MethlabIndex) do
         triggers[EHI:GetInstanceElementID(100149, index)] = random_time
         triggers[EHI:GetInstanceElementID(100150, index)] = random_time
         triggers[EHI:GetInstanceElementID(100184, index)] = { id = "MethlabInteract", special_function = SF.RemoveTracker }

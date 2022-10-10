@@ -26,13 +26,7 @@ local achievements =
 
 local other =
 {
-    [102414] = { special_function = SF.CustomCode, f = function()
-        local max = managers.ehi:CountLootbagsOnTheGround()
-        if max == 0 then
-            return
-        end
-        EHI:ShowLootCounter({ max = max })
-    end }
+    [102414] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround }
 }
 
 EHI:ParseTriggers({

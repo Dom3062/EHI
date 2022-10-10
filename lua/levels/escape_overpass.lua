@@ -25,23 +25,16 @@ end
 
 local achievements =
 {
-    [101148] = { id = "you_shall_not_pass", class = TT.AchievementStatus },
+    [101148] = { status = "defend", id = "you_shall_not_pass", class = TT.AchievementStatus },
     [102471] = { id = "you_shall_not_pass", special_function = SF.SetAchievementFailed },
     [100426] = { id = "you_shall_not_pass", special_function = SF.SetAchievementComplete }
 }
 
-local function BagsCheck()
-    local max = managers.ehi:CountLootbagsOnTheGround()
-    if max == 0 then
-        return
-    end
-    EHI:ShowLootCounter({ max = max })
-end
 local other =
 {
-    [100196] = { special_function = SF.CustomCode, f = BagsCheck },
-    [102007] = { special_function = SF.CustomCode, f = BagsCheck },
-    [102005] = { special_function = SF.CustomCode, f = BagsCheck }
+    [100196] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
+    [102007] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
+    [102005] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround }
 }
 
 EHI:ParseTriggers({

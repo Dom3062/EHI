@@ -23,23 +23,16 @@ end
 
 local achievements =
 {
-    [102444] = { id = "king_of_the_hill", class = TT.AchievementStatus },
+    [102444] = { status = "defend", id = "king_of_the_hill", class = TT.AchievementStatus },
     [101297] = { id = "king_of_the_hill", special_function = SF.SetAchievementFailed },
     [101343] = { id = "king_of_the_hill", special_function = SF.SetAchievementComplete },
 }
 
-local function BagsCheck()
-    local max = managers.ehi:CountLootbagsOnTheGround()
-    if max == 0 then
-        return
-    end
-    EHI:ShowLootCounter({ max = max })
-end
 local other =
 {
-    [102394] = { special_function = SF.CustomCode, f = BagsCheck },
-    [102393] = { special_function = SF.CustomCode, f = BagsCheck },
-    [102368] = { special_function = SF.CustomCode, f = BagsCheck }
+    [102394] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
+    [102393] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
+    [102368] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround }
 }
 
 EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.CarEscape)

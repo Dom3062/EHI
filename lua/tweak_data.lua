@@ -507,6 +507,13 @@ tweak_data.ehi =
                 end
             end
             return false
+        end,
+        ShowNumberOfLootbagsOnTheGround = function()
+            local max = managers.ehi:CountLootbagsOnTheGround()
+            if max == 0 then
+                return
+            end
+            EHI:ShowLootCounter({ max = max })
         end
     }
 }
