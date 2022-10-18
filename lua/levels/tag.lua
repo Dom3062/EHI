@@ -26,7 +26,7 @@ local triggers = {
 
     [101282] = { time = 5 + time, id = "KeypadReset", icons = { Icon.Wait } }
 }
-for _, index in pairs({13350, 14450, 14950, 15450, 15950, 16450, 16950, 17450}) do
+for _, index in ipairs({ 13350, 14450, 14950, 15450, 15950, 16450, 16950, 17450 }) do
     --, waypoint = { icon = Icon.Loop, position_by_element = EHI:GetInstanceElementID(100179, index) }
     triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop } }
 end
@@ -40,7 +40,7 @@ local achievements =
     [100609] = { id = "tag_9", special_function = SF.SetAchievementComplete },
     [100617] = { id = "tag_9", special_function = SF.SetAchievementFailed }
 }
-for _, index in pairs({4550, 5450}) do
+for _, index in ipairs({ 4550, 5450 }) do
     achievements[EHI:GetInstanceElementID(100319, index)] = { id = "tag_10", special_function = SF.SetAchievementFailed }
     achievements[EHI:GetInstanceElementID(100321, index)] = { id = "tag_10", status = "ok", special_function = SF.SetAchievementStatus }
     achievements[EHI:GetInstanceElementID(100282, index)] = { id = "tag_10", special_function = SF.SetAchievementComplete }

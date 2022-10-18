@@ -1,8 +1,8 @@
 local EHI = EHI
 EHIVaultTemperatureTracker = class(EHITracker)
+EHIVaultTemperatureTracker._forced_icons = { EHI.Icons.Vault }
 function EHIVaultTemperatureTracker:init(panel, params)
     params.time = 500
-    params.icons = { EHI.Icons.Vault }
     self._synced_time = 0
     self._tick = 0.1
     EHIVaultTemperatureTracker.super.init(self, panel, params)
@@ -50,7 +50,7 @@ end
 EHI:ShowLootCounter({
     max = max,
     additional_loot = 8
-}) -- 14/16
+}) -- 14 or 16
 
 local tbl =
 {

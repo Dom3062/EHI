@@ -2,13 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 EHIrun9Tracker = class(EHIAchievementTracker)
 function EHIrun9Tracker:update(t, dt)
-    if self._fade then
-        self._fade_time = self._fade_time - dt
-        if self._fade_time <= 0 then
-            self:delete()
-        end
-        return
-    end
     self._time = self._time - dt
     self._text:set_text(self:Format())
     if self._time <= 0 then
@@ -20,11 +13,7 @@ end
 EHI.AchievementTrackers.EHIrun9Tracker = true
 
 EHIGasTracker = class(EHIProgressTracker)
-function EHIGasTracker:init(panel, params)
-    params.icons = { Icon.Fire }
-    EHIGasTracker.super.init(self, panel, params)
-end
-
+EHIGasTracker._forced_icons = { Icon.Fire }
 function EHIGasTracker:Format()
     if self._max == 0 then
         return self._progress .. "/?"
@@ -33,7 +22,8 @@ function EHIGasTracker:Format()
 end
 
 EHIZoneTracker = class(EHIWarningTracker)
-EHIZoneTracker.update = EHIAchievementTracker.update
+EHIZoneTracker._forced_icons = { Icon.Wait }
+EHIZoneTracker.update_fade = EHIAchievementTracker.update_fade
 EHIZoneTracker.SetCompleted = EHIAchievementTracker.SetCompleted
 
 local SF = EHI.SpecialFunctions
@@ -41,7 +31,7 @@ local TT = EHI.Trackers
 local SetProgressMax = EHI:GetFreeCustomSpecialFunctionID()
 local SetZoneComplete = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [100377] = { time = 90, id = "ClearPickupZone", icons = { Icon.Wait }, class = "EHIZoneTracker" },
+    [100377] = { time = 90, id = "ClearPickupZone", class = "EHIZoneTracker" },
     [101550] = { id = "ClearPickupZone", special_function = SetZoneComplete },
 
     -- Parking lot

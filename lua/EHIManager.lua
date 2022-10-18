@@ -384,9 +384,12 @@ function EHIManager:ShowLootCounter(max, additional_loot, max_random, offset)
         max = (max or 0) + (additional_loot or 0),
         max_random = max_random or 0,
         offset = offset,
-        icons = { EHI.Icons.Loot },
         class = "EHILootTracker"
     })
+end
+
+function EHIManager:SyncSecuredLoot()
+    self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
 end
 
 function EHIManager:AddAchievementKillCounter(id, progress, max)
@@ -705,27 +708,6 @@ function EHIManager:SetTimerPowered(id, powered)
     local tracker = self._trackers[id]
     if tracker and tracker.SetPowered then
         tracker:SetPowered(powered)
-    end
-end
-
-function EHIManager:ResetTrackerTime(id)
-    local tracker = self._trackers[id]
-    if tracker then
-        tracker:ResetTime()
-    end
-end
-
-function EHIManager:ResetTrackerFadeTime(id)
-    local tracker = self._trackers[id]
-    if tracker then
-        tracker:ResetFadeTime()
-    end
-end
-
-function EHIManager:AddDelayToTracker(id, delay)
-    local tracker = self._trackers[id]
-    if tracker then
-        tracker:AddDelay(delay)
     end
 end
 
@@ -1138,5 +1120,5 @@ if Global.load_level then
     dofile(path .. "EHITrophyTrackers.lua")
     dofile(path .. "EHIDailyTrackers.lua")
     dofile(path .. "EHIInaccurateTrackers.lua")
-    dofile(path .. "StaticTrackers.lua")
+    --dofile(path .. "StaticTrackers.lua")
 end

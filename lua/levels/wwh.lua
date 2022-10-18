@@ -22,10 +22,11 @@ end
 
 local achievements =
 {
-    [100946] = { max = 4, id = "wwh_10", class = TT.AchievementProgress },
     [100012] = { id = "wwh_9", status = "defend", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
     [101250] = { id = "wwh_9", special_function = SF.SetAchievementFailed },
     [100082] = { id = "wwh_9", special_function = SF.SetAchievementComplete },
+
+    [100946] = { max = 4, id = "wwh_10", class = TT.AchievementProgress },
     [101226] = { id = "wwh_10", special_function = SF.IncreaseProgress }
 }
 

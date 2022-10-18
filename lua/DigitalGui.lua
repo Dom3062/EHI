@@ -114,7 +114,6 @@ if level_id == "chill" then
             managers.ehi:AddTracker({
                 id = self._ehi_key,
                 time = 0,
-                icons = { Icon.Wait },
                 class = "EHIStopwatchTracker"
             })
         end

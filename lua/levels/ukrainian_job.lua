@@ -29,15 +29,15 @@ local triggers = {
     [1017702] = { id = 101776, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101776 } }
 }
 if EHI:GetOption("show_escape_chance") then
+    local start_chance = 30 -- Normal
+    if EHI:IsDifficulty(EHI.Difficulties.Hard) then
+        start_chance = 33
+    elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
+        start_chance = 35
+    elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+        start_chance = 37
+    end
     EHI:AddOnAlarmCallback(function(dropin)
-        local start_chance = 30 -- Normal
-        if EHI:IsDifficulty(EHI.Difficulties.Hard) then
-            start_chance = 33
-        elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
-            start_chance = 35
-        elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-            start_chance = 37
-        end
         managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
     end)
 end

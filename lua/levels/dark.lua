@@ -39,12 +39,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 EHI.AchievementTrackers.EHIdark5Tracker = true
 
-local start_index =
-{
-    8750, 17750, 33525, 36525
-}
-
-for _, index in pairs(start_index) do
+for _, index in ipairs({ 8750, 17750, 33525, 36525 }) do
     local unit_index = EHI:GetInstanceUnitID(100334, index)
     managers.mission:add_runned_unit_sequence_trigger(unit_index, "interact", function(unit)
         managers.ehi:AddTracker({

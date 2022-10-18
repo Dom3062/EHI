@@ -2,11 +2,11 @@ local lerp = math.lerp
 local sin = math.sin
 local Color = Color
 EHIPiggyBankMutatorTracker = class(EHIProgressTracker)
+EHIPiggyBankMutatorTracker._forced_icons = { "piggy" }
 function EHIPiggyBankMutatorTracker:init(panel, params)
     self._current_level = 1
     self._max_levels = 7
     params.flash_times = 1
-    params.icons = { "piggy" }
     EHIPiggyBankMutatorTracker.super.init(self, panel, params)
     self:SetNewMax()
 end

@@ -66,24 +66,6 @@ function CivilianDamage:_on_damage_received(damage_info, ...)
     end
 end
 
-function CopDamage:_on_car_damage_received(attacker_unit)
-    if attacker_unit then
-        local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
-        if peer_id and not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
-            AddTracker(peer_id)
-        end
-    end
-end
-
-function HuskCopDamage:_on_car_damage_received(attacker_unit)
-    if attacker_unit then
-        local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
-        if peer_id and not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
-            AddTracker(peer_id)
-        end
-    end
-end
-
 function CivilianDamage:_on_car_damage_received(attacker_unit)
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
@@ -92,12 +74,3 @@ function CivilianDamage:_on_car_damage_received(attacker_unit)
         end
     end
 end
-
---[[function HuskCivilianDamage:_on_car_damage_received(attacker_unit)
-    if attacker_unit then
-        local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)
-        if peer_id then
-            AddTracker(peer_id)
-        end
-    end
-end]]

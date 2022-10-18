@@ -30,7 +30,7 @@ local function LordOfWarAchievement()
             max = n_of_weapons,
             triggers =
             {
-                [103427] = { special_function = SF.IncreaseProgress }
+                [103427] = { special_function = SF.IncreaseProgress } -- Weapons destroyed
             },
             hook_triggers = true
         })

@@ -152,7 +152,7 @@ local levels =
     pent = true, -- Mountain Master Heist
     -- Texas Heat campaign
     ranc = true, -- Midland Ranch
-    trai = true, -- Second heist of the Texas Heat campaign
+    trai = true, -- Lost in Transit
     third_heist_of_the_Texas_Heat_campaign = true,
     fourth_and_last_heist_of_the_Texas_Heat_campaign = true
 }

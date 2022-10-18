@@ -197,7 +197,7 @@ if meele_boost_tweak then
         if self:has_category_upgrade("player", "melee_kill_increase_reload_speed") then
             local data = self:upgrade_value("player", "melee_kill_increase_reload_speed", 0)
             if data ~= 0 and bloodthirst_reload then
-                managers.ehi:AddBuff("melee_kill_increase_reload_speed", data[2])
+                managers.ehi_buff:AddBuff("melee_kill_increase_reload_speed", data[2])
             end
         end
     end
@@ -338,7 +338,7 @@ if EHI:GetBuffOption("tag_team") then
             if not duration then -- No duration ? Is the owner running a rebalance or cheating ?
                 -- Other possible explanation is that the local player is running a rebalance,
                 -- making synced upgrades from client marked as invalid
-                -- End the execution here because the vanilla coroutine will crash too
+                -- End the execution here because the vanilla coroutine will crash too (but silently)
                 return
             end
             local tagged_id = managers.network:session():peer_by_unit(tagged):id()

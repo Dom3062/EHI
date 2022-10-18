@@ -1,5 +1,4 @@
 local lerp = math.lerp
-local sin = math.sin
 local Color = Color
 local IsOverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
 local Control = Color.white
@@ -7,15 +6,21 @@ local Anticipation = Color(255, 186, 204, 28) / 255
 if BAI then
     Control = BAI:GetColor("control")
     Anticipation = BAI:GetColor("anticipation")
+    BAI:AddEvent(BAI.EventList.Update, function()
+        Control = BAI:GetColor("control")
+        Anticipation = BAI:GetColor("anticipation")
+        EHIAssaultDelayTracker._forced_icons[1].color = Control
+    end)
 end
 local level_id = Global.game_settings and Global.game_settings.level_id or "branchbank"
 local level_data = tweak_data.levels[level_id]
 local ai_group = level_data and level_data.group_ai_state or "besiege"
 local tweak_values = tweak_data.group_ai[ai_group].assault.delay
 EHIAssaultDelayTracker = class(EHIWarningTracker)
+EHIAssaultDelayTracker._forced_icons = { { icon = "assaultbox", color = Control } }
+EHIAssaultDelayTracker.AnimateNegative = EHITimerTracker.AnimateCompletion
 EHIAssaultDelayTracker.IsClient = EHI:IsClient()
 function EHIAssaultDelayTracker:init(panel, params)
-    params.icons = { { icon = "assaultbox", color = Control } }
     if params.compute_time then
         params.time = self:CalculateBreakTime(params.diff) + (2 * math.random())
     end
@@ -28,21 +33,6 @@ end
 function EHIAssaultDelayTracker:update_negative(t, dt)
     self._time = self._time + dt
     self._text:set_text("+" .. self:Format())
-end
-
-function EHIAssaultDelayTracker:AnimateNegative()
-    self._text:animate(function(o)
-        while true do
-            local t = 0
-            while t < 1 do
-                t = t + coroutine.yield()
-                local n = 1 - sin(t * 180)
-                --local r = lerp(1, 0, n)
-                local g = lerp(1, 0, n)
-                o:set_color(Color(g, 1, g))
-            end
-        end
-    end)
 end
 
 function EHIAssaultDelayTracker:SyncAnticipationColor()

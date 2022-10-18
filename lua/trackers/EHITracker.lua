@@ -84,6 +84,7 @@ local corner_visibility = EHI:GetOption("show_tracker_corners")
 
 EHITracker = class()
 EHITracker._update = true
+EHITracker._fade_time = 5
 EHITracker._tracker_type = "accurate"
 EHITracker._gap = 5
 EHITracker._icon_size = 32
@@ -96,7 +97,7 @@ EHITracker._icon_size_scaled = EHITracker._icon_size * EHITracker._scale
 EHITracker._gap_scaled = EHITracker._gap * EHITracker._scale
 function EHITracker:init(panel, params)
     self._id = params.id
-    self._icons = params.icons
+    self._icons = self._forced_icons or params.icons
     local number_of_icons = 0
     local gap = 0
     if type(self._icons) == "table" then
@@ -301,15 +302,6 @@ function EHITracker:SetTimeNoAnim(time)
     self:FitTheText()
 end
 
-function EHITracker:ResetTime()
-    self:SetTime(self._former_time)
-end
-
-function EHITracker:ResetFadeTime()
-    self._fade = nil
-    self._fade_time = nil
-end
-
 function EHITracker:Run(t)
     self:SetTimeNoAnim(t)
 end
@@ -355,14 +347,15 @@ function EHITracker:SetIconColor(color)
     self._icon1:set_color(color)
 end
 
-function EHITracker:SetStatusText(status)
+function EHITracker:SetStatusText(status, text)
+    text = text or self._text
     local txt = "ehi_achievement_" .. status
     if LocalizationManager._custom_localizations[txt] then
-        self._text:set_text(managers.localization:text(txt))
+        text:set_text(managers.localization:text(txt))
     else
-        self._text:set_text(string.upper(status))
+        text:set_text(string.upper(status))
     end
-    self:FitTheText()
+    self:FitTheText(text)
 end
 
 function EHITracker:SetTrackerAccurate(time)

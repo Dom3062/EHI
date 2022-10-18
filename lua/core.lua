@@ -177,7 +177,6 @@ _G.EHI =
         Goto = "pd2_goto",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
-        CarLootDrop = { "pd2_car", "pd2_lootdrop" },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
         CarEscapeNoLoot = { "pd2_car", "pd2_escape" },
         CarWait = { "pd2_car", "pd2_escape", "pd2_lootdrop", "faster" },
@@ -657,17 +656,22 @@ function EHI:AreGagePackagesSpawned()
     return self._cache.GagePackages and self._cache.GagePackages > 0
 end
 
+---@param id string|number
+---@param f function
 function EHI:AddCallback(id, f)
     self.Callback[id] = self.Callback[id] or {}
     self.Callback[id][#self.Callback[id] + 1] = f
 end
 
+---@param id string|number
+---@param ... any
 function EHI:CallCallback(id, ...)
     for _, callback in ipairs(self.Callback[id] or {}) do
         callback(...)
     end
 end
 
+---@param f function
 function EHI:AddOnAlarmCallback(f)
     self.OnAlarmCallback[#self.OnAlarmCallback + 1] = f
 end
@@ -680,10 +684,12 @@ function EHI:RunOnAlarmCallbacks(dropin)
     self.OnAlarmCallback = {}
 end
 
+---@param f function
 function EHI:AddOnCustodyCallback(f)
     self.OnCustodyCallback[#self.OnCustodyCallback + 1] = f
 end
 
+---@param custody_state any
 function EHI:RunOnCustodyCallback(custody_state)
     for _, callback in ipairs(self.OnCustodyCallback) do
         callback(custody_state)
@@ -733,7 +739,7 @@ function EHI:Unhook(id)
     Hooks:RemovePostHook("EHI_" .. id)
 end
 
----@param id string|number
+---@param id number
 function EHI:UnhookElement(id)
     Hooks:RemovePostHook("EHI_Element_" .. id)
 end
@@ -966,6 +972,10 @@ local triggers = {}
 local host_triggers = {}
 local base_delay_triggers = {}
 local element_delay_triggers = {}
+---Adds trigger to mission element when they run
+---@param new_triggers table
+---@param trigger_id_all string?
+---@param trigger_icons_all table?
 function EHI:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     for key, value in pairs(new_triggers) do
         if triggers[key] then
@@ -982,6 +992,11 @@ function EHI:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     end
 end
 
+---Adds trigger to mission element when they run. If trigger already exists, it is moved and added into table
+---@param new_triggers table
+---@param params table?
+---@param trigger_id_all string?
+---@param trigger_icons_all table?
 function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_all)
     local function FillRestOfProperties(key, value)
         if not value.id then
@@ -1023,8 +1038,6 @@ function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_al
                     self:Log("key: " .. tostring(key) .. " with ID: " .. tostring(value.id) .. " does not have 'data' table, the former trigger won't be moved and triggers assigned to this one will not be called!")
                 end
             else
-                --self:PrintTable(value, key, "new_triggers")
-                --self:PrintTable(t, key, "triggers")
                 local new_key = (key * 10) + 1
                 local key2 = new_key + 1
                 triggers[key] = { special_function = params and params.SF or SF.Trigger, data = { new_key, key2 } }
@@ -1649,7 +1662,7 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
                 FillTrophyTrigger(data, SF.ShowTrophy, show_trophy)
             end
         end
-        self:AddTriggers2(trophy, nil, trigger_icons_all or "Trigger", trigger_icons_all)
+        self:AddTriggers2(trophy, nil, trigger_id_all or "Trigger", trigger_icons_all)
     end
     -- Daily Side Jobs are checked before they are passed to this function
     -- See EHI:IsDailyAvailable()
@@ -1660,7 +1673,7 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
                 FillTrophyTrigger(data, SF.ShowDaily, true)
             end
         end
-        self:AddTriggers2(daily, nil, trigger_icons_all or "Trigger", trigger_icons_all)
+        self:AddTriggers2(daily, nil, trigger_id_all or "Trigger", trigger_icons_all)
     end
     --self:PrintTable(triggers, "Before achievements")
     local achievement_triggers = new_triggers.achievement
@@ -1670,7 +1683,7 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
                 FillAchievementTrigger(data)
             end
         end
-        self:AddTriggers2(achievement_triggers, nil, trigger_icons_all or "Trigger", trigger_icons_all)
+        self:AddTriggers2(achievement_triggers, nil, trigger_id_all or "Trigger", trigger_icons_all)
     end
     self:ParseMissionTriggers(new_triggers.mission, trigger_id_all, trigger_icons_all)
     --self:PrintTable(triggers, "After achievements:")
@@ -1831,7 +1844,7 @@ function EHI:ShowLootCounterOffset(params, manager)
     if params.no_counting then
         return
     end
-    self:HookLootCounter()
+    self:HookLootCounter(params)
 end
 
 function EHI:ShowLootCounter(params)
@@ -1880,16 +1893,20 @@ function EHI:ShowLootCounterNoCheck(params)
     if params.no_counting then
         return
     end
-    self:HookLootCounter()
+    self:HookLootCounter(params)
 end
 
-function EHI:HookLootCounter(check_type, loot_type)
+function EHI:HookLootCounter(params, check_type, loot_type)
     if not self._cache.LootCounter then
         local function Hook(self, ...)
             self:EHIReportProgress("LootCounter", check_type or EHI.LootCounter.CheckType.BagsOnly, loot_type)
         end
         self:HookWithID(LootManager, "sync_secure_loot", "EHI_LootCounter_sync_secure_loot", Hook)
-        self:HookWithID(LootManager, "sync_load", "EHI_LootCounter_sync_load", Hook)
+        -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction to properly show number of secured loot
+        -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
+        if not params.no_sync_load then
+            self:HookWithID(LootManager, "sync_load", "EHI_LootCounter_sync_load", Hook)
+        end
         self._cache.LootCounter = true
     end
 end
@@ -2047,6 +2064,7 @@ if EHI:GetWaypointOption("show_waypoints_only") then
     function EHI:AddTracker(id)
         local trigger = triggers[id]
         if trigger.waypoint then
+            trigger.waypoint.time = self:GetTime(id)
             managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
         else
             AddTracker(id, trigger)
@@ -2116,19 +2134,22 @@ function EHI:IsDailyAvailable(daily, skip_unlockables_check)
     return false
 end
 
-function EHI:IsDailyMissionAvailable(daily, skip_unlockables_check)
-    --[[local current_daily = managers.custom_safehouse:get_daily_challenge()
-    if current_daily and current_daily.id == daily then
-        if current_daily.state == "completed" or current_daily.state == "rewarded" then
+function EHI:IsDailyMissionAvailable(challenge)
+    if managers.challenge:has_active_challenges(challenge) then
+        local c = managers.challenge:get_active_challenge(challenge)
+        if c.completed or c.rewarded then
             return false
         end
-        if skip_unlockables_check then
-            return true
-        end
-        return not self._cache.UnlockablesAreDisabled
-    end]]
+        return true
+    end
     return false
 end
+--[[function EHI:PrintAllDailyActiveChallenges()
+    self:PrintTable(managers.challenge:get_all_active_challenges())
+end
+EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+    EHI:PrintAllDailyActiveChallenges()
+end)]]
 
 function EHI:IsTrophyLocked(trophy)
     return not self:IsTrophyUnlocked(trophy) and not self._cache.UnlockablesAreDisabled

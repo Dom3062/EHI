@@ -1,5 +1,6 @@
 local format = EHI:GetOption("variable_random_loot_format")
 EHILootTracker = class(EHIProgressTracker)
+EHILootTracker._forced_icons = { EHI.Icons.Loot }
 EHILootTracker._show_popup = EHI:GetOption("show_all_loot_secured_popup")
 function EHILootTracker:init(panel, params)
     self._offset = params.offset or 0

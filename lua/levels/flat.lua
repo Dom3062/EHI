@@ -1,4 +1,6 @@
 EHIHeliTracker = class(EHICountTracker)
+EHIHeliTracker._forced_icons = { "enemy", { icon = Icon.Wait, visible = false } }
+EHIHeliTracker.AnimateCompletion = EHITimerTracker.AnimateCompletion
 function EHIHeliTracker:OverridePanel(params)
     self._time_text = self._time_bg_box:text({
         name = "time_text",
@@ -20,26 +22,11 @@ function EHIHeliTracker:update(t, dt)
     self._time_text:set_text(EHIHeliTracker.super.super.Format(self))
     if self._time <= 10 and not self._time_warning then
         self._time_warning = true
-        self:AnimateWarning()
+        self:AnimateCompletion()
     end
     if self._time <= 0 then
         self:ObjectiveComplete("time")
     end
-end
-
-function EHIHeliTracker:AnimateWarning()
-    self._time_text:animate(function(o)
-        while true do
-            local t = 0
-            while t < 1 do
-                t = t + coroutine.yield()
-                local n = 1 - math.sin(t * 180)
-                --local r = math.lerp(1, 0, n)
-                local g = math.lerp(1, 0, n)
-                o:set_color(Color(g, 1, g))
-            end
-        end
-    end)
 end
 
 function EHIHeliTracker:EnableUpdate()
@@ -116,7 +103,7 @@ local triggers = {
     [102001] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
 
     [100060] = { special_function = SF.Trigger, data = { 1000601, 1000602 } },
-    [1000601] = { id = "PanicRoomTakeoff", icons = { "enemy", { icon = Icon.Wait, visible = false } }, class = "EHIHeliTracker" },
+    [1000601] = { id = "PanicRoomTakeoff", class = "EHIHeliTracker" },
     [1000602] = { special_function = SF.CustomCode, f = function()
         local count = 0
         if EHI:IsHost() then

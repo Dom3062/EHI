@@ -1,11 +1,11 @@
 EHIMinionTracker = class(EHITracker)
+EHIMinionTracker._forced_icons = { "minion" }
 EHIMinionTracker._update = false
 function EHIMinionTracker:init(panel, params)
     self._n_of_peers = 0
     self._panel_size = 2
     self._icon_remove = 0
     self._peers = {}
-    params.icons = { "minion" }
     EHIMinionTracker.super.init(self, panel, params)
     self._default_panel_w = self._panel:w()
     self._panel_w = self._default_panel_w

@@ -1,6 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
 local WinchCar = { { icon = Icon.Car, color = Color("1E90FF") } }
 local ElementTimer = 102059
 local ElementTimerPickup = 102075
@@ -40,8 +41,9 @@ local triggers = {
     [EHI:GetInstanceElementID(100053, 14950)] = FultonCatchSuccess,
     [EHI:GetInstanceElementID(100053, 25500)] = FultonCatchSuccess,
     [EHI:GetInstanceElementID(100053, 25650)] = FultonCatchSuccess,
-    [102070] = { additional_time = 6.8, id = "FultonCatch", icons = WeaponsPickUp, special_function = SF.GetElementTimerAccurate, element = ElementTimerPickup },
-    [102077] = { chance = 34, id = "FultonCatchChance", icons = Icon.Heli },
+    [102070] = { special_function = SF.Trigger, data = { 1020701, 1020702 } },
+    [1020701] = { chance = 34, id = "FultonCatchChance", icons = { Icon.Heli }, class = TT.Chance },
+    [1020702] = { additional_time = 6.8, id = "FultonCatch", icons = WeaponsPickUp, special_function = SF.GetElementTimerAccurate, element = ElementTimerPickup },
     [103988] = { id = "FultonCatchChance", special_function = SF.RemoveTracker },
     [EHI:GetInstanceElementID(100055, 14950)] = FultonCatchIncreaseChance,
     [EHI:GetInstanceElementID(100055, 25500)] = FultonCatchIncreaseChance,

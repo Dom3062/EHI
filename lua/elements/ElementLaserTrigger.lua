@@ -10,9 +10,9 @@ if not (EHI:GetOption("show_laser_tracker") and Global.load_level) then
 end
 
 EHILaserTracker = class(EHITracker)
+EHILaserTracker._forced_icons = { EHI.Icons.Lasers }
 function EHILaserTracker:init(panel, params)
     self._next_cycle_t = params.time
-    params.icons = { EHI.Icons.Lasers }
     EHILaserTracker.super.init(self, panel, params)
 end
 

@@ -1,6 +1,6 @@
 EHIXPTracker = class(EHITracker)
+EHIXPTracker._forced_icons = { "xp" }
 function EHIXPTracker:init(panel, params)
-    params.icons = { "xp" }
     params.time = 5
     self._xp = params.amount or 0
     EHIXPTracker.super.init(self, panel, params)

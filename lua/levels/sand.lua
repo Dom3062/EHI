@@ -1,7 +1,8 @@
 local Color = Color
 EHIsand11Tracker = class(EHIAchievementProgressTracker)
+EHIsand11Tracker._forced_icons = EHI:GetAchievementIcon("sand_11")
+EHIsand11Tracker.FormatChance = EHIChanceTracker.Format
 function EHIsand11Tracker:init(panel, params)
-    params.icons = EHI:GetAchievementIcon("sand_11")
     params.max = 100
     params.remove_after_reaching_target = false
     params.no_failure = true
@@ -29,8 +30,6 @@ function EHIsand11Tracker:OverridePanel(params)
     end
 end
 
-EHIsand11Tracker.FormatChance = EHIChanceTracker.Format
-
 function EHIsand11Tracker:SetChance(amount)
     self._chance = amount
     self._text_chance:set_text(self:FormatChance())
@@ -56,7 +55,6 @@ local triggers = {
     [1000431] = { time = 15, id = "DoorOpenGas", icons = { "pd2_door" } },
     [1000432] = { time = 20, random_time = 5, id = "RoomGas", icons = { Icon.Teargas } },
 
-    --[103157] = { time = 710/30, id = "SkidDriving1", icons = skid },
     [103333] = { time = 613/30, id = "SkidDriving2", icons = skid },
     [103178] = { time = 386/30, id = "SkidDriving3", icons = skid },
     [104043] = { time = 28, id = "SkidDriving4", icons = skid }, -- More accurate
@@ -93,7 +91,7 @@ elseif EHI:IsDifficulty(EHI.Difficulties.DeathSentence) then
     -- Death Sentence
     time = 40
 end
-for _, index in ipairs({8530, 9180, 9680}) do
+for _, index in ipairs({ 8530, 9180, 9680 }) do
     triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop } } -- ECM Jammer
     triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + time, id = "KeypadReboot", icons = { Icon.Loop } }
 end

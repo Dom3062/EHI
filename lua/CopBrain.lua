@@ -10,9 +10,9 @@ if not (EHI:GetOption("show_pager_callback") and Global.load_level) then
 end
 
 EHIPagerTracker = class(EHIWarningTracker)
+EHIPagerTracker._forced_icons = { "pager_icon" }
 function EHIPagerTracker:init(panel, params)
     params.time = 12
-    params.icons = { "pager_icon" }
     EHIPagerTracker.super.init(self, panel, params)
 end
 

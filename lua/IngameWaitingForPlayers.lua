@@ -878,11 +878,18 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         if EHI:IsAchievementLocked("ovk_3") and HasWeaponEquipped("m134") and (level == "chill" or level == "safehouse") then -- "Oh, That's How You Do It" achievement
             -- Only tracked in Safehouse to prevent tracker spam in heists
+            function EHIAchievementUnlockTracker:ResetTime()
+                self:SetTime(self._former_time)
+            end
+            function EHIAchievementUnlockTracker:ResetFadeTime()
+                self._fade_time = 5
+                self.update = self.super.update
+            end
             EHI:HookWithID(RaycastWeaponBase, "start_shooting", "EHI_ovk_3_start_shooting", function(self, ...)
                 if self._shooting and self:get_name_id() == "m134" then
                     if managers.ehi:TrackerExists("ovk_3") then
-                        managers.ehi:ResetTrackerTime("ovk_3")
-                        managers.ehi:ResetTrackerFadeTime("ovk_3")
+                        managers.ehi:CallFunction("ovk_3", "ResetTime")
+                        managers.ehi:CallFunction("ovk_3", "ResetFadeTime")
                         managers.ehi:SetTrackerTextColor("ovk_3", Color.white)
                     else
                         CreateUnlockTracker("ovk_3", 25)

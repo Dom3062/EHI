@@ -3,10 +3,12 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local escape_delay = 18
+local CarLootDrop = { Icon.Car, Icon.LootDrop }
 local triggers = {
-    [102873] = { time = 36 + 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop },
+    [102873] = { time = 36 + 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = CarLootDrop },
 
-    [101256] = { time = 3 + 28 + 10 + 10, id = "CarEscape", icons = Icon.CarEscapeNoLoot },
+    [101256] = { time = 3 + 28 + 10 + 135/30 + 0.5 + 210/30, id = "CarEscape", icons = Icon.CarEscapeNoLoot },
+    [101088] = { id = "CarEscape", special_function = SF.RemoveTracker },
 
     [101218] = { time = 60 + 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot },
     [101219] = { time = 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot },
@@ -17,14 +19,14 @@ local triggers = {
 -- See ´LootVehicleArrived´ MissionScriptElement 100658
 
 if EHI:IsClient() then
-    triggers[101307] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101308] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101309] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[100944] = { time = 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101008] = { time = 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101072] = { time = 30 + 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101073] = { time = 38 + 7, id = "VanPickupLoot", icons = Icon.CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[100658] = { time = 7, id = "VanPickupLoot", icons = Icon.CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101307] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101308] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101309] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100944] = { time = 3 + 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101008] = { time = 60 + 30 + 38 + 7, id = "VanPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101072] = { time = 30 + 38 + 7, id = "VanPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101073] = { time = 38 + 7, id = "VanPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100658] = { time = 7, id = "VanPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
 
     triggers[103300] = { time = 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[103301] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }

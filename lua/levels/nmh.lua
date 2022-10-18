@@ -1,7 +1,7 @@
 EHIElevatorTimerTracker = class(EHITracker)
+EHIElevatorTimerTracker._forced_icons = { "pd2_door" }
 function EHIElevatorTimerTracker:init(panel, params)
     self._floors = params.floors or 26
-    params.icons = { "pd2_door" }
     params.time = self:GetElevatorTime()
     EHIElevatorTimerTracker.super.init(self, panel, params)
 end

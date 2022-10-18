@@ -25,8 +25,6 @@ local function ShowStartedPopup(tracker)
         managers.hud:ShowAchievementStartedPopup(tracker._id, tracker._beardlib)
     end
 end
-local lerp = math.lerp
-local sin = math.sin
 local Color = Color
 
 EHIAchievementTracker = class(EHIWarningTracker)
@@ -41,21 +39,16 @@ function EHIAchievementTracker:init(panel, params)
     end
 end
 
-function EHIAchievementTracker:update(t, dt)
-    if self._fade then
-        self._fade_time = self._fade_time - dt
-        if self._fade_time <= 0 then
-            self:delete()
-        end
-        return
+function EHIAchievementTracker:update_fade(t, dt)
+    self._fade_time = self._fade_time - dt
+    if self._fade_time <= 0 then
+        self:delete()
     end
-    EHIAchievementTracker.super.update(self, t, dt)
 end
 
 function EHIAchievementTracker:SetCompleted()
     self._text:stop()
-    self._fade_time = 5
-    self._fade = true
+    self.update = self.update_fade
     self._achieved_popup_showed = true
     self:SetTextColor(Color.green)
     self:AnimateBG()
@@ -63,8 +56,7 @@ end
 
 function EHIAchievementTracker:SetFailed()
     self._text:stop()
-    self._fade_time = 5
-    self._fade = true
+    self.update = self.update_fade
     self:SetTextColor(Color.red)
     self:AnimateBG()
     if self._show_failed then
@@ -111,6 +103,8 @@ function EHIAchievementProgressTracker:ShowStartedPopup()
 end
 
 EHIAchievementUnlockTracker = class(EHIWarningTracker)
+EHIAchievementUnlockTracker.update_fade = EHIAchievementTracker.update_fade
+EHIAchievementUnlockTracker.AnimateWarning = EHITimerTracker.AnimateCompletion
 EHIAchievementUnlockTracker._popup_type = "achievement"
 EHIAchievementUnlockTracker._show_started = EHIAchievementTracker._show_started
 EHIAchievementUnlockTracker._show_failed = EHIAchievementTracker._show_failed
@@ -122,41 +116,9 @@ function EHIAchievementUnlockTracker:init(panel, params)
     end
 end
 
-function EHIAchievementUnlockTracker:update(t, dt)
-    if self._fade then
-        self._fade_time = self._fade_time - dt
-        if self._fade_time <= 0 then
-            if self._show_failed then
-                ShowFailedPopup(self)
-            end
-            self:delete()
-        end
-        return
-    end
-    EHIAchievementUnlockTracker.super.update(self, t, dt)
-end
-
-function EHIAchievementUnlockTracker:AnimateWarning()
-    self._text:animate(function(o)
-        while true do
-            local t = 0
-
-            while t < 1 do
-                t = t + coroutine.yield()
-                local n = 1 - sin(t * 180)
-                --local r = lerp(1, 0, n)
-                local g = lerp(1, 0, n)
-
-                o:set_color(Color(g, 1, g))
-            end
-        end
-    end)
-end
-
 function EHIAchievementUnlockTracker:SetFailed()
     self._text:stop()
-    self._fade_time = 5
-    self._fade = true
+    self.update = self.update_fade
     self:SetTextColor(Color.red)
     self:AnimateBG()
     if self._show_failed then
@@ -196,19 +158,13 @@ end
 
 local show_status_changed_popup = false
 EHIAchievementStatusTracker = class(EHIAchievementTracker)
+EHIAchievementStatusTracker.update = EHIAchievementTracker.update_fade
 EHIAchievementStatusTracker._update = false
 function EHIAchievementStatusTracker:init(panel, params)
     self._status = params.status or "ok"
-    self._fade_time = 5
     EHIAchievementStatusTracker.super.init(self, panel, params)
+    self._fade_time = 5
     self:SetTextColor()
-end
-
-function EHIAchievementStatusTracker:update(t, dt)
-    self._fade_time = self._fade_time - dt
-    if self._fade_time <= 0 then
-        self:delete()
-    end
 end
 
 function EHIAchievementStatusTracker:Format()
