@@ -106,7 +106,6 @@ function EHITracker:init(panel, params)
     end
     self._parent_panel = panel
     self._time = params.time or 0
-    self._former_time = self._time -- Time to reset the tracker to default
     self._panel = panel:panel({
         name = params.id,
         x = params.x,
@@ -274,6 +273,13 @@ function EHITracker:update(t, dt)
     self._time = self._time - dt
     self._text:set_text(self:Format())
     if self._time <= 0 then
+        self:delete()
+    end
+end
+
+function EHITracker:update_fade(t, dt)
+    self._fade_time = self._fade_time - dt
+    if self._fade_time <= 0 then
         self:delete()
     end
 end

@@ -2,19 +2,11 @@ local EHI = EHI
 local SF = EHI.SpecialFunctions
 local function LordOfWarAchievement()
     local weapons = managers.ehi:GetUnits("units/payday2/equipment/gen_interactable_weapon_case_2x1/gen_interactable_weapon_case_2x1", 1)
-    local n_of_weapons = 0
     if type(weapons) ~= "table" then
         EHI:Log("[firestarter_1.lua] Engine provided invalid data; aborted to avoid crash")
         return
     end
-    for _, weapon in pairs(weapons) do
-        if weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
-            local state = weapon:damage()._state.graphic_group.grp_wpn
-            if state[1] == "set_visibility" and state[2] then
-                n_of_weapons = n_of_weapons + 1
-            end
-        end
-    end
+    local n_of_weapons = tweak_data.ehi.functions.GetNumberOfVisibleWeapons(weapons)
     EHI:ShowAchievementLootCounter({
         achievement = "lord_of_war",
         max = n_of_weapons,

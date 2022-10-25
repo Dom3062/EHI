@@ -50,9 +50,101 @@ local achievements =
     [102479] = { id = "cow_11", special_function = SF.SetAchievementComplete }
 }
 
+local LootCounter = EHI:GetOption("show_loot_counter")
+local Weapons = { 100857, 103374 }
+local other =
+{
+    [101737] = { special_function = SF.CustomCode, trigger_times = 1, f = function()
+        if not LootCounter then
+            return
+        end
+        local MayhemOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
+        EHI:ShowLootCounterNoCheck({
+            max = 4, -- Bomb parts 
+            additional_loot = 2 + tweak_data.ehi.functions.GetNumberOfVisibleWeapons(Weapons), -- Meth and Weapons
+            -- Assume no collision spawned, more loot
+            max_random = MayhemOrAbove and 14 or 18
+        })
+        if managers.game_play_central:GetMissionDisabledUnit(107388) then -- Collision (8th position)
+            -- Collision is visible, less loot spawned
+            managers.ehi:CallFunction("LootCounter", "DecreaseMaxRandom", 2)
+        end
+    end}
+}
+if LootCounter then
+    -- Random loot in crates
+    local function IncreaseMaximum()
+        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned")
+    end
+    local function DecreaseMaximum()
+        managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
+    end
+    local IncreaseMaximumTrigger = { special_function = SF.CustomCode, f = IncreaseMaximum }
+    local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = DecreaseMaximum }
+    for i = 103232, 103264, 1 do -- 1 - 11
+        other[i] = IncreaseMaximumTrigger
+    end
+    other[103284] = IncreaseMaximumTrigger -- 12 Cocaine
+    other[103317] = IncreaseMaximumTrigger -- 12 Money
+    other[103351] = IncreaseMaximumTrigger -- 13 Gold
+    other[103352] = IncreaseMaximumTrigger -- 13 Cocaine
+    other[103484] = IncreaseMaximumTrigger -- 13 Money
+    other[103485] = IncreaseMaximumTrigger -- 13 Gold
+    other[103738] = IncreaseMaximumTrigger -- 14 Cocaine
+    other[103739] = IncreaseMaximumTrigger -- 14 Money
+    other[103741] = IncreaseMaximumTrigger -- 14 Gold
+    other[103742] = IncreaseMaximumTrigger -- 15 Cocaine
+    other[103754] = IncreaseMaximumTrigger -- 15 Money
+    other[103755] = IncreaseMaximumTrigger -- 15 Gold
+    for i = 103857, 103861, 1 do -- 16 - 17 Money
+        other[i] = IncreaseMaximumTrigger
+    end
+    other[104089] = IncreaseMaximumTrigger -- 17 Gold
+    other[104090] = IncreaseMaximumTrigger -- 18 Cocaine
+    other[104093] = IncreaseMaximumTrigger -- 18 Money
+    other[104094] = IncreaseMaximumTrigger -- 18 Gold
+    other[104135] = IncreaseMaximumTrigger -- 19 Cocaine
+    for i = 104138, 104142, 1 do -- 19 Money - 20 Gold
+        other[i] = IncreaseMaximumTrigger
+    end
+    other[104145] = IncreaseMaximumTrigger -- 21 Cocaine
+    other[104455] = IncreaseMaximumTrigger -- 21 Money
+    other[104582] = IncreaseMaximumTrigger -- 21 Gold
+    other[104585] = IncreaseMaximumTrigger -- 22 Cocaine
+    other[104587] = IncreaseMaximumTrigger -- 22 Money
+    other[104588] = IncreaseMaximumTrigger -- 22 Gold
+    other[104591] = IncreaseMaximumTrigger -- 23 Cocaine
+    other[104593] = IncreaseMaximumTrigger -- 23 Money
+    other[104603] = IncreaseMaximumTrigger -- 23 Gold
+    other[104604] = IncreaseMaximumTrigger -- 24 Cocaine
+    other[104607] = IncreaseMaximumTrigger -- 24 Money
+    other[104608] = IncreaseMaximumTrigger -- 24 Gold
+    other[101728] = DecreaseMaximumTrigger -- 1 Nothing
+    other[102063] = DecreaseMaximumTrigger -- 2 Nothing
+    other[102064] = DecreaseMaximumTrigger -- 3 Nothing
+    for i = 104687, 104691, 1 do -- 4 - 8
+        other[i] = DecreaseMaximumTrigger
+    end
+    other[104726] = DecreaseMaximumTrigger -- 9 Nothing
+    other[104727] = DecreaseMaximumTrigger -- 10 Nothing
+    for i = 104730, 104734, 1 do -- 11 - 15
+        other[i] = DecreaseMaximumTrigger
+    end
+    for i = 104736, 104738, 1 do -- 16 - 18
+        other[i] = DecreaseMaximumTrigger
+    end
+    for i = 104740, 104742, 1 do -- 19 - 21
+        other[i] = DecreaseMaximumTrigger
+    end
+    for i = 104745, 104747, 1 do -- 22 - 24
+        other[i] = DecreaseMaximumTrigger
+    end
+end
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:ShowAchievementLootCounter({
     achievement = "voff_2",

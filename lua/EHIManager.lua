@@ -690,13 +690,6 @@ function EHIManager:SetTrackerTimeNoAnim(id, time)
     end
 end
 
-function EHIManager:SetTimerDone(id)
-    local tracker = self._trackers[id]
-    if tracker and tracker.SetDone then
-        tracker:SetDone()
-    end
-end
-
 function EHIManager:SetTimerJammed(id, jammed)
     local tracker = self._trackers[id]
     if tracker and tracker.SetJammed then
@@ -795,17 +788,15 @@ function EHIManager:LoadFromTradeDelayCache()
 end
 
 function EHIManager:PostPeerCustodyTime(peer_id, time, in_custody) -- In case the civilian is killed at the same time when alarm went off
-    if self:TrackerExists("CustodyTime") then
-        local tracker = self:GetTracker("CustodyTime")
-        if tracker then
-            if tracker:PeerExists(peer_id) then
-                tracker:IncreasePeerCustodyTime(peer_id, time)
-            else
-                tracker:AddPeerCustodyTime(peer_id, time)
-            end
-            if in_custody then
-                tracker:SetPeerInCustody(peer_id)
-            end
+    local tracker = self:GetTracker("CustodyTime")
+    if tracker then
+        if tracker:PeerExists(peer_id) then
+            tracker:IncreasePeerCustodyTime(peer_id, time)
+        else
+            tracker:AddPeerCustodyTime(peer_id, time)
+        end
+        if in_custody then
+            tracker:SetPeerInCustody(peer_id)
         end
     else
         self:AddCustodyTimeTracker()
@@ -961,13 +952,6 @@ function EHIManager:SetTrackerProgressRemaining(id, remaining)
     end
 end
 
-function EHIManager:SetTrackerTextColor(id, color)
-    local tracker = self._trackers[id]
-    if tracker then
-        tracker:SetTextColor(color)
-    end
-end
-
 function EHIManager:SetTrackerAccurate(id, time)
     local tracker = self._trackers[id]
     if tracker then
@@ -1046,7 +1030,6 @@ end
 function EHIManager:AddCustodyTimeTracker()
     self:AddTracker({
         id = "CustodyTime",
-        icons = { "mugshot_in_custody" },
         class = "EHICiviliansKilledTracker"
     })
 end

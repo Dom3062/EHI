@@ -31,49 +31,35 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 
-if EHI:ShowMissionAchievements() then
-    if ovk_and_up then
-        EHI:ShowAchievementLootCounter({
-            achievement = "farm_6",
-            max = 1,
-            remove_after_reaching_target = false,
-            counter =
-            {
-                check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
-                loot_type = "din_pig"
-            }
-        })
-        if managers.ehi:TrackerExists("farm_6") then
-            EHI:ShowLootCounter({
-                max = 10,
-                no_counting = true
+if EHI:ShowMissionAchievements() and ovk_and_up then
+    EHI:ShowAchievementLootCounter({
+        achievement = "farm_6",
+        max = 1,
+        remove_after_reaching_target = false,
+        counter =
+        {
+            check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+            loot_type = "din_pig"
+        }
+    })
+    EHI:HookWithID(HUDManager, "sync_set_assault_mode", "EHI_farm_1_achievement", function(self, mode, ...)
+        if mode == "phalanx" then
+            self.ehi:AddTracker({
+                id = "farm_1",
+                status = "finish",
+                icons = EHI:GetAchievementIcon("farm_1"),
+                class = EHI.Trackers.AchievementStatus,
             })
-            EHI:HookLootCounter(EHI.LootCounter.CheckType.OneTypeOfLoot, "gold")
         else
-            EHI:ShowLootCounter({ max = 11 })
+            self.ehi:SetAchievementFailed("farm_1")
         end
-        EHI:HookWithID(HUDManager, "sync_set_assault_mode", "EHI_farm_1_achievement", function(self, mode, ...)
-            if mode == "phalanx" then
-                self.ehi:AddTracker({
-                    id = "farm_1",
-                    status = "finish",
-                    icons = EHI:GetAchievementIcon("farm_1"),
-                    class = EHI.Trackers.AchievementStatus,
-                })
-            else
-                self.ehi:SetAchievementFailed("farm_1")
-            end
-        end)
-    else
-        EHI:ShowLootCounter({ max = 10 })
-    end
-else
-    local max = 10
-    if ovk_and_up then
-        max = 11
-    end
-    EHI:ShowLootCounter({ max = max })
+    end)
 end
+local pig = 0
+if ovk_and_up then
+    pig = 1
+end
+EHI:ShowLootCounter({ max = 10, additional_loot = pig })
 
 local tbl =
 {

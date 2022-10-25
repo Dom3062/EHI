@@ -514,6 +514,34 @@ tweak_data.ehi =
                 return
             end
             EHI:ShowLootCounter({ max = max })
+        end,
+        ---@param weapons table
+        GetNumberOfVisibleWeapons = function(weapons)
+            local world = managers.worlddefinition
+            local n = 0
+            for _, index in ipairs(weapons) do
+                local weapon = world:get_unit(index)
+                if weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
+                    local state = weapon:damage()._state.graphic_group.grp_wpn
+                    if state[1] == "set_visibility" and state[2] then
+                        n = n + 1
+                    end
+                end
+            end
+            return n
+        end,
+        ---Checks money, coke and gold and other loot which uses "var_hidden"
+        ---@param loot table
+        GetNumberOfVisibleOtherLoot = function(loot)
+            local world = managers.worlddefinition
+            local n = 0
+            for _, index in ipairs(loot) do
+                local unit = world:get_unit(index)
+                if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_hidden == 0 then
+                    n = n + 1
+                end
+            end
+            return n
         end
     }
 }

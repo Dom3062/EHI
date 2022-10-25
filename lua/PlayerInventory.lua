@@ -90,4 +90,5 @@ function PlayerInventory:_start_jammer_effect(end_time, ...)
             class = "EHIECMTracker"
         })
     end
+    return result
 end

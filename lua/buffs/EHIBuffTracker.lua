@@ -1,6 +1,18 @@
 local progress = EHI:GetOption("buffs_show_progress")
 local circle_shape = EHI:GetOption("buffs_shape") == 2
 local invert = EHI:GetOption("buffs_invert_progress")
+local rect = {32, 0, -32, 32}
+local prefix = "s"
+if circle_shape then
+    rect = {128, 0, -128, 128}
+    prefix = "c"
+end
+if invert then
+    rect[1] = 0
+    rect[3] = -rect[3]
+end
+local texture_good = "guis/textures/pd2_mod_ehi/buff_" .. prefix .. "frame"
+local texture_bad = "guis/textures/pd2_mod_ehi/buff_" .. prefix .. "frame_debuff"
 local Color = Color
 local lerp = math.lerp
 local function set_x(o, target_x)
@@ -25,7 +37,6 @@ local function set_right(o, x)
     o:set_right(target_right)
 end
 EHIBuffTracker = class()
-EHIBuffTracker._inverted_progress = false
 EHIBuffTracker._show = function(o)
     local t = 0
     local total = 0.15
@@ -121,45 +132,18 @@ function EHIBuffTracker:init(panel, params)
         vertical = "center",
         y = self._panel:w() + w_half,
     })
-    if circle_shape then
-        local rect = {128, 0, -128, 128}
-        if invert then
-            rect[1] = 0
-            rect[3] = -rect[3]
-        end
-        local texture = params.good and "guis/textures/pd2/hud_progress_active" or "guis/textures/pd2/hud_progress_invalid"
-        self._progress = self._panel:bitmap({
-            name = "progress_circle",
-            render_template = "VertexColorTexturedRadial",
-            layer = 5,
-            y = icon:y(),
-            w = icon:w(),
-            h = icon:h(),
-            texture = texture,
-            texture_rect = rect,
-            color = Color(1, 0, 1, 1),
-            visible = progress
-        })
-    else
-        local rect = {32, 0, -32, 32}
-        if invert then
-            rect[1] = 0
-            rect[3] = -rect[3]
-        end
-        local texture = params.good and "guis/textures/pd2_mod_ehi/buff_frame" or "guis/textures/pd2_mod_ehi/buff_frame_debuff"
-        self._progress = self._panel:bitmap({
-            name = "progress_square",
-            render_template = "VertexColorTexturedRadial",
-            layer = 5,
-            y = icon:y(),
-            w = icon:w(),
-            h = icon:h(),
-            texture = texture,
-            texture_rect = rect,
-            color = Color(1, 0, 1, 1),
-            visible = progress
-        })
-    end
+    self._progress = self._panel:bitmap({
+        name = "progress",
+        render_template = "VertexColorTexturedRadial",
+        layer = 5,
+        y = icon:y(),
+        w = icon:w(),
+        h = icon:h(),
+        texture = params.good and texture_good or texture_bad,
+        texture_rect = rect,
+        color = Color(1, 0, 1, 1),
+        visible = progress
+    })
     if progress then
         local size = 24 * params.scale
         local move = 4 * params.scale
@@ -177,21 +161,22 @@ function EHIBuffTracker:init(panel, params)
 end
 
 function EHIBuffTracker:InvertProgress()
-    local rect
-    if circle_shape then
+    local size = invert and rect[4] or 0
+    self._progress:set_texture_rect(size, rect[2], -rect[3], rect[4])
+    --[[if circle_shape then
         if invert then
-            rect = {128, 0, -128, 128}
+            size = {128, 0, -128, 128}
         else
-            rect = {0, 0, 128, 128}
+            size = {0, 0, 128, 128}
         end
     else
         if invert then
-            rect = {32, 0, -32, 32}
+            size = {32, 0, -32, 32}
         else
-            rect = {0, 0, 32, 32}
+            size = {0, 0, 32, 32}
         end
     end
-    self._progress:set_texture_rect(unpack(rect))
+    self._progress:set_texture_rect(unpack(size))]]
 end
 
 function EHIBuffTracker:SetPersistent()
@@ -200,13 +185,17 @@ function EHIBuffTracker:SetPersistent()
 end
 
 function EHIBuffTracker:CalculateMoveOffset()
-    self._panel_w = self._panel:w()
-    self._panel_w_gap = self._panel_w + 6
-    self._panel_move_gap = (self._panel_w / 2) + 3 -- add only half of the gap
+    local panel_w = self._panel:w()
+    self._panel_w_gap = panel_w + 6
+    self._panel_move_gap = (panel_w / 2) + 3 -- add only half of the gap
 end
 
 function EHIBuffTracker:UpdateIcon(texture, texture_rect)
-    self._panel:child("icon"):set_image(texture, unpack(texture_rect))
+    if texture_rect then
+        self._panel:child("icon"):set_image(texture, unpack(texture_rect))
+    else
+        self._panel:child("icon"):set_image(texture)
+    end
 end
 
 function EHIBuffTracker:SetCenterX(center_x)

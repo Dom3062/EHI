@@ -46,6 +46,7 @@
     "ehi_achievement_land" : "LAND",
     "ehi_achievement_find" : "FIND",
     "ehi_achievement_bring" : "BRING",
+    "ehi_achievement_objective" : "OBJECTIVE",
     "ehi_achievement_fail" : "FAIL",
 
     "ehi_r" : "Red",

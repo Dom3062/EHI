@@ -53,7 +53,7 @@ function EHIHeliTracker:ObjectiveComplete(objective)
     if objective == "count" then
         self._text:set_color(Color.green)
     elseif objective == "time" then
-        self._time_text:set_text("DONE")
+        self:SetStatusText("done", self._time_text)
         self._time_text:stop()
         self._time_text:set_color(Color.green)
     else -- Assault end
@@ -106,7 +106,7 @@ local triggers = {
     [1000601] = { id = "PanicRoomTakeoff", class = "EHIHeliTracker" },
     [1000602] = { special_function = SF.CustomCode, f = function()
         local count = 0
-        if EHI:IsHost() then
+        if EHI:IsPlayingFromStart() then
             local element_area_counter = managers.mission:get_element_by_id(103832) -- ´enemies alive in volume´ ElementCounter 103832
             if not element_area_counter then
                 EHI:DelayCall("RemovePanicRoomTakeoff", 1, function()

@@ -109,7 +109,7 @@ EHI:AddLoadSyncFunction(function(self)
     end
 end)
 EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
-    if EHI:IsHost() or managers.ehi:GetStartedFromBeginning() then
+    if EHI:IsPlayingFromStart() then
         local function fail(...)
             managers.ehi:SetAchievementFailed("voff_1")
         end

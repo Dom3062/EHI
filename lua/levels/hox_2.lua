@@ -56,9 +56,11 @@ local achievements =
 {
     [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072 } },
     [1001071] = { id = "slakt_3", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [1001072] = { id = "cac_26", status = "defend", class = TT.AchievementStatus, special_function = SF.ShowAchievementFromStart, difficulty_pass = ovk_and_up },
+    [1001072] = { id = "cac_26", status = "objective", class = TT.AchievementStatus, special_function = SF.ShowAchievementFromStart, difficulty_pass = ovk_and_up },
     [100256] = { id = "slakt_3", special_function = SF.SetAchievementFailed },
     [100258] = { id = "slakt_3", special_function = SF.SetAchievementComplete },
+    [104485] = { id = "cac_26", status = "defend", special_function = SF.SetAchievementStatus },
+    [104520] = { id = "cac_26", status = "objective", special_function = SF.SetAchievementStatus },
     [101884] = { id = "cac_26", status = "finish", special_function = SF.SetAchievementStatus },
     [100320] = { id = "cac_26", special_function = SF.SetAchievementComplete },
     [100322] = { id = "cac_26", special_function = SF.SetAchievementFailed },

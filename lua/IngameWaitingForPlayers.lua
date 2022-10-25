@@ -167,16 +167,6 @@ local function CreateProgressTracker(id, progress, max, dont_flash, remove_after
     })
 end
 
-local function CreateUnlockTracker(id, time, icons)
-    managers.ehi:AddTracker({
-        id = id,
-        time = time,
-        icons = icons or EHI:GetAchievementIcon(id),
-        status_is_overridable = false,
-        class = "EHIAchievementUnlockTracker"
-    })
-end
-
 local function HookKillFunctionNoCivilian(achievement, weapon_id)
     EHI:HookWithID(StatisticsManager, "killed", "EHI_" .. achievement .. "_killed", function (self, data)
         if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
@@ -522,48 +512,46 @@ function IngameWaitingForPlayersState:at_exit(...)
                 local pass, primary_index, secondary_index = CheckWeaponsBlueprint(tweak_data.achievement.complete_heist_achievements.tango_3.killed_by_blueprint.blueprint)
                 if pass then
                     if primary_index and secondary_index then
-                        do
-                            EHItango_achieve_3Tracker = class(EHIAchievementProgressTracker)
-                            function EHItango_achieve_3Tracker:init(panel, params)
-                                self._kills =
-                                {
-                                    primary = 0,
-                                    secondary = 0
-                                }
-                                self._weapon_id = 0
-                                EHItango_achieve_3Tracker.super.init(self, panel, params)
+                        EHItango_achieve_3Tracker = class(EHIAchievementProgressTracker)
+                        EHItango_achieve_3Tracker._forced_icons = EHI:GetAchievementIcon("tango_achieve_3")
+                        function EHItango_achieve_3Tracker:init(panel, params)
+                            self._kills =
+                            {
+                                primary = 0,
+                                secondary = 0
+                            }
+                            self._weapon_id = 0
+                            EHItango_achieve_3Tracker.super.init(self, panel, params)
+                        end
+                        function EHItango_achieve_3Tracker:WeaponSwitched(id)
+                            if self._weapon_id == id then
+                                return
                             end
-                            function EHItango_achieve_3Tracker:WeaponSwitched(id)
-                                if self._weapon_id == id then
-                                    return
-                                end
-                                local previous_weapon_id = self._weapon_id
-                                self._weapon_id = id
-                                local current_selection = id == 0 and "secondary" or "primary"
-                                local previous_selection = previous_weapon_id == 0 and "secondary" or "primary"
-                                self._kills[previous_selection] = self._progress
-                                self._progress = self._kills[current_selection]
-                                if self._progress >= self._max then
-                                    self:SetStatusText("finish")
-                                    self._disable_counting = true
-                                else
-                                    self._text:set_text(self:Format())
-                                    self._disable_counting = false
-                                end
-                                self:AnimateBG()
+                            local previous_weapon_id = self._weapon_id
+                            self._weapon_id = id
+                            local current_selection = id == 0 and "secondary" or "primary"
+                            local previous_selection = previous_weapon_id == 0 and "secondary" or "primary"
+                            self._kills[previous_selection] = self._progress
+                            self._progress = self._kills[current_selection]
+                            if self._progress >= self._max then
+                                self:SetStatusText("finish")
+                                self._disable_counting = true
+                            else
+                                self._text:set_text(self:Format())
+                                self._disable_counting = false
                             end
-                            function EHItango_achieve_3Tracker:SetCompleted(force)
-                                EHItango_achieve_3Tracker.super.SetCompleted(self, force)
-                                if self._status == "completed" and self._icon1 then
-                                    self:SetIconColor(Color.green)
-                                end
+                            self:AnimateBG()
+                        end
+                        function EHItango_achieve_3Tracker:SetCompleted(force)
+                            EHItango_achieve_3Tracker.super.SetCompleted(self, force)
+                            if self._status == "completed" and self._icon1 then
+                                self:SetIconColor(Color.green)
                             end
                         end
                         managers.ehi:AddTracker({
                             id = "tango_achieve_3",
                             progress = 0,
                             max = 200,
-                            icons = EHI:GetAchievementIcon("tango_achieve_3"),
                             flash_times = 1,
                             remove_after_reaching_target = false,
                             class = "EHItango_achieve_3Tracker"
@@ -878,11 +866,14 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         if EHI:IsAchievementLocked("ovk_3") and HasWeaponEquipped("m134") and (level == "chill" or level == "safehouse") then -- "Oh, That's How You Do It" achievement
             -- Only tracked in Safehouse to prevent tracker spam in heists
-            function EHIAchievementUnlockTracker:ResetTime()
-                self:SetTime(self._former_time)
+            EHIovk3Tracker = class(EHIAchievementUnlockTracker)
+            EHIovk3Tracker._forced_icons = EHI:GetAchievementIcon("ovk_3")
+            function EHIovk3Tracker:ResetTime()
+                self:SetTime(25)
             end
-            function EHIAchievementUnlockTracker:ResetFadeTime()
+            function EHIovk3Tracker:ResetFadeTime()
                 self._fade_time = 5
+                self:SetTextColor(Color.white)
                 self.update = self.super.update
             end
             EHI:HookWithID(RaycastWeaponBase, "start_shooting", "EHI_ovk_3_start_shooting", function(self, ...)
@@ -890,9 +881,13 @@ function IngameWaitingForPlayersState:at_exit(...)
                     if managers.ehi:TrackerExists("ovk_3") then
                         managers.ehi:CallFunction("ovk_3", "ResetTime")
                         managers.ehi:CallFunction("ovk_3", "ResetFadeTime")
-                        managers.ehi:SetTrackerTextColor("ovk_3", Color.white)
                     else
-                        CreateUnlockTracker("ovk_3", 25)
+                        managers.ehi:AddTracker({
+                            id = "ovk_3",
+                            time = 25,
+                            status_is_overridable = false,
+                            class = "EHIovk3Tracker"
+                        })
                     end
                 end
             end)

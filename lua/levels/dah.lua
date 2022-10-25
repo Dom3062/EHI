@@ -1,6 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
 local heli_delay = 26 + 6
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers =
@@ -21,8 +22,14 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
+local other =
+{
+    [100479] = { time = 30 + 2 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
+}
+
 EHI:ParseTriggers({
-    mission = triggers
+    mission = triggers,
+    other = other
 })
 if OVKorAbove then
     EHI:ShowAchievementLootCounter({

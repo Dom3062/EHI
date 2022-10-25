@@ -48,7 +48,6 @@ function EHIdailycakeTracker:SetCompleted()
         self._status = "completed"
         self._progress_text:set_color(Color.green)
         self:SetStatusText("finish", self._progress_text)
-        self:FitTheText(self._progress_text)
         self._disable_counting = true
     end
 end

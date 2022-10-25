@@ -309,6 +309,10 @@ function EHI:IsClient()
     return self._cache.Client
 end
 
+function EHI:IsPlayingFromStart()
+    return self:IsHost() or (self:IsClient() and not managers.statistics:is_dropin())
+end
+
 function EHI:Log(s)
     log("[EHI] " .. (s or "nil"))
 end
@@ -1013,13 +1017,13 @@ function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_al
                 -- TODO:
                 -- This won't properly rearrange triggers when both of them are Trigger function
                 -- It may lead to endless loop, stucking the game
-                local new_key = (key * 10) + 1
-                while triggers[new_key] do
-                    new_key = new_key + 1
-                end
-                triggers[new_key] = value
-                FillRestOfProperties(new_key, value)
                 if t.data then
+                    local new_key = (key * 10) + 1
+                    while triggers[new_key] do
+                        new_key = new_key + 1
+                    end
+                    triggers[new_key] = value
+                    FillRestOfProperties(new_key, value)
                     t.data[#t.data + 1] = new_key
                 else
                     self:Log("key: " .. tostring(key) .. " does not have 'data' table, the trigger " .. tostring(new_key) .. " will not be called!")

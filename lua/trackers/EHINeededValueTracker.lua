@@ -59,10 +59,9 @@ function EHINeededValueTracker:SetCompleted(force)
         self._status = "completed"
         self:SetTextColor(Color.green)
         if self._remove_after_reaching_counter_target or force then
-            self._parent_class:AddTrackerToUpdate(self._id, self)
+            self:AddTrackerToUpdate()
         else
-            self._text:set_text("FINISH")
-            self:FitTheText()
+            self:SetStatusText("finish")
         end
         self._disable_counting = true
     end
@@ -74,7 +73,7 @@ function EHINeededValueTracker:SetFailed()
     end
     self:SetTextColor(Color.red)
     self._status = "failed"
-    self._parent_class:AddTrackerToUpdate(self._id, self)
+    self:AddTrackerToUpdate()
     self:AnimateBG()
     self._disable_counting = true
 end

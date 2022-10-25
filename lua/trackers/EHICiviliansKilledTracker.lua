@@ -1,5 +1,6 @@
 EHICiviliansKilledTracker = class(EHITracker)
 EHICiviliansKilledTracker._update = false
+EHICiviliansKilledTracker._forced_icons = { "mugshot_in_custody" }
 function EHICiviliansKilledTracker:init(panel, params)
     self._pause_t = 0
     self._n_of_peers_in_custody = 0

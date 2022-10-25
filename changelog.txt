@@ -1,3 +1,6 @@
+r90 (25. 10. 2022):
+Added trackers for Lost in Transit Heist
+
 r89 (19. 10. 2022):
 Updated code to Update 229
 Bloodthirst Ace: Fixed an issue where "reload" buff is not visible

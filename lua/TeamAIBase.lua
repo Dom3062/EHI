@@ -30,7 +30,7 @@ end
 function TeamAIBase:set_loadout(loadout, ...)
     original.set_loadout(self, loadout, ...)
     if loadout.skill == "crew_generous" then
-        progress = (managers.player._throw_regen_kills or 0)
+        progress = managers.player._throw_regen_kills or 0
         managers.ehi_buff:AddGauge2("crew_throwable_regen", progress / max, progress)
         managers.player:register_message(Message.OnEnemyKilled, "EHI_crew_throwable_regen", IncreaseProgress)
     end

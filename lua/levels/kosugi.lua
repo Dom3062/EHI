@@ -74,7 +74,7 @@ function EHIkosugi5Tracker:CheckCompletion(type)
     self._completion[type] = true
     if self._completion.loot and self._completion.armor and not self._completion.final then
         self._completion.final = true
-        self._parent_class:AddTrackerToUpdate(self._id, self)
+        self:AddTrackerToUpdate()
     end
 end
 
@@ -206,6 +206,7 @@ EHI:AddLoadSyncFunction(function(self)
     if managers.game_play_central:GetMissionEnabledUnit(103995) then
         self:IncreaseTrackerProgressMax("LootCounter")
     end
+    self:SyncSecuredLoot()
 end)
 
 -- Loot Counter
@@ -235,13 +236,12 @@ EHI:ShowLootCounter({
             CheckForBrokenWeapons()
             CheckForBrokenCocaine()
         end}
-    }
+    },
+    no_sync_load = true
 })
 -- Not included bugged loot, this is checked after spawn -> 102700 in EHI:ShowLootCounter()
 -- Reported here:
 -- https://steamcommunity.com/app/218620/discussions/14/5710018482972011532/
-
--- daily_secret_identity -> Destroy 9 cameras
 
 EHI:ShowAchievementLootCounter({
     achievement = "kosugi_1",

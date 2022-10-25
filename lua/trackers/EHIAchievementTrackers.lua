@@ -39,13 +39,6 @@ function EHIAchievementTracker:init(panel, params)
     end
 end
 
-function EHIAchievementTracker:update_fade(t, dt)
-    self._fade_time = self._fade_time - dt
-    if self._fade_time <= 0 then
-        self:delete()
-    end
-end
-
 function EHIAchievementTracker:SetCompleted()
     self._text:stop()
     self.update = self.update_fade
@@ -103,7 +96,6 @@ function EHIAchievementProgressTracker:ShowStartedPopup()
 end
 
 EHIAchievementUnlockTracker = class(EHIWarningTracker)
-EHIAchievementUnlockTracker.update_fade = EHIAchievementTracker.update_fade
 EHIAchievementUnlockTracker.AnimateWarning = EHITimerTracker.AnimateCompletion
 EHIAchievementUnlockTracker._popup_type = "achievement"
 EHIAchievementUnlockTracker._show_started = EHIAchievementTracker._show_started
@@ -158,12 +150,11 @@ end
 
 local show_status_changed_popup = false
 EHIAchievementStatusTracker = class(EHIAchievementTracker)
-EHIAchievementStatusTracker.update = EHIAchievementTracker.update_fade
+EHIAchievementStatusTracker.update = EHIAchievementStatusTracker.update_fade
 EHIAchievementStatusTracker._update = false
 function EHIAchievementStatusTracker:init(panel, params)
     self._status = params.status or "ok"
     EHIAchievementStatusTracker.super.init(self, panel, params)
-    self._fade_time = 5
     self:SetTextColor()
 end
 
@@ -226,7 +217,8 @@ local yellow_status =
     land = true,
     find = true,
     bring = true,
-    mark = true
+    mark = true,
+    objective = true
 }
 function EHIAchievementStatusTracker:SetTextColor(color)
     local c

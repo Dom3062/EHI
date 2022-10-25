@@ -89,11 +89,6 @@ function EHITimerTracker:SetAnimateWarning(completion)
     end
 end
 
-function EHITimerTracker:SetDone()
-    self._text:set_text("DONE")
-    self:FitTheText()
-end
-
 function EHITimerTracker:SetUpgradeable(upgradeable)
     self._upgradeable = upgradeable
     if self._icon2 then

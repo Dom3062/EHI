@@ -91,6 +91,7 @@ local function GetNumberOfMethBags()
 end
 local Methbags = 0
 local MethbagsCooked = 0
+local MethlabExploded = false
 local other =
 {
     -- +30s anticipation
@@ -123,10 +124,16 @@ if LootCounter then
         other[i] = IncreaseMaximumTrigger
     end
     local function IncreaseMaximum2()
+        if MethlabExploded then
+            return
+        end
         Methbags = Methbags + 1
         managers.ehi:CallFunction("LootCounter", "RandomLootSpawned")
     end
     local function DecreaseMaximum()
+        if MethlabExploded then
+            return
+        end
         managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
     end
     local IncreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = IncreaseMaximum2 }
@@ -147,6 +154,7 @@ if LootCounter then
         end
         managers.ehi:DecreaseTrackerProgressMax("LootCounter", Methbags - MethbagsCooked)
         managers.ehi:CallFunction("LootCounter", "DecreaseMaxRandom", 19)
+        MethlabExploded = true
     end
     local function CookingDone()
         MethbagsCooked = MethbagsCooked + 1

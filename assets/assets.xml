@@ -17,7 +17,11 @@
         <file :name="piggy.texture" :path="piggy.texture"/>
         <file :name="daily_secret_identity.texture" :path="daily_secret_identity.texture"/>
 
-        <file :name="buff_frame.texture" :path="buff_frame.texture"/>
-        <file :name="buff_frame_debuff.texture" :path="buff_frame_debuff.texture"/>
+        <!-- Square -->
+        <file :name="buff_sframe.texture" :path="buff_sframe.texture"/>
+        <file :name="buff_sframe_debuff.texture" :path="buff_sframe_debuff.texture"/>
+        <!-- Circle -->
+        <file :name="buff_cframe.texture" :path="buff_cframe.texture"/>
+        <file :name="buff_cframe_debuff.texture" :path="buff_cframe_debuff.texture"/>
     </group>
 </assets>

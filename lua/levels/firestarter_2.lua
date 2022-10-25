@@ -26,32 +26,8 @@ local MissionDoorIndex =
     [4] = { w_id = 101783 }
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
-local function GetNumberOfVisibleWeapons()
-    local world = managers.worlddefinition
-    local n = 0
-    for _, index in ipairs({ 101473, 102717, 102718, 102720 }) do
-        local weapon = world:get_unit(index)
-        if weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
-            local state = weapon:damage()._state.graphic_group.grp_wpn
-            if state[1] == "set_visibility" and state[2] then
-                n = n + 1
-            end
-        end
-    end
-    return n
-end
-local function GetNumberOfVisibleOtherLoot()
-    local world = managers.worlddefinition
-    local n = 0
-    for _, index in ipairs({ 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }) do
-        local unit = world:get_unit(index)
-        if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_hidden == 0 then
-            n = n + 1
-        end
-    end
-    return n
-end
-
+local Weapons = { 101473, 102717, 102718, 102720 }
+local OtherLoot = { 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }
 local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {
@@ -59,9 +35,10 @@ local other =
         if not LootCounter then
             return
         end
+        local ef = tweak_data.ehi.functions
         local max = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 2 or 1
         local goat = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) and 1 or 0
-        local random_loot = GetNumberOfVisibleWeapons() + GetNumberOfVisibleOtherLoot()
+        local random_loot = ef.GetNumberOfVisibleWeapons(Weapons) + ef.GetNumberOfVisibleOtherLoot(OtherLoot)
         EHI:ShowLootCounterNoCheck({
             max = max,
             -- Random Loot + Goat
