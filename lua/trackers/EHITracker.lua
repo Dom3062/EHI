@@ -98,11 +98,11 @@ EHITracker._gap_scaled = EHITracker._gap * EHITracker._scale
 function EHITracker:init(panel, params)
     self._id = params.id
     self._icons = self._forced_icons or params.icons
-    local number_of_icons = 0
+    self._n_of_icons = 0
     local gap = 0
     if type(self._icons) == "table" then
-        number_of_icons = #self._icons
-        gap = self._gap * number_of_icons
+        self._n_of_icons = #self._icons
+        gap = self._gap * self._n_of_icons
     end
     self._parent_panel = panel
     self._time = params.time or 0
@@ -110,7 +110,7 @@ function EHITracker:init(panel, params)
         name = params.id,
         x = params.x,
         y = params.y,
-        w = (64 + gap + (self._icon_size * number_of_icons)) * self._scale,
+        w = (64 + gap + (self._icon_size * self._n_of_icons)) * self._scale,
         h = self._icon_size_scaled,
         alpha = 0,
         visible = true
@@ -140,7 +140,7 @@ function EHITracker:init(panel, params)
         color = params.text_color or Color.white
     })
     self:FitTheText()
-    if number_of_icons > 0 then
+    if self._n_of_icons > 0 then
         self:CreateIcons()
     end
     self:OverridePanel(params)
@@ -190,6 +190,17 @@ else
             end
             start = start + self._icon_size_scaled
             icon_gap = icon_gap + self._gap_scaled
+        end
+    end
+end
+
+function EHITracker:AlignIconsToPanel()
+    local index = self._time_bg_box:w() + self._gap_scaled
+    for i = 1, self._n_of_icons, 1 do
+        local icon = self._panel:child("icon" .. tostring(i))
+        if icon then
+            icon:set_x(index)
+            index = index + self._icon_gap_size_scaled
         end
     end
 end

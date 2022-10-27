@@ -73,7 +73,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                         self.ehi:AddTracker({
                             id = "pagers_chance",
                             chance = EHI:RoundChanceNumber(base[1] or 0),
-                            icons = { "pagers_used" },
+                            icons = { EHI.Icons.Pager },
                             class = EHI.Trackers.Chance
                         })
                         EHI:AddOnAlarmCallback(remove_chance)
@@ -93,7 +93,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             self.ehi:AddTracker({
                 id = "pagers",
                 max = max,
-                icons = { "pagers_used" },
+                icons = { EHI.Icons.Pager },
                 set_color_bad_when_reached = true,
                 class = EHI.Trackers.Progress
             })

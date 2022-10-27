@@ -35,13 +35,14 @@ function FakeEHIManager:AddFakeTrackers()
     self._fake_trackers = {}
     self:AddFakeTracker({ id = "show_mission_trackers", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { Icon.Wait } } )
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.random(60, 180), icons = { Icon.Car, Icon.Escape } } )
-    self:AddFakeTracker({ id = "show_unlockables", time = math.random(60, 180), icons = { "milestone_trophy" } } )
+    self:AddFakeTracker({ id = "show_unlockables", time = math.random(60, 180), icons = { Icon.Trophy } } )
     if EHI:GetOption("xp_panel") <= 2 then
         self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, class = "FakeEHIXPTracker" } )
     end
     self:AddFakeTracker({ id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = self:GetPeerColor() } } } )
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { Icon.Drill, Icon.Wait, "silent", Icon.Loop } } )
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack } } )
+    self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack }, extend = true, class = "FakeEHITimerTracker" } )
     self:AddFakeTracker({ id = "show_camera_loop", time = math.random(10, 25), icons = { "camera_loop" } })
     do
         local time = math.random() * (8 - 1) + 1
@@ -56,7 +57,7 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_minion_tracker", min = 1, charges = 4, icons = { "minion" }, class = "FakeEHIMinionCounterTracker" } )
     self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "enemy" }, class = "FakeEHIChanceTracker" } )
     self:AddFakeTracker({ id = "show_drama_tracker", chance = math.random(100), icons = { "C_Escape_H_Street_Bullet" }, class = "FakeEHIChanceTracker" })
-    self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { "pagers_used" }, class = "FakeEHIProgressTracker" } )
+    self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { Icon.Pager }, class = "FakeEHIProgressTracker" } )
     self:AddFakeTracker({ id = "show_pager_callback", time = math.random() * (12 - 0.5) + 0.5, icons = { "pager_icon" } })
     self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "enemy" }, class = "FakeEHICountTracker" } )
     self:AddFakeTracker({ id = "show_laser_tracker", time = math.random() * (4 - 0.5) + 0.5, icons = { EHI.Icons.Lasers } } )
@@ -454,21 +455,26 @@ function FakeEHITracker:init(panel, params)
         end
     end
     self._id = params.id
+    if params.extend then
+        self._panel:set_w(self._panel:w() * 2)
+        self._time_bg_box:set_w(self._time_bg_box:w() * 2)
+    end
 end
 
 function FakeEHITracker:GetID()
     return self._id
 end
 
-function FakeEHITracker:ResetFontSize()
-    self._text:set_font_size(self._panel:h() * self._text_scale)
+function FakeEHITracker:ResetFontSize(text)
+    text:set_font_size(self._panel:h() * self._text_scale)
 end
 
-function FakeEHITracker:FitTheText()
-    self:ResetFontSize()
-    local w = select(3, self._text:text_rect())
-    if w > self._text:w() then
-        self._text:set_font_size(self._text:font_size() * (self._text:w() / w) * self._text_scale)
+function FakeEHITracker:FitTheText(text)
+    text = text or self._text
+    self:ResetFontSize(text)
+    local w = select(3, text:text_rect())
+    if w > text:w() then
+        text:set_font_size(text:font_size() * (text:w() / w) * self._text_scale)
     end
 end
 
@@ -650,7 +656,7 @@ end
 
 function FakeEHIMinionCounterTracker:UpdateFormat(value)
     if value then -- "Show Minions Per Player" option is enabled
-        self._icon1:set_color(FakeEHIManager:GetPeerColor()) -- Very bad
+        self._icon1:set_color(FakeEHIManager:GetPeerColor())
     else -- Disabled
         self._icon1:set_color(Color.white)
     end
@@ -664,4 +670,29 @@ end
 
 function FakeEHICountTracker:Format(format)
     return tostring(self._count)
+end
+
+FakeEHITimerTracker = class(FakeEHITracker)
+FakeEHITimerTracker.FormatProgress = FakeEHIProgressTracker.Format
+function FakeEHITimerTracker:init(panel, params)
+    self._max = 3
+    self._progress = math.random(0, 2)
+    FakeEHITimerTracker.super.init(self, panel, params)
+    self._progress_text = self._time_bg_box:text({
+        name = "text2",
+        text = self:FormatProgress(),
+        align = "center",
+        vertical = "center",
+        w = self._time_bg_box:w() / 2,
+        h = self._time_bg_box:h(),
+        font = tweak_data.menu.pd2_large_font,
+		font_size = self._panel:h() * self._text_scale,
+        color = params.text_color or Color.white
+    })
+    self._text:set_left(0)
+    self._progress_text:set_left(self._text:right())
+    self:FitTheText(self._progress_text)
+    if self._icon1 then
+        self._icon1:set_x(self._icon1:x() * 2)
+    end
 end

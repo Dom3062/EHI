@@ -23,7 +23,6 @@ end
 
 EHIZoneTracker = class(EHIWarningTracker)
 EHIZoneTracker._forced_icons = { Icon.Wait }
-EHIZoneTracker.update_fade = EHIAchievementTracker.update_fade
 EHIZoneTracker.SetCompleted = EHIAchievementTracker.SetCompleted
 
 local SF = EHI.SpecialFunctions

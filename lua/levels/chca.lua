@@ -18,20 +18,6 @@ end
 local triggers = {
     [103030] = { time = 19, id = "InsideManTalk", icons = { "pd2_talk" } },
 
-    --[[[103211] = { special_function = SF.Trigger, data = { 1032111, 1032112 } },
-    [1032111] = { time = 20, id = "MeetingTalk", icons = { "pd2_talk" } },
-    [1032112] = { special_function = SF.CustomCode, f = function()
-        EHI:Log("Current game time: " .. TimerManager:game():time())
-        local dialog = managers.mission:get_element_by_id(103212)
-        if dialog then
-            local f = dialog._done_callback
-            function dialog:_done_callback(...)
-                EHI:Log("Dialog finished. Current game time: " .. TimerManager:game():time())
-                f(dialog, ...)
-            end
-        end
-    end },]]
-
     -- C4 in the meeting room
     [EHI:GetInstanceElementID(100025, 20420)] = { time = 5, id = "C4MeetingRoom", icons = { Icon.C4 } },
 
@@ -61,9 +47,7 @@ local triggers = {
 
     [102675] = { additional_time = 5 + 10 + 14, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.GetElementTimerAccurate, element = 102674 },
 
-    [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot },
-
-    
+    [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot }
 }
 if EHI:IsClient() then
     local wait_time = 90 -- Very Hard and below

@@ -25,11 +25,39 @@ for _, index in ipairs(FireTrapIndexes) do
     triggers[EHI:GetInstanceElementID(100022, index)] = fire
 end
 
+local cane_5 = EHI:GetFreeCustomSpecialFunctionID()
 local achievements =
 {
     [101167] = { time = 1800, id = "cane_2", class = TT.AchievementUnlock, difficulty_pass = ovk_and_up },
-    [101176] = { id = "cane_2", special_function = SF.SetAchievementFailed }
+    [101176] = { id = "cane_2", special_function = SF.SetAchievementFailed },
+
+    [100544] = { special_function = cane_5 },
+    [1005441] = { special_function = SF.CustomCode, f = function()
+        EHI:HookWithID(PlayerManager, "set_synced_deployable_equipment", "EHI_cane_5_fail_trigger", function(self, ...)
+            if self._peer_used_deployable then
+                managers.ehi:SetAchievementFailed("cane_5")
+                EHI:Unhook("cane_5_fail_trigger")
+            end
+        end)
+        EHI:ShowAchievementLootCounter({
+            achievement = "cane_5",
+            max = 10,
+            counter =
+            {
+                loot_type = "present"
+            }
+        })
+    end}
 }
+EHI:RegisterCustomSpecialFunction(cane_5, function(id, trigger, element, enabled)
+    if #managers.assets:get_unlocked_asset_ids(true) ~= 0 then
+        if EHI:GetUnlockableOption("show_achievement_failed_popup") then
+            managers.hud:ShowAchievementFailedPopup("cane_5")
+        end
+        return
+    end
+    EHI:Trigger(1005441)
+end)
 
 if EHI:MissionTrackersAndWaypointEnabled() then
     local DisableWaypoints =
@@ -70,3 +98,12 @@ for _, index in ipairs(FireTrapIndexes) do
     tbl[EHI:GetInstanceElementID(100002, index)] = { ignore = true }
 end
 EHI:UpdateUnits(tbl)
+EHI:AddLoadSyncFunction(function(self)
+    if #managers.assets:get_unlocked_asset_ids(true) ~= 0 or managers.player:has_deployable_been_used() then
+        return
+    end
+    if managers.loot:GetSecuredBagsTypeAmount("present") >= 10 then
+        return
+    end
+    EHI:Trigger(1005441)
+end)

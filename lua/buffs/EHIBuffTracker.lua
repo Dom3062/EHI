@@ -163,20 +163,6 @@ end
 function EHIBuffTracker:InvertProgress()
     local size = invert and rect[4] or 0
     self._progress:set_texture_rect(size, rect[2], -rect[3], rect[4])
-    --[[if circle_shape then
-        if invert then
-            size = {128, 0, -128, 128}
-        else
-            size = {0, 0, 128, 128}
-        end
-    else
-        if invert then
-            size = {32, 0, -32, 32}
-        else
-            size = {0, 0, 32, 32}
-        end
-    end
-    self._progress:set_texture_rect(unpack(size))]]
 end
 
 function EHIBuffTracker:SetPersistent()

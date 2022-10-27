@@ -45,7 +45,7 @@ end
 local bex_10_fail = { id = "bex_10", special_function = SF.SetAchievementFailed }
 local achievements =
 {
-    [103701] = { id = "bex_10", status = "ok", special_function = SF.SetAchievementStatus },
+    [103701] = { id = "bex_10", status = "defend", special_function = SF.SetAchievementStatus },
     [103702] = bex_10_fail,
     [103704] = bex_10_fail,
     [102602] = { id = "bex_10", special_function = SF.SetAchievementComplete },

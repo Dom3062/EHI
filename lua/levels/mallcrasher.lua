@@ -14,13 +14,6 @@ function EHIameno3Tracker:init(panel, params)
     EHIameno3Tracker.super.init(self, panel, params)
 end
 
-function EHIameno3Tracker:update_done(t, dt)
-    self._fade_time = self._fade_time - dt
-    if self._fade_time <= 0 then
-        self:delete()
-    end
-end
-
 function EHIameno3Tracker:OverridePanel(params)
     self._panel:set_w(self._panel:w() * 2)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
@@ -81,10 +74,9 @@ function EHIameno3Tracker:SetCompleted(force)
         self._text:stop()
         self:SetTextColor(Color.green)
         if self._remove_after_reaching_counter_target or force then
-            self._fade_time = 5
-            self.update = self.update_done
+            self.update = self.update_fade
         else
-            self._money_text:set_text("FINISH")
+            self:SetStatusText("finish", self._money_text)
             self:FitTheText(self._money_text)
         end
         self._disable_counting = true

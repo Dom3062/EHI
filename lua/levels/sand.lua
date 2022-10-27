@@ -14,7 +14,7 @@ function EHIsand11Tracker:OverridePanel(params)
     self._panel:set_w(self._panel:w() * 2)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self._text_chance = self._time_bg_box:text({
-        name = "time_text",
+        name = "chance",
         text = self:FormatChance(),
         align = "center",
         vertical = "center",

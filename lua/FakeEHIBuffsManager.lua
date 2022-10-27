@@ -229,8 +229,8 @@ function FakeEHIBuffsManager:UpdateBuffs(f, ...)
 end
 
 FakeEHIBuffTracker = class()
-FakeEHIBuffTracker._rect_circle = {128, 0, 128, 128}
-FakeEHIBuffTracker._rect_square = {32, 0, 32, 32}
+FakeEHIBuffTracker._rect_circle = {128, 0, -128, 128}
+FakeEHIBuffTracker._rect_square = {32, 0, -32, 32}
 function FakeEHIBuffTracker:init(panel, params)
     local buff_w_half = buff_w / 2
     self._show_progress = params.show_progress
@@ -282,7 +282,6 @@ function FakeEHIBuffTracker:init(panel, params)
         color = Color.black:with_alpha(0.2),
         visible = self._shape == 2
     })
-    local texture_circle = params.good and "guis/textures/pd2/hud_progress_active" or "guis/textures/pd2/hud_progress_invalid"
     self._hud_panel:bitmap({
         name = "progress_circle",
         render_template = "VertexColorTexturedRadial",
@@ -290,22 +289,10 @@ function FakeEHIBuffTracker:init(panel, params)
         y = icon:y(),
         w = icon:w(),
         h = icon:h(),
-        texture = texture_circle,
-        texture_rect = {128, 0, -128, 128},
+        texture = params.good and "guis/textures/pd2_mod_ehi/buff_cframe" or "guis/textures/pd2_mod_ehi/buff_cframe_debuff",
+        texture_rect = self._rect_circle,
         visible = self._shape == 2 and self._show_progress
     })
-    self._hud_panel:bitmap({
-        name = "progress_circle_inverted",
-        render_template = "VertexColorTexturedRadial",
-        layer = 5,
-        y = icon:y(),
-        w = icon:w(),
-        h = icon:h(),
-        texture = texture_circle,
-        texture_rect = {0, 0, 128, 128},
-        visible = false
-    })
-    local texture_square = params.good and "guis/textures/pd2_mod_ehi/buff_frame" or "guis/textures/pd2_mod_ehi/buff_frame_debuff"
     self._hud_panel:bitmap({
         name = "progress_square",
         render_template = "VertexColorTexturedRadial",
@@ -313,20 +300,9 @@ function FakeEHIBuffTracker:init(panel, params)
         y = icon:y(),
         w = icon:w(),
         h = icon:h(),
-        texture = texture_square,
-        texture_rect = {32, 0, -32, 32},
+        texture = params.good and "guis/textures/pd2_mod_ehi/buff_sframe" or "guis/textures/pd2_mod_ehi/buff_sframe_debuff",
+        texture_rect = self._rect_square,
         visible = self._shape == 1 and self._show_progress
-    })
-    self._hud_panel:bitmap({
-        name = "progress_square_inverted",
-        render_template = "VertexColorTexturedRadial",
-        layer = 5,
-        y = icon:y(),
-        w = icon:w(),
-        h = icon:h(),
-        texture = texture_square,
-        texture_rect = {0, 0, 32, 32},
-        visible = false
     })
     self._hint = self._hud_panel:text({
         name = "hint",
@@ -371,9 +347,7 @@ end
 function FakeEHIBuffTracker:SetProgress(r)
     local c = Color(1, r, 1, 1)
     self._hud_panel:child("progress_circle"):set_color(c)
-    self._hud_panel:child("progress_circle_inverted"):set_color(c)
     self._hud_panel:child("progress_square"):set_color(c)
-    self._hud_panel:child("progress_square_inverted"):set_color(c)
 end
 
 function FakeEHIBuffTracker:SetCenterX(center_x)
@@ -412,24 +386,14 @@ end
 function FakeEHIBuffTracker:UpdateBuffShape(shape)
     if shape == 1 then -- Square
         self._time_bg_box:child("bg_square"):set_visible(true)
-        if self._inverted then
-            self._hud_panel:child("progress_square_inverted"):set_visible(self._show_progress)
-        else
-            self._hud_panel:child("progress_square"):set_visible(self._show_progress)
-        end
+        self._hud_panel:child("progress_square"):set_visible(self._show_progress)
         self._time_bg_box:child("bg_circle"):set_visible(false)
         self._hud_panel:child("progress_circle"):set_visible(false)
-        self._hud_panel:child("progress_circle_inverted"):set_visible(false)
     else -- Circle
         self._time_bg_box:child("bg_square"):set_visible(false)
         self._hud_panel:child("progress_square"):set_visible(false)
-        self._hud_panel:child("progress_square_inverted"):set_visible(false)
         self._time_bg_box:child("bg_circle"):set_visible(true)
-        if self._inverted then
-            self._hud_panel:child("progress_circle_inverted"):set_visible(self._show_progress)
-        else
-            self._hud_panel:child("progress_circle"):set_visible(self._show_progress)
-        end
+        self._hud_panel:child("progress_circle"):set_visible(self._show_progress)
     end
     self._shape = shape
 end
@@ -437,10 +401,10 @@ end
 function FakeEHIBuffTracker:UpdateProgressVisibility(visibility, dont_force)
     self._show_progress = visibility
     self:UpdateBuffShape(self._shape)
-    local icon = self._hud_panel:child("icon")
     if dont_force then
         return
     end
+    local icon = self._hud_panel:child("icon")
     if self._show_progress then
         local size = 24 * self._scale
         local move = 4 * self._scale
@@ -455,15 +419,15 @@ function FakeEHIBuffTracker:UpdateProgressVisibility(visibility, dont_force)
     end
 end
 
+local function Invert(self, rect, shape)
+    local size = self._inverted and 0 or rect[4]
+    local size_3 = self._inverted and rect[4] or rect[3]
+    self._hud_panel:child(shape):set_texture_rect(size, rect[2], size_3, rect[4])
+end
 function FakeEHIBuffTracker:InvertProgress()
     self._inverted = not self._inverted
-    if self._shape == 1 then -- Square
-        self._hud_panel:child("progress_square"):set_visible(not self._hud_panel:child("progress_square"):visible())
-        self._hud_panel:child("progress_square_inverted"):set_visible(not self._hud_panel:child("progress_square_inverted"):visible())
-    else -- Circle
-        self._hud_panel:child("progress_circle"):set_visible(not self._hud_panel:child("progress_circle"):visible())
-        self._hud_panel:child("progress_circle_inverted"):set_visible(not self._hud_panel:child("progress_circle_inverted"):visible())
-    end
+    Invert(self, self._rect_square, "progress_square")
+    Invert(self, self._rect_circle, "progress_circle")
 end
 
 function FakeEHIBuffTracker:Format()

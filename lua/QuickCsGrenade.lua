@@ -12,11 +12,11 @@ function QuickCsGrenade:detonate(...)
     managers.ehi:AddTracker({
         id = key,
         time = self._duration,
-        icons = { Icon.Sentry, "teargas" }
+        icons = { Icon.Sentry, Icon.Teargas }
     })
     managers.ehi_waypoint:AddWaypoint(key, {
         time = self._duration,
-        icon = "teargas",
+        icon = Icon.Teargas,
         position = self._unit:position()
     })
 end

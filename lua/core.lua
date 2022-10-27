@@ -175,6 +175,7 @@ _G.EHI =
         Glasscutter = "equipment_glasscutter",
         Loot = "pd2_loot",
         Goto = "pd2_goto",
+        Pager = "pagers_used",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
