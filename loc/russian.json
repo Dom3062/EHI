@@ -1,9 +1,53 @@
 {
     "ehi_mod_title" : "Расширенное инфо при ограблении",
-    "ehi_mod_desc" : "Extra Heist Info(EHI): Показывает дополнительную информацию во время миссии",
+    "ehi_mod_desc" : "Extra Heist Info(EHI): Показывать дополнительную информацию во время миссии",
 
-    "ehi_menu_next_page" : "След. Страница -->",
-    "ehi_menu_previous_page" : "<-- Пред. Страница",
+    "ehi_save_data_corrupted" : "Файл сохранения EHI поврежден",
+    "ehi_save_data_corrupted_desc" : "Файл сохранения EHI поврежден и не может быть загружен\nEHI будет использовать значения по умолчанию, чтобы избежать сбоя",
+
+    "ehi_level_restart_required" : "Для вступления параметров в силу требуется перезапуск ограбления",
+
+    "ehi_menu_next_page" : "Следующая страница -->",
+    "ehi_menu_previous_page" : "<-- Предыдущая страница",
+
+    "ehi_menu_only" : "Только меню",
+    "ehi_show_preview_text" : "Показать текст предварительного просмотра",
+    "ehi_show_preview_text_desc" : "Скрывает или показывать текст предварительного просмотра",
+
+    "ehi_popup_experience" : "ОПЫТ",
+    "ehi_popup_experience_base_gained" : "Получаемый базовый опыт: ",
+    "ehi_popup_experience_gained" : "Получено: ",
+    "ehi_popup_experience_total" : "Суммарно: ",
+    "ehi_popup_gage_packages" : "ГЕЙДЖ ПОСЫЛКИ",
+    "ehi_popup_minion" : "КОНВЕРТ",
+    "ehi_popup_minion_killed" : "Ваш конвёрт был убит",
+    "ehi_popup_achievement_failed" : "ДОСТИЖЕНИЕ ПРОВАЛЕНО!",
+    "ehi_popup_achievement_started" : "НАЧАЛОСЬ ВЫПОЛНЕНИЕ ДОСТИЖЕНИЯ!",
+    "ehi_popup_trophy_started" : "ВЫПОЛНЕНИЕ ТРОФЕЯ НАЧАЛОСЬ!",
+    "ehi_popup_trophy_failed" : "ПОЛУЧЕНИЕ ТРОФЕЯ ПРОВАЛЕНО!",
+    "ehi_popup_daily_started" : "НАЧАЛОСЬ ВЫПОЛНЕНИЯ ЕЖЕДНЕВНОГО ЗАДАНИЯ!",
+    "ehi_popup_daily_failed" : "ЕЖЕДНЕВНОЕ ЗАДАНИЕ ПРОВАЛЕНО!",
+    "ehi_popup_loot_counter" : "СЧЕТЧИК ДОБЫЧИ",
+    "ehi_popup_all_loot_secured" : "Все сумки с добычей захвачены",
+    "ehi_achievement_ok" : "ОК",
+    "ehi_achievement_done" : "СДЕЛАНО",
+    "ehi_achievement_pass" : "ПРОЙДЕНО",
+    "ehi_achievement_defend" : "ЗАЩИЩЕНО",
+    "ehi_achievement_finish" : "ФИНИШ",
+    "ehi_achievement_secure" : "БЕЗОПАСНО",
+    "ehi_achievement_no_down" : "БЕЗ ПАДЕНИЙ",
+    "ehi_achievement_destroy" : "УНИЧТОЖЕНО",
+    "ehi_achievement_alarm" : "ТРЕВОГА",
+    "ehi_achievement_ready" : "ГОТОВО",
+    "ehi_achievement_loud" : "ГРОМКО",
+    "ehi_achievement_mark" : "ОТМЕЧЕНО",
+    "ehi_achievement_push" : "НАЖАТО",
+    "ehi_achievement_hack" : "ВЗЛОМАНО",
+    "ehi_achievement_land" : "ТЕРРИТОРИЯ",
+    "ehi_achievement_find" : "НАЙДЕНО",
+    "ehi_achievement_bring" : "ДОСТАВЛЕНО",
+    "ehi_achievement_objective" : "ЦЕЛЬ",											  
+    "ehi_achievement_fail" : "ПРОВАЛЕНО",
 
     "ehi_r" : "Красный",
     "ehi_g" : "Зеленый",
@@ -32,26 +76,91 @@
     "ehi_time_format_1" : "Только секунды",
     "ehi_time_format_2" : "Минуты и секунды",
 
-    "ehi_visuals_menu" : "Настройки отображения",
+    "ehi_tracker_alignment" : "Выравнивание трекера",
+    "ehi_tracker_alignment_desc" : "Определяет выравнивание трекера",
+    "ehi_tracker_alignment_1" : "Вертикально",
+    "ehi_tracker_alignment_2" : "Горизонтально",
+
+    "ehi_visuals_menu" : "Настройки отображения",						   
     "ehi_visuals_menu_desc" : "",
 
     "ehi_show_tracker_bg" : "Показывать рамку трекера",
-    "ehi_show_tracker_bg_desc" : "Показывать фон трекера\nКогда выключено - скрывает фон и анимации",
-
+    "ehi_show_tracker_bg_desc" : "Показывать фон трекера\nКогда выключено - скрывать фон и анимации",
+    
+	"ehi_show_tracker_corners" : "Показать углы трекера",
+    "ehi_show_tracker_corners_desc" : "показывать белые углы в трекере",
+	
     "ehi_show_one_icon" : "Только 1 иконка в трекере",
-    "ehi_show_one_icon_desc" : "Показывает только 1 иконку трекера\nКогда выключено - показывает все связанные иконки",
+    "ehi_show_one_icon_desc" : "показывать только 1 иконку трекера\nКогда выключено - показывать все связанные иконки",
 
     "ehi_trackers_menu" : "Трекеры",
     "ehi_trackers_menu_desc" : "",
+	
+    "ehi_show_mission_trackers": "Показывать трекеры миссий",
+    "ehi_show_mission_trackers_desc": "показывать трекеры миссий на экране (напр.: Фургон/Время прибытия вертолета, Время ожидания следующей цели, и т.д...)\n\nЭта опция также применяется к пользовательским миссиям.\nЕсли поддерживается EHI",
+
+    "ehi_show_unlockables" : "Показывать разблокируемые",
+    "ehi_show_unlockables_desc" : "показывать на экране трекер достижений, трофеев и ежедневных миссий",
+
+    "ehi_unlockables_menu" : "Разблокируемые",
+    "ehi_unlockables_menu_desc" : "",
+
+    "ehi_show_achievements" : "Показать достижения",
+    "ehi_show_achievements_desc" : "показывать достижения на экране\nНекоторые ограбления могут не иметь доступных достижений",
+
+    "ehi_show_achievements_mission" : "Показать достижения (Ограбления)",
+    "ehi_show_achievements_mission_desc" : "показывать достижения, которые можно выполнить только на ограблениях",
 
     "ehi_hide_unlocked_achievements" : "Не показывать открытые достижения",
     "ehi_hide_unlocked_achievements_desc" : "Когда выбрано, открытые достижения не будут показываться в трекерах",
 
-    "ehi_show_gained_xp" : "Показывать полученную XP",
-    "ehi_show_gained_xp_desc" : "Показывает полученную XP за миссию.\nТрекер не работает в режиме Серии Преступлений.",
+    "ehi_show_achievements_weapon" : "Показать достижения (оружие)",
+    "ehi_show_achievements_weapon_desc" : "показывать достижения, требующие от вас убийства врагов определённым оружием.\n\nТрекер не будет виден после разблокировки достижения.",
+
+    "ehi_show_achievements_melee" : "Показать достижения (ближний бой)",
+    "ehi_show_achievements_melee_desc" : "показывать достижения, требующие убийства врагов в ближнем бою.\n\nТрекер не будет виден после разблокировки достижения.",
+
+    "ehi_show_achievements_grenade" : "Показать достижения (метательное)",
+    "ehi_show_achievements_grenade_desc" : "показывать достижения, требующие от вас убийства врагов метательными.\n\nТрекер не будет виден после разблокировки достижения",
+
+    "ehi_show_achievements_vehicle" : "Показать достижения (транспорт)",
+    "ehi_show_achievements_vehicle_desc" : "показывать достижения, которые требуют, чтобы вы переезжали врагов на транспортных средствах.\n\nТрекер не будет виден после разблокировки достижения",
+
+    "ehi_show_achievements_other" : "Показать достижения (остальное)",
+    "ehi_show_achievements_other_desc" : "показывать достижения, которые не принадлежат ни к одной группе выше\n\nТрекер не будет виден после разблокировки достижения",
+
+    "ehi_show_achievement_failed_popup" : "Показать всплывающее окно 'Достижение провалено'",
+    "ehi_show_achievement_failed_popup_desc" : "Проваленные достижения будут отображаться красным во всплывающем окне.",
+
+    "ehi_show_achievement_started_popup" : "Показать всплывающее окно 'Началось выполнение достижения'",
+    "ehi_show_achievement_started_popup_desc" : "Достижения, которые сейчас отслеживаются, будут отображаться зеленым цветом во всплывающем окне.",
+
+    "ehi_show_trophies" : "Показать трофеи",
+    "ehi_show_trophies_desc" : "показывать трофеи на экране\nНа некоторых ограблениях могут отсутствовать трофеи.",
+
+    "ehi_hide_unlocked_trophies" : "Не показывать разблокированные трофеи",
+    "ehi_hide_unlocked_trophies_desc" : "Когда включено, EHI не будут показывать трекеры разблокированных трофеев\nПри отключении, EHI покажет все трекеры для трофеев",
+
+    "ehi_show_trophy_failed_popup" : "Показать всплывающее окно 'получение трофея провалено'",
+    "ehi_show_trophy_failed_popup_desc" : "Проваленные трофеи будут отображаться красным во всплывающем окне.",
+
+    "ehi_show_trophy_started_popup" : "Показать всплывающее окно 'выполнение трофея началось'",
+    "ehi_show_trophy_started_popup_desc" : "Трофеи, которые сейчас отслеживаются, будут отображаться зеленым цветом во всплывающем окне.",
+
+    "ehi_show_dailies" : "Показывать ежедневные задания",
+    "ehi_show_dailies_desc" : "показывать ежедневные задания на экране, если они активны\n\nЗавершенные ежедневные задания не будут отображаться на экране.",
+
+    "ehi_show_daily_failed_popup" : "Показать всплывающее окно 'Ежедневное задание провалено'",
+    "ehi_show_daily_failed_popup_desc" : "Проваленные ежедневные задания будут отображаться красным во всплывающем окне.",
+
+    "ehi_show_daily_started_popup" : "Показать всплывающее окно 'Началось выполнение ежедневного задания'",
+    "ehi_show_daily_started_popup_desc" : "Ежедневные задания, которые сейчас отслеживаются, будут отображаться зеленым цветом во всплывающем окне.",
+
+    "ehi_show_gained_xp" : "Показать полученный опыт",
+    "ehi_show_gained_xp_desc" : "показывать заработанный опыт на контракте.\nЭтот трекер отключен в серии ограблений.",
 
     "ehi_xp_format" : "Как показывать полученную XP",
-    "ehi_xp_format_desc" : "Пример: базовое значение: 1000; Сложность Death Wish\nТолько базовое значение: 1000\nЗначение умноженное сложностью: 13000\nЗначение, умноженное всеми бонусами: 13000+", 
+    "ehi_xp_format_desc" : "Пример: базовое значение: 1000; Сложность Death Wish\nТолько базовое значение: 1000\nЗначение умноженное сложностью: 13000\nЗначение, умноженное всеми бонусами: 13000+",
     "ehi_xp_format_base" : "Только базовое значение",
     "ehi_xp_format_difficulty_multiplier" : "Значение умноженное сложностью",
     "ehi_xp_format_all_bonuses" : "Значение со всеми бонусами",
@@ -60,29 +169,45 @@
     "ehi_xp_panel_desc" : "",
     "ehi_xp_panel_1" : "Раздельные панели",
     "ehi_xp_panel_2" : "Общее количество",
+    "ehi_xp_panel_3" : "Показывать всплывающее окно для каждого полученного опыта и общего количества опыта",
+    "ehi_xp_panel_4" : "Показывать подсказку для каждого полученного опыта и общего количества опыта",
+
+    "ehi_total_xp_show_difference" : "Показывать разницу опыта",
+    "ehi_total_xp_show_difference_desc" : "[Показать общее количество опыта, полученного в результате ограбления] только опция!\nпоказывать, сколько вы получили XP в автономном трекере",
 
     "ehi_show_trade_delay" : "Отсрочка обмена",
-    "ehi_show_trade_delay_desc" : "Показывает на сколько произойдёт отсрочка обмена, когда тиммейт убивает гражданских",
+    "ehi_show_trade_delay_desc" : "показывать на сколько произойдёт отсрочка обмена, когда тиммейт убивает гражданских",
 
     "ehi_show_trade_delay_option" : "Когда показывать трекер отсрочки обмена",
-    "ehi_show_trade_delay_option_desc": "Всегда: Всегда показывает трекер если Вы или тиммейт убил гражданского\nПод стражей: Если Вы или тиммейт убили как минимум 1 гражданского и оказались под стражей",
+    "ehi_show_trade_delay_option_desc": "Всегда: Всегда показывать трекер если Вы или тиммейт убили гражданского\nПод стражей: Если Вы или тиммейт убили как минимум 1 гражданского и оказались под стражей",
     "ehi_show_trade_delay_option_1" : "Всегда",
     "ehi_show_trade_delay_option_2" : "Под стражей",
 
     "ehi_show_trade_delay_other_players_only": "Показывать трекер отсрочки обмена только для других игроков",
-    "ehi_show_trade_delay_other_players_only_desc": "Когда включено - не показывает сколько гражданских вы убили.",
+    "ehi_show_trade_delay_other_players_only_desc": "Когда включено - не показывать сколько гражданских вы убили.",
+
+    "ehi_show_trade_delay_suppress_in_stealth" : "Не показывать трекер отсрочки обмена во время тихого прохождения",
+    "ehi_show_trade_delay_suppress_in_stealth_desc" : "Скрывает отсрочку обмена во время стелса, если она включена. После поднятия тревоги появляется трекер со всей накопленной отсрочкой.",
 
     "ehi_show_timers" : "Показ таймеров",
     "ehi_show_timers_desc" : "Показ таймеров взлома, сверления и т.п.",
 
+	"ehi_show_camera_loop" : "Показывать зацикливание камеры",
+    "ehi_show_camera_loop_desc" : "показывать трекер, когда камера зациклена",
+
     "ehi_show_zipline_timer" : "Таймер зиплайна",
-    "ehi_show_zipline_timer_desc" : "покажет 2 таймера.\nПервый покажет, сколько времени зиплайн будет переносить сумку/игрока, второй - когда вернётся",
+    "ehi_show_zipline_timer_desc" : "Покажет 2 таймера.\nПервый покажет, сколько времени зиплайн будет переносить сумку/игрока, второй - когда вернётся",
 
     "ehi_show_gage_tracker" : "Счётчик посылок для Гейджа",
     "ehi_show_gage_tracker_desc" : "Сколько посылок Гейджа осталось на карте.\nЕсли на карте отсутствуют посылки, трекер не появится.",
 
+    "ehi_gage_tracker_panel" : "Показывать прогресс для посылок Гейджа",
+    "ehi_gage_tracker_panel_desc" : "",
+    "ehi_gage_tracker_panel_1" : "В трекере",
+    "ehi_gage_tracker_panel_2" : "Во всплывающем окне",
+	
     "ehi_show_captain_damage_reduction" : "Показывать уменьшение урона по врагам",
-    "ehi_show_captain_damage_reduction_desc" : "Показывает, на сколько уменьшается урон по врагам, когда приходит капитан Уинтерс", 
+    "ehi_show_captain_damage_reduction_desc" : "показывать, на сколько уменьшается урон по врагам, когда приходит капитан Уинтерс",
 
     "ehi_show_equipment_tracker" : "Трекер снаряжения",
     "ehi_show_equipment_tracker_desc" : "Пока раздельные трекеры для медсумок, сумок с патронами, метательным, мешками для трупов и аптечек первой помощи",
@@ -109,32 +234,232 @@
     "ehi_show_equipment_grenadecases_desc" : "Показывать трекер сумок с метательным",
 
     "ehi_show_equipment_bodybags": "Показывать количество сумок с мешками для трупов",
-    "ehi_show_equipment_bodybags_desc": "Показывать трекер сумок с мешками для трупов\nПропадёт в случае подъёма тревоги",
+    "ehi_show_equipment_bodybags_desc": "Показывать трекер сумок с мешками для трупов\nПропадёт в случае поднятой тревоги",
 
     "ehi_show_equipment_firstaidkit": "Показывать количество аптечек первой помощи",
     "ehi_show_equipment_firstaidkit_desc": "Показывать трекер с аптечками первой помощи",
+    
+	"ehi_show_equipment_ecmjammer" : "Показывать трекер продолжительность работы генератора помех",
+    "ehi_show_equipment_ecmjammer_desc" : "показывать трекер оставшейся продолжительности генератора помех\nВ трекере отображается генератор помех с наибольшей продолжительностью.",
 
-    "ehi_show_equipment_aggregate_health" : "Считать медсумки и аптечки первой помощи вместе",
+    "ehi_show_equipment_ecmfeedback" : "Показать продолжительность работы акустической петли генератора помех",
+    "ehi_show_equipment_ecmfeedback_desc" : "показывать трекер оставшейся продолжительности акустической петли генератора помех\nВ трекере отображается генератор помех с активированной акустической петлёй с наибольшей продолжительностью (только лидер лобби)\nКарманный генератор помех с акустической петлёй работает на стороне клиента",
+
+	"ehi_show_equipment_aggregate_health" : "Считать медсумки и аптечки первой помощи вместе",
     "ehi_show_equipment_aggregate_health_desc" : "Объединить медсумки и аптечки первой помощи в один трекер",
+    
+	"ehi_show_equipment_aggregate_all" : "Считать всё снаряжение вместе",
+    "ehi_show_equipment_aggregate_all_desc" : "Объединяет все развертываемые компоненты в один трекер\nРазвертываемые объекты используют свой соответствующий цвет снизу.",
+
+	"ehi_doctor_bag" : "Медицинская сумка",
+    "ehi_ammo_bag" : "Сумка с патронами",
+    "ehi_grenade_crate" : "Кейс с гранатами",
+    "ehi_first_aid_kit" : "Аптечка первой помощи",
+    "ehi_bodybags_bag" : "Мешок для трупов",
 
     "ehi_show_minion_tracker" : "Показывать союзных бойцов",
     "ehi_show_minion_tracker_desc" : "Показывать, сколько бойцов было переведено игроками на свою сторону",
+    
+	"ehi_show_minion_per_player" : "Показать количество конвёртов на одного игрока",
+    "ehi_show_minion_per_player_desc" : "показывать в трекере цветным игроком количество конвёртов",
+
+    "ehi_show_minion_killed_message" : "Показывать сообщение 'конвёрт убит'",
+    "ehi_show_minion_killed_message_desc" : "показывать сообщение, когда ваш конвёрт был убит",
+
+    "ehi_show_minion_killed_message_type" : "'Конвёрт убит' тип сообщения",
+    "ehi_show_minion_killed_message_type_2" : "В панели подсказок",
 
     "ehi_show_difficulty_tracker" : "Показывать уровень сложности",
-    "ehi_show_difficulty_tracker_desc" : "Показывает уровень сложности волны",
+    "ehi_show_difficulty_tracker_desc" : "показывать уровень сложности волны",
 
     "ehi_show_drama_tracker" : "Показывать уровень драмы",
     "ehi_show_drama_tracker_desc" : "Только для хоста",
 
     "ehi_show_pager_tracker" : "Показывать трекер пейджеров",
-    "ehi_show_pager_tracker_desc" : "Отображает количество пейджеров как \nиспользованно / всего",
+    "ehi_show_pager_tracker_desc" : "Отображает количество пейджеров как \nиспользованно/всего",
 
     "ehi_show_pager_callback_trackers" : "Отсчёт тревоги пейджера",
-    "ehi_show_pager_callback_trackers_desc" : "Показывает время, за которое надо успеть ответить на пейджер",
+    "ehi_show_pager_callback_trackers_desc" : "показывать время, за которое надо успеть ответить на пейджер",
 
     "ehi_show_enemy_count_tracker" : "Счётчик врагов",
-    "ehi_show_enemy_count_tracker_desc" : "Показывает, сколько врагов осталось на карте",
+    "ehi_show_enemy_count_tracker_desc" : "показывать, сколько врагов осталось на карте",
 
     "ehi_show_laser_tracker" : "Трекер лазеров",
-    "ehi_show_laser_tracker_desc" : "Показывает трекер для лазеров, которые работают каждые несколько секунд"
+    "ehi_show_laser_tracker_desc" : "показывать трекер для лазеров, которые работают каждые несколько секунд",
+
+	"ehi_show_assault_delay_tracker" : "Показать отслеживание задержки нападения",
+    "ehi_show_assault_delay_tracker_desc" : "Показывать трекер, как долго будет задержка штурма\n\nТрекер не будет отображаться у клиентов, когда они заходят после того, как сложность штурма была увеличена.",
+
+	"ehi_show_loot_counter" : "Показывать счетчик добычи",
+    "ehi_show_loot_counter_desc" : "показывать трекер, сколько сумок с добычей на ограблении",
+
+    "ehi_show_all_loot_secured_popup" : "Показывать сообщение 'Все сумки с добычей захвачены'",
+    "ehi_show_all_loot_secured_popup_desc" : "показывать всплывающее окно, когда вся добыча на карте захвачена.",
+
+    "ehi_variable_random_loot_format" : "Переменный формат случайного лута",
+    "ehi_variable_random_loot_format_desc" : "Определяет, как должна быть отформатирована дополнительная случайная добыча.\n\nПример:16 гарантированные сумки с 4 сейфами, в которых может быть или не быть добычи; 9 сумок захвачено\n\nОпция 1:\n9/16-20?\n\nОпция 2:\n9/20?\n\nОпция 3:\n9/16+4?",
+    "ehi_variable_random_loot_format_1" : "Прогресс / Max - (Максимум + Случайно)?",
+    "ehi_variable_random_loot_format_2" : "Прогресс / (Максимум + Случайно)?",
+    "ehi_variable_random_loot_format_3" : "Прогресс / Максимум + Случайно?",
+
+    "ehi_show_bodybags_counter" : "Показывать счётчик мешков для трупов",
+    "ehi_show_bodybags_counter_desc" : "показывать трекер, сколько у вас мешков для трупов",
+
+    "ehi_show_escape_chance" : "Показывать шанс побега",
+    "ehi_show_escape_chance_desc" : "показывать трекер с возможным шансом на побег после дня",
+
+    "ehi_waypoints_menu" : "Маркеры",
+    "ehi_waypoints_menu_desc" : "",
+
+    "ehi_show_waypoints" : "Показывать маркеры",
+    "ehi_show_waypoints_desc" : "Показывать макреры в игре",
+
+    "ehi_show_waypoints_only" : "Показыавть только маркеры",
+    "ehi_show_waypoints_only_desc" : "Если включено и для элемента определены как трекер, так и маркер, отображается будет только маркер\nВ противном случае будет показан трекер",
+
+    "ehi_show_waypoints_present_timer" : "Текущий таймер",
+    "ehi_show_waypoints_present_timer_desc" : "Задает, как долго маркер будет оставаться на экране, прежде чем она 'переместится' к месту назначения",
+
+    "ehi_show_waypoints_enemy_turret" : "Показывать маркеры для турели",
+    "ehi_show_waypoints_enemy_turret_desc" : "показывать маркер на вражеской турели, когда она перезаряжается или ремонтируется",
+
+    "ehi_show_waypoints_timers" : "Показать маркеры для таймеров",
+    "ehi_show_waypoints_timers_desc" : "Показывать маркеры на доступных таймерах (взлом, сверление, распиливание и т.д...)\n\nПараметр 'Показать таймеры' должен быть включен для работы",
+
+    "ehi_show_waypoints_pager" : "Показать маркеры для пейджеров",
+    "ehi_show_waypoints_pager_desc" : "показывать маркер на пейджере, на который нужно ответить\n\nПараметр 'Показывать трекер пейджеров' должен быть включён для работы",
+
+    "ehi_show_waypoints_cameras" : "Показывать маркер для зацикленных камер",
+    "ehi_show_waypoints_cameras_desc" : "показывать маркер на камере, которая в данный момент зациклена\n\nПараметр 'Показывать зацикленные камеры' должен быть включён для работы",
+
+    "ehi_show_waypoints_zipline" : "Показывать маркеры для зиплайнов",
+    "ehi_show_waypoints_zipline_desc" : "Показывать маркер на зиплайне, который находится в движении\nПоказывается только время сброса\n\nПараметр 'Показывать трекер зиплайна' должен быть включён для работы",
+
+    "ehi_buffs_menu" : "Баффы",
+    "ehi_buffs_menu_desc" : "",
+
+    "ehi_show_buffs" : "Показать баффы",
+    "ehi_show_buffs_desc": "показывать на экране баффы и кулдауны от умений и перков",
+
+    "ehi_buffs_scale_desc" : "Устанавливает шкалу баффов. Чем выше число, тем сильнее баффы и наоборот.",
+
+    "ehi_buffs_alignment" : "Выравнивание",
+    "ehi_buffs_alignment_desc" : "Определяет, как баффы должны располагаться на экране.",
+    "ehi_buffs_alignment_1" : "Левее",
+    "ehi_buffs_alignment_2" : "По центру",
+    "ehi_buffs_alignment_3" : "Справа",
+
+    "ehi_buffs_shape" : "Форма",
+    "ehi_buffs_shape_desc" : "Определяет, какую форму должны иметь баффы на экране.",
+    "ehi_buffs_shape_1" : "Квадрат",
+    "ehi_buffs_shape_2" : "Круг",
+
+    "ehi_buffs_show_progress" : "Показать прогресс",
+    "ehi_buffs_show_progress_desc" : "Определяет, должен ли быть виден прогресс в баффе или нет.\nПо умолчанию прогресс будет идти по часовой стрелке",
+
+    "ehi_buffs_invert_progress" : "Инвертировать прогресс",
+    "ehi_buffs_invert_progress_desc" : "Если включено, прогресс будет идти против часовой стрелки\nЕсли отключено, прогресс будет идти по часовой стрелке",
+
+    "ehi_buffs_skills_cooldown" : "Показывать время восстановления",
+    "ehi_buffs_skills_duration" : "Показывать продолжительность",
+    "ehi_buffs_skills_progress" : "Показывать прогресс",
+
+    "ehi_buffs_skills_menu" : "Навыки",
+    "ehi_buffs_skills_mastermind_menu" : "Манипулятор",
+    "ehi_buffs_skills_mastermind_medic_subclass" : "Медик",
+    "ehi_buffs_skills_mastermind_inspire_basic" : "Вдохновение (Базовый)",
+    "ehi_buffs_skills_mastermind_inspire_basic_desc" : "показывать время восстановления, когда вы вдохновляете кого-то (путём нажатия кнопки взаимодействия на напарнике)",
+    "ehi_buffs_skills_mastermind_inspire_ace" : "Вдохновение (Про)",
+    "ehi_buffs_skills_mastermind_inspire_ace_desc" : "показывать время восстановление вдохновения, когда вы кого-то поднимаете криком",
+    "ehi_buffs_skills_mastermind_uppers" : "Колёса",
+    "ehi_buffs_skills_mastermind_uppers_range" : "Диапазон срабатывания навыка",
+    "ehi_buffs_skills_mastermind_uppers_range_desc" : "показывать бафф, когда вы находитесь в диапазоне автолечения АПП",
+    "ehi_buffs_skills_mastermind_uppers_range_refresh" : "Обновление диапазона",
+    "ehi_buffs_skills_mastermind_uppers_range_refresh_desc" : "Устанавливает как часто бафф 'Колёса' должен обновляться в секунду",
+    "ehi_buffs_skills_mastermind_quick_fix" : "Скорая помощь",
+    "ehi_buffs_skills_mastermind_painkillers" : "Обезболивающее",
+    "ehi_buffs_skills_mastermind_combat_medic" : "Боевой медик",
+    "ehi_buffs_skills_mastermind_controller_subclass" : "Командик",
+    "ehi_buffs_skills_mastermind_hostage_taker_muscle" : "Спекулянт / Силовик",
+    "ehi_buffs_skills_mastermind_forced_friendship" : "Навязанная дружба (поглощение)",
+    "ehi_buffs_skills_mastermind_forced_friendship_desc" : "показывать шкалу с текущим накопленным поглощением от навыка 'навязанная дружба'",
+    "ehi_buffs_skills_mastermind_sharpshooter_subclass" : "Снайпер",
+    "ehi_buffs_skills_mastermind_ammo_efficiency" : "Экономия патронов",
+    "ehi_buffs_skills_mastermind_aggressive_reload" : "Ловкость рук",
+
+    "ehi_buffs_skills_enforcer_menu" : "Штурмовик",
+    "ehi_buffs_skills_enforcer_shotgunner_subclass" : "Охотник",
+    "ehi_buffs_skills_enforcer_overkill" : "Overkill",
+    "ehi_buffs_skills_enforcer_underdog" : "Загнанный зверь",
+    "ehi_buffs_skills_enforcer_tank_subclass" : "Танк",
+    "ehi_buffs_skills_enforcer_bullseye" : "Меткий стрелок",
+    "ehi_buffs_skills_enforcer_ammo_specialist_subclass" : "Падальщик",
+    "ehi_buffs_skills_enforcer_bulletstorm" : "Свинцовый ливень",
+
+    "ehi_buffs_skills_ghost_menu" : "Призрак",
+    "ehi_buffs_skills_ghost_shinobi_subclass" : "ШИноби",
+    "ehi_buffs_skills_ghost_sixth_sense_initial" : "Шестое чувство (Начальная задержка)",
+    "ehi_buffs_skills_ghost_sixth_sense_marked" : "Шестое чувство (Отмеченные единицы)",
+    "ehi_buffs_skills_ghost_sixth_sense_marked_desc" : "показывать датчик, показывающий, сколько юнитов в настоящее время помечено «Шестым чувством».",
+    "ehi_buffs_skills_ghost_sixth_sense_refresh" : "Шестое чувство (Задержка обновления)",
+    "ehi_buffs_skills_ghost_silent_killer_subclass" : "Бесшумный убийца",
+    "ehi_buffs_skills_ghost_second_wind" : "Второе дыхание",
+    "ehi_buffs_skills_ghost_unseen_strike" : "Исподтишка",
+
+    "ehi_buffs_skills_fugitive_menu" : "Беглец",
+    "ehi_buffs_skills_fugitive_revenant_subclass" : "Выживший",
+    "ehi_buffs_skills_fugitive_running_from_death_reload" : "Убегая от смерти (Перезарядка и смена оружия)",
+    "ehi_buffs_skills_fugitive_running_from_death_movement" : "Убегая от смерти (Передвижение)",
+    "ehi_buffs_skills_fugitive_up_you_go" : "Проснись и пой",
+    "ehi_buffs_skills_fugitive_swan_song" : "Лебединная песня",
+    "ehi_buffs_skills_fugitive_brawler_subclass" : "Буян",
+    "ehi_buffs_skills_fugitive_bloodthirst" : "Жажда крови",
+    "ehi_buffs_skills_fugitive_bloodthirst_reload" : "Жажда крови (Перезарядка)",
+    "ehi_buffs_skills_fugitive_berserker" : "Берсеркер",
+    "ehi_buffs_skills_fugitive_berserker_refresh" : "Обновление Берсеркера",
+    "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "Устанавливает, как часто датчик «Берсерк» должен обновляться в секунду.",
+
+    "ehi_buffs_perks_menu" : "Колода перков",
+    "ehi_buffs_perks_infiltrator" : "Интервент",
+    "ehi_buffs_perks_infiltrator_desc" : "показывать баффы и кулдауны в колоде перков Интервент",
+    "ehi_buffs_perks_gambler" : "Шулер",
+    "ehi_buffs_perks_gambler_desc" : "показывать баффы и кулдауны в колоде перков Шулер",
+    "ehi_buffs_perks_grinder" : "Нападающий",
+    "ehi_buffs_perks_grinder_desc" : "показывать баффы и кулдауны в колоде перков Нападающий",
+    "ehi_buffs_perks_maniac" : "Маньяк",
+    "ehi_buffs_perks_maniac_desc" : "показывать баффы и кулдауны в колоде перков Маньяк",
+    "ehi_buffs_perks_anarchist" : "Анархист / Оружейник",
+    "ehi_buffs_perks_anarchist_desc" : "показывать баффы и кулдауны в колоде перков Анархист / Оружейник",
+    "ehi_buffs_perks_biker" : "Байкер",
+    "ehi_buffs_perks_biker_desc" : "показывать баффы и кулдауны в колоде перков Байкер",
+    "ehi_buffs_perks_kingpin" : "Вор в законе",
+    "ehi_buffs_perks_kingpin_desc" : "показывать баффы и кулдауны в колоде перков Вор в законе",
+    "ehi_buffs_perks_sicario" : "Sicario",
+    "ehi_buffs_perks_sicario_desc" : "показывать баффы и кулдауны в колоде перков Sicario",
+    "ehi_buffs_perks_stoic" : "Стоик",
+    "ehi_buffs_perks_stoic_desc" : "показывать баффы и кулдауны в колоде перков Стоик",
+    "ehi_buffs_perks_tag_team" : "Убойный Тандем",
+    "ehi_buffs_perks_tag_team_desc" : "показывать баффы и кулдауны в колоде перков Убойный Тандем",
+    "ehi_buffs_perks_hacker" : "Хакер",
+    "ehi_buffs_perks_hacker_desc" : "показывать баффы и кулдауны в колоде перков Хакер",
+    "ehi_buffs_perks_leech" : "Кровопийца",
+    "ehi_buffs_perks_leech_desc" : "показывать баффы и кулдауны в колоде перков Кровопийца",
+
+    "ehi_buffs_other_menu" : "Остальное",
+    "ehi_buffs_other_interact" : "Взаимодействие",
+    "ehi_buffs_other_reload" : "Перезарядка",
+    "ehi_buffs_other_melee_charge" : "Задержка урона в ближнем бою",
+    "ehi_buffs_other_shield_regen" : "Задержка восстановления брони",
+    "ehi_buffs_other_dodge" : "Шанс уворота",
+    "ehi_buffs_other_dodge_refresh" : "Обновление шанса уворота",
+    "ehi_buffs_other_dodge_refresh_desc" : "Устанавливает, как часто датчик 'Шанс уворота' должен обновляться в секунду.",
+    "ehi_buffs_other_dodge_persistent" : "Постоянный шанс уклонения",
+    "ehi_buffs_other_dodge_persistent_desc" : "'Шанс уклонения' останется на вашем экране, когда ваш шанс уклонение ниже, чем 0%",
+    "ehi_buffs_other_crit" : "Шанс критического урона",
+    "ehi_buffs_other_crit_refresh" : "Обновление шанса критического урона",
+    "ehi_buffs_other_crit_refresh_desc" : "Устанавливает, как часто шкала 'Шанс критического урона' должна обновляться в секунду.",
+    "ehi_buffs_other_crit_persistent" : "Постоянный шанс критического урона",
+    "ehi_buffs_other_crit_persistent_desc" : "'Шанс критического урона' останется на вашем экране, когда ваш крит ниже 0%",
+    "ehi_buffs_other_inspire_ai" : "Вдохновение (ИИ)",
+    "ehi_buffs_other_regen_throwable_ai" : "Регенерация (ИИ)"
 }

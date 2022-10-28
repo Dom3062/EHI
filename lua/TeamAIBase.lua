@@ -29,6 +29,9 @@ end
 
 function TeamAIBase:set_loadout(loadout, ...)
     original.set_loadout(self, loadout, ...)
+    if not loadout then
+        return
+    end
     if loadout.skill == "crew_generous" then
         progress = managers.player._throw_regen_kills or 0
         managers.ehi_buff:AddGauge2("crew_throwable_regen", progress / max, progress)
@@ -37,6 +40,10 @@ function TeamAIBase:set_loadout(loadout, ...)
 end
 
 function TeamAIBase:remove_upgrades(...)
+    if not self._loadout then
+        original.remove_upgrades(self, ...)
+        return
+    end
     if self._loadout.skill == "crew_generous" then
         managers.ehi_buff:RemoveBuff("crew_throwable_regen")
         managers.player:unregister_message(Message.OnEnemyKilled, "EHI_crew_throwable_regen")
