@@ -66,6 +66,9 @@ function CivilianDamage:_on_damage_received(damage_info, ...)
     end
 end
 
+function CopDamage:_on_car_damage_received(attacker_unit)
+end
+
 function CivilianDamage:_on_car_damage_received(attacker_unit)
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)

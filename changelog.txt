@@ -1,3 +1,6 @@
+r93 (30. 10. 2022):
+Fixed a crash when you run over a civilian
+
 r92 (28. 10. 2022):
 Fixed a crash when bot does not have loadout
 
