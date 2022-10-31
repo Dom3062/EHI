@@ -12,7 +12,7 @@ EHICraneFixChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHICraneFixChanceTracker.SetFailed = EHIAchievementTracker.SetFailed
 function EHICraneFixChanceTracker:init(panel, params)
     self._chance = 30
-    params.time = 33
+    params.time = 20
     EHICraneFixChanceTracker.super.init(self, panel, params)
 end
 
@@ -61,13 +61,15 @@ local triggers =
 
     [101098] = { time = 5 + 7 + 2, id = "WalkieTalkie", icons = { Icon.Pager } },
 
+    [EHI:GetInstanceElementID(100209, 10450)] = { time = 3, id = "KeygenHack", icons = { Icon.PCHack } },
+
     [103130] = { time = 10, id = "LocomotiveRefuel", icons = { Icon.Water } },
 
     [EHI:GetInstanceElementID(100024, 11650)] = { time = 25, id = "Turntable", icon = { Icon.Loop }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [EHI:GetInstanceElementID(100025, 11650)] = { id = "Turntable", special_function = SF.PauseTracker },
 
     [EHI:GetInstanceElementID(100089, 22250)] = { time = 0.1 + 400/30, id = "CraneLowerHooks", icons = { Icon.Winch } },
-    [EHI:GetInstanceElementID(100010, 22250)] = { time = 400/30 + 105 + 2 + 400/30, id = "CraneMove", icons = { Icon.Winch }, class = TT.Pausable },
+    [EHI:GetInstanceElementID(100010, 22250)] = { time = 400/30 + 91.5 + 2 + 400/30, id = "CraneMove", icons = { Icon.Winch }, class = TT.Pausable },
     [EHI:GetInstanceElementID(100047, 22250)] = { id = "CraneMove", special_function = SF.PauseTracker },
     [EHI:GetInstanceElementID(100059, 22250)] = { id = "CraneMove", special_function = SF.UnpauseTracker },
     [EHI:GetInstanceElementID(100060, 22250)] = { id = "CraneMove", special_function = SF.PauseTracker },
