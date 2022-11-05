@@ -1,3 +1,9 @@
+r95 (05. 11. 2022):
+Election Day 2: Fixed an issue with maximum amount in Loot Counter
+Firestarter Day 1: Fixed an issue where Loot Counter and achievements do not show correct progress
+Fixed an issue where achievement tracker for "The Reckoning" does not count kills from secondary weapon (if attached with Reconnaissance sight)
+Waypoints: Optimized performance
+
 r94 (31. 10. 2022):
 Lost in Transit: Updated to U230.1
 
@@ -15,7 +21,7 @@ r90 (25. 10. 2022):
 Added trackers for Lost in Transit Heist
 
 r89 (19. 10. 2022):
-Updated code to Update 229
+Updated code to U229
 Bloodthirst Ace: Fixed an issue where "reload" buff is not visible
 
 r88 (10. 10. 2022):
@@ -40,7 +46,7 @@ Added "Show Escape Chance" option
 Added option to show Trophies and Daily Side Jobs
 Achievement related options are now under "Unlockables" menu - Trophy and Daily Side Jobs options are there too
 Bloodthirst Buff: Fixed an issue where buff's progress is always full when you are still stacking kills
-Loot Counter: Fixed an issue where sometimes triggers do not have increase progress or maximum
+Loot Counter: Fixed an issue where sometimes triggers do not increase progress or maximum
 XP Counter: Fixed a very rare crash when game returned "nil" value instead of a number in how much stealth bonus you accumulated
 
 r83 (21. 09. 2022):

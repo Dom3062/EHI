@@ -98,6 +98,20 @@ function EHIAssaultDelayTracker:StartAnticipation(t)
     end
 end
 
+function EHIAssaultDelayTracker:UpdateDiff(diff)
+    if self._hostage_delay_disabled then
+        return
+    end
+    if diff > 0 then
+        self._time = self:CalculateBreakTime(diff)
+        self:AddTrackerToUpdate()
+    else
+        self:RemoveTrackerFromUpdate()
+        self._text:stop()
+        self:SetTextColor(Color.white)
+    end
+end
+
 function EHIAssaultDelayTracker:delete()
     if self._time <= 0 then
         self.update = self.update_negative

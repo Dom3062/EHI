@@ -1,29 +1,31 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
 local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {
-    [101506] = { special_function = SF.CustomCode, f = function()
+    [100107] = { special_function = SF.CustomCode, trigger_times = 1, f = function()
         if not LootCounter then
             return
         end
         EHI:ShowLootCounterNoCheck({
             max = 6,
-            max_random = 18
+            max_random = 7
         })
     end},
     [100109] = { special_function = SF.CustomCode, f = function() -- Alarm
         if not LootCounter then
             return
         end
-        managers.ehi:CallFunction("LootCounter", "RandomLootDeclined", 18)
+        managers.ehi:CallFunction("LootCounter", "RandomLootDeclined", 7)
     end},
     [107260] = { special_function = SF.CustomCode, f = function()
         if not LootCounter then
             return
         end
-        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned", 18)
-    end}
+        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned", 7)
+    end},
+    [100116] = { time = 60 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
 }
 
 EHI:ParseTriggers({

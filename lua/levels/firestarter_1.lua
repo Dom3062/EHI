@@ -1,12 +1,19 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
+local Weapons = { 100817, 100818, 100657, 100659, 100663, 100664, 100673, 100715, 100712, 100704, 100705, 100749, 100751, 100681, 100819, 100821, 100823, 100950, 100962, 100967, 101193 } -- Hangar 01 + Hangar 4 (bag 03)
+local n = 22
+-- Hangar 2, Hangar 3 + Hangar 4 (Half)
+for i = 102126, 102175, 1 do
+    Weapons[n] = i
+    n = n + 1
+end
+-- Hangar 4 (Second half)
+for i = 103797, 103806, 1 do
+    Weapons[n] = i
+    n = n + 1
+end
 local function LordOfWarAchievement()
-    local weapons = managers.ehi:GetUnits("units/payday2/equipment/gen_interactable_weapon_case_2x1/gen_interactable_weapon_case_2x1", 1)
-    if type(weapons) ~= "table" then
-        EHI:Log("[firestarter_1.lua] Engine provided invalid data; aborted to avoid crash")
-        return
-    end
-    local n_of_weapons = tweak_data.ehi.functions.GetNumberOfVisibleWeapons(weapons)
+    local n_of_weapons = tweak_data.ehi.functions.GetNumberOfVisibleWeapons(Weapons)
     EHI:ShowAchievementLootCounter({
         achievement = "lord_of_war",
         max = n_of_weapons,
@@ -24,7 +31,8 @@ local function LordOfWarAchievement()
             {
                 [103427] = { special_function = SF.IncreaseProgress } -- Weapons destroyed
             },
-            hook_triggers = true
+            hook_triggers = true,
+            remove_after_reaching_target = false
         })
     end
     EHI:ShowLootCounter({

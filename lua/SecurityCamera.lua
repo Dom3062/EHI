@@ -39,9 +39,9 @@ function SecurityCamera:_start_tape_loop(tape_loop_t, ...)
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
             time = t,
-            icon = { "camera_loop" },
+            icon = "camera_loop",
             unit = self._unit,
-            warning = true
+            class = EHI.Waypoints.Warning
         })
     end
 end

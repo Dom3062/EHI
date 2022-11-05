@@ -10,7 +10,7 @@ local element_sync_triggers = {
 local triggers = {
     [EHI:GetInstanceElementID(100017, 11325)] = { id = "Gas", special_function = SF.RemoveTracker },
 
-    [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { "pd2_question", Icon.Drill, Icon.Goto } },
+    [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { Icon.Train, Icon.Drill, Icon.Goto } },
     [101660] = { time = 120, id = "Gas", icons = { Icon.Teargas } }
 }
 if EHI:IsClient() then

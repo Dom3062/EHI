@@ -176,6 +176,7 @@ _G.EHI =
         Loot = "pd2_loot",
         Goto = "pd2_goto",
         Pager = "pagers_used",
+        Train = "C_Bain_H_TransportVarious_ButWait",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
@@ -233,6 +234,11 @@ _G.EHI =
     {
         EHIDailyTracker = true,
         EHIDailyProgressTracker = true
+    },
+
+    Waypoints =
+    {
+        Warning = "EHIWarningWaypoint"
     },
 
     Difficulties =
@@ -659,6 +665,10 @@ end
 
 function EHI:AreGagePackagesSpawned()
     return self._cache.GagePackages and self._cache.GagePackages > 0
+end
+
+function EHI:AssaultDelayTrackerIsEnabled()
+    return self:GetOption("show_assault_delay_tracker") and tweak_data.levels:get_group_ai_state() ~= "skirmish"
 end
 
 ---@param id string|number

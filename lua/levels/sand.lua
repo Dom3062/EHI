@@ -92,14 +92,12 @@ elseif EHI:IsDifficulty(EHI.Difficulties.DeathSentence) then
     time = 40
 end
 for _, index in ipairs({ 8530, 9180, 9680 }) do
-    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop } } -- ECM Jammer
-    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + time, id = "KeypadReboot", icons = { Icon.Loop } }
-end
-for i = 105290, 105329, 1 do
-    triggers[i] = { id = "sand_10", special_function = SF.IncreaseProgress }
+    local unit_id = EHI:GetInstanceUnitID(100279, index)
+    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id } } -- ECM Jammer
+    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + time, id = "KeypadReboot", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id } }
 end
 for i = 16580, 16780, 100 do
-    triggers[EHI:GetInstanceElementID(100057, i)] = { amount = 33, id = "ReviveVlad", special_function = SF.IncreaseChance }
+    triggers[EHI:GetInstanceElementID(100057, i)] = { id = "ReviveVlad", special_function = SF.IncreaseChanceFromElement } -- +33%
 end
 
 local DisableWaypoints =
@@ -140,6 +138,9 @@ local achievements =
     [103175] = sand_9_buttons,
     [103208] = { id = "sand_9", special_function = SF.FinalizeAchievement }
 }
+for i = 105290, 105329, 1 do
+    achievements[i] = { id = "sand_10", special_function = SF.IncreaseProgress }
+end
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -182,4 +183,37 @@ local tbl =
     [EHI:GetInstanceElementID(100009, 16680)] = { icons = { Icon.Power } },
     [EHI:GetInstanceElementID(100009, 16780)] = { icons = { Icon.Power } }
 }
+if EHI:GetOption("show_waypoints") then
+    local function f(instance, id, unit_data, unit)
+        local trigger_id = unit_data.trigger_id
+        EHI:AddWaypointToTrigger(trigger_id, { unit = unit })
+        EHI:HookWithID(unit:base(), "destroy", "EHI_" .. tostring(trigger_id) .. "_Destroy", function(...)
+            managers.ehi_waypoint:RemoveWaypoint(triggers[trigger_id].id)
+        end)
+    end
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/002
+    tbl[104456] = { f = f, trigger_id = 103333 }
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/003
+    tbl[104457] = { f = f, trigger_id = 103178 }
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/004
+    tbl[104458] = { f = f, trigger_id = 104043 }
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/005
+    tbl[104459] = { f = f, trigger_id = 104101 }
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/006
+    tbl[104460] = { f = f, trigger_id = 104102 }
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/007
+    tbl[104461] = { f = f, trigger_id = 104233 }
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/008
+    tbl[104462] = { f = f, trigger_id = 104262 }
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/009
+    tbl[104463] = { f = f, trigger_id = 104304 }
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/010
+    tbl[104464] = { f = f, trigger_id = 103667 }
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/011
+    tbl[104465] = { f = f, trigger_id = 100782 }
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/012
+    tbl[104467] = { f = f, trigger_id = 104227 }
+    --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/013
+    tbl[104308] = { f = f, trigger_id = 104305 }
+end
 EHI:UpdateUnits(tbl)

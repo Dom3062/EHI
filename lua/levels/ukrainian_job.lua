@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local zone_delay = 12
-local LootDropWaypoint = { icon = Icon.LootDrop, position_by_element = 104215, warning = true }
+local LootDropWaypoint = { icon = Icon.LootDrop, position_by_element = 104215, class = EHI.Waypoints.Warning }
 --104215 Vector3(1400, 3125, 125) pd2_lootdrop
 local triggers = {
     [1] = { special_function = SF.CustomCode, f = function()

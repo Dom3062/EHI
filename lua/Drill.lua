@@ -7,7 +7,7 @@ end
 
 local function SetAutorepair(unit_key, autorepair)
     managers.ehi:CallFunction(unit_key, "SetAutorepair", autorepair)
-    managers.ehi_waypoint:SetWaypointColor(unit_key, tweak_data.ehi.color.DrillAutorepair, true)
+    managers.ehi_waypoint:CallFunction(unit_key, "SetAutorepair", autorepair)
 end
 
 if EHI:IsHost() then

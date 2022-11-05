@@ -9,13 +9,13 @@ if not (Global and Global.game_settings and Global.game_settings.level_id) then
     return
 end
 
-local level_tweak = tweak_data.levels[Global.game_settings.level_id]
-if level_tweak and level_tweak.ai_group_type and level_tweak.ai_group_type == "skirmish" then
+if tweak_data.levels:get_group_ai_state() == "skirmish" then
     return
 end
 
 local function AssaultDelay(value)
     EHI._cache.diff = value
+    managers.ehi:CallFunction("AssaultDelay", "UpdateDiff", value)
 end
 
 local Trigger

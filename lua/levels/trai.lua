@@ -65,7 +65,7 @@ local triggers =
 
     [103130] = { time = 10, id = "LocomotiveRefuel", icons = { Icon.Water } },
 
-    [EHI:GetInstanceElementID(100024, 11650)] = { time = 25, id = "Turntable", icon = { Icon.Loop }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [EHI:GetInstanceElementID(100024, 11650)] = { time = 25, id = "Turntable", icons = { Icon.Train, Icon.Loop }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [EHI:GetInstanceElementID(100025, 11650)] = { id = "Turntable", special_function = SF.PauseTracker },
 
     [EHI:GetInstanceElementID(100089, 22250)] = { time = 0.1 + 400/30, id = "CraneLowerHooks", icons = { Icon.Winch } },
@@ -75,7 +75,11 @@ local triggers =
     [EHI:GetInstanceElementID(100060, 22250)] = { id = "CraneMove", special_function = SF.PauseTracker },
     [EHI:GetInstanceElementID(100046, 22250)] = { id = "CraneFixChance", class = "EHICraneFixChanceTracker", trigger_times = 1 },
     [EHI:GetInstanceElementID(100035, 22250)] = { id = "CraneFixChance", special_function = SF.IncreaseChanceFromElement }, -- +10%
-    [EHI:GetInstanceElementID(100039, 22250)] = { id = "CraneFixChance", special_function = SF.SetAchievementFailed } -- Players need to fix the crane, runs once (Won't trigger "ACHIEVEMENT FAILED!" popup)
+    [EHI:GetInstanceElementID(100039, 22250)] = { id = "CraneFixChance", special_function = SF.SetAchievementFailed }, -- Players need to fix the crane, runs once (Won't trigger "ACHIEVEMENT FAILED!" popup)
+    [EHI:GetInstanceElementID(100220, 22250)] = { chance = 33, id = "LocomotiveStartChance", icons = { Icon.Power }, class = TT.Chance },
+    [EHI:GetInstanceElementID(100193, 22250)] = { id = "LocomotiveStartChance", special_function = SF.IncreaseChanceFromElement }, -- +34%
+    [EHI:GetInstanceElementID(100187, 22250)] = { id = "LocomotiveStartChance", special_function = SF.RemoveTracker },
+    [EHI:GetInstanceElementID(100031, 22850)] = { time = 1175/30, id = "LocomotiveMoveToTurntable", icons = { Icon.Train } }
 }
 
 local other =
@@ -86,4 +90,15 @@ local other =
 EHI:ParseTriggers({
     mission = triggers,
     other = other
+})
+
+local required_bags = 6
+local bag_multiplier = 2
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+    required_bags = 9
+    bag_multiplier = 3
+end
+EHI:ShowLootCounter({
+    max = required_bags,
+    additional_loot = (6 * bag_multiplier) + 10 -- (5 secondary wagons with 2 money bags)
 })

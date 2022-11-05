@@ -21,6 +21,7 @@
         <file :name="buff_sframe.texture" :path="buff_sframe.texture"/>
         <file :name="buff_sframe_debuff.texture" :path="buff_sframe_debuff.texture"/>
         <!-- Circle -->
+        <file :name="buff_cframe_bg.texture" :path="buff_cframe_bg.texture"/>
         <file :name="buff_cframe.texture" :path="buff_cframe.texture"/>
         <file :name="buff_cframe_debuff.texture" :path="buff_cframe_debuff.texture"/>
     </group>

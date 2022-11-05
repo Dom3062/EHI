@@ -28,6 +28,22 @@ function EHIPagerTracker:delete()
     EHIPagerTracker.super.delete(self)
 end
 
+EHIPagerWaypoint = class(EHIWarningWaypoint)
+function EHIPagerWaypoint:SetAnswered()
+    self:RemoveWaypointFromUpdate()
+    self:StopAnim()
+    self:SetColor(Color.green)
+end
+
+function EHIPagerWaypoint:StopAnim()
+    self._timer:stop()
+    self._bitmap:stop()
+    self._arrow:stop()
+    if self._bitmap_world then
+        self._bitmap_world:stop()
+    end
+end
+
 local original =
 {
     on_alarm_pager_interaction = CopBrain.on_alarm_pager_interaction
@@ -38,7 +54,7 @@ function CopBrain:on_alarm_pager_interaction(status, ...)
     local id = "pager_" .. tostring(self._unit:key())
     if status == "started" then
         managers.ehi:CallFunction(id, "SetAnswered")
-        managers.ehi_waypoint:SetPagerWaypointAnswered(id)
+        managers.ehi_waypoint:CallFunction(id, "SetAnswered")
     else
         managers.ehi:RemoveTracker(id)
         managers.ehi_waypoint:RemoveWaypoint(id)

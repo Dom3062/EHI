@@ -92,8 +92,7 @@ function EHIBuffTracker:init(panel, params)
             layer = -1,
             w = self._time_bg_box:w(),
             h = self._time_bg_box:h(),
-            texture = "guis/textures/pd2/hud_tabs",
-            texture_rect = {105, 34, 19, 19},
+            texture = "guis/textures/pd2_mod_ehi/buff_cframe_bg",
             color = Color.black:with_alpha(0.2)
         })
     else
@@ -320,42 +319,8 @@ else
     end
 end
 
-do
-    local math_floor = math.floor
-    local string_format = string.format
-    local function SecondsOnly(self)
-        local t = math_floor(self._time * 10) / 10
-
-        if t < 0 then
-            return string_format("%d", 0)
-        elseif t < 1 then
-            return string_format("%.2f", self._time)
-        elseif t < 10 then
-            return string_format("%.1f", t)
-        else
-            return string_format("%d", t)
-        end
-    end
-
-    local function MinutesAndSeconds(self)
-        local t = math_floor(self._time * 10) / 10
-
-        if t < 0 then
-            return string_format("%d", 0)
-        elseif t < 1 then
-            return string_format("%.2f", self._time)
-        elseif t < 10 then
-            return string_format("%.1f", t)
-        elseif t < 60 then
-            return string_format("%d", t)
-        else
-            return string_format("%d:%02d", t / 60, t % 60)
-        end
-    end
-
-    if EHI:GetOption("time_format") == 1 then
-        EHIBuffTracker.Format = SecondsOnly
-    else
-        EHIBuffTracker.Format = MinutesAndSeconds
-    end
+if EHI:GetOption("time_format") == 1 then
+    EHIBuffTracker.Format = tweak_data.ehi.functions.FormatSecondsOnly
+else
+    EHIBuffTracker.Format = tweak_data.ehi.functions.FormatMinutesAndSeconds
 end

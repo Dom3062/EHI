@@ -168,7 +168,7 @@ local function CreateProgressTracker(id, progress, max, dont_flash, remove_after
 end
 
 local function HookKillFunctionNoCivilian(achievement, weapon_id)
-    EHI:HookWithID(StatisticsManager, "killed", "EHI_" .. achievement .. "_killed", function (self, data)
+    EHI:HookWithID(StatisticsManager, "killed", "EHI_" .. achievement .. "_" .. weapon_id .. "_killed", function (self, data)
         if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
             local name_id, _ = self:_get_name_id_and_throwable_id(data.weapon_unit)
             if name_id == weapon_id then
@@ -349,15 +349,31 @@ function IngameWaitingForPlayersState:at_exit(...)
             stats.gage3_12_stats = "gage3_12"
         end
         if EHI:IsAchievementLocked2("gage3_13") and HasWeaponTypeEquipped("snp") then -- "Didn't See That Coming Did You?" achievement
-            stats.gage3_13_stats = "gage3_13"
-            EHI:HookWithID(PlayerStandard, "_start_action_zipline", "EHI_gage3_13_start_action_zipline", function(...)
-                CreateProgressTracker("gage3_13", EHI:GetAchievementProgress("gage3_13_stats"), 10, false, true)
-                stats.gage3_13_stats = "gage3_13"
-            end)
-            EHI:HookWithID(PlayerStandard, "_end_action_zipline", "EHI_gage3_13_end_action_zipline", function(...)
-                managers.ehi:RemoveTracker("gage3_13")
-                stats.gage3_13_stats = nil
-            end)
+            local pass = false
+            for _, unit in ipairs(ZipLine.ziplines) do
+                if unit:zipline():is_usage_type_person() then
+                    pass = true
+                    break
+                end
+            end
+            if pass then
+                local progress = EHI:GetAchievementProgress("gage3_13_stats")
+                if level == "pbr" or level == "shoutout_raid" or level == "pent" then
+                    EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gage3_13_AwardProgress", function(am, stat, value)
+                        if stat == "gage3_13_stats" then
+                            progress = progress + (value or 1)
+                            if progress >= 10 then
+                                EHI:Unhook("gage3_13_AwardProgress")
+                                return
+                            end
+                            ShowPopup("gage3_13", progress, 10)
+                        end
+                    end)
+                else
+                    CreateProgressTracker("gage3_13", progress, 10, false, true)
+                    stats.gage3_13_stats = "gage3_13"
+                end
+            end
         end
         if EHI:IsAchievementLocked2("gage3_14") and HasWeaponEquipped("msr") then -- "Return to Sender" achievement
             local function f()
@@ -524,7 +540,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                             EHItango_achieve_3Tracker.super.init(self, panel, params)
                         end
                         function EHItango_achieve_3Tracker:WeaponSwitched(id)
-                            if self._weapon_id == id then
+                            if self._weapon_id == id or self._finished then
                                 return
                             end
                             local previous_weapon_id = self._weapon_id
@@ -533,19 +549,14 @@ function IngameWaitingForPlayersState:at_exit(...)
                             local previous_selection = previous_weapon_id == 0 and "secondary" or "primary"
                             self._kills[previous_selection] = self._progress
                             self._progress = self._kills[current_selection]
-                            if self._progress >= self._max then
-                                self:SetStatusText("finish")
-                                self._disable_counting = true
-                            else
-                                self._text:set_text(self:Format())
-                                self._disable_counting = false
-                            end
-                            self:AnimateBG()
+                            self._text:set_text(self:Format())
+                            self:FitTheText()
+                            self:AnimateBG(1)
                         end
                         function EHItango_achieve_3Tracker:SetCompleted(force)
                             EHItango_achieve_3Tracker.super.SetCompleted(self, force)
-                            if self._status == "completed" and self._icon1 then
-                                self:SetIconColor(Color.green)
+                            if self._status == "completed" then
+                                self._finished = true
                             end
                         end
                         managers.ehi:AddTracker({

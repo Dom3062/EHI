@@ -21,6 +21,14 @@ function EHIVaultTemperatureTracker:CheckTime(time)
     self._synced_time = time
 end
 
+EHIVaultTemperatureWaypoint = class(EHIWaypoint)
+EHIVaultTemperatureWaypoint.CheckTime = EHIVaultTemperatureTracker.CheckTime
+function EHIVaultTemperatureWaypoint:init(waypoint, params)
+    EHIVaultTemperatureWaypoint.super.init(self, waypoint, params)
+    self._synced_time = 0
+    self._tick = 0.1
+end
+
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local trophy = {

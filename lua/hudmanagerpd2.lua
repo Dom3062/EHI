@@ -28,15 +28,13 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     local hud = self:script(PlayerBase.PLAYER_INFO_HUD_PD2)
     self.ehi = managers.ehi
     self.ehi_waypoint = managers.ehi_waypoint
-    self.ehi_waypoint:SetPlayerHUD(hud, self._workspaces.overlay.saferect, self._gui)
+    self.ehi_waypoint:SetPlayerHUD(self)
     self._tracker_waypoints = {}
     if server or level_id == "hvh" then
         self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
         if EHIWaypoints then
             self:add_updator("EHI_Waypoint_Update", callback(self.ehi_waypoint, self.ehi_waypoint, "update"))
         end
-    elseif EHIWaypoints then
-        self:add_updator("EHI_Waypoint_dt_update", callback(self.ehi_waypoint, self.ehi_waypoint, "update_dt"))
     end
     if _G.IS_VR then
         self.ehi:SetPanel(hud.panel)
@@ -177,23 +175,7 @@ if EHI:IsClient() and level_id ~= "hvh" then
     end
 end
 
-function HUDManager:UpdateTrackerWaypointProgress(id, progress)
-    if self._tracker_waypoints[id] then
-        local wp = self._hud.waypoints[id]
-        wp.init_data.progress = wp.init_data.progress + progress
-        if wp.init_data.progress >= wp.init_data.max then
-            self:RemoveTrackerWaypoint(id)
-        else
-            wp.timer_gui:set_text(wp.init_data.progress .. "/" .. wp.init_data.max)
-        end
-    end
-end
-
-function HUDManager:IncreaseTrackerWaypointProgress(id, increase)
-    self:UpdateTrackerWaypointProgress(id, increase or 1)
-end
-
-if EHI:GetOption("show_assault_delay_tracker") then
+if EHI:AssaultDelayTrackerIsEnabled() then
     local SyncFunction = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation"
     local anticipation_delay = 30 -- Get it from tweak_data
     local function VerifyHostageHesitationDelay()
@@ -216,7 +198,7 @@ if EHI:GetOption("show_assault_delay_tracker") then
     original.sync_end_assault = HUDManager.sync_end_assault
     function HUDManager:sync_end_assault(result, ...)
         original.sync_end_assault(self, result, ...)
-        if EHI._cache.diff then
+        if EHI._cache.diff and EHI._cache.diff > 0 then
             self.ehi:AddTracker({
                 id = "AssaultDelay",
                 compute_time = true,

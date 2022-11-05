@@ -517,9 +517,9 @@ tweak_data.ehi =
         end,
         ---@param weapons table
         GetNumberOfVisibleWeapons = function(weapons)
-            local world = managers.worlddefinition
             local n = 0
-            for _, index in ipairs(weapons) do
+            local world = managers.worlddefinition
+            for _, index in ipairs(weapons or {}) do
                 local weapon = world:get_unit(index)
                 if weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
                     local state = weapon:damage()._state.graphic_group.grp_wpn
@@ -533,8 +533,8 @@ tweak_data.ehi =
         ---Checks money, coke and gold and other loot which uses "var_hidden"
         ---@param loot table
         GetNumberOfVisibleOtherLoot = function(loot)
-            local world = managers.worlddefinition
             local n = 0
+            local world = managers.worlddefinition
             for _, index in ipairs(loot) do
                 local unit = world:get_unit(index)
                 if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_hidden == 0 then
@@ -542,6 +542,32 @@ tweak_data.ehi =
                 end
             end
             return n
+        end,
+        FormatSecondsOnly = function(self)
+            local t = math.floor(self._time * 10) / 10
+            if t < 0 then
+                return string.format("%d", 0)
+            elseif t < 1 then
+                return string.format("%.2f", self._time)
+            elseif t < 10 then
+                return string.format("%.1f", t)
+            else
+                return string.format("%d", t)
+            end
+        end,
+        FormatMinutesAndSeconds = function(self)
+            local t = math.floor(self._time * 10) / 10
+            if t < 0 then
+                return string.format("%d", 0)
+            elseif t < 1 then
+                return string.format("%.2f", self._time)
+            elseif t < 10 then
+                return string.format("%.1f", t)
+            elseif t < 60 then
+                return string.format("%d", t)
+            else
+                return string.format("%d:%02d", t / 60, t % 60)
+            end
         end
     }
 }

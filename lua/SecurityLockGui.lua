@@ -35,25 +35,13 @@ function SecurityLockGui:_start(bar, ...)
         else
             managers.ehi:AddTracker({
                 id = self._ehi_key,
-                icons = { "wp_hack" },
                 class = "EHISecurityLockGuiTracker",
                 remove_after_reaching_target = false,
                 progress = bar,
                 max = self._bars
             })
         end
-        if not show_waypoint_only then
-            managers.ehi:CallFunction(self._ehi_key, "SetHackTime", self._current_timer)
-        end
-        if show_waypoint then
-            managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
-                time = self._current_timer,
-                icon = "wp_hack",
-                pause_timer = 1,
-                type = "timer",
-                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
-            })
-        end
+        managers.ehi:CallFunction(self._ehi_key, "SetHackTime", self._current_timer)
     else
         if not show_waypoint_only then
             managers.ehi:AddTracker({
@@ -63,27 +51,26 @@ function SecurityLockGui:_start(bar, ...)
                 class = "EHITimerTracker"
             })
         end
-        if show_waypoint then
-            managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
-                time = self._current_timer,
-                icon = "wp_hack",
-                pause_timer = 1,
-                type = "timer",
-                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
-            })
-        end
+    end
+    if show_waypoint then
+        managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+            time = self._current_timer,
+            icon = "wp_hack",
+            position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
+            class = "EHITimerWaypoint"
+        })
     end
 end
 
 if show_waypoint_only then
     function SecurityLockGui:update(...)
-        managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._current_timer)
+        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._current_timer)
         original.update(self, ...)
     end
 elseif show_waypoint then
     function SecurityLockGui:update(...)
         managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._current_timer)
-        managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._current_timer)
+        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._current_timer)
         original.update(self, ...)
     end
 else

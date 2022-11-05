@@ -20,13 +20,14 @@ if EHI:GetOption("show_pager_callback") then
                 managers.ehi:AddPagerTracker(self._ehi_key)
             end
             if show_waypoint then
-                managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+                managers.ehi_waypoint:AddPagerWaypoint({
+                    id = self._ehi_key,
                     time = 12,
                     texture = "guis/textures/pd2/specialization/icons_atlas",
                     text_rect = {64, 256, 64, 64},
-                    type = "pager_timer",
                     position = self._unit:position(),
-                    warning = true
+                    warning = true,
+                    class = "EHIPagerWaypoint"
                 })
             end
             self._pager_has_run = true
@@ -49,7 +50,7 @@ if EHI:GetOption("show_pager_callback") then
                 return
             end
             managers.ehi:CallFunction(self._ehi_key, "SetAnswered")
-            managers.ehi_waypoint:SetPagerWaypointAnswered(self._ehi_key)
+            managers.ehi_waypoint:CallFunction(self._ehi_key, "SetAnswered")
         end
     end)
 
@@ -57,7 +58,7 @@ if EHI:GetOption("show_pager_callback") then
         if self.tweak_data == "corpse_alarm_pager" then
             if status == "started" or status == 1 then
                 managers.ehi:CallFunction(self._ehi_key, "SetAnswered")
-                managers.ehi_waypoint:SetPagerWaypointAnswered(self._ehi_key)
+                managers.ehi_waypoint:CallFunction(self._ehi_key, "SetAnswered")
             else
                 managers.ehi:RemoveTracker(self._ehi_key)
                 managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)

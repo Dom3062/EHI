@@ -93,10 +93,9 @@ function TimerGui:StartTimer()
             managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
                 time = t,
                 icon = self._icons or self._ehi_icon[1].icon,
-                pause_timer = 1,
-                type = "timer",
                 position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
-                color = autorepair and tweak_data.ehi.color.DrillAutorepair
+                autorepair = autorepair,
+                class = "EHITimerWaypoint"
             })
         end
         self:PostStartTimer()
@@ -168,13 +167,13 @@ end
 
 if show_waypoint_only then
     function TimerGui:update(...)
-        managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._time_left)
+        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._time_left)
         original.update(self, ...)
     end
 elseif show_waypoint then
     function TimerGui:update(...)
         managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
-        managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._time_left)
+        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._time_left)
         original.update(self, ...)
     end
 else

@@ -6,6 +6,7 @@ else
 end
 local Icon = EHI.Icons
 local Warning = EHI.Trackers.Warning
+local WWarning = EHI.Waypoints.Warning
 
 local show_waypoints = EHI:GetOption("show_waypoints_enemy_turret")
 local show_waypoint_only = show_waypoints and EHI:GetWaypointOption("show_waypoints_only")
@@ -41,8 +42,8 @@ function SentryGunMovement:rearm(...)
             time = self._tweak.AUTO_RELOAD_DURATION,
             texture = "guis/textures/pd2/skilltree/icons_atlas",
             text_rect = {0, 576, 64, 64},
-            warning = true,
-            unit = self._unit
+            unit = self._unit,
+            class = WWarning
         })
     end
 end
@@ -63,8 +64,8 @@ function SentryGunMovement:repair(...)
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_repair, {
             time = self._tweak.AUTO_REPAIR_DURATION,
             icon = "pd2_fix",
-            warning = true,
-            unit = self._unit
+            unit = self._unit,
+            class = WWarning
         })
     end
 end

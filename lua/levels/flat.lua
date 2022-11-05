@@ -1,3 +1,5 @@
+local EHI = EHI
+local Icon = EHI.Icons
 EHIHeliTracker = class(EHICountTracker)
 EHIHeliTracker._forced_icons = { "enemy", { icon = Icon.Wait, visible = false } }
 EHIHeliTracker.AnimateCompletion = EHITimerTracker.AnimateCompletion
@@ -72,8 +74,6 @@ function EHIHeliTracker:destroy()
     EHIHeliTracker.super.destroy(self)
 end
 
-local EHI = EHI
-local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)

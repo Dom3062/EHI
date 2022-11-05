@@ -1,4 +1,5 @@
 EHISecurityLockGuiTracker = class(EHIProgressTracker)
+EHISecurityLockGuiTracker._forced_icons = { "wp_hack" }
 function EHISecurityLockGuiTracker:OverridePanel(params)
     self._time_text = self._time_bg_box:text({
         name = "time_text",

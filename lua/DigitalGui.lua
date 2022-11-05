@@ -60,11 +60,10 @@ function DigitalGui:TimerStartCountDown()
             managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
                 time = self._timer,
                 icon = self._icons or Icon.PCHack,
-                pause_timer = 1,
-                type = "timer",
                 position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
-                warning = self._warning or self._completion,
-                completion = self._completion
+                warning = self._warning,
+                completion = self._completion,
+                class = "EHITimerWaypoint"
             })
         end
         self:HideWaypoint()
@@ -87,13 +86,13 @@ end
 if level_id ~= "shoutout_raid" then
     if show_waypoint_only then
         function DigitalGui:_update_timer_text(...)
-            managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._timer)
+            managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
     elseif show_waypoint then
         function DigitalGui:_update_timer_text(...)
             managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
-            managers.ehi_waypoint:SetTimerWaypointTime(self._ehi_key, self._timer)
+            managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
     else
@@ -165,25 +164,23 @@ if level_id == "shoutout_raid" then
                 if show_waypoint then
                     managers.ehi_waypoint:AddWaypoint(key, {
                         time = 500,
-                        synced_time = 0,
-                        tick = 0.1,
                         icon = Icon.Vault,
-                        type = "timer",
-                        position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position()
+                        position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
+                        class = "EHIVaultTemperatureWaypoint"
                     })
                 end
                 created = true
             end
             local t = EHI:RoundNumber(time, 0.1)
             managers.ehi:CallFunction(key, "CheckTime", t)
-            managers.ehi_waypoint:SetTimerVaultWaypointTime(key, t)
+            managers.ehi_waypoint:CallFunction(key, "CheckTime", t)
         end
     end
 else
     SetTime = function(self, key, time)
         if managers.ehi then
             managers.ehi:SetTrackerTimeNoAnim(key, time)
-            managers.ehi_waypoint:SetTimerWaypointTime(key, time)
+            managers.ehi_waypoint:SetWaypointTime(key, time)
         end
     end
 end
