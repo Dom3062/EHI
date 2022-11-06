@@ -94,7 +94,6 @@ local MethbagsCooked = 0
 local MethlabExploded = false
 local other =
 {
-    -- +30s anticipation
     [101937] = { time = 10 + 1 + 40 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 }, condition = EHI:GetOption("show_assault_delay_tracker") },
 
     [101218] = { special_function = SF.CustomCode, f = function()

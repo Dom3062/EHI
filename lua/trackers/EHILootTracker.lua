@@ -3,6 +3,7 @@ EHILootTracker = class(EHIProgressTracker)
 EHILootTracker._forced_icons = { EHI.Icons.Loot }
 EHILootTracker._show_popup = EHI:GetOption("show_all_loot_secured_popup")
 function EHILootTracker:init(panel, params)
+    self._mission_loot = 0
     self._offset = params.offset or 0
     self._max_random = params.max_random or 0
     self._stay_on_screen = self._max_random > 0
@@ -37,7 +38,7 @@ else
 end
 
 function EHILootTracker:SetProgress(progress)
-    local fixed_progress = progress - self._offset
+    local fixed_progress = progress + self._mission_loot - self._offset
     EHILootTracker.super.SetProgress(self, fixed_progress)
 end
 
@@ -121,4 +122,10 @@ end
 
 function EHILootTracker:BlockRandomLoot(id)
     self._loot_id[id] = true
+end
+
+function EHILootTracker:SecuredMissionLoot()
+    local progress = self._progress - self._mission_loot + self._offset
+    self._mission_loot = self._mission_loot + 1
+    self:SetProgress(progress)
 end

@@ -99,7 +99,7 @@ function EHIAssaultDelayTracker:StartAnticipation(t)
 end
 
 function EHIAssaultDelayTracker:UpdateDiff(diff)
-    if self._hostage_delay_disabled then
+    if self._hostage_delay_disabled or self._ignores_diff_update then
         return
     end
     if diff > 0 then

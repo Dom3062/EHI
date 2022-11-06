@@ -1,5 +1,6 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
 local Weapons = { 100817, 100818, 100657, 100659, 100663, 100664, 100673, 100715, 100712, 100704, 100705, 100749, 100751, 100681, 100819, 100821, 100823, 100950, 100962, 100967, 101193 } -- Hangar 01 + Hangar 4 (bag 03)
 local n = 22
 -- Hangar 2, Hangar 3 + Hangar 4 (Half)
@@ -21,7 +22,8 @@ local function LordOfWarAchievement()
         {
             [103427] = { special_function = SF.SetAchievementFailed, trigger_times = 1 } -- Weapons destroyed
         },
-        hook_triggers = true
+        hook_triggers = true,
+        add_to_counter = true
     })
     if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
         EHI:ShowAchievementLootCounter({
@@ -53,7 +55,9 @@ end
 local other =
 {
     -- This needs to be delayed because the number of required weapons are decided upon spawn
-    [103240] = { special_function = SF.CustomCodeDelayed, t = 5, f = LordOfWarAchievement }
+    [103240] = { special_function = SF.CustomCodeDelayed, t = 5, f = LordOfWarAchievement },
+
+    [100531] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
 }
 
 EHI:ParseTriggers({

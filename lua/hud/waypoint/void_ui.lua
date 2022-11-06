@@ -1,8 +1,6 @@
 local original =
 {
     init = EHIWaypointManager.init,
-    AddWaypoint = EHIWaypointManager.AddWaypoint,
-    SetWaypointIcon = EHIWaypointManager.SetWaypointIcon,
     Save = VoidUI.Save
 }
 

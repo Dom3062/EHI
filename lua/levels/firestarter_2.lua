@@ -1,5 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
+local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
 for _, pc_id in ipairs({ 104170, 104175, 104349, 104350, 104351, 104352, 104354, 101455 }) do
     managers.mission:add_runned_unit_sequence_trigger(pc_id, "interact", function(unit)
         managers.ehi:AddTracker({
@@ -29,9 +31,10 @@ EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
 local Weapons = { 101473, 102717, 102718, 102720 }
 local OtherLoot = { 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }
 local LootCounter = EHI:GetOption("show_loot_counter")
+local FilterIsOk = EHI:GetFreeCustomSpecialFunctionID()
 local other =
 {
-    [107124] = { special_function = EHI.SpecialFunctions.CustomCode, f = function()
+    [107124] = { special_function = SF.CustomCode, f = function()
         if not LootCounter then
             return
         end
@@ -43,10 +46,24 @@ local other =
             max = max,
             -- Random Loot + Goat
             additional_loot = random_loot + goat,
-            offset = true
+            triggers =
+            {
+                [100249] = { special_function = FilterIsOk }, -- N-OVK
+                [100251] = { special_function = FilterIsOk } -- MH+
+            },
+            hook_triggers = true,
+            offset = true,
+            client_from_start = true
         })
-    end}
+    end},
+
+    [104618] = { time = 30 + 1 + 5 + 30 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
 }
+EHI:RegisterCustomSpecialFunction(FilterIsOk, function(id, trigger, element, enabled)
+    if element:_check_difficulty() then
+        managers.ehi:CallFunction("LootCounter", "SecuredMissionLoot") -- Server secured
+    end
+end)
 EHI:ParseTriggers({
     mission = {},
     other = other

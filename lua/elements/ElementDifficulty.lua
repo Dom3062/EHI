@@ -15,7 +15,7 @@ end
 
 local function AssaultDelay(value)
     EHI._cache.diff = value
-    managers.ehi:CallFunction("AssaultDelay", "UpdateDiff", value)
+    --managers.ehi:CallFunction("AssaultDelay", "UpdateDiff", value)
 end
 
 local Trigger

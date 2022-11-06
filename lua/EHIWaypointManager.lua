@@ -13,7 +13,9 @@ function EHIWaypointManager:init()
     self._scale = 1
     self._stored_waypoints = {}
     self._waypoints = {}
+    setmetatable(self._waypoints, {__mode = "k"})
     self._waypoints_to_update = {}
+    setmetatable(self._waypoints_to_update, {__mode = "k"})
     self._pager_waypoints = {}
     self._t = 0
 end
@@ -110,8 +112,12 @@ end
 
 function EHIWaypointManager:SetWaypointIcon(id, new_icon)
     if id and self._waypoints[id] and self._waypoints[id]._bitmap then
-        new_icon = type(new_icon) == "table" and new_icon or { new_icon }
-        self:SetWaypointInitialIcon(self._waypoints[id], new_icon)
+        local wp = self._hud:get_waypoint_data(id)
+        if not wp then
+            return
+        end
+        local icon = { icon = new_icon }
+        self:SetWaypointInitialIcon(wp, icon)
     end
 end
 

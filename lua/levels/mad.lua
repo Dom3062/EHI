@@ -1,4 +1,5 @@
 local EHI = EHI
+local Icon = EHI.Icons
 EHIdailycakeTracker = class(EHIDailyTracker)
 EHIdailycakeTracker._forced_icons = { Icon.Escape }
 EHIdailycakeTracker.FormatProgress = EHIProgressTracker.Format
@@ -53,7 +54,6 @@ function EHIdailycakeTracker:SetCompleted()
 end
 EHI.DailyTrackers.EHIdailycakeTracker = true
 
-local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)

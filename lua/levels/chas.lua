@@ -48,7 +48,7 @@ local achievements =
     end },
     [1001073] = { time = 360, id = "chas_11", class = TT.Achievement, difficulty_pass = ovk_and_up },
 
-    [100781] = { id = "chas_9", class = TT.AchievementStatus },
+    [100781] = { id = "chas_9", status = "defend", class = TT.AchievementStatus },
     [100907] = { id = "chas_9", special_function = SF.SetAchievementFailed },
     [100906] = { id = "chas_9", special_function = SF.SetAchievementComplete }
 }

@@ -1875,7 +1875,7 @@ function EHI:ShowLootCounterNoCheck(params)
     end
     local n_offset = 0
     if params.offset then
-        if self._cache.Host then
+        if self._cache.Host or params.client_from_start then
             n_offset = managers.loot:GetSecuredBagsAmount()
         else
             managers.ehi:AddFullSyncFunction(callback(self, self, "ShowLootCounterOffset", params))
@@ -1939,6 +1939,9 @@ function EHI:ShowAchievementLootCounter(params)
         self:AddTriggers2(params.triggers, nil, params.achievement)
         if params.hook_triggers then
             self:HookElements(params.triggers)
+        end
+        if params.add_to_counter then
+            self:AddAchievementToCounter(params)
         end
         return
     elseif params.no_counting then

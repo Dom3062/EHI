@@ -1,3 +1,8 @@
+r96 (06. 11. 2022):
+Boiling Point: Fixed info not appearing
+Firestarter Day 2: Fixed server loot objective not counting in Loot Counter
+Waypoints: Fixed a crash at load if custom icon is defined and unit is active (drop-in)
+
 r95 (05. 11. 2022):
 Election Day 2: Fixed an issue with maximum amount in Loot Counter
 Firestarter Day 1: Fixed an issue where Loot Counter and achievements do not show correct progress
