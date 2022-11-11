@@ -59,7 +59,7 @@ local triggers =
 
     [102011] = { time = 5, id = "Thermite", icons = { Icon.Fire } },
 
-    [101098] = { time = 5 + 7 + 2, id = "WalkieTalkie", icons = { Icon.Pager } },
+    [101098] = { time = 5 + 7 + 2, id = "WalkieTalkie", icons = { "pd2_door" } },
 
     [EHI:GetInstanceElementID(100209, 10450)] = { time = 3, id = "KeygenHack", icons = { Icon.PCHack } },
 

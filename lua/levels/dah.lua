@@ -4,6 +4,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local heli_delay = 26 + 6
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+local dah_laptop_codes = { [1900] = "red", [2100] = "green", [2300] = "blue" }
 local element_sync_triggers =
 {
     [103569] = { time = 25, id = "CFOFall", icons = { "hostage", Icon.Goto }, hook_element = 100438 }
@@ -14,8 +15,21 @@ local triggers = {
     [101343] = { time = 30, id = "KeypadReset", icons = { Icon.Loop }, waypoint = { position_by_element = EHI:GetInstanceElementID(100179, 9100) } },
 
     [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100475 } },
-    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 103163 } }
+    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 103163 } },
+
+    [103969] = { id = "ColorCodes", icons = { Icon.Interact }, class = "EHIColoredCodesTracker" },
+    [102338] = { id = "ColorCodes", special_function = SF.RemoveTracker }
 }
+if EHI:GetOption("show_mission_trackers") then
+    for index, color in pairs(dah_laptop_codes) do
+        local unit_id = EHI:GetInstanceUnitID(100052, index)
+        for i = 1, 9, 1 do
+            managers.mission:add_runned_unit_sequence_trigger(unit_id, "set_" .. color .. "_0" .. tostring(i), function(...)
+                managers.ehi:CallFunction("ColorCodes", "SetCode", color, i)
+            end)
+        end
+    end
+end
 if EHI:IsClient() then
     EHI:SetSyncTriggers(element_sync_triggers)
 else
@@ -80,3 +94,45 @@ EHI:ShowLootCounter({
     -- Difficulties Very Hard or lower can load sync via EHI as the Red Diamond does not spawn on these difficulties
     no_sync_load = OVKorAbove
 })
+if EHI:IsHost() then
+    return
+end
+local bg = Idstring("g_code_screen"):key()
+local codes = {}
+for _, color in pairs(dah_laptop_codes) do
+    codes[color] = {}
+    local _c = codes[color]
+    for i = 0, 9, 1 do
+        local str = "g_number_" .. color .. "_0" .. tostring(i)
+        _c[i] = Idstring(str):key()
+    end
+end
+local function CheckIfCodeIsVisible(unit, color)
+    if not unit then
+        return nil
+    end
+    local color_codes = codes[color]
+    local object = unit:damage() and unit:damage()._state and unit:damage()._state.object
+    if object and object[bg] then
+        for i = 0, 9, 1 do
+            if object[color_codes[i]] then
+                return i
+            end
+        end
+    end
+    return nil -- Has not been interacted yet
+end
+EHI:AddLoadSyncFunction(function(self)
+    if EHI.ConditionFunctions.IsStealth() then
+        EHI:Trigger(103969)
+        local wd = managers.worlddefinition
+        for index, color in pairs(dah_laptop_codes) do
+            local unit_id = EHI:GetInstanceUnitID(100052, index)
+            local unit = wd:get_unit(unit_id)
+            local code = CheckIfCodeIsVisible(unit, color)
+            if code then
+                managers.ehi:CallFunction("ColorCodes", "SetCode", color, code)
+            end
+        end
+    end
+end)

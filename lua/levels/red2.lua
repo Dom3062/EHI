@@ -70,8 +70,7 @@ function EHIcac10Tracker:SetCompleted(force)
         self._status = "completed"
         self._text:stop()
         self:SetTextColor(Color.green)
-        self._fade_time = 5
-        self._fade = true
+        self.update = self.update_fade
         self._disable_counting = true
         self._achieved_popup_showed = true
     end

@@ -11,7 +11,7 @@ local preplan_voted = nil
 local _f_on_execute_preplanning = PrePlanningManager.on_execute_preplanning
 function PrePlanningManager:on_execute_preplanning(...)
     if self:has_current_level_preplanning() then
-        preplan_reserved = EHI:DeepClone(self._reserved_mission_elements)
+        preplan_reserved = deep_clone(self._reserved_mission_elements)
         local winners = self:get_current_majority_votes()
         if winners then
             preplan_voted = {}

@@ -9,6 +9,12 @@ local hard_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard)
 local triggers = {
     [105842] = { time = 16.7 * 18, id = "Thermite", icons = { Icon.Fire } },
 
+    [105197] = { time = 45, id = "PickUpAPhone", icons = { Icon.Phone, Icon.Interact }, class = TT.Warning },
+    [105219] = { id = "PickUpAPhone", special_function = SF.RemoveTracker },
+
+    [103050] = { time = 60, id = "PickUpManagersPhone", icons = { Icon.Phone, Icon.Interact }, class = TT.Warning },
+    [105248] = { id = "PickUpManagersPhone", special_function = SF.RemoveTracker },
+
     [101377] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
     [104532] = pc_hack,
     [103179] = pc_hack,
@@ -69,9 +75,18 @@ local achievements =
     [106247] = { id = "cac_22", special_function = SF.SetAchievementComplete },
 }
 
+local other =
+{
+    -- "Silent Alarm 30s delay" does not delay the first assault
+    -- Reported in:
+    -- https://steamcommunity.com/app/218620/discussions/14/3487502671137130788/
+    [100109] = { time = 30 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker"), trigger_times = 1 }
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:ShowAchievementLootCounter({
     achievement = "bigbank_3",
@@ -102,7 +117,13 @@ local tbl =
 {
     --units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock
     [101457] = { icons = { Icon.Wait } },
-    [104671] = { icons = { Icon.Wait } }
+    [104671] = { icons = { Icon.Wait } },
+
+    --units/payday2/equipment/gen_interactable_lance_huge/gen_interactable_lance_huge
+    [105318] = { remove_vanilla_waypoint = true, waypoint_id = 103700 },
+    [105319] = { remove_vanilla_waypoint = true, waypoint_id = 103702 },
+    [105320] = { remove_vanilla_waypoint = true, waypoint_id = 103704 },
+    [105321] = { remove_vanilla_waypoint = true, waypoint_id = 103705 }
 }
 EHI:UpdateUnits(tbl)
 

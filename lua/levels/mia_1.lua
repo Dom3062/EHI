@@ -16,13 +16,13 @@ for _, index in ipairs(MethlabIndex) do
     -- Cooking restart
     for i = 100120, 100122, 1 do
         local element_id = EHI:GetInstanceElementID(i, index)
-        element_sync_triggers[element_id] = EHI:DeepClone(Methlab)
+        element_sync_triggers[element_id] = deep_clone(Methlab)
         element_sync_triggers[element_id].hook_element = EHI:GetInstanceElementID(100119, index)
     end
     -- Cooking continuation
     for i = 100169, 100172, 1 do
         local element_id = EHI:GetInstanceElementID(i, index)
-        element_sync_triggers[element_id] = EHI:DeepClone(Methlab)
+        element_sync_triggers[element_id] = deep_clone(Methlab)
         element_sync_triggers[element_id].hook_element = EHI:GetInstanceElementID(100168, index)
     end
 end
@@ -91,6 +91,7 @@ local function GetNumberOfMethBags()
 end
 local Methbags = 0
 local MethbagsCooked = 0
+local MethbagsPossibleToSpawn = 19
 local MethlabExploded = false
 local other =
 {
@@ -103,8 +104,8 @@ local other =
         Methbags = GetNumberOfMethBags()
         EHI:ShowLootCounterNoCheck({
             max = money + Methbags,
-             -- 19 + 3 // 19 boxes of contrabant, that can spawn chemicals (up to 4); 3 cars with possible loot (max 2)
-            max_random = 22
+             -- 19 + 2 // 19 boxes of contrabant, that can spawn chemicals (up to 4); 2 cars with possible loot
+            max_random = 19 + 2
         })
     end}
 }
@@ -127,12 +128,14 @@ if LootCounter then
             return
         end
         Methbags = Methbags + 1
+        MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
         managers.ehi:CallFunction("LootCounter", "RandomLootSpawned")
     end
     local function DecreaseMaximum()
         if MethlabExploded then
             return
         end
+        MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
         managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
     end
     local IncreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = IncreaseMaximum2 }
@@ -152,7 +155,7 @@ if LootCounter then
             return
         end
         managers.ehi:DecreaseTrackerProgressMax("LootCounter", Methbags - MethbagsCooked)
-        managers.ehi:CallFunction("LootCounter", "DecreaseMaxRandom", 19)
+        managers.ehi:CallFunction("LootCounter", "DecreaseMaxRandom", MethbagsPossibleToSpawn)
         MethlabExploded = true
     end
     local function CookingDone()
@@ -164,28 +167,28 @@ if LootCounter then
     end
 
     -- Cars
-    -- Maximum number of bags from cars spawned
+    local CarLootBlocked = false
     other[100724] = { special_function = SF.CustomCode, f = function()
-        managers.ehi:CallFunction("LootCounter", "DecreaseMaxRandom", 1)
-        EHI:Unhook(100724)
-        EHI:Unhook(100523)
-        EHI:Unhook(100848)
-        EHI:Unhook(100718)
-        EHI:Unhook(100918)
-        EHI:Unhook(100912)
-    end}
+        CarLootBlocked = true
+    end }
+    local function DecreaseMaximum2()
+        if CarLootBlocked then
+            return
+        end
+        managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
+    end
+    local DecreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = DecreaseMaximum2 }
     -- All cars; does not get triggered when maximum has been reached
     other[100721] = { special_function = SF.CustomCode, f = function()
         managers.ehi:CallFunction("LootCounter", "RandomLootSpawned")
     end }
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/001
-    other[100523] = DecreaseMaximumTrigger -- Empty money bundle, taken weapons or body spawned
+    other[100523] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
     -- units/payday2/vehicles/str_vehicle_car_crossover_burned/str_vehicle_car_crossover_burned/001
-    other[100848] = DecreaseMaximumTrigger -- Nothing spawned
-    other[100718] = DecreaseMaximumTrigger -- Empty money bundle, taken weapons or body spawned
+    other[100849] = DecreaseMaximumTrigger2 -- Money should spawn, but ElementEnableUnit does not have any unit to spawn and bag counter goes up by 1
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/006
-    other[100918] = DecreaseMaximumTrigger -- Nothing spawned
-    other[100912] = DecreaseMaximumTrigger -- Empty money bundle, taken weapons or body spawned
+    other[100918] = DecreaseMaximumTrigger2 -- Nothing spawned
+    other[100912] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
 end
 
 EHI:ParseTriggers({

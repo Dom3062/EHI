@@ -4,6 +4,8 @@ if EHI._hooks.tweak_data then
 else
 	EHI._hooks.tweak_data = true
 end
+core:import("CoreTable")
+local deep_clone = CoreTable.deep_clone
 
 tweak_data.ehi =
 {
@@ -572,32 +574,22 @@ tweak_data.ehi =
     }
 }
 
-tweak_data.ehi.buff.team_crew_inspire = EHI:DeepClone(tweak_data.ehi.buff.long_dis_revive)
+tweak_data.ehi.buff.team_crew_inspire = deep_clone(tweak_data.ehi.buff.long_dis_revive)
 tweak_data.ehi.buff.team_crew_inspire.text = "AI"
 tweak_data.ehi.buff.team_crew_inspire.option = "inspire_ai"
-tweak_data.ehi.buff.reload_weapon_faster = EHI:DeepClone(tweak_data.ehi.buff.swap_weapon_faster)
+tweak_data.ehi.buff.reload_weapon_faster = deep_clone(tweak_data.ehi.buff.swap_weapon_faster)
 tweak_data.ehi.buff.reload_weapon_faster.text = "Rld+"
-tweak_data.ehi.buff.chico_injector_cooldown = EHI:DeepClone(tweak_data.ehi.buff.chico_injector)
+tweak_data.ehi.buff.chico_injector_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector)
 tweak_data.ehi.buff.chico_injector_cooldown.bad = true
-tweak_data.ehi.buff.tag_team_cooldown = EHI:DeepClone(tweak_data.ehi.buff.chico_injector_cooldown)
+tweak_data.ehi.buff.tag_team_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.tag_team_cooldown.folder = "ecp"
 tweak_data.ehi.buff.tag_team_cooldown.option = "tag_team"
-tweak_data.ehi.buff.pocket_ecm_jammer_cooldown = EHI:DeepClone(tweak_data.ehi.buff.chico_injector_cooldown)
+tweak_data.ehi.buff.pocket_ecm_jammer_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.folder = "joy"
 tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.option = "hacker"
-tweak_data.ehi.buff.copr_ability_cooldown = EHI:DeepClone(tweak_data.ehi.buff.chico_injector_cooldown)
+tweak_data.ehi.buff.copr_ability_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.copr_ability_cooldown.folder = "copr"
 tweak_data.ehi.buff.copr_ability_cooldown.option = "leech"
-
--- Debug
-tweak_data.ehi.buff.debug_1 = EHI:DeepClone(tweak_data.ehi.buff.chico_injector)
-tweak_data.ehi.buff.debug_1.option = nil
-tweak_data.ehi.buff.debug_2 = EHI:DeepClone(tweak_data.ehi.buff.pocket_ecm_jammer_cooldown)
-tweak_data.ehi.buff.debug_2.option = nil
-tweak_data.ehi.buff.debug_3 = EHI:DeepClone(tweak_data.ehi.buff.chico_injector_cooldown)
-tweak_data.ehi.buff.debug_3.option = nil
-tweak_data.ehi.buff.debug_4 = EHI:DeepClone(tweak_data.ehi.buff.team_crew_inspire)
-tweak_data.ehi.buff.debug_4.option = nil
 
 tweak_data.hud_icons.EHI_XP = { texture = tweak_data.ehi.icons.xp.texture }
 tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }
@@ -610,7 +602,6 @@ do
     local text_rect_blimp = preplanning:get_type_texture_rect(preplanning.types.kenaz_faster_blimp.icon)
     text_rect_blimp[1] = text_rect_blimp[1] + text_rect_blimp[3] -- Add the negated "w" value so it will correctly show blimp
     text_rect_blimp[3] = -text_rect_blimp[3] -- Flip the image so it will face correctly
-    local text_rect_heli = preplanning:get_type_texture_rect(preplanning.types.kenaz_ace_pilot.icon)
     tweak_data.ehi.icons.blimp = { texture = path, texture_rect = text_rect_blimp }
-    tweak_data.ehi.icons.heli = { texture = path, texture_rect = text_rect_heli }
+    tweak_data.ehi.icons.heli = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.kenaz_ace_pilot.icon) }
 end

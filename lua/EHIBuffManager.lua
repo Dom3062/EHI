@@ -116,23 +116,6 @@ function EHIBuffManager:CallBuffFunction(id, f, ...)
     end
 end
 
-function EHIBuffManager:AddDebugBuffs()
-    local c = { 6, 6, 100, 30, 120 }
-    for i = 1, 5, 1 do
-        local buff = self._buffs["debug_" .. i]
-        if buff then
-            EHI:DelayCall("Buff_Debug_" .. i, i, function()
-                buff._time = c[i] or 6
-                buff._text:set_text(buff:Format())
-                buff._panel:set_visible(true)
-                self._visible_buffs["debug_" .. i] = true
-                self._n_visible = self._n_visible + 1
-                self:Reorganize()
-            end)
-        end
-    end
-end
-
 function EHIBuffManager:ActivateUpdatingBuffs()
     local tweak = tweak_data.ehi.buff
     for id, buff in pairs(tweak) do

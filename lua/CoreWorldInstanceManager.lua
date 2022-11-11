@@ -45,10 +45,6 @@ if client then
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100024] = { id = "sandTurretTimer", special_function = SF.RemoveTracker }
 end
 
-if EHI:GetOption("show_waypoints") then
-    --instances["levels/instances/shared/obj_skm/world"][100032].waypoint = { position_by_element = 0, warning = true }
-end
-
 local original =
 {
     prepare_mission_data = CoreWorldInstanceManager.prepare_mission_data,
@@ -69,7 +65,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
             local triggers = {}
             for id, trigger in pairs(instance_elements) do
                 local final_index = EHI:GetInstanceElementID(id, start_index, continent_data.base_id)
-                triggers[final_index] = EHI:DeepClone(trigger)
+                triggers[final_index] = deep_clone(trigger)
                 triggers[final_index].id = triggers[final_index].id .. instance_index
                 if trigger.element then
                     triggers[final_index].element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
@@ -117,7 +113,7 @@ function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ..
     local instance_data = original.prepare_unit_data(self, instance, continent_data, ...)
     for _, entry in ipairs(instance_data.statics or {}) do
         if units[entry.unit_data.name] then
-            local unit_data = EHI:DeepClone(units[entry.unit_data.name])
+            local unit_data = deep_clone(units[entry.unit_data.name])
             unit_data.instance = instance
             unit_data.instance_name = instance.name
             unit_data.instance_index = instance.start_index

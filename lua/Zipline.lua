@@ -17,17 +17,14 @@ local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoin
 local original =
 {
     init = ZipLine.init,
+    update = ZipLine.update,
+    release_bag = ZipLine.release_bag,
+    set_usage_type = ZipLine.set_usage_type,
     attach_bag = ZipLine.attach_bag,
     set_user = ZipLine.set_user,
     sync_set_user = ZipLine.sync_set_user,
     destroy = ZipLine.destroy
 }
-local bag_time_correction = 0
---local user_time_correction = 0
-local level_id = Global.game_settings.level_id
-if level_id == "dah" then
-    bag_time_correction = 1.25 -- Still not accurate, most likely ElementAreaTrigger is "eating" the bag while the zipline is moving
-end
 
 function ZipLine:init(unit, ...)
     original.init(self, unit, ...)
@@ -36,6 +33,67 @@ function ZipLine:init(unit, ...)
     self._ehi_key_bag_full = key .. "_bag_reset"
     self._ehi_key_user_half = key .. "_person_drop"
     self._ehi_key_user_full = key .. "_person_reset"
+    if not show_waypoint_only then
+        managers.ehi:PreloadTracker({
+            id = self._ehi_key_bag_half,
+            icons = { Icon.Winch, Icon.Loot, Icon.Goto },
+            hide_on_delete = true
+        })
+        managers.ehi:PreloadTracker({
+            id = self._ehi_key_bag_full,
+            icons = { Icon.Winch, Icon.Loop },
+            hide_on_delete = true
+        })
+        managers.ehi:PreloadTracker({
+            id = self._ehi_key_user_half,
+            icons = { Icon.Winch, Icon.Escape, Icon.Goto },
+            hide_on_delete = true
+        })
+        managers.ehi:PreloadTracker({
+            id = self._ehi_key_user_full,
+            icons = { Icon.Winch, Icon.Loop },
+            hide_on_delete = true
+        })
+    end
+    if self:is_usage_type_bag() then
+        self:HookUpdateLoop()
+    end
+end
+
+function ZipLine:HookUpdateLoop()
+    if self._update_hooked then
+        return
+    end
+    self.update = function(self, ...)
+        original.update(self, ...)
+        if self._ehi_bag_attached and not self._attached_bag then
+            self._ehi_bag_attached = nil
+            local t = self:total_time() * self._current_time
+            managers.ehi:RemoveTracker(self._ehi_key_bag_half)
+            managers.ehi:SetTrackerTimeNoAnim(self._ehi_key_bag_full, t)
+            managers.ehi_waypoint:SetWaypointTime(self._ehi_key_bag_full, t)
+        end
+    end
+    self._update_hooked = true
+end
+
+function ZipLine:UnhookUpdateLoop()
+    self.update = original.update
+    self._update_hooked = nil
+end
+
+function ZipLine:set_usage_type(usage_type, ...)
+    original.set_usage_type(self, usage_type, ...)
+    if self:is_usage_type_bag() then
+        self:HookUpdateLoop()
+    else
+        self:UnhookUpdateLoop()
+    end
+end
+
+function ZipLine:release_bag(...)
+    original.release_bag(self, ...)
+    self._ehi_bag_attached = nil
 end
 
 function ZipLine:GetMovingObject()
@@ -45,19 +103,9 @@ end
 function ZipLine:attach_bag(...)
     original.attach_bag(self, ...)
     local total_time = self:total_time()
-    local total_time_2 = (total_time * 2) - bag_time_correction
-    if not show_waypoint_only then
-        managers.ehi:AddTracker({
-            id = self._ehi_key_bag_half,
-            time = total_time - bag_time_correction,
-            icons = { Icon.Winch, "wp_bag", Icon.Goto }
-        })
-        managers.ehi:AddTracker({
-            id = self._ehi_key_bag_full,
-            time = total_time_2,
-            icons = { Icon.Winch, Icon.Loop }
-        })
-    end
+    local total_time_2 = total_time * 2
+    managers.ehi:RunTracker(self._ehi_key_bag_half, total_time)
+    managers.ehi:RunTracker(self._ehi_key_bag_full, total_time_2)
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_bag_full, {
             time = total_time_2,
@@ -65,6 +113,7 @@ function ZipLine:attach_bag(...)
             unit = self:GetMovingObject()
         })
     end
+    self._ehi_bag_attached = true
 end
 
 local function AddUserZipline(self, unit)
@@ -73,18 +122,8 @@ local function AddUserZipline(self, unit)
     end
     local total_time = self:total_time()
     local total_time_2 = total_time * 2
-    if not show_waypoint_only then
-        managers.ehi:AddTracker({
-            id = self._ehi_key_user_half,
-            time = total_time,
-            icons = { Icon.Winch, Icon.Escape, Icon.Goto }
-        })
-        managers.ehi:AddTracker({
-            id = self._ehi_key_user_full,
-            time = total_time_2,
-            icons = { Icon.Winch, Icon.Loop }
-        })
-    end
+    managers.ehi:RunTracker(self._ehi_key_user_half, total_time)
+    managers.ehi:RunTracker(self._ehi_key_user_full, total_time_2)
     if show_waypoint then
         local local_unit = unit == managers.player:player_unit()
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_user_full, {
@@ -107,10 +146,10 @@ function ZipLine:sync_set_user(unit, ...)
 end
 
 function ZipLine:destroy(...)
-    managers.ehi:RemoveTracker(self._ehi_key_bag_half)
-    managers.ehi:RemoveTracker(self._ehi_key_bag_full)
-    managers.ehi:RemoveTracker(self._ehi_key_user_half)
-    managers.ehi:RemoveTracker(self._ehi_key_user_full)
+    managers.ehi:ForceRemoveTracker(self._ehi_key_bag_half)
+    managers.ehi:ForceRemoveTracker(self._ehi_key_bag_full)
+    managers.ehi:ForceRemoveTracker(self._ehi_key_user_half)
+    managers.ehi:ForceRemoveTracker(self._ehi_key_user_full)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_bag_full)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_user_full)
     original.destroy(self, ...)

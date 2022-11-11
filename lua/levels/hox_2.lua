@@ -22,10 +22,10 @@ local triggers = {
     --[100107] = { time = AssaultDelay, id = "AssaultDelay", stop_counting = EHI:IsHost(), class = TT.AssaultDelay },
     [102016] = { time = 7, id = "Endless", icons = Icon.EndlessAssault, class = TT.Warning },
 
-    [104579] = { time = 15, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) },
-    [104580] = { time = 25, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) },
-    [104581] = { time = 20, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) },
-    [104582] = { time = 30, id = "Request", icons = request, waypoint = EHI:DeepClone(PCHackWaypoint) }, -- Disabled in the mission script
+    [104579] = { time = 15, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) },
+    [104580] = { time = 25, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) },
+    [104581] = { time = 20, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) },
+    [104582] = { time = 30, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) }, -- Disabled in the mission script
 
     [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop } },
 

@@ -8,7 +8,7 @@ local element_sync_triggers = {}
 for _, index in ipairs(MethlabIndex) do
     for i = 100169, 100172, 1 do
         local element_id = EHI:GetInstanceElementID(i, index)
-        element_sync_triggers[element_id] = EHI:DeepClone(interact)
+        element_sync_triggers[element_id] = deep_clone(interact)
         element_sync_triggers[element_id].hook_element = EHI:GetInstanceElementID(100168, index)
     end
 end

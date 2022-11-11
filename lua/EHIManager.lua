@@ -213,16 +213,11 @@ function EHIManager:destroy()
     end
 end
 
-function EHIManager:AddInvisibleTracker(params)
-    params.panel_visible = false
-    self:AddTracker(params)
-end
-
 function EHIManager:AddTracker(params, pos)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
         EHI:LogTraceback()
-        self._trackers[params.id]:delete()
+        self._trackers[params.id]:ForceDelete()
     end
     pos = self:MoveTracker(pos, params.icons)
     params.parent_class = self
@@ -239,11 +234,11 @@ function EHIManager:AddTracker(params, pos)
     self._n_of_trackers = self._n_of_trackers + 1
 end
 
-function EHIManager:AddStaticTracker(params)
+function EHIManager:PreloadTracker(params)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
         EHI:LogTraceback()
-        self._trackers[params.id]:delete()
+        self._trackers[params.id]:ForceDelete()
     end
     params.parent_class = self
     params.x = 0
@@ -251,10 +246,9 @@ function EHIManager:AddStaticTracker(params)
     local class = params.class or "EHITracker"
     local tracker = _G[class]:new(self._hud_panel, params)
     self._trackers[params.id] = tracker
-    self._trackers_pos[params.id] = { tracker = tracker, pos = 0, x = 0, y = 0, w = tracker:GetPanelW() }
 end
 
-function EHIManager:RunStaticTracker(id, ...)
+function EHIManager:RunTracker(id, ...)
     local tracker = self._trackers[id]
     if not tracker then
         return
@@ -265,11 +259,7 @@ function EHIManager:RunStaticTracker(id, ...)
     tracker._panel:set_y(y)
     tracker:Run(...)
     tracker:SetPanelVisible()
-    tracker._visible = true
-    local tracker_pos = self._trackers_pos[id]
-    tracker_pos.pos = self._n_of_trackers
-    tracker_pos.x = x
-    tracker_pos.y = y
+    self._trackers_pos[id] = { tracker = tracker, pos = self._n_of_trackers, x = x, y = y, w = tracker:GetPanelW() }
     if tracker._update then
         self:AddTrackerToUpdate(id, tracker)
     end
@@ -412,7 +402,7 @@ function EHIManager:AddEscapeChanceTracker(dropin, chance, civilian_killed_multi
     civilian_killed_multiplier = civilian_killed_multiplier or 5
     self:AddTracker({
         id = "EscapeChance",
-        chance = chance + (self:GetAndRemoveFromCache("CiviliansKilled") or 0) * civilian_killed_multiplier,
+        chance = chance + ((self:GetAndRemoveFromCache("CiviliansKilled") or 0) * civilian_killed_multiplier),
         icons = { { icon = EHI.Icons.Car, color = Color.red } },
         class = EHI.Trackers.Chance
     })
@@ -595,34 +585,36 @@ function EHIManager:RemoveTracker(id)
     end
 end
 
-function EHIManager:RemoveAndDestroyTracker(id)
+function EHIManager:ForceRemoveTracker(id)
     local tracker = self._trackers[id]
     if tracker then
-        if not tracker._visible then
-            self._n_of_trackers = self._n_of_trackers + 1
-        end
-        tracker:destroy(nil, true)
-        self._trackers_pos[id].pos = self._n_of_trackers
-        self:DestroyTracker(id)
+        tracker:ForceDelete()
     end
 end
 
-function EHIManager:RemoveStaticTracker(id)
+function EHIManager:HideTracker(id)
     self._trackers_to_update[id] = nil
-    local pos = self._trackers_pos[id].pos
-    local w = self._trackers_pos[id].w
-    self._n_of_trackers = self._n_of_trackers - 1
-    self:RearrangeTrackers(pos, w)
+    local tracker_pos = self._trackers_pos[id]
+    if tracker_pos then
+        local pos = tracker_pos.pos
+        local w = tracker_pos.w
+        self._trackers_pos[id] = nil
+        self._n_of_trackers = self._n_of_trackers - 1
+        self:RearrangeTrackers(pos, w)
+    end
 end
 
 function EHIManager:DestroyTracker(id)
     self._trackers[id] = nil
     self._trackers_to_update[id] = nil
-    local pos = self._trackers_pos[id].pos
-    local w = self._trackers_pos[id].w
-    self._trackers_pos[id] = nil
-    self._n_of_trackers = self._n_of_trackers - 1
-    self:RearrangeTrackers(pos, w)
+    local tracker_pos = self._trackers_pos[id]
+    if tracker_pos then
+        local pos = tracker_pos.pos
+        local w = tracker_pos.w
+        self._trackers_pos[id] = nil
+        self._n_of_trackers = self._n_of_trackers - 1
+        self:RearrangeTrackers(pos, w)
+    end
 end
 
 function EHIManager:TrackerExists(id)
@@ -1103,5 +1095,5 @@ if Global.load_level then
     dofile(path .. "EHITrophyTrackers.lua")
     dofile(path .. "EHIDailyTrackers.lua")
     dofile(path .. "EHIInaccurateTrackers.lua")
-    --dofile(path .. "StaticTrackers.lua")
+    dofile(path .. "EHIColoredCodesTracker.lua")
 end

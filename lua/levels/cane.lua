@@ -18,10 +18,10 @@ local triggers = {
 local fire_recharge = { time = 180, id = "FireRecharge", icons = { Icon.Fire, Icon.Loop } }
 local fire_t = { time = 60, id = "Fire", icons = { Icon.Fire }, class = TT.Warning }
 for _, index in ipairs(FireTrapIndexes) do
-    local recharge = EHI:DeepClone(fire_recharge)
+    local recharge = deep_clone(fire_recharge)
     recharge.id = recharge.id .. index
     triggers[EHI:GetInstanceElementID(100024, index)] = recharge
-    local fire = EHI:DeepClone(fire_t)
+    local fire = deep_clone(fire_t)
     fire.id = fire.id .. index
     triggers[EHI:GetInstanceElementID(100022, index)] = fire
 end
@@ -50,9 +50,9 @@ local achievements =
         })
     end}
 }
-EHI:RegisterCustomSpecialFunction(cane_5, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(cane_5, function(...)
     if #managers.assets:get_unlocked_asset_ids(true) ~= 0 then
-        if EHI:GetUnlockableOption("show_achievement_failed_popup") then
+        if EHI:IsAchievementUnlocked("cane_5") and EHI:GetUnlockableOption("show_achievement_failed_popup") then
             managers.hud:ShowAchievementFailedPopup("cane_5")
         end
         return

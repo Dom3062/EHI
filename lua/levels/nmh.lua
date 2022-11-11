@@ -75,7 +75,7 @@ local outcome =
 for id, value in pairs(outcome) do
     for i = 2100, 2700, 100 do
         local element = EHI:GetInstanceElementID(id, i)
-        triggers[element] = EHI:DeepClone(value)
+        triggers[element] = deep_clone(value)
         triggers[element].id = triggers[element].id .. tostring(element)
         if id == 100013 then
             local tracker_id = triggers[element].id .. tostring(element)

@@ -88,6 +88,7 @@ end
 
 function EHIWaypointManager:SetWaypointInitialIcon(wp, params)
     local bitmap = wp.bitmap
+    local bitmap_world = wp.bitmap_world -- VR
     local icon, texture_rect
     if params.texture then
         icon = params.texture
@@ -108,6 +109,14 @@ function EHIWaypointManager:SetWaypointInitialIcon(wp, params)
     end
     bitmap:set_size(self._bitmap_w, self._bitmap_h)
     wp.size = Vector3(self._bitmap_w, self._bitmap_h, 0)
+    if bitmap_world then
+        if texture_rect then
+            bitmap_world:set_image(icon, unpack(texture_rect))
+        else
+            bitmap_world:set_image(icon)
+        end
+        bitmap_world:set_size(self._bitmap_w, self._bitmap_h)
+    end
 end
 
 function EHIWaypointManager:SetWaypointIcon(id, new_icon)

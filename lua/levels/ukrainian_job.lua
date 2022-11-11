@@ -13,8 +13,8 @@ local triggers = {
         managers.hud:SoftRemoveWaypoint(104215)
         EHI:DisableElementWaypoint(104215)
     end},
-    [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 }, waypoint = EHI:DeepClone(LootDropWaypoint) },
-    [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 }, waypoint = EHI:DeepClone(LootDropWaypoint) },
+    [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 }, waypoint = deep_clone(LootDropWaypoint) },
+    [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 }, waypoint = deep_clone(LootDropWaypoint) },
 
     [103172] = { time = 2 + 830/30, id = "Van", icons = Icon.CarEscape },
     [103183] = { id = 103194, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103194 } },

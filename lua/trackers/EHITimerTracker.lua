@@ -11,7 +11,7 @@ function EHITimerTracker:init(panel, params)
         params.icons[3] = { icon = "silent", visible = false, alpha = 0.25 }
         params.icons[4] = { icon = "restarter", visible = false, alpha = 0.25 }
     end
-    self.theme = params.theme
+    self._theme = params.theme
     EHITimerTracker.super.init(self, panel, params)
     self:SetUpgradeable(false)
     self._paused = false
@@ -125,10 +125,10 @@ function EHITimerTracker:SetUpgrades(upgrades)
 end
 
 function EHITimerTracker:GetUpgradeColor(level)
-    if not self.theme then
+    if not self._theme then
         return TimerGui.upgrade_colors["upgrade_color_" .. level]
     end
-    local theme = TimerGui.themes[self.theme]
+    local theme = TimerGui.themes[self._theme]
     return theme and theme["upgrade_color_" .. level] or TimerGui.upgrade_colors["upgrade_color_" .. level]
 end
 
@@ -166,9 +166,9 @@ function EHITimerTracker:SetTextColor()
     end
 end
 
-function EHITimerTracker:destroy()
+function EHITimerTracker:delete()
     if self._text and alive(self._text) then
         self._text:stop()
     end
-    EHITimerTracker.super.destroy(self)
+    EHITimerTracker.super.delete(self)
 end

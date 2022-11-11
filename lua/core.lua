@@ -103,9 +103,10 @@ _G.EHI =
         SetTimeIfLoudOrStealth = 49,
         AddTimeByPreplanning = 50,
         ShowWaypoint = 51,
-        DecreaseProgressMax = 52,
-        DecreaseProgress = 53,
-        ShowTrophy = 54,
+        ShowEHIWaypoint = 52,
+        DecreaseProgressMax = 53,
+        DecreaseProgress = 54,
+        ShowTrophy = 55,
 
         Debug = 100000,
         CustomCode = 100001,
@@ -856,11 +857,11 @@ function EHI:SetSyncTriggers(triggers)
             if self._sync_triggers[key] then
                 self:Log("key: " .. tostring(key) .. " already exists in sync!")
             else
-                self._sync_triggers[key] = self:DeepClone(value)
+                self._sync_triggers[key] = deep_clone(value)
             end
         end
     else
-        self._sync_triggers = self:DeepClone(triggers)
+        self._sync_triggers = deep_clone(triggers)
     end
 end
 
@@ -906,22 +907,6 @@ function EHI:DebugEquipment(tracker_id, unit, key, amount, peer_id)
         self:Log("Peer ID: " .. tostring(peer_id))
     end
     self:Log(debug.traceback())
-end
-
-function EHI:DeepClone(o) -- Copy of OVK's function deep_clone
-    if type(o) == "userdata" then
-		return o
-	end
-	local res = {}
-	setmetatable(res, getmetatable(o))
-	for k, v in pairs(o) do
-		if type(v) == "table" then
-			res[k] = self:DeepClone(v)
-		else
-			res[k] = v
-		end
-	end
-	return res
 end
 
 ---@param level_id string
@@ -1109,7 +1094,7 @@ function EHI:AddWaypointToTrigger(id, waypoint)
     if not t then
         return
     end
-    local w = self:DeepClone(waypoint)
+    local w = deep_clone(waypoint)
     if not w.time then
         w.time = t.time
     end
@@ -1440,6 +1425,8 @@ function EHI:Trigger(id, element, enabled)
                 self:CheckCondition(id)
             elseif f == SF.ShowWaypoint then
                 managers.hud:add_waypoint(trigger.id, trigger.data)
+            elseif f == SF.ShowEHIWaypoint then
+                managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
             elseif f == SF.DecreaseProgressMax then
                 managers.ehi:DecreaseTrackerProgressMax(trigger.id, trigger.max)
             elseif f == SF.DecreaseProgress then
@@ -2055,7 +2042,7 @@ function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_cont
     local new_tbl = {}
     for id, data in pairs(tbl) do
         local computed_id = self:GetInstanceElementID(id, instance_start_index, instance_continent_index)
-        new_tbl[computed_id] = self:DeepClone(data)
+        new_tbl[computed_id] = deep_clone(data)
         if new_tbl[computed_id].remove_vanilla_waypoint then
             new_tbl[computed_id].waypoint_id = self:GetInstanceElementID(new_tbl[computed_id].waypoint_id, instance_start_index, instance_continent_index)
         end

@@ -8,6 +8,7 @@ EHIManagerVR.old_init = EHIManager.init
 EHIManagerVR.old_AddToDeployableCache = EHIManager.AddToDeployableCache
 EHIManagerVR.old_LoadFromDeployableCache = EHIManager.LoadFromDeployableCache
 EHIManagerVR.old_RemoveFromDeployableCache = EHIManager.RemoveFromDeployableCache
+EHIManagerVR.old_PreloadTracker = EHIManager.PreloadTracker
 
 function EHIManagerVR:init()
     self:old_init()
@@ -42,6 +43,18 @@ end
 
 function EHIManagerVR:IsLoading()
     return self._is_loading
+end
+
+function EHIManagerVR:PreloadTracker(params)
+    if self:IsLoading() then
+        self:AddToLoadQueue(params.id, params, callback(self, self, "_PreloadTracker"))
+        return
+    end
+    self:old_PreloadTracker(params)
+end
+
+function EHIManagerVR:_PreloadTracker(key, data)
+    self:old_PreloadTracker(data)
 end
 
 function EHIManagerVR:AddToLoadQueue(key, data, f, add)

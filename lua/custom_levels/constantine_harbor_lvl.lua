@@ -6,7 +6,7 @@ local interact = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop } }
 local element_sync_triggers = {}
 for i = 100169, 100172, 1 do
     local element_id = EHI:GetInstanceElementID(i, 7750)
-    element_sync_triggers[element_id] = EHI:DeepClone(interact)
+    element_sync_triggers[element_id] = deep_clone(interact)
     element_sync_triggers[element_id].hook_element = EHI:GetInstanceElementID(100168, 7750)
 end
 local escape_delay = 24 + 1

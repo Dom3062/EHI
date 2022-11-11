@@ -13,6 +13,16 @@ local function show(o) -- This is actually faster than manually re-typing optimi
         o:set_alpha(math_lerp(0, 1, lerp))
     end
 end
+local function hide(o) -- This is actually faster than manually re-typing optimized "over" function
+    local TOTAL_T = 0.18
+    local t = 0
+    while TOTAL_T > t do
+        local dt = coroutine.yield()
+        t = math_min(t + dt, TOTAL_T)
+        local lerp = t / TOTAL_T
+        o:set_alpha(math_lerp(1, 0, lerp))
+    end
+end
 local function top(o, target_y)
     local t = 0
     local total = 0.18
@@ -145,6 +155,7 @@ function EHITracker:init(panel, params)
     end
     self:OverridePanel(params)
     self._parent_class = params.parent_class
+    self._hide_on_delete = params.hide_on_delete
     if params.dynamic then
         self:SetPanelVisible()
     end
@@ -155,6 +166,10 @@ end
 
 function EHITracker:SetPanelVisible()
     self._panel:animate(show)
+end
+
+function EHITracker:SetPanelHidden()
+    self._panel:animate(hide)
 end
 
 if EHI:GetOption("show_one_icon") then
@@ -287,6 +302,7 @@ end
 
 function EHITracker:Run(t)
     self:SetTimeNoAnim(t)
+    self:SetTextColor(Color.white)
 end
 
 function EHITracker:AddDelay(delay)
@@ -387,6 +403,17 @@ function EHITracker:destroy(skip)
 end
 
 function EHITracker:delete()
+    if self._hide_on_delete then
+        self._panel:stop()
+        self:SetPanelHidden()
+        self._parent_class:HideTracker(self._id)
+        return
+    end
     self:destroy()
     self._parent_class:DestroyTracker(self._id)
+end
+
+function EHITracker:ForceDelete()
+    self._hide_on_delete = nil
+    self:delete()
 end

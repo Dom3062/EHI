@@ -1,3 +1,7 @@
+r97 (11. 11. 2022):
+Improved performance by preloading trackers for SWAT Van Turret and Zipline units
+Zipline: Fixed an issue where total time is inaccurate after a bag is "eaten" by ElementAreaTrigger
+
 r96 (06. 11. 2022):
 Boiling Point: Fixed info not appearing
 Firestarter Day 2: Fixed server loot objective not counting in Loot Counter

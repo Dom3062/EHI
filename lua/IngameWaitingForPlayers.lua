@@ -230,15 +230,12 @@ function IngameWaitingForPlayersState:at_exit(...)
             class = "EHIChanceTracker"
         })
     else]]
-    if managers.experience.RecalculateSkillXPMultiplier then
-        managers.experience:RecalculateSkillXPMultiplier()
-    end
     if managers.player.EHICheckAbility then
         managers.player:EHICheckAbility()
         managers.ehi_buff:ActivateUpdatingBuffs()
     end
     EHI:CallCallback(EHI.CallbackMessage.Spawned)
-    if not EHI:GetUnlockableAndOption("show_achievements") or EHI._cache.UnlockablesAreDisabled or GunGameGame then
+    if not EHI:GetUnlockableAndOption("show_achievements") or EHI._cache.UnlockablesAreDisabled or GunGameGame or TIM then -- Twitch Integration Mod
         return
     end
     primary = managers.blackmarket:equipped_primary()

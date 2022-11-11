@@ -4,25 +4,26 @@ if EHI._hooks.MissionDoor then
 else
     EHI._hooks.MissionDoor = true
 end
+local C4 = EHI.Icons.C4
 
 local function StartC4Sequence(unit)
     local key = tostring(unit:key())
     managers.ehi:AddTracker({
         id = key,
         time = 5,
-        icons = { "pd2_c4" }
+        icons = { C4 }
     })
     managers.ehi_waypoint:AddWaypoint(key, {
         time = 5,
-        icon = "pd2_c4",
+        icon = C4,
         position = unit:position()
     })
 end
 
 if EHI:IsHost() then
-    local _f_initiate_c4_sequence = MissionDoor._initiate_c4_sequence
+    local initiate_c4_sequence = MissionDoor._initiate_c4_sequence
     function MissionDoor:_initiate_c4_sequence(...)
-        _f_initiate_c4_sequence(self, ...)
+        initiate_c4_sequence(self, ...)
         StartC4Sequence(self._unit)
     end
 else
@@ -137,8 +138,8 @@ if EHI.debug and EHI:IsHost() then
 
     EHI:PreHookWithID(WorldDefinition, "init_done", "EHI_MissionDoorDebug_WorldDefinition", function(self, ...)
         -- These fields are nilled when loading finishes, clone them so I can check for path
-        definition = EHI:DeepClone(self._definition)
-        continent_definitions = EHI:DeepClone(self._continent_definitions)
-        continents = EHI:DeepClone(self._continents)
+        definition = deep_clone(self._definition)
+        continent_definitions = deep_clone(self._continent_definitions)
+        continents = deep_clone(self._continents)
     end)
 end

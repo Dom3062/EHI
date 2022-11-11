@@ -58,6 +58,7 @@ function ExperienceManager:EHIInitFinalize()
     end
     EXPERIENCE_GAINED = managers.localization:text(gained)
     EXPERIENCE_TOTAL = managers.localization:text("ehi_popup_experience_total")
+    EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
 end
 
 function ExperienceManager:SetJobData(data)
