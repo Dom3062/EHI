@@ -1,15 +1,15 @@
 local EHI = EHI
 local player_manager
 local DODGE_INIT = tweak_data.player.damage.DODGE_INIT or 0
-EHIDodgeChanceTracker = class(EHIGaugeBuffTracker)
-EHIDodgeChanceTracker._refresh_time = 1 / EHI:GetBuffOption("dodge_refresh")
-function EHIDodgeChanceTracker:init(panel, params)
-    EHIDodgeChanceTracker.super.init(self, panel, params)
+EHIDodgeChanceBuffTracker = class(EHIGaugeBuffTracker)
+EHIDodgeChanceBuffTracker._refresh_time = 1 / EHI:GetBuffOption("dodge_refresh")
+function EHIDodgeChanceBuffTracker:init(panel, params)
+    EHIDodgeChanceBuffTracker.super.init(self, panel, params)
     self._time = self._refresh_time
     self._dodge = 0
 end
 
-function EHIDodgeChanceTracker:UpdateDodge()
+function EHIDodgeChanceBuffTracker:UpdateDodge()
     local player_movement = player_manager:player_unit()
     if player_movement == nil then
         return
@@ -33,12 +33,12 @@ function EHIDodgeChanceTracker:UpdateDodge()
     self._dodge = total
 end
 
-function EHIDodgeChanceTracker:ForceUpdate()
+function EHIDodgeChanceBuffTracker:ForceUpdate()
     self:UpdateDodge()
     self._time = self._refresh_time
 end
 
-function EHIDodgeChanceTracker:PreUpdate()
+function EHIDodgeChanceBuffTracker:PreUpdate()
     player_manager = managers.player
     local function f(state)
         self:SetCustody(state)
@@ -55,7 +55,7 @@ function EHIDodgeChanceTracker:PreUpdate()
     self:SetRatio(0)
 end
 
-function EHIDodgeChanceTracker:SetCustody(state)
+function EHIDodgeChanceBuffTracker:SetCustody(state)
     if state then
         self._parent_class:RemoveBuffFromUpdate(self._id)
         self._dodge = 0
@@ -66,7 +66,7 @@ function EHIDodgeChanceTracker:SetCustody(state)
     end
 end
 
-function EHIDodgeChanceTracker:update(t, dt)
+function EHIDodgeChanceBuffTracker:update(t, dt)
     self._time = self._time - dt
     if self._time <= 0 then
         self:UpdateDodge()
@@ -74,7 +74,7 @@ function EHIDodgeChanceTracker:update(t, dt)
     end
 end
 
-function EHIDodgeChanceTracker:Activate()
+function EHIDodgeChanceBuffTracker:Activate()
     if self._active then
         return
     end
@@ -84,7 +84,7 @@ function EHIDodgeChanceTracker:Activate()
     self._parent_class:AddVisibleBuff(self._id)
 end
 
-function EHIDodgeChanceTracker:Deactivate()
+function EHIDodgeChanceBuffTracker:Deactivate()
     if not self._active then
         return
     end

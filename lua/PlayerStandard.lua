@@ -25,7 +25,7 @@ local target_resense_delay = tweak_data.player.omniscience.target_resense_t or 1
 local sense_latch = false
 local function RecomputeContourDuration()
     local playermanager = managers.player
-    local ContourExt = _G.ContourExt
+    local ContourExt = ContourExt
     local tmp = ContourExt._types
     if tmp then
         local multiplier = playermanager:upgrade_value("player", "mark_enemy_time_multiplier", 1)
@@ -38,9 +38,7 @@ local function RecomputeContourDuration()
     end
 end
 
-function PlayerStandard:EHIInit()
-    RecomputeContourDuration()
-end
+EHI:AddCallback(EHI.CallbackMessage.Spawned, RecomputeContourDuration)
 
 local DoNotTrackSixthSenseInitial = not EHI:GetBuffOption("sixth_sense_initial")
 local TrackSixthSenseSubsequent = EHI:GetBuffOption("sixth_sense_refresh")

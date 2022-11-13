@@ -1,10 +1,9 @@
 local function warning(o, icon, arrow, bitmap_world)
     while true do
-        local t = 0
-        while t < 1 do
-            t = t + coroutine.yield()
-            local n = 1 - math.sin(t * 180)
-            --local r = math.lerp(1, 0, n)
+        local t = 1
+        while t > 0 do
+            t = t - coroutine.yield()
+            local n = math.sin(t * 180)
             local g = math.lerp(1, 0, n)
             local c = Color(1, g, g)
             o:set_color(c)

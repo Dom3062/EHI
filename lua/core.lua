@@ -586,6 +586,7 @@ function EHI:LoadDefaultValues()
             reload = true,
             melee_charge = true,
             shield_regen = true,
+            stamina = true,
             dodge = true,
             dodge_refresh = 1, -- 1 / value
             dodge_persistent = false,

@@ -5,9 +5,8 @@ local function anim(o)
     while true do
         local t = 1
         while t > 0 do
-            t = t + coroutine.yield()
-            local n = 1 - sin(t * 180)
-            --local r = lerp(1, 0, n)
+            t = t - coroutine.yield()
+            local n = sin(t * 180)
             local g = lerp(1, 0, n)
             o:set_color(Color(1, g, g))
         end
@@ -28,9 +27,14 @@ function EHIWarningTracker:AnimateWarning()
     end
 end
 
-function EHIWarningTracker:destroy()
+function EHIWarningTracker:Run(t)
+    self._time_warning = false
+    EHIWarningTracker.super.Run(self, t)
+end
+
+function EHIWarningTracker:delete()
     if self._text and alive(self._text) then
         self._text:stop()
     end
-    EHIWarningTracker.super.destroy(self)
+    EHIWarningTracker.super.delete(self)
 end

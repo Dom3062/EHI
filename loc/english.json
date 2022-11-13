@@ -450,6 +450,7 @@
     "ehi_buffs_other_reload" : "Reload",
     "ehi_buffs_other_melee_charge" : "Melee Charge Delay",
     "ehi_buffs_other_shield_regen" : "Armor Regen Delay",
+    "ehi_buffs_other_stamina" : "Stamina",
     "ehi_buffs_other_dodge" : "Dodge Chance",
     "ehi_buffs_other_dodge_refresh" : "Dodge Chance Refresh",
     "ehi_buffs_other_dodge_refresh_desc" : "Sets how often 'Dodge Chance' gauge should be updated per second",

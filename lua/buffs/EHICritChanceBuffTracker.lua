@@ -1,16 +1,16 @@
 local EHI = EHI
 local player_manager
 local detection_risk = 0
-EHICritChanceTracker = class(EHIGaugeBuffTracker)
-EHICritChanceTracker._refresh_time = 1 / EHI:GetBuffOption("crit_refresh")
-function EHICritChanceTracker:init(panel, params)
-    EHICritChanceTracker.super.init(self, panel, params)
+EHICritChanceBuffTracker = class(EHIGaugeBuffTracker)
+EHICritChanceBuffTracker._refresh_time = 1 / EHI:GetBuffOption("crit_refresh")
+function EHICritChanceBuffTracker:init(panel, params)
+    EHICritChanceBuffTracker.super.init(self, panel, params)
     self._time = self._refresh_time
     self._crit = 0
     self._update_disabled = true
 end
 
-function EHICritChanceTracker:UpdateCrit()
+function EHICritChanceBuffTracker:UpdateCrit()
     local total = player_manager:critical_hit_chance(detection_risk)
     if self._crit == total then
         return
@@ -24,7 +24,7 @@ function EHICritChanceTracker:UpdateCrit()
     self._crit = total
 end
 
-function EHICritChanceTracker:ForceUpdate()
+function EHICritChanceBuffTracker:ForceUpdate()
     if self._update_disabled then
         return
     end
@@ -32,7 +32,7 @@ function EHICritChanceTracker:ForceUpdate()
     self._time = self._refresh_time
 end
 
-function EHICritChanceTracker:PreUpdate()
+function EHICritChanceBuffTracker:PreUpdate()
     player_manager = managers.player
     detection_risk = managers.blackmarket:get_suspicion_offset_of_local(tweak_data.player.SUSPICION_OFFSET_LERP or 0.75)
     detection_risk = math.round(detection_risk * 100)
@@ -44,7 +44,7 @@ function EHICritChanceTracker:PreUpdate()
     self:SetRatio(0)
 end
 
-function EHICritChanceTracker:SetCustody(state)
+function EHICritChanceBuffTracker:SetCustody(state)
     if state then
         self._parent_class:RemoveBuffFromUpdate(self._id)
         self._crit = 0
@@ -56,7 +56,7 @@ function EHICritChanceTracker:SetCustody(state)
     self._update_disabled = state
 end
 
-function EHICritChanceTracker:update(t, dt)
+function EHICritChanceBuffTracker:update(t, dt)
     self._time = self._time - dt
     if self._time <= 0 then
         self:UpdateCrit()
@@ -64,7 +64,7 @@ function EHICritChanceTracker:update(t, dt)
     end
 end
 
-function EHICritChanceTracker:Activate()
+function EHICritChanceBuffTracker:Activate()
     if self._active then
         return
     end
@@ -74,7 +74,7 @@ function EHICritChanceTracker:Activate()
     self._parent_class:AddVisibleBuff(self._id)
 end
 
-function EHICritChanceTracker:Deactivate()
+function EHICritChanceBuffTracker:Deactivate()
     if not self._active then
         return
     end

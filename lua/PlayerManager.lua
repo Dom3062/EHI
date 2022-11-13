@@ -129,13 +129,6 @@ function PlayerManager:EHICheckAbility()
         AbilityKey = AbilityKey .. "_cooldown"
         managers.ehi_buff._cache.Ability = AbilityKey
     end
-    local unit = self:player_unit()
-    if unit then
-        local movement = unit:movement()
-        if movement then
-            movement._states.standard:EHIInit()
-        end
-    end
 end
 
 original.activate_temporary_upgrade = PlayerManager.activate_temporary_upgrade

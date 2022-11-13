@@ -2,9 +2,9 @@ local pm
 local mvector3_distance = mvector3.distance
 local math_floor = math.floor
 local string_format = string.format
-EHIUppersRangeTracker = class(EHIGaugeBuffTracker)
-EHIUppersRangeTracker._refresh_time = 1 / EHI:GetBuffOption("uppers_range_refresh")
-function EHIUppersRangeTracker:PreUpdate()
+EHIUppersRangeBuffTracker = class(EHIGaugeBuffTracker)
+EHIUppersRangeBuffTracker._refresh_time = 1 / EHI:GetBuffOption("uppers_range_refresh")
+function EHIUppersRangeBuffTracker:PreUpdate()
     pm = managers.player
     local function Check(...)
         if self._in_custody then
@@ -25,7 +25,7 @@ function EHIUppersRangeTracker:PreUpdate()
     EHI:AddOnCustodyCallback(f)
 end
 
-function EHIUppersRangeTracker:Activate()
+function EHIUppersRangeBuffTracker:Activate()
     if self._active then
         return
     end
@@ -33,7 +33,7 @@ function EHIUppersRangeTracker:Activate()
     self._parent_class:AddBuffToUpdate(self._id, self)
 end
 
-function EHIUppersRangeTracker:CustodyState(state)
+function EHIUppersRangeBuffTracker:CustodyState(state)
     if state then
         self:Deactivate()
     else
@@ -45,7 +45,7 @@ function EHIUppersRangeTracker:CustodyState(state)
     self._in_custody = state
 end
 
-function EHIUppersRangeTracker:Deactivate()
+function EHIUppersRangeBuffTracker:Deactivate()
     if not self._active then
         return
     end
@@ -54,7 +54,7 @@ function EHIUppersRangeTracker:Deactivate()
     self._active = false
 end
 
-function EHIUppersRangeTracker:ActivateSoft()
+function EHIUppersRangeBuffTracker:ActivateSoft()
     if self._visible then
         return
     end
@@ -64,7 +64,7 @@ function EHIUppersRangeTracker:ActivateSoft()
     self._visible = true
 end
 
-function EHIUppersRangeTracker:DeactivateSoft()
+function EHIUppersRangeBuffTracker:DeactivateSoft()
     if not self._visible then
         return
     end
@@ -74,7 +74,7 @@ function EHIUppersRangeTracker:DeactivateSoft()
     self._visible = false
 end
 
-function EHIUppersRangeTracker:update(t, dt)
+function EHIUppersRangeBuffTracker:update(t, dt)
     self._time = self._time - dt
     if self._time <= 0 then
         self._time = self._refresh_time
@@ -93,7 +93,7 @@ function EHIUppersRangeTracker:update(t, dt)
     end
 end
 
-function EHIUppersRangeTracker:GetFirstAidKit(pos)
+function EHIUppersRangeBuffTracker:GetFirstAidKit(pos)
 	for _, o in pairs(FirstAidKitBase.List) do
 		local dst = mvector3_distance(pos, o.pos)
 		if dst <= o.min_distance then
@@ -103,13 +103,13 @@ function EHIUppersRangeTracker:GetFirstAidKit(pos)
 	return false
 end
 
-function EHIUppersRangeTracker:Format()
+function EHIUppersRangeBuffTracker:Format()
     return string_format("%dm", math_floor(self._distance))
 end
 
-function EHIUppersRangeTracker:SetRatio(ratio)
+function EHIUppersRangeBuffTracker:SetRatio(ratio)
     if self._ratio == ratio then
         return
     end
-    EHIUppersRangeTracker.super.SetRatio(self, ratio)
+    EHIUppersRangeBuffTracker.super.SetRatio(self, ratio)
 end

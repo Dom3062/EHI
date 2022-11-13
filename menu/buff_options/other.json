@@ -44,6 +44,16 @@
             "ehi_ver" : 79
         },
         {
+            "type": "toggle",
+            "id": "ehi_buffs_other_stamina_choice",
+            "title": "ehi_buffs_other_stamina",
+            "callback": "SetBuffOption",
+            "callback_arguments": "stamina",
+            "value": "stamina",
+            "default_value": true,
+            "ehi_ver" : 98
+        },
+        {
             "type": "divider",
             "size": 10
         },

@@ -148,7 +148,7 @@
             "title": "ehi_buffs_other_menu",
             "next_menu": "ehi_buffs_other_menu",
             "parent": "ehi_show_buffs_choice",
-            "ehi_ver" : 79
+            "ehi_ver" : 98
         }
     ]
 }

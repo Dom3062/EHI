@@ -154,14 +154,10 @@ function EHIBuffTracker:init(panel, params)
     self._active = false
     self._time = 0
     if self._inverted_progress then
-        self:InvertProgress()
+        local size = invert and rect[4] or 0
+        self._progress:set_texture_rect(size, rect[2], -rect[3], rect[4])
     end
     self:CalculateMoveOffset()
-end
-
-function EHIBuffTracker:InvertProgress()
-    local size = invert and rect[4] or 0
-    self._progress:set_texture_rect(size, rect[2], -rect[3], rect[4])
 end
 
 function EHIBuffTracker:SetPersistent()

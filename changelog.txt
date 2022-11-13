@@ -1,3 +1,8 @@
+r98 (13. 11. 2022):
+Added Stamina buff
+Fixed an issue where trackers are preloaded for Sentry Gun equipment
+Fixed an issue where trackers for SWAT Van Turret are not preloaded properly on client
+
 r97 (11. 11. 2022):
 Improved performance by preloading trackers for SWAT Van Turret and Zipline units
 Zipline: Fixed an issue where total time is inaccurate after a bag is "eaten" by ElementAreaTrigger

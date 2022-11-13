@@ -13,9 +13,10 @@ local show_waypoint_only = show_waypoints and EHI:GetWaypointOption("show_waypoi
 local original =
 {
     init = SentryGunMovement.init,
-    post_init = SentryGunMovement.post_init,
+    on_activated = SentryGunMovement.on_activated,
     rearm = SentryGunMovement.rearm,
     repair = SentryGunMovement.repair,
+    load = SentryGunMovement.load,
     on_death = SentryGunMovement.on_death,
     pre_destroy = SentryGunMovement.pre_destroy
 }
@@ -27,16 +28,20 @@ function SentryGunMovement:init(unit, ...)
     self._ehi_key_repair = key .. "_repair"
 end
 
-function SentryGunMovement:post_init(...)
-    original.post_init(self, ...)
+function SentryGunMovement:Preload()
+    if self._ehi_preloaded then
+        return
+    end
     if not show_waypoint_only then
         local Warning = EHI.Trackers.Warning
-        managers.ehi:PreloadTracker({
-            id = self._ehi_key_reload,
-            icons = { Icon.Sentry, "reload" },
-            hide_on_delete = true,
-            class = Warning
-        })
+        if self._tweak.AUTO_RELOAD then
+            managers.ehi:PreloadTracker({
+                id = self._ehi_key_reload,
+                icons = { Icon.Sentry, "reload" },
+                hide_on_delete = true,
+                class = Warning
+            })
+        end
         if self._tweak.AUTO_REPAIR then
             managers.ehi:PreloadTracker({
                 id = self._ehi_key_repair,
@@ -46,6 +51,12 @@ function SentryGunMovement:post_init(...)
             })
         end
     end
+    self._ehi_preloaded = true
+end
+
+function SentryGunMovement:on_activated(...)
+    original.on_activated(self, ...)
+    self:Preload()
 end
 
 function SentryGunMovement:rearm(...)
@@ -77,6 +88,14 @@ function SentryGunMovement:repair(...)
             class = WWarning
         })
     end
+end
+
+function SentryGunMovement:load(save_data, ...)
+    original.load(self, save_data, ...)
+    if not save_data or not save_data.movement then
+		return
+	end
+    self:Preload()
 end
 
 function SentryGunMovement:on_death(...)

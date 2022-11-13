@@ -27,10 +27,6 @@ end
 local _f_init = ExperienceManager.init
 function ExperienceManager:init(...)
     _f_init(self, ...)
-    self:EHIInitFinalize()
-end
-
-function ExperienceManager:EHIInitFinalize()
     self._xp =
     {
         mutator_xp_reduction = 0,

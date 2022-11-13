@@ -64,7 +64,7 @@ tweak_data.ehi =
             u100skill = true,
             x = 1,
             y = 12,
-            class = "EHIDodgeChanceTracker",
+            class = "EHIDodgeChanceBuffTracker",
             format = "percent",
             activate_after_spawn = true,
             option = "dodge",
@@ -76,7 +76,7 @@ tweak_data.ehi =
             x = 0,
             y = 12,
             text = "Crit",
-            class = "EHICritChanceTracker",
+            class = "EHICritChanceBuffTracker",
             format = "percent",
             activate_after_spawn = true,
             option = "crit",
@@ -164,7 +164,7 @@ tweak_data.ehi =
             x = 2,
             y = 11,
             check_after_spawn = true,
-            class = "EHIUppersRangeTracker",
+            class = "EHIUppersRangeBuffTracker",
             option = "uppers_range"
         },
         fast_learner =
@@ -244,7 +244,7 @@ tweak_data.ehi =
             x = 10,
             y = 11,
             option = "unseen_strike",
-            --class = "EHIUnseenStrikeTracker"
+            --class = "EHIUnseenStrikeBuffTracker"
         },
         melee_damage_stacking =
         {
@@ -432,6 +432,16 @@ tweak_data.ehi =
             class = "EHIGaugeBuffTracker",
             option = "regen_throwable_ai"
         },
+        Stamina =
+        {
+            skills = true,
+            x = 7,
+            y = 3,
+            class = "EHIStaminaBuffTracker",
+            format = "percent",
+            check_after_spawn = true,
+            option = "stamina"
+        },
         BikerBuff =
         {
             deck = true,
@@ -456,7 +466,7 @@ tweak_data.ehi =
         {
             deck = true,
             folder = "myh",
-            class = "EHIStoicTracker"
+            class = "EHIStoicBuffTracker"
         },
         damage_control_cooldown =
         {
@@ -476,7 +486,7 @@ tweak_data.ehi =
             deck = true,
             folder = "joy",
             x = 3,
-            class = "EHIHackerTemporaryDodgeTracker",
+            class = "EHIHackerTemporaryDodgeBuffTracker",
             option = "hacker"
         },
         HackerJammerEffect =

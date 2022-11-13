@@ -136,6 +136,19 @@ if EHI:GetOption("show_captain_damage_reduction") then
     end
 end
 
+if EHI:GetBuffAndOption("stamina") then
+    original.set_stamina_value = HUDManager.set_stamina_value
+    function HUDManager:set_stamina_value(value, ...)
+        original.set_stamina_value(self, value, ...)
+        managers.ehi_buff:AddGauge("Stamina", value)
+    end
+    original.set_max_stamina = HUDManager.set_max_stamina
+    function HUDManager:set_max_stamina(value, ...)
+        original.set_max_stamina(self, value, ...)
+        managers.ehi_buff:CallBuffFunction("Stamina", "SetMaxStamina", value)
+    end
+end
+
 function HUDManager:mark_cheater(peer_id, ...)
     original.mark_cheater(self, peer_id, ...)
     if managers.experience.RecalculateSkillXPMultiplier then
