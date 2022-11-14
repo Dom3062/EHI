@@ -154,6 +154,11 @@ function EHITimerTracker:SetPowered(powered)
     self:SetTextColor()
 end
 
+function EHITimerTracker:SetRunning()
+    self:SetJammed(false)
+    self:SetPowered(true)
+end
+
 function EHITimerTracker:SetTextColor()
     if self._jammed or self._not_powered then
         self._text:set_color(Color.red)

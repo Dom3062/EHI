@@ -14,7 +14,7 @@ for _, index in ipairs(MethlabIndex) do
 end
 local chopper_delay = 25 + 1 + 2.5
 local triggers = {
-    [102120] = { time = 5400/30, id = "ShipMove", icons = { Icon.Boat, Icon.Wait }, special_function = SF.RemoveTriggerWhenExecuted },
+    [102120] = { time = 5400/30, id = "ShipMove", icons = { Icon.Boat, Icon.Wait }, trigger_times = 1 },
 
     [101545] = { time = 100 + chopper_delay, id = "C4FasterPilot", icons = Icon.HeliDropC4 },
     [101749] = { time = 160 + chopper_delay, id = "C4", icons = Icon.HeliDropC4 },

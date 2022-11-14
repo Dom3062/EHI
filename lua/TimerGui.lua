@@ -70,10 +70,8 @@ end
 
 function TimerGui:StartTimer()
     if managers.ehi:TrackerExists(self._ehi_key) or managers.ehi_waypoint:WaypointExists(self._ehi_key) then
-        managers.ehi:SetTimerJammed(self._ehi_key, false)
-        managers.ehi:SetTimerPowered(self._ehi_key, true)
-        managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
-        managers.ehi_waypoint:SetTimerWaypointPowered(self._ehi_key, true)
+        managers.ehi:SetTimerRunning(self._ehi_key)
+        managers.ehi_waypoint:SetTimerWaypointRunning(self._ehi_key)
     else
         local autorepair = self._unit:base()._autorepair
         -- In case the conversion fails, fallback to "self._time_left" which is a number

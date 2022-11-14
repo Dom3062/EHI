@@ -72,7 +72,6 @@ _G.EHI =
         SetChanceWhenTrackerExists = 15,
         RemoveTriggerWhenExecuted = 16,
         Trigger = 17,
-        RemoveTrigger = 18,
         SetTimeOrCreateTracker = 19,
         ExecuteIfElementIsEnabled = 20,
         RemoveTrackers = 21,
@@ -80,7 +79,6 @@ _G.EHI =
         RemoveTriggerAndShowAchievement = 23,
         SetTimeByPreplanning = 24,
         IncreaseProgress = 25,
-        SetTimeNoAnimOrCreateTrackerClient = 26,
         SetTrackerAccurate = 27,
         RemoveTriggers = 28,
         SetAchievementStatus = 29,
@@ -1205,6 +1203,7 @@ end
 
 ---@param id number
 function EHI:UnhookTrigger(id)
+    self:LogFast("Element with ID: " .. tostring(id) .. " removed")
     self:UnhookElement(id)
     triggers[id] = nil
 end
@@ -1231,8 +1230,8 @@ end
 ---@param element table
 ---@param enabled boolean
 function EHI:Trigger(id, element, enabled)
-    if triggers[id] then
-        local trigger = triggers[id]
+    local trigger = triggers[id]
+    if trigger then
         if trigger.special_function then
             local f = trigger.special_function
             if f == SF.RemoveTracker then
@@ -1280,11 +1279,11 @@ function EHI:Trigger(id, element, enabled)
                 for _, t in pairs(trigger.data) do
                     self:Trigger(t, element, enabled)
                 end
-            elseif f == SF.RemoveTrigger then
-                self:UnhookTrigger(id)
             elseif f == SF.SetTimeOrCreateTracker then
-                if managers.ehi:TrackerExists(trigger.id) then
-                    managers.ehi:SetTrackerTime(trigger.id, trigger.time)
+                local key = trigger.id
+                if managers.ehi:TrackerExists(key) or managers.ehi_waypoint:WaypointExists(key) then
+                    managers.ehi:SetTrackerTime(key, trigger.time)
+                    managers.ehi_waypoint:SetWaypointTime(key, trigger.time)
                 else
                     self:CheckCondition(id)
                 end
@@ -1317,16 +1316,6 @@ function EHI:Trigger(id, element, enabled)
                 self:CheckCondition(id)
             elseif f == SF.IncreaseProgress then
                 managers.ehi:IncreaseTrackerProgress(trigger.id)
-                --managers.hud:IncreaseTrackerWaypointProgress(triggers[id].id)
-            elseif f == SF.SetTimeNoAnimOrCreateTrackerClient then
-                local value = managers.ehi:ReturnValue(trigger.id, "GetTrackerType")
-                if value ~= "accurate" then
-                    if managers.ehi:TrackerExists(trigger.id) then
-                        managers.ehi:SetTrackerTimeNoAnim(trigger.id, self:GetTime(id))
-                    else
-                        self:CheckCondition(id)
-                    end
-                end
             elseif f == SF.SetTrackerAccurate then
                 if managers.ehi:TrackerExists(trigger.id) then
                     managers.ehi:SetTrackerAccurate(trigger.id, trigger.time)

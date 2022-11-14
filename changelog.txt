@@ -1,3 +1,6 @@
+r99 (14. 11. 2022):
+Stamina Buff: Fixed a crash at spawn
+
 r98 (13. 11. 2022):
 Added Stamina buff
 Fixed an issue where trackers are preloaded for Sentry Gun equipment

@@ -36,7 +36,7 @@ local triggers = {
     -- Parking lot
     [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { Icon.Wait } },
 
-    [101521] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, special_function = SF.RemoveTriggerWhenExecuted },
+    [101521] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, trigger_times = 1 },
 
     [100144] = { id = "GasAmount", class = "EHIGasTracker", trigger_times = 1 },
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins

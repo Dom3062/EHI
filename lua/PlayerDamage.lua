@@ -50,7 +50,7 @@ if EHI:GetBuffOption("hostage_taker_muscle") then
         if hostage_taker then
             icon = "hostage_taker"
         end
-        managers.ehi_buff:CallBuffFunction("HealthRegen", "SetIcon", icon)
+        managers.ehi_buff:CallFunction("HealthRegen", "SetIcon", icon)
         managers.ehi_buff:AddBuff("HealthRegen", self._health_regen_update_timer + 0.2)
     end
 end

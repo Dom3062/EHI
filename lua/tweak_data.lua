@@ -439,7 +439,6 @@ tweak_data.ehi =
             y = 3,
             class = "EHIStaminaBuffTracker",
             format = "percent",
-            check_after_spawn = true,
             option = "stamina"
         },
         BikerBuff =

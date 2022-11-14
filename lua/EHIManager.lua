@@ -696,6 +696,13 @@ function EHIManager:SetTimerPowered(id, powered)
     end
 end
 
+function EHIManager:SetTimerRunning(id)
+    local tracker = self._trackers[id]
+    if tracker and tracker.SetRunning then
+        tracker:SetRunning()
+    end
+end
+
 function EHIManager:SetTrackerIcon(id, icon)
     local tracker = self._trackers[id]
     if tracker then

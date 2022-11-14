@@ -106,7 +106,7 @@ function PlayerManager:EHICheckAbility()
         if self:has_category_upgrade("player", "damage_control_auto_shrug") then
             tweak_data.ehi.buff.damage_control.x = 2 -- 128px
             managers.ehi_buff:UpdateBuffIcon("damage_control")
-            managers.ehi_buff:CallBuffFunction("damage_control", "SetAutoShrug", managers.player:upgrade_value("player", "damage_control_auto_shrug"))
+            managers.ehi_buff:CallFunction("damage_control", "SetAutoShrug", managers.player:upgrade_value("player", "damage_control_auto_shrug"))
         end
         self:register_message("ability_activated", "EHI_Stoic_Ability_Activated", function(ability_name)
             if ability_name == "damage_control" then

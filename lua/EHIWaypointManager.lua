@@ -159,6 +159,13 @@ function EHIWaypointManager:SetTimerWaypointPowered(id, powered)
     end
 end
 
+function EHIWaypointManager:SetTimerWaypointRunning(id)
+    local wp = self._waypoints[id]
+    if wp and wp.SetRunning then
+        wp:SetRunning()
+    end
+end
+
 function EHIWaypointManager:SetWaypointPause(id, pause)
     local wp = self._waypoints[id]
     if wp and wp.SetPaused then

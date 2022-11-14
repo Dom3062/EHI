@@ -450,6 +450,7 @@
     "ehi_buffs_other_reload" : "装填",
     "ehi_buffs_other_melee_charge" : "近战蓄力延迟",
     "ehi_buffs_other_shield_regen" : "护甲恢复延迟",
+    "ehi_buffs_other_stamina" : "耐力",
     "ehi_buffs_other_dodge" : "闪避几率",
     "ehi_buffs_other_dodge_refresh" : "闪避刷新频率",
     "ehi_buffs_other_dodge_refresh_desc" : "设置每秒内刷新多少次闪避概率显示",

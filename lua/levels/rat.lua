@@ -59,8 +59,20 @@ elseif EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVE
     triggers[102197] = { time = 120 + heli_delay_full, id = "HeliMeth", icons = heli_icon }
 end
 if EHI:IsClient() then
-    triggers[100724] = { time = 20, random_time = 5, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
+    local SetTimeNoAnimOrCreateTrackerClient = EHI:GetFreeCustomSpecialFunctionID()
+    triggers[100724] = { time = 20, random_time = 5, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
     EHI:SetSyncTriggers(element_sync_triggers)
+    EHI:RegisterCustomSpecialFunction(SetTimeNoAnimOrCreateTrackerClient, function(id, trigger, ...)
+        local key = trigger.id
+        local value = managers.ehi:ReturnValue(key, "GetTrackerType")
+        if value ~= "accurate" then
+            if managers.ehi:TrackerExists(key) then
+                managers.ehi:SetTrackerTimeNoAnim(key, EHI:GetTime(id))
+            else
+                EHI:CheckCondition(id)
+            end
+        end
+    end)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end

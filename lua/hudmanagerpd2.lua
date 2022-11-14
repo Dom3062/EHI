@@ -145,7 +145,7 @@ if EHI:GetBuffAndOption("stamina") then
     original.set_max_stamina = HUDManager.set_max_stamina
     function HUDManager:set_max_stamina(value, ...)
         original.set_max_stamina(self, value, ...)
-        managers.ehi_buff:CallBuffFunction("Stamina", "SetMaxStamina", value)
+        managers.ehi_buff:CallFunction("Stamina", "SetMaxStamina", value)
     end
 end
 

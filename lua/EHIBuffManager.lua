@@ -109,7 +109,7 @@ function EHIBuffManager:UpdateBuffIcon(id)
     end
 end
 
-function EHIBuffManager:CallBuffFunction(id, f, ...)
+function EHIBuffManager:CallFunction(id, f, ...)
     local buff = self._buffs[id]
     if buff and buff[f] then
         buff[f](buff, ...)

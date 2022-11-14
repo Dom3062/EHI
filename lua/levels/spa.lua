@@ -31,7 +31,7 @@ local achievements =
 --[[local other =
 {
     -- First Assault Delay
-    [EHI:GetInstanceElementID(100003, 7950)] = { time = 3 + 12 + 12 + 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.RemoveTriggerWhenExecuted },
+    [EHI:GetInstanceElementID(100003, 7950)] = { time = 3 + 12 + 12 + 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, trigger_times = 1 },
     [EHI:GetInstanceElementID(100024, 7950)] = { time = 12 + 12 + 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
     [EHI:GetInstanceElementID(100053, 7950)] = { time = 12 + 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
     [EHI:GetInstanceElementID(100026, 7950)] = { time = 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },

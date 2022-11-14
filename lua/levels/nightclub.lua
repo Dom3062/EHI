@@ -1,6 +1,11 @@
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local AssetLootDropOff = { Icon.Car, Icon.LootDrop }
+if EHI:GetOption("show_one_icon") then
+    AssetLootDropOff = { Icon.LootDrop }
+end
 local triggers = {
     -- Time before escape is available
     [102808] = { time = 65 },
@@ -15,7 +20,7 @@ local triggers = {
     [101453] = { time = 300, id = "fire2", icons = { Icon.Fire }, class = TT.Warning },
 
     -- Asset
-    [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = { Icon.Car, Icon.LootDrop } }
+    [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = AssetLootDropOff }
     -- 20: Base Delay
     -- 40/3: Animation finish delay
     -- Total 33.33 s
@@ -24,7 +29,7 @@ if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
         -- Civilian kills do not count towards escape chance
         -- Reported in: https://steamcommunity.com/app/218620/discussions/14/5487063042655462839/
-        managers.ehi:AddEscapeChanceTracker(false, 25)
+        managers.ehi:AddEscapeChanceTracker(false, 25, 0)
     end)
 end
 

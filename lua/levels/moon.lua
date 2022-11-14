@@ -34,7 +34,7 @@ local DisableWaypoints =
 
 local achievements =
 {
-    [100107] = { max = 2, id = "moon_4", class = TT.AchievementProgress, special_function = SF.RemoveTriggerAndShowAchievement },
+    [100107] = { max = 2, id = "moon_4", class = TT.AchievementProgress, trigger_times = 1 },
     [104219] = { id = "moon_4", special_function = SF.IncreaseProgress }, -- Chains
     [104220] = { id = "moon_4", special_function = SF.IncreaseProgress } -- Dallas
 }

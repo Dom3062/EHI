@@ -12,7 +12,7 @@ local triggers = {
     [101003] = { time = 600, id = "PresentDropChance30", icons = { "C_Vlad_H_XMas_Impossible", Icon.Wait }, class = TT.Warning },
     [101004] = { time = 600, id = "PresentDropChance20", icons = { "C_Vlad_H_XMas_Impossible", Icon.Wait }, class = TT.Warning },
     [101045] = { time = 50, random_time = 10, id = "WaitTime", icons = { Icon.Heli, Icon.Wait } },
-    [100024] = { time = 23, id = "HeliSanta", icons = { Icon.Heli, "Other_H_None_Merry", Icon.Goto }, special_function = SF.RemoveTriggerWhenExecuted },
+    [100024] = { time = 23, id = "HeliSanta", icons = { Icon.Heli, "Other_H_None_Merry", Icon.Goto }, trigger_times = 1 },
     [105102] = { time = 30, id = "HeliLoot", icons = { Icon.Heli, Icon.Escape, Icon.LootDrop, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled },
     -- Hooked to 105072 instead of 105076 to track the take off accurately
     [105072] = { time = 82, id = "HeliLootTakeOff", icons = Icon.HeliWait, class = TT.Warning },

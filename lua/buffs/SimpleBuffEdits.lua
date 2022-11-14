@@ -33,6 +33,11 @@ EHIStaminaBuffTracker = class(EHIGaugeBuffTracker)
 EHIStaminaBuffTracker.Activate = EHIDodgeChanceBuffTracker.Activate
 EHIStaminaBuffTracker.Deactivate = EHIDodgeChanceBuffTracker.Deactivate
 EHIStaminaBuffTracker.RoundNumber = EHI.RoundNumber
+function EHIStaminaBuffTracker:Spawned(max_stamina)
+    self:SetMaxStamina(max_stamina)
+    self:PreUpdate()
+end
+
 function EHIStaminaBuffTracker:PreUpdate()
     self:SetRatio(self._max_stamina)
     self:Activate()
@@ -64,21 +69,21 @@ end
 EHIHackerTemporaryDodgeBuffTracker = class(EHIBuffTracker)
 function EHIHackerTemporaryDodgeBuffTracker:Activate(...)
     EHIHackerTemporaryDodgeBuffTracker.super.Activate(self, ...)
-    self._parent_class:CallBuffFunction("DodgeChance", "ForceUpdate")
+    self._parent_class:CallFunction("DodgeChance", "ForceUpdate")
 end
 
 function EHIHackerTemporaryDodgeBuffTracker:Deactivate(...)
     EHIHackerTemporaryDodgeBuffTracker.super.Deactivate(self, ...)
-    self._parent_class:CallBuffFunction("DodgeChance", "ForceUpdate")
+    self._parent_class:CallFunction("DodgeChance", "ForceUpdate")
 end
 
 EHIUnseenStrikeBuffTracker = class(EHIBuffTracker)
 function EHIUnseenStrikeBuffTracker:Activate(...)
     EHIUnseenStrikeBuffTracker.super.Activate(self, ...)
-    self._parent_class:CallBuffFunction("CritChance", "ForceUpdate")
+    self._parent_class:CallFunction("CritChance", "ForceUpdate")
 end
 
 function EHIUnseenStrikeBuffTracker:Deactivate(...)
     EHIUnseenStrikeBuffTracker.super.Deactivate(self, ...)
-    self._parent_class:CallBuffFunction("CritChance", "ForceUpdate")
+    self._parent_class:CallFunction("CritChance", "ForceUpdate")
 end

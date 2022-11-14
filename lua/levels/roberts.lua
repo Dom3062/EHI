@@ -9,7 +9,7 @@ local triggers = {
     [101931] = { time = 90 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker },
     [101932] = { time = 120 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker },
     [101929] = { time = 30 + 150 + delay, id = "CageDrop", icons = HeliDropLootZone },
-    [102921] = { special_function = SF.RemoveTrigger, data = { 101929 } },
+    [102921] = { special_function = SF.RemoveTriggers, data = { 101929 } },
 
     [103060] = { id = 103444, special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position = Vector3(-3750.0, -300.0, 0.0) } },
     [103061] = { id = 103438, special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position = Vector3(1350.0, -4600.0, 0.0) } },
