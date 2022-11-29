@@ -1,0 +1,472 @@
+{
+    "ehi_mod_title" : "Extra Heist Info",
+    "ehi_mod_desc" : "",
+
+    "ehi_save_data_corrupted" : "Uložené nastavení modu EHI je poškozené",
+    "ehi_save_data_corrupted_desc" : "Uložené nastavení je poškozené a nelze ho načíst\nEHI načte výchozí hodnoty, aby hra nespadla",
+
+    "ehi_level_restart_required" : "Aby se nastavení projevilo, je potřeba restartovat mapu",
+
+    "ehi_menu_next_page" : "Další stránka -->",
+    "ehi_menu_previous_page" : "<-- Předchozí stránka",
+
+    "ehi_language" : "Jazyk",
+    "ehi_language_desc" : "Mění jazyk modifikace. Aby se nový jazyk načetl, je potřeba restartovat mapu.",
+    "ehi_language_1" : "Automaticky",
+
+    "ehi_menu_only" : "Pouze v menu",
+    "ehi_show_preview_text" : "Zobrazit text 'Náhled'",
+    "ehi_show_preview_text_desc" : "Zobrazuje nebo skrývá náhledový text",
+
+    "ehi_popup_experience" : "ZKUŠENOSTI",
+    "ehi_popup_experience_base_gained" : "Získán základ ZK: ",
+    "ehi_popup_experience_gained" : "Získáno: ",
+    "ehi_popup_experience_total" : "Celkem: ",
+    "ehi_popup_gage_packages" : "GAGE BALÍČKY",
+    "ehi_popup_minion" : "PŘEVEDENEC",
+    "ehi_popup_minion_killed" : "Tvůj převedenec byl zabit",
+    "ehi_popup_achievement_failed" : "ACHIEVEMENT SELHAL!",
+    "ehi_popup_achievement_started" : "LZE ZÍSKAT ACHIEVEMENT!",
+    "ehi_popup_trophy_started" : "LZE ZÍSKAT TROFEJ!",
+    "ehi_popup_trophy_failed" : "TROFEJ SELHALA!",
+    "ehi_popup_daily_started" : "LZE DOKONČIT DENNÍ VÝZVU!",
+    "ehi_popup_daily_failed" : "DENNÍ VÝZVA SELHALA!",
+    "ehi_popup_loot_counter" : "POČÍTADLO KOŘISTI",
+    "ehi_popup_all_loot_secured" : "Všechny pytle s kořistí jsou zajištěny",
+    "ehi_achievement_ok" : "OK",
+    "ehi_achievement_done" : "HOTOVO",
+    "ehi_achievement_pass" : "SPLNĚNO",
+    "ehi_achievement_defend" : "BRÁNIT",
+    "ehi_achievement_finish" : "DOKONČIT",
+    "ehi_achievement_secure" : "ZAJISTIT",
+    "ehi_achievement_no_down" : "BEZ PÁDU",
+    "ehi_achievement_destroy" : "ZNIČIT",
+    "ehi_achievement_alarm" : "ALARM",
+    "ehi_achievement_ready" : "PŘIPRAVIT",
+    "ehi_achievement_loud" : "HLASITĚ",
+    "ehi_achievement_mark" : "OZNAČIT",
+    "ehi_achievement_push" : "ZMÁČKNOUT",
+    "ehi_achievement_hack" : "HACKNOUT",
+    "ehi_achievement_land" : "PŘISTÁT",
+    "ehi_achievement_find" : "NAJÍT",
+    "ehi_achievement_bring" : "DONÉST",
+    "ehi_achievement_objective" : "ÚKOL",
+    "ehi_achievement_fail" : "SELHÁNÍ",
+
+    "ehi_r" : "Červená",
+    "ehi_g" : "Zelená",
+    "ehi_b" : "Modrá",
+    "ehi_button_ok" : "OK",
+    "ehi_color_reset" : "Obnovit barvy",
+
+    "ehi_preview" : "Náhled (Pro aktualizaci je nutný restart mapy)\nČervený roh ukazuje místo, kde se objeví první sledovač.",
+
+    "ehi_x_offset" : "Posun X",
+    "ehi_x_offset_desc" : "Posun X",
+    "ehi_y_offset" : "Posun Y",
+    "ehi_y_offset_desc" : "Posun Y",
+
+    "ehi_text_scale" : "Měřítko textu",
+    "ehi_text_scale_desc" : "Nastavuje měřítko textu.\nTato funkce je užitečná pro hráče s modifikovaným písmem",
+
+    "ehi_scale" : "Měřítko",
+    "ehi_scale_desc" : "Nastavuje měřítko sledovačů. Čím větší číslo, tím jsou sledovače větší a naopak",
+
+    "ehi_vr_scale": "Měřítko (VR)",
+    "ehi_vr_scale_desc": "Nastavuje měřítko sledovačů ve VR. Čím větší číslo, tím jsou sledovače větší a naopak",
+
+    "ehi_time_format" : "Časový formát",
+    "ehi_time_format_desc" : "Definuje jak časové sledovače mají naformátovat čas",
+    "ehi_time_format_1" : "Pouze vteřiny",
+    "ehi_time_format_2" : "Minuty a vteřiny",
+
+    "ehi_tracker_alignment" : "Zarovnání sledovačů",
+    "ehi_tracker_alignment_desc" : "Nastavuje zarovnání sledovačů",
+    "ehi_tracker_alignment_1" : "Vertikálně",
+    "ehi_tracker_alignment_2" : "Horizontálně",
+
+    "ehi_visuals_menu" : "Vizuální zobrazení",
+    "ehi_visuals_menu_desc" : "",
+
+    "ehi_show_tracker_bg" : "Zobrazovat pozadí ve sledovači",
+    "ehi_show_tracker_bg_desc" : "Zobrazuje pozadí\nJe-li tato funkce vypnutá, pozadí je skryté a animace nejsou viditelné",
+
+    "ehi_show_tracker_corners" : "Zobrazovat rohy ve sledovači",
+    "ehi_show_tracker_corners_desc" : "Zobrazuje bílé rohy",
+
+    "ehi_show_one_icon" : "Zobrazovat pouze 1 ikonu ve sledovači",
+    "ehi_show_one_icon_desc" : "Je-li povoleno, pouze 1 ikona je zobrazena\nJe-li zakázána, všechny ikony jsou viditelné",
+
+    "ehi_trackers_menu" : "Sledovače",
+    "ehi_trackers_menu_desc" : "",
+
+    "ehi_show_mission_trackers": "Zobrazovat sledovače (Loupež)",
+    "ehi_show_mission_trackers_desc": "Zobrazuje sledovače v misi (příklad: Čas do příjezdu auta/přiletu helikoptéry, za jak dlouho se spustí další úkol a tak dále...)\n\nTato funkce taky funguje na neoficiálních misí\nPokud jsou podporovány",
+
+    "ehi_show_unlockables" : "Zobrazovat odemykatelné",
+    "ehi_show_unlockables_desc" : "Zobrazuje sledovače pro achievementy, trofeje a denní výzvy",
+
+    "ehi_unlockables_menu" : "Odemykatelné",
+    "ehi_unlockables_menu_desc" : "",
+
+    "ehi_show_achievements" : "Zobrazovat Achievementy",
+    "ehi_show_achievements_desc" : "Zobrazuje na obrazovce achievementy\nNěkteré loupeže nemusí mít achievementy",
+
+    "ehi_show_achievements_mission" : "Zobrazovat Achievementy (Loupež)",
+    "ehi_show_achievements_mission_desc" : "Zobrazuje achievementy, které lze splnit pouzi v loupeži",
+
+    "ehi_hide_unlocked_achievements" : "Neukazovat odemčené achievementy",
+    "ehi_hide_unlocked_achievements_desc" : "Je-li povoleno, EHI nezobrazí již odemčené achievementy (loupež)\nJe-li zakázáno, EHI zobrazí všechny sledovače achievementů (loupež)",
+
+    "ehi_show_achievements_weapon" : "Zobrazovat Achievementy (Zbraně)",
+    "ehi_show_achievements_weapon_desc" : "Zobrazuje achievementy které vyžadují zabití nepřátel zbraní\n\nPo splnění achievementu se sledovač už nezobrazí",
+
+    "ehi_show_achievements_melee" : "Zobrazovat Achievementy (Příruční zbraně neboli Melee)",
+    "ehi_show_achievements_melee_desc" : "Zobrazuje achievementy které vyžadují zabití nepřátel příruční zbraní na blízko\n\nPo splnění achievementu se sledovač už nezobrazí",
+
+    "ehi_show_achievements_grenade" : "Zobrazovat Achievementy (Granáty a jiné hoditelné předměty)",
+    "ehi_show_achievements_grenade_desc" : "Zobrazuje achievementy které vyžadují zabití granátem či jiným hoditelným předmětem\n\nPo splnění achievementu se sledovač už nezobrazí",
+
+    "ehi_show_achievements_vehicle" : "Zobrazovat Achievementy (Vozidla)",
+    "ehi_show_achievements_vehicle_desc" : "Zobrazuje achievementy které vyžadují zabití nepřátel vozidlem\n\nPo splnění achievementu se sledovač už nezobrazí",
+
+    "ehi_show_achievements_other" : "Zobrazovat Achievementy (Ostatní)",
+    "ehi_show_achievements_other_desc" : "Zobrazuje achievementy které nepatří do žádný ze skupin výše\n\nPo splnění achievementu se sledovač už nezobrazí",
+
+    "ehi_show_achievement_failed_popup" : "Zobrazovat vyskakovací okno 'Achievement selhal'",
+    "ehi_show_achievement_failed_popup_desc" : "Selhané achievementy se zobrazí ve vyskakocím okně červeně",
+
+    "ehi_show_achievement_started_popup" : "Zobrazovat vyskakovací okno 'Lze získat achievement'",
+    "ehi_show_achievement_started_popup_desc" : "Achievementy, které jsou nyní sledované, se zobrazí ve vyskakovacím okně zeleně",
+
+    "ehi_show_trophies" : "Zobrazovat trofeje",
+    "ehi_show_trophies_desc" : "Zobrazuje na obrazovce trofeje\nNěkteré loupeže nemusí mít trofeje",
+
+    "ehi_hide_unlocked_trophies" : "Neukazovat odemčené trofeje",
+    "ehi_hide_unlocked_trophies_desc" : "Je-li povoleno, EHI nezobrazí již odemčené trofeje\nJe-li zakázáno, EHI zobrazí všechny sledovače trofejí",
+
+    "ehi_show_trophy_failed_popup" : "Zobrazovat vyskakovací okno 'Trofej selhala'",
+    "ehi_show_trophy_failed_popup_desc" : "Selhané trofeje se zobrazí ve vyskakocím okně červeně",
+
+    "ehi_show_trophy_started_popup" : "Zobrazovat vyskakovací okno 'Lze získat trofej'",
+    "ehi_show_trophy_started_popup_desc" : "Trofeje, které jsou nyní sledované, se zobrazí ve vyskakovacím okně zeleně",
+
+    "ehi_show_dailies" : "Zobrazovat denní výzvy",
+    "ehi_show_dailies_desc" : "Zobrazuje na obrazovce denní výzvy, jsou-li aktivní\n\nDokončené denní výzvy se neobjeví na obrazovce",
+
+    "ehi_show_daily_failed_popup" : "Zobrazovat vyskakovací okno 'Denní výzva selhala'",
+    "ehi_show_daily_failed_popup_desc" : "Selhané denní výzvy se zobrazí ve vyskakovacím okně červeně",
+
+    "ehi_show_daily_started_popup" : "Zobrazovat vyskakovací okno 'Lze dokončit denní výzvu'",
+    "ehi_show_daily_started_popup_desc" : "Denní výzvy, které jsou nyní sledované, se zobrazí ve vyskakovacím okně zeleně",
+
+    "ehi_show_gained_xp" : "Zobrazovat získané ZK",
+    "ehi_show_gained_xp_desc" : "Zobrazuje získané ZK v misi.\nTento sledovač je automaticky zakázán v herním módu Crime Spree.",
+
+    "ehi_xp_format" : "Jak formátovat získané ZK",
+    "ehi_xp_format_desc" : "Příklad: Základní hodnota: 1000; obtížnost Death Wish\nPouze základní hodnota: 1000\nHodnota vynásobená obtížností: 13000\nHodnota vynásobená všechny ZK bonusy: 13000+",
+    "ehi_xp_format_base" : "Zobrazit pouze základní hodnotu",
+    "ehi_xp_format_difficulty_multiplier" : "Zobrazit hodnotu vynásobenou obtížností",
+    "ehi_xp_format_all_bonuses" : "Zobrazit hodnotu vynásobenou všechny ZK bonusy",
+
+    "ehi_xp_panel" : "Jak zobrazit ZK",
+    "ehi_xp_panel_desc" : "",
+    "ehi_xp_panel_1" : "Zobrazit sledovač za každé získané ZK",
+    "ehi_xp_panel_2" : "Zobrazit sledovač s celkovou hodnotou ZK v loupeži",
+    "ehi_xp_panel_3" : "Zobrazit vyskakovací okno za každé získané ZK a celkovou hodnotu",
+    "ehi_xp_panel_4" : "Zobrazit oznámení za každé získané ZK a celkovou hodnotu",
+
+    "ehi_total_xp_show_difference" : "Zobrazovat rozdíl ZK",
+    "ehi_total_xp_show_difference_desc" : "Pouze funkce [Zobrazit sledovač s celkovou hodnotou XP v loupeži]!\nZobrazuje kolik ZK jsi získal v samostatném sledovači",
+
+    "ehi_show_trade_delay" : "Zobrazovat sledovač s délkou pobytu ve vazbě",
+    "ehi_show_trade_delay_desc" : "Zobrazuje sledovač když ty nebo tvůj spoluhráč zabijete civilistu",
+
+    "ehi_show_trade_delay_option" : "Kdy zobrazit sledovač s délkou pobytu",
+    "ehi_show_trade_delay_option_desc": "Vždyčky: Vždycky zobrazit sledovač když ty nebo tvůj spoluhráč zabijete civilistu\nVe vazbě: Zobrazuje sledovač když ty nebo tvůj spoluhráč jste šli do vazby a zabili jste alespoň 1 civilistu",
+    "ehi_show_trade_delay_option_1" : "Vždyčky",
+    "ehi_show_trade_delay_option_2" : "Ve vazbě",
+
+    "ehi_show_trade_delay_other_players_only": "Zobrazovat sledovač s délkou pobytu pouze pro ostatní hráče",
+    "ehi_show_trade_delay_other_players_only_desc": "Je-li povoleno, sledovač nezobrazí kolik civilistů jsi zabil, ale zobrazí je pro ostatní hráče.",
+
+    "ehi_show_trade_delay_suppress_in_stealth" : "Nezobrazovat sledovač s délkou pobytu, když nenazněl alarm",
+    "ehi_show_trade_delay_suppress_in_stealth_desc" : "Je-li povoleno, sledovač bude skrytý. Jakmile zazní alarm, sledovač se ukáže se vším nahromaděným časem.",
+
+    "ehi_show_timers" : "Zobrazovat časovače",
+    "ehi_show_timers_desc" : "Zobrazuje časovače, když zařízení hackuje, vrtá, řeže a tak dále...",
+
+    "ehi_show_camera_loop" : "Zobrazovat kameru se zpětnou smyčkou",
+    "ehi_show_camera_loop_desc" : "Zobrazuje sledovač, když je bezpečnostní kamera ve smyčce",
+
+    "ehi_show_zipline_timer" : "Zobrazovat sledovač na Zipline",
+    "ehi_show_zipline_timer_desc" : "Zobrazuje 2 časovače.\nPrvní ukazuje, jak dlouho trvá přemístít pytel/hráče, druhý ukazuje, kdy bude Zipline znovu použitelná",
+
+    "ehi_show_gage_tracker" : "Zobrazovat sledovač pro Gage balíčky",
+    "ehi_show_gage_tracker_desc" : "Zobrazuje sledovač pro Gage balíčky na mapě\nPokud je mapa neumožňuje, sledovač nebude viditelný",
+
+    "ehi_gage_tracker_panel" : "Zobrazovat postup pro Gage balíčky",
+    "ehi_gage_tracker_panel_desc" : "",
+    "ehi_gage_tracker_panel_1" : "Ve sledovači",
+    "ehi_gage_tracker_panel_2" : "Ve vyskakovacím okně",
+
+    "ehi_show_captain_damage_reduction" : "Zobrazovat snížení poškození nepřátel",
+    "ehi_show_captain_damage_reduction_desc" : "Zobrazuje sledovač, který ukazuje snížené poškození nepřátel, když je Kapitán Winters aktivní",
+
+    "ehi_show_equipment_tracker" : "Zobrazovat sledovač pro vybavení",
+    "ehi_show_equipment_tracker_desc" : "Zobrazuje samostatný sledovač pro položenou lékárničku, náboje, granáty, taška s pytlema na těla a 'záchranné jednohubky' (First Aid Kit neboli FAK)",
+
+    "ehi_equipment_menu" : "Menu vybavení",
+    "ehi_equipment_menu_desc" : "",
+
+    "ehi_equipment_format" : "Formát",
+    "ehi_equipment_format_desc" : "Nastavuje jak formátovat vybavení",
+    "ehi_equipment_format_1" : "Počet použití (Počet položených)",
+    "ehi_equipment_format_2" : "(Počet položených) Počet použití",
+    "ehi_equipment_format_3" : "(Počet použití) Počet položených",
+    "ehi_equipment_format_4" : "Počet položených (Počet použití)",
+    "ehi_equipment_format_5" : "Počet použití",
+    "ehi_equipment_format_6" : "Počet položených",
+
+    "ehi_show_equipment_doctorbag" : "Zobrazovat sledovač pro lékárníčku",
+    "ehi_show_equipment_doctorbag_desc" : "Zobrazuje sledovač pro položenou lékárníčku",
+
+    "ehi_show_equipment_ammobag" : "Zobrazovat sledovač pro náboje",
+    "ehi_show_equipment_ammobag_desc" : "Zobrazuje sledovač pro položené náboje",
+
+    "ehi_show_equipment_grenadecases" : "Zobrazovat sledovač pro granáty",
+    "ehi_show_equipment_grenadecases_desc" : "Zobrazuje sledovač pro položené granáty v tašce či v samostatném pouzdře",
+
+    "ehi_show_equipment_bodybags": "Zobrazovat sledovač pro tašku s pytlama na tělo",
+    "ehi_show_equipment_bodybags_desc": "Zobrazuje sledovač pro tašku na pytle na mrtvé těla\nJakmile zazní alarm, tento sledovač se odstraní",
+
+    "ehi_show_equipment_firstaidkit": "Zobrazovat sledovač pro FAK",
+    "ehi_show_equipment_firstaidkit_desc": "Zobrazuje sledovač pro 'záchranné jednohubky' (First Aid Kit neboli FAK)",
+
+    "ehi_show_equipment_ecmjammer" : "Zobrazovat sledovač pro ECM Jammer (rušička)",
+    "ehi_show_equipment_ecmjammer_desc" : "Zobrazuje sledovač pro zbývající dobu trvání ECM Jammer\nVe sledovači je zobrazen ECM Jammer s nejdelší dobou trvání",
+
+    "ehi_show_equipment_ecmfeedback" : "Zobrazovat sledovač pro ECM Feedback (zpětná vazba)",
+    "ehi_show_equipment_ecmfeedback_desc" : "Zobrazuje sledovač pro zbývající dobu trvání ECM Feedback\nVe sledovači je zobrazen ECM Feedback s nejdelší dobou trvání (Pouze host)",
+
+    "ehi_show_equipment_aggregate_health" : "Spojit lékárničky a FAK",
+    "ehi_show_equipment_aggregate_health_desc" : "Zobrazí lékárničku a FAK v jednom sledovači",
+
+    "ehi_show_equipment_aggregate_all" : "Spojit všechnu výbavu",
+    "ehi_show_equipment_aggregate_all_desc" : "Zobrazí všechnu výbavu v jednom sledovači\nVýbava používá svoji barvu níže",
+
+    "ehi_doctor_bag" : "Lékárnička",
+    "ehi_ammo_bag" : "Náboje",
+    "ehi_grenade_crate" : "Granáty",
+    "ehi_first_aid_kit" : "FAK",
+    "ehi_bodybags_bag" : "Taška s pytlema na těla",
+
+    "ehi_show_minion_tracker" : "Zobrazovat sledovač převedenců",
+    "ehi_show_minion_tracker_desc" : "Zobrazuje sledovač s počtem převedenců na mapě",
+
+    "ehi_show_minion_per_player" : "Zobrazovat počet převedenců na hráče",
+    "ehi_show_minion_per_player_desc" : "Zobrazuje ve sledovači počet převedenců barvou hráče",
+
+    "ehi_show_minion_killed_message" : "Zobrazovat oznámení 'PŘEVEDENEC ZABIT'",
+    "ehi_show_minion_killed_message_desc" : "Shows a message when your convert has been killed",
+
+    "ehi_show_minion_killed_message_type" : "Typ oznámení pro 'PŘEVEDENEC ZABIT'",
+    "ehi_show_minion_killed_message_type_2" : "V oznamovacím panelu",
+
+    "ehi_show_difficulty_tracker" : "Zobrazovat sledovač s obtížností vlny",
+    "ehi_show_difficulty_tracker_desc" : "Zobrazuje sledovač, jak moc obtížná je aktuální vlna",
+
+    "ehi_show_drama_tracker" : "Zobrazovat sledovač ohledně Drama",
+    "ehi_show_drama_tracker_desc" : "Zobrazuje sledovač, který ukazuje nahromaděné drama (pouze host)",
+
+    "ehi_show_pager_tracker" : "Zobrazovat sledovač pageru",
+    "ehi_show_pager_tracker_desc" : "Zobrazuje sledovač, kolik pagerů vám zbývá",
+
+    "ehi_show_pager_callback_trackers" : "Zobrazovat sledovač odpovědi pageru",
+    "ehi_show_pager_callback_trackers_desc" : "Zobrazuje sledovač pro pager, na který se musí odpovědět",
+
+    "ehi_show_enemy_count_tracker" : "Zobrazovat sledovač s počtem nepřátel",
+    "ehi_show_enemy_count_tracker_desc" : "Zobrazuje sledovač s počtem nepřátel na mapě",
+
+    "ehi_show_laser_tracker" : "Zobrazovat sledovač laserů",
+    "ehi_show_laser_tracker_desc" : "Zobrazuje sledovač na lasery, které cyklí každých pár vteřin",
+
+    "ehi_show_assault_delay_tracker" : "Zobrazovat sledovač délky pauzy před dalším útokem",
+    "ehi_show_assault_delay_tracker_desc" : "Zobrazuje sledovač s délkou pauzy před dalším útokem\n\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
+
+    "ehi_show_loot_counter" : "Zobrazovat počítadlo kořisti",
+    "ehi_show_loot_counter_desc" : "Zobrazuje sledovač s počtem kořisti v loupeži",
+
+    "ehi_show_all_loot_secured_popup" : "Zobrazovat vyskakovací okno 'Všechna kořist zajištěna'",
+    "ehi_show_all_loot_secured_popup_desc" : "Zobrazuje vyskakovací okno po zajištění všechny pytlů s kořistí",
+
+    "ehi_variable_random_loot_format" : "Formát náhodné kořisti",
+    "ehi_variable_random_loot_format_desc" : "Nastavuje jak se má formátovat náhodná dodatečná kořist\n\nPříklad:16 zaručených pytlů a 4 sejfy, které můžou a nebo nemusí mít kořist; 9 pytlů zajištěno\n\nMožnost 1:\n9/16-20?\n\nMožnost 2:\n9/20?\n\nMožnost 3:\n9/16+4?",
+    "ehi_variable_random_loot_format_1" : "Postup / Max - (Max + Náhodně)?",
+    "ehi_variable_random_loot_format_2" : "Postup / (Max + Náhodně)?",
+    "ehi_variable_random_loot_format_3" : "Postup / Max + Náhodně?",
+
+    "ehi_show_bodybags_counter" : "Zobrazovat počet pytlů na mrtvá těla",
+    "ehi_show_bodybags_counter_desc" : "Zobrazuje sledovač s počtem pytlů na mrtvá těla",
+
+    "ehi_show_escape_chance" : "Zobrazovat šanci na vybourání únikového vozidla",
+    "ehi_show_escape_chance_desc" : "Zobrazuje sledovač s možným vybouráním únikového vozidla",
+    
+    "ehi_waypoints_menu" : "Ukazatele",
+    "ehi_waypoints_menu_desc" : "",
+
+    "ehi_show_waypoints" : "Zobrazovat ukazatele",
+    "ehi_show_waypoints_desc" : "Zobrazuje ukazatele v herním světě",
+
+    "ehi_show_waypoints_only" : "Zobrazovat pouze ukazatele",
+    "ehi_show_waypoints_only_desc" : "Je-li povoleno a element má nadefinovaný sledovač a ukazatel, zobrazí se pouze ukazatel\nJinak se zobrazí sledovač",
+
+    "ehi_show_waypoints_present_timer" : "Čas na přesun",
+    "ehi_show_waypoints_present_timer_desc" : "Nastavuje jak dlouho bude ukazatel na obrazovce než se 'přesune' do cílového místa",
+
+    "ehi_show_waypoints_enemy_turret" : "Zobrazovat ukazatele pro nepřátelské střílny",
+    "ehi_show_waypoints_enemy_turret_desc" : "Zobrazuje ukazatel pro nepřátelskou střílku když se opravuje nebo nabíjí",
+
+    "ehi_show_waypoints_timers" : "Zobrazovat ukazatele pro časovače",
+    "ehi_show_waypoints_timers_desc" : "Zobrazuje ukazatel na viditelný časovač (hackování, vrtání, řezání, atd...)\n\nFunkce 'Zobrazovat časovače' musí být zapnutá aby tato možnost fungovala",
+
+    "ehi_show_waypoints_pager" : "Zobrazovat ukazatele pro pagery",
+    "ehi_show_waypoints_pager_desc" : "Zobrazuje ukazatel na pager, na který se musí odpovědět\n\nFunkce 'Zobrazovat sledovač odpovědi pageru' musí být zapnutá aby tato možnost fungovala",
+
+    "ehi_show_waypoints_cameras" : "Zobrazovat ukazatele pro kamery ve zpětné smyčce",
+    "ehi_show_waypoints_cameras_desc" : "Zobrazuje ukazatel na kamaře, která je právě ve zpětné smyčce\n\nFunkce 'Zobrazovat kameru se zpětnou smyčkou' musí být zapnutá aby tato možnost fungovala",
+
+    "ehi_show_waypoints_zipline" : "Zobrazovat ukazatele na Zipliny",
+    "ehi_show_waypoints_zipline_desc" : "Zobrazuje ukazatel na ziplině, která je v pohybu\nUkazatel ukazuje pouze čas, kdy bude ziplina znovu použitelná\n\nFunkce 'Zobrazovat sledovač na Zipline' musí být zapnutá aby tato možnost fungovala",
+
+    "ehi_buffs_menu" : "Buffy",
+    "ehi_buffs_menu_desc" : "",
+
+    "ehi_show_buffs" : "Zobrazovat Buffy",
+    "ehi_show_buffs_desc": "Zobrazuje na obrazovce buffy, které ukazují aktivní skilly, perky, jejich hodnotu či aktivní čas",
+
+    "ehi_buffs_scale_desc" : "Nastavuje měřítko buffů. Čím větší číslo, tím jsou buffy větší a naopak",
+
+    "ehi_buffs_alignment" : "Zarovnání",
+    "ehi_buffs_alignment_desc" : "Nastavuje jak se buffy mají zarovnat na obrazovce",
+    "ehi_buffs_alignment_1" : "Nalevo",
+    "ehi_buffs_alignment_2" : "Uprostřed",
+    "ehi_buffs_alignment_3" : "Napravo",
+
+    "ehi_buffs_shape" : "Tvar",
+    "ehi_buffs_shape_desc" : "Nastavuje tvar buffům, jak budou vypadat na obrazovce",
+    "ehi_buffs_shape_1" : "Čtverec",
+    "ehi_buffs_shape_2" : "Kruh",
+
+    "ehi_buffs_show_progress" : "Zobrazovat postup",
+    "ehi_buffs_show_progress_desc" : "Nastavuje jestli má být postup v buffu viditelný nebo ne\nVe výchozím nastavení, postup buffu jde ve směru hodinových ručiček",
+
+    "ehi_buffs_invert_progress" : "Invertovat postup",
+    "ehi_buffs_invert_progress_desc" : "Je-li povoleno, postup půjde proti směru hodinových ručiček\nJe-li zakázáno, postup jde ve směru hodinových ručiček",
+
+    "ehi_buffs_skills_cooldown" : "Zobrazuje dobu, po kterou nelze skill či perk znovu aktivovat",
+    "ehi_buffs_skills_duration" : "Zobrazuje trvání",
+    "ehi_buffs_skills_progress" : "Zobrazuje postup",
+
+    "ehi_buffs_skills_menu" : "Skilly",
+    "ehi_buffs_skills_mastermind_menu" : "Mastermind",
+    "ehi_buffs_skills_mastermind_medic_subclass" : "Medic",
+    "ehi_buffs_skills_mastermind_inspire_basic" : "Inspire (Základní)",
+    "ehi_buffs_skills_mastermind_inspire_basic_desc" : "Zobrazuje dobu, za jak dlouho lze použít Inspire když na někoho zavoláš a 'inspiruješ' ho",
+    "ehi_buffs_skills_mastermind_inspire_ace" : "Inspire (Vylepšený)",
+    "ehi_buffs_skills_mastermind_inspire_ace_desc" : "Zobrazuje dobu, za jak dlouho lze použít Inspire když někoho oživíš",
+    "ehi_buffs_skills_mastermind_uppers" : "Uppers",
+    "ehi_buffs_skills_mastermind_uppers_range" : "Oblast Uppers",
+    "ehi_buffs_skills_mastermind_uppers_range_desc" : "Zobrazuje buff jestli jsi v oblasti, kde tě oživí FAK s automatickým léčením",
+    "ehi_buffs_skills_mastermind_uppers_range_refresh" : "Aktualizace oblasti Uppers",
+    "ehi_buffs_skills_mastermind_uppers_range_refresh_desc" : "Nastavuje jak často se má buff aktualizovat za sekundu",
+    "ehi_buffs_skills_mastermind_quick_fix" : "Quick Fix",
+    "ehi_buffs_skills_mastermind_painkillers" : "Painkillers",
+    "ehi_buffs_skills_mastermind_combat_medic" : "Combat Medic",
+    "ehi_buffs_skills_mastermind_controller_subclass" : "Controller",
+    "ehi_buffs_skills_mastermind_hostage_taker_muscle" : "Hostage Taker / Muscle",
+    "ehi_buffs_skills_mastermind_forced_friendship" : "Forced Friendship (Absorpce)",
+    "ehi_buffs_skills_mastermind_forced_friendship_desc" : "Zobrazuje buff s aktuální naukumulovanou absorpcí ze skillu Forced Friendship",
+    "ehi_buffs_skills_mastermind_sharpshooter_subclass" : "Sharpshooter",
+    "ehi_buffs_skills_mastermind_ammo_efficiency" : "Ammo Efficiency",
+    "ehi_buffs_skills_mastermind_aggressive_reload" : "Aggressive Reload",
+
+    "ehi_buffs_skills_enforcer_menu" : "Enforcer",
+    "ehi_buffs_skills_enforcer_shotgunner_subclass" : "Shotgunner",
+    "ehi_buffs_skills_enforcer_overkill" : "Overkill",
+    "ehi_buffs_skills_enforcer_underdog" : "Underdog",
+    "ehi_buffs_skills_enforcer_tank_subclass" : "Tank",
+    "ehi_buffs_skills_enforcer_bullseye" : "Bullseye",
+    "ehi_buffs_skills_enforcer_ammo_specialist_subclass" : "Ammo Specialist",
+    "ehi_buffs_skills_enforcer_bulletstorm" : "Bulletstorm",
+
+    "ehi_buffs_skills_ghost_menu" : "Ghost",
+    "ehi_buffs_skills_ghost_shinobi_subclass" : "Shinobi",
+    "ehi_buffs_skills_ghost_sixth_sense_initial" : "Sixth Sense (Počáteční prodleva)",
+    "ehi_buffs_skills_ghost_sixth_sense_marked" : "Sixth Sense (Označené NPC)",
+    "ehi_buffs_skills_ghost_sixth_sense_marked_desc" : "Zobrazuje buff s počtem označených NPC skillem Sixth Sense",
+    "ehi_buffs_skills_ghost_sixth_sense_refresh" : "Sixth Sense (Prodleva obnovení)",
+    "ehi_buffs_skills_ghost_artful_dodger_subclass" : "Artful Dodger",
+    "ehi_buffs_skills_ghost_dire_need" : "Dire Need",
+    "ehi_buffs_skills_ghost_silent_killer_subclass" : "Silent Killer",
+    "ehi_buffs_skills_ghost_second_wind" : "Second Wind",
+    "ehi_buffs_skills_ghost_unseen_strike" : "Unseen Strike",
+
+    "ehi_buffs_skills_fugitive_menu" : "Fugitive",
+    "ehi_buffs_skills_fugitive_revenant_subclass" : "Revenant",
+    "ehi_buffs_skills_fugitive_running_from_death_reload" : "Running from Death (Nabití a změna zbraně)",
+    "ehi_buffs_skills_fugitive_running_from_death_movement" : "Running from Death (Pohyb)",
+    "ehi_buffs_skills_fugitive_up_you_go" : "Up You Go",
+    "ehi_buffs_skills_fugitive_swan_song" : "Swan Song",
+    "ehi_buffs_skills_fugitive_brawler_subclass" : "Brawler",
+    "ehi_buffs_skills_fugitive_bloodthirst" : "Bloodthirst",
+    "ehi_buffs_skills_fugitive_bloodthirst_reload" : "Bloodthirst (Nabití zbraně)",
+    "ehi_buffs_skills_fugitive_berserker" : "Berserker",
+    "ehi_buffs_skills_fugitive_berserker_refresh" : "Berserker Refresh",
+    "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "Nastavuje jak často se má buff aktualizovat za sekundu",
+
+    "ehi_buffs_perks_menu" : "Perky",
+    "ehi_buffs_perks_infiltrator" : "Infiltrator",
+    "ehi_buffs_perks_infiltrator_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Infiltrator",
+    "ehi_buffs_perks_gambler" : "Gambler",
+    "ehi_buffs_perks_gambler_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Gambler",
+    "ehi_buffs_perks_grinder" : "Grinder",
+    "ehi_buffs_perks_grinder_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Grinder",
+    "ehi_buffs_perks_maniac" : "Maniac",
+    "ehi_buffs_perks_maniac_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Maniac",
+    "ehi_buffs_perks_anarchist" : "Anarchist / Armorer",
+    "ehi_buffs_perks_anarchist_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Anarchist / Armorer",
+    "ehi_buffs_perks_biker" : "Biker",
+    "ehi_buffs_perks_biker_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Biker",
+    "ehi_buffs_perks_kingpin" : "Kingpin",
+    "ehi_buffs_perks_kingpin_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Kingpin",
+    "ehi_buffs_perks_sicario" : "Sicario",
+    "ehi_buffs_perks_sicario_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Sicario",
+    "ehi_buffs_perks_stoic" : "Stoic",
+    "ehi_buffs_perks_stoic_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Stoic",
+    "ehi_buffs_perks_tag_team" : "Tag Team",
+    "ehi_buffs_perks_tag_team_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Tag Team",
+    "ehi_buffs_perks_hacker" : "Hacker",
+    "ehi_buffs_perks_hacker_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Hacker",
+    "ehi_buffs_perks_leech" : "Leech",
+    "ehi_buffs_perks_leech_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Leech",
+
+    "ehi_buffs_other_menu" : "Ostatní",
+    "ehi_buffs_other_interact" : "Interakce",
+    "ehi_buffs_other_reload" : "Nabití zbraně",
+    "ehi_buffs_other_melee_charge" : "Prodleva nabití melee",
+    "ehi_buffs_other_shield_regen" : "Prodleva na obnovení zbroje",
+    "ehi_buffs_other_stamina" : "Výdrž",
+    "ehi_buffs_other_dodge" : "Šance na Dodge",
+    "ehi_buffs_other_dodge_refresh" : "Aktualizace šance na Dodge",
+    "ehi_buffs_other_dodge_refresh_desc" : "Nastavuje jak často se má šance aktualizovat za sekundu",
+    "ehi_buffs_other_dodge_persistent" : "Neschovávat šanci na Dodge",
+    "ehi_buffs_other_dodge_persistent_desc" : "Buff zůstane na obrazovce, když je tvoje šance na Dodge méně než 0 %",
+    "ehi_buffs_other_crit" : "Šance na Crit",
+    "ehi_buffs_other_crit_refresh" : "Aktualizace šance na Crit",
+    "ehi_buffs_other_crit_refresh_desc" : "Nastavuje jak často se má šance aktualizovat za sekundu",
+    "ehi_buffs_other_crit_persistent" : "Neschovávat šanci na Crit",
+    "ehi_buffs_other_crit_persistent_desc" : "Buff zůstane na obrazovce, když je tvoje šance na Crit méně než 0 %",
+    "ehi_buffs_other_inspire_ai" : "Inspire (AI)",
+    "ehi_buffs_other_regen_throwable_ai" : "Obnovení granátu (AI)"
+}

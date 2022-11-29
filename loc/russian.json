@@ -10,6 +10,10 @@
     "ehi_menu_next_page" : "Следующая страница -->",
     "ehi_menu_previous_page" : "<-- Предыдущая страница",
 
+    "ehi_language" : "Язык",
+    "ehi_language_desc" : "Изменяет язык мода. Чтобы изменение применилось, необходимо перезапустить игру.",
+    "ehi_language_1" : "Автоопределние",
+
     "ehi_menu_only" : "Только меню",
     "ehi_show_preview_text" : "Показать текст предварительного просмотра",
     "ehi_show_preview_text_desc" : "Скрывает или показывать текст предварительного просмотра",
@@ -30,22 +34,22 @@
     "ehi_popup_loot_counter" : "СЧЕТЧИК ДОБЫЧИ",
     "ehi_popup_all_loot_secured" : "Все сумки с добычей захвачены",
     "ehi_achievement_ok" : "ОК",
-    "ehi_achievement_done" : "СДЕЛАНО",
+    "ehi_achievement_done" : "ЗАВЕРШЕНО",
     "ehi_achievement_pass" : "ПРОЙДЕНО",
-    "ehi_achievement_defend" : "ЗАЩИЩЕНО",
+    "ehi_achievement_defend" : "ЗАЩИЩАТЬ",
     "ehi_achievement_finish" : "ФИНИШ",
-    "ehi_achievement_secure" : "БЕЗОПАСНО",
+    "ehi_achievement_secure" : "ОХРАНЯТЬ",
     "ehi_achievement_no_down" : "БЕЗ ПАДЕНИЙ",
-    "ehi_achievement_destroy" : "УНИЧТОЖЕНО",
+    "ehi_achievement_destroy" : "УНИЧТОЖИТЬ",
     "ehi_achievement_alarm" : "ТРЕВОГА",
     "ehi_achievement_ready" : "ГОТОВО",
     "ehi_achievement_loud" : "ГРОМКО",
-    "ehi_achievement_mark" : "ОТМЕЧЕНО",
-    "ehi_achievement_push" : "НАЖАТО",
-    "ehi_achievement_hack" : "ВЗЛОМАНО",
-    "ehi_achievement_land" : "ТЕРРИТОРИЯ",
-    "ehi_achievement_find" : "НАЙДЕНО",
-    "ehi_achievement_bring" : "ДОСТАВЛЕНО",
+    "ehi_achievement_mark" : "ОТМЕТИТЬ",
+    "ehi_achievement_push" : "НАЖАТЬ",
+    "ehi_achievement_hack" : "ВЗЛОМАТЬ",
+    "ehi_achievement_land" : "МЕСТО",
+    "ehi_achievement_find" : "НАЙТИ",
+    "ehi_achievement_bring" : "ДОСТАВИТЬ",
     "ehi_achievement_objective" : "ЦЕЛЬ",											  
     "ehi_achievement_fail" : "ПРОВАЛЕНО",
 
@@ -87,15 +91,15 @@
     "ehi_show_tracker_bg" : "Показывать рамку трекера",
     "ehi_show_tracker_bg_desc" : "Показывать фон трекера\nКогда выключено - скрывать фон и анимации",
     
-	"ehi_show_tracker_corners" : "Показать углы трекера",
+    "ehi_show_tracker_corners" : "Показать углы трекера",
     "ehi_show_tracker_corners_desc" : "показывать белые углы в трекере",
-	
+    
     "ehi_show_one_icon" : "Только 1 иконка в трекере",
     "ehi_show_one_icon_desc" : "показывать только 1 иконку трекера\nКогда выключено - показывать все связанные иконки",
 
     "ehi_trackers_menu" : "Трекеры",
     "ehi_trackers_menu_desc" : "",
-	
+    
     "ehi_show_mission_trackers": "Показывать трекеры миссий",
     "ehi_show_mission_trackers_desc": "показывать трекеры миссий на экране (напр.: Фургон/Время прибытия вертолета, Время ожидания следующей цели, и т.д...)\n\nЭта опция также применяется к пользовательским миссиям.\nЕсли поддерживается EHI",
 
@@ -192,7 +196,7 @@
     "ehi_show_timers" : "Показ таймеров",
     "ehi_show_timers_desc" : "Показ таймеров взлома, сверления и т.п.",
 
-	"ehi_show_camera_loop" : "Показывать зацикливание камеры",
+    "ehi_show_camera_loop" : "Показывать зацикливание камеры",
     "ehi_show_camera_loop_desc" : "показывать трекер, когда камера зациклена",
 
     "ehi_show_zipline_timer" : "Таймер зиплайна",
@@ -205,7 +209,7 @@
     "ehi_gage_tracker_panel_desc" : "",
     "ehi_gage_tracker_panel_1" : "В трекере",
     "ehi_gage_tracker_panel_2" : "Во всплывающем окне",
-	
+    
     "ehi_show_captain_damage_reduction" : "Показывать уменьшение урона по врагам",
     "ehi_show_captain_damage_reduction_desc" : "показывать, на сколько уменьшается урон по врагам, когда приходит капитан Уинтерс",
 
@@ -239,19 +243,19 @@
     "ehi_show_equipment_firstaidkit": "Показывать количество аптечек первой помощи",
     "ehi_show_equipment_firstaidkit_desc": "Показывать трекер с аптечками первой помощи",
     
-	"ehi_show_equipment_ecmjammer" : "Показывать трекер продолжительность работы генератора помех",
+    "ehi_show_equipment_ecmjammer" : "Показывать трекер продолжительность работы генератора помех",
     "ehi_show_equipment_ecmjammer_desc" : "показывать трекер оставшейся продолжительности генератора помех\nВ трекере отображается генератор помех с наибольшей продолжительностью.",
 
     "ehi_show_equipment_ecmfeedback" : "Показать продолжительность работы акустической петли генератора помех",
     "ehi_show_equipment_ecmfeedback_desc" : "показывать трекер оставшейся продолжительности акустической петли генератора помех\nВ трекере отображается генератор помех с активированной акустической петлёй с наибольшей продолжительностью (только лидер лобби)\nКарманный генератор помех с акустической петлёй работает на стороне клиента",
 
-	"ehi_show_equipment_aggregate_health" : "Считать медсумки и аптечки первой помощи вместе",
+    "ehi_show_equipment_aggregate_health" : "Считать медсумки и аптечки первой помощи вместе",
     "ehi_show_equipment_aggregate_health_desc" : "Объединить медсумки и аптечки первой помощи в один трекер",
     
-	"ehi_show_equipment_aggregate_all" : "Считать всё снаряжение вместе",
+    "ehi_show_equipment_aggregate_all" : "Считать всё снаряжение вместе",
     "ehi_show_equipment_aggregate_all_desc" : "Объединяет все развертываемые компоненты в один трекер\nРазвертываемые объекты используют свой соответствующий цвет снизу.",
 
-	"ehi_doctor_bag" : "Медицинская сумка",
+    "ehi_doctor_bag" : "Медицинская сумка",
     "ehi_ammo_bag" : "Сумка с патронами",
     "ehi_grenade_crate" : "Кейс с гранатами",
     "ehi_first_aid_kit" : "Аптечка первой помощи",
@@ -260,7 +264,7 @@
     "ehi_show_minion_tracker" : "Показывать союзных бойцов",
     "ehi_show_minion_tracker_desc" : "Показывать, сколько бойцов было переведено игроками на свою сторону",
     
-	"ehi_show_minion_per_player" : "Показать количество конвёртов на одного игрока",
+    "ehi_show_minion_per_player" : "Показать количество конвёртов на одного игрока",
     "ehi_show_minion_per_player_desc" : "показывать в трекере цветным игроком количество конвёртов",
 
     "ehi_show_minion_killed_message" : "Показывать сообщение 'конвёрт убит'",
@@ -287,10 +291,10 @@
     "ehi_show_laser_tracker" : "Трекер лазеров",
     "ehi_show_laser_tracker_desc" : "показывать трекер для лазеров, которые работают каждые несколько секунд",
 
-	"ehi_show_assault_delay_tracker" : "Показать отслеживание задержки нападения",
+    "ehi_show_assault_delay_tracker" : "Показать отслеживание задержки нападения",
     "ehi_show_assault_delay_tracker_desc" : "Показывать трекер, как долго будет задержка штурма\n\nТрекер не будет отображаться у клиентов, когда они заходят после того, как сложность штурма была увеличена.",
 
-	"ehi_show_loot_counter" : "Показывать счетчик добычи",
+    "ehi_show_loot_counter" : "Показывать счетчик добычи",
     "ehi_show_loot_counter_desc" : "показывать трекер, сколько сумок с добычей на ограблении",
 
     "ehi_show_all_loot_secured_popup" : "Показывать сообщение 'Все сумки с добычей захвачены'",
@@ -402,6 +406,8 @@
     "ehi_buffs_skills_ghost_sixth_sense_marked" : "Шестое чувство (Отмеченные единицы)",
     "ehi_buffs_skills_ghost_sixth_sense_marked_desc" : "показывать датчик, показывающий, сколько юнитов в настоящее время помечено «Шестым чувством».",
     "ehi_buffs_skills_ghost_sixth_sense_refresh" : "Шестое чувство (Задержка обновления)",
+    "ehi_buffs_skills_ghost_artful_dodger_subclass" : "Artful Dodger",
+    "ehi_buffs_skills_ghost_dire_need" : "Dire Need",
     "ehi_buffs_skills_ghost_silent_killer_subclass" : "Бесшумный убийца",
     "ehi_buffs_skills_ghost_second_wind" : "Второе дыхание",
     "ehi_buffs_skills_ghost_unseen_strike" : "Исподтишка",
@@ -449,7 +455,8 @@
     "ehi_buffs_other_interact" : "Взаимодействие",
     "ehi_buffs_other_reload" : "Перезарядка",
     "ehi_buffs_other_melee_charge" : "Задержка урона в ближнем бою",
-    "ehi_buffs_other_shield_regen" : "Задержка восстановления брони",
+    "ehi_buffs_other_shield_regen" : "Задержка восстановления брони",    
+    "ehi_buffs_other_stamina" : "Выносливость",
     "ehi_buffs_other_dodge" : "Шанс уворота",
     "ehi_buffs_other_dodge_refresh" : "Обновление шанса уворота",
     "ehi_buffs_other_dodge_refresh_desc" : "Устанавливает, как часто датчик 'Шанс уворота' должен обновляться в секунду.",

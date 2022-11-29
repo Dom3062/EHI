@@ -42,6 +42,10 @@ function EHIManager:init_finalize()
     EHI:AddOnAlarmCallback(callback(self, self, "RemoveStealthTrackers"))
     EHI:AddOnAlarmCallback(callback(self, self, "DisableBodyBags"))
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "Spawned"))
+    local function f(peer, peer_id, reason)
+        self:CallFunction("CustodyTime", "RemovePeerFromCustody", peer_id)
+    end
+    Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", f)
 end
 
 function EHIManager:Spawned()
@@ -66,6 +70,10 @@ function EHIManager:IsMissionElementEnabled(id)
         return false
     end
     return element:enabled()
+end
+
+function EHIManager:IsMissionElementDisabled(id)
+    return not self:IsMissionElementEnabled(id)
 end
 
 function EHIManager:InteractionExists(tweak_data)
@@ -248,17 +256,19 @@ function EHIManager:PreloadTracker(params)
     self._trackers[params.id] = tracker
 end
 
-function EHIManager:RunTracker(id, ...)
+function EHIManager:RunTracker(id, params)
     local tracker = self._trackers[id]
     if not tracker then
+        EHI:Log("Preloaded tracker with ID '" .. tostring(id) .. "' not found!")
+        return
+    end
+    tracker:Run(params)
+    if self._trackers_pos[id] then
         return
     end
     local x = self:GetX()
     local y = self:GetY()
-    tracker._panel:set_x(x)
-    tracker._panel:set_y(y)
-    tracker:Run(...)
-    tracker:SetPanelVisible()
+    tracker:PosAndSetVisible(x, y)
     self._trackers_pos[id] = { tracker = tracker, pos = self._n_of_trackers, x = x, y = y, w = tracker:GetPanelW() }
     if tracker._update then
         self:AddTrackerToUpdate(id, tracker)
@@ -519,7 +529,7 @@ else -- Horizontal
                     local gap = 5 * n
                     w = ((64 + gap + (32 * n)) * self._scale)
                 end
-                for id, tbl in pairs(self._trackers_pos) do
+                for _, tbl in pairs(self._trackers_pos) do
                     if tbl.pos >= pos then
                         local final_x = tbl.x + w + self._panel_offset
                         tbl.tracker:SetLeft(final_x)

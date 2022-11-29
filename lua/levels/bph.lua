@@ -23,7 +23,7 @@ local triggers = {
 
 local achievements =
 {
-    [101742] = { max = 3, id = "bph_10", class = TT.AchievementProgress, special_function = SF.RemoveTriggerAndShowAchievement, difficulty_pass = ovk_and_up },
+    [101742] = { max = 3, id = "bph_10", class = TT.AchievementProgress, difficulty_pass = ovk_and_up, trigger_times = 1 },
     [101885] = { id = "bph_10", special_function = SF.SetAchievementFailed },
     [102171] = { id = "bph_10", special_function = SF.IncreaseProgress }
 }

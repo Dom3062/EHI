@@ -11,7 +11,7 @@ function EHIPiggyBankMutatorTracker:init(panel, params)
     self:SetNewMax()
 end
 
-function EHIPiggyBankMutatorTracker:OverridePanel(params)
+function EHIPiggyBankMutatorTracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self._levels_text = self._time_bg_box:text({
@@ -23,7 +23,7 @@ function EHIPiggyBankMutatorTracker:OverridePanel(params)
         h = self._icon_size_scaled,
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
+        color = self._text_color
     })
     self:FitTheText(self._levels_text)
     self._levels_text:set_left(self._text:right())

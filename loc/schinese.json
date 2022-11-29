@@ -10,6 +10,10 @@
     "ehi_menu_next_page" : "下一页 -->",
     "ehi_menu_previous_page" : "<-- 上一页",
 
+    "ehi_language" : "语言(Language)",
+    "ehi_language_desc" : "修改 EHI 的显示语言。重启劫案以生效",
+    "ehi_language_1" : "自动侦测",
+
     "ehi_menu_only" : "仅显示菜单",
     "ehi_show_preview_text" : "显示预览文本",
     "ehi_show_preview_text_desc" : "隐藏/显示预览文本",
@@ -402,6 +406,8 @@
     "ehi_buffs_skills_ghost_sixth_sense_marked" : "第六感 (标记单位数)",
     "ehi_buffs_skills_ghost_sixth_sense_marked_desc" : "显示有多少单位被”第六感“技能标记",
     "ehi_buffs_skills_ghost_sixth_sense_refresh" : "第六感 (刷新标记延迟)",
+    "ehi_buffs_skills_ghost_artful_dodger_subclass" : "Artful Dodger",
+    "ehi_buffs_skills_ghost_dire_need" : "Dire Need",
     "ehi_buffs_skills_ghost_silent_killer_subclass" : "消音系",
     "ehi_buffs_skills_ghost_second_wind" : "卷土重来",
     "ehi_buffs_skills_ghost_unseen_strike" : "暗中打击",

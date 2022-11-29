@@ -83,7 +83,7 @@ EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(id, trigge
         if managers.ehi:TrackerExists(trigger.id) then
             managers.ehi:SetTrackerProgress(trigger.id, trigger.data.progress)
         elseif not trigger.data.dont_create then
-            EHI:CheckCondition(id)
+            EHI:CheckCondition(trigger)
             managers.ehi:SetTrackerProgress(trigger.id, trigger.data.progress)
         end
     end

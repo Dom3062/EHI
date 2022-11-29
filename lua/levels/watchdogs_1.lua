@@ -41,12 +41,11 @@ local achievements =
     [102470] = { id = "hot_wheels", special_function = SF.SetAchievementComplete }
 }
 
-local condition = EHI:GetOption("show_assault_delay_tracker")
 local other =
 {
-    [101244] = { time = 60 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = condition },
-    [101245] = { time = 45 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = condition },
-    [101249] = { time = 50 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = condition }
+    [101244] = EHI:AddAssaultDelay({ time = 60 + 30 }),
+    [101245] = EHI:AddAssaultDelay({ time = 45 + 30 }),
+    [101249] = EHI:AddAssaultDelay({ time = 50 + 30 })
 }
 
 EHI:ParseTriggers({

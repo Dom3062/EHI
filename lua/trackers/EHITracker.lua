@@ -105,6 +105,7 @@ EHITracker._icon_gap_size_scaled = (EHITracker._icon_size + EHITracker._gap) * E
 EHITracker._icon_size_scaled = EHITracker._icon_size * EHITracker._scale
 -- 5 * self._scale
 EHITracker._gap_scaled = EHITracker._gap * EHITracker._scale
+EHITracker._text_color = Color.white
 function EHITracker:init(panel, params)
     self._id = params.id
     self._icons = self._forced_icons or params.icons
@@ -147,13 +148,13 @@ function EHITracker:init(panel, params)
         h = self._icon_size_scaled,
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
+        color = self._text_color
     })
     self:FitTheText()
     if self._n_of_icons > 0 then
         self:CreateIcons()
     end
-    self:OverridePanel(params)
+    self:OverridePanel()
     self._parent_class = params.parent_class
     self._hide_on_delete = params.hide_on_delete
     if params.dynamic then
@@ -161,7 +162,13 @@ function EHITracker:init(panel, params)
     end
 end
 
-function EHITracker:OverridePanel(params)
+function EHITracker:OverridePanel()
+end
+
+function EHITracker:PosAndSetVisible(x, y)
+    self._panel:set_x(x)
+    self._panel:set_y(y)
+    self:SetPanelVisible()
 end
 
 function EHITracker:SetPanelVisible()
@@ -300,9 +307,9 @@ function EHITracker:SetTimeNoAnim(time)
     self:FitTheText()
 end
 
-function EHITracker:Run(t)
-    self:SetTimeNoAnim(t)
-    self:SetTextColor(Color.white)
+function EHITracker:Run(params)
+    self:SetTimeNoAnim(params.time or 0)
+    self:SetTextColor()
 end
 
 function EHITracker:AddDelay(delay)
@@ -330,7 +337,7 @@ function EHITracker:HUDBGBox_animate_bg_attention(bg, total_t)
 end
 
 function EHITracker:SetTextColor(color)
-    self._text:set_color(color)
+    self._text:set_color(color or self._text_color)
 end
 
 function EHITracker:SetIcon(new_icon)
@@ -359,7 +366,7 @@ end
 
 function EHITracker:SetTrackerAccurate(time)
     self._tracker_type = "accurate"
-    self:SetTextColor(Color.white)
+    self:SetTextColor()
     self:SetTimeNoAnim(time)
 end
 

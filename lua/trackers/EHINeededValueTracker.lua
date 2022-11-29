@@ -8,7 +8,7 @@ function EHINeededValueTracker:init(panel, params)
     EHINeededValueTracker.super.init(self, panel, params)
 end
 
-function EHINeededValueTracker:OverridePanel(params)
+function EHINeededValueTracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self._text:set_w(self._time_bg_box:w())

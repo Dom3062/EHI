@@ -19,7 +19,6 @@ do
     local string_format = string.format
 	local function SecondsOnly(self)
 		local t = math_floor(self._time * 10) / 10
-
 		if t < 0 then
 			return string_format("%d", 0)
 		elseif t < 100 then
@@ -33,7 +32,6 @@ do
 
 	local function MinutesAndSeconds(self)
 		local t = math_floor(self._time * 10) / 10
-
 		if t < 0 then
 			return string_format("%d", 0)
 		elseif t < 60 then

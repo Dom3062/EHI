@@ -4,6 +4,10 @@
 
     "ehi_menu_next_page" : "Pagina successiva -->",
     "ehi_menu_previous_page" : "<-- Pagina precedente",
+
+    "ehi_language" : "Lingua",
+    "ehi_language_desc" : "Cambia la lingua della mod. È necessario un caricamento per rendere effettive le modifiche.",
+    "ehi_language_1" : "Rileva automaticamente",
  
     "ehi_r" : "Rosso",
     "ehi_g" : "Verde",
@@ -139,7 +143,7 @@
     "ehi_show_equipment_ecmjammer_desc" : "Mostra un tracciatore per la durata rimanente di un Jammer ECM\nNel tracciatore viene visualizzato il Jammer ECM con la durata più lunga",
  
     "ehi_show_equipment_ecmfeedback" : "Mostra Monitoraggio della Durata del Feedback ECM",
-    "ehi_show_equipment_ecmfeedback_desc" : "Mostra un tracciatore per la durata rimanente di un feedback ECM\nNel tracciatore viene visualizzato il feedback ECM con la durata più lunga (solo host)\nIl feedback ECM Portatile funziona anche lato client",
+    "ehi_show_equipment_ecmfeedback_desc" : "Mostra un tracciatore per la durata rimanente di un feedback ECM\nNel tracciatore viene visualizzato il feedback ECM con la durata più lunga (solo host)",
  
     "ehi_show_equipment_aggregate_health" : "Borse Mediche Aggregate e Kit di Pronto Soccorso",
     "ehi_show_equipment_aggregate_health_desc" : "Aggrega le borse mediche e i kit di pronto soccorso in un unico tracciatore",

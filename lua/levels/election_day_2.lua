@@ -25,7 +25,7 @@ local other =
         end
         managers.ehi:CallFunction("LootCounter", "RandomLootSpawned", 7)
     end},
-    [100116] = { time = 60 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
+    [100116] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
 
 EHI:ParseTriggers({

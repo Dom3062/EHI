@@ -2,12 +2,11 @@ local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local assault_delay = 15 + 1 + 30
-local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker")
 local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {
-    [104488] = { time = assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = ShowAssaultDelay },
-    [104489] = { time = assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist, condition = ShowAssaultDelay },
+    [104488] = EHI:AddAssaultDelay({ time = assault_delay, special_function = SF.SetTimeOrCreateTracker }),
+    [104489] = EHI:AddAssaultDelay({ time = assault_delay, special_function = SF.AddTrackerIfDoesNotExist }),
     -- Police ambush
     [104535] = { special_function = SF.Trigger, data = { 1045351, 1045352 } },
     [1045351] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = ShowAssaultDelay },
@@ -77,6 +76,7 @@ EHI:ParseTriggers({
     mission = {},
     other = other
 })
+local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker")
 EHI:AddOnAlarmCallback(function(dropin)
     if dropin or not ShowAssaultDelay then
         return

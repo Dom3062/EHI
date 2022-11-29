@@ -6,7 +6,6 @@ local anim_delay = 2 + 727/30 + 2 -- 2s is function delay; 727/30 is a animation
 local assault_delay_methlab = 20 + 4 + 3 + 3 + 3 + 5 + 1 + 30
 local assault_delay = 4 + 3 + 3 + 3 + 5 + 1 + 30
 local SetTimeIfMoreThanOrCreateTracker = EHI:GetFreeCustomSpecialFunctionID()
-local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker")
 local triggers = {
     [101001] = { id = "CookChance", special_function = SF.RemoveTracker },
 
@@ -16,7 +15,7 @@ local triggers = {
     [100724] = { time = 25, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeOrCreateTracker },
     [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact } },
 
-    [1] = { special_function = SF.RemoveTriggers, data = { 101974, 101975 } },
+    [1] = { special_function = SF.RemoveTriggers, data = { 101974, 101975, 101970 } },
     [101974] = { special_function = SF.Trigger, data = { 1019741, 1 } },
     -- There is an issue in the script. Even if the van driver says 2 minutes, he arrives in a minute
     [1019741] = { time = (60 + 30 + anim_delay) - 58, special_function = SF.AddTrackerIfDoesNotExist },
@@ -37,9 +36,9 @@ local achievements =
 }
 local other =
 {
-    [100378] = { time = 42 + 50 + assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, condition = ShowAssaultDelay },
-    [100380] = { time = 45 + 40 + assault_delay, id = "AssaultDelay", class = TT.AssaultDelay, condition = ShowAssaultDelay },
-    [100707] = { time = assault_delay_methlab, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SetTimeIfMoreThanOrCreateTracker, condition = ShowAssaultDelay },
+    [100378] = EHI:AddAssaultDelay({ time = 42 + 50 + assault_delay }),
+    [100380] = EHI:AddAssaultDelay({ time = 45 + 40 + assault_delay }),
+    [100707] = EHI:AddAssaultDelay({ time = assault_delay_methlab, special_function = SetTimeIfMoreThanOrCreateTracker }),
     [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 
@@ -64,10 +63,10 @@ EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(id,
                 managers.ehi:SetTrackerTime(trigger.id, trigger.time)
             end
         else
-            EHI:CheckCondition(id)
+            EHI:CheckCondition(trigger)
         end
     else
-        EHI:CheckCondition(id)
+        EHI:CheckCondition(trigger)
     end
     EHI:UnhookTrigger(id)
 end)

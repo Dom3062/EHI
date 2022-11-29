@@ -49,7 +49,14 @@ local achievements =
     [102323] = { id = "uno_4", special_function = SF.SetAchievementFailed }
 }
 
+local other =
+{
+    [101132] = EHI:AddAssaultDelay({ time = 59 + 30 }),
+    [100487] = EHI:AddAssaultDelay({ time = 30, special_function = SF.SetTimeOrCreateTracker })
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })

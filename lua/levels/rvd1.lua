@@ -37,7 +37,7 @@ local achievements =
 
 local other =
 {
-    [100179] = { time = 1 + 9.5 + 11 + 1 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
+    [100179] = EHI:AddAssaultDelay({ time = 1 + 9.5 + 11 + 1 + 30 })
 }
 
 EHI:ParseTriggers({
@@ -50,7 +50,7 @@ EHI:RegisterCustomSpecialFunction(ExecuteIfEnabled, function(id, trigger, elemen
         if managers.ehi:TrackerExists(trigger.id) then
             managers.ehi:SetTrackerTime(trigger.id, trigger.time)
         else
-            EHI:CheckCondition(id)
+            EHI:CheckCondition(trigger)
         end
     end
 end)

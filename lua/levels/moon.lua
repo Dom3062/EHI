@@ -39,9 +39,15 @@ local achievements =
     [104220] = { id = "moon_4", special_function = SF.IncreaseProgress } -- Dallas
 }
 
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 45 + 30 })
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
 if EHI:ShowMissionAchievements() and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then

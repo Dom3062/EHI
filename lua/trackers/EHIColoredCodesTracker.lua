@@ -1,6 +1,7 @@
 EHIColoredCodesTracker = class(EHITracker)
 EHIColoredCodesTracker._update = false
-function EHIColoredCodesTracker:OverridePanel(params)
+EHIColoredCodesTracker._forced_icons = { EHI.Icons.Interact }
+function EHIColoredCodesTracker:OverridePanel()
     local third = self._time_bg_box:w() / 3
     self._time_bg_box:remove(self._text)
     self._text = self._time_bg_box:text({

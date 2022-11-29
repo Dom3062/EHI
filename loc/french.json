@@ -5,6 +5,10 @@
     "ehi_menu_next_page" : "Page suivante -->",
     "ehi_menu_previous_page" : "<-- Page précédente",
 
+    "ehi_language" : "Langage",
+    "ehi_language_desc" : "Change le langage du mod. Pour que cela prenne effet, un redémarrage du niveau est nécessaire.",
+    "ehi_language_1" : "Détecte automatiquement",
+
     "ehi_r" : "Rouge",
     "ehi_g" : "Vert",
     "ehi_b" : "Bleu",
@@ -129,7 +133,7 @@
     "ehi_show_equipment_ecmjammer_desc" : "Shows a tracker for the remaining duration of an ECM Jammer\nAn ECM Jammer with the longest duration is shown in the tracker",
 
     "ehi_show_equipment_ecmfeedback" : "Show ECM Feedback Duration Tracker",
-    "ehi_show_equipment_ecmfeedback_desc" : "Shows a tracker for the remaining duration of an ECM Feedback\nAn ECM Feedback with the longest duration is shown in the tracker (host only)\nPocket ECM Feedback also works clientside",
+    "ehi_show_equipment_ecmfeedback_desc" : "Shows a tracker for the remaining duration of an ECM Feedback\nAn ECM Feedback with the longest duration is shown in the tracker (host only)",
     
     "ehi_show_equipment_aggregate_health": "Rassemble les sacs de soins et les kits de premiers secours",
     "ehi_show_equipment_aggregate_health_desc": "Rassemble les sacs de soins et les kits de premiers secours en un seul moniteur",

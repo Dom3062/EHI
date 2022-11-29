@@ -12,7 +12,7 @@ end
 
 local other =
 {
-    [100032] = { time = 60, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
+    [100032] = EHI:AddAssaultDelay({ time = 60 })
 }
 
 EHI:ParseTriggers({

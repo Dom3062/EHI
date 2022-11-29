@@ -7,7 +7,7 @@ function EHIcac33Tracker:init(panel, params)
     EHIcac33Tracker.super.init(self, panel, params)
 end
 
-function EHIcac33Tracker:OverridePanel(params)
+function EHIcac33Tracker:OverridePanel()
     self._progress_text = self._time_bg_box:text({
         name = "progress",
         text = self:FormatProgress(),
@@ -17,7 +17,7 @@ function EHIcac33Tracker:OverridePanel(params)
         h = self._time_bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white,
+        color = self._text_color,
         visible = false
     })
     self:FitTheText(self._progress_text)

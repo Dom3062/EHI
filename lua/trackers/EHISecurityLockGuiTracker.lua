@@ -1,6 +1,6 @@
 EHISecurityLockGuiTracker = class(EHIProgressTracker)
 EHISecurityLockGuiTracker._forced_icons = { "wp_hack" }
-function EHISecurityLockGuiTracker:OverridePanel(params)
+function EHISecurityLockGuiTracker:OverridePanel()
     self._time_text = self._time_bg_box:text({
         name = "time_text",
         text = EHISecurityLockGuiTracker.super.super.Format(self),
@@ -10,7 +10,7 @@ function EHISecurityLockGuiTracker:OverridePanel(params)
         h = self._icon_size_scaled,
         font = tweak_data.menu.pd2_large_font,
         font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
+        color = self._text_color
     })
     self._time_text:set_left(self._time_bg_box:right())
 end
@@ -51,9 +51,5 @@ function EHISecurityLockGuiTracker:SetPowered(powered)
 end
 
 function EHISecurityLockGuiTracker:SetTimeColor()
-    if self._not_powered then
-        self._time_text:set_color(Color.red)
-    else
-        self._time_text:set_color(Color.white)
-    end
+    self._time_text:set_color(self._not_powered and Color.red or self._text_color)
 end

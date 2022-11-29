@@ -52,7 +52,7 @@ achievements[105694] = { status = "finish", id = "voff_1", special_function = SF
 achievements[105698] = { status = "bring", id = "voff_1", special_function = SF.SetAchievementStatus } -- Left the area
 achievements[105704] = { id = "voff_1", special_function = SF.SetAchievementFailed } -- Killed
 
-other[105364] = { time = 10 + 60 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTimeByPreplanning, data = { id = 104875, yes = 30, no = 15 }, condition = EHI:GetOption("show_assault_delay_tracker") }
+other[105364] = EHI:AddAssaultDelay({ time = 10 + 60 + 30, special_function = SF.AddTimeByPreplanning, data = { id = 104875, yes = 30, no = 15 } })
 
 EHI:ParseTriggers({
     mission = triggers,

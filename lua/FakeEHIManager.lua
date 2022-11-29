@@ -696,3 +696,12 @@ function FakeEHITimerTracker:init(panel, params)
         self._icon1:set_x(self._icon1:x() * 2)
     end
 end
+
+function FakeEHITimerTracker:GetSize()
+    return self._time_bg_box:w() + (((5 * self._n) + (32 * self._n)) * self._scale) + (6 * self._scale)
+end
+
+function FakeEHITimerTracker:SetTextColor(selected)
+    FakeEHITimerTracker.super.SetTextColor(self, selected)
+    self._progress_text:set_color(selected and tweak_data.ehi.color.Inaccurate or Color.white)
+end

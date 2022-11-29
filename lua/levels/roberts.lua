@@ -26,7 +26,7 @@ local triggers = {
     [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { Icon.Phone, "pd2_generic_look" }, class = TT.Warning },
     [102986] = { special_function = SF.RemoveTrackers, data = { "CorrectPaperChance", "GenSecArrivalWarning" } },
     [102985] = { amount = 25, id = "CorrectPaperChance", special_function = SF.IncreaseChance },
-    [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, special_function = SF.RemoveTriggerWhenExecuted },
+    [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, trigger_times = 1 },
 
     [102995] = { time = 30, id = "CallAgain", icons = { Icon.Phone, Icon.Loop } },
     [102996] = { time = 50, id = "CallAgain", icons = { Icon.Phone, Icon.Loop } },

@@ -47,7 +47,7 @@ if EHI:IsClient() then
     EHI:RegisterCustomSpecialFunction(ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, function(id, trigger, ...)
         managers.ehi:RemoveTracker(trigger.data.id)
         if managers.ehi:TrackerDoesNotExist(trigger.id) then
-            EHI:CheckCondition(id)
+            EHI:CheckCondition(trigger)
         end
     end)
 else

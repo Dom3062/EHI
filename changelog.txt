@@ -1,3 +1,8 @@
+r100 (29. 11. 2022):
+Added Czech translation
+Fixed an issue where Assault Delay tracker is not visible if enabled on certain heists
+Fixed an issue where Tag Team Effect (Tagged) buffs are marked as "bad"
+
 r99 (14. 11. 2022):
 Stamina Buff: Fixed a crash at spawn
 

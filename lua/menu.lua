@@ -5,34 +5,56 @@ else
 	EHI._hooks.MenuManager = true
 end
 
+local Languages =
+{
+	[2] = "english",
+	[3] = "czech",
+	[4] = "french",
+	[5] = "italian",
+	[6] = "russian",
+	[7] = "thai",
+	[8] = "schinese",
+	[9] = "portuguese-br",
+	[10] = "spanish",
+	[11] = "japanese"
+}
+
 Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", function(loc)
 	local language_filename = nil
-	local LanguageKey =
-	{
-		["PAYDAY 2 THAI LANGUAGE Mod"] = "thai",
-		--["Ultimate Localization Manager & 正體中文化"] = "tchinese",
-		["PAYDAY 2 BRAZILIAN PORTUGUESE"] = "portuguese-br",
-		--["Payday 2 Korean patch"] = "korean"
-	}
-	for _, mod in pairs(BLT and BLT.Mods and BLT.Mods:Mods() or {}) do
-		language_filename = mod:IsEnabled() and LanguageKey[mod:GetName()]
-		if language_filename then
-			break
-		end
-	end
-	if not language_filename then
-		for _, filename in pairs(file.GetFiles(EHI.LocPath)) do
-			local str = filename:match('^(.*).json$')
-			if str and Idstring(str) and Idstring(str):key() == SystemInfo:language():key() then
-				language_filename = str
+	local lang = EHI:GetOption("mod_language")
+	if lang == 1 then -- Autodetect
+		local LanguageKey =
+		{
+			["PAYDAY 2 THAI LANGUAGE Mod"] = "thai",
+			--["Ultimate Localization Manager & 正體中文化"] = "tchinese",
+			["PAYDAY 2 BRAZILIAN PORTUGUESE"] = "portuguese-br",
+			--["Payday 2 Korean patch"] = "korean"
+		}
+		for _, mod in pairs(BLT and BLT.Mods and BLT.Mods:Mods() or {}) do
+			language_filename = mod:IsEnabled() and LanguageKey[mod:GetName()]
+			if language_filename then
 				break
 			end
 		end
+		if not language_filename then
+			for _, filename in pairs(file.GetFiles(EHI.LocPath)) do
+				local str = filename:match('^(.*).json$')
+				if str and Idstring(str) and Idstring(str):key() == SystemInfo:language():key() then
+					language_filename = str
+					break
+				end
+			end
+		end
+		if language_filename then
+			loc:load_localization_file(EHI.ModPath .. "loc/" .. language_filename .. ".json")
+		end
+	else
+		loc:load_localization_file(EHI.ModPath .. "loc/" .. Languages[lang] .. ".json")
 	end
-	if language_filename and language_filename ~= "english" then
-		loc:load_localization_file(EHI.ModPath .. "loc/" .. language_filename .. ".json")
+	if lang ~= 2 or not language_filename then
+		loc:load_localization_file(EHI.ModPath .. "loc/english.json", false)
 	end
-	loc:load_localization_file(EHI.ModPath .. "loc/english.json", false)
+	loc:load_localization_file(EHI.ModPath .. "loc/languages.json")
 	EHI:CallCallback("LocalizationLoaded", loc)
 end)
 

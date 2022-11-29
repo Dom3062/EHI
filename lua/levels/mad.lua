@@ -10,7 +10,7 @@ function EHIdailycakeTracker:init(panel, params)
     EHIdailycakeTracker.super.init(self, panel, params)
 end
 
-function EHIdailycakeTracker:OverridePanel(params)
+function EHIdailycakeTracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self._progress_text = self._time_bg_box:text({
@@ -22,7 +22,7 @@ function EHIdailycakeTracker:OverridePanel(params)
         h = self._time_bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
+        color = self._text_color
     })
     self:FitTheText(self._progress_text)
     self._progress_text:set_left(0)

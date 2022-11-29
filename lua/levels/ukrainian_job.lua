@@ -65,9 +65,9 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, function(id, ...)
+EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, function(id, trigger, ...)
     if EHI:IsAchievementLocked("cac_12") and managers.ehi:InteractionExists("circuit_breaker_off") then
-        EHI:CheckCondition(id)
+        EHI:CheckCondition(trigger)
     end
 end)
 if EHI:ShowMissionAchievements() then

@@ -77,10 +77,10 @@ local achievements =
 
 local other =
 {
-    -- "Silent Alarm 30s delay" does not delay the first assault
+    -- "Silent Alarm 30s delay" does not delay first assault
     -- Reported in:
     -- https://steamcommunity.com/app/218620/discussions/14/3487502671137130788/
-    [100109] = { time = 30 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker"), trigger_times = 1 }
+    [100109] = EHI:AddAssaultDelay({ time = 30 + 30, trigger_times = 1 })
 }
 
 EHI:ParseTriggers({

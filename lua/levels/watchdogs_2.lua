@@ -42,7 +42,7 @@ if EHI:IsClient() then
         if managers.ehi:TrackerExists(trigger.id) then
             managers.ehi:SetTrackerAccurate(trigger.id, trigger.time)
         elseif not (managers.ehi:TrackerExists(trigger.id2) or managers.ehi:TrackerExists(trigger.id3)) then
-            EHI:CheckCondition(id)
+            EHI:CheckCondition(trigger)
         end
     end)
 end
@@ -61,19 +61,19 @@ EHI:RegisterCustomSpecialFunction(AddToCache, function(id, trigger, ...)
     EHI._cache[trigger.id] = trigger.time
 end)
 EHI:RegisterCustomSpecialFunction(GetFromCache, function(id, trigger, ...)
-    local data = EHI._cache[trigger.id]
+    local t = EHI._cache[trigger.id]
     EHI._cache[trigger.id] = nil
-    if data then
-        trigger.time = data
-        EHI:CheckCondition(id)
+    if t then
+        trigger.time = t
+        EHI:CheckCondition(trigger)
         trigger.time = nil
     else
-        EHI:CheckCondition(1011480)
+        EHI:CheckCondition(triggers[1011480])
     end
 end)
-EHI:RegisterCustomSpecialFunction(uno_8, function(id, ...)
+EHI:RegisterCustomSpecialFunction(uno_8, function(id, trigger, ...)
     local bags = managers.ehi:CountLootbagsOnTheGround() - 10
     if bags == 12 then
-        EHI:CheckCondition(id)
+        EHI:CheckCondition(trigger)
     end
 end)

@@ -8,6 +8,10 @@
     "ehi_menu_next_page" : "ไปที่หน้าถัดไป -->",
     "ehi_menu_previous_page" : "<-- ย้อนกลับไปหน้าที่แล้ว",
 
+    "ehi_language" : "ภาษา",
+    "ehi_language_desc" : "เปลี่ยนภาษาของม็อด.\nจำเป็นต้องมีการรีสตาร์ทด่านเพื่อให้การเปลี่ยนแปลงนี้ส่งผลลัพธ์",
+    "ehi_language_1" : "ค้นพบภาษาอัตโนมัติ",
+
     "ehi_menu_only" : "สำหรับเมนูเท่านั้น",
     "ehi_show_preview_text" : "แสดงข้อความตัวอย่าง",
     "ehi_show_preview_text_desc" : "แสดงหรือซ่อนข้อความและไอคอนตัวอย่างในหน้าเมนู",
@@ -191,7 +195,7 @@
     "ehi_show_equipment_ecmjammer_desc" : "แสดงไอคอนติดตามระยะเวลาที่เหลือของอุปกรณ์ตัดสัญญาณอิเล็กโทรนิคชั่วคราว หรือ แจมเมอร์ (ECM Jammer)\nแจมเมอร์ทีมีระยะเวลานานที่สุดจะถูกแสดงผลก่อนเสมอ",
 
     "ehi_show_equipment_ecmfeedback" : "ไอคอนติดตามระยะเวลาการแสดงผลคลื่นกวนสัญญาณจากอุปกรณ์แจมเมอร์",
-    "ehi_show_equipment_ecmfeedback_desc" : "แสดงไอคอนติดตามระยะเวลาที่เหลือของการเปิดใช้คลื่นรบกวนสัญญาณชั่วคราวจากอุปกรณ์ แจมเมอร์ (ECM Feedback)\nคลื่นรบกวนสัญญาณที่มีระยะเวลานานที่สุดจะถูกแสดงผลก่อนเสมอ (เฉพาะโฮสเท่านั้น)\nคลื่นรบกวนสัญญาณชั่วคราวจากแจมเมอร์จิ๋ว (Pocket ECM) ฝั่งไคลเอนต์สามารถมองเห็นไอคอนติดตามได้",
+    "ehi_show_equipment_ecmfeedback_desc" : "แสดงไอคอนติดตามระยะเวลาที่เหลือของการเปิดใช้คลื่นรบกวนสัญญาณชั่วคราวจากอุปกรณ์ แจมเมอร์ (ECM Feedback)\nคลื่นรบกวนสัญญาณที่มีระยะเวลานานที่สุดจะถูกแสดงผลก่อนเสมอ (เฉพาะโฮสเท่านั้น)",
 
     "ehi_show_equipment_aggregate_health" : "แสดงผลกระเป๋าแพทย์และกล่องปฐมพยาบาลรวมกัน",
     "ehi_show_equipment_aggregate_health_desc" : "แสดงผลกระเป๋าแพทย์และกล่องปฐมพยาบาลรวมกันให้ปรากฎอยู่ในไอคอนติดตามเดียวกัน",
@@ -342,6 +346,8 @@
     "ehi_buffs_skills_ghost_sixth_sense_marked" : "Sixth Sense (Marked units)",
     "ehi_buffs_skills_ghost_sixth_sense_marked_desc" : "Shows a gauge with how many units are currently marked with Sixth Sense",
     "ehi_buffs_skills_ghost_sixth_sense_refresh" : "Sixth Sense (Refresh Delay)",
+    "ehi_buffs_skills_ghost_artful_dodger_subclass" : "Artful Dodger",
+    "ehi_buffs_skills_ghost_dire_need" : "Dire Need",
     "ehi_buffs_skills_ghost_silent_killer_subclass" : "Silent Killer",
     "ehi_buffs_skills_ghost_second_wind" : "Second Wind",
     "ehi_buffs_skills_ghost_unseen_strike" : "Unseen Strike",

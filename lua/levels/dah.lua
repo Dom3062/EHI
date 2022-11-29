@@ -17,13 +17,13 @@ local triggers = {
     [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100475 } },
     [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 103163 } },
 
-    [103969] = { id = "ColorCodes", icons = { Icon.Interact }, class = "EHIColoredCodesTracker" },
+    [103969] = { id = "ColorCodes", class = TT.ColoredCodes },
     [102338] = { id = "ColorCodes", special_function = SF.RemoveTracker }
 }
 if EHI:GetOption("show_mission_trackers") then
     for index, color in pairs(dah_laptop_codes) do
         local unit_id = EHI:GetInstanceUnitID(100052, index)
-        for i = 1, 9, 1 do
+        for i = 0, 9, 1 do
             managers.mission:add_runned_unit_sequence_trigger(unit_id, "set_" .. color .. "_0" .. tostring(i), function(...)
                 managers.ehi:CallFunction("ColorCodes", "SetCode", color, i)
             end)
@@ -38,7 +38,7 @@ end
 
 local other =
 {
-    [100479] = { time = 30 + 2 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
+    [100479] = EHI:AddAssaultDelay({ time = 30 + 2 + 30 })
 }
 
 EHI:ParseTriggers({

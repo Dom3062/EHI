@@ -14,7 +14,7 @@ function EHIameno3Tracker:init(panel, params)
     EHIameno3Tracker.super.init(self, panel, params)
 end
 
-function EHIameno3Tracker:OverridePanel(params)
+function EHIameno3Tracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self._money_text = self._time_bg_box:text({
@@ -26,7 +26,7 @@ function EHIameno3Tracker:OverridePanel(params)
         h = self._time_bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
+        color = self._text_color
     })
     self:FitTheText(self._money_text)
     self._money_text:set_left(0)

@@ -27,9 +27,9 @@ function EHIWarningTracker:AnimateWarning()
     end
 end
 
-function EHIWarningTracker:Run(t)
+function EHIWarningTracker:Run(params)
     self._time_warning = false
-    EHIWarningTracker.super.Run(self, t)
+    EHIWarningTracker.super.Run(self, params)
 end
 
 function EHIWarningTracker:delete()

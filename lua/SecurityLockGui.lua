@@ -8,6 +8,7 @@ end
 if not EHI:GetOption("show_timers") then
     return
 end
+local HackIcon = EHI.Icons.PCHack
 
 local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")
 local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
@@ -27,17 +28,17 @@ function SecurityLockGui:init(unit, ...)
     self._ehi_key = tostring(unit:key())
 end
 
-function SecurityLockGui:_start(bar, ...)
-    original._start(self, bar, ...)
+function SecurityLockGui:_start(...)
+    original._start(self, ...)
     if self._bars > 1 then
         if managers.ehi:TrackerExists(self._ehi_key) then
-            managers.ehi:SetTrackerProgress(self._ehi_key, bar)
+            managers.ehi:SetTrackerProgress(self._ehi_key, self._current_bar)
         else
             managers.ehi:AddTracker({
                 id = self._ehi_key,
                 class = "EHISecurityLockGuiTracker",
                 remove_after_reaching_target = false,
-                progress = bar,
+                progress = self._current_bar,
                 max = self._bars
             })
         end
@@ -47,7 +48,7 @@ function SecurityLockGui:_start(bar, ...)
             managers.ehi:AddTracker({
                 id = self._ehi_key,
                 time = self._current_timer,
-                icons = { { icon = "wp_hack" } },
+                icons = { HackIcon },
                 class = "EHITimerTracker"
             })
         end
@@ -55,7 +56,7 @@ function SecurityLockGui:_start(bar, ...)
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
             time = self._current_timer,
-            icon = "wp_hack",
+            icon = HackIcon,
             position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
             class = "EHITimerWaypoint"
         })
@@ -86,8 +87,8 @@ function SecurityLockGui:_set_powered(powered, ...)
     managers.ehi_waypoint:SetTimerWaypointPowered(self._ehi_key, powered)
 end
 
-function SecurityLockGui:_set_done(bar, ...)
-    original._set_done(self, bar, ...)
+function SecurityLockGui:_set_done(...)
+    original._set_done(self, ...)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     if self._started then
         managers.ehi:RemoveTracker(self._ehi_key)

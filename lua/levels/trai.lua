@@ -16,7 +16,7 @@ function EHICraneFixChanceTracker:init(panel, params)
     EHICraneFixChanceTracker.super.init(self, panel, params)
 end
 
-function EHICraneFixChanceTracker:OverridePanel(params)
+function EHICraneFixChanceTracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self._chance_text = self._time_bg_box:text({
@@ -28,7 +28,7 @@ function EHICraneFixChanceTracker:OverridePanel(params)
         h = self._icon_size_scaled,
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
+        color = self._text_color
     })
     self:FitTheText(self._chance_text)
     self._chance_text:set_left(self._text:right())
@@ -60,6 +60,7 @@ local triggers =
     [102011] = { time = 5, id = "Thermite", icons = { Icon.Fire } },
 
     [101098] = { time = 5 + 7 + 2, id = "WalkieTalkie", icons = { "pd2_door" } },
+    [100109] = { id = "WalkieTalkie", special_function = SF.RemoveTracker },
 
     [EHI:GetInstanceElementID(100209, 10450)] = { time = 3, id = "KeygenHack", icons = { Icon.PCHack } },
 
@@ -84,7 +85,7 @@ local triggers =
 
 local other =
 {
-    [100109] = { time = 50 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
+    [100109] = EHI:AddAssaultDelay({ time = 50 + 30 })
 }
 
 EHI:ParseTriggers({
@@ -100,5 +101,5 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
 end
 EHI:ShowLootCounter({
     max = required_bags,
-    additional_loot = (6 * bag_multiplier) + 10 -- (5 secondary wagons with 2 money bags)
+    additional_loot = (6 * bag_multiplier) + 8 -- (4 secondary wagons with 2 money bags); total 5 wagons, one is disabled
 })

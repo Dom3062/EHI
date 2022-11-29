@@ -369,6 +369,7 @@ tweak_data.ehi =
         single_shot_fast_reload =
         {
             u100skill = true,
+            text = "Rld+",
             x = 8,
             y = 3,
             option = "aggressive_reload"
@@ -396,6 +397,15 @@ tweak_data.ehi =
             x = 4,
             y = 9,
             option = "inspire_ace"
+        },
+        DireNeed =
+        {
+            u100skill = true,
+            text = "Stagger",
+            no_progress = true,
+            x = 10,
+            y = 8,
+            option = "dire_need"
         },
         Immunity =
         {

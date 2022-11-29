@@ -5,6 +5,10 @@
     "ehi_menu_next_page" : "Próxima página -->",
     "ehi_menu_previous_page" : "<-- Página anterior",
 
+    "ehi_language" : "Idioma",
+    "ehi_language_desc" : "Mude o idioma do mod. Carregar um mapa é preciso para ter efeito.",
+    "ehi_language_1" : "Auto detectação",
+
     "ehi_r" : "Vermelho",
     "ehi_g" : "Verde",
     "ehi_b" : "Azul",
@@ -147,7 +151,7 @@
     "ehi_show_equipment_ecmjammer_desc" : "Mostra um Tracker que exibe quanto tempo resta para um ECM Jammer\nUm ECM Jammer com a duração mais longa vai ser exibido no Tracker",
 
     "ehi_show_equipment_ecmfeedback" : "Mostrar a duração do ECM Feedback",
-    "ehi_show_equipment_ecmfeedback_desc" : "Mostra um Tracker que exibe quanto tempo resta para um ECM Feedback\nUm ECM Feedback com a duração mais longa vai ser exibido no Tracker (apenas host)\nPocket ECM Feedback também funciona para o Cliente",
+    "ehi_show_equipment_ecmfeedback_desc" : "Mostra um Tracker que exibe quanto tempo resta para um ECM Feedback\nUm ECM Feedback com a duração mais longa vai ser exibido no Tracker (apenas host)",
  
     "ehi_show_equipment_aggregate_all" : "Juntar todos os Equipamentos",
     "ehi_show_equipment_aggregate_all_desc" : "Junta todos os equipamentos em um Tracker só\nEquipamentos vão usar uma cor diferente mostrado abaixo",

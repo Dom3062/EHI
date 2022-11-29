@@ -57,7 +57,7 @@ local other =
         })
     end},
 
-    [104618] = { time = 30 + 1 + 5 + 30 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") }
+    [104618] = EHI:AddAssaultDelay({ time = 30 + 1 + 5 + 30 + 30 })
 }
 EHI:RegisterCustomSpecialFunction(FilterIsOk, function(id, trigger, element, enabled)
     if element:_check_difficulty() then

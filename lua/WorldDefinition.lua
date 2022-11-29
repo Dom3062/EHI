@@ -125,7 +125,7 @@ end
 
 function WorldDefinition:SetDeployableOffset(instance, unit_id, unit_data, unit)
     if unit:base() and unit:base().SetOffset then
-        unit:base():SetOffset(1)
+        unit:base():SetOffset(unit_data.offset or 1)
     end
 end
 

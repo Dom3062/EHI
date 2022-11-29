@@ -118,7 +118,7 @@ EHI:RegisterCustomSpecialFunction(LowerFloor, function(id, trigger, element, ena
 end)
 EHI:RegisterCustomSpecialFunction(RemoveTriggerAndShowAchievementFromStart, function(id, trigger, ...)
     if EHI:IsAchievementLocked(trigger.id) and not managers.statistics:is_dropin() then
-        EHI:CheckCondition(id)
+        EHI:CheckCondition(trigger)
     end
     EHI:UnhookTrigger(id)
 end)

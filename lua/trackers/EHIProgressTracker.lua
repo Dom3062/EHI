@@ -58,7 +58,7 @@ end
 
 function EHIProgressTracker:DecreaseProgress(progress)
     self:SetProgress(self._progress - (progress or 1))
-    self:SetTextColor(Color.white)
+    self:SetTextColor()
     self._disable_counting = false
 end
 

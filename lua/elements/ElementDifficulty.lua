@@ -38,19 +38,22 @@ else
     Trigger = function(value) end
 end
 
+local function Run(value)
+    Trigger(value)
+    AssaultDelay(value)
+end
+
 local _f_client_on_executed = ElementDifficulty.client_on_executed
 function ElementDifficulty:client_on_executed(...)
     _f_client_on_executed(self, ...)
-    Trigger(self._values.difficulty)
-    AssaultDelay(self._values.difficulty)
+    Run(self._values.difficulty)
 end
 
 local _f_on_executed = ElementDifficulty.on_executed
 function ElementDifficulty:on_executed(...)
-    _f_on_executed(self, ...)
     if not self._values.enabled then
         return
     end
-    Trigger(self._values.difficulty)
-    AssaultDelay(self._values.difficulty)
+    Run(self._values.difficulty)
+    _f_on_executed(self, ...)
 end

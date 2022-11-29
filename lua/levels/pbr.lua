@@ -44,7 +44,7 @@ local achievements =
 
 local other =
 {
-    [102292] = { time = 75 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") },
+    [102292] = EHI:AddAssaultDelay({ time = 75 + 30 })
 }
 
 EHI:ParseTriggers({

@@ -91,7 +91,7 @@ if OVKorAbove then
 end
 EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(id, ...)
     if managers.ehi:TrackerDoesNotExist("FultonCatch") then
-        EHI:CheckCondition(id)
+        EHI:CheckCondition(trigger)
     end
 end)
 EHI:AddLoadSyncFunction(function(self)

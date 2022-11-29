@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 EHIHeliTracker = class(EHICountTracker)
 EHIHeliTracker._forced_icons = { "enemy", { icon = Icon.Wait, visible = false } }
 EHIHeliTracker.AnimateCompletion = EHITimerTracker.AnimateCompletion
-function EHIHeliTracker:OverridePanel(params)
+function EHIHeliTracker:OverridePanel()
     self._time_text = self._time_bg_box:text({
         name = "time_text",
         text = EHIHeliTracker.super.super.Format(self),
@@ -13,7 +13,7 @@ function EHIHeliTracker:OverridePanel(params)
         h = self._time_bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
         font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
+        color = self._text_color
     })
     self._time_text:set_left(self._time_bg_box:right())
     self._panel_override_w = self._time_bg_box:w() + self._icon_size_scaled
@@ -103,7 +103,7 @@ local triggers = {
     [102001] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
 
     [100060] = { special_function = SF.Trigger, data = { 1000601, 1000602 } },
-    [1000601] = { id = "PanicRoomTakeoff", class = "EHIHeliTracker" },
+    [1000601] = { id = "PanicRoomTakeoff", flash_times = 1, class = "EHIHeliTracker" },
     [1000602] = { special_function = SF.CustomCode, f = function()
         local count = 0
         if EHI:IsPlayingFromStart() then
@@ -161,7 +161,7 @@ local triggers = {
 
 local achievements =
 {
-    [100809] = { time = 60, id = "cac_9", class = TT.Achievement, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement },
+    [100809] = { time = 60, id = "cac_9", class = TT.Achievement, difficulty_pass = ovk_and_up, trigger_times = 1 },
 
     [104859] = { id = "flat_2", special_function = SF.SetAchievementComplete },
     [100805] = { id = "cac_9", special_function = SF.SetAchievementComplete },
@@ -178,7 +178,7 @@ EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(id, trigge
         if managers.ehi:TrackerExists(trigger.id) then
             managers.ehi:SetTrackerTimeNoAnim(trigger.id, trigger.time)
         else
-            EHI:CheckCondition(id)
+            EHI:CheckCondition(trigger)
         end
     end
 end)

@@ -9,7 +9,7 @@ local function f_PilotComingInAgain(id, trigger, ...)
     if managers.ehi:TrackerExists(trigger.id) then
         managers.ehi:SetTrackerTime(trigger.id, trigger.time)
     else
-        EHI:CheckCondition(id)
+        EHI:CheckCondition(trigger)
     end
 end
 local PilotComingInAgain = EHI:GetFreeCustomSpecialFunctionID()
@@ -49,7 +49,7 @@ local achievements =
 
 local other =
 {
-    [100109] = { time = 100 + 30, id = "AssaultDelay", class = TT.AssaultDelay, condition = EHI:GetOption("show_assault_delay_tracker") },
+    [100109] = EHI:AddAssaultDelay({ time = 100 + 30 })
 }
 
 EHI:ParseTriggers({

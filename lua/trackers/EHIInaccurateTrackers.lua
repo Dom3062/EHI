@@ -4,23 +4,11 @@ local sin = math.sin
 local Color = Color
 EHIInaccurateTracker = class(EHITracker)
 EHIInaccurateTracker._tracker_type = "inaccurate"
-function EHIInaccurateTracker:init(panel, params)
-    params.text_color = color
-    EHIInaccurateTracker.super.init(self, panel, params)
-end
+EHIInaccurateTracker._text_color = color
 
 EHIInaccuratePausableTracker = class(EHIPausableTracker)
 EHIInaccuratePausableTracker._tracker_type = "inaccurate"
-function EHIInaccuratePausableTracker:init(panel, params)
-    self._text_color = color
-    params.text_color = color
-    EHIInaccuratePausableTracker.super.init(self, panel, params)
-end
-
-function EHIInaccuratePausableTracker:SetTextColor()
-    self._text:set_color(self._paused and Color.red or self._text_color)
-end
-
+EHIInaccuratePausableTracker._text_color = color
 function EHIInaccuratePausableTracker:SetTrackerAccurate(time)
     self._text_color = Color.white
     self:SetTextColor()
@@ -28,44 +16,23 @@ function EHIInaccuratePausableTracker:SetTrackerAccurate(time)
 end
 
 EHIInaccurateWarningTracker = class(EHIWarningTracker)
-function EHIInaccurateWarningTracker:init(panel, params)
-    params.text_color = color
-    EHIInaccurateWarningTracker.super.init(self, panel, params)
-end
-
+EHIInaccurateWarningTracker._text_color = color
 function EHIInaccurateWarningTracker:AnimateWarning()
-    local anim
     if self._tracker_is_accurate then
-        anim = function(o)
-            while true do
-                local t = 0
-
-                while t < 1 do
-                    t = t + coroutine.yield()
-                    local n = 1 - sin(t * 180)
-                    --local r = lerp(1, 0, n)
-                    local g = lerp(1, 0, n)
-
-                    o:set_color(Color(1, g, g))
-                end
-            end
-        end
+        EHIInaccurateWarningTracker.super.AnimateWarning(self)
     else
-        anim = function(o)
+        self._text:animate(function(o)
             while true do
-                local t = 0
-
-                while t < 1 do
-                    t = t + coroutine.yield()
-                    local n = 1 - sin(t * 180)
+                local t = 1
+                while t > 0 do
+                    t = t - coroutine.yield()
+                    local n = sin(t * 180)
                     local g = lerp(color.g, 0, n)
-
                     o:set_color(Color(1, g, 0))
                 end
             end
-        end
+        end)
     end
-    self._text:animate(anim)
 end
 
 function EHIInaccurateWarningTracker:SetTrackerAccurate(time)

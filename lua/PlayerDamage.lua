@@ -11,6 +11,23 @@ end
 
 local original = {}
 
+if EHI:GetBuffOption("dire_need") then
+    original.init = PlayerDamage.init
+    function PlayerDamage:init(...)
+        original.init(self, ...)
+        if self._dire_need then
+            local function clbk(stagger)
+                if stagger then
+                    managers.ehi_buff:AddBuffNoUpdate("DireNeed")
+                else
+                    managers.ehi_buff:RemoveBuff("DireNeed")
+                end
+            end
+            managers.player:register_message(Message.SetWeaponStagger, "EHI_Buff_DireNeed", clbk)
+        end
+    end
+end
+
 --//////////////////////////////--
 --//  Muscle / Hostage Taker  //--
 --//////////////////////////////--

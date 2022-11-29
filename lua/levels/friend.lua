@@ -85,7 +85,7 @@ local achievements =
 
 local other =
 {
-    [100109] = { time = 30 + 1 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.RemoveTriggerWhenExecuted, condition = EHI:GetOption("show_assault_delay_tracker") },
+    [100109] = EHI:AddAssaultDelay({ time = 30 + 1 + 30, trigger_times = 1 })
 }
 
 EHI:ParseTriggers({

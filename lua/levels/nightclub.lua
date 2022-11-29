@@ -16,8 +16,8 @@ local triggers = {
     [100832] = { time = 270 },
 
     -- Fire
-    [101412] = { time = 300, id = "fire1", icons = { Icon.Fire }, class = TT.Warning },
-    [101453] = { time = 300, id = "fire2", icons = { Icon.Fire }, class = TT.Warning },
+    [101412] = { time = 300, id = "Fire1", icons = { Icon.Fire }, class = TT.Warning },
+    [101453] = { time = 300, id = "Fire2", icons = { Icon.Fire }, class = TT.Warning },
 
     -- Asset
     [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = AssetLootDropOff }
@@ -33,8 +33,12 @@ if EHI:GetOption("show_escape_chance") then
     end)
 end
 
+local BaseAssaultDelay = 3.5 + 2.5 + 3 + 2 + 30
 local other =
 {
+    [101159] = EHI:AddAssaultDelay({ time = 12 + BaseAssaultDelay }),
+    [101166] = EHI:AddAssaultDelay({ time = 10 + BaseAssaultDelay }),
+    [101167] = EHI:AddAssaultDelay({ time = 15 + BaseAssaultDelay }),
     [104285] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 

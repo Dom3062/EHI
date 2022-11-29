@@ -2,7 +2,7 @@ local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local other = {
-    [102064] = { time = 60 + 1 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.RemoveTriggerWhenExecuted, condition = EHI:GetOption("show_assault_delay_tracker") }
+    [102064] = EHI:AddAssaultDelay({ time = 60 + 1 + 30, trigger_times = 1 })
 }
 
 local achievements =

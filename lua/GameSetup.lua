@@ -7,8 +7,7 @@ end
 
 local original =
 {
-    init_finalize = GameSetup.init_finalize,
-    load = GameSetup.load
+    init_finalize = GameSetup.init_finalize
 }
 
 local redirect =
@@ -153,7 +152,7 @@ local levels =
     -- Texas Heat campaign
     ranc = true, -- Midland Ranch
     trai = true, -- Lost in Transit
-    third_heist_of_the_Texas_Heat_campaign = true,
+    third_heist_of_the_Texas_Heat_campaign = true, -- Hostile Takeover
     fourth_and_last_heist_of_the_Texas_Heat_campaign = true
 }
 
@@ -203,9 +202,11 @@ function GameSetup:init_finalize(...)
     EHI:DisableWaypointsOnInit()
 end
 
-function GameSetup:load(data, ...)
+EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(...)
     EHI:FinalizeUnitsClient()
-    original.load(self, data, ...)
+end)
+
+EHI:HookWithID(GameSetup, "load", "EHI_GameSetup_load_Post", function(...)
     managers.ehi:LoadSync()
     EHI:SyncLoad()
-end
+end)

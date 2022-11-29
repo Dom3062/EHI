@@ -36,9 +36,9 @@ local triggers = {
 
 local achievements =
 {
-    [100698] = { special_function = SF.Trigger, data = { 1006981, 1006982 } },
-    [1006981] = { id = "man_2", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, special_function = SF.RemoveTriggerAndShowAchievement },
-    [1006982] = { id = "man_3", class = TT.AchievementStatus, special_function = SF.RemoveTriggerAndShowAchievement },
+    [100698] = { special_function = SF.Trigger, data = { 1006981, 1006982 }, trigger_times = 1 },
+    [1006981] = { id = "man_2", status = "no_down", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, trigger_times = 1 },
+    [1006982] = { id = "man_3", class = TT.AchievementStatus, trigger_times = 1 },
 
     [103963] = { id = "man_2", special_function = SF.SetAchievementFailed },
     [103957] = { id = "man_3", special_function = SF.SetAchievementFailed }

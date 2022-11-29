@@ -22,7 +22,7 @@ function EHIkosugi5Tracker:init(panel, params)
     })
 end
 
-function EHIkosugi5Tracker:OverridePanel(params)
+function EHIkosugi5Tracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self._armor_progress_text = self._time_bg_box:text({
@@ -34,7 +34,7 @@ function EHIkosugi5Tracker:OverridePanel(params)
         h = self._time_bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
+        color = self._text_color
     })
     self:FitTheText(self._armor_progress_text)
     self._armor_progress_text:set_left(self._text:right())
@@ -181,7 +181,7 @@ EHI:ParseTriggers({
 })
 EHI:RegisterCustomSpecialFunction(DisableTriggerAndExecute, function(id, t, ...)
     EHI:UnhookTrigger(t.data.id)
-    EHI:CheckCondition(id)
+    EHI:CheckCondition(t)
 end)
 EHI:AddLoadSyncFunction(function(self)
     self:SetTrackerProgress("kosugi_1", managers.loot:GetSecuredBagsAmount())

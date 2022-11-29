@@ -18,5 +18,5 @@ function EHIPausableTracker:SetPause(pause)
 end
 
 function EHIPausableTracker:SetTextColor(color)
-    self._text:set_color(self._paused and Color.red or (color or Color.white))
+    self._text:set_color(self._paused and Color.red or (color or self._text_color))
 end

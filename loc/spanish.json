@@ -5,6 +5,10 @@
     "ehi_menu_next_page" : "Página Siguiente -->",
     "ehi_menu_previous_page" : "<-- Página Anterior",
 
+    "ehi_language" : "Idioma",
+    "ehi_language_desc" : "Cambia el idioma del mod. Para que surta efecto, se requiere un reinicio de nivel.",
+    "ehi_language_1" : "Detectar Automáticamente",
+
     "ehi_r" : "Rojo",
     "ehi_g" : "Verde",
     "ehi_b" : "Azul",

@@ -10,7 +10,7 @@ function EHIsand11Tracker:init(panel, params)
     EHIsand11Tracker.super.init(self, panel, params)
 end
 
-function EHIsand11Tracker:OverridePanel(params)
+function EHIsand11Tracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self._text_chance = self._time_bg_box:text({
@@ -22,7 +22,7 @@ function EHIsand11Tracker:OverridePanel(params)
         h = self._time_bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
         font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
+        color = self._text_color
     })
     self._text_chance:set_right(self._time_bg_box:right())
     if self._icon1 then

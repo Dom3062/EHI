@@ -10,6 +10,10 @@
     "ehi_menu_next_page" : "Next Page -->",
     "ehi_menu_previous_page" : "<-- Previous Page",
 
+    "ehi_language" : "Language",
+    "ehi_language_desc" : "Changes mod language. To take effect, a level restart is required.",
+    "ehi_language_1" : "Autodetect",
+
     "ehi_menu_only" : "Menu only",
     "ehi_show_preview_text" : "Show Preview Text",
     "ehi_show_preview_text_desc" : "Hides or shows preview text",
@@ -243,7 +247,7 @@
     "ehi_show_equipment_ecmjammer_desc" : "Shows a tracker for the remaining duration of an ECM Jammer\nAn ECM Jammer with the longest duration is shown in the tracker",
 
     "ehi_show_equipment_ecmfeedback" : "Show ECM Feedback Duration Tracker",
-    "ehi_show_equipment_ecmfeedback_desc" : "Shows a tracker for the remaining duration of an ECM Feedback\nAn ECM Feedback with the longest duration is shown in the tracker (host only)\nPocket ECM Feedback also works clientside",
+    "ehi_show_equipment_ecmfeedback_desc" : "Shows a tracker for the remaining duration of an ECM Feedback\nAn ECM Feedback with the longest duration is shown in the tracker (host only)",
 
     "ehi_show_equipment_aggregate_health" : "Aggregate Doctor Bags and First Aid Kits",
     "ehi_show_equipment_aggregate_health_desc" : "Aggregates Doctor Bags and First Aid Kits into one tracker",
@@ -402,6 +406,8 @@
     "ehi_buffs_skills_ghost_sixth_sense_marked" : "Sixth Sense (Marked units)",
     "ehi_buffs_skills_ghost_sixth_sense_marked_desc" : "Shows a gauge with how many units are currently marked with Sixth Sense",
     "ehi_buffs_skills_ghost_sixth_sense_refresh" : "Sixth Sense (Refresh Delay)",
+    "ehi_buffs_skills_ghost_artful_dodger_subclass" : "Artful Dodger",
+    "ehi_buffs_skills_ghost_dire_need" : "Dire Need",
     "ehi_buffs_skills_ghost_silent_killer_subclass" : "Silent Killer",
     "ehi_buffs_skills_ghost_second_wind" : "Second Wind",
     "ehi_buffs_skills_ghost_unseen_strike" : "Unseen Strike",

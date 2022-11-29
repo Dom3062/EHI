@@ -58,6 +58,7 @@ function EHIBuffManager:InitializeBuffs()
             params.texture, params.texture_rect = GetIcon(buff)
             params.format = buff.format
             params.good = not buff.bad
+            params.no_progress = buff.no_progress
             params.max = buff.max
             params.class = buff.class
             params.scale = self._scale
@@ -84,6 +85,7 @@ function EHIBuffManager:InitializeTagTeamBuffs()
             params.h = buff_h
             params.texture = texture
             params.texture_rect = texture_rect
+            params.good = true
             params.icon_color = tweak_data.chat_colors[i] or Color.white
             params.scale = self._scale
             params.parent_class = self
@@ -157,6 +159,20 @@ end
 function EHIBuffManager:AddBuff3(id, start_t, end_t)
     local t = end_t - start_t + 0.2
     self:AddBuff(id, t)
+end
+
+function EHIBuffManager:AddBuffNoUpdate(id)
+    local buff = self._buffs[id]
+    if buff then
+        if buff:IsActive() then
+            return
+        else
+            buff:ActivateNoUpdate(nil, self._n_visible)
+            self._visible_buffs[id] = true
+            self._n_visible = self._n_visible + 1
+            self:ReorganizeFast(buff)
+        end
+    end
 end
 
 function EHIBuffManager:AddGauge(id, ratio)
@@ -297,6 +313,20 @@ elseif alignment == 2 then -- Center
                 buff:Extend(t)
             else
                 buff:Activate(t, self._n_visible)
+                self._visible_buffs[id] = true
+                self._n_visible = self._n_visible + 1
+                self:Reorganize()
+            end
+        end
+    end
+
+    function EHIBuffManager:AddBuffNoUpdate(id)
+        local buff = self._buffs[id]
+        if buff then
+            if buff:IsActive() then
+                return
+            else
+                buff:ActivateNoUpdate(nil, self._n_visible)
                 self._visible_buffs[id] = true
                 self._n_visible = self._n_visible + 1
                 self:Reorganize()

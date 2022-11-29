@@ -98,6 +98,15 @@ function EHIAssaultDelayTracker:StartAnticipation(t)
     end
 end
 
+function EHIAssaultDelayTracker:SetTime(time)
+    if self._hostage_delay_disabled then
+        return
+    end
+    self._hostages_found = false
+    EHIAssaultDelayTracker.super.SetTime(self, time)
+    self:CheckIfHostageIsPresent()
+end
+
 function EHIAssaultDelayTracker:UpdateDiff(diff)
     if self._hostage_delay_disabled or self._ignores_diff_update then
         return

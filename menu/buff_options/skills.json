@@ -30,7 +30,7 @@
             "id": "ehi_buffs_skills_ghost_menu",
             "title": "ehi_buffs_skills_ghost_menu",
             "next_menu": "ehi_buffs_skills_ghost_menu",
-            "ehi_ver" : 79
+            "ehi_ver" : 100
         },
         {
             "type": "divider",

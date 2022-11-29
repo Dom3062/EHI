@@ -10,7 +10,38 @@ local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_ico
 if EHI:GetOption("show_one_icon") then
     refill_icon = { { icon = Icon.Water, color = Color("D4F1F9") } }
 end
+local keycode_units =
+{
+    red =
+    {
+        unit_id = 100000,
+        indexes = { 28250, 15020, 15120 }
+    },
+    green =
+    {
+        unit_ids = { 100125, 100113, 100224, 100225, 100007, 100290 },
+        indexes = { 21500, 25000, 31225 }
+    },
+    blue =
+    {
+        unit_ids = { 100061, 100064 },
+        index = 15370
+    }
+}
+local DontTriggerWithC4Entry = EHI:GetFreeCustomSpecialFunctionID()
+local RemoveColorsIfEnabled = EHI:GetFreeCustomSpecialFunctionID()
+local preload =
+{
+    { id = "RefillLeft01", icons = refill_icon, hide_on_delete = true },
+    { id = "RefillLeft02", icons = refill_icon, hide_on_delete = true },
+    { id = "RefillRight01", icons = refill_icon, hide_on_delete = true },
+    { id = "RefillRight02", icons = refill_icon, hide_on_delete = true }
+}
 local triggers = {
+    [100282] = { id = "ColorCodes", class = TT.ColoredCodes, special_function = DontTriggerWithC4Entry },
+    [100091] = { id = "ColorCodes", special_function = SF.RemoveTracker }, -- Code entered (stealth)
+    [101357] = { id = "ColorCodes", special_function = RemoveColorsIfEnabled }, -- Code entered (loud)
+
     [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { position = Vector3(9823.0, -40877.0, -2987.0) + Vector3(0, 0, 0):rotate_with(Rotation()) } },
 
     [EHI:GetInstanceElementID(100030, 11750)] = { time = 5, id = "C4Lower", icons = { Icon.C4 } },
@@ -26,10 +57,10 @@ local triggers = {
     [EHI:GetInstanceElementID(100042, 15295)] = heli_30,
 
     -- Toilets
-    [EHI:GetInstanceElementID(100181, 13000)] = { time = 30, id = "RefillLeft01", icons = refill_icon },
-    [EHI:GetInstanceElementID(100233, 13000)] = { time = 30, id = "RefillRight01", icons = refill_icon },
-    [EHI:GetInstanceElementID(100299, 13000)] = { time = 30, id = "RefillLeft02", icons = refill_icon },
-    [EHI:GetInstanceElementID(100300, 13000)] = { time = 30, id = "RefillRight02", icons = refill_icon },
+    [EHI:GetInstanceElementID(100181, 13000)] = { id = "RefillLeft01", run = { time = 30 } },
+    [EHI:GetInstanceElementID(100233, 13000)] = { id = "RefillRight01", run = { time = 30 } },
+    [EHI:GetInstanceElementID(100299, 13000)] = { id = "RefillLeft02", run = { time = 30 } },
+    [EHI:GetInstanceElementID(100300, 13000)] = { id = "RefillRight02", run = { time = 30 } },
 
     [100489] = { special_function = SF.RemoveTrackers, data = { "WaterTimer1", "WaterTimer2" } },
 
@@ -53,6 +84,48 @@ local triggers = {
 
     [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { Icon.Loop } }
 }
+if EHI:GetOption("show_mission_trackers") then
+    local function hook(unit_id, color)
+        for i = 0, 9, 1 do
+            managers.mission:add_runned_unit_sequence_trigger(unit_id, "set_" .. color .. "_0" .. tostring(i), function(...)
+                managers.ehi:CallFunction("ColorCodes", "SetCode", color, i)
+            end)
+        end
+    end
+    for color, data in pairs(keycode_units) do
+        if data.unit_ids then
+            for _, unit_id in ipairs(data.unit_ids) do
+                if data.indexes then
+                    for _, index in ipairs(data.indexes) do
+                        hook(EHI:GetInstanceUnitID(unit_id, index), color)
+                    end
+                else
+                    hook(EHI:GetInstanceUnitID(unit_id, data.index), color)
+                end
+            end
+        else
+            local unit_id = data.unit_id
+            if data.indexes then
+                for _, index in ipairs(data.indexes) do
+                    hook(EHI:GetInstanceUnitID(unit_id, index), color)
+                end
+            else
+                hook(EHI:GetInstanceUnitID(unit_id, data.index), color)
+            end
+        end
+    end
+end
+EHI:RegisterCustomSpecialFunction(DontTriggerWithC4Entry, function(id, trigger, ...)
+    if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
+        return
+    end
+    EHI:AddTracker(trigger)
+end)
+EHI:RegisterCustomSpecialFunction(RemoveColorsIfEnabled, function(id, trigger, element, enabled)
+    if enabled then
+        managers.ehi:RemoveTracker(trigger.id)
+    end
+end)
 
 local kenaz_5 = { id = "kenaz_5", class = TT.AchievementStatus }
 local achievements =
@@ -70,16 +143,39 @@ local achievements =
     [102809] = { id = "kenaz_3", special_function = SF.SetAchievementFailed },
     [103163] = { status = "finish", id = "kenaz_3", special_function = SF.SetAchievementStatus },
 }
+
+local Alarm = EHI:GetFreeCustomSpecialFunctionID()
+local other =
+{
+    [100228] = EHI:AddAssaultDelay({ time = 35 + 1 + 30, special_function = Alarm })
+}
+EHI:RegisterCustomSpecialFunction(Alarm, function(id, trigger, ...)
+    local t = 0
+    if managers.preplanning:IsAssetBought(101858) then
+        t = 10
+    elseif managers.preplanning:IsAssetBought(101815) then
+        t = 30
+    end
+    trigger.time = trigger.time + t
+    EHI:CheckCondition(trigger)
+end)
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other,
+    preload = preload
 })
-EHI:HookWithID(MissionEndState, "at_enter", function(self, ...)
-    if self._success then
-        managers.ehi:SetAchievementComplete("kenaz_4", true)
-    end
-end)
+EHI:ShowLootCounter({
+    max = 1, -- Dentist loot; mandatory
+    additional_loot = 44 -- Money
+})
 if EHI:ShowMissionAchievements() then
+    EHI:HookWithID(MissionEndState, "at_enter", "EHI_kenaz_4_complete", function(self, ...)
+        if self._success then
+            managers.ehi:SetAchievementComplete("kenaz_4", true)
+        end
+    end)
     EHI:AddLoadSyncFunction(function(self)
         self:AddTimedAchievementTracker("kenaz_4", 840)
     end)
@@ -101,3 +197,83 @@ local tbl =
     [EHI:GetInstanceElementID(100000, 44535)] = { icons = { Icon.Drill }, ignore_visibility = true }
 }
 EHI:UpdateUnits(tbl)
+
+if EHI:IsHost() then
+    return
+end
+local bg = Idstring("g_top_opened"):key()
+local codes = {}
+for _, color in ipairs({ "red", "green", "blue" }) do
+    codes[color] = {}
+    local _c = codes[color]
+    for i = 0, 9, 1 do
+        local str = "g_number_" .. color .. "_0" .. tostring(i)
+        _c[i] = Idstring(str):key()
+    end
+end
+local function CheckIfCodeIsVisible(unit, color)
+    if not unit then
+        return nil
+    end
+    local color_codes = codes[color]
+    local object = unit:damage() and unit:damage()._state and unit:damage()._state.object
+    if object and object[bg] then
+        for i = 0, 9, 1 do
+            if object[color_codes[i]] then
+                return i
+            end
+        end
+    end
+    return nil -- Has not been interacted yet
+end
+EHI:AddLoadSyncFunction(function(self)
+    if EHI.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
+        return
+    elseif managers.game_play_central:IsMissionElementEnabled(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
+        return
+    end
+    EHI:Trigger(100282)
+    local wd = managers.worlddefinition
+    for color, data in pairs(keycode_units) do
+        if data.unit_ids then
+            for _, unit_id in ipairs(data.unit_ids) do
+                if data.indexes then
+                    for _, index in ipairs(data.indexes) do
+                        local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
+                        local code = CheckIfCodeIsVisible(unit, color)
+                        if code then
+                            managers.ehi:CallFunction("ColorCodes", "SetCode", color, code)
+                            break
+                        end
+                    end
+                else
+                    local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
+                    local code = CheckIfCodeIsVisible(unit, color)
+                    if code then
+                        managers.ehi:CallFunction("ColorCodes", "SetCode", color, code)
+                        break
+                    end
+                end
+            end
+        else
+            local unit_id = data.unit_id
+            if data.indexes then
+                for _, index in ipairs(data.indexes) do
+                    local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
+                    local code = CheckIfCodeIsVisible(unit, color)
+                    if code then
+                        managers.ehi:CallFunction("ColorCodes", "SetCode", color, code)
+                        break
+                    end
+                end
+            else
+                local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
+                local code = CheckIfCodeIsVisible(unit, color)
+                if code then
+                    managers.ehi:CallFunction("ColorCodes", "SetCode", color, code)
+                    break
+                end
+            end
+        end
+    end
+end)

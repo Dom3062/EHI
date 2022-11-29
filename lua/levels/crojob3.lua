@@ -59,7 +59,7 @@ end
 
 local achievements =
 {
-    [103461] = { time = 5, id = "cow_3", class = TT.Achievement, special_function = SF.RemoveTriggerAndShowAchievement },
+    [103461] = { time = 5, id = "cow_3", class = TT.Achievement, trigger_times = 1 },
     [103458] = { id = "cow_3", special_function = SF.SetAchievementComplete },
 
     [101031] = { id = "cow_4", status = "defend", class = TT.AchievementStatus, special_function = cow_4 },
@@ -91,7 +91,7 @@ local other =
             hook_triggers = true
         })
     end},
-    [101018] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 }, condition = EHI:GetOption("show_assault_delay_tracker") }
+    [101018] = EHI:AddAssaultDelay({ time = 30, special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 } })
 }
 if LootCounter then
     -- 1 random loot in train wagon, 35% chance to spawn
@@ -135,6 +135,6 @@ EHI:ParseTriggers({
 })
 EHI:RegisterCustomSpecialFunction(cow_4, function(id, trigger, element, enabled)
     if enabled and EHI:IsAchievementLocked(trigger.id) then
-        EHI:CheckCondition(id)
+        EHI:CheckCondition(trigger)
     end
 end)

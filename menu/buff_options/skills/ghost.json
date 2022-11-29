@@ -47,6 +47,26 @@
         },
         {
             "type" : "label",
+            "title" : "ehi_buffs_skills_ghost_artful_dodger_subclass",
+            "center" : true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_ghost_dire_need_choice",
+            "title": "ehi_buffs_skills_ghost_dire_need",
+            "description": "",
+            "callback": "SetBuffOption",
+            "callback_arguments": "dire_need",
+            "value": "dire_need",
+            "default_value": true,
+            "ehi_ver" : 100
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type" : "label",
             "title" : "ehi_buffs_skills_ghost_silent_killer_subclass",
             "center" : true
         },

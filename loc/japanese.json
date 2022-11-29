@@ -8,6 +8,10 @@
   "ehi_menu_next_page": "次のページ -->",
   "ehi_menu_previous_page": "<-- 前のページ",
 
+  "ehi_language": "言語",
+  "ehi_language_desc": "Modの言語を変更します。適用にはレベルの再読み込みが必要です。",
+  "ehi_language_1": "自動検出",
+
   "ehi_menu_only": "メニューのみ",
   "ehi_show_preview_text": "プレビューテキストを表示",
   "ehi_show_preview_text_desc": "プレビューテキストの表示/非表示",
@@ -188,7 +192,7 @@
   "ehi_show_equipment_ecmjammer_desc": "ECM Jammerの効果時間のトラッカーを表示します。\n最も効果時間の長い物がトラッカーに表示されます。",
 
   "ehi_show_equipment_ecmfeedback": "ECM Feedbackの効果時間を表示",
-  "ehi_show_equipment_ecmfeedback_desc": "ECM Feedbackの効果時間のトラッカーを表示します。\n最も効果時間の長い物がトラッカーに表示されます。(ホストのみ)\nポケットECMフィードバックはクライアント側でも動作します。",
+  "ehi_show_equipment_ecmfeedback_desc": "ECM Feedbackの効果時間のトラッカーを表示します。\n最も効果時間の長い物がトラッカーに表示されます。(ホストのみ)",
 
   "ehi_show_equipment_aggregate_health": "Doctor BagとFirst Aid Kitを集約",
   "ehi_show_equipment_aggregate_health_desc": "Doctor BagとFirst Aid Kitを1つのトラッカーに集約します。",
@@ -324,6 +328,8 @@
     "ehi_buffs_skills_ghost_sixth_sense_marked" : "Sixth Sense (Marked units)",
     "ehi_buffs_skills_ghost_sixth_sense_marked_desc" : "Shows a gauge with how many units are currently marked with Sixth Sense",
     "ehi_buffs_skills_ghost_sixth_sense_refresh" : "Sixth Sense (Refresh Delay)",
+    "ehi_buffs_skills_ghost_artful_dodger_subclass" : "Artful Dodger",
+    "ehi_buffs_skills_ghost_dire_need" : "Dire Need",
     "ehi_buffs_skills_ghost_silent_killer_subclass" : "Silent Killer",
     "ehi_buffs_skills_ghost_second_wind" : "Second Wind",
     "ehi_buffs_skills_ghost_unseen_strike" : "Unseen Strike",

@@ -47,7 +47,7 @@ EHI:RegisterCustomSpecialFunction(SetTimeIfEnabled, function(id, trigger, elemen
         if managers.ehi:TrackerExists(trigger.id) then
             managers.ehi:SetTrackerTime(trigger.id, trigger.time)
         else
-            EHI:CheckCondition(id)
+            EHI:CheckCondition(trigger)
         end
     end
 end)

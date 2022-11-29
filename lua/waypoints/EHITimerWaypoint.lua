@@ -1,10 +1,9 @@
 local function completion(o, icon, arrow, bitmap_world)
     while true do
-        local t = 0
-        while t < 1 do
-            t = t + coroutine.yield()
-            local n = 1 - math.sin(t * 180)
-            --local r = lerp(1, 0, n)
+        local t = 1
+        while t > 0 do
+            t = t - coroutine.yield()
+            local n = math.sin(t * 180)
             local g = math.lerp(1, 0, n)
             local c = Color(g, 1, g)
             o:set_color(c)
@@ -73,7 +72,7 @@ function EHITimerWaypoint:SetColorBasedOnStatus()
         self:SetColor(Color.red)
     else
         self:SetColor(self._default_color)
-        if self._time <= 10 and self._animate_warning and not self._warning_started then
+        if self._time <= 10 and self._warning and not self._warning_started then
             self._warning_started = true
             self:AnimateWarning()
         end

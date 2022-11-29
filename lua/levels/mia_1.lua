@@ -95,7 +95,7 @@ local MethbagsPossibleToSpawn = 19
 local MethlabExploded = false
 local other =
 {
-    [101937] = { time = 10 + 1 + 40 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 }, condition = EHI:GetOption("show_assault_delay_tracker") },
+    [101937] = EHI:AddAssaultDelay({ time = 10 + 1 + 40 + 30, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 } }),
 
     [101218] = { special_function = SF.CustomCode, f = function()
         if not LootCounter then

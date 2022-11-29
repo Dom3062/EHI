@@ -82,8 +82,8 @@ function ZipLine:UnhookUpdateLoop()
     self._update_hooked = nil
 end
 
-function ZipLine:set_usage_type(usage_type, ...)
-    original.set_usage_type(self, usage_type, ...)
+function ZipLine:set_usage_type(...)
+    original.set_usage_type(self, ...)
     if self:is_usage_type_bag() then
         self:HookUpdateLoop()
     else
@@ -104,8 +104,8 @@ function ZipLine:attach_bag(...)
     original.attach_bag(self, ...)
     local total_time = self:total_time()
     local total_time_2 = total_time * 2
-    managers.ehi:RunTracker(self._ehi_key_bag_half, total_time)
-    managers.ehi:RunTracker(self._ehi_key_bag_full, total_time_2)
+    managers.ehi:RunTracker(self._ehi_key_bag_half, { time = total_time })
+    managers.ehi:RunTracker(self._ehi_key_bag_full, { time = total_time_2 })
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_bag_full, {
             time = total_time_2,
@@ -122,8 +122,8 @@ local function AddUserZipline(self, unit)
     end
     local total_time = self:total_time()
     local total_time_2 = total_time * 2
-    managers.ehi:RunTracker(self._ehi_key_user_half, total_time)
-    managers.ehi:RunTracker(self._ehi_key_user_full, total_time_2)
+    managers.ehi:RunTracker(self._ehi_key_user_half, { time = total_time })
+    managers.ehi:RunTracker(self._ehi_key_user_full, { time = total_time_2 })
     if show_waypoint then
         local local_unit = unit == managers.player:player_unit()
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_user_full, {

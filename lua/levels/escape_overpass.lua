@@ -51,5 +51,5 @@ EHI:RegisterCustomSpecialFunction(GetFromCache, function(id, trigger, ...)
     if data and data.icon then
         trigger.icons[1] = data.icon
     end
-    EHI:CheckCondition(id)
+    EHI:CheckCondition(trigger)
 end)

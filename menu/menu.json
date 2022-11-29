@@ -4,6 +4,33 @@
     "description": "ehi_mod_desc",
     "items": [
         {
+            "type": "multiple_choice",
+            "id": "ehi_mod_language_choice",
+            "title": "ehi_language",
+            "description": "ehi_language_desc",
+            "callback": "SetOption",
+            "callback_arguments": "mod_language",
+            "items": [
+                "ehi_language_1",
+                "ehi_language_2",
+                "ehi_language_3",
+                "ehi_language_4",
+                "ehi_language_5",
+                "ehi_language_6",
+                "ehi_language_7",
+                "ehi_language_8",
+                "ehi_language_9",
+                "ehi_language_10",
+                "ehi_language_11"
+            ],
+            "value": "mod_language",
+            "default_value": 1
+        },
+        {
+            "type" : "divider",
+            "size" : 20
+        },
+        {
             "type": "slider",
             "id": "ehi_x_offset",
             "title": "ehi_x_offset",
@@ -132,7 +159,7 @@
             "title": "ehi_buffs_menu",
             "description": "ehi_buffs_menu_desc",
             "next_menu": "ehi_buffs_menu",
-            "ehi_ver" : 98
+            "ehi_ver" : 100
         },
         {
             "type" : "divider",

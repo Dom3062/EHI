@@ -7,15 +7,20 @@ local van_delay_ovk = 6 -- 1 second before setting up the timer and 5 seconds af
 local heli_delay = 19
 local anim_delay = 743/30 -- 743/30 is a animation duration; 3s is zone activation delay (never used when van is coming back)
 local heli_delay_full = 13 + 19 -- 13 = Base Delay; 19 = anim delay
-local heli_icon = { Icon.Heli, Icon.Methlab, Icon.Goto }
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers =
 {
     [100494] = { id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100724, set_time_when_tracker_exists = true }
 }
+local preload =
+{
+    { id = "Van", icons = Icon.CarEscape, hide_on_delete = true },
+    { id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning, hide_on_delete = true },
+    { id = "HeliMeth", icons = { Icon.Heli, Icon.Methlab, Icon.Goto }, hide_on_delete = true }
+}
 local triggers = {
-    [102318] = { time = 60 + 60 + 30 + 15 + anim_delay, id = "Van", icons = Icon.CarEscape },
-    [102319] = { time = 60 + 60 + 60 + 30 + 15 + anim_delay, id = "Van", icons = Icon.CarEscape },
+    [102318] = { id = "Van", run = { time = 60 + 60 + 30 + 15 + anim_delay } },
+    [102319] = { id = "Van", run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay } },
     [101001] = { special_function = SF.Trigger, data = { 1010011, 1010012 } },
     [1010011] = { special_function = SF.RemoveTrackers, data = { "CookChance", "VanStayDelay" } },
     [1010012] = { special_function = SF.RemoveTriggers, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238 } },
@@ -26,37 +31,37 @@ local triggers = {
 
     [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact } },
 
-    [102167] = { time = 60 + heli_delay, id = "HeliMeth", icons = heli_icon },
-    [102168] = { time = 90 + heli_delay, id = "HeliMeth", icons = heli_icon },
+    [102167] = { id = "HeliMeth", run = { time = 60 + heli_delay } },
+    [102168] = { id = "HeliMeth", run = { time = 90 + heli_delay } },
 
-    [102220] = { time = 60 + van_delay_ovk, id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning },
-    [102219] = { time = 45 + van_delay, id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning },
-    [102229] = { time = 90 + van_delay_ovk, id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning },
-    [102235] = { time = 100 + van_delay_ovk, id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning },
-    [102236] = { time = 50 + van_delay, id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning },
-    [102237] = { time = 60 + van_delay_ovk, id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning },
-    [102238] = { time = 70 + van_delay_ovk, id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning },
+    [102220] = { id = "VanStayDelay", run = { time = 60 + van_delay_ovk } },
+    [102219] = { id = "VanStayDelay", run = { time = 45 + van_delay } },
+    [102229] = { id = "VanStayDelay", run = { time = 90 + van_delay_ovk } },
+    [102235] = { id = "VanStayDelay", run = { time = 100 + van_delay_ovk } },
+    [102236] = { id = "VanStayDelay", run = { time = 50 + van_delay } },
+    [102237] = { id = "VanStayDelay", run = { time = 60 + van_delay_ovk } },
+    [102238] = { id = "VanStayDelay", run = { time = 70 + van_delay_ovk } },
 
     [1] = { special_function = SF.RemoveTriggers, data = { 101972, 101973, 101974, 101975 } },
-    [101972] = { time = 60 + 60 + 60 + 30 + 15 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
-    [101973] = { time = 60 + 60 + 30 + 15 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
-    [101974] = { time = 60 + 30 + 15 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
-    [101975] = { time = 30 + 15 + anim_delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+    [101972] = { run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+    [101973] = { run = { time = 60 + 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+    [101974] = { run = { time = 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+    [101975] = { run = { time = 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
 
     [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", Icon.Goto }, class = TT.Warning },
 
     [101982] = { special_function = SF.Trigger, data = { 1019821, 1019822 } },
-    [1019821] = { time = 589/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
-    [1019822] = { id = 101281, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-1133.0, 1264.0, 1289.0) } },
+    [1019821] = { id = "Van", special_function = SF.SetTimeOrCreateTracker, run = { time = 589/30 } },
+    [1019822] = { id = 101281, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101281 } },
 
-    [101128] = { id = 101454, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-1374.0, -2388.0, 1135.0) } },
+    [101128] = { id = 101454, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101454 } },
 
     [100723] = { id = "CookChance", special_function = SF.IncreaseChanceFromElement }
 }
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
-    triggers[102197] = { time = 180 + heli_delay_full, id = "HeliMeth", icons = heli_icon }
+    triggers[102197] = { id = "HeliMeth", run = { time = 180 + heli_delay_full } }
 elseif EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
-    triggers[102197] = { time = 120 + heli_delay_full, id = "HeliMeth", icons = heli_icon }
+    triggers[102197] = { id = "HeliMeth", run = { time = 120 + heli_delay_full } }
 end
 if EHI:IsClient() then
     local SetTimeNoAnimOrCreateTrackerClient = EHI:GetFreeCustomSpecialFunctionID()
@@ -67,9 +72,9 @@ if EHI:IsClient() then
         local value = managers.ehi:ReturnValue(key, "GetTrackerType")
         if value ~= "accurate" then
             if managers.ehi:TrackerExists(key) then
-                managers.ehi:SetTrackerTimeNoAnim(key, EHI:GetTime(id))
+                managers.ehi:SetTrackerTimeNoAnim(key, EHI:GetTime(trigger))
             else
-                EHI:CheckCondition(id)
+                EHI:CheckCondition(trigger)
             end
         end
     end)
@@ -88,21 +93,16 @@ local achievements =
     [102611] = { id = "voff_5", special_function = SF.IncreaseProgress },
 }
 
-local other = {}
-if EHI:GetOption("show_assault_delay_tracker") then
-    if EHI:GetOption("show_mission_trackers") then
-        triggers[102383].special_function = SF.CreateAnotherTrackerWithTracker
-        triggers[102383].data = { fake_id = 1023831 }
-        other[1023831] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30, id = "AssaultDelay", class = TT.AssaultDelay }
-    else
-        other[102383] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30, id = "AssaultDelay", class = TT.AssaultDelay }
-    end
-end
+local other =
+{
+    [102383] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30, id = "AssaultDelay", class = TT.AssaultDelay }
+}
 
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    preload = preload
 }, "Van", Icon.CarEscape)
 if EHI:ShowMissionAchievements() and ovk_and_up then
     EHI:ShowAchievementLootCounter({

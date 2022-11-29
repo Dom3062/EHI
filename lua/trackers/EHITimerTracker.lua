@@ -21,9 +21,7 @@ function EHITimerTracker:init(panel, params)
         self:SetUpgradeable(true)
         self:SetUpgrades(params.upgrades)
     end
-    if params.autorepair then
-        self:SetAutorepair(params.autorepair)
-    end
+    self:SetAutorepair(params.autorepair)
     self._animate_warning = params.warning
     if params.completion then
         self._animate_warning = true
@@ -42,18 +40,17 @@ end
 
 function EHITimerTracker:AnimateWarning(check_progress)
     if self._text and alive(self._text) then
-        local start_t = check_progress and (min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 0
+        local start_t = check_progress and (1 - min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 1
         self._text:animate(function(o)
             while true do
                 local t = start_t
-                while t < 1 do
-                    t = t + coroutine.yield()
-                    local n = 1 - sin(t * 180)
-                    --local r = lerp(1, 0, n)
+                while t > 0 do
+                    t = t - coroutine.yield()
+                    local n = sin(t * 180)
                     local g = lerp(1, 0, n)
                     o:set_color(Color(1, g, g))
                 end
-                start_t = 0
+                start_t = 1
             end
         end)
     end
@@ -61,18 +58,17 @@ end
 
 function EHITimerTracker:AnimateCompletion(check_progress)
     if self._text and alive(self._text) then
-        local start_t = check_progress and (min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 0
+        local start_t = check_progress and (1 - min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 1
         self._text:animate(function(o)
             while true do
                 local t = start_t
-                while t < 1 do
-                    t = t + coroutine.yield()
-                    local n = 1 - sin(t * 180)
-                    --local r = lerp(1, 0, n)
+                while t > 0 do
+                    t = t - coroutine.yield()
+                    local n = sin(t * 180)
                     local g = lerp(1, 0, n)
                     o:set_color(Color(g, 1, g))
                 end
-                start_t = 0
+                start_t = 1
             end
         end)
     end

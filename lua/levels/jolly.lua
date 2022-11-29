@@ -1,6 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
 local c4_drop = { time = 120 + 25 + 0.25 + 2, id = "C4Drop", icons = Icon.HeliDropC4 }
 local SF_HeliTimer = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
@@ -37,7 +38,13 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100051, 21250)] = { time = 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
-EHI:ParseTriggers({ mission = triggers })
+local other =
+{
+    -- Shorter by 20s for some reason
+    --[100217] = { time = 30 + 30, id = "AssaultDelay", class = TT.AssaultDelay, trigger_times = 1 }
+}
+
+EHI:ParseTriggers({ mission = triggers, other = other })
 EHI:RegisterCustomSpecialFunction(SF_HeliTimer, function(id, trigger, element, enabled)
     if not managers.user:get_setting("mute_heist_vo") then
         local delay_fix = triggers[1][trigger.dialog] or 0
@@ -46,7 +53,7 @@ EHI:RegisterCustomSpecialFunction(SF_HeliTimer, function(id, trigger, element, e
     if managers.ehi:TrackerExists(trigger.id) then
         managers.ehi:SetTrackerTimeNoAnim(trigger.id, trigger.time)
     else
-        EHI:CheckCondition(id)
+        EHI:CheckCondition(trigger)
     end
 end)
 
