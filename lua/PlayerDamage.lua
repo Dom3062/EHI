@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.PlayerDamage then
+if EHI:CheckLoadHook("PlayerDamage") then
     return
-else
-    EHI._hooks.PlayerDamage = true
 end
 
 if not EHI:GetOption("show_buffs") then

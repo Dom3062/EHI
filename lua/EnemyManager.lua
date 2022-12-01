@@ -1,7 +1,5 @@
-if EHI._hooks.EnemyManager then
-	return
-else
-	EHI._hooks.EnemyManager = true
+if EHI:CheckLoadHook("EnemyManager") then
+    return
 end
 
 function EnemyManager:GetNumberOfEnemies()

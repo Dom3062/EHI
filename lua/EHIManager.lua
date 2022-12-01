@@ -1,5 +1,5 @@
 local EHI = EHI
-EHIManager = EHIManager or class()
+EHIManager = class()
 function EHIManager:init()
     self:CreateWorkspace()
     self._t = 0
@@ -163,13 +163,13 @@ function EHIManager:CountLootbagsAvailable(path, loot_type, slotmask)
 end
 
 function EHIManager:LoadSync()
-    if self._level_started_from_beginning or self._synced_from_host then
-        for _, f in pairs(self._full_sync or {}) do
+    if self._level_started_from_beginning then
+        for _, f in ipairs(self._full_sync or {}) do
             f(self)
         end
         return
     end
-    for _, f in pairs(self._load_sync or {}) do
+    for _, f in ipairs(self._load_sync or {}) do
         f(self)
     end
     EHI:DelayCall("EHI_Converts_UpdatePeerColors", 2, function()

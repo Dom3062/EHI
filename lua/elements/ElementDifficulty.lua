@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.ElementDifficulty then -- Don't hook multiple times, pls
+if EHI:CheckLoadHook("ElementDifficulty") then
     return
-else
-    EHI._hooks.ElementDifficulty = true
 end
 
 if not (Global and Global.game_settings and Global.game_settings.level_id) then

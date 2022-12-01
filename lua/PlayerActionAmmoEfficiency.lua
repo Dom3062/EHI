@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.PlayerActionAmmoEfficiency then
+if EHI:CheckLoadHook("PlayerActionAmmoEfficiency") then
     return
-else
-    EHI._hooks.PlayerActionAmmoEfficiency = true
 end
 
 if not EHI:GetBuffAndOption("ammo_efficiency") then

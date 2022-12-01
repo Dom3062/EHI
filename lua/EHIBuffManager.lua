@@ -76,7 +76,7 @@ function EHIBuffManager:InitializeTagTeamBuffs()
     local local_peer_id = managers.network:session():local_peer():id()
     local texture, texture_rect = GetIcon(tweak_data.ehi.buff.TagTeamEffect)
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
-        if i ~= local_peer_id then
+        if i ~= local_peer_id then -- You cannot tag yourself...
             local params = {}
             params.id = "TagTeamTagged_" .. i .. local_peer_id
             params.x = self._x

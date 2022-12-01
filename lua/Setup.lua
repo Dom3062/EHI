@@ -1,11 +1,5 @@
 local EHI = EHI
-if EHI._hooks.Setup then
-	return
-else
-	EHI._hooks.Setup = true
-end
-
-if not Global.load_level then
+if EHI:CheckLoadHook("Setup") then
     return
 end
 

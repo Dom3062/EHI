@@ -1,3 +1,7 @@
+r101 (01. 12. 2022):
+Reworked buff "Forced Friendship (Absorption)" to show value and not percentage
+Fixed compatibility with "More Weapon Stats" mod
+
 r100 (29. 11. 2022):
 Added Czech translation
 Fixed an issue where Assault Delay tracker is not visible if enabled on certain heists

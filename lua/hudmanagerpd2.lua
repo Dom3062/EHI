@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.HUDManagerPD2 then
-	return
-else
-	EHI._hooks.HUDManagerPD2 = true
+if EHI:CheckLoadHook("HUDManagerPD2") then
+    return
 end
 
 if not (Global.game_settings and Global.game_settings.level_id) then

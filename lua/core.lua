@@ -1203,7 +1203,6 @@ end
 
 ---@param id number
 function EHI:UnhookTrigger(id)
-    self:LogFast("Element with ID: " .. tostring(id) .. " removed")
     self:UnhookElement(id)
     triggers[id] = nil
 end
@@ -1817,34 +1816,9 @@ end
 -- Used on clients when offset is required
 -- Do not call it directly!
 function EHI:ShowLootCounterOffset(params, manager)
-    local offset = managers.loot:GetSecuredBagsAmount()
-    manager:ShowLootCounter(params.max, params.additional_loot, params.max_random, offset)
-    if params.triggers then
-        self:AddTriggers2(params.triggers, nil, "LootCounter")
-        if params.hook_triggers then
-            self:HookElements(params.triggers)
-        end
-    end
-    if params.sequence_triggers then
-        local function IncreaseMax(...)
-            managers.ehi:CallFunction("LootCounter", "RandomLootSpawned")
-        end
-        local function DecreaseRandom(...)
-            managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
-        end
-        for unit_id, sequences in pairs(params.sequence_triggers) do
-            for _, sequence in ipairs(sequences.loot) do
-                managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, IncreaseMax)
-            end
-            for _, sequence in ipairs(sequences.no_loot) do
-                managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, DecreaseRandom)
-            end
-        end
-    end
-    if params.no_counting then
-        return
-    end
-    self:HookLootCounter(params)
+    params.offset = nil
+    params.n_offset = managers.loot:GetSecuredBagsAmount()
+    self:ShowLootCounterNoCheck(params)
 end
 
 function EHI:ShowLootCounter(params)
@@ -1858,7 +1832,7 @@ function EHI:ShowLootCounterNoCheck(params)
     if Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree" then
         return
     end
-    local n_offset = 0
+    local n_offset = params.n_offset or 0
     if params.offset then
         if self._cache.Host or params.client_from_start then
             n_offset = managers.loot:GetSecuredBagsAmount()
@@ -1882,10 +1856,10 @@ function EHI:ShowLootCounterNoCheck(params)
             managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
         end
         for unit_id, sequences in pairs(params.sequence_triggers) do
-            for _, sequence in ipairs(sequences.loot) do
+            for _, sequence in ipairs(sequences.loot or {}) do
                 managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, IncreaseMax)
             end
-            for _, sequence in ipairs(sequences.no_loot) do
+            for _, sequence in ipairs(sequences.no_loot or {}) do
                 managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, DecreaseRandom)
             end
         end
@@ -2056,6 +2030,25 @@ function EHI:SetMissionDoorPosAndIndex(pos, index)
     if TimerGui.SetMissionDoorPosAndIndex then
         TimerGui.SetMissionDoorPosAndIndex(pos, index)
     end
+end
+
+function EHI:CheckLoadHook(hook)
+    if not Global.load_level then
+        return true
+    end
+    if self._hooks[hook] then
+        return true
+    end
+    self._hooks[hook] = true
+    return false
+end
+
+function EHI:CheckHook(hook)
+    if self._hooks[hook] then
+        return true
+    end
+    self._hooks[hook] = true
+    return false
 end
 
 EHI:Load()

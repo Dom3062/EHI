@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.UnitNetworkHandler then
+if EHI:CheckLoadHook("UnitNetworkHandler") then
     return
-else
-    EHI._hooks.UnitNetworkHandler = true
 end
 
 if not EHI:GetOption("show_pager_callback") then

@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.PlayerManager then
-	return
-else
-	EHI._hooks.PlayerManager = true
+if EHI:CheckLoadHook("PlayerManager") then
+    return
 end
 
 local buffs = EHI:GetOption("show_buffs")
@@ -82,7 +80,7 @@ if EHI:GetBuffOption("forced_friendship") then
                     local raw = Application:digest_value(value, false)
                     if raw > 0 then
                         local ratio = raw / max_absorption
-                        managers.ehi_buff:AddGauge("hostage_absorption", ratio)
+                        managers.ehi_buff:AddGauge2("hostage_absorption", ratio, raw * 10)
                     else
                         managers.ehi_buff:RemoveBuff("hostage_absorption")
                     end

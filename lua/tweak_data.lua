@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.tweak_data then
-	return
-else
-	EHI._hooks.tweak_data = true
+if EHI:CheckHook("tweak_data") then
+    return
 end
 core:import("CoreTable")
 local deep_clone = CoreTable.deep_clone
@@ -296,8 +294,7 @@ tweak_data.ehi =
             u100skill = true,
             x = 4,
             y = 7,
-            class = "EHIGaugeBuffTracker",
-            format = "percent"
+            class = "EHIGaugeBuffTracker"
         },
         ManiacStackTicks =
         {

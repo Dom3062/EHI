@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.GameSetup then
-	return
-else
-	EHI._hooks.GameSetup = true
+if EHI:CheckLoadHook("GameSetup") then
+    return
 end
 
 local original =

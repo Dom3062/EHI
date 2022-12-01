@@ -1,9 +1,6 @@
 local EHI = EHI
-
-if EHI._hooks.PlayerStandard then
+if EHI:CheckLoadHook("PlayerStandard") then
     return
-else
-    EHI._hooks.PlayerStandard = true
 end
 
 if not EHI:GetOption("show_buffs") then

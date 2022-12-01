@@ -1,9 +1,6 @@
 local EHI = rawget(_G, "EHI")
-
-if EHI._hooks.ElementSpawnGageAssignment then -- Don't hook multiple times, pls
+if EHI:CheckLoadHook("ElementSpawnGageAssignment") then
     return
-else
-    EHI._hooks.ElementSpawnGageAssignment = true
 end
 
 if not EHI:GetOption("show_gage_tracker") then

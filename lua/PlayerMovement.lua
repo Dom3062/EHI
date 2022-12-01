@@ -1,9 +1,6 @@
 local EHI = EHI
-
-if EHI._hooks.PlayerMovement then
+if EHI:CheckLoadHook("PlayerMovement") then
     return
-else
-    EHI._hooks.PlayerMovement = true
 end
 
 if not EHI:GetOption("show_buffs") then

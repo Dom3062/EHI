@@ -105,8 +105,11 @@ function EHILootTracker:DecreaseMaxRandom(progress)
     self:SetMaxRandom(self._max_random - (progress or 1))
 end
 
-function EHILootTracker:RandomLootSpawned2(id)
+function EHILootTracker:RandomLootSpawned2(id, force)
     if self._loot_id[id] then
+        if force then -- This is here to combat desync, use it if element does not have "fail" state
+            self:IncreaseProgressMax()
+        end
         return
     end
     self._loot_id[id] = true

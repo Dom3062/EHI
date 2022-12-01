@@ -105,13 +105,13 @@ if LootCounter then
     other[104279] = { special_function = IncreaseMaxRandomLoot, index = 1140 }
     other[104280] = { special_function = IncreaseMaxRandomLoot, index = 1160 }
     other[104281] = { special_function = IncreaseMaxRandomLoot, index = 1300 }
-    local function DelayRejection(crate) -- This will get very wonky with desync...
+    local function DelayRejection(crate)
         EHI:DelayCall(tostring(crate), 2, function()
             managers.ehi:CallFunction("LootCounter", "RandomLootDeclined2", crate)
         end)
     end
     local function LootSpawned(crate)
-        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned2", crate)
+        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned2", crate, true)
     end
     EHI:RegisterCustomSpecialFunction(IncreaseMaxRandomLoot, function(id, trigger, ...)
         local index = trigger.index
@@ -119,7 +119,7 @@ if LootCounter then
         local LootTrigger = {}
         LootTrigger[EHI:GetInstanceElementID(100009, index)] = { special_function = SF.CustomCode, f = LootSpawned, arg = crate }
         LootTrigger[EHI:GetInstanceElementID(100010, index)] = { special_function = SF.CustomCode, f = LootSpawned, arg = crate }
-        managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function()
+        managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function(...)
             DelayRejection(crate)
         end)
         EHI:AddTriggers2(LootTrigger, nil, "LootCounter")

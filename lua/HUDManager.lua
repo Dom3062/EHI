@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.HUDManager then
+if EHI:CheckLoadHook("HUDManager") then
     return
-else
-    EHI._hooks.HUDManager = true
 end
 
 local original =

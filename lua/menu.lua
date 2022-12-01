@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.MenuManager then
+if EHI:CheckHook("MenuManager") then
 	return
-else
-	EHI._hooks.MenuManager = true
 end
 
 local Languages =
@@ -18,8 +16,12 @@ local Languages =
 	[10] = "spanish",
 	[11] = "japanese"
 }
+local LocLoaded = false
 
 Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", function(loc)
+	if LocLoaded then
+		return
+	end
 	local language_filename = nil
 	local lang = EHI:GetOption("mod_language")
 	if lang == 1 then -- Autodetect
@@ -56,6 +58,7 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
 	end
 	loc:load_localization_file(EHI.ModPath .. "loc/languages.json")
 	EHI:CallCallback("LocalizationLoaded", loc)
+	LocLoaded = true
 end)
 
 Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_EHI", function(menu_manager, nodes)

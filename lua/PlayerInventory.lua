@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.PlayerInventory then
+if EHI:CheckLoadHook("PlayerInventory") then
     return
-else
-    EHI._hooks.PlayerInventory = true
 end
 
 if EHI:GetBuffAndOption("hacker") then
