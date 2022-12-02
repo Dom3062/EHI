@@ -412,12 +412,12 @@ function EHIMenu:mouse_press(o, button, x, y)
                         elseif item:name() == "reset_panel" then
                             self:ResetColorMenu()
                         else
-                            self:CloseColorMenu(true)
+                            self:CloseColorMenu()
                         end
                     end
                 end
             else
-                self:CloseColorMenu(false)
+                self:CloseColorMenu()
             end
         elseif self._highlighted_item and self._highlighted_item.panel:inside(x,y) then
             self:ActivateItem(self._highlighted_item, x)
@@ -451,7 +451,7 @@ function EHIMenu:Confirm()
         end
     elseif self._open_color_dialog then
         if self._open_color_dialog.selected == 4 then
-            self:CloseColorMenu(true)
+            self:CloseColorMenu()
         elseif self._open_color_dialog.selected == 5 then
             self:ResetColorMenu()
         end
@@ -674,7 +674,7 @@ function EHIMenu:Cancel()
     if self._open_choice_dialog then
         self:CloseMultipleChoicePanel()
     elseif self._open_color_dialog then
-        self:CloseColorMenu(false)
+        self:CloseColorMenu()
     elseif self._open_menu.parent_menu then
         self:OpenMenu(self._open_menu.parent_menu, true)
     else

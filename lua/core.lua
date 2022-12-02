@@ -104,13 +104,13 @@ _G.EHI =
         DecreaseProgress = 54,
         ShowTrophy = 55,
 
-        Debug = 100000,
-        CustomCode = 100001,
-        CustomCodeIfEnabled = 100002,
-        CustomCodeDelayed = 100003,
+        Debug = 1000,
+        CustomCode = 1001,
+        CustomCodeIfEnabled = 1002,
+        CustomCodeDelayed = 1003,
 
         -- Don't use it directly! Instead, call "EHI:GetFreeCustomSpecialFunctionID()" and "EHI:RegisterCustomSpecialFunction()" respectively
-        CustomSF = 1000
+        CustomSF = 100000
     },
 
     SyncFunctions =
@@ -261,10 +261,9 @@ _G.EHI =
     SettingsSaveFilePath = BLTModManager.Constants:SavesDirectory() .. "ehi.json",
     SaveDataVer = 1
 }
-local EHI = _G.EHI
 local SF = EHI.SpecialFunctions
 
-function EHI:DifficultyToIndex(difficulty)
+local function DifficultyToIndex(difficulty)
     local difficulties = {
         "easy", -- Leftover from PD:TH
         "normal",
@@ -301,7 +300,7 @@ end
 
 function EHI:Init()
     self._cache.Difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
-    self._cache.DifficultyIndex = self:DifficultyToIndex(self._cache.Difficulty)
+    self._cache.DifficultyIndex = DifficultyToIndex(self._cache.Difficulty)
     self._cache.Host = Network:is_server()
     self._cache.Client = not self._cache.Host
 end
@@ -334,6 +333,9 @@ function EHI:LogTraceback()
 end
 
 function EHI:Load()
+    if self._cache.loaded then
+        return
+    end
     self:LoadDefaultValues()
     local file = io.open(self.SettingsSaveFilePath, "r")
     if file then
@@ -354,6 +356,7 @@ function EHI:Load()
             self:Save() -- Resave the data
         end
     end
+    self._cache.loaded = true
 end
 
 function EHI:Save()
@@ -381,6 +384,10 @@ function EHI:LoadValues(ehi_table, file_table)
     end
 end
 
+---Delays execution of a function
+---@param name string ID
+---@param t number time
+---@param func function
 function EHI:DelayCall(name, t, func)
     DelayedCalls:Add(name, t, func)
 end
@@ -706,7 +713,7 @@ function EHI:AddOnCustodyCallback(f)
     self.OnCustodyCallback[#self.OnCustodyCallback + 1] = f
 end
 
----@param custody_state any
+---@param custody_state boolean
 function EHI:RunOnCustodyCallback(custody_state)
     for _, callback in ipairs(self.OnCustodyCallback) do
         callback(custody_state)
@@ -766,6 +773,7 @@ function EHI:ShowDramaTracker()
     return self:GetOption("show_drama_tracker") and self._cache.Host
 end
 
+---@param unit userdata
 function EHI:GetPeerColor(unit)
     local color = Color.white
     if unit then
@@ -777,6 +785,7 @@ function EHI:GetPeerColor(unit)
     return color
 end
 
+---@param peer_id number
 function EHI:GetPeerColorByPeerID(peer_id)
     local color = Color.white
     if peer_id then
@@ -795,7 +804,7 @@ end
 
 ---@param id number
 ---@param start_index number
----@param continent_index number
+---@param continent_index number?
 ---@return number
 function EHI:GetInstanceUnitID(id, start_index, continent_index)
     return self:GetInstanceElementID(id, start_index, continent_index)
@@ -820,15 +829,15 @@ function EHI:RoundChanceNumber(n)
     return self:RoundNumber(n, 0.01) * 100
 end
 
---[[
-    Instance Vector = Instance Position
-    Element Vector = Position of the element in the instance
-    Rotation = Instance Rotation
-]]
+---@param instance_vector Vector3 Instance Position
+---@param element_vector Vector3 Position of the element in the instance
+---@param rotation Rotation Instance Rotation
 function EHI:GetInstanceElementPosition(instance_vector, element_vector, rotation)
     return instance_vector + element_vector:rotate_with(rotation)
 end
 
+---@param id number Element ID
+---@return Vector3|nil
 function EHI:GetInstanceElementPosition2(id)
     local element = managers.mission:get_element_by_id(id)
     if not element then
@@ -837,6 +846,8 @@ function EHI:GetInstanceElementPosition2(id)
     return element:value("position")
 end
 
+---@param id number Unit ID
+---@return Vector3|nil
 function EHI:GetInstanceUnitPosition(id)
     local unit = managers.worlddefinition:get_unit(id)
     if not unit then
@@ -852,6 +863,7 @@ function EHI:Sync(message, data)
     LuaNetworking:SendToPeersExcept(1, message, data or "")
 end
 
+---@param triggers table
 function EHI:SetSyncTriggers(triggers)
     if self._sync_triggers then
         for key, value in pairs(triggers) do
@@ -1112,9 +1124,11 @@ function EHI:AddWaypointToTrigger(id, waypoint)
     t.waypoint = w
 end
 
+
+local E = EHI
 ---@param trigger table
 local function AddTracker(trigger)
-    trigger.time = EHI:GetTime(trigger)
+    trigger.time = E:GetTime(trigger)
     managers.ehi:AddTracker(trigger)
 end
 
@@ -1139,7 +1153,7 @@ end
 ---@param trigger table
 function EHI:AddTracker(trigger)
     if trigger.run then
-        trigger.run.time = EHI:GetTime(trigger.run)
+        trigger.run.time = self:GetTime(trigger.run)
         managers.ehi:RunTracker(trigger.id, trigger.run)
     else
         AddTracker(trigger)
@@ -1228,6 +1242,7 @@ end
 ---@param id number
 ---@param element table
 ---@param enabled boolean
+---@overload fun(self, id: number)
 function EHI:Trigger(id, element, enabled)
     local trigger = triggers[id]
     if trigger then
@@ -1450,16 +1465,8 @@ function EHI:RegisterCustomSpecialFunction(id, f)
 end
 
 function EHI:GetFreeCustomSpecialFunctionID()
-    local id = self.SpecialFunctions.CustomSF
-    self._cache.SFFUsed = self._cache.SFFUsed or {}
-    while true do
-        if self._cache.SFFUsed[id] then
-            id = id + 1
-        else
-            self._cache.SFFUsed[id] = true
-            break
-        end
-    end
+    local id = (self._cache.SFFUsed or self.SpecialFunctions.CustomSF) + 1
+    self._cache.SFFUsed = id
     return id
 end
 
@@ -1580,6 +1587,8 @@ Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id,
     end
 end)
 
+---@param params table
+---@return table
 function EHI:AddAssaultDelay(params)
     local tbl = {}
     -- Copy every passed value to the trigger
@@ -1613,6 +1622,9 @@ function EHI:AddPositionFromUnit(data, id, check)
     end
 end
 
+---@param new_triggers table
+---@param trigger_id_all string?
+---@param trigger_icons_all table?
 function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     new_triggers = new_triggers or {}
     self:PreloadTrackers(new_triggers.preload or {}, trigger_id_all or "Trigger", trigger_icons_all or {})
@@ -1646,7 +1658,7 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
             data.icons = { self.Icons.Trophy }
         end
     end
-    self:AddTriggers(new_triggers.other or {}, trigger_icons_all or "Trigger", trigger_icons_all)
+    self:AddTriggers(new_triggers.other or {}, trigger_id_all or "Trigger", trigger_icons_all)
     local trophy = new_triggers.trophy
     if show_trophy and trophy then
         for _, data in pairs(trophy) do
@@ -1784,6 +1796,7 @@ function EHI:DisableElementWaypoint(id)
     end
 end
 
+---@param id number
 function EHI:RestoreElementWaypoint(id)
     local element = managers.mission:get_element_by_id(id)
     if not (element and self._cache.ElementWaypointFunction[id]) then
@@ -1797,6 +1810,7 @@ function EHI:RestoreElementWaypoint(id)
     self._cache.ElementWaypointFunction[id] = nil
 end
 
+---@param waypoints table
 function EHI:DisableWaypoints(waypoints)
     if not self:ShouldDisableWaypoints() then
         return
@@ -1821,6 +1835,7 @@ function EHI:ShowLootCounterOffset(params, manager)
     self:ShowLootCounterNoCheck(params)
 end
 
+---@param params table
 function EHI:ShowLootCounter(params)
     if not self:GetOption("show_loot_counter") then
         return
@@ -1828,6 +1843,7 @@ function EHI:ShowLootCounter(params)
     self:ShowLootCounterNoCheck(params)
 end
 
+---@param params table
 function EHI:ShowLootCounterNoCheck(params)
     if Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree" then
         return
@@ -1886,6 +1902,7 @@ function EHI:HookLootCounter(params, check_type, loot_type)
 end
 
 local show_achievement = false
+---@param params table
 function EHI:ShowAchievementLootCounter(params)
     if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
         if params.show_loot_counter then

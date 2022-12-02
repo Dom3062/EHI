@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.SentryGunMovement then
-	return
-else
-	EHI._hooks.SentryGunMovement = true
+if EHI:CheckLoadHook("SentryGunMovement") then
+    return
 end
 local Icon = EHI.Icons
 local WWarning = EHI.Waypoints.Warning

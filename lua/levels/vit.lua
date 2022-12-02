@@ -18,17 +18,22 @@ local triggers = {
     [102544] = { time = 8.3, id = "HumveeWestWingCrash", icons = { Icon.Car, Icon.Fire }, class = TT.Warning },
 
     [102335] = { time = 60, id = "Thermite", icons = { Icon.Fire } }, -- units/pd2_dlc_vit/props/security_shutter/vit_prop_branch_security_shutter
-    [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position = Vector3(150, -1958, 133) } } -- 30s delay + 26s escape zone delay
+    [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 101914 } } -- 30s delay + 26s escape zone delay
 }
 if EHI:IsClient() then
     triggers[102073] = { time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[103500] = { time = 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { icon = Icon.Escape, position = Vector3(150, -1958, 133) } }
+    triggers[103500] = { time = 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { icon = Icon.Escape, position_by_element = 101914 } }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers({ mission = triggers })
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
+}
+
+EHI:ParseTriggers({ mission = triggers, other = other })
 
 local DisableWaypoints =
 {
@@ -42,10 +47,23 @@ for i = 4150, 4450, 100 do
     DisableWaypoints[EHI:GetInstanceElementID(100074, i)] = true -- Defend
     DisableWaypoints[EHI:GetInstanceElementID(100050, i)] = true -- Fix
 end
+for i = 30000, 31500, 300 do
+    DisableWaypoints[EHI:GetInstanceElementID(100059, i)] = true -- Fix
+end
 EHI:DisableWaypoints(DisableWaypoints)
 
 --[[local tbl =
 {
-    [EHI:GetInstanceElementID(100239, 12900)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100255, 12900) }
+    [EHI:GetInstanceElementID(100239, 12900)] = { f = function(instance, unit_id, unit_data, unit)
+        EHI:HookWithID(unit:timer_gui(), "set_jammed", "EHI_100239_12900_unjammed", function(self, jammed, ...)
+            if jammed == false then
+                self:_HideWaypoint(unit_data.waypoint_id)
+            end
+        end)
+        unit:timer_gui():RemoveVanillaWaypoint(unit_data.waypoint_id)
+    end, waypoint_id = EHI:GetInstanceElementID(100255, 12900) }
 }
+for i = 30000, 31500, 300 do
+    tbl[EHI:GetInstanceUnitID(100045, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100058, i) }
+end
 EHI:UpdateUnits(tbl)]]

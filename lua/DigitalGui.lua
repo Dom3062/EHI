@@ -1,12 +1,6 @@
-if not (Global and Global.game_settings and Global.game_settings.level_id) then
-    return
-end
-
 local EHI = EHI
-if EHI._hooks.DigitalGui then
+if EHI:CheckLoadHook("DigitalGui") then
     return
-else
-    EHI._hooks.DigitalGui = true
 end
 
 if not EHI:GetOption("show_timers") then

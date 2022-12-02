@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.TeamAIBase then
+if EHI:CheckLoadHook("TeamAIBase") then
     return
-else
-    EHI._hooks.TeamAIBase = true
 end
 
 if not EHI:GetBuffAndOption("regen_throwable_ai") then

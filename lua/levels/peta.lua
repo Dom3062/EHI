@@ -57,10 +57,6 @@ EHI:RegisterCustomSpecialFunction(ShowWaypoint, function(id, trigger, element, e
     trigger.data.present_timer = 0
     trigger.data.no_sync = true
     local e = managers.mission:get_element_by_id(trigger.id)
-    if e then
-        trigger.data.position = e._values.position
-    else
-        trigger.data.position = Vector3()
-    end
+    trigger.data.position = e and e._values.position or Vector3()
     managers.hud:add_waypoint(trigger.id, trigger.data)
 end)

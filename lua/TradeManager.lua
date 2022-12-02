@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.TradeManager then
+if EHI:CheckLoadHook("TradeManager") then
     return
-else
-    EHI._hooks.TradeManager = true
 end
 
 if not EHI:IsXPTrackerDisabled() then

@@ -1,3 +1,6 @@
+r102 (02. 12. 2022):
+Fixed a menu crash related to DigitalGui
+
 r101 (01. 12. 2022):
 Reworked buff "Forced Friendship (Absorption)" to show value and not percentage
 Fixed compatibility with "More Weapon Stats" mod

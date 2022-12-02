@@ -1,11 +1,5 @@
-if not Global.load_level then
+if EHI:CheckLoadHook("JobManager") then
     return
-end
-
-if EHI._hooks.JobManager then
-    return
-else
-    EHI._hooks.JobManager = true
 end
 
 if EHI:IsXPTrackerDisabled() then

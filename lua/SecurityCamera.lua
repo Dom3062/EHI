@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.SecurityCamera then
-	return
-else
-	EHI._hooks.SecurityCamera = true
+if EHI:CheckLoadHook("SecurityCamera") then
+    return
 end
 
 if not EHI:GetOption("show_camera_loop") then

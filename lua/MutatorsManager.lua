@@ -1,11 +1,6 @@
-if not Global.load_level then
+local EHI = EHI
+if EHI:CheckLoadHook("MutatorsManager") then
     return
-end
-
-if EHI._hooks.MutatorsManager then
-    return
-else
-    EHI._hooks.MutatorsManager = true
 end
 
 local _f_init = MutatorsManager.init

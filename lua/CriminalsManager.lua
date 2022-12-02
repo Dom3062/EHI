@@ -1,11 +1,6 @@
-if not Global.load_level then
+local EHI = EHI
+if EHI:CheckLoadHook("CriminalsManager") then
     return
-end
-
-if EHI._hooks.CriminalsManager then
-    return
-else
-    EHI._hooks.CriminalsManager = true
 end
 
 if EHI:IsXPTrackerDisabled() then

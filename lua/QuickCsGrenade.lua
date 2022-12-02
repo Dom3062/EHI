@@ -1,7 +1,5 @@
-if EHI._hooks.QuickCsGrenade then
-	return
-else
-	EHI._hooks.QuickCsGrenade = true
+if EHI:CheckLoadHook("QuickCsGrenade") then
+    return
 end
 local Icon = EHI.Icons
 

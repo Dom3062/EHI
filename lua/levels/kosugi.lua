@@ -103,7 +103,7 @@ local function CheckForBrokenCocaine() -- Not working for drop-ins
     end
 end
 
-for _, unit_id in pairs({100098, 102897, 102899, 102900}) do
+for _, unit_id in ipairs({ 100098, 102897, 102899, 102900 }) do
     managers.mission:add_runned_unit_sequence_trigger(unit_id, "interact", function(unit)
         managers.ehi:AddTracker({
             id = tostring(unit_id),
@@ -184,7 +184,6 @@ EHI:RegisterCustomSpecialFunction(DisableTriggerAndExecute, function(id, t, ...)
     EHI:CheckCondition(t)
 end)
 EHI:AddLoadSyncFunction(function(self)
-    self:SetTrackerProgress("kosugi_1", managers.loot:GetSecuredBagsAmount())
     local kosugi_3_counter = 0
     local kosugi_5_counter_loot = 0
     local kosugi_5_counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")

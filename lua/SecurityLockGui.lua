@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.SecurityLockGui then
-	return
-else
-	EHI._hooks.SecurityLockGui = true
+if EHI:CheckLoadHook("SecurityLockGui") then
+    return
 end
 
 if not EHI:GetOption("show_timers") then

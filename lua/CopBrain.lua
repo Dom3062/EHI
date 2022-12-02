@@ -1,11 +1,9 @@
 local EHI = EHI
-if EHI._hooks.CopBrain then
+if EHI:CheckLoadHook("CopBrain") then
     return
-else
-    EHI._hooks.CopBrain = true
 end
 
-if not (EHI:GetOption("show_pager_callback") and Global.load_level) then
+if not EHI:GetOption("show_pager_callback") then
     return
 end
 

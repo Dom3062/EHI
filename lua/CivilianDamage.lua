@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.CivilianDamage then
+if EHI:CheckLoadHook("CivilianDamage") then
     return
-else
-    EHI._hooks.CivilianDamage = true
 end
 
 local original =

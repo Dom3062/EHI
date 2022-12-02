@@ -1,7 +1,5 @@
-if EHI._hooks.GamePlayCentralManager then
-	return
-else
-	EHI._hooks.GamePlayCentralManager = true
+if EHI:CheckLoadHook("GamePlayCentralManager") then
+    return
 end
 
 local original =

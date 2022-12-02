@@ -10,7 +10,7 @@ local original =
     spawn_smoke_screen = PlayerManager.spawn_smoke_screen
 }
 
-if Global.load_level and not EHI:IsXPTrackerDisabled() then
+if not EHI:IsXPTrackerDisabled() then
     function PlayerManager:SetPlayerData()
         local data = {}
         data.infamy_bonus = self:get_infamy_exp_multiplier()

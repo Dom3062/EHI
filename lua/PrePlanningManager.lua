@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.PrePlanningManager then
-	return
-else
-	EHI._hooks.PrePlanningManager = true
+if EHI:CheckLoadHook("PrePlanningManager") then
+    return
 end
 
 local preplan_reserved = nil

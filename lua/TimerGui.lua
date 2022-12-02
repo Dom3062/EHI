@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.TimerGui then
-	return
-else
-	EHI._hooks.TimerGui = true
+if EHI:CheckLoadHook("TimerGui") then
+    return
 end
 
 if not EHI:GetOption("show_timers") then

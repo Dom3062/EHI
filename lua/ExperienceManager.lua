@@ -1,11 +1,5 @@
-if not Global.load_level then
+if EHI:CheckLoadHook("ExperienceManager") then
     return
-end
-
-if EHI._hooks.ExperienceManager then
-    return
-else
-    EHI._hooks.ExperienceManager = true
 end
 
 if EHI:IsXPTrackerDisabled() then

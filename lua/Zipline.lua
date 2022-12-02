@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.ZipLine then
-	return
-else
-	EHI._hooks.ZipLine = true
+if EHI:CheckLoadHook("ZipLine") then
+    return
 end
 
 if not EHI:GetOption("show_zipline_timer") then

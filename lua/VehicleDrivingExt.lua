@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.VehicleDrivingExt then
+if EHI:CheckLoadHook("VehicleDrivingExt") then
     return
-else
-    EHI._hooks.VehicleDrivingExt = true
 end
 
 if not EHI:GetOption("show_trade_delay") then

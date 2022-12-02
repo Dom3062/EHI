@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.LootManager then
-	return
-else
-	EHI._hooks.LootManager = true
+if EHI:CheckLoadHook("LootManager") then
+    return
 end
 local check_types = EHI.LootCounter.CheckType
 

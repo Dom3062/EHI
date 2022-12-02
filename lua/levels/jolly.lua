@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local c4_drop = { time = 120 + 25 + 0.25 + 2, id = "C4Drop", icons = Icon.HeliDropC4 }
-local SF_HeliTimer = EHI:GetFreeCustomSpecialFunctionID()
+local HeliTimer = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     -- Why in the flying fuck, OVK, you decided to execute the timer AFTER the dialogue has finished ?
     -- You realize how much pain this is to account for ?
@@ -18,8 +18,8 @@ local triggers = {
         [2] = 8
     },
     [101644] = { time = 60, id = "BainWait", icons = { Icon.Wait } },
-    [EHI:GetInstanceElementID(100075, 21250)] = { time = 60 + 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF_HeliTimer, dialog = 1 },
-    [EHI:GetInstanceElementID(100076, 21250)] = { time = 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF_HeliTimer, dialog = 2 },
+    [EHI:GetInstanceElementID(100075, 21250)] = { time = 60 + 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 1 },
+    [EHI:GetInstanceElementID(100076, 21250)] = { time = 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 2 },
     [EHI:GetInstanceElementID(100078, 21250)] = { time = 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.SetTimeOrCreateTracker },
     [100795] = { time = 5, id = "C4", icons = { Icon.C4 }, waypoint = { position_by_element = 100804 } },
 
@@ -45,7 +45,7 @@ local other =
 }
 
 EHI:ParseTriggers({ mission = triggers, other = other })
-EHI:RegisterCustomSpecialFunction(SF_HeliTimer, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(HeliTimer, function(id, trigger, element, enabled)
     if not managers.user:get_setting("mute_heist_vo") then
         local delay_fix = triggers[1][trigger.dialog] or 0
         trigger.time = trigger.time + delay_fix
