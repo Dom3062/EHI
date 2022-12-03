@@ -168,7 +168,7 @@ EHI:ParseTriggers({
 })
 EHI:ShowLootCounter({
     max = 1, -- Dentist loot; mandatory
-    additional_loot = 44 -- Money
+    additional_loot = 45 -- Money
 })
 if EHI:ShowMissionAchievements() then
     EHI:HookWithID(MissionEndState, "at_enter", "EHI_kenaz_4_complete", function(self, ...)
@@ -227,12 +227,18 @@ local function CheckIfCodeIsVisible(unit, color)
     return nil -- Has not been interacted yet
 end
 EHI:AddLoadSyncFunction(function(self)
-    if EHI.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
-        return
-    elseif managers.game_play_central:IsMissionElementEnabled(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
+    if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
         return
     end
-    EHI:Trigger(100282)
+    if EHI.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
+        return
+    elseif managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
+        return
+    end
+    self:AddTracker({
+        id = "ColorCodes",
+        class = TT.ColoredCodes
+    })
     local wd = managers.worlddefinition
     for color, data in pairs(keycode_units) do
         if data.unit_ids then

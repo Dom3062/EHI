@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.AmmoBagBase then
+if EHI:CheckLoadHook("AmmoBagBase") then
     return
-else
-    EHI._hooks.AmmoBagBase = true
 end
 
 if not EHI:GetEquipmentOption("show_equipment_ammobag") then

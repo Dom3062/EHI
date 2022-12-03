@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.GroupAIStateBase then
-	return
-else
-	EHI._hooks.GroupAIStateBase = true
+if EHI:CheckLoadHook("GroupAIStateBase") then
+    return
 end
 
 local dropin = false

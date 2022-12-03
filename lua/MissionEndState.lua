@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.MissionEndState then
+if EHI:CheckLoadHook("MissionEndState") then
     return
-else
-    EHI._hooks.MissionEndState = true
 end
 
 local original =

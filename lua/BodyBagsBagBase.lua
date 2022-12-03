@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.BodyBagsBagBase then
+if EHI:CheckLoadHook("BodyBagsBagBase") then
     return
-else
-    EHI._hooks.BodyBagsBagBase = true
 end
 
 if not EHI:GetEquipmentOption("show_equipment_bodybags") then

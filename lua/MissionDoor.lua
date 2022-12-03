@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.MissionDoor then
+if EHI:CheckLoadHook("MissionDoor") then
     return
-else
-    EHI._hooks.MissionDoor = true
 end
 local C4 = EHI.Icons.C4
 

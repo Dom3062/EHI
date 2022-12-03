@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.FirstAidKitBase then
-	return
-else
-	EHI._hooks.FirstAidKitBase = true
+if EHI:CheckLoadHook("FirstAidKitBase") then
+    return
 end
 
 if not EHI:GetEquipmentOption("show_equipment_firstaidkit") then

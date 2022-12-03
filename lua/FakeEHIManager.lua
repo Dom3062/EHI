@@ -705,3 +705,8 @@ function FakeEHITimerTracker:SetTextColor(selected)
     FakeEHITimerTracker.super.SetTextColor(self, selected)
     self._progress_text:set_color(selected and tweak_data.ehi.color.Inaccurate or Color.white)
 end
+
+function FakeEHITimerTracker:UpdateTextScale(scale)
+    FakeEHITimerTracker.super.UpdateTextScale(self, scale)
+    self:FitTheText(self._progress_text)
+end

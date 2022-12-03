@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.GroupAIStateBesiege then
-	return
-else
-	EHI._hooks.GroupAIStateBesiege = true
+if EHI:CheckLoadHook("GroupAIStateBesiege") then
+    return
 end
 
 local original =

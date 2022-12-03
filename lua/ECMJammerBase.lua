@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.ECMJammerBase then
+if EHI:CheckLoadHook("ECMJammerBase") then
     return
-else
-    EHI._hooks.ECMJammerBase = true
 end
 
 if not EHI:GetOption("show_equipment_tracker") then

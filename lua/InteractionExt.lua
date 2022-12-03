@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.InteractionExt then
+if EHI:CheckLoadHook("InteractionExt") then
     return
-else
-    EHI._hooks.InteractionExt = true
 end
 
 local server = EHI:IsHost()

@@ -277,18 +277,23 @@ local function DifficultyToIndex(difficulty)
     return table.index_of(difficulties, difficulty) - 2
 end
 
+---@param difficulty number
 function EHI:IsDifficultyOrAbove(difficulty)
     return difficulty <= self._cache.DifficultyIndex
 end
 
+---@param difficulty number
 function EHI:IsDifficultyOrBelow(difficulty)
     return difficulty >= self._cache.DifficultyIndex
 end
 
+---@param difficulty number
 function EHI:IsDifficulty(difficulty)
     return self._cache.DifficultyIndex == difficulty
 end
 
+---@param diff_1 number
+---@param diff_2 number
 function EHI:IsBetweenDifficulties(diff_1, diff_2)
     if diff_1 > diff_2 then
         diff_1 = diff_1 - diff_2
@@ -305,14 +310,17 @@ function EHI:Init()
     self._cache.Client = not self._cache.Host
 end
 
+---@return boolean
 function EHI:IsHost()
     return self._cache.Host
 end
 
+---@return boolean
 function EHI:IsClient()
     return self._cache.Client
 end
 
+---@return boolean
 function EHI:IsPlayingFromStart()
     return self:IsHost() or (self:IsClient() and not managers.statistics:is_dropin())
 end
@@ -1747,6 +1755,9 @@ function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_al
     self:AddTriggers2(new_triggers, nil, trigger_id_all or "Trigger", trigger_icons_all)
 end
 
+---@param preload table
+---@param trigger_id_all string?
+---@param trigger_icons_all table?
 function EHI:PreloadTrackers(preload, trigger_id_all, trigger_icons_all)
     for _, params in ipairs(preload) do
         params.id = params.id or trigger_id_all

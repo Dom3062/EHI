@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.CoreWorldInstanceManager then
+if EHI:CheckLoadHook("CoreWorldInstanceManager") then
     return
-else
-    EHI._hooks.CoreWorldInstanceManager = true
 end
 EHI:Init()
 local client = EHI:IsClient()
@@ -47,6 +45,7 @@ end
 
 local original =
 {
+    init = CoreWorldInstanceManager.init,
     prepare_mission_data = CoreWorldInstanceManager.prepare_mission_data,
     prepare_unit_data = CoreWorldInstanceManager.prepare_unit_data,
     custom_create_instance = CoreWorldInstanceManager.custom_create_instance
@@ -92,23 +91,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
     return instance_data
 end
 
-local units =
-{
-    -- Doctor Bags
-    ["units/payday2/props/stn_prop_medic_firstaid_box/stn_prop_medic_firstaid_box"] = { f = "SetDeployableOffset" }, -- CustomDoctorBagBase / cabinet 1
-    ["units/pd2_dlc_casino/props/cas_prop_medic_firstaid_box/cas_prop_medic_firstaid_box"] = { f = "SetDeployableOffset" }, -- CustomDoctorBagBase / cabinet 2
-    -- Ammo
-    ["units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"] = { f = "SetDeployableOffset" },
-    ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetDeployableOffset" },
-    ["units/pd2_dlc_hvh/props/hvh_prop_armory_shelf_ammo/hvh_prop_armory_shelf_ammo"] = { f = "SetDeployableOffset" },
-
-    ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { Icon.C4 }, warning = true },
-    ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { Icon.C4 }, f = "chasC4" },
-    ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_01"] = { disable_set_visible = true },
-    ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"] = { disable_set_visible = true },
-    ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { disable_set_visible = true }
-}
-
+local units = {}
 function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ...)
     local instance_data = original.prepare_unit_data(self, instance, continent_data, ...)
     for _, entry in ipairs(instance_data.statics or {}) do
@@ -134,4 +117,9 @@ function CoreWorldInstanceManager:custom_create_instance(instance_name, custom_d
 		return
 	end
     EHI:FinalizeUnits(EHI._cache.InstanceUnits)
+end
+
+function CoreWorldInstanceManager:init(...)
+    original.init(self, ...)
+    units = tweak_data.ehi.units
 end

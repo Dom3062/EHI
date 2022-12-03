@@ -11,4 +11,8 @@ local achievements =
     [101285] = { id = "cac_24", special_function = SF.SetAchievementComplete }
 }
 
-EHI:ParseTriggers({}, achievements, other)
+EHI:ParseTriggers({
+    mission = {},
+    achievement = achievements,
+    other = other
+})

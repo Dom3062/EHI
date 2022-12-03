@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.IngameWaitingForPlayersState then
+if EHI:CheckLoadHook("IngameWaitingForPlayersState") then
     return
-else
-    EHI._hooks.IngameWaitingForPlayersState = true
 end
 
 local ShowGageTracker = EHI:GetOption("show_gage_tracker")

@@ -1,7 +1,5 @@
-if EHI._hooks.MissionAssetsManager then
+if EHI:CheckLoadHook("MissionAssetsManager") then
     return
-else
-    EHI._hooks.MissionAssetsManager = true
 end
 
 function MissionAssetsManager:IsEscapeDriverAssetUnlocked()

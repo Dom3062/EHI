@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.GageAssignmentManager then
-	return
-else
-	EHI._hooks.GageAssignmentManager = true
+if EHI:CheckLoadHook("GageAssignmentManager") then
+    return
 end
 
 if not EHI:GetOption("show_gage_tracker") then

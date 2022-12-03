@@ -1,10 +1,10 @@
 local EHI = EHI
-if not EHI:ShowMissionAchievements() then
-    return
-end
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local function bilbo_baggin()
+    if not EHI:ShowMissionAchievements() then
+        return
+    end
     local bags_to_secure = managers.ehi:CountLootbagsOnTheGround()
     if bags_to_secure >= 8 then
         managers.ehi:AddTracker({

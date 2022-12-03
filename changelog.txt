@@ -1,3 +1,6 @@
+r103 (03. 12. 2022):
+Golden Grin Casino: Fixed a load crash
+
 r102 (02. 12. 2022):
 Fixed a menu crash related to DigitalGui
 

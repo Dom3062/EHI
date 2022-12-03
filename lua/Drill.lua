@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.Drill then
+if EHI:CheckLoadHook("Drill") then
     return
-else
-    EHI._hooks.Drill = true
 end
 
 local function SetAutorepair(unit_key, autorepair)

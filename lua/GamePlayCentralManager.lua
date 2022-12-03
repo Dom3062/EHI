@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI:CheckLoadHook("GamePlayCentralManager") then
     return
 end

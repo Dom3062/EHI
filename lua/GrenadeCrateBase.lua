@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.GrenadeCrateBase then
-	return
-else
-	EHI._hooks.GrenadeCrateBase = true
+if EHI:CheckLoadHook("GrenadeCrateBase") then
+    return
 end
 
 if not EHI:GetEquipmentOption("show_equipment_grenadecases") then

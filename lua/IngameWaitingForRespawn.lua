@@ -1,8 +1,6 @@
 local EHI = EHI
-if EHI._hooks.IngameWaitingForRespawnState then
+if EHI:CheckLoadHook("IngameWaitingForRespawnState") then
     return
-else
-    EHI._hooks.IngameWaitingForRespawnState = true
 end
 
 local original =

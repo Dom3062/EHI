@@ -1,12 +1,11 @@
 local EHI = EHI
-if EHI._hooks.WorldDefinition then
+if EHI:CheckLoadHook("WorldDefinition") then
     return
-else
-    EHI._hooks.WorldDefinition = true
 end
 
 local original =
 {
+    init = WorldDefinition.init,
     init_done = WorldDefinition.init_done,
     create = WorldDefinition.create
 }
@@ -77,24 +76,11 @@ function EHI:FinalizeUnits(tbl)
     end
 end
 
-local Icon = EHI.Icons
-local units =
-{
-    -- Copied from CoreWorldInstanceManager.lua
-    -- Doctor Bags
-    ["units/payday2/props/stn_prop_medic_firstaid_box/stn_prop_medic_firstaid_box"] = { f = "SetDeployableOffset" },
-    ["units/pd2_dlc_casino/props/cas_prop_medic_firstaid_box/cas_prop_medic_firstaid_box"] = { f = "SetDeployableOffset" },
-    -- Ammo
-    ["units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"] = { f = "SetDeployableOffset" },
-    ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetDeployableOffset" },
-    ["units/pd2_dlc_hvh/props/hvh_prop_armory_shelf_ammo/hvh_prop_armory_shelf_ammo"] = { f = "SetDeployableOffset" },
-
-    ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { Icon.C4 }, warning = true },
-    ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { Icon.C4 }, f = "chasC4" },
-    ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_01"] = { disable_set_visible = true },
-    ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"] = { disable_set_visible = true },
-    ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { disable_set_visible = true }
-}
+local units = {}
+function WorldDefinition:init(...)
+    original.init(self, ...)
+    units = tweak_data.ehi.units
+end
 
 function WorldDefinition:create(layer, offset, ...)
     local return_data = original.create(self, layer, offset, ...)
