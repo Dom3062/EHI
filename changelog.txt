@@ -1,3 +1,6 @@
+r104 (04. 12. 2022):
+Midland Ranch: Fixed a crash
+
 r103 (03. 12. 2022):
 Golden Grin Casino: Fixed a load crash
 

@@ -89,7 +89,7 @@ if OVKorAbove then
     EHI:ShowAchievementKillCounter("ranc_9", "ranc_9_stat", "show_achievements_vehicle") -- "Caddyshacked" achievement
     EHI:ShowAchievementKillCounter("ranc_11", "ranc_11_stat", "show_achievements_weapon") -- "Marshal Law" achievement
 end
-EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(id, ...)
+EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(id, trigger, ...)
     if managers.ehi:TrackerDoesNotExist("FultonCatch") then
         EHI:CheckCondition(trigger)
     end
