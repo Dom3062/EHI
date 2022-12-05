@@ -1,5 +1,9 @@
+r105 (05. 12. 2022):
+Fixed syncing with other EHI players
+
 r104 (04. 12. 2022):
 Midland Ranch: Fixed a crash
+Fixed a crash at "GetElementTimer()"
 
 r103 (03. 12. 2022):
 Golden Grin Casino: Fixed a load crash

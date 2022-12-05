@@ -6,14 +6,18 @@ local AssetLootDropOff = { Icon.Car, Icon.LootDrop }
 if EHI:GetOption("show_one_icon") then
     AssetLootDropOff = { Icon.LootDrop }
 end
+local preload =
+{
+    {} -- Escape
+}
 local triggers = {
     -- Time before escape is available
-    [102808] = { time = 65 },
-    [102811] = { time = 80 },
-    [103591] = { time = 126 },
-    [102813] = { time = 186 },
-    [100797] = { time = 240 },
-    [100832] = { time = 270 },
+    [102808] = { run = { time = 65 } },
+    [102811] = { run = { time = 80 } },
+    [103591] = { run = { time = 126 } },
+    [102813] = { run = { time = 186 } },
+    [100797] = { run = { time = 240 } },
+    [100832] = { run = { time = 270 } },
 
     -- Fire
     [101412] = { time = 300, id = "Fire1", icons = { Icon.Fire }, class = TT.Warning },
@@ -44,5 +48,6 @@ local other =
 
 EHI:ParseTriggers({
     mission = triggers,
-    other = other
+    other = other,
+    preload = preload
 }, "Escape", Icon.CarEscape)

@@ -2,19 +2,23 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local van_delay = 674/30
+local preload =
+{
+    {} -- Escape
+}
 local triggers = {
-    [101235] = { time = 120 + van_delay },
-    [100257] = { time = 100 + van_delay },
-    [100209] = { time = 80 + van_delay },
-    [100208] = { time = 60 + van_delay },
+    [101235] = { run = { time = 120 + van_delay } },
+    [100257] = { run = { time = 100 + van_delay } },
+    [100209] = { run = { time = 80 + van_delay } },
+    [100208] = { run = { time = 60 + van_delay } },
 
     [1] = { time = van_delay, special_function = SF.AddTrackerIfDoesNotExist },
     [100214] = { special_function = SF.Trigger, data = { 1, 1002141 } },
-    [1002141] = { id = 100233, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(5683, -3296, 397.65) } },
+    [1002141] = { id = 100233, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } },
     [100215] = { special_function = SF.Trigger, data = { 1, 1002151 } },
-    [1002151] = { id = 101268, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-6250, -2700, 481.755) } },
+    [1002151] = { id = 101268, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101268 } },
     [100216] = { special_function = SF.Trigger, data = { 1, 1002161 } },
-    [1002161] = { id = 100008, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position = Vector3(-6708, 2397, 392) } }
+    [1002161] = { id = 100008, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100008 } }
 }
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
@@ -27,4 +31,4 @@ local other =
     [100677] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
 }
 
-EHI:ParseTriggers({ mission = triggers, other = other }, "Escape", Icon.CarEscape)
+EHI:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)

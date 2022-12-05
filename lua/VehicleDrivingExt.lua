@@ -33,7 +33,6 @@ function VehicleDrivingExt:_detect_npc_collisions(...)
 	local units = World:find_units("intersect", "obb", oobb:center(), oobb:x(), oobb:y(), oobb:z(), self._ehi_flesh_slotmask)
 	for _, unit in pairs(units) do
 		if not unit:in_slot(self._ehi_all_criminals_slotmask) and unit:character_damage() and not unit:character_damage():dead() and unit:base():has_tag("civilian") then
-            --EHI:Log("Unit found: " .. tostring(unit))
             local attacker_unit = nil
             if self._seats.driver.occupant ~= managers.player:local_player() then
 				attacker_unit = self._seats.driver.occupant

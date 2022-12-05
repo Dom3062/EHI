@@ -1208,9 +1208,8 @@ function EHI:CheckCondition(trigger)
     end
 end
 
-local function GetElementTimer(self, id)
+local function GetElementTimer(self, trigger, id)
     if self._cache.Host then
-        local trigger = triggers[id]
         local element = managers.mission:get_element_by_id(trigger.element)
         if element then
             local t = (element._timer or 0) + (trigger.additional_time or 0)
@@ -1219,7 +1218,7 @@ local function GetElementTimer(self, id)
             managers.ehi:Sync(id, t)
         end
     else
-        self:CheckCondition(id)
+        self:CheckCondition(trigger)
     end
 end
 
@@ -1281,7 +1280,7 @@ function EHI:Trigger(id, element, enabled)
                 managers.ehi:IncreaseChance(trigger.id, trigger.amount)
             elseif f == SF.TriggerIfEnabled then
                 if enabled then
-                    for _, t in pairs(trigger.data) do
+                    for _, t in ipairs(trigger.data) do
                         self:Trigger(t, element, enabled)
                     end
                 end
@@ -1295,7 +1294,7 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.Trigger then
-                for _, t in pairs(trigger.data) do
+                for _, t in ipairs(trigger.data) do
                     self:Trigger(t, element, enabled)
                 end
             elseif f == SF.SetTimeOrCreateTracker then
@@ -1338,7 +1337,7 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.RemoveTriggers then
-                for _, trigger_id in pairs(trigger.data) do
+                for _, trigger_id in ipairs(trigger.data) do
                     self:UnhookTrigger(trigger_id)
                 end
             elseif f == SF.SetAchievementStatus then
@@ -1356,7 +1355,7 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.DecreaseChance then
                 managers.ehi:DecreaseChance(trigger.id, trigger.amount)
             elseif f == SF.GetElementTimerAccurate then
-                GetElementTimer(self, id)
+                GetElementTimer(self, trigger, id)
             elseif f == SF.UnpauseOrSetTimeByPreplanning then
                 if managers.ehi:TrackerExists(trigger.id) then
                     managers.ehi:UnpauseTracker(trigger.id)
@@ -1376,7 +1375,7 @@ function EHI:Trigger(id, element, enabled)
                 if managers.ehi:TrackerExists(trigger.id) then
                     UnpauseTracker(trigger.id)
                 else
-                    GetElementTimer(self, id)
+                    GetElementTimer(self, trigger, id)
                 end
             elseif f == SF.ShowAchievementCustom then
                 if self:IsAchievementLocked(trigger.data) then
@@ -2101,11 +2100,11 @@ if not EHI:GetOption("show_mission_trackers") then
         managers.ehi:Sync(id, delay)
     end
 
-    GetElementTimer = function(self, id)
+    GetElementTimer = function(self, trigger, id)
         if self._cache.Host then
-            local element = managers.mission:get_element_by_id(triggers[id].element)
+            local element = managers.mission:get_element_by_id(trigger.element)
             if element then
-                local t = (element._timer or 0) + (triggers[id].additional_time or 0)
+                local t = (element._timer or 0) + (trigger.additional_time or 0)
                 managers.ehi:Sync(id, t)
             end
         end
