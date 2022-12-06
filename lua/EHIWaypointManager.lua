@@ -58,17 +58,18 @@ function EHIWaypointManager:AddWaypoint(id, params)
     if not waypoint then
         return
     end
-    if waypoint.bitmap then
-        self:SetWaypointInitialIcon(waypoint, params)
+    if not (waypoint.bitmap and waypoint.timer_gui) then
+        self._enabled = false -- Disable waypoints as they don't have correct fields
+        self._hud:remove_waypoint(id)
+        return
     end
+    self:SetWaypointInitialIcon(waypoint, params)
     if waypoint.distance then
         waypoint.distance:set_font(self._font)
         waypoint.distance:set_font_size(self._distance_font_size)
     end
-    if waypoint.timer_gui then
-        waypoint.timer_gui:set_font(self._font)
-        waypoint.timer_gui:set_font_size(self._timer_font_size)
-    end
+    waypoint.timer_gui:set_font(self._font)
+    waypoint.timer_gui:set_font_size(self._timer_font_size)
     local w = _G[params.class or "EHIWaypoint"]:new(waypoint, params)
     if w._update then
         self._waypoints_to_update[id] = w

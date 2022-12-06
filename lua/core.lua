@@ -1975,19 +1975,22 @@ function EHI:HookAchievementCounter()
     end
 end
 
+---@param id string Achievement ID
+---@param id_stat string Achievement Counter
+---@param achievement_option string? Achievement option
 function EHI:ShowAchievementKillCounter(id, id_stat, achievement_option)
-    if (achievement_option and not self:GetUnlockableOption(achievement_option)) or not show_achievement then
+    if (achievement_option and not self:GetUnlockableAndOption(achievement_option)) or not show_achievement then
         return
     end
     if self._cache.UnlockablesAreDisabled or self:IsAchievementUnlocked2(id) then
         return
     end
-    local progress = self:GetAchievementProgress(id_stat)
     local tweak_data = tweak_data.achievement.persistent_stat_unlocks[id_stat]
     if not tweak_data then
         self:Log("No statistics found for achievement " .. tostring(id) .. "; Stat: " .. tostring(id_stat))
         return
     end
+    local progress = self:GetAchievementProgress(id_stat)
     local max = tweak_data[1] and tweak_data[1].at or 0
     if progress >= max then
         return
@@ -2005,6 +2008,7 @@ function EHI:ShowAchievementKillCounter(id, id_stat, achievement_option)
     end
 end
 
+---@param f function
 function EHI:AddLoadSyncFunction(f)
     if self._cache.Host then
         return
