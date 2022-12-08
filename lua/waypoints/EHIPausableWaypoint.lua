@@ -1,6 +1,6 @@
 EHIPausableWaypoint = class(EHIWaypoint)
-function EHIPausableWaypoint:init(waypoint, params)
-    EHIPausableWaypoint.super.init(self, waypoint, params)
+function EHIPausableWaypoint:init(waypoint, params, parent_class)
+    EHIPausableWaypoint.super.init(self, waypoint, params, parent_class)
     self._paused = params.paused
 end
 

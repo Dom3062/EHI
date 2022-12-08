@@ -34,10 +34,21 @@ local triggers = {
     [EHI:GetInstanceElementID(100011, 4750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain2 }
 }
 
+local IncreaseEnabled = false
 local achievements =
 {
-    [100002] = { max = (EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 15 or 13), id = "peta_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up },
-    [102211] = { id = "peta_5", special_function = SF.IncreaseProgress },
+    [100002] = { max = (EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 14 or 12), id = "peta_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up, remove_after_reaching_target = false },
+    [102095] = { special_function = SF.CustomCode, f = function()
+        IncreaseEnabled = true
+    end },
+    [102098] = { special_function = SF.CustomCode, f = function()
+        IncreaseEnabled = false
+    end },
+    [100716] = { special_function = SF.CustomCode, f = function()
+        if IncreaseEnabled then
+            managers.ehi:IncreaseTrackerProgress("peta_5")
+        end
+    end },
     [100580] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
         managers.ehi:CallFunction("peta_5", "Finalize")
     end},

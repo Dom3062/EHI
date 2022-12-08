@@ -52,7 +52,6 @@ function EHIWaypointManager:AddWaypoint(id, params)
     params.pause_timer = 1
     params.no_sync = true
     params.present_timer = params.present_timer or self._present_timer
-    params.parent_class = self
     self._hud:add_waypoint(id, params)
     local waypoint = self._hud:get_waypoint_data(id)
     if not waypoint then
@@ -70,7 +69,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
     end
     waypoint.timer_gui:set_font(self._font)
     waypoint.timer_gui:set_font_size(self._timer_font_size)
-    local w = _G[params.class or "EHIWaypoint"]:new(waypoint, params)
+    local w = _G[params.class or "EHIWaypoint"]:new(waypoint, params, self)
     if w._update then
         self._waypoints_to_update[id] = w
     end

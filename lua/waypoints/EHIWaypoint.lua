@@ -1,14 +1,14 @@
 EHIWaypoint = class()
 EHIWaypoint._update = true
 EHIWaypoint._default_color = Color.white
-function EHIWaypoint:init(waypoint, params)
+function EHIWaypoint:init(waypoint, params, parent_class)
     self._id = params.id
     self._time = params.time
     self._timer = waypoint.timer_gui
     self._bitmap = waypoint.bitmap
     self._arrow = waypoint.arrow
     self._bitmap_world = waypoint.bitmap_world -- VR
-    self._parent_class = params.parent_class
+    self._parent_class = parent_class
 end
 
 if EHI:GetOption("time_format") == 1 then

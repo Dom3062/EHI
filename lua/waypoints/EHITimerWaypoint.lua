@@ -19,8 +19,8 @@ EHITimerWaypoint = class(EHIPausableWaypoint)
 EHITimerWaypoint._update = false
 EHITimerWaypoint.AnimateWarning = EHIWarningWaypoint.AnimateWarning
 EHITimerWaypoint.delete = EHIWarningWaypoint.delete
-function EHITimerWaypoint:init(waypoint, params)
-    EHITimerWaypoint.super.init(self, waypoint, params)
+function EHITimerWaypoint:init(waypoint, params, parent_class)
+    EHITimerWaypoint.super.init(self, waypoint, params, parent_class)
     self._warning = params.warning
     self._jammed = false
     self._not_powered = false

@@ -1,3 +1,6 @@
+r107 (08. 12. 2022):
+Goat Simulator Day 2: Fixed an issue where empty cage increased achievement progress
+
 r106 (06. 12. 2022):
 Fixed a crash when waypoints are modified by other HUD
 

@@ -166,9 +166,17 @@ EHI:ParseTriggers({
     other = other,
     preload = preload
 })
+local bags = 5 + 2 + 5 -- Normal + Hard
+if EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
+    bags = 8 + 3 + 8
+elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
+    bags = 10 + 4 + 10
+elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+    bags = 12 + 5 + 12
+end
 EHI:ShowLootCounter({
     max = 1, -- Dentist loot; mandatory
-    additional_loot = 45 -- Money
+    additional_loot = bags + 1 -- Money + Painting
 })
 if EHI:ShowMissionAchievements() then
     EHI:HookWithID(MissionEndState, "at_enter", "EHI_kenaz_4_complete", function(self, ...)
