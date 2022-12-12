@@ -23,8 +23,8 @@ end
 
 EHIVaultTemperatureWaypoint = class(EHIWaypoint)
 EHIVaultTemperatureWaypoint.CheckTime = EHIVaultTemperatureTracker.CheckTime
-function EHIVaultTemperatureWaypoint:init(waypoint, params)
-    EHIVaultTemperatureWaypoint.super.init(self, waypoint, params)
+function EHIVaultTemperatureWaypoint:init(waypoint, params, parent_class)
+    EHIVaultTemperatureWaypoint.super.init(self, waypoint, params, parent_class)
     self._synced_time = 0
     self._tick = 0.1
 end
