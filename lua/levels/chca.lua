@@ -2,9 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:ShowMissionAchievements()
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
 local vault_reset_time = 5 -- Normal
 if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
     vault_reset_time = 15
@@ -57,7 +55,7 @@ if EHI:IsClient() then
     end
     if EHI:IsBetweenDifficulties(EHI.Difficulties.OVERKILL, EHI.Difficulties.Mayhem) then -- OVERKILL or Mayhem
         wait_time = 120
-    elseif dw_and_above then
+    elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
         wait_time = 150
         pickup_wait_time = 55
     end
@@ -84,7 +82,7 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100060, 21420)] = { time = 20, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
-if show_achievement and ovk_and_up then
+if EHI:CanShowAchievement("chca_12") and ovk_and_up then
     local active_saws = 0
     local function chca_12(instance, unit_id, unit_data, unit)
         unit:timer_gui():chca_12()
@@ -145,31 +143,52 @@ local function chca_9_fail()
     EHI:Unhook("chca_9_killed")
     EHI:Unhook("chca_9_killed_by_anyone")
 end
-local Achievements = { special_function = SF.Trigger, data = { 1, 2, 3 } }
 local achievements =
 {
-    -- Players spawned
-    [100264] = Achievements, -- Guest Rooms (civilian mode)
-    [102955] = Achievements, -- Crew Deck
-    [1] = { id = "chca_9", status = "ok", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [2] = { special_function = SF.CustomCode, f = function()
-        if EHI:IsAchievementLocked("chca_9") and show_achievement and ovk_and_up then
-            local function check(self, data)
-                if data.variant ~= "melee" then
-                    chca_9_fail()
+    chca_9 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            -- Players spawned
+            [100264] = { special_function = SF.Trigger, data = { 1, 2 } }, -- Guest Rooms (civilian mode)
+            [102955] = { special_function = SF.Trigger, data = { 1, 2 } }, -- Crew Deck
+            [1] = { status = "ok", class = TT.AchievementStatus },
+            [2] = { special_function = SF.CustomCode, f = function()
+                local function check(self, data)
+                    if data.variant ~= "melee" then
+                        chca_9_fail()
+                    end
                 end
-            end
-            EHI:HookWithID(StatisticsManager, "killed", "EHI_chca_9_killed", check)
-            EHI:HookWithID(StatisticsManager, "killed_by_anyone", "EHI_chca_9_killed_by_anyone", check)
-            EHI:AddOnAlarmCallback(chca_9_fail)
+                EHI:HookWithID(StatisticsManager, "killed", "EHI_chca_9_killed", check)
+                EHI:HookWithID(StatisticsManager, "killed_by_anyone", "EHI_chca_9_killed_by_anyone", check)
+            end }
+        },
+        alarm_callback = chca_9_fail
+    },
+    chca_10 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem),
+        elements =
+        {
+            [100264] = { max = 8, class = TT.AchievementProgress, remove_after_reaching_target = false }, -- Guest Rooms (civilian mode)
+            [102955] = { max = 8, class = TT.AchievementProgress, remove_after_reaching_target = false }, -- Crew Deck
+            [102944] = { special_function = SF.IncreaseProgress }, -- Bodybag thrown
+            [103371] = { special_function = SF.SetAchievementFailed } -- Civie killed
+        },
+        alarm_callback = function()
+            managers.ehi:SetAchievementFailed("chca_10")
         end
-    end },
-    [3] = { max = 8, id = "chca_10", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) },
-    [102944] = { id = "chca_10", special_function = SF.IncreaseProgress }, -- Bodybag thrown
-    [103371] = { id = "chca_10", special_function = SF.SetAchievementFailed }, -- Civie killed
-
-    [EHI:GetInstanceElementID(100041, 11770)] = { id = "chca_12", special_function = SF.ShowAchievementFromStart, class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [103584] = { id = "chca_12", status = "finish", special_function = SF.SetAchievementStatus }
+    },
+    chca_12 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [EHI:GetInstanceElementID(100041, 11770)] = { special_function = SF.ShowAchievementFromStart, class = TT.AchievementStatus },
+            [103584] = { status = "finish", special_function = SF.SetAchievementStatus }
+        }
+    }
 }
 
 local other =
@@ -183,9 +202,6 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
-EHI:AddOnAlarmCallback(function()
-    managers.ehi:SetAchievementFailed("chca_10")
-end)
 --[[local LootLeft = EHI:GetFreeCustomSpecialFunctionID()
 EHI:ShowLootCounter({
     max = 16,

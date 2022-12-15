@@ -73,22 +73,33 @@ end
 
 local achievements =
 {
-    [100547] = { special_function = SF.Trigger, data = { 1005471, 1005472 } },
-    [1005471] = { id = "mad_2", status = "no_down", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [1005472] = { id = "cac_13", status = "defend", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-
-    [101400] = { id = "mad_2", special_function = SF.SetAchievementFailed },
-    [101823] = { id = "mad_2", special_function = SF.SetAchievementComplete },
-
-    [101925] = { id = "cac_13", special_function = SF.SetAchievementFailed },
-    [101924] = { id = "cac_13", special_function = SF.SetAchievementComplete }
+    mad_2 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100547] = { status = "no_down", class = TT.AchievementStatus },
+            [101400] = { special_function = SF.SetAchievementFailed },
+            [101823] = { special_function = SF.SetAchievementComplete }
+        }
+    },
+    cac_13 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100547] = { status = "defend", class = TT.AchievementStatus },
+            [101925] = { special_function = SF.SetAchievementFailed },
+            [101924] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 local dailies = nil
-if EHI:IsDailyAvailable("daily_cake") then
+if EHI:IsDailyAvailable("daily_cake") and ovk_and_up then
     dailies =
     {
-        [101906] = { time = 1200, id = "daily_cake", class = "EHIdailycakeTracker", difficulty_pass = ovk_and_up },
+        [101906] = { time = 1200, id = "daily_cake", class = "EHIdailycakeTracker" },
         [101898] = { id = "daily_cake", special_function = SF.SetAchievementComplete },
         [EHI:GetInstanceElementID(100038, 3150)] = { id = "daily_cake", special_function = SF.IncreaseProgress }
     }

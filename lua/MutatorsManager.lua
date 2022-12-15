@@ -20,6 +20,8 @@ function MutatorsManager:init()
     EHI._cache.UnlockablesAreDisabled = check()
     local data = {}
     data.xp_reduction = self:get_experience_reduction()
+    data.MutatorPiggyBank = self:is_mutator_active(MutatorPiggyBank)
+    data.MutatorCG22 = self:is_mutator_active(MutatorCG22)
     if managers.experience.SetMutatorData then
         managers.experience:SetMutatorData(data)
     end

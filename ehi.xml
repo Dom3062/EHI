@@ -53,6 +53,7 @@
 
         <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
 
+        <post hook_id="lib/mutators/mutatorcg22" :script_path="MutatorCG22.lua" />
         <post hook_id="lib/mutators/mutatorpiggybank" :script_path="MutatorPiggyBank.lua" />
 
         <post hook_id="lib/setups/setup" :script_path="EHIManager.lua" />

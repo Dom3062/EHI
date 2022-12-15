@@ -39,17 +39,15 @@ EHI:ParseTriggers({
     mission = {},
     trophy = trophy
 })
-if EHI:ShowMissionAchievements() then
-    EHI:ShowAchievementLootCounter({
-        achievement = "melt_3",
-        max = 8,
-        counter =
-        {
-            check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
-            loot_type = { "coke", "gold", "money", "weapon", "weapons" }
-        }
-    })
-end
+EHI:ShowAchievementLootCounter({
+    achievement = "melt_3",
+    max = 8,
+    counter =
+    {
+        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+        loot_type = { "coke", "gold", "money", "weapon", "weapons" }
+    }
+})
 
 local max = 6 -- Normal to Very Hard; Mission Loot
 if ovk_and_up then

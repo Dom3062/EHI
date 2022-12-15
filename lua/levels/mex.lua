@@ -11,10 +11,16 @@ local triggers = {
 }
 local achievements =
 {
-    [100107] = { max = 4, id = "mex_9", class = TT.AchievementProgress }
+    mex_9 =
+    {
+        elements =
+        {
+            [100107] = { max = 4, class = TT.AchievementProgress }
+        }
+    }
 }
 for i = 101502, 101509, 1 do
-    achievements[i] = { id = "mex_9", special_function = SF.IncreaseProgress }
+    achievements.mex_9.elements[i] = { special_function = SF.IncreaseProgress }
 end
 
 EHI:ParseTriggers({

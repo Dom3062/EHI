@@ -127,21 +127,39 @@ EHI:RegisterCustomSpecialFunction(RemoveColorsIfEnabled, function(id, trigger, e
     end
 end)
 
-local kenaz_5 = { id = "kenaz_5", class = TT.AchievementStatus }
 local achievements =
 {
-    [100282] = { time = 840, id = "kenaz_4", class = TT.Achievement },
-
-    [EHI:GetInstanceElementID(100008, 12500)] = kenaz_5,
-    [EHI:GetInstanceElementID(100008, 12580)] = kenaz_5,
-    [EHI:GetInstanceElementID(100008, 12660)] = kenaz_5,
-    [EHI:GetInstanceElementID(100008, 18700)] = kenaz_5,
-    [102806] = { status = "finish", id = "kenaz_5", special_function = SF.SetAchievementStatus },
-    [102808] = { id = "kenaz_5", special_function = SF.SetAchievementFailed },
-
-    [102807] = { id = "kenaz_3", class = TT.AchievementStatus },
-    [102809] = { id = "kenaz_3", special_function = SF.SetAchievementFailed },
-    [103163] = { status = "finish", id = "kenaz_3", special_function = SF.SetAchievementStatus },
+    kenaz_3 =
+    {
+        elements =
+        {
+            [102807] = { class = TT.AchievementStatus },
+            [102809] = { special_function = SF.SetAchievementFailed },
+            [103163] = { status = "finish", special_function = SF.SetAchievementStatus }
+        }
+    },
+    kenaz_4 =
+    {
+        elements =
+        {
+            [100282] = { time = 840, id = "kenaz_4", class = TT.Achievement }
+        },
+        load_sync = function(self)
+            self:AddTimedAchievementTracker("kenaz_4", 840)
+        end
+    },
+    kenaz_5 =
+    {
+        elements =
+        {
+            [EHI:GetInstanceElementID(100008, 12500)] = { class = TT.AchievementStatus },
+            [EHI:GetInstanceElementID(100008, 12580)] = { class = TT.AchievementStatus },
+            [EHI:GetInstanceElementID(100008, 12660)] = { class = TT.AchievementStatus },
+            [EHI:GetInstanceElementID(100008, 18700)] = { class = TT.AchievementStatus },
+            [102806] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [102808] = { special_function = SF.SetAchievementFailed }
+        }
+    }
 }
 
 local Alarm = EHI:GetFreeCustomSpecialFunctionID()
@@ -178,14 +196,11 @@ EHI:ShowLootCounter({
     max = 1, -- Dentist loot; mandatory
     additional_loot = bags + 1 -- Money + Painting
 })
-if EHI:ShowMissionAchievements() then
+if EHI:CanShowAchievement("kenaz_4") then
     EHI:HookWithID(MissionEndState, "at_enter", "EHI_kenaz_4_complete", function(self, ...)
         if self._success then
             managers.ehi:SetAchievementComplete("kenaz_4", true)
         end
-    end)
-    EHI:AddLoadSyncFunction(function(self)
-        self:AddTimedAchievementTracker("kenaz_4", 840)
     end)
 end
 

@@ -30,16 +30,41 @@ local triggers = {
 
 local achievements =
 {
-    [100693] = { id = "live_2", class = TT.AchievementStatus },
-    [102704] = { id = "live_2", special_function = SF.SetAchievementFailed },
-    [100246] = { id = "live_2", special_function = SF.SetAchievementComplete },
-    [100304] = { time = 5, id = "live_3", class = TT.AchievementUnlock },
-    [102785] = { id = "live_4", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [100249] = { id = "live_4", special_function = SF.SetAchievementComplete },
-    [102694] = { id = "live_4", special_function = SF.SetAchievementFailed },
-    [EHI:GetInstanceElementID(100116, 4900)] = { id = "live_5", class = TT.AchievementStatus },
-    [102702] = { id = "live_5", special_function = SF.SetAchievementFailed },
-    [100265] = { id = "live_5", special_function = SF.SetAchievementComplete }
+    live_2 =
+    {
+        elements =
+        {
+            [100693] = { class = TT.AchievementStatus },
+            [102704] = { special_function = SF.SetAchievementFailed },
+            [100246] = { special_function = SF.SetAchievementComplete }
+        }
+    },
+    live_3 =
+    {
+        elements =
+        {
+            [100304] = { time = 5, class = TT.AchievementUnlock }
+        }
+    },
+    live_4 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [102785] = { class = TT.AchievementStatus },
+            [100249] = { special_function = SF.SetAchievementComplete },
+            [102694] = { special_function = SF.SetAchievementFailed },
+        }
+    },
+    live_5 =
+    {
+        elements =
+        {
+            [EHI:GetInstanceElementID(100116, 4900)] = { class = TT.AchievementStatus },
+            [102702] = { special_function = SF.SetAchievementFailed },
+            [100265] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 EHI:ParseTriggers({

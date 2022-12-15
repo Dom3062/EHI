@@ -42,17 +42,31 @@ if EHI:GetOption("show_escape_chance") then
     end)
 end
 
-local cac_12_disable = { id = "cac_12", special_function = SF.SetAchievementFailed }
 local ExecuteAchievementIfInteractionExists = EHI:GetFreeCustomSpecialFunctionID()
 local achievements =
 {
-    [100073] = { time = 36, id = "lets_do_this", class = TT.Achievement },
-    [101784] = { id = "lets_do_this", special_function = SF.SetAchievementComplete },
-    [100074] = { id = "cac_12", status = "alarm", class = TT.AchievementStatus, special_function = ExecuteAchievementIfInteractionExists },
-    [104406] = { id = "cac_12", status = "finish", special_function = SF.SetAchievementStatus },
-    [104408] = { id = "cac_12", special_function = SF.SetAchievementComplete },
-    [104409] = cac_12_disable,
-    [103116] = cac_12_disable
+    lets_do_this =
+    {
+        elements =
+        {
+            [100073] = { time = 36, class = TT.Achievement },
+            [101784] = { special_function = SF.SetAchievementComplete },
+        },
+        load_sync = function(self)
+            self:AddTimedAchievementTracker("lets_do_this", 36)
+        end
+    },
+    cac_12 =
+    {
+        elements =
+        {
+            [100074] = { status = "alarm", class = TT.AchievementStatus, special_function = ExecuteAchievementIfInteractionExists },
+            [104406] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [104408] = { special_function = SF.SetAchievementComplete },
+            [104409] = { special_function = SF.SetAchievementFailed },
+            [103116] = { special_function = SF.SetAchievementFailed }
+        }
+    }
 }
 
 local other =
@@ -66,12 +80,7 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, function(id, trigger, ...)
-    if EHI:IsAchievementLocked("cac_12") and managers.ehi:InteractionExists("circuit_breaker_off") then
+    if managers.ehi:InteractionExists("circuit_breaker_off") then
         EHI:CheckCondition(trigger)
     end
 end)
-if EHI:ShowMissionAchievements() then
-    EHI:AddLoadSyncFunction(function(self)
-        self:AddTimedAchievementTracker("lets_do_this", 36)
-    end)
-end

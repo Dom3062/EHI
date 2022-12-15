@@ -57,9 +57,16 @@ end
 
 local achievements =
 {
-    [102301] = { id = "pal_3", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
-    [101976] = { id = "pal_3", special_function = SF.SetAchievementComplete },
-    [101571] = { id = "pal_3", special_function = SF.SetAchievementFailed },
+    pal_3 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        elements =
+        {
+            [102301] = { class = TT.AchievementStatus },
+            [101976] = { special_function = SF.SetAchievementComplete },
+            [101571] = { special_function = SF.SetAchievementFailed }
+        }
+    }
 }
 
 EHI:ParseTriggers({

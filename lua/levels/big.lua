@@ -3,9 +3,6 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local pc_hack = { time = 20, id = "PCHack", icons = { Icon.PCHack } }
-local bigbank_4 = { special_function = SF.Trigger, data = { 1, 2 } }
-local show_achievement = EHI:ShowMissionAchievements()
-local hard_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard)
 local triggers = {
     [105842] = { time = 16.7 * 18, id = "Thermite", icons = { Icon.Fire } },
 
@@ -63,16 +60,39 @@ if EHI:IsClient() then
     end
 end
 
+local bigbank_4 = { special_function = SF.Trigger, data = { 1, 2 } }
 local achievements =
 {
-    [1] = { time = 720, id = "bigbank_4", class = TT.Achievement, difficulty_pass = hard_and_above },
-    [2] = { special_function = SF.RemoveTriggers, data = { 100107, 106140, 106150 } },
-    [100107] = bigbank_4,
-    [106140] = bigbank_4,
-    [106150] = bigbank_4,
-
-    [106250] = { id = "cac_22", special_function = SF.SetAchievementFailed },
-    [106247] = { id = "cac_22", special_function = SF.SetAchievementComplete },
+    bigbank_4 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard),
+        elements =
+        {
+            [1] = { time = 720, id = "bigbank_4", class = TT.Achievement },
+            [2] = { special_function = SF.RemoveTriggers, data = { 100107, 106140, 106150 } },
+            [100107] = bigbank_4,
+            [106140] = bigbank_4,
+            [106150] = bigbank_4,
+        },
+        load_sync = function(self)
+            self:AddTimedAchievementTracker("bigbank_4", 720)
+        end
+    },
+    cac_22 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
+        elements =
+        {
+            [106250] = { special_function = SF.SetAchievementFailed },
+            [106247] = { special_function = SF.SetAchievementComplete }
+        },
+        alarm_callback = function(dropin)
+            if dropin or not managers.preplanning:IsAssetBought(106594) then -- C4 Escape
+                return
+            end
+            managers.ehi:AddAchievementStatusTracker("cac_22")
+        end
+    }
 }
 
 local other =
@@ -93,25 +113,6 @@ EHI:ShowAchievementLootCounter({
     max = 16,
     remove_after_reaching_target = false
 })
-if show_achievement then
-    if hard_and_above then
-        EHI:AddLoadSyncFunction(function(self)
-            self:AddTimedAchievementTracker("bigbank_4", 720)
-        end)
-    end
-    if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
-        EHI:AddOnAlarmCallback(function(dropin)
-            if dropin or not managers.preplanning:IsAssetBought(106594) then -- C4 Escape
-                return
-            end
-            managers.ehi:AddTracker({
-                id = "cac_22",
-                icons = EHI:GetAchievementIcon("cac_22"),
-                class = TT.AchievementStatus
-            })
-        end)
-    end
-end
 
 local tbl =
 {

@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:ShowMissionAchievements()
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [EHI:GetInstanceElementID(100108, 3200)] = { time = 45, id = "LockOpen", icons = { Icon.Wait } },
@@ -12,34 +11,39 @@ local triggers = {
 }
 
 local function berry_4_fail()
-    managers.player:remove_listener("EHI_berry_4_bleedout")
-    managers.player:remove_listener("EHI_berry_4_incapacitated")
+    managers.player:remove_listener("EHI_berry_4_fail")
     EHI:Unhook("berry_4_HuskPlayerMovement_sync_bleed_out")
     EHI:Unhook("berry_4_HuskPlayerMovement_sync_incapacitated")
     managers.ehi:SetAchievementFailed("berry_4")
 end
 local achievements =
 {
-    [102290] = { id = "berry_3", special_function = SF.SetAchievementComplete },
-    [102292] = { special_function = SF.Trigger, data = { 1022921, 1022922, 1022923 } },
-    [1022921] = { time = 600, id = "berry_3", class = TT.Achievement, difficulty_pass = ovk_and_up },
-    [1022922] = { status = "no_down", id = "berry_4", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [1022923] = { special_function = SF.CustomCode, f = function()
-        if EHI:IsAchievementLocked("berry_4") and ovk_and_up and show_achievement then
-            -- Player
-            managers.player:add_listener("EHI_berry_4_bleedout", {"bleed_out"}, berry_4_fail)
-            managers.player:add_listener("EHI_berry_4_incapacitated", {"incapacitated"}, berry_4_fail)
+    berry_3 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [102292] = { time = 600, class = TT.Achievement },
+            [102290] = { special_function = SF.SetAchievementComplete }
+        }
+    },
+    berry_4 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [102292] = { special_function = SF.Trigger, data = { 1, 2 } },
+            [1] = { status = "no_down", id = "berry_4", class = TT.AchievementStatus },
+            [2] = { special_function = SF.CustomCode, f = function()
+                -- Player (Local)
+                managers.player:add_listener("EHI_berry_4_fail", { "bleed_out", "incapacitated" }, berry_4_fail)
 
-            -- Clients
-            EHI:HookWithID(HuskPlayerMovement, "_sync_movement_state_bleed_out", "EHI_berry_4_HuskPlayerMovement_sync_bleed_out", function(...)
-                berry_4_fail()
-            end)
-            EHI:HookWithID(HuskPlayerMovement, "_sync_movement_state_incapacitated", "EHI_berry_4_HuskPlayerMovement_sync_incapacitated", function(...)
-                berry_4_fail()
-            end)
-        end
-    end },
-    [EHI:GetInstanceElementID(100041, 20050)] = { id = "berry_2", special_function = SF.FinalizeAchievement }
+                -- Clients
+                EHI:HookWithID(HuskPlayerMovement, "_sync_movement_state_bleed_out", "EHI_berry_4_HuskPlayerMovement_sync_bleed_out", berry_4_fail)
+                EHI:HookWithID(HuskPlayerMovement, "_sync_movement_state_incapacitated", "EHI_berry_4_HuskPlayerMovement_sync_incapacitated", berry_4_fail)
+            end }
+        }
+    }
 }
 
 local other =
@@ -55,7 +59,12 @@ EHI:ParseTriggers({
 EHI:ShowAchievementLootCounter({
     achievement = "berry_2",
     max = 10,
-    show_loot_counter = true
+    show_loot_counter = true,
+    triggers =
+    {
+        [EHI:GetInstanceElementID(100041, 20050)] = { special_function = SF.FinalizeAchievement }
+    },
+    add_to_counter = true
 })
 
 local tbl =

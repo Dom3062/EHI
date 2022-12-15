@@ -22,15 +22,23 @@ local triggers = {
 }
 local achievements =
 {
-    [101228] = { time = 210, id = "pig_2", class = TT.Achievement, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
-    [100788] = { id = "pig_2", special_function = SF.SetAchievementComplete }
+    pig_2 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        elements =
+        {
+            [101228] = { time = 210, class = TT.Achievement },
+            [100788] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 local start_index = { 3500, 3750, 3900, 4450, 4900, 6100, 17600, 17650 }
-if EHI:ShowMissionAchievements() and EHI:IsAchievementLocked("pig_7") then
+if EHI:CanShowAchievement("pig_7") then
+    achievements.pig_7 = { elements = {} }
     for _, index in ipairs(start_index) do
-        achievements[EHI:GetInstanceElementID(100024, index)] = { time = 5, id = "pig_7", class = TT.Achievement }
-        achievements[EHI:GetInstanceElementID(100039, index)] = { id = "pig_7", special_function = SF.SetAchievementFailed } -- Hostage blew out
-        achievements[EHI:GetInstanceElementID(100027, index)] = { id = "pig_7", special_function = SF.SetAchievementComplete } -- Hostage saved
+        achievements.pig_7.elements[EHI:GetInstanceElementID(100024, index)] = { time = 5, class = TT.Achievement }
+        achievements.pig_7.elements[EHI:GetInstanceElementID(100039, index)] = { special_function = SF.SetAchievementFailed } -- Hostage blew out
+        achievements.pig_7.elements[EHI:GetInstanceElementID(100027, index)] = { special_function = SF.SetAchievementComplete } -- Hostage saved
     end
 else
     for _, index in ipairs(start_index) do

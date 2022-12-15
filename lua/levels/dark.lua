@@ -60,30 +60,52 @@ local triggers = {
 
 local achievements =
 {
-    [100296] = { special_function = SF.Trigger, data = { 1002961, 1002962, 1002963, 1002964, 1002965 } },
-    [1002961] = { time = 420, id = "dark_2", class = TT.Achievement },
-    [1002962] = { id = "dark_3", class = TT.AchievementStatus },
-    [1002963] = { max = 4, id = "dark_5", class = "EHIdark5Tracker", remove_after_reaching_target = false },
-    [1002964] = { max = 16, id = "voff_3", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
-    [1002965] = { special_function = SF.CustomCode, f = function()
-        if managers.ehi:TrackerDoesNotExist("voff_3") then
-            return
+    dark_2 =
+    {
+        elements =
+        {
+            [100296] = { time = 420, class = TT.Achievement },
+            [100290] = { special_function = SF.SetAchievementComplete }
+        },
+        load_sync = function(self)
+            self:AddTimedAchievementTracker("dark_2", 420)
         end
-        EHI:AddAchievementToCounter({ achievement = "voff_3" })
-    end },
-
-    [100470] = { special_function = SF.Trigger, data = { 1004701, 1004702 } },
-    [1004701] = { id = "dark_3", special_function = SF.SetAchievementFailed },
-    [1004702] = { id = "voff_3", special_function = SF.SetAchievementFailed },
-
-    [100290] = { id = "dark_2", special_function = SF.SetAchievementComplete }
+    },
+    dark_3 =
+    {
+        elements =
+        {
+            [100296] = { class = TT.AchievementStatus },
+            [100470] = { special_function = SF.SetAchievementFailed }
+        }
+    },
+    dark_5 =
+    {
+        elements =
+        {
+            [100296] = { max = 4, class = "EHIdark5Tracker", remove_after_reaching_target = false },
+        }
+    },
+    voff_3 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        elements =
+        {
+            [100296] = { special_function = SF.Trigger, data = { 1, 2 } },
+            [1] = { max = 16, class = TT.AchievementProgress, remove_after_reaching_target = false },
+            [2] = { special_function = SF.CustomCode, f = function()
+                EHI:AddAchievementToCounter({ achievement = "voff_3" })
+            end },
+            [100470] = { special_function = SF.SetAchievementFailed },
+        }
+    }
 }
 local AddBodyBag = EHI:GetFreeCustomSpecialFunctionID()
 local RemoveBodyBag = EHI:GetFreeCustomSpecialFunctionID()
 for i = 12850, 13600, 250 do
     local inc = EHI:GetInstanceElementID(100011, i)
-    achievements[inc] = { id = "dark_5", special_function = AddBodyBag, element = i }
-    achievements[inc + 1] = { id = "dark_5", special_function = RemoveBodyBag, element = i }
+    achievements.dark_5.elements[inc] = { special_function = AddBodyBag, element = i }
+    achievements.dark_5.elements[inc + 1] = { special_function = RemoveBodyBag, element = i }
 end
 EHI:ParseTriggers({
     mission = triggers,
@@ -96,8 +118,3 @@ end)
 EHI:RegisterCustomSpecialFunction(RemoveBodyBag, function(id, trigger, ...)
     managers.ehi:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
 end)
-if EHI:ShowMissionAchievements() then
-    EHI:AddLoadSyncFunction(function(self)
-        self:AddTimedAchievementTracker("dark_2", 420)
-    end)
-end

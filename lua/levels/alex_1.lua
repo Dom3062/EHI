@@ -28,11 +28,16 @@ local triggers = {
 }
 local achievements =
 {
-    [101088] = { id = "halloween_1", status = "ready", class = TT.AchievementStatus },
-    [101907] = { id = "halloween_1", status = "defend", special_function = SF.SetAchievementStatus },
-    [101917] = { id = "halloween_1", special_function = SF.SetAchievementComplete },
-    [101914] = { id = "halloween_1", special_function = SF.SetAchievementFailed },
-    [101001] = { id = "halloween_2", special_function = SF.SetAchievementFailed },
+    halloween_1 =
+    {
+        elements =
+        {
+            [101088] = { status = "ready", class = TT.AchievementStatus },
+            [101907] = { status = "defend", special_function = SF.SetAchievementStatus },
+            [101917] = { special_function = SF.SetAchievementComplete },
+            [101914] = { special_function = SF.SetAchievementFailed }
+        }
+    }
 }
 local other =
 {
@@ -47,10 +52,15 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 }, "Van", Icon.CarEscape)
-if EHI:ShowMissionAchievements() and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "halloween_2",
-        max = 7
+        max = 7,
+        triggers =
+        {
+            [101001] = { special_function = SF.SetAchievementFailed } -- Methlab exploded
+        },
+        add_to_counter = true
     })
 else
     EHI:ShowLootCounter({ max = 7 })

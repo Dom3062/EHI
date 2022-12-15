@@ -22,12 +22,24 @@ end
 
 local achievements =
 {
-    [100012] = { id = "wwh_9", status = "defend", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [101250] = { id = "wwh_9", special_function = SF.SetAchievementFailed },
-    [100082] = { id = "wwh_9", special_function = SF.SetAchievementComplete },
-
-    [100946] = { max = 4, id = "wwh_10", class = TT.AchievementProgress },
-    [101226] = { id = "wwh_10", special_function = SF.IncreaseProgress }
+    wwh_9 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100012] = { status = "defend", class = TT.AchievementStatus },
+            [101250] = { special_function = SF.SetAchievementFailed },
+            [100082] = { special_function = SF.SetAchievementComplete },
+        }
+    },
+    wwh_10 =
+    {
+        elements =
+        {
+            [100946] = { max = 4, class = TT.AchievementProgress },
+            [101226] = { special_function = SF.IncreaseProgress }
+        }
+    }
 }
 
 local other =

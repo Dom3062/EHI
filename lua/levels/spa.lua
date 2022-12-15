@@ -19,23 +19,36 @@ local triggers = {
 
 local achievements =
 {
-    [101989] = { special_function = SF.Trigger, data = { 1019891, 1019892 } },
-    -- It was 7 minutes before the change
-    [1019891] = { time = 360, id = "spa_5", class = TT.Achievement, difficulty_pass = ovk_and_up },
-    [1019892] = { max = 8, id = "spa_6", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = ovk_and_up },
-    [101997] = { id = "spa_5", special_function = SF.SetAchievementComplete },
-    [101999] = { id = "spa_6", special_function = SF.IncreaseProgress },
-    [102002] = { id = "spa_6", special_function = SF.FinalizeAchievement },
+    spa_5 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            -- It was 7 minutes before the change
+            [101989] = { time = 360, class = TT.Achievement },
+            [101997] = { special_function = SF.SetAchievementComplete },
+        }
+    },
+    spa_6 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [101989] = { max = 8, class = TT.AchievementProgress, remove_after_reaching_target = false },
+            [101999] = { special_function = SF.IncreaseProgress },
+            [102002] = { special_function = SF.FinalizeAchievement },
+        }
+    }
 }
 
 --[[local other =
 {
     -- First Assault Delay
-    [EHI:GetInstanceElementID(100003, 7950)] = { time = 3 + 12 + 12 + 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, trigger_times = 1 },
-    [EHI:GetInstanceElementID(100024, 7950)] = { time = 12 + 12 + 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
-    [EHI:GetInstanceElementID(100053, 7950)] = { time = 12 + 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
-    [EHI:GetInstanceElementID(100026, 7950)] = { time = 4 + 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist },
-    [EHI:GetInstanceElementID(100179, 7950)] = { time = 20 + 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.AddTrackerIfDoesNotExist }
+    [EHI:GetInstanceElementID(100003, 7950)] = EHI:AddAssaultDelay({ time = 3 + 12 + 12 + 4 + 20 + 30, trigger_times = 1 }),
+    [EHI:GetInstanceElementID(100024, 7950)] = EHI:AddAssaultDelay({ time = 12 + 12 + 4 + 20 + 30, special_function = SF.AddTrackerIfDoesNotExist }),
+    [EHI:GetInstanceElementID(100053, 7950)] = EHI:AddAssaultDelay({ time = 12 + 4 + 20 + 30, special_function = SF.AddTrackerIfDoesNotExist }),
+    [EHI:GetInstanceElementID(100026, 7950)] = EHI:AddAssaultDelay({ time = 4 + 20 + 30, special_function = SF.AddTrackerIfDoesNotExist }),
+    [EHI:GetInstanceElementID(100179, 7950)] = EHI:AddAssaultDelay({ time = 20 + 30, special_function = SF.AddTrackerIfDoesNotExist })
 }]]
 
 EHI:ParseTriggers({

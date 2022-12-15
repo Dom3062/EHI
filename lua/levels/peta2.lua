@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local goat_pick_up = { Icon.Heli, Icon.Interact }
 local function f_PilotComingInAgain(id, trigger, ...)
     managers.ehi:RemoveTracker("PilotComingIn")
@@ -37,25 +36,37 @@ local triggers = {
 local IncreaseEnabled = false
 local achievements =
 {
-    [100002] = { max = (EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 14 or 12), id = "peta_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up, remove_after_reaching_target = false },
-    [102095] = { special_function = SF.CustomCode, f = function()
-        IncreaseEnabled = true
-    end },
-    [102098] = { special_function = SF.CustomCode, f = function()
-        IncreaseEnabled = false
-    end },
-    [100716] = { special_function = SF.CustomCode, f = function()
-        if IncreaseEnabled then
-            managers.ehi:IncreaseTrackerProgress("peta_5")
-        end
-    end },
-    [100580] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
-        managers.ehi:CallFunction("peta_5", "Finalize")
-    end},
-
-    -- Formerly 5 minutes
-    [101540] = { time = 240, id = "peta_3", class = TT.Achievement },
-    [101533] = { id = "peta_3", special_function = SF.SetAchievementComplete },
+    peta_3 =
+    {
+        elements =
+        {
+            -- Formerly 5 minutes
+            [101540] = { time = 240, class = TT.Achievement },
+            [101533] = { special_function = SF.SetAchievementComplete }
+        }
+    },
+    peta_5 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        elements =
+        {
+            [100002] = { max = (EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 14 or 12), class = TT.AchievementProgress, remove_after_reaching_target = false },
+            [102095] = { special_function = SF.CustomCode, f = function()
+                IncreaseEnabled = true
+            end },
+            [102098] = { special_function = SF.CustomCode, f = function()
+                IncreaseEnabled = false
+            end },
+            [100716] = { special_function = SF.CustomCode, f = function()
+                if IncreaseEnabled then
+                    managers.ehi:IncreaseTrackerProgress("peta_5")
+                end
+            end },
+            [100580] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
+                managers.ehi:CallFunction("peta_5", "Finalize")
+            end}
+        }
+    }
 }
 
 local other =

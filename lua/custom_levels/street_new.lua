@@ -20,11 +20,25 @@ end
 -- Achievements
 local achievements =
 {
-    [100145] = { id = "run_9", special_function = SF.SetAchievementFailed },
-
-    -- Difficulty is bugged, difficulty_overkill is not OVERKILL!, it is Very Hard
-    [102426] = { time = 817, id = "str_speedrun", icons = { "ehi_str_speedrun" }, class = TT.Achievement, condition = EHI:ShowMissionAchievements() and EHI:IsBeardLibAchievementLocked("street_new_achievements", "str_speedrun") and EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), beardlib = true },
-    [100553] = { id = "str_speedrun", special_function = SF.SetAchievementComplete }
+    run_9 =
+    {
+        elements =
+        {
+            [100145] = { special_function = SF.SetAchievementFailed }
+        }
+    },
+    str_speedrun =
+    {
+        beardlib = true,
+        package = "street_new_achievements",
+        -- Difficulty is bugged, difficulty_overkill is not OVERKILL!, it is Very Hard
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard),
+        elements =
+        {
+            [102426] = { time = 817, icons = { "ehi_str_speedrun" }, class = TT.Achievement },
+            [100553] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 EHI:ParseTriggers({

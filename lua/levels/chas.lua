@@ -8,10 +8,10 @@ local element_sync_triggers = {
     [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, hook_element = 102453, remove_trigger_when_executed = true }
 }
 local triggers = {
-    [EHI:GetInstanceElementID(100017, 11325)] = { id = "Gas", special_function = SF.RemoveTracker },
-
     [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { Icon.Train, Icon.Drill, Icon.Goto } },
-    [101660] = { time = 120, id = "Gas", icons = { Icon.Teargas } }
+
+    [101660] = { time = 120, id = "Gas", icons = { Icon.Teargas } },
+    [EHI:GetInstanceElementID(100017, 11325)] = { id = "Gas", special_function = SF.RemoveTracker },
 }
 if EHI:IsClient() then
     triggers[100602] = { time = 90 + 5, random_time = 20, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
@@ -37,43 +37,66 @@ local DisableWaypoints =
 
 local achievements =
 {
-    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072, 1001073 } },
-    [1001071] = { max = 15, id = "chas_10", class = TT.AchievementProgress, remove_after_reaching_target = false, difficulty_pass = ovk_and_up },
-    [1001072] = { special_function = SF.CustomCode, f = function()
-        if managers.ehi:TrackerExists("chas_10") then
-            EHI:AddAchievementToCounter({
-                achievement = "chas_10"
-            })
+    chas_9 =
+    {
+        elements =
+        {
+            [100781] = { status = "defend", class = TT.AchievementStatus },
+            [100907] = { special_function = SF.SetAchievementFailed },
+            [100906] = { special_function = SF.SetAchievementComplete }
+        }
+    },
+    chas_10 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [1] = { max = 15, class = TT.AchievementProgress, remove_after_reaching_target = false },
+            [2] = { special_function = SF.CustomCode, f = function()
+                EHI:AddAchievementToCounter({
+                    achievement = "chas_10"
+                })
+            end },
+            [100107] = { special_function = SF.Trigger, data = { 1, 2 }}
+        },
+        load_sync = function(self)
+            if EHI.ConditionFunctions.IsStealth() then
+                EHI:ShowAchievementLootCounter({
+                    achievement = "chas_10",
+                    max = 15,
+                    remove_after_reaching_target = false
+                })
+                self:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())
+            end
+        end,
+        alarm_callback = function()
+            managers.ehi:SetAchievementFailed("chas_10")
         end
-    end },
-    [1001073] = { time = 360, id = "chas_11", class = TT.Achievement, difficulty_pass = ovk_and_up },
+    },
+    chas_11 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100107] = { time = 360, class = TT.Achievement }
+        },
+        load_sync = function(self)
+            self:AddTimedAchievementTracker("chas_11", 360)
+        end
+    }
+}
 
-    [100781] = { id = "chas_9", status = "defend", class = TT.AchievementStatus },
-    [100907] = { id = "chas_9", special_function = SF.SetAchievementFailed },
-    [100906] = { id = "chas_9", special_function = SF.SetAchievementComplete }
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
 
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
-if EHI:ShowMissionAchievements() and ovk_and_up then
-    EHI:AddLoadSyncFunction(function(self)
-        if EHI.ConditionFunctions.IsStealth() then
-            EHI:ShowAchievementLootCounter({
-                achievement = "chas_10",
-                max = 15,
-                remove_after_reaching_target = false
-            })
-            self:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())
-        end
-        self:AddTimedAchievementTracker("chas_11", 360)
-    end)
-    EHI:AddOnAlarmCallback(function()
-        managers.ehi:SetAchievementFailed("chas_10")
-    end)
-end
 EHI:ShowLootCounter({ max = 15 })
 
 local tbl =

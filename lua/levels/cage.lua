@@ -1,14 +1,19 @@
 local EHI = EHI
-local achievements = {
-    [100107] = { time = 240, id = "fort_4", class = EHI.Trackers.Achievement }
+local achievements =
+{
+    fort_4 =
+    {
+        elements =
+        {
+            [100107] = { time = 240, class = EHI.Trackers.Achievement }
+        },
+        load_sync = function(self)
+            self:AddTimedAchievementTracker("fort_4", 240)
+        end
+    }
 }
 
 EHI:ParseTriggers({
     mission = {},
     achievement = achievements
 })
-if EHI:ShowMissionAchievements() then
-    EHI:AddLoadSyncFunction(function(self)
-        self:AddTimedAchievementTracker("fort_4", 240)
-    end)
-end

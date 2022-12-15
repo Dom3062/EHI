@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
 local pink_car = { { icon = Icon.Car, color = Color("D983D1") }, Icon.Goto }
 local ExecuteIfEnabled = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
@@ -27,12 +26,24 @@ local triggers = {
 
 local achievements =
 {
-    [100107] = { id = "rvd_9", status = "defend", class = TT.AchievementStatus },
-    [100839] = { id = "rvd_9", special_function = SF.SetAchievementFailed },
-    [100869] = { id = "rvd_9", special_function = SF.SetAchievementComplete },
-
-    [100057] = { time = 60, id = "rvd_10", class = TT.Achievement, difficulty_pass = dw_and_above, special_function = SF.ShowAchievementFromStart },
-    [100247] = { id = "rvd_10", special_function = SF.SetAchievementComplete }
+    rvd_9 =
+    {
+        elements =
+        {
+            [100107] = { status = "defend", class = TT.AchievementStatus },
+            [100839] = { special_function = SF.SetAchievementFailed },
+            [100869] = { special_function = SF.SetAchievementComplete },
+        }
+    },
+    rvd_10 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
+        elements =
+        {
+            [100057] = { time = 60, class = TT.Achievement, special_function = SF.ShowAchievementFromStart },
+            [100247] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 local other =

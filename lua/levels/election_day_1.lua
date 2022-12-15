@@ -3,10 +3,22 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local achievements =
 {
-    [100003] = { time = 60, id = "slakt_1", class = TT.Achievement },
-    [100012] = { id = "bob_8", class = TT.AchievementStatus },
-    [101248] = { id = "bob_8", special_function = SF.SetAchievementComplete },
-    [100469] = { id = "bob_8", special_function = SF.SetAchievementFailed }
+    bob_8 =
+    {
+        elements =
+        {
+            [100012] = { class = TT.AchievementStatus },
+            [101248] = { special_function = SF.SetAchievementComplete },
+            [100469] = { special_function = SF.SetAchievementFailed }
+        }
+    },
+    slakt_1 =
+    {
+        elements =
+        {
+            [100003] = { time = 60, class = TT.Achievement }
+        }
+    }
 }
 
 EHI:ParseTriggers({

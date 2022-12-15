@@ -7,16 +7,19 @@ local achievements = {}
 local other = {}
 local level_id = Global.game_settings.level_id
 if level_id == "firestarter_3" then
-    local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
     triggers = {
         [102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money } }
     }
-    achievements =
+    achievements.slakt_5 =
     {
-        [102144] = { status = "ok", id = "slakt_5", class = TT.AchievementStatus, difficulty_pass = dw_and_above },
-        [102146] = { status = "finish", id = "slakt_5", special_function = SF.SetAchievementStatus },
-        [105237] = { id = "slakt_5", special_function = SF.SetAchievementComplete },
-        [105235] = { id = "slakt_5", special_function = SF.SetAchievementFailed }
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
+        elements =
+        {
+            [102144] = { status = "ok", class = TT.AchievementStatus },
+            [102146] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [105237] = { special_function = SF.SetAchievementComplete },
+            [105235] = { special_function = SF.SetAchievementFailed }
+        }
     }
 else
     -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
@@ -45,12 +48,19 @@ end
 triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
 triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
 
-achievements[101539] = { status = "bring", id = "voff_1", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) }
-achievements[105686] = { id = "voff_1", special_function = SF.SetAchievementComplete }
-achievements[105691] = { status = "finish", id = "voff_1", special_function = SF.SetAchievementStatus } -- Entered area again
-achievements[105694] = { status = "finish", id = "voff_1", special_function = SF.SetAchievementStatus } -- Both secured
-achievements[105698] = { status = "bring", id = "voff_1", special_function = SF.SetAchievementStatus } -- Left the area
-achievements[105704] = { id = "voff_1", special_function = SF.SetAchievementFailed } -- Killed
+achievements.voff_1 =
+{
+    difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+    elements =
+    {
+        [101539] = { status = "bring", class = TT.AchievementStatus },
+        [105686] = { special_function = SF.SetAchievementComplete },
+        [105691] = { status = "finish", special_function = SF.SetAchievementStatus }, -- Entered area again
+        [105694] = { status = "finish", special_function = SF.SetAchievementStatus }, -- Both secured
+        [105698] = { status = "bring", special_function = SF.SetAchievementStatus }, -- Left the area
+        [105704] = { special_function = SF.SetAchievementFailed } -- Killed
+    }
+}
 
 other[105364] = EHI:AddAssaultDelay({ time = 10 + 60 + 30, special_function = SF.AddTimeByPreplanning, data = { id = 104875, yes = 30, no = 15 } })
 
@@ -68,7 +78,7 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
-if not EHI:ShowMissionAchievements() then
+if not EHI:CanShowAchievement("voff_1") then
     return
 end
 local dog_haters =

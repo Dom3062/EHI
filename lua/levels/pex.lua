@@ -41,18 +41,18 @@ EHI:ShowAchievementLootCounter({ -- Medals
     triggers =
     {
         [103735] = { special_function = SF.IncreaseProgress }
-    }
-})
-EHI:AddLoadSyncFunction(function(self)
-    --[[
-        There are total 12 places where medals can appears
-        -- 11 places are on the first floor (6 randomly selected)
-        -- last place is in the locker room (instance)
-        Game sync all used places. When a medal is picked up, it is removed from the world
-        and not synced to other drop-in players
+    },
+    load_sync = function(self)
+        --[[
+            There are total 12 places where medals can appears
+            -- 11 places are on the first floor (6 randomly selected)
+            -- last place is in the locker room (instance)
+            Game sync all used places. When a medal is picked up, it is removed from the world
+            and not synced to other drop-in players
 
-        Can't use function "CountInteractionAvailable" because the medal in the locker room is not interactable first
-        This is more accurate and reliable
-    ]]
-    self:SetTrackerProgressRemaining("pex_11", self:CountUnitAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5)
-end)
+            Can't use function "CountInteractionAvailable" because the medal in the locker room is not interactable first
+            This is more accurate and reliable
+        ]]
+        self:SetTrackerProgressRemaining("pex_11", self:CountUnitAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5)
+    end
+})

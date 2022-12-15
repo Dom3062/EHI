@@ -80,7 +80,7 @@ for i = 11680, 12680, 500 do
 end
 
 -- pent_security_box
-for _, index in pairs({17930, 18330, 18830, 19230, 19630, 20030, 20430}) do
+for _, index in ipairs({ 17930, 18330, 18830, 19230, 19630, 20030, 20430 }) do
     DisableWaypoints[EHI:GetInstanceElementID(100081, index)] = true -- Defend
     DisableWaypoints[EHI:GetInstanceElementID(100082, index)] = true -- Fix
 end
@@ -111,11 +111,11 @@ EHI:ShowLootCounter({
     triggers = loot_triggers
 })
 
-local ShowAchievements = EHI:ShowMissionAchievements()
+local ShowAchievement = EHI:CanShowAchievement("pent_10")
 local function pent_10(instance, unit_id, unit_data, unit)
     unit:digital_gui():SetRemoveOnPause(true)
     unit:digital_gui():SetWarning(true)
-    if ShowAchievements then
+    if ShowAchievement then
         unit:digital_gui():SetIcons(EHI:GetAchievementIcon("pent_10"))
         unit:digital_gui():pent_10()
     end

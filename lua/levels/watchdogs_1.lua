@@ -36,9 +36,15 @@ end
 
 local achievements =
 {
-    [101137] = { id = "hot_wheels", status = "finish", class = TT.AchievementStatus },
-    [102487] = { id = "hot_wheels", special_function = SF.SetAchievementFailed },
-    [102470] = { id = "hot_wheels", special_function = SF.SetAchievementComplete }
+    hot_wheels =
+    {
+        elements =
+        {
+            [101137] = { status = "finish", class = TT.AchievementStatus },
+            [102487] = { special_function = SF.SetAchievementFailed },
+            [102470] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 local other =

@@ -35,9 +35,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local hard_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard)
 local LowerFloor = EHI:GetFreeCustomSpecialFunctionID()
-local RemoveTriggerAndShowAchievementFromStart = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [102460] = { time = 7, id = "Countdown", icons = { Icon.Alarm }, class = TT.Warning },
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
@@ -98,13 +96,21 @@ EHI:AddOnAlarmCallback(function()
     end
 end)
 
+local ShowAchievementFromStart = EHI:GetFreeCustomSpecialFunctionID()
 local achievements =
 {
-    -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before mission restart
-    -- Reported in:
-    -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
-    [103456] = { time = 5, id = "nmh_11", class = TT.Achievement, special_function = RemoveTriggerAndShowAchievementFromStart, difficulty_pass = hard_and_above },
-    [103460] = { id = "nmh_11", special_function = SF.SetAchievementComplete }
+    nmh_11 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard),
+        elements =
+        {
+            -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before mission restart
+            -- Reported in:
+            -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
+            [103456] = { time = 5, class = TT.Achievement, special_function = ShowAchievementFromStart, trigger_times = 1 },
+            [103460] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 EHI:ParseTriggers({
@@ -116,11 +122,10 @@ EHI:RegisterCustomSpecialFunction(LowerFloor, function(id, trigger, element, ena
         managers.ehi:CallFunction(trigger.id, "LowerFloor")
     end
 end)
-EHI:RegisterCustomSpecialFunction(RemoveTriggerAndShowAchievementFromStart, function(id, trigger, ...)
-    if EHI:IsAchievementLocked(trigger.id) and not managers.statistics:is_dropin() then
+EHI:RegisterCustomSpecialFunction(ShowAchievementFromStart, function(id, trigger, ...)
+    if not managers.statistics:is_dropin() then
         EHI:CheckCondition(trigger)
     end
-    EHI:UnhookTrigger(id)
 end)
 EHI:AddLoadSyncFunction(function(self)
     local elevator_counter = managers.worlddefinition:get_unit(102296)

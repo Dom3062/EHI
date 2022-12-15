@@ -24,7 +24,12 @@ local triggers = {
     [EHI:GetInstanceElementID(100004, 2910)] = { id = EHI:GetInstanceElementID(100009, 2910), special_function = ShowWaypoint, data = { icon = Icon.Escape } },
 }
 
-EHI:ParseTriggers({ mission = triggers })
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 25 + 30 })
+}
+
+EHI:ParseTriggers({ mission = triggers, other = other })
 EHI:RegisterCustomSpecialFunction(ShowWaypoint, function(id, trigger, element, enabled)
     trigger.data.distance = true
     trigger.data.state = "sneak_present"

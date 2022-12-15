@@ -19,9 +19,7 @@ local triggers = {
 
     [EHI:GetInstanceElementID(100049, 5200)] = { time = 6, id = "ThermiteFrontGate", icons = { Icon.Fire } },
 
-    [EHI:GetInstanceElementID(100016, 23480)] = { time = 45, id = "SafeHackStealth", icons = { Icon.Vault } },
-
-    [103553] = { id = "fex_10", special_function = SF.SetAchievementFailed }
+    [EHI:GetInstanceElementID(100016, 23480)] = { time = 45, id = "SafeHackStealth", icons = { Icon.Vault } }
 }
 if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100024, 26980)] = { time = 60 + 2, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTimeOrCreateTracker }
@@ -42,14 +40,30 @@ local DisableWaypoints =
 local spawn_trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local achievements =
 {
-    [1] = { max = 21, id = "fex_10", class = TT.AchievementProgress },
-    [2] = { special_function = SF.CustomCode, f = function()
-        EHI:AddAchievementToCounter({
-            achievement = "fex_10"
-        })
-    end },
-    [100185] = spawn_trigger, -- Default entry
-    [102665] = spawn_trigger -- Cave spawn
+    fex_10 =
+    {
+        elements =
+        {
+            [1] = { max = 21, class = TT.AchievementProgress },
+            [2] = { special_function = SF.CustomCode, f = function()
+                EHI:AddAchievementToCounter({
+                    achievement = "fex_10"
+                })
+            end },
+            [100185] = spawn_trigger, -- Default entry
+            [102665] = spawn_trigger, -- Cave spawn
+            [103553] = { special_function = SF.SetAchievementFailed }
+        },
+        load_sync = function(self)
+            if EHI.ConditionFunctions.IsStealth() then
+                EHI:ShowAchievementLootCounter({
+                    achievement = "fex_10",
+                    max = 21
+                })
+                self:SetTrackerProgress("fex_10", managers.loot:GetSecuredBagsAmount())
+            end
+        end
+    }
 }
 
 EHI:ParseTriggers({
@@ -58,12 +72,3 @@ EHI:ParseTriggers({
 })
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 21 })
-EHI:AddLoadSyncFunction(function(self)
-    if EHI.ConditionFunctions.IsStealth() then
-        EHI:ShowAchievementLootCounter({
-            achievement = "fex_10",
-            max = 21
-        })
-        self:SetTrackerProgress("fex_10", managers.loot:GetSecuredBagsAmount())
-    end
-end)

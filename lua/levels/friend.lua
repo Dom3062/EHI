@@ -77,10 +77,36 @@ end
 
 local achievements =
 {
-    [100107] = { time = 901, id = "uno_7", class = "EHIuno7Tracker", difficulty_pass = mayhem_and_up },
-    [102291] = { max = 2, id = "friend_5", class = TT.AchievementProgress },
-    [102430] = { time = 780, id = "friend_6", class = TT.Achievement, difficulty_pass = mayhem_and_up },
-    [102280] = { id = "friend_5", special_function = SF.IncreaseProgress }
+    friend_5 =
+    {
+        elements =
+        {
+            [102291] = { max = 2, class = TT.AchievementProgress },
+            [102280] = { special_function = SF.IncreaseProgress }
+        }
+    },
+    friend_6 =
+    {
+        difficulty_pass = mayhem_and_up,
+        elements =
+        {
+            [102430] = { time = 780, class = TT.Achievement },
+        },
+        alarm_callback = function()
+            managers.ehi:SetAchievementFailed("friend_6")
+        end
+    },
+    uno_7 =
+    {
+        difficulty_pass = mayhem_and_up,
+        elements =
+        {
+            [100107] = { time = 901, class = "EHIuno7Tracker" },
+        },
+        alarm_callback = function()
+            managers.ehi:CallFunction("uno_7", "SetObtainable")
+        end
+    }
 }
 
 local other =
@@ -94,9 +120,3 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:ShowLootCounter({ max = 16 })
-if EHI:ShowMissionAchievements() and mayhem_and_up then
-    EHI:AddOnAlarmCallback(function()
-        managers.ehi:SetAchievementFailed("friend_6")
-        managers.ehi:CallFunction("uno_7", "SetObtainable")
-    end)
-end

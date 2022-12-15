@@ -35,13 +35,25 @@ end
 
 local achievements =
 {
-    [101048] = { status = "defend", id = "born_3", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
-    [101001] = { status = "finish", id = "born_3", special_function = SF.SetAchievementStatus },
-    [102777] = { id = "born_3", special_function = SF.SetAchievementComplete },
-    [102779] = { id = "born_3", special_function = SF.SetAchievementFailed }
+    born_3 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        elements =
+        {
+            [101048] = { status = "defend", class = TT.AchievementStatus },
+            [101001] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [102777] = { special_function = SF.SetAchievementComplete },
+            [102779] = { special_function = SF.SetAchievementFailed }
+        }
+    }
 }
 
-EHI:ParseTriggers({ mission = triggers, achievement = achievements }, nil, trigger_icon_all)
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
+}
+
+EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, nil, trigger_icon_all)
 EHI:ShowLootCounter({ max = 9 })
 
 local tbl =

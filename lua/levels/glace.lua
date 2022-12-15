@@ -33,20 +33,38 @@ end
 
 local achievements =
 {
-    [101732] = { special_function = SF.Trigger, data = { 1017321, 1017322 } },
-    [1017321] = { id = "glace_9", status = "find", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [1017322] = { max = 6, id = "glace_10", class = TT.AchievementProgress },
-    [105758] = { id = "glace_9", special_function = SF.SetAchievementFailed },
-    [105756] = { id = "glace_9", status = "ok", special_function = SF.SetAchievementStatus },
-    [105759] = { id = "glace_9", special_function = SF.SetAchievementComplete },
-    [105761] = { id = "glace_10", special_function = SF.IncreaseProgress }, -- ElementInstanceOutputEvent
-    [105721] = { id = "glace_10", special_function = SF.IncreaseProgress }, -- ElementEnemyDummyTrigger
-
-    [100765] = { status = "destroy", id = "uno_4", class = TT.AchievementStatus },
-    -- Very Hard or above check in the mission script
-    -- Reported here: https://steamcommunity.com/app/218620/discussions/14/3386156547847005343/
-    [103397] = { id = "uno_4", special_function = SF.SetAchievementComplete },
-    [102323] = { id = "uno_4", special_function = SF.SetAchievementFailed }
+    glace_9 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [101732] = { status = "find", class = TT.AchievementStatus },
+            [105758] = { special_function = SF.SetAchievementFailed },
+            [105756] = { status = "ok", special_function = SF.SetAchievementStatus },
+            [105759] = { special_function = SF.SetAchievementComplete }
+        }
+    },
+    glace_10 =
+    {
+        elements =
+        {
+            [101732] = { max = 6, class = TT.AchievementProgress },
+            [105761] = { special_function = SF.IncreaseProgress }, -- ElementInstanceOutputEvent
+            [105721] = { special_function = SF.IncreaseProgress } -- ElementEnemyDummyTrigger
+        }
+    },
+    uno_4 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), -- Don't hook it if the difficulty is Hard or below
+        elements =
+        {
+            [100765] = { status = "destroy", class = TT.AchievementStatus },
+            -- Very Hard or above check in the mission script
+            -- Reported here: https://steamcommunity.com/app/218620/discussions/14/3386156547847005343/
+            [103397] = { special_function = SF.SetAchievementComplete },
+            [102323] = { special_function = SF.SetAchievementFailed }
+        }
+    }
 }
 
 local other =

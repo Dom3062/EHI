@@ -25,8 +25,14 @@ end
 
 local achievements =
 {
-    [EHI:GetInstanceElementID(100010, 2900)] = { time = 60, id = "peta_2", class = TT.Achievement },
-    [EHI:GetInstanceElementID(100080, 2900)] = { id = "peta_2", special_function = SF.SetAchievementComplete }
+    peta_2 =
+    {
+        elements =
+        {
+            [EHI:GetInstanceElementID(100010, 2900)] = { time = 60, class = TT.Achievement },
+            [EHI:GetInstanceElementID(100080, 2900)] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 EHI:ParseTriggers({

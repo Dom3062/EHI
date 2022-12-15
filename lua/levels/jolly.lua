@@ -41,7 +41,7 @@ end
 local other =
 {
     -- Shorter by 20s for some reason
-    --[100217] = { time = 30 + 30, id = "AssaultDelay", class = TT.AssaultDelay, trigger_times = 1 }
+    --[100217] = EHI:AddAssaultDelay({ time = 30 + 30, trigger_times = 1 })
 }
 
 EHI:ParseTriggers({ mission = triggers, other = other })

@@ -10,17 +10,29 @@ local triggers = {
     [102080] = { id = 102674, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102674 }}
 }
 
+if EHI:IsClient() then
+    triggers[101965] = { time = 60, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101966] = { time = 30, special_function = SF.AddTrackerIfDoesNotExist }
+end
+
 local achievements =
 {
-    [101959] = { id = "bullet_dodger", class = TT.AchievementStatus },
-    [101872] = { id = "bullet_dodger", special_function = SF.SetAchievementFailed },
-    [101874] = { id = "bullet_dodger", special_function = SF.SetAchievementComplete },
+    bullet_dodger =
+    {
+        elements =
+        {
+            [101959] = { status = "finish", class = TT.AchievementStatus },
+            [101872] = { special_function = SF.SetAchievementFailed },
+            [101874] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 local other =
 {
     [102031] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
-    [102030] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround }
+    [102030] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
+    [101959] = EHI:AddAssaultDelay({ time = 10 + 30 })
 }
 
 EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.HeliEscape)

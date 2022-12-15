@@ -23,9 +23,16 @@ local triggers = {
 
 local achievements =
 {
-    [101742] = { max = 3, id = "bph_10", class = TT.AchievementProgress, difficulty_pass = ovk_and_up, trigger_times = 1 },
-    [101885] = { id = "bph_10", special_function = SF.SetAchievementFailed },
-    [102171] = { id = "bph_10", special_function = SF.IncreaseProgress }
+    bph_10 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [101742] = { max = 3, class = TT.AchievementProgress, trigger_times = 1 },
+            [101885] = { special_function = SF.SetAchievementFailed },
+            [102171] = { special_function = SF.IncreaseProgress }
+        }
+    }
 }
 
 EHI:ParseTriggers({

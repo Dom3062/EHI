@@ -13,8 +13,14 @@ local triggers = {
 
 local achievements =
 {
-    [100287] = { time = 30, id = "frappucino_to_go_please", class = TT.Achievement },
-    [101379] = { id = "frappucino_to_go_please", special_function = SF.SetAchievementComplete }
+    frappucino_to_go_please =
+    {
+        elements =
+        {
+            [100287] = { time = 30, class = TT.Achievement },
+            [101379] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 local other =

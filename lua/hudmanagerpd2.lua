@@ -197,14 +197,14 @@ if EHI:AssaultDelayTrackerIsEnabled() then
         EHI:Unhook("AssaultDelay_set_control_info")
     end
     original.sync_start_assault = HUDManager.sync_start_assault
-    function HUDManager:sync_start_assault(assault_number, ...)
-        original.sync_start_assault(self, assault_number, ...)
+    function HUDManager:sync_start_assault(...)
+        original.sync_start_assault(self, ...)
         self.ehi:RemoveTracker("AssaultDelay")
         EHI:Unhook("AssaultDelay_set_control_info")
     end
     original.sync_end_assault = HUDManager.sync_end_assault
-    function HUDManager:sync_end_assault(result, ...)
-        original.sync_end_assault(self, result, ...)
+    function HUDManager:sync_end_assault(...)
+        original.sync_end_assault(self, ...)
         if EHI._cache.diff and EHI._cache.diff > 0 then
             self.ehi:AddTracker({
                 id = "AssaultDelay",

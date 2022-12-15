@@ -161,12 +161,23 @@ local triggers = {
 
 local achievements =
 {
-    [100809] = { time = 60, id = "cac_9", class = TT.Achievement, difficulty_pass = ovk_and_up, trigger_times = 1 },
-
-    [104859] = { id = "flat_2", special_function = SF.SetAchievementComplete },
-    [100805] = { id = "cac_9", special_function = SF.SetAchievementComplete },
-
-    [100049] = { time = 20, id = "flat_2", class = TT.Achievement }
+    flat_2 =
+    {
+        elements =
+        {
+            [104859] = { special_function = SF.SetAchievementComplete },
+            [100049] = { time = 20, class = TT.Achievement }
+        }
+    },
+    cac_9 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100809] = { time = 60, class = TT.Achievement, trigger_times = 1 },
+            [100805] = { special_function = SF.SetAchievementComplete },
+        }
+    }
 }
 
 EHI:ParseTriggers({

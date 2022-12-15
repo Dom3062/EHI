@@ -59,12 +59,23 @@ end
 
 local achievements =
 {
-    [103461] = { time = 5, id = "cow_3", class = TT.Achievement, trigger_times = 1 },
-    [103458] = { id = "cow_3", special_function = SF.SetAchievementComplete },
-
-    [101031] = { id = "cow_4", status = "defend", class = TT.AchievementStatus, special_function = cow_4 },
-    [103468] = { id = "cow_4", special_function = SF.SetAchievementFailed },
-    [104357] = { id = "cow_4", special_function = SF.SetAchievementComplete }
+    cow_3 =
+    {
+        elements =
+        {
+            [103461] = { time = 5, class = TT.Achievement, trigger_times = 1 },
+            [103458] = { special_function = SF.SetAchievementComplete }
+        }
+    },
+    cow_4 =
+    {
+        elements =
+        {
+            [101031] = { status = "defend", class = TT.AchievementStatus, special_function = cow_4 },
+            [103468] = { special_function = SF.SetAchievementFailed },
+            [104357] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 local LootCounter = EHI:GetOption("show_loot_counter")
@@ -76,7 +87,7 @@ local other =
         end
         local LootTrigger = {}
         local Trigger = { max = 1, special_function = SF.IncreaseProgressMax } -- Money spawned
-        for _, index in ipairs({580, 830, 3120, 3370, 3620, 3870}) do
+        for _, index in ipairs({ 580, 830, 3120, 3370, 3620, 3870 }) do
             LootTrigger[EHI:GetInstanceElementID(100197, index)] = Trigger
             LootTrigger[EHI:GetInstanceElementID(100198, index)] = Trigger
             LootTrigger[EHI:GetInstanceElementID(100201, index)] = Trigger
@@ -134,7 +145,7 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:RegisterCustomSpecialFunction(cow_4, function(id, trigger, element, enabled)
-    if enabled and EHI:IsAchievementLocked(trigger.id) then
+    if enabled then
         EHI:CheckCondition(trigger)
     end
 end)

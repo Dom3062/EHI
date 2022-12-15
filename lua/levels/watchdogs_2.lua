@@ -49,9 +49,16 @@ end
 
 local achievements =
 {
-    [100124] = { id = "uno_8", status = "defend", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL), special_function = uno_8 },
-    [102382] = { id = "uno_8", special_function = SF.SetAchievementFailed },
-    [102379] = { id = "uno_8", special_function = SF.SetAchievementComplete }
+    uno_8 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        elements =
+        {
+            [100124] = { status = "defend", class = TT.AchievementStatus, special_function = uno_8 },
+            [102382] = { special_function = SF.SetAchievementFailed },
+            [102379] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 EHI:ParseTriggers({
     mission = triggers,

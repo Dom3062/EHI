@@ -42,14 +42,20 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-local bex_10_fail = { id = "bex_10", special_function = SF.SetAchievementFailed }
 local achievements =
 {
-    [103701] = { id = "bex_10", status = "defend", special_function = SF.SetAchievementStatus },
-    [103702] = bex_10_fail,
-    [103704] = bex_10_fail,
-    [102602] = { id = "bex_10", special_function = SF.SetAchievementComplete },
-    [100107] = { id = "bex_10", status = "loud", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
+    bex_10 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [103701] = { status = "defend", special_function = SF.SetAchievementStatus },
+            [103702] = { special_function = SF.SetAchievementFailed },
+            [103704] = { special_function = SF.SetAchievementFailed },
+            [102602] = { special_function = SF.SetAchievementComplete },
+            [100107] = { status = "loud", class = TT.AchievementStatus },
+        }
+    }
 }
 
 EHI:ParseTriggers({

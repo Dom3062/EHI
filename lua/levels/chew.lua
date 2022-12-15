@@ -17,8 +17,18 @@ end
 
 local achievements =
 {
-    [100595] = { time = 120, id = "born_5", class = TT.Achievement, difficulty_pass = ovk_and_up },
-    [101170] = { id = "born_5", special_function = SF.SetAchievementComplete }
+    born_5 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100595] = { time = 120, class = TT.Achievement },
+            [101170] = { special_function = SF.SetAchievementComplete }
+        },
+        load_sync = function(self)
+            self:AddTimedAchievementTracker("born_5", 120)
+        end
+    }
 }
 
 EHI:ParseTriggers({
@@ -29,8 +39,3 @@ EHI:ShowLootCounter({
     max = 9,
     offset = true
 })
-if EHI:ShowMissionAchievements() and ovk_and_up then
-    EHI:AddLoadSyncFunction(function(self)
-        self:AddTimedAchievementTracker("born_5", 120)
-    end)
-end

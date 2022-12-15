@@ -1,11 +1,18 @@
 local EHI = EHI
-if EHI:ShowMissionAchievements() and EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
     local SF = EHI.SpecialFunctions
     local TT = EHI.Trackers
-    local achievements = {
-        [100979] = { id = "cac_30", status = "defend", class = TT.AchievementStatus },
-        [102831] = { id = "cac_30", special_function = SF.SetAchievementComplete },
-        [102829] = { id = "cac_30", special_function = SF.SetAchievementFailed }
+    local achievements =
+    {
+        cac_30 =
+        {
+            elements =
+            {
+                [100979] = { status = "defend", class = TT.AchievementStatus },
+                [102831] = { special_function = SF.SetAchievementComplete },
+                [102829] = { special_function = SF.SetAchievementFailed }
+            }
+        }
     }
 
     EHI:ParseTriggers({

@@ -9,7 +9,7 @@ local other =
     [104489] = EHI:AddAssaultDelay({ time = assault_delay, special_function = SF.AddTrackerIfDoesNotExist }),
     -- Police ambush
     [104535] = { special_function = SF.Trigger, data = { 1045351, 1045352 } },
-    [1045351] = { time = 30, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = ShowAssaultDelay },
+    [1045351] = EHI:AddAssaultDelay({ time = 30, special_function = SF.SetTimeOrCreateTracker }),
     [1045352] = { special_function = SF.RemoveTriggers, data = { 104488, 104489 } },
 
     [103696] = { special_function = SF.CustomCode, f = function()

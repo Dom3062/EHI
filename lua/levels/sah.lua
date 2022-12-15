@@ -28,19 +28,24 @@ end
 
 local achievements =
 {
-    [100107] = { time = 300, id = "sah_9", class = TT.Achievement, difficulty_pass = ovk_and_up },
-    [101878] = { id = "sah_9", special_function = SF.SetAchievementComplete }
+    sah_9 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100107] = { time = 300, class = TT.Achievement },
+            [101878] = { special_function = SF.SetAchievementComplete }
+        },
+        alarm_callback = function()
+            managers.ehi:SetAchievementFailed("sah_9")
+        end
+    }
 }
 
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
-if EHI:ShowMissionAchievements() and ovk_and_up then
-    EHI:AddOnAlarmCallback(function()
-        managers.ehi:SetAchievementFailed("sah_9")
-    end)
-end
 
 local DisableWaypoints = {}
 -- Hackboxes

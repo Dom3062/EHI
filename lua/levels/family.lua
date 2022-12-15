@@ -21,11 +21,18 @@ end
 
 local achievements =
 {
-    [100108] = { id = "uno_2", status = "secure", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) },
-    [100022] = { id = "uno_2", status = "defend", special_function = SF.SetAchievementStatus }, -- Alarm has been raised, defend the hostages until the escape vehicle arrives
-    [101492] = { id = "uno_2", status = "secure", special_function = SF.SetAchievementStatus }, -- Escape vehicle is here, secure the remaining bags
-    [102206] = { id = "uno_2", special_function = SF.SetAchievementFailed },
-    [102207] = { id = "uno_2", special_function = SF.SetAchievementComplete }
+    uno_2 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        elements =
+        {
+            [100108] = { status = "secure", class = TT.AchievementStatus },
+            [100022] = { status = "defend", special_function = SF.SetAchievementStatus }, -- Alarm has been raised, defend the hostages until the escape vehicle arrives
+            [101492] = { status = "secure", special_function = SF.SetAchievementStatus }, -- Escape vehicle is here, secure the remaining bags
+            [102206] = { special_function = SF.SetAchievementFailed },
+            [102207] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 local LootCounter = EHI:GetOption("show_loot_counter")

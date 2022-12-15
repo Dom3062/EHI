@@ -16,7 +16,9 @@ local preload =
 {
     { id = "Van", icons = Icon.CarEscape, hide_on_delete = true },
     { id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning, hide_on_delete = true },
-    { id = "HeliMeth", icons = { Icon.Heli, Icon.Methlab, Icon.Goto }, hide_on_delete = true }
+    { id = "HeliMeth", icons = { Icon.Heli, Icon.Methlab, Icon.Goto }, hide_on_delete = true },
+    { id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, hide_on_delete = true },
+    { id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, hide_on_delete = true }
 }
 local triggers = {
     [102318] = { id = "Van", run = { time = 60 + 60 + 30 + 15 + anim_delay } },
@@ -25,11 +27,11 @@ local triggers = {
     [1010011] = { special_function = SF.RemoveTrackers, data = { "CookChance", "VanStayDelay" } },
     [1010012] = { special_function = SF.RemoveTriggers, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238 } },
 
-    [102383] = { time = 2 + 5, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait } },
-    [100721] = { time = 1, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
+    [102383] = { id = "CookDelay", run = { time = 2 + 5 } },
+    [100721] = { id = "CookDelay", run = { time = 1 }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
     [1007211] = { chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists },
 
-    [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact } },
+    [100199] = { id = "CookingDone", run = { time = 5 + 1 } },
 
     [102167] = { id = "HeliMeth", run = { time = 60 + heli_delay } },
     [102168] = { id = "HeliMeth", run = { time = 90 + heli_delay } },
@@ -84,18 +86,31 @@ end
 
 local achievements =
 {
-    [101081] = { id = "halloween_1", status = "ready", class = TT.AchievementStatus },
-    [101907] = { id = "halloween_1", status = "defend", special_function = SF.SetAchievementStatus },
-    [101917] = { id = "halloween_1", special_function = SF.SetAchievementComplete },
-    [101914] = { id = "halloween_1", special_function = SF.SetAchievementFailed },
-    [101780] = { max = 25, id = "voff_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up },
-    [101001] = { id = "voff_5", special_function = SF.SetAchievementFailed },
-    [102611] = { id = "voff_5", special_function = SF.IncreaseProgress },
+    halloween_1 =
+    {
+        elements =
+        {
+            [101088] = { status = "ready", class = TT.AchievementStatus },
+            [101907] = { status = "defend", special_function = SF.SetAchievementStatus },
+            [101917] = { special_function = SF.SetAchievementComplete },
+            [101914] = { special_function = SF.SetAchievementFailed }
+        }
+    },
+    voff_5 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [101780] = { max = 25, class = TT.AchievementProgress },
+            [101001] = { special_function = SF.SetAchievementFailed },
+            [102611] = { special_function = SF.IncreaseProgress }
+        }
+    }
 }
 
 local other =
 {
-    [102383] = { time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30, id = "AssaultDelay", class = TT.AssaultDelay }
+    [102383] = EHI:AddAssaultDelay({ time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30 })
 }
 
 EHI:ParseTriggers({
@@ -104,7 +119,7 @@ EHI:ParseTriggers({
     other = other,
     preload = preload
 }, "Van", Icon.CarEscape)
-if EHI:ShowMissionAchievements() and ovk_and_up then
+if ovk_and_up then
     EHI:ShowAchievementLootCounter({
         achievement = "halloween_2",
         max = 7

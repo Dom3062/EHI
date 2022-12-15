@@ -23,25 +23,34 @@ end]]
 
 if Global.game_settings.level_id == "gallery" then
     local TT = EHI.Trackers
-    local achievements = {
-        [100789] = { id = "cac_19", class = TT.AchievementStatus }
+    local achievements =
+    {
+        cac_19 =
+        {
+            elements =
+            {
+                [100789] = { class = TT.AchievementStatus },
+                [104288] = { special_function = SF.SetAchievementComplete },
+                [104290] = { special_function = SF.SetAchievementFailed }
+            }
+        }
     }
     if TheFixes then
         if TheFixesPreventer and TheFixesPreventer.achi_masterpiece then -- Unfixed, assume Vanilla "broken" behavior
-            achievements[104288] = { id = "cac_19", special_function = SF.SetAchievementComplete }
-            achievements[104290] = { id = "cac_19", special_function = SF.SetAchievementFailed }
         else -- Fixed
-            local key = "EHI_ArtGallery_TheFixes"
-            CopDamage.register_listener(key, { "on_damage" }, function(damage_info)
-                if damage_info.result.type == "death" then
-                    managers.ehi:SetAchievementFailed("cac_19")
-                    CopDamage.unregister_listener(key)
-                end
-            end)
+            local function f()
+                local key = "EHI_ArtGallery_TheFixes"
+                CopDamage.register_listener(key, { "on_damage" }, function(damage_info)
+                    if damage_info.result.type == "death" then
+                        managers.ehi:SetAchievementFailed("cac_19")
+                        CopDamage.unregister_listener(key)
+                    end
+                end)
+            end
+            achievements.cac_19.elements[100789].special_function = SF.CreateAnotherTrackerWithTracker
+            achievements.cac_19.elements[100789].data = { fake_id = 1 }
+            achievements.cac_19.elements[1] = { special_function = SF.CustomCode, f = f }
         end
-    else
-        achievements[104288] = { id = "cac_19", special_function = SF.SetAchievementComplete }
-        achievements[104290] = { id = "cac_19", special_function = SF.SetAchievementFailed }
     end
 
     EHI:ParseTriggers({
@@ -65,11 +74,11 @@ EHI:ShowLootCounter({ max = 9 })
 EHI:ShowAchievementLootCounter({
     achievement = "pink_panther",
     max = 9,
-    remove_after_reaching_target = false
+    remove_after_reaching_target = false,
+    alarm_callback = function()
+        managers.ehi:SetAchievementFailed("pink_panther")
+    end
 })
-EHI:AddOnAlarmCallback(function()
-    managers.ehi:SetAchievementFailed("pink_panther")
-end)
 
 local MissionDoorPositions =
 {

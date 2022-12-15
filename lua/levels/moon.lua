@@ -34,9 +34,15 @@ local DisableWaypoints =
 
 local achievements =
 {
-    [100107] = { max = 2, id = "moon_4", class = TT.AchievementProgress, trigger_times = 1 },
-    [104219] = { id = "moon_4", special_function = SF.IncreaseProgress }, -- Chains
-    [104220] = { id = "moon_4", special_function = SF.IncreaseProgress } -- Dallas
+    moon_4 =
+    {
+        elements =
+        {
+            [100107] = { max = 2, class = TT.AchievementProgress, trigger_times = 1 },
+            [104219] = { special_function = SF.IncreaseProgress }, -- Chains
+            [104220] = { special_function = SF.IncreaseProgress } -- Dallas
+        }
+    }
 }
 
 local other =
@@ -50,7 +56,7 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
-if EHI:ShowMissionAchievements() and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     EHI:ShowAchievementLootCounter({
         achievement = "moon_5",
         max = 9,

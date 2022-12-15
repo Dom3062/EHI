@@ -41,13 +41,24 @@ end
 
 local achievements =
 {
-    [104086] = { id = "cow_10", status = "defend", class = TT.AchievementStatus },
-    [102480] = { id = "cow_10", special_function = SF.SetAchievementFailed },
-    [106581] = { id = "cow_10", special_function = SF.SetAchievementComplete },
-
-    [101737] = { time = 60, id = "cow_11", class = TT.Achievement },
-    [102466] = { id = "cow_11", special_function = SF.RemoveTracker },
-    [102479] = { id = "cow_11", special_function = SF.SetAchievementComplete }
+    cow_10 =
+    {
+        elements =
+        {
+            [104086] = { status = "defend", class = TT.AchievementStatus },
+            [102480] = { special_function = SF.SetAchievementFailed },
+            [106581] = { special_function = SF.SetAchievementComplete }
+        }
+    },
+    cow_11 =
+    {
+        elements =
+        {
+            [101737] = { time = 60, class = TT.Achievement },
+            [102466] = { special_function = SF.RemoveTracker },
+            [102479] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 local LootCounter = EHI:GetOption("show_loot_counter")

@@ -1,6 +1,5 @@
 local lerp = math.lerp
 local Color = Color
-local IsOverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
 local Control = Color.white
 local Anticipation = Color(255, 186, 204, 28) / 255
 if BAI then
@@ -12,22 +11,52 @@ if BAI then
         EHIAssaultDelayTracker._forced_icons[1].color = Control
     end)
 end
-local level_id = Global.game_settings and Global.game_settings.level_id or "branchbank"
-local level_data = tweak_data.levels[level_id]
-local ai_group = level_data and level_data.group_ai_state or "besiege"
-local tweak_values = tweak_data.group_ai[ai_group].assault.delay
+local assault_values = tweak_data.group_ai[tweak_data.levels:get_group_ai_state()].assault
+local tweak_values = assault_values.delay
+local hostage_values = assault_values.hostage_hesitation_delay
 EHIAssaultDelayTracker = class(EHIWarningTracker)
 EHIAssaultDelayTracker._forced_icons = { { icon = "assaultbox", color = Control } }
 EHIAssaultDelayTracker.AnimateNegative = EHITimerTracker.AnimateCompletion
-EHIAssaultDelayTracker.IsClient = EHI:IsClient()
+if type(hostage_values) ~= "table"  then -- If for some reason the hesitation delay is not a table, use the value directly
+    EHIAssaultDelayTracker._precomputed_hostage_delay = true
+    EHIAssaultDelayTracker._hostage_delay = tonumber(hostage_values) or 30
+else
+    local first_value = hostage_values[1] or 0
+    local match = true
+    for _, value in pairs(hostage_values) do
+        if first_value ~= value then
+            match = false
+            break
+        end
+    end
+    if match then -- All numbers the same, use it and avoid computation because it is expensive
+        EHIAssaultDelayTracker._precomputed_hostage_delay = true
+        EHIAssaultDelayTracker._hostage_delay = first_value
+    end
+end
 function EHIAssaultDelayTracker:init(panel, params)
     if params.compute_time then
         params.time = self:CalculateBreakTime(params.diff) + (2 * math.random())
     end
+    self:ComputeHostageDelay(params.diff)
     EHIAssaultDelayTracker.super.init(self, panel, params)
     self._update = not params.stop_counting
     self.update_normal = self.update
     self:CheckIfHostageIsPresent()
+end
+
+function EHIAssaultDelayTracker:ComputeHostageDelay(diff)
+    if self._precomputed_hostage_delay then
+        return
+    end
+    local ramp = tweak_data.group_ai.difficulty_curve_points
+    local i = 1
+    while (ramp[i] or 1) < diff do
+        i = i + 1
+    end
+    local difficulty_point_index = i
+    local difficulty_ramp = (diff - (ramp[i - 1] or 0)) / ((ramp[i] or 1) - (ramp[i - 1] or 0))
+    self._hostage_delay = lerp(hostage_values[difficulty_point_index], hostage_values[difficulty_point_index + 1], difficulty_ramp)
 end
 
 function EHIAssaultDelayTracker:update_negative(t, dt)
@@ -54,7 +83,7 @@ function EHIAssaultDelayTracker:CheckIfHostageIsPresent()
     if not group_ai._hostage_headcount or group_ai._hostage_headcount == 0 then
         return
     end
-    self:UpdateTime(IsOverkillOrBelow and 30 or 10)
+    self:UpdateTime(self._hostage_delay)
     self._hostages_found = true
 end
 
@@ -76,10 +105,10 @@ function EHIAssaultDelayTracker:SetHostages(has_hostages)
     end
     if has_hostages and not self._hostages_found then
         self._hostages_found = true
-        self:UpdateTime(IsOverkillOrBelow and 30 or 10)
+        self:UpdateTime(self._hostage_delay)
     elseif self._hostages_found and not has_hostages then
         self._hostages_found = false
-        self:UpdateTime(IsOverkillOrBelow and -30 or -10)
+        self:UpdateTime(-self._hostage_delay)
     end
 end
 
@@ -108,17 +137,20 @@ function EHIAssaultDelayTracker:SetTime(time)
 end
 
 function EHIAssaultDelayTracker:UpdateDiff(diff)
-    if self._hostage_delay_disabled or self._ignores_diff_update then
+    if self._hostage_delay_disabled or self._precomputed_hostage_delay then
         return
     end
-    if diff > 0 then
+    self:SetHostages(false)
+    self:ComputeHostageDelay(diff)
+    self:CheckIfHostageIsPresent()
+    --[[if diff > 0 then
         self._time = self:CalculateBreakTime(diff)
         self:AddTrackerToUpdate()
     else
         self:RemoveTrackerFromUpdate()
         self._text:stop()
         self:SetTextColor(Color.white)
-    end
+    end]]
 end
 
 function EHIAssaultDelayTracker:delete()

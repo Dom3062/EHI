@@ -41,11 +41,7 @@ local other =
     [100479] = EHI:AddAssaultDelay({ time = 30 + 2 + 30 })
 }
 
-EHI:ParseTriggers({
-    mission = triggers,
-    other = other
-})
-if OVKorAbove then
+local function dah_8()
     EHI:ShowAchievementLootCounter({
         achievement = "dah_8",
         max = 12,
@@ -53,17 +49,33 @@ if OVKorAbove then
         {
             check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
             loot_type = "diamondheist_big_diamond"
-        },
-        triggers =
-        {
-            [102259] = { id = "dah_8", special_function = SF.SetAchievementComplete },
-            [102261] = { id = "dah_8", special_function = SF.IncreaseProgress }
-        },
-        sync_only = true
+        }
     })
-    EHI:AddOnAlarmCallback(function()
-        managers.ehi:SetAchievementFailed("dah_8")
-    end)
+end
+local achievements =
+{
+    dah_8 =
+    {
+        difficulty_pass = OVKorAbove,
+        elements =
+        {
+            [103969] = { special_function = SF.CustomCode, f = dah_8 },
+            [102259] = { special_function = SF.SetAchievementComplete },
+            [102261] = { special_function = SF.IncreaseProgress }
+        },
+        alarm_callback = function()
+            managers.ehi:SetAchievementFailed("dah_8")
+        end,
+        load_sync = function(self)
+            if EHI.ConditionFunctions.IsStealth() then
+                dah_8()
+                self:SetTrackerProgress("dah_8", managers.loot:GetSecuredBagsTypeAmount("diamondheist_big_diamond"))
+            end
+        end
+    }
+}
+
+if OVKorAbove then
     EHI:AddLoadSyncFunction(function(self)
         if managers.game_play_central:GetMissionDisabledUnit(100950) then -- Red Diamond
             self:IncreaseTrackerProgressMax("LootCounter", 1)
@@ -71,6 +83,13 @@ if OVKorAbove then
         self:SyncSecuredLoot()
     end)
 end
+
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+})
+
 local DisableWaypoints =
 {
     [101368] = true -- Drill waypoint for vault with red diamond

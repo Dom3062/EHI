@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local c4 = { time = 5, id = "C4", icons = { Icon.C4 } }
 local triggers = {
     [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position = Vector3(-17900, 7800, 56.6182) } },
@@ -14,16 +13,35 @@ local triggers = {
     [100961] = c4
 }
 
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local achievements =
 {
-    [100484] = { time = 300, id = "farm_2", class = TT.AchievementUnlock },
-    [100485] = { time = 30, id = "farm_4", class = TT.Achievement },
-
-    [100319] = { id = "farm_2", special_function = SF.SetAchievementFailed },
-    [102841] = { id = "farm_4", special_function = SF.SetAchievementComplete },
-    [101553] = { id = "farm_3", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [103394] = { id = "farm_3", special_function = SF.SetAchievementFailed },
-    [102880] = { id = "farm_3", special_function = SF.SetAchievementComplete },
+    farm_2 =
+    {
+        elements =
+        {
+            [100484] = { time = 300, class = TT.AchievementUnlock },
+            [100319] = { special_function = SF.SetAchievementFailed }
+        }
+    },
+    farm_3 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [101553] = { class = TT.AchievementStatus },
+            [103394] = { special_function = SF.SetAchievementFailed },
+            [102880] = { special_function = SF.SetAchievementComplete }
+        }
+    },
+    farm_4 =
+    {
+        elements =
+        {
+            [100485] = { time = 30, class = TT.Achievement },
+            [102841] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 EHI:ParseTriggers({
@@ -31,7 +49,7 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 
-if EHI:ShowMissionAchievements() and ovk_and_up then
+if ovk_and_up then
     EHI:ShowAchievementLootCounter({
         achievement = "farm_6",
         max = 1,
@@ -42,18 +60,21 @@ if EHI:ShowMissionAchievements() and ovk_and_up then
             loot_type = "din_pig"
         }
     })
-    EHI:HookWithID(HUDManager, "sync_set_assault_mode", "EHI_farm_1_achievement", function(self, mode, ...)
-        if mode == "phalanx" then
-            self.ehi:AddTracker({
-                id = "farm_1",
-                status = "finish",
-                icons = EHI:GetAchievementIcon("farm_1"),
-                class = EHI.Trackers.AchievementStatus,
-            })
-        else
-            self.ehi:SetAchievementFailed("farm_1")
-        end
-    end)
+    if EHI:CanShowAchievement("farm_1") then
+        local farm_1 = EHI:GetAchievementIcon("farm_1")
+        EHI:HookWithID(HUDManager, "sync_set_assault_mode", "EHI_farm_1_achievement", function(self, mode, ...)
+            if mode == "phalanx" then
+                self.ehi:AddTracker({
+                    id = "farm_1",
+                    status = "finish",
+                    icons = farm_1,
+                    class = EHI.Trackers.AchievementStatus,
+                })
+            else
+                self.ehi:SetAchievementFailed("farm_1")
+            end
+        end)
+    end
 end
 local pig = 0
 if ovk_and_up then

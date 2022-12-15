@@ -1,6 +1,5 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
-local TT = EHI.Trackers
 local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {

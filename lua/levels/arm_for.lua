@@ -17,32 +17,36 @@ local triggers = {
 }
 local achievements =
 {
--- Achievement bugged, can be achieved in stealth
-    -- Reported in: https://steamcommunity.com/app/218620/discussions/14/3048357185566603324/
-    [104716] = { id = "armored_6", class = TT.AchievementStatus },
-    [103311] = { id = "armored_6", special_function = SF.SetAchievementFailed }
+    armored_6 =
+    {
+        elements =
+        {
+            -- Achievement bugged, can be earned in stealth
+            -- Reported in: https://steamcommunity.com/app/218620/discussions/14/3048357185566603324/
+            [104716] = { id = "armored_6", class = TT.AchievementStatus },
+            [103311] = { id = "armored_6", special_function = SF.SetAchievementFailed }
+        },
+        load_sync = function(self)
+            if EHI.ConditionFunctions.IsStealth() then
+                self:AddAchievementStatusTracker("armored_6")
+            end
+        end
+    }
 }
 
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
-if EHI:ShowMissionAchievements() then
-    EHI:ShowAchievementLootCounter({
-        achievement = "armored_1",
-        max = 20,
-        counter =
-        {
-            check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
-            loot_type = "ammo"
-        }
-    })
-    EHI:AddLoadSyncFunction(function(self)
-        if EHI.ConditionFunctions.IsStealth() then
-            self:AddAchievementStatusTracker("armored_6")
-        end
-    end)
-end
+EHI:ShowAchievementLootCounter({
+    achievement = "armored_1",
+    max = 20,
+    counter =
+    {
+        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+        loot_type = "ammo"
+    }
+})
 EHI:ShowLootCounter({ max = 23 })
 
 local tbl = {}

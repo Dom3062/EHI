@@ -61,7 +61,6 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Activate_cac_33 = EHI:GetFreeCustomSpecialFunctionID()
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local dw_and_above = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
 local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } }
 local triggers = {
     [101897] = { time = 60, id = "LockeSecureHeli", icons = { Icon.Heli, Icon.Winch } }, -- Time before Locke arrives with heli to pickup the money
@@ -71,18 +70,38 @@ local triggers = {
 
 local achievements =
 {
-    [102504] = { id = "cac_33", status = "land", class = "EHIcac33Tracker", difficulty_pass = dw_and_above },
-    [103486] = { id = "cac_33", status = "ok", special_function = SF.SetAchievementStatus },
-    [103479] = { id = "cac_33", special_function = SF.SetAchievementComplete },
-    [103475] = { id = "cac_33", special_function = SF.SetAchievementFailed },
-    [103487] = { id = "cac_33", special_function = Activate_cac_33 },
-    [103477] = { id = "cac_33", special_function = SF.IncreaseProgress },
-    [102452] = { id = "jerry_4", special_function = SF.SetAchievementComplete },
-    [102453] = { special_function = SF.Trigger, data = { 1024531, 1024532 } },
-    [1024531] = { id = "jerry_3", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [1024532] = { time = 83, id = "jerry_4", class = TT.Achievement, difficulty_pass = ovk_and_up },
-    [102816] = { id = "jerry_3", special_function = SF.SetAchievementFailed },
-    [101314] = { id = "jerry_3", special_function = SF.SetAchievementComplete },
+    jerry_3 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [102453] = { class = TT.AchievementStatus },
+            [102816] = { special_function = SF.SetAchievementFailed },
+            [101314] = { special_function = SF.SetAchievementComplete }
+        }
+    },
+    jerry_4 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [102453] = { time = 83, class = TT.Achievement },
+            [102452] = { special_function = SF.SetAchievementComplete },
+        }
+    },
+    cac_33 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
+        elements =
+        {
+            [102504] = { status = "land", class = "EHIcac33Tracker" },
+            [103486] = { status = "ok", special_function = SF.SetAchievementStatus },
+            [103479] = { special_function = SF.SetAchievementComplete },
+            [103475] = { special_function = SF.SetAchievementFailed },
+            [103487] = { special_function = Activate_cac_33 },
+            [103477] = { special_function = SF.IncreaseProgress },
+        }
+    }
 }
 
 EHI:ParseTriggers({
@@ -100,13 +119,11 @@ end
 EHI:ShowAchievementLootCounter({
     achievement = "voff_4",
     max = 9,
-    triggers = voff_4_triggers
+    triggers = voff_4_triggers,
+    load_sync = function(self)
+        self:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
+    end
 })
 EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(id, trigger, element, enabled)
     managers.ehi:CallFunction(trigger.id, "Activate")
 end)
-if EHI:ShowMissionAchievements() then
-    EHI:AddLoadSyncFunction(function(self)
-        self:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
-    end)
-end

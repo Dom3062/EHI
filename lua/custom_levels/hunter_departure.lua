@@ -1,8 +1,6 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local show_achievement = EHI:ShowMissionAchievements()
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local repair = { time = 90, id = "RepairWait", icons = { EHI.Icons.Fix } }
 local triggers = {
     [100030] = repair,
@@ -13,15 +11,22 @@ local triggers = {
 
 local achievements =
 {
-    [100132] = { special_function = SF.Trigger, data = { 1001321, 1001322 } },
-    [1001321] = { max = 21, id = "hunter_loot", icons = { "ehi_hunter_loot" }, class = TT.AchievementProgress, special_function = SF.ShowAchievementFromStart, condition = EHI:IsBeardLibAchievementLocked("hunter_all", "hunter_loot") and show_achievement and ovk_and_up, beardlib = true },
-    [1001322] = { special_function = SF.CustomCode, f = function ()
-        if managers.ehi:TrackerDoesNotExist("hunter_loot") then
-            EHI:ShowLootCounter({ max = 21 })
-            EHI:UnhookElement(100416)
-        end
-    end },
-    [100416] = { id = "hunter_loot", special_function = SF.IncreaseProgress }
+    hunter_loot =
+    {
+        beardlib = true,
+        package = "hunter_all",
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        elements =
+        {
+            [100132] = { special_function = SF.Trigger, data = { 1001321, 1001322 } },
+            [1001321] = { max = 21, icons = { "ehi_hunter_loot" }, class = TT.AchievementProgress, special_function = SF.ShowAchievementFromStart },
+            [1001322] = { special_function = SF.CustomCode, f = function ()
+                EHI:ShowLootCounter({ max = 21 })
+                EHI:UnhookElement(100416)
+            end },
+            [100416] = { special_function = SF.IncreaseProgress }
+        }
+    }
 }
 
 EHI:ParseTriggers({
@@ -31,5 +36,5 @@ EHI:ParseTriggers({
 EHI:AddLoadSyncFunction(function(self)
     EHI:ShowLootCounter({ max = 21 })
     EHI:UnhookElement(100416)
-    self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
+    self:SyncSecuredLoot()
 end)

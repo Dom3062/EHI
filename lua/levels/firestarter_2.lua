@@ -7,7 +7,7 @@ for _, pc_id in ipairs({ 104170, 104175, 104349, 104350, 104351, 104352, 104354,
         managers.ehi:AddTracker({
             id = tostring(pc_id),
             time = 13,
-            icons = { Icon.Wait }
+            icons = { Icon.PCHack }
         })
     end)
 end

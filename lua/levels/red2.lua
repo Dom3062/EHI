@@ -93,8 +93,8 @@ function EHIgreen1Tracker:SetProgress(progress)
 end
 
 local EHI = EHI
-EHI.AchievementTrackers.EHIcac10Tracker = true
 EHI.AchievementTrackers.EHIgreen1Tracker = true
+EHI.AchievementTrackers.EHIcac10Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
@@ -114,33 +114,56 @@ for i = 0, 300, 100 do
     DisableWaypoints[EHI:GetInstanceElementID(100024, i)] = true
 end
 
-local RemoveTriggerAndStartAchievementCountdown = EHI:GetFreeCustomSpecialFunctionID()
-local green_1_decrease = { id = "green_1", special_function = SF.DecreaseProgress }
+local StartAchievementCountdown = EHI:GetFreeCustomSpecialFunctionID()
 local achievements =
 {
-    --[103373] = { special_function = SF.Trigger, data = { --[[1033731,]] 1033732 } },
-    --[1033731] = { max = 6, id = "green_1", class = "EHIgreen1Tracker", remove_after_reaching_target = false },
-    [103373] = { time = 817, id = "green_3", class = TT.Achievement },
-    [107072] = { id = "cac_10", special_function = SF.SetAchievementComplete },
-    [101544] = { id = "cac_10", special_function = RemoveTriggerAndStartAchievementCountdown },
-    [101341] = { time = 30, id = "cac_10", class = "EHIcac10Tracker", difficulty_pass = ovk_and_up, condition_function = CF.IsLoud },
-    [107066] = { id = "cac_10", special_function = SF.IncreaseProgressMax },
-    [107067] = { id = "cac_10", special_function = SF.IncreaseProgress },
-    [102567] = { id = "green_3", special_function = SF.SetAchievementFailed },
-    [102153] = { id = "green_1", special_function = SF.IncreaseProgress },
-    [102333] = green_1_decrease,
-    [102539] = green_1_decrease
+    green_1 =
+    {
+        difficulty_pass = false, -- TODO: Finish; remove after that
+        elements =
+        {
+            [103373] = { max = 6, class = "EHIgreen1Tracker", remove_after_reaching_target = false },
+            [102153] = { special_function = SF.IncreaseProgress },
+            [102333] = { special_function = SF.DecreaseProgress },
+            [102539] = { special_function = SF.DecreaseProgress }
+        }
+    },
+    green_3 =
+    {
+        elements =
+        {
+            [103373] = { time = 817, class = TT.Achievement },
+            [102567] = { special_function = SF.SetAchievementFailed },
+            [103491] = { special_function = SF.SetAchievementComplete }
+        },
+        load_sync = function(self)
+            if EHI.ConditionFunctions.IsStealth() then
+                self:AddTimedAchievementTracker("green_3", 817)
+            end
+        end
+    },
+    cac_10 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [101341] = { time = 30, class = "EHIcac10Tracker", condition_function = CF.IsLoud },
+            [107072] = { special_function = SF.SetAchievementComplete },
+            [101544] = { special_function = StartAchievementCountdown, trigger_times = 1 },
+            [107066] = { special_function = SF.IncreaseProgressMax },
+            [107067] = { special_function = SF.IncreaseProgress },
+        }
+    }
 }
 
---[[local AssaultTracker = EHI:GetOption("show_assault_delay_tracker")
-local other =
+--[[local other =
 {
-    [106046] = { time = 5 + 40 + 17, id = "AssaultDelay", class = TT.AssaultDelay, condition = AssaultTracker },
-    [102213] = { time = 0, id = "AssaultDelay", class = TT.AssaultDelay, special_function = SF.SetTimeOrCreateTracker, condition = AssaultTracker }
+    [106046] = EHI:AddAssaultDelay({ time = 5 + 40 + 17 }),
+    [102213] = EHI:AddAssaultDelay({ time = 0, special_function = SF.SetTimeOrCreateTracker })
 }
 
 if EHI:IsClient() then
-    other[102212] = { time = 17, id = "AssaultDelay", class = TT.AssaultDelay, condition = AssaultTracker }
+    other[102212] = EHI:AddAssaultDelay({ time = 17 })
 end]]
 
 EHI:ParseTriggers({
@@ -148,9 +171,8 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 EHI:DisableWaypoints(DisableWaypoints)
-EHI:RegisterCustomSpecialFunction(RemoveTriggerAndStartAchievementCountdown, function(id, ...)
+EHI:RegisterCustomSpecialFunction(StartAchievementCountdown, function(...)
     managers.ehi:StartTrackerCountdown("cac_10")
-    EHI:UnhookTrigger(id)
 end)
 EHI:ShowLootCounter({
     max = 14,
@@ -159,13 +181,6 @@ EHI:ShowLootCounter({
         [106684] = { max = 70, special_function = SF.IncreaseProgressMax }
     }
 })
-if EHI:ShowMissionAchievements() then
-    EHI:AddLoadSyncFunction(function(self)
-        if EHI.ConditionFunctions.IsStealth() then
-            self:AddTimedAchievementTracker("green_3", 817)
-        end
-    end)
-end
 
 local tbl = {}
 for i = 0, 300, 100 do

@@ -1,11 +1,10 @@
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
-EHIameno3Tracker = class(EHIWarningTracker)
+EHIameno3Tracker = class(EHIAchievementTracker)
 EHIameno3Tracker.FormatNumber = EHINeededValueTracker.Format
 EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumber
 EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-EHIameno3Tracker.delete = EHIAchievementTracker.delete
 function EHIameno3Tracker:init(panel, params)
     self._secured = 0
     self._secured_formatted = "0"
@@ -94,7 +93,6 @@ EHI.AchievementTrackers.EHIameno3Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local overkill = EHI:IsDifficulty(EHI.Difficulties.OVERKILL)
 local AddMoney = EHI:GetFreeCustomSpecialFunctionID()
 local MoneyTrigger = { id = "MallDestruction", special_function = AddMoney }
 local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
@@ -128,52 +126,78 @@ end
 
 local achievements =
 {
-    [301148] = { special_function = SF.Trigger, data = { 3011481, 3011482, 3011483 } },
-    [3011481] = { time = 50, to_secure = 1800000, id = "ameno_3", class = "EHIameno3Tracker", difficulty_pass = overkill },
-    [3011482] = { time = 180, id = "uno_3", class = TT.Achievement },
-    [3011483] = { special_function = SF.CustomCode, f = function()
-        if managers.ehi:TrackerDoesNotExist("ameno_3") then
-            return
+    window_cleaner =
+    {
+        elements =
+        {
+            [301056] = { max = 171, flash_times = 1, class = TT.AchievementProgress },
+            [300791] = { special_function = SF.IncreaseProgress }
+        }
+    },
+    ameno_3 =
+    {
+        difficulty_pass = EHI:IsDifficulty(EHI.Difficulties.OVERKILL),
+        elements =
+        {
+            [301148] = { special_function = SF.Trigger, data = { 1, 2 } },
+            [1] = { time = 50, to_secure = 1800000, class = "EHIameno3Tracker" },
+            [2] = { special_function = SF.CustomCode, f = function()
+                EHI:AddAchievementToCounter({
+                    achievement = "ameno_3",
+                    counter =
+                    {
+                        check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
+                    }
+                })
+            end },
+        },
+        load_sync = function(self)
+            if self._t <= 50 then
+                self:AddTracker({
+                    time = 50 - self._t,
+                    id = "ameno_3",
+                    to_secure = 1800000,
+                    icons = EHI:GetAchievementIcon("ameno_3"),
+                    class = "EHIameno3Tracker"
+                })
+                self:SetTrackerProgress("ameno_3", managers.loot:get_real_total_small_loot_value())
+                EHI:AddAchievementToCounter({
+                    achievement = "ameno_3",
+                    counter =
+                    {
+                        check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
+                    }
+                })
+            end
         end
-        EHI:AddAchievementToCounter({
-            achievement = "ameno_3",
-            counter =
-            {
-                check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
-            }
-        })
-    end },
-    [300241] = { id = "uno_3", special_function = SF.SetAchievementComplete },
-
-    [301056] = { max = 171, id = "window_cleaner", flash_times = 1, class = TT.AchievementProgress },
-    [300791] = { id = "window_cleaner", special_function = SF.IncreaseProgress }
+    },
+    uno_3 =
+    {
+        elements =
+        {
+            [301148] = { time = 180, class = TT.Achievement },
+            [300241] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
+
+local FirstAssaultDelay = 10 + 30
+local other = {}
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+    other[301049] = EHI:AddAssaultDelay({ time = FirstAssaultDelay })
+else
+    other[301138] = EHI:AddAssaultDelay({ time = 50 + FirstAssaultDelay })
+    other[301766] = EHI:AddAssaultDelay({ time = 40 + FirstAssaultDelay })
+    other[301771] = EHI:AddAssaultDelay({ time = 30 + FirstAssaultDelay })
+    other[301772] = EHI:AddAssaultDelay({ time = 20 + FirstAssaultDelay })
+    other[301773] = EHI:AddAssaultDelay({ time = 10 + FirstAssaultDelay })
+end
 
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:RegisterCustomSpecialFunction(AddMoney, function(id, trigger, element, enabled)
     managers.ehi:AddMoneyToTracker(trigger.id, element._values.amount)
 end)
-if EHI:ShowMissionAchievements() and overkill and EHI:IsAchievementLocked("ameno_3") then
-    EHI:AddLoadSyncFunction(function(self)
-        if self._t <= 50 then
-            self:AddTracker({
-                time = 50 - self._t,
-                id = "ameno_3",
-                to_secure = 1800000,
-                icons = EHI:GetAchievementIcon("ameno_3"),
-                class = "EHIameno3Tracker"
-            })
-            self:SetTrackerProgress("ameno_3", managers.loot:get_real_total_small_loot_value())
-            EHI:AddAchievementToCounter({
-                achievement = "ameno_3",
-                counter =
-                {
-                    check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
-                }
-            })
-        end
-    end)
-end

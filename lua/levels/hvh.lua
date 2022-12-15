@@ -10,11 +10,18 @@ local other = {
 
 local achievements =
 {
-    [100212] = { max = 6, id = "cac_21", class = TT.AchievementProgress, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), special_function = SF.ShowAchievementFromStart },
-    [100224] = { id = "cac_21", special_function = SF.IncreaseProgress },
-    [100181] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
-        managers.ehi:SetAchievementFailed("cac_21")
-    end}
+    cac_21 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard),
+        elements =
+        {
+            [100212] = { max = 6, class = TT.AchievementProgress, special_function = SF.ShowAchievementFromStart },
+            [100224] = { special_function = SF.IncreaseProgress },
+            [100181] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
+                managers.ehi:SetAchievementFailed("cac_21")
+            end}
+        }
+    }
 }
 EHI:ParseTriggers({
     mission = {},

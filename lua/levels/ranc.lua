@@ -83,7 +83,10 @@ end
 EHI:ShowAchievementLootCounter({
     achievement = "ranc_10",
     max = 5,
-    triggers = ranc_10_triggers
+    triggers = ranc_10_triggers,
+    load_sync = function(self)
+        self:SetTrackerProgress("ranc_10", 5 - self:CountInteractionAvailable("ranc_press_pickup_horseshoe"))
+    end
 })
 if OVKorAbove then
     EHI:ShowAchievementKillCounter("ranc_9", "ranc_9_stat", "show_achievements_vehicle") -- "Caddyshacked" achievement
@@ -93,7 +96,4 @@ EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(id, trigger, .
     if managers.ehi:TrackerDoesNotExist("FultonCatch") then
         EHI:CheckCondition(trigger)
     end
-end)
-EHI:AddLoadSyncFunction(function(self)
-    self:SetTrackerProgress("ranc_10", 5 - self:CountInteractionAvailable("ranc_press_pickup_horseshoe"))
 end)

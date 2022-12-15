@@ -79,15 +79,32 @@ end
 
 local achievements =
 {
-    [100120] = { time = 1800, id = "run_9", class = "EHIrun9Tracker" },
-    [100144] = { id = "run_9", special_function = SF.SetAchievementFailed },
-
-    [102426] = { special_function = SF.Trigger, data = { 1024261, 1024262 } },
-    [1024261] = { max = 8, id = "run_8", class = TT.AchievementProgress },
-    [1024262] = { id = "run_10", class = TT.AchievementStatus, difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard) },
-    [100658] = { id = "run_8", special_function = SF.IncreaseProgress },
-    [100111] = { id = "run_10", special_function = SF.SetAchievementFailed },
-    [100664] = { id = "run_10", special_function = SF.SetAchievementComplete }
+    run_8 =
+    {
+        elements =
+        {
+            [102426] = { max = 8, id = "run_8", class = TT.AchievementProgress },
+            [100658] = { id = "run_8", special_function = SF.IncreaseProgress }
+        }
+    },
+    run_9 =
+    {
+        elements =
+        {
+            [100120] = { time = 1800, class = "EHIrun9Tracker" },
+            [100144] = { special_function = SF.SetAchievementFailed }
+        }
+    },
+    run_10 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard),
+        elements =
+        {
+            [102426] = { class = TT.AchievementStatus },
+            [100111] = { special_function = SF.SetAchievementFailed },
+            [100664] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 EHI:ParseTriggers({

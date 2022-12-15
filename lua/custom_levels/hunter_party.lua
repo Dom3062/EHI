@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local escape_fly_in = 30 + 35 + 24
 local fire_wait = { time = 20, id = "FireWait", icons = { Icon.Fire, Icon.Wait } }
 local triggers = {
@@ -16,8 +15,17 @@ local triggers = {
 
 local achievements =
 {
-    [100045] = { id = "hunter_party", status = "ok", icons = { "ehi_hunter_party" }, class = TT.AchievementStatus, condition = EHI:IsBeardLibAchievementLocked("hunter_all", "hunter_party") and EHI:ShowMissionAchievements() and ovk_and_up, special_function = SF.ShowAchievementFromStart, beardlib = true },
-    [100679] = { id = "hunter_party", special_function = SF.SetAchievementFailed }
+    hunter_party =
+    {
+        beardlib = true,
+        package = "hunter_all",
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        elements =
+        {
+            [100045] = { status = "ok", icons = { "ehi_hunter_party" }, class = TT.AchievementStatus, special_function = SF.ShowAchievementFromStart },
+            [100679] = { special_function = SF.SetAchievementFailed }
+        }
+    }
 }
 
 EHI:ParseTriggers({

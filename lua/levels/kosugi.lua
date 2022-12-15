@@ -1,4 +1,5 @@
 local EHI = EHI
+local Icon = EHI.Icons
 EHIkosugi5Tracker = class(EHIAchievementProgressTracker)
 function EHIkosugi5Tracker:init(panel, params)
     params.max = 16 -- Random loot
@@ -108,13 +109,12 @@ for _, unit_id in ipairs({ 100098, 102897, 102899, 102900 }) do
         managers.ehi:AddTracker({
             id = tostring(unit_id),
             time = 10,
-            icons = { "pd2_fire" }
+            icons = { Icon.Fire }
         })
     end)
 end
 
 EHI.AchievementTrackers.EHIkosugi5Tracker = true
-local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local DisableTriggerAndExecute = EHI:GetFreeCustomSpecialFunctionID()
@@ -132,23 +132,64 @@ local triggers = {
     [100967] = { special_function = SF.RemoveTrackers, data = { "KeycardLeft", "KeycardRight" } }
 }
 
+local loot_types = { "artifact_statue", "money", "coke", "gold", "circuit", "weapon", "painting" }
 local kosugi_3 = { id = "kosugi_3", special_function = SF.IncreaseProgress }
 local achievements =
 {
-    [102700] = { special_function = SF.Trigger, data = { 1027001, 1027002, 1027003 } },
-    [1027001] = { max = 6, id = "kosugi_2", class = TT.AchievementProgress, remove_after_reaching_target = false },
-    [1027002] = { max = 7, id = "kosugi_3", class = TT.AchievementProgress },
-    [1027003] = { id = "kosugi_5", class = "EHIkosugi5Tracker" },
-
-    [102796] = { id = "kosugi_2", special_function = SF.SetAchievementFailed },
-    [100311] = { id = "kosugi_2", special_function = SF.IncreaseProgress },
-    [104040] = kosugi_3, -- Artifact
-    [104041] = kosugi_3, -- Money
-    [104042] = kosugi_3, -- Coke
-    [104044] = kosugi_3, -- Server
-    [104047] = kosugi_3, -- Gold
-    [104048] = kosugi_3, -- Weapon
-    [104049] = kosugi_3 -- Painting
+    kosugi_2 =
+    {
+        elements =
+        {
+            [102700] = { max = 6, class = TT.AchievementProgress },
+            [102796] = { special_function = SF.SetAchievementFailed },
+            [100311] = { special_function = SF.IncreaseProgress }
+        }
+    },
+    kosugi_3 =
+    {
+        elements =
+        {
+            [102700] = { max = 7, class = TT.AchievementProgress },
+            [104040] = kosugi_3, -- Artifact
+            [104041] = kosugi_3, -- Money
+            [104042] = kosugi_3, -- Coke
+            [104044] = kosugi_3, -- Server
+            [104047] = kosugi_3, -- Gold
+            [104048] = kosugi_3, -- Weapon
+            [104049] = kosugi_3 -- Painting
+        },
+        load_sync = function(self)
+            local counter = 0
+            for _, loot_type in ipairs(loot_types) do
+                local amount = managers.loot:GetSecuredBagsTypeAmount(loot_type)
+                counter = counter + math.min(amount, 1)
+            end
+            if counter < 7 then
+                self:AddAchievementProgressTracker("kosugi_3", 7)
+                self:SetTrackerProgress("kosugi_3", kosugi_3_counter)
+            end
+        end
+    },
+    kosugi_5 =
+    {
+        elements =
+        {
+            [102700] = { class = "EHIkosugi5Tracker" }
+        },
+        load_sync = function(self)
+            local counter_loot = 0
+            local counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")
+            for _, loot_type in ipairs(loot_types) do
+                local amount = managers.loot:GetSecuredBagsTypeAmount(loot_type)
+                counter_loot = counter_loot + amount
+            end
+            if counter_loot < 16 or counter_armor < 4 then
+                self:AddAchievementProgressTracker("kosugi_5") -- Max is passed in the tracker "init" function
+                self:SetTrackerProgress("kosugi_5", math.min(counter_loot, 16))
+                self:CallFunction("kosugi_5", "SetProgressArmor", math.min(counter_armor, 4))
+            end
+        end
+    }
 }
 
 local dailies = nil
@@ -183,30 +224,6 @@ EHI:RegisterCustomSpecialFunction(DisableTriggerAndExecute, function(id, t, ...)
     EHI:UnhookTrigger(t.data.id)
     EHI:CheckCondition(t)
 end)
-EHI:AddLoadSyncFunction(function(self)
-    local kosugi_3_counter = 0
-    local kosugi_5_counter_loot = 0
-    local kosugi_5_counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")
-    for _, loot_type in ipairs({ "artifact_statue", "money", "coke", "gold", "circuit", "weapon", "painting" }) do
-        local amount = managers.loot:GetSecuredBagsTypeAmount(loot_type)
-        kosugi_3_counter = kosugi_3_counter + math.min(amount, 1)
-        kosugi_5_counter_loot = kosugi_5_counter_loot + amount
-    end
-    if kosugi_3_counter < 7 then
-        EHI:Trigger(1027002)
-        self:SetTrackerProgress("kosugi_3", kosugi_3_counter)
-    end
-    if kosugi_5_counter_loot < 16 or kosugi_5_counter_armor < 4 then
-        EHI:Trigger(1027003)
-        self:SetTrackerProgress("kosugi_5", math.min(kosugi_5_counter_loot, 16))
-        self:CallFunction("kosugi_5", "SetProgressArmor", math.min(kosugi_5_counter_armor, 4))
-    end
-    CheckForBrokenWeapons()
-    if managers.game_play_central:GetMissionEnabledUnit(103995) then
-        self:IncreaseTrackerProgressMax("LootCounter")
-    end
-    self:SyncSecuredLoot()
-end)
 
 -- Loot Counter
 -- 2 cocaine
@@ -236,7 +253,13 @@ EHI:ShowLootCounter({
             CheckForBrokenCocaine()
         end}
     },
-    no_sync_load = true
+    load_sync = function(self)
+        CheckForBrokenWeapons()
+        if managers.game_play_central:GetMissionEnabledUnit(103995) then
+            self:IncreaseTrackerProgressMax("LootCounter")
+        end
+        self:SyncSecuredLoot()
+    end
 })
 -- Not included bugged loot, this is checked after spawn -> 102700 in EHI:ShowLootCounter()
 -- Reported here:

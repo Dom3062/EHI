@@ -23,16 +23,23 @@ end
 
 local achievements =
 {
-    [102444] = { status = "defend", id = "king_of_the_hill", class = TT.AchievementStatus },
-    [101297] = { id = "king_of_the_hill", special_function = SF.SetAchievementFailed },
-    [101343] = { id = "king_of_the_hill", special_function = SF.SetAchievementComplete },
+    king_of_the_hill =
+    {
+        elements =
+        {
+            [102444] = { status = "defend", class = TT.AchievementStatus },
+            [101297] = { special_function = SF.SetAchievementFailed },
+            [101343] = { special_function = SF.SetAchievementComplete }
+        }
+    }
 }
 
 local other =
 {
     [102394] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
     [102393] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
-    [102368] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround }
+    [102368] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
+    [102444] = EHI:AddAssaultDelay({ time = 25 + 30 })
 }
 
 EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.CarEscape)

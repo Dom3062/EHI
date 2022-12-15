@@ -87,14 +87,12 @@ _G.EHI =
         GetElementTimerAccurate = 35,
         UnpauseOrSetTimeByPreplanning = 36,
         UnpauseTrackerIfExistsAccurate = 37,
-        ShowAchievementCustom = 38,
         FinalizeAchievement = 39,
         IncreaseChanceFromElement = 42,
         DecreaseChanceFromElement = 43,
         SetChanceFromElement = 44,
         SetChanceFromElementWhenTrackerExists = 45,
         PauseTrackerWithTime = 46,
-        RemoveTriggerAndShowAchievementCustom = 47,
         IncreaseProgressMax = 48,
         SetTimeIfLoudOrStealth = 49,
         AddTimeByPreplanning = 50,
@@ -624,6 +622,15 @@ function EHI:ShowMissionAchievements()
     return self:GetUnlockableAndOption("show_achievements_mission") and self:GetUnlockableOption("show_achievements")
 end
 
+---@param id string Achievement ID
+---@return boolean
+function EHI:CanShowAchievement(id)
+    if not self:ShowMissionAchievements() then
+        return false
+    end
+    return self:IsAchievementLocked(id)
+end
+
 function EHI:GetUnlockableOption(option)
     if option then
         return self.settings.unlockables[option]
@@ -1031,10 +1038,16 @@ function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_al
         if triggers[key] then
             local t = triggers[key]
             if t.special_function and self.TriggerFunction[t.special_function] then
-                -- TODO:
-                -- This won't properly rearrange triggers when both of them are Trigger function
-                -- It may lead to endless loop, stucking the game
-                if t.data then
+                if value.special_function and self.TriggerFunction[value.special_function] then
+                    if t.data then
+                        local data = value.data or {}
+                        for i = 1, #data, 1 do
+                            t.data[#t.data + 1] = data[i]
+                        end
+                    else
+                        self:Log("key: " .. tostring(key) .. " does not have 'data' table, new triggers won't be added!")
+                    end
+                elseif t.data then
                     local new_key = (key * 10) + 1
                     while triggers[new_key] do
                         new_key = new_key + 1
@@ -1377,10 +1390,6 @@ function EHI:Trigger(id, element, enabled)
                 else
                     GetElementTimer(self, trigger, id)
                 end
-            elseif f == SF.ShowAchievementCustom then
-                if self:IsAchievementLocked(trigger.data) then
-                    self:CheckCondition(trigger)
-                end
             elseif f == SF.FinalizeAchievement then
                 managers.ehi:CallFunction(trigger.id, "Finalize")
             elseif f == SF.IncreaseChanceFromElement then
@@ -1402,11 +1411,6 @@ function EHI:Trigger(id, element, enabled)
                 PauseTracker(t_id)
                 managers.ehi:SetTrackerTimeNoAnim(t_id, t_time)
                 managers.ehi_waypoint:SetWaypointTime(t_id, t_time)
-            elseif f == SF.RemoveTriggerAndShowAchievementCustom then
-                if self:IsAchievementLocked(trigger.data) then
-                    self:CheckCondition(trigger)
-                end
-                self:UnhookTrigger(id)
             elseif f == SF.IncreaseProgressMax then
                 managers.ehi:IncreaseTrackerProgressMax(trigger.id, trigger.max)
             elseif f == SF.SetTimeIfLoudOrStealth then
@@ -1637,9 +1641,12 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     self:PreloadTrackers(new_triggers.preload or {}, trigger_id_all or "Trigger", trigger_icons_all or {})
     local show_achievement = self:ShowMissionAchievements()
     local show_trophy = self:GetUnlockableAndOption("show_trophies")
-    local function FillAchievementTrigger(data)
-        if not data.special_function then
-            data.special_function = SF.ShowAchievement
+    local function FillAchievementTrigger(data, id)
+        if not data.icons then
+            data.icons = self:GetAchievementIcon(data.id or id)
+        end
+        if id then -- Only provided in the new achievement format; the new format already checks the correct difficulty and if the achievement is awarded
+            return
         end
         if data.difficulty_pass ~= nil then
             data.condition = data.difficulty_pass and show_achievement
@@ -1647,8 +1654,8 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
         elseif data.condition == nil then
             data.condition = show_achievement
         end
-        if not data.icons then
-            data.icons = self:GetAchievementIcon(data.id)
+        if not data.special_function then
+            data.special_function = SF.ShowAchievement
         end
     end
     local function FillTrophyTrigger(data, sf, c)
@@ -1688,12 +1695,42 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     end
     local achievement_triggers = new_triggers.achievement
     if show_achievement and achievement_triggers then
-        for _, data in pairs(achievement_triggers) do
-            if data.class and self.AchievementTrackers[data.class] then
-                FillAchievementTrigger(data)
+        local k, _ = next(achievement_triggers)
+        if not k then
+            -- empty table; do nothing
+        elseif type(k) == "number" then -- Old achievement format
+            for _, data in pairs(achievement_triggers) do
+                if data.class and self.AchievementTrackers[data.class] then
+                    FillAchievementTrigger(data)
+                end
+            end
+            self:AddTriggers2(achievement_triggers, nil, trigger_id_all or "Trigger", trigger_icons_all)
+        else -- New achievement format
+            local function Parser(data, id)
+                for _, element in pairs(data.elements or {}) do
+                    if element.class and self.AchievementTrackers[element.class] then
+                        element.beardlib = data.beardlib
+                        FillAchievementTrigger(element, id)
+                    end
+                end
+                self:AddTriggers2(data.elements or {}, nil, id)
+                if data.alarm_callback and type(data.alarm_callback) == "function" then
+                    self:AddOnAlarmCallback(data.alarm_callback)
+                end
+                if data.load_sync and type(data.load_sync) == "function" then
+                    self:AddLoadSyncFunction(data.load_sync)
+                end
+            end
+            for id, data in pairs(achievement_triggers) do
+                if data.beardlib then
+                    if data.difficulty_pass ~= false and not self:IsBeardLibAchievementUnlocked(data.package, id) then
+                        Parser(data, id)
+                    end
+                elseif data.difficulty_pass ~= false and self:IsAchievementLocked(id) then
+                    Parser(data, id)
+                end
             end
         end
-        self:AddTriggers2(achievement_triggers, nil, trigger_id_all or "Trigger", trigger_icons_all)
     end
     self:ParseMissionTriggers(new_triggers.mission, trigger_id_all, trigger_icons_all)
     --self:PrintTable(triggers)
@@ -1769,7 +1806,7 @@ function EHI:ShouldDisableWaypoints()
     return self:GetOption("show_timers") and self:GetWaypointOption("show_waypoints_timers")
 end
 
-local function HostWaypoint(self, instigator, ...)
+local function HostWaypoint(self, instigator)
     if not self._values.enabled then
         return
     end
@@ -1868,6 +1905,10 @@ function EHI:ShowLootCounterNoCheck(params)
         end
     end
     managers.ehi:ShowLootCounter(params.max, params.additional_loot, params.max_random, n_offset)
+    if params.load_sync then
+        self:AddLoadSyncFunction(params.load_sync)
+        params.no_sync_load = true
+    end
     if params.triggers then
         self:AddTriggers2(params.triggers, nil, "LootCounter")
         if params.hook_triggers then
@@ -1921,6 +1962,12 @@ function EHI:ShowAchievementLootCounter(params)
         return
     end
     managers.ehi:AddAchievementProgressTracker(params.achievement, params.max, params.additional_loot, params.remove_after_reaching_target, params.show_loot_counter)
+    if params.load_sync then
+        self:AddLoadSyncFunction(params.load_sync)
+    end
+    if params.alarm_callback then
+        self:AddOnAlarmCallback(params.alarm_callback)
+    end
     if params.triggers then
         self:AddTriggers2(params.triggers, nil, params.achievement)
         if params.hook_triggers then
@@ -1950,7 +1997,6 @@ function EHI:AddAchievementToCounter(params)
         id = params.achievement,
         check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly,
         loot_type = params.counter and params.counter.loot_type,
-        sync_only = params.sync_only,
         f = params.counter and params.counter.f
     }
     self:HookAchievementCounter()
@@ -1958,18 +2004,13 @@ end
 
 function EHI:HookAchievementCounter()
     if not self.AchievementCounterHook then
-        local function Hook(self, sync_load)
+        local function Hook(self)
             for _, achievement in ipairs(EHI.AchievementCounter) do
-                if not achievement.sync_only or (achievement.sync_only and sync_load) then
-                    self:EHIReportProgress(achievement.id, achievement.check_type, achievement.loot_type, achievement.f)
-                end
+                self:EHIReportProgress(achievement.id, achievement.check_type, achievement.loot_type, achievement.f)
             end
         end
         self:HookWithID(LootManager, "sync_secure_loot", "EHI_AchievementCounter_sync_secure_loot", function(self, ...)
-            Hook(self, false)
-        end)
-        self:HookWithID(LootManager, "sync_load", "EHI_AchievementCounter_sync_load", function(self, ...)
-            Hook(self, true)
+            Hook(self)
         end)
         self.AchievementCounterHook = true
     end

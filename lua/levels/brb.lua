@@ -40,21 +40,28 @@ for _, index in ipairs({ 900, 1100, 1500, 3200 }) do -- brb/single_door + brb/si
     DisableWaypoints[EHI:GetInstanceElementID(100022, index)] = true -- Fix
 end
 
-local achievements = {}
-if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
-    achievements[101136] = { special_function = SF.CustomCode, f = function()
-        EHI:ShowAchievementLootCounter({
-            achievement = "brb_8",
-            max = 12,
-            remove_after_reaching_target = false,
-            counter =
-            {
-                check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
-                loot_type = "gold"
-            }
-        })
-    end }
-end
+local achievements =
+{
+    brb_8 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard),
+        elements =
+        {
+            [101136] = { special_function = SF.CustomCode, f = function()
+                EHI:ShowAchievementLootCounter({
+                    achievement = "brb_8",
+                    max = 12,
+                    remove_after_reaching_target = false,
+                    counter =
+                    {
+                        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+                        loot_type = "gold"
+                    }
+                })
+            end }
+        }
+    }
+}
 
 EHI:ParseTriggers({
     mission = triggers,

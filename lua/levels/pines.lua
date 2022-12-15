@@ -22,11 +22,18 @@ local triggers = {
     [101007] = chance,
     [101008] = chance
 }
-local achievements = {}
-if EHI:ShowMissionAchievements() and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-    achievements[104385] = { id = "uno_9", special_function = SF.IncreaseProgress }
-    achievements[101471] = { max = 40, id = "uno_9", class = TT.AchievementProgress }
-end
+local achievements =
+{
+    uno_9 =
+    {
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        elements =
+        {
+            [101471] = { max = 40, id = "uno_9", class = TT.AchievementProgress },
+            [104385] = { id = "uno_9", special_function = SF.IncreaseProgress }
+        }
+    }
+}
 
 EHI:ParseTriggers({
     mission = triggers,

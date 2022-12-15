@@ -79,16 +79,29 @@ DisableWaypoints[EHI:GetInstanceElementID(100026, 29550)] = true -- Fix
 
 local achievements =
 {
-    [100296] = { max = 2, id = "uno_5", class = TT.AchievementProgress, difficulty_pass = ovk_and_up },
-    [103391] = { id = "uno_5", special_function = SF.IncreaseProgress },
-    [103395] = { id = "uno_5", special_function = SF.SetAchievementFailed },
-
-    [100107] = { id = "des_9", status = "push", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [102480] = { special_function = SF.Trigger, data = { 1024801, 1024802 } },
-    [1024801] = { id = "des_9", status = "finish", special_function = SF.SetAchievementStatus },
-    [1024802] = { special_function = SF.RemoveTriggers, data = { 102486 } },
-    [102710] = { id = "des_9", special_function = SF.SetAchievementComplete },
-    [102486] = { id = "des_9", special_function = SF.SetAchievementFailed },
+    des_9 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100107] = { status = "push", class = TT.AchievementStatus },
+            [102480] = { special_function = SF.Trigger, data = { 1024801, 1024802 } },
+            [1024801] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [1024802] = { special_function = SF.RemoveTriggers, data = { 102486 } },
+            [102710] = { special_function = SF.SetAchievementComplete },
+            [102486] = { special_function = SF.SetAchievementFailed }
+        }
+    },
+    uno_5 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100296] = { max = 2, class = TT.AchievementProgress },
+            [103391] = { special_function = SF.IncreaseProgress },
+            [103395] = { special_function = SF.SetAchievementFailed },
+        }
+    }
 }
 
 EHI:ParseTriggers({

@@ -28,7 +28,17 @@ end
 
 local achievements =
 {
-    [100840] = { time = 600, id = "bat_4", class = TT.Achievement },
+    bat_4 =
+    {
+        elements =
+        {
+            [100840] = { time = 600, class = TT.Achievement },
+            [102531] = { special_function = SF.SetAchievementComplete }
+        },
+        load_sync = function(self)
+            self:AddTimedAchievementTracker("bat_4", 600)
+        end
+    }
 }
 
 local other =
@@ -52,11 +62,6 @@ EHI:ShowAchievementLootCounter({
         loot_type = { "mus_artifact_paint", "mus_artifact" }
     }
 })
-if EHI:ShowMissionAchievements() then
-    EHI:AddLoadSyncFunction(function(self)
-        self:AddTimedAchievementTracker("bat_4", 600)
-    end)
-end
 
 local tbl =
 {

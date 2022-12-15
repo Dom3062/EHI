@@ -38,10 +38,17 @@ end
 
 local achievements =
 {
-    [100073] = { id = "ameno_7", status = "loud", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [100624] = { id = "ameno_7", special_function = SF.SetAchievementFailed },
-    [100634] = { id = "ameno_7", special_function = SF.SetAchievementComplete },
-    [100149] = { id = "ameno_7", status = "defend", special_function = SF.SetAchievementStatus }
+    ameno_7 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100073] = { status = "loud", class = TT.AchievementStatus },
+            [100624] = { special_function = SF.SetAchievementFailed },
+            [100634] = { special_function = SF.SetAchievementComplete },
+            [100149] = { status = "defend", special_function = SF.SetAchievementStatus }
+        }
+    }
 }
 EHI:ParseTriggers({
     mission = triggers,

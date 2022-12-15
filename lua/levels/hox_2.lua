@@ -13,13 +13,8 @@ local element_sync_triggers =
 local request = { Icon.PCHack, Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
 local CheckOkValueHostCheckOnly = EHI:GetFreeCustomSpecialFunctionID()
-local AssaultDelay = 30
-if EHI:IsClient() then
-    AssaultDelay = AssaultDelay + 5
-end
 local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
 local triggers = {
-    --[100107] = { time = AssaultDelay, id = "AssaultDelay", stop_counting = EHI:IsHost(), class = TT.AssaultDelay },
     [102016] = { time = 7, id = "Endless", icons = Icon.EndlessAssault, class = TT.Warning },
 
     [104579] = { time = 15, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) },
@@ -54,21 +49,45 @@ end
 
 local achievements =
 {
-    [100107] = { special_function = SF.Trigger, data = { 1001071, 1001072 } },
-    [1001071] = { id = "slakt_3", class = TT.AchievementStatus, difficulty_pass = ovk_and_up },
-    [1001072] = { id = "cac_26", status = "objective", class = TT.AchievementStatus, special_function = SF.ShowAchievementFromStart, difficulty_pass = ovk_and_up },
-    [100256] = { id = "slakt_3", special_function = SF.SetAchievementFailed },
-    [100258] = { id = "slakt_3", special_function = SF.SetAchievementComplete },
-    [104485] = { id = "cac_26", status = "defend", special_function = SF.SetAchievementStatus },
-    [104520] = { id = "cac_26", status = "objective", special_function = SF.SetAchievementStatus },
-    [101884] = { id = "cac_26", status = "finish", special_function = SF.SetAchievementStatus },
-    [100320] = { id = "cac_26", special_function = SF.SetAchievementComplete },
-    [100322] = { id = "cac_26", special_function = SF.SetAchievementFailed },
+    slakt_3 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100107] = { class = TT.AchievementStatus },
+            [100256] = { special_function = SF.SetAchievementFailed },
+            [100258] = { special_function = SF.SetAchievementComplete }
+        },
+        load_sync = function(self)
+            if self:IsMissionElementEnabled(100270) then -- No keycard achievement
+                self:AddAchievementStatusTracker("slakt_3")
+            end
+        end
+    },
+    cac_26 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100107] = { status = "objective", class = TT.AchievementStatus },
+            [104485] = { status = "defend", special_function = SF.SetAchievementStatus },
+            [104520] = { status = "objective", special_function = SF.SetAchievementStatus },
+            [101884] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [100320] = { special_function = SF.SetAchievementComplete },
+            [100322] = { special_function = SF.SetAchievementFailed }
+        }
+    }
+}
+
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 30 })
 }
 
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(id, trigger, element, enabled)
     local continue = false
@@ -89,9 +108,6 @@ EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(id, trigge
     end
 end)
 EHI:AddLoadSyncFunction(function(self)
-    if self:IsMissionElementEnabled(100270) then -- No keycard achievement
-        EHI:Trigger(1001071)
-    end
     local pc = managers.worlddefinition:get_unit(104418) -- 1
     local pc2 = managers.worlddefinition:get_unit(102413) -- 2
     local pc3 = managers.worlddefinition:get_unit(102414) -- 3

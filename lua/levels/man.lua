@@ -36,12 +36,28 @@ local triggers = {
 
 local achievements =
 {
-    [100698] = { special_function = SF.Trigger, data = { 1006981, 1006982 }, trigger_times = 1 },
-    [1006981] = { id = "man_2", status = "no_down", class = TT.AchievementStatus, difficulty_pass = ovk_and_up, trigger_times = 1 },
-    [1006982] = { id = "man_3", class = TT.AchievementStatus, trigger_times = 1 },
-
-    [103963] = { id = "man_2", special_function = SF.SetAchievementFailed },
-    [103957] = { id = "man_3", special_function = SF.SetAchievementFailed }
+    man_2 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100698] = { status = "no_down", class = TT.AchievementStatus, trigger_times = 1 },
+            [103963] = { special_function = SF.SetAchievementFailed },
+        }
+    },
+    man_3 =
+    {
+        elements =
+        {
+            [100698] = { class = TT.AchievementStatus, trigger_times = 1 },
+            [103957] = { special_function = SF.SetAchievementFailed }
+        },
+        load_sync = function(self)
+            if EHI.ConditionFunctions.IsStealth() then
+                self:AddAchievementStatusTracker("man_3")
+            end
+        end
+    }
 }
 
 EHI:ParseTriggers({
@@ -54,18 +70,13 @@ EHI:ShowAchievementLootCounter({
     triggers =
     {
         [103989] = { special_function = SF.IncreaseProgress }
-    }
-})
-if EHI:ShowMissionAchievements() then
-    EHI:AddLoadSyncFunction(function(self)
-        if EHI.ConditionFunctions.IsStealth() then
-            self:AddAchievementStatusTracker("man_3")
-        end
+    },
+    load_sync = function(self)
         -- Achievement count used planks on windows, vents, ...
         -- There are total 49 positions and 10 planks
         self:SetTrackerProgress("man_4", 49 - self:CountInteractionAvailable("stash_planks"))
-    end)
-end
+    end
+})
 
 local tbl =
 {
