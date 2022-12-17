@@ -132,7 +132,7 @@
             "title": "ehi_buffs_skills_menu",
             "next_menu": "ehi_buffs_skills_menu",
             "parent": "ehi_show_buffs_choice",
-            "ehi_ver" : 100
+            "ehi_ver" : 110
         },
         {
             "type": "button",

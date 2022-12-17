@@ -421,6 +421,8 @@
     "ehi_buffs_skills_fugitive_brawler_subclass" : "Brawler",
     "ehi_buffs_skills_fugitive_bloodthirst" : "Bloodthirst",
     "ehi_buffs_skills_fugitive_bloodthirst_reload" : "Bloodthirst (Reload)",
+    "ehi_buffs_skills_fugitive_bloodthirst_ratio" : "Bloodthirst Ratio",
+    "ehi_buffs_skills_fugitive_bloodthirst_ratio_desc" : "Sets percentual ratio to show Bloodthirst gauge\nSetting it to 0% makes the buff always visible\n\nDefault value is 34%, which are 6 kills in Vanilla",
     "ehi_buffs_skills_fugitive_berserker" : "Berserker",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "Berserker Refresh",
     "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "Sets how often 'Berserker' gauge should be updated per second",

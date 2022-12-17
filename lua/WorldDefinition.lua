@@ -82,8 +82,8 @@ function WorldDefinition:init(...)
     units = tweak_data.ehi.units
 end
 
-function WorldDefinition:create(layer, offset, ...)
-    local return_data = original.create(self, layer, offset, ...)
+function WorldDefinition:create(...)
+    local return_data = original.create(self, ...)
     if self._definition.statics then
         for _, values in ipairs(self._definition.statics) do
             if units[values.unit_data.name] and not values.unit_data.instance then

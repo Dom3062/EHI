@@ -1,3 +1,6 @@
+r110 (17. 12. 2022):
+Added option "Bloodthirst Ratio"
+
 r109 (15. 12. 2022):
 Updated code to properly support "A Criminal Carol" event
 Implemented a new achievement hooking format which will improve memory efficiency and improve framerate

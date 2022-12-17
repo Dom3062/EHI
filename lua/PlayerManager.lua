@@ -165,9 +165,17 @@ local meele_boost_tweak = tweak_data.upgrades.values.player.melee_damage_stackin
 if meele_boost_tweak then
     local not_bloodthirst = not EHI:GetBuffOption("bloodthirst")
     local bloodthirst_reload = EHI:GetBuffOption("bloodthirst_reload")
+    local bloodthirst_ratio = EHI:GetBuffOption("bloodthirst_ratio") / 100
     local max_multiplier = meele_boost_tweak.max_multiplier or 16
     local bloodthirst_max = false
     tweak_data.ehi.buff.melee_damage_stacking.max = max_multiplier
+    if bloodthirst_ratio == 0 then
+        EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+            if managers.player:has_category_upgrade("player", "melee_damage_stacking") then
+                managers.ehi_buff:AddGauge2("melee_damage_stacking", 1 / max_multiplier, 1)
+            end
+        end)
+    end
     original.set_melee_dmg_multiplier = PlayerManager.set_melee_dmg_multiplier
     function PlayerManager:set_melee_dmg_multiplier(multiplier, ...)
         original.set_melee_dmg_multiplier(self, multiplier, ...)
@@ -175,7 +183,7 @@ if meele_boost_tweak then
             return -- Avoid doing expensive call below because the multiplier is full
         end
         local ratio = multiplier / max_multiplier
-        if ratio > 0.34 then
+        if ratio >= bloodthirst_ratio then
             bloodthirst_max = ratio == 1
             managers.ehi_buff:AddGauge2("melee_damage_stacking", ratio, multiplier)
         end
@@ -183,7 +191,11 @@ if meele_boost_tweak then
     original.reset_melee_dmg_multiplier = PlayerManager.reset_melee_dmg_multiplier
     function PlayerManager:reset_melee_dmg_multiplier(...)
         original.reset_melee_dmg_multiplier(self, ...)
-        managers.ehi_buff:RemoveBuff("melee_damage_stacking")
+        if bloodthirst_ratio > 0 then
+            managers.ehi_buff:RemoveBuff("melee_damage_stacking")
+        else
+            managers.ehi_buff:AddGauge2("melee_damage_stacking", 1 / max_multiplier, 1)
+        end
         bloodthirst_max = false -- Reset the lock
         if self:has_category_upgrade("player", "melee_kill_increase_reload_speed") then
             local data = self:upgrade_value("player", "melee_kill_increase_reload_speed", 0)

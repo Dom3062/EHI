@@ -84,6 +84,21 @@
             "ehi_ver" : 79
         },
         {
+            "type": "slider",
+            "id": "ehi_buffs_skills_fugitive_bloodthirst_ratio_choice",
+            "title": "ehi_buffs_skills_fugitive_bloodthirst_ratio",
+            "description": "ehi_buffs_skills_fugitive_bloodthirst_ratio_desc",
+            "callback": "SetBuffOption",
+            "callback_arguments": "bloodthirst_ratio",
+            "value": "bloodthirst_ratio",
+            "suffix": "%",
+            "default_value": 34,
+            "max": 100,
+            "min": 0,
+            "step": 0,
+            "ehi_ver" : 110
+        },
+        {
             "type": "divider",
             "size": 10
         },

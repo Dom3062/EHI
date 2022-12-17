@@ -708,7 +708,7 @@ function EHIMenu:SetItem(item, value, menu)
             value = string.format("%." .. (item.step or 0) .. "f", value)
             local percentage = (value - item.min) / (item.max - item.min)
             item.panel:child("value_bar"):set_w(math.max(1,item.panel:w() * percentage))
-            item.panel:child("value_text"):set_text(item.percentage and math.floor(value * 100).."%" or value ..(item.suffix and item.suffix or ""))
+            item.panel:child("value_text"):set_text(item.percentage and math.floor(value * 100).."%" or value .. (item.suffix or ""))
             value = tonumber(value)
             item.value = value
         elseif item.type == "multiple_choice" then
@@ -1266,7 +1266,7 @@ function EHIMenu:CreateSlider(params)
         t = ""
     end
     if params.suffix then
-        t = t + params.suffix
+        t = t .. params.suffix
     end
     local value_text = slider_panel:text({
         name = "value_text",
@@ -1336,7 +1336,7 @@ function EHIMenu:SetSlider(item, x, add)
     if percentage then
         local value = string.format("%." .. (item.step or 0) .. "f", item.min + (item.max - item.min) * percentage)
         value_bar:set_w(math.max(1,item.panel:w() * percentage))
-        value_text:set_text(item.percentage and math.floor(value * 100).."%" or value ..(item.suffix and item.suffix or ""))
+        value_text:set_text(item.percentage and math.floor(value * 100).."%" or value .. (item.suffix or ""))
         item.value = value
     end
 end

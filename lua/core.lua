@@ -577,6 +577,7 @@ function EHI:LoadDefaultValues()
             swan_song = true,
             bloodthirst = true,
             bloodthirst_reload = true,
+            bloodthirst_ratio = 34, -- value / 100
             berserker = true,
             berserker_refresh = 4, -- 1 / value
 
