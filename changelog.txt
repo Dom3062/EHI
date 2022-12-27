@@ -1,3 +1,6 @@
+r111 (27. 12. 2022):
+Added Copycat buffs 
+
 r110 (17. 12. 2022):
 Added option "Bloodthirst Ratio"
 

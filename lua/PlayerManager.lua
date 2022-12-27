@@ -206,12 +206,14 @@ if meele_boost_tweak then
     end
 end
 
-if EHI:GetBuffOption("painkillers") then
+if EHI:GetBuffOption("painkillers") or EHI:GetBuffOption("copycat") then
     original.activate_temporary_property = PlayerManager.activate_temporary_property
     function PlayerManager:activate_temporary_property(name, time, ...)
         original.activate_temporary_property(self, name, time, ...)
         if name == "revived_damage_reduction" then -- "Painkillers"
             managers.ehi_buff:AddBuff("fast_learner", time)
+        elseif name == "mrwi_health_invulnerable" then -- "Grace Period" (Copycat)
+            managers.ehi_buff:AddBuff("mrwi_health_invulnerable_cooldown", time)
         end
     end
 end
@@ -376,7 +378,7 @@ local function ResetAmmoEfficiencyStack()
     ammo_efficiency_counter = 0
     me:RemoveBuff("AmmoEfficiencyStack")
 end]]
-if EHI:GetBuffOption("bullseye") then
+if EHI:GetBuffOption("bullseye") or EHI:GetBuffOption("copycat") then
     original.on_headshot_dealt = PlayerManager.on_headshot_dealt
     function PlayerManager:on_headshot_dealt(...)
         local previouscooldown = self._on_headshot_dealt_t or 0
@@ -388,6 +390,13 @@ if EHI:GetBuffOption("bullseye") then
             local t = Application:time()
             if t >= previouscooldown then
                 managers.ehi_buff:AddBuff2("headshot_regen_armor_bonus", t, self._on_headshot_dealt_t)
+            end
+        end
+
+        if self:has_category_upgrade("player", "headshot_regen_health_bonus") then
+            local t = Application:time()
+            if t >= previouscooldown then
+                managers.ehi_buff:AddBuff2("headshot_regen_health_bonus", t, self._on_headshot_dealt_t)
             end
         end
 

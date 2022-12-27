@@ -530,6 +530,21 @@ tweak_data.ehi =
             deck = true,
             folder = "copr",
             option = "leech"
+        },
+        headshot_regen_health_bonus =
+        {
+            deck = true,
+            folder = "mrwi",
+            bad = true,
+            x = 1,
+            option = "copycat"
+        },
+        mrwi_health_invulnerable =
+        {
+            deck = true,
+            folder = "mrwi",
+            x = 3,
+            option = "copycat"
         }
     },
     functions =
@@ -624,6 +639,8 @@ tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.option = "hacker"
 tweak_data.ehi.buff.copr_ability_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.copr_ability_cooldown.folder = "copr"
 tweak_data.ehi.buff.copr_ability_cooldown.option = "leech"
+tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown = deep_clone(tweak_data.ehi.buff.mrwi_health_invulnerable)
+tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown.bad = true
 
 tweak_data.hud_icons.EHI_XP = { texture = tweak_data.ehi.icons.xp.texture }
 tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }

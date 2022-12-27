@@ -134,6 +134,17 @@
             "value": "leech",
             "default_value": true,
             "ehi_ver" : 79
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_copycat_choice",
+            "title": "ehi_buffs_perks_copycat",
+            "description" : "ehi_buffs_perks_copycat_desc",
+            "callback": "SetBuffOption",
+            "callback_arguments": "copycat",
+            "value": "copycat",
+            "default_value": true,
+            "ehi_ver" : 111
         }
     ]
 }

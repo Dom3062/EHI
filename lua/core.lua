@@ -594,6 +594,7 @@ function EHI:LoadDefaultValues()
             tag_team = true,
             hacker = true,
             leech = true,
+            copycat = true,
 
             -- Other
             interact = true,
