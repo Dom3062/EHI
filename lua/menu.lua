@@ -57,7 +57,7 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
 		loc:load_localization_file(EHI.ModPath .. "loc/english.json", false)
 	end
 	loc:load_localization_file(EHI.ModPath .. "loc/languages.json")
-	EHI:CallCallback("LocalizationLoaded", loc)
+	EHI:CallCallback(EHI.CallbackMessage.LocLoaded, loc, Languages[lang] or language_filename or "english")
 	LocLoaded = true
 end)
 

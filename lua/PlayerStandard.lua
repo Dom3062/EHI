@@ -115,16 +115,16 @@ if EHI:GetBuffOption("reload") then
     end
 
     original._interupt_action_reload = PlayerStandard._interupt_action_reload
-    function PlayerStandard:_interupt_action_reload(t, ...)
-        original._interupt_action_reload(self, t, ...)
+    function PlayerStandard:_interupt_action_reload(...)
+        original._interupt_action_reload(self, ...)
         managers.ehi_buff:RemoveBuff("Reload")
     end
 end
 
 if EHI:GetBuffOption("interact") then
     original._start_action_interact = PlayerStandard._start_action_interact
-    function PlayerStandard:_start_action_interact(t, input, timer, interact_object, ...)
-        original._start_action_interact(self, t, input, timer, interact_object, ...)
+    function PlayerStandard:_start_action_interact(...)
+        original._start_action_interact(self, ...)
         if self._interact_expire_t > 0 then
             managers.ehi_buff:AddBuff("Interact", self._interact_expire_t)
         end
@@ -148,9 +148,10 @@ if EHI:GetBuffOption("melee_charge") then
         end
         local melee_entry = managers.blackmarket:equipped_melee_weapon()
         local current_state_name = self._camera_unit:anim_state_machine():segment_state(self:get_animation("base"))
-        local attack_allowed_expire_t = tweak_data.blackmarket.melee_weapons[melee_entry].attack_allowed_expire_t or 0.15
+        local tweak = tweak_data.blackmarket.melee_weapons[melee_entry]
+        local attack_allowed_expire_t = tweak.attack_allowed_expire_t or 0.15
         local offset = current_state_name == self:get_animation("melee_attack_state") and 0 or attack_allowed_expire_t
-        local max_charge_time = tweak_data.blackmarket.melee_weapons[melee_entry].stats.charge_time
+        local max_charge_time = tweak.stats.charge_time
         local t_charge = offset + max_charge_time
         managers.ehi_buff:AddBuff("MeleeCharge", t_charge)
     end

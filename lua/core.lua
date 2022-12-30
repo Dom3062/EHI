@@ -41,7 +41,8 @@ _G.EHI =
 
     CallbackMessage =
     {
-        Spawned = "PlayerSpawned"
+        Spawned = "PlayerSpawned",
+        LocLoaded = "LocalizationLoaded"
     },
 
     OnAlarmCallback = {},
@@ -610,7 +611,11 @@ function EHI:LoadDefaultValues()
             crit_persistent = false,
             inspire_ai = true,
             regen_throwable_ai = true
-        }
+        },
+
+        -- Inventory
+        show_inventory_detailed_description = true,
+        hide_original_desc = true
     }
 end
 

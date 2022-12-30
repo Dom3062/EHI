@@ -43,6 +43,7 @@
             <post :hook_id="menumanager" :script_path="EHIMenu.lua" />
             <post :hook_id="menumanager" :script_path="EHIMenuCallbacks.lua" />
             <post :hook_id="menumanager" :script_path="menu.lua" />
+            <post :hook_id="menu/blackmarketgui" :script_path="BlackMarketGui.lua" />
             <post :hook_id="menu/menunodegui" :script_path="MenuNodeMainGui.lua" />
 
             <post :hook_id="mutatorsmanager" :script_path="MutatorsManager.lua" />

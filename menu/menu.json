@@ -162,6 +162,14 @@
             "ehi_ver" : 111
         },
         {
+            "type": "button",
+            "id": "ehi_inventory_menu",
+            "title": "ehi_inventory_menu",
+            "description": "ehi_inventory_menu_desc",
+            "next_menu": "ehi_inventory_menu",
+            "ehi_ver" : 112
+        },
+        {
             "type" : "divider",
             "size" : 20
         },

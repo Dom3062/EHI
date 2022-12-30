@@ -1,5 +1,8 @@
+r112 (30. 12. 2022):
+Added "Show Detailed Inventory Description" option
+
 r111 (27. 12. 2022):
-Added Copycat buffs 
+Added Copycat buffs
 
 r110 (17. 12. 2022):
 Added option "Bloodthirst Ratio"

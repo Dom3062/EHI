@@ -194,7 +194,7 @@ if meele_boost_tweak then
         if bloodthirst_ratio > 0 then
             managers.ehi_buff:RemoveBuff("melee_damage_stacking")
         else
-            managers.ehi_buff:AddGauge2("melee_damage_stacking", 1 / max_multiplier, 1)
+            managers.ehi_buff:AddGauge2("melee_damage_stacking", self._melee_dmg_mul / max_multiplier, self._melee_dmg_mul)
         end
         bloodthirst_max = false -- Reset the lock
         if self:has_category_upgrade("player", "melee_kill_increase_reload_speed") then
