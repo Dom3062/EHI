@@ -15,7 +15,7 @@ local function LoadClasses()
         PlayerDamage = "lib/units/beings/player/PlayerDamage"
     }
     if not UnitBase then
-        require("lib/units/UnitBase")
+        require("lib/units/MenuScriptUnitData")
     end
     for class, path in pairs(classes) do
         if not _G[class] then

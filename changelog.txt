@@ -1,3 +1,6 @@
+r113 (31. 12. 2022):
+Fixed a possible crash in menu
+
 r112 (30. 12. 2022):
 Added "Show Detailed Inventory Description" option
 

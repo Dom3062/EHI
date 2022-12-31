@@ -11,7 +11,7 @@
             "callback": "SetOption",
             "callback_arguments": "show_inventory_detailed_description",
             "value": "show_inventory_detailed_description",
-            "default_value": true,
+            "default_value": false,
             "is_parent" : true,
             "ehi_ver" : 112
         },

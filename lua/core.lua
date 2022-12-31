@@ -614,7 +614,7 @@ function EHI:LoadDefaultValues()
         },
 
         -- Inventory
-        show_inventory_detailed_description = true,
+        show_inventory_detailed_description = false,
         hide_original_desc = true
     }
 end
