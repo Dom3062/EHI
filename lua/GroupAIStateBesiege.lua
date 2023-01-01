@@ -15,8 +15,8 @@ end
 
 if EHI:AssaultDelayTrackerIsEnabled() then
     original._begin_assault_task = GroupAIStateBesiege._begin_assault_task
-    function GroupAIStateBesiege:_begin_assault_task(assault_areas, ...)
-        original._begin_assault_task(self, assault_areas, ...)
+    function GroupAIStateBesiege:_begin_assault_task(...)
+        original._begin_assault_task(self, ...)
         local end_t = self._task_data.assault.phase_end_t
         if end_t ~= 0 then
             managers.ehi:CallFunction("AssaultDelay", "StartAnticipation", end_t - self._t)

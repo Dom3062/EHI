@@ -14,12 +14,12 @@ local original =
 }
 
 local value = tweak_data.upgrades.values.team.crew_throwable_regen
-local max = value and value[1] or 35
+local max = (value and value[1] or 35) + 1
 local progress = 0
 
 local function IncreaseProgress(...)
     progress = progress + 1
-    if progress > max then
+    if progress == max then
         progress = 0
     end
     managers.ehi_buff:AddGauge2("crew_throwable_regen", progress / max, progress)

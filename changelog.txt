@@ -1,3 +1,6 @@
+r114 (01. 01. 2023):
+Inventory: Fixed crashes related to Stoic and Leech
+
 r113 (31. 12. 2022):
 Fixed a possible crash in menu
 

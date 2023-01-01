@@ -10,8 +10,8 @@ end
 
 if EHI:IsHost() then
     local _f_set_autorepair = Drill.set_autorepair
-    function Drill:set_autorepair(state, ...)
-        _f_set_autorepair(self, state, ...)
+    function Drill:set_autorepair(...)
+        _f_set_autorepair(self, ...)
         if self._autorepair == nil then
             return
         end

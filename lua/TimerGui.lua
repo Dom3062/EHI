@@ -45,8 +45,8 @@ function TimerGui:init(unit, ...)
     self._ehi_icon = { { icon = icon } }
 end
 
-function TimerGui:set_background_icons(background_icons, ...)
-    original.set_background_icons(self, background_icons, ...)
+function TimerGui:set_background_icons(...)
+    original.set_background_icons(self, ...)
     managers.ehi:CallFunction(self._ehi_key, "SetUpgrades", self:GetUpgrades())
 end
 

@@ -12,8 +12,8 @@ local original =
     init = PlayerMovement.init
 }
 
-function PlayerMovement:init(unit, ...)
-    original.init(self, unit, ...)
+function PlayerMovement:init(...)
+    original.init(self, ...)
     managers.ehi_buff:CallFunction("Stamina", "Spawned", self._stamina)
     if EHI:GetBuffOption("inspire_basic") then
         if self._rally_skill_data and self._rally_skill_data.morale_boost_delay_t then

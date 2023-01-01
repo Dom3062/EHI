@@ -393,7 +393,7 @@ local GrenadeFormattingFunction =
             str = string.format("%s\n> %s", str, string.format("ehi_bm_sicario_3", "100", percent_format))
         end
         if managers.player:upgrade_level("player", "smoke_screen_ally_dodge_bonus") ~= 0 then
-            str = string.format("%s\n> %s", str, string.format("ehi_bm_sicario_4", tostring((player_upgrades.smoke_screen_ally_dodge_bonus or 0) * 100), percent_format))
+            str = string.format("%s\n> %s", str, string.format("ehi_bm_sicario_4", tostring((player_upgrades.smoke_screen_ally_dodge_bonus[1] or 0) * 100), percent_format))
         end
         return str
     end,
@@ -457,7 +457,7 @@ local GrenadeFormattingFunction =
         end
         if managers.player:upgrade_level("player", "copr_out_of_health_move_slow") ~= 0 then
             local multiplier = 1 - (player_upgrades.copr_out_of_health_move_slow[1] or 0)
-            str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_leech_4"), tostring(multiplier), percent_format))
+            str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_leech_5"), tostring(multiplier), percent_format))
         end
         if managers.player:upgrade_level("player", "activate_ability_downed") ~= 0 then
             str = string.format("%s\n> %s", str, managers.localization:text("ehi_bm_leech_6"))

@@ -143,8 +143,8 @@ if EHI:GetBuffAndOption("stamina") then
     end
 end
 
-function HUDManager:mark_cheater(peer_id, ...)
-    original.mark_cheater(self, peer_id, ...)
+function HUDManager:mark_cheater(...)
+    original.mark_cheater(self, ...)
     if managers.experience.RecalculateSkillXPMultiplier then
         managers.experience:RecalculateSkillXPMultiplier()
     end

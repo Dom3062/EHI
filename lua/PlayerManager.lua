@@ -452,8 +452,8 @@ end
 --//  Ammo Efficiency  //--
 --///////////////////////--
 original.on_ammo_increase = PlayerManager.on_ammo_increase
-function PlayerManager:on_ammo_increase(ammo, ...)
-    original.on_ammo_increase(self, ammo, ...)
+function PlayerManager:on_ammo_increase(...)
+    original.on_ammo_increase(self, ...)
     managers.ehi_buff:RemoveBuff("ammo_efficiency")
 end
 
@@ -523,9 +523,9 @@ end
 --///////////////--
 if EHI:GetBuffOption("grinder") then
     original._check_damage_to_hot = PlayerManager._check_damage_to_hot
-    function PlayerManager:_check_damage_to_hot(t, unit, damage_info, ...)
+    function PlayerManager:_check_damage_to_hot(t, ...)
         local previouscooldown = self._next_allowed_doh_t or 0
-        original._check_damage_to_hot(self, t, unit, damage_info, ...)
+        original._check_damage_to_hot(self, t, ...)
         if not self._next_allowed_doh_t or not self:has_category_upgrade("player", "damage_to_hot") then
             return
         end

@@ -1,7 +1,7 @@
 local EHI = EHI
 local old = MenuNodeMainGui._setup_item_rows
-function MenuNodeMainGui:_setup_item_rows(node, ...)
-    old(self, node, ...)
+function MenuNodeMainGui:_setup_item_rows(...)
+    old(self, ...)
     if EHI._cache.SaveFileCorrupted then -- Should always show, because it is important
         QuickMenu:new(
             managers.localization:text("ehi_save_data_corrupted"),

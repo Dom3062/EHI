@@ -15,16 +15,16 @@ if BB and BB.grace_period and Global.game_settings.single_player and Global.game
         _remove = CriminalsManager._remove
     }
 
-    function CriminalsManager:add_character(name, unit, peer_id, ai, ai_loadout, ...)
-        original.add_character(self, name, unit,peer_id, ai, ai_loadout, ...)
+    function CriminalsManager:add_character(name, unit, ...)
+        original.add_character(self, name, unit, ...)
         local character = self:character_by_name(name)
         if character and unit and not unit:base().is_local_player then
             managers.experience:IncreaseAlivePlayers()
         end
     end
 
-    function CriminalsManager:set_unit(name, unit, ai_loadout, ...)
-        original.set_unit(self, name, unit, ai_loadout, ...)
+    function CriminalsManager:set_unit(name, unit, ...)
+        original.set_unit(self, name, unit, ...)
         local character = self:character_by_name(name)
         if character and character.taken and character.data.ai and not unit:base().is_local_player then
             managers.experience:IncreaseAlivePlayers()

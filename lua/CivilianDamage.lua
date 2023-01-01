@@ -8,8 +8,8 @@ local original =
     _unregister_from_enemy_manager = CivilianDamage._unregister_from_enemy_manager
 }
 
-function CivilianDamage:_unregister_from_enemy_manager(damage_info)
-    original._unregister_from_enemy_manager(self, damage_info)
+function CivilianDamage:_unregister_from_enemy_manager(damage_info, ...)
+    original._unregister_from_enemy_manager(self, damage_info, ...)
     if not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
         managers.ehi:IncreaseCivilianKilled()
     end
