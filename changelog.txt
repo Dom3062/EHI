@@ -1,3 +1,8 @@
+r115 (02. 01. 2023):
+Added option "Show enemies with pager (stealth)"
+Inventory: Fixed missing strings in Sicario
+Inventory: Fixed percent issue in Leech
+
 r114 (01. 01. 2023):
 Inventory: Fixed crashes related to Stoic and Leech
 

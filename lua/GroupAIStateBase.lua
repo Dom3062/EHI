@@ -69,6 +69,7 @@ end
 local show_minion_tracker = EHI:GetOption("show_minion_tracker")
 local show_popup = EHI:GetOption("show_minion_killed_message")
 if show_minion_tracker or show_popup then
+    dofile(EHI.LuaPath .. "trackers/EHIMinionTracker.lua")
     local show_popup_type = EHI:GetOption("show_minion_killed_message_type")
     if show_popup then
         EHI:SetNotificationAlert("MINION", "ehi_popup_minion")

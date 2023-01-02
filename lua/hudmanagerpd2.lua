@@ -45,9 +45,8 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     if EHI:GetOption("show_enemy_count_tracker") then
         self.ehi:AddTracker({
             id = "EnemyCount",
-            icons = { "enemy" },
             flash = false,
-            class = EHI.Trackers.Counter
+            class = "EHIEnemyCountTracker"
         })
     end
     if level_tweak_data.ghost_bonus or level_tweak_data.ghost_required or level_tweak_data.ghost_required_visual or level_id == "welcome_to_the_jungle_2" then

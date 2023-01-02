@@ -516,6 +516,7 @@ function EHI:LoadDefaultValues()
         show_pager_tracker = true,
         show_pager_callback = true,
         show_enemy_count_tracker = true,
+        show_enemy_count_show_pagers = true,
         show_laser_tracker = false,
         show_assault_delay_tracker = true,
         show_loot_counter = true,

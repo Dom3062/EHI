@@ -27,6 +27,14 @@ function EHIMenu:UpdateTracker(option, value)
     self._preview_panel:UpdateTracker(option, value)
 end
 
+function EHIMenu:UpdateEnemyCountTracker(value)
+    self._preview_panel:UpdateEnemyCountTracker(value)
+end
+
+function EHIMenu:SetFocus2(focus, value)
+    self:SetFocus(focus, "show_enemy_count_tracker")
+end
+
 function EHIMenu:SetEquipmentColor(color, option)
     local c = EHI.settings.equipment_color[option]
     c.r = color.red

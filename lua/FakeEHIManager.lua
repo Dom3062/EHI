@@ -59,7 +59,7 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_drama_tracker", chance = math.random(100), icons = { "C_Escape_H_Street_Bullet" }, class = "FakeEHIChanceTracker" })
     self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { Icon.Pager }, class = "FakeEHIProgressTracker" } )
     self:AddFakeTracker({ id = "show_pager_callback", time = math.random() * (12 - 0.5) + 0.5, icons = { "pager_icon" } })
-    self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "enemy" }, class = "FakeEHICountTracker" } )
+    self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "pager_icon", { icon = "enemy", visible = false } }, class = "FakeEHIEnemyCountTracker" } )
     self:AddFakeTracker({ id = "show_laser_tracker", time = math.random() * (4 - 0.5) + 0.5, icons = { EHI.Icons.Lasers } } )
     self:AddFakeTracker({ id = "show_assault_delay_tracker", time = math.random(30, 120), icons = { "assaultbox" } } )
     self:AddFakeTracker({ id = "show_loot_counter", icons = { Icon.Loot }, class = "FakeEHIProgressTracker" } )
@@ -162,6 +162,13 @@ function FakeEHIManager:UpdateTracker(id, value)
     local tracker = self:GetTracker(correct_id)
     if not not tracker ~= value then
         self:Redraw()
+    end
+end
+
+function FakeEHIManager:UpdateEnemyCountTracker(value)
+    local tracker = self:GetTracker("show_enemy_count_tracker")
+    if tracker then
+        tracker:UpdateFormat(value)
     end
 end
 
@@ -670,6 +677,48 @@ end
 
 function FakeEHICountTracker:Format(format)
     return tostring(self._count)
+end
+
+FakeEHIEnemyCountTracker = class(FakeEHICountTracker)
+function FakeEHIEnemyCountTracker:init(panel, params)
+    self._alarm_count = math.random(0, 10)
+    self._format_alarm = EHI:GetOption("show_enemy_count_show_pagers")
+    FakeEHIEnemyCountTracker.super.init(self, panel, params)
+end
+
+function FakeEHIEnemyCountTracker:Format(format)
+    if self._format_alarm then
+        return self._alarm_count .. "|" .. self._count
+    end
+    return FakeEHIEnemyCountTracker.super.Format(self, format)
+end
+
+function FakeEHIEnemyCountTracker:UpdateFormat(format)
+    self._format_alarm = format
+    self._text:set_text(self:Format())
+    self:FitTheText()
+    self:UpdateIconPos()
+end
+
+function FakeEHIEnemyCountTracker:UpdateIconPos()
+    if self._n == 1 then -- 1 icon
+        self._icon1:set_visible(self._format_alarm)
+        self._icon2:set_visible(not self._format_alarm)
+        self._icon2:set_x(self._icon1:x())
+    else
+        self._icon1:set_visible(self._format_alarm)
+        self._icon2:set_visible(true)
+        if self._format_alarm then
+            self._icon2:set_x(self._icon1:x() + (37 * self._scale))
+        else
+            self._icon2:set_x(self._icon1:x())
+        end
+    end
+end
+
+function FakeEHIEnemyCountTracker:UpdateIconsVisibility(visibility)
+    FakeEHIEnemyCountTracker.super.UpdateIconsVisibility(self, visibility)
+    self:UpdateIconPos()
 end
 
 FakeEHITimerTracker = class(FakeEHITracker)

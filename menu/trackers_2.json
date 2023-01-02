@@ -206,8 +206,22 @@
             "callback_arguments": "show_enemy_count_tracker",
             "focus_changed_callback": "SetFocus",
             "value": "show_enemy_count_tracker",
+            "is_parent" : true,
             "default_value": true,
             "ehi_ver" : 6
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_enemy_count_show_pagers_choice",
+            "title": "ehi_show_enemy_count_show_pagers",
+            "description": "ehi_show_enemy_count_show_pagers_desc",
+            "callback": ["SetOption", "UpdateEnemyCountTracker"],
+            "callback_arguments": "show_enemy_count_show_pagers",
+            "focus_changed_callback": "SetFocus2",
+            "value": "show_enemy_count_show_pagers",
+            "parent" : "ehi_show_enemy_count_tracker_choice",
+            "default_value": true,
+            "ehi_ver" : 115
         },
         {
             "type": "divider",

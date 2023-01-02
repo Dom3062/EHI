@@ -115,7 +115,7 @@ local DeployableFormattingFunction =
         if managers.player:upgrade_level("first_aid_kit", "damage_reduction_upgrade") == 1 then
             local values = tweak_upgrades.values.temporary.first_aid_damage_reduction[1] or {}
             local dmg = 1 - (values[1] or 0)
-            str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_doctor_bag_2"), tostring(dmg * 100), percent_format, (values[2] or 0)))
+            str = string.format("%s\n> %s", str, managers.localization:text("ehi_bm_doctor_bag_2", { multiplier = tostring(dmg * 100) .. percent_format, duration = (values[2] or 0) }))
         end
         return str
     end,
@@ -210,7 +210,7 @@ local DeployableFormattingFunction =
         if managers.player:upgrade_level("first_aid_kit", "damage_reduction_upgrade") == 1 then
             local values = tweak_upgrades.values.temporary.first_aid_damage_reduction[1] or {}
             local dmg = 1 - (values[1] or 0)
-            str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_doctor_bag_2"), tostring(dmg * 100), percent_format, (values[2] or 0)))
+            str = string.format("%s\n> %s", str, managers.localization:text("ehi_bm_doctor_bag_2", { multiplier = tostring(dmg * 100) .. percent_format, duration = (values[2] or 0) }))
         end
         if managers.player:has_category_upgrade("first_aid_kit", "first_aid_kit_auto_recovery") then
             local range = tweak_upgrades.values.first_aid_kit.first_aid_kit_auto_recovery[1] or 0
@@ -390,10 +390,10 @@ local GrenadeFormattingFunction =
         string.format(managers.localization:text("ehi_bm_sicario_1"), tostring((grenade.dodge_chance or 0) * 100), percent_format),
         string.format(managers.localization:text("ehi_bm_sicario_2"), tostring((grenade.accuracy_roll_chance or 0) * 100), percent_format))
         if managers.player:upgrade_level("player", "sicario_multiplier") ~= 0 then
-            str = string.format("%s\n> %s", str, string.format("ehi_bm_sicario_3", "100", percent_format))
+            str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_sicario_3"), "100", percent_format))
         end
         if managers.player:upgrade_level("player", "smoke_screen_ally_dodge_bonus") ~= 0 then
-            str = string.format("%s\n> %s", str, string.format("ehi_bm_sicario_4", tostring((player_upgrades.smoke_screen_ally_dodge_bonus[1] or 0) * 100), percent_format))
+            str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_sicario_4"), tostring((player_upgrades.smoke_screen_ally_dodge_bonus[1] or 0) * 100), percent_format))
         end
         return str
     end,
@@ -457,7 +457,7 @@ local GrenadeFormattingFunction =
         end
         if managers.player:upgrade_level("player", "copr_out_of_health_move_slow") ~= 0 then
             local multiplier = 1 - (player_upgrades.copr_out_of_health_move_slow[1] or 0)
-            str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_leech_5"), tostring(multiplier), percent_format))
+            str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_leech_5"), tostring(multiplier * 100), percent_format))
         end
         if managers.player:upgrade_level("player", "activate_ability_downed") ~= 0 then
             str = string.format("%s\n> %s", str, managers.localization:text("ehi_bm_leech_6"))

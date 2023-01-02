@@ -288,6 +288,9 @@
     "ehi_show_enemy_count_tracker" : "Show Enemy Count Tracker",
     "ehi_show_enemy_count_tracker_desc" : "Shows a tracker for how many enemies are on the map",
 
+    "ehi_show_enemy_count_show_pagers" : "Show enemies with pager (stealth)",
+    "ehi_show_enemy_count_show_pagers_desc" : "Shows enemies with pager on the left and enemies without the pager on the right\nOnce alarm sounds, only a number of enemies is visible",
+
     "ehi_show_laser_tracker" : "Show Laser Tracker",
     "ehi_show_laser_tracker_desc" : "Shows a tracker for lasers that cycle every few seconds",
 
@@ -486,7 +489,7 @@
     "ehi_bm_charges" : "%s use(s) (%s uses total)",
     "ehi_bm_charges_no_total" : "%s use(s)",
     "ehi_bm_doctor_bag" : "Restores health and downs",
-    "ehi_bm_doctor_bag_2" : "Quick Fix: After use, %s%s less damage for %ds",
+    "ehi_bm_doctor_bag_2" : "Quick Fix: After use, $multiplier less damage for $duration;s",
     "ehi_bm_ammo_bag" : "Secondary weapon is refilled first, then primary",
     "ehi_bm_ammo_bag_2" : "Bulletstorm: Unlimited ammo after use for up to %ds (depends on how much ammo you have taken)",
     "ehi_bm_armor_kit" : "Packs your selected armor and you start with Two-Piece Suit\nAfter use, you will have your selected armor\nAfter change you cannot switch back to suit",

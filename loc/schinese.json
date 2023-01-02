@@ -486,6 +486,7 @@
     "ehi_bm_charges" : "%s次使用次数 (总计%s次)",
     "ehi_bm_charges_no_total" : "%s次使用次数",
     "ehi_bm_doctor_bag" : "恢复血量并重置倒地次数",
+    "ehi_bm_doctor_bag_2" : "应急处理: 使用后$duration;秒内受到的伤害减少$multiplier",
     "ehi_bm_ammo_bag" : "优先装填副武器，主武器次之",
     "ehi_bm_ammo_bag_2" : "子弹风暴: 使用后获得至多%d秒的无限弹药(时间长短取决于你补充弹药量的多少)",
     "ehi_bm_armor_kit" : "把你选择的盔甲打包，劫案开始时你将穿着两件套西装\n使用后你的护甲将更换为你选择的护甲\n更换护甲后便无法换回西装",
