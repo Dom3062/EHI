@@ -249,11 +249,11 @@
     "ehi_show_equipment_ecmfeedback" : "Mostrar la duración del 'Acople acústico' del ECM",
     "ehi_show_equipment_ecmfeedback_desc" : "Mostrar / ocultar un contador con la duración restante del 'Acople acústico' del ECM.\nEl ECM con la duración más larga será el que se muestre en el contador. (Solo como 'Anfitrión')",
 
-    "ehi_show_equipment_aggregate_health" : "Juntar 'Botiquines médicos' y 'Botiquines de primeros auxilios'",
-    "ehi_show_equipment_aggregate_health_desc" : "Juntar 'Botiquines médicos' y 'Botiquines de primeros auxilios' dentro de un mismo contador.",
+    "ehi_show_equipment_aggregate_health" : "Agrupar 'Botiquines médicos' y 'Botiquines de primeros auxilios'",
+    "ehi_show_equipment_aggregate_health_desc" : "Agrupar 'Botiquines médicos' y 'Botiquines de primeros auxilios' dentro de un mismo contador.",
 
-    "ehi_show_equipment_aggregate_all" : "Juntar todos los 'Equipamientos desplegables'",
-    "ehi_show_equipment_aggregate_all_desc" : "Juntar todos los 'Equipamientos desplegables' dentro de un mismo contador.\nCada uno usará un color respectivo que puedes cambiar más abajo.",
+    "ehi_show_equipment_aggregate_all" : "Agrupar todos los 'Equipamientos desplegables'",
+    "ehi_show_equipment_aggregate_all_desc" : "Agrupar todos los 'Equipamientos desplegables' dentro de un mismo contador.\nCada uno usará un color respectivo que puedes cambiar más abajo.",
 
     "ehi_doctor_bag" : "'Botiquín médico'",
     "ehi_ammo_bag" : "'Bolsa de munición'",
@@ -287,6 +287,9 @@
 
     "ehi_show_enemy_count_tracker" : "Mostrar contador de enemigos",
     "ehi_show_enemy_count_tracker_desc" : "Mostrar / ocultar un contador para la cantidad de enemigos que hay el mapa.",
+	
+	"ehi_show_enemy_count_show_pagers" : "Mostrar enemigos con localizador (Sigilo)",
+    "ehi_show_enemy_count_show_pagers_desc" : "Mostrar / ocultar los enemigos que llevan un localizador a la izquierda del contador, y los que no, a la derecha.\nSi se activa la alarma, solo será visible el número de enemigos en el mapa.",
 
     "ehi_show_laser_tracker" : "Mostrar contador de láseres",
     "ehi_show_laser_tracker_desc" : "Mostrar / ocultar un contador para el ciclo que hacen los láseres cada ciertos segundos.",

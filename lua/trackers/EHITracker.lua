@@ -340,6 +340,10 @@ function EHITracker:SetTextColor(color)
     self._text:set_color(color or self._text_color)
 end
 
+function EHITracker:GetIcon(new_icon)
+    return GetIcon(new_icon)
+end
+
 function EHITracker:SetIcon(new_icon)
     local icon, texture_rect = GetIcon(new_icon)
     if texture_rect then

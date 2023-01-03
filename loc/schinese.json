@@ -285,6 +285,9 @@
     "ehi_show_enemy_count_tracker" : "显示敌人追踪器",
     "ehi_show_enemy_count_tracker_desc" : "显示地图上正在行动的敌人数量追踪器",
 
+    "ehi_show_enemy_count_show_pagers" : "显示有对讲机的敌人(潜入)",
+    "ehi_show_enemy_count_show_pagers_desc" : "在追踪器面板左侧显示装备有对讲机的敌人数量而在右侧显示未装备对讲机的敌人数量，强袭开始后追踪器只统计部分敌人",
+
     "ehi_show_pager_callback_trackers" : "显示对讲机剩余时间追踪器",
     "ehi_show_pager_callback_trackers_desc" : "显示当前待回答对讲机的剩余时间追踪器",
 
