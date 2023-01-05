@@ -166,7 +166,7 @@ local achievements =
             end
             if counter < 7 then
                 self:AddAchievementProgressTracker("kosugi_3", 7)
-                self:SetTrackerProgress("kosugi_3", kosugi_3_counter)
+                self:SetTrackerProgress("kosugi_3", counter)
             end
         end
     },

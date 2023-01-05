@@ -1,3 +1,6 @@
+r117 (05. 01. 2023):
+Shadow Raid: Fixed a crash at sync
+
 r116 (03. 01. 2023):
 Enemy Counter: Fixed a crash when option "Show enemies with pager (stealth)" is enabled
 

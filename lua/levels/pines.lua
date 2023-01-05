@@ -6,6 +6,8 @@ local very_hard_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
 local chance = { id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = TT.Chance, special_function = SF.SetChanceFromElementWhenTrackerExists }
 local PresentDropTimer = { "C_Vlad_H_XMas_Impossible", Icon.Wait }
 local triggers = {
+    [100109] = { time = 25, id = "EndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning },
+    [100021] = { time = 180, id = "EndlessAssault2", icons = Icon.EndlessAssault, class = TT.Warning },
     [103707] = { time = 1800, id = "BulldozerSpawn", icons = { "heavy" }, class = TT.Warning, condition = very_hard_and_up, special_function = SF.SetTimeOrCreateTracker },
     [103367] = { chance = 100, id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = TT.Chance },
     [101001] = { time = 1200, id = "PresentDropChance50", icons = PresentDropTimer, class = TT.Warning },
