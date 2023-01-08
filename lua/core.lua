@@ -42,7 +42,8 @@ _G.EHI =
     CallbackMessage =
     {
         Spawned = "PlayerSpawned",
-        LocLoaded = "LocalizationLoaded"
+        LocLoaded = "LocalizationLoaded",
+        MissionEnd = "MissionEnd"
     },
 
     OnAlarmCallback = {},
@@ -75,7 +76,6 @@ _G.EHI =
         SetTimeOrCreateTracker = 19,
         ExecuteIfElementIsEnabled = 20,
         RemoveTrackers = 21,
-        ShowAchievement = 22,
         SetTimeByPreplanning = 24,
         IncreaseProgress = 25,
         SetTrackerAccurate = 27,
@@ -101,7 +101,6 @@ _G.EHI =
         ShowEHIWaypoint = 52,
         DecreaseProgressMax = 53,
         DecreaseProgress = 54,
-        ShowTrophy = 55,
 
         Debug = 1000,
         CustomCode = 1001,
@@ -110,18 +109,6 @@ _G.EHI =
 
         -- Don't use it directly! Instead, call "EHI:GetFreeCustomSpecialFunctionID()" and "EHI:RegisterCustomSpecialFunction()" respectively
         CustomSF = 100000
-    },
-
-    SyncFunctions =
-    {
-        [35] = true, -- GetElementTimerAccurate
-        [37] = true -- UnpauseTrackerIfExistsAccurate
-    },
-
-    TriggerFunction =
-    {
-        [13] = true, -- TriggerIfEnabled
-        [17] = true -- Trigger
     },
 
     SFF = {},
@@ -261,6 +248,16 @@ _G.EHI =
     SaveDataVer = 1
 }
 local SF = EHI.SpecialFunctions
+EHI.SyncFunctions =
+{
+    [SF.GetElementTimerAccurate] = true,
+    [SF.UnpauseTrackerIfExistsAccurate] = true
+}
+EHI.TriggerFunction =
+{
+    [SF.TriggerIfEnabled] = true,
+    [SF.Trigger] = true
+}
 
 local function DifficultyToIndex(difficulty)
     local difficulties = {
@@ -1208,24 +1205,13 @@ function EHI:AddTrackerAndSync(id, delay)
 end
 
 ---@param trigger table
-function EHI:CheckConditionFunction(trigger)
+function EHI:CheckCondition(trigger)
     if trigger.condition_function then
         if trigger.condition_function() then
             self:AddTracker(trigger)
         end
     else
         self:AddTracker(trigger)
-    end
-end
-
----@param trigger table
-function EHI:CheckCondition(trigger)
-    if trigger.condition ~= nil then
-        if trigger.condition == true then
-            self:CheckConditionFunction(trigger)
-        end
-    else
-        self:CheckConditionFunction(trigger)
     end
 end
 
@@ -1335,10 +1321,6 @@ function EHI:Trigger(id, element, enabled)
                 for _, tracker in ipairs(trigger.data) do
                     RemoveTracker(tracker)
                 end
-            elseif f == SF.ShowAchievement then
-                if self:IsAchievementLocked(trigger.id) then
-                    self:CheckCondition(trigger)
-                end
             elseif f == SF.SetTimeByPreplanning then
                 if managers.preplanning:IsAssetBought(trigger.data.id) then
                     trigger.time = trigger.data.yes
@@ -1447,10 +1429,6 @@ function EHI:Trigger(id, element, enabled)
                 managers.ehi:DecreaseTrackerProgressMax(trigger.id, trigger.max)
             elseif f == SF.DecreaseProgress then
                 managers.ehi:DecreaseTrackerProgress(trigger.id, trigger.progress)
-            elseif f == SF.ShowTrophy then
-                if self:IsTrophyLocked(trigger.id) then
-                    self:CheckCondition(trigger)
-                end
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
@@ -1647,100 +1625,81 @@ end
 function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     new_triggers = new_triggers or {}
     self:PreloadTrackers(new_triggers.preload or {}, trigger_id_all or "Trigger", trigger_icons_all or {})
-    local show_achievement = self:ShowMissionAchievements()
-    local show_trophy = self:GetUnlockableAndOption("show_trophies")
-    local function FillAchievementTrigger(data, id)
-        if not data.icons then
-            data.icons = self:GetAchievementIcon(data.id or id)
+    local function ParseParams(data, id)
+        if type(data.alarm_callback) == "function" then
+            self:AddOnAlarmCallback(data.alarm_callback)
         end
-        if id then -- Only provided in the new achievement format; the new format already checks the correct difficulty and if the achievement is awarded
-            return
+        if type(data.load_sync) == "function" then
+            self:AddLoadSyncFunction(data.load_sync)
         end
-        if data.difficulty_pass ~= nil then
-            data.condition = data.difficulty_pass and show_achievement
-            data.difficulty_pass = nil
-        elseif data.condition == nil then
-            data.condition = show_achievement
-        end
-        if not data.special_function then
-            data.special_function = SF.ShowAchievement
-        end
-    end
-    local function FillTrophyTrigger(data, sf, c)
-        if not data.special_function then
-            data.special_function = sf
-        end
-        if data.difficulty_pass ~= nil then
-            data.condition = data.difficulty_pass and c
-            data.difficulty_pass = nil
-        elseif data.condition == nil then
-            data.condition = c
-        end
-        if not data.icons then
-            data.icons = { self.Icons.Trophy }
+        if data.mission_end_callback then
+            self:AddCallback(self.CallbackMessage.MissionEnd, function(success)
+                if success then
+                    managers.ehi:SetAchievementComplete(id, true)
+                else
+                    managers.ehi:SetAchievementFailed(id)
+                end
+            end)
         end
     end
     self:AddTriggers(new_triggers.other or {}, trigger_id_all or "Trigger", trigger_icons_all)
     local trophy = new_triggers.trophy
-    if show_trophy and trophy then
-        for _, data in pairs(trophy) do
-            if data.class and self.TrophyTrackers[data.class] then
-                FillTrophyTrigger(data, SF.ShowTrophy, show_trophy)
-            end
-        end
-        self:AddTriggers2(trophy, nil, trigger_id_all or "Trigger", trigger_icons_all)
-    end
-    -- Daily Side Jobs are checked before they are passed to this function
-    -- See EHI:IsDailyAvailable()
-    local daily = new_triggers.daily
-    if daily then
-        for _, data in pairs(daily) do
-            if data.class and self.DailyTrackers[data.class] then
-                FillTrophyTrigger(data, SF.ShowDaily, true)
-            end
-        end
-        self:AddTriggers2(daily, nil, trigger_id_all or "Trigger", trigger_icons_all)
-    end
-    local achievement_triggers = new_triggers.achievement
-    if show_achievement and achievement_triggers then
-        local k, _ = next(achievement_triggers)
-        if not k then
-            -- empty table; do nothing
-        elseif type(k) == "number" then -- Old achievement format
-            for _, data in pairs(achievement_triggers) do
-                if data.class and self.AchievementTrackers[data.class] then
-                    FillAchievementTrigger(data)
-                end
-            end
-            self:AddTriggers2(achievement_triggers, nil, trigger_id_all or "Trigger", trigger_icons_all)
-        else -- New achievement format
-            local function Parser(data, id)
+    if self:GetUnlockableAndOption("show_trophies") and trophy and next(trophy) then
+        for id, data in pairs(trophy) do
+            if data.difficulty_pass ~= false and self:IsTrophyLocked(id) then
                 for _, element in pairs(data.elements or {}) do
-                    if element.class and self.AchievementTrackers[element.class] then
-                        element.beardlib = data.beardlib
-                        FillAchievementTrigger(element, id)
+                    if element.class and self.TrophyTrackers[element.class] and not data.icons then
+                        data.icons = { self.Icons.Trophy }
                     end
                 end
                 self:AddTriggers2(data.elements or {}, nil, id)
-                if data.alarm_callback and type(data.alarm_callback) == "function" then
-                    self:AddOnAlarmCallback(data.alarm_callback)
-                end
-                if data.load_sync and type(data.load_sync) == "function" then
-                    self:AddLoadSyncFunction(data.load_sync)
-                end
-            end
-            for id, data in pairs(achievement_triggers) do
-                if data.beardlib then
-                    if data.difficulty_pass ~= false and not self:IsBeardLibAchievementUnlocked(data.package, id) then
-                        Parser(data, id)
-                    end
-                elseif data.difficulty_pass ~= false and self:IsAchievementLocked(id) then
-                    Parser(data, id)
-                end
+                ParseParams(data, id)
             end
         end
     end
-    self:ParseMissionTriggers(new_triggers.mission, trigger_id_all, trigger_icons_all)
+    local daily = new_triggers.daily
+    if self:GetUnlockableAndOption("show_dailies") and daily and next(daily) then
+        for id, data in pairs(daily) do
+            if data.difficulty_pass ~= false and self:IsDailyAvailable(id) then
+                for _, element in pairs(data.elements or {}) do
+                    if element.class and self.DailyTrackers[element.class] and not data.icons then
+                        data.icons = { self.Icons.Trophy }
+                    end
+                end
+                self:AddTriggers2(data.elements or {}, nil, id)
+                ParseParams(data, id)
+            end
+        end
+    end
+    local achievement_triggers = new_triggers.achievement
+    if self:ShowMissionAchievements() and achievement_triggers and next(achievement_triggers) then
+        local function Parser(data, id)
+            for _, element in pairs(data.elements or {}) do
+                if element.class and self.AchievementTrackers[element.class] then
+                    element.beardlib = data.beardlib
+                    if not element.icons then
+                        if data.beardlib then
+                            element.icons = { "ehi_" .. id }
+                        else
+                            element.icons = self:GetAchievementIcon(id)
+                        end
+                    end
+                end
+            end
+            self:AddTriggers2(data.elements or {}, nil, id)
+            ParseParams(data, id)
+        end
+        for id, data in pairs(achievement_triggers) do
+            if data.beardlib then
+                if data.difficulty_pass ~= false and not self:IsBeardLibAchievementUnlocked(data.package, id) then
+                    Parser(data, id)
+                end
+            elseif data.difficulty_pass ~= false and self:IsAchievementLocked(id) then
+                Parser(data, id)
+            end
+        end
+    end
+    self:ParseMissionTriggers(new_triggers.mission or {}, trigger_id_all, trigger_icons_all)
     --self:PrintTable(triggers)
 end
 
@@ -1755,44 +1714,50 @@ function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_al
     end
     local host = self._cache.Host
     for _, data in pairs(new_triggers) do
-        -- Mark every tracker, that has random time, as inaccurate
-        if data.random_time then
-            if not data.class then
-                data.class = self.Trackers.Inaccurate
-            elseif data.class ~= self.Trackers.InaccuratePausable and data.class == self.Trackers.Warning then
-                data.class = self.Trackers.InaccurateWarning
+        -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
+        if data.condition == false then
+            data = nil
+        else
+            data.condition = nil
+            -- Mark every tracker, that has random time, as inaccurate
+            if data.random_time then
+                if not data.class then
+                    data.class = self.Trackers.Inaccurate
+                elseif data.class ~= self.Trackers.InaccuratePausable and data.class == self.Trackers.Warning then
+                    data.class = self.Trackers.InaccurateWarning
+                end
             end
-        end
-        -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
-        if data.special_function == SF.ShowWaypoint then
-            data.data.distance = true
-            data.data.state = "sneak_present"
-            data.data.present_timer = 0
-            data.data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
-            if data.data.position_by_element then
-                self:AddPositionFromElement(data.data, data.id, host)
-            elseif data.data.position_by_unit then
-                self:AddPositionFromUnit(data.data, data.id, host)
+            -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
+            if data.special_function == SF.ShowWaypoint then
+                data.data.distance = true
+                data.data.state = "sneak_present"
+                data.data.present_timer = 0
+                data.data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
+                if data.data.position_by_element then
+                    self:AddPositionFromElement(data.data, data.id, host)
+                elseif data.data.position_by_unit then
+                    self:AddPositionFromUnit(data.data, data.id, host)
+                end
+                if not data.data.position then
+                    data.data.position = Vector3()
+                    self:Log("Waypoint in element with ID '" .. tostring(data.id) .. "' does not have valid waypoint position! Setting it to default vector to avoid crashing")
+                end
             end
-            if not data.data.position then
-                data.data.position = Vector3()
-                self:Log("Waypoint in element with ID '" .. tostring(data.id) .. "' does not have valid waypoint position! Setting it to default vector to avoid crashing")
-            end
-        end
-        -- Fill the rest table properties for EHI Waypoints
-        if data.waypoint then
-            data.waypoint.time = data.waypoint.time or data.time
-            if not data.waypoint.icon then
-                data.waypoint.icon = data.icons and data.icons[1] and data.icons[1].icon or data.icons[1]
-            end
-            if data.waypoint.position_by_element then
-                self:AddPositionFromElement(data.waypoint, data.id, host)
-            elseif data.waypoint.position_by_unit then
-                self:AddPositionFromUnit(data.waypoint, data.id, host)
-            end
-            if not data.waypoint.position then
-                data.waypoint.position = Vector3()
-                self:Log("Waypoint in element with ID '" .. tostring(data.id) .. "' does not have valid waypoint position! Setting it to default vector to avoid crashing")
+            -- Fill the rest table properties for EHI Waypoints
+            if data.waypoint then
+                data.waypoint.time = data.waypoint.time or data.time
+                if not data.waypoint.icon then
+                    data.waypoint.icon = data.icons and data.icons[1] and data.icons[1].icon or data.icons[1]
+                end
+                if data.waypoint.position_by_element then
+                    self:AddPositionFromElement(data.waypoint, data.id, host)
+                elseif data.waypoint.position_by_unit then
+                    self:AddPositionFromUnit(data.waypoint, data.id, host)
+                end
+                if not data.waypoint.position then
+                    data.waypoint.position = Vector3()
+                    self:Log("Waypoint in element with ID '" .. tostring(data.id) .. "' does not have valid waypoint position! Setting it to default vector to avoid crashing")
+                end
             end
         end
     end
@@ -2194,9 +2159,6 @@ else
 end
 
 function EHI:IsDailyAvailable(daily, skip_unlockables_check)
-    if not self:GetUnlockableAndOption("show_dailies") then
-        return false
-    end
     local current_daily = managers.custom_safehouse:get_daily_challenge()
     if current_daily and current_daily.id == daily then
         if current_daily.state == "completed" or current_daily.state == "rewarded" then

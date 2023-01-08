@@ -14,6 +14,5 @@ local achievements =
 }
 
 EHI:ParseTriggers({
-    mission = {},
     achievement = achievements
 })

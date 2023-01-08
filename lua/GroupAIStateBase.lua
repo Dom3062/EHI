@@ -69,7 +69,6 @@ end
 local show_minion_tracker = EHI:GetOption("show_minion_tracker")
 local show_popup = EHI:GetOption("show_minion_killed_message")
 if show_minion_tracker or show_popup then
-    dofile(EHI.LuaPath .. "trackers/EHIMinionTracker.lua")
     local show_popup_type = EHI:GetOption("show_minion_killed_message_type")
     if show_popup then
         EHI:SetNotificationAlert("MINION", "ehi_popup_minion")
@@ -77,6 +76,7 @@ if show_minion_tracker or show_popup then
     local UpdateTracker = function(...) end
     if show_minion_tracker then
         if EHI:GetOption("show_minion_per_player") then
+            dofile(EHI.LuaPath .. "trackers/EHIMinionTracker.lua")
             UpdateTracker = function(unit, key, amount, peer_id)
                 if managers.ehi:TrackerDoesNotExist("Converts") and amount ~= 0 then
                     managers.ehi:AddTracker({
@@ -107,7 +107,7 @@ if show_minion_tracker or show_popup then
 
     function GroupAIStateBase:EHIRemoveConvert(params, unit)
         UpdateTracker(nil, params.unit_key, 0)
-        local callback_key = "EHIConvert" .. params.unit_key
+        local callback_key = "EHIConvert"
         unit:character_damage():remove_listener(callback_key)
         unit:base():remove_destroy_listener(callback_key)
         if show_popup and params.peer_id and params.peer_id == managers.network:session():local_peer():id() and game_state_machine:verify_game_state(_G.GameStateFilters.any_ingame) then
@@ -125,7 +125,7 @@ if show_minion_tracker or show_popup then
             return
         end
         local key = tostring(unit:key())
-        local callback_key = "EHIConvert" .. key
+        local callback_key = "EHIConvert"
         local clbk = callback(self, self, "EHIRemoveConvert", { unit_key = key, peer_id = peer_id })
         unit:base():add_destroy_listener(callback_key, clbk)
         unit:character_damage():add_listener(callback_key, { "death" }, clbk)

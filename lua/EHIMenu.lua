@@ -787,6 +787,17 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
                     break
                 end
             end
+        elseif type(parents) == "table" then
+            for _, parent in ipairs(parents) do
+                for _, pitem in ipairs(items) do
+                    if pitem.id == parent then
+                        if not settings_table[pitem.value] then
+                            enabled = false
+                            break
+                        end
+                    end
+                end
+            end
         end
     end
 

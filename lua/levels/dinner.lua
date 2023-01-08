@@ -74,6 +74,11 @@ if ovk_and_up then
                 self.ehi:SetAchievementFailed("farm_1")
             end
         end)
+        EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
+            if success then
+                managers.ehi:SetAchievementComplete("farm_1")
+            end
+        end)
     end
 end
 local pig = 0

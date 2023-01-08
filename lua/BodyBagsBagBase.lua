@@ -18,11 +18,7 @@ if EHI:GetOption("show_equipment_aggregate_all") then
 else
     UpdateTracker = function(unit, key, amount)
         if managers.ehi:TrackerDoesNotExist("BodyBags") and managers.groupai:state():whisper_mode() then
-            managers.ehi:AddTracker({
-                id = "BodyBags",
-                icons = { "bodybags_bag" },
-                class = "EHIEquipmentTracker"
-            })
+            managers.ehi:CreateDeployableTracker("BodyBags")
         end
         managers.ehi:CallFunction("BodyBags", "UpdateAmount", unit, key, amount)
     end

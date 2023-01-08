@@ -13,7 +13,8 @@ local achievements = {
         },
         load_sync = function(self)
             self:AddTimedAchievementTracker("fish_4", 360)
-        end
+        end,
+        mission_end_callback = true
     },
     fish_5 =
     {
@@ -44,7 +45,6 @@ local achievements = {
 }
 
 EHI:ParseTriggers({
-    mission = {},
     achievement = achievements
 })
 EHI:ShowLootCounter({

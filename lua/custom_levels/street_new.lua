@@ -35,7 +35,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard),
         elements =
         {
-            [102426] = { time = 817, icons = { "ehi_str_speedrun" }, class = TT.Achievement },
+            [102426] = { time = 817, class = TT.Achievement },
             [100553] = { special_function = SF.SetAchievementComplete }
         }
     }

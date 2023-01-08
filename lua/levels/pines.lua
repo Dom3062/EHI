@@ -5,6 +5,10 @@ local TT = EHI.Trackers
 local very_hard_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
 local chance = { id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = TT.Chance, special_function = SF.SetChanceFromElementWhenTrackerExists }
 local PresentDropTimer = { "C_Vlad_H_XMas_Impossible", Icon.Wait }
+local preload =
+{
+    { id = "HeliLootTakeOff", icons = Icon.HeliWait, class = TT.Warning, hide_on_delete = true }
+}
 local triggers = {
     [100109] = { time = 25, id = "EndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning },
     [100021] = { time = 180, id = "EndlessAssault2", icons = Icon.EndlessAssault, class = TT.Warning },
@@ -18,7 +22,7 @@ local triggers = {
     [100024] = { time = 23, id = "HeliSanta", icons = { Icon.Heli, "Other_H_None_Merry" }, trigger_times = 1 },
     [105102] = { time = 30, id = "HeliLoot", icons = Icon.HeliEscape, special_function = SF.ExecuteIfElementIsEnabled },
     -- Hooked to 105072 instead of 105076 to track the take off accurately
-    [105072] = { time = 82, id = "HeliLootTakeOff", icons = Icon.HeliWait, class = TT.Warning },
+    [105072] = { id = "HeliLootTakeOff", run = { time = 82 } },
 
     [101005] = chance,
     [101006] = chance,
@@ -32,13 +36,14 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [101471] = { max = 40, id = "uno_9", class = TT.AchievementProgress },
-            [104385] = { id = "uno_9", special_function = SF.IncreaseProgress }
+            [101471] = { max = 40, class = TT.AchievementProgress },
+            [104385] = { special_function = SF.IncreaseProgress }
         }
     }
 }
 
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    preload = preload
 })

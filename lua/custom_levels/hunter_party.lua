@@ -22,7 +22,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100045] = { status = "ok", icons = { "ehi_hunter_party" }, class = TT.AchievementStatus, special_function = SF.ShowAchievementFromStart },
+            [100045] = { status = "ok", class = TT.AchievementStatus, special_function = SF.ShowAchievementFromStart },
             [100679] = { special_function = SF.SetAchievementFailed }
         }
     }

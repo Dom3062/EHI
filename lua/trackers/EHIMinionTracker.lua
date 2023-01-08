@@ -1,14 +1,15 @@
 EHIMinionTracker = class(EHITracker)
 EHIMinionTracker._forced_icons = { "minion" }
 EHIMinionTracker._update = false
-function EHIMinionTracker:init(panel, params)
+function EHIMinionTracker:init(...)
     self._n_of_peers = 0
-    self._panel_size = 2
-    self._icon_remove = 0
     self._peers = {}
-    EHIMinionTracker.super.init(self, panel, params)
+    EHIMinionTracker.super.init(self, ...)
     self._default_panel_w = self._panel:w()
+    self._default_bg_box_w = self._time_bg_box:w()
+    self._panel_half = self._time_bg_box:w() / 2
     self._panel_w = self._default_panel_w
+    self._bg_box_w = self._default_bg_box_w
     self._time_bg_box:remove(self._text)
 end
 
@@ -38,83 +39,56 @@ function EHIMinionTracker:SetIconColor()
     end
 end
 
-function EHIMinionTracker:SetTextSize()
-    if self._n_of_peers == 1 then
-        return
-    end
-    for i = 0, HUDManager.PLAYER_PANEL, 1 do
-        if self._time_bg_box:child("text" .. i) then
-            self._time_bg_box:child("text" .. i):set_w(self._icon_size_scaled)
-            self:FitTheTextUnique(i)
-        end
-    end
-    if self._n_of_peers % 2 == 0 then
-        return
-    end
-    for i = HUDManager.PLAYER_PANEL, 0, -1 do
-        if self._time_bg_box:child("text" .. i) then
-            self._time_bg_box:child("text" .. i):set_font_size(self._panel:h() * self._text_scale)
-            self._time_bg_box:child("text" .. i):set_w(self._time_bg_box:w())
-            self:FitTheTextUnique(i)
-            break
-        end
-    end
+function EHIMinionTracker:AnimateMovement()
+    self:SetPanelW(self._panel_w)
+    self._parent_class:ChangeTrackerWidth(self._id, self._panel_w)
+    self:SetIconX(self._panel_w - self._icon_size_scaled)
 end
 
-function EHIMinionTracker:Reorganize()
-    if self._n_of_peers == 1 then
-        return
-    end
-    local old_panel_size = self._panel_size
-    if self._n_of_peers > self._panel_size then
-        self._panel_size = self._panel_size * 2
-        self._panel_w = self._panel_w * 3 -- Fixes text being cut off after animation
-        self:SetPanelW(self._panel_w)
-        self._time_bg_box:set_w(self._time_bg_box:w() * 2)
-        self._icon_remove = self._icon_remove + 1
-    end
-    if self._n_of_peers < self._panel_size and self._n_of_peers % 2 == 0 then
-        self._panel_size = self._panel_size / 2
-        self._panel_w = self._panel_w / 3 -- Fixes text being cut off after animation
-        self:SetPanelW(self._panel_w)
-        self._time_bg_box:set_w(self._time_bg_box:w() / 2)
-        self._icon_remove = self._icon_remove - 1
-    end
-    local bg_w = self._time_bg_box:w()
-    if old_panel_size ~= self._panel_size then
-        self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-        self:SetIconX(bg_w + self._gap_scaled)
-    end
-    local half = bg_w / self._panel_size
+function EHIMinionTracker:AlignTextOnHalfPos()
     local pos = 0
     for i = 0, HUDManager.PLAYER_PANEL, 1 do
-        if self._time_bg_box:child("text" .. i) then
-            self._time_bg_box:child("text" .. i):set_x(half * pos)
+        local text = self._time_bg_box:child("text" .. i)
+        if text then
+            text:set_w(self._panel_half)
+            text:set_x(self._panel_half * pos)
             pos = pos + 1
         end
     end
-    if old_panel_size > self._panel_size then
-        for i = HUDManager.PLAYER_PANEL, 0, -1 do
-            if self._time_bg_box:child("text" .. i) then
-                self._time_bg_box:child("text" .. i):set_w(self._icon_size_scaled)
-                self:FitTheTextUnique(i)
-                break
-            end
-        end
-    elseif old_panel_size == self._panel_size and self._n_of_peers % 2 ~= 0 then
-        for i = HUDManager.PLAYER_PANEL, 0, -1 do
-            if self._time_bg_box:child("text" .. i) then
-                self._time_bg_box:child("text" .. i):set_font_size(self._panel:h() * self._text_scale)
-                self._time_bg_box:child("text" .. i):set_w(half + half)
-                self:FitTheTextUnique(i)
-                break
-            end
-        end
-    end
 end
 
-function EHIMinionTracker:GetPanelSize()
-    return (self._default_panel_w * (self._panel_size / 2)) - (self._icon_gap_size_scaled * self._icon_remove) -- 32 + 5 (gap)
+function EHIMinionTracker:Reorganize(addition)
+    if self._n_of_peers == 1 then
+        if true then
+            return
+        end
+        for i = 0, HUDManager.PLAYER_PANEL, 1 do
+            local text = self._time_bg_box:child("text" .. i)
+            if text then
+                text:set_font_size(self._panel:h() * self._text_scale)
+                text:set_w(self._time_bg_box:w())
+                self:FitTheTextUnique(i)
+                break
+            end
+        end
+    elseif self._n_of_peers == 2 then
+        self:AlignTextOnHalfPos()
+        if not addition then
+            self._panel_w = self._default_panel_w
+            self:AnimateMovement()
+            self._time_bg_box:set_w(self._default_bg_box_w)
+        end
+    elseif addition then
+        self._panel_w = self._panel_w + self._panel_half
+        self:AnimateMovement()
+        self._time_bg_box:set_w(self._time_bg_box:w() + self._panel_half)
+        self:AlignTextOnHalfPos()
+    else
+        self._panel_w = self._panel_w - self._panel_half
+        self:AnimateMovement()
+        self._time_bg_box:set_w(self._time_bg_box:w() - self._panel_half)
+        self:AlignTextOnHalfPos()
+    end
 end
 
 function EHIMinionTracker:RemovePeer(peer_id)
@@ -139,8 +113,6 @@ function EHIMinionTracker:RemovePeer(peer_id)
                 break
             end
         end
-    else
-        --self:SetTextSize()
     end
     self:AnimateBG()
     self:SetIconColor()
@@ -199,10 +171,9 @@ function EHIMinionTracker:AddMinion(unit, key, amount, peer_id)
     if self._n_of_peers >= 2 then
         self:AnimateBG()
     end
-    self:SetTextSize()
     self:FormatUnique(peer_id)
     self:FitTheTextUnique(peer_id)
-    self:Reorganize()
+    self:Reorganize(true)
     self:SetIconColor()
     self:SetTextPeerColor()
 end

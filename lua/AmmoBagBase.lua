@@ -18,12 +18,7 @@ if EHI:GetOption("show_equipment_aggregate_all") then
 else
     UpdateTracker = function(unit, key, amount)
         if managers.ehi:TrackerDoesNotExist("AmmoBags") and amount ~= 0 then
-            managers.ehi:AddTracker({
-                id = "AmmoBags",
-                format = "percent",
-                icons = { "ammo_bag" },
-                class = "EHIEquipmentTracker"
-            })
+            managers.ehi:CreateDeployableTracker("AmmoBags")
         end
         managers.ehi:CallFunction("AmmoBags", "UpdateAmount", unit, key, amount)
     end

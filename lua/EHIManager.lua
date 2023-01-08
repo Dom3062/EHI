@@ -42,10 +42,6 @@ function EHIManager:init_finalize()
     EHI:AddOnAlarmCallback(callback(self, self, "RemoveStealthTrackers"))
     EHI:AddOnAlarmCallback(callback(self, self, "DisableBodyBags"))
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "Spawned"))
-    local function f(peer, peer_id, reason)
-        self:CallFunction("CustodyTime", "RemovePeerFromCustody", peer_id)
-    end
-    Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", f)
 end
 
 function EHIManager:Spawned()
@@ -881,6 +877,12 @@ function EHIManager:CreateDeployableTracker(type)
             icons = { "ammo_bag" },
             class = "EHIEquipmentTracker"
         })
+    elseif type == "BodyBags" then
+        self:AddTracker({
+            id = "BodyBags",
+            icons = { "bodybags_bag" },
+            class = "EHIEquipmentTracker"
+        })
     elseif type == "FirstAidKits" then
         self:AddTracker({
             id = "FirstAidKits",
@@ -1039,7 +1041,7 @@ end
 function EHIManager:AddCustodyTimeTracker()
     self:AddTracker({
         id = "CustodyTime",
-        class = "EHICiviliansKilledTracker"
+        class = "EHITradeDelayTracker"
     })
 end
 
@@ -1094,23 +1096,33 @@ if Global.load_level then
     dofile(path .. "EHIPausableTracker.lua")
     dofile(path .. "EHITimerTracker.lua")
     dofile(path .. "EHIMoneyCounterTracker.lua")
-    dofile(path .. "EHIXPTracker.lua")
     dofile(path .. "EHIChanceTracker.lua")
     dofile(path .. "EHIProgressTracker.lua")
-    dofile(path .. "EHIEquipmentTracker.lua")
     dofile(path .. "EHICountTracker.lua")
-    dofile(path .. "EHISecurityLockGuiTracker.lua")
-    dofile(path .. "EHIAssaultDelayTracker.lua")
-    dofile(path .. "EHILootTracker.lua")
     dofile(path .. "EHINeededValueTracker.lua")
     dofile(path .. "EHIAchievementTrackers.lua")
     dofile(path .. "EHITrophyTrackers.lua")
     dofile(path .. "EHIDailyTrackers.lua")
     dofile(path .. "EHIInaccurateTrackers.lua")
     dofile(path .. "EHIColoredCodesTracker.lua")
+    if EHI:GetOption("xp_panel") <= 2 and not EHI:IsXPTrackerDisabled() then
+        dofile(path .. "EHIXPTracker.lua")
+    end
+    if EHI:GetOption("show_timers") then
+        dofile(path .. "EHISecurityLockGuiTracker.lua")
+    end
+    if EHI:GetOption("show_equipment_tracker") or (EHI:GetOption("show_minion_tracker") and not EHI:GetOption("show_minion_per_player")) then
+        dofile(path .. "EHIEquipmentTracker.lua")
+    end
     if EHI:GetOption("show_equipment_tracker") then
         dofile(path .. "EHIAggregatedEquipmentTracker.lua")
         dofile(path .. "EHIAggregatedHealthEquipmentTracker.lua")
         dofile(path .. "EHIECMTracker.lua")
+    end
+    if EHI:AssaultDelayTrackerIsEnabled() then
+        dofile(path .. "EHIAssaultDelayTracker.lua")
+    end
+    if EHI:GetOption("show_loot_counter") then
+        dofile(path .. "EHILootTracker.lua")
     end
 end

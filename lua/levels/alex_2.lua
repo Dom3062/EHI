@@ -73,7 +73,6 @@ if EHI:GetOption("show_escape_chance") then
 end
 
 EHI:ParseTriggers({
-    mission = {},
     other = other
 })
 local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker")

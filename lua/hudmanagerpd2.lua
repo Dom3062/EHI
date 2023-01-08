@@ -23,7 +23,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     self.ehi = managers.ehi
     self.ehi_waypoint = managers.ehi_waypoint
     self.ehi_waypoint:SetPlayerHUD(self)
-    self._tracker_waypoints = {}
     if server or level_id == "hvh" then
         self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
         if EHIWaypoints then

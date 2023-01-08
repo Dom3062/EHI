@@ -3,24 +3,14 @@ local math_abs = math.abs
 local math_min = math.min
 local math_sin = math.sin
 local math_lerp = math.lerp
-local function show(o) -- This is actually faster than manually re-typing optimized "over" function
+local function visibility(o, start_a, end_a) -- This is actually faster than manually re-typing optimized "over" function
     local TOTAL_T = 0.18
     local t = 0
     while TOTAL_T > t do
         local dt = coroutine.yield()
         t = math_min(t + dt, TOTAL_T)
         local lerp = t / TOTAL_T
-        o:set_alpha(math_lerp(0, 1, lerp))
-    end
-end
-local function hide(o) -- This is actually faster than manually re-typing optimized "over" function
-    local TOTAL_T = 0.18
-    local t = 0
-    while TOTAL_T > t do
-        local dt = coroutine.yield()
-        t = math_min(t + dt, TOTAL_T)
-        local lerp = t / TOTAL_T
-        o:set_alpha(math_lerp(1, 0, lerp))
+        o:set_alpha(math_lerp(start_a, end_a, lerp))
     end
 end
 local function top(o, target_y)
@@ -65,6 +55,18 @@ local function icon_x(o, target_x)
         local lerp = t / TOTAL_T
         o:set_x(math_lerp(from_x, target_x, lerp))
     end
+end
+local function bg_attention(bg, total_t)
+    local color = Color.white
+	local TOTAL_T = total_t or 3
+	local t = TOTAL_T
+	while t > 0 do
+		local dt = coroutine.yield()
+		t = t - dt
+		local cv = math_abs(math_sin(t * 180 * 1))
+		bg:set_color(Color(1, color.red * cv, color.green * cv, color.blue * cv))
+	end
+	bg:set_color(Color(1, 0, 0, 0))
 end
 local icons = tweak_data.ehi.icons
 
@@ -172,11 +174,11 @@ function EHITracker:PosAndSetVisible(x, y)
 end
 
 function EHITracker:SetPanelVisible()
-    self._panel:animate(show)
+    self._panel:animate(visibility, 0, 1)
 end
 
 function EHITracker:SetPanelHidden()
-    self._panel:animate(hide)
+    self._panel:animate(visibility, 1, 0)
 end
 
 if EHI:GetOption("show_one_icon") then
@@ -320,20 +322,7 @@ function EHITracker:AnimateBG(t)
     local bg = self._time_bg_box:child("bg")
     bg:stop()
     bg:set_color(Color(1, 0, 0, 0))
-    bg:animate(callback(self, self, "HUDBGBox_animate_bg_attention"), t or 3)
-end
-
-function EHITracker:HUDBGBox_animate_bg_attention(bg, total_t)
-	local color = Color.white
-	local TOTAL_T = total_t or 3
-	local t = TOTAL_T
-	while t > 0 do
-		local dt = coroutine.yield()
-		t = t - dt
-		local cv = math_abs(math_sin(t * 180 * 1))
-		bg:set_color(Color(1, color.red * cv, color.green * cv, color.blue * cv))
-	end
-	bg:set_color(Color(1, 0, 0, 0))
+    bg:animate(bg_attention, t or 3)
 end
 
 function EHITracker:SetTextColor(color)

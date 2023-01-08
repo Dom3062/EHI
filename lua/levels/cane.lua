@@ -33,8 +33,8 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101167] = { time = 1800, id = "cane_2", class = TT.AchievementUnlock },
-            [101176] = { id = "cane_2", special_function = SF.SetAchievementFailed },
+            [101167] = { time = 1800, class = TT.AchievementUnlock },
+            [101176] = { special_function = SF.SetAchievementFailed },
         }
     },
     cane_5 =
@@ -59,7 +59,6 @@ local achievements =
                     max = 10,
                     counter =
                     {
-                        
                         loot_type = "present"
                     }
                 })

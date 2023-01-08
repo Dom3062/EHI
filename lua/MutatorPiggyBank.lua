@@ -1,3 +1,7 @@
+local EHI = EHI
+if EHI:CheckLoadHook("MutatorPiggyBank") then
+    return
+end
 local original =
 {
     on_game_started = MutatorPiggyBank.on_game_started,

@@ -1,3 +1,8 @@
+r118 (08. 01. 2023):
+Menu: Fixed a visibility issue with options having multiple parents
+Minion Tracker: Tracker will use less space on the screen
+Slaughterhouse: Fixed a visual issue in achievement tracker "Not hard enough"
+
 r117 (05. 01. 2023):
 Shadow Raid: Fixed a crash at sync
 

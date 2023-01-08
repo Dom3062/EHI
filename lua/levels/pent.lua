@@ -111,16 +111,6 @@ EHI:ShowLootCounter({
     triggers = loot_triggers
 })
 
-local ShowAchievement = EHI:CanShowAchievement("pent_10")
-local function pent_10(instance, unit_id, unit_data, unit)
-    unit:digital_gui():SetRemoveOnPause(true)
-    unit:digital_gui():SetWarning(true)
-    if ShowAchievement then
-        unit:digital_gui():SetIcons(EHI:GetAchievementIcon("pent_10"))
-        unit:digital_gui():pent_10()
-    end
-end
-
 function DigitalGui:pent_10()
     local key = self._ehi_key or tostring(self._unit:key())
     local hook_key = "EHI_pent_10_" .. key
@@ -144,7 +134,14 @@ end
 local tbl =
 {
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [102452] = { f = pent_10 },
+    [102452] = { f = function(instance, unit_id, unit_data, unit)
+        unit:digital_gui():SetRemoveOnPause(true)
+        unit:digital_gui():SetWarning(true)
+        if EHI:CanShowAchievement("pent_10") then
+            unit:digital_gui():SetIcons(EHI:GetAchievementIcon("pent_10"))
+            unit:digital_gui():pent_10()
+        end
+    end },
     [103872] = { ignore = true }
 }
 EHI:UpdateUnits(tbl)

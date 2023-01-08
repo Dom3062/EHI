@@ -29,14 +29,20 @@ function EHIVaultTemperatureWaypoint:init(waypoint, params, parent_class)
     self._tick = 0.1
 end
 
-local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local trophy = {
-    [100107] = { time = 420, id = "trophy_longfellow", class = TT.Trophy, condition = ovk_and_up }
+    trophy_longfellow =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100107] = { time = 420 }
+        },
+        mission_end_callback = true
+    }
 }
 
 EHI:ParseTriggers({
-    mission = {},
     trophy = trophy
 })
 EHI:ShowAchievementLootCounter({

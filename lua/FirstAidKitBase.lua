@@ -26,12 +26,7 @@ elseif EHI:GetOption("show_equipment_aggregate_health") then
 else
     UpdateTracker = function(unit, key, amount)
         if managers.ehi:TrackerDoesNotExist("FirstAidKits") then
-            managers.ehi:AddTracker({
-                id = "FirstAidKits",
-                icons = { "first_aid_kit" },
-                dont_show_placed = true,
-                class = "EHIEquipmentTracker"
-            })
+            managers.ehi:CreateDeployableTracker("FirstAidKits")
         end
         managers.ehi:CallFunction("FirstAidKits", "UpdateAmount", unit, key, amount)
     end

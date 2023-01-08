@@ -1,7 +1,7 @@
-EHICiviliansKilledTracker = class(EHITracker)
-EHICiviliansKilledTracker._update = false
-EHICiviliansKilledTracker._forced_icons = { "mugshot_in_custody" }
-function EHICiviliansKilledTracker:init(panel, params)
+EHITradeDelayTracker = class(EHITracker)
+EHITradeDelayTracker._update = false
+EHITradeDelayTracker._forced_icons = { "mugshot_in_custody" }
+function EHITradeDelayTracker:init(panel, params)
     self._pause_t = 0
     self._n_of_peers_in_custody = 0
     self._panel_size = 2
@@ -11,13 +11,13 @@ function EHICiviliansKilledTracker:init(panel, params)
     self._peer_in_custody = {}
     self._peer_pos = {}
     self._tick = 0
-    EHICiviliansKilledTracker.super.init(self, panel, params)
+    EHITradeDelayTracker.super.init(self, panel, params)
     self._default_panel_w = self._panel:w()
     self._panel_w = self._default_panel_w
     self._time_bg_box:remove(self._text)
 end
 
-function EHICiviliansKilledTracker:SetTextPeerColor()
+function EHITradeDelayTracker:SetTextPeerColor()
     if self._n_of_peers_in_custody == 1 then
         return
     end
@@ -29,7 +29,7 @@ function EHICiviliansKilledTracker:SetTextPeerColor()
     end
 end
 
-function EHICiviliansKilledTracker:SetIconColor()
+function EHITradeDelayTracker:SetIconColor()
     if self._n_of_peers_in_custody >= 2 then
         self._icon1:set_color(Color.white)
     else
@@ -39,7 +39,7 @@ function EHICiviliansKilledTracker:SetIconColor()
     end
 end
 
-function EHICiviliansKilledTracker:SetTextSize()
+function EHITradeDelayTracker:SetTextSize()
     if self._n_of_peers_in_custody == 1 then
         return
     end
@@ -62,7 +62,7 @@ function EHICiviliansKilledTracker:SetTextSize()
     end
 end
 
-function EHICiviliansKilledTracker:AddPeerCustodyTime(peer_id, time)
+function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time)
     self._peer_custody_time[peer_id] = time
     self._peer_pos[#self._peer_pos + 1] = peer_id
     self._peer_in_custody[peer_id] = false
@@ -89,7 +89,7 @@ function EHICiviliansKilledTracker:AddPeerCustodyTime(peer_id, time)
     self:SetTextPeerColor()
 end
 
-function EHICiviliansKilledTracker:Reorganize()
+function EHITradeDelayTracker:Reorganize()
     if self._n_of_peers_in_custody == 1 then
         return
     end
@@ -141,23 +141,23 @@ function EHICiviliansKilledTracker:Reorganize()
     end
 end
 
-function EHICiviliansKilledTracker:GetPanelSize()
+function EHITradeDelayTracker:GetPanelSize()
     return (self._default_panel_w * (self._panel_size / 2)) - (self._icon_gap_size_scaled * self._icon_remove)
 end
 
-function EHICiviliansKilledTracker:SetPeerCustodyTime(peer_id, time)
+function EHITradeDelayTracker:SetPeerCustodyTime(peer_id, time)
     self._peer_custody_time[peer_id] = time
     self:FormatUnique(time, peer_id)
     self:FitTheTextUnique(peer_id)
     self:AnimateBG()
 end
 
-function EHICiviliansKilledTracker:IncreasePeerCustodyTime(peer_id, time)
+function EHITradeDelayTracker:IncreasePeerCustodyTime(peer_id, time)
     local t = self._peer_custody_time[peer_id] or 0
     self:SetPeerCustodyTime(peer_id, t + time)
 end
 
-function EHICiviliansKilledTracker:UpdatePeerCustodyTime(peer_id, time)
+function EHITradeDelayTracker:UpdatePeerCustodyTime(peer_id, time)
     local t = self._peer_custody_time[peer_id] or 0
     if t == time then -- Don't blink on the player, son
         return
@@ -165,7 +165,7 @@ function EHICiviliansKilledTracker:UpdatePeerCustodyTime(peer_id, time)
     self:SetPeerCustodyTime(peer_id, time)
 end
 
-function EHICiviliansKilledTracker:SetTick(t)
+function EHITradeDelayTracker:SetTick(t)
     --[[
         This function makes Trade Delay accurate because of the braindead use of the "update" loop in TradeManager
         Why is OVK using another variable to "count down" the remaining time ? As shown below:
@@ -183,11 +183,11 @@ function EHICiviliansKilledTracker:SetTick(t)
     self._tick = t
 end
 
-function EHICiviliansKilledTracker:SetTradePause(t)
+function EHITradeDelayTracker:SetTradePause(t)
     self._pause_t = t
 end
 
-function EHICiviliansKilledTracker:RemovePeerFromCustody(peer_id)
+function EHITradeDelayTracker:RemovePeerFromCustody(peer_id)
     if not self._peer_custody_time[peer_id] then
         return
     end
@@ -227,18 +227,18 @@ function EHICiviliansKilledTracker:RemovePeerFromCustody(peer_id)
     self:Reorganize()
 end
 
-function EHICiviliansKilledTracker:SetPeerInCustody(peer_id)
+function EHITradeDelayTracker:SetPeerInCustody(peer_id)
     if not self:PeerExists(peer_id) then
         return
     end
     self._peer_in_custody[peer_id] = true
 end
 
-function EHICiviliansKilledTracker:PeerExists(peer_id)
+function EHITradeDelayTracker:PeerExists(peer_id)
     return self._peer_custody_time[peer_id] ~= nil
 end
 
-function EHICiviliansKilledTracker:FitTheTextUnique(i)
+function EHITradeDelayTracker:FitTheTextUnique(i)
     local text = self._time_bg_box:child("text" .. i)
     text:set_font_size(self._panel:h() * self._text_scale)
     local w = select(3, text:text_rect())
@@ -281,13 +281,13 @@ do
     end
 
     if EHI:GetOption("time_format") == 1 then
-        EHICiviliansKilledTracker.FormatUnique = SecondsOnly
+        EHITradeDelayTracker.FormatUnique = SecondsOnly
     else
-        EHICiviliansKilledTracker.FormatUnique = MinutesAndSeconds
+        EHITradeDelayTracker.FormatUnique = MinutesAndSeconds
     end
 end
 
-function EHICiviliansKilledTracker:update(t, dt)
+function EHITradeDelayTracker:update(t, dt)
     if self._tick > 0 then
         self._tick = self._tick - dt
         return
@@ -310,7 +310,7 @@ function EHICiviliansKilledTracker:update(t, dt)
     end
 end
 
-function EHICiviliansKilledTracker:SetAITrade(trade, t, force_t)
+function EHITradeDelayTracker:SetAITrade(trade, t, force_t)
     if trade then
         if not self._trade then
             self:SetTick(t)
@@ -328,7 +328,7 @@ function EHICiviliansKilledTracker:SetAITrade(trade, t, force_t)
     end
 end
 
-function EHICiviliansKilledTracker:SetTrade(trade, t, force_t)
+function EHITradeDelayTracker:SetTrade(trade, t, force_t)
     if trade then
         if not self._ai_trade then
             self:SetTick(t)

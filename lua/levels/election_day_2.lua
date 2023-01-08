@@ -28,7 +28,6 @@ local other =
 }
 
 EHI:ParseTriggers({
-    mission = {},
     other = other
 })
 

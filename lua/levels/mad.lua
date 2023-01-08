@@ -1,7 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
 EHIdailycakeTracker = class(EHIDailyTracker)
-EHIdailycakeTracker._forced_icons = { Icon.Escape }
 EHIdailycakeTracker.FormatProgress = EHIProgressTracker.Format
 EHIdailycakeTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 function EHIdailycakeTracker:init(panel, params)
@@ -95,15 +94,19 @@ local achievements =
     }
 }
 
-local dailies = nil
-if EHI:IsDailyAvailable("daily_cake") and ovk_and_up then
-    dailies =
+local dailies =
+{
+    daily_cake =
     {
-        [101906] = { time = 1200, id = "daily_cake", class = "EHIdailycakeTracker" },
-        [101898] = { id = "daily_cake", special_function = SF.SetAchievementComplete },
-        [EHI:GetInstanceElementID(100038, 3150)] = { id = "daily_cake", special_function = SF.IncreaseProgress }
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [101906] = { time = 1200, class = "EHIdailycakeTracker" },
+            [101898] = { special_function = SF.SetAchievementComplete },
+            [EHI:GetInstanceElementID(100038, 3150)] = { special_function = SF.IncreaseProgress }
+        }
     }
-end
+}
 
 local DisableWaypoints =
 {

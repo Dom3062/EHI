@@ -33,7 +33,6 @@ local other =
 }
 
 EHI:ParseTriggers({
-    mission = {},
     achievement = achievements,
     other = other
 })

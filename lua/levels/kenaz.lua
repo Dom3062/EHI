@@ -146,7 +146,8 @@ local achievements =
         },
         load_sync = function(self)
             self:AddTimedAchievementTracker("kenaz_4", 840)
-        end
+        end,
+        mission_end_callback = true
     },
     kenaz_5 =
     {
@@ -196,13 +197,6 @@ EHI:ShowLootCounter({
     max = 1, -- Dentist loot; mandatory
     additional_loot = bags + 1 -- Money + Painting
 })
-if EHI:CanShowAchievement("kenaz_4") then
-    EHI:HookWithID(MissionEndState, "at_enter", "EHI_kenaz_4_complete", function(self, ...)
-        if self._success then
-            managers.ehi:SetAchievementComplete("kenaz_4", true)
-        end
-    end)
-end
 
 local DisableWaypoints =
 {

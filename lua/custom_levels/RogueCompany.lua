@@ -15,10 +15,10 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            --[100824] = { time = 360, id = "RC_Achieve_speedrun", icons = { "ehi_rc_6mins" }, class = TT.Achievement, condition = show_achievement and ovk_and_up }
-            --[100756] = { id = "RC_Achieve_speedrun", special_function = SF.SetAchievementComplete },
+            --[100824] = { time = 360, class = TT.Achievement }
+            --[100756] = { special_function = SF.SetAchievementComplete },
             -- Apparently there is a bug in the mission script which causes to unlock this achievement even when the time runs out
-            [100824] = { time = 360, id = "RC_Achieve_speedrun", icons = { "ehi_RC_Achieve_speedrun" }, class = TT.AchievementUnlock }
+            [100824] = { time = 360, class = TT.AchievementUnlock }
         },
         load_sync = function(self)
             local t = 360 - self._t

@@ -66,9 +66,15 @@ local achievements =
     }
 }
 
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 60 })
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 21 })

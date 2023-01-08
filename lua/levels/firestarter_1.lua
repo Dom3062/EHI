@@ -61,7 +61,6 @@ local other =
 }
 
 EHI:ParseTriggers({
-    mission = {},
     other = other
 })
 --[[EHI:AddLoadSyncFunction(function(self)

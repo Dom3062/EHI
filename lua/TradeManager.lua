@@ -19,7 +19,7 @@ if not EHI:GetOption("show_trade_delay") then
     return
 end
 
-dofile(EHI.LuaPath .. "trackers/EHICiviliansKilledTracker.lua")
+dofile(EHI.LuaPath .. "trackers/EHITradeDelayTracker.lua")
 local show_trade_for_other_players = EHI:GetOption("show_trade_delay_other_players_only")
 local on_death_show = EHI:GetOption("show_trade_delay_option") == 2
 local suppress_in_stealth = EHI:GetOption("show_trade_delay_suppress_in_stealth")
@@ -74,6 +74,10 @@ function TradeManager:init(...)
         end
     end
     EHI:AddOnAlarmCallback(alarm)
+    local function f(peer, peer_id, reason)
+        managers.ehi:CallFunction(TrackerID, "RemovePeerFromCustody", peer_id)
+    end
+    Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", f)
 end
 
 function TradeManager:pause_trade(time, ...)

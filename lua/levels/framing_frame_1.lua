@@ -54,7 +54,6 @@ if Global.game_settings.level_id == "gallery" then
     end
 
     EHI:ParseTriggers({
-        mission = {},
         achievement = achievements
     })
 end
@@ -66,7 +65,6 @@ local other =
 }
 
 EHI:ParseTriggers({
-    mission = {},
     other = other
 })
 

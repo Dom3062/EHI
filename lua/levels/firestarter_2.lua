@@ -65,6 +65,5 @@ EHI:RegisterCustomSpecialFunction(FilterIsOk, function(id, trigger, element, ena
     end
 end)
 EHI:ParseTriggers({
-    mission = {},
     other = other
 })
