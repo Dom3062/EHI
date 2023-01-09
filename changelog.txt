@@ -1,3 +1,7 @@
+r119 (09. 01. 2023):
+Assault Delay Tracker: Fixed a crash when alarm went off
+Enemy Count Tracker: Fixed a visual issue where 2 icons overlap each other
+
 r118 (08. 01. 2023):
 Menu: Fixed a visibility issue with options having multiple parents
 Minion Tracker: Tracker will use less space on the screen

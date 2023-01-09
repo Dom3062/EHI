@@ -25,7 +25,7 @@ function EHIEnemyCountTracker:OverridePanel()
         texture = texture,
         texture_rect = text_rect,
         alpha = 1,
-        visible = true,
+        visible = false,
         x = self._icon1:x(),
         w = self._icon_size_scaled,
         h = self._icon_size_scaled
@@ -48,6 +48,7 @@ function EHIEnemyCountTracker:Alarm()
     self:AnimateBG()
     if self._icon2 then
         self._icon2:set_x(self._icon1:x())
+        self._icon2:set_visible(true)
         self._icon1:set_visible(false)
         if not self._manually_created_icon2 then
             self._parent_class:ChangeTrackerWidth(self._id, self._time_bg_box:w() + self._icon_gap_size_scaled)

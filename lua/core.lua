@@ -1585,8 +1585,11 @@ Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id,
 end)
 
 ---@param params table
----@return table
+---@return table|nil
 function EHI:AddAssaultDelay(params)
+    if not self:GetOption("show_assault_delay_tracker") then
+        return nil
+    end
     local tbl = {}
     -- Copy every passed value to the trigger
     for key, value in pairs(params) do
@@ -1595,7 +1598,6 @@ function EHI:AddAssaultDelay(params)
     tbl.time = tbl.time or 30
     tbl.id = "AssaultDelay"
     tbl.class = self.Trackers.AssaultDelay
-    tbl.condition = self:GetOption("show_assault_delay_tracker")
     return tbl
 end
 
@@ -1642,7 +1644,7 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
             end)
         end
     end
-    self:AddTriggers(new_triggers.other or {}, trigger_id_all or "Trigger", trigger_icons_all)
+    self:ParseOtherTriggers(new_triggers.other or {}, trigger_id_all or "Trigger", trigger_icons_all)
     local trophy = new_triggers.trophy
     if self:GetUnlockableAndOption("show_trophies") and trophy and next(trophy) then
         for id, data in pairs(trophy) do
@@ -1701,6 +1703,16 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     end
     self:ParseMissionTriggers(new_triggers.mission or {}, trigger_id_all, trigger_icons_all)
     --self:PrintTable(triggers)
+end
+
+function EHI:ParseOtherTriggers(new_triggers, trigger_id_all, trigger_icons_all)
+    for _, data in pairs(new_triggers) do
+        -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
+        if data.condition == false then
+            data = nil
+        end
+    end
+    self:AddTriggers(new_triggers, trigger_id_all or "Trigger", trigger_icons_all)
 end
 
 function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all)
