@@ -1,3 +1,8 @@
+r120 (12. 01. 2023):
+"A Criminal Carol" event ended
+Assault Delay Tracker: Fixed a crash with mods that change hostage delay
+Enemy Counter: Fixed an issue where counter is negative
+
 r119 (09. 01. 2023):
 Assault Delay Tracker: Fixed a crash when alarm went off
 Enemy Count Tracker: Fixed a visual issue where 2 icons overlap each other

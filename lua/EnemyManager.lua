@@ -44,6 +44,19 @@ if EHI:GetOption("show_enemy_count_show_pagers") then
             alarm_unit[name] = true
         end
     end
+    EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+        local enemy_data = managers.enemy._enemy_data
+        if enemy_data.nr_units == 0 then
+            return
+        end
+        for _, data in pairs(enemy_data.unit_data or {}) do
+            if alarm_unit[data.unit:base()._tweak_table] then
+                managers.ehi:CallFunction("EnemyCount", "AlarmEnemyRegistered")
+            else
+                managers.ehi:CallFunction("EnemyCount", "NormalEnemyRegistered")
+            end
+        end
+    end)
 else
     function EnemyManager:on_enemy_registered(...)
         original.on_enemy_registered(self, ...)
@@ -53,4 +66,7 @@ else
         original.on_enemy_unregistered(self, ...)
         managers.ehi:SetTrackerCount("EnemyCount", self._enemy_data.nr_units)
     end
+    EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+        managers.ehi:SetTrackerCount("EnemyCount", managers.enemy._enemy_data.nr_units)
+    end)
 end

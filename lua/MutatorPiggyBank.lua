@@ -34,7 +34,7 @@ function MutatorPiggyBank:sync_explode_piggybank(...)
     end
     original.sync_explode_piggybank(self, ...)
     managers.ehi:RemoveTracker("pda9_event")
-    if managers.experience.SetPiggyBankExplodedLevel then
+    --[[if managers.experience.SetPiggyBankExplodedLevel then
         managers.experience:SetPiggyBankExplodedLevel(self._exploded_pig_level)
-    end
+    end]]
 end

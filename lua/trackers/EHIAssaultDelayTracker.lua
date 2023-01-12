@@ -38,7 +38,7 @@ function EHIAssaultDelayTracker:init(panel, params)
     if params.compute_time then
         params.time = self:CalculateBreakTime(params.diff) + (2 * math.random())
     end
-    self:ComputeHostageDelay(params.diff)
+    self:ComputeHostageDelay(params.diff or 0)
     EHIAssaultDelayTracker.super.init(self, panel, params)
     self._update = not params.stop_counting
     self.update_normal = self.update

@@ -181,6 +181,7 @@ if EHI:IsClient() and level_id ~= "hvh" then
 end
 
 if EHI:AssaultDelayTrackerIsEnabled() then
+    dofile(EHI.LuaPath .. "trackers/EHIAssaultDelayTracker.lua")
     local SyncFunction = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation"
     local anticipation_delay = 30 -- Get it from tweak_data
     local function VerifyHostageHesitationDelay()

@@ -3,7 +3,7 @@ if EHI:CheckLoadHook("MutatorCG22") then
     return
 end
 
-local function RefreshXPCollected(self)
+--[[local function RefreshXPCollected(self)
     if managers.experience.SetCG22EventXPCollected then
         local xp_collected = self:get_xp_collected()
         managers.experience:SetCG22EventXPCollected(xp_collected)
@@ -20,4 +20,4 @@ local sync_present_sledded = MutatorCG22.sync_present_sledded
 function MutatorCG22:sync_present_sledded(...)
 	sync_present_sledded(self, ...)
     RefreshXPCollected(self)
-end
+end]]

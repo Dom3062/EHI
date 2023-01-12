@@ -10,6 +10,10 @@ local triggers = {
     [101977] = { special_function = AddToCache, data = { icon = Icon.Heli } },
     [101978] = { special_function = AddToCache, data = { icon = Icon.Heli } },
     [101979] = { special_function = AddToCache, data = { icon = Icon.Car } },
+
+    [102110] = { id = 102120, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102120 } }, -- Heli
+    [102130] = { id = 102138, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102138 } }, -- Heli
+    [100953] = { id = 102141, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102141 } } -- Van
 }
 
 if EHI:IsClient() then

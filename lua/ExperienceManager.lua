@@ -28,9 +28,7 @@ function ExperienceManager:init(...)
         in_custody = false,
         alive_players = Global.game_settings.single_player and 1 or 0,
         gage_bonus = 1,
-        stealth = true,
-        pda9_rewards = tweak_data.mutators.piggybank.rewards,
-        current_difficulty = Global.game_settings.difficulty
+        stealth = true
     }
     if xp_format == 3 then -- Multiply
         local function f()
@@ -89,8 +87,8 @@ end
 
 function ExperienceManager:SetMutatorData(data)
     self._xp.mutator_xp_reduction = data.xp_reduction * -1
-    self._xp.MutatorPiggyBank = data.MutatorPiggyBank
-    self._xp.MutatorCG22 = data.MutatorCG22
+    --self._xp.MutatorPiggyBank = data.MutatorPiggyBank
+    --self._xp.MutatorCG22 = data.MutatorCG22
 end
 
 function ExperienceManager:SetGagePackageBonus(bonus)
@@ -280,28 +278,8 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 	bonus_xp = self._xp.limited_xp_bonus
 	extra_bonus_dissect = math_round(total_xp * bonus_xp - total_xp)
     total_xp = total_xp + extra_bonus_dissect
-
-    --- Event
-    local pig_level = false
-
-	if self._xp.MutatorPiggyBank then
-		pig_level = self._xp.pda9_event_exploded_level or false
-	end
-
-	local bonus_piggybank_dissect = math.round(pig_level and (self._xp.pda9_rewards[self._xp.current_difficulty] or self._xp.pda9_rewards.default) * self._xp.pda9_rewards[pig_level].bag_requirement or 0)
-	total_xp = total_xp + bonus_piggybank_dissect
-	local bonus_cg22_dissect = self._xp.cg22_xp_collected or 0
-
-	total_xp = total_xp + bonus_cg22_dissect
-    --- Event
-
 	local bonus_mutators_dissect = total_xp * self._xp.mutator_xp_reduction
 	total_xp = total_xp + bonus_mutators_dissect
-
-    --- Double XP in event
-    local bonus_event_double_dissect = self._xp.MutatorCG22 and total_xp or 0
-	total_xp = total_xp + bonus_event_double_dissect
-    --- Double XP in event
 	return total_xp
 end
 

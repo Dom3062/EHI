@@ -1119,9 +1119,6 @@ if Global.load_level then
         dofile(path .. "EHIAggregatedHealthEquipmentTracker.lua")
         dofile(path .. "EHIECMTracker.lua")
     end
-    if EHI:AssaultDelayTrackerIsEnabled() then
-        dofile(path .. "EHIAssaultDelayTracker.lua")
-    end
     if EHI:GetOption("show_loot_counter") then
         dofile(path .. "EHILootTracker.lua")
     end
