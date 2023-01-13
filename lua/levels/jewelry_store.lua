@@ -9,16 +9,16 @@ local triggers = {
     [101601] = { time = 7, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
 
     [103172] = { time = 45 + 830/30, id = "Van", icons = Icon.CarEscape },
-    [103183] = { id = 103194, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103194 } },
+    [103183] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103194 } },
     [103182] = { special_function = SF.Trigger, data = { 1031821, 1031822 } },
     [1031821] = { time = 600/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
-    [1031822] = { id = 103193, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103193 } },
+    [1031822] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103193 } },
     [103181] = { special_function = SF.Trigger, data = { 1031811, 1031812 } },
     [1031811] = { time = 580/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
-    [1031812] = { id = 103192, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103192 } },
+    [1031812] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103192 } },
     [101770] = { special_function = SF.Trigger, data = { 1017701, 1017702 } },
     [1017701] = { time = 650/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
-    [1017702] = { id = 101776, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101776 } },
+    [1017702] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101776 } },
 
     [101433] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }

@@ -54,9 +54,9 @@ local triggers = {
 
     [101982] = { special_function = SF.Trigger, data = { 1019821, 1019822 } },
     [1019821] = { id = "Van", special_function = SF.SetTimeOrCreateTracker, run = { time = 589/30 } },
-    [1019822] = { id = 101281, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101281 } },
+    [1019822] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101281 } },
 
-    [101128] = { id = 101454, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101454 } },
+    [101128] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101454 } },
 
     [100723] = { id = "CookChance", special_function = SF.IncreaseChanceFromElement }
 }

@@ -64,8 +64,6 @@
         <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
 
-        <post hook_id="lib/network/handlers/unitnetworkhandler" :script_path="UnitNetworkHandler.lua" />
-
         <post hook_id="lib/states/ingamewaitingforplayers" :script_path="IngameWaitingForPlayers.lua" />
         <post hook_id="lib/states/ingamewaitingforrespawn" :script_path="IngameWaitingForRespawn.lua" />
         <post hook_id="lib/states/missionendstate" :script_path="MissionEndState.lua" />
@@ -76,7 +74,6 @@
         <post hook_id="lib/units/beings/player/playerinventory" :script_path="PlayerInventory.lua" />
         <post hook_id="lib/units/beings/player/playermovement" :script_path="PlayerMovement.lua" />
         <post hook_id="lib/units/beings/player/states/playerstandard" :script_path="PlayerStandard.lua" />
-        <post hook_id="lib/units/enemies/cop/copbrain" :script_path="CopBrain.lua" />
         <post hook_id="lib/units/civilians/civiliandamage" :script_path="CivilianDamage.lua" />
         <post hook_id="lib/units/interactions/interactionext" :script_path="InteractionExt.lua" />
         <post hook_id="lib/units/equipment/ammo_bag/ammobagbase" :script_path="AmmoBagBase.lua" />

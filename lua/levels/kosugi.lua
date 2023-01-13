@@ -140,7 +140,7 @@ local achievements =
     {
         elements =
         {
-            [102700] = { max = 6, class = TT.AchievementProgress },
+            [102700] = { max = 6, class = TT.AchievementProgress, status_is_overridable = true, remove_after_reaching_target = false },
             [102796] = { special_function = SF.SetAchievementFailed },
             [100311] = { special_function = SF.IncreaseProgress }
         }

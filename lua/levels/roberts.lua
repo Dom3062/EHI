@@ -11,9 +11,9 @@ local triggers = {
     [101929] = { time = 30 + 150 + delay, id = "CageDrop", icons = HeliDropLootZone },
     [102921] = { special_function = SF.RemoveTriggers, data = { 101929 } },
 
-    [103060] = { id = 103444, special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position = Vector3(-3750.0, -300.0, 0.0) } },
-    [103061] = { id = 103438, special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position = Vector3(1350.0, -4600.0, 0.0) } },
-    [104809] = { id = 103443, special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position = Vector3(1600.0, 1400.0, 0.0) } },
+    [103060] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103444 } },
+    [103061] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103438 } },
+    [104809] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103443 } },
 
     [101959] = { time = 90 + start_delay, id = "Plane", icons = { Icon.Heli, Icon.Wait }, special_function = SF.SetTimeOrCreateTracker },
     [101960] = { time = 120 + start_delay, id = "Plane", icons = { Icon.Heli, Icon.Wait }, special_function = SF.SetTimeOrCreateTracker },

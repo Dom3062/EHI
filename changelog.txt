@@ -1,3 +1,7 @@
+r121 (13. 01. 2023):
+Enemy Counter: Fixed double value
+Enemy Counter: Fixed an issue where dominated guard with pager does not count down pager counter
+
 r120 (12. 01. 2023):
 "A Criminal Carol" event ended
 Assault Delay Tracker: Fixed a crash with mods that change hostage delay

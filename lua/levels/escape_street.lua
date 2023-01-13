@@ -6,8 +6,8 @@ local triggers = {
     [101961] = { time = 120 },
     [101962] = { time = 90 },
 
-    [102065] = { id = 102675, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102675 }},
-    [102080] = { id = 102674, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102674 }}
+    [102065] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102675 }},
+    [102080] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102674 }}
 }
 
 if EHI:IsClient() then

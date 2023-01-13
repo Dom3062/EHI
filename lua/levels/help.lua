@@ -18,7 +18,7 @@ local triggers = {
 }
 for _, index in ipairs({ 2300, 5400, 10700 }) do
     local waypoint_id = EHI:GetInstanceElementID(100021, index)
-    triggers[EHI:GetInstanceElementID(100004, index)] = { id = waypoint_id, special_function = SF.ShowWaypoint, data = { icon = Icon.C4, position_by_element = waypoint_id } }
+    triggers[EHI:GetInstanceElementID(100004, index)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.C4, position_by_element = waypoint_id } }
 end
 
 local DisableWaypoints = {}

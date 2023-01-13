@@ -13,8 +13,8 @@ local triggers = {
     -- 5 = Delay when executed
     -- 22 = Heli door anim delay
     -- Total: 32 s
-    [100224] = { id = 100926, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 100926 } },
-    [101858] = { id = 101854, special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101854 } },
+    [100224] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 100926 } },
+    [101858] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101854 } },
 
     -- Bugged because of retarted use of ENABLED in ElementTimer and ElementTimerTrigger
     [101240] = { time = 540, id = "CokeTimer", icons = { { icon = Icon.Loot, color = Color.red } }, class = TT.Warning },

@@ -46,7 +46,7 @@ if EHI:GetOption("show_enemy_count_show_pagers") then
     end
     EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
         local enemy_data = managers.enemy._enemy_data
-        if enemy_data.nr_units == 0 then
+        if enemy_data.nr_units == 0 or EHI:IsPlayingFromStart() then
             return
         end
         for _, data in pairs(enemy_data.unit_data or {}) do
@@ -67,6 +67,6 @@ else
         managers.ehi:SetTrackerCount("EnemyCount", self._enemy_data.nr_units)
     end
     EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
-        managers.ehi:SetTrackerCount("EnemyCount", managers.enemy._enemy_data.nr_units)
+        managers.ehi:SetTrackerCount("EnemyCount", managers.enemy:GetNumberOfEnemies())
     end)
 end

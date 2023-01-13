@@ -7,10 +7,10 @@ local triggers = {
     [102450] = { time = 180 },
     [102451] = { time = 300 },
 
-    [101285] = { id = 100786, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100786 } },
-    [101286] = { id = 100783, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100783 } },
-    [101287] = { id = 100784, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100784 } },
-    [101284] = { id = 100785, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100785 } }
+    [101285] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100786 } },
+    [101286] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100783 } },
+    [101287] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100784 } },
+    [101284] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100785 } }
 }
 
 if EHI:IsClient() then

@@ -1557,6 +1557,7 @@ function EHI:SyncLoad()
         if trigger then
             if trigger.special_function == SF.ShowWaypoint and trigger.data then
                 if trigger.data.position_by_element then
+                    trigger.id = trigger.id or trigger.data.position_by_element
                     self:AddPositionFromElement(trigger.data, trigger.id, true)
                 elseif trigger.data.position_by_unit then
                     self:AddPositionFromUnit(trigger.data, trigger.id, true)
@@ -1746,6 +1747,7 @@ function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_al
                 data.data.present_timer = 0
                 data.data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
                 if data.data.position_by_element then
+                    data.id = data.id or data.data.position_by_element
                     self:AddPositionFromElement(data.data, data.id, host)
                 elseif data.data.position_by_unit then
                     self:AddPositionFromUnit(data.data, data.id, host)

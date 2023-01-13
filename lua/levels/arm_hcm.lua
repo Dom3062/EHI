@@ -11,9 +11,9 @@ local triggers = {
     -- Heli
     [102200] = { special_function = SF.Trigger, data = { 1022001, 1022002 } },
     [1022001] = { time = 23, special_function = SF.SetTimeOrCreateTracker },
-    [1022002] = { id = 102650, special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = 102650 } },
+    [1022002] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = 102650 } },
 
-    [100214] = { id = 100233, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } }
+    [100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } }
 }
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)

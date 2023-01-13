@@ -25,7 +25,7 @@ local triggers = {
 
 for i = 4700, 4850, 50 do
     local waypoint_id = EHI:GetInstanceElementID(100019, i)
-    triggers[EHI:GetInstanceElementID(100004, i)] = { id = waypoint_id, special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = waypoint_id } }
+    triggers[EHI:GetInstanceElementID(100004, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = waypoint_id } }
 end
 
 local heli = { id = "HeliCageDelay", icons = HeliLootDropWait, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning }

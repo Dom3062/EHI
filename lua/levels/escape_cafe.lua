@@ -6,9 +6,9 @@ local triggers = {
     [100247] = { time = 180 },
     [100248] = { time = 120 },
 
-    [100154] = { id = 100318, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100318 } },
-    [100157] = { id = 100314, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100314 } },
-    [100156] = { id = 100367, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100367 } }
+    [100154] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100318 } },
+    [100157] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100314 } },
+    [100156] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100367 } }
 }
 
 local achievements =

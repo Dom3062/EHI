@@ -31,7 +31,7 @@ local triggers = {
 }
 for i = 26550, 26950, 100 do
     local waypoint_id = EHI:GetInstanceElementID(100021, i)
-    triggers[EHI:GetInstanceElementID(100003, i)] = { id = waypoint_id, special_function = SF.ShowWaypoint, data = { icon = Icon.C4, position_by_element = waypoint_id } }
+    triggers[EHI:GetInstanceElementID(100003, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.C4, position_by_element = waypoint_id } }
 end
 
 if EHI:IsClient() then

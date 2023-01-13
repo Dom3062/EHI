@@ -18,10 +18,10 @@ local triggers = {
     [101127] = { time = 201/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker },
     [101108] = { time = 284/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker },
 
-    [101105] = { id = 100490, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100490 } },
-    [101104] = { id = 101196, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101196 } },
-    [101106] = { id = 101201, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101201 } },
-    [101102] = { id = 101138, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101138 } }
+    [101105] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100490 } },
+    [101104] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101196 } },
+    [101106] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101201 } },
+    [101102] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101138 } }
 }
 
 local achievements =

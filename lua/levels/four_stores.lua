@@ -45,8 +45,8 @@ local triggers = {
     [103593] = { run = { time = 180 + van_anim_delay } },
     [103594] = { run = { time = 200 + van_anim_delay } },
 
-    [102505] = { id = 101006, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101006 } },
-    [103200] = { id = 103234, special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103234 } }
+    [102505] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101006 } },
+    [103200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103234 } }
 }
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
