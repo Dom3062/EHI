@@ -204,6 +204,22 @@
         },
         {
             "type": "toggle",
+            "id": "ehi_show_enemy_turret_trackers_choice",
+            "title": "ehi_show_enemy_turret_trackers",
+            "description": "ehi_show_enemy_turret_trackers_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_enemy_turret_trackers",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_enemy_turret_trackers",
+            "default_value": true,
+            "ehi_ver" : 122
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
             "id": "ehi_show_zipline_timer_choice",
             "title": "ehi_show_zipline_timer",
             "description": "ehi_show_zipline_timer_desc",

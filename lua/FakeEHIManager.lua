@@ -44,6 +44,8 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack } } )
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack }, extend = true, class = "FakeEHITimerTracker" } )
     self:AddFakeTracker({ id = "show_camera_loop", time = math.random(10, 25), icons = { "camera_loop" } })
+    self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Sentry, "reload" } } )
+    self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Sentry, Icon.Fix } } )
     do
         local time = math.random() * (8 - 1) + 1
         self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { Icon.Winch, Icon.Bag, Icon.Goto } } )

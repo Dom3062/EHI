@@ -214,7 +214,7 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 	local num_winners = self._xp.alive_players
 	local player_stars = self._xp.level_to_stars
 	local pro_job_multiplier = self._xp.projob_multiplier
-	local ghost_multiplier = 1 + self._xp.stealth_bonus
+	local ghost_multiplier = 1 + (self._xp.stealth_bonus or 0)
 	local xp_multiplier = self._xp.contract_difficulty_multiplier
 	local contract_xp = 0
 	local total_xp = 0

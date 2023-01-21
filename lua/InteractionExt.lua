@@ -94,33 +94,34 @@ if EHI:GetOption("show_pager_callback") then
     EHI:AddOnAlarmCallback(function()
         EHI:Unhook("pager_init")
         EHI:Unhook("pager_set_tweak_data")
-        EHI:Unhook("EHI_pager_interact")
+        EHI:Unhook("pager_interact")
         EHI:Unhook("pager_at_interact_start")
         EHI:Unhook("pager_sync_interacted")
     end)
 end
 
 if EHI:GetOption("show_enemy_count_tracker") and EHI:GetOption("show_enemy_count_show_pagers") then
+    local CallbackKey = "EnemyCount"
     local function PagerEnemyKilled(unit)
-        managers.ehi:CallFunction("EnemyCount", "AlarmEnemyPagerKilled")
-        unit:base():remove_destroy_listener("EnemyCounter")
-        unit:character_damage():remove_listener("EnemyCounter")
+        managers.ehi:CallFunction(CallbackKey, "AlarmEnemyPagerKilled")
+        unit:base():remove_destroy_listener(CallbackKey)
+        unit:character_damage():remove_listener(CallbackKey)
     end
 
     EHI:HookWithID(IntimitateInteractionExt, "_at_interact_start", "EHI_EnemyCounter_pager_at_interact_start", function(self, ...)
         if self.tweak_data == "corpse_alarm_pager" and not self._unit:character_damage():dead() then
-            managers.ehi:CallFunction("EnemyCount", "AlarmEnemyPagerAnswered")
-            self._unit:base():add_destroy_listener("EnemyCounter", PagerEnemyKilled)
-            self._unit:character_damage():add_listener("EnemyCounter", { "death" }, PagerEnemyKilled)
+            managers.ehi:CallFunction(CallbackKey, "AlarmEnemyPagerAnswered")
+            self._unit:base():add_destroy_listener(CallbackKey, PagerEnemyKilled)
+            self._unit:character_damage():add_listener(CallbackKey, { "death" }, PagerEnemyKilled)
         end
     end)
 
     EHI:HookWithID(IntimitateInteractionExt, "sync_interacted", "EHI_EnemyCounter_pager_sync_interacted", function(self, peer, player, status, skip_alive_check)
         if self.tweak_data == "corpse_alarm_pager" then
             if (status == "started" or status == 1) and not self._unit:character_damage():dead() then
-                managers.ehi:CallFunction("EnemyCount", "AlarmEnemyPagerAnswered")
-                self._unit:base():add_destroy_listener("EnemyCounter", PagerEnemyKilled)
-                self._unit:character_damage():add_listener("EnemyCounter", { "death" }, PagerEnemyKilled)
+                managers.ehi:CallFunction(CallbackKey, "AlarmEnemyPagerAnswered")
+                self._unit:base():add_destroy_listener(CallbackKey, PagerEnemyKilled)
+                self._unit:character_damage():add_listener(CallbackKey, { "death" }, PagerEnemyKilled)
             end
         end
     end)

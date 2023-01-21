@@ -109,6 +109,12 @@ function WorldDefinition:init_done(...)
     original.init_done(self, ...)
 end
 
+function WorldDefinition:IgnoreDeployable(instance, unit_id, unit_data, unit)
+    if unit:base() and unit:base().SetIgnore then
+        unit:base():SetIgnore()
+    end
+end
+
 function WorldDefinition:SetDeployableOffset(instance, unit_id, unit_data, unit)
     if unit:base() and unit:base().SetOffset then
         unit:base():SetOffset(unit_data.offset or 1)

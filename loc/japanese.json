@@ -249,7 +249,7 @@
   "ehi_show_waypoints_present_timer_desc": "ウェイポイントが目的地に「移動」するまでに、画面上に存在する時間を設定します。",
 
   "ehi_show_waypoints_enemy_turret": "敵のタレットにウェイポイントを表示",
-  "ehi_show_waypoints_enemy_turret_desc": "リロード中や修理中の敵のタレットにウェイポイントを表示します。",
+  "ehi_show_waypoints_enemy_turret_desc": "リロード中や修理中の敵のタレットにウェイポイントを表示します。\n\nOption 'Show Enemy Turret Trackers' must be enabled in order to work",
 
   "ehi_show_waypoints_timers": "タイマーにウェイポイントを表示",
   "ehi_show_waypoints_timers_desc": "ウェイポイントにタイマーを表示します。(ハッキングやドリル等)\n\nオプション「タイマーを表示」を有効化する必要があります。",

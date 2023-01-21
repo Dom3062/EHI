@@ -747,19 +747,20 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         if level == "dark" and EHI:IsAchievementLocked2("pim_2") and HasGrenadeEquipped("wpn_prj_target") then -- Crouched and Hidden, Flying Dagger
             local progress = EHI:GetAchievementProgress("pim_2_stats")
-            local function on_heist_end(mes_self)
-                if mes_self._success and progress < 8 then
-                    managers.hud:custom_ingame_popup_text("SAVED", "Progress Saved: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
-                elseif not mes_self._success then
-                    managers.hud:custom_ingame_popup_text("LOST", "Progress Lost: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
-                end
-            end
-            EHI:HookWithID(MissionEndState, "chk_complete_heist_achievements", "EHI_pim_2_on_heist_end", on_heist_end)
             CreateProgressTracker("pim_2", progress, 8, false, false, true)
             EHI:Hook(AchievmentManager, "add_heist_success_award_progress", function(am, id)
                 if id == "pim_2_stats" then
                     progress = progress + 1
                     managers.ehi:SetTrackerProgress("pim_2", progress)
+                end
+            end)
+            EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
+                if success then
+                    if progress < 8 then
+                        managers.hud:custom_ingame_popup_text("SAVED", "Progress Saved: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
+                    end
+                else
+                    managers.hud:custom_ingame_popup_text("LOST", "Progress Lost: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
                 end
             end)
         end
@@ -1031,23 +1032,19 @@ function IngameWaitingForPlayersState:at_exit(...)
         if OVKOrAbove then
             if (level == "arm_cro" or level == "arm_und" or level == "arm_hcm" or level == "arm_par" or level == "arm_fac") and EHI:IsAchievementLocked2("armored_4") and mask_id == tweak_data.achievement.complete_heist_achievements.i_take_scores.mask and managers.ehi:GetStartedFromBeginning() then -- I Do What I Do Best, I Take Scores
                 local progress = EHI:GetAchievementProgress("armored_4_stat")
-                local function on_heist_end(mes_self)
-                    progress = progress + 1
-                    if mes_self._success and progress < 15 and managers.job:on_last_stage() then
-                        ShowPopup("armored_4", progress, 15)
+                EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
+                    if success and progress < 15 and managers.job:on_last_stage() then
+                        ShowPopup("armored_4", progress + 1, 15)
                     end
-                end
-                EHI:HookWithID(MissionEndState, "chk_complete_heist_achievements", "EHI_armored_4_on_heist_end", on_heist_end)
+                end)
             end
             if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and managers.ehi:GetStartedFromBeginning() then -- From Russia With Love
                 local progress = EHI:GetAchievementProgress("halloween_10_stats")
-                local function on_heist_end(mes_self)
-                    progress = progress + 1
-                    if mes_self._success and progress < 25 and managers.job:on_last_stage() then
-                        ShowPopup("halloween_10", progress, 25)
+                EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
+                    if success and progress < 25 and managers.job:on_last_stage() then
+                        ShowPopup("halloween_10", progress + 1, 25)
                     end
-                end
-                EHI:HookWithID(MissionEndState, "chk_complete_heist_achievements", "EHI_halloween_10_on_heist_end", on_heist_end)
+                end)
             end
         end
     end

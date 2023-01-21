@@ -83,7 +83,7 @@ end
 
 function EHIManagerVR:AddToDeployableCache(type, key, unit, tracker_type)
     if key and self:IsLoading() then
-        self:AddToLoadQueue(key, { type = type, unit = unit, tracker_type = tracker_type, f = "AddToDeployableCache"}, callback(self, self, "ReturnLoadCall"), true)
+        self:AddToLoadQueue(key, { type = type, unit = unit, tracker_type = tracker_type, f = "AddToDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
         return
     end
     self:old_AddToDeployableCache(type, key, unit, tracker_type)
@@ -91,7 +91,7 @@ end
 
 function EHIManagerVR:LoadFromDeployableCache(type, key)
     if key and self:IsLoading() then
-        self:AddToLoadQueue(key, { type = type, f = "LoadFromDeployableCache"}, callback(self, self, "ReturnLoadCall"), true)
+        self:AddToLoadQueue(key, { type = type, f = "LoadFromDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
         return
     end
     self:old_LoadFromDeployableCache(type, key)
@@ -99,7 +99,7 @@ end
 
 function EHIManagerVR:RemoveFromDeployableCache(type, key)
     if key and self:IsLoading() then
-        self:AddToLoadQueue(key, { type = type, f = "RemoveFromDeployableCache"}, callback(self, self, "ReturnLoadCall"), true)
+        self:AddToLoadQueue(key, { type = type, f = "RemoveFromDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
         return
     end
     self:old_RemoveFromDeployableCache(type, key)

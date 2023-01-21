@@ -328,7 +328,7 @@
     "ehi_show_waypoints_present_timer_desc" : "Definir cuánto tiempo se mantendrá el indicador de ruta en pantalla antes de 'moverse' a su destino.",
 
     "ehi_show_waypoints_enemy_turret" : "Mostrar indicadores de ruta para torretas enemigas",
-    "ehi_show_waypoints_enemy_turret_desc" : "Mostrar / ocultar un indicador de ruta para las torretas enemigas mientras están recargando o reparándose.",
+    "ehi_show_waypoints_enemy_turret_desc" : "Mostrar / ocultar un indicador de ruta para las torretas enemigas mientras están recargando o reparándose.\n\nOption 'Show Enemy Turret Trackers' must be enabled in order to work",
 
     "ehi_show_waypoints_timers" : "Mostrar indicadores de ruta para temporizadores",
     "ehi_show_waypoints_timers_desc" : "Mostrar / ocultar un indicador de ruta para los temporizadores visibles en hackeos, taladros, sierras, etc.\n(Requiere que actives la opción 'Mostrar temporizadores' para funcionar)",

@@ -2,38 +2,22 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local ovk_and_up = true
-local time = 10 -- Normal
-if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
-    -- Hard + Very Hard
-    time = 15
-    ovk_and_up = false
-elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
-    -- OVERKILL
-    time = 20
-elseif EHI:IsBetweenDifficulties(EHI.Difficulties.Mayhem, EHI.Difficulties.DeathWish) then
-    -- Mayhem + Death Wish
-    time = 30
-elseif EHI:IsDifficulty(EHI.Difficulties.DeathSentence) then
-    -- Death Sentence
-    time = 40
-end
 local triggers = {
     [101335] = { time = 7, id = "C4BasementWall", icons = { Icon.C4 } },
-    [101968] = { time = 10, id = "LureDelay", icons = { Icon.Wait } },
-
-    [101282] = { time = 5 + time, id = "KeypadReset", icons = { Icon.Wait } }
+    [101968] = { time = 10, id = "LureDelay", icons = { Icon.Wait } }
 }
+local safe_reset_time = EHI:GetKeypadResetTimer({ normal = 10 })
 for _, index in ipairs({ 13350, 14450, 14950, 15450, 15950, 16450, 16950, 17450 }) do
-    --, waypoint = { icon = Icon.Loop, position_by_element = EHI:GetInstanceElementID(100179, index) }
-    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop } }
+    local unit_id = EHI:GetInstanceElementID(100279, index)
+    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 5 + safe_reset_time, id = "KeypadReset", icons = { Icon.Wait }, waypoint = { position_by_unit = unit_id }  }
+    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = unit_id } }
 end
 
 local achievements =
 {
     tag_9 =
     {
-        difficulty_pass = ovk_and_up,
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
             [100107] = { class = TT.AchievementStatus },

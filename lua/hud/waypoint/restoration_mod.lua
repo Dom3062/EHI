@@ -4,7 +4,6 @@ local original =
     AddWaypoint = EHIWaypointManager.AddWaypoint
 }
 
-local prime_color = tweak_data.hud.prime_color
 EHIWaypointManager._font = Idstring(tweak_data.menu.medium_font)
 EHIWaypointManager._timer_font_size = 20
 EHIWaypointManager._distance_font_size = 32
@@ -19,4 +18,4 @@ end
 tweak_data.hud_icons.pd2_car.texture = "guis/textures/pd2/pd2_waypoints"
 tweak_data.hud_icons.pd2_water_tap.texture = "guis/textures/pd2/pd2_waypoints"
 
-EHIWaypoint._default_color = prime_color
+EHIWaypoint._default_color = tweak_data.hud.prime_color

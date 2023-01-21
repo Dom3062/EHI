@@ -199,6 +199,9 @@
     "ehi_show_camera_loop" : "Zobrazovat kameru se zpětnou smyčkou",
     "ehi_show_camera_loop_desc" : "Zobrazuje sledovač, když je bezpečnostní kamera ve smyčce",
 
+    "ehi_show_enemy_turret_trackers" : "Zobrazovat sledovače pro nepřátelské střílny",
+    "ehi_show_enemy_turret_trackers_desc" : "Zobrazovat sledovač když se nabíjí nebo se opravuje",
+
     "ehi_show_zipline_timer" : "Zobrazovat sledovač na Zipline",
     "ehi_show_zipline_timer_desc" : "Zobrazuje 2 časovače.\nPrvní ukazuje, jak dlouho trvá přemístít pytel/hráče, druhý ukazuje, kdy bude Zipline znovu použitelná",
 
@@ -328,7 +331,7 @@
     "ehi_show_waypoints_present_timer_desc" : "Nastavuje jak dlouho bude ukazatel na obrazovce než se 'přesune' do cílového místa",
 
     "ehi_show_waypoints_enemy_turret" : "Zobrazovat ukazatele pro nepřátelské střílny",
-    "ehi_show_waypoints_enemy_turret_desc" : "Zobrazuje ukazatel pro nepřátelskou střílku když se opravuje nebo nabíjí",
+    "ehi_show_waypoints_enemy_turret_desc" : "Zobrazuje ukazatel pro nepřátelskou střílku když se opravuje nebo nabíjí\n\nFunkce 'Zobrazovat sledovače pro nepřátelské střílny' musí být zapnutá aby tato možnost fungovala",
 
     "ehi_show_waypoints_timers" : "Zobrazovat ukazatele pro časovače",
     "ehi_show_waypoints_timers_desc" : "Zobrazuje ukazatel na viditelný časovač (hackování, vrtání, řezání, atd...)\n\nFunkce 'Zobrazovat časovače' musí být zapnutá aby tato možnost fungovala",

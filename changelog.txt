@@ -1,3 +1,7 @@
+r122 (21. 01. 2023):
+Added option "Show Enemy Turret Trackers"
+XP Tracker: Fixed a rare crash when game returned nil value for accumulated stealth bonus
+
 r121 (13. 01. 2023):
 Enemy Counter: Fixed double value
 Enemy Counter: Fixed an issue where dominated guard with pager does not count down pager counter

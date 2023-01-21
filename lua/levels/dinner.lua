@@ -4,7 +4,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local c4 = { time = 5, id = "C4", icons = { Icon.C4 } }
 local triggers = {
-    [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position = Vector3(-17900, 7800, 56.6182) } },
+    [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position_by_element = 100836 } },
     [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape } },
     -- C4 (Doors)
     [100985] = c4,

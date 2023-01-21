@@ -143,7 +143,7 @@
             "title": "ehi_trackers_menu",
             "description": "ehi_trackers_menu_desc",
             "next_menu": "ehi_trackers_menu",
-            "ehi_ver" : 115
+            "ehi_ver" : 122
         },
         {
             "type": "button",

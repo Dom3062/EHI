@@ -43,7 +43,8 @@ _G.EHI =
     {
         Spawned = "PlayerSpawned",
         LocLoaded = "LocalizationLoaded",
-        MissionEnd = "MissionEnd"
+        MissionEnd = "MissionEnd",
+        GameRestart = "GameRestart"
     },
 
     OnAlarmCallback = {},
@@ -259,144 +260,7 @@ EHI.TriggerFunction =
     [SF.Trigger] = true
 }
 
-local function DifficultyToIndex(difficulty)
-    local difficulties = {
-        "easy", -- Leftover from PD:TH
-        "normal",
-        "hard",
-        "overkill",
-        "overkill_145",
-        "easy_wish",
-        "overkill_290",
-        "sm_wish"
-    }
-    return table.index_of(difficulties, difficulty) - 2
-end
-
----@param difficulty number
-function EHI:IsDifficultyOrAbove(difficulty)
-    return difficulty <= self._cache.DifficultyIndex
-end
-
----@param difficulty number
-function EHI:IsDifficultyOrBelow(difficulty)
-    return difficulty >= self._cache.DifficultyIndex
-end
-
----@param difficulty number
-function EHI:IsDifficulty(difficulty)
-    return self._cache.DifficultyIndex == difficulty
-end
-
----@param diff_1 number
----@param diff_2 number
-function EHI:IsBetweenDifficulties(diff_1, diff_2)
-    if diff_1 > diff_2 then
-        diff_1 = diff_1 - diff_2
-        diff_2 = diff_1 + diff_2
-        diff_1 = diff_2 - diff_1
-    end
-    return self._cache.DifficultyIndex >= diff_1 and self._cache.DifficultyIndex <= diff_2
-end
-
-function EHI:Init()
-    self._cache.Difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
-    self._cache.DifficultyIndex = DifficultyToIndex(self._cache.Difficulty)
-    self._cache.Host = Network:is_server()
-    self._cache.Client = not self._cache.Host
-end
-
----@return boolean
-function EHI:IsHost()
-    return self._cache.Host
-end
-
----@return boolean
-function EHI:IsClient()
-    return self._cache.Client
-end
-
----@return boolean
-function EHI:IsPlayingFromStart()
-    return self:IsHost() or (self:IsClient() and not managers.statistics:is_dropin())
-end
-
-function EHI:Log(s)
-    log("[EHI] " .. (s or "nil"))
-end
-
----Works the same way as EHI:Log(), but the string is not saved on HDD
----@param s any
-function EHI:LogFast(s)
-    local prefix = os.date("%I:%M:%S %p")
-    io.stdout:write(prefix .. " Lua: [EHI] " .. (s or "nil") .. "\n")
-end
-
-function EHI:LogTraceback()
-    log("[EHI] " .. debug.traceback())
-end
-
-function EHI:Load()
-    if self._cache.loaded then
-        return
-    end
-    self:LoadDefaultValues()
-    local file = io.open(self.SettingsSaveFilePath, "r")
-    if file then
-        local table
-        local success, _ = pcall(function()
-            table = json.decode(file:read("*all"))
-        end)
-        file:close()
-        if success then
-            if table.SaveDataVer and table.SaveDataVer == self.SaveDataVer then
-                self:LoadValues(self.settings, table)
-            else
-                self.SaveDataNotCompatible = true
-                self:Save()
-            end
-        else -- Save File got corrupted, use default values
-            self._cache.SaveFileCorrupted = true
-            self:Save() -- Resave the data
-        end
-    end
-    self._cache.loaded = true
-end
-
-function EHI:Save()
-    self.settings.SaveDataVer = self.SaveDataVer
-    self.settings.ModVersion = self.ModVersion
-    local file = io.open(self.SettingsSaveFilePath, "w+")
-    if file then
-        file:write(json.encode(self.settings) or "{}")
-        file:close()
-    end
-end
-
-function EHI:LoadValues(ehi_table, file_table)
-    for k, v in pairs(file_table) do -- Load subtables in table and calls the same method to load subtables or values in that subtable
-        if type(file_table[k]) == "table" and ehi_table[k] then
-            self:LoadValues(ehi_table[k], v)
-        end
-    end
-    for k, v in pairs(file_table) do
-        if type(file_table[k]) ~= "table" then
-            if ehi_table and ehi_table[k] ~= nil then -- Load values to the table
-                ehi_table[k] = v
-            end
-        end
-    end
-end
-
----Delays execution of a function
----@param name string ID
----@param t number time
----@param func function
-function EHI:DelayCall(name, t, func)
-    DelayedCalls:Add(name, t, func)
-end
-
-function EHI:LoadDefaultValues()
+local function LoadDefaultValues(self)
     self.settings =
     {
         mod_language = 1, -- Auto (default)
@@ -456,6 +320,7 @@ function EHI:LoadDefaultValues()
         show_trade_delay_suppress_in_stealth = true,
         show_timers = true,
         show_camera_loop = true,
+        show_enemy_turret_trackers = true,
         show_zipline_timer = true,
         show_gage_tracker = true,
         gage_tracker_panel = 1,
@@ -615,6 +480,143 @@ function EHI:LoadDefaultValues()
         show_inventory_detailed_description = false,
         hide_original_desc = true
     }
+end
+
+local function DifficultyToIndex(difficulty)
+    local difficulties = {
+        "easy", -- Leftover from PD:TH
+        "normal",
+        "hard",
+        "overkill",
+        "overkill_145",
+        "easy_wish",
+        "overkill_290",
+        "sm_wish"
+    }
+    return table.index_of(difficulties, difficulty) - 2
+end
+
+---@param difficulty number
+function EHI:IsDifficultyOrAbove(difficulty)
+    return difficulty <= self._cache.DifficultyIndex
+end
+
+---@param difficulty number
+function EHI:IsDifficultyOrBelow(difficulty)
+    return difficulty >= self._cache.DifficultyIndex
+end
+
+---@param difficulty number
+function EHI:IsDifficulty(difficulty)
+    return self._cache.DifficultyIndex == difficulty
+end
+
+---@param diff_1 number
+---@param diff_2 number
+function EHI:IsBetweenDifficulties(diff_1, diff_2)
+    if diff_1 > diff_2 then
+        diff_1 = diff_1 - diff_2
+        diff_2 = diff_1 + diff_2
+        diff_1 = diff_2 - diff_1
+    end
+    return self._cache.DifficultyIndex >= diff_1 and self._cache.DifficultyIndex <= diff_2
+end
+
+function EHI:Init()
+    self._cache.Difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
+    self._cache.DifficultyIndex = DifficultyToIndex(self._cache.Difficulty)
+    self._cache.Host = Network:is_server()
+    self._cache.Client = not self._cache.Host
+end
+
+---@return boolean
+function EHI:IsHost()
+    return self._cache.Host
+end
+
+---@return boolean
+function EHI:IsClient()
+    return self._cache.Client
+end
+
+---@return boolean
+function EHI:IsPlayingFromStart()
+    return self:IsHost() or (self:IsClient() and not managers.statistics:is_dropin())
+end
+
+function EHI:Log(s)
+    log("[EHI] " .. (s or "nil"))
+end
+
+---Works the same way as EHI:Log(), but the string is not saved on HDD
+---@param s any
+function EHI:LogFast(s)
+    local prefix = os.date("%I:%M:%S %p")
+    io.stdout:write(prefix .. " Lua: [EHI] " .. (s or "nil") .. "\n")
+end
+
+function EHI:LogTraceback()
+    log("[EHI] " .. debug.traceback())
+end
+
+function EHI:Load()
+    if self._cache.loaded then
+        return
+    end
+    LoadDefaultValues(self)
+    local file = io.open(self.SettingsSaveFilePath, "r")
+    if file then
+        local table
+        local success, _ = pcall(function()
+            table = json.decode(file:read("*all"))
+        end)
+        file:close()
+        if success then
+            if table.SaveDataVer and table.SaveDataVer == self.SaveDataVer then
+                self:LoadValues(self.settings, table)
+            else
+                self.SaveDataNotCompatible = true
+                self:Save()
+            end
+        else -- Save File got corrupted, use default values
+            self._cache.SaveFileCorrupted = true
+            self:Save() -- Resave the data
+        end
+    end
+    self._cache.loaded = true
+end
+
+function EHI:Save()
+    self.settings.SaveDataVer = self.SaveDataVer
+    self.settings.ModVersion = self.ModVersion
+    local file = io.open(self.SettingsSaveFilePath, "w+")
+    if file then
+        file:write(json.encode(self.settings) or "{}")
+        file:close()
+    end
+end
+
+function EHI:LoadValues(ehi_table, file_table)
+    for k, v in pairs(file_table) do -- Load subtables in table and calls the same method to load subtables or values in that subtable
+        if type(file_table[k]) == "table" and ehi_table[k] then
+            self:LoadValues(ehi_table[k], v)
+        end
+    end
+    for k, v in pairs(file_table) do
+        if type(file_table[k]) ~= "table" then
+            if ehi_table and ehi_table[k] ~= nil then -- Load values to the table
+                ehi_table[k] = v
+            end
+        end
+    end
+end
+
+---Delays execution of a function
+---@param name string ID
+---@param t number time
+---@param func function
+function EHI:DelayCall(name, t, func)
+    DelayedCalls:Add(name, t, func)
 end
 
 function EHI:GetOption(option)
@@ -793,18 +795,6 @@ function EHI:ShowDramaTracker()
     return self:GetOption("show_drama_tracker") and self._cache.Host
 end
 
----@param unit userdata
-function EHI:GetPeerColor(unit)
-    local color = Color.white
-    if unit then
-        color = managers.criminals:character_color_id_by_unit(unit)
-        color = tweak_data.chat_colors[color] or Color.white
-    else
-        self:Log("unit is nil, returned color set to white")
-    end
-    return color
-end
-
 ---@param peer_id number
 function EHI:GetPeerColorByPeerID(peer_id)
     local color = Color.white
@@ -819,7 +809,10 @@ end
 ---@param continent_index number?
 ---@return number
 function EHI:GetInstanceElementID(id, start_index, continent_index)
-    return (continent_index or 100000) + math.mod(id, 100000) + 30000 + start_index
+    if continent_index then
+        return continent_index + math.mod(id, 100000) + 30000 + start_index
+    end
+    return id + 30000 + start_index
 end
 
 ---@param id number
@@ -849,16 +842,9 @@ function EHI:RoundChanceNumber(n)
     return self:RoundNumber(n, 0.01) * 100
 end
 
----@param instance_vector Vector3 Instance Position
----@param element_vector Vector3 Position of the element in the instance
----@param rotation Rotation Instance Rotation
-function EHI:GetInstanceElementPosition(instance_vector, element_vector, rotation)
-    return instance_vector + element_vector:rotate_with(rotation)
-end
-
 ---@param id number Element ID
 ---@return Vector3|nil
-function EHI:GetInstanceElementPosition2(id)
+function EHI:GetInstanceElementPosition(id)
     local element = managers.mission:get_element_by_id(id)
     if not element then
         return nil
@@ -881,6 +867,9 @@ end
 
 function EHI:Sync(message, data)
     LuaNetworking:SendToPeersExcept(1, message, data or "")
+end
+if Global.game_settings and Global.game_settings.single_player then
+    EHI.Sync = function(...) end
 end
 
 ---@param triggers table
@@ -1469,49 +1458,51 @@ end
 
 function EHI:InitElements()
     self:HookElements(triggers)
-    if self._cache.Host then
-        local scripts = managers.mission._scripts or {}
-        for id, _ in pairs(base_delay_triggers) do
-            for _, script in pairs(scripts) do
-                local element = script:element(id)
-                if element then
-                    self._base_delay[id] = element._calc_base_delay
-                    element._calc_base_delay = function(e, ...)
-                        local delay = self._base_delay[e._id](e, ...)
-                        self:AddTrackerAndSync(e._id, delay)
-                        return delay
-                    end
+    if self:IsClient() then
+        return
+    end
+    local scripts = managers.mission._scripts or {}
+    for id, _ in pairs(base_delay_triggers) do
+        for _, script in pairs(scripts) do
+            local element = script:element(id)
+            if element then
+                self._base_delay[id] = element._calc_base_delay
+                element._calc_base_delay = function(e, ...)
+                    local delay = self._base_delay[e._id](e, ...)
+                    self:AddTrackerAndSync(e._id, delay)
+                    return delay
                 end
             end
         end
-        for id, _ in pairs(element_delay_triggers) do
-            for _, script in pairs(scripts) do
-                local element = script:element(id)
-                if element then
-                    self._element_delay[id] = element._calc_element_delay
-                    element._calc_element_delay = function(e, params, ...)
-                        local delay = self._element_delay[e._id](e, params, ...)
-                        if element_delay_triggers[e._id][params.id] then
-                            if host_triggers[params.id] then
-                                if host_triggers[params.id].remove_trigger_when_executed then
-                                    self:AddTrackerAndSync(params.id, delay)
-                                    element_delay_triggers[e._id][params.id] = nil
-                                elseif host_triggers[params.id].set_time_when_tracker_exists then
-                                    if managers.ehi:TrackerExists(host_triggers[params.id].id) then
-                                        managers.ehi:SetTrackerTimeNoAnim(host_triggers[params.id].id, delay)
-                                        self:Sync(self.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
-                                    else
-                                        self:AddTrackerAndSync(params.id, delay)
-                                    end
+    end
+    for id, _ in pairs(element_delay_triggers) do
+        for _, script in pairs(scripts) do
+            local element = script:element(id)
+            if element then
+                self._element_delay[id] = element._calc_element_delay
+                element._calc_element_delay = function(e, params, ...)
+                    local delay = self._element_delay[e._id](e, params, ...)
+                    if element_delay_triggers[e._id][params.id] then
+                        if host_triggers[params.id] then
+                            local trigger = host_triggers[params.id]
+                            if trigger.remove_trigger_when_executed then
+                                self:AddTrackerAndSync(params.id, delay)
+                                element_delay_triggers[e._id][params.id] = nil
+                            elseif trigger.set_time_when_tracker_exists then
+                                if managers.ehi:TrackerExists(trigger.id) then
+                                    managers.ehi:SetTrackerTimeNoAnim(trigger.id, delay)
+                                    self:Sync(self.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
                                 else
                                     self:AddTrackerAndSync(params.id, delay)
                                 end
                             else
                                 self:AddTrackerAndSync(params.id, delay)
                             end
+                        else
+                            self:AddTrackerAndSync(params.id, delay)
                         end
-                        return delay
                     end
+                    return delay
                 end
             end
         end
@@ -1525,7 +1516,7 @@ function EHI:HookElements(elements_to_hook)
     local function Host(element, ...)
         self:Trigger(element._id, element, element._values.enabled)
     end
-    local client = self._cache.Client
+    local client = self:IsClient()
     local func = client and self.ClientElement or self.HostElement
     local f = client and Client or Host
     local scripts = managers.mission._scripts or {}
@@ -1603,7 +1594,7 @@ function EHI:AddAssaultDelay(params)
 end
 
 function EHI:AddPositionFromElement(data, id, check)
-    local vector = self:GetInstanceElementPosition2(data.position_by_element)
+    local vector = self:GetInstanceElementPosition(data.position_by_element)
     if vector then
         data.position = vector
         data.position_by_element = nil
@@ -1761,7 +1752,11 @@ function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_al
             if data.waypoint then
                 data.waypoint.time = data.waypoint.time or data.time
                 if not data.waypoint.icon then
-                    data.waypoint.icon = data.icons and data.icons[1] and data.icons[1].icon or data.icons[1]
+                    if data.icons then
+                        data.waypoint.icon = data.icons[1] and data.icons[1].icon or data.icons[1]
+                    elseif trigger_icons_all then
+                        data.waypoint.icon = trigger_icons_all[1] and trigger_icons_all[1].icon or trigger_icons_all[1]
+                    end
                 end
                 if data.waypoint.position_by_element then
                     self:AddPositionFromElement(data.waypoint, data.id, host)
@@ -1930,7 +1925,7 @@ function EHI:HookLootCounter(params, check_type, loot_type)
             self:EHIReportProgress("LootCounter", check_type or EHI.LootCounter.CheckType.BagsOnly, loot_type)
         end
         self:HookWithID(LootManager, "sync_secure_loot", "EHI_LootCounter_sync_secure_loot", Hook)
-        -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction to properly show number of secured loot
+        -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
         if not params.no_sync_load then
             self:HookWithID(LootManager, "sync_load", "EHI_LootCounter_sync_load", Hook)
@@ -2071,6 +2066,7 @@ end
 
 function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
     local new_tbl = {}
+    instance_continent_index = instance_continent_index or 100000
     for id, data in pairs(tbl) do
         local computed_id = self:GetInstanceElementID(id, instance_start_index, instance_continent_index)
         new_tbl[computed_id] = deep_clone(data)
@@ -2108,6 +2104,28 @@ function EHI:CheckHook(hook)
     end
     self._hooks[hook] = true
     return false
+end
+
+---Returns default keypad time reset for the current difficulty
+---@param time_override table? Overrides default keypad time reset for each difficulty
+---@return integer
+function EHI:GetKeypadResetTimer(time_override)
+    time_override = time_override or {}
+    if self:IsDifficulty(self.Difficulties.Normal) then
+        return time_override.normal or 5
+    elseif self:IsDifficulty(self.Difficulties.Hard) then
+        return time_override.hard or 15
+    elseif self:IsDifficulty(self.Difficulties.VeryHard) then
+        return time_override.veryhard or 15
+    elseif self:IsDifficulty(self.Difficulties.OVERKILL) then
+        return time_override.overkill or 20
+    elseif self:IsDifficulty(self.Difficulties.Mayhem) then
+        return time_override.mayhem or 30
+    elseif self:IsDifficulty(self.Difficulties.DeathWish) then
+        return time_override.deathwish or 30
+    else
+        return time_override.deathsentence or 40
+    end
 end
 
 EHI:Load()

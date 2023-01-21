@@ -328,7 +328,7 @@
     "ehi_show_waypoints_present_timer_desc" : "设置导航点在'移动'到目标前在屏幕上停留的时间。",
 
     "ehi_show_waypoints_enemy_turret" : "显示敌方机枪塔的导航点",
-    "ehi_show_waypoints_enemy_turret_desc" : "在敌方炮塔重装或修理时显示一个导航点",
+    "ehi_show_waypoints_enemy_turret_desc" : "在敌方炮塔重装或修理时显示一个导航点\n\nOption 'Show Enemy Turret Trackers' must be enabled in order to work",
 
     "ehi_show_waypoints_timers" : "显示计时器导航点",
     "ehi_show_waypoints_timers_desc" : "显示地图上正在进行的黑入，钻机，电锯等进程的剩余时间\n\n需要勾选'显示计时器'选项以正常使用",

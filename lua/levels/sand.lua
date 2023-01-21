@@ -47,8 +47,6 @@ local TT = EHI.Trackers
 local boat_anim = 614/30 + 12 + 1
 local skid = { { icon = Icon.Car, color = Color("1E90FF") } }
 local triggers = {
-    --[100129] = EHI:AddAssaultDelay({ time = 30 }),
-
     [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { Icon.PCHack } },
 
     [EHI:GetInstanceElementID(100043, 4800)] = { special_function = SF.Trigger, data = { 1000431, 1000432 } },
@@ -77,24 +75,10 @@ local triggers = {
 
     [103925] = { id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 30 + boat_anim, no = 19 + boat_anim } }
 }
-local time = 5 -- Normal
-if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
-    -- Hard + Very Hard
-    time = 15
-elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
-    -- OVERKILL
-    time = 20
-elseif EHI:IsBetweenDifficulties(EHI.Difficulties.Mayhem, EHI.Difficulties.DeathWish) then
-    -- Mayhem + Death Wish
-    time = 30
-elseif EHI:IsDifficulty(EHI.Difficulties.DeathSentence) then
-    -- Death Sentence
-    time = 40
-end
 for _, index in ipairs({ 8530, 9180, 9680 }) do
     local unit_id = EHI:GetInstanceUnitID(100279, index)
     triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id } } -- ECM Jammer
-    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + time, id = "KeypadReboot", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id } }
+    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + EHI:GetKeypadResetTimer(), id = "KeypadReboot", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id }, special_function = SF.SetTimeOrCreateTracker }
 end
 for i = 16580, 16780, 100 do
     triggers[EHI:GetInstanceElementID(100057, i)] = { id = "ReviveVlad", special_function = SF.IncreaseChanceFromElement } -- +33%

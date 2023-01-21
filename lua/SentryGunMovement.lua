@@ -2,6 +2,11 @@ local EHI = EHI
 if EHI:CheckLoadHook("SentryGunMovement") then
     return
 end
+
+if not EHI:GetOption("show_enemy_turret_trackers") then
+    return
+end
+
 local Icon = EHI.Icons
 local WWarning = EHI.Waypoints.Warning
 

@@ -328,7 +328,7 @@
     "ehi_show_waypoints_present_timer_desc" : "Задает, как долго маркер будет оставаться на экране, прежде чем она 'переместится' к месту назначения",
 
     "ehi_show_waypoints_enemy_turret" : "Показывать маркеры для турели",
-    "ehi_show_waypoints_enemy_turret_desc" : "показывать маркер на вражеской турели, когда она перезаряжается или ремонтируется",
+    "ehi_show_waypoints_enemy_turret_desc" : "показывать маркер на вражеской турели, когда она перезаряжается или ремонтируется\n\nOption 'Show Enemy Turret Trackers' must be enabled in order to work",
 
     "ehi_show_waypoints_timers" : "Показать маркеры для таймеров",
     "ehi_show_waypoints_timers_desc" : "Показывать маркеры на доступных таймерах (взлом, сверление, распиливание и т.д...)\n\nПараметр 'Показать таймеры' должен быть включен для работы",

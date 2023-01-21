@@ -58,8 +58,7 @@ local function icon_x(o, target_x)
 end
 local function bg_attention(bg, total_t)
     local color = Color.white
-	local TOTAL_T = total_t or 3
-	local t = TOTAL_T
+	local t = total_t or 3
 	while t > 0 do
 		local dt = coroutine.yield()
 		t = t - dt
@@ -93,6 +92,81 @@ end
 
 local bg_visibility = EHI:GetOption("show_tracker_bg")
 local corner_visibility = EHI:GetOption("show_tracker_corners")
+
+local function CreateHUDBGBox(panel, params, config)
+    local box_panel = panel:panel(params)
+	local color = config and config.color
+	local bg_color = config and config.bg_color or Color(1, 0, 0, 0)
+	local blend_mode = config and config.blend_mode
+	box_panel:rect({
+		blend_mode = "normal",
+		name = "bg",
+		halign = "grow",
+		alpha = 0.25,
+		layer = -1,
+		valign = "grow",
+		color = bg_color,
+        visible = bg_visibility
+	})
+    if bg_visibility and corner_visibility then
+        local left_top = box_panel:bitmap({
+            texture = "guis/textures/pd2/hud_corner",
+            name = "left_top",
+            visible = true,
+            layer = 0,
+            y = 0,
+            halign = "left",
+            x = 0,
+            valign = "top",
+            color = color,
+            blend_mode = blend_mode
+        })
+        local left_bottom = box_panel:bitmap({
+            texture = "guis/textures/pd2/hud_corner",
+            name = "left_bottom",
+            visible = true,
+            layer = 0,
+            x = 0,
+            y = 0,
+            halign = "left",
+            rotation = -90,
+            valign = "bottom",
+            color = color,
+            blend_mode = blend_mode
+        })
+        left_bottom:set_bottom(box_panel:h())
+        local right_top = box_panel:bitmap({
+            texture = "guis/textures/pd2/hud_corner",
+            name = "right_top",
+            visible = true,
+            layer = 0,
+            x = 0,
+            y = 0,
+            halign = "right",
+            rotation = 90,
+            valign = "top",
+            color = color,
+            blend_mode = blend_mode
+        })
+        right_top:set_right(box_panel:w())
+        local right_bottom = box_panel:bitmap({
+            texture = "guis/textures/pd2/hud_corner",
+            name = "right_bottom",
+            visible = true,
+            layer = 0,
+            x = 0,
+            y = 0,
+            halign = "right",
+            rotation = 180,
+            valign = "bottom",
+            color = color,
+            blend_mode = blend_mode
+        })
+        right_bottom:set_right(box_panel:w())
+        right_bottom:set_bottom(box_panel:h())
+    end
+	return box_panel
+end
 
 EHITracker = class()
 EHITracker._update = true
@@ -128,7 +202,7 @@ function EHITracker:init(panel, params)
         alpha = 0,
         visible = true
     })
-    self._time_bg_box = HUDBGBox_create(self._panel, {
+    self._time_bg_box = CreateHUDBGBox(self._panel, {
         x = 0,
         y = 0,
         w = 64 * self._scale,
@@ -136,11 +210,6 @@ function EHITracker:init(panel, params)
     }, {
         blend_mode = "add"
     })
-    self._time_bg_box:child("bg"):set_visible(bg_visibility)
-    self._time_bg_box:child("left_top"):set_visible(bg_visibility and corner_visibility)
-    self._time_bg_box:child("left_bottom"):set_visible(bg_visibility and corner_visibility)
-    self._time_bg_box:child("right_top"):set_visible(bg_visibility and corner_visibility)
-    self._time_bg_box:child("right_bottom"):set_visible(bg_visibility and corner_visibility)
     self._text = self._time_bg_box:text({
         name = "text1",
         text = self:Format(),
@@ -189,7 +258,7 @@ if EHI:GetOption("show_one_icon") then
             local texture, rect = GetIcon(first_icon)
             CreateIcon(self, "1", texture, rect, Color.white, 1, true, icon_pos)
         elseif type(first_icon) == "table" then
-            local texture, rect = GetIcon(first_icon.icon)
+            local texture, rect = GetIcon(first_icon.icon or "default")
             CreateIcon(self, "1", texture, rect, first_icon.color,
                 first_icon.alpha or 1,
                 first_icon.visible ~= false,
@@ -206,7 +275,7 @@ else
                 local texture, rect = GetIcon(v)
                 CreateIcon(self, s_i, texture, rect, Color.white, 1, true, start + icon_gap)
             elseif type(v) == "table" then -- table
-                local texture, rect = GetIcon(v.icon)
+                local texture, rect = GetIcon(v.icon or "default")
                 CreateIcon(self, s_i, texture, rect, v.color,
                     v.alpha or 1,
                     v.visible ~= false,
@@ -214,17 +283,6 @@ else
             end
             start = start + self._icon_size_scaled
             icon_gap = icon_gap + self._gap_scaled
-        end
-    end
-end
-
-function EHITracker:AlignIconsToPanel()
-    local index = self._time_bg_box:w() + self._gap_scaled
-    for i = 1, self._n_of_icons, 1 do
-        local icon = self._panel:child("icon" .. tostring(i))
-        if icon then
-            icon:set_x(index)
-            index = index + self._icon_gap_size_scaled
         end
     end
 end

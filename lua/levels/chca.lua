@@ -3,16 +3,6 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local vault_reset_time = 5 -- Normal
-if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
-    vault_reset_time = 15
-elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then -- OVERKILL
-    vault_reset_time = 20
-elseif EHI:IsBetweenDifficulties(EHI.Difficulties.Mayhem, EHI.Difficulties.DeathWish) then
-    vault_reset_time = 30
-elseif EHI:IsDifficulty(EHI.Difficulties.DeathSentence) then
-    vault_reset_time = 40
-end
 local triggers = {
     [103030] = { time = 19, id = "InsideManTalk", icons = { "pd2_talk" } },
 
@@ -28,8 +18,8 @@ local triggers = {
     -- Heli Extraction
     [101432] = { id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 101362 },
 
-    [EHI:GetInstanceElementID(100210, 14670)] = { time = 3 + vault_reset_time, id = "KeypadReset", icons = { Icon.Wait } },
-    [EHI:GetInstanceElementID(100176, 14670)] = { time = 30, id = "KeypadResetECMJammer", icons = { Icon.Wait } },
+    [EHI:GetInstanceElementID(100210, 14670)] = { time = 3 + EHI:GetKeypadResetTimer(), id = "KeypadReset", icons = { Icon.Wait }, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) } },
+    [EHI:GetInstanceElementID(100176, 14670)] = { time = 30, id = "KeypadResetECMJammer", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) } },
 
     [102571] = { time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = { Icon.Heli, Icon.Winch, Icon.Goto } },
 
@@ -112,7 +102,7 @@ if EHI:CanShowAchievement("chca_12") and ovk_and_up then
         [100079] = { f = chca_12 },
         [100080] = { f = chca_12 }
     }
-    EHI:UpdateInstanceUnitsNoCheck(tbl, 15470, 100000)
+    EHI:UpdateInstanceUnitsNoCheck(tbl, 15470)
     local trigger = { special_function = SF.CustomCode, f = saw_done }
     triggers[EHI:GetInstanceElementID(100082, 15470)] = trigger
     triggers[EHI:GetInstanceElementID(100083, 15470)] = trigger

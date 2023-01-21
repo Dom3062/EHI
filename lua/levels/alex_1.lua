@@ -3,13 +3,13 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local anim_delay = 2 + 727/30 + 2 -- 2s is function delay; 727/30 is a animation duration; 2s is zone activation delay; total 28,23333
-local assault_delay_methlab = 20 + 4 + 3 + 3 + 3 + 5 + 1 + 30
 local assault_delay = 4 + 3 + 3 + 3 + 5 + 1 + 30
+local assault_delay_methlab = 20 + assault_delay
 local SetTimeIfMoreThanOrCreateTracker = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [101001] = { id = "CookChance", special_function = SF.RemoveTracker },
 
-    [101970] = { time = (240 + 12) - 3, id = "Van", icons = Icon.CarEscape },
+    [101970] = { time = (240 + 12) - 3, waypoint = { position_by_element = 101454 } },
     [100721] = { time = 1, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
     [1007211] = { chance = 5, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists },
     [100724] = { time = 25, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeOrCreateTracker },
@@ -18,9 +18,9 @@ local triggers = {
     [1] = { special_function = SF.RemoveTriggers, data = { 101974, 101975, 101970 } },
     [101974] = { special_function = SF.Trigger, data = { 1019741, 1 } },
     -- There is an issue in the script. Even if the van driver says 2 minutes, he arrives in a minute
-    [1019741] = { time = (60 + 30 + anim_delay) - 58, special_function = SF.AddTrackerIfDoesNotExist },
+    [1019741] = { time = (60 + 30 + anim_delay) - 58, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { position_by_element = 101454 } },
     [101975] = { special_function = SF.Trigger, data = { 1019751, 1 } },
-    [1019751] = { time = 30 + anim_delay, special_function = SF.AddTrackerIfDoesNotExist },
+    [1019751] = { time = 30 + anim_delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { position_by_element = 101454 } },
 
     [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", Icon.Goto }, class = TT.Warning },
 
@@ -35,7 +35,8 @@ local achievements =
             [101088] = { status = "ready", class = TT.AchievementStatus },
             [101907] = { status = "defend", special_function = SF.SetAchievementStatus },
             [101917] = { special_function = SF.SetAchievementComplete },
-            [101914] = { special_function = SF.SetAchievementFailed }
+            [101914] = { special_function = SF.SetAchievementFailed },
+            [101001] = { special_function = SF.SetAchievementFailed } -- Methlab exploded
         }
     }
 }
@@ -43,7 +44,7 @@ local other =
 {
     [100378] = EHI:AddAssaultDelay({ time = 42 + 50 + assault_delay }),
     [100380] = EHI:AddAssaultDelay({ time = 45 + 40 + assault_delay }),
-    [100707] = EHI:AddAssaultDelay({ time = assault_delay_methlab, special_function = SetTimeIfMoreThanOrCreateTracker }),
+    [100707] = EHI:AddAssaultDelay({ time = assault_delay_methlab, special_function = SetTimeIfMoreThanOrCreateTracker, trigger_times = 1 }),
     [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 
@@ -78,7 +79,6 @@ EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(id,
     else
         EHI:CheckCondition(trigger)
     end
-    EHI:UnhookTrigger(id)
 end)
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)

@@ -181,7 +181,7 @@
     "ehi_show_waypoints_present_timer_desc" : "Sets how long the waypoint will stay on your screen before it will 'move' to its destination",
 
     "ehi_show_waypoints_enemy_turret" : "Show Waypoints For Enemy Turret",
-    "ehi_show_waypoints_enemy_turret_desc" : "Shows a waypoint on the enemy turret when it is reloading or repairing",
+    "ehi_show_waypoints_enemy_turret_desc" : "Shows a waypoint on the enemy turret when it is reloading or repairing\n\nOption 'Show Enemy Turret Trackers' must be enabled in order to work",
 
     "ehi_show_waypoints_timers" : "Show Waypoints For Timers",
     "ehi_show_waypoints_timers_desc" : "Shows a waypoint on a visible timer (hacking, drilling, sawing, etc ...)\n\nOption 'Show Timers' must be enabled in order to work",

@@ -41,7 +41,7 @@ function GroupAIStateBase:load(...)
         managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 	end
     local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
-    if law1team and law1team.damage_reduction then
+    if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets sets; see GameSetup:load()
         managers.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(law1team.damage_reduction or 0)))
     end
 end
@@ -69,7 +69,9 @@ end
 local show_minion_tracker = EHI:GetOption("show_minion_tracker")
 local show_popup = EHI:GetOption("show_minion_killed_message")
 if show_minion_tracker or show_popup then
+    local callback_key = "EHIConvert"
     local show_popup_type = EHI:GetOption("show_minion_killed_message_type")
+    local game_is_running = true
     if show_popup then
         EHI:SetNotificationAlert("MINION", "ehi_popup_minion")
     end
@@ -107,10 +109,9 @@ if show_minion_tracker or show_popup then
 
     function GroupAIStateBase:EHIRemoveConvert(params, unit)
         UpdateTracker(nil, params.unit_key, 0)
-        local callback_key = "EHIConvert"
         unit:character_damage():remove_listener(callback_key)
         unit:base():remove_destroy_listener(callback_key)
-        if show_popup and params.peer_id and params.peer_id == managers.network:session():local_peer():id() and game_state_machine:verify_game_state(_G.GameStateFilters.any_ingame) then
+        if game_is_running and show_popup and params.local_peer and game_state_machine:verify_game_state(_G.GameStateFilters.any_ingame) then
             if show_popup_type == 1 then
                 managers.hud:custom_ingame_popup_text("MINION", managers.localization:text("ehi_popup_minion_killed"), "EHI_Minion")
             else
@@ -118,15 +119,17 @@ if show_minion_tracker or show_popup then
             end
         end
     end
+    EHI:AddCallback(EHI.CallbackMessage.GameRestart, function()
+        game_is_running = false
+    end)
 
-    function GroupAIStateBase:EHIAddListener(unit, peer_id)
+    function GroupAIStateBase:EHIAddListener(unit, local_peer)
         if not unit.key then
             EHI:Log("Convert does not have a 'key()' function! Aborting to avoid crashing the game.")
             return
         end
         local key = tostring(unit:key())
-        local callback_key = "EHIConvert"
-        local clbk = callback(self, self, "EHIRemoveConvert", { unit_key = key, peer_id = peer_id })
+        local clbk = callback(self, self, "EHIRemoveConvert", { unit_key = key, local_peer = local_peer })
         unit:base():add_destroy_listener(callback_key, clbk)
         unit:character_damage():add_listener(callback_key, { "death" }, clbk)
     end
@@ -136,7 +139,8 @@ if show_minion_tracker or show_popup then
 		original.convert_hostage_to_criminal(self, unit, peer_unit, ...)
 		if unit:brain()._logic_data.is_converted then
 			local peer_id = peer_unit and managers.network:session():peer_by_unit(peer_unit):id() or managers.network:session():local_peer():id()
-            self:EHIAddListener(unit, peer_id)
+            local local_peer = not peer_unit
+            self:EHIAddListener(unit, local_peer)
             UpdateTracker(unit, tostring(unit:key()), 1, peer_id)
 		end
 	end
@@ -144,7 +148,8 @@ if show_minion_tracker or show_popup then
     original.sync_converted_enemy = GroupAIStateBase.sync_converted_enemy
 	function GroupAIStateBase:sync_converted_enemy(converted_enemy, owner_peer_id, ...)
 		if self._police[converted_enemy:key()] then
-            self:EHIAddListener(converted_enemy, owner_peer_id)
+            local local_peer = (owner_peer_id or 0) == managers.network:session():local_peer():id()
+            self:EHIAddListener(converted_enemy, local_peer)
             UpdateTracker(converted_enemy, tostring(converted_enemy:key()), 1, owner_peer_id or 0)
 		end
 		return original.sync_converted_enemy(self, converted_enemy, owner_peer_id, ...)

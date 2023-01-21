@@ -2,8 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local LootDropWP = Vector3(0, -341, 253)
 local triggers = {
     [100643] = { time = 30, id = "CrowdAlert", icons = { Icon.Alarm }, class = TT.Warning },
     [100645] = { id = "CrowdAlert", special_function = SF.RemoveTracker },
@@ -11,8 +9,8 @@ local triggers = {
     [101725] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape }, -- West
     [101845] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape }, -- East
 
-    [EHI:GetInstanceElementID(100004, 6200)] = { id = EHI:GetInstanceElementID(100013, 6200), special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position = EHI:GetInstanceElementPosition(Vector3(-2950, 1750, 499.835), LootDropWP, Rotation(-180, -4.09812e-005, 3.58268e-012)) } }, -- West
-    [EHI:GetInstanceElementID(100015, 6100)] = { id = EHI:GetInstanceElementID(100013, 6100), special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position = EHI:GetInstanceElementPosition(Vector3(2950, 2400, 499.838), LootDropWP, Rotation(0, 0, -0)) } } -- East
+    [EHI:GetInstanceElementID(100004, 6200)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = EHI:GetInstanceElementID(100013, 6200) } }, -- West
+    [EHI:GetInstanceElementID(100015, 6100)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = EHI:GetInstanceElementID(100013, 6100) } } -- East
 }
 
 if EHI:IsClient() then
@@ -30,7 +28,7 @@ local achievements =
 {
     sah_9 =
     {
-        difficulty_pass = ovk_and_up,
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
             [100107] = { time = 300, class = TT.Achievement },
@@ -42,9 +40,15 @@ local achievements =
     }
 }
 
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 1 + 30 })
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 
 local DisableWaypoints = {}
@@ -73,11 +77,7 @@ EHI:DisableWaypoints(DisableWaypoints)
 local tbl =
 {
     -- Unused Grenade case
-    [400178] = { f = function(instance, id, unit_data, unit)
-        if unit:base() and unit:base().SetIgnore then
-            unit:base():SetIgnore()
-        end
-    end}
+    [400178] = { f = "IgnoreDeployable" }
 }
 for i = 4900, 5100, 100 do
     --levels/instances/unique/sah/sah_vault_door

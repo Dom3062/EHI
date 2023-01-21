@@ -5,8 +5,14 @@ end
 
 local original =
 {
+    restart_the_game = GamePlayCentralManager.restart_the_game,
     load = GamePlayCentralManager.load
 }
+
+function GamePlayCentralManager:restart_the_game(...)
+    EHI:CallCallback(EHI.CallbackMessage.GameRestart)
+    original.restart_the_game(self, ...)
+end
 
 function GamePlayCentralManager:load(data, ...)
     original.load(self, data, ...)

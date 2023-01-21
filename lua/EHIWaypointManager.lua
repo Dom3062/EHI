@@ -21,6 +21,9 @@ function EHIWaypointManager:init()
 end
 
 function EHIWaypointManager:init_finalize()
+    if not self._enabled then
+        return
+    end
     EHI:AddOnAlarmCallback(callback(self, self, "RemoveAllPagerWaypoints"))
 end
 

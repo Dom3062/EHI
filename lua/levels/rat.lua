@@ -93,7 +93,8 @@ local achievements =
             [101088] = { status = "ready", class = TT.AchievementStatus },
             [101907] = { status = "defend", special_function = SF.SetAchievementStatus },
             [101917] = { special_function = SF.SetAchievementComplete },
-            [101914] = { special_function = SF.SetAchievementFailed }
+            [101914] = { special_function = SF.SetAchievementFailed },
+            [101001] = { special_function = SF.SetAchievementFailed } -- Methlab exploded
         }
     },
     voff_5 =

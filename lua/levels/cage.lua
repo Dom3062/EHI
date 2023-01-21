@@ -16,3 +16,9 @@ local achievements =
 EHI:ParseTriggers({
     achievement = achievements
 })
+
+local DisableWaypoints = {}
+for i = 0, 4800, 300 do
+    DisableWaypoints[EHI:GetInstanceElementID(100012, i)] = true
+end
+EHI:DisableWaypoints(DisableWaypoints)

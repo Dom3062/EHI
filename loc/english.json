@@ -199,6 +199,9 @@
     "ehi_show_camera_loop" : "Show Camera Loop",
     "ehi_show_camera_loop_desc" : "Shows a tracker when a security camera is looped",
 
+    "ehi_show_enemy_turret_trackers" : "Show Enemy Turret Trackers",
+    "ehi_show_enemy_turret_trackers_desc" : "Shows a tracker when it is reloading or repairing",
+
     "ehi_show_zipline_timer" : "Show Zipline Tracker",
     "ehi_show_zipline_timer_desc" : "Shows 2 timers for zipline.\nFirst timer shows how long it takes to drop a bag/player, second timer shows zipline reset",
 
@@ -328,7 +331,7 @@
     "ehi_show_waypoints_present_timer_desc" : "Sets how long the waypoint will stay on your screen before it will 'move' to its destination",
 
     "ehi_show_waypoints_enemy_turret" : "Show Waypoints For Enemy Turret",
-    "ehi_show_waypoints_enemy_turret_desc" : "Shows a waypoint on the enemy turret when it is reloading or repairing",
+    "ehi_show_waypoints_enemy_turret_desc" : "Shows a waypoint on the enemy turret when it is reloading or repairing\n\nOption 'Show Enemy Turret Trackers' must be enabled in order to work",
 
     "ehi_show_waypoints_timers" : "Show Waypoints For Timers",
     "ehi_show_waypoints_timers_desc" : "Shows a waypoint on a visible timer (hacking, drilling, sawing, etc ...)\n\nOption 'Show Timers' must be enabled in order to work",
