@@ -187,6 +187,7 @@ local custom_levels =
 
 function GameSetup:init_finalize(...)
     original.init_finalize(self, ...)
+    EHI:CallCallback(EHI.CallbackMessage.InitFinalize)
     local level_id = Global.game_settings.level_id
     if levels[level_id] then
         local fixed_name = redirect[level_id] or level_id

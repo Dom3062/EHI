@@ -27,6 +27,12 @@ function FakeEHIManager:init(panel)
     self._tracker_alignment = EHI:GetOption("tracker_alignment")
     panel_size = panel_size_original * self._scale
     panel_offset = panel_offset_original * self._scale
+    self._horizontal = {
+        x = self._x,
+        y = self._y,
+        y_offset = 0,
+        max_icons = 4
+    }
     self:AddFakeTrackers()
 end
 
@@ -63,7 +69,12 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_pager_callback", time = math.random() * (12 - 0.5) + 0.5, icons = { "pager_icon" } })
     self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "pager_icon", { icon = "enemy", visible = false } }, class = "FakeEHIEnemyCountTracker" } )
     self:AddFakeTracker({ id = "show_laser_tracker", time = math.random() * (4 - 0.5) + 0.5, icons = { EHI.Icons.Lasers } } )
-    self:AddFakeTracker({ id = "show_assault_delay_tracker", time = math.random(30, 120), icons = { "assaultbox" } } )
+    if EHI:CombineAssaultDelayAndAssaultTime() then
+        self:AddFakeTracker({ id = "aggregate_assault_delay_and_assault_time", time = math.random(0, 240), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker" })
+    else
+        self:AddFakeTracker({ id = "show_assault_delay_tracker", time = math.random(30, 120), icons = { "assaultbox" } } )
+        self:AddFakeTracker({ id = "show_assault_time_tracker", time = math.random(0, 240), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker" } )
+    end
     self:AddFakeTracker({ id = "show_loot_counter", icons = { Icon.Loot }, class = "FakeEHIProgressTracker" } )
     self:AddFakeTracker({ id = "show_bodybags_counter", count = math.random(1, 3), icons = { "equipment_body_bag" }, class = "FakeEHICountTracker" })
     self:AddFakeTracker({ id = "show_escape_chance", icons = { { icon = Icon.Car, color = Color.red } }, math.random(100), class = "FakeEHIChanceTracker" })
@@ -139,7 +150,16 @@ end
 function FakeEHIManager:GetPos(pos)
     local x, y = self._x, self._y
     if self._tracker_alignment == 1 then -- Vertical
-        y = self._y + (pos * (panel_size + panel_offset))
+        local new_y = self:GetY(pos, true)
+        if (new_y + panel_offset + panel_size) > self._hud_panel:h() then
+            self._horizontal.y_offset = pos
+            local new_x = self._horizontal.x + self:GetTrackerSize(self._horizontal.max_icons)
+            self._horizontal.x = new_x
+            x = new_x
+        else
+            x = self._horizontal.x
+            y = new_y
+        end
     elseif pos and pos > 0 then -- Horizontal
         local tracker = self._fake_trackers[pos]
         x = tracker._panel:right() + (tracker:GetSize() - tracker._panel:w()) + panel_offset
@@ -147,8 +167,17 @@ function FakeEHIManager:GetPos(pos)
     return x, y
 end
 
-function FakeEHIManager:GetY(pos)
-    return self._y + (pos * (panel_size + panel_offset))
+function FakeEHIManager:GetY(pos, horizontal)
+    local corrected_pos = horizontal and (pos - self._horizontal.y_offset) or pos
+    return self._y + (corrected_pos * (panel_size + panel_offset))
+end
+
+function FakeEHIManager:GetTrackerSize(n_of_icons)
+    local panel_with_offset = panel_size + panel_offset
+    local gap = 5 * n_of_icons
+    local icons = 32 * n_of_icons
+    local final_size = (64 + panel_with_offset + gap + icons) * self._scale
+    return final_size
 end
 
 function FakeEHIManager:UpdateTracker(id, value)
@@ -191,6 +220,8 @@ end
 function FakeEHIManager:UpdateXOffset(x)
     local x_full, _ = managers.gui_data:safe_to_full(x, 0)
     self._x = x_full
+    self._horizontal.x = x_full
+    self._horizontal.y_offset = 0
     for i, tracker in pairs(self._fake_trackers) do
         local x_new, _ = self:GetPos(i - 1)
         tracker:SetX(x_new)
@@ -200,9 +231,12 @@ end
 function FakeEHIManager:UpdateYOffset(y)
     local _, y_full = managers.gui_data:safe_to_full(0, y)
     self._y = y_full
+    self._horizontal.x = self._x
+    self._horizontal.y = y_full
+    self._horizontal.y_offset = 0
     for i, tracker in pairs(self._fake_trackers) do
-        local _, y_new = self:GetPos(i - 1)
-        tracker:SetY(y_new)
+        local x_new, y_new = self:GetPos(i - 1)
+        tracker:SetPos(x_new, y_new)
     end
     if self._preview_text then
         self._preview_text:set_bottom(self:GetY(0) - panel_offset)
@@ -271,6 +305,9 @@ function FakeEHIManager:Redraw()
     if self._preview_text then
         self._hud_panel:remove(self._preview_text)
     end
+    self._horizontal.x = self._x
+    self._horizontal.y = self._y
+    self._horizontal.y_offset = 0
     self:AddFakeTrackers()
 end
 
@@ -529,6 +566,11 @@ function FakeEHITracker:SetY(y)
     self._panel:set_y(y)
 end
 
+function FakeEHITracker:SetPos(x, y)
+    self:SetX(x)
+    self:SetY(y)
+end
+
 function FakeEHITracker:SetTextColor(selected)
     self._text:set_color(selected and tweak_data.ehi.color.Inaccurate or Color.white)
 end
@@ -760,4 +802,16 @@ end
 function FakeEHITimerTracker:UpdateTextScale(scale)
     FakeEHITimerTracker.super.UpdateTextScale(self, scale)
     self:FitTheText(self._progress_text)
+end
+
+FakeEHIAssaultTimeTracker = class(FakeEHITracker)
+function FakeEHIAssaultTimeTracker:init(panel, params)
+    FakeEHIAssaultTimeTracker.super.init(self, panel, params)
+    if params.time <= 5 then -- Fade
+        self._icon1:set_color(BAI and BAI:GetColor("fade") or Color(255, 0, 255, 255) / 255)
+    elseif params.time >= 205 then -- Build
+        self._icon1:set_color(BAI and BAI:GetColor("build") or Color.yellow)
+    else
+        self._icon1:set_color(BAI and BAI:GetColor("sustain") or Color(255, 237, 127, 127) / 255)
+    end
 end

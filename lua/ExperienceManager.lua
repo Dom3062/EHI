@@ -1,3 +1,4 @@
+local EHI = EHI
 if EHI:CheckLoadHook("ExperienceManager") then
     return
 end
@@ -27,6 +28,7 @@ function ExperienceManager:init(...)
         level_to_stars = math.clamp(math.ceil((self:current_level() + 1) / 10), 1, 10), -- Can't call the function directly because they didn't use "self"
         in_custody = false,
         alive_players = Global.game_settings.single_player and 1 or 0,
+        level_id = Global.game_settings.level_id,
         gage_bonus = 1,
         stealth = true
     }
@@ -49,19 +51,24 @@ function ExperienceManager:init(...)
     EXPERIENCE_GAINED = managers.localization:text(gained)
     EXPERIENCE_TOTAL = managers.localization:text("ehi_popup_experience_total")
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
+    EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "SetJobData"))
 end
 
-function ExperienceManager:SetJobData(data)
-    self._xp.job_stars = data.job_stars or 1
-    self._xp.difficulty_stars = data.difficulty_stars or 0
-    self._xp.stealth_bonus = data.stealth_bonus or 0
-    self._xp.level_id = data.level_id
-    self._xp.projob_multiplier = data.projob_multiplier or 1
-    self._xp.heat = data.heat
-    self._xp.contract_difficulty_multiplier = self:get_contract_difficulty_multiplier(data.difficulty_stars)
-    self._xp.is_level_limited = self._xp.level_to_stars < data.job_stars
+function ExperienceManager:SetJobData()
+    local job = managers.job
+    local difficulty_stars = job:current_difficulty_stars()
+    self._xp.job_stars = job:current_job_stars()
+    self._xp.stealth_bonus = job:get_ghost_bonus()
+    self._xp.projob_multiplier = 1
+    if job:is_current_job_professional() then
+        self._xp.projob_multiplier = tweak_data:get_value("experience_manager", "pro_job_multiplier") or 1
+    end
+    local heat = job:get_job_heat_multipliers(job:current_job_id())
+    self._xp.heat = heat and heat ~= 0 and heat or 1
+    self._xp.contract_difficulty_multiplier = self:get_contract_difficulty_multiplier(difficulty_stars)
+    self._xp.is_level_limited = self._xp.level_to_stars < self._xp.job_stars
     if xp_format ~= 1 then
-        self._xp.difficulty_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", data.difficulty_stars) or 1
+        self._xp.difficulty_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", difficulty_stars) or 1
     end
 end
 
@@ -76,6 +83,12 @@ function ExperienceManager:SetPlayerData(data)
 	self._xp.limited_xp_bonus = multiplier
 end
 
+function ExperienceManager:SetMutatorData(data)
+    self._xp.mutator_xp_reduction = data.xp_reduction * -1
+    --self._xp.MutatorPiggyBank = data.MutatorPiggyBank
+    --self._xp.MutatorCG22 = data.MutatorCG22
+end
+
 function ExperienceManager:UpdateSkillXPMultiplier(multiplier)
     self._xp.skill_xp_multiplier = multiplier
     self:RecalculateXP()
@@ -83,12 +96,6 @@ end
 
 function ExperienceManager:RecalculateSkillXPMultiplier()
     self:UpdateSkillXPMultiplier(managers.player:get_skill_exp_multiplier(self._xp.stealth))
-end
-
-function ExperienceManager:SetMutatorData(data)
-    self._xp.mutator_xp_reduction = data.xp_reduction * -1
-    --self._xp.MutatorPiggyBank = data.MutatorPiggyBank
-    --self._xp.MutatorCG22 = data.MutatorCG22
 end
 
 function ExperienceManager:SetGagePackageBonus(bonus)
@@ -213,7 +220,7 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 	local job_stars = self._xp.job_stars
 	local num_winners = self._xp.alive_players
 	local player_stars = self._xp.level_to_stars
-	local pro_job_multiplier = self._xp.projob_multiplier
+	local pro_job_multiplier = self._xp.projob_multiplier or 1
 	local ghost_multiplier = 1 + (self._xp.stealth_bonus or 0)
 	local xp_multiplier = self._xp.contract_difficulty_multiplier
 	local contract_xp = 0

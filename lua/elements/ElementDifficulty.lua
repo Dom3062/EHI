@@ -11,10 +11,11 @@ if tweak_data.levels:get_group_ai_state() == "skirmish" then
     return
 end
 
-local function AssaultDelay(value)
-    EHI._cache.diff = value
-    managers.ehi:CallFunction("AssaultDelay", "UpdateDiff", value)
-end
+local original =
+{
+    client_on_executed = ElementDifficulty.client_on_executed,
+    on_executed = ElementDifficulty.on_executed
+}
 
 local Trigger
 if EHI:GetOption("show_difficulty_tracker") then
@@ -37,21 +38,22 @@ else
 end
 
 local function Run(value)
+    EHI._cache.diff = value
     Trigger(value)
-    AssaultDelay(value)
+    managers.ehi:CallFunction("Assault", "UpdateDiff", value)
+    managers.ehi:CallFunction("AssaultDelay", "UpdateDiff", value)
+    managers.ehi:CallFunction("AssaultTime", "UpdateDiff", value)
 end
 
-local _f_client_on_executed = ElementDifficulty.client_on_executed
 function ElementDifficulty:client_on_executed(...)
-    _f_client_on_executed(self, ...)
+    original.client_on_executed(self, ...)
     Run(self._values.difficulty)
 end
 
-local _f_on_executed = ElementDifficulty.on_executed
 function ElementDifficulty:on_executed(...)
     if not self._values.enabled then
         return
     end
     Run(self._values.difficulty)
-    _f_on_executed(self, ...)
+    original.on_executed(self, ...)
 end

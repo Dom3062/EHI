@@ -14,6 +14,6 @@ function MenuNodeMainGui:_setup_item_rows(...)
             },
             true
         )
-        EHI._cache.SaveFileCorrupted = false
+        EHI._cache.SaveFileCorrupted = nil
     end
 end

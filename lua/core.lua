@@ -42,9 +42,15 @@ _G.EHI =
     CallbackMessage =
     {
         Spawned = "PlayerSpawned",
+        -- Returns "loc" (a LocalizationManager class)
         LocLoaded = "LocalizationLoaded",
+        -- Returns "success" (a boolean value)
         MissionEnd = "MissionEnd",
-        GameRestart = "GameRestart"
+        GameRestart = "GameRestart",
+        InitManagers = "InitManagers",
+        InitFinalize = "InitFinalize",
+        OnMinionAdded = "OnMinionAdded",
+        OnMinionKilled = "OnMinionKilled"
     },
 
     OnAlarmCallback = {},
@@ -482,6 +488,48 @@ local function LoadDefaultValues(self)
     }
 end
 
+local function Load()
+    local self = EHI
+    if self._cache.loaded then
+        return
+    end
+    LoadDefaultValues(self)
+    local file = io.open(self.SettingsSaveFilePath, "r")
+    if file then
+        local table
+        local success, _ = pcall(function()
+            table = json.decode(file:read("*all"))
+        end)
+        file:close()
+        if success then
+            if table.SaveDataVer and table.SaveDataVer == self.SaveDataVer then
+                local function LoadValues(settings_table, file_table)
+                    if settings_table == nil then
+                        return
+                    end
+                    for k, v in pairs(file_table) do
+                        if settings_table[k] ~= nil then
+                            if type(v) == "table" then -- Load subtables in table and calls itself to load subtables or values in that subtable
+                                LoadValues(settings_table[k], v)
+                            else -- Load values to the table
+                                settings_table[k] = v
+                            end
+                        end
+                    end
+                end
+                LoadValues(self.settings, table)
+            else
+                self.SaveDataNotCompatible = true
+                self:Save()
+            end
+        else -- Save File got corrupted, use default values
+            self._cache.SaveFileCorrupted = true
+            self:Save() -- Resave the data
+        end
+    end
+    self._cache.loaded = true
+end
+
 local function DifficultyToIndex(difficulty)
     local difficulties = {
         "easy", -- Leftover from PD:TH
@@ -494,6 +542,11 @@ local function DifficultyToIndex(difficulty)
         "sm_wish"
     }
     return table.index_of(difficulties, difficulty) - 2
+end
+
+function EHI:Init()
+    local difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
+    self._cache.DifficultyIndex = DifficultyToIndex(difficulty)
 end
 
 ---@param difficulty number
@@ -522,21 +575,20 @@ function EHI:IsBetweenDifficulties(diff_1, diff_2)
     return self._cache.DifficultyIndex >= diff_1 and self._cache.DifficultyIndex <= diff_2
 end
 
-function EHI:Init()
-    self._cache.Difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
-    self._cache.DifficultyIndex = DifficultyToIndex(self._cache.Difficulty)
-    self._cache.Host = Network:is_server()
-    self._cache.Client = not self._cache.Host
-end
-
----@return boolean
-function EHI:IsHost()
-    return self._cache.Host
-end
-
----@return boolean
-function EHI:IsClient()
-    return self._cache.Client
+if Global.load_level then
+    local function return_true()
+        return true
+    end
+    local function return_false()
+        return false
+    end
+    if Network:is_server() then
+        EHI.IsHost = return_true
+        EHI.IsClient = return_false
+    else
+        EHI.IsHost = return_false
+        EHI.IsClient = return_true
+    end
 end
 
 ---@return boolean
@@ -559,33 +611,6 @@ function EHI:LogTraceback()
     log("[EHI] " .. debug.traceback())
 end
 
-function EHI:Load()
-    if self._cache.loaded then
-        return
-    end
-    LoadDefaultValues(self)
-    local file = io.open(self.SettingsSaveFilePath, "r")
-    if file then
-        local table
-        local success, _ = pcall(function()
-            table = json.decode(file:read("*all"))
-        end)
-        file:close()
-        if success then
-            if table.SaveDataVer and table.SaveDataVer == self.SaveDataVer then
-                self:LoadValues(self.settings, table)
-            else
-                self.SaveDataNotCompatible = true
-                self:Save()
-            end
-        else -- Save File got corrupted, use default values
-            self._cache.SaveFileCorrupted = true
-            self:Save() -- Resave the data
-        end
-    end
-    self._cache.loaded = true
-end
-
 function EHI:Save()
     self.settings.SaveDataVer = self.SaveDataVer
     self.settings.ModVersion = self.ModVersion
@@ -593,21 +618,6 @@ function EHI:Save()
     if file then
         file:write(json.encode(self.settings) or "{}")
         file:close()
-    end
-end
-
-function EHI:LoadValues(ehi_table, file_table)
-    for k, v in pairs(file_table) do -- Load subtables in table and calls the same method to load subtables or values in that subtable
-        if type(file_table[k]) == "table" and ehi_table[k] then
-            self:LoadValues(ehi_table[k], v)
-        end
-    end
-    for k, v in pairs(file_table) do
-        if type(file_table[k]) ~= "table" then
-            if ehi_table and ehi_table[k] ~= nil then -- Load values to the table
-                ehi_table[k] = v
-            end
-        end
     end
 end
 
@@ -702,6 +712,10 @@ function EHI:AssaultDelayTrackerIsEnabled()
     return self:GetOption("show_assault_delay_tracker") and tweak_data.levels:get_group_ai_state() ~= "skirmish"
 end
 
+function EHI:CombineAssaultDelayAndAssaultTime()
+    return self:GetOption("show_assault_delay_tracker") and self:GetOption("show_assault_time_tracker") and self:GetOption("aggregate_assault_delay_and_assault_time")
+end
+
 ---@param id string|number
 ---@param f function
 function EHI:AddCallback(id, f)
@@ -792,7 +806,7 @@ end
 
 ---@return boolean
 function EHI:ShowDramaTracker()
-    return self:GetOption("show_drama_tracker") and self._cache.Host
+    return self:GetOption("show_drama_tracker") and self:IsHost()
 end
 
 ---@param peer_id number
@@ -1205,7 +1219,7 @@ function EHI:CheckCondition(trigger)
 end
 
 local function GetElementTimer(self, trigger, id)
-    if self._cache.Host then
+    if self:IsHost() then
         local element = managers.mission:get_element_by_id(trigger.element)
         if element then
             local t = (element._timer or 0) + (trigger.additional_time or 0)
@@ -1569,18 +1583,17 @@ function EHI:SyncLoad()
     self.DisableOnLoad = {}
 end
 
-Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id, data)
-    if id == EHI.SyncMessages.EHISyncAddTracker then
-        local tbl = LuaNetworking:StringToTable(data)
-        EHI:AddTrackerSynced(tonumber(tbl.id), tonumber(tbl.delay))
-    end
-end)
-
 ---@param params table
 ---@return table|nil
 function EHI:AddAssaultDelay(params)
     if not self:GetOption("show_assault_delay_tracker") then
         return nil
+    end
+    local id = "AssaultDelay"
+    local class = self.Trackers.AssaultDelay
+    if self:CombineAssaultDelayAndAssaultTime() then
+        id = "Assault"
+        class = "EHIAssaultTracker"
     end
     local tbl = {}
     -- Copy every passed value to the trigger
@@ -1588,8 +1601,8 @@ function EHI:AddAssaultDelay(params)
         tbl[key] = value
     end
     tbl.time = tbl.time or 30
-    tbl.id = "AssaultDelay"
-    tbl.class = self.Trackers.AssaultDelay
+    tbl.id = id
+    tbl.class = class
     return tbl
 end
 
@@ -1716,7 +1729,7 @@ function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_al
         end
         return
     end
-    local host = self._cache.Host
+    local host = self:IsHost()
     for _, data in pairs(new_triggers) do
         -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
         if data.condition == false then
@@ -1816,7 +1829,7 @@ function EHI:DisableElementWaypoint(id)
     if not element or self._cache.ElementWaypointFunction[id] then
         return
     end
-    if self._cache.Host then
+    if self:IsHost() then
         self._cache.ElementWaypointFunction[id] = element.on_executed
         element.on_executed = HostWaypoint
     else
@@ -1831,7 +1844,7 @@ function EHI:RestoreElementWaypoint(id)
     if not (element and self._cache.ElementWaypointFunction[id]) then
         return
     end
-    if self._cache.Host then
+    if self:IsHost() then
         element.on_executed = self._cache.ElementWaypointFunction[id]
     else
         element.client_on_executed = self._cache.ElementWaypointFunction[id]
@@ -1879,7 +1892,7 @@ function EHI:ShowLootCounterNoCheck(params)
     end
     local n_offset = params.n_offset or 0
     if params.offset then
-        if self._cache.Host or params.client_from_start then
+        if self:IsHost() or params.client_from_start then
             n_offset = managers.loot:GetSecuredBagsAmount()
         else
             managers.ehi:AddFullSyncFunction(callback(self, self, "ShowLootCounterOffset", params))
@@ -2033,7 +2046,7 @@ end
 
 ---@param f function
 function EHI:AddLoadSyncFunction(f)
-    if self._cache.Host then
+    if self:IsHost() then
         return
     end
     managers.ehi:AddLoadSyncFunction(f)
@@ -2064,6 +2077,9 @@ function EHI:UpdateInstanceUnits(tbl, instance_start_index, instance_continent_i
     self:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
 end
 
+---@param tbl table
+---@param instance_start_index number
+---@param instance_continent_index? number
 function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
     local new_tbl = {}
     instance_continent_index = instance_continent_index or 100000
@@ -2128,9 +2144,7 @@ function EHI:GetKeypadResetTimer(time_override)
     end
 end
 
-EHI:Load()
-
--- Hack
+Load()
 show_achievement = EHI:ShowMissionAchievements()
 
 if EHI:GetWaypointOption("show_waypoints_only") then
@@ -2151,7 +2165,7 @@ if not EHI:GetOption("show_mission_trackers") then
     end
 
     GetElementTimer = function(self, trigger, id)
-        if self._cache.Host then
+        if self:IsHost() then
             local element = managers.mission:get_element_by_id(trigger.element)
             if element then
                 local t = (element._timer or 0) + (trigger.additional_time or 0)
@@ -2264,7 +2278,7 @@ if EHI.debug then -- For testing purposes
     end
 
     function EHI:DebugInstance(instance_name)
-        if self._cache.Client then
+        if self:IsClient() then
             self:Log("Instance debugging is only available when you are the host")
             return
         end
@@ -2310,3 +2324,10 @@ function EHI:PrintTable(tbl, ...)
         _G.PrintTable(tbl)
     end
 end
+
+Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id, data)
+    if id == EHI.SyncMessages.EHISyncAddTracker then
+        local tbl = LuaNetworking:StringToTable(data)
+        EHI:AddTrackerSynced(tonumber(tbl.id), tonumber(tbl.delay))
+    end
+end)

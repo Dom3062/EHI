@@ -180,42 +180,118 @@ if EHI:IsClient() and level_id ~= "hvh" then
     end
 end
 
-if EHI:AssaultDelayTrackerIsEnabled() then
-    dofile(EHI.LuaPath .. "trackers/EHIAssaultDelayTracker.lua")
+if EHI:CombineAssaultDelayAndAssaultTime() then
+    dofile(EHI.LuaPath .. "trackers/EHIAssaultTracker.lua")
     local SyncFunction = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation"
     local anticipation_delay = 30 -- Get it from tweak_data
     local function VerifyHostageHesitationDelay()
     end
     local function set_assault_delay(self, data)
-        self.ehi:CallFunction("AssaultDelay", "SetHostages", data.nr_hostages > 0)
+        self.ehi:CallFunction("Assault", "SetHostages", data.nr_hostages > 0)
     end
+    local is_skirmish = tweak_data.levels:get_group_ai_state() == "skirmish"
     original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
     function HUDManager:sync_start_anticipation_music(...)
         original.sync_start_anticipation_music(self, ...)
-        self.ehi:CallFunction("AssaultDelay", SyncFunction, anticipation_delay)
-        EHI:Unhook("AssaultDelay_set_control_info")
+        self.ehi:CallFunction("Assault", SyncFunction, anticipation_delay)
+        EHI:Unhook("Assault_set_control_info")
     end
     original.sync_start_assault = HUDManager.sync_start_assault
     function HUDManager:sync_start_assault(...)
         original.sync_start_assault(self, ...)
-        self.ehi:RemoveTracker("AssaultDelay")
-        EHI:Unhook("AssaultDelay_set_control_info")
+        EHI:Unhook("Assault_set_control_info")
+        if EHI._cache.EndlessAssault then
+            return
+        end
+        if self.ehi:TrackerExists("Assault") then
+            self.ehi:CallFunction("Assault", "AssaultStart", EHI._cache.diff or 0)
+        elseif (EHI._cache.diff and EHI._cache.diff > 0) or is_skirmish then
+            self.ehi:AddTracker({
+                id = "Assault",
+                assault = true,
+                diff = EHI._cache.diff or 0,
+                class = "EHIAssaultTracker"
+            })
+        end
     end
     original.sync_end_assault = HUDManager.sync_end_assault
     function HUDManager:sync_end_assault(...)
         original.sync_end_assault(self, ...)
-        if EHI._cache.diff and EHI._cache.diff > 0 then
+        if is_skirmish then
+            self.ehi:RemoveTracker("Assault")
+        elseif self.ehi:TrackerExists("Assault") then
+            self.ehi:CallFunction("Assault", "AssaultEnd", EHI._cache.diff or 0)
+        elseif EHI._cache.diff and EHI._cache.diff > 0 then
             self.ehi:AddTracker({
-                id = "AssaultDelay",
-                compute_time = true,
+                id = "Assault",
                 diff = EHI._cache.diff,
-                class = EHI.Trackers.AssaultDelay
+                class = "EHIAssaultTracker"
             })
-            EHI:HookWithID(HUDManager, "set_control_info", "EHI_AssaultDelay_set_control_info", set_assault_delay)
+        end
+        EHI._cache.EndlessAssault = nil
+        EHI:HookWithID(self, "set_control_info", "EHI_Assault_set_control_info", set_assault_delay)
+    end
+    EHI:HookWithID(HUDManager, "set_control_info", "EHI_Assault_set_control_info", set_assault_delay)
+    VerifyHostageHesitationDelay()
+else
+    if EHI:AssaultDelayTrackerIsEnabled() then
+        dofile(EHI.LuaPath .. "trackers/EHIAssaultDelayTracker.lua")
+        local SyncFunction = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation"
+        local anticipation_delay = 30 -- Get it from tweak_data
+        local function VerifyHostageHesitationDelay()
+        end
+        local function set_assault_delay(self, data)
+            self.ehi:CallFunction("AssaultDelay", "SetHostages", data.nr_hostages > 0)
+        end
+        original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
+        function HUDManager:sync_start_anticipation_music(...)
+            original.sync_start_anticipation_music(self, ...)
+            self.ehi:CallFunction("AssaultDelay", SyncFunction, anticipation_delay)
+            EHI:Unhook("AssaultDelay_set_control_info")
+        end
+        original.sync_start_assault = HUDManager.sync_start_assault
+        function HUDManager:sync_start_assault(...)
+            original.sync_start_assault(self, ...)
+            self.ehi:RemoveTracker("AssaultDelay")
+            EHI:Unhook("AssaultDelay_set_control_info")
+        end
+        original.sync_end_assault = HUDManager.sync_end_assault
+        function HUDManager:sync_end_assault(...)
+            original.sync_end_assault(self, ...)
+            if EHI._cache.diff and EHI._cache.diff > 0 then
+                self.ehi:AddTracker({
+                    id = "AssaultDelay",
+                    compute_time = true,
+                    diff = EHI._cache.diff,
+                    class = EHI.Trackers.AssaultDelay
+                })
+                EHI:HookWithID(HUDManager, "set_control_info", "EHI_AssaultDelay_set_control_info", set_assault_delay)
+            end
+        end
+        EHI:HookWithID(HUDManager, "set_control_info", "EHI_AssaultDelay_set_control_info", set_assault_delay)
+        VerifyHostageHesitationDelay()
+    end
+    if EHI:GetOption("show_assault_time_tracker") then
+        dofile(EHI.LuaPath .. "trackers/EHIAssaultTimeTracker.lua")
+        local start_original = HUDManager.sync_start_assault
+        local is_skirmish = tweak_data.levels:get_group_ai_state() == "skirmish"
+        function HUDManager:sync_start_assault(...)
+            start_original(self, ...)
+            if (EHI._cache.diff and EHI._cache.diff > 0 and not EHI._cache.EndlessAssault) or is_skirmish then
+                self.ehi:AddTracker({
+                    id = "AssaultTime",
+                    diff = EHI._cache.diff or 0,
+                    class = "EHIAssaultTimeTracker"
+                })
+            end
+        end
+        local end_original = HUDManager.sync_end_assault
+        function HUDManager:sync_end_assault(...)
+            end_original(self, ...)
+            self.ehi:RemoveTracker("AssaultTime")
+            EHI._cache.EndlessAssault = nil
         end
     end
-    EHI:HookWithID(HUDManager, "set_control_info", "EHI_AssaultDelay_set_control_info", set_assault_delay)
-    VerifyHostageHesitationDelay()
 end
 
 function HUDManager:ShowAchievementStartedPopup(id, beardlib)

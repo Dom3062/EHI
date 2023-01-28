@@ -12,7 +12,8 @@
             "callback_arguments": "show_assault_delay_tracker",
             "focus_changed_callback": "SetFocus",
             "value": "show_assault_delay_tracker",
-            "default_value": false,
+            "default_value": true,
+            "is_parent" : true,
             "ehi_ver" : 78
         },
         {

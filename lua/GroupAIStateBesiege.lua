@@ -19,7 +19,9 @@ if EHI:AssaultDelayTrackerIsEnabled() then
         original._begin_assault_task(self, ...)
         local end_t = self._task_data.assault.phase_end_t
         if end_t ~= 0 then
-            managers.ehi:CallFunction("AssaultDelay", "StartAnticipation", end_t - self._t)
+            local t = end_t - self._t
+            managers.ehi:CallFunction("AssaultDelay", "StartAnticipation", t)
+            managers.ehi:CallFunction("Assault", "StartAnticipation", t)
         end
     end
 end

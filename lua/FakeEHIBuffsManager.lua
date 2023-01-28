@@ -44,8 +44,8 @@ end
 
 function FakeEHIBuffsManager:SetScale(scale)
     self._scale = scale
-	buff_w = buff_w_original * self._scale
-    buff_h = buff_h_original * self._scale
+	buff_w = buff_w_original * scale
+    buff_h = buff_h_original * scale
 end
 
 function FakeEHIBuffsManager:AddFakeTrackers()

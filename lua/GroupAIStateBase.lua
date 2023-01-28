@@ -43,6 +43,8 @@ function GroupAIStateBase:load(...)
     local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
     if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets sets; see GameSetup:load()
         managers.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(law1team.damage_reduction or 0)))
+    elseif self._hunt_mode then -- AssaultTime is created before this is checked; see GameSetup:load()
+        managers.ehi:RemoveTracker("AssaultTime")
     end
 end
 
@@ -108,6 +110,7 @@ if show_minion_tracker or show_popup then
     end
 
     function GroupAIStateBase:EHIRemoveConvert(params, unit)
+        EHI:CallCallback(EHI.CallbackMessage.OnMinionKilled)
         UpdateTracker(nil, params.unit_key, 0)
         unit:character_damage():remove_listener(callback_key)
         unit:base():remove_destroy_listener(callback_key)
@@ -128,6 +131,7 @@ if show_minion_tracker or show_popup then
             EHI:Log("Convert does not have a 'key()' function! Aborting to avoid crashing the game.")
             return
         end
+        EHI:CallCallback(EHI.CallbackMessage.OnMinionAdded)
         local key = tostring(unit:key())
         local clbk = callback(self, self, "EHIRemoveConvert", { unit_key = key, local_peer = local_peer })
         unit:base():add_destroy_listener(callback_key, clbk)

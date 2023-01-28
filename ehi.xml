@@ -28,9 +28,9 @@
 
             <post :hook_id="experiencemanager" :script_path="ExperienceManager.lua" />
 
-            <post :hook_id="jobmanager" :script_path="JobManager.lua" />
             <post :hook_id="lootmanager" :script_path="LootManager.lua" />
 
+            <post :hook_id="mission/elementaiglobalevent" :script_path="elements/ElementAiGlobalEvent.lua" />
             <post :hook_id="mission/elementdifficulty" :script_path="elements/ElementDifficulty.lua" />
             <post :hook_id="mission/elementlasertrigger" :script_path="elements/ElementLaserTrigger.lua" />
             <post :hook_id="mission/elementspawngageassignment" :script_path="elements/ElementSpawnGageAssignment.lua" />

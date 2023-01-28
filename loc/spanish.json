@@ -197,7 +197,10 @@
     "ehi_show_timers_desc" : "Mostrar / ocultar temporizadores al hackear, taladrar, cortar, etc.",
 
     "ehi_show_camera_loop" : "Mostrar cámaras desactivadas",
-    "ehi_show_camera_loop_desc" : "Mostra / ocultar un contador al haberse desactivado temporalmente una cámara de seguridad.",
+    "ehi_show_camera_loop_desc" : "Mostrar / ocultar un contador al haberse desactivado temporalmente una cámara de seguridad.",
+	
+	"ehi_show_enemy_turret_trackers" : "Mostrar contadores para torretas enemigas",
+    "ehi_show_enemy_turret_trackers_desc" : "Mostrar / ocultar contadores cuando las torretas enemigas estén recargando o reparándose.",
 
     "ehi_show_zipline_timer" : "Mostrar contador de tirolinas",
     "ehi_show_zipline_timer_desc" : "Mostrar / ocultar 2 temporizadores para tirolinas.\nEl primero, muestra cuánto tiempo le tomará dejar caer una bolsa / jugador.\nEl segundo, muestra el tiempo de reinicio de la tirolina.",
@@ -328,7 +331,7 @@
     "ehi_show_waypoints_present_timer_desc" : "Definir cuánto tiempo se mantendrá el indicador de ruta en pantalla antes de 'moverse' a su destino.",
 
     "ehi_show_waypoints_enemy_turret" : "Mostrar indicadores de ruta para torretas enemigas",
-    "ehi_show_waypoints_enemy_turret_desc" : "Mostrar / ocultar un indicador de ruta para las torretas enemigas mientras están recargando o reparándose.\n\nOption 'Show Enemy Turret Trackers' must be enabled in order to work",
+    "ehi_show_waypoints_enemy_turret_desc" : "Mostrar / ocultar un indicador de ruta para las torretas enemigas mientras están recargando o reparándose.\n(Requiere que actives la opción 'Mostrar contadores para torretas enemigas' para funcionar)",
 
     "ehi_show_waypoints_timers" : "Mostrar indicadores de ruta para temporizadores",
     "ehi_show_waypoints_timers_desc" : "Mostrar / ocultar un indicador de ruta para los temporizadores visibles en hackeos, taladros, sierras, etc.\n(Requiere que actives la opción 'Mostrar temporizadores' para funcionar)",
