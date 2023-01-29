@@ -547,6 +547,12 @@ end
 function EHI:Init()
     local difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
     self._cache.DifficultyIndex = DifficultyToIndex(difficulty)
+    self:AddCallback(self.CallbackMessage.InitManagers, function()
+        local mutator = managers.mutators
+        if mutator:can_mutators_be_active() then
+            EHI._cache.UnlockablesAreDisabled = mutator:are_achievements_disabled()
+        end
+    end)
 end
 
 ---@param difficulty number
@@ -1623,6 +1629,19 @@ function EHI:AddPositionFromUnit(data, id, check)
         data.position_by_unit = nil
     elseif check then
         self:Log("Unit with ID " .. tostring(data.position_by_unit) .. " has not been found. Element ID to hook: " .. tostring(id))
+    end
+end
+
+---@param achievements table Table with achievements
+---@param package string Beardlib package where achievements are stored
+---@param exclude table? If the achievement table contains vanilla achievements, provide their ID so they don't get marked as from Beardlib
+function EHI:PreparseBeardlibAchievements(achievements, package, exclude)
+    exclude = exclude or {}
+    for id, data in pairs(achievements or {}) do
+        if not exclude[id] then
+            data.beardlib = true
+            data.package = package
+        end
     end
 end
 

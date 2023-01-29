@@ -29,8 +29,6 @@ local achievements =
     },
     str_speedrun =
     {
-        beardlib = true,
-        package = "street_new_achievements",
         -- Difficulty is bugged, difficulty_overkill is not OVERKILL!, it is Very Hard
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard),
         elements =
@@ -40,6 +38,7 @@ local achievements =
         }
     }
 }
+EHI:PreparseBeardlibAchievements(achievements, "street_new_achievements", { run_9 = true })
 
 EHI:ParseTriggers({
     mission = triggers,

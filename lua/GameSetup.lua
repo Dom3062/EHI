@@ -182,7 +182,8 @@ local custom_levels =
     Kozlov Mansion]]
     --Tonis2 = true, -- Triple Threat
     --dwn1 = true -- Deep Inside
-    street_new = true -- Heat Street Rework (Heat Street True Classic in-game)
+    street_new = true, -- Heat Street Rework (Heat Street True Classic in-game)
+    office_strike = true
 }
 
 function GameSetup:init_finalize(...)

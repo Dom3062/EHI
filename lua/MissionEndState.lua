@@ -11,7 +11,4 @@ function MissionEndState:at_enter(...)
     EHI:CallCallback(EHI.CallbackMessage.MissionEnd, self._success)
     original.at_enter(self, ...)
     managers.ehi:HidePanel()
-    if managers.experience.BlockXPUpdate then
-        managers.experience:BlockXPUpdate()
-    end
 end

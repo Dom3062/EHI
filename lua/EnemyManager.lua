@@ -36,19 +36,21 @@ if EHI:GetOption("show_enemy_count_show_pagers") then
             managers.ehi:CallFunction("EnemyCount", "NormalEnemyUnregistered")
         end
     end
-    EHI:AddOnAlarmCallback(function()
-        managers.ehi:CallFunction("EnemyCount", "Alarm")
-    end)
     for name, data in pairs(tweak_data.character) do
         if type(data) == "table" and data.has_alarm_pager then
             alarm_unit[name] = true
         end
     end
+    EHI:AddOnAlarmCallback(function()
+        managers.ehi:CallFunction("EnemyCount", "Alarm")
+    end)
     EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
         local enemy_data = managers.enemy._enemy_data
-        if enemy_data.nr_units == 0 or EHI:IsPlayingFromStart() then
+        local enemy_counted = managers.ehi:ReturnValue("EnemyCount", "GetEnemyCount") or -1
+        if enemy_data.nr_units == enemy_counted then
             return
         end
+        managers.ehi:CallFunction("EnemyCount", "ResetCounter")
         for _, data in pairs(enemy_data.unit_data or {}) do
             if alarm_unit[data.unit:base()._tweak_table] then
                 managers.ehi:CallFunction("EnemyCount", "AlarmEnemyRegistered")

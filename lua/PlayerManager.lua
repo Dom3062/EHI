@@ -10,15 +10,6 @@ local original =
     spawn_smoke_screen = PlayerManager.spawn_smoke_screen
 }
 
-if not EHI:IsXPTrackerDisabled() then
-    function PlayerManager:SetPlayerData()
-        local data = {}
-        data.infamy_bonus = self:get_infamy_exp_multiplier()
-        data.skill_xp_multiplier = 1 + (self:upgrade_value("player", "xp_multiplier", 1) - 1) + (self:upgrade_value("player", "passive_xp_multiplier", 1) - 1) + (self:team_upgrade_value("xp", "multiplier", 1) - 1) + (self:team_upgrade_value("xp", "stealth_multiplier", 1) - 1)
-        managers.experience:SetPlayerData(data)
-    end
-end
-
 if EHI:GetOption("show_bodybags_counter") then
     original._set_body_bags_amount = PlayerManager._set_body_bags_amount
     function PlayerManager:_set_body_bags_amount(...)

@@ -28,7 +28,6 @@ function ExperienceManager:init(...)
         level_to_stars = math.clamp(math.ceil((self:current_level() + 1) / 10), 1, 10), -- Can't call the function directly because they didn't use "self"
         in_custody = false,
         alive_players = Global.game_settings.single_player and 1 or 0,
-        level_id = Global.game_settings.level_id,
         gage_bonus = 1,
         stealth = true
     }
@@ -52,6 +51,9 @@ function ExperienceManager:init(...)
     EXPERIENCE_TOTAL = managers.localization:text("ehi_popup_experience_total")
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "SetJobData"))
+    EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "SetPlayerData"))
+    EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "SetMutatorData"))
+    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, callback(self, self, "BlockXPUpdate"))
 end
 
 function ExperienceManager:SetJobData()
@@ -72,21 +74,27 @@ function ExperienceManager:SetJobData()
     end
 end
 
-function ExperienceManager:SetPlayerData(data)
-    self._xp.infamy_bonus = data.infamy_bonus
-    self._xp.skill_xp_multiplier = data.skill_xp_multiplier
+function ExperienceManager:SetPlayerData()
+    local player = managers.player
+    self._xp.infamy_bonus = player:get_infamy_exp_multiplier()
+    self._xp.skill_xp_multiplier = 1 -- Recalculated in ExperienceManager:RecalculateSkillXPMultiplier()
 	local multiplier = tweak_data:get_value("experience_manager", "limited_bonus_multiplier") or 1
-    local level_data = self._xp.level_id and tweak_data.levels[self._xp.level_id] or {}
+    local level_data = tweak_data.levels[Global.game_settings.level_id] or {}
 	if level_data.is_christmas_heist then
 		multiplier = multiplier + (tweak_data:get_value("experience_manager", "limited_xmas_bonus_multiplier") or 1) - 1
 	end
 	self._xp.limited_xp_bonus = multiplier
+    EHI:PrintTable(self._xp)
 end
 
-function ExperienceManager:SetMutatorData(data)
-    self._xp.mutator_xp_reduction = data.xp_reduction * -1
-    --self._xp.MutatorPiggyBank = data.MutatorPiggyBank
-    --self._xp.MutatorCG22 = data.MutatorCG22
+function ExperienceManager:SetMutatorData()
+    local mutator = managers.mutators
+    if not mutator:can_mutators_be_active() then
+        return
+    end
+    self._xp.mutator_xp_reduction = mutator:get_experience_reduction() * -1
+    --self._xp.MutatorPiggyBank = mutator:is_mutator_active(MutatorPiggyBank)
+    --self._xp.MutatorCG22 = mutator:is_mutator_active(MutatorCG22)
 end
 
 function ExperienceManager:UpdateSkillXPMultiplier(multiplier)

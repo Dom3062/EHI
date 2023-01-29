@@ -1,3 +1,7 @@
+r124 (29. 01. 2023):
+Pager Tracker: Fixed an issue with stuck pager waypoints when clients answered them
+Enemy Counter: Fixed wrong enemy count after drop in
+
 r123 (28. 01. 2023):
 Attempt to fix random crashes in XP Tracker
 

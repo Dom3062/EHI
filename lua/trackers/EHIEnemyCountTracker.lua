@@ -96,3 +96,15 @@ function EHIEnemyCountTracker:AlarmEnemyPagerKilled()
     self:Update()
     self:FitTheText()
 end
+
+function EHIEnemyCountTracker:GetEnemyCount()
+    if self._alarm_count then
+        return self._count
+    end
+    return self._count + self._alarm_count
+end
+
+function EHIEnemyCountTracker:ResetCounter()
+    self._count = 0
+    self._alarm_count = 0
+end
