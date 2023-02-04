@@ -1,3 +1,6 @@
+r125 (04. 02. 2023):
+Fixed a crash when an offset is set to a doctor bag
+
 r124 (29. 01. 2023):
 Pager Tracker: Fixed an issue with stuck pager waypoints when clients answered them
 Enemy Counter: Fixed wrong enemy count after drop in
