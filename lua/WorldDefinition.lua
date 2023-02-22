@@ -22,9 +22,9 @@ function EHI:FinalizeUnits(tbl)
         if unit then
             if unit_data.f then
                 if type(unit_data.f) == "string" then
-                    wd[unit_data.f](wd, unit_data.instance, id, unit_data, unit)
+                    wd[unit_data.f](wd, id, unit_data, unit)
                 else
-                    unit_data.f(unit_data.instance, id, unit_data, unit)
+                    unit_data.f(id, unit_data, unit)
                 end
             else
                 if unit:timer_gui() and unit:timer_gui()._ehi_key then
@@ -71,6 +71,7 @@ function EHI:FinalizeUnits(tbl)
                     unit:digital_gui():Finalize()
                 end
             end
+            -- Clear configured unit from the table
             tbl[id] = nil
         end
     end
@@ -109,27 +110,27 @@ function WorldDefinition:init_done(...)
     original.init_done(self, ...)
 end
 
-function WorldDefinition:IgnoreDeployable(instance, unit_id, unit_data, unit)
+function WorldDefinition:IgnoreDeployable(unit_id, unit_data, unit)
     if unit:base() and unit:base().SetIgnore then
         unit:base():SetIgnore()
     end
 end
 
-function WorldDefinition:SetDeployableOffset(instance, unit_id, unit_data, unit)
+function WorldDefinition:SetDeployableOffset(unit_id, unit_data, unit)
     if unit:base() and unit:base().SetOffset then
         unit:base():SetOffset(unit_data.offset or 1)
     end
 end
 
-function WorldDefinition:chasC4(instance, unit_id, unit_data, unit)
+function WorldDefinition:chasC4(unit_id, unit_data, unit)
     if not unit:digital_gui()._ehi_key then
         return
     end
-    if not instance then
+    if not unit_data.instance then
         unit:digital_gui():SetIcons(unit_data.icons)
         return
     end
-    if EHI:GetBaseUnitID(unit_id, unit_data.instance_index, unit_data.continent_index) == 100054 then
+    if EHI:GetBaseUnitID(unit_id, unit_data.instance.start_index, unit_data.continent_index) == 100054 then
         unit:digital_gui():SetIcons(unit_data.icons)
     else
         unit:digital_gui():SetIgnore(true)

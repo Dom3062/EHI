@@ -54,7 +54,7 @@ EHI:DisableWaypoints(DisableWaypoints)
 
 --[[local tbl =
 {
-    [EHI:GetInstanceElementID(100239, 12900)] = { f = function(instance, unit_id, unit_data, unit)
+    [EHI:GetInstanceUnitID(100239, 12900)] = { f = function(unit_id, unit_data, unit)
         EHI:HookWithID(unit:timer_gui(), "set_jammed", "EHI_100239_12900_unjammed", function(self, jammed, ...)
             if jammed == false then
                 self:_HideWaypoint(unit_data.waypoint_id)

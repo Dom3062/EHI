@@ -9,8 +9,8 @@ local triggers = {
     [101725] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape }, -- West
     [101845] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape }, -- East
 
-    [EHI:GetInstanceElementID(100004, 6200)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = EHI:GetInstanceElementID(100013, 6200) } }, -- West
-    [EHI:GetInstanceElementID(100015, 6100)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = EHI:GetInstanceElementID(100013, 6100) } } -- East
+    [EHI:GetInstanceElementID(100004, 6200)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Heli, position_by_element = EHI:GetInstanceElementID(100013, 6200) } }, -- West
+    [EHI:GetInstanceElementID(100015, 6100)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Heli, position_by_element = EHI:GetInstanceElementID(100013, 6100) } } -- East
 }
 
 if EHI:IsClient() then
@@ -82,13 +82,13 @@ local tbl =
 for i = 4900, 5100, 100 do
     --levels/instances/unique/sah/sah_vault_door
     --units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock
-    tbl[EHI:GetInstanceElementID(100001, i)] = { icons = { Icon.Vault } }
+    tbl[EHI:GetInstanceUnitID(100001, i)] = { icons = { Icon.Vault } }
 end
 for i = 18200, 19400, 600 do
     --levels/instances/unique/sah/sah_office
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
-    tbl[EHI:GetInstanceElementID(100064, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100068, i) }
+    tbl[EHI:GetInstanceUnitID(100064, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100068, i) }
     --units/pd2_dlc_sah/props/sah_interactable_hack_computer/sah_interactable_hack_computer
-    tbl[EHI:GetInstanceElementID(100168, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100084, i) }
+    tbl[EHI:GetInstanceUnitID(100168, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100084, i) }
 end
 EHI:UpdateUnits(tbl)

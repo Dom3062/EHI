@@ -1,4 +1,4 @@
-EHIElevatorTimerTracker = class(EHITracker)
+EHIElevatorTimerTracker = class(EHIPausableTracker)
 EHIElevatorTimerTracker._forced_icons = { "pd2_door" }
 function EHIElevatorTimerTracker:init(panel, params)
     self._floors = params.floors or 26
@@ -22,13 +22,14 @@ function EHIElevatorTimerTracker:LowerFloor()
     self:SetFloors(self._floors - 1)
 end
 
-function EHIElevatorTimerTracker:SetPause(pause)
-    if pause then
-        self:RemoveTrackerFromUpdate()
-    else
-        self:AddTrackerToUpdate()
-    end
-    self:SetTextColor(pause and Color.red or Color.white)
+EHIElevatorTimerWaypoint = class(EHIPausableWaypoint)
+EHIElevatorTimerWaypoint.GetElevatorTime = EHIElevatorTimerTracker.GetElevatorTime
+EHIElevatorTimerWaypoint.SetFloors = EHIElevatorTimerTracker.SetFloors
+EHIElevatorTimerWaypoint.LowerFloor = EHIElevatorTimerTracker.LowerFloor
+function EHIElevatorTimerWaypoint:init(panel, params, parent_class)
+    self._floors = params.floors or 26
+    params.time = self:GetElevatorTime()
+    EHIElevatorTimerWaypoint.super.init(self, panel, params, parent_class)
 end
 
 local EHI = EHI
@@ -45,7 +46,7 @@ local triggers = {
     [103439] = { id = "EscapeElevator", special_function = SF.RemoveTracker },
     [102619] = { id = "EscapeElevator", special_function = LowerFloor },
 
-    [103443] = { id = "EscapeElevator", class = "EHIElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists },
+    [103443] = { id = "EscapeElevator", class = "EHIElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = EHIElevatorTimerTracker._forced_icons[1], position_by_unit = 102296, class = "EHIElevatorTimerWaypoint" } },
     [104072] = { id = "EscapeElevator", special_function = SF.UnpauseTracker },
 
     [102682] = { time = 20, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
@@ -120,6 +121,7 @@ EHI:ParseTriggers({
 EHI:RegisterCustomSpecialFunction(LowerFloor, function(id, trigger, element, enabled)
     if enabled then
         managers.ehi:CallFunction(trigger.id, "LowerFloor")
+        managers.ehi_waypoint:CallFunction(trigger.id, "LowerFloor")
     end
 end)
 EHI:RegisterCustomSpecialFunction(ShowAchievementFromStart, function(id, trigger, ...)
@@ -137,8 +139,13 @@ EHI:AddLoadSyncFunction(function(self)
                 floors = o._timer - 4,
                 class = "EHIElevatorTimerTracker"
             })
+            managers.ehi_waypoint:AddWaypoint("EscapeElevator", {
+                floors = o._timer - 4,
+                class = "EHIElevatorTimerWaypoint"
+            })
             if self:InteractionExists("circuit_breaker") or self:InteractionExists("press_call_elevator") then
-                self:CallFunction("EscapeElevator", "SetPause", true)
+                self:PauseTracker("EscapeElevator")
+                managers.ehi_waypoint:PauseWaypoint("EscapeElevator")
             end
         end
     end

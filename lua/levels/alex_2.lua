@@ -2,7 +2,6 @@ local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local assault_delay = 15 + 1 + 30
-local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {
     [104488] = EHI:AddAssaultDelay({ time = assault_delay, special_function = SF.SetTimeOrCreateTracker }),
@@ -12,10 +11,7 @@ local other =
     [1045351] = EHI:AddAssaultDelay({ time = 30, special_function = SF.SetTimeOrCreateTracker }),
     [1045352] = { special_function = SF.RemoveTriggers, data = { 104488, 104489 } },
 
-    [103696] = { special_function = SF.CustomCode, f = function()
-        if not LootCounter then
-            return
-        end
+    [103696] = EHI:AddLootCounter(function()
         local SafeTriggers =
         {
             -- gen_interactable_sec_safe_05x05 - 7
@@ -62,7 +58,7 @@ local other =
                 [101211] = SafeTriggers
             }
         })
-    end}
+    end)
 }
 if EHI:GetOption("show_escape_chance") then
     local ShowVanCrashChance = EHI:GetFreeCustomSpecialFunctionID()

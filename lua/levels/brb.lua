@@ -34,12 +34,6 @@ for _, index in ipairs({ 1900, 2400 }) do
     end
 end
 
-local DisableWaypoints = {}
-for _, index in ipairs({ 900, 1100, 1500, 3200 }) do -- brb/single_door + brb/single_door_large
-    DisableWaypoints[EHI:GetInstanceElementID(100021, index)] = true -- Defend
-    DisableWaypoints[EHI:GetInstanceElementID(100022, index)] = true -- Fix
-end
-
 local achievements =
 {
     brb_8 =
@@ -67,13 +61,12 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
-EHI:DisableWaypoints(DisableWaypoints)
 
 local tbl =
 {
     --levels/instances/unique/brb/brb_vault
     --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
-    [EHI:GetInstanceElementID(100058, 1900)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100003, 1900) },
-    [EHI:GetInstanceElementID(100058, 2400)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100003, 2400) }
+    [EHI:GetInstanceUnitID(100058, 1900)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100003, 1900) },
+    [EHI:GetInstanceUnitID(100058, 2400)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100003, 2400) }
 }
 EHI:UpdateUnits(tbl)

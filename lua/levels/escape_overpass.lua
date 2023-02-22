@@ -42,9 +42,9 @@ local achievements =
 
 local other =
 {
-    [100196] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
-    [102007] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
-    [102005] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
+    [100196] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
+    [102007] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
+    [102005] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
     [101975] = EHI:AddAssaultDelay({ time = 15 + 30, trigger_times = 1 })
 }
 

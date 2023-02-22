@@ -69,6 +69,6 @@ EHI:ShowAchievementLootCounter({
 
 local tbl =
 {
-    [EHI:GetInstanceElementID(100113, 0)] = { icons = { Icon.C4 } }
+    [EHI:GetInstanceUnitID(100113, 0)] = { icons = { Icon.C4 } }
 }
 EHI:UpdateUnits(tbl)

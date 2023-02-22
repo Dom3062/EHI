@@ -94,16 +94,16 @@ local tbl =
 {
     --cane_santa_event
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceElementID(100014, 11300)] = { ignore = true },
-    [EHI:GetInstanceElementID(100056, 11300)] = { ignore = true },
-    [EHI:GetInstanceElementID(100226, 11300)] = { ignore = true },
-    [EHI:GetInstanceElementID(100227, 11300)] = { icons = { Icon.Vault }, remove_on_pause = true, completion = true }
+    [EHI:GetInstanceUnitID(100014, 11300)] = { ignore = true },
+    [EHI:GetInstanceUnitID(100056, 11300)] = { ignore = true },
+    [EHI:GetInstanceUnitID(100226, 11300)] = { ignore = true },
+    [EHI:GetInstanceUnitID(100227, 11300)] = { icons = { Icon.Vault }, remove_on_pause = true, completion = true }
 }
 for _, index in ipairs(FireTrapIndexes) do
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
     -- OVK decided to use one timer for fire and fire recharge
 	-- This ignores them and that timer is implemented in the for loop above
-    tbl[EHI:GetInstanceElementID(100002, index)] = { ignore = true }
+    tbl[EHI:GetInstanceUnitID(100002, index)] = { ignore = true }
 end
 EHI:UpdateUnits(tbl)
 EHI:AddLoadSyncFunction(function(self)

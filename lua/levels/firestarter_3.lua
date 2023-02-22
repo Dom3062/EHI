@@ -7,9 +7,7 @@ local achievements = {}
 local other = {}
 local level_id = Global.game_settings.level_id
 if level_id == "firestarter_3" then
-    triggers = {
-        [102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money } }
-    }
+    triggers[102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money } }
     achievements.slakt_5 =
     {
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
@@ -33,9 +31,7 @@ else
         }
     })
     if EHI:GetOption("show_escape_chance") then
-        other = {
-            [103306] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
-        }
+        other[103306] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
         EHI:AddOnAlarmCallback(function(dropin)
             local start_chance = 5
             if managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3) then -- Cash or Gold
@@ -101,6 +97,7 @@ EHI:AddLoadSyncFunction(function(self)
             break
         end
     end
+    dog_haters = nil
     if count ~= 2 then
         return
     end
@@ -132,5 +129,6 @@ EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
                 data.unit:base():add_destroy_listener("EHI_" .. tostring(name_key), fail)
             end
         end
+        dog_haters = nil
     end
 end)

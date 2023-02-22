@@ -97,17 +97,14 @@ local other =
 {
     [101937] = EHI:AddAssaultDelay({ time = 10 + 1 + 40 + 30, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 } }),
 
-    [101218] = { special_function = SF.CustomCode, f = function()
-        if not LootCounter then
-            return
-        end
+    [101218] = EHI:AddLootCounter(function()
         Methbags = GetNumberOfMethBags()
         EHI:ShowLootCounterNoCheck({
             max = money + Methbags,
              -- 19 + 2 // 19 boxes of contrabant, that can spawn chemicals (up to 4); 2 cars with possible loot
             max_random = 19 + 2
         })
-    end}
+    end, LootCounter)
 }
 if LootCounter then
     -- Basement

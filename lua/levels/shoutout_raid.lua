@@ -68,6 +68,6 @@ local tbl =
 {
     --levels/instances/unique/shout_container_vault
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceElementID(100014, 2850)] = { ignore = true }
+    [EHI:GetInstanceUnitID(100014, 2850)] = { ignore = true }
 }
 EHI:UpdateUnits(tbl)

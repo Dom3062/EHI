@@ -98,7 +98,7 @@ function EHIEnemyCountTracker:AlarmEnemyPagerKilled()
 end
 
 function EHIEnemyCountTracker:GetEnemyCount()
-    if self._alarm_count then
+    if self._alarm_sounded then
         return self._count
     end
     return self._count + self._alarm_count

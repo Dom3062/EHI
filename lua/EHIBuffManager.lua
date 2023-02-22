@@ -42,6 +42,8 @@ function EHIBuffManager:init_finalize(hud)
     self._panel = hud.panel
     self:InitializeBuffs()
     self:InitializeTagTeamBuffs()
+    EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "ActivateUpdatingBuffs"))
+    EHI:AddOnCustodyCallback(callback(self, self, "RemoveAbilityCooldown"))
 end
 
 function EHIBuffManager:InitializeBuffs()

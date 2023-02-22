@@ -75,10 +75,11 @@ local triggers = {
 
     [103925] = { id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 30 + boat_anim, no = 19 + boat_anim } }
 }
+local KeypadResetTimer = EHI:GetKeypadResetTimer()
 for _, index in ipairs({ 8530, 9180, 9680 }) do
     local unit_id = EHI:GetInstanceUnitID(100279, index)
-    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id } } -- ECM Jammer
-    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + EHI:GetKeypadResetTimer(), id = "KeypadReboot", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id }, special_function = SF.SetTimeOrCreateTracker }
+    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id }, special_function = SF.SetTimeOrCreateTracker } -- ECM Jammer
+    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + KeypadResetTimer, id = "KeypadReboot", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id } }
 end
 for i = 16580, 16780, 100 do
     triggers[EHI:GetInstanceElementID(100057, i)] = { id = "ReviveVlad", special_function = SF.IncreaseChanceFromElement } -- +33%
@@ -150,35 +151,35 @@ local tbl =
 {
     --levels/instances/unique/sand/sand_computer_hackable
     --units/pd2_dlc_sand/equipment/sand_interactable_hack_computer/sand_interactable_hack_computer
-    [EHI:GetInstanceElementID(100140, 18680)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100034, 18680) },
+    [EHI:GetInstanceUnitID(100140, 18680)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100034, 18680) },
 
     --levels/instances/unique/sand/sand_swat_van_drillable
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
-    [EHI:GetInstanceElementID(100022, 15380)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100023, 15380) },
+    [EHI:GetInstanceUnitID(100022, 15380)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100023, 15380) },
 
     --levels/instances/unique/sand/sand_computer_code_display
     --units/pd2_dlc_sand/equipment/sand_interactable_rotating_code_computer/sand_interactable_rotating_code_computer
-    [EHI:GetInstanceElementID(100150, 9030)] = { remove_on_pause = true, remove_on_alarm = true },
+    [EHI:GetInstanceUnitID(100150, 9030)] = { remove_on_pause = true, remove_on_alarm = true },
 
     --levels/instances/unique/sand/sand_server_hack
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceElementID(100037, 14280)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100017, 14280) },
+    [EHI:GetInstanceUnitID(100037, 14280)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100017, 14280) },
 
     --levels/instances/unique/sand/sand_chinese_computer_hackable
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceElementID(100037, 15680)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100017, 15680) },
+    [EHI:GetInstanceUnitID(100037, 15680)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100017, 15680) },
 
     --levels/instances/unique/sand/sand_defibrillator
     --units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator
-    [EHI:GetInstanceElementID(100009, 16580)] = { icons = { Icon.Power } },
-    [EHI:GetInstanceElementID(100009, 16680)] = { icons = { Icon.Power } },
-    [EHI:GetInstanceElementID(100009, 16780)] = { icons = { Icon.Power } }
+    [EHI:GetInstanceUnitID(100009, 16580)] = { icons = { Icon.Power } },
+    [EHI:GetInstanceUnitID(100009, 16680)] = { icons = { Icon.Power } },
+    [EHI:GetInstanceUnitID(100009, 16780)] = { icons = { Icon.Power } }
 }
 if EHI:GetOption("show_waypoints") then
     local function f(instance, id, unit_data, unit)
         local trigger_id = unit_data.trigger_id
         EHI:AddWaypointToTrigger(trigger_id, { unit = unit })
-        EHI:HookWithID(unit:base(), "destroy", "EHI_" .. tostring(trigger_id) .. "_Destroy", function(...)
+        unit:unit_data():add_destroy_listener("EHIDestroy", function(...)
             managers.ehi_waypoint:RemoveWaypoint(triggers[trigger_id].id)
         end)
     end

@@ -186,11 +186,11 @@ local tbl = {}
 for i = 0, 300, 100 do
     --levels/instances/unique/red/red_hacking_computer
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    tbl[EHI:GetInstanceElementID(100000, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100018, i) }
+    tbl[EHI:GetInstanceUnitID(100000, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100018, i) }
 end
 for i = 6000, 6200, 200 do
     --levels/instances/unique/red/red_gates
     --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
-    tbl[EHI:GetInstanceElementID(100006, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100014, i) }
+    tbl[EHI:GetInstanceUnitID(100006, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100014, i) }
 end
 EHI:UpdateUnits(tbl)

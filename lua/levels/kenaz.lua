@@ -210,12 +210,13 @@ local tbl =
 {
     --levels/instances/unique/kenaz/the_drill
     --units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill
-    [EHI:GetInstanceElementID(100000, 37575)] = { icons = { Icon.Drill }, ignore_visibility = true },
-    [EHI:GetInstanceElementID(100000, 44535)] = { icons = { Icon.Drill }, ignore_visibility = true }
+    [EHI:GetInstanceUnitID(100000, 37575)] = { icons = { Icon.Drill }, ignore_visibility = true },
+    [EHI:GetInstanceUnitID(100000, 44535)] = { icons = { Icon.Drill }, ignore_visibility = true }
 }
 EHI:UpdateUnits(tbl)
 
 if EHI:IsHost() then
+    keycode_units = nil
     return
 end
 local bg = Idstring("g_top_opened"):key()
@@ -243,13 +244,21 @@ local function CheckIfCodeIsVisible(unit, color)
     end
     return nil -- Has not been interacted yet
 end
+local function Cleanup()
+    keycode_units = nil
+    codes = nil
+    bg = nil
+end
 EHI:AddLoadSyncFunction(function(self)
     if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
+        Cleanup()
         return
     end
     if EHI.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
+        Cleanup()
         return
     elseif managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
+        Cleanup()
         return
     end
     self:AddTracker({
@@ -299,4 +308,5 @@ EHI:AddLoadSyncFunction(function(self)
             end
         end
     end
+    Cleanup()
 end)

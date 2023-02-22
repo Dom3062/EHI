@@ -23,7 +23,6 @@ function VehicleDrivingExt:init(...)
 	self._ehi_all_criminals_slotmask = managers.slot:get_mask("all_criminals")
 end
 
-local _f_detect_npc_collisions = VehicleDrivingExt._detect_npc_collisions
 function VehicleDrivingExt:_detect_npc_collisions(...)
 	local vel = self._vehicle:velocity()
 	if vel:length() < 150 then
@@ -40,5 +39,5 @@ function VehicleDrivingExt:_detect_npc_collisions(...)
 			unit:character_damage():_on_car_damage_received(attacker_unit)
 		end
 	end
-    _f_detect_npc_collisions(self, ...)
+    original._detect_npc_collisions(self, ...)
 end

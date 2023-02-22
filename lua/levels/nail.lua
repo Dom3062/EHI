@@ -14,9 +14,9 @@ local tbl =
 {
     --levels/instances/unique/nail_cloaker_safe
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceElementID(100014, 5020)] = { ignore = true },
-    [EHI:GetInstanceElementID(100056, 5020)] = { ignore = true },
-    [EHI:GetInstanceElementID(100226, 5020)] = { ignore = true },
-    [EHI:GetInstanceElementID(100227, 5020)] = { icons = { Icon.Vault }, remove_on_pause = true, completion = true }
+    [EHI:GetInstanceUnitID(100014, 5020)] = { ignore = true },
+    [EHI:GetInstanceUnitID(100056, 5020)] = { ignore = true },
+    [EHI:GetInstanceUnitID(100226, 5020)] = { ignore = true },
+    [EHI:GetInstanceUnitID(100227, 5020)] = { icons = { Icon.Vault }, remove_on_pause = true, completion = true }
 }
 EHI:UpdateUnits(tbl)

@@ -9,13 +9,13 @@ local triggers = {
     [100207] = { time = 260/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled },
     [100209] = { time = 250/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled },
 
+    --310/30 anim_crash_04; Waypoint ID 100490
     [100169] = { time = 17 + 1 + 310/30, id = "PinkArrival", icons = pink_car },
     --260/30 anim_crash_02; Waypoint ID 101196
-    --310/30 anim_crash_04; Waypoint ID 100490
-    --201/30 anim_crash_05; Waypoint ID 101201
-    --284/30 anim_crash_03; Waypoint ID 101138
     [101114] = { time = 260/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker },
+    --201/30 anim_crash_05; Waypoint ID 101201
     [101127] = { time = 201/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker },
+    --284/30 anim_crash_03; Waypoint ID 101138
     [101108] = { time = 284/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker },
 
     [101105] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100490 } },
@@ -23,6 +23,12 @@ local triggers = {
     [101106] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101201 } },
     [101102] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101138 } }
 }
+if EHI:IsClient() then
+    triggers[100731] = { time = 18 + 8.5 + 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100716] = { time = 8.5 + 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100286] = { time = 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101065] = { time = 25 + 375/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
+end
 
 local achievements =
 {

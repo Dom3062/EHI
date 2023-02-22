@@ -12,7 +12,6 @@ local original =
 function IngameWaitingForRespawnState:at_enter(...)
     original.at_enter(self, ...)
     EHI:RunOnCustodyCallback(true)
-    managers.ehi_buff:RemoveAbilityCooldown()
 end
 
 function IngameWaitingForRespawnState:finish_trade(...)

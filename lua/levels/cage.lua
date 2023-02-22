@@ -5,7 +5,8 @@ local achievements =
     {
         elements =
         {
-            [100107] = { time = 240, class = EHI.Trackers.Achievement }
+            [100107] = { time = 240, class = EHI.Trackers.Achievement },
+            [101412] = { special_function = EHI.SpecialFunctions.SetAchievementComplete }
         },
         load_sync = function(self)
             self:AddTimedAchievementTracker("fort_4", 240)

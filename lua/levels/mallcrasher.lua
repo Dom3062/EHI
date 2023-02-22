@@ -96,10 +96,11 @@ local TT = EHI.Trackers
 local AddMoney = EHI:GetFreeCustomSpecialFunctionID()
 local MoneyTrigger = { id = "MallDestruction", special_function = AddMoney }
 local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
+local EscapeWP = { position_by_element = 300322 }
 local triggers =
 {
     -- Time before escape vehicle arrives
-    [300248] = { time = (OverkillOrBelow and 120 or 300) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 300322 } },
+    [300248] = { time = (OverkillOrBelow and 120 or 300) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, waypoint = deep_clone(EscapeWP) },
     -- 120: Base Delay on OVK or below
     -- 300: Base Delay on Mayhem or above
     -- 25: Escape zone activation delay
@@ -118,10 +119,10 @@ local triggers =
 }
 
 if EHI:IsClient() then
-    triggers[302287] = { time = (OverkillOrBelow and 115 or 120) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[300223] = { time = 60 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[302289] = { time = 30 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[300246] = { time = 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[302287] = { time = (OverkillOrBelow and 115 or 120) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP) }
+    triggers[300223] = { time = 60 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP) }
+    triggers[302289] = { time = 30 + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP) }
+    triggers[300246] = { time = 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP) }
 end
 
 local achievements =

@@ -103,10 +103,10 @@ local tbl =
 {
     --levels/instances/unique/chas/chas_store_computer
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceElementID(100037, 10675)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100017, 10675) },
+    [EHI:GetInstanceUnitID(100037, 10675)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100017, 10675) },
 
     --levels/instances/unique/chas/chas_vault_door
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceElementID(100065, 5950)] = { icons = { Icon.Vault }, remove_on_pause = true }
+    [EHI:GetInstanceUnitID(100065, 5950)] = { icons = { Icon.Vault }, remove_on_pause = true }
 }
 EHI:UpdateUnits(tbl)

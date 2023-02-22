@@ -36,7 +36,7 @@ function EHIAggregatedEquipmentTracker:init(panel, params)
         first_aid_kit = false,
         bodybags_bag = false
     }
-    for _, id in pairs(self._ids) do
+    for _, id in ipairs(self._ids) do
         self._amount[id] = 0
         self._placed[id] = 0
         self._deployables[id] = {}
@@ -177,8 +177,9 @@ function EHIAggregatedEquipmentTracker:UpdateText(id)
         if self._amount[id] <= 0 then
             self:RemoveText(id)
         else
-            self._time_bg_box:child(id):set_text(self:FormatDeployable(id))
-            self:FitTheTextUnique(id)
+            local text = self._time_bg_box:child(id)
+            text:set_text(self:FormatDeployable(id))
+            self:FitTheText(text)
         end
         self:AnimateBG()
     elseif not self._ignore[id] then
@@ -190,7 +191,7 @@ function EHIAggregatedEquipmentTracker:UpdateText(id)
 end
 
 function EHIAggregatedEquipmentTracker:AddText(id)
-    self._time_bg_box:text({
+    local text = self._time_bg_box:text({
         name = id,
         text = "",
         align = "center",
@@ -203,8 +204,8 @@ function EHIAggregatedEquipmentTracker:AddText(id)
     })
     self.text[id] = true
     self:SetTextSize()
-    self._time_bg_box:child(id):set_text(self:FormatDeployable(id))
-    self:FitTheTextUnique(id)
+    text:set_text(self:FormatDeployable(id))
+    self:FitTheText(text)
     self:Reorganize()
 end
 
@@ -214,19 +215,21 @@ function EHIAggregatedEquipmentTracker:RemoveText(id)
     local n = self:GetNumberOfDeployables()
     if n == 1 then
         for ID, _ in pairs(self.text) do
-            if self._time_bg_box:child(ID) then
-                self._time_bg_box:child(ID):set_font_size(self._panel:h() * self._text_scale)
-                self._time_bg_box:child(ID):set_x(0)
-                self._time_bg_box:child(ID):set_w(self._time_bg_box:w())
-                self:FitTheTextUnique(ID)
+            local text = self._time_bg_box:child(ID)
+            if text then
+                text:set_font_size(self._panel:h() * self._text_scale)
+                text:set_x(0)
+                text:set_w(self._time_bg_box:w())
+                self:FitTheText(text)
                 break
             end
         end
     elseif n % 2 == 1 then
         for i = 5, 1, -1 do
-            if self._time_bg_box:child(text_i[i]) then
-                self._time_bg_box:child(text_i[i]):set_w(self._time_bg_box:w() / 2)
-                self:FitTheTextUnique(text_i[i])
+            local text = self._time_bg_box:child(text_i[i])
+            if text then
+                text:set_w(self._time_bg_box:w() / 2)
+                self:FitTheText(text)
                 break
             end
         end
@@ -242,18 +245,20 @@ function EHIAggregatedEquipmentTracker:SetTextSize(n)
         return
     end
     for id, _ in pairs(self.text) do
-        if self._time_bg_box:child(id) then
-            self._time_bg_box:child(id):set_w(self._icon_size_scaled)
-            self:FitTheTextUnique(id)
+        local text = self._time_bg_box:child(id)
+        if text then
+            text:set_w(self._icon_size_scaled)
+            self:FitTheText(text)
         end
     end
     if n % 2 == 0 then
         return
     end
     for i = 5, 1, -1 do
-        if self._time_bg_box:child(text_i[i]) then
-            self._time_bg_box:child(text_i[i]):set_w(self._time_bg_box:w())
-            self:FitTheTextUnique(text_i[i])
+        local text = self._time_bg_box:child(text_i[i])
+        if text then
+            text:set_w(self._time_bg_box:w())
+            self:FitTheText(text)
             break
         end
     end
@@ -287,8 +292,9 @@ function EHIAggregatedEquipmentTracker:Reorganize(n)
     local half = bg_w / self._panel_size
     local pos = 0
     for id, _ in pairs(self.text) do
-        if self._time_bg_box:child(id) then
-            self._time_bg_box:child(id):set_x(half * pos)
+        local text = self._time_bg_box:child(id)
+        if text then
+            text:set_x(half * pos)
             pos = pos + 1
         end
     end
@@ -296,17 +302,4 @@ end
 
 function EHIAggregatedEquipmentTracker:GetPanelSize()
     return (self._default_panel_w * (self._panel_size / 2)) - (self._icon_gap_size_scaled * self._icon_remove)
-end
-
-function EHIAggregatedEquipmentTracker:ResetFontSizeUnique(id)
-    self._time_bg_box:child(id):set_font_size(self._panel:h() * self._text_scale)
-end
-
-function EHIAggregatedEquipmentTracker:FitTheTextUnique(id)
-    self:ResetFontSizeUnique(id)
-    local txt = self._time_bg_box:child(id)
-    local w = select(3, txt:text_rect())
-    if w > txt:w() then
-        txt:set_font_size(txt:font_size() * (txt:w() / w) * self._text_scale)
-    end
 end

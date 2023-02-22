@@ -41,7 +41,7 @@ function GroupAIStateBase:load(...)
         managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
 	end
     local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
-    if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets sets; see GameSetup:load()
+    if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets set; see GameSetup:load()
         managers.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(law1team.damage_reduction or 0)))
     elseif self._hunt_mode then -- AssaultTime is created before this is checked; see GameSetup:load()
         managers.ehi:RemoveTracker("AssaultTime")

@@ -3,11 +3,6 @@ if EHI:CheckLoadHook("GameSetup") then
     return
 end
 
-local original =
-{
-    init_finalize = GameSetup.init_finalize
-}
-
 local redirect =
 {
     branchbank = "firestarter_3",
@@ -32,6 +27,15 @@ local levels =
 {
     -- Tutorial
     short2_stage2b = true, -- Basic Mission: Loud - Plan B
+    -- Escapes
+    escape_cafe = true, -- Escape: Cafe
+    escape_cafe_day = true, -- Escape: Cafe (Day)
+    escape_overpass = true, -- Escape: Overpass; Appears to be unused
+    escape_overpass_night = true, -- Escape: Overpass (Night)
+    escape_park = true, -- Escape: Park
+    escape_park_day = true, -- Escape: Park (Day)
+    escape_street = true, -- Escape: Street
+    escape_garage = true, -- Escape: Garage
     -- Chapter 1: Just getting started
     jewelry_store = true, -- Jewelry Store
     branchbank = true, -- Branchbank: Random
@@ -65,14 +69,6 @@ local levels =
     alex_1 = true, -- Rats Day 1
     alex_2 = true, -- Rats Day 2
     alex_3 = true, -- Rats Day 3
-    escape_cafe = true, -- Escape: Cafe
-    escape_cafe_day = true, -- Escape: Cafe (Day)
-    escape_overpass = true, -- Escape: Overpass; Appears to be unused
-    escape_overpass_night = true, -- Escape: Overpass (Night)
-    escape_park = true, -- Escape: Park
-    escape_park_day = true, -- Escape: Park (Day)
-    escape_street = true, -- Escape: Street
-    escape_garage = true, -- Escape: Garage
     -- Chapter 2: The Kings of CrimeNet
     welcome_to_the_jungle_1 = true, -- Big Oil Day 1
     welcome_to_the_jungle_1_night = true, -- Big Oil Day 1 (Night)
@@ -139,7 +135,7 @@ local levels =
     -- Silkroad campaign
     mex = true, -- Border Crossing
     mex_cooking = true, -- Border Crystals
-    bex = true, -- San Martín Bank; Remove vault wp; Add "Silencioso y Codicioso" achievement
+    bex = true, -- San Martín Bank; Add "Silencioso y Codicioso" achievement
     pex = true, -- Breakfast in Tijuana
     fex = true, -- Buluc's Mansion
     -- City of Gold campaign
@@ -150,7 +146,7 @@ local levels =
     -- Texas Heat campaign
     ranc = true, -- Midland Ranch
     trai = true, -- Lost in Transit
-    third_heist_of_the_Texas_Heat_campaign = true, -- Hostile Takeover
+    corp = true, -- Hostile Takeover
     fourth_and_last_heist_of_the_Texas_Heat_campaign = true
 }
 
@@ -172,22 +168,31 @@ local custom_levels =
     -- Constantine Scores
     constantine_smackdown_lvl = true, -- Smackdown
     constantine_smackdown2_lvl = true, -- Truck Hustle
-    --On Display (Stealth only)
+    constantine_ondisplay_lvl = true, --On Display
     constantine_apartment_lvl = true, -- Concrete Jungle
     --[[Smugglers Den (Loud and Stealth)
     Aurora Club (Loud and Stealth)]]
     constantine_butcher_lvl = true, --Butchers Bay (Loud only)
-    --[[Gunrunners Clubhouse (Loud Only)
-    Precinct Raid (Loud Only)
-    Kozlov Mansion]]
+    constantine_policestation_lvl = true, --Precinct Raid (Loud Only)
+    --[[Kozlov Mansion (Loud and Stealth)
+    Blood in the Water (Loud and Stealth)
+    Gunrunners Clubhouse (Loud Only)
+    In the Crosshairs (Stealth Only)
+    Murky Airpot (Loud Only)
+    Scarlett Resort (Loud and Stealth)
+    Penthouse Crasher (Loud Only)
+    Golden Shakedown (Loud and Stealth)
+    ]]
     --Tonis2 = true, -- Triple Threat
     --dwn1 = true -- Deep Inside
     street_new = true, -- Heat Street Rework (Heat Street True Classic in-game)
-    office_strike = true
+    office_strike = true,
+    tonmapjam22l = true -- Hard Cash
 }
 
+local init_finalize = GameSetup.init_finalize
 function GameSetup:init_finalize(...)
-    original.init_finalize(self, ...)
+    init_finalize(self, ...)
     EHI:CallCallback(EHI.CallbackMessage.InitFinalize)
     local level_id = Global.game_settings.level_id
     if levels[level_id] then

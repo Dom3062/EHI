@@ -25,12 +25,7 @@ local triggers = {
     [101149] = { icons = boat_icon, special_function = GetFromCache },
     [101150] = { icons = boat_icon, special_function = GetFromCache },
 
-    [1011480] = { time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate },
-
-    [100124] = { special_function = SF.CustomCode, f = function()
-        local bags = managers.ehi:CountLootbagsOnTheGround() - 10
-        EHI:ShowLootCounter({ max = bags })
-    end}
+    [1011480] = { time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate }
 }
 if EHI:IsClient() then
     local SetTrackerAccurate = EHI:GetFreeCustomSpecialFunctionID()
@@ -60,9 +55,19 @@ local achievements =
         }
     }
 }
+
+local other =
+{
+    [100124] = EHI:AddLootCounter(function()
+        local bags = managers.ehi:CountLootbagsOnTheGround() - 10
+        EHI:ShowLootCounterNoCheck({ max = bags })
+    end)
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 }, "BoatLootDropReturn", boat_icon)
 EHI:RegisterCustomSpecialFunction(AddToCache, function(id, trigger, ...)
     EHI._cache[trigger.id] = trigger.time

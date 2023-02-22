@@ -35,14 +35,10 @@ local achievements =
     }
 }
 
-local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {
     [102622] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
-    [100107] = { special_function = SF.CustomCode, f = function()
-        if not LootCounter then
-            return
-        end
+    [100107] = EHI:AddLootCounter(function()
         local SafeTriggers =
         {
             loot =
@@ -69,7 +65,7 @@ local other =
                 [101544] = SafeTriggers
             }
         })
-    end}
+    end)
 }
 
 EHI:ParseTriggers({

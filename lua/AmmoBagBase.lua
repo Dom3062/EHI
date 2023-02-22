@@ -64,7 +64,7 @@ end
 function AmmoBagBase:SetOffset(offset)
     self._offset = offset
     if self._unit:interaction():active() and not self._ignore then
-        UpdateTracker(self._unit, self._ehi_key, self._ammo_amount - self._offset)
+        UpdateTracker(self._unit, self._ehi_key, self:GetRealAmount())
     end
 end
 
@@ -76,7 +76,7 @@ end
 function AmmoBagBase:_set_visual_stage(...)
     original._set_visual_stage(self, ...)
     if not self._ignore then
-        UpdateTracker(self._unit, self._ehi_key, self._ammo_amount - self._offset)
+        UpdateTracker(self._unit, self._ehi_key, self:GetRealAmount())
     end
 end
 

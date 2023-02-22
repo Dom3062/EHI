@@ -9,7 +9,6 @@ local debug_unit = false
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers -- Tracker Type
-local instance_index = 1
 local used_start_indexes = {}
 local instances =
 {
@@ -26,6 +25,11 @@ local instances =
     {
         [100013] = { time = 5, id = "HugeSatelliteC4Explosion", icons = { Icon.C4 } }
     },
+    ["levels/instances/unique/brb/single_door/world"] =
+    {
+        [100021] = { remove_vanilla_waypoint = true },
+        [100022] = { remove_vanilla_waypoint = true }
+    },
     ["levels/instances/unique/fex/fex_explosives/world"] =
     {
         [100008] = { time = 60, id = "fexExplosivesTimer", icons = { "equipment_timer" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
@@ -36,6 +40,7 @@ local instances =
         [100027] = { id = "sandTurretTimer", icons = { Icon.Heli, Icon.Sentry, Icon.Wait }, special_function = SF.GetElementTimerAccurate, element = 100012, sync = true }
     }
 }
+instances["levels/instances/unique/brb/single_door_large/world"] = deep_clone(instances["levels/instances/unique/brb/single_door/world"])
 
 if client then
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].time = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and 90 or 60
@@ -62,25 +67,33 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
             local instance_elements = instances[folder]
             local continent_data = managers.worlddefinition._continents[instance.continent]
             local triggers = {}
+            local waypoints = {}
             for id, trigger in pairs(instance_elements) do
                 local final_index = EHI:GetInstanceElementID(id, start_index, continent_data.base_id)
-                triggers[final_index] = deep_clone(trigger)
-                triggers[final_index].id = triggers[final_index].id .. instance_index
-                if trigger.element then
-                    triggers[final_index].element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
-                end
-                if trigger.waypoint and trigger.waypoint.position_by_element then
-                    triggers[final_index].waypoint.position_by_element = EHI:GetInstanceElementID(trigger.waypoint.position_by_element, start_index, continent_data.base_id)
-                    triggers[final_index].waypoint.position = EHI:AddPositionFromElement(triggers[final_index].waypoint, true)
-                end
-                if trigger.sync and client then
-                    EHI:AddSyncTrigger(final_index, triggers[final_index])
+                if trigger.remove_vanilla_waypoint then
+                    waypoints[final_index] = true
+                else
+                    local new_trigger = deep_clone(trigger)
+                    new_trigger.id = new_trigger.id .. start_index
+                    if trigger.element then
+                        new_trigger.element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
+                    end
+                    if trigger.waypoint and trigger.waypoint.position_by_element then
+                        new_trigger.waypoint.position_by_element = EHI:GetInstanceElementID(trigger.waypoint.position_by_element, start_index, continent_data.base_id)
+                        new_trigger.waypoint.position = EHI:AddPositionFromElement(new_trigger.waypoint, true)
+                    end
+                    if trigger.sync and client then
+                        EHI:AddSyncTrigger(final_index, new_trigger)
+                    end
+                    triggers[final_index] = new_trigger
                 end
             end
             EHI:ParseMissionTriggers(triggers)
+            if next(waypoints) then
+                EHI:DisableWaypoints(waypoints)
+            end
             used_start_indexes[start_index] = true
         end
-        instance_index = instance_index + 1
     end
     if debug_instance then
         EHI:Log("---------------SEPARATOR---------------")
@@ -98,8 +111,6 @@ function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ..
         if units[entry.unit_data.name] then
             local unit_data = deep_clone(units[entry.unit_data.name])
             unit_data.instance = instance
-            unit_data.instance_name = instance.name
-            unit_data.instance_index = instance.start_index
             unit_data.continent_index = continent_data.base_id
             if unit_data.remove_vanilla_waypoint then
                 unit_data.waypoint_id = EHI:GetInstanceElementID(unit_data.waypoint_id, instance.start_index, continent_data.base_id)
@@ -110,8 +121,8 @@ function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ..
     return instance_data
 end
 
-function CoreWorldInstanceManager:custom_create_instance(instance_name, custom_data, ...)
-    original.custom_create_instance(self, instance_name, custom_data, ...)
+function CoreWorldInstanceManager:custom_create_instance(instance_name, ...)
+    original.custom_create_instance(self, instance_name, ...)
 	local instance = self:get_instance_data_by_name(instance_name)
 	if not instance then
 		return

@@ -114,6 +114,7 @@ EHI:ShowLootCounter({
     no_sync_load = OVKorAbove
 })
 if EHI:IsHost() then
+    dah_laptop_codes = nil
     return
 end
 local bg = Idstring("g_code_screen"):key()
@@ -154,4 +155,8 @@ EHI:AddLoadSyncFunction(function(self)
             end
         end
     end
+    -- Clear memory
+    bg = nil
+    codes = nil
+    dah_laptop_codes = nil
 end)

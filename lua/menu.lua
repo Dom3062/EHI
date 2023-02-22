@@ -32,14 +32,14 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
 			["PAYDAY 2 BRAZILIAN PORTUGUESE"] = "portuguese-br",
 			--["Payday 2 Korean patch"] = "korean"
 		}
-		for _, mod in pairs(BLT and BLT.Mods and BLT.Mods:Mods() or {}) do
+		for _, mod in ipairs(BLT and BLT.Mods and BLT.Mods:Mods() or {}) do
 			language_filename = mod:IsEnabled() and LanguageKey[mod:GetName()]
 			if language_filename then
 				break
 			end
 		end
 		if not language_filename then
-			for _, filename in pairs(file.GetFiles(EHI.LocPath)) do
+			for _, filename in ipairs(file.GetFiles(EHI.LocPath)) do
 				local str = filename:match('^(.*).json$')
 				if str and Idstring(str) and Idstring(str):key() == SystemInfo:language():key() then
 					language_filename = str
@@ -57,7 +57,7 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
 		loc:load_localization_file(EHI.ModPath .. "loc/english.json", false)
 	end
 	loc:load_localization_file(EHI.ModPath .. "loc/languages.json")
-	EHI:CallCallback(EHI.CallbackMessage.LocLoaded, loc, Languages[lang] or language_filename or "english")
+	EHI:CallCallbackOnce(EHI.CallbackMessage.LocLoaded, loc, Languages[lang] or language_filename or "english")
 	LocLoaded = true
 end)
 

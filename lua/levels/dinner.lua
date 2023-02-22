@@ -62,16 +62,16 @@ if ovk_and_up then
     })
     if EHI:CanShowAchievement("farm_1") then
         local farm_1 = EHI:GetAchievementIcon("farm_1")
-        EHI:HookWithID(HUDManager, "sync_set_assault_mode", "EHI_farm_1_achievement", function(self, mode, ...)
+        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
             if mode == "phalanx" then
-                self.ehi:AddTracker({
+                managers.ehi:AddTracker({
                     id = "farm_1",
                     status = "finish",
                     icons = farm_1,
                     class = EHI.Trackers.AchievementStatus,
                 })
             else
-                self.ehi:SetAchievementFailed("farm_1")
+                managers.ehi:SetAchievementFailed("farm_1")
             end
         end)
         EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)

@@ -49,9 +49,9 @@ for i = 9794, 11794, 500 do
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
     for u = 100027, 100029, 1 do
         if u == 100029 then
-            tbl[EHI:GetInstanceElementID(u, i)] = { icons = { Icon.Vault }, completion = true }
+            tbl[EHI:GetInstanceUnitID(u, i)] = { icons = { Icon.Vault }, completion = true }
         else
-            tbl[EHI:GetInstanceElementID(u, i)] = { ignore = true }
+            tbl[EHI:GetInstanceUnitID(u, i)] = { ignore = true }
         end
     end
 end

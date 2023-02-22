@@ -76,7 +76,7 @@
             "callback_arguments": "show_bodybags_counter",
             "focus_changed_callback": "SetFocus",
             "value": "show_bodybags_counter",
-            "default_value": false,
+            "default_value": true,
             "ehi_ver" : 83
         },
         {

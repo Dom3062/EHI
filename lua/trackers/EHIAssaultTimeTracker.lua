@@ -1,14 +1,17 @@
 local EHI = EHI
 local lerp = math.lerp
 local Color = Color
+local Captain = Color(255, 255, 128, 0) / 255
 local Build = Color.yellow
 local Sustain = Color(255, 237, 127, 127) / 255
 local Fade = Color(255, 0, 255, 255) / 255
 if BAI then
+    Captain = BAI:GetRightColor("captain")
     Build = BAI:GetColor("build")
     Sustain = BAI:GetColor("sustain")
     Fade = BAI:GetColor("fade")
     BAI:AddEvent(BAI.EventList.Update, function()
+        Captain = BAI:GetRightColor("captain")
         Build = BAI:GetColor("build")
         Sustain = BAI:GetColor("sustain")
         Fade = BAI:GetColor("fade")
@@ -40,7 +43,7 @@ function EHIAssaultTimeTracker:init(panel, params)
 end
 
 function EHIAssaultTimeTracker:update(t, dt)
-    self.super.update(self, t, dt)
+    EHIAssaultTimeTracker.super.update(self, t, dt)
     if self._to_sustain_t then
         self._to_sustain_t = self._to_sustain_t - dt
         if self._to_sustain_t <= 0 then
@@ -60,7 +63,7 @@ function EHIAssaultTimeTracker:update(t, dt)
 end
 
 function EHIAssaultTimeTracker:update_cs(t, dt)
-    self.super.update(self, t, dt)
+    EHIAssaultTimeTracker.super.update(self, t, dt)
     self._assault_t = self._assault_t - dt
     if self._to_sustain_t then
         self._to_sustain_t = self._to_sustain_t - dt
@@ -172,6 +175,21 @@ function EHIAssaultTimeTracker:OnEnterSustain()
     end
 end
 
+function EHIAssaultTimeTracker:CaptainArrived()
+    self:RemoveTrackerFromUpdate()
+    self._text:stop()
+    self:SetTextColor(Color.red)
+    self:SetIconColor(Captain)
+    self._time_warning = false
+end
+
+function EHIAssaultTimeTracker:CaptainDefeated()
+    self._time = 5
+    self:SetTextColor(Color.white)
+    self:SetIconColor(Fade)
+    self:AddTrackerToUpdate()
+end
+
 function EHIAssaultTimeTracker:delete()
     if self._time <= 0 then
         self.update = self.update_negative
@@ -181,6 +199,14 @@ function EHIAssaultTimeTracker:delete()
     EHI:Unhook("AssaultTime_set_control_info")
     EHIAssaultTimeTracker.super.delete(self)
 end
+
+EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
+    if mode == "phalanx" then
+        managers.ehi:CallFunction("AssaultTime", "CaptainArrived")
+    else
+        managers.ehi:CallFunction("AssaultTime", "CaptainDefeated")
+    end
+end)
 
 local _Active = false
 local function ActivateHooks()

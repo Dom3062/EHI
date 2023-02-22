@@ -8,6 +8,7 @@ local level_id = Global.game_settings.level_id
 local original =
 {
     _setup_player_info_hud_pd2 = HUDManager._setup_player_info_hud_pd2,
+    sync_set_assault_mode = HUDManager.sync_set_assault_mode,
     destroy = HUDManager.destroy,
     mark_cheater = HUDManager.mark_cheater,
     set_disabled = HUDManager.set_disabled,
@@ -38,8 +39,22 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         buff:init_finalize(hud)
     end
     local level_tweak_data = tweak_data.levels[level_id]
-    if level_tweak_data and level_tweak_data.team_ai_off then
+    if (level_tweak_data and level_tweak_data.is_safehouse) or level_id == "safehouse" then
         return
+    end
+    if EHI:GetOption("show_captain_damage_reduction") then
+        local function f(mode)
+            if mode == "phalanx" then
+                self.ehi:AddTracker({
+                    id = "PhalanxDamageReduction",
+                    icons = { "buff_shield" },
+                    class = EHI.Trackers.Chance,
+                })
+            else
+                self.ehi:RemoveTracker("PhalanxDamageReduction")
+            end
+        end
+        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, f)
     end
     if EHI:GetOption("show_enemy_count_tracker") then
         self.ehi:AddTracker({
@@ -112,20 +127,9 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     end
 end
 
-if EHI:GetOption("show_captain_damage_reduction") then
-    original.sync_set_assault_mode = HUDManager.sync_set_assault_mode
-    function HUDManager:sync_set_assault_mode(mode, ...)
-        original.sync_set_assault_mode(self, mode, ...)
-        if mode == "phalanx" then
-            self.ehi:AddTracker({
-                id = "PhalanxDamageReduction",
-                icons = { "buff_shield" },
-                class = EHI.Trackers.Chance,
-            })
-        else
-            self.ehi:RemoveTracker("PhalanxDamageReduction")
-        end
-    end
+function HUDManager:sync_set_assault_mode(mode, ...)
+    original.sync_set_assault_mode(self, mode, ...)
+    EHI:CallCallback(EHI.CallbackMessage.AssaultModeChanged, mode)
 end
 
 if EHI:GetBuffAndOption("stamina") then

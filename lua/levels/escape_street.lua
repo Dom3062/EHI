@@ -30,8 +30,8 @@ local achievements =
 
 local other =
 {
-    [102031] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
-    [102030] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround },
+    [102031] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
+    [102030] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
     [101959] = EHI:AddAssaultDelay({ time = 10 + 30 })
 }
 

@@ -124,7 +124,23 @@ local tbl =
     [105318] = { remove_vanilla_waypoint = true, waypoint_id = 103700 },
     [105319] = { remove_vanilla_waypoint = true, waypoint_id = 103702 },
     [105320] = { remove_vanilla_waypoint = true, waypoint_id = 103704 },
-    [105321] = { remove_vanilla_waypoint = true, waypoint_id = 103705 }
+    [105321] = { remove_vanilla_waypoint = true, waypoint_id = 103705 },
+
+    --units/payday2/props/gen_prop_construction_crane/gen_prop_construction_crane_arm
+    [105111] = { f = function(id, unit_data, unit)
+        if not EHI:GetOption("show_waypoints") then
+            return
+        end
+        local t = { unit = unit }
+        EHI:AddWaypointToTrigger(104091, t)
+        EHI:AddWaypointToTrigger(104261, t)
+        EHI:AddWaypointToTrigger(104069, t)
+        unit:unit_data():add_destroy_listener("EHIDestroy", function(...)
+            managers.ehi_waypoint:RemoveWaypoint("CraneLiftUp")
+            managers.ehi_waypoint:RemoveWaypoint("CraneMoveLeft")
+            managers.ehi_waypoint:RemoveWaypoint("CraneMoveRight")
+        end)
+    end }
 }
 EHI:UpdateUnits(tbl)
 

@@ -134,7 +134,7 @@ end
 local tbl =
 {
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [102452] = { f = function(instance, unit_id, unit_data, unit)
+    [102452] = { f = function(unit_id, unit_data, unit)
         unit:digital_gui():SetRemoveOnPause(true)
         unit:digital_gui():SetWarning(true)
         if EHI:CanShowAchievement("pent_10") then

@@ -5,21 +5,24 @@ local Color = Color
 EHIInaccurateTracker = class(EHITracker)
 EHIInaccurateTracker._tracker_type = "inaccurate"
 EHIInaccurateTracker._text_color = color
+function EHIInaccurateTracker:SetTrackerAccurate(time)
+    self._text_color = Color.white
+    EHIInaccurateTracker.super.SetTrackerAccurate(self, time)
+end
 
 EHIInaccuratePausableTracker = class(EHIPausableTracker)
 EHIInaccuratePausableTracker._tracker_type = "inaccurate"
 EHIInaccuratePausableTracker._text_color = color
 function EHIInaccuratePausableTracker:SetTrackerAccurate(time)
     self._text_color = Color.white
-    self:SetTextColor()
-    self:SetTimeNoAnim(time)
+    EHIInaccuratePausableTracker.super.SetTrackerAccurate(self, time)
 end
 
 EHIInaccurateWarningTracker = class(EHIWarningTracker)
 EHIInaccurateWarningTracker._text_color = color
 function EHIInaccurateWarningTracker:AnimateWarning()
-    if self._tracker_is_accurate then
-        EHIInaccurateWarningTracker.super.AnimateWarning(self)
+    if self._tracker_type == "accurate" then
+        EHIInaccuratePausableTracker.super.AnimateWarning(self)
     else
         self._text:animate(function(o)
             while true do
@@ -36,7 +39,6 @@ function EHIInaccurateWarningTracker:AnimateWarning()
 end
 
 function EHIInaccurateWarningTracker:SetTrackerAccurate(time)
-    self._tracker_is_accurate = true
-    self:SetTextColor(Color.white)
-    self:SetTimeNoAnim(time)
+    self._text_color = Color.white
+    EHIInaccurateWarningTracker.super.SetTrackerAccurate(self, time)
 end

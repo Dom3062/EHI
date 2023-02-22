@@ -1,12 +1,13 @@
 EHIAggregatedHealthEquipmentTracker = class(EHITracker)
 EHIAggregatedHealthEquipmentTracker._update = false
+EHIAggregatedHealthEquipmentTracker._pos = { "doctor_bag", "first_aid_kit" }
 EHIAggregatedHealthEquipmentTracker._dont_show_placed = { first_aid_kit = true }
+EHIAggregatedHealthEquipmentTracker._forced_icons = { { icon = "doctor_bag", visible = false }, { icon = "first_aid_kit", visible = false } }
 function EHIAggregatedHealthEquipmentTracker:init(panel, params)
     self._amount = {}
     self._placed = {}
     self._deployables = {}
-    self._pos = params.ids
-    for _, id in pairs(params.ids) do
+    for _, id in ipairs(self._pos) do
         self._amount[id] = 0
         self._placed[id] = 0
         self._deployables[id] = {}
@@ -16,7 +17,7 @@ end
 
 function EHIAggregatedHealthEquipmentTracker:Format()
     local s = ""
-    for _, id in pairs(self._pos) do
+    for _, id in ipairs(self._pos) do
         if self._amount[id] > 0 then
             if s ~= "" then
                 s = s .. " | "

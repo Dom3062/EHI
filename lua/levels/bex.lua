@@ -10,7 +10,7 @@ local element_sync_triggers =
 local hack_start = EHI:GetInstanceElementID(100015, 20450)
 local triggers = {
     [EHI:GetInstanceElementID(100108, 35450)] = { time = 4.8, id = "SuprisePull", icons = { Icon.Wait } },
-    [103919] = { time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape },
+    [103919] = { time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape, trigger_times = 1 },
     [100840] = { time = 1 + 13, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTrackerAccurate },
 
     [101818] = { time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill, class = TT.Inaccurate },
@@ -57,6 +57,12 @@ local achievements =
         }
     }
 }
+
+local tbl =
+{
+    [100000] = { remove_vanilla_waypoint = true, waypoint_id = 100005 }
+}
+EHI:UpdateInstanceUnits(tbl, 22450)
 
 EHI:ParseTriggers({
     mission = triggers,

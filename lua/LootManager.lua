@@ -3,6 +3,21 @@ if EHI:CheckLoadHook("LootManager") then
     return
 end
 local check_types = EHI.LootCounter.CheckType
+local original =
+{
+    sync_secure_loot = LootManager.sync_secure_loot,
+    sync_load = LootManager.sync_load
+}
+
+function LootManager:sync_secure_loot(...)
+    original.sync_secure_loot(self, ...)
+    EHI:CallCallback(EHI.CallbackMessage.LootSecured, self)
+end
+
+function LootManager:sync_load(...)
+    original.sync_load(self, ...)
+    EHI:CallCallbackOnce(EHI.CallbackMessage.LootLoadSync, self)
+end
 
 function LootManager:GetSecuredBagsAmount()
     local mandatory = self:get_secured_mandatory_bags_amount()
@@ -20,7 +35,7 @@ function LootManager:GetSecuredBagsTypeAmount(t)
             end
         end
     elseif type(t) == "table" then
-        for _, carry_id in pairs(t) do
+        for _, carry_id in ipairs(t) do
             for _, data in ipairs(self._global.secured) do
                 if data.carry_id == carry_id then
                     secured = secured + 1

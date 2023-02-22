@@ -10,8 +10,6 @@ local achievements =
 {
     RC_Achieve_speedrun =
     {
-        beardlib = true,
-        package = "Rogue_Company",
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
@@ -34,6 +32,7 @@ local achievements =
         end
     }
 }
+EHI:PreparseBeardlibAchievements(achievements, "Rogue_Company")
 
 EHI:ParseTriggers({
     mission = triggers,

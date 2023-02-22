@@ -1,5 +1,6 @@
 local EHI = EHI
 EHIManager = class()
+EHIManager.GetAchievementIcon = EHI.GetAchievementIconString
 function EHIManager:init()
     self:CreateWorkspace()
     self._t = 0
@@ -39,8 +40,7 @@ end
 
 function EHIManager:init_finalize()
     managers.network:add_event_listener("EHIDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
-    EHI:AddOnAlarmCallback(callback(self, self, "RemoveStealthTrackers"))
-    EHI:AddOnAlarmCallback(callback(self, self, "DisableBodyBags"))
+    EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "Spawned"))
 end
 
@@ -163,14 +163,17 @@ function EHIManager:LoadSync()
         for _, f in ipairs(self._full_sync or {}) do
             f(self)
         end
-        return
+    else
+        for _, f in ipairs(self._load_sync or {}) do
+            f(self)
+        end
+        EHI:DelayCall("EHI_Converts_UpdatePeerColors", 2, function()
+            managers.ehi:CallFunction("Converts", "UpdatePeerColors")
+        end)
     end
-    for _, f in ipairs(self._load_sync or {}) do
-        f(self)
-    end
-    EHI:DelayCall("EHI_Converts_UpdatePeerColors", 2, function()
-        managers.ehi:CallFunction("Converts", "UpdatePeerColors")
-    end)
+    -- Clear used memory
+    self._full_sync = nil
+    self._load_sync = nil
 end
 
 function EHIManager:AddLoadSyncFunction(f)
@@ -308,14 +311,9 @@ function EHIManager:AddLaserTracker(params)
     self:AddTracker(params)
 end
 
-function EHIManager:GetAchievementIcon(id)
-    local achievement = tweak_data.achievement.visual[id]
-    return achievement and achievement.icon_id
-end
-
 function EHIManager:AddTimedAchievementTracker(id, time_max, icon)
     local t = time_max - self._t
-    if EHI:IsAchievementUnlocked(id) or t <= 0 then
+    if t <= 0 then
         return
     end
     icon = icon or self:GetAchievementIcon(id)
@@ -327,17 +325,11 @@ function EHIManager:AddTimedAchievementTracker(id, time_max, icon)
     })
 end
 
-function EHIManager:AddAchievementProgressTracker(id, max, additional_loot, remove_after_reaching_target, show_loot_counter, icon)
-    if EHI:IsAchievementUnlocked(id) then
-        if show_loot_counter then
-            self:ShowLootCounter(max, additional_loot)
-            EHI:HookLootCounter()
-        end
-        return
-    end
+function EHIManager:AddAchievementProgressTracker(id, max, progress, remove_after_reaching_target, icon)
     icon = icon or self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
+        progress = progress,
         max = max,
         icons = { icon },
         delay_popup = self._delay_popups,
@@ -347,9 +339,6 @@ function EHIManager:AddAchievementProgressTracker(id, max, additional_loot, remo
 end
 
 function EHIManager:AddAchievementStatusTracker(id, status, icon)
-    if EHI:IsAchievementUnlocked(id) then
-        return
-    end
     icon = icon or self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
@@ -360,9 +349,6 @@ function EHIManager:AddAchievementStatusTracker(id, status, icon)
 end
 
 function EHIManager:AddAchievementBagValueCounter(id, to_secure, remove_after_reaching_target, icon)
-    if EHI:IsAchievementUnlocked(id) then
-        return
-    end
     icon = icon or self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
@@ -408,7 +394,7 @@ function EHIManager:AddEscapeChanceTracker(dropin, chance, civilian_killed_multi
     civilian_killed_multiplier = civilian_killed_multiplier or 5
     self:AddTracker({
         id = "EscapeChance",
-        chance = chance + ((self:GetAndRemoveFromCache("CiviliansKilled") or 0) * civilian_killed_multiplier),
+        chance = chance + (self:GetAndRemoveFromCache("CiviliansKilled", 0) * civilian_killed_multiplier),
         icons = { { icon = EHI.Icons.Car, color = Color.red } },
         class = EHI.Trackers.Chance
     })
@@ -422,15 +408,12 @@ function EHIManager:RemoveLaser(id)
     self._stealth_trackers.lasers[id] = nil
 end
 
-function EHIManager:RemoveStealthTrackers()
+function EHIManager:SwitchToLoudMode()
     for _, trackers in pairs(self._stealth_trackers) do
         for key, _ in pairs(trackers) do
             self:RemoveTracker(key)
         end
     end
-end
-
-function EHIManager:DisableBodyBags()
     self:CallFunction("Deployables", "AddToIgnore", "bodybags_bag")
     self._deployables_ignore = { bodybags_bag = true }
 end
@@ -720,10 +703,10 @@ function EHIManager:AddToCache(id, data)
     self._cache[id] = data
 end
 
-function EHIManager:GetAndRemoveFromCache(id)
+function EHIManager:GetAndRemoveFromCache(id, default)
     local data = self._cache[id]
     self._cache[id] = nil
-    return data
+    return data or default
 end
 
 function EHIManager:AddToTradeDelayCache(peer_id, respawn_penalty, in_custody)
@@ -754,12 +737,13 @@ function EHIManager:IncreaseCachedPeerCustodyTime(peer_id, time)
     if not self._cache.TradeDelay[peer_id] then
         return
     end
+    local respawn_t = self._cache.TradeDelay[peer_id].respawn_t
+    local new_t = respawn_t + time
     if self._cache.TradeDelayShowed then
-        local respawn_t = self._cache.TradeDelay[peer_id].respawn_t
-        self:PostPeerCustodyTime(peer_id, respawn_t + time)
+        self:PostPeerCustodyTime(peer_id, new_t)
         return
     end
-    self._cache.TradeDelay[peer_id].respawn_t = self._cache.TradeDelay[peer_id].respawn_t + time
+    self._cache.TradeDelay[peer_id].respawn_t = new_t
 end
 
 function EHIManager:SetCachedPeerCustodyTime(peer_id, time)
@@ -778,15 +762,13 @@ function EHIManager:CachedPeerInCustodyExists(peer_id)
 end
 
 function EHIManager:LoadFromTradeDelayCache()
-    if not next(self._cache.TradeDelay) then
-        self._cache.TradeDelayShowed = true
-        return
-    end
-    self:AddCustodyTimeTracker()
-    for peer_id, crim in pairs(self._cache.TradeDelay) do
-        self:AddPeerCustodyTime(peer_id, crim.respawn_t)
-        if crim.in_custody then
-            self:CallFunction("CustodyTime", "SetPeerInCustody", peer_id)
+    if next(self._cache.TradeDelay) then
+        self:AddCustodyTimeTracker()
+        for peer_id, crim in pairs(self._cache.TradeDelay) do
+            self:AddPeerCustodyTime(peer_id, crim.respawn_t)
+            if crim.in_custody then
+                self:CallFunction("CustodyTime", "SetPeerInCustody", peer_id)
+            end
         end
     end
     self._cache.TradeDelayShowed = true
@@ -990,8 +972,6 @@ end
 function EHIManager:AddAggregatedHealthTracker()
     self:AddTracker({
         id = "Health",
-        ids = { "doctor_bag", "first_aid_kit" },
-        icons = { { icon = "doctor_bag", visible = false }, { icon = "first_aid_kit", visible = false } },
         class = "EHIAggregatedHealthEquipmentTracker"
     })
 end
@@ -1045,7 +1025,7 @@ function EHIManager:AddCustodyTimeTracker()
     })
 end
 
-function EHIManager:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, time)
+function EHIManager:AddCustodyTimeTrackerWithPeer(peer_id, time)
     self:AddCustodyTimeTracker()
     self:AddPeerCustodyTime(peer_id, time)
     if self._trade.normal or self._trade.ai then

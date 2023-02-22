@@ -65,10 +65,7 @@ local LootCounter = EHI:GetOption("show_loot_counter")
 local Weapons = { 100857, 103374 }
 local other =
 {
-    [101737] = { special_function = SF.CustomCode, trigger_times = 1, f = function()
-        if not LootCounter then
-            return
-        end
+    [101737] = EHI:AddLootCounter(function()
         local MayhemOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
         EHI:ShowLootCounterNoCheck({
             max = 4, -- Bomb parts 
@@ -80,7 +77,7 @@ local other =
             -- Collision is visible, less loot spawned
             managers.ehi:CallFunction("LootCounter", "DecreaseMaxRandom", 2)
         end
-    end}
+    end, LootCounter, true)
 }
 if LootCounter then
     -- Random loot in crates

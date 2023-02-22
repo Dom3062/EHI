@@ -81,10 +81,7 @@ local achievements =
 local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {
-    [101041] = { special_function = SF.CustomCode, f = function()
-        if not LootCounter then
-            return
-        end
+    [101041] = EHI:AddLootCounter(function()
         local LootTrigger = {}
         local Trigger = { max = 1, special_function = SF.IncreaseProgressMax } -- Money spawned
         for _, index in ipairs({ 580, 830, 3120, 3370, 3620, 3870 }) do
@@ -101,7 +98,7 @@ local other =
             triggers = LootTrigger,
             hook_triggers = true
         })
-    end},
+    end, LootCounter),
     [101018] = EHI:AddAssaultDelay({ time = 30, special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 } })
 }
 if LootCounter then

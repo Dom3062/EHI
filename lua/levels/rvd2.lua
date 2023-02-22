@@ -6,7 +6,7 @@ local element_sync_triggers =
     [101374] = { id = "VaultTeargas", icons = { Icon.Teargas }, hook_element = 101377 }
 }
 local triggers = {
-    [100903] = { time = 120, id = "LiquidNitrogen", icons = { "equipment_liquid_nitrogen_canister" }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1009031 } },
+    [100903] = { time = 120, id = "LiquidNitrogen", icons = { Icon.LiquidNitrogen }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1009031 } },
     [1009031] = { time = 63 + 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4 },
 
     [100699] = { time = 8 + 25 + 13, id = "ObjectiveWait", icons = { Icon.Wait } },
@@ -27,7 +27,7 @@ if EHI:IsClient() then
             managers.ehi:AddTracker({
                 id = "LiquidNitrogen",
                 time = trigger.time - 10,
-                icons = { "equipment_liquid_nitrogen_canister" }
+                icons = { Icon.LiquidNitrogen }
             })
         end
         if managers.ehi:TrackerDoesNotExist("HeliC4") then

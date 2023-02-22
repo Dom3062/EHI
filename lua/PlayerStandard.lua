@@ -20,7 +20,7 @@ local computed_duration_civilian = 4.5
 local computed_duration_security = 13.5
 local target_resense_delay = tweak_data.player.omniscience.target_resense_t or 15
 local sense_latch = false
-local function RecomputeContourDuration()
+EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
     local playermanager = managers.player
     local ContourExt = ContourExt
     local tmp = ContourExt._types
@@ -33,9 +33,7 @@ local function RecomputeContourDuration()
             computed_duration_security = tmp.fadeout_silent and (tmp.fadeout_silent * multiplier) or 13.5
         end
     end
-end
-
-EHI:AddCallback(EHI.CallbackMessage.Spawned, RecomputeContourDuration)
+end)
 
 local DoNotTrackSixthSenseInitial = not EHI:GetBuffOption("sixth_sense_initial")
 local TrackSixthSenseSubsequent = EHI:GetBuffOption("sixth_sense_refresh")

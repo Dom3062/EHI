@@ -752,7 +752,7 @@ function EHIMenu:GetMenuFromJson(path, settings_table)
             focus_changed_callback = content.focus_changed_callback,
         })
 
-        for i, item in pairs(items) do
+        for _, item in ipairs(items) do
             if item.table then
                 self:CreateOneLineItems(item, items, menu_id, settings_table)
             else
@@ -802,6 +802,9 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
     end
 
     value = settings_table[item.value]
+    if value == nil then
+        value = default_value
+    end
 
     --[[if parents ~= nil and type(parents) == "string" and VoidUI.options[parents] ~= nil then
         enabled = VoidUI.options[parents]

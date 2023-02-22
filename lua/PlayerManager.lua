@@ -83,7 +83,8 @@ if EHI:GetBuffOption("forced_friendship") then
 end
 
 local AbilityKey, AbilitySpeedUp
-function PlayerManager:EHICheckAbility()
+EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+    local self = managers.player
     local grenade = managers.blackmarket:equipped_grenade()
     if grenade == "chico_injector" then -- Kingpin
         AbilityKey = "chico_injector"
@@ -95,7 +96,7 @@ function PlayerManager:EHICheckAbility()
         if self:has_category_upgrade("player", "damage_control_auto_shrug") then
             tweak_data.ehi.buff.damage_control.x = 2 -- 128px
             managers.ehi_buff:UpdateBuffIcon("damage_control")
-            managers.ehi_buff:CallFunction("damage_control", "SetAutoShrug", managers.player:upgrade_value("player", "damage_control_auto_shrug"))
+            managers.ehi_buff:CallFunction("damage_control", "SetAutoShrug", self:upgrade_value("player", "damage_control_auto_shrug"))
         end
         self:register_message("ability_activated", "EHI_Stoic_Ability_Activated", function(ability_name)
             if ability_name == "damage_control" then
@@ -104,21 +105,18 @@ function PlayerManager:EHICheckAbility()
         end)
     elseif grenade == "tag_team" then -- Tag Team
         AbilityKey = "tag_team"
-        --AbilityIcon = TagTeamDeckIcons
     elseif grenade == "pocket_ecm_jammer" then -- Hacker
         AbilityKey = "pocket_ecm_jammer"
-        --AbilityIcon = HackerDeckIcons
-        --AbilitySpeedUp = "speed_up_pocket_ecm_jammer"
+        AbilitySpeedUp = "speed_up_pocket_ecm_jammer"
     elseif grenade == "copr_ability" then -- Leech
         AbilityKey = "copr_ability"
-        --AbilityIcon = LeechDeckIcons
-        --AbilitySpeedUp = "speed_up_copr_ability"
+        AbilitySpeedUp = "speed_up_copr_ability"
     end
     if AbilityKey then
         AbilityKey = AbilityKey .. "_cooldown"
         managers.ehi_buff._cache.Ability = AbilityKey
     end
-end
+end)
 
 original.activate_temporary_upgrade = PlayerManager.activate_temporary_upgrade
 function PlayerManager:activate_temporary_upgrade(category, upgrade, ...)

@@ -3,15 +3,15 @@ if EHI:CheckLoadHook("CivilianDamage") then
     return
 end
 
-local original =
-{
-    _unregister_from_enemy_manager = CivilianDamage._unregister_from_enemy_manager
-}
+local original = {}
 
-function CivilianDamage:_unregister_from_enemy_manager(damage_info, ...)
-    original._unregister_from_enemy_manager(self, damage_info, ...)
-    if not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
-        managers.ehi:IncreaseCivilianKilled()
+if EHI:GetOption("show_escape_chance") then
+    original._unregister_from_enemy_manager = CivilianDamage._unregister_from_enemy_manager
+    function CivilianDamage:_unregister_from_enemy_manager(damage_info, ...)
+        original._unregister_from_enemy_manager(self, damage_info, ...)
+        if not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
+            managers.ehi:IncreaseCivilianKilled()
+        end
     end
 end
 
@@ -48,7 +48,7 @@ local function AddTracker(peer_id)
             tracker:AddPeerCustodyTime(peer_id, delay)
         end
     else
-        managers.ehi:AddCustodyTimeTrackerAndAddPeerCustodyTime(peer_id, delay)
+        managers.ehi:AddCustodyTimeTrackerWithPeer(peer_id, delay)
     end
 end
 

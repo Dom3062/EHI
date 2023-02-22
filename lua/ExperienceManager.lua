@@ -7,6 +7,12 @@ if EHI:IsXPTrackerDisabled() then
     return
 end
 
+local original =
+{
+    init = ExperienceManager.init,
+    on_loot_drop_xp = ExperienceManager.on_loot_drop_xp
+}
+
 local BaseXP = 0
 local TotalXP = 0
 local OldTotalXP = 0
@@ -19,9 +25,8 @@ if EHI:IsOneXPElementHeist(Global.game_settings.level_id) and xp_panel == 2 then
     xp_panel = 1 -- Force one XP panel when the heist gives you the XP at the escape zone -> less screen clutter
 end
 
-local _f_init = ExperienceManager.init
 function ExperienceManager:init(...)
-    _f_init(self, ...)
+    original.init(self, ...)
     self._xp =
     {
         mutator_xp_reduction = 0,
@@ -29,7 +34,8 @@ function ExperienceManager:init(...)
         in_custody = false,
         alive_players = Global.game_settings.single_player and 1 or 0,
         gage_bonus = 1,
-        stealth = true
+        stealth = true,
+        bonus_xp = 0
     }
     if xp_format == 3 then -- Multiply
         local function f()
@@ -53,10 +59,9 @@ function ExperienceManager:init(...)
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "SetJobData"))
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "SetPlayerData"))
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "SetMutatorData"))
-    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, callback(self, self, "BlockXPUpdate"))
 end
 
-function ExperienceManager:SetJobData()
+function ExperienceManager:SetJobData(managers)
     local job = managers.job
     local difficulty_stars = job:current_difficulty_stars()
     self._xp.job_stars = job:current_job_stars()
@@ -74,7 +79,7 @@ function ExperienceManager:SetJobData()
     end
 end
 
-function ExperienceManager:SetPlayerData()
+function ExperienceManager:SetPlayerData(managers)
     local player = managers.player
     self._xp.infamy_bonus = player:get_infamy_exp_multiplier()
     self._xp.skill_xp_multiplier = 1 -- Recalculated in ExperienceManager:RecalculateSkillXPMultiplier()
@@ -84,10 +89,9 @@ function ExperienceManager:SetPlayerData()
 		multiplier = multiplier + (tweak_data:get_value("experience_manager", "limited_xmas_bonus_multiplier") or 1) - 1
 	end
 	self._xp.limited_xp_bonus = multiplier
-    EHI:PrintTable(self._xp)
 end
 
-function ExperienceManager:SetMutatorData()
+function ExperienceManager:SetMutatorData(managers)
     local mutator = managers.mutators
     if not mutator:can_mutators_be_active() then
         return
@@ -295,11 +299,12 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
     total_xp = total_xp + extra_bonus_dissect
 	local bonus_mutators_dissect = total_xp * self._xp.mutator_xp_reduction
 	total_xp = total_xp + bonus_mutators_dissect
+    total_xp = total_xp + self._xp.bonus_xp
 	return total_xp
 end
 
 function ExperienceManager:RecalculateXP()
-    if BaseXP == 0 or self._xp_update_blocked then
+    if BaseXP == 0 then
         return
     end
     if xp_format == 3 then
@@ -311,10 +316,6 @@ function ExperienceManager:RecalculateXP()
     end
 end
 
-function ExperienceManager:BlockXPUpdate()
-    self._xp_update_blocked = true
-end
-
 function ExperienceManager:SetPiggyBankExplodedLevel(level)
     self._xp.pda9_event_exploded_level = level
     self:RecalculateXP()
@@ -322,5 +323,15 @@ end
 
 function ExperienceManager:SetCG22EventXPCollected(xp)
     self._xp.cg22_xp_collected = xp
+    self:RecalculateXP()
+end
+
+function ExperienceManager:on_loot_drop_xp(value_id, ...)
+    original.on_loot_drop_xp(self, value_id, ...)
+	local amount = tweak_data:get_value("experience_manager", "loot_drop_value", value_id) or 0
+    if amount <= 0 then
+        return
+    end
+    self._xp.bonus_xp = self._xp.bonus_xp + amount
     self:RecalculateXP()
 end

@@ -17,8 +17,6 @@ local achievements =
 {
     hunter_party =
     {
-        beardlib = true,
-        package = "hunter_all",
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
@@ -27,6 +25,7 @@ local achievements =
         }
     }
 }
+EHI:PreparseBeardlibAchievements(achievements, "hunter_all")
 
 EHI:ParseTriggers({
     mission = triggers,

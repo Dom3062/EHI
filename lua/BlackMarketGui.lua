@@ -85,8 +85,9 @@ local function FormatDOTData(dot_data, variant)
     if dot_tick_period > 0 then
         str = string.format("%s\n>> %s", str, string.format(strs.dot_tick_period, tostring(dot_tick_period)))
     end
-    local dot_trigger_times = math.floor(dot_length / (dot_tick_period == 0 and 1 or dot_tick_period))
-    local remainder = math.fmod(dot_length, dot_tick_period == 0 and 1 or dot_tick_period)
+    local divider = dot_tick_period == 0 and 1 or dot_tick_period
+    local dot_trigger_times = math.floor(dot_length / divider)
+    local remainder = math.fmod(dot_length, divider)
     if remainder > 0 then -- Incendiary Grenade for some reason triggers 3 times and not 4 times, most likely due to grace period and fire dot counter in FireManager
         dot_trigger_times = dot_trigger_times - 1
     end

@@ -24,7 +24,7 @@ local triggers = {
     [102318] = { id = "Van", run = { time = 60 + 60 + 30 + 15 + anim_delay } },
     [102319] = { id = "Van", run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay } },
     [101001] = { special_function = SF.Trigger, data = { 1010011, 1010012 } },
-    [1010011] = { special_function = SF.RemoveTrackers, data = { "CookChance", "VanStayDelay" } },
+    [1010011] = { special_function = SF.RemoveTrackers, data = { "CookChance", "VanStayDelay", "HeliMeth" } },
     [1010012] = { special_function = SF.RemoveTriggers, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238 } },
 
     [102383] = { id = "CookDelay", run = { time = 2 + 5 } },

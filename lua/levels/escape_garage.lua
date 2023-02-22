@@ -29,7 +29,7 @@ local achievements =
 
 local other =
 {
-    [102414] = { special_function = SF.CustomCode, f = tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround }
+    [102414] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround)
 }
 
 EHI:ParseTriggers({

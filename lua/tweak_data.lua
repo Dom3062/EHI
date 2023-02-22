@@ -564,7 +564,7 @@ tweak_data.ehi =
             if max == 0 then
                 return
             end
-            EHI:ShowLootCounter({ max = max })
+            EHI:ShowLootCounterNoCheck({ max = max })
         end,
         ---@param weapons table
         GetNumberOfVisibleWeapons = function(weapons)
@@ -655,4 +655,5 @@ do
     text_rect_blimp[3] = -text_rect_blimp[3] -- Flip the image so it will face correctly
     tweak_data.ehi.icons.blimp = { texture = path, texture_rect = text_rect_blimp }
     tweak_data.ehi.icons.heli = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.kenaz_ace_pilot.icon) }
+    tweak_data.hud_icons.EHI_Heli = tweak_data.ehi.icons.heli
 end

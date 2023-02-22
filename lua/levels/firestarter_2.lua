@@ -30,14 +30,10 @@ local MissionDoorIndex =
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
 local Weapons = { 101473, 102717, 102718, 102720 }
 local OtherLoot = { 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }
-local LootCounter = EHI:GetOption("show_loot_counter")
 local FilterIsOk = EHI:GetFreeCustomSpecialFunctionID()
 local other =
 {
-    [107124] = { special_function = SF.CustomCode, f = function()
-        if not LootCounter then
-            return
-        end
+    [107124] = EHI:AddLootCounter(function()
         local ef = tweak_data.ehi.functions
         local max = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 2 or 1
         local goat = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) and 1 or 0
@@ -55,7 +51,7 @@ local other =
             offset = true,
             client_from_start = true
         })
-    end},
+    end),
 
     [104618] = EHI:AddAssaultDelay({ time = 30 + 1 + 5 + 30 + 30 })
 }

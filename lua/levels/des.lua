@@ -121,7 +121,7 @@ local tbl =
 
     --levels/instances/unique/des/des_drill
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
-    [EHI:GetInstanceElementID(100030, 21000)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100009, 21000) }
+    [EHI:GetInstanceUnitID(100030, 21000)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100009, 21000) }
 }
 EHI:UpdateUnits(tbl)
 EHI:ShowLootCounter({

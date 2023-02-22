@@ -58,14 +58,11 @@ end
 local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {
-    [100043] = { special_function = SF.CustomCode, f = function()
-        if not LootCounter then
-            return
-        end
+    [100043] = EHI:AddLootCounter(function()
         --[[if EHI:IsHost() then
         else
         end]]
-    end}
+    end, LootCounter)
 }
 if LootCounter then
 end

@@ -12,7 +12,6 @@ _G.EHI =
     _sync_triggers = {},
 
     HookOnLoad = {},
-    DisableOnLoad = {},
 
     LootCounter =
     {
@@ -38,24 +37,27 @@ _G.EHI =
     },
 
     Callback = {},
-
     CallbackMessage =
     {
         Spawned = "PlayerSpawned",
-        -- Returns "loc" (a LocalizationManager class)
+        -- Provides "loc" (a LocalizationManager class)
         LocLoaded = "LocalizationLoaded",
-        -- Returns "success" (a boolean value)
+        -- Provides "success" (a boolean value)
         MissionEnd = "MissionEnd",
         GameRestart = "GameRestart",
+        -- Provides "self" (a LootManager class)
+        LootSecured = "LootSecured",
+        -- Provides "managers" (a global table with all managers)
         InitManagers = "InitManagers",
         InitFinalize = "InitFinalize",
+        -- Provides "self" (a LootManager class)
+        LootLoadSync = "LootLoadSync",
         OnMinionAdded = "OnMinionAdded",
-        OnMinionKilled = "OnMinionKilled"
+        OnMinionKilled = "OnMinionKilled",
+        -- Provides "mode" (a string value)
+        AssaultModeChanged = "AssaultModeChanged",
     },
 
-    OnAlarmCallback = {},
-    OnCustodyCallback = {},
-    AchievementCounter = {},
     KillCounter = {},
 
     _base_delay = {},
@@ -167,6 +169,7 @@ _G.EHI =
         Goto = "pd2_goto",
         Pager = "pagers_used",
         Train = "C_Bain_H_TransportVarious_ButWait",
+        LiquidNitrogen = "equipment_liquid_nitrogen_canister",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
@@ -181,6 +184,11 @@ _G.EHI =
         HeliWait = { "heli", "pd2_escape", "pd2_lootdrop", "faster" },
         BoatEscape = { "boat", "pd2_escape", "pd2_lootdrop" },
         BoatEscapeNoLoot = { "boat", "pd2_escape" }
+    },
+
+    WaypointIconRedirect =
+    {
+        heli = "EHI_Heli"
     },
 
     Trackers =
@@ -390,7 +398,7 @@ local function LoadDefaultValues(self)
         show_loot_counter = true,
         show_all_loot_secured_popup = true,
         variable_random_loot_format = 3, -- 1 = Max-(Max+Random)?; 2 = MaxRandom?; 3 = Max+Random?
-        show_bodybags_counter = false,
+        show_bodybags_counter = true,
         show_escape_chance = true,
 
         -- Waypoints
@@ -547,10 +555,14 @@ end
 function EHI:Init()
     local difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
     self._cache.DifficultyIndex = DifficultyToIndex(difficulty)
-    self:AddCallback(self.CallbackMessage.InitManagers, function()
+    self:AddCallback(self.CallbackMessage.InitManagers, function(managers)
         local mutator = managers.mutators
         if mutator:can_mutators_be_active() then
             EHI._cache.UnlockablesAreDisabled = mutator:are_achievements_disabled()
+        end
+        local level = Global.game_settings.level_id
+        if level == "Enemy_Spawner" or level == "enemy_spawner2" or level == "modders_devmap" then -- These 3 maps disable achievements
+            EHI._cache.UnlockablesAreDisabled = true
         end
     end)
 end
@@ -737,29 +749,32 @@ function EHI:CallCallback(id, ...)
     end
 end
 
+---Calls all callbacks, after that they are deleted from memory
+---@param id string|number
+---@param ... any
+function EHI:CallCallbackOnce(id, ...)
+    self:CallCallback(id, ...)
+    self.Callback[id] = nil
+end
+
 ---@param f function
 function EHI:AddOnAlarmCallback(f)
-    self.OnAlarmCallback[#self.OnAlarmCallback + 1] = f
+    self:AddCallback("Alarm", f)
 end
 
 ---@param dropin boolean
 function EHI:RunOnAlarmCallbacks(dropin)
-    for _, callback in ipairs(self.OnAlarmCallback) do
-        callback(dropin)
-    end
-    self.OnAlarmCallback = {}
+    self:CallCallbackOnce("Alarm", dropin)
 end
 
 ---@param f function
 function EHI:AddOnCustodyCallback(f)
-    self.OnCustodyCallback[#self.OnCustodyCallback + 1] = f
+    self:AddCallback("Custody", f)
 end
 
 ---@param custody_state boolean
 function EHI:RunOnCustodyCallback(custody_state)
-    for _, callback in ipairs(self.OnCustodyCallback) do
-        callback(custody_state)
-    end
+    self:CallCallback("Custody", custody_state)
 end
 
 ---@param object table
@@ -1583,10 +1598,10 @@ function EHI:SyncLoad()
         end
     end
     self:HookElements(self.HookOnLoad)
-    self.HookOnLoad = {}
+    self.HookOnLoad = nil
     self:DisableWaypoints(self.DisableOnLoad)
     self:DisableWaypointsOnInit()
-    self.DisableOnLoad = {}
+    self.DisableOnLoad = nil
 end
 
 ---@param params table
@@ -1609,6 +1624,27 @@ function EHI:AddAssaultDelay(params)
     tbl.time = tbl.time or 30
     tbl.id = id
     tbl.class = class
+    return tbl
+end
+
+---@param f function Loot counter function
+---@param check any? Boolean value of option 'show_loot_counter'
+---@param trigger_once boolean? Should the trigger run once?
+---@return table|nil
+function EHI:AddLootCounter(f, check, trigger_once)
+    if Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree" then
+        return nil
+    elseif check ~= nil and check == false then
+        return nil
+    elseif not self:GetOption("show_loot_counter") then
+        return nil
+    end
+    local tbl = {}
+    tbl.special_function = SF.CustomCode
+    if trigger_once then
+        tbl.trigger_times = 1
+    end
+    tbl.f = f
     return tbl
 end
 
@@ -1730,10 +1766,10 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
 end
 
 function EHI:ParseOtherTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-    for _, data in pairs(new_triggers) do
+    for id, data in pairs(new_triggers) do
         -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
         if data.condition == false then
-            data = nil
+            new_triggers[id] = nil
         end
     end
     self:AddTriggers(new_triggers, trigger_id_all or "Trigger", trigger_icons_all)
@@ -1749,10 +1785,10 @@ function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_al
         return
     end
     local host = self:IsHost()
-    for _, data in pairs(new_triggers) do
+    for id, data in pairs(new_triggers) do
         -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
         if data.condition == false then
-            data = nil
+            new_triggers[id] = nil
         else
             data.condition = nil
             -- Mark every tracker, that has random time, as inaccurate
@@ -1775,6 +1811,9 @@ function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_al
                 elseif data.data.position_by_unit then
                     self:AddPositionFromUnit(data.data, data.id, host)
                 end
+                if data.data.icon then
+                    data.data.icon = self.WaypointIconRedirect[data.data.icon] or data.data.icon
+                end
                 if not data.data.position then
                     data.data.position = Vector3()
                     self:Log("Waypoint in element with ID '" .. tostring(data.id) .. "' does not have valid waypoint position! Setting it to default vector to avoid crashing")
@@ -1784,10 +1823,14 @@ function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_al
             if data.waypoint then
                 data.waypoint.time = data.waypoint.time or data.time
                 if not data.waypoint.icon then
+                    local icon
                     if data.icons then
-                        data.waypoint.icon = data.icons[1] and data.icons[1].icon or data.icons[1]
+                        icon = data.icons[1] and data.icons[1].icon or data.icons[1]
                     elseif trigger_icons_all then
-                        data.waypoint.icon = trigger_icons_all[1] and trigger_icons_all[1].icon or trigger_icons_all[1]
+                        icon = trigger_icons_all[1] and trigger_icons_all[1].icon or trigger_icons_all[1]
+                    end
+                    if icon then
+                        data.waypoint.icon = self.WaypointIconRedirect[icon] or icon
                     end
                 end
                 if data.waypoint.position_by_element then
@@ -1820,12 +1863,12 @@ function EHI:ShouldDisableWaypoints()
     return self:GetOption("show_timers") and self:GetWaypointOption("show_waypoints_timers")
 end
 
-local function HostWaypoint(self, instigator)
+local function HostWaypoint(self, instigator, ...)
     if not self._values.enabled then
         return
     end
     if self._values.only_on_instigator and instigator ~= managers.player:player_unit() then
-        ElementWaypoint.super.on_executed(self, instigator)
+        ElementWaypoint.super.on_executed(self, instigator, ...)
         return
     end
     if not self._values.only_in_civilian or managers.player:current_state() == "civilian" then
@@ -1841,7 +1884,7 @@ local function HostWaypoint(self, instigator)
     elseif managers.hud:get_waypoint_data(self._id) then
         managers.hud:remove_waypoint(self._id)
     end
-    ElementWaypoint.super.on_executed(self, instigator)
+    ElementWaypoint.super.on_executed(self, instigator, ...)
 end
 function EHI:DisableElementWaypoint(id)
     local element = managers.mission:get_element_by_id(id)
@@ -1876,14 +1919,20 @@ function EHI:DisableWaypoints(waypoints)
     if not self:ShouldDisableWaypoints() then
         return
     end
-    self.DisableOnLoad = waypoints
+    if self.DisableOnLoad then
+        for id, _ in pairs(waypoints) do
+            self.DisableOnLoad[id] = true
+        end
+    else
+        self.DisableOnLoad = waypoints
+    end
     for id, _ in pairs(waypoints) do
         self._cache.IgnoreWaypoints[id] = true
     end
 end
 
 function EHI:DisableWaypointsOnInit()
-    for id, _ in pairs(self.DisableOnLoad) do
+    for id, _ in pairs(self.DisableOnLoad or {}) do
         self:DisableElementWaypoint(id)
     end
 end
@@ -1948,19 +1997,19 @@ function EHI:ShowLootCounterNoCheck(params)
     if params.no_counting then
         return
     end
-    self:HookLootCounter(params)
+    self:HookLootCounter(params.no_sync_load)
 end
 
-function EHI:HookLootCounter(params, check_type, loot_type)
+function EHI:HookLootCounter(no_sync_load)
     if not self._cache.LootCounter then
-        local function Hook(self, ...)
-            self:EHIReportProgress("LootCounter", check_type or EHI.LootCounter.CheckType.BagsOnly, loot_type)
+        local function Callback(self)
+            self:EHIReportProgress("LootCounter", EHI.LootCounter.CheckType.BagsOnly)
         end
-        self:HookWithID(LootManager, "sync_secure_loot", "EHI_LootCounter_sync_secure_loot", Hook)
+        self:AddCallback(self.CallbackMessage.LootSecured, Callback)
         -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
-        if not params.no_sync_load then
-            self:HookWithID(LootManager, "sync_load", "EHI_LootCounter_sync_load", Hook)
+        if not no_sync_load then
+            self:AddCallback(self.CallbackMessage.LootLoadSync, Callback)
         end
         self._cache.LootCounter = true
     end
@@ -1975,7 +2024,7 @@ function EHI:ShowAchievementLootCounter(params)
         end
         return
     end
-    managers.ehi:AddAchievementProgressTracker(params.achievement, params.max, params.additional_loot, params.remove_after_reaching_target, params.show_loot_counter)
+    managers.ehi:AddAchievementProgressTracker(params.achievement, params.max, 0, params.remove_after_reaching_target)
     if params.load_sync then
         self:AddLoadSyncFunction(params.load_sync)
     end
@@ -2006,28 +2055,13 @@ function EHI:ShowAchievementBagValueCounter(params)
 end
 
 function EHI:AddAchievementToCounter(params)
-    self.AchievementCounter[#self.AchievementCounter + 1] =
-    {
-        id = params.achievement,
-        check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly,
-        loot_type = params.counter and params.counter.loot_type,
-        f = params.counter and params.counter.f
-    }
-    self:HookAchievementCounter()
-end
-
-function EHI:HookAchievementCounter()
-    if not self.AchievementCounterHook then
-        local function Hook(self)
-            for _, achievement in ipairs(EHI.AchievementCounter) do
-                self:EHIReportProgress(achievement.id, achievement.check_type, achievement.loot_type, achievement.f)
-            end
-        end
-        self:HookWithID(LootManager, "sync_secure_loot", "EHI_AchievementCounter_sync_secure_loot", function(self, ...)
-            Hook(self)
-        end)
-        self.AchievementCounterHook = true
+    local check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly
+    local loot_type = params.counter and params.counter.loot_type
+    local f = params.counter and params.counter.f
+    local function Callback(self)
+        self:EHIReportProgress(params.achievement, check_type, loot_type, f)
     end
+    self:AddCallback(self.CallbackMessage.LootSecured, Callback)
 end
 
 ---@param id string Achievement ID
@@ -2053,7 +2087,7 @@ function EHI:ShowAchievementKillCounter(id, id_stat, achievement_option)
     managers.ehi:AddAchievementKillCounter(id, progress, max)
     self.KillCounter[id_stat] = id
     if not self.KillCounterHook then
-        EHI:Hook(AchievmentManager, "award_progress", function(am, stat, value)
+        EHI:HookWithID(AchievmentManager, "award_progress", "EHI_award_progress_KillCounter", function(am, stat, value)
             local s = EHI.KillCounter[stat]
             if s then
                 managers.ehi:IncreaseTrackerProgress(s, value)
@@ -2344,9 +2378,12 @@ function EHI:PrintTable(tbl, ...)
     end
 end
 
-Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id, data)
-    if id == EHI.SyncMessages.EHISyncAddTracker then
-        local tbl = LuaNetworking:StringToTable(data)
-        EHI:AddTrackerSynced(tonumber(tbl.id), tonumber(tbl.delay))
-    end
-end)
+if Global.load_level then
+    -- Add network hook when a level is loaded to prevent stupid people sending tracker data while in menu, because EHIManager does not exist
+    Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id, data)
+        if id == EHI.SyncMessages.EHISyncAddTracker then
+            local tbl = LuaNetworking:StringToTable(data)
+            EHI:AddTrackerSynced(tonumber(tbl.id), tonumber(tbl.delay))
+        end
+    end)
+end

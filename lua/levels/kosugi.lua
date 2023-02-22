@@ -165,8 +165,7 @@ local achievements =
                 counter = counter + math.min(amount, 1)
             end
             if counter < 7 then
-                self:AddAchievementProgressTracker("kosugi_3", 7)
-                self:SetTrackerProgress("kosugi_3", counter)
+                self:AddAchievementProgressTracker("kosugi_3", 7, counter)
             end
         end
     },
@@ -177,15 +176,10 @@ local achievements =
             [102700] = { class = "EHIkosugi5Tracker" }
         },
         load_sync = function(self)
-            local counter_loot = 0
             local counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")
-            for _, loot_type in ipairs(loot_types) do
-                local amount = managers.loot:GetSecuredBagsTypeAmount(loot_type)
-                counter_loot = counter_loot + amount
-            end
+            local counter_loot = managers.loot:GetSecuredBagsAmount() - counter_armor
             if counter_loot < 16 or counter_armor < 4 then
-                self:AddAchievementProgressTracker("kosugi_5") -- Max is passed in the tracker "init" function
-                self:SetTrackerProgress("kosugi_5", math.min(counter_loot, 16))
+                self:AddAchievementProgressTracker("kosugi_5", nil, math.min(counter_loot, 16)) -- Max is passed in the tracker "init" function
                 self:CallFunction("kosugi_5", "SetProgressArmor", math.min(counter_armor, 4))
             end
         end

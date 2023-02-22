@@ -137,11 +137,11 @@ local tbl =
 
     --levels/instances/unique/hox_fbi_forensic_device
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics
-    [EHI:GetInstanceElementID(100018, 2650)] = { icons = { "equipment_evidence" }, remove_vanilla_waypoint = true, waypoint_id = 101559, restore_waypoint_on_done = true },
+    [EHI:GetInstanceUnitID(100018, 2650)] = { icons = { "equipment_evidence" }, remove_vanilla_waypoint = true, waypoint_id = 101559, restore_waypoint_on_done = true },
 
     --levels/instances/unique/hox_fbi_security_office
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security
-    [EHI:GetInstanceElementID(100068, 6690)] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100019, 6690) }
+    [EHI:GetInstanceUnitID(100068, 6690)] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100019, 6690) }
 }
 EHI:UpdateUnits(tbl)
 

@@ -1,13 +1,15 @@
 local EHI = EHI
 
+local other =
+{
+    [100122] = EHI:AddAssaultDelay({ time = 30 + 30, trigger_times = 1 })
+}
+EHI:ParseTriggers({
+    other = other
+})
+
 local DisableWaypoints =
 {
-    -- Saw
-    [EHI:GetInstanceElementID(100021, 4500)] = true, -- Defend
-    [EHI:GetInstanceElementID(100022, 4500)] = true, -- Fix
-    [EHI:GetInstanceElementID(100021, 4750)] = true, -- Defend
-    [EHI:GetInstanceElementID(100022, 4750)] = true, -- Fix
-
     -- PC Hack
     [EHI:GetInstanceElementID(100018, 6750)] = true, -- Defend
 

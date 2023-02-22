@@ -62,6 +62,6 @@ local tbl =
 {
     --levels/instances/unique/chill/hockey_game
     --units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small
-    [EHI:GetInstanceElementID(100056, 15620)] = { ignore = true }
+    [EHI:GetInstanceUnitID(100056, 15620)] = { ignore = true }
 }
 EHI:UpdateUnits(tbl)

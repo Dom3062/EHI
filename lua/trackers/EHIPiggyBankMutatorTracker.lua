@@ -3,6 +3,7 @@ local sin = math.sin
 local Color = Color
 EHIPiggyBankMutatorTracker = class(EHIProgressTracker)
 EHIPiggyBankMutatorTracker._forced_icons = { "piggy" }
+EHIPiggyBankMutatorTracker._piggy_tweak_data = tweak_data.mutators.piggybank.pig_levels
 function EHIPiggyBankMutatorTracker:init(panel, params)
     self._current_level = 1
     self._max_levels = 7
@@ -37,8 +38,7 @@ function EHIPiggyBankMutatorTracker:FormatLevels()
 end
 
 function EHIPiggyBankMutatorTracker:SetNewMax()
-    local tweak_data = tweak_data.mutators.piggybank.pig_levels
-    local levels = tweak_data[self._current_level]
+    local levels = self._piggy_tweak_data[self._current_level]
     local new_max = levels and levels.bag_requirement or 0
     if self._current_level <= 2 then
         new_max = new_max + 1
@@ -52,16 +52,11 @@ function EHIPiggyBankMutatorTracker:CheckLevelFromKills()
     if self._progress == 0 then -- The game has not started yet or players haven't secured bags yet
         return
     end
-    local tweak_data = tweak_data.mutators.piggybank.pig_levels
-    local n = table.size(tweak_data)
-    local offset =
-    {
-        [1] = 1,
-        [2] = 1
-    }
+    local n = table.size(self._piggy_tweak_data)
+    local offset = { 1, 1 }
     local done = false
     for i = 1, n, 1 do
-        local max = (tweak_data[i].bag_requirement or 0) + (offset[i] or 0)
+        local max = (self._piggy_tweak_data[i].bag_requirement or 0) + (offset[i] or 0)
         if max > self._progress then
             self._current_level = i
             self._max = max
@@ -71,7 +66,7 @@ function EHIPiggyBankMutatorTracker:CheckLevelFromKills()
             break
         end
     end
-    if not done and self._progress >= (tweak_data[n].bag_requirement or 0) then
+    if not done and self._progress >= (self._piggy_tweak_data[n].bag_requirement or 0) then
         self._current_level = 6
         self:SetCompleted()
     end
@@ -86,7 +81,6 @@ function EHIPiggyBankMutatorTracker:SetCompleted(force)
         self:SetTextColor(Color.green)
     else
         self:SetNewMax()
-        self._time = 3
         self:AnimateNewLevel()
     end
     self._levels_text:set_text(self:FormatLevels())

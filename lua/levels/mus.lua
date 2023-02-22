@@ -67,16 +67,16 @@ local tbl =
 {
     --levels/instances/unique/mus_chamber_controller
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceElementID(100347, 3575)] = { icons = { Icon.Wait }, remove_on_pause = true, warning = true },
+    [EHI:GetInstanceUnitID(100347, 3575)] = { icons = { Icon.Wait }, remove_on_pause = true, warning = true },
 
     --levels/instances/unique/mus_security_room
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceElementID(100041, 6950)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100050, 6950) }
+    [EHI:GetInstanceUnitID(100041, 6950)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100050, 6950) }
 }
 for i = 300, 375, 75 do
     --levels/instances/unique/mus_security_barrier
     --units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock
-    tbl[EHI:GetInstanceElementID(100020, i)] = { icons = { Icon.Keycard } }
+    tbl[EHI:GetInstanceUnitID(100020, i)] = { icons = { Icon.Keycard } }
 end
 EHI:UpdateUnits(tbl)
 

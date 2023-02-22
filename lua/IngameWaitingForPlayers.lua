@@ -3,32 +3,30 @@ if EHI:CheckLoadHook("IngameWaitingForPlayersState") then
     return
 end
 
-local ShowGageTracker = EHI:GetOption("show_gage_tracker")
-local AddGageTracker
-if EHI:GetOption("gage_tracker_panel") == 1 then
-    AddGageTracker = function()
-        if ShowGageTracker and managers.ehi:TrackerDoesNotExist("Gage") and EHI:AreGagePackagesSpawned() then
-            managers.ehi:AddTracker({
-                id = "Gage",
-                icons = { "gage" },
-                progress = EHI._cache.GagePackagesProgress or 0,
-                max = tweak_data.gage_assignment:get_num_assignment_units(),
-                class = EHI.Trackers.Progress
-            })
-        end
-    end
-else
-    AddGageTracker = function()
-        if ShowGageTracker and EHI:AreGagePackagesSpawned() then
-            if EHI:IsHost() or not managers.ehi:GetDropin() then
+if EHI:GetOption("show_gage_tracker") then
+    if EHI:GetOption("gage_tracker_panel") == 1 then
+        EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+            if managers.ehi:TrackerDoesNotExist("Gage") and EHI:AreGagePackagesSpawned() then
+                managers.ehi:AddTracker({
+                    id = "Gage",
+                    icons = { "gage" },
+                    progress = EHI._cache.GagePackagesProgress or 0,
+                    max = tweak_data.gage_assignment:get_num_assignment_units(),
+                    class = EHI.Trackers.Progress
+                })
+            end
+        end)
+    else
+        EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+            if EHI:AreGagePackagesSpawned() and EHI:IsPlayingFromStart() then
                 local max = tweak_data.gage_assignment:get_num_assignment_units()
                 managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), "0/" .. tostring(max), "EHI_Gage")
             end
-        end
+        end)
     end
 end
 
-local primary, secondary, melee, is_stealth = nil, nil, nil, false
+local primary, secondary, melee, grenade, is_stealth = nil, nil, nil, nil, false
 local VeryHardOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
 local OVKOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 --local MayhemOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
@@ -54,13 +52,12 @@ local function HasMeleeTypeEquipped(type)
 end
 
 local function HasGrenadeEquipped(grenade_id)
-    return managers.blackmarket:equipped_grenade() == grenade_id
+    return grenade == grenade_id
 end
 
 local function HasNonExplosiveGrenadeEquipped()
-    local equipped_grenade = managers.blackmarket:equipped_grenade()
-    local projectile = tweak_data.blackmarket.projectiles[equipped_grenade]
-    local tweak = tweak_data.projectiles[equipped_grenade]
+    local projectile = tweak_data.blackmarket.projectiles[grenade]
+    local tweak = tweak_data.projectiles[grenade]
     if projectile and tweak then
         if projectile.ability then
             return false
@@ -107,12 +104,11 @@ local function ArbiterHasStandardAmmo()
         local t = managers.weapon_factory:get_ammo_data_from_weapon(factory_id, blueprint)
         return table.size(t or {}) == 0 -- Standard ammo type is not returned in the array, only the ammo upgrades
     end
-    if primary.weapon_id == "arbiter" and secondary.weapon_id == "arbiter" then -- It is not possible in Vanilla, but mods that duplicate Vanilla weapons can do that
-        return WeaponHasStandardAmmo(primary.factory_id, primary.blueprint) or WeaponHasStandardAmmo(secondary.factory_id, secondary.blueprint)
-    elseif primary.weapon_id == "arbiter" then
-        return WeaponHasStandardAmmo(primary.factory_id, primary.blueprint)
-    elseif secondary.weapon_id == "arbiter" then
-        return WeaponHasStandardAmmo(secondary.factory_id, secondary.blueprint)
+    if primary.weapon_id == "arbiter" and WeaponHasStandardAmmo(primary.factory_id, primary.blueprint) then
+        return true
+    end
+    if secondary.weapon_id == "arbiter" and WeaponHasStandardAmmo(secondary.factory_id, secondary.blueprint) then
+        return true
     end
     return false
 end
@@ -166,7 +162,7 @@ local function CreateProgressTracker(id, progress, max, dont_flash, remove_after
 end
 
 local function HookKillFunctionNoCivilian(achievement, weapon_id)
-    EHI:HookWithID(StatisticsManager, "killed", "EHI_" .. achievement .. "_" .. weapon_id .. "_killed", function (self, data)
+    EHI:HookWithID(StatisticsManager, "killed", "EHI_" .. achievement .. "_" .. weapon_id .. "_killed", function(self, data)
         if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
             local name_id, _ = self:_get_name_id_and_throwable_id(data.weapon_unit)
             if name_id == weapon_id then
@@ -189,14 +185,14 @@ local function ShowPopup(id, progress, max)
 end
 
 local pxp_1_checked = false
- -- "Plague Doctor" achievement
+-- "Plague Doctor" achievement
 local function pxp_1()
     if pxp_1_checked then
         return
     end
     if EHI:IsAchievementLocked2("pxp1_1") then
         local grenade_data = tweak_data.achievement.grenade_achievements.pxp1_1
-        local grenade_pass = table.index_of(grenade_data.grenade_types, managers.blackmarket:equipped_grenade()) ~= -1
+        local grenade_pass = table.index_of(grenade_data.grenade_types, grenade) ~= -1
         local enemy_kills_data = tweak_data.achievement.enemy_kill_achievements.pxp1_1
         local parts_pass, _, _ = CheckWeaponsBlueprint(enemy_kills_data.parts)
         local melee_pass = table.index_of(tweak_data.achievement.enemy_melee_hit_achievements.pxp1_1.melee_weapons, melee) ~= 1
@@ -219,7 +215,6 @@ function IngameWaitingForPlayersState:at_exit(...)
     if not Global.hud_disabled then
         managers.ehi:ShowPanel()
     end
-    AddGageTracker()
     --[[if level == "flat" and EHI:IsAchievementLocked("flat_5") then
         managers.ehi:AddTracker({
             id = "flat_5",
@@ -228,17 +223,14 @@ function IngameWaitingForPlayersState:at_exit(...)
             class = "EHIChanceTracker"
         })
     else]]
-    if managers.player.EHICheckAbility then
-        managers.player:EHICheckAbility()
-        managers.ehi_buff:ActivateUpdatingBuffs()
-    end
-    EHI:CallCallback(EHI.CallbackMessage.Spawned)
+    EHI:CallCallbackOnce(EHI.CallbackMessage.Spawned)
     if not EHI:GetUnlockableAndOption("show_achievements") or EHI._cache.UnlockablesAreDisabled or GunGameGame or TIM then -- Twitch Integration Mod
         return
     end
     primary = managers.blackmarket:equipped_primary()
     secondary = managers.blackmarket:equipped_secondary()
     melee = managers.blackmarket:equipped_melee_weapon()
+    grenade = managers.blackmarket:equipped_grenade()
     is_stealth = managers.groupai:state():whisper_mode()
     local level = Global.game_settings.level_id
     local mask_id = managers.blackmarket:equipped_mask().mask_id
@@ -633,7 +625,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 CreateProgressTracker("halloween_7", EHI:GetAchievementProgress("halloween_7_stats"), 50, false, true)
                 stats.halloween_7_stats = "halloween_7"
                 EHI:AddOnAlarmCallback(function()
-                    EHI:Unhook("halloween_7_killed") -- "Includes 'EHI_'"
+                    EHI:Unhook("halloween_7_killed")
                     managers.ehi:RemoveTracker("halloween_7")
                     stats.halloween_7_stats = nil
                 end)
@@ -652,7 +644,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 CreateProgressTracker("eagle_2", EHI:GetAchievementProgress("eagle_2_stats"), 25, false, true)
                 stats.eagle_2_stats = "eagle_2"
                 EHI:AddOnAlarmCallback(function()
-                    EHI:Unhook("eagle_2_killed") -- "Includes 'EHI_'"
+                    EHI:Unhook("eagle_2_killed")
                     managers.ehi:RemoveTracker("eagle_2")
                     stats.eagle_2_stats = nil
                 end)
@@ -721,10 +713,9 @@ function IngameWaitingForPlayersState:at_exit(...)
     end
     if EHI:GetUnlockableOption("show_achievements_grenade") then -- Kill with grenades
         if EHI:IsAchievementLocked2("gage_9") then -- "Fire in the Hole!" achievement
-            local equipped_grenade = managers.blackmarket:equipped_grenade()
             local eligible_grenades = tweak_data.achievement.fire_in_the_hole.grenade
-            for _, grenade in ipairs(eligible_grenades) do
-                if grenade == equipped_grenade then
+            for _, eligible_grenade in ipairs(eligible_grenades) do
+                if grenade == eligible_grenade then
                     local progress = EHI:GetAchievementProgress("gage_9_stats")
                     EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gage_9_achievement", function(am, stat, value)
                         if stat == "gage_9_stats" then
@@ -755,11 +746,9 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end
             end)
             EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
-                if success then
-                    if progress < 8 then
-                        managers.hud:custom_ingame_popup_text("SAVED", "Progress Saved: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
-                    end
-                else
+                if success and progress < 8 then
+                    managers.hud:custom_ingame_popup_text("SAVED", "Progress Saved: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
+                elseif not success then
                     managers.hud:custom_ingame_popup_text("LOST", "Progress Lost: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
                 end
             end)
@@ -803,7 +792,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end
             end)
         end
-        if EHI:IsAchievementLocked2("gmod_1") then -- Praying Mantis
+        if EHI:IsAchievementLocked2("gmod_1") then -- "Praying Mantis" achievement
             local progress = EHI:GetAchievementProgress("gmod_1_stats")
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gmod_1_achievement", function(am, stat, value)
                 if stat == "gmod_1_stats" then
@@ -814,7 +803,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end
             end)
         end
-        if EHI:IsAchievementLocked2("gmod_2") then -- Bullseye
+        if EHI:IsAchievementLocked2("gmod_2") then -- "Bullseye" achievement
             local progress = EHI:GetAchievementProgress("gmod_2_stats")
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gmod_2_achievement", function(am, stat, value)
                 if stat == "gmod_2_stats" then
@@ -825,7 +814,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end
             end)
         end
-        if EHI:IsAchievementLocked2("gmod_3") then -- My Spider Sense is Tingling
+        if EHI:IsAchievementLocked2("gmod_3") then -- "My Spider Sense is Tingling" achievement
             local progress = EHI:GetAchievementProgress("gmod_3_stats")
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gmod_3_achievement", function(am, stat, value)
                 if stat == "gmod_3_stats" then
@@ -836,7 +825,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end
             end)
         end
-        if EHI:IsAchievementLocked2("gmod_4") then -- Eagle Eyes
+        if EHI:IsAchievementLocked2("gmod_4") then -- "Eagle Eyes" achievement
             local progress = EHI:GetAchievementProgress("gmod_4_stats")
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gmod_4_achievement", function(am, stat, value)
                 if stat == "gmod_4_stats" then
@@ -847,7 +836,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end
             end)
         end
-        if EHI:IsAchievementLocked2("gmod_5") then -- Like A Boy Killing Snakes
+        if EHI:IsAchievementLocked2("gmod_5") then -- "Like A Boy Killing Snakes" achievement
             local progress = EHI:GetAchievementProgress("gmod_5_stats")
             EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gmod_5_achievement", function(am, stat, value)
                 if stat == "gmod_5_stats" then
@@ -858,7 +847,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end
             end)
         end
-        if EHI:IsAchievementLocked2("gmod_6") then -- There and Back Again
+        if EHI:IsAchievementLocked2("gmod_6") then -- "There and Back Again" achievement
             EHI:HookWithID(GageAssignmentManager, "_give_rewards", "EHI_gmod_6_achievement", function(gam, assignment, ...)
                 local progress = 0
                 for i, dvalue in pairs(gam._global.completed_assignments) do
@@ -1061,7 +1050,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end]]
-    if table.size(stats) > 0 then
+    if next(stats) then
         EHI:HookWithID(AchievmentManager, "award_progress", "EHI_IngameWaitingForPlayers_AwardProgress", function(am, stat, value)
             if stats[stat] then
                 managers.ehi:IncreaseTrackerProgress(stats[stat], value)

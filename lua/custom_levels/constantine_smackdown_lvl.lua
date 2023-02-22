@@ -21,9 +21,11 @@ local triggers =
     [100460] = { time = 24, id = "Reinforcements1", icons = { "pd2_kill" } },
     [100501] = { time = 20 + 24, id = "Reinforcements2", icons = { "pd2_kill" } },
 
-    [100518] = { time = 70 + 26, id = "Escape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100515 } },
-    [100513] = { time = 26, id = "Escape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { icon = Icon.Escape, position_by_element = 100515 } }
+    [100518] = { time = 70 + 26, id = "Escape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Heli, position_by_element = 100515 } }
 }
+if EHI:IsClient() then
+    triggers[100513] = { time = 26, id = "Escape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { icon = Icon.Heli, position_by_element = 100515 } }
+end
 if EHI:MissionTrackersAndWaypointEnabled() then
     triggers[100460].waypoint = { position_by_element = 100507 }
     triggers[100501].waypoint = { position_by_element = 100508 }
