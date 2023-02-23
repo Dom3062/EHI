@@ -73,9 +73,7 @@ EHI:ShowAchievementLootCounter({
     achievement = "pink_panther",
     max = 9,
     remove_after_reaching_target = false,
-    alarm_callback = function()
-        managers.ehi:SetAchievementFailed("pink_panther")
-    end
+    failed_on_alarm = true
 })
 
 local MissionDoorPositions =

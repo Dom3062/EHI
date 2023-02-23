@@ -38,6 +38,6 @@ if EHI:MissionTrackersAndWaypointEnabled() then
 end
 
 EHI:ParseTriggers({ mission = triggers })
-EHI:RegisterCustomSpecialFunction(AddDestruction, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(AddDestruction, function(trigger, element, ...)
     managers.ehi:IncreaseTrackerProgress(trigger.id, element._values.amount)
 end)

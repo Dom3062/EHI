@@ -1,4 +1,61 @@
 local EHI = EHI
+EHIcorp12Tracker = class(EHIAchievementTracker)
+EHIcorp12Tracker.AnimateWarning2 = EHIWarningTracker.AnimateWarning
+function EHIcorp12Tracker:init(panel, params)
+    params.time = 420 -- SP (MP has 240s)
+    EHIcorp12Tracker.super.init(self, panel, params)
+    self._mp_time = 240
+end
+
+function EHIcorp12Tracker:OverridePanel()
+    self._text2 = self._time_bg_box:text({ -- MP text
+        name = "text2",
+        text = self:Format(),
+        align = "center",
+        vertical = "center",
+        w = self._time_bg_box:w(),
+        h = self._icon_size_scaled,
+        font = tweak_data.menu.pd2_large_font,
+		font_size = self._panel:h() * self._text_scale,
+        color = self._text_color,
+        visible = false
+    })
+end
+
+function EHIcorp12Tracker:update(t, dt)
+    EHIcorp12Tracker.super.update(self, t, dt)
+    self:update2(dt)
+end
+
+function EHIcorp12Tracker:update2(dt)
+    local t = self._time
+    local _t = self._mp_time - dt
+    self._time = _t
+    self._mp_time = _t
+    self._text2:set_text(self:Format())
+    self._time = t
+    if _t <= 10 and self._warning2_started then
+        self._warning2_started = true
+        self:AnimateWarning2(self._text2)
+    end
+end
+
+function EHIcorp12Tracker:SetMPState()
+    self._text2:set_visible(true)
+    self._text1:set_visible(false)
+    if self._mp_time <= 0 then
+        self:SetFailed()
+    end
+end
+
+function EHIcorp12Tracker:delete()
+    if self._text2 and alive(self._text2) then
+        self._text2:stop()
+    end
+    EHIcorp12Tracker.super.delete(self)
+end
+
+EHI.AchievementTrackers.EHIcorp12Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -48,10 +105,16 @@ local achievements =
         difficulty_pass = OVKorAbove,
         elements =
         {
-            [100107] = { time = Global.game_settings.single_player and 420 or 240, class = TT.Achievement },
+            [100107] = { class = "EHIcorp12Tracker" },
+            [102739] = { special_function = SF.CustomCode, f = function()
+                managers.ehi:CallFunction("corp_12", "SetMPState")
+            end },
             [102014] = { special_function = SF.SetAchievementFailed }, -- Alarm
             [102736] = { special_function = SF.SetAchievementFailed } -- Civilian killed
-        }
+        },
+        cleanup_callback = function()
+            EHIcorp12Tracker = nil
+        end
     }
 }
 for i = 102699, 102712, 1 do
@@ -71,7 +134,7 @@ EHI:ParseTriggers({
 EHI:RegisterCustomSpecialFunction(corp_10_SetCounterToZero, function(...)
     managers.ehi:SetTrackerProgress("corp_10", 0)
 end)
-EHI:RegisterCustomSpecialFunction(corp_11_Start, function(id, trigger, ...)
+EHI:RegisterCustomSpecialFunction(corp_11_Start, function(trigger, ...)
     if corp_11_StartVariable then
         managers.ehi:AddTracker({
             id = "corp_11",

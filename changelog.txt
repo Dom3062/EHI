@@ -1,3 +1,6 @@
+r127 (23. 02. 2023):
+Fixed a crash at mission load (client only)
+
 r126 (22. 02. 2023):
 Added trackers for Hostile Takeover
 Attempt to fix Loot Counter not working to some players

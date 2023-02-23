@@ -66,7 +66,7 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
 else
     EHI:ShowLootCounter({ max = 7 })
 end
-EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(id, trigger, ...)
+EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(trigger, ...)
     if managers.ehi:TrackerExists(trigger.id) then
         local tracker = managers.ehi:GetTracker(trigger.id)
         if tracker then

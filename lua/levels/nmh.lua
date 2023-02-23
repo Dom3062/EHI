@@ -97,7 +97,6 @@ EHI:AddOnAlarmCallback(function()
     end
 end)
 
-local ShowAchievementFromStart = EHI:GetFreeCustomSpecialFunctionID()
 local achievements =
 {
     nmh_11 =
@@ -108,7 +107,7 @@ local achievements =
             -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before mission restart
             -- Reported in:
             -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
-            [103456] = { time = 5, class = TT.Achievement, special_function = ShowAchievementFromStart, trigger_times = 1 },
+            [103456] = { time = 5, class = TT.Achievement, special_function = SF.ShowAchievementFromStart, trigger_times = 1 },
             [103460] = { special_function = SF.SetAchievementComplete }
         }
     }
@@ -118,15 +117,10 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
-EHI:RegisterCustomSpecialFunction(LowerFloor, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(LowerFloor, function(trigger, element, enabled)
     if enabled then
         managers.ehi:CallFunction(trigger.id, "LowerFloor")
         managers.ehi_waypoint:CallFunction(trigger.id, "LowerFloor")
-    end
-end)
-EHI:RegisterCustomSpecialFunction(ShowAchievementFromStart, function(id, trigger, ...)
-    if not managers.statistics:is_dropin() then
-        EHI:CheckCondition(trigger)
     end
 end)
 EHI:AddLoadSyncFunction(function(self)

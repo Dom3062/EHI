@@ -21,9 +21,10 @@ function EHIWarningTracker:update(t, dt)
     end
 end
 
-function EHIWarningTracker:AnimateWarning()
-    if self._text and alive(self._text) then
-        self._text:animate(anim)
+function EHIWarningTracker:AnimateWarning(text)
+    text = text or self._text
+    if text and alive(text) then
+        text:animate(anim)
     end
 end
 

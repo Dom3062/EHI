@@ -92,9 +92,7 @@ local achievements =
         {
             [102430] = { time = 780, class = TT.Achievement },
         },
-        alarm_callback = function()
-            managers.ehi:SetAchievementFailed("friend_6")
-        end
+        failed_on_alarm = true
     },
     uno_7 =
     {
@@ -103,8 +101,9 @@ local achievements =
         {
             [100107] = { time = 901, class = "EHIuno7Tracker" },
         },
-        alarm_callback = function()
-            managers.ehi:CallFunction("uno_7", "SetObtainable")
+        failed_on_alarm = true,
+        cleanup_callback = function()
+            EHIuno7Tracker = nil
         end
     }
 }

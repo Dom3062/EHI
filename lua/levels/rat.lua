@@ -69,7 +69,7 @@ if EHI:IsClient() then
     local SetTimeNoAnimOrCreateTrackerClient = EHI:GetFreeCustomSpecialFunctionID()
     triggers[100724] = { time = 20, random_time = 5, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
     EHI:SetSyncTriggers(element_sync_triggers)
-    EHI:RegisterCustomSpecialFunction(SetTimeNoAnimOrCreateTrackerClient, function(id, trigger, ...)
+    EHI:RegisterCustomSpecialFunction(SetTimeNoAnimOrCreateTrackerClient, function(trigger, ...)
         local key = trigger.id
         local value = managers.ehi:ReturnValue(key, "GetTrackerType")
         if value ~= "accurate" then

@@ -45,7 +45,7 @@ local other =
 }
 
 EHI:ParseTriggers({ mission = triggers, other = other })
-EHI:RegisterCustomSpecialFunction(HeliTimer, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(HeliTimer, function(trigger, element, enabled)
     if not managers.user:get_setting("mute_heist_vo") then
         local delay_fix = triggers[1][trigger.dialog] or 0
         trigger.time = trigger.time + delay_fix

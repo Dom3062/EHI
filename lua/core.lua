@@ -70,13 +70,16 @@ _G.EHI =
 
     SpecialFunctions =
     {
-        RemoveTracker = 2,
-        PauseTracker = 3,
-        UnpauseTracker = 4,
-        UnpauseTrackerIfExists = 5,
-        AddTrackerIfDoesNotExist = 7,
+        RemoveTracker = 1,
+        PauseTracker = 2,
+        UnpauseTracker = 3,
+        UnpauseTrackerIfExists = 4,
+        AddTrackerIfDoesNotExist = 5,
+        ReplaceTrackerWithTracker = 6,
+        ShowAchievementFromStart = 7,
         SetAchievementComplete = 8,
-        ReplaceTrackerWithTracker = 11,
+        SetAchievementStatus = 9,
+        SetAchievementFailed = 10,
         IncreaseChance = 12,
         TriggerIfEnabled = 13,
         CreateAnotherTrackerWithTracker = 14,
@@ -89,9 +92,6 @@ _G.EHI =
         IncreaseProgress = 25,
         SetTrackerAccurate = 27,
         RemoveTriggers = 28,
-        SetAchievementStatus = 29,
-        ShowAchievementFromStart = 30,
-        SetAchievementFailed = 31,
         SetRandomTime = 32,
         DecreaseChance = 34,
         GetElementTimerAccurate = 35,
@@ -1281,6 +1281,7 @@ end
 ---@param element table
 ---@param enabled boolean
 ---@overload fun(self, id: number)
+---@overload fun(self, id: number, element: table)
 function EHI:Trigger(id, element, enabled)
     local trigger = triggers[id]
     if trigger then
@@ -1302,11 +1303,19 @@ function EHI:Trigger(id, element, enabled)
                 if managers.ehi:TrackerDoesNotExist(trigger.id) then
                     self:CheckCondition(trigger)
                 end
-            elseif f == SF.SetAchievementComplete then
-                managers.ehi:SetAchievementComplete(trigger.id, true)
             elseif f == SF.ReplaceTrackerWithTracker then
                 RemoveTracker(trigger.data.id)
                 self:CheckCondition(trigger)
+            elseif f == SF.ShowAchievementFromStart then -- Achievement unlock is checked during level load
+                if not managers.statistics:is_dropin() then
+                    self:CheckCondition(trigger)
+                end
+            elseif f == SF.SetAchievementComplete then
+                managers.ehi:SetAchievementComplete(trigger.id, true)
+            elseif f == SF.SetAchievementStatus then
+                managers.ehi:SetAchievementStatus(trigger.id, trigger.status or "ok")
+            elseif f == SF.SetAchievementFailed then
+                managers.ehi:SetAchievementFailed(trigger.id)
             elseif f == SF.IncreaseChance then
                 managers.ehi:IncreaseChance(trigger.id, trigger.amount)
             elseif f == SF.TriggerIfEnabled then
@@ -1367,14 +1376,6 @@ function EHI:Trigger(id, element, enabled)
                 for _, trigger_id in ipairs(trigger.data) do
                     self:UnhookTrigger(trigger_id)
                 end
-            elseif f == SF.SetAchievementStatus then
-                managers.ehi:SetAchievementStatus(trigger.id, trigger.status or "ok")
-            elseif f == SF.ShowAchievementFromStart then
-                if self:IsAchievementLocked(trigger.id) and not managers.statistics:is_dropin() then
-                    self:CheckCondition(trigger)
-                end
-            elseif f == SF.SetAchievementFailed then
-                managers.ehi:SetAchievementFailed(trigger.id)
             elseif f == SF.SetRandomTime then
                 if managers.ehi:TrackerDoesNotExist(trigger.id) then
                     self:AddTrackerWithRandomTime(trigger)
@@ -1465,7 +1466,7 @@ function EHI:Trigger(id, element, enabled)
                 self:DelayCall(tostring(id), trigger.t or 0, trigger.f)
 
             elseif f >= SF.CustomSF then
-                self.SFF[f](id, trigger, element, enabled)
+                self.SFF[f](trigger, element, enabled)
             end
         else
             self:CheckCondition(trigger)
@@ -1479,6 +1480,7 @@ function EHI:Trigger(id, element, enabled)
     end
 end
 
+---Provided function should accept these parameters in this order: "trigger", "element", "enabled"
 ---@param id number
 ---@param f function
 function EHI:RegisterCustomSpecialFunction(id, f)
@@ -1694,6 +1696,11 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
         if type(data.load_sync) == "function" then
             self:AddLoadSyncFunction(data.load_sync)
         end
+        if data.failed_on_alarm then
+            self:AddOnAlarmCallback(function()
+                managers.ehi:SetAchievementFailed(id)
+            end)
+        end
         if data.mission_end_callback then
             self:AddCallback(self.CallbackMessage.MissionEnd, function(success)
                 if success then
@@ -1751,13 +1758,18 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
             self:AddTriggers2(data.elements or {}, nil, id)
             ParseParams(data, id)
         end
-        for id, data in pairs(achievement_triggers) do
+        local function IsAchievementLocked(data, id)
             if data.beardlib then
-                if data.difficulty_pass ~= false and not self:IsBeardLibAchievementUnlocked(data.package, id) then
-                    Parser(data, id)
-                end
-            elseif data.difficulty_pass ~= false and self:IsAchievementLocked(id) then
+                return not self:IsBeardLibAchievementUnlocked(data.package, id)
+            else
+                return self:IsAchievementLocked(id)
+            end
+        end
+        for id, data in pairs(achievement_triggers) do
+            if data.difficulty_pass ~= false and IsAchievementLocked(data, id) then
                 Parser(data, id)
+            elseif type(data.cleanup_callback) == "function" then
+                data.cleanup_callback()
             end
         end
     end
@@ -1914,9 +1926,9 @@ function EHI:RestoreElementWaypoint(id)
     self._cache.ElementWaypointFunction[id] = nil
 end
 
----@param waypoints table
+---@param waypoints table|nil
 function EHI:DisableWaypoints(waypoints)
-    if not self:ShouldDisableWaypoints() then
+    if not self:ShouldDisableWaypoints() or waypoints == nil then
         return
     end
     if self.DisableOnLoad then

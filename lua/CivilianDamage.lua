@@ -15,11 +15,7 @@ if EHI:GetOption("show_escape_chance") then
     end
 end
 
-if not EHI:GetOption("show_trade_delay") then
-    return
-end
-
-if EHI:GetOption("show_trade_delay_option") == 2 then
+if not EHI:GetOption("show_trade_delay") or EHI:GetOption("show_trade_delay_option") == 2 then
     return
 end
 

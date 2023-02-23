@@ -112,9 +112,9 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 EHI:ShowLootCounter({ max = 16 })
-EHI:RegisterCustomSpecialFunction(AddBodyBag, function(id, trigger, ...)
+EHI:RegisterCustomSpecialFunction(AddBodyBag, function(trigger, ...)
     managers.ehi:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
 end)
-EHI:RegisterCustomSpecialFunction(RemoveBodyBag, function(id, trigger, ...)
+EHI:RegisterCustomSpecialFunction(RemoveBodyBag, function(trigger, ...)
     managers.ehi:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
 end)

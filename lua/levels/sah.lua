@@ -34,9 +34,7 @@ local achievements =
             [100107] = { time = 300, class = TT.Achievement },
             [101878] = { special_function = SF.SetAchievementComplete }
         },
-        alarm_callback = function()
-            managers.ehi:SetAchievementFailed("sah_9")
-        end
+        failed_on_alarm = true
     }
 }
 

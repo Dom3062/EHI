@@ -199,6 +199,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(AddMoney, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(AddMoney, function(trigger, element, ...)
     managers.ehi:AddMoneyToTracker(trigger.id, element._values.amount)
 end)

@@ -184,7 +184,7 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
-EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(trigger, element, enabled)
     if enabled then
         if managers.ehi:TrackerExists(trigger.id) then
             managers.ehi:SetTrackerTimeNoAnim(trigger.id, trigger.time)
@@ -193,7 +193,7 @@ EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(id, trigge
         end
     end
 end)
-EHI:RegisterCustomSpecialFunction(DelayExecution, function(id, trigger, ...)
+EHI:RegisterCustomSpecialFunction(DelayExecution, function(trigger, ...)
     EHI:DelayCall("Remove" .. trigger.id, 10, function()
         EHI:Trigger(4)
     end)

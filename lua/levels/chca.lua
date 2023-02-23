@@ -166,9 +166,7 @@ local achievements =
             [102944] = { special_function = SF.IncreaseProgress }, -- Bodybag thrown
             [103371] = { special_function = SF.SetAchievementFailed } -- Civie killed
         },
-        alarm_callback = function()
-            managers.ehi:SetAchievementFailed("chca_10")
-        end
+        failed_on_alarm = true
     },
     chca_12 =
     {

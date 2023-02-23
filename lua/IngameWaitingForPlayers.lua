@@ -502,7 +502,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 ShowTrackerInLoud(f)
             end
         end
-        if EHI:IsAchievementLocked2("pxp2_1") and WeaponsContainFiremode("volley") then -- "Field Test" achievement
+        if EHI:IsAchievementLocked2("pxp2_1") and HasWeaponEquipped("hailstorm") and WeaponsContainFiremode("volley") then -- "Field Test" achievement
             CreateProgressTracker("pxp2_1", EHI:GetAchievementProgress("pxp2_1_stats"), 500, false, true)
             stats.pxp2_1_stats = "pxp2_1"
         end

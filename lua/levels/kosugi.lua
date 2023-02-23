@@ -215,7 +215,7 @@ EHI:ParseTriggers({
     achievement = achievements,
     daily = dailies
 })
-EHI:RegisterCustomSpecialFunction(DisableTriggerAndExecute, function(id, t, ...)
+EHI:RegisterCustomSpecialFunction(DisableTriggerAndExecute, function(t, ...)
     EHI:UnhookTrigger(t.data.id)
     EHI:CheckCondition(t)
 end)

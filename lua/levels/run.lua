@@ -93,7 +93,10 @@ local achievements =
         {
             [100120] = { time = 1800, class = "EHIrun9Tracker" },
             [100144] = { special_function = SF.SetAchievementFailed }
-        }
+        },
+        cleanup_callback = function()
+            EHIrun9Tracker = nil
+        end
     },
     run_10 =
     {
@@ -112,7 +115,7 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 local ProgressMaxSet = false
-EHI:RegisterCustomSpecialFunction(SetProgressMax, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(SetProgressMax, function(trigger, ...)
     if ProgressMaxSet then
         return
     end
@@ -128,6 +131,6 @@ EHI:RegisterCustomSpecialFunction(SetProgressMax, function(id, trigger, element,
     end
     ProgressMaxSet = true
 end)
-EHI:RegisterCustomSpecialFunction(SetZoneComplete, function(id, trigger, ...)
+EHI:RegisterCustomSpecialFunction(SetZoneComplete, function(trigger, ...)
     managers.ehi:CallFunction(trigger.id, "SetCompleted")
 end)

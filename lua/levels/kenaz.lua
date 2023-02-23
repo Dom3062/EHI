@@ -115,13 +115,13 @@ if EHI:GetOption("show_mission_trackers") then
         end
     end
 end
-EHI:RegisterCustomSpecialFunction(DontTriggerWithC4Entry, function(id, trigger, ...)
+EHI:RegisterCustomSpecialFunction(DontTriggerWithC4Entry, function(trigger, ...)
     if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
         return
     end
     EHI:AddTracker(trigger)
 end)
-EHI:RegisterCustomSpecialFunction(RemoveColorsIfEnabled, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(RemoveColorsIfEnabled, function(trigger, element, enabled)
     if enabled then
         managers.ehi:RemoveTracker(trigger.id)
     end
@@ -168,7 +168,7 @@ local other =
 {
     [100228] = EHI:AddAssaultDelay({ time = 35 + 1 + 30, special_function = Alarm })
 }
-EHI:RegisterCustomSpecialFunction(Alarm, function(id, trigger, ...)
+EHI:RegisterCustomSpecialFunction(Alarm, function(trigger, ...)
     local t = 0
     if managers.preplanning:IsAssetBought(101858) then
         t = 10

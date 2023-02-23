@@ -48,7 +48,7 @@ for i = 3600, 3750, 75 do
     DisableWaypoints[EHI:GetInstanceElementID(100020, i)] = true -- Drill icon
 end
 EHI:DisableWaypoints(DisableWaypoints)
-EHI:RegisterCustomSpecialFunction(SetTimeIfEnabled, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(SetTimeIfEnabled, function(trigger, element, enabled)
     if enabled then
         if managers.ehi:TrackerExists(trigger.id) then
             managers.ehi:SetTrackerTime(trigger.id, trigger.time)
@@ -57,7 +57,7 @@ EHI:RegisterCustomSpecialFunction(SetTimeIfEnabled, function(id, trigger, elemen
         end
     end
 end)
-EHI:RegisterCustomSpecialFunction(ShowWaypoint, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(ShowWaypoint, function(trigger, ...)
     trigger.data.distance = true
     trigger.data.state = "sneak_present"
     trigger.data.present_timer = 0

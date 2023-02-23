@@ -69,9 +69,7 @@ local achievements =
                 self:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())
             end
         end,
-        alarm_callback = function()
-            managers.ehi:SetAchievementFailed("chas_10")
-        end
+        failed_on_alarm = true
     },
     chas_11 =
     {

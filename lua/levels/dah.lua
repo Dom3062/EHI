@@ -63,9 +63,7 @@ local achievements =
             [102259] = { special_function = SF.SetAchievementComplete },
             [102261] = { special_function = SF.IncreaseProgress }
         },
-        alarm_callback = function()
-            managers.ehi:SetAchievementFailed("dah_8")
-        end,
+        failed_on_alarm = true,
         load_sync = function(self)
             if EHI.ConditionFunctions.IsStealth() then
                 dah_8()

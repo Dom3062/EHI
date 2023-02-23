@@ -44,7 +44,7 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100013, 4850)] = { time = 180, random_time = 60, id = "HeliCageDelay", icons = HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning }
     EHI:SetSyncTriggers(sync_triggers)
     EHI:SetSyncTriggers(element_sync_triggers)
-    EHI:RegisterCustomSpecialFunction(ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, function(id, trigger, ...)
+    EHI:RegisterCustomSpecialFunction(ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, function(trigger, ...)
         managers.ehi:RemoveTracker(trigger.data.id)
         if managers.ehi:TrackerDoesNotExist(trigger.id) then
             EHI:CheckCondition(trigger)

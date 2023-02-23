@@ -79,7 +79,7 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, function(id, trigger, ...)
+EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, function(trigger, ...)
     if managers.ehi:InteractionExists("circuit_breaker_off") then
         EHI:CheckCondition(trigger)
     end

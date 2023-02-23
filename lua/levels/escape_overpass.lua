@@ -53,10 +53,10 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 }, "Escape")
-EHI:RegisterCustomSpecialFunction(AddToCache, function(id, trigger, ...)
+EHI:RegisterCustomSpecialFunction(AddToCache, function(trigger, ...)
     EHI._cache[trigger.id] = trigger.data
 end)
-EHI:RegisterCustomSpecialFunction(GetFromCache, function(id, trigger, ...)
+EHI:RegisterCustomSpecialFunction(GetFromCache, function(trigger, ...)
     local data = EHI._cache[trigger.id]
     EHI._cache[trigger.id] = nil
     if data and data.icon then

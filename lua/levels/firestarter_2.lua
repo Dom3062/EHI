@@ -55,7 +55,7 @@ local other =
 
     [104618] = EHI:AddAssaultDelay({ time = 30 + 1 + 5 + 30 + 30 })
 }
-EHI:RegisterCustomSpecialFunction(FilterIsOk, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(FilterIsOk, function(trigger, element, ...)
     if element:_check_difficulty() then
         managers.ehi:CallFunction("LootCounter", "SecuredMissionLoot") -- Server secured
     end

@@ -124,6 +124,6 @@ EHI:ShowAchievementLootCounter({
         self:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
     end
 })
-EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(id, trigger, element, enabled)
-    managers.ehi:CallFunction(trigger.id, "Activate")
+EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(...)
+    managers.ehi:CallFunction("cac_33", "Activate")
 end)

@@ -121,7 +121,7 @@ if LootCounter then
     local function LootSpawned(crate)
         managers.ehi:CallFunction("LootCounter", "RandomLootSpawned2", crate, true)
     end
-    EHI:RegisterCustomSpecialFunction(IncreaseMaxRandomLoot, function(id, trigger, ...)
+    EHI:RegisterCustomSpecialFunction(IncreaseMaxRandomLoot, function(trigger, ...)
         local index = trigger.index
         local crate = EHI:GetInstanceUnitID(100000, index)
         local LootTrigger = {}
@@ -141,7 +141,7 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(cow_4, function(id, trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(cow_4, function(trigger, element, enabled)
     if enabled then
         EHI:CheckCondition(trigger)
     end

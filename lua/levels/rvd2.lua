@@ -22,7 +22,7 @@ if EHI:IsClient() then
     triggers[100035] = { time = 4 + 30 + 24 + 3, special_function = LiquidNitrogen }
     triggers[101630] = { time = 30 + 24 + 3, special_function = LiquidNitrogen }
     triggers[101629] = { time = 24 + 3, special_function = LiquidNitrogen }
-    EHI:RegisterCustomSpecialFunction(LiquidNitrogen, function(id, trigger, ...)
+    EHI:RegisterCustomSpecialFunction(LiquidNitrogen, function(trigger, ...)
         if managers.ehi:TrackerDoesNotExist("LiquidNitrogen") then
             managers.ehi:AddTracker({
                 id = "LiquidNitrogen",
