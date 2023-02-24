@@ -69,7 +69,7 @@ local achievements =
         elements =
         {
             [1] = { time = 720, id = "bigbank_4", class = TT.Achievement },
-            [2] = { special_function = SF.RemoveTriggers, data = { 100107, 106140, 106150 } },
+            [2] = { special_function = SF.RemoveTrigger, data = { 100107, 106140, 106150 } },
             [100107] = bigbank_4,
             [106140] = bigbank_4,
             [106150] = bigbank_4,

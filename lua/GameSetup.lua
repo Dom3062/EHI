@@ -168,12 +168,12 @@ local custom_levels =
     -- Constantine Scores
     constantine_smackdown_lvl = true, -- Smackdown
     constantine_smackdown2_lvl = true, -- Truck Hustle
-    constantine_ondisplay_lvl = true, --On Display
+    constantine_ondisplay_lvl = true, -- On Display
     constantine_apartment_lvl = true, -- Concrete Jungle
     --[[Smugglers Den (Loud and Stealth)
     Aurora Club (Loud and Stealth)]]
-    constantine_butcher_lvl = true, --Butchers Bay (Loud only)
-    constantine_policestation_lvl = true, --Precinct Raid (Loud Only)
+    constantine_butcher_lvl = true, -- Butchers Bay
+    constantine_policestation_lvl = true, -- Precinct Raid
     --[[Kozlov Mansion (Loud and Stealth)
     Blood in the Water (Loud and Stealth)
     Gunrunners Clubhouse (Loud Only)

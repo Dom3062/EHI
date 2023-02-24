@@ -15,7 +15,7 @@ local triggers = {
     [100724] = { time = 25, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeOrCreateTracker },
     [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact } },
 
-    [1] = { special_function = SF.RemoveTriggers, data = { 101974, 101975, 101970 } },
+    [1] = { special_function = SF.RemoveTrigger, data = { 101974, 101975, 101970 } },
     [101974] = { special_function = SF.Trigger, data = { 1019741, 1 } },
     -- There is an issue in the script. Even if the van driver says 2 minutes, he arrives in a minute
     [1019741] = { time = (60 + 30 + anim_delay) - 58, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { position_by_element = 101454 } },

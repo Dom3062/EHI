@@ -23,9 +23,8 @@ end
 
 local other =
 {
-    [101620] = { special_function = SF.Trigger, data = { 1016201, 1016202 } },
-    [1016201] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
-    [1016202] = { special_function = SF.RemoveTriggers, data = { 101620 } }
+    [101620] = { special_function = SF.Trigger, data = { 1016201 }, trigger_times = 1 },
+    [1016201] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement, trigger_times = 1 },
 }
 
 EHI:ParseTriggers({ mission = triggers, other = other }, "Escape", { Icon.Escape, Icon.LootDrop })

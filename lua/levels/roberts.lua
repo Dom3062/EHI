@@ -9,7 +9,7 @@ local triggers = {
     [101931] = { time = 90 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker },
     [101932] = { time = 120 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker },
     [101929] = { time = 30 + 150 + delay, id = "CageDrop", icons = HeliDropLootZone },
-    [102921] = { special_function = SF.RemoveTriggers, data = { 101929 } },
+    [102921] = { id = 101929, special_function = SF.RemoveTrigger },
 
     [103060] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103444 } },
     [103061] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103438 } },
@@ -24,7 +24,7 @@ local triggers = {
     [102975] = { special_function = SF.Trigger, data = { 1029751, 1029752 } },
     [1029751] = { chance = 5, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance },
     [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { Icon.Phone, "pd2_generic_look" }, class = TT.Warning },
-    [102986] = { special_function = SF.RemoveTrackers, data = { "CorrectPaperChance", "GenSecArrivalWarning" } },
+    [102986] = { special_function = SF.RemoveTracker, data = { "CorrectPaperChance", "GenSecArrivalWarning" } },
     [102985] = { amount = 25, id = "CorrectPaperChance", special_function = SF.IncreaseChance },
     [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, trigger_times = 1 },
 

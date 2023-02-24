@@ -39,9 +39,9 @@ _G.EHI =
     Callback = {},
     CallbackMessage =
     {
-        Spawned = "PlayerSpawned",
+        Spawned = "Spawned",
         -- Provides "loc" (a LocalizationManager class)
-        LocLoaded = "LocalizationLoaded",
+        LocLoaded = "LocLoaded",
         -- Provides "success" (a boolean value)
         MissionEnd = "MissionEnd",
         GameRestart = "GameRestart",
@@ -57,8 +57,6 @@ _G.EHI =
         -- Provides "mode" (a string value)
         AssaultModeChanged = "AssaultModeChanged",
     },
-
-    KillCounter = {},
 
     _base_delay = {},
     _element_delay = {},
@@ -85,13 +83,12 @@ _G.EHI =
         CreateAnotherTrackerWithTracker = 14,
         SetChanceWhenTrackerExists = 15,
         Trigger = 17,
+        RemoveTrigger = 18,
         SetTimeOrCreateTracker = 19,
         ExecuteIfElementIsEnabled = 20,
-        RemoveTrackers = 21,
         SetTimeByPreplanning = 24,
         IncreaseProgress = 25,
         SetTrackerAccurate = 27,
-        RemoveTriggers = 28,
         SetRandomTime = 32,
         DecreaseChance = 34,
         GetElementTimerAccurate = 35,
@@ -927,7 +924,7 @@ function EHI:AddSyncTrigger(id, trigger)
 end
 
 function EHI:AddTrackerSynced(id, delay)
-    if self._sync_triggers[id] and managers.ehi then
+    if self._sync_triggers[id] then
         local trigger = self._sync_triggers[id]
         local trigger_id = trigger.id
         if managers.ehi:TrackerExists(trigger_id) then
@@ -1288,7 +1285,13 @@ function EHI:Trigger(id, element, enabled)
         if trigger.special_function then
             local f = trigger.special_function
             if f == SF.RemoveTracker then
-                RemoveTracker(trigger.id)
+                if trigger.data then
+                    for _, tracker in ipairs(trigger.data) do
+                        RemoveTracker(tracker)
+                    end
+                else
+                    RemoveTracker(trigger.id)
+                end
             elseif f == SF.PauseTracker then
                 PauseTracker(trigger.id)
             elseif f == SF.UnpauseTracker then
@@ -1337,6 +1340,14 @@ function EHI:Trigger(id, element, enabled)
                 for _, t in ipairs(trigger.data) do
                     self:Trigger(t, element, enabled)
                 end
+            elseif f == SF.RemoveTrigger then
+                if trigger.data then
+                    for _, trigger_id in ipairs(trigger.data) do
+                        self:UnhookTrigger(trigger_id)
+                    end
+                else
+                    self:UnhookTrigger(trigger.id)
+                end
             elseif f == SF.SetTimeOrCreateTracker then
                 local key = trigger.id
                 if managers.ehi:TrackerExists(key) or managers.ehi_waypoint:WaypointExists(key) then
@@ -1349,10 +1360,6 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.ExecuteIfElementIsEnabled then
                 if enabled then
                     self:CheckCondition(trigger)
-                end
-            elseif f == SF.RemoveTrackers then
-                for _, tracker in ipairs(trigger.data) do
-                    RemoveTracker(tracker)
                 end
             elseif f == SF.SetTimeByPreplanning then
                 if managers.preplanning:IsAssetBought(trigger.data.id) then
@@ -1371,10 +1378,6 @@ function EHI:Trigger(id, element, enabled)
                     managers.ehi:SetTrackerAccurate(trigger.id, trigger.time)
                 else
                     self:CheckCondition(trigger)
-                end
-            elseif f == SF.RemoveTriggers then
-                for _, trigger_id in ipairs(trigger.data) do
-                    self:UnhookTrigger(trigger_id)
                 end
             elseif f == SF.SetRandomTime then
                 if managers.ehi:TrackerDoesNotExist(trigger.id) then
@@ -2097,6 +2100,7 @@ function EHI:ShowAchievementKillCounter(id, id_stat, achievement_option)
         return
     end
     managers.ehi:AddAchievementKillCounter(id, progress, max)
+    self.KillCounter = self.KillCounter or {}
     self.KillCounter[id_stat] = id
     if not self.KillCounterHook then
         EHI:HookWithID(AchievmentManager, "award_progress", "EHI_award_progress_KillCounter", function(am, stat, value)

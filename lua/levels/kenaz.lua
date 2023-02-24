@@ -62,7 +62,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100299, 13000)] = { id = "RefillLeft02", run = { time = 30 } },
     [EHI:GetInstanceElementID(100300, 13000)] = { id = "RefillRight02", run = { time = 30 } },
 
-    [100489] = { special_function = SF.RemoveTrackers, data = { "WaterTimer1", "WaterTimer2" } },
+    [100489] = { special_function = SF.RemoveTracker, data = { "WaterTimer1", "WaterTimer2" } },
 
     [EHI:GetInstanceElementID(100166, 37575)] = { id = "DrillDrop", icons = { Icon.Winch, Icon.Drill, Icon.Goto }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101854, yes = 900/30, no = 1800/30 } },
     [EHI:GetInstanceElementID(100167, 37575)] = { id = "DrillDrop", special_function = SF.PauseTracker },
@@ -142,7 +142,7 @@ local achievements =
     {
         elements =
         {
-            [100282] = { time = 840, id = "kenaz_4", class = TT.Achievement }
+            [100282] = { time = 840, class = TT.Achievement }
         },
         load_sync = function(self)
             self:AddTimedAchievementTracker("kenaz_4", 840)

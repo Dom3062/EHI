@@ -6,9 +6,8 @@ local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [108538] = { time = 60, id = "Gas", icons = { Icon.Teargas } },
 
-    [103025] = { special_function = SF.Trigger, data = { 1030251, 1030252 } },
-    [1030251] = { time = 3, id = "des_11", class = TT.Achievement },
-    [1030252] = { special_function = SF.RemoveTriggers, data = { 103025 } },
+    [103025] = { special_function = SF.Trigger, data = { 1030251 }, trigger_times = 1 },
+    [1030251] = { time = 3, id = "des_11", class = TT.Achievement, trigger_times = 1 },
     [102822] = { id = "des_11", special_function = SF.SetAchievementComplete },
     [100716] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire } },
 
@@ -87,7 +86,7 @@ local achievements =
             [100107] = { status = "push", class = TT.AchievementStatus },
             [102480] = { special_function = SF.Trigger, data = { 1024801, 1024802 } },
             [1024801] = { status = "finish", special_function = SF.SetAchievementStatus },
-            [1024802] = { special_function = SF.RemoveTriggers, data = { 102486 } },
+            [1024802] = { id = 102486, special_function = SF.RemoveTrigger },
             [102710] = { special_function = SF.SetAchievementComplete },
             [102486] = { special_function = SF.SetAchievementFailed }
         }

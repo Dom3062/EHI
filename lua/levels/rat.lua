@@ -24,8 +24,8 @@ local triggers = {
     [102318] = { id = "Van", run = { time = 60 + 60 + 30 + 15 + anim_delay } },
     [102319] = { id = "Van", run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay } },
     [101001] = { special_function = SF.Trigger, data = { 1010011, 1010012 } },
-    [1010011] = { special_function = SF.RemoveTrackers, data = { "CookChance", "VanStayDelay", "HeliMeth" } },
-    [1010012] = { special_function = SF.RemoveTriggers, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238 } },
+    [1010011] = { special_function = SF.RemoveTracker, data = { "CookChance", "VanStayDelay", "HeliMeth" } },
+    [1010012] = { special_function = SF.RemoveTrigger, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238, 102197 } },
 
     [102383] = { id = "CookDelay", run = { time = 2 + 5 } },
     [100721] = { id = "CookDelay", run = { time = 1 }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
@@ -44,7 +44,7 @@ local triggers = {
     [102237] = { id = "VanStayDelay", run = { time = 60 + van_delay_ovk } },
     [102238] = { id = "VanStayDelay", run = { time = 70 + van_delay_ovk } },
 
-    [1] = { special_function = SF.RemoveTriggers, data = { 101972, 101973, 101974, 101975 } },
+    [1] = { special_function = SF.RemoveTrigger, data = { 101972, 101973, 101974, 101975 } },
     [101972] = { run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
     [101973] = { run = { time = 60 + 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
     [101974] = { run = { time = 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
@@ -103,7 +103,7 @@ local achievements =
         elements =
         {
             [101780] = { max = 25, class = TT.AchievementProgress },
-            [101001] = { special_function = SF.SetAchievementFailed },
+            [101001] = { special_function = SF.SetAchievementFailed }, -- Methlab exploded
             [102611] = { special_function = SF.IncreaseProgress }
         }
     }

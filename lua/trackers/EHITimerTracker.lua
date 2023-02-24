@@ -1,9 +1,23 @@
+local EHI = EHI
 local lerp = math.lerp
 local sin = math.sin
 local min = math.min
 local floor = math.floor
 local Color = Color
+local function anim_completion(o, start_t)
+    while true do
+        local t = start_t
+        while t > 0 do
+            t = t - coroutine.yield()
+            local n = sin(t * 180)
+            local g = lerp(1, 0, n)
+            o:set_color(Color(g, 1, g))
+        end
+        start_t = 1
+    end
+end
 EHITimerTracker = class(EHITracker)
+EHITimerTracker.AnimateWarning = EHIWarningTracker.AnimateWarning
 EHITimerTracker._update = false
 function EHITimerTracker:init(panel, params)
     if params.icons[1].icon then
@@ -11,8 +25,8 @@ function EHITimerTracker:init(panel, params)
         params.icons[3] = { icon = "silent", visible = false, alpha = 0.25 }
         params.icons[4] = { icon = "restarter", visible = false, alpha = 0.25 }
     end
-    self._theme = params.theme
     EHITimerTracker.super.init(self, panel, params)
+    self._theme = params.theme
     self:SetUpgradeable(false)
     self._paused = false
     self._jammed = false
@@ -38,39 +52,10 @@ function EHITimerTracker:SetTimeNoAnim(time) -- No fit text function needed, the
     end
 end
 
-function EHITimerTracker:AnimateWarning(check_progress)
-    if self._text and alive(self._text) then
-        local start_t = check_progress and (1 - min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 1
-        self._text:animate(function(o)
-            while true do
-                local t = start_t
-                while t > 0 do
-                    t = t - coroutine.yield()
-                    local n = sin(t * 180)
-                    local g = lerp(1, 0, n)
-                    o:set_color(Color(1, g, g))
-                end
-                start_t = 1
-            end
-        end)
-    end
-end
-
 function EHITimerTracker:AnimateCompletion(check_progress)
     if self._text and alive(self._text) then
         local start_t = check_progress and (1 - min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 1
-        self._text:animate(function(o)
-            while true do
-                local t = start_t
-                while t > 0 do
-                    t = t - coroutine.yield()
-                    local n = sin(t * 180)
-                    local g = lerp(1, 0, n)
-                    o:set_color(Color(g, 1, g))
-                end
-                start_t = 1
-            end
-        end)
+        self._text:animate(anim_completion, start_t)
     end
 end
 

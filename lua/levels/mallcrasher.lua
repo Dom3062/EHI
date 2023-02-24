@@ -170,6 +170,9 @@ local achievements =
                     }
                 })
             end
+        end,
+        cleanup_callback = function()
+            EHIameno3Tracker = nil
         end
     },
     uno_3 =

@@ -9,7 +9,7 @@ local other =
     -- Police ambush
     [104535] = { special_function = SF.Trigger, data = { 1045351, 1045352 } },
     [1045351] = EHI:AddAssaultDelay({ time = 30, special_function = SF.SetTimeOrCreateTracker }),
-    [1045352] = { special_function = SF.RemoveTriggers, data = { 104488, 104489 } },
+    [1045352] = { special_function = SF.RemoveTrigger, data = { 104488, 104489 } },
 
     [103696] = EHI:AddLootCounter(function()
         local SafeTriggers =

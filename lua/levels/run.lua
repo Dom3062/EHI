@@ -42,7 +42,7 @@ local triggers = {
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins
 
     [1] = { id = "GasAmount", special_function = SF.IncreaseProgress },
-    [2] = { special_function = SF.RemoveTriggers, data = { 102775, 102776, 102868 } }, -- Don't blink twice, just set the max once and remove the triggers
+    [2] = { special_function = SF.RemoveTrigger, data = { 102775, 102776, 102868 } }, -- Don't blink twice, just set the max once and remove the triggers
 
     [102876] = { special_function = SF.Trigger, data = { 1028761, 1 } },
     [1028761] = { time = 60, id = "Gas1", icons = { Icon.Fire } },

@@ -121,7 +121,7 @@ local DisableTriggerAndExecute = EHI:GetFreeCustomSpecialFunctionID()
 local trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local triggers = {
     [1] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto } },
-    [2] = { special_function = SF.RemoveTriggers, data = { 101131, 100900 } },
+    [2] = { special_function = SF.RemoveTrigger, data = { 101131, 100900 } },
     [101131] = trigger,
     [100900] = trigger,
     [101219] = { time = 27, id = "BlackhawkDropLoot", icons = { Icon.Heli, Icon.Loot, Icon.Goto } },
@@ -129,10 +129,9 @@ local triggers = {
 
     [100955] = { time = 10, id = "KeycardLeft", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100957 } },
     [100957] = { time = 10, id = "KeycardRight", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100955 } },
-    [100967] = { special_function = SF.RemoveTrackers, data = { "KeycardLeft", "KeycardRight" } }
+    [100967] = { special_function = SF.RemoveTracker, data = { "KeycardLeft", "KeycardRight" } }
 }
 
-local loot_types = { "artifact_statue", "money", "coke", "gold", "circuit", "weapon", "painting" }
 local kosugi_3 = { id = "kosugi_3", special_function = SF.IncreaseProgress }
 local achievements =
 {
@@ -160,7 +159,7 @@ local achievements =
         },
         load_sync = function(self)
             local counter = 0
-            for _, loot_type in ipairs(loot_types) do
+            for _, loot_type in ipairs({ "artifact_statue", "money", "coke", "gold", "circuit", "weapon", "painting" }) do
                 local amount = managers.loot:GetSecuredBagsTypeAmount(loot_type)
                 counter = counter + math.min(amount, 1)
             end
@@ -182,6 +181,9 @@ local achievements =
                 self:AddAchievementProgressTracker("kosugi_5", nil, math.min(counter_loot, 16)) -- Max is passed in the tracker "init" function
                 self:CallFunction("kosugi_5", "SetProgressArmor", math.min(counter_armor, 4))
             end
+        end,
+        cleanup_callback = function()
+            EHIkosugi5Tracker = nil
         end
     }
 }
@@ -237,9 +239,8 @@ elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
     random_weapons = 1
     random_paintings = 1
 end
-local total = base_amount + crates + random_weapons + random_paintings
 EHI:ShowLootCounter({
-    max = total,
+    max = base_amount + crates + random_weapons + random_paintings,
     triggers =
     {
         [103396] = { special_function = SF.IncreaseProgressMax },

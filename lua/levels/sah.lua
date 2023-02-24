@@ -32,9 +32,9 @@ local achievements =
         elements =
         {
             [100107] = { time = 300, class = TT.Achievement },
-            [101878] = { special_function = SF.SetAchievementComplete }
-        },
-        failed_on_alarm = true
+            [101878] = { special_function = SF.SetAchievementComplete },
+            [101400] = { special_function = SF.SetAchievementFailed, trigger_times = 1 }
+        }
     }
 }
 

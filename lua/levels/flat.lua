@@ -147,7 +147,7 @@ local triggers = {
         managers.ehi:CallFunction("PanicRoomTakeoff", "EnableUpdate")
     end},
     [1] = { special_function = SF.Trigger, data = { 2, 3 } },
-    [2] = { special_function = SF.RemoveTriggers, data = { 103700, 103701 } },
+    [2] = { special_function = SF.RemoveTrigger, data = { 103700, 103701 } },
     [3] = { id = "PanicRoomTakeoff", special_function = DelayExecution },
     [4] = { id = "PanicRoomTakeoff", special_function = SF.RemoveTracker },
     [103901] = { special_function = SF.CustomCode, f = function()
