@@ -12,7 +12,7 @@ local triggers = {
     [100209] = { run = { time = 80 + van_delay } },
     [100208] = { run = { time = 60 + van_delay } },
 
-    [1] = { time = van_delay, special_function = SF.AddTrackerIfDoesNotExist },
+    [1] = { run = { time = van_delay }, special_function = SF.AddTrackerIfDoesNotExist },
     [100214] = { special_function = SF.Trigger, data = { 1, 1002141 } },
     [1002141] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } },
     [100215] = { special_function = SF.Trigger, data = { 1, 1002151 } },
@@ -31,3 +31,10 @@ if EHI:IsClient() then
 end
 
 EHI:ParseTriggers({ mission = triggers, preload = preload }, "Escape", Icon.CarEscape)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 12000
+    },
+    loot_all = 1000
+})

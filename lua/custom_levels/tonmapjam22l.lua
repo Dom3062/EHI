@@ -22,7 +22,7 @@ local function AddWaypoint(self, icon_name, pos_z_offset, ...)
     self._pos_z_offset = Vector3(0, 0, pos_z_offset)
     self._is_active = true
 end
-local function ReplaceWaypointAddFunction(instance, unit_id, unit_data, unit)
+local function ReplaceWaypointAddFunction(unit_id, unit_data, unit)
     unit:waypoint().add_waypoint = AddWaypoint
 end
 local tbl =

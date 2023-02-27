@@ -38,7 +38,6 @@ if BB and BB.grace_period and Global.game_settings.single_player and Global.game
         end
         original._remove(self, id, ...)
     end
-    return
 elseif not Global.game_settings.single_player then
     local function Query(...)
         managers.experience:QueryAmountOfAlivePlayers()

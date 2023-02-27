@@ -8,6 +8,7 @@ local heli_delay = 19
 local anim_delay = 743/30 -- 743/30 is a animation duration; 3s is zone activation delay (never used when van is coming back)
 local heli_delay_full = 13 + 19 -- 13 = Base Delay; 19 = anim delay
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+local VanPos = 1 -- 1 - Left; 2 - Center
 local element_sync_triggers =
 {
     [100494] = { id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100724, set_time_when_tracker_exists = true }
@@ -62,6 +63,40 @@ local triggers = {
 }
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
     triggers[102197] = { id = "HeliMeth", run = { time = 180 + heli_delay_full } }
+    if EHI:MissionTrackersAndWaypointEnabled() then
+        triggers[101001].data[#triggers[101001].data + 1] = 1010013
+        local function ResetWaypoint()
+            managers.hud:RestoreWaypoint(VanPos == 1 and 101454 or 101449)
+            VanPos = 1 -- Reset to default position
+        end
+        triggers[1010013] = { special_function = SF.CustomCode, f = ResetWaypoint }
+        triggers[102320] = { special_function = SF.CustomCode, f = ResetWaypoint }
+        triggers[101258] = { special_function = SF.CustomCode, f = ResetWaypoint }
+        triggers[101982].data[#triggers[101982].data + 1] = 1019823
+        triggers[1019823] = { special_function = SF.CustomCode, f = function()
+            VanPos = 2
+        end }
+        local function DisableWaypoint()
+            local id = VanPos == 1 and 101454 or 101449
+            managers.hud:SoftRemoveWaypoint(id)
+            EHI._cache.IgnoreWaypoints[id] = true
+            EHI:DisableElementWaypoint(id)
+        end
+        triggers[100763] = { special_function = SF.CustomCode, f = DisableWaypoint }
+        triggers[101453] = { special_function = SF.CustomCode, f = DisableWaypoint }
+        local function ShowWaypoint(trigger)
+            local t = trigger.run and trigger.run.time or trigger.time
+            local pos = VanPos == 1 and Vector3(-1374, -2388, 1135) or Vector3(-1283, 1470, 1285)
+            managers.ehi_waypoint:AddWaypoint(trigger.id, {
+                time = t,
+                icon = Icon.LootDrop,
+                position = pos,
+                class = EHI.Waypoints.Warning
+            })
+        end
+        triggers[102219].waypoint_f = ShowWaypoint
+        triggers[102236].waypoint_f = ShowWaypoint
+    end
 elseif EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
     triggers[102197] = { id = "HeliMeth", run = { time = 120 + heli_delay_full } }
 end
@@ -126,3 +161,6 @@ if ovk_and_up then
         max = 7
     })
 end
+EHI:AddXPBreakdown({
+    loot_all = 8000
+})

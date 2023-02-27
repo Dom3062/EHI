@@ -57,3 +57,18 @@ local tbl =
     [101936] = { icons = { Icon.Vault }, remove_on_pause = true, remove_vanilla_waypoint = true, waypoint_id = 102901 }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        thermaldrill_done = { amount = 7000, loud = true },
+        timelock_done = { amount = 4000, stealth = true },
+        cage_assembled = { amount = 3000, loud = true },
+        phone_answered = { amount = 500, stealth = true, times = 4 },
+        escape =
+        {
+            { amount = 1000, stealth = true },
+            { amount = 2000 } -- Loud escape
+        }
+    },
+    loot_all = 1000
+})

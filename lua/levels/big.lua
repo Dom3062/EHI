@@ -168,3 +168,13 @@ local MissionDoorIndex =
     [7] = { w_id = 106382, restore = true, unit_id = 106336 },
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        correct_pc_hack = 8000,
+        timelock_done = 4000,
+        escape_is_enabled = 10000,
+        escape = 8000
+    },
+    loot_all = 1000
+})

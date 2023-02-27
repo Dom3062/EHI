@@ -57,7 +57,7 @@ local achievements =
                     achievement = "chas_10"
                 })
             end },
-            [100107] = { special_function = SF.Trigger, data = { 1, 2 }}
+            [100107] = { special_function = SF.Trigger, data = { 1, 2 } }
         },
         load_sync = function(self)
             if EHI.ConditionFunctions.IsStealth() then

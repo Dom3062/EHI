@@ -181,6 +181,7 @@ function EHIMenu:init()
     self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks.json", EHI.settings.buff_option)
     self:GetMenuFromJson(EHI.MenuPath .. "buff_options/other.json", EHI.settings.buff_option)
     self:GetMenuFromJson(EHI.MenuPath .. "inventory.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "other.json")
 
     self:OpenMenu("ehi_menu")
 end

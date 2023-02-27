@@ -23,3 +23,12 @@ for i = 0, 4800, 300 do
     DisableWaypoints[EHI:GetInstanceElementID(100012, i)] = true
 end
 EHI:DisableWaypoints(DisableWaypoints)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 3000,
+        correct_pc_hack = 3000,
+        placed_c4 = 3000,
+        car_secured = { amount = 1000, times = 4 }
+    }
+})

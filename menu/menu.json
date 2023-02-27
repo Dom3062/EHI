@@ -170,6 +170,14 @@
             "ehi_ver" : 112
         },
         {
+            "type": "button",
+            "id": "ehi_other_menu",
+            "title": "ehi_other_menu",
+            "description": "ehi_other_menu_desc",
+            "next_menu": "ehi_other_menu",
+            "ehi_ver" : 129
+        },
+        {
             "type" : "divider",
             "size" : 20
         },

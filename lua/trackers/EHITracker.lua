@@ -93,11 +93,8 @@ end
 local bg_visibility = EHI:GetOption("show_tracker_bg")
 local corner_visibility = EHI:GetOption("show_tracker_corners")
 
-local function CreateHUDBGBox(panel, params, config)
+local function CreateHUDBGBox(panel, params)
     local box_panel = panel:panel(params)
-	local color = config and config.color
-	local bg_color = config and config.bg_color or Color(1, 0, 0, 0)
-	local blend_mode = config and config.blend_mode
 	box_panel:rect({
 		blend_mode = "normal",
 		name = "bg",
@@ -105,11 +102,11 @@ local function CreateHUDBGBox(panel, params, config)
 		alpha = 0.25,
 		layer = -1,
 		valign = "grow",
-		color = bg_color,
+		color = Color(1, 0, 0, 0),
         visible = bg_visibility
 	})
     if bg_visibility and corner_visibility then
-        local left_top = box_panel:bitmap({
+        box_panel:bitmap({
             texture = "guis/textures/pd2/hud_corner",
             name = "left_top",
             visible = true,
@@ -118,8 +115,7 @@ local function CreateHUDBGBox(panel, params, config)
             halign = "left",
             x = 0,
             valign = "top",
-            color = color,
-            blend_mode = blend_mode
+            blend_mode = "add"
         })
         local left_bottom = box_panel:bitmap({
             texture = "guis/textures/pd2/hud_corner",
@@ -131,8 +127,7 @@ local function CreateHUDBGBox(panel, params, config)
             halign = "left",
             rotation = -90,
             valign = "bottom",
-            color = color,
-            blend_mode = blend_mode
+            blend_mode = "add"
         })
         left_bottom:set_bottom(box_panel:h())
         local right_top = box_panel:bitmap({
@@ -145,8 +140,7 @@ local function CreateHUDBGBox(panel, params, config)
             halign = "right",
             rotation = 90,
             valign = "top",
-            color = color,
-            blend_mode = blend_mode
+            blend_mode = "add"
         })
         right_top:set_right(box_panel:w())
         local right_bottom = box_panel:bitmap({
@@ -159,8 +153,7 @@ local function CreateHUDBGBox(panel, params, config)
             halign = "right",
             rotation = 180,
             valign = "bottom",
-            color = color,
-            blend_mode = blend_mode
+            blend_mode = "add"
         })
         right_bottom:set_right(box_panel:w())
         right_bottom:set_bottom(box_panel:h())
@@ -207,8 +200,6 @@ function EHITracker:init(panel, params)
         y = 0,
         w = 64 * self._scale,
         h = self._icon_size_scaled
-    }, {
-        blend_mode = "add"
     })
     self._text = self._time_bg_box:text({
         name = "text1",

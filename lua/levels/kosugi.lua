@@ -274,3 +274,18 @@ EHI:ShowAchievementLootCounter({
         loot_type = "samurai_suit"
     }
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape =
+        {
+            { amount = 4000, stealth = true }
+        }
+    },
+    loot =
+    {
+        samurai_suit = { amount = 6000, to_secure = 4 },
+        _else = { amount = 500, times = 16 },
+        xp_bonus = { amount = 4000, to_secure = 3, times = 1 },
+    }
+})

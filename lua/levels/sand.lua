@@ -176,7 +176,7 @@ local tbl =
     [EHI:GetInstanceUnitID(100009, 16780)] = { icons = { Icon.Power } }
 }
 if EHI:GetOption("show_waypoints") then
-    local function f(instance, id, unit_data, unit)
+    local function f(id, unit_data, unit)
         local trigger_id = unit_data.trigger_id
         EHI:AddWaypointToTrigger(trigger_id, { unit = unit })
         unit:unit_data():add_destroy_listener("EHIDestroy", function(...)

@@ -489,7 +489,12 @@ local function LoadDefaultValues(self)
 
         -- Inventory
         show_inventory_detailed_description = false,
-        hide_original_desc = true
+        hide_original_desc = true,
+
+        -- Other
+        show_remaining_xp = true,
+        show_remaining_xp_to_100 = false,
+        show_mission_xp_overview = true
     }
 end
 
@@ -710,10 +715,7 @@ function EHI:MissionTrackersAndWaypointEnabled()
 end
 
 function EHI:IsXPTrackerDisabled()
-    if not self:GetOption("show_gained_xp") then
-        return true
-    end
-    if Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree" then
+    if not self:GetOption("show_gained_xp") or self:IsPlayingCrimeSpree() then
         return true
     end
     return false
@@ -723,12 +725,30 @@ function EHI:AreGagePackagesSpawned()
     return self._cache.GagePackages and self._cache.GagePackages > 0
 end
 
+function EHI:IsPlayingCrimeSpree()
+    return Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree"
+end
+
 function EHI:AssaultDelayTrackerIsEnabled()
     return self:GetOption("show_assault_delay_tracker") and tweak_data.levels:get_group_ai_state() ~= "skirmish"
 end
 
 function EHI:CombineAssaultDelayAndAssaultTime()
     return self:GetOption("show_assault_delay_tracker") and self:GetOption("show_assault_time_tracker") and self:GetOption("aggregate_assault_delay_and_assault_time")
+end
+
+---@param params table
+function EHI:AddXPBreakdown(params)
+    if self:IsXPTrackerDisabled() or not managers.menu_component then
+        return
+    end
+    if not managers.menu_component._mission_briefing_gui then
+        self:AddCallback("MissionBriefingGuiInit", function(gui)
+            gui:AddXPBreakdown(params)
+        end)
+        return
+    end
+    managers.menu_component._mission_briefing_gui:AddXPBreakdown(params)
 end
 
 ---@param id string|number
@@ -1192,7 +1212,9 @@ function EHI:AddTrackerWithRandomTime(trigger)
     local time = trigger.data[math.random(#trigger.data)]
     trigger.time = time
     managers.ehi:AddTracker(trigger)
-    if trigger.waypoint then
+    if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
+        trigger.waypoint_f(trigger)
+    elseif trigger.waypoint then
         managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
     end
 end
@@ -1205,7 +1227,9 @@ function EHI:AddTracker(trigger)
     else
         AddTracker(trigger)
     end
-    if trigger.waypoint then
+    if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
+        trigger.waypoint_f(trigger)
+    elseif trigger.waypoint then
         managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
     end
 end
@@ -1220,7 +1244,9 @@ function EHI:AddTrackerAndSync(id, delay)
         icons = trigger.icons,
         class = trigger.class
     }, id, delay)
-    if trigger.waypoint then
+    if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
+        trigger.waypoint_f(trigger)
+    elseif trigger.waypoint then
         managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
     end
 end
@@ -1274,6 +1300,12 @@ local function RemoveTracker(id)
     managers.ehi_waypoint:RemoveWaypoint(id)
 end
 
+---@param id string
+local function HideTracker(id)
+    managers.ehi:x()
+    managers.ehi_waypoint:RemoveWaypoint(id)
+end
+
 ---@param id number
 ---@param element table
 ---@param enabled boolean
@@ -1323,8 +1355,12 @@ function EHI:Trigger(id, element, enabled)
                 managers.ehi:IncreaseChance(trigger.id, trigger.amount)
             elseif f == SF.TriggerIfEnabled then
                 if enabled then
-                    for _, t in ipairs(trigger.data) do
-                        self:Trigger(t, element, enabled)
+                    if trigger.data then
+                        for _, t in ipairs(trigger.data) do
+                            self:Trigger(t, element, enabled)
+                        end
+                    else
+                        self:Trigger(trigger.id, element, enabled)
                     end
                 end
             elseif f == SF.CreateAnotherTrackerWithTracker then
@@ -1337,8 +1373,12 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.Trigger then
-                for _, t in ipairs(trigger.data) do
-                    self:Trigger(t, element, enabled)
+                if trigger.data then
+                    for _, t in ipairs(trigger.data) do
+                        self:Trigger(t, element, enabled)
+                    end
+                else
+                    self:Trigger(trigger.id, element, enabled)
                 end
             elseif f == SF.RemoveTrigger then
                 if trigger.data then
@@ -1637,7 +1677,7 @@ end
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return table|nil
 function EHI:AddLootCounter(f, check, trigger_once)
-    if Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree" then
+    if self:IsPlayingCrimeSpree() then
         return nil
     elseif check ~= nil and check == false then
         return nil
@@ -1970,7 +2010,7 @@ end
 
 ---@param params table
 function EHI:ShowLootCounterNoCheck(params)
-    if Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree" then
+    if self:IsPlayingCrimeSpree() then
         return
     end
     local n_offset = params.n_offset or 0
@@ -2045,6 +2085,11 @@ function EHI:ShowAchievementLootCounter(params)
     end
     if params.alarm_callback then
         self:AddOnAlarmCallback(params.alarm_callback)
+    end
+    if params.failed_on_alarm then
+        self:AddOnAlarmCallback(function()
+            managers.ehi:SetAchievementFailed(params.achievement)
+        end)
     end
     if params.triggers then
         self:AddTriggers2(params.triggers, nil, params.achievement)
@@ -2213,13 +2258,36 @@ function EHI:GetKeypadResetTimer(time_override)
     end
 end
 
+---@param trigger table
+---@param params table|nil
+---@return table
+function EHI:ClientCopyTrigger(trigger, params)
+    local tbl = {}
+    if trigger.waypoint then
+        tbl.waypoint = deep_clone(trigger.waypoint)
+    end
+    for key, value in pairs(params or {}) do
+        tbl[key] = value
+    end
+    for key, value in pairs(trigger) do
+        tbl[key] = tbl[key] or value
+    end
+    tbl.special_function = SF.AddTrackerIfDoesNotExist
+    return tbl
+end
+
 Load()
 show_achievement = EHI:ShowMissionAchievements()
 
 if EHI:GetWaypointOption("show_waypoints_only") then
     ---@param trigger table
     function EHI:AddTracker(trigger)
-        if trigger.waypoint then
+        if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
+            if not trigger.run then
+                trigger.time = self:GetTime(trigger)
+            end
+            trigger.waypoint_f(trigger)
+        elseif trigger.waypoint then
             trigger.waypoint.time = self:GetTime(trigger)
             managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
         else

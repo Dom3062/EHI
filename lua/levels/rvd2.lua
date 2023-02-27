@@ -63,3 +63,14 @@ local DisableWaypoints =
     -- Second instance is not used, no need to have the waypoints here
 }
 EHI:DisableWaypoints(DisableWaypoints)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        hacking_done = 6000,
+        vault_drills_done = 2000,
+        vault_frozen = 4000,
+        c4_set_up = 2000,
+        escape = 1000
+    },
+    loot_all = 500
+})

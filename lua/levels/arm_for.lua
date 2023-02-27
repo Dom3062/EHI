@@ -77,3 +77,15 @@ local MissionDoorIndex =
     [6] = { w_id = 102593 }
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        vault_open = { amount = 3000, times = 3 },
+        turret_secured = 7000,
+        escape = 4000
+    },
+    loot =
+    {
+        ammo = { amount = 800, times = 20 }
+    }
+})

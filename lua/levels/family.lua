@@ -73,3 +73,14 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 2000
+    },
+    loot =
+    {
+        money = 1000,
+        diamonds = 1000
+    }
+})

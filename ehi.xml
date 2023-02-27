@@ -47,6 +47,8 @@
             <post :hook_id="menumanager" :script_path="menu.lua" />
             <post :hook_id="menu/blackmarketgui" :script_path="BlackMarketGui.lua" />
             <post :hook_id="menu/menunodegui" :script_path="MenuNodeMainGui.lua" />
+            <post :hook_id="menu/missionbriefinggui" :script_path="MissionBriefingGui.lua" />
+            <post :hook_id="menu/walletguiobject" :script_path="WalletGuiObject.lua" />
 
             <post :hook_id="playermanager" :script_path="PlayerManager.lua" />
             <post :hook_id="preplanningmanager" :script_path = "PrePlanningManager.lua" />

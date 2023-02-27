@@ -35,7 +35,8 @@ function ExperienceManager:init(...)
         alive_players = Global.game_settings.single_player and 1 or 0,
         gage_bonus = 1,
         stealth = true,
-        bonus_xp = 0
+        bonus_xp = 0,
+        skill_xp_multiplier = 1 -- Recalculated in ExperienceManager:RecalculateSkillXPMultiplier()
     }
     if xp_format == 3 then -- Multiply
         local function f()
@@ -82,7 +83,6 @@ end
 function ExperienceManager:SetPlayerData(managers)
     local player = managers.player
     self._xp.infamy_bonus = player:get_infamy_exp_multiplier()
-    self._xp.skill_xp_multiplier = 1 -- Recalculated in ExperienceManager:RecalculateSkillXPMultiplier()
 	local multiplier = tweak_data:get_value("experience_manager", "limited_bonus_multiplier") or 1
     local level_data = tweak_data.levels[Global.game_settings.level_id] or {}
 	if level_data.is_christmas_heist then

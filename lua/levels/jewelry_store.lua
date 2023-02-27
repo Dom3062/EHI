@@ -54,3 +54,14 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape =
+        {
+            { amount = 2000, timer = 120, stealth = true },
+            { amount = 6000, stealth = true },
+            { amount = 8000 } -- Loud escape
+        }
+    }
+})

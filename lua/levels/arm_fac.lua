@@ -28,3 +28,10 @@ local other =
 }
 
 EHI:ParseTriggers({ mission = triggers, other = other }, "Escape", { Icon.Escape, Icon.LootDrop })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 12000
+    },
+    loot_all = 1000
+})

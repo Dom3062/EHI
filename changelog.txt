@@ -1,3 +1,7 @@
+r129 (27. 02. 2023):
+Added options "Show Remaining XP to Next Level/Infamy Pool", "Show Remaining XP to Level 100" and "Show Mission XP Overview"
+Ukrainian Prisoner: Fixed a crash related to unit
+
 r128 (24. 02. 2023):
 Hostile Takeover: Trigger fixes for achievements
 

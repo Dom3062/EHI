@@ -6,6 +6,7 @@ local triggers = {}
 local achievements = {}
 local other = {}
 local level_id = Global.game_settings.level_id
+local EscapeXP
 if level_id == "firestarter_3" then
     triggers[102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money } }
     achievements.slakt_5 =
@@ -19,6 +20,7 @@ if level_id == "firestarter_3" then
             [105235] = { special_function = SF.SetAchievementFailed }
         }
     }
+    EscapeXP = 16000
 else
     -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
     EHI:ShowAchievementBagValueCounter({
@@ -40,6 +42,7 @@ else
             managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
         end)
     end
+    EscapeXP = 12000
 end
 triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
 triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
@@ -73,6 +76,12 @@ local tbl =
     [104466] = { remove_vanilla_waypoint = true, waypoint_id = 102752 }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = EscapeXP
+    }
+})
 
 if not EHI:CanShowAchievement("voff_1") then
     return

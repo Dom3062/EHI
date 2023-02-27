@@ -85,3 +85,11 @@ elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     max = 18
 end
 EHI:ShowLootCounter({ max = max })
+--[[EHI:AddXPBreakdown({
+    objective =
+    {
+        pc_hack = { amount = 10000, loud = true },
+        pyro_set = { amount = 3000, times = 3 }
+    },
+    loot_all = { amount = 1200, times = max }
+})]]

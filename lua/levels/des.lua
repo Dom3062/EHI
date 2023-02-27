@@ -6,7 +6,7 @@ local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [108538] = { time = 60, id = "Gas", icons = { Icon.Teargas } },
 
-    [103025] = { special_function = SF.Trigger, data = { 1030251 }, trigger_times = 1 },
+    [103025] = { id = 1030251, special_function = SF.Trigger, trigger_times = 1 },
     [1030251] = { time = 3, id = "des_11", class = TT.Achievement, trigger_times = 1 },
     [102822] = { id = "des_11", special_function = SF.SetAchievementComplete },
     [100716] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire } },
