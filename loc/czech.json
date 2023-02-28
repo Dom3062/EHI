@@ -600,5 +600,8 @@
     "ehi_experience_thermaldrill_done" : "Tepelný vrták dokončen: ",
     "ehi_experience_timelock_done" : "Časový zámek dokončen: ",
     "ehi_experience_phone_answered" : "Zvednutý telefon: ",
-    "ehi_experience_vault_frozen" : "Liquid Nitrogen hotov: "
+    "ehi_experience_vault_frozen" : "Liquid Nitrogen hotov: ",
+    "ehi_experience_mallcrasher" : "Ničení obchoďáku / Dokončení mise: ",
+    "ehi_experience_safe_event_done" : "Safe Event dokončen: ",
+    "ehi_experience_present_finished" : "Dárek zabalen: "
 }

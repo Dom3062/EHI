@@ -1,3 +1,6 @@
+r130 (28. 02. 2023):
+Fixed a possible crash in Mission Briefing
+
 r129 (27. 02. 2023):
 Added options "Show Remaining XP to Next Level/Infamy Pool", "Show Remaining XP to Level 100" and "Show Mission XP Overview"
 Ukrainian Prisoner: Fixed a crash related to unit

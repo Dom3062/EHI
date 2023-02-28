@@ -105,7 +105,7 @@ local function ProcessLoot(self, params)
                 self:AddLootSecured(loot, data.times or 0, data.to_secure or 0, total_xp)
             else
                 local total_xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
-                self:AddLootSecured(loot, 0, data.to_secure or 0, total_xp)
+                self:AddLootSecured(loot, 0, 0, total_xp)
             end
         end
     end

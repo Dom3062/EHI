@@ -600,5 +600,8 @@
     "ehi_experience_thermaldrill_done" : "Thermal Drill done: ",
     "ehi_experience_timelock_done" : "Timelock done: ",
     "ehi_experience_phone_answered" : "Phone Answered: ",
-    "ehi_experience_vault_frozen" : "Liquid Nitrogen done: "
+    "ehi_experience_vault_frozen" : "Liquid Nitrogen done: ",
+    "ehi_experience_mallcrasher" : "Destroying the mall / Escape: ",
+    "ehi_experience_safe_event_done" : "Safe Event done: ",
+    "ehi_experience_present_finished" : "Present finished: "
 }

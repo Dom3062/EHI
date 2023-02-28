@@ -47,3 +47,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     preload = preload
 })
+EHI:AddXPBreakdown({
+    loot_all = 2000
+})

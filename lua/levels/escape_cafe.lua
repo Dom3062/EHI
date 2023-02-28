@@ -47,3 +47,9 @@ if tweak_data.ehi.functions.IsBranchbankJobActive() then
         }
     })
 end
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 6000
+    }
+})

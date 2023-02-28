@@ -205,3 +205,9 @@ EHI:ParseTriggers({
 EHI:RegisterCustomSpecialFunction(AddMoney, function(trigger, element, ...)
     managers.ehi:AddMoneyToTracker(trigger.id, element._values.amount)
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        mallcrasher = { amount = 1000, times = 6 }
+    }
+})

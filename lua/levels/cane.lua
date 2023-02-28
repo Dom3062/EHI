@@ -26,6 +26,22 @@ for _, index in ipairs(FireTrapIndexes) do
     triggers[EHI:GetInstanceElementID(100022, index)] = fire
 end
 
+local function cane_5()
+    EHI:HookWithID(PlayerManager, "set_synced_deployable_equipment", "EHI_cane_5_fail_trigger", function(self, ...)
+        if self._peer_used_deployable then
+            managers.ehi:SetAchievementFailed("cane_5")
+            EHI:Unhook("cane_5_fail_trigger")
+        end
+    end)
+    EHI:ShowAchievementLootCounter({
+        achievement = "cane_5",
+        max = 10,
+        counter =
+        {
+            loot_type = "present"
+        }
+    })
+end
 local achievements =
 {
     cane_2 =
@@ -48,22 +64,18 @@ local achievements =
                     end
                     return
                 end
-                EHI:HookWithID(PlayerManager, "set_synced_deployable_equipment", "EHI_cane_5_fail_trigger", function(self, ...)
-                    if self._peer_used_deployable then
-                        managers.ehi:SetAchievementFailed("cane_5")
-                        EHI:Unhook("cane_5_fail_trigger")
-                    end
-                end)
-                EHI:ShowAchievementLootCounter({
-                    achievement = "cane_5",
-                    max = 10,
-                    counter =
-                    {
-                        loot_type = "present"
-                    }
-                })
+                cane_5()
             end },
-        }
+        },
+        load_sync = function(self)
+            if #managers.assets:get_unlocked_asset_ids(true) ~= 0 or managers.player:has_deployable_been_used() then
+                return
+            end
+            if managers.loot:GetSecuredBagsTypeAmount("present") >= 10 then
+                return
+            end
+            cane_5()
+        end
     }
 }
 
@@ -106,12 +118,12 @@ for _, index in ipairs(FireTrapIndexes) do
     tbl[EHI:GetInstanceUnitID(100002, index)] = { ignore = true }
 end
 EHI:UpdateUnits(tbl)
-EHI:AddLoadSyncFunction(function(self)
-    if #managers.assets:get_unlocked_asset_ids(true) ~= 0 or managers.player:has_deployable_been_used() then
-        return
-    end
-    if managers.loot:GetSecuredBagsTypeAmount("present") >= 10 then
-        return
-    end
-    EHI:Trigger(1005441)
-end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        safe_event_done = 4000,
+        present_finished = 1000,
+        escape = 4000
+    },
+    loot_all = 1000
+})

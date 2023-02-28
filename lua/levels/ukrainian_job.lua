@@ -84,3 +84,13 @@ EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, functio
         EHI:CheckCondition(trigger)
     end
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape =
+        {
+            { amount = 4000, timer = 120, stealth = true },
+            { amount = 10000 }
+        }
+    }
+})

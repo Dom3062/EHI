@@ -80,3 +80,9 @@ EHI:AddLoadSyncFunction(function(self)
         end
     end
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 6000
+    }
+})

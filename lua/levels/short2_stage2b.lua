@@ -5,3 +5,9 @@ local triggers =
 }
 
 EHI:ParseTriggers({ mission = triggers })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 13000
+    }
+})

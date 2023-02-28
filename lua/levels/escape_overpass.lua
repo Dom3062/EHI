@@ -64,3 +64,9 @@ EHI:RegisterCustomSpecialFunction(GetFromCache, function(trigger, ...)
     end
     EHI:CheckCondition(trigger)
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 8000
+    }
+})
