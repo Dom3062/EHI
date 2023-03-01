@@ -51,3 +51,15 @@ EHI:ParseTriggers({
     other = other,
     preload = preload
 }, "Escape", Icon.CarEscape)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape =
+        {
+            { amount = 10000, stealth = true },
+            { amount = 8000, loud = true },
+            { amount = 4000, loud = true, c4_used = true }
+        }
+    },
+    loot_all = 1000
+})

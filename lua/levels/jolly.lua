@@ -74,3 +74,12 @@ for i = 19150, 20650, 500 do
     tbl[EHI:GetInstanceUnitID(100019, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100070, i) }
 end
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        van_open = 16000,
+        c4_set_up = 6000, -- Wall blown up
+        escape = 6000
+    },
+    loot_all = 500
+})

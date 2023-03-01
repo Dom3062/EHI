@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("MissionBriefingGui") and not EHI:IsXPTrackerDisabled() then
+if EHI:CheckLoadHook("MissionBriefingGui") or EHI:IsXPTrackerDisabled() then
     return
 end
 if not EHI:GetOption("show_mission_xp_overview") then
@@ -86,6 +86,13 @@ function MissionBriefingGui:ProcessXPBreakdown()
     end
 end
 
+local function GetTranslatedKey(self, key)
+    local string_id = "ehi_experience_" .. key
+    if self._loc:exists(string_id) then
+        return self._loc:text(string_id)
+    end
+    return key
+end
 local function ProcessLoot(self, params)
     if params.loot_all then
         local data = params.loot_all
@@ -122,13 +129,48 @@ local function ProcessEscape(self, str, params)
                 end
                 s = s .. ": "
             else
-                s = self._loc:text("ehi_experience_loud_escape") .. ": "
+                s = self._loc:text("ehi_experience_loud_escape")
+                if value.c4_used then
+                    s = s .. " (" .. self._loc:text("ehi_experience_c4_used") .. ")"
+                end
+                s = s .. ": "
             end
             self:AddXPText(s, total_xp)
         end
     else
         local total_xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(params), "+")
         self:AddXPText(str, total_xp)
+    end
+end
+local function ProcessRandomObjectives(self, params)
+    local random = params.random
+    if type(random) ~= "table" then
+        return
+    end
+    self:AddRandomObjectivesHeader(random.max)
+    local separate = false
+    for obj, data in pairs(random) do
+        if obj ~= "max" then
+            if type(data) == "table" then
+                if separate then
+                    self:AddSeparator()
+                end
+                for _, xp in ipairs(data) do
+                    local str = GetTranslatedKey(self, xp.name)
+                    if type(xp) == "table" then
+                    else
+                        local total_xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(xp.amount), "+")
+                        self:AddXPText("○ " .. str, total_xp)
+                    end
+                end
+                separate = true
+            else
+                local str = "- " .. GetTranslatedKey(self, obj)
+                local total_xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
+                self:AddXPText(str, total_xp)
+                separate = false
+            end
+        end
     end
 end
 function MissionBriefingGui:AddXPBreakdown(params)
@@ -157,13 +199,11 @@ function MissionBriefingGui:AddXPBreakdown(params)
         self:AddTotalXP(self._xp:cash_string(total_xp, "+"))
     elseif params.objective then
         for key, data in pairs(params.objective) do
-            local str = key
-            local string_id = "ehi_experience_" .. key
-            if self._loc:exists(string_id) then
-                str = self._loc:text(string_id)
-            end
+            local str = GetTranslatedKey(key)
             if key == "escape" then
                 ProcessEscape(self, str, data)
+            elseif key == "random" then
+                ProcessRandomObjectives(self, data)
             elseif type(data) == "table" then
                 local total_xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.amount), "+")
                 if data.times then
@@ -294,6 +334,36 @@ function MissionBriefingGui:AddLootSecured(loot, times, to_secure, value)
         font_size = tweak_data.menu.pd2_small_font_size,
         color = Color.white,
         text = str,
+        layer = 10
+    })
+    self._lines = self._lines + 1
+end
+
+function MissionBriefingGui:AddRandomObjectivesHeader(max)
+    self._ehi_panel_v2:text({
+        name = tostring(self._lines),
+        blend_mode = "add",
+        x = 10,
+        y = 10 + (self._lines * 22),
+        font = tweak_data.menu.pd2_large_font,
+        font_size = tweak_data.menu.pd2_small_font_size,
+        color = Color.white,
+        text = self._loc:text("ehi_experience_random_objectives", { count = max }),
+        layer = 10
+    })
+    self._lines = self._lines + 1
+end
+
+function MissionBriefingGui:AddSeparator()
+    self._ehi_panel_v2:text({
+        name = tostring(self._lines),
+        blend_mode = "add",
+        x = 10,
+        y = 10 + (self._lines * 22),
+        font = tweak_data.menu.pd2_large_font,
+        font_size = tweak_data.menu.pd2_small_font_size,
+        color = Color.white,
+        text = "",
         layer = 10
     })
     self._lines = self._lines + 1

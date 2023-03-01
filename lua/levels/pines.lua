@@ -48,5 +48,9 @@ EHI:ParseTriggers({
     preload = preload
 })
 EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 8000
+    },
     loot_all = 2000
 })

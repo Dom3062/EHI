@@ -71,3 +71,17 @@ local tbl =
     [EHI:GetInstanceUnitID(100014, 2850)] = { ignore = true }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        vault_found = 4000,
+        vault_open = 4000,
+        escape = 4000
+    },
+    loot =
+    {
+        warhead = { amount = 8000, to_secure = max },
+        _else = { amount = 1500 },
+        xp_bonus = { amount = 2000, to_secure = max + 8 }
+    }
+})

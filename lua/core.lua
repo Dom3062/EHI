@@ -2211,12 +2211,15 @@ function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_cont
     end
 end
 
+---@param pos table
+---@param index table
 function EHI:SetMissionDoorPosAndIndex(pos, index)
     if TimerGui.SetMissionDoorPosAndIndex then
         TimerGui.SetMissionDoorPosAndIndex(pos, index)
     end
 end
 
+---@param hook string
 function EHI:CheckLoadHook(hook)
     if not Global.load_level then
         return true
@@ -2228,6 +2231,7 @@ function EHI:CheckLoadHook(hook)
     return false
 end
 
+---@param hook string
 function EHI:CheckHook(hook)
     if self._hooks[hook] then
         return true
