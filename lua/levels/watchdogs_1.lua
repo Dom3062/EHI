@@ -64,3 +64,12 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     max = 12
 end
 EHI:ShowLootCounter({ max = max })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        heli_escape = 2000,
+        all_bags_secured = 2000,
+        escape = 12000
+    },
+    no_total_xp = true
+})

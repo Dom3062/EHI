@@ -1530,6 +1530,12 @@ function EHI:RegisterCustomSpecialFunction(id, f)
     self.SFF[id] = f
 end
 
+---Unregisters custom special function
+---@param id number
+function EHI:UnregisterCustomSpecialFunction(id)
+    self.SFF[id] = nil
+end
+
 function EHI:GetFreeCustomSpecialFunctionID()
     local id = (self._cache.SFFUsed or self.SpecialFunctions.CustomSF) + 1
     self._cache.SFFUsed = id

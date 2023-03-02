@@ -76,7 +76,7 @@ local tbl =
     [105874] = { remove_vanilla_waypoint = true, waypoint_id = 100776 }
 }
 EHI:UpdateUnits(tbl)
---[[EHI:AddXPBreakdown({
+EHI:AddXPBreakdown({
     objective =
     {
         random =
@@ -89,7 +89,7 @@ EHI:UpdateUnits(tbl)
             },
             shoe_backroom =
             {
-                { amount = 4000, name = "shoe_backroom_enter"},
+                { amount = 4000, name = "shoe_backroom_enter" },
                 { amount = 500, name = "shoe_collected" }
             },
             jewelry =
@@ -99,25 +99,28 @@ EHI:UpdateUnits(tbl)
             },
             toy =
             {
-                { amount = 4000, name = "toy_found"},
+                { amount = 4000, name = "toy_found" },
                 { amount = 800, name = "toy_collected" }
             },
             vr =
             {
-                { amount = 6000, name = "vault_drill_done"},
+                { amount = 6000, name = "vault_drill_done" },
                 { amount = 500, name = "vr_collected" }
+            },
+            wine =
+            {
+                { amount = 800, name = "wine_collected" }
             }
         },
-        wine_collected = 800,
         flare = 500,
         c4_drop = 1000,
         c4_set_up = 1000,
         heli_arrival = 1000,
-        beat_up_santa = 500
+        wires_attached = 500
     },
     loot =
     {
         money = 1000,
         diamonds = 1000
     }
-})]]
+})

@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("ExperienceManager") then
-    return
-end
-
-if EHI:IsXPTrackerDisabled() then
+if EHI:CheckLoadHook("ExperienceManager") or EHI:IsXPTrackerDisabled() then
     return
 end
 

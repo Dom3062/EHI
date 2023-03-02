@@ -581,6 +581,7 @@
     "ehi_experience_xp_bonus" : "Bonus XP",
     "ehi_experience_trigger_times" : "$times;x max",
     "ehi_experience_random_objectives" : "Random objectives ($count max):",
+    "ehi_experience_heli_escape" : "Heli escape: ",
     "ehi_experience_loud_escape" : "Loud Escape",
     "ehi_experience_stealth_escape" : "Stealth Escape",
     "ehi_experience_escape" : "Escape: ",
@@ -613,12 +614,14 @@
     "ehi_experience_shoe_backroom_enter" : "Entered Backroom (Shoes): ",
     "ehi_experience_shoe_collected" : "Shoes collected: ",
     "ehi_experience_necklace_collected" : "Necklace collected: ",
-    "ehi_experience_toy_found" : "Timboy found: ",
+    "ehi_experience_toy_found" : "Timboy found (If in a shopping bag): ",
     "ehi_experience_toy_collected" : "Timboy collected: ",
     "ehi_experience_vr_collected" : "VR collected: ",
     "ehi_experience_wine_collected" : "Wine collected: ",
     "ehi_experience_flare" : "Flare placed: ",
     "ehi_experience_c4_drop" : "C4 Drop: ",
     "ehi_experience_heli_arrival" : "Heli arrived: ",
-    "ehi_experience_beat_up_santa" : "Beat up Santa (End): "
+    "ehi_experience_wires_attached" : "Wires attached: ",
+    "ehi_experience_all_bags_secured" : "All bags secured: ",
+    "ehi_experience_watchdogs_bonus_xp" : "Bonus XP for each bag after securing 4 mandatory bags: "
 }

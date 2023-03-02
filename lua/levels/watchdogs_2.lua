@@ -53,7 +53,10 @@ local achievements =
             [102382] = { special_function = SF.SetAchievementFailed },
             [102379] = { special_function = SF.SetAchievementComplete }
         }
-    }
+    },
+    cleanup_callback = function()
+        EHI:UnregisterCustomSpecialFunction(uno_8)
+    end
 }
 
 local other =
@@ -89,3 +92,11 @@ EHI:RegisterCustomSpecialFunction(uno_8, function(trigger, ...)
         EHI:CheckCondition(trigger)
     end
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 12000,
+        watchdogs_bonus_xp = 1500
+    },
+    no_total_xp = true
+})
