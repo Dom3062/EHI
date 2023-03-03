@@ -114,7 +114,7 @@ local function ProcessLoot(self, params, total_xp)
         else
             local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
             self:AddXPText(string.format("%s: ", secured_bag), xp)
-            --total_xp.add = false
+            total_xp.add = false
         end
     elseif params.loot then
         self:AddLootSecuredHeader()
@@ -248,13 +248,13 @@ function MissionBriefingGui:AddXPBreakdown(params)
                 self:AddXPText(str, xp)
             end
         end
-        ProcessLoot(self, params)
+        ProcessLoot(self, params, total_xp)
         --[[if total_xp.add and total_xp.total > 0 then
             self:AddTotalXP(total_xp.total)
         elseif total_xp.total_xp_override then
         end]]
     elseif params.loot_all or params.loot then
-        ProcessLoot(self, params)
+        ProcessLoot(self, params, { total = 0, base = 0 })
     else
         for key, _ in pairs(params) do
             EHI:Log("[MissionBriefingGui] Unknown key! " .. tostring(key))

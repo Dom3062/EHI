@@ -623,5 +623,14 @@
     "ehi_experience_heli_arrival" : "Přílet helikoptéry: ",
     "ehi_experience_wires_attached" : "Háky připevněny: ",
     "ehi_experience_all_bags_secured" : "Všechny pytle zajištěny: ",
-    "ehi_experience_watchdogs_bonus_xp" : "Bonusové ZK za každý pytel po zajištění 4 povinných pytlů: "
+    "ehi_experience_watchdogs_bonus_xp" : "Bonusové ZK za každý pytel po zajištění 3 povinných pytlů: ",
+    "ehi_experience_fs_secured_required_bags" : "Povinné pytle zajištěny: ",
+    "ehi_experience_fs_burned_required_bags" : "Povinné pytle zničeny: ",
+    "ehi_experience_rats_lab_exploded" : "Laborka vybouchla: ",
+    "ehi_experience_rats_3_bags_cooked" : "Uvařeny 3 pytle perníku: ",
+    "ehi_experience_rats_all_7_bags_cooked" : "Uvařeno všech 7 pytlů perníku: ",
+    "ehi_experience_rats2_info_destroyed" : "Info zničeno: ",
+    "ehi_experience_rats2_trade" : "Předání perníku: ",
+    "ehi_experience_rats2_trade_and_steal" : "Předání a potom ukradení perníku zpět: ",
+    "ehi_experience_rats3_rats_killed" : "Informátoři zabiti: "
 }

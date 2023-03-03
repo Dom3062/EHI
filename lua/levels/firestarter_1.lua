@@ -63,6 +63,15 @@ local other =
 EHI:ParseTriggers({
     other = other
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        fs_secured_required_bags = 10000,
+        fs_burned_required_bags = 8000,
+        all_bags_secured = 6000
+    },
+    no_total_xp = true
+})
 --[[EHI:AddLoadSyncFunction(function(self)
     LordOfWarAchievement()
     if self:TrackerExists("lord_of_war") then

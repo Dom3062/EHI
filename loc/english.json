@@ -623,5 +623,14 @@
     "ehi_experience_heli_arrival" : "Heli arrived: ",
     "ehi_experience_wires_attached" : "Wires attached: ",
     "ehi_experience_all_bags_secured" : "All bags secured: ",
-    "ehi_experience_watchdogs_bonus_xp" : "Bonus XP for each bag after securing 4 mandatory bags: "
+    "ehi_experience_watchdogs_bonus_xp" : "Bonus XP for each bag after securing 3 mandatory bags: ",
+    "ehi_experience_fs_secured_required_bags" : "Mandatory bags secured: ",
+    "ehi_experience_fs_burned_required_bags" : "Mandatory bags destroyed: ",
+    "ehi_experience_rats_lab_exploded" : "Lab Exploded: ",
+    "ehi_experience_rats_3_bags_cooked" : "3 bags of meth cooked: ",
+    "ehi_experience_rats_all_7_bags_cooked" : "All 7 bags of meth cooked: ",
+    "ehi_experience_rats2_info_destroyed" : "Info destroyed: ",
+    "ehi_experience_rats2_trade" : "Trade: ",
+    "ehi_experience_rats2_trade_and_steal" : "Trade and then steal: ",
+    "ehi_experience_rats3_rats_killed" : "Rats killed: "
 }

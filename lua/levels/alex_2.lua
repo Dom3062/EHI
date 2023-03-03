@@ -82,3 +82,12 @@ EHI:AddOnAlarmCallback(function(dropin)
         class = TT.AssaultDelay
     })
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        rats2_info_destroyed = 4000,
+        rats2_trade = 6000,
+        rats2_trade_and_steal = 4000
+    },
+    no_total_xp = true
+})

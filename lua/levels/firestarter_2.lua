@@ -1,15 +1,15 @@
 local EHI = EHI
 local Icon = EHI.Icons
-local SF = EHI.SpecialFunctions
-local TT = EHI.Trackers
-for _, pc_id in ipairs({ 104170, 104175, 104349, 104350, 104351, 104352, 104354, 101455 }) do
-    managers.mission:add_runned_unit_sequence_trigger(pc_id, "interact", function(unit)
-        managers.ehi:AddTracker({
-            id = tostring(pc_id),
-            time = 13,
-            icons = { Icon.PCHack }
-        })
-    end)
+if EHI:GetOption("show_mission_trackers") then
+    for _, pc_id in ipairs({ 104170, 104175, 104349, 104350, 104351, 104352, 104354, 101455 }) do
+        managers.mission:add_runned_unit_sequence_trigger(pc_id, "interact", function(unit)
+            managers.ehi:AddTracker({
+                id = tostring(pc_id),
+                time = 13,
+                icons = { Icon.PCHack }
+            })
+        end)
+    end
 end
 
 local MissionDoorPositions =
@@ -62,4 +62,16 @@ EHI:RegisterCustomSpecialFunction(FilterIsOk, function(trigger, element, ...)
 end)
 EHI:ParseTriggers({
     other = other
+})
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape =
+        {
+            { amount = 6000, stealth = true, timer = 180 },
+            { amount = 12000, stealth = true },
+            { amount = 10000, loud = true }
+        }
+    },
+    loot_all = 1000
 })

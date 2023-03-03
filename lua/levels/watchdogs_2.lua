@@ -52,11 +52,11 @@ local achievements =
             [100124] = { status = "defend", class = TT.AchievementStatus, special_function = uno_8 },
             [102382] = { special_function = SF.SetAchievementFailed },
             [102379] = { special_function = SF.SetAchievementComplete }
-        }
-    },
-    cleanup_callback = function()
-        EHI:UnregisterCustomSpecialFunction(uno_8)
-    end
+        },
+        cleanup_callback = function()
+            EHI:UnregisterCustomSpecialFunction(uno_8)
+        end
+    }
 }
 
 local other =

@@ -1,3 +1,6 @@
+r133 (03. 03. 2023):
+Fixed a crash with missing values
+
 r132 (02. 03. 2023):
 Safehouse Raid: Fixed a crash in Mission Briefing
 

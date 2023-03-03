@@ -95,3 +95,11 @@ EHI:ShowLootCounter({
     triggers = loot_triggers,
     offset = true
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        rats3_rats_killed = 2000,
+        all_bags_secured = 14000
+    },
+    no_total_xp = true
+})

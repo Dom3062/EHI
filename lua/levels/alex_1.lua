@@ -97,3 +97,12 @@ if EHI:GetOption("show_escape_chance") then
         end
     end)
 end
+EHI:AddXPBreakdown({
+    objective =
+    {
+        rats_lab_exploded = 12000,
+        rats_3_bags_cooked = 30000,
+        rats_all_7_bags_cooked = 40000
+    },
+    no_total_xp = true
+})
