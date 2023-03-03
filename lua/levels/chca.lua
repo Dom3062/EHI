@@ -74,7 +74,7 @@ end
 
 if EHI:CanShowAchievement("chca_12") and ovk_and_up then
     local active_saws = 0
-    local function chca_12(instance, unit_id, unit_data, unit)
+    local function chca_12(unit_id, unit_data, unit)
         unit:timer_gui():chca_12()
     end
     local function check(...)

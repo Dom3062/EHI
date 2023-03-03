@@ -192,3 +192,16 @@ EHI:ParseTriggers({
     mission = triggers,
     other = other
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        hm1_mobsters_killed = 4000,
+        hm1_cars_destroyed = 4000,
+        hm1_gas_station_destroyed = 4000,
+        hm1_hatch_open = 4000,
+        hm1_correct_barcode_scanned = 6000,
+        hm1_meth_cooked = 500,
+        escape = 4000
+    },
+    loot_all = 1000
+})

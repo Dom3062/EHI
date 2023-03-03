@@ -100,7 +100,7 @@ local function GetTranslatedKey(self, key)
     if self._loc:exists(string_id) then
         return self._loc:text(string_id)
     end
-    return key
+    return key .. ": "
 end
 local function ProcessLoot(self, params, total_xp)
     if params.loot_all then

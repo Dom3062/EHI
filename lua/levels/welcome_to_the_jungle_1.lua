@@ -21,3 +21,12 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        big_oil_intel_pickup = { amount = 1500, times = 3 },
+        big_oil_safe_open = 6000,
+        escape = 6000
+    },
+    no_total_xp = true
+})

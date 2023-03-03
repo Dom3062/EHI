@@ -170,3 +170,13 @@ local MissionDoorIndex =
     [5] = SecurityOffice
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        hox2_reached_server_room = 4000,
+        hox2_random_obj = 8000,
+        escape = 6000,
+        hox2_no_keycard_bonus_xp = 4000
+    },
+    no_total_xp = true
+})

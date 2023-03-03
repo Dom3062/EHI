@@ -18,3 +18,10 @@ if EHI:GetOption("show_escape_chance") then
         managers.ehi:AddEscapeChanceTracker(dropin, 24)
     end)
 end
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 2000
+    },
+    loot_all = 500
+})

@@ -8,3 +8,19 @@ local triggers = {
 }
 
 EHI:ParseTriggers({ mission = triggers }, "Escape", Icon.HeliEscapeNoLoot)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        ff3_item_deployed = { amount = 300, stealth = true },
+        ff3_cocaine_placed = { amount = 1000, stealth = true },
+        ff3_gold_secured = { amount = 1000, stealth = true },
+        pc_found = { amount = 8000, loud = true },
+        pc_hack = { amount = 8000, loud = true },
+        escape =
+        {
+            { amount = 2000, stealth = true },
+            { amount = 8000, loud = true }
+        }
+    },
+    no_total_xp = true
+})

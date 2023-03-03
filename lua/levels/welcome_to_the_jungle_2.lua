@@ -36,3 +36,12 @@ local tbl =
     [101863] = { remove_vanilla_waypoint = true, waypoint_id = 102498 }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        pc_found = 3000,
+        pc_hack = 6000,
+        big_oil2_correct_engine = 6000,
+        escape = 6000
+    }
+})

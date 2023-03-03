@@ -19,10 +19,11 @@ function EHIInaccuratePausableTracker:SetTrackerAccurate(time)
 end
 
 EHIInaccurateWarningTracker = class(EHIWarningTracker)
+EHIInaccurateWarningTracker._tracker_type = "inaccurate"
 EHIInaccurateWarningTracker._text_color = color
 function EHIInaccurateWarningTracker:AnimateWarning()
     if self._tracker_type == "accurate" then
-        EHIInaccuratePausableTracker.super.AnimateWarning(self)
+        EHIInaccurateWarningTracker.super.AnimateWarning(self)
     else
         self._text:animate(function(o)
             while true do

@@ -72,3 +72,17 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        hm2_enter_building = 2000,
+        hm2_hostage_rescued = 2000,
+        hm2_yellow_gate_open = 2000,
+        hm2_magnetic_door_open = 2000,
+        hm2_enter_apartment = 2000,
+        vault_open = 2000,
+        hm2_commissar_dead = 2000,
+        escape = 2000
+    },
+    loot_all = { amount = 1000, times = 10 }
+})

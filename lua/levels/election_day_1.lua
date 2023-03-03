@@ -36,3 +36,13 @@ local tbl =
     [101320] = { remove_vanilla_waypoint = true, waypoint_id = 101923, ignore_visibility = true, restore_waypoint_on_done = true }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        ed1_tag_right_truck = { amount = 2000, stealth = true },
+        ed1_hack_1 = { amount = 12000, loud = true },
+        ed1_hack_2 = { amount = 12000, loud = true },
+        stealth_escape = 6000
+    },
+    no_total_xp = true
+})

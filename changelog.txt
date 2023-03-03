@@ -1,3 +1,7 @@
+r134 (04. 03. 2023):
+Black Cat: Fixed a crash with enabled waypoints
+Counterfeit: Fixed a crash in inaccurate tracker
+
 r133 (03. 03. 2023):
 Fixed a crash with missing values
 

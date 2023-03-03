@@ -40,3 +40,14 @@ EHI:ShowAchievementLootCounter({
         loot_type = "money"
     }
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape =
+        {
+            { amount = 8000, stealth = true, timer = 300 },
+            { amount = 14000, stealth = true },
+            { amount = 18000, loud = true }
+        }
+    }
+})

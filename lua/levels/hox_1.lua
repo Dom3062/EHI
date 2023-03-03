@@ -63,3 +63,16 @@ for i = 1350, 4950, 400 do
 end
 EHI:UpdateUnits(tbl)
 EHI._cache.diff = 1
+EHI:AddXPBreakdown({
+    objective =
+    {
+        hox1_first_corner = 3000,
+        hox1_second_corner = 4000,
+        hox1_blockade_cleared = 200,
+        hox1_parking_gate_open = 2000,
+        hox1_parking_car_reached_garages = 4000,
+        pc_hack = 3000,
+        escape = 2000
+    },
+    no_total_xp = true
+})
