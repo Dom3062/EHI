@@ -1,6 +1,6 @@
 EHIuno7Tracker = class(EHIAchievementTracker)
-function EHIuno7Tracker:init(panel, params)
-    EHIuno7Tracker.super.init(self, panel, params)
+function EHIuno7Tracker:init(...)
+    EHIuno7Tracker.super.init(self, ...)
     self._obtainable = false
     self._blocked_warning = true
     self:SetTextColor()
@@ -101,7 +101,9 @@ local achievements =
         {
             [100107] = { time = 901, class = "EHIuno7Tracker" },
         },
-        failed_on_alarm = true,
+        failed_on_alarm = function()
+            managers.ehi:CallFunction("uno_7", "SetObtainable")
+        end,
         cleanup_callback = function()
             EHIuno7Tracker = nil
         end
@@ -119,3 +121,23 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:ShowLootCounter({ max = 16 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        scarface_got_usb = 2000,
+        pc_hack = 3000,
+        scarface_entered_house = 1000,
+        scarface_shutters_open = 1000,
+        scarface_searched_planted_yayo = { amount = 2000, stealth = true },
+        scarface_made_a_call = { amount = 1000, stealth = true },
+        scarface_gathered_all_paintings = { amount = 1000, loud = true },
+        scarface_all_paintings_burned = { amount = 2000, loud = true },
+        scarface_all_cars_hooked_up = { amount = 1000, loud = true },
+        scarface_defeated_security = { amount = 4000, loud = true },
+        scarface_entered_sosa_office = { amount = 2000, stealth = true },
+        scarface_sosa_killed = 1000,
+        vault_open = 8000
+    },
+    loot_all = { amount = 500, times = 16 },
+    no_total_xp = true
+})

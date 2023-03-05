@@ -4,6 +4,7 @@ if EHI:CheckLoadHook("MissionBriefingGui") or EHI:IsXPTrackerDisabled() or not E
 end
 
 local _params
+local reloading_outfit = false
 local function FormatTime(self, t)
     self._time = t
     local _t = tweak_data.ehi.functions.FormatMinutesAndSeconds(self)
@@ -100,7 +101,7 @@ local function GetTranslatedKey(self, key)
     if self._loc:exists(string_id) then
         return self._loc:text(string_id)
     end
-    return key .. ": "
+    return key
 end
 local function ProcessLoot(self, params, total_xp)
     if params.loot_all then
@@ -158,7 +159,7 @@ local function ProcessEscape(self, str, params, total_xp)
         end
     else
         local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(params), "+")
-        self:AddXPText(str, xp)
+        self:AddXPText(str .. ": ", xp)
         --total_xp.total = total_xp.total + xp
         --total_xp.base = total_xp.base + params
     end
@@ -180,13 +181,13 @@ local function ProcessRandomObjectives(self, random, total_xp)
                 for _, xp in ipairs(data) do
                     local str = GetTranslatedKey(self, xp.name)
                     local _xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(xp.amount), "+")
-                    self:AddXPText(dot .. " " .. str, _xp)
+                    self:AddXPText(dot .. " " .. str .. ": ", _xp)
                 end
                 separate = true
             else
                 local str = "- " .. GetTranslatedKey(self, obj)
                 local _xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
-                self:AddXPText(str, _xp)
+                self:AddXPText(str .. ": ", _xp)
                 separate = false
             end
         end
@@ -229,23 +230,25 @@ function MissionBriefingGui:AddXPBreakdown(params)
                 local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.amount), "+")
                 if data.times then
                     local times_formatted = self._loc:text("ehi_experience_trigger_times", { times = data.times })
+                    local s
                     if data.stealth then
-                        self:AddXPText(str .. " (" .. times_formatted .. "; " .. self._loc:text("ehi_experience_stealth") .. "): ", xp)
+                        s = str .. " (" .. times_formatted .. "; " .. self._loc:text("ehi_experience_stealth") .. ")"
                     elseif data.loud then
-                        self:AddXPText(str .. " (" .. times_formatted .. "; " .. self._loc:text("ehi_experience_loud") .. "): ", xp)
+                        s = str .. " (" .. times_formatted .. "; " .. self._loc:text("ehi_experience_loud") .. ")"
                     else
-                        self:AddXPText(str .. " (" .. times_formatted .. "): ", xp)
+                        s = str .. " (" .. times_formatted .. ")"
                     end
+                    self:AddXPText(s .. ": ", xp)
                 elseif data.stealth then
                     self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", xp)
                 elseif data.loud then
                     self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", xp)
                 else
-                    self:AddXPText(str, xp)
+                    self:AddXPText(str .. ": ", xp)
                 end
             else
                 local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
-                self:AddXPText(str, xp)
+                self:AddXPText(str .. ": ", xp)
             end
         end
         ProcessLoot(self, params, total_xp)
@@ -401,7 +404,9 @@ function MissionBriefingGui:FakeExperienceMultipliers()
     if Global.block_update_outfit_information then -- Outfit update is late when "managers.player:get_skill_exp_multiplier(true)" is called, update it now to stay accurate
         local outfit_string = managers.blackmarket:outfit_string()
         local local_peer = managers.network:session():local_peer()
+        reloading_outfit = true
         local_peer:set_outfit_string(outfit_string)
+        reloading_outfit = false
     end
     self._skill_bonus = managers.player:get_skill_exp_multiplier(true)
 end
@@ -409,13 +414,14 @@ end
 function MissionBriefingGui:RefreshXPOverview()
     self._num_winners = managers.network:session() and managers.network:session():amount_of_players() or 1
     self._ehi_panel_v2:clear()
+    self._lines = 0
     self:ProcessXPBreakdown()
 end
 
 function TeamLoadoutItem:set_slot_outfit(slot, ...)
     original.set_slot_outfit(self, slot, ...)
 	local player_slot = self._player_slots[slot]
-	if not player_slot then
+	if not player_slot or reloading_outfit then
 		return
 	end
     local mcm = managers.menu_component

@@ -194,3 +194,25 @@ for i = 6000, 6200, 200 do
     tbl[EHI:GetInstanceUnitID(100006, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100014, i) }
 end
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        fwb_server_room_open = 2000,
+        fwb_rewired_circuit_box = { amount = 1500, stealth = true },
+        fwb_found_code = { amount = 1000, stealth = true },
+        pc_hack = { amount = 2000, loud = true },
+        fwb_gates_open_stealth = 2000,
+        fwb_gates_open_loud = 4000,
+        vault_open = { amount = 2000, stealth = true },
+        thermite_done = 6000,
+        fwb_c4_escape = { amount = 2000, loud = true },
+        fwb_overdrill = 40000,
+        escape = 2000,
+        loud_escape = 2000
+    },
+    loot =
+    {
+        money = 1000
+    },
+    no_total_xp = true
+})

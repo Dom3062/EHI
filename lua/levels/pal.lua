@@ -98,3 +98,19 @@ local tbl =
     [102192] = { remove_vanilla_waypoint = true, waypoint_id = 100943 }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        counterfeit_found_sus_doors = 2000,
+        counterfeit_first_hack_finish = 2500,
+        counterfeit_defuse_c4 = 2000,
+        vault_drill_done = 5000,
+        vault_open = 6000,
+        counterfeit_printed_money = 4000,
+        escape = 3000
+    },
+    loot =
+    {
+        counterfeit_money = 1000
+    }
+})

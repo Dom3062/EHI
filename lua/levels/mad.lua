@@ -121,3 +121,15 @@ EHI:ParseTriggers({
     achievement = achievements,
     daily = dailies
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        boiling_point_radar_blown_up = 3000,
+        pc_hack = 5000,
+        boiling_point_emp_triggered = 5000,
+        boiling_point_gas_off_hand_taken = 1000,
+        boiling_point_scan_finished = { amount = 5000, times = 4 },
+        boiling_point_grabbed_server = 6000,
+        escape = 6000
+    }
+})

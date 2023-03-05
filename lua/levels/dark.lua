@@ -118,3 +118,18 @@ end)
 EHI:RegisterCustomSpecialFunction(RemoveBodyBag, function(trigger, ...)
     managers.ehi:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        murky_station_equipment_found = { amount = 1000, times = 1 },
+        murky_station_found_emp_part = 2000,
+        escape = 2000
+    },
+    loot =
+    {
+        weapon = 1000,
+        weapon_glock = 1000,
+        weapon_scar = 1000,
+        drk_bomb_part = { amount = 3000, times = 2 }
+    }
+})

@@ -85,11 +85,15 @@ elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     max = 18
 end
 EHI:ShowLootCounter({ max = max })
---[[EHI:AddXPBreakdown({
+EHI:AddXPBreakdown({
     objective =
     {
+        alesso_find_c4_stealth = 1000,
         pc_hack = { amount = 10000, loud = true },
-        pyro_set = { amount = 3000, times = 3 }
-    },
-    loot_all = { amount = 1200, times = max }
-})]]
+        alesso_find_c4_loud = 2000,
+        c4_set_up = 2000,
+        alesso_pyro_set = { amount = 3000, times = 3 },
+        alesso_bag_secured_stealth = 1200,
+        alesso_bag_secured_loud = 1500
+    }
+})

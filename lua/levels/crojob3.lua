@@ -146,3 +146,14 @@ EHI:RegisterCustomSpecialFunction(cow_4, function(trigger, element, enabled)
         EHI:CheckCondition(trigger)
     end
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        vault_found = 2000,
+        the_bomb2_vault_filled = 12000,
+        ggc_c4_taken = 6000,
+        escape = 12000
+    },
+    loot_all = 1500,
+    no_total_xp = true
+})

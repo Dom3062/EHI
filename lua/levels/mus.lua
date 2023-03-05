@@ -90,3 +90,22 @@ local MissionDoorIndex =
     [1] = { w_id = 100841 }
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        mus_powerboxes_stealth = 6000,
+        mus_first_timelock_stealth = 2000,
+        mus_second_timelock_stealth = 2000,
+        mus_no_gas_trap_stealth = 3000,
+        mus_pc_hack_loud = 8000,
+        mus_first_timelock_loud = 5000,
+        mus_second_timelock_loud = 5000,
+        mus_no_gas_trap_loud = 4000,
+        escape =
+        {
+            { amount = 4000, stealth = true },
+            { amount = 6000, loud = true }
+        }
+    },
+    loot_all = 1000
+})

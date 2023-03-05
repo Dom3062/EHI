@@ -57,3 +57,15 @@ local tbl =
     [EHI:GetInstanceUnitID(100021, 9685)] = { icons = { Icon.Alarm }, warning = true, remove_on_pause = true }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        hox3_vault_objective = 2000,
+        vault_found = 4000,
+        vault_open = { amount = 4000, stealth = true },
+        hox3_vault_open = 8000,
+        hox3_traitor_killed = 2000,
+        escape = 2000
+    },
+    loot_all = 1000
+})

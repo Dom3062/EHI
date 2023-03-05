@@ -66,3 +66,10 @@ EHI:RegisterCustomSpecialFunction(ShowWaypoint, function(trigger, ...)
     trigger.data.position = e and e._values.position or Vector3()
     managers.hud:add_waypoint(trigger.id, trigger.data)
 end)
+--[[EHI:AddXPBreakdown({
+    objective =
+    {
+        gs_start = 3000
+    },
+    loot_all = 1500
+})]]

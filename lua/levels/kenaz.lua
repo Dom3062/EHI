@@ -214,6 +214,34 @@ local tbl =
     [EHI:GetInstanceUnitID(100000, 44535)] = { icons = { Icon.Drill }, ignore_visibility = true }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        ggc_gear_found = { amount = 1000, stealth = true },
+        ggc_blueprint_found = { amount = 4000, stealth = true },
+        ggc_blueprint_send = { amount = 4000, stealth = true },
+        ggc_got_data = { amount = 4000, stealth = true },
+        ggc_civie_drugged = { amount = 4000, stealth = true },
+        ggc_gas_planted = { amount = 4000, stealth = true },
+        ggc_color_code = { amount = 4000, times = 3 },
+        vault_open = { amount = 4000, stealth = true },
+        ggc_laser_disabled = { amount = 2000, stealth = true },
+        ggc_locker_room_found = { amount = 2000, loud = true },
+        ggc_c4_taken = { amount = 2000, loud = true, times = 1 },
+        ggc_weak_spot_found = { amount = 4000, loud = true },
+        ggc_winch_part_picked_up = { amount = 3000, loud = true, times = 1 },
+        ggc_winch_set_up = { amount = 6000, loud = true },
+        ggc_fireworks = { amount = 2000, loud = true },
+        ggc_winch_connected_to_bfd = { amount = 1000, loud = true },
+        ggc_bfd_lowered = { amount = 8000, loud = true },
+        ggc_bfd_started = { amount = 6000, loud = true },
+        ggc_bfd_done = { amount = 1000, loud = true }
+    },
+    loot =
+    {
+        unknown = 250
+    }
+})
 
 if EHI:IsHost() then
     keycode_units = nil
@@ -251,15 +279,12 @@ local function Cleanup()
 end
 EHI:AddLoadSyncFunction(function(self)
     if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
-        Cleanup()
-        return
+        return Cleanup()
     end
     if EHI.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
-        Cleanup()
-        return
+        return Cleanup()
     elseif managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
-        Cleanup()
-        return
+        return Cleanup()
     end
     self:AddTracker({
         id = "ColorCodes",
