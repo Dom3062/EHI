@@ -76,3 +76,11 @@ for i = 900, 1500, 300 do
     tbl[EHI:GetInstanceUnitID(100033, i)] = LotteryWheel
 end
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        prison_entered = 6000,
+        escape = 8000
+    },
+    loot_all = 850
+})

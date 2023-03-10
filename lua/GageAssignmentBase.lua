@@ -1,10 +1,6 @@
 local EHI = EHI
-if EHI:CheckLoadHook("GageAssignmentBase") then
+if EHI:CheckLoadHook("GageAssignmentBase") or not EHI:GetOption("show_gage_tracker") then
     return
-end
-
-if not EHI:GetOption("show_gage_tracker") then
-	return
 end
 
 local original =

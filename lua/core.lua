@@ -344,6 +344,7 @@ local function LoadDefaultValues(self)
         show_equipment_bodybags = true,
         show_equipment_firstaidkit = true,
         show_equipment_ecmjammer = true,
+        ecmjammer_block_ecm_without_pager_delay = false,
         show_equipment_ecmfeedback = true,
         show_equipment_aggregate_health = true,
         show_equipment_aggregate_all = false,
@@ -407,6 +408,7 @@ local function LoadDefaultValues(self)
         show_waypoints_pager = true,
         show_waypoints_cameras = true,
         show_waypoints_zipline = true,
+        show_waypoints_ecmjammer = true,
 
         -- Buffs
         show_buffs = true,

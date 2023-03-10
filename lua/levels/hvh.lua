@@ -56,3 +56,10 @@ for i = 9794, 11794, 500 do
     end
 end
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 2000
+    },
+    loot_all = 1000
+})

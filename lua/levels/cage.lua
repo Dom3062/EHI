@@ -29,6 +29,6 @@ EHI:AddXPBreakdown({
         escape = 3000,
         correct_pc_hack = 3000,
         placed_c4 = 3000,
-        car_secured = { amount = 1000, times = 4 }
+        car_shop_car_secured = { amount = 1000, times = 4 }
     }
 })

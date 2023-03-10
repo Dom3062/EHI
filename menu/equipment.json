@@ -74,6 +74,10 @@
             "default_value": true
         },
         {
+            "type" : "divider",
+            "size" : 10
+        },
+        {
             "type": "toggle",
             "id": "ehi_show_equipment_ecmjammer_choice",
             "title": "ehi_show_equipment_ecmjammer",
@@ -83,6 +87,21 @@
             "value": "show_equipment_ecmjammer",
             "default_value": true,
             "ehi_ver" : 21
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_ecmjammer_block_ecm_without_pager_delay_choice",
+            "title": "ehi_ecmjammer_block_ecm_without_pager_delay",
+            "description": "ehi_ecmjammer_block_ecm_without_pager_delay_desc",
+            "callback": "SetOption",
+            "callback_arguments": "ecmjammer_block_ecm_without_pager_delay",
+            "value": "ecmjammer_block_ecm_without_pager_delay",
+            "default_value": false,
+            "ehi_ver" : 136
+        },
+        {
+            "type" : "divider",
+            "size" : 10
         },
         {
             "type": "toggle",

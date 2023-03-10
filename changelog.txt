@@ -1,3 +1,6 @@
+r136 (10. 03. 2023):
+Added options "Don't show ECM Jammer that won't delay pagers" and "Show Waypoints for ECM Jammer"
+
 r135 (05. 03. 2023):
 Mission Briefing: Fixed a stack overflow crash
 Mission Briefing: Fixed panel increasing in size for no reason

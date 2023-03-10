@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [EHI:GetInstanceElementID(100108, 3200)] = { time = 45, id = "LockOpen", icons = { Icon.Wait } },
     [EHI:GetInstanceElementID(100124, 3200)] = { id = "LockOpen", special_function = SF.RemoveTracker },
@@ -16,6 +15,7 @@ local function berry_4_fail()
     EHI:Unhook("berry_4_HuskPlayerMovement_sync_incapacitated")
     managers.ehi:SetAchievementFailed("berry_4")
 end
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local achievements =
 {
     berry_3 =
@@ -72,3 +72,17 @@ local tbl =
     [EHI:GetInstanceUnitID(100113, 0)] = { icons = { Icon.C4 } }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        btm_blasted_entrance = 2000,
+        btm_used_keycard = 2500,
+        btm_request_approved = 3000,
+        btm_vault_open_loot = 1000,
+        btm_destroyed_comm = 1500,
+        btm_heli_refueled = 3000,
+        escape = 4000
+    },
+    loot_all = 700,
+    no_total_xp = true
+})

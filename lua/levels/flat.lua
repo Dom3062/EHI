@@ -198,3 +198,22 @@ EHI:RegisterCustomSpecialFunction(DelayExecution, function(trigger, ...)
         EHI:Trigger(4)
     end)
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        panic_room_found = 2000,
+        saws_done = 8000,
+        panic_room_killed_all_snipers = 3000,
+        c4_set_up = 2000,
+        panic_room_roof_secured = 4000,
+        panic_room_magnet_attached = 1000,
+        panic_room_defended_heli = 3000,
+        escape = 2000
+    },
+    loot =
+    {
+        meth = 500,
+        coke = 500,
+        toothbrush = 1000
+    }
+})

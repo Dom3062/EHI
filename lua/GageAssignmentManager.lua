@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("GageAssignmentManager") then
-    return
-end
-
-if not EHI:GetOption("show_gage_tracker") then
+if EHI:CheckLoadHook("GageAssignmentManager") or not EHI:GetOption("show_gage_tracker") then
     return
 end
 
@@ -32,9 +28,8 @@ local function GetGageXPRatio(self, picked_up, max_units)
 	if picked_up > 0 then
 		local ratio = 1 - (max_units - picked_up) / max_units
 		return self._tweak_data:get_experience_multiplier(ratio)
-	else
-		return 1
 	end
+	return 1
 end
 
 local function UpdateTracker(self, client_sync_load)

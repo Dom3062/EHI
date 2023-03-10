@@ -88,3 +88,15 @@ local tbl =
 }
 
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        undercover_deal_stealth = 2500,
+        undercover_deal_loud = 500,
+        undercover_limo_open = 4000,
+        undercover_taxman_is_in_chair = 4000,
+        pc_hack = { amount = 4000, times = 3 },
+        undercover_hack_fixed = 1000,
+        escape = 3000
+    }
+})

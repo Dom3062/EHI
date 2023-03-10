@@ -157,7 +157,7 @@ local function CreateProgressTracker(id, progress, max, dont_flash, remove_after
         remove_after_reaching_target = remove_after_reaching_target,
         status_is_overridable = status_is_overridable,
         no_failure = true,
-        class = "EHIAchievementProgressTracker"
+        class = EHI.Trackers.AchievementProgress
     })
 end
 

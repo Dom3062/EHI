@@ -51,3 +51,14 @@ EHI:ShowLootCounter({
     max = 8, -- Mission bags
     additional_loot = 7 -- Artifacts
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 4000
+    },
+    loot =
+    {
+        money = 1000,
+        mus_artifact = 500
+    }
+})

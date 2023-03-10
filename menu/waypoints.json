@@ -113,6 +113,18 @@
             "default_value": true,
             "parent" : "ehi_show_waypoints_choice",
             "ehi_ver" : 55
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_waypoints_ecmjammer_choice",
+            "title": "ehi_show_waypoints_ecmjammer",
+            "description": "ehi_show_waypoints_ecmjammer_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints_ecmjammer",
+            "value": "show_waypoints_ecmjammer",
+            "default_value": true,
+            "parent" : "ehi_show_waypoints_choice",
+            "ehi_ver" : 136
         }
     ]
 }

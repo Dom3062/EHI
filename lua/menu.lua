@@ -73,7 +73,7 @@ Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_EHI", func
 			end
 		end)
 
-		Hooks:PostHook(MenuManager, "destroy", "destroy_menu_EHI", function(self)
+		Hooks:PostHook(MenuManager, "destroy", "destroy_menu_EHI", function(...)
 			if EHI.Menu then
 				EHI.Menu:destroy()
 				EHI.Menu = nil

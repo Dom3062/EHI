@@ -49,7 +49,9 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 
+local pig = 0
 if ovk_and_up then
+    pig = 1
     EHI:ShowAchievementLootCounter({
         achievement = "farm_6",
         max = 1,
@@ -81,10 +83,7 @@ if ovk_and_up then
         end)
     end
 end
-local pig = 0
-if ovk_and_up then
-    pig = 1
-end
+
 EHI:ShowLootCounter({ max = 10, additional_loot = pig })
 
 local tbl =
@@ -94,3 +93,18 @@ local tbl =
     [100949] = { remove_vanilla_waypoint = true, waypoint_id = 103174 }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        slaughterhouse_entered = 4000,
+        vault_drill_done = 6000,
+        slaughterhouse_tires_burn = 6000,
+        slaughterhouse_trap_lifted = 6000,
+        slaughterhouse_gold_lifted = 6000,
+        escape = 6000
+    },
+    loot =
+    {
+        gold = ovk_and_up and 800 or 1000
+    }
+})

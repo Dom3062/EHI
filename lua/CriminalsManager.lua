@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("CriminalsManager") then
-    return
-end
-
-if EHI:IsXPTrackerDisabled() then
+if EHI:CheckLoadHook("CriminalsManager") or EHI:IsXPTrackerDisabled() then
     return
 end
 

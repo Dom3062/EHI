@@ -92,3 +92,17 @@ local DisableWaypoints =
     [101738] = true
 }
 EHI:DisableWaypoints(DisableWaypoints)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        gs2_plane_started = { amount = 7000, times = 1 },
+        cage_assembled = 500,
+        gs2_cage_grabbed = 500,
+        gs2_arrived_on_bridge = 4500,
+        gs2_drilled_door = 4500,
+        gs2_bridge_rotated = 2000,
+        gs2_peta_5 = 50000,
+        escape = 3000
+    },
+    loot_all = 500
+})

@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("FirstAidKitBase") then
-    return
-end
-
-if not EHI:GetEquipmentOption("show_equipment_firstaidkit") then
+if EHI:CheckLoadHook("FirstAidKitBase") or not EHI:GetEquipmentOption("show_equipment_firstaidkit") then
     return
 end
 

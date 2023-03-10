@@ -77,3 +77,19 @@ local MissionDoorIndex =
     [2] = { w_ids = { EHI:GetInstanceElementID(100007, 4850), EHI:GetInstanceElementID(100007, 5350) } }
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        biker_mike_in_the_trailer = { amount = 3000, times = 1 },
+        biker_seat_collected = 6000,
+        biker_skull_collected = 8000,
+        biker_exhaust_pipe_collected = 2000,
+        biker_engine_collected = 3000,
+        biker_tools_collected = 2000,
+        biker_cola_collected = 1000,
+        biker_help_mike_garage = 3000,
+        biker_defend_mike = { amount = 3000, times = 3 },
+        escape = 2500
+    },
+    loot_all = 500
+})

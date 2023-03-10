@@ -20,3 +20,20 @@ local tbl =
     [EHI:GetInstanceUnitID(100227, 5020)] = { icons = { Icon.Vault }, remove_on_pause = true, completion = true }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        lab_rats_added_ephedrin_pill = 2000,
+        lab_rats_added_correct_ingredient = 1000,
+        lab_rats_bagged_meth = 500,
+        lab_rats_safe_event_1 = 30000,
+        lab_rats_safe_event_2 = 22500,
+        lab_rats_safe_event_3 = 15000,
+        escape = 5000
+    },
+    loot =
+    {
+        half_meth = 500,
+    },
+    no_total_xp = true
+})

@@ -9,6 +9,7 @@ function EHIECMTracker:SetTime(time)
     self._text:stop()
     self._time_warning = false
     self:SetTextColor(Color.white)
+    self._check_anim_progress = time <= 10
     EHIECMTracker.super.SetTime(self, time)
 end
 

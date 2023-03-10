@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("DigitalGui") then
-    return
-end
-
-if not EHI:GetOption("show_timers") then
+if EHI:CheckLoadHook("DigitalGui") or not EHI:GetOption("show_timers") then
     return
 end
 

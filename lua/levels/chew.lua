@@ -39,3 +39,11 @@ EHI:ShowLootCounter({
     max = 9,
     offset = true
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        biker2_boss_dead = 6000,
+        escape = 4000
+    },
+    loot_all = 500
+})

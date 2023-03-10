@@ -68,3 +68,13 @@ local tbl =
     [EHI:GetInstanceUnitID(100063, 4050)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100061, 4050) }
 }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        brooklyn_1010_opened_door_to_roof = 8000,
+        brooklyn_1010_secured_briefcase = 6000,
+        brooklyn_1010_used_zipline = 6000,
+        escape = 8000
+    },
+    loot_all = 1000
+})

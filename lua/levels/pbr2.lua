@@ -104,9 +104,15 @@ local achievements =
     }
 }
 
+local other =
+{
+    [100653] = EHI:AddAssaultDelay({ time = 2 + 15 + 30, trigger_times = 1 })
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 local ring = { special_function = SF.IncreaseProgress }
 local voff_4_triggers =
@@ -127,3 +133,15 @@ EHI:ShowAchievementLootCounter({
 EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(...)
     managers.ehi:CallFunction("cac_33", "Activate")
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        bos_cargo_door_open = 3000,
+        bos_money_released = 3000,
+        bos_money_pallet_found = 2500,
+        flare = 500,
+        bos_found_scattered_money = 700,
+        bos_heli_picked_up_money = 1500,
+        escape = 6000
+    }
+})

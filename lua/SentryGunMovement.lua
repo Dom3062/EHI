@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("SentryGunMovement") then
-    return
-end
-
-if not EHI:GetOption("show_enemy_turret_trackers") then
+if EHI:CheckLoadHook("SentryGunMovement") or not EHI:GetOption("show_enemy_turret_trackers") then
     return
 end
 

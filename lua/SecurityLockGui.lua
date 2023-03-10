@@ -1,11 +1,8 @@
 local EHI = EHI
-if EHI:CheckLoadHook("SecurityLockGui") then
+if EHI:CheckLoadHook("SecurityLockGui") or not EHI:GetOption("show_timers") then
     return
 end
 
-if not EHI:GetOption("show_timers") then
-    return
-end
 local HackIcon = EHI.Icons.PCHack
 
 local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")

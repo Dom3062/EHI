@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("SecurityCamera") then
-    return
-end
-
-if not EHI:GetOption("show_camera_loop") then
+if EHI:CheckLoadHook("SecurityCamera") or not EHI:GetOption("show_camera_loop") then
     return
 end
 
