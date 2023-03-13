@@ -64,6 +64,7 @@
             "value": "show_waypoints_enemy_turret",
             "default_value": true,
             "parent" : "ehi_show_waypoints_choice",
+            "depends_on" : "ehi_show_enemy_turret_trackers",
             "ehi_ver" : 21
         },
         {
@@ -76,6 +77,7 @@
             "value": "show_waypoints_timers",
             "default_value": true,
             "parent" : "ehi_show_waypoints_choice",
+            "depends_on" : "ehi_show_timers",
             "ehi_ver" : 26
         },
         {
@@ -88,6 +90,7 @@
             "value": "show_waypoints_pager",
             "default_value": true,
             "parent" : "ehi_show_waypoints_choice",
+            "depends_on" : "ehi_show_pager_callback_trackers",
             "ehi_ver" : 26
         },
         {
@@ -100,6 +103,7 @@
             "value": "show_waypoints_cameras",
             "default_value": true,
             "parent" : "ehi_show_waypoints_choice",
+            "depends_on" : "ehi_show_camera_loop",
             "ehi_ver" : 35
         },
         {
@@ -112,6 +116,7 @@
             "value": "show_waypoints_zipline",
             "default_value": true,
             "parent" : "ehi_show_waypoints_choice",
+            "depends_on" : "ehi_show_zipline_timer",
             "ehi_ver" : 55
         },
         {
@@ -124,6 +129,7 @@
             "value": "show_waypoints_ecmjammer",
             "default_value": true,
             "parent" : "ehi_show_waypoints_choice",
+            "depends_on" : "ehi_show_equipment_ecmjammer",
             "ehi_ver" : 136
         }
     ]

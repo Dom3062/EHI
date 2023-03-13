@@ -60,8 +60,8 @@ if EHI:GetOption("show_equipment_ecmjammer") then
 				jam_pagers = managers.player:has_category_upgrade("ecm_jammer", "affects_pagers")
 			elseif self._ehi_peer_id ~= 0 then
                 local peer = managers.network:session():peer(self._ehi_peer_id)
-                if peer and peer.unit and peer.unit.base then
-                    jam_pagers = peer.unit:base():upgrade_value("ecm_jammer", "affects_pagers")
+                if peer and peer._unit and peer._unit.base then
+                    jam_pagers = peer._unit:base():upgrade_value("ecm_jammer", "affects_pagers")
                 end
 			end
             if BlockECMsWithoutPagerBlocking and not jam_pagers then

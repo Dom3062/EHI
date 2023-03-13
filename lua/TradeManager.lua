@@ -3,7 +3,7 @@ if EHI:CheckLoadHook("TradeManager") then
     return
 end
 
-if not EHI:IsXPTrackerDisabled() then
+if EHI:IsXPTrackerVisible() then
     if BB and BB.grace_period and Global.game_settings.single_player and Global.game_settings.team_ai then
         EHI:HookWithID(TradeManager, "on_AI_criminal_death", "EHI_ExperienceManager_AICriminalDeath", function(...)
             managers.experience:DecreaseAlivePlayers()

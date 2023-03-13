@@ -7,6 +7,8 @@
 
     "ehi_level_restart_required" : "Для вступления параметров в силу требуется перезапуск ограбления",
 
+    "ehi_item_depends_on" : "Параметр '$option;' должен быть включён для работы",
+
     "ehi_menu_next_page" : "Следующая страница -->",
     "ehi_menu_previous_page" : "<-- Предыдущая страница",
 
@@ -331,19 +333,19 @@
     "ehi_show_waypoints_present_timer_desc" : "Задает, как долго маркер будет оставаться на экране, прежде чем она 'переместится' к месту назначения",
 
     "ehi_show_waypoints_enemy_turret" : "Показывать маркеры для турели",
-    "ehi_show_waypoints_enemy_turret_desc" : "показывать маркер на вражеской турели, когда она перезаряжается или ремонтируется\n\nПараметр 'Показывать трекеры вражеских турелей' должен быть включен для работы",
+    "ehi_show_waypoints_enemy_turret_desc" : "показывать маркер на вражеской турели, когда она перезаряжается или ремонтируется",
 
     "ehi_show_waypoints_timers" : "Показать маркеры для таймеров",
-    "ehi_show_waypoints_timers_desc" : "Показывать маркеры на доступных таймерах (взлом, сверление, распиливание и т.д...)\n\nПараметр 'Показать таймеры' должен быть включен для работы",
+    "ehi_show_waypoints_timers_desc" : "Показывать маркеры на доступных таймерах (взлом, сверление, распиливание и т.д...)",
 
     "ehi_show_waypoints_pager" : "Показать маркеры для пейджеров",
-    "ehi_show_waypoints_pager_desc" : "показывать маркер на пейджере, на который нужно ответить\n\nПараметр 'Показывать трекер пейджеров' должен быть включён для работы",
+    "ehi_show_waypoints_pager_desc" : "показывать маркер на пейджере, на который нужно ответить",
 
     "ehi_show_waypoints_cameras" : "Показывать маркер для зацикленных камер",
-    "ehi_show_waypoints_cameras_desc" : "показывать маркер на камере, которая в данный момент зациклена\n\nПараметр 'Показывать зацикленные камеры' должен быть включён для работы",
+    "ehi_show_waypoints_cameras_desc" : "показывать маркер на камере, которая в данный момент зациклена",
 
     "ehi_show_waypoints_zipline" : "Показывать маркеры для зиплайнов",
-    "ehi_show_waypoints_zipline_desc" : "Показывать маркер на зиплайне, который находится в движении\nПоказывается только время сброса\n\nПараметр 'Показывать трекер зиплайна' должен быть включён для работы",
+    "ehi_show_waypoints_zipline_desc" : "Показывать маркер на зиплайне, который находится в движении\nПоказывается только время сброса",
 
     "ehi_buffs_menu" : "Баффы",
     "ehi_buffs_menu_desc" : "",
@@ -567,7 +569,7 @@
     "ehi_other_show_remaining_xp_to_100_desc" : "Показывает оставшееся количество опыта до 100-го уровня (отображается, если вы ниже 100-го уровня)",
 
     "ehi_other_show_mission_xp_overview" : "Показыать обзор опыта миссии",
-    "ehi_other_show_mission_xp_overview_desc" : "Показывает панель в брифинге миссии с возможным опытом, который вы можете получить\nОпция «Показывть полученный опыт» должна быть включена", 
+    "ehi_other_show_mission_xp_overview_desc" : "Показывает панель в брифинге миссии с возможным опытом, который вы можете получить", 
 
     "ehi_experience_infamy_pool" : "Осталось накопить резерв бесславия:",
     "ehi_experience_next_level" : "Следующий уровень через:",
@@ -600,13 +602,11 @@
     "ehi_experience_c4_set_up" : "Установка С4",
     "ehi_experience_car_secured" : "Захват спорткара",
     "ehi_experience_cage_assembled" : "Сбор клетки",
-    "ehi_experience_hacking_done" : "Завершение взлома",
     "ehi_experience_vault_drill_done" : "Завершение сверление хранилища",
     "ehi_experience_vault_drills_done" : "Сверление двери внутри хранилища завершено",
     "ehi_experience_thermaldrill_done" : "Завершение работы термобура",
     "ehi_experience_timelock_done" : "Завершение взлома временного замка",
     "ehi_experience_phone_answered" : "Ответ на телефон",
-    "ehi_experience_vault_frozen" : "Завершение работы жидкого азота",
     "ehi_experience_mallcrasher" : "Разрушение торгового центра / Побег",
     "ehi_experience_safe_event_done" : "Открыте временного сейфа",
     "ehi_experience_present_finished" : "Завершение сбора подарка",
@@ -633,7 +633,6 @@
     "ehi_experience_rats2_info_destroyed" : "Информация уничтожена",
     "ehi_experience_rats2_trade" : "Обмен",
     "ehi_experience_rats2_trade_and_steal" : "Обмениваем, потом воруем",
-    "ehi_experience_rats3_rats_killed" : "Крысы уничтожены",
     "ehi_experience_big_oil_intel_pickup" : "Разведданные подобраны:",
     "ehi_experience_big_oil_safe_open" : "Правильный сейф открыт",
     "ehi_experience_big_oil2_correct_engine" : "Правильный двигатель найден",
@@ -662,5 +661,7 @@
     "ehi_experience_hox1_parking_car_reached_garages" : "Броневик добрался до стоянки",
     "ehi_experience_hox2_reached_server_room" : "Хокстон добрался до серверной",
     "ehi_experience_hox2_random_obj" : "Выполнено случайное задание",
-    "ehi_experience_hox2_no_keycard_bonus_xp" : "Ключ-карты не использовались"
+    "ehi_experience_hox2_no_keycard_bonus_xp" : "Ключ-карты не использовались",
+    "ehi_experience_rvd2_hacking_done" : "Завершение взлома",
+    "ehi_experience_rvd2_vault_frozen" : "Завершение работы жидкого азота"
 }

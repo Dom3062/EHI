@@ -40,6 +40,7 @@
             "callback_arguments": "show_mission_xp_overview",
             "value": "show_mission_xp_overview",
             "default_value": true,
+            "depends_on" : "ehi_show_gained_xp",
             "ehi_ver" : 129
         }
     ]

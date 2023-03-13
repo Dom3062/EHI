@@ -148,3 +148,20 @@ end)
 --units/pd2_dlc_nmh/props/nmh_interactable_teddy_saw/nmh_interactable_teddy_saw
 local tbl = { [101387] = { remove_vanilla_waypoint = true, waypoint_id = 104494 } }
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        nmh_cameras_taken_out = 2000,
+        nmh_keep_hostages_down = { amount = 7000, stealth = true },
+        nmh_found_patients_file = { amount = 2000, stealth = true },
+        nmh_set_up_fake_sentries = { amount = 1000, stealth = true },
+        nmh_found_correct_patient = { amount = 3000, stealth = true },
+        nmh_icu_open = { amount = 7000, loud = true },
+        nmh_saw_patient_room = { amount = 3000, loud = true, times = 3 },
+        nmh_valid_sample = { amount = 3000, times = 1 },
+        nmh_elevator_arrived = 8000,
+        nmh_exit_elevator = 2000
+    },
+    no_total_xp = true,
+    no_gage = true
+})

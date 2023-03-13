@@ -59,11 +59,14 @@ function MissionBriefingGui:init(...)
         self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp)
             local alive_original = ex._xp.alive_players
             local skill_original = ex._xp.skill_xp_multiplier
+            local gage_original = ex._xp.gage_bonus
             ex._xp.alive_players = self._num_winners or 1
             ex._xp.skill_xp_multiplier = self._skill_bonus or 1
+            ex._xp.gage_bonus = self._gage_bonus or 1
             local value = ex:MultiplyXPWithAllBonuses(xp)
             ex._xp.alive_players = alive_original
             ex._xp.skill_xp_multiplier = skill_original
+            ex._xp.gage_bonus = gage_original
             return value
         end
     end
@@ -79,15 +82,15 @@ function MissionBriefingGui:ProcessXPBreakdown()
         {
             wave =
             {
-                [1] = 8000,
-                [2] = 9200,
-                [3] = 10600,
-                [4] = 12200,
-                [5] = 14100,
-                [6] = 16300,
-                [7] = 18800,
-                [8] = 21700,
-                [9] = 25000
+                8000,
+                9200,
+                10600,
+                12200,
+                14100,
+                16300,
+                18800,
+                21700,
+                25000
             }
         }
         self:AddXPBreakdown(params)
@@ -103,42 +106,67 @@ local function GetTranslatedKey(self, key)
     end
     return key
 end
-local function ProcessLoot(self, params, total_xp)
+local function ProcessLoot(self, params, total_xp, gage)
     if params.loot_all then
         local data = params.loot_all
         local secured_bag = self._loc:text("ehi_experience_each_loot_secured")
         if type(data) == "table" then
-            local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.amount), "+")
-            self:AddXPText(string.format("%s (%s): ", secured_bag, self._loc:text("ehi_experience_trigger_times", { times = data.times })), xp)
+            local value = self._xp:FakeMultiplyXPWithAllBonuses(data.amount)
+            local xp = self._xp:cash_string(value, "+")
+            local xp_with_gage
+            if gage then
+                xp_with_gage = self:FormatXPWithAllGagePackages(data.amount)
+            end
+            self:AddXPText(string.format("%s (%s): ", secured_bag, self._loc:text("ehi_experience_trigger_times", { times = data.times })), xp, xp_with_gage)
             --total_xp.total = total_xp.total + xp
             --total_xp.base = total_xp.base + data.amount
         else
-            local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
-            self:AddXPText(string.format("%s: ", secured_bag), xp)
+            local value = self._xp:FakeMultiplyXPWithAllBonuses(data)
+            local xp = self._xp:cash_string(value, "+")
+            local xp_with_gage
+            if gage then
+                xp_with_gage = self:FormatXPWithAllGagePackages(data)
+            end
+            self:AddXPText(string.format("%s: ", secured_bag), xp, xp_with_gage)
             total_xp.add = false
         end
     elseif params.loot then
         self:AddLootSecuredHeader()
         for loot, data in pairs(params.loot) do
             if type(data) == "table" then
-                local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.amount), "+")
-                self:AddLootSecured(loot, data.times or 0, data.to_secure or 0, xp)
+                local value = self._xp:FakeMultiplyXPWithAllBonuses(data.amount)
+                local xp = self._xp:cash_string(value, "+")
+                local xp_with_gage
+                if gage then
+                    xp_with_gage = self:FormatXPWithAllGagePackages(data.amount)
+                end
+                self:AddLootSecured(loot, data.times or 0, data.to_secure or 0, xp, xp_with_gage)
                 total_xp.add = false
                 --total_xp.total = total_xp.total + xp
                 --total_xp.base = total_xp.base + data.amount
             else
-                local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
-                self:AddLootSecured(loot, 0, 0, xp)
+                local value = self._xp:FakeMultiplyXPWithAllBonuses(data)
+                local xp = self._xp:cash_string(value, "+")
+                local xp_with_gage
+                if gage then
+                    xp_with_gage = self:FormatXPWithAllGagePackages(data)
+                end
+                self:AddLootSecured(loot, 0, 0, xp, xp_with_gage)
                 total_xp.add = false
             end
         end
     end
 end
-local function ProcessEscape(self, str, params, total_xp)
+local function ProcessEscape(self, str, params, total_xp, gage)
     if type(params) == "table" then
         for _, value in ipairs(params) do
             local s
-            local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(value.amount), "+")
+            local _value = self._xp:FakeMultiplyXPWithAllBonuses(value.amount)
+            local xp = self._xp:cash_string(_value, "+")
+            local xp_with_gage
+            if gage then
+                xp_with_gage = self:FormatXPWithAllGagePackages(value.amount)
+            end
             if value.stealth then
                 s = self._loc:text("ehi_experience_stealth_escape")
                 if value.timer then
@@ -152,19 +180,24 @@ local function ProcessEscape(self, str, params, total_xp)
                 end
                 s = s .. ": "
             end
-            self:AddXPText(s, xp)
+            self:AddXPText(s, xp, xp_with_gage)
         end
         if next(params) then
             total_xp.add = false
         end
     else
-        local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(params), "+")
-        self:AddXPText(str .. ": ", xp)
+        local value = self._xp:FakeMultiplyXPWithAllBonuses(params)
+        local xp = self._xp:cash_string(value, "+")
+        local xp_with_gage
+        if gage then
+            xp_with_gage = self:FormatXPWithAllGagePackages(params)
+        end
+        self:AddXPText(str .. ": ", xp, xp_with_gage)
         --total_xp.total = total_xp.total + xp
         --total_xp.base = total_xp.base + params
     end
 end
-local function ProcessRandomObjectives(self, random, total_xp)
+local function ProcessRandomObjectives(self, random, total_xp, gage)
     if type(random) ~= "table" then
         return
     end
@@ -180,14 +213,28 @@ local function ProcessRandomObjectives(self, random, total_xp)
                 end
                 for _, xp in ipairs(data) do
                     local str = GetTranslatedKey(self, xp.name)
-                    local _xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(xp.amount), "+")
-                    self:AddXPText(dot .. " " .. str .. ": ", _xp)
+                    local value = self._xp:FakeMultiplyXPWithAllBonuses(xp.amount)
+                    local _xp = self._xp:cash_string(value, "+")
+                    local xp_with_gage
+                    if gage then
+                        xp_with_gage = self:FormatXPWithAllGagePackages(xp.amount)
+                    end
+                    if data.times then
+                        self:AddXPText(dot .. " " .. str .. " (" .. tostring(data.times) .. "): ", _xp, xp_with_gage)
+                    else
+                        self:AddXPText(dot .. " " .. str .. ": ", _xp, xp_with_gage)
+                    end
                 end
                 separate = true
             else
                 local str = "- " .. GetTranslatedKey(self, obj)
-                local _xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
-                self:AddXPText(str .. ": ", _xp)
+                local value = self._xp:FakeMultiplyXPWithAllBonuses(data)
+                local _xp = self._xp:cash_string(value, "+")
+                local xp_with_gage
+                if gage then
+                    xp_with_gage = self:FormatXPWithAllGagePackages(data)
+                end
+                self:AddXPText(str .. ": ", _xp, xp_with_gage)
                 separate = false
             end
         end
@@ -197,6 +244,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
     if type(params) ~= "table" or not next(params) then
         return
     end
+    local gage = xp_format == 3 and not params.no_gage
     self:AddXPOverviewText()
     self:FakeExperienceMultipliers()
     if params.wave_all then
@@ -223,11 +271,16 @@ function MissionBriefingGui:AddXPBreakdown(params)
         for key, data in pairs(params.objective) do
             local str = GetTranslatedKey(self, key)
             if key == "escape" then
-                ProcessEscape(self, str, data, total_xp)
+                ProcessEscape(self, str, data, total_xp, gage)
             elseif key == "random" then
-                ProcessRandomObjectives(self, data, total_xp)
+                ProcessRandomObjectives(self, data, total_xp, gage)
             elseif type(data) == "table" then
-                local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.amount), "+")
+                local value = self._xp:FakeMultiplyXPWithAllBonuses(data.amount)
+                local xp = self._xp:cash_string(value, "+")
+                local xp_with_gage
+                if gage then
+                    xp_with_gage = self:FormatXPWithAllGagePackages(data.amount)
+                end
                 if data.times then
                     local times_formatted = self._loc:text("ehi_experience_trigger_times", { times = data.times })
                     local s
@@ -238,26 +291,31 @@ function MissionBriefingGui:AddXPBreakdown(params)
                     else
                         s = str .. " (" .. times_formatted .. ")"
                     end
-                    self:AddXPText(s .. ": ", xp)
+                    self:AddXPText(s .. ": ", xp, xp_with_gage)
                 elseif data.stealth then
-                    self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", xp)
+                    self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", xp, xp_with_gage)
                 elseif data.loud then
-                    self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", xp)
+                    self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", xp, xp_with_gage)
                 else
-                    self:AddXPText(str .. ": ", xp)
+                    self:AddXPText(str .. ": ", xp, xp_with_gage)
                 end
             else
-                local xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
-                self:AddXPText(str .. ": ", xp)
+                local value = self._xp:FakeMultiplyXPWithAllBonuses(data)
+                local xp = self._xp:cash_string(value, "+")
+                local xp_with_gage
+                if gage then
+                    xp_with_gage = self:FormatXPWithAllGagePackages(data)
+                end
+                self:AddXPText(str .. ": ", xp, xp_with_gage)
             end
         end
-        ProcessLoot(self, params, total_xp)
+        ProcessLoot(self, params, total_xp, gage)
         --[[if total_xp.add and total_xp.total > 0 then
             self:AddTotalXP(total_xp.total)
         elseif total_xp.total_xp_override then
         end]]
     elseif params.loot_all or params.loot then
-        ProcessLoot(self, params, { total = 0, base = 0 })
+        ProcessLoot(self, params, { total = 0, base = 0 }, gage)
     else
         for key, _ in pairs(params) do
             EHI:Log("[MissionBriefingGui] Unknown key! " .. tostring(key))
@@ -273,7 +331,13 @@ function MissionBriefingGui:AddXPBreakdown(params)
     _params = params
 end
 
-function MissionBriefingGui:AddXPText(txt, value)
+function MissionBriefingGui:AddXPText(txt, value, value_with_gage)
+    local text
+    if value_with_gage then
+        text = string.format("%s%s-%s XP", txt, value, value_with_gage)
+    else
+        text = string.format("%s%s XP", txt, value)
+    end
     self._ehi_panel_v2:text({
         name = tostring(self._lines),
         blend_mode = "add",
@@ -282,7 +346,7 @@ function MissionBriefingGui:AddXPText(txt, value)
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
         color = Color.white,
-        text = string.format("%s%s XP", txt, value),
+        text = text,
         layer = 10
     })
     self._lines = self._lines + 1
@@ -333,7 +397,7 @@ function MissionBriefingGui:AddLootSecuredHeader()
     self._lines = self._lines + 1
 end
 
-function MissionBriefingGui:AddLootSecured(loot, times, to_secure, value)
+function MissionBriefingGui:AddLootSecured(loot, times, to_secure, value, value_with_gage)
     local loot_name
     if loot == "_else" then
         loot_name = self._loc:text("ehi_experience_loot_else")
@@ -352,7 +416,11 @@ function MissionBriefingGui:AddLootSecured(loot, times, to_secure, value)
         local prefix = times > 0 and "; " or " ("
         str = str .. prefix .. self._loc:text("ehi_experience_to_secure", { amount = to_secure }) .. ")"
     end
-    str = str .. ": " .. tostring(value) .. " XP"
+    if value_with_gage then
+        str = str .. ": " .. tostring(value) .. "-" .. tostring(value_with_gage) .. " XP"
+    else
+        str = str .. ": " .. tostring(value) .. " XP"
+    end
     self._ehi_panel_v2:text({
         name = tostring(self._lines),
         blend_mode = "add",
@@ -404,11 +472,18 @@ function MissionBriefingGui:FakeExperienceMultipliers()
     if Global.block_update_outfit_information then -- Outfit update is late when "managers.player:get_skill_exp_multiplier(true)" is called, update it now to stay accurate
         local outfit_string = managers.blackmarket:outfit_string()
         local local_peer = managers.network:session():local_peer()
-        reloading_outfit = true
+        reloading_outfit = true -- Fix for Beardlib stack overflow crash
         local_peer:set_outfit_string(outfit_string)
         reloading_outfit = false
     end
     self._skill_bonus = managers.player:get_skill_exp_multiplier(true)
+end
+
+function MissionBriefingGui:FormatXPWithAllGagePackages(base_xp)
+    self._gage_bonus = 1.05
+    local value = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(base_xp), "")
+    self._gage_bonus = 1
+    return value
 end
 
 function MissionBriefingGui:RefreshXPOverview()

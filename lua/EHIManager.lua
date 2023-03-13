@@ -1085,7 +1085,7 @@ if Global.load_level then
     dofile(path .. "EHIDailyTrackers.lua")
     dofile(path .. "EHIInaccurateTrackers.lua")
     dofile(path .. "EHIColoredCodesTracker.lua")
-    if EHI:GetOption("xp_panel") <= 2 and not EHI:IsXPTrackerDisabled() then
+    if EHI:GetOption("xp_panel") <= 2 and EHI:IsXPTrackerVisible() then
         dofile(path .. "EHIXPTracker.lua")
     end
     if EHI:GetOption("show_timers") then

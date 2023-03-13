@@ -78,3 +78,13 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        green_bridge_prisoner_found = 8000,
+        green_bridge_prisoner_escorted = 6000,
+        green_bridge_prisoner_defended = 6000,
+        escape = 4000
+    },
+    loot_all = 1000
+})

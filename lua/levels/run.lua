@@ -134,3 +134,13 @@ end)
 EHI:RegisterCustomSpecialFunction(SetZoneComplete, function(trigger, ...)
     managers.ehi:CallFunction(trigger.id, "SetCompleted")
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        heat_street_reached_crashsite = 4000,
+        van_open = 6000,
+        heat_street_reached_parking = 4000,
+        heat_street_reached_hill = 6000,
+        escape = 6000
+    }
+})

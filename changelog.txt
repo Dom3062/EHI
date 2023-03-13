@@ -1,3 +1,6 @@
+r137 (13. 03. 2023):
+Added option "Show gained XP in Mission Briefing only"
+
 r136 (10. 03. 2023):
 Added options "Don't show ECM Jammer that won't delay pagers" and "Show Waypoints for ECM Jammer"
 

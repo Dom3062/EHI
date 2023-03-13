@@ -5,8 +5,7 @@ end
 
 local original =
 {
-    init = ExperienceManager.init,
-    on_loot_drop_xp = ExperienceManager.on_loot_drop_xp
+    init = ExperienceManager.init
 }
 
 local BaseXP = 0
@@ -177,51 +176,63 @@ function ExperienceManager:ShowGainedXP(base_xp, xp_gained)
     end
 end
 
-local f
-if xp_panel == 2 then
-    if xp_format == 1 then
-        f = function(self, amount)
-            if amount > 0 then
-                managers.ehi:AddXPToTracker("XPTotal", amount)
+if not EHI:GetOption("show_xp_in_mission_briefing_only") then
+    local f
+    if xp_panel == 2 then
+        if xp_format == 1 then
+            f = function(self, amount)
+                if amount > 0 then
+                    managers.ehi:AddXPToTracker("XPTotal", amount)
+                end
             end
-        end
-    elseif xp_format == 2 then
-        f = function(self, amount)
-            if amount > 0 then
-                managers.ehi:AddXPToTracker("XPTotal", amount * self._xp.difficulty_multiplier)
+        elseif xp_format == 2 then
+            f = function(self, amount)
+                if amount > 0 then
+                    managers.ehi:AddXPToTracker("XPTotal", amount * self._xp.difficulty_multiplier)
+                end
+            end
+        else
+            f = function(self, amount)
+                if amount > 0 then
+                    BaseXP = BaseXP + amount
+                    managers.ehi:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
+                end
             end
         end
     else
-        f = function(self, amount)
-            if amount > 0 then
-                BaseXP = BaseXP + amount
-                managers.ehi:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
+        if xp_format == 1 then
+            f = function(self, amount)
+                if amount > 0 then
+                    self:ShowGainedXP(amount, amount)
+                end
+            end
+        elseif xp_format == 2 then
+            f = function(self, amount)
+                if amount > 0 then
+                    self:ShowGainedXP(amount, amount * self._xp.difficulty_multiplier)
+                end
+            end
+        else
+            f = function(self, amount)
+                if amount > 0 then
+                    self:ShowGainedXP(amount)
+                end
             end
         end
     end
-else
-    if xp_format == 1 then
-        f = function(self, amount)
-            if amount > 0 then
-                self:ShowGainedXP(amount, amount)
-            end
+    EHI:Hook(ExperienceManager, "mission_xp_award", f)
+
+    original.on_loot_drop_xp = ExperienceManager.on_loot_drop_xp
+    function ExperienceManager:on_loot_drop_xp(value_id, ...)
+        original.on_loot_drop_xp(self, value_id, ...)
+        local amount = tweak_data:get_value("experience_manager", "loot_drop_value", value_id) or 0
+        if amount <= 0 then
+            return
         end
-    elseif xp_format == 2 then
-        f = function(self, amount)
-            if amount > 0 then
-                self:ShowGainedXP(amount, amount * self._xp.difficulty_multiplier)
-            end
-        end
-    else
-        f = function(self, amount)
-            if amount > 0 then
-                self:ShowGainedXP(amount)
-            end
-        end
+        self._xp.bonus_xp = self._xp.bonus_xp + amount
+        self:RecalculateXP()
     end
 end
-
-EHI:Hook(ExperienceManager, "mission_xp_award", f)
 
 local math_round = math.round
 function ExperienceManager:MultiplyXPWithAllBonuses(xp)
@@ -319,15 +330,5 @@ end
 
 function ExperienceManager:SetCG22EventXPCollected(xp)
     self._xp.cg22_xp_collected = xp
-    self:RecalculateXP()
-end
-
-function ExperienceManager:on_loot_drop_xp(value_id, ...)
-    original.on_loot_drop_xp(self, value_id, ...)
-	local amount = tweak_data:get_value("experience_manager", "loot_drop_value", value_id) or 0
-    if amount <= 0 then
-        return
-    end
-    self._xp.bonus_xp = self._xp.bonus_xp + amount
     self:RecalculateXP()
 end

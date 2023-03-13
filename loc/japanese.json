@@ -5,6 +5,8 @@
   "ehi_save_data_corrupted" : "EHI's Save File Corrupted",
   "ehi_save_data_corrupted_desc" : "EHI's Save File got corrupted and cannot be loaded\nEHI will use default values to avoid crashing",
 
+  "ehi_item_depends_on" : "オプション「$option;」を有効化する必要があります。",
+
   "ehi_menu_next_page": "次のページ -->",
   "ehi_menu_previous_page": "<-- 前のページ",
 
@@ -44,6 +46,7 @@
   "ehi_achievement_land": "LAND",
   "ehi_achievement_find": "FIND",
   "ehi_achievement_bring": "BRING",
+  "ehi_achievement_objective" : "OBJECTIVE",
   "ehi_achievement_fail": "FAIL",
 
   "ehi_r": "赤",
@@ -249,19 +252,19 @@
   "ehi_show_waypoints_present_timer_desc": "ウェイポイントが目的地に「移動」するまでに、画面上に存在する時間を設定します。",
 
   "ehi_show_waypoints_enemy_turret": "敵のタレットにウェイポイントを表示",
-  "ehi_show_waypoints_enemy_turret_desc": "リロード中や修理中の敵のタレットにウェイポイントを表示します。\n\nOption 'Show Enemy Turret Trackers' must be enabled in order to work",
+  "ehi_show_waypoints_enemy_turret_desc": "リロード中や修理中の敵のタレットにウェイポイントを表示します。",
 
   "ehi_show_waypoints_timers": "タイマーにウェイポイントを表示",
-  "ehi_show_waypoints_timers_desc": "ウェイポイントにタイマーを表示します。(ハッキングやドリル等)\n\nオプション「タイマーを表示」を有効化する必要があります。",
+  "ehi_show_waypoints_timers_desc": "ウェイポイントにタイマーを表示します。(ハッキングやドリル等)",
 
   "ehi_show_waypoints_pager": "Pagerにウェイポイントを表示",
-  "ehi_show_waypoints_pager_desc": "ウェイポイントにPagerタイマーを表示します。\n\nオプション「Pager応答タイマーを表示」を有効化する必要があります。",
+  "ehi_show_waypoints_pager_desc": "ウェイポイントにPagerタイマーを表示します。",
 
   "ehi_show_waypoints_cameras": "ループされたカメラにウェイポイントを表示",
-  "ehi_show_waypoints_cameras_desc": "ループ中のカメラにウェイポイントを表示します。\n\nOption 'Show Camera Loop' must be enabled in order to work",
+  "ehi_show_waypoints_cameras_desc": "ループ中のカメラにウェイポイントを表示します。",
 
   "ehi_show_waypoints_zipline": "ジップラインにウェイポイントを表示",
-  "ehi_show_waypoints_zipline_desc": "動作中のジップラインのリセット時間のウェイポイントを表示します。\n\nオプション「ジップライントラッカーを表示」を有効化する必要があります。",
+  "ehi_show_waypoints_zipline_desc": "動作中のジップラインのリセット時間のウェイポイントを表示します。",
 
   "ehi_buffs_menu": "バフ",
   "ehi_buffs_menu_desc": "",

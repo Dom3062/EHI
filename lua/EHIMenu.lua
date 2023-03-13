@@ -585,7 +585,9 @@ end
 function EHIMenu:SetMenuItemsEnabled(menu, parent_item_id, enabled)
     for _, item in pairs(menu.items) do
         local parents = item.parent
-        if parents then
+        if item.parent_func_update then
+            self[item.parent_func_update](self, menu)
+        elseif parents then
             local e
             if type(parents) == "string" and parents == parent_item_id then
                 e = enabled
@@ -771,7 +773,6 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
     local item_type = item.type
     local id = item.id
     local title = item.title
-    local desc = item.description
     local value = item.default_value
     local default_value = item.default_value
     local parents = item.parent
@@ -780,6 +781,8 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
 
     if item.enabled ~= nil then
         enabled = item.enabled
+    elseif item.parent_func then
+        enabled = self[item.parent_func](self)
     elseif parents then
         if type(parents) == "string" then
             for _, pitem in pairs(items) do
@@ -807,17 +810,16 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
         value = default_value
     end
 
-    --[[if parents ~= nil and type(parents) == "string" and VoidUI.options[parents] ~= nil then
-        enabled = VoidUI.options[parents]
-    elseif parents ~= nil and type(parents) == "table" then
-        for _, parent in pairs(parents) do
-            if VoidUI.options[parent] == false and VoidUI.options[parent] ~= nil then
-                enabled = VoidUI.options[parent]
-            end
+    local desc = item.description and managers.localization:text(item.description) or ""
+    if item.depends_on then
+        local item_name = managers.localization:text(item.depends_on)
+        local depends_on_string = managers.localization:text("ehi_item_depends_on", { option = item_name })
+        if desc == "" then
+            desc = depends_on_string
+        else
+            desc = string.format("%s\n\n%s", desc, depends_on_string)
         end
-    elseif item.enabled ~= nil then
-        enabled = item.enabled
-    end]]
+    end
 
     local itm
     if item_type == "label" then
@@ -840,7 +842,7 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
             menu_id = menu_id,
             id = id,
             title = managers.localization:text(title),
-            description = managers.localization:text(desc),
+            description = desc,
             next_menu = item.next_menu,
             callback = item.callback,
             callback_arguments = item.callback_arguments,
@@ -854,7 +856,7 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
             menu_id = menu_id,
             id = id,
             title = managers.localization:text(title),
-            description = managers.localization:text(desc),
+            description = desc,
             value = value,
             default_value = default_value,
             is_parent = item.is_parent,
@@ -863,6 +865,7 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
             callback = item.callback,
             callback_arguments = item.callback_arguments,
             focus_changed_callback = item.focus_changed_callback,
+            parent_func_update = item.parent_func_update,
             new = new
         })
     elseif item_type == "slider" then
@@ -870,7 +873,7 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
             menu_id = menu_id,
             id = id,
             title = managers.localization:text(title),
-            description = managers.localization:text(desc),
+            description = desc,
             percentage = item.percentage,
             callback = item.callback,
             callback_arguments = item.callback_arguments,
@@ -894,7 +897,7 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
             menu_id = menu_id,
             id = id,
             title = managers.localization:text(title),
-            description = managers.localization:text(desc),
+            description = desc,
             value = value,
             items = item.items,
             default_value = default_value,
@@ -915,7 +918,7 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
             menu_id = menu_id,
             id = id,
             title = managers.localization:text(title),
-            description = managers.localization:text(desc),
+            description = desc,
             value = value,
             default_value = default_value,
             enabled = enabled,
@@ -1241,7 +1244,7 @@ function EHIMenu:CreateToggle(params)
         callback = params.callback,
         callback_arguments = params.callback_arguments,
         focus_changed_callback = params.focus_changed_callback,
-        from_module = params.from_module
+        parent_func_update = params.parent_func_update
     }
     self:AddItemToMenu(params.menu_id, toggle)
     return toggle
@@ -1874,7 +1877,7 @@ end
 function EHIMenu:ResetColorMenu()
     local item = self._open_color_dialog
     local c = item.parent_item.default_value
-    local colors_to_table = { ["red"] = 1, ["green"] = 2, ["blue"] = 3 }
+    local colors_to_table = { red = 1, green = 2, blue = 3 }
     local color_panel
     for _, v in pairs(item.items) do
         color_panel = v:name():gsub("_panel", "")
@@ -1882,6 +1885,47 @@ function EHIMenu:ResetColorMenu()
         if number then
             local world_x = v:world_x()
             self:SetColorSlider(v, math.lerp(world_x, world_x + v:w(), c[number] / 255), number)
+        end
+    end
+end
+
+function EHIMenu:GetXPEnabledValue()
+    return EHI:GetOption("show_gained_xp") and not EHI:GetOption("show_xp_in_mission_briefing_only")
+end
+
+function EHIMenu:UpdateXPEnabledValue(menu)
+    local enabled = EHI:GetOption("show_gained_xp") and not EHI:GetOption("show_xp_in_mission_briefing_only")
+    local items =
+    {
+        ehi_total_xp_show_difference_choice = true,
+        ehi_xp_panel_choice = true
+    }
+    for _, item in ipairs(menu.items) do
+        if items[item.id or ""] then
+            self:AnimateItemEnabled(item, enabled)
+        end
+    end
+end
+
+function EHIMenu:UpdateAllXPOptions(menu)
+    local enabled = EHI:GetOption("show_gained_xp")
+    local enabled2 = enabled and not EHI:GetOption("show_xp_in_mission_briefing_only")
+    local items =
+    {
+        ehi_show_xp_in_mission_briefing_only_choice = true,
+        ehi_xp_format_choice = true,
+        ehi_xp_panel_choice = true
+    }
+    local items2 =
+    {
+        ehi_total_xp_show_difference_choice = true,
+        ehi_xp_panel_choice = true
+    }
+    for _, item in ipairs(menu.items) do
+        if items[item.id or ""] then
+            self:AnimateItemEnabled(item, enabled)
+        elseif items2[item.id or ""] then
+            self:AnimateItemEnabled(item, enabled2)
         end
     end
 end

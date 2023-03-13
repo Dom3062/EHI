@@ -66,9 +66,9 @@ EHI:DisableWaypoints(DisableWaypoints)
 EHI:AddXPBreakdown({
     objective =
     {
-        hacking_done = 6000,
+        rvd2_hacking_done = 6000,
         vault_drills_done = 2000,
-        vault_frozen = 4000,
+        rvd2_vault_frozen = 4000,
         c4_set_up = 2000,
         escape = 1000
     },

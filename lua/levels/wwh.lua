@@ -55,3 +55,17 @@ EHI:ParseTriggers({
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 8 })
 EHI._cache.diff = 1
+EHI:AddXPBreakdown({
+    objective =
+    {
+        alaskan_deal_crew_saved = 2000,
+        alaskan_deal_captain_reached_boat = 5000,
+        alaskan_deal_boat_fueled = 6000,
+        escape = 1000
+    },
+    loot =
+    {
+        money = 400,
+        weapon = 600
+    }
+})

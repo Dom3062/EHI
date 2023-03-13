@@ -2,6 +2,8 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "",
 
+    "ehi_item_depends_on" : "L'opzione '$option;' deve essere abilitata per funzionare",
+
     "ehi_menu_next_page" : "Pagina successiva -->",
     "ehi_menu_previous_page" : "<-- Pagina precedente",
 
@@ -194,14 +196,14 @@
     "ehi_show_waypoints_present_timer_desc" : "Imposta per quanto tempo il punto di riferimento rimarrà sullo schermo prima che si 'sposti' verso la sua destinazione",
  
     "ehi_show_waypoints_enemy_turret" : "Mostra Punto di Riferimento per le Torrette Nemiche",
-    "ehi_show_waypoints_enemy_turret_desc" : "Mostra un punto di riferimento sulla torretta nemica durante la ricarica o la riparazione\n\nOption 'Show Enemy Turret Trackers' must be enabled in order to work",
+    "ehi_show_waypoints_enemy_turret_desc" : "Mostra un punto di riferimento sulla torretta nemica durante la ricarica o la riparazione",
  
     "ehi_show_waypoints_timers" : "Mostra Punto di Riferimento per i Timer",
-    "ehi_show_waypoints_timers_desc" : "Mostra un punto di riferimento su un timer visibile (hacking, trapano, sega circolare, ecc ...)\n\nL'opzione 'Mostra Timer' deve essere abilitata per funzionare",
+    "ehi_show_waypoints_timers_desc" : "Mostra un punto di riferimento su un timer visibile (hacking, trapano, sega circolare, ecc ...)",
  
     "ehi_show_waypoints_pager" : "Mostra Punto di Riferimento per i Cercapersone",
-    "ehi_show_waypoints_pager_desc" : "Mostra un punto di riferimento sui cercapersone a cui è necessario rispondere\n\nL'opzione 'Mostra Timer di Risposta al Cercapersone' deve essere abilitata per funzionare",
+    "ehi_show_waypoints_pager_desc" : "Mostra un punto di riferimento sui cercapersone a cui è necessario rispondere",
  
     "ehi_show_waypoints_cameras" : "Mostra Punto di Riferimento per le Telecamere in Loop",
-    "ehi_show_waypoints_cameras_desc" : "Mostra un punto di riferimento su una telecamera che è attualmente in loop\n\nOption 'Show Camera Loop' must be enabled in order to work"
+    "ehi_show_waypoints_cameras_desc" : "Mostra un punto di riferimento su una telecamera che è attualmente in loop"
 }

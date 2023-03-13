@@ -6,6 +6,8 @@
     "ehi_save_data_corrupted_desc" : "ไฟล์ที่บันทึกไว้ในม็อด EHI เสียหายและไม่สามารถโหลดใช้งานได้\nม็อด EHI จะใช้ค่าดั้งเดิมเพื่อเพื่อไม่ให้เกมเด้ง",
 
     "ehi_level_restart_required" : "A level restart is required for options to take effect",
+
+    "ehi_item_depends_on" : "ตัวเลือก '$option;' ต้องถูกเปิดใช้งานเพื่อให้ตัวเลือกนี้เกิดผล",
     
     "ehi_menu_next_page" : "ไปที่หน้าถัดไป -->",
     "ehi_menu_previous_page" : "<-- ย้อนกลับไปหน้าที่แล้ว",
@@ -325,19 +327,19 @@
     "ehi_show_waypoints_present_timer_desc" : "กำหนดระยะเวลาสูงสุดที่จุดอ้างอิงจะถูกแสดงบนหน้าจอของคุณก่อนที่มันจะ'ถูกย้าย'ไปอยู่ที่วัตถุเป้าหมาย",
 
     "ehi_show_waypoints_enemy_turret" : "แสดงจุดอ้างอิงสำหรับป้อมปืนของศัตรู",
-    "ehi_show_waypoints_enemy_turret_desc" : "แสดงจุดอ้างอิงที่ป้อมปืนของศัตรูเมื่อป้อมปืนนั้นกำลังโหลดกระสุนชุดใหม่หรือกำลังซ่อมแซมตัวมัน\n\nOption 'Show Enemy Turret Trackers' must be enabled in order to work",
+    "ehi_show_waypoints_enemy_turret_desc" : "แสดงจุดอ้างอิงที่ป้อมปืนของศัตรูเมื่อป้อมปืนนั้นกำลังโหลดกระสุนชุดใหม่หรือกำลังซ่อมแซมตัวมัน",
 
     "ehi_show_waypoints_timers" : "แสดงจุดอ้างอิงเกี่ยวกับเวลา",
-    "ehi_show_waypoints_timers_desc" : "แสดงไอคอนติดตามเกี่ยวกับเวลาที่ปรากฎในเกม (การแฮคระบบ, สว่าน, เลื่อย ฯลฯ)\n\nตัวเลือก 'แสดงไอคอนติดตามเกี่ยวกับเวลา' ต้องถูกเปิดใช้งานเพื่อให้ตัวเลือกนี้เกิดผล",
+    "ehi_show_waypoints_timers_desc" : "แสดงไอคอนติดตามเกี่ยวกับเวลาที่ปรากฎในเกม (การแฮคระบบ, สว่าน, เลื่อย ฯลฯ)",
 
     "ehi_show_waypoints_pager" : "แสดงจุดอ้างอิงสำหรับวิทยุเรียกตัว",
-    "ehi_show_waypoints_pager_desc" : "แสดงจุดอ้างอิงสำหรับวิทยุเรียกตัวหรือ pager ที่ต้องถูกตอบกลับ\n\nตัวเลือก 'แสดงเวลาของเพจเจอร์ตอบกลับ' ต้องถูกเปิดใช้งานเพื่อให้ตัวเลือกนี้เกิดผล",
+    "ehi_show_waypoints_pager_desc" : "แสดงจุดอ้างอิงสำหรับวิทยุเรียกตัวหรือ pager ที่ต้องถูกตอบกลับ",
 
     "ehi_show_waypoints_cameras" : "แสดงจุดอ้างอิงกล้องที่ถูกลูป",
-    "ehi_show_waypoints_cameras_desc" : "แสดงจุดอ้างอิงตำแหน่งกล้องวงจรปิดที่ถูกลูปภาพในขณะนั้น\n\nOption 'Show Camera Loop' must be enabled in order to work",
+    "ehi_show_waypoints_cameras_desc" : "แสดงจุดอ้างอิงตำแหน่งกล้องวงจรปิดที่ถูกลูปภาพในขณะนั้น",
 
     "ehi_show_waypoints_zipline" : "แสดงไอคอนติดตามสำหรับที่โหนสลิง",
-    "ehi_show_waypoints_zipline_desc" : "แสดงไอคอนติดตามการใช้โหนสลิงที่กำลังถูกใช้งาน\nมีเพียงแค่โหนสลิงเท่านั้นที่จะแสดงค่า\n\nตัวเลือก 'แสดงไอคอนติดตามการใช้โหนสลิง' ต้องถูกเปิดใช้งานเพื่อให้ตัวเลือกนี้เกิดผล",
+    "ehi_show_waypoints_zipline_desc" : "แสดงไอคอนติดตามการใช้โหนสลิงที่กำลังถูกใช้งาน\nมีเพียงแค่โหนสลิงเท่านั้นที่จะแสดงค่า",
 
     "ehi_buffs_menu" : "ทักษะ",
     "ehi_buffs_menu_desc" : "Buffs หรือทักษะที่ถูกใช้งานในเกม แสดงในรูปไอคอน",
@@ -375,7 +377,7 @@
     "ehi_buffs_skills_mastermind_inspire_basic_desc" : "แสดงการหน่วงเวลาหลังจากที่ใช้ inspire กับเพื่อนพ้อง",
     "ehi_buffs_skills_mastermind_inspire_ace" : "Inspire (Ace)",
     "ehi_buffs_skills_mastermind_inspire_ace_desc" : "แสดงการหน่วงเวลาที่จะสามารถใช้ทักษะได้อีกครั้งหลังจากที่ใช้ชุบชีวิตเพื่อนพ้อง",
-"ehi_buffs_skills_mastermind_uppers" : "Uppers",
+    "ehi_buffs_skills_mastermind_uppers" : "Uppers",
     "ehi_buffs_skills_mastermind_uppers_range" : "Uppers Range",
     "ehi_buffs_skills_mastermind_uppers_range_desc" : "แสดงทักษะนี้เมื่อคุณอยู่ในระยะทักษะ FAK's autoheal",
     "ehi_buffs_skills_mastermind_uppers_range_refresh" : "Uppers Range Refresh",

@@ -127,3 +127,40 @@ EHI:ShowLootCounter({
     max = 2,
     additional_loot = 6
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        diamond_heist_boxes_hack = 2000,
+        henrys_rock_first_mission_bag_on_belt = 2000,
+        ed1_hack_1 = 2000,
+        random =
+        {
+            max = 2,
+            archaelogy =
+            {
+                { amount = 6000, name = "henrys_rock_drilled_archaelogy_door" },
+                { amount = 2000, name = "henrys_rock_archaelogy_chest_open" }
+            },
+            biolab =
+            {
+                { amount = 6000, name = "henrys_rock_made_concoction" }
+            },
+            weapon_lab =
+            {
+                { amount = 4000, name = "henrys_rock_weapon_fired", times = 2 }
+            },
+            computer_lab =
+            {
+                { amount = 2000, name = "pc_hack" },
+                { amount = 2000, name = "henrys_rock_crane" }
+            }
+        },
+        henrys_rock_disabled_AA = 4000,
+        escape = 6000
+    },
+    loot =
+    {
+        mus_artifact = 2000
+    },
+    no_total_xp = true
+})

@@ -7,6 +7,8 @@
 
     "ehi_level_restart_required" : "Se requiere un reinicio de nivel para que los cambios surtan efecto.",
 
+    "ehi_item_depends_on" : "(Requiere que actives la opción '$option;' para funcionar)",
+
     "ehi_menu_next_page" : "Página siguiente -->",
     "ehi_menu_previous_page" : "<-- Página anterior",
 
@@ -331,19 +333,19 @@
     "ehi_show_waypoints_present_timer_desc" : "Definir cuánto tiempo se mantendrá el indicador de ruta en pantalla antes de 'moverse' a su destino.",
 
     "ehi_show_waypoints_enemy_turret" : "Mostrar indicadores de ruta para torretas enemigas",
-    "ehi_show_waypoints_enemy_turret_desc" : "Mostrar / ocultar un indicador de ruta para las torretas enemigas mientras están recargando o reparándose.\n(Requiere que actives la opción 'Mostrar contadores para torretas enemigas' para funcionar)",
+    "ehi_show_waypoints_enemy_turret_desc" : "Mostrar / ocultar un indicador de ruta para las torretas enemigas mientras están recargando o reparándose.",
 
     "ehi_show_waypoints_timers" : "Mostrar indicadores de ruta para temporizadores",
-    "ehi_show_waypoints_timers_desc" : "Mostrar / ocultar un indicador de ruta para los temporizadores visibles en hackeos, taladros, sierras, etc.\n(Requiere que actives la opción 'Mostrar temporizadores' para funcionar)",
+    "ehi_show_waypoints_timers_desc" : "Mostrar / ocultar un indicador de ruta para los temporizadores visibles en hackeos, taladros, sierras, etc.",
 
     "ehi_show_waypoints_pager" : "Mostrar indicadores de ruta para localizadores",
-    "ehi_show_waypoints_pager_desc" : "Mostrar / ocultar un indicador de ruta para los localizadores que necesitan ser contestados.\n(Requiere que actives la opción 'Mostrar temporizador de localizadores pendientes' para funcionar)",
+    "ehi_show_waypoints_pager_desc" : "Mostrar / ocultar un indicador de ruta para los localizadores que necesitan ser contestados.",
 
     "ehi_show_waypoints_cameras" : "Mostrar indicadores de ruta para cámaras desactivadas",
-    "ehi_show_waypoints_cameras_desc" : "Mostrar / ocultar un indicador de ruta para las cámaras de seguridad temporalmente desactivadas.\n(Requiere que actives la opción 'Mostrar cámaras desactivadas' para funcionar)",
+    "ehi_show_waypoints_cameras_desc" : "Mostrar / ocultar un indicador de ruta para las cámaras de seguridad temporalmente desactivadas.",
 
     "ehi_show_waypoints_zipline" : "Mostrar indicadores de ruta para tirolinas",
-    "ehi_show_waypoints_zipline_desc" : "Mostrar / ocultar un indicador de ruta en una tirolina que esté en uso.\nSolo se mostrará su tiempo de reinicio.\n(Requiere que actives la opción 'Mostrar contador de tirolinas' para funcionar)",
+    "ehi_show_waypoints_zipline_desc" : "Mostrar / ocultar un indicador de ruta en una tirolina que esté en uso.\nSolo se mostrará su tiempo de reinicio.",
 
     "ehi_buffs_menu" : "Bonificaciones",
     "ehi_buffs_menu_desc" : "",

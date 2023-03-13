@@ -111,6 +111,32 @@ EHI:ShowLootCounter({
     -- Difficulties Very Hard or lower can load sync via EHI as the Red Diamond does not spawn on these difficulties
     no_sync_load = OVKorAbove
 })
+local xp =
+{
+    objective =
+    {
+        diamond_heist_boxes_hack = 4000,
+        diamond_heist_found_color_codes = { amount = 1000, stealth = true },
+        diamond_heist_found_keycard = 2000,
+        diamond_heist_cfo_in_heli = { amount = 4000, loud = true },
+        vault_open = { amount = 4000, loud = true },
+        escape =
+        {
+            { amount = 2000, stealth = true },
+            { amount = 4000, loud = true }
+        }
+    }
+}
+if OVKorAbove then
+    xp.loot =
+    {
+        red_diamond = 2000,
+        diamonds_dah = 400
+    }
+else
+    xp.loot_all = 400
+end
+EHI:AddXPBreakdown(xp)
 if EHI:IsHost() then
     dah_laptop_codes = nil
     return

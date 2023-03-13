@@ -71,3 +71,12 @@ EHI:RegisterCustomSpecialFunction(ExecuteIfEnabled, function(trigger, element, e
         end
     end
 end)
+EHI:AddXPBreakdown({
+    objective =
+    {
+        rvd1_defended_warehouse = 4000,
+        rvd1_escorted_pink = 4000,
+        saw_done = 1500
+    },
+    loot_all = 1000
+})

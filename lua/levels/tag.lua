@@ -43,3 +43,14 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
+EHI:AddXPBreakdown({
+    objective =
+    {
+        correct_pc_hack = { amount = 2000, times = 1 },
+        breakin_feds_found_garret_office = 2000,
+        breakin_feds_lure = 4000,
+        breakin_feds_entered_office = { amount = 1000, times = 1 },
+        breakin_feds_safe_found = 1000
+    },
+    loot_all = 1000
+})

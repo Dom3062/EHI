@@ -322,6 +322,7 @@ local function LoadDefaultValues(self)
             show_daily_started_popup = true
         },
         show_gained_xp = true,
+        show_xp_in_mission_briefing_only = false,
         xp_format = 3,
         xp_panel = 1,
         total_xp_show_difference = true,
@@ -531,7 +532,7 @@ local function Load()
                 end
                 LoadValues(self.settings, table)
             else
-                self.SaveDataNotCompatible = true
+                self._cache.SaveDataNotCompatible = true
                 self:Save()
             end
         else -- Save File got corrupted, use default values
@@ -721,6 +722,15 @@ function EHI:IsXPTrackerDisabled()
         return true
     end
     return false
+end
+
+function EHI:IsXPTrackerVisible()
+    local result = not self:IsXPTrackerDisabled()
+    return result and not self:GetOption("show_xp_in_mission_briefing_only")
+end
+
+function EHI:IsXPTrackerHidden()
+    return not self:IsXPTrackerVisible()
 end
 
 function EHI:AreGagePackagesSpawned()

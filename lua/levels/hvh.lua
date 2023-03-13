@@ -61,5 +61,6 @@ EHI:AddXPBreakdown({
     {
         escape = 2000
     },
-    loot_all = 1000
+    loot_all = 1000,
+    no_gage = true
 })
