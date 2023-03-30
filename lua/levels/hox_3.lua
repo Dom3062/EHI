@@ -58,14 +58,17 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        hox3_vault_objective = 2000,
-        vault_found = 4000,
-        vault_open = { amount = 4000, stealth = true },
-        hox3_vault_open = 8000,
-        hox3_traitor_killed = 2000,
-        escape = 2000
+        { amount = 2000, name = "hox3_vault_objective" },
+        { amount = 4000, name = "vault_found" },
+        {
+            name = "vault_open",
+            stealth = 4000,
+            loud = 8000
+        },
+        { amount = 2000, name = "hox3_traitor_killed" },
+        { escape = 2000 }
     },
     loot_all = 1000
 })

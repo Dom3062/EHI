@@ -185,7 +185,7 @@ function EHITracker:init(panel, params)
         gap = self._gap * self._n_of_icons
     end
     self._parent_panel = panel
-    self._time = params.time or 0
+    self._time = self._forced_time or params.time or 0
     self._panel = panel:panel({
         name = params.id,
         x = params.x,

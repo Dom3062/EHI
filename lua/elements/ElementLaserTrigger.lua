@@ -26,11 +26,6 @@ function EHILaserTracker:UpdateInterval(t)
     self._time = t
 end
 
-function EHILaserTracker:delete()
-    self._parent_class:RemoveLaser(self._id)
-    EHILaserTracker.super.delete(self)
-end
-
 local original =
 {
     init = ElementLaserTrigger.init,
@@ -57,7 +52,7 @@ end
 
 function ElementLaserTrigger:remove_callback(...)
     original.remove_callback(self, ...)
-	managers.ehi:RemoveTracker(self._ehi_id)
+	managers.ehi:RemoveLaserTracker(self._ehi_id)
 end
 
 function ElementLaserTrigger:load(...)

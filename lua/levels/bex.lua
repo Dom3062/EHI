@@ -64,8 +64,34 @@ local tbl =
 }
 EHI:UpdateInstanceUnits(tbl, 22450)
 
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:ShowLootCounter({ max = 11 })
+EHI:AddXPBreakdown({
+    objectives =
+    {
+        { amount = 3000, name = "mex2_found_managers_safe", stealth = true },
+        { amount = 1000, name = "mex2_picked_up_tape", stealth = true },
+        { amount = 1000, name = "mex2_used_tape", stealth = true },
+        { amount = 3000, name = "mex2_picked_up_keychain", stealth = true },
+        { amount = 2000, name = "mex2_found_manual", stealth = true },
+        { amount = 3000, name = "pc_hack", stealth = true },
+        { amount = 2000, name = "ggc_laser_disabled", stealth = true },
+        { amount = 2000, name = "stealth_escape" },
+        { amount = 8000, name = "vault_found", loud = true },
+        { amount = 3000, name = "mex2_it_guy_escorted", loud = true },
+        { amount = 3000, name = "pc_hack", loud = true },
+        { amount = 3000, name = "mex2_beast_arrived", loud = true },
+        { amount = 12000, name = "vault_open", loud = true },
+        { amount = 3000, name = "loud_escape" }
+    },
+    loot_all = 1000
+})

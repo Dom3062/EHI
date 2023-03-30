@@ -31,7 +31,8 @@ function ExperienceManager:init(...)
         gage_bonus = 1,
         stealth = true,
         bonus_xp = 0,
-        skill_xp_multiplier = 1 -- Recalculated in ExperienceManager:RecalculateSkillXPMultiplier()
+        skill_xp_multiplier = 1, -- Recalculated in ExperienceManager:RecalculateSkillXPMultiplier()
+        difficulty_multiplier = 1
     }
     if xp_format == 3 then -- Multiply
         local function f()
@@ -68,7 +69,6 @@ function ExperienceManager:SetJobData(managers)
     end
     local heat = job:get_job_heat_multipliers(job:current_job_id())
     self._xp.heat = heat and heat ~= 0 and heat or 1
-    self._xp.contract_difficulty_multiplier = self:get_contract_difficulty_multiplier(difficulty_stars)
     self._xp.is_level_limited = self._xp.level_to_stars < self._xp.job_stars
     if xp_format ~= 1 then
         self._xp.difficulty_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", difficulty_stars) or 1
@@ -241,7 +241,7 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 	local player_stars = self._xp.level_to_stars
 	local pro_job_multiplier = self._xp.projob_multiplier or 1
 	local ghost_multiplier = 1 + (self._xp.stealth_bonus or 0)
-	local xp_multiplier = self._xp.contract_difficulty_multiplier
+	local xp_multiplier = self._xp.difficulty_multiplier or 1
 	local contract_xp = 0
 	local total_xp = 0
 	local stage_xp_dissect = 0

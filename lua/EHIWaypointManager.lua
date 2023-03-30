@@ -189,6 +189,11 @@ function EHIWaypointManager:AddPagerWaypoint(params)
     self:AddWaypoint(params.id, params)
 end
 
+function EHIWaypointManager:RemovePagerWaypoint(id)
+    self._pager_waypoints[id] = nil
+    self:RemoveWaypoint(id)
+end
+
 function EHIWaypointManager:RemoveAllPagerWaypoints()
     for key, _ in pairs(self._pager_waypoints) do
         self:RemoveWaypoint(key)

@@ -10,17 +10,6 @@
             <post :hook_id="criminalsmanager" :script_path="CriminalsManager.lua" />
             <post :hook_id="group_ai_states/groupaistatebase" :script_path="GroupAIStateBase.lua" />
             <post :hook_id="group_ai_states/groupaistatebesiege" :script_path="GroupAIStateBesiege.lua" />
-            <group :script_path="buffs/">
-                <post :hook_id="hudmanagerpd2" :script_path="EHIBuffTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIGaugeBuffTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIDodgeChanceBuffTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIBikerBuffTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIMeleeChargeBuffTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIUppersRangeBuffTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHIBerserkerBuffTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="EHICritChanceBuffTracker.lua"/>
-                <post :hook_id="hudmanagerpd2" :script_path="SimpleBuffEdits.lua"/>
-            </group>
             <post :hook_id="hudmanager" :script_path="HUDManager.lua" />
             <post :hook_id="hudmanagerpd2" :script_path="HUDManagerPD2.lua" />
             <post :hook_id="hud/hudchallengenotification" :script_path="HudChallengeNotification.lua" />
@@ -32,10 +21,13 @@
 
             <post :hook_id="lootmanager" :script_path="LootManager.lua" />
 
-            <post :hook_id="mission/elementaiglobalevent" :script_path="elements/ElementAiGlobalEvent.lua" />
-            <post :hook_id="mission/elementdifficulty" :script_path="elements/ElementDifficulty.lua" />
-            <post :hook_id="mission/elementlasertrigger" :script_path="elements/ElementLaserTrigger.lua" />
-            <post :hook_id="mission/elementspawngageassignment" :script_path="elements/ElementSpawnGageAssignment.lua" />
+            <group :hook_id="mission/" :script_path="elements/">
+                <post :hook_id="elementaiglobalevent" :script_path="ElementAiGlobalEvent.lua" />
+                <post :hook_id="elementdifficulty" :script_path="ElementDifficulty.lua" />
+                <post :hook_id="elementlasertrigger" :script_path="ElementLaserTrigger.lua" />
+                <post :hook_id="elementspawngageassignment" :script_path="ElementSpawnGageAssignment.lua" />
+                <post :hook_id="elementterminateassault" :script_path="ElementTerminateAssault.lua" />
+            </group>
 
             <post :hook_id="missionassetsmanager" :script_path="MissionAssetsManager.lua" />
     

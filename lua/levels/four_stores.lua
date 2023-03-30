@@ -66,11 +66,13 @@ local FirstAssaultBreak = 15 + 2.5 + 3 + 2 + 30 + 20 + 30
 local other =
 {
     [103501] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
-    [103278] = EHI:AddAssaultDelay({ time = FirstAssaultBreak + CopArrivalDelay, trigger_times = 1 }), -- Full assault break; 15s (55s delay)
-    [101167] = EHI:AddAssaultDelay({ time = FirstAssaultBreak, special_function = SF.AddTrackerIfDoesNotExist }), -- 15s (55s delay)
-    [101166] = EHI:AddAssaultDelay({ time = FirstAssaultBreak - 5, special_function = SF.SetTimeOrCreateTracker }), -- 10s (65s delay)
-    [101159] = EHI:AddAssaultDelay({ time = FirstAssaultBreak - 2, special_function = SF.SetTimeOrCreateTracker }) -- 13s (60s delay)
+    [101167] = EHI:AddAssaultDelay({ time = FirstAssaultBreak, special_function = SF.AddTrackerIfDoesNotExist, trigger_times = 1 }), -- 15s (55s delay)
+    [101166] = EHI:AddAssaultDelay({ time = FirstAssaultBreak - 5, special_function = SF.SetTimeOrCreateTracker, trigger_times = 1 }), -- 10s (65s delay)
+    [101159] = EHI:AddAssaultDelay({ time = FirstAssaultBreak - 2, special_function = SF.SetTimeOrCreateTracker, trigger_times = 1 }) -- 13s (60s delay)
 }
+if CopArrivalDelay > 0 then
+    other[103278] = EHI:AddAssaultDelay({ time = FirstAssaultBreak + CopArrivalDelay, trigger_times = 1 }) -- Full assault break; 15s (55s delay)
+end
 EHI:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 EHI:AddLoadSyncFunction(function(self)
     if LootSafeIsVisible() then

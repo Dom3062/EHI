@@ -91,18 +91,29 @@ for i = 18200, 19400, 600 do
 end
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        sah_vault_seen_stealth = 4000,
-        sah_vault_seen_loud = 6000,
-        sah_entered_vault_code_stealth = 6000,
-        sah_entered_vault_code_loud = 10000,
-        sah_retrieved_tablet_stealth = 4000,
-        sah_retrieved_tablet_loud = 6000,
-        escape =
         {
-            { amount = 1000, stealth = true },
-            { amount = 4000, loud = true }
+            name = "vault_found",
+            stealth = 4000,
+            loud = 6000,
+        },
+        {
+            name = "sah_entered_vault_code",
+            stealth = 6000,
+            loud = 10000
+        },
+        {
+            name = "sah_retrieved_tablet",
+            stealth = 4000,
+            loud = 6000
+        },
+        {
+            escape =
+            {
+                { amount = 1000, stealth = true },
+                { amount = 4000, loud = true }
+            }
         }
     },
     loot =

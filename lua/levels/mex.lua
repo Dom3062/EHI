@@ -40,3 +40,38 @@ for i = 7950, 8550, 300 do
     tbl[EHI:GetInstanceUnitID(100032, i)] = { icons = { Icon.C4 } }
 end
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    objectives =
+    {
+        { amount = 1000, name = "mex1_red_door_found", stealth = true },
+        {
+            name = "mex1_tunnel_found",
+            stealth = 2000,
+            loud = 1000
+        },
+        { amount = 3000, name = "mex1_explosives_found", loud = true },
+        {
+            name = "mex1_tunnel_open",
+            stealth = 2000,
+            loud = 3000
+        },
+        { amount = 2000, name = "mex1_plane_found" },
+        {
+            name = "mex1_secured_mandatory_bags",
+            stealth = 8000,
+            loud = 6000
+        },
+        {
+            name = "mex1_started_fueling",
+            stealth = 2000,
+            loud = 1000
+        },
+        {
+            name = "mex1_hose_detached",
+            stealth = 3000,
+            loud = 2000
+        },
+        { escape = 1000 }
+    },
+    loot_all = 500
+})

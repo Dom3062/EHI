@@ -70,13 +70,13 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
             if server then
                 local function remove_chance()
-                    self.ehi:RemoveTracker("pagers_chance")
+                    self.ehi:RemoveTracker("PagersChance")
                 end
                 for _, value in pairs(base) do
                     if value > 0 and value < 1 then
                         -- Random Chance
                         self.ehi:AddTracker({
-                            id = "pagers_chance",
+                            id = "PagersChance",
                             chance = EHI:RoundChanceNumber(base[1] or 0),
                             icons = { EHI.Icons.Pager },
                             class = EHI.Trackers.Chance
@@ -87,7 +87,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 end
             end
             local function remove()
-                self.ehi:RemoveTracker("pagers")
+                self.ehi:RemoveTracker("Pagers")
             end
             local max = 0
             for _, value in pairs(base) do
@@ -96,14 +96,14 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 end
             end
             self.ehi:AddTracker({
-                id = "pagers",
+                id = "Pagers",
                 max = max,
                 icons = { EHI.Icons.Pager },
                 set_color_bad_when_reached = true,
                 class = EHI.Trackers.Progress
             })
             if max == 0 then
-                self.ehi:CallFunction("pagers", "SetBad")
+                self.ehi:CallFunction("Pagers", "SetBad")
             end
             EHI:AddOnAlarmCallback(remove)
         end
@@ -206,8 +206,7 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
         EHI:Unhook("Assault_set_control_info")
         if EHI._cache.EndlessAssault then
             return
-        end
-        if self.ehi:TrackerExists("Assault") then
+        elseif self.ehi:TrackerExists("Assault") then
             self.ehi:CallFunction("Assault", "AssaultStart", EHI._cache.diff or 0)
         elseif (EHI._cache.diff and EHI._cache.diff > 0) or is_skirmish then
             self.ehi:AddTracker({

@@ -1,7 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
-local TT = EHI.Trackers
 local c4_drop = { time = 120 + 25 + 0.25 + 2, id = "C4Drop", icons = Icon.HeliDropC4 }
 local HeliTimer = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
@@ -75,11 +74,15 @@ for i = 19150, 20650, 500 do
 end
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        van_open = 16000,
-        c4_set_up = 6000, -- Wall blown up
-        escape = 6000
+        { amount = 16000, name = "van_open" },
+        { amount = 6000, name = "c4_set_up" }, -- Wall blown up
+        { escape = 6000 }
     },
-    loot_all = 500
+    loot_all = 500,
+    total_xp_override =
+    {
+        loot_all = { times = 4 + (2 * (EHI._cache.DifficultyIndex or 0)) }
+    }
 })

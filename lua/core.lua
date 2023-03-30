@@ -234,7 +234,8 @@ _G.EHI =
 
     Waypoints =
     {
-        Warning = "EHIWarningWaypoint"
+        Warning = "EHIWarningWaypoint",
+        Pausable = "EHIPausableWaypoint"
     },
 
     Difficulties =

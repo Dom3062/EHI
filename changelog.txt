@@ -1,3 +1,6 @@
+r139 (30. 03. 2023):
+XP Tracker: Fixed a crash when difficulty multiplier is nil
+
 r138 (23. 03. 2023):
 Updated to U235
 

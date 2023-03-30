@@ -171,12 +171,12 @@ local MissionDoorIndex =
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        hox2_reached_server_room = 4000,
-        hox2_random_obj = 8000,
-        escape = 6000,
-        hox2_no_keycard_bonus_xp = 4000
+        { amount = 4000, name = "hox2_reached_server_room" },
+        { amount = 8000, name = "hox2_random_obj" },
+        { escape = 6000 },
+        { amount = 4000, name = "hox2_no_keycard_bonus_xp" },
     },
     total_xp_override =
     {
@@ -184,7 +184,7 @@ EHI:AddXPBreakdown({
         {
             min =
             {
-                objective =
+                objectives =
                 {
                     hox2_reached_server_room = true,
                     hox2_random_obj = true,
@@ -192,7 +192,7 @@ EHI:AddXPBreakdown({
                 }
             }
         },
-        objective =
+        objectives =
         {
             hox2_random_obj = { times = 3 }
         }

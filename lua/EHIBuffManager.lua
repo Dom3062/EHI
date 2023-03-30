@@ -39,6 +39,16 @@ function EHIBuffManager:init()
 end
 
 function EHIBuffManager:init_finalize(hud)
+    local path = EHI.LuaPath .. "buffs/"
+    dofile(path .. "EHIBuffTracker.lua")
+    dofile(path .. "EHIGaugeBuffTracker.lua")
+    dofile(path .. "EHIDodgeChanceBuffTracker.lua")
+    dofile(path .. "EHIBikerBuffTracker.lua")
+    dofile(path .. "EHIMeleeChargeBuffTracker.lua")
+    dofile(path .. "EHIUppersRangeBuffTracker.lua")
+    dofile(path .. "EHIBerserkerBuffTracker.lua")
+    dofile(path .. "EHICritChanceBuffTracker.lua")
+    dofile(path .. "SimpleBuffEdits.lua")
     self._panel = hud.panel
     self:InitializeBuffs()
     self:InitializeTagTeamBuffs()

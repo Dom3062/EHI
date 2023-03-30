@@ -198,7 +198,7 @@ function EHIAssaultTracker:UpdateDiff(diff)
     end
     self._diff = diff
     if self._assault then
-        if self._state == State.build then
+        if self._is_client and self._state == State.build then
             self:CalculateDifficultyRamp()
             local new_time = self:CalculateAssaultTime()
             if new_time ~= self._original_time then
@@ -289,6 +289,10 @@ function EHIAssaultTracker:UpdateSustainTime(new_sustain)
 end
 
 function EHIAssaultTracker:OnEnterSustain()
+    self._to_fade_t = t
+    self._assault_t = t
+    self._sustain_original_t = t
+    self._time = t + assault_values.fade_duration + 2
     self._state = State.sustain
     self:SetIconColor(Sustain)
     if self._cs_assault_extender then
@@ -327,6 +331,7 @@ function EHIAssaultTracker:StopTextAnim()
 end
 
 function EHIAssaultTracker:CaptainArrived()
+    self._assault_paused_t = Application:time()
     self:RemoveTrackerFromUpdate()
     self._text:stop()
     self:SetTextColor(Color.red)
@@ -339,6 +344,11 @@ function EHIAssaultTracker:CaptainDefeated()
     self:SetTextColor(Color.white)
     self:SetIconColor(Fade)
     self:AddTrackerToUpdate()
+end
+
+function EHIAssaultTracker:PoliceActivityBlocked()
+    self._hide_on_delete = nil
+    EHIAssaultTracker.super.delete(self)
 end
 
 function EHIAssaultTracker:delete()
@@ -393,8 +403,8 @@ local function CheckIfModifierIsActive()
 end
 if EHI:IsHost() then
     local ListenerModifier = class(BaseModifier)
-    function ListenerModifier:OnEnterSustainPhase(...)
-        managers.ehi:CallFunction("Assault", "OnEnterSustain")
+    function ListenerModifier:OnEnterSustainPhase(duration)
+        managers.ehi:CallFunction("Assault", "OnEnterSustain", duration)
     end
     EHI:AddCallback(EHI.CallbackMessage.InitFinalize, function()
         managers.modifiers:add_modifier(ListenerModifier, "EHI")

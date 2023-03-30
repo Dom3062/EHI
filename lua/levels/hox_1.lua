@@ -64,19 +64,19 @@ end
 EHI:UpdateUnits(tbl)
 EHI._cache.diff = 1
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        hox1_first_corner = 3000,
-        hox1_second_corner = 4000,
-        hox1_blockade_cleared = 200,
-        hox1_parking_gate_open = 2000,
-        hox1_parking_car_reached_garages = 4000,
-        pc_hack = 3000,
-        escape = 2000
+        { amount = 3000, name = "hox1_first_corner" },
+        { amount = 4000, name = "hox1_second_corner" },
+        { amount = 200, name = "hox1_blockade_cleared" },
+        { amount = 2000, name = "hox1_parking_gate_open" },
+        { amount = 4000, name = "hox1_parking_car_reached_garages" },
+        { amount = 3000, name = "pc_hack" },
+        { escape = 2000 }
     },
     total_xp_override =
     {
-        objective =
+        objectives =
         {
             hox1_blockade_cleared = { times = 2 }
         }

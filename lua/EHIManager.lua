@@ -7,8 +7,6 @@ function EHIManager:init()
     self._trackers = {}
     setmetatable(self._trackers, {__mode = "k"})
     self._stealth_trackers = { pagers = {}, lasers = {} }
-    self._pager_trackers = {}
-    self._laser_trackers = {}
     self._trackers_to_update = {}
     setmetatable(self._trackers_to_update, {__mode = "k"})
     self._trackers_pos = {}
@@ -258,7 +256,6 @@ end
 function EHIManager:RunTracker(id, params)
     local tracker = self._trackers[id]
     if not tracker then
-        EHI:Log("Preloaded tracker with ID '" .. tostring(id) .. "' not found!")
         return
     end
     tracker:Run(params)
@@ -400,12 +397,14 @@ function EHIManager:AddEscapeChanceTracker(dropin, chance, civilian_killed_multi
     })
 end
 
-function EHIManager:RemovePager(id)
+function EHIManager:RemovePagerTracker(id)
     self._stealth_trackers.pagers[id] = nil
+    self:RemoveTracker(id)
 end
 
-function EHIManager:RemoveLaser(id)
+function EHIManager:RemoveLaserTracker(id)
     self._stealth_trackers.lasers[id] = nil
+    self:RemoveTracker(id)
 end
 
 function EHIManager:SwitchToLoudMode()

@@ -91,20 +91,31 @@ local MissionDoorIndex =
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        mus_powerboxes_stealth = 6000,
-        mus_first_timelock_stealth = 2000,
-        mus_second_timelock_stealth = 2000,
-        mus_no_gas_trap_stealth = 3000,
-        mus_pc_hack_loud = 8000,
-        mus_first_timelock_loud = 5000,
-        mus_second_timelock_loud = 5000,
-        mus_no_gas_trap_loud = 4000,
-        escape =
+        { amount = 6000, name = "mus_powerboxes", stealth = true },
+        { amount = 8000, name = "pc_hack", loud = true },
         {
-            { amount = 4000, stealth = true },
-            { amount = 6000, loud = true }
+            name = "mus_first_timelock",
+            stealth = 2000,
+            loud = 5000
+        },
+        {
+            name = "mus_second_timelock",
+            stealth = 2000,
+            loud = 5000
+        },
+        {
+            name = "mus_no_gas_trap",
+            stealth = 3000,
+            loud = 4000
+        },
+        {
+            escape =
+            {
+                { amount = 4000, stealth = true },
+                { amount = 6000, loud = true }
+            }
         }
     },
     loot_all = 1000

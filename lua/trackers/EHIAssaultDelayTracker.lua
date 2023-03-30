@@ -153,6 +153,11 @@ function EHIAssaultDelayTracker:UpdateDiff(diff)
     end]]
 end
 
+function EHIAssaultDelayTracker:PoliceActivityBlocked()
+    self._hide_on_delete = nil
+    EHIAssaultDelayTracker.super.delete(self)
+end
+
 function EHIAssaultDelayTracker:delete()
     if self._time <= 0 then
         self.update = self.update_negative

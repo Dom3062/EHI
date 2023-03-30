@@ -9,6 +9,8 @@ EHIManagerVR.old_AddToDeployableCache = EHIManager.AddToDeployableCache
 EHIManagerVR.old_LoadFromDeployableCache = EHIManager.LoadFromDeployableCache
 EHIManagerVR.old_RemoveFromDeployableCache = EHIManager.RemoveFromDeployableCache
 EHIManagerVR.old_PreloadTracker = EHIManager.PreloadTracker
+EHIManagerVR.old_AddLaserTracker = EHIManager.AddLaserTracker
+EHIManagerVR.old_RemoveLaserTracker = EHIManager.RemoveLaserTracker
 
 function EHIManagerVR:init()
     self:old_init()
@@ -65,12 +67,12 @@ function EHIManagerVR:AddToLoadQueue(key, data, f, add)
             else
                 local previous = self._load_callback[key]
                 self._load_callback[key] = { table = {
-                    [1] = { data = previous.data, f = previous.f },
-                    [2] = { data = data, f = f }
+                    { data = previous.data, f = previous.f },
+                    { data = data, f = f }
                 }}
             end
         else
-            self._load_callback[key] = { table = { [1] = { data = data, f = f } } }
+            self._load_callback[key] = { table = { { data = data, f = f } } }
         end
     else
         self._load_callback[key] = { data = data, f = f }
@@ -103,4 +105,24 @@ function EHIManagerVR:RemoveFromDeployableCache(type, key)
         return
     end
     self:old_RemoveFromDeployableCache(type, key)
+end
+
+function EHIManagerVR:AddLaserTracker(params)
+    if self:IsLoading() then
+        self:AddToLoadQueue(params.id, params, callback(self, self, "_AddLaserTracker"))
+        return
+    end
+    self:old_AddLaserTracker(params)
+end
+
+function EHIManagerVR:_AddLaserTracker(key, params)
+    self:old_AddLaserTracker(params)
+end
+
+function EHIManagerVR:RemoveLaserTracker(id)
+    if self:IsLoading() then
+        self._load_callback[id] = nil
+        return
+    end
+    self:old_RemoveLaserTracker(id)
 end

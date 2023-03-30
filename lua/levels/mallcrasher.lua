@@ -209,6 +209,5 @@ EHI:AddXPBreakdown({
     objective =
     {
         mallcrasher = { amount = 1000, times = 6 }
-    },
-    no_total_xp = true
+    }
 })

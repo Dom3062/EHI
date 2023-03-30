@@ -147,7 +147,7 @@ local levels =
     ranc = true, -- Midland Ranch
     trai = true, -- Lost in Transit
     corp = true, -- Hostile Takeover
-    fourth_and_last_heist_of_the_Texas_Heat_campaign = true
+    fourth_and_last_heist_of_the_Texas_Heat_campaign = true -- Crude Awakening
 }
 
 local custom_levels =
@@ -193,7 +193,7 @@ local custom_levels =
 local init_finalize = GameSetup.init_finalize
 function GameSetup:init_finalize(...)
     init_finalize(self, ...)
-    EHI:CallCallback(EHI.CallbackMessage.InitFinalize)
+    EHI:CallCallbackOnce(EHI.CallbackMessage.InitFinalize)
     local level_id = Global.game_settings.level_id
     if levels[level_id] then
         local fixed_name = redirect[level_id] or level_id

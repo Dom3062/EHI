@@ -23,13 +23,13 @@ end
 
 function GroupAIStateBase:on_successful_alarm_pager_bluff(...) -- Called by host
     original.on_successful_alarm_pager_bluff(self, ...)
-    managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
-    managers.ehi:SetChance("pagers_chance", (EHI:RoundChanceNumber(tweak_data.player.alarm_pager.bluff_success_chance_w_skill[self._nr_successful_alarm_pager_bluffs + 1] or 0)))
+    managers.ehi:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
+    managers.ehi:SetChance("PagersChance", (EHI:RoundChanceNumber(tweak_data.player.alarm_pager.bluff_success_chance_w_skill[self._nr_successful_alarm_pager_bluffs + 1] or 0)))
 end
 
 function GroupAIStateBase:sync_alarm_pager_bluff(...) -- Called by client
     original.sync_alarm_pager_bluff(self, ...)
-    managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
+    managers.ehi:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
 end
 
 function GroupAIStateBase:load(...)
@@ -38,7 +38,7 @@ function GroupAIStateBase:load(...)
     if self._enemy_weapons_hot then
         EHI:RunOnAlarmCallbacks(dropin)
     else
-        managers.ehi:SetTrackerProgress("pagers", self._nr_successful_alarm_pager_bluffs)
+        managers.ehi:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
 	end
     local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
     if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets set; see GameSetup:load()
@@ -114,7 +114,7 @@ if show_minion_tracker or show_popup then
         UpdateTracker(nil, params.unit_key, 0)
         unit:character_damage():remove_listener(callback_key)
         unit:base():remove_destroy_listener(callback_key)
-        if game_is_running and show_popup and params.local_peer and game_state_machine:verify_game_state(_G.GameStateFilters.any_ingame) then
+        if game_is_running and show_popup and params.local_peer then
             if show_popup_type == 1 then
                 managers.hud:custom_ingame_popup_text("MINION", managers.localization:text("ehi_popup_minion_killed"), "EHI_Minion")
             else
@@ -122,9 +122,11 @@ if show_minion_tracker or show_popup then
             end
         end
     end
-    EHI:AddCallback(EHI.CallbackMessage.GameRestart, function()
+    local function GameEnd()
         game_is_running = false
-    end)
+    end
+    EHI:AddCallback(EHI.CallbackMessage.GameRestart, GameEnd)
+    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, GameEnd)
 
     function GroupAIStateBase:EHIAddListener(unit, local_peer)
         if not unit.key then

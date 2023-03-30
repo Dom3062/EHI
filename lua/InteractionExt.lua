@@ -6,21 +6,12 @@ end
 if EHI:GetOption("show_pager_callback") then
     EHIPagerTracker = class(EHIWarningTracker)
     EHIPagerTracker._forced_icons = { "pager_icon" }
-    function EHIPagerTracker:init(panel, params)
-        params.time = 12
-        EHIPagerTracker.super.init(self, panel, params)
-    end
-
+    EHIPagerTracker._forced_time = 12
     function EHIPagerTracker:SetAnswered()
         self:RemoveTrackerFromUpdate()
         self._text:stop()
         self:SetTextColor(Color.green)
         self:AnimateBG()
-    end
-
-    function EHIPagerTracker:delete()
-        self._parent_class:RemovePager(self._id)
-        EHIPagerTracker.super.delete(self)
     end
 
     EHIPagerWaypoint = class(EHIWarningWaypoint)
@@ -67,8 +58,8 @@ if EHI:GetOption("show_pager_callback") then
 
     EHI:PreHookWithID(IntimitateInteractionExt, "interact", "EHI_pager_interact", function(self, ...)
         if self.tweak_data == "corpse_alarm_pager" then
-            managers.ehi:RemoveTracker(self._ehi_key)
-            managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+            managers.ehi:RemovePagerTracker(self._ehi_key)
+            managers.ehi_waypoint:RemovePagerWaypoint(self._ehi_key)
         end
     end)
 
@@ -85,8 +76,8 @@ if EHI:GetOption("show_pager_callback") then
                 managers.ehi:CallFunction(self._ehi_key, "SetAnswered")
                 managers.ehi_waypoint:CallFunction(self._ehi_key, "SetAnswered")
             else -- complete or interrupted
-                managers.ehi:RemoveTracker(self._ehi_key)
-                managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+                managers.ehi:RemovePagerTracker(self._ehi_key)
+                managers.ehi_waypoint:RemovePagerWaypoint(self._ehi_key)
             end
         end
     end)

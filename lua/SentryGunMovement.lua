@@ -95,6 +95,8 @@ function SentryGunMovement:load(save_data, ...)
 		return
 	end
     self:Preload()
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_reload)
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_repair)
 end
 
 function SentryGunMovement:on_death(...)
