@@ -87,6 +87,9 @@
     "ehi_tracker_alignment_1" : "Вертикально",
     "ehi_tracker_alignment_2" : "Горизонтально",
 
+    "ehi_vr_tracker_alignment" : "Выравнивание трекера в VR",
+    "ehi_vr_tracker_alignment_desc" : "Определяет выравнивание трекера в VR",
+
     "ehi_visuals_menu" : "Настройки отображения",						   
     "ehi_visuals_menu_desc" : "",
 

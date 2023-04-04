@@ -230,11 +230,21 @@ function EHIBuffTracker:Activate(t, pos)
     self._pos = pos
 end
 
-function EHIBuffTracker:ActivateNoUpdate(t, pos)
+function EHIBuffTracker:ActivateNoUpdate(pos)
     self._active = true
     self._panel:stop()
     self._panel:animate(self._show)
     self._pos = pos
+end
+
+function EHIBuffTracker:ActivateSoft()
+    if self._visible then
+        return
+    end
+    self._panel:stop()
+    self._panel:animate(self._show)
+    self._parent_class:AddVisibleBuff(self._id)
+    self._visible = true
 end
 
 function EHIBuffTracker:Extend(t)
@@ -258,6 +268,16 @@ function EHIBuffTracker:Deactivate()
     self._panel:stop()
     self._panel:animate(self._hide)
     self._active = false
+end
+
+function EHIBuffTracker:DeactivateSoft()
+    if not self._visible then
+        return
+    end
+    self._parent_class:RemoveVisibleBuff(self._id, self._pos)
+    self._panel:stop()
+    self._panel:animate(self._hide)
+    self._visible = false
 end
 
 function EHIBuffTracker:Shorten(t)

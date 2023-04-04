@@ -83,16 +83,6 @@ function EHIBerserkerBuffTracker:Activate()
     self._active = true
 end
 
-function EHIBerserkerBuffTracker:ActivateSoft()
-    if self._visible then
-        return
-    end
-    self._panel:stop()
-    self._panel:animate(self._show)
-    self._parent_class:AddVisibleBuff(self._id)
-    self._visible = true
-end
-
 function EHIBerserkerBuffTracker:Deactivate()
     if not self._active then
         return
@@ -100,16 +90,6 @@ function EHIBerserkerBuffTracker:Deactivate()
     self:DeactivateSoft()
     self._active = false
     self._progress:set_color(Color(1, 0, 1, 1)) -- No need to animate this because the panel is no longer visible
-end
-
-function EHIBerserkerBuffTracker:DeactivateSoft()
-    if not self._visible then
-        return
-    end
-    self._parent_class:RemoveVisibleBuff(self._id, self._pos)
-    self._panel:stop()
-    self._panel:animate(self._hide)
-    self._visible = false
 end
 
 function EHIBerserkerBuffTracker:Format()

@@ -288,6 +288,7 @@ local function LoadDefaultValues(self)
         vr_scale = 1,
         time_format = 2, -- 1 = Seconds only, 2 = Minutes and seconds
         tracker_alignment = 1, -- 1 = Vertical, 2 = Horizontal
+        vr_tracker_alignment = 1, -- 1 = Vertical, 2 = Horizontal
 
         -- Visuals
         show_tracker_bg = true,
@@ -466,6 +467,7 @@ local function LoadDefaultValues(self)
             grinder = true,
             maniac = true,
             anarchist = true, -- +Armorer
+            expresident = true,
             biker = true,
             kingpin = true,
             sicario = true,
@@ -564,11 +566,11 @@ function EHI:Init()
     self:AddCallback(self.CallbackMessage.InitManagers, function(managers)
         local mutator = managers.mutators
         if mutator:can_mutators_be_active() then
-            EHI._cache.UnlockablesAreDisabled = mutator:are_achievements_disabled()
+            self._cache.UnlockablesAreDisabled = mutator:are_achievements_disabled()
         end
         local level = Global.game_settings.level_id
         if level == "Enemy_Spawner" or level == "enemy_spawner2" or level == "modders_devmap" then -- These 3 maps disable achievements
-            EHI._cache.UnlockablesAreDisabled = true
+            self._cache.UnlockablesAreDisabled = true
         end
     end)
 end
@@ -695,6 +697,11 @@ end
 
 function EHI:GetWaypointOption(waypoint)
     return self:GetOption("show_waypoints") and self:GetOption(waypoint)
+end
+
+function EHI:GetWaypointOptionWithOnly(waypoint)
+    local show = self:GetWaypointOption(waypoint)
+    return show, show and self:GetOption("show_waypoints_only")
 end
 
 function EHI:GetColor(color)
@@ -1342,7 +1349,7 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.UnpauseTracker then
                 UnpauseTracker(trigger.id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.ehi:TrackerExists(trigger.id) then
+                if managers.ehi:TrackerExists(trigger.id) or managers.ehi_waypoint:WaypointExists(trigger.id) then
                     UnpauseTracker(trigger.id)
                 else
                     self:CheckCondition(trigger)
@@ -2281,6 +2288,21 @@ function EHI:GetKeypadResetTimer(time_override)
     end
 end
 
+---@param tracker string Filename without extension
+function EHI:LoadTrackerInVR(tracker)
+    if BLT:IsVr() then
+        if self._cache.TrackersInit_VR then
+            dofile(self.LuaPath .. "trackers/" .. tracker .. ".lua")
+        else
+            self:AddCallback("TrackersInit_VR", function()
+                dofile(self.LuaPath .. "trackers/" .. tracker .. ".lua")
+            end)
+        end
+    else
+        dofile(self.LuaPath .. "trackers/" .. tracker .. ".lua")
+    end
+end
+
 ---@param trigger table
 ---@param params table|nil
 ---@return table
@@ -2295,7 +2317,7 @@ function EHI:ClientCopyTrigger(trigger, params)
     for key, value in pairs(trigger) do
         tbl[key] = tbl[key] or value
     end
-    tbl.special_function = SF.AddTrackerIfDoesNotExist
+    tbl.special_function = tbl.special_function or SF.AddTrackerIfDoesNotExist
     return tbl
 end
 

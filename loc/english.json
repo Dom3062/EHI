@@ -87,6 +87,9 @@
     "ehi_tracker_alignment_1" : "Vertical",
     "ehi_tracker_alignment_2" : "Horizontal",
 
+    "ehi_vr_tracker_alignment" : "VR Tracker Alignment",
+    "ehi_vr_tracker_alignment_desc" : "Defines how trackers should be aligned in VR",
+
     "ehi_visuals_menu" : "Visuals",
     "ehi_visuals_menu_desc" : "",
 
@@ -455,6 +458,8 @@
     "ehi_buffs_perks_maniac_desc" : "Shows buffs and cooldowns in Maniac perk deck",
     "ehi_buffs_perks_anarchist" : "Anarchist / Armorer",
     "ehi_buffs_perks_anarchist_desc" : "Shows buffs and cooldowns in Anarchist / Armorer perk deck",
+    "ehi_buffs_perks_expresident" : "Ex-President",
+    "ehi_buffs_perks_expresident_desc" : "Shows buffs and cooldowns in Ex-President perk deck",
     "ehi_buffs_perks_biker" : "Biker",
     "ehi_buffs_perks_biker_desc" : "Shows buffs and cooldowns in Biker perk deck",
     "ehi_buffs_perks_kingpin" : "Kingpin",
@@ -862,7 +867,7 @@
     "ehi_experience_mex1_started_fueling" : "Started fueling the plane",
     "ehi_experience_mex1_hose_detached" : "Fueling hose detached",
     "ehi_experience_mex2_found_managers_safe" : "Found manager's safe",
-    "ehi_experience_mex2_picked_up_tape" : "Picked up tape",
+    "ehi_experience_mex2_picked_up_tape" : "Picked up a tape",
     "ehi_experience_mex2_used_tape" : "Used tape on a cup",
     "ehi_experience_mex2_picked_up_keychain" : "Found keychains to the vault",
     "ehi_experience_mex2_found_manual" : "Found manual",
@@ -893,5 +898,11 @@
     "ehi_experience_mex4_contact_list_stolen_car_escape" : "Contact list stolen (if car escape)",
     "ehi_experience_mex4_turret_discovered_car_escape" : "Spotted police turret (if car escape)",
     "ehi_experience_mex4_turret_destroyed_car_escape" : "Turret destroyed (if car escape)",
-    "ehi_experience_mex4_flare_lit_heli_escape" : "Flare lit (if heli escape)"
+    "ehi_experience_mex4_flare_lit_heli_escape" : "Flare lit (if heli escape)",
+    "ehi_experience_texas3_evidences_found" : "Evidences found",
+    "ehi_experience_texas3_prototype_secured" : "Prototype secured",
+    "ehi_experience_texas3_documents_secured" : "Research documents secured",
+    "ehi_experience_texas3_lab_destroyed" : "Lab destroyed",
+    "ehi_experience_texas3_escape_1" : "Escape (No inspectors / Turret not set up)",
+    "ehi_experience_texas3_escape_2" : "Escape (Inspectors arrived / Turret set up)"
 }

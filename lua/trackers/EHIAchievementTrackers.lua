@@ -12,8 +12,8 @@ local function ShowFailedPopup(tracker)
         managers.hud:ShowAchievementFailedPopup(tracker._id, tracker._beardlib)
     end
 end
-local function ShowStartedPopup(tracker)
-    if tracker._delay_popup then
+local function ShowStartedPopup(tracker, delay_popup)
+    if delay_popup then
         EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(tracker, tracker, "ShowStartedPopup"))
         return
     end
@@ -70,12 +70,15 @@ EHIAchievementProgressTracker._show_started = EHIAchievementTracker._show_starte
 EHIAchievementProgressTracker._show_failed = EHIAchievementTracker._show_failed
 function EHIAchievementProgressTracker:init(panel, params)
     self._no_failure = params.no_failure
-    self._delay_popup = params.delay_popup
     self._beardlib = params.beardlib
     EHIAchievementProgressTracker.super.init(self, panel, params)
     if self._show_started then
-        ShowStartedPopup(self)
+        ShowStartedPopup(self, params.delay_popup)
     end
+end
+
+function EHIAchievementProgressTracker:ShowStartedPopup()
+    ShowStartedPopup(self)
 end
 
 function EHIAchievementProgressTracker:SetCompleted(force)
@@ -88,11 +91,6 @@ function EHIAchievementProgressTracker:SetFailed()
     if self._show_failed then
         ShowFailedPopup(self)
     end
-end
-
-function EHIAchievementProgressTracker:ShowStartedPopup()
-    self._delay_popup = false
-    ShowStartedPopup(self)
 end
 
 EHIAchievementUnlockTracker = class(EHIWarningTracker)
@@ -124,15 +122,13 @@ EHIAchievementBagValueTracker._show_started = EHIAchievementTracker._show_starte
 EHIAchievementBagValueTracker._show_failed = EHIAchievementTracker._show_failed
 function EHIAchievementBagValueTracker:init(panel, params)
     EHIAchievementBagValueTracker.super.init(self, panel, params)
-    self._delay_popup = params.delay_popup
     self._beardlib = params.beardlib
     if self._show_started then
-        ShowStartedPopup(self)
+        ShowStartedPopup(self, params.delay_popup)
     end
 end
 
 function EHIAchievementBagValueTracker:ShowStartedPopup()
-    self._delay_popup = false
     ShowStartedPopup(self)
 end
 

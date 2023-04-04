@@ -3,8 +3,7 @@ if EHI:CheckLoadHook("SecurityCamera") or not EHI:GetOption("show_camera_loop") 
     return
 end
 
-local show_waypoint = EHI:GetWaypointOption("show_waypoints_cameras")
-local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
+local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_cameras")
 
 local original =
 {

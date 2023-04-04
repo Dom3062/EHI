@@ -1,3 +1,7 @@
+r140 (04. 04. 2023):
+Added Ex-President buffs
+Added option "VR Tracker Alignment"
+
 r139 (30. 03. 2023):
 XP Tracker: Fixed a crash when difficulty multiplier is nil
 

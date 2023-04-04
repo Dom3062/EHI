@@ -38,6 +38,21 @@ EHIAssaultTracker = class(EHIWarningTracker)
 EHIAssaultTracker._forced_icons = { { icon = "assaultbox", color = Control } }
 EHIAssaultTracker._is_client = EHI:IsClient()
 EHIAssaultTracker.AnimateNegative = EHITimerTracker.AnimateCompletion
+if type(tweak_values) ~= "table" then -- If for some reason the assault delay is not a table, use the value directly
+    EHIAssaultTracker._assault_delay = tonumber(tweak_values) or 30
+else
+    local first_value = tweak_values[1] or 0
+    local match = true
+    for _, value in pairs(tweak_values) do
+        if first_value ~= value then
+            match = false
+            break
+        end
+    end
+    if match then -- All numbers the same, use it and avoid computation because it is expensive
+        EHIAssaultTracker._assault_delay = first_value
+    end
+end
 if type(hostage_values) ~= "table"  then -- If for some reason the hesitation delay is not a table, use the value directly
     EHIAssaultTracker._precomputed_hostage_delay = true
     EHIAssaultTracker._hostage_delay = tonumber(hostage_values) or 30
@@ -150,6 +165,9 @@ function EHIAssaultTracker:CheckIfHostageIsPresent()
 end
 
 function EHIAssaultTracker:CalculateBreakTime()
+    if self._assault_delay then
+        return self._assault_delay + 30
+    end
     local base_delay = lerp(tweak_values[self._difficulty_point_index], tweak_values[self._difficulty_point_index + 1], self._difficulty_ramp)
     return base_delay + 30
 end

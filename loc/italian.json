@@ -42,6 +42,9 @@
     "ehi_tracker_alignment_desc" : "Definisce come dovrebbero allinearsi i tracciatori",
     "ehi_tracker_alignment_1" : "Verticale",
     "ehi_tracker_alignment_2" : "Orizzontale",
+
+    "ehi_vr_tracker_alignment" : "Allineamento Tracciatore VR",
+    "ehi_vr_tracker_alignment_desc" : "Definisce come dovrebbero allinearsi i tracciatori in VR",
  
     "ehi_visuals_menu" : "Aspetto visivo",
     "ehi_visuals_menu_desc" : "",

@@ -21,6 +21,7 @@ local function do_animation(TOTAL_T, clbk)
 end
 
 EHIMenu = class()
+EHIMenu.IsVR = BLT.IsVr
 EHIMenu.make_fine_text = BlackMarketGui.make_fine_text
 function EHIMenu:init()
     local aspect_ratio = RenderSettings.resolution.x / RenderSettings.resolution.y
@@ -128,7 +129,7 @@ function EHIMenu:init()
         self._button_legends:set_right(self._options_panel:right() - 5)
         self._button_legends:set_top(self._options_panel:bottom())
     end
-    if _G.IS_VR then
+    if BLT:IsVr() then
         self._gui_vr = World:newgui()
         --self._ws_vr = managers.gui_data:create_fullscreen_workspace(nil, MenuRoom:gui())
         self._ws_vr = self._gui_vr:create_world_workspace(1280, 720, Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0))
@@ -326,7 +327,7 @@ function EHIMenu:Close()
 end
 
 function EHIMenu:destroy()
-    if _G.IS_VR then
+    if BLT:IsVr() then
         self._gui_vr:destroy_workspace(self._ws_vr)
         self._ws_vr = nil
         self._gui_vr = nil
@@ -1887,6 +1888,10 @@ function EHIMenu:ResetColorMenu()
             self:SetColorSlider(v, math.lerp(world_x, world_x + v:w(), c[number] / 255), number)
         end
     end
+end
+
+function EHIMenu:IsNotVR()
+    return not self:IsVR()
 end
 
 function EHIMenu:GetXPEnabledValue()

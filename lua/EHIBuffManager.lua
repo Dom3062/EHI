@@ -179,7 +179,7 @@ function EHIBuffManager:AddBuffNoUpdate(id)
         if buff:IsActive() then
             return
         else
-            buff:ActivateNoUpdate(nil, self._n_visible)
+            buff:ActivateNoUpdate(self._n_visible)
             self._visible_buffs[id] = true
             self._n_visible = self._n_visible + 1
             self:ReorganizeFast(buff)
@@ -338,7 +338,7 @@ elseif alignment == 2 then -- Center
             if buff:IsActive() then
                 return
             else
-                buff:ActivateNoUpdate(nil, self._n_visible)
+                buff:ActivateNoUpdate(self._n_visible)
                 self._visible_buffs[id] = true
                 self._n_visible = self._n_visible + 1
                 self:Reorganize()

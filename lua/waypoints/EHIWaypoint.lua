@@ -51,7 +51,7 @@ end
 function EHIWaypoint:destroy()
 end
 
-if _G.IS_VR then
+if BLT:IsVr() then
     EHIWaypointVR = EHIWaypoint
     EHIWaypointVR.old_SetColor = EHIWaypoint.SetColor
     function EHIWaypointVR:SetColor(color)

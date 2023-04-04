@@ -17,6 +17,21 @@ local hostage_values = assault_values.hostage_hesitation_delay
 EHIAssaultDelayTracker = class(EHIWarningTracker)
 EHIAssaultDelayTracker._forced_icons = { { icon = "assaultbox", color = Control } }
 EHIAssaultDelayTracker.AnimateNegative = EHITimerTracker.AnimateCompletion
+if type(tweak_values) ~= "table" then -- If for some reason the assault delay is not a table, use the value directly
+    EHIAssaultDelayTracker._assault_delay = tonumber(tweak_values) or 30
+else
+    local first_value = tweak_values[1] or 0
+    local match = true
+    for _, value in pairs(tweak_values) do
+        if first_value ~= value then
+            match = false
+            break
+        end
+    end
+    if match then -- All numbers are the same, use it and avoid computation because it is expensive
+        EHIAssaultDelayTracker._assault_delay = first_value
+    end
+end
 if type(hostage_values) ~= "table"  then -- If for some reason the hesitation delay is not a table, use the value directly
     EHIAssaultDelayTracker._precomputed_hostage_delay = true
     EHIAssaultDelayTracker._hostage_delay = tonumber(hostage_values) or 30
@@ -29,13 +44,13 @@ else
             break
         end
     end
-    if match then -- All numbers the same, use it and avoid computation because it is expensive
+    if match then -- All numbers are the same, use it and avoid computation because it is expensive
         EHIAssaultDelayTracker._precomputed_hostage_delay = true
         EHIAssaultDelayTracker._hostage_delay = first_value
     end
 end
 function EHIAssaultDelayTracker:init(panel, params)
-    if params.compute_time then
+    if not params.time then
         params.time = self:CalculateBreakTime(params.diff) + (2 * math.random())
     end
     self:ComputeHostageDelay(params.diff or 0)
@@ -88,6 +103,9 @@ function EHIAssaultDelayTracker:CheckIfHostageIsPresent()
 end
 
 function EHIAssaultDelayTracker:CalculateBreakTime(diff)
+    if self._assault_delay then
+        return self._assault_delay + 30
+    end
     local ramp = tweak_data.group_ai.difficulty_curve_points
     local i = 1
     while (ramp[i] or 1) < diff do

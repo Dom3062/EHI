@@ -115,3 +115,15 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100056, 12710)] = true, -- Fix
 }
 EHI:DisableWaypoints(DisableWaypoints)
+EHI:AddXPBreakdown({
+    objectives =
+    {
+        { amount = 5000, name = "texas3_evidences_found" },
+        { amount = 5000, name = "texas3_prototype_secured" },
+        { amount = 5000, name = "texas3_documents_secured" },
+        { amount = 5000, name = "texas3_lab_destroyed" },
+        { amount = 2000, name = "texas3_escape_1" },
+        { amount = 1000, name = "texas3_escape_2" }
+    },
+    loot_all = 500
+})

@@ -81,6 +81,9 @@
   "ehi_tracker_alignment_1": "縦",
   "ehi_tracker_alignment_2": "横",
 
+  "ehi_vr_tracker_alignment": "VRのトラッカーの整列",
+  "ehi_vr_tracker_alignment_desc": "VRモードでのトラッカーの位置合わせを定義します。",
+
   "ehi_visuals_menu": "ビジュアル",
   "ehi_visuals_menu_desc": "",
 
@@ -361,6 +364,8 @@
     "ehi_buffs_perks_maniac_desc" : "Shows buffs and cooldowns in Maniac perk deck",
     "ehi_buffs_perks_anarchist" : "Anarchist / Armorer",
     "ehi_buffs_perks_anarchist_desc" : "Shows buffs and cooldowns in Anarchist / Armorer perk deck",
+    "ehi_buffs_perks_expresident" : "Ex-President",
+    "ehi_buffs_perks_expresident_desc" : "Shows buffs and cooldowns in Ex-President perk deck",
     "ehi_buffs_perks_biker" : "Biker",
     "ehi_buffs_perks_biker_desc" : "Shows buffs and cooldowns in Biker perk deck",
     "ehi_buffs_perks_kingpin" : "Kingpin",

@@ -28,7 +28,7 @@ local triggers = {
     [101485] = { id = "HackChance", special_function = SF.RemoveTracker }
 }
 if EHI:IsClient() then
-    triggers[100564] = { time = 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100564] = EHI:ClientCopyTrigger(triggers[100423], { time = 25 + 3 })
     -- Not worth adding the 3s delay here
 end
 

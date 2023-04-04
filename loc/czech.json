@@ -87,6 +87,9 @@
     "ehi_tracker_alignment_1" : "Vertikálně",
     "ehi_tracker_alignment_2" : "Horizontálně",
 
+    "ehi_vr_tracker_alignment" : "Zarovnání sledovačů (VR)",
+    "ehi_vr_tracker_alignment_desc" : "Nastavuje zarovnání sledovačů ve VR",
+
     "ehi_visuals_menu" : "Vizuální zobrazení",
     "ehi_visuals_menu_desc" : "",
 
@@ -457,6 +460,8 @@
     "ehi_buffs_perks_anarchist_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Anarchist / Armorer",
     "ehi_buffs_perks_biker" : "Biker",
     "ehi_buffs_perks_biker_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Biker",
+    "ehi_buffs_perks_expresident" : "Ex-President",
+    "ehi_buffs_perks_expresident_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Ex-President",
     "ehi_buffs_perks_kingpin" : "Kingpin",
     "ehi_buffs_perks_kingpin_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Kingpin",
     "ehi_buffs_perks_sicario" : "Sicario",
@@ -816,7 +821,7 @@
     "ehi_experience_breakin_feds_lure" : "Garrett vylákán z jeho kanceláře",
     "ehi_experience_breakin_feds_entered_office" : "Vstup do Garrettovy kanceláře",
     "ehi_experience_breakin_feds_safe_found" : "Nalezen skrytý sejf",
-    "ehi_experience_henrys_rock_first_mission_bag_on_belt" : "První povinný pytel položen pásový dopravník",
+    "ehi_experience_henrys_rock_first_mission_bag_on_belt" : "První povinný pytel položen na pásový dopravník",
     "ehi_experience_henrys_rock_drilled_archaelogy_door" : "Vyvrtány kovové dveře v laboratoři Archeologie",
     "ehi_experience_henrys_rock_archaelogy_chest_open" : "Truhla otevřena",
     "ehi_experience_henrys_rock_made_concoction" : "Vyroben lektvar v Biolaboratoři",
@@ -893,5 +898,11 @@
     "ehi_experience_mex4_contact_list_stolen_car_escape" : "Seznam kontaktů ukraden (pokud je únik autem)",
     "ehi_experience_mex4_turret_discovered_car_escape" : "Spatřena policejní střílna (pokud je únik autem)",
     "ehi_experience_mex4_turret_destroyed_car_escape" : "Střílna zničena (pokud je únik autem)",
-    "ehi_experience_mex4_flare_lit_heli_escape" : "Světlice zapálena (pokud je únik helikoptérou)"
+    "ehi_experience_mex4_flare_lit_heli_escape" : "Světlice zapálena (pokud je únik helikoptérou)",
+    "ehi_experience_texas3_evidences_found" : "Důkazy nalezeny",
+    "ehi_experience_texas3_prototype_secured" : "Prototyp zajištěn",
+    "ehi_experience_texas3_documents_secured" : "Výzkumné dokumenty zajištěny",
+    "ehi_experience_texas3_lab_destroyed" : "Laborka zničena",
+    "ehi_experience_texas3_escape_1" : "Dokončení mise (Inspektoři nedorazili / Střílna nepostavena)",
+    "ehi_experience_texas3_escape_2" : "Dokončení mise (Inspektoři dorazili / Střílna postavena)"
 }

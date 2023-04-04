@@ -4,8 +4,7 @@ if EHI:CheckLoadHook("ECMJammerBase") or not EHI:GetOption("show_equipment_track
 end
 
 local BlockECMsWithoutPagerBlocking = EHI:GetOption("ecmjammer_block_ecm_without_pager_delay")
-local show_waypoint = EHI:GetWaypointOption("show_waypoints_ecmjammer")
-local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
+local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_ecmjammer")
 local WWaypoint = EHI.Waypoints.Warning
 
 local original =

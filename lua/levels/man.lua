@@ -89,14 +89,43 @@ local tbl =
 
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        undercover_deal_stealth = 2500,
-        undercover_deal_loud = 500,
-        undercover_limo_open = 4000,
-        undercover_taxman_is_in_chair = 4000,
-        pc_hack = { amount = 4000, times = 3 },
-        undercover_hack_fixed = 1000,
-        escape = 3000
+        { amount = 2500, name = "undercover_deal_stealth" },
+        { amount = 500, name = "undercover_deal_loud" },
+        { amount = 4000, name = "undercover_limo_open" },
+        { amount = 4000, name = "undercover_taxman_is_in_chair" },
+        { amount = 4000, name = "pc_hack", times = 3 },
+        { amount = 1000, name = "undercover_hack_fixed" },
+        { escape = 3000 }
+    },
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives =
+                {
+                    undercover_deal_loud = true,
+                    undercover_limo_open = true,
+                    undercover_taxman_is_in_chair = true,
+                    pc_hack = true,
+                    escape = true
+                }
+            },
+            max =
+            {
+                objectives =
+                {
+                    undercover_deal_stealth = true,
+                    undercover_limo_open = true,
+                    undercover_taxman_is_in_chair = true,
+                    pc_hack = { times = 3 },
+                    undercover_hack_fixed = { times = 3 },
+                    escape = true
+                }
+            }
+        }
     }
 })

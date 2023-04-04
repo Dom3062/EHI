@@ -44,6 +44,7 @@ function ExperienceManager:init(...)
             self:SetInCustody(state)
         end
         EHI:AddOnCustodyCallback(f2)
+        EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
     end
     EXPERIENCE = managers.localization:text("ehi_popup_experience")
     local gained = xp_format == 1 and "ehi_popup_experience_base_gained" or "ehi_popup_experience_gained"
@@ -52,13 +53,11 @@ function ExperienceManager:init(...)
     end
     EXPERIENCE_GAINED = managers.localization:text(gained)
     EXPERIENCE_TOTAL = managers.localization:text("ehi_popup_experience_total")
-    EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
-    EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "SetJobData"))
-    EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "SetPlayerData"))
-    EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "SetMutatorData"))
+    EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "LoadData"))
 end
 
-function ExperienceManager:SetJobData(managers)
+function ExperienceManager:LoadData(managers)
+    -- Job
     local job = managers.job
     local difficulty_stars = job:current_difficulty_stars()
     self._xp.job_stars = job:current_job_stars()
@@ -73,9 +72,7 @@ function ExperienceManager:SetJobData(managers)
     if xp_format ~= 1 then
         self._xp.difficulty_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", difficulty_stars) or 1
     end
-end
-
-function ExperienceManager:SetPlayerData(managers)
+    -- Player
     local player = managers.player
     self._xp.infamy_bonus = player:get_infamy_exp_multiplier()
 	local multiplier = tweak_data:get_value("experience_manager", "limited_bonus_multiplier") or 1
@@ -84,16 +81,13 @@ function ExperienceManager:SetPlayerData(managers)
 		multiplier = multiplier + (tweak_data:get_value("experience_manager", "limited_xmas_bonus_multiplier") or 1) - 1
 	end
 	self._xp.limited_xp_bonus = multiplier
-end
-
-function ExperienceManager:SetMutatorData(managers)
+    -- Mutators
     local mutator = managers.mutators
-    if not mutator:can_mutators_be_active() then
-        return
+    if mutator:can_mutators_be_active() then
+        self._xp.mutator_xp_reduction = mutator:get_experience_reduction() * -1
+        --self._xp.MutatorPiggyBank = mutator:is_mutator_active(MutatorPiggyBank)
+        --self._xp.MutatorCG22 = mutator:is_mutator_active(MutatorCG22)
     end
-    self._xp.mutator_xp_reduction = mutator:get_experience_reduction() * -1
-    --self._xp.MutatorPiggyBank = mutator:is_mutator_active(MutatorPiggyBank)
-    --self._xp.MutatorCG22 = mutator:is_mutator_active(MutatorCG22)
 end
 
 function ExperienceManager:UpdateSkillXPMultiplier(multiplier)

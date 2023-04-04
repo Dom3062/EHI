@@ -64,6 +64,8 @@ function EHIGaugeBuffTracker:Format()
         return tostring(self._ratio * 100) .. "%"
     elseif self._format == "multiplier" then
         return self._ratio .. "x"
+    elseif self._format == "damage" then
+        return tostring(self._ratio * 10)
     end
     return tostring(self._ratio)
 end
@@ -73,6 +75,8 @@ function EHIGaugeBuffTracker:FormatCustom(value)
         return tostring(value * 100) .. "%"
     elseif self._format == "multiplier" then
         return value .. "x"
+    elseif self._format == "damage" then
+        return tostring(value * 10)
     end
     return tostring(value)
 end

@@ -23,15 +23,7 @@ if level_id == "firestarter_3" then
     EscapeXP = 16000
 else
     -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
-    EHI:ShowAchievementBagValueCounter({
-        achievement = "uno_1",
-        value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value,
-        remove_after_reaching_target = false,
-        counter =
-        {
-            check_type = EHI.LootCounter.CheckType.ValueOfBags
-        }
-    })
+    tweak_data.ehi.functions.uno_1()
     if EHI:GetOption("show_escape_chance") then
         other[103306] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
         EHI:AddOnAlarmCallback(function(dropin)

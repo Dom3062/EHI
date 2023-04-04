@@ -126,6 +126,21 @@
             "ehi_ver" : 30
         },
         {
+            "type": "multiple_choice",
+            "id": "ehi_vr_tracker_alignment_choice",
+            "title": "ehi_vr_tracker_alignment",
+            "description": "ehi_vr_tracker_alignment_desc",
+            "callback": "SetOption",
+            "callback_arguments": "vr_tracker_alignment",
+            "items": [
+                "ehi_tracker_alignment_1",
+                "ehi_tracker_alignment_2"
+            ],
+            "value": "vr_tracker_alignment",
+            "default_value": 1,
+            "ehi_ver" : 140
+        },
+        {
             "type": "button",
             "id": "ehi_visuals_menu",
             "title": "ehi_visuals_menu",

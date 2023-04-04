@@ -5,8 +5,7 @@ end
 
 local HackIcon = EHI.Icons.PCHack
 
-local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")
-local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
+local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
 
 local original =
 {

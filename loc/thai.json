@@ -86,6 +86,9 @@
     "ehi_tracker_alignment_desc" : "กำหนดการจัดตำแหน่งไอคอนติดตาม",
     "ehi_tracker_alignment_1" : "แนวตั้ง",
     "ehi_tracker_alignment_2" : "แนวนอน",
+
+    "ehi_vr_tracker_alignment" : "จัดตำแหน่งไอคอนติดตาม VR",
+    "ehi_vr_tracker_alignment_desc" : "กำหนดการจัดตำแหน่งไอคอนติดตาม VR",
 	
     "ehi_visuals_menu" : "ภาพไอคอน",
     "ehi_visuals_menu_desc" : "",
@@ -440,6 +443,8 @@
     "ehi_buffs_perks_maniac_desc" : "แสดงค่าความสามารถและการหน่วงเวลาสำหรับทักษะติดตัวพิเศษ Maniac",
     "ehi_buffs_perks_anarchist" : "Anarchist / Armorer",
     "ehi_buffs_perks_anarchist_desc" : "แสดงค่าความสามารถและการหน่วงเวลาสำหรับทักษะติดตัวพิเศษ Anarchist / Armorer",
+    "ehi_buffs_perks_expresident" : "Ex-President",
+    "ehi_buffs_perks_expresident_desc" : "แสดงค่าความสามารถและการหน่วงเวลาสำหรับทักษะติดตัวพิเศษ Ex-President",
     "ehi_buffs_perks_biker" : "Biker",
     "ehi_buffs_perks_biker_desc" : "แสดงค่าความสามารถและการหน่วงเวลาสำหรับทักษะติดตัวพิเศษ Biker",
     "ehi_buffs_perks_kingpin" : "Kingpin",

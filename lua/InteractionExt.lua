@@ -30,8 +30,7 @@ if EHI:GetOption("show_pager_callback") then
         end
     end
 
-    local show_waypoint = EHI:GetWaypointOption("show_waypoints_pager")
-    local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
+    local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_pager")
     EHI:HookWithID(IntimitateInteractionExt, "init", "EHI_pager_init", function(self, unit, ...)
         self._ehi_key = "pager_" .. tostring(unit:key())
     end)

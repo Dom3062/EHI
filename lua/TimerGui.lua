@@ -5,8 +5,7 @@ end
 
 local Icon = EHI.Icons
 
-local show_waypoint = EHI:GetWaypointOption("show_waypoints_timers")
-local show_waypoint_only = show_waypoint and EHI:GetWaypointOption("show_waypoints_only")
+local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
 -- [index] = Vector3(x, y, z)
 local MissionDoorPositions = {}
 -- [index] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes", w_ids = "Table of waypoints and their ID", unit_id = "ID of the door" }

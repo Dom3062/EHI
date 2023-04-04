@@ -16,10 +16,10 @@ local original =
 }
 
 local EHIWaypoints = EHI:GetOption("show_waypoints")
-local server = EHI:IsHost()
 
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
+    local server = EHI:IsHost()
     local hud = self:script(PlayerBase.PLAYER_INFO_HUD_PD2)
     self.ehi = managers.ehi
     self.ehi_waypoint = managers.ehi_waypoint
@@ -30,7 +30,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             self:add_updator("EHI_Waypoint_Update", callback(self.ehi_waypoint, self.ehi_waypoint, "update"))
         end
     end
-    if _G.IS_VR then
+    if BLT:IsVr() then
         self.ehi:SetPanel(hud.panel)
     end
     if EHI:GetOption("show_buffs") then
@@ -43,7 +43,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         return
     end
     if EHI:GetOption("show_captain_damage_reduction") then
-        local function f(mode)
+        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
             if mode == "phalanx" then
                 self.ehi:AddTracker({
                     id = "PhalanxDamageReduction",
@@ -53,8 +53,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             else
                 self.ehi:RemoveTracker("PhalanxDamageReduction")
             end
-        end
-        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, f)
+        end)
     end
     if EHI:GetOption("show_enemy_count_tracker") then
         self.ehi:AddTracker({
@@ -69,9 +68,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         if EHI:GetOption("show_pager_tracker") then
             local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
             if server then
-                local function remove_chance()
-                    self.ehi:RemoveTracker("PagersChance")
-                end
                 for _, value in pairs(base) do
                     if value > 0 and value < 1 then
                         -- Random Chance
@@ -81,13 +77,12 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                             icons = { EHI.Icons.Pager },
                             class = EHI.Trackers.Chance
                         })
-                        EHI:AddOnAlarmCallback(remove_chance)
+                        EHI:AddOnAlarmCallback(function()
+                            self.ehi:RemoveTracker("PagersChance")
+                        end)
                         return
                     end
                 end
-            end
-            local function remove()
-                self.ehi:RemoveTracker("Pagers")
             end
             local max = 0
             for _, value in pairs(base) do
@@ -105,7 +100,9 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             if max == 0 then
                 self.ehi:CallFunction("Pagers", "SetBad")
             end
-            EHI:AddOnAlarmCallback(remove)
+            EHI:AddOnAlarmCallback(function()
+                self.ehi:RemoveTracker("Pagers")
+            end)
         end
         if EHI:GetOption("show_bodybags_counter") then
             self.ehi:AddTracker({
@@ -113,10 +110,9 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 icons = { "equipment_body_bag" },
                 class = EHI.Trackers.Counter
             })
-            local function remove()
+            EHI:AddOnAlarmCallback(function()
                 self.ehi:RemoveTracker("BodybagsCounter")
-            end
-            EHI:AddOnAlarmCallback(remove)
+            end)
         end
     end
     if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" and not EHI:IsOneXPElementHeist(level_id) then
@@ -185,7 +181,7 @@ if EHI:IsClient() and level_id ~= "hvh" then
 end
 
 if EHI:CombineAssaultDelayAndAssaultTime() then
-    dofile(EHI.LuaPath .. "trackers/EHIAssaultTracker.lua")
+    EHI:LoadTrackerInVR("EHIAssaultTracker")
     local SyncFunction = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation"
     local anticipation_delay = 30 -- Get it from tweak_data
     local function VerifyHostageHesitationDelay()
@@ -238,7 +234,7 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
     VerifyHostageHesitationDelay()
 else
     if EHI:AssaultDelayTrackerIsEnabled() then
-        dofile(EHI.LuaPath .. "trackers/EHIAssaultDelayTracker.lua")
+        EHI:LoadTrackerInVR("EHIAssaultDelayTracker")
         local SyncFunction = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation"
         local anticipation_delay = 30 -- Get it from tweak_data
         local function VerifyHostageHesitationDelay()
@@ -264,7 +260,6 @@ else
             if EHI._cache.diff and EHI._cache.diff > 0 then
                 self.ehi:AddTracker({
                     id = "AssaultDelay",
-                    compute_time = true,
                     diff = EHI._cache.diff,
                     class = EHI.Trackers.AssaultDelay
                 })
@@ -275,7 +270,7 @@ else
         VerifyHostageHesitationDelay()
     end
     if EHI:GetOption("show_assault_time_tracker") then
-        dofile(EHI.LuaPath .. "trackers/EHIAssaultTimeTracker.lua")
+        EHI:LoadTrackerInVR("EHIAssaultTimeTracker")
         local start_original = HUDManager.sync_start_assault
         local is_skirmish = tweak_data.levels:IsLevelSkirmish()
         function HUDManager:sync_start_assault(...)

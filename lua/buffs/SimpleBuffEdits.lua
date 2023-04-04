@@ -87,3 +87,21 @@ function EHIUnseenStrikeBuffTracker:Deactivate(...)
     EHIUnseenStrikeBuffTracker.super.Deactivate(self, ...)
     self._parent_class:CallFunction("CritChance", "ForceUpdate")
 end
+
+EHIExPresidentBuffTracker = class(EHIGaugeBuffTracker)
+function EHIExPresidentBuffTracker:PreUpdateCheck()
+    return managers.player:has_category_upgrade("player", "armor_health_store_amount")
+end
+
+function EHIExPresidentBuffTracker:PreUpdate()
+    self._parent_class:AddBuffNoUpdate(self._id)
+end
+
+function EHIExPresidentBuffTracker:SetStoredHealthMax(max)
+    self._stored_health_max = max
+end
+
+function EHIExPresidentBuffTracker:SetRatio2(ratio, custom_value)
+    ratio = custom_value / self._stored_health_max
+    EHIExPresidentBuffTracker.super.SetRatio2(self, ratio, custom_value)
+end

@@ -54,26 +54,6 @@ function EHIUppersRangeBuffTracker:Deactivate()
     self._active = false
 end
 
-function EHIUppersRangeBuffTracker:ActivateSoft()
-    if self._visible then
-        return
-    end
-    self._panel:stop()
-    self._panel:animate(self._show)
-    self._parent_class:AddVisibleBuff(self._id)
-    self._visible = true
-end
-
-function EHIUppersRangeBuffTracker:DeactivateSoft()
-    if not self._visible then
-        return
-    end
-    self._parent_class:RemoveVisibleBuff(self._id, self._pos)
-    self._panel:stop()
-    self._panel:animate(self._hide)
-    self._visible = false
-end
-
 function EHIUppersRangeBuffTracker:update(t, dt)
     self._time = self._time - dt
     if self._time <= 0 then

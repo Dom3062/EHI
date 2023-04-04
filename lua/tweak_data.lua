@@ -466,6 +466,16 @@ tweak_data.ehi =
             format = "percent",
             option = "stamina"
         },
+        ExPresident =
+        {
+            deck = true,
+            x = 3,
+            y = 7,
+            class = "EHIExPresidentBuffTracker",
+            option = "expresident",
+            check_after_spawn = true,
+            format = "damage"
+        },
         BikerBuff =
         {
             deck = true,
@@ -517,13 +527,15 @@ tweak_data.ehi =
         {
             skills = true,
             x = 6,
-            y = 3
+            y = 3,
+            option = "hacker"
         },
         HackerFeedbackEffect =
         {
             skills = true,
             x = 6,
-            y = 2
+            y = 2,
+            option = "hacker"
         },
         copr_ability =
         {
@@ -549,14 +561,23 @@ tweak_data.ehi =
     },
     functions =
     {
-        IsBranchbankJobActive = function()
-            local current_job = managers.job:current_job_id()
-            for _, job in ipairs(tweak_data.achievement.complete_heist_achievements.uno_1.jobs) do
-                if current_job == job then
-                    return true
+        ---@param check_level? boolean
+        uno_1 = function(check_level)
+            if check_level then
+                local current_job = managers.job:current_job_id()
+                if not table.contains(tweak_data.achievement.complete_heist_achievements.uno_1.jobs, current_job) then
+                    return
                 end
             end
-            return false
+            EHI:ShowAchievementBagValueCounter({
+                achievement = "uno_1",
+                value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value,
+                remove_after_reaching_target = false,
+                counter =
+                {
+                    check_type = EHI.LootCounter.CheckType.ValueOfBags
+                }
+            })
         end,
         ShowNumberOfLootbagsOnTheGround = function()
             local max = managers.ehi:CountLootbagsOnTheGround()

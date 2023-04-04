@@ -87,6 +87,8 @@
     "ehi_tracker_alignment_1" : "垂直",
     "ehi_tracker_alignment_2" : "水平",
 
+    "ehi_vr_tracker_alignment" : "VR追踪器对齐",
+
     "ehi_visuals_menu" : "显示设置",
     "ehi_visuals_menu_desc" : "",
 

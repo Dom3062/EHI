@@ -44,17 +44,7 @@ local other =
 
 EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.CarEscape)
 
-if tweak_data.ehi.functions.IsBranchbankJobActive() then
-    EHI:ShowAchievementBagValueCounter({
-        achievement = "uno_1",
-        value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value,
-        remove_after_reaching_target = false,
-        counter =
-        {
-            check_type = EHI.LootCounter.CheckType.ValueOfBags
-        }
-    })
-end
+tweak_data.ehi.functions.uno_1(true)
 EHI:AddXPBreakdown({
     objective =
     {

@@ -1,4 +1,4 @@
-if not _G.IS_VR then
+if not BLT:IsVr() then
     return
 end
 
