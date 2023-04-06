@@ -18,12 +18,8 @@ end
 function ElementAiGlobalEvent:client_on_executed(...)
     original.client_on_executed(self, ...)
     local wave_mode = self._wave_modes[self._values.wave_mode]
-    if wave_mode then
-        if wave_mode == "hunt" then
-            TriggerEndlessAssault()
-        --elseif wave_mode == "besiege" then
-            --managers.hud:SetNormalAssaultOverride()
-        end
+    if wave_mode and wave_mode == "hunt" then
+        TriggerEndlessAssault()
     end
 end
 
@@ -32,12 +28,8 @@ function ElementAiGlobalEvent:on_executed(...)
         return
     end
     local wave_mode = self._wave_modes[self._values.wave_mode]
-    if wave_mode then
-        if wave_mode == "hunt" then
-            TriggerEndlessAssault()
-        --elseif wave_mode == "besiege" then
-            --managers.hud:SetNormalAssaultOverride()
-        end
+    if wave_mode and wave_mode == "hunt" then
+        TriggerEndlessAssault()
     end
     original.on_executed(self, ...)
 end

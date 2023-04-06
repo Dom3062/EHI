@@ -82,6 +82,25 @@ if EHI:GetBuffOption("forced_friendship") then
     end
 end
 
+if EHI:GetBuffAndOption("unseen_strike_initial") then
+    EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+        local self = managers.player
+        if self:has_category_upgrade("player", "unseen_increased_crit_chance") then
+            local data = self:upgrade_value("player", "unseen_increased_crit_chance", 0)
+            if data == 0 then
+                return
+            end
+            local min_time = data.min_time or 4
+            local function on_damage_taken()
+                if not self:has_activate_temporary_upgrade("temporary", "unseen_strike") then
+                    managers.ehi_buff:AddBuff("unseen_strike_initial", min_time)
+                end
+            end
+            self:register_message(Message.OnPlayerDamage, "EHI_UnseenStrike_Initial", on_damage_taken)
+        end
+    end)
+end
+
 local AbilityKey, AbilitySpeedUp
 EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
     local self = managers.player

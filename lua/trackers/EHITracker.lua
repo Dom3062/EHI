@@ -167,7 +167,7 @@ EHITracker._fade_time = 5
 EHITracker._tracker_type = "accurate"
 EHITracker._gap = 5
 EHITracker._icon_size = 32
-EHITracker._scale = BLT:IsVr() and EHI:GetOption("vr_scale") or EHI:GetOption("scale")
+EHITracker._scale = EHI:IsVR() and EHI:GetOption("vr_scale") or EHI:GetOption("scale")
 EHITracker._text_scale = EHI:GetOption("text_scale")
 EHITracker._icon_gap_size_scaled = (EHITracker._icon_size + EHITracker._gap) * EHITracker._scale
 -- 32 * self._scale

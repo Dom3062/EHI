@@ -431,6 +431,7 @@
     "ehi_buffs_skills_ghost_silent_killer_subclass" : "Silent Killer",
     "ehi_buffs_skills_ghost_second_wind" : "Second Wind",
     "ehi_buffs_skills_ghost_unseen_strike" : "Unseen Strike",
+    "ehi_buffs_skills_ghost_unseen_strike_initial" : "Unseen Strike (Initial Delay)",
 
     "ehi_buffs_skills_fugitive_menu" : "Fugitive",
     "ehi_buffs_skills_fugitive_revenant_subclass" : "Revenant",

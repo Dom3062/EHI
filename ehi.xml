@@ -61,7 +61,7 @@
         <post hook_id="lib/states/ingamewaitingforrespawn" :script_path="IngameWaitingForRespawn.lua" />
         <post hook_id="lib/states/missionendstate" :script_path="MissionEndState.lua" />
 
-        <post hook_id="lib/player_actions/skills/playeractionaamoefficiency" :script_path="PlayerActionAmmoEfficiency.lua" />
+        <post hook_id="lib/player_actions/skills/playeractionammoefficiency" :script_path="PlayerActionAmmoEfficiency.lua" />
 
         <post hook_id="lib/units/beings/player/playerdamage" :script_path="PlayerDamage.lua" />
         <post hook_id="lib/units/beings/player/playerinventory" :script_path="PlayerInventory.lua" />
@@ -77,7 +77,6 @@
         <post hook_id="lib/units/equipment/first_aid_kit/firstaidkitbase" :script_path="FirstAidKitBase.lua" />
         <!--<post hook_id="lib/units/equipment/sentry_gun/sentrygundamage" :script_path="SentryGunDamage.lua" />-->
         <post hook_id="lib/units/equipment/sentry_gun/sentrygunmovement" :script_path="SentryGunMovement.lua" />
-        <post hook_id="lib/units/pickups/gageassignmentbase" :script_path="GageAssignmentBase.lua" />
         <post hook_id="lib/units/player_team/teamaibase" :script_path="TeamAIBase.lua" />
         <post hook_id="lib/units/props/drill" :script_path="Drill.lua" />
         <post hook_id="lib/units/props/digitalgui" :script_path="DigitalGui.lua" />

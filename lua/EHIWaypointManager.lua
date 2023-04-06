@@ -241,7 +241,7 @@ do
     dofile(path .. "EHITimerWaypoint.lua")
 end
 
-if BLT:IsVr() then
+if EHI:IsVR() then
     if restoration and restoration.Options and restoration.Options:GetValue("HUD/Waypoints") then
         -- Use Vanilla texture file because Restoration HUD does not have the icons
         -- Reported here: https://modworkshop.net/mod/28118

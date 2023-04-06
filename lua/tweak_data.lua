@@ -260,7 +260,14 @@ tweak_data.ehi =
             x = 10,
             y = 11,
             option = "unseen_strike",
-            --class = "EHIUnseenStrikeBuffTracker"
+        },
+        unseen_strike_initial =
+        {
+            u100skill = true,
+            bad = true,
+            x = 10,
+            y = 11,
+            option = "unseen_strike_initial",
         },
         melee_damage_stacking =
         {

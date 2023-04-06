@@ -450,6 +450,7 @@ local function LoadDefaultValues(self)
             dire_need = true,
             second_wind = true,
             unseen_strike = true,
+            unseen_strike_initial = true,
             -- Fugitive
             running_from_death_reload = true,
             running_from_death_movement = true,
@@ -561,6 +562,7 @@ local function DifficultyToIndex(difficulty)
 end
 
 function EHI:Init()
+    self._cache.is_vr = _G.IS_VR
     local difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
     self._cache.DifficultyIndex = DifficultyToIndex(difficulty)
     self:AddCallback(self.CallbackMessage.InitManagers, function(managers)
@@ -573,6 +575,11 @@ function EHI:Init()
             self._cache.UnlockablesAreDisabled = true
         end
     end)
+end
+
+---@return boolean
+function EHI:IsVR()
+    return self._cache.is_vr
 end
 
 ---@param difficulty number
@@ -655,12 +662,20 @@ function EHI:DelayCall(name, t, func)
     DelayedCalls:Add(name, t, func)
 end
 
+function EHI:IsVRAndOption(option)
+    if self:IsVR() then
+        return option and self:GetOption(option) or 0
+    end
+    return 0
+end
+
 function EHI:GetOption(option)
     if option then
         return self.settings[option]
     end
 end
 
+---@return boolean
 function EHI:ShowMissionAchievements()
     return self:GetUnlockableAndOption("show_achievements_mission") and self:GetUnlockableOption("show_achievements")
 end
@@ -668,10 +683,10 @@ end
 ---@param id string Achievement ID
 ---@return boolean
 function EHI:CanShowAchievement(id)
-    if not self:ShowMissionAchievements() then
-        return false
+    if self:ShowMissionAchievements() then
+        return self:IsAchievementLocked(id)
     end
-    return self:IsAchievementLocked(id)
+    return false
 end
 
 function EHI:GetUnlockableOption(option)
@@ -741,8 +756,9 @@ function EHI:IsXPTrackerHidden()
     return not self:IsXPTrackerVisible()
 end
 
+---@return boolean|nil
 function EHI:AreGagePackagesSpawned()
-    return self._cache.GagePackages and self._cache.GagePackages > 0
+    return self._cache.GagePackagesSpawned
 end
 
 function EHI:IsPlayingCrimeSpree()
@@ -2290,7 +2306,7 @@ end
 
 ---@param tracker string Filename without extension
 function EHI:LoadTrackerInVR(tracker)
-    if BLT:IsVr() then
+    if self:IsVR() then
         if self._cache.TrackersInit_VR then
             dofile(self.LuaPath .. "trackers/" .. tracker .. ".lua")
         else

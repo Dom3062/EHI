@@ -15,7 +15,7 @@ function FakeEHIManager:init(panel)
     local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
     self._x = x
     self._y = y
-    if BLT:IsVr() then
+    if EHI:IsVR() then
         self._scale = EHI:GetOption("vr_scale")
     else
         self._scale = EHI:GetOption("scale")

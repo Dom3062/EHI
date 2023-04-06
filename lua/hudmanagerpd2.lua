@@ -30,7 +30,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             self:add_updator("EHI_Waypoint_Update", callback(self.ehi_waypoint, self.ehi_waypoint, "update"))
         end
     end
-    if BLT:IsVr() then
+    if EHI:IsVR() then
         self.ehi:SetPanel(hud.panel)
     end
     if EHI:GetOption("show_buffs") then

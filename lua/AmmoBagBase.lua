@@ -24,7 +24,7 @@ else
     end
 end
 
-if BLT:IsVr() then
+if EHI:IsVR() then
     local old_UpdateTracker = UpdateTracker
     local function Reload(key, data)
         old_UpdateTracker(data.unit, key, data.amount)

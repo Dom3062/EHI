@@ -122,14 +122,30 @@ EHI:ParseTriggers({
     daily = dailies
 })
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        boiling_point_radar_blown_up = 3000,
-        pc_hack = 5000,
-        boiling_point_emp_triggered = 5000,
-        boiling_point_gas_off_hand_taken = 1000,
-        boiling_point_scan_finished = { amount = 5000, times = 4 },
-        boiling_point_grabbed_server = 6000,
-        escape = 6000
+        { amount = 3000, name = "boiling_point_radar_blown_up" },
+        { amount = 5000, name = "pc_hack" },
+        { amount = 5000, name = "boiling_point_emp_triggered" },
+        { amount = 1000, name = "boiling_point_gas_off_hand_taken" },
+        { amount = 5000, name = "boiling_point_scan_finished" },
+        { amount = 6000, name = "boiling_point_grabbed_server" },
+        { escape = 6000 }
+    },
+    total_xp_override =
+    {
+        params =
+        {
+            max =
+            {
+                boiling_point_radar_blown_up = true,
+                pc_hack = true,
+                boiling_point_emp_triggered = true,
+                boiling_point_gas_off_hand_taken = true,
+                boiling_point_scan_finished = { times = 4 },
+                boiling_point_grabbed_server = true,
+                escape = true
+            }
+        }
     }
 })

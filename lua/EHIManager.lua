@@ -417,7 +417,7 @@ function EHIManager:SwitchToLoudMode()
     self._deployables_ignore = { bodybags_bag = true }
 end
 
-if (BLT:IsVr() and EHI:GetOption("vr_tracker_alignment") == 1) or EHI:GetOption("tracker_alignment") == 1 then -- Vertical in VR or in non-VR
+if EHI:IsVRAndOption("vr_tracker_alignment") == 1 or EHI:GetOption("tracker_alignment") == 1 then -- Vertical in VR or in non-VR
     function EHIManager:GetX(pos)
         return self._x
     end
@@ -1101,7 +1101,7 @@ if Global.load_level then
     if EHI:GetOption("show_loot_counter") then
         dofile(path .. "EHILootTracker.lua")
     end
-    if BLT:IsVr() then
+    if EHI:IsVR() then
         EHI._cache.TrackersInit_VR = true
         EHI:CallCallbackOnce("TrackersInit_VR")
     end

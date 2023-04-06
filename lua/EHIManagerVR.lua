@@ -1,4 +1,4 @@
-if not BLT:IsVr() then
+if not EHI:IsVR() then
     return
 end
 
