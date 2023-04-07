@@ -1,3 +1,6 @@
+r142 (07. 04. 2023):
+Fixed issues with "Tracker Alignment" option in VR
+
 r141 (06. 04. 2023):
 Added Unseen Strike (Initial Delay) buff
 Fixed an issue where Ex-President buff is visible when the perk is not equipped

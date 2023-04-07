@@ -18,14 +18,14 @@ function EHIManagerVR:init()
     self._load_callback = {}
 end
 
+function EHIManagerVR:CreateWorkspace()
+    self._scale = EHI:GetOption("vr_scale")
+end
+
 function EHIManagerVR:ShowPanel()
 end
 
 function EHIManagerVR:HidePanel()
-end
-
-function EHIManagerVR:CreateWorkspace()
-    self._scale = EHI:GetOption("vr_scale")
 end
 
 function EHIManagerVR:SetPanel(panel)

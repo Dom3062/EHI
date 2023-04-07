@@ -417,7 +417,7 @@ function EHIManager:SwitchToLoudMode()
     self._deployables_ignore = { bodybags_bag = true }
 end
 
-if EHI:IsVRAndOption("vr_tracker_alignment") == 1 or EHI:GetOption("tracker_alignment") == 1 then -- Vertical in VR or in non-VR
+if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) then -- Vertical in VR or in non-VR
     function EHIManager:GetX(pos)
         return self._x
     end

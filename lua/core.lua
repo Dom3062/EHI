@@ -662,11 +662,16 @@ function EHI:DelayCall(name, t, func)
     DelayedCalls:Add(name, t, func)
 end
 
-function EHI:IsVRAndOption(option)
+---@param vr_option string Option to be checked if the game is running in VR version
+---@param option string Option to be checked if the game is running in non-VR version
+---@param expected_value any What the expected value in the option should be
+---@param vr_expected_value any? What the expected value in the VR option should be in VR (optional if the same value is expected for both options)
+---@return boolean
+function EHI:CheckVRAndNonVROption(vr_option, option, expected_value, vr_expected_value)
     if self:IsVR() then
-        return option and self:GetOption(option) or 0
+        return self:GetOption(vr_option) == (vr_expected_value or expected_value)
     end
-    return 0
+    return self:GetOption(option) == expected_value
 end
 
 function EHI:GetOption(option)
