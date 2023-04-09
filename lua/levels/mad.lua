@@ -136,15 +136,12 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            max =
+            min_max =
             {
-                boiling_point_radar_blown_up = true,
-                pc_hack = true,
-                boiling_point_emp_triggered = true,
-                boiling_point_gas_off_hand_taken = true,
-                boiling_point_scan_finished = { times = 4 },
-                boiling_point_grabbed_server = true,
-                escape = true
+                max =
+                {
+                    boiling_point_scan_finished = { times = 4 }
+                }
             }
         }
     }

@@ -38,8 +38,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         self:add_updator("EHI_Buff_Update", callback(buff, buff, "update"))
         buff:init_finalize(hud)
     end
-    local level_tweak_data = tweak_data.levels[level_id]
-    if (level_tweak_data and level_tweak_data.is_safehouse) or level_id == "safehouse" then
+    if tweak_data.levels:IsLevelSafehouse() then
         return
     end
     if EHI:GetOption("show_captain_damage_reduction") then
@@ -62,9 +61,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             class = "EHIEnemyCountTracker"
         })
     end
-    if level_tweak_data.ghost_bonus or level_tweak_data.ghost_required or level_tweak_data.ghost_required_visual or level_id == "welcome_to_the_jungle_2" then
-        -- In case the heist will require stealth completion but does not have XP bonus
-        -- Big Oil Day 2 is exception to this rule because guards have pagers
+    if tweak_data.levels:IsStealthAvailable() then
         if EHI:GetOption("show_pager_tracker") then
             local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
             if server then
@@ -350,7 +347,7 @@ function HUDManager:DebugBaseElement2(base_id, instance_index, continent_index, 
     managers.chat:_receive_message(1, "[EHI]", "Base ID: " .. tostring(EHI:GetBaseUnitID(base_id, instance_index, continent_index or 100000)) .. "; ID: " .. tostring(base_id) .. "; Element: " .. tostring(element) .. "; Instance: " .. tostring(instance_name), Color.white)
 end
 
-local animation = { start_t = {}, end_t = {} }
+--[[local animation = { start_t = {}, end_t = {} }
 function HUDManager:DebugAnimation(id, type)
     if type == "start" then
         animation.start_t[id] = TimerManager:game():time()
@@ -374,4 +371,4 @@ function HUDManager:DebugAnimation2(id, type)
     if type == "end" then
         last_id = ""
     end
-end
+end]]

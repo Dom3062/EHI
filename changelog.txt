@@ -1,3 +1,7 @@
+r143 (09. 04. 2023):
+Added options "X offset (VR)" and "Y offset (VR)"
+Fixed a crash in waypoints
+
 r142 (07. 04. 2023):
 Fixed issues with "Tracker Alignment" option in VR
 

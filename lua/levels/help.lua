@@ -77,10 +77,26 @@ for i = 900, 1500, 300 do
 end
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        prison_entered = 6000,
-        escape = 8000
+        { amount = 6000, name = "prison_entered" },
+        { escape = 8000 }
     },
-    loot_all = 850
+    loot_all = 850,
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives =
+                {
+                    prison_entered = true,
+                    escape = true
+                },
+                loot_all = { times = 0 }
+            },
+            no_max = true
+        }
+    }
 })

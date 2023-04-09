@@ -13,6 +13,18 @@ _G.EHI =
 
     HookOnLoad = {},
 
+    XPElementLevel =
+    {
+        jewelry_store = true,
+        ukrainian_job = true,
+        election_day_1 = true,
+        alex_1 = true,
+        alex_2 = true,
+        alex_3 = true,
+        firestarter_1 = true,
+        safehouse = true
+    },
+
     LootCounter =
     {
         CheckType =
@@ -33,7 +45,8 @@ _G.EHI =
         MissionUnits = {},
         InstanceUnits = {},
         IgnoreWaypoints = {},
-        ElementWaypointFunction = {}
+        ElementWaypointFunction = {},
+        XPElement = 0
     },
 
     Callback = {},
@@ -285,9 +298,11 @@ local function LoadDefaultValues(self)
         y_offset = 150,
         text_scale = 1,
         scale = 1,
-        vr_scale = 1,
         time_format = 2, -- 1 = Seconds only, 2 = Minutes and seconds
         tracker_alignment = 1, -- 1 = Vertical, 2 = Horizontal
+        vr_x_offset = 0,
+        vr_y_offset = 150,
+        vr_scale = 1,
         vr_tracker_alignment = 1, -- 1 = Vertical, 2 = Horizontal
 
         -- Visuals
@@ -396,6 +411,7 @@ local function LoadDefaultValues(self)
         show_enemy_count_show_pagers = true,
         show_laser_tracker = false,
         show_assault_delay_tracker = true,
+        --show_assault_time_tracker = true,
         show_loot_counter = true,
         show_all_loot_secured_popup = true,
         variable_random_loot_format = 3, -- 1 = Max-(Max+Random)?; 2 = MaxRandom?; 3 = Max+Random?
@@ -562,7 +578,6 @@ local function DifficultyToIndex(difficulty)
 end
 
 function EHI:Init()
-    self._cache.is_vr = _G.IS_VR
     local difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
     self._cache.DifficultyIndex = DifficultyToIndex(difficulty)
     self:AddCallback(self.CallbackMessage.InitManagers, function(managers)
@@ -885,7 +900,7 @@ end
 
 ---@return boolean
 function EHI:ShowDramaTracker()
-    return self:GetOption("show_drama_tracker") and self:IsHost()
+    return self:IsHost() and self:GetOption("show_drama_tracker")
 end
 
 ---@param peer_id number
@@ -1027,46 +1042,7 @@ end
 ---@param level_id string
 ---@return boolean
 function EHI:IsOneXPElementHeist(level_id)
-    return table.contains({
-            "four_stores",
-            "nightclub",
-            "jewelry_store",
-            "ukrainian_job",
-            "election_day_1",
-            "election_day_2",
-            "election_day_3",
-            "election_day_3_skip1",
-            "election_day_3_skip2",
-            "alex_1",
-            "alex_2",
-            "alex_3",
-            "firestarter_1",
-            "firestarter_2",
-            "firestarter_3",
-            "branchbank",
-            "branchbank_gold",
-            "branchbank_cash",
-            "branchbank_deposit",
-            "haunted",
-            "safehouse",
-            "short1_stage1",
-            "short1_stage2",
-            "short2_stage1",
-            "short2_stage2b",
-            "arm_cro",
-            "arm_fac",
-            "arm_hcm",
-            "arm_par",
-            "arm_und",
-            "escape_cafe",
-            "escape_cafe_day",
-            "escape_garage",
-            "escape_overpass",
-            "escape_overpass_night",
-            "escape_park",
-            "escape_park_day",
-            "escape_street"
-        }, level_id)
+    return self._cache.XPElement <= 1 or self.XPElementLevel[level_id]
 end
 
 ---@param id string
@@ -2104,8 +2080,9 @@ end
 
 function EHI:HookLootCounter(no_sync_load)
     if not self._cache.LootCounter then
+        local BagsOnly = self.LootCounter.CheckType.BagsOnly
         local function Callback(self)
-            self:EHIReportProgress("LootCounter", EHI.LootCounter.CheckType.BagsOnly)
+            self:EHIReportProgress("LootCounter", BagsOnly)
         end
         self:AddCallback(self.CallbackMessage.LootSecured, Callback)
         -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot

@@ -31,7 +31,7 @@ local State =
     sustain = 4,
     fade = 5
 }
-local assault_values = tweak_data.group_ai[tweak_data.levels:get_group_ai_state()].assault
+local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
 local tweak_values = assault_values.delay
 local hostage_values = assault_values.hostage_hesitation_delay
 EHIAssaultTracker = class(EHIWarningTracker)

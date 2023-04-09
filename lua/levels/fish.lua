@@ -61,5 +61,27 @@ EHI:AddXPBreakdown({
         money = 1000,
         mus_artifact = 500
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objective = true,
+                loot =
+                {
+                    money = { times = 8 }
+                }
+            },
+            max =
+            {
+                objective = true,
+                loot =
+                {
+                    money = { times = 8 },
+                    mus_artifact = { times = 7 }
+                }
+            }
+        }
+    }
 })

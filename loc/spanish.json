@@ -74,9 +74,6 @@
     "ehi_scale" : "Tamaño",
     "ehi_scale_desc" : "Ajustar el tamaño de los contadores.\nCuanto mayor sea el número, más grandes serán los contadores y viceversa.",
 
-    "ehi_vr_scale": "Tamaño en VR",
-    "ehi_vr_scale_desc": "Ajustar el tamaño de los contadores en realidad virtual.\nCuanto mayor sea el número, más grandes serán los contadores y viceversa.",
-
     "ehi_time_format" : "Formato del tiempo",
     "ehi_time_format_desc" : "Definir cómo se muestra el tiempo en los contadores cronometrados.",
     "ehi_time_format_1" : "Solo segundos",
@@ -86,6 +83,12 @@
     "ehi_tracker_alignment_desc" : "Definir cómo se alinean los contadores en pantalla.",
     "ehi_tracker_alignment_1" : "En vertical",
     "ehi_tracker_alignment_2" : "En horizontal",
+
+    "ehi_vr_x_offset" : "Posición horizontal en VR",
+    "ehi_vr_y_offset" : "Posición vertical en VR",
+
+    "ehi_vr_scale": "Tamaño en VR",
+    "ehi_vr_scale_desc": "Ajustar el tamaño de los contadores en realidad virtual.\nCuanto mayor sea el número, más grandes serán los contadores y viceversa.",
 
     "ehi_vr_tracker_alignment" : "Alineación en VR",
     "ehi_vr_tracker_alignment_desc" : "Definir cómo se alinean los contadores en pantalla en realidad virtual.",

@@ -128,38 +128,87 @@ EHI:ShowLootCounter({
     additional_loot = 6
 })
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        diamond_heist_boxes_hack = 2000,
-        henrys_rock_first_mission_bag_on_belt = 2000,
-        ed1_hack_1 = 2000,
-        random =
+        { amount = 2000, name = "diamond_heist_boxes_hack" },
+        { amount = 2000, name = "henrys_rock_first_mission_bag_on_belt" },
+        { amount = 2000, name = "ed1_hack_1" },
         {
-            max = 2,
-            archaelogy =
+            random =
             {
-                { amount = 6000, name = "henrys_rock_drilled_archaelogy_door" },
-                { amount = 2000, name = "henrys_rock_archaelogy_chest_open" }
-            },
-            biolab =
-            {
-                { amount = 6000, name = "henrys_rock_made_concoction" }
-            },
-            weapon_lab =
-            {
-                { amount = 4000, name = "henrys_rock_weapon_fired", times = 2 }
-            },
-            computer_lab =
-            {
-                { amount = 2000, name = "pc_hack" },
-                { amount = 2000, name = "henrys_rock_crane" }
+                max = 2,
+                archaelogy =
+                {
+                    { amount = 6000, name = "henrys_rock_drilled_archaelogy_door" },
+                    { amount = 2000, name = "henrys_rock_archaelogy_chest_open" }
+                },
+                biolab =
+                {
+                    { amount = 6000, name = "henrys_rock_made_concoction" }
+                },
+                weapon_lab =
+                {
+                    { amount = 4000, name = "henrys_rock_weapon_fired", times = 2 }
+                },
+                computer_lab =
+                {
+                    { amount = 2000, name = "pc_hack" },
+                    { amount = 2000, name = "henrys_rock_crane" }
+                }
             }
         },
-        twh_disable_aa = 4000,
-        escape = 6000
+        { amount = 4000, name = "twh_disable_aa" },
+        { escape = 6000 }
     },
     loot =
     {
         mus_artifact = 2000
+    },
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives =
+                {
+                    diamond_heist_boxes_hack = true,
+                    henrys_rock_first_mission_bag_on_belt = true,
+                    ed1_hack_1 = true,
+                    random =
+                    {
+                        biolab = true,
+                        computer_lab = true
+                    },
+                    twh_disable_aa = true,
+                    escape = true
+                }
+            },
+            --[[max =
+            {
+                objectives =
+                {
+                    diamond_heist_boxes_hack = true,
+                    henrys_rock_first_mission_bag_on_belt = true,
+                    ed1_hack_1 = true,
+                    random =
+                    {
+                        weapon_lab = true,
+                        computer_lab =
+                        {
+                            { times = 4 },
+                            true
+                        }
+                    },
+                    twh_disable_aa = true,
+                    escape = true
+                },
+                loot =
+                {
+                    mus_artifact = { times = 6 }
+                }
+            },]]
+            no_max = true
+        }
     }
 })

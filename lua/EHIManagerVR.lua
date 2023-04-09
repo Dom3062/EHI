@@ -19,6 +19,9 @@ function EHIManagerVR:init()
 end
 
 function EHIManagerVR:CreateWorkspace()
+    local x, y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
+    self._x = x
+    self._y = y
     self._scale = EHI:GetOption("vr_scale")
 end
 

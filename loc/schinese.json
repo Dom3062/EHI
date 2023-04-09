@@ -74,9 +74,6 @@
     "ehi_scale" : "追踪器大小",
     "ehi_scale_desc" : "更改追踪器大小，数值越大追踪器越大",
 
-    "ehi_vr_scale": "VR追踪器大小",
-    "ehi_vr_scale_desc": "更改VR模式下的追踪器大小，数值越大追踪器越大",
-
     "ehi_time_format" : "时间显示格式",
     "ehi_time_format_desc" : "选择追踪器中时间显示格式",
     "ehi_time_format_1" : "只显示秒数",
@@ -86,6 +83,9 @@
     "ehi_tracker_alignment_desc" : "设置追踪器对齐模式",
     "ehi_tracker_alignment_1" : "垂直",
     "ehi_tracker_alignment_2" : "水平",
+
+    "ehi_vr_scale": "VR追踪器大小",
+    "ehi_vr_scale_desc": "更改VR模式下的追踪器大小，数值越大追踪器越大",
 
     "ehi_vr_tracker_alignment" : "VR追踪器对齐",
     "ehi_vr_tracker_alignment_desc" : "设置使用VR时如何对齐追踪器",

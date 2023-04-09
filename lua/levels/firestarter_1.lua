@@ -70,7 +70,27 @@ EHI:AddXPBreakdown({
         fs_burned_required_bags = 8000,
         all_bags_secured = 6000
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objective =
+                {
+                    fs_burned_required_bags = true
+                }
+            },
+            max =
+            {
+                objective =
+                {
+                    fs_secured_required_bags = true,
+                    all_bags_secured = true
+                }
+            }
+        }
+    }
 })
 --[[EHI:AddLoadSyncFunction(function(self)
     LordOfWarAchievement()

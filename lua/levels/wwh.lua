@@ -56,25 +56,30 @@ EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 8 })
 EHI._cache.diff = 1
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        alaskan_deal_crew_saved = 2000,
-        alaskan_deal_captain_reached_boat = 5000,
-        alaskan_deal_boat_fueled = 6000,
-        escape = 1000
+        { amount = 2000, name = "alaskan_deal_crew_saved" },
+        { amount = 5000, name = "alaskan_deal_captain_reached_boat" },
+        { amount = 6000, name = "alaskan_deal_boat_fueled" },
+        { escape = 1000 }
     },
     loot =
     {
         money = 400,
         weapon = 600
     },
-    no_total_xp = true
-    --[[total_xp_override =
+    total_xp_override =
     {
-        loot =
+        params =
         {
-            money = { times = 4 },
-            weapon = { times = 4 }
+            min_max =
+            {
+                loot =
+                {
+                    money = { max = 4 },
+                    weapon = { max = 4 }
+                }
+            }
         }
-    }]]
+    }
 })

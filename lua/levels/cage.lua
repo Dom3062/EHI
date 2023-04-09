@@ -24,11 +24,24 @@ for i = 0, 4800, 300 do
 end
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        escape = 3000,
-        correct_pc_hack = 3000,
-        placed_c4 = 3000,
-        car_shop_car_secured = { amount = 1000, times = 4 }
+        { amount = 3000, name = "correct_pc_hack" },
+        { amount = 3000, name = "c4_set_up" },
+        { amount = 1000, name = "car_shop_car_secured" },
+        { escape = 3000 }
+    },
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                max =
+                {
+                    car_shop_car_secured = { times = 4 }
+                }
+            }
+        }
     }
 })

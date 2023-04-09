@@ -12,13 +12,16 @@ function FakeEHIManager:init(panel)
         layer = 0,
         alpha = 1
     })
-    local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
-    self._x = x
-    self._y = y
     if EHI:IsVR() then
         self._scale = EHI:GetOption("vr_scale")
+        local x, y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
+        self._x = x
+        self._y = y
     else
         self._scale = EHI:GetOption("scale")
+        local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
+        self._x = x
+        self._y = y
     end
     self._text_scale = EHI:GetOption("text_scale")
     self._bg_visibility = EHI:GetOption("show_tracker_bg")

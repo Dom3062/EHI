@@ -40,10 +40,20 @@ EHI:ShowLootCounter({
     offset = true
 })
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        biker2_boss_dead = 6000,
-        escape = 4000
+        { amount = 6000, name = "biker2_boss_dead" },
+        { escape = 4000 }
     },
-    loot_all = 500
+    loot_all = 500,
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot_all = { min = 1, max = 9 }
+            }
+        }
+    }
 })

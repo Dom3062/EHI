@@ -93,18 +93,39 @@ local tbl =
     [100949] = { remove_vanilla_waypoint = true, waypoint_id = 103174 }
 }
 EHI:UpdateUnits(tbl)
+local required_bags = 2 -- Normal
+if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
+    required_bags = 4
+elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
+    required_bags = 6
+elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+    required_bags = 8
+end
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        slaughterhouse_entered = 4000,
-        vault_drill_done = 6000,
-        slaughterhouse_tires_burn = 6000,
-        slaughterhouse_trap_lifted = 6000,
-        slaughterhouse_gold_lifted = 6000,
-        escape = 6000
+        { amount = 4000, name = "slaughterhouse_entered" },
+        { amount = 6000, name = "vault_drill_done" },
+        { amount = 6000, name = "slaughterhouse_tires_burn" },
+        { amount = 6000, name = "slaughterhouse_trap_lifted" },
+        { amount = 6000, name = "slaughterhouse_gold_lifted" },
+        { escape = 6000 }
     },
     loot =
     {
         gold = ovk_and_up and 800 or 1000
+    },
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot =
+                {
+                    gold = { min = required_bags, max = 10 }
+                }
+            }
+        }
     }
 })

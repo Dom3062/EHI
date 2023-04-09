@@ -74,9 +74,6 @@
     "ehi_scale" : "Měřítko",
     "ehi_scale_desc" : "Nastavuje měřítko sledovačů. Čím větší číslo, tím jsou sledovače větší a naopak",
 
-    "ehi_vr_scale": "Měřítko (VR)",
-    "ehi_vr_scale_desc": "Nastavuje měřítko sledovačů ve VR. Čím větší číslo, tím jsou sledovače větší a naopak",
-
     "ehi_time_format" : "Časový formát",
     "ehi_time_format_desc" : "Definuje jak časové sledovače mají naformátovat čas",
     "ehi_time_format_1" : "Pouze vteřiny",
@@ -86,6 +83,12 @@
     "ehi_tracker_alignment_desc" : "Nastavuje zarovnání sledovačů",
     "ehi_tracker_alignment_1" : "Vertikálně",
     "ehi_tracker_alignment_2" : "Horizontálně",
+
+    "ehi_vr_x_offset" : "Posun X (VR)",
+    "ehi_vr_y_offset" : "Posun Y (VR)",
+
+    "ehi_vr_scale": "Měřítko (VR)",
+    "ehi_vr_scale_desc": "Nastavuje měřítko sledovačů ve VR. Čím větší číslo, tím jsou sledovače větší a naopak",
 
     "ehi_vr_tracker_alignment" : "Zarovnání sledovačů (VR)",
     "ehi_vr_tracker_alignment_desc" : "Nastavuje zarovnání sledovačů ve VR",
@@ -754,7 +757,7 @@
     "ehi_experience_gs2_drilled_door" : "Dveře k ovládání mostu otevřeny",
     "ehi_experience_gs2_bridge_rotated" : "Most otočen",
     "ehi_experience_gs2_peta_5" : "Achievement 'Farmer Miserable'",
-    "ehi_experience_car_shop_car_secured" : "Ukradené auto",
+    "ehi_experience_car_shop_car_secured" : "Zajištěné ukradené auto",
     "ehi_experience_biker_mike_in_the_trailer" : "Mike dorazil k náklaďáku",
     "ehi_experience_biker_seat_collected" : "Sebráno sedadlo",
     "ehi_experience_biker_skull_collected" : "Sebrána lebka",

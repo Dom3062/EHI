@@ -73,37 +73,35 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        btm_blasted_entrance = 2000,
-        btm_used_keycard = 2500,
-        btm_request_approved = 3000,
-        btm_vault_open_loot = 1000,
-        btm_destroyed_comm = 1500,
-        btm_heli_refueled = 3000,
-        escape = 4000
+        { amount = 2000, name = "btm_blasted_entrance" },
+        { amount = 2500, name = "btm_used_keycard" },
+        { amount = 3000, name = "btm_request_approved" },
+        { amount = 1000, name = "btm_vault_open_loot" },
+        { amount = 1500, name = "btm_destroyed_comm" },
+        { amount = 3000, name = "btm_heli_refueled" },
+        { escape = 4000 }
     },
-    loot_all = 700
-    --[[total_xp_override =
+    loot_all = 700,
+    total_xp_override =
     {
         params =
         {
-            min =
+            min_max =
             {
-                btm_blasted_entrance = true,
-                btm_used_keycard = true,
-                btm_request_approved = true,
-                btm_vault_open_loot = { times = 2 },
-                btm_destroyed_comm = true,
-                btm_heli_refueled = true,
-                escape = true
+                min =
+                {
+                    btm_vault_open_loot = { times = 2 },
+                    btm_destroyed_comm = { times = 3 }
+                },
+                max =
+                {
+                    btm_vault_open_loot = { times = 4 },
+                    btm_destroyed_comm = { times = 3 }
+                },
+                loot_all = { min = 2, max = 10 }
             }
-        },
-        objective =
-        {
-            btm_vault_open_loot = { times = 4 },
-            btm_destroyed_comm = { times = 3 }
-        },
-        loot_all = { times = 10 }
-    }]]
+        }
+    }
 })

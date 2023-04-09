@@ -45,8 +45,8 @@ function SecurityCamera:_deactivate_tape_loop(...)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
-function SecurityCamera:destroy(unit, ...)
-    original.destroy(self, unit, ...)
+function SecurityCamera:destroy(...)
     managers.ehi:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    original.destroy(self, ...)
 end

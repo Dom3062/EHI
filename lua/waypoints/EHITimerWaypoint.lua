@@ -45,7 +45,9 @@ function EHITimerWaypoint:SetTime(t)
 end
 
 function EHITimerWaypoint:AnimateCompletion()
-    self._timer:animate(completion, self._bitmap, self._arrow, self._bitmap_world)
+    if self._timer and alive(self._timer) then
+        self._timer:animate(completion, self._bitmap, self._arrow, self._bitmap_world)
+    end
 end
 
 function EHITimerWaypoint:SetJammed(jammed)

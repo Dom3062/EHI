@@ -25,7 +25,9 @@ function EHIWarningWaypoint:update(t, dt)
 end
 
 function EHIWarningWaypoint:AnimateWarning()
-    self._timer:animate(warning, self._bitmap, self._arrow, self._bitmap_world)
+    if self._timer and alive(self._timer) then
+        self._timer:animate(warning, self._bitmap, self._arrow, self._bitmap_world)
+    end
 end
 
 function EHIWarningWaypoint:delete()

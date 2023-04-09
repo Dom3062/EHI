@@ -121,9 +121,9 @@ EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     objective =
     {
-        safe_event_done = 4000,
         present_finished = 1000,
-        escape = 4000
+        escape = 4000,
+        safe_event_done = 4000
     },
     loot_all = 1000
 })

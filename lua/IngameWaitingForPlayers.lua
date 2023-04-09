@@ -26,6 +26,47 @@ if EHI:GetOption("show_gage_tracker") then
     end
 end
 
+local gage3_13_levels =
+{
+    pbr = true,
+    shoutout_raid = true,
+    pent = true
+}
+
+local eng_1_levels =
+{
+    branchbank = true,
+    branchbank_gold = true,
+    branchbank_cash = true,
+    branchbank_deposit = true,
+    jewelry_store = true
+}
+
+local xm20_1_levels =
+{
+    mex = true,
+    bex = true,
+    pex = true,
+    fex = true
+}
+
+local pent_11_levels =
+{
+    chas = true,
+    sand = true,
+    chca = true,
+    pent = true
+}
+
+local armored_4_levels =
+{
+    arm_cro = true,
+    arm_und = true,
+    arm_hcm = true,
+    arm_par = true,
+    arm_fac = true
+}
+
 local primary, secondary, melee, grenade, is_stealth = nil, nil, nil, nil, false
 local VeryHardOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
 local OVKOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
@@ -206,6 +247,32 @@ local function pxp_1()
     pxp_1_checked = true
 end
 
+---@param achievement_id string
+---@param f function Function has to accept "self" of AchievmentManager, stat and value
+local function HookAwardAchievement(achievement_id, f)
+    EHI:HookWithID(AchievmentManager, "award_progress", "EHI_" .. achievement_id .. "_AwardProgress", f)
+end
+
+---@param achievement_id string
+---@param keys table
+local function OnSetSavedJobValue(achievement_id, keys)
+    EHI:PreHookWithID(MissionManager, "on_set_saved_job_value", "EHI_" .. achievement_id .. "_Achievement", function(mm, key, value)
+        if keys[key] and value == 1 then
+            local progress = 0
+            local to_secure = tweak_data.achievement.collection_achievements[achievement_id].collection
+            for _, item in pairs(to_secure) do
+                if Global.mission_manager.saved_job_values[item] then
+                    progress = progress + 1
+                end
+            end
+            if progress == 4 then
+                return
+            end
+            ShowPopup(achievement_id, progress, 4)
+        end
+    end)
+end
+
 local original =
 {
     at_exit = IngameWaitingForPlayersState.at_exit
@@ -336,29 +403,25 @@ function IngameWaitingForPlayersState:at_exit(...)
             stats.gage3_12_stats = "gage3_12"
         end
         if EHI:IsAchievementLocked2("gage3_13") and HasWeaponTypeEquipped("snp") then -- "Didn't See That Coming Did You?" achievement
-            local pass = false
             for _, unit in ipairs(ZipLine.ziplines) do
                 if unit:zipline():is_usage_type_person() then
-                    pass = true
-                    break
-                end
-            end
-            if pass then
-                local progress = EHI:GetAchievementProgress("gage3_13_stats")
-                if level == "pbr" or level == "shoutout_raid" or level == "pent" then
-                    EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gage3_13_AwardProgress", function(am, stat, value)
-                        if stat == "gage3_13_stats" then
-                            progress = progress + (value or 1)
-                            if progress >= 10 then
-                                EHI:Unhook("gage3_13_AwardProgress")
-                                return
+                    local progress = EHI:GetAchievementProgress("gage3_13_stats")
+                    if gage3_13_levels[level] then
+                        EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gage3_13_AwardProgress", function(am, stat, value)
+                            if stat == "gage3_13_stats" then
+                                progress = progress + (value or 1)
+                                if progress >= 10 then
+                                    EHI:Unhook("gage3_13_AwardProgress")
+                                    return
+                                end
+                                ShowPopup("gage3_13", progress, 10)
                             end
-                            ShowPopup("gage3_13", progress, 10)
-                        end
-                    end)
-                else
-                    CreateProgressTracker("gage3_13", progress, 10, false, true)
-                    stats.gage3_13_stats = "gage3_13"
+                        end)
+                    else
+                        CreateProgressTracker("gage3_13", progress, 10, false, true)
+                        stats.gage3_13_stats = "gage3_13"
+                    end
+                    break
                 end
             end
         end
@@ -571,12 +634,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                         managers.player:register_message(Message.OnSwitchWeapon, "EHI_tango_achieve_3", switch)
                     else
                         CreateProgressTracker("tango_achieve_3", 0, 200, false, false)
-                        local weapon_required = nil
-                        if primary_index then
-                            weapon_required = primary.weapon_id
-                        else
-                            weapon_required = secondary.weapon_id
-                        end
+                        local weapon_required = primary_index and primary.weapon_id or secondary.weapon_id
                         HookKillFunctionNoCivilian("tango_achieve_3", weapon_required)
                     end
                 end
@@ -630,10 +688,6 @@ function IngameWaitingForPlayersState:at_exit(...)
                     stats.halloween_7_stats = nil
                 end)
             end
-            if EHI:IsAchievementLocked2("gsu_01") and HasMeleeEquipped("spoon") then -- "For all you legends" achievement
-                CreateProgressTracker("gsu_01", EHI:GetAchievementProgress("gsu_stat"), 100, false, true)
-                stats.gsu_stat = "gsu_01"
-            end
         end
         if EHI:IsAchievementLocked2("gage5_8") and HasMeleeEquipped("dingdong") then -- "Hammertime" achievement
             CreateProgressTracker("gage5_8", EHI:GetAchievementProgress("gage5_8_stats"), 25, false, true)
@@ -661,6 +715,10 @@ function IngameWaitingForPlayersState:at_exit(...)
                     end
                 end)
             end
+        end
+        if EHI:IsAchievementLocked2("gsu_01") and HasMeleeEquipped("spoon") then -- "For all you legends" achievement
+            CreateProgressTracker("gsu_01", EHI:GetAchievementProgress("gsu_stat"), 100, false, true)
+            stats.gsu_stat = "gsu_01"
         end
         if level == "nightclub" then
             if EHI:IsAchievementLocked2("gage2_3") and HasMeleeEquipped("fists") then -- "The Eighth and Final Rule" achievement
@@ -934,10 +992,10 @@ function IngameWaitingForPlayersState:at_exit(...)
             managers.player:register_message("cop_converted", listener_key, on_cop_converted)
             ShowPopup("cac_34", progress, 300)
         end
-        if level == "branchbank" or level == "branchbank_gold" or level == "branchbank_cash" or level == "branchbank_deposit" or level == "jewelry_store" then
+        if eng_1_levels[level] then
             if EHI:IsAchievementLocked2("eng_1") then -- "The only one that is true" achievement
                 local progress = EHI:GetAchievementProgress("eng_1_stats") + 1
-                EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_1_award_progress", function(am, stat, value)
+                HookAwardAchievement("eng_1",  function(am, stat, value)
                     if stat == "eng_1_stats" and progress < 5 then
                         ShowPopup("eng_1", progress, 5)
                     end
@@ -947,7 +1005,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         if level == "kosugi" or level == "red2" then
             if EHI:IsAchievementLocked2("eng_2") then -- "The one that had many names" achievement
                 local progress = EHI:GetAchievementProgress("eng_2_stats") + 1
-                EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_2_award_progress", function(am, stat, value)
+                HookAwardAchievement("eng_2",  function(am, stat, value)
                     if stat == "eng_2_stats" and progress < 5 then
                         ShowPopup("eng_2", progress, 5)
                     end
@@ -957,7 +1015,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         if level == "roberts" or level == "four_stores" then
             if EHI:IsAchievementLocked2("eng_3") then -- "The one that survived" achievement
                 local progress = EHI:GetAchievementProgress("eng_3_stats") + 1
-                EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_3_award_progress", function(am, stat, value)
+                HookAwardAchievement("eng_3", function(am, stat, value)
                     if stat == "eng_3_stats" and progress < 5 then
                         ShowPopup("eng_3", progress, 5)
                     end
@@ -967,46 +1025,18 @@ function IngameWaitingForPlayersState:at_exit(...)
         if level == "family" or level == "hox_1" then
             if EHI:IsAchievementLocked2("eng_4") then -- "The one who declared himself the hero" achievement
                 local progress = EHI:GetAchievementProgress("eng_4_stats") + 1
-                EHI:HookWithID(AchievmentManager, "award_progress", "EHI_eng_4_award_progress", function(am, stat, value)
+                HookAwardAchievement("eng_4", function(am, stat, value)
                     if stat == "eng_4_stats" and progress < 5 then
                         ShowPopup("eng_4", progress, 5)
                     end
                 end)
             end
         end
-        if EHI:IsAchievementLocked2("xm20_1") and (level == "mex" or level == "bex" or level == "pex" or level == "fex") then
-            EHI:PreHookWithID(MissionManager, "on_set_saved_job_value", "EHI_xm20_1_achievement", function(mm, key, value)
-                if (key == "present_mex" or key == "present_bex" or key == "present_pex" or key == "present_bex") and value == 1 then
-                    local progress = 0
-                    local to_secure = tweak_data.achievement.collection_achievements.xm20_1.collection
-                    for _, item in pairs(to_secure) do
-                        if Global.mission_manager.saved_job_values[item] then
-                            progress = progress + 1
-                        end
-                    end
-                    if progress == 4 then
-                        return
-                    end
-                    ShowPopup("xm20_1", progress, 4)
-                end
-            end)
+        if EHI:IsAchievementLocked2("xm20_1") and xm20_1_levels[level] then
+            OnSetSavedJobValue("xm20_1", { present_mex = true, present_bex = true, present_pex = true, present_fex = true })
         end
-        if EHI:IsAchievementLocked2("pent_11") and (level == "chas" or level == "sand" or level == "chca" or level == "pent") then
-            EHI:PreHookWithID(MissionManager, "on_set_saved_job_value", "EHI_pent_11_achievement", function(mm, key, value)
-                if (key == "tea_chas" or key == "tea_sand" or key == "tea_chca" or key == "tea_pent") and value == 1 then
-                    local progress = 0
-                    local to_secure = tweak_data.achievement.collection_achievements.pent_11.collection
-                    for _, item in pairs(to_secure) do
-                        if Global.mission_manager.saved_job_values[item] then
-                            progress = progress + 1
-                        end
-                    end
-                    if progress == 4 then
-                        return
-                    end
-                    ShowPopup("pent_11", progress, 4)
-                end
-            end)
+        if EHI:IsAchievementLocked2("pent_11") and pent_11_levels[level] then
+            OnSetSavedJobValue("pent_11", { tea_chas = true, tea_sand = true, tea_chca = true, tea_pent = true })
         end
         if VeryHardOrAbove then
             if level == "help" and EHI:IsAchievementLocked2("tawp_1") and mask_id == tweak_data.achievement.complete_heist_achievements.tawp_1.mask then -- "Cloaker Charmer" achievement
@@ -1019,7 +1049,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end
         if OVKOrAbove then
-            if (level == "arm_cro" or level == "arm_und" or level == "arm_hcm" or level == "arm_par" or level == "arm_fac") and EHI:IsAchievementLocked2("armored_4") and mask_id == tweak_data.achievement.complete_heist_achievements.i_take_scores.mask and managers.ehi:GetStartedFromBeginning() then -- I Do What I Do Best, I Take Scores
+            if armored_4_levels[level] and EHI:IsAchievementLocked2("armored_4") and mask_id == tweak_data.achievement.complete_heist_achievements.i_take_scores.mask and managers.ehi:GetStartedFromBeginning() then -- I Do What I Do Best, I Take Scores
                 local progress = EHI:GetAchievementProgress("armored_4_stat")
                 EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
                     if success and progress < 15 and managers.job:on_last_stage() then
@@ -1051,7 +1081,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end)
     end]]
     if next(stats) then
-        EHI:HookWithID(AchievmentManager, "award_progress", "EHI_IngameWaitingForPlayers_AwardProgress", function(am, stat, value)
+        HookAwardAchievement("IngameWaitingForPlayers", function(am, stat, value)
             if stats[stat] then
                 managers.ehi:IncreaseTrackerProgress(stats[stat], value)
             end

@@ -44,30 +44,18 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
 end
 EHI:ShowLootCounter({ max = 50 })
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        escape = 1000
+        { escape = 1000 }
     },
     loot_all = { amount = 6000, times = 50 },
     total_xp_override =
     {
         params =
         {
-            min =
+            min_max =
             {
-                objective =
-                {
-                    escape = true
-                },
-                loot_all = { times = 3 }
-            },
-            max =
-            {
-                objective =
-                {
-                    escape = true
-                },
-                loot_all = { times = 50 }
+                loot_all = { min = 3, max = 50 }
             }
         }
     }

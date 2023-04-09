@@ -1,4 +1,5 @@
 local EHI = EHI
+EHI._cache.is_vr = _G.IS_VR
 if EHI:CheckLoadHook("Setup") then
     return
 end

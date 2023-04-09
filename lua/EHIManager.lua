@@ -17,9 +17,6 @@ function EHIManager:init()
     }
     self._n_of_trackers = 0
     self._cache = { _deployables = {}, TradeDelay = {} }
-    local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
-    self._x = x
-    self._y = y
     self._level_started_from_beginning = true
     self._delay_popups = true
     self._panel_size = 32 * self._scale
@@ -27,6 +24,9 @@ function EHIManager:init()
 end
 
 function EHIManager:CreateWorkspace()
+    local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
+    self._x = x
+    self._y = y
     self._ws = managers.gui_data:create_fullscreen_workspace()
     self._ws:hide()
     self._scale = EHI:GetOption("scale")

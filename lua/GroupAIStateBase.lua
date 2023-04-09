@@ -48,24 +48,20 @@ function GroupAIStateBase:load(...)
     end
 end
 
-if EHI:ShowDramaTracker() then
-    local level_id = Global.game_settings.level_id
-    local level_data = tweak_data.levels[level_id]
-    if not (level_data.ghost_required or level_data.ghost_required_visual) then
-        original._add_drama = GroupAIStateBase._add_drama
-        function GroupAIStateBase:_add_drama(...)
-            original._add_drama(self, ...)
-            managers.ehi:SetChance("Drama", EHI:RoundChanceNumber(self._drama_data.amount))
-        end
-        EHI:AddOnAlarmCallback(function()
-            managers.ehi:AddTracker({
-                id = "Drama",
-                icons = { "C_Escape_H_Street_Bullet" },
-                class = "EHIChanceTracker",
-                dont_flash = true
-            }, 0)
-        end)
+if EHI:ShowDramaTracker() and not tweak_data.levels:IsStealthRequired() then
+    original._add_drama = GroupAIStateBase._add_drama
+    function GroupAIStateBase:_add_drama(...)
+        original._add_drama(self, ...)
+        managers.ehi:SetChance("Drama", EHI:RoundChanceNumber(self._drama_data.amount))
     end
+    EHI:AddOnAlarmCallback(function()
+        managers.ehi:AddTracker({
+            id = "Drama",
+            icons = { "C_Escape_H_Street_Bullet" },
+            class = "EHIChanceTracker",
+            dont_flash = true
+        }, 0)
+    end)
 end
 
 local show_minion_tracker = EHI:GetOption("show_minion_tracker")

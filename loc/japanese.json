@@ -68,9 +68,6 @@
   "ehi_scale": "スケール",
   "ehi_scale_desc": "トラッカーの大きさを設定します。\nトラッカーは、値が大きい程大きくなります。",
 
-  "ehi_vr_scale": "VRのスケール",
-  "ehi_vr_scale_desc": "VRモードでのトラッカーの大きさを設定します。\nトラッカーは、値が大きい程大きくなります。",
-
   "ehi_time_format": "時間のフォーマット",
   "ehi_time_format_desc": "トラッカーで使用される時計の形式を定義します。",
   "ehi_time_format_1": "秒数のみ",
@@ -80,6 +77,9 @@
   "ehi_tracker_alignment_desc": "トラッカーの位置合わせを定義します。",
   "ehi_tracker_alignment_1": "縦",
   "ehi_tracker_alignment_2": "横",
+
+  "ehi_vr_scale": "VRのスケール",
+  "ehi_vr_scale_desc": "VRモードでのトラッカーの大きさを設定します。\nトラッカーは、値が大きい程大きくなります。",
 
   "ehi_vr_tracker_alignment": "VRのトラッカーの整列",
   "ehi_vr_tracker_alignment_desc": "VRモードでのトラッカーの位置合わせを定義します。",

@@ -24,6 +24,7 @@
             <group :hook_id="mission/" :script_path="elements/">
                 <post :hook_id="elementaiglobalevent" :script_path="ElementAiGlobalEvent.lua" />
                 <post :hook_id="elementdifficulty" :script_path="ElementDifficulty.lua" />
+                <post :hook_id="elementexperience" :script_path="ElementExperience.lua" />
                 <post :hook_id="elementlasertrigger" :script_path="ElementLaserTrigger.lua" />
                 <post :hook_id="elementspawngageassignment" :script_path="ElementSpawnGageAssignment.lua" />
                 <post :hook_id="elementterminateassault" :script_path="ElementTerminateAssault.lua" />
