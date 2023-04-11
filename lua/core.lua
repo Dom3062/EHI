@@ -433,6 +433,8 @@ local function LoadDefaultValues(self)
         show_buffs = true,
         buffs_x_offset = 0,
         buffs_y_offset = 80,
+        buffs_vr_x_offset = 0,
+        buffs_vr_y_offset = 80,
         buffs_alignment = 2, -- 1 = Left; 2 = Center; 3 = Right
         buffs_scale = 1,
         buffs_shape = 1, -- 1 = Square; 2 = Circle
@@ -621,6 +623,10 @@ function EHI:IsBetweenDifficulties(diff_1, diff_2)
         diff_1 = diff_2 - diff_1
     end
     return self._cache.DifficultyIndex >= diff_1 and self._cache.DifficultyIndex <= diff_2
+end
+
+function EHI:DifficultyIndex()
+    return self._cache.DifficultyIndex or 0
 end
 
 if Global.load_level then
@@ -1680,6 +1686,9 @@ function EHI:AddAssaultDelay(params)
     end
     local id = "AssaultDelay"
     local class = self.Trackers.AssaultDelay
+    if params.random_time then
+        class = "EHIInaccurateAssaultDelayTracker"
+    end
     if self:CombineAssaultDelayAndAssaultTime() then
         id = "Assault"
         class = "EHIAssaultTracker"
@@ -2301,10 +2310,13 @@ function EHI:LoadTrackerInVR(tracker)
     end
 end
 
----@param trigger table
+---@param trigger table|nil
 ---@param params table|nil
----@return table
+---@return table|nil
 function EHI:ClientCopyTrigger(trigger, params)
+    if trigger == nil then
+        return nil
+    end
     local tbl = {}
     if trigger.waypoint then
         tbl.waypoint = deep_clone(trigger.waypoint)

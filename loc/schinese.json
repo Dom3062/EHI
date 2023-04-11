@@ -84,6 +84,9 @@
     "ehi_tracker_alignment_1" : "垂直",
     "ehi_tracker_alignment_2" : "水平",
 
+    "ehi_vr_x_offset" : "X轴偏移 (VR)",
+    "ehi_vr_y_offset" : "Y轴偏移 (VR)",
+
     "ehi_vr_scale": "VR追踪器大小",
     "ehi_vr_scale_desc": "更改VR模式下的追踪器大小，数值越大追踪器越大",
 
@@ -431,6 +434,7 @@
     "ehi_buffs_skills_ghost_silent_killer_subclass" : "消音系",
     "ehi_buffs_skills_ghost_second_wind" : "卷土重来",
     "ehi_buffs_skills_ghost_unseen_strike" : "暗中打击",
+    "ehi_buffs_skills_ghost_unseen_strike_initial" : "暗中打击 (启动延迟)",
 
     "ehi_buffs_skills_fugitive_menu" : "逃犯",
     "ehi_buffs_skills_fugitive_revenant_subclass" : "重生系",

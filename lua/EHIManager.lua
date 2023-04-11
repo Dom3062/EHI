@@ -91,7 +91,7 @@ function EHIManager:CountInteractionAvailable(tweak_data)
     return count
 end
 
-function EHIManager:CountLootbagsOnTheGround()
+function EHIManager:CountLootbagsOnTheGround(offset)
     local excluded = { value_multiplier = true, dye = true, types = true, small_loot = true }
     local lootbags = {}
     for key, data in pairs(tweak_data.carry) do
@@ -100,7 +100,7 @@ function EHIManager:CountLootbagsOnTheGround()
         end
     end
     local interactions = managers.interaction._interactive_units or {}
-    local count = 0
+    local count = 0 - (offset or 0)
     for _, unit in pairs(interactions) do
         if unit:carry_data() and lootbags[unit:carry_data():carry_id()] then
             count = count + 1

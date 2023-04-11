@@ -24,10 +24,10 @@ local triggers = {
     [101102] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101138 } }
 }
 if EHI:IsClient() then
-    triggers[100731] = { time = 18 + 8.5 + 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[100716] = { time = 8.5 + 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[100286] = { time = 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101065] = { time = 25 + 375/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100731] = EHI:ClientCopyTrigger(triggers[100727], { time = 18 + 8.5 + 30 + 25 + 375/30 })
+    triggers[100716] = EHI:ClientCopyTrigger(triggers[100727], { time = 8.5 + 30 + 25 + 375/30 })
+    triggers[100286] = EHI:ClientCopyTrigger(triggers[100727], { time = 30 + 25 + 375/30 })
+    triggers[101065] = EHI:ClientCopyTrigger(triggers[100727], { time = 25 + 375/30 })
 end
 
 local achievements =
@@ -72,11 +72,25 @@ EHI:RegisterCustomSpecialFunction(ExecuteIfEnabled, function(trigger, element, e
     end
 end)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        rvd1_defended_warehouse = 4000,
-        rvd1_escorted_pink = 4000,
-        saw_done = 1500
+        { amount = 4000, name = "rvd1_defended_warehouse" },
+        { amount = 4000, name = "rvd1_escorted_pink" },
+        { amount = 1500, name = "saw_done" }
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                max =
+                {
+                    saw_done = { times = 4 }
+                },
+                loot_all = { min = 1, max = 6 }
+            }
+        }
+    }
 })

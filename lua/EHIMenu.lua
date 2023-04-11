@@ -782,7 +782,9 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
     if item.enabled ~= nil then
         enabled = item.enabled
     elseif item.parent_func then
-        enabled = self[item.parent_func](self)
+        if self[item.parent_func] then
+            enabled = self[item.parent_func](self)
+        end
     elseif parents then
         if type(parents) == "string" then
             for _, pitem in pairs(items) do
@@ -1934,6 +1936,24 @@ function EHIMenu:UpdateAllXPOptions(menu)
             self:AnimateItemEnabled(item, enabled)
         elseif items2[item.id or ""] then
             self:AnimateItemEnabled(item, enabled2)
+        end
+    end
+end
+
+function EHIMenu:GetBuffVROffsetEnabled()
+    return EHI:GetOption("show_buffs") and EHI:IsVR()
+end
+
+function EHIMenu:UpdateBuffVROffset(menu)
+    local enabled = self:GetBuffVROffsetEnabled()
+    local items =
+    {
+        ehi_vr_x_offset = true,
+        ehi_vr_y_offset = true
+    }
+    for _, item in ipairs(menu.items) do
+        if items[item.id or ""] then
+            self:AnimateItemEnabled(item, enabled)
         end
     end
 end

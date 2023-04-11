@@ -309,7 +309,7 @@ function MissionBriefingGui:ProcessTotalXP(panel, params, gage, total_xp)
                 local o_max = o_params.min_max.max or {}
                 local min, max = 0, 0
                 if type(params.objective) == "table" then
-                    min = self:SumObjective(params.objective, o_min)
+                    min = self:SumObjective(params.objective, o_min, true)
                     max = self:SumObjective(params.objective, o_max)
                 end
                 for _, data in ipairs(params.objectives or {}) do
@@ -381,42 +381,46 @@ function MissionBriefingGui:ProcessTotalXP(panel, params, gage, total_xp)
                             end
                         end
                     else
-                        min = min + self:SumObjective(params.objective, override_objective)
+                        min = min + self:SumObjective(params.objective, override_objective, true)
                     end
                 end
-                if type(o_params.min.objectives) == "table" then
-                    local objectives = o_params.min.objectives
-                    for _, data in ipairs(params.objectives or {}) do
-                        local key = data.name or "unknown"
-                        if objectives[key] or (data.escape and objectives.escape) or (data.random and objectives.random) then -- Count this objective
-                            local actual_value = data.amount or 0
-                            if data.escape then
-                                if type(data.escape) == "number" then
-                                    min = min + data.escape
-                                else
-                                    EHI:Log("[MissionBriefingGui] Unknown type for escape!")
-                                end
-                            elseif data.random then
-                                for random, _ in pairs(objectives.random) do
-                                    local r_data = data.random[random]
-                                    if r_data and random ~= "max" then
-                                        if type(r_data) == "table" then
-                                            for _, ro_data in ipairs(r_data) do
-                                                min = min + (ro_data.amount * (ro_data.times or 1))
+                if o_params.min.objectives then
+                    if type(o_params.min.objectives) == "table" then
+                        local objectives = o_params.min.objectives
+                        for _, data in ipairs(params.objectives or {}) do
+                            local key = data.name or "unknown"
+                            if objectives[key] or (data.escape and objectives.escape) or (data.random and objectives.random) then -- Count this objective
+                                local actual_value = data.amount or 0
+                                if data.escape then
+                                    if type(data.escape) == "number" then
+                                        min = min + data.escape
+                                    else
+                                        EHI:Log("[MissionBriefingGui] Unknown type for escape!")
+                                    end
+                                elseif data.random then
+                                    for random, _ in pairs(objectives.random) do
+                                        local r_data = data.random[random]
+                                        if r_data and random ~= "max" then
+                                            if type(r_data) == "table" then
+                                                for _, ro_data in ipairs(r_data) do
+                                                    min = min + (ro_data.amount * (ro_data.times or 1))
+                                                end
+                                            else -- Number
+                                                min = min + r_data
                                             end
-                                        else -- Number
-                                            min = min + r_data
                                         end
                                     end
+                                elseif type(objectives[key]) == "table" then
+                                    min = min + (actual_value * (objectives[key].times or 1))
+                                elseif override_objectives[key] then
+                                    min = min + (actual_value * (override_objectives[key].times or 1))
+                                else
+                                    min = min + actual_value
                                 end
-                            elseif type(objectives[key]) == "table" then
-                                min = min + (actual_value * (objectives[key].times or 1))
-                            elseif override_objectives[key] then
-                                min = min + (actual_value * (override_objectives[key].times or 1))
-                            else
-                                min = min + actual_value
                             end
                         end
+                    else
+                        min = min + self:SumObjectives(params.objectives, override_objectives, true)
                     end
                 end
                 if o_params.min.loot then
@@ -462,41 +466,30 @@ function MissionBriefingGui:ProcessTotalXP(panel, params, gage, total_xp)
                             max = max + self:SumObjective(params.objective, override_objective)
                         end
                     end
-                    if type(o_params.max.objectives) == "table" then
-                        local objectives = o_params.max.objectives
-                        for _, data in pairs(params.objectives or {}) do
-                            local key = data.name or "unknown"
-                            if objectives[key] or (data.escape and objectives.escape) then
-                                local actual_value = data.amount or 0
-                                if data.escape then
-                                    if type(data.escape) == "number" then
-                                        max = max + data.escape
-                                    else
-                                        EHI:Log("[MissionBriefingGui] Unknown type for escape!")
-                                    end
-                                elseif type(objectives[key]) == "table" then
-                                    max = max + (actual_value * (objectives[key].times or 1))
-                                elseif override_objectives[key] then
-                                    max = max + (actual_value * (override_objectives[key].times or 1))
-                                else
-                                    max = max + actual_value
-                                end
-                            end
-                        end
-                    else
-                        for _, data in ipairs(params.objectives or {}) do
-                            if data.escape then
-                                if type(data.escape) == "number" then
-                                    max = max + data.escape
-                                else
-                                    EHI:Log("[MissionBriefingGui] Unknown type for escape!")
-                                end
-                            else
+                    if o_params.max.objectives then
+                        if type(o_params.max.objectives) == "table" then
+                            local objectives = o_params.max.objectives
+                            for _, data in pairs(params.objectives or {}) do
                                 local key = data.name or "unknown"
-                                local amount = data.amount or 0
-                                local o_override = override_objectives[key] or {}
-                                max = max + (amount * (o_override.times or data.times or 1))
+                                if objectives[key] or (data.escape and objectives.escape) then
+                                    local actual_value = data.amount or 0
+                                    if data.escape then
+                                        if type(data.escape) == "number" then
+                                            max = max + data.escape
+                                        else
+                                            EHI:Log("[MissionBriefingGui] Unknown type for escape!")
+                                        end
+                                    elseif type(objectives[key]) == "table" then
+                                        max = max + (actual_value * (objectives[key].times or 1))
+                                    elseif override_objectives[key] then
+                                        max = max + (actual_value * (override_objectives[key].times or 1))
+                                    else
+                                        max = max + actual_value
+                                    end
+                                end
                             end
+                        else
+                            max = max + self:SumObjectives(params.objectives, override_objectives)
                         end
                     end
                     if o_params.max.loot then
@@ -1006,43 +999,48 @@ function MissionBriefingGui:ProcessRandomObjectives(panel, random, total_xp, gag
     end
 end
 
-function MissionBriefingGui:SumObjective(objective, override_objective)
+function MissionBriefingGui:SumObjective(objective, override_objective, skip_optional)
     local xp = 0
     for key, obj in pairs(objective or {}) do
         local actual_value = 0
         local times = 1
+        local count = true
         if type(obj) == "table" then
             actual_value = obj.amount
             times = obj.times or 1
+            count = not obj.optional or (obj.optional and not skip_optional)
         elseif type(obj) == "number" then
             actual_value = obj
         end
-        if override_objective[key] then
-            xp = xp + (actual_value * (override_objective[key].times or times or 1))
-        else
-            xp = xp + (actual_value * (times or 1))
+        if count then
+            if override_objective[key] then
+                xp = xp + (actual_value * (override_objective[key].times or times or 1))
+            else
+                xp = xp + (actual_value * (times or 1))
+            end
         end
     end
     return xp
 end
 
-function MissionBriefingGui:SumObjectives(objectives, override_objectives)
+function MissionBriefingGui:SumObjectives(objectives, override_objectives, skip_optional)
     local xp = 0
-    --[[for key, obj in pairs(objective or {}) do
-        local actual_value = 0
-        local times = 1
-        if type(obj) == "table" then
-            actual_value = obj.amount
-            times = obj.times or 1
-        elseif type(obj) == "number" then
-            actual_value = obj
+    for _, data in ipairs(objectives or {}) do
+        if data.escape then
+            if type(data.escape) == "number" then
+                xp = xp + data.escape
+            else
+                EHI:Log("[MissionBriefingGui] Unknown type for escape!")
+            end
+        elseif data.random then
+            EHI:Log("[MissionBriefingGui] Random objectives cannot be counted! Use min or max and count them manually")
+        elseif not data.optional or (data.optional and not skip_optional) then
+            local key = data.name or "unknown"
+            local amount = data.amount or 0
+            local o_override = override_objectives[key] or {}
+            xp = xp + (amount * (o_override.times or data.times or 1))
         end
-        if override_objective[key] then
-            xp = xp + (actual_value * (override_objective[key].times or times or 1))
-        else
-            xp = xp + (actual_value * (times or 1))
-        end
-    end]]
+    end
     return xp
 end
 

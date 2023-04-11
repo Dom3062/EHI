@@ -10,7 +10,6 @@ local triggers = {
     [101430] = { id = "CharonPickLock", special_function = SF.PauseTracker },
 
     [102266] = { max = 6, id = "SniperDeath", icons = { "sniper", "pd2_kill" }, class = TT.Progress },
-    [100833] = { id = "SniperDeath", special_function = SF.RemoveTracker },
 
     [100549] = { time = 20, id = "ObjectiveWait", icons = { Icon.Wait } },
     [101202] = { time = 15, id = "Escape", icons = Icon.CarEscape },
@@ -41,19 +40,22 @@ local achievements =
     }
 }
 
---[[local other =
+local other =
 {
-    -- First Assault Delay
-    [EHI:GetInstanceElementID(100003, 7950)] = EHI:AddAssaultDelay({ time = 3 + 12 + 12 + 4 + 20 + 30, trigger_times = 1 }),
-    [EHI:GetInstanceElementID(100024, 7950)] = EHI:AddAssaultDelay({ time = 12 + 12 + 4 + 20 + 30, special_function = SF.AddTrackerIfDoesNotExist }),
-    [EHI:GetInstanceElementID(100053, 7950)] = EHI:AddAssaultDelay({ time = 12 + 4 + 20 + 30, special_function = SF.AddTrackerIfDoesNotExist }),
-    [EHI:GetInstanceElementID(100026, 7950)] = EHI:AddAssaultDelay({ time = 4 + 20 + 30, special_function = SF.AddTrackerIfDoesNotExist }),
-    [EHI:GetInstanceElementID(100179, 7950)] = EHI:AddAssaultDelay({ time = 20 + 30, special_function = SF.AddTrackerIfDoesNotExist })
-}]]
+    [EHI:GetInstanceElementID(100003, 7950)] = EHI:AddAssaultDelay({ time = 3 + 12 + 12 + 4 + 10 + 30, random_time = 5, trigger_times = 1 })
+}
+if EHI:IsClient() then
+    local original = other[EHI:GetInstanceElementID(100003, 7950)]
+    other[EHI:GetInstanceElementID(100024, 7950)] = EHI:ClientCopyTrigger(original, { time = 12 + 12 + 4 + 10 + 30 })
+    other[EHI:GetInstanceElementID(100053, 7950)] = EHI:ClientCopyTrigger(original, { time = 12 + 4 + 10 + 30 })
+    other[EHI:GetInstanceElementID(100026, 7950)] = EHI:ClientCopyTrigger(original, { time = 4 + 10 + 30 })
+    other[EHI:GetInstanceElementID(100179, 7950)] = EHI:ClientCopyTrigger(original, { time = 10 + 30 })
+end
 
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:ShowLootCounter({ max = 4 })
 
@@ -69,12 +71,22 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        brooklyn_1010_opened_door_to_roof = 8000,
-        brooklyn_1010_secured_briefcase = 6000,
-        brooklyn_1010_used_zipline = 6000,
-        escape = 8000
+        { amount = 8000, name = "brooklyn_1010_opened_door_to_roof" },
+        { amount = 6000, name = "brooklyn_1010_secured_briefcase" },
+        { amount = 4000, name = "brooklyn_1010_used_zipline" },
+        { escape = 8000 }
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot_all = { max = 4 }
+            }
+        }
+    }
 })

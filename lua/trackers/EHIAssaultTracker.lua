@@ -86,6 +86,9 @@ function EHIAssaultTracker:init(panel, params)
         self:CheckIfHostageIsPresent()
         self._forced_icons[1].color = Control
     end
+    if params.random_time and not params.assault then
+        self._text_color = tweak_data.ehi.color.Inaccurate
+    end
     EHIAssaultTracker.super.init(self, panel, params)
     self._update = not params.stop_counting
 end

@@ -27,8 +27,13 @@ function EHIBuffManager:init()
     self._buffs = {}
     self._update_buffs = {}
     setmetatable(self._update_buffs, {__mode = "k"})
-    self._x = EHI:GetOption("buffs_x_offset")
-    self._y = EHI:GetOption("buffs_y_offset")
+    if EHI:IsVR() then
+        self._x = EHI:GetOption("buffs_vr_x_offset")
+        self._y = EHI:GetOption("buffs_vr_y_offset")
+    else
+        self._x = EHI:GetOption("buffs_x_offset")
+        self._y = EHI:GetOption("buffs_y_offset")
+    end
     self._scale = EHI:GetOption("buffs_scale")
     buff_w = buff_w * self._scale
     buff_h = buff_h * self._scale

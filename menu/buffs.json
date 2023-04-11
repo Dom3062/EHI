@@ -50,6 +50,42 @@
             "ehi_ver" : 58
         },
         {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "slider",
+            "id": "ehi_vr_x_offset",
+            "title": "ehi_vr_x_offset",
+            "description": "ehi_x_offset_desc",
+            "callback": "SetOption",
+            "callback_arguments" : "buffs_vr_x_offset",
+            "value": "buffs_vr_x_offset",
+            "default_value": 0,
+            "max": 1280,
+            "min": 0,
+            "step": 0,
+            "ehi_ver" : 144
+        },
+        {
+            "type": "slider",
+            "id": "ehi_vr_y_offset",
+            "title": "ehi_vr_y_offset",
+            "description": "ehi_y_offset_desc",
+            "callback": "SetOption",
+            "callback_arguments": "buffs_vr_y_offset",
+            "value": "buffs_vr_y_offset",
+            "default_value": 80,
+            "max": 720,
+            "min": 0,
+            "step": 0,
+            "ehi_ver" : 144
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
             "type": "slider",
             "id": "ehi_buff_scale_choice",
             "title": "ehi_scale",

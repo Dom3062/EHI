@@ -65,11 +65,27 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
 end
 EHI:ShowLootCounter({ max = max })
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        heli_escape = 2000,
-        all_bags_secured = 2000,
-        escape = 12000
+        { amount = 2000, name = "all_bags_secured" },
+        { escape = 12000 },
+        { amount = 2000, name = "heli_escape" }
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives =
+                {
+                    escape = true
+                }
+            },
+            max =
+            {
+                objectives = true
+            }
+        }
+    }
 })

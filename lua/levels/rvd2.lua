@@ -64,13 +64,25 @@ local DisableWaypoints =
 }
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        rvd2_hacking_done = 6000,
-        vault_drills_done = 2000,
-        rvd2_vault_frozen = 4000,
-        c4_set_up = 2000,
-        escape = 1000
+        { amount = 6000, name = "rvd2_hacking_done" },
+        { amount = 2000, name = "vault_drills_done" },
+        { amount = 4000, name = "rvd2_vault_frozen" },
+        { amount = 2000, name = "c4_set_up" },
+        { escape = 1000 }
     },
-    loot_all = 500
+    loot_all = 500,
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives = true,
+                loot_all = { times = 6 }
+            },
+            no_max = true
+        }
+    }
 })

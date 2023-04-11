@@ -79,12 +79,23 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        green_bridge_prisoner_found = 8000,
-        green_bridge_prisoner_escorted = 6000,
-        green_bridge_prisoner_defended = 6000,
-        escape = 4000
+        { amount = 8000, name = "green_bridge_prisoner_found" },
+        { amount = 6000, name = "green_bridge_prisoner_escorted" },
+        { amount = 6000, name = "green_bridge_prisoner_defended" },
+        { escape = 4000 }
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives = true
+            },
+            no_max = true
+        }
+    }
 })

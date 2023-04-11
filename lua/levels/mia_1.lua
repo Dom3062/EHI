@@ -193,15 +193,26 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        hm1_mobsters_killed = 4000,
-        hm1_cars_destroyed = 4000,
-        hm1_gas_station_destroyed = 4000,
-        hm1_hatch_open = 4000,
-        hm1_correct_barcode_scanned = 6000,
-        hm1_meth_cooked = 500,
-        escape = 4000
+        { amount = 4000, name = "hm1_mobsters_killed" },
+        { amount = 4000, name = "hm1_cars_destroyed" },
+        { amount = 4000, name = "hm1_gas_station_destroyed" },
+        { amount = 4000, name = "hm1_hatch_open" },
+        { amount = 6000, name = "hm1_correct_barcode_scanned" },
+        { escape = 4000 },
+        { amount = 500, name = "hm1_meth_cooked", optional = true }
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives = true
+            },
+            no_max = true
+        }
+    }
 })

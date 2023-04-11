@@ -89,12 +89,7 @@ EHI:AddXPBreakdown({
         {
             min =
             {
-                objectives =
-                {
-                    prison_entered = true,
-                    escape = true
-                },
-                loot_all = { times = 0 }
+                objectives = true
             },
             no_max = true
         }

@@ -187,3 +187,10 @@ function EHIAssaultDelayTracker:delete()
     end
     EHIAssaultDelayTracker.super.delete(self)
 end
+
+EHIInaccurateAssaultDelayTracker = class(EHIAssaultDelayTracker)
+EHIInaccurateAssaultDelayTracker._text_color = tweak_data.ehi.color.Inaccurate
+function EHIInaccurateAssaultDelayTracker:StartAnticipation(t)
+    self:SetTextColor(Color.white)
+    EHIInaccurateAssaultDelayTracker.super.StartAnticipation(self, t)
+end

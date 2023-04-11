@@ -4,11 +4,8 @@ if EHI:CheckLoadHook("LevelsTweakData") then
 end
 
 function LevelsTweakData:GetGroupAIState()
-	local level_data = self[Global.game_settings.level_id]
-	if level_data then
-        return level_data.group_ai_state or "besiege"
-	end
-	return "besiege"
+	local level_data = self[Global.game_settings.level_id] or {}
+    return level_data.group_ai_state or "besiege"
 end
 
 function LevelsTweakData:IsLevelSkirmish()

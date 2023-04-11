@@ -25,11 +25,25 @@ local triggers = {
     [101149] = { icons = boat_icon, special_function = GetFromCache },
     [101150] = { icons = boat_icon, special_function = GetFromCache },
 
-    [1011480] = { time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate }
+    [1] = { special_function = SF.RemoveTrigger, data = { 101148, 101149, 101150, 1 }},
+
+    [1011480] = { time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate },
+
+    [100124] = { special_function = SF.CustomCode, f = function()
+        local bags = managers.ehi:CountLootbagsOnTheGround(10)
+        if bags % 4 == 0 then -- 4/8/12
+            local trigger = bags - 3
+            EHI:AddCallback(EHI.CallbackMessage.LootSecured, function(self)
+                if self:GetSecuredBagsAmount() == trigger then
+                    EHI:Trigger(1)
+                end
+            end)
+        end
+    end}
 }
 if EHI:IsClient() then
     local SetTrackerAccurate = EHI:GetFreeCustomSpecialFunctionID()
-    local boat_return = { time = 450/30, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = SetTrackerAccurate }
+    local boat_return = { time = anim_delay, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = SetTrackerAccurate }
     triggers[100470] = boat_return
     triggers[100472] = boat_return
     triggers[100474] = boat_return
@@ -62,7 +76,7 @@ local achievements =
 local other =
 {
     [100124] = EHI:AddLootCounter(function()
-        local bags = managers.ehi:CountLootbagsOnTheGround() - 10
+        local bags = managers.ehi:CountLootbagsOnTheGround(10)
         EHI:ShowLootCounterNoCheck({ max = bags })
     end)
 }
@@ -87,16 +101,28 @@ EHI:RegisterCustomSpecialFunction(GetFromCache, function(trigger, ...)
     end
 end)
 EHI:RegisterCustomSpecialFunction(uno_8, function(trigger, ...)
-    local bags = managers.ehi:CountLootbagsOnTheGround() - 10
+    local bags = managers.ehi:CountLootbagsOnTheGround(10)
     if bags == 12 then
         EHI:CheckCondition(trigger)
     end
 end)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        escape = 12000,
-        watchdogs_bonus_xp = 1500
+        { amount = 1500, name = "watchdogs_bonus_xp" },
+        { escape = 12000 },
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                max =
+                {
+                    watchdogs_bonus_xp = { times = 9 }
+                }
+            }
+        }
+    }
 })

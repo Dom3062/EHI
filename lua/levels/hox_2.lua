@@ -176,7 +176,7 @@ EHI:AddXPBreakdown({
         { amount = 4000, name = "hox2_reached_server_room" },
         { amount = 8000, name = "hox2_random_obj" },
         { escape = 6000 },
-        { amount = 4000, name = "hox2_no_keycard_bonus_xp" },
+        { amount = 4000, name = "hox2_no_keycard_bonus_xp", optional = true },
     },
     total_xp_override =
     {
@@ -184,12 +184,7 @@ EHI:AddXPBreakdown({
         {
             min =
             {
-                objectives =
-                {
-                    hox2_reached_server_room = true,
-                    hox2_random_obj = true,
-                    escape = true
-                }
+                objectives = true
             }
         },
         objectives =

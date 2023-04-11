@@ -38,6 +38,7 @@
             "callback": ["SetOption", "UpdateXOffset"],
             "callback_arguments" : "x_offset",
             "value": "x_offset",
+            "parent_func" : "IsNotVR",
             "default_value": 0,
             "max": 1280,
             "min": 0,
@@ -51,6 +52,7 @@
             "callback": ["SetOption", "UpdateYOffset"],
             "callback_arguments": "y_offset",
             "value": "y_offset",
+            "parent_func" : "IsNotVR",
             "default_value": 150,
             "max": 720,
             "min": 0,
@@ -78,6 +80,7 @@
             "callback": ["SetOption", "UpdateScale"],
             "callback_arguments": "scale",
             "value": "scale",
+            "parent_func" : "IsNotVR",
             "default_value": 1,
             "max": 2,
             "min": 0.5,
@@ -109,6 +112,7 @@
                 "ehi_tracker_alignment_2"
             ],
             "value": "tracker_alignment",
+            "parent_func" : "IsNotVR",
             "default_value": 1,
             "ehi_ver" : 30
         },
@@ -132,10 +136,12 @@
             "callback": "SetOption",
             "callback_arguments" : "vr_x_offset",
             "value": "vr_x_offset",
+            "parent_func" : "IsVR",
             "default_value": 0,
             "max": 1280,
             "min": 0,
-            "step": 0
+            "step": 0,
+            "ehi_ver" : 143
         },
         {
             "type": "slider",
@@ -145,10 +151,12 @@
             "callback": "SetOption",
             "callback_arguments": "vr_y_offset",
             "value": "vr_y_offset",
+            "parent_func" : "IsVR",
             "default_value": 150,
             "max": 720,
             "min": 0,
-            "step": 0
+            "step": 0,
+            "ehi_ver" : 143
         },
         {
             "type": "slider",
@@ -158,6 +166,7 @@
             "callback": "SetOption",
             "callback_arguments": "vr_scale",
             "value": "vr_scale",
+            "parent_func" : "IsVR",
             "default_value": 1,
             "max": 5,
             "min": 0.5,
@@ -175,6 +184,7 @@
                 "ehi_tracker_alignment_2"
             ],
             "value": "vr_tracker_alignment",
+            "parent_func" : "IsVR",
             "default_value": 1,
             "ehi_ver" : 140
         },
@@ -204,7 +214,7 @@
             "title": "ehi_buffs_menu",
             "description": "ehi_buffs_menu_desc",
             "next_menu": "ehi_buffs_menu",
-            "ehi_ver" : 111
+            "ehi_ver" : 144
         },
         {
             "type": "button",

@@ -37,11 +37,11 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        pc_found = 3000,
-        pc_hack = 6000,
-        big_oil2_correct_engine = 6000,
-        escape = 6000
+        { amount = 3000, name = "pc_found" },
+        { amount = 6000, name = "pc_hack" },
+        { amount = 6000, name = "big_oil2_correct_engine" },
+        { escape = 6000 }
     }
 })
