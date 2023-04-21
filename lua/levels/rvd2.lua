@@ -41,8 +41,12 @@ if EHI:IsClient() then
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
+}
 
-EHI:ParseTriggers({ mission = triggers })
+EHI:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowAchievementLootCounter({
     achievement = "rvd_11",
     max = 19,

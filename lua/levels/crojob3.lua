@@ -147,12 +147,24 @@ EHI:RegisterCustomSpecialFunction(cow_4, function(trigger, element, enabled)
     end
 end)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        vault_found = 2000,
-        the_bomb2_vault_filled = 12000,
-        ggc_c4_taken = 6000,
-        escape = 12000
+        { amount = 2000, name = "vault_found" },
+        { amount = 12000, name = "the_bomb2_vault_filled" },
+        { amount = 6000, name = "ggc_c4_taken" },
+        { escape = 12000 }
     },
-    loot_all = 1500
+    loot_all = 1500,
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives = true,
+                loot_all = { times = 4 }
+            },
+            no_max = true
+        }
+    }
 })

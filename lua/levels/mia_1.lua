@@ -181,11 +181,17 @@ if LootCounter then
     end }
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/001
     other[100523] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
+    other[100550] = DecreaseMaximumTrigger2 -- Car set on fire
     -- units/payday2/vehicles/str_vehicle_car_crossover_burned/str_vehicle_car_crossover_burned/001
     other[100849] = DecreaseMaximumTrigger2 -- Money should spawn, but ElementEnableUnit does not have any unit to spawn and bag counter goes up by 1
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/006
     other[100918] = DecreaseMaximumTrigger2 -- Nothing spawned
     other[100912] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
+    other[100553] = DecreaseMaximumTrigger2 -- Car set on fire
+
+    -- Loot removal (Fire)
+    -- coke, meth, money, weapon
+    EHI:HookLootRemovalElement({ 104475, 106825, 106826, 106827 })
 end
 
 EHI:ParseTriggers({

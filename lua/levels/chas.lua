@@ -108,3 +108,63 @@ local tbl =
     [EHI:GetInstanceUnitID(100065, 5950)] = { icons = { Icon.Vault }, remove_on_pause = true }
 }
 EHI:UpdateUnits(tbl)
+local xp_override =
+{
+    params =
+    {
+        min =
+        {
+            objectives = true
+        },
+        max =
+        {
+            objectives = true,
+            loot_all = { times = 14 }
+        }
+    }
+}
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "china1_alarm_disabled" },
+                { amount = 1000, name = "china1_found_basement_door" },
+                { amount = 1000, name = "diamond_heist_found_keycard" },
+                { amount = 1000, name = "china1_enter_warehouse" },
+                { amount = 500, name = "vault_found" },
+                { amount = 2000, name = "btm_used_keycard" },
+                { amount = 3000, name = "china1_auction_room_stealth" },
+                { amount = 1000, name = "timelock_done" },
+                { amount = 1000, name = "ggc_laser_disabled" },
+                { amount = 1000, name = "china1_vault_gate_open" },
+                { amount = 1000, name = "china1_vault_pc_hack", optional = true },
+                { amount = 1000, name = "china1_dragon_statue_picked_up" },
+                { amount = 2000, name = "china1_dragon_statue_secured" },
+                { escape = 1000 }
+            },
+            loot_all = 1000,
+            total_xp_override = xp_override
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "pc_hack" },
+                { amount = 1000, name = "china1_found_forklift_keys" },
+                { amount = 500, name = "china1_enter_warehouse" },
+                { amount = 2000, name = "china1_pick_up_thermal_drill" },
+                { amount = 1000, name = "china1_placed_thermal_drill" },
+                { amount = 1000, name = "china1_gas_disabled" },
+                { amount = 3000, name = "vault_open" },
+                { amount = 2500, name = "china1_auction_room_loud" },
+                { amount = 1000, name = "china1_vault_gate_open" },
+                { escape = 3000 }
+            },
+            loot_all = 1000,
+            total_xp_override = xp_override
+        }
+    }
+})

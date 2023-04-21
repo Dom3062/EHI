@@ -32,6 +32,11 @@ function LevelsTweakData:IsStealthRequired()
 end
 
 function LevelsTweakData:IsLevelChristmas()
-	local level_data = tweak_data.levels[Global.game_settings.level_id] or {}
+	local level_data = self[Global.game_settings.level_id] or {}
 	return level_data.is_christmas_heist
+end
+
+function LevelsTweakData:IsLevelCustom(level_id)
+	local level_data = self[level_id or Global.game_settings.level_id] or {}
+	return level_data.custom or false
 end

@@ -35,20 +35,22 @@ function EHIameno3Tracker:OverridePanel()
     end
 end
 
-function EHIameno3Tracker:AnimateWarning()
+function EHIameno3Tracker:AnimateColor()
     if self._text and alive(self._text) then
         self._text:animate(function(o)
+            local c = Color(self._text_color.r, self._text_color.g, self._text_color.b)
             while true do
-                local t = 0
-                while t < 1 do
-                    t = t + coroutine.yield()
-                    local n = 1 - sin(t * 180)
-                    --local r = lerp(1, 0, n)
-                    local g = lerp(1, 0, n)
-                    local c = Color(1, g, g)
+                local t = 1
+                while t > 0 do
+                    t = t - coroutine.yield()
+                    local n = sin(t * 180)
+                    c.r = lerp(self._text_color.r, self._warning_color.r, n)
+                    c.g = lerp(self._text_color.g, self._warning_color.g, n)
+                    c.b = lerp(self._text_color.b, self._warning_color.b, n)
                     o:set_color(c)
                     self._money_text:set_color(c)
                 end
+                t = 1
             end
         end)
     end

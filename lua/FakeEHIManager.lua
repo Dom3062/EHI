@@ -4,6 +4,7 @@ local panel_size_original = 32
 local panel_offset_original = 6
 local panel_size = panel_size_original
 local panel_offset = panel_offset_original
+local selected_color = Color(255, 255, 165, 0) / 255
 FakeEHIManager = class()
 FakeEHIManager.make_fine_text = BlackMarketGui.make_fine_text
 function FakeEHIManager:init(panel)
@@ -575,7 +576,7 @@ function FakeEHITracker:SetPos(x, y)
 end
 
 function FakeEHITracker:SetTextColor(selected)
-    self._text:set_color(selected and tweak_data.ehi.color.Inaccurate or Color.white)
+    self._text:set_color(selected and selected_color or Color.white)
 end
 
 function FakeEHITracker:UpdateBGVisibility(visibility, corners)
@@ -799,7 +800,7 @@ end
 
 function FakeEHITimerTracker:SetTextColor(selected)
     FakeEHITimerTracker.super.SetTextColor(self, selected)
-    self._progress_text:set_color(selected and tweak_data.ehi.color.Inaccurate or Color.white)
+    self._progress_text:set_color(selected and selected_color or Color.white)
 end
 
 function FakeEHITimerTracker:UpdateTextScale(scale)

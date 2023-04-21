@@ -31,9 +31,10 @@ function EHIWaypoint:SetTime(t)
 end
 
 function EHIWaypoint:SetColor(color)
-    self._timer:set_color(color)
-    self._bitmap:set_color(color)
-    self._arrow:set_color(color)
+    local c = color or self._default_color
+    self._timer:set_color(c)
+    self._bitmap:set_color(c)
+    self._arrow:set_color(c)
 end
 
 function EHIWaypoint:AddWaypointToUpdate()
@@ -56,6 +57,6 @@ if EHI:IsVR() then
     EHIWaypointVR.old_SetColor = EHIWaypoint.SetColor
     function EHIWaypointVR:SetColor(color)
         self:old_SetColor(color)
-        self._bitmap_world:set_color(color)
+        self._bitmap_world:set_color(color or self._default_color)
     end
 end

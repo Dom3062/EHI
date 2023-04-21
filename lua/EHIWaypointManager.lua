@@ -176,14 +176,6 @@ function EHIWaypointManager:SetWaypointPause(id, pause)
     end
 end
 
-function EHIWaypointManager:PauseWaypoint(id)
-    self:SetWaypointPause(id, true)
-end
-
-function EHIWaypointManager:UnpauseWaypoint(id)
-    self:SetWaypointPause(id, false)
-end
-
 function EHIWaypointManager:AddPagerWaypoint(params)
     self._pager_waypoints[params.id] = true
     self:AddWaypoint(params.id, params)

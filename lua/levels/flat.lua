@@ -2,7 +2,8 @@ local EHI = EHI
 local Icon = EHI.Icons
 EHIHeliTracker = class(EHICountTracker)
 EHIHeliTracker._forced_icons = { "enemy", { icon = Icon.Wait, visible = false } }
-EHIHeliTracker.AnimateCompletion = EHITimerTracker.AnimateCompletion
+EHIHeliTracker.AnimateColor = EHIWarningTracker.AnimateColor
+EHIHeliTracker._warning_color = EHITimerTracker._completion_color
 function EHIHeliTracker:OverridePanel()
     self._time_text = self._time_bg_box:text({
         name = "time_text",
@@ -24,7 +25,7 @@ function EHIHeliTracker:update(t, dt)
     self._time_text:set_text(EHIHeliTracker.super.super.Format(self))
     if self._time <= 10 and not self._time_warning then
         self._time_warning = true
-        self:AnimateCompletion()
+        self:AnimateColor()
     end
     if self._time <= 0 then
         self:ObjectiveComplete("time")
@@ -199,16 +200,16 @@ EHI:RegisterCustomSpecialFunction(DelayExecution, function(trigger, ...)
     end)
 end)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        panic_room_found = 2000,
-        saws_done = 8000,
-        panic_room_killed_all_snipers = 3000,
-        c4_set_up = 2000,
-        panic_room_roof_secured = 4000,
-        panic_room_magnet_attached = 1000,
-        panic_room_defended_heli = 3000,
-        escape = 2000
+        { amount = 2000, name = "panic_room_found" },
+        { amount = 8000, name = "saws_done" },
+        { amount = 3000, name = "panic_room_killed_all_snipers" },
+        { amount = 2000, name = "c4_set_up" },
+        { amount = 4000, name = "panic_room_roof_secured" },
+        { amount = 1000, name = "panic_room_magnet_attached" },
+        { amount = 3000, name = "panic_room_defended_heli" },
+        { escape = 2000 }
     },
     loot =
     {
@@ -216,5 +217,15 @@ EHI:AddXPBreakdown({
         coke = 500,
         toothbrush = 1000
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives = true
+            },
+            no_max = true
+        }
+    }
 })

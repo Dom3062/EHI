@@ -64,7 +64,9 @@ if EHI:GetOption("show_escape_chance") then
     local ShowVanCrashChance = EHI:GetFreeCustomSpecialFunctionID()
     other[100342] = { special_function = ShowVanCrashChance }
     EHI:RegisterCustomSpecialFunction(ShowVanCrashChance, function(...)
-        managers.ehi:AddEscapeChanceTracker(false, 25)
+        if managers.ehi:TrackerDoesNotExist("EscapeChance") then
+            managers.ehi:AddEscapeChanceTracker(false, 25)
+        end
     end)
 end
 
@@ -73,7 +75,11 @@ EHI:ParseTriggers({
 })
 local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker")
 EHI:AddOnAlarmCallback(function(dropin)
-    if dropin or not ShowAssaultDelay then
+    if dropin then
+        EHI:Trigger(100342)
+        return
+    end
+    if not ShowAssaultDelay then
         return
     end
     managers.ehi:AddTracker({
@@ -89,5 +95,24 @@ EHI:AddXPBreakdown({
         rats2_trade = 6000,
         rats2_trade_and_steal = 4000
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objective =
+                {
+                    rats2_info_destroyed = true
+                }
+            },
+            max =
+            {
+                objective =
+                {
+                    rats2_trade = true
+                }
+            }
+        }
+    }
 })

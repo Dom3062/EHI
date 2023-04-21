@@ -1,5 +1,7 @@
 EHIcorp12Tracker = class(EHIAchievementTracker)
 function EHIcorp12Tracker:SetMPState()
+    self._text:stop()
+    self._time_warning = false
     self._time = self._time - 180
     self._check_anim_progress = self._time <= 10
 end
@@ -17,10 +19,7 @@ local triggers =
     [EHI:GetInstanceElementID(100018, 12190)] = { time = 10, id = "Thermite", icons = { Icon.Fire } }
 }
 if EHI:IsClient() then
-    local escape_time = 15
-    if OVKorAbove then
-        escape_time = 30
-    end
+    local escape_time = OVKorAbove and 30 or 15
     triggers[102406].time = escape_time
     triggers[102406].random_time = 15
     triggers[102406].delay_only = true

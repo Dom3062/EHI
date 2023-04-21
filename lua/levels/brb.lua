@@ -71,11 +71,22 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        vault_found = 4000,
-        vault_open = 8000,
-        brb_medallion_taken = 4000
+        { amount = 4000, name = "vault_found" },
+        { amount = 8000, name = "vault_open" },
+        { amount = 4000, name = "brb_medallion_taken" }
     },
-    loot_all = 400
+    loot_all = 400,
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives = true
+            },
+            no_total_xp = true
+        }
+    }
 })

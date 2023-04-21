@@ -22,11 +22,24 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        big_oil_intel_pickup = { amount = 1500, times = 3 },
-        big_oil_safe_open = 6000,
-        escape = 6000
+        { amount = 1500, name = "big_oil_intel_pickup", times = 3, optional = true },
+        { amount = 6000, name = "big_oil_safe_open" },
+        { escape = 6000 }
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives = true
+            },
+            max =
+            {
+                objectives = true
+            }
+        }
+    }
 })

@@ -194,16 +194,30 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    tactic =
     {
-        the_bomb_open_dock_gate = { amount = 2500, stealth = true },
-        the_bomb_find_coordinates = { amount = 2500, stealth = true },
-        the_bomb_call_captain = { amount = 2500, stealth = true },
-        the_bomb_find_bomb_stealth = { amount = 2500, stealth = true },
-        the_bomb_blowup_dock_gate = { amount = 6000, loud = true },
-        pc_hack = { amount = 6000, loud = true },
-        the_bomb_find_bomb_loud = { amount = 6000, loud = true },
-        escape = 6000
-    },
-    loot_all = 500
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 2500, name = "the_bomb_open_dock_gate" },
+                { amount = 2500, name = "the_bomb_find_coordinates" },
+                { amount = 2500, name = "the_bomb_call_captain" },
+                { amount = 2500, name = "the_bomb_find_bomb" },
+                { escape = 6000 }
+            },
+            loot_all = 500
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 6000, name = "the_bomb_blowup_dock_gate" },
+                { amount = 6000, name = "pc_hack" },
+                { amount = 6000, name = "the_bomb_find_bomb" },
+                { escape = 6000 }
+            },
+            loot_all = 500
+        }
+    }
 })

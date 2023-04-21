@@ -1,24 +1,10 @@
 local EHI = EHI
-local lerp = math.lerp
-local sin = math.sin
-local min = math.min
-local floor = math.floor
 local Color = Color
-local function anim_completion(o, start_t)
-    while true do
-        local t = start_t
-        while t > 0 do
-            t = t - coroutine.yield()
-            local n = sin(t * 180)
-            local g = lerp(1, 0, n)
-            o:set_color(Color(g, 1, g))
-        end
-        start_t = 1
-    end
-end
-EHITimerTracker = class(EHITracker)
-EHITimerTracker.AnimateWarning = EHIWarningTracker.AnimateWarning
+EHITimerTracker = class(EHIWarningTracker)
 EHITimerTracker._update = false
+EHITimerTracker._autorepair_color = EHI:GetTWColor("drill_autorepair")
+EHITimerTracker._completion_color = EHI:GetTWColor("completion")
+EHITimerTracker._paused_color = EHIPausableTracker._paused_color
 function EHITimerTracker:init(panel, params)
     if params.icons[1].icon then
         params.icons[2] = { icon = "faster", visible = false, alpha = 0.25 }
@@ -39,34 +25,27 @@ function EHITimerTracker:init(panel, params)
     self._animate_warning = params.warning
     if params.completion then
         self._animate_warning = true
-        self.AnimateWarning = self.AnimateCompletion
+        self._warning_color = self._completion_color
     end
 end
 
 function EHITimerTracker:SetTimeNoAnim(time) -- No fit text function needed, these timers just run down
     self._time = time
     self._text:set_text(self:Format())
-    if time <= 10 and self._animate_warning and not self._warning_started then
-        self._warning_started = true
-        self:AnimateWarning()
+    if time <= 10 and self._animate_warning and not self._anim_started then
+        self._anim_started = true
+        self:AnimateColor()
     end
 end
 
-function EHITimerTracker:AnimateCompletion(check_progress)
-    if self._text and alive(self._text) then
-        local start_t = check_progress and (1 - min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 1
-        self._text:animate(anim_completion, start_t)
-    end
-end
-
-function EHITimerTracker:SetAnimateWarning(completion)
+function EHITimerTracker:SetAnimation(completion)
     self._animate_warning = true
     if completion then
-        self.AnimateWarning = self.AnimateCompletion
+        self._warning_color = self._completion_color
     end
-    if self._time <= 10 and not self._warning_started then
-        self._warning_started = true
-        self:AnimateWarning(true)
+    if self._time <= 10 and not self._anim_started then
+        self._anim_started = true
+        self:AnimateColor(true)
     end
 end
 
@@ -114,22 +93,22 @@ function EHITimerTracker:GetUpgradeColor(level)
 end
 
 function EHITimerTracker:SetAutorepair(state)
-    self._icon1:set_color(state and tweak_data.ehi.color.DrillAutorepair or Color.white)
+    self._icon1:set_color(state and self._autorepair_color or Color.white)
 end
 
 function EHITimerTracker:SetJammed(jammed)
-    if self._warning_started then
+    if self._anim_started then
         self._text:stop()
-        self._warning_started = false
+        self._anim_started = false
     end
     self._jammed = jammed
     self:SetTextColor()
 end
 
 function EHITimerTracker:SetPowered(powered)
-    if self._warning_started then
+    if self._anim_started then
         self._text:stop()
-        self._warning_started = false
+        self._anim_started = false
     end
     self._not_powered = not powered
     self:SetTextColor()
@@ -142,19 +121,12 @@ end
 
 function EHITimerTracker:SetTextColor()
     if self._jammed or self._not_powered then
-        self._text:set_color(Color.red)
+        self._text:set_color(self._paused_color)
     else
         self._text:set_color(Color.white)
-        if self._time <= 10 and self._animate_warning and not self._warning_started then
-            self._warning_started = true
-            self:AnimateWarning(true)
+        if self._time <= 10 and self._animate_warning and not self._anim_started then
+            self._anim_started = true
+            self:AnimateColor(true)
         end
     end
-end
-
-function EHITimerTracker:delete()
-    if self._text and alive(self._text) then
-        self._text:stop()
-    end
-    EHITimerTracker.super.delete(self)
 end

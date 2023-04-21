@@ -37,13 +37,13 @@ if EHI:CanShowAchievement("pig_7") then
     achievements.pig_7 = { elements = {} }
     for _, index in ipairs(start_index) do
         achievements.pig_7.elements[EHI:GetInstanceElementID(100024, index)] = { time = 5, class = TT.Achievement }
-        achievements.pig_7.elements[EHI:GetInstanceElementID(100039, index)] = { special_function = SF.SetAchievementFailed } -- Hostage blew out
+        achievements.pig_7.elements[EHI:GetInstanceElementID(100016, index)] = { special_function = SF.SetAchievementFailed } -- Hostage blew out
         achievements.pig_7.elements[EHI:GetInstanceElementID(100027, index)] = { special_function = SF.SetAchievementComplete } -- Hostage saved
     end
 else
     for _, index in ipairs(start_index) do
         triggers[EHI:GetInstanceElementID(100024, index)] = { time = 5, id = "HostageBomb", icons = { Icon.Hostage, Icon.C4 }, class = TT.Warning }
-        triggers[EHI:GetInstanceElementID(100039, index)] = { id = "HostageBomb", special_function = SF.RemoveTracker } -- Hostage blew out
+        triggers[EHI:GetInstanceElementID(100016, index)] = { id = "HostageBomb", special_function = SF.RemoveTracker } -- Hostage blew out
         triggers[EHI:GetInstanceElementID(100027, index)] = { id = "HostageBomb", special_function = SF.RemoveTracker } -- Hostage saved
     end
 end
@@ -56,15 +56,70 @@ else
 end
 
 local LootCounter = EHI:GetOption("show_loot_counter")
+local MoneyBagsInVault = 1
+if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
+    MoneyBagsInVault = 2
+elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+    MoneyBagsInVault = 3
+end
+local MoneyAroundHostage = 0
+local HostageMoneyTaken = 0
+local _HostageExploded = false
+local function HostageMoneyInteracted(...)
+    if _HostageExploded then
+        return
+    end
+    HostageMoneyTaken = HostageMoneyTaken + 1
+end
+local function HostageExploded()
+    _HostageExploded = true
+    local count = MoneyAroundHostage - HostageMoneyTaken
+    if count ~= 0 then
+        managers.ehi:DecreaseTrackerProgressMax("LootCounter", count)
+    end
+end
 local other =
 {
     [100043] = EHI:AddLootCounter(function()
-        --[[if EHI:IsHost() then
-        else
-        end]]
-    end, LootCounter)
+        local loot_triggers = {}
+        MoneyAroundHostage = managers.ehi:CountInteractionAvailable("money_small")
+        for _, index in ipairs(start_index) do
+            if managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceElementID(100000, index)) then -- Bomb guy is here
+                for i = 100003, 100006, 1 do
+                    managers.mission:add_runned_unit_sequence_trigger(EHI:GetInstanceElementID(i, index), "interact", HostageMoneyInteracted )
+                end
+                loot_triggers[EHI:GetInstanceElementID(100029, index)] = { special_function = SF.CustomCode, f = HostageExploded }
+                break
+            end
+        end
+        EHI:ShowLootCounterNoCheck({
+            max = 9,
+            additional_loot = MoneyBagsInVault + MoneyAroundHostage,
+            offset = true,
+            triggers = loot_triggers,
+            hook_triggers = true,
+            client_from_start = true
+        })
+    end, LootCounter),
+
+    [100520] = EHI:AddAssaultDelay({ time = 30 }) -- Diff is applied earlier
 }
 if LootCounter then
+    -- coke, money, meth
+    EHI:HookLootRemovalElement({ 101681, 101700, 101701 })
+    local function CokeDestroyed()
+        managers.ehi:DecreaseTrackerProgressMax("LootCounter")
+    end
+    local CokeDestroyedTrigger = { special_function = SF.CustomCode, f = CokeDestroyed }
+    other[101264] = CokeDestroyedTrigger
+    other[101271] = CokeDestroyedTrigger
+    other[101272] = CokeDestroyedTrigger
+    other[101274] = CokeDestroyedTrigger
+    other[101276] = CokeDestroyedTrigger
+    other[101278] = CokeDestroyedTrigger
+    other[101279] = CokeDestroyedTrigger
+    other[101280] = CokeDestroyedTrigger
+    other[101281] = CokeDestroyedTrigger
 end
 
 EHI:ParseTriggers({

@@ -88,14 +88,17 @@ end
 
 function EHIAchievementProgressTracker:SetFailed()
     EHIAchievementProgressTracker.super.SetFailed(self)
+    if self._status_is_overridable then
+        self._achieved_popup_showed = nil
+    end
     if self._show_failed then
         ShowFailedPopup(self)
     end
 end
 
 EHIAchievementUnlockTracker = class(EHIWarningTracker)
-EHIAchievementUnlockTracker.AnimateWarning = EHITimerTracker.AnimateCompletion
 EHIAchievementUnlockTracker._popup_type = "achievement"
+EHIAchievementUnlockTracker._warning_color = EHITimerTracker._completion_color
 EHIAchievementUnlockTracker._show_started = EHIAchievementTracker._show_started
 EHIAchievementUnlockTracker._show_failed = EHIAchievementTracker._show_failed
 function EHIAchievementUnlockTracker:init(panel, params)

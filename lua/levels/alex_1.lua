@@ -98,11 +98,31 @@ if EHI:GetOption("show_escape_chance") then
     end)
 end
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        rats_lab_exploded = 12000,
-        rats_3_bags_cooked = 30000,
-        rats_all_7_bags_cooked = 40000
+        { amount = 12000, name = "rats_lab_exploded" },
+        { amount = 30000, name = "rats_3_bags_cooked" },
+        { amount = 40000, name = "rats_all_7_bags_cooked" }
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives =
+                {
+                    rats_lab_exploded = true
+                }
+            },
+            max =
+            {
+                objectives =
+                {
+                    rats_3_bags_cooked = true,
+                    rats_all_7_bags_cooked = true
+                }
+            }
+        }
+    }
 })

@@ -55,6 +55,7 @@
         <post hook_id="lib/setups/setup" :script_path="EHIManagerVR.lua" />
         <post hook_id="lib/setups/setup" :script_path="EHIWaypointManager.lua" />
         <post hook_id="lib/setups/setup" :script_path="EHIBuffManager.lua" />
+        <post hook_id="lib/setups/setup" :script_path="EHICommon.lua" />
         <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
 

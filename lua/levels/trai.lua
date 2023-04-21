@@ -6,7 +6,7 @@ if EHI:GetOption("show_one_icon") then
 end
 EHICraneFixChanceTracker = class(EHIWarningTracker)
 EHICraneFixChanceTracker._forced_icons = WinchFix
-EHICraneFixChanceTracker.AnimateWarning = EHITimerTracker.AnimateCompletion
+EHICraneFixChanceTracker._warning_color = EHITimerTracker._completion_color
 EHICraneFixChanceTracker.FormatChance = EHIChanceTracker.Format
 EHICraneFixChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHICraneFixChanceTracker.SetFailed = EHIAchievementTracker.SetFailed

@@ -305,6 +305,41 @@ local function LoadDefaultValues(self)
         vr_scale = 1,
         vr_tracker_alignment = 1, -- 1 = Vertical, 2 = Horizontal
 
+        colors =
+        {
+            inaccurate =
+            {
+                r = 255,
+                g = 165,
+                b = 0
+            },
+            pause =
+            {
+                r = 255,
+                g = 0,
+                b = 0
+            },
+            drill_autorepair =
+            {
+                r = 137,
+                g = 209,
+                b = 254
+            },
+            warning =
+            {
+                r = 255,
+                g = 0,
+                b = 0
+            },
+            completion =
+            {
+                r = 0,
+                g = 255,
+                b = 0
+            },
+
+        },
+
         -- Visuals
         show_tracker_bg = true,
         show_tracker_corners = true,
@@ -701,6 +736,13 @@ function EHI:GetOption(option)
     end
 end
 
+function EHI:GetTWColor(color)
+    if color and self.settings.colors[color] then
+        return self:GetColor(self.settings.colors[color])
+    end
+    return Color.white
+end
+
 ---@return boolean
 function EHI:ShowMissionAchievements()
     return self:GetUnlockableAndOption("show_achievements_mission") and self:GetUnlockableOption("show_achievements")
@@ -904,6 +946,56 @@ function EHI:UnhookElement(id)
     Hooks:RemovePostHook("EHI_Element_" .. id)
 end
 
+---Hooks elements that removes loot bags (due to fire or out of bounds)
+---@param elements number|table Index or indexes of ElementCarry that removes loot bags with operation "remove"
+function EHI:HookLootRemovalElement(elements)
+    if type(elements) ~= "table" and type(elements) ~= "number" then
+        return
+    end
+    local f
+    local HookFunction
+    local ElementFunction
+    if self:IsHost() then
+        HookFunction = self.PreHookWithID
+        ElementFunction = self.HostElement
+        f = function(e, instigator, ...)
+            if not e._values.enabled or not alive(instigator) then
+                return
+            end
+            if e._values.type_filter and e._values.type_filter ~= "none" then
+                local carry_ext = instigator:carry_data()
+                if not carry_ext then
+                    return
+                end
+                local carry_id = carry_ext:carry_id()
+                if carry_id ~= e._values.type_filter then
+                    return
+                end
+            end
+            managers.ehi:DecreaseTrackerProgressMax("LootCounter")
+        end
+    else
+        HookFunction = self.HookWithID
+        ElementFunction = self.ClientElement
+        f = function(...)
+            managers.ehi:DecreaseTrackerProgressMax("LootCounter")
+        end
+    end
+    if type(elements) == "table" then
+        for _, index in ipairs(elements) do
+            local element = managers.mission:get_element_by_id(index)
+            if element then
+                HookFunction(self, element, ElementFunction, "EHI_Prehook_Element_" .. tostring(element), f)
+            end
+        end
+    else -- number
+        local element = managers.mission:get_element_by_id(elements)
+        if element then
+            HookFunction(self, element, ElementFunction, "EHI_Element_" .. tostring(element), f)
+        end
+    end
+end
+
 ---@return boolean
 function EHI:ShowDramaTracker()
     return self:IsHost() and self:GetOption("show_drama_tracker")
@@ -1002,7 +1094,8 @@ function EHI:SetSyncTriggers(triggers)
 end
 
 function EHI:AddSyncTrigger(id, trigger)
-    self:SetSyncTriggers({ [id] = trigger })
+    self._sync_triggers = self._sync_triggers or {}
+    self._sync_triggers[id] = deep_clone(trigger)
 end
 
 function EHI:AddTrackerSynced(id, delay)
@@ -1306,24 +1399,6 @@ function EHI:UnhookTrigger(id)
 end
 
 ---@param id string
-local function PauseTracker(id)
-    managers.ehi:PauseTracker(id)
-    managers.ehi_waypoint:PauseWaypoint(id)
-end
-
----@param id string
-local function UnpauseTracker(id)
-    managers.ehi:UnpauseTracker(id)
-    managers.ehi_waypoint:UnpauseWaypoint(id)
-end
-
----@param id string
-local function RemoveTracker(id)
-    managers.ehi:ForceRemoveTracker(id)
-    managers.ehi_waypoint:RemoveWaypoint(id)
-end
-
----@param id string
 local function HideTracker(id)
     managers.ehi:x()
     managers.ehi_waypoint:RemoveWaypoint(id)
@@ -1342,18 +1417,18 @@ function EHI:Trigger(id, element, enabled)
             if f == SF.RemoveTracker then
                 if trigger.data then
                     for _, tracker in ipairs(trigger.data) do
-                        RemoveTracker(tracker)
+                        managers.ehi_common:Remove(tracker)
                     end
                 else
-                    RemoveTracker(trigger.id)
+                    managers.ehi_common:Remove(trigger.id)
                 end
             elseif f == SF.PauseTracker then
-                PauseTracker(trigger.id)
+                managers.ehi_common:Pause(trigger.id)
             elseif f == SF.UnpauseTracker then
-                UnpauseTracker(trigger.id)
+                managers.ehi_common:Unpause(trigger.id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.ehi:TrackerExists(trigger.id) or managers.ehi_waypoint:WaypointExists(trigger.id) then
-                    UnpauseTracker(trigger.id)
+                if managers.ehi_common:Exists(trigger.id) then
+                    managers.ehi_common:Unpause(trigger.id)
                 else
                     self:CheckCondition(trigger)
                 end
@@ -1362,7 +1437,7 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.ReplaceTrackerWithTracker then
-                RemoveTracker(trigger.data.id)
+                managers.ehi_common:Remove(trigger.data.id)
                 self:CheckCondition(trigger)
             elseif f == SF.ShowAchievementFromStart then -- Achievement unlock is checked during level load
                 if not managers.statistics:is_dropin() then
@@ -1413,7 +1488,7 @@ function EHI:Trigger(id, element, enabled)
                 end
             elseif f == SF.SetTimeOrCreateTracker then
                 local key = trigger.id
-                if managers.ehi:TrackerExists(key) or managers.ehi_waypoint:WaypointExists(key) then
+                if managers.ehi_common:Exists(key) then
                     local time = trigger.run and trigger.run.time or trigger.time or 0
                     managers.ehi:SetTrackerTime(key, time)
                     managers.ehi_waypoint:SetWaypointTime(key, time)
@@ -1452,7 +1527,7 @@ function EHI:Trigger(id, element, enabled)
                 GetElementTimer(self, trigger, id)
             elseif f == SF.UnpauseOrSetTimeByPreplanning then
                 if managers.ehi:TrackerExists(trigger.id) then
-                    managers.ehi:UnpauseTracker(trigger.id)
+                    managers.ehi_common:Unpause(trigger.id)
                 else
                     if trigger.time then
                         self:CheckCondition(trigger)
@@ -1467,7 +1542,7 @@ function EHI:Trigger(id, element, enabled)
                 end
             elseif f == SF.UnpauseTrackerIfExistsAccurate then
                 if managers.ehi:TrackerExists(trigger.id) then
-                    UnpauseTracker(trigger.id)
+                    managers.ehi_common:Unpause(trigger.id)
                 else
                     GetElementTimer(self, trigger, id)
                 end
@@ -1489,7 +1564,7 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.PauseTrackerWithTime then
                 local t_id = trigger.id
                 local t_time = trigger.time
-                PauseTracker(t_id)
+                managers.ehi_common:Pause(t_id)
                 managers.ehi:SetTrackerTimeNoAnim(t_id, t_time)
                 managers.ehi_waypoint:SetWaypointTime(t_id, t_time)
             elseif f == SF.IncreaseProgressMax then
@@ -2517,7 +2592,7 @@ function EHI:PrintTable(tbl, ...)
     end
 end
 
-if Global.load_level then
+if Global.load_level and EHI:IsClient() then
     -- Add network hook when a level is loaded to prevent stupid people sending tracker data while in menu, because EHIManager does not exist
     Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id, data)
         if id == EHI.SyncMessages.EHISyncAddTracker then

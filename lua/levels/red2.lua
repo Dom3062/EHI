@@ -1,15 +1,14 @@
+local lerp = math.lerp
+local sin = math.sin
+local Color = Color
 EHIcac10Tracker = class(EHIAchievementTracker)
 EHIcac10Tracker._update = false
 EHIcac10Tracker.FormatProgress = EHIProgressTracker.Format
 EHIcac10Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac10Tracker.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
-function EHIcac10Tracker:init(panel, params)
+function EHIcac10Tracker:OverridePanel()
     self._max = 0
     self._progress = 0
-    EHIcac10Tracker.super.init(self, panel, params)
-end
-
-function EHIcac10Tracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self._progress_text = self._time_bg_box:text({
@@ -31,21 +30,22 @@ function EHIcac10Tracker:OverridePanel()
     end
 end
 
-function EHIcac10Tracker:AnimateWarning()
+function EHIcac10Tracker:AnimateColor()
     if self._text and alive(self._text) then
-        local progress = self._progress_text
         self._text:animate(function(o)
+            local c = Color(self._text_color.r, self._text_color.g, self._text_color.b)
             while true do
-                local t = 0
-                while t < 1 do
-                    t = t + coroutine.yield()
-                    local n = 1 - sin(t * 180)
-                    --local r = lerp(1, 0, n)
-                    local g = lerp(1, 0, n)
-                    local c = Color(1, g, g)
+                local t = 1
+                while t > 0 do
+                    t = t - coroutine.yield()
+                    local n = sin(t * 180)
+                    c.r = lerp(self._text_color.r, self._warning_color.r, n)
+                    c.g = lerp(self._text_color.g, self._warning_color.g, n)
+                    c.b = lerp(self._text_color.b, self._warning_color.b, n)
                     o:set_color(c)
-                    progress:set_color(c)
+                    self._progress_text:set_color(c)
                 end
+                t = 1
             end
         end)
     end

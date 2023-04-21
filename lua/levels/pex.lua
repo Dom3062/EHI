@@ -78,21 +78,46 @@ EHI:ShowAchievementLootCounter({ -- Medals
         self:SetTrackerProgressRemaining("pex_11", self:CountUnitAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5)
     end
 })
-EHI:AddXPBreakdown({
-    objectives =
+local xp_override =
+{
+    params =
     {
-        { amount = 4000, name = "mex3_found_rfid_tag", stealth = true },
-        { amount = 3000, name = "mex3_found_cells", stealth = true },
-        { amount = 4000, name = "mex3_armory_opened", stealth = true },
-        { amount = 4000, name = "mex3_handcuffs_cut", stealth = true },
-        { amount = 5000, name = "mex3_hajrudin_found_his_car", stealth = true },
-        { amount = 2000, name = "stealth_escape" },
-        { amount = 5000, name = "mex3_evidence_opened", loud = true },
-        { amount = 5000, name = "mex3_evidence_burned", loud = true },
-        { amount = 4000, name = "mex3_armory_opened", loud = true },
-        { amount = 5000, name = "mex3_hajrudin_found_his_car", loud = true },
-        { amount = 4000, name = "heli_arrival", loud = true },
-        { amount = 3000, name = "loud_escape" }
-    },
-    loot_all = 1000
+        min_max =
+        {
+            loot_all = { max = 6 }
+        }
+    }
+}
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 4000, name = "mex3_found_rfid_tag" },
+                { amount = 3000, name = "mex3_found_cells" },
+                { amount = 4000, name = "mex3_armory_opened" },
+                { amount = 4000, name = "mex3_handcuffs_cut" },
+                { amount = 5000, name = "mex3_hajrudin_found_his_car" },
+                { escape = 2000 }
+            },
+            loot_all = 1000,
+            total_xp_override = xp_override
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 5000, name = "mex3_evidence_opened" },
+                { amount = 5000, name = "mex3_evidence_burned" },
+                { amount = 4000, name = "mex3_armory_opened" },
+                { amount = 5000, name = "mex3_hajrudin_found_his_car" },
+                { amount = 4000, name = "heli_arrival" },
+                { escape = 3000 }
+            },
+            loot_all = 1000,
+            total_xp_override = xp_override
+        }
+    }
 })

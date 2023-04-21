@@ -37,7 +37,9 @@ local hostage_values = assault_values.hostage_hesitation_delay
 EHIAssaultTracker = class(EHIWarningTracker)
 EHIAssaultTracker._forced_icons = { { icon = "assaultbox", color = Control } }
 EHIAssaultTracker._is_client = EHI:IsClient()
-EHIAssaultTracker.AnimateNegative = EHITimerTracker.AnimateCompletion
+EHIAssaultTracker._inaccurate_text_color = EHI:GetTWColor("inaccurate")
+EHIAssaultTracker._paused_color = EHIPausableTracker._paused_color
+EHIAssaultTracker._completion_color = EHITimerTracker._completion_color
 if type(tweak_values) ~= "table" then -- If for some reason the assault delay is not a table, use the value directly
     EHIAssaultTracker._assault_delay = tonumber(tweak_values) or 30
 else
@@ -87,7 +89,7 @@ function EHIAssaultTracker:init(panel, params)
         self._forced_icons[1].color = Control
     end
     if params.random_time and not params.assault then
-        self._text_color = tweak_data.ehi.color.Inaccurate
+        self._text_color = self._inaccurate_text_color
     end
     EHIAssaultTracker.super.init(self, panel, params)
     self._update = not params.stop_counting
@@ -118,12 +120,8 @@ function EHIAssaultTracker:update_assault(t, dt)
     end
 end
 
-function EHIAssaultTracker:AnimateWarning()
-    if self._assault then
-        self:AnimateNegative()
-    else
-        EHIAssaultTracker.super.AnimateWarning(self)
-    end
+function EHIAssaultTracker:AnimateColor(assault_delay_bonus)
+    EHIAssaultTracker.super.AnimateColor(self, nil, (self._assault or assault_delay_bonus) and self._completion_color or self._warning_color)
 end
 
 function EHIAssaultTracker:CalculateDifficultyRamp()
@@ -310,6 +308,9 @@ function EHIAssaultTracker:UpdateSustainTime(new_sustain)
 end
 
 function EHIAssaultTracker:OnEnterSustain()
+    if self._captain_arrived then
+        return
+    end
     self._to_fade_t = t
     self._assault_t = t
     self._sustain_original_t = t
@@ -352,10 +353,10 @@ function EHIAssaultTracker:StopTextAnim()
 end
 
 function EHIAssaultTracker:CaptainArrived()
-    self._assault_paused_t = Application:time()
+    self._captain_arrived = true
     self:RemoveTrackerFromUpdate()
     self._text:stop()
-    self:SetTextColor(Color.red)
+    self:SetTextColor(self._paused_color)
     self:SetIconColor(Captain)
     self._time_warning = false
 end
@@ -378,7 +379,7 @@ function EHIAssaultTracker:delete()
         self._time = -self._time
         if not self._assault then
             self:StopTextAnim()
-            self:AnimateNegative()
+            self:AnimateColor(true)
         end
         return
     end

@@ -16,7 +16,7 @@ local tweak_values = assault_values.delay
 local hostage_values = assault_values.hostage_hesitation_delay
 EHIAssaultDelayTracker = class(EHIWarningTracker)
 EHIAssaultDelayTracker._forced_icons = { { icon = "assaultbox", color = Control } }
-EHIAssaultDelayTracker.AnimateNegative = EHITimerTracker.AnimateCompletion
+EHIAssaultDelayTracker._completion_color = EHITimerTracker._completion_color
 if type(tweak_values) ~= "table" then -- If for some reason the assault delay is not a table, use the value directly
     EHIAssaultDelayTracker._assault_delay = tonumber(tweak_values) or 30
 else
@@ -182,14 +182,14 @@ function EHIAssaultDelayTracker:delete()
         self._time = -self._time
         self._text:stop()
         self:SetTextColor(Color.white)
-        self:AnimateNegative()
+        self:AnimateColor(nil, self._completion_color)
         return
     end
     EHIAssaultDelayTracker.super.delete(self)
 end
 
 EHIInaccurateAssaultDelayTracker = class(EHIAssaultDelayTracker)
-EHIInaccurateAssaultDelayTracker._text_color = tweak_data.ehi.color.Inaccurate
+EHIInaccurateAssaultDelayTracker._text_color = EHI:GetTWColor("inaccurate")
 function EHIInaccurateAssaultDelayTracker:StartAnticipation(t)
     self:SetTextColor(Color.white)
     EHIInaccurateAssaultDelayTracker.super.StartAnticipation(self, t)

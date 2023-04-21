@@ -90,33 +90,45 @@ local MissionDoorIndex =
     [1] = { w_id = 100841 }
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
-EHI:AddXPBreakdown({
-    objectives =
+local xp_override =
+{
+    params =
     {
-        { amount = 6000, name = "mus_powerboxes", stealth = true },
-        { amount = 8000, name = "pc_hack", loud = true },
+        min =
         {
-            name = "mus_first_timelock",
-            stealth = 2000,
-            loud = 5000
+            objectives = true
         },
+        no_max = true
+    }
+}
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
         {
-            name = "mus_second_timelock",
-            stealth = 2000,
-            loud = 5000
-        },
-        {
-            name = "mus_no_gas_trap",
-            stealth = 3000,
-            loud = 4000
-        },
-        {
-            escape =
+            objectives =
             {
-                { amount = 4000, stealth = true },
-                { amount = 6000, loud = true }
-            }
+                { amount = 6000, name = "mus_powerboxes" },
+                { amount = 2000, name = "mus_first_timelock" },
+                { amount = 2000, name = "mus_second_timelock" },
+                { amount = 3000, name = "mus_no_gas_trap" },
+                { escape = 4000 }
+            },
+            loot_all = 1000,
+            total_xp_override = xp_override
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 8000, name = "pc_hack" },
+                { amount = 5000, name = "mus_first_timelock" },
+                { amount = 5000, name = "mus_second_timelock" },
+                { amount = 4000, name = "mus_no_gas_trap" },
+                { escape = 6000 }
+            },
+            loot_all = 1000,
+            total_xp_override = xp_override
         }
-    },
-    loot_all = 1000
+    }
 })

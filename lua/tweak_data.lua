@@ -8,11 +8,6 @@ local Icon = EHI.Icons
 
 tweak_data.ehi =
 {
-    color =
-    {
-        Inaccurate = Color(255, 255, 165, 0) / 255,
-        DrillAutorepair = Color(255, 137, 209, 254) / 255
-    },
     icons =
     {
         default = { texture = "guis/textures/pd2/pd2_waypoints", texture_rect = {96, 64, 32, 32} },

@@ -75,23 +75,48 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:ShowLootCounter({ max = 11 })
-EHI:AddXPBreakdown({
-    objectives =
+local xp_override =
+{
+    params =
     {
-        { amount = 3000, name = "mex2_found_managers_safe", stealth = true },
-        { amount = 1000, name = "mex2_picked_up_tape", stealth = true },
-        { amount = 1000, name = "mex2_used_tape", stealth = true },
-        { amount = 3000, name = "mex2_picked_up_keychain", stealth = true },
-        { amount = 2000, name = "mex2_found_manual", stealth = true },
-        { amount = 3000, name = "pc_hack", stealth = true },
-        { amount = 2000, name = "ggc_laser_disabled", stealth = true },
-        { amount = 2000, name = "stealth_escape" },
-        { amount = 8000, name = "vault_found", loud = true },
-        { amount = 3000, name = "mex2_it_guy_escorted", loud = true },
-        { amount = 3000, name = "pc_hack", loud = true },
-        { amount = 3000, name = "mex2_beast_arrived", loud = true },
-        { amount = 12000, name = "vault_open", loud = true },
-        { amount = 3000, name = "loud_escape" }
-    },
-    loot_all = 1000
+        min_max =
+        {
+            loot_all = { min = 4, max = 11 }
+        }
+    }
+}
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 3000, name = "mex2_found_managers_safe" },
+                { amount = 1000, name = "mex2_picked_up_tape" },
+                { amount = 1000, name = "mex2_used_tape" },
+                { amount = 3000, name = "mex2_picked_up_keychain" },
+                { amount = 2000, name = "mex2_found_manual" },
+                { amount = 3000, name = "pc_hack" },
+                { amount = 2000, name = "ggc_laser_disabled" },
+                { escape = 2000 }
+            },
+            loot_all = 1000,
+            total_xp_override = xp_override
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 8000, name = "vault_found" },
+                { amount = 3000, name = "mex2_it_guy_escorted" },
+                { amount = 3000, name = "pc_hack" },
+                { amount = 3000, name = "mex2_beast_arrived" },
+                { amount = 12000, name = "vault_open" },
+                { escape = 3000 }
+            },
+            loot_all = 1000,
+            total_xp_override = xp_override
+        }
+    }
 })

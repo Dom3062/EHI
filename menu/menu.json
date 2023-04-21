@@ -233,6 +233,14 @@
             "ehi_ver" : 129
         },
         {
+            "type": "button",
+            "id": "ehi_colors_menu",
+            "title": "ehi_colors_menu",
+            "description": "ehi_colors_menu_desc",
+            "next_menu": "ehi_colors_menu",
+            "ehi_ver" : 145
+        },
+        {
             "type" : "divider",
             "size" : 20
         },

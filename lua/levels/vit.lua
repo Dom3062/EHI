@@ -68,21 +68,42 @@ for i = 30000, 31500, 300 do
 end
 EHI:UpdateUnits(tbl)]]
 EHI:AddXPBreakdown({
-    objective =
+    tactic =
     {
-        twh_entered = 1000,
-        twh_wireboxes_hacked = { amount = 4000, loud = true },
-        twh_wireboxes_cut = { amount = 2000, stealth = true },
-        twh_enter_west_wing = 2000,
-        twh_found_thermite = { amount = 2000, loud = true },
-        twh_use_thermite = { amount = 1000, loud = true },
-        twh_enter_oval_office = 2000,
-        twh_safe_open = 8000,
-        twh_access_peoc = 4000,
-        twh_mainframe_hacked = 8000,
-        twh_pardons_stolen = 2000,
-        twh_left_peoc = 2000,
-        twh_disable_aa = { amount = 4000, loud = true },
-        heli_arrival = 2000
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "twh_entered" },
+                { amount = 2000, name = "twh_wireboxes_cut" },
+                { amount = 2000, name = "twh_enter_west_wing" },
+                { amount = 2000, name = "twh_enter_oval_office" },
+                { amount = 8000, name = "twh_safe_open" },
+                { amount = 4000, name = "twh_access_peoc" },
+                { amount = 8000, name = "twh_mainframe_hacked" },
+                { amount = 2000, name = "twh_pardons_stolen" },
+                { amount = 2000, name = "twh_left_peoc" },
+                { amount = 2000, name = "heli_arrival" }
+            }
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "twh_entered" },
+                { amount = 4000, name = "twh_wireboxes_hacked" },
+                { amount = 2000, name = "twh_enter_west_wing" },
+                { amount = 2000, name = "twh_found_thermite" },
+                { amount = 1000, name = "twh_use_thermite" },
+                { amount = 2000, name = "twh_enter_oval_office" },
+                { amount = 8000, name = "twh_safe_open" },
+                { amount = 4000, name = "twh_access_peoc" },
+                { amount = 8000, name = "twh_mainframe_hacked" },
+                { amount = 2000, name = "twh_pardons_stolen" },
+                { amount = 2000, name = "twh_left_peoc" },
+                { amount = 4000, name = "twh_disable_aa" },
+                { amount = 2000, name = "heli_arrival" }
+            }
+        }
     }
 })

@@ -119,8 +119,7 @@ EHI:ParseTriggers({
 })
 EHI:RegisterCustomSpecialFunction(LowerFloor, function(trigger, element, enabled)
     if enabled then
-        managers.ehi:CallFunction(trigger.id, "LowerFloor")
-        managers.ehi_waypoint:CallFunction(trigger.id, "LowerFloor")
+        managers.ehi_common:Call(trigger.id, "LowerFloor")
     end
 end)
 EHI:AddLoadSyncFunction(function(self)
@@ -138,8 +137,7 @@ EHI:AddLoadSyncFunction(function(self)
                 class = "EHIElevatorTimerWaypoint"
             })
             if self:InteractionExists("circuit_breaker") or self:InteractionExists("press_call_elevator") then
-                self:PauseTracker("EscapeElevator")
-                managers.ehi_waypoint:PauseWaypoint("EscapeElevator")
+                managers.ehi_common:Pause("EscapeElevator")
             end
         end
     end

@@ -1,0 +1,73 @@
+{
+    "menu_id": "ehi_colors_menu",
+    "parent_menu" : "ehi_menu",
+    "title": "ehi_colors_menu",
+    "h" : 500,
+    "items": [
+        {
+            "type": "color_select",
+            "id": "ehi_colors_inaccurate_choice",
+            "title": "ehi_colors_inaccurate",
+            "description": "ehi_colors_inaccurate_desc",
+            "value": "inaccurate",
+            "default_value": [255, 165, 0],
+            "callback": "SetColor",
+            "callback_arguments": "inaccurate",
+            "setting_value": "colors",
+            "ehi_ver" : 145
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_pause_choice",
+            "title": "ehi_colors_pause",
+            "description": "ehi_colors_pause_desc",
+            "value": "pause",
+            "default_value": [255, 0, 0],
+            "callback": "SetColor",
+            "callback_arguments": "pause",
+            "setting_value": "colors",
+            "ehi_ver" : 145
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_drill_autorepair_choice",
+            "title": "ehi_colors_drill_autorepair",
+            "description": "ehi_colors_drill_autorepair_desc",
+            "value": "drill_autorepair",
+            "default_value": [137, 209, 254],
+            "callback": "SetColor",
+            "callback_arguments": "drill_autorepair",
+            "setting_value": "colors",
+            "ehi_ver" : 145
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_warning_choice",
+            "title": "ehi_colors_warning",
+            "description": "ehi_colors_warning_desc",
+            "value": "warning",
+            "default_value": [255, 0, 0],
+            "callback": "SetColor",
+            "callback_arguments": "warning",
+            "setting_value": "colors",
+            "ehi_ver" : 145
+        },
+
+        {
+            "type": "color_select",
+            "id": "ehi_colors_completion_choice",
+            "title": "ehi_colors_completion",
+            "description": "ehi_colors_completion_desc",
+            "value": "completion",
+            "default_value": [0, 255, 0],
+            "callback": "SetColor",
+            "callback_arguments": "completion",
+            "setting_value": "colors",
+            "ehi_ver" : 145
+        }
+    ]
+}

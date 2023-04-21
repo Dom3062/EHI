@@ -99,19 +99,29 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        counterfeit_found_sus_doors = 2000,
-        counterfeit_first_hack_finish = 2500,
-        counterfeit_defuse_c4 = 2000,
-        vault_drill_done = 5000,
-        vault_open = 6000,
-        counterfeit_printed_money = 4000,
-        escape = 3000
+        { amount = 2000, name = "counterfeit_found_sus_doors" },
+        { amount = 2500, name = "counterfeit_first_hack_finish" },
+        { amount = 2000, name = "counterfeit_defuse_c4", optional = true },
+        { amount = 5000, name = "vault_drill_done" },
+        { amount = 6000, name = "vault_open" },
+        { amount = 4000, name = "counterfeit_printed_money", optional = true },
+        { escape = 3000 }
     },
     loot =
     {
         counterfeit_money = 1000
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives = true
+            },
+            no_max = true
+        }
+    }
 })

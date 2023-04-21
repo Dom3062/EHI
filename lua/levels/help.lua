@@ -49,9 +49,14 @@ local achievements =
         }
     }
 }
+local other =
+{
+    [101315] = EHI:AddAssaultDelay({ time = 30 })
+}
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
 local LotteryWheel = { icons = { Icon.Wait }, icon_on_pause = { Icon.Loop } }

@@ -73,12 +73,6 @@ for i = 19150, 20650, 500 do
     tbl[EHI:GetInstanceUnitID(100019, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100070, i) }
 end
 EHI:UpdateUnits(tbl)
-local index = 0
-if EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL) then
-    index = EHI:DifficultyIndex()
-else
-    index = 4
-end
 EHI:AddXPBreakdown({
     objectives =
     {
@@ -89,6 +83,6 @@ EHI:AddXPBreakdown({
     loot_all = 500,
     total_xp_override =
     {
-        loot_all = { times = 4 + (2 * index) }
+        loot_all = { times = 4 + (2 * math.max(EHI:DifficultyIndex(), 4)) }
     }
 })

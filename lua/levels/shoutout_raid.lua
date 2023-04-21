@@ -72,11 +72,11 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        vault_found = 4000,
-        vault_open = 4000,
-        escape = 4000
+        { amount = 4000, name = "vault_found" },
+        { amount = 4000, name = "vault_open" },
+        { escape = 4000 }
     },
     loot =
     {

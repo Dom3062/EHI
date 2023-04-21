@@ -4,6 +4,133 @@ if EHI:CheckLoadHook("MissionBriefingGui") or EHI:IsXPTrackerDisabled() or not E
 end
 
 local _params
+local TacticSelected = 1
+XPBreakdownItem = class()
+function XPBreakdownItem:init(gui, panel, string, type, selected)
+    self._gui = gui
+    self._type = type
+    self._panel = panel
+    self._button = panel:text({
+        align = "center",
+		name = string,
+		blend_mode = "add",
+		layer = 2,
+		text = gui._loc:text(string),
+		font_size = tweak_data.menu.pd2_large_font_size / 2,
+		font = tweak_data.menu.pd2_large_font,
+		color = tweak_data.screen_colors.button_stage_3,
+        visible = false
+	})
+	local _, _, w, h = self._button:text_rect()
+	self._button:set_size(w + 15, h)
+    self._button:set_position(math.round(self._button:x()), math.round(self._button:y()))
+    self._tab_select_rect = panel:bitmap({
+		texture = "guis/textures/pd2/shared_tab_box",
+		visible = false,
+		layer = 1,
+		name = string .. "_selected",
+		color = tweak_data.screen_colors.text
+	})
+	self._tab_select_rect:set_shape(self._button:shape())
+    if selected then
+        self:Select(true)
+    end
+end
+
+function XPBreakdownItem:GetIndex()
+    return self._type == "stealth" and 1 or 2
+end
+
+function XPBreakdownItem:SetPreviousItem(item)
+    self._previous_item = item
+end
+
+function XPBreakdownItem:GetButton()
+    return self._button
+end
+
+function XPBreakdownItem:SetPosByPanel(panel)
+    self._button:set_bottom(panel:top())
+    self._button:set_left(panel:left())
+    self._tab_select_rect:set_bottom(self._button:bottom())
+    self._tab_select_rect:set_left(self._button:left())
+end
+
+function XPBreakdownItem:SetPosByPreviousItem(item)
+    self:SetPreviousItem(item)
+    local button = item:GetButton()
+    self._button:set_bottom(button:bottom())
+    self._button:set_left(button:right() + 10)
+    self._tab_select_rect:set_bottom(self._button:bottom())
+    self._tab_select_rect:set_left(self._button:left())
+end
+
+function XPBreakdownItem:SetVisibleWithOffset(offset)
+    self._button:set_y(self._button:y() + offset)
+    self._button:set_visible(true)
+    self._tab_select_rect:set_y(self._button:y())
+end
+
+function XPBreakdownItem:Select(no_change)
+    if self._selected then
+        return
+    end
+    self._button:set_color(tweak_data.screen_colors.button_stage_1)
+    self._button:set_blend_mode("normal")
+    self._tab_select_rect:show()
+    self._selected = true
+    if no_change then
+        return
+    end
+    self._gui:OnTacticChanged(self:GetIndex(), self._previous_item:GetIndex())
+end
+
+function XPBreakdownItem:Unselect()
+    if not self._selected then
+        return
+    end
+    self._button:set_color(tweak_data.screen_colors.button_stage_3)
+    self._button:set_blend_mode("add")
+    self._tab_select_rect:hide()
+    self._selected = false
+end
+
+function XPBreakdownItem:UnselectPreviousItem()
+    self._previous_item:Unselect()
+end
+
+function XPBreakdownItem:mouse_moved(x, y)
+    if not self._selected then
+        if self._button:inside(x, y) then
+            if not self._highlighted then
+                self._highlighted = true
+                self._button:set_color(tweak_data.screen_colors.button_stage_2)
+                managers.menu_component:post_event("highlight")
+            end
+            return true
+        elseif self._highlighted then
+            self._button:set_color(tweak_data.screen_colors.button_stage_3)
+            self._highlighted = false
+        end
+    end
+	return false
+end
+
+function XPBreakdownItem:mouse_pressed(button, x, y)
+	if button ~= Idstring("0") then
+		return
+	end
+	if not self._selected and self._button and alive(self._button) and self._button:inside(x, y) then
+		self:Select()
+        self:UnselectPreviousItem()
+	end
+end
+
+function XPBreakdownItem:destroy()
+    self._panel:remove(self._button)
+    self._panel:remove(self._tab_select_rect)
+end
+
 local reloading_outfit = false
 local function FormatTime(self, t)
     self._time = t
@@ -22,6 +149,8 @@ local original =
 
 function MissionBriefingGui:init(...)
     original.init(self, ...)
+    self._loc = managers.localization
+    self._xp = managers.experience
     local w = self._fullscreen_panel:w() * 0.45
     self._ehi_panel = self._fullscreen_panel:panel({
 		name = "ehi_panel",
@@ -44,8 +173,6 @@ function MissionBriefingGui:init(...)
 	self._ehi_panel:set_top(75)
     self._ehi_panel:set_visible(false)
     self._ehi_panel_v2:set_visible(false)
-    self._loc = managers.localization
-    self._xp = managers.experience
     if xp_format == 1 then
         self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp)
             return xp
@@ -103,23 +230,73 @@ function MissionBriefingGui:AddXPBreakdown(params)
         return
     end
     if params.tactic then
+        local tactic = params.tactic
         if self._panels then
-            self:ProcessBreakDown(params.stealth, self._panels[1])
-            self:ProcessBreakDown(params.loud, self._panels[2])
+            self:ProcessBreakDown(tactic.stealth, self._panels[1])
+            self:ProcessBreakDown(tactic.loud, self._panels[2])
         else
+            self._stealth_button = XPBreakdownItem:new(self, self._fullscreen_panel, "ehi_experience_stealth", "stealth", TacticSelected == 1)
+            self._stealth_button:SetPosByPanel(self._ehi_panel)
+            self._loud_button = XPBreakdownItem:new(self, self._fullscreen_panel, "ehi_experience_loud", "loud", TacticSelected == 2)
+            self._loud_button:SetPosByPreviousItem(self._stealth_button)
+            self._stealth_button:SetPreviousItem(self._loud_button)
             self._panels = {}
             -- Process stealth tactic first, loud at the end
             local panel = { panel = self._ehi_panel_v2, lines = 0 } -- Reuse the panel, memory efficiency
-            self:ProcessBreakDown(params.stealth, panel)
+            self:ProcessBreakDown(tactic.stealth, panel)
             self._panels[1] = panel
             -- Loud
             self._ehi_panel:panel({
                 name = "panel_v2",
                 layer = 9,
             })
-            local panel_v2 = { panel = self._ehi_panel:child("panel_v2"), lines = 0, adjust_h = true }
-            self:ProcessBreakDown(params.loud, panel_v2)
+            local panel_v2 = { panel = self._ehi_panel:child("panel_v2"), lines = 0, adjust_h = true, selected = TacticSelected == 2 }
+            self:ProcessBreakDown(tactic.loud, panel_v2)
             self._panels[2] = panel_v2
+            self._stealth_button:SetVisibleWithOffset(20)
+            self._loud_button:SetVisibleWithOffset(20)
+            self._ehi_panel:set_y(self._ehi_panel:y() + 20)
+            original.mouse_pressed = self.mouse_pressed
+            self.mouse_pressed = function(gui, button, x, y, ...)
+                local result = original.mouse_pressed(gui, button, x, y, ...)
+                if result then
+                    local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
+                    gui._stealth_button:mouse_pressed(button, fx, fy)
+                    gui._loud_button:mouse_pressed(button, fx, fy)
+                end
+                return result
+            end
+            original.mouse_moved = self.mouse_moved
+            self.mouse_moved = function(gui, x, y, ...)
+                if not alive(gui._panel) or not alive(gui._fullscreen_panel) or not gui._enabled then
+                    return false, "arrow"
+                end
+                if gui._displaying_asset then
+                    return false, "arrow"
+                end
+                if game_state_machine:current_state().blackscreen_started and game_state_machine:current_state():blackscreen_started() then
+                    return false, "arrow"
+                end
+                local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
+                if gui._stealth_button:mouse_moved(fx, fy) then
+                    return true, "link"
+                end
+                if gui._loud_button:mouse_moved(fx, fy) then
+                    return true, "link"
+                end
+                return original.mouse_moved(gui, x, y, ...)
+            end
+            original.close = self.close
+            self.close = function(gui, ...)
+                gui._stealth_button:destroy()
+                gui._loud_button:destroy()
+                original.close(gui, ...)
+                -- Remove hooks; the gui will refresh or is closing
+                gui.mouse_pressed = original.mouse_pressed
+                gui.mouse_moved = original.mouse_moved
+                original.mouse_pressed = nil
+                original.mouse_moved = nil
+            end
         end
     else
         self:ProcessBreakDown(params)
@@ -278,22 +455,28 @@ function MissionBriefingGui:ProcessBreakDown(params, panel)
     end
     if panel.lines > 0 and panel.adjust_h then
         if self._panels then
-            local most_lines = math.max(self._panels[1].lines, self._panels[2].lines)
-            local h = 10 + (most_lines * 22)
-            self._ehi_panel:set_h(h)
+            self._panels[1].h = self:GetPanelHeight(self._panels[1].lines)
+            panel.h = self:GetPanelHeight(panel.lines)
+            local visible_panel = panel.selected and panel or self._panels[1]
+            local hidden_panel = panel.selected and self._panels[1] or panel
+            self._ehi_panel:set_h(visible_panel.h)
             self._ehi_panel:set_visible(true)
-            self._panels[1].panel:set_h(h)
-            self._panels[1].panel:set_visible(true)
-            self._panels[2].panel:set_h(h)
-            self._panels[2].panel:set_visible(false)
+            visible_panel.panel:set_h(visible_panel.h)
+            visible_panel.panel:set_visible(true)
+            hidden_panel.panel:set_h(hidden_panel.h)
+            hidden_panel.panel:set_visible(false)
         else
-            local h = 10 + (panel.lines * 22)
+            local h = self:GetPanelHeight(panel.lines)
             self._ehi_panel:set_h(h)
             self._ehi_panel:set_visible(true)
             panel.panel:set_h(h)
             panel.panel:set_visible(true)
         end
     end
+end
+
+function MissionBriefingGui:GetPanelHeight(lines)
+    return 10 + (lines * 22)
 end
 
 function MissionBriefingGui:ProcessTotalXP(panel, params, gage, total_xp)
@@ -641,7 +824,7 @@ function MissionBriefingGui:ProcessTotalXP(panel, params, gage, total_xp)
     end
 end
 
-function MissionBriefingGui:AddXPText(panel, txt, value, value_with_gage)
+function MissionBriefingGui:AddXPText(panel, txt, value, value_with_gage, text_color)
     local xp = self._loc:text("ehi_experience_xp")
     local text
     if value_with_gage then
@@ -656,7 +839,7 @@ function MissionBriefingGui:AddXPText(panel, txt, value, value_with_gage)
         y = 10 + (panel.lines * 22),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
-        color = Color.white,
+        color = text_color or Color.white,
         text = text,
         layer = 10
     })
@@ -723,7 +906,7 @@ function MissionBriefingGui:AddLootSecuredHeader(panel)
         y = 10 + (panel.lines * 22),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
-        color = Color.white,
+        color = Color("ffbc00"),
         text = self._loc:text("ehi_experience_loot_secured"),
         layer = 10
     })
@@ -762,7 +945,7 @@ function MissionBriefingGui:AddLootSecured(panel, loot, times, to_secure, value,
         y = 10 + (panel.lines * 22),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
-        color = Color.white,
+        color = Color("ffbc00"),
         text = str,
         layer = 10
     })
@@ -871,7 +1054,7 @@ function MissionBriefingGui:ProcessLoot(panel, params, total_xp, gage)
             if gage then
                 xp_with_gage = self:FormatXPWithAllGagePackages(data.amount)
             end
-            self:AddXPText(panel, string.format("%s (%s): ", secured_bag, self._loc:text("ehi_experience_trigger_times", { times = data.times })), xp, xp_with_gage)
+            self:AddXPText(panel, string.format("%s (%s): ", secured_bag, self._loc:text("ehi_experience_trigger_times", { times = data.times })), xp, xp_with_gage, Color("ffbc00"))
             if total_xp.add and not data.times then
                 total_xp.add = false
             end
@@ -883,7 +1066,7 @@ function MissionBriefingGui:ProcessLoot(panel, params, total_xp, gage)
             if gage then
                 xp_with_gage = self:FormatXPWithAllGagePackages(data)
             end
-            self:AddXPText(panel, string.format("%s: ", secured_bag), xp, xp_with_gage)
+            self:AddXPText(panel, string.format("%s: ", secured_bag), xp, xp_with_gage, Color("ffbc00"))
             total_xp.add = false
         end
     elseif params.loot then
@@ -1042,6 +1225,14 @@ function MissionBriefingGui:SumObjectives(objectives, override_objectives, skip_
         end
     end
     return xp
+end
+
+function MissionBriefingGui:OnTacticChanged(index, previous_index)
+    local panel = self._panels[index]
+    panel.panel:set_visible(true)
+    self._ehi_panel:set_h(panel.h)
+    self._panels[previous_index].panel:set_visible(false)
+    TacticSelected = index
 end
 
 function TeamLoadoutItem:set_slot_outfit(slot, ...)

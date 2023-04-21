@@ -1,5 +1,6 @@
 EHIProgressTracker = class(EHITracker)
 EHIProgressTracker.update = EHIProgressTracker.update_fade
+EHIProgressTracker._progress_bad = Color(255, 255, 165, 0) / 255
 EHIProgressTracker._update = false
 function EHIProgressTracker:init(panel, params)
     self._max = params.max or 0
@@ -30,8 +31,8 @@ function EHIProgressTracker:IncreaseProgressMax(progress)
     self:SetProgressMax(self._max + (progress or 1))
 end
 
-function EHIProgressTracker:DecreaseProgressMax(progress)
-    self:SetProgressMax(self._max - (progress or 1))
+function EHIProgressTracker:DecreaseProgressMax(max)
+    self:SetProgressMax(self._max - (max or 1))
 end
 
 function EHIProgressTracker:SetProgress(progress)
@@ -80,7 +81,7 @@ function EHIProgressTracker:SetCompleted(force)
 end
 
 function EHIProgressTracker:SetBad()
-    self:SetTextColor(tweak_data.ehi.color.Inaccurate)
+    self:SetTextColor(self._progress_bad)
 end
 
 function EHIProgressTracker:Finalize()

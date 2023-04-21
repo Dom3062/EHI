@@ -41,37 +41,37 @@ for i = 7950, 8550, 300 do
 end
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objectives =
+    tactic =
     {
-        { amount = 1000, name = "mex1_red_door_found", stealth = true },
+        stealth =
         {
-            name = "mex1_tunnel_found",
-            stealth = 2000,
-            loud = 1000
+            objectives =
+            {
+                { amount = 1000, name = "mex1_red_door_found" },
+                { amount = 2000, name = "mex1_tunnel_found" },
+                { amount = 2000, name = "mex1_tunnel_open" },
+                { amount = 2000, name = "mex1_plane_found" },
+                { amount = 8000, name = "mex1_secured_mandatory_bags" },
+                { amount = 2000, name = "mex1_started_fueling" },
+                { amount = 3000, name = "mex1_hose_detached" },
+                { escape = 1000 },
+            },
+            loot_all = 500
         },
-        { amount = 3000, name = "mex1_explosives_found", loud = true },
+        loud =
         {
-            name = "mex1_tunnel_open",
-            stealth = 2000,
-            loud = 3000
-        },
-        { amount = 2000, name = "mex1_plane_found" },
-        {
-            name = "mex1_secured_mandatory_bags",
-            stealth = 8000,
-            loud = 6000
-        },
-        {
-            name = "mex1_started_fueling",
-            stealth = 2000,
-            loud = 1000
-        },
-        {
-            name = "mex1_hose_detached",
-            stealth = 3000,
-            loud = 2000
-        },
-        { escape = 1000 }
-    },
-    loot_all = 500
+            objectives =
+            {
+                { amount = 1000, name = "mex1_tunnel_found" },
+                { amount = 3000, name = "mex1_explosives_found" },
+                { amount = 3000, name = "mex1_tunnel_open" },
+                { amount = 2000, name = "mex1_plane_found" },
+                { amount = 6000, name = "mex1_secured_mandatory_bags" },
+                { amount = 1000, name = "mex1_started_fueling" },
+                { amount = 2000, name = "mex1_hose_detached" },
+                { escape = 1000 },
+            },
+            loot_all = 500
+        }
+    }
 })

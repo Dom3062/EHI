@@ -4,8 +4,7 @@ if EHI:CheckLoadHook("Drill") then
 end
 
 local function SetAutorepair(unit_key, autorepair)
-    managers.ehi:CallFunction(unit_key, "SetAutorepair", autorepair)
-    managers.ehi_waypoint:CallFunction(unit_key, "SetAutorepair", autorepair)
+    managers.ehi_common:Call(unit_key, "SetAutorepair", autorepair)
 end
 
 if EHI:IsHost() then

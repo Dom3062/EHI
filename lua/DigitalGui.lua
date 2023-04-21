@@ -31,7 +31,7 @@ function DigitalGui:TimerStartCountDown()
     if (self._ignore or not self._visible) and not self._ignore_visibility then
         return
     end
-    if managers.ehi:TrackerExists(self._ehi_key) or managers.ehi_waypoint:WaypointExists(self._ehi_key) then
+    if managers.ehi_common:Exists(self._ehi_key) then
         managers.ehi:SetTimerJammed(self._ehi_key, false)
         managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
     else
@@ -255,14 +255,14 @@ end
 function DigitalGui:SetWarning(warning)
     self._warning = warning
     if self._timer_count_down and warning then
-        managers.ehi:CallFunction(self._ehi_key, "SetAnimateWarning")
+        managers.ehi:CallFunction(self._ehi_key, "SetAnimation")
     end
 end
 
 function DigitalGui:SetCompletion(completion)
     self._completion = completion
     if self._timer_count_down and completion then
-        managers.ehi:CallFunction(self._ehi_key, "SetAnimateWarning", true)
+        managers.ehi:CallFunction(self._ehi_key, "SetAnimation", true)
     end
 end
 

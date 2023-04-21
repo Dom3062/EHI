@@ -620,14 +620,6 @@ function EHIManager:SetTrackerPaused(id, pause)
     end
 end
 
-function EHIManager:PauseTracker(id)
-    self:SetTrackerPaused(id, true)
-end
-
-function EHIManager:UnpauseTracker(id)
-    self:SetTrackerPaused(id, false)
-end
-
 function EHIManager:AddMoneyToTracker(id, money)
     local tracker = self._trackers[id]
     if tracker and tracker.AddMoney then

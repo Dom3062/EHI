@@ -16,6 +16,7 @@ function Setup:init_managers(managers, ...)
     managers.ehi = EHIManager:new()
     managers.ehi_waypoint = EHIWaypointManager:new()
     managers.ehi_buff = EHIBuffManager:new()
+    managers.ehi_common = EHICommon:new(managers.ehi, managers.ehi_waypoint)
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitManagers, managers)
 end
 

@@ -40,13 +40,13 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        bph_found_control_room = 2000,
-        bph_opening_correct_cell = 3000,
-        bph_follow_bain = 5000,
-        bph_met_on_rooftop = 1000,
-        bph_extended_bridge = 3000,
-        bph_helipad_is_accessible = ovk_and_up and 4000 or 3000
+        { amount = 2000, name = "bph_found_control_room" },
+        { amount = 3000, name = "bph_opening_correct_cell" },
+        { amount = 5000, name = "bph_follow_bain" },
+        { amount = 1000, name = "bph_met_on_rooftop" },
+        { amount = 3000, name = "bph_extended_bridge" },
+        { amount = ovk_and_up and 4000 or 3000, name = "bph_helipad_is_accessible" }
     }
 })

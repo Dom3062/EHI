@@ -182,6 +182,7 @@ function EHIMenu:init()
     self:GetMenuFromJson(EHI.MenuPath .. "buff_options/other.json", EHI.settings.buff_option)
     self:GetMenuFromJson(EHI.MenuPath .. "inventory.json")
     self:GetMenuFromJson(EHI.MenuPath .. "other.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "colors.json", EHI.settings.colors)
 
     self:OpenMenu("ehi_menu")
 end
@@ -912,8 +913,12 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
         })
     elseif item_type == "color_select" then
         local stored_value = EHI.settings
-        if item.setting_value and item.setting_value == "equipment" then
-            stored_value = EHI.settings.equipment_color
+        if item.setting_value then
+            if item.setting_value == "equipment" then
+                stored_value = EHI.settings.equipment_color
+            elseif item.setting_value == "colors" then
+                stored_value = EHI.settings.colors
+            end
         end
         value = EHI:GetColor(stored_value[item.value])
         itm = self:CreateColorSelect({
@@ -1940,20 +1945,31 @@ function EHIMenu:UpdateAllXPOptions(menu)
     end
 end
 
+function EHIMenu:GetBuffOffsetEnabled()
+    return EHI:GetOption("show_buffs") and self:IsNotVR()
+end
+
 function EHIMenu:GetBuffVROffsetEnabled()
     return EHI:GetOption("show_buffs") and EHI:IsVR()
 end
 
-function EHIMenu:UpdateBuffVROffset(menu)
+function EHIMenu:UpdateAllBuffOffset(menu)
     local enabled = self:GetBuffVROffsetEnabled()
     local items =
     {
         ehi_vr_x_offset = true,
         ehi_vr_y_offset = true
     }
+    local items2 =
+    {
+        ehi_x_offset = true,
+        ehi_y_offset = true
+    }
     for _, item in ipairs(menu.items) do
         if items[item.id or ""] then
             self:AnimateItemEnabled(item, enabled)
+        elseif items2[item.id or ""] then
+            self:AnimateItemEnabled(item, not enabled)
         end
     end
 end

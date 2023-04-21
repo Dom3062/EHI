@@ -96,10 +96,23 @@ EHI:ShowLootCounter({
     offset = true
 })
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        escape = 2000,
-        all_bags_secured = 14000
+        { amount = 14000, name = "all_bags_secured", optional = true },
+        { escape = 2000 }
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives = true
+            },
+            max =
+            {
+                objectives = true
+            }
+        }
+    }
 })

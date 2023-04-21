@@ -28,7 +28,8 @@ local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].
 EHIAssaultTimeTracker = class(EHIWarningTracker)
 EHIAssaultTimeTracker._forced_icons = { { icon = "assaultbox", color = Build } }
 EHIAssaultTimeTracker._is_client = EHI:IsClient()
-EHIAssaultTimeTracker.AnimateWarning = EHITimerTracker.AnimateCompletion
+EHIAssaultTimeTracker._paused_color = EHIPausableTracker._paused_color
+EHIAssaultTimeTracker._warning_color = EHITimerTracker._completion_color
 function EHIAssaultTimeTracker:init(panel, params)
     self:CalculateDifficultyRamp(params.diff)
     self._original_time = self:CalculateAssaultTime()
@@ -169,6 +170,9 @@ function EHIAssaultTimeTracker:UpdateDiff(diff)
 end
 
 function EHIAssaultTimeTracker:OnEnterSustain(t)
+    if self._captain_arrived or self._state ~= State.build then
+        return
+    end
     self._to_fade_t = t
     self._assault_t = t
     self._sustain_original_t = t
@@ -181,10 +185,10 @@ function EHIAssaultTimeTracker:OnEnterSustain(t)
 end
 
 function EHIAssaultTimeTracker:CaptainArrived()
-    self._assault_paused_t = Application:time()
+    self._captain_arrived = true
     self:RemoveTrackerFromUpdate()
     self._text:stop()
-    self:SetTextColor(Color.red)
+    self:SetTextColor(self._paused_color)
     self:SetIconColor(Captain)
     self._time_warning = false
 end

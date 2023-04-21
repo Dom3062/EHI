@@ -1,4 +1,5 @@
 EHIPausableTracker = class(EHITracker)
+EHIPausableTracker._paused_color = EHI:GetTWColor("pause")
 function EHIPausableTracker:init(panel, params)
     EHIPausableTracker.super.init(self, panel, params)
     self._paused = params.paused
@@ -18,5 +19,5 @@ function EHIPausableTracker:SetPause(pause)
 end
 
 function EHIPausableTracker:SetTextColor(color)
-    self._text:set_color(self._paused and Color.red or (color or self._text_color))
+    self._text:set_color(self._paused and self._paused_color or (color or self._text_color))
 end

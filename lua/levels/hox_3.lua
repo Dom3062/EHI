@@ -57,18 +57,65 @@ local tbl =
     [EHI:GetInstanceUnitID(100021, 9685)] = { icons = { Icon.Alarm }, warning = true, remove_on_pause = true }
 }
 EHI:UpdateUnits(tbl)
+local required_bags = 4
+if EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
+    required_bags = 5
+elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+    required_bags = 6
+end
 EHI:AddXPBreakdown({
-    objectives =
+    tactic =
     {
-        { amount = 2000, name = "hox3_vault_objective" },
-        { amount = 4000, name = "vault_found" },
+        stealth =
         {
-            name = "vault_open",
-            stealth = 4000,
-            loud = 8000
+            objectives =
+            {
+                { amount = 4000, name = "vault_found" },
+                { amount = 2000, name = "hox3_vault_objective" },
+                { amount = 4000, name = "vault_open" },
+                { amount = 2000, name = "hox3_traitor_killed" },
+                { escape = 2000 }
+            },
+            loot_all = 1000,
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        min =
+                        {
+                            hox3_vault_objective = { times = 2 }
+                        },
+                        max =
+                        {
+                            hox3_vault_objective = { times = 2 }
+                        },
+                        loot_all = { min = required_bags, max = 8 }
+                    }
+                }
+            }
         },
-        { amount = 2000, name = "hox3_traitor_killed" },
-        { escape = 2000 }
-    },
-    loot_all = 1000
+        loud =
+        {
+            objectives =
+            {
+                { amount = 4000, name = "vault_found" },
+                { amount = 8000, name = "vault_open" },
+                { amount = 2000, name = "hox3_traitor_killed" },
+                { escape = 2000 }
+            },
+            loot_all = 1000,
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        loot_all = { min = required_bags, max = 8 }
+                    }
+                }
+            }
+        }
+    }
 })

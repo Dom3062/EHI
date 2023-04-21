@@ -587,7 +587,25 @@
     "ehi_other_show_remaining_xp_to_100_desc" : "Zobrazuje zbývající ZK do Levelu 100 (viditelný pokud tvůj Level je menší než 100)",
 
     "ehi_other_show_mission_xp_overview" : "Zobrazovat přehled ZK v misi",
-    "ehi_other_show_mission_xp_overview_desc" : "Zobrazuje panel v briefingu před loupeží s možnými ZK, které lze získat", 
+    "ehi_other_show_mission_xp_overview_desc" : "Zobrazuje panel v briefingu před loupeží s možnými ZK, které lze získat",
+
+    "ehi_colors_menu" : "Barvy",
+    "ehi_colors_menu_desc" : "Mění barvy ve sledovačích\n\nTyto změny se taky aplikují na ukazetele",
+
+    "ehi_colors_inaccurate" : "Nepřesnost",
+    "ehi_colors_inaccurate_desc" : "Mění barvu textu když sledovač je nepřesný",
+
+    "ehi_colors_pause" : "Pozastaven",
+    "ehi_colors_pause_desc" : "Mění barvu textu když sledovač je pozastaven",
+
+    "ehi_colors_drill_autorepair" : "Autorestart vrtáku či pily",
+    "ehi_colors_drill_autorepair_desc" : "Mění barvu ikony když vrták či pila se umí automaticky restartovat sám od sebe",
+
+    "ehi_colors_warning" : "Varování",
+    "ehi_colors_warning_desc" : "Animuje barvu textu když zbývá 10 vteřin",
+
+    "ehi_colors_completion" : "Dokončení",
+    "ehi_colors_completion_desc" : "Animuje barvu textu když zbývá 10 vteřin",
 
     "ehi_experience_infamy_pool" : "Infamy Pool za:",
     "ehi_experience_next_level" : "Další za:",
@@ -713,9 +731,8 @@
     "ehi_experience_the_bomb_open_dock_gate" : "Brána k průplavu otevřena",
     "ehi_experience_the_bomb_find_coordinates" : "Nalezeno číslo na Kapitána",
     "ehi_experience_the_bomb_call_captain" : "Kapitán zavolán k přesunutí lodě",
-    "ehi_experience_the_bomb_find_bomb_stealth" : "Nalezena bomba",
+    "ehi_experience_the_bomb_find_bomb" : "Nalezena bomba",
     "ehi_experience_the_bomb_blowup_dock_gate" : "Brána k průplavu odpálena",
-    "ehi_experience_the_bomb_find_bomb_loud" : "Nalezena bomba",
     "ehi_experience_the_bomb2_vault_filled" : "Trezor napuštěn vodou",
     "ehi_experience_scarface_got_usb" : "Nalezena USB fleška",
     "ehi_experience_scarface_entered_house" : "Vstup do sídla",
@@ -903,6 +920,19 @@
     "ehi_experience_mex4_turret_discovered_car_escape" : "Spatřena policejní střílna (pokud je únik autem)",
     "ehi_experience_mex4_turret_destroyed_car_escape" : "Střílna zničena (pokud je únik autem)",
     "ehi_experience_mex4_flare_lit_heli_escape" : "Světlice zapálena (pokud je únik helikoptérou)",
+    "ehi_experience_china1_alarm_disabled" : "Alarm odpojen",
+    "ehi_experience_china1_found_basement_door" : "Nalezeny dveře do suterénu",
+    "ehi_experience_china1_enter_warehouse" : "Vstup do skladu",
+    "ehi_experience_china1_auction_room_stealth" : "Vypnuty světla v aukční síni",
+    "ehi_experience_china1_vault_gate_open" : "Brána k trezoru otevřena",
+    "ehi_experience_china1_dragon_statue_picked_up" : "Sebrána Dračí soška",
+    "ehi_experience_china1_dragon_statue_secured" : "Dračí soška zajištěna",
+    "ehi_experience_china1_vault_pc_hack" : "Hacknuté PC u trezoru (Nepovinné)",
+    "ehi_experience_china1_found_forklift_keys" : "Nalezeny klíčky k vysokozdvižnému vozíku",
+    "ehi_experience_china1_pick_up_thermal_drill" : "Sebrán doručený tepelný vrták",
+    "ehi_experience_china1_placed_thermal_drill" : "Tepelný vrták umístěn",
+    "ehi_experience_china1_gas_disabled" : "Plyn vypnut nebo vpuštění zabráněno",
+    "ehi_experience_china1_auction_room_loud" : "Hack dokončen v aukční síni",
     "ehi_experience_texas3_evidences_found" : "Důkazy nalezeny",
     "ehi_experience_texas3_prototype_secured" : "Prototyp zajištěn",
     "ehi_experience_texas3_documents_secured" : "Výzkumné dokumenty zajištěny",

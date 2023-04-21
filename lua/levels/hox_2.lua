@@ -89,12 +89,10 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(trigger, element, ...)
     local continue = false
     if EHI:IsHost() then
-        if element:_values_ok() then
-            continue = true
-        end
+        continue = element:_values_ok()
     else
         continue = true
     end

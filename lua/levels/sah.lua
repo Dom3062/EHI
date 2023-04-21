@@ -90,35 +90,52 @@ for i = 18200, 19400, 600 do
     tbl[EHI:GetInstanceUnitID(100168, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100084, i) }
 end
 EHI:UpdateUnits(tbl)
-EHI:AddXPBreakdown({
-    objectives =
+local loot =
+{
+    black_tablet = 1000,
+    mus_artifact = 1000
+}
+local xp_override =
+{
+    params =
     {
+        min =
         {
-            name = "vault_found",
-            stealth = 4000,
-            loud = 6000,
-        },
-        {
-            name = "sah_entered_vault_code",
-            stealth = 6000,
-            loud = 10000
-        },
-        {
-            name = "sah_retrieved_tablet",
-            stealth = 4000,
-            loud = 6000
-        },
-        {
-            escape =
+            objectives = true,
+            loot =
             {
-                { amount = 1000, stealth = true },
-                { amount = 4000, loud = true }
+                black_tablet = { times = 1 }
             }
-        }
-    },
-    loot =
+        },
+        no_max = true
+    }
+}
+EHI:AddXPBreakdown({
+    tactic =
     {
-        black_tablet = 1000,
-        mus_artifact = 1000
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 4000, name = "vault_found" },
+                { amount = 6000, name = "sah_entered_vault_code" },
+                { amount = 4000, name = "sah_retrieved_tablet" },
+                { escape = 1000 }
+            },
+            loot = loot,
+            total_xp_override = xp_override
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 6000, name = "vault_found" },
+                { amount = 10000, name = "sah_entered_vault_code" },
+                { amount = 6000, name = "sah_retrieved_tablet" },
+                { escape = 4000 }
+            },
+            loot = loot,
+            total_xp_override = xp_override
+        }
     }
 })

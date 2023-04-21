@@ -79,28 +79,66 @@ local DisableWaypoints =
 EHI:DisableWaypoints(DisableWaypoints)
 
 local max = 6
+local required_bags = 3
+local closets = 2
 if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
     max = 12
+    required_bags = 6
+    closets = 3
 elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     max = 18
+    if EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
+        required_bags = 9
+    else
+        required_bags = 12
+    end
+    closets = 5
 end
 EHI:ShowLootCounter({ max = max })
-EHI:AddXPBreakdown({
-    objectives =
+local xp_override =
+{
+    params =
     {
-        { amount = 10000, name = "pc_hack", loud = true },
+        min_max =
         {
-            name = "alesso_find_c4",
-            stealth = 1000,
-            loud = 2000
-        },
-        { amount = 2000, name = "c4_set_up" },
-        { amount = 3000, times = 3, name = "alesso_pyro_set" },
-        {
-            name = "loot_secured",
-            stealth = 1200,
-            loud = 1500
+            min =
+            {
+                alesso_find_c4 = { times = closets },
+                loot_secured = { times = required_bags }
+            },
+            max =
+            {
+                alesso_find_c4 = { times = closets },
+                loot_secured = { times = max }
+            }
         }
-    },
-    no_total_xp = true
+    }
+}
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "alesso_find_c4" },
+                { amount = 2000, name = "c4_set_up" },
+                { amount = 3000, times = 3, name = "alesso_pyro_set" },
+                { amount = 1200, name = "loot_secured" }
+            },
+            total_xp_override = xp_override
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 10000, name = "pc_hack" },
+                { amount = 1000, name = "alesso_find_c4" },
+                { amount = 2000, name = "c4_set_up" },
+                { amount = 3000, times = 3, name = "alesso_pyro_set" },
+                { amount = 1500, name = "loot_secured" }
+            },
+            total_xp_override = xp_override
+        }
+    }
 })

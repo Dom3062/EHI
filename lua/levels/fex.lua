@@ -79,33 +79,46 @@ EHI:ParseTriggers({
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 21 })
 EHI:AddXPBreakdown({
-    objectives =
+    tactic =
     {
-        { amount = 1000, name = "mex4_found_bulucs_office", stealth = true },
-        { amount = 1000, name = "mex4_found_inner_sanctum", stealth = true },
-        { amount = 1000, name = "mex4_discover_keycard_holder_mask_list", stealth = true },
-        { amount = 1000, name = "mex4_found_keycard", stealth = true },
-        { amount = 1000, name = "mex4_inner_sanctum_open", stealth = true },
-        { amount = 1000, name = "mex4_codex_room_open", stealth = true },
-        { amount = 10000, name = "mex4_bulucs_office_open", stealth = true },
-        { amount = 1000, name = "mex4_interacted_with_safe", stealth = true },
-        { amount = 2000, name = "mex4_contact_list_stolen_stealth", stealth = true },
-        { amount = 2000, name = "mex4_found_car_keys", stealth = true },
-        { amount = 2000, name = "mex4_car_escape_stealth" },
-        { amount = 1000, name = "mex4_boat_escape_stealth" },
-        { amount = 1000, name = "mex4_found_bulucs_office", loud = true },
-        { amount = 2000, name = "mex4_found_inner_sanctum", loud = true },
-        { amount = 2000, name = "mex4_found_all_bomb_parts_hack_start", loud = true },
-        { amount = 2000, name = "mex4_inner_sanctum_open_bomb", loud = true },
-        { amount = 3000, name = "mex4_saw_placed", loud = true },
-        { amount = 3000, name = "saw_done", loud = true },
-        { amount = 4000, name = "mex4_bulucs_office_open", loud = true },
-        { amount = 1000, name = "mex4_interacted_with_safe", loud = true },
-        { amount = 1000, name = "mex4_contact_list_stolen_car_escape", loud = true },
-        { amount = 1000, name = "mex4_turret_discovered_car_escape", loud = true },
-        { amount = 3000, name = "mex4_turret_destroyed_car_escape", loud = true },
-        { amount = 3000, name = "mex4_flare_lit_heli_escape", loud = true },
-        { amount = 1000, name = "loud_escape" }
-    },
-    loot_all = 500
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "mex4_found_bulucs_office" },
+                { amount = 1000, name = "mex4_found_inner_sanctum" },
+                { amount = 1000, name = "mex4_discover_keycard_holder_mask_list" },
+                { amount = 1000, name = "mex4_found_keycard" },
+                { amount = 1000, name = "mex4_inner_sanctum_open" },
+                { amount = 1000, name = "mex4_codex_room_open" },
+                { amount = 10000, name = "mex4_bulucs_office_open" },
+                { amount = 1000, name = "mex4_interacted_with_safe" },
+                { amount = 2000, name = "mex4_contact_list_stolen_stealth" },
+                { amount = 2000, name = "mex4_found_car_keys" },
+                { amount = 2000, name = "mex4_car_escape_stealth" },
+                { amount = 1000, name = "mex4_boat_escape_stealth" },
+            },
+            loot_all = 500
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "mex4_found_bulucs_office" },
+                { amount = 2000, name = "mex4_found_inner_sanctum" },
+                { amount = 2000, name = "mex4_found_all_bomb_parts_hack_start" },
+                { amount = 2000, name = "mex4_inner_sanctum_open_bomb" },
+                { amount = 3000, name = "mex4_saw_placed" },
+                { amount = 3000, name = "saw_done" },
+                { amount = 4000, name = "mex4_bulucs_office_open" },
+                { amount = 1000, name = "mex4_interacted_with_safe" },
+                { amount = 1000, name = "mex4_contact_list_stolen_car_escape" },
+                { amount = 1000, name = "mex4_turret_discovered_car_escape" },
+                { amount = 3000, name = "mex4_turret_destroyed_car_escape" },
+                { amount = 3000, name = "mex4_flare_lit_heli_escape" },
+                { amount = 1000, name = "loud_escape" }
+            },
+            loot_all = 500
+        }
+    }
 })

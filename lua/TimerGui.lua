@@ -62,7 +62,7 @@ function TimerGui:GetUpgrades()
 end
 
 function TimerGui:StartTimer()
-    if managers.ehi:TrackerExists(self._ehi_key) or managers.ehi_waypoint:WaypointExists(self._ehi_key) then
+    if managers.ehi_common:Exists(self._ehi_key) then
         managers.ehi:SetTimerRunning(self._ehi_key)
         managers.ehi_waypoint:SetTimerWaypointRunning(self._ehi_key)
     else

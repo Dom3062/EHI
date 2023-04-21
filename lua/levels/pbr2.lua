@@ -134,19 +134,19 @@ EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(...)
     managers.ehi:CallFunction("cac_33", "Activate")
 end)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        bos_cargo_door_open = 3000,
-        bos_money_released = 3000,
-        bos_money_pallet_found = 2500,
-        flare = 500,
-        bos_found_scattered_money = 700,
-        bos_heli_picked_up_money = 1500,
-        escape = 6000
+        { amount = 3000, name = "bos_cargo_door_open" },
+        { amount = 3000, name = "bos_money_released" },
+        { amount = 2500, name = "bos_money_pallet_found" },
+        { amount = 500, name = "flare" },
+        { amount = 700, name = "bos_found_scattered_money" },
+        { amount = 1500, name = "bos_heli_picked_up_money" },
+        { escape = 6000 }
     },
     total_xp_override =
     {
-        objective =
+        objectives =
         {
             bos_money_pallet_found = { times = 2 },
             flare = { times = 3 },

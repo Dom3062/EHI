@@ -1,24 +1,8 @@
-local function completion(o, icon, arrow, bitmap_world)
-    while true do
-        local t = 1
-        while t > 0 do
-            t = t - coroutine.yield()
-            local n = math.sin(t * 180)
-            local g = math.lerp(1, 0, n)
-            local c = Color(g, 1, g)
-            o:set_color(c)
-            icon:set_color(c)
-            arrow:set_color(c)
-            if bitmap_world then
-                bitmap_world:set_color(c)
-            end
-        end
-    end
-end
-EHITimerWaypoint = class(EHIPausableWaypoint)
+EHITimerWaypoint = class(EHIWarningWaypoint)
 EHITimerWaypoint._update = false
-EHITimerWaypoint.AnimateWarning = EHIWarningWaypoint.AnimateWarning
-EHITimerWaypoint.delete = EHIWarningWaypoint.delete
+EHITimerWaypoint._autorepair_color = EHI:GetTWColor("drill_autorepair")
+EHITimerWaypoint._completion_color = EHI:GetTWColor("completion")
+EHITimerWaypoint._paused_color = EHIPausableWaypoint._paused_color
 function EHITimerWaypoint:init(waypoint, params, parent_class)
     EHITimerWaypoint.super.init(self, waypoint, params, parent_class)
     self._warning = params.warning
@@ -29,7 +13,7 @@ function EHITimerWaypoint:init(waypoint, params, parent_class)
     end
     if params.completion then
         self._warning = true
-        self.AnimateWarning = self.AnimateCompletion
+        self._warning_color = self._completion_color
     end
 end
 
@@ -38,22 +22,16 @@ function EHITimerWaypoint:SetTime(t)
         return
     end
     EHITimerWaypoint.super.SetTime(self, t)
-    if self._time <= 10 and self._warning and not self._warning_started then
-        self:AnimateWarning()
-        self._warning_started = true
-    end
-end
-
-function EHITimerWaypoint:AnimateCompletion()
-    if self._timer and alive(self._timer) then
-        self._timer:animate(completion, self._bitmap, self._arrow, self._bitmap_world)
+    if self._time <= 10 and self._warning and not self._anim_started then
+        self:AnimateColor()
+        self._anim_started = true
     end
 end
 
 function EHITimerWaypoint:SetJammed(jammed)
-    if self._warning_started and jammed then
+    if self._anim_started and jammed then
         self._timer:stop()
-        self._warning_started = false
+        self._anim_started = false
     end
     self._jammed = jammed
     self:SetColorBasedOnStatus()
@@ -71,17 +49,17 @@ end
 
 function EHITimerWaypoint:SetColorBasedOnStatus()
     if self._jammed or self._not_powered then
-        self:SetColor(Color.red)
+        self:SetColor(self._paused_color)
     else
-        self:SetColor(self._default_color)
-        if self._time <= 10 and self._warning and not self._warning_started then
-            self._warning_started = true
-            self:AnimateWarning()
+        self:SetColor()
+        if self._time <= 10 and self._warning and not self._anim_started then
+            self._anim_started = true
+            self:AnimateColor()
         end
     end
 end
 
 function EHITimerWaypoint:SetAutorepair(state)
-    self._default_color = state and tweak_data.ehi.color.DrillAutorepair or Color.white
-    self:SetColor(self._default_color)
+    self._default_color = state and self._autorepair_color or Color.white
+    self:SetColor()
 end

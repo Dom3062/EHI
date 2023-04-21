@@ -16,7 +16,7 @@ function EHIuno7Tracker:SetTextColor()
     if self._obtainable then
         self._text:set_color(Color.white)
         if self._time <= 10 then
-            self:AnimateWarning(true)
+            self:AnimateColor(true)
         end
     else
         self._text:stop()
@@ -24,11 +24,11 @@ function EHIuno7Tracker:SetTextColor()
     end
 end
 
-function EHIuno7Tracker:AnimateWarning(check_progress)
+function EHIuno7Tracker:AnimateColor(check_progress)
     if self._blocked_warning then
         return
     end
-    EHITimerTracker.AnimateWarning(self, check_progress)
+    EHIuno7Tracker.super.AnimateColor(self, check_progress)
 end
 
 local EHI = EHI
@@ -121,22 +121,42 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:ShowLootCounter({ max = 16 })
+local loot_all = { amount = 500, times = 16 }
 EHI:AddXPBreakdown({
-    objective =
+    tactic =
     {
-        scarface_got_usb = 2000,
-        pc_hack = 3000,
-        scarface_entered_house = 1000,
-        scarface_shutters_open = 1000,
-        scarface_searched_planted_yayo = { amount = 2000, stealth = true },
-        scarface_made_a_call = { amount = 1000, stealth = true },
-        scarface_gathered_all_paintings = { amount = 1000, loud = true },
-        scarface_all_paintings_burned = { amount = 2000, loud = true },
-        scarface_all_cars_hooked_up = { amount = 1000, loud = true },
-        scarface_defeated_security = { amount = 4000, loud = true },
-        scarface_entered_sosa_office = { amount = 2000, stealth = true },
-        scarface_sosa_killed = 1000,
-        vault_open = 8000
-    },
-    loot_all = { amount = 500, times = 16 }
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 2000, name = "scarface_got_usb" },
+                { amount = 3000, name = "pc_hack" },
+                { amount = 1000, name = "scarface_entered_house" },
+                { amount = 1000, name = "scarface_shutters_open" },
+                { amount = 2000, name = "scarface_searched_planted_yayo" },
+                { amount = 1000, name = "scarface_made_a_call" },
+                { amount = 2000, name = "scarface_entered_sosa_office" },
+                { amount = 1000, name = "scarface_sosa_killed" },
+                { amount = 8000, name = "vault_open" }
+            },
+            loot_all = loot_all
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 2000, name = "scarface_got_usb" },
+                { amount = 3000, name = "pc_hack" },
+                { amount = 1000, name = "scarface_entered_house" },
+                { amount = 1000, name = "scarface_shutters_open" },
+                { amount = 1000, name = "scarface_gathered_all_paintings" },
+                { amount = 2000, name = "scarface_all_paintings_burned" },
+                { amount = 1000, name = "scarface_all_cars_hooked_up" },
+                { amount = 4000, name = "scarface_defeated_security" },
+                { amount = 1000, name = "scarface_sosa_killed" },
+                { amount = 8000, name = "vault_open" }
+            },
+            loot_all = loot_all
+        }
+    }
 })
