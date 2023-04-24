@@ -158,7 +158,7 @@ local achievements =
     },
     chca_10 =
     {
-        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem),
+        difficulty_pass = EHI:IsMayhemOrAbove(),
         elements =
         {
             [100264] = { max = 8, class = TT.AchievementProgress, remove_after_reaching_target = false }, -- Guest Rooms (civilian mode)

@@ -131,8 +131,8 @@ EHI:AddXPBreakdown({
     objectives =
     {
         { amount = 2000, name = "diamond_heist_boxes_hack" },
-        { amount = 2000, name = "henrys_rock_first_mission_bag_on_belt" },
         { amount = 2000, name = "ed1_hack_1" },
+        { amount = 2000, name = "henrys_rock_first_mission_bag_on_belt" },
         {
             random =
             {
@@ -173,8 +173,8 @@ EHI:AddXPBreakdown({
                 objectives =
                 {
                     diamond_heist_boxes_hack = true,
-                    henrys_rock_first_mission_bag_on_belt = true,
                     ed1_hack_1 = true,
+                    henrys_rock_first_mission_bag_on_belt = true,
                     random =
                     {
                         biolab = true,
@@ -184,13 +184,13 @@ EHI:AddXPBreakdown({
                     escape = true
                 }
             },
-            --[[max =
+            max =
             {
                 objectives =
                 {
                     diamond_heist_boxes_hack = true,
-                    henrys_rock_first_mission_bag_on_belt = true,
                     ed1_hack_1 = true,
+                    henrys_rock_first_mission_bag_on_belt = true,
                     random =
                     {
                         weapon_lab = true,
@@ -207,7 +207,7 @@ EHI:AddXPBreakdown({
                 {
                     mus_artifact = { times = 6 }
                 }
-            },]]
+            },
             no_max = true
         }
     }

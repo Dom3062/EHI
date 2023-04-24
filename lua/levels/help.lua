@@ -1,4 +1,4 @@
-EHIorange5Tracker = class(EHIAchievementProgressTracker)
+EHIorange5Tracker = EHI:AchievementClass(EHIAchievementProgressTracker, "EHIorange5Tracker")
 function EHIorange5Tracker:Finalize()
     if self._progress < self._max then
         self:SetFailed()
@@ -6,11 +6,9 @@ function EHIorange5Tracker:Finalize()
 end
 
 local EHI = EHI
-EHI.AchievementTrackers.EHIorange5Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local mayhem_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
 local triggers = {
     [101725] = { time = 25 + 0.25 + 2 + 2.35, id = "C4", icons = Icon.HeliDropC4 },
 
@@ -26,6 +24,7 @@ for _, index in ipairs({ 900, 1200, 1500, 4800, 13200 }) do
     DisableWaypoints[EHI:GetInstanceElementID(100093, index)] = true -- Defend
     DisableWaypoints[EHI:GetInstanceElementID(100212, index)] = true -- Fix
 end
+local mayhem_and_up = EHI:IsMayhemOrAbove()
 local achievements =
 {
     orange_4 =

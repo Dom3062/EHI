@@ -95,7 +95,7 @@ EHI:ParseTriggers({
 
 local required_bags = 6
 local bag_multiplier = 2
-if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+if EHI:IsMayhemOrAbove() then
     required_bags = 9
     bag_multiplier = 3
 end

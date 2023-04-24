@@ -18,8 +18,8 @@ local triggers =
     [100207] = DestructionTrigger, -- +1000
     [100226] = DestructionTrigger, -- +10000
 
-    [100460] = { time = 24, id = "Reinforcements1", icons = { "pd2_kill" } },
-    [100501] = { time = 20 + 24, id = "Reinforcements2", icons = { "pd2_kill" } },
+    [100460] = { time = 24, id = "Reinforcements1", icons = { Icon.Kill } },
+    [100501] = { time = 20 + 24, id = "Reinforcements2", icons = { Icon.Kill } },
 
     [100518] = { time = 70 + 26, id = "Escape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Heli, position_by_element = 100515 } }
 }

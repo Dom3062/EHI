@@ -33,7 +33,7 @@ local achievements =
         elements =
         {
             [102292] = { special_function = SF.Trigger, data = { 1, 2 } },
-            [1] = { status = "no_down", id = "berry_4", class = TT.AchievementStatus },
+            [1] = { status = "no_down", class = TT.AchievementStatus },
             [2] = { special_function = SF.CustomCode, f = function()
                 -- Player (Local)
                 managers.player:add_listener("EHI_berry_4_fail", { "bleed_out", "incapacitated" }, berry_4_fail)

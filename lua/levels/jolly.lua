@@ -83,6 +83,6 @@ EHI:AddXPBreakdown({
     loot_all = 500,
     total_xp_override =
     {
-        loot_all = { times = 4 + (2 * math.max(EHI:DifficultyIndex(), 4)) }
+        loot_all = { times = 4 + (2 * math.min(EHI:DifficultyIndex(), 4)) }
     }
 })

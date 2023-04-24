@@ -314,6 +314,9 @@
     "ehi_show_assault_delay_tracker" : "Show Assault Delay Tracker",
     "ehi_show_assault_delay_tracker_desc" : "Shows a tracker for how long the assault delay will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
 
+    "ehi_show_assault_time_tracker" : "Show Assault Duration Tracker",
+    "ehi_show_assault_time_tracker_desc" : "Shows a tracker for how long the assault duration will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
+
     "ehi_show_loot_counter" : "Show Loot Counter",
     "ehi_show_loot_counter_desc" : "Shows a tracker for how much loot is in heist",
 
@@ -620,7 +623,7 @@
     "ehi_experience_to_secure" : "To secure: $amount",
     "ehi_experience_xp_bonus" : "Bonus XP",
     "ehi_experience_trigger_times" : "$times;x max",
-    "ehi_experience_random_objectives" : "Random objectives ($count max):",
+    "ehi_experience_random_objectives" : "Random objectives ($count):",
     "ehi_experience_heli_escape" : "Heli escape",
     "ehi_experience_loud_escape" : "Loud Escape",
     "ehi_experience_stealth_escape" : "Stealth Escape",
@@ -630,7 +633,7 @@
     "ehi_experience_loot_else" : "Everything else",
     "ehi_experience_loot_secured" : "Loot Secured",
     "ehi_experience_each_wave_survived" : "Each survived police wave",
-    "ehi_experience_wave_survived" : "Survived Wave $wave",
+    "ehi_experience_wave_survived" : "Survived Wave $wave;: ",
     "ehi_experience_vault_found" : "Vault found",
     "ehi_experience_vault_open" : "Vault opened",
     "ehi_experience_turret_secured" : "Turret secured",
@@ -752,8 +755,7 @@
     "ehi_experience_fwb_server_room_open" : "Opened server room",
     "ehi_experience_fwb_rewired_circuit_box" : "Rewired a circuit box",
     "ehi_experience_fwb_found_code" : "Found security code",
-    "ehi_experience_fwb_gates_open_stealth" : "Gates are open (Stealth)",
-    "ehi_experience_fwb_gates_open_loud" : "Gates are open (Loud)",
+    "ehi_experience_fwb_gates_open" : "Gates are open",
     "ehi_experience_fwb_c4_escape" : "Wall blown up (Escape route)",
     "ehi_experience_fwb_overdrill" : "OVERDRILL",
     "ehi_experience_murky_station_equipment_found" : "Equipment found",

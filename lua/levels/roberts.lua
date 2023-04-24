@@ -57,18 +57,42 @@ local tbl =
     [101936] = { icons = { Icon.Vault }, remove_on_pause = true, remove_vanilla_waypoint = true, waypoint_id = 102901 }
 }
 EHI:UpdateUnits(tbl)
-EHI:AddXPBreakdown({
-    objective =
+local xp_override =
+{
+    params =
     {
-        thermaldrill_done = { amount = 7000, loud = true },
-        timelock_done = { amount = 4000, stealth = true },
-        cage_assembled = { amount = 3000, loud = true },
-        phone_answered = { amount = 500, stealth = true, times = 4 },
-        escape =
+        min =
         {
-            { amount = 1000, stealth = true },
-            { amount = 2000, loud = true }
+            objectives = true,
+            loot_all = { times = 1 }
+        },
+        no_max = true
+    }
+}
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 4000, name = "timelock_done" },
+                { amount = 500, name = "phone_answered", times = 4 },
+                { escape = 1000 }
+            },
+            loot_all = 1000,
+            total_xp_override = xp_override
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 7000, name = "thermaldrill_done" },
+                { amount = 3000, name = "cage_assembled" },
+                { escape = 2000 }
+            },
+            loot_all = 1000,
+            total_xp_override = xp_override
         }
-    },
-    loot_all = 1000
+    }
 })

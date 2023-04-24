@@ -314,6 +314,9 @@
     "ehi_show_assault_delay_tracker" : "Zobrazovat sledovač délky pauzy před dalším útokem",
     "ehi_show_assault_delay_tracker_desc" : "Zobrazuje sledovač s délkou pauzy před dalším útokem\n\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
 
+    "ehi_show_assault_time_tracker" : "Zobrazovat sledovač délky útoku",
+    "ehi_show_assault_time_tracker_desc" : "Zobrazuje sledovač s délkou útoku\n\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
+
     "ehi_show_loot_counter" : "Zobrazovat počítadlo lupu",
     "ehi_show_loot_counter_desc" : "Zobrazuje sledovač s počtem lupu v loupeži",
 
@@ -620,7 +623,7 @@
     "ehi_experience_xp_bonus" : "Bonusové ZK",
     "ehi_experience_to_secure" : "Zajistit: $amount",
     "ehi_experience_trigger_times" : "Max $times;x",
-    "ehi_experience_random_objectives" : "Náhodné úkoly (max $count;):",
+    "ehi_experience_random_objectives" : "Náhodné úkoly ($count;):",
     "ehi_experience_heli_escape" : "Únik helikoptérou",
     "ehi_experience_loud_escape" : "Dokončení mise po alarmu",
     "ehi_experience_stealth_escape" : "Dokončení mise bez alarmu",
@@ -630,7 +633,7 @@
     "ehi_experience_loot_else" : "Ostatní lup",
     "ehi_experience_loot_secured" : "Lup zajištěn:",
     "ehi_experience_each_wave_survived" : "Každá přežitá vlna",
-    "ehi_experience_wave_survived" : "Přežitá $wave;. vlna",
+    "ehi_experience_wave_survived" : "Přežitá $wave;. vlna: ",
     "ehi_experience_vault_found" : "Trezor nalezen",
     "ehi_experience_vault_open" : "Trezor otevřen",
     "ehi_experience_turret_secured" : "Střílna zajištěna",
@@ -752,8 +755,7 @@
     "ehi_experience_fwb_server_room_open" : "Serverová místnost otevřena",
     "ehi_experience_fwb_rewired_circuit_box" : "Přepojena obvodová skříň",
     "ehi_experience_fwb_found_code" : "Nalezen bezpečnostní kód",
-    "ehi_experience_fwb_gates_open_stealth" : "Brána je otevřená (Bez alarmu)",
-    "ehi_experience_fwb_gates_open_loud" : "Brána je otevřená (Po alarmu)",
+    "ehi_experience_fwb_gates_open" : "Brána je otevřená",
     "ehi_experience_fwb_c4_escape" : "Zeď odpálena (Únik)",
     "ehi_experience_fwb_overdrill" : "OVERDRILL",
     "ehi_experience_murky_station_equipment_found" : "Vybavení nalezeno",

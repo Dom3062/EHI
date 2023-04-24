@@ -190,7 +190,7 @@ if EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
     bags = 8 + 3 + 8
 elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
     bags = 10 + 4 + 10
-elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+elseif EHI:IsMayhemOrAbove() then
     bags = 12 + 5 + 12
 end
 EHI:ShowLootCounter({

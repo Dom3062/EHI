@@ -1,6 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
-EHIrun9Tracker = class(EHIAchievementTracker)
+EHIrun9Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIrun9Tracker")
 function EHIrun9Tracker:update(t, dt)
     self._time = self._time - dt
     self._text:set_text(self:Format())
@@ -10,7 +10,6 @@ function EHIrun9Tracker:update(t, dt)
         self:RemoveTrackerFromUpdate()
     end
 end
-EHI.AchievementTrackers.EHIrun9Tracker = true
 
 EHIGasTracker = class(EHIProgressTracker)
 EHIGasTracker._forced_icons = { Icon.Fire }

@@ -77,50 +77,97 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        random =
         {
-            max = 3,
-            shoe_storage =
+            random =
             {
-                { amount = 1000, name = "shoe_storage_enter" },
-                { amount = 500, name = "shoe_collected" }
-            },
-            shoe_backroom =
-            {
-                { amount = 4000, name = "shoe_backroom_enter" },
-                { amount = 500, name = "shoe_collected" }
-            },
-            jewelry =
-            {
-                { amount = 1500, name = "pc_hack" },
-                { amount = 500, name = "necklace_collected" }
-            },
-            toy =
-            {
-                { amount = 4000, name = "toy_found" },
-                { amount = 800, name = "toy_collected" }
-            },
-            vr =
-            {
-                { amount = 6000, name = "vault_drill_done" },
-                { amount = 500, name = "vr_collected" }
-            },
-            wine =
-            {
-                { amount = 800, name = "wine_collected" }
+                max = 3,
+                shoe_storage =
+                {
+                    { amount = 1000, name = "shoe_storage_enter" },
+                    { amount = 500, name = "shoe_collected" }
+                },
+                shoe_backroom =
+                {
+                    { amount = 4000, name = "shoe_backroom_enter" },
+                    { amount = 500, name = "shoe_collected" }
+                },
+                jewelry =
+                {
+                    { amount = 1500, name = "pc_hack" },
+                    { amount = 500, name = "necklace_collected" }
+                },
+                toy =
+                {
+                    { amount = 4000, name = "toy_found" },
+                    { amount = 800, name = "toy_collected" }
+                },
+                vr =
+                {
+                    { amount = 6000, name = "vault_drill_done" },
+                    { amount = 500, name = "vr_collected" }
+                },
+                wine =
+                {
+                    { amount = 800, name = "wine_collected" }
+                }
             }
         },
-        flare = 500,
-        c4_drop = 1000,
-        c4_set_up = 1000,
-        heli_arrival = 1000,
-        wires_attached = 500
+        { amount = 500, name = "flare" },
+        { amount = 1000, name = "c4_drop" },
+        { amount = 1000, name = "c4_set_up" },
+        { amount = 1000, name = "heli_arrival" },
+        { amount = 500, name = "wires_attached" }
     },
     loot =
     {
         money = 1000,
         diamonds = 1000
+    },
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives =
+                {
+                    random =
+                    {
+                        shoe_storage = true,
+                        jewelry = true,
+                        wine = true
+                    },
+                    flare = true,
+                    c4_drop = true,
+                    c4_set_up = true,
+                    heli_arrival = true,
+                    wires_attached = true
+                }
+            },
+            max =
+            {
+                objectives =
+                {
+                    random =
+                    {
+                        shoe_backroom = true,
+                        toy = true,
+                        vr = true
+                    },
+                    flare = true,
+                    c4_drop = true,
+                    c4_set_up = true,
+                    heli_arrival = true,
+                    wires_attached = true
+                },
+                loot =
+                {
+                    money = { times = 3 },
+                    diamonds = { times = 6 }
+                }
+            }
+        }
     }
 })

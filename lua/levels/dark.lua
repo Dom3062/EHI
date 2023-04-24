@@ -1,4 +1,4 @@
-EHIdark5Tracker = class(EHIProgressTracker)
+EHIdark5Tracker = EHI:AchievementClass(EHIProgressTracker, "EHIdark5Tracker")
 function EHIdark5Tracker:init(panel, params)
     self._bodies = {}
     EHIdark5Tracker.super.init(self, panel, params)
@@ -37,7 +37,6 @@ end
 
 local EHI = EHI
 local Icon = EHI.Icons
-EHI.AchievementTrackers.EHIdark5Tracker = true
 
 for _, index in ipairs({ 8750, 17750, 33525, 36525 }) do
     local unit_index = EHI:GetInstanceUnitID(100334, index)

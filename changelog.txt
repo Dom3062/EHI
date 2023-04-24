@@ -1,3 +1,6 @@
+r146 (24. 04. 2023):
+Added "Show Assault Duration Tracker" option
+
 r145 (21. 04. 2023):
 Added option to change colors
 Fixed an issue where "ACHIEVEMENT FAILED" popup do not show on some achievements

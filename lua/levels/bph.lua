@@ -4,8 +4,8 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    [100109] = { max = (ovk_and_up and 40 or 30), id = "EnemyDeathShowers", icons = { "pd2_kill" }, flash_times = 1, class = TT.Progress },
-    [101433] = { id = "EnemyDeathShowers", special_function = SF.RemoveTracker },
+    [100109] = { max = (ovk_and_up and 40 or 30), id = "EnemyDeathShowers", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress },
+    [101339] = { id = "EnemyDeathShowers", special_function = SF.IncreaseProgress },
 
     [101815] = { time = 10, id = "MoveWalkway", icons = { Icon.Wait } },
 
@@ -14,10 +14,7 @@ local triggers = {
     [101715] = { time = 11, id = "Thermite3", icons = { Icon.Fire } },
     [101716] = { time = 11, id = "Thermite4", icons = { Icon.Fire } },
 
-    [101137] = { max = 10, id = "EnemyDeathOutside", icons = { "pd2_kill" }, flash_times = 1, class = TT.Progress },
-    [101405] = { id = "EnemyDeathOutside", special_function = SF.RemoveTracker },
-
-    [101339] = { id = "EnemyDeathShowers", special_function = SF.IncreaseProgress },
+    [101137] = { max = 10, id = "EnemyDeathOutside", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress },
     [101412] = { id = "EnemyDeathOutside", special_function = SF.IncreaseProgress }
 }
 
@@ -35,9 +32,23 @@ local achievements =
     }
 }
 
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 1 + 30 })
+}
+
+local DisableWaypoints =
+{
+    --levels/instances/unique/bph/bph_drill_door
+    [EHI:GetInstanceElementID(100037, 3000)] = true,
+    [EHI:GetInstanceElementID(100037, 8000)] = true
+}
+EHI:DisableWaypoints(DisableWaypoints)
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:AddXPBreakdown({
     objectives =

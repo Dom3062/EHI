@@ -104,7 +104,7 @@ if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) t
     required_bags = 4
 elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
     required_bags = 6
-elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+elseif EHI:IsMayhemOrAbove() then
     required_bags = 8
 end
 EHI:AddXPBreakdown({

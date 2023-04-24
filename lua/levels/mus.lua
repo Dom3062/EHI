@@ -111,7 +111,7 @@ EHI:AddXPBreakdown({
                 { amount = 6000, name = "mus_powerboxes" },
                 { amount = 2000, name = "mus_first_timelock" },
                 { amount = 2000, name = "mus_second_timelock" },
-                { amount = 3000, name = "mus_no_gas_trap" },
+                { amount = 3000, name = "mus_no_gas_trap", optional = true },
                 { escape = 4000 }
             },
             loot_all = 1000,
@@ -124,7 +124,7 @@ EHI:AddXPBreakdown({
                 { amount = 8000, name = "pc_hack" },
                 { amount = 5000, name = "mus_first_timelock" },
                 { amount = 5000, name = "mus_second_timelock" },
-                { amount = 4000, name = "mus_no_gas_trap" },
+                { amount = 4000, name = "mus_no_gas_trap", optional = true },
                 { escape = 6000 }
             },
             loot_all = 1000,

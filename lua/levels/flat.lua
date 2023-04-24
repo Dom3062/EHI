@@ -82,10 +82,8 @@ local ExecuteIfElementIsEnabled = EHI:GetFreeCustomSpecialFunctionID()
 local DelayExecution = EHI:GetFreeCustomSpecialFunctionID()
 local kills = 7 -- Normal + Hard
 if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
-    -- Very Hard + OVERKILL
     kills = 10
-elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
-    -- Mayhem+
+elseif EHI:IsMayhemOrAbove() then
     kills = 15
 end
 local triggers = {
@@ -95,7 +93,7 @@ local triggers = {
     [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = ExecuteIfElementIsEnabled },
     [102181] = { id = "HeliWinchLoop", special_function = SF.RemoveTracker },
 
-    [100068] = { max = kills, id = "SniperDeath", icons = { "sniper", "pd2_kill" }, class = TT.Progress },
+    [100068] = { max = kills, id = "SniperDeath", icons = { "sniper", Icon.Kill }, class = TT.Progress },
     [103446] = { time = 20 + 6 + 4, id = "HeliDropsC4", icons = { Icon.Heli, Icon.C4, Icon.Goto } },
     [100082] = { time = 40, id = "HeliComesWithMagnet", icons = { Icon.Heli, Icon.Winch } },
 
@@ -181,9 +179,15 @@ local achievements =
     }
 }
 
+local other =
+{
+    [100290] = EHI:AddAssaultDelay({ time = 30 })
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(trigger, element, enabled)
     if enabled then

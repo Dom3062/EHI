@@ -1,4 +1,4 @@
-EHIuno7Tracker = class(EHIAchievementTracker)
+EHIuno7Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIuno7Tracker")
 function EHIuno7Tracker:init(...)
     EHIuno7Tracker.super.init(self, ...)
     self._obtainable = false
@@ -32,11 +32,9 @@ function EHIuno7Tracker:AnimateColor(check_progress)
 end
 
 local EHI = EHI
-EHI.AchievementTrackers.EHIuno7Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local mayhem_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
 local element_sync_triggers =
 {
     [100241] = { time = 662/30, id = "EscapeBoat", icons = Icon.BoatEscape, hook_element = 100216 },
@@ -75,6 +73,7 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
+local mayhem_and_up = EHI:IsMayhemOrAbove()
 local achievements =
 {
     friend_5 =

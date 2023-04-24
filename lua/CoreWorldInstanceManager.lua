@@ -14,7 +14,7 @@ local instances =
 {
     ["levels/instances/shared/obj_skm/world"] = -- Hostage in the Holdout mode
     {
-        [100032] = { time = 7, id = "HostageRescue", icons = { "pd2_kill" }, class = TT.Warning },
+        [100032] = { time = 7, id = "HostageRescue", icons = { Icon.Kill }, class = TT.Warning },
         [100036] = { id = "HostageRescue", special_function = SF.RemoveTracker }
     },
     ["levels/instances/unique/pbr/pbr_mountain_comm_dish/world"] =

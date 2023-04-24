@@ -66,7 +66,7 @@ local Weapons = { 100857, 103374 }
 local other =
 {
     [101737] = EHI:AddLootCounter(function()
-        local MayhemOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
+        local MayhemOrAbove = EHI:IsMayhemOrAbove()
         EHI:ShowLootCounterNoCheck({
             max = 4, -- Bomb parts 
             additional_loot = 2 + tweak_data.ehi.functions.GetNumberOfVisibleWeapons(Weapons), -- Meth and Weapons

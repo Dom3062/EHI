@@ -180,6 +180,7 @@ _G.EHI =
         Pager = "pagers_used",
         Train = "C_Bain_H_TransportVarious_ButWait",
         LiquidNitrogen = "equipment_liquid_nitrogen_canister",
+        Kill = "pd2_kill",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
@@ -446,7 +447,7 @@ local function LoadDefaultValues(self)
         show_enemy_count_show_pagers = true,
         show_laser_tracker = false,
         show_assault_delay_tracker = true,
-        --show_assault_time_tracker = true,
+        show_assault_time_tracker = true,
         show_loot_counter = true,
         show_all_loot_secured_popup = true,
         variable_random_loot_format = 3, -- 1 = Max-(Max+Random)?; 2 = MaxRandom?; 3 = Max+Random?
@@ -653,15 +654,18 @@ end
 ---@param diff_2 number
 function EHI:IsBetweenDifficulties(diff_1, diff_2)
     if diff_1 > diff_2 then
-        diff_1 = diff_1 - diff_2
-        diff_2 = diff_1 + diff_2
-        diff_1 = diff_2 - diff_1
+        -- Swap the numbers
+        diff_1, diff_2 = diff_2, diff_1
     end
     return self._cache.DifficultyIndex >= diff_1 and self._cache.DifficultyIndex <= diff_2
 end
 
 function EHI:DifficultyIndex()
     return self._cache.DifficultyIndex or 0
+end
+
+function EHI:IsMayhemOrAbove()
+    return self:IsDifficultyOrAbove(self.Difficulties.Mayhem)
 end
 
 if Global.load_level then
@@ -721,7 +725,7 @@ end
 ---@param vr_option string Option to be checked if the game is running in VR version
 ---@param option string Option to be checked if the game is running in non-VR version
 ---@param expected_value any What the expected value in the option should be
----@param vr_expected_value any? What the expected value in the VR option should be in VR (optional if the same value is expected for both options)
+---@param vr_expected_value any? What the expected value in the VR option should be in VR (don't pass a value if the same value is expected for both options)
 ---@return boolean
 function EHI:CheckVRAndNonVROption(vr_option, option, expected_value, vr_expected_value)
     if self:IsVR() then
@@ -824,9 +828,8 @@ function EHI:IsXPTrackerHidden()
     return not self:IsXPTrackerVisible()
 end
 
----@return boolean|nil
 function EHI:AreGagePackagesSpawned()
-    return self._cache.GagePackagesSpawned
+    return self._cache.GagePackagesSpawned or false
 end
 
 function EHI:IsPlayingCrimeSpree()
@@ -2348,7 +2351,15 @@ function EHI:CheckHook(hook)
     return false
 end
 
----Returns default keypad time reset for the current difficulty
+---Returns default keypad time reset for the current difficulty  
+---Default values:  
+---`normal = 5s`  
+---`hard = 15s`  
+---`veryhard = 15s`  
+---`overkill = 20s`  
+---`mayhem = 30s`  
+---`deathwish = 30s`  
+---`deathsentence = 40s`  
 ---@param time_override table? Overrides default keypad time reset for each difficulty
 ---@return integer
 function EHI:GetKeypadResetTimer(time_override)
@@ -2368,6 +2379,81 @@ function EHI:GetKeypadResetTimer(time_override)
     else
         return time_override.deathsentence or 40
     end
+end
+
+---Returns value for the current difficulty. If the value is not provided "-1" is returned  
+---Possible values  
+---`normal_or_above`  
+---`normal`  
+---`hard_or_below`  
+---`hard_or_above`  
+---`hard`  
+---`veryhard_or_below`  
+---`veryhard_or_above`  
+---`veryhard`  
+---`overkill_or_below`  
+---`overkill_or_above`  
+---`overkill`  
+---`mayhem_or_below`  
+---`mayhem_or_above`  
+---`mayhem`  
+---`deathwish_or_below`  
+---`deathwish_or_above`  
+---`deathwish`  
+---`deathsentence_or_below`  
+---`deathsentence_or_above`  
+---`deathsentence`
+---@param values table
+---@return any
+function EHI:GetValueBasedOnDifficulty(values)
+    if values.normal_or_above and self:IsDifficultyOrAbove(self.Difficulties.Normal) then
+        return values.normal_or_above
+    elseif self:IsDifficulty(self.Difficulties.Normal) then
+        return values.normal or -1
+    elseif values.hard_or_below and self:IsDifficultyOrBelow(self.Difficulties.Hard) then
+        return values.hard_or_below
+    elseif values.hard_or_above and self:IsDifficultyOrAbove(self.Difficulties.Hard) then
+        return values.hard_or_above
+    elseif self:IsDifficulty(self.Difficulties.Hard) then
+        return values.hard or -1
+    elseif values.veryhard_or_below and self:IsDifficultyOrBelow(self.Difficulties.VeryHard) then
+        return values.veryhard_or_below
+    elseif values.veryhard_or_above and self:IsDifficultyOrAbove(self.Difficulties.VeryHard) then
+        return values.veryhard_or_below
+    elseif self:IsDifficulty(self.Difficulties.VeryHard) then
+        return values.veryhard or -1
+    elseif values.overkill_or_below and self:IsDifficultyOrBelow(self.Difficulties.OVERKILL) then
+        return values.overkill_or_below
+    elseif values.overkill_or_above and self:IsDifficultyOrAbove(self.Difficulties.OVERKILL) then
+        return values.overkill_or_above
+    elseif self:IsDifficulty(self.Difficulties.OVERKILL) then
+        return values.overkill or -1
+    elseif values.mayhem_or_below and self:IsDifficultyOrBelow(self.Difficulties.Mayhem) then
+        return values.mayhem_or_below
+    elseif values.mayhem_or_above and self:IsMayhemOrAbove() then
+        return values.mayhem_or_above
+    elseif self:IsDifficulty(self.Difficulties.Mayhem) then
+        return values.mayhem or -1
+    elseif values.deathwish_or_below and self:IsDifficultyOrBelow(self.Difficulties.DeathWish) then
+        return values.deathwish_or_below
+    elseif values.deathwish_or_above and self:IsDifficultyOrAbove(self.Difficulties.DeathWish) then
+        return values.deathwish_or_above
+    elseif self:IsDifficulty(self.Difficulties.DeathWish) then
+        return values.deathwish or -1
+    elseif values.deathsentence_or_below and self:IsDifficultyOrBelow(self.Difficulties.DeathSentence) then
+        return values.deathsentence_or_below
+    else
+        return values.deathsentence or -1
+    end
+end
+
+---Registers and returns inherited class
+---@param c class
+---@param id string
+---@return any
+function EHI:AchievementClass(c, id)
+    self.AchievementTrackers[id] = true
+    return class(c)
 end
 
 ---@param tracker string Filename without extension

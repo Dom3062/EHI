@@ -35,7 +35,7 @@ local other =
 {
     [107124] = EHI:AddLootCounter(function()
         local ef = tweak_data.ehi.functions
-        local max = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 2 or 1
+        local max = EHI:IsMayhemOrAbove() and 2 or 1
         local goat = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) and 1 or 0
         local random_loot = ef.GetNumberOfVisibleWeapons(Weapons) + ef.GetNumberOfVisibleOtherLoot(OtherLoot)
         EHI:ShowLootCounterNoCheck({

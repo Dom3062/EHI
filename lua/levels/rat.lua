@@ -61,7 +61,7 @@ local triggers = {
 
     [100723] = { id = "CookChance", special_function = SF.IncreaseChanceFromElement }
 }
-if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+if EHI:IsMayhemOrAbove() then
     triggers[102197] = { id = "HeliMeth", run = { time = 180 + heli_delay_full } }
     if EHI:MissionTrackersAndWaypointEnabled() then
         triggers[101001].data[#triggers[101001].data + 1] = 1010013

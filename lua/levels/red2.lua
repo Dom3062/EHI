@@ -1,7 +1,7 @@
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
-EHIcac10Tracker = class(EHIAchievementTracker)
+EHIcac10Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIcac10Tracker")
 EHIcac10Tracker._update = false
 EHIcac10Tracker.FormatProgress = EHIProgressTracker.Format
 EHIcac10Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
@@ -81,7 +81,7 @@ function EHIcac10Tracker:SetTextColor(color)
     self._progress_text:set_color(color)
 end
 
-EHIgreen1Tracker = class(EHIProgressTracker)
+EHIgreen1Tracker = EHI:AchievementClass(EHIProgressTracker, "EHIgreen1Tracker")
 function EHIgreen1Tracker:SetCompleted(force)
     EHIgreen1Tracker.super.SetCompleted(self, force)
     self._disable_counting = false
@@ -93,8 +93,6 @@ function EHIgreen1Tracker:SetProgress(progress)
 end
 
 local EHI = EHI
-EHI.AchievementTrackers.EHIgreen1Tracker = true
-EHI.AchievementTrackers.EHIcac10Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
@@ -160,19 +158,15 @@ local achievements =
     }
 }
 
---[[local other =
+local other =
 {
-    [106046] = EHI:AddAssaultDelay({ time = 5 + 40 + 17 }),
-    [102213] = EHI:AddAssaultDelay({ time = 0, special_function = SF.SetTimeOrCreateTracker })
+    [100850] = EHI:AddAssaultDelay({ time = 20 + 30, trigger_times = 1 }),
 }
-
-if EHI:IsClient() then
-    other[102212] = EHI:AddAssaultDelay({ time = 17 })
-end]]
 
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:RegisterCustomSpecialFunction(StartAchievementCountdown, function(...)
@@ -198,24 +192,129 @@ for i = 6000, 6200, 200 do
     tbl[EHI:GetInstanceUnitID(100006, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100014, i) }
 end
 EHI:UpdateUnits(tbl)
+local min_bags = EHI:GetValueBasedOnDifficulty({
+    hard_or_below = 4,
+    veryhard = 6,
+    overkill = 6,
+    mayhem_or_above = 8
+})
+local loud_xp =
+{
+    objectives =
+    {
+        { amount = 2000, name = "fwb_server_room_open" },
+        { amount = 2000, name = "pc_hack" },
+        { amount = 4000, name = "fwb_gates_open" },
+        { amount = 6000, name = "thermite_done" },
+        { amount = 2000, name = "fwb_c4_escape" },
+        { escape = 4000 } -- 2000 + 2000 (loud escape)
+    }
+}
+if EHI:IsMayhemOrAbove() then
+    loud_xp.objectives[7] = { amount = 40000, name = "fwb_overdrill", optional = true }
+    loud_xp.loot =
+    {
+        money = 1000,
+        gold = 143
+    }
+    loud_xp.total_xp_override =
+    {
+        params =
+        {
+            custom =
+            {
+                {
+                    type = "min_with_max",
+                    min =
+                    {
+                        objectives = true,
+                        loot =
+                        {
+                            money = { times = min_bags }
+                        }
+                    },
+                    max =
+                    {
+                        objectives = true,
+                        loot =
+                        {
+                            money = { times = 14 }
+                        },
+                        bonus_xp = -40000 -- subtract OVERDRILL bonus xp
+                    }
+                },
+                {
+                    type = "min_with_max",
+                    name = "fwb_overdrill",
+                    min =
+                    {
+                        objectives = true,
+                        loot =
+                        {
+                            money = { times = min_bags }
+                        },
+                        bonus_xp = 40000 -- OVERDRILL
+                    },
+                    max =
+                    {
+                        objectives = true,
+                        loot =
+                        {
+                            money = { times = 14 },
+                            gold = { times = 70 }
+                        }
+                    }
+                }
+            }
+        }
+    }
+else
+    loud_xp.loot_all = 1000
+    loud_xp.total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot_all = { min = min_bags, max = 14 }
+            }
+        }
+    }
+end
 EHI:AddXPBreakdown({
-    objective =
+    tactic =
     {
-        fwb_server_room_open = 2000,
-        fwb_rewired_circuit_box = { amount = 1500, stealth = true },
-        fwb_found_code = { amount = 1000, stealth = true },
-        pc_hack = { amount = 2000, loud = true },
-        fwb_gates_open_stealth = 2000,
-        fwb_gates_open_loud = 4000,
-        vault_open = { amount = 2000, stealth = true },
-        thermite_done = 6000,
-        fwb_c4_escape = { amount = 2000, loud = true },
-        fwb_overdrill = 40000,
-        escape = 2000,
-        loud_escape = 2000
-    },
-    loot =
-    {
-        money = 1000
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 2000, name = "fwb_server_room_open" },
+                { amount = 1500, name = "fwb_rewired_circuit_box" },
+                { amount = 1000, name = "fwb_found_code" },
+                { amount = 2000, name = "fwb_gates_open" },
+                { amount = 2000, name = "vault_open" },
+                { escape = 2000 }
+            },
+            loot_all = 1000,
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        min =
+                        {
+                            fwb_rewired_circuit_box = { times = 3 }
+                        },
+                        max =
+                        {
+                            fwb_rewired_circuit_box = { times = 3 }
+                        },
+                        loot_all = { min = min_bags, max = 14 }
+                    }
+                }
+            }
+        },
+        loud = loud_xp
     }
 })

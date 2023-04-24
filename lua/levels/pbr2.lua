@@ -1,4 +1,4 @@
-EHIcac33Tracker = class(EHIAchievementStatusTracker)
+EHIcac33Tracker = EHI:AchievementClass(EHIAchievementStatusTracker, "EHIcac33Tracker")
 EHIcac33Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac33Tracker.FormatProgress = EHIProgressTracker.Format
 function EHIcac33Tracker:init(panel, params)
@@ -55,7 +55,6 @@ function EHIcac33Tracker:SetFailed()
 end
 
 local EHI = EHI
-EHI.AchievementTrackers.EHIcac33Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers

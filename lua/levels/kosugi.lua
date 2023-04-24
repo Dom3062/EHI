@@ -1,6 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
-EHIkosugi5Tracker = class(EHIAchievementProgressTracker)
+EHIkosugi5Tracker = EHI:AchievementClass(EHIAchievementProgressTracker, "EHIkosugi5Tracker")
 function EHIkosugi5Tracker:init(panel, params)
     params.max = 16 -- Random loot
     self._armor_max = 4 -- Armor
@@ -114,7 +114,6 @@ for _, unit_id in ipairs({ 100098, 102897, 102899, 102900 }) do
     end)
 end
 
-EHI.AchievementTrackers.EHIkosugi5Tracker = true
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local DisableTriggerAndExecute = EHI:GetFreeCustomSpecialFunctionID()
@@ -234,7 +233,7 @@ local random_paintings = 2
 local crates = 4 -- (Normal + Hard)
 if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
     crates = 5
-elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+elseif EHI:IsMayhemOrAbove() then
     crates = 6
     random_weapons = 1
     random_paintings = 1
@@ -274,6 +273,13 @@ EHI:ShowAchievementLootCounter({
         loot_type = "samurai_suit"
     }
 })
+local min_bags = EHI:GetValueBasedOnDifficulty({
+    normal = 3,
+    hard = 5,
+    veryhard = 7,
+    overkill = 9,
+    mayhem_or_above = 12
+})
 EHI:AddXPBreakdown({
     objective =
     {
@@ -286,6 +292,30 @@ EHI:AddXPBreakdown({
     {
         samurai_suit = { amount = 6000, to_secure = 4 },
         _else = { amount = 500, times = 16 },
-        xp_bonus = { amount = 4000, to_secure = 3, times = 1 },
+        xp_bonus = { amount = 4000, to_secure = 3, times = 1 }
+    },
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                loot =
+                {
+                    _else = { times = min_bags },
+                    xp_bonus = { times = 1 }
+                }
+            },
+            max =
+            {
+                loot =
+                {
+                    samurai_suit = { times = 1 },
+                    _else = { times = 16 },
+                    xp_bonus = { times = 1 }
+                },
+                bonus_xp = 4000 -- Stealth Escape
+            }
+        }
     }
 })

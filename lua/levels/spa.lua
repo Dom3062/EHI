@@ -9,7 +9,7 @@ local triggers = {
     [100681] = { time = 60, id = "CharonPickLock", icons = { "pd2_door" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [101430] = { id = "CharonPickLock", special_function = SF.PauseTracker },
 
-    [102266] = { max = 6, id = "SniperDeath", icons = { "sniper", "pd2_kill" }, class = TT.Progress },
+    [102266] = { max = 6, id = "SniperDeath", icons = { "sniper", Icon.Kill }, class = TT.Progress },
 
     [100549] = { time = 20, id = "ObjectiveWait", icons = { Icon.Wait } },
     [101202] = { time = 15, id = "Escape", icons = Icon.CarEscape },

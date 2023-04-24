@@ -9,7 +9,7 @@ local heli_delay = 60 -- Normal -> Very Hard
 --[[if EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
     heli_element_timer = 102293
     heli_delay = 80
-elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+elseif EHI:IsMayhemOrAbove() then
     heli_element_timer = 102294
     heli_delay = 100
 end]]

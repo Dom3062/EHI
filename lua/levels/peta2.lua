@@ -50,7 +50,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100002] = { max = (EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 14 or 12), class = TT.AchievementProgress, remove_after_reaching_target = false },
+            [100002] = { max = (EHI:IsMayhemOrAbove() and 14 or 12), class = TT.AchievementProgress, remove_after_reaching_target = false },
             [102095] = { special_function = SF.CustomCode, f = function()
                 IncreaseEnabled = true
             end },

@@ -1,7 +1,7 @@
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
-EHIameno3Tracker = class(EHIAchievementTracker)
+EHIameno3Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIameno3Tracker")
 EHIameno3Tracker.FormatNumber = EHINeededValueTracker.Format
 EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumber
 EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
@@ -91,7 +91,6 @@ function EHIameno3Tracker:SetTextColor(color)
 end
 
 local EHI = EHI
-EHI.AchievementTrackers.EHIameno3Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -189,7 +188,7 @@ local achievements =
 
 local FirstAssaultDelay = 10 + 30
 local other = {}
-if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+if EHI:IsMayhemOrAbove() then
     other[301049] = EHI:AddAssaultDelay({ time = FirstAssaultDelay })
 else
     other[301138] = EHI:AddAssaultDelay({ time = 50 + FirstAssaultDelay })

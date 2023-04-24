@@ -147,18 +147,50 @@ end)
 local tbl = { [101387] = { remove_vanilla_waypoint = true, waypoint_id = 104494 } }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    tactic =
     {
-        nmh_cameras_taken_out = 2000,
-        nmh_keep_hostages_down = { amount = 7000, stealth = true },
-        nmh_found_patients_file = { amount = 2000, stealth = true },
-        nmh_set_up_fake_sentries = { amount = 1000, stealth = true },
-        nmh_found_correct_patient = { amount = 3000, stealth = true },
-        nmh_icu_open = { amount = 7000, loud = true },
-        nmh_saw_patient_room = { amount = 3000, loud = true, times = 3 },
-        nmh_valid_sample = { amount = 3000, times = 1 },
-        nmh_elevator_arrived = 8000,
-        nmh_exit_elevator = 2000
-    },
-    no_gage = true
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 2000, name = "nmh_cameras_taken_out" },
+                { amount = 7000, name = "nmh_keep_hostages_down" },
+                { amount = 2000, name = "nmh_found_patients_file" },
+                { amount = 1000, name = "nmh_set_up_fake_sentries" },
+                { amount = 3000, name = "nmh_found_correct_patient" },
+                { amount = 3000, name = "nmh_valid_sample" },
+                { amount = 8000, name = "nmh_elevator_arrived" },
+                { amount = 2000, name = "nmh_exit_elevator" }
+            }
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 2000, name = "nmh_cameras_taken_out", optional = true },
+                { amount = 7000, name = "nmh_icu_open" },
+                { amount = 3000, name = "nmh_saw_patient_room" },
+                { amount = 3000, name = "nmh_valid_sample" },
+                { amount = 8000, name = "nmh_elevator_arrived" },
+                { amount = 2000, name = "nmh_exit_elevator" }
+            },
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        min =
+                        {
+                            nmh_cameras_taken_out = { times = 0 }
+                        },
+                        max =
+                        {
+                            nmh_saw_patient_room = { times = 3 }
+                        }
+                    }
+                }
+            }
+        }
+    }
 })

@@ -200,6 +200,7 @@ end
 
 function EHIAssaultTimeTracker:PoliceActivityBlocked()
     self._hide_on_delete = nil
+    self._time = 1
     EHIAssaultTimeTracker.super.delete(self)
 end
 

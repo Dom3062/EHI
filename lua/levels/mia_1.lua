@@ -67,7 +67,7 @@ if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) t
     money = 4
 elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
     money = 3
-elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then
+elseif EHI:IsMayhemOrAbove() then
     money = 2
 end
 local function GetNumberOfMethBags()

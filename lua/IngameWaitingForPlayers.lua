@@ -70,7 +70,7 @@ local armored_4_levels =
 local primary, secondary, melee, grenade, is_stealth = nil, nil, nil, nil, false
 local VeryHardOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
 local OVKOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
---local MayhemOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem)
+--local MayhemOrAbove = EHI:IsMayhemOrAbove()
 local stats = {}
 
 local function HasWeaponEquipped(weapon_id)
@@ -669,7 +669,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end)
             end
         end
-        if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
+        if EHI:IsMayhemOrAbove() and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
             local function f()
                 CreateProgressTracker("gage3_2", EHI:GetAchievementProgress("gage3_2_stats"), 6, false, true)
             end

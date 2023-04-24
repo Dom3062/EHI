@@ -1,4 +1,4 @@
-EHIcorp12Tracker = class(EHIAchievementTracker)
+EHIcorp12Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIcorp12Tracker")
 function EHIcorp12Tracker:SetMPState()
     self._text:stop()
     self._time_warning = false
