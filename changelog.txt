@@ -1,3 +1,6 @@
+r148 (01. 05. 2023):
+Fixed an issue where waypoints are not properly aligned and are on default vector position (0, 0, 0) on clients
+
 r147 (30. 04. 2023):
 Fixed a crash in Wallet Gui object
 

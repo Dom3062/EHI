@@ -1730,6 +1730,21 @@ function EHI:HookElements(elements_to_hook)
 end
 
 function EHI:SyncLoad()
+    for _, trigger in pairs(triggers) do
+        if trigger.special_function == SF.ShowWaypoint and trigger.data and not trigger.data.position then
+            if trigger.data.position_by_element then
+                self:AddPositionFromElement(trigger.data, trigger.id, true)
+            elseif trigger.data.position_by_unit then
+                self:AddPositionFromUnit(trigger.data, trigger.id, true)
+            end
+        elseif trigger.waypoint and not trigger.waypoint.position then
+            if trigger.waypoint.position_by_element then
+                self:AddPositionFromElement(trigger.waypoint, trigger.id, true)
+            elseif trigger.waypoint.position_by_unit then
+                self:AddPositionFromUnit(trigger.waypoint, trigger.id, true)
+            end
+        end
+    end
     for id, _ in pairs(self.HookOnLoad) do
         local trigger = triggers[id]
         if trigger then
@@ -1809,7 +1824,8 @@ function EHI:AddPositionFromElement(data, id, check)
         data.position = vector
         data.position_by_element = nil
     elseif check then
-        self:Log("Element with ID " .. tostring(data.position_by_element) .. " has not been found. Element ID to hook: " .. tostring(id))
+        data.position = Vector3()
+        self:Log(string.format("Element with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_by_element, tostring(id)))
     end
 end
 
@@ -1819,7 +1835,8 @@ function EHI:AddPositionFromUnit(data, id, check)
         data.position = vector
         data.position_by_unit = nil
     elseif check then
-        self:Log("Unit with ID " .. tostring(data.position_by_unit) .. " has not been found. Element ID to hook: " .. tostring(id))
+        data.position = Vector3()
+        self:Log(string.format("Unit with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_by_unit, tostring(id)))
     end
 end
 
@@ -1979,10 +1996,6 @@ function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_al
                 if data.data.icon then
                     data.data.icon = self.WaypointIconRedirect[data.data.icon] or data.data.icon
                 end
-                if not data.data.position then
-                    data.data.position = Vector3()
-                    self:Log("Waypoint in element with ID '" .. tostring(data.id) .. "' does not have valid waypoint position! Setting it to default vector to avoid crashing")
-                end
             end
             -- Fill the rest table properties for EHI Waypoints
             if data.waypoint then
@@ -2002,10 +2015,6 @@ function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_al
                     self:AddPositionFromElement(data.waypoint, data.id, host)
                 elseif data.waypoint.position_by_unit then
                     self:AddPositionFromUnit(data.waypoint, data.id, host)
-                end
-                if not data.waypoint.position then
-                    data.waypoint.position = Vector3()
-                    self:Log("Waypoint in element with ID '" .. tostring(data.id) .. "' does not have valid waypoint position! Setting it to default vector to avoid crashing")
                 end
             end
         end
