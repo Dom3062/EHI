@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 if EHI:GetOption("show_mission_trackers") then
     for _, pc_id in ipairs({ 104170, 104175, 104349, 104350, 104351, 104352, 104354, 101455 }) do
         managers.mission:add_runned_unit_sequence_trigger(pc_id, "interact", function(unit)
-            managers.ehi:AddTracker({
+            managers.ehi_tracker:AddTracker({
                 id = tostring(pc_id),
                 time = 13,
                 icons = { Icon.PCHack }
@@ -57,7 +57,7 @@ local other =
 }
 EHI:RegisterCustomSpecialFunction(FilterIsOk, function(trigger, element, ...)
     if element:_check_difficulty() then
-        managers.ehi:CallFunction("LootCounter", "SecuredMissionLoot") -- Server secured
+        managers.ehi_tracker:CallFunction("LootCounter", "SecuredMissionLoot") -- Server secured
     end
 end)
 EHI:ParseTriggers({

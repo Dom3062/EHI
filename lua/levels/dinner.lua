@@ -72,19 +72,19 @@ if ovk_and_up then
         local farm_1 = EHI:GetAchievementIcon("farm_1")
         EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
             if mode == "phalanx" then
-                managers.ehi:AddTracker({
+                managers.ehi_tracker:AddTracker({
                     id = "farm_1",
                     status = "finish",
                     icons = farm_1,
                     class = EHI.Trackers.AchievementStatus,
                 })
             else
-                managers.ehi:SetAchievementFailed("farm_1")
+                managers.ehi_tracker:SetAchievementFailed("farm_1")
             end
         end)
         EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
             if success then
-                managers.ehi:SetAchievementComplete("farm_1")
+                managers.ehi_tracker:SetAchievementComplete("farm_1")
             end
         end)
     end

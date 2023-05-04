@@ -1,6 +1,6 @@
 EHIXPTracker = class(EHITracker)
+EHIXPTracker.update = EHIXPTracker.update_fade
 EHIXPTracker._forced_icons = { "xp" }
-EHIXPTracker._forced_time = 5
 function EHIXPTracker:init(panel, params)
     self._xp = params.amount or 0
     EHIXPTracker.super.init(self, panel, params)
@@ -8,13 +8,6 @@ end
 
 function EHIXPTracker:Format() -- Formats the amount of XP in the panel
     return managers.experience:cash_string(self._xp, self._xp >= 0 and "+" or "") -- May show up a negative value because it is called from EHITotalXPTracker (diff)
-end
-
-function EHIXPTracker:update(t, dt)
-    self._time = self._time - dt
-    if self._time <= 0 then
-        self:delete()
-    end
 end
 
 function EHIXPTracker:AddXP(amount)

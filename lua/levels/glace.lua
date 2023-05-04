@@ -91,11 +91,10 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
-                objectives = true
-            },
-            no_max = true
+                loot_all = { max = 4 }
+            }
         }
     }
 })

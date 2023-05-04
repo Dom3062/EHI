@@ -24,7 +24,7 @@ for _, index in ipairs({ 1900, 2400 }) do
     for _, unit_id in ipairs({ 100010, 100039, 100004, 100034 }) do
         local fixed_unit_id = EHI:GetInstanceUnitID(unit_id, index)
         managers.mission:add_runned_unit_sequence_trigger(fixed_unit_id, "interact", function(...)
-            managers.ehi:AddTracker({
+            managers.ehi_tracker:AddTracker({
                 id = tostring(fixed_unit_id),
                 time = 50 + math.rand(10),
                 icons = { Icon.Fire },
@@ -42,7 +42,7 @@ local achievements =
         elements =
         {
             [101136] = { special_function = SF.CustomCode, f = function()
-                EHI:ShowAchievementLootCounter({
+                EHI:ShowAchievementLootCounterNoCheck({
                     achievement = "brb_8",
                     max = 12,
                     remove_after_reaching_target = false,

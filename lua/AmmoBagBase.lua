@@ -10,17 +10,17 @@ end
 local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(unit, key, amount)
-        if managers.ehi:TrackerDoesNotExist("Deployables") and amount ~= 0 then
-            managers.ehi:AddAggregatedDeployablesTracker()
+        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount ~= 0 then
+            managers.ehi_tracker:AddAggregatedDeployablesTracker()
         end
-        managers.ehi:CallFunction("Deployables", "UpdateAmount", "ammo_bag", unit, key, amount)
+        managers.ehi_tracker:CallFunction("Deployables", "UpdateAmount", "ammo_bag", unit, key, amount)
     end
 else
     UpdateTracker = function(unit, key, amount)
-        if managers.ehi:TrackerDoesNotExist("AmmoBags") and amount ~= 0 then
-            managers.ehi:CreateDeployableTracker("AmmoBags")
+        if managers.ehi_tracker:TrackerDoesNotExist("AmmoBags") and amount ~= 0 then
+            managers.ehi_tracker:CreateDeployableTracker("AmmoBags")
         end
-        managers.ehi:CallFunction("AmmoBags", "UpdateAmount", unit, key, amount)
+        managers.ehi_tracker:CallFunction("AmmoBags", "UpdateAmount", unit, key, amount)
     end
 end
 
@@ -30,8 +30,8 @@ if EHI:IsVR() then
         old_UpdateTracker(data.unit, key, data.amount)
     end
     UpdateTracker = function(unit, key, amount)
-        if managers.ehi:IsLoading() then
-            managers.ehi:AddToLoadQueue(key, { unit = unit, amount = amount }, Reload)
+        if managers.ehi_tracker:IsLoading() then
+            managers.ehi_tracker:AddToLoadQueue(key, { unit = unit, amount = amount }, Reload)
             return
         end
         old_UpdateTracker(unit, key, amount)
@@ -69,8 +69,26 @@ function AmmoBagBase:SetOffset(offset)
 end
 
 function AmmoBagBase:SetIgnore()
+    if self._ignore_set_by_parent then
+        return
+    end
     self._ignore = true
     UpdateTracker(self._unit, self._ehi_key, 0)
+end
+
+function AmmoBagBase:SetIgnoreChild()
+    if self._parent_done then
+        return
+    end
+    self:SetIgnore()
+    self._ignore_set_by_parent = true
+end
+
+function AmmoBagBase:SetCountThisUnit()
+    self._ignore = nil
+    self._ignore_set_by_parent = nil
+    self._parent_done = true
+    self:SetOffset(self._offset)
 end
 
 function AmmoBagBase:_set_visual_stage(...)

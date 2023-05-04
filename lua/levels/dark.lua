@@ -41,7 +41,7 @@ local Icon = EHI.Icons
 for _, index in ipairs({ 8750, 17750, 33525, 36525 }) do
     local unit_index = EHI:GetInstanceUnitID(100334, index)
     managers.mission:add_runned_unit_sequence_trigger(unit_index, "interact", function(unit)
-        managers.ehi:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = tostring(unit_index),
             time = 10,
             icons = { Icon.Fire }
@@ -67,7 +67,7 @@ local achievements =
             [100290] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
-            self:AddTimedAchievementTracker("dark_2", 420)
+            self._trackers:AddTimedAchievementTracker("dark_2", 420)
         end
     },
     dark_3 =
@@ -112,17 +112,17 @@ EHI:ParseTriggers({
 })
 EHI:ShowLootCounter({ max = 16 })
 EHI:RegisterCustomSpecialFunction(AddBodyBag, function(trigger, ...)
-    managers.ehi:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
+    managers.ehi_tracker:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
 end)
 EHI:RegisterCustomSpecialFunction(RemoveBodyBag, function(trigger, ...)
-    managers.ehi:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
+    managers.ehi_tracker:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
 end)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        murky_station_equipment_found = { amount = 1000, times = 1 },
-        murky_station_found_emp_part = 2000,
-        escape = 2000
+        { amount = 1000, name = "murky_station_equipment_found", times = 1 },
+        { amount = 2000, name = "murky_station_found_emp_part", times = 2 },
+        { escape = 2000 }
     },
     loot =
     {
@@ -130,5 +130,20 @@ EHI:AddXPBreakdown({
         weapon_glock = 1000,
         weapon_scar = 1000,
         drk_bomb_part = { amount = 3000, times = 2 }
+    },
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot =
+                {
+                    weapon_glock = { max = 7 },
+                    weapon_scar = { max = 7 },
+                    drk_bomb_part = { min_max = 2 }
+                }
+            }
+        }
     }
 })

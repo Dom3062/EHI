@@ -25,7 +25,10 @@ end
 function EHINeededValueTracker:FormatNumber(n)
     local divisor = 1
     local post_fix = ""
-    if n >= 1000000 then
+    if n >= 1000000000 then
+        divisor = 1000000000
+        post_fix = "B"
+    elseif n >= 1000000 then
         divisor = 1000000
         post_fix = "M"
     elseif n >= 1000 then

@@ -7,7 +7,6 @@ function EHIcorp12Tracker:SetMPState()
 end
 
 local EHI = EHI
-EHI.AchievementTrackers.EHIcorp12Tracker = true
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -58,7 +57,7 @@ local achievements =
             -- SP (MP has 240s)
             [100107] = { time = 420, class = "EHIcorp12Tracker" },
             [102739] = { special_function = SF.CustomCode, f = function()
-                managers.ehi:CallFunction("corp_12", "SetMPState")
+                managers.ehi_tracker:CallFunction("corp_12", "SetMPState")
             end },
             [102014] = { special_function = SF.SetAchievementFailed }, -- Alarm
             [102736] = { special_function = SF.SetAchievementFailed }, -- Civilian killed
@@ -85,7 +84,7 @@ EHI:ParseTriggers({
 })
 EHI:RegisterCustomSpecialFunction(corp_11_Start, function(trigger, ...)
     if corp_11_StartVariable then
-        managers.ehi:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "corp_11",
             time = 60,
             icons = trigger.icons,
@@ -95,7 +94,7 @@ EHI:RegisterCustomSpecialFunction(corp_11_Start, function(trigger, ...)
 end)
 EHI:RegisterCustomSpecialFunction(corp_11_SetFailed, function(trigger, element, enabled)
     if enabled then
-        managers.ehi:SetAchievementFailed("corp_11")
+        managers.ehi_tracker:SetAchievementFailed("corp_11")
         corp_11_StartVariable = false
     end
 end)

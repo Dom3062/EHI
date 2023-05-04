@@ -25,7 +25,7 @@ if EHI:GetOption("show_mission_trackers") then
         local unit_id = EHI:GetInstanceUnitID(100052, index)
         for i = 0, 9, 1 do
             managers.mission:add_runned_unit_sequence_trigger(unit_id, "set_" .. color .. "_0" .. tostring(i), function(...)
-                managers.ehi:CallFunction("ColorCodes", "SetCode", color, i)
+                managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, i)
             end)
         end
     end
@@ -42,7 +42,7 @@ local other =
 }
 
 local function dah_8()
-    EHI:ShowAchievementLootCounter({
+    EHI:ShowAchievementLootCounterNoCheck({
         achievement = "dah_8",
         max = 12,
         counter =
@@ -67,7 +67,7 @@ local achievements =
         load_sync = function(self)
             if EHI.ConditionFunctions.IsStealth() then
                 dah_8()
-                self:SetTrackerProgress("dah_8", managers.loot:GetSecuredBagsTypeAmount("diamondheist_big_diamond"))
+                self._trackers:SetTrackerProgress("dah_8", managers.loot:GetSecuredBagsTypeAmount("diamondheist_big_diamond"))
             end
         end
     }
@@ -76,9 +76,9 @@ local achievements =
 if OVKorAbove then
     EHI:AddLoadSyncFunction(function(self)
         if managers.game_play_central:GetMissionDisabledUnit(100950) then -- Red Diamond
-            self:IncreaseTrackerProgressMax("LootCounter", 1)
+            self._trackers:IncreaseTrackerProgressMax("LootCounter", 1)
         end
-        self:SyncSecuredLoot()
+        self._trackers:SyncSecuredLoot()
     end)
 end
 
@@ -111,31 +111,47 @@ EHI:ShowLootCounter({
     -- Difficulties Very Hard or lower can load sync via EHI as the Red Diamond does not spawn on these difficulties
     no_sync_load = OVKorAbove
 })
-local xp =
-{
-    objective =
-    {
-        diamond_heist_boxes_hack = 4000,
-        diamond_heist_found_color_codes = { amount = 1000, stealth = true },
-        diamond_heist_found_keycard = 2000,
-        diamond_heist_cfo_in_heli = { amount = 4000, loud = true },
-        vault_open = { amount = 4000, loud = true },
-        escape =
-        {
-            { amount = 2000, stealth = true },
-            { amount = 4000, loud = true }
-        }
-    }
-}
+local loot, loot_all
 if OVKorAbove then
-    xp.loot =
+    loot =
     {
         red_diamond = 2000,
         diamonds_dah = 400
     }
 else
-    xp.loot_all = 400
+    loot_all = 400
 end
+local xp =
+{
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 4000, name = "diamond_heist_boxes_hack" },
+                { amount = 1000, name = "diamond_heist_found_color_codes" },
+                { amount = 2000, name = "diamond_heist_found_keycard" },
+                { escape = 2000 }
+            },
+            loot = loot,
+            loot_all = loot_all
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 4000, name = "diamond_heist_boxes_hack" },
+                { amount = 2000, name = "diamond_heist_found_keycard" },
+                { amount = 4000, name = "diamond_heist_cfo_in_heli" },
+                { amount = 4000, name = "vault_open" },
+                { escape = 4000 }
+            },
+            loot = loot,
+            loot_all = loot_all
+        }
+    }
+}
 EHI:AddXPBreakdown(xp)
 if EHI:IsHost() then
     dah_laptop_codes = nil
@@ -175,7 +191,7 @@ EHI:AddLoadSyncFunction(function(self)
             local unit = wd:get_unit(unit_id)
             local code = CheckIfCodeIsVisible(unit, color)
             if code then
-                managers.ehi:CallFunction("ColorCodes", "SetCode", color, code)
+                managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, code)
             end
         end
     end

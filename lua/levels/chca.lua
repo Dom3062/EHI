@@ -80,7 +80,7 @@ if EHI:CanShowAchievement("chca_12") and ovk_and_up then
     local function check(...)
         active_saws = active_saws + 1
         if active_saws > 1 then
-            managers.ehi:SetAchievementFailed("chca_12")
+            managers.ehi_tracker:SetAchievementFailed("chca_12")
         end
     end
     local function saw_done()
@@ -129,7 +129,7 @@ local DisableWaypoints =
 }
 
 local function chca_9_fail()
-    managers.ehi:SetAchievementFailed("chca_9")
+    managers.ehi_tracker:SetAchievementFailed("chca_9")
     EHI:Unhook("chca_9_killed")
     EHI:Unhook("chca_9_killed_by_anyone")
 end
@@ -220,10 +220,10 @@ EHI:RegisterCustomSpecialFunction(LootLeft, function(...)
             left_to_burn = left_to_burn - 1
         end
     end
-    managers.ehi:DecreaseTrackerProgressMax("LootCounter", left_to_burn)
+    managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter", left_to_burn)
 end)
 EHI:AddLoadSyncFunction(function(self)
     if managers.game_play_central:GetMissionDisabledUnit(200942) then -- AI Vision Blocker; "editor_only" continent
-        self:DecreaseTrackerProgressMax("LootCounter", 16)
+        self._trackers:DecreaseTrackerProgressMax("LootCounter", 16)
     end
 end)]]

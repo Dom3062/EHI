@@ -35,5 +35,5 @@ EHI:ParseTriggers({
 EHI:AddLoadSyncFunction(function(self)
     EHI:ShowLootCounter({ max = 21 })
     EHI:UnhookElement(100416)
-    self:SyncSecuredLoot()
+    self._trackers:SyncSecuredLoot()
 end)

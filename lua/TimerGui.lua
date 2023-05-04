@@ -42,7 +42,7 @@ end
 
 function TimerGui:set_background_icons(...)
     original.set_background_icons(self, ...)
-    managers.ehi:CallFunction(self._ehi_key, "SetUpgrades", self:GetUpgrades())
+    managers.ehi_tracker:CallFunction(self._ehi_key, "SetUpgrades", self:GetUpgrades())
 end
 
 function TimerGui:GetUpgrades()
@@ -62,15 +62,15 @@ function TimerGui:GetUpgrades()
 end
 
 function TimerGui:StartTimer()
-    if managers.ehi_common:Exists(self._ehi_key) then
-        managers.ehi:SetTimerRunning(self._ehi_key)
+    if managers.ehi_manager:Exists(self._ehi_key) then
+        managers.ehi_tracker:SetTimerRunning(self._ehi_key)
         managers.ehi_waypoint:SetTimerWaypointRunning(self._ehi_key)
     else
         local autorepair = self._unit:base()._autorepair
         -- In case the conversion fails, fallback to "self._time_left" which is a number
         local t = tonumber(self._current_timer) or self._time_left
         if not show_waypoint_only then
-            managers.ehi:AddTracker({
+            managers.ehi_tracker:AddTracker({
                 id = self._ehi_key,
                 time = t,
                 icons = self._icons or self._ehi_icon,
@@ -163,13 +163,13 @@ if show_waypoint_only then
     end
 elseif show_waypoint then
     function TimerGui:update(...)
-        managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
+        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
         managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._time_left)
         original.update(self, ...)
     end
 else
     function TimerGui:update(...)
-        managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
+        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
         original.update(self, ...)
     end
 end
@@ -178,6 +178,13 @@ function TimerGui:_set_done(...)
     self:RemoveTracker()
     original._set_done(self, ...)
     self:RestoreWaypoint()
+    if self._parent then
+        for _, unit in ipairs(self._child_units or {}) do
+            if unit:base() and unit:base().SetCountThisUnit then
+                unit:base():SetCountThisUnit()
+            end
+        end
+    end
 end
 
 function TimerGui:RestoreWaypoint()
@@ -189,7 +196,7 @@ function TimerGui:RestoreWaypoint()
 end
 
 function TimerGui:_set_jammed(jammed, ...)
-    managers.ehi:SetTimerJammed(self._ehi_key, jammed)
+    managers.ehi_tracker:SetTimerJammed(self._ehi_key, jammed)
     managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, jammed)
     original._set_jammed(self, jammed, ...)
 end
@@ -198,7 +205,7 @@ function TimerGui:_set_powered(powered, ...)
     if powered == false and self._remove_on_power_off then
         self:RemoveTracker()
     end
-    managers.ehi:SetTimerPowered(self._ehi_key, powered)
+    managers.ehi_tracker:SetTimerPowered(self._ehi_key, powered)
     managers.ehi_waypoint:SetTimerWaypointPowered(self._ehi_key, powered)
     original._set_powered(self, powered, ...)
 end
@@ -224,7 +231,7 @@ function TimerGui:destroy(...)
 end
 
 function TimerGui:RemoveTracker()
-    managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_tracker:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
@@ -265,12 +272,38 @@ function TimerGui:SetRestoreVanillaWaypointOnDone()
     self._restore_vanilla_waypoint_on_done = true
 end
 
+function TimerGui:SetChildUnits(units, wd)
+    if self._done then
+        for _, unit_id in ipairs(units) do
+            local unit = wd:get_unit(unit_id)
+            if unit and unit:base() and unit:base().SetCountThisUnit then
+                unit:base():SetCountThisUnit()
+            else
+                EHI:Log("[TimerGui] Cannot find unit with ID " .. tostring(unit_id))
+            end
+        end
+    else
+        self._parent = true
+        self._child_units = {}
+        local n = 1
+        for _, unit_id in ipairs(units) do
+            local unit = wd:get_unit(unit_id)
+            if unit then
+                self._child_units[n] = unit
+                n = n + 1
+            else
+                EHI:Log("[TimerGui] Cannot find unit with ID " .. tostring(unit_id))
+            end
+        end
+    end
+end
+
 function TimerGui:Finalize()
     if self._ignore or (self._remove_on_power_off and not self._powered) then
         self:RemoveTracker()
         return
     elseif self._icons then
-		managers.ehi:SetTrackerIcon(self._ehi_key, self._icons[1])
+		managers.ehi_tracker:SetTrackerIcon(self._ehi_key, self._icons[1])
 		managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icons[1])
 	end
     if self._started and not self._done and self._unit:mission_door_device() then

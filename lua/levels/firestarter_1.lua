@@ -94,12 +94,12 @@ EHI:AddXPBreakdown({
 })
 --[[EHI:AddLoadSyncFunction(function(self)
     LordOfWarAchievement()
-    if self:TrackerExists("lord_of_war") then
-        self:SetTrackerProgress("lord_of_war", managers.loot:GetSecuredBagsTypeAmount("weapon"))
-        if self:TrackerExists("LootCounter") then
-            self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
+    if self._trackers:TrackerExists("lord_of_war") then
+        self._trackers:SetTrackerProgress("lord_of_war", managers.loot:GetSecuredBagsTypeAmount("weapon"))
+        if self._trackers:TrackerExists("LootCounter") then
+            self._trackers:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
         end
     else
-        self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
+        self._trackers:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
     end
 end)]]

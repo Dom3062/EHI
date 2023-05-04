@@ -5,7 +5,7 @@ for _, unit_id in ipairs({ 100067, 100093, 100094 }) do
     for _, index in ipairs({ 4500, 5400, 5800, 6000, 6200, 6600 }) do
         local fixed_unit_id = EHI:GetInstanceUnitID(unit_id, index)
         managers.mission:add_runned_unit_sequence_trigger(fixed_unit_id, "interact", function(unit)
-            managers.ehi:AddTracker({
+            managers.ehi_tracker:AddTracker({
                 id = tostring(fixed_unit_id),
                 time = 30,
                 icons = { Icon.Glasscutter }

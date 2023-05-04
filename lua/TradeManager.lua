@@ -37,14 +37,14 @@ local TrackerID = "CustodyTime"
 
 local function OnPlayerCriminalDeath(peer_id, respawn_penalty)
     if suppress_in_stealth and managers.groupai:state():whisper_mode() then
-        managers.ehi:AddToTradeDelayCache(peer_id, respawn_penalty, true)
+        managers.ehi_tracker:AddToTradeDelayCache(peer_id, respawn_penalty, true)
         return
     end
-    local tracker = managers.ehi:GetTracker(TrackerID)
+    local tracker = managers.ehi_tracker:GetTracker(TrackerID)
     if tracker and not tracker:PeerExists(peer_id) then
         tracker:AddPeerCustodyTime(peer_id, respawn_penalty)
     else
-        managers.ehi:AddCustodyTimeTrackerWithPeer(peer_id, respawn_penalty)
+        managers.ehi_tracker:AddCustodyTimeTrackerWithPeer(peer_id, respawn_penalty)
     end
 end
 
@@ -59,28 +59,28 @@ local function CreateTracker(peer_id, respawn_penalty)
 end
 
 local function SetTrackerPause(character_name, t)
-    managers.ehi:SetTrade("ai", character_name ~= nil, t)
+    managers.ehi_tracker:SetTrade("ai", character_name ~= nil, t)
 end
 
 function TradeManager:init(...)
     original.init(self, ...)
     EHI:Hook(self, "set_trade_countdown", function(s, enabled)
-        managers.ehi:SetTrade("normal", enabled, self._trade_counter_tick)
+        managers.ehi_tracker:SetTrade("normal", enabled, self._trade_counter_tick)
     end)
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi:LoadFromTradeDelayCache()
+        managers.ehi_tracker:LoadFromTradeDelayCache()
         if not dropin then
-            managers.ehi:SetTrade("normal", true, self:GetTradeCounterTick())
+            managers.ehi_tracker:SetTrade("normal", true, self:GetTradeCounterTick())
         end
     end)
     Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", function(peer, peer_id, reason)
-        managers.ehi:CallFunction(TrackerID, "RemovePeerFromCustody", peer_id)
+        managers.ehi_tracker:CallFunction(TrackerID, "RemovePeerFromCustody", peer_id)
     end)
 end
 
 function TradeManager:pause_trade(time, ...)
     original.pause_trade(self, time, ...)
-    managers.ehi:CallFunction(TrackerID, "SetTradePause", time)
+    managers.ehi_tracker:CallFunction(TrackerID, "SetTradePause", time)
 end
 
 function TradeManager:GetTradeCounterTick()
@@ -106,15 +106,15 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, .
             CreateTracker(peer_id, respawn_penalty)
         elseif respawn_penalty ~= tweak_data.player.damage.base_respawn_time_penalty then
             if suppress_in_stealth and managers.groupai:state():whisper_mode() then
-                if managers.ehi:CachedPeerInCustodyExists(peer_id) then
-                    managers.ehi:SetCachedPeerCustodyTime(peer_id, respawn_penalty)
+                if managers.ehi_tracker:CachedPeerInCustodyExists(peer_id) then
+                    managers.ehi_tracker:SetCachedPeerCustodyTime(peer_id, respawn_penalty)
                 else
-                    managers.ehi:AddToTradeDelayCache(peer_id, respawn_penalty)
+                    managers.ehi_tracker:AddToTradeDelayCache(peer_id, respawn_penalty)
                 end
-                managers.ehi:SetCachedPeerInCustody(peer_id)
+                managers.ehi_tracker:SetCachedPeerInCustody(peer_id)
                 return
             end
-            local tracker = managers.ehi:GetTracker(TrackerID)
+            local tracker = managers.ehi_tracker:GetTracker(TrackerID)
             if tracker then
                 if tracker:PeerExists(peer_id) then
                     tracker:UpdatePeerCustodyTime(peer_id, respawn_penalty)
@@ -123,7 +123,7 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, .
                 end
             end
         end
-        managers.ehi:CallFunction(TrackerID, "SetPeerInCustody", peer_id)
+        managers.ehi_tracker:CallFunction(TrackerID, "SetPeerInCustody", peer_id)
     end
     return crim
 end

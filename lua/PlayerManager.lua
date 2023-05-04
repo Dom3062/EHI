@@ -14,7 +14,7 @@ if EHI:GetOption("show_bodybags_counter") then
     original._set_body_bags_amount = PlayerManager._set_body_bags_amount
     function PlayerManager:_set_body_bags_amount(...)
         original._set_body_bags_amount(self, ...)
-        managers.ehi:CallFunction("BodybagsCounter", "SetCount", self._local_player_body_bags)
+        managers.ehi_tracker:CallFunction("BodybagsCounter", "SetCount", self._local_player_body_bags)
     end
 end
 
@@ -32,7 +32,7 @@ function PlayerManager:spawn_smoke_screen(position, normal, grenade_unit, ...)
         end
 	    local color = tweak_data.chat_colors[color_id] or Color.white
         local duration = tweak_data.projectiles.smoke_screen_grenade.duration
-        managers.ehi:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "SmokeScreenGrenade_" .. key,
             time = duration,
             icons = {

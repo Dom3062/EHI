@@ -13,7 +13,7 @@ local function berry_4_fail()
     managers.player:remove_listener("EHI_berry_4_fail")
     EHI:Unhook("berry_4_HuskPlayerMovement_sync_bleed_out")
     EHI:Unhook("berry_4_HuskPlayerMovement_sync_incapacitated")
-    managers.ehi:SetAchievementFailed("berry_4")
+    managers.ehi_tracker:SetAchievementFailed("berry_4")
 end
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local achievements =

@@ -41,7 +41,7 @@ end
 
 function ElementLaserTrigger:add_callback(...)
     if not self._callback and self._is_cycled then
-        managers.ehi:AddLaserTracker({
+        managers.ehi_tracker:AddLaserTracker({
             id = self._ehi_id,
             time = self._values.cycle_interval,
             class = "EHILaserTracker"
@@ -52,10 +52,10 @@ end
 
 function ElementLaserTrigger:remove_callback(...)
     original.remove_callback(self, ...)
-	managers.ehi:RemoveLaserTracker(self._ehi_id)
+	managers.ehi_tracker:RemoveLaserTracker(self._ehi_id)
 end
 
 function ElementLaserTrigger:load(...)
     original.load(self, ...)
-    managers.ehi:CallFunction(self._ehi_id, "UpdateInterval", self._next_cycle_t)
+    managers.ehi_tracker:CallFunction(self._ehi_id, "UpdateInterval", self._next_cycle_t)
 end

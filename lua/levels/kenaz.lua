@@ -88,7 +88,7 @@ if EHI:GetOption("show_mission_trackers") then
     local function hook(unit_id, color)
         for i = 0, 9, 1 do
             managers.mission:add_runned_unit_sequence_trigger(unit_id, "set_" .. color .. "_0" .. tostring(i), function(...)
-                managers.ehi:CallFunction("ColorCodes", "SetCode", color, i)
+                managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, i)
             end)
         end
     end
@@ -123,7 +123,7 @@ EHI:RegisterCustomSpecialFunction(DontTriggerWithC4Entry, function(trigger, ...)
 end)
 EHI:RegisterCustomSpecialFunction(RemoveColorsIfEnabled, function(trigger, element, enabled)
     if enabled then
-        managers.ehi:RemoveTracker(trigger.id)
+        managers.ehi_tracker:RemoveTracker(trigger.id)
     end
 end)
 
@@ -145,7 +145,7 @@ local achievements =
             [100282] = { time = 840, class = TT.Achievement }
         },
         load_sync = function(self)
-            self:AddTimedAchievementTracker("kenaz_4", 840)
+            self._trackers:AddTimedAchievementTracker("kenaz_4", 840)
         end,
         mission_end_callback = true
     },
@@ -278,12 +278,12 @@ EHI:AddLoadSyncFunction(function(self)
     if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
         return Cleanup()
     end
-    if EHI.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
+    if EHI.ConditionFunctions.IsStealth() and self._trackers:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
         return Cleanup()
     elseif managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
         return Cleanup()
     end
-    self:AddTracker({
+    self._trackers:AddTracker({
         id = "ColorCodes",
         class = TT.ColoredCodes
     })
@@ -296,7 +296,7 @@ EHI:AddLoadSyncFunction(function(self)
                         local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
                         local code = CheckIfCodeIsVisible(unit, color)
                         if code then
-                            managers.ehi:CallFunction("ColorCodes", "SetCode", color, code)
+                            managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, code)
                             break
                         end
                     end
@@ -304,7 +304,7 @@ EHI:AddLoadSyncFunction(function(self)
                     local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
                     local code = CheckIfCodeIsVisible(unit, color)
                     if code then
-                        managers.ehi:CallFunction("ColorCodes", "SetCode", color, code)
+                        managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, code)
                         break
                     end
                 end
@@ -316,7 +316,7 @@ EHI:AddLoadSyncFunction(function(self)
                     local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
                     local code = CheckIfCodeIsVisible(unit, color)
                     if code then
-                        managers.ehi:CallFunction("ColorCodes", "SetCode", color, code)
+                        managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, code)
                         break
                     end
                 end
@@ -324,7 +324,7 @@ EHI:AddLoadSyncFunction(function(self)
                 local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
                 local code = CheckIfCodeIsVisible(unit, color)
                 if code then
-                    managers.ehi:CallFunction("ColorCodes", "SetCode", color, code)
+                    managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, code)
                     break
                 end
             end

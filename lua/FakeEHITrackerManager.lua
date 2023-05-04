@@ -5,9 +5,9 @@ local panel_offset_original = 6
 local panel_size = panel_size_original
 local panel_offset = panel_offset_original
 local selected_color = Color(255, 255, 165, 0) / 255
-FakeEHIManager = class()
-FakeEHIManager.make_fine_text = BlackMarketGui.make_fine_text
-function FakeEHIManager:init(panel)
+FakeEHITrackerManager = class()
+FakeEHITrackerManager.make_fine_text = BlackMarketGui.make_fine_text
+function FakeEHITrackerManager:init(panel)
     self._hud_panel = panel:panel({
         name = "fake_ehi_panel",
         layer = 0,
@@ -40,7 +40,7 @@ function FakeEHIManager:init(panel)
     self:AddFakeTrackers()
 end
 
-function FakeEHIManager:AddFakeTrackers()
+function FakeEHITrackerManager:AddFakeTrackers()
     self._n_of_trackers = 0
     self._fake_trackers = {}
     self:AddFakeTracker({ id = "show_mission_trackers", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { Icon.Wait } } )
@@ -85,7 +85,7 @@ function FakeEHIManager:AddFakeTrackers()
     self:AddPreviewText()
 end
 
-function FakeEHIManager:AddFakeTracker(params)
+function FakeEHITrackerManager:AddFakeTracker(params)
     if not EHI:GetOption(params.id) then
         return
     end
@@ -96,7 +96,7 @@ function FakeEHIManager:AddFakeTracker(params)
     end
 end
 
-function FakeEHIManager:CreateFakeTracker(params)
+function FakeEHITrackerManager:CreateFakeTracker(params)
     params.x, params.y = self:GetPos(self._n_of_trackers)
     params.scale = self._scale
     params.text_scale = self._text_scale
@@ -107,13 +107,13 @@ function FakeEHIManager:CreateFakeTracker(params)
     self._fake_trackers[self._n_of_trackers] = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params)
 end
 
-function FakeEHIManager:CreateFirstFakeTracker(params)
+function FakeEHITrackerManager:CreateFirstFakeTracker(params)
     params.first = true
     self:CreateFakeTracker(params)
     self._fake_trackers[1]._time_bg_box:child("left_top"):set_color(Color.red)
 end
 
-function FakeEHIManager:GetPeerColor()
+function FakeEHITrackerManager:GetPeerColor()
     if CustomNameColor and CustomNameColor.GetOwnColor then
         return CustomNameColor:GetOwnColor()
     else
@@ -126,7 +126,7 @@ function FakeEHIManager:GetPeerColor()
     end
 end
 
-function FakeEHIManager:AddPreviewText()
+function FakeEHITrackerManager:AddPreviewText()
     if self._n_of_trackers == 0 then
         return
     end
@@ -145,13 +145,13 @@ function FakeEHIManager:AddPreviewText()
     self._preview_text:set_x(self._x)
 end
 
-function FakeEHIManager:UpdatePreviewTextVisibility(visibility)
+function FakeEHITrackerManager:UpdatePreviewTextVisibility(visibility)
     if self._preview_text then
         self._preview_text:set_visible(visibility)
     end
 end
 
-function FakeEHIManager:GetPos(pos)
+function FakeEHITrackerManager:GetPos(pos)
     local x, y = self._x, self._y
     if self._tracker_alignment == 1 then -- Vertical
         local new_y = self:GetY(pos, true)
@@ -171,12 +171,12 @@ function FakeEHIManager:GetPos(pos)
     return x, y
 end
 
-function FakeEHIManager:GetY(pos, horizontal)
+function FakeEHITrackerManager:GetY(pos, horizontal)
     local corrected_pos = horizontal and (pos - self._horizontal.y_offset) or pos
     return self._y + (corrected_pos * (panel_size + panel_offset))
 end
 
-function FakeEHIManager:GetTrackerSize(n_of_icons)
+function FakeEHITrackerManager:GetTrackerSize(n_of_icons)
     local panel_with_offset = panel_size + panel_offset
     local gap = 5 * n_of_icons
     local icons = 32 * n_of_icons
@@ -184,7 +184,7 @@ function FakeEHIManager:GetTrackerSize(n_of_icons)
     return final_size
 end
 
-function FakeEHIManager:UpdateTracker(id, value)
+function FakeEHITrackerManager:UpdateTracker(id, value)
     local correct_id = ""
     if id == "xp_panel" then
         correct_id = "show_gained_xp"
@@ -200,20 +200,20 @@ function FakeEHIManager:UpdateTracker(id, value)
     end
 end
 
-function FakeEHIManager:UpdateEnemyCountTracker(value)
+function FakeEHITrackerManager:UpdateEnemyCountTracker(value)
     local tracker = self:GetTracker("show_enemy_count_tracker")
     if tracker then
         tracker:UpdateFormat(value)
     end
 end
 
-function FakeEHIManager:UpdateFormat(format)
+function FakeEHITrackerManager:UpdateFormat(format)
     for _, tracker in pairs(self._fake_trackers) do
         tracker:UpdateFormat(format)
     end
 end
 
-function FakeEHIManager:UpdateEquipmentFormat(format)
+function FakeEHITrackerManager:UpdateEquipmentFormat(format)
     for _, tracker in pairs(self._fake_trackers) do
         if tracker.UpdateEquipmentFormat then
             tracker:UpdateEquipmentFormat(format)
@@ -221,7 +221,7 @@ function FakeEHIManager:UpdateEquipmentFormat(format)
     end
 end
 
-function FakeEHIManager:UpdateXOffset(x)
+function FakeEHITrackerManager:UpdateXOffset(x)
     local x_full, _ = managers.gui_data:safe_to_full(x, 0)
     self._x = x_full
     self._horizontal.x = x_full
@@ -232,7 +232,7 @@ function FakeEHIManager:UpdateXOffset(x)
     end
 end
 
-function FakeEHIManager:UpdateYOffset(y)
+function FakeEHITrackerManager:UpdateYOffset(y)
     local _, y_full = managers.gui_data:safe_to_full(0, y)
     self._y = y_full
     self._horizontal.x = self._x
@@ -247,34 +247,34 @@ function FakeEHIManager:UpdateYOffset(y)
     end
 end
 
-function FakeEHIManager:SetSelected(id)
+function FakeEHITrackerManager:SetSelected(id)
     for _, tracker in pairs(self._fake_trackers) do
         tracker:SetTextColor(id == tracker:GetID())
     end
 end
 
-function FakeEHIManager:UpdateTextScale(scale)
+function FakeEHITrackerManager:UpdateTextScale(scale)
     self._text_scale = scale
     for _, tracker in pairs(self._fake_trackers) do
         tracker:UpdateTextScale(scale)
     end
 end
 
-function FakeEHIManager:UpdateScale(scale)
+function FakeEHITrackerManager:UpdateScale(scale)
     self._scale = scale
     panel_size = panel_size_original * self._scale
     panel_offset = panel_offset_original * self._scale
     self:Redraw()
 end
 
-function FakeEHIManager:UpdateBGVisibility(visibility)
+function FakeEHITrackerManager:UpdateBGVisibility(visibility)
     self._bg_visibility = visibility
     for _, tracker in pairs(self._fake_trackers) do
         tracker:UpdateBGVisibility(visibility, self._corner_visibility)
     end
 end
 
-function FakeEHIManager:UpdateCornerVisibility(visibility)
+function FakeEHITrackerManager:UpdateCornerVisibility(visibility)
     self._corner_visibility = visibility
     if not self._bg_visibility then
         return
@@ -284,7 +284,7 @@ function FakeEHIManager:UpdateCornerVisibility(visibility)
     end
 end
 
-function FakeEHIManager:UpdateIconsVisibility(visibility)
+function FakeEHITrackerManager:UpdateIconsVisibility(visibility)
     self._icons_visibility = visibility
     for _, tracker in pairs(self._fake_trackers) do
         tracker:UpdateIconsVisibility(visibility)
@@ -294,7 +294,7 @@ function FakeEHIManager:UpdateIconsVisibility(visibility)
     end
 end
 
-function FakeEHIManager:UpdateTrackerAlignment(alignment)
+function FakeEHITrackerManager:UpdateTrackerAlignment(alignment)
     if self._tracker_alignment == alignment then
         return
     end
@@ -302,7 +302,7 @@ function FakeEHIManager:UpdateTrackerAlignment(alignment)
     self:Redraw()
 end
 
-function FakeEHIManager:Redraw()
+function FakeEHITrackerManager:Redraw()
     for _, tracker in pairs(self._fake_trackers) do
         tracker:destroy()
     end
@@ -315,7 +315,7 @@ function FakeEHIManager:Redraw()
     self:AddFakeTrackers()
 end
 
-function FakeEHIManager:UpdateMinionTracker(value)
+function FakeEHITrackerManager:UpdateMinionTracker(value)
     local tracker = self:GetTracker("show_minion_tracker")
     if not tracker then
         return
@@ -323,7 +323,7 @@ function FakeEHIManager:UpdateMinionTracker(value)
     tracker:UpdateFormat(value)
 end
 
-function FakeEHIManager:GetTracker(id)
+function FakeEHITrackerManager:GetTracker(id)
     for _, tracker in pairs(self._fake_trackers) do
         if tracker:GetID() == id then
             return tracker
@@ -711,7 +711,7 @@ end
 
 function FakeEHIMinionCounterTracker:UpdateFormat(value)
     if value then -- "Show Minions Per Player" option is enabled
-        self._icon1:set_color(FakeEHIManager:GetPeerColor())
+        self._icon1:set_color(FakeEHITrackerManager:GetPeerColor())
     else -- Disabled
         self._icon1:set_color(Color.white)
     end

@@ -54,7 +54,7 @@ local achievements =
         },
         load_sync = function(self)
             if EHI.ConditionFunctions.IsStealth() then
-                self:AddAchievementStatusTracker("man_3")
+                self._trackers:AddAchievementStatusTracker("man_3")
             end
         end
     }
@@ -74,7 +74,7 @@ EHI:ShowAchievementLootCounter({
     load_sync = function(self)
         -- Achievement count used planks on windows, vents, ...
         -- There are total 49 positions and 10 planks
-        self:SetTrackerProgress("man_4", 49 - self:CountInteractionAvailable("stash_planks"))
+        self._trackers:SetTrackerProgress("man_4", 49 - self._trackers:CountInteractionAvailable("stash_planks"))
     end
 })
 

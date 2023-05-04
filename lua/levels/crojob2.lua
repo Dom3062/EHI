@@ -75,17 +75,17 @@ local other =
         })
         if managers.game_play_central:GetMissionDisabledUnit(107388) then -- Collision (8th position)
             -- Collision is visible, less loot spawned
-            managers.ehi:CallFunction("LootCounter", "DecreaseMaxRandom", 2)
+            managers.ehi_tracker:CallFunction("LootCounter", "DecreaseMaxRandom", 2)
         end
     end, LootCounter, true)
 }
 if LootCounter then
     -- Random loot in crates
     local function IncreaseMaximum()
-        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned")
+        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
     end
     local function DecreaseMaximum()
-        managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
+        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined")
     end
     local IncreaseMaximumTrigger = { special_function = SF.CustomCode, f = IncreaseMaximum }
     local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = DecreaseMaximum }

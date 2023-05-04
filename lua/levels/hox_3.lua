@@ -40,7 +40,7 @@ EHI:RegisterCustomSpecialFunction(ShowWaypoint, function(trigger, element, enabl
     managers.hud:add_waypoint(trigger.id, trigger.data)
 end)
 EHI:AddOnAlarmCallback(function(dropin)
-    managers.ehi:RemoveTracker("ForcedAlarm")
+    managers.ehi_tracker:RemoveTracker("ForcedAlarm")
 end)
 EHI:ShowLootCounter({ max = 8 })
 

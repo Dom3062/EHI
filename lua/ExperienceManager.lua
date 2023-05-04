@@ -135,10 +135,10 @@ end
 local Show = function() end
 if xp_panel == 1 then
     Show = function(self, diff)
-        if managers.ehi:TrackerExists("XP") then
-            managers.ehi:AddXPToTracker("XP", diff)
+        if managers.ehi_tracker:TrackerExists("XP") then
+            managers.ehi_tracker:AddXPToTracker("XP", diff)
         else
-            managers.ehi:AddTracker({
+            managers.ehi_tracker:AddTracker({
                 id = "XP",
                 amount = diff,
                 class = "EHIXPTracker"
@@ -175,20 +175,20 @@ if not EHI:GetOption("show_xp_in_mission_briefing_only") then
         if xp_format == 1 then
             f = function(self, amount)
                 if amount > 0 then
-                    managers.ehi:AddXPToTracker("XPTotal", amount)
+                    managers.ehi_tracker:AddXPToTracker("XPTotal", amount)
                 end
             end
         elseif xp_format == 2 then
             f = function(self, amount)
                 if amount > 0 then
-                    managers.ehi:AddXPToTracker("XPTotal", amount * self._xp.difficulty_multiplier)
+                    managers.ehi_tracker:AddXPToTracker("XPTotal", amount * self._xp.difficulty_multiplier)
                 end
             end
         else
             f = function(self, amount)
                 if amount > 0 then
                     BaseXP = BaseXP + amount
-                    managers.ehi:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
+                    managers.ehi_tracker:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
                 end
             end
         end
@@ -309,7 +309,7 @@ function ExperienceManager:RecalculateXP()
     end
     if xp_format == 3 then
         if xp_panel == 2 then
-            managers.ehi:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
+            managers.ehi_tracker:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
         else
             self:ShowGainedXP(0)
         end

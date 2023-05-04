@@ -106,10 +106,10 @@ if EHI:IsClient() then
     EHI:SetSyncTriggers(element_sync_triggers)
     EHI:RegisterCustomSpecialFunction(SetTimeNoAnimOrCreateTrackerClient, function(trigger, ...)
         local key = trigger.id
-        local value = managers.ehi:ReturnValue(key, "GetTrackerType")
+        local value = managers.ehi_tracker:ReturnValue(key, "GetTrackerType")
         if value ~= "accurate" then
-            if managers.ehi:TrackerExists(key) then
-                managers.ehi:SetTrackerTimeNoAnim(key, EHI:GetTime(trigger))
+            if managers.ehi_tracker:TrackerExists(key) then
+                managers.ehi_tracker:SetTrackerTimeNoAnim(key, EHI:GetTime(trigger))
             else
                 EHI:CheckCondition(trigger)
             end

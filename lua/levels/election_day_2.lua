@@ -12,10 +12,10 @@ if EHI:GetOption("show_loot_counter") then
         })
     end}
     other[100109] = { special_function = SF.CustomCode, f = function() -- Alarm
-        managers.ehi:CallFunction("LootCounter", "RandomLootDeclined", 7)
+        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined", 7)
     end}
     other[107260] = { special_function = SF.CustomCode, f = function()
-        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned", 7)
+        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned", 7)
     end}
 end
 

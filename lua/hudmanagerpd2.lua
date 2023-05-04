@@ -21,13 +21,14 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
     local server = EHI:IsHost()
     local hud = self:script(PlayerBase.PLAYER_INFO_HUD_PD2)
-    self.ehi = managers.ehi
-    self.ehi_waypoint = managers.ehi_waypoint
-    self.ehi_waypoint:SetPlayerHUD(self)
+    self.ehi = managers.ehi_tracker
+    managers.ehi_waypoint:SetPlayerHUD(self)
+    self.ehi_manager = managers.ehi_manager
     if server or level_id == "hvh" then
-        self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
         if EHIWaypoints then
-            self:add_updator("EHI_Waypoint_Update", callback(self.ehi_waypoint, self.ehi_waypoint, "update"))
+            self:add_updator("EHIManager_Update", callback(self.ehi_manager, self.ehi_manager, "update"))
+        else
+            self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
         end
     end
     if EHI:IsVR() then
@@ -120,6 +121,11 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     end
 end
 
+function HUDManager:AddWaypoint(id, params)
+    self:add_waypoint(id, params)
+    return self:get_waypoint_data(id)
+end
+
 function HUDManager:sync_set_assault_mode(mode, ...)
     original.sync_set_assault_mode(self, mode, ...)
     EHI:CallCallback(EHI.CallbackMessage.AssaultModeChanged, mode)
@@ -156,8 +162,7 @@ function HUDManager:set_enabled(...)
 end
 
 function HUDManager:destroy(...)
-    self.ehi:destroy()
-    self.ehi_waypoint:destroy()
+    self.ehi_manager:destroy()
     original.destroy(self, ...)
 end
 
@@ -166,8 +171,7 @@ if EHI:IsClient() and level_id ~= "hvh" then
     if EHIWaypoints then
         function HUDManager:feed_heist_time(time, ...)
             original.feed_heist_time(self, time, ...)
-            self.ehi:update_client(time)
-            self.ehi_waypoint:update_client(time)
+            self.ehi_manager:update_client(time)
         end
     else
         function HUDManager:feed_heist_time(time, ...)

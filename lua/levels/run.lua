@@ -118,10 +118,10 @@ EHI:RegisterCustomSpecialFunction(SetProgressMax, function(trigger, ...)
     if ProgressMaxSet then
         return
     end
-    if managers.ehi:TrackerExists(trigger.id) then
-        managers.ehi:SetTrackerProgressMax(trigger.id, trigger.max)
+    if managers.ehi_tracker:TrackerExists(trigger.id) then
+        managers.ehi_tracker:SetTrackerProgressMax(trigger.id, trigger.max)
     else
-        managers.ehi:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = trigger.id,
             progress = 1,
             max = trigger.max,
@@ -131,7 +131,7 @@ EHI:RegisterCustomSpecialFunction(SetProgressMax, function(trigger, ...)
     ProgressMaxSet = true
 end)
 EHI:RegisterCustomSpecialFunction(SetZoneComplete, function(trigger, ...)
-    managers.ehi:CallFunction(trigger.id, "SetCompleted")
+    managers.ehi_tracker:CallFunction(trigger.id, "SetCompleted")
 end)
 EHI:AddXPBreakdown({
     objectives =

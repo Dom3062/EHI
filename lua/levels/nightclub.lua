@@ -33,7 +33,7 @@ if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
         -- Civilian kills do not count towards escape chance
         -- Reported in: https://steamcommunity.com/app/218620/discussions/14/5487063042655462839/
-        managers.ehi:AddEscapeChanceTracker(false, 25, 0)
+        managers.ehi_tracker:AddEscapeChanceTracker(false, 25, 0)
     end)
 end
 

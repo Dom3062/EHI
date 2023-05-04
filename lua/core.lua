@@ -113,7 +113,8 @@ _G.EHI =
         SetChanceFromElement = 44,
         SetChanceFromElementWhenTrackerExists = 45,
         PauseTrackerWithTime = 46,
-        IncreaseProgressMax = 48,
+        IncreaseProgressMax = 47,
+        IncreaseProgressMax2 = 48,
         SetTimeIfLoudOrStealth = 49,
         AddTimeByPreplanning = 50,
         ShowWaypoint = 51,
@@ -204,7 +205,6 @@ _G.EHI =
 
     Trackers =
     {
-        MallcrasherMoney = "EHIMoneyCounterTracker",
         Warning = "EHIWarningTracker",
         Pausable = "EHIPausableTracker",
         Chance = "EHIChanceTracker",
@@ -448,6 +448,7 @@ local function LoadDefaultValues(self)
         show_laser_tracker = false,
         show_assault_delay_tracker = true,
         show_assault_time_tracker = true,
+        --aggregate_assault_delay_and_assault_time = true,
         show_loot_counter = true,
         show_all_loot_secured_popup = true,
         variable_random_loot_format = 3, -- 1 = Max-(Max+Random)?; 2 = MaxRandom?; 3 = Max+Random?
@@ -975,13 +976,13 @@ function EHI:HookLootRemovalElement(elements)
                     return
                 end
             end
-            managers.ehi:DecreaseTrackerProgressMax("LootCounter")
+            managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter")
         end
     else
         HookFunction = self.HookWithID
         ElementFunction = self.ClientElement
         f = function(...)
-            managers.ehi:DecreaseTrackerProgressMax("LootCounter")
+            managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter")
         end
     end
     if type(elements) == "table" then
@@ -1105,14 +1106,14 @@ function EHI:AddTrackerSynced(id, delay)
     if self._sync_triggers[id] then
         local trigger = self._sync_triggers[id]
         local trigger_id = trigger.id
-        if managers.ehi:TrackerExists(trigger_id) then
+        if managers.ehi_tracker:TrackerExists(trigger_id) then
             if trigger.delay_only then
-                managers.ehi:SetTrackerAccurate(trigger_id, delay)
+                managers.ehi_tracker:SetTrackerAccurate(trigger_id, delay)
             else
-                managers.ehi:SetTrackerAccurate(trigger_id, (trigger.time or 0) + delay)
+                managers.ehi_tracker:SetTrackerAccurate(trigger_id, (trigger.time or 0) + delay)
             end
         else
-            managers.ehi:AddTracker({
+            managers.ehi_tracker:AddTracker({
                 id = trigger_id,
                 time = trigger.delay_only and delay or ((trigger.time or 0) + delay),
                 icons = trigger.icons,
@@ -1315,7 +1316,7 @@ local E = EHI
 ---@param trigger table
 local function AddTracker(trigger)
     trigger.time = E:GetTime(trigger)
-    managers.ehi:AddTracker(trigger)
+    managers.ehi_tracker:AddTracker(trigger)
 end
 
 ---@param trigger table
@@ -1330,7 +1331,7 @@ end
 function EHI:AddTrackerWithRandomTime(trigger)
     local time = trigger.data[math.random(#trigger.data)]
     trigger.time = time
-    managers.ehi:AddTracker(trigger)
+    managers.ehi_tracker:AddTracker(trigger)
     if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
         trigger.waypoint_f(trigger)
     elseif trigger.waypoint then
@@ -1342,7 +1343,7 @@ end
 function EHI:AddTracker(trigger)
     if trigger.run then
         trigger.run.time = self:GetTime(trigger.run)
-        managers.ehi:RunTracker(trigger.id, trigger.run)
+        managers.ehi_tracker:RunTracker(trigger.id, trigger.run)
     else
         AddTracker(trigger)
     end
@@ -1357,7 +1358,7 @@ end
 ---@param delay number
 function EHI:AddTrackerAndSync(id, delay)
     local trigger = host_triggers[id]
-    managers.ehi:AddTrackerAndSync({
+    managers.ehi_tracker:AddTrackerAndSync({
         id = trigger.id,
         time = (trigger.time or 0) + (delay or 0),
         icons = trigger.icons,
@@ -1388,7 +1389,7 @@ local function GetElementTimer(self, trigger, id)
             local t = (element._timer or 0) + (trigger.additional_time or 0)
             trigger.time = t
             self:CheckCondition(trigger)
-            managers.ehi:Sync(id, t)
+            managers.ehi_tracker:Sync(id, t)
         end
     else
         self:CheckCondition(trigger)
@@ -1403,7 +1404,7 @@ end
 
 ---@param id string
 local function HideTracker(id)
-    managers.ehi:x()
+    managers.ehi_tracker:x()
     managers.ehi_waypoint:RemoveWaypoint(id)
 end
 
@@ -1420,40 +1421,40 @@ function EHI:Trigger(id, element, enabled)
             if f == SF.RemoveTracker then
                 if trigger.data then
                     for _, tracker in ipairs(trigger.data) do
-                        managers.ehi_common:Remove(tracker)
+                        managers.ehi_manager:Remove(tracker)
                     end
                 else
-                    managers.ehi_common:Remove(trigger.id)
+                    managers.ehi_manager:Remove(trigger.id)
                 end
             elseif f == SF.PauseTracker then
-                managers.ehi_common:Pause(trigger.id)
+                managers.ehi_manager:Pause(trigger.id)
             elseif f == SF.UnpauseTracker then
-                managers.ehi_common:Unpause(trigger.id)
+                managers.ehi_manager:Unpause(trigger.id)
             elseif f == SF.UnpauseTrackerIfExists then
-                if managers.ehi_common:Exists(trigger.id) then
-                    managers.ehi_common:Unpause(trigger.id)
+                if managers.ehi_manager:Exists(trigger.id) then
+                    managers.ehi_manager:Unpause(trigger.id)
                 else
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.AddTrackerIfDoesNotExist then
-                if managers.ehi:TrackerDoesNotExist(trigger.id) then
+                if managers.ehi_tracker:TrackerDoesNotExist(trigger.id) then
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.ReplaceTrackerWithTracker then
-                managers.ehi_common:Remove(trigger.data.id)
+                managers.ehi_manager:Remove(trigger.data.id)
                 self:CheckCondition(trigger)
             elseif f == SF.ShowAchievementFromStart then -- Achievement unlock is checked during level load
                 if not managers.statistics:is_dropin() then
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.SetAchievementComplete then
-                managers.ehi:SetAchievementComplete(trigger.id, true)
+                managers.ehi_tracker:SetAchievementComplete(trigger.id, true)
             elseif f == SF.SetAchievementStatus then
-                managers.ehi:SetAchievementStatus(trigger.id, trigger.status or "ok")
+                managers.ehi_tracker:SetAchievementStatus(trigger.id, trigger.status or "ok")
             elseif f == SF.SetAchievementFailed then
-                managers.ehi:SetAchievementFailed(trigger.id)
+                managers.ehi_tracker:SetAchievementFailed(trigger.id)
             elseif f == SF.IncreaseChance then
-                managers.ehi:IncreaseChance(trigger.id, trigger.amount)
+                managers.ehi_tracker:IncreaseChance(trigger.id, trigger.amount)
             elseif f == SF.TriggerIfEnabled then
                 if enabled then
                     if trigger.data then
@@ -1468,8 +1469,8 @@ function EHI:Trigger(id, element, enabled)
                 self:CheckCondition(trigger)
                 self:Trigger(trigger.data.fake_id, element, enabled)
             elseif f == SF.SetChanceWhenTrackerExists then
-                if managers.ehi:TrackerExists(trigger.id) then
-                    managers.ehi:SetChance(trigger.id, trigger.chance)
+                if managers.ehi_tracker:TrackerExists(trigger.id) then
+                    managers.ehi_tracker:SetChance(trigger.id, trigger.chance)
                 else
                     self:CheckCondition(trigger)
                 end
@@ -1491,9 +1492,9 @@ function EHI:Trigger(id, element, enabled)
                 end
             elseif f == SF.SetTimeOrCreateTracker then
                 local key = trigger.id
-                if managers.ehi_common:Exists(key) then
+                if managers.ehi_manager:Exists(key) then
                     local time = trigger.run and trigger.run.time or trigger.time or 0
-                    managers.ehi:SetTrackerTime(key, time)
+                    managers.ehi_tracker:SetTrackerTime(key, time)
                     managers.ehi_waypoint:SetWaypointTime(key, time)
                 else
                     self:CheckCondition(trigger)
@@ -1513,24 +1514,24 @@ function EHI:Trigger(id, element, enabled)
                 end
                 self:CheckCondition(trigger)
             elseif f == SF.IncreaseProgress then
-                managers.ehi:IncreaseTrackerProgress(trigger.id)
+                managers.ehi_tracker:IncreaseTrackerProgress(trigger.id)
             elseif f == SF.SetTrackerAccurate then
-                if managers.ehi:TrackerExists(trigger.id) then
-                    managers.ehi:SetTrackerAccurate(trigger.id, trigger.time)
+                if managers.ehi_tracker:TrackerExists(trigger.id) then
+                    managers.ehi_tracker:SetTrackerAccurate(trigger.id, trigger.time)
                 else
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.SetRandomTime then
-                if managers.ehi:TrackerDoesNotExist(trigger.id) then
+                if managers.ehi_tracker:TrackerDoesNotExist(trigger.id) then
                     self:AddTrackerWithRandomTime(trigger)
                 end
             elseif f == SF.DecreaseChance then
-                managers.ehi:DecreaseChance(trigger.id, trigger.amount)
+                managers.ehi_tracker:DecreaseChance(trigger.id, trigger.amount)
             elseif f == SF.GetElementTimerAccurate then
                 GetElementTimer(self, trigger, id)
             elseif f == SF.UnpauseOrSetTimeByPreplanning then
-                if managers.ehi:TrackerExists(trigger.id) then
-                    managers.ehi_common:Unpause(trigger.id)
+                if managers.ehi_tracker:TrackerExists(trigger.id) then
+                    managers.ehi_manager:Unpause(trigger.id)
                 else
                     if trigger.time then
                         self:CheckCondition(trigger)
@@ -1544,22 +1545,22 @@ function EHI:Trigger(id, element, enabled)
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.UnpauseTrackerIfExistsAccurate then
-                if managers.ehi:TrackerExists(trigger.id) then
-                    managers.ehi_common:Unpause(trigger.id)
+                if managers.ehi_tracker:TrackerExists(trigger.id) then
+                    managers.ehi_manager:Unpause(trigger.id)
                 else
                     GetElementTimer(self, trigger, id)
                 end
             elseif f == SF.FinalizeAchievement then
-                managers.ehi:CallFunction(trigger.id, "Finalize")
+                managers.ehi_tracker:CallFunction(trigger.id, "Finalize")
             elseif f == SF.IncreaseChanceFromElement then
-                managers.ehi:IncreaseChance(trigger.id, element._values.chance)
+                managers.ehi_tracker:IncreaseChance(trigger.id, element._values.chance)
             elseif f == SF.DecreaseChanceFromElement then
-                managers.ehi:DecreaseChance(trigger.id, element._values.chance)
+                managers.ehi_tracker:DecreaseChance(trigger.id, element._values.chance)
             elseif f == SF.SetChanceFromElement then
-                managers.ehi:SetChance(trigger.id, element._values.chance)
+                managers.ehi_tracker:SetChance(trigger.id, element._values.chance)
             elseif f == SF.SetChanceFromElementWhenTrackerExists then
-                if managers.ehi:TrackerExists(trigger.id) then
-                    managers.ehi:SetChance(trigger.id, element._values.chance)
+                if managers.ehi_tracker:TrackerExists(trigger.id) then
+                    managers.ehi_tracker:SetChance(trigger.id, element._values.chance)
                 else
                     trigger.chance = element._values.chance
                     self:CheckCondition(trigger)
@@ -1567,11 +1568,23 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.PauseTrackerWithTime then
                 local t_id = trigger.id
                 local t_time = trigger.time
-                managers.ehi_common:Pause(t_id)
-                managers.ehi:SetTrackerTimeNoAnim(t_id, t_time)
+                managers.ehi_manager:Pause(t_id)
+                managers.ehi_tracker:SetTrackerTimeNoAnim(t_id, t_time)
                 managers.ehi_waypoint:SetWaypointTime(t_id, t_time)
             elseif f == SF.IncreaseProgressMax then
-                managers.ehi:IncreaseTrackerProgressMax(trigger.id, trigger.max)
+                managers.ehi_tracker:IncreaseTrackerProgressMax(trigger.id, trigger.max)
+            elseif f == SF.IncreaseProgressMax2 then
+                if managers.ehi_tracker:TrackerExists(trigger.id) then
+                    managers.ehi_tracker:IncreaseTrackerProgressMax(trigger.id, trigger.max)
+                else
+                    local new_trigger =
+                    {
+                        id = trigger.id,
+                        max = trigger.max or 1,
+                        class = trigger.class or "EHILootTracker"
+                    }
+                    self:CheckCondition(new_trigger)
+                end
             elseif f == SF.SetTimeIfLoudOrStealth then
                 if managers.groupai then
                     if managers.groupai:state():whisper_mode() then -- Stealth
@@ -1595,9 +1608,9 @@ function EHI:Trigger(id, element, enabled)
             elseif f == SF.ShowEHIWaypoint then
                 managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
             elseif f == SF.DecreaseProgressMax then
-                managers.ehi:DecreaseTrackerProgressMax(trigger.id, trigger.max)
+                managers.ehi_tracker:DecreaseTrackerProgressMax(trigger.id, trigger.max)
             elseif f == SF.DecreaseProgress then
-                managers.ehi:DecreaseTrackerProgress(trigger.id, trigger.progress)
+                managers.ehi_tracker:DecreaseTrackerProgress(trigger.id, trigger.progress)
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.CustomCode then
@@ -1676,8 +1689,8 @@ function EHI:InitElements()
                                 self:AddTrackerAndSync(params.id, delay)
                                 element_delay_triggers[e._id][params.id] = nil
                             elseif trigger.set_time_when_tracker_exists then
-                                if managers.ehi:TrackerExists(trigger.id) then
-                                    managers.ehi:SetTrackerTimeNoAnim(trigger.id, delay)
+                                if managers.ehi_tracker:TrackerExists(trigger.id) then
+                                    managers.ehi_tracker:SetTrackerTimeNoAnim(trigger.id, delay)
                                     self:Sync(self.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
                                 else
                                     self:AddTrackerAndSync(params.id, delay)
@@ -1868,15 +1881,15 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
         end
         if data.failed_on_alarm then
             self:AddOnAlarmCallback(function()
-                managers.ehi:SetAchievementFailed(id)
+                managers.ehi_tracker:SetAchievementFailed(id)
             end)
         end
         if data.mission_end_callback then
             self:AddCallback(self.CallbackMessage.MissionEnd, function(success)
                 if success then
-                    managers.ehi:SetAchievementComplete(id, true)
+                    managers.ehi_tracker:SetAchievementComplete(id, true)
                 else
-                    managers.ehi:SetAchievementFailed(id)
+                    managers.ehi_tracker:SetAchievementFailed(id)
                 end
             end)
         end
@@ -1913,20 +1926,26 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     local achievement_triggers = new_triggers.achievement
     if self:ShowMissionAchievements() and achievement_triggers and next(achievement_triggers) then
         local function Parser(data, id)
-            for _, element in pairs(data.elements or {}) do
-                if element.class and self.AchievementTrackers[element.class] then
-                    element.beardlib = data.beardlib
-                    if not element.icons then
-                        if data.beardlib then
-                            element.icons = { "ehi_" .. id }
-                        else
-                            element.icons = self:GetAchievementIcon(id)
+            if data.achievement_counter then
+                local params = data.achievement_counter
+                params.achievement = id
+                self:ShowAchievementLootCounterNoCheck(params)
+            else
+                for _, element in pairs(data.elements or {}) do
+                    if element.class and self.AchievementTrackers[element.class] then
+                        element.beardlib = data.beardlib
+                        if not element.icons then
+                            if data.beardlib then
+                                element.icons = { "ehi_" .. id }
+                            else
+                                element.icons = self:GetAchievementIcon(id)
+                            end
                         end
                     end
                 end
+                self:AddTriggers2(data.elements or {}, nil, id)
+                ParseParams(data, id)
             end
-            self:AddTriggers2(data.elements or {}, nil, id)
-            ParseParams(data, id)
         end
         local function IsAchievementLocked(data, id)
             if data.beardlib then
@@ -2029,7 +2048,7 @@ function EHI:PreloadTrackers(preload, trigger_id_all, trigger_icons_all)
     for _, params in ipairs(preload) do
         params.id = params.id or trigger_id_all
         params.icons = params.icons or trigger_icons_all
-        managers.ehi:PreloadTracker(params)
+        managers.ehi_tracker:PreloadTracker(params)
     end
 end
 
@@ -2137,11 +2156,11 @@ function EHI:ShowLootCounterNoCheck(params)
         if self:IsHost() or params.client_from_start then
             n_offset = managers.loot:GetSecuredBagsAmount()
         else
-            managers.ehi:AddFullSyncFunction(callback(self, self, "ShowLootCounterOffset", params))
+            managers.ehi_manager:AddFullSyncFunction(callback(self, self, "ShowLootCounterOffset", params))
             return
         end
     end
-    managers.ehi:ShowLootCounter(params.max, params.additional_loot, params.max_random, n_offset)
+    managers.ehi_tracker:ShowLootCounter(params.max, params.additional_loot, params.max_random, n_offset)
     if params.load_sync then
         self:AddLoadSyncFunction(params.load_sync)
         params.no_sync_load = true
@@ -2154,10 +2173,10 @@ function EHI:ShowLootCounterNoCheck(params)
     end
     if params.sequence_triggers then
         local function IncreaseMax(...)
-            managers.ehi:CallFunction("LootCounter", "RandomLootSpawned")
+            managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
         end
         local function DecreaseRandom(...)
-            managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
+            managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined")
         end
         for unit_id, sequences in pairs(params.sequence_triggers) do
             for _, sequence in ipairs(sequences.loot or {}) do
@@ -2181,7 +2200,7 @@ function EHI:HookLootCounter(no_sync_load)
             self:EHIReportProgress("LootCounter", BagsOnly)
         end
         self:AddCallback(self.CallbackMessage.LootSecured, Callback)
-        -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot
+        -- If sync load is disabled, the counter needs to be updated via EHICommon:AddLoadSyncFunction() to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
         if not no_sync_load then
             self:AddCallback(self.CallbackMessage.LootLoadSync, Callback)
@@ -2199,7 +2218,11 @@ function EHI:ShowAchievementLootCounter(params)
         end
         return
     end
-    managers.ehi:AddAchievementProgressTracker(params.achievement, params.max, 0, params.remove_after_reaching_target)
+    self:ShowAchievementLootCounterNoCheck(params)
+end
+
+function EHI:ShowAchievementLootCounterNoCheck(params)
+    managers.ehi_tracker:AddAchievementProgressTracker(params.achievement, params.max, 0, params.remove_after_reaching_target, params.class)
     if params.load_sync then
         self:AddLoadSyncFunction(params.load_sync)
     end
@@ -2208,7 +2231,7 @@ function EHI:ShowAchievementLootCounter(params)
     end
     if params.failed_on_alarm then
         self:AddOnAlarmCallback(function()
-            managers.ehi:SetAchievementFailed(params.achievement)
+            managers.ehi_tracker:SetAchievementFailed(params.achievement)
         end)
     end
     if params.triggers then
@@ -2230,7 +2253,7 @@ function EHI:ShowAchievementBagValueCounter(params)
     if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
         return
     end
-    managers.ehi:AddAchievementBagValueCounter(params.achievement, params.value, params.remove_after_reaching_target)
+    managers.ehi_tracker:AddAchievementBagValueCounter(params.achievement, params.value, params.remove_after_reaching_target)
     self:AddAchievementToCounter(params)
 end
 
@@ -2264,14 +2287,14 @@ function EHI:ShowAchievementKillCounter(id, id_stat, achievement_option)
     if progress >= max then
         return
     end
-    managers.ehi:AddAchievementKillCounter(id, progress, max)
+    managers.ehi_tracker:AddAchievementKillCounter(id, progress, max)
     self.KillCounter = self.KillCounter or {}
     self.KillCounter[id_stat] = id
     if not self.KillCounterHook then
         EHI:HookWithID(AchievmentManager, "award_progress", "EHI_award_progress_KillCounter", function(am, stat, value)
             local s = EHI.KillCounter[stat]
             if s then
-                managers.ehi:IncreaseTrackerProgress(s, value)
+                managers.ehi_tracker:IncreaseTrackerProgress(s, value)
             end
         end)
         self.KillCounterHook = true
@@ -2283,7 +2306,7 @@ function EHI:AddLoadSyncFunction(f)
     if self:IsHost() then
         return
     end
-    managers.ehi:AddLoadSyncFunction(f)
+    managers.ehi_manager:AddLoadSyncFunction(f)
 end
 
 ---@param tbl table
@@ -2523,7 +2546,7 @@ end
 
 if not EHI:GetOption("show_mission_trackers") then
     function EHI:AddTrackerAndSync(id, delay)
-        managers.ehi:Sync(id, delay)
+        managers.ehi_tracker:Sync(id, delay)
     end
 
     GetElementTimer = function(self, trigger, id)
@@ -2531,7 +2554,7 @@ if not EHI:GetOption("show_mission_trackers") then
             local element = managers.mission:get_element_by_id(trigger.element)
             if element then
                 local t = (element._timer or 0) + (trigger.additional_time or 0)
-                managers.ehi:Sync(id, t)
+                managers.ehi_tracker:Sync(id, t)
             end
         end
     end
@@ -2688,7 +2711,7 @@ function EHI:PrintTable(tbl, ...)
 end
 
 if Global.load_level and EHI:IsClient() then
-    -- Add network hook when a level is loaded to prevent stupid people sending tracker data while in menu, because EHIManager does not exist
+    -- Add network hook when a level is loaded to prevent stupid people sending tracker data while in menu, because EHITrackerManager does not exist
     Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id, data)
         if id == EHI.SyncMessages.EHISyncAddTracker then
             local tbl = LuaNetworking:StringToTable(data)

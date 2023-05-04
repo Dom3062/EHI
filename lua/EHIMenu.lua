@@ -138,7 +138,7 @@ function EHIMenu:init()
             alpha = 1
         })
     end
-    self._preview_panel = FakeEHIManager:new(self._vr_panel or self._panel)
+    self._preview_panel = FakeEHITrackerManager:new(self._vr_panel or self._panel)
     self._buffs_preview_panel = FakeEHIBuffsManager:new(self._vr_panel or self._panel)
 
     self._menu_ver = 1

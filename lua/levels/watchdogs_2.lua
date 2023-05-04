@@ -30,7 +30,7 @@ local triggers = {
     [1011480] = { time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate },
 
     [100124] = { special_function = SF.CustomCode, f = function()
-        local bags = managers.ehi:CountLootbagsOnTheGround(10)
+        local bags = managers.ehi_tracker:CountLootbagsOnTheGround(10)
         if bags % 4 == 0 then -- 4/8/12
             local trigger = bags - 3
             EHI:AddCallback(EHI.CallbackMessage.LootSecured, function(self)
@@ -48,9 +48,9 @@ if EHI:IsClient() then
     triggers[100472] = boat_return
     triggers[100474] = boat_return
     EHI:RegisterCustomSpecialFunction(SetTrackerAccurate, function(trigger, ...)
-        if managers.ehi:TrackerExists(trigger.id) then
-            managers.ehi:SetTrackerAccurate(trigger.id, trigger.time)
-        elseif not (managers.ehi:TrackerExists(trigger.id2) or managers.ehi:TrackerExists(trigger.id3)) then
+        if managers.ehi_tracker:TrackerExists(trigger.id) then
+            managers.ehi_tracker:SetTrackerAccurate(trigger.id, trigger.time)
+        elseif not (managers.ehi_tracker:TrackerExists(trigger.id2) or managers.ehi_tracker:TrackerExists(trigger.id3)) then
             EHI:CheckCondition(trigger)
         end
     end)
@@ -76,7 +76,7 @@ local achievements =
 local other =
 {
     [100124] = EHI:AddLootCounter(function()
-        local bags = managers.ehi:CountLootbagsOnTheGround(10)
+        local bags = managers.ehi_tracker:CountLootbagsOnTheGround(10)
         EHI:ShowLootCounterNoCheck({ max = bags })
     end)
 }
@@ -101,7 +101,7 @@ EHI:RegisterCustomSpecialFunction(GetFromCache, function(trigger, ...)
     end
 end)
 EHI:RegisterCustomSpecialFunction(uno_8, function(trigger, ...)
-    local bags = managers.ehi:CountLootbagsOnTheGround(10)
+    local bags = managers.ehi_tracker:CountLootbagsOnTheGround(10)
     if bags == 12 then
         EHI:CheckCondition(trigger)
     end

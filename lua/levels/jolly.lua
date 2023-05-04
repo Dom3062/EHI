@@ -49,8 +49,8 @@ EHI:RegisterCustomSpecialFunction(HeliTimer, function(trigger, element, enabled)
         local delay_fix = triggers[1][trigger.dialog] or 0
         trigger.time = trigger.time + delay_fix
     end
-    if managers.ehi:TrackerExists(trigger.id) then
-        managers.ehi:SetTrackerTimeNoAnim(trigger.id, trigger.time)
+    if managers.ehi_tracker:TrackerExists(trigger.id) then
+        managers.ehi_tracker:SetTrackerTimeNoAnim(trigger.id, trigger.time)
     else
         EHI:CheckCondition(trigger)
     end

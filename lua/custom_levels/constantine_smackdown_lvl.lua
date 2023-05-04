@@ -39,5 +39,5 @@ end
 
 EHI:ParseTriggers({ mission = triggers })
 EHI:RegisterCustomSpecialFunction(AddDestruction, function(trigger, element, ...)
-    managers.ehi:IncreaseTrackerProgress(trigger.id, element._values.amount)
+    managers.ehi_tracker:IncreaseTrackerProgress(trigger.id, element._values.amount)
 end)

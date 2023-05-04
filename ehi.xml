@@ -33,8 +33,8 @@
             <post :hook_id="missionassetsmanager" :script_path="MissionAssetsManager.lua" />
     
             <!-- Menu code -->
-            <post :hook_id="menumanager" :script_path="FakeEHIManager.lua" />
-            <post :hook_id="menumanager" :script_path="FakeEHIBuffsManager.lua" />
+            <post :hook_id="menumanager" :script_path="FakeEHITrackerManager.lua" />
+            <post :hook_id="menumanager" :script_path="FakeEHIBuffManager.lua" />
             <post :hook_id="menumanager" :script_path="EHIMenu.lua" />
             <post :hook_id="menumanager" :script_path="EHIMenuCallbacks.lua" />
             <post :hook_id="menumanager" :script_path="menu.lua" />
@@ -51,11 +51,11 @@
         <post hook_id="lib/mutators/mutatorcg22" :script_path="MutatorCG22.lua" />
         <post hook_id="lib/mutators/mutatorpiggybank" :script_path="MutatorPiggyBank.lua" />
 
-        <post hook_id="lib/setups/setup" :script_path="EHIManager.lua" />
-        <post hook_id="lib/setups/setup" :script_path="EHIManagerVR.lua" />
+        <post hook_id="lib/setups/setup" :script_path="EHITrackerManager.lua" />
+        <post hook_id="lib/setups/setup" :script_path="EHITrackerManagerVR.lua" />
         <post hook_id="lib/setups/setup" :script_path="EHIWaypointManager.lua" />
         <post hook_id="lib/setups/setup" :script_path="EHIBuffManager.lua" />
-        <post hook_id="lib/setups/setup" :script_path="EHICommon.lua" />
+        <post hook_id="lib/setups/setup" :script_path="EHIManager.lua" />
         <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
 

@@ -1,7 +1,7 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
 --[[function EHI:PaintingCount()
-    --[[local paintings = managers.ehi:GetUnits("units/payday2/architecture/com_int_gallery/com_int_gallery_wall_painting_bars", 1)
+    --[[local paintings = managers.ehi_tracker:GetUnits("units/payday2/architecture/com_int_gallery/com_int_gallery_wall_painting_bars", 1)
     local n_of_paintings = 0
     -- 3878622f45bc7dfe => Idstring("g_important") without ID and @ at the end
     for _, painting in pairs(paintings) do
@@ -42,7 +42,7 @@ if Global.game_settings.level_id == "gallery" then
                 local key = "EHI_ArtGallery_TheFixes"
                 CopDamage.register_listener(key, { "on_damage" }, function(damage_info)
                     if damage_info.result.type == "death" then
-                        managers.ehi:SetAchievementFailed("cac_19")
+                        managers.ehi_tracker:SetAchievementFailed("cac_19")
                         CopDamage.unregister_listener(key)
                     end
                 end)
@@ -92,14 +92,40 @@ local MissionDoorIndex =
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi:AddEscapeChanceTracker(dropin, 25)
+        managers.ehi_tracker:AddEscapeChanceTracker(dropin, 25)
     end)
 end
-EHI:AddXPBreakdown({
-    objective =
+local xp_override =
+{
+    params =
     {
-        pc_hack = { amount = 6000, loud = true },
-        escape = 2000
-    },
-    loot_all = { amount = 500, times = 9 }
+        min_max =
+        {
+            loot_all = { min = 4, max = 9 }
+        }
+    }
+}
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { escape = 2000 }
+            },
+            loot_all = 500,
+            total_xp_override = xp_override
+        },
+        loud =
+        {
+            objectives =
+            {
+                { escape = 6000, name = "pc_hack" },
+                { escape = 2000 }
+            },
+            loot_all = 500,
+            total_xp_override = xp_override
+        }
+    }
 })

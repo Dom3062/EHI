@@ -19,11 +19,11 @@ local achievements =
             [100824] = { time = 360, class = TT.AchievementUnlock }
         },
         load_sync = function(self)
-            local t = 360 - self._t
+            local t = 360 - self._trackers._t
             if t <= 0 then
                 return
             end
-            self:AddTracker({
+            self._trackers:AddTracker({
                 id = "RC_Achieve_speedrun",
                 time = t,
                 icons = { "ehi_RC_Achieve_speedrun" },

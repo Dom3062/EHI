@@ -115,11 +115,11 @@ if LootCounter then
     other[104281] = { special_function = IncreaseMaxRandomLoot, index = 1300 }
     local function DelayRejection(crate)
         EHI:DelayCall(tostring(crate), 2, function()
-            managers.ehi:CallFunction("LootCounter", "RandomLootDeclined2", crate)
+            managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined2", crate)
         end)
     end
     local function LootSpawned(crate)
-        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned2", crate, true)
+        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned2", crate, true)
     end
     EHI:RegisterCustomSpecialFunction(IncreaseMaxRandomLoot, function(trigger, ...)
         local index = trigger.index
@@ -132,7 +132,7 @@ if LootCounter then
         end)
         EHI:AddTriggers2(LootTrigger, nil, "LootCounter")
         EHI:HookElements(LootTrigger)
-        managers.ehi:CallFunction("LootCounter", "IncreaseMaxRandom", 1)
+        managers.ehi_tracker:CallFunction("LootCounter", "IncreaseMaxRandom", 1)
     end)
 end
 

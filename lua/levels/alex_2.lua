@@ -32,7 +32,7 @@ local other =
                 "spawn_loot_crap_d"
             }
         }
-        local spawned = managers.ehi:CountLootbagsOnTheGround()
+        local spawned = managers.ehi_tracker:CountLootbagsOnTheGround()
         local additional_loot = math.max(0, spawned - 3)
         EHI:ShowLootCounterNoCheck({
             max = spawned,
@@ -64,8 +64,8 @@ if EHI:GetOption("show_escape_chance") then
     local ShowVanCrashChance = EHI:GetFreeCustomSpecialFunctionID()
     other[100342] = { special_function = ShowVanCrashChance }
     EHI:RegisterCustomSpecialFunction(ShowVanCrashChance, function(...)
-        if managers.ehi:TrackerDoesNotExist("EscapeChance") then
-            managers.ehi:AddEscapeChanceTracker(false, 25)
+        if managers.ehi_tracker:TrackerDoesNotExist("EscapeChance") then
+            managers.ehi_tracker:AddEscapeChanceTracker(false, 25)
         end
     end)
 end
@@ -82,7 +82,7 @@ EHI:AddOnAlarmCallback(function(dropin)
     if not ShowAssaultDelay then
         return
     end
-    managers.ehi:AddTracker({
+    managers.ehi_tracker:AddTracker({
         id = "AssaultDelay",
         time = 75 + 15 + 30,
         class = TT.AssaultDelay

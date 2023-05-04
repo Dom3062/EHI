@@ -126,11 +126,11 @@ EHI:ShowAchievementLootCounter({
     max = 9,
     triggers = voff_4_triggers,
     load_sync = function(self)
-        self:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
+        self._trackers:SetTrackerProgressRemaining("voff_4", self._trackers:CountInteractionAvailable("ring_band"))
     end
 })
 EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(...)
-    managers.ehi:CallFunction("cac_33", "Activate")
+    managers.ehi_tracker:CallFunction("cac_33", "Activate")
 end)
 EHI:AddXPBreakdown({
     objectives =

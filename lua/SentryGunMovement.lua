@@ -33,7 +33,7 @@ function SentryGunMovement:Preload()
     if not show_waypoint_only then
         local Warning = EHI.Trackers.Warning
         if self._tweak.AUTO_RELOAD then
-            managers.ehi:PreloadTracker({
+            managers.ehi_tracker:PreloadTracker({
                 id = self._ehi_key_reload,
                 icons = { Icon.Sentry, "reload" },
                 hide_on_delete = true,
@@ -41,7 +41,7 @@ function SentryGunMovement:Preload()
             })
         end
         if self._tweak.AUTO_REPAIR then
-            managers.ehi:PreloadTracker({
+            managers.ehi_tracker:PreloadTracker({
                 id = self._ehi_key_repair,
                 icons = { Icon.Sentry, Icon.Fix },
                 hide_on_delete = true,
@@ -60,7 +60,7 @@ end
 function SentryGunMovement:rearm(...)
     original.rearm(self, ...)
     local t = self._tweak.AUTO_RELOAD_DURATION -- 8s
-    managers.ehi:RunTracker(self._ehi_key_reload, { time = t })
+    managers.ehi_tracker:RunTracker(self._ehi_key_reload, { time = t })
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_reload, {
             time = t,
@@ -74,10 +74,10 @@ end
 
 function SentryGunMovement:repair(...)
     original.repair(self, ...)
-    managers.ehi:RemoveTracker(self._ehi_key_reload)
+    managers.ehi_tracker:RemoveTracker(self._ehi_key_reload)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_reload)
     local t = self._tweak.AUTO_REPAIR_DURATION -- 30s
-    managers.ehi:RunTracker(self._ehi_key_repair, { time = t })
+    managers.ehi_tracker:RunTracker(self._ehi_key_repair, { time = t })
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_repair, {
             time = t,
@@ -100,8 +100,8 @@ end
 
 function SentryGunMovement:on_death(...)
     original.on_death(self, ...)
-    managers.ehi_common:Remove(self._ehi_key_reload)
-    managers.ehi_common:Remove(self._ehi_key_repair)
+    managers.ehi_manager:Remove(self._ehi_key_reload)
+    managers.ehi_manager:Remove(self._ehi_key_repair)
 end
 
 function SentryGunMovement:pre_destroy(...)

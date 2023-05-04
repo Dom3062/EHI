@@ -1,3 +1,7 @@
+r149 (04. 05. 2023):
+The Biker Heist: Fixed an issue where ammo and grenades are counted, but the bunker is not open
+Hoxton Breakout Day 2: Fixed an issue where ammo and grenades are counted, but armory is not open
+
 r148 (01. 05. 2023):
 Fixed an issue where waypoints are not properly aligned and are on default vector position (0, 0, 0) on clients
 
@@ -307,7 +311,7 @@ Goat Simulator Day 1: Fixed a load crash when "Show hint for every XP" option is
 
 r72 (03. 08. 2022):
 Added popups for achievements related to Gage Packages
-Biker Heist: Added achievement tracker for "Let the Man Work"
+The Biker Heist: Added achievement tracker for "Let the Man Work"
 Election Day: Added achievement tracker for "Storage Hunter"
 Escape: Garage: Added achievement tracker for "They See Me Baggin', They Hatin'"
 Midland Ranch Heist: Fixed an issue where trackers were not visible on client

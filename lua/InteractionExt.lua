@@ -38,7 +38,7 @@ if EHI:GetOption("show_pager_callback") then
     EHI:HookWithID(IntimitateInteractionExt, "set_tweak_data", "EHI_pager_set_tweak_data", function(self, id)
         if id == "corpse_alarm_pager" and not self._pager_has_run then
             if not show_waypoint_only then
-                managers.ehi:AddPagerTracker(self._ehi_key)
+                managers.ehi_tracker:AddPagerTracker(self._ehi_key)
             end
             if show_waypoint then
                 managers.ehi_waypoint:AddPagerWaypoint({
@@ -57,25 +57,23 @@ if EHI:GetOption("show_pager_callback") then
 
     EHI:PreHookWithID(IntimitateInteractionExt, "interact", "EHI_pager_interact", function(self, ...)
         if self.tweak_data == "corpse_alarm_pager" then
-            managers.ehi:RemovePagerTracker(self._ehi_key)
+            managers.ehi_tracker:RemoveStealthTracker(self._ehi_key, "pagers")
             managers.ehi_waypoint:RemovePagerWaypoint(self._ehi_key)
         end
     end)
 
     EHI:HookWithID(IntimitateInteractionExt, "_at_interact_start", "EHI_pager_at_interact_start", function(self, ...)
         if self.tweak_data == "corpse_alarm_pager" then
-            managers.ehi:CallFunction(self._ehi_key, "SetAnswered")
-            managers.ehi_waypoint:CallFunction(self._ehi_key, "SetAnswered")
+            managers.ehi_manager:Call(self._ehi_key, "SetAnswered")
         end
     end)
 
     EHI:PreHookWithID(IntimitateInteractionExt, "sync_interacted", "EHI_pager_sync_interacted", function(self, peer, player, status, ...)
         if self.tweak_data == "corpse_alarm_pager" then
             if status == "started" or status == 1 then
-                managers.ehi:CallFunction(self._ehi_key, "SetAnswered")
-                managers.ehi_waypoint:CallFunction(self._ehi_key, "SetAnswered")
+                managers.ehi_manager:Call(self._ehi_key, "SetAnswered")
             else -- complete or interrupted
-                managers.ehi:RemovePagerTracker(self._ehi_key)
+                managers.ehi_tracker:RemoveStealthTracker(self._ehi_key, "pagers")
                 managers.ehi_waypoint:RemovePagerWaypoint(self._ehi_key)
             end
         end
@@ -93,14 +91,14 @@ end
 if EHI:GetOption("show_enemy_count_tracker") and EHI:GetOption("show_enemy_count_show_pagers") then
     local CallbackKey = "EnemyCount"
     local function PagerEnemyKilled(unit)
-        managers.ehi:CallFunction(CallbackKey, "AlarmEnemyPagerKilled")
+        managers.ehi_tracker:CallFunction(CallbackKey, "AlarmEnemyPagerKilled")
         unit:base():remove_destroy_listener(CallbackKey)
         unit:character_damage():remove_listener(CallbackKey)
     end
 
     EHI:HookWithID(IntimitateInteractionExt, "_at_interact_start", "EHI_EnemyCounter_pager_at_interact_start", function(self, ...)
         if self.tweak_data == "corpse_alarm_pager" and not self._unit:character_damage():dead() then
-            managers.ehi:CallFunction(CallbackKey, "AlarmEnemyPagerAnswered")
+            managers.ehi_tracker:CallFunction(CallbackKey, "AlarmEnemyPagerAnswered")
             self._unit:base():add_destroy_listener(CallbackKey, PagerEnemyKilled)
             self._unit:character_damage():add_listener(CallbackKey, { "death" }, PagerEnemyKilled)
         end
@@ -109,7 +107,7 @@ if EHI:GetOption("show_enemy_count_tracker") and EHI:GetOption("show_enemy_count
     EHI:PreHookWithID(IntimitateInteractionExt, "sync_interacted", "EHI_EnemyCounter_pager_sync_interacted", function(self, peer, player, status, ...)
         if self.tweak_data == "corpse_alarm_pager" then
             if (status == "started" or status == 1) and not self._unit:character_damage():dead() then
-                managers.ehi:CallFunction(CallbackKey, "AlarmEnemyPagerAnswered")
+                managers.ehi_tracker:CallFunction(CallbackKey, "AlarmEnemyPagerAnswered")
                 self._unit:base():add_destroy_listener(CallbackKey, PagerEnemyKilled)
                 self._unit:character_damage():add_listener(CallbackKey, { "death" }, PagerEnemyKilled)
             end
@@ -144,14 +142,14 @@ if EHI:GetOption("show_equipment_ammobag") then
         if self._ehi_active ~= self._active then
             if self._active then -- Active
                 if self._unit:base():GetRealAmount() > 0 then -- The unit is active now, load it from cache and show it on screen
-                    managers.ehi:LoadFromDeployableCache(self._tracker_id, self._ehi_key)
+                    managers.ehi_tracker:LoadFromDeployableCache(self._tracker_id, self._ehi_key)
                 end
             else -- Not Active
                 if self._unit:base():GetRealAmount() > 0 then -- There is some ammo in the unit, let's cache the unit
                     if all then
-                        managers.ehi:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit, "ammo_bag")
+                        managers.ehi_tracker:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit, "ammo_bag")
                     else
-                        managers.ehi:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit)
+                        managers.ehi_tracker:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit)
                     end
                 end
             end
@@ -160,7 +158,7 @@ if EHI:GetOption("show_equipment_ammobag") then
     end)
 
     EHI:Hook(AmmoBagInteractionExt, "destroy", function(self, ...)
-        managers.ehi:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
+        managers.ehi_tracker:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
     end)
 end
 
@@ -176,14 +174,14 @@ if EHI:GetOption("show_equipment_bodybags") then
         if self._ehi_active ~= self._active then
             if self._active then -- Active
                 if self._unit:base():GetRealAmount() > 0 and managers.groupai:state():whisper_mode() then -- The unit is active now, load it from cache and show it on screen
-                    managers.ehi:LoadFromDeployableCache(self._tracker_id, self._ehi_key)
+                    managers.ehi_tracker:LoadFromDeployableCache(self._tracker_id, self._ehi_key)
                 end
             else -- Not Active
                 if self._unit:base():GetRealAmount() > 0 then -- There are some body bags in the unit, let's cache the unit
                     if all then
-                        managers.ehi:AddToDeployableCache("Deployables", self._ehi_key, self._unit, "bodybags_bag")
+                        managers.ehi_tracker:AddToDeployableCache("Deployables", self._ehi_key, self._unit, "bodybags_bag")
                     else
-                        managers.ehi:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit)
+                        managers.ehi_tracker:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit)
                     end
                 end
             end
@@ -192,7 +190,7 @@ if EHI:GetOption("show_equipment_bodybags") then
     end)
 
     EHI:Hook(BodyBagsBagInteractionExt, "destroy", function(self, ...)
-        managers.ehi:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
+        managers.ehi_tracker:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
     end)
 end
 
@@ -217,14 +215,14 @@ if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_fi
         if self._ehi_active ~= self._active then
             if self._active then -- Active
                 if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 then -- The unit is active now, load it from cache and show it on screen
-                    managers.ehi:LoadFromDeployableCache(self._tracker_id, self._ehi_key)
+                    managers.ehi_tracker:LoadFromDeployableCache(self._tracker_id, self._ehi_key)
                 end
             else -- Not Active
                 if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 then -- There are some charges left in the unit, let's cache the unit
                     if aggregate or all then
-                        managers.ehi:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit, self._ehi_unit_tweak)
+                        managers.ehi_tracker:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit, self._ehi_unit_tweak)
                     else
-                        managers.ehi:AddToDeployableCache(self._ehi_tweak, self._ehi_key, self._unit)
+                        managers.ehi_tracker:AddToDeployableCache(self._ehi_tweak, self._ehi_key, self._unit)
                     end
                 end
             end
@@ -233,6 +231,6 @@ if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_fi
     end)
 
     EHI:Hook(DoctorBagBaseInteractionExt, "destroy", function(self, ...)
-        managers.ehi:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
+        managers.ehi_tracker:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
     end)
 end

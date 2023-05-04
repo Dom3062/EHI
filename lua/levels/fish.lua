@@ -1,4 +1,16 @@
 local EHI = EHI
+EHIfish6Tracker = class(EHIAchievementProgressTracker)
+EHIfish6Tracker._forced_icons = EHI:GetAchievementIcon("fish_6")
+function EHIfish6Tracker:init(panel, params)
+    params.max = managers.enemy:GetNumberOfEnemies()
+    EHIfish6Tracker.super.init(self, panel, params)
+    CopDamage.register_listener("EHI_fish_6_listener", { "on_damage" }, function(damage_info)
+        if damage_info.result.type == "death" then
+            self:IncreaseProgress()
+        end
+    end)
+end
+
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
@@ -12,7 +24,7 @@ local achievements = {
             [100244] = { time = 360, id = "fish_4", class = TT.Achievement },
         },
         load_sync = function(self)
-            self:AddTimedAchievementTracker("fish_4", 360)
+            self._trackers:AddTimedAchievementTracker("fish_4", 360)
         end,
         mission_end_callback = true
     },
@@ -30,16 +42,7 @@ local achievements = {
         elements =
         {
             -- 100244 is ´Players_spawned´
-            [100244] = { special_function = SF.Trigger, data = { 1, 2 } },
-            [1] = { id = "fish_6", class = TT.AchievementProgress, remove_after_reaching_target = false }, -- Maximum is set in the next trigger; difficulty dependant
-            [2] = { special_function = SF.CustomCode, f = function()
-                managers.ehi:SetTrackerProgressMax("fish_6", managers.enemy:GetNumberOfEnemies())
-                CopDamage.register_listener("EHI_fish_6_listener", { "on_damage" }, function(damage_info)
-                    if damage_info.result.type == "death" then
-                        managers.ehi:IncreaseTrackerProgress("fish_6")
-                    end
-                end)
-            end},
+            [100244] = { class = TT.AchievementProgress, remove_after_reaching_target = false } -- Maximum is set in the tracker; difficulty dependant
         }
     }
 }
@@ -65,21 +68,12 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
-                objective = true,
                 loot =
                 {
-                    money = { times = 8 }
-                }
-            },
-            max =
-            {
-                objective = true,
-                loot =
-                {
-                    money = { times = 8 },
-                    mus_artifact = { times = 7 }
+                    money = { min_max = 8 },
+                    mus_artifact = { max = 7 }
                 }
             }
         }

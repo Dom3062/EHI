@@ -32,8 +32,7 @@ EHIAssaultTimeTracker._paused_color = EHIPausableTracker._paused_color
 EHIAssaultTimeTracker._warning_color = EHITimerTracker._completion_color
 function EHIAssaultTimeTracker:init(panel, params)
     self:CalculateDifficultyRamp(params.diff)
-    self._original_time = self:CalculateAssaultTime()
-    params.time = self._original_time
+    params.time = self:CalculateAssaultTime()
     EHIAssaultTimeTracker.super.init(self, panel, params)
     self.update_normal = self.update
     self._state = State.build
@@ -48,9 +47,14 @@ function EHIAssaultTimeTracker:update(t, dt)
     if self._to_sustain_t then
         self._to_sustain_t = self._to_sustain_t - dt
         if self._to_sustain_t <= 0 then
-            self._to_sustain_t = nil
             self._state = State.sustain
             self:SetIconColor(Sustain)
+            if self._recalculate_on_sustain then
+                self:RecalculateAssaultTime(self._new_diff)
+                self._new_diff = nil
+                self._recalculate_on_sustain = nil
+            end
+            self._to_sustain_t = nil
         end
     end
     if self._to_fade_t then
@@ -69,9 +73,14 @@ function EHIAssaultTimeTracker:update_cs(t, dt)
     if self._to_sustain_t then
         self._to_sustain_t = self._to_sustain_t - dt
         if self._to_sustain_t <= 0 then
-            self._to_sustain_t = nil
             self._state = State.sustain
             self:SetIconColor(Sustain)
+            if self._recalculate_on_sustain then
+                self:RecalculateAssaultTime(self._new_diff)
+                self._new_diff = nil
+                self._recalculate_on_sustain = nil
+            end
+            self._to_sustain_t = nil
         end
     end
     if self._to_fade_t then
@@ -120,6 +129,16 @@ function EHIAssaultTimeTracker:CalculateAssaultTime()
     return build + sustain + fade
 end
 
+function EHIAssaultTimeTracker:RecalculateAssaultTime(diff)
+    self:CalculateDifficultyRamp(diff)
+    local t = self:CalculateAssaultTime()
+    local build = assault_values.build_duration
+    local fade = assault_values.fade_duration
+    self._assault_t = t - build - fade
+    self._to_fade_t = t - build - fade
+    self._time = t - build
+end
+
 function EHIAssaultTimeTracker:CalculateCSSustainTime(sustain, n_of_hostages)
     n_of_hostages = n_of_hostages or managers.groupai:state():hostage_count()
     local n_of_jokers = managers.groupai:state():get_amount_enemies_converted_to_criminals()
@@ -155,17 +174,8 @@ end
 
 function EHIAssaultTimeTracker:UpdateDiff(diff)
     if self._is_client and self._state == State.build and self._diff ~= diff then
-        self:CalculateDifficultyRamp(diff)
-        local new_time = self:CalculateAssaultTime()
-        if new_time ~= self._original_time then
-            local time_diff = new_time - self._original_time
-            self._time = self._time + time_diff
-            self._original_time = new_time
-            self._to_fade_t = self._to_fade_t + time_diff
-            if self._to_sustain_t then
-                self._to_sustain_t = self._to_sustain_t + time_diff
-            end
-        end
+        self._recalculate_on_sustain = true
+        self._new_diff = diff
     end
 end
 
@@ -216,16 +226,16 @@ end
 
 EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
     if mode == "phalanx" then
-        managers.ehi:CallFunction("AssaultTime", "CaptainArrived")
+        managers.ehi_tracker:CallFunction("AssaultTime", "CaptainArrived")
     else
-        managers.ehi:CallFunction("AssaultTime", "CaptainDefeated")
+        managers.ehi_tracker:CallFunction("AssaultTime", "CaptainDefeated")
     end
 end)
 
 local _Active = false
 local function ActivateHooks()
     local function f()
-        managers.ehi:CallFunction("AssaultTime", "OnMinionCountChanged")
+        managers.ehi_tracker:CallFunction("AssaultTime", "OnMinionCountChanged")
     end
     EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, f)
     EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, f)
@@ -254,7 +264,7 @@ end
 if EHI:IsHost() then
     local ListenerModifier = class(BaseModifier)
     function ListenerModifier:OnEnterSustainPhase(duration)
-        managers.ehi:CallFunction("AssaultTime", "OnEnterSustain", duration)
+        managers.ehi_tracker:CallFunction("AssaultTime", "OnEnterSustain", duration)
     end
     EHI:AddCallback(EHI.CallbackMessage.InitFinalize, function()
         managers.modifiers:add_modifier(ListenerModifier, "EHI")

@@ -79,7 +79,7 @@ for id, value in pairs(outcome) do
         if id == 100013 then
             local tracker_id = triggers[element].id .. tostring(element)
             managers.mission:add_runned_unit_sequence_trigger(EHI:GetInstanceUnitID(100008, i), "done_cleaning", function(unit)
-                managers.ehi:RemoveTracker(tracker_id)
+                managers.ehi_tracker:RemoveTracker(tracker_id)
             end)
         end
     end
@@ -93,7 +93,7 @@ EHI:AddOnAlarmCallback(function()
         "CorrectPaperChance"
     }
     for _, tracker in ipairs(remove) do
-        managers.ehi:RemoveTracker(tracker)
+        managers.ehi_tracker:RemoveTracker(tracker)
     end
 end)
 
@@ -119,7 +119,7 @@ EHI:ParseTriggers({
 })
 EHI:RegisterCustomSpecialFunction(LowerFloor, function(trigger, element, enabled)
     if enabled then
-        managers.ehi_common:Call(trigger.id, "LowerFloor")
+        managers.ehi_manager:Call(trigger.id, "LowerFloor")
     end
 end)
 EHI:AddLoadSyncFunction(function(self)
@@ -127,17 +127,17 @@ EHI:AddLoadSyncFunction(function(self)
     if elevator_counter then
         local o = elevator_counter:digital_gui()
         if o and o._timer and o._timer ~= 30 then
-            self:AddTracker({
+            self._trackers:AddTracker({
                 id = "EscapeElevator",
                 floors = o._timer - 4,
                 class = "EHIElevatorTimerTracker"
             })
-            managers.ehi_waypoint:AddWaypoint("EscapeElevator", {
+            self._waypoints:AddWaypoint("EscapeElevator", {
                 floors = o._timer - 4,
                 class = "EHIElevatorTimerWaypoint"
             })
-            if self:InteractionExists("circuit_breaker") or self:InteractionExists("press_call_elevator") then
-                managers.ehi_common:Pause("EscapeElevator")
+            if self._trackers:InteractionExists("circuit_breaker") or self._trackers:InteractionExists("press_call_elevator") then
+                self:Pause("EscapeElevator")
             end
         end
     end

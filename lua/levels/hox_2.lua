@@ -59,8 +59,8 @@ local achievements =
             [100258] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
-            if self:IsMissionElementEnabled(100270) then -- No keycard achievement
-                self:AddAchievementStatusTracker("slakt_3")
+            if self._trackers:IsMissionElementEnabled(100270) then -- No keycard achievement
+                self._trackers:AddAchievementStatusTracker("slakt_3")
             end
         end
     },
@@ -97,11 +97,11 @@ EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(trigger, e
         continue = true
     end
     if continue then
-        if managers.ehi:TrackerExists(trigger.id) then
-            managers.ehi:SetTrackerProgress(trigger.id, trigger.data.progress)
+        if managers.ehi_tracker:TrackerExists(trigger.id) then
+            managers.ehi_tracker:SetTrackerProgress(trigger.id, trigger.data.progress)
         elseif not trigger.data.dont_create then
             EHI:CheckCondition(trigger)
-            managers.ehi:SetTrackerProgress(trigger.id, trigger.data.progress)
+            managers.ehi_tracker:SetTrackerProgress(trigger.id, trigger.data.progress)
         end
     end
 end)
@@ -139,8 +139,86 @@ local tbl =
 
     --levels/instances/unique/hox_fbi_security_office
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security
-    [EHI:GetInstanceUnitID(100068, 6690)] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100019, 6690) }
+    [EHI:GetInstanceUnitID(100068, 6690)] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100019, 6690) },
+
+    --levels/instances/unique/hox_fbi_armory
+    --units/pd2_dlc2/architecture/gov_d_int/gov_d_int_door_b/001
+    [EHI:GetInstanceUnitID(100003, 6840)] = { f = function(unit_id, unit_data, unit)
+        local units = {}
+        local n = 1
+        local wd = managers.worlddefinition
+        for i = 100004, 100007, 1 do
+            local _unit = wd:get_unit(EHI:GetInstanceUnitID(i, 6840))
+            if _unit then
+                units[n] = _unit
+                n = n + 1
+            end
+        end
+        do
+            local _unit = wd:get_unit(EHI:GetInstanceUnitID(100019, 6840))
+            if _unit then
+                units[n] = _unit
+                n = n + 1
+            end
+        end
+        do
+            local _unit = wd:get_unit(EHI:GetInstanceUnitID(100020, 6840))
+            if _unit then
+                units[n] = _unit
+                n = n + 1
+            end
+        end
+        for i = 100024, 100030, 1 do
+            local _unit = wd:get_unit(EHI:GetInstanceUnitID(i, 6840))
+            if _unit then
+                units[n] = _unit
+                n = n + 1
+            end
+        end
+        local pos =
+        {
+            -- Upper
+            [1] = Vector3(1816.87, 3664.57, 17.2887), -- Keycard
+            [2] = Vector3(1817.05, 3659.48, 45.4985), -- ECM
+
+            -- Lower
+            [3] = Vector3(-2216.87, 2410.43, -382.711), -- Keycard
+            [4] = Vector3(-2217.05, 2415.52, -354.502) -- ECM
+        }
+        local playing = true
+        local disabled = false
+        EHI:HookWithID(MissionDoorDeviceInteractionExt, "set_active", "EHI_100003_6840_set_active", function(self, active, ...)
+            if active == false and playing and not disabled then
+                local u_pos = tostring(self._unit:position())
+                for _, unit_pos in ipairs(pos) do
+                    if tostring(unit_pos) == u_pos then
+                        for _, _unit in ipairs(units) do
+                            if _unit:base() and _unit:base().SetCountThisUnit then
+                                _unit:base():SetCountThisUnit()
+                            end
+                        end
+                        break
+                    end
+                end
+                disabled = true
+            end
+        end)
+        EHI:PreHookWithID(MissionDoorDeviceInteractionExt, "destroy", "EHI_100003_6840_destroy", function(...)
+            playing = false
+        end)
+    end}
 }
+-- Armory
+-- Ammo
+for i = 100004, 100007, 1 do
+    tbl[EHI:GetInstanceUnitID(i, 6840)] = { f = "IgnoreChildDeployable" }
+end
+-- Grenades
+tbl[EHI:GetInstanceUnitID(100019, 6840)] = { f = "IgnoreChildDeployable" }
+tbl[EHI:GetInstanceUnitID(100020, 6840)] = { f = "IgnoreChildDeployable" }
+for i = 100024, 100030, 1 do
+    tbl[EHI:GetInstanceUnitID(i, 6840)] = { f = "IgnoreChildDeployable" }
+end
 EHI:UpdateUnits(tbl)
 
 local SecurityOffice = { w_id = EHI:GetInstanceElementID(100026, 6690) }

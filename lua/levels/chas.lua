@@ -61,12 +61,12 @@ local achievements =
         },
         load_sync = function(self)
             if EHI.ConditionFunctions.IsStealth() then
-                EHI:ShowAchievementLootCounter({
+                EHI:ShowAchievementLootCounterNoCheck({
                     achievement = "chas_10",
                     max = 15,
                     remove_after_reaching_target = false
                 })
-                self:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())
+                self._trackers:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())
             end
         end,
         failed_on_alarm = true
@@ -79,7 +79,7 @@ local achievements =
             [100107] = { time = 360, class = TT.Achievement }
         },
         load_sync = function(self)
-            self:AddTimedAchievementTracker("chas_11", 360)
+            self._trackers:AddTimedAchievementTracker("chas_11", 360)
         end
     }
 }

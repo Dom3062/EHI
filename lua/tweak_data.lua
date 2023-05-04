@@ -582,7 +582,7 @@ tweak_data.ehi =
             })
         end,
         ShowNumberOfLootbagsOnTheGround = function()
-            local max = managers.ehi:CountLootbagsOnTheGround()
+            local max = managers.ehi_tracker:CountLootbagsOnTheGround()
             if max == 0 then
                 return
             end
@@ -669,13 +669,11 @@ tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }
 tweak_data.hud_icons.EHI_Minion = tweak_data.ehi.icons.minion
 tweak_data.hud_icons.EHI_Loot = tweak_data.hud_icons.pd2_loot
 
-do
-    local preplanning = tweak_data.preplanning
-    local path = preplanning.gui.type_icons_path
-    local text_rect_blimp = preplanning:get_type_texture_rect(preplanning.types.kenaz_faster_blimp.icon)
-    text_rect_blimp[1] = text_rect_blimp[1] + text_rect_blimp[3] -- Add the negated "w" value so it will correctly show blimp
-    text_rect_blimp[3] = -text_rect_blimp[3] -- Flip the image so it will face correctly
-    tweak_data.ehi.icons.blimp = { texture = path, texture_rect = text_rect_blimp }
-    tweak_data.ehi.icons.heli = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.kenaz_ace_pilot.icon) }
-    tweak_data.hud_icons.EHI_Heli = tweak_data.ehi.icons.heli
-end
+local preplanning = tweak_data.preplanning
+local path = preplanning.gui.type_icons_path
+local text_rect_blimp = preplanning:get_type_texture_rect(preplanning.types.kenaz_faster_blimp.icon)
+text_rect_blimp[1] = text_rect_blimp[1] + text_rect_blimp[3] -- Add the negated "w" value so it will correctly show blimp
+text_rect_blimp[3] = -text_rect_blimp[3] -- Flip the image so it will face correctly
+tweak_data.ehi.icons.blimp = { texture = path, texture_rect = text_rect_blimp }
+tweak_data.ehi.icons.heli = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.kenaz_ace_pilot.icon) }
+tweak_data.hud_icons.EHI_Heli = tweak_data.ehi.icons.heli

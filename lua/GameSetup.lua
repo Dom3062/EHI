@@ -182,6 +182,14 @@ local custom_levels =
     Scarlett Resort (Loud and Stealth)
     Penthouse Crasher (Loud Only)
     Golden Shakedown (Loud and Stealth)
+    Early Bird (Loud Only)
+    Cartel Transport: Construction Site (Loud Only)
+    Cartel Transport: Train (Loud Only)
+    Dance with the Devil (Loud Only)
+    Cartel Transport: Downtown (Loud Only)
+    Welcome to the Jungle (Loud Only)
+    Fiesta (Loud Only)
+    Showdown (Loud Only)
     ]]
     --Tonis2 = true, -- Triple Threat
     --dwn1 = true -- Deep Inside
@@ -212,6 +220,6 @@ EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(...)
 end)
 
 EHI:HookWithID(GameSetup, "load", "EHI_GameSetup_load_Post", function(...)
-    managers.ehi:LoadSync()
+    managers.ehi_manager:LoadSync()
     EHI:SyncLoad()
 end)

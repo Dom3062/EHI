@@ -22,10 +22,10 @@ if EHI:GetOption("show_difficulty_tracker") then
     local id = "Difficulty"
     Trigger = function(value)
         local diff = EHI:RoundChanceNumber(value)
-        if managers.ehi:TrackerExists(id) then
-            managers.ehi:SetChance(id, diff)
+        if managers.ehi_tracker:TrackerExists(id) then
+            managers.ehi_tracker:SetChance(id, diff)
         else
-            managers.ehi:AddTracker({
+            managers.ehi_tracker:AddTracker({
                 id = id,
                 icons = { "enemy" },
                 chance = diff,
@@ -40,9 +40,9 @@ end
 local function Run(value)
     EHI._cache.diff = value
     Trigger(value)
-    managers.ehi:CallFunction("Assault", "UpdateDiff", value)
-    managers.ehi:CallFunction("AssaultDelay", "UpdateDiff", value)
-    managers.ehi:CallFunction("AssaultTime", "UpdateDiff", value)
+    managers.ehi_tracker:CallFunction("Assault", "UpdateDiff", value)
+    managers.ehi_tracker:CallFunction("AssaultDelay", "UpdateDiff", value)
+    managers.ehi_tracker:CallFunction("AssaultTime", "UpdateDiff", value)
 end
 
 function ElementDifficulty:client_on_executed(...)

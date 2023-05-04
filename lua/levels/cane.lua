@@ -29,7 +29,7 @@ end
 local function cane_5()
     EHI:HookWithID(PlayerManager, "set_synced_deployable_equipment", "EHI_cane_5_fail_trigger", function(self, ...)
         if self._peer_used_deployable then
-            managers.ehi:SetAchievementFailed("cane_5")
+            managers.ehi_tracker:SetAchievementFailed("cane_5")
             EHI:Unhook("cane_5_fail_trigger")
         end
     end)

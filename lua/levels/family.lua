@@ -15,7 +15,7 @@ local triggers = {
 }
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi:AddEscapeChanceTracker(dropin, 10)
+        managers.ehi_tracker:AddEscapeChanceTracker(dropin, 10)
     end)
 end
 
@@ -37,6 +37,7 @@ local achievements =
 
 local other =
 {
+    [100109] = EHI:AddAssaultDelay({ time = 30 + 30 }),
     [102622] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
     [100107] = EHI:AddLootCounter(function()
         local SafeTriggers =
@@ -68,6 +69,12 @@ local other =
     end)
 }
 
+local min_bags = EHI:GetValueBasedOnDifficulty({
+    normal = 4,
+    hard = 6,
+    veryhard = 10,
+    overkill_or_above = 14
+})
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
@@ -83,5 +90,15 @@ EHI:AddXPBreakdown({
         money = 1000,
         diamonds = 1000
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        min_max =
+        {
+            loot =
+            {
+                money = { max = 2 },
+                diamonds = { min = min_bags, max = 18 }
+            }
+        }
+    }
 })

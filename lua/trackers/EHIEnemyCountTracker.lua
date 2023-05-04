@@ -41,7 +41,7 @@ end
 function EHIEnemyCountTracker:Alarm()
     self._alarm_sounded = true
     self._count = self._count + self._alarm_count
-    self.Format = self.super.Format
+    self.Format = EHIEnemyCountTracker.super.Format
     self:Update()
     self:FitTheText()
     self:AnimateBG()

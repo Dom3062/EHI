@@ -109,7 +109,7 @@ local other =
 if LootCounter then
     -- Basement
     local function IncreaseMaximum()
-        managers.ehi:IncreaseTrackerProgressMax("LootCounter", 1)
+        managers.ehi_tracker:IncreaseTrackerProgressMax("LootCounter", 1)
     end
     local IncreaseMaximumTrigger = { special_function = SF.CustomCode, f = IncreaseMaximum }
     -- Coke
@@ -126,14 +126,14 @@ if LootCounter then
         end
         Methbags = Methbags + 1
         MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
-        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned")
+        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
     end
     local function DecreaseMaximum()
         if MethlabExploded then
             return
         end
         MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
-        managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
+        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined")
     end
     local IncreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = IncreaseMaximum2 }
     local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = DecreaseMaximum }
@@ -151,8 +151,8 @@ if LootCounter then
         if Methbags == 0 then -- Dropin; impossible to tell how many bags were cooked
             return
         end
-        managers.ehi:DecreaseTrackerProgressMax("LootCounter", Methbags - MethbagsCooked)
-        managers.ehi:CallFunction("LootCounter", "DecreaseMaxRandom", MethbagsPossibleToSpawn)
+        managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter", Methbags - MethbagsCooked)
+        managers.ehi_tracker:CallFunction("LootCounter", "DecreaseMaxRandom", MethbagsPossibleToSpawn)
         MethlabExploded = true
     end
     local function CookingDone()
@@ -172,12 +172,12 @@ if LootCounter then
         if CarLootBlocked then
             return
         end
-        managers.ehi:CallFunction("LootCounter", "RandomLootDeclined")
+        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined")
     end
     local DecreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = DecreaseMaximum2 }
     -- All cars; does not get triggered when maximum has been reached
     other[100721] = { special_function = SF.CustomCode, f = function()
-        managers.ehi:CallFunction("LootCounter", "RandomLootSpawned")
+        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
     end }
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/001
     other[100523] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned

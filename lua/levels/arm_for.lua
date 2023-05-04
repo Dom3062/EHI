@@ -23,12 +23,12 @@ local achievements =
         {
             -- Achievement bugged, can be earned in stealth
             -- Reported in: https://steamcommunity.com/app/218620/discussions/14/3048357185566603324/
-            [104716] = { id = "armored_6", class = TT.AchievementStatus },
-            [103311] = { id = "armored_6", special_function = SF.SetAchievementFailed }
+            [104716] = { class = TT.AchievementStatus },
+            [103311] = { special_function = SF.SetAchievementFailed }
         },
         load_sync = function(self)
             if EHI.ConditionFunctions.IsStealth() then
-                self:AddAchievementStatusTracker("armored_6")
+                self._trackers:AddAchievementStatusTracker("armored_6")
             end
         end
     }

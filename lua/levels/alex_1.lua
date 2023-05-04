@@ -67,11 +67,11 @@ else
     EHI:ShowLootCounter({ max = 7 })
 end
 EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(trigger, ...)
-    if managers.ehi:TrackerExists(trigger.id) then
-        local tracker = managers.ehi:GetTracker(trigger.id)
+    if managers.ehi_tracker:TrackerExists(trigger.id) then
+        local tracker = managers.ehi_tracker:GetTracker(trigger.id)
         if tracker then
             if tracker._time >= trigger.time then
-                managers.ehi:SetTrackerTime(trigger.id, trigger.time)
+                managers.ehi_tracker:SetTrackerTime(trigger.id, trigger.time)
             end
         else
             EHI:CheckCondition(trigger)
@@ -82,17 +82,17 @@ EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(tri
 end)
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi:AddEscapeChanceTracker(dropin, 25)
+        managers.ehi_tracker:AddEscapeChanceTracker(dropin, 25)
     end)
     EHI:AddLoadSyncFunction(function(self)
         if managers.environment_effects._mission_effects[101437] then
-            self:AddEscapeChanceTracker(false, 105)
+            self._trackers:AddEscapeChanceTracker(false, 105)
             EHI:UnhookElement(101863)
         else
-            self:AddEscapeChanceTracker(false, 35)
+            self._trackers:AddEscapeChanceTracker(false, 35)
             -- Disable increase when the cooks got killed by gangster in case the player dropins
             -- after Escape Chance is shown on screen and before they get killed by mission script
-            self.IncreaseCivilianKilled = function(...)
+            self._trackers.IncreaseCivilianKilled = function(...)
             end
         end
     end)

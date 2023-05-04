@@ -35,8 +35,8 @@ end
 function ECMJammerBase:set_owner(...)
     original.set_owner(self, ...)
     self:SetPeerID(self._owner_id or 0)
-    managers.ehi:CallFunction("ECMJammer", "UpdateOwnerID", self._ehi_peer_id)
-    managers.ehi:CallFunction("ECMFeedback", "UpdateOwnerID", self._ehi_peer_id)
+    managers.ehi_tracker:CallFunction("ECMJammer", "UpdateOwnerID", self._ehi_peer_id)
+    managers.ehi_tracker:CallFunction("ECMFeedback", "UpdateOwnerID", self._ehi_peer_id)
 end
 
 function ECMJammerBase:SetPeerID(peer_id)
@@ -67,10 +67,10 @@ if EHI:GetOption("show_equipment_ecmjammer") then
                 return
             end
             if not show_waypoint_only then
-                if managers.ehi:TrackerExists("ECMJammer") then
-                    managers.ehi:CallFunction("ECMJammer", "SetTimeIfLower", battery_life, self._ehi_peer_id, self._unit)
+                if managers.ehi_tracker:TrackerExists("ECMJammer") then
+                    managers.ehi_tracker:CallFunction("ECMJammer", "SetTimeIfLower", battery_life, self._ehi_peer_id, self._unit)
                 else
-                    managers.ehi:AddTracker({
+                    managers.ehi_tracker:AddTracker({
                         id = "ECMJammer",
                         time = battery_life,
                         icons = { { icon = "ecm_jammer", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
@@ -97,10 +97,10 @@ if EHI:GetOption("show_equipment_ecmfeedback") then
     function ECMJammerBase:_set_feedback_active(state, ...)
         original._set_feedback_active(self, state, ...)
         if state and self._feedback_duration then
-            if managers.ehi:TrackerExists("ECMFeedback") then
-                managers.ehi:CallFunction("ECMFeedback", "SetTimeIfLower", self._feedback_duration, self._ehi_peer_id, self._unit)
+            if managers.ehi_tracker:TrackerExists("ECMFeedback") then
+                managers.ehi_tracker:CallFunction("ECMFeedback", "SetTimeIfLower", self._feedback_duration, self._ehi_peer_id, self._unit)
             else
-                managers.ehi:AddTracker({
+                managers.ehi_tracker:AddTracker({
                     id = "ECMFeedback",
                     time = self._feedback_duration,
                     icons = { { icon = "ecm_feedback", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
@@ -114,7 +114,7 @@ end
 
 function ECMJammerBase:destroy(...)
     original.destroy(self, ...)
-    managers.ehi:CallFunction("ECMJammer", "Destroyed", self._unit)
-    managers.ehi:CallFunction("ECMFeedback", "Destroyed", self._unit)
+    managers.ehi_tracker:CallFunction("ECMJammer", "Destroyed", self._unit)
+    managers.ehi_tracker:CallFunction("ECMFeedback", "Destroyed", self._unit)
     managers.ehi_waypoint:RemoveWaypoint(tostring(self._unit:key()))
 end

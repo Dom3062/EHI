@@ -55,8 +55,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
     params.pause_timer = 1
     params.no_sync = true
     params.present_timer = params.present_timer or self._present_timer
-    self._hud:add_waypoint(id, params)
-    local waypoint = self._hud:get_waypoint_data(id)
+    local waypoint = self._hud:AddWaypoint(id, params)
     if not waypoint then
         return
     end
@@ -204,12 +203,6 @@ function EHIWaypointManager:update(t, dt)
     for _, waypoint in pairs(self._waypoints_to_update) do
         waypoint:update(t, dt)
     end
-end
-
-function EHIWaypointManager:update_client(t)
-    local dt = t - self._t
-    self._t = t
-    self:update(self._t, dt)
 end
 
 function EHIWaypointManager:destroy()

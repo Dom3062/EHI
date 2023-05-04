@@ -28,6 +28,9 @@ function EHI:FinalizeUnits(tbl)
                 end
             else
                 if unit:timer_gui() and unit:timer_gui()._ehi_key then
+                    if unit_data.child_units then
+                        unit:timer_gui():SetChildUnits(unit_data.child_units, wd)
+                    end
                     unit:timer_gui():SetIcons(unit_data.icons)
                     unit:timer_gui():SetRemoveOnPowerOff(unit_data.remove_on_power_off)
                     if unit_data.disable_set_visible then
@@ -113,6 +116,12 @@ end
 function WorldDefinition:IgnoreDeployable(unit_id, unit_data, unit)
     if unit:base() and unit:base().SetIgnore then
         unit:base():SetIgnore()
+    end
+end
+
+function WorldDefinition:IgnoreChildDeployable(unit_id, unit_data, unit)
+    if unit:base() and unit:base().SetIgnoreChild then
+        unit:base():SetIgnoreChild()
     end
 end
 

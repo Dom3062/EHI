@@ -10,7 +10,7 @@ local original =
 
 function GroupAIStateBesiege:set_phalanx_damage_reduction_buff(damage_reduction, ...)
     original.set_phalanx_damage_reduction_buff(self, damage_reduction, ...)
-    managers.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(damage_reduction or 0)))
+    managers.ehi_tracker:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(damage_reduction or 0)))
 end
 
 if EHI:CombineAssaultDelayAndAssaultTime() or EHI:AssaultDelayTrackerIsEnabled() then
@@ -20,8 +20,8 @@ if EHI:CombineAssaultDelayAndAssaultTime() or EHI:AssaultDelayTrackerIsEnabled()
         local end_t = self._task_data.assault.phase_end_t
         if end_t ~= 0 then
             local t = end_t - self._t
-            managers.ehi:CallFunction("AssaultDelay", "StartAnticipation", t)
-            managers.ehi:CallFunction("Assault", "StartAnticipation", t)
+            managers.ehi_tracker:CallFunction("AssaultDelay", "StartAnticipation", t)
+            managers.ehi_tracker:CallFunction("Assault", "StartAnticipation", t)
         end
     end
 end

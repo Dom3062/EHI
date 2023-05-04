@@ -22,9 +22,9 @@ local function Block()
 	if not state.terminate_assaults then
         return
 	end
-    managers.ehi:CallFunction("Assault", "PoliceActivityBlocked")
-    managers.ehi:CallFunction("AssaultDelay", "PoliceActivityBlocked")
-    managers.ehi:CallFunction("AssaultTime", "PoliceActivityBlocked")
+    managers.ehi_tracker:CallFunction("Assault", "PoliceActivityBlocked")
+    managers.ehi_tracker:CallFunction("AssaultDelay", "PoliceActivityBlocked")
+    managers.ehi_tracker:CallFunction("AssaultTime", "PoliceActivityBlocked")
 end
 
 function ElementTerminateAssault:client_on_executed(...)

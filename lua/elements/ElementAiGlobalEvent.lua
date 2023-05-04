@@ -11,8 +11,8 @@ local original =
 
 local function TriggerEndlessAssault()
     EHI._cache.EndlessAssault = true
-    managers.ehi:RemoveTracker("AssaultTime")
-    managers.ehi:RemoveTracker("Assault")
+    managers.ehi_tracker:RemoveTracker("AssaultTime")
+    managers.ehi_tracker:RemoveTracker("Assault")
 end
 
 function ElementAiGlobalEvent:client_on_executed(...)

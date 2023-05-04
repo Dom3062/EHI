@@ -43,7 +43,7 @@ EHI:AddOnAlarmCallback(function()
         "AnswerPhone"
     }
     for _, tracker in ipairs(remove) do
-        managers.ehi:RemoveTracker(tracker)
+        managers.ehi_tracker:RemoveTracker(tracker)
     end
 end)
 

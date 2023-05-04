@@ -109,7 +109,7 @@ local triggers = {
             local element_area_counter = managers.mission:get_element_by_id(103832) -- ´enemies alive in volume´ ElementCounter 103832
             if not element_area_counter then
                 EHI:DelayCall("RemovePanicRoomTakeoff", 1, function()
-                    managers.ehi:RemoveTracker("PanicRoomTakeoff")
+                    managers.ehi_tracker:RemoveTracker("PanicRoomTakeoff")
                 end)
                 return
             end
@@ -118,7 +118,7 @@ local triggers = {
             local element_area = managers.mission:get_element_by_id(100216) -- ´on enter´ ElementAreaReportTrigger 100216
             if not element_area then
                 EHI:DelayCall("RemovePanicRoomTakeoff", 1, function()
-                    managers.ehi:RemoveTracker("PanicRoomTakeoff")
+                    managers.ehi_tracker:RemoveTracker("PanicRoomTakeoff")
                 end)
                 return
             end
@@ -131,29 +131,29 @@ local triggers = {
                 end
             end
         end
-        managers.ehi:SetTrackerCount("PanicRoomTakeoff", count)
+        managers.ehi_tracker:SetTrackerCount("PanicRoomTakeoff", count)
         EHI:AddTriggers({
             [103700] = { special_function = SF.CustomCode, f = function()
-                managers.ehi:IncreaseTrackerCount("PanicRoomTakeoff")
+                managers.ehi_tracker:IncreaseTrackerCount("PanicRoomTakeoff")
             end},
             [103701] = { special_function = SF.CustomCode, f = function()
-                managers.ehi:DecreaseTrackerCount("PanicRoomTakeoff")
+                managers.ehi_tracker:DecreaseTrackerCount("PanicRoomTakeoff")
             end}
         }, "Trigger", {})
         EHI:HookElements({ [103700] = true, [103701] = true })
     end},
     [103869] = { special_function = SF.CustomCode, f = function()
-        managers.ehi:CallFunction("PanicRoomTakeoff", "EnableUpdate")
+        managers.ehi_tracker:CallFunction("PanicRoomTakeoff", "EnableUpdate")
     end},
     [1] = { special_function = SF.Trigger, data = { 2, 3 } },
     [2] = { special_function = SF.RemoveTrigger, data = { 103700, 103701 } },
     [3] = { id = "PanicRoomTakeoff", special_function = DelayExecution },
     [4] = { id = "PanicRoomTakeoff", special_function = SF.RemoveTracker },
     [103901] = { special_function = SF.CustomCode, f = function()
-        managers.ehi:CallFunction("PanicRoomTakeoff", "ObjectiveComplete", "count")
+        managers.ehi_tracker:CallFunction("PanicRoomTakeoff", "ObjectiveComplete", "count")
     end },
     [104661] = { special_function = SF.CustomCode, f = function()
-        managers.ehi:CallFunction("PanicRoomTakeoff", "ObjectiveComplete", "assault_end")
+        managers.ehi_tracker:CallFunction("PanicRoomTakeoff", "ObjectiveComplete", "assault_end")
     end },
     [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } }
 }
@@ -191,8 +191,8 @@ EHI:ParseTriggers({
 })
 EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(trigger, element, enabled)
     if enabled then
-        if managers.ehi:TrackerExists(trigger.id) then
-            managers.ehi:SetTrackerTimeNoAnim(trigger.id, trigger.time)
+        if managers.ehi_tracker:TrackerExists(trigger.id) then
+            managers.ehi_tracker:SetTrackerTimeNoAnim(trigger.id, trigger.time)
         else
             EHI:CheckCondition(trigger)
         end

@@ -75,7 +75,7 @@ local achievements =
             [106150] = bigbank_4,
         },
         load_sync = function(self)
-            self:AddTimedAchievementTracker("bigbank_4", 720)
+            self._trackers:AddTimedAchievementTracker("bigbank_4", 720)
         end
     },
     cac_22 =
@@ -90,7 +90,7 @@ local achievements =
             if dropin or not managers.preplanning:IsAssetBought(106594) then -- C4 Escape
                 return
             end
-            managers.ehi:AddAchievementStatusTracker("cac_22")
+            managers.ehi_tracker:AddAchievementStatusTracker("cac_22")
         end
     }
 }

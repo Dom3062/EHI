@@ -40,8 +40,12 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [101048] = { status = "defend", class = TT.AchievementStatus },
+            [101048] = { status = "objective", class = TT.AchievementStatus },
             [101001] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [101022] = { status = "objective", special_function = SF.SetAchievementStatus },
+            [100728] = { status = "defend", special_function = SF.SetAchievementStatus }, -- Truck
+            [101589] = { status = "defend", special_function = SF.SetAchievementStatus }, -- Garage
+            [101446] = { status = "objective", special_function = SF.SetAchievementStatus }, -- Garage done
             [102777] = { special_function = SF.SetAchievementComplete },
             [102779] = { special_function = SF.SetAchievementFailed }
         }
@@ -58,8 +62,17 @@ EHI:ShowLootCounter({ max = 9 })
 
 local tbl =
 {
-    --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small/001
-    [101086] = { remove_vanilla_waypoint = true, waypoint_id = 101562 }
+    --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small/001 (Bunker)
+    [101086] = { remove_vanilla_waypoint = true, waypoint_id = 101562, child_units = { 100776, 101226, 101469, 101472, 101473 } },
+
+    -- Inside the bunker
+    -- Grenades
+    [100776] = { f = "IgnoreChildDeployable" },
+    [101226] = { f = "IgnoreChildDeployable" },
+    [101469] = { f = "IgnoreChildDeployable" },
+    -- Ammo
+    [101472] = { f = "IgnoreChildDeployable" },
+    [101473] = { f = "IgnoreChildDeployable" }
 }
 EHI:UpdateUnits(tbl)
 
@@ -68,13 +81,15 @@ local MissionDoorPositions =
     -- Workshop
     [1] = Vector3(-3798.92, -1094.9, -6.52779),
 
-    -- Safe with bike mask
-    [2] = Vector3(1570.02, -419.693, 185.724)
+    -- Safe with a bike mask
+    [2] = Vector3(1570.02, -419.693, 185.724),
+    [3] = Vector3(1570.02, -419.693, 585.724)
 }
 local MissionDoorIndex =
 {
     [1] = { w_id = 101580 },
-    [2] = { w_ids = { EHI:GetInstanceElementID(100007, 4850), EHI:GetInstanceElementID(100007, 5350) } }
+    [2] = { w_id = EHI:GetInstanceElementID(100007, 4850) },
+    [3] = { w_id = EHI:GetInstanceElementID(100007, 5350) }
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
 EHI:AddXPBreakdown({

@@ -1,16 +1,41 @@
+local EHI = EHI
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
+EHIMoneyCounterTracker = class(EHITracker)
+EHIMoneyCounterTracker._update = false
+function EHIMoneyCounterTracker:init(panel, params)
+    self._money = params.money or 0
+    EHIMoneyCounterTracker.super.init(self, panel, params)
+end
+
+function EHIMoneyCounterTracker:Format()
+    return "$" .. self._money
+end
+
+function EHIMoneyCounterTracker:AddMoney(money)
+    self._money = self._money + money
+    self._text:set_text(self:Format())
+    self:FitTheText()
+end
+
 EHIameno3Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIameno3Tracker")
 EHIameno3Tracker.FormatNumber = EHINeededValueTracker.Format
 EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumber
 EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 function EHIameno3Tracker:init(panel, params)
-    self._secured = 0
+    self._secured = params.secured or 0
     self._secured_formatted = "0"
     self._to_secure = params.to_secure or 0
     self._to_secure_formatted = self:FormatNumber2(self._to_secure)
     EHIameno3Tracker.super.init(self, panel, params)
+    EHI:AddAchievementToCounter({
+        achievement = "ameno_3",
+        counter =
+        {
+            check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
+        }
+    })
 end
 
 function EHIameno3Tracker:OverridePanel()
@@ -90,7 +115,6 @@ function EHIameno3Tracker:SetTextColor(color)
     self._money_text:set_color(color)
 end
 
-local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -106,7 +130,7 @@ local triggers =
     -- 300: Base Delay on Mayhem or above
     -- 25: Escape zone activation delay
 
-    [300043] = { id = "MallDestruction", class = TT.MallcrasherMoney, icons = { "C_Vlad_H_Mallcrasher_Shoot" } },
+    [300043] = { id = "MallDestruction", class = "EHIMoneyCounterTracker", icons = { "C_Vlad_H_Mallcrasher_Shoot" } },
     [300843] = MoneyTrigger, -- +40
     [300844] = MoneyTrigger, -- +80
     [300845] = MoneyTrigger, -- +250
@@ -141,34 +165,18 @@ local achievements =
         difficulty_pass = EHI:IsDifficulty(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [301148] = { special_function = SF.Trigger, data = { 1, 2 } },
-            [1] = { time = 50, to_secure = 1800000, class = "EHIameno3Tracker" },
-            [2] = { special_function = SF.CustomCode, f = function()
-                EHI:AddAchievementToCounter({
-                    achievement = "ameno_3",
-                    counter =
-                    {
-                        check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
-                    }
-                })
-            end },
+            [301148] = { time = 50, to_secure = 1800000, class = "EHIameno3Tracker" },
         },
         load_sync = function(self)
-            if self._t <= 50 then
-                self:AddTracker({
-                    time = 50 - self._t,
+            local t = 50 - self._trackers._t
+            if t > 0 then
+                self._trackers:AddTracker({
+                    time = t,
                     id = "ameno_3",
+                    secured = managers.loot:get_real_total_small_loot_value(),
                     to_secure = 1800000,
                     icons = EHI:GetAchievementIcon("ameno_3"),
                     class = "EHIameno3Tracker"
-                })
-                self:SetTrackerProgress("ameno_3", managers.loot:get_real_total_small_loot_value())
-                EHI:AddAchievementToCounter({
-                    achievement = "ameno_3",
-                    counter =
-                    {
-                        check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
-                    }
                 })
             end
         end,
@@ -204,7 +212,7 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:RegisterCustomSpecialFunction(AddMoney, function(trigger, element, ...)
-    managers.ehi:AddMoneyToTracker(trigger.id, element._values.amount)
+    managers.ehi_tracker:CallFunction(trigger.id, "AddMoney", element._values.amount)
 end)
 EHI:AddXPBreakdown({
     objective =

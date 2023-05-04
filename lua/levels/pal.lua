@@ -45,8 +45,8 @@ if EHI:IsClient() then
     EHI:SetSyncTriggers(sync_triggers)
     EHI:SetSyncTriggers(element_sync_triggers)
     EHI:RegisterCustomSpecialFunction(ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, function(trigger, ...)
-        managers.ehi:RemoveTracker(trigger.data.id)
-        if managers.ehi:TrackerDoesNotExist(trigger.id) then
+        managers.ehi_tracker:RemoveTracker(trigger.data.id)
+        if managers.ehi_tracker:TrackerDoesNotExist(trigger.id) then
             EHI:CheckCondition(trigger)
         end
     end)
@@ -69,9 +69,15 @@ local achievements =
     }
 }
 
+local other =
+{
+    [100658] = EHI:AddAssaultDelay({ time = 30 })
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 local value_max = tweak_data.achievement.loot_cash_achievements.pal_2.secured.value
 local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)

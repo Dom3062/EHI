@@ -610,8 +610,8 @@ function MissionBriefingGui:ParamsMinMax(panel, params, o_params)
             elseif type(loot) == "number" then
                 amount = loot
             end
-            min = min + (amount * (data.min or 0))
-            max = max + (amount * (data.max or 0))
+            min = min + (amount * (data.min_max or data.min or 0))
+            max = max + (amount * (data.min_max or data.max or 0))
         end
     end
     if o_params.loot_all then
@@ -622,8 +622,8 @@ function MissionBriefingGui:ParamsMinMax(panel, params, o_params)
         elseif type(params.loot_all) == "number" then
             amount = params.loot_all
         end
-        min = min + (amount * (data.min or 0))
-        max = max + (amount * (data.max or 0))
+        min = min + (amount * (data.min_max or data.min or 0))
+        max = max + (amount * (data.min_max or data.max or 0))
     end
     self:AddTotalMinMaxXP(panel, min, max, true, o_params.name)
 end

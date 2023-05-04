@@ -16,8 +16,8 @@ function EHIkosugi5Tracker:init(panel, params)
             f = function(self, tracker_id, loot_type)
                 local armor_count = self:GetSecuredBagsTypeAmount("samurai_suit")
                 local total_count = self:GetSecuredBagsAmount()
-                managers.ehi:CallFunction(tracker_id, "SetProgressArmor", armor_count)
-                managers.ehi:SetTrackerProgress(tracker_id, total_count - armor_count)
+                managers.ehi_tracker:CallFunction(tracker_id, "SetProgressArmor", armor_count)
+                managers.ehi_tracker:SetTrackerProgress(tracker_id, total_count - armor_count)
             end
         }
     })
@@ -87,7 +87,7 @@ local function CheckForBrokenWeapons()
             local state = weapon:damage()._state.graphic_group.grp_wpn
             if state[1] == "set_visibility" and state[2] then
                 --EHI:Log("Found broken unit weapon with ID: " .. tostring(i))
-                managers.ehi:IncreaseTrackerProgressMax("LootCounter", 1)
+                managers.ehi_tracker:IncreaseTrackerProgressMax("LootCounter", 1)
             end
         end
     end
@@ -99,14 +99,14 @@ local function CheckForBrokenCocaine() -- Not working for drop-ins
         local unit = world:get_unit(i)
         if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_hidden == 0 then
             --EHI:Log("Found broken unit cocaine with ID: " .. tostring(unit:editor_id()))
-            managers.ehi:IncreaseTrackerProgressMax("LootCounter", 1)
+            managers.ehi_tracker:IncreaseTrackerProgressMax("LootCounter", 1)
         end
     end
 end
 
 for _, unit_id in ipairs({ 100098, 102897, 102899, 102900 }) do
     managers.mission:add_runned_unit_sequence_trigger(unit_id, "interact", function(unit)
-        managers.ehi:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = tostring(unit_id),
             time = 10,
             icons = { Icon.Fire }
@@ -163,7 +163,7 @@ local achievements =
                 counter = counter + math.min(amount, 1)
             end
             if counter < 7 then
-                self:AddAchievementProgressTracker("kosugi_3", 7, counter)
+                self._trackers:AddAchievementProgressTracker("kosugi_3", 7, counter)
             end
         end
     },
@@ -177,8 +177,8 @@ local achievements =
             local counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")
             local counter_loot = managers.loot:GetSecuredBagsAmount() - counter_armor
             if counter_loot < 16 or counter_armor < 4 then
-                self:AddAchievementProgressTracker("kosugi_5", nil, math.min(counter_loot, 16)) -- Max is passed in the tracker "init" function
-                self:CallFunction("kosugi_5", "SetProgressArmor", math.min(counter_armor, 4))
+                self._trackers:AddAchievementProgressTracker("kosugi_5", nil, math.min(counter_loot, 16)) -- Max is passed in the tracker "init" function
+                self._trackers:CallFunction("kosugi_5", "SetProgressArmor", math.min(counter_armor, 4))
             end
         end,
         cleanup_callback = function()
@@ -242,7 +242,7 @@ EHI:ShowLootCounter({
     max = base_amount + crates + random_weapons + random_paintings,
     triggers =
     {
-        [103396] = { special_function = SF.IncreaseProgressMax },
+        [103396] = { special_function = SF.IncreaseProgressMax2 },
         [102700] = { special_function = SF.CustomCode, f = function()
             CheckForBrokenWeapons()
             CheckForBrokenCocaine()
@@ -251,9 +251,9 @@ EHI:ShowLootCounter({
     load_sync = function(self)
         CheckForBrokenWeapons()
         if managers.game_play_central:GetMissionEnabledUnit(103995) then
-            self:IncreaseTrackerProgressMax("LootCounter")
+            self._trackers:IncreaseTrackerProgressMax("LootCounter")
         end
-        self:SyncSecuredLoot()
+        self._trackers:SyncSecuredLoot()
     end
 })
 -- Not included bugged loot, this is checked after spawn -> 102700 in EHI:ShowLootCounter()

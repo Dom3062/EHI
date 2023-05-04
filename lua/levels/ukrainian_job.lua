@@ -38,7 +38,7 @@ if EHI:GetOption("show_escape_chance") then
         start_chance = 37
     end
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
+        managers.ehi_tracker:AddEscapeChanceTracker(dropin, start_chance)
     end)
 end
 
@@ -53,7 +53,7 @@ local achievements =
             [101784] = { special_function = SF.SetAchievementComplete },
         },
         load_sync = function(self)
-            self:AddTimedAchievementTracker("lets_do_this", 36)
+            self._trackers:AddTimedAchievementTracker("lets_do_this", 36)
         end
     },
     cac_12 =
@@ -80,7 +80,7 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, function(trigger, ...)
-    if managers.ehi:InteractionExists("circuit_breaker_off") then
+    if managers.ehi_tracker:InteractionExists("circuit_breaker_off") then
         EHI:CheckCondition(trigger)
     end
 end)

@@ -6,7 +6,7 @@ local C4 = EHI.Icons.C4
 
 local function StartC4Sequence(unit)
     local key = tostring(unit:key())
-    managers.ehi:AddTracker({
+    managers.ehi_tracker:AddTracker({
         id = key,
         time = 5,
         icons = { C4 }

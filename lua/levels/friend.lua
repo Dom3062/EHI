@@ -101,7 +101,7 @@ local achievements =
             [100107] = { time = 901, class = "EHIuno7Tracker" },
         },
         failed_on_alarm = function()
-            managers.ehi:CallFunction("uno_7", "SetObtainable")
+            managers.ehi_tracker:CallFunction("uno_7", "SetObtainable")
         end,
         cleanup_callback = function()
             EHIuno7Tracker = nil
@@ -120,7 +120,16 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:ShowLootCounter({ max = 16 })
-local loot_all = { amount = 500, times = 16 }
+local xp_override =
+{
+    params =
+    {
+        min_max =
+        {
+            loot_all = { min = EHI:GetValueBasedOnDifficulty({ veryhard_or_below = 4, overkill_or_above = 6 }), max = 16 }
+        }
+    }
+}
 EHI:AddXPBreakdown({
     tactic =
     {
@@ -138,7 +147,8 @@ EHI:AddXPBreakdown({
                 { amount = 1000, name = "scarface_sosa_killed" },
                 { amount = 8000, name = "vault_open" }
             },
-            loot_all = loot_all
+            loot_all = 500,
+            total_xp_override = xp_override
         },
         loud =
         {
@@ -155,7 +165,8 @@ EHI:AddXPBreakdown({
                 { amount = 1000, name = "scarface_sosa_killed" },
                 { amount = 8000, name = "vault_open" }
             },
-            loot_all = loot_all
+            loot_all = 500,
+            total_xp_override = xp_override
         }
     }
 })

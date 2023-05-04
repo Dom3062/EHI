@@ -10,7 +10,7 @@ if EHI:GetOption("show_escape_chance") then
     function CivilianDamage:_unregister_from_enemy_manager(...)
         original._unregister_from_enemy_manager(self, ...)
         if not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty then
-            managers.ehi:IncreaseCivilianKilled()
+            managers.ehi_tracker:IncreaseCivilianKilled()
         end
     end
 end
@@ -29,14 +29,14 @@ local function AddTracker(peer_id)
     local tweak_data = tweak_data.player.damage
     local delay = tweak_data.base_respawn_time_penalty + tweak_data.respawn_time_penalty
     if suppress_in_stealth and managers.groupai:state():whisper_mode() then
-        if managers.ehi:CachedPeerInCustodyExists(peer_id) then
-            managers.ehi:IncreaseCachedPeerCustodyTime(peer_id, tweak_data.respawn_time_penalty)
+        if managers.ehi_tracker:CachedPeerInCustodyExists(peer_id) then
+            managers.ehi_tracker:IncreaseCachedPeerCustodyTime(peer_id, tweak_data.respawn_time_penalty)
         else
-            managers.ehi:AddToTradeDelayCache(peer_id, delay)
+            managers.ehi_tracker:AddToTradeDelayCache(peer_id, delay)
         end
         return
     end
-    local tracker = managers.ehi:GetTracker("CustodyTime")
+    local tracker = managers.ehi_tracker:GetTracker("CustodyTime")
     if tracker then
         if tracker:PeerExists(peer_id) then
             tracker:IncreasePeerCustodyTime(peer_id, tweak_data.respawn_time_penalty)
@@ -44,7 +44,7 @@ local function AddTracker(peer_id)
             tracker:AddPeerCustodyTime(peer_id, delay)
         end
     else
-        managers.ehi:AddCustodyTimeTrackerWithPeer(peer_id, delay)
+        managers.ehi_tracker:AddCustodyTimeTrackerWithPeer(peer_id, delay)
     end
 end
 

@@ -31,7 +31,7 @@ else
             if managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3) then -- Cash or Gold
                 start_chance = 15 -- 5 (start_chance) + 10
             end
-            managers.ehi:AddEscapeChanceTracker(dropin, start_chance)
+            managers.ehi_tracker:AddEscapeChanceTracker(dropin, start_chance)
         end)
     end
     EscapeXP = 12000
@@ -116,13 +116,13 @@ EHI:AddLoadSyncFunction(function(self)
     if (secure_area_1:_is_inside(pos_1) and secure_area_1:_is_inside(pos_2)) or
         (secure_area_2:_is_inside(pos_1) and secure_area_2:_is_inside(pos_2)) or
         (secure_area_3:_is_inside(pos_1) and secure_area_3:_is_inside(pos_2)) then
-        self:SetAchievementStatus("voff_1", "finish")
+        self._trackers:SetAchievementStatus("voff_1", "finish")
     end
 end)
 EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
     if EHI:IsPlayingFromStart() then
         local function fail(...)
-            managers.ehi:SetAchievementFailed("voff_1")
+            managers.ehi_tracker:SetAchievementFailed("voff_1")
         end
         local civies = managers.enemy:all_civilians()
         for _, data in pairs(civies or {}) do

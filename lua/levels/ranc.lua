@@ -85,7 +85,7 @@ EHI:ShowAchievementLootCounter({
     max = 5,
     triggers = ranc_10_triggers,
     load_sync = function(self)
-        self:SetTrackerProgress("ranc_10", 5 - self:CountInteractionAvailable("ranc_press_pickup_horseshoe"))
+        self._trackers:SetTrackerProgress("ranc_10", 5 - self._trackers:CountInteractionAvailable("ranc_press_pickup_horseshoe"))
     end
 })
 if OVKorAbove then
@@ -93,7 +93,7 @@ if OVKorAbove then
     EHI:ShowAchievementKillCounter("ranc_11", "ranc_11_stat", "show_achievements_weapon") -- "Marshal Law" achievement
 end
 EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(trigger, ...)
-    if managers.ehi:TrackerDoesNotExist("FultonCatch") then
+    if managers.ehi_tracker:TrackerDoesNotExist("FultonCatch") then
         EHI:CheckCondition(trigger)
     end
 end)

@@ -18,7 +18,7 @@ local achievements =
             [100212] = { max = 6, class = TT.AchievementProgress, special_function = SF.ShowAchievementFromStart },
             [100224] = { special_function = SF.IncreaseProgress },
             [100181] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
-                managers.ehi:SetAchievementFailed("cac_21")
+                managers.ehi_tracker:SetAchievementFailed("cac_21")
             end}
         }
     }

@@ -31,12 +31,12 @@ function DigitalGui:TimerStartCountDown()
     if (self._ignore or not self._visible) and not self._ignore_visibility then
         return
     end
-    if managers.ehi_common:Exists(self._ehi_key) then
-        managers.ehi:SetTimerJammed(self._ehi_key, false)
+    if managers.ehi_manager:Exists(self._ehi_key) then
+        managers.ehi_tracker:SetTimerJammed(self._ehi_key, false)
         managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
     else
         if not show_waypoint_only then
-            managers.ehi:AddTracker({
+            managers.ehi_tracker:AddTracker({
                 id = self._ehi_key,
                 time = self._timer,
                 icons = self._icons or { Icon.PCHack },
@@ -80,13 +80,13 @@ if level_id ~= "shoutout_raid" then
         end
     elseif show_waypoint then
         function DigitalGui:_update_timer_text(...)
-            managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
+            managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
             managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
     else
         function DigitalGui:_update_timer_text(...)
-            managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
+            managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
     end
@@ -96,10 +96,10 @@ if level_id == "chill" then
     original.timer_start_count_up = DigitalGui.timer_start_count_up
     function DigitalGui:timer_start_count_up(...)
         original.timer_start_count_up(self, ...)
-        if managers.ehi:TrackerExists(self._ehi_key) then
-            managers.ehi:CallFunction(self._ehi_key, "Reset")
+        if managers.ehi_tracker:TrackerExists(self._ehi_key) then
+            managers.ehi_tracker:CallFunction(self._ehi_key, "Reset")
         else
-            managers.ehi:AddTracker({
+            managers.ehi_tracker:AddTracker({
                 id = self._ehi_key,
                 time = 0,
                 class = "EHIStopwatchTracker"
@@ -109,7 +109,7 @@ if level_id == "chill" then
 
     function DigitalGui:timer_pause(...)
         original.timer_pause(self, ...)
-        managers.ehi:CallFunction(self._ehi_key, "Stop")
+        managers.ehi_tracker:CallFunction(self._ehi_key, "Stop")
     end
 else
     function DigitalGui:timer_pause(...)
@@ -117,10 +117,10 @@ else
         if self._remove_on_pause then
             self:RemoveTracker()
         else
-            managers.ehi:SetTimerJammed(self._ehi_key, true)
+            managers.ehi_tracker:SetTimerJammed(self._ehi_key, true)
             managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, true)
             if self._change_icon_on_pause then
-                managers.ehi:SetTrackerIcon(self._ehi_key, self._icon_on_pause)
+                managers.ehi_tracker:SetTrackerIcon(self._ehi_key, self._icon_on_pause)
                 managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icon_on_pause)
             end
         end
@@ -129,7 +129,7 @@ end
 
 function DigitalGui:timer_resume(...)
     original.timer_resume(self, ...)
-    managers.ehi:SetTimerJammed(self._ehi_key, false)
+    managers.ehi_tracker:SetTimerJammed(self._ehi_key, false)
     managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
 end
 
@@ -142,10 +142,10 @@ if level_id == "shoutout_raid" then
             return
         end
         old_time = time
-        if managers.ehi then
+        if managers.ehi_tracker then
             if not created then
                 if not show_waypoint_only then
-                    managers.ehi:AddTracker({
+                    managers.ehi_tracker:AddTracker({
                         id = key,
                         class = "EHIVaultTemperatureTracker"
                     })
@@ -161,14 +161,14 @@ if level_id == "shoutout_raid" then
                 created = true
             end
             local t = EHI:RoundNumber(time, 0.1)
-            managers.ehi:CallFunction(key, "CheckTime", t)
+            managers.ehi_tracker:CallFunction(key, "CheckTime", t)
             managers.ehi_waypoint:CallFunction(key, "CheckTime", t)
         end
     end
 else
     SetTime = function(self, key, time)
-        if managers.ehi then
-            managers.ehi:SetTrackerTimeNoAnim(key, time)
+        if managers.ehi_tracker then
+            managers.ehi_tracker:SetTrackerTimeNoAnim(key, time)
             managers.ehi_waypoint:SetWaypointTime(key, time)
         end
     end
@@ -194,7 +194,7 @@ function DigitalGui:set_visible(visible, ...)
 end
 
 function DigitalGui:RemoveTracker()
-    managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_tracker:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
@@ -203,7 +203,7 @@ function DigitalGui:load(data, ...)
     if self:is_timer() and state.timer_count_down then
         self:TimerStartCountDown()
         if state.timer_paused then
-            managers.ehi:SetTimerJammed(self._ehi_key, true)
+            managers.ehi_tracker:SetTimerJammed(self._ehi_key, true)
             managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, true)
         end
     end
@@ -255,14 +255,14 @@ end
 function DigitalGui:SetWarning(warning)
     self._warning = warning
     if self._timer_count_down and warning then
-        managers.ehi:CallFunction(self._ehi_key, "SetAnimation")
+        managers.ehi_tracker:CallFunction(self._ehi_key, "SetAnimation")
     end
 end
 
 function DigitalGui:SetCompletion(completion)
     self._completion = completion
     if self._timer_count_down and completion then
-        managers.ehi:CallFunction(self._ehi_key, "SetAnimation", true)
+        managers.ehi_tracker:CallFunction(self._ehi_key, "SetAnimation", true)
     end
 end
 
@@ -274,10 +274,10 @@ function DigitalGui:Finalize()
     if self._ignore or (self._remove_on_pause and self._timer_paused) then
         self:RemoveTracker()
     elseif self._change_icon_on_pause and self._timer_paused then
-        managers.ehi:SetTrackerIcon(self._ehi_key, self._icon_on_pause)
+        managers.ehi_tracker:SetTrackerIcon(self._ehi_key, self._icon_on_pause)
         managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icon_on_pause)
     elseif self._icons then
-        managers.ehi:SetTrackerIcon(self._ehi_key, self._icons[1])
+        managers.ehi_tracker:SetTrackerIcon(self._ehi_key, self._icons[1])
         managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icons[1])
     end
 end

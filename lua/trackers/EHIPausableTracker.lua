@@ -2,18 +2,20 @@ EHIPausableTracker = class(EHITracker)
 EHIPausableTracker._paused_color = EHI:GetTWColor("pause")
 function EHIPausableTracker:init(panel, params)
     EHIPausableTracker.super.init(self, panel, params)
-    self._paused = params.paused
-    self:SetTextColor()
-end
-
-function EHIPausableTracker:update(t, dt)
-    if self._paused then
-        return
-    end
-    EHIPausableTracker.super.update(self, t, dt)
+    self._update = not params.paused
+    self:_SetPause(pause)
 end
 
 function EHIPausableTracker:SetPause(pause)
+    self:_SetPause(pause)
+    if pause then
+        self:RemoveTrackerFromUpdate()
+    else
+        self:AddTrackerToUpdate()
+    end
+end
+
+function EHIPausableTracker:_SetPause(pause)
     self._paused = pause
     self:SetTextColor()
 end

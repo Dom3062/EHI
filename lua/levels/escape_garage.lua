@@ -2,9 +2,9 @@ local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local function bilbo_baggin()
-    local bags_to_secure = managers.ehi:CountLootbagsOnTheGround()
+    local bags_to_secure = managers.ehi_tracker:CountLootbagsOnTheGround()
     if bags_to_secure >= 8 then
-        managers.ehi:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "bilbo_baggin",
             icons = EHI:GetAchievementIcon("bilbo_baggin"),
             max = 8,
@@ -38,7 +38,7 @@ EHI:ParseTriggers({
 })
 --[[EHI:AddLoadSyncFunction(function(self)
     bilbo_baggin()
-    self:SetTrackerProgress("bilbo_baggin", managers.loot:GetSecuredBagsAmount())
+    self._trackers:SetTrackerProgress("bilbo_baggin", managers.loot:GetSecuredBagsAmount())
 end)]]
 EHI:AddXPBreakdown({
     objective =

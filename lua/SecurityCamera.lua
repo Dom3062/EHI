@@ -22,7 +22,7 @@ function SecurityCamera:_start_tape_loop(tape_loop_t, ...)
     original._start_tape_loop(self, tape_loop_t, ...)
     local t = tape_loop_t + 5
     if not show_waypoint_only then
-        managers.ehi:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = self._ehi_key,
             time = t,
             icons = { "camera_loop" },
@@ -41,12 +41,12 @@ end
 
 function SecurityCamera:_deactivate_tape_loop(...)
     original._deactivate_tape_loop(self, ...)
-    managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_tracker:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
 function SecurityCamera:destroy(...)
-    managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_tracker:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     original.destroy(self, ...)
 end

@@ -75,14 +75,14 @@ local function HostageExploded()
     _HostageExploded = true
     local count = MoneyAroundHostage - HostageMoneyTaken
     if count ~= 0 then
-        managers.ehi:DecreaseTrackerProgressMax("LootCounter", count)
+        managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter", count)
     end
 end
 local other =
 {
     [100043] = EHI:AddLootCounter(function()
         local loot_triggers = {}
-        MoneyAroundHostage = managers.ehi:CountInteractionAvailable("money_small")
+        MoneyAroundHostage = managers.ehi_tracker:CountInteractionAvailable("money_small")
         for _, index in ipairs(start_index) do
             if managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceElementID(100000, index)) then -- Bomb guy is here
                 for i = 100003, 100006, 1 do
@@ -108,7 +108,7 @@ if LootCounter then
     -- coke, money, meth
     EHI:HookLootRemovalElement({ 101681, 101700, 101701 })
     local function CokeDestroyed()
-        managers.ehi:DecreaseTrackerProgressMax("LootCounter")
+        managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter")
     end
     local CokeDestroyedTrigger = { special_function = SF.CustomCode, f = CokeDestroyed }
     other[101264] = CokeDestroyedTrigger

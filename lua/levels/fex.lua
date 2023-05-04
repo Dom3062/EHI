@@ -56,11 +56,11 @@ local achievements =
         },
         load_sync = function(self)
             if EHI.ConditionFunctions.IsStealth() then
-                EHI:ShowAchievementLootCounter({
+                EHI:ShowAchievementLootCounterNoCheck({
                     achievement = "fex_10",
                     max = 21
                 })
-                self:SetTrackerProgress("fex_10", managers.loot:GetSecuredBagsAmount())
+                self._trackers:SetTrackerProgress("fex_10", managers.loot:GetSecuredBagsAmount())
             end
         end
     }
@@ -98,7 +98,7 @@ EHI:AddXPBreakdown({
                 { amount = 2000, name = "mex4_car_escape_stealth" },
                 { amount = 1000, name = "mex4_boat_escape_stealth" },
             },
-            loot_all = 500
+            loot_all = { amount = 500, times = 21 }
         },
         loud =
         {
@@ -118,7 +118,7 @@ EHI:AddXPBreakdown({
                 { amount = 3000, name = "mex4_flare_lit_heli_escape" },
                 { amount = 1000, name = "loud_escape" }
             },
-            loot_all = 500
+            loot_all = { amount = 500, times = 21 }
         }
     }
 })

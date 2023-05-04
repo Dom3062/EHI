@@ -140,7 +140,7 @@ local achievements =
         },
         load_sync = function(self)
             if EHI.ConditionFunctions.IsStealth() then
-                self:AddTimedAchievementTracker("green_3", 817)
+                self._trackers:AddTimedAchievementTracker("green_3", 817)
             end
         end
     },
@@ -170,13 +170,13 @@ EHI:ParseTriggers({
 })
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:RegisterCustomSpecialFunction(StartAchievementCountdown, function(...)
-    managers.ehi:StartTrackerCountdown("cac_10")
+    managers.ehi_tracker:StartTrackerCountdown("cac_10")
 end)
 EHI:ShowLootCounter({
     max = 14,
     triggers =
     {
-        [106684] = { max = 70, special_function = SF.IncreaseProgressMax }
+        [106684] = { max = 70, special_function = SF.IncreaseProgressMax2 }
     }
 })
 

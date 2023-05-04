@@ -25,10 +25,10 @@ end
 function SecurityLockGui:_start(...)
     original._start(self, ...)
     if self._bars > 1 then
-        if managers.ehi:TrackerExists(self._ehi_key) then
-            managers.ehi:SetTrackerProgress(self._ehi_key, self._current_bar)
+        if managers.ehi_tracker:TrackerExists(self._ehi_key) then
+            managers.ehi_tracker:SetTrackerProgress(self._ehi_key, self._current_bar)
         else
-            managers.ehi:AddTracker({
+            managers.ehi_tracker:AddTracker({
                 id = self._ehi_key,
                 class = "EHISecurityLockGuiTracker",
                 remove_after_reaching_target = false,
@@ -36,10 +36,10 @@ function SecurityLockGui:_start(...)
                 max = self._bars
             })
         end
-        managers.ehi:CallFunction(self._ehi_key, "SetHackTime", self._current_timer)
+        managers.ehi_tracker:CallFunction(self._ehi_key, "SetHackTime", self._current_timer)
     else
         if not show_waypoint_only then
-            managers.ehi:AddTracker({
+            managers.ehi_tracker:AddTracker({
                 id = self._ehi_key,
                 time = self._current_timer,
                 icons = { HackIcon },
@@ -64,20 +64,20 @@ if show_waypoint_only then
     end
 elseif show_waypoint then
     function SecurityLockGui:update(...)
-        managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._current_timer)
+        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._current_timer)
         managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._current_timer)
         original.update(self, ...)
     end
 else
     function SecurityLockGui:update(...)
-        managers.ehi:SetTrackerTimeNoAnim(self._ehi_key, self._current_timer)
+        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._current_timer)
         original.update(self, ...)
     end
 end
 
 function SecurityLockGui:_set_powered(powered, ...)
     original._set_powered(self, powered, ...)
-    managers.ehi:SetTimerPowered(self._ehi_key, powered)
+    managers.ehi_tracker:SetTimerPowered(self._ehi_key, powered)
     managers.ehi_waypoint:SetTimerWaypointPowered(self._ehi_key, powered)
 end
 
@@ -85,14 +85,14 @@ function SecurityLockGui:_set_done(...)
     original._set_done(self, ...)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     if self._started then
-        managers.ehi:RemoveTracker(self._ehi_key)
+        managers.ehi_tracker:RemoveTracker(self._ehi_key)
     else
-        managers.ehi:CallFunction(self._ehi_key, "RemoveHack")
+        managers.ehi_tracker:CallFunction(self._ehi_key, "RemoveHack")
     end
 end
 
 function SecurityLockGui:destroy(...)
-    managers.ehi:RemoveTracker(self._ehi_key)
+    managers.ehi_tracker:RemoveTracker(self._ehi_key)
     managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     original.destroy(self, ...)
 end

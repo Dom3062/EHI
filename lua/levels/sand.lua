@@ -109,7 +109,7 @@ local achievements =
             [EHI:GetInstanceElementID(100024, 31755)] = { special_function = SF.Trigger, data = { 1, 2 } },
             [1] = { max = 10, remove_after_reaching_target = false, class = TT.AchievementProgress, special_function = SF.ShowAchievementFromStart },
             [2] = { special_function = SF.CustomCode, f = function()
-                if managers.ehi:TrackerDoesNotExist("sand_9") then
+                if managers.ehi_tracker:TrackerDoesNotExist("sand_9") then
                     return
                 end
                 -- Counter is bugged. Teaset is counted too.
@@ -118,7 +118,7 @@ local achievements =
                 EHI:AddAchievementToCounter({
                     achievement = "sand_9"
                 })
-                managers.ehi:SetTrackerProgress("sand_9", managers.loot:GetSecuredBagsAmount())
+                managers.ehi_tracker:SetTrackerProgress("sand_9", managers.loot:GetSecuredBagsAmount())
             end },
             [103208] = { special_function = SF.FinalizeAchievement }
         }

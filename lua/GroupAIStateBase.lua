@@ -23,28 +23,28 @@ end
 
 function GroupAIStateBase:on_successful_alarm_pager_bluff(...) -- Called by host
     original.on_successful_alarm_pager_bluff(self, ...)
-    managers.ehi:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
-    managers.ehi:SetChance("PagersChance", (EHI:RoundChanceNumber(tweak_data.player.alarm_pager.bluff_success_chance_w_skill[self._nr_successful_alarm_pager_bluffs + 1] or 0)))
+    managers.ehi_tracker:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
+    managers.ehi_tracker:SetChance("PagersChance", (EHI:RoundChanceNumber(tweak_data.player.alarm_pager.bluff_success_chance_w_skill[self._nr_successful_alarm_pager_bluffs + 1] or 0)))
 end
 
 function GroupAIStateBase:sync_alarm_pager_bluff(...) -- Called by client
     original.sync_alarm_pager_bluff(self, ...)
-    managers.ehi:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
+    managers.ehi_tracker:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
 end
 
 function GroupAIStateBase:load(...)
-    dropin = managers.ehi:GetDropin()
+    dropin = managers.ehi_manager:GetDropin()
     original.load(self, ...)
     if self._enemy_weapons_hot then
         EHI:RunOnAlarmCallbacks(dropin)
     else
-        managers.ehi:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
+        managers.ehi_tracker:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
 	end
     local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
     if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets set; see GameSetup:load()
-        managers.ehi:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(law1team.damage_reduction or 0)))
+        managers.ehi_tracker:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(law1team.damage_reduction or 0)))
     elseif self._hunt_mode then -- AssaultTime is created before this is checked; see GameSetup:load()
-        managers.ehi:RemoveTracker("AssaultTime")
+        managers.ehi_tracker:RemoveTracker("AssaultTime")
     end
 end
 
@@ -52,10 +52,10 @@ if EHI:ShowDramaTracker() and not tweak_data.levels:IsStealthRequired() then
     original._add_drama = GroupAIStateBase._add_drama
     function GroupAIStateBase:_add_drama(...)
         original._add_drama(self, ...)
-        managers.ehi:SetChance("Drama", EHI:RoundChanceNumber(self._drama_data.amount))
+        managers.ehi_tracker:SetChance("Drama", EHI:RoundChanceNumber(self._drama_data.amount))
     end
     EHI:AddOnAlarmCallback(function()
-        managers.ehi:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "Drama",
             icons = { "C_Escape_H_Street_Bullet" },
             class = "EHIChanceTracker",
@@ -78,29 +78,29 @@ if show_minion_tracker or show_popup then
         if EHI:GetOption("show_minion_per_player") then
             dofile(EHI.LuaPath .. "trackers/EHIMinionTracker.lua")
             UpdateTracker = function(unit, key, amount, peer_id)
-                if managers.ehi:TrackerDoesNotExist("Converts") and amount ~= 0 then
-                    managers.ehi:AddTracker({
+                if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount ~= 0 then
+                    managers.ehi_tracker:AddTracker({
                         id = "Converts",
                         class = "EHIMinionTracker"
                     })
                 end
                 if amount == 0 then -- Removal
-                    managers.ehi:CallFunction("Converts", "RemoveMinion", key)
+                    managers.ehi_tracker:CallFunction("Converts", "RemoveMinion", key)
                 else
-                    managers.ehi:CallFunction("Converts", "AddMinion", unit, key, amount, peer_id)
+                    managers.ehi_tracker:CallFunction("Converts", "AddMinion", unit, key, amount, peer_id)
                 end
             end
         else
             UpdateTracker = function(unit, key, amount, peer_id)
-                if managers.ehi:TrackerDoesNotExist("Converts") and amount ~= 0 then
-                    managers.ehi:AddTracker({
+                if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount ~= 0 then
+                    managers.ehi_tracker:AddTracker({
                         id = "Converts",
                         dont_show_placed = true,
                         icons = { "minion" },
                         class = "EHIEquipmentTracker"
                     })
                 end
-                managers.ehi:CallFunction("Converts", "UpdateAmount", unit, key, amount)
+                managers.ehi_tracker:CallFunction("Converts", "UpdateAmount", unit, key, amount)
             end
         end
     end

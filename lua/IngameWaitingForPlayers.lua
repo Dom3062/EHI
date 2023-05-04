@@ -6,8 +6,8 @@ end
 if EHI:GetOption("show_gage_tracker") then
     if EHI:GetOption("gage_tracker_panel") == 1 then
         EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
-            if managers.ehi:TrackerDoesNotExist("Gage") and EHI:AreGagePackagesSpawned() then
-                managers.ehi:AddTracker({
+            if managers.ehi_tracker:TrackerDoesNotExist("Gage") and EHI:AreGagePackagesSpawned() then
+                managers.ehi_tracker:AddTracker({
                     id = "Gage",
                     icons = { "gage" },
                     progress = EHI._cache.GagePackagesProgress or 0,
@@ -188,7 +188,7 @@ local function WeaponsContainFiremode(firemode)
 end
 
 local function CreateProgressTracker(id, progress, max, dont_flash, remove_after_reaching_target, status_is_overridable, icons)
-    managers.ehi:AddTracker({
+    managers.ehi_tracker:AddTracker({
         id = id,
         progress = progress,
         max = max,
@@ -207,7 +207,7 @@ local function HookKillFunctionNoCivilian(achievement, weapon_id)
         if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
             local name_id, _ = self:_get_name_id_and_throwable_id(data.weapon_unit)
             if name_id == weapon_id then
-                managers.ehi:IncreaseTrackerProgress(achievement)
+                managers.ehi_tracker:IncreaseTrackerProgress(achievement)
             end
         end
     end)
@@ -280,10 +280,10 @@ local original =
 function IngameWaitingForPlayersState:at_exit(...)
     original.at_exit(self, ...)
     if not Global.hud_disabled then
-        managers.ehi:ShowPanel()
+        managers.ehi_tracker:ShowPanel()
     end
     --[[if level == "flat" and EHI:IsAchievementLocked("flat_5") then
-        managers.ehi:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "flat_5",
             icons = { "C_Classics_H_PanicRoom_DontYouDare" },
             dont_flash = true,
@@ -360,7 +360,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             CreateProgressTracker("gage2_5", 0, 220, false, true)
             EHI:HookWithID(StatisticsManager, "killed", "EHI_gage2_5_killed", function(self, data)
                 if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("lmg") and not CopDamage.is_civilian(data.name) then
-                    managers.ehi:IncreaseTrackerProgress("gage2_5")
+                    managers.ehi_tracker:IncreaseTrackerProgress("gage2_5")
                 end
             end)
         end
@@ -510,7 +510,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             HookKillFunctionNoCivilian("turtles_1", "wa2000")
             EHI:Hook(RaycastWeaponBase, "on_reload", function(self, amount)
                 if self:get_name_id() == "wa2000" then
-                    managers.ehi:SetTrackerProgress("turtles_1", 0)
+                    managers.ehi_tracker:SetTrackerProgress("turtles_1", 0)
                 end
             end)
         end
@@ -530,7 +530,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             HookKillFunctionNoCivilian("grv_2", "coal")
             EHI:Hook(RaycastWeaponBase, "on_reload", function(self, amount)
                 if self:get_name_id() == "coal" then
-                    managers.ehi:SetTrackerProgress("grv_2", 0)
+                    managers.ehi_tracker:SetTrackerProgress("grv_2", 0)
                 end
             end)
         end
@@ -550,10 +550,10 @@ function IngameWaitingForPlayersState:at_exit(...)
                     local enemy_killed_key = "EHI_cac_2_enemy_killed"
                     CreateProgressTracker("cac_2", 0, 20, false, true)
                     local function on_enemy_killed(...)
-                        managers.ehi:IncreaseTrackerProgress("cac_2")
+                        managers.ehi_tracker:IncreaseTrackerProgress("cac_2")
                     end
                     local function on_player_state_changed(state_name)
-                        managers.ehi:SetTrackerProgress("cac_2", 0)
+                        managers.ehi_tracker:SetTrackerProgress("cac_2", 0)
                         if state_name == "bipod" then
                             managers.player:register_message(Message.OnEnemyKilled, enemy_killed_key, on_enemy_killed)
                         else
@@ -574,7 +574,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             stats.pxp2_2_stats = "pxp2_2"
         end
         if VeryHardOrAbove then
-            if EHI:IsAchievementLocked2("tango_achieve_3") and managers.ehi:GetStartedFromBeginning() then -- "The Reckoning" achievement
+            if EHI:IsAchievementLocked2("tango_achieve_3") and managers.ehi_manager:GetStartedFromBeginning() then -- "The Reckoning" achievement
                 local pass, primary_index, secondary_index = CheckWeaponsBlueprint(tweak_data.achievement.complete_heist_achievements.tango_3.killed_by_blueprint.blueprint)
                 if pass then
                     if primary_index and secondary_index then
@@ -609,7 +609,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                                 self._finished = true
                             end
                         end
-                        managers.ehi:AddTracker({
+                        managers.ehi_tracker:AddTracker({
                             id = "tango_achieve_3",
                             progress = 0,
                             max = 200,
@@ -617,10 +617,8 @@ function IngameWaitingForPlayersState:at_exit(...)
                             remove_after_reaching_target = false,
                             class = "EHItango_achieve_3Tracker"
                         })
-                        local primary_weapon = primary.weapon_id
-                        local secondary_weapon = secondary.weapon_id
-                        HookKillFunctionNoCivilian("tango_achieve_3", primary_weapon)
-                        HookKillFunctionNoCivilian("tango_achieve_3", secondary_weapon)
+                        HookKillFunctionNoCivilian("tango_achieve_3", primary.weapon_id)
+                        HookKillFunctionNoCivilian("tango_achieve_3", secondary.weapon_id)
                         local function switch()
                             local player = managers.player:local_player()
                             if not player then
@@ -628,7 +626,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                             end
                             local weapon = player:inventory():equipped_unit():base():selection_index()
                             if weapon and (weapon == 1 or weapon == 2) then
-                                managers.ehi:CallFunction("tango_achieve_3", "WeaponSwitched", weapon - 1)
+                                managers.ehi_tracker:CallFunction("tango_achieve_3", "WeaponSwitched", weapon - 1)
                             end
                         end
                         managers.player:register_message(Message.OnSwitchWeapon, "EHI_tango_achieve_3", switch)
@@ -654,18 +652,18 @@ function IngameWaitingForPlayersState:at_exit(...)
                 stats.pim_3_stats = "pim_3"
             end
             if level == "sand" and EHI:IsAchievementLocked2("sand_11") and HasWeaponTypeEquipped("snp") then -- "This Calls for a Round of Sputniks!" achievement
-                managers.ehi:AddTracker({
+                managers.ehi_tracker:AddTracker({
                     id = "sand_11",
                     flash_times = 1,
                     class = "EHIsand11Tracker"
                 })
                 EHI:HookWithID(StatisticsManager, "killed", "EHI_sand_11_killed", function (_, data)
                     if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("snp") then
-                        managers.ehi:IncreaseTrackerProgress("sand_11")
+                        managers.ehi_tracker:IncreaseTrackerProgress("sand_11")
                     end
                 end)
-                EHI:HookWithID(StatisticsManager, "shot_fired", "EHI_sand_11_accuracy", function(self, data)
-                    managers.ehi:SetChance("sand_11", self:session_hit_accuracy())
+                EHI:HookWithID(StatisticsManager, "shot_fired", "EHI_sand_11_accuracy", function(self, _)
+                    managers.ehi_tracker:SetChance("sand_11", self:session_hit_accuracy())
                 end)
             end
         end
@@ -684,7 +682,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 stats.halloween_7_stats = "halloween_7"
                 EHI:AddOnAlarmCallback(function()
                     EHI:Unhook("halloween_7_killed")
-                    managers.ehi:RemoveTracker("halloween_7")
+                    managers.ehi_tracker:RemoveTracker("halloween_7")
                     stats.halloween_7_stats = nil
                 end)
             end
@@ -699,7 +697,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 stats.eagle_2_stats = "eagle_2"
                 EHI:AddOnAlarmCallback(function()
                     EHI:Unhook("eagle_2_killed")
-                    managers.ehi:RemoveTracker("eagle_2")
+                    managers.ehi_tracker:RemoveTracker("eagle_2")
                     stats.eagle_2_stats = nil
                 end)
             end
@@ -711,7 +709,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 CreateProgressTracker("steel_2", 0, 10, false, true)
                 EHI:HookWithID(StatisticsManager, "killed", "EHI_steel_2_killed", function (self, data)
                     if data.variant == "melee" and data.name == "shield" then
-                        managers.ehi:IncreaseTrackerProgress("steel_2")
+                        managers.ehi_tracker:IncreaseTrackerProgress("steel_2")
                     end
                 end)
             end
@@ -800,7 +798,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             EHI:Hook(AchievmentManager, "add_heist_success_award_progress", function(am, id)
                 if id == "pim_2_stats" then
                     progress = progress + 1
-                    managers.ehi:SetTrackerProgress("pim_2", progress)
+                    managers.ehi_tracker:SetTrackerProgress("pim_2", progress)
                 end
             end)
             EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
@@ -922,21 +920,18 @@ function IngameWaitingForPlayersState:at_exit(...)
             -- Only tracked in Safehouse to prevent tracker spam in heists
             EHIovk3Tracker = class(EHIAchievementUnlockTracker)
             EHIovk3Tracker._forced_icons = EHI:GetAchievementIcon("ovk_3")
-            function EHIovk3Tracker:ResetTime()
+            function EHIovk3Tracker:Reset()
                 self:SetTime(25)
-            end
-            function EHIovk3Tracker:ResetFadeTime()
                 self._fade_time = 5
                 self:SetTextColor(Color.white)
                 self.update = self.super.update
             end
             EHI:HookWithID(RaycastWeaponBase, "start_shooting", "EHI_ovk_3_start_shooting", function(self, ...)
                 if self._shooting and self:get_name_id() == "m134" then
-                    if managers.ehi:TrackerExists("ovk_3") then
-                        managers.ehi:CallFunction("ovk_3", "ResetTime")
-                        managers.ehi:CallFunction("ovk_3", "ResetFadeTime")
+                    if managers.ehi_tracker:TrackerExists("ovk_3") then
+                        managers.ehi_tracker:CallFunction("ovk_3", "Reset")
                     else
-                        managers.ehi:AddTracker({
+                        managers.ehi_tracker:AddTracker({
                             id = "ovk_3",
                             time = 25,
                             status_is_overridable = false,
@@ -945,8 +940,8 @@ function IngameWaitingForPlayersState:at_exit(...)
                     end
                 end
             end)
-            EHI:HookWithID(RaycastWeaponBase, "stop_shooting", "EHI_ovk_3_stop_shooting", function(self, ...)
-                managers.ehi:SetAchievementFailed("ovk_3")
+            EHI:HookWithID(RaycastWeaponBase, "stop_shooting", "EHI_ovk_3_stop_shooting", function(...)
+                managers.ehi_tracker:SetAchievementFailed("ovk_3")
             end)
             EHI:HookWithID(AchievmentManager, "award", "EHI_ovk_3_award", function(self, id)
                 if id == "ovk_3" then
@@ -1043,13 +1038,13 @@ function IngameWaitingForPlayersState:at_exit(...)
                 CreateProgressTracker("tawp_1", 0, 1, false, false)
                 EHI:HookWithID(StatisticsManager, "killed", "EHI_tawp_1_killed", function (self, data)
                     if data.name == "spooc" then
-                        managers.ehi:IncreaseTrackerProgress("tawp_1")
+                        managers.ehi_tracker:IncreaseTrackerProgress("tawp_1")
                     end
                 end)
             end
         end
         if OVKOrAbove then
-            if armored_4_levels[level] and EHI:IsAchievementLocked2("armored_4") and mask_id == tweak_data.achievement.complete_heist_achievements.i_take_scores.mask and managers.ehi:GetStartedFromBeginning() then -- I Do What I Do Best, I Take Scores
+            if armored_4_levels[level] and EHI:IsAchievementLocked2("armored_4") and mask_id == tweak_data.achievement.complete_heist_achievements.i_take_scores.mask and managers.ehi_manager:GetStartedFromBeginning() then -- I Do What I Do Best, I Take Scores
                 local progress = EHI:GetAchievementProgress("armored_4_stat")
                 EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
                     if success and progress < 15 and managers.job:on_last_stage() then
@@ -1057,7 +1052,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                     end
                 end)
             end
-            if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and managers.ehi:GetStartedFromBeginning() then -- From Russia With Love
+            if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and managers.ehi_manager:GetStartedFromBeginning() then -- From Russia With Love
                 local progress = EHI:GetAchievementProgress("halloween_10_stats")
                 EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
                     if success and progress < 25 and managers.job:on_last_stage() then
@@ -1072,10 +1067,10 @@ function IngameWaitingForPlayersState:at_exit(...)
         EHI:HookWithID(StatisticsManager, "killed", "EHI_gage4_3_killed", function (self, data)
             if data.variant == "melee" then
                 if not CopDamage.is_civilian(data.name) then
-                    managers.ehi:IncreaseTrackerProgress("gage4_3")
+                    managers.ehi_tracker:IncreaseTrackerProgress("gage4_3")
                 end
             else
-                managers.ehi:SetAchievementFailed("gage4_3")
+                managers.ehi_tracker:SetAchievementFailed("gage4_3")
                 EHI:Unhook("gage4_3_killed")
             end
         end)
@@ -1083,7 +1078,7 @@ function IngameWaitingForPlayersState:at_exit(...)
     if next(stats) then
         HookAwardAchievement("IngameWaitingForPlayers", function(am, stat, value)
             if stats[stat] then
-                managers.ehi:IncreaseTrackerProgress(stats[stat], value)
+                managers.ehi_tracker:IncreaseTrackerProgress(stats[stat], value)
             end
         end)
     end

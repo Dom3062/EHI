@@ -4,9 +4,9 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local goat_pick_up = { Icon.Heli, Icon.Interact }
 local function f_PilotComingInAgain(trigger, ...)
-    managers.ehi:RemoveTracker("PilotComingIn")
-    if managers.ehi:TrackerExists(trigger.id) then
-        managers.ehi:SetTrackerTime(trigger.id, trigger.time)
+    managers.ehi_tracker:RemoveTracker("PilotComingIn")
+    if managers.ehi_tracker:TrackerExists(trigger.id) then
+        managers.ehi_tracker:SetTrackerTime(trigger.id, trigger.time)
     else
         EHI:CheckCondition(trigger)
     end
@@ -59,11 +59,11 @@ local achievements =
             end },
             [100716] = { special_function = SF.CustomCode, f = function()
                 if IncreaseEnabled then
-                    managers.ehi:IncreaseTrackerProgress("peta_5")
+                    managers.ehi_tracker:IncreaseTrackerProgress("peta_5")
                 end
             end },
             [100580] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
-                managers.ehi:CallFunction("peta_5", "Finalize")
+                managers.ehi_tracker:CallFunction("peta_5", "Finalize")
             end}
         }
     }
