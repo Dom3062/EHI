@@ -89,7 +89,7 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(trigger, element, ...)
+EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(self, trigger, element, ...)
     local continue = false
     if EHI:IsHost() then
         continue = element:_values_ok()
@@ -97,11 +97,11 @@ EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(trigger, e
         continue = true
     end
     if continue then
-        if managers.ehi_tracker:TrackerExists(trigger.id) then
-            managers.ehi_tracker:SetTrackerProgress(trigger.id, trigger.data.progress)
+        if self._trackers:TrackerExists(trigger.id) then
+            self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
         elseif not trigger.data.dont_create then
-            EHI:CheckCondition(trigger)
-            managers.ehi_tracker:SetTrackerProgress(trigger.id, trigger.data.progress)
+            self:CheckCondition(trigger)
+            self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
         end
     end
 end)
@@ -116,11 +116,11 @@ EHI:AddLoadSyncFunction(function(self)
         local timer3 = pc3:timer_gui()
         local timer4 = pc4:timer_gui()
         if (timer._started or timer._done) and not (timer2._started or timer2._done) then
-            EHI:Trigger(104478)
+            self:Trigger(104478)
         elseif (timer2._started or timer2._done) and not (timer3._started or timer3._done) then
-            EHI:Trigger(104480)
+            self:Trigger(104480)
         elseif (timer3._started or timer3._done) and not (timer4._started or timer4._done) then
-            EHI:Trigger(104481)
+            self:Trigger(104481)
         end
         -- Pointless to query the last PC
     else -- Just in case, but the PCs should exist
@@ -143,7 +143,7 @@ local tbl =
 
     --levels/instances/unique/hox_fbi_armory
     --units/pd2_dlc2/architecture/gov_d_int/gov_d_int_door_b/001
-    [EHI:GetInstanceUnitID(100003, 6840)] = { f = function(unit_id, unit_data, unit)
+    [EHI:GetInstanceUnitID(100003, 6840)] = { f = function(...)
         local units = {}
         local n = 1
         local wd = managers.worlddefinition
@@ -185,10 +185,9 @@ local tbl =
             [3] = Vector3(-2216.87, 2410.43, -382.711), -- Keycard
             [4] = Vector3(-2217.05, 2415.52, -354.502) -- ECM
         }
-        local playing = true
-        local disabled = false
+        local playing, enabled = true, true
         EHI:HookWithID(MissionDoorDeviceInteractionExt, "set_active", "EHI_100003_6840_set_active", function(self, active, ...)
-            if active == false and playing and not disabled then
+            if playing and active == false and enabled then
                 local u_pos = tostring(self._unit:position())
                 for _, unit_pos in ipairs(pos) do
                     if tostring(unit_pos) == u_pos then
@@ -200,7 +199,7 @@ local tbl =
                         break
                     end
                 end
-                disabled = true
+                enabled = false
             end
         end)
         EHI:PreHookWithID(MissionDoorDeviceInteractionExt, "destroy", "EHI_100003_6840_destroy", function(...)
@@ -221,29 +220,29 @@ for i = 100024, 100030, 1 do
 end
 EHI:UpdateUnits(tbl)
 
-local SecurityOffice = { w_id = EHI:GetInstanceElementID(100026, 6690) }
+local SecurityOffice = EHI:GetInstanceElementID(100026, 6690)
 local MissionDoorPositions =
 {
     -- Evidence
-    [1] = Vector3(-1552.84, 816.472, -9.11819),
+    Vector3(-1552.84, 816.472, -9.11819),
 
     -- Basement (Escape)
-    [2] = Vector3(-744.305, 5042.19, -409.118),
+    Vector3(-744.305, 5042.19, -409.118),
 
     -- Archives
-    [3] = Vector3(817.472, 2884.84, -809.118),
+    Vector3(817.472, 2884.84, -809.118),
 
     -- Security Office
-    [4] = Vector3(-1207.53, 4234.84, -409.118),
-    [5] = Vector3(807.528, 4265.16, -9.11819)
+    Vector3(-1207.53, 4234.84, -409.118),
+    Vector3(807.528, 4265.16, -9.11819)
 }
 local MissionDoorIndex =
 {
-    [1] = { w_id = 101562 },
-    [2] = { w_id = 102017 },
-    [3] = { w_id = 101345 },
-    [4] = SecurityOffice,
-    [5] = SecurityOffice
+    101562,
+    102017,
+    101345,
+    SecurityOffice,
+    SecurityOffice
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
 EHI:AddXPBreakdown({

@@ -85,10 +85,9 @@ if EHI:IsMayhemOrAbove() then
         triggers[100763] = { special_function = SF.CustomCode, f = DisableWaypoint }
         triggers[101453] = { special_function = SF.CustomCode, f = DisableWaypoint }
         local function ShowWaypoint(trigger)
-            local t = trigger.run and trigger.run.time or trigger.time
             local pos = VanPos == 1 and Vector3(-1374, -2388, 1135) or Vector3(-1283, 1470, 1285)
             managers.ehi_waypoint:AddWaypoint(trigger.id, {
-                time = t,
+                time = trigger.run.time,
                 icon = Icon.LootDrop,
                 position = pos,
                 class = EHI.Waypoints.Warning
@@ -102,16 +101,16 @@ elseif EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVE
 end
 if EHI:IsClient() then
     local SetTimeNoAnimOrCreateTrackerClient = EHI:GetFreeCustomSpecialFunctionID()
-    triggers[100724] = { time = 20, random_time = 5, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
+    triggers[100724] = { additional_time = 20, random_time = 5, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
     EHI:SetSyncTriggers(element_sync_triggers)
-    EHI:RegisterCustomSpecialFunction(SetTimeNoAnimOrCreateTrackerClient, function(trigger, ...)
+    EHI:RegisterCustomSpecialFunction(SetTimeNoAnimOrCreateTrackerClient, function(self, trigger, ...)
         local key = trigger.id
-        local value = managers.ehi_tracker:ReturnValue(key, "GetTrackerType")
+        local value = self._trackers:ReturnValue(key, "GetTrackerType")
         if value ~= "accurate" then
-            if managers.ehi_tracker:TrackerExists(key) then
-                managers.ehi_tracker:SetTrackerTimeNoAnim(key, EHI:GetTime(trigger))
+            if self._trackers:TrackerExists(key) then
+                self._trackers:SetTrackerTimeNoAnim(key, self:GetRandomTime(trigger))
             else
-                EHI:CheckCondition(trigger)
+                self:CheckCondition(trigger)
             end
         end
     end)

@@ -1,10 +1,10 @@
-local EHI = EHI
+local EHI, EM = EHI, EHIManager
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 dofile(EHI.LuaPath .. "levels/run.lua")
 -- Triggers
-EHI:UnhookTrigger(100144) -- Does not work in reworked version
-EHI:UnhookTrigger(102876) -- Needs to be reworked -> 1st gas can
+EM:UnhookTrigger(100144) -- Does not work in reworked version
+EM:UnhookTrigger(102876) -- Needs to be reworked -> 1st gas can
 local triggers =
 {
     -- Creates Fire tracker -> 1028762, copy of 100144

@@ -115,15 +115,15 @@ if EHI:GetOption("show_mission_trackers") then
         end
     end
 end
-EHI:RegisterCustomSpecialFunction(DontTriggerWithC4Entry, function(trigger, ...)
+EHI:RegisterCustomSpecialFunction(DontTriggerWithC4Entry, function(self, trigger, ...)
     if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
         return
     end
-    EHI:AddTracker(trigger)
+    self:AddTracker(trigger)
 end)
-EHI:RegisterCustomSpecialFunction(RemoveColorsIfEnabled, function(trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(RemoveColorsIfEnabled, function(self, trigger, element, enabled)
     if enabled then
-        managers.ehi_tracker:RemoveTracker(trigger.id)
+        self._trackers:RemoveTracker(trigger.id)
     end
 end)
 
@@ -168,7 +168,7 @@ local other =
 {
     [100228] = EHI:AddAssaultDelay({ time = 35 + 1 + 30, special_function = Alarm })
 }
-EHI:RegisterCustomSpecialFunction(Alarm, function(trigger, ...)
+EHI:RegisterCustomSpecialFunction(Alarm, function(self, trigger, ...)
     local t = 0
     if managers.preplanning:IsAssetBought(101858) then
         t = 10
@@ -176,7 +176,7 @@ EHI:RegisterCustomSpecialFunction(Alarm, function(trigger, ...)
         t = 30
     end
     trigger.time = trigger.time + t
-    EHI:CheckCondition(trigger)
+    self:CheckCondition(trigger)
 end)
 
 EHI:ParseTriggers({
@@ -296,7 +296,7 @@ EHI:AddLoadSyncFunction(function(self)
                         local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
                         local code = CheckIfCodeIsVisible(unit, color)
                         if code then
-                            managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, code)
+                            self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
                             break
                         end
                     end
@@ -304,7 +304,7 @@ EHI:AddLoadSyncFunction(function(self)
                     local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
                     local code = CheckIfCodeIsVisible(unit, color)
                     if code then
-                        managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, code)
+                        self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
                         break
                     end
                 end
@@ -316,7 +316,7 @@ EHI:AddLoadSyncFunction(function(self)
                     local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
                     local code = CheckIfCodeIsVisible(unit, color)
                     if code then
-                        managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, code)
+                        self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
                         break
                     end
                 end
@@ -324,7 +324,7 @@ EHI:AddLoadSyncFunction(function(self)
                 local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
                 local code = CheckIfCodeIsVisible(unit, color)
                 if code then
-                    managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, code)
+                    self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
                     break
                 end
             end

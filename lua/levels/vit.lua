@@ -21,8 +21,8 @@ local triggers = {
     [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 101914 } } -- 30s delay + 26s escape zone delay
 }
 if EHI:IsClient() then
-    triggers[102073] = { time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[103500] = { time = 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { icon = Icon.Escape, position_by_element = 101914 } }
+    triggers[102073] = { additional_time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[103500] = EHI:ClientCopyTrigger(triggers[102104], { time = 26 })
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
@@ -51,6 +51,15 @@ for i = 30000, 31500, 300 do
     DisableWaypoints[EHI:GetInstanceElementID(100059, i)] = true -- Fix
 end
 EHI:DisableWaypoints(DisableWaypoints)
+
+--[[local tbl =
+{
+    [EHI:GetInstanceUnitID(100239, 12900)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100255, 12900) }
+}
+for i = 14250, 15150, 300 do
+    tbl[EHI:GetInstanceUnitID(100239, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100255, i) }
+end
+EHI:UpdateUnits(tbl)]]
 
 --[[local tbl =
 {

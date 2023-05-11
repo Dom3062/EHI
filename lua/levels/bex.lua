@@ -10,10 +10,10 @@ local element_sync_triggers =
 local hack_start = EHI:GetInstanceElementID(100015, 20450)
 local triggers = {
     [EHI:GetInstanceElementID(100108, 35450)] = { time = 4.8, id = "SuprisePull", icons = { Icon.Wait } },
-    [103919] = { time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape, trigger_times = 1 },
+    [103919] = { additional_time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape, trigger_times = 1 },
     [100840] = { time = 1 + 13, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTrackerAccurate },
 
-    [101818] = { time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill, class = TT.Inaccurate },
+    [101818] = { additional_time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill, class = TT.Inaccurate },
     [hack_start] = { id = "ServerHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = EHI:GetInstanceElementID(100014, 20450) },
     [EHI:GetInstanceElementID(100016, 20450)] = { id = "ServerHack", special_function = SF.PauseTracker },
 
@@ -28,7 +28,7 @@ for i = 7250, 9050, 150 do
     triggers[EHI:GetInstanceElementID(100138, i)] = { id = id, special_function = SF.RemoveTracker } -- Alarm
 end
 if EHI:IsClient() then
-    triggers[hack_start].time = 90
+    triggers[hack_start].additional_time = 90
     triggers[hack_start].random_time = 10
     triggers[hack_start].special_function = SF.UnpauseTrackerIfExists
     triggers[hack_start].delay_only = true
@@ -36,7 +36,7 @@ if EHI:IsClient() then
     triggers[hack_start].synced = { class = TT.Pausable }
     EHI:AddSyncTrigger(hack_start, triggers[hack_start])
     triggers[EHI:GetInstanceElementID(100011, 20450)] = { id = "ServerHack", special_function = SF.RemoveTracker }
-    triggers[102157] = { time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, class = TT.Inaccurate, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[102157] = { additional_time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, class = TT.Inaccurate, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")

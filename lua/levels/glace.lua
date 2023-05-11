@@ -11,7 +11,7 @@ local triggers = {
     [102370] = { id = "PickUpBalloonSecondTry", icons = { Icon.Escape }, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = 100732 }
 }
 if EHI:IsClient() then
-    triggers[102368].time = 120
+    triggers[102368].additional_time = 120
     triggers[102368].random_time = 10
     triggers[102368].delay_only = true
     triggers[102368].class = TT.InaccuratePausable
@@ -21,7 +21,7 @@ if EHI:IsClient() then
     triggers[102371] = { time = 60, id = "PickUpBalloonFirstTry", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
     triggers[102366] = { time = 30, id = "PickUpBalloonFirstTry", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
     triggers[103039] = { time = 20, id = "PickUpBalloonFirstTry", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
-    triggers[102370].time = 35
+    triggers[102370].additional_time = 35
     triggers[102370].random_time = 10
     triggers[102370].delay_only = true
     triggers[102370].class = TT.InaccuratePausable

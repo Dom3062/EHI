@@ -97,11 +97,11 @@ EHI:UpdateUnits(tbl)
 
 local MissionDoorPositions =
 {
-    [1] = Vector3(945.08, 3403.11, 92.4429)
+    Vector3(945.08, 3403.11, 92.4429)
 }
 local MissionDoorIndex =
 {
-    [1] = { w_id = 200160 }
+    200160
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
 

@@ -6,7 +6,7 @@ local triggers = {}
 local achievements = {}
 local other = {}
 local level_id = Global.game_settings.level_id
-local EscapeXP
+local EscapeXP = 16000
 if level_id == "firestarter_3" then
     triggers[102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money } }
     achievements.slakt_5 =
@@ -20,7 +20,6 @@ if level_id == "firestarter_3" then
             [105235] = { special_function = SF.SetAchievementFailed }
         }
     }
-    EscapeXP = 16000
 else
     -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
     tweak_data.ehi.functions.uno_1()
@@ -110,7 +109,7 @@ EHI:AddLoadSyncFunction(function(self)
     if not (secure_area_1 and secure_area_2 and secure_area_3) then
         return
     end
-    EHI:Trigger(101177)
+    self:Trigger(101177)
     local pos_1 = dog_haters_unit[1]:position()
     local pos_2 = dog_haters_unit[2]:position()
     if (secure_area_1:_is_inside(pos_1) and secure_area_1:_is_inside(pos_2)) or

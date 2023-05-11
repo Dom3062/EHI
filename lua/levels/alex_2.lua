@@ -1,4 +1,4 @@
-local EHI = EHI
+local EHI, EM = EHI, EHIManager
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local assault_delay = 15 + 1 + 30
@@ -63,9 +63,9 @@ local other =
 if EHI:GetOption("show_escape_chance") then
     local ShowVanCrashChance = EHI:GetFreeCustomSpecialFunctionID()
     other[100342] = { special_function = ShowVanCrashChance }
-    EHI:RegisterCustomSpecialFunction(ShowVanCrashChance, function(...)
-        if managers.ehi_tracker:TrackerDoesNotExist("EscapeChance") then
-            managers.ehi_tracker:AddEscapeChanceTracker(false, 25)
+    EHI:RegisterCustomSpecialFunction(ShowVanCrashChance, function(self, ...)
+        if self._trackers:TrackerDoesNotExist("EscapeChance") then
+            self._trackers:AddEscapeChanceTracker(false, 25)
         end
     end)
 end
@@ -76,13 +76,13 @@ EHI:ParseTriggers({
 local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker")
 EHI:AddOnAlarmCallback(function(dropin)
     if dropin then
-        EHI:Trigger(100342)
+        EM:Trigger(100342)
         return
     end
     if not ShowAssaultDelay then
         return
     end
-    managers.ehi_tracker:AddTracker({
+    EM._trackers:AddTracker({
         id = "AssaultDelay",
         time = 75 + 15 + 30,
         class = TT.AssaultDelay

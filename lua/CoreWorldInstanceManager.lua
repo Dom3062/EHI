@@ -43,7 +43,7 @@ local instances =
 instances["levels/instances/unique/brb/single_door_large/world"] = deep_clone(instances["levels/instances/unique/brb/single_door/world"])
 
 if client then
-    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].time = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and 90 or 60
+    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].additional_time = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and 90 or 60
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].random_time = 30
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100024] = { id = "sandTurretTimer", special_function = SF.RemoveTracker }
 end

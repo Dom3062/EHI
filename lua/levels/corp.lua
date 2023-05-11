@@ -19,7 +19,7 @@ local triggers =
 }
 if EHI:IsClient() then
     local escape_time = OVKorAbove and 30 or 15
-    triggers[102406].time = escape_time
+    triggers[102406].additional_time = escape_time
     triggers[102406].random_time = 15
     triggers[102406].delay_only = true
     EHI:AddSyncTrigger(102406, triggers[102406])
@@ -82,9 +82,9 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(corp_11_Start, function(trigger, ...)
+EHI:RegisterCustomSpecialFunction(corp_11_Start, function(self, trigger, ...)
     if corp_11_StartVariable then
-        managers.ehi_tracker:AddTracker({
+        self._trackers:AddTracker({
             id = "corp_11",
             time = 60,
             icons = trigger.icons,
@@ -92,9 +92,9 @@ EHI:RegisterCustomSpecialFunction(corp_11_Start, function(trigger, ...)
         })
     end
 end)
-EHI:RegisterCustomSpecialFunction(corp_11_SetFailed, function(trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(corp_11_SetFailed, function(self, trigger, element, enabled)
     if enabled then
-        managers.ehi_tracker:SetAchievementFailed("corp_11")
+        self._trackers:SetAchievementFailed("corp_11")
         corp_11_StartVariable = false
     end
 end)

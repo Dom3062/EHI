@@ -8,10 +8,12 @@ local Icon = EHI.Icons
 local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
 -- [index] = Vector3(x, y, z)
 local MissionDoorPositions = {}
--- [index] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes", w_ids = "Table of waypoints and their ID", unit_id = "ID of the door" }
+-- Option 1:
+-- [index] = "Waypoint ID"
+-- Option 2:
+-- [index] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes", unit_id = "ID of the door" }
 ---- See MissionDoor class how to get Drill position
 ---- Indexes must match or it won't work
----- "w_ids" has a higher priority than "w_id"
 local MissionDoorIndex = {}
 
 function TimerGui.SetMissionDoorPosAndIndex(pos, index)
@@ -98,14 +100,8 @@ function TimerGui:PostStartTimer()
         local data = self:GetMissionDoorData()
         if data then
             self._remove_vanilla_waypoint = true
-            self._restore_vanilla_waypoint_on_done = data.restore
-            if data.w_ids then
-                for _, id in ipairs(data.w_ids) do
-                    self._waypoint_id = id
-                    self:HideWaypoint()
-                end
-                return
-            else
+            if type(data) == "table" then
+                self._restore_vanilla_waypoint_on_done = data.restore
                 self._waypoint_id = data.w_id
                 if data.restore and data.unit_id then
                     local restore = callback(self, self, "RestoreWaypoint")
@@ -117,6 +113,8 @@ function TimerGui:PostStartTimer()
                     add_trigger(m, data.unit_id, "open_door", restore) -- In case the drill finishes first host side than client-side
                     -- Drill finish is covered in TimerGui:_set_done()
                 end
+            else -- Assume provided waypoint is a number
+                self._waypoint_id = data
             end
         end
     end
@@ -196,8 +194,7 @@ function TimerGui:RestoreWaypoint()
 end
 
 function TimerGui:_set_jammed(jammed, ...)
-    managers.ehi_tracker:SetTimerJammed(self._ehi_key, jammed)
-    managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, jammed)
+    managers.ehi_manager:SetTimerJammed(self._ehi_key, jammed)
     original._set_jammed(self, jammed, ...)
 end
 
@@ -205,8 +202,7 @@ function TimerGui:_set_powered(powered, ...)
     if powered == false and self._remove_on_power_off then
         self:RemoveTracker()
     end
-    managers.ehi_tracker:SetTimerPowered(self._ehi_key, powered)
-    managers.ehi_waypoint:SetTimerWaypointPowered(self._ehi_key, powered)
+    managers.ehi_manager:SetTimerPowered(self._ehi_key, powered)
     original._set_powered(self, powered, ...)
 end
 
@@ -303,8 +299,7 @@ function TimerGui:Finalize()
         self:RemoveTracker()
         return
     elseif self._icons then
-		managers.ehi_tracker:SetTrackerIcon(self._ehi_key, self._icons[1])
-		managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icons[1])
+        managers.ehi_manager:SetIcon(self._ehi_key, self._icons[1])
 	end
     if self._started and not self._done and self._unit:mission_door_device() then
         self:PostStartTimer()

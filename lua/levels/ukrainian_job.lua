@@ -79,9 +79,9 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, function(trigger, ...)
-    if managers.ehi_tracker:InteractionExists("circuit_breaker_off") then
-        EHI:CheckCondition(trigger)
+EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, function(self, trigger, ...)
+    if self._trackers:InteractionExists("circuit_breaker_off") then
+        self:CheckCondition(trigger)
     end
 end)
 EHI:AddXPBreakdown({

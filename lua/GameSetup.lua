@@ -2,6 +2,7 @@ local EHI = EHI
 if EHI:CheckLoadHook("GameSetup") then
     return
 end
+local EM = EHIManager
 
 local redirect =
 {
@@ -27,6 +28,8 @@ local levels =
 {
     -- Tutorial
     short2_stage2b = true, -- Basic Mission: Loud - Plan B
+    -- Nightmare
+    haunted_safehouse = true,
     -- Escapes
     escape_cafe = true, -- Escape: Cafe
     escape_cafe_day = true, -- Escape: Cafe (Day)
@@ -211,7 +214,7 @@ function GameSetup:init_finalize(...)
         local fixed_path = redirect[level_id] or ("custom_levels/" .. level_id)
         dofile(EHI.LuaPath .. fixed_path .. ".lua")
     end
-    EHI:InitElements()
+    EM:InitElements()
     EHI:DisableWaypointsOnInit()
 end
 
@@ -220,6 +223,5 @@ EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(...)
 end)
 
 EHI:HookWithID(GameSetup, "load", "EHI_GameSetup_load_Post", function(...)
-    managers.ehi_manager:LoadSync()
-    EHI:SyncLoad()
+    managers.ehi_manager:load()
 end)

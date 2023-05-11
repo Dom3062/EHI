@@ -62,12 +62,12 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(ExecuteIfEnabled, function(trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(ExecuteIfEnabled, function(self, trigger, element, enabled)
     if enabled then
-        if managers.ehi_tracker:TrackerExists(trigger.id) then
-            managers.ehi_tracker:SetTrackerTime(trigger.id, trigger.time)
+        if self._trackers:TrackerExists(trigger.id) then
+            self._trackers:SetTrackerTime(trigger.id, trigger.time)
         else
-            EHI:CheckCondition(trigger)
+            self:CheckCondition(trigger)
         end
     end
 end)

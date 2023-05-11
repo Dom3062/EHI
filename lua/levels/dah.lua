@@ -184,14 +184,14 @@ local function CheckIfCodeIsVisible(unit, color)
 end
 EHI:AddLoadSyncFunction(function(self)
     if EHI.ConditionFunctions.IsStealth() then
-        EHI:Trigger(103969)
+        self:Trigger(103969)
         local wd = managers.worlddefinition
         for index, color in pairs(dah_laptop_codes) do
             local unit_id = EHI:GetInstanceUnitID(100052, index)
             local unit = wd:get_unit(unit_id)
             local code = CheckIfCodeIsVisible(unit, color)
             if code then
-                managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, code)
+                self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
             end
         end
     end

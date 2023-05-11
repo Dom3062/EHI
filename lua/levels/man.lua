@@ -27,7 +27,7 @@ local triggers = {
     [102016] = CodeChance, -- Second and Third Hack
     [102121] = { time = 10, id = "Escape", icons = { Icon.Escape } },
 
-    [103163] = { time = 1.5 + 25, random_time = 10, id = "Faint", icons = { "hostage", Icon.Wait } },
+    [103163] = { additional_time = 1.5 + 25, random_time = 10, id = "Faint", icons = { "hostage", Icon.Wait } },
 
     [102866] = { time = 5, id = "GotCode", icons = { Icon.Wait } },
 

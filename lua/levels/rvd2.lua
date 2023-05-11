@@ -15,23 +15,23 @@ local triggers = {
     [EHI:GetInstanceElementID(100020, 6700)] = { time = 5, id = "C4Escape", icons = { Icon.C4 } }
 }
 if EHI:IsClient() then
-    triggers[101366] = { time = 5 + 40, random_time = 10, id = "VaultTeargas", icons = { Icon.Teargas } }
+    triggers[101366] = { additional_time = 5 + 40, random_time = 10, id = "VaultTeargas", icons = { Icon.Teargas } }
     EHI:SetSyncTriggers(element_sync_triggers)
     local LiquidNitrogen = EHI:GetFreeCustomSpecialFunctionID()
     triggers[101498] = { time = 6 + 4 + 30 + 24 + 3, special_function = LiquidNitrogen }
     triggers[100035] = { time = 4 + 30 + 24 + 3, special_function = LiquidNitrogen }
     triggers[101630] = { time = 30 + 24 + 3, special_function = LiquidNitrogen }
     triggers[101629] = { time = 24 + 3, special_function = LiquidNitrogen }
-    EHI:RegisterCustomSpecialFunction(LiquidNitrogen, function(trigger, ...)
-        if managers.ehi_tracker:TrackerDoesNotExist("LiquidNitrogen") then
-            managers.ehi_tracker:AddTracker({
+    EHI:RegisterCustomSpecialFunction(LiquidNitrogen, function(self, trigger, ...)
+        if self._trackers:TrackerDoesNotExist("LiquidNitrogen") then
+            self._trackers:AddTracker({
                 id = "LiquidNitrogen",
                 time = trigger.time - 10,
                 icons = { Icon.LiquidNitrogen }
             })
         end
-        if managers.ehi_tracker:TrackerDoesNotExist("HeliC4") then
-            managers.ehi_tracker:AddTracker({
+        if self._trackers:TrackerDoesNotExist("HeliC4") then
+            self._trackers:AddTracker({
                 id = "HeliC4",
                 time = trigger.time,
                 icons = Icon.HeliDropC4

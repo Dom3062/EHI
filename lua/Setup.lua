@@ -3,12 +3,18 @@ EHI._cache.is_vr = _G.IS_VR
 if EHI:CheckLoadHook("Setup") then
     return
 end
+dofile(EHI.LuaPath .. "EHITrackerManager.lua")
+dofile(EHI.LuaPath .. "EHIWaypointManager.lua")
+dofile(EHI.LuaPath .. "EHIBuffManager.lua")
+if EHI:IsVR() then
+    dofile(EHI.LuaPath .. "EHITrackerManagerVR.lua")
+end
+dofile(EHI.LuaPath .. "EHIManager.lua")
 
 local original =
 {
     init_managers = Setup.init_managers,
-    init_finalize = Setup.init_finalize,
-    destroy = Setup.destroy
+    init_finalize = Setup.init_finalize
 }
 
 function Setup:init_managers(managers, ...)
@@ -25,9 +31,4 @@ function Setup:init_finalize(...)
     managers.ehi_tracker:init_finalize()
     managers.ehi_waypoint:init_finalize()
     managers.ehi_manager:init_finalize()
-end
-
-function Setup:destroy(...)
-    original.destroy(self, ...)
-    managers.ehi_tracker:destroy()
 end

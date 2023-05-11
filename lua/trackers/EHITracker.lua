@@ -335,6 +335,7 @@ function EHITracker:update_fade(t, dt)
 end
 
 function EHITracker:ResetFontSize(text)
+    text = text or self._text
     text:set_font_size(self._panel:h() * self._text_scale)
 end
 

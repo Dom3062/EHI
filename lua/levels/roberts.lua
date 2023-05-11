@@ -47,7 +47,26 @@ EHI:AddOnAlarmCallback(function()
     end
 end)
 
-EHI:ParseTriggers({ mission = triggers })
+local other =
+{
+    [106579] = EHI:AddLootCounter(function()
+        local max = 0
+        local wd = managers.worlddefinition
+        for i = 103625, 103684, 1 do
+            local unit = wd:get_unit(i)
+            if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_random == 0 then -- Money will spawn here
+                max = max + 1
+            end
+        end
+        EHI:ShowLootCounterNoCheck({ max = max })
+    end)
+}
+EHI:AddLoadSyncFunction(function(self)
+    self:Trigger(106579)
+    self._trackers:SyncSecuredLoot()
+end)
+
+EHI:ParseTriggers({ mission = triggers, other = other })
 
 local tbl =
 {
@@ -61,12 +80,10 @@ local xp_override =
 {
     params =
     {
-        min =
+        min_max =
         {
-            objectives = true,
-            loot_all = { times = 1 }
-        },
-        no_max = true
+            loot_all = { min = 1, max = 10 }
+        }
     }
 }
 EHI:AddXPBreakdown({

@@ -14,8 +14,8 @@ local triggers = {
     [EHI:GetInstanceElementID(100017, 11325)] = { id = "Gas", special_function = SF.RemoveTracker },
 }
 if EHI:IsClient() then
-    triggers[100602] = { time = 90 + 5, random_time = 20, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[102453] = { time = 60 + 12.5, random_time = 20, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100602] = { additional_time = 90 + 5, random_time = 20, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[102453] = { additional_time = 60 + 12.5, random_time = 20, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
@@ -51,13 +51,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [1] = { max = 15, class = TT.AchievementProgress, remove_after_reaching_target = false },
-            [2] = { special_function = SF.CustomCode, f = function()
-                EHI:AddAchievementToCounter({
-                    achievement = "chas_10"
-                })
-            end },
-            [100107] = { special_function = SF.Trigger, data = { 1, 2 } }
+            [100107] = { max = 15, class = TT.AchievementProgress, remove_after_reaching_target = false, special_function = SF.AddAchievementToCounter }
         },
         load_sync = function(self)
             if EHI.ConditionFunctions.IsStealth() then

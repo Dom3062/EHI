@@ -32,8 +32,7 @@ function DigitalGui:TimerStartCountDown()
         return
     end
     if managers.ehi_manager:Exists(self._ehi_key) then
-        managers.ehi_tracker:SetTimerJammed(self._ehi_key, false)
-        managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
+        managers.ehi_manager:SetTimerJammed(self._ehi_key, false)
     else
         if not show_waypoint_only then
             managers.ehi_tracker:AddTracker({
@@ -117,11 +116,9 @@ else
         if self._remove_on_pause then
             self:RemoveTracker()
         else
-            managers.ehi_tracker:SetTimerJammed(self._ehi_key, true)
-            managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, true)
+            managers.ehi_manager:SetTimerJammed(self._ehi_key, true)
             if self._change_icon_on_pause then
-                managers.ehi_tracker:SetTrackerIcon(self._ehi_key, self._icon_on_pause)
-                managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icon_on_pause)
+                managers.ehi_manager:SetIcon(self._ehi_key, self._icon_on_pause)
             end
         end
     end
@@ -129,8 +126,7 @@ end
 
 function DigitalGui:timer_resume(...)
     original.timer_resume(self, ...)
-    managers.ehi_tracker:SetTimerJammed(self._ehi_key, false)
-    managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, false)
+    managers.ehi_manager:SetTimerJammed(self._ehi_key, false)
 end
 
 local SetTime = nil
@@ -203,8 +199,7 @@ function DigitalGui:load(data, ...)
     if self:is_timer() and state.timer_count_down then
         self:TimerStartCountDown()
         if state.timer_paused then
-            managers.ehi_tracker:SetTimerJammed(self._ehi_key, true)
-            managers.ehi_waypoint:SetTimerWaypointJammed(self._ehi_key, true)
+            managers.ehi_manager:SetTimerJammed(self._ehi_key, true)
         end
     end
     original.load(self, data, ...)
@@ -274,10 +269,8 @@ function DigitalGui:Finalize()
     if self._ignore or (self._remove_on_pause and self._timer_paused) then
         self:RemoveTracker()
     elseif self._change_icon_on_pause and self._timer_paused then
-        managers.ehi_tracker:SetTrackerIcon(self._ehi_key, self._icon_on_pause)
-        managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icon_on_pause)
+        managers.ehi_manager:SetIcon(self._ehi_key, self._icon_on_pause)
     elseif self._icons then
-        managers.ehi_tracker:SetTrackerIcon(self._ehi_key, self._icons[1])
-        managers.ehi_waypoint:SetWaypointIcon(self._ehi_key, self._icons[1])
+        managers.ehi_manager:SetIcon(self._ehi_key, self._icons[1])
     end
 end

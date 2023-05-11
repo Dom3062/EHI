@@ -89,7 +89,7 @@ end
 
 function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, ...)
     local crim = original.on_player_criminal_death(self, criminal_name, respawn_penalty, ...)
-    if crim and type(crim) == "table" then -- Apparently OVK sometimes send empty criminal, not sure why; Probably mods
+    if type(crim) == "table" then -- Apparently OVK sometimes send empty criminal, not sure why; Probably mods
         local peer_id = crim.peer_id
         if not peer_id then
             for _, peer in pairs(managers.network:session():peers()) do

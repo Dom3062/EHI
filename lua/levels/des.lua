@@ -11,7 +11,7 @@ local triggers = {
     [102822] = { id = "des_11", special_function = SF.SetAchievementComplete },
     [100716] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire } },
 
-    [100423] = { time = 60 + 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape },
+    [100423] = { time = 60 + 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 100451 } },
     -- 60s delay after flare has been placed
     -- 25s to land
     -- 3s to open the heli doors
@@ -103,9 +103,15 @@ local achievements =
     }
 }
 
+local other =
+{
+    [102065] = EHI:AddAssaultDelay({ time = 2 + 30 })
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
 

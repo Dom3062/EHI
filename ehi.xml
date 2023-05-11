@@ -51,11 +51,6 @@
         <post hook_id="lib/mutators/mutatorcg22" :script_path="MutatorCG22.lua" />
         <post hook_id="lib/mutators/mutatorpiggybank" :script_path="MutatorPiggyBank.lua" />
 
-        <post hook_id="lib/setups/setup" :script_path="EHITrackerManager.lua" />
-        <post hook_id="lib/setups/setup" :script_path="EHITrackerManagerVR.lua" />
-        <post hook_id="lib/setups/setup" :script_path="EHIWaypointManager.lua" />
-        <post hook_id="lib/setups/setup" :script_path="EHIBuffManager.lua" />
-        <post hook_id="lib/setups/setup" :script_path="EHIManager.lua" />
         <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
 

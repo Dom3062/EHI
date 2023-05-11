@@ -1,4 +1,4 @@
-local EHI = EHI
+local EHI, EM = EHI, EHIManager
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -66,18 +66,18 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
 else
     EHI:ShowLootCounter({ max = 7 })
 end
-EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(trigger, ...)
-    if managers.ehi_tracker:TrackerExists(trigger.id) then
-        local tracker = managers.ehi_tracker:GetTracker(trigger.id)
+EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(self, trigger, ...)
+    if self._trackers:TrackerExists(trigger.id) then
+        local tracker = self._trackers:GetTracker(trigger.id)
         if tracker then
             if tracker._time >= trigger.time then
-                managers.ehi_tracker:SetTrackerTime(trigger.id, trigger.time)
+                self._trackers:SetTrackerTime(trigger.id, trigger.time)
             end
         else
-            EHI:CheckCondition(trigger)
+            self:CheckCondition(trigger)
         end
     else
-        EHI:CheckCondition(trigger)
+        self:CheckCondition(trigger)
     end
 end)
 if EHI:GetOption("show_escape_chance") then
@@ -87,7 +87,7 @@ if EHI:GetOption("show_escape_chance") then
     EHI:AddLoadSyncFunction(function(self)
         if managers.environment_effects._mission_effects[101437] then
             self._trackers:AddEscapeChanceTracker(false, 105)
-            EHI:UnhookElement(101863)
+            self:UnhookElement(101863)
         else
             self._trackers:AddEscapeChanceTracker(false, 35)
             -- Disable increase when the cooks got killed by gangster in case the player dropins

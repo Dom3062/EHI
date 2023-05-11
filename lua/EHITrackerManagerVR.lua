@@ -1,7 +1,3 @@
-if not EHI:IsVR() then
-    return
-end
-
 local EHI = EHI
 EHITrackerManagerVR = EHITrackerManager
 EHITrackerManagerVR.old_init = EHITrackerManager.init

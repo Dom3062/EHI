@@ -121,11 +121,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     end
 end
 
-function HUDManager:AddWaypoint(id, params)
-    self:add_waypoint(id, params)
-    return self:get_waypoint_data(id)
-end
-
 function HUDManager:sync_set_assault_mode(mode, ...)
     original.sync_set_assault_mode(self, mode, ...)
     EHI:CallCallback(EHI.CallbackMessage.AssaultModeChanged, mode)
@@ -276,19 +271,23 @@ else
         local is_skirmish = tweak_data.levels:IsLevelSkirmish()
         function HUDManager:sync_start_assault(...)
             start_original(self, ...)
-            if (EHI._cache.diff and EHI._cache.diff > 0 and not EHI._cache.EndlessAssault) or is_skirmish then
+            --[[if self._ehi_assault_in_progress then
+                return
+            else]]if (EHI._cache.diff and EHI._cache.diff > 0 and not EHI._cache.EndlessAssault) or is_skirmish then
                 self.ehi:AddTracker({
                     id = "AssaultTime",
                     diff = EHI._cache.diff or 0,
                     class = "EHIAssaultTimeTracker"
                 })
             end
+            --self._ehi_assault_in_progress = true
         end
         local end_original = HUDManager.sync_end_assault
         function HUDManager:sync_end_assault(...)
             end_original(self, ...)
             self.ehi:RemoveTracker("AssaultTime")
             EHI._cache.EndlessAssault = nil
+            --self._ehi_assault_in_progress = nil
         end
     end
 end

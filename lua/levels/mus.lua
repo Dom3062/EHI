@@ -83,11 +83,11 @@ EHI:UpdateUnits(tbl)
 local MissionDoorPositions =
 {
     -- Diamond Room Hatch
-    [1] = Vector3(8638, 193.001, -519)
+    Vector3(8638, 193.001, -519)
 }
 local MissionDoorIndex =
 {
-    [1] = { w_id = 100841 }
+    100841
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
 local xp_override =

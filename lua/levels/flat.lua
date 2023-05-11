@@ -88,7 +88,6 @@ elseif EHI:IsMayhemOrAbove() then
 end
 local triggers = {
     [100001] = { time = 30, id = "BileArrival", icons = { Icon.Heli, Icon.C4 } },
-    [100182] = { id = "SniperDeath", special_function = SF.RemoveTracker },
     [104555] = { id = "SniperDeath", special_function = SF.IncreaseProgress },
     [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = ExecuteIfElementIsEnabled },
     [102181] = { id = "HeliWinchLoop", special_function = SF.RemoveTracker },
@@ -189,18 +188,18 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(self, trigger, element, enabled)
     if enabled then
-        if managers.ehi_tracker:TrackerExists(trigger.id) then
-            managers.ehi_tracker:SetTrackerTimeNoAnim(trigger.id, trigger.time)
+        if self._trackers:TrackerExists(trigger.id) then
+            self._trackers:SetTrackerTimeNoAnim(trigger.id, trigger.time)
         else
-            EHI:CheckCondition(trigger)
+            self:CheckCondition(trigger)
         end
     end
 end)
-EHI:RegisterCustomSpecialFunction(DelayExecution, function(trigger, ...)
+EHI:RegisterCustomSpecialFunction(DelayExecution, function(self, trigger, ...)
     EHI:DelayCall("Remove" .. trigger.id, 10, function()
-        EHI:Trigger(4)
+        self:Trigger(4)
     end)
 end)
 EHI:AddXPBreakdown({

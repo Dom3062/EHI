@@ -57,8 +57,7 @@ if EHI:GetOption("show_pager_callback") then
 
     EHI:PreHookWithID(IntimitateInteractionExt, "interact", "EHI_pager_interact", function(self, ...)
         if self.tweak_data == "corpse_alarm_pager" then
-            managers.ehi_tracker:RemoveStealthTracker(self._ehi_key, "pagers")
-            managers.ehi_waypoint:RemovePagerWaypoint(self._ehi_key)
+            managers.ehi_manager:RemovePager(self._ehi_key)
         end
     end)
 
@@ -73,8 +72,7 @@ if EHI:GetOption("show_pager_callback") then
             if status == "started" or status == 1 then
                 managers.ehi_manager:Call(self._ehi_key, "SetAnswered")
             else -- complete or interrupted
-                managers.ehi_tracker:RemoveStealthTracker(self._ehi_key, "pagers")
-                managers.ehi_waypoint:RemovePagerWaypoint(self._ehi_key)
+                managers.ehi_manager:RemovePager(self._ehi_key)
             end
         end
     end)

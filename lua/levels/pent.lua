@@ -50,7 +50,7 @@ if EHI:IsClient() then
     -- FOR THE LOVE OF GOD
     -- OVERKILL
     -- STOP. USING. F... RANDOM DELAY, it's not funny
-    triggers[102295].time = heli_delay + triggers[102295].additional_time
+    triggers[102295].additional_time = heli_delay + triggers[102295].additional_time
     triggers[102295].random_time = 20
     triggers[102295].class = TT.InaccuratePausable
     triggers[102295].synced = { class = TT.Pausable }

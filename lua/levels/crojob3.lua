@@ -121,7 +121,7 @@ if LootCounter then
     local function LootSpawned(crate)
         managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned2", crate, true)
     end
-    EHI:RegisterCustomSpecialFunction(IncreaseMaxRandomLoot, function(trigger, ...)
+    EHI:RegisterCustomSpecialFunction(IncreaseMaxRandomLoot, function(self, trigger, ...)
         local index = trigger.index
         local crate = EHI:GetInstanceUnitID(100000, index)
         local LootTrigger = {}
@@ -130,9 +130,9 @@ if LootCounter then
         managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function(...)
             DelayRejection(crate)
         end)
-        EHI:AddTriggers2(LootTrigger, nil, "LootCounter")
-        EHI:HookElements(LootTrigger)
-        managers.ehi_tracker:CallFunction("LootCounter", "IncreaseMaxRandom", 1)
+        self:AddTriggers2(LootTrigger, nil, "LootCounter")
+        self:HookElements(LootTrigger)
+        self._trackers:CallFunction("LootCounter", "IncreaseMaxRandom", 1)
     end)
 end
 
@@ -141,9 +141,9 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(cow_4, function(trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(cow_4, function(self, trigger, element, enabled)
     if enabled then
-        EHI:CheckCondition(trigger)
+        self:CheckCondition(trigger)
     end
 end)
 EHI:AddXPBreakdown({

@@ -1,3 +1,4 @@
+local EHI = EHI
 EHIcac33Tracker = EHI:AchievementClass(EHIAchievementStatusTracker, "EHIcac33Tracker")
 EHIcac33Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac33Tracker.FormatProgress = EHIProgressTracker.Format
@@ -54,7 +55,6 @@ function EHIcac33Tracker:SetFailed()
     self._progress_text:set_color(Color.red)
 end
 
-local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -129,8 +129,8 @@ EHI:ShowAchievementLootCounter({
         self._trackers:SetTrackerProgressRemaining("voff_4", self._trackers:CountInteractionAvailable("ring_band"))
     end
 })
-EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(...)
-    managers.ehi_tracker:CallFunction("cac_33", "Activate")
+EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(self, ...)
+    self._trackers:CallFunction("cac_33", "Activate")
 end)
 EHI:AddXPBreakdown({
     objectives =

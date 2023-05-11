@@ -9,6 +9,27 @@ local original =
     load = HUDManager.load
 }
 
+function HUDManager:AddWaypoint(id, params)
+    self:add_waypoint(id, params)
+    return self:get_waypoint_data(id)
+end
+
+function HUDManager:AddWaypointFromTrigger(id, params)
+    if params.icon_redirect then
+        local wp = self:AddWaypoint(id, params)
+        if not wp then
+            return
+        end
+        if wp.bitmap then
+            managers.ehi_waypoint:SetWaypointInitialIcon(wp, params)
+        else -- Remove the waypoint as it does not have bitmap
+            self:remove_waypoint(id)
+        end
+    else
+        self:add_waypoint(id, params)
+    end
+end
+
 function HUDManager:AddWaypointSoft(id, data)
     self._hud.stored_waypoints[id] = data
     self._hud.ehi_removed_waypoints = self._hud.ehi_removed_waypoints or {}

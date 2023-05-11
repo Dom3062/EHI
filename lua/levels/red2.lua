@@ -169,8 +169,8 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
-EHI:RegisterCustomSpecialFunction(StartAchievementCountdown, function(...)
-    managers.ehi_tracker:StartTrackerCountdown("cac_10")
+EHI:RegisterCustomSpecialFunction(StartAchievementCountdown, function(self, ...)
+    self._trackers:StartTrackerCountdown("cac_10")
 end)
 EHI:ShowLootCounter({
     max = 14,

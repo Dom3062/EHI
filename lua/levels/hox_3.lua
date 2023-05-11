@@ -30,7 +30,7 @@ local other =
 }
 
 EHI:ParseTriggers({ mission = triggers, other = other })
-EHI:RegisterCustomSpecialFunction(ShowWaypoint, function(trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(ShowWaypoint, function(self, trigger, element, enabled)
     trigger.data.distance = true
     trigger.data.state = "sneak_present"
     trigger.data.present_timer = 0

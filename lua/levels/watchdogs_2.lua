@@ -1,4 +1,4 @@
-local EHI = EHI
+local EHI, EM = EHI, EHIManager
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -27,7 +27,7 @@ local triggers = {
 
     [1] = { special_function = SF.RemoveTrigger, data = { 101148, 101149, 101150, 1 }},
 
-    [1011480] = { time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate },
+    [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate },
 
     [100124] = { special_function = SF.CustomCode, f = function()
         local bags = managers.ehi_tracker:CountLootbagsOnTheGround(10)
@@ -35,7 +35,7 @@ local triggers = {
             local trigger = bags - 3
             EHI:AddCallback(EHI.CallbackMessage.LootSecured, function(self)
                 if self:GetSecuredBagsAmount() == trigger then
-                    EHI:Trigger(1)
+                    EM:Trigger(1)
                 end
             end)
         end
@@ -47,11 +47,11 @@ if EHI:IsClient() then
     triggers[100470] = boat_return
     triggers[100472] = boat_return
     triggers[100474] = boat_return
-    EHI:RegisterCustomSpecialFunction(SetTrackerAccurate, function(trigger, ...)
-        if managers.ehi_tracker:TrackerExists(trigger.id) then
-            managers.ehi_tracker:SetTrackerAccurate(trigger.id, trigger.time)
-        elseif not (managers.ehi_tracker:TrackerExists(trigger.id2) or managers.ehi_tracker:TrackerExists(trigger.id3)) then
-            EHI:CheckCondition(trigger)
+    EHI:RegisterCustomSpecialFunction(SetTrackerAccurate, function(self, trigger, ...)
+        if self._trackers:TrackerExists(trigger.id) then
+            self._trackers:SetTrackerAccurate(trigger.id, trigger.time)
+        elseif not (self._trackers:TrackerExists(trigger.id2) or self._trackers:TrackerExists(trigger.id3)) then
+            self:CheckCondition(trigger)
         end
     end)
 end
@@ -86,24 +86,24 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 }, "BoatLootDropReturn", boat_icon)
-EHI:RegisterCustomSpecialFunction(AddToCache, function(trigger, ...)
+EHI:RegisterCustomSpecialFunction(AddToCache, function(self, trigger, ...)
     EHI._cache[trigger.id] = trigger.time
 end)
-EHI:RegisterCustomSpecialFunction(GetFromCache, function(trigger, ...)
+EHI:RegisterCustomSpecialFunction(GetFromCache, function(self, trigger, ...)
     local t = EHI._cache[trigger.id]
     EHI._cache[trigger.id] = nil
     if t then
         trigger.time = t
-        EHI:CheckCondition(trigger)
+        self:CheckCondition(trigger)
         trigger.time = nil
     else
-        EHI:CheckCondition(triggers[1011480])
+        self:CheckCondition(triggers[1011480])
     end
 end)
-EHI:RegisterCustomSpecialFunction(uno_8, function(trigger, ...)
+EHI:RegisterCustomSpecialFunction(uno_8, function(self, trigger, ...)
     local bags = managers.ehi_tracker:CountLootbagsOnTheGround(10)
     if bags == 12 then
-        EHI:CheckCondition(trigger)
+        self:CheckCondition(trigger)
     end
 end)
 EHI:AddXPBreakdown({

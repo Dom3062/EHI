@@ -21,7 +21,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100210, 14670)] = { time = 3 + EHI:GetKeypadResetTimer(), id = "KeypadReset", icons = { Icon.Wait }, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) } },
     [EHI:GetInstanceElementID(100176, 14670)] = { time = 30, id = "KeypadResetECMJammer", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) } },
 
-    [102571] = { time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = { Icon.Heli, Icon.Winch, Icon.Goto } },
+    [102571] = { additional_time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = { Icon.Heli, Icon.Winch, Icon.Goto } },
 
     -- Winch (the element is actually in instance "chas_heli_drop")
     [EHI:GetInstanceElementID(100097, 21420)] = { time = 150, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable },
@@ -49,11 +49,11 @@ if EHI:IsClient() then
         wait_time = 150
         pickup_wait_time = 55
     end
-    triggers[101432].time = wait_time
+    triggers[101432].additional_time = wait_time
     triggers[101432].random_time = 30
     triggers[101432].delay_only = true
     EHI:AddSyncTrigger(101432, triggers[101432])
-    triggers[102675].time = pickup_wait_time + triggers[102675].additional_time
+    triggers[102675].additional_time = pickup_wait_time + triggers[102675].additional_time
     triggers[102675].random_time = 15
     triggers[102675].delay_only = true
     EHI:AddSyncTrigger(102675, triggers[102675])
@@ -145,7 +145,7 @@ local achievements =
             [102955] = { special_function = SF.Trigger, data = { 1, 2 } }, -- Crew Deck
             [1] = { status = "ok", class = TT.AchievementStatus },
             [2] = { special_function = SF.CustomCode, f = function()
-                local function check(self, data)
+                local function check(_, data)
                     if data.variant ~= "melee" then
                         chca_9_fail()
                     end
@@ -211,7 +211,7 @@ end
 for i = 100034, 100041, 1 do
     units[EHI:GetInstanceElementID(i, 15470)] = true
 end
-EHI:RegisterCustomSpecialFunction(LootLeft, function(...)
+EHI:RegisterCustomSpecialFunction(LootLeft, function(self, ...)
     local left_to_burn = 16
     for unit_id, _ in pairs(units) do
         local unit = managers.worlddefinition:get_unit(unit_id)
@@ -220,7 +220,7 @@ EHI:RegisterCustomSpecialFunction(LootLeft, function(...)
             left_to_burn = left_to_burn - 1
         end
     end
-    managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter", left_to_burn)
+    self._trackers:DecreaseTrackerProgressMax("LootCounter", left_to_burn)
 end)
 EHI:AddLoadSyncFunction(function(self)
     if managers.game_play_central:GetMissionDisabledUnit(200942) then -- AI Vision Blocker; "editor_only" continent

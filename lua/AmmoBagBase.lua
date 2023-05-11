@@ -47,10 +47,24 @@ local original =
     custom_set_empty = CustomAmmoBagBase._set_empty
 }
 
+local ignored_pos = {}
+function AmmoBagBase.SetIgnoredPos(pos)
+    ignored_pos = pos
+end
+
 function AmmoBagBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._offset = 0
+    if next(ignored_pos) then
+        local pos = tostring(unit:position())
+        for _, _pos in ipairs(ignored_pos) do
+            if pos == tostring(_pos) then
+                self._ignore = true
+                break
+            end
+        end
+    end
 end
 
 function AmmoBagBase:GetEHIKey()

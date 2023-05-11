@@ -1,6 +1,5 @@
-local icons = tweak_data.ehi.icons
-
 local EHI = EHI
+local icons = tweak_data.ehi.icons
 EHIWaypointManager = class()
 EHIWaypointManager._font = tweak_data.menu.pd2_large_font_id -- Large font
 EHIWaypointManager._timer_font_size = 32
@@ -191,6 +190,13 @@ function EHIWaypointManager:RemoveAllPagerWaypoints()
     end
 end
 
+function EHIWaypointManager:SetWaypointAccurate(id, t)
+    local wp = id and self._waypoints[id]
+    if wp and wp.SetWaypointAccurate then
+        wp:SetWaypointAccurate(t)
+    end
+end
+
 function EHIWaypointManager:AddWaypointToUpdate(id, wp)
     self._waypoints_to_update[id] = wp
 end
@@ -224,6 +230,7 @@ do
     dofile(path .. "EHIWarningWaypoint.lua")
     dofile(path .. "EHIPausableWaypoint.lua")
     dofile(path .. "EHITimerWaypoint.lua")
+    dofile(path .. "EHIInaccurateWaypoints.lua")
 end
 
 if EHI:IsVR() then

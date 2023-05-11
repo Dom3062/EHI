@@ -15,17 +15,17 @@ end
 local MissionDoorPositions =
 {
     -- Security doors
-    [1] = Vector3(-2357.87, -3621.42, 489.107),
-    [2] = Vector3(1221.42, -2957.87, 489.107),
-    [3] = Vector3(1342.13, -2621.42, 89.1069), --101867
-    [4] = Vector3(-2830.08, 341.886, 492.443) --102199
+    Vector3(-2357.87, -3621.42, 489.107),
+    Vector3(1221.42, -2957.87, 489.107),
+    Vector3(1342.13, -2621.42, 89.1069), --101867
+    Vector3(-2830.08, 341.886, 492.443) --102199
 }
 local MissionDoorIndex =
 {
-    [1] = { w_id = 101899 },
-    [2] = { w_id = 101834 },
-    [3] = { w_id = 101782 },
-    [4] = { w_id = 101783 }
+    101899,
+    101834,
+    101782,
+    101783
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
 local Weapons = { 101473, 102717, 102718, 102720 }
@@ -55,9 +55,9 @@ local other =
 
     [104618] = EHI:AddAssaultDelay({ time = 30 + 1 + 5 + 30 + 30 })
 }
-EHI:RegisterCustomSpecialFunction(FilterIsOk, function(trigger, element, ...)
+EHI:RegisterCustomSpecialFunction(FilterIsOk, function(self, trigger, element, ...)
     if element:_check_difficulty() then
-        managers.ehi_tracker:CallFunction("LootCounter", "SecuredMissionLoot") -- Server secured
+        self._trackers:CallFunction("LootCounter", "SecuredMissionLoot") -- Server secured
     end
 end)
 EHI:ParseTriggers({

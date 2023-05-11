@@ -42,7 +42,7 @@ local achievements =
 
 local other =
 {
-    [EHI:GetInstanceElementID(100003, 7950)] = EHI:AddAssaultDelay({ time = 3 + 12 + 12 + 4 + 10 + 30, random_time = 5, trigger_times = 1 })
+    [EHI:GetInstanceElementID(100003, 7950)] = EHI:AddAssaultDelay({ additional_time = 3 + 12 + 12 + 4 + 10 + 30, random_time = 5, trigger_times = 1 })
 }
 if EHI:IsClient() then
     local original = other[EHI:GetInstanceElementID(100003, 7950)]

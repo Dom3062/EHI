@@ -21,6 +21,7 @@ local SF = EHI.SpecialFunctions
     })
 end]]
 
+local min_bags = 4
 if Global.game_settings.level_id == "gallery" then
     local TT = EHI.Trackers
     local achievements =
@@ -31,7 +32,8 @@ if Global.game_settings.level_id == "gallery" then
             {
                 [100789] = { class = TT.AchievementStatus },
                 [104288] = { special_function = SF.SetAchievementComplete },
-                [104290] = { special_function = SF.SetAchievementFailed }
+                [104290] = { special_function = SF.SetAchievementFailed },
+                [102860] = { special_function = SF.SetAchievementFailed } -- Painting flushed
             }
         }
     }
@@ -56,52 +58,77 @@ if Global.game_settings.level_id == "gallery" then
     EHI:ParseTriggers({
         achievement = achievements
     })
+
+    min_bags = 6
+else -- Framing Frame Day 1
+    EHI:ShowAchievementLootCounter({
+        achievement = "pink_panther",
+        max = 9,
+        remove_after_reaching_target = false,
+        failed_on_alarm = true,
+        triggers =
+        {
+            [102860] = { special_function = SF.SetAchievementFailed } -- Painting flushed
+        }
+    })
+
+    local other =
+    {
+        [102437] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }, -- +5%
+        [103884] = { id = "EscapeChance", special_function = SF.SetChanceFromElement } -- 100 %
+    }
+
+    EHI:ParseTriggers({
+        other = other
+    })
+
+    if EHI:GetOption("show_escape_chance") then
+        EHI:AddOnAlarmCallback(function(dropin)
+            managers.ehi_tracker:AddEscapeChanceTracker(dropin, 25)
+        end)
+    end
 end
 
-local other =
-{
-    [102437] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }, -- +5%
-    [103884] = { id = "EscapeChance", special_function = SF.SetChanceFromElement } -- 100 %
-}
-
-EHI:ParseTriggers({
-    other = other
-})
-
-EHI:ShowLootCounter({ max = 9 })
-EHI:ShowAchievementLootCounter({
-    achievement = "pink_panther",
+EHI:ShowLootCounter({
     max = 9,
-    remove_after_reaching_target = false,
-    failed_on_alarm = true
+    triggers =
+    {
+        [102860] = { special_function = SF.DecreaseProgressMax } -- Painting flushed
+    },
+    load_sync = function(self)
+        local max_reduction = 0
+        if self._trackers:IsMissionElementDisabled(104285) then
+            max_reduction = max_reduction + 1
+        end
+        if self._trackers:IsMissionElementDisabled(104286) then
+            max_reduction = max_reduction + 1
+        end
+        self._trackers:DecreaseTrackerProgressMax(max_reduction)
+        self._trackers:SyncSecuredLoot()
+    end
 })
 
 local MissionDoorPositions =
 {
     -- Security doors
-    [1] = Vector3(-827.08, 115.886, 92.4429),
-    [2] = Vector3(-60.1138, 802.08, 92.4429),
-    [3] = Vector3(-140.886, -852.08, 92.4429)
+    Vector3(-827.08, 115.886, 92.4429),
+    Vector3(-60.1138, 802.08, 92.4429),
+    Vector3(-140.886, -852.08, 92.4429)
 }
 local MissionDoorIndex =
 {
-    [1] = { w_id = 103191 },
-    [2] = { w_id = 103188 },
-    [3] = { w_id = 103202 }
+    103191,
+    103188,
+    103202
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
-if EHI:GetOption("show_escape_chance") then
-    EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi_tracker:AddEscapeChanceTracker(dropin, 25)
-    end)
-end
 local xp_override =
 {
     params =
     {
         min_max =
         {
-            loot_all = { min = 4, max = 9 }
+            loot_all = { min = min_bags, max = 9 }
         }
     }
 }
@@ -121,7 +148,7 @@ EHI:AddXPBreakdown({
         {
             objectives =
             {
-                { escape = 6000, name = "pc_hack" },
+                { amount = 6000, name = "pc_hack" },
                 { escape = 2000 }
             },
             loot_all = 500,

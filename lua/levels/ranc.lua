@@ -54,15 +54,15 @@ local triggers = {
 }
 
 if EHI:IsClient() then
-    triggers[102053].time = (ElementTimer == 102063 and 60 or 30) + triggers[102053].additional_time
+    triggers[102053].additional_time = (ElementTimer == 102063 and 60 or 30) + triggers[102053].additional_time
     triggers[102053].random_time = 5
     triggers[102053].delay_only = true
     EHI:AddSyncTrigger(102053, triggers[102053])
-    triggers[102070].time = (ElementTimer == 102076 and 60 or 30) + triggers[102070].additional_time
+    triggers[102070].additional_time = (ElementTimer == 102076 and 60 or 30) + triggers[102070].additional_time
     triggers[102070].random_time = 5
     triggers[102070].delay_only = true
     EHI:AddSyncTrigger(102070, triggers[102070])
-    local FultonCatchAgainClient = { time = 30, random_time = 30, id = "FultonCatch", icons = FultonCatchAgain, special_function = SF.AddTrackerIfDoesNotExist }
+    local FultonCatchAgainClient = { additional_time = 30, random_time = 30, id = "FultonCatch", icons = FultonCatchAgain, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[EHI:GetInstanceElementID(100070, 14950)] = FultonCatchAgainClient
     triggers[EHI:GetInstanceElementID(100070, 25500)] = FultonCatchAgainClient
     triggers[EHI:GetInstanceElementID(100070, 25650)] = FultonCatchAgainClient
@@ -92,8 +92,8 @@ if OVKorAbove then
     EHI:ShowAchievementKillCounter("ranc_9", "ranc_9_stat", "show_achievements_vehicle") -- "Caddyshacked" achievement
     EHI:ShowAchievementKillCounter("ranc_11", "ranc_11_stat", "show_achievements_weapon") -- "Marshal Law" achievement
 end
-EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(trigger, ...)
-    if managers.ehi_tracker:TrackerDoesNotExist("FultonCatch") then
-        EHI:CheckCondition(trigger)
+EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(self, trigger, ...)
+    if self._trackers:TrackerDoesNotExist("FultonCatch") then
+        self:CheckCondition(trigger)
     end
 end)

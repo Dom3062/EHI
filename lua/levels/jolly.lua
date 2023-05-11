@@ -44,15 +44,15 @@ local other =
 }
 
 EHI:ParseTriggers({ mission = triggers, other = other })
-EHI:RegisterCustomSpecialFunction(HeliTimer, function(trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(HeliTimer, function(self, trigger, ...)
     if not managers.user:get_setting("mute_heist_vo") then
         local delay_fix = triggers[1][trigger.dialog] or 0
         trigger.time = trigger.time + delay_fix
     end
-    if managers.ehi_tracker:TrackerExists(trigger.id) then
-        managers.ehi_tracker:SetTrackerTimeNoAnim(trigger.id, trigger.time)
+    if self._trackers:TrackerExists(trigger.id) then
+        self._trackers:SetTrackerTimeNoAnim(trigger.id, trigger.time)
     else
-        EHI:CheckCondition(trigger)
+        self:CheckCondition(trigger)
     end
 end)
 

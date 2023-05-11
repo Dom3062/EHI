@@ -15,7 +15,7 @@ local triggers = {
     [101048] = { time = 12, id = "ObjectiveDelay", icons = { Icon.Wait } }
 }
 if EHI:IsClient() then
-    triggers[101034].time = 80
+    triggers[101034].additional_time = 80
     triggers[101034].random_time = 10
     triggers[101034].special_function = SF.UnpauseTrackerIfExists
     triggers[101034].icons = trigger_icon_all
@@ -23,7 +23,7 @@ if EHI:IsClient() then
     triggers[101034].class = TT.InaccuratePausable
     triggers[101034].synced = { class = TT.Pausable }
     EHI:AddSyncTrigger(101034, triggers[101034])
-    triggers[101535].time = 90
+    triggers[101535].additional_time = 90
     triggers[101535].random_time = 30
     triggers[101535].special_function = SF.UnpauseTrackerIfExists
     triggers[101535].icons = trigger_icon_all
@@ -79,17 +79,17 @@ EHI:UpdateUnits(tbl)
 local MissionDoorPositions =
 {
     -- Workshop
-    [1] = Vector3(-3798.92, -1094.9, -6.52779),
+    Vector3(-3798.92, -1094.9, -6.52779),
 
     -- Safe with a bike mask
-    [2] = Vector3(1570.02, -419.693, 185.724),
-    [3] = Vector3(1570.02, -419.693, 585.724)
+    Vector3(1570.02, -419.693, 185.724),
+    Vector3(1570.02, -419.693, 585.724)
 }
 local MissionDoorIndex =
 {
-    [1] = { w_id = 101580 },
-    [2] = { w_id = EHI:GetInstanceElementID(100007, 4850) },
-    [3] = { w_id = EHI:GetInstanceElementID(100007, 5350) }
+    101580,
+    EHI:GetInstanceElementID(100007, 4850),
+    EHI:GetInstanceElementID(100007, 5350)
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
 EHI:AddXPBreakdown({

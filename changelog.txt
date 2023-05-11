@@ -1,3 +1,10 @@
+r150 (11. 05. 2023):
+Code reorganization
+Fixed an issue where random time is increased everytime the tracker/waypoint is created
+Big Oil Day 2: Ammo bags outside of playable area are ignored
+Shacklethorne Auction: Fixed an issue where heli icon is bigger than usual
+VR: Possible fix for a load crash
+
 r149 (04. 05. 2023):
 The Biker Heist: Fixed an issue where ammo and grenades are counted, but the bunker is not open
 Hoxton Breakout Day 2: Fixed an issue where ammo and grenades are counted, but armory is not open

@@ -82,8 +82,8 @@ local achievements =
     {
         elements =
         {
-            [102426] = { max = 8, id = "run_8", class = TT.AchievementProgress },
-            [100658] = { id = "run_8", special_function = SF.IncreaseProgress }
+            [102426] = { max = 8, class = TT.AchievementProgress },
+            [100658] = { special_function = SF.IncreaseProgress }
         }
     },
     run_9 =
@@ -114,24 +114,23 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 local ProgressMaxSet = false
-EHI:RegisterCustomSpecialFunction(SetProgressMax, function(trigger, ...)
+EHI:RegisterCustomSpecialFunction(SetProgressMax, function(self, trigger, ...)
     if ProgressMaxSet then
         return
     end
-    if managers.ehi_tracker:TrackerExists(trigger.id) then
-        managers.ehi_tracker:SetTrackerProgressMax(trigger.id, trigger.max)
+    if self._trackers:TrackerExists(trigger.id) then
+        self._trackers:SetTrackerProgressMax(trigger.id, trigger.max)
     else
-        managers.ehi_tracker:AddTracker({
+        self._trackers:AddTracker({
             id = trigger.id,
             progress = 1,
             max = trigger.max,
             class = "EHIGasTracker"
         })
     end
-    ProgressMaxSet = true
 end)
-EHI:RegisterCustomSpecialFunction(SetZoneComplete, function(trigger, ...)
-    managers.ehi_tracker:CallFunction(trigger.id, "SetCompleted")
+EHI:RegisterCustomSpecialFunction(SetZoneComplete, function(self, trigger, ...)
+    self._trackers:CallFunction(trigger.id, "SetCompleted")
 end)
 EHI:AddXPBreakdown({
     objectives =

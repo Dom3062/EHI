@@ -67,21 +67,17 @@ local triggers = {
 }
 local outcome =
 {
-    [100013] = { time = 15 + 15 + 10 + 40/30, random_time = 5, id = "VialFail", icons = { "equipment_bloodvial", Icon.Loop } },
-    [100017] = { time = 30, id = "VialSuccess", icons = { "equipment_bloodvialok" } }
+    [100013] = { additional_time = 15 + 15 + 10 + 40/30, random_time = 5, id = "VialFail", icons = { "equipment_bloodvial", Icon.Loop } },
+    [100017] = { time = 30, id = "VialSuccess", icons = { "equipment_bloodvialok" } },
+    [100014] = { time = 15 + 10 + 40/30, id = "VialFail", icons = { "equipment_bloodvial", Icon.Loop }, special_function = SF.SetTrackerAccurate }
 }
 
 for id, value in pairs(outcome) do
     for i = 2100, 2700, 100 do
         local element = EHI:GetInstanceElementID(id, i)
         triggers[element] = deep_clone(value)
-        triggers[element].id = triggers[element].id .. tostring(element)
-        if id == 100013 then
-            local tracker_id = triggers[element].id .. tostring(element)
-            managers.mission:add_runned_unit_sequence_trigger(EHI:GetInstanceUnitID(100008, i), "done_cleaning", function(unit)
-                managers.ehi_tracker:RemoveTracker(tracker_id)
-            end)
-        end
+        triggers[element].id = triggers[element].id .. tostring(i)
+        triggers[element].waypoint = { position_by_unit = EHI:GetInstanceUnitID(100008, i) }
     end
 end
 EHI:AddOnAlarmCallback(function()
@@ -117,9 +113,9 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
-EHI:RegisterCustomSpecialFunction(LowerFloor, function(trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(LowerFloor, function(self, trigger, element, enabled)
     if enabled then
-        managers.ehi_manager:Call(trigger.id, "LowerFloor")
+        self:Call(trigger.id, "LowerFloor")
     end
 end)
 EHI:AddLoadSyncFunction(function(self)
@@ -127,13 +123,14 @@ EHI:AddLoadSyncFunction(function(self)
     if elevator_counter then
         local o = elevator_counter:digital_gui()
         if o and o._timer and o._timer ~= 30 then
+            local floors = o._timer - 4
             self._trackers:AddTracker({
                 id = "EscapeElevator",
-                floors = o._timer - 4,
+                floors = floors,
                 class = "EHIElevatorTimerTracker"
             })
             self._waypoints:AddWaypoint("EscapeElevator", {
-                floors = o._timer - 4,
+                floors = floors,
                 class = "EHIElevatorTimerWaypoint"
             })
             if self._trackers:InteractionExists("circuit_breaker") or self._trackers:InteractionExists("press_call_elevator") then

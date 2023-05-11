@@ -3,12 +3,12 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local goat_pick_up = { Icon.Heli, Icon.Interact }
-local function f_PilotComingInAgain(trigger, ...)
-    managers.ehi_tracker:RemoveTracker("PilotComingIn")
-    if managers.ehi_tracker:TrackerExists(trigger.id) then
-        managers.ehi_tracker:SetTrackerTime(trigger.id, trigger.time)
+local function f_PilotComingInAgain(self, trigger, ...)
+    self._trackers:RemoveTracker("PilotComingIn")
+    if self._trackers:TrackerExists(trigger.id) then
+        self._trackers:SetTrackerTime(trigger.id, trigger.time)
     else
-        EHI:CheckCondition(trigger)
+        self:CheckCondition(trigger)
     end
 end
 local PilotComingInAgain = EHI:GetFreeCustomSpecialFunctionID()
@@ -79,9 +79,9 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(PilotComingInAgain, function(trigger, element, enabled)
+EHI:RegisterCustomSpecialFunction(PilotComingInAgain, function(self, trigger, element, enabled)
     if enabled then
-        f_PilotComingInAgain(trigger)
+        f_PilotComingInAgain(self, trigger)
     end
 end)
 EHI:RegisterCustomSpecialFunction(PilotComingInAgain2, f_PilotComingInAgain)

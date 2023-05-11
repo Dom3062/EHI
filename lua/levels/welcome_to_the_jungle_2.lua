@@ -45,3 +45,13 @@ EHI:AddXPBreakdown({
         { escape = 6000 }
     }
 })
+EHI:SetDeployableIgnorePos("ammo_bag", {
+    Vector3(-7350, -3525, 591.541),
+    Vector3(-4825, -2175, 1330.36),
+    Vector3(-375, 3125, 843.889),
+    Vector3(175, 3000, -1216.21),
+    Vector3(-1600, -2175, 800),
+    Vector3(-2053, -4263, -1046.93),
+    Vector3(-5931, 2294, 1394.4),
+    Vector3(-5425, 6250, 519.189)
+})

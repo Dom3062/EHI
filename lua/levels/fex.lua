@@ -37,21 +37,14 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100022, 23480)] = true -- Fix
 }
 
-local spawn_trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local achievements =
 {
     fex_10 =
     {
         elements =
         {
-            [1] = { max = 21, class = TT.AchievementProgress },
-            [2] = { special_function = SF.CustomCode, f = function()
-                EHI:AddAchievementToCounter({
-                    achievement = "fex_10"
-                })
-            end },
-            [100185] = spawn_trigger, -- Default entry
-            [102665] = spawn_trigger, -- Cave spawn
+            [100185] = { max = 21, class = TT.AchievementProgress, special_function = SF.AddAchievementToCounter }, -- Default spawn
+            [102665] = { max = 21, class = TT.AchievementProgress, special_function = SF.AddAchievementToCounter }, -- Cave spawn
             [103553] = { special_function = SF.SetAchievementFailed }
         },
         load_sync = function(self)

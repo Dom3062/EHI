@@ -91,6 +91,7 @@ _G.EHI =
         SetAchievementComplete = 8,
         SetAchievementStatus = 9,
         SetAchievementFailed = 10,
+        AddAchievementToCounter = 11,
         IncreaseChance = 12,
         TriggerIfEnabled = 13,
         CreateAnotherTrackerWithTracker = 14,
@@ -198,11 +199,6 @@ _G.EHI =
         BoatEscapeNoLoot = { "boat", "pd2_escape" }
     },
 
-    WaypointIconRedirect =
-    {
-        heli = "EHI_Heli"
-    },
-
     Trackers =
     {
         Warning = "EHIWarningTracker",
@@ -249,7 +245,10 @@ _G.EHI =
     Waypoints =
     {
         Warning = "EHIWarningWaypoint",
-        Pausable = "EHIPausableWaypoint"
+        Pausable = "EHIPausableWaypoint",
+        Inaccurate = "EHIInaccurateWaypoint",
+        InaccuratePausable = "EHIInaccuratePausableWaypoint",
+        InaccurateWarning = "EHIInaccurateWarningWaypoint"
     },
 
     Difficulties =
@@ -284,6 +283,10 @@ EHI.TriggerFunction =
 {
     [SF.TriggerIfEnabled] = true,
     [SF.Trigger] = true
+}
+EHI.WaypointIconRedirect =
+{
+    [EHI.Icons.Heli] = "EHI_Heli"
 }
 
 local function LoadDefaultValues(self)
@@ -945,11 +948,6 @@ function EHI:Unhook(id)
     Hooks:RemovePostHook("EHI_" .. id)
 end
 
----@param id number
-function EHI:UnhookElement(id)
-    Hooks:RemovePostHook("EHI_Element_" .. id)
-end
-
 ---Hooks elements that removes loot bags (due to fire or out of bounds)
 ---@param elements number|table Index or indexes of ElementCarry that removes loot bags with operation "remove"
 function EHI:HookLootRemovalElement(elements)
@@ -1084,47 +1082,11 @@ end
 
 ---@param triggers table
 function EHI:SetSyncTriggers(triggers)
-    if self._sync_triggers then
-        for key, value in pairs(triggers) do
-            if self._sync_triggers[key] then
-                self:Log("key: " .. tostring(key) .. " already exists in sync!")
-            else
-                self._sync_triggers[key] = deep_clone(value)
-            end
-        end
-    else
-        self._sync_triggers = deep_clone(triggers)
-    end
+    managers.ehi_manager:SetSyncTriggers(triggers)
 end
 
 function EHI:AddSyncTrigger(id, trigger)
-    self._sync_triggers = self._sync_triggers or {}
-    self._sync_triggers[id] = deep_clone(trigger)
-end
-
-function EHI:AddTrackerSynced(id, delay)
-    if self._sync_triggers[id] then
-        local trigger = self._sync_triggers[id]
-        local trigger_id = trigger.id
-        if managers.ehi_tracker:TrackerExists(trigger_id) then
-            if trigger.delay_only then
-                managers.ehi_tracker:SetTrackerAccurate(trigger_id, delay)
-            else
-                managers.ehi_tracker:SetTrackerAccurate(trigger_id, (trigger.time or 0) + delay)
-            end
-        else
-            managers.ehi_tracker:AddTracker({
-                id = trigger_id,
-                time = trigger.delay_only and delay or ((trigger.time or 0) + delay),
-                icons = trigger.icons,
-                class = trigger.synced and trigger.synced.class or trigger.class
-            })
-        end
-        if trigger.client_on_executed then
-            -- Right now there is only SF.RemoveTriggerWhenExecuted
-            self._sync_triggers[id] = nil
-        end
-    end
+    managers.ehi_manager:AddSyncTrigger(id, trigger)
 end
 
 function EHI:DebugEquipment(tracker_id, unit, key, amount, peer_id)
@@ -1162,28 +1124,12 @@ function EHI:GetAchievementIconString(id)
     return achievement and achievement.icon_id
 end
 
-local triggers = {}
-local host_triggers = {}
-local base_delay_triggers = {}
-local element_delay_triggers = {}
 ---Adds trigger to mission element when they run
 ---@param new_triggers table
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
 function EHI:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-    for key, value in pairs(new_triggers) do
-        if triggers[key] then
-            self:Log("key: " .. tostring(key) .. " already exists in triggers!")
-        else
-            triggers[key] = value
-            if not value.id then
-                triggers[key].id = trigger_id_all
-            end
-            if not value.icons and not value.run then
-                triggers[key].icons = trigger_icons_all
-            end
-        end
-    end
+    managers.ehi_manager:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
 end
 
 ---Adds trigger to mission element when they run. If trigger already exists, it is moved and added into table
@@ -1192,214 +1138,15 @@ end
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
 function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_all)
-    local function FillRestOfProperties(key, value)
-        if not value.id then
-            triggers[key].id = trigger_id_all
-        end
-        if not value.icons and not value.run then
-            triggers[key].icons = trigger_icons_all
-        end
-    end
-    for key, value in pairs(new_triggers) do
-        if triggers[key] then
-            local t = triggers[key]
-            if t.special_function and self.TriggerFunction[t.special_function] then
-                if value.special_function and self.TriggerFunction[value.special_function] then
-                    if t.data then
-                        local data = value.data or {}
-                        for i = 1, #data, 1 do
-                            t.data[#t.data + 1] = data[i]
-                        end
-                    else
-                        self:Log("key: " .. tostring(key) .. " does not have 'data' table, new triggers won't be added!")
-                    end
-                elseif t.data then
-                    local new_key = (key * 10) + 1
-                    while triggers[new_key] do
-                        new_key = new_key + 1
-                    end
-                    triggers[new_key] = value
-                    FillRestOfProperties(new_key, value)
-                    t.data[#t.data + 1] = new_key
-                else
-                    self:Log("key: " .. tostring(key) .. " does not have 'data' table, the trigger " .. tostring(new_key) .. " will not be called!")
-                end
-            elseif value.special_function and self.TriggerFunction[value.special_function] then
-                if value.data then
-                    local new_key = (key * 10) + 1
-                    while table.contains(value.data, new_key) or new_triggers[new_key] or triggers[new_key] do
-                        new_key = new_key + 1
-                    end
-                    triggers[new_key] = t
-                    triggers[key] = value
-                    FillRestOfProperties(key, value)
-                    value.data[#value.data + 1] = new_key
-                else
-                    self:Log("key: " .. tostring(key) .. " with ID: " .. tostring(value.id) .. " does not have 'data' table, the former trigger won't be moved and triggers assigned to this one will not be called!")
-                end
-            else
-                local new_key = (key * 10) + 1
-                local key2 = new_key + 1
-                triggers[key] = { special_function = params and params.SF or SF.Trigger, data = { new_key, key2 } }
-                triggers[new_key] = t
-                triggers[key2] = value
-                FillRestOfProperties(key2, value)
-            end
-        else
-            triggers[key] = value
-            FillRestOfProperties(key, value)
-        end
-    end
+    managers.ehi_manager:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_all)
 end
 
 function EHI:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, type)
-    for key, value in pairs(new_triggers) do
-        if host_triggers[key] then
-            self:Log("key: " .. tostring(key) .. " already exists in host triggers!")
-        else
-            host_triggers[key] = value
-            if not value.id then
-                host_triggers[key].id = trigger_id_all
-            end
-            if not value.icons then
-                host_triggers[key].icons = trigger_icons_all
-            end
-        end
-        if type == "base" then
-            if base_delay_triggers[key] then
-                self:Log("key: " .. tostring(key) .. " already exists in host base delay triggers!")
-            else
-                base_delay_triggers[key] = true
-            end
-        else
-            if value.hook_element or value.hook_elements then
-                if value.hook_element then
-                    element_delay_triggers[value.hook_element] = element_delay_triggers[value.hook_element] or {}
-                    element_delay_triggers[value.hook_element][key] = true
-                else
-                    for _, element in pairs(value.hook_elements) do
-                        element_delay_triggers[element] = element_delay_triggers[element] or {}
-                        element_delay_triggers[element][key] = true
-                    end
-                end
-            else
-                self:Log("key: " .. tostring(key) .. " does not have element to hook!")
-            end
-        end
-    end
+    managers.ehi_manager:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, type)
 end
 
 function EHI:AddWaypointToTrigger(id, waypoint)
-    local t = triggers[id]
-    if not t then
-        return
-    end
-    local w = deep_clone(waypoint)
-    if not w.time then
-        w.time = t.time
-    end
-    if not w.icon then
-        local icon = t.icons
-        if icon and icon[1] then
-            if type(icon[1]) == "table" then
-                w.icon = icon[1].icon
-            elseif type(icon[1]) == "string" then
-                w.icon = icon[1]
-            end
-        end
-    end
-    t.waypoint = w
-end
-
-
-local E = EHI
----@param trigger table
-local function AddTracker(trigger)
-    trigger.time = E:GetTime(trigger)
-    managers.ehi_tracker:AddTracker(trigger)
-end
-
----@param trigger table
----@return number
-function EHI:GetTime(trigger)
-    local full_time = trigger.time or 0
-    full_time = full_time + (trigger.random_time and math.rand(trigger.random_time) or 0)
-    return full_time
-end
-
----@param trigger table
-function EHI:AddTrackerWithRandomTime(trigger)
-    local time = trigger.data[math.random(#trigger.data)]
-    trigger.time = time
-    managers.ehi_tracker:AddTracker(trigger)
-    if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
-        trigger.waypoint_f(trigger)
-    elseif trigger.waypoint then
-        managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
-    end
-end
-
----@param trigger table
-function EHI:AddTracker(trigger)
-    if trigger.run then
-        trigger.run.time = self:GetTime(trigger.run)
-        managers.ehi_tracker:RunTracker(trigger.id, trigger.run)
-    else
-        AddTracker(trigger)
-    end
-    if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
-        trigger.waypoint_f(trigger)
-    elseif trigger.waypoint then
-        managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
-    end
-end
-
----@param id number
----@param delay number
-function EHI:AddTrackerAndSync(id, delay)
-    local trigger = host_triggers[id]
-    managers.ehi_tracker:AddTrackerAndSync({
-        id = trigger.id,
-        time = (trigger.time or 0) + (delay or 0),
-        icons = trigger.icons,
-        class = trigger.class
-    }, id, delay)
-    if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
-        trigger.waypoint_f(trigger)
-    elseif trigger.waypoint then
-        managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
-    end
-end
-
----@param trigger table
-function EHI:CheckCondition(trigger)
-    if trigger.condition_function then
-        if trigger.condition_function() then
-            self:AddTracker(trigger)
-        end
-    else
-        self:AddTracker(trigger)
-    end
-end
-
-local function GetElementTimer(self, trigger, id)
-    if self:IsHost() then
-        local element = managers.mission:get_element_by_id(trigger.element)
-        if element then
-            local t = (element._timer or 0) + (trigger.additional_time or 0)
-            trigger.time = t
-            self:CheckCondition(trigger)
-            managers.ehi_tracker:Sync(id, t)
-        end
-    else
-        self:CheckCondition(trigger)
-    end
-end
-
----@param id number
-function EHI:UnhookTrigger(id)
-    self:UnhookElement(id)
-    triggers[id] = nil
+    managers.ehi_manager:AddWaypointToTrigger(id, waypoint)
 end
 
 ---@param id string
@@ -1408,246 +1155,17 @@ local function HideTracker(id)
     managers.ehi_waypoint:RemoveWaypoint(id)
 end
 
----@param id number
----@param element table
----@param enabled boolean
----@overload fun(self, id: number)
----@overload fun(self, id: number, element: table)
-function EHI:Trigger(id, element, enabled)
-    local trigger = triggers[id]
-    if trigger then
-        if trigger.special_function then
-            local f = trigger.special_function
-            if f == SF.RemoveTracker then
-                if trigger.data then
-                    for _, tracker in ipairs(trigger.data) do
-                        managers.ehi_manager:Remove(tracker)
-                    end
-                else
-                    managers.ehi_manager:Remove(trigger.id)
-                end
-            elseif f == SF.PauseTracker then
-                managers.ehi_manager:Pause(trigger.id)
-            elseif f == SF.UnpauseTracker then
-                managers.ehi_manager:Unpause(trigger.id)
-            elseif f == SF.UnpauseTrackerIfExists then
-                if managers.ehi_manager:Exists(trigger.id) then
-                    managers.ehi_manager:Unpause(trigger.id)
-                else
-                    self:CheckCondition(trigger)
-                end
-            elseif f == SF.AddTrackerIfDoesNotExist then
-                if managers.ehi_tracker:TrackerDoesNotExist(trigger.id) then
-                    self:CheckCondition(trigger)
-                end
-            elseif f == SF.ReplaceTrackerWithTracker then
-                managers.ehi_manager:Remove(trigger.data.id)
-                self:CheckCondition(trigger)
-            elseif f == SF.ShowAchievementFromStart then -- Achievement unlock is checked during level load
-                if not managers.statistics:is_dropin() then
-                    self:CheckCondition(trigger)
-                end
-            elseif f == SF.SetAchievementComplete then
-                managers.ehi_tracker:SetAchievementComplete(trigger.id, true)
-            elseif f == SF.SetAchievementStatus then
-                managers.ehi_tracker:SetAchievementStatus(trigger.id, trigger.status or "ok")
-            elseif f == SF.SetAchievementFailed then
-                managers.ehi_tracker:SetAchievementFailed(trigger.id)
-            elseif f == SF.IncreaseChance then
-                managers.ehi_tracker:IncreaseChance(trigger.id, trigger.amount)
-            elseif f == SF.TriggerIfEnabled then
-                if enabled then
-                    if trigger.data then
-                        for _, t in ipairs(trigger.data) do
-                            self:Trigger(t, element, enabled)
-                        end
-                    else
-                        self:Trigger(trigger.id, element, enabled)
-                    end
-                end
-            elseif f == SF.CreateAnotherTrackerWithTracker then
-                self:CheckCondition(trigger)
-                self:Trigger(trigger.data.fake_id, element, enabled)
-            elseif f == SF.SetChanceWhenTrackerExists then
-                if managers.ehi_tracker:TrackerExists(trigger.id) then
-                    managers.ehi_tracker:SetChance(trigger.id, trigger.chance)
-                else
-                    self:CheckCondition(trigger)
-                end
-            elseif f == SF.Trigger then
-                if trigger.data then
-                    for _, t in ipairs(trigger.data) do
-                        self:Trigger(t, element, enabled)
-                    end
-                else
-                    self:Trigger(trigger.id, element, enabled)
-                end
-            elseif f == SF.RemoveTrigger then
-                if trigger.data then
-                    for _, trigger_id in ipairs(trigger.data) do
-                        self:UnhookTrigger(trigger_id)
-                    end
-                else
-                    self:UnhookTrigger(trigger.id)
-                end
-            elseif f == SF.SetTimeOrCreateTracker then
-                local key = trigger.id
-                if managers.ehi_manager:Exists(key) then
-                    local time = trigger.run and trigger.run.time or trigger.time or 0
-                    managers.ehi_tracker:SetTrackerTime(key, time)
-                    managers.ehi_waypoint:SetWaypointTime(key, time)
-                else
-                    self:CheckCondition(trigger)
-                end
-            elseif f == SF.ExecuteIfElementIsEnabled then
-                if enabled then
-                    self:CheckCondition(trigger)
-                end
-            elseif f == SF.SetTimeByPreplanning then
-                if managers.preplanning:IsAssetBought(trigger.data.id) then
-                    trigger.time = trigger.data.yes
-                else
-                    trigger.time = trigger.data.no
-                end
-                if trigger.waypoint then
-                    trigger.waypoint.time = trigger.time
-                end
-                self:CheckCondition(trigger)
-            elseif f == SF.IncreaseProgress then
-                managers.ehi_tracker:IncreaseTrackerProgress(trigger.id)
-            elseif f == SF.SetTrackerAccurate then
-                if managers.ehi_tracker:TrackerExists(trigger.id) then
-                    managers.ehi_tracker:SetTrackerAccurate(trigger.id, trigger.time)
-                else
-                    self:CheckCondition(trigger)
-                end
-            elseif f == SF.SetRandomTime then
-                if managers.ehi_tracker:TrackerDoesNotExist(trigger.id) then
-                    self:AddTrackerWithRandomTime(trigger)
-                end
-            elseif f == SF.DecreaseChance then
-                managers.ehi_tracker:DecreaseChance(trigger.id, trigger.amount)
-            elseif f == SF.GetElementTimerAccurate then
-                GetElementTimer(self, trigger, id)
-            elseif f == SF.UnpauseOrSetTimeByPreplanning then
-                if managers.ehi_tracker:TrackerExists(trigger.id) then
-                    managers.ehi_manager:Unpause(trigger.id)
-                else
-                    if trigger.time then
-                        self:CheckCondition(trigger)
-                        return
-                    end
-                    if managers.preplanning:IsAssetBought(trigger.data.id) then
-                        trigger.time = trigger.data.yes
-                    else
-                        trigger.time = trigger.data.no
-                    end
-                    self:CheckCondition(trigger)
-                end
-            elseif f == SF.UnpauseTrackerIfExistsAccurate then
-                if managers.ehi_tracker:TrackerExists(trigger.id) then
-                    managers.ehi_manager:Unpause(trigger.id)
-                else
-                    GetElementTimer(self, trigger, id)
-                end
-            elseif f == SF.FinalizeAchievement then
-                managers.ehi_tracker:CallFunction(trigger.id, "Finalize")
-            elseif f == SF.IncreaseChanceFromElement then
-                managers.ehi_tracker:IncreaseChance(trigger.id, element._values.chance)
-            elseif f == SF.DecreaseChanceFromElement then
-                managers.ehi_tracker:DecreaseChance(trigger.id, element._values.chance)
-            elseif f == SF.SetChanceFromElement then
-                managers.ehi_tracker:SetChance(trigger.id, element._values.chance)
-            elseif f == SF.SetChanceFromElementWhenTrackerExists then
-                if managers.ehi_tracker:TrackerExists(trigger.id) then
-                    managers.ehi_tracker:SetChance(trigger.id, element._values.chance)
-                else
-                    trigger.chance = element._values.chance
-                    self:CheckCondition(trigger)
-                end
-            elseif f == SF.PauseTrackerWithTime then
-                local t_id = trigger.id
-                local t_time = trigger.time
-                managers.ehi_manager:Pause(t_id)
-                managers.ehi_tracker:SetTrackerTimeNoAnim(t_id, t_time)
-                managers.ehi_waypoint:SetWaypointTime(t_id, t_time)
-            elseif f == SF.IncreaseProgressMax then
-                managers.ehi_tracker:IncreaseTrackerProgressMax(trigger.id, trigger.max)
-            elseif f == SF.IncreaseProgressMax2 then
-                if managers.ehi_tracker:TrackerExists(trigger.id) then
-                    managers.ehi_tracker:IncreaseTrackerProgressMax(trigger.id, trigger.max)
-                else
-                    local new_trigger =
-                    {
-                        id = trigger.id,
-                        max = trigger.max or 1,
-                        class = trigger.class or "EHILootTracker"
-                    }
-                    self:CheckCondition(new_trigger)
-                end
-            elseif f == SF.SetTimeIfLoudOrStealth then
-                if managers.groupai then
-                    if managers.groupai:state():whisper_mode() then -- Stealth
-                        trigger.time = trigger.data.no
-                    else -- Loud
-                        trigger.time = trigger.data.yes
-                    end
-                    self:CheckCondition(trigger)
-                end
-            elseif f == SF.AddTimeByPreplanning then
-                local t = 0
-                if managers.preplanning:IsAssetBought(trigger.data.id) then
-                    t = trigger.data.yes
-                else
-                    t = trigger.data.no
-                end
-                trigger.time = trigger.time + t
-                self:CheckCondition(trigger)
-            elseif f == SF.ShowWaypoint then
-                managers.hud:add_waypoint(trigger.id, trigger.data)
-            elseif f == SF.ShowEHIWaypoint then
-                managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
-            elseif f == SF.DecreaseProgressMax then
-                managers.ehi_tracker:DecreaseTrackerProgressMax(trigger.id, trigger.max)
-            elseif f == SF.DecreaseProgress then
-                managers.ehi_tracker:DecreaseTrackerProgress(trigger.id, trigger.progress)
-            elseif f == SF.Debug then
-                managers.hud:Debug(id)
-            elseif f == SF.CustomCode then
-                trigger.f(trigger.arg)
-            elseif f == SF.CustomCodeIfEnabled then
-                if enabled then
-                    trigger.f(trigger.arg)
-                end
-            elseif f == SF.CustomCodeDelayed then
-                self:DelayCall(tostring(id), trigger.t or 0, trigger.f)
-
-            elseif f >= SF.CustomSF then
-                self.SFF[f](trigger, element, enabled)
-            end
-        else
-            self:CheckCondition(trigger)
-        end
-        if trigger.trigger_times and trigger.trigger_times > 0 then
-            trigger.trigger_times = trigger.trigger_times - 1
-            if trigger.trigger_times == 0 then
-                self:UnhookTrigger(id)
-            end
-        end
-    end
-end
-
----Provided function should accept these parameters in this order: "trigger", "element", "enabled"
+---Provided function should accept these parameters in this order: "self" (EHIManager), "trigger", "element", "enabled"
 ---@param id number
 ---@param f function
 function EHI:RegisterCustomSpecialFunction(id, f)
-    self.SFF[id] = f
+    managers.ehi_manager:RegisterCustomSpecialFunction(id, f)
 end
 
 ---Unregisters custom special function
 ---@param id number
 function EHI:UnregisterCustomSpecialFunction(id)
-    self.SFF[id] = nil
+    managers.ehi_manager:UnregisterCustomSpecialFunction(id)
 end
 
 function EHI:GetFreeCustomSpecialFunctionID()
@@ -1656,132 +1174,8 @@ function EHI:GetFreeCustomSpecialFunctionID()
     return id
 end
 
-function EHI:InitElements()
-    self:HookElements(triggers)
-    if self:IsClient() then
-        return
-    end
-    local scripts = managers.mission._scripts or {}
-    for id, _ in pairs(base_delay_triggers) do
-        for _, script in pairs(scripts) do
-            local element = script:element(id)
-            if element then
-                self._base_delay[id] = element._calc_base_delay
-                element._calc_base_delay = function(e, ...)
-                    local delay = self._base_delay[e._id](e, ...)
-                    self:AddTrackerAndSync(e._id, delay)
-                    return delay
-                end
-            end
-        end
-    end
-    for id, _ in pairs(element_delay_triggers) do
-        for _, script in pairs(scripts) do
-            local element = script:element(id)
-            if element then
-                self._element_delay[id] = element._calc_element_delay
-                element._calc_element_delay = function(e, params, ...)
-                    local delay = self._element_delay[e._id](e, params, ...)
-                    if element_delay_triggers[e._id][params.id] then
-                        if host_triggers[params.id] then
-                            local trigger = host_triggers[params.id]
-                            if trigger.remove_trigger_when_executed then
-                                self:AddTrackerAndSync(params.id, delay)
-                                element_delay_triggers[e._id][params.id] = nil
-                            elseif trigger.set_time_when_tracker_exists then
-                                if managers.ehi_tracker:TrackerExists(trigger.id) then
-                                    managers.ehi_tracker:SetTrackerTimeNoAnim(trigger.id, delay)
-                                    self:Sync(self.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
-                                else
-                                    self:AddTrackerAndSync(params.id, delay)
-                                end
-                            else
-                                self:AddTrackerAndSync(params.id, delay)
-                            end
-                        else
-                            self:AddTrackerAndSync(params.id, delay)
-                        end
-                    end
-                    return delay
-                end
-            end
-        end
-    end
-end
-
 function EHI:HookElements(elements_to_hook)
-    local function Client(element, ...)
-        self:Trigger(element._id, element, true)
-    end
-    local function Host(element, ...)
-        self:Trigger(element._id, element, element._values.enabled)
-    end
-    local client = self:IsClient()
-    local func = client and self.ClientElement or self.HostElement
-    local f = client and Client or Host
-    local scripts = managers.mission._scripts or {}
-    for id, _ in pairs(elements_to_hook) do
-        if id >= 100000 and id <= 999999 then
-            for _, script in pairs(scripts) do
-                local element = script:element(id)
-                if element then
-                    self:HookElement(element, func, id, f)
-                elseif client then
-                    --[[
-                        On client, the element was not found
-                        This is because the element is from an instance that is mission placed
-                        Mission Placed instances are preloaded and all elements are not cached until
-                        ElementInstancePoint is called
-                        These instances are synced when you join
-                        Delay the hook until the sync is complete (see: EHI:SyncLoad())
-                    ]]
-                    self.HookOnLoad[id] = true
-                end
-            end
-        end
-    end
-end
-
-function EHI:SyncLoad()
-    for _, trigger in pairs(triggers) do
-        if trigger.special_function == SF.ShowWaypoint and trigger.data and not trigger.data.position then
-            if trigger.data.position_by_element then
-                self:AddPositionFromElement(trigger.data, trigger.id, true)
-            elseif trigger.data.position_by_unit then
-                self:AddPositionFromUnit(trigger.data, trigger.id, true)
-            end
-        elseif trigger.waypoint and not trigger.waypoint.position then
-            if trigger.waypoint.position_by_element then
-                self:AddPositionFromElement(trigger.waypoint, trigger.id, true)
-            elseif trigger.waypoint.position_by_unit then
-                self:AddPositionFromUnit(trigger.waypoint, trigger.id, true)
-            end
-        end
-    end
-    for id, _ in pairs(self.HookOnLoad) do
-        local trigger = triggers[id]
-        if trigger then
-            if trigger.special_function == SF.ShowWaypoint and trigger.data then
-                if trigger.data.position_by_element then
-                    trigger.id = trigger.id or trigger.data.position_by_element
-                    self:AddPositionFromElement(trigger.data, trigger.id, true)
-                elseif trigger.data.position_by_unit then
-                    self:AddPositionFromUnit(trigger.data, trigger.id, true)
-                end
-            elseif trigger.waypoint then
-                if trigger.waypoint.position_by_element then
-                    self:AddPositionFromElement(trigger.waypoint, trigger.id, true)
-                elseif trigger.waypoint.position_by_unit then
-                    self:AddPositionFromUnit(trigger.waypoint, trigger.id, true)
-                end
-            end
-        end
-    end
-    self:HookElements(self.HookOnLoad)
-    self.HookOnLoad = nil
-    self:DisableWaypoints(self.DisableOnLoad)
-    self:DisableWaypointsOnInit()
-    self.DisableOnLoad = nil
+    managers.ehi_manager:HookElements(elements_to_hook)
 end
 
 ---@param params table
@@ -1804,7 +1198,11 @@ function EHI:AddAssaultDelay(params)
     for key, value in pairs(params) do
         tbl[key] = value
     end
-    tbl.time = tbl.time or 30
+    if params.random_time then
+        tbl.additional_time = tbl.additional_time or 30
+    else
+        tbl.time = tbl.time or 30
+    end
     tbl.id = id
     tbl.class = class
     return tbl
@@ -1870,186 +1268,11 @@ end
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
 function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-    new_triggers = new_triggers or {}
-    self:PreloadTrackers(new_triggers.preload or {}, trigger_id_all or "Trigger", trigger_icons_all or {})
-    local function ParseParams(data, id)
-        if type(data.alarm_callback) == "function" then
-            self:AddOnAlarmCallback(data.alarm_callback)
-        end
-        if type(data.load_sync) == "function" then
-            self:AddLoadSyncFunction(data.load_sync)
-        end
-        if data.failed_on_alarm then
-            self:AddOnAlarmCallback(function()
-                managers.ehi_tracker:SetAchievementFailed(id)
-            end)
-        end
-        if data.mission_end_callback then
-            self:AddCallback(self.CallbackMessage.MissionEnd, function(success)
-                if success then
-                    managers.ehi_tracker:SetAchievementComplete(id, true)
-                else
-                    managers.ehi_tracker:SetAchievementFailed(id)
-                end
-            end)
-        end
-    end
-    self:ParseOtherTriggers(new_triggers.other or {}, trigger_id_all or "Trigger", trigger_icons_all)
-    local trophy = new_triggers.trophy
-    if self:GetUnlockableAndOption("show_trophies") and trophy and next(trophy) then
-        for id, data in pairs(trophy) do
-            if data.difficulty_pass ~= false and self:IsTrophyLocked(id) then
-                for _, element in pairs(data.elements or {}) do
-                    if element.class and self.TrophyTrackers[element.class] and not data.icons then
-                        data.icons = { self.Icons.Trophy }
-                    end
-                end
-                self:AddTriggers2(data.elements or {}, nil, id)
-                ParseParams(data, id)
-            end
-        end
-    end
-    local daily = new_triggers.daily
-    if self:GetUnlockableAndOption("show_dailies") and daily and next(daily) then
-        for id, data in pairs(daily) do
-            if data.difficulty_pass ~= false and self:IsDailyAvailable(id) then
-                for _, element in pairs(data.elements or {}) do
-                    if element.class and self.DailyTrackers[element.class] and not data.icons then
-                        data.icons = { self.Icons.Trophy }
-                    end
-                end
-                self:AddTriggers2(data.elements or {}, nil, id)
-                ParseParams(data, id)
-            end
-        end
-    end
-    local achievement_triggers = new_triggers.achievement
-    if self:ShowMissionAchievements() and achievement_triggers and next(achievement_triggers) then
-        local function Parser(data, id)
-            if data.achievement_counter then
-                local params = data.achievement_counter
-                params.achievement = id
-                self:ShowAchievementLootCounterNoCheck(params)
-            else
-                for _, element in pairs(data.elements or {}) do
-                    if element.class and self.AchievementTrackers[element.class] then
-                        element.beardlib = data.beardlib
-                        if not element.icons then
-                            if data.beardlib then
-                                element.icons = { "ehi_" .. id }
-                            else
-                                element.icons = self:GetAchievementIcon(id)
-                            end
-                        end
-                    end
-                end
-                self:AddTriggers2(data.elements or {}, nil, id)
-                ParseParams(data, id)
-            end
-        end
-        local function IsAchievementLocked(data, id)
-            if data.beardlib then
-                return not self:IsBeardLibAchievementUnlocked(data.package, id)
-            else
-                return self:IsAchievementLocked(id)
-            end
-        end
-        for id, data in pairs(achievement_triggers) do
-            if data.difficulty_pass ~= false and IsAchievementLocked(data, id) then
-                Parser(data, id)
-            elseif type(data.cleanup_callback) == "function" then
-                data.cleanup_callback()
-            end
-        end
-    end
-    self:ParseMissionTriggers(new_triggers.mission or {}, trigger_id_all, trigger_icons_all)
-    --self:PrintTable(triggers)
-end
-
-function EHI:ParseOtherTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-    for id, data in pairs(new_triggers) do
-        -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
-        if data.condition == false then
-            new_triggers[id] = nil
-        end
-    end
-    self:AddTriggers(new_triggers, trigger_id_all or "Trigger", trigger_icons_all)
+    managers.ehi_manager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
 end
 
 function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-    if not self:GetOption("show_mission_trackers") then
-        for id, data in pairs(new_triggers) do
-            if data.special_function and self.SyncFunctions[data.special_function] then
-                self:AddTriggers2({ [id] = data }, nil, trigger_id_all or "Trigger", trigger_icons_all)
-            end
-        end
-        return
-    end
-    local host = self:IsHost()
-    for id, data in pairs(new_triggers) do
-        -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
-        if data.condition == false then
-            new_triggers[id] = nil
-        else
-            data.condition = nil
-            -- Mark every tracker, that has random time, as inaccurate
-            if data.random_time then
-                if not data.class then
-                    data.class = self.Trackers.Inaccurate
-                elseif data.class ~= self.Trackers.InaccuratePausable and data.class == self.Trackers.Warning then
-                    data.class = self.Trackers.InaccurateWarning
-                end
-            end
-            -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
-            if data.special_function == SF.ShowWaypoint then
-                data.data.distance = true
-                data.data.state = "sneak_present"
-                data.data.present_timer = 0
-                data.data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
-                if data.data.position_by_element then
-                    data.id = data.id or data.data.position_by_element
-                    self:AddPositionFromElement(data.data, data.id, host)
-                elseif data.data.position_by_unit then
-                    self:AddPositionFromUnit(data.data, data.id, host)
-                end
-                if data.data.icon then
-                    data.data.icon = self.WaypointIconRedirect[data.data.icon] or data.data.icon
-                end
-            end
-            -- Fill the rest table properties for EHI Waypoints
-            if data.waypoint then
-                data.waypoint.time = data.waypoint.time or data.time
-                if not data.waypoint.icon then
-                    local icon
-                    if data.icons then
-                        icon = data.icons[1] and data.icons[1].icon or data.icons[1]
-                    elseif trigger_icons_all then
-                        icon = trigger_icons_all[1] and trigger_icons_all[1].icon or trigger_icons_all[1]
-                    end
-                    if icon then
-                        data.waypoint.icon = self.WaypointIconRedirect[icon] or icon
-                    end
-                end
-                if data.waypoint.position_by_element then
-                    self:AddPositionFromElement(data.waypoint, data.id, host)
-                elseif data.waypoint.position_by_unit then
-                    self:AddPositionFromUnit(data.waypoint, data.id, host)
-                end
-            end
-        end
-    end
-    self:AddTriggers2(new_triggers, nil, trigger_id_all or "Trigger", trigger_icons_all)
-end
-
----@param preload table
----@param trigger_id_all string?
----@param trigger_icons_all table?
-function EHI:PreloadTrackers(preload, trigger_id_all, trigger_icons_all)
-    for _, params in ipairs(preload) do
-        params.id = params.id or trigger_id_all
-        params.icons = params.icons or trigger_icons_all
-        managers.ehi_tracker:PreloadTracker(params)
-    end
+    managers.ehi_manager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all)
 end
 
 function EHI:ShouldDisableWaypoints()
@@ -2200,7 +1423,7 @@ function EHI:HookLootCounter(no_sync_load)
             self:EHIReportProgress("LootCounter", BagsOnly)
         end
         self:AddCallback(self.CallbackMessage.LootSecured, Callback)
-        -- If sync load is disabled, the counter needs to be updated via EHICommon:AddLoadSyncFunction() to properly show number of secured loot
+        -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
         if not no_sync_load then
             self:AddCallback(self.CallbackMessage.LootLoadSync, Callback)
@@ -2303,9 +1526,6 @@ end
 
 ---@param f function
 function EHI:AddLoadSyncFunction(f)
-    if self:IsHost() then
-        return
-    end
     managers.ehi_manager:AddLoadSyncFunction(f)
 end
 
@@ -2524,42 +1744,20 @@ function EHI:ClientCopyTrigger(trigger, params)
     return tbl
 end
 
+---@param type string Allowed types: `ammo_bag`
+---@param pos table Table with positions that should be ignored
+function EHI:SetDeployableIgnorePos(type, pos)
+    if not type then
+        self:Log("[EHI:SetDeployableIgnorePos()] Type is nil")
+        return
+    end
+    if type == "ammo_bag" and AmmoBagBase.SetIgnoredPos then
+        AmmoBagBase.SetIgnoredPos(pos)
+    end
+end
+
 Load()
 show_achievement = EHI:ShowMissionAchievements()
-
-if EHI:GetWaypointOption("show_waypoints_only") then
-    ---@param trigger table
-    function EHI:AddTracker(trigger)
-        if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
-            if not trigger.run then
-                trigger.time = self:GetTime(trigger)
-            end
-            trigger.waypoint_f(trigger)
-        elseif trigger.waypoint then
-            trigger.waypoint.time = self:GetTime(trigger)
-            managers.ehi_waypoint:AddWaypoint(trigger.id, trigger.waypoint)
-        else
-            AddTracker(trigger)
-        end
-    end
-end
-
-if not EHI:GetOption("show_mission_trackers") then
-    function EHI:AddTrackerAndSync(id, delay)
-        managers.ehi_tracker:Sync(id, delay)
-    end
-
-    GetElementTimer = function(self, trigger, id)
-        if self:IsHost() then
-            local element = managers.mission:get_element_by_id(trigger.element)
-            if element then
-                local t = (element._timer or 0) + (trigger.additional_time or 0)
-                managers.ehi_tracker:Sync(id, t)
-            end
-        end
-    end
-end
-
 if EHI:GetUnlockableOption("hide_unlocked_achievements") then
     local G = Global
     function EHI:IsAchievementUnlocked(achievement)
@@ -2708,14 +1906,4 @@ function EHI:PrintTable(tbl, ...)
         end
         _G.PrintTable(tbl)
     end
-end
-
-if Global.load_level and EHI:IsClient() then
-    -- Add network hook when a level is loaded to prevent stupid people sending tracker data while in menu, because EHITrackerManager does not exist
-    Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id, data)
-        if id == EHI.SyncMessages.EHISyncAddTracker then
-            local tbl = LuaNetworking:StringToTable(data)
-            EHI:AddTrackerSynced(tonumber(tbl.id), tonumber(tbl.delay))
-        end
-    end)
 end

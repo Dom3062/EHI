@@ -42,7 +42,7 @@ local element_sync_triggers =
 local random_car = { time = 18, id = "RandomCar", icons = { Icon.Heli, Icon.Goto }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" } }
 local caddilac = { time = 18, id = "Caddilac", icons = { Icon.Heli, Icon.Goto } }
 local triggers = {
-    [100103] = { time = 15 + 5, random_time = 10, id = "BileArrival", icons = { Icon.Heli } },
+    [100103] = { additional_time = 15 + 5, random_time = 10, id = "BileArrival", icons = { Icon.Heli } },
 
     [100238] = random_car,
     [100249] = random_car,
@@ -67,7 +67,7 @@ local triggers = {
     [102815] = { id = "Safe", special_function = SF.PauseTracker }
 }
 if EHI:IsClient() then
-    triggers[100216] = { time = 662/30, random_time = 10, id = "EscapeBoat", icons = Icon.BoatEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100216] = { additional_time = 662/30, random_time = 10, id = "EscapeBoat", icons = Icon.BoatEscape, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
