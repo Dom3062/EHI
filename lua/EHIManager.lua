@@ -507,7 +507,7 @@ function EHIManager:InitElements()
                                 elseif trigger.set_time_when_tracker_exists then
                                     if self._trackers:TrackerExists(trigger.id) then
                                         self._trackers:SetTrackerTimeNoAnim(trigger.id, delay)
-                                        EHI:Sync(self.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
+                                        EHI:Sync(EHI.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
                                     else
                                         self:AddTrackerAndSync(params.id, delay)
                                     end

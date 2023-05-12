@@ -1,3 +1,6 @@
+r151 (12. 05. 2023):
+Cook Off: Fixed a crash after putting first ingredient
+
 r150 (11. 05. 2023):
 Code reorganization
 Fixed an issue where random time is increased everytime the tracker/waypoint is created
