@@ -48,7 +48,7 @@ local tbl =
 {
     --levels/instances/unique/hox_estate_panic_room
     --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
-    [EHI:GetInstanceUnitID(100068, 2585)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100089, 2585) },
+    [EHI:GetInstanceUnitID(100068, 2585)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100089, 2585) },
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
     [EHI:GetInstanceUnitID(100090, 2585)] = { icons = { Icon.Vault }, remove_on_pause = true },
 

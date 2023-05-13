@@ -63,8 +63,8 @@ EHI:ParseTriggers({
 local tbl =
 {
     --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
-    [104674] = { remove_vanilla_waypoint = true, waypoint_id = 102633 },
-    [104466] = { remove_vanilla_waypoint = true, waypoint_id = 102752 }
+    [104674] = { remove_vanilla_waypoint = 102633 },
+    [104466] = { remove_vanilla_waypoint = 102752 }
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({

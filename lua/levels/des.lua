@@ -6,9 +6,6 @@ local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [108538] = { time = 60, id = "Gas", icons = { Icon.Teargas } },
 
-    [103025] = { id = 1030251, special_function = SF.Trigger, trigger_times = 1 },
-    [1030251] = { time = 3, id = "des_11", class = TT.Achievement, trigger_times = 1 },
-    [102822] = { id = "des_11", special_function = SF.SetAchievementComplete },
     [100716] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire } },
 
     [100423] = { time = 60 + 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 100451 } },
@@ -91,6 +88,14 @@ local achievements =
             [102486] = { special_function = SF.SetAchievementFailed }
         }
     },
+    des_11 =
+    {
+        elements =
+        {
+            [103025] = { time = 3, class = TT.Achievement, trigger_times = 1 },
+            [102822] = { special_function = SF.SetAchievementComplete }
+        }
+    },
     uno_5 =
     {
         difficulty_pass = ovk_and_up,
@@ -105,7 +110,7 @@ local achievements =
 
 local other =
 {
-    [102065] = EHI:AddAssaultDelay({ time = 2 + 30 })
+    [102065] = EHI:AddAssaultDelay({ time = 2 + 30 + 2 })
 }
 
 EHI:ParseTriggers({
@@ -126,7 +131,7 @@ local tbl =
 
     --levels/instances/unique/des/des_drill
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
-    [EHI:GetInstanceUnitID(100030, 21000)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100009, 21000) }
+    [EHI:GetInstanceUnitID(100030, 21000)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100009, 21000) }
 }
 EHI:UpdateUnits(tbl)
 EHI:ShowLootCounter({

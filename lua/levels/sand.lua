@@ -151,11 +151,11 @@ local tbl =
 {
     --levels/instances/unique/sand/sand_computer_hackable
     --units/pd2_dlc_sand/equipment/sand_interactable_hack_computer/sand_interactable_hack_computer
-    [EHI:GetInstanceUnitID(100140, 18680)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100034, 18680) },
+    [EHI:GetInstanceUnitID(100140, 18680)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100034, 18680) },
 
     --levels/instances/unique/sand/sand_swat_van_drillable
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
-    [EHI:GetInstanceUnitID(100022, 15380)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100023, 15380) },
+    [EHI:GetInstanceUnitID(100022, 15380)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100023, 15380) },
 
     --levels/instances/unique/sand/sand_computer_code_display
     --units/pd2_dlc_sand/equipment/sand_interactable_rotating_code_computer/sand_interactable_rotating_code_computer
@@ -163,11 +163,11 @@ local tbl =
 
     --levels/instances/unique/sand/sand_server_hack
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceUnitID(100037, 14280)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100017, 14280) },
+    [EHI:GetInstanceUnitID(100037, 14280)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100017, 14280) },
 
     --levels/instances/unique/sand/sand_chinese_computer_hackable
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceUnitID(100037, 15680)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100017, 15680) },
+    [EHI:GetInstanceUnitID(100037, 15680)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100017, 15680) },
 
     --levels/instances/unique/sand/sand_defibrillator
     --units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator

@@ -85,9 +85,9 @@ end
 for i = 18200, 19400, 600 do
     --levels/instances/unique/sah/sah_office
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
-    tbl[EHI:GetInstanceUnitID(100064, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100068, i) }
+    tbl[EHI:GetInstanceUnitID(100064, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100068, i) }
     --units/pd2_dlc_sah/props/sah_interactable_hack_computer/sah_interactable_hack_computer
-    tbl[EHI:GetInstanceUnitID(100168, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100084, i) }
+    tbl[EHI:GetInstanceUnitID(100168, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100084, i) }
 end
 EHI:UpdateUnits(tbl)
 local loot =

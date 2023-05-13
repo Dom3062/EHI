@@ -38,6 +38,15 @@ function EHITimerTracker:SetTimeNoAnim(time) -- No fit text function needed, the
     end
 end
 
+function EHITimerTracker:SetTimeNoFormat(t, time) -- No fit text function needed, these timers just run down
+    self._time = t
+    self._text:set_text(time)
+    if t <= 10 and self._animate_warning and not self._anim_started then
+        self._anim_started = true
+        self:AnimateColor()
+    end
+end
+
 function EHITimerTracker:SetAnimation(completion)
     self._animate_warning = true
     if completion then

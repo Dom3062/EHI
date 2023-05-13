@@ -81,10 +81,10 @@ EHI:ShowAchievementLootCounter({
 local tbl =
 {
     -- Saws
-    [102034] = { remove_vanilla_waypoint = true, waypoint_id = 102303 },
-    [102035] = { remove_vanilla_waypoint = true, waypoint_id = 102301 },
-    [102040] = { remove_vanilla_waypoint = true, waypoint_id = 101837 },
-    [102041] = { remove_vanilla_waypoint = true, waypoint_id = 101992 }
+    [102034] = { remove_vanilla_waypoint = 102303 },
+    [102035] = { remove_vanilla_waypoint = 102301 },
+    [102040] = { remove_vanilla_waypoint = 101837 },
+    [102041] = { remove_vanilla_waypoint = 101992 }
 }
 
 EHI:UpdateUnits(tbl)

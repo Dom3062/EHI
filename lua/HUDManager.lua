@@ -44,6 +44,11 @@ function HUDManager:SoftRemoveWaypoint(id)
     end
 end
 
+function HUDManager:SoftRemoveWaypoint2(id)
+    self:SoftRemoveWaypoint(id)
+    EHI:DisableElementWaypoint(id)
+end
+
 function HUDManager:RestoreWaypoint(id)
     local data = self._hud.stored_waypoints[id]
     if data then

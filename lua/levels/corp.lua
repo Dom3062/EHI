@@ -101,7 +101,7 @@ end)
 
 local tbl =
 {
-    [EHI:GetInstanceUnitID(100023, 12190)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100050, 12190) }
+    [EHI:GetInstanceUnitID(100023, 12190)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100050, 12190) }
 }
 EHI:UpdateUnits(tbl)
 

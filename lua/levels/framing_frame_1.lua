@@ -108,20 +108,14 @@ EHI:ShowLootCounter({
     end
 })
 
-local MissionDoorPositions =
+local MissionDoor =
 {
     -- Security doors
-    Vector3(-827.08, 115.886, 92.4429),
-    Vector3(-60.1138, 802.08, 92.4429),
-    Vector3(-140.886, -852.08, 92.4429)
+    [Vector3(-827.08, 115.886, 92.4429)] = 103191,
+    [Vector3(-60.1138, 802.08, 92.4429)] = 103188,
+    [Vector3(-140.886, -852.08, 92.4429)] = 103202
 }
-local MissionDoorIndex =
-{
-    103191,
-    103188,
-    103202
-}
-EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:SetMissionDoorPosAndIndex(MissionDoor)
 local xp_override =
 {
     params =

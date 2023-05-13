@@ -75,6 +75,9 @@ function EHIWaypointManager:AddWaypoint(id, params)
         self._waypoints_to_update[id] = w
     end
     self._waypoints[id] = w
+    if params.remove_vanilla_waypoint then
+        self._hud:SoftRemoveWaypoint2(params.remove_vanilla_waypoint)
+    end
 end
 
 function EHIWaypointManager:RemoveWaypoint(id)

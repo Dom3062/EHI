@@ -9,10 +9,6 @@ _G.EHI =
 
     _hooks = {},
 
-    _sync_triggers = {},
-
-    HookOnLoad = {},
-
     XPElementLevel =
     {
         jewelry_store = true,
@@ -71,9 +67,6 @@ _G.EHI =
         AssaultModeChanged = "AssaultModeChanged",
     },
 
-    _base_delay = {},
-    _element_delay = {},
-
     SyncMessages =
     {
         EHISyncAddTracker = "EHISyncAddTracker"
@@ -131,8 +124,6 @@ _G.EHI =
         -- Don't use it directly! Instead, call "EHI:GetFreeCustomSpecialFunctionID()" and "EHI:RegisterCustomSpecialFunction()" respectively
         CustomSF = 100000
     },
-
-    SFF = {},
 
     ConditionFunctions =
     {
@@ -1564,7 +1555,7 @@ function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_cont
         local computed_id = self:GetInstanceElementID(id, instance_start_index, instance_continent_index)
         new_tbl[computed_id] = deep_clone(data)
         if new_tbl[computed_id].remove_vanilla_waypoint then
-            new_tbl[computed_id].waypoint_id = self:GetInstanceElementID(new_tbl[computed_id].waypoint_id, instance_start_index, instance_continent_index)
+            new_tbl[computed_id].remove_vanilla_waypoint = self:GetInstanceElementID(new_tbl[computed_id].remove_vanilla_waypoint, instance_start_index, instance_continent_index)
         end
         new_tbl[computed_id].base_index = id
     end
@@ -1574,11 +1565,10 @@ function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_cont
     end
 end
 
----@param pos table
----@param index table
-function EHI:SetMissionDoorPosAndIndex(pos, index)
+---@param tbl table
+function EHI:SetMissionDoorPosAndIndex(tbl)
     if TimerGui.SetMissionDoorPosAndIndex then
-        TimerGui.SetMissionDoorPosAndIndex(pos, index)
+        TimerGui.SetMissionDoorPosAndIndex(tbl)
     end
 end
 
@@ -1706,21 +1696,6 @@ end
 function EHI:AchievementClass(c, id)
     self.AchievementTrackers[id] = true
     return class(c)
-end
-
----@param tracker string Filename without extension
-function EHI:LoadTrackerInVR(tracker)
-    if self:IsVR() then
-        if self._cache.TrackersInit_VR then
-            dofile(self.LuaPath .. "trackers/" .. tracker .. ".lua")
-        else
-            self:AddCallback("TrackersInit_VR", function()
-                dofile(self.LuaPath .. "trackers/" .. tracker .. ".lua")
-            end)
-        end
-    else
-        dofile(self.LuaPath .. "trackers/" .. tracker .. ".lua")
-    end
 end
 
 ---@param trigger table|nil

@@ -2,25 +2,28 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local WT = EHI.Waypoints
 local triggers = {
-    [101392] = { time = 120, id = "FireEvidence", icons = { Icon.Fire }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [101392] = { time = 120, id = "FireEvidence", icons = { Icon.Fire }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = Icon.Defend, position_by_element = EHI:GetInstanceElementID(100024, 18900), remove_vanilla_waypoint = EHI:GetInstanceElementID(100024, 18900) } },
     [101588] = { id = "FireEvidence", special_function = SF.PauseTracker },
 
-    [101460] = { time = 18, id = "DoorBreach", icons = { "pd2_door" }, waypoint = { position_by_element = 103837 } },
+    [101460] = { time = 18, id = "DoorBreach", icons = { "pd2_door" }, waypoint = { position_by_element = 103837, remove_vanilla_waypoint = 103837 } },
 
-    [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Defend, position_by_element = 101391 } }
+    [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Defend, position_by_element = 101391, remove_vanilla_waypoint = 101391 } }
 }
 local function waypoint(trigger)
-    local pos = EHI:GetInstanceElementPosition(trigger.element_id) or Vector3()
+    local pos = EHI:GetInstanceElementPosition(trigger.element_ids.defend) or Vector3()
     managers.ehi_waypoint:AddWaypoint(trigger.id, {
         time = trigger.time,
         icon = Icon.PCHack,
         position = pos,
-        class = EHI.Waypoints.Pausable
+        class = WT.Pausable
     })
+    managers.hud:SoftRemoveWaypoint2(trigger.element_ids.defend)
+    managers.hud:SoftRemoveWaypoint2(trigger.element_ids.fix)
 end
 for _, index in ipairs({ 5300, 6300, 7300 }) do
-    triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint_f = waypoint, element_id = EHI:GetInstanceElementID(100055, index) }
+    triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint_f = waypoint, element_ids = { defend = EHI:GetInstanceElementID(100055, index), fix = EHI:GetInstanceElementID(100056, index) } }
     triggers[EHI:GetInstanceElementID(100026, index)] = { id = "ArmoryHack", special_function = SF.PauseTracker }
 end
 if EHI:IsClient() then
@@ -36,14 +39,6 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100079, 14300)] = true -- Fix
     -- Why they use 2 instances for one objective ???
 }
-if EHI:MissionTrackersAndWaypointEnabled() then
-    DisableWaypoints[103837] = true -- Door breach
-    DisableWaypoints[101391] = true -- Defend car
-    for _, index in ipairs({ 5300, 6300, 7300 }) do
-        DisableWaypoints[EHI:GetInstanceElementID(100055, index)] = true -- Defend
-        DisableWaypoints[EHI:GetInstanceElementID(100056, index)] = true -- Fix
-    end
-end
 
 local other =
 {

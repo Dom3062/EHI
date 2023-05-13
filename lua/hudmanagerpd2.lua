@@ -177,7 +177,6 @@ if EHI:IsClient() and level_id ~= "hvh" then
 end
 
 if EHI:CombineAssaultDelayAndAssaultTime() then
-    EHI:LoadTrackerInVR("EHIAssaultTracker")
     local SyncFunction = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation"
     local anticipation_delay = 30 -- Get it from tweak_data
     local function VerifyHostageHesitationDelay()
@@ -196,7 +195,7 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
     function HUDManager:sync_start_assault(...)
         original.sync_start_assault(self, ...)
         EHI:Unhook("Assault_set_control_info")
-        if EHI._cache.EndlessAssault then
+        if EHI._cache.EndlessAssault or self._ehi_manual_block then
             return
         elseif self.ehi:TrackerExists("Assault") then
             self.ehi:CallFunction("Assault", "AssaultStart", EHI._cache.diff or 0)
@@ -212,7 +211,9 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
     original.sync_end_assault = HUDManager.sync_end_assault
     function HUDManager:sync_end_assault(...)
         original.sync_end_assault(self, ...)
-        if is_skirmish then
+        if self._ehi_manual_block then
+            return
+        elseif is_skirmish then
             self.ehi:RemoveTracker("Assault")
         elseif self.ehi:TrackerExists("Assault") then
             self.ehi:CallFunction("Assault", "AssaultEnd", EHI._cache.diff or 0)
@@ -230,7 +231,6 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
     VerifyHostageHesitationDelay()
 else
     if EHI:AssaultDelayTrackerIsEnabled() then
-        EHI:LoadTrackerInVR("EHIAssaultDelayTracker")
         local SyncFunction = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation"
         local anticipation_delay = 30 -- Get it from tweak_data
         local function VerifyHostageHesitationDelay()
@@ -253,7 +253,7 @@ else
         original.sync_end_assault = HUDManager.sync_end_assault
         function HUDManager:sync_end_assault(...)
             original.sync_end_assault(self, ...)
-            if EHI._cache.diff and EHI._cache.diff > 0 then
+            if EHI._cache.diff and EHI._cache.diff > 0 and not self._ehi_manual_block then
                 self.ehi:AddTracker({
                     id = "AssaultDelay",
                     diff = EHI._cache.diff,
@@ -266,14 +266,13 @@ else
         VerifyHostageHesitationDelay()
     end
     if EHI:GetOption("show_assault_time_tracker") then
-        EHI:LoadTrackerInVR("EHIAssaultTimeTracker")
         local start_original = HUDManager.sync_start_assault
         local is_skirmish = tweak_data.levels:IsLevelSkirmish()
         function HUDManager:sync_start_assault(...)
             start_original(self, ...)
-            --[[if self._ehi_assault_in_progress then
+            if --[[self._ehi_assault_in_progress or]] self._ehi_manual_block then
                 return
-            else]]if (EHI._cache.diff and EHI._cache.diff > 0 and not EHI._cache.EndlessAssault) or is_skirmish then
+            elseif (EHI._cache.diff and EHI._cache.diff > 0 and not EHI._cache.EndlessAssault) or is_skirmish then
                 self.ehi:AddTracker({
                     id = "AssaultTime",
                     diff = EHI._cache.diff or 0,
@@ -289,6 +288,15 @@ else
             EHI._cache.EndlessAssault = nil
             --self._ehi_assault_in_progress = nil
         end
+    end
+end
+
+function HUDManager:SetAssaultTrackerManualBlock(block)
+    self._ehi_manual_block = block
+    if block then
+        self.ehi:CallFunction("Assault", "PoliceActivityBlocked")
+        self.ehi:CallFunction("AssaultDelay", "PoliceActivityBlocked")
+        self.ehi:CallFunction("AssaultTime", "PoliceActivityBlocked")
     end
 end
 

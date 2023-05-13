@@ -57,26 +57,17 @@ for i = 0, 500, 100 do
 end
 EHI:UpdateUnits(tbl)
 
-local MissionDoorPositions =
+local MissionDoor =
 {
     -- Vaults
-    Vector3(-150, -1100, 685),
-    Vector3(-1750, -1200, 685),
-    Vector3(750, -1200, 685),
-    Vector3(2350, -1100, 685),
-    Vector3(-2650, -1100, 685),
-    Vector3(3250, -1200, 685)
+    [Vector3(-150, -1100, 685)] = 100835,
+    [Vector3(-1750, -1200, 685)] = 100253,
+    [Vector3(750, -1200, 685)] = 100838,
+    [Vector3(2350, -1100, 685)] = 100840,
+    [Vector3(-2650, -1100, 685)] = 102288,
+    [Vector3(3250, -1200, 685)] = 102593
 }
-local MissionDoorIndex =
-{
-    100835,
-    100253,
-    100838,
-    100840,
-    102288,
-    102593
-}
-EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:SetMissionDoorPosAndIndex(MissionDoor)
 EHI:AddXPBreakdown({
     objective =
     {

@@ -63,7 +63,7 @@ EHI:ShowLootCounter({ max = 9 })
 local tbl =
 {
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small/001 (Bunker)
-    [101086] = { remove_vanilla_waypoint = true, waypoint_id = 101562, child_units = { 100776, 101226, 101469, 101472, 101473 } },
+    [101086] = { remove_vanilla_waypoint = 101562, child_units = { 100776, 101226, 101469, 101472, 101473 } },
 
     -- Inside the bunker
     -- Grenades
@@ -76,22 +76,16 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
-local MissionDoorPositions =
+local MissionDoor =
 {
     -- Workshop
-    Vector3(-3798.92, -1094.9, -6.52779),
+    [Vector3(-3798.92, -1094.9, -6.52779)] = 101580,
 
     -- Safe with a bike mask
-    Vector3(1570.02, -419.693, 185.724),
-    Vector3(1570.02, -419.693, 585.724)
+    [Vector3(1570.02, -419.693, 185.724)] = EHI:GetInstanceElementID(100007, 4850),
+    [Vector3(1570.02, -419.693, 585.724)] = EHI:GetInstanceElementID(100007, 5350)
 }
-local MissionDoorIndex =
-{
-    101580,
-    EHI:GetInstanceElementID(100007, 4850),
-    EHI:GetInstanceElementID(100007, 5350)
-}
-EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:SetMissionDoorPosAndIndex(MissionDoor)
 EHI:AddXPBreakdown({
     objective =
     {

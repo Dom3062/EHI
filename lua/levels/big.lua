@@ -68,7 +68,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard),
         elements =
         {
-            [1] = { time = 720, id = "bigbank_4", class = TT.Achievement },
+            [1] = { time = 720, class = TT.Achievement },
             [2] = { special_function = SF.RemoveTrigger, data = { 100107, 106140, 106150 } },
             [100107] = bigbank_4,
             [106140] = bigbank_4,
@@ -121,10 +121,10 @@ local tbl =
     [104671] = { icons = { Icon.Wait } },
 
     --units/payday2/equipment/gen_interactable_lance_huge/gen_interactable_lance_huge
-    [105318] = { remove_vanilla_waypoint = true, waypoint_id = 103700 },
-    [105319] = { remove_vanilla_waypoint = true, waypoint_id = 103702 },
-    [105320] = { remove_vanilla_waypoint = true, waypoint_id = 103704 },
-    [105321] = { remove_vanilla_waypoint = true, waypoint_id = 103705 },
+    [105318] = { remove_vanilla_waypoint = 103700 },
+    [105319] = { remove_vanilla_waypoint = 103702 },
+    [105320] = { remove_vanilla_waypoint = 103704 },
+    [105321] = { remove_vanilla_waypoint = 103705 },
 
     --units/payday2/props/gen_prop_construction_crane/gen_prop_construction_crane_arm
     [105111] = { f = function(id, unit_data, unit)
@@ -144,30 +144,20 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
-local MissionDoorPositions =
+local MissionDoor =
 {
     -- Server Room
-    Vector3(733.114, 1096.92, -907.557),
-    Vector3(1419.89, -1897.92, -907.557),
-    Vector3(402.08, -1266.89, -507.56),
+    [Vector3(733.114, 1096.92, -907.557)] = { w_id = 103457, restore = true, unit_id = 104582 },
+    [Vector3(1419.89, -1897.92, -907.557)] = { w_id = 103461, restore = true, unit_id = 104584 },
+    [Vector3(402.08, -1266.89, -507.56)] = { w_id = 103465, restore = true, unit_id = 104585 },
 
     -- Roof
-    Vector3(503.08, 1067.11, 327.432),
-    Vector3(503.08, -1232.89, 327.432),
-    Vector3(3446.92, -1167.11, 327.432),
-    Vector3(3466.11, 1296.92, 327.432)
+    [Vector3(503.08, 1067.11, 327.432)] = { w_id = 101306, restore = true, unit_id = 100311 },
+    [Vector3(503.08, -1232.89, 327.432)] = { w_id = 106362, restore = true, unit_id = 103322 },
+    [Vector3(3446.92, -1167.11, 327.432)] = { w_id = 106372, restore = true, unit_id = 105317 },
+    [Vector3(3466.11, 1296.92, 327.432)] = { w_id = 106382, restore = true, unit_id = 106336 }
 }
-local MissionDoorIndex =
-{
-    { w_id = 103457, restore = true, unit_id = 104582 },
-    { w_id = 103461, restore = true, unit_id = 104584 },
-    { w_id = 103465, restore = true, unit_id = 104585 },
-    { w_id = 101306, restore = true, unit_id = 100311 },
-    { w_id = 106362, restore = true, unit_id = 103322 },
-    { w_id = 106372, restore = true, unit_id = 105317 },
-    { w_id = 106382, restore = true, unit_id = 106336 },
-}
-EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:SetMissionDoorPosAndIndex(MissionDoor)
 EHI:AddXPBreakdown({
     objective =
     {

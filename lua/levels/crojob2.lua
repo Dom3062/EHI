@@ -167,30 +167,30 @@ EHI:ShowAchievementLootCounter({
 local tbl =
 {
     -- units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
-    [107585] = { remove_vanilla_waypoint = true, waypoint_id = 102926 }, -- 1 front
-    [100690] = { remove_vanilla_waypoint = true, waypoint_id = 102926 }, -- 1 back
-    [101046] = { remove_vanilla_waypoint = true, waypoint_id = 102929 }, -- 2 front
-    [100547] = { remove_vanilla_waypoint = true, waypoint_id = 102929 }, -- 2 back
-    [100640] = { remove_vanilla_waypoint = true, waypoint_id = 102931 }, -- 3 front
-    [100542] = { remove_vanilla_waypoint = true, waypoint_id = 102931 }, -- 3 back
-    [100642] = { remove_vanilla_waypoint = true, waypoint_id = 102934 }, -- 4 front
-    [100548] = { remove_vanilla_waypoint = true, waypoint_id = 102934 }, -- 4 back
-    [100644] = { remove_vanilla_waypoint = true, waypoint_id = 102936 }, -- 5 front
-    [100641] = { remove_vanilla_waypoint = true, waypoint_id = 102936 }, -- 5 back
-    [100659] = { remove_vanilla_waypoint = true, waypoint_id = 103295 }, -- 6 front
-    [100643] = { remove_vanilla_waypoint = true, waypoint_id = 103295 }, -- 6 back
-    [100660] = { remove_vanilla_waypoint = true, waypoint_id = 102947 }, -- 7 front
-    [100645] = { remove_vanilla_waypoint = true, waypoint_id = 102947 }, -- 7 back
-    [100671] = { remove_vanilla_waypoint = true, waypoint_id = 103296 }, -- 9 front
-    [100661] = { remove_vanilla_waypoint = true, waypoint_id = 103296 }, -- 9 back
-    [100672] = { remove_vanilla_waypoint = true, waypoint_id = 103297 }, -- 10 front
-    [100663] = { remove_vanilla_waypoint = true, waypoint_id = 103297 }, -- 10 back
-    [100678] = { remove_vanilla_waypoint = true, waypoint_id = 103298 }, -- 11 front
-    [100676] = { remove_vanilla_waypoint = true, waypoint_id = 103298 }, -- 11 back
-    [100684] = { remove_vanilla_waypoint = true, waypoint_id = 103299 }, -- 12 front
-    [100682] = { remove_vanilla_waypoint = true, waypoint_id = 103299 }, -- 12 back
-    [100689] = { remove_vanilla_waypoint = true, waypoint_id = 103300 }, -- 13 front
-    [100688] = { remove_vanilla_waypoint = true, waypoint_id = 103300 }, -- 13 back
+    [107585] = { remove_vanilla_waypoint = 102926 }, -- 1 front
+    [100690] = { remove_vanilla_waypoint = 102926 }, -- 1 back
+    [101046] = { remove_vanilla_waypoint = 102929 }, -- 2 front
+    [100547] = { remove_vanilla_waypoint = 102929 }, -- 2 back
+    [100640] = { remove_vanilla_waypoint = 102931 }, -- 3 front
+    [100542] = { remove_vanilla_waypoint = 102931 }, -- 3 back
+    [100642] = { remove_vanilla_waypoint = 102934 }, -- 4 front
+    [100548] = { remove_vanilla_waypoint = 102934 }, -- 4 back
+    [100644] = { remove_vanilla_waypoint = 102936 }, -- 5 front
+    [100641] = { remove_vanilla_waypoint = 102936 }, -- 5 back
+    [100659] = { remove_vanilla_waypoint = 103295 }, -- 6 front
+    [100643] = { remove_vanilla_waypoint = 103295 }, -- 6 back
+    [100660] = { remove_vanilla_waypoint = 102947 }, -- 7 front
+    [100645] = { remove_vanilla_waypoint = 102947 }, -- 7 back
+    [100671] = { remove_vanilla_waypoint = 103296 }, -- 9 front
+    [100661] = { remove_vanilla_waypoint = 103296 }, -- 9 back
+    [100672] = { remove_vanilla_waypoint = 103297 }, -- 10 front
+    [100663] = { remove_vanilla_waypoint = 103297 }, -- 10 back
+    [100678] = { remove_vanilla_waypoint = 103298 }, -- 11 front
+    [100676] = { remove_vanilla_waypoint = 103298 }, -- 11 back
+    [100684] = { remove_vanilla_waypoint = 103299 }, -- 12 front
+    [100682] = { remove_vanilla_waypoint = 103299 }, -- 12 back
+    [100689] = { remove_vanilla_waypoint = 103300 }, -- 13 front
+    [100688] = { remove_vanilla_waypoint = 103300 }, -- 13 back
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({

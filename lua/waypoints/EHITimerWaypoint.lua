@@ -22,9 +22,21 @@ function EHITimerWaypoint:SetTime(t)
         return
     end
     EHITimerWaypoint.super.SetTime(self, t)
-    if self._time <= 10 and self._warning and not self._anim_started then
+    if t <= 10 and self._warning and not self._anim_started then
         self:AnimateColor()
         self._anim_started = true
+    end
+end
+
+function EHITimerWaypoint:SetTimeNoFormat(t, time)
+    if self._time == t then
+        return
+    end
+    self._time = t
+    self._timer:set_text(time)
+    if t <= 10 and self._animate_warning and not self._anim_started then
+        self._anim_started = true
+        self:AnimateColor()
     end
 end
 

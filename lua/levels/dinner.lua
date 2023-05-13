@@ -95,8 +95,8 @@ EHI:ShowLootCounter({ max = 10, additional_loot = pig })
 local tbl =
 {
     -- Drills
-    [100035] = { remove_vanilla_waypoint = true, waypoint_id = 103175 },
-    [100949] = { remove_vanilla_waypoint = true, waypoint_id = 103174 }
+    [100035] = { remove_vanilla_waypoint = 103175 },
+    [100949] = { remove_vanilla_waypoint = 103174 }
 }
 EHI:UpdateUnits(tbl)
 local required_bags = 2 -- Normal

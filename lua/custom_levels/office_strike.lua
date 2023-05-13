@@ -58,18 +58,13 @@ local achievements =
         difficulty_pass = OVKorAbove,
         elements =
         {
-            [1] = { max = 18, class = TT.AchievementProgress },
-            [2] = { special_function = SF.CustomCode, f = function()
-                EHI:AddAchievementToCounter({
-                    achievement = "os_clearedout",
-                    counter =
-                    {
-                        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
-                        loot_type = "money"
-                    }
-                })
-            end },
-            [200106] = { special_function = SF.Trigger, data = { 1, 2 } }
+            [200106] = { max = 18, class = TT.AchievementProgress, special_function = SF.AddAchievementToCounter, data = {
+                counter =
+                {
+                    check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+                    loot_type = "money"
+                }
+            }}
         }
     }
 }
@@ -85,25 +80,21 @@ local other =
 
 local tbl =
 {
-    [100241] = { remove_vanilla_waypoint = true, waypoint_id = 200163 },
-    [102736] = { remove_vanilla_waypoint = true, waypoint_id = 200175 },
-    [103138] = { remove_vanilla_waypoint = true, waypoint_id = 200306 },
-    [102770] = { remove_vanilla_waypoint = true, waypoint_id = 200307 },
-    [102774] = { remove_vanilla_waypoint = true, waypoint_id = 200308 },
-    [102775] = { remove_vanilla_waypoint = true, waypoint_id = 200309 },
-    [102776] = { remove_vanilla_waypoint = true, waypoint_id = 200310 }
+    [100241] = { remove_vanilla_waypoint = 200163 },
+    [102736] = { remove_vanilla_waypoint = 200175 },
+    [103138] = { remove_vanilla_waypoint = 200306 },
+    [102770] = { remove_vanilla_waypoint = 200307 },
+    [102774] = { remove_vanilla_waypoint = 200308 },
+    [102775] = { remove_vanilla_waypoint = 200309 },
+    [102776] = { remove_vanilla_waypoint = 200310 }
 }
 EHI:UpdateUnits(tbl)
 
-local MissionDoorPositions =
+local MissionDoor =
 {
-    Vector3(945.08, 3403.11, 92.4429)
+    [Vector3(945.08, 3403.11, 92.4429)] = 200160
 }
-local MissionDoorIndex =
-{
-    200160
-}
-EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:SetMissionDoorPosAndIndex(MissionDoor)
 
 EHI:ParseTriggers({
     mission = triggers,

@@ -40,7 +40,7 @@ function EHI:FinalizeUnits(tbl)
                         unit:timer_gui():SetOnAlarm()
                     end
                     if unit_data.remove_vanilla_waypoint then
-                        unit:timer_gui():RemoveVanillaWaypoint(unit_data.waypoint_id)
+                        unit:timer_gui():RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
                         if unit_data.restore_waypoint_on_done then
                             unit:timer_gui():SetRestoreVanillaWaypointOnDone()
                         end
@@ -66,7 +66,7 @@ function EHI:FinalizeUnits(tbl)
                         unit:digital_gui():SetIconOnPause(unit_data.icon_on_pause[1])
                     end
                     if unit_data.remove_vanilla_waypoint then
-                        unit:digital_gui():RemoveVanillaWaypoint(unit_data.waypoint_id)
+                        unit:digital_gui():RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
                     end
                     if unit_data.ignore_visibility then
                         unit:digital_gui():SetIgnoreVisibility()

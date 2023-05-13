@@ -31,9 +31,9 @@ EHI:ParseTriggers({ mission = triggers })
 local tbl =
 {
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [103320] = { remove_vanilla_waypoint = true, waypoint_id = 100309 },
-    [101365] = { remove_vanilla_waypoint = true, waypoint_id = 102499 },
-    [101863] = { remove_vanilla_waypoint = true, waypoint_id = 102498 }
+    [103320] = { remove_vanilla_waypoint = 100309 },
+    [101365] = { remove_vanilla_waypoint = 102499 },
+    [101863] = { remove_vanilla_waypoint = 102498 }
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({

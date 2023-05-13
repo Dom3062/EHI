@@ -71,9 +71,9 @@ EHI:ParseTriggers({ mission = triggers, other = other })
 local tbl =
 {
     --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
-    [101570] = { remove_vanilla_waypoint = true, waypoint_id = 102899 },
+    [101570] = { remove_vanilla_waypoint = 102899 },
     --units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock
-    [101936] = { icons = { Icon.Vault }, remove_on_pause = true, remove_vanilla_waypoint = true, waypoint_id = 102901 }
+    [101936] = { icons = { Icon.Vault }, remove_on_pause = true, remove_vanilla_waypoint = 102901 }
 }
 EHI:UpdateUnits(tbl)
 local xp_override =

@@ -139,11 +139,9 @@ function ZipLine:sync_set_user(unit, ...)
 end
 
 function ZipLine:destroy(...)
+    managers.ehi_manager:ForceRemove(self._ehi_key_bag_full)
+    managers.ehi_manager:ForceRemove(self._ehi_key_user_full)
     managers.ehi_tracker:ForceRemoveTracker(self._ehi_key_bag_half)
-    managers.ehi_tracker:ForceRemoveTracker(self._ehi_key_bag_full)
     managers.ehi_tracker:ForceRemoveTracker(self._ehi_key_user_half)
-    managers.ehi_tracker:ForceRemoveTracker(self._ehi_key_user_full)
-    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_bag_full)
-    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key_user_full)
     original.destroy(self, ...)
 end

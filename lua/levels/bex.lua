@@ -60,7 +60,7 @@ local achievements =
 
 local tbl =
 {
-    [100000] = { remove_vanilla_waypoint = true, waypoint_id = 100005 }
+    [100000] = { remove_vanilla_waypoint = 100005 }
 }
 EHI:UpdateInstanceUnits(tbl, 22450)
 

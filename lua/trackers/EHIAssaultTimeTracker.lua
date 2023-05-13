@@ -5,19 +5,6 @@ local Captain = Color(255, 255, 128, 0) / 255
 local Build = Color.yellow
 local Sustain = Color(255, 237, 127, 127) / 255
 local Fade = Color(255, 0, 255, 255) / 255
-if BAI then
-    Captain = BAI:GetRightColor("captain")
-    Build = BAI:GetColor("build")
-    Sustain = BAI:GetColor("sustain")
-    Fade = BAI:GetColor("fade")
-    BAI:AddEvent(BAI.EventList.Update, function()
-        Captain = BAI:GetRightColor("captain")
-        Build = BAI:GetColor("build")
-        Sustain = BAI:GetColor("sustain")
-        Fade = BAI:GetColor("fade")
-        EHIAssaultTimeTracker._forced_icons[1].color = Build
-    end)
-end
 local State =
 {
     build = 1,

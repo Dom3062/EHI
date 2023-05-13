@@ -71,7 +71,7 @@ local tbl =
 
     --levels/instances/unique/mus_security_room
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceUnitID(100041, 6950)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100050, 6950) }
+    [EHI:GetInstanceUnitID(100041, 6950)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100050, 6950) }
 }
 for i = 300, 375, 75 do
     --levels/instances/unique/mus_security_barrier
@@ -80,16 +80,12 @@ for i = 300, 375, 75 do
 end
 EHI:UpdateUnits(tbl)
 
-local MissionDoorPositions =
+local MissionDoor =
 {
     -- Diamond Room Hatch
-    Vector3(8638, 193.001, -519)
+    [Vector3(8638, 193.001, -519)] = 100841
 }
-local MissionDoorIndex =
-{
-    100841
-}
-EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:SetMissionDoorPosAndIndex(MissionDoor)
 local xp_override =
 {
     params =

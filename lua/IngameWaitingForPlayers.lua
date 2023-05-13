@@ -667,7 +667,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end)
             end
         end
-        if EHI:IsMayhemOrAbove() and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
+        if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
             local function f()
                 CreateProgressTracker("gage3_2", EHI:GetAchievementProgress("gage3_2_stats"), 6, false, true)
             end

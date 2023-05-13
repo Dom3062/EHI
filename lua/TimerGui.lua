@@ -6,19 +6,17 @@ end
 local Icon = EHI.Icons
 
 local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
--- [index] = Vector3(x, y, z)
-local MissionDoorPositions = {}
+local MissionDoor = {}
 -- Option 1:
--- [index] = "Waypoint ID"
+-- [Vector3] = "Waypoint ID"
 -- Option 2:
--- [index] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes", unit_id = "ID of the door" }
+-- [Vector3] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes", unit_id = "ID of the door" }
 ---- See MissionDoor class how to get Drill position
----- Indexes must match or it won't work
-local MissionDoorIndex = {}
 
-function TimerGui.SetMissionDoorPosAndIndex(pos, index)
-    MissionDoorPositions = pos
-    MissionDoorIndex = index
+function TimerGui.SetMissionDoorPosAndIndex(tbl)
+    for vector, value in pairs(tbl) do
+        MissionDoor[tostring(vector)] = value
+    end
 end
 
 local original =
@@ -65,8 +63,7 @@ end
 
 function TimerGui:StartTimer()
     if managers.ehi_manager:Exists(self._ehi_key) then
-        managers.ehi_tracker:SetTimerRunning(self._ehi_key)
-        managers.ehi_waypoint:SetTimerWaypointRunning(self._ehi_key)
+        managers.ehi_manager:SetTimerRunning(self._ehi_key)
     else
         local autorepair = self._unit:base()._autorepair
         -- In case the conversion fails, fallback to "self._time_left" which is a number
@@ -97,12 +94,11 @@ end
 
 function TimerGui:PostStartTimer()
     if self._unit:mission_door_device() then
-        local data = self:GetMissionDoorData()
+        local data = MissionDoor[tostring(self._unit:position())]
         if data then
-            self._remove_vanilla_waypoint = true
             if type(data) == "table" then
                 self._restore_vanilla_waypoint_on_done = data.restore
-                self._waypoint_id = data.w_id
+                self._remove_vanilla_waypoint = data.w_id
                 if data.restore and data.unit_id then
                     local restore = callback(self, self, "RestoreWaypoint")
                     local m = managers.mission
@@ -114,7 +110,7 @@ function TimerGui:PostStartTimer()
                     -- Drill finish is covered in TimerGui:_set_done()
                 end
             else -- Assume provided waypoint is a number
-                self._waypoint_id = data
+                self._remove_vanilla_waypoint = data
             end
         end
     end
@@ -123,7 +119,7 @@ end
 
 function TimerGui:HideWaypoint()
     if self._remove_vanilla_waypoint and show_waypoint then
-        self:_HideWaypoint(self._waypoint_id)
+        self:_HideWaypoint(self._remove_vanilla_waypoint)
     end
 end
 
@@ -131,19 +127,6 @@ function TimerGui:_HideWaypoint(waypoint)
     managers.hud:SoftRemoveWaypoint(waypoint)
     EHI._cache.IgnoreWaypoints[waypoint] = true
     EHI:DisableElementWaypoint(waypoint)
-end
-
-function TimerGui:GetMissionDoorData()
-    -- No clue on what I can't compare the vectors directly via == and I have to do string comparison
-    -- What changed that the comparison is not valid ? Constellation ? Game had a bad sleep ?
-    -- This should be changed in the future...
-    -- Saving grace here is that this function only runs when the drill is from MissionDoor class, which heists rarely use.
-    local pos = tostring(self._unit:position())
-    for i, p in ipairs(MissionDoorPositions) do
-        if tostring(p) == pos then
-            return MissionDoorIndex[i]
-        end
-    end
 end
 
 function TimerGui:_start(...)
@@ -161,8 +144,7 @@ if show_waypoint_only then
     end
 elseif show_waypoint then
     function TimerGui:update(...)
-        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
-        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._time_left)
+        managers.ehi_manager:UpdateTimer(self._ehi_key, self._time_left)
         original.update(self, ...)
     end
 else
@@ -186,10 +168,10 @@ function TimerGui:_set_done(...)
 end
 
 function TimerGui:RestoreWaypoint()
-    if self._restore_vanilla_waypoint_on_done and self._waypoint_id then
-        EHI._cache.IgnoreWaypoints[self._waypoint_id] = nil
-        managers.hud:RestoreWaypoint(self._waypoint_id)
-        EHI:RestoreElementWaypoint(self._waypoint_id)
+    if self._restore_vanilla_waypoint_on_done and self._remove_vanilla_waypoint then
+        EHI._cache.IgnoreWaypoints[self._remove_vanilla_waypoint] = nil
+        managers.hud:RestoreWaypoint(self._remove_vanilla_waypoint)
+        EHI:RestoreElementWaypoint(self._remove_vanilla_waypoint)
     end
 end
 
@@ -227,8 +209,7 @@ function TimerGui:destroy(...)
 end
 
 function TimerGui:RemoveTracker()
-    managers.ehi_tracker:RemoveTracker(self._ehi_key)
-    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    managers.ehi_manager:Remove(self._ehi_key)
 end
 
 function TimerGui:OnAlarm()
@@ -253,8 +234,7 @@ function TimerGui:SetOnAlarm()
 end
 
 function TimerGui:RemoveVanillaWaypoint(waypoint_id)
-    self._remove_vanilla_waypoint = true
-    self._waypoint_id = waypoint_id
+    self._remove_vanilla_waypoint = waypoint_id
     if self._started then
         self:HideWaypoint()
     end

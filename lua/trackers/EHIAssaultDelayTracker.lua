@@ -2,15 +2,6 @@ local lerp = math.lerp
 local Color = Color
 local Control = Color.white
 local Anticipation = Color(255, 186, 204, 28) / 255
-if BAI then
-    Control = BAI:GetColor("control")
-    Anticipation = BAI:GetColor("anticipation")
-    BAI:AddEvent(BAI.EventList.Update, function()
-        Control = BAI:GetColor("control")
-        Anticipation = BAI:GetColor("anticipation")
-        EHIAssaultDelayTracker._forced_icons[1].color = Control
-    end)
-end
 local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
 local tweak_values = assault_values.delay
 local hostage_values = assault_values.hostage_hesitation_delay

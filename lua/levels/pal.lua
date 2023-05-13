@@ -101,7 +101,7 @@ EHI:DisableWaypoints(DisableWaypoints)
 local tbl =
 {
     -- Drill
-    [102192] = { remove_vanilla_waypoint = true, waypoint_id = 100943 }
+    [102192] = { remove_vanilla_waypoint = 100943 }
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({

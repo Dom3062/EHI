@@ -223,5 +223,5 @@ EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(...)
 end)
 
 EHI:HookWithID(GameSetup, "load", "EHI_GameSetup_load_Post", function(...)
-    managers.ehi_manager:load()
+    EM:load()
 end)

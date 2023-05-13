@@ -12,22 +12,15 @@ if EHI:GetOption("show_mission_trackers") then
     end
 end
 
-local MissionDoorPositions =
+local MissionDoor =
 {
     -- Security doors
-    Vector3(-2357.87, -3621.42, 489.107),
-    Vector3(1221.42, -2957.87, 489.107),
-    Vector3(1342.13, -2621.42, 89.1069), --101867
-    Vector3(-2830.08, 341.886, 492.443) --102199
+    [Vector3(-2357.87, -3621.42, 489.107)] = 101899,
+    [Vector3(1221.42, -2957.87, 489.107)] = 101834,
+    [Vector3(1342.13, -2621.42, 89.1069)] = 101782, --101867
+    [Vector3(-2830.08, 341.886, 492.443)] = 101783 --102199
 }
-local MissionDoorIndex =
-{
-    101899,
-    101834,
-    101782,
-    101783
-}
-EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:SetMissionDoorPosAndIndex(MissionDoor)
 local Weapons = { 101473, 102717, 102718, 102720 }
 local OtherLoot = { 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }
 local FilterIsOk = EHI:GetFreeCustomSpecialFunctionID()

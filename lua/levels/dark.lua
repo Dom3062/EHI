@@ -90,11 +90,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100296] = { special_function = SF.Trigger, data = { 1, 2 } },
-            [1] = { max = 16, class = TT.AchievementProgress, remove_after_reaching_target = false },
-            [2] = { special_function = SF.CustomCode, f = function()
-                EHI:AddAchievementToCounter({ achievement = "voff_3" })
-            end },
+            [100296] = { max = 16, class = TT.AchievementProgress, remove_after_reaching_target = false, special_function = SF.AddAchievementToCounter },
             [100470] = { special_function = SF.SetAchievementFailed },
         }
     }

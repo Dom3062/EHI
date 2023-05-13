@@ -1042,8 +1042,14 @@ if Global.load_level then
     if EHI:GetOption("show_loot_counter") then
         dofile(path .. "EHILootTracker.lua")
     end
-    if EHI:IsVR() then
-        EHI._cache.TrackersInit_VR = true
-        EHI:CallCallbackOnce("TrackersInit_VR")
+    if EHI:CombineAssaultDelayAndAssaultTime() then
+        dofile(path .. "EHIAssaultTracker.lua")
+    else
+        if EHI:AssaultDelayTrackerIsEnabled() then
+            dofile(path .. "EHIAssaultDelayTracker.lua")
+        end
+        if EHI:GetOption("show_assault_time_tracker") then
+            dofile(path .. "EHIAssaultTimeTracker.lua")
+        end
     end
 end

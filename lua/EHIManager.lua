@@ -6,11 +6,20 @@ EHIManager.Waypoints = EHI.Waypoints
 EHIManager.SyncFunctions = EHI.SyncFunctions
 EHIManager.TriggerFunction = EHI.TriggerFunction
 EHIManager.SFF = {}
+EHIManager.HookOnLoad = {}
 function EHIManager:new(ehi_tracker, ehi_waypoints)
     self._trackers = ehi_tracker
     self._waypoints = ehi_waypoints
     self._level_started_from_beginning = true
     self._t = 0
+    self.TrackerWaypointsClass =
+    {
+        [self.Trackers.Pausable] = self.Waypoints.Pausable,
+        [self.Trackers.Warning] = self.Waypoints.Warning,
+        [self.Trackers.Inaccurate] = self.Waypoints.Inaccurate,
+        [self.Trackers.InaccuratePausable] = self.Waypoints.InaccuratePausable,
+        [self.Trackers.InaccurateWarning] = self.Waypoints.InaccurateWarning
+    }
     return self
 end
 
@@ -93,6 +102,11 @@ function EHIManager:DoesNotExist(id)
 end
 
 function EHIManager:Remove(id)
+    self._trackers:RemoveTracker(id)
+    self._waypoints:RemoveWaypoint(id)
+end
+
+function EHIManager:ForceRemove(id)
     self._trackers:ForceRemoveTracker(id)
     self._waypoints:RemoveWaypoint(id)
 end
@@ -133,6 +147,21 @@ end
 function EHIManager:SetTimerPowered(id, powered)
     self._trackers:SetTimerPowered(id, powered)
     self._waypoints:SetTimerWaypointPowered(id, powered)
+end
+
+function EHIManager:SetTimerRunning(id)
+    self._trackers:SetTimerRunning(id)
+    self._waypoints:SetTimerWaypointRunning(id)
+end
+
+function EHIManager:SetTime(id, t)
+    self._trackers:SetTrackerTime(id, t)
+    self._waypoints:SetWaypointTime(id, t)
+end
+
+function EHIManager:SetTimeNoAnim(id, t)
+    self._trackers:SetTrackerTimeNoAnim(id, t)
+    self._waypoints:SetWaypointTime(id, t)
 end
 
 function EHIManager:Call(id, f, ...)
@@ -401,14 +430,8 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
             if data.random_time then
                 if not data.class then
                     data.class = self.Trackers.Inaccurate
-                    if data.waypoint then
-                        data.waypoint.class = self.Waypoints.Inaccurate
-                    end
                 elseif data.class ~= self.Trackers.InaccuratePausable and data.class == self.Trackers.Warning then
                     data.class = self.Trackers.InaccurateWarning
-                    if data.waypoint then
-                        data.class = self.Waypoints.InaccurateWarning
-                    end
                 end
             end
             -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
@@ -433,6 +456,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
             end
             -- Fill the rest table properties for EHI Waypoints
             if data.waypoint then
+                data.waypoint.class = data.waypoint.class or self.TrackerWaypointsClass[data.class or ""]
                 data.waypoint.time = data.waypoint.time or data.time
                 if not data.waypoint.icon then
                     local icon
@@ -552,7 +576,7 @@ function EHIManager:HookElements(elements_to_hook)
                         These instances are synced when you join
                         Delay the hook until the sync is complete (see: EHIManager:SyncLoad())
                     ]]
-                    EHI.HookOnLoad[id] = true
+                    self.HookOnLoad[id] = true
                 end
             end
         end
@@ -575,7 +599,7 @@ function EHIManager:SyncLoad()
             end
         end
     end
-    for id, _ in pairs(EHI.HookOnLoad) do
+    for id, _ in pairs(self.HookOnLoad) do
         local trigger = triggers[id]
         if trigger then
             if trigger.special_function == SF.ShowWaypoint and trigger.data then
@@ -594,8 +618,8 @@ function EHIManager:SyncLoad()
             end
         end
     end
-    self:HookElements(EHI.HookOnLoad)
-    EHI.HookOnLoad = nil
+    self:HookElements(self.HookOnLoad)
+    self.HookOnLoad = nil
     EHI:DisableWaypoints(EHI.DisableOnLoad)
     EHI:DisableWaypointsOnInit()
     EHI.DisableOnLoad = nil
@@ -711,10 +735,10 @@ function EHIManager:Trigger(id, element, enabled)
             if f == SF.RemoveTracker then
                 if trigger.data then
                     for _, tracker in ipairs(trigger.data) do
-                        self:Remove(tracker)
+                        self:ForceRemove(tracker)
                     end
                 else
-                    self:Remove(trigger.id)
+                    self:ForceRemove(trigger.id)
                 end
             elseif f == SF.PauseTracker then
                 self:Pause(trigger.id)
@@ -727,11 +751,11 @@ function EHIManager:Trigger(id, element, enabled)
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.AddTrackerIfDoesNotExist then
-                if self._trackers:TrackerDoesNotExist(trigger.id) then
+                if self:DoesNotExist(trigger.id) then
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.ReplaceTrackerWithTracker then
-                self:Remove(trigger.data.id)
+                self:ForceRemove(trigger.data.id)
                 self:CheckCondition(trigger)
             elseif f == SF.ShowAchievementFromStart then -- Achievement unlock is checked during level load
                 if not managers.statistics:is_dropin() then
@@ -789,8 +813,7 @@ function EHIManager:Trigger(id, element, enabled)
                 local key = trigger.id
                 if self:Exists(key) then
                     local time = trigger.run and trigger.run.time or trigger.time or 0
-                    self._trackers:SetTrackerTime(key, time)
-                    self._waypoints:SetWaypointTime(key, time)
+                    self:SetTime(key, time)
                 else
                     self:CheckCondition(trigger)
                 end
@@ -825,7 +848,7 @@ function EHIManager:Trigger(id, element, enabled)
             elseif f == SF.GetElementTimerAccurate then
                 GetElementTimer(self, trigger, id)
             elseif f == SF.UnpauseOrSetTimeByPreplanning then
-                if self._trackers:TrackerExists(trigger.id) then
+                if self:Exists(trigger.id) then
                     self:Unpause(trigger.id)
                 else
                     if trigger.time then
@@ -862,10 +885,8 @@ function EHIManager:Trigger(id, element, enabled)
                 end
             elseif f == SF.PauseTrackerWithTime then
                 local t_id = trigger.id
-                local t_time = trigger.time
                 self:Pause(t_id)
-                self._trackers:SetTrackerTimeNoAnim(t_id, t_time)
-                self._waypoints:SetWaypointTime(t_id, t_time)
+                self:SetTimeNoAnim(t_id, trigger.time)
             elseif f == SF.IncreaseProgressMax then
                 self._trackers:IncreaseTrackerProgressMax(trigger.id, trigger.max)
             elseif f == SF.IncreaseProgressMax2 then
@@ -1050,4 +1071,43 @@ if EHI:IsClient() then
             EHIManager:AddTrackerSynced(tonumber(tbl.id), tonumber(tbl.delay))
         end
     end)
+end
+
+if EHI:GetOption("show_timers") and EHI:GetWaypointOption("show_waypoints_timers") and not EHI:GetOption("show_waypoints_only") then
+    local math_floor = math.floor
+    local string_format = string.format
+    if EHI:GetOption("time_format") == 1 then
+        function EHIManager:FormatTimer(time)
+            local t = math_floor(time * 10) / 10
+            if t < 0 then
+                return string_format("%d", 0)
+            elseif t < 1 then
+                return string_format("%.2f", time)
+            elseif t < 10 then
+                return string_format("%.1f", t)
+            else
+                return string_format("%d", t)
+            end
+        end
+    else
+        function EHIManager:FormatTimer(time)
+            local t = math_floor(time * 10) / 10
+            if t < 0 then
+                return string_format("%d", 0)
+            elseif t < 1 then
+                return string_format("%.2f", time)
+            elseif t < 10 then
+                return string_format("%.1f", t)
+            elseif t < 60 then
+                return string_format("%d", t)
+            else
+                return string_format("%d:%02d", t / 60, t % 60)
+            end
+        end
+    end
+    function EHIManager:UpdateTimer(id, t)
+        local t_string = self:FormatTimer(t)
+        self._trackers:CallFunction(id, "SetTimeNoFormat", t, t_string)
+        self._waypoints:CallFunction(id, "SetTimeNoFormat", t, t_string)
+    end
 end

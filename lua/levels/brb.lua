@@ -41,18 +41,12 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard),
         elements =
         {
-            [101136] = { special_function = SF.CustomCode, f = function()
-                EHI:ShowAchievementLootCounterNoCheck({
-                    achievement = "brb_8",
-                    max = 12,
-                    remove_after_reaching_target = false,
-                    counter =
-                    {
-                        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
-                        loot_type = "gold"
-                    }
-                })
-            end }
+            [101136] = { max = 12, class = TT.AchievementProgress, remove_after_reaching_target = false, special_function = SF.AddAchievementToCounter, data = {
+                counter = {
+                    check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+                    loot_type = "gold"
+                }
+            }}
         }
     }
 }
@@ -66,8 +60,8 @@ local tbl =
 {
     --levels/instances/unique/brb/brb_vault
     --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
-    [EHI:GetInstanceUnitID(100058, 1900)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100003, 1900) },
-    [EHI:GetInstanceUnitID(100058, 2400)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100003, 2400) }
+    [EHI:GetInstanceUnitID(100058, 1900)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100003, 1900) },
+    [EHI:GetInstanceUnitID(100058, 2400)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100003, 2400) }
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
@@ -86,7 +80,7 @@ EHI:AddXPBreakdown({
             {
                 objectives = true
             },
-            no_total_xp = true
+            no_max = true
         }
     }
 })

@@ -60,9 +60,9 @@ end
 
 function DigitalGui:HideWaypoint()
     if self._remove_vanilla_waypoint and show_waypoint then
-        managers.hud:SoftRemoveWaypoint(self._waypoint_id)
-        EHI._cache.IgnoreWaypoints[self._waypoint_id] = true
-        EHI:DisableElementWaypoint(self._waypoint_id)
+        managers.hud:SoftRemoveWaypoint(self._remove_vanilla_waypoint)
+        EHI._cache.IgnoreWaypoints[self._remove_vanilla_waypoint] = true
+        EHI:DisableElementWaypoint(self._remove_vanilla_waypoint)
     end
 end
 
@@ -79,8 +79,7 @@ if level_id ~= "shoutout_raid" then
         end
     elseif show_waypoint then
         function DigitalGui:_update_timer_text(...)
-            managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
-            managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._timer)
+            managers.ehi_manager:UpdateTimer(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
     else
@@ -88,6 +87,40 @@ if level_id ~= "shoutout_raid" then
             managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
+    end
+    function DigitalGui:timer_set(timer, ...)
+        original.timer_set(self, timer, ...)
+        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, timer)
+        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, timer)
+    end
+else
+    local old_time = 0
+    local created = false
+    function DigitalGui:timer_set(timer, ...)
+        original.timer_set(self, timer, ...)
+        if old_time == timer then
+            return
+        end
+        old_time = timer
+        if not created then
+            if not show_waypoint_only then
+                managers.ehi_tracker:AddTracker({
+                    id = self._ehi_key,
+                    class = "EHIVaultTemperatureTracker"
+                })
+            end
+            if show_waypoint then
+                managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+                    time = 500,
+                    icon = Icon.Vault,
+                    position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
+                    class = "EHIVaultTemperatureWaypoint"
+                })
+            end
+            created = true
+        end
+        local t = EHI:RoundNumber(timer, 0.1)
+        managers.ehi_manager:Call(self._ehi_key, "CheckTime", t)
     end
 end
 
@@ -129,52 +162,6 @@ function DigitalGui:timer_resume(...)
     managers.ehi_manager:SetTimerJammed(self._ehi_key, false)
 end
 
-local SetTime = nil
-if level_id == "shoutout_raid" then
-    local old_time = 0
-    local created = false
-    SetTime = function(self, key, time)
-        if old_time == time then
-            return
-        end
-        old_time = time
-        if managers.ehi_tracker then
-            if not created then
-                if not show_waypoint_only then
-                    managers.ehi_tracker:AddTracker({
-                        id = key,
-                        class = "EHIVaultTemperatureTracker"
-                    })
-                end
-                if show_waypoint then
-                    managers.ehi_waypoint:AddWaypoint(key, {
-                        time = 500,
-                        icon = Icon.Vault,
-                        position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
-                        class = "EHIVaultTemperatureWaypoint"
-                    })
-                end
-                created = true
-            end
-            local t = EHI:RoundNumber(time, 0.1)
-            managers.ehi_tracker:CallFunction(key, "CheckTime", t)
-            managers.ehi_waypoint:CallFunction(key, "CheckTime", t)
-        end
-    end
-else
-    SetTime = function(self, key, time)
-        if managers.ehi_tracker then
-            managers.ehi_tracker:SetTrackerTimeNoAnim(key, time)
-            managers.ehi_waypoint:SetWaypointTime(key, time)
-        end
-    end
-end
-
-function DigitalGui:timer_set(timer, ...)
-    original.timer_set(self, timer, ...)
-    SetTime(self, self._ehi_key, timer)
-end
-
 function DigitalGui:_timer_stop(...)
     original._timer_stop(self, ...)
     self:RemoveTracker()
@@ -190,8 +177,7 @@ function DigitalGui:set_visible(visible, ...)
 end
 
 function DigitalGui:RemoveTracker()
-    managers.ehi_tracker:RemoveTracker(self._ehi_key)
-    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    managers.ehi_manager:Remove(self._ehi_key)
 end
 
 function DigitalGui:load(data, ...)
@@ -234,8 +220,7 @@ function DigitalGui:SetOnAlarm()
 end
 
 function DigitalGui:RemoveVanillaWaypoint(waypoint_id)
-    self._remove_vanilla_waypoint = true
-    self._waypoint_id = waypoint_id
+    self._remove_vanilla_waypoint = waypoint_id
     if self._timer_count_down then
         self:HideWaypoint()
     end

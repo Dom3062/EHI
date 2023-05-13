@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local WT = EHI.Waypoints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local LootDrop = { Icon.Escape, Icon.LootDrop }
 local TimedLootDrop = { Icon.Escape, Icon.LootDrop, Icon.Wait }
@@ -33,7 +32,7 @@ local function cane_5()
             EHI:Unhook("cane_5_fail_trigger")
         end
     end)
-    EHI:ShowAchievementLootCounter({
+    EHI:ShowAchievementLootCounterNoCheck({
         achievement = "cane_5",
         max = 10,
         counter =
@@ -86,8 +85,8 @@ if EHI:MissionTrackersAndWaypointEnabled() then
         [EHI:GetInstanceElementID(100016, 11000)] = true
     }
     EHI:DisableWaypoints(DisableWaypoints)
-    triggers[EHI:GetInstanceElementID(100011, 10700)].waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100016, 10700), class = WT.Warning }
-    triggers[EHI:GetInstanceElementID(100011, 11000)].waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100016, 11000), class = WT.Warning }
+    triggers[EHI:GetInstanceElementID(100011, 10700)].waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100016, 10700) }
+    triggers[EHI:GetInstanceElementID(100011, 11000)].waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100016, 11000) }
 end
 
 EHI:ParseTriggers({

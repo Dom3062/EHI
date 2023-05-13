@@ -73,7 +73,7 @@ local tbl =
 {
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
     --Jewelry Store
-    [105874] = { remove_vanilla_waypoint = true, waypoint_id = 100776 }
+    [105874] = { remove_vanilla_waypoint = 100776 }
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({

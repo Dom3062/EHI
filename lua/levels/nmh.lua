@@ -63,7 +63,13 @@ local triggers = {
     [102992] = { chance = 1, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance },
     [103013] = { amount = 1, id = "CorrectPaperChance", special_function = SF.IncreaseChance },
     [103006] = { chance = 100, id = "CorrectPaperChance", special_function = SF.SetChanceWhenTrackerExists },
-    [104752] = { id = "CorrectPaperChance", special_function = SF.RemoveTracker }
+    [104752] = { id = "CorrectPaperChance", special_function = SF.RemoveTracker },
+
+    [104721] = { special_function = SF.CustomCode, f = function()
+        if managers.hud.SetAssaultTrackerManualBlock then
+            managers.hud:SetAssaultTrackerManualBlock(true)
+        end
+    end}
 }
 local outcome =
 {
@@ -141,7 +147,7 @@ EHI:AddLoadSyncFunction(function(self)
 end)
 
 --units/pd2_dlc_nmh/props/nmh_interactable_teddy_saw/nmh_interactable_teddy_saw
-local tbl = { [101387] = { remove_vanilla_waypoint = true, waypoint_id = 104494 } }
+local tbl = { [101387] = { remove_vanilla_waypoint = 104494 } }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     tactic =

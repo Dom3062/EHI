@@ -95,7 +95,7 @@ local tbl =
 {
     --levels/instances/unique/chas/chas_store_computer
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceUnitID(100037, 10675)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100017, 10675) },
+    [EHI:GetInstanceUnitID(100037, 10675)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100017, 10675) },
 
     --levels/instances/unique/chas/chas_vault_door
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer

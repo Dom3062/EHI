@@ -131,15 +131,15 @@ end)
 local tbl =
 {
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_director/stn_interactable_computer_director
-    [102104] = { remove_vanilla_waypoint = true, waypoint_id = 104571, restore_waypoint_on_done = true },
+    [102104] = { remove_vanilla_waypoint = 104571, restore_waypoint_on_done = true },
 
     --levels/instances/unique/hox_fbi_forensic_device
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics
-    [EHI:GetInstanceUnitID(100018, 2650)] = { icons = { "equipment_evidence" }, remove_vanilla_waypoint = true, waypoint_id = 101559, restore_waypoint_on_done = true },
+    [EHI:GetInstanceUnitID(100018, 2650)] = { icons = { "equipment_evidence" }, remove_vanilla_waypoint = 101559, restore_waypoint_on_done = true },
 
     --levels/instances/unique/hox_fbi_security_office
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security
-    [EHI:GetInstanceUnitID(100068, 6690)] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100019, 6690) },
+    [EHI:GetInstanceUnitID(100068, 6690)] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = EHI:GetInstanceElementID(100019, 6690) },
 
     --levels/instances/unique/hox_fbi_armory
     --units/pd2_dlc2/architecture/gov_d_int/gov_d_int_door_b/001
@@ -178,12 +178,12 @@ local tbl =
         local pos =
         {
             -- Upper
-            [1] = Vector3(1816.87, 3664.57, 17.2887), -- Keycard
-            [2] = Vector3(1817.05, 3659.48, 45.4985), -- ECM
+            Vector3(1816.87, 3664.57, 17.2887), -- Keycard
+            Vector3(1817.05, 3659.48, 45.4985), -- ECM
 
             -- Lower
-            [3] = Vector3(-2216.87, 2410.43, -382.711), -- Keycard
-            [4] = Vector3(-2217.05, 2415.52, -354.502) -- ECM
+            Vector3(-2216.87, 2410.43, -382.711), -- Keycard
+            Vector3(-2217.05, 2415.52, -354.502) -- ECM
         }
         local playing, enabled = true, true
         EHI:HookWithID(MissionDoorDeviceInteractionExt, "set_active", "EHI_100003_6840_set_active", function(self, active, ...)
@@ -221,30 +221,22 @@ end
 EHI:UpdateUnits(tbl)
 
 local SecurityOffice = EHI:GetInstanceElementID(100026, 6690)
-local MissionDoorPositions =
+local MissionDoor =
 {
     -- Evidence
-    Vector3(-1552.84, 816.472, -9.11819),
+    [Vector3(-1552.84, 816.472, -9.11819)] = 101562,
 
     -- Basement (Escape)
-    Vector3(-744.305, 5042.19, -409.118),
+    [Vector3(-744.305, 5042.19, -409.118)] = 102017,
 
     -- Archives
-    Vector3(817.472, 2884.84, -809.118),
+    [Vector3(817.472, 2884.84, -809.118)] = 101345,
 
     -- Security Office
-    Vector3(-1207.53, 4234.84, -409.118),
-    Vector3(807.528, 4265.16, -9.11819)
+    [Vector3(-1207.53, 4234.84, -409.118)] = SecurityOffice,
+    [Vector3(807.528, 4265.16, -9.11819)] = SecurityOffice
 }
-local MissionDoorIndex =
-{
-    101562,
-    102017,
-    101345,
-    SecurityOffice,
-    SecurityOffice
-}
-EHI:SetMissionDoorPosAndIndex(MissionDoorPositions, MissionDoorIndex)
+EHI:SetMissionDoorPosAndIndex(MissionDoor)
 EHI:AddXPBreakdown({
     objectives =
     {

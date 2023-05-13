@@ -54,10 +54,10 @@ EHI:DisableWaypoints(DisableWaypoints)
 
 --[[local tbl =
 {
-    [EHI:GetInstanceUnitID(100239, 12900)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100255, 12900) }
+    [EHI:GetInstanceUnitID(100239, 12900)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100255, 12900) }
 }
 for i = 14250, 15150, 300 do
-    tbl[EHI:GetInstanceUnitID(100239, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100255, i) }
+    tbl[EHI:GetInstanceUnitID(100239, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100255, i) }
 end
 EHI:UpdateUnits(tbl)]]
 
@@ -66,14 +66,14 @@ EHI:UpdateUnits(tbl)]]
     [EHI:GetInstanceUnitID(100239, 12900)] = { f = function(unit_id, unit_data, unit)
         EHI:HookWithID(unit:timer_gui(), "set_jammed", "EHI_100239_12900_unjammed", function(self, jammed, ...)
             if jammed == false then
-                self:_HideWaypoint(unit_data.waypoint_id)
+                self:_HideWaypoint(unit_data.remove_vanilla_waypoint)
             end
         end)
-        unit:timer_gui():RemoveVanillaWaypoint(unit_data.waypoint_id)
-    end, waypoint_id = EHI:GetInstanceElementID(100255, 12900) }
+        unit:timer_gui():RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
+    end, remove_vanilla_waypoint = EHI:GetInstanceElementID(100255, 12900) }
 }
 for i = 30000, 31500, 300 do
-    tbl[EHI:GetInstanceUnitID(100045, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100058, i) }
+    tbl[EHI:GetInstanceUnitID(100045, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100058, i) }
 end
 EHI:UpdateUnits(tbl)]]
 EHI:AddXPBreakdown({

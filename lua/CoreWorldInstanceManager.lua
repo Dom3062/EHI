@@ -113,7 +113,7 @@ function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ..
             unit_data.instance = instance
             unit_data.continent_index = continent_data.base_id
             if unit_data.remove_vanilla_waypoint then
-                unit_data.waypoint_id = EHI:GetInstanceElementID(unit_data.waypoint_id, instance.start_index, continent_data.base_id)
+                unit_data.remove_vanilla_waypoint = EHI:GetInstanceElementID(unit_data.remove_vanilla_waypoint, instance.start_index, continent_data.base_id)
             end
             EHI._cache.InstanceUnits[entry.unit_data.unit_id] = unit_data
         end

@@ -1,3 +1,8 @@
+r152 (13. 05. 2023):
+Optimized Timer Trackers if both tracker and waypoint are visible
+No Mercy: Disabled Assault Delay and Assault Tracker when all players are in the elevator
+VR: Fixed crashes related to "Assault Delay" and "Assault Time" trackers
+
 r151 (12. 05. 2023):
 Cook Off: Fixed a crash after putting first ingredient
 

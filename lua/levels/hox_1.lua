@@ -34,8 +34,8 @@ local tbl =
 {
     --levels/instances/unique/hox_breakout_road001
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small
-    [EHI:GetInstanceUnitID(100058, RoadBlockVehicleIndex1)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100090, RoadBlockVehicleIndex1) },
-    [EHI:GetInstanceUnitID(100058, RoadBlockVehicleIndex2)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100090, RoadBlockVehicleIndex2) },
+    [EHI:GetInstanceUnitID(100058, RoadBlockVehicleIndex1)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100090, RoadBlockVehicleIndex1) },
+    [EHI:GetInstanceUnitID(100058, RoadBlockVehicleIndex2)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100090, RoadBlockVehicleIndex2) },
 
     --units/payday2/vehicles/anim_vehicle_pickup_sportcab_armored/anim_vehicle_pickup_sportcab_armored/the_car
     [102482] = { f = function(id, unit_data, unit)
@@ -59,7 +59,7 @@ local tbl =
 }
 for i = 1350, 4950, 400 do
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    tbl[EHI:GetInstanceElementID(100025, i)] = { remove_vanilla_waypoint = true, waypoint_id = EHI:GetInstanceElementID(100072, i), restore_waypoint_on_done = true }
+    tbl[EHI:GetInstanceElementID(100025, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100072, i), restore_waypoint_on_done = true }
 end
 EHI:UpdateUnits(tbl)
 EHI._cache.diff = 1

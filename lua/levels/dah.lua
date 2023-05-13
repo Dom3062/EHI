@@ -14,8 +14,8 @@ local triggers = {
 
     [101343] = { time = 30, id = "KeypadReset", icons = { Icon.Loop }, waypoint = { position_by_element = EHI:GetInstanceElementID(100179, 9100) } },
 
-    [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100475 } },
-    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 103163 } },
+    [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100475, remove_vanilla_waypoint = 104882 } },
+    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 103163, remove_vanilla_waypoint = 103163 } },
 
     [103969] = { id = "ColorCodes", class = TT.ColoredCodes },
     [102338] = { id = "ColorCodes", special_function = SF.RemoveTracker }
@@ -92,10 +92,6 @@ local DisableWaypoints =
 {
     [101368] = true -- Drill waypoint for vault with red diamond
 }
-if EHI:MissionTrackersAndWaypointEnabled() then
-    DisableWaypoints[104882] = true -- Defend during loud escape
-    DisableWaypoints[103163] = true -- Exclamation mark during loud escape
-end
 for i = 2500, 2700, 200 do
     DisableWaypoints[EHI:GetInstanceElementID(100011, i)] = true -- Defend
     DisableWaypoints[EHI:GetInstanceElementID(100036, i)] = true -- Fix
