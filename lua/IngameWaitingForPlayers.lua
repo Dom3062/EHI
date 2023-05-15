@@ -476,7 +476,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         if EHI:IsAchievementLocked2("gage5_5") and HasWeaponEquipped("gre_m79") then -- "Artillery Barrage" achievement
             CreateProgressTracker("gage5_5", EHI:GetAchievementProgress("gage5_5_stats"), 25, false, true)
-            stats.gage5_1_stats = "gage5_5"
+            stats.gage5_5_stats = "gage5_5"
         end
         if EHI:IsAchievementLocked2("gage5_9") and HasWeaponEquipped("galil") then -- "Rabbit Hunting" achievement
             local function f()

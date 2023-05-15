@@ -9,9 +9,15 @@ local other =
     -- Police ambush
     [104535] = { special_function = SF.Trigger, data = { 1045351, 1045352 } },
     [1045351] = EHI:AddAssaultDelay({ time = 30, special_function = SF.SetTimeOrCreateTracker }),
-    [1045352] = { special_function = SF.RemoveTrigger, data = { 104488, 104489 } },
-
-    [103696] = EHI:AddLootCounter(function()
+    [1045352] = { special_function = SF.RemoveTrigger, data = { 104488, 104489 } }
+}
+if EHI:GetOption("show_loot_counter") then
+    local LootCounterValue = EHI:GetFreeCustomSpecialFunctionID()
+    local loot_trigger = { special_function = LootCounterValue }
+    for i = 103715, 103724, 1 do
+        other[i] = loot_trigger
+    end
+    EHI:RegisterCustomSpecialFunction(LootCounterValue, function(self, trigger, element, ...)
         local SafeTriggers =
         {
             -- gen_interactable_sec_safe_05x05 - 7
@@ -32,7 +38,7 @@ local other =
                 "spawn_loot_crap_d"
             }
         }
-        local spawned = managers.ehi_tracker:CountLootbagsOnTheGround()
+        local spawned = element._values.value
         local additional_loot = math.max(0, spawned - 3)
         EHI:ShowLootCounterNoCheck({
             max = spawned,
@@ -59,7 +65,7 @@ local other =
             }
         })
     end)
-}
+end
 if EHI:GetOption("show_escape_chance") then
     local ShowVanCrashChance = EHI:GetFreeCustomSpecialFunctionID()
     other[100342] = { special_function = ShowVanCrashChance }
@@ -79,7 +85,7 @@ EHI:AddOnAlarmCallback(function(dropin)
         EM:Trigger(100342)
         return
     end
-    if not ShowAssaultDelay then
+    if not ShowAssaultDelay or EM._trackers:TrackerExists("AssaultDelay") then
         return
     end
     EM._trackers:AddTracker({
@@ -110,7 +116,8 @@ EHI:AddXPBreakdown({
             {
                 objective =
                 {
-                    rats2_trade = true
+                    rats2_trade = true,
+                    rats2_trade_and_steal = true
                 }
             }
         }

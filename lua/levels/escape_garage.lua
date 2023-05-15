@@ -4,13 +4,7 @@ local TT = EHI.Trackers
 local function bilbo_baggin()
     local bags_to_secure = managers.ehi_tracker:CountLootbagsOnTheGround()
     if bags_to_secure >= 8 then
-        managers.ehi_tracker:AddTracker({
-            id = "bilbo_baggin",
-            icons = EHI:GetAchievementIcon("bilbo_baggin"),
-            max = 8,
-            remove_after_reaching_target = false,
-            class = TT.AchievementProgress
-        })
+        managers.ehi_tracker:AddAchievementProgressTracker("bilbo_baggin", 8, 0, false)
         EHI:AddAchievementToCounter({
             achievement = "bilbo_baggin"
         })
@@ -31,6 +25,15 @@ local other =
 {
     [102414] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround)
 }
+
+--[[if EHI:IsClient() then
+    achievements.bilbo_baggin.elements[102414].special_function = SF.CustomCodeDelayed
+    achievements.bilbo_baggin.elements[102414].t = 1
+    if other[102414] then
+        other[102414].special_function = SF.CustomCodeDelayed
+        other[102414].t = 1
+    end
+end]]
 
 EHI:ParseTriggers({
     achievement = achievements,

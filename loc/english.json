@@ -347,6 +347,9 @@
     "ehi_show_waypoints_present_timer" : "Present Timer",
     "ehi_show_waypoints_present_timer_desc" : "Sets how long the waypoint will stay on your screen before it will 'move' to its destination",
 
+    "ehi_show_waypoints_mission" : "Show Waypoints For Heist Elements",
+    "ehi_show_waypoints_mission_desc" : "Shows a waypoint on heist elements",
+
     "ehi_show_waypoints_enemy_turret" : "Show Waypoints For Enemy Turret",
     "ehi_show_waypoints_enemy_turret_desc" : "Shows a waypoint on the enemy turret when it is reloading or repairing",
 

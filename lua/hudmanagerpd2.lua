@@ -270,7 +270,7 @@ else
         local is_skirmish = tweak_data.levels:IsLevelSkirmish()
         function HUDManager:sync_start_assault(...)
             start_original(self, ...)
-            if --[[self._ehi_assault_in_progress or]] self._ehi_manual_block then
+            if self._ehi_assault_in_progress or self._ehi_manual_block then
                 return
             elseif (EHI._cache.diff and EHI._cache.diff > 0 and not EHI._cache.EndlessAssault) or is_skirmish then
                 self.ehi:AddTracker({
@@ -279,14 +279,14 @@ else
                     class = "EHIAssaultTimeTracker"
                 })
             end
-            --self._ehi_assault_in_progress = true
+            self._ehi_assault_in_progress = true
         end
         local end_original = HUDManager.sync_end_assault
         function HUDManager:sync_end_assault(...)
             end_original(self, ...)
             self.ehi:RemoveTracker("AssaultTime")
             EHI._cache.EndlessAssault = nil
-            --self._ehi_assault_in_progress = nil
+            self._ehi_assault_in_progress = nil
         end
     end
 end

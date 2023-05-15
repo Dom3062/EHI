@@ -420,6 +420,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
         return
     end
     local host = EHI:IsHost()
+    local configure_waypoints = EHI:GetOption("show_waypoints_mission")
     for id, data in pairs(new_triggers) do
         -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
         if data.condition == false then
@@ -455,25 +456,30 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
                 end
             end
             -- Fill the rest table properties for EHI Waypoints
-            if data.waypoint then
-                data.waypoint.class = data.waypoint.class or self.TrackerWaypointsClass[data.class or ""]
-                data.waypoint.time = data.waypoint.time or data.time
-                if not data.waypoint.icon then
-                    local icon
-                    if data.icons then
-                        icon = data.icons[1] and data.icons[1].icon or data.icons[1]
-                    elseif trigger_icons_all then
-                        icon = trigger_icons_all[1] and trigger_icons_all[1].icon or trigger_icons_all[1]
+            if configure_waypoints then
+                if data.waypoint then
+                    data.waypoint.class = data.waypoint.class or self.TrackerWaypointsClass[data.class or ""]
+                    data.waypoint.time = data.waypoint.time or data.time
+                    if not data.waypoint.icon then
+                        local icon
+                        if data.icons then
+                            icon = data.icons[1] and data.icons[1].icon or data.icons[1]
+                        elseif trigger_icons_all then
+                            icon = trigger_icons_all[1] and trigger_icons_all[1].icon or trigger_icons_all[1]
+                        end
+                        if icon then
+                            data.waypoint.icon = EHI.WaypointIconRedirect[icon] or icon
+                        end
                     end
-                    if icon then
-                        data.waypoint.icon = EHI.WaypointIconRedirect[icon] or icon
+                    if data.waypoint.position_by_element then
+                        EHI:AddPositionFromElement(data.waypoint, data.id, host)
+                    elseif data.waypoint.position_by_unit then
+                        EHI:AddPositionFromUnit(data.waypoint, data.id, host)
                     end
                 end
-                if data.waypoint.position_by_element then
-                    EHI:AddPositionFromElement(data.waypoint, data.id, host)
-                elseif data.waypoint.position_by_unit then
-                    EHI:AddPositionFromUnit(data.waypoint, data.id, host)
-                end
+            else
+                data.waypoint = nil
+                data.waypoint_f = nil
             end
         end
     end
@@ -998,6 +1004,9 @@ function EHIManager:AddTrackerSynced(id, delay)
 end
 
 function EHIManager:AddWaypointToTrigger(id, waypoint)
+    if not EHI:GetOption("show_waypoints_mission") then
+        return
+    end
     local t = triggers[id]
     if not t then
         return

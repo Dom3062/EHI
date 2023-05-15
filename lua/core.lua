@@ -453,6 +453,7 @@ local function LoadDefaultValues(self)
         show_waypoints = true,
         show_waypoints_only = false,
         show_waypoints_present_timer = 2,
+        show_waypoints_mission = true,
         show_waypoints_enemy_turret = true,
         show_waypoints_timers = true,
         show_waypoints_pager = true,
@@ -1349,6 +1350,7 @@ end
 function EHI:ShowLootCounterOffset(params, manager)
     params.offset = nil
     params.n_offset = managers.loot:GetSecuredBagsAmount()
+    params.hook_triggers = params.triggers ~= nil
     self:ShowLootCounterNoCheck(params)
 end
 

@@ -347,6 +347,9 @@
     "ehi_show_waypoints_present_timer" : "Čas na přesun",
     "ehi_show_waypoints_present_timer_desc" : "Nastavuje jak dlouho bude ukazatel na obrazovce než se 'přesune' do cílového místa",
 
+    "ehi_show_waypoints_mission" : "Zobrazovat ukazelete pro elementy v misi",
+    "ehi_show_waypoints_mission_desc" : "Zobrazuje ukazatel pro elementy v misi",
+
     "ehi_show_waypoints_enemy_turret" : "Zobrazovat ukazatele pro nepřátelské střílny",
     "ehi_show_waypoints_enemy_turret_desc" : "Zobrazuje ukazatel pro nepřátelskou střílku když se opravuje nebo nabíjí",
 
