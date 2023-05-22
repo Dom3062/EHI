@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 EHIkosugi5Tracker = EHI:AchievementClass(EHIAchievementProgressTracker, "EHIkosugi5Tracker")
 function EHIkosugi5Tracker:init(panel, params)
-    params.max = 16 -- Random loot
+    params.max = 16 -- Random loot (with armor)
     self._armor_max = 4 -- Armor
     self._armor_counter = 0
     self._completion = {}
@@ -14,10 +14,8 @@ function EHIkosugi5Tracker:init(panel, params)
         {
             check_type = EHI.LootCounter.CheckType.CustomCheck,
             f = function(self, tracker_id, loot_type)
-                local armor_count = self:GetSecuredBagsTypeAmount("samurai_suit")
-                local total_count = self:GetSecuredBagsAmount()
-                managers.ehi_tracker:CallFunction(tracker_id, "SetProgressArmor", armor_count)
-                managers.ehi_tracker:SetTrackerProgress(tracker_id, total_count - armor_count)
+                managers.ehi_tracker:CallFunction(tracker_id, "SetProgressArmor", self:GetSecuredBagsTypeAmount("samurai_suit"))
+                managers.ehi_tracker:SetTrackerProgress(tracker_id, self:GetSecuredBagsAmount())
             end
         }
     })
@@ -175,7 +173,7 @@ local achievements =
         },
         load_sync = function(self)
             local counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")
-            local counter_loot = managers.loot:GetSecuredBagsAmount() - counter_armor
+            local counter_loot = managers.loot:GetSecuredBagsAmount()
             if counter_loot < 16 or counter_armor < 4 then
                 self._trackers:AddAchievementProgressTracker("kosugi_5", nil, math.min(counter_loot, 16)) -- Max is passed in the tracker "init" function
                 self._trackers:CallFunction("kosugi_5", "SetProgressArmor", math.min(counter_armor, 4))

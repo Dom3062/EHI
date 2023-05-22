@@ -137,9 +137,10 @@ EHI:AddLoadSyncFunction(function(self)
             })
             self._waypoints:AddWaypoint("EscapeElevator", {
                 floors = floors,
+                position = elevator_counter:position(),
                 class = "EHIElevatorTimerWaypoint"
             })
-            if self._trackers:InteractionExists("circuit_breaker") or self._trackers:InteractionExists("press_call_elevator") then
+            if self:InteractionExists("circuit_breaker") or self:InteractionExists("press_call_elevator") then
                 self:Pause("EscapeElevator")
             end
         end

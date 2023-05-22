@@ -1,3 +1,14 @@
+---@param tbl table
+---@return boolean
+local function table_icontains(tbl, val)
+    for _, value in ipairs(tbl) do
+        if value == val then
+            return true
+        end
+    end
+    return false
+end
+
 local EHI = EHI
 EHIManager = {}
 EHIManager.GetAchievementIcon = EHI.GetAchievementIcon
@@ -25,6 +36,16 @@ end
 
 function EHIManager:init_finalize()
     managers.network:add_event_listener("EHIManagerDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
+end
+
+function EHIManager:InteractionExists(tweak_data)
+    local interactions = managers.interaction._interactive_units or {}
+    for _, unit in ipairs(interactions) do
+        if unit:interaction().tweak_data == tweak_data then
+            return true
+        end
+    end
+    return false
 end
 
 function EHIManager:load()
@@ -241,7 +262,7 @@ function EHIManager:AddTriggers2(new_triggers, params, trigger_id_all, trigger_i
             elseif value.special_function and self.TriggerFunction[value.special_function] then
                 if value.data then
                     local new_key = (key * 10) + 1
-                    while table.contains(value.data, new_key) or new_triggers[new_key] or triggers[new_key] do
+                    while table_icontains(value.data, new_key) or new_triggers[new_key] or triggers[new_key] do
                         new_key = new_key + 1
                     end
                     triggers[new_key] = t
@@ -360,26 +381,20 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     local achievement_triggers = new_triggers.achievement
     if EHI:ShowMissionAchievements() and achievement_triggers and next(achievement_triggers) then
         local function Parser(data, id)
-            if data.achievement_counter then
-                local params = data.achievement_counter
-                params.achievement = id
-                EHI:ShowAchievementLootCounterNoCheck(params)
-            else
-                for _, element in pairs(data.elements or {}) do
-                    if element.class and EHI.AchievementTrackers[element.class] then
-                        element.beardlib = data.beardlib
-                        if not element.icons then
-                            if data.beardlib then
-                                element.icons = { "ehi_" .. id }
-                            else
-                                element.icons = self:GetAchievementIcon(id)
-                            end
+            for _, element in pairs(data.elements or {}) do
+                if element.class and EHI.AchievementTrackers[element.class] then
+                    element.beardlib = data.beardlib
+                    if not element.icons then
+                        if data.beardlib then
+                            element.icons = { "ehi_" .. id }
+                        else
+                            element.icons = self:GetAchievementIcon(id)
                         end
                     end
                 end
-                self:AddTriggers2(data.elements or {}, nil, id)
-                ParseParams(data, id)
             end
+            self:AddTriggers2(data.elements or {}, nil, id)
+            ParseParams(data, id)
         end
         local function IsAchievementLocked(data, id)
             if data.beardlib then
@@ -651,17 +666,6 @@ function EHIManager:GetRandomTime(trigger)
 end
 
 ---@param trigger table
-function EHIManager:AddTrackerWithRandomTime(trigger)
-    trigger.time = trigger.data[math.random(#trigger.data)]
-    self._trackers:AddTracker(trigger)
-    if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
-        trigger.waypoint_f(trigger)
-    elseif trigger.waypoint then
-        self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
-    end
-end
-
----@param trigger table
 function EHIManager:AddTracker(trigger)
     if trigger.run then
         self._trackers:RunTracker(trigger.id, trigger.run)
@@ -847,7 +851,8 @@ function EHIManager:Trigger(id, element, enabled)
                 end
             elseif f == SF.SetRandomTime then
                 if self._trackers:TrackerDoesNotExist(trigger.id) then
-                    self:AddTrackerWithRandomTime(trigger)
+                    trigger.time = trigger.data[math.random(#trigger.data)]
+                    self:CheckCondition(trigger)
                 end
             elseif f == SF.DecreaseChance then
                 self._trackers:DecreaseChance(trigger.id, trigger.amount)

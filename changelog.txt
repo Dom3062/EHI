@@ -1,3 +1,7 @@
+r154 (22. 05. 2023):
+No Mercy: Fixed missing waypoint position for the escape elevator after dropin
+Shadow Raid: Fixed an issue where samurai armor is not counted in total loot count in "I am a Ninja" achievement
+
 r153 (15. 05. 2023):
 Added option "Show Waypoints For Heist Elements"
 Fixed a log spam when endless assault starts (client only)
