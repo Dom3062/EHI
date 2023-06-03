@@ -1,5 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
+local SF = EHI.SpecialFunctions
 local triggers = {
     [101505] = { time = 10, id = "TruckDoorOpens", icons = { "pd2_door" } },
     -- There are a lot of delays in the ID. Using average instead (5.2)
@@ -8,7 +9,13 @@ local triggers = {
     [101936] = { time = 30 + 12, id = "Escape", icons = Icon.HeliEscapeNoLoot }
 }
 
-EHI:ParseTriggers({ mission = triggers })
+local other =
+{
+    [101612] = EHI:AddAssaultDelay({ time = 30 + 30 }),
+    [101613] = EHI:AddAssaultDelay({ time = 30, special_function = SF.SetTimeOrCreateTracker })
+}
+
+EHI:ParseTriggers({ mission = triggers, other = other })
 
 local tbl =
 {
@@ -21,19 +28,19 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        lab_rats_added_ephedrin_pill = 2000,
-        lab_rats_added_correct_ingredient = 1000,
-        lab_rats_bagged_meth = 500,
-        lab_rats_safe_event_1 = 30000,
-        lab_rats_safe_event_2 = 22500,
-        lab_rats_safe_event_3 = 15000,
-        escape = 5000
+        { amount = 2000, name = "lab_rats_added_ephedrin_pill" },
+        { amount = 1000, name = "lab_rats_added_correct_ingredient" },
+        { amount = 500, name = "lab_rats_bagged_meth" },
+        { amount = 30000, name = "lab_rats_safe_event_1", optional = true },
+        { amount = 22500, name = "lab_rats_safe_event_2", optional = true },
+        { amount = 15000, name = "lab_rats_safe_event_3", optional = true },
+        { escape = 5000 }
     },
     loot =
     {
-        half_meth = 500,
+        meth_half = 500,
     },
     no_total_xp = true
 })

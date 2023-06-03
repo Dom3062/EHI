@@ -142,8 +142,8 @@ function EHIMenu:UpdateBuffsInvertProgress()
     self._buffs_preview_panel:UpdateBuffs("InvertProgress")
 end
 
-function EHIMenu:SetColor(color, option)
-    local c = EHI.settings.colors[option]
+function EHIMenu:SetColor(color, option, color_type)
+    local c = EHI.settings.colors[color_type][option]
     c.r = color.red
     c.g = color.green
     c.b = color.blue

@@ -74,6 +74,7 @@ else
 end
 
 local mayhem_and_up = EHI:IsMayhemOrAbove()
+---@type ParseAchievementTable
 local achievements =
 {
     friend_5 =
@@ -100,7 +101,7 @@ local achievements =
         {
             [100107] = { time = 901, class = "EHIuno7Tracker" },
         },
-        failed_on_alarm = function()
+        alarm_callback = function()
             managers.ehi_tracker:CallFunction("uno_7", "SetObtainable")
         end,
         cleanup_callback = function()

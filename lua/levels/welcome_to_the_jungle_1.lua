@@ -5,6 +5,7 @@ local other = {
     [102064] = EHI:AddAssaultDelay({ time = 60 + 1 + 30, trigger_times = 1 })
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     cac_24 =

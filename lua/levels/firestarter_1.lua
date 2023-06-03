@@ -25,21 +25,19 @@ local function LordOfWarAchievement()
         hook_triggers = true,
         add_to_counter = true
     })
-    if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
-        EHI:ShowAchievementLootCounter({
-            achievement = "ovk_10",
-            max = n_of_weapons,
-            triggers =
-            {
-                [103427] = { special_function = SF.IncreaseProgress } -- Weapons destroyed
-            },
-            hook_triggers = true,
-            remove_after_reaching_target = false
-        })
-    end
-    EHI:ShowLootCounter({
+    EHI:ShowAchievementLootCounter({
+        achievement = "ovk_10",
         max = n_of_weapons,
-        additional_loot = 1, -- 1 bag of money
+        triggers =
+        {
+            [103427] = { special_function = SF.IncreaseProgress } -- Weapons destroyed
+        },
+        hook_triggers = true,
+        remove_after_reaching_target = false,
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
+    })
+    EHI:ShowLootCounter({
+        max = n_of_weapons + 1, -- 1 bag of money
         triggers =
         {
             [103427] = { special_function = SF.DecreaseProgressMax }, -- Weapons destroyed

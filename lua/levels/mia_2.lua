@@ -20,6 +20,7 @@ local triggers = {
     [101240] = { time = 540, id = "CokeTimer", icons = { { icon = Icon.Loot, color = Color.red } }, class = TT.Warning },
     [101282] = { id = "CokeTimer", special_function = SF.RemoveTracker }
 }
+---@type ParseAchievementTable
 local achievements =
 {
     pig_2 =
@@ -93,8 +94,7 @@ local other =
             end
         end
         EHI:ShowLootCounterNoCheck({
-            max = 9,
-            additional_loot = MoneyBagsInVault + MoneyAroundHostage,
+            max = 9 + MoneyBagsInVault + MoneyAroundHostage,
             offset = true,
             triggers = loot_triggers,
             hook_triggers = true,

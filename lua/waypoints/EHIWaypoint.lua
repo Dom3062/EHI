@@ -1,3 +1,5 @@
+---@class EHIWaypoint
+---@field new fun(waypoint: WaypointDataTable, params: table, parent_class: EHIWaypointManager): self
 EHIWaypoint = class()
 EHIWaypoint._update = true
 EHIWaypoint._default_color = Color.white

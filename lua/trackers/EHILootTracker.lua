@@ -132,3 +132,36 @@ function EHILootTracker:SecuredMissionLoot()
     self._mission_loot = self._mission_loot + 1
     self:SetProgress(progress)
 end
+
+EHIAchievementLootCounterTracker = class(EHILootTracker)
+EHIAchievementLootCounterTracker._popup_type = "achievement"
+EHIAchievementLootCounterTracker._show_started = EHIAchievementTracker._show_started
+EHIAchievementLootCounterTracker._show_failed = EHIAchievementTracker._show_failed
+EHIAchievementLootCounterTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
+EHIAchievementLootCounterTracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
+function EHIAchievementLootCounterTracker:init(panel, params)
+    self._no_failure = params.no_failure
+    self._beardlib = params.beardlib
+    self._loot_counter_on_fail = params.loot_counter_on_fail
+    self._forced_icons[1] = params.icons[1]
+    self._forced_icons[2] = "pd2_loot"
+    EHIAchievementLootCounterTracker.super.init(self, panel, params)
+    if self._show_started then
+        self:ShowStartedPopup(params.delay_popup)
+    end
+end
+
+function EHIAchievementLootCounterTracker:SetCompleted(force)
+    self._achieved_popup_showed = true
+    EHIAchievementLootCounterTracker.super.SetCompleted(self, force)
+end
+
+function EHIAchievementLootCounterTracker:SetFailed()
+    EHIAchievementLootCounterTracker.super.SetFailed(self)
+    if self._status_is_overridable then
+        self._achieved_popup_showed = nil
+    end
+    if self._show_failed then
+        self:ShowFailedPopup()
+    end
+end

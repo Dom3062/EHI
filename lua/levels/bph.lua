@@ -18,6 +18,7 @@ local triggers = {
     [101412] = { id = "EnemyDeathOutside", special_function = SF.IncreaseProgress }
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     bph_10 =

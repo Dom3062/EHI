@@ -6,13 +6,10 @@ end
 local Icon = EHI.Icons
 
 local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
+---@type MissionDoorTable
 local MissionDoor = {}
--- Option 1:
--- [Vector3] = "Waypoint ID"
--- Option 2:
--- [Vector3] = { w_id = "Waypoint ID", restore = "If the waypoint should be restored when the drill finishes", unit_id = "ID of the door" }
----- See MissionDoor class how to get Drill position
 
+---@param tbl MissionDoorTable
 function TimerGui.SetMissionDoorPosAndIndex(tbl)
     for vector, value in pairs(tbl) do
         MissionDoor[tostring(vector)] = value
@@ -65,7 +62,7 @@ function TimerGui:StartTimer()
     if managers.ehi_manager:Exists(self._ehi_key) then
         managers.ehi_manager:SetTimerRunning(self._ehi_key)
     else
-        local autorepair = self._unit:base()._autorepair
+        local autorepair = self._unit:base()._autorepair or self._unit:base()._autorepair_client
         -- In case the conversion fails, fallback to "self._time_left" which is a number
         local t = tonumber(self._current_timer) or self._time_left
         if not show_waypoint_only then
@@ -83,7 +80,7 @@ function TimerGui:StartTimer()
             managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
                 time = t,
                 icon = self._icons or self._ehi_icon[1].icon,
-                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
+                position = self._forced_pos or self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
                 autorepair = autorepair,
                 class = "EHITimerWaypoint"
             })
@@ -271,6 +268,13 @@ function TimerGui:SetChildUnits(units, wd)
                 EHI:Log("[TimerGui] Cannot find unit with ID " .. tostring(unit_id))
             end
         end
+    end
+end
+
+function TimerGui:SetWaypointPosition(pos)
+    self._forced_pos = pos
+    if self._started and pos then
+        managers.ehi_waypoint:SetWaypointPosition(self._ehi_key, pos)
     end
 end
 

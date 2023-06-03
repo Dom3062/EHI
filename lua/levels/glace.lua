@@ -31,6 +31,7 @@ if EHI:IsClient() then
     triggers[103038] = { time = 20, id = "PickUpBalloonSecondTry", icons = { Icon.Escape }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     glace_9 =
@@ -55,7 +56,7 @@ local achievements =
     },
     uno_4 =
     {
-        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), -- Don't hook it if the difficulty is Hard or below
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard),
         elements =
         {
             [100765] = { status = "destroy", class = TT.AchievementStatus },

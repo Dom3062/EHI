@@ -14,6 +14,7 @@ end
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@type ParseAchievementTable
 local achievements = {
     -- "fish_4" achievement is not in the Mission Script
     fish_4 =
@@ -21,7 +22,7 @@ local achievements = {
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100244] = { time = 360, id = "fish_4", class = TT.Achievement },
+            [100244] = { time = 360, class = TT.Achievement },
         },
         load_sync = function(self)
             self._trackers:AddTimedAchievementTracker("fish_4", 360)
@@ -42,8 +43,11 @@ local achievements = {
         elements =
         {
             -- 100244 is ´Players_spawned´
-            [100244] = { class = TT.AchievementProgress, remove_after_reaching_target = false } -- Maximum is set in the tracker; difficulty dependant
-        }
+            [100244] = { class = "EHIfish6Tracker", remove_after_reaching_target = false } -- Maximum is set in the tracker; difficulty dependant
+        },
+        cleanup_callback = function()
+            EHIfish6Tracker = nil
+        end
     }
 }
 
@@ -51,8 +55,7 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 EHI:ShowLootCounter({
-    max = 8, -- Mission bags
-    additional_loot = 7 -- Artifacts
+    max = 8 + 7 -- Mission bags + Artifacts
 })
 EHI:AddXPBreakdown({
     objective =

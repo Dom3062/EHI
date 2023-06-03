@@ -28,6 +28,7 @@ end
 local corp_11_Start = EHI:GetFreeCustomSpecialFunctionID()
 local corp_11_SetFailed = EHI:GetFreeCustomSpecialFunctionID()
 local corp_11_StartVariable = true
+---@type ParseAchievementTable
 local achievements =
 {
     corp_10 =

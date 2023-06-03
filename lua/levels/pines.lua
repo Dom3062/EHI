@@ -29,6 +29,7 @@ local triggers = {
     [101007] = chance,
     [101008] = chance
 }
+---@type ParseAchievementTable
 local achievements =
 {
     uno_9 =

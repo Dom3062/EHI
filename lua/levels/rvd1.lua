@@ -30,6 +30,7 @@ if EHI:IsClient() then
     triggers[101065] = EHI:ClientCopyTrigger(triggers[100727], { time = 25 + 375/30 })
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     rvd_9 =
@@ -56,6 +57,14 @@ local other =
 {
     [100179] = EHI:AddAssaultDelay({ time = 1 + 9.5 + 11 + 1 + 30 })
 }
+if EHI:IsLootCounterVisible() then
+    other[100107] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
+        EHI:ShowLootCounterNoChecks({ max = 6 })
+    end)}
+    other[100037] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+        self._trackers:CallFunction("LootCounter", "SecuredMissionLoot") -- Secured diamonds at Mr. Blonde or in a Van
+    end)}
+end
 
 EHI:ParseTriggers({
     mission = triggers,

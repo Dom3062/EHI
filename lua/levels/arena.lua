@@ -28,6 +28,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100128, 4900)] = { time = 10, id = "PressSequence", icons = { Icon.Interact }, class = TT.Warning }
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     live_2 =

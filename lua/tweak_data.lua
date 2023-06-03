@@ -2,6 +2,8 @@ local EHI = EHI
 if EHI:CheckHook("tweak_data") then
     return
 end
+local string_format = string.format
+local math_floor = math.floor
 core:import("CoreTable")
 local deep_clone = CoreTable.deep_clone
 local Icon = EHI.Icons
@@ -616,30 +618,75 @@ tweak_data.ehi =
             end
             return n
         end,
+        HookArmoredTransportUnit = function(truck_id)
+            local exploded = {}
+            local function GarbageFound()
+                managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined")
+            end
+            local function LootFound()
+                managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
+            end
+            local function LootFoundExplosionCheck()
+                if exploded[truck_id] then
+                    GarbageFound()
+                    return
+                end
+                managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
+            end
+            managers.mission:add_runned_unit_sequence_trigger(truck_id, "set_exploded", function()
+                exploded[truck_id] = true
+            end)
+            for _, loot in ipairs({ "gold", "money", "art" }) do
+                for i = 1, 9, 1 do
+                    if i <= 2 then -- Explosion can disable this loot
+                        managers.mission:add_runned_unit_sequence_trigger(truck_id, "spawn_loot_" .. loot .. "_" .. tostring(i), LootFoundExplosionCheck)
+                    else
+                        managers.mission:add_runned_unit_sequence_trigger(truck_id, "spawn_loot_" .. loot .. "_" .. tostring(i), LootFound)
+                    end
+                end
+            end
+            for i = 1, 9, 1 do
+                managers.mission:add_runned_unit_sequence_trigger(truck_id, "spawn_loot_empty_" .. tostring(i), GarbageFound)
+            end
+        end,
         FormatSecondsOnly = function(self)
-            local t = math.floor(self._time * 10) / 10
+            local t = math_floor(self._time * 10) / 10
             if t < 0 then
-                return string.format("%d", 0)
+                return string_format("%d", 0)
             elseif t < 1 then
-                return string.format("%.2f", self._time)
+                return string_format("%.2f", self._time)
             elseif t < 10 then
-                return string.format("%.1f", t)
+                return string_format("%.1f", t)
             else
-                return string.format("%d", t)
+                return string_format("%d", t)
             end
         end,
         FormatMinutesAndSeconds = function(self)
-            local t = math.floor(self._time * 10) / 10
+            local t = math_floor(self._time * 10) / 10
             if t < 0 then
-                return string.format("%d", 0)
+                return string_format("%d", 0)
             elseif t < 1 then
-                return string.format("%.2f", self._time)
+                return string_format("%.2f", self._time)
             elseif t < 10 then
-                return string.format("%.1f", t)
+                return string_format("%.1f", t)
             elseif t < 60 then
-                return string.format("%d", t)
+                return string_format("%d", t)
             else
-                return string.format("%d:%02d", t / 60, t % 60)
+                return string_format("%d:%02d", t / 60, t % 60)
+            end
+        end,
+        ReturnMinutesAndSeconds = function(_, time)
+            local t = math_floor(time * 10) / 10
+            if t < 0 then
+                return string_format("%d", 0)
+            elseif t < 1 then
+                return string_format("%.2f", time)
+            elseif t < 10 then
+                return string_format("%.1f", t)
+            elseif t < 60 then
+                return string_format("%d", t)
+            else
+                return string_format("%d:%02d", t / 60, t % 60)
             end
         end
     }

@@ -9,11 +9,22 @@ local original =
     load = HUDManager.load
 }
 
+---@class HUDManager
+---@field AddWaypoint fun(self: HUDManager, id: string, params: table): WaypointDataTable
+---@field remove_waypoint fun(self: HUDManager, id: string)
+---@field SoftRemoveWaypoint2 fun(self: HUDManager, id: number)
+---@field get_waypoint_data fun(self: HUDManager, id: string): WaypointDataTable|nil
+
+---@param id string
+---@param params AddWaypointTable
+---@return WaypointDataTable
 function HUDManager:AddWaypoint(id, params)
     self:add_waypoint(id, params)
     return self:get_waypoint_data(id)
 end
 
+---@param id string
+---@param params table
 function HUDManager:AddWaypointFromTrigger(id, params)
     if params.icon_redirect then
         local wp = self:AddWaypoint(id, params)
@@ -30,12 +41,15 @@ function HUDManager:AddWaypointFromTrigger(id, params)
     end
 end
 
+---@param id number
+---@param data WaypointDataTable
 function HUDManager:AddWaypointSoft(id, data)
     self._hud.stored_waypoints[id] = data
     self._hud.ehi_removed_waypoints = self._hud.ehi_removed_waypoints or {}
     self._hud.ehi_removed_waypoints[id] = true
 end
 
+---@param id number
 function HUDManager:SoftRemoveWaypoint(id)
     local init_data = self._hud.waypoints[id] and self._hud.waypoints[id].init_data
     if init_data then
@@ -44,11 +58,13 @@ function HUDManager:SoftRemoveWaypoint(id)
     end
 end
 
+---@param id number
 function HUDManager:SoftRemoveWaypoint2(id)
     self:SoftRemoveWaypoint(id)
     EHI:DisableElementWaypoint(id)
 end
 
+---@param id number
 function HUDManager:RestoreWaypoint(id)
     local data = self._hud.stored_waypoints[id]
     if data then

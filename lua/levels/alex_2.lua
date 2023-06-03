@@ -11,13 +11,14 @@ local other =
     [1045351] = EHI:AddAssaultDelay({ time = 30, special_function = SF.SetTimeOrCreateTracker }),
     [1045352] = { special_function = SF.RemoveTrigger, data = { 104488, 104489 } }
 }
-if EHI:GetOption("show_loot_counter") then
+if EHI:IsLootCounterVisible() then
     local LootCounterValue = EHI:GetFreeCustomSpecialFunctionID()
     local loot_trigger = { special_function = LootCounterValue }
     for i = 103715, 103724, 1 do
         other[i] = loot_trigger
     end
     EHI:RegisterCustomSpecialFunction(LootCounterValue, function(self, trigger, element, ...)
+        ---@type LootCounterSequenceTriggersTable
         local SafeTriggers =
         {
             -- gen_interactable_sec_safe_05x05 - 7
@@ -40,7 +41,7 @@ if EHI:GetOption("show_loot_counter") then
         }
         local spawned = element._values.value
         local additional_loot = math.max(0, spawned - 3)
-        EHI:ShowLootCounterNoCheck({
+        EHI:ShowLootCounterNoChecks({
             max = spawned,
             additional_loot = additional_loot,
             max_random = 1,
@@ -95,11 +96,11 @@ EHI:AddOnAlarmCallback(function(dropin)
     })
 end)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        rats2_info_destroyed = 4000,
-        rats2_trade = 6000,
-        rats2_trade_and_steal = 4000
+        { amount = 4000, name = "rats2_info_destroyed" },
+        { amount = 6000, name = "rats2_trade" },
+        { amount = 4000, name = "rats2_trade_and_steal" }
     },
     total_xp_override =
     {
@@ -107,14 +108,14 @@ EHI:AddXPBreakdown({
         {
             min =
             {
-                objective =
+                objectives =
                 {
                     rats2_info_destroyed = true
                 }
             },
             max =
             {
-                objective =
+                objectives =
                 {
                     rats2_trade = true,
                     rats2_trade_and_steal = true

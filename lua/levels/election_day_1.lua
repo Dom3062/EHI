@@ -1,6 +1,7 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+---@type ParseAchievementTable
 local achievements =
 {
     bob_8 =
@@ -37,12 +38,23 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    tactic =
     {
-        ed1_tag_right_truck = { amount = 2000, stealth = true },
-        ed1_hack_1 = { amount = 12000, loud = true },
-        ed1_hack_2 = { amount = 12000, loud = true },
-        stealth_escape = 6000
-    },
-    no_total_xp = true
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 2000, name = "ed1_tag_right_truck", optional = true },
+                { escape = 6000 }
+            }
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 12000, name = "ed1_hack_1" },
+                { amount = 12000, name = "ed1_hack_2", optional = true }
+            }
+        }
+    }
 })

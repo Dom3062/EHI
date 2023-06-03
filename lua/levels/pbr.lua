@@ -16,6 +16,7 @@ local function berry_4_fail()
     managers.ehi_tracker:SetAchievementFailed("berry_4")
 end
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@type ParseAchievementTable
 local achievements =
 {
     berry_3 =
@@ -69,7 +70,21 @@ EHI:ShowAchievementLootCounter({
 
 local tbl =
 {
-    [EHI:GetInstanceUnitID(100113, 0)] = { icons = { Icon.C4 } }
+    [EHI:GetInstanceUnitID(100113, 0)] = { icons = { Icon.C4 } },
+
+    -- Vaults
+    -- Poseidon
+    [EHI:GetInstanceUnitID(100005, 16550)] = { icons = { Icon.Vault }, position = Vector3(-6845, -2202, -800) },
+    -- Ares
+    [EHI:GetInstanceUnitID(100007, 16550)] = { icons = { Icon.Vault }, position = Vector3(-8737.18, -5842.67, -800) },
+    -- Chronos
+    [EHI:GetInstanceUnitID(100008, 16550)] = { icons = { Icon.Vault }, position = Vector3(-11417.6, -3197.62, -799.999) },
+    -- Demeter
+    [EHI:GetInstanceUnitID(100039, 16550)] = { icons = { Icon.Vault }, position = Vector3(-12702, -1630, -800) },
+    -- Hades
+    [EHI:GetInstanceUnitID(100040, 16550)] = { icons = { Icon.Vault }, position = Vector3(-9298, -195, -800) },
+    -- Zeus
+    [EHI:GetInstanceUnitID(100041, 16550)] = { icons = { Icon.Vault }, position = Vector3(-6845, -4202, -800) }
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({

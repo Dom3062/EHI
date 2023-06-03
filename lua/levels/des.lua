@@ -73,6 +73,7 @@ end
 DisableWaypoints[EHI:GetInstanceElementID(100025, 29550)] = true -- Defend
 DisableWaypoints[EHI:GetInstanceElementID(100026, 29550)] = true -- Fix
 
+---@type ParseAchievementTable
 local achievements =
 {
     des_9 =
@@ -134,10 +135,7 @@ local tbl =
     [EHI:GetInstanceUnitID(100030, 21000)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100009, 21000) }
 }
 EHI:UpdateUnits(tbl)
-EHI:ShowLootCounter({
-    max = 2,
-    additional_loot = 6
-})
+EHI:ShowLootCounter({ max = 8 }) -- 2 main loot; 6 artifacts
 EHI:AddXPBreakdown({
     objectives =
     {

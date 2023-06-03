@@ -27,10 +27,11 @@ EHIZoneTracker.SetCompleted = EHIAchievementTracker.SetCompleted
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local SetProgressMax = EHI:GetFreeCustomSpecialFunctionID()
-local SetZoneComplete = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [100377] = { time = 90, id = "ClearPickupZone", class = "EHIZoneTracker" },
-    [101550] = { id = "ClearPickupZone", special_function = SetZoneComplete },
+    [101550] = { id = "ClearPickupZone", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+        self._trackers:CallFunction(trigger.id, "SetCompleted")
+    end) },
 
     -- Parking lot
     [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { Icon.Wait } },
@@ -76,6 +77,7 @@ if EHI:MissionTrackersAndWaypointEnabled() then
     triggers[1028731].waypoint = { icon = Icon.Escape, position_by_element = 101290 }
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     run_8 =
@@ -128,9 +130,6 @@ EHI:RegisterCustomSpecialFunction(SetProgressMax, function(self, trigger, ...)
             class = "EHIGasTracker"
         })
     end
-end)
-EHI:RegisterCustomSpecialFunction(SetZoneComplete, function(self, trigger, ...)
-    self._trackers:CallFunction(trigger.id, "SetCompleted")
 end)
 EHI:AddXPBreakdown({
     objectives =

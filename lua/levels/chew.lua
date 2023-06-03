@@ -15,6 +15,7 @@ else
     EHI:AddHostTriggers(sync_triggers, nil, nil, "base")
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     born_5 =

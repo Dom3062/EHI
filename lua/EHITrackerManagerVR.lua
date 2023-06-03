@@ -1,6 +1,6 @@
 local EHI = EHI
 EHITrackerManagerVR = EHITrackerManager
-EHITrackerManagerVR.old_init = EHITrackerManager.init
+EHITrackerManagerVR.old_new = EHITrackerManager.new
 EHITrackerManagerVR.old_AddToDeployableCache = EHITrackerManager.AddToDeployableCache
 EHITrackerManagerVR.old_LoadFromDeployableCache = EHITrackerManager.LoadFromDeployableCache
 EHITrackerManagerVR.old_RemoveFromDeployableCache = EHITrackerManager.RemoveFromDeployableCache
@@ -8,10 +8,11 @@ EHITrackerManagerVR.old_PreloadTracker = EHITrackerManager.PreloadTracker
 EHITrackerManagerVR.old_AddLaserTracker = EHITrackerManager.AddLaserTracker
 EHITrackerManagerVR.old_RemoveLaserTracker = EHITrackerManager.RemoveLaserTracker
 
-function EHITrackerManagerVR:init()
-    self:old_init()
+function EHITrackerManagerVR:new()
+    self:old_new()
     self._is_loading = true
     self._load_callback = {}
+    return self
 end
 
 function EHITrackerManagerVR:CreateWorkspace()
@@ -46,6 +47,7 @@ function EHITrackerManagerVR:IsLoading()
     return self._is_loading
 end
 
+---@param params AddTrackerTable
 function EHITrackerManagerVR:PreloadTracker(params)
     if self:IsLoading() then
         self:AddToLoadQueue(params.id, params, callback(self, self, "_PreloadTracker"))
@@ -54,10 +56,16 @@ function EHITrackerManagerVR:PreloadTracker(params)
     self:old_PreloadTracker(params)
 end
 
+---@param key string
+---@param data AddTrackerTable
 function EHITrackerManagerVR:_PreloadTracker(key, data)
     self:old_PreloadTracker(data)
 end
 
+---@param key string
+---@param data table
+---@param f function
+---@param add boolean
 function EHITrackerManagerVR:AddToLoadQueue(key, data, f, add)
     if add then
         if self._load_callback[key] then
@@ -78,10 +86,16 @@ function EHITrackerManagerVR:AddToLoadQueue(key, data, f, add)
     end
 end
 
+---@param key string
+---@param data table
 function EHITrackerManagerVR:ReturnLoadCall(key, data)
     self[data.f](self, data.type, key, data.unit, data.tracker_type)
 end
 
+---@param type string
+---@param key string
+---@param unit Unit
+---@param tracker_type string
 function EHITrackerManagerVR:AddToDeployableCache(type, key, unit, tracker_type)
     if key and self:IsLoading() then
         self:AddToLoadQueue(key, { type = type, unit = unit, tracker_type = tracker_type, f = "AddToDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
@@ -90,6 +104,8 @@ function EHITrackerManagerVR:AddToDeployableCache(type, key, unit, tracker_type)
     self:old_AddToDeployableCache(type, key, unit, tracker_type)
 end
 
+---@param type string
+---@param key string
 function EHITrackerManagerVR:LoadFromDeployableCache(type, key)
     if key and self:IsLoading() then
         self:AddToLoadQueue(key, { type = type, f = "LoadFromDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
@@ -98,6 +114,8 @@ function EHITrackerManagerVR:LoadFromDeployableCache(type, key)
     self:old_LoadFromDeployableCache(type, key)
 end
 
+---@param type string
+---@param key string
 function EHITrackerManagerVR:RemoveFromDeployableCache(type, key)
     if key and self:IsLoading() then
         self:AddToLoadQueue(key, { type = type, f = "RemoveFromDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
@@ -106,6 +124,7 @@ function EHITrackerManagerVR:RemoveFromDeployableCache(type, key)
     self:old_RemoveFromDeployableCache(type, key)
 end
 
+---@param params table
 function EHITrackerManagerVR:AddLaserTracker(params)
     if self:IsLoading() then
         self:AddToLoadQueue(params.id, params, callback(self, self, "_AddLaserTracker"))
@@ -114,10 +133,13 @@ function EHITrackerManagerVR:AddLaserTracker(params)
     self:old_AddLaserTracker(params)
 end
 
+---@param key string
+---@param params table
 function EHITrackerManagerVR:_AddLaserTracker(key, params)
     self:old_AddLaserTracker(params)
 end
 
+---@param id string
 function EHITrackerManagerVR:RemoveLaserTracker(id)
     if self:IsLoading() then
         self._load_callback[id] = nil

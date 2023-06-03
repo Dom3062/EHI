@@ -8,6 +8,7 @@ local other = {
     end}
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     cac_21 =

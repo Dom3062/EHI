@@ -12,6 +12,7 @@ if EHI:GetOption("show_mission_trackers") then
     end
 end
 
+---@type MissionDoorTable
 local MissionDoor =
 {
     -- Security doors

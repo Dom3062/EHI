@@ -118,6 +118,7 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     halloween_1 =
@@ -154,12 +155,11 @@ EHI:ParseTriggers({
     other = other,
     preload = preload
 }, "Van", Icon.CarEscape)
-if ovk_and_up then
-    EHI:ShowAchievementLootCounter({
-        achievement = "halloween_2",
-        max = 7
-    })
-end
+EHI:ShowAchievementLootCounter({
+    achievement = "halloween_2",
+    max = 7,
+    difficulty_pass = ovk_and_up
+})
 EHI:AddXPBreakdown({
     loot_all = 8000,
     total_xp_override =

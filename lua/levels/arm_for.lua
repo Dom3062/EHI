@@ -15,6 +15,7 @@ local triggers = {
     [105055] = { time = 15 + truck_delay, id = "TruckSecureTurret", icons = { Icon.Car, Icon.LootDrop } },
     [105183] = { time = 30 + 524/30, id = "TruckSecureAmmo", icons = { Icon.Car, Icon.LootDrop } }
 }
+---@type ParseAchievementTable
 local achievements =
 {
     armored_6 =
@@ -57,6 +58,7 @@ for i = 0, 500, 100 do
 end
 EHI:UpdateUnits(tbl)
 
+---@type MissionDoorTable
 local MissionDoor =
 {
     -- Vaults

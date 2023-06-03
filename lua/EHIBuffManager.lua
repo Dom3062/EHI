@@ -22,6 +22,8 @@ end
 
 local buff_w = 32
 local buff_h = 64
+---@class EHIBuffManager
+---@field new fun(...): self
 EHIBuffManager = class()
 function EHIBuffManager:init()
     self._buffs = {}
@@ -59,6 +61,14 @@ function EHIBuffManager:init_finalize(hud)
     self:InitializeTagTeamBuffs()
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "ActivateUpdatingBuffs"))
     EHI:AddOnCustodyCallback(callback(self, self, "RemoveAbilityCooldown"))
+    if EHI:IsClient() then
+        Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHIBuff", function(_, id, data)
+            if id == EHI.SyncMessages.EHISyncAddBuff then
+                local tbl = LuaNetworking:StringToTable(data)
+                self:AddBuff(tbl.id, tonumber(tbl.t))
+            end
+        end)
+    end
 end
 
 function EHIBuffManager:InitializeBuffs()
@@ -133,6 +143,10 @@ function EHIBuffManager:CallFunction(id, f, ...)
     if buff and buff[f] then
         buff[f](buff, ...)
     end
+end
+
+function EHIBuffManager:SyncBuff(id, t)
+    EHI:Sync(EHI.SyncMessages.EHISyncAddBuff, LuaNetworking:TableToString({ id = id, t = t }))
 end
 
 function EHIBuffManager:ActivateUpdatingBuffs()
@@ -270,10 +284,12 @@ function EHIBuffManager:RemoveBuffFromUpdate(id)
     self._update_buffs[id] = nil
 end
 
-function EHIBuffManager:RemoveAbilityCooldown()
-    local ability = self._cache.Ability
-    if ability then
-        self:RemoveBuff(ability)
+function EHIBuffManager:RemoveAbilityCooldown(in_custody)
+    if in_custody then
+        local ability = self._cache.Ability
+        if ability then
+            self:RemoveBuff(ability)
+        end
     end
 end
 

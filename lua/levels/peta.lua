@@ -23,6 +23,7 @@ if EHI:IsClient() then
     triggers[101748] = { time = 1330/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker }
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     peta_2 =

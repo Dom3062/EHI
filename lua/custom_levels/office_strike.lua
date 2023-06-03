@@ -31,6 +31,7 @@ local triggers = {
     end}
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     os_powerup =
@@ -90,6 +91,7 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
+---@type MissionDoorTable
 local MissionDoor =
 {
     [Vector3(945.08, 3403.11, 92.4429)] = 200160

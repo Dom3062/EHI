@@ -10,6 +10,8 @@ local function table_icontains(tbl, val)
 end
 
 local EHI = EHI
+---@class EHIManager
+---@field FormatTimer fun(self: self, t: number): string
 EHIManager = {}
 EHIManager.GetAchievementIcon = EHI.GetAchievementIcon
 EHIManager.Trackers = EHI.Trackers
@@ -19,7 +21,9 @@ EHIManager.TriggerFunction = EHI.TriggerFunction
 EHIManager.SFF = {}
 EHIManager.HookOnLoad = {}
 function EHIManager:new(ehi_tracker, ehi_waypoints)
+    ---@type EHITrackerManager
     self._trackers = ehi_tracker
+    ---@type EHIWaypointManager
     self._waypoints = ehi_waypoints
     self._level_started_from_beginning = true
     self._t = 0
@@ -38,6 +42,8 @@ function EHIManager:init_finalize()
     managers.network:add_event_listener("EHIManagerDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
 end
 
+---@param tweak_data string
+---@return boolean
 function EHIManager:InteractionExists(tweak_data)
     local interactions = managers.interaction._interactive_units or {}
     for _, unit in ipairs(interactions) do
@@ -49,16 +55,18 @@ function EHIManager:InteractionExists(tweak_data)
 end
 
 function EHIManager:load()
-    self:LoadSync()
-    self:SyncLoad()
+    self:SyncLoad() -- Add missing positions from elements and remove waypoints
+    self:LoadSync() -- Run LoadSync functions
 end
 
+---@param t number
 function EHIManager:LoadTime(t)
     self._t = t
     self._trackers:LoadTime(t)
     self._waypoints:LoadTime(t)
 end
 
+---@param f fun(self: EHIManager)
 function EHIManager:AddLoadSyncFunction(f)
     if EHI:IsHost() then
         return
@@ -67,6 +75,7 @@ function EHIManager:AddLoadSyncFunction(f)
     self._load_sync[#self._load_sync + 1] = f
 end
 
+---@param f fun(self: EHIManager)
 function EHIManager:AddFullSyncFunction(f)
     if EHI:IsHost() then
         return
@@ -103,88 +112,116 @@ function EHIManager:GetDropin()
     return not self:GetStartedFromBeginning()
 end
 
+---@param t number
+---@param dt number
 function EHIManager:update(t, dt)
     self._trackers:update(t, dt)
     self._waypoints:update(t, dt)
 end
 
+---@param t number
 function EHIManager:update_client(t)
     local dt = t - self._t
     self._t = t
     self:update(t, dt)
 end
 
+---@param id string
 function EHIManager:Exists(id)
     return self._trackers:TrackerExists(id) or self._waypoints:WaypointExists(id)
 end
 
+---@param id string
 function EHIManager:DoesNotExist(id)
     return not self:Exists(id)
 end
 
+---@param id string
 function EHIManager:Remove(id)
     self._trackers:RemoveTracker(id)
     self._waypoints:RemoveWaypoint(id)
 end
 
+---@param id string
 function EHIManager:ForceRemove(id)
     self._trackers:ForceRemoveTracker(id)
     self._waypoints:RemoveWaypoint(id)
 end
 
+---@param id string
+---@param pause boolean
 function EHIManager:SetPaused(id, pause)
     self._trackers:SetTrackerPaused(id, pause)
     self._waypoints:SetWaypointPause(id, pause)
 end
 
+---@param id string
 function EHIManager:Pause(id)
     self:SetPaused(id, true)
 end
 
+---@param id string
 function EHIManager:Unpause(id)
     self:SetPaused(id, false)
 end
 
+---@param id string
 function EHIManager:RemovePager(id)
     self._trackers:RemoveStealthTracker(id, "pagers")
     self._waypoints:RemovePagerWaypoint(id)
 end
 
+---@param id string
+---@param t number
 function EHIManager:SetAccurate(id, t)
     self._trackers:SetTrackerAccurate(id, t)
     self._waypoints:SetWaypointAccurate(id, t)
 end
 
+---@param id string
+---@param icon string
 function EHIManager:SetIcon(id, icon)
     self._trackers:SetTrackerIcon(id, icon)
     self._waypoints:SetWaypointIcon(id, icon)
 end
 
+---@param id string
+---@param jammed boolean
 function EHIManager:SetTimerJammed(id, jammed)
     self._trackers:SetTimerJammed(id, jammed)
     self._waypoints:SetTimerWaypointJammed(id, jammed)
 end
 
+---@param id string
+---@param powered boolean
 function EHIManager:SetTimerPowered(id, powered)
     self._trackers:SetTimerPowered(id, powered)
     self._waypoints:SetTimerWaypointPowered(id, powered)
 end
 
+---@param id string
 function EHIManager:SetTimerRunning(id)
     self._trackers:SetTimerRunning(id)
     self._waypoints:SetTimerWaypointRunning(id)
 end
 
+---@param id string
+---@param t number
 function EHIManager:SetTime(id, t)
     self._trackers:SetTrackerTime(id, t)
     self._waypoints:SetWaypointTime(id, t)
 end
 
+---@param id string
+---@param t number
 function EHIManager:SetTimeNoAnim(id, t)
     self._trackers:SetTrackerTimeNoAnim(id, t)
     self._waypoints:SetWaypointTime(id, t)
 end
 
+---@param id string
+---@param f string
+---@param ... any
 function EHIManager:Call(id, f, ...)
     self._trackers:CallFunction(id, f, ...)
     self._waypoints:CallFunction(id, f, ...)
@@ -324,6 +361,9 @@ function EHIManager:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_
     end
 end
 
+---@param new_triggers ParseTriggersTable
+---@param trigger_id_all string?
+---@param trigger_icons_all table?
 function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     new_triggers = new_triggers or {}
     self:PreloadTrackers(new_triggers.preload or {}, trigger_id_all or "Trigger", trigger_icons_all or {})
@@ -349,9 +389,19 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
             end)
         end
     end
+    local function Cleanup(data)
+        for _, element in pairs(data.elements or {}) do
+            if element.special_function and element.special_function > SF.CustomSF then
+                self:UnregisterCustomSpecialFunction(element.special_function)
+            end
+        end
+        if type(data.cleanup_callback) == "function" then
+            data.cleanup_callback()
+        end
+    end
     self:ParseOtherTriggers(new_triggers.other or {}, trigger_id_all or "Trigger", trigger_icons_all)
-    local trophy = new_triggers.trophy
-    if EHI:GetUnlockableAndOption("show_trophies") and trophy and next(trophy) then
+    local trophy = new_triggers.trophy or {}
+    if EHI:GetUnlockableAndOption("show_trophies") and next(trophy) then
         for id, data in pairs(trophy) do
             if data.difficulty_pass ~= false and EHI:IsTrophyLocked(id) then
                 for _, element in pairs(data.elements or {}) do
@@ -363,9 +413,13 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
                 ParseParams(data, id)
             end
         end
+    else
+        for _, data in pairs(trophy) do
+            Cleanup(data)
+        end
     end
-    local daily = new_triggers.daily
-    if EHI:GetUnlockableAndOption("show_dailies") and daily and next(daily) then
+    local daily = new_triggers.daily or {}
+    if EHI:GetUnlockableAndOption("show_dailies") and next(daily) then
         for id, data in pairs(daily) do
             if data.difficulty_pass ~= false and EHI:IsDailyAvailable(id) then
                 for _, element in pairs(data.elements or {}) do
@@ -375,11 +429,17 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
                 end
                 self:AddTriggers2(data.elements or {}, nil, id)
                 ParseParams(data, id)
+            else
+                Cleanup(data)
             end
         end
+    else
+        for _, data in pairs(daily) do
+            Cleanup(data)
+        end
     end
-    local achievement_triggers = new_triggers.achievement
-    if EHI:ShowMissionAchievements() and achievement_triggers and next(achievement_triggers) then
+    local achievement_triggers = new_triggers.achievement or {}
+    if EHI:ShowMissionAchievements() and next(achievement_triggers) then
         local function Parser(data, id)
             for _, element in pairs(data.elements or {}) do
                 if element.class and EHI.AchievementTrackers[element.class] then
@@ -406,9 +466,13 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
         for id, data in pairs(achievement_triggers) do
             if data.difficulty_pass ~= false and IsAchievementLocked(data, id) then
                 Parser(data, id)
-            elseif type(data.cleanup_callback) == "function" then
-                data.cleanup_callback()
+            else
+                Cleanup(data)
             end
+        end
+    else
+        for _, data in pairs(achievement_triggers) do
+            Cleanup(data)
         end
     end
     self:ParseMissionTriggers(new_triggers.mission or {}, trigger_id_all, trigger_icons_all)
@@ -428,8 +492,12 @@ end
 function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     if not EHI:GetOption("show_mission_trackers") then
         for id, data in pairs(new_triggers) do
-            if data.special_function and self.SyncFunctions[data.special_function] then
-                self:AddTriggers2({ [id] = data }, nil, trigger_id_all or "Trigger", trigger_icons_all)
+            if data.special_function then
+                if self.SyncFunctions[data.special_function] then
+                    self:AddTriggers2({ [id] = data }, nil, trigger_id_all or "Trigger", trigger_icons_all)
+                elseif data.special_function > SF.CustomSF then
+                    self:UnregisterCustomSpecialFunction(data.special_function)
+                end
             end
         end
         return
@@ -571,6 +639,7 @@ function EHIManager:InitElements()
     end
 end
 
+---@param elements_to_hook table
 function EHIManager:HookElements(elements_to_hook)
     local function Client(element, ...)
         self:Trigger(element._id, element, true)
@@ -707,6 +776,9 @@ function EHIManager:CheckCondition(trigger)
     end
 end
 
+---@param self EHIManager
+---@param trigger table
+---@param id number
 local function GetElementTimer(self, trigger, id)
     if EHI:IsHost() then
         local element = managers.mission:get_element_by_id(trigger.element)
@@ -968,7 +1040,7 @@ function EHIManager:SetSyncTriggers(sync_triggers)
     if self._sync_triggers then
         for key, value in pairs(sync_triggers) do
             if self._sync_triggers[key] then
-                self:Log("key: " .. tostring(key) .. " already exists in sync!")
+                EHI:Log("key: " .. tostring(key) .. " already exists in sync!")
             else
                 self._sync_triggers[key] = deep_clone(value)
             end
@@ -1033,8 +1105,18 @@ function EHIManager:AddWaypointToTrigger(id, waypoint)
     t.waypoint = w
 end
 
+---@param id number
+---@param f fun(self: EHIManager, trigger: table, element: table, enabled: boolean)
+---@return nil
+---@overload fun(self, f: fun(self: EHIManager, trigger: table, element: table, enabled: boolean)): integer
 function EHIManager:RegisterCustomSpecialFunction(id, f)
-    self.SFF[id] = f
+    if f then
+        self.SFF[id] = f
+    else
+        local f_id = EHI:GetFreeCustomSpecialFunctionID()
+        self.SFF[f_id] = id
+        return f_id
+    end
 end
 
 function EHIManager:UnregisterCustomSpecialFunction(id)
@@ -1079,7 +1161,7 @@ if not EHI:GetOption("show_mission_trackers") then
 end
 
 if EHI:IsClient() then
-    Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(sender, id, data)
+    Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(_, id, data)
         if id == EHI.SyncMessages.EHISyncAddTracker then
             local tbl = LuaNetworking:StringToTable(data)
             EHIManager:AddTrackerSynced(tonumber(tbl.id), tonumber(tbl.delay))
@@ -1088,9 +1170,9 @@ if EHI:IsClient() then
 end
 
 if EHI:GetOption("show_timers") and EHI:GetWaypointOption("show_waypoints_timers") and not EHI:GetOption("show_waypoints_only") then
-    local math_floor = math.floor
-    local string_format = string.format
     if EHI:GetOption("time_format") == 1 then
+        local math_floor = math.floor
+        local string_format = string.format
         function EHIManager:FormatTimer(time)
             local t = math_floor(time * 10) / 10
             if t < 0 then
@@ -1104,21 +1186,10 @@ if EHI:GetOption("show_timers") and EHI:GetWaypointOption("show_waypoints_timers
             end
         end
     else
-        function EHIManager:FormatTimer(time)
-            local t = math_floor(time * 10) / 10
-            if t < 0 then
-                return string_format("%d", 0)
-            elseif t < 1 then
-                return string_format("%.2f", time)
-            elseif t < 10 then
-                return string_format("%.1f", t)
-            elseif t < 60 then
-                return string_format("%d", t)
-            else
-                return string_format("%d:%02d", t / 60, t % 60)
-            end
-        end
+        EHIManager.FormatTimer = tweak_data.ehi.functions.ReturnMinutesAndSeconds
     end
+    ---@param id string
+    ---@param t number
     function EHIManager:UpdateTimer(id, t)
         local t_string = self:FormatTimer(t)
         self._trackers:CallFunction(id, "SetTimeNoFormat", t, t_string)

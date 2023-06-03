@@ -13,6 +13,7 @@ for _, index in ipairs({ 13350, 14450, 14950, 15450, 15950, 16450, 16950, 17450 
     triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = unit_id } }
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     tag_9 =

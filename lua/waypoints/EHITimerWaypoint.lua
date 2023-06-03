@@ -1,3 +1,5 @@
+---@class EHITimerWaypoint: EHIWarningWaypoint
+---@field super EHIWarningWaypoint
 EHITimerWaypoint = class(EHIWarningWaypoint)
 EHITimerWaypoint._update = false
 EHITimerWaypoint._autorepair_color = EHI:GetTWColor("drill_autorepair")
@@ -34,7 +36,7 @@ function EHITimerWaypoint:SetTimeNoFormat(t, time)
     end
     self._time = t
     self._timer:set_text(time)
-    if t <= 10 and self._animate_warning and not self._anim_started then
+    if t <= 10 and self._warning and not self._anim_started then
         self._anim_started = true
         self:AnimateColor()
     end

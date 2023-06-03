@@ -1,15 +1,16 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
-local TT = EHI.Trackers
+local bilbo_baggin_bags = 0
 local function bilbo_baggin()
-    local bags_to_secure = managers.ehi_tracker:CountLootbagsOnTheGround()
-    if bags_to_secure >= 8 then
+    bilbo_baggin_bags = bilbo_baggin_bags + 1
+    if bilbo_baggin_bags == 8 then
         managers.ehi_tracker:AddAchievementProgressTracker("bilbo_baggin", 8, 0, false)
         EHI:AddAchievementToCounter({
             achievement = "bilbo_baggin"
         })
     end
 end
+---@type ParseAchievementTable
 local achievements =
 {
     bilbo_baggin =
@@ -25,6 +26,18 @@ local other =
 {
     [102414] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround)
 }
+--[[if EHI:GetOption("show_loot_counter") then
+    local CreateCounter = true
+    local UpdateLootCounter = EHI:GetFreeCustomSpecialFunctionID()
+    other[104263] = { special_function = UpdateLootCounter }
+    EHI:RegisterCustomSpecialFunction(UpdateLootCounter, function(self, ...)
+        if CreateCounter then
+            EHI:ShowLootCounterNoCheck({})
+            CreateCounter = false
+        end
+        self._trackers:IncreaseTrackerProgressMax("LootCounter")
+    end)
+end]]
 
 --[[if EHI:IsClient() then
     achievements.bilbo_baggin.elements[102414].special_function = SF.CustomCodeDelayed

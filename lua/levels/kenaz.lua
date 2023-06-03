@@ -127,13 +127,14 @@ EHI:RegisterCustomSpecialFunction(RemoveColorsIfEnabled, function(self, trigger,
     end
 end)
 
+---@type ParseAchievementTable
 local achievements =
 {
     kenaz_3 =
     {
         elements =
         {
-            [102807] = { class = TT.AchievementStatus },
+            [102807] = { status = "defend", class = TT.AchievementStatus },
             [102809] = { special_function = SF.SetAchievementFailed },
             [103163] = { status = "finish", special_function = SF.SetAchievementStatus }
         }

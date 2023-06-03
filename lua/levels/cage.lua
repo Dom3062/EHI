@@ -1,4 +1,5 @@
 local EHI = EHI
+---@type ParseAchievementTable
 local achievements =
 {
     fort_4 =

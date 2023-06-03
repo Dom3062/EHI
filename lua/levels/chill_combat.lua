@@ -2,6 +2,7 @@ local EHI = EHI
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
     local SF = EHI.SpecialFunctions
     local TT = EHI.Trackers
+    ---@type ParseAchievementTable
     local achievements =
     {
         cac_30 =

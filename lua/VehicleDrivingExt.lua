@@ -3,7 +3,7 @@ if EHI:CheckLoadHook("VehicleDrivingExt") then
     return
 end
 
-if not EHI:GetOption("show_trade_delay") or EHI:GetOption("show_trade_delay_option") == 2 then
+if EHI:IsTradeTrackerDisabled() or EHI:GetOption("show_trade_delay_option") == 2 then
     return
 end
 

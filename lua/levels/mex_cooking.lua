@@ -35,13 +35,12 @@ else
 end
 
 EHI:ParseTriggers({ mission = triggers })
-if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-    EHI:ShowAchievementLootCounter({
-        achievement = "mex2_9",
-        max = 25,
-        remove_after_reaching_target = false
-    })
-end
+EHI:ShowAchievementLootCounter({
+    achievement = "mex2_9",
+    max = 25,
+    remove_after_reaching_target = false,
+    difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+})
 EHI:ShowLootCounter({ max = 50 })
 EHI:AddXPBreakdown({
     objectives =

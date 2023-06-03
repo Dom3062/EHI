@@ -19,6 +19,7 @@ if EHI:GetOption("show_escape_chance") then
     end)
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     uno_2 =
@@ -92,12 +93,15 @@ EHI:AddXPBreakdown({
     },
     total_xp_override =
     {
-        min_max =
+        params =
         {
-            loot =
+            min_max =
             {
-                money = { max = 2 },
-                diamonds = { min = min_bags, max = 18 }
+                loot =
+                {
+                    money = { max = 2 },
+                    diamonds = { min = min_bags, max = 18 }
+                }
             }
         }
     }

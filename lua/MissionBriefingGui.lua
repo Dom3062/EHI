@@ -3,7 +3,13 @@ if EHI:CheckLoadHook("MissionBriefingGui") or EHI:IsXPTrackerDisabled() or not E
     return
 end
 
-local OptionalColor = Color(255, 137, 209, 254) / 255
+local colors =
+{
+    loot_secured = EHI:GetColor(EHI.settings.colors.mission_briefing.loot_secured),
+    total_xp = EHI:GetColor(EHI.settings.colors.mission_briefing.total_xp),
+    optional = EHI:GetColor(EHI.settings.colors.mission_briefing.optional)
+}
+
 local _params
 local TacticSelected = 1
 XPBreakdownItem = class()
@@ -133,12 +139,6 @@ function XPBreakdownItem:destroy()
 end
 
 local reloading_outfit = false
-local function FormatTime(self, t)
-    self._time = t
-    local _t = tweak_data.ehi.functions.FormatMinutesAndSeconds(self)
-    self._time = nil
-    return _t
-end
 local xp_format = EHI:GetOption("xp_format")
 local diff_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", EHI._cache.DifficultyIndex or 0) or 1
 
@@ -148,6 +148,7 @@ local original =
     set_slot_outfit = TeamLoadoutItem.set_slot_outfit
 }
 
+MissionBriefingGui.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
 function MissionBriefingGui:init(...)
     original.init(self, ...)
     self._loc = managers.localization
@@ -344,7 +345,7 @@ function MissionBriefingGui:ProcessBreakDown(params, panel)
                 if gage then
                     xp_with_gage = self:FormatXPWithAllGagePackages(data.amount)
                 end
-                local text_color = data.optional and OptionalColor
+                local text_color = data.optional and colors.optional
                 if data.times then
                     local times_formatted = self._loc:text("ehi_experience_trigger_times", { times = data.times })
                     local s
@@ -417,7 +418,7 @@ function MissionBriefingGui:ProcessBreakDown(params, panel)
                         xp_with_gage = self:FormatXPWithAllGagePackages(amount)
                     end
                     local str = data.name and self:GetTranslatedKey(data.name) or "<Unknown objective>"
-                    local text_color = data.optional and OptionalColor
+                    local text_color = data.optional and colors.optional
                     if data.times then
                         local times_formatted = self._loc:text("ehi_experience_trigger_times", { times = data.times })
                         local s
@@ -934,7 +935,7 @@ function MissionBriefingGui:AddTotalXP(panel, total, total_with_gage)
         y = 10 + (panel.lines * 22),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
-        color = Color.green,
+        color = colors.total_xp,
         text = txt,
         layer = 10
     })
@@ -965,7 +966,7 @@ function MissionBriefingGui:AddLootSecuredHeader(panel)
         y = 10 + (panel.lines * 22),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
-        color = Color("ffbc00"),
+        color = colors.loot_secured,
         text = self._loc:text("ehi_experience_loot_secured"),
         layer = 10
     })
@@ -1004,7 +1005,7 @@ function MissionBriefingGui:AddLootSecured(panel, loot, times, to_secure, value,
         y = 10 + (panel.lines * 22),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
-        color = Color("ffbc00"),
+        color = colors.loot_secured,
         text = str,
         layer = 10
     })
@@ -1098,7 +1099,7 @@ function MissionBriefingGui:ProcessLoot(panel, params, total_xp, gage)
             if gage then
                 xp_with_gage = self:FormatXPWithAllGagePackages(data.amount)
             end
-            self:AddXPText(panel, string.format("%s (%s): ", secured_bag, self._loc:text("ehi_experience_trigger_times", { times = data.times })), xp, xp_with_gage, Color("ffbc00"))
+            self:AddXPText(panel, string.format("%s (%s): ", secured_bag, self._loc:text("ehi_experience_trigger_times", { times = data.times })), xp, xp_with_gage, colors.loot_secured)
             if total_xp.add and not data.times then
                 total_xp.add = false
             end
@@ -1110,7 +1111,7 @@ function MissionBriefingGui:ProcessLoot(panel, params, total_xp, gage)
             if gage then
                 xp_with_gage = self:FormatXPWithAllGagePackages(data)
             end
-            self:AddXPText(panel, string.format("%s: ", secured_bag), xp, xp_with_gage, Color("ffbc00"))
+            self:AddXPText(panel, string.format("%s: ", secured_bag), xp, xp_with_gage, colors.loot_secured)
             total_xp.add = false
         end
     elseif params.loot then
@@ -1155,7 +1156,7 @@ function MissionBriefingGui:ProcessEscape(panel, str, params, total_xp, gage)
             if value.stealth then
                 s = self._loc:text("ehi_experience_stealth_escape")
                 if value.timer then
-                    s = s .. " (<" .. FormatTime(self, value.timer) .. ")"
+                    s = s .. " (<" .. self:FormatTime(value.timer) .. ")"
                 end
                 s = s .. ": "
             else

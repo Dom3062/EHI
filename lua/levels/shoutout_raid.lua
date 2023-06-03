@@ -60,8 +60,7 @@ if ovk_and_up then
     max = 8
 end
 EHI:ShowLootCounter({
-    max = max,
-    additional_loot = 8
+    max = max + 8
 }) -- 14 or 16
 
 local tbl =

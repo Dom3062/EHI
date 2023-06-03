@@ -52,6 +52,7 @@ local function dah_8()
         }
     })
 end
+---@type ParseAchievementTable
 local achievements =
 {
     dah_8 =
@@ -72,15 +73,6 @@ local achievements =
         end
     }
 }
-
-if OVKorAbove then
-    EHI:AddLoadSyncFunction(function(self)
-        if managers.game_play_central:GetMissionDisabledUnit(100950) then -- Red Diamond
-            self._trackers:IncreaseTrackerProgressMax("LootCounter", 1)
-        end
-        self._trackers:SyncSecuredLoot()
-    end)
-end
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -105,7 +97,13 @@ EHI:ShowLootCounter({
         [101019] = { special_function = SF.IncreaseProgressMax } -- Red Diamond
     },
     -- Difficulties Very Hard or lower can load sync via EHI as the Red Diamond does not spawn on these difficulties
-    no_sync_load = OVKorAbove
+    no_sync_load = OVKorAbove,
+    load_sync = OVKorAbove and function(self)
+        if managers.game_play_central:GetMissionDisabledUnit(100950) then -- Red Diamond
+            self._trackers:IncreaseTrackerProgressMax("LootCounter", 1)
+        end
+        self._trackers:SyncSecuredLoot()
+    end
 })
 local loot, loot_all
 if OVKorAbove then
@@ -117,6 +115,21 @@ if OVKorAbove then
 else
     loot_all = 400
 end
+local xp_override =
+{
+    params =
+    {
+        min_max =
+        {
+            loot =
+            {
+                red_diamond = { max = 1 },
+                diamonds_dah = { min_max = 8 }
+            },
+            loot_all = { min_max = 8 }
+        }
+    }
+}
 local xp =
 {
     tactic =
@@ -131,7 +144,8 @@ local xp =
                 { escape = 2000 }
             },
             loot = loot,
-            loot_all = loot_all
+            loot_all = loot_all,
+            total_xp_override = xp_override
         },
         loud =
         {
@@ -144,7 +158,8 @@ local xp =
                 { escape = 4000 }
             },
             loot = loot,
-            loot_all = loot_all
+            loot_all = loot_all,
+            total_xp_override = xp_override
         }
     }
 }

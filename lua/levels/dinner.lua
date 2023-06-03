@@ -3,17 +3,37 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local c4 = { time = 5, id = "C4", icons = { Icon.C4 } }
+local EscapePos = nil
 local triggers = {
     [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position_by_element = 100836 } },
-    [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape } },
+    [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape }, waypoint_f = function(trigger)
+        if EscapePos then
+            local element = managers.mission:get_element_by_id(EscapePos)
+            if element then
+                managers.ehi_waypoint:AddWaypoint(trigger.id, {
+                    icon = Icon.Interact,
+                    time = trigger.time,
+                    position = element:value("position")
+                })
+            end
+        end
+        managers.ehi_tracker:AddTrackerIfDoesNotExist(trigger)
+    end },
     -- C4 (Doors)
     [100985] = c4,
     -- C4 (GenSec Truck)
     [100830] = c4,
     [100961] = c4
 }
+local function CacheEscapePos(index)
+    EscapePos = EHI:GetInstanceElementID(100034, index)
+end
+for i = 2850, 3050, 100 do
+    triggers[EHI:GetInstanceElementID(100028, i)] = { special_function = SF.CustomCode, f = CacheEscapePos, arg = i }
+end
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@type ParseAchievementTable
 local achievements =
 {
     farm_2 =
@@ -29,7 +49,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101553] = { class = TT.AchievementStatus },
+            [101179] = { class = TT.AchievementStatus }, --101553
             [103394] = { special_function = SF.SetAchievementFailed },
             [102880] = { special_function = SF.SetAchievementComplete }
         }
@@ -90,7 +110,7 @@ if ovk_and_up then
     end
 end
 
-EHI:ShowLootCounter({ max = 10, additional_loot = pig })
+EHI:ShowLootCounter({ max = 10 + pig })
 
 local tbl =
 {

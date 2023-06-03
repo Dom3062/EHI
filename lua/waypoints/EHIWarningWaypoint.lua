@@ -20,6 +20,8 @@ local function anim(o, old_color, color, icon, arrow, bitmap_world)
         end
     end
 end
+---@class EHIWarningWaypoint: EHIWaypoint
+---@field super EHIWaypoint
 EHIWarningWaypoint = class(EHIWaypoint)
 EHIWarningWaypoint._warning_color = EHI:GetTWColor("warning")
 function EHIWarningWaypoint:update(t, dt)

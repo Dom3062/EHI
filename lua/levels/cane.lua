@@ -25,7 +25,7 @@ for _, index in ipairs(FireTrapIndexes) do
     triggers[EHI:GetInstanceElementID(100022, index)] = fire
 end
 
-local function cane_5()
+local function cane_5(present_amount)
     EHI:HookWithID(PlayerManager, "set_synced_deployable_equipment", "EHI_cane_5_fail_trigger", function(self, ...)
         if self._peer_used_deployable then
             managers.ehi_tracker:SetAchievementFailed("cane_5")
@@ -34,6 +34,7 @@ local function cane_5()
     end)
     EHI:ShowAchievementLootCounterNoCheck({
         achievement = "cane_5",
+        progress = present_amount or 0,
         max = 10,
         counter =
         {
@@ -41,6 +42,7 @@ local function cane_5()
         }
     })
 end
+---@type ParseAchievementTable
 local achievements =
 {
     cane_2 =
@@ -57,23 +59,19 @@ local achievements =
         elements =
         {
             [100544] = { special_function = SF.CustomCode, f = function()
-                if #managers.assets:get_unlocked_asset_ids(true) ~= 0 then
-                    if EHI:GetUnlockableOption("show_achievement_failed_popup") then
-                        managers.hud:ShowAchievementFailedPopup("cane_5")
-                    end
-                    return
+                if #managers.assets:get_unlocked_asset_ids(true) == 0 then
+                    cane_5()
                 end
-                cane_5()
             end },
         },
         load_sync = function(self)
             if #managers.assets:get_unlocked_asset_ids(true) ~= 0 or managers.player:has_deployable_been_used() then
                 return
             end
-            if managers.loot:GetSecuredBagsTypeAmount("present") >= 10 then
-                return
+            local present_amount = managers.loot:GetSecuredBagsTypeAmount("present")
+            if present_amount < 10 then
+                cane_5(present_amount)
             end
-            cane_5()
         end
     }
 }
@@ -93,13 +91,12 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
-if ovk_and_up then
-    EHI:ShowAchievementLootCounter({
-        achievement = "cane_3",
-        max = 100,
-        remove_after_reaching_target = false
-    })
-end
+EHI:ShowAchievementLootCounter({
+    achievement = "cane_3",
+    max = 100,
+    remove_after_reaching_target = false,
+    difficulty_pass = ovk_and_up
+})
 
 local tbl =
 {

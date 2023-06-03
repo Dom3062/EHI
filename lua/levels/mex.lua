@@ -9,6 +9,7 @@ local triggers = {
     [101983] = { time = 15, id = "C4Trap", icons = { Icon.C4 }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
     [101722] = { id = "C4Trap", special_function = SF.RemoveTracker },
 }
+---@type ParseAchievementTable
 local achievements =
 {
     mex_9 =

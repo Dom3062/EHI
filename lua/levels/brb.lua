@@ -9,7 +9,7 @@ local triggers = {
     [100654] = { time = 120, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [100655] = { id = "Winch", special_function = SF.PauseTracker },
     [100656] = { id = "Winch", special_function = SF.UnpauseTracker },
-    [EHI:GetInstanceElementID(100077, 2900)] = { time = 90, id = "Cutter", icons = { Icon.Glasscutter }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [EHI:GetInstanceElementID(100077, 2900)] = { time = 90, id = "Cutter", icons = { Icon.Glasscutter }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_by_element = EHI:GetInstanceElementID(100021, 2900), remove_vanilla_waypoint = EHI:GetInstanceElementID(100021, 2900) } },
     [EHI:GetInstanceElementID(100078, 2900)] = { id = "Cutter", special_function = SF.PauseTracker },
     [EHI:GetInstanceElementID(100103, 2900)] = { time = 5, id = "C4OfficeFloor", icons = { Icon.C4 } },
 
@@ -34,6 +34,7 @@ for _, index in ipairs({ 1900, 2400 }) do
     end
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     brb_8 =

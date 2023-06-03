@@ -27,6 +27,7 @@ if EHI:IsClient() then
     triggers[101571] = { time = 30, icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     you_shall_not_pass =
@@ -47,6 +48,18 @@ local other =
     [102005] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
     [101975] = EHI:AddAssaultDelay({ time = 15 + 30, trigger_times = 1 })
 }
+--[[if EHI:GetOption("show_loot_counter") then
+    local CreateCounter = true
+    local UpdateLootCounter = EHI:GetFreeCustomSpecialFunctionID()
+    other[102564] = { special_function = UpdateLootCounter }
+    EHI:RegisterCustomSpecialFunction(UpdateLootCounter, function(self, ...)
+        if CreateCounter then
+            EHI:ShowLootCounterNoCheck({})
+            CreateCounter = false
+        end
+        self._trackers:IncreaseTrackerProgressMax("LootCounter")
+    end)
+end]]
 
 EHI:ParseTriggers({
     mission = triggers,

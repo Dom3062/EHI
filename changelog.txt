@@ -1,6 +1,16 @@
+r155 (03. 06. 2023):
+Added option to change colors in Mission Briefing XP Breakdown
+Buffs: Inspire (AI) is now synced to other players
+Scarface Mansion: Fixed an issue where "Settling a Scar" achievement tracker does not update correctly after alarm
+Safehouse Nightmare: Trade Delay tracker is disabled
+Rats Day 1: Fixed an issue where Loot Counter is not visible on OVERKILL difficulty or above
+Escape: Park: Fixed an issue where Loot Counter is not visible for clients
+Escape: Street: Fixed an issue where Loot Counter is not visible for clients
+The Yacht Heist: Fixed an issue where achievement "Blood in the Water" is not counting correctly
+
 r154 (22. 05. 2023):
 No Mercy: Fixed missing waypoint position for the escape elevator after dropin
-Shadow Raid: Fixed an issue where samurai armor is not counted in total loot count in "I am a Ninja" achievement
+Shadow Raid: Fixed an issue where samurai armor is not counted in total loot count in "I am a Ninja" achievement tracker
 
 r153 (15. 05. 2023):
 Added option "Show Waypoints For Heist Elements"

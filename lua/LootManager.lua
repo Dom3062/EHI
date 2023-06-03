@@ -2,6 +2,13 @@ local EHI = EHI
 if EHI:CheckLoadHook("LootManager") then
     return
 end
+
+---@class LootManager
+---@field GetSecuredBagsAmount fun(): integer
+---@field GetSecuredBagsTypeAmount fun(self: LootManager, t: string|table): integer
+---@field GetSecuredBagsValueAmount fun(): number
+---@field EHIReportProgress fun(tracker_id: string, check_type: integer, loot_type: string|table, f: fun(self: LootManager, tracker_id: string, loot_type: string|table))
+
 local check_types = EHI.LootCounter.CheckType
 local original =
 {
@@ -26,6 +33,7 @@ function LootManager:GetSecuredBagsAmount()
     return total
 end
 
+---@param t string|table
 function LootManager:GetSecuredBagsTypeAmount(t)
     local secured = 0
     if type(t) == "string" then
@@ -56,6 +64,10 @@ function LootManager:GetSecuredBagsValueAmount()
     return value
 end
 
+---@param tracker_id string
+---@param check_type integer
+---@param loot_type string
+---@param f fun(self: LootManager, tracker_id: string, loot_type: string|table)?
 function LootManager:EHIReportProgress(tracker_id, check_type, loot_type, f)
     if check_type == check_types.AllLoot then
     elseif check_type == check_types.BagsOnly then
@@ -80,5 +92,21 @@ function LootManager:EHIReportProgress(tracker_id, check_type, loot_type, f)
             loot_name = "Small Loot"
         end
         managers.chat:_receive_message(1, "[EHI]", "Secured: " .. loot_name .. "; Carry ID: " .. tostring(loot_type))
+    end
+end
+
+if EHI.debug.loot_manager_escape then
+    original.init = LootManager.init
+    function LootManager:init(...)
+        original.init(self, ...)
+        self._distribution_loot[#self._distribution_loot+1] = { carry_id = "money", multiplier = 1 }
+        self._distribution_loot[#self._distribution_loot+1] = { carry_id = "money", multiplier = 1 }
+        self._distribution_loot[#self._distribution_loot+1] = { carry_id = "money", multiplier = 1 }
+        self._distribution_loot[#self._distribution_loot+1] = { carry_id = "money", multiplier = 1 }
+        self._distribution_loot[#self._distribution_loot+1] = { carry_id = "coke", multiplier = 1 }
+        self._distribution_loot[#self._distribution_loot+1] = { carry_id = "coke", multiplier = 1 }
+        self._distribution_loot[#self._distribution_loot+1] = { carry_id = "coke", multiplier = 1 }
+        self._distribution_loot[#self._distribution_loot+1] = { carry_id = "coke", multiplier = 1 }
+        self._distribution_loot[#self._distribution_loot+1] = { carry_id = "coke", multiplier = 1 }
     end
 end

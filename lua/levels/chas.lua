@@ -35,6 +35,7 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100056, 11900)] = true -- Fix
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     chas_9 =

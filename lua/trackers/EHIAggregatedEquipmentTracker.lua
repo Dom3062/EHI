@@ -9,11 +9,11 @@ local color =
 
 local text_i =
 {
-    [1] = "doctor_bag",
-    [2] = "ammo_bag",
-    [3] = "grenade_crate",
-    [4] = "first_aid_kit",
-    [5] = "bodybags_bag"
+    "doctor_bag",
+    "ammo_bag",
+    "grenade_crate",
+    "first_aid_kit",
+    "bodybags_bag"
 }
 
 EHIAggregatedEquipmentTracker = class(EHITracker)

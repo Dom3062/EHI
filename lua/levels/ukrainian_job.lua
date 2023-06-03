@@ -42,7 +42,7 @@ if EHI:GetOption("show_escape_chance") then
     end)
 end
 
-local ExecuteAchievementIfInteractionExists = EHI:GetFreeCustomSpecialFunctionID()
+---@type ParseAchievementTable
 local achievements =
 {
     lets_do_this =
@@ -60,7 +60,11 @@ local achievements =
     {
         elements =
         {
-            [100074] = { status = "alarm", class = TT.AchievementStatus, special_function = ExecuteAchievementIfInteractionExists },
+            [100074] = { status = "alarm", class = TT.AchievementStatus, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+                if self:InteractionExists("circuit_breaker_off") then
+                    self:CheckCondition(trigger)
+                end
+            end) },
             [104406] = { status = "finish", special_function = SF.SetAchievementStatus },
             [104408] = { special_function = SF.SetAchievementComplete },
             [104409] = { special_function = SF.SetAchievementFailed },
@@ -79,11 +83,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(ExecuteAchievementIfInteractionExists, function(self, trigger, ...)
-    if self._trackers:InteractionExists("circuit_breaker_off") then
-        self:CheckCondition(trigger)
-    end
-end)
 EHI:AddXPBreakdown({
     objective =
     {

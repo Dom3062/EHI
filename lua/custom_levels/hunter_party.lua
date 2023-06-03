@@ -13,6 +13,7 @@ local triggers = {
     [100423] = { time = escape_fly_in, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable }
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     hunter_party =

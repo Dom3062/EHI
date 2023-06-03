@@ -58,7 +58,6 @@ end
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local Activate_cac_33 = EHI:GetFreeCustomSpecialFunctionID()
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } }
 local triggers = {
@@ -67,6 +66,7 @@ local triggers = {
     [101984] = thermite -- Second grate
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     jerry_3 =
@@ -97,7 +97,9 @@ local achievements =
             [103486] = { status = "ok", special_function = SF.SetAchievementStatus },
             [103479] = { special_function = SF.SetAchievementComplete },
             [103475] = { special_function = SF.SetAchievementFailed },
-            [103487] = { special_function = Activate_cac_33 },
+            [103487] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+                self._trackers:CallFunction("cac_33", "Activate")
+            end) },
             [103477] = { special_function = SF.IncreaseProgress },
         }
     }
@@ -129,9 +131,6 @@ EHI:ShowAchievementLootCounter({
         self._trackers:SetTrackerProgressRemaining("voff_4", self._trackers:CountInteractionAvailable("ring_band"))
     end
 })
-EHI:RegisterCustomSpecialFunction(Activate_cac_33, function(self, ...)
-    self._trackers:CallFunction("cac_33", "Activate")
-end)
 EHI:AddXPBreakdown({
     objectives =
     {

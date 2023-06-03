@@ -15,6 +15,7 @@ if EHI:IsClient() then
     triggers[101966] = { time = 30, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     bullet_dodger =
@@ -30,10 +31,20 @@ local achievements =
 
 local other =
 {
-    [102031] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
-    [102030] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
     [101959] = EHI:AddAssaultDelay({ time = 10 + 30 })
 }
+if EHI:GetOption("show_loot_counter") then
+    local CreateCounter = true
+    local UpdateLootCounter = EHI:GetFreeCustomSpecialFunctionID()
+    other[102091] = { special_function = UpdateLootCounter }
+    EHI:RegisterCustomSpecialFunction(UpdateLootCounter, function(self, ...)
+        if CreateCounter then
+            EHI:ShowLootCounterNoCheck({})
+            CreateCounter = false
+        end
+        self._trackers:IncreaseTrackerProgressMax("LootCounter")
+    end)
+end
 
 EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.HeliEscape)
 

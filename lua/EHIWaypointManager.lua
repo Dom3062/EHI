@@ -1,5 +1,7 @@
 local EHI = EHI
 local icons = tweak_data.ehi.icons
+---@class EHIWaypointManager
+---@field new fun(...): self
 EHIWaypointManager = class()
 EHIWaypointManager._font = tweak_data.menu.pd2_large_font_id -- Large font
 EHIWaypointManager._timer_font_size = 32
@@ -26,10 +28,12 @@ function EHIWaypointManager:init_finalize()
     EHI:AddOnAlarmCallback(callback(self, self, "RemoveAllPagerWaypoints"))
 end
 
+---@param t number
 function EHIWaypointManager:LoadTime(t)
     self._t = t
 end
 
+---@param hud HUDManager
 function EHIWaypointManager:SetPlayerHUD(hud)
     self._hud = hud
     for id, params in pairs(self._stored_waypoints) do
@@ -38,6 +42,8 @@ function EHIWaypointManager:SetPlayerHUD(hud)
     self._stored_waypoints = {}
 end
 
+---@param id string
+---@param params AddWaypointTable
 function EHIWaypointManager:AddWaypoint(id, params)
     if not self._enabled then
         return
@@ -80,6 +86,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
     end
 end
 
+---@param id string
 function EHIWaypointManager:RemoveWaypoint(id)
     if not self._waypoints[id] then
         return
@@ -90,6 +97,8 @@ function EHIWaypointManager:RemoveWaypoint(id)
     self._hud:remove_waypoint(id)
 end
 
+---@param wp WaypointDataTable
+---@param params AddWaypointTable
 function EHIWaypointManager:SetWaypointInitialIcon(wp, params)
     local bitmap = wp.bitmap
     local bitmap_world = wp.bitmap_world -- VR
@@ -123,6 +132,8 @@ function EHIWaypointManager:SetWaypointInitialIcon(wp, params)
     end
 end
 
+---@param id string
+---@param new_icon string
 function EHIWaypointManager:SetWaypointIcon(id, new_icon)
     if id and self._waypoints[id] and self._waypoints[id]._bitmap then
         local wp = self._hud:get_waypoint_data(id)
@@ -134,14 +145,31 @@ function EHIWaypointManager:SetWaypointIcon(id, new_icon)
     end
 end
 
-function EHIWaypointManager:WaypointExists(id)
-    return id and self._waypoints[id] or false
+---@param id string
+---@param pos Vector3
+function EHIWaypointManager:SetWaypointPosition(id, pos)
+    if self:WaypointExists(id) then
+        local wp = self._hud:get_waypoint_data(id)
+        if wp then
+            wp.position = pos
+        end
+    end
 end
 
+---@param id string
+---@return boolean
+function EHIWaypointManager:WaypointExists(id)
+    return id and self._waypoints[id] ~= nil or false
+end
+
+---@param id string
+---@return boolean
 function EHIWaypointManager:WaypointDoesNotExist(id)
     return not self:WaypointExists(id)
 end
 
+---@param id string
+---@param time number
 function EHIWaypointManager:SetWaypointTime(id, time)
     local wp = self._waypoints[id]
     if wp then
@@ -149,6 +177,8 @@ function EHIWaypointManager:SetWaypointTime(id, time)
     end
 end
 
+---@param id string
+---@param jammed boolean
 function EHIWaypointManager:SetTimerWaypointJammed(id, jammed)
     local wp = self._waypoints[id]
     if wp and wp.SetJammed then
@@ -156,6 +186,8 @@ function EHIWaypointManager:SetTimerWaypointJammed(id, jammed)
     end
 end
 
+---@param id string
+---@param powered boolean
 function EHIWaypointManager:SetTimerWaypointPowered(id, powered)
     local wp = self._waypoints[id]
     if wp and wp.SetPowered then
@@ -163,6 +195,7 @@ function EHIWaypointManager:SetTimerWaypointPowered(id, powered)
     end
 end
 
+---@param id string
 function EHIWaypointManager:SetTimerWaypointRunning(id)
     local wp = self._waypoints[id]
     if wp and wp.SetRunning then
@@ -170,6 +203,8 @@ function EHIWaypointManager:SetTimerWaypointRunning(id)
     end
 end
 
+---@param id string
+---@param pause boolean
 function EHIWaypointManager:SetWaypointPause(id, pause)
     local wp = self._waypoints[id]
     if wp and wp.SetPaused then
@@ -177,11 +212,13 @@ function EHIWaypointManager:SetWaypointPause(id, pause)
     end
 end
 
+---@param params AddWaypointTable
 function EHIWaypointManager:AddPagerWaypoint(params)
     self._pager_waypoints[params.id] = true
     self:AddWaypoint(params.id, params)
 end
 
+---@param id string
 function EHIWaypointManager:RemovePagerWaypoint(id)
     self._pager_waypoints[id] = nil
     self:RemoveWaypoint(id)
@@ -193,6 +230,8 @@ function EHIWaypointManager:RemoveAllPagerWaypoints()
     end
 end
 
+---@param id string
+---@param t number
 function EHIWaypointManager:SetWaypointAccurate(id, t)
     local wp = id and self._waypoints[id]
     if wp and wp.SetWaypointAccurate then
@@ -200,14 +239,19 @@ function EHIWaypointManager:SetWaypointAccurate(id, t)
     end
 end
 
+---@param id string
+---@param wp EHIWaypoint
 function EHIWaypointManager:AddWaypointToUpdate(id, wp)
     self._waypoints_to_update[id] = wp
 end
 
+---@param id string
 function EHIWaypointManager:RemoveWaypointFromUpdate(id)
     self._waypoints_to_update[id] = nil
 end
 
+---@param t number
+---@param dt number
 function EHIWaypointManager:update(t, dt)
     for _, waypoint in pairs(self._waypoints_to_update) do
         waypoint:update(t, dt)
@@ -220,6 +264,9 @@ function EHIWaypointManager:destroy()
     end
 end
 
+---@param id string
+---@param f string
+---@param ... any
 function EHIWaypointManager:CallFunction(id, f, ...)
     local wp = self._waypoints[id]
     if wp and wp[f] then

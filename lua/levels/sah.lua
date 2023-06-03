@@ -24,6 +24,7 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100035, 6200)] = { time = 17 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     sah_9 =

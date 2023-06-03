@@ -7,7 +7,8 @@ local buffs = EHI:GetOption("show_buffs")
 
 local original =
 {
-    spawn_smoke_screen = PlayerManager.spawn_smoke_screen
+    spawn_smoke_screen = PlayerManager.spawn_smoke_screen,
+    start_custom_cooldown = PlayerManager.start_custom_cooldown
 }
 
 if EHI:GetOption("show_bodybags_counter") then
@@ -46,6 +47,13 @@ function PlayerManager:spawn_smoke_screen(position, normal, grenade_unit, ...)
             managers.ehi_buff:AddBuff("SmokeScreen", duration)
         end
     end
+end
+
+function PlayerManager:start_custom_cooldown(category, upgrade, cooldown, ...)
+    if upgrade == "crew_inspire" then
+        managers.ehi_buff:SyncBuff("team_crew_inspire", cooldown)
+    end
+    original.start_custom_cooldown(self, category, upgrade, cooldown, ...)
 end
 
 if not buffs then

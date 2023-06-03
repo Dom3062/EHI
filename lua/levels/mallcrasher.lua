@@ -149,6 +149,7 @@ if EHI:IsClient() then
     triggers[300246] = EHI:ClientCopyTrigger(triggers[300248], { time = 25 })
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     window_cleaner =
@@ -185,6 +186,7 @@ local achievements =
     },
     uno_3 =
     {
+        difficulty_pass = OverkillOrBelow, -- Can be achieved on any difficulty but the heli takes 5:25 to arrive on Mayhem or above
         elements =
         {
             [301148] = { time = 180, class = TT.Achievement },

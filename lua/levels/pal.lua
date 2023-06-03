@@ -55,6 +55,7 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     pal_3 =

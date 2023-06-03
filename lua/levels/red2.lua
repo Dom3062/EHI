@@ -34,8 +34,8 @@ function EHIcac10Tracker:AnimateColor()
     if self._text and alive(self._text) then
         self._text:animate(function(o)
             local c = Color(self._text_color.r, self._text_color.g, self._text_color.b)
+            local t = 1
             while true do
-                local t = 1
                 while t > 0 do
                     t = t - coroutine.yield()
                     local n = sin(t * 180)
@@ -116,7 +116,7 @@ for i = 0, 300, 100 do
     DisableWaypoints[EHI:GetInstanceElementID(100024, i)] = true
 end
 
-local StartAchievementCountdown = EHI:GetFreeCustomSpecialFunctionID()
+---@type ParseAchievementTable
 local achievements =
 {
     green_1 =
@@ -151,7 +151,9 @@ local achievements =
         {
             [101341] = { time = 30, class = "EHIcac10Tracker", condition_function = CF.IsLoud },
             [107072] = { special_function = SF.SetAchievementComplete },
-            [101544] = { special_function = StartAchievementCountdown, trigger_times = 1 },
+            [101544] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+                self._trackers:StartTrackerCountdown("cac_10")
+            end), trigger_times = 1 },
             [107066] = { special_function = SF.IncreaseProgressMax },
             [107067] = { special_function = SF.IncreaseProgress },
         }
@@ -169,9 +171,6 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
-EHI:RegisterCustomSpecialFunction(StartAchievementCountdown, function(self, ...)
-    self._trackers:StartTrackerCountdown("cac_10")
-end)
 EHI:ShowLootCounter({
     max = 14,
     triggers =

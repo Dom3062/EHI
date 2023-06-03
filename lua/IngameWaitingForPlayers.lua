@@ -301,6 +301,8 @@ function IngameWaitingForPlayersState:at_exit(...)
     is_stealth = managers.groupai:state():whisper_mode()
     local level = Global.game_settings.level_id
     local mask_id = managers.blackmarket:equipped_mask().mask_id
+    local from_beginning = managers.statistics:started_session_from_beginning()
+    EHI:CallCallbackOnce(EHI.CallbackMessage.SpawnedAchievements, primary, secondary, melee, grenade)
     if EHI:GetUnlockableOption("show_achievements_weapon") then -- Kill with weapons (primary or secondary)
         if EHI:IsAchievementLocked2("halloween_6") and mask_id == tweak_data.achievement.pump_action.mask and HasWeaponTypeEquipped("shotgun") then -- "Pump-Action" achievement
             CreateProgressTracker("halloween_6", EHI:GetAchievementProgress("halloween_6_stats"), 666, false, true)
@@ -647,6 +649,18 @@ function IngameWaitingForPlayersState:at_exit(...)
                 stats.pim_1_stats = "pim_1"
             end
             pxp_1()
+            if level == "man" and EHI:IsAchievementLocked2("man_5") and HasWeaponTypeEquipped("grenade_launcher") and from_beginning and false then
+                managers.ehi_tracker:AddTracker({
+                    id = "man_5",
+                    icons = EHI:GetAchievementIcon("man_5"),
+                    class = EHI.Trackers.AchievementStatus
+                })
+                EHI:HookWithID(StatisticsManager, "killed", "EHI_man_5_killed", function(_, data)
+                    if data.weapon_unit and data.weapon_unit:base().is_category and not data.weapon_unit:base():is_category("grenade_launcher") then
+                        
+                    end
+                end)
+            end
             if level == "mad" and EHI:IsAchievementLocked2("pim_3") and HasWeaponEquipped("schakal") then -- "UMP for Me, UMP for You" achievement
                 CreateProgressTracker("pim_3", EHI:GetAchievementProgress("pim_3_stats"), 45, false, true)
                 stats.pim_3_stats = "pim_3"
@@ -657,7 +671,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                     flash_times = 1,
                     class = "EHIsand11Tracker"
                 })
-                EHI:HookWithID(StatisticsManager, "killed", "EHI_sand_11_killed", function (_, data)
+                EHI:HookWithID(StatisticsManager, "killed", "EHI_sand_11_killed", function(_, data)
                     if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("snp") then
                         managers.ehi_tracker:IncreaseTrackerProgress("sand_11")
                     end
@@ -1044,7 +1058,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end
         if OVKOrAbove then
-            if armored_4_levels[level] and EHI:IsAchievementLocked2("armored_4") and mask_id == tweak_data.achievement.complete_heist_achievements.i_take_scores.mask and managers.ehi_manager:GetStartedFromBeginning() then -- I Do What I Do Best, I Take Scores
+            if armored_4_levels[level] and EHI:IsAchievementLocked2("armored_4") and mask_id == tweak_data.achievement.complete_heist_achievements.i_take_scores.mask and from_beginning then -- I Do What I Do Best, I Take Scores
                 local progress = EHI:GetAchievementProgress("armored_4_stat")
                 EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
                     if success and progress < 15 and managers.job:on_last_stage() then
@@ -1052,7 +1066,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                     end
                 end)
             end
-            if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and managers.ehi_manager:GetStartedFromBeginning() then -- From Russia With Love
+            if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and from_beginning then -- From Russia With Love
                 local progress = EHI:GetAchievementProgress("halloween_10_stats")
                 EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
                     if success and progress < 25 and managers.job:on_last_stage() then

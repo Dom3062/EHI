@@ -23,11 +23,6 @@ local preload =
     {} -- Escape
 }
 local triggers = {
-    [101890] = { special_function = SF.CustomCodeDelayed, t = 4, f = function()
-        if LootSafeIsVisible() then
-            EHI:ShowLootCounter({ max = 1 })
-        end
-    end},
     -- Time before escape vehicle arrives
     [102492] = { run = { time = 40 + van_anim_delay } },
     [102493] = { run = { time = 30 + van_anim_delay } },
@@ -73,15 +68,19 @@ local other =
 if CopArrivalDelay > 0 then
     other[103278] = EHI:AddAssaultDelay({ time = FirstAssaultBreak + CopArrivalDelay, trigger_times = 1 }) -- Full assault break; 15s (55s delay)
 end
-EHI:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
-EHI:AddLoadSyncFunction(function(self)
-    if LootSafeIsVisible() then
-        local secured = managers.loot:GetSecuredBagsAmount()
-        if secured == 0 then
-            EHI:ShowLootCounter({ max = 1 })
+if EHI:IsLootCounterVisible() then
+    other[101890] = { special_function = SF.CustomCodeDelayed, t = 4, f = function()
+        if LootSafeIsVisible() then
+            EHI:ShowLootCounterNoChecks({ max = 1 })
         end
-    end
-end)
+    end}
+    EHI:AddLoadSyncFunction(function(self)
+        if LootSafeIsVisible() and managers.loot:GetSecuredBagsAmount() == 0 then
+            EHI:ShowLootCounterNoChecks({ max = 1 })
+        end
+    end)
+end
+EHI:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 EHI:AddXPBreakdown({
     objective =
     {

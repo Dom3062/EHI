@@ -1,6 +1,7 @@
 local EHI = EHI
 EHI:ShowLootCounter({ max = 18 })
 
+---@type MissionDoorTable
 local MissionDoor =
 {
     [Vector3(5636.56, 7026.42, -1877.75)] = EHI:GetInstanceElementID(100006, 0),

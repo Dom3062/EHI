@@ -36,6 +36,7 @@ if EHI:GetOption("show_escape_chance") then
     end)
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     ameno_7 =

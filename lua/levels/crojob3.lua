@@ -57,6 +57,7 @@ for _, index in ipairs({ 100, 150, 250, 300 }) do
     triggers[EHI:GetInstanceElementID(100037, index)] = { special_function = SF.Trigger, data = { 1, 2 } }
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     cow_3 =

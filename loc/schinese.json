@@ -344,6 +344,9 @@
     "ehi_show_waypoints_present_timer" : "动画时间",
     "ehi_show_waypoints_present_timer_desc" : "设置导航点在'移动'到目标前在屏幕上停留的时间。",
 
+    "ehi_show_waypoints_mission" : "显示劫案事件的导航点",
+    "ehi_show_waypoints_mission_desc" : "在劫案中将发生的事件处显示导航点",
+    
     "ehi_show_waypoints_enemy_turret" : "显示敌方机枪塔导航点",
     "ehi_show_waypoints_enemy_turret_desc" : "在敌方炮塔装弹或修理时显示一个导航点",
 
@@ -587,7 +590,22 @@
     "ehi_other_show_remaining_xp_to_100_desc" : "显示距离你声望等级升级至100还要多少经验 (当你声望等级未达100时显示)",
 
     "ehi_other_show_mission_xp_overview" : "显示合约任务经验概览",
-    "ehi_other_show_mission_xp_overview_desc" : "在合约简报上显示一个含有你可以获得的经验的界面", 
+    "ehi_other_show_mission_xp_overview_desc" : "在合约简报上显示一个含有你可以获得的经验的界面",
+
+    "ehi_colors_menu" : "颜色",
+
+    "ehi_colors_inaccurate" : "误差",
+
+    "ehi_colors_pause" : "暂停",
+    "ehi_colors_pause_desc" : "当追踪器暂停时改变文本颜色",
+
+    "ehi_colors_drill_autorepair" : "钻机/电锯自动重启",
+
+    "ehi_colors_warning" : "警告",
+    "ehi_colors_warning_desc" : "设定追踪器剩余时间小于10秒时的文本动画颜色",
+
+    "ehi_colors_completion" : "完成",
+    "ehi_colors_completion_desc" : "设定追踪器剩余时间小于10秒时的文本动画颜色",
 
     "ehi_experience_infamy_pool" : "距恶名池满:",
     "ehi_experience_next_level" : "距下一级还有:",
@@ -852,7 +870,6 @@
     "ehi_experience_twh_wireboxes_cut" : "切断电线盒",
     "ehi_experience_twh_enter_west_wing" : "进入西翼厅",
     "ehi_experience_twh_found_thermite" : "找到铝热剂",
-    "ehi_experience_twh_use_thermite" : "使用铝热剂",
     "ehi_experience_twh_enter_oval_office" : "进入椭圆办公室",
     "ehi_experience_twh_safe_open" : "打开保险箱",
     "ehi_experience_twh_access_peoc" : "找到进入总统应急行动中心的方法",
@@ -892,8 +909,6 @@
     "ehi_experience_mex4_interacted_with_safe" : "打开保险箱",
     "ehi_experience_mex4_contact_list_stolen_stealth" : "偷走联系人名单",
     "ehi_experience_mex4_found_car_keys" : "找到车钥匙(如乘车撤离)",
-    "ehi_experience_mex4_car_escape_stealth" : "潜入开车撤离",
-    "ehi_experience_mex4_boat_escape_stealth" : "潜入快艇撤离",
     "ehi_experience_mex4_found_all_bomb_parts_hack_start" : "集齐炸弹零件/开始黑入",
     "ehi_experience_mex4_inner_sanctum_open_bomb" : "炸开“内部净土”",
     "ehi_experience_mex4_saw_placed" : "在秘密会议室门上部署电锯",
@@ -901,6 +916,19 @@
     "ehi_experience_mex4_turret_discovered_car_escape" : "发现警方机枪塔(如乘车撤离)",
     "ehi_experience_mex4_turret_destroyed_car_escape" : "摧毁机枪塔 (如乘车撤离)",
     "ehi_experience_mex4_flare_lit_heli_escape" : "点亮信号弹(如直升机撤离)",
+    "ehi_experience_china1_alarm_disabled" : "解除警报",
+    "ehi_experience_china1_found_basement_door" : "找到通往地下室的门",
+    "ehi_experience_china1_enter_warehouse" : "进入仓库",
+    "ehi_experience_china1_auction_room_stealth" : "关闭拍卖间的灯光",
+    "ehi_experience_china1_vault_gate_open" : "打开金库门",
+    "ehi_experience_china1_dragon_statue_picked_up" : "打包金龙雕像",
+    "ehi_experience_china1_dragon_statue_secured" : "劫获金龙雕像",
+    "ehi_experience_china1_vault_pc_hack" : "黑入金库旁的电脑（可选）",
+    "ehi_experience_china1_found_forklift_keys" : "找到叉车钥匙",
+    "ehi_experience_china1_pick_up_thermal_drill" : "拾起运达的热力钻机",
+    "ehi_experience_china1_placed_thermal_drill" : "放置热力钻机",
+    "ehi_experience_china1_gas_disabled" : "阻止或中断毒气攻击",
+    "ehi_experience_china1_auction_room_loud" : "黑入拍卖间系统",
     "ehi_experience_texas3_evidences_found" : "找到证据",
     "ehi_experience_texas3_prototype_secured" : "劫获原型机",
     "ehi_experience_texas3_documents_secured" : "劫获研究文件",

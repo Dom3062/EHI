@@ -20,6 +20,7 @@ for i = 6850, 7525, 225 do
     DisableWaypoints[EHI:GetInstanceElementID(100022, i)] = true -- Fix
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     wwh_9 =

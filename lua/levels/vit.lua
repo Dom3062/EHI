@@ -103,7 +103,7 @@ EHI:AddXPBreakdown({
                 { amount = 4000, name = "twh_wireboxes_hacked" },
                 { amount = 2000, name = "twh_enter_west_wing" },
                 { amount = 2000, name = "twh_found_thermite" },
-                { amount = 1000, name = "twh_use_thermite" },
+                { amount = 1000, name = "thermite_done" },
                 { amount = 2000, name = "twh_enter_oval_office" },
                 { amount = 8000, name = "twh_safe_open" },
                 { amount = 4000, name = "twh_access_peoc" },

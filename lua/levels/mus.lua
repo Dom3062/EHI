@@ -26,6 +26,7 @@ for i = 300, 375, 75 do
     DisableWaypoints[EHI:GetInstanceElementID(100034, i)] = true -- Defend
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     bat_4 =
@@ -80,6 +81,7 @@ for i = 300, 375, 75 do
 end
 EHI:UpdateUnits(tbl)
 
+---@type MissionDoorTable
 local MissionDoor =
 {
     -- Diamond Room Hatch

@@ -57,6 +57,7 @@ local triggers = {
     [106036] = { time = 410/30, id = "Boat", icons = Icon.BoatEscape }
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     dark_2 =

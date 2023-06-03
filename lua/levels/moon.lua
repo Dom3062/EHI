@@ -32,6 +32,7 @@ local DisableWaypoints =
     [100664] = true
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     moon_4 =
@@ -56,17 +57,16 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
-if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-    EHI:ShowAchievementLootCounter({
-        achievement = "moon_5",
-        max = 9,
-        counter =
-        {
-            check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
-            loot_type = { "money", "diamonds" }
-        }
-    })
-end
+EHI:ShowAchievementLootCounter({
+    achievement = "moon_5",
+    max = 9,
+    counter =
+    {
+        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+        loot_type = { "money", "diamonds" }
+    },
+    difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+})
 EHI:ShowLootCounter({ max = 12 })
 
 local tbl =

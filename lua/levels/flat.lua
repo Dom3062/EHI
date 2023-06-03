@@ -157,6 +157,7 @@ local triggers = {
     [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } }
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     flat_2 =
@@ -182,6 +183,9 @@ local other =
 {
     [100290] = EHI:AddAssaultDelay({ time = 30 })
 }
+
+--´drill defend waypoint001´ ElementWaypoint 101734
+EHI:DisableWaypoints({ [101734] = true })
 
 EHI:ParseTriggers({
     mission = triggers,

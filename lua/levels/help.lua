@@ -25,6 +25,7 @@ for _, index in ipairs({ 900, 1200, 1500, 4800, 13200 }) do
     DisableWaypoints[EHI:GetInstanceElementID(100212, index)] = true -- Fix
 end
 local mayhem_and_up = EHI:IsMayhemOrAbove()
+---@type ParseAchievementTable
 local achievements =
 {
     orange_4 =

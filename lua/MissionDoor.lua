@@ -34,7 +34,7 @@ else
     end
 end
 
-if EHI.debug and EHI:IsHost() then
+if EHI.debug.mission_door and EHI:IsHost() then
     EHI._cache.MissionDoor = {}
     local _f_init = MissionDoor.init
     function MissionDoor:init(...)

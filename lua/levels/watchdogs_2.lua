@@ -7,7 +7,6 @@ local boat_delay = 60 + 30 + 30 + 450/30
 local boat_icon = { Icon.Boat, Icon.LootDrop }
 local AddToCache = EHI:GetFreeCustomSpecialFunctionID()
 local GetFromCache = EHI:GetFreeCustomSpecialFunctionID()
-local uno_8 = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [101560] = { time = 35 + 75 + 30 + boat_delay, id = "BoatLootFirst" },
     -- 101127 tracked in 101560
@@ -56,6 +55,7 @@ if EHI:IsClient() then
     end)
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     uno_8 =
@@ -63,13 +63,15 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100124] = { status = "defend", class = TT.AchievementStatus, special_function = uno_8 },
+            [100124] = { status = "defend", class = TT.AchievementStatus, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+                local bags = self._trackers:CountLootbagsOnTheGround(10)
+                if bags == 12 then
+                    self:CheckCondition(trigger)
+                end
+            end) },
             [102382] = { special_function = SF.SetAchievementFailed },
             [102379] = { special_function = SF.SetAchievementComplete }
-        },
-        cleanup_callback = function()
-            EHI:UnregisterCustomSpecialFunction(uno_8)
-        end
+        }
     }
 }
 
@@ -98,12 +100,6 @@ EHI:RegisterCustomSpecialFunction(GetFromCache, function(self, trigger, ...)
         trigger.time = nil
     else
         self:CheckCondition(triggers[1011480])
-    end
-end)
-EHI:RegisterCustomSpecialFunction(uno_8, function(self, trigger, ...)
-    local bags = managers.ehi_tracker:CountLootbagsOnTheGround(10)
-    if bags == 12 then
-        self:CheckCondition(trigger)
     end
 end)
 EHI:AddXPBreakdown({

@@ -9,6 +9,7 @@ local triggers = {
     [100123] = repair
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     hunter_loot =
@@ -19,7 +20,7 @@ local achievements =
             [100132] = { special_function = SF.Trigger, data = { 1001321, 1001322 } },
             [1001321] = { max = 21, class = TT.AchievementProgress, special_function = SF.ShowAchievementFromStart },
             [1001322] = { special_function = SF.CustomCode, f = function()
-                EM:ShowLootCounter({ max = 21 })
+                EHI:ShowLootCounter({ max = 21 })
                 EM:UnhookElement(100416)
             end },
             [100416] = { special_function = SF.IncreaseProgress }

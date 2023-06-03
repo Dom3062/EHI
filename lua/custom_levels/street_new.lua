@@ -18,6 +18,7 @@ if EHI:MissionTrackersAndWaypointEnabled() then
 end
 
 -- Achievements
+---@type ParseAchievementTable
 local achievements =
 {
     run_9 =

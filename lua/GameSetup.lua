@@ -150,7 +150,7 @@ local levels =
     ranc = true, -- Midland Ranch
     trai = true, -- Lost in Transit
     corp = true, -- Hostile Takeover
-    fourth_and_last_heist_of_the_Texas_Heat_campaign = true -- Crude Awakening
+    deep = true -- Crude Awakening
 }
 
 local custom_levels =

@@ -70,6 +70,7 @@ if EHI:IsClient() then
     triggers[101410] = { id = "Scan", special_function = SF.RemoveTracker } -- Just in case
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     mad_2 =

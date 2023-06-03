@@ -133,6 +133,7 @@ local function chca_9_fail()
     EHI:Unhook("chca_9_killed")
     EHI:Unhook("chca_9_killed_by_anyone")
 end
+---@type ParseAchievementTable
 local achievements =
 {
     chca_9 =

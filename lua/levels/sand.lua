@@ -100,6 +100,7 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100051, 16780)] = true -- Wait
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     sand_9 =
@@ -209,3 +210,85 @@ if EHI:GetOption("show_waypoints") then
     tbl[104308] = { f = f, trigger_id = 104305 }
 end
 EHI:UpdateUnits(tbl)
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 500, name = "china2_entered_dockyard" }, -- Enter the compound
+                { amount = 4000, name = "china2_found_vlad" }, -- Located Vlad on cameras
+                { amount = 500, name = "china2_hacked_into_control_room" }, -- Hacked into the control room
+                { amount = 500, name = "china2_downloaded_manifest" }, -- Downloaded warehouse manifest
+                { amount = 1000, name = "china2_found_warehouse_with_vlad" }, -- Reached the warehouse
+                { amount = 1000, name = "china2_found_foremans_office" }, -- Found foreman's office (if keycard)
+                { amount = 2000, name = "china2_called_foremans_extension" }, -- Called foreman's extension (if keycard)
+                { amount = 2000, name = "china2_lured_foreman_out" }, -- Lured foreman out of the office (if keycard)
+                { amount = 1000, name = "china2_found_keycard_keypad_keycode" }, -- Obtained keycard/keypad/keycode
+                { amount = 500, name = "china2_warehouse_open" }, -- Warehouse opened
+                { amount = 2000, name = "china2_opened_vlads_container" }, -- Opened Vlad's container
+                { amount = 500, name = "china2_cut_vlad_free" }, -- Cut Vlad free
+                { amount = 1000, name = "china2_inject_adrenaline" }, -- Injected adrenalite to Vlad
+                { amount = 1000, name = "china2_gathered_at_the_security_gate" }, -- Gathered at the security gate
+                { amount = 3000, name = "china2_vlad_at_security_gate" }, -- Vlad arrived at the security gate
+                { amount = 3000, name = "china2_second_path", optional = true }, -- Arrived at harbor offices
+                { amount = 3000, name = "china2_found_it_room" }, -- Located IT room
+                { amount = 6000, name = "china2_copied_documents" }, -- Copied documents onto USB stick
+                { amount = 1000, name = "china2_lowered_bollards" }, -- Lowered bollards
+                { amount = 500, name = "china2_ramp" }, -- Arrived at ramp
+                { amount = 1000, name = "china2_ramp_raised" }, -- Ramp raised
+                { amount = 2000, name = "china2_final_area" }, -- Entered the final area in the docks
+                { amount = 1000, name = "china2_route_done", times = 5 }, -- Route done
+                { amount = 2000, name = "china2_signaled_jiu_feng" }, -- Signaled Jiu Feng for extraction
+                { amount = 2000, name = "china2_escape_arrived" }, -- Escape arrived
+                { escape = 4000 }
+            },
+            loot_all = 500
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 500, name = "china2_entered_dockyard" }, -- Enter the compound
+                { amount = 4000, name = "china2_found_vlad" }, -- Located Vlad on cameras
+                { amount = 500, name = "china2_hacked_into_control_room" }, -- Hacked into the control room
+                { amount = 500, name = "china2_downloaded_manifest" }, -- Downloaded warehouse manifest
+                { amount = 1000, name = "china2_found_warehouse_with_vlad" }, -- Reached the warehouse
+                {
+                    random =
+                    {
+                        max = 1,
+                        pc_hack =
+                        {
+                            { amount = 2500, name = "pc_hack" },
+                        },
+                        swat_van =
+                        {
+                            { amount = 2000, name = "diamond_heist_found_keycard" }
+                        }
+                    }
+                },
+                { amount = 1000, name = "china2_warehouse_open" }, -- Warehouse opened
+                { amount = 2000, name = "china2_opened_vlads_container" }, -- Opened Vlad's container
+                { amount = 500, name = "china2_cut_vlad_free" }, -- Cut Vlad free
+                { amount = 2000, name = "china2_resuscitated_vlad" }, -- Resuscitated Vlad
+                { amount = 6000, name = "china2_vlad_at_security_gate" }, -- Vlad arrived at the security gate
+                { amount = 3000, name = "china2_second_path", optional = true }, -- Arrived at harbor offices
+                { amount = 2000, name = "china2_found_it_room" }, -- Located IT room
+                { amount = 2000, name = "pc_hack" }, -- IT Room PC hack
+                { amount = 1500, name = "china2_harddrive_taken" }, -- Took harddrive
+                { amount = 1000, name = "china2_lowered_bollards" }, -- Lowered bollards
+                { amount = 500, name = "china2_ramp" }, -- Arrived at ramp
+                { amount = 1000, name = "china2_ramp_raised" }, -- Ramp raised
+                { amount = 2000, name = "china2_final_area" }, -- Entered the final area in the docks
+                { amount = 1000, name = "china2_route_done", times = 5 }, -- Route done
+                { amount = 2000, name = "china2_found_fireworks" }, -- Found fireworks
+                { amount = 500, name = "china2_placed_fireworks" }, -- Placed fireworks
+                { amount = 2000, name = "china2_escape_arrived" }, -- Escape arrived
+                { escape = 3000 }
+            },
+            loot_all = 500
+        }
+    }
+})

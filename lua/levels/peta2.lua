@@ -33,7 +33,8 @@ local triggers = {
     [EHI:GetInstanceElementID(100011, 4750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain2 }
 }
 
-local IncreaseEnabled = false
+local peta_5_IncreaseEnabled = false
+---@type ParseAchievementTable
 local achievements =
 {
     peta_3 =
@@ -52,13 +53,13 @@ local achievements =
         {
             [100002] = { max = (EHI:IsMayhemOrAbove() and 14 or 12), class = TT.AchievementProgress, remove_after_reaching_target = false },
             [102095] = { special_function = SF.CustomCode, f = function()
-                IncreaseEnabled = true
+                peta_5_IncreaseEnabled = true
             end },
             [102098] = { special_function = SF.CustomCode, f = function()
-                IncreaseEnabled = false
+                peta_5_IncreaseEnabled = false
             end },
             [100716] = { special_function = SF.CustomCode, f = function()
-                if IncreaseEnabled then
+                if peta_5_IncreaseEnabled then
                     managers.ehi_tracker:IncreaseTrackerProgress("peta_5")
                 end
             end },

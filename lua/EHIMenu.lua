@@ -195,16 +195,8 @@ function EHIMenu:CallCallback(item, params)
             value = tonumber(value)
         end
         if params.color then
-            local cpanels = { 5, 32, 59 }
-            local colors = {}
-            local i = 1
-            for _, v in pairs(params.color_panels) do
-                if v:y() == cpanels[i] then
-                    colors[#colors + 1] = v:child("value"):text()
-                    i = i + 1
-                end
-            end
-            value = Color(colors[1], colors[2], colors[3])
+            local v = params.color_panels
+            value = Color(v[1]:child("value"):text(), v[2]:child("value"):text(), v[3]:child("value"):text())
         end
         local var = item.callback_arguments and type(item.callback_arguments) == "table" or false
         if type(item.callback) == "table" then
@@ -917,7 +909,11 @@ function EHIMenu:CreateItem(item, items, menu_id, settings_table)
             if item.setting_value == "equipment" then
                 stored_value = EHI.settings.equipment_color
             elseif item.setting_value == "colors" then
-                stored_value = EHI.settings.colors
+                if item.color_type then
+                    stored_value = EHI.settings.colors[item.color_type]
+                else
+                    stored_value = EHI.settings.colors
+                end
             end
         end
         value = EHI:GetColor(stored_value[item.value])
@@ -953,18 +949,20 @@ function EHIMenu:CreateOneLineItems(item, items, menu_id, settings_table)
     local previous_item
     for _, v in pairs(item.table) do
         local itm = self:CreateItem(v, items, menu_id, settings_table)
-        itm.panel:set_w(itm.panel:w() / n)
-        if itm.panel:child("title") then
-            itm.panel:child("title"):set_w(itm.panel:w() - (offset[itm.type] or 0))
-            local w = select(3, itm.panel:child("title"):text_rect())
-            if w > itm.panel:child("title"):w() then
-                itm.panel:child("title"):set_font_size(itm.panel:child("title"):font_size() * (itm.panel:child("title"):w() / w))
+        if itm then
+            itm.panel:set_w(itm.panel:w() / n)
+            if itm.panel:child("title") then
+                itm.panel:child("title"):set_w(itm.panel:w() - (offset[itm.type] or 0))
+                local w = select(3, itm.panel:child("title"):text_rect())
+                if w > itm.panel:child("title"):w() then
+                    itm.panel:child("title"):set_font_size(itm.panel:child("title"):font_size() * (itm.panel:child("title"):w() / w))
+                end
             end
-        end
-        if previous_item then
-            itm.panel:set_left(previous_item.panel:right())
-            itm.panel:set_y(previous_item.panel:y())
-            self:AddItemToMenu(menu_id, nil, -(itm.panel:h() + 1))
+            if previous_item then
+                itm.panel:set_left(previous_item.panel:right())
+                itm.panel:set_y(previous_item.panel:y())
+                self:AddItemToMenu(menu_id, nil, -(itm.panel:h() + 1))
+            end
         end
         previous_item = itm
     end

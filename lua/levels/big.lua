@@ -61,6 +61,7 @@ if EHI:IsClient() then
 end
 
 local bigbank_4 = { special_function = SF.Trigger, data = { 1, 2 } }
+---@type ParseAchievementTable
 local achievements =
 {
     bigbank_4 =
@@ -144,6 +145,7 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
+---@type MissionDoorTable
 local MissionDoor =
 {
     -- Server Room
@@ -159,12 +161,12 @@ local MissionDoor =
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoor)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        correct_pc_hack = 8000,
-        timelock_done = 4000,
-        escape_is_enabled = 10000,
-        escape = 8000
+        { amount = 8000, name = "correct_pc_hack" },
+        { amount = 4000, name = "timelock_done" },
+        { amount = 10000, name = "escape_is_enabled" },
+        { escape = 8000 }
     },
     loot_all = 1000
 })

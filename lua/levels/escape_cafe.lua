@@ -11,6 +11,7 @@ local triggers = {
     [100156] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100367 } }
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     frappucino_to_go_please =
@@ -29,6 +30,22 @@ local other =
     [100969] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
     [100970] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround)
 }
+
+-- Bugged because one loot bag is not counted
+-- Reported in:
+-- https://steamcommunity.com/app/218620/discussions/14/3834297051382791123/
+--[[if EHI:GetOption("show_loot_counter") then
+    local CreateCounter = true
+    local UpdateLootCounter = EHI:GetFreeCustomSpecialFunctionID()
+    other[101419] = { special_function = UpdateLootCounter }
+    EHI:RegisterCustomSpecialFunction(UpdateLootCounter, function(self, ...)
+        if CreateCounter then
+            EHI:ShowLootCounterNoCheck({})
+            CreateCounter = false
+        end
+        self._trackers:IncreaseTrackerProgressMax("LootCounter")
+    end)
+end]]
 
 EHI:ParseTriggers({
     mission = triggers,

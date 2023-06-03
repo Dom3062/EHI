@@ -24,6 +24,7 @@ end]]
 local min_bags = 4
 if Global.game_settings.level_id == "gallery" then
     local TT = EHI.Trackers
+    ---@type ParseAchievementTable
     local achievements =
     {
         cac_19 =
@@ -103,11 +104,12 @@ EHI:ShowLootCounter({
         if self._trackers:IsMissionElementDisabled(104286) then
             max_reduction = max_reduction + 1
         end
-        self._trackers:DecreaseTrackerProgressMax(max_reduction)
+        self._trackers:DecreaseTrackerProgressMax("LootCounter", max_reduction)
         self._trackers:SyncSecuredLoot()
     end
 })
 
+---@type MissionDoorTable
 local MissionDoor =
 {
     -- Security doors

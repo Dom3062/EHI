@@ -100,6 +100,5 @@ if EHI:IsMayhemOrAbove() then
     bag_multiplier = 3
 end
 EHI:ShowLootCounter({
-    max = required_bags,
-    additional_loot = (6 * bag_multiplier) + 8 -- (4 secondary wagons with 2 money bags); total 5 wagons, one is disabled
+    max = required_bags + ((6 * bag_multiplier) + 8) -- (4 secondary wagons with 2 money bags); total 5 wagons, one is disabled
 })

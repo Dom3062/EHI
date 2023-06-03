@@ -4,7 +4,14 @@ end
 
 _G.EHI =
 {
-    debug = false,
+    debug =
+    {
+        achievements = false,
+        mission_door = false,
+        loot_manager_escape = false,
+        instances = false,
+        gained_experience = false
+    },
     settings = {},
 
     _hooks = {},
@@ -49,6 +56,8 @@ _G.EHI =
     CallbackMessage =
     {
         Spawned = "Spawned",
+        -- Provides "primary", "secondary", "melee" and "grenades"
+        SpawnedAchievements = "SpawnedAchievements",
         -- Provides "loc" (a LocalizationManager class)
         LocLoaded = "LocLoaded",
         -- Provides "success" (a boolean value)
@@ -69,6 +78,7 @@ _G.EHI =
 
     SyncMessages =
     {
+        EHISyncAddBuff = "EHISyncAddBuff",
         EHISyncAddTracker = "EHISyncAddTracker"
     },
 
@@ -203,6 +213,7 @@ _G.EHI =
         AchievementStatus = "EHIAchievementStatusTracker",
         AchievementProgress = "EHIAchievementProgressTracker",
         AchievementBagValue = "EHIAchievementBagValueTracker",
+        AchievementLootCounter = "EHIAchievementLootCounterTracker",
         AssaultDelay = "EHIAssaultDelayTracker",
         ColoredCodes = "EHIColoredCodesTracker",
         Inaccurate = "EHIInaccurateTracker",
@@ -302,37 +313,60 @@ local function LoadDefaultValues(self)
 
         colors =
         {
-            inaccurate =
+            tracker_waypoint =
             {
-                r = 255,
-                g = 165,
-                b = 0
+                inaccurate =
+                {
+                    r = 255,
+                    g = 165,
+                    b = 0
+                },
+                pause =
+                {
+                    r = 255,
+                    g = 0,
+                    b = 0
+                },
+                drill_autorepair =
+                {
+                    r = 137,
+                    g = 209,
+                    b = 254
+                },
+                warning =
+                {
+                    r = 255,
+                    g = 0,
+                    b = 0
+                },
+                completion =
+                {
+                    r = 0,
+                    g = 255,
+                    b = 0
+                }
             },
-            pause =
+            mission_briefing =
             {
-                r = 255,
-                g = 0,
-                b = 0
-            },
-            drill_autorepair =
-            {
-                r = 137,
-                g = 209,
-                b = 254
-            },
-            warning =
-            {
-                r = 255,
-                g = 0,
-                b = 0
-            },
-            completion =
-            {
-                r = 0,
-                g = 255,
-                b = 0
-            },
-
+                loot_secured =
+                {
+                    r = 255,
+                    g = 188,
+                    b = 0
+                },
+                total_xp =
+                {
+                    r = 0,
+                    g = 255,
+                    b = 0
+                },
+                optional =
+                {
+                    r = 137,
+                    g = 209,
+                    b = 254
+                }
+            }
         },
 
         -- Visuals
@@ -737,8 +771,8 @@ function EHI:GetOption(option)
 end
 
 function EHI:GetTWColor(color)
-    if color and self.settings.colors[color] then
-        return self:GetColor(self.settings.colors[color])
+    if color and self.settings.colors.tracker_waypoint[color] then
+        return self:GetColor(self.settings.colors.tracker_waypoint[color])
     end
     return Color.white
 end
@@ -828,6 +862,10 @@ function EHI:AreGagePackagesSpawned()
     return self._cache.GagePackagesSpawned or false
 end
 
+function EHI:IsLootCounterVisible()
+    return self:GetOption("show_loot_counter") and not self:IsPlayingCrimeSpree()
+end
+
 function EHI:IsPlayingCrimeSpree()
     return Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree"
 end
@@ -838,6 +876,10 @@ end
 
 function EHI:CombineAssaultDelayAndAssaultTime()
     return self:GetOption("show_assault_delay_tracker") and self:GetOption("show_assault_time_tracker") and self:GetOption("aggregate_assault_delay_and_assault_time")
+end
+
+function EHI:IsTradeTrackerDisabled()
+    return not self:GetOption("show_trade_delay") or Global.game_settings.level_id == "haunted_safehouse"
 end
 
 ---@param params table
@@ -877,7 +919,7 @@ function EHI:CallCallbackOnce(id, ...)
     self.Callback[id] = nil
 end
 
----@param f function
+---@param f fun(dropin: boolean)
 function EHI:AddOnAlarmCallback(f)
     self:AddCallback("Alarm", f)
 end
@@ -887,7 +929,7 @@ function EHI:RunOnAlarmCallbacks(dropin)
     self:CallCallbackOnce("Alarm", dropin)
 end
 
----@param f function
+---@param f fun(custody_state: boolean)
 function EHI:AddOnCustodyCallback(f)
     self:AddCallback("Custody", f)
 end
@@ -1147,11 +1189,12 @@ local function HideTracker(id)
     managers.ehi_waypoint:RemoveWaypoint(id)
 end
 
----Provided function should accept these parameters in this order: "self" (EHIManager), "trigger", "element", "enabled"
 ---@param id number
----@param f function
+---@param f fun(self: EHIManager, trigger: table, element: table, enabled: boolean)
+---@return nil
+---@overload fun(self, f: fun(self: EHIManager, trigger: table, element: table, enabled: boolean)): integer
 function EHI:RegisterCustomSpecialFunction(id, f)
-    managers.ehi_manager:RegisterCustomSpecialFunction(id, f)
+    return managers.ehi_manager:RegisterCustomSpecialFunction(id, f)
 end
 
 ---Unregisters custom special function
@@ -1166,6 +1209,7 @@ function EHI:GetFreeCustomSpecialFunctionID()
     return id
 end
 
+---@param elements_to_hook table
 function EHI:HookElements(elements_to_hook)
     managers.ehi_manager:HookElements(elements_to_hook)
 end
@@ -1256,7 +1300,7 @@ function EHI:PreparseBeardlibAchievements(achievements, package, exclude)
     end
 end
 
----@param new_triggers table
+---@param new_triggers ParseTriggersTable
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
 function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
@@ -1347,14 +1391,16 @@ end
 
 -- Used on clients when offset is required
 -- Do not call it directly!
+---@param params LootCounterTable
+---@param manager EHIManager
 function EHI:ShowLootCounterOffset(params, manager)
     params.offset = nil
     params.n_offset = managers.loot:GetSecuredBagsAmount()
     params.hook_triggers = params.triggers ~= nil
-    self:ShowLootCounterNoCheck(params)
+    self:ShowLootCounterNoChecks(params)
 end
 
----@param params table
+---@param params LootCounterTable
 function EHI:ShowLootCounter(params)
     if not self:GetOption("show_loot_counter") then
         return
@@ -1362,11 +1408,16 @@ function EHI:ShowLootCounter(params)
     self:ShowLootCounterNoCheck(params)
 end
 
----@param params table
+---@param params LootCounterTable
 function EHI:ShowLootCounterNoCheck(params)
     if self:IsPlayingCrimeSpree() then
         return
     end
+    self:ShowLootCounterNoChecks(params)
+end
+
+---@param params LootCounterTable
+function EHI:ShowLootCounterNoChecks(params)
     local n_offset = params.n_offset or 0
     if params.offset then
         if self:IsHost() or params.client_from_start then
@@ -1412,8 +1463,8 @@ end
 function EHI:HookLootCounter(no_sync_load)
     if not self._cache.LootCounter then
         local BagsOnly = self.LootCounter.CheckType.BagsOnly
-        local function Callback(self)
-            self:EHIReportProgress("LootCounter", BagsOnly)
+        local function Callback(loot)
+            loot:EHIReportProgress("LootCounter", BagsOnly)
         end
         self:AddCallback(self.CallbackMessage.LootSecured, Callback)
         -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot
@@ -1426,9 +1477,9 @@ function EHI:HookLootCounter(no_sync_load)
 end
 
 local show_achievement = false
----@param params table
+---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounter(params)
-    if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
+    if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false then
         if params.show_loot_counter then
             self:ShowLootCounter({ max = params.max, additional_loot = params.additional_loot })
         end
@@ -1437,8 +1488,13 @@ function EHI:ShowAchievementLootCounter(params)
     self:ShowAchievementLootCounterNoCheck(params)
 end
 
+---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounterNoCheck(params)
-    managers.ehi_tracker:AddAchievementProgressTracker(params.achievement, params.max, 0, params.remove_after_reaching_target, params.class)
+    if self:GetOption("show_loot_counter") and params.show_loot_counter then
+        managers.ehi_tracker:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail)
+    else
+        managers.ehi_tracker:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.remove_after_reaching_target, params.class)
+    end
     if params.load_sync then
         self:AddLoadSyncFunction(params.load_sync)
     end
@@ -1465,6 +1521,7 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
     self:AddAchievementToCounter(params)
 end
 
+---@param params AchievementBagValueCounterTable
 function EHI:ShowAchievementBagValueCounter(params)
     if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
         return
@@ -1473,14 +1530,14 @@ function EHI:ShowAchievementBagValueCounter(params)
     self:AddAchievementToCounter(params)
 end
 
+---@param params AchievementLootCounterTable|AchievementBagValueCounterTable
 function EHI:AddAchievementToCounter(params)
     local check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly
     local loot_type = params.counter and params.counter.loot_type
     local f = params.counter and params.counter.f
-    local function Callback(self)
-        self:EHIReportProgress(params.achievement, check_type, loot_type, f)
-    end
-    self:AddCallback(self.CallbackMessage.LootSecured, Callback)
+    self:AddCallback(self.CallbackMessage.LootSecured, function(loot)
+        loot:EHIReportProgress(params.achievement, check_type, loot_type, f)
+    end)
 end
 
 ---@param id string Achievement ID
@@ -1517,7 +1574,7 @@ function EHI:ShowAchievementKillCounter(id, id_stat, achievement_option)
     end
 end
 
----@param f function
+---@param f fun(self: EHIManager)
 function EHI:AddLoadSyncFunction(f)
     managers.ehi_manager:AddLoadSyncFunction(f)
 end
@@ -1567,7 +1624,7 @@ function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_cont
     end
 end
 
----@param tbl table
+---@param tbl MissionDoorTable
 function EHI:SetMissionDoorPosAndIndex(tbl)
     if TimerGui.SetMissionDoorPosAndIndex then
         TimerGui.SetMissionDoorPosAndIndex(tbl)
@@ -1721,7 +1778,8 @@ function EHI:ClientCopyTrigger(trigger, params)
     return tbl
 end
 
----@param type string Allowed types: `ammo_bag`
+---@param type string
+---|"ammo_bag" # Ignore ammo bags
 ---@param pos table Table with positions that should be ignored
 function EHI:SetDeployableIgnorePos(type, pos)
     if not type then
@@ -1832,11 +1890,13 @@ function EHI:IsAchievementUnlocked2(achievement)
     return not self:IsAchievementLocked2(achievement)
 end
 
-if EHI.debug then -- For testing purposes
+if EHI.debug.achievements then
     function EHI:IsAchievementLocked2(achievement)
         return true
     end
+end
 
+if EHI.debug.instances then -- For testing purposes
     function EHI:DebugInstance(instance_name)
         if self:IsClient() then
             self:Log("Instance debugging is only available when you are the host")

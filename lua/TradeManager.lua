@@ -15,7 +15,7 @@ if EHI:IsXPTrackerVisible() then
     end
 end
 
-if not EHI:GetOption("show_trade_delay") then
+if EHI:IsTradeTrackerDisabled() then
     return
 end
 

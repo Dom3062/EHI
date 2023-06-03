@@ -4,11 +4,11 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local trigger_icon_all = { Icon.Defend }
 local triggers = {
-    [101034] = { id = "MikeDefendTruck", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033 },
+    [101034] = { id = "MikeDefendTruck", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033, waypoint = { position_by_element = EHI:GetInstanceElementID(100483, 1350), remove_vanilla_waypoint = EHI:GetInstanceElementID(100483, 1350) } },
     [101038] = { id = "MikeDefendTruck", special_function = SF.PauseTracker },
     [101070] = { id = "MikeDefendTruck", special_function = SF.UnpauseTracker },
 
-    [101535] = { id = "MikeDefendGarage", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101532 },
+    [101535] = { id = "MikeDefendGarage", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101532, waypoint = { position_by_element = 101445, remove_vanilla_waypoint = 101445 } },
     [101534] = { id = "MikeDefendGarage", special_function = SF.UnpauseTracker },
     [101533] = { id = "MikeDefendGarage", special_function = SF.PauseTracker },
 
@@ -33,6 +33,7 @@ if EHI:IsClient() then
     EHI:AddSyncTrigger(101535, triggers[101535])
 end
 
+---@type ParseAchievementTable
 local achievements =
 {
     born_3 =
@@ -76,6 +77,7 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
+---@type MissionDoorTable
 local MissionDoor =
 {
     -- Workshop

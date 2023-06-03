@@ -35,15 +35,13 @@ function ExperienceManager:init(...)
         difficulty_multiplier = 1
     }
     if xp_format == 3 then -- Multiply
-        local function f()
+        EHI:AddOnAlarmCallback(function()
             self._xp.stealth = false
             self:RecalculateSkillXPMultiplier()
-        end
-        EHI:AddOnAlarmCallback(f)
-        local function f2(state)
+        end)
+        EHI:AddOnCustodyCallback(function(state)
             self:SetInCustody(state)
-        end
-        EHI:AddOnCustodyCallback(f2)
+        end)
         EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
     end
     EXPERIENCE = managers.localization:text("ehi_popup_experience")

@@ -6,6 +6,7 @@ local triggers = {
     [100269] = ObjectiveWait
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     RC_Achieve_speedrun =

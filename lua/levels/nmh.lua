@@ -36,7 +36,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local LowerFloor = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [102460] = { time = 7, id = "Countdown", icons = { Icon.Alarm }, class = TT.Warning },
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
@@ -44,7 +43,11 @@ local triggers = {
     [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
 
     [103439] = { id = "EscapeElevator", special_function = SF.RemoveTracker },
-    [102619] = { id = "EscapeElevator", special_function = LowerFloor },
+    [102619] = { id = "EscapeElevator", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+        if enabled then
+            self:Call(trigger.id, "LowerFloor")
+        end
+    end) },
 
     [103443] = { id = "EscapeElevator", class = "EHIElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = EHIElevatorTimerTracker._forced_icons[1], position_by_unit = 102296, class = "EHIElevatorTimerWaypoint" } },
     [104072] = { id = "EscapeElevator", special_function = SF.UnpauseTracker },
@@ -99,6 +102,7 @@ EHI:AddOnAlarmCallback(function()
     end
 end)
 
+---@type ParseAchievementTable
 local achievements =
 {
     nmh_11 =
@@ -119,27 +123,13 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
-EHI:RegisterCustomSpecialFunction(LowerFloor, function(self, trigger, element, enabled)
-    if enabled then
-        self:Call(trigger.id, "LowerFloor")
-    end
-end)
 EHI:AddLoadSyncFunction(function(self)
     local elevator_counter = managers.worlddefinition:get_unit(102296)
     if elevator_counter then
         local o = elevator_counter:digital_gui()
         if o and o._timer and o._timer ~= 30 then
-            local floors = o._timer - 4
-            self._trackers:AddTracker({
-                id = "EscapeElevator",
-                floors = floors,
-                class = "EHIElevatorTimerTracker"
-            })
-            self._waypoints:AddWaypoint("EscapeElevator", {
-                floors = floors,
-                position = elevator_counter:position(),
-                class = "EHIElevatorTimerWaypoint"
-            })
+            self:Trigger(103443)
+            self:Call("EscapeElevator", "SetFloors", o._timer - 4)
             if self:InteractionExists("circuit_breaker") or self:InteractionExists("press_call_elevator") then
                 self:Pause("EscapeElevator")
             end
@@ -148,8 +138,7 @@ EHI:AddLoadSyncFunction(function(self)
 end)
 
 --units/pd2_dlc_nmh/props/nmh_interactable_teddy_saw/nmh_interactable_teddy_saw
-local tbl = { [101387] = { remove_vanilla_waypoint = 104494 } }
-EHI:UpdateUnits(tbl)
+EHI:UpdateUnits({ [101387] = { remove_vanilla_waypoint = 104494 } })
 EHI:AddXPBreakdown({
     tactic =
     {

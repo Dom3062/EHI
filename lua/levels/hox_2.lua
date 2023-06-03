@@ -47,6 +47,7 @@ else
 end
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@type ParseAchievementTable
 local achievements =
 {
     slakt_3 =
@@ -221,6 +222,7 @@ end
 EHI:UpdateUnits(tbl)
 
 local SecurityOffice = EHI:GetInstanceElementID(100026, 6690)
+---@type MissionDoorTable
 local MissionDoor =
 {
     -- Evidence

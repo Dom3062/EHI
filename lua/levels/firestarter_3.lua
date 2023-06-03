@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {}
+---@type ParseAchievementTable
 local achievements = {}
 local other = {}
 local level_id = Global.game_settings.level_id

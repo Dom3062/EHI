@@ -1,6 +1,7 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+---@type ParseAchievementTable
 local achievements = {
     hunter_fall =
     {

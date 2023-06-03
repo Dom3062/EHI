@@ -37,6 +37,7 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100022, 23480)] = true -- Fix
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     fex_10 =
@@ -86,10 +87,10 @@ EHI:AddXPBreakdown({
                 { amount = 1000, name = "mex4_codex_room_open" },
                 { amount = 10000, name = "mex4_bulucs_office_open" },
                 { amount = 1000, name = "mex4_interacted_with_safe" },
-                { amount = 2000, name = "mex4_contact_list_stolen_stealth" },
+                { amount = 2000, name = "mex4_contact_list_stolen" },
                 { amount = 2000, name = "mex4_found_car_keys" },
-                { amount = 2000, name = "mex4_car_escape_stealth" },
-                { amount = 1000, name = "mex4_boat_escape_stealth" },
+                { amount = 2000, name = "mex4_car_escape" },
+                { amount = 1000, name = "mex4_boat_escape" },
             },
             loot_all = { amount = 500, times = 21 }
         },
@@ -109,7 +110,7 @@ EHI:AddXPBreakdown({
                 { amount = 1000, name = "mex4_turret_discovered_car_escape" },
                 { amount = 3000, name = "mex4_turret_destroyed_car_escape" },
                 { amount = 3000, name = "mex4_flare_lit_heli_escape" },
-                { amount = 1000, name = "loud_escape" }
+                { escape = 1000 }
             },
             loot_all = { amount = 500, times = 21 }
         }

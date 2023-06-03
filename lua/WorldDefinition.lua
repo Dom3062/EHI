@@ -48,6 +48,7 @@ function EHI:FinalizeUnits(tbl)
                     if unit_data.ignore_visibility then
                         unit:timer_gui():SetIgnoreVisibility()
                     end
+                    unit:timer_gui():SetWaypointPosition(unit_data.position)
                     unit:timer_gui():Finalize()
                 end
                 if unit:digital_gui() and unit:digital_gui()._ehi_key then

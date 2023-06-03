@@ -1,7 +1,8 @@
 local EHI = EHI
-EHITrackerManager = class()
+---@class EHITrackerManager
+EHITrackerManager = {}
 EHITrackerManager.GetAchievementIcon = EHI.GetAchievementIconString
-function EHITrackerManager:init()
+function EHITrackerManager:new()
     self:CreateWorkspace()
     self._t = 0
     self._trackers = {}
@@ -20,6 +21,7 @@ function EHITrackerManager:init()
     self._delay_popups = true
     self._panel_size = 32 * self._scale
     self._panel_offset = 6 * self._scale
+    return self
 end
 
 function EHITrackerManager:CreateWorkspace()
@@ -52,10 +54,13 @@ function EHITrackerManager:HidePanel()
     self._ws:hide()
 end
 
+---@param t number
 function EHITrackerManager:LoadTime(t)
     self._t = t
 end
 
+---@param id number
+---@return boolean
 function EHITrackerManager:IsMissionElementEnabled(id)
     local element = managers.mission:get_element_by_id(id)
     if not element then
@@ -64,20 +69,14 @@ function EHITrackerManager:IsMissionElementEnabled(id)
     return element:enabled()
 end
 
+---@param id number
+---@return boolean
 function EHITrackerManager:IsMissionElementDisabled(id)
     return not self:IsMissionElementEnabled(id)
 end
 
-function EHITrackerManager:InteractionExists(tweak_data)
-    local interactions = managers.interaction._interactive_units or {}
-    for _, unit in ipairs(interactions) do
-        if unit:interaction().tweak_data == tweak_data then
-            return true
-        end
-    end
-    return false
-end
-
+---@param tweak_data string
+---@return integer
 function EHITrackerManager:CountInteractionAvailable(tweak_data)
     local interactions = managers.interaction._interactive_units or {}
     local count = 0
@@ -89,6 +88,8 @@ function EHITrackerManager:CountInteractionAvailable(tweak_data)
     return count
 end
 
+---@param offset integer?
+---@return integer
 function EHITrackerManager:CountLootbagsOnTheGround(offset)
     local excluded = { value_multiplier = true, dye = true, types = true, small_loot = true }
     local lootbags = {}
@@ -107,22 +108,16 @@ function EHITrackerManager:CountLootbagsOnTheGround(offset)
     return count
 end
 
-function EHITrackerManager:CountSpecificLootVisible(carry_id)
-    local interactions = managers.interaction._interactive_units or {}
-    local count = 0
-    for _, unit in pairs(interactions) do
-        if unit:carry_data() and unit:carry_data():carry_id() == carry_id then
-            count = count + 1
-        end
-    end
-    EHI:Log("Found: " .. tostring(count))
-    return count
-end
-
+---@param path string
+---@param slotmask integer
+---@return integer
 function EHITrackerManager:CountUnitAvailable(path, slotmask)
     return #self:GetUnits(path, slotmask)
 end
 
+---@param path string
+---@param slotmask integer
+---@return table
 function EHITrackerManager:GetUnits(path, slotmask)
     local tbl = {}
     local tbl_i = 1
@@ -137,10 +132,18 @@ function EHITrackerManager:GetUnits(path, slotmask)
     return tbl
 end
 
+---@param path string
+---@param slotmask integer
+---@param pos integer
+---@return Unit
 function EHITrackerManager:GetUnit(path, slotmask, pos)
     return self:GetUnits(path, slotmask)[pos or 1]
 end
 
+---@param path string
+---@param loot_type string
+---@param slotmask integer
+---@return integer
 function EHITrackerManager:CountLootbagsAvailable(path, loot_type, slotmask)
     slotmask = slotmask or 14
     local count = 0
@@ -160,12 +163,15 @@ function EHITrackerManager:LoadSync()
     end)
 end
 
+---@param t number
+---@param dt number
 function EHITrackerManager:update(t, dt)
     for _, tracker in pairs(self._trackers_to_update) do
         tracker:update(t, dt)
     end
 end
 
+---@param t number
 function EHITrackerManager:update_client(t)
     local dt = t - self._t
     self._t = t
@@ -182,6 +188,8 @@ function EHITrackerManager:destroy()
     end
 end
 
+---@param params AddTrackerTable
+---@param pos integer?
 function EHITrackerManager:AddTracker(params, pos)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
@@ -203,6 +211,7 @@ function EHITrackerManager:AddTracker(params, pos)
     self._n_of_trackers = self._n_of_trackers + 1
 end
 
+---@param params AddTrackerTable
 function EHITrackerManager:PreloadTracker(params)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
@@ -217,6 +226,8 @@ function EHITrackerManager:PreloadTracker(params)
     self._trackers[params.id] = tracker
 end
 
+---@param id string
+---@param params AddTrackerTable
 function EHITrackerManager:RunTracker(id, params)
     local tracker = self._trackers[id]
     if not tracker then
@@ -236,12 +247,17 @@ function EHITrackerManager:RunTracker(id, params)
     self._n_of_trackers = self._n_of_trackers + 1
 end
 
--- Called by host only. Clients with EHI call EHITrackerManager:AddTracker() when synced
+---Called by host only. Clients with EHI call EHITrackerManager:AddTracker() when synced
+---@param params AddTrackerTable
+---@param id integer
+---@param delay number
 function EHITrackerManager:AddTrackerAndSync(params, id, delay)
     self:AddTracker(params)
     self:Sync(id, delay)
 end
 
+---@param id integer
+---@param delay number
 function EHITrackerManager:Sync(id, delay)
     EHI:Sync(EHI.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
 end
@@ -250,6 +266,7 @@ if Global.game_settings and Global.game_settings.single_player then
     EHITrackerManager.Sync = function(...) end
 end
 
+---@param id string
 function EHITrackerManager:AddPagerTracker(id)
     self._stealth_trackers.pagers[id] = true
     local params =
@@ -260,6 +277,7 @@ function EHITrackerManager:AddPagerTracker(id)
     self:AddTracker(params)
 end
 
+---@param params table
 function EHITrackerManager:AddLaserTracker(params)
     for id, _ in pairs(self._stealth_trackers.lasers) do
         -- Don't add this tracker if the "next_cycle_t" is the same as time to prevent duplication
@@ -272,6 +290,9 @@ function EHITrackerManager:AddLaserTracker(params)
     self:AddTracker(params)
 end
 
+---@param id string
+---@param time_max number
+---@param icon string?
 function EHITrackerManager:AddTimedAchievementTracker(id, time_max, icon)
     local t = time_max - self._t
     if t <= 0 then
@@ -286,6 +307,12 @@ function EHITrackerManager:AddTimedAchievementTracker(id, time_max, icon)
     })
 end
 
+---@param id string
+---@param max integer
+---@param progress integer
+---@param remove_after_reaching_target boolean?
+---@param class string?
+---@param icon string?
 function EHITrackerManager:AddAchievementProgressTracker(id, max, progress, remove_after_reaching_target, class, icon)
     icon = icon or self:GetAchievementIcon(id)
     self:AddTracker({
@@ -299,6 +326,9 @@ function EHITrackerManager:AddAchievementProgressTracker(id, max, progress, remo
     })
 end
 
+---@param id string
+---@param status string?
+---@param icon string?
 function EHITrackerManager:AddAchievementStatusTracker(id, status, icon)
     icon = icon or self:GetAchievementIcon(id)
     self:AddTracker({
@@ -309,6 +339,26 @@ function EHITrackerManager:AddAchievementStatusTracker(id, status, icon)
     })
 end
 
+---@param id string
+---@param max number
+---@param loot_counter_on_fail boolean?
+---@param icon string?
+function EHITrackerManager:AddAchievementLootCounter(id, max, loot_counter_on_fail, icon)
+    icon = icon or self:GetAchievementIcon(id)
+    self:AddTracker({
+        id = id,
+        max = max,
+        icons = { icon },
+        delay_popup = self._delay_popups,
+        loot_counter_on_fail = loot_counter_on_fail,
+        class = EHI.Trackers.AchievementLootCounter
+    })
+end
+
+---@param id string
+---@param to_secure number
+---@param remove_after_reaching_target boolean?
+---@param icon string?
 function EHITrackerManager:AddAchievementBagValueCounter(id, to_secure, remove_after_reaching_target, icon)
     icon = icon or self:GetAchievementIcon(id)
     self:AddTracker({
@@ -321,12 +371,17 @@ function EHITrackerManager:AddAchievementBagValueCounter(id, to_secure, remove_a
     })
 end
 
+---Shows Loot Counter, needs to be hooked to count correctly
+---@param max integer?
+---@param additional_loot integer? DEPRECATED
+---@param max_random any?
+---@param offset any?
 function EHITrackerManager:ShowLootCounter(max, additional_loot, max_random, offset)
     self:AddTracker({
         id = "LootCounter",
         max = (max or 0) + (additional_loot or 0),
         max_random = max_random or 0,
-        offset = offset,
+        offset = offset or 0,
         class = "EHILootTracker"
     })
 end
@@ -335,6 +390,9 @@ function EHITrackerManager:SyncSecuredLoot()
     self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
 end
 
+---@param id string
+---@param progress number
+---@param max number
 function EHITrackerManager:AddAchievementKillCounter(id, progress, max)
     local icon = self:GetAchievementIcon(id)
     self:AddTracker({
@@ -347,6 +405,9 @@ function EHITrackerManager:AddAchievementKillCounter(id, progress, max)
     })
 end
 
+---@param dropin boolean
+---@param chance number
+---@param civilian_killed_multiplier number?
 function EHITrackerManager:AddEscapeChanceTracker(dropin, chance, civilian_killed_multiplier)
     if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
         return
@@ -361,11 +422,22 @@ function EHITrackerManager:AddEscapeChanceTracker(dropin, chance, civilian_kille
     })
 end
 
+---@param params AddTrackerTable
+---@param pos integer?
+function EHITrackerManager:AddTrackerIfDoesNotExist(params, pos)
+    if self:TrackerDoesNotExist(params.id) then
+        self:AddTracker(params, pos)
+    end
+end
+
+---@param id string
+---@param stealth_id string
 function EHITrackerManager:RemoveStealthTracker(id, stealth_id)
     self._stealth_trackers[stealth_id][id] = nil
     self:RemoveTracker(id)
 end
 
+---@param id string
 function EHITrackerManager:RemoveLaserTracker(id)
     self._stealth_trackers.lasers[id] = nil
     self:RemoveTracker(id)
@@ -382,45 +454,41 @@ function EHITrackerManager:SwitchToLoudMode()
 end
 
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) then -- Vertical in VR or in non-VR
+    ---@param pos integer?
+    ---@return integer
     function EHITrackerManager:GetX(pos)
         return self._x
     end
 
+    ---@param pos integer?
+    ---@return integer
     function EHITrackerManager:GetY(pos)
         pos = pos or self._n_of_trackers
         return self._y + (pos * (self._panel_size + self._panel_offset))
     end
 
+    ---@param pos number?
+    ---@param icons table?
+    ---@return integer?
     function EHITrackerManager:MoveTracker(pos, icons)
-        if pos and type(pos) == "number" and self._n_of_trackers ~= 0 then
-            local move = false
+        if type(pos) == "number" and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
             for _, tbl in pairs(self._trackers_pos) do
                 if tbl.pos >= pos then
-                    move = true
-                    break
+                    local final_pos = tbl.pos + 1
+                    tbl.tracker:SetTop(self:GetY(final_pos))
+                    tbl.pos = final_pos
                 end
             end
-            if move then
-                for _, tbl in pairs(self._trackers_pos) do
-                    if tbl.pos >= pos then
-                        local final_pos = tbl.pos + 1
-                        tbl.tracker:SetTop(self:GetY(final_pos))
-                        tbl.pos = final_pos
-                    end
-                end
-            else
-                -- No tracker found on the provided pos
-                -- Scrap this and create the tracker on the first available position
-                pos = nil
-            end
-        else
-            -- Received crap or no tracker exists
-            pos = nil
+            return pos
         end
-        return pos
+        return nil -- Received crap or no tracker exists; create tracker on the first available position
     end
 
-    function EHITrackerManager:RearrangeTrackers(pos, w)
+    ---@param pos integer
+    ---@param w number
+    ---@param pos_move integer?
+    ---@param panel_offset_move integer?
+    function EHITrackerManager:RearrangeTrackers(pos, w, pos_move, panel_offset_move)
         if not pos then
             return
         end
@@ -433,9 +501,14 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) the
         end
     end
 
+    ---Call this function only from trackers themselves
+    ---@param id string
+    ---@param new_w number
     function EHITrackerManager:ChangeTrackerWidth(id, new_w)
     end
 else -- Horizontal
+    ---@param pos integer?
+    ---@return integer
     function EHITrackerManager:GetX(pos)
         if self._n_of_trackers == 0 or pos and pos == 0 then
             return self._x
@@ -451,53 +524,47 @@ else -- Horizontal
         return x
     end
 
+    ---@param pos integer?
+    ---@return integer
     function EHITrackerManager:GetY(pos)
         return self._y
     end
 
+    ---@param pos number?
+    ---@param icons table?
+    ---@return integer?
     function EHITrackerManager:MoveTracker(pos, icons)
-        if pos and type(pos) == "number" and self._n_of_trackers ~= 0 then
-            local move = false
+        if type(pos) == "number" and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
+            local w = 64 * self._scale
+            if type(icons) == "table" then
+                local n = #icons
+                local gap = 5 * n
+                w = ((64 + gap + (32 * n)) * self._scale)
+            end
             for _, tbl in pairs(self._trackers_pos) do
                 if tbl.pos >= pos then
-                    move = true
-                    break
+                    local final_x = tbl.x + w + self._panel_offset
+                    tbl.tracker:SetLeft(final_x)
+                    tbl.x = final_x
+                    tbl.pos = tbl.pos + 1
                 end
             end
-            if move then
-                local w = 64 * self._scale
-                if type(icons) == "table" then
-                    local n = #icons
-                    local gap = 5 * n
-                    w = ((64 + gap + (32 * n)) * self._scale)
-                end
-                for _, tbl in pairs(self._trackers_pos) do
-                    if tbl.pos >= pos then
-                        local final_x = tbl.x + w + self._panel_offset
-                        tbl.tracker:SetLeft(final_x)
-                        tbl.x = final_x
-                        tbl.pos = tbl.pos + 1
-                    end
-                end
-            else
-                -- No tracker found on the provided pos
-                -- Scrap this and create the tracker on the first available position
-                pos = nil
-            end
-        else
-            -- Received crap or no tracker exists
-            pos = nil
+            return pos
         end
-        return pos
+        return nil -- Received crap or no tracker exists; create tracker on the first available position
     end
 
+    ---@param pos integer
+    ---@param w number
+    ---@param pos_move integer?
+    ---@param panel_offset_move integer?
     function EHITrackerManager:RearrangeTrackers(pos, w, pos_move, panel_offset_move)
         if not pos then
             return
         end
         pos_move = pos_move or 1
         panel_offset_move = panel_offset_move or self._panel_offset
-        for id, value in pairs(self._trackers_pos) do
+        for _, value in pairs(self._trackers_pos) do
             if value.pos > pos then
                 local final_x = value.x - w - panel_offset_move
                 value.tracker:SetLeft(final_x)
@@ -507,29 +574,37 @@ else -- Horizontal
         end
     end
 
+    ---Call this function only from trackers themselves
+    ---@param id string
+    ---@param new_w number
     function EHITrackerManager:ChangeTrackerWidth(id, new_w)
-        if not self._trackers_pos[id] then
+        local tracker = self._trackers_pos[id]
+        if not tracker then
             return
         end
-        local tracker = self._trackers_pos[id]
         local w = tracker.w
         tracker.w = new_w
         self:RearrangeTrackers(tracker.pos, -(new_w - w), 0, 0)
     end
 end
 
+---@param id string
+---@param tracker EHITracker
 function EHITrackerManager:AddTrackerToUpdate(id, tracker)
     self._trackers_to_update[id] = tracker
 end
 
+---@param id string
 function EHITrackerManager:RemoveTrackerFromUpdate(id)
     self._trackers_to_update[id] = nil
 end
 
+---@param id string
 function EHITrackerManager:GetTracker(id)
     return id and self._trackers[id]
 end
 
+---@param id string
 function EHITrackerManager:RemoveTracker(id)
     local tracker = self._trackers[id]
     if tracker then
@@ -537,6 +612,7 @@ function EHITrackerManager:RemoveTracker(id)
     end
 end
 
+---@param id string
 function EHITrackerManager:ForceRemoveTracker(id)
     local tracker = self._trackers[id]
     if tracker then
@@ -544,6 +620,7 @@ function EHITrackerManager:ForceRemoveTracker(id)
     end
 end
 
+---@param id string
 function EHITrackerManager:HideTracker(id)
     self._trackers_to_update[id] = nil
     local tracker_pos = self._trackers_pos[id]
@@ -556,6 +633,7 @@ function EHITrackerManager:HideTracker(id)
     end
 end
 
+---@param id string
 function EHITrackerManager:DestroyTracker(id)
     self._trackers[id] = nil
     self._trackers_to_update[id] = nil
@@ -569,14 +647,18 @@ function EHITrackerManager:DestroyTracker(id)
     end
 end
 
+---@param id string
 function EHITrackerManager:TrackerExists(id)
-    return self._trackers[id] ~= nil
+    return self._trackers_pos[id] ~= nil
 end
 
+---@param id string
 function EHITrackerManager:TrackerDoesNotExist(id)
     return not self:TrackerExists(id)
 end
 
+---@param id string
+---@param pause boolean
 function EHITrackerManager:SetTrackerPaused(id, pause)
     local tracker = self._trackers[id]
     if tracker and tracker.SetPause then
@@ -584,6 +666,8 @@ function EHITrackerManager:SetTrackerPaused(id, pause)
     end
 end
 
+---@param id string
+---@param amount number
 function EHITrackerManager:AddXPToTracker(id, amount)
     local tracker = self._trackers[id]
     if tracker and tracker.AddXP then
@@ -591,6 +675,8 @@ function EHITrackerManager:AddXPToTracker(id, amount)
     end
 end
 
+---@param id string
+---@param amount number
 function EHITrackerManager:SetXPInTracker(id, amount)
     local tracker = self._trackers[id]
     if tracker and tracker.SetXP then
@@ -598,6 +684,8 @@ function EHITrackerManager:SetXPInTracker(id, amount)
     end
 end
 
+---@param id string
+---@param time number
 function EHITrackerManager:SetTrackerTime(id, time)
     local tracker = self._trackers[id]
     if tracker then
@@ -605,6 +693,8 @@ function EHITrackerManager:SetTrackerTime(id, time)
     end
 end
 
+---@param id string
+---@param time number
 function EHITrackerManager:SetTrackerTimeNoAnim(id, time)
     local tracker = self._trackers[id]
     if tracker then
@@ -612,6 +702,8 @@ function EHITrackerManager:SetTrackerTimeNoAnim(id, time)
     end
 end
 
+---@param id string
+---@param jammed boolean
 function EHITrackerManager:SetTimerJammed(id, jammed)
     local tracker = self._trackers[id]
     if tracker and tracker.SetJammed then
@@ -619,6 +711,8 @@ function EHITrackerManager:SetTimerJammed(id, jammed)
     end
 end
 
+---@param id string
+---@param powered boolean
 function EHITrackerManager:SetTimerPowered(id, powered)
     local tracker = self._trackers[id]
     if tracker and tracker.SetPowered then
@@ -626,6 +720,7 @@ function EHITrackerManager:SetTimerPowered(id, powered)
     end
 end
 
+---@param id string
 function EHITrackerManager:SetTimerRunning(id)
     local tracker = self._trackers[id]
     if tracker and tracker.SetRunning then
@@ -633,15 +728,13 @@ function EHITrackerManager:SetTimerRunning(id)
     end
 end
 
+---@param id string
+---@param icon string
 function EHITrackerManager:SetTrackerIcon(id, icon)
     local tracker = self._trackers[id]
     if tracker then
         tracker:SetIcon(icon)
     end
-end
-
-function EHITrackerManager:AddToCache(id, data)
-    self._cache[id] = data
 end
 
 function EHITrackerManager:GetAndRemoveFromCache(id, default)
@@ -650,6 +743,9 @@ function EHITrackerManager:GetAndRemoveFromCache(id, default)
     return data or default
 end
 
+---@param peer_id number
+---@param respawn_penalty number
+---@param in_custody boolean?
 function EHITrackerManager:AddToTradeDelayCache(peer_id, respawn_penalty, in_custody)
     if self._cache.TradeDelayShowed then
         self:PostPeerCustodyTime(peer_id, respawn_penalty, in_custody)
@@ -662,6 +758,7 @@ function EHITrackerManager:AddToTradeDelayCache(peer_id, respawn_penalty, in_cus
     }
 end
 
+---@param peer_id number
 function EHITrackerManager:SetCachedPeerInCustody(peer_id)
     if not self._cache.TradeDelay[peer_id] then
         return
@@ -674,6 +771,8 @@ function EHITrackerManager:SetCachedPeerInCustody(peer_id)
     self._cache.TradeDelay[peer_id].in_custody = true
 end
 
+---@param peer_id number
+---@param time number
 function EHITrackerManager:IncreaseCachedPeerCustodyTime(peer_id, time)
     if not self._cache.TradeDelay[peer_id] then
         return
@@ -687,6 +786,8 @@ function EHITrackerManager:IncreaseCachedPeerCustodyTime(peer_id, time)
     self._cache.TradeDelay[peer_id].respawn_t = new_t
 end
 
+---@param peer_id number
+---@param time number
 function EHITrackerManager:SetCachedPeerCustodyTime(peer_id, time)
     if not self._cache.TradeDelay[peer_id] then
         return
@@ -698,13 +799,17 @@ function EHITrackerManager:SetCachedPeerCustodyTime(peer_id, time)
     self._cache.TradeDelay[peer_id].respawn_t = time
 end
 
+---@param peer_id number
 function EHITrackerManager:CachedPeerInCustodyExists(peer_id)
     return self._cache.TradeDelay[peer_id] ~= nil
 end
 
 function EHITrackerManager:LoadFromTradeDelayCache()
     if next(self._cache.TradeDelay) then
-        self:AddCustodyTimeTracker()
+        -- The tracker may get created the frame before, only create it when the tracker does not exist
+        if self:TrackerDoesNotExist("CustodyTime") then
+            self:AddCustodyTimeTracker()
+        end
         for peer_id, crim in pairs(self._cache.TradeDelay) do
             self:AddPeerCustodyTime(peer_id, crim.respawn_t)
             if crim.in_custody then
@@ -715,6 +820,9 @@ function EHITrackerManager:LoadFromTradeDelayCache()
     self._cache.TradeDelayShowed = true
 end
 
+---@param peer_id number
+---@param time number
+---@param in_custody boolean?
 function EHITrackerManager:PostPeerCustodyTime(peer_id, time, in_custody) -- In case the civilian is killed at the same time when alarm went off
     local tracker = self:GetTracker("CustodyTime")
     if tracker then
@@ -735,6 +843,10 @@ function EHITrackerManager:PostPeerCustodyTime(peer_id, time, in_custody) -- In 
     end
 end
 
+---@param type string
+---@param key string
+---@param unit Unit
+---@param tracker_type string?
 function EHITrackerManager:AddToDeployableCache(type, key, unit, tracker_type)
     if not key then
         return
@@ -751,6 +863,8 @@ function EHITrackerManager:AddToDeployableCache(type, key, unit, tracker_type)
     end
 end
 
+---@param type string
+---@param key string
 function EHITrackerManager:LoadFromDeployableCache(type, key)
     if not key then
         return
@@ -774,6 +888,8 @@ function EHITrackerManager:LoadFromDeployableCache(type, key)
     end
 end
 
+---@param type string
+---@param key string
 function EHITrackerManager:RemoveFromDeployableCache(type, key)
     if not key then
         return
@@ -782,6 +898,7 @@ function EHITrackerManager:RemoveFromDeployableCache(type, key)
     self._cache._deployables[type][key] = nil
 end
 
+---@param type string
 function EHITrackerManager:CreateDeployableTracker(type)
     if type == "Deployables" then
         self:AddAggregatedDeployablesTracker()
@@ -816,6 +933,8 @@ function EHITrackerManager:CreateDeployableTracker(type)
     end
 end
 
+---@param id string
+---@param amount number
 function EHITrackerManager:IncreaseChance(id, amount)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseChance then
@@ -823,6 +942,8 @@ function EHITrackerManager:IncreaseChance(id, amount)
     end
 end
 
+---@param id string
+---@param amount number
 function EHITrackerManager:DecreaseChance(id, amount)
     local tracker = self._trackers[id]
     if tracker and tracker.DecreaseChance then
@@ -830,6 +951,8 @@ function EHITrackerManager:DecreaseChance(id, amount)
     end
 end
 
+---@param id string
+---@param amount number
 function EHITrackerManager:SetChance(id, amount)
     local tracker = self._trackers[id]
     if tracker and tracker.SetChance then
@@ -837,6 +960,8 @@ function EHITrackerManager:SetChance(id, amount)
     end
 end
 
+---@param id string
+---@param progress number
 function EHITrackerManager:SetTrackerProgress(id, progress)
     local tracker = self._trackers[id]
     if tracker and tracker.SetProgress then
@@ -844,6 +969,8 @@ function EHITrackerManager:SetTrackerProgress(id, progress)
     end
 end
 
+---@param id string
+---@param value number?
 function EHITrackerManager:IncreaseTrackerProgress(id, value)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseProgress then
@@ -851,6 +978,8 @@ function EHITrackerManager:IncreaseTrackerProgress(id, value)
     end
 end
 
+---@param id string
+---@param value number?
 function EHITrackerManager:DecreaseTrackerProgress(id, value)
     local tracker = self._trackers[id]
     if tracker and tracker.DecreaseProgress then
@@ -858,6 +987,8 @@ function EHITrackerManager:DecreaseTrackerProgress(id, value)
     end
 end
 
+---@param id string
+---@param max number?
 function EHITrackerManager:IncreaseTrackerProgressMax(id, max)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseProgressMax then
@@ -865,6 +996,8 @@ function EHITrackerManager:IncreaseTrackerProgressMax(id, max)
     end
 end
 
+---@param id string
+---@param max number?
 function EHITrackerManager:DecreaseTrackerProgressMax(id, max)
     local tracker = self._trackers[id]
     if tracker and tracker.DecreaseProgressMax then
@@ -872,6 +1005,8 @@ function EHITrackerManager:DecreaseTrackerProgressMax(id, max)
     end
 end
 
+---@param id string
+---@param max number
 function EHITrackerManager:SetTrackerProgressMax(id, max)
     local tracker = self._trackers[id]
     if tracker and tracker.SetProgressMax then
@@ -879,6 +1014,8 @@ function EHITrackerManager:SetTrackerProgressMax(id, max)
     end
 end
 
+---@param id string
+---@param remaining number
 function EHITrackerManager:SetTrackerProgressRemaining(id, remaining)
     local tracker = self._trackers[id]
     if tracker and tracker.SetProgressRemaining then
@@ -886,6 +1023,8 @@ function EHITrackerManager:SetTrackerProgressRemaining(id, remaining)
     end
 end
 
+---@param id string
+---@param time number
 function EHITrackerManager:SetTrackerAccurate(id, time)
     local tracker = self._trackers[id]
     if tracker then
@@ -893,6 +1032,7 @@ function EHITrackerManager:SetTrackerAccurate(id, time)
     end
 end
 
+---@param id string
 function EHITrackerManager:StartTrackerCountdown(id)
     local tracker = self._trackers[id]
     if tracker then
@@ -917,6 +1057,8 @@ function EHITrackerManager:AddAggregatedHealthTracker()
     })
 end
 
+---@param id string
+---@param force boolean?
 function EHITrackerManager:SetAchievementComplete(id, force)
     local tracker = self._trackers[id]
     if tracker and tracker.SetCompleted then
@@ -924,6 +1066,7 @@ function EHITrackerManager:SetAchievementComplete(id, force)
     end
 end
 
+---@param id string
 function EHITrackerManager:SetAchievementFailed(id)
     local tracker = self._trackers[id]
     if tracker and tracker.SetFailed then
@@ -931,6 +1074,8 @@ function EHITrackerManager:SetAchievementFailed(id)
     end
 end
 
+---@param id string
+---@param status string
 function EHITrackerManager:SetAchievementStatus(id, status)
     local tracker = self._trackers[id]
     if tracker and tracker.SetStatus then
@@ -938,6 +1083,8 @@ function EHITrackerManager:SetAchievementStatus(id, status)
     end
 end
 
+---@param id string
+---@param count number
 function EHITrackerManager:SetTrackerCount(id, count)
     local tracker = self._trackers[id]
     if tracker and tracker.SetCount then
@@ -945,6 +1092,7 @@ function EHITrackerManager:SetTrackerCount(id, count)
     end
 end
 
+---@param id string
 function EHITrackerManager:IncreaseTrackerCount(id)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseCount then
@@ -952,6 +1100,7 @@ function EHITrackerManager:IncreaseTrackerCount(id)
     end
 end
 
+---@param id string
 function EHITrackerManager:DecreaseTrackerCount(id)
     local tracker = self._trackers[id]
     if tracker and tracker.DecreaseCount then
@@ -966,6 +1115,8 @@ function EHITrackerManager:AddCustodyTimeTracker()
     })
 end
 
+---@param peer_id number
+---@param time number
 function EHITrackerManager:AddCustodyTimeTrackerWithPeer(peer_id, time)
     self:AddCustodyTimeTracker()
     self:AddPeerCustodyTime(peer_id, time)
@@ -975,10 +1126,15 @@ function EHITrackerManager:AddCustodyTimeTrackerWithPeer(peer_id, time)
     end
 end
 
+---@param peer_id number
+---@param respawn_time_penalty number
 function EHITrackerManager:AddPeerCustodyTime(peer_id, respawn_time_penalty)
     self:CallFunction("CustodyTime", "AddPeerCustodyTime", peer_id, respawn_time_penalty)
 end
 
+---@param type string
+---@param pause boolean
+---@param t number
 function EHITrackerManager:SetTrade(type, pause, t)
     self._trade[type] = pause
     local f = type == "normal" and "SetTrade" or "SetAITrade"
@@ -996,6 +1152,9 @@ function EHITrackerManager:DisableIncreaseCivilianKilled()
     self._cache.CiviliansKilledDisabled = true
 end
 
+---@param id string
+---@param f string
+---@param ... any
 function EHITrackerManager:CallFunction(id, f, ...)
     local tracker = self._trackers[id]
     if tracker and tracker[f] then
@@ -1003,6 +1162,10 @@ function EHITrackerManager:CallFunction(id, f, ...)
     end
 end
 
+---@param id string
+---@param f string
+---@param ... any
+---@return ...
 function EHITrackerManager:ReturnValue(id, f, ...)
     local tracker = self._trackers[id]
     if tracker and tracker[f] then
@@ -1020,11 +1183,11 @@ if Global.load_level then
     dofile(path .. "EHIProgressTracker.lua")
     dofile(path .. "EHICountTracker.lua")
     dofile(path .. "EHINeededValueTracker.lua")
+    dofile(path .. "EHIInaccurateTrackers.lua")
+    dofile(path .. "EHIColoredCodesTracker.lua")
     dofile(path .. "EHIAchievementTrackers.lua")
     dofile(path .. "EHITrophyTrackers.lua")
     dofile(path .. "EHIDailyTrackers.lua")
-    dofile(path .. "EHIInaccurateTrackers.lua")
-    dofile(path .. "EHIColoredCodesTracker.lua")
     if EHI:GetOption("xp_panel") <= 2 and EHI:IsXPTrackerVisible() then
         dofile(path .. "EHIXPTracker.lua")
     end

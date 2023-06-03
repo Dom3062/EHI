@@ -6,6 +6,7 @@ local anim_delay = 2 + 727/30 + 2 -- 2s is function delay; 727/30 is a animation
 local assault_delay = 4 + 3 + 3 + 3 + 5 + 1 + 30
 local assault_delay_methlab = 20 + assault_delay
 local SetTimeIfMoreThanOrCreateTracker = EHI:GetFreeCustomSpecialFunctionID()
+local BagsCooked = 0
 local triggers = {
     [101001] = { id = "CookChance", special_function = SF.RemoveTracker },
 
@@ -13,7 +14,15 @@ local triggers = {
     [100721] = { time = 1, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
     [1007211] = { chance = 5, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists },
     [100724] = { time = 25, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_element = 100212 } },
-    [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { icon = Icon.Loot, position_by_element = 100485 } },
+    [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { icon = Icon.Loot, position_by_element = 100485 }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1001991 } },
+    [1001991] = { special_function = SF.CustomCode, f = function()
+        BagsCooked = BagsCooked + 1
+        if BagsCooked >= 7 then
+            managers.ehi_tracker:RemoveTracker("CookChance")
+            EM:UnhookTrigger(100721)
+            EM:UnhookTrigger(100724)
+        end
+    end},
 
     [1] = { special_function = SF.RemoveTrigger, data = { 101974, 101975, 101970 } },
     [101974] = { special_function = SF.Trigger, data = { 1019741, 1 } },
@@ -26,6 +35,7 @@ local triggers = {
 
     [100723] = { amount = 10, id = "CookChance", special_function = SF.IncreaseChance }
 }
+---@type ParseAchievementTable
 local achievements =
 {
     halloween_1 =
@@ -48,24 +58,35 @@ local other =
     [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 
+if EHI:IsClient() then
+    local function SyncBagsCooked(self)
+        BagsCooked = self:GetSecuredBagsAmount()
+        if BagsCooked >= 7 then
+            managers.ehi_tracker:RemoveTracker("CookChance")
+            EM:UnhookTrigger(100721)
+            EM:UnhookTrigger(100724)
+        end
+    end
+    EHI:AddCallback(EHI.CallbackMessage.LootSecured, SyncBagsCooked)
+    EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, SyncBagsCooked)
+end
+
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
 }, "Van", Icon.CarEscape)
-if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-    EHI:ShowAchievementLootCounter({
-        achievement = "halloween_2",
-        max = 7,
-        triggers =
-        {
-            [101001] = { special_function = SF.SetAchievementFailed } -- Methlab exploded
-        },
-        add_to_counter = true
-    })
-else
-    EHI:ShowLootCounter({ max = 7 })
-end
+EHI:ShowAchievementLootCounter({
+    achievement = "halloween_2",
+    max = 7,
+    triggers =
+    {
+        [101001] = { special_function = SF.SetAchievementFailed } -- Methlab exploded
+    },
+    add_to_counter = true,
+    show_loot_counter = true,
+    difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+})
 EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(self, trigger, ...)
     if self._trackers:TrackerExists(trigger.id) then
         local tracker = self._trackers:GetTracker(trigger.id)

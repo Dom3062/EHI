@@ -34,6 +34,7 @@ local triggers = {
     [102887] = { amount = 5, id = "CodeChance", special_function = SF.IncreaseChance }
 }
 
+---@type ParseAchievementTable
 local achievements =
 {
     man_2 =

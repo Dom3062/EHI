@@ -64,10 +64,19 @@ function EHIAchievementTracker:delete()
     EHIAchievementTracker.super.delete(self)
 end
 
+function EHIAchievementTracker:ShowStartedPopup(delay_popup)
+    ShowStartedPopup(self, delay_popup)
+end
+
+function EHIAchievementTracker:ShowFailedPopup()
+    ShowFailedPopup(self)
+end
+
 EHIAchievementProgressTracker = class(EHIProgressTracker)
 EHIAchievementProgressTracker._popup_type = "achievement"
 EHIAchievementProgressTracker._show_started = EHIAchievementTracker._show_started
 EHIAchievementProgressTracker._show_failed = EHIAchievementTracker._show_failed
+EHIAchievementProgressTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 function EHIAchievementProgressTracker:init(panel, params)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
@@ -75,10 +84,6 @@ function EHIAchievementProgressTracker:init(panel, params)
     if self._show_started then
         ShowStartedPopup(self, params.delay_popup)
     end
-end
-
-function EHIAchievementProgressTracker:ShowStartedPopup()
-    ShowStartedPopup(self)
 end
 
 function EHIAchievementProgressTracker:SetCompleted(force)
@@ -123,16 +128,13 @@ EHIAchievementBagValueTracker = class(EHINeededValueTracker)
 EHIAchievementBagValueTracker._popup_type = "achievement"
 EHIAchievementBagValueTracker._show_started = EHIAchievementTracker._show_started
 EHIAchievementBagValueTracker._show_failed = EHIAchievementTracker._show_failed
+EHIAchievementBagValueTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 function EHIAchievementBagValueTracker:init(panel, params)
     EHIAchievementBagValueTracker.super.init(self, panel, params)
     self._beardlib = params.beardlib
     if self._show_started then
         ShowStartedPopup(self, params.delay_popup)
     end
-end
-
-function EHIAchievementBagValueTracker:ShowStartedPopup()
-    ShowStartedPopup(self)
 end
 
 function EHIAchievementBagValueTracker:SetCompleted(force)

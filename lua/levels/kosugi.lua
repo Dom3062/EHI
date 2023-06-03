@@ -115,12 +115,12 @@ end
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local DisableTriggerAndExecute = EHI:GetFreeCustomSpecialFunctionID()
-local trigger = { special_function = SF.Trigger, data = { 1, 2 } }
+local Trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local triggers = {
     [1] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto } },
     [2] = { special_function = SF.RemoveTrigger, data = { 101131, 100900 } },
-    [101131] = trigger,
-    [100900] = trigger,
+    [101131] = Trigger,
+    [100900] = Trigger,
     [101219] = { time = 27, id = "BlackhawkDropLoot", icons = { Icon.Heli, Icon.Loot, Icon.Goto } },
     [100303] = { time = 30, id = "BlackhawkDropGuards", icons = { Icon.Heli, "pager_icon", Icon.Goto }, class = TT.Warning },
 
@@ -130,6 +130,7 @@ local triggers = {
 }
 
 local kosugi_3 = { id = "kosugi_3", special_function = SF.IncreaseProgress }
+---@type ParseAchievementTable
 local achievements =
 {
     kosugi_2 =
@@ -175,7 +176,7 @@ local achievements =
             local counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")
             local counter_loot = managers.loot:GetSecuredBagsAmount()
             if counter_loot < 16 or counter_armor < 4 then
-                self._trackers:AddAchievementProgressTracker("kosugi_5", nil, math.min(counter_loot, 16)) -- Max is passed in the tracker "init" function
+                self._trackers:AddAchievementProgressTracker("kosugi_5", 0, math.min(counter_loot, 16)) -- Max is passed in the tracker "init" function
                 self._trackers:CallFunction("kosugi_5", "SetProgressArmor", math.min(counter_armor, 4))
             end
         end,
