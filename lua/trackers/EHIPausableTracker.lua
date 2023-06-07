@@ -1,3 +1,5 @@
+---@class EHIPausableTracker : EHITracker
+---@field super EHITracker
 EHIPausableTracker = class(EHITracker)
 EHIPausableTracker._paused_color = EHI:GetTWColor("pause")
 function EHIPausableTracker:init(panel, params)

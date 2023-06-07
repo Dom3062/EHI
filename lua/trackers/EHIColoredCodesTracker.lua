@@ -1,3 +1,5 @@
+---@class EHIColoredCodesTracker : EHITracker
+---@field super EHITracker
 EHIColoredCodesTracker = class(EHITracker)
 EHIColoredCodesTracker._update = false
 EHIColoredCodesTracker._forced_icons = { EHI.Icons.Interact }

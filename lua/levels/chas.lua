@@ -47,25 +47,6 @@ local achievements =
             [100906] = { special_function = SF.SetAchievementComplete }
         }
     },
-    chas_10 =
-    {
-        difficulty_pass = ovk_and_up,
-        elements =
-        {
-            [100107] = { max = 15, class = TT.AchievementProgress, remove_after_reaching_target = false, special_function = SF.AddAchievementToCounter }
-        },
-        load_sync = function(self)
-            if EHI.ConditionFunctions.IsStealth() then
-                EHI:ShowAchievementLootCounterNoCheck({
-                    achievement = "chas_10",
-                    max = 15,
-                    remove_after_reaching_target = false
-                })
-                self._trackers:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())
-            end
-        end,
-        failed_on_alarm = true
-    },
     chas_11 =
     {
         difficulty_pass = ovk_and_up,
@@ -84,13 +65,28 @@ local other =
     [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
 
+if ovk_and_up then
+    EHI:ShowAchievementLootCounter({
+        achievement = "chas_10",
+        max = 15,
+        remove_after_reaching_target = false,
+        load_sync = function(self)
+            self._trackers:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())
+        end,
+        show_loot_counter = true,
+        loot_counter_on_fail = true,
+        silent_failed_on_alarm = true
+    })
+else
+    EHI:ShowLootCounter({ max = 15 })
+end
+
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
-EHI:ShowLootCounter({ max = 15 })
 
 local tbl =
 {

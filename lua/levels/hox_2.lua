@@ -45,6 +45,22 @@ if EHI:IsClient() then
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
+EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(self, trigger, element, ...)
+    local continue = false
+    if EHI:IsHost() then
+        continue = element:_values_ok()
+    else
+        continue = true
+    end
+    if continue then
+        if self._trackers:TrackerExists(trigger.id) then
+            self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
+        elseif not trigger.data.dont_create then
+            self:CheckCondition(trigger)
+            self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
+        end
+    end
+end)
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseAchievementTable
@@ -60,7 +76,7 @@ local achievements =
             [100258] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
-            if self._trackers:IsMissionElementEnabled(100270) then -- No keycard achievement
+            if self:IsMissionElementEnabled(100270) then -- No keycard achievement
                 self._trackers:AddAchievementStatusTracker("slakt_3")
             end
         end
@@ -90,22 +106,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(self, trigger, element, ...)
-    local continue = false
-    if EHI:IsHost() then
-        continue = element:_values_ok()
-    else
-        continue = true
-    end
-    if continue then
-        if self._trackers:TrackerExists(trigger.id) then
-            self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
-        elseif not trigger.data.dont_create then
-            self:CheckCondition(trigger)
-            self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
-        end
-    end
-end)
 EHI:AddLoadSyncFunction(function(self)
     local pc = managers.worlddefinition:get_unit(104418) -- 1
     local pc2 = managers.worlddefinition:get_unit(102413) -- 2

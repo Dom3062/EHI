@@ -12,6 +12,8 @@ local State =
     fade = 3
 }
 local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
+---@class EHIAssaultTimeTracker : EHIWarningTracker
+---@field super EHIWarningTracker
 EHIAssaultTimeTracker = class(EHIWarningTracker)
 EHIAssaultTimeTracker._forced_icons = { { icon = "assaultbox", color = Build } }
 EHIAssaultTimeTracker._is_client = EHI:IsClient()

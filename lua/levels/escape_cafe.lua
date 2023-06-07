@@ -34,7 +34,7 @@ local other =
 -- Bugged because one loot bag is not counted
 -- Reported in:
 -- https://steamcommunity.com/app/218620/discussions/14/3834297051382791123/
---[[if EHI:GetOption("show_loot_counter") then
+--[[if EHI:IsLootCounterVisible() then
     local CreateCounter = true
     local UpdateLootCounter = EHI:GetFreeCustomSpecialFunctionID()
     other[101419] = { special_function = UpdateLootCounter }

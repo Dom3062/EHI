@@ -12,12 +12,7 @@ local other =
     [1045352] = { special_function = SF.RemoveTrigger, data = { 104488, 104489 } }
 }
 if EHI:IsLootCounterVisible() then
-    local LootCounterValue = EHI:GetFreeCustomSpecialFunctionID()
-    local loot_trigger = { special_function = LootCounterValue }
-    for i = 103715, 103724, 1 do
-        other[i] = loot_trigger
-    end
-    EHI:RegisterCustomSpecialFunction(LootCounterValue, function(self, trigger, element, ...)
+    local loot_trigger = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
         ---@type LootCounterSequenceTriggersTable
         local SafeTriggers =
         {
@@ -40,10 +35,8 @@ if EHI:IsLootCounterVisible() then
             }
         }
         local spawned = element._values.value
-        local additional_loot = math.max(0, spawned - 3)
         EHI:ShowLootCounterNoChecks({
-            max = spawned,
-            additional_loot = additional_loot,
+            max = spawned + math.max(0, spawned - 3),
             max_random = 1,
             sequence_triggers =
             {
@@ -65,16 +58,17 @@ if EHI:IsLootCounterVisible() then
                 [101211] = SafeTriggers
             }
         })
-    end)
+    end)}
+    for i = 103715, 103724, 1 do
+        other[i] = loot_trigger
+    end
 end
 if EHI:GetOption("show_escape_chance") then
-    local ShowVanCrashChance = EHI:GetFreeCustomSpecialFunctionID()
-    other[100342] = { special_function = ShowVanCrashChance }
-    EHI:RegisterCustomSpecialFunction(ShowVanCrashChance, function(self, ...)
+    other[100342] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
         if self._trackers:TrackerDoesNotExist("EscapeChance") then
             self._trackers:AddEscapeChanceTracker(false, 25)
         end
-    end)
+    end) }
 end
 
 EHI:ParseTriggers({

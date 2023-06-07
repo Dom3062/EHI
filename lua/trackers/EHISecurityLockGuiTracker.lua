@@ -1,3 +1,5 @@
+---@class EHISecurityLockGuiTracker : EHIProgressTracker
+---@field super EHIProgressTracker
 EHISecurityLockGuiTracker = class(EHIProgressTracker)
 EHISecurityLockGuiTracker._forced_icons = { "wp_hack" }
 EHISecurityLockGuiTracker._paused_color = EHIPausableTracker._paused_color

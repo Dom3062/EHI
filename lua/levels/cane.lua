@@ -115,11 +115,27 @@ for _, index in ipairs(FireTrapIndexes) do
 end
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        present_finished = 1000,
-        escape = 4000,
-        safe_event_done = 4000
+        { amount = 1000, name = "present_finished" },
+        { escape = 4000 },
+        { amount = 4000, name = "safe_event_done", optional = true }
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives =
+                {
+                    present_finished = { times = 4 },
+                    escape = true
+                },
+                loot_all = { times = 4 }
+            },
+            no_max = true
+        }
+    }
 })

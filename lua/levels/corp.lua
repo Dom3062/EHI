@@ -25,9 +25,13 @@ if EHI:IsClient() then
     EHI:AddSyncTrigger(102406, triggers[102406])
 end
 
-local corp_11_Start = EHI:GetFreeCustomSpecialFunctionID()
-local corp_11_SetFailed = EHI:GetFreeCustomSpecialFunctionID()
 local corp_11_StartVariable = true
+local corp_11_SetFailed = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+    if enabled then
+        self._trackers:SetAchievementFailed("corp_11")
+        corp_11_StartVariable = false
+    end
+end)
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -45,7 +49,16 @@ local achievements =
     {
         elements =
         {
-            [102728] = { icons = EHI:GetAchievementIcon("corp_11"), special_function = corp_11_Start },
+            [102728] = { icons = EHI:GetAchievementIcon("corp_11"), special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+                if corp_11_StartVariable then
+                    self._trackers:AddTracker({
+                        id = "corp_11",
+                        time = 60,
+                        icons = trigger.icons,
+                        class = TT.Achievement
+                    })
+                end
+            end) },
             [102683] = { special_function = corp_11_SetFailed },
             [102741] = { special_function = SF.SetAchievementComplete }
         }
@@ -57,9 +70,9 @@ local achievements =
         {
             -- SP (MP has 240s)
             [100107] = { time = 420, class = "EHIcorp12Tracker" },
-            [102739] = { special_function = SF.CustomCode, f = function()
-                managers.ehi_tracker:CallFunction("corp_12", "SetMPState")
-            end },
+            [102739] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+                self._trackers:CallFunction("corp_12", "SetMPState")
+            end) },
             [102014] = { special_function = SF.SetAchievementFailed }, -- Alarm
             [102736] = { special_function = SF.SetAchievementFailed }, -- Civilian killed
             [102740] = { special_function = SF.SetAchievementComplete }
@@ -83,22 +96,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(corp_11_Start, function(self, trigger, ...)
-    if corp_11_StartVariable then
-        self._trackers:AddTracker({
-            id = "corp_11",
-            time = 60,
-            icons = trigger.icons,
-            class = TT.Achievement
-        })
-    end
-end)
-EHI:RegisterCustomSpecialFunction(corp_11_SetFailed, function(self, trigger, element, enabled)
-    if enabled then
-        self._trackers:SetAchievementFailed("corp_11")
-        corp_11_StartVariable = false
-    end
-end)
 
 local tbl =
 {

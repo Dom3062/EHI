@@ -34,6 +34,8 @@ local State =
 local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
 local tweak_values = assault_values.delay
 local hostage_values = assault_values.hostage_hesitation_delay
+---@class EHIAssaultTracker : EHIWarningTracker
+---@field super EHIWarningTracker
 EHIAssaultTracker = class(EHIWarningTracker)
 EHIAssaultTracker._forced_icons = { { icon = "assaultbox", color = Control } }
 EHIAssaultTracker._is_client = EHI:IsClient()

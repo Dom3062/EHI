@@ -1,3 +1,5 @@
+---@class EHIProgressTracker : EHITracker
+---@field super EHITracker
 EHIProgressTracker = class(EHITracker)
 EHIProgressTracker.update = EHIProgressTracker.update_fade
 EHIProgressTracker._progress_bad = Color(255, 255, 165, 0) / 255

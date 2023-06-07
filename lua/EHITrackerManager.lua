@@ -59,22 +59,6 @@ function EHITrackerManager:LoadTime(t)
     self._t = t
 end
 
----@param id number
----@return boolean
-function EHITrackerManager:IsMissionElementEnabled(id)
-    local element = managers.mission:get_element_by_id(id)
-    if not element then
-        return false
-    end
-    return element:enabled()
-end
-
----@param id number
----@return boolean
-function EHITrackerManager:IsMissionElementDisabled(id)
-    return not self:IsMissionElementEnabled(id)
-end
-
 ---@param tweak_data string
 ---@return integer
 function EHITrackerManager:CountInteractionAvailable(tweak_data)
@@ -373,13 +357,12 @@ end
 
 ---Shows Loot Counter, needs to be hooked to count correctly
 ---@param max integer?
----@param additional_loot integer? DEPRECATED
 ---@param max_random any?
 ---@param offset any?
-function EHITrackerManager:ShowLootCounter(max, additional_loot, max_random, offset)
+function EHITrackerManager:ShowLootCounter(max, max_random, offset)
     self:AddTracker({
         id = "LootCounter",
-        max = (max or 0) + (additional_loot or 0),
+        max = (max or 0),
         max_random = max_random or 0,
         offset = offset or 0,
         class = "EHILootTracker"
@@ -743,106 +726,6 @@ function EHITrackerManager:GetAndRemoveFromCache(id, default)
     return data or default
 end
 
----@param peer_id number
----@param respawn_penalty number
----@param in_custody boolean?
-function EHITrackerManager:AddToTradeDelayCache(peer_id, respawn_penalty, in_custody)
-    if self._cache.TradeDelayShowed then
-        self:PostPeerCustodyTime(peer_id, respawn_penalty, in_custody)
-        return
-    end
-    self._cache.TradeDelay[peer_id] =
-    {
-        respawn_t = respawn_penalty,
-        in_custody = in_custody
-    }
-end
-
----@param peer_id number
-function EHITrackerManager:SetCachedPeerInCustody(peer_id)
-    if not self._cache.TradeDelay[peer_id] then
-        return
-    end
-    if self._cache.TradeDelayShowed then
-        local data = self._cache.TradeDelay[peer_id]
-        self:PostPeerCustodyTime(peer_id, data.respawn_t, true)
-        return
-    end
-    self._cache.TradeDelay[peer_id].in_custody = true
-end
-
----@param peer_id number
----@param time number
-function EHITrackerManager:IncreaseCachedPeerCustodyTime(peer_id, time)
-    if not self._cache.TradeDelay[peer_id] then
-        return
-    end
-    local respawn_t = self._cache.TradeDelay[peer_id].respawn_t
-    local new_t = respawn_t + time
-    if self._cache.TradeDelayShowed then
-        self:PostPeerCustodyTime(peer_id, new_t)
-        return
-    end
-    self._cache.TradeDelay[peer_id].respawn_t = new_t
-end
-
----@param peer_id number
----@param time number
-function EHITrackerManager:SetCachedPeerCustodyTime(peer_id, time)
-    if not self._cache.TradeDelay[peer_id] then
-        return
-    end
-    if self._cache.TradeDelayShowed then
-        self:PostPeerCustodyTime(peer_id, time)
-        return
-    end
-    self._cache.TradeDelay[peer_id].respawn_t = time
-end
-
----@param peer_id number
-function EHITrackerManager:CachedPeerInCustodyExists(peer_id)
-    return self._cache.TradeDelay[peer_id] ~= nil
-end
-
-function EHITrackerManager:LoadFromTradeDelayCache()
-    if next(self._cache.TradeDelay) then
-        -- The tracker may get created the frame before, only create it when the tracker does not exist
-        if self:TrackerDoesNotExist("CustodyTime") then
-            self:AddCustodyTimeTracker()
-        end
-        for peer_id, crim in pairs(self._cache.TradeDelay) do
-            self:AddPeerCustodyTime(peer_id, crim.respawn_t)
-            if crim.in_custody then
-                self:CallFunction("CustodyTime", "SetPeerInCustody", peer_id)
-            end
-        end
-    end
-    self._cache.TradeDelayShowed = true
-end
-
----@param peer_id number
----@param time number
----@param in_custody boolean?
-function EHITrackerManager:PostPeerCustodyTime(peer_id, time, in_custody) -- In case the civilian is killed at the same time when alarm went off
-    local tracker = self:GetTracker("CustodyTime")
-    if tracker then
-        if tracker:PeerExists(peer_id) then
-            tracker:IncreasePeerCustodyTime(peer_id, time)
-        else
-            tracker:AddPeerCustodyTime(peer_id, time)
-        end
-        if in_custody then
-            tracker:SetPeerInCustody(peer_id)
-        end
-    else
-        self:AddCustodyTimeTracker()
-        self:AddPeerCustodyTime(peer_id, time)
-        if in_custody then
-            self:CallFunction("CustodyTime", "SetPeerInCustody", peer_id)
-        end
-    end
-end
-
 ---@param type string
 ---@param key string
 ---@param unit Unit
@@ -1106,39 +989,6 @@ function EHITrackerManager:DecreaseTrackerCount(id)
     if tracker and tracker.DecreaseCount then
         tracker:DecreaseCount()
     end
-end
-
-function EHITrackerManager:AddCustodyTimeTracker()
-    self:AddTracker({
-        id = "CustodyTime",
-        class = "EHITradeDelayTracker"
-    })
-end
-
----@param peer_id number
----@param time number
-function EHITrackerManager:AddCustodyTimeTrackerWithPeer(peer_id, time)
-    self:AddCustodyTimeTracker()
-    self:AddPeerCustodyTime(peer_id, time)
-    if self._trade.normal or self._trade.ai then
-        local f = self._trade.normal and "SetTrade" or "SetAITrade"
-        self:CallFunction("CustodyTime", f, true, managers.trade:GetTradeCounterTick(), true)
-    end
-end
-
----@param peer_id number
----@param respawn_time_penalty number
-function EHITrackerManager:AddPeerCustodyTime(peer_id, respawn_time_penalty)
-    self:CallFunction("CustodyTime", "AddPeerCustodyTime", peer_id, respawn_time_penalty)
-end
-
----@param type string
----@param pause boolean
----@param t number
-function EHITrackerManager:SetTrade(type, pause, t)
-    self._trade[type] = pause
-    local f = type == "normal" and "SetTrade" or "SetAITrade"
-    self:CallFunction("CustodyTime", f, pause, t)
 end
 
 function EHITrackerManager:IncreaseCivilianKilled()

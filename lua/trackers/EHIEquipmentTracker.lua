@@ -1,3 +1,5 @@
+---@class EHIEquipmentTracker : EHITracker
+---@field super EHITracker
 EHIEquipmentTracker = class(EHITracker)
 EHIEquipmentTracker._update = false
 function EHIEquipmentTracker:init(panel, params)

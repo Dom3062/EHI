@@ -5,6 +5,8 @@ local Anticipation = Color(255, 186, 204, 28) / 255
 local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
 local tweak_values = assault_values.delay
 local hostage_values = assault_values.hostage_hesitation_delay
+---@class EHIAssaultDelayTracker : EHIWarningTracker
+---@field super EHIWarningTracker
 EHIAssaultDelayTracker = class(EHIWarningTracker)
 EHIAssaultDelayTracker._forced_icons = { { icon = "assaultbox", color = Control } }
 EHIAssaultDelayTracker._completion_color = EHITimerTracker._completion_color

@@ -69,8 +69,7 @@ local other =
     [101737] = EHI:AddLootCounter(function()
         local MayhemOrAbove = EHI:IsMayhemOrAbove()
         EHI:ShowLootCounterNoCheck({
-            max = 4, -- Bomb parts 
-            additional_loot = 2 + tweak_data.ehi.functions.GetNumberOfVisibleWeapons(Weapons), -- Meth and Weapons
+            max = 6 + tweak_data.ehi.functions.GetNumberOfVisibleWeapons(Weapons), -- 4 Bomb parts; 2 Meth and Weapons
             -- Assume no collision spawned, more loot
             max_random = MayhemOrAbove and 14 or 18
         })

@@ -28,8 +28,8 @@ local levels =
 {
     -- Tutorial
     short2_stage2b = true, -- Basic Mission: Loud - Plan B
-    -- Nightmare
-    haunted_safehouse = true,
+    -- Safehouse Nightmare
+    haunted = true,
     -- Escapes
     escape_cafe = true, -- Escape: Cafe
     escape_cafe_day = true, -- Escape: Cafe (Day)
@@ -219,6 +219,7 @@ function GameSetup:init_finalize(...)
 end
 
 EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(...)
+    EM:SetInSync(true)
     EHI:FinalizeUnitsClient()
 end)
 

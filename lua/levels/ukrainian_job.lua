@@ -3,18 +3,10 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local zone_delay = 12
-local LootDropWaypoint = { icon = Icon.LootDrop, position_by_element = 104215, class = EHI.Waypoints.Warning }
---104215 Vector3(1400, 3125, 125) pd2_lootdrop
+local LootDropWaypoint = { icon = Icon.LootDrop, position_by_element = 104215, remove_vanilla_waypoint = 104215 }
 local triggers = {
-    [1] = { special_function = SF.CustomCode, f = function()
-        if not EHI:GetOption("show_waypoints") then
-            return
-        end
-        managers.hud:SoftRemoveWaypoint(104215)
-        EHI:DisableElementWaypoint(104215)
-    end},
-    [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 }, waypoint = deep_clone(LootDropWaypoint) },
-    [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 }, waypoint = deep_clone(LootDropWaypoint) },
+    [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint) },
+    [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint) },
 
     [103172] = { time = 2 + 830/30, id = "Van", icons = Icon.CarEscape },
     [103183] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103194 } },

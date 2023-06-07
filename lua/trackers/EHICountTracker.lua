@@ -1,3 +1,5 @@
+---@class EHICountTracker : EHITracker
+---@field super EHITracker
 EHICountTracker = class(EHITracker)
 EHICountTracker._update = false
 function EHICountTracker:init(panel, params)

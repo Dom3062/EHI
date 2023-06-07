@@ -41,18 +41,16 @@ local triggers = {
     end}
 }
 if EHI:IsClient() then
-    local SetTrackerAccurate = EHI:GetFreeCustomSpecialFunctionID()
-    local boat_return = { time = anim_delay, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = SetTrackerAccurate }
-    triggers[100470] = boat_return
-    triggers[100472] = boat_return
-    triggers[100474] = boat_return
-    EHI:RegisterCustomSpecialFunction(SetTrackerAccurate, function(self, trigger, ...)
+    local boat_return = { time = anim_delay, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
         if self._trackers:TrackerExists(trigger.id) then
             self._trackers:SetTrackerAccurate(trigger.id, trigger.time)
         elseif not (self._trackers:TrackerExists(trigger.id2) or self._trackers:TrackerExists(trigger.id3)) then
             self:CheckCondition(trigger)
         end
-    end)
+    end) }
+    triggers[100470] = boat_return
+    triggers[100472] = boat_return
+    triggers[100474] = boat_return
 end
 
 ---@type ParseAchievementTable

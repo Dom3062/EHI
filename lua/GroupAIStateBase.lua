@@ -37,30 +37,38 @@ function GroupAIStateBase:load(...)
     original.load(self, ...)
     if self._enemy_weapons_hot then
         EHI:RunOnAlarmCallbacks(dropin)
+        local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
+        if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets set; see GameSetup:load()
+            managers.ehi_tracker:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(law1team.damage_reduction or 0)))
+        elseif self._hunt_mode then -- AssaultTime is created before this is checked; see GameSetup:load()
+            managers.ehi_tracker:RemoveTracker("AssaultTime")
+        end
     else
         managers.ehi_tracker:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
 	end
-    local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
-    if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets set; see GameSetup:load()
-        managers.ehi_tracker:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(law1team.damage_reduction or 0)))
-    elseif self._hunt_mode then -- AssaultTime is created before this is checked; see GameSetup:load()
-        managers.ehi_tracker:RemoveTracker("AssaultTime")
-    end
 end
 
 if EHI:ShowDramaTracker() and not tweak_data.levels:IsStealthRequired() then
-    original._add_drama = GroupAIStateBase._add_drama
-    function GroupAIStateBase:_add_drama(...)
-        original._add_drama(self, ...)
-        managers.ehi_tracker:SetChance("Drama", EHI:RoundChanceNumber(self._drama_data.amount))
-    end
-    EHI:AddOnAlarmCallback(function()
+    local function Create()
         managers.ehi_tracker:AddTracker({
             id = "Drama",
             icons = { "C_Escape_H_Street_Bullet" },
             class = "EHIChanceTracker",
             dont_flash = true
         }, 0)
+    end
+    original._add_drama = GroupAIStateBase._add_drama
+    function GroupAIStateBase:_add_drama(...)
+        original._add_drama(self, ...)
+        managers.ehi_tracker:SetChance("Drama", EHI:RoundChanceNumber(self._drama_data.amount))
+    end
+    EHI:AddOnAlarmCallback(Create)
+    EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
+        if mode == "endless" then
+            managers.ehi_tracker:RemoveTracker("Drama")
+        elseif managers.ehi_tracker:TrackerDoesNotExist("Drama") then
+            Create()
+        end
     end)
 end
 
@@ -151,8 +159,7 @@ if show_minion_tracker or show_popup then
 	function GroupAIStateBase:sync_converted_enemy(converted_enemy, owner_peer_id, ...)
 		if self._police[converted_enemy:key()] then
             local peer_id = owner_peer_id or 0
-            local local_peer = peer_id == managers.network:session():local_peer():id()
-            self:EHIAddListener(converted_enemy, local_peer)
+            self:EHIAddListener(converted_enemy, peer_id == managers.network:session():local_peer():id())
             UpdateTracker(converted_enemy, tostring(converted_enemy:key()), 1, peer_id)
 		end
 		return original.sync_converted_enemy(self, converted_enemy, owner_peer_id, ...)

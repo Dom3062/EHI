@@ -4,10 +4,10 @@ if EHI:CheckLoadHook("LootManager") then
 end
 
 ---@class LootManager
----@field GetSecuredBagsAmount fun(): integer
+---@field GetSecuredBagsAmount fun(self: LootManager): integer
 ---@field GetSecuredBagsTypeAmount fun(self: LootManager, t: string|table): integer
----@field GetSecuredBagsValueAmount fun(): number
----@field EHIReportProgress fun(tracker_id: string, check_type: integer, loot_type: string|table, f: fun(self: LootManager, tracker_id: string, loot_type: string|table))
+---@field GetSecuredBagsValueAmount fun(self: LootManager): number
+---@field EHIReportProgress fun(self: LootManager, tracker_id: string, check_type: integer, loot_type: string|table, f: fun(self: LootManager, tracker_id: string, loot_type: string|table))
 
 local check_types = EHI.LootCounter.CheckType
 local original =

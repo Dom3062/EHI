@@ -3,6 +3,14 @@ if EHI:CheckLoadHook("LevelsTweakData") then
 	return
 end
 
+---@class LevelsTweakData
+---@field GetGroupAIState fun(self: LevelsTweakData): string
+---@field IsLevelSkirmish fun(self: LevelsTweakData): boolean
+---@field IsLevelSafehouse fun(self: LevelsTweakData): boolean
+---@field IsStealthAvailable fun(self: LevelsTweakData): boolean
+---@field IsStealthRequired fun(self: LevelsTweakData): boolean
+---@field IsLevelChristmas fun(self: LevelsTweakData): boolean
+
 function LevelsTweakData:GetGroupAIState()
 	local level_data = self[Global.game_settings.level_id] or {}
     return level_data.group_ai_state or "besiege"

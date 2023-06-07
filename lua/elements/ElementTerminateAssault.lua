@@ -33,6 +33,9 @@ function ElementTerminateAssault:client_on_executed(...)
 end
 
 function ElementTerminateAssault:on_executed(...)
+    if not self._values.enabled then
+		return
+	end
     original.on_executed(self, ...)
     Block()
 end

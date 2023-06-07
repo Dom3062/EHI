@@ -85,6 +85,7 @@ EHI:ShowAchievementLootCounter({
     },
     add_to_counter = true,
     show_loot_counter = true,
+    loot_counter_on_fail = true,
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 })
 EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(self, trigger, ...)

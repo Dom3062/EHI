@@ -57,6 +57,7 @@ end
 function EHIManager:load()
     self:SyncLoad() -- Add missing positions from elements and remove waypoints
     self:LoadSync() -- Run LoadSync functions
+    self:SetInSync(false)
 end
 
 ---@param t number
@@ -64,6 +65,32 @@ function EHIManager:LoadTime(t)
     self._t = t
     self._trackers:LoadTime(t)
     self._waypoints:LoadTime(t)
+end
+
+---@param state boolean
+function EHIManager:SetInSync(state)
+    self._syncing = state
+end
+
+---@return boolean
+function EHIManager:GetInSyncState()
+    return self._syncing
+end
+
+---@param id number
+---@return boolean
+function EHIManager:IsMissionElementEnabled(id)
+    local element = managers.mission:get_element_by_id(id)
+    if not element then
+        return false
+    end
+    return element:enabled()
+end
+
+---@param id number
+---@return boolean
+function EHIManager:IsMissionElementDisabled(id)
+    return not self:IsMissionElementEnabled(id)
 end
 
 ---@param f fun(self: EHIManager)
@@ -785,6 +812,9 @@ local function GetElementTimer(self, trigger, id)
         if element then
             local t = (element._timer or 0) + (trigger.additional_time or 0)
             trigger.time = t
+            if trigger.waypoint then
+                trigger.waypoint.time = t
+            end
             self:CheckCondition(trigger)
             self._trackers:Sync(id, t)
         end

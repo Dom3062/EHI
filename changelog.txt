@@ -1,3 +1,11 @@
+r156 (07. 06. 2023):
+The Biker Heist: Fixed a crash when mechanic started working
+Drama Tracker: Tracker is disabled in Safehouse Nightmare
+Drama Tracker: Tracker is disabled in endless assaults
+Trade Delay Tracker: Improved accuracy with very long trade delays
+Trade Delay Tracker: Tracker will use less space on the screen
+Escape: Overpass: Fixed an issue where Loot Counter is not visible for clients
+
 r155 (03. 06. 2023):
 Added option to change colors in Mission Briefing XP Breakdown
 Buffs: Inspire (AI) is now synced to other players

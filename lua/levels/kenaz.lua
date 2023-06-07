@@ -194,10 +194,7 @@ elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
 elseif EHI:IsMayhemOrAbove() then
     bags = 12 + 5 + 12
 end
-EHI:ShowLootCounter({
-    max = 1, -- Dentist loot; mandatory
-    additional_loot = bags + 1 -- Money + Painting
-})
+EHI:ShowLootCounter({ max = 2 + bags }) -- Dentist loot (mandatory) + Money + Painting
 
 local DisableWaypoints =
 {
@@ -279,7 +276,7 @@ EHI:AddLoadSyncFunction(function(self)
     if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
         return Cleanup()
     end
-    if EHI.ConditionFunctions.IsStealth() and self._trackers:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
+    if EHI.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
         return Cleanup()
     elseif managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
         return Cleanup()

@@ -193,8 +193,7 @@ EHI:ParseTriggers({
 EHI:DisableWaypoints(DisableWaypoints)
 --[[local LootLeft = EHI:GetFreeCustomSpecialFunctionID()
 EHI:ShowLootCounter({
-    max = 16,
-    additional_loot = 2, -- Teaset and Money bundle
+    max = 18, -- 18 money bags, teaset and 1 money bundle in a safe
     triggers =
     {
         [103761] = { max = 16, special_function = SF.DecreaseProgressMax }, -- C4 Plan

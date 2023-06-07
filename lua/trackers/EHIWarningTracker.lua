@@ -19,6 +19,8 @@ local function anim(o, old_color, color, start_t)
         start_t = 1
     end
 end
+---@class EHIWarningTracker : EHITracker
+---@field super EHITracker
 EHIWarningTracker = class(EHITracker)
 EHIWarningTracker._warning_color = EHI:GetTWColor("warning")
 EHIWarningTracker._check_anim_progress = false

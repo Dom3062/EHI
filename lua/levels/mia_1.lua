@@ -61,52 +61,50 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-local LootCounter = EHI:GetOption("show_loot_counter")
-local money = 5
-if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
-    money = 4
-elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
-    money = 3
-elseif EHI:IsMayhemOrAbove() then
-    money = 2
-end
-local function GetNumberOfMethBags()
-    for _, index in ipairs(MethlabIndex) do
-        local unit_id = EHI:GetInstanceUnitID(100068, index) -- Acid 3
-        if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
-            -- Unit is enabled, return 3
-            return 3
-        end
-    end
-    for _, index in ipairs(MethlabIndex) do
-        local unit_id = EHI:GetInstanceUnitID(100067, index) -- Acid 2
-        if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
-            -- Unit is enabled, return 2
-            return 2
-        end
-    end
-    -- If third or second acid is not found in either methlab instance, return one possible bag
-    -- No need to check Caustic Soda and Hydrogen Chloride, they spawn with Muriatic Acid
-    return 1
-end
-local Methbags = 0
-local MethbagsCooked = 0
-local MethbagsPossibleToSpawn = 19
-local MethlabExploded = false
 local other =
 {
-    [101937] = EHI:AddAssaultDelay({ time = 10 + 1 + 40 + 30, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 } }),
-
-    [101218] = EHI:AddLootCounter(function()
+    [101937] = EHI:AddAssaultDelay({ time = 10 + 1 + 40 + 30, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 } })
+}
+if EHI:IsLootCounterVisible() then
+    local money = 5
+    if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
+        money = 4
+    elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
+        money = 3
+    elseif EHI:IsMayhemOrAbove() then
+        money = 2
+    end
+    local function GetNumberOfMethBags()
+        for _, index in ipairs(MethlabIndex) do
+            local unit_id = EHI:GetInstanceUnitID(100068, index) -- Acid 3
+            if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
+                -- Unit is enabled, return 3
+                return 3
+            end
+        end
+        for _, index in ipairs(MethlabIndex) do
+            local unit_id = EHI:GetInstanceUnitID(100067, index) -- Acid 2
+            if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
+                -- Unit is enabled, return 2
+                return 2
+            end
+        end
+        -- If third or second acid is not found in either methlab instance, return one possible bag
+        -- No need to check Caustic Soda and Hydrogen Chloride, they spawn with Muriatic Acid
+        return 1
+    end
+    local Methbags = 0
+    local MethbagsCooked = 0
+    local MethbagsPossibleToSpawn = 19
+    local MethlabExploded = false
+    other[101218] = { special_function = EHI:RegisterCustomSpecialFunction(function()
         Methbags = GetNumberOfMethBags()
-        EHI:ShowLootCounterNoCheck({
+        EHI:ShowLootCounterNoChecks({
             max = money + Methbags,
              -- 19 + 2 // 19 boxes of contrabant, that can spawn chemicals (up to 4); 2 cars with possible loot
             max_random = 19 + 2
         })
-    end, LootCounter)
-}
-if LootCounter then
+    end)}
     -- Basement
     local function IncreaseMaximum()
         managers.ehi_tracker:IncreaseTrackerProgressMax("LootCounter", 1)

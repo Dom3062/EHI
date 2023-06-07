@@ -1,3 +1,5 @@
+---@class EHIXPTracker : EHITracker
+---@field super EHITracker
 EHIXPTracker = class(EHITracker)
 EHIXPTracker.update = EHIXPTracker.update_fade
 EHIXPTracker._forced_icons = { "xp" }
@@ -18,6 +20,8 @@ function EHIXPTracker:AddXP(amount)
     self:AnimateBG()
 end
 
+---@class EHITotalXPTracker : EHIXPTracker
+---@field super EHIXPTracker
 EHITotalXPTracker = class(EHIXPTracker)
 EHITotalXPTracker._update = false
 EHITotalXPTracker._show_diff = EHI:GetOption("total_xp_show_difference")

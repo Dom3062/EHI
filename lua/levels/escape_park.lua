@@ -39,13 +39,11 @@ local other =
 {
     [102444] = EHI:AddAssaultDelay({ time = 25 + 30 })
 }
-if EHI:GetOption("show_loot_counter") then
+if EHI:IsLootCounterVisible() then
     local CreateCounter = true
-    local UpdateLootCounter = EHI:GetFreeCustomSpecialFunctionID()
-    other[102293] = { special_function = UpdateLootCounter }
-    EHI:RegisterCustomSpecialFunction(UpdateLootCounter, function(self, ...)
+    other[102293] = EHI:AddLootCounter3(function(self, ...)
         if CreateCounter then
-            EHI:ShowLootCounterNoCheck({})
+            EHI:ShowLootCounterNoCheck()
             CreateCounter = false
         end
         self._trackers:IncreaseTrackerProgressMax("LootCounter")

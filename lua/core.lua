@@ -56,8 +56,6 @@ _G.EHI =
     CallbackMessage =
     {
         Spawned = "Spawned",
-        -- Provides "primary", "secondary", "melee" and "grenades"
-        SpawnedAchievements = "SpawnedAchievements",
         -- Provides "loc" (a LocalizationManager class)
         LocLoaded = "LocLoaded",
         -- Provides "success" (a boolean value)
@@ -72,8 +70,10 @@ _G.EHI =
         LootLoadSync = "LootLoadSync",
         OnMinionAdded = "OnMinionAdded",
         OnMinionKilled = "OnMinionKilled",
-        -- Provides "mode" (a string value)
+        -- Provides "mode" (a string value -> "normal", "phalanx")
         AssaultModeChanged = "AssaultModeChanged",
+        -- Provides "mode" (a string value -> "normal", "endless")
+        AssaultWaveModeChanged = "AssaultWaveModeChanged"
     },
 
     SyncMessages =
@@ -268,9 +268,13 @@ _G.EHI =
     ClientElement = "client_on_executed",
 
     ModVersion = ModInstance and tonumber(ModInstance:GetVersion()) or "N/A",
+    -- PAYDAY 2/mods/Extra Heist Info/
     ModPath = ModPath,
+    -- PAYDAY 2/mods/Extra Heist Info/loc/
     LocPath = ModPath .. "loc/",
+    -- PAYDAY 2/mods/Extra Heist Info/lua/
     LuaPath = ModPath .. "lua/",
+    -- PAYDAY 2/mods/Extra Heist Info/menu/
     MenuPath = ModPath .. "menu/",
     SettingsSaveFilePath = BLTModManager.Constants:SavesDirectory() .. "ehi.json",
     SaveDataVer = 1
@@ -719,6 +723,14 @@ function EHI:IsPlayingFromStart()
     return self:IsHost() or (self:IsClient() and not managers.statistics:is_dropin())
 end
 
+function EHI:IsPlayingSFN()
+    return Global.game_settings.level_id == "haunted"
+end
+
+function EHI:IsNotPlayingSFN()
+    return Global.game_settings.level_id ~= "haunted"
+end
+
 function EHI:Log(s)
     log("[EHI] " .. (s or "nil"))
 end
@@ -879,7 +891,7 @@ function EHI:CombineAssaultDelayAndAssaultTime()
 end
 
 function EHI:IsTradeTrackerDisabled()
-    return not self:GetOption("show_trade_delay") or Global.game_settings.level_id == "haunted_safehouse"
+    return not self:GetOption("show_trade_delay") or self:IsPlayingSFN()
 end
 
 ---@param params table
@@ -1034,7 +1046,7 @@ end
 
 ---@return boolean
 function EHI:ShowDramaTracker()
-    return self:IsHost() and self:GetOption("show_drama_tracker")
+    return self:IsHost() and self:GetOption("show_drama_tracker") and self:IsNotPlayingSFN()
 end
 
 ---@param peer_id number
@@ -1265,6 +1277,35 @@ function EHI:AddLootCounter(f, check, trigger_once)
     return tbl
 end
 
+---@param f function Loot counter function
+---@param trigger_once boolean? Should the trigger run once?
+---@return table
+function EHI:AddLootCounter2(f, trigger_once)
+    local tbl =
+    {
+        special_function = SF.CustomCode,
+        f = f
+    }
+    if trigger_once then
+        tbl.trigger_times = 1
+    end
+    return tbl
+end
+
+---@param f fun(self: EHIManager, trigger: table, element: table, enabled: boolean) Loot counter function
+---@param trigger_once boolean? Should the trigger run once?
+---@return table
+function EHI:AddLootCounter3(f, trigger_once)
+    local tbl =
+    {
+        special_function = self:RegisterCustomSpecialFunction(f)
+    }
+    if trigger_once then
+        tbl.trigger_times = 1
+    end
+    return tbl
+end
+
 function EHI:AddPositionFromElement(data, id, check)
     local vector = self:GetInstanceElementPosition(data.position_by_element)
     if vector then
@@ -1400,7 +1441,7 @@ function EHI:ShowLootCounterOffset(params, manager)
     self:ShowLootCounterNoChecks(params)
 end
 
----@param params LootCounterTable
+---@param params LootCounterTable?
 function EHI:ShowLootCounter(params)
     if not self:GetOption("show_loot_counter") then
         return
@@ -1408,7 +1449,7 @@ function EHI:ShowLootCounter(params)
     self:ShowLootCounterNoCheck(params)
 end
 
----@param params LootCounterTable
+---@param params LootCounterTable?
 function EHI:ShowLootCounterNoCheck(params)
     if self:IsPlayingCrimeSpree() then
         return
@@ -1416,8 +1457,9 @@ function EHI:ShowLootCounterNoCheck(params)
     self:ShowLootCounterNoChecks(params)
 end
 
----@param params LootCounterTable
+---@param params LootCounterTable?
 function EHI:ShowLootCounterNoChecks(params)
+    params = params or {}
     local n_offset = params.n_offset or 0
     if params.offset then
         if self:IsHost() or params.client_from_start then
@@ -1427,7 +1469,7 @@ function EHI:ShowLootCounterNoChecks(params)
             return
         end
     end
-    managers.ehi_tracker:ShowLootCounter(params.max, params.additional_loot, params.max_random, n_offset)
+    managers.ehi_tracker:ShowLootCounter(params.max, params.max_random, n_offset)
     if params.load_sync then
         self:AddLoadSyncFunction(params.load_sync)
         params.no_sync_load = true
@@ -1481,7 +1523,7 @@ local show_achievement = false
 function EHI:ShowAchievementLootCounter(params)
     if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false then
         if params.show_loot_counter then
-            self:ShowLootCounter({ max = params.max, additional_loot = params.additional_loot })
+            self:ShowLootCounter({ max = params.max })
         end
         return
     end
@@ -1504,6 +1546,15 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
     if params.failed_on_alarm then
         self:AddOnAlarmCallback(function()
             managers.ehi_tracker:SetAchievementFailed(params.achievement)
+        end)
+    end
+    if params.silent_failed_on_alarm then
+        self:AddOnAlarmCallback(function()
+            if managers.ehi_manager:GetInSyncState() then
+                managers.ehi_tracker:CallFunction(params.achievement, "SetFailedSilent")
+            else
+                managers.ehi_tracker:SetAchievementFailed(params.achievement)
+            end
         end)
     end
     if params.triggers then

@@ -1,4 +1,6 @@
 local format = EHI:GetOption("variable_random_loot_format")
+---@class EHILootTracker : EHIProgressTracker
+---@field super EHIProgressTracker
 EHILootTracker = class(EHIProgressTracker)
 EHILootTracker._forced_icons = { EHI.Icons.Loot }
 EHILootTracker._show_popup = EHI:GetOption("show_all_loot_secured_popup")
@@ -133,6 +135,8 @@ function EHILootTracker:SecuredMissionLoot()
     self:SetProgress(progress)
 end
 
+---@class EHIAchievementLootCounterTracker : EHILootTracker
+---@field super EHILootTracker
 EHIAchievementLootCounterTracker = class(EHILootTracker)
 EHIAchievementLootCounterTracker._popup_type = "achievement"
 EHIAchievementLootCounterTracker._show_started = EHIAchievementTracker._show_started
@@ -151,17 +155,51 @@ function EHIAchievementLootCounterTracker:init(panel, params)
     end
 end
 
+function EHIAchievementLootCounterTracker:OverridePanel()
+    if self._icon2 then
+        return
+    end
+    local texture, text_rect = self:GetIcon("pd2_loot")
+    self._icon2 = self._panel:bitmap({
+        name = "icon2",
+        texture = texture,
+        texture_rect = text_rect,
+        alpha = 1,
+        visible = false,
+        x = self._icon1:x(),
+        w = self._icon_size_scaled,
+        h = self._icon_size_scaled
+    })
+    self._manually_created_icon2 = true
+end
+
 function EHIAchievementLootCounterTracker:SetCompleted(force)
     self._achieved_popup_showed = true
     EHIAchievementLootCounterTracker.super.SetCompleted(self, force)
 end
 
 function EHIAchievementLootCounterTracker:SetFailed()
-    EHIAchievementLootCounterTracker.super.SetFailed(self)
+    if self._loot_counter_on_fail then
+        self:AnimateBG()
+        self._icon2:set_visible(true)
+        self._icon1:set_visible(false)
+        if not self._manually_created_icon2 then
+            self._icon2:set_x(self._icon1:x())
+        end
+    else
+        EHIAchievementLootCounterTracker.super.SetFailed(self)
+    end
     if self._status_is_overridable then
         self._achieved_popup_showed = nil
     end
     if self._show_failed then
         self:ShowFailedPopup()
     end
+end
+
+function EHIAchievementLootCounterTracker:SetFailedSilent()
+    self._failed_on_sync = true
+    self._show_failed = nil
+    self._remove_after_reaching_counter_target = nil
+    self:SetFailed()
 end

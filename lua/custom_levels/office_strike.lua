@@ -11,7 +11,7 @@ local triggers = {
     end },
     [200148] = { special_function = SF.CustomCode, f = function()
         if not EHI:IsPlayingFromStart() then -- Not playing from the start, try to determine the escape vehicle
-            if managers.ehi_tracker:IsMissionElementDisabled(200171) then -- Heli show sequence is disabled, Van escape it is
+            if managers.ehi_manager:IsMissionElementDisabled(200171) then -- Heli show sequence is disabled, Van escape it is
                 escape = "Van"
             end
         end

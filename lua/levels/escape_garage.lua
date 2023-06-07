@@ -26,11 +26,9 @@ local other =
 {
     [102414] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround)
 }
---[[if EHI:GetOption("show_loot_counter") then
+--[[if EHI:IsLootCounterVisible() then
     local CreateCounter = true
-    local UpdateLootCounter = EHI:GetFreeCustomSpecialFunctionID()
-    other[104263] = { special_function = UpdateLootCounter }
-    EHI:RegisterCustomSpecialFunction(UpdateLootCounter, function(self, ...)
+    other[104263] = EHI:AddLootCounter3(function(self, ...)
         if CreateCounter then
             EHI:ShowLootCounterNoCheck({})
             CreateCounter = false

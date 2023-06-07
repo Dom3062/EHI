@@ -16,6 +16,8 @@ local text_i =
     "bodybags_bag"
 }
 
+---@class EHIAggregatedEquipmentTracker : EHITracker
+---@field super EHITracker
 EHIAggregatedEquipmentTracker = class(EHITracker)
 EHIAggregatedEquipmentTracker._update = false
 EHIAggregatedEquipmentTracker._dont_show_placed = { first_aid_kit = true }

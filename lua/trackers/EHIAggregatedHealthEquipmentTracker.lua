@@ -1,3 +1,5 @@
+---@class EHIAggregatedHealthEquipmentTracker : EHITracker
+---@field super EHITracker
 EHIAggregatedHealthEquipmentTracker = class(EHITracker)
 EHIAggregatedHealthEquipmentTracker._update = false
 EHIAggregatedHealthEquipmentTracker._pos = { "doctor_bag", "first_aid_kit" }

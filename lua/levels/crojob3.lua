@@ -12,7 +12,6 @@ local HeliWaterFill = { Icon.Heli, Icon.Water }
 if EHI:GetOption("show_one_icon") then
     HeliWaterFill = { { icon = Icon.Heli, color = Color("D4F1F9") } }
 end
-local cow_4 = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     [101499] = { time = 155 + 25, id = "EscapeHeli", icons = Icon.HeliEscape },
     [101253] = heli_65,
@@ -72,37 +71,36 @@ local achievements =
     {
         elements =
         {
-            [101031] = { status = "defend", class = TT.AchievementStatus, special_function = cow_4 },
+            [101031] = { status = "defend", class = TT.AchievementStatus, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+                if enabled then
+                    self:CheckCondition(trigger)
+                end
+            end) },
             [103468] = { special_function = SF.SetAchievementFailed },
             [104357] = { special_function = SF.SetAchievementComplete }
         }
     }
 }
 
-local LootCounter = EHI:GetOption("show_loot_counter")
 local other =
 {
-    [101041] = EHI:AddLootCounter(function()
-        local LootTrigger = {}
-        local Trigger = { max = 1, special_function = SF.IncreaseProgressMax } -- Money spawned
-        for _, index in ipairs({ 580, 830, 3120, 3370, 3620, 3870 }) do
-            LootTrigger[EHI:GetInstanceElementID(100197, index)] = Trigger
-            LootTrigger[EHI:GetInstanceElementID(100198, index)] = Trigger
-            LootTrigger[EHI:GetInstanceElementID(100201, index)] = Trigger
-            LootTrigger[EHI:GetInstanceElementID(100202, index)] = Trigger
-        end
-        EHI:ShowLootCounterNoCheck({
-            max = 4,
-            -- 1 flipped wagon crate; guaranteed to have gold or 2x money; 15% chance to spawn 2x money, otherwise gold
-            -- If second money bundle spawns, the maximum is increased in the Trigger above
-            additional_loot = 1,
-            triggers = LootTrigger,
-            hook_triggers = true
-        })
-    end, LootCounter),
     [101018] = EHI:AddAssaultDelay({ time = 30, special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 } })
 }
-if LootCounter then
+if EHI:IsLootCounterVisible() then
+    local Trigger = { id = "LootCounter", special_function = SF.IncreaseProgressMax } -- Money spawned
+    for _, index in ipairs({ 580, 830, 3120, 3370, 3620, 3870 }) do
+        other[EHI:GetInstanceElementID(100197, index)] = Trigger
+        other[EHI:GetInstanceElementID(100198, index)] = Trigger
+        other[EHI:GetInstanceElementID(100201, index)] = Trigger
+        other[EHI:GetInstanceElementID(100202, index)] = Trigger
+    end
+    other[101041] = { special_function = EHI:RegisterCustomSpecialFunction(function()
+        EHI:ShowLootCounterNoCheck({
+            -- 1 flipped wagon crate; guaranteed to have gold or 2x money; 15% chance to spawn 2x money, otherwise gold
+            -- If second money bundle spawns, the maximum is increased in the Trigger above
+            max = 5 -- 4 Bomb parts + 1
+        })
+    end)}
     -- 1 random loot in train wagon, 35% chance to spawn
     -- Wagons are selected randomly; sometimes 2 with possible loot spawns, sometimes 1
     local IncreaseMaxRandomLoot = EHI:GetFreeCustomSpecialFunctionID()
@@ -142,11 +140,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(cow_4, function(self, trigger, element, enabled)
-    if enabled then
-        self:CheckCondition(trigger)
-    end
-end)
 EHI:AddXPBreakdown({
     objectives =
     {

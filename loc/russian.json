@@ -184,8 +184,8 @@
     "ehi_xp_panel_3" : "Показывать всплывающее окно для каждого полученного опыта и общего количества опыта",
     "ehi_xp_panel_4" : "Показывать подсказку для каждого полученного опыта и общего количества опыта",
 
-    "ehi_show_xp_in_mission_briefing_only" : "Show gained XP in Mission Briefing only",
-    "ehi_show_xp_in_mission_briefing_only_desc" : "Enable this function if you want to see XP in Mission Briefing, but not in-game",
+    "ehi_show_xp_in_mission_briefing_only" : "Показывать полученный опыт только в брифинге миссии",
+    "ehi_show_xp_in_mission_briefing_only_desc" : "Включите эту функцию, если вы хотите видеть XP в брифинге миссии, но не в игре.",
 
     "ehi_total_xp_show_difference" : "Показывать разницу опыта",
     "ehi_total_xp_show_difference_desc" : "[Показать общее количество опыта, полученного в результате ограбления] только опция!\nпоказывать, сколько вы получили XP в автономном трекере",
@@ -260,7 +260,7 @@
     "ehi_show_equipment_ecmjammer" : "Показывать трекер продолжительность работы генератора помех",
     "ehi_show_equipment_ecmjammer_desc" : "показывать трекер оставшейся продолжительности генератора помех\nВ трекере отображается генератор помех с наибольшей продолжительностью.",
 
-    "ehi_ecmjammer_block_ecm_without_pager_delay" : "Don't show ECM Jammer that won't delay pagers",
+    "ehi_ecmjammer_block_ecm_without_pager_delay" : "Не показывать генераторы помех, которые не будут задерживать пейджеры",
     "ehi_ecmjammer_block_ecm_without_pager_delay_desc" : "",
 
     "ehi_show_equipment_ecmfeedback" : "Показать продолжительность работы акустической петли генератора помех",
@@ -440,7 +440,7 @@
     "ehi_buffs_skills_ghost_silent_killer_subclass" : "Бесшумный убийца",
     "ehi_buffs_skills_ghost_second_wind" : "Второе дыхание",
     "ehi_buffs_skills_ghost_unseen_strike" : "Исподтишка",
-    "ehi_buffs_skills_ghost_unseen_strike_initial" : "Unseen Strike (Initial Delay)",
+    "ehi_buffs_skills_ghost_unseen_strike_initial" : "Исподтишка (Начальная задержка)",
 
     "ehi_buffs_skills_fugitive_menu" : "Беглец",
     "ehi_buffs_skills_fugitive_revenant_subclass" : "Выживший",
@@ -596,22 +596,35 @@
     "ehi_other_show_mission_xp_overview_desc" : "Показывает панель в брифинге ограбления с указанием возможного опыта, который вы можете получить",
 
     "ehi_colors_menu" : "Цвета",
-    "ehi_colors_menu_desc" : "Изменяет цвета в трекерах\n\nЭти изменения также применяются к путевым точкам",
+    "ehi_colors_menu_desc" : "Изменяет используемые цвета",
+
+    "ehi_colors_tracker_waypoint" : "Трекер / Маркер",
 
     "ehi_colors_inaccurate" : "Ошибка",
-    "ehi_colors_inaccurate_desc" : "Изменяет цвет текста, когда трекер выдаёт ошибочную информацию",
+    "ehi_colors_inaccurate_desc" : "Изменяет цвет текста, когда трекер/маркер неточны",
 
     "ehi_colors_pause" : "Пауза",
-    "ehi_colors_pause_desc" : "Изменяет цвет текста при приостановке работы трекера",
+    "ehi_colors_pause_desc" : "Изменяет цвет текста, когда трекер/маркер приостановлены",
 
     "ehi_colors_drill_autorepair" : "Автоматический запуск дрели/пилы",
-    "ehi_colors_drill_autorepair_desc" : "Изменяет цвет значка, когда дрель/пила могут автоматически перезапускаться самостоятельно",
+    "ehi_colors_drill_autorepair_desc" : "Изменяет цвет значка, когда дрель/пила может автоматически перезапуститься",
 
     "ehi_colors_warning" : "Предупреждение",
     "ehi_colors_warning_desc" : "Анимирует цвет текста, когда остается 10 секунд",
 
     "ehi_colors_completion" : "Завершение",
     "ehi_colors_completion_desc" : "Анимирует цвет текста, когда остается 10 секунд",
+
+    "ehi_colors_mission_briefing" : "Брифинг миссии",
+
+    "ehi_colors_loot_secured" : "Захват добычи",
+    "ehi_colors_loot_secured_desc" : "Меняет цвет добычи",
+    
+    "ehi_colors_total_xp" : "Общий опыт",
+    "ehi_colors_total_xp_desc" : "Изменяет цвет общего количества опыта, которое вы можете получить",
+    
+    "ehi_colors_optional" : "Необязательная цель",
+    "ehi_colors_optional_desc" : "Изменяет цвет дополнительной цели, которая не требуется для выполнения миссии\nНо ее выполнение даст вам больше опыта",
 
     "ehi_experience_infamy_pool" : "Резерв бесславия:",
     "ehi_experience_next_level" : "Следующий уровень через:",

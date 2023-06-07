@@ -46,7 +46,8 @@ EHI:AddXPBreakdown({
             {
                 { amount = 2000, name = "ed1_tag_right_truck", optional = true },
                 { escape = 6000 }
-            }
+            },
+            total_xp_override = { params = { min_max = {} } }
         },
         loud =
         {
@@ -54,7 +55,8 @@ EHI:AddXPBreakdown({
             {
                 { amount = 12000, name = "ed1_hack_1" },
                 { amount = 12000, name = "ed1_hack_2", optional = true }
-            }
+            },
+            total_xp_override = { params = { min_max = {} } }
         }
     }
 })

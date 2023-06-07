@@ -98,10 +98,10 @@ EHI:ShowLootCounter({
     },
     load_sync = function(self)
         local max_reduction = 0
-        if self._trackers:IsMissionElementDisabled(104285) then
+        if self:IsMissionElementDisabled(104285) then
             max_reduction = max_reduction + 1
         end
-        if self._trackers:IsMissionElementDisabled(104286) then
+        if self:IsMissionElementDisabled(104286) then
             max_reduction = max_reduction + 1
         end
         self._trackers:DecreaseTrackerProgressMax("LootCounter", max_reduction)

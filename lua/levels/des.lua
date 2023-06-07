@@ -216,8 +216,7 @@ EHI:AddXPBreakdown({
                 {
                     mus_artifact = { times = 6 }
                 }
-            },
-            no_max = true
+            }
         }
     }
 })

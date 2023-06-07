@@ -43,23 +43,18 @@ local achievements =
 
 local other =
 {
-    [100196] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
-    [102007] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
-    [102005] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
     [101975] = EHI:AddAssaultDelay({ time = 15 + 30, trigger_times = 1 })
 }
---[[if EHI:GetOption("show_loot_counter") then
+if EHI:IsLootCounterVisible() then
     local CreateCounter = true
-    local UpdateLootCounter = EHI:GetFreeCustomSpecialFunctionID()
-    other[102564] = { special_function = UpdateLootCounter }
-    EHI:RegisterCustomSpecialFunction(UpdateLootCounter, function(self, ...)
+    other[102564] = EHI:AddLootCounter3(function(self, ...)
         if CreateCounter then
-            EHI:ShowLootCounterNoCheck({})
+            EHI:ShowLootCounterNoChecks()
             CreateCounter = false
         end
         self._trackers:IncreaseTrackerProgressMax("LootCounter")
     end)
-end]]
+end
 
 EHI:ParseTriggers({
     mission = triggers,

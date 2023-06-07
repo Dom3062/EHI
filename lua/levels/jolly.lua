@@ -2,6 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local c4_drop = { time = 120 + 25 + 0.25 + 2, id = "C4Drop", icons = Icon.HeliDropC4 }
+local EscapeWP = { icon = Icon.Escape, position_by_element = EHI:GetInstanceElementID(100029, 21250) }
 local HeliTimer = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
     -- Why in the flying fuck, OVK, you decided to execute the timer AFTER the dialogue has finished ?
@@ -17,9 +18,9 @@ local triggers = {
         [2] = 8
     },
     [101644] = { time = 60, id = "BainWait", icons = { Icon.Wait } },
-    [EHI:GetInstanceElementID(100075, 21250)] = { time = 60 + 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 1 },
-    [EHI:GetInstanceElementID(100076, 21250)] = { time = 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 2 },
-    [EHI:GetInstanceElementID(100078, 21250)] = { time = 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.SetTimeOrCreateTracker },
+    [EHI:GetInstanceElementID(100075, 21250)] = { time = 60 + 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 1, waypoint = deep_clone(EscapeWP) },
+    [EHI:GetInstanceElementID(100076, 21250)] = { time = 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 2, waypoint = deep_clone(EscapeWP) },
+    [EHI:GetInstanceElementID(100078, 21250)] = { time = 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.SetTimeOrCreateTracker, waypoint = deep_clone(EscapeWP) },
     [100795] = { time = 5, id = "C4", icons = { Icon.C4 }, waypoint = { position_by_element = 100804 } },
 
     [101240] = c4_drop,
@@ -34,7 +35,7 @@ for i = 26550, 26950, 100 do
 end
 
 if EHI:IsClient() then
-    triggers[EHI:GetInstanceElementID(100051, 21250)] = { time = 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[EHI:GetInstanceElementID(100051, 21250)] = { time = 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP) }
 end
 
 local other =
@@ -48,9 +49,12 @@ EHI:RegisterCustomSpecialFunction(HeliTimer, function(self, trigger, ...)
     if not managers.user:get_setting("mute_heist_vo") then
         local delay_fix = triggers[1][trigger.dialog] or 0
         trigger.time = trigger.time + delay_fix
+        if trigger.waypoint then
+            trigger.waypoint.time = trigger.time
+        end
     end
-    if self._trackers:TrackerExists(trigger.id) then
-        self._trackers:SetTrackerTimeNoAnim(trigger.id, trigger.time)
+    if self:Exists(trigger.id) then
+        self:SetTimeNoAnim(trigger.id, trigger.time)
     else
         self:CheckCondition(trigger)
     end

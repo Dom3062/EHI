@@ -1,3 +1,5 @@
+---@class EHIMinionTracker : EHITracker
+---@field super EHITracker
 EHIMinionTracker = class(EHITracker)
 EHIMinionTracker._forced_icons = { "minion" }
 EHIMinionTracker._update = false
@@ -29,13 +31,9 @@ function EHIMinionTracker:SetIconColor()
     if self._n_of_peers >= 2 then
         self._icon1:set_color(Color.white)
     else
-        for i = 0, HUDManager.PLAYER_PANEL, 1 do
-            if self._time_bg_box:child("text" .. i) then
-                local color = tweak_data.chat_colors[i] or Color.white
-                self._icon1:set_color(color)
-                break
-            end
-        end
+        local peer_id, _ = next(self._peers)
+        local color = tweak_data.chat_colors[peer_id] or Color.white
+        self._icon1:set_color(color)
     end
 end
 
@@ -67,7 +65,7 @@ function EHIMinionTracker:Reorganize(addition)
             if text then
                 text:set_font_size(self._panel:h() * self._text_scale)
                 text:set_w(self._time_bg_box:w())
-                self:FitTheTextUnique(i)
+                self:FitTheText(text)
                 break
             end
         end
@@ -104,12 +102,13 @@ function EHIMinionTracker:RemovePeer(peer_id)
     self._time_bg_box:remove(self._time_bg_box:child("text" .. peer_id))
     if self._n_of_peers == 1 then
         for i = 0, HUDManager.PLAYER_PANEL, 1 do
-            if self._time_bg_box:child("text" .. i) then
-                self._time_bg_box:child("text" .. i):set_font_size(self._panel:h() * self._text_scale)
-                self._time_bg_box:child("text" .. i):set_color(Color.white)
-                self._time_bg_box:child("text" .. i):set_x(0)
-                self._time_bg_box:child("text" .. i):set_w(self._time_bg_box:w())
-                self:FitTheTextUnique(i)
+            local text = self._time_bg_box:child("text" .. i)
+            if text then
+                text:set_font_size(self._panel:h() * self._text_scale)
+                text:set_color(Color.white)
+                text:set_x(0)
+                text:set_w(self._time_bg_box:w())
+                self:FitTheText(text)
                 break
             end
         end
@@ -121,12 +120,7 @@ function EHIMinionTracker:RemovePeer(peer_id)
 end
 
 function EHIMinionTracker:FitTheTextUnique(i)
-    local text = self._time_bg_box:child("text" .. i)
-    text:set_font_size(self._panel:h() * self._text_scale)
-    local w = select(3, text:text_rect())
-    if w > text:w() then
-        text:set_font_size(text:font_size() * (text:w() / w) * self._text_scale)
-    end
+    self:FitTheText(self._time_bg_box:child("text" .. i))
 end
 
 function EHIMinionTracker:FormatUnique(peer_id)
@@ -184,7 +178,7 @@ function EHIMinionTracker:RemoveMinion(key)
     end
     for peer, tbl in pairs(self._peers) do
         if tbl[key] then
-            self._peers[peer][key] = 0
+            tbl[key] = 0
             if self:GetNumberOfMinions(peer) == 0 then
                 self:RemovePeer(peer)
             else

@@ -49,7 +49,10 @@ end)
 
 local other =
 {
-    [106579] = EHI:AddLootCounter(function()
+    [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
+}
+if EHI:IsLootCounterVisible() then
+    other[106579] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
         local max = 0
         local wd = managers.worlddefinition
         for i = 103625, 103684, 1 do
@@ -58,13 +61,13 @@ local other =
                 max = max + 1
             end
         end
-        EHI:ShowLootCounterNoCheck({ max = max })
+        EHI:ShowLootCounterNoChecks({ max = max })
+    end)}
+    EHI:AddLoadSyncFunction(function(self)
+        self:Trigger(106579)
+        self._trackers:SyncSecuredLoot()
     end)
-}
-EHI:AddLoadSyncFunction(function(self)
-    self:Trigger(106579)
-    self._trackers:SyncSecuredLoot()
-end)
+end
 
 EHI:ParseTriggers({ mission = triggers, other = other })
 

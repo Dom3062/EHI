@@ -13,11 +13,6 @@ local triggers = {
     [101572] = { time = 60, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
     [101573] = { time = 80, id = "Van", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
 }
-if EHI:GetOption("show_escape_chance") then
-    EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi_tracker:AddEscapeChanceTracker(dropin, 10)
-    end)
-end
 
 ---@type ParseAchievementTable
 local achievements =
@@ -39,8 +34,10 @@ local achievements =
 local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 30 + 30 }),
-    [102622] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
     [100107] = EHI:AddLootCounter(function()
+        if EHI:IsClient() then -- Disabled because SafeTriggers does not work on Client
+            return
+        end
         local SafeTriggers =
         {
             loot =
@@ -69,6 +66,12 @@ local other =
         })
     end)
 }
+if EHI:GetOption("show_escape_chance") then
+    other[102622] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    EHI:AddOnAlarmCallback(function(dropin)
+        managers.ehi_tracker:AddEscapeChanceTracker(dropin, 10)
+    end)
+end
 
 local min_bags = EHI:GetValueBasedOnDifficulty({
     normal = 4,

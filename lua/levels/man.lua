@@ -58,25 +58,25 @@ local achievements =
                 self._trackers:AddAchievementStatusTracker("man_3")
             end
         end
+    },
+    man_4 =
+    {
+        elements =
+        {
+            [100698] = { max = 10, class = TT.AchievementProgress, trigger_times = 1 },
+            [103989] = { special_function = SF.IncreaseProgress }
+        },
+        load_sync = function(self)
+            -- Achievement count used planks on windows, vents, ...
+            -- There are total 49 positions and 10 planks
+            self._trackers:AddAchievementProgressTracker("man_4", 10, 49 - self._trackers:CountInteractionAvailable("stash_planks"))
+        end
     }
 }
 
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements
-})
-EHI:ShowAchievementLootCounter({
-    achievement = "man_4",
-    max = 10,
-    triggers =
-    {
-        [103989] = { special_function = SF.IncreaseProgress }
-    },
-    load_sync = function(self)
-        -- Achievement count used planks on windows, vents, ...
-        -- There are total 49 positions and 10 planks
-        self._trackers:SetTrackerProgress("man_4", 49 - self._trackers:CountInteractionAvailable("stash_planks"))
-    end
 })
 
 local tbl =

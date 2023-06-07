@@ -1,3 +1,5 @@
+---@class EHIEnemyCountTracker : EHICountTracker
+---@field super EHICountTracker
 EHIEnemyCountTracker = class(EHICountTracker)
 if EHI:GetOption("show_enemy_count_show_pagers") then
     EHIEnemyCountTracker._forced_icons = { "pager_icon", "enemy" }

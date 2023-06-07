@@ -1,3 +1,5 @@
+---@class EHINeededValueTracker : EHIProgressTracker
+---@field super EHIProgressTracker
 EHINeededValueTracker = class(EHIProgressTracker)
 EHINeededValueTracker._update = false
 function EHINeededValueTracker:init(panel, params)

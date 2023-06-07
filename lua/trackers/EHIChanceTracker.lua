@@ -1,3 +1,5 @@
+---@class EHIChanceTracker : EHITracker
+---@field super EHITracker
 EHIChanceTracker = class(EHITracker)
 EHIChanceTracker._update = false
 function EHIChanceTracker:init(panel, params)

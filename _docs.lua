@@ -2,6 +2,7 @@
     This file is not loaded, it is here to provide code completion in VSCode
 ]]
 
+_G.tweak_data = {}
 _G.managers = {}
 ---@type boolean
 _G.IS_VR = ...
@@ -11,21 +12,29 @@ _G.IS_VR = ...
 ---@field ehi_tracker EHITrackerManager
 ---@field ehi_waypoint EHIWaypointManager
 ---@field ehi_buff EHIBuffManager
+---@field ehi_trade EHITradeManager
 ---@field loot LootManager
+---@field [unknown] unknown
+
+---@class tweak_data Global table of all configuration data
+---@field levels LevelsTweakData
 ---@field [unknown] unknown
 
 ---@class _G Global
 ---@field managers managers Global table of all managers in the game
+---@field tweak_data tweak_data Global table of all configuration data
 
 ---@class mathlib
 ---@field lerp fun(a: number, b: number, lerp: number): number Linearly interpolates between `a` and `b` by `lerp`
 ---@field round fun(n: number, precision: number?): number Rounds number with precision
 ---@field clamp fun(number: number, min: number, max: number): number Returns `number` clamped to the inclusive range of `min` and `max`
 ---@field rand fun(a: number, b: number?): number
+---@field mod fun(n: number, div: number): number Returns remainder of a division
 
 ---@class tablelib
 ---@field size fun(tbl: table): number Returns size of the table
 ---@field contains fun(v: table, e: string): boolean Returns `true` or `false` if `e` exists in the table
+---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
 
 ---@class ParseAchievementDefinitionTable
 ---@field difficulty_pass boolean Difficulty check, setting this to `false` will disable the achievement to show on the screen
@@ -54,8 +63,7 @@ _G.IS_VR = ...
 ---@class LootCounterTable
 ---@field max integer Maximum number of loot
 ---@field max_random integer Defines a variable number of loot
----@field additional_loot integer Increments maximum number; DEPRECATED DO NOT USE ANYMORE
----@field load_sync fun(self: EHIManager, trigger: table, element: table, enabled: boolean)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true
+---@field load_sync fun(self: EHIManager)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true
 ---@field no_sync_load boolean Prevents Loot Counter from sync after joining
 ---@field offset boolean If offset is required, used in multi-day heists
 ---@field client_from_start boolean If client is playing from mission briefing; does not do anything on host
@@ -74,11 +82,10 @@ _G.IS_VR = ...
 ---@field achievement string Achievement ID
 ---@field show_loot_counter boolean If achievement is already earned, show Loot Counter instead
 ---@field max integer Maximum number of loot
----@field additional_loot integer Increments maximum number in Loot Counter; DEPRECATED DO NOT USE ANYMORE
 ---@field progress integer Start with progress if provided, otherwise 0
 ---@field remove_after_reaching_target boolean Setting this to `false` will show `FINISH` in the tracker
 ---@field class string Achievement tracker class
----@field load_sync fun(self: EHIManager, trigger: table, element: table, enabled: boolean) Synchronizes secured bags in the achievement
+---@field load_sync fun(self: EHIManager) Synchronizes secured bags in the achievement
 ---@field alarm_callback fun(dropin: boolean) Do some action when alarm is sounded
 ---@field failed_on_alarm boolean Fails achievement in tracker on alarm
 ---@field triggers table Adds triggers when counter is manipulated via Mission Script, prevents counting
@@ -88,6 +95,7 @@ _G.IS_VR = ...
 ---@field counter AchievementCounterTable Modifies counter checks
 ---@field difficulty_pass boolean?
 ---@field loot_counter_on_fail boolean? If the achievement loot counter should switch to EHILootCounter class when failed
+---@field silent_failed_on_alarm boolean Fails achievement silently and switches to Loot Counter (only for dropins that are currently syncing and after the achievement has failed)
 
 ---@class AchievementBagValueCounterTable
 ---@field achievement string Achievement ID

@@ -302,7 +302,6 @@ function IngameWaitingForPlayersState:at_exit(...)
     local level = Global.game_settings.level_id
     local mask_id = managers.blackmarket:equipped_mask().mask_id
     local from_beginning = managers.statistics:started_session_from_beginning()
-    EHI:CallCallbackOnce(EHI.CallbackMessage.SpawnedAchievements, primary, secondary, melee, grenade)
     if EHI:GetUnlockableOption("show_achievements_weapon") then -- Kill with weapons (primary or secondary)
         if EHI:IsAchievementLocked2("halloween_6") and mask_id == tweak_data.achievement.pump_action.mask and HasWeaponTypeEquipped("shotgun") then -- "Pump-Action" achievement
             CreateProgressTracker("halloween_6", EHI:GetAchievementProgress("halloween_6_stats"), 666, false, true)

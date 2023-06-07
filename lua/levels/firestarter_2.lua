@@ -22,20 +22,26 @@ local MissionDoor =
     [Vector3(-2830.08, 341.886, 492.443)] = 101783 --102199
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoor)
-local Weapons = { 101473, 102717, 102718, 102720 }
-local OtherLoot = { 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }
-local FilterIsOk = EHI:GetFreeCustomSpecialFunctionID()
+
 local other =
 {
-    [107124] = EHI:AddLootCounter(function()
+    [104618] = EHI:AddAssaultDelay({ time = 30 + 1 + 5 + 30 + 30 })
+}
+if EHI:IsLootCounterVisible() then
+    local Weapons = { 101473, 102717, 102718, 102720 }
+    local OtherLoot = { 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }
+    local FilterIsOk = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+        if element:_check_difficulty() then
+            self._trackers:CallFunction("LootCounter", "SecuredMissionLoot") -- Server secured
+        end
+    end)
+    other[107121] = EHI:AddLootCounter2(function()
         local ef = tweak_data.ehi.functions
         local max = EHI:IsMayhemOrAbove() and 2 or 1
         local goat = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) and 1 or 0
         local random_loot = ef.GetNumberOfVisibleWeapons(Weapons) + ef.GetNumberOfVisibleOtherLoot(OtherLoot)
         EHI:ShowLootCounterNoCheck({
-            max = max,
-            -- Random Loot + Goat
-            additional_loot = random_loot + goat,
+            max = max + random_loot + goat,
             triggers =
             {
                 [100249] = { special_function = FilterIsOk }, -- N-OVK
@@ -45,15 +51,9 @@ local other =
             offset = true,
             client_from_start = true
         })
-    end),
+    end)
+end
 
-    [104618] = EHI:AddAssaultDelay({ time = 30 + 1 + 5 + 30 + 30 })
-}
-EHI:RegisterCustomSpecialFunction(FilterIsOk, function(self, trigger, element, ...)
-    if element:_check_difficulty() then
-        self._trackers:CallFunction("LootCounter", "SecuredMissionLoot") -- Server secured
-    end
-end)
 EHI:ParseTriggers({
     other = other
 })

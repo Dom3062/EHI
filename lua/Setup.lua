@@ -9,6 +9,7 @@ dofile(EHI.LuaPath .. "EHIBuffManager.lua")
 if EHI:IsVR() then
     dofile(EHI.LuaPath .. "EHITrackerManagerVR.lua")
 end
+dofile(EHI.LuaPath .. "EHITradeManager.lua")
 dofile(EHI.LuaPath .. "EHIManager.lua")
 
 local original =
@@ -22,6 +23,7 @@ function Setup:init_managers(managers, ...)
     managers.ehi_tracker = EHITrackerManager:new()
     managers.ehi_waypoint = EHIWaypointManager:new()
     managers.ehi_buff = EHIBuffManager:new()
+    managers.ehi_trade = EHITradeManager:new(managers.ehi_tracker)
     managers.ehi_manager = EHIManager:new(managers.ehi_tracker, managers.ehi_waypoint)
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitManagers, managers)
 end

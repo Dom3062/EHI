@@ -17,7 +17,9 @@ local function ShowStartedPopup(tracker, delay_popup)
         EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(tracker, tracker, "ShowStartedPopup"))
         return
     end
-    if tracker._popup_type == "daily" then
+    if tracker._failed_on_sync then
+        return
+    elseif tracker._popup_type == "daily" then
         managers.hud:ShowDailyStartedPopup(tracker._id)
     elseif tracker._popup_type == "trophy" then
         managers.hud:ShowTrophyStartedPopup(tracker._id)

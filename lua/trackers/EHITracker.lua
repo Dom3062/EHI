@@ -33,7 +33,7 @@ local function left(o, target_x)
     end
     o:set_x(target_x)
 end
-local function panel_w(o, target_w)
+local function panel_w(o, target_w, self)
     local TOTAL_T = 0.18
     local from_w = o:w()
     local abs = -(from_w - target_w)
@@ -43,6 +43,9 @@ local function panel_w(o, target_w)
         t = math_min(t + dt, TOTAL_T)
         local lerp = t / TOTAL_T
         o:set_w(math_lerp(from_w, target_w, lerp))
+    end
+    if self and self.Refresh then
+        self:Refresh()
     end
 end
 local function icon_x(o, target_x)
@@ -161,6 +164,11 @@ local function CreateHUDBGBox(panel, params)
 	return box_panel
 end
 
+---@class EHITracker
+---@field _forced_icons table?
+---@field _forced_time number?
+---@field _icon1 userdata
+---@field _panel_override_w number?
 EHITracker = class()
 EHITracker._update = true
 EHITracker._fade_time = 5
@@ -300,6 +308,14 @@ function EHITracker:SetPanelW(target_w)
         self._anim_set_w = nil
     end
     self._anim_set_w = self._panel:animate(panel_w, target_w)
+end
+
+function EHITracker:SetPanelWAndRefresh(target_w)
+    if self._anim_set_w then
+        self._panel:stop(self._anim_set_w)
+        self._anim_set_w = nil
+    end
+    self._anim_set_w = self._panel:animate(panel_w, target_w, self)
 end
 
 function EHITracker:SetIconX(target_x)

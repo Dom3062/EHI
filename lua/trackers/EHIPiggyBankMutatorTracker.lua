@@ -1,6 +1,8 @@
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
+---@class EHIPiggyBankMutatorTracker : EHIProgressTracker
+---@field super EHIProgressTracker
 EHIPiggyBankMutatorTracker = class(EHIProgressTracker)
 EHIPiggyBankMutatorTracker._forced_icons = { "piggy" }
 EHIPiggyBankMutatorTracker._piggy_tweak_data = tweak_data.mutators.piggybank.pig_levels

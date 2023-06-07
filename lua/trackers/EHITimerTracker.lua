@@ -1,5 +1,10 @@
 local EHI = EHI
 local Color = Color
+---@class EHITimerTracker : EHIWarningTracker
+---@field super EHIWarningTracker
+---@field _icon2 userdata
+---@field _icon3 userdata
+---@field _icon4 userdata
 EHITimerTracker = class(EHIWarningTracker)
 EHITimerTracker._update = false
 EHITimerTracker._autorepair_color = EHI:GetTWColor("drill_autorepair")

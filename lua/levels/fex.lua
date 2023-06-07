@@ -1,7 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
-local TT = EHI.Trackers
 local triggers = {
     -- Van Escape, 2 possible car escape scenarions here, the longer is here, the shorter is in WankerCar
     [101638] = { time = 1 + 60 + 900/30 + 5, id = "CarEscape", icons = Icon.CarEscape },
@@ -37,28 +36,16 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100022, 23480)] = true -- Fix
 }
 
----@type ParseAchievementTable
-local achievements =
-{
-    fex_10 =
-    {
-        elements =
-        {
-            [100185] = { max = 21, class = TT.AchievementProgress, special_function = SF.AddAchievementToCounter }, -- Default spawn
-            [102665] = { max = 21, class = TT.AchievementProgress, special_function = SF.AddAchievementToCounter }, -- Cave spawn
-            [103553] = { special_function = SF.SetAchievementFailed }
-        },
-        load_sync = function(self)
-            if EHI.ConditionFunctions.IsStealth() then
-                EHI:ShowAchievementLootCounterNoCheck({
-                    achievement = "fex_10",
-                    max = 21
-                })
-                self._trackers:SetTrackerProgress("fex_10", managers.loot:GetSecuredBagsAmount())
-            end
-        end
-    }
-}
+EHI:ShowAchievementLootCounter({
+    achievement = "fex_10",
+    max = 21,
+    load_sync = function(self)
+        self._trackers:SetTrackerProgress("fex_10", managers.loot:GetSecuredBagsAmount())
+    end,
+    show_loot_counter = true,
+    loot_counter_on_fail = true,
+    silent_failed_on_alarm = true
+})
 
 local other =
 {
@@ -67,11 +54,9 @@ local other =
 
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements,
     other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
-EHI:ShowLootCounter({ max = 21 })
 EHI:AddXPBreakdown({
     tactic =
     {
