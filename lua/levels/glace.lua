@@ -56,12 +56,10 @@ local achievements =
     },
     uno_4 =
     {
-        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard),
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
             [100765] = { status = "destroy", class = TT.AchievementStatus },
-            -- Very Hard or above check in the mission script
-            -- Reported here: https://steamcommunity.com/app/218620/discussions/14/3386156547847005343/
             [103397] = { special_function = SF.SetAchievementComplete },
             [102323] = { special_function = SF.SetAchievementFailed }
         }

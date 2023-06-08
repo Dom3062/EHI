@@ -57,7 +57,7 @@ EHI:AddXPBreakdown({
                 { amount = 3000, name = "mex1_hose_detached" },
                 { escape = 1000 },
             },
-            loot_all = 500
+            loot_all = 1000
         },
         loud =
         {
@@ -72,7 +72,7 @@ EHI:AddXPBreakdown({
                 { amount = 2000, name = "mex1_hose_detached" },
                 { escape = 1000 },
             },
-            loot_all = 500
+            loot_all = 1000
         }
     }
 })

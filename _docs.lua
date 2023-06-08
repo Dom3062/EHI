@@ -95,7 +95,7 @@ _G.IS_VR = ...
 ---@field counter AchievementCounterTable Modifies counter checks
 ---@field difficulty_pass boolean?
 ---@field loot_counter_on_fail boolean? If the achievement loot counter should switch to EHILootCounter class when failed
----@field silent_failed_on_alarm boolean Fails achievement silently and switches to Loot Counter (only for dropins that are currently syncing and after the achievement has failed)
+---@field silent_failed_on_alarm boolean Fails achievement silently and switches to Loot Counter (only for dropins that are currently syncing and after the achievement has failed); Depends on Loot Counter to be visible in order to work
 
 ---@class AchievementBagValueCounterTable
 ---@field achievement string Achievement ID
