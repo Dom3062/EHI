@@ -1,3 +1,6 @@
+r158 (17. 06. 2023):
+Fixed Lobby code panel overlapping with XP Overview panel
+
 r157 (08. 06. 2023):
 Updated to U237
 

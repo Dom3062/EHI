@@ -145,7 +145,8 @@ local diff_multiplier = tweak_data:get_value("experience_manager", "difficulty_m
 local original =
 {
     init = MissionBriefingGui.init,
-    set_slot_outfit = TeamLoadoutItem.set_slot_outfit
+    set_slot_outfit = TeamLoadoutItem.set_slot_outfit,
+    lobby_code_init = LobbyCodeMenuComponent.init
 }
 
 MissionBriefingGui.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
@@ -255,9 +256,10 @@ function MissionBriefingGui:AddXPBreakdown(params)
             local panel_v2 = { panel = self._ehi_panel:child("panel_v2"), lines = 0, adjust_h = true, selected = TacticSelected == 2 }
             self:ProcessBreakDown(tactic.loud, panel_v2)
             self._panels[2] = panel_v2
-            self._stealth_button:SetVisibleWithOffset(20)
-            self._loud_button:SetVisibleWithOffset(20)
-            self._ehi_panel:set_y(self._ehi_panel:y() + 20)
+            local offset = Global.game_settings.single_player and 20 or 25
+            self._stealth_button:SetVisibleWithOffset(offset)
+            self._loud_button:SetVisibleWithOffset(offset)
+            self._ehi_panel:set_y(self._ehi_panel:y() + offset)
             original.mouse_pressed = self.mouse_pressed
             self.mouse_pressed = function(gui, button, x, y, ...)
                 local result = original.mouse_pressed(gui, button, x, y, ...)
@@ -1294,4 +1296,9 @@ function TeamLoadoutItem:set_slot_outfit(slot, ...)
     if mcm and mcm._mission_briefing_gui then
         mcm._mission_briefing_gui:RefreshXPOverview()
     end
+end
+
+function LobbyCodeMenuComponent:init(...)
+    original.lobby_code_init(self, ...)
+    self._panel:set_y(0)
 end
