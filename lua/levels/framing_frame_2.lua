@@ -16,7 +16,7 @@ EHI:ParseTriggers({
 })
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi_tracker:AddEscapeChanceTracker(dropin, 24)
+        managers.ehi_escape:AddEscapeChanceTracker(dropin, 24)
     end)
 end
 EHI:AddXPBreakdown({

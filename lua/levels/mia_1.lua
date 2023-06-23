@@ -26,17 +26,11 @@ for _, index in ipairs(MethlabIndex) do
         element_sync_triggers[element_id].hook_element = EHI:GetInstanceElementID(100168, index)
     end
 end
-local delay = 1.5
 local triggers = {
     [102177] = { time = Heli, id = "Heli", icons = Icon.HeliDropBag }, -- Time before Bile arrives
 
     [106013] = { time = Truck, id = "Truck", icons = { Icon.Car }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [106017] = { id = "Truck", special_function = SF.PauseTracker },
-    [EHI:GetInstanceElementID(100038, 1300)] = { time = 90 + delay, id = "reader", icons = { Icon.PCHack }, class = TT.Pausable },
-    [EHI:GetInstanceElementID(100039, 1300)] = { time = 120 + delay, id = "reader", icons = { Icon.PCHack }, class = TT.Pausable },
-    [EHI:GetInstanceElementID(100040, 1300)] = { time = 180 + delay, id = "reader", icons = { Icon.PCHack }, class = TT.Pausable },
-    [EHI:GetInstanceElementID(100045, 1300)] = { id = "reader", special_function = SF.PauseTracker },
-    [EHI:GetInstanceElementID(100051, 1300)] = { id = "reader", special_function = SF.UnpauseTracker },
 
     [104299] = { time = 5, id = "C4GasStation", icons = { Icon.C4 } },
 
@@ -107,7 +101,7 @@ if EHI:IsLootCounterVisible() then
     end)}
     -- Basement
     local function IncreaseMaximum()
-        managers.ehi_tracker:IncreaseTrackerProgressMax("LootCounter", 1)
+        managers.ehi_tracker:IncreaseLootCounterProgressMax()
     end
     local IncreaseMaximumTrigger = { special_function = SF.CustomCode, f = IncreaseMaximum }
     -- Coke
@@ -124,14 +118,14 @@ if EHI:IsLootCounterVisible() then
         end
         Methbags = Methbags + 1
         MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
+        managers.ehi_tracker:RandomLootSpawned()
     end
     local function DecreaseMaximum()
         if MethlabExploded then
             return
         end
         MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined")
+        managers.ehi_tracker:RandomLootDeclined()
     end
     local IncreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = IncreaseMaximum2 }
     local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = DecreaseMaximum }
@@ -149,8 +143,8 @@ if EHI:IsLootCounterVisible() then
         if Methbags == 0 then -- Dropin; impossible to tell how many bags were cooked
             return
         end
-        managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter", Methbags - MethbagsCooked)
-        managers.ehi_tracker:CallFunction("LootCounter", "DecreaseMaxRandom", MethbagsPossibleToSpawn)
+        managers.ehi_tracker:DecreaseLootCounterProgressMax(Methbags - MethbagsCooked)
+        managers.ehi_tracker:DecreaseLootCounterMaxRandom(MethbagsPossibleToSpawn)
         MethlabExploded = true
     end
     local function CookingDone()
@@ -170,12 +164,12 @@ if EHI:IsLootCounterVisible() then
         if CarLootBlocked then
             return
         end
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined")
+        managers.ehi_tracker:RandomLootDeclined()
     end
     local DecreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = DecreaseMaximum2 }
     -- All cars; does not get triggered when maximum has been reached
     other[100721] = { special_function = SF.CustomCode, f = function()
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
+        managers.ehi_tracker:RandomLootSpawned()
     end }
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/001
     other[100523] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
@@ -204,8 +198,8 @@ EHI:AddXPBreakdown({
         { amount = 4000, name = "hm1_gas_station_destroyed" },
         { amount = 4000, name = "hm1_hatch_open" },
         { amount = 6000, name = "hm1_correct_barcode_scanned" },
-        { escape = 4000 },
-        { amount = 500, name = "hm1_meth_cooked", optional = true }
+        { amount = 500, name = "hm1_meth_cooked", optional = true },
+        { escape = 4000 }
     },
     loot_all = 1000,
     total_xp_override =

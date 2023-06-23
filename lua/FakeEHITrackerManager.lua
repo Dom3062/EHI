@@ -4,7 +4,6 @@ local panel_size_original = 32
 local panel_offset_original = 6
 local panel_size = panel_size_original
 local panel_offset = panel_offset_original
-local selected_color = Color(255, 255, 165, 0) / 255
 FakeEHITrackerManager = class()
 FakeEHITrackerManager.make_fine_text = BlackMarketGui.make_fine_text
 function FakeEHITrackerManager:init(panel)
@@ -103,6 +102,7 @@ function FakeEHITrackerManager:CreateFakeTracker(params)
     params.bg = self._bg_visibility
     params.corners = self._corner_visibility
     params.one_icon = self._icons_visibility
+    params.parent_class = self
     self._n_of_trackers = self._n_of_trackers + 1
     self._fake_trackers[self._n_of_trackers] = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params)
 end
@@ -124,6 +124,17 @@ function FakeEHITrackerManager:GetPeerColor()
         end
         return tweak_data.chat_colors[i] or tweak_data.chat_colors[#tweak_data.chat_colors] or Color.white
     end
+end
+
+function FakeEHITrackerManager:GetOtherPeerColor()
+    local colors = deep_clone(tweak_data.chat_colors)
+    local i = 1
+    local session = managers.network and managers.network:session()
+    if session and session:local_peer() then
+        i = session:local_peer():id() or 1
+    end
+    table.remove(colors, i)
+    return colors[math.random(#colors - 1)]
 end
 
 function FakeEHITrackerManager:AddPreviewText()
@@ -208,13 +219,13 @@ function FakeEHITrackerManager:UpdateEnemyCountTracker(value)
 end
 
 function FakeEHITrackerManager:UpdateFormat(format)
-    for _, tracker in pairs(self._fake_trackers) do
+    for _, tracker in ipairs(self._fake_trackers) do
         tracker:UpdateFormat(format)
     end
 end
 
 function FakeEHITrackerManager:UpdateEquipmentFormat(format)
-    for _, tracker in pairs(self._fake_trackers) do
+    for _, tracker in ipairs(self._fake_trackers) do
         if tracker.UpdateEquipmentFormat then
             tracker:UpdateEquipmentFormat(format)
         end
@@ -226,7 +237,7 @@ function FakeEHITrackerManager:UpdateXOffset(x)
     self._x = x_full
     self._horizontal.x = x_full
     self._horizontal.y_offset = 0
-    for i, tracker in pairs(self._fake_trackers) do
+    for i, tracker in ipairs(self._fake_trackers) do
         local x_new, _ = self:GetPos(i - 1)
         tracker:SetX(x_new)
     end
@@ -238,7 +249,7 @@ function FakeEHITrackerManager:UpdateYOffset(y)
     self._horizontal.x = self._x
     self._horizontal.y = y_full
     self._horizontal.y_offset = 0
-    for i, tracker in pairs(self._fake_trackers) do
+    for i, tracker in ipairs(self._fake_trackers) do
         local x_new, y_new = self:GetPos(i - 1)
         tracker:SetPos(x_new, y_new)
     end
@@ -248,14 +259,14 @@ function FakeEHITrackerManager:UpdateYOffset(y)
 end
 
 function FakeEHITrackerManager:SetSelected(id)
-    for _, tracker in pairs(self._fake_trackers) do
-        tracker:SetTextColor(id == tracker:GetID())
+    for _, tracker in ipairs(self._fake_trackers) do
+        tracker:SetSelected(id)
     end
 end
 
 function FakeEHITrackerManager:UpdateTextScale(scale)
     self._text_scale = scale
-    for _, tracker in pairs(self._fake_trackers) do
+    for _, tracker in ipairs(self._fake_trackers) do
         tracker:UpdateTextScale(scale)
     end
 end
@@ -269,7 +280,7 @@ end
 
 function FakeEHITrackerManager:UpdateBGVisibility(visibility)
     self._bg_visibility = visibility
-    for _, tracker in pairs(self._fake_trackers) do
+    for _, tracker in ipairs(self._fake_trackers) do
         tracker:UpdateBGVisibility(visibility, self._corner_visibility)
     end
 end
@@ -279,14 +290,14 @@ function FakeEHITrackerManager:UpdateCornerVisibility(visibility)
     if not self._bg_visibility then
         return
     end
-    for _, tracker in pairs(self._fake_trackers) do
+    for _, tracker in ipairs(self._fake_trackers) do
         tracker:UpdateCornerVisibility(visibility)
     end
 end
 
 function FakeEHITrackerManager:UpdateIconsVisibility(visibility)
     self._icons_visibility = visibility
-    for _, tracker in pairs(self._fake_trackers) do
+    for _, tracker in ipairs(self._fake_trackers) do
         tracker:UpdateIconsVisibility(visibility)
     end
     if self._tracker_alignment == 2 then -- Horizontal Alignment
@@ -303,7 +314,7 @@ function FakeEHITrackerManager:UpdateTrackerAlignment(alignment)
 end
 
 function FakeEHITrackerManager:Redraw()
-    for _, tracker in pairs(self._fake_trackers) do
+    for _, tracker in ipairs(self._fake_trackers) do
         tracker:destroy()
     end
     if self._preview_text then
@@ -324,7 +335,7 @@ function FakeEHITrackerManager:UpdateMinionTracker(value)
 end
 
 function FakeEHITrackerManager:GetTracker(id)
-    for _, tracker in pairs(self._fake_trackers) do
+    for _, tracker in ipairs(self._fake_trackers) do
         if tracker:GetID() == id then
             return tracker
         end
@@ -437,6 +448,7 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
 end
 
 FakeEHITracker = class()
+FakeEHITracker._selected_color = Color(255, 255, 165, 0) / 255
 function FakeEHITracker:init(panel, params)
     self._scale = params.scale
     self._text_scale = params.text_scale
@@ -505,10 +517,12 @@ function FakeEHITracker:init(panel, params)
         end
     end
     self._id = params.id
+    self._parent_class = params.parent_class
     if params.extend then
         self._panel:set_w(self._panel:w() * 2)
         self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     end
+    self._selected = false
 end
 
 function FakeEHITracker:GetID()
@@ -575,8 +589,17 @@ function FakeEHITracker:SetPos(x, y)
     self:SetY(y)
 end
 
+function FakeEHITracker:SetSelected(id)
+    local previous = self._selected
+    self._selected = id == self:GetID()
+    if previous == self._selected then
+        return
+    end
+    self:SetTextColor(self._selected)
+end
+
 function FakeEHITracker:SetTextColor(selected)
-    self._text:set_color(selected and selected_color or Color.white)
+    self._text:set_color(selected and self._selected_color or Color.white)
 end
 
 function FakeEHITracker:UpdateBGVisibility(visibility, corners)
@@ -706,15 +729,53 @@ end
 FakeEHIMinionCounterTracker = class(FakeEHIEquipmentTracker)
 function FakeEHIMinionCounterTracker:init(panel, params)
     FakeEHIMinionCounterTracker.super.init(self, panel, params)
-    self:UpdateFormat(EHI:GetOption("show_minion_per_player"))
+    self._charges_second_player = math.random(params.min, params.charges)
+    self._color_second_player = self._parent_class:GetOtherPeerColor()
+    self._text_second_player = self._time_bg_box:text({
+        name = "text_second_player",
+        text = tostring(self._charges_second_player),
+        align = "center",
+        vertical = "center",
+        w = self._time_bg_box:w() / 2,
+        h = self._time_bg_box:h(),
+        font = tweak_data.menu.pd2_large_font,
+		font_size = self._panel:h() * self._text_scale,
+        color = self._color_second_player
+    })
+    self._text_second_player:set_right(self._time_bg_box:right())
+    self:FitTheText(self._text_second_player)
+    self._text_total = self._time_bg_box:text({
+        name = "text_total",
+        text = tostring(self._charges + self._charges_second_player),
+        align = "center",
+        vertical = "center",
+        w = self._time_bg_box:w(),
+        h = self._time_bg_box:h(),
+        font = tweak_data.menu.pd2_large_font,
+		font_size = self._panel:h() * self._text_scale,
+        color = Color.white
+    })
+    self:UpdateFormat(EHI:GetOption("show_minion_option"))
 end
 
 function FakeEHIMinionCounterTracker:UpdateFormat(value)
-    if value then -- "Show Minions Per Player" option is enabled
-        self._icon1:set_color(FakeEHITrackerManager:GetPeerColor())
-    else -- Disabled
-        self._icon1:set_color(Color.white)
+    self._icon1:set_color(value == 1 and self._parent_class:GetPeerColor() or Color.white)
+    self._text_second_player:set_visible(value == 3)
+    self._text_total:set_visible(value == 2)
+    self._text:set_visible(value ~= 2)
+    self._text:set_color(value == 3 and self._parent_class:GetPeerColor() or Color.white)
+    self._format = value
+    if value == 3 then
+        self._text:set_w(self._time_bg_box:w() / 2)
+    else
+        self._text:set_w(self._time_bg_box:w())
     end
+    self:FitTheText()
+end
+
+function FakeEHIMinionCounterTracker:SetTextColor(selected)
+    self._text:set_color(selected and self._selected_color or (self._format == 3 and self._parent_class:GetPeerColor() or Color.white))
+    self._text_second_player:set_color(selected and self._selected_color or self._color_second_player)
 end
 
 FakeEHICountTracker = class(FakeEHITracker)
@@ -800,7 +861,7 @@ end
 
 function FakeEHITimerTracker:SetTextColor(selected)
     FakeEHITimerTracker.super.SetTextColor(self, selected)
-    self._progress_text:set_color(selected and selected_color or Color.white)
+    self._progress_text:set_color(selected and self._selected_color or Color.white)
 end
 
 function FakeEHITimerTracker:UpdateTextScale(scale)

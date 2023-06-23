@@ -275,8 +275,7 @@
     "ehi_show_minion_tracker" : "Mostrar contador de enemigos convertidos",
     "ehi_show_minion_tracker_desc" : "Mostrar / ocultar un contador de cuántos enemigos convertidos hay en el mapa.",
 
-    "ehi_show_minion_per_player" : "Mostrar enemigos convertidos por cada jugador",
-    "ehi_show_minion_per_player_desc" : "Mostrar / ocultar el número de enemigos convertidos por cada jugador con su color respectivo.",
+    "ehi_show_minion_option_3" : "Mostrar enemigos convertidos por cada jugador",
 
     "ehi_show_minion_killed_message" : "Mostrar mensaje de 'Enemigo convertido asesinado'",
     "ehi_show_minion_killed_message_desc" : "Mostrar / ocultar un mensaje cuando tu enemigo convertido haya sido asesinado.",

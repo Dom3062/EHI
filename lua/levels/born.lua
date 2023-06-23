@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local trigger_icon_all = { Icon.Defend }
 local triggers = {
     [101034] = { id = "MikeDefendTruck", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033, waypoint = { position_by_element = EHI:GetInstanceElementID(100483, 1350), remove_vanilla_waypoint = EHI:GetInstanceElementID(100483, 1350) } },
     [101038] = { id = "MikeDefendTruck", special_function = SF.PauseTracker },
@@ -18,7 +17,6 @@ if EHI:IsClient() then
     triggers[101034].additional_time = 80
     triggers[101034].random_time = 10
     triggers[101034].special_function = SF.UnpauseTrackerIfExists
-    triggers[101034].icons = trigger_icon_all
     triggers[101034].delay_only = true
     triggers[101034].class = TT.InaccuratePausable
     triggers[101034].synced = { class = TT.Pausable }
@@ -26,7 +24,6 @@ if EHI:IsClient() then
     triggers[101535].additional_time = 90
     triggers[101535].random_time = 30
     triggers[101535].special_function = SF.UnpauseTrackerIfExists
-    triggers[101535].icons = trigger_icon_all
     triggers[101535].delay_only = true
     triggers[101535].class = TT.InaccuratePausable
     triggers[101535].synced = { class = TT.Pausable }
@@ -58,7 +55,7 @@ local other =
     [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
 
-EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, nil, trigger_icon_all)
+EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, nil, { Icon.Defend })
 EHI:ShowLootCounter({ max = 9 })
 
 local tbl =
@@ -89,18 +86,83 @@ local MissionDoor =
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoor)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        biker_mike_in_the_trailer = { amount = 3000, times = 1 },
-        biker_seat_collected = 6000,
-        biker_skull_collected = 8000,
-        biker_exhaust_pipe_collected = 2000,
-        biker_engine_collected = 3000,
-        biker_tools_collected = 2000,
-        biker_cola_collected = 1000,
-        biker_help_mike_garage = 3000,
-        biker_defend_mike = { amount = 3000, times = 3 },
-        escape = 2500
+        { amount = 3000, name = "biker_mike_in_the_trailer", times = 1 },
+        {
+            random =
+            {
+                seat =
+                {
+                    { amount = 6000, name = "biker_seat_collected" }
+                },
+                skull =
+                {
+                    { amount = 8000, name = "biker_skull_collected" }
+                },
+                exhaust_pipe =
+                {
+                    { amount = 2000, name = "biker_exhaust_pipe_collected" }
+                },
+                engine =
+                {
+                    { amount = 3000, name = "biker_engine_collected" }
+                },
+                tools =
+                {
+                    { amount = 2000, name = "biker_tools_collected" }
+                },
+                cola =
+                {
+                    { amount = 1000, name = "biker_cola_collected" },
+                },
+                garage =
+                {
+                    { amount = 3000, name = "biker_help_mike_garage" }
+                }
+            }
+        },
+        { amount = 3000, name = "biker_defend_mike" },
+        { escape = 2500 }
     },
-    loot_all = 500
+    loot_all = 500,
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives =
+                {
+                    biker_mike_in_the_trailer = true,
+                    random =
+                    {
+                        exhaust_pipe = true,
+                        tools = true,
+                        engine = true
+                    },
+                    biker_defend_mike = { times = 3 },
+                    escape = true
+                },
+                loot_all = { times = 0 }
+            },
+            max =
+            {
+                objectives =
+                {
+                    biker_mike_in_the_trailer = true,
+                    random =
+                    {
+                        seat = true,
+                        skull = true,
+                        engine = true,
+                        cola = true
+                    },
+                    biker_defend_mike = { times = 3 },
+                    escape = true
+                },
+                loot_all = { times = 9 }
+            }
+        }
+    }
 })

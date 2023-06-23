@@ -34,11 +34,16 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-EHI:ParseTriggers({ mission = triggers })
+local other =
+{
+    [101374] = EHI:AddAssaultDelay({ time = 3 + 30 + 30 })
+}
+
+EHI:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowAchievementLootCounter({
     achievement = "mex2_9",
     max = 25,
-    remove_after_reaching_target = false,
+    show_finish_after_reaching_target = true,
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 })
 EHI:ShowLootCounter({ max = 50 })

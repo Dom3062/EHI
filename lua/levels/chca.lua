@@ -162,8 +162,8 @@ local achievements =
         difficulty_pass = EHI:IsMayhemOrAbove(),
         elements =
         {
-            [100264] = { max = 8, class = TT.AchievementProgress, remove_after_reaching_target = false }, -- Guest Rooms (civilian mode)
-            [102955] = { max = 8, class = TT.AchievementProgress, remove_after_reaching_target = false }, -- Crew Deck
+            [100264] = { max = 8, class = TT.AchievementProgress, show_finish_after_reaching_target = true }, -- Guest Rooms (civilian mode)
+            [102955] = { max = 8, class = TT.AchievementProgress, show_finish_after_reaching_target = true }, -- Crew Deck
             [102944] = { special_function = SF.IncreaseProgress }, -- Bodybag thrown
             [103371] = { special_function = SF.SetAchievementFailed } -- Civie killed
         },
@@ -220,10 +220,10 @@ EHI:RegisterCustomSpecialFunction(LootLeft, function(self, ...)
             left_to_burn = left_to_burn - 1
         end
     end
-    self._trackers:DecreaseTrackerProgressMax("LootCounter", left_to_burn)
+    self._trackers:DecreaseLootCounterProgressMax(left_to_burn)
 end)
 EHI:AddLoadSyncFunction(function(self)
     if managers.game_play_central:GetMissionDisabledUnit(200942) then -- AI Vision Blocker; "editor_only" continent
-        self._trackers:DecreaseTrackerProgressMax("LootCounter", 16)
+        self._trackers:DecreaseLootCounterProgressMax(16)
     end
 end)]]

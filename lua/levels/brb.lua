@@ -42,7 +42,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard),
         elements =
         {
-            [101136] = { max = 12, class = TT.AchievementProgress, remove_after_reaching_target = false, special_function = SF.AddAchievementToCounter, data = {
+            [101136] = { max = 12, class = TT.AchievementProgress, show_finish_after_reaching_target = true, special_function = SF.AddAchievementToCounter, data = {
                 counter = {
                     check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
                     loot_type = "gold"

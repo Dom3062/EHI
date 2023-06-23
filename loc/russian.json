@@ -281,8 +281,7 @@
     "ehi_show_minion_tracker" : "Показывать союзных бойцов",
     "ehi_show_minion_tracker_desc" : "Показывать, сколько бойцов было переведено игроками на свою сторону",
     
-    "ehi_show_minion_per_player" : "Показать количество конвёртов на одного игрока",
-    "ehi_show_minion_per_player_desc" : "показывать в трекере цветным игроком количество конвёртов",
+    "ehi_show_minion_option_3" : "Показать количество конвёртов на одного игрока",
 
     "ehi_show_minion_killed_message" : "Показывать сообщение 'конвёрт убит'",
     "ehi_show_minion_killed_message_desc" : "показывать сообщение, когда ваш конвёрт был убит",
@@ -640,6 +639,7 @@
     "ehi_experience_xp_bonus" : "Бонусный опыт",
     "ehi_experience_trigger_times" : "$times;x макс.",
     "ehi_experience_random_objectives" : "Случайные цели ($count):",
+    "ehi_experience_random_objectives_no_count" : "Случайные цели:",
     "ehi_experience_heli_escape" : "Побег на вертолёте",
     "ehi_experience_loud_escape" : "Побег по-громкому",
     "ehi_experience_stealth_escape" : "Побег по-тихому",
@@ -786,7 +786,6 @@
     "ehi_experience_gs_turn_off_powerbox" : "Отключение блока питания",
     "ehi_experience_gs_clear_fire_debris" : "Убрано препятствие в доме с пожаром",
     "ehi_experience_gs_saw_lightpost" : "Фонарный столб распилен",
-    "ehi_experience_gs2_plane_started" : "Сигнал подан",
     "ehi_experience_gs2_cage_grabbed" : "Клетка поймана",
     "ehi_experience_gs2_arrived_on_bridge" : "Прибытие на мост",
     "ehi_experience_gs2_drilled_door" : "Открытие двери на управление мостом",

@@ -31,7 +31,7 @@ else
             if managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3) then -- Cash or Gold
                 start_chance = 15 -- 5 (start_chance) + 10
             end
-            managers.ehi_tracker:AddEscapeChanceTracker(dropin, start_chance)
+            managers.ehi_escape:AddEscapeChanceTracker(dropin, start_chance)
         end)
     end
     EscapeXP = 12000

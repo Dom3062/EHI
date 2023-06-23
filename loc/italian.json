@@ -165,8 +165,7 @@
     "ehi_show_minion_tracker" : "Mostra Tracciatore Convertiti",
     "ehi_show_minion_tracker_desc" : "Mostra un tracciatore per segnalare il numero di poliziotti convertiti presente sulla mappa",
  
-    "ehi_show_minion_per_player" : "Mostra Numero di Convertiti per Giocatore",
-    "ehi_show_minion_per_player_desc" : "Mostra nel tracciatore il numero di conversioni colorate del giocatore",
+    "ehi_show_minion_option_3" : "Mostra Numero di Convertiti per Giocatore",
  
     "ehi_show_difficulty_tracker" : "Mostra Tracciatore Difficoltà",
     "ehi_show_difficulty_tracker_desc" : "Mostra un tracciatore per quanto è difficile l'ondata",

@@ -32,7 +32,7 @@ if EHI:GetOption("show_escape_chance") then
         start_chance = 36
     end
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi_tracker:AddEscapeChanceTracker(dropin, start_chance)
+        managers.ehi_escape:AddEscapeChanceTracker(dropin, start_chance)
     end)
 end
 

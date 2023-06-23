@@ -17,6 +17,14 @@ local instances =
         [100032] = { time = 7, id = "HostageRescue", icons = { Icon.Kill }, class = TT.Warning },
         [100036] = { id = "HostageRescue", special_function = SF.RemoveTracker }
     },
+    ["levels/instances/unique/hlm_reader/world"] =
+    {
+        [100038] = { time = 90 + 1.5, id = "Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element = 100060, remove_vanilla_waypoint = 100060, restore_on_done = true } },
+        [100039] = { time = 120 + 1.5, id = "Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element = 100060, remove_vanilla_waypoint = 100060, restore_on_done = true } },
+        [100040] = { time = 180 + 1.5, id = "Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element = 100060, remove_vanilla_waypoint = 100060, restore_on_done = true } },
+        [100045] = { id = "Reader", special_function = SF.PauseTracker },
+        [100051] = { id = "Reader", special_function = SF.UnpauseTracker }
+    },
     ["levels/instances/unique/pbr/pbr_mountain_comm_dish/world"] =
     {
         [100008] = { time = 5, id = "SatelliteC4Explosion", icons = { Icon.C4 } }
@@ -68,6 +76,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
             local continent_data = managers.worlddefinition._continents[instance.continent]
             local triggers = {}
             local waypoints = {}
+            local defer_loading_waypoints = false
             for id, trigger in pairs(instance_elements) do
                 local final_index = EHI:GetInstanceElementID(id, start_index, continent_data.base_id)
                 if trigger.remove_vanilla_waypoint then
@@ -78,9 +87,14 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                     if trigger.element then
                         new_trigger.element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
                     end
-                    if trigger.waypoint and trigger.waypoint.position_by_element then
-                        new_trigger.waypoint.position_by_element = EHI:GetInstanceElementID(trigger.waypoint.position_by_element, start_index, continent_data.base_id)
-                        new_trigger.waypoint.position = EHI:AddPositionFromElement(new_trigger.waypoint, true)
+                    if trigger.waypoint then
+                        if trigger.waypoint.position_by_element then
+                            new_trigger.waypoint.position_by_element = EHI:GetInstanceElementID(trigger.waypoint.position_by_element, start_index, continent_data.base_id)
+                            defer_loading_waypoints = true
+                        end
+                        if trigger.waypoint.remove_vanilla_waypoint then
+                            new_trigger.waypoint.remove_vanilla_waypoint = EHI:GetInstanceElementID(trigger.waypoint.remove_vanilla_waypoint, start_index, continent_data.base_id)
+                        end
                     end
                     if trigger.sync and client then
                         EHI:AddSyncTrigger(final_index, new_trigger)
@@ -88,7 +102,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                     triggers[final_index] = new_trigger
                 end
             end
-            EHI:ParseMissionTriggers(triggers)
+            EHI:ParseMissionInstanceTriggers(triggers, defer_loading_waypoints)
             if next(waypoints) then
                 EHI:DisableWaypoints(waypoints)
             end

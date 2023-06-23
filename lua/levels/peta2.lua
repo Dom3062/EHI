@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local goat_pick_up = { Icon.Heli, Icon.Interact }
+local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local function f_PilotComingInAgain(self, trigger, ...)
     self._trackers:RemoveTracker("PilotComingIn")
     if self._trackers:TrackerExists(trigger.id) then
@@ -48,10 +49,10 @@ local achievements =
     },
     peta_5 =
     {
-        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        difficulty_pass = OVKorAbove,
         elements =
         {
-            [100002] = { max = (EHI:IsMayhemOrAbove() and 14 or 12), class = TT.AchievementProgress, remove_after_reaching_target = false },
+            [100002] = { max = (EHI:IsMayhemOrAbove() and 14 or 12), class = TT.AchievementProgress, show_finish_after_reaching_target = true },
             [102095] = { special_function = SF.CustomCode, f = function()
                 peta_5_IncreaseEnabled = true
             end },
@@ -93,18 +94,67 @@ local DisableWaypoints =
     [101738] = true
 }
 EHI:DisableWaypoints(DisableWaypoints)
-EHI:AddXPBreakdown({
-    objective =
+local GoatsToSecure = EHI:GetValueBasedOnDifficulty({
+    normal = 5,
+    hard = 7,
+    veryhard = 10,
+    overkill = 13,
+    mayhem_or_above = 15
+})
+local objectives =
+{
+    { amount = 7000, name = "gs2_cage_drop", times = 1 },
+    { amount = 500, name = "cage_assembled" },
+    { amount = 500, name = "gs2_cage_grabbed" },
+    { amount = 4500, name = "gs2_arrived_on_bridge" },
+    { amount = 4500, name = "gs2_drilled_door" },
+    { amount = 2000, name = "gs2_bridge_rotated" },
+    { escape = 3000 }
+}
+local total_xp_override =
+{
+    params =
     {
-        gs2_plane_started = { amount = 7000, times = 1 },
-        cage_assembled = 500,
-        gs2_cage_grabbed = 500,
-        gs2_arrived_on_bridge = 4500,
-        gs2_drilled_door = 4500,
-        gs2_bridge_rotated = 2000,
-        gs2_peta_5 = 50000,
-        escape = 3000
+        custom = {}
+    }
+}
+local loot_all = { times = GoatsToSecure }
+local min_max =
+{
+    type = "min_with_max",
+    min =
+    {
+        objectives = true,
+        loot_all = loot_all
     },
-    loot_all = 500,
-    no_total_xp = true
+    max =
+    {
+        objectives =
+        {
+            gs2_cage_drop = true,
+            cage_assembled = { times = GoatsToSecure },
+            gs2_cage_grabbed = { times = GoatsToSecure },
+            gs2_arrived_on_bridge = true,
+            gs2_drilled_door = true,
+            gs2_bridge_rotated = true,
+            escape = true
+        },
+        loot_all = loot_all
+    }
+}
+if OVKorAbove then
+    table.insert(objectives, 4, { amount = 50000, name = "gs2_peta_5", optional = true }) -- Farmer Miserable
+    total_xp_override.params.custom[1] = min_max
+    local peta_5 = deep_clone(min_max)
+    peta_5.name = "gs2_peta_5"
+    peta_5.type = "max_only"
+    peta_5.max.objectives = true
+    total_xp_override.params.custom[2] = peta_5
+else
+    total_xp_override.params.custom[1] = min_max
+end
+EHI:AddXPBreakdown({
+    objectives = objectives,
+    loot_all = { amount = 500, text = "each_goat_secured" },
+    total_xp_override = total_xp_override
 })

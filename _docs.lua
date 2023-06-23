@@ -13,6 +13,8 @@ _G.IS_VR = ...
 ---@field ehi_waypoint EHIWaypointManager
 ---@field ehi_buff EHIBuffManager
 ---@field ehi_trade EHITradeManager
+---@field ehi_escape EHIEscapeChanceManager
+---@field ehi_deployable EHIDeployableManager
 ---@field loot LootManager
 ---@field [unknown] unknown
 
@@ -23,6 +25,8 @@ _G.IS_VR = ...
 ---@class _G Global
 ---@field managers managers Global table of all managers in the game
 ---@field tweak_data tweak_data Global table of all configuration data
+---@field PrintTableDeep fun(tbl: table, maxDepth: integer?, allowLogHeavyTables: boolean?, customNameForInitialLog: string?, tablesToIgnore: table|string?, skipFunctions: boolean?) Recursively prints tables; depends on mod: https://modworkshop.net/mod/34161
+---@field PrintTable fun(tbl: table) Prints tables, provided by SuperBLT
 
 ---@class mathlib
 ---@field lerp fun(a: number, b: number, lerp: number): number Linearly interpolates between `a` and `b` by `lerp`
@@ -83,7 +87,7 @@ _G.IS_VR = ...
 ---@field show_loot_counter boolean If achievement is already earned, show Loot Counter instead
 ---@field max integer Maximum number of loot
 ---@field progress integer Start with progress if provided, otherwise 0
----@field remove_after_reaching_target boolean Setting this to `false` will show `FINISH` in the tracker
+---@field show_finish_after_reaching_target boolean Setting this to `true` will show `FINISH` in the tracker
 ---@field class string Achievement tracker class
 ---@field load_sync fun(self: EHIManager) Synchronizes secured bags in the achievement
 ---@field alarm_callback fun(dropin: boolean) Do some action when alarm is sounded
@@ -100,7 +104,7 @@ _G.IS_VR = ...
 ---@class AchievementBagValueCounterTable
 ---@field achievement string Achievement ID
 ---@field value number Value of loot needed to secure
----@field remove_after_reaching_target boolean Setting this to `false` will show `FINISH` in the tracker
+---@field show_finish_after_reaching_target boolean Setting this to `true` will show `FINISH` in the tracker
 ---@field counter AchievementCounterTable Modifies counter checks
 
 ---@class AddTrackerTable
@@ -113,6 +117,7 @@ _G.IS_VR = ...
 ---@field time number
 ---@field class string? Waypoint class, defaults to `EHIWaypoint` if not provided
 ---@field remove_vanilla_waypoint number?
+---@field restore_on_done boolean
 ---@field icon string|table
 ---@field texture string
 ---@field text_rect table
@@ -131,3 +136,33 @@ _G.IS_VR = ...
 
 ---@class MissionDoorTable
 ---@field [Vector3] number|MissionDoorAdvancedTable
+
+---@class ValueBasedOnDifficultyTable
+---@field normal_or_above any Normal or above
+---@field normal any Normal
+---@field hard_or_below any Hard or below
+---@field hard_or_above any Hard or above
+---@field hard any Hard
+---@field veryhard_or_below any Very Hard or below
+---@field veryhard_or_above any Very Hard or above
+---@field veryhard any Very Hard
+---@field overkill_or_below any OVERKILL or below
+---@field overkill_or_above any OVERKILL or above
+---@field overkill any OVERKILL
+---@field mayhem_or_below any Mayhem or below
+---@field mayhem_or_above any Mayhem or above
+---@field mayhem any Mayhem
+---@field deathwish_or_below any Death Wish or below
+---@field deathwish_or_above any Death Wish or above
+---@field deathwish any Death Wish
+---@field deathsentence_or_below any Death Sentence or below
+---@field deathsentence any Death Sentence
+
+---@class KeypadResetTimerTable
+---@field normal number Normal `5s`
+---@field hard number Hard `15s`
+---@field veryhard number Very Hard `15s`
+---@field overkill number OVERKILL `20s`
+---@field mayhem number Mayhem `30s`
+---@field deathwish number Death Wish `30s`
+---@field deathsentence number Death Sentence `40s`

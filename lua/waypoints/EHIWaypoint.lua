@@ -1,11 +1,12 @@
 ---@class EHIWaypoint
 ---@field new fun(waypoint: WaypointDataTable, params: table, parent_class: EHIWaypointManager): self
+---@field _parent_class EHIWaypointManager
 EHIWaypoint = class()
 EHIWaypoint._update = true
 EHIWaypoint._default_color = Color.white
 function EHIWaypoint:init(waypoint, params, parent_class)
     self._id = params.id
-    self._time = params.time
+    self._time = params.time or 0
     self._timer = waypoint.timer_gui
     self._bitmap = waypoint.bitmap
     self._arrow = waypoint.arrow
@@ -17,6 +18,10 @@ if EHI:GetOption("time_format") == 1 then
     EHIWaypoint.Format = tweak_data.ehi.functions.FormatSecondsOnly
 else
     EHIWaypoint.Format = tweak_data.ehi.functions.FormatMinutesAndSeconds
+end
+
+function EHIWaypoint:WaypointToRestore(id)
+    self._vanilla_waypoint = id
 end
 
 function EHIWaypoint:update(t, dt)
@@ -52,6 +57,9 @@ function EHIWaypoint:delete()
 end
 
 function EHIWaypoint:destroy()
+    if self._vanilla_waypoint then
+        self._parent_class:RestoreVanillaWaypoint(self._vanilla_waypoint)
+    end
 end
 
 if EHI:IsVR() then

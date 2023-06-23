@@ -13,7 +13,7 @@ if EHI:GetOption("show_one_icon") then
     HeliWaterFill = { { icon = Icon.Heli, color = Color("D4F1F9") } }
 end
 local triggers = {
-    [101499] = { time = 155 + 25, id = "EscapeHeli", icons = Icon.HeliEscape },
+    [101499] = { time = 155 + 25, id = "HeliEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 101525 } },
     [101253] = heli_65,
     [101254] = heli_20,
     [101255] = heli_65,
@@ -23,7 +23,7 @@ local triggers = {
     [101279] = heli_65,
     [101280] = heli_20,
 
-    [101691] = { time = 10 + 700/30, id = "PlaneEscape", icons = Icon.HeliEscape },
+    [101691] = { time = 10 + 700/30, id = "PlaneEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 100058 } },
 
     [102996] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
 
@@ -82,6 +82,7 @@ local achievements =
     }
 }
 
+--- 100475
 local other =
 {
     [101018] = EHI:AddAssaultDelay({ time = 30, special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 } })
@@ -95,7 +96,7 @@ if EHI:IsLootCounterVisible() then
         other[EHI:GetInstanceElementID(100202, index)] = Trigger
     end
     other[101041] = { special_function = EHI:RegisterCustomSpecialFunction(function()
-        EHI:ShowLootCounterNoCheck({
+        EHI:ShowLootCounterNoChecks({
             -- 1 flipped wagon crate; guaranteed to have gold or 2x money; 15% chance to spawn 2x money, otherwise gold
             -- If second money bundle spawns, the maximum is increased in the Trigger above
             max = 5 -- 4 Bomb parts + 1
@@ -103,24 +104,15 @@ if EHI:IsLootCounterVisible() then
     end)}
     -- 1 random loot in train wagon, 35% chance to spawn
     -- Wagons are selected randomly; sometimes 2 with possible loot spawns, sometimes 1
-    local IncreaseMaxRandomLoot = EHI:GetFreeCustomSpecialFunctionID()
-    other[104274] = { special_function = IncreaseMaxRandomLoot, index = 500 }
-    other[104275] = { special_function = IncreaseMaxRandomLoot, index = 520 }
-    other[104276] = { special_function = IncreaseMaxRandomLoot, index = 1080 }
-    other[104277] = { special_function = IncreaseMaxRandomLoot, index = 1100 }
-    other[104278] = { special_function = IncreaseMaxRandomLoot, index = 1120 }
-    other[104279] = { special_function = IncreaseMaxRandomLoot, index = 1140 }
-    other[104280] = { special_function = IncreaseMaxRandomLoot, index = 1160 }
-    other[104281] = { special_function = IncreaseMaxRandomLoot, index = 1300 }
     local function DelayRejection(crate)
         EHI:DelayCall(tostring(crate), 2, function()
-            managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined2", crate)
+            managers.ehi_tracker:RandomLootDeclinedCheck(crate)
         end)
     end
     local function LootSpawned(crate)
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned2", crate, true)
+        managers.ehi_tracker:RandomLootSpawnedCheck(crate, true)
     end
-    EHI:RegisterCustomSpecialFunction(IncreaseMaxRandomLoot, function(self, trigger, ...)
+    local IncreaseMaxRandomLoot = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
         local index = trigger.index
         local crate = EHI:GetInstanceUnitID(100000, index)
         local LootTrigger = {}
@@ -131,8 +123,16 @@ if EHI:IsLootCounterVisible() then
         end)
         self:AddTriggers2(LootTrigger, nil, "LootCounter")
         self:HookElements(LootTrigger)
-        self._trackers:CallFunction("LootCounter", "IncreaseMaxRandom", 1)
+        self._trackers:IncreaseLootCounterMaxRandom()
     end)
+    other[104274] = { special_function = IncreaseMaxRandomLoot, index = 500 }
+    other[104275] = { special_function = IncreaseMaxRandomLoot, index = 520 }
+    other[104276] = { special_function = IncreaseMaxRandomLoot, index = 1080 }
+    other[104277] = { special_function = IncreaseMaxRandomLoot, index = 1100 }
+    other[104278] = { special_function = IncreaseMaxRandomLoot, index = 1120 }
+    other[104279] = { special_function = IncreaseMaxRandomLoot, index = 1140 }
+    other[104280] = { special_function = IncreaseMaxRandomLoot, index = 1160 }
+    other[104281] = { special_function = IncreaseMaxRandomLoot, index = 1300 }
 end
 
 EHI:ParseTriggers({
@@ -153,12 +153,11 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
-                objectives = true,
-                loot_all = { times = 4 }
-            },
-            no_max = true
+                -- Max = 2 money spawned instead of gold and all four train vagons have loot (very unprobable, but still...)
+                loot_all = { min = 5, max = 10 }
+            }
         }
     }
 })

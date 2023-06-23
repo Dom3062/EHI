@@ -43,7 +43,7 @@ local other =
             EHI:ShowLootCounterNoCheck({})
             CreateCounter = false
         end
-        self._trackers:IncreaseTrackerProgressMax("LootCounter")
+        self._trackers:IncreaseLootCounterProgressMax()
     end)
 end]]
 

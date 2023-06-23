@@ -96,17 +96,16 @@ function EHIMenu:fcc_equipment_tracker(focus, ...)
 end
 
 function EHIMenu:fcc_equipment_tracker_menu(focus, ...)
-    local function f()
+    EHI:DelayCall("HighlightDelay", 0.5, function()
         self:SetFocus(focus, focus and "show_equipment_tracker" or "")
-    end
-    EHI:DelayCall("HighlightDelay", 0.5, f)
+    end)
 end
 
 function EHIMenu:UpdateMinionTracker(value)
     self._preview_panel:UpdateMinionTracker(value)
 end
 
-function EHIMenu:fcc_show_minion_per_player(focus, ...)
+function EHIMenu:fcc_show_minion_option(focus, ...)
     self:SetFocus(focus, focus and "show_minion_tracker" or "")
 end
 

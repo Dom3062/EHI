@@ -31,7 +31,7 @@ function SecurityLockGui:_start(...)
             managers.ehi_tracker:AddTracker({
                 id = self._ehi_key,
                 class = "EHISecurityLockGuiTracker",
-                remove_after_reaching_target = false,
+                show_finish_after_reaching_target = true,
                 progress = self._current_bar,
                 max = self._bars
             })

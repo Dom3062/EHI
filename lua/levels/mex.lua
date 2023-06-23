@@ -2,12 +2,20 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local function SetAssaultTrackerBlock(block)
+    if managers.hud.SetAssaultTrackerManualBlock then
+        managers.hud:SetAssaultTrackerManualBlock(block)
+    end
+end
 local triggers = {
     [102685] = { id = "Refueling", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 121, no = 91 }, trigger_times = 1 },
     [102678] = { id = "Refueling", special_function = SF.UnpauseTracker },
     [102684] = { id = "Refueling", special_function = SF.PauseTracker },
     [101983] = { time = 15, id = "C4Trap", icons = { Icon.C4 }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
     [101722] = { id = "C4Trap", special_function = SF.RemoveTracker },
+
+    [100880] = { special_function = SF.CustomCode, f = SetAssaultTrackerBlock, arg = true }, -- Entered the tunnel
+    [103212] = { special_function = SF.CustomCode, f = SetAssaultTrackerBlock, arg = false } -- Entered in Mexico
 }
 ---@type ParseAchievementTable
 local achievements =
@@ -24,9 +32,16 @@ for i = 101502, 101509, 1 do
     achievements.mex_9.elements[i] = { special_function = SF.IncreaseProgress }
 end
 
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 30 + 30 }), -- Arizona (When alarm is raised in Mexico (for the first time), run this trigger instead)
+    [100697] = EHI:AddAssaultDelay({ additional_time = 30, random_time = 10, condition_function = EHI.ConditionFunctions.IsLoud }) -- Mexico (ElementDifficulty already exists)
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 
 local tbl =

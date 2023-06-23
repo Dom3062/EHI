@@ -32,7 +32,7 @@ if EHI:IsLootCounterVisible() then
     local OtherLoot = { 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }
     local FilterIsOk = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
         if element:_check_difficulty() then
-            self._trackers:CallFunction("LootCounter", "SecuredMissionLoot") -- Server secured
+            self._trackers:SecuredMissionLoot() -- Server secured
         end
     end)
     other[107121] = EHI:AddLootCounter2(function()
@@ -40,7 +40,7 @@ if EHI:IsLootCounterVisible() then
         local max = EHI:IsMayhemOrAbove() and 2 or 1
         local goat = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) and 1 or 0
         local random_loot = ef.GetNumberOfVisibleWeapons(Weapons) + ef.GetNumberOfVisibleOtherLoot(OtherLoot)
-        EHI:ShowLootCounterNoCheck({
+        EHI:ShowLootCounterNoChecks({
             max = max + random_loot + goat,
             triggers =
             {

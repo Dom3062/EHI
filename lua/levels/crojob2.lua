@@ -62,33 +62,33 @@ local achievements =
     }
 }
 
-local LootCounter = EHI:GetOption("show_loot_counter")
-local Weapons = { 100857, 103374 }
 local other =
 {
-    [101737] = EHI:AddLootCounter(function()
+    [101742] = EHI:AddAssaultDelay({ time = 30 })
+    -- Delay assault preplanning does not help as Captain Winter's group is there from the start, causing assaults to start prematurely
+    -- See ´phalanx_start´ MissionScriptElement 106209
+}
+if EHI:IsLootCounterVisible() then
+    local Weapons = { 100857, 103374 }
+    other[101737] = EHI:AddLootCounter3(function(self, ...)
         local MayhemOrAbove = EHI:IsMayhemOrAbove()
-        EHI:ShowLootCounterNoCheck({
+        EHI:ShowLootCounterNoChecks({
             max = 6 + tweak_data.ehi.functions.GetNumberOfVisibleWeapons(Weapons), -- 4 Bomb parts; 2 Meth and Weapons
             -- Assume no collision spawned, more loot
             max_random = MayhemOrAbove and 14 or 18
         })
         if managers.game_play_central:GetMissionDisabledUnit(107388) then -- Collision (8th position)
             -- Collision is visible, less loot spawned
-            managers.ehi_tracker:CallFunction("LootCounter", "DecreaseMaxRandom", 2)
+            self._trackers:DecreaseLootCounterMaxRandom(2)
         end
-    end, LootCounter, true)
-}
-if LootCounter then
+    end, true)
     -- Random loot in crates
-    local function IncreaseMaximum()
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
-    end
-    local function DecreaseMaximum()
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined")
-    end
-    local IncreaseMaximumTrigger = { special_function = SF.CustomCode, f = IncreaseMaximum }
-    local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = DecreaseMaximum }
+    local IncreaseMaximumTrigger = { special_function = SF.CustomCode, f = function()
+        managers.ehi_tracker:RandomLootSpawned()
+    end }
+    local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = function()
+        managers.ehi_tracker:RandomLootDeclined()
+    end }
     for i = 103232, 103264, 1 do -- 1 - 11
         other[i] = IncreaseMaximumTrigger
     end

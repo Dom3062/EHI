@@ -45,13 +45,24 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        correct_pc_hack = { amount = 2000, times = 1 },
-        breakin_feds_found_garret_office = 2000,
-        breakin_feds_lure = 4000,
-        breakin_feds_entered_office = { amount = 1000, times = 1 },
-        breakin_feds_safe_found = 1000
+        { amount = 2000, name = "correct_pc_hack", times = 1 },
+        { amount = 2000, name = "breakin_feds_found_garret_office" },
+        { amount = 4000, name = "breakin_feds_lure" },
+        { amount = 1000, name = "breakin_feds_entered_office", times = 1 },
+        { amount = 1000, name = "breakin_feds_safe_found" }
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives = true
+            },
+            no_max = true
+        }
+    }
 })

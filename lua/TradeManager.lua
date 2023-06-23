@@ -33,27 +33,27 @@ local original =
     sync_set_auto_assault_ai_trade = TradeManager.sync_set_auto_assault_ai_trade
 }
 
-local function OnPlayerCriminalDeath(peer_id, respawn_penalty)
+local function OnPlayerCriminalDeath(peer_id, respawn_penalty, civilians_killed)
     if suppress_in_stealth and managers.groupai:state():whisper_mode() then
-        managers.ehi_trade:AddToTradeDelayCache(peer_id, respawn_penalty, true)
+        managers.ehi_trade:AddToTradeDelayCache(peer_id, respawn_penalty, civilians_killed, true)
         return
     end
     local tracker = managers.ehi_trade:GetTracker()
     if tracker and not tracker:PeerExists(peer_id) then
-        tracker:AddPeerCustodyTime(peer_id, respawn_penalty)
+        tracker:AddPeerCustodyTime(peer_id, respawn_penalty, civilians_killed)
     else
-        managers.ehi_trade:AddCustodyTimeTrackerWithPeer(peer_id, respawn_penalty)
+        managers.ehi_trade:AddCustodyTimeTrackerWithPeer(peer_id, respawn_penalty, civilians_killed)
     end
 end
 
-local function CreateTracker(peer_id, respawn_penalty)
+local function CreateTracker(peer_id, respawn_penalty, civilians_killed)
     if respawn_penalty == tweak_data.player.damage.base_respawn_time_penalty then
         return
     end
     if show_trade_for_other_players and peer_id == managers.network:session():local_peer():id() then
         return
     end
-    OnPlayerCriminalDeath(peer_id, respawn_penalty)
+    OnPlayerCriminalDeath(peer_id, respawn_penalty, civilians_killed)
 end
 
 local function SetTrackerPause(character_name, t)
@@ -67,7 +67,7 @@ function TradeManager:init(...)
         if not enabled then
             for _, crim in ipairs(self._criminals_to_respawn) do
                 if crim.peer_id and crim.respawn_penalty then
-                    managers.ehi_trade:CallFunction("UpdatePeerCustodyTime", crim.peer_id, crim.respawn_penalty)
+                    managers.ehi_trade:CallFunction("UpdatePeerCustodyTime", crim.peer_id, crim.respawn_penalty, crim.hostages_killed)
                 end
             end
         end
@@ -92,8 +92,8 @@ function TradeManager:GetTradeCounterTick()
     return self._trade_counter_tick
 end
 
-function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, ...)
-    local crim = original.on_player_criminal_death(self, criminal_name, respawn_penalty, ...)
+function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, hostages_killed, ...)
+    local crim = original.on_player_criminal_death(self, criminal_name, respawn_penalty, hostages_killed, ...)
     if type(crim) == "table" then -- A nil criminal can be returned (because it is already in custody); Shouldn't happen again, probably mods
         local peer_id = crim.peer_id
         if not peer_id then
@@ -108,19 +108,19 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, .
             end
         end
         if on_death_show then
-            CreateTracker(peer_id, respawn_penalty)
+            CreateTracker(peer_id, respawn_penalty, hostages_killed)
         elseif respawn_penalty ~= tweak_data.player.damage.base_respawn_time_penalty then
             if suppress_in_stealth and managers.groupai:state():whisper_mode() then
-                managers.ehi_trade:AddOrUpdateCachedPeer(peer_id, respawn_penalty)
+                managers.ehi_trade:AddOrUpdateCachedPeer(peer_id, respawn_penalty, hostages_killed)
                 managers.ehi_trade:SetCachedPeerInCustody(peer_id)
                 return
             end
             local tracker = managers.ehi_trade:GetTracker()
             if tracker then
                 if tracker:PeerExists(peer_id) then
-                    tracker:UpdatePeerCustodyTime(peer_id, respawn_penalty)
+                    tracker:UpdatePeerCustodyTime(peer_id, respawn_penalty, hostages_killed)
                 else
-                    tracker:AddPeerCustodyTime(peer_id, respawn_penalty)
+                    tracker:AddPeerCustodyTime(peer_id, respawn_penalty, hostages_killed)
                 end
             end
         end

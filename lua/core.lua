@@ -276,6 +276,7 @@ _G.EHI =
     LuaPath = ModPath .. "lua/",
     -- PAYDAY 2/mods/Extra Heist Info/menu/
     MenuPath = ModPath .. "menu/",
+    -- PAYDAY 2/mods/saves/ehi.json
     SettingsSaveFilePath = BLTModManager.Constants:SavesDirectory() .. "ehi.json",
     SaveDataVer = 1
 }
@@ -415,6 +416,7 @@ local function LoadDefaultValues(self)
         show_trade_delay_option = 1,
         show_trade_delay_other_players_only = true,
         show_trade_delay_suppress_in_stealth = true,
+        show_trade_delay_amount_of_killed_civilians = false,
         show_timers = true,
         show_camera_loop = true,
         show_enemy_turret_trackers = true,
@@ -468,6 +470,7 @@ local function LoadDefaultValues(self)
             }
         },
         show_minion_tracker = true,
+        show_minion_option = 3, -- 1 = You only; 2 = Total number of minions in one number; 3 = Number of minions per player
         show_minion_per_player = true,
         show_minion_killed_message = true,
         show_minion_killed_message_type = 1, -- 1 = Popup; 2 = Hint
@@ -850,6 +853,7 @@ function EHI:GetBuffAndOption(option)
     return self:GetOption("show_buffs") and self:GetBuffOption(option)
 end
 
+---@return boolean
 function EHI:MissionTrackersAndWaypointEnabled()
     return self:GetOption("show_mission_trackers") and self:GetOption("show_waypoints")
 end
@@ -886,6 +890,7 @@ function EHI:AssaultDelayTrackerIsEnabled()
     return self:GetOption("show_assault_delay_tracker") and not tweak_data.levels:IsLevelSkirmish()
 end
 
+---@return boolean
 function EHI:CombineAssaultDelayAndAssaultTime()
     return self:GetOption("show_assault_delay_tracker") and self:GetOption("show_assault_time_tracker") and self:GetOption("aggregate_assault_delay_and_assault_time")
 end
@@ -1020,13 +1025,13 @@ function EHI:HookLootRemovalElement(elements)
                     return
                 end
             end
-            managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter")
+            managers.ehi_tracker:DecreaseLootCounterProgressMax()
         end
     else
         HookFunction = self.HookWithID
         ElementFunction = self.ClientElement
         f = function(...)
-            managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter")
+            managers.ehi_tracker:DecreaseLootCounterProgressMax()
         end
     end
     if type(elements) == "table" then
@@ -1119,11 +1124,19 @@ function EHI:GetInstanceUnitPosition(id)
     return unit:position()
 end
 
+---@param message string
+---@param data any
 function EHI:Sync(message, data)
     LuaNetworking:SendToPeersExcept(1, message, data or "")
 end
+---@param message string
+---@param tbl table|nil
+function EHI:SyncTable(message, tbl)
+    LuaNetworking:SendToPeersExcept(1, message, LuaNetworking:TableToString(tbl or {}))
+end
 if Global.game_settings and Global.game_settings.single_player then
     EHI.Sync = function(...) end
+    EHI.SyncTable = function(...) end
 end
 
 ---@param triggers table
@@ -1234,12 +1247,14 @@ function EHI:AddAssaultDelay(params)
     end
     local id = "AssaultDelay"
     local class = self.Trackers.AssaultDelay
+    local pos = nil
     if params.random_time then
         class = "EHIInaccurateAssaultDelayTracker"
     end
     if self:CombineAssaultDelayAndAssaultTime() then
         id = "Assault"
         class = "EHIAssaultTracker"
+        pos = 0
     end
     local tbl = {}
     -- Copy every passed value to the trigger
@@ -1253,6 +1268,7 @@ function EHI:AddAssaultDelay(params)
     end
     tbl.id = id
     tbl.class = class
+    tbl.pos = pos
     return tbl
 end
 
@@ -1348,8 +1364,17 @@ function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     managers.ehi_manager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
 end
 
+---@param new_triggers table
+---@param trigger_id_all string?
+---@param trigger_icons_all table?
 function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     managers.ehi_manager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all)
+end
+
+---@param new_triggers table
+---@param defer_loading_waypoints boolean?
+function EHI:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
+    managers.ehi_manager:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
 end
 
 function EHI:ShouldDisableWaypoints()
@@ -1482,10 +1507,10 @@ function EHI:ShowLootCounterNoChecks(params)
     end
     if params.sequence_triggers then
         local function IncreaseMax(...)
-            managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
+            managers.ehi_tracker:RandomLootSpawned()
         end
         local function DecreaseRandom(...)
-            managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined")
+            managers.ehi_tracker:RandomLootDeclined()
         end
         for unit_id, sequences in pairs(params.sequence_triggers) do
             for _, sequence in ipairs(sequences.loot or {}) do
@@ -1535,7 +1560,7 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
     if self:GetOption("show_loot_counter") and params.show_loot_counter then
         managers.ehi_tracker:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail)
     else
-        managers.ehi_tracker:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.remove_after_reaching_target, params.class)
+        managers.ehi_tracker:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target, params.class)
     end
     if params.load_sync then
         self:AddLoadSyncFunction(params.load_sync)
@@ -1577,7 +1602,7 @@ function EHI:ShowAchievementBagValueCounter(params)
     if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
         return
     end
-    managers.ehi_tracker:AddAchievementBagValueCounter(params.achievement, params.value, params.remove_after_reaching_target)
+    managers.ehi_tracker:AddAchievementBagValueCounter(params.achievement, params.value, params.show_finish_after_reaching_target)
     self:AddAchievementToCounter(params)
 end
 
@@ -1712,7 +1737,7 @@ end
 ---`mayhem = 30s`  
 ---`deathwish = 30s`  
 ---`deathsentence = 40s`  
----@param time_override table? Overrides default keypad time reset for each difficulty
+---@param time_override KeypadResetTimerTable? Overrides default keypad time reset for each difficulty
 ---@return integer
 function EHI:GetKeypadResetTimer(time_override)
     time_override = time_override or {}
@@ -1733,29 +1758,8 @@ function EHI:GetKeypadResetTimer(time_override)
     end
 end
 
----Returns value for the current difficulty. If the value is not provided "-1" is returned  
----Possible values  
----`normal_or_above`  
----`normal`  
----`hard_or_below`  
----`hard_or_above`  
----`hard`  
----`veryhard_or_below`  
----`veryhard_or_above`  
----`veryhard`  
----`overkill_or_below`  
----`overkill_or_above`  
----`overkill`  
----`mayhem_or_below`  
----`mayhem_or_above`  
----`mayhem`  
----`deathwish_or_below`  
----`deathwish_or_above`  
----`deathwish`  
----`deathsentence_or_below`  
----`deathsentence_or_above`  
----`deathsentence`
----@param values table
+---Returns value for the current difficulty. If the value is not provided `-1` is returned
+---@param values ValueBasedOnDifficultyTable
 ---@return any
 function EHI:GetValueBasedOnDifficulty(values)
     if values.normal_or_above and self:IsDifficultyOrAbove(self.Difficulties.Normal) then
@@ -1800,7 +1804,7 @@ function EHI:GetValueBasedOnDifficulty(values)
 end
 
 ---Registers and returns inherited class
----@param c class
+---@param c any
 ---@param id string
 ---@return any
 function EHI:AchievementClass(c, id)
@@ -1978,6 +1982,8 @@ if EHI.debug.instances then -- For testing purposes
     end
 end
 
+---@param tbl table
+---@param ... any
 function EHI:PrintTable(tbl, ...)
     local s = ""
     if ... then

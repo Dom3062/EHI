@@ -33,7 +33,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101989] = { max = 8, class = TT.AchievementProgress, remove_after_reaching_target = false },
+            [101989] = { max = 8, class = TT.AchievementProgress, show_finish_after_reaching_target = true },
             [101999] = { special_function = SF.IncreaseProgress },
             [102002] = { special_function = SF.FinalizeAchievement },
         }
@@ -46,10 +46,10 @@ local other =
 }
 if EHI:IsClient() then
     local original = other[EHI:GetInstanceElementID(100003, 7950)]
-    other[EHI:GetInstanceElementID(100024, 7950)] = EHI:ClientCopyTrigger(original, { time = 12 + 12 + 4 + 10 + 30 })
-    other[EHI:GetInstanceElementID(100053, 7950)] = EHI:ClientCopyTrigger(original, { time = 12 + 4 + 10 + 30 })
-    other[EHI:GetInstanceElementID(100026, 7950)] = EHI:ClientCopyTrigger(original, { time = 4 + 10 + 30 })
-    other[EHI:GetInstanceElementID(100179, 7950)] = EHI:ClientCopyTrigger(original, { time = 10 + 30 })
+    other[EHI:GetInstanceElementID(100024, 7950)] = EHI:ClientCopyTrigger(original, { additional_time = 12 + 12 + 4 + 10 + 30 })
+    other[EHI:GetInstanceElementID(100053, 7950)] = EHI:ClientCopyTrigger(original, { additional_time = 12 + 4 + 10 + 30 })
+    other[EHI:GetInstanceElementID(100026, 7950)] = EHI:ClientCopyTrigger(original, { additional_time = 4 + 10 + 30 })
+    other[EHI:GetInstanceElementID(100179, 7950)] = EHI:ClientCopyTrigger(original, { additional_time = 10 + 30 })
 end
 
 EHI:ParseTriggers({

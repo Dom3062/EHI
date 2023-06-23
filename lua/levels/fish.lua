@@ -43,7 +43,7 @@ local achievements = {
         elements =
         {
             -- 100244 is ´Players_spawned´
-            [100244] = { class = "EHIfish6Tracker", remove_after_reaching_target = false } -- Maximum is set in the tracker; difficulty dependant
+            [100244] = { class = "EHIfish6Tracker", show_finish_after_reaching_target = true } -- Maximum is set in the tracker; difficulty dependant
         },
         cleanup_callback = function()
             EHIfish6Tracker = nil

@@ -81,12 +81,11 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
-                objectives = true,
-                loot_all = { times = 6 }
-            },
-            no_max = true
+                -- max = 19 diamond bags, 3 money bags in the safes (random), 3 bags in GenSec transport
+                loot_all = { min = 6, max = 25 }
+            }
         }
     }
 })

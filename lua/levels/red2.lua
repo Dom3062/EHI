@@ -124,7 +124,7 @@ local achievements =
         difficulty_pass = false, -- TODO: Finish; remove after that
         elements =
         {
-            [103373] = { max = 6, class = "EHIgreen1Tracker", remove_after_reaching_target = false },
+            [103373] = { max = 6, class = "EHIgreen1Tracker", show_finish_after_reaching_target = true },
             [102153] = { special_function = SF.IncreaseProgress },
             [102333] = { special_function = SF.DecreaseProgress },
             [102539] = { special_function = SF.DecreaseProgress }
@@ -210,7 +210,8 @@ local loud_xp =
     }
 }
 if EHI:IsMayhemOrAbove() then
-    loud_xp.objectives[7] = { amount = 40000, name = "fwb_overdrill", optional = true }
+    local o_fwb_overdrill = { amount = 40000, name = "fwb_overdrill", optional = true }
+    loud_xp.objectives[7] = o_fwb_overdrill
     loud_xp.loot =
     {
         money = 1000,
@@ -239,7 +240,7 @@ if EHI:IsMayhemOrAbove() then
                         {
                             money = { times = 14 }
                         },
-                        bonus_xp = -40000 -- subtract OVERDRILL bonus xp
+                        bonus_xp = -o_fwb_overdrill.amount -- subtract OVERDRILL bonus xp
                     }
                 },
                 {
@@ -252,7 +253,7 @@ if EHI:IsMayhemOrAbove() then
                         {
                             money = { times = min_bags }
                         },
-                        bonus_xp = 40000 -- OVERDRILL
+                        bonus_xp = o_fwb_overdrill.amount -- OVERDRILL
                     },
                     max =
                     {

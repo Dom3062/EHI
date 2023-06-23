@@ -4,19 +4,21 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local delay = 5
 local gas_delay = 0.5
+local heli_wp = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100028, 7200) }
+local gas_wp = { icon = Icon.Teargas, position_by_element = 100841 }
 local triggers = {
-    [102442] = { time = 130 + delay, special_function = SF.AddTrackerIfDoesNotExist },
-    [102441] = { time = 120 + delay, special_function = SF.AddTrackerIfDoesNotExist },
-    [102434] = { time = 110 + delay, special_function = SF.AddTrackerIfDoesNotExist },
-    [102433] = { time = 80 + delay, special_function = SF.AddTrackerIfDoesNotExist },
+    [102442] = { time = 130 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp) },
+    [102441] = { time = 120 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp) },
+    [102434] = { time = 110 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp) },
+    [102433] = { time = 80 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp) },
 
-    [102065] = { time = 50 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
-    [102067] = { time = 65 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
-    [102068] = { time = 80 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
-    [102069] = { time = 95 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
-    [102070] = { time = 110 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
-    [102071] = { time = 125 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } },
-    [102072] = { time = 140 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas } }
+    [102065] = { time = 50 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
+    [102067] = { time = 65 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
+    [102068] = { time = 80 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
+    [102069] = { time = 95 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
+    [102070] = { time = 110 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
+    [102071] = { time = 125 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
+    [102072] = { time = 140 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) }
 }
 
 local DisableWaypoints = {}
@@ -46,6 +48,38 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 35 + 30 })
 }
+if EHI:IsLootCounterVisible() and false then
+    local ignore_units = {
+        [300686] = true
+    }
+    local function PrintAllInteractions()
+        local count = 0
+        local interactions = managers.interaction._interactive_units or {}
+        for _, unit in ipairs(interactions) do
+            if unit:carry_data() and unit:interaction() then
+                local unit_id = unit:editor_id()
+                if not ignore_units[unit_id] then
+                    managers.hud:add_waypoint(unit_id, {
+                        icon = Icon.Interact,
+                        position = unit:position(),
+                        no_sync = true
+                    })
+                    managers.mission:add_runned_unit_sequence_trigger(unit_id, "interact", function(...)
+                        managers.hud:remove_waypoint(unit_id)
+                    end)
+                    EHI:LogFast("Unit is a bag; interaction: " .. tostring(unit:interaction().tweak_data))
+                else
+                    EHI:LogFast("Unit with ID '" .. tostring(unit_id) .. "' ignored")
+                end
+            end
+        end
+        return count
+    end
+
+    other[100840] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
+        EHI:ShowLootCounterNoChecks({ max = PrintAllInteractions() + 1 })
+    end)}
+end
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -56,7 +90,7 @@ EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowAchievementLootCounter({
     achievement = "bat_3",
     max = 10,
-    remove_after_reaching_target = false,
+    show_finish_after_reaching_target = true,
     counter =
     {
         check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,

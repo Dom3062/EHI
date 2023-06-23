@@ -27,7 +27,7 @@ local other =
 if EHI:GetOption("show_escape_chance") then
     other[100677] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi_tracker:AddEscapeChanceTracker(dropin, 10)
+        managers.ehi_escape:AddEscapeChanceTracker(dropin, 10)
     end)
 end
 --[[if EHI:GetOption("show_loot_counter") then

@@ -33,26 +33,22 @@ if Global.game_settings.level_id == "gallery" then
             {
                 [100789] = { class = TT.AchievementStatus },
                 [104288] = { special_function = SF.SetAchievementComplete },
-                [104290] = { special_function = SF.SetAchievementFailed },
+                [104290] = { special_function = SF.SetAchievementFailed }, -- Alarm
                 [102860] = { special_function = SF.SetAchievementFailed } -- Painting flushed
             }
         }
     }
     if TheFixes then
-        if TheFixesPreventer and TheFixesPreventer.achi_masterpiece then -- Unfixed, assume Vanilla "broken" behavior
-        else -- Fixed
-            local function f()
-                local key = "EHI_ArtGallery_TheFixes"
-                CopDamage.register_listener(key, { "on_damage" }, function(damage_info)
-                    if damage_info.result.type == "death" then
-                        managers.ehi_tracker:SetAchievementFailed("cac_19")
-                        CopDamage.unregister_listener(key)
-                    end
-                end)
+        local Preventer = TheFixesPreventer or {}
+        if not Preventer.achi_masterpiece then -- Fixed
+            managers.mission:add_global_event_listener("EHI_ArtGallery_TheFixes", { "TheFixes_AchievementFailed" }, function(id)
+                if id == "cac_19" then
+                    managers.ehi_tracker:SetAchievementFailed(id)
+                end
+            end)
+            achievements.cac_19.cleanup_callback = function()
+                managers.mission:remove_global_event_listener("EHI_ArtGallery_TheFixes")
             end
-            achievements.cac_19.elements[100789].special_function = SF.CreateAnotherTrackerWithTracker
-            achievements.cac_19.elements[100789].data = { fake_id = 1 }
-            achievements.cac_19.elements[1] = { special_function = SF.CustomCode, f = f }
         end
     end
 
@@ -65,7 +61,7 @@ else -- Framing Frame Day 1
     EHI:ShowAchievementLootCounter({
         achievement = "pink_panther",
         max = 9,
-        remove_after_reaching_target = false,
+        show_finish_after_reaching_target = true,
         failed_on_alarm = true,
         triggers =
         {
@@ -85,7 +81,7 @@ else -- Framing Frame Day 1
 
     if EHI:GetOption("show_escape_chance") then
         EHI:AddOnAlarmCallback(function(dropin)
-            managers.ehi_tracker:AddEscapeChanceTracker(dropin, 25)
+            managers.ehi_escape:AddEscapeChanceTracker(dropin, 25)
         end)
     end
 end
@@ -104,7 +100,7 @@ EHI:ShowLootCounter({
         if self:IsMissionElementDisabled(104286) then
             max_reduction = max_reduction + 1
         end
-        self._trackers:DecreaseTrackerProgressMax("LootCounter", max_reduction)
+        self._trackers:DecreaseLootCounterProgressMax(max_reduction)
         self._trackers:SyncSecuredLoot()
     end
 })

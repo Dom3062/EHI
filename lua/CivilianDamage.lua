@@ -16,7 +16,7 @@ if EHI:GetOption("show_escape_chance") then
     function CivilianDamage:_unregister_from_enemy_manager(...)
         original._unregister_from_enemy_manager(self, ...)
         if PenaltyWhenKilled(self) then
-            managers.ehi_tracker:IncreaseCivilianKilled()
+            managers.ehi_escape:IncreaseCivilianKilled()
         end
     end
 end

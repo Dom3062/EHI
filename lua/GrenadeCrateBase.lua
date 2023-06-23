@@ -10,21 +10,21 @@ end
 local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(unit, key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount ~= 0 then
-            managers.ehi_tracker:AddAggregatedDeployablesTracker()
+        if managers.ehi_deployable:TrackerDoesNotExist("Deployables") and amount ~= 0 then
+            managers.ehi_deployable:AddAggregatedDeployablesTracker()
         end
-        managers.ehi_tracker:CallFunction("Deployables", "UpdateAmount", "grenade_crate", unit, key, amount)
+        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "grenade_crate", unit, key, amount)
     end
 else
     UpdateTracker = function(unit, key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("GrenadeCases") and amount ~= 0 then
-            managers.ehi_tracker:AddTracker({
+        if managers.ehi_deployable:TrackerDoesNotExist("GrenadeCases") and amount ~= 0 then
+            managers.ehi_deployable:AddTracker({
                 id = "GrenadeCases",
                 icons = { "frag_grenade" },
                 class = "EHIEquipmentTracker"
             })
         end
-        managers.ehi_tracker:CallFunction("GrenadeCases", "UpdateAmount", unit, key, amount)
+        managers.ehi_deployable:CallFunction("GrenadeCases", "UpdateAmount", unit, key, amount)
     end
 end
 
@@ -34,8 +34,8 @@ if EHI:IsVR() then
         old_UpdateTracker(data.unit, key, data.amount)
     end
     UpdateTracker = function(unit, key, amount)
-        if managers.ehi_tracker:IsLoading() then
-            managers.ehi_tracker:AddToLoadQueue(key, { unit = unit, amount = amount }, Reload)
+        if managers.ehi_deployable:IsLoading() then
+            managers.ehi_deployable:AddToLoadQueue(key, { unit = unit, amount = amount }, Reload)
             return
         end
         old_UpdateTracker(unit, key, amount)

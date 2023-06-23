@@ -4,18 +4,18 @@ local other =
 {
     [100116] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
-if EHI:GetOption("show_loot_counter") then
+if EHI:IsLootCounterVisible() then
     other[100107] = { special_function = SF.CustomCode, trigger_times = 1, f = function()
-        EHI:ShowLootCounterNoCheck({
+        EHI:ShowLootCounterNoChecks({
             max = 6,
             max_random = 7
         })
     end}
     other[100109] = { special_function = SF.CustomCode, f = function() -- Alarm
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined", 7)
+        managers.ehi_tracker:RandomLootDeclined(7)
     end}
     other[107260] = { special_function = SF.CustomCode, f = function()
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned", 7)
+        managers.ehi_tracker:RandomLootSpawned(7)
     end}
 end
 

@@ -42,7 +42,7 @@ local achievements =
         difficulty_pass = mayhem_and_up,
         elements =
         {
-            [100279] = { max = 15, class = "EHIorange5Tracker", status_is_overridable = true, remove_after_reaching_target = false },
+            [100279] = { max = 15, class = "EHIorange5Tracker", status_is_overridable = true, show_finish_after_reaching_target = true },
             [EHI:GetInstanceElementID(100471, 21700)] = { special_function = SF.SetAchievementFailed },
             [EHI:GetInstanceElementID(100474, 21700)] = { special_function = SF.IncreaseProgress },
             [EHI:GetInstanceElementID(100005, 12200)] = { special_function = SF.FinalizeAchievement }

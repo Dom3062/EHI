@@ -65,11 +65,13 @@ function EHITradeDelayTracker:AlignTextOnHalfPos()
     end
 end
 
-function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time)
+function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time, civilians_killed)
+    local kills = civilians_killed or 1
     self._peers[peer_id] =
     {
         t = time,
-        in_custody = false
+        in_custody = false,
+        civilians_killed = kills
     }
     self._time_bg_box:text({
         name = "text" .. peer_id,
@@ -86,7 +88,7 @@ function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time)
     if self._n_of_peers >= 2 then
         self:AnimateBG()
     end
-    self:FormatUnique(time, peer_id)
+    self:FormatUnique(time, peer_id, kills)
     self:Reorganize(true)
     self:SetIconColor()
     self:SetTextPeerColor()
@@ -115,9 +117,12 @@ function EHITradeDelayTracker:Reorganize(addition)
     end
 end
 
-function EHITradeDelayTracker:SetPeerCustodyTime(peer_id, time, anim)
+function EHITradeDelayTracker:SetPeerCustodyTime(peer_id, time, civilians_killed, anim)
     self._peers[peer_id].t = time
-    self:FormatUnique(time, peer_id)
+    local killed = self._peers[peer_id].civilians_killed
+    killed = civilians_killed or (killed + 1)
+    self._peers[peer_id].civilians_killed = killed
+    self:FormatUnique(time, peer_id, killed)
     self:FitTheTextUnique(peer_id)
     if anim then
         self:AnimateBG()
@@ -126,22 +131,22 @@ end
 
 function EHITradeDelayTracker:IncreasePeerCustodyTime(peer_id, time)
     local t = self:GetPeerData(peer_id, "t", 0)
-    self:SetPeerCustodyTime(peer_id, t + time, true)
+    self:SetPeerCustodyTime(peer_id, t + time, nil, true)
 end
 
-function EHITradeDelayTracker:UpdatePeerCustodyTime(peer_id, time)
+function EHITradeDelayTracker:UpdatePeerCustodyTime(peer_id, time, civilians_killed)
     local t = self:GetPeerData(peer_id, "t", 0)
     if t == time then -- Don't blink on the player, son
         return
     end
-    self:SetPeerCustodyTime(peer_id, time)
+    self:SetPeerCustodyTime(peer_id, time, civilians_killed)
 end
 
-function EHITradeDelayTracker:AddOrUpdatePeerCustodyTime(peer_id, time, in_custody)
+function EHITradeDelayTracker:AddOrUpdatePeerCustodyTime(peer_id, time, civilians_killed, in_custody)
     if self:PeerExists(peer_id) then
-        self:UpdatePeerCustodyTime(peer_id, time)
+        self:UpdatePeerCustodyTime(peer_id, time, civilians_killed)
     else
-        self:AddPeerCustodyTime(peer_id, time)
+        self:AddPeerCustodyTime(peer_id, time, civilians_killed)
     end
     if in_custody then
         self:SetPeerInCustody(peer_id)
@@ -222,11 +227,45 @@ function EHITradeDelayTracker:FitTheTextUnique(i)
     self:FitTheText(self._time_bg_box:child("text" .. i))
 end
 
-do
+if EHI:GetOption("show_trade_delay_amount_of_killed_civilians") then
     local math_floor = math.floor
     local string_format = string.format
     if EHI:GetOption("time_format") == 1 then
-        EHITradeDelayTracker.FormatUnique = function(self, time, peer_id)
+        EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
+            local t = math_floor(time * 10) / 10
+            local text = self._time_bg_box:child("text" .. peer_id)
+            local s
+            if t < 0 then
+                s = string_format("%d (%d)", 0, civilians_killed)
+            elseif t < 10 then
+                s = string_format("%.1f (%d)", t, civilians_killed)
+            else
+                s = string_format("%d (%d)", t, civilians_killed)
+            end
+            text:set_text(s)
+        end
+    else
+        EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
+            local t = math_floor(time * 10) / 10
+            local text = self._time_bg_box:child("text" .. peer_id)
+            local s
+            if t < 0 then
+                s = string_format("%d (%d)", 0, civilians_killed)
+            elseif t < 10 then
+                s = string_format("%.1f (%d)", t, civilians_killed)
+            elseif t < 60 then
+                s = string_format("%d (%d)", t, civilians_killed)
+            else
+                s = string_format("%d:%02d (%d)", t / 60, t % 60, civilians_killed)
+            end
+            text:set_text(s)
+        end
+    end
+else
+    local math_floor = math.floor
+    local string_format = string.format
+    if EHI:GetOption("time_format") == 1 then
+        EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
             local t = math_floor(time * 10) / 10
             local text = self._time_bg_box:child("text" .. peer_id)
             local s
@@ -240,7 +279,7 @@ do
             text:set_text(s)
         end
     else
-        EHITradeDelayTracker.FormatUnique = function(self, time, peer_id)
+        EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
             local t = math_floor(time * 10) / 10
             local text = self._time_bg_box:child("text" .. peer_id)
             local s
@@ -274,7 +313,7 @@ function EHITradeDelayTracker:update(t, dt)
                 self:RemovePeerFromCustody(peer_id)
             else
                 data.t = time
-                self:FormatUnique(time, peer_id)
+                self:FormatUnique(time, peer_id, data.civilians_killed)
                 self:FitTheTextUnique(peer_id)
             end
         end

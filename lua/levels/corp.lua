@@ -19,7 +19,7 @@ local triggers =
 }
 if EHI:IsClient() then
     local escape_time = OVKorAbove and 30 or 15
-    triggers[102406].additional_time = escape_time
+    triggers[102406].additional_time = triggers[102406].additional_time + escape_time
     triggers[102406].random_time = 15
     triggers[102406].delay_only = true
     EHI:AddSyncTrigger(102406, triggers[102406])

@@ -96,11 +96,10 @@ EHI:ShowLootCounter({
     {
         [101019] = { special_function = SF.IncreaseProgressMax } -- Red Diamond
     },
-    -- Difficulties Very Hard or lower can load sync via EHI as the Red Diamond does not spawn on these difficulties
-    no_sync_load = OVKorAbove,
-    load_sync = OVKorAbove and function(self)
-        if managers.game_play_central:GetMissionDisabledUnit(100950) then -- Red Diamond
-            self._trackers:IncreaseTrackerProgressMax("LootCounter", 1)
+    load_sync = function(self)
+        -- Red Diamond spawns on OVK or above only
+        if OVKorAbove and managers.game_play_central:GetMissionDisabledUnit(100950) then -- Red Diamond
+            self._trackers:IncreaseLootCounterProgressMax()
         end
         self._trackers:SyncSecuredLoot()
     end
@@ -115,6 +114,11 @@ if OVKorAbove then
 else
     loot_all = 400
 end
+local MinBags = EHI:GetValueBasedOnDifficulty({
+    hard_or_below = 4,
+    veryhard = 6,
+    overkill_or_above = 8
+})
 local xp_override =
 {
     params =
@@ -124,9 +128,9 @@ local xp_override =
             loot =
             {
                 red_diamond = { max = 1 },
-                diamonds_dah = { min_max = 8 }
+                diamonds_dah = { min = MinBags, max = 8 }
             },
-            loot_all = { min_max = 8 }
+            loot_all = { min = MinBags, max = 8 }
         }
     }
 }

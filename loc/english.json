@@ -204,6 +204,9 @@
     "ehi_show_trade_delay_suppress_in_stealth" : "Don't Show Trade Delay Tracker in Stealth",
     "ehi_show_trade_delay_suppress_in_stealth_desc" : "Hides Trade Delay in stealth when enabled. Once the alarm goes off, the tracker appears with all accumulated delay.",
 
+    "ehi_show_trade_delay_amount_of_killed_civilians" : "Show in Trade Delay Tracker amount of killed civilians",
+    "ehi_show_trade_delay_amount_of_killed_civilians_desc" : "Shows for each player how many civilians they killed",
+
     "ehi_show_timers" : "Show Timers",
     "ehi_show_timers_desc" : "Shows timers for hacking, drilling, sawing, etc...",
 
@@ -281,8 +284,11 @@
     "ehi_show_minion_tracker" : "Show Converts Tracker",
     "ehi_show_minion_tracker_desc" : "Shows tracker for how many converted enemies are on the map",
 
-    "ehi_show_minion_per_player" : "Show Number of Converts Per Player",
-    "ehi_show_minion_per_player_desc" : "Shows in the tracker colored player number of converts",
+    "ehi_show_minion_option" : "Converts Format",
+    "ehi_show_minion_option_desc" : "",
+    "ehi_show_minion_option_1" : "Show Number of your Converts only",
+    "ehi_show_minion_option_2" : "Show Total Number of Converts on the map",
+    "ehi_show_minion_option_3" : "Show Number of Converts Per Player",
 
     "ehi_show_minion_killed_message" : "Show 'CONVERT KILLED' Message",
     "ehi_show_minion_killed_message_desc" : "Shows a message when your convert has been killed",
@@ -640,11 +646,13 @@
     "ehi_experience_xp_bonus" : "Bonus XP",
     "ehi_experience_trigger_times" : "$times;x max",
     "ehi_experience_random_objectives" : "Random objectives ($count):",
+    "ehi_experience_random_objectives_no_count" : "Random objectives:",
     "ehi_experience_heli_escape" : "Heli escape",
     "ehi_experience_loud_escape" : "Loud Escape",
     "ehi_experience_stealth_escape" : "Stealth Escape",
     "ehi_experience_escape" : "Escape",
     "ehi_experience_escape_is_enabled" : "Escape Zone Enabled",
+    "ehi_experience_each_goat_secured" : "Each goat secured",
     "ehi_experience_each_loot_secured" : "Each secured bag",
     "ehi_experience_loot_else" : "Everything else",
     "ehi_experience_loot_secured" : "Loot Secured",
@@ -786,7 +794,7 @@
     "ehi_experience_gs_turn_off_powerbox" : "Powerbox turned off",
     "ehi_experience_gs_clear_fire_debris" : "Cleared fire debris",
     "ehi_experience_gs_saw_lightpost" : "Lightpost sawed",
-    "ehi_experience_gs2_plane_started" : "Signal given",
+    "ehi_experience_gs2_cage_drop" : "Cage dropped",
     "ehi_experience_gs2_cage_grabbed" : "Cage catched",
     "ehi_experience_gs2_arrived_on_bridge" : "Arrived on the bridge",
     "ehi_experience_gs2_drilled_door" : "Door to bridge controls open",

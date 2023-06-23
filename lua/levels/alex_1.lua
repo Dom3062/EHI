@@ -104,18 +104,17 @@ EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(sel
 end)
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi_tracker:AddEscapeChanceTracker(dropin, 25)
+        managers.ehi_escape:AddEscapeChanceTracker(dropin, 25)
     end)
     EHI:AddLoadSyncFunction(function(self)
         if managers.environment_effects._mission_effects[101437] then
-            self._trackers:AddEscapeChanceTracker(false, 105)
+            self._escape:AddEscapeChanceTracker(false, 105)
             self:UnhookElement(101863)
         else
-            self._trackers:AddEscapeChanceTracker(false, 35)
+            self._escape:AddEscapeChanceTracker(false, 35)
             -- Disable increase when the cooks got killed by gangster in case the player dropins
             -- after Escape Chance is shown on screen and before they get killed by mission script
-            self._trackers.IncreaseCivilianKilled = function(...)
-            end
+            self._escape:DisableIncreaseCivilianKilled()
         end
     end)
 end

@@ -45,7 +45,7 @@ local triggers = {
 }
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi_tracker:AddEscapeChanceTracker(dropin, 30)
+        managers.ehi_escape:AddEscapeChanceTracker(dropin, 30)
     end)
 end
 

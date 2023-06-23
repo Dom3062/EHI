@@ -14,6 +14,7 @@ local original =
 ---@field remove_waypoint fun(self: HUDManager, id: string)
 ---@field SoftRemoveWaypoint2 fun(self: HUDManager, id: number)
 ---@field get_waypoint_data fun(self: HUDManager, id: string): WaypointDataTable|nil
+---@field RestoreWaypoint2 fun(self: HUDManager, id: number)
 
 ---@param id string
 ---@param params AddWaypointTable
@@ -74,6 +75,12 @@ function HUDManager:RestoreWaypoint(id)
     if type(self._hud.ehi_removed_waypoints) == "table" then
         self._hud.ehi_removed_waypoints[id] = nil
     end
+end
+
+---@param id number
+function HUDManager:RestoreWaypoint2(id)
+    self:RestoreWaypoint(id)
+    EHI:RestoreElementWaypoint(id)
 end
 
 function HUDManager:save(data, ...)

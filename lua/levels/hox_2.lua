@@ -46,19 +46,14 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(self, trigger, element, ...)
-    local continue = false
-    if EHI:IsHost() then
-        continue = element:_values_ok()
-    else
-        continue = true
+    if EHI:IsHost() and not element:_values_ok() then
+        return
     end
-    if continue then
-        if self._trackers:TrackerExists(trigger.id) then
-            self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
-        elseif not trigger.data.dont_create then
-            self:CheckCondition(trigger)
-            self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
-        end
+    if self._trackers:TrackerExists(trigger.id) then
+        self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
+    elseif not trigger.data.dont_create then
+        self:CheckCondition(trigger)
+        self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
     end
 end)
 
@@ -179,19 +174,19 @@ local tbl =
         local pos =
         {
             -- Upper
-            Vector3(1816.87, 3664.57, 17.2887), -- Keycard
-            Vector3(1817.05, 3659.48, 45.4985), -- ECM
+            tostring(Vector3(1816.87, 3664.57, 17.2887)), -- Keycard
+            tostring(Vector3(1817.05, 3659.48, 45.4985)), -- ECM
 
             -- Lower
-            Vector3(-2216.87, 2410.43, -382.711), -- Keycard
-            Vector3(-2217.05, 2415.52, -354.502) -- ECM
+            tostring(Vector3(-2216.87, 2410.43, -382.711)), -- Keycard
+            tostring(Vector3(-2217.05, 2415.52, -354.502)) -- ECM
         }
         local playing, enabled = true, true
         EHI:HookWithID(MissionDoorDeviceInteractionExt, "set_active", "EHI_100003_6840_set_active", function(self, active, ...)
             if playing and active == false and enabled then
                 local u_pos = tostring(self._unit:position())
                 for _, unit_pos in ipairs(pos) do
-                    if tostring(unit_pos) == u_pos then
+                    if unit_pos == u_pos then
                         for _, _unit in ipairs(units) do
                             if _unit:base() and _unit:base().SetCountThisUnit then
                                 _unit:base():SetCountThisUnit()

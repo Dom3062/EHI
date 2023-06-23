@@ -95,7 +95,7 @@ function EHILootTracker:RandomLootDeclined(random)
 end
 
 function EHILootTracker:SetMaxRandom(max)
-    self._max_random = max
+    self._max_random = max or 0
     self:SetProgressMax(self._max)
 end
 

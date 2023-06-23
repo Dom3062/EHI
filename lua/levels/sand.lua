@@ -4,7 +4,7 @@ EHIsand11Tracker._forced_icons = EHI:GetAchievementIcon("sand_11")
 EHIsand11Tracker.FormatChance = EHIChanceTracker.Format
 function EHIsand11Tracker:init(panel, params)
     params.max = 100
-    params.remove_after_reaching_target = false
+    params.show_finish_after_reaching_target = true
     params.no_failure = true
     self._chance = 0
     EHIsand11Tracker.super.init(self, panel, params)
@@ -108,7 +108,7 @@ local achievements =
         elements =
         {
             [EHI:GetInstanceElementID(100024, 31755)] = { special_function = SF.Trigger, data = { 1, 2 } },
-            [1] = { max = 10, remove_after_reaching_target = false, class = TT.AchievementProgress, special_function = SF.ShowAchievementFromStart },
+            [1] = { max = 10, show_finish_after_reaching_target = true, class = TT.AchievementProgress, special_function = SF.ShowAchievementFromStart },
             [2] = { special_function = SF.CustomCode, f = function()
                 if managers.ehi_tracker:TrackerDoesNotExist("sand_9") then
                     return

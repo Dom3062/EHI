@@ -69,7 +69,7 @@ if ovk_and_up then
     EHI:ShowAchievementLootCounter({
         achievement = "chas_10",
         max = 15,
-        remove_after_reaching_target = false,
+        show_finish_after_reaching_target = true,
         load_sync = function(self)
             self._trackers:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())
         end,

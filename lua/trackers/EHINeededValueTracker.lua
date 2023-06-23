@@ -63,7 +63,7 @@ function EHINeededValueTracker:SetCompleted(force)
     if force or not self._status then
         self._status = "completed"
         self:SetTextColor(Color.green)
-        if self._remove_after_reaching_counter_target or force then
+        if force or not self._show_finish_after_reaching_target then
             self:AddTrackerToUpdate()
         else
             self:SetStatusText("finish")

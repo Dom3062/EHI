@@ -83,6 +83,9 @@ function EHIWaypointManager:AddWaypoint(id, params)
     self._waypoints[id] = w
     if params.remove_vanilla_waypoint then
         self._hud:SoftRemoveWaypoint2(params.remove_vanilla_waypoint)
+        if params.restore_on_done then
+            w:WaypointToRestore(params.remove_vanilla_waypoint)
+        end
     end
 end
 
@@ -95,6 +98,14 @@ function EHIWaypointManager:RemoveWaypoint(id)
     self._waypoints[id] = nil
     self._waypoints_to_update[id] = nil
     self._hud:remove_waypoint(id)
+end
+
+---@param id number
+function EHIWaypointManager:RestoreVanillaWaypoint(id)
+    if not id then
+        return
+    end
+    self._hud:RestoreWaypoint2(id)
 end
 
 ---@param wp WaypointDataTable

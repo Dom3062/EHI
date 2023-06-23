@@ -85,7 +85,7 @@ local function CheckForBrokenWeapons()
             local state = weapon:damage()._state.graphic_group.grp_wpn
             if state[1] == "set_visibility" and state[2] then
                 --EHI:Log("Found broken unit weapon with ID: " .. tostring(i))
-                managers.ehi_tracker:IncreaseTrackerProgressMax("LootCounter", 1)
+                managers.ehi_tracker:IncreaseLootCounterProgressMax()
             end
         end
     end
@@ -97,7 +97,7 @@ local function CheckForBrokenCocaine() -- Not working for drop-ins
         local unit = world:get_unit(i)
         if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_hidden == 0 then
             --EHI:Log("Found broken unit cocaine with ID: " .. tostring(unit:editor_id()))
-            managers.ehi_tracker:IncreaseTrackerProgressMax("LootCounter", 1)
+            managers.ehi_tracker:IncreaseLootCounterProgressMax()
         end
     end
 end
@@ -137,7 +137,7 @@ local achievements =
     {
         elements =
         {
-            [102700] = { max = 6, class = TT.AchievementProgress, status_is_overridable = true, remove_after_reaching_target = false },
+            [102700] = { max = 6, class = TT.AchievementProgress, status_is_overridable = true, show_finish_after_reaching_target = true },
             [102796] = { special_function = SF.SetAchievementFailed },
             [100311] = { special_function = SF.IncreaseProgress }
         }
@@ -190,7 +190,7 @@ local dailies = {}
 if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
     local IncreaseProgress = { special_function = SF.IncreaseProgress }
     local elements = {
-        [103427] = { max = 9, icons = { "daily_secret_identity" }, class = TT.DailyProgress, remove_after_reaching_target = false },
+        [103427] = { max = 9, icons = { "daily_secret_identity" }, class = TT.DailyProgress, show_finish_after_reaching_target = true },
         [100484] = IncreaseProgress,
         [100515] = IncreaseProgress,
         [100534] = IncreaseProgress,
@@ -250,7 +250,7 @@ EHI:ShowLootCounter({
     load_sync = function(self)
         CheckForBrokenWeapons()
         if managers.game_play_central:GetMissionEnabledUnit(103995) then
-            self._trackers:IncreaseTrackerProgressMax("LootCounter")
+            self._trackers:IncreaseLootCounterProgressMax()
         end
         self._trackers:SyncSecuredLoot()
     end

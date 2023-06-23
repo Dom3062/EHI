@@ -62,7 +62,7 @@ if EHI:IsLootCounterVisible() then
         EHI:ShowLootCounterNoChecks({ max = 6 })
     end)}
     other[100037] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
-        self._trackers:CallFunction("LootCounter", "SecuredMissionLoot") -- Secured diamonds at Mr. Blonde or in a Van
+        self._trackers:SecuredMissionLoot() -- Secured diamonds at Mr. Blonde or in a Van
     end)}
 end
 

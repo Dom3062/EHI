@@ -83,7 +83,7 @@ local achievements =
     {
         elements =
         {
-            [100296] = { max = 4, class = "EHIdark5Tracker", remove_after_reaching_target = false },
+            [100296] = { max = 4, class = "EHIdark5Tracker", show_finish_after_reaching_target = true },
         }
     },
     voff_3 =
@@ -91,7 +91,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100296] = { max = 16, class = TT.AchievementProgress, remove_after_reaching_target = false, special_function = SF.AddAchievementToCounter },
+            [100296] = { max = 16, class = TT.AchievementProgress, show_finish_after_reaching_target = true, special_function = SF.AddAchievementToCounter },
             [100470] = { special_function = SF.SetAchievementFailed },
         }
     }

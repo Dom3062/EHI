@@ -94,7 +94,7 @@ EHI:ParseTriggers({
 EHI:ShowAchievementLootCounter({
     achievement = "cane_3",
     max = 100,
-    remove_after_reaching_target = false,
+    show_finish_after_reaching_target = true,
     difficulty_pass = ovk_and_up
 })
 

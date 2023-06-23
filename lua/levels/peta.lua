@@ -67,14 +67,36 @@ EHI:RegisterCustomSpecialFunction(ShowWaypoint, function(self, trigger, ...)
     trigger.data.position = e and e._values.position or Vector3()
     managers.hud:add_waypoint(trigger.id, trigger.data)
 end)
+local objectives =
+{
+    { amount = 1500, name = "gs_drill_open_store" },
+    { amount = 1500, name = "gs_turn_off_powerbox" },
+    { amount = 1500, name = "gs_clear_fire_debris" },
+    { amount = 1500, name = "gs_saw_lightpost" }
+}
+if EHI:IsHost() then
+    -- 2 * 1500
+    table.insert(objectives, 1, { amount = 3000, name = "gs_start" })
+end
+local GoatsToSecure = EHI:GetValueBasedOnDifficulty({
+    normal = 5,
+    hard = 7,
+    veryhard = 10,
+    overkill = 13,
+    mayhem_or_above = 15
+})
 EHI:AddXPBreakdown({
-    objective =
+    objectives = objectives,
+    loot_all = { amount = 1500, text = "each_goat_secured" },
+    total_xp_override =
     {
-        gs_start = 3000, -- 2 * 1500
-        gs_drill_open_store = 1500,
-        gs_turn_off_powerbox = 1500,
-        gs_clear_fire_debris = 1500,
-        gs_saw_lightpost = 1500
-    },
-    loot_all = 1500
+        params =
+        {
+            objectives =
+            {
+                gs_clear_fire_debris = { times = 2 }
+            },
+            loot_all = { times = GoatsToSecure }
+        }
+    }
 })

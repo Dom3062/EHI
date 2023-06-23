@@ -43,10 +43,10 @@ if EHI:IsLootCounterVisible() then
     local CreateCounter = true
     other[102293] = EHI:AddLootCounter3(function(self, ...)
         if CreateCounter then
-            EHI:ShowLootCounterNoCheck()
+            EHI:ShowLootCounterNoChecks()
             CreateCounter = false
         end
-        self._trackers:IncreaseTrackerProgressMax("LootCounter")
+        self._trackers:IncreaseLootCounterProgressMax()
     end)
 end
 

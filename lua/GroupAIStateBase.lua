@@ -49,13 +49,14 @@ function GroupAIStateBase:load(...)
 end
 
 if EHI:ShowDramaTracker() and not tweak_data.levels:IsStealthRequired() then
+    local pos = EHI:CombineAssaultDelayAndAssaultTime() and 1 or 0
     local function Create()
         managers.ehi_tracker:AddTracker({
             id = "Drama",
             icons = { "C_Escape_H_Street_Bullet" },
-            class = "EHIChanceTracker",
+            class = EHI.Trackers.Chance,
             dont_flash = true
-        }, 0)
+        }, pos)
     end
     original._add_drama = GroupAIStateBase._add_drama
     function GroupAIStateBase:_add_drama(...)
@@ -83,7 +84,7 @@ if show_minion_tracker or show_popup then
     end
     local UpdateTracker = function(...) end
     if show_minion_tracker then
-        if EHI:GetOption("show_minion_per_player") then
+        if EHI:GetOption("show_minion_option") ~= 2 then
             dofile(EHI.LuaPath .. "trackers/EHIMinionTracker.lua")
             UpdateTracker = function(unit, key, amount, peer_id)
                 if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount ~= 0 then
@@ -115,7 +116,9 @@ if show_minion_tracker or show_popup then
 
     function GroupAIStateBase:EHIRemoveConvert(params, unit)
         EHI:CallCallback(EHI.CallbackMessage.OnMinionKilled)
-        UpdateTracker(nil, params.unit_key, 0)
+        if params.update_tracker then
+            UpdateTracker(nil, params.unit_key, 0)
+        end
         unit:character_damage():remove_listener(callback_key)
         unit:base():remove_destroy_listener(callback_key)
         if game_is_running and show_popup and params.local_peer then
@@ -132,16 +135,34 @@ if show_minion_tracker or show_popup then
     EHI:AddCallback(EHI.CallbackMessage.GameRestart, GameEnd)
     EHI:AddCallback(EHI.CallbackMessage.MissionEnd, GameEnd)
 
-    function GroupAIStateBase:EHIAddListener(unit, local_peer)
-        if not unit.key then
-            EHI:Log("Convert does not have a 'key()' function! Aborting to avoid crashing the game.")
-            return
+    if EHI:GetOption("show_minion_option") == 1 then -- Only you
+        function GroupAIStateBase:EHIAddConvert(unit, local_peer, peer_id)
+            if not unit.key then
+                EHI:Log("Convert does not have a 'key()' function! Aborting to avoid crashing the game.")
+                return
+            end
+            EHI:CallCallback(EHI.CallbackMessage.OnMinionAdded)
+            local key = tostring(unit:key())
+            local clbk = callback(self, self, "EHIRemoveConvert", { unit_key = key, local_peer = local_peer, update_tracker = local_peer })
+            unit:base():add_destroy_listener(callback_key, clbk)
+            unit:character_damage():add_listener(callback_key, { "death" }, clbk)
+            if local_peer then
+                UpdateTracker(unit, key, 1, peer_id)
+            end
         end
-        EHI:CallCallback(EHI.CallbackMessage.OnMinionAdded)
-        local key = tostring(unit:key())
-        local clbk = callback(self, self, "EHIRemoveConvert", { unit_key = key, local_peer = local_peer })
-        unit:base():add_destroy_listener(callback_key, clbk)
-        unit:character_damage():add_listener(callback_key, { "death" }, clbk)
+    else -- Everyone
+        function GroupAIStateBase:EHIAddConvert(unit, local_peer, peer_id)
+            if not unit.key then
+                EHI:Log("Convert does not have a 'key()' function! Aborting to avoid crashing the game.")
+                return
+            end
+            EHI:CallCallback(EHI.CallbackMessage.OnMinionAdded)
+            local key = tostring(unit:key())
+            local clbk = callback(self, self, "EHIRemoveConvert", { unit_key = key, local_peer = local_peer, update_tracker = true })
+            unit:base():add_destroy_listener(callback_key, clbk)
+            unit:character_damage():add_listener(callback_key, { "death" }, clbk)
+            UpdateTracker(unit, key, 1, peer_id)
+        end
     end
 
     original.convert_hostage_to_criminal = GroupAIStateBase.convert_hostage_to_criminal
@@ -150,8 +171,7 @@ if show_minion_tracker or show_popup then
 		if unit:brain()._logic_data.is_converted then
 			local peer_id = peer_unit and managers.network:session():peer_by_unit(peer_unit):id() or managers.network:session():local_peer():id()
             local local_peer = not peer_unit
-            self:EHIAddListener(unit, local_peer)
-            UpdateTracker(unit, tostring(unit:key()), 1, peer_id)
+            self:EHIAddConvert(unit, local_peer, peer_id)
 		end
 	end
 
@@ -159,8 +179,7 @@ if show_minion_tracker or show_popup then
 	function GroupAIStateBase:sync_converted_enemy(converted_enemy, owner_peer_id, ...)
 		if self._police[converted_enemy:key()] then
             local peer_id = owner_peer_id or 0
-            self:EHIAddListener(converted_enemy, peer_id == managers.network:session():local_peer():id())
-            UpdateTracker(converted_enemy, tostring(converted_enemy:key()), 1, peer_id)
+            self:EHIAddConvert(converted_enemy, peer_id == managers.network:session():local_peer():id(), peer_id)
 		end
 		return original.sync_converted_enemy(self, converted_enemy, owner_peer_id, ...)
 	end

@@ -281,8 +281,7 @@
     "ehi_show_minion_tracker" : "显示变节警察追踪器",
     "ehi_show_minion_tracker_desc" : "显示地图上已变节警察的数量追踪器",
 
-    "ehi_show_minion_per_player" : "单独显示每位玩家的变节警察",
-    "ehi_show_minion_per_player_desc" : "在追踪器中用玩家颜色单独显示玩家的变节警察数",
+    "ehi_show_minion_option_3" : "单独显示每位玩家的变节警察",
 
     "ehi_show_minion_killed_message" : "显示 '变节警察阵亡' 提示",
     "ehi_show_minion_killed_message_desc" : "在你的变节警察死亡时发出提示",
@@ -621,6 +620,7 @@
     "ehi_experience_xp_bonus" : "额外经验",
     "ehi_experience_trigger_times" : "$times;次最多",
     "ehi_experience_random_objectives" : "随机目标($count;):",
+    "ehi_experience_random_objectives_no_count" : "随机目标:",
     "ehi_experience_heli_escape" : "直升机撤离",
     "ehi_experience_loud_escape" : "强袭撤离",
     "ehi_experience_stealth_escape" : "潜入撤离",
@@ -767,7 +767,6 @@
     "ehi_experience_gs_turn_off_powerbox" : "关闭电箱",
     "ehi_experience_gs_clear_fire_debris" : "清理火灾现场",
     "ehi_experience_gs_saw_lightpost" : "锯断灯柱",
-    "ehi_experience_gs2_plane_started" : "发送信号",
     "ehi_experience_gs2_cage_grabbed" : "拿取笼子",
     "ehi_experience_gs2_arrived_on_bridge" : "到达桥上",
     "ehi_experience_gs2_drilled_door" : "钻开桥梁控制室",

@@ -16,7 +16,7 @@ local triggers = {
     [100224] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 100926 } },
     [101858] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101854 } },
 
-    -- Bugged because of retarted use of ENABLED in ElementTimer and ElementTimerTrigger
+    -- Bugged because of retarded use of ENABLED in ElementTimer and ElementTimerTrigger
     [101240] = { time = 540, id = "CokeTimer", icons = { { icon = Icon.Loot, color = Color.red } }, class = TT.Warning },
     [101282] = { id = "CokeTimer", special_function = SF.RemoveTracker }
 }
@@ -56,34 +56,36 @@ else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
 
-local LootCounter = EHI:GetOption("show_loot_counter")
-local MoneyBagsInVault = 1
-if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
-    MoneyBagsInVault = 2
-elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-    MoneyBagsInVault = 3
-end
-local MoneyAroundHostage = 0
-local HostageMoneyTaken = 0
-local _HostageExploded = false
-local function HostageMoneyInteracted(...)
-    if _HostageExploded then
-        return
-    end
-    HostageMoneyTaken = HostageMoneyTaken + 1
-end
-local function HostageExploded()
-    _HostageExploded = true
-    local count = MoneyAroundHostage - HostageMoneyTaken
-    if count ~= 0 then
-        managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter", count)
-    end
-end
 local other =
 {
-    [100043] = EHI:AddLootCounter(function()
+    [100520] = EHI:AddAssaultDelay({ time = 30 }) -- Diff is applied earlier
+}
+if EHI:IsLootCounterVisible() then
+    local MoneyBagsInVault = 1
+    if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
+        MoneyBagsInVault = 2
+    elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+        MoneyBagsInVault = 3
+    end
+    local MoneyAroundHostage = 0
+    local HostageMoneyTaken = 0
+    local _HostageExploded = false
+    local function HostageMoneyInteracted(...)
+        if _HostageExploded then
+            return
+        end
+        HostageMoneyTaken = HostageMoneyTaken + 1
+    end
+    local function HostageExploded()
+        _HostageExploded = true
+        local count = MoneyAroundHostage - HostageMoneyTaken
+        if count ~= 0 then
+            managers.ehi_tracker:DecreaseLootCounterProgressMax(count)
+        end
+    end
+    other[100043] = EHI:AddLootCounter3(function(self, ...)
         local loot_triggers = {}
-        MoneyAroundHostage = managers.ehi_tracker:CountInteractionAvailable("money_small")
+        MoneyAroundHostage = self._trackers:CountInteractionAvailable("money_small")
         for _, index in ipairs(start_index) do
             if managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceElementID(100000, index)) then -- Bomb guy is here
                 for i = 100003, 100006, 1 do
@@ -93,24 +95,19 @@ local other =
                 break
             end
         end
-        EHI:ShowLootCounterNoCheck({
+        EHI:ShowLootCounterNoChecks({
             max = 9 + MoneyBagsInVault + MoneyAroundHostage,
             offset = true,
             triggers = loot_triggers,
             hook_triggers = true,
             client_from_start = true
         })
-    end, LootCounter),
-
-    [100520] = EHI:AddAssaultDelay({ time = 30 }) -- Diff is applied earlier
-}
-if LootCounter then
+    end)
     -- coke, money, meth
     EHI:HookLootRemovalElement({ 101681, 101700, 101701 })
-    local function CokeDestroyed()
-        managers.ehi_tracker:DecreaseTrackerProgressMax("LootCounter")
-    end
-    local CokeDestroyedTrigger = { special_function = SF.CustomCode, f = CokeDestroyed }
+    local CokeDestroyedTrigger = { special_function = SF.CustomCode, f = function()
+        managers.ehi_tracker:DecreaseLootCounterProgressMax()
+    end }
     other[101264] = CokeDestroyedTrigger
     other[101271] = CokeDestroyedTrigger
     other[101272] = CokeDestroyedTrigger

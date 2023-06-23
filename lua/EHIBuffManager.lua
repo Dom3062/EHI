@@ -146,7 +146,7 @@ function EHIBuffManager:CallFunction(id, f, ...)
 end
 
 function EHIBuffManager:SyncBuff(id, t)
-    EHI:Sync(EHI.SyncMessages.EHISyncAddBuff, LuaNetworking:TableToString({ id = id, t = t }))
+    EHI:SyncTable(EHI.SyncMessages.EHISyncAddBuff, { id = id, t = t })
 end
 
 function EHIBuffManager:ActivateUpdatingBuffs()

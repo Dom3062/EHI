@@ -17,7 +17,6 @@ function EHITrackerManager:new()
         normal = false
     }
     self._n_of_trackers = 0
-    self._cache = { _deployables = {}, TradeDelay = {} }
     self._delay_popups = true
     self._panel_size = 32 * self._scale
     self._panel_offset = 6 * self._scale
@@ -243,7 +242,7 @@ end
 ---@param id integer
 ---@param delay number
 function EHITrackerManager:Sync(id, delay)
-    EHI:Sync(EHI.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
+    EHI:SyncTable(EHI.SyncMessages.EHISyncAddTracker, { id = id, delay = delay or 0 })
 end
 
 if Global.game_settings and Global.game_settings.single_player then
@@ -294,10 +293,10 @@ end
 ---@param id string
 ---@param max integer
 ---@param progress integer
----@param remove_after_reaching_target boolean?
+---@param show_finish_after_reaching_target boolean?
 ---@param class string?
 ---@param icon string?
-function EHITrackerManager:AddAchievementProgressTracker(id, max, progress, remove_after_reaching_target, class, icon)
+function EHITrackerManager:AddAchievementProgressTracker(id, max, progress, show_finish_after_reaching_target, class, icon)
     icon = icon or self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
@@ -305,7 +304,7 @@ function EHITrackerManager:AddAchievementProgressTracker(id, max, progress, remo
         max = max,
         icons = { icon },
         delay_popup = self._delay_popups,
-        remove_after_reaching_target = remove_after_reaching_target,
+        show_finish_after_reaching_target = show_finish_after_reaching_target,
         class = class or EHI.Trackers.AchievementProgress
     })
 end
@@ -341,16 +340,16 @@ end
 
 ---@param id string
 ---@param to_secure number
----@param remove_after_reaching_target boolean?
+---@param show_finish_after_reaching_target boolean?
 ---@param icon string?
-function EHITrackerManager:AddAchievementBagValueCounter(id, to_secure, remove_after_reaching_target, icon)
+function EHITrackerManager:AddAchievementBagValueCounter(id, to_secure, show_finish_after_reaching_target, icon)
     icon = icon or self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         to_secure = to_secure,
         icons = { icon },
         delay_popup = true,
-        remove_after_reaching_target = remove_after_reaching_target,
+        show_finish_after_reaching_target = show_finish_after_reaching_target,
         class = EHI.Trackers.AchievementBagValue
     })
 end
@@ -388,23 +387,6 @@ function EHITrackerManager:AddAchievementKillCounter(id, progress, max)
     })
 end
 
----@param dropin boolean
----@param chance number
----@param civilian_killed_multiplier number?
-function EHITrackerManager:AddEscapeChanceTracker(dropin, chance, civilian_killed_multiplier)
-    if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
-        return
-    end
-    self:DisableIncreaseCivilianKilled()
-    civilian_killed_multiplier = civilian_killed_multiplier or 5
-    self:AddTracker({
-        id = "EscapeChance",
-        chance = chance + (self:GetAndRemoveFromCache("CiviliansKilled", 0) * civilian_killed_multiplier),
-        icons = { { icon = EHI.Icons.Car, color = Color.red } },
-        class = EHI.Trackers.Chance
-    })
-end
-
 ---@param params AddTrackerTable
 ---@param pos integer?
 function EHITrackerManager:AddTrackerIfDoesNotExist(params, pos)
@@ -432,8 +414,6 @@ function EHITrackerManager:SwitchToLoudMode()
             self:RemoveTracker(key)
         end
     end
-    self:CallFunction("Deployables", "AddToIgnore", "bodybags_bag")
-    self._deployables_ignore = { bodybags_bag = true }
 end
 
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) then -- Vertical in VR or in non-VR
@@ -720,102 +700,6 @@ function EHITrackerManager:SetTrackerIcon(id, icon)
     end
 end
 
-function EHITrackerManager:GetAndRemoveFromCache(id, default)
-    local data = self._cache[id]
-    self._cache[id] = nil
-    return data or default
-end
-
----@param type string
----@param key string
----@param unit Unit
----@param tracker_type string?
-function EHITrackerManager:AddToDeployableCache(type, key, unit, tracker_type)
-    if not key then
-        return
-    end
-    self._cache._deployables[type] = self._cache._deployables[type] or {}
-    self._cache._deployables[type][key] = { unit = unit, tracker_type = tracker_type }
-    local tracker = self:GetTracker(type)
-    if tracker then
-        if tracker_type then
-            tracker:UpdateAmount(tracker_type, unit, key, 0)
-        else
-            tracker:UpdateAmount(unit, key, 0)
-        end
-    end
-end
-
----@param type string
----@param key string
-function EHITrackerManager:LoadFromDeployableCache(type, key)
-    if not key then
-        return
-    end
-    self._cache._deployables[type] = self._cache._deployables[type] or {}
-    if self._cache._deployables[type][key] then
-        if self:TrackerDoesNotExist(type) then
-            self:CreateDeployableTracker(type)
-        end
-        local deployable = self._cache._deployables[type][key]
-        local unit = deployable.unit
-        local tracker = self:GetTracker(type)
-        if tracker then
-            if deployable.tracker_type then
-                tracker:UpdateAmount(deployable.tracker_type, unit, key, unit:base():GetRealAmount())
-            else
-                tracker:UpdateAmount(unit, key, unit:base():GetRealAmount())
-            end
-        end
-        self._cache._deployables[type][key] = nil
-    end
-end
-
----@param type string
----@param key string
-function EHITrackerManager:RemoveFromDeployableCache(type, key)
-    if not key then
-        return
-    end
-    self._cache._deployables[type] = self._cache._deployables[type] or {}
-    self._cache._deployables[type][key] = nil
-end
-
----@param type string
-function EHITrackerManager:CreateDeployableTracker(type)
-    if type == "Deployables" then
-        self:AddAggregatedDeployablesTracker()
-    elseif type == "Health" then
-        self:AddAggregatedHealthTracker()
-    elseif type == "DoctorBags" then
-        self:AddTracker({
-            id = "DoctorBags",
-            icons = { "doctor_bag" },
-            class = "EHIEquipmentTracker"
-        })
-    elseif type == "AmmoBags" then
-        self:AddTracker({
-            id = "AmmoBags",
-            format = "percent",
-            icons = { "ammo_bag" },
-            class = "EHIEquipmentTracker"
-        })
-    elseif type == "BodyBags" then
-        self:AddTracker({
-            id = "BodyBags",
-            icons = { "bodybags_bag" },
-            class = "EHIEquipmentTracker"
-        })
-    elseif type == "FirstAidKits" then
-        self:AddTracker({
-            id = "FirstAidKits",
-            icons = { "first_aid_kit" },
-            dont_show_placed = true,
-            class = "EHIEquipmentTracker"
-        })
-    end
-end
-
 ---@param id string
 ---@param amount number
 function EHITrackerManager:IncreaseChance(id, amount)
@@ -923,23 +807,6 @@ function EHITrackerManager:StartTrackerCountdown(id)
     end
 end
 
-function EHITrackerManager:AddAggregatedDeployablesTracker()
-    self:AddTracker({
-        id = "Deployables",
-        icons = { "deployables" },
-        ignore = self._deployables_ignore or {},
-        format = { ammo_bag = "percent" },
-        class = "EHIAggregatedEquipmentTracker"
-    })
-end
-
-function EHITrackerManager:AddAggregatedHealthTracker()
-    self:AddTracker({
-        id = "Health",
-        class = "EHIAggregatedHealthEquipmentTracker"
-    })
-end
-
 ---@param id string
 ---@param force boolean?
 function EHITrackerManager:SetAchievementComplete(id, force)
@@ -991,15 +858,54 @@ function EHITrackerManager:DecreaseTrackerCount(id)
     end
 end
 
-function EHITrackerManager:IncreaseCivilianKilled()
-    if self._cache.CiviliansKilledDisabled then
-        return
-    end
-    self._cache.CiviliansKilled = (self._cache.CiviliansKilled or 0) + 1
+function EHITrackerManager:SecuredMissionLoot()
+    self:CallFunction("LootCounter", "SecuredMissionLoot")
 end
 
-function EHITrackerManager:DisableIncreaseCivilianKilled()
-    self._cache.CiviliansKilledDisabled = true
+---@param max number?
+function EHITrackerManager:IncreaseLootCounterProgressMax(max)
+    self:IncreaseTrackerProgressMax("LootCounter", max)
+end
+
+---@param max number?
+function EHITrackerManager:DecreaseLootCounterProgressMax(max)
+    self:DecreaseTrackerProgressMax("LootCounter", max)
+end
+
+---@param max_random number?
+function EHITrackerManager:SetLootCounterMaxRandom(max_random)
+    self:CallFunction("LootCounter", "SetMaxRandom", max_random)
+end
+
+---@param progress number?
+function EHITrackerManager:IncreaseLootCounterMaxRandom(progress)
+    self:CallFunction("LootCounter", "IncreaseMaxRandom", progress)
+end
+
+---@param progress number?
+function EHITrackerManager:DecreaseLootCounterMaxRandom(progress)
+    self:CallFunction("LootCounter", "DecreaseMaxRandom", progress)
+end
+
+---@param random number?
+function EHITrackerManager:RandomLootSpawned(random)
+    self:CallFunction("LootCounter", "RandomLootSpawned", random)
+end
+
+---@param random number?
+function EHITrackerManager:RandomLootDeclined(random)
+    self:CallFunction("LootCounter", "RandomLootDeclined", random)
+end
+
+---@param id string|number Element ID
+---@param force boolean? Force loot spawn event if the element does not have "fail" state (desync workaround)
+function EHITrackerManager:RandomLootSpawnedCheck(id, force)
+    self:CallFunction("LootCounter", "RandomLootSpawned2", id, force)
+end
+
+---@param id string|number Element ID
+function EHITrackerManager:RandomLootDeclinedCheck(id)
+    self:CallFunction("LootCounter", "RandomLootDeclined2", id)
 end
 
 ---@param id string
@@ -1044,7 +950,7 @@ if Global.load_level then
     if EHI:GetOption("show_timers") then
         dofile(path .. "EHISecurityLockGuiTracker.lua")
     end
-    if EHI:GetOption("show_equipment_tracker") or (EHI:GetOption("show_minion_tracker") and not EHI:GetOption("show_minion_per_player")) then
+    if EHI:GetOption("show_equipment_tracker") or (EHI:GetOption("show_minion_tracker") and EHI:GetOption("show_minion_option") == 2) then
         dofile(path .. "EHIEquipmentTracker.lua")
     end
     if EHI:GetOption("show_equipment_tracker") then

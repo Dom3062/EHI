@@ -20,11 +20,14 @@ EHIManager.SyncFunctions = EHI.SyncFunctions
 EHIManager.TriggerFunction = EHI.TriggerFunction
 EHIManager.SFF = {}
 EHIManager.HookOnLoad = {}
-function EHIManager:new(ehi_tracker, ehi_waypoints)
-    ---@type EHITrackerManager
+---@param ehi_tracker EHITrackerManager
+---@param ehi_waypoints EHIWaypointManager
+---@param ehi_escape EHIEscapeChanceManager
+---@return EHIManager
+function EHIManager:new(ehi_tracker, ehi_waypoints, ehi_escape)
     self._trackers = ehi_tracker
-    ---@type EHIWaypointManager
     self._waypoints = ehi_waypoints
+    self._escape = ehi_escape
     self._level_started_from_beginning = true
     self._t = 0
     self.TrackerWaypointsClass =
@@ -506,6 +509,9 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     --EHI:PrintTable(triggers)
 end
 
+---@param new_triggers table
+---@param trigger_id_all string?
+---@param trigger_icons_all table?
 function EHIManager:ParseOtherTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     for id, data in pairs(new_triggers) do
         -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
@@ -516,7 +522,11 @@ function EHIManager:ParseOtherTriggers(new_triggers, trigger_id_all, trigger_ico
     self:AddTriggers(new_triggers, trigger_id_all or "Trigger", trigger_icons_all)
 end
 
-function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all)
+---@param new_triggers table
+---@param trigger_id_all string?
+---@param trigger_icons_all table?
+---@param no_host_override boolean?
+function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all, no_host_override)
     if not EHI:GetOption("show_mission_trackers") then
         for id, data in pairs(new_triggers) do
             if data.special_function then
@@ -530,6 +540,9 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
         return
     end
     local host = EHI:IsHost()
+    if no_host_override then
+        host = false
+    end
     local configure_waypoints = EHI:GetOption("show_waypoints_mission")
     for id, data in pairs(new_triggers) do
         -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
@@ -596,6 +609,12 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
     self:AddTriggers2(new_triggers, nil, trigger_id_all or "Trigger", trigger_icons_all)
 end
 
+---@param new_triggers ParseTriggersTable
+---@param defer_loading_waypoints boolean?
+function EHIManager:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
+    self:ParseMissionTriggers(new_triggers, nil, nil, defer_loading_waypoints)
+end
+
 ---@param preload table
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
@@ -608,8 +627,14 @@ function EHIManager:PreloadTrackers(preload, trigger_id_all, trigger_icons_all)
 end
 
 function EHIManager:InitElements()
+    if self.__init_done then
+        return
+    end
+    self.__init_done = true
     self:HookElements(triggers)
-    if EHI:IsClient() then
+    if EHI:IsHost() then
+        self:AddPositionToWaypointFromLoad()
+    else
         return
     end
     local scripts = managers.mission._scripts or {}
@@ -647,7 +672,7 @@ function EHIManager:InitElements()
                                 elseif trigger.set_time_when_tracker_exists then
                                     if self._trackers:TrackerExists(trigger.id) then
                                         self._trackers:SetTrackerTimeNoAnim(trigger.id, delay)
-                                        EHI:Sync(EHI.SyncMessages.EHISyncAddTracker, LuaNetworking:TableToString({ id = id, delay = delay or 0 }))
+                                        EHI:SyncTable(EHI.SyncMessages.EHISyncAddTracker, { id = id, delay = delay or 0 })
                                     else
                                         self:AddTrackerAndSync(params.id, delay)
                                     end
@@ -700,7 +725,7 @@ function EHIManager:HookElements(elements_to_hook)
     end
 end
 
-function EHIManager:SyncLoad()
+function EHIManager:AddPositionToWaypointFromLoad()
     for _, trigger in pairs(triggers) do
         if trigger.special_function == SF.ShowWaypoint and trigger.data and not trigger.data.position then
             if trigger.data.position_by_element then
@@ -716,6 +741,10 @@ function EHIManager:SyncLoad()
             end
         end
     end
+end
+
+function EHIManager:SyncLoad()
+    self:AddPositionToWaypointFromLoad()
     for id, _ in pairs(self.HookOnLoad) do
         local trigger = triggers[id]
         if trigger then
@@ -750,7 +779,7 @@ local function AddTracker(self, trigger)
             trigger.waypoint.time = trigger.time
         end
     end
-    self._trackers:AddTracker(trigger)
+    self._trackers:AddTracker(trigger, trigger.pos)
 end
 
 ---@param trigger table

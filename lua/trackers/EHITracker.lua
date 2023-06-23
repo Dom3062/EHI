@@ -165,6 +165,7 @@ local function CreateHUDBGBox(panel, params)
 end
 
 ---@class EHITracker
+---@field _parent_class EHITrackerManager
 ---@field _forced_icons table?
 ---@field _forced_time number?
 ---@field _icon1 userdata

@@ -204,6 +204,9 @@
     "ehi_show_trade_delay_suppress_in_stealth" : "Nezobrazovat sledovač s délkou pobytu, když nenazněl alarm",
     "ehi_show_trade_delay_suppress_in_stealth_desc" : "Je-li povoleno, sledovač bude skrytý. Jakmile zazní alarm, sledovač se ukáže se vším nahromaděným časem.",
 
+    "ehi_show_trade_delay_amount_of_killed_civilians" : "Zobrazovat ve sledovači s délkou pobytu počet zabitých civilistů",
+    "ehi_show_trade_delay_amount_of_killed_civilians_desc" : "U každého hráče zobrazuje počet zabitých civilistů",
+
     "ehi_show_timers" : "Zobrazovat časovače",
     "ehi_show_timers_desc" : "Zobrazuje časovače, když zařízení hackuje, vrtá, řeže a tak dále...",
 
@@ -281,8 +284,11 @@
     "ehi_show_minion_tracker" : "Zobrazovat sledovač převedenců",
     "ehi_show_minion_tracker_desc" : "Zobrazuje sledovač s počtem převedenců na mapě",
 
-    "ehi_show_minion_per_player" : "Zobrazovat počet převedenců na hráče",
-    "ehi_show_minion_per_player_desc" : "Zobrazuje ve sledovači počet převedenců barvou hráče",
+    "ehi_show_minion_option" : "Jak formátovat převedence",
+    "ehi_show_minion_option_desc" : "",
+    "ehi_show_minion_option_1" : "Zobrazovat pouze počet tvých převedenců",
+    "ehi_show_minion_option_2" : "Zobrazovat celkový počet převedenců na mapě",
+    "ehi_show_minion_option_3" : "Zobrazovat počet převedenců na hráče",
 
     "ehi_show_minion_killed_message" : "Zobrazovat oznámení 'PŘEVEDENEC ZABIT'",
     "ehi_show_minion_killed_message_desc" : "Zobrazuje oznámení, když tvůj převedenec je zabit",
@@ -640,11 +646,13 @@
     "ehi_experience_to_secure" : "Zajistit: $amount",
     "ehi_experience_trigger_times" : "Max $times;x",
     "ehi_experience_random_objectives" : "Náhodné úkoly ($count;):",
+    "ehi_experience_random_objectives_no_count" : "Náhodné úkoly:",
     "ehi_experience_heli_escape" : "Únik helikoptérou",
     "ehi_experience_loud_escape" : "Dokončení mise po alarmu",
     "ehi_experience_stealth_escape" : "Dokončení mise bez alarmu",
     "ehi_experience_escape" : "Dokončení mise",
     "ehi_experience_escape_is_enabled" : "Úniková zóna je k dispozici",
+    "ehi_experience_each_goat_secured" : "Každá zajištěná koza",
     "ehi_experience_each_loot_secured" : "Každý zajištěný pytel",
     "ehi_experience_loot_else" : "Ostatní lup",
     "ehi_experience_loot_secured" : "Lup zajištěn:",
@@ -786,7 +794,7 @@
     "ehi_experience_gs_turn_off_powerbox" : "Elektřina odpojena",
     "ehi_experience_gs_clear_fire_debris" : "Odstraněny trosky po požáru",
     "ehi_experience_gs_saw_lightpost" : "Lampa uřezaná",
-    "ehi_experience_gs2_plane_started" : "Dán signál pro vyzvednutí klece",
+    "ehi_experience_gs2_cage_drop" : "Klec shozena",
     "ehi_experience_gs2_cage_grabbed" : "Klec chycena",
     "ehi_experience_gs2_arrived_on_bridge" : "Tým dorazil na most",
     "ehi_experience_gs2_drilled_door" : "Dveře k ovládání mostu otevřeny",

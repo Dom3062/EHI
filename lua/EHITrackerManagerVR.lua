@@ -1,13 +1,9 @@
 local EHI = EHI
 EHITrackerManagerVR = EHITrackerManager
 EHITrackerManagerVR.old_new = EHITrackerManager.new
-EHITrackerManagerVR.old_AddToDeployableCache = EHITrackerManager.AddToDeployableCache
-EHITrackerManagerVR.old_LoadFromDeployableCache = EHITrackerManager.LoadFromDeployableCache
-EHITrackerManagerVR.old_RemoveFromDeployableCache = EHITrackerManager.RemoveFromDeployableCache
 EHITrackerManagerVR.old_PreloadTracker = EHITrackerManager.PreloadTracker
 EHITrackerManagerVR.old_AddLaserTracker = EHITrackerManager.AddLaserTracker
 EHITrackerManagerVR.old_RemoveLaserTracker = EHITrackerManager.RemoveLaserTracker
-
 function EHITrackerManagerVR:new()
     self:old_new()
     self._is_loading = true
@@ -84,44 +80,6 @@ function EHITrackerManagerVR:AddToLoadQueue(key, data, f, add)
     else
         self._load_callback[key] = { data = data, f = f }
     end
-end
-
----@param key string
----@param data table
-function EHITrackerManagerVR:ReturnLoadCall(key, data)
-    self[data.f](self, data.type, key, data.unit, data.tracker_type)
-end
-
----@param type string
----@param key string
----@param unit Unit
----@param tracker_type string
-function EHITrackerManagerVR:AddToDeployableCache(type, key, unit, tracker_type)
-    if key and self:IsLoading() then
-        self:AddToLoadQueue(key, { type = type, unit = unit, tracker_type = tracker_type, f = "AddToDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
-        return
-    end
-    self:old_AddToDeployableCache(type, key, unit, tracker_type)
-end
-
----@param type string
----@param key string
-function EHITrackerManagerVR:LoadFromDeployableCache(type, key)
-    if key and self:IsLoading() then
-        self:AddToLoadQueue(key, { type = type, f = "LoadFromDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
-        return
-    end
-    self:old_LoadFromDeployableCache(type, key)
-end
-
----@param type string
----@param key string
-function EHITrackerManagerVR:RemoveFromDeployableCache(type, key)
-    if key and self:IsLoading() then
-        self:AddToLoadQueue(key, { type = type, f = "RemoveFromDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
-        return
-    end
-    self:old_RemoveFromDeployableCache(type, key)
 end
 
 ---@param params table

@@ -140,7 +140,7 @@ end
 
 local reloading_outfit = false
 local xp_format = EHI:GetOption("xp_format")
-local diff_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", EHI._cache.DifficultyIndex or 0) or 1
+local diff_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", EHI:DifficultyIndex()) or 1
 
 local original =
 {
@@ -159,7 +159,7 @@ function MissionBriefingGui:init(...)
         name = "ehi_panel",
         h = 100,
         layer = 9,
-        w = w --0.35
+        w = w
     })
     self._ehi_panel_v2 = self._ehi_panel:panel({
         name = "panel",
@@ -450,7 +450,7 @@ function MissionBriefingGui:ProcessBreakDown(params, panel)
         end
         self:ProcessLoot(panel, params, total_xp, gage)
         self:ProcessTotalXP(panel, params, gage, total_xp)
-    elseif params.loot_all or params.loot then
+    elseif params.loot or params.loot_all then
         local total_xp = { base = 0, add = not params.no_total_xp }
         self:ProcessLoot(panel, params, total_xp, gage)
         self:ProcessTotalXP(panel, params, gage, total_xp)
@@ -499,6 +499,8 @@ function MissionBriefingGui:ProcessTotalXP(panel, params, gage, total_xp)
                 self:ParamsMinMax(panel, params, o_params.min_max)
             elseif o_params.min then
                 self:ParamsMinWithMax(panel, params, o_params, override)
+            elseif o_params.max_only then
+                self:ParamsMaxOnly(panel, params, o_params.max_only)
             end
         else
             local base = 0
@@ -569,6 +571,7 @@ function MissionBriefingGui:ParamsCustom(panel, params, o_params)
             self:ParamsMinMax(panel, params, c_params)
         elseif c_params.type == "min_with_max" then
             self:ParamsMinWithMax(panel, params, c_params, params.total_xp_override)
+        elseif c_params.type == "max_only" then
         else
             EHI:Log("Custom type not recognized! " .. tostring(c_params.type))
         end
@@ -883,6 +886,57 @@ function MissionBriefingGui:ParamsMinWithMax(panel, params, o_params, override)
     self:AddTotalMinMaxXP(panel, min, max, format_max, o_params.name)
 end
 
+function MissionBriefingGui:ParamsMaxOnly(panel, params, o_params)
+    local o_max = o_params.max or {}
+    local max = 0
+    if type(params.objective) == "table" then
+        max = self:SumObjective(params.objective, o_max)
+    end
+    if type(params.objectives) == "table" then
+        for _, data in ipairs(params.objectives or {}) do
+            local key = data.name or "unknown"
+            local actual_value = data.amount or 0
+            if data.escape then
+                if type(data.escape) == "number" then
+                    actual_value = data.escape
+                else
+                    EHI:Log("[MissionBriefingGui] Unknown type for escape!")
+                end
+            end
+            if o_max[key] then
+                max = max + (actual_value * (o_max[key].times or data.times or 1))
+            else
+                max = max + (actual_value * (data.times or 1))
+            end
+        end
+    else
+        max = max + self:SumObjectives(params.objectives, o_max)
+    end
+    for key, data in pairs(o_params.loot or {}) do
+        local loot = params.loot and params.loot[key]
+        if loot then
+            local amount = 0
+            if type(loot) == "table" then
+                amount = loot.amount
+            elseif type(loot) == "number" then
+                amount = loot
+            end
+            max = max + (amount * (data.min_max or data.max or 0))
+        end
+    end
+    if o_params.loot_all then
+        local data = o_params.loot_all
+        local amount = 0
+        if type(params.loot_all) == "table" then
+            amount = params.loot_all.amount
+        elseif type(params.loot_all) == "number" then
+            amount = params.loot_all
+        end
+        max = max + (amount * (data.min_max or data.max or 0))
+    end
+    self:AddLine(panel, ("Max (" .. o_params.name .. "): +") .. self:FormatXPWithAllGagePackages(max) .. " " .. self._loc:text("ehi_experience_xp"), Color.green)
+end
+
 function MissionBriefingGui:AddXPText(panel, txt, value, value_with_gage, text_color)
     local xp = self._loc:text("ehi_experience_xp")
     local text
@@ -1015,6 +1069,7 @@ function MissionBriefingGui:AddLootSecured(panel, loot, times, to_secure, value,
 end
 
 function MissionBriefingGui:AddRandomObjectivesHeader(panel, max)
+    local text = max and self._loc:text("ehi_experience_random_objectives", { count = max }) or self._loc:text("ehi_experience_random_objectives_no_count")
     panel.panel:text({
         name = tostring(panel.lines),
         blend_mode = "add",
@@ -1023,7 +1078,7 @@ function MissionBriefingGui:AddRandomObjectivesHeader(panel, max)
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
         color = Color.white,
-        text = self._loc:text("ehi_experience_random_objectives", { count = max }),
+        text = text,
         layer = 10
     })
     panel.lines = panel.lines + 1
@@ -1101,7 +1156,14 @@ function MissionBriefingGui:ProcessLoot(panel, params, total_xp, gage)
             if gage then
                 xp_with_gage = self:FormatXPWithAllGagePackages(data.amount)
             end
-            self:AddXPText(panel, string.format("%s (%s): ", secured_bag, self._loc:text("ehi_experience_trigger_times", { times = data.times })), xp, xp_with_gage, colors.loot_secured)
+            if data.text then
+                secured_bag = self._loc:text("ehi_experience_" .. data.text)
+            end
+            if data.times then
+                self:AddXPText(panel, string.format("%s (%s): ", secured_bag, self._loc:text("ehi_experience_trigger_times", { times = data.times })), xp, xp_with_gage, colors.loot_secured)
+            else
+                self:AddXPText(panel, string.format("%s: ", secured_bag), xp, xp_with_gage, colors.loot_secured)
+            end
             if total_xp.add and not data.times then
                 total_xp.add = false
             end

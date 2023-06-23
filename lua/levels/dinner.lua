@@ -81,7 +81,7 @@ if ovk_and_up then
     EHI:ShowAchievementLootCounter({
         achievement = "farm_6",
         max = 1,
-        remove_after_reaching_target = false,
+        show_finish_after_reaching_target = true,
         counter =
         {
             check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,

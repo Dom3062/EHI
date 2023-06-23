@@ -33,7 +33,7 @@ local function LordOfWarAchievement()
             [103427] = { special_function = SF.IncreaseProgress } -- Weapons destroyed
         },
         hook_triggers = true,
-        remove_after_reaching_target = false,
+        show_finish_after_reaching_target = true,
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
     })
     EHI:ShowLootCounter({
@@ -41,6 +41,7 @@ local function LordOfWarAchievement()
         triggers =
         {
             [103427] = { special_function = SF.DecreaseProgressMax }, -- Weapons destroyed
+            -- Why make 1 ElementCarry (remove) elements when you can make 4...
             [104470] = { special_function = SF.DecreaseProgressMax }, -- Money destroyed
             [104471] = { special_function = SF.DecreaseProgressMax }, -- Money destroyed
             [104472] = { special_function = SF.DecreaseProgressMax }, -- Money destroyed

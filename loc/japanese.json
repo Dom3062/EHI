@@ -215,8 +215,7 @@
   "ehi_show_minion_tracker": "コンバートトラッカーを表示",
   "ehi_show_minion_tracker_desc": "マップ上に存在するコンバートされた敵のトラッカーを表示します。",
 
-  "ehi_show_minion_per_player": "プレイヤーごとのコンバート数を表示",
-  "ehi_show_minion_per_player_desc": "コンバート数のトラッカーを着色して表示します。",
+  "ehi_show_minion_option_3": "プレイヤーごとのコンバート数を表示",
 
   "ehi_show_minion_killed_message": "コンバート死亡メッセージを表示",
   "ehi_show_minion_killed_message_desc": "コンバートした敵が殺害された際にメッセージを表示します。",

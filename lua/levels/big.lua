@@ -95,6 +95,19 @@ local achievements =
         end
     }
 }
+if TheFixes then
+    local Preventer = TheFixesPreventer or {}
+    if not Preventer.achi_matrix_with_lasers and achievements.cac_22.difficulty_pass then -- Fixed
+        managers.mission:add_global_event_listener("EHI_BigBank_TheFixes", { "TheFixes_AchievementFailed" }, function(id)
+            if id == "cac_22" then
+                managers.ehi_tracker:SetAchievementFailed(id)
+            end
+        end)
+        achievements.cac_22.cleanup_callback = function()
+            managers.mission:remove_global_event_listener("EHI_BigBank_TheFixes")
+        end
+    end
+end
 
 local other =
 {
@@ -112,7 +125,7 @@ EHI:ParseTriggers({
 EHI:ShowAchievementLootCounter({
     achievement = "bigbank_3",
     max = 16,
-    remove_after_reaching_target = false
+    show_finish_after_reaching_target = true
 })
 
 local tbl =

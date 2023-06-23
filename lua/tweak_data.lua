@@ -576,7 +576,7 @@ tweak_data.ehi =
             EHI:ShowAchievementBagValueCounter({
                 achievement = "uno_1",
                 value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value,
-                remove_after_reaching_target = false,
+                show_finish_after_reaching_target = true,
                 counter =
                 {
                     check_type = EHI.LootCounter.CheckType.ValueOfBags

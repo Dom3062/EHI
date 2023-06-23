@@ -65,9 +65,7 @@ if EHI:IsLootCounterVisible() then
 end
 if EHI:GetOption("show_escape_chance") then
     other[100342] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
-        if self._trackers:TrackerDoesNotExist("EscapeChance") then
-            self._trackers:AddEscapeChanceTracker(false, 25)
-        end
+        self._escape:AddChanceWhenDoesNotExists(false, 25)
     end) }
 end
 
