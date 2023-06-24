@@ -66,8 +66,8 @@ function TradeManager:init(...)
         managers.ehi_trade:SetTrade("normal", enabled, self._trade_counter_tick)
         if not enabled then
             for _, crim in ipairs(self._criminals_to_respawn) do
-                if crim.peer_id and crim.respawn_penalty then
-                    managers.ehi_trade:CallFunction("UpdatePeerCustodyTime", crim.peer_id, crim.respawn_penalty, crim.hostages_killed)
+                if crim.peer_id and crim.respawn_penalty and (crim.hostages_killed and crim.hostages_killed > 0) then
+                    managers.ehi_trade:CallFunction("AddOrUpdatePeerCustodyTime", crim.peer_id, crim.respawn_penalty, crim.hostages_killed, true)
                 end
             end
         end

@@ -278,6 +278,17 @@ function TimerGui:SetWaypointPosition(pos)
     end
 end
 
+function TimerGui:SetCustomID(id)
+    if not id then
+        return
+    end
+    if self._started then
+        managers.ehi_tracker:UpdateTrackerID(self._ehi_key, id)
+        managers.ehi_waypoint:UpdateWaypointID(self._ehi_key, id)
+    end
+    self._ehi_key = id
+end
+
 function TimerGui:Finalize()
     if self._ignore or (self._remove_on_power_off and not self._powered) then
         self:RemoveTracker()

@@ -236,6 +236,10 @@ end
 function EHITracker:OverridePanel()
 end
 
+function EHITracker:UpdateID(new_id)
+    self._id = new_id
+end
+
 function EHITracker:PosAndSetVisible(x, y)
     self._panel:set_x(x)
     self._panel:set_y(y)

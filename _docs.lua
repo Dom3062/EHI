@@ -127,6 +127,7 @@ _G.IS_VR = ...
 ---@field bitmap_world userdata
 ---@field timer_gui userdata
 ---@field distance userdata
+---@field arrow userdata
 ---@field position Vector3
 
 ---@class MissionDoorAdvancedTable

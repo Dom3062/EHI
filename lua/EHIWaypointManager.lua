@@ -108,6 +108,21 @@ function EHIWaypointManager:RestoreVanillaWaypoint(id)
     self._hud:RestoreWaypoint2(id)
 end
 
+function EHIWaypointManager:UpdateWaypointID(id, new_id)
+    if self._waypoints[new_id] or not self._waypoints[id] then
+        return
+    end
+    local wp = self._waypoints[id]
+    wp:UpdateID(new_id)
+    self._waypoints[id] = nil
+    self._waypoints[new_id] = wp
+    if self._waypoints_to_update[id] then
+        local update = self._waypoints_to_update[id]
+        self._waypoints_to_update[id] = nil
+        self._waypoints_to_update[new_id] = update
+    end
+end
+
 ---@param wp WaypointDataTable
 ---@param params AddWaypointTable
 function EHIWaypointManager:SetWaypointInitialIcon(wp, params)

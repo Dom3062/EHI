@@ -563,6 +563,28 @@ function EHITrackerManager:RemoveTrackerFromUpdate(id)
 end
 
 ---@param id string
+---@param new_id string
+function EHITrackerManager:UpdateTrackerID(id, new_id)
+    if self:TrackerExists(new_id) or self:TrackerDoesNotExist(id) then
+        return
+    end
+    local tracker = self._trackers[id]
+    tracker:UpdateID(new_id)
+    self._trackers[id] = nil
+    self._trackers[new_id] = tracker
+    if self._trackers_to_update[id] then
+        local update = self._trackers_to_update[id]
+        self._trackers_to_update[id] = nil
+        self._trackers_to_update[new_id] = update
+    end
+    if self._trackers_pos[id] then
+        local pos = self._trackers_pos[id]
+        self._trackers_pos[id] = nil
+        self._trackers_pos[new_id] = pos
+    end
+end
+
+---@param id string
 function EHITrackerManager:GetTracker(id)
     return id and self._trackers[id]
 end

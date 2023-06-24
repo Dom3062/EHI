@@ -13,6 +13,8 @@ local request = { Icon.PCHack, Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
 local CheckOkValueHostCheckOnly = EHI:GetFreeCustomSpecialFunctionID()
 local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
+local CurrentHackNumber = 0
+local PCVectors = {}
 local triggers = {
     [102016] = { time = 7, id = "Endless", icons = Icon.EndlessAssault, class = TT.Warning },
 
@@ -21,12 +23,23 @@ local triggers = {
     [104581] = { time = 20, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) },
     [104582] = { time = 30, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) }, -- Disabled in the mission script
 
-    [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop } },
+    [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop } --[[, waypoint_f = function(trigger)
+        local vector = PCVectors[CurrentHackNumber]
+        if vector then
+            managers.ehi_waypoint:AddWaypoint(trigger.id, {
+                time = trigger.time,
+                icon = Icon.Loop,
+                position = vector
+            })
+            managers.ehi_waypoint:RemoveWaypoint("HoxtonHack")
+        end
+    end]] },
+    --[[[102189] = { special_function = SF.CustomCode, f = function()
+        managers.ehi_waypoint:UnhideWaypoint("HoxtonHack")
+    end },]]
 
     [104314] = { max = 4, id = "RequestCounter", icons = { Icon.PCHack }, class = TT.Progress, special_function = SF.AddTrackerIfDoesNotExist },
-
     [104599] = { id = "RequestCounter", special_function = SF.RemoveTracker },
-
     [104591] = { id = "RequestCounter", special_function = SF.IncreaseProgress },
 
     [104472] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress },
@@ -55,6 +68,7 @@ EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(self, trig
         self:CheckCondition(trigger)
         self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
     end
+    CurrentHackNumber = trigger.data.progress
 end)
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
@@ -117,6 +131,8 @@ EHI:AddLoadSyncFunction(function(self)
             self:Trigger(104480)
         elseif (timer3._started or timer3._done) and not (timer4._started or timer4._done) then
             self:Trigger(104481)
+        else
+            CurrentHackNumber = 4
         end
         -- Pointless to query the last PC
     else -- Just in case, but the PCs should exist
@@ -124,10 +140,19 @@ EHI:AddLoadSyncFunction(function(self)
     end
 end)
 
+local function PCPosition(id, unit_data, unit)
+    PCVectors[unit_data.pos] = unit:interaction() and unit:interaction():interact_position() or unit:position()
+    unit:timer_gui():SetCustomID("HoxtonHack")
+end
 local tbl =
 {
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_director/stn_interactable_computer_director
     [102104] = { remove_vanilla_waypoint = 104571, restore_waypoint_on_done = true },
+
+    [104418] = { f = PCPosition, pos = 1 },
+    [102413] = { f = PCPosition, pos = 2 },
+    [102414] = { f = PCPosition, pos = 3 },
+    [102415] = { f = PCPosition, pos = 4 },
 
     --levels/instances/unique/hox_fbi_forensic_device
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics

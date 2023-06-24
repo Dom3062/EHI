@@ -1,3 +1,6 @@
+r160 (24. 06. 2023):
+Trade Delay Tracker: Fixed a crash after dropin and one or more teammates are in custody
+
 r159 (23. 06. 2023):
 Added option "Show Number of your Converts only"
 Added option "Show in Trade Delay Tracker amount of killed civilians"

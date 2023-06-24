@@ -14,6 +14,10 @@ function EHIWaypoint:init(waypoint, params, parent_class)
     self._parent_class = parent_class
 end
 
+function EHIWaypoint:UpdateID(new_id)
+    self._id = new_id
+end
+
 if EHI:GetOption("time_format") == 1 then
     EHIWaypoint.Format = tweak_data.ehi.functions.FormatSecondsOnly
 else
