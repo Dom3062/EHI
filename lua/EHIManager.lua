@@ -157,6 +157,13 @@ function EHIManager:update_client(t)
 end
 
 ---@param id string
+---@param new_id string
+function EHIManager:UpdateID(id, new_id)
+    self._trackers:UpdateTrackerID(id, new_id)
+    self._waypoints:UpdateWaypointID(id, new_id)
+end
+
+---@param id string
 function EHIManager:Exists(id)
     return self._trackers:TrackerExists(id) or self._waypoints:WaypointExists(id)
 end

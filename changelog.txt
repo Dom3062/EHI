@@ -1,3 +1,6 @@
+r161 (25. 06. 2023):
+Fixed a crash due to a typo
+
 r160 (24. 06. 2023):
 Trade Delay Tracker: Fixed a crash after dropin and one or more teammates are in custody
 

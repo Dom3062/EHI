@@ -23,7 +23,7 @@ local triggers = {
     [104581] = { time = 20, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) },
     [104582] = { time = 30, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) }, -- Disabled in the mission script
 
-    [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop } --[[, waypoint_f = function(trigger)
+    [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop }, waypoint_f = function(trigger)
         local vector = PCVectors[CurrentHackNumber]
         if vector then
             managers.ehi_waypoint:AddWaypoint(trigger.id, {
@@ -33,10 +33,10 @@ local triggers = {
             })
             managers.ehi_waypoint:RemoveWaypoint("HoxtonHack")
         end
-    end]] },
-    --[[[102189] = { special_function = SF.CustomCode, f = function()
-        managers.ehi_waypoint:UnhideWaypoint("HoxtonHack")
-    end },]]
+    end },
+    [102189] = { special_function = SF.CustomCode, f = function()
+        EHI:CallCallback("hox_2_restore_waypoint_hack")
+    end },
 
     [104314] = { max = 4, id = "RequestCounter", icons = { Icon.PCHack }, class = TT.Progress, special_function = SF.AddTrackerIfDoesNotExist },
     [104599] = { id = "RequestCounter", special_function = SF.RemoveTracker },
@@ -140,9 +140,13 @@ EHI:AddLoadSyncFunction(function(self)
     end
 end)
 
+---@param id any
+---@param unit_data any
+---@param unit Unit
 local function PCPosition(id, unit_data, unit)
     PCVectors[unit_data.pos] = unit:interaction() and unit:interaction():interact_position() or unit:position()
     unit:timer_gui():SetCustomID("HoxtonHack")
+    unit:timer_gui():SetCustomCallback("hox_2_restore_waypoint_hack", "add_waypoint")
 end
 local tbl =
 {

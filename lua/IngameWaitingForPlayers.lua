@@ -715,7 +715,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end
         if EHI:IsAchievementLocked2("gsu_01") and HasMeleeEquipped("spoon") then -- "For all you legends" achievement
-            CreateProgressTracker5("gsu_stat")
+            CreateProgressTracker2("gsu_stat")
         end
         if level == "nightclub" then
             if EHI:IsAchievementLocked2("gage2_3") and HasMeleeEquipped("fists") then -- "The Eighth and Final Rule" achievement

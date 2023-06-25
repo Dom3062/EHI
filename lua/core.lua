@@ -1091,12 +1091,16 @@ function EHI:GetBaseUnitID(final_index, start_index, continent_index)
 end
 
 local math_floor = math.floor
+---@param n number
+---@param bracket number Number in `*10` or `/10`
+---@return number
 function EHI:RoundNumber(n, bracket)
     bracket = bracket or 1
     local sign = n >= 0 and 1 or -1
     return math_floor(n / bracket + sign * 0.5) * bracket
 end
 
+---@param n number
 function EHI:RoundChanceNumber(n)
     return self:RoundNumber(n, 0.01) * 100
 end

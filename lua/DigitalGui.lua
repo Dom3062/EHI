@@ -3,6 +3,14 @@ if EHI:CheckLoadHook("DigitalGui") or not EHI:GetOption("show_timers") then
     return
 end
 
+---@class DigitalGui
+---@field _unit Unit
+---@field _visible boolean
+---@field _timer number
+---@field _timer_count_down boolean
+---@field _timer_paused boolean
+---@field is_timer fun(): boolean
+
 local Icon = EHI.Icons
 
 local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
@@ -21,6 +29,7 @@ local original =
 }
 local level_id = Global.game_settings.level_id
 
+---@param unit Unit
 function DigitalGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
@@ -88,6 +97,7 @@ if level_id ~= "shoutout_raid" then
             original._update_timer_text(self, ...)
         end
     end
+    ---@param timer number
     function DigitalGui:timer_set(timer, ...)
         original.timer_set(self, timer, ...)
         managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, timer)
@@ -96,6 +106,7 @@ if level_id ~= "shoutout_raid" then
 else
     local old_time = 0
     local created = false
+    ---@param timer number
     function DigitalGui:timer_set(timer, ...)
         original.timer_set(self, timer, ...)
         if old_time == timer then
@@ -167,6 +178,7 @@ function DigitalGui:_timer_stop(...)
     self:RemoveTracker()
 end
 
+---@param visible boolean
 function DigitalGui:set_visible(visible, ...)
     original.set_visible(self, visible, ...)
     if not visible then
@@ -180,6 +192,7 @@ function DigitalGui:RemoveTracker()
     managers.ehi_manager:Remove(self._ehi_key)
 end
 
+---@param data table
 function DigitalGui:load(data, ...)
     local state = data.DigitalGui
     if self:is_timer() and state.timer_count_down then
@@ -196,10 +209,12 @@ function DigitalGui:OnAlarm()
     self:RemoveTracker()
 end
 
+---@param icons table
 function DigitalGui:SetIcons(icons)
     self._icons = icons
 end
 
+---@param icon string
 function DigitalGui:SetIconOnPause(icon)
     if icon then
         self._icon_on_pause = icon
@@ -207,10 +222,12 @@ function DigitalGui:SetIconOnPause(icon)
     end
 end
 
+---@param ignore boolean
 function DigitalGui:SetIgnore(ignore)
     self._ignore = ignore
 end
 
+---@param remove_on_pause boolean
 function DigitalGui:SetRemoveOnPause(remove_on_pause)
     self._remove_on_pause = remove_on_pause
 end
@@ -219,6 +236,7 @@ function DigitalGui:SetOnAlarm()
     EHI:AddOnAlarmCallback(callback(self, self, "OnAlarm"))
 end
 
+---@param waypoint_id number
 function DigitalGui:RemoveVanillaWaypoint(waypoint_id)
     self._remove_vanilla_waypoint = waypoint_id
     if self._timer_count_down then
@@ -226,12 +244,15 @@ function DigitalGui:RemoveVanillaWaypoint(waypoint_id)
     end
 end
 
+---@param id number|string
+---@param operation string
 function DigitalGui:SetCustomCallback(id, operation)
     if operation == "remove" then
         EHI:AddCallback(id, callback(self, self, "OnAlarm"))
     end
 end
 
+---@param warning boolean
 function DigitalGui:SetWarning(warning)
     self._warning = warning
     if self._timer_count_down and warning then
@@ -239,6 +260,7 @@ function DigitalGui:SetWarning(warning)
     end
 end
 
+---@param completion boolean
 function DigitalGui:SetCompletion(completion)
     self._completion = completion
     if self._timer_count_down and completion then

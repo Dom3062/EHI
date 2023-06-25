@@ -4,7 +4,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local other = {
     [100181] = { special_function = SF.CustomCode, f = function()
-        EHI:CallCallback("hvhCleanUp")
+        EHI:CallCallback("hvh_CleanUp")
     end}
 }
 
@@ -43,7 +43,7 @@ local tbl =
 
     --units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small
     [100029] = { ignore = true },
-    [100878] = { icons = { Icon.Wait }, custom_callback = { id = "hvhCleanUp", f = "remove" } }
+    [100878] = { icons = { Icon.Wait }, custom_callback = { id = "hvh_CleanUp", f = "remove" } }
 }
 --levels/instances/unique/hvh/hvh_event
 for i = 9794, 11794, 500 do

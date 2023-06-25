@@ -6,6 +6,20 @@ _G.tweak_data = {}
 _G.managers = {}
 ---@type boolean
 _G.IS_VR = ...
+---@class TimerGui
+_G.TimerGui = {}
+---@class DigitalGui
+_G.DigitalGui = {}
+---@param o table? Can be used to pass `self` to the callback function
+---@param base_callback_class table
+---@param base_callback_func_name string
+---@param base_callback_param any
+---@return function
+_G.callback = function(o, base_callback_class, base_callback_func_name, base_callback_param)
+    return function(...)
+        return ...
+    end
+end
 
 ---@class managers Global table of all managers in the game
 ---@field ehi_manager EHIManager
@@ -16,6 +30,7 @@ _G.IS_VR = ...
 ---@field ehi_escape EHIEscapeChanceManager
 ---@field ehi_deployable EHIDeployableManager
 ---@field loot LootManager
+---@field worlddefinition WorldDefinition
 ---@field [unknown] unknown
 
 ---@class tweak_data Global table of all configuration data
@@ -138,6 +153,9 @@ _G.IS_VR = ...
 ---@class MissionDoorTable
 ---@field [Vector3] number|MissionDoorAdvancedTable
 
+---@class MissionDoorTableParsed
+---@field [string] number|MissionDoorAdvancedTable
+
 ---@class ValueBasedOnDifficultyTable
 ---@field normal_or_above any Normal or above
 ---@field normal any Normal
@@ -167,3 +185,24 @@ _G.IS_VR = ...
 ---@field mayhem number Mayhem `30s`
 ---@field deathwish number Death Wish `30s`
 ---@field deathsentence number Death Sentence `40s`
+
+---@class UnitUpdateDefinition
+---@field ignore boolean
+---@field f string|fun(id: number, unit_data: UnitUpdateDefinition, unit: Unit)
+
+---@class UnitsToUpdateTable
+---@field [number] UnitUpdateDefinition
+
+---@class InteractionExt
+---@field interact_position fun(): Vector3
+
+---@class Unit
+---@field base unknown
+---@field timer_gui fun(): TimerGui
+---@field digital_gui fun(): DigitalGui
+---@field interaction fun(): InteractionExt
+---@field mission_door_device fun(): MissionDoorDevice
+---@field key fun(): string
+---@field editor_id fun(): number
+---@field position fun(): Vector3
+---@field [unknown] unknown

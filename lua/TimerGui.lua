@@ -3,10 +3,20 @@ if EHI:CheckLoadHook("TimerGui") or not EHI:GetOption("show_timers") then
     return
 end
 
+---@class TimerGui
+---@field _started boolean
+---@field _done boolean
+---@field _powered boolean
+---@field _unit Unit
+---@field _original_colors table?
+---@field _current_timer number|string
+---@field _time_left number
+---@field THEME string
+
 local Icon = EHI.Icons
 
 local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
----@type MissionDoorTable
+---@type MissionDoorTableParsed
 local MissionDoor = {}
 
 ---@param tbl MissionDoorTable
@@ -30,6 +40,7 @@ local original =
     hide = TimerGui.hide
 }
 
+---@param unit Unit
 function TimerGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
@@ -42,6 +53,7 @@ function TimerGui:set_background_icons(...)
     managers.ehi_tracker:CallFunction(self._ehi_key, "SetUpgrades", self:GetUpgrades())
 end
 
+---@return table?
 function TimerGui:GetUpgrades()
     if self._unit:base()._disable_upgrades or not (self._unit:base().is_drill or self._unit:base().is_saw) or table.size(self._original_colors or {}) == 0 then
         return nil
@@ -76,16 +88,22 @@ function TimerGui:StartTimer()
                 autorepair = autorepair
             })
         end
-        if show_waypoint then
-            managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
-                time = t,
-                icon = self._icons or self._ehi_icon[1].icon,
-                position = self._forced_pos or self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
-                autorepair = autorepair,
-                class = "EHITimerWaypoint"
-            })
-        end
+        self:AddWaypoint(t, autorepair)
         self:PostStartTimer()
+    end
+end
+
+---@param t number
+---@param autorepair boolean
+function TimerGui:AddWaypoint(t, autorepair)
+    if show_waypoint then
+        managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+            time = t,
+            icon = self._icons or self._ehi_icon[1].icon,
+            position = self._forced_pos or self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
+            autorepair = autorepair,
+            class = "EHITimerWaypoint"
+        })
     end
 end
 
@@ -106,7 +124,7 @@ function TimerGui:PostStartTimer()
                     add_trigger(m, data.unit_id, "open_door", restore) -- In case the drill finishes first host side than client-side
                     -- Drill finish is covered in TimerGui:_set_done()
                 end
-            else -- Assume provided waypoint is a number
+            elseif type(data) == "number" then
                 self._remove_vanilla_waypoint = data
             end
         end
@@ -120,6 +138,7 @@ function TimerGui:HideWaypoint()
     end
 end
 
+---@param waypoint number
 function TimerGui:_HideWaypoint(waypoint)
     managers.hud:SoftRemoveWaypoint(waypoint)
     EHI._cache.IgnoreWaypoints[waypoint] = true
@@ -172,11 +191,13 @@ function TimerGui:RestoreWaypoint()
     end
 end
 
+---@param jammed boolean
 function TimerGui:_set_jammed(jammed, ...)
     managers.ehi_manager:SetTimerJammed(self._ehi_key, jammed)
     original._set_jammed(self, jammed, ...)
 end
 
+---@param powered boolean
 function TimerGui:_set_powered(powered, ...)
     if powered == false and self._remove_on_power_off then
         self:RemoveTracker()
@@ -185,6 +206,7 @@ function TimerGui:_set_powered(powered, ...)
     original._set_powered(self, powered, ...)
 end
 
+---@param visible boolean
 function TimerGui:set_visible(visible, ...)
     original.set_visible(self, visible, ...)
     if self._ignore_visibility then
@@ -218,10 +240,12 @@ function TimerGui:DisableOnSetVisible()
     self.set_visible = original.set_visible
 end
 
+---@param icons table
 function TimerGui:SetIcons(icons)
     self._icons = icons
 end
 
+---@param remove_on_power_off boolean
 function TimerGui:SetRemoveOnPowerOff(remove_on_power_off)
 	self._remove_on_power_off = remove_on_power_off
 end
@@ -230,6 +254,7 @@ function TimerGui:SetOnAlarm()
 	EHI:AddOnAlarmCallback(callback(self, self, "OnAlarm"))
 end
 
+---@param waypoint_id number
 function TimerGui:RemoveVanillaWaypoint(waypoint_id)
     self._remove_vanilla_waypoint = waypoint_id
     if self._started then
@@ -245,6 +270,8 @@ function TimerGui:SetRestoreVanillaWaypointOnDone()
     self._restore_vanilla_waypoint_on_done = true
 end
 
+---@param units table
+---@param wd WorldDefinition
 function TimerGui:SetChildUnits(units, wd)
     if self._done then
         for _, unit_id in ipairs(units) do
@@ -271,6 +298,7 @@ function TimerGui:SetChildUnits(units, wd)
     end
 end
 
+---@param pos Vector3
 function TimerGui:SetWaypointPosition(pos)
     self._forced_pos = pos
     if self._started and pos then
@@ -278,13 +306,27 @@ function TimerGui:SetWaypointPosition(pos)
     end
 end
 
+---@param id number|string
+---@param operation string
+function TimerGui:SetCustomCallback(id, operation)
+    if operation == "remove" then
+        EHI:AddCallback(id, callback(self, self, "OnAlarm"))
+    elseif operation == "add_waypoint" then
+        EHI:AddCallback(id, function()
+            if self._started and not self._done then
+                self:AddWaypoint(self._time_left, self._unit:base()._autorepair or self._unit:base()._autorepair_client)
+            end
+        end)
+    end
+end
+
+---@param id string
 function TimerGui:SetCustomID(id)
     if not id then
         return
     end
     if self._started then
-        managers.ehi_tracker:UpdateTrackerID(self._ehi_key, id)
-        managers.ehi_waypoint:UpdateWaypointID(self._ehi_key, id)
+        managers.ehi_manager:UpdateID(self._ehi_key, id)
     end
     self._ehi_key = id
 end

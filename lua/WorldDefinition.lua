@@ -3,6 +3,9 @@ if EHI:CheckLoadHook("WorldDefinition") then
     return
 end
 
+---@class WorldDefinition
+---@field get_unit fun(self: WorldDefinition, id: number): Unit?
+
 local original =
 {
     init = WorldDefinition.init,
@@ -15,6 +18,7 @@ function EHI:FinalizeUnitsClient()
     self:FinalizeUnits(self._cache.InstanceUnits)
 end
 
+---@param tbl UnitsToUpdateTable
 function EHI:FinalizeUnits(tbl)
     local wd = managers.worlddefinition
     for id, unit_data in pairs(tbl) do
@@ -27,55 +31,60 @@ function EHI:FinalizeUnits(tbl)
                     unit_data.f(id, unit_data, unit)
                 end
             else
-                if unit:timer_gui() and unit:timer_gui()._ehi_key then
+                local timer_gui = unit:timer_gui()
+                local digital_gui = unit:digital_gui()
+                if timer_gui and timer_gui._ehi_key then
                     if unit_data.child_units then
-                        unit:timer_gui():SetChildUnits(unit_data.child_units, wd)
+                        timer_gui:SetChildUnits(unit_data.child_units, wd)
                     end
-                    unit:timer_gui():SetIcons(unit_data.icons)
-                    unit:timer_gui():SetRemoveOnPowerOff(unit_data.remove_on_power_off)
+                    timer_gui:SetIcons(unit_data.icons)
+                    timer_gui:SetRemoveOnPowerOff(unit_data.remove_on_power_off)
                     if unit_data.disable_set_visible then
-                        unit:timer_gui():DisableOnSetVisible()
+                        timer_gui:DisableOnSetVisible()
                     end
                     if unit_data.remove_on_alarm then
-                        unit:timer_gui():SetOnAlarm()
+                        timer_gui:SetOnAlarm()
                     end
                     if unit_data.remove_vanilla_waypoint then
-                        unit:timer_gui():RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
+                        timer_gui:RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
                         if unit_data.restore_waypoint_on_done then
-                            unit:timer_gui():SetRestoreVanillaWaypointOnDone()
+                            timer_gui:SetRestoreVanillaWaypointOnDone()
                         end
                     end
                     if unit_data.ignore_visibility then
-                        unit:timer_gui():SetIgnoreVisibility()
+                        timer_gui:SetIgnoreVisibility()
                     end
                     if unit_data.set_custom_id then
-                        unit:timer_gui():SetCustomID(unit_data.set_custom_id)
-                    end
-                    unit:timer_gui():SetWaypointPosition(unit_data.position)
-                    unit:timer_gui():Finalize()
-                end
-                if unit:digital_gui() and unit:digital_gui()._ehi_key then
-                    unit:digital_gui():SetIcons(unit_data.icons)
-                    unit:digital_gui():SetIgnore(unit_data.ignore)
-                    unit:digital_gui():SetRemoveOnPause(unit_data.remove_on_pause)
-                    unit:digital_gui():SetWarning(unit_data.warning)
-                    unit:digital_gui():SetCompletion(unit_data.completion)
-                    if unit_data.remove_on_alarm then
-                        unit:digital_gui():SetOnAlarm()
+                        timer_gui:SetCustomID(unit_data.set_custom_id)
                     end
                     if unit_data.custom_callback then
-                        unit:digital_gui():SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
+                        timer_gui:SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
+                    end
+                    timer_gui:SetWaypointPosition(unit_data.position)
+                    timer_gui:Finalize()
+                end
+                if digital_gui and digital_gui._ehi_key then
+                    digital_gui:SetIcons(unit_data.icons)
+                    digital_gui:SetIgnore(unit_data.ignore)
+                    digital_gui:SetRemoveOnPause(unit_data.remove_on_pause)
+                    digital_gui:SetWarning(unit_data.warning)
+                    digital_gui:SetCompletion(unit_data.completion)
+                    if unit_data.remove_on_alarm then
+                        digital_gui:SetOnAlarm()
+                    end
+                    if unit_data.custom_callback then
+                        digital_gui:SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
                     end
                     if unit_data.icon_on_pause then
-                        unit:digital_gui():SetIconOnPause(unit_data.icon_on_pause[1])
+                        digital_gui:SetIconOnPause(unit_data.icon_on_pause[1])
                     end
                     if unit_data.remove_vanilla_waypoint then
-                        unit:digital_gui():RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
+                        digital_gui:RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
                     end
                     if unit_data.ignore_visibility then
-                        unit:digital_gui():SetIgnoreVisibility()
+                        digital_gui:SetIgnoreVisibility()
                     end
-                    unit:digital_gui():Finalize()
+                    digital_gui:Finalize()
                 end
             end
             -- Clear configured unit from the table
