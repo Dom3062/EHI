@@ -18,7 +18,7 @@ function EHI:FinalizeUnitsClient()
     self:FinalizeUnits(self._cache.InstanceUnits)
 end
 
----@param tbl UnitsToUpdateTable
+---@param tbl table<number, UnitUpdateDefinition>
 function EHI:FinalizeUnits(tbl)
     local wd = managers.worlddefinition
     for id, unit_data in pairs(tbl) do

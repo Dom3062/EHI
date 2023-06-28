@@ -8,7 +8,7 @@ local function SetAssaultTrackerBlock(block)
     end
 end
 local triggers = {
-    [102685] = { id = "Refueling", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 121, no = 91 }, trigger_times = 1 },
+    [102685] = { id = "Refueling", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.SetTimeIfLoudOrStealth, data = { loud = 121, stealth = 91 }, trigger_times = 1 },
     [102678] = { id = "Refueling", special_function = SF.UnpauseTracker },
     [102684] = { id = "Refueling", special_function = SF.PauseTracker },
     [101983] = { time = 15, id = "C4Trap", icons = { Icon.C4 }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },

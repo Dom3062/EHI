@@ -1219,9 +1219,9 @@ local function HideTracker(id)
 end
 
 ---@param id number
----@param f fun(self: EHIManager, trigger: table, element: table, enabled: boolean)
+---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
 ---@return nil
----@overload fun(self, f: fun(self: EHIManager, trigger: table, element: table, enabled: boolean)): integer
+---@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)): integer
 function EHI:RegisterCustomSpecialFunction(id, f)
     return managers.ehi_manager:RegisterCustomSpecialFunction(id, f)
 end

@@ -35,7 +35,7 @@ EHI:RegisterCustomSpecialFunction(ShowWaypoint, function(self, trigger, ...)
     trigger.data.state = "sneak_present"
     trigger.data.present_timer = 0
     trigger.data.no_sync = true
-    local e = managers.mission:get_element_by_id(trigger.id)
+    local e = managers.mission:get_element_by_id(trigger.id --[[@as number]])
     trigger.data.position = e and e._values.position or Vector3()
     managers.hud:add_waypoint(trigger.id, trigger.data)
 end)

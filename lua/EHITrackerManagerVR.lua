@@ -61,7 +61,7 @@ end
 ---@param key string
 ---@param data table
 ---@param f function
----@param add boolean
+---@param add boolean?
 function EHITrackerManagerVR:AddToLoadQueue(key, data, f, add)
     if add then
         if self._load_callback[key] then

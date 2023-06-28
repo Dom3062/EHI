@@ -477,6 +477,8 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     end
     local achievement_triggers = new_triggers.achievement or {}
     if EHI:ShowMissionAchievements() and next(achievement_triggers) then
+        ---@param data ParseAchievementDefinitionTable
+        ---@param id string
         local function Parser(data, id)
             for _, element in pairs(data.elements or {}) do
                 if element.class and EHI.AchievementTrackers[element.class] then
@@ -529,7 +531,7 @@ function EHIManager:ParseOtherTriggers(new_triggers, trigger_id_all, trigger_ico
     self:AddTriggers(new_triggers, trigger_id_all or "Trigger", trigger_icons_all)
 end
 
----@param new_triggers table
+---@param new_triggers { [number]: ElementTrigger }
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
 ---@param no_host_override boolean?
@@ -1052,10 +1054,10 @@ function EHIManager:Trigger(id, element, enabled)
                 end
             elseif f == SF.SetTimeIfLoudOrStealth then
                 if managers.groupai then
-                    if managers.groupai:state():whisper_mode() then -- Stealth
-                        trigger.time = trigger.data.no
-                    else -- Loud
-                        trigger.time = trigger.data.yes
+                    if managers.groupai:state():whisper_mode() then
+                        trigger.time = trigger.data.stealth
+                    else
+                        trigger.time = trigger.data.loud
                     end
                     self:CheckCondition(trigger)
                 end
@@ -1172,9 +1174,9 @@ function EHIManager:AddWaypointToTrigger(id, waypoint)
 end
 
 ---@param id number
----@param f fun(self: EHIManager, trigger: table, element: table, enabled: boolean)
+---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
 ---@return nil
----@overload fun(self, f: fun(self: EHIManager, trigger: table, element: table, enabled: boolean)): integer
+---@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)): integer
 function EHIManager:RegisterCustomSpecialFunction(id, f)
     if f then
         self.SFF[id] = f

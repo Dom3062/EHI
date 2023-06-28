@@ -29,6 +29,8 @@ local function ShowStartedPopup(tracker, delay_popup)
 end
 local Color = Color
 
+---@class EHIAchievementTracker : EHIWarningTracker
+---@field super EHIWarningTracker
 EHIAchievementTracker = class(EHIWarningTracker)
 EHIAchievementTracker._popup_type = "achievement"
 EHIAchievementTracker._show_started = EHI:GetUnlockableOption("show_achievement_started_popup")
@@ -151,7 +153,8 @@ function EHIAchievementBagValueTracker:SetFailed()
     end
 end
 
-local show_status_changed_popup = false
+---@class EHIAchievementStatusTracker : EHIAchievementTracker
+---@field super EHIAchievementTracker
 EHIAchievementStatusTracker = class(EHIAchievementTracker)
 EHIAchievementStatusTracker.update = EHIAchievementStatusTracker.update_fade
 EHIAchievementStatusTracker._update = false
@@ -178,9 +181,6 @@ function EHIAchievementStatusTracker:SetStatus(status)
     self:SetStatusText(status)
     self:SetTextColor()
     self:AnimateBG()
-    if show_status_changed_popup and status ~= "done" and status ~= "fail" then
-        managers.hud:custom_ingame_popup_text("")
-    end
 end
 
 function EHIAchievementStatusTracker:SetCompleted()
@@ -235,12 +235,4 @@ function EHIAchievementStatusTracker:SetTextColor(color)
         c = Color.red
     end
     EHIAchievementStatusTracker.super.SetTextColor(self, c)
-end
-if show_status_changed_popup then
-    for status, _ in pairs(green_status) do
-        EHI:SetNotificationAlert("ACHIEVEMENT STATUS", "ehi_achievement_" .. status, Color.green)
-    end
-    for status, _ in pairs(yellow_status) do
-        EHI:SetNotificationAlert("ACHIEVEMENT STATUS", "ehi_achievement_" .. status, Color.yellow)
-    end
 end

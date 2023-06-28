@@ -73,7 +73,7 @@ local triggers = {
     [103870] = { chance = 34, id = "ReviveVlad", icons = { "equipment_defibrillator" }, class = TT.Chance, special_function = SF.AddTrackerIfDoesNotExist },
     [103871] = { id = "ReviveVlad", special_function = SF.RemoveTracker },
 
-    [103925] = { id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { yes = 30 + boat_anim, no = 19 + boat_anim } }
+    [103925] = { id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { loud = 30 + boat_anim, stealth = 19 + boat_anim } }
 }
 local KeypadResetTimer = EHI:GetKeypadResetTimer()
 for _, index in ipairs({ 8530, 9180, 9680 }) do

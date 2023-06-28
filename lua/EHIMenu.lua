@@ -945,7 +945,7 @@ function EHIMenu:CreateOneLineItems(item, items, menu_id, settings_table)
         multiple_choice = 215,
         color_select = 64
     }
-    local n = table.getn(item.table)
+    local n = table.size(item.table)
     local previous_item
     for _, v in pairs(item.table) do
         local itm = self:CreateItem(v, items, menu_id, settings_table)

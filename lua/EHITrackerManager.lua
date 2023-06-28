@@ -919,13 +919,13 @@ function EHITrackerManager:RandomLootDeclined(random)
     self:CallFunction("LootCounter", "RandomLootDeclined", random)
 end
 
----@param id string|number Element ID
+---@param id string Element ID
 ---@param force boolean? Force loot spawn event if the element does not have "fail" state (desync workaround)
 function EHITrackerManager:RandomLootSpawnedCheck(id, force)
     self:CallFunction("LootCounter", "RandomLootSpawned2", id, force)
 end
 
----@param id string|number Element ID
+---@param id string Element ID
 function EHITrackerManager:RandomLootDeclinedCheck(id)
     self:CallFunction("LootCounter", "RandomLootDeclined2", id)
 end

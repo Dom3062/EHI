@@ -3,14 +3,14 @@ if EHI:CheckLoadHook("GroupAIStateBesiege") then
     return
 end
 
-local original =
-{
-    set_phalanx_damage_reduction_buff = GroupAIStateBesiege.set_phalanx_damage_reduction_buff
-}
+local original = {}
 
-function GroupAIStateBesiege:set_phalanx_damage_reduction_buff(damage_reduction, ...)
-    original.set_phalanx_damage_reduction_buff(self, damage_reduction, ...)
-    managers.ehi_tracker:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(damage_reduction or 0)))
+if EHI:GetOption("show_captain_damage_reduction") then
+    original.set_phalanx_damage_reduction_buff = GroupAIStateBesiege.set_phalanx_damage_reduction_buff
+    function GroupAIStateBesiege:set_phalanx_damage_reduction_buff(damage_reduction, ...)
+        original.set_phalanx_damage_reduction_buff(self, damage_reduction, ...)
+        managers.ehi_tracker:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(damage_reduction or 0)))
+    end
 end
 
 if EHI:CombineAssaultDelayAndAssaultTime() or EHI:AssaultDelayTrackerIsEnabled() then

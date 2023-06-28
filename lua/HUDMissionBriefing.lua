@@ -1,5 +1,5 @@
 local EHI = EHI
-if Global.game_settings.single_player or EHI:CheckLoadHook("HUDMissionBriefing") then
+if Global.game_settings.single_player or EHI:CheckLoadHook("HUDMissionBriefing") or EHI:IsXPTrackerDisabled() or not EHI:GetOption("show_mission_xp_overview") then
     return
 end
 local init = HUDMissionBriefing.init

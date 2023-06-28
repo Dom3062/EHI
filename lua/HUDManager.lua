@@ -10,6 +10,7 @@ local original =
 }
 
 ---@class HUDManager
+---@field add_waypoint fun(self: HUDManager, id: number|string, params: table)
 ---@field AddWaypoint fun(self: HUDManager, id: string, params: table): WaypointDataTable
 ---@field remove_waypoint fun(self: HUDManager, id: string)
 ---@field SoftRemoveWaypoint2 fun(self: HUDManager, id: number)

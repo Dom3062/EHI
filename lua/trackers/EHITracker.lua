@@ -166,8 +166,8 @@ end
 
 ---@class EHITracker
 ---@field _parent_class EHITrackerManager
----@field _forced_icons table?
----@field _forced_time number?
+---@field _forced_icons table? Forces specific icons in the tracker
+---@field _forced_time number? Forces specific time in the tracker
 ---@field _icon1 userdata
 ---@field _panel_override_w number?
 EHITracker = class()

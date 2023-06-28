@@ -20,6 +20,41 @@ _G.callback = function(o, base_callback_class, base_callback_func_name, base_cal
         return ...
     end
 end
+---@return Vector3
+---@overload fun(x: number, y: number, z: number): Vector3
+_G.Vector3 = function()
+    return Vector3()
+end
+---@return Rotation
+---@overload fun(x: number, y: number): Rotation
+---@overload fun(x: number, y: number, z: number): Rotation
+---@overload fun(x: number, y: number, z: number, w: number): Rotation
+_G.Rotation = function()
+    return Rotation()
+end
+
+---@class MissionScriptElementValues
+---@field position Vector3
+---@field rotation Rotation
+
+---@class MissionScriptElement
+---@field counter_value fun(self: MissionScriptElement): number ElementCounter | ElementCounterOperator
+---@field enabled fun(self: MissionScriptElement): boolean
+---@field value fun(self: MissionScriptElement, value: string): any
+---@field _is_inside fun(self: MissionScriptElement, position: Vector3): boolean ElementAreaReportTrigger 
+---@field _values_ok fun(self: MissionScriptElement): boolean ElementCounter | ElementCounterOperator
+---@field _values MissionScriptElementValues
+---@field _calc_base_delay fun(...): number
+---@field _calc_element_delay fun(...): number
+---@field _timer number ElementTimer | ElementTimerOperator
+
+---@class MissionScript
+---@field element fun(self: MissionScript, id: number): MissionScriptElement?
+
+---@class MissionManager
+---@field _scripts table<string, MissionScript> All running scripts in a mission
+---@field add_runned_unit_sequence_trigger fun(self: MissionManager, unit_id: number, sequence: string, callback: function)
+---@field get_element_by_id fun(self: MissionManager, id: number): MissionScriptElement?
 
 ---@class managers Global table of all managers in the game
 ---@field ehi_manager EHIManager
@@ -29,6 +64,9 @@ end
 ---@field ehi_trade EHITradeManager
 ---@field ehi_escape EHIEscapeChanceManager
 ---@field ehi_deployable EHIDeployableManager
+---@field game_play_central GamePlayCentralManager
+---@field hud HUDManager
+---@field mission MissionManager
 ---@field loot LootManager
 ---@field worlddefinition WorldDefinition
 ---@field [unknown] unknown
@@ -55,7 +93,26 @@ end
 ---@field contains fun(v: table, e: string): boolean Returns `true` or `false` if `e` exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
 
+---@class ElementWaypointTrigger
+---@field id number|string? ID of the waypoint, if not provided, ID is then copied from the trigger
+---@field icon string? 
+---@field class string? Class of the waypoint. If not provided, class is then copied from the trigger and converted to Waypoint class
+
+---@class ElementTrigger
+---@field id string ID of the tracker
+---@field time number? Time to run down. Not required when tracker class is not using it. Defaults to `0` if not provided
+---@field condition boolean?
+---@field icons table? Icons to show in the tracker
+---@field class string? Class of tracker. If not provided it defaults to `EHITracker` in `EHITrackerManager`
+---@field special_function number?
+---@field waypoint ElementWaypointTrigger?
+---@field [any] any
+
+---@class TableTrigger
+---@field [number] ElementTrigger
+
 ---@class ParseAchievementDefinitionTable
+---@field beardlib boolean If the achievement is from Beardlib
 ---@field difficulty_pass boolean Difficulty check, setting this to `false` will disable the achievement to show on the screen
 ---@field elements table Elements to hook
 ---@field failed_on_alarm boolean Fails the achievement on alarm
@@ -68,8 +125,8 @@ end
 ---@field [string] ParseAchievementDefinitionTable Achievement Definition
 
 ---@class ParseTriggersTable
----@field mission table Triggers related to mission
----@field achievement ParseAchievementTable Triggers related to achievements in the mission
+---@field mission { [number]: ElementTrigger } Triggers related to mission
+---@field achievement { [string]: ParseAchievementDefinitionTable } Triggers related to achievements in the mission
 ---@field other table Triggers not related to mission or achievements
 ---@field trophy table Triggers related to Safehouse trophies
 ---@field daily table Triggers related to Safehouse daily mission
@@ -84,7 +141,7 @@ end
 ---@field max_random integer Defines a variable number of loot
 ---@field load_sync fun(self: EHIManager)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true
 ---@field no_sync_load boolean Prevents Loot Counter from sync after joining
----@field offset boolean If offset is required, used in multi-day heists
+---@field offset boolean If offset is required, used in multi-day heists if loot is brought to next days
 ---@field client_from_start boolean If client is playing from mission briefing; does not do anything on host
 ---@field n_offset integer Provided via EHI:ShowLootCounterOffset(); DO NOT PROVIDE IT
 ---@field triggers table If loot is manipulated via Mission Script, also see field `hook_triggers`
@@ -188,10 +245,22 @@ end
 
 ---@class UnitUpdateDefinition
 ---@field ignore boolean
+---@field child_units table
+---@field icons table
+---@field remove_on_power_off boolean
+---@field disable_set_visible boolean
+---@field remove_on_alarm boolean
+---@field remove_vanilla_waypoint number
+---@field restore_waypoint_on_done boolean Depends on `remove_vanilla_waypoint`
+---@field ignore_visibility boolean
+---@field set_custom_id string
+---@field custom_callback table<string, string>
+---@field position Vector3
+---@field remove_on_pause boolean
+---@field warning boolean
+---@field completion boolean
+---@field icon_on_pause table
 ---@field f string|fun(id: number, unit_data: UnitUpdateDefinition, unit: Unit)
-
----@class UnitsToUpdateTable
----@field [number] UnitUpdateDefinition
 
 ---@class InteractionExt
 ---@field interact_position fun(): Vector3
