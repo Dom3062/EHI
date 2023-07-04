@@ -4,10 +4,10 @@ if EHI:CheckLoadHook("LootManager") then
 end
 
 ---@class LootManager
----@field GetSecuredBagsAmount fun(self: LootManager): integer
----@field GetSecuredBagsTypeAmount fun(self: LootManager, t: string|table): integer
----@field GetSecuredBagsValueAmount fun(self: LootManager): number
----@field EHIReportProgress fun(self: LootManager, tracker_id: string, check_type: integer, loot_type: string|table, f: fun(self: LootManager, tracker_id: string, loot_type: string|table))
+---@field GetSecuredBagsAmount fun(self: self): integer
+---@field GetSecuredBagsTypeAmount fun(self: self, t: string|table): integer
+---@field GetSecuredBagsValueAmount fun(self: self): number
+---@field EHIReportProgress fun(self: self, tracker_id: string, check_type: integer, loot_type: string|table, f: fun(self: self, tracker_id: string, loot_type: string|table))
 
 local check_types = EHI.LootCounter.CheckType
 local original =
@@ -67,9 +67,12 @@ end
 ---@param tracker_id string
 ---@param check_type integer
 ---@param loot_type string
----@param f fun(self: LootManager, tracker_id: string, loot_type: string|table)?
+---@param f fun(self: self, tracker_id: string, loot_type: string|table)?
 function LootManager:EHIReportProgress(tracker_id, check_type, loot_type, f)
     if check_type == check_types.AllLoot then
+        local bags = self:GetSecuredBagsValueAmount()
+        local small_loot = self:get_real_total_small_loot_value()
+        managers.ehi_tracker:SetTrackerProgress(tracker_id, bags + small_loot)
     elseif check_type == check_types.BagsOnly then
         managers.ehi_tracker:SetTrackerProgress(tracker_id, self:GetSecuredBagsAmount())
     elseif check_type == check_types.ValueOfBags then

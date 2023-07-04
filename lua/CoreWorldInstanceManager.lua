@@ -3,7 +3,6 @@ if EHI:CheckLoadHook("CoreWorldInstanceManager") then
     return
 end
 EHI:Init()
-local client = EHI:IsClient()
 local debug_instance = false
 local debug_unit = false
 local Icon = EHI.Icons
@@ -19,19 +18,19 @@ local instances =
     },
     ["levels/instances/unique/hlm_reader/world"] =
     {
-        [100038] = { time = 90 + 1.5, id = "Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element = 100060, remove_vanilla_waypoint = 100060, restore_on_done = true } },
-        [100039] = { time = 120 + 1.5, id = "Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element = 100060, remove_vanilla_waypoint = 100060, restore_on_done = true } },
-        [100040] = { time = 180 + 1.5, id = "Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element = 100060, remove_vanilla_waypoint = 100060, restore_on_done = true } },
-        [100045] = { id = "Reader", special_function = SF.PauseTracker },
-        [100051] = { id = "Reader", special_function = SF.UnpauseTracker }
+        [100038] = { time = 90 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true } },
+        [100039] = { time = 120 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true } },
+        [100040] = { time = 180 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true } },
+        [100045] = { id = "mia_1_Reader", special_function = SF.PauseTracker },
+        [100051] = { id = "mia_1_Reader", special_function = SF.UnpauseTracker }
     },
     ["levels/instances/unique/pbr/pbr_mountain_comm_dish/world"] =
     {
-        [100008] = { time = 5, id = "SatelliteC4Explosion", icons = { Icon.C4 } }
+        [100008] = { time = 5, id = "pbr_SatelliteC4Explosion", icons = { Icon.C4 } }
     },
     ["levels/instances/unique/pbr/pbr_mountain_comm_dish_huge/world"] =
     {
-        [100013] = { time = 5, id = "HugeSatelliteC4Explosion", icons = { Icon.C4 } }
+        [100013] = { time = 5, id = "pbr_HugeSatelliteC4Explosion", icons = { Icon.C4 } }
     },
     ["levels/instances/unique/brb/single_door/world"] =
     {
@@ -40,19 +39,18 @@ local instances =
     },
     ["levels/instances/unique/fex/fex_explosives/world"] =
     {
-        [100008] = { time = 60, id = "fexExplosivesTimer", icons = { "equipment_timer" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
-        [100007] = { id = "fexExplosivesTimer", special_function = SF.PauseTracker }
+        [100008] = { time = 60, id = "fex_ExplosivesTimer", icons = { "equipment_timer" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+        [100007] = { id = "fex_ExplosivesTimer", special_function = SF.PauseTracker }
     },
     ["levels/instances/unique/sand/sand_helicopter_turret/world"] =
     {
-        [100027] = { id = "sandTurretTimer", icons = { Icon.Heli, Icon.Sentry, Icon.Wait }, special_function = SF.GetElementTimerAccurate, element = 100012, sync = true }
+        [100027] = { id = "sand_TurretTimer", icons = { Icon.Heli, Icon.Sentry, Icon.Wait }, special_function = SF.GetElementTimerAccurate, element = 100012 }
     }
 }
 instances["levels/instances/unique/brb/single_door_large/world"] = deep_clone(instances["levels/instances/unique/brb/single_door/world"])
 
-if client then
-    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].additional_time = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and 90 or 60
-    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].random_time = 30
+if EHI:IsClient() then
+    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].client = { time = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and 90 or 60, random_time = 30 }
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100024] = { id = "sandTurretTimer", special_function = SF.RemoveTracker }
 end
 
@@ -88,6 +86,13 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                         new_trigger.element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
                     end
                     if trigger.waypoint then
+                        if trigger.waypoint.position_by_element_and_remove_vanilla_waypoint then
+                            local wp_id = EHI:GetInstanceElementID(trigger.waypoint.position_by_element_and_remove_vanilla_waypoint, start_index, continent_data.base_id)
+                            new_trigger.waypoint.position_by_element = wp_id
+                            new_trigger.waypoint.remove_vanilla_waypoint = wp_id
+                            new_trigger.waypoint.position_by_element_and_remove_vanilla_waypoint = nil
+                            defer_loading_waypoints = true
+                        end
                         if trigger.waypoint.position_by_element then
                             new_trigger.waypoint.position_by_element = EHI:GetInstanceElementID(trigger.waypoint.position_by_element, start_index, continent_data.base_id)
                             defer_loading_waypoints = true
@@ -95,9 +100,6 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                         if trigger.waypoint.remove_vanilla_waypoint then
                             new_trigger.waypoint.remove_vanilla_waypoint = EHI:GetInstanceElementID(trigger.waypoint.remove_vanilla_waypoint, start_index, continent_data.base_id)
                         end
-                    end
-                    if trigger.sync and client then
-                        EHI:AddSyncTrigger(final_index, new_trigger)
                     end
                     triggers[final_index] = new_trigger
                 end

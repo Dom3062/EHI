@@ -232,6 +232,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
     if type(params) ~= "table" or not next(params) then
         return
     end
+    self:FakeExperienceMultipliers()
     if params.tactic then
         local tactic = params.tactic
         if self._panels then
@@ -312,7 +313,6 @@ function MissionBriefingGui:ProcessBreakDown(params, panel)
     panel = panel or { panel = self._ehi_panel_v2, lines = 0, adjust_h = true }
     local gage = xp_format == 3 and EHI:AreGagePackagesSpawned()
     self:AddXPOverviewText(panel)
-    self:FakeExperienceMultipliers()
     if params.wave_all then
         local data = params.wave_all
         if type(data) == "table" then
@@ -1100,7 +1100,7 @@ function MissionBriefingGui:AddLine(panel, txt, txt_color)
 end
 
 function MissionBriefingGui:FakeExperienceMultipliers()
-    if BB and BB.grace_period and Global.game_settings.single_player and Global.game_settings.team_ai then
+    if EHI:IsRunningBB() then
         self._num_winners = 4
     end
     if Global.block_update_outfit_information then -- Outfit update is late when "managers.player:get_skill_exp_multiplier(true)" is called, update it now to stay accurate

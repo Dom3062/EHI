@@ -23,6 +23,7 @@ local sync_triggers =
     [EHI:GetInstanceElementID(100070, 25500)] = FultonCatchAgain,
     [EHI:GetInstanceElementID(100070, 25650)] = FultonCatchAgain,
 }
+---@type ParseTriggerTable
 local triggers = {
     [EHI:GetInstanceElementID(100083, 12500)] = { time = 230/30, id = "CarPush1", icons = WinchCar },
     [EHI:GetInstanceElementID(100084, 12500)] = { time = 230/30 + 1, id = "CarPush2", icons = WinchCar },
@@ -54,14 +55,8 @@ local triggers = {
 }
 
 if EHI:IsClient() then
-    triggers[102053].additional_time = (ElementTimer == 102063 and 60 or 30) + triggers[102053].additional_time
-    triggers[102053].random_time = 5
-    triggers[102053].delay_only = true
-    EHI:AddSyncTrigger(102053, triggers[102053])
-    triggers[102070].additional_time = (ElementTimer == 102076 and 60 or 30) + triggers[102070].additional_time
-    triggers[102070].random_time = 5
-    triggers[102070].delay_only = true
-    EHI:AddSyncTrigger(102070, triggers[102070])
+    triggers[102053].client = { time = OVKorAbove and 60 or 30, random_time = 5 }
+    triggers[1020702].client = { time = OVKorAbove and 60 or 30, random_time = 5 }
     local FultonCatchAgainClient = { additional_time = 30, random_time = 30, id = "FultonCatch", icons = FultonCatchAgain, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[EHI:GetInstanceElementID(100070, 14950)] = FultonCatchAgainClient
     triggers[EHI:GetInstanceElementID(100070, 25500)] = FultonCatchAgainClient

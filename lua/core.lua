@@ -32,7 +32,7 @@ _G.EHI =
     {
         CheckType =
         {
-            AllLoot = 1, -- Currently unused
+            AllLoot = 1,
             BagsOnly = 2,
             ValueOfBags = 3,
             SmallLootOnly = 4, -- Currently unused
@@ -109,8 +109,8 @@ _G.EHI =
         SetRandomTime = 32,
         DecreaseChance = 34,
         GetElementTimerAccurate = 35,
-        UnpauseOrSetTimeByPreplanning = 36,
-        UnpauseTrackerIfExistsAccurate = 37,
+        UnpauseTrackerIfExistsAccurate = 36,
+        UnpauseOrSetTimeByPreplanning = 37,
         FinalizeAchievement = 39,
         IncreaseChanceFromElement = 42,
         DecreaseChanceFromElement = 43,
@@ -137,9 +137,13 @@ _G.EHI =
 
     ConditionFunctions =
     {
+        ---Checks if loud is active
+        ---@return boolean
         IsLoud = function()
             return managers.groupai and not managers.groupai:state():whisper_mode()
         end,
+        ---Checks if stealth is active
+        ---@return boolean
         IsStealth = function()
             return managers.groupai and managers.groupai:state():whisper_mode()
         end
@@ -184,6 +188,7 @@ _G.EHI =
         Train = "C_Bain_H_TransportVarious_ButWait",
         LiquidNitrogen = "equipment_liquid_nitrogen_canister",
         Kill = "pd2_kill",
+        Oil = "oil",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
@@ -202,6 +207,7 @@ _G.EHI =
 
     Trackers =
     {
+        Base = "EHITracker",
         Warning = "EHIWarningTracker",
         Pausable = "EHIPausableTracker",
         Chance = "EHIChanceTracker",
@@ -282,6 +288,11 @@ _G.EHI =
 }
 local SF = EHI.SpecialFunctions
 EHI.SyncFunctions =
+{
+    [SF.GetElementTimerAccurate] = true,
+    [SF.UnpauseTrackerIfExistsAccurate] = true
+}
+EHI.ClientSyncFunctions =
 {
     [SF.GetElementTimerAccurate] = true,
     [SF.UnpauseTrackerIfExistsAccurate] = true
@@ -483,7 +494,7 @@ local function LoadDefaultValues(self)
         show_laser_tracker = false,
         show_assault_delay_tracker = true,
         show_assault_time_tracker = true,
-        --aggregate_assault_delay_and_assault_time = true,
+        aggregate_assault_delay_and_assault_time = true,
         show_loot_counter = true,
         show_all_loot_secured_popup = true,
         variable_random_loot_format = 3, -- 1 = Max-(Max+Random)?; 2 = MaxRandom?; 3 = Max+Random?
@@ -858,16 +869,16 @@ function EHI:MissionTrackersAndWaypointEnabled()
     return self:GetOption("show_mission_trackers") and self:GetOption("show_waypoints")
 end
 
+function EHI:IsXPTrackerEnabled()
+    return self:GetOption("show_gained_xp") and not self:IsPlayingCrimeSpree()
+end
+
 function EHI:IsXPTrackerDisabled()
-    if not self:GetOption("show_gained_xp") or self:IsPlayingCrimeSpree() then
-        return true
-    end
-    return false
+    return not self:IsXPTrackerEnabled()
 end
 
 function EHI:IsXPTrackerVisible()
-    local result = not self:IsXPTrackerDisabled()
-    return result and not self:GetOption("show_xp_in_mission_briefing_only")
+    return self:IsXPTrackerEnabled() and not self:GetOption("show_xp_in_mission_briefing_only")
 end
 
 function EHI:IsXPTrackerHidden()
@@ -988,7 +999,7 @@ end
 
 ---@param object table
 ---@param func string
----@param id string
+---@param id string|number
 ---@param post_call function
 function EHI:HookElement(object, func, id, post_call)
     Hooks:PostHook(object, func, "EHI_Element_" .. id, post_call)
@@ -1052,6 +1063,11 @@ end
 ---@return boolean
 function EHI:ShowDramaTracker()
     return self:IsHost() and self:GetOption("show_drama_tracker") and self:IsNotPlayingSFN()
+end
+
+---@return boolean
+function EHI:IsRunningBB()
+    return BB and BB.grace_period and Global.game_settings.single_player and Global.game_settings.team_ai
 end
 
 ---@param peer_id number
@@ -1189,7 +1205,7 @@ end
 
 ---Adds trigger to mission element when they run
 ---@param new_triggers table
----@param trigger_id_all string?
+---@param trigger_id_all string
 ---@param trigger_icons_all table?
 function EHI:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     managers.ehi_manager:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
@@ -1198,7 +1214,7 @@ end
 ---Adds trigger to mission element when they run. If trigger already exists, it is moved and added into table
 ---@param new_triggers table
 ---@param params table?
----@param trigger_id_all string?
+---@param trigger_id_all string
 ---@param trigger_icons_all table?
 function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_all)
     managers.ehi_manager:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_all)
@@ -1208,14 +1224,16 @@ function EHI:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, ty
     managers.ehi_manager:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, type)
 end
 
+---@param id number
+---@param waypoint table
 function EHI:AddWaypointToTrigger(id, waypoint)
     managers.ehi_manager:AddWaypointToTrigger(id, waypoint)
 end
 
----@param id string
-local function HideTracker(id)
-    managers.ehi_tracker:x()
-    managers.ehi_waypoint:RemoveWaypoint(id)
+---@param id number
+---@param icon string
+function EHI:UpdateWaypointTriggerIcon(id, icon)
+    managers.ehi_manager:UpdateWaypointTriggerIcon(id, icon)
 end
 
 ---@param id number

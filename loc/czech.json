@@ -323,6 +323,9 @@
     "ehi_show_assault_time_tracker" : "Zobrazovat sledovač délky útoku",
     "ehi_show_assault_time_tracker_desc" : "Zobrazuje sledovač s délkou útoku\n\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
 
+    "ehi_aggregate_assault_delay_and_assault_time" : "Spojit délku pauzy před útokem a délku útoku do jednoho sledovače",
+    "ehi_aggregate_assault_delay_and_assault_time_desc" : "Spojí oba sledovače 'Délka pauzy před dalším útokem' a 'Délka útoku' do jednoho sledovače\n\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
+    
     "ehi_show_loot_counter" : "Zobrazovat počítadlo lupu",
     "ehi_show_loot_counter_desc" : "Zobrazuje sledovač s počtem lupu v loupeži",
 
@@ -992,5 +995,23 @@
     "ehi_experience_texas3_documents_secured" : "Výzkumné dokumenty zajištěny",
     "ehi_experience_texas3_lab_destroyed" : "Laborka zničena",
     "ehi_experience_texas3_escape_1" : "Dokončení mise (Inspektoři nedorazili / Střílna nepostavena)",
-    "ehi_experience_texas3_escape_2" : "Dokončení mise (Inspektoři dorazili / Střílna postavena)"
+    "ehi_experience_texas3_escape_2" : "Dokončení mise (Inspektoři dorazili / Střílna postavena)",
+    "ehi_experience_texas4_found_server_room" : "Nalezena serverovna",
+    "ehi_experience_texas4_accessed_security_computer" : "Získán přístup na počítač v serverovně",
+    "ehi_experience_texas4_updated_docking_schedule" : "Aktualizován časový plán příjezdu lodí",
+    "ehi_experience_texas4_found_the_purest_sample" : "Nalezen perfektní vzorek",
+    "ehi_experience_texas4_found_the_good_sample" : "Nalezen dobrý vzorek",
+    "ehi_experience_texas4_entered_the_processing_area" : "Vstup do oblasti zpracování",
+    "ehi_experience_texas4_crane_lowered" : "Jeřáb spuštěn",
+    "ehi_experience_texas4_pipeline_connected" : "Trubky správně propojeny",
+    "ehi_experience_texas4_pumping_complete" : "Pumpování dokončeno",
+    "ehi_experience_texas4_entered_the_drilling_tower" : "Vstup na vrtnou věž",
+    "ehi_experience_texas4_lasers_disabled" : "Lasery vypnuty",
+    "ehi_experience_texas4_fan_jammed" : "Ventilace zaseknuta",
+    "ehi_experience_texas4_disabled_gas_can" : "Vypnut plyn",
+    "ehi_experience_texas4_disabled_blowout_preventor" : "Vypnuta pojistka proti výbuchu",
+    "ehi_experience_texas4_build_pressure" : "Zvýšen tlak ve ventilech",
+    "ehi_experience_texas4_drill_activated" : "Vrták aktivován",
+    "ehi_experience_texas4_servers_destroyed" : "Servery zničeny",
+    "ehi_experience_texas4_gabriel_killed" : "Gabriel zabit"
 }

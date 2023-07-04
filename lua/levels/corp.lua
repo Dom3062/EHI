@@ -1,9 +1,73 @@
+---@class EHIcorp9Tracker : EHIColoredCodesTracker
+---@field super EHIColoredCodesTracker
+EHIcorp9Tracker = class(EHIColoredCodesTracker)
+EHIcorp9Tracker._update = false
+EHIcorp9Tracker._forced_icons = EHI:GetAchievementIcon("corp_9")
+EHIcorp9Tracker._popup_type = "achievement"
+EHIcorp9Tracker._show_started = EHIAchievementTracker._show_started
+EHIcorp9Tracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
+function EHIcorp9Tracker:init(panel, params)
+    EHIcorp9Tracker.super.init(self, panel, params)
+    if self._show_started then
+        ---@diagnostic disable-next-line
+        self:ShowStartedPopup()
+    end
+end
+
+function EHIcorp9Tracker:OverridePanel()
+    EHIcorp9Tracker.super.OverridePanel(self)
+    self._text4 = self._time_bg_box:text({
+        name = "text4",
+        text = "",
+        align = "center",
+        vertical = "center",
+        w = self._time_bg_box:w(),
+        h = self._icon_size_scaled,
+        font = tweak_data.menu.pd2_large_font,
+		font_size = self._panel:h() * self._text_scale,
+        color = Color.yellow
+    })
+    self:SetStatusText("find", self._text4)
+    self._text:set_visible(false)
+    self._text2:set_visible(false)
+    self._text3:set_visible(false)
+end
+
+function EHIcorp9Tracker:LaptopInteracted()
+    self:SetStatusText("push", self._text4)
+    self:AnimateBG()
+end
+
+function EHIcorp9Tracker:FindCodesStarted()
+    self._text:set_visible(true)
+    self._text2:set_visible(true)
+    self._text3:set_visible(true)
+    self._text4:set_visible(false)
+    self:AnimateBG()
+end
+
+function EHIcorp9Tracker:SetCompleted()
+    ---@diagnostic disable-next-line
+    EHIAchievementTracker.SetCompleted(self)
+    self._text2:set_color(Color.green)
+    self._text3:set_color(Color.green)
+    self:AddTrackerToUpdate()
+end
+
+function EHIcorp9Tracker:SetFailed()
+end
+
 EHIcorp12Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIcorp12Tracker")
+EHIcorp12Tracker._forced_icons = EHI:GetAchievementIcon("corp_12")
 function EHIcorp12Tracker:SetMPState()
+    if self._mp then
+        return
+    end
     self._text:stop()
     self._time_warning = false
     self._time = self._time - 180
     self._check_anim_progress = self._time <= 10
+    self._mp = true
 end
 
 local EHI = EHI
@@ -11,6 +75,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@type ParseTriggerTable
 local triggers =
 {
     [102406] = { additional_time = 22 + 6, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 102401 },
@@ -18,11 +83,7 @@ local triggers =
     [EHI:GetInstanceElementID(100018, 12190)] = { time = 10, id = "Thermite", icons = { Icon.Fire } }
 }
 if EHI:IsClient() then
-    local escape_time = OVKorAbove and 30 or 15
-    triggers[102406].additional_time = triggers[102406].additional_time + escape_time
-    triggers[102406].random_time = 15
-    triggers[102406].delay_only = true
-    EHI:AddSyncTrigger(102406, triggers[102406])
+    triggers[102406].client = { time = OVKorAbove and 30 or 15, random_time = 15 }
 end
 
 local corp_11_StartVariable = true
@@ -35,6 +96,50 @@ end)
 ---@type ParseAchievementTable
 local achievements =
 {
+    corp_9 =
+    {
+        elements =
+        {
+            [100107] = { class = "EHIcorp9Tracker", condition_function = function()
+                local value = managers.mission:get_saved_job_value("usb_train")
+                return value == 1
+            end },
+            [EHI:GetInstanceElementID(100010, 14610)] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+                self._trackers:CallFunction("corp_9", "LaptopInteracted")
+            end) },
+            [103518] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+                self._trackers:CallFunction("corp_9", "FindCodesStarted")
+            end) },
+            [103045] = { special_function = SF.SetAchievementComplete }
+        },
+        cleanup_callback = function()
+            ---@diagnostic disable-next-line
+            EHIcorp9Tracker = nil
+        end,
+        parsed_callback = function()
+            for i = 102867, 102869, 1 do
+                for j = 0, 9, 1 do
+                    managers.mission:add_runned_unit_sequence_trigger(i, "set_red_0" .. tostring(j), function(...)
+                        managers.ehi_tracker:CallFunction("corp_9", "SetCode", "red", j)
+                    end)
+                end
+            end
+            for i = 102870, 102872, 1 do
+                for j = 0, 9, 1 do
+                    managers.mission:add_runned_unit_sequence_trigger(i, "set_green_0" .. tostring(j), function(...)
+                        managers.ehi_tracker:CallFunction("corp_9", "SetCode", "green", j)
+                    end)
+                end
+            end
+            for i = 102873, 102875, 1 do
+                for j = 0, 9, 1 do
+                    managers.mission:add_runned_unit_sequence_trigger(i, "set_blue_0" .. tostring(j), function(...)
+                        managers.ehi_tracker:CallFunction("corp_9", "SetCode", "blue", j)
+                    end)
+                end
+            end
+        end
+    },
     corp_10 =
     {
         difficulty_pass = OVKorAbove,
@@ -69,8 +174,15 @@ local achievements =
         elements =
         {
             -- SP (MP has 240s)
-            [100107] = { time = 420, class = "EHIcorp12Tracker" },
+            [100107] = { time = 420, class = "EHIcorp12Tracker", special_function = SF.AddTrackerIfDoesNotExist },
             [102739] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+                if self._trackers:TrackerDoesNotExist("corp_12") then
+                    self._trackers:AddTracker({
+                        id = "corp_12",
+                        time = 420,
+                        class = "EHIcorp12Tracker"
+                    })
+                end
                 self._trackers:CallFunction("corp_12", "SetMPState")
             end) },
             [102014] = { special_function = SF.SetAchievementFailed }, -- Alarm
@@ -108,7 +220,7 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100031, 12610)] = true, -- Defend
     [EHI:GetInstanceElementID(100056, 12610)] = true, -- Fix
     [EHI:GetInstanceElementID(100031, 12710)] = true, -- Defend
-    [EHI:GetInstanceElementID(100056, 12710)] = true, -- Fix
+    [EHI:GetInstanceElementID(100056, 12710)] = true -- Fix
 }
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:AddXPBreakdown({

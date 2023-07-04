@@ -1,3 +1,10 @@
+r163 (04. 07. 2023):
+Added option "Aggregate Assault Delay and Duration into one tracker"
+Crude Awakening: Fixed an issue where achievement tracker for "Human Torch" could get stuck
+Hostile Takeover: Added achievement tracker for "Texas Treasures, Part 3"
+Hostile Takeover: Possible fix for the achievement tracker "Just Passing Through" not showing correct time left in multiplayer
+Fixed a possible log spam in the first game load
+
 r162 (28. 06. 2023):
 Added trackers for Crude Awakening
 Fixed an issue where job name in mission briefing moved when XP Overview is disabled

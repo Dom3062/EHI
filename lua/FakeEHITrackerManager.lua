@@ -80,7 +80,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
     end
     self:AddFakeTracker({ id = "show_loot_counter", icons = { Icon.Loot }, class = "FakeEHIProgressTracker" } )
     self:AddFakeTracker({ id = "show_bodybags_counter", count = math.random(1, 3), icons = { "equipment_body_bag" }, class = "FakeEHICountTracker" })
-    self:AddFakeTracker({ id = "show_escape_chance", icons = { { icon = Icon.Car, color = Color.red } }, math.random(100), class = "FakeEHIChanceTracker" })
+    self:AddFakeTracker({ id = "show_escape_chance", icons = { { icon = Icon.Car, color = Color.red } }, chance = math.random(100), class = "FakeEHIChanceTracker" })
     self:AddPreviewText()
 end
 
@@ -873,10 +873,10 @@ FakeEHIAssaultTimeTracker = class(FakeEHITracker)
 function FakeEHIAssaultTimeTracker:init(panel, params)
     FakeEHIAssaultTimeTracker.super.init(self, panel, params)
     if params.time <= 5 then -- Fade
-        self._icon1:set_color(BAI and BAI:GetColor("fade") or Color(255, 0, 255, 255) / 255)
+        self._icon1:set_color(Color(255, 0, 255, 255) / 255)
     elseif params.time >= 205 then -- Build
-        self._icon1:set_color(BAI and BAI:GetColor("build") or Color.yellow)
+        self._icon1:set_color(Color.yellow)
     else
-        self._icon1:set_color(BAI and BAI:GetColor("sustain") or Color(255, 237, 127, 127) / 255)
+        self._icon1:set_color(Color(255, 237, 127, 127) / 255)
     end
 end

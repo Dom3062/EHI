@@ -36,6 +36,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+---@type ParseTriggerTable
 local triggers = {
     [102460] = { time = 7, id = "Countdown", icons = { Icon.Alarm }, class = TT.Warning },
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
@@ -68,12 +69,19 @@ local triggers = {
     [103006] = { chance = 100, id = "CorrectPaperChance", special_function = SF.SetChanceWhenTrackerExists },
     [104752] = { id = "CorrectPaperChance", special_function = SF.RemoveTracker },
 
+    [102675] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+        self._trackers:RemoveTracker("AnswerPhone")
+        self._trackers:RemoveTracker("Patrol")
+        self._trackers:RemoveTracker("ExtraCivilianElevatorLeft")
+        self._trackers:RemoveTracker("ExtraCivilianElevatorRight")
+        self._trackers:RemoveTracker("CorrectPaperChance")
+    end), trigger_times = 1 },
+
     [104721] = { special_function = SF.CustomCode, f = function()
-        if managers.hud.SetAssaultTrackerManualBlock then
-            managers.hud:SetAssaultTrackerManualBlock(true)
-        end
-    end}
+        managers.hud:SetAssaultTrackerManualBlock(true)
+    end }
 }
+---@type ParseTriggerTable
 local outcome =
 {
     [100013] = { additional_time = 15 + 15 + 10 + 40/30, random_time = 5, id = "VialFail", icons = { "equipment_bloodvial", Icon.Loop } },
@@ -89,18 +97,6 @@ for id, value in pairs(outcome) do
         triggers[element].waypoint = { position_by_unit = EHI:GetInstanceUnitID(100008, i) }
     end
 end
-EHI:AddOnAlarmCallback(function()
-    local remove = {
-        "AnswerPhone",
-        "Patrol",
-        "ExtraCivilianElevatorLeft",
-        "ExtraCivilianElevatorRight",
-        "CorrectPaperChance"
-    }
-    for _, tracker in ipairs(remove) do
-        managers.ehi_tracker:RemoveTracker(tracker)
-    end
-end)
 
 ---@type ParseAchievementTable
 local achievements =

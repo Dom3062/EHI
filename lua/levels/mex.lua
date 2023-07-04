@@ -3,12 +3,10 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local function SetAssaultTrackerBlock(block)
-    if managers.hud.SetAssaultTrackerManualBlock then
-        managers.hud:SetAssaultTrackerManualBlock(block)
-    end
+    managers.hud:SetAssaultTrackerManualBlock(block)
 end
 local triggers = {
-    [102685] = { id = "Refueling", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.SetTimeIfLoudOrStealth, data = { loud = 121, stealth = 91 }, trigger_times = 1 },
+    [102685] = { id = "Refueling", icons = { Icon.Oil }, class = TT.Pausable, special_function = SF.SetTimeIfLoudOrStealth, data = { loud = 121, stealth = 91 }, trigger_times = 1 },
     [102678] = { id = "Refueling", special_function = SF.UnpauseTracker },
     [102684] = { id = "Refueling", special_function = SF.PauseTracker },
     [101983] = { time = 15, id = "C4Trap", icons = { Icon.C4 }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
@@ -35,7 +33,7 @@ end
 local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 30 + 30 }), -- Arizona (When alarm is raised in Mexico (for the first time), run this trigger instead)
-    [100697] = EHI:AddAssaultDelay({ additional_time = 30, random_time = 10, condition_function = EHI.ConditionFunctions.IsLoud }) -- Mexico (ElementDifficulty already exists)
+    [100697] = EHI:AddAssaultDelay({ additional_time = 30 + 30, random_time = 10, condition_function = EHI.ConditionFunctions.IsLoud }) -- Mexico (ElementDifficulty already exists)
 }
 
 EHI:ParseTriggers({

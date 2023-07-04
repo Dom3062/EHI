@@ -21,6 +21,7 @@ local preload =
     { id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, hide_on_delete = true },
     { id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, hide_on_delete = true }
 }
+---@type ParseTriggerTable
 local triggers = {
     [102318] = { id = "Van", run = { time = 60 + 60 + 30 + 15 + anim_delay } },
     [102319] = { id = "Van", run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay } },
@@ -84,9 +85,11 @@ if EHI:IsMayhemOrAbove() then
         end
         triggers[100763] = { special_function = SF.CustomCode, f = DisableWaypoint }
         triggers[101453] = { special_function = SF.CustomCode, f = DisableWaypoint }
-        local function ShowWaypoint(trigger)
+        ---@param self EHIManager
+        ---@param trigger ElementTrigger
+        local function ShowWaypoint(self, trigger)
             local pos = VanPos == 1 and Vector3(-1374, -2388, 1135) or Vector3(-1283, 1470, 1285)
-            managers.ehi_waypoint:AddWaypoint(trigger.id, {
+            self._waypoints:AddWaypoint(trigger.id, {
                 time = trigger.run.time,
                 icon = Icon.LootDrop,
                 position = pos,

@@ -3,6 +3,7 @@ if EHI:CheckLoadHook("HUDManagerPD2") then
     return
 end
 
+---@type string
 local level_id = Global.game_settings.level_id
 
 local original =
@@ -39,7 +40,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         self:add_updator("EHI_Buff_Update", callback(buff, buff, "update"))
         buff:init_finalize(hud)
     end
-    if tweak_data.levels:IsLevelSafehouse() then
+    if tweak_data.levels:IsLevelSafehouse(level_id) then
         return
     end
     if EHI:GetOption("show_captain_damage_reduction") then
@@ -62,7 +63,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             class = "EHIEnemyCountTracker"
         })
     end
-    if tweak_data.levels:IsStealthAvailable() then
+    if tweak_data.levels:IsStealthAvailable(level_id) then
         if EHI:GetOption("show_pager_tracker") then
             local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
             if server then
@@ -113,7 +114,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             end)
         end
     end
-    if EHI:GetOption("show_gained_xp") and EHI:GetOption("xp_panel") == 2 and Global.game_settings.gamemode ~= "crime_spree" and not EHI:IsOneXPElementHeist(level_id) then
+    if EHI:IsXPTrackerEnabled() and EHI:GetOption("xp_panel") == 2 and not EHI:IsOneXPElementHeist(level_id) then
         self.ehi:AddTracker({
             id = "XPTotal",
             class = "EHITotalXPTracker"
@@ -184,7 +185,7 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
     local function set_assault_delay(self, data)
         self.ehi:CallFunction("Assault", "SetHostages", data.nr_hostages > 0)
     end
-    local is_skirmish = tweak_data.levels:IsLevelSkirmish()
+    local is_skirmish = tweak_data.levels:IsLevelSkirmish(level_id)
     local EndlessAssault = nil
     original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
     function HUDManager:sync_start_anticipation_music(...)
@@ -206,7 +207,7 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
                 assault = true,
                 diff = EHI._cache.diff or 0,
                 class = "EHIAssaultTracker"
-            })
+            }, 0)
         end
     end
     original.sync_end_assault = HUDManager.sync_end_assault
@@ -214,7 +215,7 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
         original.sync_end_assault(self, ...)
         if self._ehi_manual_block then
             return
-        elseif is_skirmish then
+        elseif is_skirmish or EndlessAssault then
             self.ehi:RemoveTracker("Assault")
         elseif self.ehi:TrackerExists("Assault") then
             self.ehi:CallFunction("Assault", "AssaultEnd", EHI._cache.diff or 0)
@@ -223,7 +224,7 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
                 id = "Assault",
                 diff = EHI._cache.diff,
                 class = "EHIAssaultTracker"
-            })
+            }, 0)
         end
         EHI:HookWithID(self, "set_control_info", "EHI_Assault_set_control_info", set_assault_delay)
     end
@@ -278,7 +279,7 @@ else
     end
     if EHI:GetOption("show_assault_time_tracker") then
         local start_original = HUDManager.sync_start_assault
-        local is_skirmish = tweak_data.levels:IsLevelSkirmish()
+        local is_skirmish = tweak_data.levels:IsLevelSkirmish(level_id)
         local EndlessAssault = nil
         function HUDManager:sync_start_assault(...)
             start_original(self, ...)

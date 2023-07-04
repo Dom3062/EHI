@@ -3,49 +3,71 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
+local WP = EHI.Waypoints
+---@type Vector3?
+local TransferPosition = nil
+---@param self EHIManager
+---@param trigger ElementTrigger
+--[[local function TransferWP(self, trigger)
+    local wp
+    local index = self:IsMissionElementDisabled(EHI:GetInstanceUnitID(100087, 9340)) and 9340 or 9590
+    if TransferPosition then
+        wp = TransferPosition
+    else
+        TransferPosition = EHI:GetInstanceElementPosition(EHI:GetInstanceElementID(100019, index)) or Vector3()
+        wp = TransferPosition
+    end
+    self._waypoints:AddWaypoint(trigger.id, {
+        time = trigger.time,
+        icon = trigger.stealth and Icon.Wait or Icon.Defend,
+        position = wp,
+        class = WP.Pausable,
+        remove_vanilla_waypoint = EHI:GetInstanceElementID(100019, index)
+    })
+end]]
 
+---@type ParseTriggerTable
 local triggers =
 {
     [103053] = { id = "FuelChecking", icons = { Icon.Wait }, class = TT.Pausable, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
         if not enabled then
             return
         end
-        if managers.groupai then
-            if managers.groupai:state():whisper_mode() then
-                trigger.time = 40
-            else
-                trigger.time = 60
-            end
-            self:CheckCondition(trigger)
+        if self:Exists(trigger.id) then
+            self:Unpause(trigger.id)
+            return
+        --[[elseif self:IsMissionElementDisabled(trigger.fix_wp) or self:IsMissionElementEnabled(trigger.success_sequence) then
+            trigger.time = 5]] -- Broken for some reason
+        elseif CF.IsStealth() then
+            trigger.time = 40
+        else
+            trigger.time = 60
         end
-    end) },
+        if trigger.waypoint then
+            trigger.waypoint.time = trigger.time
+        end
+        self:CheckCondition(trigger)
+    end), fix_wp = EHI:GetInstanceElementID(100068, 4650), success_sequence = EHI:GetInstanceElementID(100016, 4650), waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100067, 4650) } },
     [103055] = { id = "FuelChecking", special_function = SF.PauseTracker },
     [103070] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; loud
     [103071] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; stealth
-    [103307] = { time = 5, id = "FuelCheckingExcellent", icons = { Icon.Wait }, special_function = SF.TriggerIfEnabled },
 
-    [102454] = { id = "FuelTransferStealth", icons = { Icon.Water }, class = TT.Pausable, condition_function = CF.IsStealth, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 102438 },
+    [102454] = { id = "FuelTransferStealth", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsStealth, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 102438, --[[waypoint_f = TransferWP, stealth = true]] },
     [102439] = { id = "FuelTransferStealth", special_function = SF.PauseTracker },
-    [102656] = { id = "FuelTransferLoud", icons = { Icon.Water }, class = TT.Pausable, condition_function = CF.IsLoud, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101686 },
-    [101684] = { id = "FuelTransferLoud", special_function = SF.PauseTracker }
+    [102656] = { id = "FuelTransferLoud", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsLoud, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101686, --[[waypoint_f = TransferWP, loud = true]] },
+    [101684] = { id = "FuelTransferLoud", special_function = SF.PauseTracker },
+
+    [101050] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+        self._trackers:CallFunction("FuelChecking", "AddDelay", 20) -- Add 20s because stealth trigger is now disabled
+        self._trackers:RemoveTracker("FuelTransferStealth") -- ElementTimer won't proceed because alarm has been raised, remove it from the screen
+        self:UpdateWaypointTriggerIcon(103053, Icon.Defend) -- Cops can turn off the checking device, change the waypoint icon to reflect this
+    end), trigger_times = 1 } -- Alarm
 }
 if EHI:IsClient() then
-    triggers[102454].additional_time = 60
-    triggers[102454].random_time = 20
-    triggers[102454].delay_only = true
-    triggers[102454].special_function = SF.UnpauseTrackerIfExists
-    triggers[102454].class = TT.InaccuratePausable
-    triggers[102454].synced = { class = TT.Pausable }
-    EHI:AddSyncTrigger(102454, triggers[102454])
-    triggers[102656].additional_time = 100
-    triggers[102656].random_time = 30
-    triggers[102656].delay_only = true
-    triggers[102656].special_function = SF.UnpauseTrackerIfExists
-    triggers[102656].class = TT.InaccuratePausable
-    triggers[102656].synced = { class = TT.Pausable }
-    EHI:AddSyncTrigger(102656, triggers[102656])
-    triggers[101685] = { time = 80, id = "FuelTransferLoud", icons = { Icon.Water }, special_function = SF.SetTrackerAccurate }
-    triggers[104930] = { time = 20, id = "FuelTransferLoud", icons = { Icon.Water }, special_function = SF.SetTrackerAccurate }
+    triggers[102454].client = { time = 60, random_time = 20, special_function = SF.UnpauseTrackerIfExists }
+    triggers[102456].client = { time = 100, random_time = 30, special_function = SF.UnpauseTrackerIfExists }
+    triggers[101685] = { time = 80, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate }
+    triggers[104930] = { time = 20, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate }
 end
 
 ---@type ParseAchievementTable
@@ -74,9 +96,10 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [EHI:GetInstanceElementID(100267, 9840)] = { progress = 1, max = 3, set_color_bad_when_reached = true, class = TT.AchievementProgress },
-            [EHI:GetInstanceElementID(100228, 9840)] = { special_function = SF.IncreaseProgress },
-            [EHI:GetInstanceElementID(100229, 9840)] = { special_function = SF.IncreaseProgress },
+            [100610] = { max = 3, set_color_bad_when_reached = true, class = TT.AchievementProgress, condition_function = CF.IsLoud, trigger_times = 1 },
+            [EHI:GetInstanceElementID(100225, 9840)] = { special_function = SF.IncreaseProgress }, -- 1st pump used
+            [EHI:GetInstanceElementID(100228, 9840)] = { special_function = SF.IncreaseProgress }, -- 2nd pump used
+            [EHI:GetInstanceElementID(100229, 9840)] = { special_function = SF.IncreaseProgress }, -- 3rd pump used
             [EHI:GetInstanceElementID(100283, 9840)] = { special_function = SF.SetAchievementFailed }, -- 4th pump used
             [EHI:GetInstanceElementID(100467, 9840)] = { special_function = SF.SetAchievementComplete }
         }
@@ -90,6 +113,20 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
+
+EHI:ShowLootCounter({
+    max = 4,
+    triggers =
+    {
+        [101084] = { max = 4, special_function = SF.IncreaseProgressMax }
+    },
+    load_sync = function(self)
+        if managers.preplanning:IsAssetBought(102474) then
+            self._trackers:IncreaseLootCounterProgressMax(4)
+        end
+        self._trackers:SyncSecuredLoot()
+    end
+})
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -110,3 +147,75 @@ local MissionDoor =
     [Vector3(2358.11, 867.92, 4091.94)] = 104174
 }
 EHI:SetMissionDoorPosAndIndex(MissionDoor)
+local total_xp_override =
+{
+    params =
+    {
+        min_max =
+        {
+            min =
+            {
+                texas4_found_the_perfect_sample = { times = 0 }
+            },
+            max =
+            {
+                texas4_found_the_good_sample = { times = 0 }
+            },
+            loot_all = { max = 8 }
+        }
+    }
+}
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "texas4_found_server_room" },
+                { amount = 1000, name = "texas4_accessed_security_computer" },
+                { amount = 1000, name = "pc_hack" },
+                { amount = 1000, name = "texas4_updated_docking_schedule" },
+                { amount = 3000, name = "texas4_found_the_purest_sample" },
+                { amount = 2000, name = "texas4_found_the_good_sample" },
+                { amount = 500, name = "texas4_entered_the_processing_area" },
+                { amount = 500, name = "texas4_crane_lowered" },
+                { amount = 6000, name = "texas4_pipeline_connected" },
+                { amount = 6000, name = "texas4_pumping_complete" },
+                { amount = 500, name = "texas4_entered_the_drilling_tower" },
+                { amount = 500, name = "texas4_lasers_disabled" },
+                { amount = 500, name = "texas4_fan_jammed" },
+                { amount = 4000, name = "texas4_disabled_gas_can" },
+                { amount = 1000, name = "texas4_disabled_blowout_preventor" },
+                { amount = 4000, name = "texas4_build_pressure" },
+                { amount = 500, name = "texas4_drill_activated" },
+                { escape = 2000 }
+            },
+            loot_all = 1000,
+            total_xp_override = total_xp_override
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "texas4_found_server_room" },
+                { amount = 1000, name = "texas4_servers_destroyed" },
+                { amount = 1000, name = "pc_hack" },
+                { amount = 3000, name = "texas4_found_the_purest_sample" },
+                { amount = 2000, name = "texas4_found_the_good_sample" },
+                { amount = 500, name = "texas4_entered_the_processing_area" },
+                { amount = 500, name = "texas4_crane_lowered" },
+                { amount = 6000, name = "texas4_pipeline_connected" },
+                { amount = 6000, name = "texas4_pumping_complete" },
+                { amount = 500, name = "texas4_entered_the_drilling_tower" },
+                { amount = 6000, name = "texas4_gabriel_killed" },
+                { amount = 1000, name = "texas4_disabled_blowout_preventor" },
+                { amount = 4000, name = "texas4_build_pressure" },
+                { amount = 500, name = "texas4_drill_activated" },
+                { escape = 2000 }
+            },
+            loot_all = 1000,
+            total_xp_override = total_xp_override
+        }
+    }
+})

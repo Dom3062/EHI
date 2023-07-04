@@ -43,7 +43,7 @@ function EHIWaypointManager:SetPlayerHUD(hud)
 end
 
 ---@param id string
----@param params AddWaypointTable
+---@param params AddWaypointTable|ElementWaypointTrigger
 function EHIWaypointManager:AddWaypoint(id, params)
     if not self._enabled then
         return
@@ -124,7 +124,7 @@ function EHIWaypointManager:UpdateWaypointID(id, new_id)
 end
 
 ---@param wp WaypointDataTable
----@param params AddWaypointTable
+---@param params AddWaypointTable|ElementWaypointTrigger
 function EHIWaypointManager:SetWaypointInitialIcon(wp, params)
     local bitmap = wp.bitmap
     local bitmap_world = wp.bitmap_world -- VR

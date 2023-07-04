@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@type ParseTriggerTable
 local triggers = {
     [102368] = { id = "PickUpBalloonFirstTry", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = 102333 },
     [104290] = { id = "PickUpBalloonFirstTry", special_function = SF.PauseTracker },
@@ -11,23 +12,11 @@ local triggers = {
     [102370] = { id = "PickUpBalloonSecondTry", icons = { Icon.Escape }, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = 100732 }
 }
 if EHI:IsClient() then
-    triggers[102368].additional_time = 120
-    triggers[102368].random_time = 10
-    triggers[102368].delay_only = true
-    triggers[102368].class = TT.InaccuratePausable
-    triggers[102368].synced = { class = TT.Pausable }
-    triggers[102368].special_function = SF.AddTrackerIfDoesNotExist
-    EHI:AddSyncTrigger(102368, triggers[102368])
+    triggers[102368].client = { time = 120, random_time = 10 }
     triggers[102371] = { time = 60, id = "PickUpBalloonFirstTry", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
     triggers[102366] = { time = 30, id = "PickUpBalloonFirstTry", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
     triggers[103039] = { time = 20, id = "PickUpBalloonFirstTry", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
-    triggers[102370].additional_time = 35
-    triggers[102370].random_time = 10
-    triggers[102370].delay_only = true
-    triggers[102370].class = TT.InaccuratePausable
-    triggers[102370].synced = { class = TT.Pausable }
-    triggers[102370].special_function = SF.AddTrackerIfDoesNotExist
-    EHI:AddSyncTrigger(102370, triggers[102370])
+    triggers[102370].client = { time = 35, random_time = 10 }
     triggers[103038] = { time = 20, id = "PickUpBalloonSecondTry", icons = { Icon.Escape }, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
 end
 

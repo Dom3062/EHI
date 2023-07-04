@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@type ParseTriggerTable
 local triggers = {
     [108538] = { time = 60, id = "Gas", icons = { Icon.Teargas } },
 

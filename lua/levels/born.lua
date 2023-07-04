@@ -2,32 +2,21 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+---@type ParseTriggerTable
 local triggers = {
-    [101034] = { id = "MikeDefendTruck", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033, waypoint = { position_by_element = EHI:GetInstanceElementID(100483, 1350), remove_vanilla_waypoint = EHI:GetInstanceElementID(100483, 1350) } },
+    [101034] = { id = "MikeDefendTruck", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033, waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100483, 1350) } },
     [101038] = { id = "MikeDefendTruck", special_function = SF.PauseTracker },
     [101070] = { id = "MikeDefendTruck", special_function = SF.UnpauseTracker },
 
-    [101535] = { id = "MikeDefendGarage", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101532, waypoint = { position_by_element = 101445, remove_vanilla_waypoint = 101445 } },
+    [101535] = { id = "MikeDefendGarage", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101532, waypoint = { position_by_element_and_remove_vanilla_waypoint = 101445 } },
     [101534] = { id = "MikeDefendGarage", special_function = SF.UnpauseTracker },
     [101533] = { id = "MikeDefendGarage", special_function = SF.PauseTracker },
 
     [101048] = { time = 12, id = "ObjectiveDelay", icons = { Icon.Wait } }
 }
 if EHI:IsClient() then
-    triggers[101034].additional_time = 80
-    triggers[101034].random_time = 10
-    triggers[101034].special_function = SF.UnpauseTrackerIfExists
-    triggers[101034].delay_only = true
-    triggers[101034].class = TT.InaccuratePausable
-    triggers[101034].synced = { class = TT.Pausable }
-    EHI:AddSyncTrigger(101034, triggers[101034])
-    triggers[101535].additional_time = 90
-    triggers[101535].random_time = 30
-    triggers[101535].special_function = SF.UnpauseTrackerIfExists
-    triggers[101535].delay_only = true
-    triggers[101535].class = TT.InaccuratePausable
-    triggers[101535].synced = { class = TT.Pausable }
-    EHI:AddSyncTrigger(101535, triggers[101535])
+    triggers[101034].client = { time = 80, random_time = 10, special_function = SF.UnpauseTrackerIfExists }
+    triggers[101535].client = { time = 90, random_time = 30, special_function = SF.UnpauseTrackerIfExists }
 end
 
 ---@type ParseAchievementTable

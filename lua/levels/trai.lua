@@ -64,7 +64,7 @@ local triggers =
 
     [EHI:GetInstanceElementID(100209, 10450)] = { time = 3, id = "KeygenHack", icons = { Icon.PCHack } },
 
-    [103130] = { time = 10, id = "LocomotiveRefuel", icons = { Icon.Water } },
+    [103130] = { time = 10, id = "LocomotiveRefuel", icons = { Icon.Oil } },
 
     [EHI:GetInstanceElementID(100024, 11650)] = { time = 25, id = "Turntable", icons = { Icon.Train, Icon.Loop }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [EHI:GetInstanceElementID(100025, 11650)] = { id = "Turntable", special_function = SF.PauseTracker },

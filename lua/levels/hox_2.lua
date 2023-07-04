@@ -14,7 +14,9 @@ local hoxton_hack = { "hoxton_character" }
 local CheckOkValueHostCheckOnly = EHI:GetFreeCustomSpecialFunctionID()
 local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
 local CurrentHackNumber = 0
+---@type table<number, Vector3?>
 local PCVectors = {}
+---@type ParseTriggerTable
 local triggers = {
     [102016] = { time = 7, id = "Endless", icons = Icon.EndlessAssault, class = TT.Warning },
 
@@ -23,15 +25,15 @@ local triggers = {
     [104581] = { time = 20, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) },
     [104582] = { time = 30, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) }, -- Disabled in the mission script
 
-    [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop }, waypoint_f = function(trigger)
+    [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop }, waypoint_f = function(self, trigger)
         local vector = PCVectors[CurrentHackNumber]
         if vector then
-            managers.ehi_waypoint:AddWaypoint(trigger.id, {
+            self._waypoints:AddWaypoint(trigger.id, {
                 time = trigger.time,
                 icon = Icon.Loop,
                 position = vector
             })
-            managers.ehi_waypoint:RemoveWaypoint("HoxtonHack")
+            self._waypoints:RemoveWaypoint("HoxtonHack")
         end
     end },
     [102189] = { special_function = SF.CustomCode, f = function()

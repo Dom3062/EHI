@@ -6,23 +6,6 @@ local Anticipation = Color(255, 186, 204, 28) / 255
 local Build = Color.yellow
 local Sustain = Color(255, 237, 127, 127) / 255
 local Fade = Color(255, 0, 255, 255) / 255
-if BAI then
-    Captain = BAI:GetRightColor("captain")
-    Control = BAI:GetColor("control")
-    Anticipation = BAI:GetColor("anticipation")
-    Build = BAI:GetColor("build")
-    Sustain = BAI:GetColor("sustain")
-    Fade = BAI:GetColor("fade")
-    BAI:AddEvent(BAI.EventList.Update, function()
-        Captain = BAI:GetRightColor("captain")
-        Control = BAI:GetColor("control")
-        Anticipation = BAI:GetColor("anticipation")
-        Build = BAI:GetColor("build")
-        Sustain = BAI:GetColor("sustain")
-        Fade = BAI:GetColor("fade")
-        EHIAssaultTracker._forced_icons[1].color = Control
-    end)
-end
 local State =
 {
     control = 1,

@@ -9,13 +9,14 @@ local element_sync_triggers =
 {
     [103569] = { time = 25, id = "CFOFall", icons = { "hostage", Icon.Goto }, hook_element = 100438 }
 }
+---@type ParseTriggerTable
 local triggers = {
     [100276] = { time = 25 + 3 + 11, id = "CFOInChopper", icons = { Icon.Heli, Icon.Goto } },
 
     [101343] = { time = 30, id = "KeypadReset", icons = { Icon.Loop }, waypoint = { position_by_element = EHI:GetInstanceElementID(100179, 9100) } },
 
     [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100475, remove_vanilla_waypoint = 104882 } },
-    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 103163, remove_vanilla_waypoint = 103163 } },
+    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element_and_remove_vanilla_waypoint = 103163 } },
 
     [103969] = { id = "ColorCodes", class = TT.ColoredCodes },
     [102338] = { id = "ColorCodes", special_function = SF.RemoveTracker }

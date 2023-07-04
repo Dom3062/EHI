@@ -40,7 +40,8 @@ function GroupAIStateBase:load(...)
         local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
         if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets set; see GameSetup:load()
             managers.ehi_tracker:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(law1team.damage_reduction or 0)))
-        elseif self._hunt_mode then -- AssaultTime is created before this is checked; see GameSetup:load()
+        elseif self._hunt_mode then -- Assault and AssaultTime is created before this is checked; see GameSetup:load()
+            managers.ehi_tracker:RemoveTracker("Assault")
             managers.ehi_tracker:RemoveTracker("AssaultTime")
         end
     else
@@ -49,8 +50,8 @@ function GroupAIStateBase:load(...)
 end
 
 if EHI:ShowDramaTracker() and not tweak_data.levels:IsStealthRequired() then
-    local pos = EHI:CombineAssaultDelayAndAssaultTime() and 1 or 0
     local function Create()
+        local pos = managers.ehi_tracker:TrackerExists("Assault") and 1 or 0
         managers.ehi_tracker:AddTracker({
             id = "Drama",
             icons = { "C_Escape_H_Street_Bullet" },

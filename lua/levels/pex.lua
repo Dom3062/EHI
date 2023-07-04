@@ -3,17 +3,20 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local WT = EHI.Waypoints
+---@type ParseTriggerTable
 local triggers = {
-    [101392] = { time = 120, id = "FireEvidence", icons = { Icon.Fire }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = Icon.Defend, position_by_element = EHI:GetInstanceElementID(100024, 18900), remove_vanilla_waypoint = EHI:GetInstanceElementID(100024, 18900) } },
+    [101392] = { time = 120, id = "FireEvidence", icons = { Icon.Fire }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100024, 18900) } },
     [101588] = { id = "FireEvidence", special_function = SF.PauseTracker },
 
-    [101460] = { time = 18, id = "DoorBreach", icons = { "pd2_door" }, waypoint = { position_by_element = 103837, remove_vanilla_waypoint = 103837 } },
+    [101460] = { time = 18, id = "DoorBreach", icons = { "pd2_door" }, waypoint = { position_by_element_and_remove_vanilla_waypoint = 103837 } },
 
-    [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Defend, position_by_element = 101391, remove_vanilla_waypoint = 101391 } }
+    [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 101391 } }
 }
-local function waypoint(trigger)
+---@param self EHIManager
+---@param trigger ElementTrigger
+local function waypoint(self, trigger)
     local pos = EHI:GetInstanceElementPosition(trigger.element_ids.defend) or Vector3()
-    managers.ehi_waypoint:AddWaypoint(trigger.id, {
+    self._waypoints:AddWaypoint(trigger.id, {
         time = trigger.time,
         icon = Icon.PCHack,
         position = pos,

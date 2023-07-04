@@ -8,6 +8,7 @@ local element_sync_triggers =
     [102290] = { id = "VaultGas", icons = { Icon.Teargas }, hook_element = 102157 }
 }
 local hack_start = EHI:GetInstanceElementID(100015, 20450)
+---@type ParseTriggerTable
 local triggers = {
     [EHI:GetInstanceElementID(100108, 35450)] = { time = 4.8, id = "SuprisePull", icons = { Icon.Wait } },
     [103919] = { additional_time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape, trigger_times = 1 },
@@ -28,13 +29,7 @@ for i = 7250, 9050, 150 do
     triggers[EHI:GetInstanceElementID(100138, i)] = { id = id, special_function = SF.RemoveTracker } -- Alarm
 end
 if EHI:IsClient() then
-    triggers[hack_start].additional_time = 90
-    triggers[hack_start].random_time = 10
-    triggers[hack_start].special_function = SF.UnpauseTrackerIfExists
-    triggers[hack_start].delay_only = true
-    triggers[hack_start].class = TT.InaccuratePausable
-    triggers[hack_start].synced = { class = TT.Pausable }
-    EHI:AddSyncTrigger(hack_start, triggers[hack_start])
+    triggers[hack_start].client = { time = 90, random_time = 10, special_function = SF.UnpauseTrackerIfExists }
     triggers[EHI:GetInstanceElementID(100011, 20450)] = { id = "ServerHack", special_function = SF.RemoveTracker }
     triggers[102157] = { additional_time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, class = TT.Inaccurate, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(element_sync_triggers)

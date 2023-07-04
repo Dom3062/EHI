@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@type ParseTriggerTable
 local triggers = {
     [103030] = { time = 19, id = "InsideManTalk", icons = { "pd2_talk" } },
 
@@ -49,14 +50,8 @@ if EHI:IsClient() then
         wait_time = 150
         pickup_wait_time = 55
     end
-    triggers[101432].additional_time = wait_time
-    triggers[101432].random_time = 30
-    triggers[101432].delay_only = true
-    EHI:AddSyncTrigger(101432, triggers[101432])
-    triggers[102675].additional_time = pickup_wait_time + triggers[102675].additional_time
-    triggers[102675].random_time = 15
-    triggers[102675].delay_only = true
-    EHI:AddSyncTrigger(102675, triggers[102675])
+    triggers[101432].client = { time = wait_time, random_time = 30 }
+    triggers[102675].client = { time = pickup_wait_time, random_time = 15 }
     if ovk_and_up then -- OVK and up
         triggers[101456] = { time = 120, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate }
     end

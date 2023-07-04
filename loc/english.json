@@ -323,6 +323,9 @@
     "ehi_show_assault_time_tracker" : "Show Assault Duration Tracker",
     "ehi_show_assault_time_tracker_desc" : "Shows a tracker for how long the assault duration will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
 
+    "ehi_aggregate_assault_delay_and_assault_time" : "Aggregate Assault Delay and Duration into one tracker",
+    "ehi_aggregate_assault_delay_and_assault_time_desc" : "Aggregates both 'Assault Delay' and 'Assault Duration' into one tracker\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
+    
     "ehi_show_loot_counter" : "Show Loot Counter",
     "ehi_show_loot_counter_desc" : "Shows a tracker for how much loot is in heist",
 
@@ -992,5 +995,23 @@
     "ehi_experience_texas3_documents_secured" : "Research documents secured",
     "ehi_experience_texas3_lab_destroyed" : "Lab destroyed",
     "ehi_experience_texas3_escape_1" : "Escape (No inspectors / Turret not set up)",
-    "ehi_experience_texas3_escape_2" : "Escape (Inspectors arrived / Turret set up)"
+    "ehi_experience_texas3_escape_2" : "Escape (Inspectors arrived / Turret set up)",
+    "ehi_experience_texas4_found_server_room" : "Found the server room",
+    "ehi_experience_texas4_accessed_security_computer" : "Accessed the computer in the server room",
+    "ehi_experience_texas4_updated_docking_schedule" : "Updated docking schedule",
+    "ehi_experience_texas4_found_the_purest_sample" : "Found the purest oil sample",
+    "ehi_experience_texas4_found_the_good_sample" : "Found good oil sample",
+    "ehi_experience_texas4_entered_the_processing_area" : "Entered the Processing Area",
+    "ehi_experience_texas4_crane_lowered" : "Crane lowered",
+    "ehi_experience_texas4_pipeline_connected" : "Pipeline connected",
+    "ehi_experience_texas4_pumping_complete" : "Oil pumping completed",
+    "ehi_experience_texas4_entered_the_drilling_tower" : "Entered the Drilling Tower",
+    "ehi_experience_texas4_lasers_disabled" : "Lasers disabled",
+    "ehi_experience_texas4_fan_jammed" : "Ventilation fan jammed",
+    "ehi_experience_texas4_disabled_gas_can" : "Removed the gas cannister",
+    "ehi_experience_texas4_disabled_blowout_preventor" : "Disabled the blowout preventor",
+    "ehi_experience_texas4_build_pressure" : "Built pressure in the valves",
+    "ehi_experience_texas4_drill_activated" : "Drill activated",
+    "ehi_experience_texas4_servers_destroyed" : "Servers destroyed",
+    "ehi_experience_texas4_gabriel_killed" : "Gabriel killed"
 }

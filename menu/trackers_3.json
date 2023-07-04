@@ -46,6 +46,19 @@
             "ehi_ver" : 146
         },
         {
+            "type": "toggle",
+            "id": "ehi_aggregate_assault_delay_and_assault_time_choice",
+            "title": "ehi_aggregate_assault_delay_and_assault_time",
+            "description": "ehi_show_assault_tracker_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "aggregate_assault_delay_and_assault_time",
+            "focus_changed_callback": "SetFocus",
+            "value": "aggregate_assault_delay_and_assault_time",
+            "default_value": true,
+            "parent": ["ehi_show_assault_delay_tracker_choice", "ehi_show_assault_time_tracker_choice"],
+            "ehi_ver" : 163
+        },
+        {
             "type": "divider",
             "size": 20
         },
@@ -121,7 +134,7 @@
             "callback_arguments": "show_escape_chance",
             "focus_changed_callback": "SetFocus",
             "value": "show_escape_chance",
-            "default_value": false,
+            "default_value": true,
             "ehi_ver" : 84
         }
     ]

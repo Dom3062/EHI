@@ -32,29 +32,35 @@ end
 _G.Rotation = function()
     return Rotation()
 end
+---@generic T
+---@param TC `T`
+---@return T
+_G.deep_clone = function(TC)
+    return TC
+end
 
 ---@class MissionScriptElementValues
 ---@field position Vector3
 ---@field rotation Rotation
 
 ---@class MissionScriptElement
----@field counter_value fun(self: MissionScriptElement): number ElementCounter | ElementCounterOperator
----@field enabled fun(self: MissionScriptElement): boolean
----@field value fun(self: MissionScriptElement, value: string): any
----@field _is_inside fun(self: MissionScriptElement, position: Vector3): boolean ElementAreaReportTrigger 
----@field _values_ok fun(self: MissionScriptElement): boolean ElementCounter | ElementCounterOperator
+---@field counter_value fun(self: self): number ElementCounter | ElementCounterOperator
+---@field enabled fun(self: self): boolean
+---@field value fun(self: self, value: string): any
+---@field _is_inside fun(self: self, position: Vector3): boolean ElementAreaReportTrigger 
+---@field _values_ok fun(self: self): boolean ElementCounter | ElementCounterOperator
 ---@field _values MissionScriptElementValues
 ---@field _calc_base_delay fun(...): number
 ---@field _calc_element_delay fun(...): number
 ---@field _timer number ElementTimer | ElementTimerOperator
 
 ---@class MissionScript
----@field element fun(self: MissionScript, id: number): MissionScriptElement?
+---@field element fun(self: self, id: number): MissionScriptElement?
 
 ---@class MissionManager
 ---@field _scripts table<string, MissionScript> All running scripts in a mission
----@field add_runned_unit_sequence_trigger fun(self: MissionManager, unit_id: number, sequence: string, callback: function)
----@field get_element_by_id fun(self: MissionManager, id: number): MissionScriptElement?
+---@field add_runned_unit_sequence_trigger fun(self: self, unit_id: number, sequence: string, callback: function)
+---@field get_element_by_id fun(self: self, id: number): MissionScriptElement?
 
 ---@class managers Global table of all managers in the game
 ---@field ehi_manager EHIManager
@@ -94,30 +100,48 @@ end
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
 
 ---@class ElementWaypointTrigger
----@field id number|string? ID of the waypoint, if not provided, ID is then copied from the trigger
+---@field id number|string? ID of the waypoint, if not provided, `id` is then copied from the trigger
 ---@field icon string? 
----@field class string? Class of the waypoint. If not provided, class is then copied from the trigger and converted to Waypoint class
+---@field time number? Time to run down. If not provided, `time` is then copied from the trigger
+---@field class string? Class of the waypoint. If not provided, `class` is then copied from the trigger and converted to Waypoint class
+---@field position_by_element number?
+---@field position_by_unit number?
+---@field remove_vanilla_waypoint number?
+---@field position_by_element_and_remove_vanilla_waypoint number?
+
+---@class ElementClientTriggerData
+---@field time number Maps to `additional_time`. If the field already exists, it is added to the field (+)
+---@field random_time number,
+---@field special_function number?
 
 ---@class ElementTrigger
----@field id string ID of the tracker
+---@field id string Tracker ID
 ---@field time number? Time to run down. Not required when tracker class is not using it. Defaults to `0` if not provided
+---@field additional_time number? Time to add when the time is randomized. Used with conjuction with `random_time`
+---@field random_time number?
 ---@field condition boolean?
+---@field condition_function function?
 ---@field icons table? Icons to show in the tracker
 ---@field class string? Class of tracker. If not provided it defaults to `EHITracker` in `EHITrackerManager`
----@field special_function number?
----@field waypoint ElementWaypointTrigger?
+---@field special_function number? Special function the trigger should do
+---@field waypoint ElementWaypointTrigger? Waypoint definition
+---@field waypoint_f fun(self: EHIManager, trigger: ElementTrigger)? In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
+---@field trigger_times number? How many times the trigger should run. If the number is provided and once it hits `0`, the trigger is unhooked from the Element and removed from memory
+---@field client ElementClientTriggerData? Table for clients only to prepopulate fields for tracker syncing. Only applicable to `SF.GetElementTimerAccurate` and `SF.UnpauseTrackerIfExistsAccurate`
+---@field pos number? Tracker position
 ---@field [any] any
 
----@class TableTrigger
+---@class ParseTriggerTable
 ---@field [number] ElementTrigger
 
 ---@class ParseAchievementDefinitionTable
 ---@field beardlib boolean If the achievement is from Beardlib
 ---@field difficulty_pass boolean Difficulty check, setting this to `false` will disable the achievement to show on the screen
----@field elements table Elements to hook
+---@field elements ParseTriggerTable Elements to hook
 ---@field failed_on_alarm boolean Fails the achievement on alarm
 ---@field load_sync fun(self: EHIManager) Function to run if client drops-in to the game
 ---@field alarm_callback fun(dropin: boolean) Function to run after alarm has sounded
+---@field parsed_callback fun() Function runs after the achievement is parsed
 ---@field cleanup_callback fun() Function runs during achievement traversal when difficulty check or unlock check is false; intended to delete remnants so they don't occupy memory
 ---@field mission_end_callback boolean Achieves or fails achievement on mission end
 

@@ -389,6 +389,7 @@ function EHITracker:AddDelay(delay)
     self:SetTime(self._time + delay)
 end
 
+---@param t number?
 function EHITracker:AnimateBG(t)
     local bg = self._time_bg_box:child("bg")
     bg:stop()

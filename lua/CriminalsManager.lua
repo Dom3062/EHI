@@ -3,7 +3,7 @@ if EHI:CheckLoadHook("CriminalsManager") or EHI:IsXPTrackerHidden() then
     return
 end
 
-if BB and BB.grace_period and Global.game_settings.single_player and Global.game_settings.team_ai then
+if EHI:IsRunningBB() then
     local original =
     {
         add_character = CriminalsManager.add_character,

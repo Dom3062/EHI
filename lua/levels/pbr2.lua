@@ -146,7 +146,7 @@ EHI:AddXPBreakdown({
     {
         objectives =
         {
-            bos_money_pallet_found = { times = 2 },
+            bos_money_pallet_found = { times = 3 },
             flare = { times = 3 },
             bos_found_scattered_money = { times = 8 },
             bos_heli_picked_up_money = { times = 3 }

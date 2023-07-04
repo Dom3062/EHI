@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local very_hard_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
 local heli_element_timer = 102292
 local heli_delay = 60 -- Normal -> Very Hard
 -- Bugged because of braindead use of ElementTimerTrigger...
@@ -13,6 +12,7 @@ elseif EHI:IsMayhemOrAbove() then
     heli_element_timer = 102294
     heli_delay = 100
 end]]
+---@type ParseTriggerTable
 local triggers = {
     -- Loud Heli Escape
     [101539] = { time = 5, id = "EndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning },
@@ -50,12 +50,7 @@ if EHI:IsClient() then
     -- FOR THE LOVE OF GOD
     -- OVERKILL
     -- STOP. USING. F... RANDOM DELAY, it's not funny
-    triggers[102295].additional_time = heli_delay + triggers[102295].additional_time
-    triggers[102295].random_time = 20
-    triggers[102295].class = TT.InaccuratePausable
-    triggers[102295].synced = { class = TT.Pausable }
-    triggers[102295].delay_only = true
-    EHI:AddSyncTrigger(102295, triggers[102295])
+    triggers[102295].client = { time = heli_delay, random_time = 20 }
     triggers[102303] = { time = 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
     if EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL) then
         triggers[103584] = { time = 70 + 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
@@ -88,7 +83,7 @@ end
 EHI:ParseTriggers({ mission = triggers })
 EHI:DisableWaypoints(DisableWaypoints)
 local loot_triggers = {}
-if very_hard_and_up then
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     EHI:AddOnAlarmCallback(function()
         EHI:ShowAchievementLootCounter({
             achievement = "pent_12",

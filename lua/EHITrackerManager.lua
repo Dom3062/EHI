@@ -1,5 +1,8 @@
 local EHI = EHI
 ---@class EHITrackerManager
+---@field IsLoading fun(self: self): boolean VR only (EHITrackerManagerVR)
+---@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) VR only (EHITrackerManagerVR)
+---@field SetPanel fun(self: self, panel: userdata) VR only (EHITrackerManagerVR)
 EHITrackerManager = {}
 EHITrackerManager.GetAchievementIcon = EHI.GetAchievementIconString
 function EHITrackerManager:new()
@@ -20,6 +23,7 @@ function EHITrackerManager:new()
     self._delay_popups = true
     self._panel_size = 32 * self._scale
     self._panel_offset = 6 * self._scale
+    self._base_tracker_class = EHI.Trackers.Base
     return self
 end
 
@@ -171,7 +175,7 @@ function EHITrackerManager:destroy()
     end
 end
 
----@param params AddTrackerTable
+---@param params AddTrackerTable|ElementTrigger
 ---@param pos integer?
 function EHITrackerManager:AddTracker(params, pos)
     if self._trackers[params.id] then
@@ -184,7 +188,7 @@ function EHITrackerManager:AddTracker(params, pos)
     params.x = self:GetX(pos)
     params.y = self:GetY(pos)
     params.dynamic = true
-    local class = params.class or "EHITracker"
+    local class = params.class or self._base_tracker_class
     local tracker = _G[class]:new(self._hud_panel, params)
     if tracker._update then
         self._trackers_to_update[params.id] = tracker
@@ -204,7 +208,7 @@ function EHITrackerManager:PreloadTracker(params)
     params.parent_class = self
     params.x = 0
     params.y = 0
-    local class = params.class or "EHITracker"
+    local class = params.class or self._base_tracker_class
     local tracker = _G[class]:new(self._hud_panel, params)
     self._trackers[params.id] = tracker
 end
@@ -387,7 +391,7 @@ function EHITrackerManager:AddAchievementKillCounter(id, progress, max)
     })
 end
 
----@param params AddTrackerTable
+---@param params AddTrackerTable|ElementTrigger
 ---@param pos integer?
 function EHITrackerManager:AddTrackerIfDoesNotExist(params, pos)
     if self:TrackerDoesNotExist(params.id) then
