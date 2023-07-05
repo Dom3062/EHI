@@ -65,7 +65,7 @@ local triggers =
 }
 if EHI:IsClient() then
     triggers[102454].client = { time = 60, random_time = 20, special_function = SF.UnpauseTrackerIfExists }
-    triggers[102456].client = { time = 100, random_time = 30, special_function = SF.UnpauseTrackerIfExists }
+    triggers[102656].client = { time = 100, random_time = 30, special_function = SF.UnpauseTrackerIfExists }
     triggers[101685] = { time = 80, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate }
     triggers[104930] = { time = 20, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate }
 end

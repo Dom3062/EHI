@@ -50,6 +50,14 @@ end
 
 function EHIManager:init_finalize()
     managers.network:add_event_listener("EHIManagerDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
+    if EHI:IsClient() then
+        Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(_, id, data)
+            if id == EHI.SyncMessages.EHISyncAddTracker then
+                local tbl = LuaNetworking:StringToTable(data)
+                self:AddTrackerSynced(tonumber(tbl.id) --[[@as number]], tonumber(tbl.delay) --[[@as number]])
+            end
+        end)
+    end
 end
 
 ---@param tweak_data string
@@ -1158,7 +1166,7 @@ end
 ---@param id number
 ---@param delay number
 function EHIManager:AddTrackerSynced(id, delay)
-    if self._sync_triggers[id] then
+    if self._sync_triggers and self._sync_triggers[id] then
         ---@type ElementTrigger
         local trigger = self._sync_triggers[id]
         local trigger_id = trigger.id
@@ -1293,15 +1301,6 @@ if not EHI:GetOption("show_mission_trackers") then
             end
         end
     end
-end
-
-if EHI:IsClient() then
-    Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(_, id, data)
-        if id == EHI.SyncMessages.EHISyncAddTracker then
-            local tbl = LuaNetworking:StringToTable(data)
-            EHIManager:AddTrackerSynced(tonumber(tbl.id) --[[@as number]], tonumber(tbl.delay) --[[@as number]])
-        end
-    end)
 end
 
 if EHI:GetOption("show_timers") and EHI:GetWaypointOption("show_waypoints_timers") and not EHI:GetOption("show_waypoints_only") then

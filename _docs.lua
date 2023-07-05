@@ -120,7 +120,7 @@ end
 ---@field additional_time number? Time to add when the time is randomized. Used with conjuction with `random_time`
 ---@field random_time number?
 ---@field condition boolean?
----@field condition_function function?
+---@field condition_function function? Function has to return `boolean` value
 ---@field icons table? Icons to show in the tracker
 ---@field class string? Class of tracker. If not provided it defaults to `EHITracker` in `EHITrackerManager`
 ---@field special_function number? Special function the trigger should do
