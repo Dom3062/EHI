@@ -72,19 +72,20 @@ end
 EHI:ParseTriggers({
     other = other
 })
-local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker")
+local CombineAssault = EHI:CombineAssaultDelayAndAssaultTime()
+local ShowAssaultDelay = EHI:GetOption("show_assault_delay_tracker") or CombineAssault
 EHI:AddOnAlarmCallback(function(dropin)
     if dropin then
         EM:Trigger(100342)
         return
     end
-    if not ShowAssaultDelay or EM._trackers:TrackerExists("AssaultDelay") then
+    if not ShowAssaultDelay or (EM._trackers:TrackerExists("AssaultDelay") or EM._trackers:TrackerExists("Assault")) then
         return
     end
     EM._trackers:AddTracker({
-        id = "AssaultDelay",
+        id = CombineAssault and "Assault" or "AssaultDelay",
         time = 75 + 15 + 30,
-        class = TT.AssaultDelay
+        class = CombineAssault and "EHIAssaultTracker" or TT.AssaultDelay
     })
 end)
 EHI:AddXPBreakdown({

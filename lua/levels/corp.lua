@@ -176,6 +176,9 @@ local achievements =
             -- SP (MP has 240s)
             [100107] = { time = 420, class = "EHIcorp12Tracker", special_function = SF.AddTrackerIfDoesNotExist },
             [102739] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+                if EHI.ConditionFunctions.IsLoud() then
+                    return
+                end
                 if self._trackers:TrackerDoesNotExist("corp_12") then
                     self._trackers:AddTracker({
                         id = "corp_12",

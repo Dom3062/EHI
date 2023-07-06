@@ -1,3 +1,7 @@
+r165 (06. 07. 2023):
+Rats Day 2: Fixed a crash after gangsters took their weapons
+Hostile Takeover: Fixed an issue where achievement tracker for "Just Passing Through" could show up in loud
+
 r164 (05. 07. 2023):
 Crude Awakening: Fixed a crash on clients due to a typo
 
