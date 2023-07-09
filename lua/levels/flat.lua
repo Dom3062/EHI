@@ -39,7 +39,7 @@ function EHIHeliTracker:EnableUpdate()
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self:FitTheText(self._time_text)
     self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-    self:SetIconX(self._time_bg_box:w() + self._gap_scaled)
+    self:AnimIconX(self._time_bg_box:w() + self._gap_scaled)
     if self._icon2 then
         self._icon2:set_x(self:GetPanelSize() - self._icon_size_scaled)
         self._icon2:set_visible(true)

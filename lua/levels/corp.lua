@@ -1,15 +1,15 @@
----@class EHIcorp9Tracker : EHIColoredCodesTracker
+---@class EHIcorp9Tracker : EHIColoredCodesTracker, EHIAchievementTracker
 ---@field super EHIColoredCodesTracker
 EHIcorp9Tracker = class(EHIColoredCodesTracker)
 EHIcorp9Tracker._update = false
 EHIcorp9Tracker._forced_icons = EHI:GetAchievementIcon("corp_9")
 EHIcorp9Tracker._popup_type = "achievement"
 EHIcorp9Tracker._show_started = EHIAchievementTracker._show_started
+EHIcorp9Tracker._show_failed = EHIAchievementTracker._show_failed
 EHIcorp9Tracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 function EHIcorp9Tracker:init(panel, params)
     EHIcorp9Tracker.super.init(self, panel, params)
     if self._show_started then
-        ---@diagnostic disable-next-line
         self:ShowStartedPopup()
     end
 end
@@ -47,16 +47,23 @@ function EHIcorp9Tracker:FindCodesStarted()
 end
 
 function EHIcorp9Tracker:SetCompleted()
-    ---@diagnostic disable-next-line
     EHIAchievementTracker.SetCompleted(self)
     self._text2:set_color(Color.green)
     self._text3:set_color(Color.green)
     self:AddTrackerToUpdate()
+    self._achieved = true
 end
 
 function EHIcorp9Tracker:SetFailed()
+    if self._achieved then
+        return
+    end
+    EHIAchievementTracker.SetFailed(self)
+    self._text2:set_color(Color.red)
+    self._text3:set_color(Color.red)
 end
 
+---@class EHIcorp12Tracker : EHIAchievementTracker
 EHIcorp12Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIcorp12Tracker")
 EHIcorp12Tracker._forced_icons = EHI:GetAchievementIcon("corp_12")
 function EHIcorp12Tracker:SetMPState()
@@ -110,7 +117,8 @@ local achievements =
             [103518] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
                 self._trackers:CallFunction("corp_9", "FindCodesStarted")
             end) },
-            [103045] = { special_function = SF.SetAchievementComplete }
+            [103045] = { special_function = SF.SetAchievementComplete },
+            [EHI:GetInstanceElementID(100021, 11090)] = { special_function = SF.SetAchievementFailed } -- Lab destroyed with C4
         },
         cleanup_callback = function()
             ---@diagnostic disable-next-line
@@ -193,6 +201,7 @@ local achievements =
             [102740] = { special_function = SF.SetAchievementComplete }
         },
         cleanup_callback = function()
+            ---@diagnostic disable-next-line
             EHIcorp12Tracker = nil
         end
     }
@@ -236,5 +245,24 @@ EHI:AddXPBreakdown({
         { amount = 2000, name = "texas3_escape_1" },
         { amount = 1000, name = "texas3_escape_2" }
     },
-    loot_all = 500
+    loot_all = 500,
+    total_xp_override =
+    {
+        params =
+        {
+            min =
+            {
+                objectives =
+                {
+                    texas3_evidences_found = true,
+                    texas3_prototype_secured = true,
+                    texas3_documents_secured = true,
+                    texas3_lab_destroyed = true,
+                    texas3_escape_2 = true
+                },
+                loot_all = { times = 4 }
+            },
+            no_max = true
+        }
+    }
 })

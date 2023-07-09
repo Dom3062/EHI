@@ -40,7 +40,7 @@ end
 function EHIMinionTracker:AnimateMovement()
     self:SetPanelW(self._panel_w)
     self._parent_class:ChangeTrackerWidth(self._id, self._panel_w)
-    self:SetIconX(self._panel_w - self._icon_size_scaled)
+    self:AnimIconX(self._panel_w - self._icon_size_scaled)
 end
 
 function EHIMinionTracker:AlignTextOnHalfPos()

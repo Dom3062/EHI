@@ -8,6 +8,7 @@ local original =
     init = ExperienceManager.init
 }
 
+local Show = function(...) end
 local BaseXP = 0
 local TotalXP = 0
 local OldTotalXP = 0
@@ -16,9 +17,6 @@ local xp_panel = EHI:GetOption("xp_panel")
 local EXPERIENCE = ""
 local EXPERIENCE_GAINED = ""
 local EXPERIENCE_TOTAL = ""
-if EHI:IsOneXPElementHeist(Global.game_settings.level_id) and xp_panel == 2 then
-    xp_panel = 1 -- Force one XP panel when the heist gives you the XP at the escape zone -> less screen clutter
-end
 
 function ExperienceManager:init(...)
     original.init(self, ...)
@@ -52,6 +50,9 @@ function ExperienceManager:init(...)
     EXPERIENCE_GAINED = managers.localization:text(gained)
     EXPERIENCE_TOTAL = managers.localization:text("ehi_popup_experience_total")
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "LoadData"))
+    if not EHI:GetOption("show_xp_in_mission_briefing_only") then
+        EHI:AddCallback(EHI.CallbackMessage.InitFinalize, callback(self, self, "HookAwardXP"))
+    end
 end
 
 function ExperienceManager:LoadData(managers)
@@ -84,6 +85,89 @@ function ExperienceManager:LoadData(managers)
         self._xp.mutator_xp_reduction = mutator:get_experience_reduction() * -1
         --self._xp.MutatorPiggyBank = mutator:is_mutator_active(MutatorPiggyBank)
         --self._xp.MutatorCG22 = mutator:is_mutator_active(MutatorCG22)
+    end
+end
+
+function ExperienceManager:HookAwardXP()
+    if EHI:IsOneXPElementHeist(Global.game_settings.level_id) and xp_panel == 2 then
+        xp_panel = 1 -- Force one XP panel when the heist gives you the XP at the escape zone -> less screen clutter
+    end
+    if xp_panel == 1 then
+        Show = function(self, diff)
+            if managers.ehi_tracker:TrackerExists("XP") then
+                managers.ehi_tracker:AddXPToTracker("XP", diff)
+            else
+                managers.ehi_tracker:AddTracker({
+                    id = "XP",
+                    amount = diff,
+                    class = "EHIXPTracker"
+                })
+            end
+        end
+    elseif xp_panel == 3 then
+        Show = function(self, diff)
+            if managers.hud then
+                managers.hud:custom_ingame_popup_text(EXPERIENCE, EXPERIENCE_GAINED .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\n" .. EXPERIENCE_TOTAL .. self:cash_string(TotalXP, "+"), "EHI_XP")
+            end
+        end
+    elseif xp_panel == 4 then
+        Show = function(self, diff)
+            if managers.hud and managers.hud._hud_hint then
+                managers.hud:show_hint({ text = EXPERIENCE_GAINED .. self:cash_string(diff, diff >= 0 and "+" or "") .. " XP; ".. EXPERIENCE_TOTAL .. self:cash_string(TotalXP, "+") .. " XP" })
+            end
+        end
+    end
+    local f
+    if xp_panel == 2 then
+        if xp_format == 1 then
+            f = function(self, amount)
+                if amount > 0 then
+                    managers.ehi_tracker:AddXPToTracker("XPTotal", amount)
+                end
+            end
+        elseif xp_format == 2 then
+            f = function(self, amount)
+                if amount > 0 then
+                    managers.ehi_tracker:AddXPToTracker("XPTotal", amount * self._xp.difficulty_multiplier)
+                end
+            end
+        else
+            f = function(self, amount)
+                if amount > 0 then
+                    BaseXP = BaseXP + amount
+                    managers.ehi_tracker:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
+                end
+            end
+        end
+    elseif xp_format == 1 then
+        f = function(self, amount)
+            if amount > 0 then
+                self:ShowGainedXP(amount, amount)
+            end
+        end
+    elseif xp_format == 2 then
+        f = function(self, amount)
+            if amount > 0 then
+                self:ShowGainedXP(amount, amount * self._xp.difficulty_multiplier)
+            end
+        end
+    else
+        f = function(self, amount)
+            if amount > 0 then
+                self:ShowGainedXP(amount)
+            end
+        end
+    end
+    EHI:Hook(ExperienceManager, "mission_xp_award", f)
+    original.on_loot_drop_xp = self.on_loot_drop_xp
+    self.on_loot_drop_xp = function(self, value_id, ...)
+        original.on_loot_drop_xp(self, value_id, ...)
+        local amount = tweak_data:get_value("experience_manager", "loot_drop_value", value_id) or 0
+        if amount <= 0 then
+            return
+        end
+        self._xp.bonus_xp = self._xp.bonus_xp + amount
+        self:RecalculateXP()
     end
 end
 
@@ -130,33 +214,6 @@ function ExperienceManager:DecreaseAlivePlayers(human_player)
     end
 end
 
-local Show = function() end
-if xp_panel == 1 then
-    Show = function(self, diff)
-        if managers.ehi_tracker:TrackerExists("XP") then
-            managers.ehi_tracker:AddXPToTracker("XP", diff)
-        else
-            managers.ehi_tracker:AddTracker({
-                id = "XP",
-                amount = diff,
-                class = "EHIXPTracker"
-            })
-        end
-    end
-elseif xp_panel == 3 then
-    Show = function(self, diff)
-        if managers.hud then
-            managers.hud:custom_ingame_popup_text(EXPERIENCE, EXPERIENCE_GAINED .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\n" .. EXPERIENCE_TOTAL .. self:cash_string(TotalXP, "+"), "EHI_XP")
-        end
-    end
-elseif xp_panel == 4 then
-    Show = function(self, diff)
-        if managers.hud and managers.hud._hud_hint then
-            managers.hud:show_hint({ text = EXPERIENCE_GAINED .. self:cash_string(diff, diff >= 0 and "+" or "") .. " XP; ".. EXPERIENCE_TOTAL .. self:cash_string(TotalXP, "+") .. " XP" })
-        end
-    end
-end
-
 function ExperienceManager:ShowGainedXP(base_xp, xp_gained)
     BaseXP = BaseXP + base_xp
     TotalXP = xp_gained and (TotalXP + xp_gained) or self:MultiplyXPWithAllBonuses(BaseXP)
@@ -164,64 +221,6 @@ function ExperienceManager:ShowGainedXP(base_xp, xp_gained)
         local diff = TotalXP - OldTotalXP
         OldTotalXP = TotalXP
         Show(self, diff)
-    end
-end
-
-if not EHI:GetOption("show_xp_in_mission_briefing_only") then
-    local f
-    if xp_panel == 2 then
-        if xp_format == 1 then
-            f = function(self, amount)
-                if amount > 0 then
-                    managers.ehi_tracker:AddXPToTracker("XPTotal", amount)
-                end
-            end
-        elseif xp_format == 2 then
-            f = function(self, amount)
-                if amount > 0 then
-                    managers.ehi_tracker:AddXPToTracker("XPTotal", amount * self._xp.difficulty_multiplier)
-                end
-            end
-        else
-            f = function(self, amount)
-                if amount > 0 then
-                    BaseXP = BaseXP + amount
-                    managers.ehi_tracker:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
-                end
-            end
-        end
-    else
-        if xp_format == 1 then
-            f = function(self, amount)
-                if amount > 0 then
-                    self:ShowGainedXP(amount, amount)
-                end
-            end
-        elseif xp_format == 2 then
-            f = function(self, amount)
-                if amount > 0 then
-                    self:ShowGainedXP(amount, amount * self._xp.difficulty_multiplier)
-                end
-            end
-        else
-            f = function(self, amount)
-                if amount > 0 then
-                    self:ShowGainedXP(amount)
-                end
-            end
-        end
-    end
-    EHI:Hook(ExperienceManager, "mission_xp_award", f)
-
-    original.on_loot_drop_xp = ExperienceManager.on_loot_drop_xp
-    function ExperienceManager:on_loot_drop_xp(value_id, ...)
-        original.on_loot_drop_xp(self, value_id, ...)
-        local amount = tweak_data:get_value("experience_manager", "loot_drop_value", value_id) or 0
-        if amount <= 0 then
-            return
-        end
-        self._xp.bonus_xp = self._xp.bonus_xp + amount
-        self:RecalculateXP()
     end
 end
 

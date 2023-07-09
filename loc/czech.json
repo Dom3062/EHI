@@ -756,6 +756,7 @@
     "ehi_experience_ggc_fireworks" : "Spuštěn ohňostroj",
     "ehi_experience_ggc_winch_connected_to_bfd" : "Naviják připojen k BFD",
     "ehi_experience_ggc_bfd_lowered" : "BFD spuštěn na zem",
+    "ehi_experience_ggc_bfd_in_position" : "BFD je na místě",
     "ehi_experience_ggc_bfd_started" : "BFD začal vrtat",
     "ehi_experience_ggc_bfd_done" : "BFD dokončen",
     "ehi_experience_the_bomb_open_dock_gate" : "Brána k průplavu otevřena",

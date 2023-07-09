@@ -756,6 +756,7 @@
     "ehi_experience_ggc_fireworks" : "Firework launched",
     "ehi_experience_ggc_winch_connected_to_bfd" : "Winch connected to BFD",
     "ehi_experience_ggc_bfd_lowered" : "BFD lowered",
+    "ehi_experience_ggc_bfd_in_position" : "BFD in position",
     "ehi_experience_ggc_bfd_started" : "BFD started",
     "ehi_experience_ggc_bfd_done" : "BFD done",
     "ehi_experience_the_bomb_open_dock_gate" : "Dock gate opened",

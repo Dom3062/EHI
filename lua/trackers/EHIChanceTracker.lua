@@ -22,10 +22,7 @@ function EHIChanceTracker:DecreaseChance(amount)
 end
 
 function EHIChanceTracker:SetChance(amount)
-    if amount < 0 then
-        amount = 0
-    end
-    self._chance = amount
+    self._chance = math.max(0, amount)
     self._text:set_text(self:Format())
     if self._flash then
         self:AnimateBG(self._flash_times)

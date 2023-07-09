@@ -10,7 +10,7 @@ local triggers = {
     [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position_by_element = 100836 } },
     [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape }, waypoint_f = function(self, trigger)
         if EscapePos then
-            local vector = EHI:GetInstanceElementPosition(EscapePos)
+            local vector = EHI:GetElementPosition(EscapePos)
             if vector then
                 self._waypoints:AddWaypoint(trigger.id, {
                     icon = Icon.Interact,

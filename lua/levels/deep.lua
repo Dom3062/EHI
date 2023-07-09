@@ -3,28 +3,28 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
-local WP = EHI.Waypoints
 ---@type Vector3?
 local TransferPosition = nil
 ---@param self EHIManager
 ---@param trigger ElementTrigger
---[[local function TransferWP(self, trigger)
+local function TransferWP(self, trigger)
     local wp
-    local index = self:IsMissionElementDisabled(EHI:GetInstanceUnitID(100087, 9340)) and 9340 or 9590
+    local index = managers.game_play_central:GetMissionDisabledUnit(EHI:GetInstanceUnitID(100087, 9340)) and 9590 or 9340
+    local class = trigger.synced_class or trigger.class
     if TransferPosition then
         wp = TransferPosition
     else
-        TransferPosition = EHI:GetInstanceElementPosition(EHI:GetInstanceElementID(100019, index)) or Vector3()
+        TransferPosition = EHI:GetElementPosition(EHI:GetInstanceElementID(100019, index)) or Vector3()
         wp = TransferPosition
     end
     self._waypoints:AddWaypoint(trigger.id, {
         time = trigger.time,
         icon = trigger.stealth and Icon.Wait or Icon.Defend,
         position = wp,
-        class = WP.Pausable,
+        class = self.TrackerWaypointsClass[class or ""],
         remove_vanilla_waypoint = EHI:GetInstanceElementID(100019, index)
     })
-end]]
+end
 
 ---@type ParseTriggerTable
 local triggers =
@@ -52,9 +52,9 @@ local triggers =
     [103070] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; loud
     [103071] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; stealth
 
-    [102454] = { id = "FuelTransferStealth", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsStealth, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 102438, --[[waypoint_f = TransferWP, stealth = true]] },
+    [102454] = { id = "FuelTransferStealth", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsStealth, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 102438, waypoint_f = TransferWP, stealth = true },
     [102439] = { id = "FuelTransferStealth", special_function = SF.PauseTracker },
-    [102656] = { id = "FuelTransferLoud", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsLoud, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101686, --[[waypoint_f = TransferWP, loud = true]] },
+    [102656] = { id = "FuelTransferLoud", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsLoud, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101686, waypoint_f = TransferWP, loud = true },
     [101684] = { id = "FuelTransferLoud", special_function = SF.PauseTracker },
 
     [101050] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)

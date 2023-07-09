@@ -40,6 +40,7 @@ _G.deep_clone = function(TC)
 end
 
 ---@class MissionScriptElementValues
+---@field amount number ElementCounter | ElementCounterOperator
 ---@field position Vector3
 ---@field rotation Rotation
 
@@ -108,6 +109,7 @@ end
 ---@field position_by_unit number?
 ---@field remove_vanilla_waypoint number?
 ---@field position_by_element_and_remove_vanilla_waypoint number?
+---@field restore_on_done boolean? Depends on `remove_vanilla_waypoint`
 
 ---@class ElementClientTriggerData
 ---@field time number Maps to `additional_time`. If the field already exists, it is added to the field (+)
@@ -213,7 +215,7 @@ end
 ---@field time number
 ---@field class string? Waypoint class, defaults to `EHIWaypoint` if not provided
 ---@field remove_vanilla_waypoint number?
----@field restore_on_done boolean
+---@field restore_on_done boolean? Depends on `remove_vanilla_waypoint`
 ---@field icon string|table
 ---@field texture string
 ---@field text_rect table

@@ -28,8 +28,6 @@ local keycode_units =
         index = 15370
     }
 }
-local DontTriggerWithC4Entry = EHI:GetFreeCustomSpecialFunctionID()
-local RemoveColorsIfEnabled = EHI:GetFreeCustomSpecialFunctionID()
 local preload =
 {
     { id = "RefillLeft01", icons = refill_icon, hide_on_delete = true },
@@ -37,12 +35,23 @@ local preload =
     { id = "RefillRight01", icons = refill_icon, hide_on_delete = true },
     { id = "RefillRight02", icons = refill_icon, hide_on_delete = true }
 }
+---@type ParseTriggerTable
 local triggers = {
-    [100282] = { id = "ColorCodes", class = TT.ColoredCodes, special_function = DontTriggerWithC4Entry },
+    [100282] = { id = "ColorCodes", class = TT.ColoredCodes, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+        if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
+            return
+        end
+        self:AddTracker(trigger)
+    end) },
     [100091] = { id = "ColorCodes", special_function = SF.RemoveTracker }, -- Code entered (stealth)
-    [101357] = { id = "ColorCodes", special_function = RemoveColorsIfEnabled }, -- Code entered (loud)
+    [101357] = { id = "ColorCodes", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+        if enabled then
+            self._trackers:RemoveTracker(trigger.id)
+        end
+    end) }, -- Code entered (loud)
 
-    [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { position = Vector3(9823.0, -40877.0, -2987.0) + Vector3(0, 0, 0):rotate_with(Rotation()) } },
+    [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, 66615) } },
+    [EHI:GetInstanceElementID(100193, 66615)] = { time = 30, id = "ArmoryKeypadRebootECM", icons = { Icon.Wait }, special_function = SF.TriggerIfEnabled, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, 66615) } },
 
     [EHI:GetInstanceElementID(100030, 11750)] = { time = 5, id = "C4Lower", icons = { Icon.C4 } },
     [EHI:GetInstanceElementID(100030, 11850)] = { time = 5, id = "C4Top", icons = { Icon.C4 } },
@@ -115,17 +124,6 @@ if EHI:GetOption("show_mission_trackers") then
         end
     end
 end
-EHI:RegisterCustomSpecialFunction(DontTriggerWithC4Entry, function(self, trigger, ...)
-    if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
-        return
-    end
-    self:AddTracker(trigger)
-end)
-EHI:RegisterCustomSpecialFunction(RemoveColorsIfEnabled, function(self, trigger, element, enabled)
-    if enabled then
-        self._trackers:RemoveTracker(trigger.id)
-    end
-end)
 
 ---@type ParseAchievementTable
 local achievements =
@@ -164,21 +162,19 @@ local achievements =
     }
 }
 
-local Alarm = EHI:GetFreeCustomSpecialFunctionID()
 local other =
 {
-    [100228] = EHI:AddAssaultDelay({ time = 35 + 1 + 30, special_function = Alarm })
+    [100228] = EHI:AddAssaultDelay({ time = 35 + 1 + 30, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+        local t = 0
+        if managers.preplanning:IsAssetBought(101858) then
+            t = 10
+        elseif managers.preplanning:IsAssetBought(101815) then
+            t = 30
+        end
+        trigger.time = trigger.time + t
+        self:CheckCondition(trigger)
+    end) })
 }
-EHI:RegisterCustomSpecialFunction(Alarm, function(self, trigger, ...)
-    local t = 0
-    if managers.preplanning:IsAssetBought(101858) then
-        t = 10
-    elseif managers.preplanning:IsAssetBought(101815) then
-        t = 30
-    end
-    trigger.time = trigger.time + t
-    self:CheckCondition(trigger)
-end)
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -212,30 +208,65 @@ local tbl =
     [EHI:GetInstanceUnitID(100000, 44535)] = { icons = { Icon.Drill }, ignore_visibility = true }
 }
 EHI:UpdateUnits(tbl)
-EHI:AddXPBreakdown({
-    objective =
+local xp_override =
+{
+    params =
     {
-        ggc_gear_found = { amount = 1000, stealth = true },
-        ggc_blueprint_found = { amount = 4000, stealth = true },
-        ggc_blueprint_send = { amount = 4000, stealth = true },
-        ggc_got_data = { amount = 4000, stealth = true },
-        ggc_civie_drugged = { amount = 4000, stealth = true },
-        ggc_gas_planted = { amount = 4000, stealth = true },
-        ggc_color_code = { amount = 4000, times = 3 },
-        vault_open = { amount = 4000, stealth = true },
-        ggc_laser_disabled = { amount = 2000, stealth = true },
-        ggc_locker_room_found = { amount = 2000, loud = true },
-        ggc_c4_taken = { amount = 2000, loud = true, times = 1 },
-        ggc_weak_spot_found = { amount = 4000, loud = true },
-        ggc_winch_part_picked_up = { amount = 3000, loud = true, times = 1 },
-        ggc_winch_set_up = { amount = 6000, loud = true },
-        ggc_fireworks = { amount = 2000, loud = true },
-        ggc_winch_connected_to_bfd = { amount = 1000, loud = true },
-        ggc_bfd_lowered = { amount = 8000, loud = true },
-        ggc_bfd_started = { amount = 6000, loud = true },
-        ggc_bfd_done = { amount = 1000, loud = true }
-    },
-    loot_all = 500
+        min_max =
+        {
+            min =
+            {
+                ggc_color_code = { times = 3 }
+            },
+            max =
+            {
+                ggc_color_code = { times = 3 }
+            },
+            loot_all = { min = 1, max = bags + 2 }
+        }
+    }
+}
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "ggc_gear_found" },
+                { amount = 4000, name = "ggc_blueprint_found" },
+                { amount = 4000, name = "ggc_blueprint_send" },
+                { amount = 4000, name = "ggc_got_data" },
+                { amount = 4000, name = "ggc_civie_drugged" },
+                { amount = 4000, name = "ggc_gas_planted" },
+                { amount = 4000, name = "ggc_color_code" },
+                { amount = 4000, name = "vault_open" },
+                { amount = 2000, name = "ggc_laser_disabled" }
+            },
+            loot_all = 500,
+            total_xp_override = xp_override
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 4000, name = "ggc_color_code" },
+                { amount = 2000, name = "ggc_locker_room_found" },
+                { amount = 2000, name = "ggc_c4_taken", times = 1 },
+                { amount = 4000, name = "ggc_weak_spot_found" },
+                { amount = 3000, name = "ggc_winch_part_picked_up", times = 1 },
+                { amount = 6000, name = "ggc_winch_set_up" },
+                { amount = 2000, name = "ggc_fireworks" },
+                { amount = 8000, name = "ggc_bfd_lowered" },
+                { amount = 1000, name = "ggc_winch_connected_to_bfd" },
+                { amount = 2000, name = "ggc_bfd_in_position" },
+                { amount = 6000, name = "ggc_bfd_started" },
+                { amount = 10000, name = "ggc_bfd_done" }
+            },
+            loot_all = 500,
+            total_xp_override = xp_override
+        }
+    }
 })
 
 if EHI:IsHost() then

@@ -77,6 +77,8 @@ function EHIAssaultTracker:init(panel, params)
         end
     end
     if params.random_time and not params.assault then
+        self.old_SyncAnticipationColor = self.SyncAnticipationColor
+        self.SyncAnticipationColor = self.SyncAnticipationColorInaccurate
         self._text_color = self._inaccurate_text_color
     end
     EHIAssaultTracker.super.init(self, panel, params)
@@ -129,6 +131,13 @@ function EHIAssaultTracker:ComputeHostageDelay()
         return
     end
     self._hostage_delay = lerp(hostage_values[self._difficulty_point_index], hostage_values[self._difficulty_point_index + 1], self._difficulty_ramp)
+end
+
+function EHIAssaultTracker:SyncAnticipationColorInaccurate()
+    self._text_color = Color.white
+    self.SyncAnticipationColor = self.old_SyncAnticipationColor
+    self.old_SyncAnticipationColor = nil
+    self:SyncAnticipationColor()
 end
 
 function EHIAssaultTracker:SyncAnticipationColor()

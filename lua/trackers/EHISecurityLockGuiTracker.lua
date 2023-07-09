@@ -25,7 +25,7 @@ function EHISecurityLockGuiTracker:SetHackTime(time)
     self._time_bg_box:set_w(self._time_bg_box:w() * 2)
     self:FitTheText(self._time_text)
     self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-    self:SetIconX(self._time_bg_box:w() + self._gap_scaled)
+    self:AnimIconX(self._time_bg_box:w() + self._gap_scaled)
 end
 
 function EHISecurityLockGuiTracker:RemoveHack()
@@ -33,7 +33,7 @@ function EHISecurityLockGuiTracker:RemoveHack()
     self:SetPanelW(new_w)
     self._time_bg_box:set_w(self._time_bg_box:w() / 2)
     self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-    self:SetIconX(self._time_bg_box:w() + self._gap_scaled)
+    self:AnimIconX(self._time_bg_box:w() + self._gap_scaled)
 end
 
 function EHISecurityLockGuiTracker:GetPanelSize()

@@ -91,7 +91,7 @@ if EHI:IsLootCounterVisible() then
     local MethbagsCooked = 0
     local MethbagsPossibleToSpawn = 19
     local MethlabExploded = false
-    other[101218] = { special_function = EHI:RegisterCustomSpecialFunction(function()
+    other[101218] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
         Methbags = GetNumberOfMethBags()
         EHI:ShowLootCounterNoChecks({
             max = money + Methbags,

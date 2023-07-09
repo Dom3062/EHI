@@ -49,7 +49,7 @@ end
 function EHITradeDelayTracker:AnimateMovement()
     self:SetPanelWAndRefresh(self._panel_w)
     self._parent_class:ChangeTrackerWidth(self._id, self._panel_w)
-    self:SetIconX(self._panel_w - self._icon_size_scaled)
+    self:AnimIconX(self._panel_w - self._icon_size_scaled)
 end
 
 function EHITradeDelayTracker:AlignTextOnHalfPos()
@@ -228,72 +228,12 @@ function EHITradeDelayTracker:FitTheTextUnique(i)
 end
 
 if EHI:GetOption("show_trade_delay_amount_of_killed_civilians") then
-    local math_floor = math.floor
-    local string_format = string.format
-    if EHI:GetOption("time_format") == 1 then
-        EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
-            local t = math_floor(time * 10) / 10
-            local text = self._time_bg_box:child("text" .. peer_id)
-            local s
-            if t < 0 then
-                s = string_format("%d (%d)", 0, civilians_killed)
-            elseif t < 10 then
-                s = string_format("%.1f (%d)", t, civilians_killed)
-            else
-                s = string_format("%d (%d)", t, civilians_killed)
-            end
-            text:set_text(s)
-        end
-    else
-        EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
-            local t = math_floor(time * 10) / 10
-            local text = self._time_bg_box:child("text" .. peer_id)
-            local s
-            if t < 0 then
-                s = string_format("%d (%d)", 0, civilians_killed)
-            elseif t < 10 then
-                s = string_format("%.1f (%d)", t, civilians_killed)
-            elseif t < 60 then
-                s = string_format("%d (%d)", t, civilians_killed)
-            else
-                s = string_format("%d:%02d (%d)", t / 60, t % 60, civilians_killed)
-            end
-            text:set_text(s)
-        end
+    EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
+        self._time_bg_box:child("text" .. peer_id):set_text(string.format("%s (%d)", self:FormatTime(time), civilians_killed))
     end
 else
-    local math_floor = math.floor
-    local string_format = string.format
-    if EHI:GetOption("time_format") == 1 then
-        EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
-            local t = math_floor(time * 10) / 10
-            local text = self._time_bg_box:child("text" .. peer_id)
-            local s
-            if t < 0 then
-                s = string_format("%d", 0)
-            elseif t < 10 then
-                s = string_format("%.1f", t)
-            else
-                s = string_format("%d", t)
-            end
-            text:set_text(s)
-        end
-    else
-        EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
-            local t = math_floor(time * 10) / 10
-            local text = self._time_bg_box:child("text" .. peer_id)
-            local s
-            if t < 0 then
-                s = string_format("%d", 0)
-            elseif t < 10 then
-                s = string_format("%.1f", t)
-            elseif t < 60 then
-                s = string_format("%d", t)
-            else
-                s = string_format("%d:%02d", t / 60, t % 60)
-            end
-            text:set_text(s)
-        end
+    EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
+        self._time_bg_box:child("text" .. peer_id):set_text(self:FormatTime(time))
     end
 end
 
@@ -353,5 +293,33 @@ function EHITradeDelayTracker:SetTrade(trade, t, force_t)
             self:RemoveTrackerFromUpdate()
         end
         self._trade = false
+    end
+end
+
+local math_floor = math.floor
+local string_format = string.format
+if EHI:GetOption("time_format") == 1 then
+    EHITradeDelayTracker.FormatTime = function(_, time)
+        local t = math_floor(time * 10) / 10
+        if t < 0 then
+            return string_format("%d", 0)
+        elseif t < 10 then
+            return string_format("%.1f", t)
+        else
+            return string_format("%d", t)
+        end
+    end
+else
+    EHITradeDelayTracker.FormatTime = function(_, time)
+        local t = math_floor(time * 10) / 10
+        if t < 0 then
+            return string_format("%d", 0)
+        elseif t < 10 then
+            return string_format("%.1f", t)
+        elseif t < 60 then
+            return string_format("%d", t)
+        else
+            return string_format("%d:%02d", t / 60, t % 60)
+        end
     end
 end

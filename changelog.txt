@@ -1,3 +1,8 @@
+r166 (09. 07. 2023):
+Updated Zipline icons
+Total XP Tracker: Slighty increased size of the tracker
+Fixed an issue where Total XP Tracker is stuck and does not count any gained experience
+
 r165 (06. 07. 2023):
 Rats Day 2: Fixed a crash after gangsters took their weapons
 Hostile Takeover: Fixed an issue where achievement tracker for "Just Passing Through" could show up in loud

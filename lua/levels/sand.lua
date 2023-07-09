@@ -50,7 +50,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { Icon.PCHack } },
 
     [EHI:GetInstanceElementID(100043, 4800)] = { special_function = SF.Trigger, data = { 1000431, 1000432 } },
-    [1000431] = { time = 15, id = "DoorOpenGas", icons = { "pd2_door" } },
+    [1000431] = { time = 15, id = "DoorOpenGas", icons = { Icon.Door } },
     [1000432] = { additional_time = 20, random_time = 5, id = "RoomGas", icons = { Icon.Teargas } },
 
     [103333] = { time = 613/30, id = "SkidDriving2", icons = skid },

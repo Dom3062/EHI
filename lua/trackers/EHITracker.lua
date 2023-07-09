@@ -323,7 +323,20 @@ function EHITracker:SetPanelWAndRefresh(target_w)
     self._anim_set_w = self._panel:animate(panel_w, target_w, self)
 end
 
-function EHITracker:SetIconX(target_x)
+---@param previous_icon userdata?
+---@param icon userdata? Defaults to `self._icon1` if not provided
+function EHITracker:SetIconX(previous_icon, icon)
+    icon = icon or self._icon1
+    if icon then
+        if previous_icon then
+            icon:set_x(previous_icon:right() + self._gap_scaled)
+        else
+            icon:set_x(self._time_bg_box:w() + self._gap_scaled)
+        end
+    end
+end
+
+function EHITracker:AnimIconX(target_x)
     if not self._icon1 then
         return
     end
@@ -336,8 +349,10 @@ end
 
 if EHI:GetOption("time_format") == 1 then
     EHITracker.Format = tweak_data.ehi.functions.FormatSecondsOnly
+    EHITracker.FormatTime = tweak_data.ehi.functions.ReturnSecondsOnly
 else
     EHITracker.Format = tweak_data.ehi.functions.FormatMinutesAndSeconds
+    EHITracker.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
 end
 
 function EHITracker:update(t, dt)

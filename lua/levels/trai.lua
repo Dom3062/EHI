@@ -4,6 +4,9 @@ local WinchFix = { Icon.Winch, Icon.Fix }
 if EHI:GetOption("show_one_icon") then
     WinchFix = { Icon.Fix }
 end
+---@class EHICraneFixChanceTracker : EHIWarningTracker, EHIChanceTracker
+---@field super EHIWarningTracker
+---@field _icon2 userdata?
 EHICraneFixChanceTracker = class(EHIWarningTracker)
 EHICraneFixChanceTracker._forced_icons = WinchFix
 EHICraneFixChanceTracker._warning_color = EHITimerTracker._completion_color
@@ -32,20 +35,14 @@ function EHICraneFixChanceTracker:OverridePanel()
     })
     self:FitTheText(self._chance_text)
     self._chance_text:set_left(self._text:right())
-    if self._icon1 then
-        self._icon1:set_x(self._time_bg_box:w() + self._gap_scaled)
-    end
+    self:SetIconX()
     if self._icon2 then
-        local initial_size = self._icon1 and self._icon_gap_size_scaled or 0
-        self._icon2:set_x(self._time_bg_box:w() + initial_size + self._gap_scaled)
+        self:SetIconX(self._icon1, self._icon2)
     end
 end
 
 function EHICraneFixChanceTracker:SetChance(amount)
-    if amount < 0 then
-        amount = 0
-    end
-    self._chance = amount
+    self._chance = math.max(0, amount)
     self._chance_text:set_text(self:FormatChance())
     self:AnimateBG()
 end
@@ -59,7 +56,7 @@ local triggers =
 
     [102011] = { time = 5, id = "Thermite", icons = { Icon.Fire } },
 
-    [101098] = { time = 5 + 7 + 2, id = "WalkieTalkie", icons = { "pd2_door" } },
+    [101098] = { time = 5 + 7 + 2, id = "WalkieTalkie", icons = { Icon.Door } },
     [100109] = { id = "WalkieTalkie", special_function = SF.RemoveTracker },
 
     [EHI:GetInstanceElementID(100209, 10450)] = { time = 3, id = "KeygenHack", icons = { Icon.PCHack } },

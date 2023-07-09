@@ -3,7 +3,8 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local zone_delay = 12
-local LootDropWaypoint = { icon = Icon.LootDrop, position_by_element = 104215, remove_vanilla_waypoint = 104215 }
+local LootDropWaypoint = { icon = Icon.LootDrop, position_by_element_and_remove_vanilla_waypoint = 104215 }
+---@type ParseTriggerTable
 local triggers = {
     [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint) },
     [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint) },

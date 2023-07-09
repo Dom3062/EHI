@@ -8,14 +8,14 @@ local triggers = {
     [101392] = { time = 120, id = "FireEvidence", icons = { Icon.Fire }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100024, 18900) } },
     [101588] = { id = "FireEvidence", special_function = SF.PauseTracker },
 
-    [101460] = { time = 18, id = "DoorBreach", icons = { "pd2_door" }, waypoint = { position_by_element_and_remove_vanilla_waypoint = 103837 } },
+    [101460] = { time = 18, id = "DoorBreach", icons = { Icon.Door }, waypoint = { position_by_element_and_remove_vanilla_waypoint = 103837 } },
 
     [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 101391 } }
 }
 ---@param self EHIManager
 ---@param trigger ElementTrigger
 local function waypoint(self, trigger)
-    local pos = EHI:GetInstanceElementPosition(trigger.element_ids.defend) or Vector3()
+    local pos = EHI:GetElementPosition(trigger.element_ids.defend) or Vector3()
     self._waypoints:AddWaypoint(trigger.id, {
         time = trigger.time,
         icon = Icon.PCHack,

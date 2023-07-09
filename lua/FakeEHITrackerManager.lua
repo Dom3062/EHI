@@ -45,8 +45,11 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_mission_trackers", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { Icon.Wait } } )
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.random(60, 180), icons = { Icon.Car, Icon.Escape } } )
     self:AddFakeTracker({ id = "show_unlockables", time = math.random(60, 180), icons = { Icon.Trophy } } )
-    if EHI:GetOption("xp_panel") <= 2 then
-        self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, class = "FakeEHIXPTracker" } )
+    do
+        local xp_panel = EHI:GetOption("xp_panel")
+        if xp_panel <= 2 then
+            self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, extend_half = xp_panel == 2, class = "FakeEHIXPTracker" } )
+        end
     end
     self:AddFakeTracker({ id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = self:GetPeerColor() } } } )
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { Icon.Drill, Icon.Wait, "silent", Icon.Loop } } )
@@ -57,8 +60,8 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Sentry, Icon.Fix } } )
     do
         local time = math.random() * (8 - 1) + 1
-        self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { Icon.Winch, Icon.Bag, Icon.Goto } } )
-        self:AddFakeTracker({ id = "show_zipline_timer", time = time * 2, icons = { Icon.Winch, Icon.Loop } } )
+        self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { "zipline_bag" } } )
+        self:AddFakeTracker({ id = "show_zipline_timer", time = time * 2, icons = { "zipline", Icon.Loop } } )
     end
     if EHI:GetOption("gage_tracker_panel") == 1 then
         self:AddFakeTracker({ id = "show_gage_tracker", icons = { "gage" }, class = "FakeEHIProgressTracker" } )
@@ -521,6 +524,9 @@ function FakeEHITracker:init(panel, params)
     if params.extend then
         self._panel:set_w(self._panel:w() * 2)
         self._time_bg_box:set_w(self._time_bg_box:w() * 2)
+    elseif params.extend_half then
+        self._panel:set_w(self._panel:w() + (self._panel:w() / 2))
+        self._time_bg_box:set_w(self._time_bg_box:w() + (self._time_bg_box:w() / 2))
     end
     self._selected = false
 end
@@ -550,29 +556,9 @@ end
 function FakeEHITracker:Format(format)
     format = format or EHI:GetOption("time_format")
     if format == 1 then
-        local t = math.floor(self._time * 10) / 10
-        if t < 0 then
-            return string.format("%d", 0)
-        elseif t < 1 then
-            return string.format("%.2f", self._time)
-        elseif t < 10 then
-            return string.format("%.1f", t)
-        else
-            return string.format("%d", t)
-        end
+        return tweak_data.ehi.functions.FormatSecondsOnly(self)
     else
-        local t = math.floor(self._time * 10) / 10
-        if t < 0 then
-            return string.format("%d", 0)
-        elseif t < 1 then
-            return string.format("%.2f", self._time)
-        elseif t < 10 then
-            return string.format("%.1f", t)
-        elseif t < 60 then
-            return string.format("%d", t)
-        else
-            return string.format("%d:%02d", t / 60, t % 60)
-        end
+        return tweak_data.ehi.functions.FormatMinutesAndSeconds(self)
     end
 end
 
@@ -641,8 +627,13 @@ end
 
 FakeEHIXPTracker = class(FakeEHITracker)
 function FakeEHIXPTracker:init(panel, params)
-    self._xp = math.random(1000, 100000)
+    self._xp = math.random(1000, 1000000)
     FakeEHIXPTracker.super.init(self, panel, params)
+    if params.extend_half and self._icon1 then
+        self._icon1:set_x(self._icon1:x() + (self._icon1:x() / 2))
+        self._text:set_w(self._time_bg_box:w())
+        self:FitTheText()
+    end
 end
 
 function FakeEHIXPTracker:Format(format)
@@ -872,9 +863,9 @@ end
 FakeEHIAssaultTimeTracker = class(FakeEHITracker)
 function FakeEHIAssaultTimeTracker:init(panel, params)
     FakeEHIAssaultTimeTracker.super.init(self, panel, params)
-    if params.time <= 5 then -- Fade
+    if self._time <= 5 then -- Fade
         self._icon1:set_color(Color(255, 0, 255, 255) / 255)
-    elseif params.time >= 205 then -- Build
+    elseif self._time >= 205 then -- Build
         self._icon1:set_color(Color.yellow)
     else
         self._icon1:set_color(Color(255, 237, 127, 127) / 255)

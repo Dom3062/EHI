@@ -129,12 +129,12 @@ EHI:AddXPBreakdown({
     {
         { amount = 2000, name = "hm2_enter_building" },
         { amount = 2000, name = "hm2_yellow_gate_open" },
+        { amount = 2000, name = "hm2_hostage_rescued", optional = true },
         { amount = 2000, name = "hm2_magnetic_door_open" },
         { amount = 2000, name = "hm2_enter_apartment" },
         { amount = 2000, name = "vault_open" },
         { amount = 2000, name = "hm2_commissar_dead" },
-        { escape = 2000 },
-        { amount = 2000, name = "hm2_hostage_rescued", optional = true }
+        { escape = 2000 }
     },
     loot_all = { amount = 1000, times = 10 },
     total_xp_override =

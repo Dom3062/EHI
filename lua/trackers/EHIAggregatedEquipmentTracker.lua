@@ -289,7 +289,7 @@ function EHIAggregatedEquipmentTracker:Reorganize(n)
     local bg_w = self._time_bg_box:w()
     if old_panel_size ~= self._panel_size then
         self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-        self:SetIconX(bg_w + self._gap_scaled)
+        self:AnimIconX(bg_w + self._gap_scaled)
     end
     local half = bg_w / self._panel_size
     local pos = 0

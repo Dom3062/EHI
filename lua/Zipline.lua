@@ -29,22 +29,22 @@ function ZipLine:init(unit, ...)
     if not show_waypoint_only then
         managers.ehi_tracker:PreloadTracker({
             id = self._ehi_key_bag_half,
-            icons = { Icon.Winch, Icon.Loot, Icon.Goto },
+            icons = { "zipline_bag" },
             hide_on_delete = true
         })
         managers.ehi_tracker:PreloadTracker({
             id = self._ehi_key_bag_full,
-            icons = { Icon.Winch, Icon.Loop },
+            icons = { "zipline", Icon.Loop },
             hide_on_delete = true
         })
         managers.ehi_tracker:PreloadTracker({
             id = self._ehi_key_user_half,
-            icons = { Icon.Winch, Icon.Escape, Icon.Goto },
+            icons = { "zipline", Icon.Escape, Icon.Goto },
             hide_on_delete = true
         })
         managers.ehi_tracker:PreloadTracker({
             id = self._ehi_key_user_full,
-            icons = { Icon.Winch, Icon.Loop },
+            icons = { "zipline", Icon.Loop },
             hide_on_delete = true
         })
     end
@@ -102,7 +102,7 @@ function ZipLine:attach_bag(...)
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_bag_full, {
             time = total_time_2,
-            icon = Icon.Winch,
+            icon = "zipline_bag",
             unit = self:GetMovingObject()
         })
     end
@@ -122,7 +122,7 @@ local function AddUserZipline(self, unit)
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_user_full, {
             time = total_time_2,
             present_timer = local_unit and total_time,
-            icon = Icon.Winch,
+            icon = "zipline",
             unit = self:GetMovingObject()
         })
     end

@@ -118,8 +118,9 @@ end
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local AddMoney = EHI:GetFreeCustomSpecialFunctionID()
-local MoneyTrigger = { id = "MallDestruction", special_function = AddMoney }
+local MoneyTrigger = { id = "MallDestruction", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+    self._trackers:CallFunction(trigger.id, "AddMoney", element._values.amount)
+end) }
 local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
 local triggers =
 {
@@ -212,9 +213,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(AddMoney, function(self, trigger, element, ...)
-    self._trackers:CallFunction(trigger.id, "AddMoney", element._values.amount)
-end)
 EHI:AddXPBreakdown({
     objective =
     {

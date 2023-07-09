@@ -3,16 +3,17 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@type ParseTriggerTable
 local triggers = {
-    [100681] = { time = 60, id = "CharonPickLock", icons = { "pd2_door" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [100681] = { time = 60, id = "CharonPickLock", icons = { Icon.Door }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_by_unit = 102837 } },
     [101430] = { id = "CharonPickLock", special_function = SF.PauseTracker },
 
     [102266] = { max = 6, id = "SniperDeath", icons = { "sniper", Icon.Kill }, class = TT.Progress },
     [103419] = { id = "SniperDeath", special_function = SF.IncreaseProgress },
 
-    [100549] = { time = 20, id = "ObjectiveWait", icons = { Icon.Wait } },
-    [101202] = { time = 15, id = "Escape", icons = Icon.CarEscape },
-    [101313] = { time = 75, id = "Escape", icons = Icon.CarEscape }
+    [100549] = { time = 20, id = "ObjectiveWait", icons = { Icon.Wait }, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 100935, restore_on_done = true } },
+    [101202] = { time = 15, id = "Escape", icons = Icon.CarEscape, waypoint = { icon = Icon.Escape, position_by_element = 100944 } },
+    [101313] = { time = 75, id = "Escape", icons = Icon.CarEscape, waypoint = { icon = Icon.Escape, position_by_element = 100910 } }
 }
 
 ---@type ParseAchievementTable

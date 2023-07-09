@@ -675,6 +675,18 @@ tweak_data.ehi =
                 return string_format("%d:%02d", t / 60, t % 60)
             end
         end,
+        ReturnSecondsOnly = function(_, time)
+            local t = math_floor(time * 10) / 10
+            if t < 0 then
+                return string_format("%d", 0)
+            elseif t < 1 then
+                return string_format("%.2f", time)
+            elseif t < 10 then
+                return string_format("%.1f", t)
+            else
+                return string_format("%d", t)
+            end
+        end,
         ReturnMinutesAndSeconds = function(_, time)
             local t = math_floor(time * 10) / 10
             if t < 0 then
@@ -725,3 +737,5 @@ tweak_data.ehi.icons.blimp = { texture = path, texture_rect = text_rect_blimp }
 tweak_data.ehi.icons.heli = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.kenaz_ace_pilot.icon) }
 tweak_data.hud_icons.EHI_Heli = tweak_data.ehi.icons.heli
 tweak_data.ehi.icons.oil = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.kenaz_drill_improved_cooling_system.icon) }
+tweak_data.ehi.icons.zipline = { texture = path, texture_rect = preplanning:get_type_texture_rect(81) } -- Zipline, currently unused -> hardcoded number
+tweak_data.ehi.icons.zipline_bag = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.corp_zipline_north.icon) }

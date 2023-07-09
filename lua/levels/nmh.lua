@@ -1,5 +1,7 @@
+local EHI = EHI
+local Icon = EHI.Icons
 EHIElevatorTimerTracker = class(EHIPausableTracker)
-EHIElevatorTimerTracker._forced_icons = { "pd2_door" }
+EHIElevatorTimerTracker._forced_icons = { Icon.Door }
 function EHIElevatorTimerTracker:init(panel, params)
     self._floors = params.floors or 26
     params.time = self:GetElevatorTime()
@@ -32,8 +34,6 @@ function EHIElevatorTimerWaypoint:init(panel, params, parent_class)
     EHIElevatorTimerWaypoint.super.init(self, panel, params, parent_class)
 end
 
-local EHI = EHI
-local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 ---@type ParseTriggerTable
@@ -56,13 +56,13 @@ local triggers = {
     [102682] = { time = 20, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
     [102683] = { id = "AnswerPhone", special_function = SF.RemoveTracker },
 
-    [103743] = { time = 25, id = "ExtraCivilianElevatorLeft", icons = { "pd2_door", "hostage" }, class = TT.Warning },
-    [103744] = { time = 35, id = "ExtraCivilianElevatorLeft", icons = { "pd2_door", "hostage" }, class = TT.Warning },
-    [103746] = { time = 15, id = "ExtraCivilianElevatorLeft", icons = { "pd2_door", "hostage" }, class = TT.Warning },
+    [103743] = { time = 25, id = "ExtraCivilianElevatorLeft", icons = { Icon.Door, "hostage" }, class = TT.Warning },
+    [103744] = { time = 35, id = "ExtraCivilianElevatorLeft", icons = { Icon.Door, "hostage" }, class = TT.Warning },
+    [103746] = { time = 15, id = "ExtraCivilianElevatorLeft", icons = { Icon.Door, "hostage" }, class = TT.Warning },
 
-    [103745] = { time = 10, id = "ExtraCivilianElevatorRight", icons = { "pd2_door", "hostage" }, class = TT.Warning },
-    [103749] = { time = 19, id = "ExtraCivilianElevatorRight", icons = { "pd2_door", "hostage" }, class = TT.Warning },
-    [103750] = { time = 30, id = "ExtraCivilianElevatorRight", icons = { "pd2_door", "hostage" }, class = TT.Warning },
+    [103745] = { time = 10, id = "ExtraCivilianElevatorRight", icons = { Icon.Door, "hostage" }, class = TT.Warning },
+    [103749] = { time = 19, id = "ExtraCivilianElevatorRight", icons = { Icon.Door, "hostage" }, class = TT.Warning },
+    [103750] = { time = 30, id = "ExtraCivilianElevatorRight", icons = { Icon.Door, "hostage" }, class = TT.Warning },
 
     [102992] = { chance = 1, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance },
     [103013] = { amount = 1, id = "CorrectPaperChance", special_function = SF.IncreaseChance },

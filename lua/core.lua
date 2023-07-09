@@ -27,6 +27,10 @@ _G.EHI =
         firestarter_1 = true,
         safehouse = true
     },
+    XPElementLevelNoCheck =
+    {
+        mallcrasher = true
+    },
 
     LootCounter =
     {
@@ -189,6 +193,7 @@ _G.EHI =
         LiquidNitrogen = "equipment_liquid_nitrogen_canister",
         Kill = "pd2_kill",
         Oil = "oil",
+        Door = "pd2_door",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
@@ -1080,7 +1085,7 @@ function EHI:GetPeerColorByPeerID(peer_id)
 end
 
 ---@param id number
----@param start_index number
+---@param start_index number?
 ---@param continent_index number?
 ---@return number
 function EHI:GetInstanceElementID(id, start_index, continent_index)
@@ -1122,8 +1127,8 @@ function EHI:RoundChanceNumber(n)
 end
 
 ---@param id number Element ID
----@return Vector3|nil
-function EHI:GetInstanceElementPosition(id)
+---@return Vector3?
+function EHI:GetElementPosition(id)
     local element = managers.mission:get_element_by_id(id)
     if not element then
         return nil
@@ -1132,8 +1137,8 @@ function EHI:GetInstanceElementPosition(id)
 end
 
 ---@param id number Unit ID
----@return Vector3|nil
-function EHI:GetInstanceUnitPosition(id)
+---@return Vector3?
+function EHI:GetUnitPosition(id)
     local unit = managers.worlddefinition:get_unit(id)
     if not unit then
         return nil
@@ -1150,7 +1155,7 @@ function EHI:Sync(message, data)
     LuaNetworking:SendToPeersExcept(1, message, data or "")
 end
 ---@param message string
----@param tbl table|nil
+---@param tbl table?
 function EHI:SyncTable(message, tbl)
     LuaNetworking:SendToPeersExcept(1, message, LuaNetworking:TableToString(tbl or {}))
 end
@@ -1186,6 +1191,9 @@ end
 ---@param level_id string
 ---@return boolean
 function EHI:IsOneXPElementHeist(level_id)
+    if self.XPElementLevelNoCheck[level_id] then
+        return false
+    end
     return self._cache.XPElement <= 1 or self.XPElementLevel[level_id]
 end
 
@@ -1345,7 +1353,7 @@ function EHI:AddLootCounter3(f, trigger_once)
 end
 
 function EHI:AddPositionFromElement(data, id, check)
-    local vector = self:GetInstanceElementPosition(data.position_by_element)
+    local vector = self:GetElementPosition(data.position_by_element)
     if vector then
         data.position = vector
         data.position_by_element = nil
@@ -1356,7 +1364,7 @@ function EHI:AddPositionFromElement(data, id, check)
 end
 
 function EHI:AddPositionFromUnit(data, id, check)
-    local vector = self:GetInstanceUnitPosition(data.position_by_unit)
+    local vector = self:GetUnitPosition(data.position_by_unit)
     if vector then
         data.position = vector
         data.position_by_unit = nil

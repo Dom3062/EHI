@@ -544,7 +544,11 @@ end
 function EHIManager:ParseOtherTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     for id, data in pairs(new_triggers) do
         -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
+        -- Unregister custom special function if it is there
         if data.condition == false then
+            if data.special_function and data.special_function > SF.CustomSF then
+                self:UnregisterCustomSpecialFunction(data.special_function)
+            end
             new_triggers[id] = nil
         end
     end
@@ -575,7 +579,11 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
     local configure_waypoints = EHI:GetOption("show_waypoints_mission")
     for id, data in pairs(new_triggers) do
         -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
+        -- Unregister custom special function if it is there
         if data.condition == false then
+            if data.special_function and data.special_function > SF.CustomSF then
+                self:UnregisterCustomSpecialFunction(data.special_function)
+            end
             new_triggers[id] = nil
         else
             data.condition = nil
@@ -1097,6 +1105,9 @@ function EHIManager:Trigger(id, element, enabled)
                     else
                         trigger.time = trigger.data.loud
                     end
+                    if trigger.waypoint then
+                        trigger.waypoint.time = trigger.time
+                    end
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.AddTimeByPreplanning then
@@ -1107,6 +1118,9 @@ function EHIManager:Trigger(id, element, enabled)
                     t = trigger.data.no
                 end
                 trigger.time = trigger.time + t
+                if trigger.waypoint then
+                    trigger.waypoint.time = trigger.time
+                end
                 self:CheckCondition(trigger)
             elseif f == SF.ShowWaypoint then
                 managers.hud:AddWaypointFromTrigger(trigger.id, trigger.data)
@@ -1187,8 +1201,10 @@ function EHIManager:AddTrackerSynced(id, delay)
             }, trigger.pos)
             if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
                 trigger.time = t
+                trigger.synced_class = class
                 trigger.waypoint_f(self, trigger)
                 trigger.time = nil
+                trigger.synced_class = nil
             elseif trigger.waypoint then
                 trigger.waypoint.time = t
                 trigger.waypoint.class = self.TrackerWaypointsClass[class or ""]
@@ -1305,20 +1321,7 @@ end
 
 if EHI:GetOption("show_timers") and EHI:GetWaypointOption("show_waypoints_timers") and not EHI:GetOption("show_waypoints_only") then
     if EHI:GetOption("time_format") == 1 then
-        local math_floor = math.floor
-        local string_format = string.format
-        function EHIManager:FormatTimer(time)
-            local t = math_floor(time * 10) / 10
-            if t < 0 then
-                return string_format("%d", 0)
-            elseif t < 1 then
-                return string_format("%.2f", time)
-            elseif t < 10 then
-                return string_format("%.1f", t)
-            else
-                return string_format("%d", t)
-            end
-        end
+        EHIManager.FormatTimer = tweak_data.ehi.functions.ReturnSecondsOnly
     else
         EHIManager.FormatTimer = tweak_data.ehi.functions.ReturnMinutesAndSeconds
     end

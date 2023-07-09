@@ -114,7 +114,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             end)
         end
     end
-    if EHI:IsXPTrackerEnabled() and EHI:GetOption("xp_panel") == 2 and not EHI:IsOneXPElementHeist(level_id) then
+    if EHI:IsXPTrackerVisible() and EHI:GetOption("xp_panel") == 2 and not EHI:IsOneXPElementHeist(level_id) then
         self.ehi:AddTracker({
             id = "XPTotal",
             class = "EHITotalXPTracker"

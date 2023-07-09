@@ -70,6 +70,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
         if not used_start_indexes[start_index] then
             -- Don't compute the indexes again if the instance on this start_index has been computed already
             -- start_index is unique for each instance in a heist, so this shouldn't break anything
+            ---@type table<number, ElementTrigger>
             local instance_elements = instances[folder]
             local continent_data = managers.worlddefinition._continents[instance.continent]
             local triggers = {}
