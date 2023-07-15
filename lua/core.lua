@@ -110,6 +110,7 @@ _G.EHI =
         SetTimeByPreplanning = 24,
         IncreaseProgress = 25,
         SetTrackerAccurate = 27,
+        -- Autosets tracker class to `EHIInaccurateTracker`; see `EHIManager:ParseMissionTriggers()`
         SetRandomTime = 32,
         DecreaseChance = 34,
         GetElementTimerAccurate = 35,
@@ -125,15 +126,17 @@ _G.EHI =
         IncreaseProgressMax2 = 48,
         SetTimeIfLoudOrStealth = 49,
         AddTimeByPreplanning = 50,
+        -- Autosets Vanilla settings for Waypoints; see `EHIManager:ParseMissionTriggers()`
         ShowWaypoint = 51,
         ShowEHIWaypoint = 52,
         DecreaseProgressMax = 53,
         DecreaseProgress = 54,
 
         Debug = 1000,
-        CustomCode = 1001,
-        CustomCodeIfEnabled = 1002,
-        CustomCodeDelayed = 1003,
+        DebugElement = 1001,
+        CustomCode = 1002,
+        CustomCodeIfEnabled = 1003,
+        CustomCodeDelayed = 1004,
 
         -- Don't use it directly! Instead, call "EHI:GetFreeCustomSpecialFunctionID()" and "EHI:RegisterCustomSpecialFunction()" respectively
         CustomSF = 100000
@@ -312,6 +315,7 @@ EHI.WaypointIconRedirect =
     [EHI.Icons.Heli] = "EHI_Heli"
 }
 
+---@param self EHI
 local function LoadDefaultValues(self)
     self.settings =
     {
@@ -402,6 +406,7 @@ local function LoadDefaultValues(self)
         {
             -- Achievements
             show_achievements = true,
+            show_achievement_description = false,
             show_achievements_mission = true,
             hide_unlocked_achievements = true,
             show_achievements_weapon = true,
@@ -1085,7 +1090,7 @@ function EHI:GetPeerColorByPeerID(peer_id)
 end
 
 ---@param id number
----@param start_index number?
+---@param start_index number
 ---@param continent_index number?
 ---@return number
 function EHI:GetInstanceElementID(id, start_index, continent_index)
@@ -1551,9 +1556,6 @@ function EHI:ShowLootCounterNoChecks(params)
             end
         end
     end
-    if params.no_counting then
-        return
-    end
     self:HookLootCounter(params.no_sync_load)
 end
 
@@ -1588,7 +1590,7 @@ end
 ---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounterNoCheck(params)
     if self:GetOption("show_loot_counter") and params.show_loot_counter then
-        managers.ehi_tracker:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail)
+        managers.ehi_tracker:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail, params.start_silent)
     else
         managers.ehi_tracker:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target, params.class)
     end
@@ -1737,9 +1739,16 @@ function EHI:SetMissionDoorPosAndIndex(tbl)
     end
 end
 
+function EHI:CheckNotLoad()
+    if Global.load_level and not Global.editor_mode then
+        return false
+    end
+    return true
+end
+
 ---@param hook string
 function EHI:CheckLoadHook(hook)
-    if not Global.load_level then
+    if not Global.load_level or Global.editor_mode then
         return true
     end
     if self._hooks[hook] then
@@ -1751,7 +1760,7 @@ end
 
 ---@param hook string
 function EHI:CheckHook(hook)
-    if self._hooks[hook] then
+    if self._hooks[hook] or Global.editor_mode then
         return true
     end
     self._hooks[hook] = true
@@ -1946,6 +1955,10 @@ function EHI:IsAchievementLocked(achievement)
     return not self:IsAchievementUnlocked(achievement) and not self._cache.UnlockablesAreDisabled
 end
 
+---@param package_id string Package ID in Beardlib
+---@param achievement_id string
+---@param skip_check boolean?
+---@return boolean
 function EHI:IsBeardLibAchievementLocked(package_id, achievement_id, skip_check)
     local Achievement = CustomAchievementPackage:new(package_id):Achievement(achievement_id)
     if not Achievement then
@@ -1954,11 +1967,14 @@ function EHI:IsBeardLibAchievementLocked(package_id, achievement_id, skip_check)
     if Achievement:IsUnlocked() and not skip_check then
         return false
     end
-    self._cache[achievement_id] = Achievement:GetName()
+    self._cache.Beardlib = self._cache.Beardlib or {}
+    self._cache.Beardlib[achievement_id] = { name = Achievement:GetName(), objective = Achievement:GetObjective() }
     tweak_data.hud_icons["ehi_" .. achievement_id] = { texture = Achievement:GetIcon() }
     return true
 end
 
+---@param achievement string Achievement ID in Vanilla; Beardlib is not supported
+---@return integer
 function EHI:GetAchievementProgress(achievement)
     return managers.achievment:get_stat(achievement) or 0
 end

@@ -614,6 +614,9 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
                         data.data.icon_redirect = true
                     end
                 end
+            -- Fill the rest table properties if SF.SetRandomTime is provided
+            elseif data.special_function == SF.SetRandomTime then
+                data.class = self.Trackers.Inaccurate
             end
             -- Fill the rest table properties for EHI Waypoints
             if configure_waypoints then
@@ -647,7 +650,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
                 data.waypoint = nil
                 data.waypoint_f = nil
             end
-            if data.client and data.special_function and self.ClientSyncFunctions[data.special_function] then
+            if data.client and self.ClientSyncFunctions[data.special_function or 0] then
                 data.additional_time = (data.additional_time or 0) + data.client.time
                 data.random_time = data.client.random_time
                 data.delay_only = true
@@ -919,10 +922,10 @@ function EHIManager:UnhookTrigger(id)
 end
 
 ---@param id number
----@param element table
+---@param element MissionScriptElement
 ---@param enabled boolean
 ---@overload fun(self, id: number)
----@overload fun(self, id: number, element: table)
+---@overload fun(self, id: number, element: MissionScriptElement)
 function EHIManager:Trigger(id, element, enabled)
     local trigger = triggers[id]
     if trigger then
@@ -1132,6 +1135,8 @@ function EHIManager:Trigger(id, element, enabled)
                 self._trackers:DecreaseTrackerProgress(trigger.id, trigger.progress)
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
+            elseif f == SF.DebugElement then
+                managers.hud:DebugElement(element:id(), element:editor_name(), enabled)
             elseif f == SF.CustomCode then
                 trigger.f(trigger.arg)
             elseif f == SF.CustomCodeIfEnabled then

@@ -50,7 +50,7 @@ else
 end
 
 if EHI:IsClient() then
-    triggers[100426] = { id = "HeliDropDrill", icons = Icon.HeliDropDrill, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 44, 54 } }
+    triggers[100426] = { id = "HeliDropDrill", icons = Icon.HeliDropDrill, special_function = SF.SetRandomTime, data = { 44, 54 } }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
@@ -58,7 +58,7 @@ end
 
 local other =
 {
-    [100520] = EHI:AddAssaultDelay({ time = 30 }) -- Diff is applied earlier
+    --[100520] = EHI:AddAssaultDelay({ time = 30 }) -- Diff is applied earlier
 }
 if EHI:IsLootCounterVisible() then
     local MoneyBagsInVault = 1

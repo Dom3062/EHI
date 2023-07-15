@@ -24,8 +24,8 @@ function WalletGuiObject.refresh(...)
         local skillpoint_text = Global.wallet_panel:child("wallet_skillpoint_text")
         local xp = managers.experience
         local s = ""
-        if xp:level_cap() <= xp:current_level() then -- Level is maxed, show Infamy Pool instead
-            s = ", " .. infamy_pool .. " " .. xp:experience_string(xp:get_max_prestige_xp() - xp:get_current_prestige_xp()) .. " " .. _xp
+        if xp:reached_level_cap() then -- Level is maxed, show Infamy Pool instead
+            s = ", " .. infamy_pool .. " " .. xp:experience_string(xp:GetRemainingPrestigeXP()) .. " " .. _xp
         elseif to_100_left then
             -- calculate total XP to 100
             local totalXpTo100 = 0

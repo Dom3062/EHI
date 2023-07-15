@@ -120,10 +120,13 @@
     "ehi_show_achievements" : "Zobrazovat Achievementy",
     "ehi_show_achievements_desc" : "Zobrazuje na obrazovce achievementy\nNěkteré loupeže nemusí mít achievementy",
 
+    "ehi_show_achievement_description" : "Zobrazovat popis achievementu",
+    "ehi_show_achievement_description_desc" : "Zobrazuje popis achievementu v herním chatu\n\nPopis vidíš jenom ty",
+
     "ehi_show_achievements_mission" : "Zobrazovat Achievementy (Loupež)",
     "ehi_show_achievements_mission_desc" : "Zobrazuje achievementy, které lze splnit pouzi v loupeži",
 
-    "ehi_hide_unlocked_achievements" : "Neukazovat odemčené achievementy",
+    "ehi_hide_unlocked_achievements" : "Neukazovat odemčené achievementy (Loupež)",
     "ehi_hide_unlocked_achievements_desc" : "Je-li povoleno, EHI nezobrazí již odemčené achievementy (loupež)\nJe-li zakázáno, EHI zobrazí všechny sledovače achievementů (loupež)",
 
     "ehi_show_achievements_weapon" : "Zobrazovat Achievementy (Zbraně)",

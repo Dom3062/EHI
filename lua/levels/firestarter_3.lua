@@ -9,7 +9,7 @@ local other = {}
 local level_id = Global.game_settings.level_id
 local EscapeXP = 16000
 if level_id == "firestarter_3" then
-    triggers[102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire, Icon.Money } }
+    triggers[102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire } }
     achievements.slakt_5 =
     {
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),

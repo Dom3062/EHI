@@ -53,7 +53,12 @@ EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowAchievementLootCounter({ -- Loot
     achievement = "pex_10",
     max = 6,
-    show_loot_counter = true
+    show_loot_counter = true,
+    triggers =
+    {
+        [100357] = { special_function = SF.SetAchievementFailed }
+    },
+    add_to_counter = true
 })
 EHI:ShowAchievementLootCounter({ -- Medals
     achievement = "pex_11",

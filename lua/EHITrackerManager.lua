@@ -296,7 +296,7 @@ end
 
 ---@param id string
 ---@param max integer
----@param progress integer
+---@param progress integer?
 ---@param show_finish_after_reaching_target boolean?
 ---@param class string?
 ---@param icon string?
@@ -329,8 +329,9 @@ end
 ---@param id string
 ---@param max number
 ---@param loot_counter_on_fail boolean?
+---@param start_silent boolean?
 ---@param icon string?
-function EHITrackerManager:AddAchievementLootCounter(id, max, loot_counter_on_fail, icon)
+function EHITrackerManager:AddAchievementLootCounter(id, max, loot_counter_on_fail, start_silent, icon)
     icon = icon or self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
@@ -338,6 +339,7 @@ function EHITrackerManager:AddAchievementLootCounter(id, max, loot_counter_on_fa
         icons = { icon },
         delay_popup = self._delay_popups,
         loot_counter_on_fail = loot_counter_on_fail,
+        start_silent = start_silent,
         class = EHI.Trackers.AchievementLootCounter
     })
 end
@@ -372,8 +374,9 @@ function EHITrackerManager:ShowLootCounter(max, max_random, offset)
     })
 end
 
-function EHITrackerManager:SyncSecuredLoot()
-    self:SetTrackerProgress("LootCounter", managers.loot:GetSecuredBagsAmount())
+---@param tracker_id string? Defaults to `LootCounter` if not provided
+function EHITrackerManager:SyncSecuredLoot(tracker_id)
+    self:SetTrackerProgress(tracker_id or "LootCounter", managers.loot:GetSecuredBagsAmount())
 end
 
 ---@param id string

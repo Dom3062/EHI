@@ -120,6 +120,9 @@
     "ehi_show_achievements" : "Show Achievements",
     "ehi_show_achievements_desc" : "Shows achievements on the screen\nSome heists may not have any achievements available",
 
+    "ehi_show_achievement_description" : "Show Achievement Description",
+    "ehi_show_achievement_description_desc" : "Shows achievement description in the game chat\n\nThe description is only visible to you",
+
     "ehi_show_achievements_mission" : "Show Achievements (Heist)",
     "ehi_show_achievements_mission_desc" : "Shows achievements that can be completed only in heists",
 

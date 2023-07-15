@@ -84,13 +84,6 @@ local achievements =
             [104456] = { special_function = SF.IncreaseProgress }
         }
     },
-    deep_11 =
-    {
-        elements =
-        {
-            [101084] = { max = 8, class = TT.AchievementProgress, special_function = SF.AddAchievementToCounter }
-        }
-    },
     deep_12 =
     {
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
@@ -114,18 +107,28 @@ local other =
     [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
 
-EHI:ShowLootCounter({
+EHI:ShowAchievementLootCounter({
+    achievement = "deep_11",
     max = 4,
     triggers =
     {
-        [101084] = { max = 4, special_function = SF.IncreaseProgressMax }
+        [101084] = { special_function = SF.CustomCode, f = function()
+            managers.ehi_tracker:IncreaseTrackerProgressMax("deep_11", 4)
+            managers.ehi_tracker:CallFunction("deep_11", "SetStarted")
+        end },
+        [102062] = { special_function = SF.CustomCode, f = function()
+            managers.ehi_tracker:CallFunction("deep_11", "SetFailed2")
+        end }
     },
+    add_to_counter = true,
+    start_silent = true,
     load_sync = function(self)
         if managers.preplanning:IsAssetBought(102474) then
-            self._trackers:IncreaseLootCounterProgressMax(4)
+            self:Trigger(101084)
         end
-        self._trackers:SyncSecuredLoot()
-    end
+        self._trackers:SyncSecuredLoot("deep_11")
+    end,
+    show_loot_counter = true
 })
 
 EHI:ParseTriggers({

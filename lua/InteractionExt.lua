@@ -124,111 +124,75 @@ end
 
 local all = EHI:GetOption("show_equipment_aggregate_all")
 
-local function set_active(self, ...)
+local function StealthCheck()
+    return managers.groupai:state():whisper_mode()
+end
+
+local function pre_set_active(self, ...)
     self._ehi_active = self._active
+end
+
+local function post_set_active(self, ...)
+    if self._ehi_active ~= self._active then
+        if self._active then -- Active
+            if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 and (not self._ehi_load_check or self._ehi_load_check()) then -- The unit is active now, load it from cache and show it on screen
+                managers.ehi_deployable:LoadFromDeployableCache(self._ehi_tracker_id, self._ehi_key)
+            end
+        else -- Not Active
+            if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 then -- There is some amount left in the unit, let's cache it
+                managers.ehi_deployable:AddToDeployableCache(self._ehi_tracker_id, self._ehi_key, self._unit, self._ehi_unit_check and self._ehi_unit)
+            end
+        end
+        self._ehi_active = self._active
+    end
+end
+
+local function destroy(self, ...)
+    managers.ehi_deployable:RemoveFromDeployableCache(self._ehi_tracker_id, self._ehi_key)
 end
 
 if EHI:GetOption("show_equipment_ammobag") then
     EHI:PreHook(AmmoBagInteractionExt, "init", function(self, unit, ...)
         self._ehi_key = unit:base():GetEHIKey()
-        self._tracker_id = all and "Deployables" or "AmmoBags"
+        self._ehi_tracker_id = all and "Deployables" or "AmmoBags"
+        self._ehi_unit = "ammo_bag"
+        self._ehi_unit_check = all
     end)
-
-    EHI:PreHook(AmmoBagInteractionExt, "set_active", set_active)
-
-    EHI:Hook(AmmoBagInteractionExt, "set_active", function(self, ...)
-        if self._ehi_active ~= self._active then
-            if self._active then -- Active
-                if self._unit:base():GetRealAmount() > 0 then -- The unit is active now, load it from cache and show it on screen
-                    managers.ehi_deployable:LoadFromDeployableCache(self._tracker_id, self._ehi_key)
-                end
-            else -- Not Active
-                if self._unit:base():GetRealAmount() > 0 then -- There is some ammo in the unit, let's cache the unit
-                    if all then
-                        managers.ehi_deployable:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit, "ammo_bag")
-                    else
-                        managers.ehi_deployable:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit)
-                    end
-                end
-            end
-            self._ehi_active = self._active
-        end
-    end)
-
-    EHI:Hook(AmmoBagInteractionExt, "destroy", function(self, ...)
-        managers.ehi_deployable:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
-    end)
+    EHI:PreHook(AmmoBagInteractionExt, "set_active", pre_set_active)
+    EHI:Hook(AmmoBagInteractionExt, "set_active", post_set_active)
+    EHI:Hook(AmmoBagInteractionExt, "destroy", destroy)
 end
 
 if EHI:GetOption("show_equipment_bodybags") then
     EHI:PreHook(BodyBagsBagInteractionExt, "init", function(self, unit, ...)
         self._ehi_key = unit:base():GetEHIKey()
-        self._tracker_id = all and "Deployables" or "BodyBags"
+        self._ehi_tracker_id = all and "Deployables" or "BodyBags"
+        self._ehi_unit = "bodybags_bag"
+        self._ehi_load_check = StealthCheck
+        self._ehi_unit_check = all
     end)
-
-    EHI:PreHook(BodyBagsBagInteractionExt, "set_active", set_active)
-
-    EHI:Hook(BodyBagsBagInteractionExt, "set_active", function(self, ...)
-        if self._ehi_active ~= self._active then
-            if self._active then -- Active
-                if self._unit:base():GetRealAmount() > 0 and managers.groupai:state():whisper_mode() then -- The unit is active now, load it from cache and show it on screen
-                    managers.ehi_deployable:LoadFromDeployableCache(self._tracker_id, self._ehi_key)
-                end
-            else -- Not Active
-                if self._unit:base():GetRealAmount() > 0 then -- There are some body bags in the unit, let's cache the unit
-                    if all then
-                        managers.ehi_deployable:AddToDeployableCache("Deployables", self._ehi_key, self._unit, "bodybags_bag")
-                    else
-                        managers.ehi_deployable:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit)
-                    end
-                end
-            end
-            self._ehi_active = self._active
-        end
-    end)
-
-    EHI:Hook(BodyBagsBagInteractionExt, "destroy", function(self, ...)
-        managers.ehi_deployable:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
-    end)
+    EHI:PreHook(BodyBagsBagInteractionExt, "set_active", pre_set_active)
+    EHI:Hook(BodyBagsBagInteractionExt, "set_active", post_set_active)
+    EHI:Hook(BodyBagsBagInteractionExt, "destroy", destroy)
 end
 
 if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_firstaidkit") then
     local aggregate = EHI:GetOption("show_equipment_aggregate_health")
     EHI:PreHook(DoctorBagBaseInteractionExt, "init", function(self, unit, ...)
         self._ehi_key = unit:base().GetEHIKey and unit:base():GetEHIKey()
-        self._ehi_tweak = self.tweak_data == "first_aid_kit" and "FirstAidKits" or "DoctorBags"
-        self._ehi_unit_tweak = self.tweak_data == "first_aid_kit" and "first_aid_kit" or "doctor_bag"
         if all then
-            self._tracker_id = "Deployables"
+            self._ehi_tracker_id = "Deployables"
         elseif aggregate then
-            self._tracker_id = "Health"
+            self._ehi_tracker_id = "Health"
+        elseif self.tweak_data == "first_aid_kit" then
+            self._ehi_tracker_id = "FirstAidKits"
         else
-            self._tracker_id = self._ehi_tweak
+            self._ehi_tracker_id = "DoctorBags"
         end
+        self._ehi_unit = self.tweak_data == "first_aid_kit" and "first_aid_kit" or "doctor_bag"
+        self._ehi_unit_check = aggregate or all
     end)
-
-    EHI:PreHook(DoctorBagBaseInteractionExt, "set_active", set_active)
-
-    EHI:Hook(DoctorBagBaseInteractionExt, "set_active", function(self, ...)
-        if self._ehi_active ~= self._active then
-            if self._active then -- Active
-                if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 then -- The unit is active now, load it from cache and show it on screen
-                    managers.ehi_deployable:LoadFromDeployableCache(self._tracker_id, self._ehi_key)
-                end
-            else -- Not Active
-                if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 then -- There are some charges left in the unit, let's cache the unit
-                    if aggregate or all then
-                        managers.ehi_deployable:AddToDeployableCache(self._tracker_id, self._ehi_key, self._unit, self._ehi_unit_tweak)
-                    else
-                        managers.ehi_deployable:AddToDeployableCache(self._ehi_tweak, self._ehi_key, self._unit)
-                    end
-                end
-            end
-            self._ehi_active = self._active
-        end
-    end)
-
-    EHI:Hook(DoctorBagBaseInteractionExt, "destroy", function(self, ...)
-        managers.ehi_deployable:RemoveFromDeployableCache(self._tracker_id, self._ehi_key)
-    end)
+    EHI:PreHook(DoctorBagBaseInteractionExt, "set_active", pre_set_active)
+    EHI:Hook(DoctorBagBaseInteractionExt, "set_active", post_set_active)
+    EHI:Hook(DoctorBagBaseInteractionExt, "destroy", destroy)
 end

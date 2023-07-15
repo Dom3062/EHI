@@ -51,6 +51,9 @@ end
 
 if EHI:ShowDramaTracker() and not tweak_data.levels:IsStealthRequired() then
     local function Create()
+        if managers.ehi_tracker:TrackerExists("Drama") then
+            return
+        end
         local pos = managers.ehi_tracker:TrackerExists("Assault") and 1 or 0
         managers.ehi_tracker:AddTracker({
             id = "Drama",

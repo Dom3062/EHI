@@ -1,3 +1,5 @@
+---@class EHIdark5Tracker : EHIProgressTracker
+---@field super EHIProgressTracker
 EHIdark5Tracker = EHI:AchievementClass(EHIProgressTracker, "EHIdark5Tracker")
 function EHIdark5Tracker:init(panel, params)
     self._bodies = {}
@@ -96,8 +98,12 @@ local achievements =
         }
     }
 }
-local AddBodyBag = EHI:GetFreeCustomSpecialFunctionID()
-local RemoveBodyBag = EHI:GetFreeCustomSpecialFunctionID()
+local AddBodyBag = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    self._trackers:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
+end)
+local RemoveBodyBag = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    self._trackers:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
+end)
 for i = 12850, 13600, 250 do
     local inc = EHI:GetInstanceElementID(100011, i)
     achievements.dark_5.elements[inc] = { special_function = AddBodyBag, element = i }
@@ -108,12 +114,6 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 EHI:ShowLootCounter({ max = 16 })
-EHI:RegisterCustomSpecialFunction(AddBodyBag, function(self, trigger, ...)
-    self._trackers:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
-end)
-EHI:RegisterCustomSpecialFunction(RemoveBodyBag, function(self, trigger, ...)
-    self._trackers:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
-end)
 EHI:AddXPBreakdown({
     objectives =
     {

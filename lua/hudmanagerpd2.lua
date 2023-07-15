@@ -325,7 +325,7 @@ end
 
 function HUDManager:ShowAchievementStartedPopup(id, beardlib)
     if beardlib then
-        self:custom_ingame_popup_text("ACHIEVEMENT STARTED!", EHI._cache[id], "ehi_" .. id)
+        self:custom_ingame_popup_text("ACHIEVEMENT STARTED!", EHI._cache.Beardlib[id].name, "ehi_" .. id)
     else
         self:custom_ingame_popup_text("ACHIEVEMENT STARTED!", managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
     end
@@ -333,9 +333,18 @@ end
 
 function HUDManager:ShowAchievementFailedPopup(id, beardlib)
     if beardlib then
-        self:custom_ingame_popup_text("ACHIEVEMENT FAILED!", EHI._cache[id], "ehi_" .. id)
+        self:custom_ingame_popup_text("ACHIEVEMENT FAILED!", EHI._cache.Beardlib[id].name, "ehi_" .. id)
     else
         self:custom_ingame_popup_text("ACHIEVEMENT FAILED!", managers.localization:to_upper_text("achievement_" .. id), EHI:GetAchievementIconString(id))
+    end
+end
+
+function HUDManager:ShowAchievementDescription(id, beardlib)
+    if beardlib then
+        local Achievement = EHI._cache.Beardlib[id]
+        managers.chat:_receive_message(1, Achievement.name, Achievement.objective, Color.white)
+    else
+        managers.chat:_receive_message(1, managers.localization:text("achievement_" .. id), managers.localization:text("achievement_" .. id .. "_desc"), Color.white)
     end
 end
 
@@ -369,8 +378,8 @@ function HUDManager:Debug(id)
     managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; dt: " .. dt, Color.white)
 end
 
-function HUDManager:DebugElement(id, element)
-    managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; Element: " .. tostring(element), Color.white)
+function HUDManager:DebugElement(id, editor_name, enabled)
+    managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; Editor Name: " .. tostring(editor_name) .. "; Enabled: " .. tostring(enabled), Color.white)
 end
 
 function HUDManager:DebugExperience(id, name, amount)

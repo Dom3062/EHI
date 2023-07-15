@@ -4,31 +4,46 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local escape = "Heli"
+---@type ParseTriggerTable
 local triggers = {
     --heli_escape_OFF
     [200534] = { special_function = SF.CustomCode, f = function()
         escape = "Van"
     end },
-    [200148] = { special_function = SF.CustomCode, f = function()
+    [200148] = { id = "Escape", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
         if not EHI:IsPlayingFromStart() then -- Not playing from the start, try to determine the escape vehicle
-            if managers.ehi_manager:IsMissionElementDisabled(200171) then -- Heli show sequence is disabled, Van escape it is
+            if self:IsMissionElementDisabled(200171) then -- Heli show sequence is disabled, Van escape it is
                 escape = "Van"
             end
         end
         if escape == "Heli" then
-            managers.ehi_tracker:AddTracker({
-                id = "Escape",
-                time = 50 + 25 + 6,
+            local t = 50 + 25 + 6
+            self._trackers:AddTracker({
+                id = trigger.id,
+                time = t,
                 icons = Icons.HeliEscape
             })
+            if trigger.waypoint then
+                trigger.waypoint.time = t
+                trigger.waypoint.icon = Icons.Heli
+                trigger.waypoint.position = EHI:GetElementPosition(200179) or Vector3()
+            end
         else -- Van
-            managers.ehi_tracker:AddTracker({
-                id = "Escape",
+            self._trackers:AddTracker({
+                id = trigger.id,
                 time = 80,
                 icons = Icons.CarEscape
             })
+            if trigger.waypoint then
+                trigger.waypoint.time = 80
+                trigger.waypoint.icon = Icons.Car
+                trigger.waypoint.position = EHI:GetElementPosition(200178) or Vector3()
+            end
         end
-    end}
+        if trigger.waypoint then
+            self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
+        end
+    end), waypoint = {} }
 }
 
 ---@type ParseAchievementTable
@@ -78,6 +93,16 @@ local other =
 {
     [200018] = EHI:AddAssaultDelay({ time = 5 + 30 })
 }
+if EHI:IsLootCounterVisible() then
+    other[200106] = EHI:AddLootCounter2(function()
+        local servers = EHI:IsMayhemOrAbove() and 2 or 1
+        EHI:ShowLootCounterNoChecks({ max = servers + 18 })
+    end)
+    for i = 200502, 200519, 1 do
+        other[i] = { id = "LootCounter", special_function = SF.DecreaseProgressMax }
+    end
+    other[100092] = { max = 5, id = "LootCounter", special_function = SF.IncreaseProgressMax2 }
+end
 
 local tbl =
 {
@@ -102,4 +127,29 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
+})
+EHI:AddXPBreakdown({
+    objective =
+    {
+        escape = 16000
+    },
+    loot =
+    {
+        master_server = 2500,
+        money = 850
+    },
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot =
+                {
+                    master_server = { min_max = EHI:IsMayhemOrAbove() and 2 or 1 },
+                    money = { max = 15 } -- 3 always and 3 random
+                }
+            }
+        }
+    }
 })

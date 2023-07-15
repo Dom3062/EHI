@@ -28,7 +28,7 @@ for _, index in ipairs(MethlabIndex) do
     triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, Icon.Interact } }
 end
 if EHI:IsClient() then
-    local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
+    local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
     for _, index in ipairs(MethlabIndex) do
         triggers[EHI:GetInstanceElementID(100149, index)] = random_time
         triggers[EHI:GetInstanceElementID(100150, index)] = random_time

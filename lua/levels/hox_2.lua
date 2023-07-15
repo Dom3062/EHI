@@ -55,7 +55,7 @@ local triggers = {
     [105137] = { id = "ForensicsMatchChance", special_function = SF.RemoveTracker }
 }
 if EHI:IsClient() then
-    triggers[EHI:GetInstanceElementID(100055, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 45, 55, 65 } }
+    triggers[EHI:GetInstanceElementID(100055, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, special_function = SF.SetRandomTime, data = { 45, 55, 65 } }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")

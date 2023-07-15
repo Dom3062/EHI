@@ -39,7 +39,7 @@ local triggers = {
     [104261] = { time = 1000/30, id = "CraneMoveLeft", icons = { "piggy" } },
     [104069] = { time = 1000/30, id = "CraneMoveRight", icons = { "piggy" } },
 
-    [105623] = { time = 8, id = "Bus", icons = { Icon.Wait } }
+    [104783] = { time = 8, id = "Bus", icons = { Icon.Wait } }
 }
 if EHI:IsClient() then
     triggers[101605] = { time = 16.7 * 17, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist }

@@ -1,6 +1,7 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
 local delay = 2
+---@type ParseTriggerTable
 local triggers = {
     [1] = { special_function = SF.RemoveTrigger, data = { 100668, 100669, 100670 } },
     [100668] = { time = 240 + delay, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },

@@ -85,6 +85,7 @@ local achievements =
             [100107] = { status = "push", class = TT.AchievementStatus },
             [102480] = { special_function = SF.Trigger, data = { 1024801, 1024802 } },
             [1024801] = { status = "finish", special_function = SF.SetAchievementStatus },
+            ---@diagnostic disable-next-line
             [1024802] = { id = 102486, special_function = SF.RemoveTrigger },
             [102710] = { special_function = SF.SetAchievementComplete },
             [102486] = { special_function = SF.SetAchievementFailed }
@@ -136,7 +137,19 @@ local tbl =
     [EHI:GetInstanceUnitID(100030, 21000)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100009, 21000) }
 }
 EHI:UpdateUnits(tbl)
-EHI:ShowLootCounter({ max = 8 }) -- 2 main loot; 6 artifacts
+EHI:ShowLootCounter({
+    max = 8, -- 2 main loot; 6 artifacts in crates, one in Archaeology room -> 400511
+    triggers =
+    {
+        [102491] = { special_function = SF.IncreaseProgressMax } -- Archaeology, one more bag next to the objective
+    },
+    load_sync = function(self)
+        if self:IsMissionElementDisabled(101506) then
+            self._trackers:IncreaseLootCounterProgressMax()
+        end
+        self._trackers:SyncSecuredLoot()
+    end
+})
 EHI:AddXPBreakdown({
     objectives =
     {
@@ -203,7 +216,7 @@ EHI:AddXPBreakdown({
                     henrys_rock_first_mission_bag_on_belt = true,
                     random =
                     {
-                        weapon_lab = true,
+                        archaelogy = true,
                         computer_lab =
                         {
                             { times = 4 },
@@ -215,7 +228,7 @@ EHI:AddXPBreakdown({
                 },
                 loot =
                 {
-                    mus_artifact = { times = 6 }
+                    mus_artifact = { times = 7 }
                 }
             }
         }

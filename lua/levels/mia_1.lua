@@ -39,11 +39,11 @@ local triggers = {
     [101389] = { time = 10.5 + 8, id = "SecondCall", icons = { Icon.Phone } },
     [103385] = { time = 8.5 + 5, id = "LastCall", icons = { Icon.Phone } }
 }
-local random_time = { id = Methlab.id, icons = Methlab.icons, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
+local random_time = { id = Methlab.id, icons = Methlab.icons, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
 for _, index in ipairs(MethlabIndex) do
     triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethPickUp", icons = { Icon.Methlab, Icon.Interact } }
     if client then
-        triggers[EHI:GetInstanceElementID(100118, index)] = { id = Methlab.id, icons = Methlab.icons, class = TT.Inaccurate, special_function = SF.SetRandomTime, data = { 5, 25, 40 } }
+        triggers[EHI:GetInstanceElementID(100118, index)] = { id = Methlab.id, icons = Methlab.icons, special_function = SF.SetRandomTime, data = { 5, 25, 40 } }
         triggers[EHI:GetInstanceElementID(100149, index)] = random_time
         triggers[EHI:GetInstanceElementID(100150, index)] = random_time
         triggers[EHI:GetInstanceElementID(100184, index)] = { id = Methlab.id, special_function = SF.RemoveTracker }
@@ -173,7 +173,7 @@ if EHI:IsLootCounterVisible() then
     end }
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/001
     other[100523] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
-    other[100550] = DecreaseMaximumTrigger2 -- Car set on fire
+    other[100550] = DecreaseMaximumTrigger2 -- Car set on fire -- 103846
     -- units/payday2/vehicles/str_vehicle_car_crossover_burned/str_vehicle_car_crossover_burned/001
     other[100849] = DecreaseMaximumTrigger2 -- Money should spawn, but ElementEnableUnit does not have any unit to spawn and bag counter goes up by 1
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/006

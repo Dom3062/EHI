@@ -14,7 +14,7 @@ local triggers = {
     [103919] = { additional_time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape, trigger_times = 1 },
     [100840] = { time = 1 + 13, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTrackerAccurate },
 
-    [101818] = { additional_time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill, class = TT.Inaccurate },
+    [101818] = { additional_time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill },
     [hack_start] = { id = "ServerHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = EHI:GetInstanceElementID(100014, 20450) },
     [EHI:GetInstanceElementID(100016, 20450)] = { id = "ServerHack", special_function = SF.PauseTracker },
 
@@ -31,7 +31,7 @@ end
 if EHI:IsClient() then
     triggers[hack_start].client = { time = 90, random_time = 10, special_function = SF.UnpauseTrackerIfExists }
     triggers[EHI:GetInstanceElementID(100011, 20450)] = { id = "ServerHack", special_function = SF.RemoveTracker }
-    triggers[102157] = { additional_time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, class = TT.Inaccurate, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[102157] = { additional_time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
@@ -45,7 +45,12 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [103701] = { status = "defend", special_function = SF.SetAchievementStatus },
+            [103701] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+                if enabled then
+                    self._trackers:SetAchievementStatus("bex_10", "defend")
+                    self:UnhookTrigger(103704)
+                end
+            end) },
             [103702] = { special_function = SF.SetAchievementFailed },
             [103704] = { special_function = SF.SetAchievementFailed },
             [102602] = { special_function = SF.SetAchievementComplete },

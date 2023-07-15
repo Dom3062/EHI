@@ -78,8 +78,6 @@ end
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local ExecuteIfElementIsEnabled = EHI:GetFreeCustomSpecialFunctionID()
-local DelayExecution = EHI:GetFreeCustomSpecialFunctionID()
 local kills = 7 -- Normal + Hard
 if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
     kills = 10
@@ -89,7 +87,15 @@ end
 local triggers = {
     [100001] = { time = 30, id = "BileArrival", icons = { Icon.Heli, Icon.C4 } },
     [104555] = { id = "SniperDeath", special_function = SF.IncreaseProgress },
-    [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = ExecuteIfElementIsEnabled },
+    [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+        if enabled then
+            if self._trackers:TrackerExists(trigger.id) then
+                self._trackers:SetTrackerTimeNoAnim(trigger.id, trigger.time)
+            else
+                self:CheckCondition(trigger)
+            end
+        end
+    end) },
     [102181] = { id = "HeliWinchLoop", special_function = SF.RemoveTracker },
 
     [100068] = { max = kills, id = "SniperDeath", icons = { "sniper", Icon.Kill }, class = TT.Progress },
@@ -146,7 +152,11 @@ local triggers = {
     end},
     [1] = { special_function = SF.Trigger, data = { 2, 3 } },
     [2] = { special_function = SF.RemoveTrigger, data = { 103700, 103701 } },
-    [3] = { id = "PanicRoomTakeoff", special_function = DelayExecution },
+    [3] = { id = "PanicRoomTakeoff", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+        EHI:DelayCall("Remove" .. trigger.id, 10, function()
+            self:Trigger(4)
+        end)
+    end) },
     [4] = { id = "PanicRoomTakeoff", special_function = SF.RemoveTracker },
     [103901] = { special_function = SF.CustomCode, f = function()
         managers.ehi_tracker:CallFunction("PanicRoomTakeoff", "ObjectiveComplete", "count")
@@ -192,20 +202,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(ExecuteIfElementIsEnabled, function(self, trigger, element, enabled)
-    if enabled then
-        if self._trackers:TrackerExists(trigger.id) then
-            self._trackers:SetTrackerTimeNoAnim(trigger.id, trigger.time)
-        else
-            self:CheckCondition(trigger)
-        end
-    end
-end)
-EHI:RegisterCustomSpecialFunction(DelayExecution, function(self, trigger, ...)
-    EHI:DelayCall("Remove" .. trigger.id, 10, function()
-        self:Trigger(4)
-    end)
-end)
 EHI:AddXPBreakdown({
     objectives =
     {
@@ -220,7 +216,6 @@ EHI:AddXPBreakdown({
     },
     loot =
     {
-        meth = 500,
         coke = 500,
         toothbrush = 1000
     },

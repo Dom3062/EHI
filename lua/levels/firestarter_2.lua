@@ -35,7 +35,7 @@ if EHI:IsLootCounterVisible() then
             self._trackers:SecuredMissionLoot() -- Server secured
         end
     end)
-    other[107121] = EHI:AddLootCounter2(function()
+    other[107124] = EHI:AddLootCounter2(function()
         local ef = tweak_data.ehi.functions
         local max = EHI:IsMayhemOrAbove() and 2 or 1
         local goat = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) and 1 or 0

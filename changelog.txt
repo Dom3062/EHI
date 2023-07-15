@@ -1,6 +1,14 @@
+r167 (15. 07. 2023):
+Added option "Show Achievement Description"
+To prevent crashes, mod will disable itself while in editor mode
+Total XP Tracker: Tracker will stop showing XP when you reached your XP limit
+Firestarter Day 2: Fixed an issue where Loot Counter is not visible
+Henry's Rock: Fixed an issue where additional artifact in Archaeology room is not counted 
+San Martín Bank: Fixed a visual issue where achievement "Gunpowder Glory" failed after alarm and you entered the bank
+
 r166 (09. 07. 2023):
 Updated Zipline icons
-Total XP Tracker: Slighty increased size of the tracker
+Total XP Tracker: Slightly increased size of the tracker
 Fixed an issue where Total XP Tracker is stuck and does not count any gained experience
 
 r165 (06. 07. 2023):

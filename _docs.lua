@@ -10,6 +10,8 @@ _G.IS_VR = ...
 _G.TimerGui = {}
 ---@class DigitalGui
 _G.DigitalGui = {}
+---@class ExperienceManager
+_G.ExperienceManager = {}
 ---@param o table? Can be used to pass `self` to the callback function
 ---@param base_callback_class table
 ---@param base_callback_func_name string
@@ -41,6 +43,7 @@ end
 
 ---@class MissionScriptElementValues
 ---@field amount number ElementCounter | ElementCounterOperator
+---@field chance number ElementLogicChance | ElementLogicChanceOperator
 ---@field position Vector3
 ---@field rotation Rotation
 
@@ -48,12 +51,15 @@ end
 ---@field counter_value fun(self: self): number ElementCounter | ElementCounterOperator
 ---@field enabled fun(self: self): boolean
 ---@field value fun(self: self, value: string): any
+---@field id fun(self: self): number
+---@field editor_name fun(self: self): string
 ---@field _is_inside fun(self: self, position: Vector3): boolean ElementAreaReportTrigger 
 ---@field _values_ok fun(self: self): boolean ElementCounter | ElementCounterOperator
 ---@field _values MissionScriptElementValues
 ---@field _calc_base_delay fun(...): number
 ---@field _calc_element_delay fun(...): number
 ---@field _timer number ElementTimer | ElementTimerOperator
+---@field _check_difficulty fun(self: self): boolean ElementDifficulty
 
 ---@class MissionScript
 ---@field element fun(self: self, id: number): MissionScriptElement?
@@ -71,9 +77,11 @@ end
 ---@field ehi_trade EHITradeManager
 ---@field ehi_escape EHIEscapeChanceManager
 ---@field ehi_deployable EHIDeployableManager
+---@field experience ExperienceManager
 ---@field game_play_central GamePlayCentralManager
 ---@field hud HUDManager
 ---@field mission MissionManager
+---@field localization LocalizationManager
 ---@field loot LootManager
 ---@field worlddefinition WorldDefinition
 ---@field [unknown] unknown
@@ -105,6 +113,7 @@ end
 ---@field icon string? 
 ---@field time number? Time to run down. If not provided, `time` is then copied from the trigger
 ---@field class string? Class of the waypoint. If not provided, `class` is then copied from the trigger and converted to Waypoint class
+---@field position Vector3
 ---@field position_by_element number?
 ---@field position_by_unit number?
 ---@field remove_vanilla_waypoint number?
@@ -131,6 +140,7 @@ end
 ---@field trigger_times number? How many times the trigger should run. If the number is provided and once it hits `0`, the trigger is unhooked from the Element and removed from memory
 ---@field client ElementClientTriggerData? Table for clients only to prepopulate fields for tracker syncing. Only applicable to `SF.GetElementTimerAccurate` and `SF.UnpauseTrackerIfExistsAccurate`
 ---@field pos number? Tracker position
+---@field f fun(arg: any?)? Arguments are unsupported in `SF.CustomCodeDelayed`
 ---@field [any] any
 
 ---@class ParseTriggerTable
@@ -165,7 +175,7 @@ end
 ---@class LootCounterTable
 ---@field max integer Maximum number of loot
 ---@field max_random integer Defines a variable number of loot
----@field load_sync fun(self: EHIManager)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true
+---@field load_sync fun(self: EHIManager)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true and you have to sync the progress manually via `EHITrackerManager:SyncSecuredLoot()`
 ---@field no_sync_load boolean Prevents Loot Counter from sync after joining
 ---@field offset boolean If offset is required, used in multi-day heists if loot is brought to next days
 ---@field client_from_start boolean If client is playing from mission briefing; does not do anything on host
@@ -173,7 +183,6 @@ end
 ---@field triggers table If loot is manipulated via Mission Script, also see field `hook_triggers`
 ---@field hook_triggers boolean If Loot Counter is created during spawn or gameplay, triggers must be hooked in order to work
 ---@field sequence_triggers table<number, LootCounterSequenceTriggersTable> Used for random loot spawning via sequences
----@field no_counting boolean Disables standard Loot Counter updates via LootManager
 
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.LootCounter.CheckType`, defaults to `EHI.LootCounter.CheckType.BagsOnly` if not provided
@@ -196,8 +205,9 @@ end
 ---@field no_counting boolean Prevents standard counting
 ---@field counter AchievementCounterTable Modifies counter checks
 ---@field difficulty_pass boolean?
----@field loot_counter_on_fail boolean? If the achievement loot counter should switch to EHILootCounter class when failed
+---@field loot_counter_on_fail boolean? If the achievement loot counter should switch to `EHILootCounter` class when failed
 ---@field silent_failed_on_alarm boolean Fails achievement silently and switches to Loot Counter (only for dropins that are currently syncing and after the achievement has failed); Depends on Loot Counter to be visible in order to work
+---@field start_silent boolean? If the achievement loot counter should start as `EHILootCounter` first; When achievement really starts, call `EHIAchievementLootCounterTracker:SetStarted()`
 
 ---@class AchievementBagValueCounterTable
 ---@field achievement string Achievement ID
@@ -301,3 +311,8 @@ end
 ---@field editor_id fun(): number
 ---@field position fun(): Vector3
 ---@field [unknown] unknown
+
+---@class LocalizationManager
+---@field exists fun(self: self, string_id: string): boolean SuperBLT only
+---@field text fun(self: self, string_id: string, macros: table?): string
+---@field to_upper_text fun(self: self, string_id: string, macros: table?): string

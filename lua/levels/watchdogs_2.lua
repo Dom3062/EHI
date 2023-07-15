@@ -26,7 +26,7 @@ local triggers = {
 
     [1] = { special_function = SF.RemoveTrigger, data = { 101148, 101149, 101150, 1 }},
 
-    [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, class = TT.Inaccurate },
+    [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon },
 
     [100124] = { special_function = SF.CustomCode, f = function()
         local bags = managers.ehi_tracker:CountLootbagsOnTheGround(10)
@@ -93,7 +93,7 @@ EHI:RegisterCustomSpecialFunction(GetFromCache, function(self, trigger, ...)
     local t = EHI._cache[trigger.id]
     EHI._cache[trigger.id] = nil
     if t then
-        trigger.time = t
+        trigger.time = t --[[@as number]]
         self:CheckCondition(trigger)
         trigger.time = nil
     else

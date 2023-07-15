@@ -27,6 +27,16 @@ local function ShowStartedPopup(tracker, delay_popup)
         managers.hud:ShowAchievementStartedPopup(tracker._id, tracker._beardlib)
     end
 end
+local function ShowAchievementDescription(tracker, delay_popup)
+    if delay_popup then
+        EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(tracker, tracker, "ShowAchievementDescription"))
+        return
+    end
+    if tracker._failed_on_sync then
+        return
+    end
+    managers.hud:ShowAchievementDescription(tracker._id, tracker._beardlib)
+end
 local Color = Color
 
 ---@class EHIAchievementTracker : EHIWarningTracker
@@ -35,11 +45,15 @@ EHIAchievementTracker = class(EHIWarningTracker)
 EHIAchievementTracker._popup_type = "achievement"
 EHIAchievementTracker._show_started = EHI:GetUnlockableOption("show_achievement_started_popup")
 EHIAchievementTracker._show_failed = EHI:GetUnlockableOption("show_achievement_failed_popup")
+EHIAchievementTracker._show_desc = EHI:GetUnlockableOption("show_achievement_description")
 function EHIAchievementTracker:init(panel, params)
     EHIAchievementTracker.super.init(self, panel, params)
     self._beardlib = params.beardlib
     if self._show_started then
         ShowStartedPopup(self)
+    end
+    if self._show_desc then
+        ShowAchievementDescription(self)
     end
 end
 
@@ -76,17 +90,28 @@ function EHIAchievementTracker:ShowFailedPopup()
     ShowFailedPopup(self)
 end
 
+function EHIAchievementTracker:ShowAchievementDescription(delay_popup)
+    ShowAchievementDescription(self, delay_popup)
+end
+
+---@class EHIAchievementProgressTracker : EHIProgressTracker
+---@field super EHIProgressTracker
 EHIAchievementProgressTracker = class(EHIProgressTracker)
 EHIAchievementProgressTracker._popup_type = "achievement"
 EHIAchievementProgressTracker._show_started = EHIAchievementTracker._show_started
 EHIAchievementProgressTracker._show_failed = EHIAchievementTracker._show_failed
+EHIAchievementProgressTracker._show_desc = EHIAchievementTracker._show_desc
 EHIAchievementProgressTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
+EHIAchievementProgressTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
 function EHIAchievementProgressTracker:init(panel, params)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
     EHIAchievementProgressTracker.super.init(self, panel, params)
     if self._show_started then
         ShowStartedPopup(self, params.delay_popup)
+    end
+    if self._show_desc then
+        ShowAchievementDescription(self, params.delay_popup)
     end
 end
 
@@ -105,16 +130,22 @@ function EHIAchievementProgressTracker:SetFailed()
     end
 end
 
+---@class EHIAchievementUnlockTracker : EHIWarningTracker
+---@field super EHIWarningTracker
 EHIAchievementUnlockTracker = class(EHIWarningTracker)
 EHIAchievementUnlockTracker._popup_type = "achievement"
 EHIAchievementUnlockTracker._warning_color = EHITimerTracker._completion_color
 EHIAchievementUnlockTracker._show_started = EHIAchievementTracker._show_started
 EHIAchievementUnlockTracker._show_failed = EHIAchievementTracker._show_failed
+EHIAchievementUnlockTracker._show_desc = EHIAchievementTracker._show_desc
 function EHIAchievementUnlockTracker:init(panel, params)
     EHIAchievementUnlockTracker.super.init(self, panel, params)
     self._beardlib = params.beardlib
     if self._show_started then
         ShowStartedPopup(self)
+    end
+    if self._show_desc then
+        ShowAchievementDescription(self)
     end
 end
 
@@ -128,16 +159,23 @@ function EHIAchievementUnlockTracker:SetFailed()
     end
 end
 
+---@class EHIAchievementBagValueTracker : EHINeededValueTracker
+---@field super EHINeededValueTracker
 EHIAchievementBagValueTracker = class(EHINeededValueTracker)
 EHIAchievementBagValueTracker._popup_type = "achievement"
 EHIAchievementBagValueTracker._show_started = EHIAchievementTracker._show_started
 EHIAchievementBagValueTracker._show_failed = EHIAchievementTracker._show_failed
+EHIAchievementBagValueTracker._show_desc = EHIAchievementTracker._show_desc
 EHIAchievementBagValueTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
+EHIAchievementBagValueTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
 function EHIAchievementBagValueTracker:init(panel, params)
     EHIAchievementBagValueTracker.super.init(self, panel, params)
     self._beardlib = params.beardlib
     if self._show_started then
         ShowStartedPopup(self, params.delay_popup)
+    end
+    if self._show_desc then
+        ShowAchievementDescription(self, params.delay_popup)
     end
 end
 

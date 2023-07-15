@@ -186,16 +186,16 @@ function MissionBriefingGui:init(...)
         end
     else
         self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp)
-            local alive_original = ex._xp.alive_players
-            local skill_original = ex._xp.skill_xp_multiplier
-            local gage_original = ex._xp.gage_bonus
-            ex._xp.alive_players = self._num_winners or 1
-            ex._xp.skill_xp_multiplier = self._skill_bonus or 1
-            ex._xp.gage_bonus = self._gage_bonus or 1
+            local alive_original = ex._ehi_xp.alive_players
+            local skill_original = ex._ehi_xp.skill_xp_multiplier
+            local gage_original = ex._ehi_xp.gage_bonus
+            ex._ehi_xp.alive_players = self._num_winners or 1
+            ex._ehi_xp.skill_xp_multiplier = self._skill_bonus or 1
+            ex._ehi_xp.gage_bonus = self._gage_bonus or 1
             local value = ex:MultiplyXPWithAllBonuses(xp)
-            ex._xp.alive_players = alive_original
-            ex._xp.skill_xp_multiplier = skill_original
-            ex._xp.gage_bonus = gage_original
+            ex._ehi_xp.alive_players = alive_original
+            ex._ehi_xp.skill_xp_multiplier = skill_original
+            ex._ehi_xp.gage_bonus = gage_original
             return value
         end
     end
@@ -823,15 +823,11 @@ function MissionBriefingGui:ParamsMinWithMax(panel, params, o_params, override)
     elseif o_params.max_level then
         format_max = false
         local max_n = 0
-        if self._xp:level_cap() <= self._xp:current_level() then -- Level is maxed, show Infamy Pool instead
-            max_n = self._xp:get_max_prestige_xp() - self._xp:get_current_prestige_xp()
+        if self._xp:reached_level_cap() then -- Level is maxed, show Infamy Pool instead
+            max_n = self._xp:GetRemainingPrestigeXP()
             max = self._xp:experience_string(max_n)
         else -- Show remaining XP up to level 100
-            local totalXpTo100 = 0
-            for _, level in ipairs(tweak_data.experience_manager.levels) do
-                totalXpTo100 = totalXpTo100 + Application:digest_value(level.points, false)
-            end
-            max_n = math.max(totalXpTo100 - self._xp:total(), 0)
+            max_n = self._xp:GetRemainingXPToMaxLevel()
             max = self._xp:experience_string(max_n)
         end
         local xp = self._loc:text("ehi_experience_xp")
