@@ -3,24 +3,21 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local c4 = { time = 5, id = "C4", icons = { Icon.C4 } }
----@type number?
+---@type Vector3?
 local EscapePos = nil
 ---@type ParseTriggerTable
 local triggers = {
     [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position_by_element = 100836 } },
     [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape }, waypoint_f = function(self, trigger)
         if EscapePos then
-            local vector = EHI:GetElementPosition(EscapePos)
-            if vector then
-                self._waypoints:AddWaypoint(trigger.id, {
-                    icon = Icon.Interact,
-                    time = trigger.time,
-                    position = vector
-                })
-            end
+            self._waypoints:AddWaypoint(trigger.id, {
+                time = trigger.time,
+                icon = Icon.Interact,
+                position = EscapePos
+            })
             return
         end
-        self._trackers:AddTrackerIfDoesNotExist(trigger)
+        self._trackers:AddTrackerIfDoesNotExist(trigger, trigger.pos)
     end },
     -- C4 (Doors)
     [100985] = c4,
@@ -29,7 +26,7 @@ local triggers = {
     [100961] = c4
 }
 local function CacheEscapePos(index)
-    EscapePos = EHI:GetInstanceElementID(100034, index)
+    EscapePos = EHI:GetElementPosition(EHI:GetInstanceElementID(100034, index))
 end
 for i = 2850, 3050, 100 do
     triggers[EHI:GetInstanceElementID(100028, i)] = { special_function = SF.CustomCode, f = CacheEscapePos, arg = i }
@@ -71,6 +68,31 @@ local other =
 {
     [101346] = EHI:AddAssaultDelay({ time = 45 + 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[101179] = { chance = 15, id = "Snipers", class = TT.Sniper.Chance, flash_times = 1 }
+    other[101227] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[101228] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[101233] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+        if EHI:IsHost() and not element:_values_ok() then
+            return
+        end
+        self._trackers:CallFunction("Snipers", "SnipersKilled")
+    end)}
+    other[101956] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[101957] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+        if self._trackers:TrackerExists("Snipers") then
+            self._trackers:SetChance("Snipers", element._values.chance) -- 0%
+            self._trackers:CallFunction("Snipers", "SniperSpawnsSuccess")
+        else
+            self._trackers:AddTracker({
+                id = "Snipers",
+                flash_times = 1,
+                chance_success = true,
+                class = TT.Sniper.Chance
+            })
+        end
+    end) }
+end
 
 EHI:ParseTriggers({
     mission = triggers,

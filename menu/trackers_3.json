@@ -136,6 +136,22 @@
             "value": "show_escape_chance",
             "default_value": true,
             "ehi_ver" : 84
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_sniper_tracker_choice",
+            "title": "ehi_show_sniper_tracker",
+            "description": "ehi_show_sniper_tracker_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_sniper_tracker",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_sniper_tracker",
+            "default_value": true,
+            "ehi_ver" : 168
         }
     ]
 }

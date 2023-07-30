@@ -14,6 +14,7 @@ elseif ovk_and_up then
     start_chance = 5
 end
 local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, Icon.PCHack }, flash_times = 1, class = TT.Chance }
+---@type ParseTriggerTable
 local triggers = {
     [101587] = { time = 30 + delay, id = "DealGoingDown", icons = deal },
     [101588] = { time = 40 + delay, id = "DealGoingDown", icons = deal },
@@ -44,6 +45,7 @@ local achievements =
         {
             [100698] = { status = "no_down", class = TT.AchievementStatus, trigger_times = 1 },
             [103963] = { special_function = SF.SetAchievementFailed },
+            [103964] = { special_function = SF.SetAchievementComplete }
         }
     },
     man_3 =
@@ -51,7 +53,8 @@ local achievements =
         elements =
         {
             [100698] = { class = TT.AchievementStatus, trigger_times = 1 },
-            [103957] = { special_function = SF.SetAchievementFailed }
+            [103957] = { special_function = SF.SetAchievementFailed },
+            [103958] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
             if EHI.ConditionFunctions.IsStealth() then
@@ -74,9 +77,41 @@ local achievements =
     }
 }
 
+local other =
+{
+    [100116] = EHI:AddAssaultDelay({ random_time = 10, additional_time = 20 + 1 + 30 })
+}
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[102161] = { chance = 20, time = 30 + 20, recheck_t = 20, id = "Snipers", class = TT.Sniper.TimedChance, trigger_times = 1 }
+    other[103169] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
+    other[101756] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+        if EHI:IsHost() and not element:_values_ok() then
+            return
+        end
+        if self._trackers:TrackerExists("Snipers") then
+            self._trackers:CallFunction("Snipers", "SnipersKilled", 40) -- 20 + 20
+        else
+            self._trackers:AddTracker({
+                id = "Snipers",
+                time = 40,
+                recheck_t = 20,
+                chance = 20,
+                class = TT.Sniper.TimedChance
+            })
+        end
+    end)}
+    other[102185] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[102186] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 20%
+    other[103104] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 100%
+    other[100557] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 100%
+    other[102181] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[102180] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 
 local tbl =
@@ -104,27 +139,13 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
                 objectives =
                 {
-                    undercover_deal_loud = true,
-                    undercover_limo_open = true,
-                    undercover_taxman_is_in_chair = true,
-                    pc_hack = true,
-                    escape = true
-                }
-            },
-            max =
-            {
-                objectives =
-                {
-                    undercover_deal_stealth = true,
-                    undercover_limo_open = true,
-                    undercover_taxman_is_in_chair = true,
-                    pc_hack = { times = 3 },
-                    undercover_hack_fixed = { times = 3 },
-                    escape = true
+                    undercover_deal_stealth = { min = 0 },
+                    undercover_deal_loud = { max = 0 },
+                    undercover_hack_fixed = { min = 0, max = 3 }
                 }
             }
         }

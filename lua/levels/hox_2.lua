@@ -11,9 +11,20 @@ local element_sync_triggers =
 }
 local request = { Icon.PCHack, Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
-local CheckOkValueHostCheckOnly = EHI:GetFreeCustomSpecialFunctionID()
 local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
 local CurrentHackNumber = 0
+local CheckOkValueHostCheckOnly = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+    if EHI:IsHost() and not element:_values_ok() then
+        return
+    end
+    if self._trackers:TrackerExists(trigger.id) then
+        self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
+    elseif not trigger.data.dont_create then
+        self:CheckCondition(trigger)
+        self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
+    end
+    CurrentHackNumber = trigger.data.progress
+end)
 ---@type table<number, Vector3?>
 local PCVectors = {}
 ---@type ParseTriggerTable
@@ -34,6 +45,7 @@ local triggers = {
                 position = vector
             })
             self._waypoints:RemoveWaypoint("HoxtonHack")
+            self._waypoints:RemoveWaypoint("HoxtonMaxHacks") -- In case the timer is merged with the progress
         end
     end },
     [102189] = { special_function = SF.CustomCode, f = function()
@@ -44,13 +56,13 @@ local triggers = {
     [104599] = { id = "RequestCounter", special_function = SF.RemoveTracker },
     [104591] = { id = "RequestCounter", special_function = SF.IncreaseProgress },
 
-    [104472] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress },
-    [104478] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 1 } },
-    [104480] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 2 } },
-    [104481] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 3 } },
-    [104482] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 4, dont_create = true } },
+    [104472] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress },
+    [104478] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 1 } },
+    [104480] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 2 } },
+    [104481] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 3 } },
+    [104482] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 4, dont_create = true } },
 
-    [105113] = { chance = 25, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Chance },
+    [105113] = { chance = 25, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance },
     [102257] = { amount = 25, id = "ForensicsMatchChance", special_function = SF.IncreaseChance },
     [105137] = { id = "ForensicsMatchChance", special_function = SF.RemoveTracker }
 }
@@ -60,18 +72,6 @@ if EHI:IsClient() then
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
-EHI:RegisterCustomSpecialFunction(CheckOkValueHostCheckOnly, function(self, trigger, element, ...)
-    if EHI:IsHost() and not element:_values_ok() then
-        return
-    end
-    if self._trackers:TrackerExists(trigger.id) then
-        self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
-    elseif not trigger.data.dont_create then
-        self:CheckCondition(trigger)
-        self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
-    end
-    CurrentHackNumber = trigger.data.progress
-end)
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseAchievementTable
@@ -83,6 +83,7 @@ local achievements =
         elements =
         {
             [100107] = { class = TT.AchievementStatus },
+            [101892] = { status = "finish", special_function = SF.SetAchievementStatus },
             [100256] = { special_function = SF.SetAchievementFailed },
             [100258] = { special_function = SF.SetAchievementComplete }
         },
@@ -111,6 +112,16 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100122] = { chance = 10, time = 50 + 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop }
+    other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -142,14 +153,20 @@ EHI:AddLoadSyncFunction(function(self)
     end
 end)
 
----@param id any
----@param unit_data any
+---@param id number
+---@param unit_data UnitUpdateDefinition
 ---@param unit Unit
 local function PCPosition(id, unit_data, unit)
-    PCVectors[unit_data.pos] = unit:interaction() and unit:interaction():interact_position() or unit:position()
+    ---@type number
+    local pos = unit_data.pos
+    PCVectors[pos] = unit:interaction() and unit:interaction():interact_position() or unit:position()
     unit:timer_gui():SetCustomID("HoxtonHack")
     unit:timer_gui():SetCustomCallback("hox_2_restore_waypoint_hack", "add_waypoint")
+    if pos ~= 4 then
+        unit:timer_gui():SetTrackerMergeID("HoxtonMaxHacks")
+    end
 end
+---@type ParseUnitsTable
 local tbl =
 {
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_director/stn_interactable_computer_director
@@ -162,7 +179,7 @@ local tbl =
 
     --levels/instances/unique/hox_fbi_forensic_device
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics
-    [EHI:GetInstanceUnitID(100018, 2650)] = { icons = { "equipment_evidence" }, remove_vanilla_waypoint = 101559, restore_waypoint_on_done = true },
+    [EHI:GetInstanceUnitID(100018, 2650)] = { icons = { "equipment_evidence" }, remove_vanilla_waypoint = 101559, restore_waypoint_on_done = true, tracker_merge_id = "ForensicsMatchChance" },
 
     --levels/instances/unique/hox_fbi_security_office
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security

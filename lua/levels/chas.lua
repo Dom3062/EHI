@@ -64,22 +64,29 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
-
-if ovk_and_up then
-    EHI:ShowAchievementLootCounter({
-        achievement = "chas_10",
-        max = 15,
-        show_finish_after_reaching_target = true,
-        load_sync = function(self)
-            self._trackers:SetTrackerProgress("chas_10", managers.loot:GetSecuredBagsAmount())
-        end,
-        show_loot_counter = true,
-        loot_counter_on_fail = true,
-        silent_failed_on_alarm = true
-    })
-else
-    EHI:ShowLootCounter({ max = 15 })
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1 }
+    --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+
+EHI:ShowAchievementLootCounter({
+    achievement = "chas_10",
+    max = 15,
+    show_finish_after_reaching_target = true,
+    load_sync = function(self)
+        self._trackers:SyncSecuredLoot("chas_10")
+    end,
+    show_loot_counter = true,
+    loot_counter_on_fail = true,
+    silent_failed_on_alarm = true,
+    difficulty_pass = ovk_and_up
+})
 
 EHI:ParseTriggers({
     mission = triggers,

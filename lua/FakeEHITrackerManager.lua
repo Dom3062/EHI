@@ -84,6 +84,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_loot_counter", icons = { Icon.Loot }, class = "FakeEHIProgressTracker" } )
     self:AddFakeTracker({ id = "show_bodybags_counter", count = math.random(1, 3), icons = { "equipment_body_bag" }, class = "FakeEHICountTracker" })
     self:AddFakeTracker({ id = "show_escape_chance", icons = { { icon = Icon.Car, color = Color.red } }, chance = math.random(100), class = "FakeEHIChanceTracker" })
+    self:AddFakeTracker({ id = "show_sniper_tracker", icons = { "sniper" }, class = "FakeEHISniperTracker" } )
     self:AddPreviewText()
 end
 
@@ -345,7 +346,7 @@ function FakeEHITrackerManager:GetTracker(id)
     end
 end
 
-local icons = tweak_data.ehi.icons
+local icons = tweak_data.ehi and tweak_data.ehi.icons or {}
 
 local function GetIcon(icon)
     if icons[icon] then
@@ -870,4 +871,17 @@ function FakeEHIAssaultTimeTracker:init(panel, params)
     else
         self._icon1:set_color(Color(255, 237, 127, 127) / 255)
     end
+end
+
+FakeEHISniperTracker = class(FakeEHITracker)
+FakeEHISniperTracker._selected_color = Color.yellow
+FakeEHISniperTracker._text_color = FakeEHITracker._selected_color
+function FakeEHISniperTracker:init(panel, params)
+    FakeEHISniperTracker.super.init(self, panel, params)
+    self._text:set_color(self._text_color)
+    self._text:set_text(tostring(math.random(1, 4)))
+end
+
+function FakeEHISniperTracker:SetTextColor(selected)
+    self._text:set_color(selected and self._selected_color or self._text_color)
 end

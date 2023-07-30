@@ -115,6 +115,25 @@ local other =
 {
     [102065] = EHI:AddAssaultDelay({ time = 2 + 30 + 2 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 30 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
+    other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[100297] = { chance = 25, recheck_t = 30, id = "SnipersBlackhawk", class = TT.Sniper.HeliTimedChance }
+    other[101295] = { id = "SnipersBlackhawk", special_function = SF.IncreaseChanceFromElement }
+    other[101293] = { id = "SnipersBlackhawk", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess", arg = { 25 } }
+    other[EHI:GetInstanceElementID(100023, 7500)] = { id = "SnipersBlackhawk", special_function = SF.IncreaseCounter }
+    other[EHI:GetInstanceElementID(100007, 7500)] = { id = "SnipersBlackhawk", special_function = SF.DecreaseCounter }
+    other[EHI:GetInstanceElementID(100025, 7500)] = { id = "SnipersBlackhawk", special_function = SF.CallCustomFunction, f = "SnipersKilled", arg = { 23 } }
+    other[EHI:GetInstanceElementID(100023, 8000)] = { id = "SnipersBlackhawk", special_function = SF.IncreaseCounter }
+    other[EHI:GetInstanceElementID(100007, 8000)] = { id = "SnipersBlackhawk", special_function = SF.DecreaseCounter }
+    other[EHI:GetInstanceElementID(100025, 8000)] = { id = "SnipersBlackhawk", special_function = SF.CallCustomFunction, f = "SnipersKilled", arg = { 23 } }
+end
 
 EHI:ParseTriggers({
     mission = triggers,

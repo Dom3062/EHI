@@ -2,29 +2,28 @@ local Color = Color
 EHIsand11Tracker = class(EHIAchievementProgressTracker)
 EHIsand11Tracker._forced_icons = EHI:GetAchievementIcon("sand_11")
 EHIsand11Tracker.FormatChance = EHIChanceTracker.Format
-function EHIsand11Tracker:init(panel, params)
+function EHIsand11Tracker:pre_init(params)
     params.max = 100
     params.show_finish_after_reaching_target = true
     params.no_failure = true
     self._chance = 0
-    EHIsand11Tracker.super.init(self, panel, params)
 end
 
 function EHIsand11Tracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
-    self._time_bg_box:set_w(self._time_bg_box:w() * 2)
-    self._text_chance = self._time_bg_box:text({
+    self._bg_box:set_w(self._bg_box:w() * 2)
+    self._text_chance = self._bg_box:text({
         name = "chance",
         text = self:FormatChance(),
         align = "center",
         vertical = "center",
-        w = self._time_bg_box:w() / 2,
-        h = self._time_bg_box:h(),
+        w = self._bg_box:w() / 2,
+        h = self._bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
         font_size = self._panel:h() * self._text_scale,
         color = self._text_color
     })
-    self._text_chance:set_right(self._time_bg_box:right())
+    self._text_chance:set_right(self._bg_box:right())
     if self._icon1 then
         self._icon1:set_x(self._icon1:x() * 2)
     end
@@ -45,7 +44,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local boat_anim = 614/30 + 12 + 1
-local skid = { { icon = Icon.Car, color = Color("1E90FF") } }
+local skid = { { icon = Icon.Car, color = tweak_data.ehi.colors.CarBlue } }
 local triggers = {
     [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { Icon.PCHack } },
 
@@ -140,6 +139,16 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1 }
+    --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({
     mission = triggers,

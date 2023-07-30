@@ -60,6 +60,8 @@
         <post hook_id="lib/states/missionendstate" :script_path="MissionEndState.lua" />
 
         <post hook_id="lib/player_actions/skills/playeractionammoefficiency" :script_path="PlayerActionAmmoEfficiency.lua" />
+        <post hook_id="lib/player_actions/skills/playeractionexperthandling" :script_path="PlayerActionExpertHandling.lua" />
+        <post hook_id="lib/player_actions/skills/playeractiontriggerhappy" :script_path="PlayerActionTriggerHappy.lua" />
 
         <post hook_id="lib/units/beings/player/playerdamage" :script_path="PlayerDamage.lua" />
         <post hook_id="lib/units/beings/player/playerinventory" :script_path="PlayerInventory.lua" />

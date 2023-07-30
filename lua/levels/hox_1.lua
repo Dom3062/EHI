@@ -1,6 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
-local car = { { icon = Icon.Car, color = Color("1E90FF") } }
+local car = { { icon = Icon.Car, color = tweak_data.ehi.colors.CarBlue } }
 local move = { time = 10, id = "MoveVehicle", icons = { Icon.Wait } }
 local RoadBlockVehicleIndex1 = 550
 local RoadBlockVehicleIndex2 = 950

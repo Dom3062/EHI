@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local WinchCar = { { icon = Icon.Car, color = Color("1E90FF") } }
+local WinchCar = { { icon = Icon.Car, color = tweak_data.ehi.colors.CarBlue } }
 local ElementTimer = 102059
 local ElementTimerPickup = 102075
 local WeaponsPickUp = { Icon.Heli, Icon.Interact }
@@ -27,7 +27,7 @@ local sync_triggers =
 local triggers = {
     [EHI:GetInstanceElementID(100083, 12500)] = { time = 230/30, id = "CarPush1", icons = WinchCar },
     [EHI:GetInstanceElementID(100084, 12500)] = { time = 230/30 + 1, id = "CarPush2", icons = WinchCar },
-    [EHI:GetInstanceElementID(100087, 12500)] = { time = 250/30, id = "CarWinchUsed", icons = { { icon = Icon.Car, color = Color("1E90FF") }, Icon.Winch } },
+    [EHI:GetInstanceElementID(100087, 12500)] = { time = 250/30, id = "CarWinchUsed", icons = { { icon = Icon.Car, color = tweak_data.ehi.colors.CarBlue }, Icon.Winch } },
 
     -- Thermite
     [EHI:GetInstanceElementID(100012, 2850)] = { time = 0.5 + 0.5 + 0.5 + 0.5 + 1, id = "ThermiteOpenGate", icons = { Icon.Fire } },
@@ -66,7 +66,29 @@ else
     EHI:AddHostTriggers(sync_triggers, nil, nil, "base")
 end
 
-EHI:ParseTriggers({ mission = triggers })
+--[[
+    anim_ranc_arrive_01 -> 215/30 + 2-7 + 10 + 10 -> 29,1666-34,1666
+    anim_ranc_arrive_02 -> 202/30 + 10-15 + 5 + 10 -> 31,7333-36,7333
+    anim_ranc_arrive_03 -> 170/30 + 6.9 + 10-15 + 10 -> 32,5666-37,5666
+    anim_ranc_arrive_04 -> 894/30 + 0-5 + 10 -> 39,8-44,8
+    anim_ranc_arrive_05 -> 980/30 + 5 + 10 -> 47,6666
+]]
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ additional_time = 20 + 215/30 + 2 + 10 + 10 + 10 + 30, random_time = 5 + 10 })
+}
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1 }
+    --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
+
+EHI:ParseTriggers({ mission = triggers, other = other })
 local ranc_10 = { special_function = SF.IncreaseProgress }
 local ranc_10_triggers =
 {

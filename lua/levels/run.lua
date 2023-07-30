@@ -1,5 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
+---@class EHIrun9Tracker : EHIAchievementTracker
 EHIrun9Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIrun9Tracker")
 function EHIrun9Tracker:update(t, dt)
     self._time = self._time - dt
@@ -11,6 +12,8 @@ function EHIrun9Tracker:update(t, dt)
     end
 end
 
+---@class EHIGasTracker : EHIProgressTracker
+---@field super EHIProgressTracker
 EHIGasTracker = class(EHIProgressTracker)
 EHIGasTracker._forced_icons = { Icon.Fire }
 function EHIGasTracker:Format()
@@ -20,6 +23,7 @@ function EHIGasTracker:Format()
     return EHIGasTracker.super.Format(self)
 end
 
+---@class EHIZoneTracker : EHIWarningTracker
 EHIZoneTracker = class(EHIWarningTracker)
 EHIZoneTracker._forced_icons = { Icon.Wait }
 EHIZoneTracker.SetCompleted = EHIAchievementTracker.SetCompleted
@@ -27,16 +31,15 @@ EHIZoneTracker.SetCompleted = EHIAchievementTracker.SetCompleted
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local SetProgressMax = EHI:GetFreeCustomSpecialFunctionID()
+---@type ParseTriggerTable
 local triggers = {
     [100377] = { time = 90, id = "ClearPickupZone", class = "EHIZoneTracker" },
-    [101550] = { id = "ClearPickupZone", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
-        self._trackers:CallFunction(trigger.id, "SetCompleted")
-    end) },
+    [101550] = { id = "ClearPickupZone", special_function = SF.CallCustomFunction, f = "SetCompleted" },
 
     -- Parking lot
     [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { Icon.Wait } },
 
-    [101521] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, trigger_times = 1 },
+    [101967] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, waypoint = { icon = Icon.Goto, position_by_element_and_remove_vanilla_waypoint = 100372, restore_on_done = true } },
 
     [100144] = { id = "GasAmount", class = "EHIGasTracker", trigger_times = 1 },
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins
@@ -96,6 +99,7 @@ local achievements =
             [100144] = { special_function = SF.SetAchievementFailed }
         },
         cleanup_callback = function()
+            ---@diagnostic disable-next-line
             EHIrun9Tracker = nil
         end
     },

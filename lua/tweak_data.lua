@@ -10,6 +10,11 @@ local Icon = EHI.Icons
 
 tweak_data.ehi =
 {
+    colors =
+    {
+        WaterColor = Color("D4F1F9"),
+        CarBlue = Color("1E90FF")
+    },
     icons =
     {
         default = { texture = "guis/textures/pd2/pd2_waypoints", texture_rect = {96, 64, 32, 32} },
@@ -225,6 +230,22 @@ tweak_data.ehi =
             x = 10,
             y = 9,
             option = "second_wind"
+        },
+        trigger_happy =
+        {
+            u100skill = true,
+            text = "Dmg+",
+            x = 11,
+            y = 2,
+            option = "trigger_happy"
+        },
+        desperado =
+        {
+            u100skill = true,
+            text = "Acc+",
+            x = 11,
+            y = 1,
+            option = "desperado"
         },
         revived_damage_resist =
         {
@@ -451,7 +472,7 @@ tweak_data.ehi =
             skills = true,
             x = 2,
             y = 10,
-            class = "EHIHostageTakerMuscleRegenBuffTracker",
+            class = "EHIHealthRegenBuffTracker",
             option = "hostage_taker_muscle"
         },
         crew_throwable_regen =

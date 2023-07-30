@@ -43,6 +43,16 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { chance = 20, time = 1 + 5 + 30, on_fail_refresh_t = 30, on_success_refresh_t = 20 + 5 + 30, id = "Snipers", class = TT.Sniper.Loop }
+    other[100517] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 20%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +20%
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, nil, { Icon.Defend })
 EHI:ShowLootCounter({ max = 9 })

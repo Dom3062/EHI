@@ -346,6 +346,9 @@
 
     "ehi_show_escape_chance" : "Zobrazovat šanci na vybourání únikového vozidla",
     "ehi_show_escape_chance_desc" : "Zobrazuje sledovač s možným vybouráním únikového vozidla",
+
+    "ehi_show_sniper_tracker" : "Zobrazovat naskriptované odstřelovače",
+    "ehi_show_sniper_tracker_desc" : "Zobrazuje sledovač s naskriptovanými odstřelovači, kteří se respawnují\n\nPoznámka:\nMarshal odstřelovači nejsou započteni\nKaždá mise používá jinou logiku na respawn odstřelovačů (pokud nějaká je) a sledovač může vypadat odlišně",
     
     "ehi_waypoints_menu" : "Ukazatele",
     "ehi_waypoints_menu_desc" : "",
@@ -455,6 +458,9 @@
     "ehi_buffs_skills_ghost_unseen_strike_initial" : "Unseen Strike (Počáteční prodleva)",
 
     "ehi_buffs_skills_fugitive_menu" : "Fugitive",
+    "ehi_buffs_skills_fugitive_gunslinger_subclass" : "Gunslinger",
+    "ehi_buffs_skills_fugitive_trigger_happy" : "Trigger Happy",
+    "ehi_buffs_skills_fugitive_desperado" : "Desperado",
     "ehi_buffs_skills_fugitive_revenant_subclass" : "Revenant",
     "ehi_buffs_skills_fugitive_running_from_death_reload" : "Running from Death (Nabití a změna zbraně)",
     "ehi_buffs_skills_fugitive_running_from_death_movement" : "Running from Death (Pohyb)",

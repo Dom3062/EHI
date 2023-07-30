@@ -5,10 +5,12 @@ local TT = EHI.Trackers
 local start_delay = 1
 local delay = 20 + (math.random() * (7.5 - 6.2) + 6.2)
 local HeliDropLootZone = { Icon.Heli, Icon.LootDrop, Icon.Goto }
+---@type ParseTriggerTable
 local triggers = {
     [101931] = { time = 90 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker },
     [101932] = { time = 120 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker },
     [101929] = { time = 30 + 150 + delay, id = "CageDrop", icons = HeliDropLootZone },
+    ---@diagnostic disable-next-line
     [102921] = { id = 101929, special_function = SF.RemoveTrigger },
 
     [103060] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103444 } },
@@ -25,27 +27,23 @@ local triggers = {
     [1029751] = { chance = 5, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance },
     [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { Icon.Phone, "pd2_generic_look" }, class = TT.Warning },
     [102986] = { special_function = SF.RemoveTracker, data = { "CorrectPaperChance", "GenSecArrivalWarning" } },
-    [102985] = { amount = 25, id = "CorrectPaperChance", special_function = SF.IncreaseChance },
+    [102985] = { id = "CorrectPaperChance", special_function = SF.IncreaseChanceFromElement }, -- +25%
     [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, trigger_times = 1 },
 
     [102995] = { time = 30, id = "CallAgain", icons = { Icon.Phone, Icon.Loop } },
     [102996] = { time = 50, id = "CallAgain", icons = { Icon.Phone, Icon.Loop } },
     [102997] = { time = 60, id = "CallAgain", icons = { Icon.Phone, Icon.Loop } },
     [102940] = { time = 10, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning },
-    [102945] = { id = "AnswerPhone", special_function = SF.RemoveTracker }
+    [102945] = { id = "AnswerPhone", special_function = SF.RemoveTracker },
+
+    [100052] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+        self._trackers:RemoveTracker("CorrectPaperChance")
+        self._trackers:RemoveTracker("GenSecArrivalWarning")
+        self._trackers:RemoveTracker("GenSecArrival")
+        self._trackers:RemoveTracker("CallAgain")
+        self._trackers:RemoveTracker("AnswerPhone")
+    end)}
 }
-EHI:AddOnAlarmCallback(function()
-    local remove = {
-        "CorrectPaperChance",
-        "GenSecArrivalWarning",
-        "GenSecArrival",
-        "CallAgain",
-        "AnswerPhone"
-    }
-    for _, tracker in ipairs(remove) do
-        managers.ehi_tracker:RemoveTracker(tracker)
-    end
-end)
 
 local other =
 {
@@ -67,6 +65,16 @@ if EHI:IsLootCounterVisible() then
         self:Trigger(106579)
         self._trackers:SyncSecuredLoot()
     end)
+end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { chance = 10, time = 1 + 15 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 15 + 25, id = "Snipers", class = TT.Sniper.Loop }
+    other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
 EHI:ParseTriggers({ mission = triggers, other = other })

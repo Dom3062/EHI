@@ -60,10 +60,10 @@ if not buffs then
     return
 end
 
-if EHI:GetBuffOption("forced_friendship") then
-    original.init = PlayerManager.init
-    function PlayerManager:init(...)
-        original.init(self, ...)
+original.init = PlayerManager.init
+function PlayerManager:init(...)
+    original.init(self, ...)
+    if EHI:GetBuffOption("forced_friendship") then
         local hostage_limit = tweak_data.upgrades.values.team.damage.hostage_absorption_limit
         local absorption_gain = tweak_data.upgrades.values.team.damage.hostage_absorption[1]
         local max_absorption = hostage_limit * absorption_gain
@@ -87,6 +87,30 @@ if EHI:GetBuffOption("forced_friendship") then
             end
         }
         setmetatable(self._damage_absorption, _mt)
+    end
+    if EHI:GetBuffOption("regen_throwable_ai") then
+        local value = tweak_data.upgrades.values.team.crew_throwable_regen
+        local max = (value and value[1] or 35) + 1
+        local progress = 0
+        local function IncreaseProgress(...)
+            progress = progress + 1
+            if progress == max then
+                progress = 0
+            end
+            managers.ehi_buff:AddGauge2("crew_throwable_regen", progress / max, progress)
+        end
+        EHI:AddCallback(EHI.CallbackMessage.TeamAISkillBoostChange, function(boost, operation)
+            if boost == "crew_generous" then
+                if operation == "add" then
+                    progress = self._throw_regen_kills or 0
+                    managers.ehi_buff:AddGauge2("crew_throwable_regen", progress / max, progress)
+                    self:register_message(Message.OnEnemyKilled, "EHI_crew_throwable_regen", IncreaseProgress)
+                else
+                    managers.ehi_buff:RemoveBuff("crew_throwable_regen")
+                    self:unregister_message(Message.OnEnemyKilled, "EHI_crew_throwable_regen")
+                end
+            end
+        end)
     end
 end
 

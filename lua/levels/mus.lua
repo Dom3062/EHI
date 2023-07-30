@@ -48,9 +48,11 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 35 + 30 })
 }
-if EHI:IsLootCounterVisible() and false then
+if EHI:IsLootCounterVisible() then
     local ignore_units = {
-        [300686] = true
+        [300686] = true,
+        [300421] = true,
+        [300457] = true
     }
     local function PrintAllInteractions()
         local count = 0
@@ -59,15 +61,16 @@ if EHI:IsLootCounterVisible() and false then
             if unit:carry_data() and unit:interaction() then
                 local unit_id = unit:editor_id()
                 if not ignore_units[unit_id] then
-                    managers.hud:add_waypoint(unit_id, {
+                    --[[managers.hud:add_waypoint(unit_id, {
                         icon = Icon.Interact,
                         position = unit:position(),
                         no_sync = true
                     })
                     managers.mission:add_runned_unit_sequence_trigger(unit_id, "interact", function(...)
                         managers.hud:remove_waypoint(unit_id)
-                    end)
+                    end)]]
                     EHI:LogFast("Unit is a bag; interaction: " .. tostring(unit:interaction().tweak_data))
+                    count = count + 1
                 else
                     EHI:LogFast("Unit with ID '" .. tostring(unit_id) .. "' ignored")
                 end
@@ -79,6 +82,28 @@ if EHI:IsLootCounterVisible() and false then
     other[100840] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
         EHI:ShowLootCounterNoChecks({ max = PrintAllInteractions() + 1 })
     end)}
+end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+        if EHI:IsHost() and element:counter_value() ~= 0 then
+            return
+        end
+        self._trackers:AddTracker({
+            id = "Snipers",
+            time = 0.05 + 10 + 25,
+            chance = 10,
+            on_fail_refresh_t = 25,
+            on_success_refresh_t = 20 + 10 + 25,
+            class = TT.Sniper.Loop
+        })
+    end) }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
 EHI:ParseTriggers({

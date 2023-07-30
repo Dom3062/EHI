@@ -4,6 +4,9 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local goat_pick_up = { Icon.Heli, Icon.Interact }
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@param self EHIManager
+---@param trigger ElementTrigger
+---@param ... unknown
 local function f_PilotComingInAgain(self, trigger, ...)
     self._trackers:RemoveTracker("PilotComingIn")
     if self._trackers:TrackerExists(trigger.id) then
@@ -12,8 +15,13 @@ local function f_PilotComingInAgain(self, trigger, ...)
         self:CheckCondition(trigger)
     end
 end
-local PilotComingInAgain = EHI:GetFreeCustomSpecialFunctionID()
-local PilotComingInAgain2 = EHI:GetFreeCustomSpecialFunctionID()
+local PilotComingInAgain = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+    if enabled then
+        f_PilotComingInAgain(self, trigger)
+    end
+end)
+local PilotComingInAgain2 = EHI:RegisterCustomSpecialFunction(f_PilotComingInAgain)
+---@type ParseTriggerTable
 local triggers = {
     [EHI:GetInstanceElementID(100022, 2850)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag },
     [EHI:GetInstanceElementID(100022, 3150)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag },
@@ -75,18 +83,42 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 100 + 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { chance = 10, time = 1 + 10 + 60, on_fail_refresh_t = 60, on_success_refresh_t = 20 + 10 + 60, id = "Snipers", class = TT.Sniper.Loop }
+    other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[101358] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "ResetCount" }
+    other[101733] = { id = "SniperHeli", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+        local id = trigger.id
+        if self._trackers:TrackerExists(id) then
+            self._trackers:CallFunction(id, "SniperRespawn")
+        else
+            local t = 23 + 2
+            self._trackers:AddTracker({
+                id = id,
+                time = t,
+                refresh_t = t,
+                class = TT.Sniper.Heli
+            })
+        end
+    end) }
+    if EHI:IsDifficultyOrBelow(EHI.Difficulties.Hard) then
+        local trigger = { id = "SniperHeli", special_function = SF.CallCustomFunction, f = "SniperKilledUpdateCount" }
+        other[EHI:GetInstanceElementID(100007, 8400)] = trigger
+        other[EHI:GetInstanceElementID(100007, 8550)] = trigger
+    end
+end
 
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(PilotComingInAgain, function(self, trigger, element, enabled)
-    if enabled then
-        f_PilotComingInAgain(self, trigger)
-    end
-end)
-EHI:RegisterCustomSpecialFunction(PilotComingInAgain2, f_PilotComingInAgain)
 
 local DisableWaypoints =
 {

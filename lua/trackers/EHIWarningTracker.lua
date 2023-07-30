@@ -23,7 +23,9 @@ end
 ---@field super EHITracker
 EHIWarningTracker = class(EHITracker)
 EHIWarningTracker._warning_color = EHI:GetTWColor("warning")
+EHIWarningTracker._completion_color = EHI:GetTWColor("completion")
 EHIWarningTracker._check_anim_progress = false
+EHIWarningTracker._show_completion_color = false
 function EHIWarningTracker:update(t, dt)
     EHIWarningTracker.super.update(self, t, dt)
     if self._time <= 10 and not self._time_warning then
@@ -35,7 +37,7 @@ end
 function EHIWarningTracker:AnimateColor(check_progress, color)
     if self._text and alive(self._text) then
         local start_t = check_progress and (1 - min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 1
-        self._text:animate(anim, self._text_color, color or self._warning_color, start_t)
+        self._text:animate(anim, self._text_color, color or (self._show_completion_color and self._completion_color or self._warning_color), start_t)
     end
 end
 

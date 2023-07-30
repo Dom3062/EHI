@@ -1,3 +1,12 @@
+r168 (30. 07. 2023):
+Added Trigger Happy and Desperado buffs
+Fixed an issue where achievement loot counters do not properly sync secured loot
+Improved memory consumption by deferring loading of TimerGui, DigitalGui and SecurityLockGui trackers until they are needed
+Gage Tracker: Fixed an issue where the tracker could get stuck on the screen after sync
+Cook Off: Fixed an issue where achievement tracker for "I Am the One Who Knocks" is visible
+Cook Off: Fixed an issue where Total XP Tracker is not visible
+The Bomb: Forest: Fixed an issue where "Assault Delay" is not visible on client
+
 r167 (15. 07. 2023):
 Added option "Show Achievement Description"
 To prevent crashes, mod will disable itself while in editor mode

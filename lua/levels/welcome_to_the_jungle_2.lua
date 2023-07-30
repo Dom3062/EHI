@@ -26,7 +26,12 @@ local triggers = {
     [100905] = { time = 60 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot }
 }
 
-EHI:ParseTriggers({ mission = triggers })
+local other =
+{
+    [100531] = EHI:AddAssaultDelay({ time = 35 + 30 })
+}
+
+EHI:ParseTriggers({ mission = triggers, other = other })
 
 local tbl =
 {

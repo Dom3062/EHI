@@ -10,14 +10,14 @@ function EHIcac10Tracker:OverridePanel()
     self._max = 0
     self._progress = 0
     self._panel:set_w(self._panel:w() * 2)
-    self._time_bg_box:set_w(self._time_bg_box:w() * 2)
-    self._progress_text = self._time_bg_box:text({
+    self._bg_box:set_w(self._bg_box:w() * 2)
+    self._progress_text = self._bg_box:text({
         name = "text2",
         text = self:FormatProgress(),
         align = "center",
         vertical = "center",
-        w = self._time_bg_box:w() / 2,
-        h = self._time_bg_box:h(),
+        w = self._bg_box:w() / 2,
+        h = self._bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
         color = self._text_color
@@ -302,13 +302,9 @@ EHI:AddXPBreakdown({
                 {
                     min_max =
                     {
-                        min =
+                        objectives =
                         {
-                            fwb_rewired_circuit_box = { times = 3 }
-                        },
-                        max =
-                        {
-                            fwb_rewired_circuit_box = { times = 3 }
+                            fwb_rewired_circuit_box = { min_max = 3 }
                         },
                         loot_all = { min = min_bags, max = 14 }
                     }

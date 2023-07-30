@@ -10,6 +10,7 @@ local colors =
     optional = EHI:GetColor(EHI.settings.colors.mission_briefing.optional)
 }
 
+---@type XPBreakdown
 local _params
 local TacticSelected = 1
 XPBreakdownItem = class()
@@ -138,7 +139,7 @@ function XPBreakdownItem:destroy()
     self._panel:remove(self._tab_select_rect)
 end
 
-local reloading_outfit = false
+local reloading_outfit = false -- Fix for Beardlib stack overflow crash
 local xp_format = EHI:GetOption("xp_format")
 local diff_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", EHI:DifficultyIndex()) or 1
 
@@ -207,6 +208,7 @@ function MissionBriefingGui:ProcessXPBreakdown()
         self:AddXPBreakdown(_params)
     elseif tweak_data.levels:IsLevelSkirmish() then
         -- Hardcoded in shared instance "obj_skm"
+        ---@type XPBreakdown
         local params =
         {
             wave =
@@ -228,6 +230,7 @@ function MissionBriefingGui:ProcessXPBreakdown()
     end
 end
 
+---@param params XPBreakdown
 function MissionBriefingGui:AddXPBreakdown(params)
     if type(params) ~= "table" or not next(params) then
         return
@@ -309,6 +312,8 @@ function MissionBriefingGui:AddXPBreakdown(params)
     _params = params
 end
 
+---@param params XPBreakdown|_XPBreakdown
+---@param panel table?
 function MissionBriefingGui:ProcessBreakDown(params, panel)
     panel = panel or { panel = self._ehi_panel_v2, lines = 0, adjust_h = true }
     local gage = xp_format == 3 and EHI:AreGagePackagesSpawned()
@@ -579,33 +584,50 @@ function MissionBriefingGui:ParamsCustom(panel, params, o_params)
 end
 
 function MissionBriefingGui:ParamsMinMax(panel, params, o_params)
-    local o_min = o_params.min or {}
-    local o_max = o_params.max or {}
     local min, max = 0, 0
-    if type(params.objective) == "table" then
-        min = self:SumObjective(params.objective, o_min, true)
-        max = self:SumObjective(params.objective, o_max)
-    end
-    for _, data in ipairs(params.objectives or {}) do
-        local key = data.name or "unknown"
-        local actual_value = data.amount or 0
-        if data.escape then
-            if type(data.escape) == "number" then
-                actual_value = data.escape
+    if o_params.objective then
+        local o_min, o_max = {}, {}
+        for key, value in pairs(o_params.objective or {}) do
+            if value.min_max then
+                local times = { times = value.min_max }
+                o_min[key] = times
+                o_max[key] = times
             else
-                EHI:Log("[MissionBriefingGui] Unknown type for escape!")
+                if value.min then
+                    o_min[key] = { times = value.min }
+                end
+                if value.max then
+                    o_max[key] = { times = value.max }
+                end
             end
         end
-        if o_min[key] then
-            min = min + (actual_value * (o_min[key].times or data.times or 1))
-        else
-            min = min + (actual_value * (data.times or 1))
+        min = self:SumObjective(params.objective, o_min, true)
+        max = self:SumObjective(params.objective, o_max)
+    else
+        min = self:SumObjective(params.objective, {}, true)
+        max = self:SumObjective(params.objective, {})
+    end
+    if o_params.objectives then
+        local o_min, o_max = {}, {}
+        for key, value in pairs(o_params.objectives or {}) do
+            if value.min_max then
+                local times = { times = value.min_max }
+                o_min[key] = times
+                o_max[key] = times
+            else
+                if value.min then
+                    o_min[key] = { times = value.min }
+                end
+                if value.max then
+                    o_max[key] = { times = value.max }
+                end
+            end
         end
-        if o_max[key] then
-            max = max + (actual_value * (o_max[key].times or data.times or 1))
-        else
-            max = max + (actual_value * (data.times or 1))
-        end
+        min = min + self:SumObjectives(params.objectives, o_min, true)
+        max = max + self:SumObjectives(params.objectives, o_max)
+    else
+        min = min + self:SumObjectives(params.objectives, {}, true)
+        max = max + self:SumObjectives(params.objectives, {})
     end
     for key, data in pairs(o_params.loot or {}) do
         local loot = params.loot and params.loot[key]
@@ -634,6 +656,10 @@ function MissionBriefingGui:ParamsMinMax(panel, params, o_params)
     self:AddTotalMinMaxXP(panel, min, max, true, o_params.name)
 end
 
+---@param panel Panel
+---@param params table
+---@param o_params table
+---@param override table
 function MissionBriefingGui:ParamsMinWithMax(panel, params, o_params, override)
     local override_objective = override.objective or {}
     local override_objectives = override.objectives or {}
@@ -994,6 +1020,11 @@ function MissionBriefingGui:AddTotalXP(panel, total, total_with_gage)
     panel.lines = panel.lines + 1
 end
 
+---@param panel Panel
+---@param min number
+---@param max number|string?
+---@param format_max boolean
+---@param post_fix string?
 function MissionBriefingGui:AddTotalMinMaxXP(panel, min, max, format_max, post_fix)
     local post_fix_text = post_fix and self._loc:text("ehi_experience_" .. post_fix) or ""
     local xp = self._loc:text("ehi_experience_xp")
@@ -1003,7 +1034,7 @@ function MissionBriefingGui:AddTotalMinMaxXP(panel, min, max, format_max, post_f
     self:AddLine(panel, (post_fix and ("Min (" .. post_fix_text .. "): ") or "Min: ") .. self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(min), "+") .. " " .. xp, Color.green)
     if max then
         if format_max then
-            self:AddLine(panel, (post_fix and ("Max (" .. post_fix_text .. "): +") or "Max: +") .. self:FormatXPWithAllGagePackages(max or 0) .. " " .. xp, Color.green)
+            self:AddLine(panel, (post_fix and ("Max (" .. post_fix_text .. "): +") or "Max: +") .. self:FormatXPWithAllGagePackages(max or 0 --[[@as number]]) .. " " .. xp, Color.green)
         else
             self:AddLine(panel, (post_fix and ("Max (" .. post_fix_text .. "): ") or "Max: ") .. tostring(max), Color.green)
         end
@@ -1102,13 +1133,15 @@ function MissionBriefingGui:FakeExperienceMultipliers()
     if Global.block_update_outfit_information then -- Outfit update is late when "managers.player:get_skill_exp_multiplier(true)" is called, update it now to stay accurate
         local outfit_string = managers.blackmarket:outfit_string()
         local local_peer = managers.network:session():local_peer()
-        reloading_outfit = true -- Fix for Beardlib stack overflow crash
+        reloading_outfit = true
         local_peer:set_outfit_string(outfit_string)
         reloading_outfit = false
     end
     self._skill_bonus = managers.player:get_skill_exp_multiplier(true)
 end
 
+---@param base_xp number
+---@return number
 function MissionBriefingGui:FormatXPWithAllGagePackagesNoString(base_xp)
     self._gage_bonus = 1.05
     local value = self._xp:FakeMultiplyXPWithAllBonuses(base_xp)
@@ -1116,6 +1149,8 @@ function MissionBriefingGui:FormatXPWithAllGagePackagesNoString(base_xp)
     return value
 end
 
+---@param base_xp number
+---@return string
 function MissionBriefingGui:FormatXPWithAllGagePackages(base_xp)
     return self._xp:cash_string(self:FormatXPWithAllGagePackagesNoString(base_xp), "")
 end
@@ -1133,6 +1168,8 @@ function MissionBriefingGui:RefreshXPOverview()
     self:ProcessXPBreakdown()
 end
 
+---@param key string
+---@return string
 function MissionBriefingGui:GetTranslatedKey(key)
     local string_id = "ehi_experience_" .. key
     if self._loc:exists(string_id) then
@@ -1141,6 +1178,10 @@ function MissionBriefingGui:GetTranslatedKey(key)
     return key
 end
 
+---@param panel Panel
+---@param params table
+---@param total_xp table
+---@param gage boolean?
 function MissionBriefingGui:ProcessLoot(panel, params, total_xp, gage)
     if params.loot_all then
         local data = params.loot_all
@@ -1203,6 +1244,11 @@ function MissionBriefingGui:ProcessLoot(panel, params, total_xp, gage)
     end
 end
 
+---@param panel Panel
+---@param str string
+---@param params table|number
+---@param total_xp table
+---@param gage boolean?
 function MissionBriefingGui:ProcessEscape(panel, str, params, total_xp, gage)
     if type(params) == "table" then
         for _, value in ipairs(params) do
@@ -1243,6 +1289,10 @@ function MissionBriefingGui:ProcessEscape(panel, str, params, total_xp, gage)
     end
 end
 
+---@param panel Panel
+---@param random table
+---@param total_xp table
+---@param gage boolean?
 function MissionBriefingGui:ProcessRandomObjectives(panel, random, total_xp, gage)
     if type(random) ~= "table" then
         return
@@ -1291,12 +1341,17 @@ function MissionBriefingGui:ProcessRandomObjectives(panel, random, total_xp, gag
     end
 end
 
+---@param objective table?
+---@param override_objective table
+---@param skip_optional boolean?
+---@return number
 function MissionBriefingGui:SumObjective(objective, override_objective, skip_optional)
     local xp = 0
     for key, obj in pairs(objective or {}) do
         local actual_value = 0
         local times = 1
         local count = true
+        local override = override_objective[key]
         if type(obj) == "table" then
             actual_value = obj.amount
             times = obj.times or 1
@@ -1305,8 +1360,8 @@ function MissionBriefingGui:SumObjective(objective, override_objective, skip_opt
             actual_value = obj
         end
         if count then
-            if override_objective[key] then
-                xp = xp + (actual_value * (override_objective[key].times or times or 1))
+            if override then
+                xp = xp + (actual_value * (override.times or times or 1))
             else
                 xp = xp + (actual_value * (times or 1))
             end
@@ -1315,6 +1370,10 @@ function MissionBriefingGui:SumObjective(objective, override_objective, skip_opt
     return xp
 end
 
+---@param objectives table?
+---@param override_objectives table
+---@param skip_optional boolean?
+---@return number
 function MissionBriefingGui:SumObjectives(objectives, override_objectives, skip_optional)
     local xp = 0
     for _, data in ipairs(objectives or {}) do

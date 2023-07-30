@@ -1,6 +1,8 @@
-EHIHostageTakerMuscleRegenBuffTracker = class(EHIBuffTracker)
-function EHIHostageTakerMuscleRegenBuffTracker:init(panel, params)
-    EHIHostageTakerMuscleRegenBuffTracker.super.init(self, panel, params)
+---@class EHIHealthRegenBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
+EHIHealthRegenBuffTracker = class(EHIBuffTracker)
+function EHIHealthRegenBuffTracker:init(panel, params)
+    EHIHealthRegenBuffTracker.super.init(self, panel, params)
     local icon = self._panel:child("icon") -- Hostage Taker regen
     self._panel:bitmap({ -- Muscle regen
         name = "icon2",
@@ -12,23 +14,41 @@ function EHIHostageTakerMuscleRegenBuffTracker:init(panel, params)
         w = icon:w(),
         h = icon:h()
     })
+    self._panel:bitmap({
+        name = "icon3",
+        texture = tweak_data.hud_icons.skill_5.texture,
+        texture_rect = tweak_data.hud_icons.skill_5.texture_rect,
+        color = Color.white,
+        x = icon:x(),
+        y = icon:y(),
+        w = icon:w(),
+        h = icon:h()
+    })
     self:SetIcon("hostage_taker")
 end
 
-function EHIHostageTakerMuscleRegenBuffTracker:SetIcon(buff)
+function EHIHealthRegenBuffTracker:SetIcon(buff)
     if self._buff == buff then
         return
     end
     if buff == "hostage_taker" then
         self._panel:child("icon"):set_visible(true)
         self._panel:child("icon2"):set_visible(false)
-    else
+        self._panel:child("icon3"):set_visible(false)
+    elseif buff == "muscle" then
         self._panel:child("icon2"):set_visible(true)
+        self._panel:child("icon"):set_visible(false)
+        self._panel:child("icon3"):set_visible(false)
+    else -- AIRegen
+        self._panel:child("icon3"):set_visible(true)
+        self._panel:child("icon2"):set_visible(false)
         self._panel:child("icon"):set_visible(false)
     end
     self._buff = buff
 end
 
+---@class EHIStaminaBuffTracker : EHIGaugeBuffTracker, EHIDodgeChanceBuffTracker
+---@field super EHIGaugeBuffTracker
 EHIStaminaBuffTracker = class(EHIGaugeBuffTracker)
 EHIStaminaBuffTracker.Activate = EHIDodgeChanceBuffTracker.Activate
 EHIStaminaBuffTracker.Deactivate = EHIDodgeChanceBuffTracker.Deactivate
@@ -53,6 +73,8 @@ function EHIStaminaBuffTracker:SetRatio(ratio)
     self:SetRatio2(value, rounded)
 end
 
+---@class EHIStoicBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
 EHIStoicBuffTracker = class(EHIBuffTracker)
 function EHIStoicBuffTracker:Activate(t, pos)
     EHIStoicBuffTracker.super.Activate(self, self._auto_shrug or t, pos)
@@ -66,28 +88,34 @@ function EHIStoicBuffTracker:SetAutoShrug(t)
     self._auto_shrug = t
 end
 
+---@class EHIHackerTemporaryDodgeBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
 EHIHackerTemporaryDodgeBuffTracker = class(EHIBuffTracker)
 function EHIHackerTemporaryDodgeBuffTracker:Activate(...)
     EHIHackerTemporaryDodgeBuffTracker.super.Activate(self, ...)
     self._parent_class:CallFunction("DodgeChance", "ForceUpdate")
 end
 
-function EHIHackerTemporaryDodgeBuffTracker:Deactivate(...)
-    EHIHackerTemporaryDodgeBuffTracker.super.Deactivate(self, ...)
+function EHIHackerTemporaryDodgeBuffTracker:Deactivate()
+    EHIHackerTemporaryDodgeBuffTracker.super.Deactivate(self)
     self._parent_class:CallFunction("DodgeChance", "ForceUpdate")
 end
 
+---@class EHIUnseenStrikeBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
 EHIUnseenStrikeBuffTracker = class(EHIBuffTracker)
 function EHIUnseenStrikeBuffTracker:Activate(...)
     EHIUnseenStrikeBuffTracker.super.Activate(self, ...)
     self._parent_class:CallFunction("CritChance", "ForceUpdate")
 end
 
-function EHIUnseenStrikeBuffTracker:Deactivate(...)
-    EHIUnseenStrikeBuffTracker.super.Deactivate(self, ...)
+function EHIUnseenStrikeBuffTracker:Deactivate()
+    EHIUnseenStrikeBuffTracker.super.Deactivate(self)
     self._parent_class:CallFunction("CritChance", "ForceUpdate")
 end
 
+---@class EHIExPresidentBuffTracker : EHIGaugeBuffTracker
+---@field super EHIGaugeBuffTracker
 EHIExPresidentBuffTracker = class(EHIGaugeBuffTracker)
 function EHIExPresidentBuffTracker:PreUpdateCheck()
     return managers.player:has_category_upgrade("player", "armor_health_store_amount")

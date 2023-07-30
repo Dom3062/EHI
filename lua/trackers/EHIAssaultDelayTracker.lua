@@ -9,7 +9,7 @@ local hostage_values = assault_values.hostage_hesitation_delay
 ---@field super EHIWarningTracker
 EHIAssaultDelayTracker = class(EHIWarningTracker)
 EHIAssaultDelayTracker._forced_icons = { { icon = "assaultbox", color = Control } }
-EHIAssaultDelayTracker._completion_color = EHITimerTracker._completion_color
+EHIAssaultDelayTracker._show_completion_color = true
 if type(tweak_values) ~= "table" then -- If for some reason the assault delay is not a table, use the value directly
     EHIAssaultDelayTracker._assault_delay = tonumber(tweak_values) or 30
 else
@@ -176,7 +176,7 @@ function EHIAssaultDelayTracker:delete()
         self._time = -self._time
         self._text:stop()
         self:SetTextColor(Color.white)
-        self:AnimateColor(nil, self._completion_color)
+        self:AnimateColor()
         return
     end
     EHIAssaultDelayTracker.super.delete(self)

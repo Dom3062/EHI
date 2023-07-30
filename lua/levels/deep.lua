@@ -106,6 +106,16 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1 }
+    --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ShowAchievementLootCounter({
     achievement = "deep_11",
@@ -116,9 +126,7 @@ EHI:ShowAchievementLootCounter({
             managers.ehi_tracker:IncreaseTrackerProgressMax("deep_11", 4)
             managers.ehi_tracker:CallFunction("deep_11", "SetStarted")
         end },
-        [102062] = { special_function = SF.CustomCode, f = function()
-            managers.ehi_tracker:CallFunction("deep_11", "SetFailed2")
-        end }
+        [102062] = { special_function = SF.CallCustomFunction, f = "SetFailed2" }
     },
     add_to_counter = true,
     start_silent = true,
@@ -127,6 +135,12 @@ EHI:ShowAchievementLootCounter({
             self:Trigger(101084)
         end
         self._trackers:SyncSecuredLoot("deep_11")
+    end,
+    loot_counter_load_sync = function(self)
+        if managers.preplanning:IsAssetBought(102474) then
+            self._trackers:IncreaseLootCounterProgressMax(4)
+        end
+        self._trackers:SyncSecuredLoot()
     end,
     show_loot_counter = true
 })
@@ -156,13 +170,10 @@ local total_xp_override =
     {
         min_max =
         {
-            min =
+            objectives =
             {
-                texas4_found_the_perfect_sample = { times = 0 }
-            },
-            max =
-            {
-                texas4_found_the_good_sample = { times = 0 }
+                texas4_found_the_perfect_sample = { min = 0 },
+                texas4_found_the_good_sample = { max = 0 }
             },
             loot_all = { max = 8 }
         }

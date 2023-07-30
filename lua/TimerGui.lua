@@ -12,6 +12,8 @@ end
 ---@field _current_timer number|string
 ---@field _time_left number
 ---@field THEME string
+---@field upgrade_colors table
+---@field themes table
 
 local Icon = EHI.Icons
 
@@ -46,6 +48,9 @@ function TimerGui:init(unit, ...)
     self._ehi_key = tostring(unit:key())
     local icon = unit:base().is_drill and Icon.Drill or unit:base().is_hacking_device and Icon.PCHack or unit:base().is_saw and "pd2_generic_saw" or Icon.Wait
     self._ehi_icon = { { icon = icon } }
+    if not show_waypoint_only then
+        EHI:OptionAndLoadTracker("show_timers")
+    end
 end
 
 function TimerGui:set_background_icons(...)
@@ -71,26 +76,26 @@ function TimerGui:GetUpgrades()
 end
 
 function TimerGui:StartTimer()
-    if managers.ehi_manager:Exists(self._ehi_key) then
-        managers.ehi_manager:SetTimerRunning(self._ehi_key)
-    else
-        local autorepair = self._unit:base()._autorepair or self._unit:base()._autorepair_client
-        -- In case the conversion fails, fallback to "self._time_left" which is a number
-        local t = tonumber(self._current_timer) or self._time_left
-        if not show_waypoint_only then
+    local autorepair = self._unit:base()._autorepair or self._unit:base()._autorepair_client
+    -- In case the conversion fails, fallback to "self._time_left" which is a number
+    local t = tonumber(self._current_timer) or self._time_left
+    if not show_waypoint_only then
+        if self._ehi_merge then
+            managers.ehi_tracker:CallFunction(self._ehi_key, "StartTimer", t)
+        else
             managers.ehi_tracker:AddTracker({
                 id = self._ehi_key,
                 time = t,
                 icons = self._icons or self._ehi_icon,
                 theme = self.THEME,
-                class = "EHITimerTracker",
+                class = EHI.Trackers.Timer.Base,
                 upgrades = self:GetUpgrades(),
                 autorepair = autorepair
             })
         end
-        self:AddWaypoint(t, autorepair)
-        self:PostStartTimer()
     end
+    self:AddWaypoint(t, autorepair)
+    self:PostStartTimer()
 end
 
 ---@param t number
@@ -149,6 +154,11 @@ function TimerGui:_start(...)
     original._start(self, ...)
     if self._ignore then
         return
+    end
+    if self._tracker_merge_id and managers.ehi_tracker:TrackerExists(self._tracker_merge_id) then
+        self._ehi_key = self._tracker_merge_id
+        self._ehi_merge = true
+        self._tracker_merge_id = nil
     end
     self:StartTimer()
 end
@@ -223,12 +233,18 @@ function TimerGui:hide(...)
 end
 
 function TimerGui:destroy(...)
-    self:RemoveTracker()
+    self:RemoveTracker(true)
     original.destroy(self, ...)
 end
 
-function TimerGui:RemoveTracker()
-    managers.ehi_manager:Remove(self._ehi_key)
+---@param destroy boolean?
+function TimerGui:RemoveTracker(destroy)
+    if self._ehi_merge and not destroy then
+        managers.ehi_tracker:CallFunction(self._ehi_key, "StopTimer")
+        managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    else
+        managers.ehi_manager:Remove(self._ehi_key)
+    end
 end
 
 function TimerGui:OnAlarm()
@@ -329,6 +345,11 @@ function TimerGui:SetCustomID(id)
         managers.ehi_manager:UpdateID(self._ehi_key, id)
     end
     self._ehi_key = id
+end
+
+---@param id string
+function TimerGui:SetTrackerMergeID(id)
+    self._tracker_merge_id = id
 end
 
 function TimerGui:Finalize()

@@ -68,6 +68,21 @@ if EHI:GetOption("show_escape_chance") then
         self._escape:AddChanceWhenDoesNotExists(false, 25)
     end) }
 end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[104496] = { time = 120, count_on_refresh = 1, id = "Snipers", class = TT.Sniper.TimedCount }
+    other[100063] = { time = 90, id = "Snipers", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+        if self._trackers:TrackerExists(trigger.id) then
+            self._trackers:CallFunction(trigger.id, "SetRespawnTime", trigger.time)
+        else
+            self._trackers:AddTracker({
+                id = trigger.id,
+                time = trigger.time,
+                count_on_refresh = 1,
+                class = TT.Sniper.TimedCount
+            })
+        end
+    end)}
+end
 
 EHI:ParseTriggers({
     other = other

@@ -32,6 +32,29 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100314] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+        if EHI:IsHost() and element:counter_value() ~= 0 then
+            return
+        end
+        self._trackers:AddTracker({
+            id = "Snipers",
+            chance = 10,
+            time = 20 + 10 + 25,
+            on_fail_refresh_t = 25,
+            on_success_refresh_t = 20 + 10 + 25,
+            class = TT.Sniper.Loop
+        })
+    end) }
+    other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[101324] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "RequestRemoval" }
+end
 
 EHI:ParseTriggers({ mission = triggers, other = other })
 

@@ -72,6 +72,16 @@ if EHI:GetOption("show_escape_chance") then
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 10)
     end)
 end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { chance = 20, time = 1 + 30 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 30 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
+    other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 local min_bags = EHI:GetValueBasedOnDifficulty({
     normal = 4,

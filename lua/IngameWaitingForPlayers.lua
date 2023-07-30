@@ -7,13 +7,17 @@ if EHI:GetOption("show_gage_tracker") then
     if EHI:GetOption("gage_tracker_panel") == 1 then
         EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
             if managers.ehi_tracker:TrackerDoesNotExist("Gage") and EHI:AreGagePackagesSpawned() then
-                managers.ehi_tracker:AddTracker({
-                    id = "Gage",
-                    icons = { "gage" },
-                    progress = EHI._cache.GagePackagesProgress or 0,
-                    max = tweak_data.gage_assignment:get_num_assignment_units(),
-                    class = EHI.Trackers.Progress
-                })
+                local progress = EHI._cache.GagePackagesProgress or 0
+                local max = tweak_data.gage_assignment:get_num_assignment_units()
+                if progress < max then
+                    managers.ehi_tracker:AddTracker({
+                        id = "Gage",
+                        icons = { "gage" },
+                        progress = progress,
+                        max = max,
+                        class = EHI.Trackers.Progress
+                    })
+                end
             end
         end)
     else

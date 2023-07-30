@@ -28,7 +28,7 @@ local triggers = {
     [102061] = { time = 900/30, id = "ElevatorUp", icons = { Icon.Wait } },
 
     -- Elevator Generator
-    [EHI:GetInstanceElementID(100066, 13930)] = { chance = 0, id = "GeneratorStartChance", icons = { Icon.Power }, class = TT.Chance },
+    [EHI:GetInstanceElementID(100066, 13930)] = { id = "GeneratorStartChance", icons = { Icon.Power }, class = TT.Chance },
     [EHI:GetInstanceElementID(100018, 13930)] = { id = "GeneratorStartChance", special_function = SF.IncreaseChanceFromElement }, -- +33%
     [EHI:GetInstanceElementID(100016, 13930)] = { id = "GeneratorStartChance", special_function = SF.RemoveTracker },
 
@@ -80,22 +80,46 @@ for _, index in ipairs({ 17930, 18330, 18830, 19230, 19630, 20030, 20430 }) do
     DisableWaypoints[EHI:GetInstanceElementID(100082, index)] = true -- Fix
 end
 
-EHI:ParseTriggers({ mission = triggers })
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 50 + 30, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+        local time_for_prefereds = self:IsMissionElementEnabled(104439) and 5 or 0
+        self._trackers:AddTracker({
+            id = trigger.id,
+            time = trigger.time + time_for_prefereds,
+            class = trigger.class
+        }, trigger.pos)
+    end)})
+}
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1 }
+    --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
+
+EHI:ParseTriggers({ mission = triggers, other = other })
 EHI:DisableWaypoints(DisableWaypoints)
 local loot_triggers = {}
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
-    EHI:AddOnAlarmCallback(function()
-        EHI:ShowAchievementLootCounter({
-            achievement = "pent_12",
-            max = 1,
-            show_finish_after_reaching_target = true,
-            counter =
-            {
-                check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
-                loot_type = "gnome"
-            }
-        })
-    end)
+    if EHI:CanShowAchievement("pent_12") then
+        EHI:AddOnAlarmCallback(function()
+            EHI:ShowAchievementLootCounterNoCheck({
+                achievement = "pent_12",
+                max = 1,
+                show_finish_after_reaching_target = true,
+                counter =
+                {
+                    check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+                    loot_type = "gnome"
+                }
+            })
+        end)
+    end
     loot_triggers[103616] = { special_function = SF.IncreaseProgressMax }
     loot_triggers[103617] = { special_function = SF.IncreaseProgressMax }
 end

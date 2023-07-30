@@ -16,13 +16,13 @@ end
 
 function EHIPiggyBankMutatorTracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
-    self._time_bg_box:set_w(self._time_bg_box:w() * 2)
-    self._levels_text = self._time_bg_box:text({
+    self._bg_box:set_w(self._bg_box:w() * 2)
+    self._levels_text = self._bg_box:text({
         name = "text2",
         text = self:FormatLevels(),
         align = "center",
         vertical = "center",
-        w = self._time_bg_box:w() / 2,
+        w = self._bg_box:w() / 2,
         h = self._icon_size_scaled,
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,

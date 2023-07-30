@@ -36,6 +36,9 @@ local function set_right(o, x)
     end
     o:set_right(target_right)
 end
+---@class EHIBuffTracker
+---@field _parent_class EHIBuffManager
+---@field _inverted_progress boolean
 EHIBuffTracker = class()
 EHIBuffTracker._show = function(o)
     local t = 0
@@ -55,6 +58,8 @@ EHIBuffTracker._hide = function(o)
     end
     o:set_alpha(0)
 end
+---@param panel Panel
+---@param params table
 function EHIBuffTracker:init(panel, params)
     local w_half = params.w / 2
     local color = params.icon_color or params.good and Color.white or Color.red
@@ -80,24 +85,24 @@ function EHIBuffTracker:init(panel, params)
         w = params.w,
         h = params.w
     })
-    self._time_bg_box = self._panel:panel({
-		name = "time_bg_box",
+    self._bg_box = self._panel:panel({
+		name = "bg_box",
 		x = 0,
         y = icon:y(),
         w = icon:w(),
         h = icon:h()
 	})
     if circle_shape then
-        self._time_bg_box:bitmap({
+        self._bg_box:bitmap({
             name = "bg",
             layer = -1,
-            w = self._time_bg_box:w(),
-            h = self._time_bg_box:h(),
+            w = self._bg_box:w(),
+            h = self._bg_box:h(),
             texture = "guis/textures/pd2_mod_ehi/buff_cframe_bg",
             color = Color.black:with_alpha(0.2)
         })
     else
-        self._time_bg_box:rect({
+        self._bg_box:rect({
             blend_mode = "normal",
             name = "bg",
             halign = "grow",
@@ -125,7 +130,7 @@ function EHIBuffTracker:init(panel, params)
         name = "text",
         text = "100s",
         w = self._panel:w(),
-        h = self._panel:h() - self._time_bg_box:h() - w_half,
+        h = self._panel:h() - self._bg_box:h() - w_half,
         font = tweak_data.menu.pd2_large_font,
 		font_size = w_half,
         color = Color.white,

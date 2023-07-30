@@ -197,8 +197,9 @@ local custom_levels =
     --Tonis2 = true, -- Triple Threat
     --dwn1 = true -- Deep Inside
     street_new = true, -- Heat Street Rework (Heat Street True Classic in-game)
-    office_strike = true,
-    tonmapjam22l = true -- Hard Cash
+    office_strike = true, -- Office Strike
+    tonmapjam22l = true, -- Hard Cash
+    SJamBank = true -- Branch Bank Initiative
 }
 
 local init_finalize = GameSetup.init_finalize

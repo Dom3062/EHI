@@ -2,26 +2,24 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+---@type ParseTriggerTable
 local triggers = {
     [100643] = { time = 30, id = "CrowdAlert", icons = { Icon.Alarm }, class = TT.Warning },
     [100645] = { id = "CrowdAlert", special_function = SF.RemoveTracker },
 
-    [101725] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape }, -- West
-    [101845] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape }, -- East
-
-    [EHI:GetInstanceElementID(100004, 6200)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Heli, position_by_element = EHI:GetInstanceElementID(100013, 6200) } }, -- West
-    [EHI:GetInstanceElementID(100015, 6100)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Heli, position_by_element = EHI:GetInstanceElementID(100013, 6100) } } -- East
+    [101725] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100013, 6200) } }, -- West
+    [101845] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100013, 6100) } } -- East
 }
 
 if EHI:IsClient() then
-    triggers[EHI:GetInstanceElementID(100030, 6100)] = { time = 113 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[EHI:GetInstanceElementID(100033, 6100)] = { time = 107 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[EHI:GetInstanceElementID(100034, 6100)] = { time = 47 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[EHI:GetInstanceElementID(100035, 6100)] = { time = 17 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[EHI:GetInstanceElementID(100030, 6200)] = { time = 113 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[EHI:GetInstanceElementID(100033, 6200)] = { time = 107 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[EHI:GetInstanceElementID(100034, 6200)] = { time = 47 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[EHI:GetInstanceElementID(100035, 6200)] = { time = 17 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[EHI:GetInstanceElementID(100030, 6100)] = EHI:ClientCopyTrigger(triggers[101845], { time = 113 + 24 + 5 + 3 })
+    triggers[EHI:GetInstanceElementID(100033, 6100)] = EHI:ClientCopyTrigger(triggers[101845], { time = 107 + 24 + 5 + 3 })
+    triggers[EHI:GetInstanceElementID(100034, 6100)] = EHI:ClientCopyTrigger(triggers[101845], { time = 47 + 24 + 5 + 3 })
+    triggers[EHI:GetInstanceElementID(100035, 6100)] = EHI:ClientCopyTrigger(triggers[101845], { time = 17 + 24 + 5 + 3 })
+    triggers[EHI:GetInstanceElementID(100030, 6200)] = EHI:ClientCopyTrigger(triggers[101725], { time = 113 + 24 + 5 + 3 })
+    triggers[EHI:GetInstanceElementID(100033, 6200)] = EHI:ClientCopyTrigger(triggers[101725], { time = 107 + 24 + 5 + 3 })
+    triggers[EHI:GetInstanceElementID(100034, 6200)] = EHI:ClientCopyTrigger(triggers[101725], { time = 47 + 24 + 5 + 3 })
+    triggers[EHI:GetInstanceElementID(100035, 6200)] = EHI:ClientCopyTrigger(triggers[101725], { time = 17 + 24 + 5 + 3 })
 end
 
 ---@type ParseAchievementTable

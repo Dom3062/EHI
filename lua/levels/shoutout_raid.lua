@@ -42,7 +42,13 @@ local trophy = {
     }
 }
 
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 20 + 60 + 30 })
+}
+
 EHI:ParseTriggers({
+    other = other,
     trophy = trophy
 })
 EHI:ShowAchievementLootCounter({

@@ -1,78 +1,15 @@
 local EHI = EHI
 local Icon = EHI.Icons
-EHIHeliTracker = class(EHICountTracker)
-EHIHeliTracker._forced_icons = { "enemy", { icon = Icon.Wait, visible = false } }
-EHIHeliTracker.AnimateColor = EHIWarningTracker.AnimateColor
-EHIHeliTracker._warning_color = EHITimerTracker._completion_color
-function EHIHeliTracker:OverridePanel()
-    self._time_text = self._time_bg_box:text({
-        name = "time_text",
-        text = EHIHeliTracker.super.super.Format(self),
-        align = "center",
-        vertical = "center",
-        w = self._time_bg_box:w(),
-        h = self._time_bg_box:h(),
-        font = tweak_data.menu.pd2_large_font,
-        font_size = self._panel:h() * self._text_scale,
-        color = self._text_color
-    })
-    self._time_text:set_left(self._time_bg_box:right())
-    self._panel_override_w = self._time_bg_box:w() + self._icon_size_scaled
-end
-
-function EHIHeliTracker:update(t, dt)
-    self._time = self._time - dt
-    self._time_text:set_text(EHIHeliTracker.super.super.Format(self))
-    if self._time <= 10 and not self._time_warning then
-        self._time_warning = true
-        self:AnimateColor()
-    end
-    if self._time <= 0 then
-        self:ObjectiveComplete("time")
-    end
-end
-
-function EHIHeliTracker:EnableUpdate()
-    self._time = 600 -- See element ´heli_is_ready_timer´ MissionScriptElement 103869
-    local new_w = self._panel:w() * 3
-    self:SetPanelW(new_w)
-    self._time_bg_box:set_w(self._time_bg_box:w() * 2)
-    self:FitTheText(self._time_text)
-    self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-    self:AnimIconX(self._time_bg_box:w() + self._gap_scaled)
-    if self._icon2 then
-        self._icon2:set_x(self:GetPanelSize() - self._icon_size_scaled)
-        self._icon2:set_visible(true)
-    end
-    self:AddTrackerToUpdate()
-end
-
-function EHIHeliTracker:GetPanelSize()
-    local n = self._icon2 and 2 or 1
-    return self._time_bg_box:w() + (self._icon_size_scaled * n)
-end
-
-function EHIHeliTracker:ObjectiveComplete(objective)
-    if objective == "count" then
-        self._text:set_color(Color.green)
-    elseif objective == "time" then
-        self:SetStatusText("done", self._time_text)
-        self._time_text:stop()
-        self._time_text:set_color(Color.green)
-    else -- Assault end
-        self._text:set_color(Color.green)
-        self._time_text:stop()
-        self._time_text:set_color(Color.green)
-    end
-    self:AnimateBG()
-    self:RemoveTrackerFromUpdate()
-end
-
-function EHIHeliTracker:destroy()
-    if self._time_text and alive(self._time_text) then
-        self._time_text:stop()
-    end
-    EHIHeliTracker.super.destroy(self)
+---@class EHIHeliTracker : EHIWarningTracker
+---@field super EHIWarningTracker
+EHIHeliTracker = class(EHIWarningTracker)
+EHIHeliTracker._forced_icons = { Icon.Heli }
+EHIHeliTracker._show_completion_color = true
+function EHIHeliTracker:SetDelayedRemoval()
+    self._fade_time = 10
+    self.update = self.update_fade
+    self._text:stop()
+    self:SetTextColor(Color.green)
 end
 
 local SF = EHI.SpecialFunctions
@@ -84,10 +21,20 @@ if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKIL
 elseif EHI:IsMayhemOrAbove() then
     kills = 15
 end
+---@type ParseTriggerTable
 local triggers = {
     [100001] = { time = 30, id = "BileArrival", icons = { Icon.Heli, Icon.C4 } },
+
+    [100068] = { max = kills, id = "SniperDeath", icons = { "sniper" }, class = TT.Progress, waypoint = { max = kills, position_by_element_and_remove_vanilla_waypoint = 100294, restore_on_done = true } },
     [104555] = { id = "SniperDeath", special_function = SF.IncreaseProgress },
-    [100147] = { time = 18.2, id = "HeliWinchLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+
+    [103446] = { time = 20 + 6 + 4, id = "HeliDropsC4", icons = { Icon.Heli, Icon.C4, Icon.Goto } },
+
+    [102001] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
+
+    [100082] = { time = 30 + 10, id = "HeliComesWithMagnet", icons = { Icon.Heli, Icon.Winch } },
+
+    [100147] = { time = 18.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
         if enabled then
             if self._trackers:TrackerExists(trigger.id) then
                 self._trackers:SetTrackerTimeNoAnim(trigger.id, trigger.time)
@@ -96,75 +43,13 @@ local triggers = {
             end
         end
     end) },
-    [102181] = { id = "HeliWinchLoop", special_function = SF.RemoveTracker },
+    [102181] = { id = "HeliMagnetLoop", special_function = SF.RemoveTracker },
 
-    [100068] = { max = kills, id = "SniperDeath", icons = { "sniper", Icon.Kill }, class = TT.Progress },
-    [103446] = { time = 20 + 6 + 4, id = "HeliDropsC4", icons = { Icon.Heli, Icon.C4, Icon.Goto } },
-    [100082] = { time = 40, id = "HeliComesWithMagnet", icons = { Icon.Heli, Icon.Winch } },
+    [100206] = { time = 30, id = "LoweringTheMagnet", icons = { Icon.Heli, Icon.Winch, Icon.Goto }, waypoint = { icon = Icon.Interact, position_by_element = 101016 } },
 
-    [100206] = { time = 30, id = "LoweringTheWinch", icons = { Icon.Heli, Icon.Winch, Icon.Goto } },
-
-    [102001] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
-
-    [100060] = { special_function = SF.Trigger, data = { 1000601, 1000602 } },
-    [1000601] = { id = "PanicRoomTakeoff", flash_times = 1, class = "EHIHeliTracker" },
-    [1000602] = { special_function = SF.CustomCode, f = function()
-        local count = 0
-        if EHI:IsPlayingFromStart() then
-            local element_area_counter = managers.mission:get_element_by_id(103832) -- ´enemies alive in volume´ ElementCounter 103832
-            if not element_area_counter then
-                EHI:DelayCall("RemovePanicRoomTakeoff", 1, function()
-                    managers.ehi_tracker:RemoveTracker("PanicRoomTakeoff")
-                end)
-                return
-            end
-            count = element_area_counter:counter_value()
-        else
-            local element_area = managers.mission:get_element_by_id(100216) -- ´on enter´ ElementAreaReportTrigger 100216
-            if not element_area then
-                EHI:DelayCall("RemovePanicRoomTakeoff", 1, function()
-                    managers.ehi_tracker:RemoveTracker("PanicRoomTakeoff")
-                end)
-                return
-            end
-            local all_enemies = managers.enemy:all_enemies()
-            for _, enemy_data in pairs(all_enemies) do
-                if not enemy_data.death_t and enemy_data.unit and alive(enemy_data.unit) then
-                    if element_area:_is_inside(enemy_data.unit:position()) then
-                        count = count + 1
-                    end
-                end
-            end
-        end
-        managers.ehi_tracker:SetTrackerCount("PanicRoomTakeoff", count)
-        EHI:AddTriggers({
-            [103700] = { special_function = SF.CustomCode, f = function()
-                managers.ehi_tracker:IncreaseTrackerCount("PanicRoomTakeoff")
-            end},
-            [103701] = { special_function = SF.CustomCode, f = function()
-                managers.ehi_tracker:DecreaseTrackerCount("PanicRoomTakeoff")
-            end}
-        }, "Trigger", {})
-        EHI:HookElements({ [103700] = true, [103701] = true })
-    end},
-    [103869] = { special_function = SF.CustomCode, f = function()
-        managers.ehi_tracker:CallFunction("PanicRoomTakeoff", "EnableUpdate")
-    end},
-    [1] = { special_function = SF.Trigger, data = { 2, 3 } },
-    [2] = { special_function = SF.RemoveTrigger, data = { 103700, 103701 } },
-    [3] = { id = "PanicRoomTakeoff", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
-        EHI:DelayCall("Remove" .. trigger.id, 10, function()
-            self:Trigger(4)
-        end)
-    end) },
-    [4] = { id = "PanicRoomTakeoff", special_function = SF.RemoveTracker },
-    [103901] = { special_function = SF.CustomCode, f = function()
-        managers.ehi_tracker:CallFunction("PanicRoomTakeoff", "ObjectiveComplete", "count")
-    end },
-    [104661] = { special_function = SF.CustomCode, f = function()
-        managers.ehi_tracker:CallFunction("PanicRoomTakeoff", "ObjectiveComplete", "assault_end")
-    end },
-    [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } }
+    [103869] = { time = 600, id = "PanicRoomTakeoff", class = "EHIHeliTracker" },
+    [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1004051 } },
+    [1004051] = { id = "PanicRoomTakeoff", special_function = SF.CallCustomFunction, f = "SetDelayedRemoval" }
 }
 
 ---@type ParseAchievementTable
@@ -174,8 +59,8 @@ local achievements =
     {
         elements =
         {
-            [104859] = { special_function = SF.SetAchievementComplete },
-            [100049] = { time = 20, class = TT.Achievement }
+            [100049] = { time = 20, class = TT.Achievement },
+            [104859] = { special_function = SF.SetAchievementComplete }
         }
     },
     cac_9 =
@@ -191,7 +76,11 @@ local achievements =
 
 local other =
 {
-    [100290] = EHI:AddAssaultDelay({ time = 30 })
+    [100290] = EHI:AddAssaultDelay({ time = 30 }),
+    [102741] = EHI:AddLootCounter(function()
+        local max = managers.ehi_tracker:CountInteractionAvailable("gen_pku_cocaine")
+        EHI:ShowLootCounterNoChecks({ max = max + 1 })
+    end)
 }
 
 --´drill defend waypoint001´ ElementWaypoint 101734
@@ -227,7 +116,15 @@ EHI:AddXPBreakdown({
             {
                 objectives = true
             },
-            no_max = true
+            max =
+            {
+                objectives = true,
+                loot =
+                {
+                    coke = { times = 10 },
+                    toothbrush = { times = 1 }
+                }
+            }
         }
     }
 })

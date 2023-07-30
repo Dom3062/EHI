@@ -1,3 +1,5 @@
+---@class EHIMeleeChargeBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
 EHIMeleeChargeBuffTracker = class(EHIBuffTracker)
 EHIMeleeChargeBuffTracker._inverted_progress = true
 local string_format = string.format

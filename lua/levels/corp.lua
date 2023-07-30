@@ -16,12 +16,12 @@ end
 
 function EHIcorp9Tracker:OverridePanel()
     EHIcorp9Tracker.super.OverridePanel(self)
-    self._text4 = self._time_bg_box:text({
+    self._text4 = self._bg_box:text({
         name = "text4",
         text = "",
         align = "center",
         vertical = "center",
-        w = self._time_bg_box:w(),
+        w = self._bg_box:w(),
         h = self._icon_size_scaled,
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
@@ -111,12 +111,8 @@ local achievements =
                 local value = managers.mission:get_saved_job_value("usb_train")
                 return value == 1
             end },
-            [EHI:GetInstanceElementID(100010, 14610)] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
-                self._trackers:CallFunction("corp_9", "LaptopInteracted")
-            end) },
-            [103518] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
-                self._trackers:CallFunction("corp_9", "FindCodesStarted")
-            end) },
+            [EHI:GetInstanceElementID(100010, 14610)] = { special_function = SF.CallCustomFunction, f = "LaptopInteracted" },
+            [103518] = { special_function = SF.CallCustomFunction, f = "FindCodesStarted" },
             [103045] = { special_function = SF.SetAchievementComplete },
             [EHI:GetInstanceElementID(100021, 11090)] = { special_function = SF.SetAchievementFailed } -- Lab destroyed with C4
         },
@@ -214,6 +210,16 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 45 + 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1 }
+    --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({
     mission = triggers,

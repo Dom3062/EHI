@@ -8,7 +8,7 @@ local refill_icon = { Icon.Water, Icon.Loop }
 local heli_60 = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
 local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
 if EHI:GetOption("show_one_icon") then
-    refill_icon = { { icon = Icon.Water, color = Color("D4F1F9") } }
+    refill_icon = { { icon = Icon.Water, color = tweak_data.ehi.colors.WaterColor } }
 end
 local keycode_units =
 {
@@ -175,6 +175,19 @@ local other =
         self:CheckCondition(trigger)
     end) })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100228] = { chance = 100, time = 150 + 120, on_fail_refresh_t = 120, on_success_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop }
+    other[101405] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[101404] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[101406] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 25%
+    other[101049] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[101050] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[101408] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI:IsClient() then
+        other[101038] = { chance = 25, time = 120, on_fail_refresh_t = 120, on_success_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop, special_function = SF.AddTrackerIfDoesNotExist }
+    end
+end
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -214,13 +227,9 @@ local xp_override =
     {
         min_max =
         {
-            min =
+            objectives =
             {
-                ggc_color_code = { times = 3 }
-            },
-            max =
-            {
-                ggc_color_code = { times = 3 }
+                ggc_color_code = { min_max = 3 }
             },
             loot_all = { min = 1, max = bags + 2 }
         }
@@ -306,8 +315,7 @@ end
 EHI:AddLoadSyncFunction(function(self)
     if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
         return Cleanup()
-    end
-    if EHI.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
+    elseif EHI.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
         return Cleanup()
     elseif managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
         return Cleanup()

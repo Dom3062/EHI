@@ -34,6 +34,7 @@ function EHIManager:new(ehi_tracker, ehi_waypoints, ehi_escape)
     self.TrackerWaypointsClass =
     {
         [self.Trackers.Pausable] = self.Waypoints.Pausable,
+        [self.Trackers.Progress] = self.Waypoints.Progress,
         [self.Trackers.Warning] = self.Waypoints.Warning,
         [self.Trackers.Inaccurate] = self.Waypoints.Inaccurate,
         [self.Trackers.InaccuratePausable] = self.Waypoints.InaccuratePausable,
@@ -82,7 +83,6 @@ end
 function EHIManager:LoadTime(t)
     self._t = t
     self._trackers:LoadTime(t)
-    self._waypoints:LoadTime(t)
 end
 
 ---@param state boolean
@@ -252,12 +252,6 @@ function EHIManager:SetTimerPowered(id, powered)
 end
 
 ---@param id string
-function EHIManager:SetTimerRunning(id)
-    self._trackers:SetTimerRunning(id)
-    self._waypoints:SetTimerWaypointRunning(id)
-end
-
----@param id string
 ---@param t number
 function EHIManager:SetTime(id, t)
     self._trackers:SetTrackerTime(id, t)
@@ -269,6 +263,11 @@ end
 function EHIManager:SetTimeNoAnim(id, t)
     self._trackers:SetTrackerTimeNoAnim(id, t)
     self._waypoints:SetWaypointTime(id, t)
+end
+
+function EHIManager:IncreaseProgress(id)
+    self._trackers:IncreaseTrackerProgress(id)
+    self._waypoints:IncreaseWaypointProgress(id)
 end
 
 ---@param id string
@@ -591,7 +590,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
             if data.random_time then
                 data.class = self.TrackerToInaccurate[data.class or self.Trackers.Base]
                 if not data.class then
-                    EHI:Log(string.format("Trigger %d with random time is using unknown tracker! Tracker class has been set to %s", id, "EHIInaccurateTracker"))
+                    EHI:Log(string.format("Trigger %d with random time is using unknown tracker! Tracker class has been set to %s", id, self.Trackers.Inaccurate))
                     data.class = self.Trackers.Inaccurate
                 end
             end
@@ -1031,7 +1030,7 @@ function EHIManager:Trigger(id, element, enabled)
                 end
                 self:CheckCondition(trigger)
             elseif f == SF.IncreaseProgress then
-                self._trackers:IncreaseTrackerProgress(trigger.id)
+                self:IncreaseProgress(trigger.id)
             elseif f == SF.SetTrackerAccurate then
                 if self:Exists(trigger.id) then
                     self:SetAccurate(trigger.id, trigger.time)
@@ -1133,6 +1132,18 @@ function EHIManager:Trigger(id, element, enabled)
                 self._trackers:DecreaseTrackerProgressMax(trigger.id, trigger.max)
             elseif f == SF.DecreaseProgress then
                 self._trackers:DecreaseTrackerProgress(trigger.id, trigger.progress)
+            elseif f == SF.IncreaseCounter then
+                self._trackers:IncreaseTrackerCount(trigger.id)
+            elseif f == SF.DecreaseCounter then
+                self._trackers:DecreaseTrackerCount(trigger.id)
+            elseif f == SF.SetCounter then
+                self._trackers:SetTrackerCount(trigger.id, trigger.count)
+            elseif f == SF.CallCustomFunction then
+                if trigger.arg then
+                    self:Call(trigger.id, trigger.f --[[@as string]], unpack(trigger.arg))
+                else
+                    self:Call(trigger.id, trigger.f --[[@as string]])
+                end
             elseif f == SF.Debug then
                 managers.hud:Debug(id)
             elseif f == SF.DebugElement then
@@ -1144,7 +1155,7 @@ function EHIManager:Trigger(id, element, enabled)
                     trigger.f(trigger.arg)
                 end
             elseif f == SF.CustomCodeDelayed then
-                EHI:DelayCall(tostring(id), trigger.t or 0, trigger.f)
+                EHI:DelayCall(tostring(id), trigger.t or 0, trigger.f --[[@as function]])
             elseif f >= SF.CustomSF then
                 self.SFF[f](self, trigger, element, enabled)
             end
@@ -1234,9 +1245,7 @@ function EHIManager:AddWaypointToTrigger(id, waypoint)
         return
     end
     local w = deep_clone(waypoint)
-    if not w.time then
-        w.time = t.time
-    end
+    w.time = w.time or t.time
     if not w.icon then
         local icon = t.icons
         if icon and icon[1] then

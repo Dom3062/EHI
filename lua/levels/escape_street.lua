@@ -43,6 +43,11 @@ if EHI:IsLootCounterVisible() then
         self._trackers:IncreaseLootCounterProgressMax()
     end)
 end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[102528] = { id = "Snipers", count_on_refresh = 2, snipers_spawned = true, class = TT.Sniper.TimedCount }
+    other[102431] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[102428] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SetRespawnTime", arg = { 15 + 20 }}
+end
 
 EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.HeliEscape)
 

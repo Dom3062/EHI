@@ -173,8 +173,9 @@ function EHITradeManager:PostPeerCustodyTime(peer_id, time, civilians_killed, in
     end
 end
 
----@return EHITradeDelayTracker|nil
+---@return EHITradeDelayTracker?
 function EHITradeManager:GetTracker()
+    ---@diagnostic disable-next-line
     return self._trackers:GetTracker("CustodyTime")
 end
 

@@ -24,7 +24,6 @@ EHIAssaultTracker._forced_icons = { { icon = "assaultbox", color = Control } }
 EHIAssaultTracker._is_client = EHI:IsClient()
 EHIAssaultTracker._inaccurate_text_color = EHI:GetTWColor("inaccurate")
 EHIAssaultTracker._paused_color = EHIPausableTracker._paused_color
-EHIAssaultTracker._completion_color = EHITimerTracker._completion_color
 if type(tweak_values) ~= "table" then -- If for some reason the assault delay is not a table, use the value directly
     EHIAssaultTracker._assault_delay = tonumber(tweak_values) or 30
 else

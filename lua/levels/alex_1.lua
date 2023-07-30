@@ -1,4 +1,4 @@
-local EHI, EM = EHI, EHIManager
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -15,14 +15,14 @@ local triggers = {
     [1007211] = { chance = 5, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists },
     [100724] = { time = 25, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_element = 100212 } },
     [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { icon = Icon.Loot, position_by_element = 100485 }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1001991 } },
-    [1001991] = { special_function = SF.CustomCode, f = function()
+    [1001991] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
         BagsCooked = BagsCooked + 1
         if BagsCooked >= 7 then
-            managers.ehi_tracker:RemoveTracker("CookChance")
-            EM:UnhookTrigger(100721)
-            EM:UnhookTrigger(100724)
+            self._trackers:RemoveTracker("CookChance")
+            self:UnhookTrigger(100721)
+            self:UnhookTrigger(100724)
         end
-    end},
+    end) },
 
     [1] = { special_function = SF.RemoveTrigger, data = { 101974, 101975, 101970 } },
     [101974] = { special_function = SF.Trigger, data = { 1019741, 1 } },
@@ -57,8 +57,29 @@ local other =
     [100707] = EHI:AddAssaultDelay({ time = assault_delay_methlab, special_function = SetTimeIfMoreThanOrCreateTracker, trigger_times = 1 }),
     [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    local SetRespawnTime = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+        local id = trigger.id
+        if self._trackers:TrackerExists(id) then
+            self._trackers:CallFunction(id, "SetRespawnTime", trigger.time)
+        else
+            self._trackers:AddTracker({
+                id = id,
+                time = trigger.time,
+                count_on_refresh = 2,
+                class = TT.Sniper.TimedCount
+            })
+        end
+    end)
+    other[101257] = { time = 90 + 140, id = "Snipers", count_on_refresh = 2, class = TT.Sniper.TimedCount, trigger_times = 1 }
+    other[101137] = { time = 60, id = "Snipers", special_function = SetRespawnTime }
+    other[101138] = { time = 90, id = "Snipers", special_function = SetRespawnTime }
+    other[101141] = { time = 140, id = "Snipers", special_function = SetRespawnTime }
+    other[101134] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 if EHI:IsClient() then
+    local EM = EHIManager
     local function SyncBagsCooked(self)
         BagsCooked = self:GetSecuredBagsAmount()
         if BagsCooked >= 7 then
@@ -89,14 +110,10 @@ EHI:ShowAchievementLootCounter({
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 })
 EHI:RegisterCustomSpecialFunction(SetTimeIfMoreThanOrCreateTracker, function(self, trigger, ...)
-    if self._trackers:TrackerExists(trigger.id) then
-        local tracker = self._trackers:GetTracker(trigger.id)
-        if tracker then
-            if tracker._time >= trigger.time then
-                self._trackers:SetTrackerTime(trigger.id, trigger.time)
-            end
-        else
-            self:CheckCondition(trigger)
+    local tracker = self._trackers:GetTracker(trigger.id)
+    if tracker then
+        if tracker._time >= trigger.time then
+            tracker:SetTime(trigger.time)
         end
     else
         self:CheckCondition(trigger)

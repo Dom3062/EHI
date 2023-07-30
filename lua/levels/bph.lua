@@ -37,6 +37,16 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 1 + 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { chance = 10, time = 1 + 15, on_fail_refresh_t = 15, on_success_refresh_t = 20 + 15, id = "Snipers", class = TT.Sniper.Loop }
+    other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 local DisableWaypoints =
 {
@@ -45,6 +55,8 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100037, 8000)] = true
 }
 EHI:DisableWaypoints(DisableWaypoints)
+-- 101399 units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer/001 (2050, -10250, 639.67)
+EHI:UpdateUnits({ [101399] = { icons = { "C_Locke_H_HellsIsland_Another" } } })
 
 EHI:ParseTriggers({
     mission = triggers,

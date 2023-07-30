@@ -10,6 +10,7 @@ local preload =
 {
     {} -- Escape
 }
+---@type ParseTriggerTable
 local triggers = {
     -- Time before escape is available
     [102808] = { run = { time = 65 } },
@@ -20,14 +21,21 @@ local triggers = {
     [100832] = { run = { time = 270 } },
 
     -- Fire
-    [101412] = { time = 300, id = "Fire1", icons = { Icon.Fire }, class = TT.Warning },
-    [101453] = { time = 300, id = "Fire2", icons = { Icon.Fire }, class = TT.Warning },
+    [101412] = { time = 300, id = "Fire1", icons = { Icon.Fire }, class = TT.Warning, waypoint = { position_by_unit = 101758 } },
+    [101453] = { time = 300, id = "Fire2", icons = { Icon.Fire }, class = TT.Warning, waypoint = { position_by_unit = 101759 } },
 
     -- Asset
-    [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = AssetLootDropOff }
+    [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = AssetLootDropOff, waypoint = { position_by_element = 103152 } }
     -- 20: Base Delay
     -- 40/3: Animation finish delay
     -- Total 33.33 s
+}
+local BaseAssaultDelay = 3.5 + 2.5 + 3 + 2 + 30
+local other =
+{
+    [101159] = EHI:AddAssaultDelay({ time = 12 + BaseAssaultDelay }),
+    [101166] = EHI:AddAssaultDelay({ time = 10 + BaseAssaultDelay }),
+    [101167] = EHI:AddAssaultDelay({ time = 15 + BaseAssaultDelay })
 }
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
@@ -35,16 +43,8 @@ if EHI:GetOption("show_escape_chance") then
         -- Reported in: https://steamcommunity.com/app/218620/discussions/14/5487063042655462839/
         managers.ehi_escape:AddEscapeChanceTracker(false, 25, 0)
     end)
+    other[104285] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 end
-
-local BaseAssaultDelay = 3.5 + 2.5 + 3 + 2 + 30
-local other =
-{
-    [101159] = EHI:AddAssaultDelay({ time = 12 + BaseAssaultDelay }),
-    [101166] = EHI:AddAssaultDelay({ time = 10 + BaseAssaultDelay }),
-    [101167] = EHI:AddAssaultDelay({ time = 15 + BaseAssaultDelay }),
-    [104285] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
-}
 
 EHI:ParseTriggers({
     mission = triggers,

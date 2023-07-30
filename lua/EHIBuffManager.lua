@@ -23,9 +23,8 @@ end
 local buff_w = 32
 local buff_h = 64
 ---@class EHIBuffManager
----@field new fun(...): self
-EHIBuffManager = class()
-function EHIBuffManager:init()
+EHIBuffManager = {}
+function EHIBuffManager:new()
     self._buffs = {}
     self._update_buffs = {}
     setmetatable(self._update_buffs, {__mode = "k"})
@@ -43,6 +42,7 @@ function EHIBuffManager:init()
     self._n_visible = 0
     self._cache = {}
     self._gap = 6
+    return self
 end
 
 function EHIBuffManager:init_finalize(hud)

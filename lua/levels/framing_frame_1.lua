@@ -1,5 +1,6 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
 --[[function EHI:PaintingCount()
     --[[local paintings = managers.ehi_tracker:GetUnits("units/payday2/architecture/com_int_gallery/com_int_gallery_wall_painting_bars", 1)
     local n_of_paintings = 0
@@ -20,6 +21,8 @@ local SF = EHI.SpecialFunctions
         max = 9
     })
 end]]
+
+local other = {}
 
 local min_bags = 4
 if Global.game_settings.level_id == "gallery" then
@@ -69,15 +72,8 @@ else -- Framing Frame Day 1
         }
     })
 
-    local other =
-    {
-        [102437] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }, -- +5%
-        [103884] = { id = "EscapeChance", special_function = SF.SetChanceFromElement } -- 100 %
-    }
-
-    EHI:ParseTriggers({
-        other = other
-    })
+    other[102437] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[103884] = { id = "EscapeChance", special_function = SF.SetChanceFromElement } -- 100 %
 
     if EHI:GetOption("show_escape_chance") then
         EHI:AddOnAlarmCallback(function(dropin)
@@ -104,6 +100,16 @@ EHI:ShowLootCounter({
         self._trackers:SyncSecuredLoot()
     end
 })
+
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[103331] = { id = "Snipers", chance = 10, time = 15, recheck_t = 30, class = TT.Sniper.TimedChanceOnce }
+    other[103829] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess", arg = { 2 } }
+    other[103828] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[103785] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[103761] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
+
+EHI:ParseTriggers({ other = other })
 
 ---@type MissionDoorTable
 local MissionDoor =

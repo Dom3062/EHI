@@ -14,7 +14,7 @@ local original =
 ---@field AddWaypoint fun(self: self, id: string, params: table): WaypointDataTable
 ---@field remove_waypoint fun(self: self, id: string)
 ---@field SoftRemoveWaypoint2 fun(self: self, id: number)
----@field get_waypoint_data fun(self: self, id: string): WaypointDataTable|nil
+---@field get_waypoint_data fun(self: self, id: string): WaypointDataTable?
 ---@field RestoreWaypoint2 fun(self: self, id: number)
 
 ---@param id string

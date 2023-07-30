@@ -123,10 +123,9 @@ EHI:AddXPBreakdown({
     },
     loot =
     {
-        weapon = 1000,
         weapon_glock = 1000,
         weapon_scar = 1000,
-        drk_bomb_part = { amount = 3000, times = 2 }
+        drk_bomb_part = 3000
     },
     total_xp_override =
     {

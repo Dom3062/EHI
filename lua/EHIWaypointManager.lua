@@ -18,7 +18,6 @@ function EHIWaypointManager:init()
     self._waypoints_to_update = {}
     setmetatable(self._waypoints_to_update, {__mode = "k"})
     self._pager_waypoints = {}
-    self._t = 0
 end
 
 function EHIWaypointManager:init_finalize()
@@ -26,11 +25,6 @@ function EHIWaypointManager:init_finalize()
         return
     end
     EHI:AddOnAlarmCallback(callback(self, self, "RemoveAllPagerWaypoints"))
-end
-
----@param t number
-function EHIWaypointManager:LoadTime(t)
-    self._t = t
 end
 
 ---@param hud HUDManager
@@ -176,8 +170,9 @@ end
 function EHIWaypointManager:SetWaypointPosition(id, pos)
     if self:WaypointExists(id) then
         local wp = self._hud:get_waypoint_data(id)
-        if wp then
+        if wp and pos then
             wp.position = pos
+            wp.init_data.position = pos
         end
     end
 end
@@ -222,14 +217,6 @@ function EHIWaypointManager:SetTimerWaypointPowered(id, powered)
 end
 
 ---@param id string
-function EHIWaypointManager:SetTimerWaypointRunning(id)
-    local wp = self._waypoints[id]
-    if wp and wp.SetRunning then
-        wp:SetRunning()
-    end
-end
-
----@param id string
 ---@param pause boolean
 function EHIWaypointManager:SetWaypointPause(id, pause)
     local wp = self._waypoints[id]
@@ -262,6 +249,14 @@ function EHIWaypointManager:SetWaypointAccurate(id, t)
     local wp = id and self._waypoints[id]
     if wp and wp.SetWaypointAccurate then
         wp:SetWaypointAccurate(t)
+    end
+end
+
+---@param id string
+function EHIWaypointManager:IncreaseWaypointProgress(id)
+    local wp = id and self._waypoints[id]
+    if wp and wp.IncreaseProgress then
+        wp:IncreaseProgress()
     end
 end
 
@@ -306,6 +301,7 @@ do
     dofile(path .. "EHIWarningWaypoint.lua")
     dofile(path .. "EHIPausableWaypoint.lua")
     dofile(path .. "EHITimerWaypoint.lua")
+    dofile(path .. "EHIProgressWaypoint.lua")
     dofile(path .. "EHIInaccurateWaypoints.lua")
 end
 

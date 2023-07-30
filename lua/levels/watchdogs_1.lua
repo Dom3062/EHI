@@ -26,7 +26,6 @@ if EHI:IsClient() then
     triggers[101008] = { time = 60 + 30 + 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[101072] = { time = 30 + 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[101073] = { time = 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[100658] = { time = 7, id = "CarPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
 
     triggers[103300] = { time = 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[103301] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }

@@ -4,13 +4,11 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local heli_anim = 35
 local heli_anim_full = 35 + 10 -- 10 seconds is hose lifting up animation when chopper goes refilling
-local thermite_right = { time = 86, id = "Thermite", icons = { Icon.Fire } }
-local thermite_left_top = { time = 90, id = "Thermite", icons = { Icon.Fire } }
 local heli_20 = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled }
 local heli_65 = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled }
 local HeliWaterFill = { Icon.Heli, Icon.Water }
 if EHI:GetOption("show_one_icon") then
-    HeliWaterFill = { { icon = Icon.Heli, color = Color("D4F1F9") } }
+    HeliWaterFill = { { icon = Icon.Heli, color = tweak_data.ehi.colors.WaterColor } }
 end
 local triggers = {
     [101499] = { time = 155 + 25, id = "HeliEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 101525 } },
@@ -35,20 +33,20 @@ local triggers = {
     [2] = { id = "HeliWaterReset", icons = { Icon.Heli, Icon.Water, Icon.Loop }, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 62 + heli_anim_full, no = 122 + heli_anim_full } },
 
     -- Right
-    [100283] = thermite_right,
-    [100284] = thermite_right,
-    [100288] = thermite_right,
+    [100283] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100647 } },
+    [100284] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100648 } },
+    [100288] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100653 } },
 
     -- Left
-    [100285] = thermite_left_top,
-    [100286] = thermite_left_top,
-    [100560] = thermite_left_top,
+    [100285] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100651 } },
+    [100286] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100652 } },
+    [100560] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100220 } },
 
     -- Top
-    [100282] = thermite_left_top,
-    [100287] = thermite_left_top,
-    [100558] = thermite_left_top,
-    [100559] = thermite_left_top
+    [100282] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100646 } },
+    [100287] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100653 } },
+    [100558] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100655 } },
+    [100559] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100656 } }
 }
 for _, index in ipairs({ 100, 150, 250, 300 }) do
     triggers[EHI:GetInstanceElementID(100032, index)] = { time = 240, id = "HeliWaterFill", icons = HeliWaterFill, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists }
@@ -82,10 +80,9 @@ local achievements =
     }
 }
 
---- 100475
 local other =
 {
-    [101018] = EHI:AddAssaultDelay({ time = 30, special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 } })
+    [100475] = EHI:AddAssaultDelay({ time = 30, special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 } })
 }
 if EHI:IsLootCounterVisible() then
     local Trigger = { id = "LootCounter", special_function = SF.IncreaseProgressMax } -- Money spawned
@@ -133,6 +130,50 @@ if EHI:IsLootCounterVisible() then
     other[104279] = { special_function = IncreaseMaxRandomLoot, index = 1140 }
     other[104280] = { special_function = IncreaseMaxRandomLoot, index = 1160 }
     other[104281] = { special_function = IncreaseMaxRandomLoot, index = 1300 }
+end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    ---@class EHIcrojob3SnipersTracker : EHISniperLoopTracker
+    ---@field super EHISniperLoopTracker
+    EHIcrojob3SnipersTracker = class(EHISniperLoopTracker)
+    function EHIcrojob3SnipersTracker:pre_init(params)
+        self._sniper_respawn = true
+        self._initial_spawn = true
+        self._refresh_on_delete = true
+        EHIcrojob3SnipersTracker.super.pre_init(self, params)
+    end
+    function EHIcrojob3SnipersTracker:RequestRemoval()
+        self._sniper_respawn = true -- To disable the respawn
+        EHIcrojob3SnipersTracker.super.RequestRemoval(self)
+    end
+    function EHIcrojob3SnipersTracker:OnChanceSuccess()
+        self:SetChance(10) -- ´set10´ ElementLogicChanceOperator 100749
+        self:RemoveTrackerFromUpdate()
+        self._sniper_respawn = false
+    end
+    function EHIcrojob3SnipersTracker:SniperKilled()
+        if self._sniper_respawn then
+            return
+        end
+        self._sniper_respawn = true
+        self:OnChanceFail()
+        self:AddTrackerToUpdate()
+    end
+    function EHIcrojob3SnipersTracker:Refresh()
+        if self._initial_spawn then
+            self:OnChanceSuccess()
+            self._initial_spawn = nil
+        end
+    end
+    other[100750] = { chance = 100, time = 120, on_fail_refresh_t = 40, id = "Snipers", class = "EHIcrojob3SnipersTracker" }
+    other[102928] = { id = "Snipers", special_function = SF.RemoveTracker }
+    other[100745] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100749] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" } -- 10%
+    other[100518] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperKilled" }
+    other[102928] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "RequestRemoval" }
+    other[100744] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100496] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100519] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[100521] = { id = "Snipers", special_function = SF.IncreaseCounter }
 end
 
 EHI:ParseTriggers({

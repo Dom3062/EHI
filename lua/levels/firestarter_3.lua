@@ -54,6 +54,31 @@ achievements.voff_1 =
 }
 
 other[105364] = EHI:AddAssaultDelay({ time = 10 + 60 + 30, special_function = SF.AddTimeByPreplanning, data = { id = 104875, yes = 30, no = 15 } })
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100438] = { chance = 10, time = 30 + 60, id = "Snipers", class = TT.Sniper.Loop }
+    other[105327] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[101481] = { id = "Snipers", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+        self._trackers:SetChance(trigger.id, element._values.chance) -- 20%
+        self._trackers:SetTrackerTimeNoAnim(trigger.id, 60)
+    end)}
+    other[101446] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+        self._trackers:SetTrackerTimeNoAnim("Snipers", 60)
+    end)}
+    -- Sniper spawn
+    other[103529] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[103534] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[101066] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100945] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[101068] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[101444] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    -- Sniper death
+    other[101635] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[101632] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[101638] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[101640] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[101645] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[101627] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -110,7 +135,7 @@ EHI:AddLoadSyncFunction(function(self)
     if not (secure_area_1 and secure_area_2 and secure_area_3) then
         return
     end
-    self:Trigger(101177)
+    self:Trigger(101539)
     local pos_1 = dog_haters_unit[1]:position()
     local pos_2 = dog_haters_unit[2]:position()
     if (secure_area_1:_is_inside(pos_1) and secure_area_1:_is_inside(pos_2)) or

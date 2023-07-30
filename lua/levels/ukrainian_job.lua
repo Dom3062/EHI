@@ -21,19 +21,6 @@ local triggers = {
     [1017701] = { time = 650/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
     [1017702] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101776 } }
 }
-if EHI:GetOption("show_escape_chance") then
-    local start_chance = 30 -- Normal
-    if EHI:IsDifficulty(EHI.Difficulties.Hard) then
-        start_chance = 33
-    elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
-        start_chance = 35
-    elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-        start_chance = 37
-    end
-    EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi_escape:AddEscapeChanceTracker(dropin, start_chance)
-    end)
-end
 
 ---@type ParseAchievementTable
 local achievements =
@@ -68,8 +55,23 @@ local achievements =
 
 local other =
 {
-    [101614] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    [104176] = EHI:AddAssaultDelay({ time = 25 + 90 }),
+    [104178] = EHI:AddAssaultDelay({ time = 35 + 90 })
 }
+if EHI:GetOption("show_escape_chance") then
+    local start_chance = 30 -- Normal
+    if EHI:IsDifficulty(EHI.Difficulties.Hard) then
+        start_chance = 33
+    elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
+        start_chance = 35
+    elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+        start_chance = 37
+    end
+    EHI:AddOnAlarmCallback(function(dropin)
+        managers.ehi_escape:AddEscapeChanceTracker(dropin, start_chance)
+    end)
+    other[101614] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+end
 
 EHI:ParseTriggers({
     mission = triggers,

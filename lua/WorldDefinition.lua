@@ -4,7 +4,7 @@ if EHI:CheckLoadHook("WorldDefinition") then
 end
 
 ---@class WorldDefinition
----@field get_unit fun(self: WorldDefinition, id: number): Unit?
+---@field get_unit fun(self: self, id: number): Unit?
 
 local original =
 {
@@ -56,6 +56,9 @@ function EHI:FinalizeUnits(tbl)
                     end
                     if unit_data.set_custom_id then
                         timer_gui:SetCustomID(unit_data.set_custom_id)
+                    end
+                    if unit_data.tracker_merge_id then
+                        timer_gui:SetTrackerMergeID(unit_data.tracker_merge_id)
                     end
                     if unit_data.custom_callback then
                         timer_gui:SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)

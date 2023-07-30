@@ -118,6 +118,26 @@ if EHI:IsLootCounterVisible() then
     other[101280] = CokeDestroyedTrigger
     other[101281] = CokeDestroyedTrigger
 end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") and false then
+    other[100667] = { chance = 100, time = 35, recheck_t = 35, id = "Snipers", class = "EHISniperTimedChanceTracker" }
+    other[100682] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100683] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[100685] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+        if self._trackers:TrackerExists("Snipers") then
+            self._trackers:SetChance("Snipers", element._values.chance)
+            self._trackers:CallFunction("Snipers", "SniperSpawnsSuccess")
+        else
+            self._trackers:AddTracker({
+                id = "Snipers",
+                chance = element._values.chance,
+                recheck_t = 35,
+                chance_success = true,
+                class = "EHISniperTimedChanceTracker"
+            })
+        end
+    end)}
+    other[100686] = { special_function}
+end
 
 EHI:ParseTriggers({
     mission = triggers,

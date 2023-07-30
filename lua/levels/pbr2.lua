@@ -1,4 +1,5 @@
 local EHI = EHI
+---@class EHIcac33Tracker : EHIAchievementStatusTracker, EHIProgressTracker
 EHIcac33Tracker = EHI:AchievementClass(EHIAchievementStatusTracker, "EHIcac33Tracker")
 EHIcac33Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac33Tracker.FormatProgress = EHIProgressTracker.Format
@@ -9,18 +10,11 @@ function EHIcac33Tracker:init(panel, params)
 end
 
 function EHIcac33Tracker:OverridePanel()
-    self._progress_text = self._time_bg_box:text({
+    self._progress_text = self:CreateText({
         name = "progress",
-        text = self:FormatProgress(),
-        align = "center",
-        vertical = "center",
-        w = self._time_bg_box:w(),
-        h = self._time_bg_box:h(),
-        font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h() * self._text_scale,
-        color = self._text_color,
-        visible = false
+        text = self:FormatProgress()
     })
+    self._progress_text:set_visible(false)
     self:FitTheText(self._progress_text)
 end
 
@@ -61,10 +55,10 @@ local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } }
 local triggers = {
-    [101897] = { time = 60, id = "LockeSecureHeli", icons = { Icon.Heli, Icon.Winch } }, -- Time before Locke arrives with heli to pickup the money
     [101985] = thermite, -- First grate
     [101984] = thermite -- Second grate
 }
+-- Flare is handled in CoreWorldInstanceManager.lua
 
 ---@type ParseAchievementTable
 local achievements =
@@ -97,9 +91,7 @@ local achievements =
             [103486] = { status = "ok", special_function = SF.SetAchievementStatus },
             [103479] = { special_function = SF.SetAchievementComplete },
             [103475] = { special_function = SF.SetAchievementFailed },
-            [103487] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
-                self._trackers:CallFunction("cac_33", "Activate")
-            end) },
+            [103487] = { special_function = SF.CallCustomFunction, f = "Activate" },
             [103477] = { special_function = SF.IncreaseProgress },
         }
     }
@@ -109,6 +101,16 @@ local other =
 {
     [100653] = EHI:AddAssaultDelay({ time = 2 + 15 + 30, trigger_times = 1 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100161] = { chance = 10, time = 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop }
+    other[100153] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100159] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100155] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100152] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100156] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100148] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100146] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({
     mission = triggers,

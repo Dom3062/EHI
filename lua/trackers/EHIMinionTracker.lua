@@ -8,11 +8,11 @@ function EHIMinionTracker:init(...)
     self._peers = {}
     EHIMinionTracker.super.init(self, ...)
     self._default_panel_w = self._panel:w()
-    self._default_bg_box_w = self._time_bg_box:w()
-    self._panel_half = self._time_bg_box:w() / 2
+    self._default_bg_box_w = self._bg_box:w()
+    self._panel_half = self._bg_box:w() / 2
     self._panel_w = self._default_panel_w
     self._bg_box_w = self._default_bg_box_w
-    self._time_bg_box:remove(self._text)
+    self._bg_box:remove(self._text)
 end
 
 function EHIMinionTracker:SetTextPeerColor()
@@ -20,9 +20,9 @@ function EHIMinionTracker:SetTextPeerColor()
         return
     end
     for i = 0, HUDManager.PLAYER_PANEL, 1 do
-        if self._time_bg_box:child("text" .. i) then
+        if self._bg_box:child("text" .. i) then
             local color = tweak_data.chat_colors[i] or Color.white
-            self._time_bg_box:child("text" .. i):set_color(color)
+            self._bg_box:child("text" .. i):set_color(color)
         end
     end
 end
@@ -46,7 +46,7 @@ end
 function EHIMinionTracker:AlignTextOnHalfPos()
     local pos = 0
     for i = 0, HUDManager.PLAYER_PANEL, 1 do
-        local text = self._time_bg_box:child("text" .. i)
+        local text = self._bg_box:child("text" .. i)
         if text then
             text:set_w(self._panel_half)
             text:set_x(self._panel_half * pos)
@@ -61,10 +61,10 @@ function EHIMinionTracker:Reorganize(addition)
             return
         end
         for i = 0, HUDManager.PLAYER_PANEL, 1 do
-            local text = self._time_bg_box:child("text" .. i)
+            local text = self._bg_box:child("text" .. i)
             if text then
                 text:set_font_size(self._panel:h() * self._text_scale)
-                text:set_w(self._time_bg_box:w())
+                text:set_w(self._bg_box:w())
                 self:FitTheText(text)
                 break
             end
@@ -74,17 +74,17 @@ function EHIMinionTracker:Reorganize(addition)
         if not addition then
             self._panel_w = self._default_panel_w
             self:AnimateMovement()
-            self._time_bg_box:set_w(self._default_bg_box_w)
+            self._bg_box:set_w(self._default_bg_box_w)
         end
     elseif addition then
         self._panel_w = self._panel_w + self._panel_half
         self:AnimateMovement()
-        self._time_bg_box:set_w(self._time_bg_box:w() + self._panel_half)
+        self._bg_box:set_w(self._bg_box:w() + self._panel_half)
         self:AlignTextOnHalfPos()
     else
         self._panel_w = self._panel_w - self._panel_half
         self:AnimateMovement()
-        self._time_bg_box:set_w(self._time_bg_box:w() - self._panel_half)
+        self._bg_box:set_w(self._bg_box:w() - self._panel_half)
         self:AlignTextOnHalfPos()
     end
 end
@@ -99,15 +99,15 @@ function EHIMinionTracker:RemovePeer(peer_id)
         return
     end
     self._peers[peer_id] = nil
-    self._time_bg_box:remove(self._time_bg_box:child("text" .. peer_id))
+    self._bg_box:remove(self._bg_box:child("text" .. peer_id))
     if self._n_of_peers == 1 then
         for i = 0, HUDManager.PLAYER_PANEL, 1 do
-            local text = self._time_bg_box:child("text" .. i)
+            local text = self._bg_box:child("text" .. i)
             if text then
                 text:set_font_size(self._panel:h() * self._text_scale)
                 text:set_color(Color.white)
                 text:set_x(0)
-                text:set_w(self._time_bg_box:w())
+                text:set_w(self._bg_box:w())
                 self:FitTheText(text)
                 break
             end
@@ -120,11 +120,11 @@ function EHIMinionTracker:RemovePeer(peer_id)
 end
 
 function EHIMinionTracker:FitTheTextUnique(i)
-    self:FitTheText(self._time_bg_box:child("text" .. i))
+    self:FitTheText(self._bg_box:child("text" .. i))
 end
 
 function EHIMinionTracker:FormatUnique(peer_id)
-    self._time_bg_box:child("text" .. peer_id):set_text(tostring(self:GetNumberOfMinions(peer_id)))
+    self._bg_box:child("text" .. peer_id):set_text(tostring(self:GetNumberOfMinions(peer_id)))
 end
 
 function EHIMinionTracker:GetNumberOfMinions(peer_id)
@@ -150,17 +150,7 @@ function EHIMinionTracker:AddMinion(unit, key, amount, peer_id)
         return
     end
     self._peers[peer_id] = { [key] = amount }
-    self._time_bg_box:text({
-        name = "text" .. peer_id,
-        text = "",
-        align = "center",
-        vertical = "center",
-        w = self._time_bg_box:w(),
-        h = self._time_bg_box:h(),
-        font = tweak_data.menu.pd2_large_font,
-        font_size = self._panel:h() * self._text_scale,
-        color = Color.white
-    })
+    self:CreateText({ name = "text" .. peer_id })
     self._n_of_peers = self._n_of_peers + 1
     if self._n_of_peers >= 2 then
         self:AnimateBG()
@@ -192,9 +182,9 @@ end
 
 function EHIMinionTracker:UpdatePeerColors()
     for i = 0, HUDManager.PLAYER_PANEL, 1 do
-        if self._time_bg_box:child("text" .. i) then
+        if self._bg_box:child("text" .. i) then
             local color = tweak_data.chat_colors[i] or Color.white
-            self._time_bg_box:child("text" .. i):set_color(color)
+            self._bg_box:child("text" .. i):set_color(color)
         end
     end
 end

@@ -1,6 +1,10 @@
 ---@class EHIWaypoint
 ---@field new fun(waypoint: WaypointDataTable, params: table, parent_class: EHIWaypointManager): self
 ---@field _parent_class EHIWaypointManager
+---@field _timer PanelText
+---@field _bitmap PanelBitmap
+---@field _arrow PanelBitmap
+---@field _bitmap_world PanelBitmap
 EHIWaypoint = class()
 EHIWaypoint._update = true
 EHIWaypoint._default_color = Color.white
@@ -22,6 +26,10 @@ if EHI:GetOption("time_format") == 1 then
     EHIWaypoint.Format = tweak_data.ehi.functions.FormatSecondsOnly
 else
     EHIWaypoint.Format = tweak_data.ehi.functions.FormatMinutesAndSeconds
+end
+
+function EHIWaypoint:ForceFormat()
+    self._timer:set_text(self:Format())
 end
 
 function EHIWaypoint:WaypointToRestore(id)

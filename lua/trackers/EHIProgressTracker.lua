@@ -4,7 +4,7 @@ EHIProgressTracker = class(EHITracker)
 EHIProgressTracker.update = EHIProgressTracker.update_fade
 EHIProgressTracker._progress_bad = Color(255, 255, 165, 0) / 255
 EHIProgressTracker._update = false
-function EHIProgressTracker:init(panel, params)
+function EHIProgressTracker:pre_init(params)
     self._max = params.max or 0
     self._progress = params.progress or 0
     self._flash = not params.dont_flash
@@ -13,7 +13,6 @@ function EHIProgressTracker:init(panel, params)
     self._set_color_bad_when_reached = params.set_color_bad_when_reached
     self._flash_times = params.flash_times or 3
     self._status_is_overridable = params.status_is_overridable
-    EHIProgressTracker.super.init(self, panel, params)
 end
 
 function EHIProgressTracker:Format()

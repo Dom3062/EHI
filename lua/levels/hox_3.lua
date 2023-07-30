@@ -29,6 +29,16 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 25 + 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { chance = 20, time = 1 + 10 + 45, on_fail_refresh_t = 45, on_success_refresh_t = 20 + 10 + 45, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
+    other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 20%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowLootCounter({ max = 8 })
@@ -72,13 +82,9 @@ EHI:AddXPBreakdown({
                 {
                     min_max =
                     {
-                        min =
+                        objectives =
                         {
-                            hox3_vault_objective = { times = 2 }
-                        },
-                        max =
-                        {
-                            hox3_vault_objective = { times = 2 }
+                            hox3_vault_objective = { min_max = 2 }
                         },
                         loot_all = { min = required_bags, max = 8 }
                     }

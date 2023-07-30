@@ -58,7 +58,7 @@ local triggers = {
     [100733] = caddilac,
     [100734] = caddilac,
 
-    [102253] = { time = 11, id = "BileDropCaddilac", icons = { Icon.Heli, { icon = Icon.Car, color = Color("FFFF00") }, Icon.Goto } },
+    [102253] = { time = 11, id = "BileDropCaddilac", icons = { Icon.Heli, { icon = Icon.Car, color = Color.yellow }, Icon.Goto } },
 
     [100213] = { time = 450/30, id = "EscapeCar1", icons = Icon.CarEscape },
     [100214] = { time = 160/30, id = "EscapeCar2", icons = Icon.CarEscape },

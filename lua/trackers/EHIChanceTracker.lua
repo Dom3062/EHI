@@ -2,11 +2,10 @@
 ---@field super EHITracker
 EHIChanceTracker = class(EHITracker)
 EHIChanceTracker._update = false
-function EHIChanceTracker:init(panel, params)
+function EHIChanceTracker:pre_init(params)
     self._flash = params.dont_flash ~= true
     self._flash_times = params.flash_times or 3
     self._chance = params.chance or 0
-    EHIChanceTracker.super.init(self, panel, params)
 end
 
 function EHIChanceTracker:Format()

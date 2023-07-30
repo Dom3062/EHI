@@ -7,6 +7,8 @@ local function anim(o, ratio)
         o:set_color(Color(1, l, 1, 1))
     end)
 end
+---@class EHIGaugeBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
 EHIGaugeBuffTracker = class(EHIBuffTracker)
 EHIGaugeBuffTracker._inverted_progress = true
 function EHIGaugeBuffTracker:init(panel, params)

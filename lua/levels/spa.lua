@@ -8,7 +8,7 @@ local triggers = {
     [100681] = { time = 60, id = "CharonPickLock", icons = { Icon.Door }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_by_unit = 102837 } },
     [101430] = { id = "CharonPickLock", special_function = SF.PauseTracker },
 
-    [102266] = { max = 6, id = "SniperDeath", icons = { "sniper", Icon.Kill }, class = TT.Progress },
+    [102266] = { max = 6, id = "SniperDeath", icons = { "sniper" }, class = TT.Progress },
     [103419] = { id = "SniperDeath", special_function = SF.IncreaseProgress },
 
     [100549] = { time = 20, id = "ObjectiveWait", icons = { Icon.Wait }, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 100935, restore_on_done = true } },

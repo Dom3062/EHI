@@ -214,7 +214,7 @@ function EHITrackerManager:PreloadTracker(params)
 end
 
 ---@param id string
----@param params AddTrackerTable
+---@param params AddTrackerTable|ElementTrigger
 function EHITrackerManager:RunTracker(id, params)
     local tracker = self._trackers[id]
     if not tracker then
@@ -249,7 +249,7 @@ function EHITrackerManager:Sync(id, delay)
     EHI:SyncTable(EHI.SyncMessages.EHISyncAddTracker, { id = id, delay = delay or 0 })
 end
 
-if Global.game_settings and Global.game_settings.single_player then
+if Global.game_settings.single_player then
     EHITrackerManager.Sync = function(...) end
 end
 
@@ -269,6 +269,7 @@ function EHITrackerManager:AddLaserTracker(params)
     for id, _ in pairs(self._stealth_trackers.lasers) do
         -- Don't add this tracker if the "next_cycle_t" is the same as time to prevent duplication
         local tracker = self:GetTracker(id)
+        ---@diagnostic disable-next-line
         if tracker and tracker._next_cycle_t == params.time then
             return
         end
@@ -399,6 +400,14 @@ end
 function EHITrackerManager:AddTrackerIfDoesNotExist(params, pos)
     if self:TrackerDoesNotExist(params.id) then
         self:AddTracker(params, pos)
+    end
+end
+
+---@param id string
+---@param params AddTrackerTable|ElementTrigger
+function EHITrackerManager:RunTrackerIfDoesNotExist(id, params)
+    if self:TrackerExists(id) and not self._trackers_pos[id] then
+        self:RunTracker(id, params)
     end
 end
 
@@ -592,6 +601,7 @@ function EHITrackerManager:UpdateTrackerID(id, new_id)
 end
 
 ---@param id string
+---@return EHITracker?
 function EHITrackerManager:GetTracker(id)
     return id and self._trackers[id]
 end
@@ -709,14 +719,6 @@ function EHITrackerManager:SetTimerPowered(id, powered)
     local tracker = self._trackers[id]
     if tracker and tracker.SetPowered then
         tracker:SetPowered(powered)
-    end
-end
-
----@param id string
-function EHITrackerManager:SetTimerRunning(id)
-    local tracker = self._trackers[id]
-    if tracker and tracker.SetRunning then
-        tracker:SetRunning()
     end
 end
 
@@ -963,7 +965,6 @@ if Global.load_level then
     dofile(path .. "EHITracker.lua")
     dofile(path .. "EHIWarningTracker.lua")
     dofile(path .. "EHIPausableTracker.lua")
-    dofile(path .. "EHITimerTracker.lua")
     dofile(path .. "EHIChanceTracker.lua")
     dofile(path .. "EHIProgressTracker.lua")
     dofile(path .. "EHICountTracker.lua")
@@ -975,9 +976,6 @@ if Global.load_level then
     dofile(path .. "EHIDailyTrackers.lua")
     if EHI:GetOption("xp_panel") <= 2 and EHI:IsXPTrackerVisible() then
         dofile(path .. "EHIXPTracker.lua")
-    end
-    if EHI:GetOption("show_timers") then
-        dofile(path .. "EHISecurityLockGuiTracker.lua")
     end
     if EHI:GetOption("show_equipment_tracker") or (EHI:GetOption("show_minion_tracker") and EHI:GetOption("show_minion_option") == 2) then
         dofile(path .. "EHIEquipmentTracker.lua")

@@ -12,6 +12,26 @@ local other =
     [100355] = EHI:AddAssaultDelay({ time = 35 + 30 })
 }
 
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    local SetRespawnTime = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+        if self._trackers:TrackerExists(trigger.id) then
+            self._trackers:CallFunction(trigger.id, "SetRespawnTime", trigger.time)
+        else
+            self._trackers:AddTracker({
+                id = trigger.id,
+                time = trigger.time,
+                count_on_refresh = 3,
+                class = TT.Sniper.TimedCount
+            })
+        end
+    end)
+    other[100879] = { time = 60 + 75, id = "Snipers", count_on_refresh = 3, class = TT.Sniper.TimedCount }
+    other[104455] = { id = "Snipers", time = 45, special_function = SetRespawnTime }
+    other[104456] = { id = "Snipers", time = 75, special_function = SetRespawnTime }
+    other[104460] = { id = "Snipers", time = 15, special_function = SetRespawnTime }
+    other[104468] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
+
 EHI:ParseTriggers({ mission = triggers, other = other }, "Escape", Icon.HeliEscapeNoLoot)
 EHI:AddXPBreakdown({
     tactic =

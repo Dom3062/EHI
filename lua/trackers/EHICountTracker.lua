@@ -2,11 +2,10 @@
 ---@field super EHITracker
 EHICountTracker = class(EHITracker)
 EHICountTracker._update = false
-function EHICountTracker:init(panel, params)
+function EHICountTracker:pre_init(params)
     self._count = 0
     self._anim_flash = params.flash ~= false
     self._flash_times = params.flash_times or 3
-    EHICountTracker.super.init(self, panel, params)
 end
 
 function EHICountTracker:Format()
@@ -27,4 +26,8 @@ function EHICountTracker:SetCount(count)
     if self._anim_flash then
         self:AnimateBG(self._flash_times)
     end
+end
+
+function EHICountTracker:ResetCount()
+    self:SetCount(0)
 end

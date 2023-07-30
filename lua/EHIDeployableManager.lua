@@ -1,3 +1,4 @@
+---@diagnostic disable
 ---@class EHIDeployableManager
 EHIDeployableManager = {}
 ---@param ehi_tracker EHITrackerManager

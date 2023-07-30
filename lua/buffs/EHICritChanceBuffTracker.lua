@@ -1,6 +1,8 @@
 local EHI = EHI
 local player_manager
 local detection_risk = 0
+---@class EHICritChanceBuffTracker : EHIGaugeBuffTracker
+---@field super EHIGaugeBuffTracker
 EHICritChanceBuffTracker = class(EHIGaugeBuffTracker)
 EHICritChanceBuffTracker._refresh_time = 1 / EHI:GetBuffOption("crit_refresh")
 function EHICritChanceBuffTracker:init(panel, params)

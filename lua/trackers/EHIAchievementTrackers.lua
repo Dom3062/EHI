@@ -134,7 +134,7 @@ end
 ---@field super EHIWarningTracker
 EHIAchievementUnlockTracker = class(EHIWarningTracker)
 EHIAchievementUnlockTracker._popup_type = "achievement"
-EHIAchievementUnlockTracker._warning_color = EHITimerTracker._completion_color
+EHIAchievementUnlockTracker._show_completion_color = true
 EHIAchievementUnlockTracker._show_started = EHIAchievementTracker._show_started
 EHIAchievementUnlockTracker._show_failed = EHIAchievementTracker._show_failed
 EHIAchievementUnlockTracker._show_desc = EHIAchievementTracker._show_desc

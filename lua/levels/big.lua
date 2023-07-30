@@ -2,9 +2,10 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local pc_hack = { time = 20, id = "PCHack", icons = { Icon.PCHack } }
+local ThermiteWP = { icon = Icon.Fire, position_by_element = 104326 }
+---@type ParseTriggerTable
 local triggers = {
-    [105842] = { time = 16.7 * 18, id = "Thermite", icons = { Icon.Fire } },
+    [105842] = { time = 16.7 * 18, id = "Thermite", icons = { Icon.Fire }, waypoint = deep_clone(ThermiteWP) },
 
     [105197] = { time = 45, id = "PickUpAPhone", icons = { Icon.Phone, Icon.Interact }, class = TT.Warning },
     [105219] = { id = "PickUpAPhone", special_function = SF.RemoveTracker },
@@ -13,24 +14,25 @@ local triggers = {
     [105248] = { id = "PickUpManagersPhone", special_function = SF.RemoveTracker },
 
     [101377] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
-    [104532] = pc_hack,
-    [103179] = pc_hack,
-    [103259] = pc_hack,
-    [103590] = pc_hack,
-    [103620] = pc_hack,
-    [103671] = pc_hack,
-    [103734] = pc_hack,
-    [103776] = pc_hack,
-    [103815] = pc_hack,
-    [103903] = pc_hack,
-    [103920] = pc_hack,
-    [103936] = pc_hack,
-    [103956] = pc_hack,
-    [103974] = pc_hack,
-    [103988] = pc_hack,
-    [104014] = pc_hack,
-    [104029] = pc_hack,
-    [104051] = pc_hack,
+
+    [104532] = { time = 20, id = "PCHack", icons = { Icon.PCHack } },
+    [103179] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103198 } },
+    [103259] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103177 } },
+    [103590] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103196 } },
+    [103620] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103293 } },
+    [103671] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103311 } },
+    [103734] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103313 } },
+    [103776] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103323 } },
+    [103815] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103328 } },
+    [103903] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103335 } },
+    [103920] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103356 } },
+    [103936] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103361 } },
+    [103956] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103376 } },
+    [103974] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103397 } },
+    [103988] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103418 } },
+    [104014] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103445 } },
+    [104029] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103463 } },
+    [104051] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103504 } },
 
     -- Heli escape
     [104126] = { time = 23 + 1, id = "HeliEscape", icons = Icon.HeliEscape },
@@ -42,7 +44,7 @@ local triggers = {
     [104783] = { time = 8, id = "Bus", icons = { Icon.Wait } }
 }
 if EHI:IsClient() then
-    triggers[101605] = { time = 16.7 * 17, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101605] = { time = 16.7 * 17, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(ThermiteWP) }
     local doesnotexists = {
         [101817] = true,
         [101819] = true,
@@ -54,7 +56,7 @@ if EHI:IsClient() then
     local multiplier = 16
     for i = 101812, 101833, 1 do
         if not doesnotexists[i] then
-            triggers[i] = { time = 16.7 * multiplier, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist }
+            triggers[i] = { time = 16.7 * multiplier, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(ThermiteWP) }
             multiplier = multiplier - 1
         end
     end
@@ -116,6 +118,16 @@ local other =
     -- https://steamcommunity.com/app/218620/discussions/14/3487502671137130788/
     [100109] = EHI:AddAssaultDelay({ time = 30 + 30, trigger_times = 1 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
+    other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -131,8 +143,8 @@ EHI:ShowAchievementLootCounter({
 local tbl =
 {
     --units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock
-    [101457] = { icons = { Icon.Wait } },
-    [104671] = { icons = { Icon.Wait } },
+    [101457] = { icons = { Icon.Door } },
+    [104671] = { icons = { Icon.Door } },
 
     --units/payday2/equipment/gen_interactable_lance_huge/gen_interactable_lance_huge
     [105318] = { remove_vanilla_waypoint = 103700 },

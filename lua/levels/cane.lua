@@ -87,9 +87,27 @@ if EHI:MissionTrackersAndWaypointEnabled() then
     triggers[EHI:GetInstanceElementID(100011, 11000)].waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100016, 11000) }
 end
 
+local other =
+{
+    [EHI:GetInstanceElementID(100002, 10100)] = EHI:AddAssaultDelay({ additional_time = 20 + 15 + 405/30 + 15, random_time = 5 + 9 + 10 })
+}
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[101162] = { id = "Snipers", class = TT.Sniper.Count }
+    --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[102361] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[102362] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI:IsClient() then
+        other[102369] = { id = "Snipers", class = TT.Sniper.Count, special_function = SF.AddTrackerIfDoesNotExist, trigger_times = 1 }
+    end
+end
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:ShowAchievementLootCounter({
     achievement = "cane_3",

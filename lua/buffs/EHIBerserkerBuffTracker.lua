@@ -2,6 +2,8 @@ local EHI = EHI
 local player_manager
 local math_max = math.max
 local THRESHOLD = tweak_data.upgrades.player_damage_health_ratio_threshold or 0.5
+---@class EHIBerserkerBuffTracker : EHIGaugeBuffTracker
+---@field super EHIGaugeBuffTracker
 EHIBerserkerBuffTracker = class(EHIGaugeBuffTracker)
 EHIBerserkerBuffTracker._refresh_time = 1 / EHI:GetBuffOption("berserker_refresh")
 function EHIBerserkerBuffTracker:init(panel, params)

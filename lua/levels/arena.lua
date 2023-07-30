@@ -17,6 +17,7 @@ end
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@type ParseTriggerTable
 local triggers = {
     [100241] = { time = 19, id = "HeliEscape", icons = Icon.HeliEscape },
 
@@ -70,9 +71,25 @@ local achievements =
     }
 }
 
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 30 })
+}
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
+    other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 
 local DisableWaypoints =
@@ -104,15 +121,10 @@ local xp_override =
     {
         min_max =
         {
-            min =
+            objectives =
             {
-                alesso_find_c4 = { times = closets },
-                loot_secured = { times = required_bags }
-            },
-            max =
-            {
-                alesso_find_c4 = { times = closets },
-                loot_secured = { times = max }
+                alesso_find_c4 = { min_max = closets },
+                loot_secured = { min = required_bags, max = max }
             }
         }
     }

@@ -47,8 +47,5 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100018, 3750)] = true -- Defend
 }
 -- levels/instances/unique/rvd/rvd_hackbox
-for i = 8250, 9000, 250 do
-    DisableWaypoints[EHI:GetInstanceElementID(100034, i)] = true -- Defend Hackbox
-    DisableWaypoints[EHI:GetInstanceElementID(100031, i)] = true -- Fix Hackbox
-end
+-- Handled in CoreWorldInstanceManager.lua
 EHI:DisableWaypoints(DisableWaypoints)

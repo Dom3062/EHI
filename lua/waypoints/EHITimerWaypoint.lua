@@ -56,11 +56,6 @@ function EHITimerWaypoint:SetPowered(powered)
     self:SetColorBasedOnStatus()
 end
 
-function EHITimerWaypoint:SetRunning()
-    self:SetJammed(false)
-    self:SetPowered(true)
-end
-
 function EHITimerWaypoint:SetColorBasedOnStatus()
     if self._jammed or self._not_powered then
         self:SetColor(self._paused_color)

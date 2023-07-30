@@ -185,6 +185,28 @@ if EHI:IsLootCounterVisible() then
     -- coke, meth, money, weapon
     EHI:HookLootRemovalElement({ 104475, 106825, 106826, 106827 })
 end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100159] = { chance = 100, time = 30 + 20, recheck_t = 20 + 20, id = "Snipers", class = TT.Sniper.TimedChance }
+    other[104026] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
+    other[105008] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+        if self._trackers:TrackerExists("Snipers") then
+            self._trackers:SetChance("Snipers", element._values.chance)
+            self._trackers:CallFunction("Snipers", "SnipersKilled")
+        else
+            local t = 20 + 20
+            self._trackers:AddTracker({
+                id = "Snipers",
+                time = t,
+                recheck_t = t,
+                chance = element._values.chance,
+                class = TT.Sniper.TimedChance
+            })
+        end
+    end) } -- 20%
+    other[105024] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +10%
+    other[104289] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[104303] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({
     mission = triggers,

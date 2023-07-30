@@ -1,15 +1,11 @@
 local EHI = EHI
 local Icon = EHI.Icons
-local WinchFix = { Icon.Winch, Icon.Fix }
-if EHI:GetOption("show_one_icon") then
-    WinchFix = { Icon.Fix }
-end
 ---@class EHICraneFixChanceTracker : EHIWarningTracker, EHIChanceTracker
 ---@field super EHIWarningTracker
----@field _icon2 userdata?
+---@field _icon2 PanelBitmap?
 EHICraneFixChanceTracker = class(EHIWarningTracker)
-EHICraneFixChanceTracker._forced_icons = WinchFix
-EHICraneFixChanceTracker._warning_color = EHITimerTracker._completion_color
+EHICraneFixChanceTracker._forced_icons = EHI:GetOption("show_one_icon") and { Icon.Fix } or { Icon.Winch, Icon.Fix }
+EHICraneFixChanceTracker._show_completion_color = true
 EHICraneFixChanceTracker.FormatChance = EHIChanceTracker.Format
 EHICraneFixChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHICraneFixChanceTracker.SetFailed = EHIAchievementTracker.SetFailed
@@ -21,13 +17,13 @@ end
 
 function EHICraneFixChanceTracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
-    self._time_bg_box:set_w(self._time_bg_box:w() * 2)
-    self._chance_text = self._time_bg_box:text({
+    self._bg_box:set_w(self._bg_box:w() * 2)
+    self._chance_text = self._bg_box:text({
         name = "text2",
         text = self:FormatChance(),
         align = "center",
         vertical = "center",
-        w = self._time_bg_box:w() / 2,
+        w = self._bg_box:w() / 2,
         h = self._icon_size_scaled,
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
@@ -84,6 +80,16 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 50 + 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1 }
+    --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({
     mission = triggers,

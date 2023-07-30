@@ -2,6 +2,8 @@ local pm
 local mvector3_distance = mvector3.distance
 local math_floor = math.floor
 local string_format = string.format
+---@class EHIUppersRangeBuffTracker : EHIGaugeBuffTracker
+---@field super EHIGaugeBuffTracker
 EHIUppersRangeBuffTracker = class(EHIGaugeBuffTracker)
 EHIUppersRangeBuffTracker._refresh_time = 1 / EHI:GetBuffOption("uppers_range_refresh")
 function EHIUppersRangeBuffTracker:PreUpdate()

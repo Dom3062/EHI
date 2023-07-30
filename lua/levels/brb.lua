@@ -21,7 +21,7 @@ local triggers = {
     [100142] = { time = 5, id = "C4Vault", icons = { Icon.C4 } }
 }
 
-for _, index in ipairs({ 1900, 2400 }) do
+for index = 1900, 2400, 500 do
     for _, unit_id in ipairs({ 100010, 100039, 100004, 100034 }) do
         local fixed_unit_id = EHI:GetInstanceUnitID(unit_id, index)
         managers.mission:add_runned_unit_sequence_trigger(fixed_unit_id, "interact", function(...)
@@ -53,9 +53,31 @@ local achievements =
     }
 }
 
+local other =
+{
+    [100955] = EHI:AddAssaultDelay({ additional_time = 45 + 30, random_time = 15, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+        if (EHI:IsHost() and element:counter_value() ~= 0) or self._trackers:TrackerExists(trigger.id) then
+            return
+        end
+        self:CheckCondition(trigger)
+    end) })
+}
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[EHI:GetInstanceElementID(100025, 16400)] = { id = "Snipers", class = TT.Sniper.Count }
+    other[EHI:GetInstanceElementID(100090, 16400)] = { id = "Snipers", class = TT.Sniper.Count }
+    --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[EHI:GetInstanceElementID(100027, 16400)] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[EHI:GetInstanceElementID(100026, 16400)] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 
 local tbl =

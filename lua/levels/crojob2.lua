@@ -148,6 +148,16 @@ if EHI:IsLootCounterVisible() then
         other[i] = DecreaseMaximumTrigger
     end
 end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[101773] = { id = "Snipers", class = TT.Sniper.Count }
+    --[[other[100517] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 20%
+    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +20%
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }]]
+    other[104330] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[104331] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({
     mission = triggers,

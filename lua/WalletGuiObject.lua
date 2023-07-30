@@ -28,12 +28,8 @@ function WalletGuiObject.refresh(...)
             s = ", " .. infamy_pool .. " " .. xp:experience_string(xp:GetRemainingPrestigeXP()) .. " " .. _xp
         elseif to_100_left then
             -- calculate total XP to 100
-            local totalXpTo100 = 0
-            for _, level in ipairs(tweak_data.experience_manager.levels) do
-                totalXpTo100 = totalXpTo100 + Application:digest_value(level.points, false)
-            end
             local xpToNextText = xp:experience_string(math.max(xp:next_level_data_points() - xp:next_level_data_current_points(), 0))
-            local xpTo100Text = xp:experience_string(math.max(totalXpTo100 - xp:total(), 0))
+            local xpTo100Text = xp:experience_string(xp:GetRemainingXPToMaxLevel())
             s = ", " .. next_level .. " " .. xpToNextText .. " " .. _xp .. ", " .. _100_in .. " " .. xpTo100Text .. " " .. _xp
         else
             s = ", " .. next_level .. " " .. xp:experience_string(xp:next_level_data_points() - xp:next_level_data_current_points()) .. " " .. _xp

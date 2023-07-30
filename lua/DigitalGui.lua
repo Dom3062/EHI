@@ -34,6 +34,9 @@ function DigitalGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._ignore_visibility = false
+    if not show_waypoint_only then
+        EHI:OptionAndLoadTracker("show_timers")
+    end
 end
 
 function DigitalGui:TimerStartCountDown()

@@ -40,14 +40,14 @@ end
 
 function EHIameno3Tracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
-    self._time_bg_box:set_w(self._time_bg_box:w() * 2)
-    self._money_text = self._time_bg_box:text({
+    self._bg_box:set_w(self._bg_box:w() * 2)
+    self._money_text = self._bg_box:text({
         name = "text2",
         text = self:FormatNumber(),
         align = "center",
         vertical = "center",
-        w = self._time_bg_box:w() / 2,
-        h = self._time_bg_box:h(),
+        w = self._bg_box:w() / 2,
+        h = self._bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
         color = self._text_color

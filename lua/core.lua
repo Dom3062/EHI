@@ -14,6 +14,25 @@ _G.EHI =
     },
     settings = {},
 
+    OptionTracker =
+    {
+        show_timers =
+        {
+            file = "EHITimerTracker",
+            count = 1
+        },
+        show_timers_securitylockgui =
+        {
+            file = "EHISecurityLockGuiTracker",
+            count = 1
+        },
+        show_sniper_tracker =
+        {
+            file = "EHISniperTrackers",
+            count = 1
+        }
+    },
+
     _hooks = {},
 
     XPElementLevel =
@@ -29,7 +48,8 @@ _G.EHI =
     },
     XPElementLevelNoCheck =
     {
-        mallcrasher = true
+        mallcrasher = true, -- Mallcrasher
+        rat = true -- Cook Off
     },
 
     LootCounter =
@@ -60,23 +80,27 @@ _G.EHI =
     CallbackMessage =
     {
         Spawned = "Spawned",
-        -- Provides "loc" (a LocalizationManager class)
+        -- Provides `loc` (a LocalizationManager class)
         LocLoaded = "LocLoaded",
-        -- Provides "success" (a boolean value)
+        -- Provides `success` (a boolean value)
         MissionEnd = "MissionEnd",
         GameRestart = "GameRestart",
-        -- Provides "self" (a LootManager class)
+        -- Provides `self` (a LootManager class)
         LootSecured = "LootSecured",
-        -- Provides "managers" (a global table with all managers)
+        -- Provides `managers` (a global table with all managers)
         InitManagers = "InitManagers",
         InitFinalize = "InitFinalize",
-        -- Provides "self" (a LootManager class)
+        -- Provides `self` (a LootManager class)
         LootLoadSync = "LootLoadSync",
         OnMinionAdded = "OnMinionAdded",
         OnMinionKilled = "OnMinionKilled",
-        -- Provides "mode" (a string value -> "normal", "phalanx")
+        -- Provides `boost` (a string value) and `operation` (a string value -> `add`, `remove`)
+        TeamAISkillBoostChange = "TeamAISkillBoostChanged",
+        -- Provides `boost` (a string value) and `operation` (a string value -> `add`, `remove`)
+        TeamAIAbilityBoostChange = "TeamAIAbilityBoostChanged",
+        -- Provides `mode` (a string value -> `normal`, `phalanx`)
         AssaultModeChanged = "AssaultModeChanged",
-        -- Provides "mode" (a string value -> "normal", "endless")
+        -- Provides `mode` (a string value -> `normal`, `endless`)
         AssaultWaveModeChanged = "AssaultWaveModeChanged"
     },
 
@@ -131,6 +155,14 @@ _G.EHI =
         ShowEHIWaypoint = 52,
         DecreaseProgressMax = 53,
         DecreaseProgress = 54,
+        IncreaseCounter = 55,
+        DecreaseCounter = 56,
+        SetCounter = 57,
+        SniperSpawned = 58,
+        SniperDead = 59,
+        SniperRespawn = 60,
+
+        CallCustomFunction = 100,
 
         Debug = 1000,
         DebugElement = 1001,
@@ -138,7 +170,7 @@ _G.EHI =
         CustomCodeIfEnabled = 1003,
         CustomCodeDelayed = 1004,
 
-        -- Don't use it directly! Instead, call "EHI:GetFreeCustomSpecialFunctionID()" and "EHI:RegisterCustomSpecialFunction()" respectively
+        -- Don't use it directly! Instead, call `EHI:GetFreeCustomSpecialFunctionID()` and `EHI:RegisterCustomSpecialFunction()` respectively; or provide a function to `EHI:RegisterCustomSpecialFunction()` as a first argument
         CustomSF = 100000
     },
 
@@ -197,6 +229,7 @@ _G.EHI =
         Kill = "pd2_kill",
         Oil = "oil",
         Door = "pd2_door",
+        USB = "equipment_usb_no_data",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
@@ -222,6 +255,35 @@ _G.EHI =
         Counter = "EHICountTracker",
         Progress = "EHIProgressTracker",
         NeededValue = "EHINeededValueTracker",
+        Timer =
+        {
+            Base = "EHITimerTracker",
+            Progress = "EHIProgressTimerTracker",
+            Chance = "EHIChanceTimerTracker"
+        },
+        Sniper =
+        {
+            Base = "EHISniperTracker",
+            Count = "EHISniperCountTracker",
+            -- Requires `chance`  
+            -- Optional `chance_success`
+            Chance = "EHISniperChanceTracker",
+            -- Requires `time` and `refresh_t`
+            Timed = "EHISniperTimedTracker",
+            -- Requires `time`  
+            -- Optional `count_on_refresh`
+            TimedCount = "EHISniperTimedCountTracker",
+            -- Requires `chance`, `time` and `recheck_t`
+            TimedChance = "EHISniperTimedChanceTracker",
+            -- Requires `chance`, `time` and `recheck_t`
+            TimedChanceOnce = "EHISniperTimedChanceOnceTracker",
+            -- Requires `chance`, `time`, `on_fail_refresh_t` and `on_success_refresh_t`
+            Loop = "EHISniperLoopTracker",
+            -- Requires `time` and `refresh_t`
+            Heli = "EHISniperHeliTracker",
+            -- Requires `chance`, `time` and `recheck_t`
+            HeliTimedChance = "EHISniperHeliTimedChanceTracker"
+        },
         Achievement = "EHIAchievementTracker",
         AchievementUnlock = "EHIAchievementUnlockTracker",
         AchievementStatus = "EHIAchievementStatusTracker",
@@ -261,6 +323,7 @@ _G.EHI =
     Waypoints =
     {
         Warning = "EHIWarningWaypoint",
+        Progress = "EHIProgressWaypoint",
         Pausable = "EHIPausableWaypoint",
         Inaccurate = "EHIInaccurateWaypoint",
         InaccuratePausable = "EHIInaccuratePausableWaypoint",
@@ -510,6 +573,7 @@ local function LoadDefaultValues(self)
         variable_random_loot_format = 3, -- 1 = Max-(Max+Random)?; 2 = MaxRandom?; 3 = Max+Random?
         show_bodybags_counter = true,
         show_escape_chance = true,
+        show_sniper_tracker = true,
 
         -- Waypoints
         show_waypoints = true,
@@ -564,6 +628,8 @@ local function LoadDefaultValues(self)
             unseen_strike = true,
             unseen_strike_initial = true,
             -- Fugitive
+            trigger_happy = true,
+            desperado = true,
             running_from_death_reload = true,
             running_from_death_movement = true,
             up_you_go = true,
@@ -800,6 +866,31 @@ function EHI:CheckVRAndNonVROption(vr_option, option, expected_value, vr_expecte
     return self:GetOption(option) == expected_value
 end
 
+---@param option string
+function EHI:OptionAndLoadTracker(option)
+    if self.OptionTracker[option] then
+        local tracker = self.OptionTracker[option]
+        tracker.count = tracker.count - 1
+        if tracker.count == 0 then
+            dofile(string.format("%s%s%s.lua", self.LuaPath, "trackers/", tracker.file))
+        end
+    end
+end
+
+---@param option string
+function EHI:GetOptionAndLoadTracker(option)
+    local result = self:GetOption(option)
+    if result and self.OptionTracker[option] then
+        local tracker = self.OptionTracker[option]
+        tracker.count = tracker.count - 1
+        if tracker.count == 0 then
+            dofile(string.format("%s%s%s.lua", self.LuaPath, "trackers/", tracker.file))
+        end
+    end
+    return result
+end
+
+---@param option string
 function EHI:GetOption(option)
     if option then
         return self.settings[option]
@@ -852,6 +943,9 @@ function EHI:GetWaypointOption(waypoint)
     return self:GetOption("show_waypoints") and self:GetOption(waypoint)
 end
 
+---@param waypoint any
+---@return boolean
+---@return boolean
 function EHI:GetWaypointOptionWithOnly(waypoint)
     local show = self:GetWaypointOption(waypoint)
     return show, show and self:GetOption("show_waypoints_only")
@@ -920,7 +1014,7 @@ function EHI:IsTradeTrackerDisabled()
     return not self:GetOption("show_trade_delay") or self:IsPlayingSFN()
 end
 
----@param params table
+---@param params XPBreakdown
 function EHI:AddXPBreakdown(params)
     if self:IsXPTrackerDisabled() or not managers.menu_component then
         return
@@ -1021,7 +1115,7 @@ function EHI:Unhook(id)
 end
 
 ---Hooks elements that removes loot bags (due to fire or out of bounds)
----@param elements number|table Index or indexes of ElementCarry that removes loot bags with operation "remove"
+---@param elements number|{ [number]: number } Index or indexes of ElementCarry that removes loot bags with operation "remove"
 function EHI:HookLootRemovalElement(elements)
     if type(elements) ~= "table" and type(elements) ~= "number" then
         return
@@ -1274,22 +1368,24 @@ function EHI:HookElements(elements_to_hook)
     managers.ehi_manager:HookElements(elements_to_hook)
 end
 
----@param params table
----@return table|nil
+---@param params ElementTrigger
+---@return ElementTrigger?
 function EHI:AddAssaultDelay(params)
     if not self:GetOption("show_assault_delay_tracker") then
+        if params.special_function and params.special_function > SF.CustomSF then
+            self:UnregisterCustomSpecialFunction(params.special_function)
+        end
         return nil
     end
     local id = "AssaultDelay"
     local class = self.Trackers.AssaultDelay
     local pos = nil
-    if params.random_time then
-        class = "EHIInaccurateAssaultDelayTracker"
-    end
     if self:CombineAssaultDelayAndAssaultTime() then
         id = "Assault"
         class = "EHIAssaultTracker"
         pos = 0
+    elseif params.random_time then
+        class = "EHIInaccurateAssaultDelayTracker"
     end
     local tbl = {}
     -- Copy every passed value to the trigger
@@ -1416,7 +1512,7 @@ function EHI:ShouldDisableWaypoints()
     return self:GetOption("show_timers") and self:GetWaypointOption("show_waypoints_timers")
 end
 
-local function HostWaypoint(self, instigator, ...)
+local function Waypoint(self, instigator, ...)
     if not self._values.enabled then
         return
     end
@@ -1444,13 +1540,8 @@ function EHI:DisableElementWaypoint(id)
     if not element or self._cache.ElementWaypointFunction[id] then
         return
     end
-    if self:IsHost() then
-        self._cache.ElementWaypointFunction[id] = element.on_executed
-        element.on_executed = HostWaypoint
-    else
-        self._cache.ElementWaypointFunction[id] = element.client_on_executed
-        element.client_on_executed = function(...) end
-    end
+    self._cache.ElementWaypointFunction[id] = element.on_executed
+    element.on_executed = Waypoint
 end
 
 ---@param id number
@@ -1459,11 +1550,7 @@ function EHI:RestoreElementWaypoint(id)
     if not (element and self._cache.ElementWaypointFunction[id]) then
         return
     end
-    if self:IsHost() then
-        element.on_executed = self._cache.ElementWaypointFunction[id]
-    else
-        element.client_on_executed = self._cache.ElementWaypointFunction[id]
-    end
+    element.on_executed = self._cache.ElementWaypointFunction[id]
     self._cache.ElementWaypointFunction[id] = nil
 end
 
@@ -1580,7 +1667,7 @@ local show_achievement = false
 function EHI:ShowAchievementLootCounter(params)
     if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false then
         if params.show_loot_counter then
-            self:ShowLootCounter({ max = params.max })
+            self:ShowLootCounter({ max = params.max, load_sync = params.loot_counter_load_sync })
         end
         return
     end
@@ -1643,9 +1730,13 @@ function EHI:AddAchievementToCounter(params)
     local check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly
     local loot_type = params.counter and params.counter.loot_type
     local f = params.counter and params.counter.f
-    self:AddCallback(self.CallbackMessage.LootSecured, function(loot)
+    local function callback(loot)
         loot:EHIReportProgress(params.achievement, check_type, loot_type, f)
-    end)
+    end
+    self:AddCallback(self.CallbackMessage.LootSecured, callback)
+    if not (params.load_sync or params.no_sync) then
+        self:AddCallback(self.CallbackMessage.LootLoadSync, callback)
+    end
 end
 
 ---@param id string Achievement ID
@@ -1851,13 +1942,15 @@ function EHI:AchievementClass(c, id)
     return class(c)
 end
 
----@param trigger table|nil
----@param params table|nil
----@return table|nil
-function EHI:ClientCopyTrigger(trigger, params)
+---@param trigger ElementTrigger?
+---@param params ElementTrigger?
+---@param overwrite_SF boolean?
+---@return ElementTrigger?
+function EHI:ClientCopyTrigger(trigger, params, overwrite_SF)
     if trigger == nil then
         return nil
     end
+    ---@type ElementTrigger
     local tbl = {}
     if trigger.waypoint then
         tbl.waypoint = deep_clone(trigger.waypoint)
@@ -1868,7 +1961,9 @@ function EHI:ClientCopyTrigger(trigger, params)
     for key, value in pairs(trigger) do
         tbl[key] = tbl[key] or value
     end
-    tbl.special_function = tbl.special_function or SF.AddTrackerIfDoesNotExist
+    if overwrite_SF or not tbl.special_function then
+        tbl.special_function = SF.AddTrackerIfDoesNotExist
+    end
     return tbl
 end
 

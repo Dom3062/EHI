@@ -105,15 +105,10 @@ EHI:AddXPBreakdown({
         {
             min_max =
             {
-                min =
+                objectives =
                 {
-                    btm_vault_open_loot = { times = 2 },
-                    btm_destroyed_comm = { times = 3 }
-                },
-                max =
-                {
-                    btm_vault_open_loot = { times = 4 },
-                    btm_destroyed_comm = { times = 3 }
+                    btm_vault_open_loot = { min = 2, max = 4 },
+                    btm_destroyed_comm = { min_max = 3 }
                 },
                 loot_all = { min = 2, max = 10 }
             }

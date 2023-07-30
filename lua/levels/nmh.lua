@@ -41,17 +41,12 @@ local triggers = {
     [102460] = { time = 7, id = "Countdown", icons = { Icon.Alarm }, class = TT.Warning },
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
     [102701] = { time = 13, id = "Patrol", icons = { "pd2_generic_look" }, class = TT.Warning },
-    [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
-
-    [103439] = { id = "EscapeElevator", special_function = SF.RemoveTracker },
-    [102619] = { id = "EscapeElevator", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
-        if enabled then
-            self:Call(trigger.id, "LowerFloor")
-        end
-    end) },
 
     [103443] = { id = "EscapeElevator", class = "EHIElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = EHIElevatorTimerTracker._forced_icons[1], position_by_unit = 102296, class = "EHIElevatorTimerWaypoint" } },
+    [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
     [104072] = { id = "EscapeElevator", special_function = SF.UnpauseTracker },
+    [103439] = { id = "EscapeElevator", special_function = SF.RemoveTracker },
+    [100186] = { id = "EscapeElevator", special_function = SF.CallCustomFunction, f = "LowerFloor" },
 
     [102682] = { time = 20, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
     [102683] = { id = "AnswerPhone", special_function = SF.RemoveTracker },
@@ -169,13 +164,10 @@ EHI:AddXPBreakdown({
                 {
                     min_max =
                     {
-                        min =
+                        objectives =
                         {
-                            nmh_cameras_taken_out = { times = 0 }
-                        },
-                        max =
-                        {
-                            nmh_saw_patient_room = { times = 3 }
+                            nmh_cameras_taken_out = { min = 0, max = 1 },
+                            nmh_saw_patient_room = { max = 3 }
                         }
                     }
                 }

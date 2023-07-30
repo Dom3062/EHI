@@ -38,9 +38,9 @@ EHI:AddXPBreakdown({
         {
             min_max =
             {
-                max =
+                objectives =
                 {
-                    car_shop_car_secured = { times = 4 }
+                    car_shop_car_secured = { max = 4 }
                 }
             }
         }

@@ -44,8 +44,8 @@ local function panel_w(o, target_w, self)
         local lerp = t / TOTAL_T
         o:set_w(math_lerp(from_w, target_w, lerp))
     end
-    if self and self.Refresh then
-        self:Refresh()
+    if self and self.Redraw then
+        self:Redraw()
     end
 end
 local function icon_x(o, target_x)
@@ -71,7 +71,8 @@ local function bg_attention(bg, total_t)
 	bg:set_color(Color(1, 0, 0, 0))
 end
 local icons = tweak_data.ehi.icons
-
+---@param icon string
+---@return string, { x: number, y: number, w: number, h: number }
 local function GetIcon(icon)
     if icons[icon] then
         return icons[icon].texture, icons[icon].texture_rect
@@ -79,6 +80,14 @@ local function GetIcon(icon)
     return tweak_data.hud_icons:get_icon_or(icon, icons.default.texture, icons.default.texture_rect)
 end
 
+---@param self EHITracker
+---@param i string
+---@param texture string
+---@param texture_rect { x: number, y: number, w: number, h: number }
+---@param color Color
+---@param alpha number
+---@param visible boolean
+---@param x number
 local function CreateIcon(self, i, texture, texture_rect, color, alpha, visible, x)
     self["_icon" .. i] = self._panel:bitmap({
         name = "icon" .. i,
@@ -96,6 +105,9 @@ end
 local bg_visibility = EHI:GetOption("show_tracker_bg")
 local corner_visibility = EHI:GetOption("show_tracker_corners")
 
+---@param panel Panel
+---@param params table
+---@return Panel
 local function CreateHUDBGBox(panel, params)
     local box_panel = panel:panel(params)
 	box_panel:rect({
@@ -168,7 +180,7 @@ end
 ---@field _parent_class EHITrackerManager
 ---@field _forced_icons table? Forces specific icons in the tracker
 ---@field _forced_time number? Forces specific time in the tracker
----@field _icon1 userdata
+---@field _icon1 PanelBitmap
 ---@field _panel_override_w number?
 EHITracker = class()
 EHITracker._update = true
@@ -184,7 +196,10 @@ EHITracker._icon_size_scaled = EHITracker._icon_size * EHITracker._scale
 -- 5 * self._scale
 EHITracker._gap_scaled = EHITracker._gap * EHITracker._scale
 EHITracker._text_color = Color.white
+---@param panel Panel Main panel provided by EHITrackerManager
+---@param params table
 function EHITracker:init(panel, params)
+    self:pre_init(params)
     self._id = params.id
     self._icons = self._forced_icons or params.icons
     self._n_of_icons = 0
@@ -204,18 +219,18 @@ function EHITracker:init(panel, params)
         alpha = 0,
         visible = true
     })
-    self._time_bg_box = CreateHUDBGBox(self._panel, {
+    self._bg_box = CreateHUDBGBox(self._panel, {
         x = 0,
         y = 0,
         w = 64 * self._scale,
         h = self._icon_size_scaled
     })
-    self._text = self._time_bg_box:text({
+    self._text = self._bg_box:text({
         name = "text1",
         text = self:Format(),
         align = "center",
         vertical = "center",
-        w = self._time_bg_box:w(),
+        w = self._bg_box:w(),
         h = self._icon_size_scaled,
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
@@ -228,18 +243,30 @@ function EHITracker:init(panel, params)
     self:OverridePanel()
     self._parent_class = params.parent_class
     self._hide_on_delete = params.hide_on_delete
+    self:post_init(params)
     if params.dynamic then
         self:SetPanelVisible()
     end
 end
 
+---@param params table
+function EHITracker:pre_init(params)
+end
+
+---@param params table
+function EHITracker:post_init(params)
+end
+
 function EHITracker:OverridePanel()
 end
 
+---@param new_id string
 function EHITracker:UpdateID(new_id)
     self._id = new_id
 end
 
+---@param x number
+---@param y number
 function EHITracker:PosAndSetVisible(x, y)
     self._panel:set_x(x)
     self._panel:set_y(y)
@@ -254,43 +281,7 @@ function EHITracker:SetPanelHidden()
     self._panel:animate(visibility, 1, 0)
 end
 
-if EHI:GetOption("show_one_icon") then
-    function EHITracker:CreateIcons()
-        local icon_pos = self._time_bg_box:w() + self._gap_scaled
-        local first_icon = self._icons[1]
-        if type(first_icon) == "string" then
-            local texture, rect = GetIcon(first_icon)
-            CreateIcon(self, "1", texture, rect, Color.white, 1, true, icon_pos)
-        elseif type(first_icon) == "table" then
-            local texture, rect = GetIcon(first_icon.icon or "default")
-            CreateIcon(self, "1", texture, rect, first_icon.color,
-                first_icon.alpha or 1,
-                first_icon.visible ~= false,
-                icon_pos)
-        end
-    end
-else
-    function EHITracker:CreateIcons()
-        local start = self._time_bg_box:w()
-        local icon_gap = self._gap_scaled
-        for i, v in ipairs(self._icons) do
-            local s_i = tostring(i)
-            if type(v) == "string" then
-                local texture, rect = GetIcon(v)
-                CreateIcon(self, s_i, texture, rect, Color.white, 1, true, start + icon_gap)
-            elseif type(v) == "table" then -- table
-                local texture, rect = GetIcon(v.icon or "default")
-                CreateIcon(self, s_i, texture, rect, v.color,
-                    v.alpha or 1,
-                    v.visible ~= false,
-                    start + icon_gap)
-            end
-            start = start + self._icon_size_scaled
-            icon_gap = icon_gap + self._gap_scaled
-        end
-    end
-end
-
+---@param target_y number
 function EHITracker:SetTop(target_y)
     if self._anim_move then
         self._panel:stop(self._anim_move)
@@ -299,6 +290,7 @@ function EHITracker:SetTop(target_y)
     self._anim_move = self._panel:animate(top, target_y)
 end
 
+---@param target_x number
 function EHITracker:SetLeft(target_x)
     if self._anim_move then
         self._panel:stop(self._anim_move)
@@ -307,6 +299,7 @@ function EHITracker:SetLeft(target_x)
     self._anim_move = self._panel:animate(left, target_x)
 end
 
+---@param target_w number
 function EHITracker:SetPanelW(target_w)
     if self._anim_set_w then
         self._panel:stop(self._anim_set_w)
@@ -315,6 +308,7 @@ function EHITracker:SetPanelW(target_w)
     self._anim_set_w = self._panel:animate(panel_w, target_w)
 end
 
+---@param target_w number
 function EHITracker:SetPanelWAndRefresh(target_w)
     if self._anim_set_w then
         self._panel:stop(self._anim_set_w)
@@ -323,19 +317,20 @@ function EHITracker:SetPanelWAndRefresh(target_w)
     self._anim_set_w = self._panel:animate(panel_w, target_w, self)
 end
 
----@param previous_icon userdata?
----@param icon userdata? Defaults to `self._icon1` if not provided
+---@param previous_icon PanelBitmap?
+---@param icon PanelBitmap? Defaults to `self._icon1` if not provided
 function EHITracker:SetIconX(previous_icon, icon)
     icon = icon or self._icon1
     if icon then
         if previous_icon then
             icon:set_x(previous_icon:right() + self._gap_scaled)
         else
-            icon:set_x(self._time_bg_box:w() + self._gap_scaled)
+            icon:set_x(self._bg_box:w() + self._gap_scaled)
         end
     end
 end
 
+---@param target_x number
 function EHITracker:AnimIconX(target_x)
     if not self._icon1 then
         return
@@ -355,6 +350,63 @@ else
     EHITracker.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
 end
 
+if EHI:GetOption("show_one_icon") then
+    function EHITracker:CreateIcons()
+        local icon_pos = self._bg_box:w() + self._gap_scaled
+        local first_icon = self._icons[1]
+        if type(first_icon) == "string" then
+            local texture, rect = GetIcon(first_icon)
+            CreateIcon(self, "1", texture, rect, Color.white, 1, true, icon_pos)
+        elseif type(first_icon) == "table" then
+            local texture, rect = GetIcon(first_icon.icon or "default")
+            CreateIcon(self, "1", texture, rect, first_icon.color,
+                first_icon.alpha or 1,
+                first_icon.visible ~= false,
+                icon_pos)
+        end
+    end
+else
+    function EHITracker:CreateIcons()
+        local start = self._bg_box:w()
+        local icon_gap = self._gap_scaled
+        for i, v in ipairs(self._icons) do
+            local s_i = tostring(i)
+            if type(v) == "string" then
+                local texture, rect = GetIcon(v)
+                CreateIcon(self, s_i, texture, rect, Color.white, 1, true, start + icon_gap)
+            elseif type(v) == "table" then -- table
+                local texture, rect = GetIcon(v.icon or "default")
+                CreateIcon(self, s_i, texture, rect, v.color,
+                    v.alpha or 1,
+                    v.visible ~= false,
+                    start + icon_gap)
+            end
+            start = start + self._icon_size_scaled
+            icon_gap = icon_gap + self._gap_scaled
+        end
+    end
+end
+
+---@param params EHITracker_CreateText?
+---@return PanelText
+function EHITracker:CreateText(params)
+    params = params or {}
+    local text = self._bg_box:text({
+        name = params.name or "",
+        text = params.text or "",
+        align = "center",
+        vertical = "center",
+        w = params.w or self._bg_box:w(),
+        h = params.h or self._bg_box:h(),
+        font = tweak_data.menu.pd2_large_font,
+        font_size = self._panel:h() * self._text_scale,
+        color = params.color or self._text_color
+    })
+    return text
+end
+
+---@param t any Unused
+---@param dt number
 function EHITracker:update(t, dt)
     self._time = self._time - dt
     self._text:set_text(self:Format())
@@ -363,6 +415,8 @@ function EHITracker:update(t, dt)
     end
 end
 
+---@param t any Unused
+---@param dt number
 function EHITracker:update_fade(t, dt)
     self._fade_time = self._fade_time - dt
     if self._fade_time <= 0 then
@@ -370,11 +424,13 @@ function EHITracker:update_fade(t, dt)
     end
 end
 
+---@param text PanelText?
 function EHITracker:ResetFontSize(text)
     text = text or self._text
     text:set_font_size(self._panel:h() * self._text_scale)
 end
 
+---@param text PanelText?
 function EHITracker:FitTheText(text)
     text = text or self._text
     self:ResetFontSize(text)
@@ -384,11 +440,13 @@ function EHITracker:FitTheText(text)
     end
 end
 
+---@param time number
 function EHITracker:SetTime(time)
     self:SetTimeNoAnim(time)
     self:AnimateBG()
 end
 
+---@param time number
 function EHITracker:SetTimeNoAnim(time)
     self._time = time
     self._text:set_text(self:Format())
@@ -400,26 +458,32 @@ function EHITracker:Run(params)
     self:SetTextColor()
 end
 
+---@param delay number
 function EHITracker:AddDelay(delay)
     self:SetTime(self._time + delay)
 end
 
 ---@param t number?
 function EHITracker:AnimateBG(t)
-    local bg = self._time_bg_box:child("bg")
+    ---@type PanelRectangle
+    local bg = self._bg_box:child("bg")
     bg:stop()
     bg:set_color(Color(1, 0, 0, 0))
     bg:animate(bg_attention, t or 3)
 end
 
-function EHITracker:SetTextColor(color)
-    self._text:set_color(color or self._text_color)
+function EHITracker:SetTextColor(color, text)
+    text = text or self._text
+    text:set_color(color or self._text_color)
 end
 
+---@param new_icon string
+---@return string, { x: number, y: number, w: number, h: number }
 function EHITracker:GetIcon(new_icon)
     return GetIcon(new_icon)
 end
 
+---@param new_icon string
 function EHITracker:SetIcon(new_icon)
     local icon, texture_rect = GetIcon(new_icon)
     if texture_rect then
@@ -429,10 +493,17 @@ function EHITracker:SetIcon(new_icon)
     end
 end
 
-function EHITracker:SetIconColor(color)
-    self._icon1:set_color(color)
+---@param color any
+---@param icon PanelBitmap?
+function EHITracker:SetIconColor(color, icon)
+    icon = icon or self._icon1
+    if icon then
+        icon:set_color(color)
+    end
 end
 
+---@param status string
+---@param text PanelText?
 function EHITracker:SetStatusText(status, text)
     text = text or self._text
     local txt = "ehi_achievement_" .. status
@@ -444,6 +515,7 @@ function EHITracker:SetStatusText(status, text)
     self:FitTheText(text)
 end
 
+---@param time number
 function EHITracker:SetTrackerAccurate(time)
     self._tracker_type = "accurate"
     self:SetTextColor()
@@ -466,6 +538,7 @@ function EHITracker:GetTrackerType()
     return self._tracker_type
 end
 
+---@param skip boolean?
 function EHITracker:destroy(skip)
     if alive(self._panel) and alive(self._parent_panel) then
         if self._icon1 then
@@ -483,7 +556,7 @@ function EHITracker:destroy(skip)
                     o:set_alpha(math_lerp(1, 0, lerp))
                 end
             end
-            self._time_bg_box:child("bg"):stop()
+            self._bg_box:child("bg"):stop()
             self._parent_panel:remove(self._panel)
         end)
     end
@@ -495,12 +568,19 @@ function EHITracker:delete()
         self:SetPanelHidden()
         self._parent_class:HideTracker(self._id)
         return
+    elseif self._refresh_on_delete then
+        self:Refresh()
+        return
     end
     self:destroy()
     self._parent_class:DestroyTracker(self._id)
 end
 
+function EHITracker:Refresh()
+end
+
 function EHITracker:ForceDelete()
     self._hide_on_delete = nil
+    self._refresh_on_delete = nil
     self:delete()
 end
