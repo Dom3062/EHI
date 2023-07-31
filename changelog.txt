@@ -1,5 +1,11 @@
+r169 (31. 07. 2023):
+Fixed a very rare and possible crash when a convert died or was deleted by the mission script
+Buluc's Mansion: Fixed a crash
+Slaughterhouse: Fixed a crash
+
 r168 (30. 07. 2023):
 Added Trigger Happy and Desperado buffs
+Added "Show Scripted Snipers" option
 Fixed an issue where achievement loot counters do not properly sync secured loot
 Improved memory consumption by deferring loading of TimerGui, DigitalGui and SecurityLockGui trackers until they are needed
 Gage Tracker: Fixed an issue where the tracker could get stuck on the screen after sync

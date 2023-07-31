@@ -11,6 +11,7 @@ EHISniperChanceTracker._forced_icons = { "sniper" }
 EHISniperChanceTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperChanceTracker.DecreaseCount = EHICountTracker.DecreaseCount
 function EHISniperChanceTracker:pre_init(params)
+    EHISniperChanceTracker.super.pre_init(self, params)
     EHICountTracker.pre_init(self, params)
     self._additional_count = 0
 end

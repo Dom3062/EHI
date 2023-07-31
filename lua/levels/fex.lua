@@ -1,6 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
 local triggers = {
     -- Van Escape, 2 possible car escape scenarions here, the longer is here, the shorter is in WankerCar
     [101638] = { time = 1 + 60 + 900/30 + 5, id = "CarEscape", icons = Icon.CarEscape },

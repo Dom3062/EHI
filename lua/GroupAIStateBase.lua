@@ -118,13 +118,25 @@ if show_minion_tracker or show_popup then
         end
     end
 
+    function GroupAIStateBase:EHIConvertDied(params, unit)
+        params.killed_callback = nil
+        self:EHIRemoveConvert(params, unit)
+    end
+    function GroupAIStateBase:EHIConvertDestroyed(params, unit)
+        params.destroyed_callback = nil
+        self:EHIRemoveConvert(params, unit)
+    end
     function GroupAIStateBase:EHIRemoveConvert(params, unit)
         EHI:CallCallback(EHI.CallbackMessage.OnMinionKilled)
         if params.update_tracker then
             UpdateTracker(nil, params.unit_key, 0)
         end
-        unit:character_damage():remove_listener(callback_key)
-        unit:base():remove_destroy_listener(callback_key)
+        if params.killed_callback then
+            unit:character_damage():remove_listener(callback_key)
+        end
+        if params.destroyed_callback then
+            unit:base():remove_destroy_listener(callback_key)
+        end
         if game_is_running and show_popup and params.local_peer then
             if show_popup_type == 1 then
                 managers.hud:custom_ingame_popup_text("MINION", managers.localization:text("ehi_popup_minion_killed"), "EHI_Minion")
@@ -147,9 +159,9 @@ if show_minion_tracker or show_popup then
             end
             EHI:CallCallback(EHI.CallbackMessage.OnMinionAdded)
             local key = tostring(unit:key())
-            local clbk = callback(self, self, "EHIRemoveConvert", { unit_key = key, local_peer = local_peer, update_tracker = local_peer })
-            unit:base():add_destroy_listener(callback_key, clbk)
-            unit:character_damage():add_listener(callback_key, { "death" }, clbk)
+            local data = { unit_key = key, local_peer = local_peer, update_tracker = local_peer, killed_callback = true, destroyed_callback = true }
+            unit:base():add_destroy_listener(callback_key, callback(self, self, "EHIConvertDestroyed", data))
+            unit:character_damage():add_listener(callback_key, { "death" }, callback(self, self, "EHIConvertDied", data))
             if local_peer then
                 UpdateTracker(unit, key, 1, peer_id)
             end
@@ -162,9 +174,9 @@ if show_minion_tracker or show_popup then
             end
             EHI:CallCallback(EHI.CallbackMessage.OnMinionAdded)
             local key = tostring(unit:key())
-            local clbk = callback(self, self, "EHIRemoveConvert", { unit_key = key, local_peer = local_peer, update_tracker = true })
-            unit:base():add_destroy_listener(callback_key, clbk)
-            unit:character_damage():add_listener(callback_key, { "death" }, clbk)
+            local data = { unit_key = key, local_peer = local_peer, update_tracker = true, killed_callback = true, destroyed_callback = true }
+            unit:base():add_destroy_listener(callback_key, callback(self, self, "EHIConvertDestroyed", data))
+            unit:character_damage():add_listener(callback_key, { "death" }, callback(self, self, "EHIConvertDied", data))
             UpdateTracker(unit, key, 1, peer_id)
         end
     end
