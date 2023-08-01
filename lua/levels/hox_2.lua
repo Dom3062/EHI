@@ -72,6 +72,7 @@ if EHI:IsClient() then
 else
     EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
 end
+EHI:FilterOutNotLoadedTrackers(triggers, "show_timers")
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseAchievementTable

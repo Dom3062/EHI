@@ -19,6 +19,7 @@ EHIManager.Waypoints = EHI.Waypoints
 EHIManager.SyncFunctions = EHI.SyncFunctions
 EHIManager.ClientSyncFunctions = EHI.ClientSyncFunctions
 EHIManager.TriggerFunction = EHI.TriggerFunction
+EHIManager.FilterTracker = EHI.FilterTracker
 EHIManager.SFF = {}
 EHIManager.HookOnLoad = {}
 ---@param ehi_tracker EHITrackerManager
@@ -680,6 +681,39 @@ function EHIManager:PreloadTrackers(preload, trigger_id_all, trigger_icons_all)
         params.id = params.id or trigger_id_all
         params.icons = params.icons or trigger_icons_all
         self._trackers:PreloadTracker(params)
+    end
+end
+
+---@param trigger_table { [number] : ElementTrigger }
+---@param option string
+function EHIManager:FilterOutNotLoadedTrackers(trigger_table, option)
+    local config = option and self.FilterTracker[option]
+    if not config then
+        return
+    end
+    local visible = EHI:GetOption(option)
+    if config.waypoint then
+        local _, show_waypoints_only = EHI:GetWaypointOptionWithOnly(config.waypoint)
+        if show_waypoints_only then
+            visible = false
+        end
+    end
+    if visible then
+        return
+    end
+    local not_loaded_tt = self.Trackers[config.table_name]
+    if type(not_loaded_tt) ~= "table" then
+        EHI:Log(string.format("Provided table name '%s' is not a table in EHI.Trackers! Nothing will be changed and the game may crash unexpectly!", config.table_name))
+        return
+    end
+    for _, trigger in pairs(trigger_table) do
+        if trigger.class then
+            ---@type string?
+            local key = table.get_key(not_loaded_tt, trigger.class)
+            if key then
+                trigger.class = self.Trackers[key] --[[@as string]]
+            end
+        end
     end
 end
 

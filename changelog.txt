@@ -1,3 +1,6 @@
+r170 (01. 08. 2023):
+Hoxton Breakout Day 2: Fixed crash when Hoxton started hacking
+
 r169 (31. 07. 2023):
 Fixed a very rare and possible crash when a convert died or was deleted by the mission script
 Buluc's Mansion: Fixed a crash

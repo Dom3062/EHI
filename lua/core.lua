@@ -14,16 +14,20 @@ _G.EHI =
     },
     settings = {},
 
+    FilterTracker =
+    {
+        show_timers =
+        {
+            waypoint = "show_waypoints_timers",
+            table_name = "Timer"
+        }
+    },
+
     OptionTracker =
     {
         show_timers =
         {
             file = "EHITimerTracker",
-            count = 1
-        },
-        show_timers_securitylockgui =
-        {
-            file = "EHISecurityLockGuiTracker",
             count = 1
         },
         show_sniper_tracker =
@@ -1506,6 +1510,12 @@ end
 ---@param defer_loading_waypoints boolean?
 function EHI:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
     managers.ehi_manager:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
+end
+
+---@param triggers ParseTriggerTable
+---@param option string
+function EHI:FilterOutNotLoadedTrackers(triggers, option)
+    managers.ehi_manager:FilterOutNotLoadedTrackers(triggers, option)
 end
 
 function EHI:ShouldDisableWaypoints()
