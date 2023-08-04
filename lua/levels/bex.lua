@@ -34,7 +34,7 @@ if EHI:IsClient() then
     triggers[102157] = { additional_time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
+    EHI:AddHostTriggers(element_sync_triggers, "element")
 end
 
 ---@type ParseAchievementTable

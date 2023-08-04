@@ -140,7 +140,7 @@ if EHI:IsClient() then
         end
     end)
 else
-    EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
+    EHI:AddHostTriggers(element_sync_triggers, "element")
 end
 
 ---@type ParseAchievementTable

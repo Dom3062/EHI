@@ -346,14 +346,14 @@ function EHITrackerManager:AddAchievementLootCounter(id, max, loot_counter_on_fa
 end
 
 ---@param id string
----@param to_secure number
+---@param max number
 ---@param show_finish_after_reaching_target boolean?
 ---@param icon string?
-function EHITrackerManager:AddAchievementBagValueCounter(id, to_secure, show_finish_after_reaching_target, icon)
+function EHITrackerManager:AddAchievementBagValueCounter(id, max, show_finish_after_reaching_target, icon)
     icon = icon or self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
-        to_secure = to_secure,
+        max = max,
         icons = { icon },
         delay_popup = true,
         show_finish_after_reaching_target = show_finish_after_reaching_target,

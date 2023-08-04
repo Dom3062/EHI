@@ -59,7 +59,7 @@ if EHI:ShowDramaTracker() and not tweak_data.levels:IsStealthRequired() then
             id = "Drama",
             icons = { "C_Escape_H_Street_Bullet" },
             class = EHI.Trackers.Chance,
-            dont_flash = true
+            flash_bg = false
         }, pos)
     end
     original._add_drama = GroupAIStateBase._add_drama

@@ -74,8 +74,17 @@ local achievements =
                     self:CheckCondition(trigger)
                 end
             end) },
-            [103468] = { special_function = SF.SetAchievementFailed },
+            [103468] = { special_function = SF.SetAchievementFailed, trigger_times = 1 },
             [104357] = { special_function = SF.SetAchievementComplete }
+        }
+    },
+    cow_5 =
+    {
+        elements =
+        {
+            [101041] = { status = "defend", class = TT.AchievementStatus },
+            [104426] = { special_function = SF.SetAchievementComplete },
+            [104364] = { special_function = SF.SetAchievementFailed, trigger_times = 1 }
         }
     }
 }
@@ -113,8 +122,10 @@ if EHI:IsLootCounterVisible() then
         local index = trigger.index
         local crate = EHI:GetInstanceUnitID(100000, index)
         local LootTrigger = {}
-        LootTrigger[EHI:GetInstanceElementID(100009, index)] = { special_function = SF.CustomCode, f = LootSpawned, arg = crate }
-        LootTrigger[EHI:GetInstanceElementID(100010, index)] = { special_function = SF.CustomCode, f = LootSpawned, arg = crate }
+        local arg = { crate, true }
+        local loot_trigger = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootSpawnedCheck", arg = arg }
+        LootTrigger[EHI:GetInstanceElementID(100009, index)] = loot_trigger
+        LootTrigger[EHI:GetInstanceElementID(100010, index)] = loot_trigger
         managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function(...)
             DelayRejection(crate)
         end)
@@ -135,6 +146,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     ---@class EHIcrojob3SnipersTracker : EHISniperLoopTracker
     ---@field super EHISniperLoopTracker
     EHIcrojob3SnipersTracker = class(EHISniperLoopTracker)
+    EHIcrojob3SnipersTracker.super._refresh_on_delete = nil
     function EHIcrojob3SnipersTracker:pre_init(params)
         self._sniper_respawn = true
         self._initial_spawn = true
@@ -165,7 +177,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         end
     end
     other[100750] = { chance = 100, time = 120, on_fail_refresh_t = 40, id = "Snipers", class = "EHIcrojob3SnipersTracker" }
-    other[102928] = { id = "Snipers", special_function = SF.RemoveTracker }
     other[100745] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100749] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" } -- 10%
     other[100518] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperKilled" }

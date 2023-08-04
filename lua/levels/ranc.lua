@@ -63,7 +63,7 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100070, 25650)] = FultonCatchAgainClient
     EHI:SetSyncTriggers(sync_triggers)
 else
-    EHI:AddHostTriggers(sync_triggers, nil, nil, "base")
+    EHI:AddHostTriggers(sync_triggers, "base")
 end
 
 --[[

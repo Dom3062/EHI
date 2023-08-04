@@ -51,6 +51,22 @@ local other =
 {
     [102292] = EHI:AddAssaultDelay({ time = 75 + 30 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[EHI:GetInstanceElementID(101410, 10950)] = { id = "Snipers", class = TT.Sniper.Count }
+    other[EHI:GetInstanceElementID(100019, 10950)] = { id = "Snipers", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+        local id = trigger.id
+        if self._trackers:TrackerExists(id) then
+            self._trackers:SetTrackerCount(id, 1)
+        else
+            self._trackers:AddTracker({
+                id = id,
+                count = 1,
+                class = TT.Sniper.Count
+            })
+        end
+    end) }
+    other[EHI:GetInstanceElementID(100021, 10950)] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
 EHI:ParseTriggers({
     mission = triggers,

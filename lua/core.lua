@@ -167,6 +167,8 @@ _G.EHI =
         SniperRespawn = 60,
 
         CallCustomFunction = 100,
+        CallTrackerManagerFunction = 101,
+        CallWaypointManagerFunction = 102,
 
         Debug = 1000,
         DebugElement = 1001,
@@ -234,6 +236,7 @@ _G.EHI =
         Oil = "oil",
         Door = "pd2_door",
         USB = "equipment_usb_no_data",
+        Destruction = "C_Vlad_H_Mallcrasher_Shoot",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
@@ -267,7 +270,6 @@ _G.EHI =
         },
         Sniper =
         {
-            Base = "EHISniperTracker",
             Count = "EHISniperCountTracker",
             -- Requires `chance`  
             -- Optional `chance_success`
@@ -294,7 +296,12 @@ _G.EHI =
         AchievementProgress = "EHIAchievementProgressTracker",
         AchievementBagValue = "EHIAchievementBagValueTracker",
         AchievementLootCounter = "EHIAchievementLootCounterTracker",
-        AssaultDelay = "EHIAssaultDelayTracker",
+        Assault =
+        {
+            Time = "EHIAssaultTimeTracker",
+            Delay = "EHIAssaultDelayTracker",
+            Assault = "EHIAssaultTracker"
+        },
         ColoredCodes = "EHIColoredCodesTracker",
         Inaccurate = "EHIInaccurateTracker",
         InaccurateWarning = "EHIInaccurateWarningTracker",
@@ -1178,6 +1185,15 @@ function EHI:IsRunningBB()
     return BB and BB.grace_period and Global.game_settings.single_player and Global.game_settings.team_ai
 end
 
+function EHI:IsRunningUsefulBots()
+    if self:IsHost() then
+        return UsefulBots and Global.game_settings.team_ai
+    elseif self._cache.HostHasUsefulBots ~= nil then
+        return self._cache.HostHasUsefulBots
+    end
+    return false
+end
+
 ---@param peer_id number
 function EHI:GetPeerColorByPeerID(peer_id)
     local color = Color.white
@@ -1331,8 +1347,14 @@ function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_al
     managers.ehi_manager:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_all)
 end
 
-function EHI:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, type)
-    managers.ehi_manager:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, type)
+---@param new_triggers table
+---@param type string
+---|"base" # Random delay is defined in the BASE DELAY
+---|"element" # Random delay is defined when calling the elements
+---@param trigger_id_all string?
+---@param trigger_icons_all table?
+function EHI:AddHostTriggers(new_triggers, type, trigger_id_all, trigger_icons_all)
+    managers.ehi_manager:AddHostTriggers(new_triggers, type, trigger_id_all, trigger_icons_all)
 end
 
 ---@param id number
@@ -1382,11 +1404,11 @@ function EHI:AddAssaultDelay(params)
         return nil
     end
     local id = "AssaultDelay"
-    local class = self.Trackers.AssaultDelay
+    local class = self.Trackers.Assault.Delay
     local pos = nil
     if self:CombineAssaultDelayAndAssaultTime() then
         id = "Assault"
-        class = "EHIAssaultTracker"
+        class = self.Trackers.Assault.Assault
         pos = 0
     elseif params.random_time then
         class = "EHIInaccurateAssaultDelayTracker"
@@ -1512,8 +1534,9 @@ function EHI:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
     managers.ehi_manager:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
 end
 
----@param triggers ParseTriggerTable
+---@param triggers { [number] : ElementTrigger }
 ---@param option string
+---| "show_timers" Filters out not loaded trackers with option show_timers
 function EHI:FilterOutNotLoadedTrackers(triggers, option)
     managers.ehi_manager:FilterOutNotLoadedTrackers(triggers, option)
 end

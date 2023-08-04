@@ -100,7 +100,7 @@ EHI:AddOnAlarmCallback(function(dropin)
     EM._trackers:AddTracker({
         id = CombineAssault and "Assault" or "AssaultDelay",
         time = 75 + 15 + 30,
-        class = CombineAssault and "EHIAssaultTracker" or TT.AssaultDelay
+        class = CombineAssault and TT.Assault.Assault or TT.Assault.Delay
     })
 end)
 EHI:AddXPBreakdown({

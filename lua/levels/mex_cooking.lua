@@ -20,9 +20,9 @@ local triggers =
     [EHI:GetInstanceElementID(100056, 56850)] = { time = 15, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist }
 }
 if EHI:IsClient() then
-    local cooking_start = { time = 30, delay = 10, id = "CookingStartDelay", icons = MethlabStart, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist }
-    local meth_ready = { time = 10, delay = 5, id = "MethReady", icons = MethlabPickup, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist }
-    local next_ingredient = { time = 40, delay = 5, id = "NextIngredient", icons = MethlabRestart, class = "EHIInaccurateTracker", special_function = SF.AddTrackerIfDoesNotExist }
+    local cooking_start = { additional_time = 30, random_time = 10, id = "CookingStartDelay", icons = MethlabStart, special_function = SF.AddTrackerIfDoesNotExist }
+    local meth_ready = { additional_time = 10, random_time = 5, id = "MethReady", icons = MethlabPickup, special_function = SF.AddTrackerIfDoesNotExist }
+    local next_ingredient = { additional_time = 40, random_time = 5, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[103573] = cooking_start
     triggers[103574] = cooking_start
     triggers[EHI:GetInstanceElementID(100173, 55850)] = next_ingredient
@@ -31,7 +31,7 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100174, 56850)] = meth_ready
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
+    EHI:AddHostTriggers(element_sync_triggers, "element")
 end
 
 local other =

@@ -36,7 +36,7 @@ if EHI:IsClient() then
     end
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
+    EHI:AddHostTriggers(element_sync_triggers, "element")
 end
 
 ---@type ParseAchievementTable
@@ -83,12 +83,8 @@ if EHI:IsLootCounterVisible() then
         end
     end, true)
     -- Random loot in crates
-    local IncreaseMaximumTrigger = { special_function = SF.CustomCode, f = function()
-        managers.ehi_tracker:RandomLootSpawned()
-    end }
-    local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = function()
-        managers.ehi_tracker:RandomLootDeclined()
-    end }
+    local IncreaseMaximumTrigger = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootSpawned" }
+    local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = "RandomLootDeclined" }
     for i = 103232, 103264, 1 do -- 1 - 11
         other[i] = IncreaseMaximumTrigger
     end

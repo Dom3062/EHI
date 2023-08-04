@@ -70,7 +70,7 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100055, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, special_function = SF.SetRandomTime, data = { 45, 55, 65 } }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
+    EHI:AddHostTriggers(element_sync_triggers, "element")
 end
 EHI:FilterOutNotLoadedTrackers(triggers, "show_timers")
 

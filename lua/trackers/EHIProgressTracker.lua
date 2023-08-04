@@ -7,11 +7,8 @@ EHIProgressTracker._update = false
 function EHIProgressTracker:pre_init(params)
     self._max = params.max or 0
     self._progress = params.progress or 0
-    self._flash = not params.dont_flash
-    self._flash_max = not params.dont_flash_max
     self._show_finish_after_reaching_target = params.show_finish_after_reaching_target
     self._set_color_bad_when_reached = params.set_color_bad_when_reached
-    self._flash_times = params.flash_times or 3
     self._status_is_overridable = params.status_is_overridable
 end
 
@@ -23,9 +20,7 @@ function EHIProgressTracker:SetProgressMax(max)
     self._max = max
     self._text:set_text(self:Format())
     self:FitTheText()
-    if self._flash_max then
-        self:AnimateBG(self._flash_times)
-    end
+    self:AnimateBG()
 end
 
 function EHIProgressTracker:IncreaseProgressMax(progress)
@@ -41,9 +36,7 @@ function EHIProgressTracker:SetProgress(progress)
         self._progress = progress
         self._text:set_text(self:Format())
         self:FitTheText()
-        if self._flash then
-            self:AnimateBG(self._flash_times)
-        end
+        self:AnimateBG()
         if self._progress == self._max then
             if self._set_color_bad_when_reached then
                 self:SetBad()
@@ -69,7 +62,7 @@ function EHIProgressTracker:SetProgressRemaining(remaining)
 end
 
 function EHIProgressTracker:SetCompleted(force)
-    if not self._status or force then
+    if force or not self._status then
         self._status = "completed"
         self:SetTextColor(Color.green)
         if force or not self._show_finish_after_reaching_target then

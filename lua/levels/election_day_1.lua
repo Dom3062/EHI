@@ -17,7 +17,8 @@ local achievements =
     {
         elements =
         {
-            [100003] = { time = 60, class = TT.Achievement }
+            [100003] = { time = 60, class = TT.Achievement },
+            [104896] = { special_function = SF.SetAchievementComplete }
         }
     }
 }

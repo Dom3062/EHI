@@ -61,9 +61,7 @@ if EHI:IsLootCounterVisible() then
     other[100107] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
         EHI:ShowLootCounterNoChecks({ max = 6 })
     end)}
-    other[100037] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
-        self._trackers:SecuredMissionLoot() -- Secured diamonds at Mr. Blonde or in a Van
-    end)}
+    other[100037] = { special_function = SF.CallTrackerManagerFunction, f = "SecuredMissionLoot" } -- Secured diamonds at Mr. Blonde or in a Van
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }

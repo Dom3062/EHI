@@ -53,7 +53,7 @@ if EHI:IsClient() then
     triggers[100426] = { id = "HeliDropDrill", icons = Icon.HeliDropDrill, special_function = SF.SetRandomTime, data = { 44, 54 } }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
+    EHI:AddHostTriggers(element_sync_triggers, "element")
 end
 
 local other =
@@ -105,9 +105,7 @@ if EHI:IsLootCounterVisible() then
     end)
     -- coke, money, meth
     EHI:HookLootRemovalElement({ 101681, 101700, 101701 })
-    local CokeDestroyedTrigger = { special_function = SF.CustomCode, f = function()
-        managers.ehi_tracker:DecreaseLootCounterProgressMax()
-    end }
+    local CokeDestroyedTrigger = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
     other[101264] = CokeDestroyedTrigger
     other[101271] = CokeDestroyedTrigger
     other[101272] = CokeDestroyedTrigger
@@ -118,25 +116,60 @@ if EHI:IsLootCounterVisible() then
     other[101280] = CokeDestroyedTrigger
     other[101281] = CokeDestroyedTrigger
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") and false then
-    other[100667] = { chance = 100, time = 35, recheck_t = 35, id = "Snipers", class = "EHISniperTimedChanceTracker" }
-    other[100682] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100683] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    other[100685] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
-        if self._trackers:TrackerExists("Snipers") then
-            self._trackers:SetChance("Snipers", element._values.chance)
-            self._trackers:CallFunction("Snipers", "SniperSpawnsSuccess")
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    ---@class EHImia2SnipersTracker : EHISniperLoopTracker
+    ---@field super EHISniperLoopTracker
+    EHImia2SnipersTracker = class(EHISniperLoopTracker)
+    function EHImia2SnipersTracker:post_init(params)
+        EHImia2SnipersTracker.post_init(self, params)
+        self._sniper_respawn = true
+        if params.chance_success then
+            self:OnChanceSuccess()
+        end
+    end
+    function EHImia2SnipersTracker:OnChanceSuccess()
+        self:RemoveTrackerFromUpdate()
+        self._sniper_respawn = false
+    end
+    function EHImia2SnipersTracker:DecreaseCount()
+        EHImia2SnipersTracker.super.DecreaseCount(self)
+        self:SniperLoopStart()
+    end
+    function EHImia2SnipersTracker:SniperLoopStart()
+        if self._sniper_respawn then
+            return
+        end
+        self._sniper_respawn = true
+        self._time = 36 -- 1 + 35
+        self:AddTrackerToUpdate()
+    end
+    local ChanceSuccess = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+        local id = trigger.id
+        if self._trackers:TrackerExists(id) then
+            self._trackers:SetChance(id, element._values.chance) -- 10%/15%
+            self._trackers:CallFunction(id, "OnChanceSuccess")
         else
             self._trackers:AddTracker({
-                id = "Snipers",
+                id = id,
                 chance = element._values.chance,
-                recheck_t = 35,
+                on_fail_refresh_t = 0.5 + 35,
                 chance_success = true,
-                class = "EHISniperTimedChanceTracker"
+                class = "EHImia2SnipersTracker"
             })
         end
-    end)}
-    other[100686] = { special_function}
+    end)
+    other[100667] = { chance = 100, time = 35, on_fail_refresh_t = 0.5 + 35, id = "Snipers", class = "EHImia2SnipersTracker" }
+    other[100682] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[100683] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[100685] = { id = "Snipers", special_function = ChanceSuccess }
+    other[100686] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +10%
+    other[100687] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[100512] = { chance = 100, times = 35, on_fail_refresh_t = 0.5 + 35, id = "Snipers2", class = "EHImia2SnipersTracker" }
+    other[101202] = { id = "Snipers2", special_function = SF.IncreaseChanceFromElement } -- +10%
+    other[101197] = { id = "Snipers2", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    other[101208] = { id = "Snipers2", special_function = ChanceSuccess }
+    other[101266] = { id = "Snipers2", special_function = SF.DecreaseCounter }
+    other[101267] = { id = "Snipers2", special_function = SF.IncreaseCounter }
 end
 
 EHI:ParseTriggers({

@@ -168,8 +168,7 @@ EHIAchievementBagValueTracker._show_failed = EHIAchievementTracker._show_failed
 EHIAchievementBagValueTracker._show_desc = EHIAchievementTracker._show_desc
 EHIAchievementBagValueTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 EHIAchievementBagValueTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
-function EHIAchievementBagValueTracker:init(panel, params)
-    EHIAchievementBagValueTracker.super.init(self, panel, params)
+function EHIAchievementBagValueTracker:post_init(params)
     self._beardlib = params.beardlib
     if self._show_started then
         ShowStartedPopup(self, params.delay_popup)

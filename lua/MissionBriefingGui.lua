@@ -1127,7 +1127,7 @@ function MissionBriefingGui:AddLine(panel, txt, txt_color)
 end
 
 function MissionBriefingGui:FakeExperienceMultipliers()
-    if EHI:IsRunningBB() then
+    if EHI:IsRunningBB() or EHI:IsRunningUsefulBots() then
         self._num_winners = 4
     end
     if Global.block_update_outfit_information then -- Outfit update is late when "managers.player:get_skill_exp_multiplier(true)" is called, update it now to stay accurate
@@ -1417,5 +1417,10 @@ end
 
 function LobbyCodeMenuComponent:init(...)
     original.lobby_code_init(self, ...)
-    self._panel:set_y(0)
+    if self._panel:alpha() ~= 0 then
+        self._panel:set_y(0)
+        if managers.hud._hud_mission_briefing and managers.hud._hud_mission_briefing.MoveJobName then
+            managers.hud._hud_mission_briefing:MoveJobName()
+        end
+    end
 end

@@ -21,7 +21,7 @@ local triggers = {
     [102009] = { time = 60, id = "Crane", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
     [101702] = { id = "Crane", special_function = SF.PauseTracker },
 
-    [100729] = { chance = 20, id = "HackChance", icons = { Icon.PCHack }, class = TT.Chance },
+    [100729] = { chance = 20, id = "HackChance", icons = { Icon.PCHack }, class = TT.Timer.Chance },
     [108694] = { id = "HackChance", special_function = SF.IncreaseChanceFromElement }, -- +33%
     [101485] = { id = "HackChance", special_function = SF.RemoveTracker }
 }
@@ -29,50 +29,7 @@ if EHI:IsClient() then
     triggers[100564] = EHI:ClientCopyTrigger(triggers[100423], { time = 25 + 3 })
     -- Not worth adding the 3s delay here
 end
-
-local DisableWaypoints =
-{
-    -- Hackboxes at the start
-    [EHI:GetInstanceElementID(100007, 11000)] = true, -- Defend
-    [EHI:GetInstanceElementID(100008, 11000)] = true, -- Fix
-    [EHI:GetInstanceElementID(100007, 11500)] = true, -- Defend
-    [EHI:GetInstanceElementID(100008, 11500)] = true, -- Fix
-
-    -- Archaeology
-    [EHI:GetInstanceElementID(100008, 21000)] = true, -- Defend
-    -- Interact is disabled in CoreWorldInstanceManager.lua
-
-    -- Turret charging computer
-    [101122] = true, -- Defend
-    [103191] = true, -- Fix
-
-    -- Outside hack turret box
-    [102901] = true, -- Defend
-    [102902] = true, -- Fix
-    [102926] = true, -- Defend
-    [102927] = true -- Fix
-}
-
--- levels/instances/unique/des/des_computer/001-004
-for i = 3000, 4500, 500 do
-    DisableWaypoints[EHI:GetInstanceElementID(100025, i)] = true -- Defend
-    DisableWaypoints[EHI:GetInstanceElementID(100026, i)] = true -- Fix
-end
-
--- levels/instances/unique/des/des_computer/012
-DisableWaypoints[EHI:GetInstanceElementID(100025, 8500)] = true -- Defend
-DisableWaypoints[EHI:GetInstanceElementID(100026, 8500)] = true -- Fix
-
--- levels/instances/unique/des/des_computer_001/001
--- levels/instances/unique/des/des_computer_002/001
-for i = 6000, 6500, 500 do
-    DisableWaypoints[EHI:GetInstanceElementID(100025, i)] = true -- Defend
-    DisableWaypoints[EHI:GetInstanceElementID(100026, i)] = true -- Fix
-end
-
--- levels/instances/unique/des/des_computer_002/002
-DisableWaypoints[EHI:GetInstanceElementID(100025, 29550)] = true -- Defend
-DisableWaypoints[EHI:GetInstanceElementID(100026, 29550)] = true -- Fix
+EHI:FilterOutNotLoadedTrackers(triggers, "show_timers")
 
 ---@type ParseAchievementTable
 local achievements =
@@ -140,7 +97,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:DisableWaypoints(DisableWaypoints)
 
 local tbl =
 {
@@ -155,7 +111,58 @@ local tbl =
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
     [EHI:GetInstanceUnitID(100030, 21000)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100009, 21000) }
 }
+
+local DisableWaypoints =
+{
+    -- Hackboxes at the start
+    [EHI:GetInstanceElementID(100007, 11000)] = true, -- Defend
+    [EHI:GetInstanceElementID(100008, 11000)] = true, -- Fix
+    [EHI:GetInstanceElementID(100007, 11500)] = true, -- Defend
+    [EHI:GetInstanceElementID(100008, 11500)] = true, -- Fix
+
+    -- Archaeology
+    [EHI:GetInstanceElementID(100008, 21000)] = true, -- Defend
+    -- Interact is disabled in CoreWorldInstanceManager.lua
+
+    -- Turret charging computer
+    [101122] = true, -- Defend
+    [103191] = true, -- Fix
+
+    -- Outside hack turret box
+    [102901] = true, -- Defend
+    [102902] = true, -- Fix
+    [102926] = true, -- Defend
+    [102927] = true -- Fix
+}
+
+-- levels/instances/unique/des/des_computer/001-004
+for i = 3000, 4500, 500 do
+    tbl[EHI:GetInstanceUnitID(100051, i)] = { tracker_merge_id = "HackChance" }
+    DisableWaypoints[EHI:GetInstanceElementID(100025, i)] = true -- Defend
+    DisableWaypoints[EHI:GetInstanceElementID(100026, i)] = true -- Fix
+end
+
+-- levels/instances/unique/des/des_computer/012
+tbl[EHI:GetInstanceUnitID(100051, 8500)] = { tracker_merge_id = "HackChance" }
+DisableWaypoints[EHI:GetInstanceElementID(100025, 8500)] = true -- Defend
+DisableWaypoints[EHI:GetInstanceElementID(100026, 8500)] = true -- Fix
+
+-- levels/instances/unique/des/des_computer_001/001
+-- levels/instances/unique/des/des_computer_002/001
+for i = 6000, 6500, 500 do
+    tbl[EHI:GetInstanceUnitID(i == 6000 and 100000 or 100051, i)] = { tracker_merge_id = "HackChance" }
+    DisableWaypoints[EHI:GetInstanceElementID(100025, i)] = true -- Defend
+    DisableWaypoints[EHI:GetInstanceElementID(100026, i)] = true -- Fix
+end
+
+-- levels/instances/unique/des/des_computer_002/002
+tbl[EHI:GetInstanceUnitID(100051, 29550)] = { tracker_merge_id = "HackChance" }
+DisableWaypoints[EHI:GetInstanceElementID(100025, 29550)] = true -- Defend
+DisableWaypoints[EHI:GetInstanceElementID(100026, 29550)] = true -- Fix
+
 EHI:UpdateUnits(tbl)
+EHI:DisableWaypoints(DisableWaypoints)
+
 EHI:ShowLootCounter({
     max = 8, -- 2 main loot; 6 artifacts in crates, one in Archaeology room -> 400511
     triggers =

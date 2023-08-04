@@ -52,7 +52,7 @@ end
 if client then
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
+    EHI:AddHostTriggers(element_sync_triggers, "element")
 end
 
 local other =
@@ -100,10 +100,7 @@ if EHI:IsLootCounterVisible() then
         })
     end)}
     -- Basement
-    local function IncreaseMaximum()
-        managers.ehi_tracker:IncreaseLootCounterProgressMax()
-    end
-    local IncreaseMaximumTrigger = { special_function = SF.CustomCode, f = IncreaseMaximum }
+    local IncreaseMaximumTrigger = { special_function = SF.CallTrackerManagerFunction, f = "IncreaseLootCounterProgressMax" }
     -- Coke
     for i = 102832, 102841, 1 do
         other[i] = IncreaseMaximumTrigger
@@ -112,6 +109,7 @@ if EHI:IsLootCounterVisible() then
     for i = 104498, 104506, 1 do
         other[i] = IncreaseMaximumTrigger
     end
+    -- Meth
     local function IncreaseMaximum2()
         if MethlabExploded then
             return
@@ -168,9 +166,7 @@ if EHI:IsLootCounterVisible() then
     end
     local DecreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = DecreaseMaximum2 }
     -- All cars; does not get triggered when maximum has been reached
-    other[100721] = { special_function = SF.CustomCode, f = function()
-        managers.ehi_tracker:RandomLootSpawned()
-    end }
+    other[100721] = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootSpawned" }
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/001
     other[100523] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
     other[100550] = DecreaseMaximumTrigger2 -- Car set on fire -- 103846

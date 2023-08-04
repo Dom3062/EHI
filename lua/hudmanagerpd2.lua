@@ -59,7 +59,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     if EHI:GetOption("show_enemy_count_tracker") then
         self.ehi:AddTracker({
             id = "EnemyCount",
-            flash = false,
+            flash_bg = false,
             class = "EHIEnemyCountTracker"
         })
     end
@@ -206,7 +206,7 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
                 id = "Assault",
                 assault = true,
                 diff = EHI._cache.diff or 0,
-                class = "EHIAssaultTracker"
+                class = EHI.Trackers.Assault.Assault
             }, 0)
         end
     end
@@ -223,7 +223,7 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
             self.ehi:AddTracker({
                 id = "Assault",
                 diff = EHI._cache.diff,
-                class = "EHIAssaultTracker"
+                class = EHI.Trackers.Assault.Assault
             }, 0)
         end
         EHI:HookWithID(self, "set_control_info", "EHI_Assault_set_control_info", set_assault_delay)
@@ -269,7 +269,7 @@ else
                 self.ehi:AddTracker({
                     id = "AssaultDelay",
                     diff = EHI._cache.diff,
-                    class = EHI.Trackers.AssaultDelay
+                    class = EHI.Trackers.Assault.Delay
                 })
                 EHI:HookWithID(HUDManager, "set_control_info", "EHI_AssaultDelay_set_control_info", set_assault_delay)
             end
@@ -289,7 +289,7 @@ else
                 self.ehi:AddTracker({
                     id = "AssaultTime",
                     diff = EHI._cache.diff or 0,
-                    class = "EHIAssaultTimeTracker"
+                    class = EHI.Trackers.Assault.Time
                 })
             end
             self._ehi_assault_in_progress = true

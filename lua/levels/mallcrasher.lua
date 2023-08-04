@@ -2,33 +2,18 @@ local EHI = EHI
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
-EHIMoneyCounterTracker = class(EHITracker)
-EHIMoneyCounterTracker._update = false
-function EHIMoneyCounterTracker:init(panel, params)
-    self._money = params.money or 0
-    EHIMoneyCounterTracker.super.init(self, panel, params)
-end
-
-function EHIMoneyCounterTracker:Format()
-    return "$" .. self._money
-end
-
-function EHIMoneyCounterTracker:AddMoney(money)
-    self._money = self._money + money
-    self._text:set_text(self:Format())
-    self:FitTheText()
-end
-
+---@class EHIameno3Tracker : EHIAchievementTracker, EHINeededValueTracker
+---@field super EHIAchievementTracker
 EHIameno3Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIameno3Tracker")
 EHIameno3Tracker.FormatNumber = EHINeededValueTracker.Format
-EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumber
+EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
 EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-function EHIameno3Tracker:init(panel, params)
-    self._secured = params.secured or 0
-    self._secured_formatted = "0"
-    self._to_secure = params.to_secure or 0
-    self._to_secure_formatted = self:FormatNumber2(self._to_secure)
-    EHIameno3Tracker.super.init(self, panel, params)
+function EHIameno3Tracker:pre_init(params)
+    self._cash_sign = managers.localization:text("cash_sign")
+    EHINeededValueTracker.pre_init(self, params)
+end
+
+function EHIameno3Tracker:post_init(params)
     EHI:AddAchievementToCounter({
         achievement = "ameno_3",
         counter =
@@ -55,9 +40,7 @@ function EHIameno3Tracker:OverridePanel()
     self:FitTheText(self._money_text)
     self._money_text:set_left(0)
     self._text:set_left(self._money_text:right())
-    if self._icon1 then
-        self._icon1:set_x(self._icon1:x() * 2)
-    end
+    self:SetIconX()
 end
 
 function EHIameno3Tracker:AnimateColor()
@@ -82,24 +65,22 @@ function EHIameno3Tracker:AnimateColor()
 end
 
 function EHIameno3Tracker:SetProgress(progress)
-    if self._secured ~= progress and not self._disable_counting then
-        self._secured = progress
-        self._secured_formatted = self:FormatNumber2(progress)
+    if self._progress ~= progress and not self._disable_counting then
+        self._progress = progress
+        self._progress_formatted = self:FormatNumber2(progress)
         self._money_text:set_text(self:FormatNumber())
         self:FitTheText(self._money_text)
-        if self._flash then
-            self:AnimateBG(self._flash_times)
-        end
+        self:AnimateBG()
         self:SetCompleted()
     end
 end
 
 function EHIameno3Tracker:SetCompleted(force)
-    if (self._secured >= self._to_secure and not self._status) or force then
+    if (self._progress >= self._max and not self._status) or force then
         self._status = "completed"
         self._text:stop()
         self:SetTextColor(Color.green)
-        if self._remove_after_reaching_counter_target or force then
+        if force then
             self.update = self.update_fade
         else
             self:SetStatusText("finish", self._money_text)
@@ -119,18 +100,18 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local MoneyTrigger = { id = "MallDestruction", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
-    self._trackers:CallFunction(trigger.id, "AddMoney", element._values.amount)
+    self._trackers:IncreaseTrackerProgress(trigger.id, element._values.amount)
 end) }
 local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
 local triggers =
 {
     -- Time before escape vehicle arrives
-    [300248] = { time = (OverkillOrBelow and 120 or 300) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, waypoint = { position_by_element = 300322 } },
+    [300248] = { time = (OverkillOrBelow and 120 or 300) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 300322 } },
     -- 120: Base Delay on OVK or below
     -- 300: Base Delay on Mayhem or above
     -- 25: Escape zone activation delay
 
-    [300043] = { id = "MallDestruction", class = "EHIMoneyCounterTracker", icons = { "C_Vlad_H_Mallcrasher_Shoot" } },
+    [300043] = { max = 50000, id = "MallDestruction", class = TT.NeededValue, icons = { Icon.Destruction }, flash_times = 1 },
     [300843] = MoneyTrigger, -- +40
     [300844] = MoneyTrigger, -- +80
     [300845] = MoneyTrigger, -- +250
@@ -166,7 +147,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficulty(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [301148] = { time = 50, to_secure = 1800000, class = "EHIameno3Tracker" },
+            [301148] = { time = 50, max = 1800000, class = "EHIameno3Tracker" },
         },
         load_sync = function(self)
             local t = 50 - self._trackers._t
@@ -174,14 +155,15 @@ local achievements =
                 self._trackers:AddTracker({
                     time = t,
                     id = "ameno_3",
-                    secured = managers.loot:get_real_total_small_loot_value(),
-                    to_secure = 1800000,
+                    progress = managers.loot:get_real_total_small_loot_value(),
+                    max = 1800000,
                     icons = EHI:GetAchievementIcon("ameno_3"),
                     class = "EHIameno3Tracker"
                 })
             end
         end,
         cleanup_callback = function()
+            ---@diagnostic disable-next-line
             EHIameno3Tracker = nil
         end
     },

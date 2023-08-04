@@ -377,7 +377,13 @@ function EHIManager:AddTriggers2(new_triggers, params, trigger_id_all, trigger_i
     end
 end
 
-function EHIManager:AddHostTriggers(new_triggers, trigger_id_all, trigger_icons_all, type)
+---@param new_triggers table
+---@param type string
+---|"base" # Random delay is defined in the BASE DELAY
+---|"element" # Random delay is defined when calling the elements
+---@param trigger_id_all string?
+---@param trigger_icons_all table?
+function EHIManager:AddHostTriggers(new_triggers, type, trigger_id_all, trigger_icons_all)
     for key, value in pairs(new_triggers) do
         if host_triggers[key] then
             EHI:Log("key: " .. tostring(key) .. " already exists in host triggers!")
@@ -686,6 +692,7 @@ end
 
 ---@param trigger_table { [number] : ElementTrigger }
 ---@param option string
+---| "show_timers" Filters out not loaded trackers with option show_timers
 function EHIManager:FilterOutNotLoadedTrackers(trigger_table, option)
     local config = option and self.FilterTracker[option]
     if not config then
@@ -1177,6 +1184,24 @@ function EHIManager:Trigger(id, element, enabled)
                     self:Call(trigger.id, trigger.f --[[@as string]], unpack(trigger.arg))
                 else
                     self:Call(trigger.id, trigger.f --[[@as string]])
+                end
+            elseif f == SF.CallTrackerManagerFunction then
+                local _tf = self._trackers[trigger.f --[[@as string]]]
+                if _tf then
+                    if trigger.arg then
+                        _tf(self._trackers, unpack(trigger.arg))
+                    else
+                        _tf(self._trackers)
+                    end
+                end
+            elseif f == SF.CallWaypointManagerFunction then
+                local _tf = self._waypoints[trigger.f --[[@as string]]]
+                if _tf then
+                    if trigger.arg then
+                        _tf(self._waypoints, unpack(trigger.arg))
+                    else
+                        _tf(self._waypoints)
+                    end
                 end
             elseif f == SF.Debug then
                 managers.hud:Debug(id)

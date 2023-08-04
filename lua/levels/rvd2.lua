@@ -58,7 +58,7 @@ if EHI:IsClient() then
     triggers[101630] = { time = 30 + 24 + 3, special_function = LiquidNitrogen, waypoint_f = WP }
     triggers[101629] = { time = 24 + 3, special_function = LiquidNitrogen, waypoint_f = WP }
 else
-    EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
+    EHI:AddHostTriggers(element_sync_triggers, "element")
 end
 local other =
 {

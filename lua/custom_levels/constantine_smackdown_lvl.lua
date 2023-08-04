@@ -2,12 +2,14 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local AddDestruction = EHI:GetFreeCustomSpecialFunctionID()
-local DestructionTrigger = { id = "Destruction", special_function = AddDestruction }
+local DestructionTrigger = { id = "Destruction", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+    self._trackers:IncreaseTrackerProgress(trigger.id, element._values.amount)
+end) }
+---@type ParseTriggerTable
 local triggers =
 {
     --editor_name="CounterDamages" id="100082"
-    [100397] = { to_secure = 1000000, id = "Destruction", class = TT.NeededValue, icons = { "C_Vlad_H_Mallcrasher_Shoot" }, flash_times = 1 },
+    [100397] = { max = 1000000, short_format = true, id = "Destruction", class = TT.NeededValue, icons = { Icon.Destruction }, flash_times = 1 },
     [100066] = DestructionTrigger, -- +5000
     [100077] = DestructionTrigger, -- +300000
     [100015] = DestructionTrigger, -- +200000
@@ -38,6 +40,3 @@ if EHI:MissionTrackersAndWaypointEnabled() then
 end
 
 EHI:ParseTriggers({ mission = triggers })
-EHI:RegisterCustomSpecialFunction(AddDestruction, function(self, trigger, element, ...)
-    self._trackers:IncreaseTrackerProgress(trigger.id, element._values.amount)
-end)

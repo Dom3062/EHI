@@ -195,9 +195,7 @@ function EHIProgressTimerTracker:SetProgressMax(max)
     self._max = max
     self._progress_text:set_text(self:FormatProgress())
     self:FitTheText()
-    if self._flash_max then
-        self:AnimateBG()
-    end
+    self:AnimateBG()
 end
 
 function EHIProgressTimerTracker:SetProgress(progress)
@@ -205,9 +203,7 @@ function EHIProgressTimerTracker:SetProgress(progress)
         self._progress = progress
         self._progress_text:set_text(self:FormatProgress())
         self:FitTheText()
-        if self._flash then
-            self:AnimateBG()
-        end
+        self:AnimateBG()
         if self._progress == self._max then
             if self._set_color_bad_when_reached then
                 self:SetBad()
@@ -258,7 +254,5 @@ end
 function EHIChanceTimerTracker:SetChance(amount)
     self._chance = math.max(0, amount)
     self._chance_text:set_text(self:FormatChance())
-    if self._flash then
-        self:AnimateBG(self._flash_times)
-    end
+    self:AnimateBG()
 end

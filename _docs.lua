@@ -15,7 +15,7 @@ _G.TimerGui = {}
 _G.DigitalGui = {}
 ---@class ExperienceManager
 _G.ExperienceManager = {}
----@param o table? Can be used to pass `self` to the callback function
+---@param o table? Can be used to provide `self` to the callback function
 ---@param base_callback_class table
 ---@param base_callback_func_name string
 ---@param base_callback_param any
@@ -132,6 +132,7 @@ end
 ---@field size fun(tbl: table): number Returns size of the table
 ---@field contains fun(v: table, e: string): boolean Returns `true` or `false` if `e` exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
+---@field get_key fun(map: table, wanted_key_value: any): any? Returns `key name` if value exists
 
 ---@class ElementWaypointTrigger
 ---@field id number|string? ID of the waypoint, if not provided, `id` is then copied from the trigger
@@ -169,6 +170,8 @@ end
 ---@field client ElementClientTriggerData? Table for clients only to prepopulate fields for tracker syncing. Only applicable to `SF.GetElementTimerAccurate` and `SF.UnpauseTrackerIfExistsAccurate`
 ---@field pos number? Tracker position
 ---@field f string|fun(arg: any?)? Arguments are unsupported in `SF.CustomCodeDelayed`
+---@field flash_times number?
+---@field flash_bg boolean?
 ---@field [any] any
 
 ---@class ParseTriggerTable

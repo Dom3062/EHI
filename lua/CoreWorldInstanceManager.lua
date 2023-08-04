@@ -166,7 +166,6 @@ function CoreWorldInstanceManager:custom_create_instance(instance_name, ...)
     EHI:FinalizeUnits(EHI._cache.InstanceUnits)
 end
 
-function CoreWorldInstanceManager:init(...)
-    original.init(self, ...)
+EHI:HookWithID(CoreWorldInstanceManager, "init", "EHI_CoreWorldInstanceManager_init", function(...)
     units = tweak_data.ehi.units
-end
+end)

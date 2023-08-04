@@ -1,11 +1,10 @@
 local EHI = EHI
 EHIVaultTemperatureTracker = class(EHITracker)
 EHIVaultTemperatureTracker._forced_icons = { EHI.Icons.Vault }
-function EHIVaultTemperatureTracker:init(panel, params)
+function EHIVaultTemperatureTracker:pre_init(params)
     params.time = 500
     self._synced_time = 0
     self._tick = 0.1
-    EHIVaultTemperatureTracker.super.init(self, panel, params)
 end
 
 function EHIVaultTemperatureTracker:CheckTime(time)
@@ -23,8 +22,8 @@ end
 
 EHIVaultTemperatureWaypoint = class(EHIWaypoint)
 EHIVaultTemperatureWaypoint.CheckTime = EHIVaultTemperatureTracker.CheckTime
-function EHIVaultTemperatureWaypoint:init(waypoint, params, parent_class)
-    EHIVaultTemperatureWaypoint.super.init(self, waypoint, params, parent_class)
+function EHIVaultTemperatureWaypoint:init(...)
+    EHIVaultTemperatureWaypoint.super.init(self, ...)
     self._synced_time = 0
     self._tick = 0.1
 end

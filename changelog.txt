@@ -1,3 +1,7 @@
+r171 (04. 08. 2023):
+Ukrainian Prisoner: Fixed a crash
+The Bomb: Forest: Added achievement tracker for "Oppressor"
+
 r170 (01. 08. 2023):
 Hoxton Breakout Day 2: Fixed crash when Hoxton started hacking
 

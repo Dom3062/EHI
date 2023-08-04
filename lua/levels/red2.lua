@@ -151,9 +151,7 @@ local achievements =
         {
             [101341] = { time = 30, class = "EHIcac10Tracker", condition_function = CF.IsLoud },
             [107072] = { special_function = SF.SetAchievementComplete },
-            [101544] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
-                self._trackers:StartTrackerCountdown("cac_10")
-            end), trigger_times = 1 },
+            [101544] = { special_function = SF.CallTrackerManagerFunction, f = "StartTrackerCountdown", arg = { "cac_10" }, trigger_times = 1 },
             [107066] = { special_function = SF.IncreaseProgressMax },
             [107067] = { special_function = SF.IncreaseProgress },
         }

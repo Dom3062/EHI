@@ -12,7 +12,7 @@ if EHI:IsClient() then
     triggers[100558] = { additional_time = 5, random_time = 5, id = "BileReturn", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(sync_triggers)
 else
-    EHI:AddHostTriggers(sync_triggers, nil, nil, "base")
+    EHI:AddHostTriggers(sync_triggers, "base")
 end
 
 ---@type ParseAchievementTable

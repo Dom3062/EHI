@@ -1,6 +1,5 @@
 EHIuno7Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIuno7Tracker")
-function EHIuno7Tracker:init(...)
-    EHIuno7Tracker.super.init(self, ...)
+function EHIuno7Tracker:post_init(...)
     self._obtainable = false
     self._blocked_warning = true
     self:SetTextColor()
@@ -19,16 +18,15 @@ function EHIuno7Tracker:SetTextColor()
             self:AnimateColor(true)
         end
     else
-        self._text:stop()
         self._text:set_color(Color.red)
     end
 end
 
-function EHIuno7Tracker:AnimateColor(check_progress)
+function EHIuno7Tracker:AnimateColor(check_progress, color)
     if self._blocked_warning then
         return
     end
-    EHIuno7Tracker.super.AnimateColor(self, check_progress)
+    EHIuno7Tracker.super.AnimateColor(self, check_progress, color)
 end
 
 local EHI = EHI
@@ -70,7 +68,7 @@ if EHI:IsClient() then
     triggers[100216] = { additional_time = 662/30, random_time = 10, id = "EscapeBoat", icons = Icon.BoatEscape, special_function = SF.AddTrackerIfDoesNotExist }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, nil, nil, "element")
+    EHI:AddHostTriggers(element_sync_triggers, "element")
 end
 
 local mayhem_and_up = EHI:IsMayhemOrAbove()
@@ -91,8 +89,8 @@ local achievements =
         elements =
         {
             [102430] = { time = 780, class = TT.Achievement },
-        },
-        failed_on_alarm = true
+            [100801] = { special_function = SF.SetAchievementFailed }
+        }
     },
     uno_7 =
     {
@@ -100,10 +98,8 @@ local achievements =
         elements =
         {
             [100107] = { time = 901, class = "EHIuno7Tracker" },
+            [100801] = { special_function = SF.CallCustomFunction, f = "SetObtainable" }
         },
-        alarm_callback = function()
-            managers.ehi_tracker:CallFunction("uno_7", "SetObtainable")
-        end,
         cleanup_callback = function()
             EHIuno7Tracker = nil
         end

@@ -35,9 +35,7 @@ end
 
 function EHIEnemyCountTracker:Update()
     self._text:set_text(self:Format())
-    if self._anim_flash then
-        self:AnimateBG(self._flash_times)
-    end
+    self:AnimateBG()
 end
 
 function EHIEnemyCountTracker:Alarm()

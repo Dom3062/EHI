@@ -243,6 +243,8 @@ function EHITracker:init(panel, params)
     self:OverridePanel()
     self._parent_class = params.parent_class
     self._hide_on_delete = params.hide_on_delete
+    self._flash_times = params.flash_times or 3
+    self._anim_flash = params.flash_bg ~= false
     self:post_init(params)
     if params.dynamic then
         self:SetPanelVisible()
@@ -465,11 +467,14 @@ end
 
 ---@param t number?
 function EHITracker:AnimateBG(t)
+    if not self._anim_flash then
+        return
+    end
     ---@type PanelRectangle
     local bg = self._bg_box:child("bg")
     bg:stop()
     bg:set_color(Color(1, 0, 0, 0))
-    bg:animate(bg_attention, t or 3)
+    bg:animate(bg_attention, t or self._flash_times)
 end
 
 function EHITracker:SetTextColor(color, text)

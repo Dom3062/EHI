@@ -191,13 +191,13 @@ local function WeaponsContainFiremode(firemode)
     return FireModeExists(primary.weapon_id) or FireModeExists(secondary.weapon_id)
 end
 
-local function CreateProgressTracker(id, progress, max, dont_flash, show_finish_after_reaching_target, status_is_overridable)
+local function CreateProgressTracker(id, progress, max, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
     managers.ehi_tracker:AddTracker({
         id = id,
         progress = progress,
         max = max,
         icons = EHI:GetAchievementIcon(id),
-        dont_flash = dont_flash,
+        flash_bg = not dont_flash_bg,
         flash_times = 1,
         show_finish_after_reaching_target = show_finish_after_reaching_target,
         status_is_overridable = status_is_overridable,
@@ -207,7 +207,7 @@ local function CreateProgressTracker(id, progress, max, dont_flash, show_finish_
 end
 
 local persistent_stat_unlocks = tweak_data.achievement.persistent_stat_unlocks
-local function CreateProgressTracker2(id_stat, dont_flash, show_finish_after_reaching_target, status_is_overridable)
+local function CreateProgressTracker2(id_stat, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
     local achievement = persistent_stat_unlocks[id_stat] or {}
     local stat = achievement[1]
     if not stat then
@@ -222,7 +222,7 @@ local function CreateProgressTracker2(id_stat, dont_flash, show_finish_after_rea
         EHI:Log("No achievement ID is defined in statistics with stat: " .. tostring(id_stat))
     end
     stats[id_stat] = stat.award
-    CreateProgressTracker(stat.award, EHI:GetAchievementProgress(id_stat), stat.at, dont_flash, show_finish_after_reaching_target, status_is_overridable)
+    CreateProgressTracker(stat.award, EHI:GetAchievementProgress(id_stat), stat.at, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
 end
 
 local function HookKillFunctionNoCivilian(achievement, weapon_id)
@@ -308,7 +308,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         managers.ehi_tracker:AddTracker({
             id = "flat_5",
             icons = { "C_Classics_H_PanicRoom_DontYouDare" },
-            dont_flash = true,
+            flash_bg = false,
             class = "EHIChanceTracker"
         })
     else]]

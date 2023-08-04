@@ -1,4 +1,6 @@
 local Color = Color
+---@class EHIsand11Tracker : EHIAchievementProgressTracker, EHIChanceTracker
+---@field super EHIAchievementProgressTracker
 EHIsand11Tracker = class(EHIAchievementProgressTracker)
 EHIsand11Tracker._forced_icons = EHI:GetAchievementIcon("sand_11")
 EHIsand11Tracker.FormatChance = EHIChanceTracker.Format
@@ -7,6 +9,7 @@ function EHIsand11Tracker:pre_init(params)
     params.show_finish_after_reaching_target = true
     params.no_failure = true
     self._chance = 0
+    EHIsand11Tracker.super.pre_init(self, params)
 end
 
 function EHIsand11Tracker:OverridePanel()

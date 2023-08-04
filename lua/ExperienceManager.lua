@@ -4,7 +4,7 @@ if EHI:CheckHook("ExperienceManager") then
 end
 
 ---@class ExperienceManager
----@field cash_string fun(self: self, cash: number, cash_string: string): string
+---@field cash_string fun(self: self, cash: number, cash_string: string?): string
 ---@field experience_string fun(self: self, xp: number): string
 ---@field total fun(self: self): number
 ---@field current_level fun(self: self): number
@@ -225,6 +225,16 @@ end
 function ExperienceManager:IncreaseAlivePlayers()
     self._ehi_xp.alive_players = self._ehi_xp.alive_players + 1
     self:RecalculateXP()
+end
+
+function ExperienceManager:QueryAmountOfAllPlayers()
+    local previous_value = self._ehi_xp.alive_players
+    local human_players = managers.network:session() and managers.network:session():amount_of_alive_players() or 0
+    local bots = managers.criminals:nr_AI_criminals()
+    self._ehi_xp.alive_players = math.clamp(human_players + bots, 0, 4)
+    if previous_value ~= self._ehi_xp.alive_players then
+        self:RecalculateSkillXPMultiplier()
+    end
 end
 
 function ExperienceManager:QueryAmountOfAlivePlayers()
