@@ -10,7 +10,7 @@ function EHILootTracker:init(panel, params)
     self._max_random = params.max_random or 0
     self._stay_on_screen = self._max_random > 0
     EHILootTracker.super.init(self, panel, params)
-    self._remove_after_reaching_counter_target = not self._stay_on_screen
+    self._show_finish_after_reaching_target = self._stay_on_screen
     self._loot_id = {}
 end
 
@@ -71,7 +71,7 @@ end
 
 function EHILootTracker:VerifyStatus()
     self._stay_on_screen = self._max_random > 0
-    self._remove_after_reaching_counter_target = not self._stay_on_screen
+    self._show_finish_after_reaching_target = self._stay_on_screen
     if self._progress == self._max then
         self:SetCompleted()
     end
@@ -220,7 +220,7 @@ end
 function EHIAchievementLootCounterTracker:SetFailedSilent()
     self._failed_on_sync = true
     self._show_failed = nil
-    self._remove_after_reaching_counter_target = nil
+    self._show_finish_after_reaching_target = nil
     self:SetFailed()
 end
 

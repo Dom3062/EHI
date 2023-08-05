@@ -121,7 +121,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     ---@field super EHISniperLoopTracker
     EHImia2SnipersTracker = class(EHISniperLoopTracker)
     function EHImia2SnipersTracker:post_init(params)
-        EHImia2SnipersTracker.post_init(self, params)
+        EHImia2SnipersTracker.super.post_init(self, params)
         self._sniper_respawn = true
         if params.chance_success then
             self:OnChanceSuccess()

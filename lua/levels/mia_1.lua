@@ -170,6 +170,7 @@ if EHI:IsLootCounterVisible() then
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/001
     other[100523] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
     other[100550] = DecreaseMaximumTrigger2 -- Car set on fire -- 103846
+    other[106837] = DecreaseMaximumTrigger2 -- Nothing spawned
     -- units/payday2/vehicles/str_vehicle_car_crossover_burned/str_vehicle_car_crossover_burned/001
     other[100849] = DecreaseMaximumTrigger2 -- Money should spawn, but ElementEnableUnit does not have any unit to spawn and bag counter goes up by 1
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/006

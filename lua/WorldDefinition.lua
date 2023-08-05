@@ -10,7 +10,6 @@ local original =
 {
     init = WorldDefinition.init,
     init_done = WorldDefinition.init_done,
-    create = WorldDefinition.create
 }
 
 function EHI:FinalizeUnitsClient()
@@ -97,13 +96,11 @@ function EHI:FinalizeUnits(tbl)
 end
 
 local units = {}
-function WorldDefinition:init(...)
-    original.init(self, ...)
+EHI:HookWithID(WorldDefinition, "init", "EHI_WorldDefinition_init", function(...)
     units = tweak_data.ehi.units
-end
+end)
 
-function WorldDefinition:create(...)
-    local return_data = original.create(self, ...)
+EHI:HookWithID(WorldDefinition, "create", "EHI_WorldDefinition_create", function(self, ...)
     if self._definition.statics then
         for _, values in ipairs(self._definition.statics) do
             if units[values.unit_data.name] and not values.unit_data.instance then
@@ -120,14 +117,12 @@ function WorldDefinition:create(...)
             end
         end
     end
-    return return_data
-end
+end)
 
-function WorldDefinition:init_done(...)
+EHI:PreHookWithID(WorldDefinition, "init_done", "EHI_WorldDefinition_init_done", function(...)
     EHI:FinalizeUnits(EHI._cache.MissionUnits)
     EHI:FinalizeUnits(EHI._cache.InstanceUnits)
-    original.init_done(self, ...)
-end
+end)
 
 function WorldDefinition:IgnoreDeployable(unit_id, unit_data, unit)
     if unit:base() and unit:base().SetIgnore then

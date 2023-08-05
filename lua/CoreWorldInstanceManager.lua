@@ -67,7 +67,6 @@ end
 
 local original =
 {
-    init = CoreWorldInstanceManager.init,
     prepare_mission_data = CoreWorldInstanceManager.prepare_mission_data,
     prepare_unit_data = CoreWorldInstanceManager.prepare_unit_data,
     custom_create_instance = CoreWorldInstanceManager.custom_create_instance

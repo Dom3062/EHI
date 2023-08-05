@@ -7,7 +7,7 @@ function EHIkosugi5Tracker:init(panel, params)
     self._armor_counter = 0
     self._completion = {}
     EHIkosugi5Tracker.super.init(self, panel, params)
-    self._remove_after_reaching_counter_target = false
+    self._show_finish_after_reaching_target = false
     EHI:AddAchievementToCounter({
         achievement = "kosugi_5",
         counter =
