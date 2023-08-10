@@ -62,14 +62,7 @@ local pent_11_levels =
     pent = true
 }
 
-local armored_4_levels =
-{
-    arm_cro = true,
-    arm_und = true,
-    arm_hcm = true,
-    arm_par = true,
-    arm_fac = true
-}
+local armored_4_levels = table.list_to_set(tweak_data.achievement.complete_heist_achievements.i_take_scores.jobs)
 
 local primary, secondary, melee, grenade, is_stealth = nil, nil, nil, nil, false
 local VeryHardOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
@@ -220,6 +213,7 @@ local function CreateProgressTracker2(id_stat, dont_flash_bg, show_finish_after_
     end
     if not stat.award then
         EHI:Log("No achievement ID is defined in statistics with stat: " .. tostring(id_stat))
+        return
     end
     stats[id_stat] = stat.award
     CreateProgressTracker(stat.award, EHI:GetAchievementProgress(id_stat), stat.at, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
@@ -343,7 +337,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         if EHI:IsAchievementLocked2("armored_9") and HasWeaponEquipped("m45") and mask_id == tweak_data.achievement.enemy_kill_achievements.fool_me_once.mask then -- "Fool Me Once, Shame on -Shame on You. Fool Me - You Can't Get Fooled Again" achievement
             local function f()
-                CreateProgressTracker("armored_9_stat")
+                CreateProgressTracker2("armored_9_stat")
             end
             ShowTrackerInLoud(f)
             stats.armored_9_stat = "armored_9"

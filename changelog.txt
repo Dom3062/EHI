@@ -1,3 +1,6 @@
+r173 (10. 08. 2023):
+Fixed an issue with "Fool Me Once, Shame on -Shame on You. Fool Me - You Can't Get Fooled Again" achievement tracker
+
 r172 (05. 08. 2023):
 Loot Tracker: Fixed an issue where the tracker would hide even there is random loot on the map
 Hotline Miami Day 1: Fixed an issue where the black sedan sometimes did not spawn any loot and it wasn't reflected in the Loot Counter
