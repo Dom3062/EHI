@@ -10,7 +10,10 @@ EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
 EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 function EHIameno3Tracker:pre_init(params)
     self._cash_sign = managers.localization:text("cash_sign")
-    EHINeededValueTracker.pre_init(self, params)
+    self._max = params.max or 0
+    self._progress = params.progress or 0
+    self._progress_formatted = self:FormatNumber2(0)
+    self._max_formatted = self:FormatNumber2(self._max)
 end
 
 function EHIameno3Tracker:post_init(params)

@@ -1,3 +1,6 @@
+r174 (11. 08. 2023):
+Mallcrasher: Fixed a crash on OVERKILL difficulty
+
 r173 (10. 08. 2023):
 Fixed an issue with "Fool Me Once, Shame on -Shame on You. Fool Me - You Can't Get Fooled Again" achievement tracker
 
