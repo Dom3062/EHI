@@ -23,7 +23,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100595] = { time = 120, class = TT.Achievement },
+            [100595] = { time = 120, class = TT.Achievement.Base },
             [101170] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)

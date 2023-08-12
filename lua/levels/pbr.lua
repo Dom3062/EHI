@@ -24,7 +24,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [102292] = { time = 600, class = TT.Achievement },
+            [102292] = { time = 600, class = TT.Achievement.Base },
             [102290] = { special_function = SF.SetAchievementComplete }
         }
     },
@@ -34,7 +34,7 @@ local achievements =
         elements =
         {
             [102292] = { special_function = SF.Trigger, data = { 1, 2 } },
-            [1] = { status = "no_down", class = TT.AchievementStatus },
+            [1] = { status = "no_down", class = TT.Achievement.Status },
             [2] = { special_function = SF.CustomCode, f = function()
                 -- Player (Local)
                 managers.player:add_listener("EHI_berry_4_fail", { "bleed_out", "incapacitated" }, berry_4_fail)

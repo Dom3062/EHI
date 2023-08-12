@@ -56,6 +56,8 @@ else
         EHIAssaultTracker._hostage_delay = first_value
     end
 end
+---@param panel Panel
+---@param params EHITracker_params
 function EHIAssaultTracker:init(panel, params)
     self:CalculateDifficultyRamp(params.diff or 0)
     self.update_break = self.update

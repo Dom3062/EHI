@@ -77,7 +77,7 @@ local achievements =
     {
         elements =
         {
-            [104591] = { max = 10, class = TT.AchievementProgress }, -- Stealth approach (cannot be achieved in loud)
+            [104591] = { max = 10, class = TT.Achievement.Progress }, -- Stealth approach (cannot be achieved in loud)
             [101704] = { special_function = SF.SetAchievementFailed }, -- Alarm
             [104408] = { special_function = SF.IncreaseProgress },
             [104442] = { special_function = SF.IncreaseProgress },
@@ -89,7 +89,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100610] = { max = 3, set_color_bad_when_reached = true, class = TT.AchievementProgress, condition_function = CF.IsLoud, trigger_times = 1 },
+            [100610] = { max = 3, set_color_bad_when_reached = true, class = TT.Achievement.Progress, condition_function = CF.IsLoud, trigger_times = 1 },
             [EHI:GetInstanceElementID(100225, 9840)] = { special_function = SF.IncreaseProgress }, -- 1st pump used
             [EHI:GetInstanceElementID(100228, 9840)] = { special_function = SF.IncreaseProgress }, -- 2nd pump used
             [EHI:GetInstanceElementID(100229, 9840)] = { special_function = SF.IncreaseProgress }, -- 3rd pump used
@@ -163,7 +163,7 @@ local MissionDoor =
     -- Locker
     [Vector3(2358.11, 867.92, 4091.94)] = 104174
 }
-EHI:SetMissionDoorPosAndIndex(MissionDoor)
+EHI:SetMissionDoorData(MissionDoor)
 local total_xp_override =
 {
     params =

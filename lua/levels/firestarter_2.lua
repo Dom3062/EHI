@@ -23,7 +23,7 @@ local MissionDoor =
     [Vector3(1342.13, -2621.42, 89.1069)] = 101782, --101867
     [Vector3(-2830.08, 341.886, 492.443)] = 101783 --102199
 }
-EHI:SetMissionDoorPosAndIndex(MissionDoor)
+EHI:SetMissionDoorData(MissionDoor)
 
 local other =
 {

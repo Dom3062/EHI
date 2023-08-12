@@ -1,4 +1,4 @@
-EHIorange5Tracker = EHI:AchievementClass(EHIAchievementProgressTracker, "EHIorange5Tracker")
+EHIorange5Tracker = class(EHIAchievementProgressTracker)
 function EHIorange5Tracker:Finalize()
     if self._progress < self._max then
         self:SetFailed()
@@ -33,7 +33,7 @@ local achievements =
         difficulty_pass = mayhem_and_up,
         elements =
         {
-            [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, class = TT.Achievement },
+            [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, class = TT.Achievement.Base },
             [EHI:GetInstanceElementID(100461, 21700)] = { special_function = SF.SetAchievementComplete },
         }
     },

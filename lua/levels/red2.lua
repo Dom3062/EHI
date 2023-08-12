@@ -1,9 +1,10 @@
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
-EHIcac10Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIcac10Tracker")
+---@class EHIcac10Tracker : EHIAchievementTracker, EHIProgressTracker
+EHIcac10Tracker = class(EHIAchievementTracker)
 EHIcac10Tracker._update = false
-EHIcac10Tracker.FormatProgress = EHIProgressTracker.Format
+EHIcac10Tracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIcac10Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac10Tracker.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
 function EHIcac10Tracker:OverridePanel()
@@ -25,9 +26,7 @@ function EHIcac10Tracker:OverridePanel()
     self:FitTheText(self._progress_text)
     self._progress_text:set_left(0)
     self._text:set_left(self._progress_text:right())
-    if self._icon1 then
-        self._icon1:set_x(self._icon1:x() * 2)
-    end
+    self:SetIconX()
 end
 
 function EHIcac10Tracker:AnimateColor()
@@ -57,7 +56,7 @@ function EHIcac10Tracker:SetProgressMax(max)
 end
 
 function EHIcac10Tracker:SetProgress(progress)
-    if self._progress ~= progress and not self._disable_counting then
+    if self._progress ~= progress then
         self._progress = progress
         self._progress_text:set_text(self:FormatProgress())
         self:FitTheText(self._progress_text)
@@ -66,14 +65,11 @@ function EHIcac10Tracker:SetProgress(progress)
 end
 
 function EHIcac10Tracker:SetCompleted(force)
-    if (self._progress == self._max and not self._status) or force then
-        self._status = "completed"
-        self._text:stop()
-        self:SetTextColor(Color.green)
-        self.update = self.update_fade
-        self._disable_counting = true
-        self._achieved_popup_showed = true
-    end
+    self._status = "completed"
+    self._text:stop()
+    self:SetTextColor(Color.green)
+    self.update = self.update_fade
+    self._achieved_popup_showed = true
 end
 
 function EHIcac10Tracker:SetTextColor(color)
@@ -81,7 +77,7 @@ function EHIcac10Tracker:SetTextColor(color)
     self._progress_text:set_color(color)
 end
 
-EHIgreen1Tracker = EHI:AchievementClass(EHIProgressTracker, "EHIgreen1Tracker")
+EHIgreen1Tracker = class(EHIProgressTracker)
 function EHIgreen1Tracker:SetCompleted(force)
     EHIgreen1Tracker.super.SetCompleted(self, force)
     self._disable_counting = false
@@ -134,7 +130,7 @@ local achievements =
     {
         elements =
         {
-            [103373] = { time = 817, class = TT.Achievement },
+            [103373] = { time = 817, class = TT.Achievement.Base },
             [102567] = { special_function = SF.SetAchievementFailed },
             [103491] = { special_function = SF.SetAchievementComplete }
         },

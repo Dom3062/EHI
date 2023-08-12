@@ -19,6 +19,8 @@ EHIAssaultTimeTracker._forced_icons = { { icon = "assaultbox", color = Build } }
 EHIAssaultTimeTracker._is_client = EHI:IsClient()
 EHIAssaultTimeTracker._paused_color = EHIPausableTracker._paused_color
 EHIAssaultTimeTracker._show_completion_color = true
+---@param panel Panel
+---@param params EHITracker_params
 function EHIAssaultTimeTracker:init(panel, params)
     self:CalculateDifficultyRamp(params.diff)
     params.time = self:CalculateAssaultTime()

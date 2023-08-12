@@ -56,10 +56,10 @@ local triggers = {
     [104599] = { id = "RequestCounter", special_function = SF.RemoveTracker },
     [104591] = { id = "RequestCounter", special_function = SF.IncreaseProgress },
 
-    [104472] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress },
-    [104478] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 1 } },
-    [104480] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 2 } },
-    [104481] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 3 } },
+    [104472] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress },
+    [104478] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 1 } },
+    [104480] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 2 } },
+    [104481] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 3 } },
     [104482] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 4, dont_create = true } },
 
     [105113] = { chance = 25, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance },
@@ -83,7 +83,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100107] = { class = TT.AchievementStatus },
+            [100107] = { class = TT.Achievement.Status },
             [101892] = { status = "finish", special_function = SF.SetAchievementStatus },
             [100256] = { special_function = SF.SetAchievementFailed },
             [100258] = { special_function = SF.SetAchievementComplete }
@@ -99,7 +99,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100107] = { status = "objective", class = TT.AchievementStatus },
+            [100107] = { status = "objective", class = TT.Achievement.Status },
             [104485] = { status = "defend", special_function = SF.SetAchievementStatus },
             [104520] = { status = "objective", special_function = SF.SetAchievementStatus },
             [101884] = { status = "finish", special_function = SF.SetAchievementStatus },
@@ -163,9 +163,7 @@ local function PCPosition(id, unit_data, unit)
     PCVectors[pos] = unit:interaction() and unit:interaction():interact_position() or unit:position()
     unit:timer_gui():SetCustomID("HoxtonHack")
     unit:timer_gui():SetCustomCallback("hox_2_restore_waypoint_hack", "add_waypoint")
-    if pos ~= 4 then
-        unit:timer_gui():SetTrackerMergeID("HoxtonMaxHacks")
-    end
+    unit:timer_gui():SetTrackerMergeID("HoxtonMaxHacks", pos == 4)
 end
 ---@type ParseUnitsTable
 local tbl =
@@ -282,7 +280,7 @@ local MissionDoor =
     [Vector3(-1207.53, 4234.84, -409.118)] = SecurityOffice,
     [Vector3(807.528, 4265.16, -9.11819)] = SecurityOffice
 }
-EHI:SetMissionDoorPosAndIndex(MissionDoor)
+EHI:SetMissionDoorData(MissionDoor)
 EHI:AddXPBreakdown({
     objectives =
     {

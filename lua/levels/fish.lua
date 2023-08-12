@@ -22,7 +22,7 @@ local achievements = {
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100244] = { time = 360, class = TT.Achievement },
+            [100244] = { time = 360, class = TT.Achievement.Base },
         },
         load_sync = function(self)
             self._trackers:AddTimedAchievementTracker("fish_4", 360)
@@ -33,7 +33,7 @@ local achievements = {
     {
         elements =
         {
-            [100244] = { class = TT.AchievementStatus },
+            [100244] = { class = TT.Achievement.Status },
             [100395] = { special_function = SF.SetAchievementFailed },
             [100842] = { special_function = SF.SetAchievementComplete }
         }

@@ -7,7 +7,7 @@ local achievements = {
     {
         elements =
         {
-            [100077] = { time = 62, class = TT.Achievement, special_function = SF.ShowAchievementFromStart }
+            [100077] = { time = 62, class = TT.Achievement.Base, special_function = SF.ShowAchievementFromStart }
         }
     }
 }

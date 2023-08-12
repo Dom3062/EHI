@@ -7,8 +7,12 @@ if not EHI:GetOption("show_laser_tracker") then
     return
 end
 
+---@class EHILaserTracker : EHITracker
+---@field super EHITracker
 EHILaserTracker = class(EHITracker)
 EHILaserTracker._forced_icons = { EHI.Icons.Lasers }
+---@param panel Panel
+---@param params EHITracker_params
 function EHILaserTracker:init(panel, params)
     self._next_cycle_t = params.time
     EHILaserTracker.super.init(self, panel, params)

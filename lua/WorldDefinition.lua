@@ -6,12 +6,6 @@ end
 ---@class WorldDefinition
 ---@field get_unit fun(self: self, id: number): Unit?
 
-local original =
-{
-    init = WorldDefinition.init,
-    init_done = WorldDefinition.init_done,
-}
-
 function EHI:FinalizeUnitsClient()
     self:FinalizeUnits(self._cache.MissionUnits)
     self:FinalizeUnits(self._cache.InstanceUnits)
@@ -57,7 +51,7 @@ function EHI:FinalizeUnits(tbl)
                         timer_gui:SetCustomID(unit_data.set_custom_id)
                     end
                     if unit_data.tracker_merge_id then
-                        timer_gui:SetTrackerMergeID(unit_data.tracker_merge_id)
+                        timer_gui:SetTrackerMergeID(unit_data.tracker_merge_id, unit_data.destroy_tracker_merge_on_done)
                     end
                     if unit_data.custom_callback then
                         timer_gui:SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)

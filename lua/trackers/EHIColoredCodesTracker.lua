@@ -40,7 +40,7 @@ function EHIColoredCodesTracker:Format(code)
 end
 
 function EHIColoredCodesTracker:SetCode(color, code)
-    local text = self._bg_box:child(color)
+    local text = self._bg_box:child(color) --[[@as PanelText]]
     text:set_text(self:Format(code))
     self:FitTheText(text)
     self:AnimateBG()

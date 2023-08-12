@@ -1,6 +1,9 @@
 local EHI = EHI
 local Icon = EHI.Icons
-EHIkosugi5Tracker = EHI:AchievementClass(EHIAchievementProgressTracker, "EHIkosugi5Tracker")
+---@class EHIkosugi5Tracker : EHIAchievementProgressTracker
+EHIkosugi5Tracker = class(EHIAchievementProgressTracker)
+---@param panel Panel
+---@param params EHITracker_params
 function EHIkosugi5Tracker:init(panel, params)
     params.max = 16 -- Random loot (with armor)
     self._armor_max = 4 -- Armor
@@ -13,11 +16,12 @@ function EHIkosugi5Tracker:init(panel, params)
         counter =
         {
             check_type = EHI.LootCounter.CheckType.CustomCheck,
-            f = function(self, tracker_id, loot_type)
-                managers.ehi_tracker:CallFunction(tracker_id, "SetProgressArmor", self:GetSecuredBagsTypeAmount("samurai_suit"))
-                managers.ehi_tracker:SetTrackerProgress(tracker_id, self:GetSecuredBagsAmount())
+            f = function(loot, tracker_id)
+                managers.ehi_tracker:CallFunction(tracker_id, "SetProgressArmor", loot:GetSecuredBagsTypeAmount("samurai_suit"))
+                managers.ehi_tracker:SetTrackerProgress(tracker_id, loot:GetSecuredBagsAmount())
             end
-        }
+        },
+        no_sync = true
     })
 end
 
@@ -37,9 +41,7 @@ function EHIkosugi5Tracker:OverridePanel()
     })
     self:FitTheText(self._armor_progress_text)
     self._armor_progress_text:set_left(self._text:right())
-    if self._icon1 then
-        self._icon1:set_x(self._icon1:x() * 2)
-    end
+    self:SetIconX()
 end
 
 function EHIkosugi5Tracker:FormatArmorProgress()
@@ -137,7 +139,7 @@ local achievements =
     {
         elements =
         {
-            [102700] = { max = 6, class = TT.AchievementProgress, status_is_overridable = true, show_finish_after_reaching_target = true },
+            [102700] = { max = 6, class = TT.Achievement.Progress, status_is_overridable = true, show_finish_after_reaching_target = true },
             [102796] = { special_function = SF.SetAchievementFailed },
             [100311] = { special_function = SF.IncreaseProgress }
         }
@@ -146,7 +148,7 @@ local achievements =
     {
         elements =
         {
-            [102700] = { max = 7, class = TT.AchievementProgress },
+            [102700] = { max = 7, class = TT.Achievement.Progress },
             [104040] = kosugi_3, -- Artifact
             [104041] = kosugi_3, -- Money
             [104042] = kosugi_3, -- Coke
@@ -181,6 +183,7 @@ local achievements =
             end
         end,
         cleanup_callback = function()
+            ---@diagnostic disable-next-line
             EHIkosugi5Tracker = nil
         end
     }

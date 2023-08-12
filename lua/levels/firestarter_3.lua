@@ -15,7 +15,7 @@ if level_id == "firestarter_3" then
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
         elements =
         {
-            [102144] = { status = "ok", class = TT.AchievementStatus },
+            [102144] = { status = "ok", class = TT.Achievement.Status },
             [102146] = { status = "finish", special_function = SF.SetAchievementStatus },
             [105237] = { special_function = SF.SetAchievementComplete },
             [105235] = { special_function = SF.SetAchievementFailed }
@@ -44,7 +44,7 @@ achievements.voff_1 =
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
     elements =
     {
-        [101539] = { status = "bring", class = TT.AchievementStatus },
+        [101539] = { status = "bring", class = TT.Achievement.Status },
         [105686] = { special_function = SF.SetAchievementComplete },
         [105691] = { status = "finish", special_function = SF.SetAchievementStatus }, -- Entered area again
         [105694] = { status = "finish", special_function = SF.SetAchievementStatus }, -- Both secured

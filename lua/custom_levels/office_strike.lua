@@ -54,7 +54,7 @@ local achievements =
         difficulty_pass = OVKorAbove,
         elements =
         {
-            [200134] = { status = "defend", class = TT.AchievementStatus },
+            [200134] = { status = "defend", class = TT.Achievement.Status },
             [100604] = { special_function = SF.SetAchievementComplete },
             [100621] = { special_function = SF.SetAchievementFailed }
         }
@@ -64,7 +64,7 @@ local achievements =
         difficulty_pass = OVKorAbove,
         elements =
         {
-            [200106] = { status = "defend", class = TT.AchievementStatus },
+            [200106] = { status = "defend", class = TT.Achievement.Status },
             [100606] = { special_function = SF.SetAchievementComplete },
             [100630] = { special_function = SF.SetAchievementFailed }
         }
@@ -74,7 +74,7 @@ local achievements =
         difficulty_pass = OVKorAbove,
         elements =
         {
-            [200106] = { max = 18, class = TT.AchievementProgress, special_function = SF.AddAchievementToCounter, data = {
+            [200106] = { max = 18, class = TT.Achievement.Progress, special_function = SF.AddAchievementToCounter, data = {
                 counter =
                 {
                     check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
@@ -121,7 +121,7 @@ local MissionDoor =
 {
     [Vector3(945.08, 3403.11, 92.4429)] = 200160
 }
-EHI:SetMissionDoorPosAndIndex(MissionDoor)
+EHI:SetMissionDoorData(MissionDoor)
 
 EHI:ParseTriggers({
     mission = triggers,

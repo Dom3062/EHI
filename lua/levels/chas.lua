@@ -42,7 +42,7 @@ local achievements =
     {
         elements =
         {
-            [100781] = { status = "defend", class = TT.AchievementStatus },
+            [100781] = { status = "defend", class = TT.Achievement.Status },
             [100907] = { special_function = SF.SetAchievementFailed },
             [100906] = { special_function = SF.SetAchievementComplete }
         }
@@ -52,7 +52,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100107] = { time = 360, class = TT.Achievement }
+            [100107] = { time = 360, class = TT.Achievement.Base }
         },
         load_sync = function(self)
             self._trackers:AddTimedAchievementTracker("chas_11", 360)

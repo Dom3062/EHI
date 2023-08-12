@@ -21,8 +21,8 @@ local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_wa
 ---@type MissionDoorTableParsed
 local MissionDoor = {}
 
----@param tbl MissionDoorTable
-function TimerGui.SetMissionDoorPosAndIndex(tbl)
+---@param tbl table<Vector3, number|MissionDoorAdvancedTable>
+function TimerGui.SetMissionDoorData(tbl)
     for vector, value in pairs(tbl) do
         MissionDoor[tostring(vector)] = value
     end
@@ -122,11 +122,10 @@ function TimerGui:PostStartTimer()
                 if data.restore and data.unit_id then
                     local restore = callback(self, self, "RestoreWaypoint")
                     local m = managers.mission
-                    local add_trigger = m.add_runned_unit_sequence_trigger
-                    add_trigger(m, data.unit_id, "explode_door", restore)
-                    add_trigger(m, data.unit_id, "open_door_keycard", restore)
-                    add_trigger(m, data.unit_id, "open_door_ecm", restore)
-                    add_trigger(m, data.unit_id, "open_door", restore) -- In case the drill finishes first host side than client-side
+                    m:add_runned_unit_sequence_trigger(data.unit_id, "explode_door", restore)
+                    m:add_runned_unit_sequence_trigger(data.unit_id, "open_door_keycard", restore)
+                    m:add_runned_unit_sequence_trigger(data.unit_id, "open_door_ecm", restore)
+                    m:add_runned_unit_sequence_trigger(data.unit_id, "open_door", restore) -- In case the drill finishes first host side than client-side
                     -- Drill finish is covered in TimerGui:_set_done()
                 end
             elseif type(data) == "number" then
@@ -240,7 +239,11 @@ end
 ---@param destroy boolean?
 function TimerGui:RemoveTracker(destroy)
     if self._ehi_merge and not destroy then
-        managers.ehi_tracker:CallFunction(self._ehi_key, "StopTimer")
+        if self._destroy_tracker_merge_on_done then
+            managers.ehi_tracker:RemoveTracker(self._ehi_key)
+        else
+            managers.ehi_tracker:CallFunction(self._ehi_key, "StopTimer")
+        end
         managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     else
         managers.ehi_manager:Remove(self._ehi_key)
@@ -348,8 +351,10 @@ function TimerGui:SetCustomID(id)
 end
 
 ---@param id string
-function TimerGui:SetTrackerMergeID(id)
+---@param destroy_on_done boolean
+function TimerGui:SetTrackerMergeID(id, destroy_on_done)
     self._tracker_merge_id = id
+    self._destroy_tracker_merge_on_done = destroy_on_done
 end
 
 function TimerGui:Finalize()

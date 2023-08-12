@@ -28,7 +28,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [101228] = { time = 210, class = TT.Achievement },
+            [101228] = { time = 210, class = TT.Achievement.Base },
             [100788] = { special_function = SF.SetAchievementComplete }
         }
     }
@@ -37,7 +37,7 @@ local start_index = { 3500, 3750, 3900, 4450, 4900, 6100, 17600, 17650 }
 if EHI:CanShowAchievement("pig_7") then
     achievements.pig_7 = { elements = {} }
     for _, index in ipairs(start_index) do
-        achievements.pig_7.elements[EHI:GetInstanceElementID(100024, index)] = { time = 5, class = TT.Achievement }
+        achievements.pig_7.elements[EHI:GetInstanceElementID(100024, index)] = { time = 5, class = TT.Achievement.Base }
         achievements.pig_7.elements[EHI:GetInstanceElementID(100016, index)] = { special_function = SF.SetAchievementFailed } -- Hostage blew out
         achievements.pig_7.elements[EHI:GetInstanceElementID(100027, index)] = { special_function = SF.SetAchievementComplete } -- Hostage saved
     end

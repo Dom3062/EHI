@@ -1,4 +1,91 @@
 local EHI = EHI
+---@class EHIbex11Tracker : EHIAchievementProgressTracker
+---@field super EHIAchievementProgressTracker
+EHIbex11Tracker = class(EHIAchievementProgressTracker)
+---@param params EHITracker_params
+function EHIbex11Tracker:pre_init(params)
+    params.max = 11 -- Loot
+    self._box_max = 240
+    self._box_progress = 0
+    self._objectives_to_complete = 2 -- Loot and Deposit boxes
+    EHIbex11Tracker.super.pre_init(self, params)
+    EHI:AddAchievementToCounter({
+        achievement = "bex_11",
+        no_sync = true
+    })
+end
+
+function EHIbex11Tracker:FormatBoxProgress()
+    return self._box_progress .. "/" .. self._box_max
+end
+
+function EHIbex11Tracker:OverridePanel()
+    self._icon_previous_pos = self._icon1 and self._icon1:x()
+    self._finish_status_text = self:CreateText({
+        name = "finish_status_text",
+        status_text = "finish",
+        color = Color.green
+    })
+    self._finish_status_text:set_visible(false)
+    self._box_progress_text = self:CreateText({
+        name = "box_progress_text",
+        text = self:FormatBoxProgress()
+    })
+    self._panel:set_w(self._panel:w() * 2)
+    self._bg_box:set_w(self._bg_box:w() * 2)
+    self._box_progress_text:set_left(self._text:right())
+    self:SetIconX()
+end
+
+function EHIbex11Tracker:SetFailed()
+    EHIbex11Tracker.super.SetFailed(self)
+    self:SetTextColor(Color.red, self._box_progress_text)
+    self:SetTextColor(Color.red, self._finish_status_text)
+    self:SetStatusText("fail", self._finish_status_text)
+end
+
+function EHIbex11Tracker:SetCompleted(...)
+    EHIbex11Tracker.super.SetCompleted(self, ...)
+    if self._status and self._status == "completed" and not self._loot_objective_done then
+        self._loot_objective_done = true
+        self:ObjectiveComplete()
+    end
+end
+
+function EHIbex11Tracker:IncreaseBoxProgress()
+    self:SetBoxProgress(self._box_progress + 1)
+end
+
+---@param progress number
+function EHIbex11Tracker:SetBoxProgress(progress)
+    if self._box_progress ~= progress and not self._disable_counting_box then
+        self._box_progress = progress
+        self._box_progress_text:set_text(self:FormatBoxProgress())
+        self:FitTheText(self._box_progress_text)
+        self:AnimateBG(1)
+        if self._box_progress == self._box_max then
+            self._disable_counting_box = true
+            self:ObjectiveComplete()
+            self:SetTextColor(Color.green, self._box_progress_text)
+        end
+    end
+end
+
+function EHIbex11Tracker:ObjectiveComplete()
+    self._objectives_to_complete = self._objectives_to_complete - 1
+    if self._objectives_to_complete == 0 then -- Both objectives complete
+        self._finish_status_text:set_visible(true)
+        self._text:set_visible(false)
+        self._box_progress_text:set_visible(false)
+        self._bg_box:set_w(self._bg_box:w() / 2)
+        local panel_w = self._panel:w() / 2
+        self:SetPanelW(panel_w)
+        self:AnimIconX(self._icon_previous_pos)
+        self:ChangeTrackerWidth(panel_w)
+        self:AnimateBG()
+    end
+end
+
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -54,7 +141,17 @@ local achievements =
             [103702] = { special_function = SF.SetAchievementFailed },
             [103704] = { special_function = SF.SetAchievementFailed },
             [102602] = { special_function = SF.SetAchievementComplete },
-            [100107] = { status = "loud", class = TT.AchievementStatus },
+            [100107] = { status = "loud", class = TT.Achievement.Status },
+        }
+    },
+    bex_11 =
+    {
+        difficulty_pass = ovk_and_up,
+        elements =
+        {
+            [100107] = { class = "EHIbex11Tracker" },
+            [103677] = { special_function = SF.CallCustomFunction, f = "IncreaseBoxProgress" },
+            [103772] = { special_function = SF.SetAchievementFailed }
         }
     }
 }

@@ -2,11 +2,12 @@
 ---@field super EHIColoredCodesTracker
 EHIcorp9Tracker = class(EHIColoredCodesTracker)
 EHIcorp9Tracker._update = false
-EHIcorp9Tracker._forced_icons = EHI:GetAchievementIcon("corp_9")
 EHIcorp9Tracker._popup_type = "achievement"
 EHIcorp9Tracker._show_started = EHIAchievementTracker._show_started
 EHIcorp9Tracker._show_failed = EHIAchievementTracker._show_failed
 EHIcorp9Tracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
+---@param panel Panel
+---@param params EHITracker_params
 function EHIcorp9Tracker:init(panel, params)
     EHIcorp9Tracker.super.init(self, panel, params)
     if self._show_started then
@@ -64,7 +65,7 @@ function EHIcorp9Tracker:SetFailed()
 end
 
 ---@class EHIcorp12Tracker : EHIAchievementTracker
-EHIcorp12Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIcorp12Tracker")
+EHIcorp12Tracker = class(EHIAchievementTracker)
 EHIcorp12Tracker._forced_icons = EHI:GetAchievementIcon("corp_12")
 function EHIcorp12Tracker:SetMPState()
     if self._mp then
@@ -149,7 +150,7 @@ local achievements =
         difficulty_pass = OVKorAbove,
         elements =
         {
-            [103043] = { max = 50, class = TT.AchievementProgress },
+            [103043] = { max = 50, class = TT.Achievement.Progress },
             [103482] = { special_function = SF.IncreaseProgress },
             [103487] = { special_function = SF.SetAchievementFailed }
         }
@@ -164,7 +165,7 @@ local achievements =
                         id = "corp_11",
                         time = 60,
                         icons = trigger.icons,
-                        class = TT.Achievement
+                        class = TT.Achievement.Base
                     })
                 end
             end) },

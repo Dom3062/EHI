@@ -37,7 +37,7 @@ local achievements =
     {
         elements =
         {
-            [100107] = { status = "defend", class = TT.AchievementStatus },
+            [100107] = { status = "defend", class = TT.Achievement.Status },
             [100839] = { special_function = SF.SetAchievementFailed },
             [100869] = { special_function = SF.SetAchievementComplete },
         }
@@ -47,7 +47,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
         elements =
         {
-            [100057] = { time = 60, class = TT.Achievement, special_function = SF.ShowAchievementFromStart },
+            [100057] = { time = 60, class = TT.Achievement.Base, special_function = SF.ShowAchievementFromStart },
             [100247] = { special_function = SF.SetAchievementComplete }
         }
     }

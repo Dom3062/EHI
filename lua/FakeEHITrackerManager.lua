@@ -42,7 +42,7 @@ end
 function FakeEHITrackerManager:AddFakeTrackers()
     self._n_of_trackers = 0
     self._fake_trackers = {}
-    self:AddFakeTracker({ id = "show_mission_trackers", time = (math.random() * (9.99 - 0.5) + 0.5), icons = { Icon.Wait } } )
+    self:AddFakeTracker({ id = "show_mission_trackers", time = math.rand(0.5, 9.99), icons = { Icon.Wait } } )
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.random(60, 180), icons = { Icon.Car, Icon.Escape } } )
     self:AddFakeTracker({ id = "show_unlockables", time = math.random(60, 180), icons = { Icon.Trophy } } )
     do
@@ -59,7 +59,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Sentry, "reload" } } )
     self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Sentry, Icon.Fix } } )
     do
-        local time = math.random() * (8 - 1) + 1
+        local time = math.rand(1, 8)
         self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { "zipline_bag" } } )
         self:AddFakeTracker({ id = "show_zipline_timer", time = time * 2, icons = { "zipline", Icon.Loop } } )
     end
@@ -72,9 +72,9 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "enemy" }, class = "FakeEHIChanceTracker" } )
     self:AddFakeTracker({ id = "show_drama_tracker", chance = math.random(100), icons = { "C_Escape_H_Street_Bullet" }, class = "FakeEHIChanceTracker" })
     self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { Icon.Pager }, class = "FakeEHIProgressTracker" } )
-    self:AddFakeTracker({ id = "show_pager_callback", time = math.random() * (12 - 0.5) + 0.5, icons = { "pager_icon" } })
+    self:AddFakeTracker({ id = "show_pager_callback", time = math.rand(0.5, 12), icons = { "pager_icon" } })
     self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "pager_icon", { icon = "enemy", visible = false } }, class = "FakeEHIEnemyCountTracker" } )
-    self:AddFakeTracker({ id = "show_laser_tracker", time = math.random() * (4 - 0.5) + 0.5, icons = { EHI.Icons.Lasers } } )
+    self:AddFakeTracker({ id = "show_laser_tracker", time = math.rand(0.5, 4), icons = { EHI.Icons.Lasers } } )
     if EHI:CombineAssaultDelayAndAssaultTime() then
         self:AddFakeTracker({ id = "aggregate_assault_delay_and_assault_time", time = math.random(0, 240), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker" })
     else

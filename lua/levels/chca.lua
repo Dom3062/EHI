@@ -139,7 +139,7 @@ local achievements =
             -- Players spawned
             [100264] = { special_function = SF.Trigger, data = { 1, 2 } }, -- Guest Rooms (civilian mode)
             [102955] = { special_function = SF.Trigger, data = { 1, 2 } }, -- Crew Deck
-            [1] = { status = "ok", class = TT.AchievementStatus },
+            [1] = { status = "ok", class = TT.Achievement.Status },
             [2] = { special_function = SF.CustomCode, f = function()
                 local function check(_, data)
                     if data.variant ~= "melee" then
@@ -157,8 +157,8 @@ local achievements =
         difficulty_pass = EHI:IsMayhemOrAbove(),
         elements =
         {
-            [100264] = { max = 8, class = TT.AchievementProgress, show_finish_after_reaching_target = true }, -- Guest Rooms (civilian mode)
-            [102955] = { max = 8, class = TT.AchievementProgress, show_finish_after_reaching_target = true }, -- Crew Deck
+            [100264] = { max = 8, class = TT.Achievement.Progress, show_finish_after_reaching_target = true }, -- Guest Rooms (civilian mode)
+            [102955] = { max = 8, class = TT.Achievement.Progress, show_finish_after_reaching_target = true }, -- Crew Deck
             [102944] = { special_function = SF.IncreaseProgress }, -- Bodybag thrown
             [103371] = { special_function = SF.SetAchievementFailed } -- Civie killed
         },
@@ -169,7 +169,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [EHI:GetInstanceElementID(100041, 11770)] = { special_function = SF.ShowAchievementFromStart, class = TT.AchievementStatus },
+            [EHI:GetInstanceElementID(100041, 11770)] = { special_function = SF.ShowAchievementFromStart, class = TT.Achievement.Status },
             [103584] = { status = "finish", special_function = SF.SetAchievementStatus }
         }
     }

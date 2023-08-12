@@ -1,9 +1,10 @@
 ---@class EHIdark5Tracker : EHIProgressTracker
 ---@field super EHIProgressTracker
-EHIdark5Tracker = EHI:AchievementClass(EHIProgressTracker, "EHIdark5Tracker")
-function EHIdark5Tracker:init(panel, params)
+EHIdark5Tracker = class(EHIProgressTracker)
+---@param params EHITracker_params
+function EHIdark5Tracker:pre_init(params)
     self._bodies = {}
-    EHIdark5Tracker.super.init(self, panel, params)
+    EHIdark5Tracker.super.pre_init(self, params)
 end
 
 function EHIdark5Tracker:SetProgress(progress)
@@ -66,7 +67,7 @@ local achievements =
     {
         elements =
         {
-            [100296] = { time = 420, class = TT.Achievement },
+            [100296] = { time = 420, class = TT.Achievement.Base },
             [100290] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
@@ -77,7 +78,7 @@ local achievements =
     {
         elements =
         {
-            [100296] = { class = TT.AchievementStatus },
+            [100296] = { class = TT.Achievement.Status },
             [100470] = { special_function = SF.SetAchievementFailed }
         }
     },
@@ -93,7 +94,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100296] = { max = 16, class = TT.AchievementProgress, show_finish_after_reaching_target = true, special_function = SF.AddAchievementToCounter },
+            [100296] = { max = 16, class = TT.Achievement.Progress, show_finish_after_reaching_target = true, special_function = SF.AddAchievementToCounter },
             [100470] = { special_function = SF.SetAchievementFailed },
         }
     }

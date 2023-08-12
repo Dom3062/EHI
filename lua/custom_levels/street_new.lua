@@ -34,7 +34,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard),
         elements =
         {
-            [102426] = { time = 817, class = TT.Achievement },
+            [102426] = { time = 817, class = TT.Achievement.Base },
             [100553] = { special_function = SF.SetAchievementComplete }
         }
     }

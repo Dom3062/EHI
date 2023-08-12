@@ -1,4 +1,4 @@
-EHIuno7Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIuno7Tracker")
+EHIuno7Tracker = class(EHIAchievementTracker)
 function EHIuno7Tracker:post_init(...)
     self._obtainable = false
     self._blocked_warning = true
@@ -79,7 +79,7 @@ local achievements =
     {
         elements =
         {
-            [102291] = { max = 2, class = TT.AchievementProgress },
+            [102291] = { max = 2, class = TT.Achievement.Progress },
             [102280] = { special_function = SF.IncreaseProgress }
         }
     },
@@ -88,7 +88,7 @@ local achievements =
         difficulty_pass = mayhem_and_up,
         elements =
         {
-            [102430] = { time = 780, class = TT.Achievement },
+            [102430] = { time = 780, class = TT.Achievement.Base },
             [100801] = { special_function = SF.SetAchievementFailed }
         }
     },

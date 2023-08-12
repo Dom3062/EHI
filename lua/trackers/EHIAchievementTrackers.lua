@@ -46,8 +46,7 @@ EHIAchievementTracker._popup_type = "achievement"
 EHIAchievementTracker._show_started = EHI:GetUnlockableOption("show_achievement_started_popup")
 EHIAchievementTracker._show_failed = EHI:GetUnlockableOption("show_achievement_failed_popup")
 EHIAchievementTracker._show_desc = EHI:GetUnlockableOption("show_achievement_description")
-function EHIAchievementTracker:init(panel, params)
-    EHIAchievementTracker.super.init(self, panel, params)
+function EHIAchievementTracker:post_init(params)
     self._beardlib = params.beardlib
     if self._show_started then
         ShowStartedPopup(self)
@@ -103,6 +102,8 @@ EHIAchievementProgressTracker._show_failed = EHIAchievementTracker._show_failed
 EHIAchievementProgressTracker._show_desc = EHIAchievementTracker._show_desc
 EHIAchievementProgressTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 EHIAchievementProgressTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
+---@param panel Panel
+---@param params EHITracker_params
 function EHIAchievementProgressTracker:init(panel, params)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
@@ -138,24 +139,14 @@ EHIAchievementUnlockTracker._show_completion_color = true
 EHIAchievementUnlockTracker._show_started = EHIAchievementTracker._show_started
 EHIAchievementUnlockTracker._show_failed = EHIAchievementTracker._show_failed
 EHIAchievementUnlockTracker._show_desc = EHIAchievementTracker._show_desc
-function EHIAchievementUnlockTracker:init(panel, params)
-    EHIAchievementUnlockTracker.super.init(self, panel, params)
+EHIAchievementUnlockTracker.SetFailed = EHIAchievementTracker.SetFailed
+function EHIAchievementUnlockTracker:post_init(params)
     self._beardlib = params.beardlib
     if self._show_started then
         ShowStartedPopup(self)
     end
     if self._show_desc then
         ShowAchievementDescription(self)
-    end
-end
-
-function EHIAchievementUnlockTracker:SetFailed()
-    self._text:stop()
-    self.update = self.update_fade
-    self:SetTextColor(Color.red)
-    self:AnimateBG()
-    if self._show_failed then
-        ShowFailedPopup(self)
     end
 end
 
@@ -195,6 +186,8 @@ end
 EHIAchievementStatusTracker = class(EHIAchievementTracker)
 EHIAchievementStatusTracker.update = EHIAchievementStatusTracker.update_fade
 EHIAchievementStatusTracker._update = false
+---@param panel Panel
+---@param params EHITracker_params
 function EHIAchievementStatusTracker:init(panel, params)
     self._status = params.status or "ok"
     EHIAchievementStatusTracker.super.init(self, panel, params)

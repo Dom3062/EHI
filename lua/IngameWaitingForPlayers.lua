@@ -195,7 +195,7 @@ local function CreateProgressTracker(id, progress, max, dont_flash_bg, show_fini
         show_finish_after_reaching_target = show_finish_after_reaching_target,
         status_is_overridable = status_is_overridable,
         no_failure = true,
-        class = EHI.Trackers.AchievementProgress
+        class = EHI.Trackers.Achievement.Progress
     })
 end
 
@@ -643,7 +643,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 managers.ehi_tracker:AddTracker({
                     id = "man_5",
                     icons = EHI:GetAchievementIcon("man_5"),
-                    class = EHI.Trackers.AchievementStatus
+                    class = EHI.Trackers.Achievement.Status
                 })
                 EHI:HookWithID(StatisticsManager, "killed", "EHI_man_5_killed", function(_, data)
                     if data.weapon_unit and data.weapon_unit:base().is_category and not data.weapon_unit:base():is_category("grenade_launcher") then

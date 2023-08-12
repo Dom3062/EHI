@@ -177,7 +177,6 @@ local function CreateHUDBGBox(panel, params)
 end
 
 ---@class EHITracker
----@field _parent_class EHITrackerManager
 ---@field _forced_icons table? Forces specific icons in the tracker
 ---@field _forced_time number? Forces specific time in the tracker
 ---@field _icon1 PanelBitmap
@@ -197,7 +196,7 @@ EHITracker._icon_size_scaled = EHITracker._icon_size * EHITracker._scale
 EHITracker._gap_scaled = EHITracker._gap * EHITracker._scale
 EHITracker._text_color = Color.white
 ---@param panel Panel Main panel provided by EHITrackerManager
----@param params table
+---@param params EHITracker_params
 function EHITracker:init(panel, params)
     self:pre_init(params)
     self._id = params.id
@@ -251,11 +250,11 @@ function EHITracker:init(panel, params)
     end
 end
 
----@param params table
+---@param params EHITracker_params
 function EHITracker:pre_init(params)
 end
 
----@param params table
+---@param params EHITracker_params
 function EHITracker:post_init(params)
 end
 
@@ -404,6 +403,9 @@ function EHITracker:CreateText(params)
         font_size = self._panel:h() * self._text_scale,
         color = params.color or self._text_color
     })
+    if params.status_text then
+        self:SetStatusText(params.status_text, text)
+    end
     return text
 end
 
@@ -470,13 +472,14 @@ function EHITracker:AnimateBG(t)
     if not self._anim_flash then
         return
     end
-    ---@type PanelRectangle
-    local bg = self._bg_box:child("bg")
+    local bg = self._bg_box:child("bg") --[[@as PanelBitmap]]
     bg:stop()
     bg:set_color(Color(1, 0, 0, 0))
     bg:animate(bg_attention, t or self._flash_times)
 end
 
+---@param color number? Color is set to `White` or tracker default color if not provided
+---@param text PanelText? Defaults to `self._text` if not provided
 function EHITracker:SetTextColor(color, text)
     text = text or self._text
     text:set_color(color or self._text_color)
@@ -533,6 +536,11 @@ end
 
 function EHITracker:AddTrackerToUpdate()
     self._parent_class:AddTrackerToUpdate(self._id, self)
+end
+
+---@param w number
+function EHITracker:ChangeTrackerWidth(w)
+    self._parent_class:ChangeTrackerWidth(self._id, w)
 end
 
 function EHITracker:GetPanelW()

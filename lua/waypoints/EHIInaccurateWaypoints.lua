@@ -3,8 +3,7 @@ local color = EHI:GetTWColor("inaccurate")
 ---@field super EHIWaypoint
 EHIInaccurateWaypoint = class(EHIWaypoint)
 EHIInaccurateWaypoint._default_color = color
-function EHIInaccurateWaypoint:init(...)
-    EHIInaccurateWaypoint.super.init(self, ...)
+function EHIInaccurateWaypoint:post_init(params)
     self:SetColor()
 end
 

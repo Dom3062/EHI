@@ -5,8 +5,7 @@ EHITimerWaypoint._update = false
 EHITimerWaypoint._autorepair_color = EHI:GetTWColor("drill_autorepair")
 EHITimerWaypoint._completion_color = EHI:GetTWColor("completion")
 EHITimerWaypoint._paused_color = EHIPausableWaypoint._paused_color
-function EHITimerWaypoint:init(waypoint, params, parent_class)
-    EHITimerWaypoint.super.init(self, waypoint, params, parent_class)
+function EHITimerWaypoint:post_init(params)
     self._warning = params.warning
     self._jammed = false
     self._not_powered = false

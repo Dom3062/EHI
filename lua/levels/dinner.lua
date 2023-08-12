@@ -40,7 +40,7 @@ local achievements =
     {
         elements =
         {
-            [100484] = { time = 300, class = TT.AchievementUnlock },
+            [100484] = { time = 300, class = TT.Achievement.Unlock },
             [100319] = { special_function = SF.SetAchievementFailed }
         }
     },
@@ -49,7 +49,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101179] = { class = TT.AchievementStatus }, --101553
+            [101179] = { class = TT.Achievement.Status },
             [103394] = { special_function = SF.SetAchievementFailed },
             [102880] = { special_function = SF.SetAchievementComplete }
         }
@@ -58,7 +58,7 @@ local achievements =
     {
         elements =
         {
-            [100485] = { time = 30, class = TT.Achievement },
+            [100485] = { time = 30, class = TT.Achievement.Base },
             [102841] = { special_function = SF.SetAchievementComplete }
         }
     }
@@ -121,7 +121,7 @@ if ovk_and_up then
                     id = "farm_1",
                     status = "finish",
                     icons = farm_1,
-                    class = EHI.Trackers.AchievementStatus,
+                    class = EHI.Trackers.Achievement.Status,
                 })
             else
                 managers.ehi_tracker:SetAchievementFailed("farm_1")

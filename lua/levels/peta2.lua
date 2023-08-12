@@ -51,7 +51,7 @@ local achievements =
         elements =
         {
             -- Formerly 5 minutes
-            [101540] = { time = 240, class = TT.Achievement },
+            [101540] = { time = 240, class = TT.Achievement.Base },
             [101533] = { special_function = SF.SetAchievementComplete }
         }
     },
@@ -60,7 +60,7 @@ local achievements =
         difficulty_pass = OVKorAbove,
         elements =
         {
-            [100002] = { max = (EHI:IsMayhemOrAbove() and 14 or 12), class = TT.AchievementProgress, show_finish_after_reaching_target = true },
+            [100002] = { max = (EHI:IsMayhemOrAbove() and 14 or 12), class = TT.Achievement.Progress, show_finish_after_reaching_target = true },
             [102095] = { special_function = SF.CustomCode, f = function()
                 peta_5_IncreaseEnabled = true
             end },

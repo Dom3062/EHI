@@ -9,6 +9,8 @@ EHICraneFixChanceTracker._show_completion_color = true
 EHICraneFixChanceTracker.FormatChance = EHIChanceTracker.Format
 EHICraneFixChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHICraneFixChanceTracker.SetFailed = EHIAchievementTracker.SetFailed
+---@param panel Panel
+---@param params EHITracker_params
 function EHICraneFixChanceTracker:init(panel, params)
     self._chance = 30
     params.time = 20

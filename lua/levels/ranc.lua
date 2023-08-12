@@ -11,9 +11,12 @@ if OVKorAbove then
     ElementTimer = 102063
     ElementTimerPickup = 102076
 end
-local SF_FultonCatchSuccess = EHI:GetFreeCustomSpecialFunctionID()
-local FultonCatchAgain = { id = "FultonCatch", icons = WeaponsPickUp, special_function = SF.AddTrackerIfDoesNotExist }
-local FultonCatchSuccess = { time = 6.8, id = "FultonCatchSuccess", icons = WeaponsPickUp, special_function = SF_FultonCatchSuccess }
+local FultonCatchAgain = { id = "FultonCatchAgain", icons = WeaponsPickUp, special_function = SF.AddTrackerIfDoesNotExist }
+local FultonCatchSuccess = { time = 6.8, id = "FultonCatchSuccess", icons = WeaponsPickUp, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    if self._trackers:TrackerDoesNotExist("FultonCatch") or self._trackers:TrackerDoesNotExist("FultonCatchAgain") then
+        self:CheckCondition(trigger)
+    end
+end) }
 local FultonCatchIncreaseChance = { id = "FultonCatchChance", special_function = SF.IncreaseChanceFromElement }
 local FultonRemoveCatch = { id = "FultonCatch", special_function = SF.RemoveTracker }
 
@@ -57,7 +60,7 @@ local triggers = {
 if EHI:IsClient() then
     triggers[102053].client = { time = OVKorAbove and 60 or 30, random_time = 5 }
     triggers[1020702].client = { time = OVKorAbove and 60 or 30, random_time = 5 }
-    local FultonCatchAgainClient = { additional_time = 30, random_time = 30, id = "FultonCatch", icons = FultonCatchAgain, special_function = SF.AddTrackerIfDoesNotExist }
+    local FultonCatchAgainClient = { additional_time = 30, random_time = 30, id = "FultonCatchAgain", icons = FultonCatchAgain, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[EHI:GetInstanceElementID(100070, 14950)] = FultonCatchAgainClient
     triggers[EHI:GetInstanceElementID(100070, 25500)] = FultonCatchAgainClient
     triggers[EHI:GetInstanceElementID(100070, 25650)] = FultonCatchAgainClient
@@ -105,12 +108,15 @@ EHI:ShowAchievementLootCounter({
         self._trackers:SetTrackerProgress("ranc_10", 5 - self._trackers:CountInteractionAvailable("ranc_press_pickup_horseshoe"))
     end
 })
-if OVKorAbove then
-    EHI:ShowAchievementKillCounter("ranc_9", "ranc_9_stat", "show_achievements_vehicle") -- "Caddyshacked" achievement
-    EHI:ShowAchievementKillCounter("ranc_11", "ranc_11_stat", "show_achievements_weapon") -- "Marshal Law" achievement
-end
-EHI:RegisterCustomSpecialFunction(SF_FultonCatchSuccess, function(self, trigger, ...)
-    if self._trackers:TrackerDoesNotExist("FultonCatch") then
-        self:CheckCondition(trigger)
-    end
-end)
+EHI:ShowAchievementKillCounter({
+    achievement = "ranc_9", -- "Caddyshacked" achievement
+    achievement_stat = "ranc_9_stat", -- 100
+    achievement_option = "show_achievements_vehicle",
+    difficulty_pass = OVKorAbove
+})
+EHI:ShowAchievementKillCounter({
+    achievement = "ranc_11", -- "Marshal Law" achievement
+    achievement_stat = "ranc_11_stat", -- 4
+    achievement_option = "show_achievements_weapon",
+    difficulty_pass = OVKorAbove
+})

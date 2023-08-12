@@ -1,12 +1,17 @@
 local EHI = EHI
 ---@class EHIcac33Tracker : EHIAchievementStatusTracker, EHIProgressTracker
-EHIcac33Tracker = EHI:AchievementClass(EHIAchievementStatusTracker, "EHIcac33Tracker")
+---@field super EHIAchievementStatusTracker
+EHIcac33Tracker = class(EHIAchievementStatusTracker)
 EHIcac33Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-EHIcac33Tracker.FormatProgress = EHIProgressTracker.Format
+EHIcac33Tracker.FormatProgress = EHIProgressTracker.FormatProgress
+EHIcac33Tracker.SetProgress = EHIProgressTracker.SetProgress
+---@param panel Panel
+---@param params EHITracker_params
 function EHIcac33Tracker:init(panel, params)
     self._progress = 0
     self._max = 200
     EHIcac33Tracker.super.init(self, panel, params)
+    self._flash_times = 1
 end
 
 function EHIcac33Tracker:OverridePanel()
@@ -21,18 +26,6 @@ end
 function EHIcac33Tracker:Activate()
     self._progress_text:set_visible(true)
     self._text:set_visible(false)
-end
-
-function EHIcac33Tracker:SetProgress(progress)
-    if self._progress ~= progress and not self._disable_counting then
-        self._progress = progress
-        self._progress_text:set_text(self:FormatProgress())
-        self:FitTheText(self._progress_text)
-        self:AnimateBG(1)
-        if self._progress == self._max then
-            self:SetCompleted()
-        end
-    end
 end
 
 function EHIcac33Tracker:SetCompleted()
@@ -68,7 +61,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [102453] = { class = TT.AchievementStatus },
+            [102453] = { class = TT.Achievement.Status },
             [102816] = { special_function = SF.SetAchievementFailed },
             [101314] = { special_function = SF.SetAchievementComplete }
         }
@@ -78,7 +71,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [102453] = { time = 83, class = TT.Achievement },
+            [102453] = { time = 83, class = TT.Achievement.Base },
             [102452] = { special_function = SF.SetAchievementComplete },
         }
     },

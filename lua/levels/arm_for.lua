@@ -25,7 +25,7 @@ local achievements =
         {
             -- Achievement bugged, can be earned in stealth
             -- Reported in: https://steamcommunity.com/app/218620/discussions/14/3048357185566603324/
-            [104716] = { class = TT.AchievementStatus },
+            [104716] = { class = TT.Achievement.Status },
             [103311] = { special_function = SF.SetAchievementFailed }
         },
         load_sync = function(self)
@@ -86,7 +86,7 @@ local MissionDoor =
     [Vector3(-2650, -1100, 685)] = 102288,
     [Vector3(3250, -1200, 685)] = 102593
 }
-EHI:SetMissionDoorPosAndIndex(MissionDoor)
+EHI:SetMissionDoorData(MissionDoor)
 EHI:AddXPBreakdown({
     objective =
     {

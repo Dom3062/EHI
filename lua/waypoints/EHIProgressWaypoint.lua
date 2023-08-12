@@ -3,22 +3,17 @@
 EHIProgressWaypoint = class(EHIWaypoint)
 EHIProgressWaypoint._update = false
 EHIProgressWaypoint.Format = EHIProgressTracker.Format
+EHIProgressWaypoint.FormatProgress = EHIProgressTracker.FormatProgress
 EHIProgressWaypoint.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIProgressWaypoint.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
 EHIProgressWaypoint.DecreaseProgressMax = EHIProgressTracker.DecreaseProgressMax
-function EHIProgressWaypoint:init(waypoint, params, parent_class)
+function EHIProgressWaypoint:pre_init(params)
     self._max = params.max or 0
     self._progress = params.progress or 0
-    EHIProgressWaypoint.super.init(self, waypoint, params, parent_class)
-    self._time = 5
-    self:ForceFormat()
 end
 
-function EHIProgressWaypoint:update_fade(t, dt)
-    self._time = self._time - dt
-    if self._time <= 0 then
-        self:delete()
-    end
+function EHIProgressWaypoint:post_init(params)
+    self:ForceFormat()
 end
 
 function EHIProgressTracker:DecreaseProgress(progress)

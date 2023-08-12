@@ -38,7 +38,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [101471] = { max = 40, class = TT.AchievementProgress },
+            [101471] = { max = 40, class = TT.Achievement.Progress },
             [104385] = { special_function = SF.IncreaseProgress }
         }
     }

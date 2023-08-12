@@ -13,7 +13,6 @@ local EHI = EHI
 ---@class EHIManager
 ---@field FormatTimer fun(self: self, t: number): string
 EHIManager = {}
-EHIManager.GetAchievementIcon = EHI.GetAchievementIcon
 EHIManager.Trackers = EHI.Trackers
 EHIManager.Waypoints = EHI.Waypoints
 EHIManager.SyncFunctions = EHI.SyncFunctions
@@ -468,7 +467,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
         for id, data in pairs(trophy) do
             if data.difficulty_pass ~= false and EHI:IsTrophyLocked(id) then
                 for _, element in pairs(data.elements or {}) do
-                    if element.class and EHI.TrophyTrackers[element.class] and not data.icons then
+                    if element.class and not data.icons then
                         data.icons = { EHI.Icons.Trophy }
                     end
                 end
@@ -486,7 +485,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
         for id, data in pairs(daily) do
             if data.difficulty_pass ~= false and EHI:IsDailyAvailable(id) then
                 for _, element in pairs(data.elements or {}) do
-                    if element.class and EHI.DailyTrackers[element.class] and not data.icons then
+                    if element.class and not data.icons then
                         data.icons = { EHI.Icons.Trophy }
                     end
                 end
@@ -507,13 +506,13 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
         ---@param id string
         local function Parser(data, id)
             for _, element in pairs(data.elements or {}) do
-                if element.class and EHI.AchievementTrackers[element.class] then
+                if element.class then
                     element.beardlib = data.beardlib
                     if not element.icons then
                         if data.beardlib then
                             element.icons = { "ehi_" .. id }
                         else
-                            element.icons = self:GetAchievementIcon(id)
+                            element.icons = EHI:GetAchievementIcon(id)
                         end
                     end
                 end
@@ -690,7 +689,7 @@ function EHIManager:PreloadTrackers(preload, trigger_id_all, trigger_icons_all)
     end
 end
 
----@param trigger_table { [number] : ElementTrigger }
+---@param trigger_table table<number, ElementTrigger>
 ---@param option string
 ---| "show_timers" Filters out not loaded trackers with option show_timers
 function EHIManager:FilterOutNotLoadedTrackers(trigger_table, option)
@@ -730,11 +729,10 @@ function EHIManager:InitElements()
     end
     self.__init_done = true
     self:HookElements(triggers)
-    if EHI:IsHost() then
-        self:AddPositionToWaypointFromLoad()
-    else
+    if EHI:IsClient() then
         return
     end
+    self:AddPositionToWaypointFromLoad()
     local scripts = managers.mission._scripts or {}
     if next(base_delay_triggers) then
         self._base_delay = {}
@@ -1142,17 +1140,15 @@ function EHIManager:Trigger(id, element, enabled)
                     self:CheckCondition(new_trigger)
                 end
             elseif f == SF.SetTimeIfLoudOrStealth then
-                if managers.groupai then
-                    if managers.groupai:state():whisper_mode() then
-                        trigger.time = trigger.data.stealth
-                    else
-                        trigger.time = trigger.data.loud
-                    end
-                    if trigger.waypoint then
-                        trigger.waypoint.time = trigger.time
-                    end
-                    self:CheckCondition(trigger)
+                if managers.groupai:state():whisper_mode() then
+                    trigger.time = trigger.data.stealth
+                else
+                    trigger.time = trigger.data.loud
                 end
+                if trigger.waypoint then
+                    trigger.waypoint.time = trigger.time
+                end
+                self:CheckCondition(trigger)
             elseif f == SF.AddTimeByPreplanning then
                 local t = 0
                 if managers.preplanning:IsAssetBought(trigger.data.id) then

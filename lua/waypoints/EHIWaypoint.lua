@@ -7,8 +7,10 @@
 ---@field _bitmap_world PanelBitmap
 EHIWaypoint = class()
 EHIWaypoint._update = true
+EHIWaypoint._fade_time = 5
 EHIWaypoint._default_color = Color.white
 function EHIWaypoint:init(waypoint, params, parent_class)
+    self:pre_init(params)
     self._id = params.id
     self._time = params.time or 0
     self._timer = waypoint.timer_gui
@@ -16,6 +18,13 @@ function EHIWaypoint:init(waypoint, params, parent_class)
     self._arrow = waypoint.arrow
     self._bitmap_world = waypoint.bitmap_world -- VR
     self._parent_class = parent_class
+    self:post_init(params)
+end
+
+function EHIWaypoint:pre_init(params)
+end
+
+function EHIWaypoint:post_init(params)
 end
 
 function EHIWaypoint:UpdateID(new_id)
@@ -40,6 +49,13 @@ function EHIWaypoint:update(t, dt)
     self._time = self._time - dt
     self._timer:set_text(self:Format())
     if self._time <= 0 then
+        self:delete()
+    end
+end
+
+function EHIWaypoint:update_fade(t, dt)
+    self._fade_time = self._fade_time - dt
+    if self._fade_time <= 0 then
         self:delete()
     end
 end

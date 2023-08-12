@@ -46,7 +46,7 @@ local achievements =
     {
         elements =
         {
-            [104086] = { status = "defend", class = TT.AchievementStatus },
+            [104086] = { status = "defend", class = TT.Achievement.Status },
             [102480] = { special_function = SF.SetAchievementFailed },
             [106581] = { special_function = SF.SetAchievementComplete }
         }
@@ -55,7 +55,7 @@ local achievements =
     {
         elements =
         {
-            [101737] = { time = 60, class = TT.Achievement },
+            [101737] = { time = 60, class = TT.Achievement.Base },
             [102466] = { special_function = SF.RemoveTracker },
             [102479] = { special_function = SF.SetAchievementComplete }
         }
@@ -84,7 +84,7 @@ if EHI:IsLootCounterVisible() then
     end, true)
     -- Random loot in crates
     local IncreaseMaximumTrigger = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootSpawned" }
-    local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = "RandomLootDeclined" }
+    local DecreaseMaximumTrigger = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootDeclined" }
     for i = 103232, 103264, 1 do -- 1 - 11
         other[i] = IncreaseMaximumTrigger
     end
@@ -126,21 +126,21 @@ if EHI:IsLootCounterVisible() then
     other[101728] = DecreaseMaximumTrigger -- 1 Nothing
     other[102063] = DecreaseMaximumTrigger -- 2 Nothing
     other[102064] = DecreaseMaximumTrigger -- 3 Nothing
-    for i = 104687, 104691, 1 do -- 4 - 8
+    for i = 104687, 104691, 1 do -- 4 - 8 Nothing
         other[i] = DecreaseMaximumTrigger
     end
     other[104726] = DecreaseMaximumTrigger -- 9 Nothing
     other[104727] = DecreaseMaximumTrigger -- 10 Nothing
-    for i = 104730, 104734, 1 do -- 11 - 15
+    for i = 104730, 104734, 1 do -- 11 - 15 Nothing
         other[i] = DecreaseMaximumTrigger
     end
-    for i = 104736, 104738, 1 do -- 16 - 18
+    for i = 104736, 104738, 1 do -- 16 - 18 Nothing
         other[i] = DecreaseMaximumTrigger
     end
-    for i = 104740, 104742, 1 do -- 19 - 21
+    for i = 104740, 104742, 1 do -- 19 - 21 Nothing
         other[i] = DecreaseMaximumTrigger
     end
-    for i = 104745, 104747, 1 do -- 22 - 24
+    for i = 104745, 104747, 1 do -- 22 - 24 Nothing
         other[i] = DecreaseMaximumTrigger
     end
 end

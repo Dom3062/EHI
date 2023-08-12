@@ -55,3 +55,4 @@ function EHINeededValueTracker:SetProgress(progress)
         end
     end
 end
+EHINeededValueTracker.FormatProgress = EHINeededValueTracker.Format

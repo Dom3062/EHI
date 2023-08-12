@@ -28,7 +28,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101732] = { status = "find", class = TT.AchievementStatus },
+            [101732] = { status = "find", class = TT.Achievement.Status },
             [105758] = { special_function = SF.SetAchievementFailed },
             [105756] = { status = "ok", special_function = SF.SetAchievementStatus },
             [105759] = { special_function = SF.SetAchievementComplete }
@@ -38,7 +38,7 @@ local achievements =
     {
         elements =
         {
-            [101732] = { max = 6, class = TT.AchievementProgress },
+            [101732] = { max = 6, class = TT.Achievement.Progress },
             [105761] = { special_function = SF.IncreaseProgress }, -- ElementInstanceOutputEvent
             [105721] = { special_function = SF.IncreaseProgress } -- ElementEnemyDummyTrigger
         }
@@ -48,7 +48,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100765] = { status = "destroy", class = TT.AchievementStatus },
+            [100765] = { status = "destroy", class = TT.Achievement.Status },
             [103397] = { special_function = SF.SetAchievementComplete },
             [102323] = { special_function = SF.SetAchievementFailed }
         }

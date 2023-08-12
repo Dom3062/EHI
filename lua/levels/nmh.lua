@@ -1,7 +1,11 @@
 local EHI = EHI
 local Icon = EHI.Icons
+---@class EHIElevatorTimerTracker : EHIPausableTracker
+---@field super EHIPausableTracker
 EHIElevatorTimerTracker = class(EHIPausableTracker)
 EHIElevatorTimerTracker._forced_icons = { Icon.Door }
+---@param panel Panel
+---@param params EHITracker_params
 function EHIElevatorTimerTracker:init(panel, params)
     self._floors = params.floors or 26
     params.time = self:GetElevatorTime()
@@ -12,6 +16,7 @@ function EHIElevatorTimerTracker:GetElevatorTime()
     return self._floors * 8
 end
 
+---@param floors number
 function EHIElevatorTimerTracker:SetFloors(floors)
     self._floors = floors
     local new_time = self:GetElevatorTime()
@@ -24,6 +29,8 @@ function EHIElevatorTimerTracker:LowerFloor()
     self:SetFloors(self._floors - 1)
 end
 
+---@class EHIElevatorTimerWaypoint : EHIPausableWaypoint, EHIElevatorTimerTracker
+---@field super EHIPausableWaypoint
 EHIElevatorTimerWaypoint = class(EHIPausableWaypoint)
 EHIElevatorTimerWaypoint.GetElevatorTime = EHIElevatorTimerTracker.GetElevatorTime
 EHIElevatorTimerWaypoint.SetFloors = EHIElevatorTimerTracker.SetFloors
@@ -104,7 +111,7 @@ local achievements =
             -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before mission restart
             -- Reported in:
             -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
-            [103456] = { time = 5, class = TT.Achievement, special_function = SF.ShowAchievementFromStart, trigger_times = 1 },
+            [103456] = { time = 5, class = TT.Achievement.Base, special_function = SF.ShowAchievementFromStart, trigger_times = 1 },
             [103460] = { special_function = SF.SetAchievementComplete }
         }
     }

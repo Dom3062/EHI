@@ -39,7 +39,7 @@ local achievements =
     {
         elements =
         {
-            [100107] = { max = 2, class = TT.AchievementProgress, trigger_times = 1 },
+            [100107] = { max = 2, class = TT.Achievement.Progress, trigger_times = 1 },
             [104219] = { special_function = SF.IncreaseProgress }, -- Chains
             [104220] = { special_function = SF.IncreaseProgress } -- Dallas
         }

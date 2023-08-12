@@ -6,6 +6,8 @@ local Color = Color
 EHIPiggyBankMutatorTracker = class(EHIProgressTracker)
 EHIPiggyBankMutatorTracker._forced_icons = { "piggy" }
 EHIPiggyBankMutatorTracker._piggy_tweak_data = tweak_data.mutators.piggybank.pig_levels
+---@param panel Panel
+---@param params EHITracker_params
 function EHIPiggyBankMutatorTracker:init(panel, params)
     self._current_level = 1
     self._max_levels = 7

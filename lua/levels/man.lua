@@ -43,7 +43,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100698] = { status = "no_down", class = TT.AchievementStatus, trigger_times = 1 },
+            [100698] = { status = "no_down", class = TT.Achievement.Status, trigger_times = 1 },
             [103963] = { special_function = SF.SetAchievementFailed },
             [103964] = { special_function = SF.SetAchievementComplete }
         }
@@ -52,7 +52,7 @@ local achievements =
     {
         elements =
         {
-            [100698] = { class = TT.AchievementStatus, trigger_times = 1 },
+            [100698] = { class = TT.Achievement.Status, trigger_times = 1 },
             [103957] = { special_function = SF.SetAchievementFailed },
             [103958] = { special_function = SF.SetAchievementComplete }
         },
@@ -66,7 +66,7 @@ local achievements =
     {
         elements =
         {
-            [100698] = { max = 10, class = TT.AchievementProgress, trigger_times = 1 },
+            [100698] = { max = 10, class = TT.Achievement.Progress, trigger_times = 1 },
             [103989] = { special_function = SF.IncreaseProgress }
         },
         load_sync = function(self)

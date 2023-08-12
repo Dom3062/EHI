@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local start_delay = 1
-local delay = 20 + (math.random() * (7.5 - 6.2) + 6.2)
+local delay = 20 + math.rand(6.2, 7.5)
 local HeliDropLootZone = { Icon.Heli, Icon.LootDrop, Icon.Goto }
 ---@type ParseTriggerTable
 local triggers = {

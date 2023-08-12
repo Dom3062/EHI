@@ -61,7 +61,7 @@ local achievements =
     {
         elements =
         {
-            [103461] = { time = 5, class = TT.Achievement, trigger_times = 1 },
+            [103461] = { time = 5, class = TT.Achievement.Base, trigger_times = 1 },
             [103458] = { special_function = SF.SetAchievementComplete }
         }
     },
@@ -69,7 +69,7 @@ local achievements =
     {
         elements =
         {
-            [101031] = { status = "defend", class = TT.AchievementStatus, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+            [101031] = { status = "defend", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
                 if enabled then
                     self:CheckCondition(trigger)
                 end
@@ -82,7 +82,7 @@ local achievements =
     {
         elements =
         {
-            [101041] = { status = "defend", class = TT.AchievementStatus },
+            [101041] = { status = "defend", class = TT.Achievement.Status },
             [104426] = { special_function = SF.SetAchievementComplete },
             [104364] = { special_function = SF.SetAchievementFailed, trigger_times = 1 }
         }

@@ -1,4 +1,3 @@
----@diagnostic disable
 ---@class EHIDeployableManager
 EHIDeployableManager = {}
 ---@param ehi_tracker EHITrackerManager
@@ -25,8 +24,9 @@ function EHIDeployableManager:AddTracker(params, pos)
 end
 
 ---@param id string
+---@return EHIAggregatedEquipmentTracker|EHIAggregatedHealthEquipmentTracker|EHIEquipmentTracker?
 function EHIDeployableManager:GetTracker(id)
-    return self._trackers:GetTracker(id)
+    return self._trackers:GetTracker(id) --[[@as EHIAggregatedEquipmentTracker|EHIAggregatedHealthEquipmentTracker|EHIEquipmentTracker]]
 end
 
 ---@param id string
@@ -52,6 +52,7 @@ function EHIDeployableManager:AddToDeployableCache(type, key, unit, tracker_type
     local tracker = self:GetTracker(type)
     if tracker then
         if tracker_type then
+            ---@diagnostic disable-next-line
             tracker:UpdateAmount(tracker_type, unit, key, 0)
         else
             tracker:UpdateAmount(unit, key, 0)

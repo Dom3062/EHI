@@ -110,7 +110,7 @@ local achievements =
         elements =
         {
             [EHI:GetInstanceElementID(100024, 31755)] = { special_function = SF.Trigger, data = { 1, 2 } },
-            [1] = { max = 10, show_finish_after_reaching_target = true, class = TT.AchievementProgress, special_function = SF.ShowAchievementFromStart },
+            [1] = { max = 10, show_finish_after_reaching_target = true, class = TT.Achievement.Progress, special_function = SF.ShowAchievementFromStart },
             [2] = { special_function = SF.CustomCode, f = function()
                 if managers.ehi_tracker:TrackerDoesNotExist("sand_9") then
                     return
@@ -130,7 +130,7 @@ local achievements =
     {
         elements =
         {
-            [100107] = { max = 8, class = TT.AchievementProgress },
+            [100107] = { max = 8, class = TT.Achievement.Progress },
         }
     }
 }

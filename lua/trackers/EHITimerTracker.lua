@@ -13,7 +13,6 @@ EHITimerTracker = class(EHIWarningTracker)
 EHITimerTracker._update = false
 EHITimerTracker._autorepair_color = EHI:GetTWColor("drill_autorepair")
 EHITimerTracker._paused_color = EHIPausableTracker._paused_color
-EHITimerTracker._timer_move_block = true
 function EHITimerTracker:pre_init(params)
     if params.icons[1].icon then
         params.icons[2] = { icon = "faster", visible = false, alpha = 0.25 }
@@ -147,22 +146,16 @@ function EHITimerTracker:SetTextColor()
 end
 
 function EHITimerTracker:StartTimer(t)
-    if self._timer_move_block then
-        return
-    end
     self:SetTimeNoAnim(t)
     self:SetPanelW(self._panel_double)
-    self._parent_class:ChangeTrackerWidth(self._id, self._bg_box_double + self._icon_gap_size_scaled)
+    self:ChangeTrackerWidth(self._bg_box_double + self._icon_gap_size_scaled)
     self:AnimIconX(self._bg_box_double + self._gap_scaled)
     self._bg_box:set_w(self._bg_box_double)
 end
 
 function EHITimerTracker:StopTimer()
-    if self._timer_move_block then
-        return
-    end
     self:SetPanelW(self._panel_w)
-    self._parent_class:ChangeTrackerWidth(self._id, self._bg_box_w + self._icon_gap_size_scaled)
+    self:ChangeTrackerWidth(self._bg_box_w + self._icon_gap_size_scaled)
     self:AnimIconX(self._bg_box_w + self._gap_scaled)
     self._bg_box:set_w(self._bg_box_w)
 end
@@ -172,13 +165,14 @@ end
 EHIProgressTimerTracker = class(EHITimerTracker)
 EHIProgressTimerTracker.pre_init = EHIProgressTracker.pre_init
 EHIProgressTimerTracker.update = EHIProgressTimerTracker.update_fade
-EHIProgressTimerTracker.FormatProgress = EHIProgressTracker.Format
+EHIProgressTimerTracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIProgressTimerTracker.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
 EHIProgressTimerTracker.DecreaseProgressMax = EHIProgressTracker.DecreaseProgressMax
+EHIProgressTimerTracker.SetProgressMax = EHIProgressTracker.SetProgressMax
 EHIProgressTimerTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIProgressTimerTracker.DecreaseProgress = EHIProgressTracker.DecreaseProgress
+EHIProgressTimerTracker.SetProgress = EHIProgressTracker.SetProgress
 EHIProgressTimerTracker.SetProgressRemaining = EHIProgressTracker.SetProgressRemaining
-EHIProgressTimerTracker._timer_move_block = false
 function EHIProgressTimerTracker:post_init(params)
     self._panel_w = self._panel:w()
     self._bg_box_w = self._bg_box:w()
@@ -191,36 +185,13 @@ function EHIProgressTimerTracker:post_init(params)
     self._text:set_left(self._progress_text:right())
 end
 
-function EHIProgressTimerTracker:SetProgressMax(max)
-    self._max = max
-    self._progress_text:set_text(self:FormatProgress())
-    self:FitTheText()
-    self:AnimateBG()
-end
-
-function EHIProgressTimerTracker:SetProgress(progress)
-    if self._progress ~= progress and not self._disable_counting then
-        self._progress = progress
-        self._progress_text:set_text(self:FormatProgress())
-        self:FitTheText()
-        self:AnimateBG()
-        if self._progress == self._max then
-            if self._set_color_bad_when_reached then
-                self:SetBad()
-            else
-                self:SetCompleted()
-            end
-        end
-    end
-end
-
 function EHIProgressTimerTracker:SetCompleted(force)
     if not self._status or force then
         self._status = "completed"
         EHIProgressTimerTracker.super.super.super:SetTextColor(Color.green, self._progress_text)
         if force or not self._show_finish_after_reaching_target then
             self:AddTrackerToUpdate()
-        else
+        elseif not self._show_progress_on_finish then
             self:SetStatusText("finish", self._progress_text)
         end
         self._disable_counting = true
@@ -238,7 +209,6 @@ EHIChanceTimerTracker.pre_init = EHIChanceTracker.pre_init
 EHIChanceTimerTracker.FormatChance = EHIChanceTracker.Format
 EHIChanceTimerTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHIChanceTimerTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
-EHIChanceTimerTracker._timer_move_block = false
 function EHIChanceTimerTracker:post_init(params)
     self._panel_w = self._panel:w()
     self._bg_box_w = self._bg_box:w()

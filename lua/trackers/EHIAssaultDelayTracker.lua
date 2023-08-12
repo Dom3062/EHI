@@ -42,6 +42,8 @@ else
         EHIAssaultDelayTracker._hostage_delay = first_value
     end
 end
+---@param panel Panel
+---@param params EHITracker_params
 function EHIAssaultDelayTracker:init(panel, params)
     if not params.time then
         params.time = self:CalculateBreakTime(params.diff) + (2 * math.random())
@@ -53,6 +55,7 @@ function EHIAssaultDelayTracker:init(panel, params)
     self:CheckIfHostageIsPresent()
 end
 
+---@param diff number
 function EHIAssaultDelayTracker:ComputeHostageDelay(diff)
     if self._precomputed_hostage_delay then
         return
@@ -67,6 +70,8 @@ function EHIAssaultDelayTracker:ComputeHostageDelay(diff)
     self._hostage_delay = lerp(hostage_values[difficulty_point_index], hostage_values[difficulty_point_index + 1], difficulty_ramp)
 end
 
+---@param t any Unused
+---@param dt number
 function EHIAssaultDelayTracker:update_negative(t, dt)
     self._time = self._time + dt
     self._text:set_text("+" .. self:Format())
@@ -81,6 +86,7 @@ function EHIAssaultDelayTracker:SyncAnticipationColor()
     self._hostage_delay_disabled = true
 end
 
+---@param t number
 function EHIAssaultDelayTracker:SyncAnticipation(t)
     self._time = t - (2 * math.random())
     self:SyncAnticipationColor()
@@ -95,6 +101,7 @@ function EHIAssaultDelayTracker:CheckIfHostageIsPresent()
     self._hostages_found = true
 end
 
+---@param diff number
 function EHIAssaultDelayTracker:CalculateBreakTime(diff)
     if self._assault_delay then
         return self._assault_delay + 30
@@ -110,6 +117,7 @@ function EHIAssaultDelayTracker:CalculateBreakTime(diff)
     return base_delay + 30
 end
 
+---@param has_hostages boolean
 function EHIAssaultDelayTracker:SetHostages(has_hostages)
     if self._hostage_delay_disabled then
         return
@@ -123,6 +131,7 @@ function EHIAssaultDelayTracker:SetHostages(has_hostages)
     end
 end
 
+---@param t number
 function EHIAssaultDelayTracker:UpdateTime(t)
     self._time = self._time + t
     if not self._update then
@@ -130,6 +139,7 @@ function EHIAssaultDelayTracker:UpdateTime(t)
     end
 end
 
+---@param t number
 function EHIAssaultDelayTracker:StartAnticipation(t)
     self._hostage_delay_disabled = true
     self._time = t
@@ -138,6 +148,7 @@ function EHIAssaultDelayTracker:StartAnticipation(t)
     end
 end
 
+---@param time number
 function EHIAssaultDelayTracker:SetTime(time)
     if self._hostage_delay_disabled then
         return
@@ -147,6 +158,7 @@ function EHIAssaultDelayTracker:SetTime(time)
     self:CheckIfHostageIsPresent()
 end
 
+---@param diff number
 function EHIAssaultDelayTracker:UpdateDiff(diff)
     if self._hostage_delay_disabled or self._precomputed_hostage_delay then
         return
@@ -186,12 +198,14 @@ end
 ---@field super EHIAssaultDelayTracker
 EHIInaccurateAssaultDelayTracker = class(EHIAssaultDelayTracker)
 EHIInaccurateAssaultDelayTracker._text_color = EHI:GetTWColor("inaccurate")
+---@param t number
 function EHIInaccurateAssaultDelayTracker:StartAnticipation(t)
     self:SetTextColor(Color.white)
     self._text_color = Color.white
     EHIInaccurateAssaultDelayTracker.super.StartAnticipation(self, t)
 end
 
+---@param t number
 function EHIInaccurateAssaultDelayTracker:SyncAnticipation(t)
     EHIInaccurateAssaultDelayTracker.super.SyncAnticipation(self, t)
     self._text_color = Color.white

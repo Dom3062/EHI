@@ -29,7 +29,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100012] = { status = "defend", class = TT.AchievementStatus },
+            [100012] = { status = "defend", class = TT.Achievement.Status },
             [101250] = { special_function = SF.SetAchievementFailed },
             [100082] = { special_function = SF.SetAchievementComplete },
         }
@@ -38,7 +38,7 @@ local achievements =
     {
         elements =
         {
-            [100946] = { max = 4, class = TT.AchievementProgress },
+            [100946] = { max = 4, class = TT.Achievement.Progress },
             [101226] = { special_function = SF.IncreaseProgress }
         }
     }

@@ -21,7 +21,8 @@ local redirect =
     gallery = "framing_frame_1",
     crojob3_night = "crojob3",
     -- Custom Missions
-    ratdaylight = "levels/rat"
+    ratdaylight = "levels/rat",
+    lid_cookoff_methslaves = "levels/rat"
 }
 
 local levels =
@@ -138,7 +139,7 @@ local levels =
     -- Silkroad campaign
     mex = true, -- Border Crossing
     mex_cooking = true, -- Border Crystals
-    bex = true, -- San Martín Bank; Add "Silencioso y Codicioso" achievement
+    bex = true, -- San Martín Bank
     pex = true, -- Breakfast in Tijuana
     fex = true, -- Buluc's Mansion
     -- City of Gold campaign

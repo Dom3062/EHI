@@ -23,6 +23,7 @@ EHIAggregatedEquipmentTracker._update = false
 EHIAggregatedEquipmentTracker._dont_show_placed = { first_aid_kit = true }
 EHIAggregatedEquipmentTracker._ids = { "doctor_bag", "ammo_bag", "grenade_crate", "first_aid_kit", "bodybags_bag" }
 function EHIAggregatedEquipmentTracker:pre_init(params)
+    self._n_of_deployables = 0
     self._amount = {}
     self._placed = {}
     self._deployables = {}
@@ -48,6 +49,8 @@ end
 
 function EHIAggregatedEquipmentTracker:post_init(params)
     self._default_panel_w = self._panel:w()
+    self._default_bg_box_w = self._bg_box:w()
+    self._panel_half = self._bg_box:w() / 2
     self._panel_w = self._default_panel_w
     self._bg_box:remove(self._text)
 end
@@ -118,14 +121,6 @@ function EHIAggregatedEquipmentTracker:GetTotalAmount()
     return amount
 end
 
-function EHIAggregatedEquipmentTracker:GetNumberOfDeployables()
-    local amount = 0
-    for _, value in pairs(self.text) do
-        amount = amount + (value and 1 or 0)
-    end
-    return amount
-end
-
 function EHIAggregatedEquipmentTracker:AddToIgnore(id)
     self._ignore[id] = true
     self._deployables[id] = {}
@@ -167,7 +162,7 @@ function EHIAggregatedEquipmentTracker:UpdateText(id)
         if self._amount[id] <= 0 then
             self:RemoveText(id)
         else
-            local text = self._bg_box:child(id)
+            local text = self._bg_box:child(id) --[[@as PanelText]]
             text:set_text(self:FormatDeployable(id))
             self:FitTheText(text)
         end
@@ -181,24 +176,23 @@ function EHIAggregatedEquipmentTracker:UpdateText(id)
 end
 
 function EHIAggregatedEquipmentTracker:AddText(id)
+    self._n_of_deployables = self._n_of_deployables + 1
     local text = self:CreateText({
         name = id,
         color = color[id]
     })
     self.text[id] = true
-    self:SetTextSize()
     text:set_text(self:FormatDeployable(id))
-    self:FitTheText(text)
-    self:Reorganize()
+    self:Reorganize(true)
 end
 
 function EHIAggregatedEquipmentTracker:RemoveText(id)
     self._bg_box:remove(self._bg_box:child(id))
     self.text[id] = false
-    local n = self:GetNumberOfDeployables()
-    if n == 1 then
+    self._n_of_deployables = self._n_of_deployables - 1
+    if self._n_of_deployables == 1 then
         for ID, _ in pairs(self.text) do
-            local text = self._bg_box:child(ID)
+            local text = self._bg_box:child(ID) --[[@as PanelText?]]
             if text then
                 text:set_font_size(self._panel:h() * self._text_scale)
                 text:set_x(0)
@@ -207,82 +201,58 @@ function EHIAggregatedEquipmentTracker:RemoveText(id)
                 break
             end
         end
-    elseif n % 2 == 1 then
-        for i = 5, 1, -1 do
-            local text = self._bg_box:child(text_i[i])
-            if text then
-                text:set_w(self._bg_box:w() / 2)
-                self:FitTheText(text)
-                break
-            end
-        end
-    else
-        self:SetTextSize(n)
     end
-    self:Reorganize(n)
+    self:Reorganize()
 end
 
-function EHIAggregatedEquipmentTracker:SetTextSize(n)
-    n = n or self:GetNumberOfDeployables()
-    if n == 1 then
-        return
-    end
-    for id, _ in pairs(self.text) do
-        local text = self._bg_box:child(id)
-        if text then
-            text:set_w(self._icon_size_scaled)
-            self:FitTheText(text)
-        end
-    end
-    if n % 2 == 0 then
-        return
-    end
-    for i = 5, 1, -1 do
-        local text = self._bg_box:child(text_i[i])
-        if text then
-            text:set_w(self._bg_box:w())
-            self:FitTheText(text)
-            break
-        end
-    end
+function EHIAggregatedEquipmentTracker:AnimateMovement()
+    self:SetPanelW(self._panel_w)
+    self:ChangeTrackerWidth(self._panel_w)
+    self:AnimIconX(self._panel_w - self._icon_size_scaled)
 end
 
-function EHIAggregatedEquipmentTracker:Reorganize(n)
-    n = n or self:GetNumberOfDeployables()
-    if n == 1 then
-        return
-    end
-    local old_panel_size = self._panel_size
-    if n > self._panel_size then
-        self._panel_size = self._panel_size * 2
-        self._panel_w = self._panel_w * 3 -- Fixes text being cut off after animation; I suspect a math.floor call somewhere during the anim, maybe the parameter ?
-        self:SetPanelW(self._panel_w)
-        self._bg_box:set_w(self._bg_box:w() * 2)
-        self._icon_remove = self._icon_remove + 1
-    end
-    if n < self._panel_size and n % 2 == 0 then
-        self._panel_size = self._panel_size / 2
-        self._panel_w = self._panel_w / 3 -- Fixes text being cut off after animation
-        self:SetPanelW(self._panel_w)
-        self._bg_box:set_w(self._bg_box:w() / 2)
-        self._icon_remove = self._icon_remove - 1
-    end
-    local bg_w = self._bg_box:w()
-    if old_panel_size ~= self._panel_size then
-        self._parent_class:ChangeTrackerWidth(self._id, self:GetPanelSize())
-        self:AnimIconX(bg_w + self._gap_scaled)
-    end
-    local half = bg_w / self._panel_size
+function EHIAggregatedEquipmentTracker:AlignTextOnHalfPos()
     local pos = 0
-    for id, _ in pairs(self.text) do
-        local text = self._bg_box:child(id)
+    for _, id in ipairs(self._ids) do
+        local text = self._bg_box:child(id) --[[@as PanelText?]]
         if text then
-            text:set_x(half * pos)
+            text:set_w(self._panel_half)
+            text:set_x(self._panel_half * pos)
+            self:FitTheText(text)
             pos = pos + 1
         end
     end
 end
 
-function EHIAggregatedEquipmentTracker:GetPanelSize()
-    return (self._default_panel_w * (self._panel_size / 2)) - (self._icon_gap_size_scaled * self._icon_remove)
+function EHIAggregatedEquipmentTracker:Reorganize(addition)
+    if self._n_of_deployables == 1 then
+        if true then
+            return
+        end
+        for id, _ in pairs(self.text) do
+            local text = self._bg_box:child(id) --[[@as PanelText?]]
+            if text then
+                text:set_font_size(self._panel:h() * self._text_scale)
+                text:set_w(self._icon_size_scaled)
+                self:FitTheText(text)
+            end
+        end
+    elseif self._n_of_deployables == 2 then
+        self:AlignTextOnHalfPos()
+        if not addition then
+            self._panel_w = self._default_panel_w
+            self:AnimateMovement()
+            self._bg_box:set_w(self._default_bg_box_w)
+        end
+    elseif addition then
+        self._panel_w = self._panel_w + self._panel_half
+        self:AnimateMovement()
+        self._bg_box:set_w(self._bg_box:w() + self._panel_half)
+        self:AlignTextOnHalfPos()
+    else
+        self._panel_w = self._panel_w - self._panel_half
+        self:AnimateMovement()
+        self._bg_box:set_w(self._bg_box:w() - self._panel_half)
+        self:AlignTextOnHalfPos()
+    end
 end

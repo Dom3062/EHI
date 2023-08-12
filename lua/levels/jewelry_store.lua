@@ -44,7 +44,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100073] = { status = "loud", class = TT.AchievementStatus },
+            [100073] = { status = "loud", class = TT.Achievement.Status },
             [100624] = { special_function = SF.SetAchievementFailed },
             [100634] = { special_function = SF.SetAchievementComplete },
             [100149] = { status = "defend", special_function = SF.SetAchievementStatus }

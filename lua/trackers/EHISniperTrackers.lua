@@ -223,7 +223,7 @@ function EHISniperTimedChanceTracker:SetChance(amount)
     self._chance = math.max(0, amount)
     self._chance_text:set_text(self:FormatChance())
     self:FitTheText(self._chance_text)
-    self:AnimateBG()
+    self:AnimateBG(1)
 end
 
 ---@class EHISniperLoopTracker : EHITracker, EHIChanceTracker, EHICountTracker
@@ -307,7 +307,7 @@ function EHISniperLoopTracker:SetChance(amount)
     self._chance = math.max(0, amount)
     self._chance_text:set_text(self:FormatChance())
     self:FitTheText(self._chance_text)
-    self:AnimateBG()
+    self:AnimateBG(1)
 end
 
 function EHISniperLoopTracker:DisableChanceUpdate(amount)

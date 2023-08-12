@@ -37,7 +37,7 @@ function SecurityLockGui:_start(...)
                     id = self._ehi_key,
                     progress = self._current_bar,
                     max = self._bars,
-                    show_finish_after_reaching_target = true,
+                    show_progress_on_finish = true,
                     icons = { HackIcon },
                     class = TimerClass.Progress
                 })

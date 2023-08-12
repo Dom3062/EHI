@@ -1,7 +1,8 @@
 ---@class EHITradeManager
 EHITradeManager = {}
+---@param ehi_tracker EHITrackerManager
+---@return EHITradeManager
 function EHITradeManager:new(ehi_tracker)
-    ---@type EHITrackerManager
     self._trackers = ehi_tracker
     self._trade = {
         ai = false,
@@ -175,8 +176,7 @@ end
 
 ---@return EHITradeDelayTracker?
 function EHITradeManager:GetTracker()
-    ---@diagnostic disable-next-line
-    return self._trackers:GetTracker("CustodyTime")
+    return self._trackers:GetTracker("CustodyTime") --[[@as EHITradeDelayTracker]]
 end
 
 ---@param f string

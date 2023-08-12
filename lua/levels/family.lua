@@ -22,7 +22,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100108] = { status = "secure", class = TT.AchievementStatus },
+            [100108] = { status = "secure", class = TT.Achievement.Status },
             [100022] = { status = "defend", special_function = SF.SetAchievementStatus }, -- Alarm has been raised, defend the hostages until the escape vehicle arrives
             [101492] = { status = "secure", special_function = SF.SetAchievementStatus }, -- Escape vehicle is here, secure the remaining bags
             [102206] = { special_function = SF.SetAchievementFailed },

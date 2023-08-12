@@ -38,7 +38,7 @@ local achievements =
     {
         elements =
         {
-            [100693] = { class = TT.AchievementStatus },
+            [100693] = { class = TT.Achievement.Status },
             [102704] = { special_function = SF.SetAchievementFailed },
             [100246] = { special_function = SF.SetAchievementComplete }
         }
@@ -47,7 +47,7 @@ local achievements =
     {
         elements =
         {
-            [100304] = { time = 5, class = TT.AchievementUnlock }
+            [100304] = { time = 5, class = TT.Achievement.Unlock }
         }
     },
     live_4 =
@@ -55,7 +55,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [102785] = { class = TT.AchievementStatus },
+            [102785] = { class = TT.Achievement.Status },
             [100249] = { special_function = SF.SetAchievementComplete },
             [102694] = { special_function = SF.SetAchievementFailed },
         }
@@ -64,7 +64,7 @@ local achievements =
     {
         elements =
         {
-            [EHI:GetInstanceElementID(100116, 4900)] = { class = TT.AchievementStatus },
+            [EHI:GetInstanceElementID(100116, 4900)] = { class = TT.Achievement.Status },
             [102702] = { special_function = SF.SetAchievementFailed },
             [100265] = { special_function = SF.SetAchievementComplete }
         }

@@ -27,7 +27,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [101048] = { status = "objective", class = TT.AchievementStatus },
+            [101048] = { status = "objective", class = TT.Achievement.Status },
             [101001] = { status = "finish", special_function = SF.SetAchievementStatus },
             [101022] = { status = "objective", special_function = SF.SetAchievementStatus },
             [100728] = { status = "defend", special_function = SF.SetAchievementStatus }, -- Truck
@@ -83,7 +83,7 @@ local MissionDoor =
     [Vector3(1570.02, -419.693, 185.724)] = EHI:GetInstanceElementID(100007, 4850),
     [Vector3(1570.02, -419.693, 585.724)] = EHI:GetInstanceElementID(100007, 5350)
 }
-EHI:SetMissionDoorPosAndIndex(MissionDoor)
+EHI:SetMissionDoorData(MissionDoor)
 EHI:AddXPBreakdown({
     objectives =
     {

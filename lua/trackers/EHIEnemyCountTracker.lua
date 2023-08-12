@@ -50,7 +50,7 @@ function EHIEnemyCountTracker:Alarm()
         self._icon2:set_visible(true)
         self._icon1:set_visible(false)
         if not self._manually_created_icon2 then
-            self._parent_class:ChangeTrackerWidth(self._id, self._bg_box:w() + self._icon_gap_size_scaled)
+            self:ChangeTrackerWidth(self._bg_box:w() + self._icon_gap_size_scaled)
         end
     end
 end

@@ -73,6 +73,7 @@ _G.EHI =
 
     _cache =
     {
+        DisableAchievements = false,
         MissionUnits = {},
         InstanceUnits = {},
         IgnoreWaypoints = {},
@@ -257,9 +258,13 @@ _G.EHI =
     {
         Base = "EHITracker",
         Warning = "EHIWarningTracker",
+        -- Optional `paused`
         Pausable = "EHIPausableTracker",
+        -- Optional `chance`
         Chance = "EHIChanceTracker",
+        -- Optional `count`
         Counter = "EHICountTracker",
+        -- Optional `max` and `progress`
         Progress = "EHIProgressTracker",
         NeededValue = "EHINeededValueTracker",
         Timer =
@@ -290,12 +295,16 @@ _G.EHI =
             -- Requires `chance`, `time` and `recheck_t`
             HeliTimedChance = "EHISniperHeliTimedChanceTracker"
         },
-        Achievement = "EHIAchievementTracker",
-        AchievementUnlock = "EHIAchievementUnlockTracker",
-        AchievementStatus = "EHIAchievementStatusTracker",
-        AchievementProgress = "EHIAchievementProgressTracker",
-        AchievementBagValue = "EHIAchievementBagValueTracker",
-        AchievementLootCounter = "EHIAchievementLootCounterTracker",
+        Achievement =
+        {
+            Base = "EHIAchievementTracker",
+            Unlock = "EHIAchievementUnlockTracker",
+            -- Optional `status`
+            Status = "EHIAchievementStatusTracker",
+            Progress = "EHIAchievementProgressTracker",
+            BagValue = "EHIAchievementBagValueTracker",
+            LootCounter = "EHIAchievementLootCounterTracker"
+        },
         Assault =
         {
             Time = "EHIAssaultTimeTracker",
@@ -309,26 +318,6 @@ _G.EHI =
         Trophy = "EHITrophyTracker",
         Daily = "EHIDailyTracker",
         DailyProgress = "EHIDailyProgressTracker"
-    },
-
-    AchievementTrackers =
-    {
-        EHIAchievementTracker = true,
-        EHIAchievementUnlockTracker = true,
-        EHIAchievementProgressTracker = true,
-        EHIAchievementStatusTracker = true,
-        EHIAchievementBagValueTracker = true
-    },
-
-    TrophyTrackers =
-    {
-        EHITrophyTracker = true
-    },
-
-    DailyTrackers =
-    {
-        EHIDailyTracker = true,
-        EHIDailyProgressTracker = true
     },
 
     Waypoints =
@@ -696,7 +685,7 @@ end
 
 local function Load()
     local self = EHI
-    if self._cache.loaded then
+    if self._cache.__loaded then
         return
     end
     LoadDefaultValues(self)
@@ -733,7 +722,8 @@ local function Load()
             self:Save() -- Resave the data
         end
     end
-    self._cache.loaded = true
+    self._cache.__loaded = true
+    self._cache.DisableAchievements = not self:ShowMissionAchievements()
 end
 
 local function DifficultyToIndex(difficulty)
@@ -1126,7 +1116,7 @@ function EHI:Unhook(id)
 end
 
 ---Hooks elements that removes loot bags (due to fire or out of bounds)
----@param elements number|{ [number]: number } Index or indexes of ElementCarry that removes loot bags with operation "remove"
+---@param elements number|number[] Index or indexes of ElementCarry that removes loot bags with operation "remove"
 function EHI:HookLootRemovalElement(elements)
     if type(elements) ~= "table" and type(elements) ~= "number" then
         return
@@ -1134,9 +1124,11 @@ function EHI:HookLootRemovalElement(elements)
     local f
     local HookFunction
     local ElementFunction
+    local id
     if self:IsHost() then
         HookFunction = self.PreHookWithID
         ElementFunction = self.HostElement
+        id = "EHI_Prehook_Element_"
         f = function(e, instigator, ...)
             if not e._values.enabled or not alive(instigator) then
                 return
@@ -1156,6 +1148,7 @@ function EHI:HookLootRemovalElement(elements)
     else
         HookFunction = self.HookWithID
         ElementFunction = self.ClientElement
+        id = "EHI_Element_"
         f = function(...)
             managers.ehi_tracker:DecreaseLootCounterProgressMax()
         end
@@ -1164,13 +1157,13 @@ function EHI:HookLootRemovalElement(elements)
         for _, index in ipairs(elements) do
             local element = managers.mission:get_element_by_id(index)
             if element then
-                HookFunction(self, element, ElementFunction, "EHI_Prehook_Element_" .. tostring(element), f)
+                HookFunction(self, element, ElementFunction, id .. tostring(index), f)
             end
         end
     else -- number
         local element = managers.mission:get_element_by_id(elements)
         if element then
-            HookFunction(self, element, ElementFunction, "EHI_Element_" .. tostring(element), f)
+            HookFunction(self, element, ElementFunction, id .. tostring(elements), f)
         end
     end
 end
@@ -1432,7 +1425,7 @@ end
 ---@param f function Loot counter function
 ---@param check any? Boolean value of option 'show_loot_counter'
 ---@param trigger_once boolean? Should the trigger run once?
----@return table|nil
+---@return table?
 function EHI:AddLootCounter(f, check, trigger_once)
     if self:IsPlayingCrimeSpree() then
         return nil
@@ -1534,7 +1527,7 @@ function EHI:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
     managers.ehi_manager:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
 end
 
----@param triggers { [number] : ElementTrigger }
+---@param triggers table<number, ElementTrigger>
 ---@param option string
 ---| "show_timers" Filters out not loaded trackers with option show_timers
 function EHI:FilterOutNotLoadedTrackers(triggers, option)
@@ -1587,7 +1580,7 @@ function EHI:RestoreElementWaypoint(id)
     self._cache.ElementWaypointFunction[id] = nil
 end
 
----@param waypoints table|nil
+---@param waypoints table?
 function EHI:DisableWaypoints(waypoints)
     if not self:ShouldDisableWaypoints() or waypoints == nil then
         return
@@ -1695,10 +1688,9 @@ function EHI:HookLootCounter(no_sync_load)
     end
 end
 
-local show_achievement = false
 ---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounter(params)
-    if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false then
+    if self._cache.UnlockablesAreDisabled or self._cache.DisableAchievements or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false then
         if params.show_loot_counter then
             self:ShowLootCounter({ max = params.max, load_sync = params.loot_counter_load_sync })
         end
@@ -1709,7 +1701,7 @@ end
 
 ---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounterNoCheck(params)
-    if self:GetOption("show_loot_counter") and params.show_loot_counter then
+    if params.show_loot_counter and self:GetOption("show_loot_counter") then
         managers.ehi_tracker:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail, params.start_silent)
     else
         managers.ehi_tracker:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target, params.class)
@@ -1751,7 +1743,7 @@ end
 
 ---@param params AchievementBagValueCounterTable
 function EHI:ShowAchievementBagValueCounter(params)
-    if self._cache.UnlockablesAreDisabled or not show_achievement or self:IsAchievementUnlocked(params.achievement) then
+    if self._cache.UnlockablesAreDisabled or self._cache.DisableAchievements or self:IsAchievementUnlocked(params.achievement) then
         return
     end
     managers.ehi_tracker:AddAchievementBagValueCounter(params.achievement, params.value, params.show_finish_after_reaching_target)
@@ -1763,6 +1755,7 @@ function EHI:AddAchievementToCounter(params)
     local check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly
     local loot_type = params.counter and params.counter.loot_type
     local f = params.counter and params.counter.f
+    ---@param loot LootManager
     local function callback(loot)
         loot:EHIReportProgress(params.achievement, check_type, loot_type, f)
     end
@@ -1772,16 +1765,17 @@ function EHI:AddAchievementToCounter(params)
     end
 end
 
----@param id string Achievement ID
----@param id_stat string Achievement Counter
----@param achievement_option string? Achievement option
-function EHI:ShowAchievementKillCounter(id, id_stat, achievement_option)
-    if (achievement_option and not self:GetUnlockableAndOption(achievement_option)) or not show_achievement then
+---@param params AchievementKillCounterTable
+function EHI:ShowAchievementKillCounter(params)
+    if params.achievement_option and not self:GetUnlockableAndOption(params.achievement_option) then
         return
     end
-    if self._cache.UnlockablesAreDisabled or self:IsAchievementUnlocked2(id) then
+    if self._cache.UnlockablesAreDisabled or self._cache.DisableAchievements or self:IsAchievementUnlocked2(params.achievement) or params.difficulty_pass == false then
+        self:Log("Achievement disabled! id: " .. tostring(params.achievement))
         return
     end
+    local id = params.achievement
+    local id_stat = params.achievement_stat
     local tweak_data = tweak_data.achievement.persistent_stat_unlocks[id_stat]
     if not tweak_data then
         self:Log("No statistics found for achievement " .. tostring(id) .. "; Stat: " .. tostring(id_stat))
@@ -1790,6 +1784,8 @@ function EHI:ShowAchievementKillCounter(id, id_stat, achievement_option)
     local progress = self:GetAchievementProgress(id_stat)
     local max = tweak_data[1] and tweak_data[1].at or 0
     if progress >= max then
+        self:Log("Achievement already unlocked; return")
+        self:Log(string.format("progress: %d; max: %d", progress, max))
         return
     end
     managers.ehi_tracker:AddAchievementKillCounter(id, progress, max)
@@ -1828,7 +1824,7 @@ end
 
 ---@param tbl table
 ---@param instance_start_index number
----@param instance_continent_index? number
+---@param instance_continent_index? number Defaults to `100000`
 function EHI:UpdateInstanceUnits(tbl, instance_start_index, instance_continent_index)
     if not self:GetOption("show_timers") then
         return
@@ -1838,7 +1834,7 @@ end
 
 ---@param tbl table
 ---@param instance_start_index number
----@param instance_continent_index? number
+---@param instance_continent_index? number Defaults to `100000`
 function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
     local new_tbl = {}
     instance_continent_index = instance_continent_index or 100000
@@ -1857,9 +1853,9 @@ function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_cont
 end
 
 ---@param tbl MissionDoorTable
-function EHI:SetMissionDoorPosAndIndex(tbl)
-    if TimerGui.SetMissionDoorPosAndIndex then
-        TimerGui.SetMissionDoorPosAndIndex(tbl)
+function EHI:SetMissionDoorData(tbl)
+    if TimerGui.SetMissionDoorData then
+        TimerGui.SetMissionDoorData(tbl)
     end
 end
 
@@ -1966,15 +1962,6 @@ function EHI:GetValueBasedOnDifficulty(values)
     end
 end
 
----Registers and returns inherited class
----@param c any
----@param id string
----@return any
-function EHI:AchievementClass(c, id)
-    self.AchievementTrackers[id] = true
-    return class(c)
-end
-
 ---@param trigger ElementTrigger?
 ---@param params ElementTrigger?
 ---@param overwrite_SF boolean?
@@ -2002,7 +1989,7 @@ end
 
 ---@param type string
 ---|"ammo_bag" # Ignore ammo bags
----@param pos table Table with positions that should be ignored
+---@param pos Vector3[] Table with positions that should be ignored
 function EHI:SetDeployableIgnorePos(type, pos)
     if not type then
         self:Log("[EHI:SetDeployableIgnorePos()] Type is nil")
@@ -2014,7 +2001,6 @@ function EHI:SetDeployableIgnorePos(type, pos)
 end
 
 Load()
-show_achievement = EHI:ShowMissionAchievements()
 if EHI:GetUnlockableOption("hide_unlocked_achievements") then
     local G = Global
     function EHI:IsAchievementUnlocked(achievement)
@@ -2104,7 +2090,7 @@ end
 ---@param achievement string Achievement ID in Vanilla; Beardlib is not supported
 ---@return integer
 function EHI:GetAchievementProgress(achievement)
-    return managers.achievment:get_stat(achievement) or 0
+    return managers.network.account:get_stat(achievement)
 end
 
 -- Used for achievements that has in the description "Kill X enemies in an heist" and etc... to show them only once

@@ -1,7 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
 ---@class EHIrun9Tracker : EHIAchievementTracker
-EHIrun9Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIrun9Tracker")
+EHIrun9Tracker = class(EHIAchievementTracker)
 function EHIrun9Tracker:update(t, dt)
     self._time = self._time - dt
     self._text:set_text(self:Format())
@@ -22,6 +22,7 @@ function EHIGasTracker:Format()
     end
     return EHIGasTracker.super.Format(self)
 end
+EHIGasTracker.FormatProgress = EHIGasTracker.Format
 
 ---@class EHIZoneTracker : EHIWarningTracker
 EHIZoneTracker = class(EHIWarningTracker)
@@ -87,7 +88,7 @@ local achievements =
     {
         elements =
         {
-            [102426] = { max = 8, class = TT.AchievementProgress },
+            [102426] = { max = 8, class = TT.Achievement.Progress },
             [100658] = { special_function = SF.IncreaseProgress }
         }
     },
@@ -108,7 +109,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard),
         elements =
         {
-            [102426] = { class = TT.AchievementStatus },
+            [102426] = { class = TT.Achievement.Status },
             [100111] = { special_function = SF.SetAchievementFailed },
             [100664] = { special_function = SF.SetAchievementComplete }
         }

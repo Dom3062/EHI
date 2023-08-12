@@ -19,9 +19,9 @@ local refresh = WalletGuiObject.refresh
 function WalletGuiObject.refresh(...)
     refresh(...)
     if Global.wallet_panel then
-        local level_text = Global.wallet_panel:child("wallet_level_text")
-        local skillpoint_icon = Global.wallet_panel:child("wallet_skillpoint_icon")
-        local skillpoint_text = Global.wallet_panel:child("wallet_skillpoint_text")
+        local level_text = Global.wallet_panel:child("wallet_level_text") --[[@as PanelText]]
+        local skillpoint_icon = Global.wallet_panel:child("wallet_skillpoint_icon") --[[@as PanelBitmap]]
+        local skillpoint_text = Global.wallet_panel:child("wallet_skillpoint_text") --[[@as PanelText]]
         local xp = managers.experience
         local s = ""
         if xp:reached_level_cap() then -- Level is maxed, show Infamy Pool instead

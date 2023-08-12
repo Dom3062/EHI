@@ -34,7 +34,7 @@ if Global.game_settings.level_id == "gallery" then
         {
             elements =
             {
-                [100789] = { class = TT.AchievementStatus },
+                [100789] = { class = TT.Achievement.Status },
                 [104288] = { special_function = SF.SetAchievementComplete },
                 [104290] = { special_function = SF.SetAchievementFailed }, -- Alarm
                 [102860] = { special_function = SF.SetAchievementFailed } -- Painting flushed
@@ -119,7 +119,7 @@ local MissionDoor =
     [Vector3(-60.1138, 802.08, 92.4429)] = 103188,
     [Vector3(-140.886, -852.08, 92.4429)] = 103202
 }
-EHI:SetMissionDoorPosAndIndex(MissionDoor)
+EHI:SetMissionDoorData(MissionDoor)
 local xp_override =
 {
     params =

@@ -15,10 +15,6 @@ function EHITrackerManager:new()
     setmetatable(self._trackers_to_update, {__mode = "k"})
     self._trackers_pos = {}
     setmetatable(self._trackers_pos, {__mode = "k"})
-    self._trade = {
-        ai = false,
-        normal = false
-    }
     self._n_of_trackers = 0
     self._delay_popups = true
     self._panel_size = 32 * self._scale
@@ -291,7 +287,7 @@ function EHITrackerManager:AddTimedAchievementTracker(id, time_max, icon)
         id = id,
         time = t,
         icons = { icon },
-        class = EHI.Trackers.Achievement
+        class = EHI.Trackers.Achievement.Base
     })
 end
 
@@ -310,7 +306,7 @@ function EHITrackerManager:AddAchievementProgressTracker(id, max, progress, show
         icons = { icon },
         delay_popup = self._delay_popups,
         show_finish_after_reaching_target = show_finish_after_reaching_target,
-        class = class or EHI.Trackers.AchievementProgress
+        class = class or EHI.Trackers.Achievement.Progress
     })
 end
 
@@ -323,7 +319,7 @@ function EHITrackerManager:AddAchievementStatusTracker(id, status, icon)
         id = id,
         status = status,
         icons = { icon },
-        class = EHI.Trackers.AchievementStatus
+        class = EHI.Trackers.Achievement.Status
     })
 end
 
@@ -341,7 +337,7 @@ function EHITrackerManager:AddAchievementLootCounter(id, max, loot_counter_on_fa
         delay_popup = self._delay_popups,
         loot_counter_on_fail = loot_counter_on_fail,
         start_silent = start_silent,
-        class = EHI.Trackers.AchievementLootCounter
+        class = EHI.Trackers.Achievement.LootCounter
     })
 end
 
@@ -357,7 +353,7 @@ function EHITrackerManager:AddAchievementBagValueCounter(id, max, show_finish_af
         icons = { icon },
         delay_popup = true,
         show_finish_after_reaching_target = show_finish_after_reaching_target,
-        class = EHI.Trackers.AchievementBagValue
+        class = EHI.Trackers.Achievement.BagValue
     })
 end
 
@@ -391,7 +387,7 @@ function EHITrackerManager:AddAchievementKillCounter(id, progress, max)
         max = max,
         icons = { icon },
         delay_popup = true,
-        class = EHI.Trackers.AchievementProgress
+        class = EHI.Trackers.Achievement.Progress
     })
 end
 

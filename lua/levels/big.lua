@@ -71,7 +71,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard),
         elements =
         {
-            [1] = { time = 720, class = TT.Achievement },
+            [1] = { time = 720, class = TT.Achievement.Base },
             [2] = { special_function = SF.RemoveTrigger, data = { 100107, 106140, 106150 } },
             [100107] = bigbank_4,
             [106140] = bigbank_4,
@@ -184,7 +184,7 @@ local MissionDoor =
     [Vector3(3446.92, -1167.11, 327.432)] = { w_id = 106372, restore = true, unit_id = 105317 },
     [Vector3(3466.11, 1296.92, 327.432)] = { w_id = 106382, restore = true, unit_id = 106336 }
 }
-EHI:SetMissionDoorPosAndIndex(MissionDoor)
+EHI:SetMissionDoorData(MissionDoor)
 EHI:AddXPBreakdown({
     objectives =
     {

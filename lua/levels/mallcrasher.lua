@@ -4,7 +4,7 @@ local sin = math.sin
 local Color = Color
 ---@class EHIameno3Tracker : EHIAchievementTracker, EHINeededValueTracker
 ---@field super EHIAchievementTracker
-EHIameno3Tracker = EHI:AchievementClass(EHIAchievementTracker, "EHIameno3Tracker")
+EHIameno3Tracker = class(EHIAchievementTracker)
 EHIameno3Tracker.FormatNumber = EHINeededValueTracker.Format
 EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
 EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
@@ -141,7 +141,7 @@ local achievements =
     {
         elements =
         {
-            [301056] = { max = 171, flash_times = 1, class = TT.AchievementProgress },
+            [301056] = { max = 171, flash_times = 1, class = TT.Achievement.Progress },
             [300791] = { special_function = SF.IncreaseProgress }
         }
     },
@@ -175,7 +175,7 @@ local achievements =
         difficulty_pass = OverkillOrBelow, -- Can be achieved on any difficulty but the heli takes 5:25 to arrive on Mayhem or above
         elements =
         {
-            [301148] = { time = 180, class = TT.Achievement },
+            [301148] = { time = 180, class = TT.Achievement.Base },
             [300241] = { special_function = SF.SetAchievementComplete }
         }
     }

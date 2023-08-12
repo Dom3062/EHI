@@ -151,7 +151,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101780] = { max = 25, class = TT.AchievementProgress },
+            [101780] = { max = 25, class = TT.Achievement.Progress },
             [101001] = { special_function = SF.SetAchievementFailed }, -- Methlab exploded
             [102611] = { special_function = SF.IncreaseProgress }
         }

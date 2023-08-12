@@ -97,7 +97,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100124] = { status = "defend", class = TT.AchievementStatus, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+            [100124] = { status = "defend", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
                 local bags = self._trackers:CountLootbagsOnTheGround(10)
                 if bags == 12 then
                     self:CheckCondition(trigger)

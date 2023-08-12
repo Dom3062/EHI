@@ -4,7 +4,7 @@ EHITradeDelayTracker = class(EHITracker)
 EHITradeDelayTracker._update = false
 EHITradeDelayTracker._forced_icons = { "mugshot_in_custody" }
 ---@param panel Panel
----@param params table
+---@param params EHITracker_params
 function EHITradeDelayTracker:init(panel, params)
     self._pause_t = 0
     self._n_of_peers = 0
@@ -50,14 +50,14 @@ end
 
 function EHITradeDelayTracker:AnimateMovement()
     self:SetPanelWAndRefresh(self._panel_w)
-    self._parent_class:ChangeTrackerWidth(self._id, self._panel_w)
+    self:ChangeTrackerWidth(self._panel_w)
     self:AnimIconX(self._panel_w - self._icon_size_scaled)
 end
 
 function EHITradeDelayTracker:AlignTextOnHalfPos()
     local pos = 0
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
-        local text = self._bg_box:child("text" .. i)
+        local text = self._bg_box:child("text" .. i) --[[@as PanelText]]
         if text then
             text:set_w(self._panel_half)
             text:set_x(self._panel_half * pos)
@@ -202,7 +202,7 @@ function EHITradeDelayTracker:RemovePeerFromCustody(peer_id)
     self._bg_box:remove(self._bg_box:child("text" .. peer_id))
     if self._n_of_peers == 1 then
         for i = 1, HUDManager.PLAYER_PANEL, 1 do
-            local text = self._bg_box:child("text" .. i)
+            local text = self._bg_box:child("text" .. i) --[[@as PanelText]]
             if text then
                 text:set_font_size(self._panel:h() * self._text_scale)
                 text:set_color(Color.white)
@@ -245,7 +245,7 @@ end
 
 ---@param i number
 function EHITradeDelayTracker:FitTheTextUnique(i)
-    self:FitTheText(self._bg_box:child("text" .. i))
+    self:FitTheText(self._bg_box:child("text" .. i) --[[@as PanelText]])
 end
 
 if EHI:GetOption("show_trade_delay_amount_of_killed_civilians") then

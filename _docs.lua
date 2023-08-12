@@ -1,3 +1,4 @@
+---@meta
 --[[
     This file is not loaded, it is here to provide code completion in VSCode
 ]]
@@ -18,31 +19,35 @@ _G.ExperienceManager = {}
 ---@param o table? Can be used to provide `self` to the callback function
 ---@param base_callback_class table
 ---@param base_callback_func_name string
----@param base_callback_param any
+---@param base_callback_param any?
 ---@return function
 _G.callback = function(o, base_callback_class, base_callback_func_name, base_callback_param)
-    return function(...)
-        return ...
-    end
 end
 ---@return Vector3
 ---@overload fun(x: number, y: number, z: number): Vector3
 _G.Vector3 = function()
-    return Vector3()
 end
 ---@return Rotation
 ---@overload fun(x: number, y: number): Rotation
 ---@overload fun(x: number, y: number, z: number): Rotation
 ---@overload fun(x: number, y: number, z: number, w: number): Rotation
 _G.Rotation = function()
-    return Rotation()
 end
 ---@generic T
----@param TC `T`
+---@param TC T
 ---@return T
 _G.deep_clone = function(TC)
-    return TC
 end
+---@generic T
+---@param TC T
+---@return T
+CoreTable.deep_clone = function(TC)
+end
+
+---@generic T: table
+---@param super T? A base class which `class` will derive from
+---@return T
+function class(super) end
 
 ---@class MissionScriptElementValues
 ---@field amount number `ElementCounter` | `ElementCounterOperator`
@@ -125,7 +130,7 @@ end
 ---@field lerp fun(a: number, b: number, lerp: number): number Linearly interpolates between `a` and `b` by `lerp`
 ---@field round fun(n: number, precision: number?): number Rounds number with precision
 ---@field clamp fun(number: number, min: number, max: number): number Returns `number` clamped to the inclusive range of `min` and `max`
----@field rand fun(a: number, b: number?): number
+---@field rand fun(a: number, b: number?): number If `b` is provided, returns random number between `a` and `b`. Otherwise returns number between `0` and `a`
 ---@field mod fun(n: number, div: number): number Returns remainder of a division
 
 ---@class tablelib
@@ -133,6 +138,7 @@ end
 ---@field contains fun(v: table, e: string): boolean Returns `true` or `false` if `e` exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
 ---@field get_key fun(map: table, wanted_key_value: any): any? Returns `key name` if value exists
+---@field list_to_set fun(list: table): table Maps values as keys
 
 ---@class ElementWaypointTrigger
 ---@field id number|string? ID of the waypoint, if not provided, `id` is then copied from the trigger
@@ -180,7 +186,7 @@ end
 ---@class ParseAchievementDefinitionTable
 ---@field beardlib boolean If the achievement is from Beardlib
 ---@field difficulty_pass boolean Difficulty check, setting this to `false` will disable the achievement to show on the screen
----@field elements ParseTriggerTable Elements to hook
+---@field elements table<number, ElementTrigger> Elements to hook
 ---@field failed_on_alarm boolean Fails the achievement on alarm
 ---@field load_sync fun(self: EHIManager) Function to run if client drops-in to the game
 ---@field alarm_callback fun(dropin: boolean) Function to run after alarm has sounded
@@ -203,8 +209,8 @@ end
 ---@field [number] UnitUpdateDefinition
 
 ---@class LootCounterSequenceTriggersTable
----@field loot table Sequences where loot spawns (ipairs); triggers "LootCounter:RandomLootSpawned()"
----@field no_loot table Sequences where no loot or garbage spawns (ipairs); triggers "LootCounter:RandomLootDeclined()"
+---@field loot string[] Sequences where loot spawns (ipairs); triggers "LootCounter:RandomLootSpawned()"
+---@field no_loot string[] Sequences where no loot or garbage spawns (ipairs); triggers "LootCounter:RandomLootDeclined()"
 
 ---@class LootCounterTable
 ---@field max integer Maximum number of loot
@@ -220,8 +226,8 @@ end
 
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.LootCounter.CheckType`, defaults to `EHI.LootCounter.CheckType.BagsOnly` if not provided
----@field loot_type string|table<string> What loot should be counted
----@field f fun(self: LootManager, tracker_id: string, loot_type: string|table<string>) Function for custom calculation when `loot_type` is set to `EHI.LootCounter.CheckType.CustomCheck`
+---@field loot_type string|string[] What loot should be counted
+---@field f fun(loot: LootManager, tracker_id: string) Function for custom calculation when `check_type` is set to `EHI.LootCounter.CheckType.CustomCheck`
 
 ---@class AchievementLootCounterTable
 ---@field achievement string Achievement ID
@@ -250,6 +256,12 @@ end
 ---@field value number Value of loot needed to secure
 ---@field show_finish_after_reaching_target boolean Setting this to `true` will show `FINISH` in the tracker
 ---@field counter AchievementCounterTable Modifies counter checks
+
+---@class AchievementKillCounterTable
+---@field achievement string Achievement ID
+---@field achievement_stat string Achievement Counter
+---@field achievement_option string? If achievement belongs to some EHI setting
+---@field difficulty_pass boolean?
 
 ---@class AddTrackerTable
 ---@field id string Tracker ID
@@ -358,9 +370,22 @@ end
 ---@field text fun(self: self, string_id: string, macros: table?): string
 ---@field to_upper_text fun(self: self, string_id: string, macros: table?): string
 
+---@class EHITracker_params
+---@field id string
+---@field icons table?
+---@field time number?
+---@field x number Provided by `EHITrackerManager`
+---@field y number Provided by `EHITrackerManager`
+---@field parent_class EHITrackerManager
+---@field hide_on_delete boolean?
+---@field flash_times number?
+---@field flash_bg boolean?
+---@field [any] any
+
 ---@class EHITracker_CreateText
----@field name string?
----@field text string?
+---@field name string? Text name
+---@field status_text string? Sets status text, like in achievements
+---@field text string? Text to display
 ---@field w number?
 ---@field h number?
 ---@field color number?
@@ -408,7 +433,7 @@ end
 ---@field objectives XPBreakdown_objectives
 ---@field loot XPBreakdown_loot
 ---@field loot_all number|{amount: number, times: number}
----@field wave { [number]: number }
+---@field wave number[]
 ---@field wave_all number|{amount: number, times: number}
 
 ---@class XPBreakdown
@@ -416,12 +441,12 @@ end
 ---@field objectives XPBreakdown_objectives
 ---@field loot XPBreakdown_loot
 ---@field loot_all number|{amount: number, times: number}
----@field wave { [number]: number }
+---@field wave number[]
 ---@field wave_all number|{amount: number, times: number}
 ---@field no_total_xp boolean
 ---@field tactic XPBreakdown_tactic
 
----@class Panel
+---@class PanelBaseObject
 ---@field x fun(self: self): number
 ---@field set_x fun(self: self, x: number)
 ---@field y fun(self: self): number
@@ -440,37 +465,21 @@ end
 ---@field set_right fun(self: self, right: number): number
 ---@field center_x fun(self: self): number
 ---@field set_center_x fun(self: self, center_x: number)
+---@field set_position fun(self: self, x: number, y: number)
+---@field set_leftbottom fun(self: self, left: number, bottom: number)
 ---@field stop fun(self: self, anim_thread: thread?)
 ---@field animate fun(self: self, f: function, ...:any?): thread
----@field child fun(self: self, child_name: string): any
----@field remove fun(self: self, child_name: any)
+
+---@class Panel : PanelBaseObject
+---@field child fun(self: self, child_name: string): (PanelText|PanelBitmap|PanelRectangle|self)?
+---@field remove fun(self: self, child_name: PanelBaseObject)
 ---@field text fun(self: self, params: table): PanelText
 ---@field bitmap fun(self: self, params: table): PanelBitmap
 ---@field rect fun(self: self, params: table): PanelRectangle
 ---@field panel fun(self: self, params: table): self
 ---@field children fun(self: self): table Returns an ipairs table of all items created on the panel
 
----@class PanelText
----@field x fun(self: self): number
----@field set_x fun(self: self, x: number)
----@field y fun(self: self): number
----@field set_y fun(self: self, y: number)
----@field w fun(self: self): number
----@field set_w fun(self: self, w: number)
----@field h fun(self: self): number
----@field set_h fun(self: self, h: number)
----@field top fun(self: self): number
----@field set_top fun(self: self, top: number): number
----@field bottom fun(self: self): number
----@field set_bottom fun(self: self, bottom: number): number
----@field left fun(self: self): number
----@field set_left fun(self: self, left: number): number
----@field right fun(self: self): number
----@field set_right fun(self: self, right: number): number
----@field center_x fun(self: self): number
----@field set_center_x fun(self: self, center_x: number)
----@field stop fun(self: self, anim_thread: thread?)
----@field animate fun(self: self, f: function, ...:any?): thread
+---@class PanelText : PanelBaseObject
 ---@field set_color fun(self: self, color: number)
 ---@field set_text fun(self: self, text: string)
 ---@field text_rect fun(self: self): x: number, y: number, w: number, h: number Returns rectangle of the text
@@ -480,53 +489,13 @@ end
 ---@field set_visible fun(self: self, visibility: boolean)
 ---@field set_size fun(self: self, w: number, h: number)
 
----@class PanelBitmap
----@field x fun(self: self): number
----@field set_x fun(self: self, x: number)
----@field y fun(self: self): number
----@field set_y fun(self: self, y: number)
----@field w fun(self: self): number
----@field set_w fun(self: self, w: number)
----@field h fun(self: self): number
----@field set_h fun(self: self, h: number)
----@field top fun(self: self): number
----@field set_top fun(self: self, top: number): number
----@field bottom fun(self: self): number
----@field set_bottom fun(self: self, bottom: number): number
----@field left fun(self: self): number
----@field set_left fun(self: self, left: number): number
----@field right fun(self: self): number
----@field set_right fun(self: self, right: number): number
----@field center_x fun(self: self): number
----@field set_center_x fun(self: self, center_x: number)
----@field stop fun(self: self, anim_thread: thread?)
----@field animate fun(self: self, f: function, ...:any?): thread
+---@class PanelBitmap : PanelBaseObject
 ---@field set_color fun(self: self, color: number)
 ---@field set_image fun(self: self, texture_path: string, texture_rect_x: number?, texture_rect_y: number?, texture_rect_w: number?, texture_rect_h: number?)
 ---@field set_visible fun(self: self, visibility: boolean)
 ---@field set_texture_rect fun(self: self, x: number, y: number, w: number, h: number)
 ---@field set_size fun(self: self, w: number, h: number)
 
----@class PanelRectangle
----@field x fun(self: self): number
----@field set_x fun(self: self, x: number)
----@field y fun(self: self): number
----@field set_y fun(self: self, y: number)
----@field w fun(self: self): number
----@field set_w fun(self: self, w: number)
----@field h fun(self: self): number
----@field set_h fun(self: self, h: number)
----@field top fun(self: self): number
----@field set_top fun(self: self, top: number): number
----@field bottom fun(self: self): number
----@field set_bottom fun(self: self, bottom: number): number
----@field left fun(self: self): number
----@field set_left fun(self: self, left: number): number
----@field right fun(self: self): number
----@field set_right fun(self: self, right: number): number
----@field center_x fun(self: self): number
----@field set_center_x fun(self: self, center_x: number)
----@field stop fun(self: self, anim_thread: thread?)
----@field animate fun(self: self, f: function, ...:any?): thread
+---@class PanelRectangle : PanelBaseObject
 ---@field set_color fun(self: self, color: number)
 ---@field set_size fun(self: self, w: number, h: number)

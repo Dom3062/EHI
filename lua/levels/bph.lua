@@ -26,7 +26,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101742] = { max = 3, class = TT.AchievementProgress, trigger_times = 1 },
+            [101742] = { max = 3, class = TT.Achievement.Progress, trigger_times = 1 },
             [101885] = { special_function = SF.SetAchievementFailed },
             [102171] = { special_function = SF.IncreaseProgress }
         }

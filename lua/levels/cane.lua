@@ -50,7 +50,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101167] = { time = 1800, class = TT.AchievementUnlock },
+            [101167] = { time = 1800, class = TT.Achievement.Unlock },
             [101176] = { special_function = SF.SetAchievementFailed },
         }
     },

@@ -20,7 +20,7 @@ local achievements =
     {
         elements =
         {
-            [100107] = { max = 4, class = TT.AchievementProgress }
+            [100107] = { max = 4, class = TT.Achievement.Progress }
         }
     }
 }

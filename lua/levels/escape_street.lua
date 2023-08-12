@@ -22,7 +22,7 @@ local achievements =
     {
         elements =
         {
-            [101959] = { status = "finish", class = TT.AchievementStatus },
+            [101959] = { status = "finish", class = TT.Achievement.Status },
             [101872] = { special_function = SF.SetAchievementFailed },
             [101874] = { special_function = SF.SetAchievementComplete }
         }

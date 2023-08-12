@@ -63,7 +63,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [102301] = { class = TT.AchievementStatus },
+            [102301] = { class = TT.Achievement.Status },
             [101976] = { special_function = SF.SetAchievementComplete },
             [101571] = { special_function = SF.SetAchievementFailed }
         }

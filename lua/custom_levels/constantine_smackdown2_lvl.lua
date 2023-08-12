@@ -11,4 +11,4 @@ local MissionDoor =
     [Vector3(-3930.91, -4684.99, -1877.75)] = EHI:GetInstanceElementID(100006, 1000),
     [Vector3(-4313.83, -5976.53, -1877.75)] = EHI:GetInstanceElementID(100006, 1250)
 }
-EHI:SetMissionDoorPosAndIndex(MissionDoor)
+EHI:SetMissionDoorData(MissionDoor)

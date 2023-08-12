@@ -25,7 +25,7 @@ local achievements =
         elements =
         {
             -- It was 7 minutes before the change
-            [101989] = { time = 360, class = TT.Achievement },
+            [101989] = { time = 360, class = TT.Achievement.Base },
             [101997] = { special_function = SF.SetAchievementComplete },
         }
     },
@@ -34,7 +34,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101989] = { max = 8, class = TT.AchievementProgress, show_finish_after_reaching_target = true },
+            [101989] = { max = 8, class = TT.Achievement.Progress, show_finish_after_reaching_target = true },
             [101999] = { special_function = SF.IncreaseProgress },
             [102002] = { special_function = SF.FinalizeAchievement },
         }

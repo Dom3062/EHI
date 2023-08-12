@@ -2,8 +2,7 @@
 ---@field super EHIWaypoint
 EHIPausableWaypoint = class(EHIWaypoint)
 EHIPausableWaypoint._paused_color = EHI:GetTWColor("pause")
-function EHIPausableWaypoint:init(waypoint, params, parent_class)
-    EHIPausableWaypoint.super.init(self, waypoint, params, parent_class)
+function EHIPausableWaypoint:post_init(params)
     self._paused = params.paused
     self:SetColor()
 end

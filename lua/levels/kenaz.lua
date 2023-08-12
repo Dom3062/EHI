@@ -132,7 +132,7 @@ local achievements =
     {
         elements =
         {
-            [102807] = { status = "defend", class = TT.AchievementStatus },
+            [102807] = { status = "defend", class = TT.Achievement.Status },
             [102809] = { special_function = SF.SetAchievementFailed },
             [103163] = { status = "finish", special_function = SF.SetAchievementStatus }
         }
@@ -141,7 +141,7 @@ local achievements =
     {
         elements =
         {
-            [100282] = { time = 840, class = TT.Achievement }
+            [100282] = { time = 840, class = TT.Achievement.Base }
         },
         load_sync = function(self)
             self._trackers:AddTimedAchievementTracker("kenaz_4", 840)
@@ -152,10 +152,10 @@ local achievements =
     {
         elements =
         {
-            [EHI:GetInstanceElementID(100008, 12500)] = { class = TT.AchievementStatus },
-            [EHI:GetInstanceElementID(100008, 12580)] = { class = TT.AchievementStatus },
-            [EHI:GetInstanceElementID(100008, 12660)] = { class = TT.AchievementStatus },
-            [EHI:GetInstanceElementID(100008, 18700)] = { class = TT.AchievementStatus },
+            [EHI:GetInstanceElementID(100008, 12500)] = { class = TT.Achievement.Status },
+            [EHI:GetInstanceElementID(100008, 12580)] = { class = TT.Achievement.Status },
+            [EHI:GetInstanceElementID(100008, 12660)] = { class = TT.Achievement.Status },
+            [EHI:GetInstanceElementID(100008, 18700)] = { class = TT.Achievement.Status },
             [102806] = { status = "finish", special_function = SF.SetAchievementStatus },
             [102808] = { special_function = SF.SetAchievementFailed }
         }

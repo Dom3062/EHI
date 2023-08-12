@@ -39,7 +39,7 @@ end
 
 function EHIMinionTracker:AnimateMovement()
     self:SetPanelW(self._panel_w)
-    self._parent_class:ChangeTrackerWidth(self._id, self._panel_w)
+    self:ChangeTrackerWidth(self._panel_w)
     self:AnimIconX(self._panel_w - self._icon_size_scaled)
 end
 
@@ -61,7 +61,7 @@ function EHIMinionTracker:Reorganize(addition)
             return
         end
         for i = 0, HUDManager.PLAYER_PANEL, 1 do
-            local text = self._bg_box:child("text" .. i)
+            local text = self._bg_box:child("text" .. i) --[[@as PanelText]]
             if text then
                 text:set_font_size(self._panel:h() * self._text_scale)
                 text:set_w(self._bg_box:w())
@@ -102,7 +102,7 @@ function EHIMinionTracker:RemovePeer(peer_id)
     self._bg_box:remove(self._bg_box:child("text" .. peer_id))
     if self._n_of_peers == 1 then
         for i = 0, HUDManager.PLAYER_PANEL, 1 do
-            local text = self._bg_box:child("text" .. i)
+            local text = self._bg_box:child("text" .. i) --[[@as PanelText?]]
             if text then
                 text:set_font_size(self._panel:h() * self._text_scale)
                 text:set_color(Color.white)
@@ -120,7 +120,7 @@ function EHIMinionTracker:RemovePeer(peer_id)
 end
 
 function EHIMinionTracker:FitTheTextUnique(i)
-    self:FitTheText(self._bg_box:child("text" .. i))
+    self:FitTheText(self._bg_box:child("text" .. i) --[[@as PanelText]])
 end
 
 function EHIMinionTracker:FormatUnique(peer_id)

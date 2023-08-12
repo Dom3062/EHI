@@ -1,8 +1,13 @@
 local EHI = EHI
 local Icon = EHI.Icons
+---@class EHIdailycakeTracker : EHIDailyTracker, EHIProgressTracker
+---@field super EHIDailyTracker
 EHIdailycakeTracker = class(EHIDailyTracker)
 EHIdailycakeTracker.FormatProgress = EHIProgressTracker.Format
 EHIdailycakeTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+EHIdailycakeTracker.SetProgress = EHIProgressTracker.SetProgress
+---@param panel Panel
+---@param params EHITracker_params
 function EHIdailycakeTracker:init(panel, params)
     self._max = 4
     self._progress = 0
@@ -31,18 +36,6 @@ function EHIdailycakeTracker:OverridePanel()
     end
 end
 
-function EHIdailycakeTracker:SetProgress(progress)
-    if self._progress ~= progress and not self._disable_counting then
-        self._progress = progress
-        self._progress_text:set_text(self:FormatProgress())
-        self:FitTheText(self._progress_text)
-        self:AnimateBG()
-        if self._progress == self._max then
-            self:SetCompleted()
-        end
-    end
-end
-
 function EHIdailycakeTracker:SetCompleted()
     if not self._status then
         self._status = "completed"
@@ -51,7 +44,6 @@ function EHIdailycakeTracker:SetCompleted()
         self._disable_counting = true
     end
 end
-EHI.DailyTrackers.EHIdailycakeTracker = true
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -78,7 +70,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100547] = { status = "no_down", class = TT.AchievementStatus },
+            [100547] = { status = "no_down", class = TT.Achievement.Status },
             [101400] = { special_function = SF.SetAchievementFailed },
             [101823] = { special_function = SF.SetAchievementComplete }
         }
@@ -88,7 +80,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100547] = { status = "defend", class = TT.AchievementStatus },
+            [100547] = { status = "defend", class = TT.Achievement.Status },
             [101925] = { special_function = SF.SetAchievementFailed },
             [101924] = { special_function = SF.SetAchievementComplete }
         }

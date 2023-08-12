@@ -48,6 +48,7 @@ local original =
 }
 
 local ignored_pos = {}
+---@param pos Vector3[]
 function AmmoBagBase.SetIgnoredPos(pos)
     for _, _pos in ipairs(pos) do
         ignored_pos[tostring(_pos)] = true

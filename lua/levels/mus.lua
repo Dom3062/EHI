@@ -35,7 +35,7 @@ local achievements =
     {
         elements =
         {
-            [100840] = { time = 600, class = TT.Achievement },
+            [100840] = { time = 600, class = TT.Achievement.Base },
             [102531] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
@@ -146,7 +146,7 @@ local MissionDoor =
     -- Diamond Room Hatch
     [Vector3(8638, 193.001, -519)] = 100841
 }
-EHI:SetMissionDoorPosAndIndex(MissionDoor)
+EHI:SetMissionDoorData(MissionDoor)
 local xp_override =
 {
     params =

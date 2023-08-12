@@ -18,7 +18,7 @@ local achievements =
         elements =
         {
             [100132] = { special_function = SF.Trigger, data = { 1001321, 1001322 } },
-            [1001321] = { max = 21, class = TT.AchievementProgress, special_function = SF.ShowAchievementFromStart },
+            [1001321] = { max = 21, class = TT.Achievement.Progress, special_function = SF.ShowAchievementFromStart },
             [1001322] = { special_function = SF.CustomCode, f = function()
                 EHI:ShowLootCounter({ max = 21 })
                 EM:UnhookElement(100416)

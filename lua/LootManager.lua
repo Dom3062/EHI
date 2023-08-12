@@ -5,9 +5,9 @@ end
 
 ---@class LootManager
 ---@field GetSecuredBagsAmount fun(self: self): integer
----@field GetSecuredBagsTypeAmount fun(self: self, t: string|table): integer
+---@field GetSecuredBagsTypeAmount fun(self: self, t: string|string[]): integer
 ---@field GetSecuredBagsValueAmount fun(self: self): number
----@field EHIReportProgress fun(self: self, tracker_id: string, check_type: integer, loot_type: string|table, f: fun(self: self, tracker_id: string, loot_type: string|table))
+---@field EHIReportProgress fun(self: self, tracker_id: string, check_type: integer, loot_type: string|string[], f: fun(loot: self, tracker_id: string))
 
 local check_types = EHI.LootCounter.CheckType
 local original =
@@ -33,7 +33,7 @@ function LootManager:GetSecuredBagsAmount()
     return total
 end
 
----@param t string|table
+---@param t string|string[]
 function LootManager:GetSecuredBagsTypeAmount(t)
     local secured = 0
     if type(t) == "string" then
@@ -66,8 +66,8 @@ end
 
 ---@param tracker_id string
 ---@param check_type integer
----@param loot_type string
----@param f fun(self: self, tracker_id: string, loot_type: string|table)?
+---@param loot_type string|string[]
+---@param f fun(loot: self, tracker_id: string)?
 function LootManager:EHIReportProgress(tracker_id, check_type, loot_type, f)
     if check_type == check_types.AllLoot then
         local bags = self:GetSecuredBagsValueAmount()
@@ -84,7 +84,7 @@ function LootManager:EHIReportProgress(tracker_id, check_type, loot_type, f)
         managers.ehi_tracker:SetTrackerProgress(tracker_id, self:GetSecuredBagsTypeAmount(loot_type))
     elseif check_type == check_types.CustomCheck then
         if f then
-            f(self, tracker_id, loot_type)
+            f(self, tracker_id)
         end
     elseif check_type == check_types.Debug then
         local tweak = tweak_data.carry

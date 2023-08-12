@@ -59,7 +59,7 @@ local achievements =
     {
         elements =
         {
-            [100049] = { time = 20, class = TT.Achievement },
+            [100049] = { time = 20, class = TT.Achievement.Base },
             [104859] = { special_function = SF.SetAchievementComplete }
         }
     },
@@ -68,7 +68,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100809] = { time = 60, class = TT.Achievement, trigger_times = 1 },
+            [100809] = { time = 60, class = TT.Achievement.Base, trigger_times = 1 },
             [100805] = { special_function = SF.SetAchievementComplete },
         }
     }

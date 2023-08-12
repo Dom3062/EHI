@@ -6,7 +6,7 @@ local achievements =
     {
         elements =
         {
-            [100107] = { time = 240, class = EHI.Trackers.Achievement },
+            [100107] = { time = 240, class = EHI.Trackers.Achievement.Base },
             [101412] = { special_function = EHI.SpecialFunctions.SetAchievementComplete }
         },
         load_sync = function(self)

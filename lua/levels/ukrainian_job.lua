@@ -29,7 +29,7 @@ local achievements =
     {
         elements =
         {
-            [100073] = { time = 36, class = TT.Achievement },
+            [100073] = { time = 36, class = TT.Achievement.Base },
             [101784] = { special_function = SF.SetAchievementComplete },
         },
         load_sync = function(self)
@@ -40,7 +40,7 @@ local achievements =
     {
         elements =
         {
-            [100074] = { status = "alarm", class = TT.AchievementStatus, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+            [100074] = { status = "alarm", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
                 if self:InteractionExists("circuit_breaker_off") then
                     self:CheckCondition(trigger)
                 end

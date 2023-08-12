@@ -1,14 +1,13 @@
 local EHI = EHI
 local icons = tweak_data.ehi.icons
 ---@class EHIWaypointManager
----@field new fun(...): self
-EHIWaypointManager = class()
+EHIWaypointManager = {}
 EHIWaypointManager._font = tweak_data.menu.pd2_large_font_id -- Large font
 EHIWaypointManager._timer_font_size = 32
 EHIWaypointManager._distance_font_size = tweak_data.hud.default_font_size
 EHIWaypointManager._bitmap_w = 32
 EHIWaypointManager._bitmap_h = 32
-function EHIWaypointManager:init()
+function EHIWaypointManager:new()
     self._enabled = EHI:GetOption("show_waypoints")
     self._present_timer = EHI:GetOption("show_waypoints_present_timer")
     self._scale = 1
@@ -18,6 +17,7 @@ function EHIWaypointManager:init()
     self._waypoints_to_update = {}
     setmetatable(self._waypoints_to_update, {__mode = "k"})
     self._pager_waypoints = {}
+    return self
 end
 
 function EHIWaypointManager:init_finalize()

@@ -117,7 +117,7 @@ function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
     end
     local n = icons
     local panel_w = self._bg_box:w()
-    self._parent_class:ChangeTrackerWidth(self._id, panel_w + ((self._icon_size_scaled + self._gap_scaled) * n))
+    self:ChangeTrackerWidth(panel_w + ((self._icon_size_scaled + self._gap_scaled) * n))
 end
 
 function EHIAggregatedHealthEquipmentTracker:UpdateAmount(id, unit, key, amount)

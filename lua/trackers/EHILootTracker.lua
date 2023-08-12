@@ -4,6 +4,8 @@ local format = EHI:GetOption("variable_random_loot_format")
 EHILootTracker = class(EHIProgressTracker)
 EHILootTracker._forced_icons = { EHI.Icons.Loot }
 EHILootTracker._show_popup = EHI:GetOption("show_all_loot_secured_popup")
+---@param panel Panel
+---@param params EHITracker_params
 function EHILootTracker:init(panel, params)
     self._mission_loot = 0
     self._offset = params.offset or 0
@@ -134,6 +136,7 @@ function EHILootTracker:SecuredMissionLoot()
     self._mission_loot = self._mission_loot + 1
     self:SetProgress(progress)
 end
+EHILootTracker.FormatProgress = EHILootTracker.Format
 
 ---@class EHIAchievementLootCounterTracker : EHILootTracker, EHIAchievementTracker
 ---@field super EHILootTracker
@@ -145,6 +148,8 @@ EHIAchievementLootCounterTracker._show_desc = EHIAchievementTracker._show_desc
 EHIAchievementLootCounterTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 EHIAchievementLootCounterTracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
 EHIAchievementLootCounterTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
+---@param panel Panel
+---@param params EHITracker_params
 function EHIAchievementLootCounterTracker:init(panel, params)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
