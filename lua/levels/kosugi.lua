@@ -5,20 +5,20 @@ EHIkosugi5Tracker = class(EHIAchievementProgressTracker)
 ---@param panel Panel
 ---@param params EHITracker_params
 function EHIkosugi5Tracker:init(panel, params)
+    params.show_progress_on_finish = true
     params.max = 16 -- Random loot (with armor)
     self._armor_max = 4 -- Armor
     self._armor_counter = 0
-    self._completion = {}
+    self._objectives_to_complete = 2
     EHIkosugi5Tracker.super.init(self, panel, params)
-    self._show_finish_after_reaching_target = false
     EHI:AddAchievementToCounter({
         achievement = "kosugi_5",
         counter =
         {
             check_type = EHI.LootCounter.CheckType.CustomCheck,
             f = function(loot, tracker_id)
-                managers.ehi_tracker:CallFunction(tracker_id, "SetProgressArmor", loot:GetSecuredBagsTypeAmount("samurai_suit"))
-                managers.ehi_tracker:SetTrackerProgress(tracker_id, loot:GetSecuredBagsAmount())
+                self:SetProgressArmor(loot:GetSecuredBagsTypeAmount("samurai_suit"))
+                self:SetProgress(loot:GetSecuredBagsAmount())
             end
         },
         no_sync = true
@@ -28,16 +28,10 @@ end
 function EHIkosugi5Tracker:OverridePanel()
     self._panel:set_w(self._panel:w() * 2)
     self._bg_box:set_w(self._bg_box:w() * 2)
-    self._armor_progress_text = self._bg_box:text({
+    self._armor_progress_text = self:CreateText({
         name = "text2",
         text = self:FormatArmorProgress(),
-        align = "center",
-        vertical = "center",
-        w = self._bg_box:w() / 2,
-        h = self._bg_box:h(),
-        font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h() * self._text_scale,
-        color = self._text_color
+        w = self._bg_box:w() / 2
     })
     self:FitTheText(self._armor_progress_text)
     self._armor_progress_text:set_left(self._text:right())
@@ -51,9 +45,7 @@ end
 function EHIkosugi5Tracker:SetCompleted(force)
     EHIkosugi5Tracker.super.SetCompleted(self, force)
     if self._status then
-        self._text:set_text(self:Format())
-        self:FitTheText()
-        self:CheckCompletion("loot")
+        self:ObjectiveComplete()
     end
 end
 
@@ -65,16 +57,15 @@ function EHIkosugi5Tracker:SetProgressArmor(progress)
         if self._armor_counter == self._armor_max then
             self._armor_progress_text:set_color(Color.green)
             self._armor_counting_disabled = true
-            self:CheckCompletion("armor")
+            self:ObjectiveComplete()
         end
         self:AnimateBG()
     end
 end
 
-function EHIkosugi5Tracker:CheckCompletion(type)
-    self._completion[type] = true
-    if self._completion.loot and self._completion.armor and not self._completion.final then
-        self._completion.final = true
+function EHIkosugi5Tracker:ObjectiveComplete()
+    self._objectives_to_complete = self._objectives_to_complete - 1
+    if self._objectives_to_complete == 0 then
         self:AddTrackerToUpdate()
     end
 end

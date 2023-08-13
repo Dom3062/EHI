@@ -39,7 +39,8 @@ local function cane_5(present_amount)
         counter =
         {
             loot_type = "present"
-        }
+        },
+        no_sync = true
     })
 end
 ---@type ParseAchievementTable

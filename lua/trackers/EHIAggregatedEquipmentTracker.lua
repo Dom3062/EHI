@@ -7,15 +7,6 @@ local color =
     bodybags_bag = EHI:GetEquipmentColor("bodybags_bag")
 }
 
-local text_i =
-{
-    "doctor_bag",
-    "ammo_bag",
-    "grenade_crate",
-    "first_aid_kit",
-    "bodybags_bag"
-}
-
 ---@class EHIAggregatedEquipmentTracker : EHITracker
 ---@field super EHITracker
 EHIAggregatedEquipmentTracker = class(EHITracker)
@@ -28,8 +19,6 @@ function EHIAggregatedEquipmentTracker:pre_init(params)
     self._placed = {}
     self._deployables = {}
     self._ignore = params.ignore or {}
-    self._panel_size = 2
-    self._icon_remove = 0
     self._format = {}
     self.text =
     {

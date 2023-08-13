@@ -17,18 +17,12 @@ end
 
 function EHIcorp9Tracker:OverridePanel()
     EHIcorp9Tracker.super.OverridePanel(self)
-    self._text4 = self._bg_box:text({
+    self._text4 = self:CreateText({
         name = "text4",
-        text = "",
-        align = "center",
-        vertical = "center",
-        w = self._bg_box:w(),
+        status_text = "find",
         h = self._icon_size_scaled,
-        font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h() * self._text_scale,
         color = Color.yellow
     })
-    self:SetStatusText("find", self._text4)
     self._text:set_visible(false)
     self._text2:set_visible(false)
     self._text3:set_visible(false)

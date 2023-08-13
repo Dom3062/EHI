@@ -1,3 +1,6 @@
+r176 (13. 08. 2023):
+Election Day 2: Fixed an issue where trackers aren't visible
+
 r175 (12. 08. 2023):
 Aggregated Equipment Tracker: Tracker will use less space on the screen
 San Martín Bank: Added achievement tracker for "Silencioso y Codicioso"

@@ -85,7 +85,7 @@ if EHI:IsLootCounterVisible() then
     -- Random loot in crates
     local IncreaseMaximumTrigger = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootSpawned" }
     local DecreaseMaximumTrigger = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootDeclined" }
-    for i = 103232, 103264, 1 do -- 1 - 11
+    for i = 103232, 103264, 1 do -- 1 - 11 Cocaine / Money / Gold
         other[i] = IncreaseMaximumTrigger
     end
     other[103284] = IncreaseMaximumTrigger -- 12 Cocaine

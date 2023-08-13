@@ -12,10 +12,8 @@ function EHIWaypointManager:new()
     self._present_timer = EHI:GetOption("show_waypoints_present_timer")
     self._scale = 1
     self._stored_waypoints = {}
-    self._waypoints = {}
-    setmetatable(self._waypoints, {__mode = "k"})
-    self._waypoints_to_update = {}
-    setmetatable(self._waypoints_to_update, {__mode = "k"})
+    self._waypoints = setmetatable({}, {__mode = "k"})
+    self._waypoints_to_update = setmetatable({}, {__mode = "k"})
     self._pager_waypoints = {}
     return self
 end

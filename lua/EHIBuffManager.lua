@@ -26,8 +26,7 @@ local buff_h = 64
 EHIBuffManager = {}
 function EHIBuffManager:new()
     self._buffs = {}
-    self._update_buffs = {}
-    setmetatable(self._update_buffs, {__mode = "k"})
+    self._update_buffs = setmetatable({}, {__mode = "k"})
     if EHI:IsVR() then
         self._x = EHI:GetOption("buffs_vr_x_offset")
         self._y = EHI:GetOption("buffs_vr_y_offset")

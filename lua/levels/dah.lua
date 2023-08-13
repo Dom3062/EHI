@@ -7,7 +7,7 @@ local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local dah_laptop_codes = { [1900] = "red", [2100] = "green", [2300] = "blue" }
 local element_sync_triggers =
 {
-    [103569] = { time = 25, id = "CFOFall", icons = { "hostage", Icon.Goto }, hook_element = 100438 }
+    [103569] = { time = 25, id = "CFOFall", icons = { Icon.Hostage, Icon.Goto }, hook_element = 100438 }
 }
 ---@type ParseTriggerTable
 local triggers = {

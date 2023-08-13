@@ -5,6 +5,7 @@ EHIbex11Tracker = class(EHIAchievementProgressTracker)
 ---@param params EHITracker_params
 function EHIbex11Tracker:pre_init(params)
     params.max = 11 -- Loot
+    params.show_progress_on_finish = true
     self._box_max = 240
     self._box_progress = 0
     self._objectives_to_complete = 2 -- Loot and Deposit boxes

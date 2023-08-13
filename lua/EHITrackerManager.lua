@@ -8,13 +8,10 @@ EHITrackerManager.GetAchievementIcon = EHI.GetAchievementIconString
 function EHITrackerManager:new()
     self:CreateWorkspace()
     self._t = 0
-    self._trackers = {}
-    setmetatable(self._trackers, {__mode = "k"})
+    self._trackers = setmetatable({}, {__mode = "k"})
     self._stealth_trackers = { pagers = {}, lasers = {} }
-    self._trackers_to_update = {}
-    setmetatable(self._trackers_to_update, {__mode = "k"})
-    self._trackers_pos = {}
-    setmetatable(self._trackers_pos, {__mode = "k"})
+    self._trackers_to_update = setmetatable({}, {__mode = "k"})
+    self._trackers_pos = setmetatable({}, {__mode = "k"})
     self._n_of_trackers = 0
     self._delay_popups = true
     self._panel_size = 32 * self._scale
@@ -63,7 +60,7 @@ end
 function EHITrackerManager:CountInteractionAvailable(tweak_data)
     local interactions = managers.interaction._interactive_units or {}
     local count = 0
-    for _, unit in pairs(interactions) do
+    for _, unit in ipairs(interactions) do
         if unit:interaction().tweak_data == tweak_data then
             count = count + 1
         end
@@ -83,7 +80,7 @@ function EHITrackerManager:CountLootbagsOnTheGround(offset)
     end
     local interactions = managers.interaction._interactive_units or {}
     local count = 0 - (offset or 0)
-    for _, unit in pairs(interactions) do
+    for _, unit in ipairs(interactions) do
         if unit:carry_data() and lootbags[unit:carry_data():carry_id()] then
             count = count + 1
         end
@@ -106,7 +103,7 @@ function EHITrackerManager:GetUnits(path, slotmask)
     local tbl_i = 1
     local idstring = Idstring(path)
     local units = World:find_units_quick("all", slotmask)
-    for _, unit in pairs(units) do
+    for _, unit in ipairs(units) do
         if unit and unit:name() == idstring then
             tbl[tbl_i] = unit
             tbl_i = tbl_i + 1
@@ -132,7 +129,7 @@ function EHITrackerManager:CountLootbagsAvailable(path, loot_type, slotmask)
     local count = 0
     local idstring = Idstring(path)
     local units = World:find_units_quick("all", slotmask)
-    for _, unit in pairs(units) do
+    for _, unit in ipairs(units) do
         if unit and unit:name() == idstring and unit:carry_data() and unit:carry_data():carry_id() == loot_type then
             count = count + 1
         end
@@ -430,13 +427,13 @@ end
 
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) then -- Vertical in VR or in non-VR
     ---@param pos integer?
-    ---@return integer
+    ---@return number
     function EHITrackerManager:GetX(pos)
         return self._x
     end
 
     ---@param pos integer?
-    ---@return integer
+    ---@return number
     function EHITrackerManager:GetY(pos)
         pos = pos or self._n_of_trackers
         return self._y + (pos * (self._panel_size + self._panel_offset))
@@ -483,7 +480,7 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) the
     end
 else -- Horizontal
     ---@param pos integer?
-    ---@return integer
+    ---@return number
     function EHITrackerManager:GetX(pos)
         if self._n_of_trackers == 0 or pos and pos == 0 then
             return self._x
@@ -500,7 +497,7 @@ else -- Horizontal
     end
 
     ---@param pos integer?
-    ---@return integer
+    ---@return number
     function EHITrackerManager:GetY(pos)
         return self._y
     end
@@ -514,7 +511,7 @@ else -- Horizontal
             if type(icons) == "table" then
                 local n = #icons
                 local gap = 5 * n
-                w = ((64 + gap + (32 * n)) * self._scale)
+                w = (64 + gap + (32 * n)) * self._scale
             end
             for _, tbl in pairs(self._trackers_pos) do
                 if tbl.pos >= pos then
