@@ -309,7 +309,7 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
 
     total_xp = contract_xp
     local total_contract_xp = total_xp
-    bonus_xp = self._ehi_xp.skill_xp_multiplier
+    bonus_xp = self._ehi_xp.skill_xp_multiplier or 1
     skill_dissect = math_round(total_contract_xp * bonus_xp - total_contract_xp)
     total_xp = total_xp + skill_dissect
     bonus_xp = self._ehi_xp.infamy_bonus
