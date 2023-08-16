@@ -1,5 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
+local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {
     [100931] = { time = 23 },
