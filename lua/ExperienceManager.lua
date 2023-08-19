@@ -57,7 +57,10 @@ function ExperienceManager:init(...)
         stealth = true,
         bonus_xp = 0,
         skill_xp_multiplier = 1, -- Recalculated in ExperienceManager:RecalculateSkillXPMultiplier()
-        difficulty_multiplier = 1
+        difficulty_multiplier = 1,
+        pda9_rewards = tweak_data.mutators.piggybank.rewards,
+        pda10_rewards = tweak_data.mutators.piggyrevenge.pig_levels, -- Needs to be accessed via an index to get the rewards
+        current_difficulty = Global.game_settings.difficulty
     }
     if xp_format == 3 then -- Multiply
         EHI:AddOnAlarmCallback(function()
@@ -110,8 +113,9 @@ function ExperienceManager:LoadData(managers)
     local mutator = managers.mutators
     if mutator:can_mutators_be_active() then
         self._ehi_xp.mutator_xp_reduction = mutator:get_experience_reduction() * -1
-        --self._ehi_xp.MutatorPiggyBank = mutator:is_mutator_active(MutatorPiggyBank)
-        --self._ehi_xp.MutatorCG22 = mutator:is_mutator_active(MutatorCG22)
+        self._ehi_xp.MutatorPiggyRevenge = mutator:is_mutator_active(MutatorPiggyRevenge)
+        self._ehi_xp.MutatorPiggyBank = mutator:is_mutator_active(MutatorPiggyBank)
+        self._ehi_xp.MutatorCG22 = mutator:is_mutator_active(MutatorCG22)
     end
 end
 
@@ -331,8 +335,33 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
     bonus_xp = self._ehi_xp.limited_xp_bonus
     extra_bonus_dissect = math_round(total_xp * bonus_xp - total_xp)
     total_xp = total_xp + extra_bonus_dissect
+
+    -- pda10 event
+	if self._ehi_xp.MutatorPiggyBank then
+	    local pig_level = self._ehi_xp.piggy_event_exploded_level or false
+        local bonus_piggybank_dissect = math_round(pig_level and (self._ehi_xp.pda9_rewards[self._ehi_xp.current_difficulty] or self._ehi_xp.pda9_rewards.default) * tweak_data.mutators.piggybank.pig_levels[pig_level].bag_requirement or 0)
+	    total_xp = total_xp + bonus_piggybank_dissect
+	end
+
+	if self._ehi_xp.MutatorCG22 then
+        local bonus_cg22_dissect = self._ehi_xp.cg22_xp_collected or 0
+        total_xp = total_xp + bonus_cg22_dissect
+	end
+
+	if self._ehi_xp.MutatorPiggyRevenge and self._ehi_xp.piggy_event_exploded_level then
+        local piggyrevenge_level = math.clamp(self._ehi_xp.piggy_event_exploded_level, 1, #self._ehi_xp.pda10_rewards)
+        local piggybank_rewards = piggyrevenge_level and self._ehi_xp.pda10_rewards[piggyrevenge_level].rewards
+        local bonus_piggyrevenge_dissect = piggybank_rewards and total_xp * ((piggybank_rewards.xp_multiplier or 1) - 1) or 0
+        total_xp = total_xp + bonus_piggyrevenge_dissect
+	end
+
     local bonus_mutators_dissect = total_xp * self._ehi_xp.mutator_xp_reduction
     total_xp = total_xp + bonus_mutators_dissect
+
+    if self._ehi_xp.MutatorCG22 then
+        total_xp = total_xp * 2
+    end
+
     total_xp = total_xp + self._ehi_xp.bonus_xp
     return total_xp
 end
@@ -351,7 +380,7 @@ function ExperienceManager:RecalculateXP()
 end
 
 function ExperienceManager:SetPiggyBankExplodedLevel(level)
-    self._ehi_xp.pda9_event_exploded_level = level
+    self._ehi_xp.piggy_event_exploded_level = level
     self:RecalculateXP()
 end
 

@@ -51,6 +51,7 @@
 
         <post hook_id="lib/mutators/mutatorcg22" :script_path="MutatorCG22.lua" />
         <post hook_id="lib/mutators/mutatorpiggybank" :script_path="MutatorPiggyBank.lua" />
+        <post hook_id="lib/mutators/mutatorpiggyrevenge" :script_path="MutatorPiggyRevenge.lua" />
 
         <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
         <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
