@@ -157,6 +157,7 @@ function EHIAchievementLootCounterTracker:init(panel, params)
     self._forced_icons[1] = params.icons[1]
     self._forced_icons[2] = "pd2_loot"
     EHIAchievementLootCounterTracker.super.init(self, panel, params)
+    self:ChangeTrackerWidth()
     if params.start_silent then
         self._silent_start = true
         self._icon2:set_visible(true)

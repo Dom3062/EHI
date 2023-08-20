@@ -176,13 +176,14 @@ function EHITrackerManager:AddTracker(params, pos)
         EHI:LogTraceback()
         self._trackers[params.id]:ForceDelete()
     end
-    pos = self:MoveTracker(pos, params.icons)
+    local class = params.class or self._base_tracker_class
+    local tracker_class = _G[class]
+    pos = self:MoveTracker(pos, tracker_class._forced_icons or params.icons)
     params.parent_class = self
     params.x = self:GetX(pos)
     params.y = self:GetY(pos)
     params.dynamic = true
-    local class = params.class or self._base_tracker_class
-    local tracker = _G[class]:new(self._hud_panel, params)
+    local tracker = tracker_class:new(self._hud_panel, params)
     if tracker._update then
         self._trackers_to_update[params.id] = tracker
     end
@@ -426,13 +427,13 @@ function EHITrackerManager:SwitchToLoudMode()
 end
 
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) then -- Vertical in VR or in non-VR
-    ---@param pos integer?
+    ---@param pos number?
     ---@return number
     function EHITrackerManager:GetX(pos)
         return self._x
     end
 
-    ---@param pos integer?
+    ---@param pos number?
     ---@return number
     function EHITrackerManager:GetY(pos)
         pos = pos or self._n_of_trackers
@@ -441,7 +442,7 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) the
 
     ---@param pos number?
     ---@param icons table?
-    ---@return integer?
+    ---@return number?
     function EHITrackerManager:MoveTracker(pos, icons)
         if type(pos) == "number" and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
             for _, tbl in pairs(self._trackers_pos) do
@@ -456,10 +457,10 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) the
         return nil -- Received crap or no tracker exists; create tracker on the first available position
     end
 
-    ---@param pos integer
+    ---@param pos number
     ---@param w number
-    ---@param pos_move integer?
-    ---@param panel_offset_move integer?
+    ---@param pos_move number?
+    ---@param panel_offset_move number?
     function EHITrackerManager:RearrangeTrackers(pos, w, pos_move, panel_offset_move)
         if not pos then
             return
@@ -479,14 +480,14 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) the
     function EHITrackerManager:ChangeTrackerWidth(id, new_w)
     end
 else -- Horizontal
-    ---@param pos integer?
+    ---@param pos number?
     ---@return number
     function EHITrackerManager:GetX(pos)
-        if self._n_of_trackers == 0 or pos and pos == 0 then
+        if self._n_of_trackers == 0 or pos and pos <= 0 then
             return self._x
         end
         local x = 0
-        local pos_create = pos or (self._n_of_trackers - 1)
+        local pos_create = pos and (pos - 1) or (self._n_of_trackers - 1)
         for _, value in pairs(self._trackers_pos) do
             if value.pos == pos_create then
                 x = value.x + value.w + self._panel_offset
@@ -496,7 +497,7 @@ else -- Horizontal
         return x
     end
 
-    ---@param pos integer?
+    ---@param pos number?
     ---@return number
     function EHITrackerManager:GetY(pos)
         return self._y
@@ -504,7 +505,7 @@ else -- Horizontal
 
     ---@param pos number?
     ---@param icons table?
-    ---@return integer?
+    ---@return number?
     function EHITrackerManager:MoveTracker(pos, icons)
         if type(pos) == "number" and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
             local w = 64 * self._scale
@@ -526,10 +527,10 @@ else -- Horizontal
         return nil -- Received crap or no tracker exists; create tracker on the first available position
     end
 
-    ---@param pos integer
+    ---@param pos number
     ---@param w number
-    ---@param pos_move integer?
-    ---@param panel_offset_move integer?
+    ---@param pos_move number?
+    ---@param panel_offset_move number?
     function EHITrackerManager:RearrangeTrackers(pos, w, pos_move, panel_offset_move)
         if not pos then
             return

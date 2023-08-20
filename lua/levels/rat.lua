@@ -34,7 +34,6 @@ local element_sync_triggers =
 local preload =
 {
     { id = "Van", icons = Icon.CarEscape, hide_on_delete = true },
-    { id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning, hide_on_delete = true },
     { id = "HeliMeth", icons = { Icon.Heli, Icon.Methlab, Icon.Goto }, hide_on_delete = true },
     { id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, hide_on_delete = true },
     { id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, hide_on_delete = true }
@@ -45,7 +44,7 @@ local triggers = {
     [102319] = { id = "Van", run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay } },
     [101001] = { special_function = SF.Trigger, data = { 1010011, 1010012 } },
     [1010011] = { special_function = SF.RemoveTracker, data = { "CookChance", "VanStayDelay", "HeliMeth" } },
-    [1010012] = { special_function = SF.RemoveTrigger, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238, 102197 } },
+    [1010012] = { special_function = SF.RemoveTrigger, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238, 102197, 102167, 102168 } },
 
     [102383] = { id = "CookDelay", run = { time = 2 + 5 } },
     [100721] = { id = "CookDelay", run = { time = 1 }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
@@ -59,14 +58,6 @@ local triggers = {
     [102201] = { special_function = SF.CustomCode, f = SetFlarePos, arg = 102154 },
     [102202] = { special_function = SF.CustomCode, f = SetFlarePos, arg = 102153 },
     [102203] = { special_function = SF.CustomCode, f = SetFlarePos, arg = 102152 },
-
-    [102220] = { id = "VanStayDelay", run = { time = 60 + van_delay_ovk } },
-    [102219] = { id = "VanStayDelay", run = { time = 45 + van_delay } },
-    [102229] = { id = "VanStayDelay", run = { time = 90 + van_delay_ovk } },
-    [102235] = { id = "VanStayDelay", run = { time = 100 + van_delay_ovk } },
-    [102236] = { id = "VanStayDelay", run = { time = 50 + van_delay } },
-    [102237] = { id = "VanStayDelay", run = { time = 60 + van_delay_ovk } },
-    [102238] = { id = "VanStayDelay", run = { time = 70 + van_delay_ovk } },
 
     [1] = { special_function = SF.RemoveTrigger, data = { 101972, 101973, 101974, 101975 } },
     [101972] = { run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
@@ -84,9 +75,19 @@ local triggers = {
 
     [100723] = { id = "CookChance", special_function = SF.IncreaseChanceFromElement }
 }
+if EHI:EscapeVehicleWillReturn("rat") then
+    table.insert(preload, { id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning, hide_on_delete = true })
+    triggers[102220] = { id = "VanStayDelay", run = { time = 60 + van_delay_ovk } }
+    triggers[102219] = { id = "VanStayDelay", run = { time = 45 + van_delay } }
+    triggers[102229] = { id = "VanStayDelay", run = { time = 90 + van_delay_ovk } }
+    triggers[102235] = { id = "VanStayDelay", run = { time = 100 + van_delay_ovk } }
+    triggers[102236] = { id = "VanStayDelay", run = { time = 50 + van_delay } }
+    triggers[102237] = { id = "VanStayDelay", run = { time = 60 + van_delay_ovk } }
+    triggers[102238] = { id = "VanStayDelay", run = { time = 70 + van_delay_ovk } }
+end
 if EHI:IsMayhemOrAbove() then
     triggers[102197] = { id = "HeliMeth", run = { time = 180 + heli_delay_full }, waypoint_f = ShowFlareWP }
-    if EHI:MissionTrackersAndWaypointEnabled() then
+    if EHI:MissionTrackersAndWaypointEnabled() and EHI:EscapeVehicleWillReturn("rat") then
         triggers[101001].data[#triggers[101001].data + 1] = 1010013
         local function ResetWaypoint()
             managers.hud:RestoreWaypoint(VanPos == 1 and 101454 or 101449)

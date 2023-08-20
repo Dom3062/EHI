@@ -8,10 +8,6 @@ local TimedLootDrop = { Icon.Escape, Icon.LootDrop, Icon.Wait }
 local FireTrapIndexes = { 0, 120, 240, 360, 480 }
 local triggers = {
     [100647] = { time = 240 + 60, id = "Chimney", icons = LootDrop },
-    [EHI:GetInstanceElementID(100078, 10700)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist },
-    [EHI:GetInstanceElementID(100078, 11000)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist },
-    [EHI:GetInstanceElementID(100011, 10700)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" } },
-    [EHI:GetInstanceElementID(100011, 11000)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" } },
     [EHI:GetInstanceElementID(100135, 11300)] = { time = 12, id = "SafeEvent", icons = { Icon.Heli, Icon.Goto } }
 }
 local fire_recharge = { time = 180, id = "FireRecharge", icons = { Icon.Fire, Icon.Loop } }
@@ -23,6 +19,22 @@ for _, index in ipairs(FireTrapIndexes) do
     local fire = deep_clone(fire_t)
     fire.id = fire.id .. index
     triggers[EHI:GetInstanceElementID(100022, index)] = fire
+end
+if EHI:EscapeVehicleWillReturn("cane") then
+    triggers[EHI:GetInstanceElementID(100078, 10700)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[EHI:GetInstanceElementID(100078, 11000)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[EHI:GetInstanceElementID(100011, 10700)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" } }
+    triggers[EHI:GetInstanceElementID(100011, 11000)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" } }
+    if EHI:MissionTrackersAndWaypointEnabled() then
+        local DisableWaypoints =
+        {
+            [EHI:GetInstanceElementID(100016, 10700)] = true,
+            [EHI:GetInstanceElementID(100016, 11000)] = true
+        }
+        EHI:DisableWaypoints(DisableWaypoints)
+        triggers[EHI:GetInstanceElementID(100011, 10700)].waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100016, 10700) }
+        triggers[EHI:GetInstanceElementID(100011, 11000)].waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100016, 11000) }
+    end
 end
 
 local function cane_5(present_amount)
@@ -76,17 +88,6 @@ local achievements =
         end
     }
 }
-
-if EHI:MissionTrackersAndWaypointEnabled() then
-    local DisableWaypoints =
-    {
-        [EHI:GetInstanceElementID(100016, 10700)] = true,
-        [EHI:GetInstanceElementID(100016, 11000)] = true
-    }
-    EHI:DisableWaypoints(DisableWaypoints)
-    triggers[EHI:GetInstanceElementID(100011, 10700)].waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100016, 10700) }
-    triggers[EHI:GetInstanceElementID(100011, 11000)].waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100016, 11000) }
-end
 
 local other =
 {

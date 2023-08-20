@@ -5,10 +5,7 @@ local TT = EHI.Trackers
 local very_hard_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
 local chance = { id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = TT.Chance, special_function = SF.SetChanceFromElementWhenTrackerExists }
 local PresentDropTimer = { "C_Vlad_H_XMas_Impossible", Icon.Wait }
-local preload =
-{
-    { id = "HeliLootTakeOff", icons = Icon.HeliWait, class = TT.Warning, hide_on_delete = true }
-}
+local preload = {}
 ---@type ParseTriggerTable
 local triggers = {
     [100109] = { time = 25, id = "EndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning },
@@ -22,8 +19,6 @@ local triggers = {
     [101045] = { additional_time = 50, random_time = 10, id = "WaitTime", icons = { Icon.Heli, Icon.Wait } },
     [100024] = { time = 23, id = "HeliSanta", icons = { Icon.Heli, "Other_H_None_Merry" }, trigger_times = 1 },
     [105102] = { time = 30, id = "HeliLoot", icons = Icon.HeliEscape, special_function = SF.ExecuteIfElementIsEnabled },
-    -- Hooked to 105072 instead of 105076 to track the take off accurately
-    [105072] = { id = "HeliLootTakeOff", run = { time = 82 } },
 
     [101005] = chance,
     [101006] = chance,
@@ -43,6 +38,11 @@ local achievements =
         }
     }
 }
+if EHI:EscapeVehicleWillReturn("pines") then
+    preload[1] = { id = "HeliLootTakeOff", icons = Icon.HeliWait, class = TT.Warning, hide_on_delete = true }
+    -- Hooked to 105072 instead of 105076 to track the take off accurately
+    triggers[105072] = { id = "HeliLootTakeOff", run = { time = 82 } }
+end
 
 local other = {}
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

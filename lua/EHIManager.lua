@@ -401,20 +401,18 @@ function EHIManager:AddHostTriggers(new_triggers, type, trigger_id_all, trigger_
             else
                 base_delay_triggers[key] = true
             end
-        else
-            if value.hook_element or value.hook_elements then
-                if value.hook_element then
-                    element_delay_triggers[value.hook_element] = element_delay_triggers[value.hook_element] or {}
-                    element_delay_triggers[value.hook_element][key] = true
-                else
-                    for _, element in pairs(value.hook_elements) do
-                        element_delay_triggers[element] = element_delay_triggers[element] or {}
-                        element_delay_triggers[element][key] = true
-                    end
-                end
+        elseif value.hook_element or value.hook_elements then
+            if value.hook_element then
+                element_delay_triggers[value.hook_element] = element_delay_triggers[value.hook_element] or {}
+                element_delay_triggers[value.hook_element][key] = true
             else
-                EHI:Log("key: " .. tostring(key) .. " does not have element to hook!")
+                for _, element in pairs(value.hook_elements) do
+                    element_delay_triggers[element] = element_delay_triggers[element] or {}
+                    element_delay_triggers[element][key] = true
+                end
             end
+        else
+            EHI:Log("key: " .. tostring(key) .. " does not have element to hook!")
         end
     end
 end

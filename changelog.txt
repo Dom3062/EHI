@@ -1,3 +1,7 @@
+r180 (19. 08. 2023):
+Fixed an issue where trackers with forced icons are incorrectly positioned on the screen in horizontal alignment
+Fixed an alignment issue with trackers that are created on specific position in horizontal alignment
+
 r179 (16. 08. 2023):
 Updated to U239 (10th Anniversary)
 

@@ -2000,6 +2000,15 @@ function EHI:SetDeployableIgnorePos(type, pos)
     end
 end
 
+---@param level_id string
+---@return boolean
+function EHI:EscapeVehicleWillReturn(level_id)
+    if self:IsHost() and SWAYRMod and SWAYRMod.included(level_id) then
+        return false
+    end
+    return true
+end
+
 Load()
 if EHI:GetUnlockableOption("hide_unlocked_achievements") then
     local G = Global

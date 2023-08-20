@@ -22,7 +22,7 @@ end
 
 function MutatorPiggyRevenge:sync_load(mutator_manager, load_data, ...)
     original.sync_load(self, mutator_manager, load_data, ...)
-    managers.ehi_tracker:CallFunction("pda10_event", "SyncLoad", load_data.piggybank_mutator)
+    managers.ehi_tracker:CallFunction("pda10_event", "SyncLoad", load_data.piggyrevenge_mutator)
 end
 
 function MutatorPiggyRevenge:sync_feed_piggybank(...)

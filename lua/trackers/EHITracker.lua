@@ -538,9 +538,9 @@ function EHITracker:AddTrackerToUpdate()
     self._parent_class:AddTrackerToUpdate(self._id, self)
 end
 
----@param w number
+---@param w number? If not provided the width is then called from `EHITracker:GetPanelW()`
 function EHITracker:ChangeTrackerWidth(w)
-    self._parent_class:ChangeTrackerWidth(self._id, w)
+    self._parent_class:ChangeTrackerWidth(self._id, w or self:GetPanelW())
 end
 
 function EHITracker:GetPanelW()

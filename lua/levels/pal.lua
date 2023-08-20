@@ -28,13 +28,14 @@ for i = 4700, 4850, 50 do
     triggers[EHI:GetInstanceElementID(100004, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = waypoint_id } }
 end
 
-local heli = { id = "HeliCageDelay", icons = HeliLootDropWait, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning }
-local sync_triggers = {
-    [EHI:GetInstanceElementID(100013, 4700)] = heli,
-    [EHI:GetInstanceElementID(100013, 4750)] = heli,
-    [EHI:GetInstanceElementID(100013, 4800)] = heli,
-    [EHI:GetInstanceElementID(100013, 4850)] = heli
-}
+local sync_triggers = {}
+if EHI:EscapeVehicleWillReturn("pal") then
+    local heli = { id = "HeliCageDelay", icons = HeliLootDropWait, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning }
+    sync_triggers[EHI:GetInstanceElementID(100013, 4700)] = heli
+    sync_triggers[EHI:GetInstanceElementID(100013, 4750)] = heli
+    sync_triggers[EHI:GetInstanceElementID(100013, 4800)] = heli
+    sync_triggers[EHI:GetInstanceElementID(100013, 4850)] = heli
+end
 if EHI:IsClient() then
     local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI:GetFreeCustomSpecialFunctionID()
     triggers[102892] = { additional_time = 1800/30 + 120, random_time = 60, id = "HeliCage", icons = { Icon.Heli, Icon.LootDrop }, special_function = SF.AddTrackerIfDoesNotExist }
