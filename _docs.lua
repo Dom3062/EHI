@@ -4,6 +4,8 @@
 ]]
 
 _G.Global = {}
+---@class World
+_G.World = {}
 _G.tweak_data = {}
 ---@class EHITweakData
 _G.tweak_data.ehi = {}
@@ -79,6 +81,11 @@ function class(super) end
 ---@field add_runned_unit_sequence_trigger fun(self: self, unit_id: number, sequence: string, callback: function)
 ---@field get_element_by_id fun(self: self, id: number): MissionScriptElement?
 
+---@class GuiDataManager
+---@field create_fullscreen_workspace fun(self: self): Workspace
+---@field destroy_workspace fun(self: self, ws: Workspace)
+---@field safe_to_full fun(self: self, in_x: number, in_y: number): number, number
+
 ---@class managers Global table of all managers in the game
 ---@field ehi_manager EHIManager
 ---@field ehi_tracker EHITrackerManager
@@ -89,6 +96,7 @@ function class(super) end
 ---@field ehi_deployable EHIDeployableManager
 ---@field experience ExperienceManager
 ---@field game_play_central GamePlayCentralManager
+---@field gui_data GuiDataManager
 ---@field hud HUDManager
 ---@field mission MissionManager
 ---@field localization LocalizationManager
@@ -119,8 +127,16 @@ function class(super) end
 ---@field statistics_manager table
 ---@field wallet_panel Panel?
 
+---@class Gui
+---@field create_world_workspace fun(self: self, w: number, h: number, x: Vector3, y: Vector3, z: Vector3): Workspace
+---@field destroy_workspace fun(self: self, ws: Workspace)
+
+---@class World
+---@field newgui fun(self: self): Gui
+
 ---@class _G Global
 ---@field Global Global
+---@field World World
 ---@field managers managers Global table of all managers in the game
 ---@field tweak_data tweak_data Global table of all configuration data
 ---@field PrintTableDeep fun(tbl: table, maxDepth: integer?, allowLogHeavyTables: boolean?, customNameForInitialLog: string?, tablesToIgnore: table|string?, skipFunctions: boolean?) Recursively prints tables; depends on mod: https://modworkshop.net/mod/34161
@@ -446,6 +462,11 @@ function class(super) end
 ---@field no_total_xp boolean
 ---@field tactic XPBreakdown_tactic
 
+---@class Workspace
+---@field show fun(self: self)
+---@field hide fun(self: self)
+---@field panel fun(self: self): Panel
+
 ---@class PanelBaseObject
 ---@field x fun(self: self): number
 ---@field set_x fun(self: self, x: number)
@@ -467,8 +488,11 @@ function class(super) end
 ---@field set_center_x fun(self: self, center_x: number)
 ---@field set_position fun(self: self, x: number, y: number)
 ---@field set_leftbottom fun(self: self, left: number, bottom: number)
+---@field alpha fun(self: self) : number
+---@field set_alpha fun(self: self, alpha: number)
 ---@field stop fun(self: self, anim_thread: thread?)
 ---@field animate fun(self: self, f: function, ...:any?): thread
+---@field set_size fun(self: self, w: number, h: number)
 
 ---@class Panel : PanelBaseObject
 ---@field child fun(self: self, child_name: string): (PanelText|PanelBitmap|PanelRectangle|self)?
@@ -478,6 +502,7 @@ function class(super) end
 ---@field rect fun(self: self, params: table): PanelRectangle
 ---@field panel fun(self: self, params: table): self
 ---@field children fun(self: self): table Returns an ipairs table of all items created on the panel
+---@field inside fun(self: self, x: number, y: number): boolean Returns `true` or `false` if provided `x` and `y` are inside the panel
 
 ---@class PanelText : PanelBaseObject
 ---@field set_color fun(self: self, color: number)

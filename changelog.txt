@@ -1,3 +1,9 @@
+r181 (24. 08. 2023):
+Added "Your Health Value" and "Your Armor Value" buff options
+Updated to U239.3
+Updated Turret icon
+Fixed gaps between trackers in horizontal alignment
+
 r180 (19. 08. 2023):
 Fixed an issue where trackers with forced icons are incorrectly positioned on the screen in horizontal alignment
 Fixed an alignment issue with trackers that are created on specific position in horizontal alignment

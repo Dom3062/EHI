@@ -246,8 +246,7 @@ function EHISniperLoopTracker:pre_init(params)
 end
 
 function EHISniperLoopTracker:OverridePanel()
-    self._panel:set_w(self._panel:w() + (self._panel:w() / 2))
-    self._bg_box:set_w(self._bg_box:w() + (self._bg_box:w() / 2))
+    self:SetBGSize(self._bg_box:w() / 2)
     local w = self._bg_box:w() / 3
     self._text:set_w(w)
     self._chance_text = self:CreateText({

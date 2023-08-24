@@ -10,8 +10,7 @@ EHIcac10Tracker.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
 function EHIcac10Tracker:OverridePanel()
     self._max = 0
     self._progress = 0
-    self._panel:set_w(self._panel:w() * 2)
-    self._bg_box:set_w(self._bg_box:w() * 2)
+    self:SetBGSize()
     self._progress_text = self._bg_box:text({
         name = "text2",
         text = self:FormatProgress(),

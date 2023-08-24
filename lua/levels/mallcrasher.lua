@@ -27,8 +27,7 @@ function EHIameno3Tracker:post_init(params)
 end
 
 function EHIameno3Tracker:OverridePanel()
-    self._panel:set_w(self._panel:w() * 2)
-    self._bg_box:set_w(self._bg_box:w() * 2)
+    self:SetBGSize()
     self._money_text = self._bg_box:text({
         name = "text2",
         text = self:FormatNumber(),

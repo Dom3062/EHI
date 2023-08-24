@@ -411,6 +411,7 @@
     "ehi_buffs_skills_cooldown" : "Zobrazuje dobu, po kterou nelze skill či perk znovu aktivovat",
     "ehi_buffs_skills_duration" : "Zobrazuje trvání",
     "ehi_buffs_skills_progress" : "Zobrazuje postup",
+    "ehi_buffs_skills_value" : "Zobrazuje hodnotu",
 
     "ehi_buffs_skills_menu" : "Skilly",
     "ehi_buffs_skills_mastermind_menu" : "Mastermind",
@@ -523,6 +524,8 @@
     "ehi_buffs_other_crit_persistent_desc" : "Buff zůstane na obrazovce, když je tvoje šance na Crit méně než 0 %",
     "ehi_buffs_other_inspire_ai" : "Inspire (AI)",
     "ehi_buffs_other_regen_throwable_ai" : "Obnovení granátu (AI)",
+    "ehi_buffs_other_health" : "Tvoje hodnota zdraví",
+    "ehi_buffs_other_armor" : "Tvoje hodnota armoru",
 
     "ehi_inventory_menu" : "Inventory",
     "ehi_inventory_menu_desc" : "",

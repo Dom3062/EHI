@@ -18,8 +18,7 @@ function EHICraneFixChanceTracker:init(panel, params)
 end
 
 function EHICraneFixChanceTracker:OverridePanel()
-    self._panel:set_w(self._panel:w() * 2)
-    self._bg_box:set_w(self._bg_box:w() * 2)
+    self:SetBGSize()
     self._chance_text = self._bg_box:text({
         name = "text2",
         text = self:FormatChance(),

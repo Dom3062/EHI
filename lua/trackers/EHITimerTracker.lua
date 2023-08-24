@@ -147,14 +147,14 @@ end
 
 function EHITimerTracker:StartTimer(t)
     self:SetTimeNoAnim(t)
-    self:SetPanelW(self._panel_double)
+    self:AnimatePanelW(self._panel_double)
     self:ChangeTrackerWidth(self._bg_box_double + self._icon_gap_size_scaled)
     self:AnimIconX(self._bg_box_double + self._gap_scaled)
     self._bg_box:set_w(self._bg_box_double)
 end
 
 function EHITimerTracker:StopTimer()
-    self:SetPanelW(self._panel_w)
+    self:AnimatePanelW(self._panel_w)
     self:ChangeTrackerWidth(self._bg_box_w + self._icon_gap_size_scaled)
     self:AnimIconX(self._bg_box_w + self._gap_scaled)
     self._bg_box:set_w(self._bg_box_w)

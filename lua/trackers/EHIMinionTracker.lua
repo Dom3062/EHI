@@ -37,8 +37,16 @@ function EHIMinionTracker:SetIconColor()
     end
 end
 
+function EHIMinionTracker:Redraw()
+    for _, text in ipairs(self._bg_box:children()) do
+        if text.set_text then
+            self:FitTheText(text)
+        end
+    end
+end
+
 function EHIMinionTracker:AnimateMovement()
-    self:SetPanelW(self._panel_w)
+    self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
     self:AnimIconX(self._panel_w - self._icon_size_scaled)
 end
@@ -79,12 +87,12 @@ function EHIMinionTracker:Reorganize(addition)
     elseif addition then
         self._panel_w = self._panel_w + self._panel_half
         self:AnimateMovement()
-        self._bg_box:set_w(self._bg_box:w() + self._panel_half)
+        self:SetBGSize(self._panel_half, "add", true)
         self:AlignTextOnHalfPos()
     else
         self._panel_w = self._panel_w - self._panel_half
         self:AnimateMovement()
-        self._bg_box:set_w(self._bg_box:w() - self._panel_half)
+        self:SetBGSize(self._panel_half, "short", true)
         self:AlignTextOnHalfPos()
     end
 end

@@ -78,7 +78,7 @@ local other =
 {
     [100290] = EHI:AddAssaultDelay({ time = 30 }),
     [102741] = EHI:AddLootCounter(function()
-        local max = managers.ehi_tracker:CountInteractionAvailable("gen_pku_cocaine")
+        local max = managers.ehi_manager:CountInteractionAvailable("gen_pku_cocaine")
         EHI:ShowLootCounterNoChecks({ max = max + 1 })
     end)
 }

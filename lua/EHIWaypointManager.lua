@@ -12,8 +12,8 @@ function EHIWaypointManager:new()
     self._present_timer = EHI:GetOption("show_waypoints_present_timer")
     self._scale = 1
     self._stored_waypoints = {}
-    self._waypoints = setmetatable({}, {__mode = "k"})
-    self._waypoints_to_update = setmetatable({}, {__mode = "k"})
+    self._waypoints = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIWaypoint?>
+    self._waypoints_to_update = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIWaypoint?>
     self._pager_waypoints = {}
     return self
 end
@@ -104,7 +104,7 @@ function EHIWaypointManager:UpdateWaypointID(id, new_id)
     if self._waypoints[new_id] or not self._waypoints[id] then
         return
     end
-    local wp = self._waypoints[id]
+    local wp = self._waypoints[id] --[[@as EHIWaypoint]]
     wp:UpdateID(new_id)
     self._waypoints[id] = nil
     self._waypoints[new_id] = wp
@@ -196,6 +196,7 @@ function EHIWaypointManager:SetWaypointTime(id, time)
     end
 end
 
+---@diagnostic disable
 ---@param id string
 ---@param jammed boolean
 function EHIWaypointManager:SetTimerWaypointJammed(id, jammed)
@@ -223,6 +224,24 @@ function EHIWaypointManager:SetWaypointPause(id, pause)
     end
 end
 
+---@param id string
+---@param t number
+function EHIWaypointManager:SetWaypointAccurate(id, t)
+    local wp = id and self._waypoints[id]
+    if wp and wp.SetWaypointAccurate then
+        wp:SetWaypointAccurate(t)
+    end
+end
+
+---@param id string
+function EHIWaypointManager:IncreaseWaypointProgress(id)
+    local wp = id and self._waypoints[id]
+    if wp and wp.IncreaseProgress then
+        wp:IncreaseProgress()
+    end
+end
+---@diagnostic enable
+
 ---@param params AddWaypointTable
 function EHIWaypointManager:AddPagerWaypoint(params)
     self._pager_waypoints[params.id] = true
@@ -238,23 +257,6 @@ end
 function EHIWaypointManager:RemoveAllPagerWaypoints()
     for key, _ in pairs(self._pager_waypoints) do
         self:RemoveWaypoint(key)
-    end
-end
-
----@param id string
----@param t number
-function EHIWaypointManager:SetWaypointAccurate(id, t)
-    local wp = id and self._waypoints[id]
-    if wp and wp.SetWaypointAccurate then
-        wp:SetWaypointAccurate(t)
-    end
-end
-
----@param id string
-function EHIWaypointManager:IncreaseWaypointProgress(id)
-    local wp = id and self._waypoints[id]
-    if wp and wp.IncreaseProgress then
-        wp:IncreaseProgress()
     end
 end
 

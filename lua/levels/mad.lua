@@ -15,8 +15,7 @@ function EHIdailycakeTracker:init(panel, params)
 end
 
 function EHIdailycakeTracker:OverridePanel()
-    self._panel:set_w(self._panel:w() * 2)
-    self._bg_box:set_w(self._bg_box:w() * 2)
+    self:SetBGSize()
     self._progress_text = self._bg_box:text({
         name = "text2",
         text = self:FormatProgress(),
@@ -31,9 +30,7 @@ function EHIdailycakeTracker:OverridePanel()
     self:FitTheText(self._progress_text)
     self._progress_text:set_left(0)
     self._text:set_left(self._progress_text:right())
-    if self._icon1 then
-        self._icon1:set_x(self._icon1:x() * 2)
-    end
+    self:SetIconX()
 end
 
 function EHIdailycakeTracker:SetCompleted()

@@ -35,7 +35,7 @@ function SentryGunMovement:Preload()
         if self._tweak.AUTO_RELOAD then
             managers.ehi_tracker:PreloadTracker({
                 id = self._ehi_key_reload,
-                icons = { Icon.Sentry, "reload" },
+                icons = { Icon.Turret, "reload" },
                 hide_on_delete = true,
                 class = Warning
             })
@@ -43,7 +43,7 @@ function SentryGunMovement:Preload()
         if self._tweak.AUTO_REPAIR then
             managers.ehi_tracker:PreloadTracker({
                 id = self._ehi_key_repair,
-                icons = { Icon.Sentry, Icon.Fix },
+                icons = { Icon.Turret, Icon.Fix },
                 hide_on_delete = true,
                 class = Warning
             })

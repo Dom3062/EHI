@@ -21,8 +21,7 @@ function EHIPiggyBankMutatorTracker:init(panel, params)
 end
 
 function EHIPiggyBankMutatorTracker:OverridePanel()
-    self._panel:set_w(self._panel:w() * 2)
-    self._bg_box:set_w(self._bg_box:w() * 2)
+    self:SetBGSize()
     self._levels_text = self._bg_box:text({
         name = "text2",
         text = self:FormatLevels(),
@@ -36,9 +35,7 @@ function EHIPiggyBankMutatorTracker:OverridePanel()
     })
     self:FitTheText(self._levels_text)
     self._levels_text:set_left(self._text:right())
-    if self._icon1 then
-        self._icon1:set_x(self._icon1:x() * 2)
-    end
+    self:SetIconX()
 end
 
 function EHIPiggyBankMutatorTracker:FormatLevels()

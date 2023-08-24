@@ -2,7 +2,7 @@ local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 --[[function EHI:PaintingCount()
-    --[[local paintings = managers.ehi_tracker:GetUnits("units/payday2/architecture/com_int_gallery/com_int_gallery_wall_painting_bars", 1)
+    --[[local paintings = managers.ehi_manager:GetUnits("units/payday2/architecture/com_int_gallery/com_int_gallery_wall_painting_bars", 1)
     local n_of_paintings = 0
     -- 3878622f45bc7dfe => Idstring("g_important") without ID and @ at the end
     for _, painting in pairs(paintings) do
@@ -26,7 +26,6 @@ local other = {}
 
 local min_bags = 4
 if Global.game_settings.level_id == "gallery" then
-    local TT = EHI.Trackers
     ---@type ParseAchievementTable
     local achievements =
     {

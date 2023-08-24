@@ -12,8 +12,7 @@ function EHINeededValueTracker:pre_init(params)
 end
 
 function EHINeededValueTracker:OverridePanel()
-    self._panel:set_w(self._panel:w() * 2)
-    self._bg_box:set_w(self._bg_box:w() * 2)
+    self:SetBGSize()
     self._text:set_w(self._bg_box:w())
     self:FitTheText()
     self:SetIconX()

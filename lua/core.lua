@@ -225,7 +225,7 @@ _G.EHI =
         Alarm = "C_Bain_H_GOBank_IsEverythingOK",
         Water = "pd2_water_tap",
         Blimp = "blimp",
-        Sentry = "wp_sentry",
+        Turret = "turret",
         PCHack = "wp_hack",
         Glasscutter = "equipment_glasscutter",
         Loot = "pd2_loot",
@@ -669,7 +669,9 @@ local function LoadDefaultValues(self)
             crit_refresh = 1, -- 1 / value
             crit_persistent = false,
             inspire_ai = true,
-            regen_throwable_ai = true
+            regen_throwable_ai = true,
+            health = false,
+            armor = false
         },
 
         -- Inventory

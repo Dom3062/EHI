@@ -26,8 +26,7 @@ function EHIkosugi5Tracker:init(panel, params)
 end
 
 function EHIkosugi5Tracker:OverridePanel()
-    self._panel:set_w(self._panel:w() * 2)
-    self._bg_box:set_w(self._bg_box:w() * 2)
+    self:SetBGSize()
     self._armor_progress_text = self:CreateText({
         name = "text2",
         text = self:FormatArmorProgress(),

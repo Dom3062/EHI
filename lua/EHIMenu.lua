@@ -362,7 +362,7 @@ function EHIMenu:mouse_move(o, x, y)
             end
         elseif self._slider then
             self:SetSlider(self._slider, x)
-        elseif self._back_button and self._back_button.panel:inside(x,y) then
+        elseif self._back_button and self._back_button.panel:inside(x, y) then
             self:HighlightItem(self._back_button)
             managers.mouse_pointer:set_pointer_image("link")
         else

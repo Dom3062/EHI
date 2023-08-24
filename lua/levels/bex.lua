@@ -32,8 +32,7 @@ function EHIbex11Tracker:OverridePanel()
         name = "box_progress_text",
         text = self:FormatBoxProgress()
     })
-    self._panel:set_w(self._panel:w() * 2)
-    self._bg_box:set_w(self._bg_box:w() * 2)
+    self:SetBGSize()
     self._box_progress_text:set_left(self._text:right())
     self:SetIconX()
 end
@@ -80,7 +79,7 @@ function EHIbex11Tracker:ObjectiveComplete()
         self._box_progress_text:set_visible(false)
         self._bg_box:set_w(self._bg_box:w() / 2)
         local panel_w = self._panel:w() / 2
-        self:SetPanelW(panel_w)
+        self:AnimatePanelW(panel_w)
         self:AnimIconX(self._icon_previous_pos)
         self:ChangeTrackerWidth(panel_w)
         self:AnimateBG()

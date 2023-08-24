@@ -54,7 +54,7 @@ local instances =
     },
     ["levels/instances/unique/sand/sand_helicopter_turret/world"] =
     {
-        [100027] = { id = "sand_TurretTimer", icons = { Icon.Heli, Icon.Sentry, Icon.Wait }, special_function = SF.GetElementTimerAccurate, element = 100012 }
+        [100027] = { id = "sand_TurretTimer", icons = { Icon.Heli, Icon.Turret, Icon.Wait }, special_function = SF.GetElementTimerAccurate, element = 100012 }
     }
 }
 instances["levels/instances/unique/brb/single_door_large/world"] = deep_clone(instances["levels/instances/unique/brb/single_door/world"])

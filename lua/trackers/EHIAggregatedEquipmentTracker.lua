@@ -195,7 +195,7 @@ function EHIAggregatedEquipmentTracker:RemoveText(id)
 end
 
 function EHIAggregatedEquipmentTracker:AnimateMovement()
-    self:SetPanelW(self._panel_w)
+    self:AnimatePanelW(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
     self:AnimIconX(self._panel_w - self._icon_size_scaled)
 end

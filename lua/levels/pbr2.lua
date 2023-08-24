@@ -123,7 +123,7 @@ EHI:ShowAchievementLootCounter({
     max = 9,
     triggers = voff_4_triggers,
     load_sync = function(self)
-        self._trackers:SetTrackerProgressRemaining("voff_4", self._trackers:CountInteractionAvailable("ring_band"))
+        self._trackers:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
     end
 })
 EHI:AddXPBreakdown({

@@ -115,9 +115,6 @@ if EHI:IsLootCounterVisible() then
             managers.ehi_tracker:RandomLootDeclinedCheck(crate)
         end)
     end
-    local function LootSpawned(crate)
-        managers.ehi_tracker:RandomLootSpawnedCheck(crate, true)
-    end
     local IncreaseMaxRandomLoot = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
         local index = trigger.index
         local crate = EHI:GetInstanceUnitID(100000, index)

@@ -65,7 +65,7 @@ local triggers = {
     [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, waypoint_f = waypoint_f },
 
     [100124] = { special_function = SF.CustomCode, f = function()
-        local bags = managers.ehi_tracker:CountLootbagsOnTheGround(10)
+        local bags = managers.ehi_manager:CountLootbagsOnTheGround(10)
         if bags % 4 == 0 then -- 4/8/12
             local trigger = bags - 3
             EHI:AddCallback(EHI.CallbackMessage.LootSecured, function(self)
@@ -98,7 +98,7 @@ local achievements =
         elements =
         {
             [100124] = { status = "defend", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
-                local bags = self._trackers:CountLootbagsOnTheGround(10)
+                local bags = self:CountLootbagsOnTheGround(10)
                 if bags == 12 then
                     self:CheckCondition(trigger)
                 end
@@ -112,7 +112,7 @@ local achievements =
 local other =
 {
     [100124] = EHI:AddLootCounter(function()
-        local bags = managers.ehi_tracker:CountLootbagsOnTheGround(10)
+        local bags = managers.ehi_manager:CountLootbagsOnTheGround(10)
         EHI:ShowLootCounterNoCheck({ max = bags })
     end),
     [103696] = EHI:AddAssaultDelay({ time = 5 + 15 + 30 })

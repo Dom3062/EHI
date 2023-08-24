@@ -13,8 +13,7 @@ function EHIsand11Tracker:pre_init(params)
 end
 
 function EHIsand11Tracker:OverridePanel()
-    self._panel:set_w(self._panel:w() * 2)
-    self._bg_box:set_w(self._bg_box:w() * 2)
+    self:SetBGSize()
     self._text_chance = self._bg_box:text({
         name = "chance",
         text = self:FormatChance(),
@@ -27,9 +26,7 @@ function EHIsand11Tracker:OverridePanel()
         color = self._text_color
     })
     self._text_chance:set_right(self._bg_box:right())
-    if self._icon1 then
-        self._icon1:set_x(self._icon1:x() * 2)
-    end
+    self:SetIconX()
 end
 
 function EHIsand11Tracker:SetChance(amount)

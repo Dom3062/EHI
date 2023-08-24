@@ -2,16 +2,16 @@ local EHI = EHI
 ---@class EHITrackerManager
 ---@field IsLoading fun(self: self): boolean VR only (EHITrackerManagerVR)
 ---@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) VR only (EHITrackerManagerVR)
----@field SetPanel fun(self: self, panel: userdata) VR only (EHITrackerManagerVR)
+---@field SetPanel fun(self: self, panel: Panel) VR only (EHITrackerManagerVR)
 EHITrackerManager = {}
 EHITrackerManager.GetAchievementIcon = EHI.GetAchievementIconString
 function EHITrackerManager:new()
     self:CreateWorkspace()
     self._t = 0
-    self._trackers = setmetatable({}, {__mode = "k"})
+    self._trackers = setmetatable({}, {__mode = "k"}) ---@type table<string, EHITracker?>
     self._stealth_trackers = { pagers = {}, lasers = {} }
-    self._trackers_to_update = setmetatable({}, {__mode = "k"})
-    self._trackers_pos = setmetatable({}, {__mode = "k"})
+    self._trackers_to_update = setmetatable({}, {__mode = "k"}) ---@type table<string, EHITracker?>
+    self._trackers_pos = setmetatable({}, {__mode = "k"}) ---@type table<string, { tracker: EHITracker, pos: number, x: number, y: number, w: number }?>
     self._n_of_trackers = 0
     self._delay_popups = true
     self._panel_size = 32 * self._scale
@@ -55,88 +55,6 @@ function EHITrackerManager:LoadTime(t)
     self._t = t
 end
 
----@param tweak_data string
----@return integer
-function EHITrackerManager:CountInteractionAvailable(tweak_data)
-    local interactions = managers.interaction._interactive_units or {}
-    local count = 0
-    for _, unit in ipairs(interactions) do
-        if unit:interaction().tweak_data == tweak_data then
-            count = count + 1
-        end
-    end
-    return count
-end
-
----@param offset integer?
----@return integer
-function EHITrackerManager:CountLootbagsOnTheGround(offset)
-    local excluded = { value_multiplier = true, dye = true, types = true, small_loot = true }
-    local lootbags = {}
-    for key, data in pairs(tweak_data.carry) do
-        if not (excluded[key] or data.is_unique_loot or data.skip_exit_secure) then
-            lootbags[key] = true
-        end
-    end
-    local interactions = managers.interaction._interactive_units or {}
-    local count = 0 - (offset or 0)
-    for _, unit in ipairs(interactions) do
-        if unit:carry_data() and lootbags[unit:carry_data():carry_id()] then
-            count = count + 1
-        end
-    end
-    return count
-end
-
----@param path string
----@param slotmask integer
----@return integer
-function EHITrackerManager:CountUnitAvailable(path, slotmask)
-    return #self:GetUnits(path, slotmask)
-end
-
----@param path string
----@param slotmask integer
----@return table
-function EHITrackerManager:GetUnits(path, slotmask)
-    local tbl = {}
-    local tbl_i = 1
-    local idstring = Idstring(path)
-    local units = World:find_units_quick("all", slotmask)
-    for _, unit in ipairs(units) do
-        if unit and unit:name() == idstring then
-            tbl[tbl_i] = unit
-            tbl_i = tbl_i + 1
-        end
-    end
-    return tbl
-end
-
----@param path string
----@param slotmask integer
----@param pos integer
----@return Unit
-function EHITrackerManager:GetUnit(path, slotmask, pos)
-    return self:GetUnits(path, slotmask)[pos or 1]
-end
-
----@param path string
----@param loot_type string
----@param slotmask integer
----@return integer
-function EHITrackerManager:CountLootbagsAvailable(path, loot_type, slotmask)
-    slotmask = slotmask or 14
-    local count = 0
-    local idstring = Idstring(path)
-    local units = World:find_units_quick("all", slotmask)
-    for _, unit in ipairs(units) do
-        if unit and unit:name() == idstring and unit:carry_data() and unit:carry_data():carry_id() == loot_type then
-            count = count + 1
-        end
-    end
-    return count
-end
-
 function EHITrackerManager:LoadSync()
     EHI:DelayCall("EHI_Converts_UpdatePeerColors", 2, function()
         self:CallFunction("Converts", "UpdatePeerColors")
@@ -177,7 +95,7 @@ function EHITrackerManager:AddTracker(params, pos)
         self._trackers[params.id]:ForceDelete()
     end
     local class = params.class or self._base_tracker_class
-    local tracker_class = _G[class]
+    local tracker_class = _G[class] --[[@as EHITracker]]
     pos = self:MoveTracker(pos, tracker_class._forced_icons or params.icons)
     params.parent_class = self
     params.x = self:GetX(pos)
@@ -203,7 +121,7 @@ function EHITrackerManager:PreloadTracker(params)
     params.x = 0
     params.y = 0
     local class = params.class or self._base_tracker_class
-    local tracker = _G[class]:new(self._hud_panel, params)
+    local tracker = _G[class]:new(self._hud_panel, params) --[[@as EHITracker]]
     self._trackers[params.id] = tracker
 end
 
@@ -448,7 +366,7 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) the
             for _, tbl in pairs(self._trackers_pos) do
                 if tbl.pos >= pos then
                     local final_pos = tbl.pos + 1
-                    tbl.tracker:SetTop(self:GetY(final_pos))
+                    tbl.tracker:AnimateTop(self:GetY(final_pos))
                     tbl.pos = final_pos
                 end
             end
@@ -468,7 +386,7 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) the
         for _, value in pairs(self._trackers_pos) do
             if value.pos > pos then
                 local final_pos = value.pos - 1
-                value.tracker:SetTop(self:GetY(final_pos))
+                value.tracker:AnimateTop(self:GetY(final_pos))
                 value.pos = final_pos
             end
         end
@@ -517,7 +435,7 @@ else -- Horizontal
             for _, tbl in pairs(self._trackers_pos) do
                 if tbl.pos >= pos then
                     local final_x = tbl.x + w + self._panel_offset
-                    tbl.tracker:SetLeft(final_x)
+                    tbl.tracker:AnimateLeft(final_x)
                     tbl.x = final_x
                     tbl.pos = tbl.pos + 1
                 end
@@ -540,7 +458,7 @@ else -- Horizontal
         for _, value in pairs(self._trackers_pos) do
             if value.pos > pos then
                 local final_x = value.x - w - panel_offset_move
-                value.tracker:SetLeft(final_x)
+                value.tracker:AnimateLeft(final_x)
                 value.x = final_x
                 value.pos = value.pos - pos_move
             end
@@ -578,7 +496,7 @@ function EHITrackerManager:UpdateTrackerID(id, new_id)
     if self:TrackerExists(new_id) or self:TrackerDoesNotExist(id) then
         return
     end
-    local tracker = self._trackers[id]
+    local tracker = self._trackers[id] --[[@as EHITracker]]
     tracker:UpdateID(new_id)
     self._trackers[id] = nil
     self._trackers[new_id] = tracker
@@ -653,6 +571,7 @@ function EHITrackerManager:TrackerDoesNotExist(id)
     return not self:TrackerExists(id)
 end
 
+---@diagnostic disable
 ---@param id string
 ---@param pause boolean
 function EHITrackerManager:SetTrackerPaused(id, pause)
@@ -882,6 +801,7 @@ function EHITrackerManager:DecreaseTrackerCount(id)
         tracker:DecreaseCount()
     end
 end
+---@diagnostic enable
 
 function EHITrackerManager:SecuredMissionLoot()
     self:CallFunction("LootCounter", "SecuredMissionLoot")
@@ -954,7 +874,7 @@ function EHITrackerManager:ReturnValue(id, f, ...)
     end
 end
 
-if Global.load_level then
+do
     local path = EHI.LuaPath .. "trackers/"
     dofile(path .. "EHITracker.lua")
     dofile(path .. "EHIWarningTracker.lua")
@@ -992,4 +912,8 @@ if Global.load_level then
             dofile(path .. "EHIAssaultTimeTracker.lua")
         end
     end
+end
+
+if VoidUI then
+    dofile(EHI.LuaPath .. "hud/tracker/void_ui.lua")
 end

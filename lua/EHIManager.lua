@@ -111,6 +111,88 @@ function EHIManager:IsMissionElementDisabled(id)
     return not self:IsMissionElementEnabled(id)
 end
 
+---@param tweak_data string
+---@return integer
+function EHIManager:CountInteractionAvailable(tweak_data)
+    local interactions = managers.interaction._interactive_units or {}
+    local count = 0
+    for _, unit in ipairs(interactions) do
+        if unit:interaction().tweak_data == tweak_data then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+---@param offset integer?
+---@return integer
+function EHIManager:CountLootbagsOnTheGround(offset)
+    local excluded = { value_multiplier = true, dye = true, types = true, small_loot = true }
+    local lootbags = {}
+    for key, data in pairs(tweak_data.carry) do
+        if not (excluded[key] or data.is_unique_loot or data.skip_exit_secure) then
+            lootbags[key] = true
+        end
+    end
+    local interactions = managers.interaction._interactive_units or {}
+    local count = 0 - (offset or 0)
+    for _, unit in ipairs(interactions) do
+        if unit:carry_data() and lootbags[unit:carry_data():carry_id()] then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+---@param path string
+---@param slotmask integer
+---@return integer
+function EHIManager:CountUnitAvailable(path, slotmask)
+    return #self:GetUnits(path, slotmask)
+end
+
+---@param path string
+---@param slotmask integer
+---@return table
+function EHIManager:GetUnits(path, slotmask)
+    local tbl = {}
+    local tbl_i = 1
+    local idstring = Idstring(path)
+    local units = World:find_units_quick("all", slotmask)
+    for _, unit in ipairs(units) do
+        if unit and unit:name() == idstring then
+            tbl[tbl_i] = unit
+            tbl_i = tbl_i + 1
+        end
+    end
+    return tbl
+end
+
+---@param path string
+---@param slotmask integer
+---@param pos integer
+---@return Unit
+function EHIManager:GetUnit(path, slotmask, pos)
+    return self:GetUnits(path, slotmask)[pos or 1]
+end
+
+---@param path string
+---@param loot_type string
+---@param slotmask integer
+---@return integer
+function EHIManager:CountLootbagsAvailable(path, loot_type, slotmask)
+    slotmask = slotmask or 14
+    local count = 0
+    local idstring = Idstring(path)
+    local units = World:find_units_quick("all", slotmask)
+    for _, unit in ipairs(units) do
+        if unit and unit:name() == idstring and unit:carry_data() and unit:carry_data():carry_id() == loot_type then
+            count = count + 1
+        end
+    end
+    return count
+end
+
 ---@param f fun(self: EHIManager)
 function EHIManager:AddLoadSyncFunction(f)
     if EHI:IsHost() then

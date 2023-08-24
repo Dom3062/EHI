@@ -85,7 +85,7 @@ if EHI:IsLootCounterVisible() then
     end
     other[100043] = EHI:AddLootCounter3(function(self, ...)
         local loot_triggers = {}
-        MoneyAroundHostage = self._trackers:CountInteractionAvailable("money_small")
+        MoneyAroundHostage = self:CountInteractionAvailable("money_small")
         for _, index in ipairs(start_index) do
             if managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceElementID(100000, index)) then -- Bomb guy is here
                 for i = 100003, 100006, 1 do

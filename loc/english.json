@@ -411,6 +411,7 @@
     "ehi_buffs_skills_cooldown" : "Shows cooldown",
     "ehi_buffs_skills_duration" : "Shows duration",
     "ehi_buffs_skills_progress" : "Shows progress",
+    "ehi_buffs_skills_value" : "Shows value",
 
     "ehi_buffs_skills_menu" : "Skills",
     "ehi_buffs_skills_mastermind_menu" : "Mastermind",
@@ -523,6 +524,8 @@
     "ehi_buffs_other_crit_persistent_desc" : "'Crit Chance' gauge will stay on your screen when your crit is lower than 0%",
     "ehi_buffs_other_inspire_ai" : "Inspire (AI)",
     "ehi_buffs_other_regen_throwable_ai" : "Regen Throwable (AI)",
+    "ehi_buffs_other_health" : "Your Health Value",
+    "ehi_buffs_other_armor" : "Your Armor Value",
 
     "ehi_inventory_menu" : "Inventory",
     "ehi_inventory_menu_desc" : "",

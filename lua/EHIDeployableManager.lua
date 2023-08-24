@@ -1,4 +1,6 @@
 ---@class EHIDeployableManager
+---@field IsLoading fun(self: self): boolean VR only (EHIDeployableManagerVR)
+---@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) VR only (EHIDeployableManagerVR)
 EHIDeployableManager = {}
 ---@param ehi_tracker EHITrackerManager
 ---@return EHIDeployableManager
@@ -52,8 +54,7 @@ function EHIDeployableManager:AddToDeployableCache(type, key, unit, tracker_type
     local tracker = self:GetTracker(type)
     if tracker then
         if tracker_type then
-            ---@diagnostic disable-next-line
-            tracker:UpdateAmount(tracker_type, unit, key, 0)
+            tracker:UpdateAmount(tracker_type, unit, key, 0) ---@diagnostic disable-line
         else
             tracker:UpdateAmount(unit, key, 0)
         end

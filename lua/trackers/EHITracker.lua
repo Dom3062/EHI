@@ -3,6 +3,9 @@ local math_abs = math.abs
 local math_min = math.min
 local math_sin = math.sin
 local math_lerp = math.lerp
+---@param o PanelBaseObject
+---@param start_a number Start alpha
+---@param end_a number End alpha
 local function visibility(o, start_a, end_a) -- This is actually faster than manually re-typing optimized "over" function
     local TOTAL_T = 0.18
     local t = 0
@@ -13,6 +16,8 @@ local function visibility(o, start_a, end_a) -- This is actually faster than man
         o:set_alpha(math_lerp(start_a, end_a, lerp))
     end
 end
+---@param o PanelBaseObject
+---@param target_y number
 local function top(o, target_y)
     local t = 0
     local total = 0.18
@@ -23,6 +28,8 @@ local function top(o, target_y)
     end
     o:set_y(target_y)
 end
+---@param o PanelBaseObject
+---@param target_x number
 local function left(o, target_x)
     local t = 0
     local total = 0.18
@@ -33,6 +40,9 @@ local function left(o, target_x)
     end
     o:set_x(target_x)
 end
+---@param o PanelBaseObject
+---@param target_w number
+---@param self EHITracker
 local function panel_w(o, target_w, self)
     local TOTAL_T = 0.18
     local from_w = o:w()
@@ -44,10 +54,12 @@ local function panel_w(o, target_w, self)
         local lerp = t / TOTAL_T
         o:set_w(math_lerp(from_w, target_w, lerp))
     end
-    if self and self.Redraw then
-        self:Redraw()
+    if self and self.Redraw then ---@diagnostic disable-line
+        self:Redraw() ---@diagnostic disable-line
     end
 end
+---@param o PanelBaseObject
+---@param target_x number
 local function icon_x(o, target_x)
     local TOTAL_T = 0.18
     local from_x = o:x()
@@ -59,6 +71,8 @@ local function icon_x(o, target_x)
         o:set_x(math_lerp(from_x, target_x, lerp))
     end
 end
+---@param bg PanelRectangle
+---@param total_t number
 local function bg_attention(bg, total_t)
     local color = Color.white
 	local t = total_t or 3
@@ -69,6 +83,16 @@ local function bg_attention(bg, total_t)
 		bg:set_color(Color(1, color.red * cv, color.green * cv, color.blue * cv))
 	end
 	bg:set_color(Color(1, 0, 0, 0))
+end
+---@param o PanelBaseObject
+---@param skip boolean
+---@param self EHITracker
+local function destroy(o, skip, self)
+    if not skip then
+        visibility(o, o:alpha(), 0)
+    end
+    self._bg_box:child("bg"):stop()
+    self._parent_panel:remove(self._panel)
 end
 local icons = tweak_data.ehi.icons
 ---@param icon string
@@ -177,6 +201,7 @@ local function CreateHUDBGBox(panel, params)
 end
 
 ---@class EHITracker
+---@field new fun(self: self, panel: Panel, params: AddTrackerTable|ElementTrigger): self
 ---@field _forced_icons table? Forces specific icons in the tracker
 ---@field _forced_time number? Forces specific time in the tracker
 ---@field _icon1 PanelBitmap
@@ -187,8 +212,9 @@ EHITracker._fade_time = 5
 EHITracker._tracker_type = "accurate"
 EHITracker._gap = 5
 EHITracker._icon_size = 32
-EHITracker._scale = EHI:IsVR() and EHI:GetOption("vr_scale") or EHI:GetOption("scale")
-EHITracker._text_scale = EHI:GetOption("text_scale")
+EHITracker._scale = EHI:IsVR() and EHI:GetOption("vr_scale") or EHI:GetOption("scale") --[[@as number]]
+EHITracker._text_scale = EHI:GetOption("text_scale") --[[@as number]]
+-- (32 + 5) * self._scale
 EHITracker._icon_gap_size_scaled = (EHITracker._icon_size + EHITracker._gap) * EHITracker._scale
 -- 32 * self._scale
 EHITracker._icon_size_scaled = EHITracker._icon_size * EHITracker._scale
@@ -275,15 +301,23 @@ function EHITracker:PosAndSetVisible(x, y)
 end
 
 function EHITracker:SetPanelVisible()
-    self._panel:animate(visibility, 0, 1)
+    if self._anim_visibility then
+        self._panel:stop(self._anim_visibility)
+        self._anim_visibility = nil
+    end
+    self._anim_visibility = self._panel:animate(visibility, 0, 1)
 end
 
 function EHITracker:SetPanelHidden()
-    self._panel:animate(visibility, 1, 0)
+    if self._anim_visibility then
+        self._panel:stop(self._anim_visibility)
+        self._anim_visibility = nil
+    end
+    self._anim_visibility = self._panel:animate(visibility, 1, 0)
 end
 
 ---@param target_y number
-function EHITracker:SetTop(target_y)
+function EHITracker:AnimateTop(target_y)
     if self._anim_move then
         self._panel:stop(self._anim_move)
         self._anim_move = nil
@@ -292,7 +326,7 @@ function EHITracker:SetTop(target_y)
 end
 
 ---@param target_x number
-function EHITracker:SetLeft(target_x)
+function EHITracker:AnimateLeft(target_x)
     if self._anim_move then
         self._panel:stop(self._anim_move)
         self._anim_move = nil
@@ -301,7 +335,7 @@ function EHITracker:SetLeft(target_x)
 end
 
 ---@param target_w number
-function EHITracker:SetPanelW(target_w)
+function EHITracker:AnimatePanelW(target_w)
     if self._anim_set_w then
         self._panel:stop(self._anim_set_w)
         self._anim_set_w = nil
@@ -310,7 +344,7 @@ function EHITracker:SetPanelW(target_w)
 end
 
 ---@param target_w number
-function EHITracker:SetPanelWAndRefresh(target_w)
+function EHITracker:AnimatePanelWAndRefresh(target_w)
     if self._anim_set_w then
         self._panel:stop(self._anim_set_w)
         self._anim_set_w = nil
@@ -407,6 +441,25 @@ function EHITracker:CreateText(params)
         self:SetStatusText(params.status_text, text)
     end
     return text
+end
+
+---@param w number? If not provided, `w` is taken from the BG
+---@param type string?
+---|"add" # Adds `w` to the BG; default `type` if not provided
+---|"short" # Shorts `w` on the BG
+---@param dont_recalculate_panel_w boolean? Setting this to `true` will not recalculate the total width on the main panel
+function EHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
+    w = w or self._bg_box:w()
+    if not type or type == "add" then
+        self._bg_box:set_w(self._bg_box:w() + w)
+    else
+        self._bg_box:set_w(self._bg_box:w() - w)
+    end
+    if not dont_recalculate_panel_w then
+        local start = self._bg_box:w()
+        local icons_with_gap = self._icon_gap_size_scaled * self._n_of_icons
+        self._panel:set_w(start + icons_with_gap)
+    end
 end
 
 ---@param t any Unused
@@ -558,20 +611,7 @@ function EHITracker:destroy(skip)
             self._icon1:stop()
         end
         self._panel:stop()
-        self._panel:animate(function(o)
-            if not skip then
-                local TOTAL_T = 0.18
-                local t = 0
-                while TOTAL_T > t do
-                    local dt = coroutine.yield()
-                    t = math_min(t + dt, TOTAL_T)
-                    local lerp = t / TOTAL_T
-                    o:set_alpha(math_lerp(1, 0, lerp))
-                end
-            end
-            self._bg_box:child("bg"):stop()
-            self._parent_panel:remove(self._panel)
-        end)
+        self._panel:animate(destroy, skip, self)
     end
 end
 
@@ -596,4 +636,11 @@ function EHITracker:ForceDelete()
     self._hide_on_delete = nil
     self._refresh_on_delete = nil
     self:delete()
+end
+
+---@param create_f function
+---@param animate_f function
+function EHITracker.SetCustomBGFunctions(create_f, animate_f)
+    CreateHUDBGBox = create_f
+    bg_attention = animate_f
 end

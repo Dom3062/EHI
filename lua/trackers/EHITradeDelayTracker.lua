@@ -49,7 +49,7 @@ function EHITradeDelayTracker:Redraw()
 end
 
 function EHITradeDelayTracker:AnimateMovement()
-    self:SetPanelWAndRefresh(self._panel_w)
+    self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
     self:AnimIconX(self._panel_w - self._icon_size_scaled)
 end

@@ -189,9 +189,9 @@ end
 
 function EHIBuffTracker:UpdateIcon(texture, texture_rect)
     if texture_rect then
-        self._panel:child("icon"):set_image(texture, unpack(texture_rect))
+        self._panel:child("icon"):set_image(texture, unpack(texture_rect)) ---@diagnostic disable-line
     else
-        self._panel:child("icon"):set_image(texture)
+        self._panel:child("icon"):set_image(texture) ---@diagnostic disable-line
     end
 end
 
@@ -291,6 +291,11 @@ end
 
 function EHIBuffTracker:SetPos(pos)
     self._pos = pos
+end
+
+function EHIBuffTracker:SetHintText(text)
+    self._hint:set_text(tostring(text))
+    self:FitHint(self._hint)
 end
 
 function EHIBuffTracker:SetLeftXByPos(x, pos)

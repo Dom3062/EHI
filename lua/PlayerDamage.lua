@@ -239,3 +239,38 @@ if EHI:GetBuffOption("shield_regen") then
         managers.ehi_buff:AddBuff("ArmorRegenDelay", final_time)
     end
 end
+
+--//////////////--
+--//  Health  //--
+--//////////////--
+if EHI:GetBuffOption("health") then
+    original._send_set_health = PlayerDamage._send_set_health
+    function PlayerDamage:_send_set_health(...)
+        original._send_set_health(self, ...)
+        local max_health = self:_max_health()
+        local current_health = self:get_real_health()
+        local ratio = current_health / max_health
+        managers.ehi_buff:AddGauge2("Health", ratio, current_health)
+    end
+
+    original._send_set_revives = PlayerDamage._send_set_revives
+    function PlayerDamage:_send_set_revives(...)
+        original._send_set_revives(self, ...)
+        local revives = math.max(Application:digest_value(self._revives, false) - 1, 0)
+        managers.ehi_buff:CallFunction("Health", "SetHintText", tostring(revives))
+    end
+end
+
+--/////////////--
+--//  Armor  //--
+--/////////////--
+if EHI:GetBuffOption("armor") then
+    original._send_set_armor = PlayerDamage._send_set_armor
+    function PlayerDamage:_send_set_armor(...)
+        original._send_set_armor(self, ...)
+        local max_armor = self:_max_armor()
+        local current_armor = self:get_real_armor()
+        local ratio = current_armor / max_armor
+        managers.ehi_buff:AddGauge2("Armor", ratio, current_armor)
+    end
+end

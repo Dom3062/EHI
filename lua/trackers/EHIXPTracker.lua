@@ -36,8 +36,7 @@ function EHITotalXPTracker:init(panel, params)
 end
 
 function EHITotalXPTracker:OverridePanel()
-    self._panel:set_w(self._panel:w() + (self._panel:w() / 2))
-    self._bg_box:set_w(self._bg_box:w() + (self._bg_box:w() / 2))
+    self:SetBGSize(self._bg_box:w() / 2)
     self._text:set_w(self._bg_box:w())
     self:SetIconX()
 end

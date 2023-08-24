@@ -32,6 +32,7 @@ tweak_data.ehi =
         assaultbox = { texture = "guis/textures/pd2_mod_ehi/assaultbox" },
         deployables = { texture = "guis/textures/pd2_mod_ehi/deployables" },
         padlock = { texture = "guis/textures/pd2_mod_ehi/padlock" },
+        turret = { texture = "guis/textures/pd2_mod_ehi/turret" },
 
         reload = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {0, 576, 64, 64} },
         smoke = { texture = "guis/dlcs/max/textures/pd2/specialization/icons_atlas", texture_rect = {0, 0, 64, 64} },
@@ -77,12 +78,35 @@ tweak_data.ehi =
     -- Definitions for buffs and their icons
     buff =
     {
+        Health =
+        {
+            deck = true,
+            folder = "chico",
+            text = "0",
+            x = 1,
+            y = 0,
+            class = "EHIGaugeBuffTracker",
+            format = "damage",
+            option = "health",
+            pos = 0,
+        },
+        Armor =
+        {
+            u100skill = true,
+            x = 2,
+            y = 12,
+            class = "EHIGaugeBuffTracker",
+            format = "damage",
+            option = "armor",
+            pos = 1
+        },
         DodgeChance =
         {
             u100skill = true,
             x = 1,
             y = 12,
             class = "EHIDodgeChanceBuffTracker",
+            text = "Dodge",
             format = "percent",
             activate_after_spawn = true,
             option = "dodge",
@@ -545,6 +569,7 @@ tweak_data.ehi =
             deck = true,
             folder = "joy",
             x = 3,
+            text = "Dodge+",
             class = "EHIHackerTemporaryDodgeBuffTracker",
             option = "hacker"
         },
@@ -605,7 +630,7 @@ tweak_data.ehi =
             })
         end,
         ShowNumberOfLootbagsOnTheGround = function()
-            local max = managers.ehi_tracker:CountLootbagsOnTheGround()
+            local max = managers.ehi_manager:CountLootbagsOnTheGround()
             if max == 0 then
                 return
             end
