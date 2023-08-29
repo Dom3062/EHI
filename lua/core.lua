@@ -639,6 +639,7 @@ local function LoadDefaultValues(self)
             bloodthirst_ratio = 34, -- value / 100
             berserker = true,
             berserker_refresh = 4, -- 1 / value
+            berserker_format = 1, -- 1 = Multiplier; 2 = Percent
 
             -- Perks
             infiltrator = true,
@@ -1227,7 +1228,7 @@ end
 
 local math_floor = math.floor
 ---@param n number
----@param bracket number Number in `*10` or `/10`
+---@param bracket number? Number in `*10` or `/10`
 ---@return number
 function EHI:RoundNumber(n, bracket)
     bracket = bracket or 1

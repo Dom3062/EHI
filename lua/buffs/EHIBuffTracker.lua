@@ -15,6 +15,8 @@ local texture_good = "guis/textures/pd2_mod_ehi/buff_" .. prefix .. "frame"
 local texture_bad = "guis/textures/pd2_mod_ehi/buff_" .. prefix .. "frame_debuff"
 local Color = Color
 local lerp = math.lerp
+---@param o Panel
+---@param target_x number
 local function set_x(o, target_x)
     local t = 0
     local total = 0.15
@@ -25,6 +27,8 @@ local function set_x(o, target_x)
     end
     o:set_x(target_x)
 end
+---@param o Panel
+---@param x number
 local function set_right(o, x)
     local t = 0
     local total = 0.15
@@ -40,6 +44,7 @@ end
 ---@field _parent_class EHIBuffManager
 ---@field _inverted_progress boolean
 EHIBuffTracker = class()
+---@param o Panel
 EHIBuffTracker._show = function(o)
     local t = 0
     local total = 0.15
@@ -49,6 +54,7 @@ EHIBuffTracker._show = function(o)
     end
     o:set_alpha(1)
 end
+---@param o Panel
 EHIBuffTracker._hide = function(o)
     local t = 0
     local total = 0.15
@@ -64,7 +70,7 @@ function EHIBuffTracker:init(panel, params)
     local w_half = params.w / 2
     local color = params.icon_color or params.good and Color.white or Color.red
     local progress_visible = progress and not params.no_progress
-    self._id = params.id
+    self._id = params.id --[[@as string]]
     self._parent_class = params.parent_class
     self._panel = panel:panel({
         name = self._id,
@@ -125,7 +131,7 @@ function EHIBuffTracker:init(panel, params)
         x = 0,
         y = 0
     })
-    self:FitHint(self._hint)
+    self:FitTheText(self._hint)
     self._text = self._panel:text({
         name = "text",
         text = "100s",
@@ -139,6 +145,7 @@ function EHIBuffTracker:init(panel, params)
         y = self._panel:w() + w_half,
         visible = not params.no_progress
     })
+    self._progress_bar = Color(1, 0, 1, 1)
     self._progress = self._panel:bitmap({
         name = "progress",
         render_template = "VertexColorTexturedRadial",
@@ -148,7 +155,7 @@ function EHIBuffTracker:init(panel, params)
         h = icon:h(),
         texture = params.good and texture_good or texture_bad,
         texture_rect = rect,
-        color = Color(1, 0, 1, 1),
+        color = self._progress_bar,
         visible = progress_visible
     })
     if progress_visible then
@@ -170,12 +177,9 @@ function EHIBuffTracker:init(panel, params)
     self._panel_move_gap = (panel_w / 2) + 3 -- add only half of the gap
 end
 
-function EHIBuffTracker:ResetFontSize(text)
+---@param text PanelText
+function EHIBuffTracker:FitTheText(text)
     text:set_font_size(self._panel:w() / 2)
-end
-
-function EHIBuffTracker:FitHint(text)
-    self:ResetFontSize(text)
     local w = select(3, text:text_rect())
     if w > text:w() then
         text:set_font_size(text:font_size() * (text:w() / w))
@@ -187,6 +191,8 @@ function EHIBuffTracker:SetPersistent()
     self:Activate()
 end
 
+---@param texture string
+---@param texture_rect table?
 function EHIBuffTracker:UpdateIcon(texture, texture_rect)
     if texture_rect then
         self._panel:child("icon"):set_image(texture, unpack(texture_rect)) ---@diagnostic disable-line
@@ -195,18 +201,22 @@ function EHIBuffTracker:UpdateIcon(texture, texture_rect)
     end
 end
 
+---@param center_x number
 function EHIBuffTracker:SetCenterX(center_x)
     self._panel:set_center_x(center_x)
 end
 
+---@param x number
 function EHIBuffTracker:MovePanelLeft(x)
     self._panel:set_x(self._panel:x() - x)
 end
 
+---@param x number
 function EHIBuffTracker:MovePanelRight(x)
     self._panel:set_x(self._panel:x() + x)
 end
 
+---@param x number
 function EHIBuffTracker:SetX(x)
     if self._move_panel_x then
         self._panel:stop(self._move_panel_x)
@@ -214,6 +224,7 @@ function EHIBuffTracker:SetX(x)
     self._move_panel_x = self._panel:animate(set_x, x)
 end
 
+---@param x number
 function EHIBuffTracker:SetRight(x)
     if self._move_panel_x then
         self._panel:stop(self._move_panel_x)
@@ -225,6 +236,8 @@ function EHIBuffTracker:IsActive()
     return self._active
 end
 
+---@param t number? Required
+---@param pos number? Required
 function EHIBuffTracker:Activate(t, pos)
     self._active = true
     self._time = t
@@ -235,6 +248,7 @@ function EHIBuffTracker:Activate(t, pos)
     self._pos = pos
 end
 
+---@param pos number
 function EHIBuffTracker:ActivateNoUpdate(pos)
     self._active = true
     self._panel:stop()
@@ -248,20 +262,24 @@ function EHIBuffTracker:ActivateSoft()
     end
     self._panel:stop()
     self._panel:animate(self._show)
-    self._parent_class:AddVisibleBuff(self._id)
+    self._parent_class:AddVisibleBuff(self._id, self)
     self._visible = true
 end
 
+---@param t number
 function EHIBuffTracker:Extend(t)
     self._time = t
     self._time_set = t
 end
 
+---@param t number
 function EHIBuffTracker:Append(t)
     self._time = self._time + t
     self._time_set = self._time
 end
 
+---@param t number
+---@param max number
 function EHIBuffTracker:AppendCeil(t, max)
     self._time = math.min(self._time + t, max)
     self._time_set = self._time
@@ -285,19 +303,23 @@ function EHIBuffTracker:DeactivateSoft()
     self._visible = false
 end
 
+---@param t number
 function EHIBuffTracker:Shorten(t)
     self._time = self._time - t
 end
 
+---@param pos number
 function EHIBuffTracker:SetPos(pos)
     self._pos = pos
 end
 
 function EHIBuffTracker:SetHintText(text)
     self._hint:set_text(tostring(text))
-    self:FitHint(self._hint)
+    self:FitTheText(self._hint)
 end
 
+---@param x number
+---@param pos number
 function EHIBuffTracker:SetLeftXByPos(x, pos)
     if pos < self._pos then
         self._pos = self._pos - 1
@@ -306,6 +328,9 @@ function EHIBuffTracker:SetLeftXByPos(x, pos)
 end
 
 local abs = math.abs
+---@param pos number
+---@param center_pos number
+---@param even boolean
 function EHIBuffTracker:SetCenterXByPos(pos, center_pos, even)
     if pos < self._pos then
         self._pos = self._pos - 1
@@ -330,11 +355,29 @@ function EHIBuffTracker:SetCenterXByPos(pos, center_pos, even)
     end
 end
 
+---@param x number
+---@param pos number
 function EHIBuffTracker:SetRightXByPos(x, pos)
     if pos < self._pos then
         self._pos = self._pos - 1
     end
     self:SetRight(x + (self._panel_w_gap * self._pos))
+end
+
+function EHIBuffTracker:AddBuffToUpdate()
+    self._parent_class:AddBuffToUpdate(self._id, self)
+end
+
+function EHIBuffTracker:RemoveBuffFromUpdate()
+    self._parent_class:RemoveBuffFromUpdate(self._id)
+end
+
+function EHIBuffTracker:AddVisibleBuff()
+    self._parent_class:AddVisibleBuff(self._id, self)
+end
+
+function EHIBuffTracker:RemoveVisibleBuff()
+    self._parent_class:RemoveVisibleBuff(self._id, self._pos)
 end
 
 function EHIBuffTracker:PreUpdate()
@@ -348,7 +391,8 @@ if progress then
     function EHIBuffTracker:update(t, dt)
         self._time = self._time - dt
         self._text:set_text(self:Format())
-        self._progress:set_color(Color(1, self._time / self._time_set, 1, 1))
+        self._progress_bar.red = self._time / self._time_set
+        self._progress:set_color(self._progress_bar)
         if self._time <= 0 then
             self:Deactivate()
         end

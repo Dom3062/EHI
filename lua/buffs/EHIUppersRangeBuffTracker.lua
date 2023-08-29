@@ -12,19 +12,17 @@ function EHIUppersRangeBuffTracker:PreUpdate()
         if self._in_custody then
             return
         end
-        local list = FirstAidKitBase.List
-        if table.size(list) == 0 then
+        if table.size(FirstAidKitBase.List) == 0 then
             self:Deactivate()
         else
             self:Activate()
         end
     end
-    EHI:HookWithID(FirstAidKitBase, "Add", "UppersRangeBuff_Add", Check)
-    EHI:HookWithID(FirstAidKitBase, "Remove", "UppersRangeBuff_Remove", Check)
-    local function f(state)
+    EHI:HookWithID(FirstAidKitBase, "Add", "EHI_UppersRangeBuff_Add", Check)
+    EHI:HookWithID(FirstAidKitBase, "Remove", "EHI_UppersRangeBuff_Remove", Check)
+    EHI:AddOnCustodyCallback(function(state)
         self:CustodyState(state)
-    end
-    EHI:AddOnCustodyCallback(f)
+    end)
 end
 
 function EHIUppersRangeBuffTracker:Activate()
@@ -32,17 +30,14 @@ function EHIUppersRangeBuffTracker:Activate()
         return
     end
     self._active = true
-    self._parent_class:AddBuffToUpdate(self._id, self)
+    self:AddBuffToUpdate()
 end
 
 function EHIUppersRangeBuffTracker:CustodyState(state)
     if state then
         self:Deactivate()
-    else
-        local list = FirstAidKitBase.List
-        if next(list) then
-            self:Activate()
-        end
+    elseif next(FirstAidKitBase.List) then
+        self:Activate()
     end
     self._in_custody = state
 end
@@ -52,7 +47,7 @@ function EHIUppersRangeBuffTracker:Deactivate()
         return
     end
     self:DeactivateSoft()
-    self._parent_class:RemoveBuffFromUpdate(self._id)
+    self:RemoveBuffFromUpdate()
     self._active = false
 end
 
@@ -75,8 +70,12 @@ function EHIUppersRangeBuffTracker:update(t, dt)
     end
 end
 
+---@param pos Vector3
+---@return boolean
+---@return number?
+---@return number?
 function EHIUppersRangeBuffTracker:GetFirstAidKit(pos)
-	for _, o in pairs(FirstAidKitBase.List) do
+	for _, o in ipairs(FirstAidKitBase.List) do
 		local dst = mvector3_distance(pos, o.pos)
 		if dst <= o.min_distance then
 			return true, dst, o.min_distance
@@ -87,11 +86,4 @@ end
 
 function EHIUppersRangeBuffTracker:Format()
     return string_format("%dm", math_floor(self._distance))
-end
-
-function EHIUppersRangeBuffTracker:SetRatio(ratio)
-    if self._ratio == ratio then
-        return
-    end
-    EHIUppersRangeBuffTracker.super.SetRatio(self, ratio)
 end

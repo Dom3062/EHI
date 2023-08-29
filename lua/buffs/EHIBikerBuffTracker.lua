@@ -59,12 +59,12 @@ function EHIBikerBuffTracker:Trigger(kills)
 end
 
 function EHIBikerBuffTracker:SetIconColor(color)
-    self._panel:child("icon"):set_color(color)
+    self._panel:child("icon"):set_color(color) ---@diagnostic disable-line
 end
 
 function EHIBikerBuffTracker:Activate(t)
     EHIBikerBuffTracker.super.Activate(self, t)
-    self._parent_class:AddVisibleBuff(self._id)
+    self:AddVisibleBuff()
 end
 
 function EHIBikerBuffTracker:Deactivate()

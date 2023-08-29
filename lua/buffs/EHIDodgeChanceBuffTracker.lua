@@ -59,12 +59,12 @@ end
 
 function EHIDodgeChanceBuffTracker:SetCustody(state)
     if state then
-        self._parent_class:RemoveBuffFromUpdate(self._id)
+        self:RemoveBuffFromUpdate()
         self._dodge = 0
         self:Deactivate()
     else
         self._time = self._refresh_time
-        self._parent_class:AddBuffToUpdate(self._id, self)
+        self:AddBuffToUpdate()
     end
 end
 
@@ -83,14 +83,14 @@ function EHIDodgeChanceBuffTracker:Activate()
     self._active = true
     self._panel:stop()
     self._panel:animate(self._show)
-    self._parent_class:AddVisibleBuff(self._id)
+    self:AddVisibleBuff()
 end
 
 function EHIDodgeChanceBuffTracker:Deactivate()
     if not self._active then
         return
     end
-    self._parent_class:RemoveVisibleBuff(self._id, self._pos)
+    self:RemoveVisibleBuff()
     self._panel:stop()
     self._panel:animate(self._hide)
     self._active = false

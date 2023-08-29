@@ -70,7 +70,7 @@ end
 function EHIStaminaBuffTracker:SetRatio(ratio)
     local value = ratio / self._max_stamina
     local rounded = self:RoundNumber(value, 0.01)
-    self:SetRatio2(value, rounded)
+    EHIStaminaBuffTracker.super.SetRatio(self, value, rounded)
 end
 
 ---@class EHIStoicBuffTracker : EHIBuffTracker
@@ -125,11 +125,12 @@ function EHIExPresidentBuffTracker:PreUpdate()
     self._parent_class:AddBuffNoUpdate(self._id)
 end
 
-function EHIExPresidentBuffTracker:SetStoredHealthMax(max)
+function EHIExPresidentBuffTracker:SetStoredHealthMaxAndUpdateRatio(max, ratio)
     self._stored_health_max = max
+    self:SetRatio(nil, ratio)
 end
 
-function EHIExPresidentBuffTracker:SetRatio2(ratio, custom_value)
+function EHIExPresidentBuffTracker:SetRatio(ratio, custom_value)
     ratio = custom_value / self._stored_health_max
-    EHIExPresidentBuffTracker.super.SetRatio2(self, ratio, custom_value)
+    EHIExPresidentBuffTracker.super.SetRatio(self, ratio, custom_value)
 end

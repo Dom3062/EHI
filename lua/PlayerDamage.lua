@@ -14,14 +14,13 @@ if EHI:GetBuffOption("dire_need") then
     function PlayerDamage:init(...)
         original.init(self, ...)
         if self._dire_need then
-            local function clbk(stagger)
+            managers.player:register_message(Message.SetWeaponStagger, "EHI_Buff_DireNeed", function(stagger)
                 if stagger then
                     managers.ehi_buff:AddBuffNoUpdate("DireNeed")
                 else
                     managers.ehi_buff:RemoveBuff("DireNeed")
                 end
-            end
-            managers.player:register_message(Message.SetWeaponStagger, "EHI_Buff_DireNeed", clbk)
+            end)
         end
     end
 end
@@ -88,8 +87,7 @@ if EHI:GetBuffOption("expresident") then
     function PlayerDamage:update_armor_stored_health(...)
         original.update_armor_stored_health(self, ...)
         if managers.hud then -- Vanilla check
-            managers.ehi_buff:CallFunction("ExPresident", "SetStoredHealthMax", self:max_armor_stored_health())
-            managers.ehi_buff:CallFunction("ExPresident", "SetRatio2", nil, self._armor_stored_health)
+            managers.ehi_buff:CallFunction("ExPresident", "SetStoredHealthMaxAndUpdateRatio", self:max_armor_stored_health(), self._armor_stored_health)
         end
     end
 
@@ -98,14 +96,14 @@ if EHI:GetBuffOption("expresident") then
         local previous = self._armor_stored_health
         original.add_armor_stored_health(self, ...)
         if previous ~= self._armor_stored_health and not self._check_berserker_done then
-            managers.ehi_buff:CallFunction("ExPresident", "SetRatio2", nil, self._armor_stored_health)
+            managers.ehi_buff:AddGauge("ExPresident", nil, self._armor_stored_health) ---@diagnostic disable-line
         end
     end
 
     original.clear_armor_stored_health = PlayerDamage.clear_armor_stored_health
     function PlayerDamage:clear_armor_stored_health(...)
         original.clear_armor_stored_health(self, ...)
-        managers.ehi_buff:CallFunction("ExPresident", "SetRatio2", nil, self._armor_stored_health)
+        managers.ehi_buff:AddGauge("ExPresident", nil, self._armor_stored_health) ---@diagnostic disable-line
     end
 end
 
@@ -250,7 +248,7 @@ if EHI:GetBuffOption("health") then
         local max_health = self:_max_health()
         local current_health = self:get_real_health()
         local ratio = current_health / max_health
-        managers.ehi_buff:AddGauge2("Health", ratio, current_health)
+        managers.ehi_buff:AddGauge("Health", ratio, current_health)
     end
 
     original._send_set_revives = PlayerDamage._send_set_revives
@@ -271,6 +269,6 @@ if EHI:GetBuffOption("armor") then
         local max_armor = self:_max_armor()
         local current_armor = self:get_real_armor()
         local ratio = current_armor / max_armor
-        managers.ehi_buff:AddGauge2("Armor", ratio, current_armor)
+        managers.ehi_buff:AddGauge("Armor", ratio, current_armor)
     end
 end

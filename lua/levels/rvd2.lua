@@ -1,6 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
 local element_sync_triggers =
 {
     [101374] = { id = "VaultTeargas", icons = { Icon.Teargas }, hook_element = 101377 }

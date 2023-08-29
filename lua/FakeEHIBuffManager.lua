@@ -24,7 +24,10 @@ local buff_w_original = 32
 local buff_h_original = 64
 local buff_w = buff_w_original
 local buff_h = buff_h_original
+---@class FakeEHIBuffsManager
+---@field new fun(self: self, panel: Panel): self
 FakeEHIBuffsManager = class()
+---@param panel Panel
 function FakeEHIBuffsManager:init(panel)
 	self._buffs = {}
     self._hud_panel = panel:panel({

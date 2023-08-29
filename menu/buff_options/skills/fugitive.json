@@ -96,17 +96,7 @@
             "callback": "SetBuffOption",
             "callback_arguments": "bloodthirst",
             "value": "bloodthirst",
-            "default_value": true,
-            "ehi_ver" : 79
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_buffs_skills_fugitive_bloodthirst_reload_choice",
-            "title": "ehi_buffs_skills_fugitive_bloodthirst_reload",
-            "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffOption",
-            "callback_arguments": "bloodthirst_reload",
-            "value": "bloodthirst_reload",
+            "is_parent" : true,
             "default_value": true,
             "ehi_ver" : 79
         },
@@ -118,12 +108,24 @@
             "callback": "SetBuffOption",
             "callback_arguments": "bloodthirst_ratio",
             "value": "bloodthirst_ratio",
+            "parent" : "ehi_buffs_skills_fugitive_bloodthirst_choice",
             "suffix": "%",
             "default_value": 34,
             "max": 100,
             "min": 0,
             "step": 0,
             "ehi_ver" : 110
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_fugitive_bloodthirst_reload_choice",
+            "title": "ehi_buffs_skills_fugitive_bloodthirst_reload",
+            "description": "ehi_buffs_skills_duration",
+            "callback": "SetBuffOption",
+            "callback_arguments": "bloodthirst_reload",
+            "value": "bloodthirst_reload",
+            "default_value": true,
+            "ehi_ver" : 79
         },
         {
             "type": "divider",
@@ -155,6 +157,22 @@
             "min": 1,
             "step": 0,
             "ehi_ver" : 79
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_buffs_skills_fugitive_berserker_format_choice",
+            "title": "ehi_buffs_skills_fugitive_berserker_format",
+            "description": "ehi_buffs_skills_fugitive_berserker_format_desc",
+            "callback": "SetBuffOption",
+            "callback_arguments": "berserker_format",
+            "items": [
+                "ehi_buffs_skills_fugitive_berserker_format_1",
+                "ehi_buffs_skills_fugitive_berserker_format_2"
+            ],
+            "value": "berserker_format",
+            "parent": "ehi_buffs_skills_fugitive_berserker_choice",
+            "default_value": 1,
+            "ehi_ver" : 182
         }
     ]
 }

@@ -282,9 +282,10 @@ function EHIMenu:Open()
     self._panel:animate(function(o)
         local a = self._panel:alpha()
 
-        do_animation(0.2, function (p)
-            self._panel:set_alpha(math.lerp(a, 1, p))
-            self._preview_panel._hud_panel:set_alpha(math.lerp(a, 1, p))
+        do_animation(0.2, function(p)
+            local alpha_lerp = math.lerp(a, 1, p)
+            self._panel:set_alpha(alpha_lerp)
+            self._preview_panel._hud_panel:set_alpha(alpha_lerp)
         end)
         self._controller:enable()
     end)
@@ -303,9 +304,10 @@ function EHIMenu:Close()
     self._panel:animate(function(o)
         local a = self._panel:alpha()
 
-        do_animation(0.2, function (p)
-            self._panel:set_alpha(math.lerp(a, 0, p))
-            self._preview_panel._hud_panel:set_alpha(math.lerp(a, 0, p))
+        do_animation(0.2, function(p)
+            local alpha_lerp = math.lerp(a, 0, p)
+            self._panel:set_alpha(alpha_lerp)
+            self._preview_panel._hud_panel:set_alpha(alpha_lerp)
         end)
         self._panel:set_alpha(0)
         self._preview_panel._hud_panel:set_alpha(0)
@@ -474,7 +476,7 @@ function EHIMenu:MenuDown()
             end
             self._open_color_dialog.items[self._open_color_dialog.selected + 1]:child("bg"):set_alpha(0.1)
             self._open_color_dialog.selected = self._open_color_dialog.selected + 1
-            self:SetLegends(self._open_color_dialog.selected == 4 and true or false, false, self._open_color_dialog.selected < 4 and true or false)
+            self:SetLegends(self._open_color_dialog.selected == 4, false, self._open_color_dialog.selected < 4)
         end
     elseif self._open_menu and not self._highlighted_item then
         for i, item in ipairs(self._open_menu.items) do
@@ -660,9 +662,9 @@ function EHIMenu:SetLegends(accept, reset, step)
     if self._button_legends then
         local text = managers.localization:text("menu_legend_back", {BTN_BACK = managers.localization:btn_macro("back")})
         local separator = "    "
-        if accept then text = managers.localization:text("menu_legend_select", {BTN_UPDATE  = managers.localization:btn_macro("menu_update")}) .. separator .. text end
-        if reset then text = managers.localization:to_upper_text("VoidUI_tooltip_reset_cnt", {BTN_RESET  = managers.localization:btn_macro("menu_toggle_voice_message")}) .. separator .. text end
-        if step then text = managers.localization:to_upper_text("VoidUI_tooltip_steps", {BTN_STEP  = managers.localization:btn_macro("previous_page") .. managers.localization:btn_macro("next_page")}) .. separator .. text end
+        if accept then text = managers.localization:text("menu_legend_select", {BTN_UPDATE = managers.localization:btn_macro("menu_update")}) .. separator .. text end
+        if reset then text = managers.localization:to_upper_text("VoidUI_tooltip_reset_cnt", {BTN_RESET = managers.localization:btn_macro("menu_toggle_voice_message")}) .. separator .. text end
+        if step then text = managers.localization:to_upper_text("VoidUI_tooltip_steps", {BTN_STEP = managers.localization:btn_macro("previous_page") .. managers.localization:btn_macro("next_page")}) .. separator .. text end
         self._button_legends:set_text(text)
     end
 end

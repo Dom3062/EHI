@@ -1,3 +1,10 @@
+---@class PlayerManager
+---@field has_category_upgrade fun(self: self, category: string, upgrade: string): boolean
+---@field upgrade_value fun(self: self, category: string, upgrade: string, default: any?): any|table|number|boolean
+---@field _get_damage_health_ratio_threshold fun(self: self, category: string): number
+---@field has_activate_temporary_upgrade fun(self: self, category: string, upgrade: string): boolean
+---@field register_message fun(self: self, message: number|string, uid: string|number, func: function)
+
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
     return
@@ -79,7 +86,7 @@ function PlayerManager:init(...)
                     local raw = Application:digest_value(value, false)
                     if raw > 0 then
                         local ratio = raw / max_absorption
-                        managers.ehi_buff:AddGauge2("hostage_absorption", ratio, raw * 10)
+                        managers.ehi_buff:AddGauge("hostage_absorption", ratio, raw * 10)
                     else
                         managers.ehi_buff:RemoveBuff("hostage_absorption")
                     end
@@ -97,13 +104,13 @@ function PlayerManager:init(...)
             if progress == max then
                 progress = 0
             end
-            managers.ehi_buff:AddGauge2("crew_throwable_regen", progress / max, progress)
+            managers.ehi_buff:AddGauge("crew_throwable_regen", progress / max, progress)
         end
         EHI:AddCallback(EHI.CallbackMessage.TeamAISkillBoostChange, function(boost, operation)
             if boost == "crew_generous" then
                 if operation == "add" then
                     progress = self._throw_regen_kills or 0
-                    managers.ehi_buff:AddGauge2("crew_throwable_regen", progress / max, progress)
+                    managers.ehi_buff:AddGauge("crew_throwable_regen", progress / max, progress)
                     self:register_message(Message.OnEnemyKilled, "EHI_crew_throwable_regen", IncreaseProgress)
                 else
                     managers.ehi_buff:RemoveBuff("crew_throwable_regen")
@@ -118,17 +125,16 @@ if EHI:GetBuffAndOption("unseen_strike_initial") then
     EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
         local self = managers.player
         if self:has_category_upgrade("player", "unseen_increased_crit_chance") then
-            local data = self:upgrade_value("player", "unseen_increased_crit_chance", 0)
+            local data = self:upgrade_value("player", "unseen_increased_crit_chance", 0) --[[@as table|number]]
             if data == 0 then
                 return
             end
             local min_time = data.min_time or 4
-            local function on_damage_taken()
+            self:register_message(Message.OnPlayerDamage, "EHI_UnseenStrike_Initial", function()
                 if not self:has_activate_temporary_upgrade("temporary", "unseen_strike") then
                     managers.ehi_buff:AddBuff("unseen_strike_initial", min_time)
                 end
-            end
-            self:register_message(Message.OnPlayerDamage, "EHI_UnseenStrike_Initial", on_damage_taken)
+            end)
         end
     end)
 end
@@ -212,7 +218,7 @@ if meele_boost_tweak then
     if bloodthirst_ratio == 0 then
         EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
             if managers.player:has_category_upgrade("player", "melee_damage_stacking") then
-                managers.ehi_buff:AddGauge2("melee_damage_stacking", 1 / max_multiplier, 1)
+                managers.ehi_buff:AddGauge("melee_damage_stacking", 1 / max_multiplier, 1)
             end
         end)
     end
@@ -225,7 +231,7 @@ if meele_boost_tweak then
         local ratio = multiplier / max_multiplier
         if ratio >= bloodthirst_ratio then
             bloodthirst_max = ratio == 1
-            managers.ehi_buff:AddGauge2("melee_damage_stacking", ratio, multiplier)
+            managers.ehi_buff:AddGauge("melee_damage_stacking", ratio, multiplier)
         end
     end
     original.reset_melee_dmg_multiplier = PlayerManager.reset_melee_dmg_multiplier
@@ -234,7 +240,7 @@ if meele_boost_tweak then
         if bloodthirst_ratio > 0 then
             managers.ehi_buff:RemoveBuff("melee_damage_stacking")
         else
-            managers.ehi_buff:AddGauge2("melee_damage_stacking", self._melee_dmg_mul / max_multiplier, self._melee_dmg_mul)
+            managers.ehi_buff:AddGauge("melee_damage_stacking", self._melee_dmg_mul / max_multiplier, self._melee_dmg_mul)
         end
         bloodthirst_max = false -- Reset the lock
         if self:has_category_upgrade("player", "melee_kill_increase_reload_speed") then
