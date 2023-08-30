@@ -317,6 +317,9 @@
     "ehi_show_enemy_count_show_pagers" : "Zobrazovat nepřátele s pagerem (stealth)",
     "ehi_show_enemy_count_show_pagers_desc" : "Zobrazuje nepřátele s pagerem nalevo a nepřátele bez napravo\nJakmile zazní alarm, je zobrazen pouze počet nepřátel",
 
+    "ehi_show_civilian_count_tracker" : "Zobrazovat sledovač s počtem civilistů",
+    "ehi_show_civilian_count_tracker_desc" : "Zobrazuje sledovač s počtem civilistů na mapě\n\nJakmile na mapě už nejsou žádní civilisté, sledovač nebude už viditelný",
+
     "ehi_show_laser_tracker" : "Zobrazovat sledovač laserů",
     "ehi_show_laser_tracker_desc" : "Zobrazuje sledovač na lasery, které cyklí každých pár vteřin",
 

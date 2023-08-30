@@ -10,12 +10,14 @@ function EHICountTracker:Format()
     return tostring(self._count)
 end
 
-function EHICountTracker:IncreaseCount()
-    self:SetCount(self._count + 1)
+---@param count number?
+function EHICountTracker:IncreaseCount(count)
+    self:SetCount(self._count + (count or 1))
 end
 
-function EHICountTracker:DecreaseCount()
-    self:SetCount(self._count - 1)
+---@param count number?
+function EHICountTracker:DecreaseCount(count)
+    self:SetCount(self._count - (count or 1))
 end
 
 function EHICountTracker:SetCount(count)
@@ -26,4 +28,8 @@ end
 
 function EHICountTracker:ResetCount()
     self:SetCount(0)
+end
+
+function EHICountTracker:GetCount()
+    return self._count
 end

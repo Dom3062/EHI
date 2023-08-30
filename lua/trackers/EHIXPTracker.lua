@@ -48,7 +48,7 @@ function EHITotalXPTracker:SetPlayerXPLimit()
     else
         self._player_xp_limit = xp:GetRemainingXPToMaxLevel()
     end
-    if self._player_xp_limit == 0 then
+    if self._player_xp_limit <= 0 then
         self:SetTextColor(Color.green)
         self._player_limit_reached = true
     end

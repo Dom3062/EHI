@@ -4,7 +4,7 @@ if EHI:CheckLoadHook("DigitalGui") or not EHI:GetOption("show_timers") then
 end
 
 ---@class DigitalGui
----@field _unit Unit
+---@field _unit UnitDigitalTimer
 ---@field _visible boolean
 ---@field _timer number
 ---@field _timer_count_down boolean
@@ -29,7 +29,7 @@ local original =
 }
 local level_id = Global.game_settings.level_id
 
----@param unit Unit
+---@param unit UnitDigitalTimer
 function DigitalGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
@@ -60,7 +60,7 @@ function DigitalGui:TimerStartCountDown()
             managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
                 time = self._timer,
                 icon = self._icons or Icon.PCHack,
-                position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
+                position = self._unit:position(),
                 warning = self._warning,
                 completion = self._completion,
                 class = "EHITimerWaypoint"
@@ -83,7 +83,37 @@ function DigitalGui:timer_start_count_down(...)
     self:TimerStartCountDown()
 end
 
-if level_id ~= "shoutout_raid" then
+if level_id == "shoutout_raid" then
+    local old_time = 0
+    local created = false
+    ---@param timer number
+    function DigitalGui:timer_set(timer, ...)
+        original.timer_set(self, timer, ...)
+        if old_time == timer then
+            return
+        end
+        old_time = timer
+        if not created then
+            if not show_waypoint_only then
+                managers.ehi_tracker:AddTracker({
+                    id = self._ehi_key,
+                    class = "EHIVaultTemperatureTracker"
+                })
+            end
+            if show_waypoint then
+                managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+                    time = 500,
+                    icon = Icon.Vault,
+                    position = self._unit:position(),
+                    class = "EHIVaultTemperatureWaypoint"
+                })
+            end
+            created = true
+        end
+        local t = EHI:RoundNumber(timer, 0.1)
+        managers.ehi_manager:Call(self._ehi_key, "CheckTime", t)
+    end
+else
     if show_waypoint_only then
         function DigitalGui:_update_timer_text(...)
             managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._timer)
@@ -105,36 +135,6 @@ if level_id ~= "shoutout_raid" then
         original.timer_set(self, timer, ...)
         managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, timer)
         managers.ehi_waypoint:SetWaypointTime(self._ehi_key, timer)
-    end
-else
-    local old_time = 0
-    local created = false
-    ---@param timer number
-    function DigitalGui:timer_set(timer, ...)
-        original.timer_set(self, timer, ...)
-        if old_time == timer then
-            return
-        end
-        old_time = timer
-        if not created then
-            if not show_waypoint_only then
-                managers.ehi_tracker:AddTracker({
-                    id = self._ehi_key,
-                    class = "EHIVaultTemperatureTracker"
-                })
-            end
-            if show_waypoint then
-                managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
-                    time = 500,
-                    icon = Icon.Vault,
-                    position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
-                    class = "EHIVaultTemperatureWaypoint"
-                })
-            end
-            created = true
-        end
-        local t = EHI:RoundNumber(timer, 0.1)
-        managers.ehi_manager:Call(self._ehi_key, "CheckTime", t)
     end
 end
 

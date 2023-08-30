@@ -39,6 +39,7 @@ tweak_data.ehi =
         teargas = { texture = "guis/dlcs/drm/textures/pd2/crime_spree/modifiers_atlas_2", texture_rect = {128, 256, 128, 128} },
         gage = { texture = "guis/dlcs/gage_pack_jobs/textures/pd2/endscreen/gage_assignment" },
         hostage = { texture = "guis/textures/pd2/hud_icon_hostage" },
+        civilians = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 448, 64, 64} },
         buff_shield = { texture = "guis/textures/pd2/hud_buff_shield" },
 
         doctor_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/doctor_bag" },

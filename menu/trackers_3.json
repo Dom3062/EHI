@@ -5,6 +5,22 @@
     "items": [
         {
             "type": "toggle",
+            "id": "ehi_show_civilian_count_tracker_choice",
+            "title": "ehi_show_civilian_count_tracker",
+            "description": "ehi_show_civilian_count_tracker",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_civilian_count_tracker",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_civilian_count_tracker",
+            "default_value": true,
+            "ehi_ver" : 183
+        },
+        {
+            "type" : "divider",
+            "size" : 20
+        },
+        {
+            "type": "toggle",
             "id": "ehi_show_laser_tracker_choice",
             "title": "ehi_show_laser_tracker",
             "description": "ehi_show_laser_tracker_desc",

@@ -531,7 +531,7 @@ function EHITracker:AnimateBG(t)
     bg:animate(bg_attention, t or self._flash_times)
 end
 
----@param color number? Color is set to `White` or tracker default color if not provided
+---@param color Color? Color is set to `White` or tracker default color if not provided
 ---@param text PanelText? Defaults to `self._text` if not provided
 function EHITracker:SetTextColor(color, text)
     text = text or self._text

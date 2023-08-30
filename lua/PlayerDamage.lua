@@ -96,14 +96,14 @@ if EHI:GetBuffOption("expresident") then
         local previous = self._armor_stored_health
         original.add_armor_stored_health(self, ...)
         if previous ~= self._armor_stored_health and not self._check_berserker_done then
-            managers.ehi_buff:AddGauge("ExPresident", nil, self._armor_stored_health) ---@diagnostic disable-line
+            managers.ehi_buff:CallFunction("ExPresident", "SetRatio", nil, self._armor_stored_health)
         end
     end
 
     original.clear_armor_stored_health = PlayerDamage.clear_armor_stored_health
     function PlayerDamage:clear_armor_stored_health(...)
         original.clear_armor_stored_health(self, ...)
-        managers.ehi_buff:AddGauge("ExPresident", nil, self._armor_stored_health) ---@diagnostic disable-line
+        managers.ehi_buff:CallFunction("ExPresident", "SetRatio", nil, self._armor_stored_health)
     end
 end
 

@@ -232,7 +232,7 @@
 ---@field text string? Text to display
 ---@field w number?
 ---@field h number?
----@field color number?
+---@field color Color?
 
 ---@class XPBreakdown_tactic
 ---@field stealth _XPBreakdown

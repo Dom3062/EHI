@@ -4,6 +4,9 @@
 ---@field _get_damage_health_ratio_threshold fun(self: self, category: string): number
 ---@field has_activate_temporary_upgrade fun(self: self, category: string, upgrade: string): boolean
 ---@field register_message fun(self: self, message: number|string, uid: string|number, func: function)
+---@field player_unit fun(self: self): Unit
+---@field add_listener fun(self: self, key: string, events: string[], clbk: function)
+---@field remove_listener fun(self: self, key: string)
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then

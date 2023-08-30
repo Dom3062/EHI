@@ -39,6 +39,8 @@ end
 ---@field black Color
 ---@field red Color
 ---@field white Color
+---@field green Color
+---@field yellow Color
 
 ---@class _G.Color
 _G.Color = {}
@@ -125,6 +127,7 @@ function class(super) end
 
 ---@class GroupAIStateBase
 ---@field hostage_count fun(self: self): number
+---@field whisper_mode fun(self: self): boolean
 
 ---@class GroupAIManager
 ---@field state fun(self: self): GroupAIStateBase
@@ -236,15 +239,27 @@ function class(super) end
 ---@class InteractionExt
 ---@field interact_position fun(): Vector3
 
+---@class UnitBase
+---@field key fun(): string
+---@field editor_id fun(): number
+---@field position fun(): Vector3
+---@field damage fun(): UnitDamage
+
+---@class UnitTimer : UnitBase
+---@field base Drill
+---@field timer_gui fun(): TimerGui
+---@field interaction fun(): InteractionExt
+---@field mission_door_device fun(): MissionDoorDevice
+
+---@class UnitDigitalTimer : UnitBase
+---@field digital_gui fun(): DigitalGui
+
 ---@class Unit
 ---@field base unknown
 ---@field timer_gui fun(): TimerGui
 ---@field digital_gui fun(): DigitalGui
 ---@field interaction fun(): InteractionExt
 ---@field mission_door_device fun(): MissionDoorDevice
----@field key fun(): string
----@field editor_id fun(): number
----@field position fun(): Vector3
 ---@field [unknown] unknown
 
 ---@class LocalizationManager

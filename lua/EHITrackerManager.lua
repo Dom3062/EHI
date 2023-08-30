@@ -787,18 +787,20 @@ function EHITrackerManager:SetTrackerCount(id, count)
 end
 
 ---@param id string
-function EHITrackerManager:IncreaseTrackerCount(id)
+---@param count number?
+function EHITrackerManager:IncreaseTrackerCount(id, count)
     local tracker = self._trackers[id]
     if tracker and tracker.IncreaseCount then
-        tracker:IncreaseCount()
+        tracker:IncreaseCount(count)
     end
 end
 
 ---@param id string
-function EHITrackerManager:DecreaseTrackerCount(id)
+---@param count number?
+function EHITrackerManager:DecreaseTrackerCount(id, count)
     local tracker = self._trackers[id]
     if tracker and tracker.DecreaseCount then
-        tracker:DecreaseCount()
+        tracker:DecreaseCount(count)
     end
 end
 ---@diagnostic enable

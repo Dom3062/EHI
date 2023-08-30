@@ -1,3 +1,7 @@
+r183 (30. 08. 2023):
+Added "Show Civilian Counter" option
+Fixed an issue where Ex-President buff is visible when the perk is not equipped
+
 r182 (29. 08. 2023):
 Added "Berserker Format" buff option
 Reservoir Dogs Day 2: Fixed an issue where trackers are not visible

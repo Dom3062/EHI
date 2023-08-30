@@ -564,6 +564,7 @@ local function LoadDefaultValues(self)
         show_pager_callback = true,
         show_enemy_count_tracker = true,
         show_enemy_count_show_pagers = true,
+        show_civilian_count_tracker = true,
         show_laser_tracker = false,
         show_assault_delay_tracker = true,
         show_assault_time_tracker = true,
@@ -936,6 +937,8 @@ function EHI:GetEquipmentOption(option)
     return self:GetOption("show_equipment_tracker") and self:GetOption(option)
 end
 
+---@param equipment string
+---@return Color
 function EHI:GetEquipmentColor(equipment)
     if equipment and self.settings.equipment_color[equipment] then
         return self:GetColor(self.settings.equipment_color[equipment])
@@ -955,6 +958,8 @@ function EHI:GetWaypointOptionWithOnly(waypoint)
     return show, show and self:GetOption("show_waypoints_only")
 end
 
+---@param color {r: number, g: number, b: number}
+---@return Color
 function EHI:GetColor(color)
     if color and color.r and color.g and color.b then
         return Color(255, color.r, color.g, color.b) / 255

@@ -4,6 +4,8 @@ if EHI:CheckLoadHook("InteractionExt") then
 end
 
 if EHI:GetOption("show_pager_callback") then
+    ---@class EHIPagerTracker : EHIWarningTracker
+    ---@field super EHIWarningTracker
     EHIPagerTracker = class(EHIWarningTracker)
     EHIPagerTracker._forced_icons = { "pager_icon" }
     EHIPagerTracker._forced_time = 12
@@ -14,6 +16,8 @@ if EHI:GetOption("show_pager_callback") then
         self:AnimateBG()
     end
 
+    ---@class EHIPagerWaypoint : EHIWarningWaypoint
+    ---@field super EHIWarningWaypoint
     EHIPagerWaypoint = class(EHIWarningWaypoint)
     function EHIPagerWaypoint:SetAnswered()
         self:RemoveWaypointFromUpdate()

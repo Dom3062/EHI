@@ -783,7 +783,7 @@ function EHIMenu:CreateItem(item, items, menu, settings_table)
         end
     elseif parents then
         if type(parents) == "string" then
-            for _, pitem in pairs(items) do
+            for _, pitem in ipairs(items) do
                 if pitem.id == parents then
                     enabled = settings_table[pitem.value]
                     break
@@ -803,7 +803,9 @@ function EHIMenu:CreateItem(item, items, menu, settings_table)
         end
     end
 
-    value = settings_table[item.value] or default_value
+    if item.value and settings_table[item.value] ~= nil then
+        value = settings_table[item.value]
+    end
 
     local desc = item.description and managers.localization:text(item.description) or ""
     if item.depends_on then
@@ -827,9 +829,7 @@ function EHIMenu:CreateItem(item, items, menu, settings_table)
             new = new
         })
     elseif item_type == "divider" then
-        itm = self:CreateDivider(menu, {
-            size = item.size
-        })
+        itm = self:CreateDivider(menu, { size = item.size })
     elseif item_type == "button" then
         itm = self:CreateButton(menu, {
             id = id,

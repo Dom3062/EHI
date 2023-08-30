@@ -7,7 +7,7 @@ end
 ---@field _started boolean
 ---@field _done boolean
 ---@field _powered boolean
----@field _unit Unit
+---@field _unit UnitTimer
 ---@field _original_colors table?
 ---@field _current_timer number|string
 ---@field _time_left number

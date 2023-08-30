@@ -317,6 +317,9 @@
     "ehi_show_enemy_count_show_pagers" : "Show enemies with pager (stealth)",
     "ehi_show_enemy_count_show_pagers_desc" : "Shows enemies with pager on the left and enemies without the pager on the right\nOnce alarm sounds, only a number of enemies is visible",
 
+    "ehi_show_civilian_count_tracker" : "Show Civilian Count Tracker",
+    "ehi_show_civilian_count_tracker_desc" : "Shows a tracker for how many civilians are on the map\n\nOnce there are no civilians on the map, tracker won't be visible",
+
     "ehi_show_laser_tracker" : "Show Laser Tracker",
     "ehi_show_laser_tracker_desc" : "Shows a tracker for lasers that cycle every few seconds",
 

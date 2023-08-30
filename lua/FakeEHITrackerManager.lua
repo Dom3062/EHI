@@ -82,6 +82,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { Icon.Pager }, class = "FakeEHIProgressTracker" })
     self:AddFakeTracker({ id = "show_pager_callback", time = math.rand(0.5, 12), icons = { "pager_icon" } })
     self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "pager_icon", { icon = "enemy", visible = false } }, class = "FakeEHIEnemyCountTracker" })
+    self:AddFakeTracker({ id = "show_civilian_count_tracker", count = math.random(1, 10), icons = { "civilians" }, class = "FakeEHICountTracker" })
     self:AddFakeTracker({ id = "show_laser_tracker", time = math.rand(0.5, 4), icons = { EHI.Icons.Lasers } })
     if EHI:CombineAssaultDelayAndAssaultTime() then
         self:AddFakeTracker({ id = "aggregate_assault_delay_and_assault_time", time = math.random(0, 240), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker" })
