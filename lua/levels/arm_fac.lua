@@ -1,6 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local TT = EHI.Trackers
 local delay = 17 + 30 + 450/30 -- Boat escape; Van escape is 100215 and 100216
 local triggers = {
     [100259] = { time = 120 + delay },

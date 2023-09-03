@@ -1,3 +1,6 @@
+r184 (03. 09. 2023):
+Armored Transport Heists: Fixed an issue where trackers are not visible
+
 r183 (30. 08. 2023):
 Added "Show Civilian Counter" option
 Fixed an issue where Ex-President buff is visible when the perk is not equipped
