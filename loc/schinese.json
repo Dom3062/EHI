@@ -81,8 +81,10 @@
 
     "ehi_tracker_alignment" : "追踪器对齐",
     "ehi_tracker_alignment_desc" : "设置追踪器对齐模式",
-    "ehi_tracker_alignment_1" : "垂直",
-    "ehi_tracker_alignment_2" : "水平",
+    "ehi_tracker_alignment_1" : "垂直; Top to bottom",
+    "ehi_tracker_alignment_2" : "垂直; Bottom to Top",
+    "ehi_tracker_alignment_3" : "水平; Left to Right",
+    "ehi_tracker_alignment_4" : "水平; Right to Left",
 
     "ehi_vr_x_offset" : "X轴偏移 (VR)",
     "ehi_vr_y_offset" : "Y轴偏移 (VR)",

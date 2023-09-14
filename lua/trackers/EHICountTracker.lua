@@ -20,6 +20,7 @@ function EHICountTracker:DecreaseCount(count)
     self:SetCount(self._count - (count or 1))
 end
 
+---@param count number
 function EHICountTracker:SetCount(count)
     self._count = count
     self._text:set_text(self:Format())

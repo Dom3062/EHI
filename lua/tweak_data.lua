@@ -637,7 +637,7 @@ tweak_data.ehi =
             end
             EHI:ShowLootCounterNoCheck({ max = max })
         end,
-        ---@param weapons table
+        ---@param weapons number[]
         GetNumberOfVisibleWeapons = function(weapons)
             local n = 0
             local world = managers.worlddefinition
@@ -653,7 +653,7 @@ tweak_data.ehi =
             return n
         end,
         ---Checks money, coke and gold and other loot which uses "var_hidden"
-        ---@param loot table
+        ---@param loot number[]
         GetNumberOfVisibleOtherLoot = function(loot)
             local n = 0
             local world = managers.worlddefinition
@@ -696,6 +696,8 @@ tweak_data.ehi =
                 managers.mission:add_runned_unit_sequence_trigger(truck_id, "spawn_loot_empty_" .. tostring(i), GarbageFound)
             end
         end,
+        ---@param self table
+        ---@return string
         FormatSecondsOnly = function(self)
             local t = math_floor(self._time * 10) / 10
             if t < 0 then
@@ -708,6 +710,8 @@ tweak_data.ehi =
                 return string_format("%d", t)
             end
         end,
+        ---@param self table
+        ---@return string
         FormatMinutesAndSeconds = function(self)
             local t = math_floor(self._time * 10) / 10
             if t < 0 then
@@ -722,6 +726,9 @@ tweak_data.ehi =
                 return string_format("%d:%02d", t / 60, t % 60)
             end
         end,
+        ---@param _ any Unused
+        ---@param time number
+        ---@return string
         ReturnSecondsOnly = function(_, time)
             local t = math_floor(time * 10) / 10
             if t < 0 then
@@ -734,6 +741,9 @@ tweak_data.ehi =
                 return string_format("%d", t)
             end
         end,
+        ---@param _ any Unused
+        ---@param time number
+        ---@return string
         ReturnMinutesAndSeconds = function(_, time)
             local t = math_floor(time * 10) / 10
             if t < 0 then

@@ -4,10 +4,11 @@ if EHI:CheckLoadHook("LootManager") then
 end
 
 ---@class LootManager
----@field GetSecuredBagsAmount fun(self: self): integer
----@field GetSecuredBagsTypeAmount fun(self: self, t: string|string[]): integer
----@field GetSecuredBagsValueAmount fun(self: self): number
----@field EHIReportProgress fun(self: self, tracker_id: string, check_type: integer, loot_type: string|string[], f: fun(loot: self, tracker_id: string))
+---@field _global { secured: { carry_id: string, multiplier: number }[] }
+---@field _distribution_loot { carry_id: string, multiplier: number }[]
+---@field get_real_total_small_loot_value fun(self: self): number
+---@field get_secured_bonus_bags_amount fun(self: self): integer
+---@field get_secured_mandatory_bags_amount fun(self: self): integer
 
 local check_types = EHI.LootCounter.CheckType
 local original =
@@ -26,6 +27,7 @@ function LootManager:sync_load(...)
     EHI:CallCallbackOnce(EHI.CallbackMessage.LootLoadSync, self)
 end
 
+---@return integer
 function LootManager:GetSecuredBagsAmount()
     local mandatory = self:get_secured_mandatory_bags_amount()
     local bonus = self:get_secured_bonus_bags_amount()
@@ -34,6 +36,7 @@ function LootManager:GetSecuredBagsAmount()
 end
 
 ---@param t string|string[]
+---@return integer
 function LootManager:GetSecuredBagsTypeAmount(t)
     local secured = 0
     if type(t) == "string" then
@@ -54,6 +57,7 @@ function LootManager:GetSecuredBagsTypeAmount(t)
     return secured
 end
 
+---@return number
 function LootManager:GetSecuredBagsValueAmount()
     local value = 0
     for _, data in ipairs(self._global.secured) do
@@ -94,7 +98,7 @@ function LootManager:EHIReportProgress(tracker_id, check_type, loot_type, f)
         elseif tweak.small_loot[loot_type] then
             loot_name = "Small Loot"
         end
-        managers.chat:_receive_message(1, "[EHI]", "Secured: " .. loot_name .. "; Carry ID: " .. tostring(loot_type))
+        managers.chat:_receive_message(1, "[EHI]", "Secured: " .. loot_name .. "; Carry ID: " .. tostring(loot_type), Color.white)
     end
 end
 

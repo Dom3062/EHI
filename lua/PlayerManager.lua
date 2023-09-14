@@ -1,12 +1,29 @@
 ---@class PlayerManager
+---@field _local_player_body_bags number
+---@field _throw_regen_kills number?
+---@field _temporary_upgrades table
+---@field _timers table
+---@field _melee_dmg_mul number
+---@field _on_headshot_dealt_t number
+---@field _damage_dealt_to_cops number
+---@field _damage_dealt_to_cops_t number
+---@field _damage_dealt_to_cops_decay_t number
+---@field _dodge_shot_gain_value number
+---@field _next_allowed_doh_t number
 ---@field has_category_upgrade fun(self: self, category: string, upgrade: string): boolean
----@field upgrade_value fun(self: self, category: string, upgrade: string, default: any?): any|table|number|boolean
 ---@field _get_damage_health_ratio_threshold fun(self: self, category: string): number
 ---@field has_activate_temporary_upgrade fun(self: self, category: string, upgrade: string): boolean
 ---@field register_message fun(self: self, message: number|string, uid: string|number, func: function)
----@field player_unit fun(self: self): Unit
+---@field unregister_message fun(self: self, message: number|string, uid: string|number)
+---@field player_unit fun(self: self): UnitPlayer
 ---@field add_listener fun(self: self, key: string, events: string[], clbk: function)
 ---@field remove_listener fun(self: self, key: string)
+---@field player_timer fun(self: self): TimerManager
+---@field add_coroutine fun(self: self, name: number|string, func: {Priority: number, Function: function}, ...: any)
+---@field local_player fun(self: self): UnitPlayer
+---@field get_skill_exp_multiplier fun(self: self, stealth: boolean?): number
+---@field upgrade_value_by_level fun(self: self, category: string, upgrade: string, level: number, default: any?): any|number
+---@field equiptment_upgrade_value fun(self: self, category: string, upgrade: string, default: any?): any|number
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -42,7 +59,7 @@ function PlayerManager:spawn_smoke_screen(position, normal, grenade_unit, ...)
             color_id = #tweak_data.chat_colors
         end
 	    local color = tweak_data.chat_colors[color_id] or Color.white
-        local duration = tweak_data.projectiles.smoke_screen_grenade.duration
+        local duration = tweak_data.projectiles.smoke_screen_grenade.duration --[[@as number]]
         managers.ehi_tracker:AddTracker({
             id = "SmokeScreenGrenade_" .. key,
             time = duration,
@@ -371,7 +388,7 @@ if EHI:GetBuffOption("tag_team") then
     function PlayerManager:_attempt_tag_team(...)
         local result = original._attempt_tag_team(self, ...)
         if result then
-            local duration = self:upgrade_value("player", "tag_team_base", {}).duration
+            local duration = self:upgrade_value("player", "tag_team_base", {}).duration --[[@as number?]]
             if not duration then -- No duration ? How ?
                 return
             end

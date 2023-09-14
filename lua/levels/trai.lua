@@ -11,10 +11,11 @@ EHICraneFixChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHICraneFixChanceTracker.SetFailed = EHIAchievementTracker.SetFailed
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHICraneFixChanceTracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHICraneFixChanceTracker:init(panel, params, parent_class)
     self._chance = 30
     params.time = 20
-    EHICraneFixChanceTracker.super.init(self, panel, params)
+    EHICraneFixChanceTracker.super.init(self, panel, params, parent_class)
 end
 
 function EHICraneFixChanceTracker:OverridePanel()

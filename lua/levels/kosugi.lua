@@ -4,13 +4,14 @@ local Icon = EHI.Icons
 EHIkosugi5Tracker = class(EHIAchievementProgressTracker)
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIkosugi5Tracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHIkosugi5Tracker:init(panel, params, parent_class)
     params.show_progress_on_finish = true
     params.max = 16 -- Random loot (with armor)
     self._armor_max = 4 -- Armor
     self._armor_counter = 0
     self._objectives_to_complete = 2
-    EHIkosugi5Tracker.super.init(self, panel, params)
+    EHIkosugi5Tracker.super.init(self, panel, params, parent_class)
     EHI:AddAchievementToCounter({
         achievement = "kosugi_5",
         counter =

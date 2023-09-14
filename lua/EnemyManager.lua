@@ -3,12 +3,17 @@ if EHI:CheckLoadHook("EnemyManager") then
     return
 end
 
+---@class EnemyManager
+---@field _enemy_data table
+---@field _civilian_data table
+---@field all_civilians fun(self: self): table
+
 ---@return number
 function EnemyManager:GetNumberOfEnemies()
     return self._enemy_data.nr_units
 end
 
-if not (EHI:GetOption("show_enemy_count_tracker") or EHI:GetOption("show_civilian_count_tracker")) then
+if not (EHI:GetOption("show_enemy_count_tracker") or EHI:CanShowCivilianCountTracker()) then
     return
 end
 
@@ -74,7 +79,7 @@ if EHI:GetOption("show_enemy_count_tracker") then
     end
 end
 
-if EHI:GetOption("show_civilian_count_tracker") then
+if EHI:CanShowCivilianCountTracker() then
     local function CreateTracker(count)
         managers.ehi_tracker:AddTracker({
             id = "CivilianCount",

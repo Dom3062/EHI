@@ -4,8 +4,9 @@ local EHI = EHI
 EHIECMTracker = class(EHIWarningTracker)
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIECMTracker:init(panel, params)
-    EHIECMTracker.super.init(self, panel, params)
+---@param parent_class EHITrackerManager
+function EHIECMTracker:init(panel, params, parent_class)
+    EHIECMTracker.super.init(self, panel, params, parent_class)
     self._unit = params.unit
 end
 

@@ -7,6 +7,7 @@ function EHIInaccurateWaypoint:post_init(params)
     self:SetColor()
 end
 
+---@param time number
 function EHIInaccurateWaypoint:SetWaypointAccurate(time)
     self._default_color = Color.white
     self:SetColor()

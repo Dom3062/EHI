@@ -1,4 +1,4 @@
-local bg_visibility = EHI:GetOption("show_tracker_bg")
+local bg_visibility = EHI:GetOption("show_tracker_bg") --[[@as boolean]]
 
 ---@param panel Panel
 ---@param params table
@@ -16,18 +16,20 @@ local function CreateHUDBGBox(panel, params)
 	return box_panel
 end
 
+---@param background PanelRectangle
+---@param times number
 local function AnimateBG(background, times)
     local TOTAL_T = 0.4
     local t = 0
     local color = 1
     for _ = 1, times or 1 do
-        t = 0
         while TOTAL_T > t do
             local dt = coroutine.yield()
             t = t + dt
             color = math.lerp(1, 0, t / TOTAL_T)
             background:set_color(Color(color, color, color))
         end
+        t = 0
     end
     background:set_color(Color.black:with_alpha(0.6))
 end

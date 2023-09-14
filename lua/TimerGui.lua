@@ -18,7 +18,7 @@ end
 local Icon = EHI.Icons
 
 local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
----@type MissionDoorTableParsed
+---@type { [string]: number|MissionDoorAdvancedTable }
 local MissionDoor = {}
 
 ---@param tbl table<Vector3, number|MissionDoorAdvancedTable>
@@ -76,6 +76,10 @@ function TimerGui:GetUpgrades()
 end
 
 function TimerGui:StartTimer()
+    if managers.ehi_manager:Exists(self._ehi_key) then
+        managers.ehi_manager:SetTimerRunning(self._ehi_key)
+        return
+    end
     local autorepair = self._unit:base()._autorepair or self._unit:base()._autorepair_client
     -- In case the conversion fails, fallback to "self._time_left" which is a number
     local t = tonumber(self._current_timer) or self._time_left

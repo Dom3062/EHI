@@ -58,7 +58,8 @@ else
 end
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIAssaultTracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHIAssaultTracker:init(panel, params, parent_class)
     self:CalculateDifficultyRamp(params.diff or 0)
     self.update_break = self.update
     if params.assault then
@@ -82,7 +83,7 @@ function EHIAssaultTracker:init(panel, params)
         self.SyncAnticipationColor = self.SyncAnticipationColorInaccurate
         self._text_color = self._inaccurate_text_color
     end
-    EHIAssaultTracker.super.init(self, panel, params)
+    EHIAssaultTracker.super.init(self, panel, params, parent_class)
     self._update = not params.stop_counting
 end
 

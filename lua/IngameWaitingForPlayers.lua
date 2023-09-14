@@ -64,31 +64,41 @@ local pent_11_levels =
 
 local armored_4_levels = table.list_to_set(tweak_data.achievement.complete_heist_achievements.i_take_scores.jobs)
 
-local primary, secondary, melee, grenade, is_stealth = nil, nil, nil, nil, false
+local primary, secondary, melee, grenade, is_stealth = nil, nil, nil, nil, false ---@type table, table, string, string, boolean
 local VeryHardOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
 local OVKOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 --local MayhemOrAbove = EHI:IsMayhemOrAbove()
 local stats = {}
 
+---@param weapon_id string
+---@return boolean
 local function HasWeaponEquipped(weapon_id)
     return primary.weapon_id == weapon_id or secondary.weapon_id == weapon_id
 end
 
+---@param type string
+---@return boolean
 local function HasWeaponTypeEquipped(type)
     local primary_categories = tweak_data.weapon[primary.weapon_id] and tweak_data.weapon[primary.weapon_id].categories or {}
     local secondary_categories = tweak_data.weapon[secondary.weapon_id] and tweak_data.weapon[secondary.weapon_id].categories or {}
     return table.contains(primary_categories, type) or table.contains(secondary_categories, type)
 end
 
+---@param melee_id string
+---@return boolean
 local function HasMeleeEquipped(melee_id)
     return melee == melee_id
 end
 
+---@param type string
+---@return boolean
 local function HasMeleeTypeEquipped(type)
     local melee_tweak = tweak_data.blackmarket.melee_weapons[melee]
     return melee_tweak and melee_tweak.type and melee_tweak.type == type
 end
 
+---@param grenade_id string
+---@return boolean
 local function HasGrenadeEquipped(grenade_id)
     return grenade == grenade_id
 end
@@ -106,10 +116,14 @@ local function HasNonExplosiveGrenadeEquipped()
     return false
 end
 
+---@param player_style_id string
+---@return boolean
 local function HasPlayerStyleEquipped(player_style_id)
     return managers.blackmarket:equipped_player_style() == player_style_id
 end
 
+---@param variation_id string
+---@return boolean
 local function HasSuitVariationEquipped(variation_id)
     return managers.blackmarket:equipped_suit_variation() == variation_id
 end
@@ -154,7 +168,7 @@ end
 local function HasViperGrenadesOnLauncherEquipped()
     local function HasViperAmmo(factory_id, blueprint)
         local t = managers.weapon_factory:get_ammo_data_from_weapon(factory_id, blueprint)
-        if table.size(t or {}) ~= 0 then
+        if t and table.size(t) ~= 0 then
             return table.contains(t, "launcher_poison") or table.contains(t, "launcher_poison_ms3gl_conversion")
         end
         return false
@@ -238,6 +252,9 @@ local function ShowTrackerInLoud(f)
     end
 end
 
+---@param id string
+---@param progress number
+---@param max number
 local function ShowPopup(id, progress, max)
     managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_" .. id), tostring(progress) .. "/" .. tostring(max), EHI:GetAchievementIconString(id))
 end
@@ -289,12 +306,9 @@ local function OnSetSavedJobValue(achievement_id, keys)
     end)
 end
 
-local original =
-{
-    at_exit = IngameWaitingForPlayersState.at_exit
-}
+local _f_at_exit = IngameWaitingForPlayersState.at_exit
 function IngameWaitingForPlayersState:at_exit(...)
-    original.at_exit(self, ...)
+    _f_at_exit(self, ...)
     if not Global.hud_disabled then
         managers.ehi_tracker:ShowPanel()
     end
@@ -570,16 +584,18 @@ function IngameWaitingForPlayersState:at_exit(...)
                 local pass, primary_index, secondary_index = CheckWeaponsBlueprint(tweak_data.achievement.complete_heist_achievements.tango_3.killed_by_blueprint.blueprint)
                 if pass then
                     if primary_index and secondary_index then
+                        ---@class EHItango_achieve_3Tracker : EHIAchievementProgressTracker
+                        ---@field super EHIAchievementProgressTracker
                         EHItango_achieve_3Tracker = class(EHIAchievementProgressTracker)
                         EHItango_achieve_3Tracker._forced_icons = EHI:GetAchievementIcon("tango_achieve_3")
-                        function EHItango_achieve_3Tracker:init(panel, params)
+                        function EHItango_achieve_3Tracker:init(panel, params, parent_class)
                             self._kills =
                             {
                                 primary = 0,
                                 secondary = 0
                             }
                             self._weapon_id = 0
-                            EHItango_achieve_3Tracker.super.init(self, panel, params)
+                            EHItango_achieve_3Tracker.super.init(self, panel, params, parent_class)
                         end
                         function EHItango_achieve_3Tracker:WeaponSwitched(id)
                             if self._weapon_id == id or self._finished then
@@ -804,7 +820,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         if OVKOrAbove then
             pxp_1()
             if EHI:IsAchievementLocked2("pxp2_3") and HasGrenadeEquipped("poison_gas_grenade") then -- "Snake Charmer" achievement
-                CreateProgressTracker("pxp2_3_stats")
+                CreateProgressTracker2("pxp2_3_stats")
             end
         end
     end
@@ -908,6 +924,8 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         if EHI:IsAchievementLocked("ovk_3") and HasWeaponEquipped("m134") and (level == "chill" or level == "safehouse") then -- "Oh, That's How You Do It" achievement
             -- Only tracked in Safehouse to prevent tracker spam in heists
+            ---@class EHIovk3Tracker : EHIAchievementUnlockTracker
+            ---@field super EHIAchievementUnlockTracker
             EHIovk3Tracker = class(EHIAchievementUnlockTracker)
             EHIovk3Tracker._forced_icons = EHI:GetAchievementIcon("ovk_3")
             function EHIovk3Tracker:Reset()

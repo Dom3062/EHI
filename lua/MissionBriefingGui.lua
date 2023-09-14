@@ -3,12 +3,28 @@ if EHI:CheckLoadHook("MissionBriefingGui") or EHI:IsXPTrackerDisabled() or not E
     return
 end
 
+---@class MissionBriefingGui
+---@field _fullscreen_panel Panel
+
+---@class MissionBriefingPanel
+---@field panel Panel
+---@field lines number
+---@field h number
+---@field selected boolean
+
 local colors =
 {
     loot_secured = EHI:GetColor(EHI.settings.colors.mission_briefing.loot_secured),
     total_xp = EHI:GetColor(EHI.settings.colors.mission_briefing.total_xp),
     optional = EHI:GetColor(EHI.settings.colors.mission_briefing.optional)
 }
+
+local percent_format = "%"
+EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, loc_loaded)
+    if loc_loaded == "czech" then
+        percent_format = " %"
+    end
+end)
 
 ---@type XPBreakdown
 local _params
@@ -178,15 +194,24 @@ function MissionBriefingGui:init(...)
     self._ehi_panel:set_visible(false)
     self._ehi_panel_v2:set_visible(false)
     if xp_format == 1 then
-        self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp)
+        ---@param ex ExperienceManager
+        ---@param xp number
+        ---@return number
+        self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp) ---@diagnostic disable-line
             return xp
         end
     elseif xp_format == 2 then
-        self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp)
+        ---@param ex ExperienceManager
+        ---@param xp number
+        ---@return number
+        self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp) ---@diagnostic disable-line
             return xp * diff_multiplier
         end
     else
-        self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp)
+        ---@param ex ExperienceManager
+        ---@param xp number
+        ---@return number
+        self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp) ---@diagnostic disable-line
             local alive_original = ex._ehi_xp.alive_players
             local skill_original = ex._ehi_xp.skill_xp_multiplier
             local gage_original = ex._ehi_xp.gage_bonus
@@ -313,7 +338,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
 end
 
 ---@param params XPBreakdown|_XPBreakdown
----@param panel table?
+---@param panel MissionBriefingPanel?
 function MissionBriefingGui:ProcessBreakDown(params, panel)
     panel = panel or { panel = self._ehi_panel_v2, lines = 0, adjust_h = true }
     local gage = xp_format == 3 and EHI:AreGagePackagesSpawned()
@@ -425,7 +450,7 @@ function MissionBriefingGui:ProcessBreakDown(params, panel)
                         xp_with_gage = self:FormatXPWithAllGagePackages(amount)
                     end
                     local str = data.name and self:GetTranslatedKey(data.name) or "<Unknown objective>"
-                    local text_color = data.optional and colors.optional
+                    local text_color = data.optional and colors.optional --[[@as Color?]]
                     if data.times then
                         local times_formatted = self._loc:text("ehi_experience_trigger_times", { times = data.times })
                         local s
@@ -656,7 +681,7 @@ function MissionBriefingGui:ParamsMinMax(panel, params, o_params)
     self:AddTotalMinMaxXP(panel, min, max, true, o_params.name)
 end
 
----@param panel Panel
+---@param panel MissionBriefingPanel
 ---@param params table
 ---@param o_params table
 ---@param override table
@@ -959,6 +984,258 @@ function MissionBriefingGui:ParamsMaxOnly(panel, params, o_params)
     self:AddLine(panel, ("Max (" .. o_params.name .. "): +") .. self:FormatXPWithAllGagePackages(max) .. " " .. self._loc:text("ehi_experience_xp"), Color.green)
 end
 
+---@param panel MissionBriefingPanel
+function MissionBriefingGui:AddXPOverviewText(panel)
+    local text_panel = panel.panel:text({
+        name = "0",
+        blend_mode = "add",
+        x = 10,
+        y = 10,
+        font = tweak_data.menu.pd2_large_font,
+        font_size = tweak_data.menu.pd2_small_font_size,
+        color = Color.white,
+        text = self._loc:text("ehi_experience_xp_overview"),
+        layer = 10
+    })
+    managers.hud:make_fine_text(text_panel)
+    panel.lines = panel.lines + 1
+    local xp = self._xp._ehi_xp
+    local last_modifier = text_panel
+    if xp.projob_multiplier and xp.projob_multiplier > 1 then
+        local pro = panel.panel:text({
+            name = "0_pro_job",
+            blend_mode = "add",
+            x = text_panel:right() + 2,
+            y = 10,
+            font = tweak_data.menu.pd2_large_font,
+            font_size = tweak_data.menu.pd2_small_font_size,
+            color = tweak_data.screen_colors.pro_color,
+            text = string.format("PRO +%d%s", (xp.projob_multiplier - 1) * 100, percent_format),
+            layer = 10
+        })
+        managers.hud:make_fine_text(pro)
+        last_modifier = pro
+    end
+    if xp.stealth_bonus and xp.stealth_bonus > 0 then
+        local percent = xp.stealth_bonus * 100
+        local stealth = panel.panel:text({
+            name = "0_stealth",
+            blend_mode = "add",
+            x = last_modifier:right() + 2,
+            y = 10,
+            font = tweak_data.menu.pd2_large_font,
+            font_size = tweak_data.menu.pd2_small_font_size,
+            color = tweak_data.screen_colors.ghost_color,
+            text = string.format("%s +%d%s", self._loc:get_default_macro("BTN_GHOST"), percent, percent_format),
+            layer = 10
+        })
+        managers.hud:make_fine_text(stealth)
+        last_modifier = stealth
+    end
+    if xp.heat and xp.heat ~= 1 then
+        local text
+        local range_color
+        if xp.heat < 1 then -- Negative XP
+            range_color = tweak_data.screen_colors.heat_cold_color
+            local percent = (1 - xp.heat) * 100
+            text = string.format("-%d%s", percent, percent_format)
+        else -- Positive XP
+            range_color = tweak_data.screen_colors.heat_warm_color
+            local percent = (xp.heat - 1) * 100
+            text = string.format("+%d%s", percent, percent_format)
+        end
+        local heat_icon = panel.panel:bitmap({
+            name = "0_heat_icon",
+            blend_mode = "add",
+            x = last_modifier:right() + 2,
+            y = 10,
+            w = 16,
+            h = 16,
+            texture = "guis/textures/pd2/pd2_waypoints",
+            texture_rect = { 128, 32, 32, 32 },
+            color = range_color,
+            layer = 10
+        })
+        local heat = panel.panel:text({
+            name = "0_heat",
+            blend_mode = "add",
+            x = heat_icon:right() + 2,
+            y = 10,
+            font = tweak_data.menu.pd2_large_font,
+            font_size = tweak_data.menu.pd2_small_font_size,
+            color = range_color,
+            text = text,
+            layer = 10
+        })
+        managers.hud:make_fine_text(heat)
+        last_modifier = heat
+    end
+    if tweak_data.levels:IsLevelChristmas() then
+        local bonus = (tweak_data:get_value("experience_manager", "limited_xmas_bonus_multiplier") or 1) - 1
+        if bonus > 0 then
+            local percent = bonus * 100
+            local xmas = panel.panel:text({
+                name = "0_xmas",
+                blend_mode = "add",
+                x = last_modifier:right() + 2,
+                y = 10,
+                font = tweak_data.menu.pd2_large_font,
+                font_size = tweak_data.menu.pd2_small_font_size,
+                color = tweak_data.screen_colors.event_color,
+                text = string.format("%s +%d%s", self._loc:get_default_macro("BTN_XMAS"), percent, percent_format),
+                layer = 10
+            })
+            managers.hud:make_fine_text(xmas)
+            last_modifier = xmas
+        end
+    end
+    if xp.is_level_limited then
+        local diff_in_stars = xp.job_stars - xp.player_stars
+        local tweak_multiplier = tweak_data:get_value("experience_manager", "level_limit", "pc_difference_multipliers", diff_in_stars) or 0
+        if tweak_multiplier > 0 then
+            local reduction_percent = tostring((1 - tweak_multiplier) * 100)
+            local level_limit_icon = panel.panel:bitmap({
+                name = "0_level_limit_icon",
+                blend_mode = "add",
+                x = last_modifier:right() + 2,
+                y = 10,
+                texture = "guis/textures/pd2/shared_level_symbol",
+                color = tweak_data.screen_colors.important_1,
+                layer = 10
+            })
+            local level_limit = panel.panel:text({
+                name = "0_level_limit",
+                blend_mode = "add",
+                x = level_limit_icon:right() + 2,
+                y = 10,
+                font = tweak_data.menu.pd2_large_font,
+                font_size = tweak_data.menu.pd2_small_font_size,
+                color = tweak_data.screen_colors.important_1,
+                text = string.format("-%s%s", reduction_percent, percent_format),
+                layer = 10
+            })
+            managers.hud:make_fine_text(level_limit)
+            last_modifier = level_limit
+        end
+    end
+    if self._skill_bonus > 1 then
+        local passive_xp_reduction = managers.player:upgrade_value("player", "passive_xp_multiplier", 1) - 1
+        local percent = (self._skill_bonus - passive_xp_reduction - 1) * 100
+        local skill_icon = panel.panel:bitmap({
+            name = "0_skill_icon",
+            blend_mode = "add",
+            x = last_modifier:right() + 2,
+            y = 10,
+            texture = "guis/dlcs/cash/textures/pd2/safe_raffle/teamboost_icon",
+            color = tweak_data.screen_colors.button_stage_2,
+            layer = 10
+        })
+        local skill = panel.panel:text({
+            name = "0_skill_bonus",
+            blend_mode = "add",
+            x = skill_icon:right() + 2,
+            y = 10,
+            font = tweak_data.menu.pd2_large_font,
+            font_size = tweak_data.menu.pd2_small_font_size,
+            color = tweak_data.screen_colors.button_stage_2,
+            text = string.format("+%d%s", percent, percent_format),
+            layer = 10
+        })
+        managers.hud:make_fine_text(skill)
+        last_modifier = skill
+    end
+    if math.clamp(self._num_winners, 1, 4) > 1 then
+        local bonus = (tweak_data:get_value("experience_manager", "alive_humans_multiplier", self._num_winners) or 1) - 1
+        if bonus > 0 then
+            local percent = bonus * 100
+            local player_icon = panel.panel:bitmap({
+                name = "0_player_icon",
+                blend_mode = "add",
+                x = last_modifier:right() + 2,
+                y = 10,
+                w = 16,
+                h = 16,
+                texture = "guis/textures/pd2/pd2_waypoints",
+                texture_rect = { 32, 0, 32, 32 },
+                color = tweak_data.screen_colors.risk,
+                layer = 10
+            })
+            local player = panel.panel:text({
+                name = "0_player_bonus",
+                blend_mode = "add",
+                x = player_icon:right() + 2,
+                y = 10,
+                font = tweak_data.menu.pd2_large_font,
+                font_size = tweak_data.menu.pd2_small_font_size,
+                color = tweak_data.screen_colors.risk,
+                text = string.format("+%d%s", percent, percent_format),
+                layer = 10
+            })
+            managers.hud:make_fine_text(player)
+            last_modifier = player
+        end
+    end
+    if xp.mutator_xp_reduction < 0 then
+        local reduction = xp.mutator_xp_reduction * 100
+        local mutator_icon = panel.panel:bitmap({
+            name = "0_mutator_icon",
+            blend_mode = "add",
+            x = last_modifier:right() + 2,
+            y = 10,
+            w = 16,
+            h = 16,
+            texture = "guis/dlcs/new/textures/pd2/crimenet/crimenet_sidebar_icons",
+            texture_rect = { 0, 0, 64, 64 },
+            color = tweak_data.screen_colors.important_1,
+            layer = 10
+        })
+        local mutator = panel.panel:text({
+            name = "0_mutator",
+            blend_mode = "add",
+            x = mutator_icon:right() + 2,
+            y = 10,
+            font = tweak_data.menu.pd2_large_font,
+            font_size = tweak_data.menu.pd2_small_font_size,
+            color = tweak_data.screen_colors.important_1,
+            text = string.format("%s%s", tostring(reduction), percent_format),
+            layer = 10
+        })
+        managers.hud:make_fine_text(mutator)
+        last_modifier = mutator
+    end
+    if xp.MutatorCG22 then
+        local CG22_icon = panel.panel:bitmap({
+            name = "0_MutatorCG22_icon",
+            blend_mode = "add",
+            x = last_modifier:right() + 2,
+            y = 10,
+            w = 16,
+            h = 16,
+            texture = "guis/textures/pd2/blackmarket/xp_drop",
+            color = tweak_data.screen_colors.event_color,
+            layer = 10
+        })
+        local CG22 = panel.panel:text({
+            name = "0_MutatorCG22",
+            blend_mode = "add",
+            x = CG22_icon:right() + 2,
+            y = 10,
+            font = tweak_data.menu.pd2_large_font,
+            font_size = tweak_data.menu.pd2_small_font_size,
+            color = tweak_data.screen_colors.event_color,
+            text = string.format("+100%s", percent_format),
+            layer = 10
+        })
+        managers.hud:make_fine_text(CG22)
+        last_modifier = CG22
+    end
+end
+
+---@param panel MissionBriefingPanel
+---@param txt string
+---@param value string
+---@param value_with_gage string?
+---@param text_color Color?
 function MissionBriefingGui:AddXPText(panel, txt, value, value_with_gage, text_color)
     local xp = self._loc:text("ehi_experience_xp")
     local text
@@ -981,21 +1258,9 @@ function MissionBriefingGui:AddXPText(panel, txt, value, value_with_gage, text_c
     panel.lines = panel.lines + 1
 end
 
-function MissionBriefingGui:AddXPOverviewText(panel)
-    panel.panel:text({
-        name = "0",
-        blend_mode = "add",
-        x = 10,
-        y = 10,
-        font = tweak_data.menu.pd2_large_font,
-        font_size = tweak_data.menu.pd2_small_font_size,
-        color = Color.white,
-        text = self._loc:text("ehi_experience_xp_overview"),
-        layer = 10
-    })
-    panel.lines = panel.lines + 1
-end
-
+---@param panel MissionBriefingPanel
+---@param total string?
+---@param total_with_gage string?
 function MissionBriefingGui:AddTotalXP(panel, total, total_with_gage)
     local xp = self._loc:text("ehi_experience_xp")
     local txt
@@ -1020,7 +1285,7 @@ function MissionBriefingGui:AddTotalXP(panel, total, total_with_gage)
     panel.lines = panel.lines + 1
 end
 
----@param panel Panel
+---@param panel MissionBriefingPanel
 ---@param min number
 ---@param max number|string?
 ---@param format_max boolean
@@ -1041,6 +1306,7 @@ function MissionBriefingGui:AddTotalMinMaxXP(panel, min, max, format_max, post_f
     end
 end
 
+---@param panel MissionBriefingPanel
 function MissionBriefingGui:AddLootSecuredHeader(panel)
     panel.panel:text({
         name = tostring(panel.lines),
@@ -1056,6 +1322,12 @@ function MissionBriefingGui:AddLootSecuredHeader(panel)
     panel.lines = panel.lines + 1
 end
 
+---@param panel MissionBriefingPanel
+---@param loot string
+---@param times number
+---@param to_secure number
+---@param value string
+---@param value_with_gage string?
 function MissionBriefingGui:AddLootSecured(panel, loot, times, to_secure, value, value_with_gage)
     local loot_name
     if loot == "_else" then
@@ -1156,7 +1428,7 @@ function MissionBriefingGui:FormatXPWithAllGagePackages(base_xp)
 end
 
 function MissionBriefingGui:RefreshXPOverview()
-    self._num_winners = managers.network:session() and managers.network:session():amount_of_players() or 1
+    self._num_winners = managers.network:session() and managers.network:session():amount_of_players()
     if self._panels then
         for _, panel in ipairs(self._panels) do
             panel.panel:clear()
@@ -1178,7 +1450,7 @@ function MissionBriefingGui:GetTranslatedKey(key)
     return key
 end
 
----@param panel Panel
+---@param panel MissionBriefingPanel
 ---@param params table
 ---@param total_xp table
 ---@param gage boolean?
@@ -1244,7 +1516,7 @@ function MissionBriefingGui:ProcessLoot(panel, params, total_xp, gage)
     end
 end
 
----@param panel Panel
+---@param panel MissionBriefingPanel
 ---@param str string
 ---@param params table|number
 ---@param total_xp table
@@ -1289,7 +1561,7 @@ function MissionBriefingGui:ProcessEscape(panel, str, params, total_xp, gage)
     end
 end
 
----@param panel Panel
+---@param panel MissionBriefingPanel
 ---@param random table
 ---@param total_xp table
 ---@param gage boolean?

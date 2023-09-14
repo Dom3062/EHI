@@ -11,11 +11,9 @@ end
 ---@field super EHITracker
 EHILaserTracker = class(EHITracker)
 EHILaserTracker._forced_icons = { EHI.Icons.Lasers }
----@param panel Panel
 ---@param params EHITracker_params
-function EHILaserTracker:init(panel, params)
+function EHILaserTracker:pre_init(params)
     self._next_cycle_t = params.time
-    EHILaserTracker.super.init(self, panel, params)
 end
 
 function EHILaserTracker:update(t, dt)

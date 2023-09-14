@@ -14,6 +14,7 @@ function EHIPausableWaypoint:update(t, dt)
     EHIPausableWaypoint.super.update(self, t, dt)
 end
 
+---@param pause boolean
 function EHIPausableWaypoint:SetPaused(pause)
     self._paused = pause
     self:SetColor()

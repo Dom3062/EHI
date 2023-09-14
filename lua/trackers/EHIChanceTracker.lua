@@ -10,14 +10,17 @@ function EHIChanceTracker:Format()
     return self._chance .. "%"
 end
 
+---@param amount number
 function EHIChanceTracker:IncreaseChance(amount)
     self:SetChance(self._chance + amount)
 end
 
+---@param amount number
 function EHIChanceTracker:DecreaseChance(amount)
     self:SetChance(self._chance - amount)
 end
 
+---@param amount number
 function EHIChanceTracker:SetChance(amount)
     self._chance = math.max(0, amount)
     self._text:set_text(self:Format())

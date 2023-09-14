@@ -100,8 +100,7 @@ local achievements =
             [100144] = { special_function = SF.SetAchievementFailed }
         },
         cleanup_callback = function()
-            ---@diagnostic disable-next-line
-            EHIrun9Tracker = nil
+            EHIrun9Tracker = nil ---@diagnostic disable-line
         end
     },
     run_10 =
@@ -116,10 +115,11 @@ local achievements =
     }
 }
 
-EHI:ParseTriggers({
-    mission = triggers,
-    achievement = achievements
-})
+local other =
+{
+    [101486] = EHI:AddAssaultDelay({ time = 30, trigger_times = 1 })
+}
+
 local ProgressMaxSet = false
 EHI:RegisterCustomSpecialFunction(SetProgressMax, function(self, trigger, ...)
     if ProgressMaxSet then
@@ -135,7 +135,13 @@ EHI:RegisterCustomSpecialFunction(SetProgressMax, function(self, trigger, ...)
             class = "EHIGasTracker"
         })
     end
+    ProgressMaxSet = true
 end)
+EHI:ParseTriggers({
+    mission = triggers,
+    achievement = achievements,
+    other = other
+})
 EHI:AddXPBreakdown({
     objectives =
     {

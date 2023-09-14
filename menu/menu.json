@@ -109,12 +109,14 @@
             "callback_arguments": "tracker_alignment",
             "items": [
                 "ehi_tracker_alignment_1",
-                "ehi_tracker_alignment_2"
+                "ehi_tracker_alignment_2",
+                "ehi_tracker_alignment_3",
+                "ehi_tracker_alignment_4"
             ],
             "value": "tracker_alignment",
             "parent_func" : "IsNotVR",
             "default_value": 1,
-            "ehi_ver" : 30
+            "ehi_ver" : 185
         },
         {
             "type": "button",
@@ -181,12 +183,14 @@
             "callback_arguments": "vr_tracker_alignment",
             "items": [
                 "ehi_tracker_alignment_1",
-                "ehi_tracker_alignment_2"
+                "ehi_tracker_alignment_2",
+                "ehi_tracker_alignment_3",
+                "ehi_tracker_alignment_4"
             ],
             "value": "vr_tracker_alignment",
             "parent_func" : "IsVR",
             "default_value": 1,
-            "ehi_ver" : 140
+            "ehi_ver" : 185
         },
         {
             "type" : "divider",

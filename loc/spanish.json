@@ -81,8 +81,10 @@
 
     "ehi_tracker_alignment" : "Alineación",
     "ehi_tracker_alignment_desc" : "Definir cómo se alinean los contadores en pantalla.",
-    "ehi_tracker_alignment_1" : "En vertical",
-    "ehi_tracker_alignment_2" : "En horizontal",
+    "ehi_tracker_alignment_1" : "En vertical; Top to bottom",
+    "ehi_tracker_alignment_2" : "En vertical; Bottom to Top",
+    "ehi_tracker_alignment_3" : "En horizontal; Left to Right",
+    "ehi_tracker_alignment_4" : "En horizontal; Right to Left",
 
     "ehi_vr_x_offset" : "Posición horizontal en VR",
     "ehi_vr_y_offset" : "Posición vertical en VR",

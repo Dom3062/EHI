@@ -1,3 +1,4 @@
+---@class EHIDeployableManager
 EHIDeployableManagerVR = EHIDeployableManager
 EHIDeployableManagerVR.old_AddToDeployableCache = EHIDeployableManager.AddToDeployableCache
 EHIDeployableManagerVR.old_LoadFromDeployableCache = EHIDeployableManager.LoadFromDeployableCache

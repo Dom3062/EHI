@@ -16,12 +16,20 @@ local original =
     destroy = ECMJammerBase.destroy
 }
 
+---@param pos Vector3
+---@param rot Rotation
+---@param battery_life_upgrade_lvl number
+---@param owner NetworkPeer
+---@param peer_id number
+---@param ... unknown
+---@return Unit
 function ECMJammerBase.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
     local unit = original.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
     unit:base():SetPeerID(peer_id)
 	return unit
 end
 
+---@param peer_id number
 function ECMJammerBase:set_server_information(peer_id, ...)
     original.set_server_information(self, peer_id, ...)
     self:SetPeerID(peer_id)
@@ -39,6 +47,7 @@ function ECMJammerBase:set_owner(...)
     managers.ehi_tracker:CallFunction("ECMFeedback", "UpdateOwnerID", self._ehi_peer_id)
 end
 
+---@param peer_id number
 function ECMJammerBase:SetPeerID(peer_id)
     local id = peer_id or 0
     self._ehi_peer_id = id
@@ -54,17 +63,15 @@ if EHI:GetOption("show_equipment_ecmjammer") then
             if battery_life == 0 then
                 return
             end
-            local jam_pagers = false
-            if self._ehi_local_peer then
-				jam_pagers = managers.player:has_category_upgrade("ecm_jammer", "affects_pagers")
-			elseif self._ehi_peer_id ~= 0 then
-                local peer = managers.network:session():peer(self._ehi_peer_id)
-                if peer and peer._unit and peer._unit.base then
-                    jam_pagers = peer._unit:base():upgrade_value("ecm_jammer", "affects_pagers")
+            if BlockECMsWithoutPagerBlocking then
+                if self._ehi_local_peer and not managers.player:has_category_upgrade("ecm_jammer", "affects_pagers") then
+                    return
+                elseif self._ehi_peer_id ~= 0 then
+                    local peer = managers.network:session():peer(self._ehi_peer_id)
+                    if peer and peer._unit and peer._unit.base and not peer._unit:base():upgrade_value("ecm_jammer", "affects_pagers") then
+                        return
+                    end
                 end
-			end
-            if BlockECMsWithoutPagerBlocking and not jam_pagers then
-                return
             end
             if not show_waypoint_only then
                 if managers.ehi_tracker:TrackerExists("ECMJammer") then

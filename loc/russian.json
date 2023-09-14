@@ -81,8 +81,10 @@
 
     "ehi_tracker_alignment" : "Выравнивание трекера",
     "ehi_tracker_alignment_desc" : "Определяет выравнивание трекера",
-    "ehi_tracker_alignment_1" : "Вертикально",
-    "ehi_tracker_alignment_2" : "Горизонтально",
+    "ehi_tracker_alignment_1" : "Вертикально; Top to bottom",
+    "ehi_tracker_alignment_2" : "Вертикально; Bottom to Top",
+    "ehi_tracker_alignment_3" : "Горизонтально; Left to Right",
+    "ehi_tracker_alignment_4" : "Горизонтально; Right to Left",
     
     "ehi_vr_x_offset" : "Смещение по горизонтали (VR)",
     "ehi_vr_y_offset" : "Смещение по вертикали (VR)",

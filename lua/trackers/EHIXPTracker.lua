@@ -5,15 +5,17 @@ EHIXPTracker._forced_icons = { "xp" }
 EHIXPTracker.update = EHIXPTracker.update_fade
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIXPTracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHIXPTracker:init(panel, params, parent_class)
     self._xp = params.amount or 0
-    EHIXPTracker.super.init(self, panel, params)
+    EHIXPTracker.super.init(self, panel, params, parent_class)
 end
 
 function EHIXPTracker:Format() -- Formats the amount of XP in the panel
     return managers.experience:cash_string(self._xp, self._xp >= 0 and "+" or "") -- May show up a negative value because it is called from EHITotalXPTracker (diff)
 end
 
+---@param amount number
 function EHIXPTracker:AddXP(amount)
     self._fade_time = 5
     self._xp = self._xp + amount
@@ -29,9 +31,10 @@ EHITotalXPTracker._update = false
 EHITotalXPTracker._show_diff = EHI:GetOption("total_xp_show_difference")
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHITotalXPTracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHITotalXPTracker:init(panel, params, parent_class)
     self._total_xp = params.amount or 0
-    EHITotalXPTracker.super.init(self, panel, params)
+    EHITotalXPTracker.super.init(self, panel, params, parent_class)
     self:SetPlayerXPLimit()
 end
 
@@ -58,6 +61,7 @@ function EHITotalXPTracker:Format() -- Formats the amount of XP in the panel
     return managers.experience:cash_string(self._total_xp, "+") -- Will never show a negative value
 end
 
+---@param amount number
 function EHITotalXPTracker:SetXP(amount)
     self._xp = amount
     if self._total_xp ~= self._xp and not self._player_limit_reached then

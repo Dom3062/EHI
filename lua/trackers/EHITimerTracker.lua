@@ -115,6 +115,7 @@ function EHITimerTracker:SetAutorepair(state)
     self._icon1:set_color(state and self._autorepair_color or Color.white)
 end
 
+---@param jammed boolean
 function EHITimerTracker:SetJammed(jammed)
     if self._anim_started then
         self._text:stop()
@@ -124,6 +125,7 @@ function EHITimerTracker:SetJammed(jammed)
     self:SetTextColor()
 end
 
+---@param powered boolean
 function EHITimerTracker:SetPowered(powered)
     if self._anim_started then
         self._text:stop()
@@ -131,6 +133,11 @@ function EHITimerTracker:SetPowered(powered)
     end
     self._not_powered = not powered
     self:SetTextColor()
+end
+
+function EHITimerTracker:SetRunning()
+    self:SetJammed(false)
+    self:SetPowered(true)
 end
 
 function EHITimerTracker:SetTextColor()
@@ -148,14 +155,14 @@ end
 function EHITimerTracker:StartTimer(t)
     self:SetTimeNoAnim(t)
     self:AnimatePanelW(self._panel_double)
-    self:ChangeTrackerWidth(self._bg_box_double + self._icon_gap_size_scaled)
+    self:ChangeTrackerWidth(self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons))
     self:AnimIconX(self._bg_box_double + self._gap_scaled)
     self._bg_box:set_w(self._bg_box_double)
 end
 
 function EHITimerTracker:StopTimer()
     self:AnimatePanelW(self._panel_w)
-    self:ChangeTrackerWidth(self._bg_box_w + self._icon_gap_size_scaled)
+    self:ChangeTrackerWidth(self._bg_box_w + (self._icon_gap_size_scaled * self._n_of_icons))
     self:AnimIconX(self._bg_box_w + self._gap_scaled)
     self._bg_box:set_w(self._bg_box_w)
 end
@@ -174,15 +181,30 @@ EHIProgressTimerTracker.DecreaseProgress = EHIProgressTracker.DecreaseProgress
 EHIProgressTimerTracker.SetProgress = EHIProgressTracker.SetProgress
 EHIProgressTimerTracker.SetProgressRemaining = EHIProgressTracker.SetProgressRemaining
 function EHIProgressTimerTracker:post_init(params)
-    self._panel_w = self._panel:w()
     self._bg_box_w = self._bg_box:w()
-    self._panel_double = self._panel_w * 2
     self._bg_box_double = self._bg_box_w * 2
+    self._panel_w = self._panel:w()
+    self._panel_double = self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons)
     self._progress_text = self:CreateText({
         name = "progress_text",
         text = self:FormatProgress()
     })
     self._text:set_left(self._progress_text:right())
+    if not managers.ehi_manager:GetInSyncState() then
+        self:SetBad()
+    end
+end
+
+function EHIProgressTimerTracker:StartTimer(t)
+    EHIProgressTimerTracker.super.StartTimer(self, t)
+    if self._progress ~= self._max then
+        EHIProgressTimerTracker.super.super.super:SetTextColor(Color.white, self._progress_text)
+    end
+end
+
+function EHIProgressTimerTracker:StopTimer()
+    EHIProgressTimerTracker.super.StopTimer(self)
+    self:SetBad()
 end
 
 function EHIProgressTimerTracker:SetCompleted(force)
@@ -210,10 +232,10 @@ EHIChanceTimerTracker.FormatChance = EHIChanceTracker.Format
 EHIChanceTimerTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHIChanceTimerTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 function EHIChanceTimerTracker:post_init(params)
-    self._panel_w = self._panel:w()
     self._bg_box_w = self._bg_box:w()
-    self._panel_double = self._panel_w * 2
     self._bg_box_double = self._bg_box_w * 2
+    self._panel_w = self._panel:w()
+    self._panel_double = self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons)
     self._chance_text = self:CreateText({
         name = "chance_text",
         text = self:FormatChance()

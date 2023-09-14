@@ -69,7 +69,7 @@ function PlayerStandard:_update_omniscience(t, dt, ...)
         -- Subsequent poll (called once every second)
         local detected = 0
         local tmp = self._state_data.omniscience_units_detected
-        local civilians = managers.enemy:all_civilians() or {}
+        local civilians = managers.enemy:all_civilians()
         if tmp then
             local begin_t = 0
             local end_t = 0

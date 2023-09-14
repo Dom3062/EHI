@@ -1,3 +1,11 @@
+r185 (14. 09. 2023):
+Added XP modifiers to Mission Briefing
+Added additional alignment options
+Civilian Counter Tracker: Disabled in Safehouse and Safehouse Nightmare
+Fixed an issue with achievement tracker "Snake Charmer"
+Fixed "Trigger Happy" buff
+Heat Street: Fixed an issue with Gas Counter Tracker
+
 r184 (03. 09. 2023):
 Armored Transport Heists: Fixed an issue where trackers are not visible
 

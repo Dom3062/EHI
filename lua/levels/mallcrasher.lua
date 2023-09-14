@@ -77,17 +77,12 @@ function EHIameno3Tracker:SetProgress(progress)
     end
 end
 
-function EHIameno3Tracker:SetCompleted(force)
-    if (self._progress >= self._max and not self._status) or force then
+function EHIameno3Tracker:SetCompleted()
+    if self._progress >= self._max and not self._status then
         self._status = "completed"
         self._text:stop()
         self:SetTextColor(Color.green)
-        if force then
-            self.update = self.update_fade
-        else
-            self:SetStatusText("finish", self._money_text)
-            self:FitTheText(self._money_text)
-        end
+        self.update = self.update_fade
         self._disable_counting = true
         self._achieved_popup_showed = true
     end
@@ -152,7 +147,7 @@ local achievements =
             [301148] = { time = 50, max = 1800000, class = "EHIameno3Tracker" },
         },
         load_sync = function(self)
-            local t = 50 - self._trackers._t
+            local t = 50 - math.max(self._trackers._t, self._t)
             if t > 0 then
                 self._trackers:AddTracker({
                     time = t,
@@ -165,8 +160,7 @@ local achievements =
             end
         end,
         cleanup_callback = function()
-            ---@diagnostic disable-next-line
-            EHIameno3Tracker = nil
+            EHIameno3Tracker = nil ---@diagnostic disable-line
         end
     },
     uno_3 =

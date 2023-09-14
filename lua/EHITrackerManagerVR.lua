@@ -1,4 +1,5 @@
 local EHI = EHI
+---@class EHITrackerManager
 EHITrackerManagerVR = EHITrackerManager
 EHITrackerManagerVR.old_new = EHITrackerManager.new
 EHITrackerManagerVR.old_PreloadTracker = EHITrackerManager.PreloadTracker
@@ -15,7 +16,7 @@ function EHITrackerManagerVR:CreateWorkspace()
     local x, y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
     self._x = x
     self._y = y
-    self._scale = EHI:GetOption("vr_scale")
+    self._scale = EHI:GetOption("vr_scale") --[[@as number]]
 end
 
 function EHITrackerManagerVR:ShowPanel()

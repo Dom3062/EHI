@@ -40,24 +40,50 @@ local function left(o, target_x)
     end
     o:set_x(target_x)
 end
----@param o PanelBaseObject
----@param target_w number
----@param self EHITracker
-local function panel_w(o, target_w, self)
-    local TOTAL_T = 0.18
-    local from_w = o:w()
-    local abs = -(from_w - target_w)
-    local t = (1 - abs / abs) * TOTAL_T
-    while TOTAL_T > t do
-        local dt = coroutine.yield()
-        t = math_min(t + dt, TOTAL_T)
-        local lerp = t / TOTAL_T
-        o:set_w(math_lerp(from_w, target_w, lerp))
+local panel_w
+if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) then -- Horizontal: Left to Right
+    ---@param o PanelBaseObject
+    ---@param target_w number
+    ---@param self EHITracker
+    panel_w = function(o, target_w, self)
+        local TOTAL_T = 0.18
+        local from_w = o:w()
+        local from_x = o:x()
+        local abs = -(from_w - target_w)
+        local target_x = from_x + -(target_w - from_w)
+        local t = (1 - abs / abs) * TOTAL_T
+        while TOTAL_T > t do
+            local dt = coroutine.yield()
+            t = math_min(t + dt, TOTAL_T)
+            local lerp = t / TOTAL_T
+            o:set_x(math_lerp(from_x, target_x, lerp))
+            o:set_w(math_lerp(from_w, target_w, lerp))
+        end
+        if self and self.Redraw then ---@diagnostic disable-line
+            self:Redraw() ---@diagnostic disable-line
+        end
     end
-    if self and self.Redraw then ---@diagnostic disable-line
-        self:Redraw() ---@diagnostic disable-line
+else
+    ---@param o PanelBaseObject
+    ---@param target_w number
+    ---@param self EHITracker
+    panel_w = function(o, target_w, self)
+        local TOTAL_T = 0.18
+        local from_w = o:w()
+        local abs = -(from_w - target_w)
+        local t = (1 - abs / abs) * TOTAL_T
+        while TOTAL_T > t do
+            local dt = coroutine.yield()
+            t = math_min(t + dt, TOTAL_T)
+            local lerp = t / TOTAL_T
+            o:set_w(math_lerp(from_w, target_w, lerp))
+        end
+        if self and self.Redraw then ---@diagnostic disable-line
+            self:Redraw() ---@diagnostic disable-line
+        end
     end
 end
+
 ---@param o PanelBaseObject
 ---@param target_x number
 local function icon_x(o, target_x)
@@ -70,6 +96,7 @@ local function icon_x(o, target_x)
         local lerp = t / TOTAL_T
         o:set_x(math_lerp(from_x, target_x, lerp))
     end
+    o:set_x(target_x)
 end
 ---@param bg PanelRectangle
 ---@param total_t number
@@ -201,7 +228,7 @@ local function CreateHUDBGBox(panel, params)
 end
 
 ---@class EHITracker
----@field new fun(self: self, panel: Panel, params: AddTrackerTable|ElementTrigger): self
+---@field new fun(self: self, panel: Panel, params: AddTrackerTable|ElementTrigger, parent_class: EHITrackerManager): self
 ---@field _forced_icons table? Forces specific icons in the tracker
 ---@field _forced_time number? Forces specific time in the tracker
 ---@field _icon1 PanelBitmap
@@ -223,7 +250,8 @@ EHITracker._gap_scaled = EHITracker._gap * EHITracker._scale
 EHITracker._text_color = Color.white
 ---@param panel Panel Main panel provided by EHITrackerManager
 ---@param params EHITracker_params
-function EHITracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHITracker:init(panel, params, parent_class)
     self:pre_init(params)
     self._id = params.id
     self._icons = self._forced_icons or params.icons
@@ -237,8 +265,8 @@ function EHITracker:init(panel, params)
     self._time = self._forced_time or params.time or 0
     self._panel = panel:panel({
         name = params.id,
-        x = params.x,
-        y = params.y,
+        x = 0,
+        y = 0,
         w = (64 + gap + (self._icon_size * self._n_of_icons)) * self._scale,
         h = self._icon_size_scaled,
         alpha = 0,
@@ -266,14 +294,11 @@ function EHITracker:init(panel, params)
         self:CreateIcons()
     end
     self:OverridePanel()
-    self._parent_class = params.parent_class
+    self._parent_class = parent_class
     self._hide_on_delete = params.hide_on_delete
     self._flash_times = params.flash_times or 3
     self._anim_flash = params.flash_bg ~= false
     self:post_init(params)
-    if params.dynamic then
-        self:SetPanelVisible()
-    end
 end
 
 ---@param params EHITracker_params
@@ -592,8 +617,9 @@ function EHITracker:AddTrackerToUpdate()
 end
 
 ---@param w number? If not provided the width is then called from `EHITracker:GetPanelW()`
-function EHITracker:ChangeTrackerWidth(w)
-    self._parent_class:ChangeTrackerWidth(self._id, w or self:GetPanelW())
+---@param move_the_tracker boolean? If the tracker should move too, useful if number icons change and tracker needs to rearranged to fit properly
+function EHITracker:ChangeTrackerWidth(w, move_the_tracker)
+    self._parent_class:ChangeTrackerWidth(self._id, w or self:GetPanelW(), move_the_tracker)
 end
 
 function EHITracker:GetPanelW()
@@ -638,8 +664,8 @@ function EHITracker:ForceDelete()
     self:delete()
 end
 
----@param create_f function
----@param animate_f function
+---@param create_f fun(panel: Panel, params: table): Panel
+---@param animate_f fun(bg: PanelRectangle, total_t: number)
 function EHITracker.SetCustomBGFunctions(create_f, animate_f)
     CreateHUDBGBox = create_f
     bg_attention = animate_f

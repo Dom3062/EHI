@@ -104,10 +104,11 @@ EHIAchievementProgressTracker.ShowStartedPopup = EHIAchievementTracker.ShowStart
 EHIAchievementProgressTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIAchievementProgressTracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHIAchievementProgressTracker:init(panel, params, parent_class)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
-    EHIAchievementProgressTracker.super.init(self, panel, params)
+    EHIAchievementProgressTracker.super.init(self, panel, params, parent_class)
     if self._show_started then
         ShowStartedPopup(self, params.delay_popup)
     end
@@ -188,9 +189,10 @@ EHIAchievementStatusTracker.update = EHIAchievementStatusTracker.update_fade
 EHIAchievementStatusTracker._update = false
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIAchievementStatusTracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHIAchievementStatusTracker:init(panel, params, parent_class)
     self._status = params.status or "ok"
-    EHIAchievementStatusTracker.super.init(self, panel, params)
+    EHIAchievementStatusTracker.super.init(self, panel, params, parent_class)
     self:SetTextColor()
 end
 
@@ -203,6 +205,7 @@ function EHIAchievementStatusTracker:Format()
     end
 end
 
+---@param status string
 function EHIAchievementStatusTracker:SetStatus(status)
     if self._dont_override_status or self._status == status then
         return

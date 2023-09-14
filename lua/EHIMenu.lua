@@ -650,7 +650,7 @@ function EHIMenu:UnhighlightItem(item)
     item.panel:child("bg"):stop()
     item.panel:child("bg"):animate(function(o)
         local alpha = o:alpha()
-        do_animation(0.20, function (p)
+        do_animation(0.2, function (p)
             o:set_alpha(math.lerp(alpha, 0, p))
         end)
         o:set_alpha(0)
@@ -663,8 +663,8 @@ function EHIMenu:SetLegends(accept, reset, step)
         local text = managers.localization:text("menu_legend_back", {BTN_BACK = managers.localization:btn_macro("back")})
         local separator = "    "
         if accept then text = managers.localization:text("menu_legend_select", {BTN_UPDATE = managers.localization:btn_macro("menu_update")}) .. separator .. text end
-        if reset then text = managers.localization:to_upper_text("VoidUI_tooltip_reset_cnt", {BTN_RESET = managers.localization:btn_macro("menu_toggle_voice_message")}) .. separator .. text end
-        if step then text = managers.localization:to_upper_text("VoidUI_tooltip_steps", {BTN_STEP = managers.localization:btn_macro("previous_page") .. managers.localization:btn_macro("next_page")}) .. separator .. text end
+        if reset then text = managers.localization:to_upper_text("ehi_menu_reset_to_default", {BTN_RESET = managers.localization:btn_macro("menu_toggle_voice_message")}) .. separator .. text end
+        if step then text = managers.localization:to_upper_text("ehi_menu_large_steps", {BTN_STEP = managers.localization:btn_macro("previous_page") .. managers.localization:btn_macro("next_page")}) .. separator .. text end
         self._button_legends:set_text(text)
     end
 end
@@ -1445,7 +1445,7 @@ function EHIMenu:OpenMultipleChoicePanel(item)
         rotation = 360
     })
     self._open_choice_dialog = { parent_item = item, panel = choice_dialog, selected = item.value, items = {} }
-    for i, choice in pairs(item.items) do
+    for i, choice in ipairs(item.items) do
         local title = choice_dialog:text({
             name = "title",
             font_size = 18,
@@ -1816,7 +1816,7 @@ function EHIMenu:SetColorSlider(item, x, type, add)
     if not add then
         percentage = (x - panel_min) / (panel_max - panel_min)
     end
-    local value = string.format("%.0f", 0 + (255 - 0) * percentage)
+    local value = string.format("%.0f", 0 + (255 - 0) * percentage) --[[@as number]]
     value_bar:set_w(math.max(1, item:w() * percentage))
     value_bar:set_color(Color(255, type == 1 and value or 0, type == 2 and value or 0, type == 3 and value or 0) / 255)
     value_text:set_text(value)
@@ -1903,6 +1903,14 @@ function EHIMenu:UpdateAllXPOptions(menu)
             self:AnimateItemEnabled(item, enabled2)
         end
     end
+end
+
+function EHIMenu:IsVR()
+    return EHI:IsVR()
+end
+
+function EHIMenu:IsNotVR()
+    return not self:IsVR()
 end
 
 function EHIMenu:GetBuffOffsetEnabled()

@@ -40,7 +40,8 @@ end
 
 local original =
 {
-    load = PlayerInventory.load
+    load = PlayerInventory.load,
+    _start_jammer_effect = PlayerInventory._start_jammer_effect
 }
 
 function PlayerInventory:load(load_data, ...)
@@ -66,7 +67,6 @@ function PlayerInventory:load(load_data, ...)
     end
 end
 
-original._start_jammer_effect = PlayerInventory._start_jammer_effect
 function PlayerInventory:_start_jammer_effect(end_time, ...)
     local result = original._start_jammer_effect(self, end_time, ...)
     if result ~= true then

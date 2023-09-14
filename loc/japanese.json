@@ -75,8 +75,10 @@
 
   "ehi_tracker_alignment": "トラッカーの整列",
   "ehi_tracker_alignment_desc": "トラッカーの位置合わせを定義します。",
-  "ehi_tracker_alignment_1": "縦",
-  "ehi_tracker_alignment_2": "横",
+  "ehi_tracker_alignment_1": "縦; Top to bottom",
+  "ehi_tracker_alignment_2": "縦; Bottom to Top",
+  "ehi_tracker_alignment_3": "横; Left to Right",
+  "ehi_tracker_alignment_4": "横; Right to Left",
 
   "ehi_vr_scale": "VRのスケール",
   "ehi_vr_scale_desc": "VRモードでのトラッカーの大きさを設定します。\nトラッカーは、値が大きい程大きくなります。",

@@ -118,14 +118,20 @@ if show_minion_tracker or show_popup then
         end
     end
 
+    ---@param params table
+    ---@param unit UnitEnemy
     function GroupAIStateBase:EHIConvertDied(params, unit)
         params.killed_callback = nil
         self:EHIRemoveConvert(params, unit)
     end
+    ---@param params table
+    ---@param unit UnitEnemy
     function GroupAIStateBase:EHIConvertDestroyed(params, unit)
         params.destroyed_callback = nil
         self:EHIRemoveConvert(params, unit)
     end
+    ---@param params table
+    ---@param unit UnitEnemy
     function GroupAIStateBase:EHIRemoveConvert(params, unit)
         EHI:CallCallback(EHI.CallbackMessage.OnMinionKilled)
         if params.update_tracker then
@@ -152,6 +158,9 @@ if show_minion_tracker or show_popup then
     EHI:AddCallback(EHI.CallbackMessage.MissionEnd, GameEnd)
 
     if EHI:GetOption("show_minion_option") == 1 then -- Only you
+        ---@param unit UnitEnemy
+        ---@param local_peer boolean
+        ---@param peer_id number
         function GroupAIStateBase:EHIAddConvert(unit, local_peer, peer_id)
             if not unit.key then
                 EHI:Log("Convert does not have a 'key()' function! Aborting to avoid crashing the game.")
@@ -167,6 +176,9 @@ if show_minion_tracker or show_popup then
             end
         end
     else -- Everyone
+        ---@param unit UnitEnemy
+        ---@param local_peer boolean
+        ---@param peer_id number
         function GroupAIStateBase:EHIAddConvert(unit, local_peer, peer_id)
             if not unit.key then
                 EHI:Log("Convert does not have a 'key()' function! Aborting to avoid crashing the game.")

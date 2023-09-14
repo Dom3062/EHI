@@ -41,6 +41,7 @@ function EHITimerWaypoint:SetTimeNoFormat(t, time)
     end
 end
 
+---@param jammed boolean
 function EHITimerWaypoint:SetJammed(jammed)
     if self._anim_started and jammed then
         self._timer:stop()
@@ -50,9 +51,15 @@ function EHITimerWaypoint:SetJammed(jammed)
     self:SetColorBasedOnStatus()
 end
 
+---@param powered boolean
 function EHITimerWaypoint:SetPowered(powered)
     self._not_powered = not powered
     self:SetColorBasedOnStatus()
+end
+
+function EHITimerWaypoint:SetRunning()
+    self:SetJammed(false)
+    self:SetPowered(true)
 end
 
 function EHITimerWaypoint:SetColorBasedOnStatus()

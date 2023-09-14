@@ -6,10 +6,11 @@ EHIElevatorTimerTracker = class(EHIPausableTracker)
 EHIElevatorTimerTracker._forced_icons = { Icon.Door }
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIElevatorTimerTracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHIElevatorTimerTracker:init(panel, params, parent_class)
     self._floors = params.floors or 26
     params.time = self:GetElevatorTime()
-    EHIElevatorTimerTracker.super.init(self, panel, params)
+    EHIElevatorTimerTracker.super.init(self, panel, params, parent_class)
 end
 
 function EHIElevatorTimerTracker:GetElevatorTime()

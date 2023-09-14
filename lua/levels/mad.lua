@@ -8,10 +8,11 @@ EHIdailycakeTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIdailycakeTracker.SetProgress = EHIProgressTracker.SetProgress
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIdailycakeTracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHIdailycakeTracker:init(panel, params, parent_class)
     self._max = 4
     self._progress = 0
-    EHIdailycakeTracker.super.init(self, panel, params)
+    EHIdailycakeTracker.super.init(self, panel, params, parent_class)
 end
 
 function EHIdailycakeTracker:OverridePanel()

@@ -16,11 +16,13 @@ function EHIProgressWaypoint:post_init(params)
     self:ForceFormat()
 end
 
-function EHIProgressTracker:DecreaseProgress(progress)
+---@param progress number?
+function EHIProgressWaypoint:DecreaseProgress(progress)
     self:SetProgress(self._progress - (progress or 1))
     self._disable_counting = false
 end
 
+---@param progress number
 function EHIProgressWaypoint:SetProgress(progress)
     if self._progress ~= progress and not self._disable_counting then
         self._progress = progress

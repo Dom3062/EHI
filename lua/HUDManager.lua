@@ -10,16 +10,22 @@ local original =
 }
 
 ---@class HUDManager
+---@field _hud table
+---@field _hud_hint table HUDHint class
+---@field _hud_mission_briefing HUDMissionBriefing
+---@field PLAYER_PANEL number
 ---@field add_waypoint fun(self: self, id: number|string, params: table)
----@field AddWaypoint fun(self: self, id: string, params: table): WaypointDataTable
----@field remove_waypoint fun(self: self, id: string)
----@field SoftRemoveWaypoint2 fun(self: self, id: number)
+---@field remove_waypoint fun(self: self, id: number|string)
 ---@field get_waypoint_data fun(self: self, id: string): WaypointDataTable?
----@field RestoreWaypoint2 fun(self: self, id: number)
+---@field add_updator fun(self: self, id: string, cb: function)
+---@field script fun(self: self, name: string): { panel: Panel }
+---@field custom_ingame_popup_text fun(self: self, title: string?, text: string, icon_id: string?)
+---@field show_hint fun(self: self, params: table)
+---@field make_fine_text fun(self: self, text: PanelText)
 
 ---@param id string
----@param params AddWaypointTable
----@return WaypointDataTable
+---@param params AddWaypointTable|ElementWaypointTrigger
+---@return WaypointDataTable?
 function HUDManager:AddWaypoint(id, params)
     self:add_waypoint(id, params)
     return self:get_waypoint_data(id)
@@ -44,7 +50,7 @@ function HUDManager:AddWaypointFromTrigger(id, params)
 end
 
 ---@param id number
----@param data WaypointDataTable
+---@param data WaypointDataTable|VanillaWaypointDataTable
 function HUDManager:AddWaypointSoft(id, data)
     self._hud.stored_waypoints[id] = data
     self._hud.ehi_removed_waypoints = self._hud.ehi_removed_waypoints or {}

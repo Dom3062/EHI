@@ -37,8 +37,10 @@
  
     "ehi_tracker_alignment" : "Allineamento Tracciatore",
     "ehi_tracker_alignment_desc" : "Definisce come dovrebbero allinearsi i tracciatori",
-    "ehi_tracker_alignment_1" : "Verticale",
-    "ehi_tracker_alignment_2" : "Orizzontale",
+    "ehi_tracker_alignment_1" : "Verticale; Top to bottom",
+    "ehi_tracker_alignment_2" : "Verticale; Bottom to Top",
+    "ehi_tracker_alignment_3" : "Orizzontale; Left to Right",
+    "ehi_tracker_alignment_4" : "Orizzontale; Right to Left",
 
     "ehi_vr_scale": "Dimensione VR",
     "ehi_vr_scale_desc": "Imposta la dimensione dei tracciatori in VR. Più il numero è alto, più i tracciatori sono grossi e vice versa",

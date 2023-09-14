@@ -3,6 +3,16 @@ if EHI:CheckLoadHook("CriminalsManager") or EHI:IsXPTrackerHidden() then
     return
 end
 
+---@class CriminalsManager_CharacterData
+---@field taken boolean
+---@field data { ai: boolean }
+
+---@class CriminalsManager
+---@field _characters CriminalsManager_CharacterData[]
+---@field character_by_name fun(self: self, name: string): CriminalsManager_CharacterData?
+---@field character_color_id_by_unit fun(self: self, unit: UnitPlayer|UnitTeamAI): number?
+---@field character_peer_id_by_unit fun(self: self, unit: UnitPlayer|UnitTeamAI): number?
+
 if EHI:IsRunningBB() then
     local original =
     {
@@ -11,6 +21,7 @@ if EHI:IsRunningBB() then
         _remove = CriminalsManager._remove
     }
 
+    ---@param name string
     function CriminalsManager:add_character(name, ...)
         original.add_character(self, name, ...)
         local character = self:character_by_name(name)
@@ -19,6 +30,8 @@ if EHI:IsRunningBB() then
         end
     end
 
+    ---@param name string
+    ---@param unit UnitPlayer|UnitTeamAI
     function CriminalsManager:set_unit(name, unit, ...)
         original.set_unit(self, name, unit, ...)
         local character = self:character_by_name(name)
@@ -27,6 +40,7 @@ if EHI:IsRunningBB() then
         end
     end
 
+    ---@param id number
     function CriminalsManager:_remove(id, ...)
         local char_data = self._characters[id]
         if char_data.data.ai then

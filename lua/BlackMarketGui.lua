@@ -35,7 +35,10 @@ local original =
 
 local strs = {}
 local percent_format = "%"
-EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, loc_loaded)
+EHI:AddCallback(EHI.CallbackMessage.LocLoaded,
+---@param loc LocalizationManager
+---@param loc_loaded string
+function(loc, loc_loaded)
     strs.poison = loc:text("ehi_bm_poison")
     strs.fire = loc:text("ehi_bm_fire")
     strs.explosion = loc:text("ehi_bm_explosion")
@@ -64,6 +67,9 @@ local function AddCustomText(id, t)
     LocalizationManager._custom_localizations[id] = t
 end
 
+---@param dot_data table
+---@param variant string?
+---@return string
 local function FormatDOTData(dot_data, variant)
     local str = string.format("%s: (%s)", variant or "<Unknown>", strs.dot)
     if dot_data.dot_trigger_chance then
@@ -386,7 +392,7 @@ local GrenadeFormattingFunction =
         return str
     end,
     smoke_screen_grenade = function()
-        local grenade = tweak_data.projectiles.smoke_screen_grenade
+        local grenade = tweak_data.projectiles.smoke_screen_grenade or {}
         local str = string.format("\n> %s\n> %s\n> %s", string.format(strs.cooldown_drain, "1"),
         string.format(managers.localization:text("ehi_bm_sicario_1"), tostring((grenade.dodge_chance or 0) * 100), percent_format),
         string.format(managers.localization:text("ehi_bm_sicario_2"), tostring((grenade.accuracy_roll_chance or 0) * 100), percent_format))

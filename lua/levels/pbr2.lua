@@ -7,10 +7,11 @@ EHIcac33Tracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIcac33Tracker.SetProgress = EHIProgressTracker.SetProgress
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIcac33Tracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHIcac33Tracker:init(panel, params, parent_class)
     self._progress = 0
     self._max = 200
-    EHIcac33Tracker.super.init(self, panel, params)
+    EHIcac33Tracker.super.init(self, panel, params, parent_class)
     self._flash_times = 1
 end
 

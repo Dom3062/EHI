@@ -1,9 +1,9 @@
 local EHI = EHI
 EHIfish6Tracker = class(EHIAchievementProgressTracker)
 EHIfish6Tracker._forced_icons = EHI:GetAchievementIcon("fish_6")
-function EHIfish6Tracker:init(panel, params)
+function EHIfish6Tracker:init(panel, params, parent_class)
     params.max = managers.enemy:GetNumberOfEnemies()
-    EHIfish6Tracker.super.init(self, panel, params)
+    EHIfish6Tracker.super.init(self, panel, params, parent_class)
     CopDamage.register_listener("EHI_fish_6_listener", { "on_damage" }, function(damage_info)
         if damage_info.result.type == "death" then
             self:IncreaseProgress()

@@ -5,6 +5,9 @@
     "ehi_save_data_corrupted" : "EHI's Save File Corrupted",
     "ehi_save_data_corrupted_desc" : "EHI's Save File got corrupted and cannot be loaded\nEHI will use default values to avoid crashing",
 
+    "ehi_menu_reset_to_default" : "$BTN_RESET Set to default",
+    "ehi_menu_large_steps" : "$BTN_STEP Large steps",
+
     "ehi_level_restart_required" : "A level restart is required for options to take effect",
 
     "ehi_item_depends_on" : "Option '$option;' must be enabled in order to work",
@@ -81,8 +84,10 @@
 
     "ehi_tracker_alignment" : "Tracker Alignment",
     "ehi_tracker_alignment_desc" : "Defines how trackers should be aligned",
-    "ehi_tracker_alignment_1" : "Vertical",
-    "ehi_tracker_alignment_2" : "Horizontal",
+    "ehi_tracker_alignment_1" : "Vertical; Top to bottom",
+    "ehi_tracker_alignment_2" : "Vertical; Bottom to Top",
+    "ehi_tracker_alignment_3" : "Horizontal; Left to Right",
+    "ehi_tracker_alignment_4" : "Horizontal; Right to Left",
 
     "ehi_vr_x_offset" : "X offset (VR)",
     "ehi_vr_y_offset" : "Y offset (VR)",

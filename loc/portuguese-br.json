@@ -137,8 +137,10 @@
 
     "ehi_tracker_alignment" : "Alinhamento do Tracker",
     "ehi_tracker_alignment_desc" : "Define como os Trackers devem ser alinhados",
-    "ehi_tracker_alignment_1" : "Vertical",
-    "ehi_tracker_alignment_2" : "Horizontal",
+    "ehi_tracker_alignment_1" : "Vertical; Top to bottom",
+    "ehi_tracker_alignment_2" : "Vertical; Bottom to Top",
+    "ehi_tracker_alignment_3" : "Horizontal; Left to Right",
+    "ehi_tracker_alignment_4" : "Horizontal; Right to Left",
 
     "ehi_show_achievements" : "Mostrar Tracker de Conquista",
     "ehi_show_achievements_desc" : "Mostra as conquistas na tela\nAlgumas heists não tem conquistas disponíveis",

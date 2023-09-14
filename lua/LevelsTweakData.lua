@@ -3,15 +3,6 @@ if EHI:CheckLoadHook("LevelsTweakData") then
 	return
 end
 
----@class LevelsTweakData
----@field GetGroupAIState fun(self: self, level_id: string?): string
----@field IsLevelSkirmish fun(self: self, level_id: string?): boolean
----@field IsLevelSafehouse fun(self: self, level_id: string?): boolean
----@field IsStealthAvailable fun(self: self, level_id: string?): boolean
----@field IsStealthRequired fun(self: self, level_id: string?): boolean
----@field IsLevelChristmas fun(self: self, level_id: string?): boolean
----@field IsLevelCustom fun(self: self, level_id: string?): boolean
-
 ---@param level_id string?
 ---@return string
 function LevelsTweakData:GetGroupAIState(level_id)

@@ -8,8 +8,9 @@ EHIcorp9Tracker._show_failed = EHIAchievementTracker._show_failed
 EHIcorp9Tracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIcorp9Tracker:init(panel, params)
-    EHIcorp9Tracker.super.init(self, panel, params)
+---@param parent_class EHITrackerManager
+function EHIcorp9Tracker:init(panel, params, parent_class)
+    EHIcorp9Tracker.super.init(self, panel, params, parent_class)
     if self._show_started then
         self:ShowStartedPopup()
     end

@@ -57,7 +57,8 @@ function ExperienceManager:init(...)
         stealth = true,
         bonus_xp = 0,
         skill_xp_multiplier = 1, -- Recalculated in ExperienceManager:RecalculateSkillXPMultiplier()
-        difficulty_multiplier = 1
+        difficulty_multiplier = 1,
+        projob_multiplier = 1 -- Unavailable since Update 109, however mods can still enable Pro Job modifier in heists
     }
     if xp_format == 3 then -- Multiply
         EHI:AddOnAlarmCallback(function()
@@ -88,7 +89,6 @@ function ExperienceManager:LoadData(managers)
     local difficulty_stars = job:current_difficulty_stars()
     self._ehi_xp.job_stars = job:current_job_stars()
     self._ehi_xp.stealth_bonus = job:get_ghost_bonus()
-    self._ehi_xp.projob_multiplier = 1
     if job:is_current_job_professional() then
         self._ehi_xp.projob_multiplier = tweak_data:get_value("experience_manager", "pro_job_multiplier") or 1
     end
@@ -199,6 +199,7 @@ function ExperienceManager:HookAwardXP()
     end
 end
 
+---@param multiplier number
 function ExperienceManager:UpdateSkillXPMultiplier(multiplier)
     self._ehi_xp.skill_xp_multiplier = multiplier
     self:RecalculateXP()
@@ -208,17 +209,19 @@ function ExperienceManager:RecalculateSkillXPMultiplier()
     self:UpdateSkillXPMultiplier(managers.player:get_skill_exp_multiplier(self._ehi_xp.stealth))
 end
 
+---@param bonus number
 function ExperienceManager:SetGagePackageBonus(bonus)
     self._ehi_xp.gage_bonus = bonus
     self:RecalculateXP()
 end
 
+---@param in_custody boolean
 function ExperienceManager:SetInCustody(in_custody)
     self._ehi_xp.in_custody = in_custody
     if in_custody then
         self._ehi_xp.alive_players = math.max(self._ehi_xp.alive_players - 1, 0)
     else
-        self._ehi_xp.alive_players = self._ehi_xp.alive_players + 1
+        self._ehi_xp.alive_players = math.max(self._ehi_xp.alive_players + 1, 4)
     end
     self:RecalculateXP()
 end
@@ -230,8 +233,8 @@ end
 
 function ExperienceManager:QueryAmountOfAllPlayers()
     local previous_value = self._ehi_xp.alive_players
-    local human_players = managers.network:session() and managers.network:session():amount_of_alive_players() or 0
-    local bots = managers.criminals:nr_AI_criminals()
+    local human_players = managers.network:session() and managers.network:session():amount_of_alive_players()
+    local bots = managers.groupai:state() and managers.groupai:state():amount_of_winning_ai_criminals()
     self._ehi_xp.alive_players = math.clamp(human_players + bots, 0, 4)
     if previous_value ~= self._ehi_xp.alive_players then
         self:RecalculateSkillXPMultiplier()
@@ -239,10 +242,11 @@ function ExperienceManager:QueryAmountOfAllPlayers()
 end
 
 function ExperienceManager:QueryAmountOfAlivePlayers()
-    self._ehi_xp.alive_players = managers.network:session() and managers.network:session():amount_of_alive_players() or 0
+    self._ehi_xp.alive_players = managers.network:session() and managers.network:session():amount_of_alive_players()
     self:RecalculateSkillXPMultiplier()
 end
 
+---@param human_player boolean?
 function ExperienceManager:DecreaseAlivePlayers(human_player)
     self._ehi_xp.alive_players = math.max(self._ehi_xp.alive_players - 1, 0)
     if human_player then

@@ -44,12 +44,13 @@ else
 end
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIAssaultDelayTracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHIAssaultDelayTracker:init(panel, params, parent_class)
     if not params.time then
         params.time = self:CalculateBreakTime(params.diff) + (2 * math.random())
     end
     self:ComputeHostageDelay(params.diff or 0)
-    EHIAssaultDelayTracker.super.init(self, panel, params)
+    EHIAssaultDelayTracker.super.init(self, panel, params, parent_class)
     self._update = not params.stop_counting
     self.update_normal = self.update
     self:CheckIfHostageIsPresent()

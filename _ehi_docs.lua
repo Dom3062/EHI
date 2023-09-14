@@ -142,15 +142,20 @@
 ---@field text_rect { x: number, y: number, w: number, h: number }
 
 ---@class _WaypointDataTable
----@field bitmap userdata
----@field bitmap_world userdata
----@field timer_gui userdata
----@field distance userdata
----@field arrow userdata
+---@field bitmap PanelBitmap
+---@field bitmap_world PanelBitmap VR only
+---@field timer_gui PanelText
+---@field distance PanelText
+---@field arrow PanelBitmap
 ---@field position Vector3
+---@field size Vector3
 
 ---@class WaypointDataTable : _WaypointDataTable
 ---@field init_data _WaypointDataTable
+
+---@class VanillaWaypointDataTable : _WaypointDataTable
+---@field init_data _WaypointDataTable
+---@field distance boolean
 
 ---@class MissionDoorAdvancedTable
 ---@field w_id number Waypoint ID
@@ -159,9 +164,6 @@
 
 ---@class MissionDoorTable
 ---@field [Vector3] number|MissionDoorAdvancedTable
-
----@class MissionDoorTableParsed
----@field [string] number|MissionDoorAdvancedTable
 
 ---@class ValueBasedOnDifficultyTable
 ---@field normal_or_above any Normal or above

@@ -5,6 +5,9 @@
     "ehi_save_data_corrupted" : "Uložené nastavení modu EHI je poškozené",
     "ehi_save_data_corrupted_desc" : "Uložené nastavení je poškozené a nelze ho načíst\nEHI načte výchozí hodnoty, aby hra nespadla",
 
+    "ehi_menu_reset_to_default" : "$BTN_RESET Nastavit výchozí hodnotu",
+    "ehi_menu_large_steps" : "$BTN_STEP Větší posunutí",
+
     "ehi_level_restart_required" : "Aby se nastavení projevilo, je potřeba restartovat mapu",
 
     "ehi_item_depends_on" : "Funkce '$option;' musí být zapnutá aby tato možnost fungovala",
@@ -81,8 +84,10 @@
 
     "ehi_tracker_alignment" : "Zarovnání sledovačů",
     "ehi_tracker_alignment_desc" : "Nastavuje zarovnání sledovačů",
-    "ehi_tracker_alignment_1" : "Vertikálně",
-    "ehi_tracker_alignment_2" : "Horizontálně",
+    "ehi_tracker_alignment_1" : "Svisle; Odshora dolů",
+    "ehi_tracker_alignment_2" : "Svisle; Odspodu nahoru",
+    "ehi_tracker_alignment_3" : "Vodorovně; Zleva doprava",
+    "ehi_tracker_alignment_4" : "Vodorovně; Zprava doleva",
 
     "ehi_vr_x_offset" : "Posun X (VR)",
     "ehi_vr_y_offset" : "Posun Y (VR)",

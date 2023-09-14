@@ -10,7 +10,7 @@ EHIWaypointManager._distance_font_size = 32
 ---@param id string
 ---@param params AddWaypointTable|ElementWaypointTrigger
 function EHIWaypointManager:AddWaypoint(id, params)
-    params.distance = true
+    params.distance = true ---@diagnostic disable-line
     original.AddWaypoint(self, id, params)
 end
 

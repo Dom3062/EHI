@@ -53,7 +53,11 @@ _G.EHI =
     XPElementLevelNoCheck =
     {
         mallcrasher = true, -- Mallcrasher
-        rat = true -- Cook Off
+        rat = true, -- Cook Off
+
+        -- Custom Missions
+        ratdaylight = true,
+        lid_cookoff_methslaves = true
     },
 
     LootCounter =
@@ -81,7 +85,7 @@ _G.EHI =
         XPElement = 0
     },
 
-    Callback = {},
+    Callback = {}, ---@type table<string|number, function[]>
     CallbackMessage =
     {
         Spawned = "Spawned",
@@ -378,7 +382,7 @@ EHI.WaypointIconRedirect =
     [EHI.Icons.Heli] = "EHI_Heli"
 }
 
----@param self EHI
+---@param self table
 local function LoadDefaultValues(self)
     self.settings =
     {
@@ -393,11 +397,11 @@ local function LoadDefaultValues(self)
         text_scale = 1,
         scale = 1,
         time_format = 2, -- 1 = Seconds only, 2 = Minutes and seconds
-        tracker_alignment = 1, -- 1 = Vertical, 2 = Horizontal
+        tracker_alignment = 1, -- 1 = Vertical; Top to Bottom, 2 = Vertical; Bottom to Top, 3 = Horizontal; Left to Right, 4 = Horizontal; Right to Left
         vr_x_offset = 0,
         vr_y_offset = 150,
         vr_scale = 1,
-        vr_tracker_alignment = 1, -- 1 = Vertical, 2 = Horizontal
+        vr_tracker_alignment = 1, -- 1 = Vertical; Top to Bottom, 2 = Vertical; Bottom to Top, 3 = Horizontal; Left to Right, 4 = Horizontal; Right to Left
 
         colors =
         {
@@ -782,8 +786,7 @@ end
 ---@param diff_1 number
 ---@param diff_2 number
 function EHI:IsBetweenDifficulties(diff_1, diff_2)
-    if diff_1 > diff_2 then
-        -- Swap the numbers
+    if diff_1 > diff_2 then -- Swap the numbers
         diff_1, diff_2 = diff_2, diff_1
     end
     return self._cache.DifficultyIndex >= diff_1 and self._cache.DifficultyIndex <= diff_2
@@ -861,12 +864,18 @@ end
 
 ---@param vr_option string Option to be checked if the game is running in VR version
 ---@param option string Option to be checked if the game is running in non-VR version
----@param expected_value any What the expected value in the option should be
----@param vr_expected_value any? What the expected value in the VR option should be in VR (don't pass a value if the same value is expected for both options)
+---@param expected_value { [any]: boolean }|any What the expected value in the option should be
+---@param vr_expected_value { [any]: boolean }|any? What the expected value in the VR option should be in VR (don't pass a value if the same value is expected for both options)
 ---@return boolean
 function EHI:CheckVRAndNonVROption(vr_option, option, expected_value, vr_expected_value)
     if self:IsVR() then
+        if type(vr_expected_value or expected_value) == "table" then
+            local tbl = vr_expected_value or expected_value
+            return tbl[self:GetOption(vr_option)]
+        end
         return self:GetOption(vr_option) == (vr_expected_value or expected_value)
+    elseif type(expected_value) == "table" then
+        return expected_value[self:GetOption(option)]
     end
     return self:GetOption(option) == expected_value
 end
@@ -940,7 +949,7 @@ end
 ---@param equipment string
 ---@return Color
 function EHI:GetEquipmentColor(equipment)
-    if equipment and self.settings.equipment_color[equipment] then
+    if equipment then
         return self:GetColor(self.settings.equipment_color[equipment])
     end
     return Color.white
@@ -1124,7 +1133,7 @@ function EHI:Unhook(id)
 end
 
 ---Hooks elements that removes loot bags (due to fire or out of bounds)
----@param elements number|number[] Index or indexes of ElementCarry that removes loot bags with operation "remove"
+---@param elements number|number[] Index or indices of ElementCarry that removes loot bags with operation "remove"
 function EHI:HookLootRemovalElement(elements)
     if type(elements) ~= "table" and type(elements) ~= "number" then
         return
@@ -1250,23 +1259,14 @@ end
 ---@return Vector3?
 function EHI:GetElementPosition(id)
     local element = managers.mission:get_element_by_id(id)
-    if not element then
-        return nil
-    end
-    return element:value("position")
+    return element and element:value("position")
 end
 
 ---@param id number Unit ID
 ---@return Vector3?
 function EHI:GetUnitPosition(id)
     local unit = managers.worlddefinition:get_unit(id)
-    if not unit then
-        return nil
-    end
-    if not unit.position then
-        return nil
-    end
-    return unit:position()
+    return unit and unit.position and unit:position()
 end
 
 ---@param message string
@@ -2017,6 +2017,10 @@ function EHI:EscapeVehicleWillReturn(level_id)
     return true
 end
 
+function EHI:CanShowCivilianCountTracker()
+    return self:GetOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and self:IsNotPlayingSFN()
+end
+
 Load()
 if EHI:GetUnlockableOption("hide_unlocked_achievements") then
     local G = Global
@@ -2105,7 +2109,7 @@ function EHI:IsBeardLibAchievementLocked(package_id, achievement_id, skip_check)
 end
 
 ---@param achievement string Achievement ID in Vanilla; Beardlib is not supported
----@return integer
+---@return number
 function EHI:GetAchievementProgress(achievement)
     return managers.network.account:get_stat(achievement)
 end
@@ -2171,6 +2175,27 @@ function EHI:PrintTable(tbl, ...)
     end
     if _G.PrintTableDeep then
         _G.PrintTableDeep(tbl, 5000, true, "[EHI]" .. s, {}, false)
+    else
+        if s ~= "" then
+            self:Log(s)
+        end
+        _G.PrintTable(tbl)
+    end
+end
+
+---@param tbl table
+---@param tables_to_ignore string|table
+---@param ... any
+function EHI:PrintTable2(tbl, tables_to_ignore, ...)
+    local s = ""
+    if ... then
+        local _tbl = { ... }
+        for _, _s in ipairs(_tbl) do
+            s = s .. " " .. tostring(_s)
+        end
+    end
+    if _G.PrintTableDeep then
+        _G.PrintTableDeep(tbl, 5000, true, "[EHI]" .. s, tables_to_ignore, false)
     else
         if s ~= "" then
             self:Log(s)

@@ -45,29 +45,29 @@ function DigitalGui:TimerStartCountDown()
     end
     if managers.ehi_manager:Exists(self._ehi_key) then
         managers.ehi_manager:SetTimerJammed(self._ehi_key, false)
-    else
-        if not show_waypoint_only then
-            managers.ehi_tracker:AddTracker({
-                id = self._ehi_key,
-                time = self._timer,
-                icons = self._icons or { Icon.PCHack },
-                warning = self._warning,
-                completion = self._completion,
-                class = "EHITimerTracker"
-            })
-        end
-        if show_waypoint then
-            managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
-                time = self._timer,
-                icon = self._icons or Icon.PCHack,
-                position = self._unit:position(),
-                warning = self._warning,
-                completion = self._completion,
-                class = "EHITimerWaypoint"
-            })
-        end
-        self:HideWaypoint()
+        return
     end
+    if not show_waypoint_only then
+        managers.ehi_tracker:AddTracker({
+            id = self._ehi_key,
+            time = self._timer,
+            icons = self._icons or { Icon.PCHack },
+            warning = self._warning,
+            completion = self._completion,
+            class = "EHITimerTracker"
+        })
+    end
+    if show_waypoint then
+        managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
+            time = self._timer,
+            icon = self._icons or Icon.PCHack,
+            position = self._unit:position(),
+            warning = self._warning,
+            completion = self._completion,
+            class = "EHITimerWaypoint"
+        })
+    end
+    self:HideWaypoint()
 end
 
 function DigitalGui:HideWaypoint()

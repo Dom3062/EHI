@@ -1,3 +1,13 @@
+---@class ZipLine
+---@field _attached_bag Unit?
+---@field _current_time number
+---@field _sled_data { object: Unit? }
+---@field _unit UnitZipline
+---@field ziplines UnitZipline[]
+---@field is_usage_type_bag fun(self: self): boolean
+---@field is_usage_type_person fun(self: self): boolean
+---@field total_time fun(self: self): number
+
 local EHI = EHI
 if EHI:CheckLoadHook("ZipLine") or not EHI:GetOption("show_zipline_timer") then
     return
@@ -54,25 +64,25 @@ function ZipLine:init(unit, ...)
 end
 
 function ZipLine:HookUpdateLoop()
-    if self._update_hooked then
+    if self.__ehi_update_hooked then
         return
     end
     self.update = function(self, ...)
         original.update(self, ...)
-        if self._ehi_bag_attached and not self._attached_bag then
-            self._ehi_bag_attached = nil
+        if self.__ehi_bag_attached and not self._attached_bag then
+            self.__ehi_bag_attached = nil
             local t = self:total_time() * self._current_time
             managers.ehi_tracker:RemoveTracker(self._ehi_key_bag_half)
             managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key_bag_full, t)
             managers.ehi_waypoint:SetWaypointTime(self._ehi_key_bag_full, t)
         end
     end
-    self._update_hooked = true
+    self.__ehi_update_hooked = true
 end
 
 function ZipLine:UnhookUpdateLoop()
     self.update = original.update
-    self._update_hooked = nil
+    self.__ehi_update_hooked = nil
 end
 
 function ZipLine:set_usage_type(...)
@@ -86,7 +96,7 @@ end
 
 function ZipLine:release_bag(...)
     original.release_bag(self, ...)
-    self._ehi_bag_attached = nil
+    self.__ehi_bag_attached = nil
 end
 
 function ZipLine:GetMovingObject()
@@ -106,9 +116,11 @@ function ZipLine:attach_bag(...)
             unit = self:GetMovingObject()
         })
     end
-    self._ehi_bag_attached = true
+    self.__ehi_bag_attached = true
 end
 
+---@param self ZipLine
+---@param unit Unit?
 local function AddUserZipline(self, unit)
     if not unit then
         return

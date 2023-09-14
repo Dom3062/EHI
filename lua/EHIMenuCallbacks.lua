@@ -28,7 +28,7 @@ function EHIMenu:UpdateTracker(option, value)
 end
 
 function EHIMenu:UpdateEnemyCountTracker(value)
-    self._preview_panel:UpdateEnemyCountTracker(value)
+    self._preview_panel:UpdateTrackerFormat("show_enemy_count_tracker", value)
 end
 
 function EHIMenu:SetFocus2(focus, value)
@@ -102,7 +102,7 @@ function EHIMenu:fcc_equipment_tracker_menu(focus, ...)
 end
 
 function EHIMenu:UpdateMinionTracker(value)
-    self._preview_panel:UpdateMinionTracker(value)
+    self._preview_panel:UpdateTrackerFormat("show_minion_tracker", value)
 end
 
 function EHIMenu:fcc_show_minion_option(focus, ...)

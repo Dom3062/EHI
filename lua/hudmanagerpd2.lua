@@ -197,7 +197,7 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
     function HUDManager:sync_start_assault(...)
         original.sync_start_assault(self, ...)
         EHI:Unhook("Assault_set_control_info")
-        if EndlessAssault or self._ehi_manual_block then
+        if EndlessAssault or self._ehi_assault_block then
             return
         elseif self.ehi:TrackerExists("Assault") then
             self.ehi:CallFunction("Assault", "AssaultStart", EHI._cache.diff or 0)
@@ -213,7 +213,7 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
     original.sync_end_assault = HUDManager.sync_end_assault
     function HUDManager:sync_end_assault(...)
         original.sync_end_assault(self, ...)
-        if self._ehi_manual_block then
+        if self._ehi_assault_block then
             return
         elseif is_skirmish or EndlessAssault then
             self.ehi:RemoveTracker("Assault")
@@ -265,7 +265,7 @@ else
         original.sync_end_assault = HUDManager.sync_end_assault
         function HUDManager:sync_end_assault(...)
             original.sync_end_assault(self, ...)
-            if EHI._cache.diff and EHI._cache.diff > 0 and not self._ehi_manual_block then
+            if EHI._cache.diff and EHI._cache.diff > 0 and not self._ehi_assault_block then
                 self.ehi:AddTracker({
                     id = "AssaultDelay",
                     diff = EHI._cache.diff,
@@ -283,7 +283,7 @@ else
         local EndlessAssault = nil
         function HUDManager:sync_start_assault(...)
             start_original(self, ...)
-            if self._ehi_assault_in_progress or self._ehi_manual_block then
+            if self._ehi_assault_in_progress or self._ehi_assault_block then
                 return
             elseif (EHI._cache.diff and EHI._cache.diff > 0 and not EndlessAssault) or is_skirmish then
                 self.ehi:AddTracker({
@@ -315,7 +315,7 @@ else
 end
 
 function HUDManager:SetAssaultTrackerManualBlock(block)
-    self._ehi_manual_block = block
+    self._ehi_assault_block = block
     if block then
         self.ehi:CallFunction("Assault", "PoliceActivityBlocked")
         self.ehi:CallFunction("AssaultDelay", "PoliceActivityBlocked")

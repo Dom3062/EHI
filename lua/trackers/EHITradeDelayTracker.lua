@@ -5,12 +5,13 @@ EHITradeDelayTracker._update = false
 EHITradeDelayTracker._forced_icons = { "mugshot_in_custody" }
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHITradeDelayTracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHITradeDelayTracker:init(panel, params, parent_class)
     self._pause_t = 0
     self._n_of_peers = 0
     self._peers = {}
     self._tick = 0
-    EHITradeDelayTracker.super.init(self, panel, params)
+    EHITradeDelayTracker.super.init(self, panel, params, parent_class)
     self._default_panel_w = self._panel:w()
     self._default_bg_box_w = self._bg_box:w()
     self._panel_half = self._default_bg_box_w / 2

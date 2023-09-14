@@ -3,6 +3,13 @@ if EHI:CheckLoadHook("PrePlanningManager") then
     return
 end
 
+---@class PrePlanningManager
+---@field _finished_preplan table
+---@field _reserved_mission_elements table
+---@field get_current_majority_votes fun(self: self): table
+---@field get_mission_element_id fun(self: self, type: string, index: number): number?
+---@field has_current_level_preplanning fun(self: self): boolean
+
 local preplan_reserved = nil
 local preplan_voted = nil
 
@@ -27,6 +34,8 @@ function PrePlanningManager:on_execute_preplanning(...)
     _f_on_execute_preplanning(self, ...)
 end
 
+---@param asset_id number
+---@return boolean
 function PrePlanningManager:IsAssetBought(asset_id)
     if self._finished_preplan then
         local voted = self._finished_preplan[1]

@@ -21,10 +21,11 @@ EHIAssaultTimeTracker._paused_color = EHIPausableTracker._paused_color
 EHIAssaultTimeTracker._show_completion_color = true
 ---@param panel Panel
 ---@param params EHITracker_params
-function EHIAssaultTimeTracker:init(panel, params)
+---@param parent_class EHITrackerManager
+function EHIAssaultTimeTracker:init(panel, params, parent_class)
     self:CalculateDifficultyRamp(params.diff)
     params.time = self:CalculateAssaultTime()
-    EHIAssaultTimeTracker.super.init(self, panel, params)
+    EHIAssaultTimeTracker.super.init(self, panel, params, parent_class)
     self.update_normal = self.update
     self._state = State.build
     if self._cs_assault_extender then

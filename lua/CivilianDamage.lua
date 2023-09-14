@@ -3,8 +3,10 @@ if EHI:CheckLoadHook("CivilianDamage") then
     return
 end
 
--- If this function is in "CivilianDamage", then it is not visible from "HuskCivilianDamage", because that
--- class inherits "HuskCopDamage" and not "CivilianDamage"
+--- If this function is in "CivilianDamage", then it is not visible from "HuskCivilianDamage", because that
+--- class inherits "HuskCopDamage" and not "CivilianDamage"
+---@param self CivilianDamage|HuskCivilianDamage
+---@return boolean
 function PenaltyWhenKilled(self)
     return not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty
 end
@@ -28,6 +30,7 @@ end
 local other_players_only = EHI:GetOption("show_trade_delay_other_players_only")
 local suppress_in_stealth = EHI:GetOption("show_trade_delay_suppress_in_stealth")
 
+---@param peer_id number
 local function AddTracker(peer_id)
     if other_players_only and peer_id == managers.network:session():local_peer():id() then
         return
@@ -62,9 +65,11 @@ function CivilianDamage:_on_damage_received(damage_info, ...)
     end
 end
 
+---@param attacker_unit UnitPlayer?
 function CopDamage:_on_car_damage_received(attacker_unit)
 end
 
+---@param attacker_unit UnitPlayer?
 function CivilianDamage:_on_car_damage_received(attacker_unit)
     if attacker_unit then
         local peer_id = managers.criminals:character_peer_id_by_unit(attacker_unit)

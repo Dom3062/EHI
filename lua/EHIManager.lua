@@ -64,7 +64,7 @@ end
 ---@param tweak_data string
 ---@return boolean
 function EHIManager:InteractionExists(tweak_data)
-    local interactions = managers.interaction._interactive_units or {}
+    local interactions = managers.interaction._interactive_units
     for _, unit in ipairs(interactions) do
         if unit:interaction().tweak_data == tweak_data then
             return true
@@ -96,13 +96,10 @@ function EHIManager:GetInSyncState()
 end
 
 ---@param id number
----@return boolean
+---@return boolean?
 function EHIManager:IsMissionElementEnabled(id)
     local element = managers.mission:get_element_by_id(id)
-    if not element then
-        return false
-    end
-    return element:enabled()
+    return element and element:enabled()
 end
 
 ---@param id number
@@ -114,8 +111,8 @@ end
 ---@param tweak_data string
 ---@return integer
 function EHIManager:CountInteractionAvailable(tweak_data)
-    local interactions = managers.interaction._interactive_units or {}
     local count = 0
+    local interactions = managers.interaction._interactive_units
     for _, unit in ipairs(interactions) do
         if unit:interaction().tweak_data == tweak_data then
             count = count + 1
@@ -127,15 +124,15 @@ end
 ---@param offset integer?
 ---@return integer
 function EHIManager:CountLootbagsOnTheGround(offset)
-    local excluded = { value_multiplier = true, dye = true, types = true, small_loot = true }
     local lootbags = {}
+    local excluded = { value_multiplier = true, dye = true, types = true, small_loot = true }
     for key, data in pairs(tweak_data.carry) do
         if not (excluded[key] or data.is_unique_loot or data.skip_exit_secure) then
             lootbags[key] = true
         end
     end
-    local interactions = managers.interaction._interactive_units or {}
     local count = 0 - (offset or 0)
+    local interactions = managers.interaction._interactive_units
     for _, unit in ipairs(interactions) do
         if unit:carry_data() and lootbags[unit:carry_data():carry_id()] then
             count = count + 1
@@ -147,7 +144,7 @@ end
 ---@param path string
 ---@param slotmask integer
 ---@return integer
-function EHIManager:CountUnitAvailable(path, slotmask)
+function EHIManager:CountUnitsAvailable(path, slotmask)
     return #self:GetUnits(path, slotmask)
 end
 
@@ -166,31 +163,6 @@ function EHIManager:GetUnits(path, slotmask)
         end
     end
     return tbl
-end
-
----@param path string
----@param slotmask integer
----@param pos integer
----@return Unit
-function EHIManager:GetUnit(path, slotmask, pos)
-    return self:GetUnits(path, slotmask)[pos or 1]
-end
-
----@param path string
----@param loot_type string
----@param slotmask integer
----@return integer
-function EHIManager:CountLootbagsAvailable(path, loot_type, slotmask)
-    slotmask = slotmask or 14
-    local count = 0
-    local idstring = Idstring(path)
-    local units = World:find_units_quick("all", slotmask)
-    for _, unit in ipairs(units) do
-        if unit and unit:name() == idstring and unit:carry_data() and unit:carry_data():carry_id() == loot_type then
-            count = count + 1
-        end
-    end
-    return count
 end
 
 ---@param f fun(self: EHIManager)
@@ -331,6 +303,12 @@ end
 function EHIManager:SetTimerPowered(id, powered)
     self._trackers:SetTimerPowered(id, powered)
     self._waypoints:SetTimerWaypointPowered(id, powered)
+end
+
+---@param id string
+function EHIManager:SetTimerRunning(id)
+    self._trackers:SetTimerRunning(id)
+    self._waypoints:SetTimerWaypointRunning(id)
 end
 
 ---@param id string

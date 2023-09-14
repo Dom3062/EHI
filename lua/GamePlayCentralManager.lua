@@ -4,8 +4,8 @@ if EHI:CheckLoadHook("GamePlayCentralManager") then
 end
 
 ---@class GamePlayCentralManager
----@field GetMissionDisabledUnit fun(self: GamePlayCentralManager, id: number): boolean
----@field GetMissionEnabledUnit fun(self: GamePlayCentralManager, id: number): boolean
+---@field GetMissionDisabledUnit fun(self: self, id: number): boolean
+---@field GetMissionEnabledUnit fun(self: self, id: number): boolean
 
 local original =
 {

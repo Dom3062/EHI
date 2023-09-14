@@ -4,6 +4,10 @@ local sin = math.sin
 local min = math.min
 local floor = math.floor
 local Color = Color
+---@param o PanelText
+---@param old_color Color
+---@param color Color
+---@param start_t number
 local function anim(o, old_color, color, start_t)
     local c = Color(old_color.r, old_color.g, old_color.b)
     while true do

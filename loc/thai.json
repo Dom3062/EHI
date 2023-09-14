@@ -81,8 +81,10 @@
 
     "ehi_tracker_alignment" : "จัดตำแหน่งไอคอนติดตาม",
     "ehi_tracker_alignment_desc" : "กำหนดการจัดตำแหน่งไอคอนติดตาม",
-    "ehi_tracker_alignment_1" : "แนวตั้ง",
-    "ehi_tracker_alignment_2" : "แนวนอน",
+    "ehi_tracker_alignment_1" : "แนวตั้ง; Top to bottom",
+    "ehi_tracker_alignment_2" : "แนวตั้ง; Bottom to Top",
+    "ehi_tracker_alignment_3" : "แนวนอน; Left to Right",
+    "ehi_tracker_alignment_4" : "แนวนอน; Right to Left",
 
     "ehi_vr_x_offset" : "ตำแหน่งแกน X (VR)",
     "ehi_vr_y_offset" : "ตำแหน่งแกน Y (VR)",

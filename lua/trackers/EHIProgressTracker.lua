@@ -21,6 +21,7 @@ function EHIProgressTracker:Format()
     return self._progress .. "/" .. self._max
 end
 
+---@param max number
 function EHIProgressTracker:SetProgressMax(max)
     self._max = max
     self._progress_text:set_text(self:FormatProgress())
@@ -28,14 +29,17 @@ function EHIProgressTracker:SetProgressMax(max)
     self:AnimateBG()
 end
 
+---@param max number?
 function EHIProgressTracker:IncreaseProgressMax(max)
     self:SetProgressMax(self._max + (max or 1))
 end
 
+---@param max number?
 function EHIProgressTracker:DecreaseProgressMax(max)
     self:SetProgressMax(self._max - (max or 1))
 end
 
+---@param progress number
 function EHIProgressTracker:SetProgress(progress)
     if self._progress ~= progress and not self._disable_counting then
         self._progress = progress
@@ -52,16 +56,19 @@ function EHIProgressTracker:SetProgress(progress)
     end
 end
 
+---@param progress number?
 function EHIProgressTracker:IncreaseProgress(progress)
     self:SetProgress(self._progress + (progress or 1))
 end
 
+---@param progress number?
 function EHIProgressTracker:DecreaseProgress(progress)
     self:SetProgress(self._progress - (progress or 1))
     self:SetTextColor(nil, self._progress_text)
     self._disable_counting = false
 end
 
+---@param remaining number
 function EHIProgressTracker:SetProgressRemaining(remaining)
     self:SetProgress(self._max - remaining)
 end
