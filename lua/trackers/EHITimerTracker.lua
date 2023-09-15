@@ -167,6 +167,10 @@ function EHITimerTracker:StopTimer()
     self._bg_box:set_w(self._bg_box_w)
 end
 
+function EHITimerTracker:IsTimerRunning()
+    return self._bg_box:w() == self._bg_box_double
+end
+
 ---@class EHIProgressTimerTracker : EHITimerTracker, EHIProgressTracker
 ---@field super EHITimerTracker
 EHIProgressTimerTracker = class(EHITimerTracker)

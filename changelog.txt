@@ -1,3 +1,6 @@
+r186 (15. 09. 2023):
+Hoxton Breakout Day 2: Fixed an issue where hacking timers are not visible
+
 r185 (14. 09. 2023):
 Added XP modifiers to Mission Briefing
 Added additional alignment options

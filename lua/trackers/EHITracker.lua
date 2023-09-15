@@ -41,7 +41,7 @@ local function left(o, target_x)
     o:set_x(target_x)
 end
 local panel_w
-if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) then -- Horizontal: Left to Right
+if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) then -- Horizontal; Right to Left
     ---@param o PanelBaseObject
     ---@param target_w number
     ---@param self EHITracker
@@ -123,7 +123,7 @@ local function destroy(o, skip, self)
 end
 local icons = tweak_data.ehi.icons
 ---@param icon string
----@return string, { x: number, y: number, w: number, h: number }
+---@return string, number[]
 local function GetIcon(icon)
     if icons[icon] then
         return icons[icon].texture, icons[icon].texture_rect
@@ -134,7 +134,7 @@ end
 ---@param self EHITracker
 ---@param i string
 ---@param texture string
----@param texture_rect { x: number, y: number, w: number, h: number }
+---@param texture_rect number[]
 ---@param color Color
 ---@param alpha number
 ---@param visible boolean

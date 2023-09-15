@@ -312,6 +312,12 @@ function EHIManager:SetTimerRunning(id)
 end
 
 ---@param id string
+---@return boolean
+function EHIManager:IsTimerMergeRunning(id)
+    return self._trackers:ReturnValue(id, "IsTimerRunning") or self._waypoints:WaypointExists(id)
+end
+
+---@param id string
 ---@param t number
 function EHIManager:SetTime(id, t)
     self._trackers:SetTrackerTime(id, t)

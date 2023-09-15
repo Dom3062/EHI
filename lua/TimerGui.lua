@@ -77,8 +77,10 @@ end
 
 function TimerGui:StartTimer()
     if managers.ehi_manager:Exists(self._ehi_key) then
-        managers.ehi_manager:SetTimerRunning(self._ehi_key)
-        return
+        if (self._ehi_merge and managers.ehi_manager:IsTimerMergeRunning(self._ehi_key)) or not self._ehi_merge then
+            managers.ehi_manager:SetTimerRunning(self._ehi_key)
+            return
+        end
     end
     local autorepair = self._unit:base()._autorepair or self._unit:base()._autorepair_client
     -- In case the conversion fails, fallback to "self._time_left" which is a number
