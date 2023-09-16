@@ -1090,7 +1090,7 @@ function MissionBriefingGui:AddXPOverviewText(panel)
         end
     end
     if xp.is_level_limited then
-        local diff_in_stars = xp.job_stars - xp.player_stars
+        local diff_in_stars = xp.job_stars - xp.level_to_stars
         local tweak_multiplier = tweak_data:get_value("experience_manager", "level_limit", "pc_difference_multipliers", diff_in_stars) or 0
         if tweak_multiplier > 0 then
             local reduction_percent = tostring((1 - tweak_multiplier) * 100)

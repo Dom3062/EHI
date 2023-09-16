@@ -1,3 +1,6 @@
+r187 (16. 09. 2023):
+Fixed a crash when your level is limited
+
 r186 (15. 09. 2023):
 Hoxton Breakout Day 2: Fixed an issue where hacking timers are not visible
 
