@@ -251,11 +251,11 @@ end
 
 if EHI:GetOption("show_trade_delay_amount_of_killed_civilians") then
     EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
-        self._bg_box:child("text" .. peer_id):set_text(string.format("%s (%d)", self:FormatTime(time), civilians_killed))
+        self._bg_box:child("text" .. peer_id):set_text(string.format("%s (%d)", self:FormatTime(time), civilians_killed)) ---@diagnostic disable-line
     end
 else
     EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
-        self._bg_box:child("text" .. peer_id):set_text(self:FormatTime(time))
+        self._bg_box:child("text" .. peer_id):set_text(self:FormatTime(time)) ---@diagnostic disable-line
     end
 end
 

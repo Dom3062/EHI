@@ -5,6 +5,9 @@
     "ehi_save_data_corrupted" : "ไฟล์ที่บันทึกไว้ในม็อด EHI เสียหาย",
     "ehi_save_data_corrupted_desc" : "ไฟล์ที่บันทึกไว้ในม็อด EHI เสียหายและไม่สามารถโหลดใช้งานได้\nม็อด EHI จะใช้ค่าดั้งเดิมเพื่อเพื่อไม่ให้เกมเด้ง",
 
+    "ehi_menu_reset_to_default" : "$BTN_RESET Set to default",
+    "ehi_menu_large_steps" : "$BTN_STEP Large steps",
+    
     "ehi_level_restart_required" : "A level restart is required for options to take effect",
 
     "ehi_item_depends_on" : "ตัวเลือก '$option;' ต้องถูกเปิดใช้งานเพื่อให้ตัวเลือกนี้เกิดผล",
@@ -122,6 +125,9 @@
     "ehi_show_achievements" : "แสดงไอคอนติดตามรางวัลความสำเร็จ",
     "ehi_show_achievements_desc" : "Show achievement tracker เป็นการแสดงไอคอนติดตามรางวัลความสำเร็จที่เกี่ยวข้องกับเวลาหรือจำนวนในแต่ละด่าน\nบางด่านอาจไม่มีไอคอนติดตามรางวัลความสำเร็จปรากฎให้เห็น",
 
+    "ehi_show_achievement_description" : "Show Achievement Description",
+    "ehi_show_achievement_description_desc" : "Shows achievement description in the game chat\n\nThe description is only visible to you",
+
     "ehi_show_achievements_mission" : "Show Achievements (Heist)",
     "ehi_show_achievements_mission_desc" : "Shows achievements that can be completed only in heists",
 
@@ -186,6 +192,9 @@
     "ehi_xp_panel_3" : "แสดงหน้าต่างค่าประสบการณ์ที่ได้รับแต่ละครั้งและที่ได้รับทั้งหมด",
     "ehi_xp_panel_4" : "แสดงคำใบ้ว่าคุณได้รับค่าประสบการณ์ในแต่ละครั้งและที่ได้รับทั้งหมด",
 
+    "ehi_show_xp_in_mission_briefing_only" : "Show gained XP in Mission Briefing only",
+    "ehi_show_xp_in_mission_briefing_only_desc" : "Enable this function if you want to see XP in Mission Briefing, but not in-game",
+
     "ehi_total_xp_show_difference" : "แสดงค่าประสบการณ์ที่ได้รับในแต่ละครั้ง",
     "ehi_total_xp_show_difference_desc" : "เป็นตัวเลือกคู่กับ [แสดงค่าประสบการณ์ทั้งหมดที่ได้รับจากด่านนั้นๆ] เท่านั้น!\nแสดงค่าประสบการณ์ที่ได้รับในไอคอนติดตาม",
 
@@ -203,6 +212,9 @@
     "ehi_show_trade_delay_suppress_in_stealth" : "ไม่ต้องแสดงไอคอนติดตามความล่าช้าการแลกเปลี่ยนตัวประกันเมื่ออยู่ในโหมดลอบเร้น",
     "ehi_show_trade_delay_suppress_in_stealth_desc" : "หากเลือก จะซ่อนไอคอนติดตามแสดงความล่าช้าของการแลกเปลี่ยนตัวประกันเมื่อเล่นในโหมดลอบเร้น\nเมื่อเกมเปลี่ยนเป็นโหมดบู๊ล้างผลาญแหลก ไอคอนติดตามจะปรากฎให้เห็นพร้อมค่าความล่าช้าทั้งหมด",
 
+    "ehi_show_trade_delay_amount_of_killed_civilians" : "Show in Trade Delay Tracker amount of killed civilians",
+    "ehi_show_trade_delay_amount_of_killed_civilians_desc" : "Shows for each player how many civilians they killed",
+    
     "ehi_show_timers" : "แสดงไอคอนติดตามเกี่ยวกับเวลา",
     "ehi_show_timers_desc" : "แสดงไอคอนติดตามเกี่ยวกับเวลา เช่น การแฮคระบบ, สว่าน, เลื่อย ฯลฯ",
 
@@ -256,6 +268,9 @@
     "ehi_show_equipment_ecmjammer" : "ไอคอนติดตามระยะเวลาการแสดงผลอุปกรณ์แจมเมอร์",
     "ehi_show_equipment_ecmjammer_desc" : "แสดงไอคอนติดตามระยะเวลาที่เหลือของอุปกรณ์ตัดสัญญาณอิเล็กโทรนิคชั่วคราว หรือ แจมเมอร์ (ECM Jammer)\nแจมเมอร์ทีมีระยะเวลานานที่สุดจะถูกแสดงผลก่อนเสมอ",
 
+    "ehi_ecmjammer_block_ecm_without_pager_delay" : "Don't show ECM Jammer that won't delay pagers",
+    "ehi_ecmjammer_block_ecm_without_pager_delay_desc" : "",
+    
     "ehi_show_equipment_ecmfeedback" : "ไอคอนติดตามระยะเวลาการแสดงผลคลื่นกวนสัญญาณจากอุปกรณ์แจมเมอร์",
     "ehi_show_equipment_ecmfeedback_desc" : "แสดงไอคอนติดตามระยะเวลาที่เหลือของการเปิดใช้คลื่นรบกวนสัญญาณชั่วคราวจากอุปกรณ์ แจมเมอร์ (ECM Feedback)\nคลื่นรบกวนสัญญาณที่มีระยะเวลานานที่สุดจะถูกแสดงผลก่อนเสมอ (เฉพาะโฮสเท่านั้น)",
 
@@ -297,12 +312,21 @@
     "ehi_show_enemy_count_tracker" : "แสดงจำนวนศัตรูทั้งหมด",
     "ehi_show_enemy_count_tracker_desc" : "แสดงจำนวนศัตรูทั้งหมดที่อยู่ในด่าน ณ ขณะนั้น",
 
+    "ehi_show_enemy_count_show_pagers" : "Show enemies with pager (stealth)",
+    "ehi_show_enemy_count_show_pagers_desc" : "Shows enemies with pager on the left and enemies without the pager on the right\nOnce alarm sounds, only a number of enemies is visible",
+
+    "ehi_show_civilian_count_tracker" : "Show Civilian Count Tracker",
+    "ehi_show_civilian_count_tracker_desc" : "Shows a tracker for how many civilians are on the map\n\nOnce there are no civilians on the map, tracker won't be visible",
+
     "ehi_show_laser_tracker" : "แสดงไอคอนติดตามเลเซอร์",
     "ehi_show_laser_tracker_desc" : "แสดงเวลาเลเซอร์ที่มีการเปลี่ยนสถานะกลับไปกลับมาได้",
 
-    "ehi_show_assault_delay_tracker" : "Show Assault Delay Tracker",
-    "ehi_show_assault_delay_tracker_desc" : "Shows a tracker for how long the assault delay will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
+    "ehi_show_assault_time_tracker" : "Show Assault Duration Tracker",
+    "ehi_show_assault_time_tracker_desc" : "Shows a tracker for how long the assault duration will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
 
+    "ehi_aggregate_assault_delay_and_assault_time" : "Aggregate Assault Delay and Duration into one tracker",
+    "ehi_aggregate_assault_delay_and_assault_time_desc" : "Aggregates both 'Assault Delay' and 'Assault Duration' into one tracker\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
+    
     "ehi_show_loot_counter" : "แสดงจำนวนของที่ปล้นมาได้",
     "ehi_show_loot_counter_desc" : "แสดงจำนวนของที่ปล้นมาได้ทั้งหมดในด่านนั้นๆ",
 
@@ -321,6 +345,9 @@
     "ehi_show_escape_chance" : "Show Escape Chance",
     "ehi_show_escape_chance_desc" : "Shows a tracker with possible escape chance",
     
+    "ehi_show_sniper_tracker" : "Show Scripted Snipers",
+    "ehi_show_sniper_tracker_desc" : "Shows a tracker with scripted snipers that respawn\n\nNote:\nMarshal snipers are not counted\nEvery heist uses different sniper logic (if there is any) and tracker may look differently",
+
     "ehi_waypoints_menu" : "จุดอ้างอิง",
     "ehi_waypoints_menu_desc" : "จุดอ้างอิง (Waypoints) เป็นไอคอนในเกมที่แสดงที่วัตถุนั้นๆ โดยตรง",
     
@@ -333,6 +360,9 @@
     "ehi_show_waypoints_present_timer" : "กำหนดเเวลาของแอนิเมชั่นจุดอ้างอิง",
     "ehi_show_waypoints_present_timer_desc" : "กำหนดระยะเวลาสูงสุดที่จุดอ้างอิงจะถูกแสดงบนหน้าจอของคุณก่อนที่มันจะ'ถูกย้าย'ไปอยู่ที่วัตถุเป้าหมาย",
 
+    "ehi_show_waypoints_mission" : "Show Waypoints For Heist Elements",
+    "ehi_show_waypoints_mission_desc" : "Shows a waypoint on heist elements",
+    
     "ehi_show_waypoints_enemy_turret" : "แสดงจุดอ้างอิงสำหรับป้อมปืนของศัตรู",
     "ehi_show_waypoints_enemy_turret_desc" : "แสดงจุดอ้างอิงที่ป้อมปืนของศัตรูเมื่อป้อมปืนนั้นกำลังโหลดกระสุนชุดใหม่หรือกำลังซ่อมแซมตัวมัน",
 
@@ -348,6 +378,9 @@
     "ehi_show_waypoints_zipline" : "แสดงไอคอนติดตามสำหรับที่โหนสลิง",
     "ehi_show_waypoints_zipline_desc" : "แสดงไอคอนติดตามการใช้โหนสลิงที่กำลังถูกใช้งาน\nมีเพียงแค่โหนสลิงเท่านั้นที่จะแสดงค่า",
 
+    "ehi_show_waypoints_ecmjammer" : "Show Waypoints for ECM Jammer",
+    "ehi_show_waypoints_ecmjammer_desc" : "Shows a waypoint on active ECM Jammer",
+    
     "ehi_buffs_menu" : "ทักษะ",
     "ehi_buffs_menu_desc" : "Buffs หรือทักษะที่ถูกใช้งานในเกม แสดงในรูปไอคอน",
 
@@ -376,6 +409,7 @@
     "ehi_buffs_skills_cooldown" : "แสดงการหน่วงเวลา (Cooldown)",
     "ehi_buffs_skills_duration" : "แสดงระยะเวลา",
     "ehi_buffs_skills_progress" : "แสดงความคืบหน้า",
+    "ehi_buffs_skills_value" : "Shows value",
 
     "ehi_buffs_skills_menu" : "ทักษะ",
     "ehi_buffs_skills_mastermind_menu" : "Mastermind",
@@ -439,6 +473,10 @@
     "ehi_buffs_skills_fugitive_berserker" : "Berserker",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "Berserker Refresh",
     "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "กำหนดค่าเวลาเป็นวินาทีเพื่ออัพเดททักษะ 'Berserker' ",
+    "ehi_buffs_skills_fugitive_berserker_format" : "Berserker Format",
+    "ehi_buffs_skills_fugitive_berserker_format_desc" : "Sets how to format Berserker buff, both ranged damage and melee damage\n\nMultiplier: 1.4x 2.6x\n\nPercent: 140% 260%",
+    "ehi_buffs_skills_fugitive_berserker_format_1" : "Multiplier",
+    "ehi_buffs_skills_fugitive_berserker_format_2" : "Percent",
 
     "ehi_buffs_perks_menu" : "ทักษะติดตัวพิเศษ",
     "ehi_buffs_perks_infiltrator" : "Infiltrator",
@@ -488,6 +526,8 @@
     "ehi_buffs_other_crit_persistent_desc" : "'โอกาสติดคริติคอล' จะแสดงบนหน้าจอเมื่อโอกาสติดคริติคอลของคุณมีค่าน้อยกว่า 0%",
     "ehi_buffs_other_inspire_ai" : "Inspire (AI)",
     "ehi_buffs_other_regen_throwable_ai" : "Regen Throwable (AI)",
+    "ehi_buffs_other_health" : "Your Health Value",
+    "ehi_buffs_other_armor" : "Your Armor Value",
 
     "ehi_inventory_menu" : "Inventory",
     "ehi_inventory_menu_desc" : "",

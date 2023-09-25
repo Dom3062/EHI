@@ -60,10 +60,10 @@ end
 ---@field super EHITracker
 EHISniperTimedTracker = class(EHITracker)
 EHISniperTimedTracker._forced_icons = { "sniper" }
-EHISniperTimedTracker._refresh_on_delete = true
 EHISniperTimedTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperTimedTracker.DecreaseCount = EHICountTracker.DecreaseCount
 function EHISniperTimedTracker:pre_init(params)
+    self._refresh_on_delete = true
     self._count = params.count or 0
     self._additional_count = 0
     self._count_on_refresh = params.count_on_refresh
@@ -97,12 +97,12 @@ end
 ---@field super EHIWarningTracker
 EHISniperTimedCountTracker = class(EHIWarningTracker)
 EHISniperTimedCountTracker._forced_icons = { "sniper" }
-EHISniperTimedCountTracker._refresh_on_delete = true
 EHISniperTimedCountTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperTimedCountTracker.DecreaseCount = EHICountTracker.DecreaseCount
 EHISniperTimedCountTracker.FormatCount = EHISniperTimedTracker.FormatCount
 EHISniperTimedCountTracker.SetCount = EHISniperTimedTracker.SetCount
 function EHISniperTimedCountTracker:pre_init(params)
+    self._refresh_on_delete = true
     self._count = params.count or 0
     self._additional_count = 0
     self._count_on_refresh = params.count_on_refresh
@@ -147,7 +147,6 @@ end
 ---@field super EHITracker
 EHISniperTimedChanceTracker = class(EHITracker)
 EHISniperTimedChanceTracker._forced_icons = { "sniper" }
-EHISniperTimedChanceTracker._refresh_on_delete = true
 EHISniperTimedChanceTracker.FormatChance = EHIChanceTracker.Format
 EHISniperTimedChanceTracker.FormatCount = EHICountTracker.Format
 EHISniperTimedChanceTracker.IncreaseCount = EHICountTracker.IncreaseCount
@@ -155,6 +154,7 @@ EHISniperTimedChanceTracker.DecreaseCount = EHICountTracker.DecreaseCount
 EHISniperTimedChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHISniperTimedChanceTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 function EHISniperTimedChanceTracker:pre_init(params)
+    self._refresh_on_delete = true
     self._count = params.count or 0
     self._chance = params.chance or 0
     self._recheck_t = params.recheck_t or 0
@@ -230,7 +230,6 @@ end
 ---@field super EHITracker
 EHISniperLoopTracker = class(EHITracker)
 EHISniperLoopTracker._forced_icons = { "sniper" }
-EHISniperLoopTracker._refresh_on_delete = true
 EHISniperLoopTracker.FormatChance = EHIChanceTracker.Format
 EHISniperLoopTracker.FormatCount = EHICountTracker.Format
 EHISniperLoopTracker.ResetCount = EHICountTracker.ResetCount
@@ -239,6 +238,7 @@ EHISniperLoopTracker.DecreaseCount = EHICountTracker.DecreaseCount
 EHISniperLoopTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHISniperLoopTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 function EHISniperLoopTracker:pre_init(params)
+    self._refresh_on_delete = true
     self._count = 0
     self._chance = params.chance or 0
     self._on_fail_refresh_t = params.on_fail_refresh_t or 0
@@ -294,10 +294,10 @@ end
 
 function EHISniperLoopTracker:SetCountRemovalCheck(count)
     self._count = math.max(0, count)
-    self._count_text:set_text(self:FormatCount())
     if self._count == 0 then
         self:ForceDelete()
     else
+        self._count_text:set_text(self:FormatCount())
         self:AnimateBG(1)
     end
 end

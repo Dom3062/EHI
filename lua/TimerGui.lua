@@ -77,7 +77,7 @@ end
 
 function TimerGui:StartTimer()
     if managers.ehi_manager:Exists(self._ehi_key) then
-        if (self._ehi_merge and managers.ehi_manager:IsTimerMergeRunning(self._ehi_key)) or not self._ehi_merge then
+        if (self.__ehi_merge and managers.ehi_manager:IsTimerMergeRunning(self._ehi_key)) or not self.__ehi_merge then
             managers.ehi_manager:SetTimerRunning(self._ehi_key)
             return
         end
@@ -86,7 +86,7 @@ function TimerGui:StartTimer()
     -- In case the conversion fails, fallback to "self._time_left" which is a number
     local t = tonumber(self._current_timer) or self._time_left
     if not show_waypoint_only then
-        if self._ehi_merge then
+        if self.__ehi_merge then
             managers.ehi_tracker:CallFunction(self._ehi_key, "StartTimer", t)
         else
             managers.ehi_tracker:AddTracker({
@@ -162,7 +162,7 @@ function TimerGui:_start(...)
     end
     if self._tracker_merge_id and managers.ehi_tracker:TrackerExists(self._tracker_merge_id) then
         self._ehi_key = self._tracker_merge_id
-        self._ehi_merge = true
+        self.__ehi_merge = true
         self._tracker_merge_id = nil
     end
     self:StartTimer()
@@ -189,8 +189,8 @@ function TimerGui:_set_done(...)
     self:RemoveTracker()
     original._set_done(self, ...)
     self:RestoreWaypoint()
-    if self._parent then
-        for _, unit in ipairs(self._child_units or {}) do
+    if self.__ehi_parent then
+        for _, unit in ipairs(self.__ehi_child_units or {}) do
             if unit:base() and unit:base().SetCountThisUnit then
                 unit:base():SetCountThisUnit()
             end
@@ -244,7 +244,7 @@ end
 
 ---@param destroy boolean?
 function TimerGui:RemoveTracker(destroy)
-    if self._ehi_merge and not destroy then
+    if self.__ehi_merge and not destroy then
         if self._destroy_tracker_merge_on_done then
             managers.ehi_tracker:RemoveTracker(self._ehi_key)
         else
@@ -308,13 +308,13 @@ function TimerGui:SetChildUnits(units, wd)
             end
         end
     else
-        self._parent = true
-        self._child_units = {}
+        self.__ehi_parent = true
+        self.__ehi_child_units = {}
         local n = 1
         for _, unit_id in ipairs(units) do
             local unit = wd:get_unit(unit_id)
             if unit then
-                self._child_units[n] = unit
+                self.__ehi_child_units[n] = unit
                 n = n + 1
             else
                 EHI:Log("[TimerGui] Cannot find unit with ID " .. tostring(unit_id))

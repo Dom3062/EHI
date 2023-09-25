@@ -1,3 +1,7 @@
+---@class CoreWorldInstanceManager
+---@field get_instance_data_by_name fun(self: self, instance_name: string): table?
+---@field instance_data fun(self: self): table
+
 local EHI = EHI
 if EHI:CheckLoadHook("CoreWorldInstanceManager") then
     return

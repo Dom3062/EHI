@@ -1,10 +1,15 @@
+---@class TradeManager
+---@field _auto_assault_ai_trade_criminal_name string?
+---@field _criminals_to_respawn { peer_id: number, respawn_penalty: number, hostages_killed: number }[]
+---@field _trade_counter_tick number
+
 local EHI = EHI
 if EHI:CheckLoadHook("TradeManager") then
     return
 end
 
 if EHI:IsXPTrackerVisible() then
-    if BB and BB.grace_period and Global.game_settings.single_player and Global.game_settings.team_ai then
+    if EHI:IsRunningBB() or EHI:IsRunningUsefulBots() then
         EHI:HookWithID(TradeManager, "on_AI_criminal_death", "EHI_ExperienceManager_AICriminalDeath", function(...)
             managers.experience:DecreaseAlivePlayers()
         end)
@@ -33,6 +38,9 @@ local original =
     sync_set_auto_assault_ai_trade = TradeManager.sync_set_auto_assault_ai_trade
 }
 
+---@param peer_id number
+---@param respawn_penalty number
+---@param civilians_killed number?
 local function OnPlayerCriminalDeath(peer_id, respawn_penalty, civilians_killed)
     if suppress_in_stealth and managers.groupai:state():whisper_mode() then
         managers.ehi_trade:AddToTradeDelayCache(peer_id, respawn_penalty, civilians_killed, true)
@@ -46,6 +54,9 @@ local function OnPlayerCriminalDeath(peer_id, respawn_penalty, civilians_killed)
     end
 end
 
+---@param peer_id number
+---@param respawn_penalty number
+---@param civilians_killed number?
 local function CreateTracker(peer_id, respawn_penalty, civilians_killed)
     if respawn_penalty == tweak_data.player.damage.base_respawn_time_penalty then
         return
@@ -56,6 +67,8 @@ local function CreateTracker(peer_id, respawn_penalty, civilians_killed)
     OnPlayerCriminalDeath(peer_id, respawn_penalty, civilians_killed)
 end
 
+---@param character_name string?
+---@param t number
 local function SetTrackerPause(character_name, t)
     managers.ehi_trade:SetTrade("ai", character_name ~= nil, t)
 end
@@ -92,6 +105,11 @@ function TradeManager:GetTradeCounterTick()
     return self._trade_counter_tick
 end
 
+---@param criminal_name string
+---@param respawn_penalty number
+---@param hostages_killed number
+---@param ... unknown
+---@return table?
 function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, hostages_killed, ...)
     local crim = original.on_player_criminal_death(self, criminal_name, respawn_penalty, hostages_killed, ...)
     if type(crim) == "table" then -- A nil criminal can be returned (because it is already in custody); Shouldn't happen again, probably mods
@@ -129,6 +147,8 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, h
     return crim
 end
 
+---@param character_name string?
+---@param ... unknown
 function TradeManager:_set_auto_assault_ai_trade(character_name, ...)
     if self._auto_assault_ai_trade_criminal_name ~= character_name then
         SetTrackerPause(character_name, self._trade_counter_tick)
@@ -136,6 +156,7 @@ function TradeManager:_set_auto_assault_ai_trade(character_name, ...)
     original._set_auto_assault_ai_trade(self, character_name, ...)
 end
 
+---@param character_name string?
 function TradeManager:sync_set_auto_assault_ai_trade(character_name, ...)
     original.sync_set_auto_assault_ai_trade(self, character_name, ...)
     SetTrackerPause(character_name, self._trade_counter_tick)

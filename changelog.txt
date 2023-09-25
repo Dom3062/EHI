@@ -1,3 +1,7 @@
+r188 (25. 09. 2023):
+Trackers: Optimized memory usage
+The White House: Fixed an issue where enemy sniper tracker could get stuck
+
 r187 (16. 09. 2023):
 Fixed a crash when your level is limited
 

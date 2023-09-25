@@ -121,64 +121,127 @@ _G.EHI =
 
     SpecialFunctions =
     {
+        -- Requires `id` or `data (table of strings)`
         RemoveTracker = 1,
+        -- Requires `id`
         PauseTracker = 2,
+        -- Requires `id`
         UnpauseTracker = 3,
+        -- Requires `id`
         UnpauseTrackerIfExists = 4,
+        -- Requires `id`
         AddTrackerIfDoesNotExist = 5,
+        -- Requires `id` and `data.id (string)`
         ReplaceTrackerWithTracker = 6,
         ShowAchievementFromStart = 7,
+        -- Requires `id`
         SetAchievementComplete = 8,
+        -- Requires `id`  
+        -- Optional `status`
         SetAchievementStatus = 9,
+        -- Requires `id`
         SetAchievementFailed = 10,
+        -- Optional `data`  
+        ---@see AchievementBagValueCounterTable  
+        ---@see AchievementLootCounterTable
         AddAchievementToCounter = 11,
+        -- Requires `id` and `amount`
         IncreaseChance = 12,
+        -- Requires `id (number)` or `data (table of numbers)`
         TriggerIfEnabled = 13,
+        -- Requires `id` and `data.fake_id (number)`
         CreateAnotherTrackerWithTracker = 14,
+        -- Requires `id` and `chance`
         SetChanceWhenTrackerExists = 15,
+        -- Requires `id (number)` or `data (table of numbers)`
         Trigger = 17,
+        -- Requires `id (number)` or `data (table of numbers)`
         RemoveTrigger = 18,
+        -- Requires `id` and `time`
         SetTimeOrCreateTracker = 19,
         ExecuteIfElementIsEnabled = 20,
+        -- Requires `id` and `data.id (preplanning id)`  
+        -- See: `ElementPreplanning` in Mission Script
         SetTimeByPreplanning = 24,
+        -- Requires `id`
         IncreaseProgress = 25,
+        -- Requires `id` and `time`
         SetTrackerAccurate = 27,
-        -- Autosets tracker class to `EHIInaccurateTracker`; see `EHIManager:ParseMissionTriggers()`
+        -- Autosets tracker class to `EHIInaccurateTracker`  
+        -- Requires `data (table of numbers)`  
+        ---@see EHIManager.ParseMissionTriggers
         SetRandomTime = 32,
+        -- Requires `id` and `amount`
         DecreaseChance = 34,
+        -- Requires `element`  
+        -- Optional `additional_time`  
         GetElementTimerAccurate = 35,
+        -- Requires `id` and `element`  
+        -- Optional `additional_time` 
         UnpauseTrackerIfExistsAccurate = 36,
+        -- Requires `id` and `data.id (preplanning id)`  
+        -- See: `ElementPreplanning` in Mission Script
         UnpauseOrSetTimeByPreplanning = 37,
+        -- Requires `id`
         FinalizeAchievement = 39,
+        -- Requires `id` and must be hooked to `ElementLogicChanceOperator`
         IncreaseChanceFromElement = 42,
+        -- Requires `id` and must be hooked to `ElementLogicChanceOperator`
         DecreaseChanceFromElement = 43,
+        -- Requires `id` and must be hooked to `ElementLogicChanceOperator`
         SetChanceFromElement = 44,
+        -- Requires `id` and must be hooked to `ElementLogicChanceOperator`
         SetChanceFromElementWhenTrackerExists = 45,
+        -- Requires `id` and `time`
         PauseTrackerWithTime = 46,
+        -- Requires `id` and `max`
         IncreaseProgressMax = 47,
+        -- Requires `id` and `max`  
+        -- Optional `class`
         IncreaseProgressMax2 = 48,
+        -- Requires `data.stealth` and `data.loud`
         SetTimeIfLoudOrStealth = 49,
+        -- Requires `id`, `data.id (preplanning id)`, `data.yes (if preplanning asset bought)` and `data.no (if preplanning asset not bought)`  
+        -- See: `ElementPreplanning` in Mission Script
         AddTimeByPreplanning = 50,
-        -- Autosets Vanilla settings for Waypoints; see `EHIManager:ParseMissionTriggers()`
+        -- Autosets Vanilla settings for Waypoints  
+        ---@see EHIManager.ParseMissionTriggers
         ShowWaypoint = 51,
+        --- Requires `id` and `waypoint (table)`
         ShowEHIWaypoint = 52,
+        -- Requires `id` and `max`
         DecreaseProgressMax = 53,
+        -- Requires `id` and `progress`
         DecreaseProgress = 54,
+        -- Requires `id`
         IncreaseCounter = 55,
+        -- Requires `id`
         DecreaseCounter = 56,
+        -- Requires `id` and `count`
         SetCounter = 57,
-        SniperSpawned = 58,
-        SniperDead = 59,
-        SniperRespawn = 60,
 
+        -- Requires `id` and `f (function name as string)`  
+        -- Optional `arg (table of arguments to pass to the function)`
         CallCustomFunction = 100,
+        -- Requires `f (function name as string in EHITrackerManager)`  
+        -- Optional `arg (table of arguments to pass to the function)`  
+        ---@see EHITrackerManager
         CallTrackerManagerFunction = 101,
+        -- Requires `f (function name as string in EHIWaypointManager)`  
+        -- Optional `arg (table of arguments to pass to the function)`  
+        ---@see EHIWaypointManager
         CallWaypointManagerFunction = 102,
 
         Debug = 1000,
         DebugElement = 1001,
+        -- Requires `f (function)`  
+        -- Optional `arg (1 argument to pass to the function)`
         CustomCode = 1002,
+        -- Requires `f (function)`  
+        -- Optional `arg (1 argument to pass to the function)`
         CustomCodeIfEnabled = 1003,
+        -- Requires `f (function)`  
+        -- Optional `arg (1 argument to pass to the function)` and `t`
         CustomCodeDelayed = 1004,
 
         -- Don't use it directly! Instead, call `EHI:GetFreeCustomSpecialFunctionID()` and `EHI:RegisterCustomSpecialFunction()` respectively; or provide a function to `EHI:RegisterCustomSpecialFunction()` as a first argument

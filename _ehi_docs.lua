@@ -34,7 +34,7 @@
 ---@field class string? Class of tracker. If not provided it defaults to `EHITracker` in `EHITrackerManager`
 ---@field special_function number? Special function the trigger should do
 ---@field waypoint ElementWaypointTrigger? Waypoint definition
----@field waypoint_f fun(self: EHIManager, trigger: ElementTrigger)? In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
+---@field waypoint_f fun(self: EHIManager, trigger: self)? In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
 ---@field trigger_times number? How many times the trigger should run. If the number is provided and once it hits `0`, the trigger is unhooked from the Element and removed from memory
 ---@field client ElementClientTriggerData? Table for clients only to prepopulate fields for tracker syncing. Only applicable to `SF.GetElementTimerAccurate` and `SF.UnpauseTrackerIfExistsAccurate`
 ---@field pos number? Tracker position
@@ -139,7 +139,7 @@
 ---@field restore_on_done boolean? Depends on `remove_vanilla_waypoint`
 ---@field icon string|table
 ---@field texture string
----@field text_rect { x: number, y: number, w: number, h: number }
+---@field text_rect { number: x, number: y, number: w, number: h }
 
 ---@class _WaypointDataTable
 ---@field bitmap PanelBitmap

@@ -143,11 +143,9 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     ---@class EHIcrojob3SnipersTracker : EHISniperLoopTracker
     ---@field super EHISniperLoopTracker
     EHIcrojob3SnipersTracker = class(EHISniperLoopTracker)
-    EHIcrojob3SnipersTracker.super._refresh_on_delete = nil
     function EHIcrojob3SnipersTracker:pre_init(params)
         self._sniper_respawn = true
         self._initial_spawn = true
-        self._refresh_on_delete = true
         EHIcrojob3SnipersTracker.super.pre_init(self, params)
     end
     function EHIcrojob3SnipersTracker:RequestRemoval()

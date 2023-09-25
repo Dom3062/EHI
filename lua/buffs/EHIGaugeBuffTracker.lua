@@ -19,6 +19,9 @@ function EHIGaugeBuffTracker:init(panel, params)
     EHIGaugeBuffTracker.super.init(self, panel, params)
 end
 
+---@param ratio number
+---@param custom_value number?
+---@param pos number
 function EHIGaugeBuffTracker:Activate(ratio, custom_value, pos)
     self._active = true
     self:SetRatio(ratio, custom_value)

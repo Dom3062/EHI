@@ -1,4 +1,5 @@
 ---@class PlayerManager
+---@field _coroutine_mgr CoroutineManager
 ---@field _local_player_body_bags number
 ---@field _throw_regen_kills number?
 ---@field _temporary_upgrades table

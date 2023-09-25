@@ -37,7 +37,7 @@ function EHIBuffManager:new()
     self._scale = EHI:GetOption("buffs_scale")
     buff_w = buff_w * self._scale
     buff_h = buff_h * self._scale
-    self._visible_buffs = {}
+    self._visible_buffs = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIBuffTracker?>
     self._n_visible = 0
     self._cache = {}
     self._gap = 6
@@ -55,7 +55,7 @@ function EHIBuffManager:init_finalize(hud)
     dofile(path .. "EHIBerserkerBuffTracker.lua")
     dofile(path .. "EHICritChanceBuffTracker.lua")
     dofile(path .. "SimpleBuffEdits.lua")
-    self._panel = hud.panel
+    self._panel = hud.panel --[[@as Panel]]
     self:InitializeBuffs()
     self:InitializeTagTeamBuffs()
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "ActivateUpdatingBuffs"))
@@ -181,9 +181,9 @@ function EHIBuffManager:AddBuff(id, t)
             buff:Extend(t)
         else
             buff:Activate(t, self._n_visible)
-            self._visible_buffs[id] = true
+            self._visible_buffs[id] = buff
             self._n_visible = self._n_visible + 1
-            self:ReorganizeFast(buff)
+            self:ReorganizeFast(self._n_visible, buff)
         end
     end
 end
@@ -210,9 +210,9 @@ function EHIBuffManager:AddBuffNoUpdate(id)
     local buff = self._buffs[id]
     if buff and not buff:IsActive() then
         buff:ActivateNoUpdate(self._n_visible)
-        self._visible_buffs[id] = true
+        self._visible_buffs[id] = buff
         self._n_visible = self._n_visible + 1
-        self:ReorganizeFast(buff)
+        self:ReorganizeFast(self._n_visible, buff)
     end
 end
 
@@ -226,9 +226,9 @@ function EHIBuffManager:AddGauge(id, ratio, custom_value)
             buff:SetRatio(ratio, custom_value)
         else
             buff:Activate(ratio, custom_value, self._n_visible)
-            self._visible_buffs[id] = true
+            self._visible_buffs[id] = buff
             self._n_visible = self._n_visible + 1
-            self:ReorganizeFast(buff)
+            self:ReorganizeFast(self._n_visible, buff)
         end
     end
 end
@@ -272,18 +272,19 @@ end
 ---@param id string
 ---@param buff EHIBuffTracker
 function EHIBuffManager:AddVisibleBuff(id, buff)
-    self._visible_buffs[id] = true
+    self._visible_buffs[id] = buff
     buff:SetPos(self._n_visible)
     self._n_visible = self._n_visible + 1
-    self:ReorganizeFast(buff)
+    self:ReorganizeFast(self._n_visible, buff)
 end
 
 ---@param id string
 ---@param pos number?
 function EHIBuffManager:RemoveVisibleBuff(id, pos)
+    local buff = self._visible_buffs[id] or self._buffs[id] --[[@as EHIBuffTracker]]
     self._visible_buffs[id] = nil
     self._n_visible = self._n_visible - 1
-    self:Reorganize(pos)
+    self:Reorganize(pos, buff)
 end
 
 ---@param id string
@@ -318,31 +319,31 @@ end
 local alignment = EHI:GetOption("buffs_alignment")
 if alignment == 1 then -- Left
     ---@param pos number?
-    function EHIBuffManager:Reorganize(pos)
+    ---@param buff EHIBuffTracker
+    function EHIBuffManager:Reorganize(pos, buff)
         if self._n_visible == 0 then
             return
         end
         pos = pos or self._n_visible
-        for key, _ in pairs(self._visible_buffs) do
-            local buff = self._buffs[key] --[[@as EHIBuffTracker]]
-            buff:SetLeftXByPos(self._x, pos)
+        for _, v_buff in pairs(self._visible_buffs) do
+            v_buff:SetLeftXByPos(self._x, pos)
         end
     end
 
+    ---@param pos number
     ---@param buff EHIBuffTracker
-    function EHIBuffManager:ReorganizeFast(buff)
-        buff:SetLeftXByPos(self._x, self._n_visible)
+    function EHIBuffManager:ReorganizeFast(pos, buff)
+        buff:SetLeftXByPos(self._x, pos)
     end
 elseif alignment == 2 then -- Center
     local ceil = math.ceil
     local floor = math.floor
     ---@param pos number?
-    function EHIBuffManager:Reorganize(pos)
+    ---@param buff EHIBuffTracker
+    function EHIBuffManager:Reorganize(pos, buff)
         if self._n_visible == 0 then
             return
         elseif self._n_visible == 1 then
-            local key, _ = next(self._visible_buffs)
-            local buff = self._buffs[key] --[[@as EHIBuffTracker]]
             buff:SetCenterX(self._panel:center_x())
             buff:SetPos(0)
         else
@@ -350,81 +351,28 @@ elseif alignment == 2 then -- Center
             local center_pos = even and ceil(self._n_visible / 2) or floor(self._n_visible / 2)
             local center_x = self._panel:center_x()
             pos = pos or self._n_visible
-            for key, _ in pairs(self._visible_buffs) do
-                local buff = self._buffs[key] --[[@as EHIBuffTracker]]
-                buff:SetCenterX(center_x)
-                buff:SetCenterXByPos(pos, center_pos, even)
+            for _, v_buff in pairs(self._visible_buffs) do
+                v_buff:SetCenterXByPos(center_x, pos, center_pos, even)
             end
         end
     end
-
-    ---@param id string
-    ---@param t number
-    function EHIBuffManager:AddBuff(id, t)
-        local buff = self._buffs[id]
-        if buff then
-            if buff:IsActive() then
-                buff:Extend(t)
-            else
-                buff:Activate(t, self._n_visible)
-                self._visible_buffs[id] = true
-                self._n_visible = self._n_visible + 1
-                self:Reorganize()
-            end
-        end
-    end
-
-    ---@param id string
-    function EHIBuffManager:AddBuffNoUpdate(id)
-        local buff = self._buffs[id]
-        if buff and not buff:IsActive() then
-            buff:ActivateNoUpdate(self._n_visible)
-            self._visible_buffs[id] = true
-            self._n_visible = self._n_visible + 1
-            self:Reorganize()
-        end
-    end
-
-    ---@param id string
-    ---@param ratio number
-    ---@param custom_value number?
-    function EHIBuffManager:AddGauge(id, ratio, custom_value)
-        local buff = self._buffs[id] --[[@as EHIGaugeBuffTracker]]
-        if buff then
-            if buff:IsActive() then
-                buff:SetRatio(ratio, custom_value)
-            else
-                buff:Activate(ratio, custom_value, self._n_visible)
-                self._visible_buffs[id] = true
-                self._n_visible = self._n_visible + 1
-                self:Reorganize()
-            end
-        end
-    end
-
-    ---@param id string
-    ---@param buff EHIBuffTracker
-    function EHIBuffManager:AddVisibleBuff(id, buff)
-        self._visible_buffs[id] = true
-        buff:SetPos(self._n_visible)
-        self._n_visible = self._n_visible + 1
-        self:Reorganize()
-    end
+    EHIBuffManager.ReorganizeFast = EHIBuffManager.Reorganize
 else -- Right
     ---@param pos number?
-    function EHIBuffManager:Reorganize(pos)
+    ---@param buff EHIBuffTracker
+    function EHIBuffManager:Reorganize(pos, buff)
         if self._n_visible == 0 then
             return
         end
         pos = pos or self._n_visible
-        for key, _ in pairs(self._visible_buffs) do
-            local buff = self._buffs[key] --[[@as EHIBuffTracker]]
-            buff:SetRightXByPos(self._x, pos)
+        for _, v_buff in pairs(self._visible_buffs) do
+            v_buff:SetRightXByPos(self._x, pos)
         end
     end
 
+    ---@param pos number
     ---@param buff EHIBuffTracker
-    function EHIBuffManager:ReorganizeFast(buff)
-        buff:SetRightXByPos(self._x, self._n_visible)
+    function EHIBuffManager:ReorganizeFast(pos, buff)
+        buff:SetRightXByPos(self._x, pos)
     end
 end

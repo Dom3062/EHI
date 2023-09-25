@@ -328,10 +328,12 @@ function EHIBuffTracker:SetLeftXByPos(x, pos)
 end
 
 local abs = math.abs
+---@param center_x number
 ---@param pos number
 ---@param center_pos number
 ---@param even boolean
-function EHIBuffTracker:SetCenterXByPos(pos, center_pos, even)
+function EHIBuffTracker:SetCenterXByPos(center_x, pos, center_pos, even)
+    self._panel:set_center_x(center_x)
     if pos < self._pos then
         self._pos = self._pos - 1
     end

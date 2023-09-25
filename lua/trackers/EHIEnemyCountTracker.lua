@@ -1,4 +1,5 @@
 ---@class EHIEnemyCountTracker : EHICountTracker
+---@field _icon2 PanelBitmap?
 ---@field super EHICountTracker
 EHIEnemyCountTracker = class(EHICountTracker)
 if EHI:GetOption("show_enemy_count_show_pagers") then
@@ -20,16 +21,7 @@ function EHIEnemyCountTracker:OverridePanel()
         return
     end
     local texture, text_rect = self:GetIcon("enemy")
-    self._icon2 = self._panel:bitmap({
-        name = "icon2",
-        texture = texture,
-        texture_rect = text_rect,
-        alpha = 1,
-        visible = false,
-        x = self._icon1:x(),
-        w = self._icon_size_scaled,
-        h = self._icon_size_scaled
-    })
+    self:CreateIcon("2", texture, text_rect, self._icon1:x(), false)
     self._manually_created_icon2 = true
 end
 

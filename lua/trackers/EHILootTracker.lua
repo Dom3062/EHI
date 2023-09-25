@@ -140,6 +140,7 @@ end
 EHILootTracker.FormatProgress = EHILootTracker.Format
 
 ---@class EHIAchievementLootCounterTracker : EHILootTracker, EHIAchievementTracker
+---@field _icon2 PanelBitmap
 ---@field super EHILootTracker
 EHIAchievementLootCounterTracker = class(EHILootTracker)
 EHIAchievementLootCounterTracker._popup_type = "achievement"
@@ -182,16 +183,7 @@ function EHIAchievementLootCounterTracker:OverridePanel()
         return
     end
     local texture, text_rect = self:GetIcon("pd2_loot")
-    self._icon2 = self._panel:bitmap({
-        name = "icon2",
-        texture = texture,
-        texture_rect = text_rect,
-        alpha = 1,
-        visible = false,
-        x = self._icon1:x(),
-        w = self._icon_size_scaled,
-        h = self._icon_size_scaled
-    })
+    self:CreateIcon("2", texture, text_rect, self._icon1:x(), false)
     self._manually_created_icon2 = true
 end
 

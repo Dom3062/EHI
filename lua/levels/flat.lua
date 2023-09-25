@@ -34,7 +34,8 @@ local triggers = {
 
     [100082] = { time = 30 + 10, id = "HeliComesWithMagnet", icons = { Icon.Heli, Icon.Winch } },
 
-    [100147] = { time = 18.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+    --- Add 0.2 delay here so the tracker does not hide first before this gets executed again; players won't notice 0.2 delay here
+    [100147] = { time = 18.2 + 0.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
         if enabled then
             if self._trackers:TrackerExists(trigger.id) then
                 self._trackers:SetTrackerTimeNoAnim(trigger.id, trigger.time)

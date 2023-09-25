@@ -67,7 +67,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         if EHI:GetOption("show_pager_tracker") then
             local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
             if server then
-                for _, value in pairs(base) do
+                for _, value in ipairs(base) do
                     if value > 0 and value < 1 then
                         -- Random Chance
                         self.ehi:AddTracker({
@@ -84,7 +84,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 end
             end
             local max = 0
-            for _, value in pairs(base) do
+            for _, value in ipairs(base) do
                 if value > 0 then
                     max = max + 1
                 end

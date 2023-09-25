@@ -131,28 +131,6 @@ local function GetIcon(icon)
     return tweak_data.hud_icons:get_icon_or(icon, icons.default.texture, icons.default.texture_rect)
 end
 
----@param self EHITracker
----@param i string
----@param texture string
----@param texture_rect number[]
----@param color Color
----@param alpha number
----@param visible boolean
----@param x number
-local function CreateIcon(self, i, texture, texture_rect, color, alpha, visible, x)
-    self["_icon" .. i] = self._panel:bitmap({
-        name = "icon" .. i,
-        texture = texture,
-        texture_rect = texture_rect,
-        color = color,
-        alpha = alpha,
-        visible = visible,
-        x = x,
-        w = self._icon_size_scaled,
-        h = self._icon_size_scaled
-    })
-end
-
 local bg_visibility = EHI:GetOption("show_tracker_bg")
 local corner_visibility = EHI:GetOption("show_tracker_corners")
 
@@ -416,35 +394,48 @@ if EHI:GetOption("show_one_icon") then
         local first_icon = self._icons[1]
         if type(first_icon) == "string" then
             local texture, rect = GetIcon(first_icon)
-            CreateIcon(self, "1", texture, rect, Color.white, 1, true, icon_pos)
+            self:CreateIcon("1", texture, rect, icon_pos)
         elseif type(first_icon) == "table" then
             local texture, rect = GetIcon(first_icon.icon or "default")
-            CreateIcon(self, "1", texture, rect, first_icon.color,
-                first_icon.alpha or 1,
-                first_icon.visible ~= false,
-                icon_pos)
+            self:CreateIcon("1", texture, rect, icon_pos, first_icon.visible, first_icon.color, first_icon.alpha)
         end
     end
 else
     function EHITracker:CreateIcons()
-        local start = self._bg_box:w()
-        local icon_gap = self._gap_scaled
+        local icon_pos = self._bg_box:w() + self._gap_scaled
         for i, v in ipairs(self._icons) do
             local s_i = tostring(i)
             if type(v) == "string" then
                 local texture, rect = GetIcon(v)
-                CreateIcon(self, s_i, texture, rect, Color.white, 1, true, start + icon_gap)
+                self:CreateIcon(s_i, texture, rect, icon_pos)
             elseif type(v) == "table" then -- table
                 local texture, rect = GetIcon(v.icon or "default")
-                CreateIcon(self, s_i, texture, rect, v.color,
-                    v.alpha or 1,
-                    v.visible ~= false,
-                    start + icon_gap)
+                self:CreateIcon(s_i, texture, rect, icon_pos, v.visible, v.color, v.alpha)
             end
-            start = start + self._icon_size_scaled
-            icon_gap = icon_gap + self._gap_scaled
+            icon_pos = icon_pos + self._icon_gap_size_scaled
         end
     end
+end
+
+---@param i string
+---@param texture string
+---@param texture_rect number[]
+---@param x number
+---@param visible boolean?
+---@param color Color?
+---@param alpha number?
+function EHITracker:CreateIcon(i, texture, texture_rect, x, visible, color, alpha)
+    self["_icon" .. i] = self._panel:bitmap({
+        name = "icon" .. i,
+        texture = texture,
+        texture_rect = texture_rect,
+        color = color or Color.white,
+        alpha = alpha or 1,
+        visible = visible ~= false,
+        x = x,
+        w = self._icon_size_scaled,
+        h = self._icon_size_scaled
+    })
 end
 
 ---@param params EHITracker_CreateText?
@@ -535,6 +526,7 @@ function EHITracker:SetTimeNoAnim(time)
     self:FitTheText()
 end
 
+---@param params AddTrackerTable|ElementTrigger
 function EHITracker:Run(params)
     self:SetTimeNoAnim(params.time or 0)
     self:SetTextColor()

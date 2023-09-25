@@ -1,6 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
 local element_sync_triggers =
 {
@@ -9,15 +10,24 @@ local element_sync_triggers =
 }
 local triggers = {
     [102949] = { time = 17, id = "HeliDropWait", icons = { Icon.Wait } },
+
+    [102335] = { time = 60, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = EHI:GetInstanceElementID(100029, 16950) } }, -- units/pd2_dlc_vit/props/security_shutter/vit_prop_branch_security_shutter
+
     [100246] = { time = 31, id = "TearGasOffice", icons = { Icon.Teargas }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "TearGasOfficeChance" } },
     [101580] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, condition = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), class = TT.Chance },
     -- Disabled in the mission script
     --[101394] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists }, -- It will not run on Hard and below
     [101377] = { amount = 20, id = "TearGasOfficeChance", special_function = SF.IncreaseChance },
     [101393] = { id = "TearGasOfficeChance", special_function = SF.RemoveTracker },
+
     [102544] = { time = 8.3, id = "HumveeWestWingCrash", icons = { Icon.Car, Icon.Fire }, class = TT.Warning },
 
-    [102335] = { time = 60, id = "Thermite", icons = { Icon.Fire } }, -- units/pd2_dlc_vit/props/security_shutter/vit_prop_branch_security_shutter
+    [101504] = { time = 12 + 11, id = "AirlockOpenInside", icons = { Icon.Door } },
+
+    [102095] = { special_function = SF.Trigger, data = { 1020951, 1020952 } },
+    [1020951] = { time = 26, id = "AirlockOpenOutside", icons = { Icon.Door }, condition_function = CF.IsStealth },
+    [1020952] = { time = 26, id = "AirlockOpenOutsideEndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning, condition_function = CF.IsLoud },
+
     [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 101914 } } -- 30s delay + 26s escape zone delay
 }
 if EHI:IsClient() then
@@ -54,6 +64,8 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101324] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "RequestRemoval" }
+    -- Enemies killed via "ElementAIRemove" DOES NOT TRIGGER ElementEnemyDummyTrigger if "force_ragdoll" and "true_death" are set to "false" and "use_instigator" is set to "true"
+    other[102596] = { id = "Snipers", special_function = SF.RemoveTracker }
 end
 
 EHI:ParseTriggers({ mission = triggers, other = other })
@@ -70,10 +82,17 @@ for i = 4150, 4450, 100 do
     DisableWaypoints[EHI:GetInstanceElementID(100074, i)] = true -- Defend
     DisableWaypoints[EHI:GetInstanceElementID(100050, i)] = true -- Fix
 end
+-- levels/instances/unique/vit/vit_peoc_workstation/001-006
 for i = 30000, 31500, 300 do
     DisableWaypoints[EHI:GetInstanceElementID(100059, i)] = true -- Fix
 end
 EHI:DisableWaypoints(DisableWaypoints)
+
+local tbl = {}
+for i = 30000, 31500, 300 do
+    tbl[EHI:GetInstanceUnitID(100045, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100058, i) }
+end
+EHI:UpdateUnits(tbl)
 
 --[[local tbl =
 {

@@ -22,6 +22,9 @@ _G.tweak_data.ehi = {}
 ---@class GageAssignmentTweakData
 ---@field get_num_assignment_units fun(self: self): number
 _G.tweak_data.gage_assignment = {}
+---@class GuiTweakData
+---@field stats_present_multiplier number
+_G.tweak_data.gui = {}
 ---@class GroupAITweakData
 ---@field difficulty_curve_points number[]
 _G.tweak_data.group_ai = {}
@@ -38,10 +41,48 @@ _G.tweak_data.hud_icons = {}
 ---@field pd2_large_font_id userdata
 ---@field pd2_large_font_size number
 _G.tweak_data.menu = {}
+---@class PlayerTweakData
+---@field SUSPICION_OFFSET_LERP number
+---@field alarm_pager PlayerTweakData.alarm_pager
+---@field damage PlayerTweakData.damage
+---@field omniscience PlayerTweakData.omniscience
+_G.tweak_data.player = {}
+---@class PlayerTweakData.alarm_pager
+---@field bluff_success_chance_w_skill number[]
+_G.tweak_data.alarm_pager = {}
+---@class PlayerTweakData.damage
+---@field base_respawn_time_penalty number
+_G.tweak_data.player.damage = {}
+---@class PlayerTweakData.omniscience
+---@field start_t number
+---@field target_resense_t number
+_G.tweak_data.player.damage.omniscience = {}
+---@class UpgradesTweakData
+---@field max_cocaine_stacks_per_tick number
+---@field values UpgradesTweakData.values
+_G.tweak_data.upgrades = {}
+---@class UpgradesTweakData.values
+---@field player UpgradesTweakData.values.player
+---@field team UpgradesTweakData.values.team
+_G.tweak_data.upgrades.values = {}
+---@class UpgradesTweakData.values.player
+---@field dodge_shot_gain table
+---@field melee_damage_stacking table
+_G.tweak_data.upgrades.values.player = {}
+---@class UpgradesTweakData.values.team
+---@field crew_throwable_regen table
+---@field damage UpgradesTweakData.values.team.damage
+_G.tweak_data.upgrades.values.team = {}
+---@class UpgradesTweakData.values.team.damage
+---@field hostage_absorption table
+---@field hostage_absorption_limit number
+_G.tweak_data.upgrades.values.team.damage = {}
 ---@class managers
 _G.managers = {}
 ---@type boolean
 _G.IS_VR = ...
+---@class CoreWorldInstanceManager
+_G.CoreWorldInstanceManager = {}
 ---@class CivilianDamage
 _G.CivilianDamage = {}
 ---@class CopDamage
@@ -78,6 +119,8 @@ _G.MissionAssetsManager = {}
 _G.MissionBriefingGui = {}
 ---@class MoneyManager
 _G.MoneyManager = {}
+---@class TradeManager
+_G.TradeManager = {}
 ---@class VehicleDrivingExt
 _G.VehicleDrivingExt = {}
 ---@class ZipLine
@@ -164,16 +207,18 @@ end
 ---@field rotation Rotation
 
 ---@class MissionScriptElement
+---@field _id number
 ---@field counter_value fun(self: self): number `ElementCounter`
 ---@field enabled fun(self: self): boolean
 ---@field value fun(self: self, value: string): any
 ---@field id fun(self: self): number
 ---@field editor_name fun(self: self): string
+---@field on_executed function
 ---@field _is_inside fun(self: self, position: Vector3): boolean `ElementAreaReportTrigger `
 ---@field _values_ok fun(self: self): boolean `ElementCounterFilter` | `ElementStopwatchFilter`
 ---@field _values MissionScriptElementValues
----@field _calc_base_delay fun(...): number
----@field _calc_element_delay fun(...): number
+---@field _calc_base_delay fun(self: self): number
+---@field _calc_element_delay fun(self: self, params: table): number
 ---@field _timer number `ElementTimer` | `ElementTimerOperator`
 ---@field _check_difficulty fun(self: self): boolean `ElementDifficulty`
 ---@field _check_mode fun(self: self): boolean `ElementFilter`
@@ -202,6 +247,9 @@ end
 
 ---@class ControllerManager
 ---@field create_controller fun(self: self, name: string, index: number?, debug: boolean?, prio: number?): ControllerWrapper
+
+---@class CoroutineManager
+---@field _buffer table
 
 ---@class GuiDataManager
 ---@field create_fullscreen_workspace fun(self: self): Workspace
@@ -280,7 +328,7 @@ end
 ---@field session fun(self: self): NetworkBaseSession
 
 ---@class SlotManager
----@field get_mask fun(self: self, ...): number
+---@field get_mask fun(self: self, ...: string): number
 
 ---@class StatisticsManager
 ---@field is_dropin fun(self: self): boolean
@@ -322,8 +370,10 @@ end
 ---@field preplanning PrePlanningManager
 ---@field slot SlotManager
 ---@field statistics StatisticsManager
+---@field trade TradeManager
 ---@field weapon_factory WeaponFactoryManager
 ---@field worlddefinition WorldDefinition
+---@field world_instance CoreWorldInstanceManager
 
 ---@class AchievementsTweakData
 ---@field persistent_stat_unlocks table<string, { [1]: { award: string, at: number } }>
@@ -331,7 +381,7 @@ end
 
 ---@class BlackMarketTweakData
 
----@class BlackMarketTweakData_Projectiles
+---@class BlackMarketTweakData.projectiles
 ---@field [string] table?
 
 ---@class tweak_data Global table of all configuration data
@@ -340,11 +390,14 @@ end
 ---@field carry CarryTweakData
 ---@field ehi EHITweakData
 ---@field gage_assignment GageAssignmentTweakData
+---@field gui GuiTweakData
 ---@field group_ai GroupAITweakData
 ---@field hud_icons HudIconsTweakData
 ---@field levels LevelsTweakData
 ---@field menu MenuTweakData
----@field projectiles BlackMarketTweakData_Projectiles
+---@field player PlayerTweakData
+---@field projectiles BlackMarketTweakData.projectiles
+---@field upgrades UpgradesTweakData
 
 ---@class TimerManager
 ---@field time fun(self: self): number
@@ -507,6 +560,7 @@ end
 ---@field digital_gui fun(): DigitalGui
 ---@field interaction fun(): InteractionExt
 ---@field in_slot fun(self: self, slotmask: number): boolean
+---@field position fun(self: self): Vector3
 ---@field [unknown] unknown
 
 ---@class LocalizationManager
@@ -555,8 +609,12 @@ end
 ---@field visible fun(self: self): boolean
 ---@field set_visible fun(self: self, visible: boolean)
 ---@field parent fun(self: self): self
+---@field color fun(self: self): Color
+---@field set_color fun(self: self, color: Color)
 
 ---@class Panel : PanelBaseObject
+---@field color nil Does not exist in Panel
+---@field set_color nil Does not exist in Panel
 ---@field child fun(self: self, child_name: string): (PanelText|PanelBitmap|PanelRectangle|self)?
 ---@field remove fun(self: self, child_name: PanelBaseObject)
 ---@field text fun(self: self, params: table): PanelText
@@ -568,8 +626,6 @@ end
 ---@field clear fun(self: self) Removes all children in the panel
 
 ---@class PanelText : PanelBaseObject
----@field color fun(self: self): Color
----@field set_color fun(self: self, color: Color)
 ---@field set_text fun(self: self, text: string)
 ---@field text_rect fun(self: self): x: number, y: number, w: number, h: number Returns rectangle of the text
 ---@field font_size fun(self: self): number
@@ -579,13 +635,9 @@ end
 ---@field text fun(self: self): string
 
 ---@class PanelBitmap : PanelBaseObject
----@field color fun(self: self): Color
----@field set_color fun(self: self, color: Color)
 ---@field set_image fun(self: self, texture_path: string, texture_rect_x: number?, texture_rect_y: number?, texture_rect_w: number?, texture_rect_h: number?)
 ---@field set_texture_rect fun(self: self, x: number, y: number, w: number, h: number)
 ---@field set_size fun(self: self, w: number, h: number)
 
 ---@class PanelRectangle : PanelBaseObject
----@field color fun(self: self): Color
----@field set_color fun(self: self, color: Color)
 ---@field set_size fun(self: self, w: number, h: number)

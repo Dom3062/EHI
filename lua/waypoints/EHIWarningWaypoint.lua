@@ -20,10 +20,12 @@ local function anim(o, old_color, color, icon, arrow, bitmap_world)
         end
     end
 end
----@class EHIWarningWaypoint: EHIWaypoint
+---@class EHIWarningWaypoint : EHIWaypoint
 ---@field super EHIWaypoint
 EHIWarningWaypoint = class(EHIWaypoint)
 EHIWarningWaypoint._warning_color = EHI:GetTWColor("warning")
+---@param t any Unused
+---@param dt number
 function EHIWarningWaypoint:update(t, dt)
     EHIWarningWaypoint.super.update(self, t, dt)
     if self._time <= 10 and not self._anim_started then
@@ -32,6 +34,7 @@ function EHIWarningWaypoint:update(t, dt)
     end
 end
 
+---@param color Color?
 function EHIWarningWaypoint:AnimateColor(color)
     if self._timer and alive(self._timer) then
         self._timer:animate(anim, self._default_color, color or self._warning_color, self._bitmap, self._arrow, self._bitmap_world)

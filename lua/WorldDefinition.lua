@@ -4,6 +4,7 @@ if EHI:CheckLoadHook("WorldDefinition") then
 end
 
 ---@class WorldDefinition
+---@field _continents table
 ---@field get_unit fun(self: self, id: number): Unit?
 
 function EHI:FinalizeUnitsClient()

@@ -145,12 +145,13 @@ end
 ---@param slotmask integer
 ---@return integer
 function EHIManager:CountUnitsAvailable(path, slotmask)
-    return #self:GetUnits(path, slotmask)
+    local _, n = self:GetUnits(path, slotmask)
+    return n - 1
 end
 
 ---@param path string
 ---@param slotmask integer
----@return table
+---@return table, integer
 function EHIManager:GetUnits(path, slotmask)
     local tbl = {}
     local tbl_i = 1
@@ -162,7 +163,7 @@ function EHIManager:GetUnits(path, slotmask)
             tbl_i = tbl_i + 1
         end
     end
-    return tbl
+    return tbl, tbl_i
 end
 
 ---@param f fun(self: EHIManager)
@@ -799,14 +800,14 @@ function EHIManager:InitElements()
     self:AddPositionToWaypointFromLoad()
     local scripts = managers.mission._scripts or {}
     if next(base_delay_triggers) then
-        self._base_delay = {}
+        self._base_delay = {} ---@type table<number, fun(self: MissionScriptElement): number>
         for id, _ in pairs(base_delay_triggers) do
             for _, script in pairs(scripts) do
                 local element = script:element(id)
                 if element then
                     self._base_delay[id] = element._calc_base_delay
-                    element._calc_base_delay = function(e, ...)
-                        local delay = self._base_delay[e._id](e, ...)
+                    element._calc_base_delay = function(e)
+                        local delay = self._base_delay[e._id](e)
                         self:AddTrackerAndSync(e._id, delay)
                         return delay
                     end
@@ -815,14 +816,14 @@ function EHIManager:InitElements()
         end
     end
     if next(element_delay_triggers) then
-        self._element_delay = {}
+        self._element_delay = {} ---@type table<number, fun(self: MissionScriptElement, params: table): number>
         for id, _ in pairs(element_delay_triggers) do
             for _, script in pairs(scripts) do
                 local element = script:element(id)
                 if element then
                     self._element_delay[id] = element._calc_element_delay
-                    element._calc_element_delay = function(e, params, ...)
-                        local delay = self._element_delay[e._id](e, params, ...)
+                    element._calc_element_delay = function(e, params)
+                        local delay = self._element_delay[e._id](e, params)
                         if element_delay_triggers[e._id][params.id] then
                             if host_triggers[params.id] then
                                 local trigger = host_triggers[params.id]
