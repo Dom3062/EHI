@@ -1426,6 +1426,8 @@ if EHI:GetWaypointOption("show_waypoints_only") then
                 trigger.waypoint.time = self:GetRandomTime(trigger)
             end
             self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
+        elseif trigger.run then
+            self._trackers:RunTracker(trigger.id, trigger.run)
         else
             AddTracker(self, trigger)
         end

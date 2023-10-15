@@ -1,3 +1,6 @@
+r189 (15. 10. 2023):
+Fixed an issue where preloaded trackers won't get visible when "Show Only Waypoints" option is enabled
+
 r188 (25. 09. 2023):
 Trackers: Optimized memory usage
 The White House: Fixed an issue where enemy sniper tracker could get stuck
