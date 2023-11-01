@@ -43,42 +43,43 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local boat_anim = 614/30 + 12 + 1
 local skid = { { icon = Icon.Car, color = tweak_data.ehi.colors.CarBlue } }
 local triggers = {
-    [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { Icon.PCHack } },
+    [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { Icon.PCHack }, hint = Hints.Hack },
 
     [EHI:GetInstanceElementID(100043, 4800)] = { special_function = SF.Trigger, data = { 1000431, 1000432 } },
-    [1000431] = { time = 15, id = "DoorOpenGas", icons = { Icon.Door } },
-    [1000432] = { additional_time = 20, random_time = 5, id = "RoomGas", icons = { Icon.Teargas } },
+    [1000431] = { time = 15, id = "DoorOpenGas", icons = { Icon.Door }, hint = Hints.Wait },
+    [1000432] = { additional_time = 20, random_time = 5, id = "RoomGas", icons = { Icon.Teargas }, hint = Hints.Teargas },
 
-    [103333] = { time = 613/30, id = "SkidDriving2", icons = skid },
-    [103178] = { time = 386/30, id = "SkidDriving3", icons = skid },
-    [104043] = { time = 28, id = "SkidDriving4", icons = skid }, -- More accurate
-    [104101] = { time = 7, id = "SkidDriving5", icons = skid }, -- 100704; More accurate
-    [104102] = { time = 477/30, id = "SkidDriving6", icons = skid },
-    [104233] = { time = 30, id = "SkidDriving7", icons = skid }, -- More accurate
-    [104262] = { time = 549/30, id = "SkidDriving8", icons = skid },
-    [104304] = { time = 40, id = "SkidDriving9", icons = skid }, -- More accurate
-    [103667] = { time = 1399/30, id = "SkidDriving10", icons = skid },
-    [100782] = { time = 18, id = "SkidDriving11", icons = skid }, -- More accurate
-    [104227] = { time = 37, id = "SkidDriving12", icons = skid }, -- More accurate
-    [104305] = { time = 25, id = "SkidDriving13", icons = skid }, -- More accurate
-    [101009] = { time = 210/30, id = "RampRaise", icons = { Icon.Wait } },
-    [101799] = { time = 181/30, id = "RampLower", icons = { Icon.Wait } },
+    [103333] = { time = 613/30, id = "SkidDriving2", icons = skid, hint = Hints.hox_1_VehicleMove },
+    [103178] = { time = 386/30, id = "SkidDriving3", icons = skid, hint = Hints.hox_1_VehicleMove },
+    [104043] = { time = 28, id = "SkidDriving4", icons = skid, hint = Hints.hox_1_VehicleMove }, -- More accurate
+    [104101] = { time = 7, id = "SkidDriving5", icons = skid, hint = Hints.hox_1_VehicleMove }, -- 100704; More accurate
+    [104102] = { time = 477/30, id = "SkidDriving6", icons = skid, hint = Hints.hox_1_VehicleMove },
+    [104233] = { time = 30, id = "SkidDriving7", icons = skid, hint = Hints.hox_1_VehicleMove }, -- More accurate
+    [104262] = { time = 549/30, id = "SkidDriving8", icons = skid, hint = Hints.hox_1_VehicleMove },
+    [104304] = { time = 40, id = "SkidDriving9", icons = skid, hint = Hints.hox_1_VehicleMove }, -- More accurate
+    [103667] = { time = 1399/30, id = "SkidDriving10", icons = skid, hint = Hints.hox_1_VehicleMove },
+    [100782] = { time = 18, id = "SkidDriving11", icons = skid, hint = Hints.hox_1_VehicleMove }, -- More accurate
+    [104227] = { time = 37, id = "SkidDriving12", icons = skid, hint = Hints.hox_1_VehicleMove }, -- More accurate
+    [104305] = { time = 25, id = "SkidDriving13", icons = skid, hint = Hints.hox_1_VehicleMove }, -- More accurate
+    [101009] = { time = 210/30, id = "RampRaise", icons = { Icon.Wait }, hint = Hints.Wait },
+    [101799] = { time = 181/30, id = "RampLower", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [104528] = { time = 22, id = "Crane", icons = { Icon.Winch } }, -- 104528 -> 100703
+    [104528] = { time = 22, id = "Crane", icons = { Icon.Winch }, hint = Hints.des_Crane }, -- 104528 -> 100703
 
-    [103870] = { chance = 34, id = "ReviveVlad", icons = { "equipment_defibrillator" }, class = TT.Chance, special_function = SF.AddTrackerIfDoesNotExist },
+    [103870] = { chance = 34, id = "ReviveVlad", icons = { "equipment_defibrillator" }, class = TT.Chance, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.sand_Revive },
     [103871] = { id = "ReviveVlad", special_function = SF.RemoveTracker },
 
-    [103925] = { id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { loud = 30 + boat_anim, stealth = 19 + boat_anim } }
+    [103925] = { id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { loud = 30 + boat_anim, stealth = 19 + boat_anim }, hint = Hints.LootEscape }
 }
 local KeypadResetTimer = EHI:GetKeypadResetTimer()
 for _, index in ipairs({ 8530, 9180, 9680 }) do
     local unit_id = EHI:GetInstanceUnitID(100279, index)
-    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id }, special_function = SF.SetTimeOrCreateTracker } -- ECM Jammer
-    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + KeypadResetTimer, id = "KeypadReboot", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id } }
+    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.KeypadReset } -- ECM Jammer
+    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + KeypadResetTimer, id = "KeypadReboot", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id }, hint = Hints.KeypadReset }
 end
 for i = 16580, 16780, 100 do
     triggers[EHI:GetInstanceElementID(100057, i)] = { id = "ReviveVlad", special_function = SF.IncreaseChanceFromElement } -- +33%
@@ -181,9 +182,9 @@ local tbl =
 
     --levels/instances/unique/sand/sand_defibrillator
     --units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator
-    [EHI:GetInstanceUnitID(100009, 16580)] = { icons = { Icon.Power } },
-    [EHI:GetInstanceUnitID(100009, 16680)] = { icons = { Icon.Power } },
-    [EHI:GetInstanceUnitID(100009, 16780)] = { icons = { Icon.Power } }
+    [EHI:GetInstanceUnitID(100009, 16580)] = { icons = { Icon.Power }, hint = Hints.Charging },
+    [EHI:GetInstanceUnitID(100009, 16680)] = { icons = { Icon.Power }, hint = Hints.Charging },
+    [EHI:GetInstanceUnitID(100009, 16780)] = { icons = { Icon.Power }, hint = Hints.Charging }
 }
 if EHI:GetOption("show_waypoints") then
     local function f(id, unit_data, unit)

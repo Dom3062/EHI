@@ -12,6 +12,7 @@ _G.World = {}
 ---@field chat_colors Color[]
 ---@field get_value fun(self: self, ...): any
 _G.tweak_data = {}
+_G.tweak_data.hud = {}
 _G.tweak_data.screen_colors = {}
 ---@class CarryTweakData
 ---@field small_loot table<string, number>
@@ -51,8 +52,11 @@ _G.tweak_data.player = {}
 ---@field bluff_success_chance_w_skill number[]
 _G.tweak_data.alarm_pager = {}
 ---@class PlayerTweakData.damage
----@field base_respawn_time_penalty number
-_G.tweak_data.player.damage = {}
+---@field automatic_respawn_time number?
+_G.tweak_data.player.damage = {
+    base_respawn_time_penalty = 5,
+    respawn_time_penalty = 30
+}
 ---@class PlayerTweakData.omniscience
 ---@field start_t number
 ---@field target_resense_t number
@@ -93,6 +97,8 @@ _G.TimerGui = {}
 _G.DigitalGui = {}
 ---@class ExperienceManager
 _G.ExperienceManager = {}
+---@class GamePlayCentralManager
+_G.GamePlayCentralManager = {}
 ---@class LevelsTweakData
 ---@field get_default_team_ID fun(self: self, type: string): string
 _G.LevelsTweakData = {}
@@ -247,6 +253,7 @@ end
 
 ---@class ControllerManager
 ---@field create_controller fun(self: self, name: string, index: number?, debug: boolean?, prio: number?): ControllerWrapper
+---@field get_settings fun(self: self, wrapper_type: string): unknown
 
 ---@class CoroutineManager
 ---@field _buffer table
@@ -256,6 +263,7 @@ end
 ---@field create_fullscreen_16_9_workspace fun(self: self): Workspace 16:9
 ---@field destroy_workspace fun(self: self, ws: Workspace)
 ---@field safe_to_full fun(self: self, in_x: number, in_y: number): number, number
+---@field safe_to_full_16_9 fun(self: self, in_x: number, in_y: number): number, number
 ---@field full_to_safe fun(self: self, in_x: number, in_y: number): number, number
 ---@field full_scaled_size fun(self: self): { x: number, y: number, w: number, h: number }
 
@@ -276,12 +284,14 @@ end
 ---@class JobManager
 ---@field current_contact_id fun(self: self): string
 ---@field current_job_id fun(self: self): string
+---@field is_level_christmas fun(self: self, level_id: string): boolean
 ---@field on_last_stage fun(self: self): boolean
 
 ---@class MissionManager
 ---@field _scripts table<string, MissionScript> All running scripts in a mission
 ---@field add_global_event_listener fun(self: self, key: string, event_types: string[], clbk: function)
 ---@field add_runned_unit_sequence_trigger fun(self: self, unit_id: number, sequence: string, callback: function)
+---@field check_mission_filter fun(self: self, value: number): boolean
 ---@field get_element_by_id fun(self: self, id: number): MissionScriptElement?
 ---@field remove_global_event_listener fun(self: self, key: string)
 
@@ -321,11 +331,15 @@ end
 ---@field peer fun(self: self, peer_id: number): NetworkPeer
 ---@field peer_by_unit fun(self: self, Unit: UnitPlayer): NetworkPeer
 ---@field peers fun(self: self): table<number, NetworkPeer>
+---@field send_to_peers_synched fun(self: self, ...: any)
 
 ---@class NetworkManager
 ---@field account NetworkAccountBase
 ---@field add_event_listener fun(self: self, key: string, event_types: string, clbk: function)
 ---@field session fun(self: self): NetworkBaseSession
+
+---@class PerpetualEventManager
+---@field get_holiday_tactics fun(self: self): string
 
 ---@class SlotManager
 ---@field get_mask fun(self: self, ...: string): number
@@ -366,6 +380,7 @@ end
 ---@field network NetworkManager
 ---@field localization LocalizationManager
 ---@field loot LootManager
+---@field perpetual_event PerpetualEventManager
 ---@field player PlayerManager
 ---@field preplanning PrePlanningManager
 ---@field slot SlotManager
@@ -380,8 +395,9 @@ end
 ---@field visual table<string, { icon_id: string }>
 
 ---@class BlackMarketTweakData
+---@field melee_weapons { [string]: { type: string } }
 
----@class BlackMarketTweakData.projectiles
+---@class tweak_data.projectiles
 ---@field [string] table?
 
 ---@class tweak_data Global table of all configuration data
@@ -389,14 +405,16 @@ end
 ---@field blackmarket BlackMarketTweakData
 ---@field carry CarryTweakData
 ---@field ehi EHITweakData
+---@field experience_manager table
 ---@field gage_assignment GageAssignmentTweakData
 ---@field gui GuiTweakData
 ---@field group_ai GroupAITweakData
 ---@field hud_icons HudIconsTweakData
 ---@field levels LevelsTweakData
 ---@field menu MenuTweakData
+---@field mutators table
 ---@field player PlayerTweakData
----@field projectiles BlackMarketTweakData.projectiles
+---@field projectiles tweak_data.projectiles
 ---@field upgrades UpgradesTweakData
 
 ---@class TimerManager
@@ -597,6 +615,8 @@ end
 ---@field set_center fun(self: self, x: number, y: number)
 ---@field center_x fun(self: self): number
 ---@field set_center_x fun(self: self, center_x: number)
+---@field center_y fun(self: self): number
+---@field set_center_y fun(self: self, center_y: number)
 ---@field set_position fun(self: self, x: number, y: number)
 ---@field set_leftbottom fun(self: self, left: number, bottom: number)
 ---@field set_righttop fun(self: self, right: number, top: number)
@@ -608,20 +628,20 @@ end
 ---@field set_size fun(self: self, w: number, h: number)
 ---@field visible fun(self: self): boolean
 ---@field set_visible fun(self: self, visible: boolean)
----@field parent fun(self: self): self
+---@field parent fun(self: self): Panel
 ---@field color fun(self: self): Color
 ---@field set_color fun(self: self, color: Color)
 
 ---@class Panel : PanelBaseObject
 ---@field color nil Does not exist in Panel
 ---@field set_color nil Does not exist in Panel
----@field child fun(self: self, child_name: string): (PanelText|PanelBitmap|PanelRectangle|self)?
+---@field child fun(self: self, child_name: string): (PanelBaseObject)?
 ---@field remove fun(self: self, child_name: PanelBaseObject)
 ---@field text fun(self: self, params: table): PanelText
 ---@field bitmap fun(self: self, params: table): PanelBitmap
 ---@field rect fun(self: self, params: table): PanelRectangle
 ---@field panel fun(self: self, params: table): self
----@field children fun(self: self): table Returns an ipairs table of all items created on the panel
+---@field children fun(self: self): PanelBaseObject[] Returns an ipairs table of all items created on the panel
 ---@field inside fun(self: self, x: number, y: number): boolean Returns `true` or `false` if provided `x` and `y` are inside the panel
 ---@field clear fun(self: self) Removes all children in the panel
 

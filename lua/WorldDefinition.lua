@@ -57,6 +57,9 @@ function EHI:FinalizeUnits(tbl)
                     if unit_data.custom_callback then
                         timer_gui:SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
                     end
+                    if unit_data.hint then
+                        timer_gui:SetHint(unit_data.hint)
+                    end
                     timer_gui:SetWaypointPosition(unit_data.position)
                     timer_gui:Finalize()
                 end
@@ -80,6 +83,9 @@ function EHI:FinalizeUnits(tbl)
                     end
                     if unit_data.ignore_visibility then
                         digital_gui:SetIgnoreVisibility()
+                    end
+                    if unit_data.hint then
+                        digital_gui:SetHint(unit_data.hint)
                     end
                     digital_gui:Finalize()
                 end

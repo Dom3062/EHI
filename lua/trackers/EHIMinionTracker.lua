@@ -1,6 +1,7 @@
 ---@class EHIMinionTracker : EHITracker
 ---@field super EHITracker
 EHIMinionTracker = class(EHITracker)
+EHIMinionTracker._forced_hint_text = "converts"
 EHIMinionTracker._forced_icons = { "minion" }
 EHIMinionTracker._update = false
 function EHIMinionTracker:init(...)
@@ -132,7 +133,7 @@ function EHIMinionTracker:FitTheTextUnique(i)
 end
 
 function EHIMinionTracker:FormatUnique(peer_id)
-    self._bg_box:child("text" .. peer_id):set_text(tostring(self:GetNumberOfMinions(peer_id)))
+    self._bg_box:child("text" .. peer_id):set_text(tostring(self:GetNumberOfMinions(peer_id))) ---@diagnostic disable-line
 end
 
 function EHIMinionTracker:GetNumberOfMinions(peer_id)

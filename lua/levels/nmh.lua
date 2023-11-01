@@ -36,6 +36,9 @@ EHIElevatorTimerWaypoint = class(EHIPausableWaypoint)
 EHIElevatorTimerWaypoint.GetElevatorTime = EHIElevatorTimerTracker.GetElevatorTime
 EHIElevatorTimerWaypoint.SetFloors = EHIElevatorTimerTracker.SetFloors
 EHIElevatorTimerWaypoint.LowerFloor = EHIElevatorTimerTracker.LowerFloor
+---@param panel WaypointDataTable
+---@param params table
+---@param parent_class EHIWaypointManager
 function EHIElevatorTimerWaypoint:init(panel, params, parent_class)
     self._floors = params.floors or 26
     params.time = self:GetElevatorTime()
@@ -44,32 +47,34 @@ end
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
-    [102460] = { time = 7, id = "Countdown", icons = { Icon.Alarm }, class = TT.Warning },
+    [102460] = { time = 7, id = "Countdown", icons = { Icon.Alarm }, class = TT.Warning, hint = Hints.Alarm },
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
-    [102701] = { time = 13, id = "Patrol", icons = { "pd2_generic_look" }, class = TT.Warning },
 
-    [103443] = { id = "EscapeElevator", class = "EHIElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = EHIElevatorTimerTracker._forced_icons[1], position_by_unit = 102296, class = "EHIElevatorTimerWaypoint" } },
+    [102701] = { time = 13, id = "Patrol", icons = { "pd2_generic_look" }, class = TT.Warning, hint = Hints.nmh_IncomingPolicePatrol },
+
+    [103443] = { id = "EscapeElevator", class = "EHIElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = EHIElevatorTimerTracker._forced_icons[1], position_by_unit = 102296, class = "EHIElevatorTimerWaypoint" }, hint = Hints.Wait },
     [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
     [104072] = { id = "EscapeElevator", special_function = SF.UnpauseTracker },
     [103439] = { id = "EscapeElevator", special_function = SF.RemoveTracker },
     [100186] = { id = "EscapeElevator", special_function = SF.CallCustomFunction, f = "LowerFloor" },
 
-    [102682] = { time = 20, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
+    [102682] = { time = 20, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.PickUpPhone },
     [102683] = { id = "AnswerPhone", special_function = SF.RemoveTracker },
 
-    [103743] = { time = 25, id = "ExtraCivilianElevatorLeft", icons = { Icon.Door, "hostage" }, class = TT.Warning },
-    [103744] = { time = 35, id = "ExtraCivilianElevatorLeft", icons = { Icon.Door, "hostage" }, class = TT.Warning },
-    [103746] = { time = 15, id = "ExtraCivilianElevatorLeft", icons = { Icon.Door, "hostage" }, class = TT.Warning },
+    [103743] = { time = 25, id = "ExtraCivilianElevatorLeft", icons = { Icon.Door, "hostage" }, class = TT.Warning, hint = Hints.nmh_IncomingCivilian },
+    [103744] = { time = 35, id = "ExtraCivilianElevatorLeft", icons = { Icon.Door, "hostage" }, class = TT.Warning, hint = Hints.nmh_IncomingCivilian },
+    [103746] = { time = 15, id = "ExtraCivilianElevatorLeft", icons = { Icon.Door, "hostage" }, class = TT.Warning, hint = Hints.nmh_IncomingCivilian },
 
-    [103745] = { time = 10, id = "ExtraCivilianElevatorRight", icons = { Icon.Door, "hostage" }, class = TT.Warning },
-    [103749] = { time = 19, id = "ExtraCivilianElevatorRight", icons = { Icon.Door, "hostage" }, class = TT.Warning },
-    [103750] = { time = 30, id = "ExtraCivilianElevatorRight", icons = { Icon.Door, "hostage" }, class = TT.Warning },
+    [103745] = { time = 10, id = "ExtraCivilianElevatorRight", icons = { Icon.Door, "hostage" }, class = TT.Warning, hint = Hints.nmh_IncomingCivilian },
+    [103749] = { time = 19, id = "ExtraCivilianElevatorRight", icons = { Icon.Door, "hostage" }, class = TT.Warning, hint = Hints.nmh_IncomingCivilian },
+    [103750] = { time = 30, id = "ExtraCivilianElevatorRight", icons = { Icon.Door, "hostage" }, class = TT.Warning, hint = Hints.nmh_IncomingCivilian },
 
-    [102992] = { chance = 1, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance },
+    [102992] = { chance = 1, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, hint = Hints.nmh_PatientFileChance },
     [103013] = { amount = 1, id = "CorrectPaperChance", special_function = SF.IncreaseChance },
-    [103006] = { chance = 100, id = "CorrectPaperChance", special_function = SF.SetChanceWhenTrackerExists },
+    [103006] = { chance = 100, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.nmh_PatientFileChance },
     [104752] = { id = "CorrectPaperChance", special_function = SF.RemoveTracker },
 
     [102675] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
@@ -87,9 +92,9 @@ local triggers = {
 ---@type ParseTriggerTable
 local outcome =
 {
-    [100013] = { additional_time = 15 + 15 + 10 + 40/30, random_time = 5, id = "VialFail", icons = { "equipment_bloodvial", Icon.Loop } },
-    [100017] = { time = 30, id = "VialSuccess", icons = { "equipment_bloodvialok" } },
-    [100014] = { time = 15 + 10 + 40/30, id = "VialFail", icons = { "equipment_bloodvial", Icon.Loop }, special_function = SF.SetTrackerAccurate }
+    [100013] = { additional_time = 15 + 15 + 10 + 40/30, random_time = 5, id = "VialFail", icons = { "equipment_bloodvial", Icon.Loop }, hint = Hints.nmh_VialFail },
+    [100017] = { time = 30, id = "VialSuccess", icons = { "equipment_bloodvialok" }, hint = Hints.nmh_VialSuccess },
+    [100014] = { time = 15 + 10 + 40/30, id = "VialFail", icons = { "equipment_bloodvial", Icon.Loop }, special_function = SF.SetTrackerAccurate, hint = Hints.nmh_VialFail }
 }
 
 for id, value in pairs(outcome) do

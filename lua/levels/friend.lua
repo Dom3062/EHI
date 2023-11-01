@@ -1,3 +1,4 @@
+---@class EHIuno7Tracker : EHIAchievementTracker
 EHIuno7Tracker = class(EHIAchievementTracker)
 function EHIuno7Tracker:post_init(...)
     self._obtainable = false
@@ -33,14 +34,15 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local element_sync_triggers =
 {
-    [100241] = { time = 662/30, id = "EscapeBoat", icons = Icon.BoatEscape, hook_element = 100216 },
+    [100241] = { time = 662/30, id = "EscapeBoat", icons = Icon.BoatEscape, hook_element = 100216, hint = Hints.LootEscape },
 }
-local random_car = { time = 18, id = "RandomCar", icons = { Icon.Heli, Icon.Goto }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" } }
-local caddilac = { time = 18, id = "Caddilac", icons = { Icon.Heli, Icon.Goto } }
+local random_car = { time = 18, id = "RandomCar", icons = { Icon.Heli, Icon.Goto }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "BileArrival" }, hint = Hints.friend_HeliRandom }
+local caddilac = { time = 18, id = "Caddilac", icons = { Icon.Heli, Icon.Goto }, hint = Hints.friend_HeliCaddilac }
 local triggers = {
-    [100103] = { additional_time = 15 + 5, random_time = 10, id = "BileArrival", icons = { Icon.Heli } },
+    [100103] = { additional_time = 15 + 5, random_time = 10, id = "BileArrival", icons = { Icon.Heli }, hint = Hints.friend_Heli },
 
     [100238] = random_car,
     [100249] = random_car,
@@ -48,7 +50,7 @@ local triggers = {
     [100313] = random_car,
     [100314] = random_car,
 
-    [102231] = { time = 20, id = "BileDropCar", icons = { Icon.Heli, Icon.Car, Icon.Goto } },
+    [102231] = { time = 20, id = "BileDropCar", icons = { Icon.Heli, Icon.Car, Icon.Goto }, hint = Hints.friend_HeliDropCar },
 
     [100718] = caddilac,
     [100720] = caddilac,
@@ -56,16 +58,16 @@ local triggers = {
     [100733] = caddilac,
     [100734] = caddilac,
 
-    [102253] = { time = 11, id = "BileDropCaddilac", icons = { Icon.Heli, { icon = Icon.Car, color = Color.yellow }, Icon.Goto } },
+    [102253] = { time = 11, id = "BileDropCaddilac", icons = { Icon.Heli, { icon = Icon.Car, color = Color.yellow }, Icon.Goto }, hint = Hints.friend_HeliDropCar },
 
-    [100213] = { time = 450/30, id = "EscapeCar1", icons = Icon.CarEscape },
-    [100214] = { time = 160/30, id = "EscapeCar2", icons = Icon.CarEscape },
+    [100213] = { time = 450/30, id = "EscapeCar1", icons = Icon.CarEscape, hint = Hints.LootEscape },
+    [100214] = { time = 160/30, id = "EscapeCar2", icons = Icon.CarEscape, hint = Hints.LootEscape },
 
-    [102814] = { time = 180, id = "Safe", icons = { Icon.Winch }, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable },
+    [102814] = { time = 180, id = "Safe", icons = { Icon.Winch }, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable, hint = Hints.Winch },
     [102815] = { id = "Safe", special_function = SF.PauseTracker }
 }
 if EHI:IsClient() then
-    triggers[100216] = { additional_time = 662/30, random_time = 10, id = "EscapeBoat", icons = Icon.BoatEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100216] = { additional_time = 662/30, random_time = 10, id = "EscapeBoat", icons = Icon.BoatEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, "element")
@@ -101,7 +103,7 @@ local achievements =
             [100801] = { special_function = SF.CallCustomFunction, f = "SetObtainable" }
         },
         cleanup_callback = function()
-            EHIuno7Tracker = nil
+            EHIuno7Tracker = nil ---@diagnostic disable-line
         end
     }
 }

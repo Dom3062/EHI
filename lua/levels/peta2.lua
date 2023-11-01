@@ -2,6 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local goat_pick_up = { Icon.Heli, Icon.Interact }
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@param self EHIManager
@@ -23,23 +24,23 @@ end)
 local PilotComingInAgain2 = EHI:RegisterCustomSpecialFunction(f_PilotComingInAgain)
 ---@type ParseTriggerTable
 local triggers = {
-    [EHI:GetInstanceElementID(100022, 2850)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag },
-    [EHI:GetInstanceElementID(100022, 3150)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag },
-    [EHI:GetInstanceElementID(100022, 3450)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag },
-    [100581] = { time = 9 + 30 + 6.9, id = "BagsDropinAgain", icons = Icon.HeliDropBag, special_function = SF.ExecuteIfElementIsEnabled },
-    [EHI:GetInstanceElementID(100072, 3750)] = { time = 120 + 6.5, id = "PilotComingIn", icons = goat_pick_up, special_function = SF.ExecuteIfElementIsEnabled },
-    [EHI:GetInstanceElementID(100072, 4250)] = { time = 120 + 6.5, id = "PilotComingIn", icons = goat_pick_up, special_function = SF.ExecuteIfElementIsEnabled },
-    [EHI:GetInstanceElementID(100072, 4750)] = { time = 120 + 6.5, id = "PilotComingIn", icons = goat_pick_up, special_function = SF.ExecuteIfElementIsEnabled },
-    [EHI:GetInstanceElementID(100099, 3750)] = { time = 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain },
-    [EHI:GetInstanceElementID(100099, 4250)] = { time = 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain },
-    [EHI:GetInstanceElementID(100099, 4750)] = { time = 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain },
+    [EHI:GetInstanceElementID(100022, 2850)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag, hint = Hints.peta2_LootZoneDelivery },
+    [EHI:GetInstanceElementID(100022, 3150)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag, hint = Hints.peta2_LootZoneDelivery },
+    [EHI:GetInstanceElementID(100022, 3450)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag, hint = Hints.peta2_LootZoneDelivery },
+    [100581] = { time = 9 + 30 + 6.9, id = "BagsDropinAgain", icons = Icon.HeliDropBag, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.peta2_LootZoneDelivery },
+    [EHI:GetInstanceElementID(100072, 3750)] = { time = 120 + 6.5, id = "PilotComingIn", icons = goat_pick_up, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootTimed },
+    [EHI:GetInstanceElementID(100072, 4250)] = { time = 120 + 6.5, id = "PilotComingIn", icons = goat_pick_up, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootTimed },
+    [EHI:GetInstanceElementID(100072, 4750)] = { time = 120 + 6.5, id = "PilotComingIn", icons = goat_pick_up, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootTimed },
+    [EHI:GetInstanceElementID(100099, 3750)] = { time = 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain, hint = Hints.LootTimed },
+    [EHI:GetInstanceElementID(100099, 4250)] = { time = 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain, hint = Hints.LootTimed },
+    [EHI:GetInstanceElementID(100099, 4750)] = { time = 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain, hint = Hints.LootTimed },
 
-    [101720] = { time = 80, id = "Bridge", icons = { Icon.Wait }, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable },
+    [101720] = { time = 80, id = "Bridge", icons = { Icon.Wait }, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable, hint = Hints.Wait },
     [101718] = { id = "Bridge", special_function = SF.PauseTracker },
 
-    [EHI:GetInstanceElementID(100011, 3750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain2 },
-    [EHI:GetInstanceElementID(100011, 4250)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain2 },
-    [EHI:GetInstanceElementID(100011, 4750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain2 }
+    [EHI:GetInstanceElementID(100011, 3750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain2, hint = Hints.LootTimed },
+    [EHI:GetInstanceElementID(100011, 4250)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain2, hint = Hints.LootTimed },
+    [EHI:GetInstanceElementID(100011, 4750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain2, hint = Hints.LootTimed }
 }
 
 local peta_5_IncreaseEnabled = false

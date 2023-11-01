@@ -2,41 +2,42 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseTriggerTable
 local triggers = {
-    [103030] = { time = 19, id = "InsideManTalk", icons = { "pd2_talk" } },
+    [103030] = { time = 19, id = "InsideManTalk", icons = { "pd2_talk" }, hint = Hints.Wait },
 
     -- C4 in the meeting room
-    [EHI:GetInstanceElementID(100025, 20420)] = { time = 5, id = "C4MeetingRoom", icons = { Icon.C4 } },
+    [EHI:GetInstanceElementID(100025, 20420)] = { time = 5, id = "C4MeetingRoom", icons = { Icon.C4 }, hint = Hints.Explosion },
 
     -- C4 in the vault room
-    [EHI:GetInstanceElementID(100022, 11770)] = { time = 5, id = "C4VaultWall", icons = { Icon.C4 } },
+    [EHI:GetInstanceElementID(100022, 11770)] = { time = 5, id = "C4VaultWall", icons = { Icon.C4 }, hint = Hints.Explosion },
 
     -- Chandelier swing
-    [EHI:GetInstanceElementID(100137, 20420)] = { time = 10 + 1 + 52/30, id = "Swing", icons = { Icon.Wait } },
+    [EHI:GetInstanceElementID(100137, 20420)] = { time = 10 + 1 + 52/30, id = "Swing", icons = { Icon.Wait }, hint = Hints.Wait },
 
     -- Heli Extraction
-    [101432] = { id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 101362 },
+    [101432] = { id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 101362, hint = Hints.Escape },
 
-    [EHI:GetInstanceElementID(100210, 14670)] = { time = 3 + EHI:GetKeypadResetTimer(), id = "KeypadReset", icons = { Icon.Wait }, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) } },
-    [EHI:GetInstanceElementID(100176, 14670)] = { time = 30, id = "KeypadResetECMJammer", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) } },
+    [EHI:GetInstanceElementID(100210, 14670)] = { time = 3 + EHI:GetKeypadResetTimer(), id = "KeypadReset", icons = { Icon.Wait }, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) }, hint = Hints.KeypadReset },
+    [EHI:GetInstanceElementID(100176, 14670)] = { time = 30, id = "KeypadResetECMJammer", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) }, hint = Hints.KeypadReset },
 
-    [102571] = { additional_time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = { Icon.Heli, Icon.Winch, Icon.Goto } },
+    [102571] = { additional_time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = { Icon.Heli, Icon.Winch, Icon.Goto }, hint = Hints.brb_WinchDelivery },
 
     -- Winch (the element is actually in instance "chas_heli_drop")
-    [EHI:GetInstanceElementID(100097, 21420)] = { time = 150, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable },
+    [EHI:GetInstanceElementID(100097, 21420)] = { time = 150, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable, hint = Hints.Winch },
     [EHI:GetInstanceElementID(100104, 21420)] = { id = "Winch", special_function = SF.UnpauseTracker },
     [EHI:GetInstanceElementID(100105, 21420)] = { id = "Winch", special_function = SF.PauseTracker },
     -- DON'T REMOVE THIS, because OVK's scripting skills suck
     -- They pause the timer when it reaches zero for no reason. But the timer is already stopped via Lua...
     [EHI:GetInstanceElementID(100101, 21420)] = { id = "Winch", special_function = SF.RemoveTracker },
 
-    [EHI:GetInstanceElementID(100096, 21420)] = { time = 5 + 15, id = "HeliRaise", icons = { Icon.Heli, Icon.Wait } },
+    [EHI:GetInstanceElementID(100096, 21420)] = { time = 5 + 15, id = "HeliRaise", icons = { Icon.Heli, Icon.Wait }, hint = Hints.Wait },
 
-    [102675] = { additional_time = 5 + 10 + 14, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.GetElementTimerAccurate, element = 102674 },
+    [102675] = { additional_time = 5 + 10 + 14, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.GetElementTimerAccurate, element = 102674, hint = Hints.Wait },
 
-    [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot }
+    [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot, hint = Hints.Escape }
 }
 if EHI:IsClient() then
     local wait_time = 90 -- Very Hard and below
@@ -53,18 +54,18 @@ if EHI:IsClient() then
     triggers[101432].client = { time = wait_time, random_time = 30 }
     triggers[102675].client = { time = pickup_wait_time, random_time = 15 }
     if ovk_and_up then -- OVK and up
-        triggers[101456] = { time = 120, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate }
+        triggers[101456] = { time = 120, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape }
     end
-    triggers[101366] = { time = 60, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate }
-    triggers[101463] = { time = 45, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate }
-    triggers[101367] = { time = 30, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate }
-    triggers[101372] = { time = 15, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate }
-    triggers[102678] = { time = 45, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate }
-    triggers[102679] = { time = 15, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate }
+    triggers[101366] = { time = 60, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape }
+    triggers[101463] = { time = 45, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape }
+    triggers[101367] = { time = 30, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape }
+    triggers[101372] = { time = 15, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape }
+    triggers[102678] = { time = 45, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait }
+    triggers[102679] = { time = 15, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait }
     -- "pulling_timer_trigger_120sec" but the time is set to 80s...
-    triggers[EHI:GetInstanceElementID(100099, 21420)] = { time = 80, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[EHI:GetInstanceElementID(100100, 21420)] = { time = 90, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[EHI:GetInstanceElementID(100060, 21420)] = { time = 20, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[EHI:GetInstanceElementID(100099, 21420)] = { time = 80, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Winch }
+    triggers[EHI:GetInstanceElementID(100100, 21420)] = { time = 90, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Winch }
+    triggers[EHI:GetInstanceElementID(100060, 21420)] = { time = 20, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Winch }
 end
 
 if EHI:CanShowAchievement("chca_12") and ovk_and_up then

@@ -89,36 +89,37 @@ end
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers =
 {
-    [102290] = { id = "VaultGas", icons = { Icon.Teargas }, hook_element = 102157 }
+    [102290] = { id = "VaultGas", icons = { Icon.Teargas }, hook_element = 102157, hint = Hints.Teargas }
 }
 local hack_start = EHI:GetInstanceElementID(100015, 20450)
 ---@type ParseTriggerTable
 local triggers = {
+    [102302] = { time = 28.05 + 418/30, id = "Suprise", icons = { "pd2_question" }, hint = Hints.Question },
     [EHI:GetInstanceElementID(100108, 35450)] = { time = 4.8, id = "SuprisePull", icons = { Icon.Wait } },
-    [103919] = { additional_time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape, trigger_times = 1 },
-    [100840] = { time = 1 + 13, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTrackerAccurate },
 
-    [101818] = { additional_time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill },
-    [hack_start] = { id = "ServerHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = EHI:GetInstanceElementID(100014, 20450) },
+    [hack_start] = { id = "ServerHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = EHI:GetInstanceElementID(100014, 20450), hint = Hints.Hack },
     [EHI:GetInstanceElementID(100016, 20450)] = { id = "ServerHack", special_function = SF.PauseTracker },
 
-    [102302] = { time = 28.05 + 418/30, id = "Suprise", icons = { "pd2_question" } },
+    [101818] = { additional_time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill, hint = Hints.DrillPartsDelivery },
+    [101820] = { time = 9.3, id = "HeliDropLance", icons = Icon.HeliDropDrill, special_function = SF.SetTrackerAccurate, hint = Hints.DrillPartsDelivery },
 
-    [101820] = { time = 9.3, id = "HeliDropLance", icons = Icon.HeliDropDrill, special_function = SF.SetTrackerAccurate }
+    [103919] = { additional_time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape, trigger_times = 1, hint = Hints.LootEscape },
+    [100840] = { time = 1 + 13, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTrackerAccurate, hint = Hints.LootEscape }
 }
 -- levels/instances/unique/bex/bex_computer
 for i = 7250, 9050, 150 do
     local id = "PCHack" .. i
-    triggers[EHI:GetInstanceElementID(100006, i)] = { time = 30, id = id, icons = { Icon.PCHack }, waypoint = { position_by_unit = EHI:GetInstanceElementID(100000, i) } }
+    triggers[EHI:GetInstanceElementID(100006, i)] = { time = 30, id = id, icons = { Icon.PCHack }, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, i) } }
     triggers[EHI:GetInstanceElementID(100138, i)] = { id = id, special_function = SF.RemoveTracker } -- Alarm
 end
 if EHI:IsClient() then
     triggers[hack_start].client = { time = 90, random_time = 10, special_function = SF.UnpauseTrackerIfExists }
     triggers[EHI:GetInstanceElementID(100011, 20450)] = { id = "ServerHack", special_function = SF.RemoveTracker }
-    triggers[102157] = { additional_time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[102157] = { additional_time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, "element")

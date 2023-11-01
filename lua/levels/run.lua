@@ -31,31 +31,32 @@ EHIZoneTracker.SetCompleted = EHIAchievementTracker.SetCompleted
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local SetProgressMax = EHI:GetFreeCustomSpecialFunctionID()
 ---@type ParseTriggerTable
 local triggers = {
-    [100377] = { time = 90, id = "ClearPickupZone", class = "EHIZoneTracker" },
+    [100377] = { time = 90, id = "ClearPickupZone", class = "EHIZoneTracker", hint = Hints.run_FinalZone },
     [101550] = { id = "ClearPickupZone", special_function = SF.CallCustomFunction, f = "SetCompleted" },
 
     -- Parking lot
-    [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { Icon.Wait } },
+    [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [101967] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, waypoint = { icon = Icon.Goto, position_by_element_and_remove_vanilla_waypoint = 100372, restore_on_done = true } },
+    [101967] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, waypoint = { icon = Icon.Goto, position_by_element_and_remove_vanilla_waypoint = 100372, restore_on_done = true }, hint = Hints.friend_Heli },
 
-    [100144] = { id = "GasAmount", class = "EHIGasTracker", trigger_times = 1 },
+    [100144] = { id = "GasAmount", class = "EHIGasTracker", trigger_times = 1, hint = Hints.run_Gas },
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins
 
     [1] = { id = "GasAmount", special_function = SF.IncreaseProgress },
     [2] = { special_function = SF.RemoveTrigger, data = { 102775, 102776, 102868 } }, -- Don't blink twice, just set the max once and remove the triggers
 
     [102876] = { special_function = SF.Trigger, data = { 1028761, 1 } },
-    [1028761] = { time = 60, id = "Gas1", icons = { Icon.Fire } },
+    [1028761] = { time = 60, id = "Gas1", icons = { Icon.Fire }, hint = Hints.Fire },
     [102875] = { special_function = SF.Trigger, data = { 1028751, 1 } },
-    [1028751] = { time = 60, id = "Gas2", icons = { Icon.Fire } },
+    [1028751] = { time = 60, id = "Gas2", icons = { Icon.Fire }, hint = Hints.Fire },
     [102874] = { special_function = SF.Trigger, data = { 1028741, 1 } },
-    [1028741] = { time = 60, id = "Gas3", icons = { Icon.Fire } },
+    [1028741] = { time = 60, id = "Gas3", icons = { Icon.Fire }, hint = Hints.Fire },
     [102873] = { special_function = SF.Trigger, data = { 1028731, 1 } },
-    [1028731] = { time = 80, id = "Gas4", icons = { Icon.Fire, Icon.Escape } },
+    [1028731] = { time = 80, id = "Gas4", icons = { Icon.Fire, Icon.Escape }, hint = Hints.run_GasFinal },
 
     [102775] = { special_function = SF.Trigger, data = { 1027751, 2 } },
     [1027751] = { max = 4, id = "GasAmount", special_function = SetProgressMax },
@@ -132,7 +133,8 @@ EHI:RegisterCustomSpecialFunction(SetProgressMax, function(self, trigger, ...)
             id = trigger.id,
             progress = 1,
             max = trigger.max,
-            class = "EHIGasTracker"
+            class = "EHIGasTracker",
+            hint = Hints.run_Gas
         })
     end
     ProgressMaxSet = true

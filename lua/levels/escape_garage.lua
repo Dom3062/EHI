@@ -1,10 +1,10 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
-local bilbo_baggin_bags = 0
+local bilbo_baggin_bags = 8
 local function bilbo_baggin()
-    bilbo_baggin_bags = bilbo_baggin_bags + 1
-    if bilbo_baggin_bags == 8 then
-        managers.ehi_tracker:AddAchievementProgressTracker("bilbo_baggin", 8, 0, false)
+    bilbo_baggin_bags = bilbo_baggin_bags - 1
+    if bilbo_baggin_bags == 0 then
+        managers.ehi_tracker:AddAchievementProgressTracker("bilbo_baggin", 8, 0, true)
         EHI:AddAchievementToCounter({
             achievement = "bilbo_baggin"
         })
@@ -17,16 +17,18 @@ local achievements =
     {
         elements =
         {
-            [102414] = { special_function = SF.CustomCode, f = bilbo_baggin }
+            [104263] = { special_function = SF.CustomCode, f = bilbo_baggin }
         }
     }
 }
 
-local other =
+local triggers =
 {
-    [102414] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround)
+    [102510] = { time = 10 + 10, id = "EndlessAssault", icons = EHI.Icons.EndlessAssault, class = EHI.Trackers.Warning, hint = EHI.Hints.EndlessAssault }
 }
---[[if EHI:IsLootCounterVisible() then
+
+local other = {}
+if EHI:IsLootCounterVisible() then
     local CreateCounter = true
     other[104263] = EHI:AddLootCounter3(function(self, ...)
         if CreateCounter then
@@ -35,18 +37,10 @@ local other =
         end
         self._trackers:IncreaseLootCounterProgressMax()
     end)
-end]]
-
---[[if EHI:IsClient() then
-    achievements.bilbo_baggin.elements[102414].special_function = SF.CustomCodeDelayed
-    achievements.bilbo_baggin.elements[102414].t = 1
-    if other[102414] then
-        other[102414].special_function = SF.CustomCodeDelayed
-        other[102414].t = 1
-    end
-end]]
+end
 
 EHI:ParseTriggers({
+    mission = triggers,
     achievement = achievements,
     other = other
 })

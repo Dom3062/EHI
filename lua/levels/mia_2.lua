@@ -2,13 +2,14 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local element_sync_triggers =
 {
-    [100428] = { time = 24, id = "HeliDropDrill", icons = Icon.HeliDropDrill, hook_element = 100427 }, -- 20s
-    [100430] = { time = 24, id = "HeliDropDrill", icons = Icon.HeliDropDrill, hook_element = 100427 } -- 30s
+    [100428] = { time = 24, id = "HeliDropDrill", icons = Icon.HeliDropDrill, hook_element = 100427, hint = Hints.DrillDelivery }, -- 20s
+    [100430] = { time = 24, id = "HeliDropDrill", icons = Icon.HeliDropDrill, hook_element = 100427, hint = Hints.DrillDelivery } -- 30s
 }
 local triggers = {
-    [100225] = { time = 5 + 5 + 22, id = Icon.Heli, icons = Icon.HeliEscape },
+    [100225] = { time = 5 + 5 + 22, id = Icon.Heli, icons = Icon.HeliEscape, hint = Hints.LootEscape },
     -- 5 = Base Delay
     -- 5 = Delay when executed
     -- 22 = Heli door anim delay
@@ -17,7 +18,7 @@ local triggers = {
     [101858] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101854 } },
 
     -- Bugged because of retarded use of ENABLED in ElementTimer and ElementTimerTrigger
-    [101240] = { time = 540, id = "CokeTimer", icons = { { icon = Icon.Loot, color = Color.red } }, class = TT.Warning },
+    [101240] = { time = 540, id = "CokeTimer", icons = { { icon = Icon.Loot, color = Color.red } }, class = TT.Warning, hint = Hints.mia_2_Loot },
     [101282] = { id = "CokeTimer", special_function = SF.RemoveTracker }
 }
 ---@type ParseAchievementTable
@@ -43,7 +44,7 @@ if EHI:CanShowAchievement("pig_7") then
     end
 else
     for _, index in ipairs(start_index) do
-        triggers[EHI:GetInstanceElementID(100024, index)] = { time = 5, id = "HostageBomb", icons = { Icon.Hostage, Icon.C4 }, class = TT.Warning }
+        triggers[EHI:GetInstanceElementID(100024, index)] = { time = 5, id = "HostageBomb", icons = { Icon.Hostage, Icon.C4 }, class = TT.Warning, hint = Hints.Explosion }
         triggers[EHI:GetInstanceElementID(100016, index)] = { id = "HostageBomb", special_function = SF.RemoveTracker } -- Hostage blew out
         triggers[EHI:GetInstanceElementID(100027, index)] = { id = "HostageBomb", special_function = SF.RemoveTracker } -- Hostage saved
     end
@@ -79,7 +80,7 @@ if EHI:IsLootCounterVisible() then
     local function HostageExploded()
         _HostageExploded = true
         local count = MoneyAroundHostage - HostageMoneyTaken
-        if count ~= 0 then
+        if count > 0 then
             managers.ehi_tracker:DecreaseLootCounterProgressMax(count)
         end
     end
@@ -164,7 +165,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100685] = { id = "Snipers", special_function = ChanceSuccess }
     other[100686] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +10%
     other[100687] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
-    other[100512] = { chance = 100, times = 35, on_fail_refresh_t = 0.5 + 35, id = "Snipers2", class = "EHImia2SnipersTracker" }
+    other[100512] = { chance = 100, time = 35, on_fail_refresh_t = 0.5 + 35, id = "Snipers2", class = "EHImia2SnipersTracker" }
     other[101202] = { id = "Snipers2", special_function = SF.IncreaseChanceFromElement } -- +10%
     other[101197] = { id = "Snipers2", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[101208] = { id = "Snipers2", special_function = ChanceSuccess }

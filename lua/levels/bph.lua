@@ -2,19 +2,20 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    [100109] = { max = (ovk_and_up and 40 or 30), id = "EnemyDeathShowers", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress },
+    [100109] = { max = (ovk_and_up and 40 or 30), id = "EnemyDeathShowers", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress, hint = Hints.Kills },
     [101339] = { id = "EnemyDeathShowers", special_function = SF.IncreaseProgress },
 
-    [101815] = { time = 10, id = "MoveWalkway", icons = { Icon.Wait } },
+    [101815] = { time = 10, id = "MoveWalkway", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [101221] = { time = 11, id = "Thermite1", icons = { Icon.Fire } },
-    [101714] = { time = 11, id = "Thermite2", icons = { Icon.Fire } },
-    [101715] = { time = 11, id = "Thermite3", icons = { Icon.Fire } },
-    [101716] = { time = 11, id = "Thermite4", icons = { Icon.Fire } },
+    [101221] = { time = 11, id = "Thermite1", icons = { Icon.Fire }, hint = Hints.Thermite },
+    [101714] = { time = 11, id = "Thermite2", icons = { Icon.Fire }, hint = Hints.Thermite },
+    [101715] = { time = 11, id = "Thermite3", icons = { Icon.Fire }, hint = Hints.Thermite },
+    [101716] = { time = 11, id = "Thermite4", icons = { Icon.Fire }, hint = Hints.Thermite },
 
-    [101137] = { max = 10, id = "EnemyDeathOutside", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress },
+    [101137] = { max = 10, id = "EnemyDeathOutside", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress, hint = Hints.Kills },
     [101412] = { id = "EnemyDeathOutside", special_function = SF.IncreaseProgress }
 }
 
@@ -56,7 +57,7 @@ local DisableWaypoints =
 }
 EHI:DisableWaypoints(DisableWaypoints)
 -- 101399 units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer/001 (2050, -10250, 639.67)
-EHI:UpdateUnits({ [101399] = { icons = { "C_Locke_H_HellsIsland_Another" } } })
+EHI:UpdateUnits({ [101399] = { icons = { "C_Locke_H_HellsIsland_Another" }, hint = Hints.Wait } })
 
 EHI:ParseTriggers({
     mission = triggers,

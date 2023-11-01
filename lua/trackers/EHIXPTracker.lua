@@ -2,6 +2,7 @@
 ---@field super EHITracker
 EHIXPTracker = class(EHITracker)
 EHIXPTracker._forced_icons = { "xp" }
+EHIXPTracker._forced_hint_text = "gained_xp"
 EHIXPTracker.update = EHIXPTracker.update_fade
 ---@param panel Panel
 ---@param params EHITracker_params
@@ -27,6 +28,7 @@ end
 ---@class EHITotalXPTracker : EHIXPTracker
 ---@field super EHIXPTracker
 EHITotalXPTracker = class(EHIXPTracker)
+EHITotalXPTracker._forced_hint_text = "total_xp"
 EHITotalXPTracker._update = false
 EHITotalXPTracker._show_diff = EHI:GetOption("total_xp_show_difference")
 ---@param panel Panel
@@ -34,27 +36,23 @@ EHITotalXPTracker._show_diff = EHI:GetOption("total_xp_show_difference")
 ---@param parent_class EHITrackerManager
 function EHITotalXPTracker:init(panel, params, parent_class)
     self._total_xp = params.amount or 0
+    self._player_xp_limit = params.xp_limit or 0
     EHITotalXPTracker.super.init(self, panel, params, parent_class)
-    self:SetPlayerXPLimit()
+    if self._player_xp_limit <= 0 then
+        self._update = true -- Request deletion next frame
+    end
+end
+
+---@param t any Unused
+---@param dt number
+function EHITotalXPTracker:update(t, dt)
+    self:delete()
 end
 
 function EHITotalXPTracker:OverridePanel()
     self:SetBGSize(self._bg_box:w() / 2)
     self._text:set_w(self._bg_box:w())
     self:SetIconX()
-end
-
-function EHITotalXPTracker:SetPlayerXPLimit()
-    local xp = managers.experience
-    if xp:reached_level_cap() then
-        self._player_xp_limit = xp:GetRemainingPrestigeXP()
-    else
-        self._player_xp_limit = xp:GetRemainingXPToMaxLevel()
-    end
-    if self._player_xp_limit <= 0 then
-        self:SetTextColor(Color.green)
-        self._player_limit_reached = true
-    end
 end
 
 function EHITotalXPTracker:Format() -- Formats the amount of XP in the panel

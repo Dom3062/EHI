@@ -3,7 +3,7 @@ local SF = EHI.SpecialFunctions
 local Icon = EHI.Icons
 local TT = EHI.Trackers
 local triggers = {
-    [103712] = { time = 25, id = "HeliTrade", icons = Icon.HeliLootDrop }
+    [103712] = { time = 25, id = "HeliTrade", icons = Icon.HeliLootDrop, hint = EHI.Hints.Wait }
 }
 
 local other =

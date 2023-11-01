@@ -2,12 +2,13 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local SecurityTearGasRandomElement = EHI:GetInstanceElementID(100061, 6690)
 local element_sync_triggers =
 {
-    [EHI:GetInstanceElementID(100062, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, hook_element = SecurityTearGasRandomElement }, -- 45s
-    [EHI:GetInstanceElementID(100063, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, hook_element = SecurityTearGasRandomElement }, -- 55s
-    [EHI:GetInstanceElementID(100064, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, hook_element = SecurityTearGasRandomElement } -- 65s
+    [EHI:GetInstanceElementID(100062, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, hook_element = SecurityTearGasRandomElement, hint = Hints.Teargas }, -- 45s
+    [EHI:GetInstanceElementID(100063, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, hook_element = SecurityTearGasRandomElement, hint = Hints.Teargas }, -- 55s
+    [EHI:GetInstanceElementID(100064, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, hook_element = SecurityTearGasRandomElement, hint = Hints.Teargas } -- 65s
 }
 local request = { Icon.PCHack, Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
@@ -29,12 +30,12 @@ end)
 local PCVectors = {}
 ---@type ParseTriggerTable
 local triggers = {
-    [102016] = { time = 7, id = "Endless", icons = Icon.EndlessAssault, class = TT.Warning },
+    [102016] = { time = 7, id = "Endless", icons = Icon.EndlessAssault, class = TT.Warning, hint = Hints.EndlessAssault },
 
-    [104579] = { time = 15, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) },
-    [104580] = { time = 25, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) },
-    [104581] = { time = 20, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) },
-    [104582] = { time = 30, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint) }, -- Disabled in the mission script
+    [104579] = { time = 15, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait },
+    [104580] = { time = 25, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait },
+    [104581] = { time = 20, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait },
+    [104582] = { time = 30, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait }, -- Disabled in the mission script
 
     [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop }, waypoint_f = function(self, trigger)
         local vector = PCVectors[CurrentHackNumber]
@@ -47,27 +48,27 @@ local triggers = {
             self._waypoints:RemoveWaypoint("HoxtonHack")
             self._waypoints:RemoveWaypoint("HoxtonMaxHacks") -- In case the timer is merged with the progress
         end
-    end },
+    end, hint = Hints.Restarting },
     [102189] = { special_function = SF.CustomCode, f = function()
         EHI:CallCallback("hox_2_restore_waypoint_hack")
     end },
 
-    [104314] = { max = 4, id = "RequestCounter", icons = { Icon.PCHack }, class = TT.Progress, special_function = SF.AddTrackerIfDoesNotExist },
+    [104314] = { max = 4, id = "RequestCounter", icons = { Icon.PCHack }, class = TT.Progress, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.hox_2_Request },
     [104599] = { id = "RequestCounter", special_function = SF.RemoveTracker },
     [104591] = { id = "RequestCounter", special_function = SF.IncreaseProgress },
 
-    [104472] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress },
-    [104478] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 1 } },
-    [104480] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 2 } },
-    [104481] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 3 } },
+    [104472] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, hint = Hints.Hack },
+    [104478] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 1 }, hint = Hints.Hack },
+    [104480] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 2 }, hint = Hints.Hack },
+    [104481] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 3 }, hint = Hints.Hack },
     [104482] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 4, dont_create = true } },
 
-    [105113] = { chance = 25, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance },
+    [105113] = { chance = 25, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance, hint = Hints.hox_2_Evidence },
     [102257] = { amount = 25, id = "ForensicsMatchChance", special_function = SF.IncreaseChance },
     [105137] = { id = "ForensicsMatchChance", special_function = SF.RemoveTracker }
 }
 if EHI:IsClient() then
-    triggers[EHI:GetInstanceElementID(100055, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, special_function = SF.SetRandomTime, data = { 45, 55, 65 } }
+    triggers[EHI:GetInstanceElementID(100055, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, special_function = SF.SetRandomTime, data = { 45, 55, 65 }, hint = Hints.Teargas }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, "element")
@@ -147,10 +148,7 @@ EHI:AddLoadSyncFunction(function(self)
             self:Trigger(104481)
         else
             CurrentHackNumber = 4
-        end
-        -- Pointless to query the last PC
-    else -- Just in case, but the PCs should exist
-        return
+        end -- Pointless to query the last PC
     end
 end)
 
@@ -178,7 +176,7 @@ local tbl =
 
     --levels/instances/unique/hox_fbi_forensic_device
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics
-    [EHI:GetInstanceUnitID(100018, 2650)] = { icons = { "equipment_evidence" }, remove_vanilla_waypoint = 101559, restore_waypoint_on_done = true, tracker_merge_id = "ForensicsMatchChance" },
+    [EHI:GetInstanceUnitID(100018, 2650)] = { icons = { "equipment_evidence" }, remove_vanilla_waypoint = 101559, restore_waypoint_on_done = true, tracker_merge_id = "ForensicsMatchChance", hint = Hints.hox_2_Evidence },
 
     --levels/instances/unique/hox_fbi_security_office
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security

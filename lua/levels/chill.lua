@@ -1,4 +1,6 @@
 local EHI = EHI
+---@class EHIStopwatchTracker : EHITracker
+---@field super EHITracker
 EHIStopwatchTracker = class(EHITracker)
 EHIStopwatchTracker._forced_icons = { EHI.Icons.Wait }
 EHIStopwatchTracker.super._fade_time = nil

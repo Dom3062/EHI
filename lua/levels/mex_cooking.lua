@@ -1,28 +1,29 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local Hints = EHI.Hints
 local MethlabStart = { Icon.Methlab, Icon.Wait }
 local MethlabRestart = { Icon.Methlab, Icon.Loop }
 local MethlabPickup = { Icon.Methlab, Icon.Interact }
 local element_sync_triggers =
 {
-    [103575] = { id = "CookingStartDelay", icons = MethlabStart, hook_element = 103573 },
-    [103576] = { id = "CookingStartDelay", icons = MethlabStart, hook_element = 103574 },
-    [EHI:GetInstanceElementID(100078, 55850)] = { id = "NextIngredient", icons = MethlabRestart, hook_element = EHI:GetInstanceElementID(100173, 55850) },
-    [EHI:GetInstanceElementID(100078, 56850)] = { id = "NextIngredient", icons = MethlabRestart, hook_element = EHI:GetInstanceElementID(100173, 56850) },
-    [EHI:GetInstanceElementID(100157, 55850)] = { id = "MethReady", icons = MethlabPickup, hook_element = EHI:GetInstanceElementID(100174, 55850) },
-    [EHI:GetInstanceElementID(100157, 56850)] = { id = "MethReady", icons = MethlabPickup, hook_element = EHI:GetInstanceElementID(100174, 56850) }
+    [103575] = { id = "CookingStartDelay", icons = MethlabStart, hook_element = 103573, hint = Hints.Restarting },
+    [103576] = { id = "CookingStartDelay", icons = MethlabStart, hook_element = 103574, hint = Hints.Restarting },
+    [EHI:GetInstanceElementID(100078, 55850)] = { id = "NextIngredient", icons = MethlabRestart, hook_element = EHI:GetInstanceElementID(100173, 55850), hint = Hints.mia_1_NextMethIngredient },
+    [EHI:GetInstanceElementID(100078, 56850)] = { id = "NextIngredient", icons = MethlabRestart, hook_element = EHI:GetInstanceElementID(100173, 56850), hint = Hints.mia_1_NextMethIngredient },
+    [EHI:GetInstanceElementID(100157, 55850)] = { id = "MethReady", icons = MethlabPickup, hook_element = EHI:GetInstanceElementID(100174, 55850), hint = Hints.mia_1_MethDone },
+    [EHI:GetInstanceElementID(100157, 56850)] = { id = "MethReady", icons = MethlabPickup, hook_element = EHI:GetInstanceElementID(100174, 56850), hint = Hints.mia_1_MethDone }
 }
 local triggers =
 {
     -- Also handles next ingredient when meth is picked up
-    [EHI:GetInstanceElementID(100056, 55850)] = { time = 15, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist },
-    [EHI:GetInstanceElementID(100056, 56850)] = { time = 15, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist }
+    [EHI:GetInstanceElementID(100056, 55850)] = { time = 15, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.mia_1_NextMethIngredient },
+    [EHI:GetInstanceElementID(100056, 56850)] = { time = 15, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.mia_1_NextMethIngredient }
 }
 if EHI:IsClient() then
-    local cooking_start = { additional_time = 30, random_time = 10, id = "CookingStartDelay", icons = MethlabStart, special_function = SF.AddTrackerIfDoesNotExist }
-    local meth_ready = { additional_time = 10, random_time = 5, id = "MethReady", icons = MethlabPickup, special_function = SF.AddTrackerIfDoesNotExist }
-    local next_ingredient = { additional_time = 40, random_time = 5, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist }
+    local cooking_start = { additional_time = 30, random_time = 10, id = "CookingStartDelay", icons = MethlabStart, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Restarting }
+    local meth_ready = { additional_time = 10, random_time = 5, id = "MethReady", icons = MethlabPickup, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.mia_1_MethDone }
+    local next_ingredient = { additional_time = 40, random_time = 5, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.mia_1_NextMethIngredient }
     triggers[103573] = cooking_start
     triggers[103574] = cooking_start
     triggers[EHI:GetInstanceElementID(100173, 55850)] = next_ingredient

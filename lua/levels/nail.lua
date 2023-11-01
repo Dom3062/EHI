@@ -1,12 +1,13 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local Hints = EHI.Hints
 local triggers = {
-    [101505] = { time = 10, id = "TruckDoorOpens", icons = { Icon.Door } },
+    [101505] = { time = 10, id = "TruckDoorOpens", icons = { Icon.Door }, hint = Hints.Wait },
     -- There are a lot of delays in the ID. Using average instead (5.2)
-    [101806] = { time = 20 + 5.2, id = "ChemicalsDrop", icons = { Icon.Heli, Icon.Methlab, Icon.Goto } },
+    [101806] = { time = 20 + 5.2, id = "ChemicalsDrop", icons = { Icon.Heli, Icon.Methlab, Icon.Goto }, hint = Hints.nail_ChemicalsEnRoute },
 
-    [101936] = { time = 30 + 12, id = "Escape", icons = Icon.HeliEscapeNoLoot }
+    [101936] = { time = 30 + 12, id = "Escape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape }
 }
 
 local other =
@@ -24,7 +25,7 @@ local tbl =
     [EHI:GetInstanceUnitID(100014, 5020)] = { ignore = true },
     [EHI:GetInstanceUnitID(100056, 5020)] = { ignore = true },
     [EHI:GetInstanceUnitID(100226, 5020)] = { ignore = true },
-    [EHI:GetInstanceUnitID(100227, 5020)] = { icons = { Icon.Vault }, remove_on_pause = true, completion = true }
+    [EHI:GetInstanceUnitID(100227, 5020)] = { icons = { Icon.Vault }, remove_on_pause = true, completion = true, hint = Hints.cane_Safe }
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({

@@ -37,6 +37,37 @@
             "value": "show_one_icon",
             "default_value": false,
             "ehi_ver" : 6
+        },
+        {
+            "type" : "divider",
+            "size" : 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_tracker_hint_choice",
+            "title": "ehi_show_tracker_hint",
+            "description": "ehi_show_tracker_hint_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_tracker_hint",
+            "value": "show_tracker_hint",
+            "is_parent" : true,
+            "default_value": true,
+            "ehi_ver" : 191
+        },
+        {
+            "type": "slider",
+            "id": "ehi_show_tracker_hint_t_choice",
+            "title": "ehi_show_tracker_hint_t",
+            "description": "ehi_show_tracker_hint_t_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_tracker_hint_t",
+            "value": "show_tracker_hint_t",
+            "parent" : "ehi_show_tracker_hint_choice",
+            "max": 120,
+            "min": 0,
+            "step": 1,
+            "default_value": 15,
+            "ehi_ver" : 191
         }
     ]
 }

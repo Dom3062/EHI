@@ -2,13 +2,15 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 if EHI:GetOption("show_mission_trackers") then
     for _, pc_id in ipairs({ 104170, 104175, 104349, 104350, 104351, 104352, 104354, 101455 }) do
         managers.mission:add_runned_unit_sequence_trigger(pc_id, "interact", function(unit)
             managers.ehi_tracker:AddTracker({
                 id = tostring(pc_id),
                 time = 13,
-                icons = { Icon.PCHack }
+                icons = { Icon.PCHack },
+                hint = Hints.Hack
             })
         end)
     end
@@ -55,11 +57,11 @@ if EHI:IsLootCounterVisible() then
         })
     end)
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[104618] = { time = 30 + 1 + 5 + 30 + 45 + 45 + 120, id = "Snipers", icons = { "sniper" }, class = TT.Warning }
-    other[105713] = { time = 60, id = "Snipers", icons = { "sniper" }, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker }
-    other[105716] = { time = 90, id = "Snipers", icons = { "sniper" }, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker }
-    other[105717] = { time = 30, id = "Snipers", icons = { "sniper" }, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker }
+if EHI:GetOption("show_sniper_tracker") then
+    other[104618] = { time = 30 + 1 + 5 + 30 + 45 + 45 + 120, id = "Snipers", icons = { "sniper" }, class = TT.Warning, hint = Hints.EnemySnipers }
+    other[105713] = { time = 60, id = "Snipers", icons = { "sniper" }, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker, hint = Hints.EnemySnipers }
+    other[105716] = { time = 90, id = "Snipers", icons = { "sniper" }, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker, hint = Hints.EnemySnipers }
+    other[105717] = { time = 30, id = "Snipers", icons = { "sniper" }, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker, hint = Hints.EnemySnipers }
     if EHI:IsClient() then
         other[102177] = EHI:ClientCopyTrigger(other[104618], { time = 1 + 5 + 30 + 45 + 45 + 120, trigger_times = 1 })
         other[100973] = EHI:ClientCopyTrigger(other[104618], { time = 5 + 30 + 45 + 45 + 120 })

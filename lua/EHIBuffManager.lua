@@ -1,7 +1,6 @@
 local EHI = EHI
 local function GetIcon(params)
-    local texture = ""
-    local texture_rect = {}
+    local texture, texture_rect
     local x = params.x or 0
     local y = params.y or 0
     if params.skills then
@@ -284,7 +283,7 @@ function EHIBuffManager:RemoveVisibleBuff(id, pos)
     local buff = self._visible_buffs[id] or self._buffs[id] --[[@as EHIBuffTracker]]
     self._visible_buffs[id] = nil
     self._n_visible = self._n_visible - 1
-    self:Reorganize(pos, buff)
+    self:Reorganize(pos, buff, true)
 end
 
 ---@param id string
@@ -320,7 +319,8 @@ local alignment = EHI:GetOption("buffs_alignment")
 if alignment == 1 then -- Left
     ---@param pos number?
     ---@param buff EHIBuffTracker
-    function EHIBuffManager:Reorganize(pos, buff)
+    ---@param removal boolean?
+    function EHIBuffManager:Reorganize(pos, buff, removal)
         if self._n_visible == 0 then
             return
         end
@@ -340,12 +340,17 @@ elseif alignment == 2 then -- Center
     local floor = math.floor
     ---@param pos number?
     ---@param buff EHIBuffTracker
-    function EHIBuffManager:Reorganize(pos, buff)
+    ---@param removal boolean?
+    function EHIBuffManager:Reorganize(pos, buff, removal)
         if self._n_visible == 0 then
             return
         elseif self._n_visible == 1 then
-            buff:SetCenterX(self._panel:center_x())
-            buff:SetPos(0)
+            if removal then
+                local _, v_buff = next(self._visible_buffs) ---@cast v_buff -?
+                v_buff:SetCenterDefaultX(self._panel:center_x())
+            else
+                buff:SetCenterDefaultX(self._panel:center_x())
+            end
         else
             local even = self._n_visible % 2 == 0
             local center_pos = even and ceil(self._n_visible / 2) or floor(self._n_visible / 2)
@@ -360,7 +365,8 @@ elseif alignment == 2 then -- Center
 else -- Right
     ---@param pos number?
     ---@param buff EHIBuffTracker
-    function EHIBuffManager:Reorganize(pos, buff)
+    ---@param removal boolean?
+    function EHIBuffManager:Reorganize(pos, buff, removal)
         if self._n_visible == 0 then
             return
         end

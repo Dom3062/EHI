@@ -39,6 +39,9 @@ end
 
 function EHITrackerManager:Spawned()
     self._delay_popups = false
+    for _, tbl in pairs(self._trackers) do
+        tbl.tracker:PlayerSpawned()
+    end
 end
 
 function EHITrackerManager:ShowPanel()
@@ -93,6 +96,7 @@ function EHITrackerManager:AddTracker(params, pos)
         EHI:LogTraceback()
         self._trackers[params.id].tracker:ForceDelete()
     end
+    params.delay_popup = self._delay_popups
     local class = params.class or self._base_tracker_class
     local tracker_class = _G[class] --[[@as EHITracker]]
     local tracker = tracker_class:new(self._hud_panel, params, self)
@@ -108,7 +112,7 @@ function EHITrackerManager:AddTracker(params, pos)
     self._n_of_trackers = self._n_of_trackers + 1
 end
 
----@param params AddTrackerTable
+---@param params AddTrackerTable|ElementTrigger
 function EHITrackerManager:PreloadTracker(params)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
@@ -169,6 +173,7 @@ function EHITrackerManager:AddPagerTracker(id)
     local params =
     {
         id = id,
+        hint = "pager",
         class = "EHIPagerTracker"
     }
     self:AddTracker(params)
@@ -189,13 +194,12 @@ end
 
 ---@param id string
 ---@param time_max number
----@param icon string?
-function EHITrackerManager:AddTimedAchievementTracker(id, time_max, icon)
-    local t = time_max - self._t
+function EHITrackerManager:AddTimedAchievementTracker(id, time_max)
+    local t = time_max - math.max(managers.ehi_manager._t, self._t)
     if t <= 0 then
         return
     end
-    icon = icon or self:GetAchievementIcon(id)
+    local icon = self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         time = t,
@@ -205,19 +209,17 @@ function EHITrackerManager:AddTimedAchievementTracker(id, time_max, icon)
 end
 
 ---@param id string
----@param max integer
----@param progress integer?
+---@param max number
+---@param progress number?
 ---@param show_finish_after_reaching_target boolean?
 ---@param class string?
----@param icon string?
-function EHITrackerManager:AddAchievementProgressTracker(id, max, progress, show_finish_after_reaching_target, class, icon)
-    icon = icon or self:GetAchievementIcon(id)
+function EHITrackerManager:AddAchievementProgressTracker(id, max, progress, show_finish_after_reaching_target, class)
+    local icon = self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         progress = progress,
         max = max,
         icons = { icon },
-        delay_popup = self._delay_popups,
         show_finish_after_reaching_target = show_finish_after_reaching_target,
         class = class or EHI.Trackers.Achievement.Progress
     })
@@ -225,9 +227,8 @@ end
 
 ---@param id string
 ---@param status string?
----@param icon string?
-function EHITrackerManager:AddAchievementStatusTracker(id, status, icon)
-    icon = icon or self:GetAchievementIcon(id)
+function EHITrackerManager:AddAchievementStatusTracker(id, status)
+    local icon = self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         status = status,
@@ -240,14 +241,12 @@ end
 ---@param max number
 ---@param loot_counter_on_fail boolean?
 ---@param start_silent boolean?
----@param icon string?
-function EHITrackerManager:AddAchievementLootCounter(id, max, loot_counter_on_fail, start_silent, icon)
-    icon = icon or self:GetAchievementIcon(id)
+function EHITrackerManager:AddAchievementLootCounter(id, max, loot_counter_on_fail, start_silent)
+    local icon = self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         max = max,
         icons = { icon },
-        delay_popup = self._delay_popups,
         loot_counter_on_fail = loot_counter_on_fail,
         start_silent = start_silent,
         class = EHI.Trackers.Achievement.LootCounter
@@ -257,9 +256,8 @@ end
 ---@param id string
 ---@param max number
 ---@param show_finish_after_reaching_target boolean?
----@param icon string?
-function EHITrackerManager:AddAchievementBagValueCounter(id, max, show_finish_after_reaching_target, icon)
-    icon = icon or self:GetAchievementIcon(id)
+function EHITrackerManager:AddAchievementBagValueCounter(id, max, show_finish_after_reaching_target)
+    local icon = self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         max = max,
@@ -271,13 +269,13 @@ function EHITrackerManager:AddAchievementBagValueCounter(id, max, show_finish_af
 end
 
 ---Shows Loot Counter, needs to be hooked to count correctly
----@param max integer?
----@param max_random any?
----@param offset any?
+---@param max number?
+---@param max_random number?
+---@param offset number?
 function EHITrackerManager:ShowLootCounter(max, max_random, offset)
     self:AddTracker({
         id = "LootCounter",
-        max = (max or 0),
+        max = max or 0,
         max_random = max_random or 0,
         offset = offset or 0,
         class = "EHILootTracker"
@@ -330,8 +328,7 @@ end
 
 ---@param id string
 function EHITrackerManager:RemoveLaserTracker(id)
-    self._stealth_trackers.lasers[id] = nil
-    self:RemoveTracker(id)
+    self:RemoveStealthTracker(id, "lasers")
 end
 
 function EHITrackerManager:SwitchToLoudMode()
@@ -374,7 +371,9 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
             for _, tbl in pairs(self._trackers) do
                 if tbl.pos and tbl.pos >= pos then
                     local final_pos = tbl.pos + 1
-                    tbl.tracker:AnimateTop(self:GetY(final_pos))
+                    local y = self:GetY(final_pos)
+                    tbl.tracker:AnimateTop(y)
+                    tbl.tracker:AnimateHintTop(y)
                     tbl.pos = final_pos
                 end
             end
@@ -394,7 +393,9 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
         for _, value in pairs(self._trackers) do
             if value.pos and value.pos > pos then
                 local final_pos = value.pos - 1
-                value.tracker:AnimateTop(self:GetY(final_pos))
+                local y = self:GetY(final_pos)
+                value.tracker:AnimateTop(y)
+                value.tracker:AnimateHintTop(y)
                 value.pos = final_pos
             end
         end
@@ -441,6 +442,7 @@ else -- Horizontal
                     if tbl.pos and tbl.pos >= pos then
                         local final_x = tbl.x + w + self._panel_offset
                         tbl.tracker:AnimateLeft(final_x)
+                        tbl.tracker:AnimateHintLeft(final_x)
                         tbl.x = final_x
                         tbl.pos = tbl.pos + 1
                     end
@@ -464,6 +466,7 @@ else -- Horizontal
                 if value.pos and value.pos > pos then
                     local final_x = value.x - w - panel_offset_move
                     value.tracker:AnimateLeft(final_x)
+                    value.tracker:AnimateHintLeft(final_x)
                     value.x = final_x
                     value.pos = value.pos - pos_move
                 end
@@ -520,10 +523,11 @@ else -- Horizontal
                 local start_pos = 0
                 local previous_x = self._x
                 if pos > 0 then
-                    if list[pos] then
-                        local on_pos = list[pos]
+                    local on_pos = list[pos]
+                    if on_pos then
                         previous_x = on_pos.x - w - self._panel_offset
                         on_pos.tracker:AnimateLeft(previous_x)
+                        on_pos.tracker:AnimateHintLeft(previous_x)
                         on_pos.x = previous_x
                         on_pos.pos = on_pos.pos + 1
                         start_pos = pos + 1
@@ -538,6 +542,7 @@ else -- Horizontal
                     local final_x = previous_x - t_pos.w - self._panel_offset
                     previous_x = final_x
                     t_pos.tracker:AnimateLeft(final_x)
+                    t_pos.tracker:AnimateHintLeft(final_x)
                     t_pos.x = final_x
                     t_pos.pos = t_pos.pos + 1
                 end
@@ -560,6 +565,7 @@ else -- Horizontal
                 if value.pos and value.pos > pos then
                     local final_x = value.x + w + panel_offset_move
                     value.tracker:AnimateLeft(final_x)
+                    value.tracker:AnimateHintLeft(final_x)
                     value.x = final_x
                     value.pos = value.pos - pos_move
                 end
@@ -609,14 +615,24 @@ function EHITrackerManager:UpdateTrackerID(id, new_id)
     if self:TrackerExists(new_id) or self:TrackerDoesNotExist(id) then
         return
     end
-    local tbl = self._trackers[id]
-    tbl.tracker:UpdateID(new_id) ---@diagnostic disable-line
+    local tbl = self._trackers[id] ---@cast tbl -?
+    tbl.tracker:UpdateID(new_id)
     self._trackers[id] = nil
     self._trackers[new_id] = tbl
     if self._trackers_to_update[id] then
         local update = self._trackers_to_update[id]
         self._trackers_to_update[id] = nil
         self._trackers_to_update[new_id] = update
+    end
+end
+
+---@param id string
+---@param hint string
+---@param vanilla_localization boolean?
+function EHITrackerManager:UpdateHint(id, hint, vanilla_localization)
+    local tracker = self:GetTracker(id)
+    if tracker then
+        tracker:UpdateHint(hint, vanilla_localization)
     end
 end
 
@@ -958,13 +974,13 @@ function EHITrackerManager:RandomLootDeclined(random)
     self:CallFunction("LootCounter", "RandomLootDeclined", random)
 end
 
----@param id string Element ID
+---@param id string|number Element ID
 ---@param force boolean? Force loot spawn event if the element does not have "fail" state (desync workaround)
 function EHITrackerManager:RandomLootSpawnedCheck(id, force)
     self:CallFunction("LootCounter", "RandomLootSpawned2", id, force)
 end
 
----@param id string Element ID
+---@param id string|number Element ID
 function EHITrackerManager:RandomLootDeclinedCheck(id)
     self:CallFunction("LootCounter", "RandomLootDeclined2", id)
 end

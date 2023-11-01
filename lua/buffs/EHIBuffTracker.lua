@@ -68,7 +68,6 @@ end
 ---@param params table
 function EHIBuffTracker:init(panel, params)
     local w_half = params.w / 2
-    local color = params.icon_color or params.good and Color.white or Color.red
     local progress_visible = progress and not params.no_progress
     self._id = params.id --[[@as string]]
     self._parent_class = params.parent_class
@@ -85,7 +84,7 @@ function EHIBuffTracker:init(panel, params)
         name = "icon",
         texture = params.texture,
         texture_rect = params.texture_rect,
-        color = color,
+        color = params.icon_color or params.good and Color.white or Color.red,
         x = 0,
         y = w_half,
         w = params.w,
@@ -202,8 +201,9 @@ function EHIBuffTracker:UpdateIcon(texture, texture_rect)
 end
 
 ---@param center_x number
-function EHIBuffTracker:SetCenterX(center_x)
+function EHIBuffTracker:SetCenterDefaultX(center_x)
     self._panel:set_center_x(center_x)
+    self:SetPos(0)
 end
 
 ---@param x number

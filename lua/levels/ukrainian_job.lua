@@ -2,23 +2,24 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local zone_delay = 12
 local LootDropWaypoint = { icon = Icon.LootDrop, position_by_element_and_remove_vanilla_waypoint = 104215 }
 ---@type ParseTriggerTable
 local triggers = {
-    [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint) },
-    [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint) },
+    [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint), hint = Hints.LootTimed },
+    [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint), hint = Hints.LootTimed },
 
-    [103172] = { time = 2 + 830/30, id = "Van", icons = Icon.CarEscape },
+    [103172] = { time = 2 + 830/30, id = "Van", icons = Icon.CarEscape, hint = Hints.LootEscape },
     [103183] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103194 } },
     [103182] = { special_function = SF.Trigger, data = { 1031821, 1031822 } },
-    [1031821] = { time = 600/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
+    [1031821] = { time = 600/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
     [1031822] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103193 } },
     [103181] = { special_function = SF.Trigger, data = { 1031811, 1031812 } },
-    [1031811] = { time = 580/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
+    [1031811] = { time = 580/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
     [1031812] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103192 } },
     [101770] = { special_function = SF.Trigger, data = { 1017701, 1017702 } },
-    [1017701] = { time = 650/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
+    [1017701] = { time = 650/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
     [1017702] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101776 } }
 }
 

@@ -2,19 +2,20 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local element_sync_triggers =
 {
-    [101374] = { id = "VaultTeargas", icons = { Icon.Teargas }, hook_element = 101377 }
+    [101374] = { id = "VaultTeargas", icons = { Icon.Teargas }, hook_element = 101377, hint = Hints.Teargas }
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [100903] = { time = 120, id = "LiquidNitrogen", icons = { Icon.LiquidNitrogen }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1009031 }, waypoint = { position_by_element = 100941 } },
-    [1009031] = { time = 63 + 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4, waypoint = { icon = Icon.C4, position_by_element = 100943 } },
+    [100903] = { time = 120, id = "LiquidNitrogen", icons = { Icon.LiquidNitrogen }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1009031 }, waypoint = { position_by_element = 100941 }, hint = Hints.rvd2_LiquidNitrogen },
+    [1009031] = { time = 63 + 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4, waypoint = { icon = Icon.C4, position_by_element = 100943 }, hint = Hints.C4Delivery },
 
-    [100699] = { time = 8 + 25 + 13, id = "ObjectiveWait", icons = { Icon.Wait } },
+    [100699] = { time = 8 + 25 + 13, id = "ObjectiveWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [100939] = { time = 5, id = "C4Vault", icons = { Icon.C4 }, waypoint = { position_by_element = 100941 } },
-    [EHI:GetInstanceElementID(100020, 6700)] = { time = 5, id = "C4Escape", icons = { Icon.C4 }, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100008, 6700) } }
+    [100939] = { time = 5, id = "C4Vault", icons = { Icon.C4 }, waypoint = { position_by_element = 100941 }, hint = Hints.Explosion },
+    [EHI:GetInstanceElementID(100020, 6700)] = { time = 5, id = "C4Escape", icons = { Icon.C4 }, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100008, 6700) }, hint = Hints.Explosion }
 }
 if EHI:IsClient() then
     EHI:SetSyncTriggers(element_sync_triggers)
@@ -25,7 +26,7 @@ if EHI:IsClient() then
             self._waypoints:AddWaypoint("LiquidNitrogen", {
                 time = trigger.time - 10,
                 icon = Icon.LiquidNitrogen,
-                position = EHI:GetElementPosition(100941) or Vector3(),
+                position = EHI:GetElementPosition(100941) or Vector3()
             })
         end
         if self._waypoints:WaypointDoesNotExist("HeliC4") then
@@ -36,21 +37,23 @@ if EHI:IsClient() then
             })
         end
     end
-    triggers[101366] = { additional_time = 5 + 40, random_time = 10, id = "VaultTeargas", icons = { Icon.Teargas } }
+    triggers[101366] = { additional_time = 5 + 40, random_time = 10, id = "VaultTeargas", icons = { Icon.Teargas }, hint = Hints.Teargas }
     local LiquidNitrogen = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
         if self._trackers:TrackerDoesNotExist("LiquidNitrogen") then
             local t = trigger.time - 10
             self._trackers:AddTracker({
                 id = "LiquidNitrogen",
                 time = t,
-                icons = { Icon.LiquidNitrogen }
+                icons = { Icon.LiquidNitrogen },
+                hint = Hints.rvd2_LiquidNitrogen
             })
         end
         if self._trackers:TrackerDoesNotExist("HeliC4") then
             self._trackers:AddTracker({
                 id = "HeliC4",
                 time = trigger.time,
-                icons = Icon.HeliDropC4
+                icons = Icon.HeliDropC4,
+                hint = Hints.C4Delivery
             })
         end
     end)

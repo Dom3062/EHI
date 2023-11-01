@@ -1,12 +1,14 @@
 ---@class EHISniperCountTracker : EHICountTracker
 ---@field super EHICountTracker
 EHISniperCountTracker = class(EHICountTracker)
+EHISniperCountTracker._forced_hint_text = "enemy_snipers"
 EHISniperCountTracker._forced_icons = { "sniper" }
 EHISniperCountTracker._text_color = EHIProgressTracker._progress_bad
 
 ---@class EHISniperChanceTracker : EHIChanceTracker, EHICountTracker
 ---@field super EHIChanceTracker
 EHISniperChanceTracker = class(EHIChanceTracker)
+EHISniperChanceTracker._forced_hint_text = "enemy_snipers"
 EHISniperChanceTracker._forced_icons = { "sniper" }
 EHISniperChanceTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperChanceTracker.DecreaseCount = EHICountTracker.DecreaseCount
@@ -59,6 +61,7 @@ end
 ---@class EHISniperTimedTracker : EHITracker
 ---@field super EHITracker
 EHISniperTimedTracker = class(EHITracker)
+EHISniperTimedTracker._forced_hint_text = "enemy_snipers"
 EHISniperTimedTracker._forced_icons = { "sniper" }
 EHISniperTimedTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperTimedTracker.DecreaseCount = EHICountTracker.DecreaseCount
@@ -96,6 +99,7 @@ end
 ---@class EHISniperTimedCountTracker : EHIWarningTracker, EHISniperTimedTracker
 ---@field super EHIWarningTracker
 EHISniperTimedCountTracker = class(EHIWarningTracker)
+EHISniperTimedCountTracker._forced_hint_text = "enemy_snipers"
 EHISniperTimedCountTracker._forced_icons = { "sniper" }
 EHISniperTimedCountTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperTimedCountTracker.DecreaseCount = EHICountTracker.DecreaseCount
@@ -146,6 +150,7 @@ end
 ---@class EHISniperTimedChanceTracker : EHITracker, EHIChanceTracker, EHICountTracker
 ---@field super EHITracker
 EHISniperTimedChanceTracker = class(EHITracker)
+EHISniperTimedChanceTracker._forced_hint_text = "enemy_snipers"
 EHISniperTimedChanceTracker._forced_icons = { "sniper" }
 EHISniperTimedChanceTracker.FormatChance = EHIChanceTracker.Format
 EHISniperTimedChanceTracker.FormatCount = EHICountTracker.Format
@@ -158,6 +163,8 @@ function EHISniperTimedChanceTracker:pre_init(params)
     self._count = params.count or 0
     self._chance = params.chance or 0
     self._recheck_t = params.recheck_t or 0
+    self._no_chance_reset = params.no_chance_reset
+    self._delay_on_max_chance = params.delay_on_max_chance
 end
 
 function EHISniperTimedChanceTracker:post_init(params)
@@ -201,16 +208,22 @@ function EHISniperTimedChanceTracker:SniperSpawnsSuccess()
 end
 
 function EHISniperTimedChanceTracker:SnipersKilled(t)
-    self._time = t or self._recheck_t
     self._count_text:set_visible(false)
-    self._chance_text:set_visible(true)
+    if self._max_chance_reached then
+        self._time = self._delay_on_max_chance
+    else
+        self._time = t or self._recheck_t
+        self._chance_text:set_visible(true)
+    end
     self._text:set_visible(true)
     self:AddTrackerToUpdate()
     self:AnimateBG()
 end
 
 function EHISniperTimedChanceTracker:Refresh()
-    self._time = self._time + self._recheck_t
+    if not self._max_chance_reached then
+        self._time = self._time + self._recheck_t
+    end
 end
 
 function EHISniperTimedChanceTracker:SetCount(count)
@@ -221,14 +234,23 @@ end
 
 function EHISniperTimedChanceTracker:SetChance(amount)
     self._chance = math.max(0, amount)
-    self._chance_text:set_text(self:FormatChance())
-    self:FitTheText(self._chance_text)
+    if self._no_chance_reset and self._chance >= 100 then
+        self._max_chance_reached = true
+        self._text:set_w(self._bg_box:w())
+        self._text:set_x(0)
+        self:SetTimeNoAnim(self._delay_on_max_chance)
+        self._chance_text:set_visible(false)
+    else
+        self._chance_text:set_text(self:FormatChance())
+        self:FitTheText(self._chance_text)
+    end
     self:AnimateBG(1)
 end
 
 ---@class EHISniperLoopTracker : EHITracker, EHIChanceTracker, EHICountTracker
 ---@field super EHITracker
 EHISniperLoopTracker = class(EHITracker)
+EHISniperLoopTracker._forced_hint_text = "enemy_snipers_loop"
 EHISniperLoopTracker._forced_icons = { "sniper" }
 EHISniperLoopTracker.FormatChance = EHIChanceTracker.Format
 EHISniperLoopTracker.FormatCount = EHICountTracker.Format
@@ -349,6 +371,7 @@ end
 ---@class EHISniperHeliTracker : EHITracker
 ---@field super EHITracker
 EHISniperHeliTracker = class(EHITracker)
+EHISniperHeliTracker._forced_hint_text = "enemy_snipers_heli"
 EHISniperHeliTracker._forced_icons = EHI:GetOption("show_one_icon") and { { icon = EHI.Icons.Heli, color = Color.red } } or { EHI.Icons.Heli, "sniper" }
 EHISniperHeliTracker._refresh_on_delete = true
 function EHISniperHeliTracker:pre_init(params)
@@ -388,6 +411,7 @@ end
 ---@class EHISniperHeliTimedChanceTracker : EHISniperTimedChanceTracker
 ---@field super EHISniperTimedChanceTracker
 EHISniperHeliTimedChanceTracker = class(EHISniperTimedChanceTracker)
+EHISniperHeliTimedChanceTracker._forced_hint_text = "enemy_snipers_heli"
 EHISniperHeliTimedChanceTracker._forced_icons = EHISniperHeliTracker._forced_icons
 function EHISniperHeliTimedChanceTracker:OverridePanel()
     EHISniperHeliTimedChanceTracker.super.OverridePanel(self)
@@ -397,16 +421,20 @@ end
 function EHISniperHeliTimedChanceTracker:SniperSpawnsSuccess(t)
     self._time = t
     self._sniper_incoming = true
-    self._chance_text:set_visible(false)
-    self._text:set_w(self._bg_box:w())
-    self._text:set_x(0)
-    self:FitTheText()
+    if not self._max_chance_reached then
+        self._chance_text:set_visible(false)
+        self._text:set_w(self._bg_box:w())
+        self._text:set_x(0)
+        self:FitTheText()
+    end
 end
 
 function EHISniperHeliTimedChanceTracker:SnipersKilled(t)
-    self._text:set_w(self._chance_text:w())
-    self._text:set_left(self._chance_text:right())
-    self._text:set_font_size(self._text_font_size)
+    if not self._max_chance_reached then
+        self._text:set_w(self._chance_text:w())
+        self._text:set_left(self._chance_text:right())
+        self._text:set_font_size(self._text_font_size)
+    end
     EHISniperHeliTimedChanceTracker.super.SnipersKilled(self, t)
 end
 
@@ -414,7 +442,7 @@ function EHISniperHeliTimedChanceTracker:Refresh()
     if self._sniper_incoming then
         self._sniper_incoming = false
         EHISniperHeliTimedChanceTracker.super.SniperSpawnsSuccess(self)
-    else
+    elseif not self._max_chance_reached then
         self._time = self._time + self._recheck_t
     end
 end

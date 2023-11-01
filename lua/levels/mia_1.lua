@@ -2,6 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local Methlab = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop } }
 local element_sync_triggers = {}
 local MethlabIndex = { 7800, 8200, 8600 }
@@ -18,38 +19,41 @@ for _, index in ipairs(MethlabIndex) do
         local element_id = EHI:GetInstanceElementID(i, index)
         element_sync_triggers[element_id] = deep_clone(Methlab)
         element_sync_triggers[element_id].hook_element = EHI:GetInstanceElementID(100119, index)
+        element_sync_triggers[element_id].hint = Hints.Restarting
     end
     -- Cooking continuation
     for i = 100169, 100172, 1 do
         local element_id = EHI:GetInstanceElementID(i, index)
         element_sync_triggers[element_id] = deep_clone(Methlab)
         element_sync_triggers[element_id].hook_element = EHI:GetInstanceElementID(100168, index)
+        element_sync_triggers[element_id].hint = Hints.mia_1_NextMethIngredient
     end
 end
 local triggers = {
-    [102177] = { time = Heli, id = "Heli", icons = Icon.HeliDropBag }, -- Time before Bile arrives
+    [102177] = { time = Heli, id = "Heli", icons = Icon.HeliDropBag, hint = Hints.Winch }, -- Time before Bile arrives
 
-    [106013] = { time = Truck, id = "Truck", icons = { Icon.Car }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [106013] = { time = Truck, id = "Truck", icons = { Icon.Car }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Defend },
     [106017] = { id = "Truck", special_function = SF.PauseTracker },
 
-    [104299] = { time = 5, id = "C4GasStation", icons = { Icon.C4 } },
+    [104299] = { time = 5, id = "C4GasStation", icons = { Icon.C4 }, hint = Hints.Explosion },
 
     -- Calls with Commissar
-    [101388] = { time = 8.5 + 6, id = "FirstCall", icons = { Icon.Phone } },
-    [101389] = { time = 10.5 + 8, id = "SecondCall", icons = { Icon.Phone } },
-    [103385] = { time = 8.5 + 5, id = "LastCall", icons = { Icon.Phone } }
+    [101388] = { time = 8.5 + 6, id = "FirstCall", icons = { Icon.Phone }, hint = Hints.Wait },
+    [101389] = { time = 10.5 + 8, id = "SecondCall", icons = { Icon.Phone }, hint = Hints.Wait },
+    [103385] = { time = 8.5 + 5, id = "LastCall", icons = { Icon.Phone }, hint = Hints.Wait }
 }
-local random_time = { id = Methlab.id, icons = Methlab.icons, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
+local random_time = { id = Methlab.id, icons = Methlab.icons, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 }, hint = Hints.mia_1_NextMethIngredient }
 for _, index in ipairs(MethlabIndex) do
-    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethPickUp", icons = { Icon.Methlab, Icon.Interact } }
+    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethPickUp", icons = { Icon.Methlab, Icon.Interact }, hint = Hints.mia_1_MethDone }
     if client then
-        triggers[EHI:GetInstanceElementID(100118, index)] = { id = Methlab.id, icons = Methlab.icons, special_function = SF.SetRandomTime, data = { 5, 25, 40 } }
+        triggers[EHI:GetInstanceElementID(100118, index)] = { id = Methlab.id, icons = Methlab.icons, special_function = SF.SetRandomTime, data = { 5, 25, 40 }, hint = Hints.Restarting }
         triggers[EHI:GetInstanceElementID(100149, index)] = random_time
         triggers[EHI:GetInstanceElementID(100150, index)] = random_time
         triggers[EHI:GetInstanceElementID(100184, index)] = { id = Methlab.id, special_function = SF.RemoveTracker }
     end
 end
 if client then
+    triggers[104955] = EHI:ClientCopyTrigger(triggers[106013], { time = 30 })
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, "element")
@@ -155,13 +159,16 @@ if EHI:IsLootCounterVisible() then
 
     -- Cars
     local CarLootBlocked = false
+    local CarLootNumber = 2
     other[100724] = { special_function = SF.CustomCode, f = function()
         CarLootBlocked = true
+        managers.ehi_tracker:DecreaseLootCounterMaxRandom(CarLootNumber)
     end }
     local function DecreaseMaximum2()
         if CarLootBlocked then
             return
         end
+        CarLootNumber = CarLootNumber - 1
         managers.ehi_tracker:RandomLootDeclined()
     end
     local DecreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = DecreaseMaximum2 }
@@ -209,6 +216,13 @@ EHI:ParseTriggers({
     mission = triggers,
     other = other
 })
+local money = EHI:GetValueBasedOnDifficulty({
+    normal = 5,
+    hard = 4,
+    veryhard = 4,
+    overkill = 3,
+    mayhem_or_above = 2
+})
 EHI:AddXPBreakdown({
     objectives =
     {
@@ -225,11 +239,14 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
-                objectives = true
-            },
-            no_max = true
+                objectives =
+                {
+                    hm1_meth_cooked = { min = 0, max = 7 }
+                },
+                loot_all = { max = money + 7 + 3 + 2 } -- Money + 7 meth bags (3 in methlab, up to 4 in basement) + 3 coke/weapons + 2 random loot from cars
+            }
         }
     }
 })

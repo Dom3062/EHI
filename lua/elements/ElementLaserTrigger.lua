@@ -46,6 +46,7 @@ function ElementLaserTrigger:add_callback(...)
         managers.ehi_tracker:AddLaserTracker({
             id = self._ehi_id,
             time = self._values.cycle_interval,
+            hint = "laser",
             class = "EHILaserTracker"
         })
     end

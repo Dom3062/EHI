@@ -2,12 +2,13 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local delay = 17 + 30 + 450/30 -- Boat escape; Van escape is 100215 and 100216
 local triggers = {
-    [100259] = { time = 120 + delay },
-    [100258] = { time = 100 + delay },
-    [100257] = { time = 80 + delay },
-    [100209] = { time = 60 + delay },
+    [100259] = { time = 120 + delay, hint = Hints.LootEscape },
+    [100258] = { time = 100 + delay, hint = Hints.LootEscape },
+    [100257] = { time = 80 + delay, hint = Hints.LootEscape },
+    [100209] = { time = 60 + delay, hint = Hints.LootEscape },
 
     [100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 100233 } },
     [100215] = { special_function = SF.Trigger, data = { 1002151, 1002152 } },

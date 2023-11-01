@@ -3,7 +3,7 @@
 ---@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) VR only (EHIDeployableManagerVR)
 EHIDeployableManager = {}
 ---@param ehi_tracker EHITrackerManager
----@return EHIDeployableManager
+---@return self
 function EHIDeployableManager:new(ehi_tracker)
     self._trackers = ehi_tracker
     self._deployables = {}
@@ -15,7 +15,7 @@ function EHIDeployableManager:init_finalize()
 end
 
 function EHIDeployableManager:SwitchToLoudMode()
-    self._trackers:CallFunction("Deployables", "AddToIgnore", "bodybags_bag")
+    self:CallFunction("Deployables", "AddToIgnore", "bodybags_bag")
     self._deployables_ignore = { bodybags_bag = true }
 end
 
@@ -106,6 +106,7 @@ function EHIDeployableManager:CreateDeployableTracker(type)
         self._trackers:AddTracker({
             id = "DoctorBags",
             icons = { "doctor_bag" },
+            hint = "doctor_bag",
             class = "EHIEquipmentTracker"
         })
     elseif type == "AmmoBags" then
@@ -113,12 +114,14 @@ function EHIDeployableManager:CreateDeployableTracker(type)
             id = "AmmoBags",
             format = "percent",
             icons = { "ammo_bag" },
+            hint = "ammo_bag",
             class = "EHIEquipmentTracker"
         })
     elseif type == "BodyBags" then
         self._trackers:AddTracker({
             id = "BodyBags",
             icons = { "bodybags_bag" },
+            hint = "bodybags_bag",
             class = "EHIEquipmentTracker"
         })
     elseif type == "FirstAidKits" then
@@ -126,6 +129,7 @@ function EHIDeployableManager:CreateDeployableTracker(type)
             id = "FirstAidKits",
             icons = { "first_aid_kit" },
             dont_show_placed = true,
+            hint = "fak",
             class = "EHIEquipmentTracker"
         })
     end
@@ -137,6 +141,7 @@ function EHIDeployableManager:AddAggregatedDeployablesTracker()
         icons = { "deployables" },
         ignore = self._deployables_ignore or {},
         format = { ammo_bag = "percent" },
+        hint = "deployables",
         class = "EHIAggregatedEquipmentTracker"
     })
 end
@@ -144,6 +149,7 @@ end
 function EHIDeployableManager:AddAggregatedHealthTracker()
     self._trackers:AddTracker({
         id = "Health",
+        hint = "doctor_fak",
         class = "EHIAggregatedHealthEquipmentTracker"
     })
 end

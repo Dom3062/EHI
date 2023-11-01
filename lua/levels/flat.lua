@@ -14,6 +14,7 @@ end
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local kills = 7 -- Normal + Hard
 if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
@@ -23,16 +24,16 @@ elseif EHI:IsMayhemOrAbove() then
 end
 ---@type ParseTriggerTable
 local triggers = {
-    [100001] = { time = 30, id = "BileArrival", icons = { Icon.Heli, Icon.C4 } },
+    [100001] = { time = 30, id = "BileArrival", icons = { Icon.Heli, Icon.C4 }, hint = Hints.C4Delivery },
 
-    [100068] = { max = kills, id = "SniperDeath", icons = { "sniper" }, class = TT.Progress, waypoint = { max = kills, position_by_element_and_remove_vanilla_waypoint = 100294, restore_on_done = true } },
+    [100068] = { max = kills, id = "SniperDeath", icons = { "sniper" }, class = TT.Progress, waypoint = { max = kills, position_by_element_and_remove_vanilla_waypoint = 100294, restore_on_done = true }, hint = Hints.Kills },
     [104555] = { id = "SniperDeath", special_function = SF.IncreaseProgress },
 
-    [103446] = { time = 20 + 6 + 4, id = "HeliDropsC4", icons = { Icon.Heli, Icon.C4, Icon.Goto } },
+    [103446] = { time = 20 + 6 + 4, id = "HeliDropsC4", icons = { Icon.Heli, Icon.C4, Icon.Goto }, hint = Hints.C4Delivery },
 
-    [102001] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
+    [102001] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion },
 
-    [100082] = { time = 30 + 10, id = "HeliComesWithMagnet", icons = { Icon.Heli, Icon.Winch } },
+    [100082] = { time = 30 + 10, id = "HeliComesWithMagnet", icons = { Icon.Heli, Icon.Winch }, hint = Hints.Winch },
 
     --- Add 0.2 delay here so the tracker does not hide first before this gets executed again; players won't notice 0.2 delay here
     [100147] = { time = 18.2 + 0.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
@@ -43,13 +44,13 @@ local triggers = {
                 self:CheckCondition(trigger)
             end
         end
-    end) },
+    end), hint = Hints.Wait },
     [102181] = { id = "HeliMagnetLoop", special_function = SF.RemoveTracker },
 
-    [100206] = { time = 30, id = "LoweringTheMagnet", icons = { Icon.Heli, Icon.Winch, Icon.Goto }, waypoint = { icon = Icon.Interact, position_by_element = 101016 } },
+    [100206] = { time = 30, id = "LoweringTheMagnet", icons = { Icon.Heli, Icon.Winch, Icon.Goto }, waypoint = { icon = Icon.Interact, position_by_element = 101016 }, hint = Hints.Winch },
 
-    [103869] = { time = 600, id = "PanicRoomTakeoff", class = "EHIHeliTracker" },
-    [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1004051 } },
+    [103869] = { time = 600, id = "PanicRoomTakeoff", class = "EHIHeliTracker", hint = Hints.Defend },
+    [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1004051 }, hint = Hints.Wait },
     [1004051] = { id = "PanicRoomTakeoff", special_function = SF.CallCustomFunction, f = "SetDelayedRemoval" }
 }
 

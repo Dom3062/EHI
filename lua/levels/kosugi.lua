@@ -1,5 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
+local Hints = EHI.Hints
 ---@class EHIkosugi5Tracker : EHIAchievementProgressTracker
 EHIkosugi5Tracker = class(EHIAchievementProgressTracker)
 ---@param panel Panel
@@ -100,25 +101,29 @@ for _, unit_id in ipairs({ 100098, 102897, 102899, 102900 }) do
         managers.ehi_tracker:AddTracker({
             id = tostring(unit_id),
             time = 10,
-            icons = { Icon.Fire }
+            icons = { Icon.Fire },
+            hint = Hints.Thermite
         })
     end)
 end
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local DisableTriggerAndExecute = EHI:GetFreeCustomSpecialFunctionID()
+local DisableTriggerAndExecute = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    self:UnhookTrigger(trigger.data.id)
+    self:CheckCondition(trigger)
+end)
 local Trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local triggers = {
-    [1] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto } },
+    [1] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto }, hint = Hints.kosugi_Heli },
     [2] = { special_function = SF.RemoveTrigger, data = { 101131, 100900 } },
     [101131] = Trigger,
     [100900] = Trigger,
-    [101219] = { time = 27, id = "BlackhawkDropLoot", icons = { Icon.Heli, Icon.Loot, Icon.Goto } },
-    [100303] = { time = 30, id = "BlackhawkDropGuards", icons = { Icon.Heli, "pager_icon", Icon.Goto }, class = TT.Warning },
+    [101219] = { time = 27, id = "BlackhawkDropLoot", icons = { Icon.Heli, Icon.Loot, Icon.Goto }, hint = Hints.kosugi_Loot },
+    [100303] = { time = 30, id = "BlackhawkDropGuards", icons = { Icon.Heli, "pager_icon", Icon.Goto }, class = TT.Warning, hint = Hints.kosugi_Guards },
 
-    [100955] = { time = 10, id = "KeycardLeft", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100957 } },
-    [100957] = { time = 10, id = "KeycardRight", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100955 } },
+    [100955] = { time = 10, id = "KeycardLeft", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100957 }, hint = Hints.kosugi_Keycard },
+    [100957] = { time = 10, id = "KeycardRight", icons = { Icon.Keycard }, class = TT.Warning, special_function = DisableTriggerAndExecute, data = { id = 100955 }, hint = Hints.kosugi_Keycard },
     [100967] = { special_function = SF.RemoveTracker, data = { "KeycardLeft", "KeycardRight" } }
 }
 
@@ -174,8 +179,7 @@ local achievements =
             end
         end,
         cleanup_callback = function()
-            ---@diagnostic disable-next-line
-            EHIkosugi5Tracker = nil
+            EHIkosugi5Tracker = nil ---@diagnostic disable-line
         end
     }
 }
@@ -184,7 +188,7 @@ local dailies = {}
 if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
     local IncreaseProgress = { special_function = SF.IncreaseProgress }
     local elements = {
-        [103427] = { max = 9, icons = { "daily_secret_identity" }, class = TT.DailyProgress, show_finish_after_reaching_target = true },
+        [103427] = { max = 9, icons = { "daily_secret_identity" }, class = TT.Daily.Progress, show_finish_after_reaching_target = true },
         [100484] = IncreaseProgress,
         [100515] = IncreaseProgress,
         [100534] = IncreaseProgress,
@@ -209,10 +213,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     daily = dailies
 })
-EHI:RegisterCustomSpecialFunction(DisableTriggerAndExecute, function(self, trigger, ...)
-    self:UnhookTrigger(trigger.data.id)
-    self:CheckCondition(trigger)
-end)
 
 -- Loot Counter
 -- 2 cocaine

@@ -30,6 +30,7 @@ if EHI:GetOption("gage_tracker_panel") == 1 then -- Tracker
             id = "Gage",
             icons = { "gage" },
             max = max,
+            hint = "gage",
             class = EHI.Trackers.Progress
         })
     end

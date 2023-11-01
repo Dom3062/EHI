@@ -1,6 +1,5 @@
 local function GetIcon(params)
-    local texture = ""
-    local texture_rect = {}
+    local texture, texture_rect
     local x = params.x or 0
     local y = params.y or 0
     if params.skills then
@@ -63,13 +62,14 @@ function FakeEHIBuffsManager:AddFakeBuffs()
     local max = math.random(3, 5)
     local max_buffs = table.size(buffs)
     local visible_buffs = {}
-    local saferect_x, saferect_y = managers.gui_data:full_to_safe(self._panel:w(), self._panel:h())
+    local saferect_x, saferect_y
+    saferect_x, saferect_y = managers.gui_data:full_to_safe(self._panel:w(), self._panel:h())
     saferect_x = self._panel:w() - saferect_x + 0.5
     saferect_y = self._panel:h() - saferect_y + 0.5
     saferect_x = saferect_x * 2
     saferect_y = saferect_y * 2
     local invert_progress = EHI:GetOption("buffs_invert_progress")
-    for i = 1, max, 1 do
+    for _ = 1, max, 1 do
         local n = 0
         local m = math.random(1, max_buffs)
         for key, buff in pairs(buffs) do

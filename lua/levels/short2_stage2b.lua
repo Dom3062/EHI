@@ -1,7 +1,7 @@
 local EHI = EHI
 local triggers =
 {
-    [100806] = { time = 62 + 24, id = "HeliEscape", icons = EHI.Icons.HeliEscape }
+    [100806] = { time = 62 + 24, id = "HeliEscape", icons = EHI.Icons.HeliEscape, hint = EHI.Hints.Escape }
 }
 
 EHI:ParseTriggers({ mission = triggers })

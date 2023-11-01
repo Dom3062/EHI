@@ -2,14 +2,15 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {}
 local sync_triggers =
 {
-    [100558] = { id = "BileReturn", icons = Icon.HeliEscape }
+    [100558] = { id = "BileReturn", icons = Icon.HeliEscape, hint = Hints.LootEscape }
 }
 if EHI:IsClient() then
-    triggers[100558] = { additional_time = 5, random_time = 5, id = "BileReturn", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100558] = { additional_time = 5, random_time = 5, id = "BileReturn", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
     EHI:SetSyncTriggers(sync_triggers)
 else
     EHI:AddHostTriggers(sync_triggers, "base")

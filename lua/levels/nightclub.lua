@@ -2,13 +2,14 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local AssetLootDropOff = { Icon.Car, Icon.LootDrop }
 if EHI:GetOption("show_one_icon") then
     AssetLootDropOff = { Icon.LootDrop }
 end
 local preload =
 {
-    {} -- Escape
+    { hint = Hints.LootEscape } -- Escape
 }
 ---@type ParseTriggerTable
 local triggers = {
@@ -21,11 +22,11 @@ local triggers = {
     [100832] = { run = { time = 270 } },
 
     -- Fire
-    [101412] = { time = 300, id = "Fire1", icons = { Icon.Fire }, class = TT.Warning, waypoint = { position_by_unit = 101758 } },
-    [101453] = { time = 300, id = "Fire2", icons = { Icon.Fire }, class = TT.Warning, waypoint = { position_by_unit = 101759 } },
+    [101412] = { time = 300, id = "Fire1", icons = { Icon.Fire }, class = TT.Warning, waypoint = { position_by_unit = 101758 }, hint = Hints.Fire },
+    [101453] = { time = 300, id = "Fire2", icons = { Icon.Fire }, class = TT.Warning, waypoint = { position_by_unit = 101759 }, hint = Hints.Fire },
 
     -- Asset
-    [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = AssetLootDropOff, waypoint = { position_by_element = 103152 } }
+    [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = AssetLootDropOff, waypoint = { position_by_element = 103152 }, hint = Hints.Loot }
     -- 20: Base Delay
     -- 40/3: Animation finish delay
     -- Total 33.33 s

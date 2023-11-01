@@ -27,7 +27,7 @@ function SentryGunMovement:init(unit, ...)
 end
 
 function SentryGunMovement:Preload()
-    if self._ehi_preloaded then
+    if self.__ehi_preloaded then
         return
     end
     if not show_waypoint_only then
@@ -37,6 +37,7 @@ function SentryGunMovement:Preload()
                 id = self._ehi_key_reload,
                 icons = { Icon.Turret, "reload" },
                 hide_on_delete = true,
+                hint = "sentry_reload",
                 class = Warning
             })
         end
@@ -45,11 +46,12 @@ function SentryGunMovement:Preload()
                 id = self._ehi_key_repair,
                 icons = { Icon.Turret, Icon.Fix },
                 hide_on_delete = true,
+                hint = "sentry_repair",
                 class = Warning
             })
         end
     end
-    self._ehi_preloaded = true
+    self.__ehi_preloaded = true
 end
 
 function SentryGunMovement:on_activated(...)

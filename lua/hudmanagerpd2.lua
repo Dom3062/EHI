@@ -49,6 +49,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 self.ehi:AddTracker({
                     id = "PhalanxDamageReduction",
                     icons = { "buff_shield" },
+                    hint = "damage_reduction",
                     class = EHI.Trackers.Chance,
                 })
             else
@@ -60,6 +61,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         self.ehi:AddTracker({
             id = "EnemyCount",
             flash_bg = false,
+            hint = "enemy_count",
             class = "EHIEnemyCountTracker"
         })
     end
@@ -74,7 +76,8 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                             id = "PagersChance",
                             chance = EHI:RoundChanceNumber(base[1] or 0),
                             icons = { EHI.Icons.Pager },
-                            class = EHI.Trackers.Chance
+                            class = EHI.Trackers.Chance,
+                            hint = "pager_chance"
                         })
                         EHI:AddOnAlarmCallback(function()
                             self.ehi:RemoveTracker("PagersChance")
@@ -94,7 +97,8 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 max = max,
                 icons = { EHI.Icons.Pager },
                 set_color_bad_when_reached = true,
-                class = EHI.Trackers.Progress
+                class = EHI.Trackers.Progress,
+                hint = "pager_counter"
             })
             if max == 0 then
                 self.ehi:CallFunction("Pagers", "SetBad")
@@ -107,6 +111,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             self.ehi:AddTracker({
                 id = "BodybagsCounter",
                 icons = { "equipment_body_bag" },
+                hint = "bodybags_counter",
                 class = EHI.Trackers.Counter
             })
             EHI:AddOnAlarmCallback(function()
@@ -115,10 +120,14 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         end
     end
     if EHI:IsXPTrackerVisible() and EHI:GetOption("xp_panel") == 2 and not EHI:IsOneXPElementHeist(level_id) then
-        self.ehi:AddTracker({
-            id = "XPTotal",
-            class = "EHITotalXPTracker"
-        })
+        local xp_limit = managers.experience:GetPlayerXPLimit()
+        if xp_limit > 0 then
+            self.ehi:AddTracker({
+                id = "XPTotal",
+                xp_limit = xp_limit,
+                class = "EHITotalXPTracker"
+            })
+        end
     end
 end
 
@@ -206,7 +215,8 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
                 id = "Assault",
                 assault = true,
                 diff = EHI._cache.diff or 0,
-                class = EHI.Trackers.Assault.Assault
+                class = EHI.Trackers.Assault.Assault,
+                hint = "assault"
             }, 0)
         end
     end
@@ -223,7 +233,8 @@ if EHI:CombineAssaultDelayAndAssaultTime() then
             self.ehi:AddTracker({
                 id = "Assault",
                 diff = EHI._cache.diff,
-                class = EHI.Trackers.Assault.Assault
+                class = EHI.Trackers.Assault.Assault,
+                hint = "assault"
             }, 0)
         end
         EHI:HookWithID(self, "set_control_info", "EHI_Assault_set_control_info", set_assault_delay)
@@ -269,7 +280,8 @@ else
                 self.ehi:AddTracker({
                     id = "AssaultDelay",
                     diff = EHI._cache.diff,
-                    class = EHI.Trackers.Assault.Delay
+                    class = EHI.Trackers.Assault.Delay,
+                    hint = "assault_delay"
                 })
                 EHI:HookWithID(HUDManager, "set_control_info", "EHI_AssaultDelay_set_control_info", set_assault_delay)
             end
@@ -289,7 +301,8 @@ else
                 self.ehi:AddTracker({
                     id = "AssaultTime",
                     diff = EHI._cache.diff or 0,
-                    class = EHI.Trackers.Assault.Time
+                    class = EHI.Trackers.Assault.Time,
+                    hint = "assault_time",
                 })
             end
             self._ehi_assault_in_progress = true
@@ -314,6 +327,7 @@ else
     end
 end
 
+---@param block boolean?
 function HUDManager:SetAssaultTrackerManualBlock(block)
     self._ehi_assault_block = block
     if block then
@@ -323,6 +337,8 @@ function HUDManager:SetAssaultTrackerManualBlock(block)
     end
 end
 
+---@param id string
+---@param beardlib boolean?
 function HUDManager:ShowAchievementStartedPopup(id, beardlib)
     if beardlib then
         self:custom_ingame_popup_text("ACHIEVEMENT STARTED!", EHI._cache.Beardlib[id].name, "ehi_" .. id)
@@ -331,6 +347,8 @@ function HUDManager:ShowAchievementStartedPopup(id, beardlib)
     end
 end
 
+---@param id string
+---@param beardlib boolean?
 function HUDManager:ShowAchievementFailedPopup(id, beardlib)
     if beardlib then
         self:custom_ingame_popup_text("ACHIEVEMENT FAILED!", EHI._cache.Beardlib[id].name, "ehi_" .. id)
@@ -339,6 +357,8 @@ function HUDManager:ShowAchievementFailedPopup(id, beardlib)
     end
 end
 
+---@param id string
+---@param beardlib boolean?
 function HUDManager:ShowAchievementDescription(id, beardlib)
     if beardlib then
         local Achievement = EHI._cache.Beardlib[id]
@@ -348,19 +368,28 @@ function HUDManager:ShowAchievementDescription(id, beardlib)
     end
 end
 
+---@param id string
 function HUDManager:ShowTrophyStartedPopup(id)
     self:custom_ingame_popup_text("TROPHY STARTED!", managers.localization:to_upper_text(id), "milestone_trophy")
 end
 
+---@param id string
 function HUDManager:ShowTrophyFailedPopup(id)
     self:custom_ingame_popup_text("TROPHY FAILED!", managers.localization:to_upper_text(id), "milestone_trophy")
 end
 
+---@param id string
+function HUDManager:ShowTrophyDailyDescription(id)
+    managers.chat:_receive_message(1, managers.localization:text(id), managers.localization:text(id .. "_objective"), Color.white)
+end
+
+---@param id string
 function HUDManager:ShowDailyStartedPopup(id)
     local icon = tweak_data.ehi.icons[id] and id or "milestone_trophy"
     self:custom_ingame_popup_text("DAILY SIDE JOB STARTED!", managers.localization:to_upper_text(id), icon)
 end
 
+---@param id string
 function HUDManager:ShowDailyFailedPopup(id)
     local icon = tweak_data.ehi.icons[id] and id or "milestone_trophy"
     self:custom_ingame_popup_text("DAILY SIDE JOB FAILED!", managers.localization:to_upper_text(id), icon)

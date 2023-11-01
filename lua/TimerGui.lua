@@ -48,6 +48,7 @@ function TimerGui:init(unit, ...)
     self._ehi_key = tostring(unit:key())
     local icon = unit:base().is_drill and Icon.Drill or unit:base().is_hacking_device and Icon.PCHack or unit:base().is_saw and "pd2_generic_saw" or Icon.Wait
     self._ehi_icon = { { icon = icon } }
+    self._ehi_hint = icon == Icon.Drill and "drill" or icon == Icon.PCHack and "hack" or icon == "pd2_generic_saw" and "saw" or "process"
     if not show_waypoint_only then
         EHI:OptionAndLoadTracker("show_timers")
     end
@@ -95,6 +96,7 @@ function TimerGui:StartTimer()
                 icons = self._icons or self._ehi_icon,
                 theme = self.THEME,
                 class = EHI.Trackers.Timer.Base,
+                hint = self._ehi_hint,
                 upgrades = self:GetUpgrades(),
                 autorepair = autorepair
             })
@@ -361,6 +363,12 @@ end
 function TimerGui:SetTrackerMergeID(id, destroy_on_done)
     self._tracker_merge_id = id
     self._destroy_tracker_merge_on_done = destroy_on_done
+end
+
+---@param hint string
+function TimerGui:SetHint(hint)
+    self._ehi_hint = hint
+    managers.ehi_tracker:UpdateHint(self._ehi_key, hint)
 end
 
 function TimerGui:Finalize()

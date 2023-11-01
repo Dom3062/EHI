@@ -17,16 +17,10 @@ end
 
 function EHIdailycakeTracker:OverridePanel()
     self:SetBGSize()
-    self._progress_text = self._bg_box:text({
+    self._progress_text = self:CreateText({
         name = "text2",
         text = self:FormatProgress(),
-        align = "center",
-        vertical = "center",
-        w = self._bg_box:w() / 2,
-        h = self._bg_box:h(),
-        font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h() * self._text_scale,
-        color = self._text_color
+        w = self._bg_box:w() / 2
     })
     self:FitTheText(self._progress_text)
     self._progress_text:set_left(0)
@@ -45,15 +39,16 @@ end
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    [100891] = { additional_time = 320/30 + 5, random_time = 5, id = "EMPBombDrop", icons = { Icon.Goto } },
+    [100891] = { additional_time = 320/30 + 5, random_time = 5, id = "EMPBombDrop", icons = { Icon.Goto }, hint = Hints.mad_Bomb },
 
-    [EHI:GetInstanceElementID(100019, 3150)] = { time = 90, id = "Scan", icons = { "mad_scan" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [EHI:GetInstanceElementID(100019, 3150)] = { time = 90, id = "Scan", icons = { "mad_scan" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.mad_Scan },
     [EHI:GetInstanceElementID(100049, 3150)] = { id = "Scan", special_function = SF.PauseTracker },
     [EHI:GetInstanceElementID(100030, 3150)] = { id = "Scan", special_function = SF.RemoveTracker }, -- Just in case
 
-    [EHI:GetInstanceElementID(100013, 1350)] = { time = 120, id = "EMP", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [EHI:GetInstanceElementID(100013, 1350)] = { time = 120, id = "EMP", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.mad_EMP },
     [EHI:GetInstanceElementID(100023, 1350)] = { id = "EMP", special_function = SF.PauseTracker }
 }
 if EHI:IsClient() then

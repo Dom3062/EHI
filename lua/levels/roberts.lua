@@ -2,38 +2,39 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local start_delay = 1
 local delay = 20 + math.rand(6.2, 7.5)
 local HeliDropLootZone = { Icon.Heli, Icon.LootDrop, Icon.Goto }
 ---@type ParseTriggerTable
 local triggers = {
-    [101931] = { time = 90 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker },
-    [101932] = { time = 120 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker },
-    [101929] = { time = 30 + 150 + delay, id = "CageDrop", icons = HeliDropLootZone },
-    ---@diagnostic disable-next-line
-    [102921] = { id = 101929, special_function = SF.RemoveTrigger },
+    [101931] = { time = 90 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker, hint = Hints.peta2_LootZoneDelivery },
+    [101932] = { time = 120 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker, hint = Hints.peta2_LootZoneDelivery },
+    [101929] = { time = 30 + 150 + delay, id = "CageDrop", icons = HeliDropLootZone, hint = Hints.peta2_LootZoneDelivery },
+
+    [102921] = { id = 101929, special_function = SF.RemoveTrigger }, ---@diagnostic disable-line
 
     [103060] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103444 } },
     [103061] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103438 } },
     [104809] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103443 } },
 
-    [101959] = { time = 90 + start_delay, id = "Plane", icons = { Icon.Heli, Icon.Wait }, special_function = SF.SetTimeOrCreateTracker },
-    [101960] = { time = 120 + start_delay, id = "Plane", icons = { Icon.Heli, Icon.Wait }, special_function = SF.SetTimeOrCreateTracker },
-    [101961] = { time = 150 + start_delay, id = "Plane", icons = { Icon.Heli, Icon.Wait }, special_function = SF.SetTimeOrCreateTracker },
+    [101959] = { time = 90 + start_delay, id = "Plane", icons = { Icon.Heli, Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootTimed },
+    [101960] = { time = 120 + start_delay, id = "Plane", icons = { Icon.Heli, Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootTimed },
+    [101961] = { time = 150 + start_delay, id = "Plane", icons = { Icon.Heli, Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootTimed },
 
     [102796] = { time = 10, id = "ObjectiveWait", icons = { Icon.Wait } },
 
     [102975] = { special_function = SF.Trigger, data = { 1029751, 1029752 } },
-    [1029751] = { chance = 5, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance },
-    [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { Icon.Phone, "pd2_generic_look" }, class = TT.Warning },
+    [1029751] = { chance = 5, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, hint = Hints.man_Code },
+    [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { Icon.Phone, "pd2_generic_look" }, class = TT.Warning, hint = Hints.roberts_GenSecWarning },
     [102986] = { special_function = SF.RemoveTracker, data = { "CorrectPaperChance", "GenSecArrivalWarning" } },
     [102985] = { id = "CorrectPaperChance", special_function = SF.IncreaseChanceFromElement }, -- +25%
-    [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, trigger_times = 1 },
+    [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, trigger_times = 1, hint = Hints.roberts_GenSec },
 
-    [102995] = { time = 30, id = "CallAgain", icons = { Icon.Phone, Icon.Loop } },
-    [102996] = { time = 50, id = "CallAgain", icons = { Icon.Phone, Icon.Loop } },
-    [102997] = { time = 60, id = "CallAgain", icons = { Icon.Phone, Icon.Loop } },
-    [102940] = { time = 10, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning },
+    [102995] = { time = 30, id = "CallAgain", icons = { Icon.Phone, Icon.Loop }, hint = Hints.roberts_NextPhoneCall },
+    [102996] = { time = 50, id = "CallAgain", icons = { Icon.Phone, Icon.Loop }, hint = Hints.roberts_NextPhoneCall },
+    [102997] = { time = 60, id = "CallAgain", icons = { Icon.Phone, Icon.Loop }, hint = Hints.roberts_NextPhoneCall },
+    [102940] = { time = 10, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning, hint = Hints.PickUpPhone },
     [102945] = { id = "AnswerPhone", special_function = SF.RemoveTracker },
 
     [100052] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)

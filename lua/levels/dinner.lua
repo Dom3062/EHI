@@ -2,12 +2,13 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local c4 = { time = 5, id = "C4", icons = { Icon.C4 } }
+local Hints = EHI.Hints
+local c4 = { time = 5, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion }
 ---@type Vector3?
 local EscapePos = nil
 ---@type ParseTriggerTable
 local triggers = {
-    [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position_by_element = 100836 } },
+    [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position_by_element = 100836 }, hint = Hints.des_Crane },
     [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape }, waypoint_f = function(self, trigger)
         if EscapePos then
             self._waypoints:AddWaypoint(trigger.id, {
@@ -18,7 +19,7 @@ local triggers = {
             return
         end
         self._trackers:AddTrackerIfDoesNotExist(trigger, trigger.pos)
-    end },
+    end, hint = Hints.Escape },
     -- C4 (Doors)
     [100985] = c4,
     -- C4 (GenSec Truck)

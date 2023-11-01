@@ -2,10 +2,11 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local van_delay = 674/30
 local preload =
 {
-    {} -- Escape
+    { hint = Hints.LootEscape } -- Escape
 }
 local triggers = {
     [101880] = { run = { time = 120 + van_delay } },

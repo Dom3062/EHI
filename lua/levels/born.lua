@@ -2,17 +2,18 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
-    [101034] = { id = "MikeDefendTruck", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033, waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100483, 1350) } },
+    [101034] = { id = "MikeDefendTruck", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033, waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100483, 1350) }, hint = Hints.Defend },
     [101038] = { id = "MikeDefendTruck", special_function = SF.PauseTracker },
     [101070] = { id = "MikeDefendTruck", special_function = SF.UnpauseTracker },
 
-    [101535] = { id = "MikeDefendGarage", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101532, waypoint = { position_by_element_and_remove_vanilla_waypoint = 101445 } },
+    [101535] = { id = "MikeDefendGarage", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101532, waypoint = { position_by_element_and_remove_vanilla_waypoint = 101445 }, hint = Hints.Defend },
     [101534] = { id = "MikeDefendGarage", special_function = SF.UnpauseTracker },
     [101533] = { id = "MikeDefendGarage", special_function = SF.PauseTracker },
 
-    [101048] = { time = 12, id = "ObjectiveDelay", icons = { Icon.Wait } }
+    [101048] = { time = 12, id = "ObjectiveDelay", icons = { Icon.Wait }, hint = Hints.Wait }
 }
 if EHI:IsClient() then
     triggers[101034].client = { time = 80, random_time = 10, special_function = SF.UnpauseTrackerIfExists }

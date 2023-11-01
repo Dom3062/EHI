@@ -2,17 +2,18 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local triggers = {
-    [101961] = { time = 120 },
-    [101962] = { time = 90 },
+    [101961] = { time = 120, hint = Hints.LootEscape },
+    [101962] = { time = 90, hint = Hints.LootEscape },
 
     [102065] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102675 }},
     [102080] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102674 }}
 }
 
 if EHI:IsClient() then
-    triggers[101965] = { time = 60, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101966] = { time = 30, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101965] = { time = 60, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
+    triggers[101966] = { time = 30, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
 end
 
 ---@type ParseAchievementTable

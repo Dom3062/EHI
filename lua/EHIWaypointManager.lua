@@ -8,8 +8,8 @@ EHIWaypointManager._distance_font_size = tweak_data.hud.default_font_size
 EHIWaypointManager._bitmap_w = 32
 EHIWaypointManager._bitmap_h = 32
 function EHIWaypointManager:new()
-    self._enabled = EHI:GetOption("show_waypoints")
-    self._present_timer = EHI:GetOption("show_waypoints_present_timer")
+    self._enabled = EHI:GetOption("show_waypoints") --[[@as boolean]]
+    self._present_timer = EHI:GetOption("show_waypoints_present_timer") --[[@as number]]
     self._scale = 1
     self._stored_waypoints = {}
     self._waypoints = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIWaypoint?>
@@ -68,7 +68,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
     end
     waypoint.timer_gui:set_font(self._font)
     waypoint.timer_gui:set_font_size(self._timer_font_size)
-    local w = _G[params.class or "EHIWaypoint"]:new(waypoint, params, self)
+    local w = _G[params.class or "EHIWaypoint"]:new(waypoint, params, self) --[[@as EHIWaypoint]]
     if w._update then
         self._waypoints_to_update[id] = w
     end
@@ -125,7 +125,7 @@ function EHIWaypointManager:SetWaypointInitialIcon(wp, params)
         icon = params.texture
         texture_rect = params.text_rect
     else
-        local _icon = type(params.icon) == "table" and params.icon[1] or params.icon
+        local _icon = type(params.icon) == "table" and params.icon[1] or params.icon --[[@as string]]
         if icons[_icon] then
             icon = icons[_icon].texture
             texture_rect = icons[_icon].texture_rect
@@ -312,13 +312,6 @@ do
 end
 
 if EHI:IsVR() then
-    if restoration and restoration.Options and restoration.Options:GetValue("HUD/Waypoints") then
-        -- Use Vanilla texture file because Restoration HUD does not have the icons
-        -- Reported here: https://modworkshop.net/mod/28118
-        -- Don't forget to remove it from Restoration Mod theme file too when it is fixed
-        tweak_data.hud_icons.pd2_car.texture = "guis/textures/pd2/pd2_waypoints"
-        tweak_data.hud_icons.pd2_water_tap.texture = "guis/textures/pd2/pd2_waypoints"
-    end
     return
 end
 

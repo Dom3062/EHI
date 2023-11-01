@@ -20,16 +20,10 @@ end
 
 function EHICraneFixChanceTracker:OverridePanel()
     self:SetBGSize()
-    self._chance_text = self._bg_box:text({
+    self._chance_text = self:CreateText({
         name = "text2",
         text = self:FormatChance(),
-        align = "center",
-        vertical = "center",
-        w = self._bg_box:w() / 2,
-        h = self._icon_size_scaled,
-        font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h() * self._text_scale,
-        color = self._text_color
+        w = self._bg_box:w() / 2
     })
     self:FitTheText(self._chance_text)
     self._chance_text:set_left(self._text:right())
@@ -47,35 +41,35 @@ end
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-
+local Hints = EHI.Hints
 local triggers =
 {
-    [100975] = { time = 5, id = "C4Pipeline", icons = { Icon.C4 } },
+    [100975] = { time = 5, id = "C4Pipeline", icons = { Icon.C4 }, hint = Hints.Explosion },
 
-    [102011] = { time = 5, id = "Thermite", icons = { Icon.Fire } },
+    [102011] = { time = 5, id = "Thermite", icons = { Icon.Fire }, hint = Hints.Thermite },
 
-    [101098] = { time = 5 + 7 + 2, id = "WalkieTalkie", icons = { Icon.Door } },
+    [101098] = { time = 5 + 7 + 2, id = "WalkieTalkie", icons = { Icon.Door }, hint = Hints.Wait },
     [100109] = { id = "WalkieTalkie", special_function = SF.RemoveTracker },
 
-    [EHI:GetInstanceElementID(100209, 10450)] = { time = 3, id = "KeygenHack", icons = { Icon.PCHack } },
+    [EHI:GetInstanceElementID(100209, 10450)] = { time = 3, id = "KeygenHack", icons = { Icon.PCHack }, hint = Hints.Hack },
 
-    [103130] = { time = 10, id = "LocomotiveRefuel", icons = { Icon.Oil } },
+    [103130] = { time = 10, id = "LocomotiveRefuel", icons = { Icon.Oil }, hint = Hints.FuelTransfer },
 
-    [EHI:GetInstanceElementID(100024, 11650)] = { time = 25, id = "Turntable", icons = { Icon.Train, Icon.Loop }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [EHI:GetInstanceElementID(100024, 11650)] = { time = 25, id = "Turntable", icons = { Icon.Train, Icon.Loop }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Wait },
     [EHI:GetInstanceElementID(100025, 11650)] = { id = "Turntable", special_function = SF.PauseTracker },
 
-    [EHI:GetInstanceElementID(100089, 22250)] = { time = 0.1 + 400/30, id = "CraneLowerHooks", icons = { Icon.Winch } },
-    [EHI:GetInstanceElementID(100010, 22250)] = { time = 400/30 + 91.5 + 2 + 400/30, id = "CraneMove", icons = { Icon.Winch }, class = TT.Pausable },
+    [EHI:GetInstanceElementID(100089, 22250)] = { time = 0.1 + 400/30, id = "CraneLowerHooks", icons = { Icon.Winch }, hint = Hints.des_Crane },
+    [EHI:GetInstanceElementID(100010, 22250)] = { time = 400/30 + 91.5 + 2 + 400/30, id = "CraneMove", icons = { Icon.Winch }, class = TT.Pausable, hint = Hints.des_Crane },
     [EHI:GetInstanceElementID(100047, 22250)] = { id = "CraneMove", special_function = SF.PauseTracker },
     [EHI:GetInstanceElementID(100059, 22250)] = { id = "CraneMove", special_function = SF.UnpauseTracker },
     [EHI:GetInstanceElementID(100060, 22250)] = { id = "CraneMove", special_function = SF.PauseTracker },
-    [EHI:GetInstanceElementID(100046, 22250)] = { id = "CraneFixChance", class = "EHICraneFixChanceTracker", trigger_times = 1 },
+    [EHI:GetInstanceElementID(100046, 22250)] = { id = "CraneFixChance", class = "EHICraneFixChanceTracker", trigger_times = 1, hint = Hints.trai_Crane },
     [EHI:GetInstanceElementID(100035, 22250)] = { id = "CraneFixChance", special_function = SF.IncreaseChanceFromElement }, -- +10%
     [EHI:GetInstanceElementID(100039, 22250)] = { id = "CraneFixChance", special_function = SF.SetAchievementFailed }, -- Players need to fix the crane, runs once (Won't trigger "ACHIEVEMENT FAILED!" popup)
-    [EHI:GetInstanceElementID(100220, 22250)] = { chance = 33, id = "LocomotiveStartChance", icons = { Icon.Power }, class = TT.Chance },
+    [EHI:GetInstanceElementID(100220, 22250)] = { chance = 33, id = "LocomotiveStartChance", icons = { Icon.Power }, class = TT.Chance, hint = Hints.trai_LocoStart },
     [EHI:GetInstanceElementID(100193, 22250)] = { id = "LocomotiveStartChance", special_function = SF.IncreaseChanceFromElement }, -- +34%
     [EHI:GetInstanceElementID(100187, 22250)] = { id = "LocomotiveStartChance", special_function = SF.RemoveTracker },
-    [EHI:GetInstanceElementID(100031, 22850)] = { time = 1175/30, id = "LocomotiveMoveToTurntable", icons = { Icon.Train } }
+    [EHI:GetInstanceElementID(100031, 22850)] = { time = 1175/30, id = "LocomotiveMoveToTurntable", icons = { Icon.Train }, hint = Hints.Wait }
 }
 
 local other =

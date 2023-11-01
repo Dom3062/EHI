@@ -2,20 +2,21 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers = {
-    [100209] = { time = 5, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, client_on_executed = true, hook_element = 100602, remove_trigger_when_executed = true },
-    [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, hook_element = 102453, remove_trigger_when_executed = true }
+    [100209] = { time = 5, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, client_on_executed = true, hook_element = 100602, remove_trigger_when_executed = true, hint = Hints.LootEscape },
+    [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, hook_element = 102453, remove_trigger_when_executed = true, hint = Hints.DrillDelivery }
 }
 local triggers = {
-    [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { Icon.Train, Icon.Drill, Icon.Goto } },
+    [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { Icon.Train, Icon.Drill, Icon.Goto }, hint = Hints.DrillDelivery },
 
-    [101660] = { time = 120, id = "Gas", icons = { Icon.Teargas } },
+    [101660] = { time = 120, id = "Gas", icons = { Icon.Teargas }, hint = Hints.Teargas },
     [EHI:GetInstanceElementID(100017, 11325)] = { id = "Gas", special_function = SF.RemoveTracker },
 }
 if EHI:IsClient() then
-    triggers[100602] = { additional_time = 90 + 5, random_time = 20, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[102453] = { additional_time = 60 + 12.5, random_time = 20, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100602] = { additional_time = 90 + 5, random_time = 20, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
+    triggers[102453] = { additional_time = 60 + 12.5, random_time = 20, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.DrillDelivery }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, "element")
@@ -24,7 +25,7 @@ local DisableWaypoints =
 {
     -- chas_store_computer
     [EHI:GetInstanceElementID(100018, 10675)] = true, -- Defend
-    -- Fix is in CoreWorldInstanceManager.lua
+    -- "Fix" icon is in CoreWorldInstanceManager.lua
     -- chas_vault_door
     [EHI:GetInstanceElementID(100029, 5950)] = true, -- Defend
     [EHI:GetInstanceElementID(100030, 5950)] = true, -- Fix

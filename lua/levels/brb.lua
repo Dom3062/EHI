@@ -2,23 +2,24 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
-    [100128] = { time = 38, id = "WinchDropTrainA", icons = { Icon.Winch, Icon.Goto } },
-    [100164] = { time = 38, id = "WinchDropTrainB", icons = { Icon.Winch, Icon.Goto } },
+    [100128] = { time = 38, id = "WinchDropTrainA", icons = { Icon.Winch, Icon.Goto }, hint = Hints.brb_WinchDelivery },
+    [100164] = { time = 38, id = "WinchDropTrainB", icons = { Icon.Winch, Icon.Goto }, hint = Hints.brb_WinchDelivery },
 
-    [100654] = { time = 120, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [100654] = { time = 120, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Winch },
     [100655] = { id = "Winch", special_function = SF.PauseTracker },
     [100656] = { id = "Winch", special_function = SF.UnpauseTracker },
-    [EHI:GetInstanceElementID(100077, 2900)] = { time = 90, id = "Cutter", icons = { Icon.Glasscutter }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100021, 2900) } },
+    [EHI:GetInstanceElementID(100077, 2900)] = { time = 90, id = "Cutter", icons = { Icon.Glasscutter }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100021, 2900) }, hint = Hints.Cutter },
     [EHI:GetInstanceElementID(100078, 2900)] = { id = "Cutter", special_function = SF.PauseTracker },
-    [EHI:GetInstanceElementID(100103, 2900)] = { time = 5, id = "C4OfficeFloor", icons = { Icon.C4 } },
+    [EHI:GetInstanceElementID(100103, 2900)] = { time = 5, id = "C4OfficeFloor", icons = { Icon.C4 }, hint = Hints.Explosion },
 
-    [100124] = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } },
+    [100124] = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire }, hint = Hints.Thermite },
 
-    [100275] = { time = 20, id = "Van", icons = Icon.CarEscape },
+    [100275] = { time = 20, id = "Van", icons = Icon.CarEscape, hint = Hints.LootEscape },
 
-    [100142] = { time = 5, id = "C4Vault", icons = { Icon.C4 } }
+    [100142] = { time = 5, id = "C4Vault", icons = { Icon.C4 }, hint = Hints.Explosion }
 }
 
 for index = 1900, 2400, 500 do
@@ -29,7 +30,8 @@ for index = 1900, 2400, 500 do
                 id = tostring(fixed_unit_id),
                 time = 50 + math.rand(10),
                 icons = { Icon.Fire },
-                class = TT.Inaccurate
+                class = TT.Inaccurate,
+                hint = Hints.Thermite
             })
         end)
     end

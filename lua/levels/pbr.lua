@@ -2,11 +2,13 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
+---@type ParseTriggerTable
 local triggers = {
-    [EHI:GetInstanceElementID(100108, 3200)] = { time = 45, id = "LockOpen", icons = { Icon.Wait } },
+    [EHI:GetInstanceElementID(100108, 3200)] = { time = 45, id = "LockOpen", icons = { Icon.Wait }, hint = Hints.Wait },
     [EHI:GetInstanceElementID(100124, 3200)] = { id = "LockOpen", special_function = SF.RemoveTracker },
 
-    [101774] = { time = 90, id = "EscapeHeli", icons = { Icon.Escape } }
+    [101770] = { time = 90, id = "EscapeHeli", icons = { Icon.Escape }, hint = Hints.Escape, waypoint = { position_by_element = EHI:GetInstanceElementID(100031, 20050) } }
 }
 
 local function berry_4_fail()
@@ -86,7 +88,7 @@ EHI:ShowAchievementLootCounter({
 
 local tbl =
 {
-    [EHI:GetInstanceUnitID(100113, 0)] = { icons = { Icon.C4 } },
+    [EHI:GetInstanceUnitID(100113, 0)] = { icons = { Icon.C4 }, hint = Hints.Explosion },
 
     -- Vaults
     -- Poseidon

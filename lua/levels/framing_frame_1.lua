@@ -51,10 +51,9 @@ else -- Framing Frame Day 1
         }
     })
 
-    other[102437] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement } -- +5%
-    other[103884] = { id = "EscapeChance", special_function = SF.SetChanceFromElement } -- 100 %
-
     if EHI:GetOption("show_escape_chance") then
+        other[102437] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement } -- +5%
+        other[103884] = { id = "EscapeChance", special_function = SF.SetChanceFromElement } -- 100 %
         EHI:AddOnAlarmCallback(function(dropin)
             managers.ehi_escape:AddEscapeChanceTracker(dropin, 25)
         end)

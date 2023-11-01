@@ -10,8 +10,8 @@ local Color = Color
 ---@param start_t number
 local function anim(o, old_color, color, start_t)
     local c = Color(old_color.r, old_color.g, old_color.b)
+    local t = start_t
     while true do
-        local t = start_t
         while t > 0 do
             t = t - coroutine.yield()
             local n = sin(t * 180)
@@ -20,7 +20,7 @@ local function anim(o, old_color, color, start_t)
             c.b = lerp(old_color.b, color.b, n)
             o:set_color(c)
         end
-        start_t = 1
+        t = 1
     end
 end
 ---@class EHIWarningTracker : EHITracker

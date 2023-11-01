@@ -15,6 +15,7 @@ if EHI:GetOption("show_gage_tracker") then
                         icons = { "gage" },
                         progress = progress,
                         max = max,
+                        hint = "gage",
                         class = EHI.Trackers.Progress
                     })
                 end
@@ -198,6 +199,12 @@ local function WeaponsContainFiremode(firemode)
     return FireModeExists(primary.weapon_id) or FireModeExists(secondary.weapon_id)
 end
 
+---@param id string
+---@param progress number
+---@param max number
+---@param dont_flash_bg boolean?
+---@param show_finish_after_reaching_target boolean?
+---@param status_is_overridable boolean?
 local function CreateProgressTracker(id, progress, max, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
     managers.ehi_tracker:AddTracker({
         id = id,
@@ -214,6 +221,10 @@ local function CreateProgressTracker(id, progress, max, dont_flash_bg, show_fini
 end
 
 local persistent_stat_unlocks = tweak_data.achievement.persistent_stat_unlocks
+---@param id_stat string
+---@param dont_flash_bg boolean?
+---@param show_finish_after_reaching_target boolean?
+---@param status_is_overridable boolean?
 local function CreateProgressTracker2(id_stat, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
     local achievement = persistent_stat_unlocks[id_stat] or {}
     local stat = achievement[1]
@@ -233,6 +244,8 @@ local function CreateProgressTracker2(id_stat, dont_flash_bg, show_finish_after_
     CreateProgressTracker(stat.award, EHI:GetAchievementProgress(id_stat), stat.at, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
 end
 
+---@param achievement string
+---@param weapon_id string
 local function HookKillFunctionNoCivilian(achievement, weapon_id)
     EHI:HookWithID(StatisticsManager, "killed", "EHI_" .. achievement .. "_" .. weapon_id .. "_killed", function(self, data)
         if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
@@ -244,6 +257,7 @@ local function HookKillFunctionNoCivilian(achievement, weapon_id)
     end)
 end
 
+---@param f function
 local function ShowTrackerInLoud(f)
     if is_stealth then
         EHI:AddOnAlarmCallback(f)
@@ -1083,6 +1097,30 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end)
     end]]
+    if EHI:GetUnlockableAndOption("show_dailies") then
+        local daily = {}
+        if HasMeleeEquipped("whiskey") and EHI:IsDailyAvailable("daily_hangover") then
+            local progress, max = EHI:GetDailyProgressAndMax("daily_hangover")
+            daily.daily_hangover = "daily_hangover"
+            managers.ehi_tracker:AddTracker({
+                id = "daily_hangover",
+                progress = progress,
+                max = max,
+                icons = { "daily_hangover" },
+                flash_bg = true,
+                flash_times = 1,
+                no_failure = true,
+                class = EHI.Trackers.Daily.Progress
+            })
+        end
+        if next(daily) then
+            EHI:HookWithID(CustomSafehouseManager, "award", "EHI_Daily_AwardProgress", function(csm, id)
+                if daily[id] then
+                    managers.ehi_tracker:IncreaseTrackerProgress(daily[id])
+                end
+            end)
+        end
+    end
     if next(stats) then
         HookAwardAchievement("IngameWaitingForPlayers", function(am, stat, value)
             if stats[stat] then
@@ -1091,3 +1129,13 @@ function IngameWaitingForPlayersState:at_exit(...)
         end)
     end
 end
+
+--[[EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+    EHI:DelayCall("HintTest", 3, function()
+        managers.ehi_tracker:AddTracker({
+            id = "PagerTest",
+            hint = "pager",
+            class = "EHIPagerTracker"
+        })
+    end)
+end)]]

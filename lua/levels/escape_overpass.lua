@@ -2,11 +2,12 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local AddToCache = EHI:GetFreeCustomSpecialFunctionID()
 local GetFromCache = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [101145] = { time = 180, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop } },
-    [101158] = { time = 240, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop } },
+    [101145] = { time = 180, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape },
+    [101158] = { time = 240, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape },
     [101977] = { special_function = AddToCache, data = { icon = Icon.Heli } },
     [101978] = { special_function = AddToCache, data = { icon = Icon.Heli } },
     [101979] = { special_function = AddToCache, data = { icon = Icon.Car } },

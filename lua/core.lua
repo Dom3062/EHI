@@ -9,8 +9,9 @@ _G.EHI =
         achievements = false,
         mission_door = false,
         loot_manager_escape = false,
-        instances = false,
-        gained_experience = false
+        all_instances = false,
+        gained_experience = false,
+        instance = false
     },
     settings = {},
 
@@ -78,6 +79,7 @@ _G.EHI =
     _cache =
     {
         DisableAchievements = false,
+        Mods = {},
         MissionUnits = {},
         InstanceUnits = {},
         IgnoreWaypoints = {},
@@ -262,6 +264,107 @@ _G.EHI =
         end
     },
 
+    Hints =
+    {
+        -- Generic hints
+        Question = "question",
+        EndlessAssault = "endless_assault",
+        Fire = "fire",
+        FireRecharge = "fire_recharge",
+        Escape = "escape",
+        LootEscape = "loot_escape",
+        Loot = "loot",
+        LootTimed = "loot_timed",
+        CookingChance = "cooking_chance",
+        ScriptedBulldozer = "scripted_bulldozer",
+        EnemySnipers = "enemy_snipers",
+        EnemySnipersHeli = "enemy_snipers_heli",
+        EnemySnipersLoop = "enemy_snipers_loop",
+        Cutter = "cutter",
+        Wait = "wait",
+        Teargas = "teargas",
+        Hack = "hack",
+        DrillDelivery = "drill_delivery",
+        DrillPartsDelivery = "drill_parts_delivery",
+        Thermite = "thermite",
+        Explosion = "explosion",
+        PickUpPhone = "pick_up_phone",
+        Kills = "kills",
+        Winch = "winch",
+        HeliDropC4 = "c4_delivery",
+        ColorCodes = "color_codes",
+        KeypadReset = "keypad_reset",
+        FuelTransfer = "fuel_transfer",
+        Charging = "charging",
+        Alarm = "alarm",
+        Process = "process",
+        Chance = "chance",
+        Defend = "defend",
+        Restarting = "restarting",
+
+        -- Heist specific hints
+        alex_1_Methlab = "alex_1_methlab",
+        big_Piggy = "big_piggy",
+        brb_WinchDelivery = "brb_winch_delivery",
+        cane_Safe = "cane_safe",
+        crojob3_Water = "crojob3_water",
+        crojob3_WaterEnRoute = "crojob3_water_enroute",
+        crojob3_WaterRefill = "crojob3_water_refill",
+        des_Crane = "des_crane",
+        des_ChemSetRestart = "des_chem_set_restart",
+        des_ChemSetInterrupt = "des_chem_set_interrupt",
+        des_ChemSet = "des_chem_set",
+        election_day_3_CrashChance = "election_day_3_crash_chance",
+        election_day_3_CrashChanceTime = "election_day_3_crash_chance_time",
+        friend_Heli = "friend_heli",
+        friend_HeliRandom = "friend_heli_random",
+        friend_HeliCaddilac = "friend_heli_caddilac",
+        friend_HeliDropCar = "friend_heli_drop_car",
+        hox_1_VehicleMove = "hox_1_vehicle_move",
+        hox_1_Car = "hox_1_car",
+        hox_2_Request = "hox_2_request",
+        hox_2_Evidence = "hox_2_evidence",
+        kosugi_Heli = "kosugi_heli",
+        kosugi_Loot = "kosugi_loot",
+        kosugi_Guards = "kosugi_guards",
+        kosugi_Keycard = "kosugi_keycard",
+        mad_Bomb = "mad_bomb",
+        mad_Scan = "mad_scan",
+        mad_EMP = "mad_emp",
+        mallcrasher_Destruction = "mallcrasher_destruction",
+        man_Code = "man_code",
+        mia_1_MethDone = "mia_1_meth_done",
+        mia_1_NextMethIngredient = "mia_1_next_meth_ingredient",
+        mia_2_Loot = "mia_2_loot",
+        nail_ChemicalsEnRoute = "nail_chemicals_en_route",
+        nmh_IncomingPolicePatrol = "nmh_incoming_police_patrol",
+        nmh_IncomingCivilian = "nmh_incoming_civilian",
+        nmh_PatientFileChance = "nmh_patient_file_chance",
+        nmh_VialFail = "nmh_vial_fail",
+        nmh_VialSuccess = "nmh_vial_success",
+        pal_Money = "pal_money",
+        pent_Chance = "pent_chance",
+        peta2_LootZoneDelivery = "peta2_loot_zone_delivery",
+        pines_Chance = "pines_chance",
+        pines_ChanceReduction = "pines_chance_reduction",
+        pines_Santa = "pines_santa",
+        ranc_Chance = "ranc_chance",
+        red2_Thermite = "red2_thermite",
+        roberts_GenSec = "roberts_gensec",
+        roberts_GenSecWarning = "roberts_gensec_warning",
+        roberts_NextPhoneCall = "roberts_next_phone_call",
+        run_FinalZone = "run_final_zone",
+        run_Gas = "run_gas",
+        run_GasFinal = "run_gas_final",
+        rvd_Pink = "rvd_pink",
+        rvd2_LiquidNitrogen = "rvd2_liquid_nitrogen",
+        sand_Revive = "sand_revive",
+        sand_HeliTurretTimer = "sand_heli_turret_timer",
+        trai_Crane = "trai_crane",
+        trai_LocoStart = "trat_loco_start",
+        vit_Teargas = "vit_teargas"
+    },
+
     Icons =
     {
         Trophy = "milestone_trophy",
@@ -383,8 +486,11 @@ _G.EHI =
         InaccurateWarning = "EHIInaccurateWarningTracker",
         InaccuratePausable = "EHIInaccuratePausableTracker",
         Trophy = "EHITrophyTracker",
-        Daily = "EHIDailyTracker",
-        DailyProgress = "EHIDailyProgressTracker"
+        Daily =
+        {
+            Base = "EHIDailyTracker",
+            Progress = "EHIDailyProgressTracker"
+        }
     },
 
     Waypoints =
@@ -528,6 +634,8 @@ local function LoadDefaultValues(self)
         show_tracker_bg = true,
         show_tracker_corners = true,
         show_one_icon = false,
+        show_tracker_hint = true,
+        show_tracker_hint_t = 15,
 
         -- Trackers
         show_mission_trackers = true,
@@ -549,12 +657,14 @@ local function LoadDefaultValues(self)
 
             -- Trophies
             show_trophies = true,
+            show_trophy_description = false,
             hide_unlocked_trophies = true,
             show_trophy_failed_popup = true,
             show_trophy_started_popup = true,
 
             -- Daily missions
             show_dailies = true,
+            show_daily_description = false,
             show_daily_failed_popup = true,
             show_daily_started_popup = true
         },
@@ -797,6 +907,8 @@ local function Load()
     self._cache.DisableAchievements = not self:ShowMissionAchievements()
 end
 
+---@param difficulty string
+---@return integer
 local function DifficultyToIndex(difficulty)
     local difficulties = {
         "easy", -- Leftover from PD:TH
@@ -824,6 +936,11 @@ function EHI:Init()
             self._cache.UnlockablesAreDisabled = true
         end
     end)
+    --[[local InfamyOverflow = BLT.Mods:GetModByName("Infamy Pool Overflow")
+    if InfamyOverflow and InfamyOverflow:IsEnabled() and InfamyOverflow:GetAuthor() == "Dr_Newbie" then
+        self._cache.Mods.InfamyOverflow = true
+        self:Log("InfamyOverflow mod installed")
+    end]]
 end
 
 ---@return boolean
@@ -1469,11 +1586,13 @@ function EHI:AddAssaultDelay(params)
     end
     local id = "AssaultDelay"
     local class = self.Trackers.Assault.Delay
+    local hint = "assault_delay"
     local pos = nil
     if self:CombineAssaultDelayAndAssaultTime() then
         id = "Assault"
         class = self.Trackers.Assault.Assault
         pos = 0
+        hint = "assault"
     elseif params.random_time then
         class = "EHIInaccurateAssaultDelayTracker"
     end
@@ -1490,6 +1609,7 @@ function EHI:AddAssaultDelay(params)
     tbl.id = id
     tbl.class = class
     tbl.pos = pos
+    tbl.hint = hint
     return tbl
 end
 
@@ -2114,9 +2234,11 @@ else
     end
 end
 
-function EHI:IsDailyAvailable(daily, skip_unlockables_check)
+---@param daily_id string
+---@param skip_unlockables_check boolean?
+function EHI:IsDailyAvailable(daily_id, skip_unlockables_check)
     local current_daily = managers.custom_safehouse:get_daily_challenge()
-    if current_daily and current_daily.id == daily then
+    if current_daily and current_daily.id == daily_id then
         if current_daily.state == "completed" or current_daily.state == "rewarded" then
             return false
         end
@@ -2126,6 +2248,22 @@ function EHI:IsDailyAvailable(daily, skip_unlockables_check)
         return not self._cache.UnlockablesAreDisabled
     end
     return false
+end
+
+---@param daily_id string
+---@param progress_id string?
+---@return number, number
+function EHI:GetDailyProgressAndMax(daily_id, progress_id)
+    local current_daily = managers.custom_safehouse:get_daily_challenge()
+    if current_daily and current_daily.id == daily_id then
+        progress_id = progress_id or daily_id
+        for _, objective in ipairs(current_daily.trophy.objectives) do
+            if objective.progress_id == progress_id then
+                return objective.progress, objective.max_progress
+            end
+        end
+    end
+    return 0, 0
 end
 
 function EHI:IsDailyMissionAvailable(challenge)
@@ -2195,12 +2333,8 @@ if EHI.debug.achievements then
     end
 end
 
-if EHI.debug.instances then -- For testing purposes
+if EHI.debug.all_instances then -- For testing purposes
     function EHI:DebugInstance(instance_name)
-        if self:IsClient() then
-            self:Log("Instance debugging is only available when you are the host")
-            return
-        end
         local scripts = managers.mission._scripts or {}
         local instances = managers.world_instance:instance_data()
         for _, instance in ipairs(instances) do

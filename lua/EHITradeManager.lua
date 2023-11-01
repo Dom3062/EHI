@@ -1,7 +1,7 @@
 ---@class EHITradeManager
 EHITradeManager = {}
 ---@param ehi_tracker EHITrackerManager
----@return EHITradeManager
+---@return self
 function EHITradeManager:new(ehi_tracker)
     self._trackers = ehi_tracker
     self._trade = {
@@ -22,7 +22,7 @@ function EHITradeManager:SetTrade(type, pause, t)
 end
 
 function EHITradeManager:AddCustodyTimeTracker()
-    self._trackers:AddTracker({
+    self._trackers:AddTrackerIfDoesNotExist({
         id = "CustodyTime",
         class = "EHITradeDelayTracker"
     })
@@ -139,9 +139,7 @@ end
 function EHITradeManager:LoadFromTradeDelayCache()
     if next(self._trade_delay) then
         -- The tracker may get created the frame before, only create it when the tracker does not exist
-        if self._trackers:TrackerDoesNotExist("CustodyTime") then
-            self:AddCustodyTimeTracker()
-        end
+        self:AddCustodyTimeTracker()
         for peer_id, crim in pairs(self._trade_delay) do
             self:CallFunction("AddOrUpdatePeerCustodyTime", peer_id, crim.respawn_t, crim.civilians_killed, crim.in_custody)
         end
@@ -176,7 +174,7 @@ end
 
 ---@return EHITradeDelayTracker?
 function EHITradeManager:GetTracker()
-    return self._trackers:GetTracker("CustodyTime") --[[@as EHITradeDelayTracker]]
+    return self._trackers:GetTracker("CustodyTime") --[[@as EHITradeDelayTracker?]]
 end
 
 ---@param f string

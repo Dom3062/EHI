@@ -28,16 +28,10 @@ end
 
 function EHIameno3Tracker:OverridePanel()
     self:SetBGSize()
-    self._money_text = self._bg_box:text({
+    self._money_text = self:CreateText({
         name = "text2",
         text = self:FormatNumber(),
-        align = "center",
-        vertical = "center",
-        w = self._bg_box:w() / 2,
-        h = self._bg_box:h(),
-        font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h() * self._text_scale,
-        color = self._text_color
+        w = self._bg_box:w() / 2
     })
     self:FitTheText(self._money_text)
     self._money_text:set_left(0)
@@ -96,6 +90,7 @@ end
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local MoneyTrigger = { id = "MallDestruction", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
     self._trackers:IncreaseTrackerProgress(trigger.id, element._values.amount)
 end) }
@@ -103,12 +98,12 @@ local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
 local triggers =
 {
     -- Time before escape vehicle arrives
-    [300248] = { time = (OverkillOrBelow and 120 or 300) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 300322 } },
+    [300248] = { time = (OverkillOrBelow and 120 or 300) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 300322 }, hint = Hints.Escape },
     -- 120: Base Delay on OVK or below
     -- 300: Base Delay on Mayhem or above
     -- 25: Escape zone activation delay
 
-    [300043] = { max = 50000, id = "MallDestruction", class = TT.NeededValue, icons = { Icon.Destruction }, flash_times = 1 },
+    [300043] = { max = 50000, id = "MallDestruction", class = TT.NeededValue, icons = { Icon.Destruction }, flash_times = 1, hint = Hints.mallcrasher_Destruction },
     [300843] = MoneyTrigger, -- +40
     [300844] = MoneyTrigger, -- +80
     [300845] = MoneyTrigger, -- +250

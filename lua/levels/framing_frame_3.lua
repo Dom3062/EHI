@@ -2,9 +2,10 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local triggers = {
-    [100931] = { time = 23 },
-    [104910] = { time = 24 },
+    [100931] = { time = 23, hint = Hints.Escape },
+    [104910] = { time = 24, hint = Hints.Escape },
     [100842] = { time = 50, id = "Lasers", icons = { Icon.Lasers }, class = TT.Warning }
 }
 

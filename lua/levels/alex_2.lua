@@ -1,6 +1,7 @@
 local EHI, EM = EHI, EHIManager
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local assault_delay = 15 + 1 + 30
 local other =
 {
@@ -69,7 +70,7 @@ if EHI:GetOption("show_escape_chance") then
     end) }
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[104496] = { time = 120, count_on_refresh = 1, id = "Snipers", class = TT.Sniper.TimedCount }
+    other[104496] = { time = 120, count_on_refresh = 1, id = "Snipers", class = TT.Sniper.TimedCount, hint = Hints.EnemySnipers }
     other[100063] = { time = 90, id = "Snipers", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
         if self._trackers:TrackerExists(trigger.id) then
             self._trackers:CallFunction(trigger.id, "SetRespawnTime", trigger.time)
@@ -78,7 +79,8 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
                 id = trigger.id,
                 time = trigger.time,
                 count_on_refresh = 1,
-                class = TT.Sniper.TimedCount
+                class = TT.Sniper.TimedCount,
+                hint = Hints.EnemySnipers
             })
         end
     end)}

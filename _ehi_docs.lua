@@ -41,6 +41,7 @@
 ---@field f string|fun(arg: any?)? Arguments are unsupported in `SF.CustomCodeDelayed`
 ---@field flash_times number?
 ---@field flash_bg boolean?
+---@field hint string?
 ---@field [any] any
 
 ---@class ParseTriggerTable
@@ -214,6 +215,7 @@
 ---@field completion boolean
 ---@field icon_on_pause table
 ---@field f string|fun(id: number, unit_data: self, unit: Unit)
+---@field hint string
 ---@field [any] any
 
 ---@class EHITracker_params
@@ -226,6 +228,7 @@
 ---@field hide_on_delete boolean?
 ---@field flash_times number?
 ---@field flash_bg boolean?
+---@field hint string?
 ---@field [any] any
 
 ---@class EHITracker_CreateText

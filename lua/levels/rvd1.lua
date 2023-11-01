@@ -2,21 +2,22 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local pink_car = { { icon = Icon.Car, color = Color("D983D1") }, Icon.Goto }
 local ExecuteIfEnabled = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [100727] = { time = 6 + 18 + 8.5 + 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape },
-    [100207] = { time = 260/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled },
-    [100209] = { time = 250/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled },
+    [100727] = { time = 6 + 18 + 8.5 + 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape, hint = Hints.LootEscape },
+    [100207] = { time = 260/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled, hint = Hints.LootEscape },
+    [100209] = { time = 250/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled, hint = Hints.LootEscape },
 
     --310/30 anim_crash_04; Waypoint ID 100490
-    [100169] = { time = 17 + 1 + 310/30, id = "PinkArrival", icons = pink_car },
+    [100169] = { time = 17 + 1 + 310/30, id = "PinkArrival", icons = pink_car, hint = Hints.rvd_Pink },
     --260/30 anim_crash_02; Waypoint ID 101196
-    [101114] = { time = 260/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker },
+    [101114] = { time = 260/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker, hint = Hints.rvd_Pink },
     --201/30 anim_crash_05; Waypoint ID 101201
-    [101127] = { time = 201/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker },
+    [101127] = { time = 201/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker, hint = Hints.rvd_Pink },
     --284/30 anim_crash_03; Waypoint ID 101138
-    [101108] = { time = 284/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker },
+    [101108] = { time = 284/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker, hint = Hints.rvd_Pink },
 
     [101105] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100490 } },
     [101104] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101196 } },

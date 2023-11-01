@@ -4,7 +4,7 @@ local SF = EHI.SpecialFunctions
 local van_delay = 674/30
 local preload =
 {
-    {} -- Escape
+    { hint = EHI.Hints.LootEscape } -- Escape
 }
 local triggers = {
     [101235] = { run = { time = 120 + van_delay } },

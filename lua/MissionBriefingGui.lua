@@ -4,6 +4,7 @@ if EHI:CheckLoadHook("MissionBriefingGui") or EHI:IsXPTrackerDisabled() or not E
 end
 
 ---@class MissionBriefingGui
+---@field _assets_item table
 ---@field _fullscreen_panel Panel
 
 ---@class MissionBriefingPanel
@@ -28,7 +29,9 @@ end)
 
 ---@type XPBreakdown
 local _params
-local TacticSelected = 1
+local TacticSelected, ToggleButtonAlpha = 1, 1
+---@class XPBreakdownItem
+---@field new fun(self: self, gui: MissionBriefingGui, panel: Panel, string: string, type: string, selected: boolean): self
 XPBreakdownItem = class()
 function XPBreakdownItem:init(gui, panel, string, type, selected)
     self._gui = gui
@@ -65,14 +68,17 @@ function XPBreakdownItem:GetIndex()
     return self._type == "stealth" and 1 or 2
 end
 
+---@param item XPBreakdownItem
 function XPBreakdownItem:SetPreviousItem(item)
     self._previous_item = item
 end
 
+---@return PanelText
 function XPBreakdownItem:GetButton()
     return self._button
 end
 
+---@param panel Panel
 function XPBreakdownItem:SetPosByPanel(panel)
     self._button:set_bottom(panel:top())
     self._button:set_left(panel:left())
@@ -80,6 +86,7 @@ function XPBreakdownItem:SetPosByPanel(panel)
     self._tab_select_rect:set_left(self._button:left())
 end
 
+---@param item XPBreakdownItem
 function XPBreakdownItem:SetPosByPreviousItem(item)
     self:SetPreviousItem(item)
     local button = item:GetButton()
@@ -89,12 +96,14 @@ function XPBreakdownItem:SetPosByPreviousItem(item)
     self._tab_select_rect:set_left(self._button:left())
 end
 
+---@param offset number
 function XPBreakdownItem:SetVisibleWithOffset(offset)
     self._button:set_y(self._button:y() + offset)
     self._button:set_visible(true)
     self._tab_select_rect:set_y(self._button:y())
 end
 
+---@param no_change boolean?
 function XPBreakdownItem:Select(no_change)
     if self._selected then
         return
@@ -123,6 +132,17 @@ function XPBreakdownItem:UnselectPreviousItem()
     self._previous_item:Unselect()
 end
 
+function XPBreakdownItem:ToggleSelection()
+    if self._selected then
+        self:Unselect()
+    else
+        self:Select()
+    end
+end
+
+---@param x number
+---@param y number
+---@return boolean
 function XPBreakdownItem:mouse_moved(x, y)
     if not self._selected then
         if self._button:inside(x, y) then
@@ -140,6 +160,8 @@ function XPBreakdownItem:mouse_moved(x, y)
     return false
 end
 
+---@param x number
+---@param y number
 function XPBreakdownItem:mouse_pressed(button, x, y)
     if button ~= Idstring("0") then
         return
@@ -225,6 +247,24 @@ function MissionBriefingGui:init(...)
             return value
         end
     end
+    if not managers.menu:is_pc_controller() then
+        if self._fullscreen_panel:child("ehi_controller_switch_button") then
+            self._ehi_controller_switch_button = self._fullscreen_panel:child("ehi_controller_switch_button")
+        else
+            self._ehi_controller_switch_button = self._fullscreen_panel:text({
+                id = "ehi_controller_switch_button",
+                text = string.format("%s %s", utf8.char(57346), self._loc:text("ehi_mission_briefing_toggle_tactic_text")),
+                blend_mode = "add",
+                layer = 2,
+                font_size = tweak_data.menu.pd2_large_font_size / 2,
+                font = tweak_data.menu.pd2_large_font,
+                color = Color.white,
+                alpha = ToggleButtonAlpha,
+                visible = false
+            })
+            EHIMenu:make_fine_text(self._ehi_controller_switch_button)
+        end
+    end
     self:ProcessXPBreakdown()
 end
 
@@ -282,53 +322,100 @@ function MissionBriefingGui:AddXPBreakdown(params)
                 name = "panel_v2",
                 layer = 9,
             })
-            local panel_v2 = { panel = self._ehi_panel:child("panel_v2"), lines = 0, adjust_h = true, selected = TacticSelected == 2 }
+            local panel_v2 = { panel = self._ehi_panel:child("panel_v2") --[[@as Panel]], lines = 0, adjust_h = true, selected = TacticSelected == 2 }
             self:ProcessBreakDown(tactic.loud, panel_v2)
             self._panels[2] = panel_v2
             local offset = Global.game_settings.single_player and 20 or 25
             self._stealth_button:SetVisibleWithOffset(offset)
             self._loud_button:SetVisibleWithOffset(offset)
             self._ehi_panel:set_y(self._ehi_panel:y() + offset)
-            original.mouse_pressed = self.mouse_pressed
-            self.mouse_pressed = function(gui, button, x, y, ...)
-                local result = original.mouse_pressed(gui, button, x, y, ...)
-                if result then
-                    local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
-                    gui._stealth_button:mouse_pressed(button, fx, fy)
-                    gui._loud_button:mouse_pressed(button, fx, fy)
-                end
-                return result
-            end
-            original.mouse_moved = self.mouse_moved
-            self.mouse_moved = function(gui, x, y, ...)
-                if not alive(gui._panel) or not alive(gui._fullscreen_panel) or not gui._enabled then
-                    return false, "arrow"
-                end
-                if gui._displaying_asset then
-                    return false, "arrow"
-                end
-                if game_state_machine:current_state().blackscreen_started and game_state_machine:current_state():blackscreen_started() then
-                    return false, "arrow"
-                end
-                local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
-                if gui._stealth_button:mouse_moved(fx, fy) then
-                    return true, "link"
-                end
-                if gui._loud_button:mouse_moved(fx, fy) then
-                    return true, "link"
-                end
-                return original.mouse_moved(gui, x, y, ...)
-            end
             original.close = self.close
             self.close = function(gui, ...)
                 gui._stealth_button:destroy()
                 gui._loud_button:destroy()
                 original.close(gui, ...)
                 -- Remove hooks; the gui will refresh or is closing
-                gui.mouse_pressed = original.mouse_pressed
-                gui.mouse_moved = original.mouse_moved
-                original.mouse_pressed = nil
-                original.mouse_moved = nil
+                if original.mouse_pressed then
+                    gui.mouse_pressed = original.mouse_pressed
+                    gui.mouse_moved = original.mouse_moved
+                    original.mouse_pressed = nil
+                    original.mouse_moved = nil
+                end
+                if original.special_btn_pressed then
+                    gui.special_btn_pressed = original.special_btn_pressed
+                    original.special_btn_pressed = nil
+                end
+                -- No need to restore original function; these will get recreated
+                original.assets_select = nil
+                original.assets_deselect = nil
+            end
+            if self._ehi_controller_switch_button then
+                local loud_button = self._loud_button:GetButton()
+                self._ehi_controller_switch_button:set_bottom(loud_button:bottom())
+                self._ehi_controller_switch_button:set_left(loud_button:right() + 10)
+                self._ehi_controller_switch_button:set_visible(true)
+                original.special_btn_pressed = self.special_btn_pressed
+                self.special_btn_pressed = function(gui, button, ...)
+                    if not alive(gui._panel) or not alive(gui._fullscreen_panel) or not gui._enabled then
+                        return false
+                    end
+                    if gui._displaying_asset then
+                        gui:close_asset()
+                        return false
+                    end
+                    if game_state_machine:current_state().blackscreen_started and game_state_machine:current_state():blackscreen_started() then
+                        return false
+                    end
+                    if button == Idstring("menu_toggle_pp_breakdown") then
+                        if gui._assets_item and gui._items[gui._selected_item] ~= gui._assets_item then
+                            gui:ToggleTacticSelection()
+                        end
+                    end
+                    return original.special_btn_pressed(gui, button, ...)
+                end
+                original.assets_select = self._assets_item.select
+                self._assets_item.select = function(...)
+                    self._ehi_controller_switch_button:set_alpha(0.25)
+                    ToggleButtonAlpha = 0.25
+                    original.assets_select(...)
+                end
+                original.assets_deselect = self._assets_item.deselect
+                self._assets_item.deselect = function(...)
+                    self._ehi_controller_switch_button:set_alpha(1)
+                    ToggleButtonAlpha = 1
+                    original.assets_deselect(...)
+                end
+            else
+                original.mouse_pressed = self.mouse_pressed
+                self.mouse_pressed = function(gui, button, x, y, ...)
+                    local result = original.mouse_pressed(gui, button, x, y, ...)
+                    if result then
+                        local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
+                        gui._stealth_button:mouse_pressed(button, fx, fy)
+                        gui._loud_button:mouse_pressed(button, fx, fy)
+                    end
+                    return result
+                end
+                original.mouse_moved = self.mouse_moved
+                self.mouse_moved = function(gui, x, y, ...)
+                    if not alive(gui._panel) or not alive(gui._fullscreen_panel) or not gui._enabled then
+                        return false, "arrow"
+                    end
+                    if gui._displaying_asset then
+                        return false, "arrow"
+                    end
+                    if game_state_machine:current_state().blackscreen_started and game_state_machine:current_state():blackscreen_started() then
+                        return false, "arrow"
+                    end
+                    local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
+                    if gui._stealth_button:mouse_moved(fx, fy) then
+                        return true, "link"
+                    end
+                    if gui._loud_button:mouse_moved(fx, fy) then
+                        return true, "link"
+                    end
+                    return original.mouse_moved(gui, x, y, ...)
+                end
             end
         end
     else
@@ -873,14 +960,8 @@ function MissionBriefingGui:ParamsMinWithMax(panel, params, o_params, override)
         max = max + (o_params.max.bonus_xp or 0)
     elseif o_params.max_level then
         format_max = false
-        local max_n = 0
-        if self._xp:reached_level_cap() then -- Level is maxed, show Infamy Pool instead
-            max_n = self._xp:GetRemainingPrestigeXP()
-            max = self._xp:experience_string(max_n)
-        else -- Show remaining XP up to level 100
-            max_n = self._xp:GetRemainingXPToMaxLevel()
-            max = self._xp:experience_string(max_n)
-        end
+        local max_n = self._xp:GetPlayerXPLimit()
+        max = self._xp:experience_string(max_n)
         local xp = self._loc:text("ehi_experience_xp")
         if o_params.max_level_bags then
             if false then --self._xp:FakeMultiplyXPWithAllBonuses(min) > max_n then
@@ -1120,29 +1201,32 @@ function MissionBriefingGui:AddXPOverviewText(panel)
     end
     if self._skill_bonus > 1 then
         local passive_xp_reduction = managers.player:upgrade_value("player", "passive_xp_multiplier", 1) - 1
-        local percent = (self._skill_bonus - passive_xp_reduction - 1) * 100
-        local skill_icon = panel.panel:bitmap({
-            name = "0_skill_icon",
-            blend_mode = "add",
-            x = last_modifier:right() + 2,
-            y = 10,
-            texture = "guis/dlcs/cash/textures/pd2/safe_raffle/teamboost_icon",
-            color = tweak_data.screen_colors.button_stage_2,
-            layer = 10
-        })
-        local skill = panel.panel:text({
-            name = "0_skill_bonus",
-            blend_mode = "add",
-            x = skill_icon:right() + 2,
-            y = 10,
-            font = tweak_data.menu.pd2_large_font,
-            font_size = tweak_data.menu.pd2_small_font_size,
-            color = tweak_data.screen_colors.button_stage_2,
-            text = string.format("+%d%s", percent, percent_format),
-            layer = 10
-        })
-        managers.hud:make_fine_text(skill)
-        last_modifier = skill
+        local real_bonus = self._skill_bonus - passive_xp_reduction - 1
+        if real_bonus > 0 then
+            local percent = real_bonus * 100
+            local skill_icon = panel.panel:bitmap({
+                name = "0_skill_icon",
+                blend_mode = "add",
+                x = last_modifier:right() + 2,
+                y = 10,
+                texture = "guis/dlcs/cash/textures/pd2/safe_raffle/teamboost_icon",
+                color = tweak_data.screen_colors.button_stage_2,
+                layer = 10
+            })
+            local skill = panel.panel:text({
+                name = "0_skill_bonus",
+                blend_mode = "add",
+                x = skill_icon:right() + 2,
+                y = 10,
+                font = tweak_data.menu.pd2_large_font,
+                font_size = tweak_data.menu.pd2_small_font_size,
+                color = tweak_data.screen_colors.button_stage_2,
+                text = string.format("+%d%s", percent, percent_format),
+                layer = 10
+            })
+            managers.hud:make_fine_text(skill)
+            last_modifier = skill
+        end
     end
     if math.clamp(self._num_winners, 1, 4) > 1 then
         local bonus = (tweak_data:get_value("experience_manager", "alive_humans_multiplier", self._num_winners) or 1) - 1
@@ -1665,6 +1749,11 @@ function MissionBriefingGui:SumObjectives(objectives, override_objectives, skip_
         end
     end
     return xp
+end
+
+function MissionBriefingGui:ToggleTacticSelection()
+    self._stealth_button:ToggleSelection()
+    self._loud_button:ToggleSelection()
 end
 
 function MissionBriefingGui:OnTacticChanged(index, previous_index)

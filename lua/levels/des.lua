@@ -2,26 +2,27 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseTriggerTable
 local triggers = {
-    [108538] = { time = 60, id = "Gas", icons = { Icon.Teargas } },
+    [108538] = { time = 60, id = "Gas", icons = { Icon.Teargas }, hint = Hints.Teargas },
 
-    [100716] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire } },
+    [100716] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire }, hint = Hints.Thermite },
 
-    [100423] = { time = 60 + 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 100451 } },
+    [100423] = { time = 60 + 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 100451 }, hint = Hints.LootEscape },
     -- 60s delay after flare has been placed
     -- 25s to land
     -- 3s to open the heli doors
 
-    [102593] = { time = 30, id = "ChemSetReset", icons = { Icon.Methlab, Icon.Loop } },
-    [101217] = { time = 30, id = "ChemSetInterrupted", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "ChemSetCooking" } },
-    [102595] = { time = 30, id = "ChemSetCooking", icons = { Icon.Methlab } },
+    [102593] = { time = 30, id = "ChemSetReset", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.des_ChemSetRestart },
+    [101217] = { time = 30, id = "ChemSetInterrupted", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "ChemSetCooking" }, hint = Hints.des_ChemSetInterrupt },
+    [102595] = { time = 30, id = "ChemSetCooking", icons = { Icon.Methlab }, hint = Hints.des_ChemSet },
 
-    [102009] = { time = 60, id = "Crane", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [102009] = { time = 60, id = "Crane", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.des_Crane },
     [101702] = { id = "Crane", special_function = SF.PauseTracker },
 
-    [100729] = { chance = 20, id = "HackChance", icons = { Icon.PCHack }, class = TT.Timer.Chance },
+    [100729] = { chance = 20, id = "HackChance", icons = { Icon.PCHack }, class = TT.Timer.Chance, hint = Hints.Hack },
     [108694] = { id = "HackChance", special_function = SF.IncreaseChanceFromElement }, -- +33%
     [101485] = { id = "HackChance", special_function = SF.RemoveTracker }
 }
@@ -42,8 +43,7 @@ local achievements =
             [100107] = { status = "push", class = TT.Achievement.Status },
             [102480] = { special_function = SF.Trigger, data = { 1024801, 1024802 } },
             [1024801] = { status = "finish", special_function = SF.SetAchievementStatus },
-            ---@diagnostic disable-next-line
-            [1024802] = { id = 102486, special_function = SF.RemoveTrigger },
+            [1024802] = { id = 102486, special_function = SF.RemoveTrigger }, ---@diagnostic disable-line
             [102710] = { special_function = SF.SetAchievementComplete },
             [102486] = { special_function = SF.SetAchievementFailed }
         }
@@ -81,7 +81,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    other[100297] = { chance = 25, recheck_t = 30, id = "SnipersBlackhawk", class = TT.Sniper.HeliTimedChance }
+    other[100297] = { chance = 25, recheck_t = 30, id = "SnipersBlackhawk", no_chance_reset = true, delay_on_max_chance = 23 + 25, class = TT.Sniper.HeliTimedChance }
     other[101295] = { id = "SnipersBlackhawk", special_function = SF.IncreaseChanceFromElement }
     other[101293] = { id = "SnipersBlackhawk", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess", arg = { 25 } }
     other[EHI:GetInstanceElementID(100023, 7500)] = { id = "SnipersBlackhawk", special_function = SF.IncreaseCounter }
@@ -101,7 +101,7 @@ EHI:ParseTriggers({
 local tbl =
 {
     --units/pd2_dlc_des/props/des_prop_inter_hack_computer/des_inter_hack_computer
-    [103009] = { icons = { Icon.Power } },
+    [103009] = { icons = { Icon.Power }, hint = Hints.Charging },
 
     --units/pd2_dlc_dah/props/dah_prop_hack_box/dah_prop_hack_ipad_unit
     [101323] = { remove_on_power_off = true },

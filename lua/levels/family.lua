@@ -2,16 +2,17 @@ local EHI = EHI
 local Icon = EHI.Icons
 local TT = EHI.Trackers
 local SF = EHI.SpecialFunctions
+local Hints = EHI.Hints
 local triggers = {
-    [102611] = { time = 1, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
-    [102612] = { time = 3, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
-    [102613] = { time = 5, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning },
+    [102611] = { time = 1, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
+    [102612] = { time = 3, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
+    [102613] = { time = 5, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
 
-    [100750] = { time = 120 + 80, id = "Van", icons = Icon.CarEscape },
-    [101568] = { time = 20, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
-    [101569] = { time = 40, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
-    [101572] = { time = 60, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker },
-    [101573] = { time = 80, id = "Van", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    [100750] = { time = 120 + 80, id = "Van", icons = Icon.CarEscape, hint = Hints.LootEscape },
+    [101568] = { time = 20, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
+    [101569] = { time = 40, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
+    [101572] = { time = 60, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
+    [101573] = { time = 80, id = "Van", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
 }
 
 ---@type ParseAchievementTable

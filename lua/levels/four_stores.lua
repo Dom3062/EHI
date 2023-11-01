@@ -20,7 +20,7 @@ local SF = EHI.SpecialFunctions
 local van_anim_delay = 320 / 30
 local preload =
 {
-    {} -- Escape
+    { hint = EHI.Hints.LootEscape } -- Escape
 }
 local triggers = {
     -- Time before escape vehicle arrives

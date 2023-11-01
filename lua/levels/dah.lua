@@ -2,27 +2,28 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local heli_delay = 26 + 6
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local dah_laptop_codes = { [1900] = "red", [2100] = "green", [2300] = "blue" }
+local dah_laptop_codes = { red = 1900, green = 2100, blue = 2300 }
 local element_sync_triggers =
 {
-    [103569] = { time = 25, id = "CFOFall", icons = { Icon.Hostage, Icon.Goto }, hook_element = 100438 }
+    [103569] = { time = 25, id = "CFOFall", icons = { Icon.Hostage, Icon.Goto }, hook_element = 100438, hint = Hints.Wait }
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [100276] = { time = 25 + 3 + 11, id = "CFOInChopper", icons = { Icon.Heli, Icon.Goto } },
+    [100276] = { time = 25 + 3 + 11, id = "CFOInChopper", icons = { Icon.Heli, Icon.Goto }, hint = Hints.Wait },
 
-    [101343] = { time = 30, id = "KeypadReset", icons = { Icon.Loop }, waypoint = { position_by_element = EHI:GetInstanceElementID(100179, 9100) } },
+    [101343] = { time = 30, id = "KeypadReset", icons = { Icon.Loop }, waypoint = { position_by_element = EHI:GetInstanceElementID(100179, 9100) }, hint = Hints.KeypadReset },
 
-    [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100475, remove_vanilla_waypoint = 104882 } },
-    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element_and_remove_vanilla_waypoint = 103163 } },
+    [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100475, remove_vanilla_waypoint = 104882 }, hint = Hints.Escape },
+    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element_and_remove_vanilla_waypoint = 103163 }, hint = Hints.Escape },
 
-    [103969] = { id = "ColorCodes", class = TT.ColoredCodes },
+    [103969] = { id = "ColorCodes", class = TT.ColoredCodes, hint = Hints.ColorCodes },
     [102338] = { id = "ColorCodes", special_function = SF.RemoveTracker }
 }
 if EHI:GetOption("show_mission_trackers") then
-    for index, color in pairs(dah_laptop_codes) do
+    for color, index in pairs(dah_laptop_codes) do
         local unit_id = EHI:GetInstanceUnitID(100052, index)
         for i = 0, 9, 1 do
             managers.mission:add_runned_unit_sequence_trigger(unit_id, "set_" .. color .. "_0" .. tostring(i), function(...)
@@ -175,7 +176,7 @@ if EHI:IsHost() then
 end
 local bg = Idstring("g_code_screen"):key()
 local codes = {}
-for _, color in pairs(dah_laptop_codes) do
+for color, _ in pairs(dah_laptop_codes) do
     codes[color] = {}
     local _c = codes[color]
     for i = 0, 9, 1 do
@@ -202,7 +203,7 @@ EHI:AddLoadSyncFunction(function(self)
     if EHI.ConditionFunctions.IsStealth() then
         self:Trigger(103969)
         local wd = managers.worlddefinition
-        for index, color in pairs(dah_laptop_codes) do
+        for color, index in pairs(dah_laptop_codes) do
             local unit_id = EHI:GetInstanceUnitID(100052, index)
             local unit = wd:get_unit(unit_id)
             local code = CheckIfCodeIsVisible(unit, color)

@@ -34,6 +34,7 @@ function DigitalGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._ignore_visibility = false
+    self._hint = "timelock"
     if not show_waypoint_only then
         EHI:OptionAndLoadTracker("show_timers")
     end
@@ -54,6 +55,7 @@ function DigitalGui:TimerStartCountDown()
             icons = self._icons or { Icon.PCHack },
             warning = self._warning,
             completion = self._completion,
+            hint = self._hint,
             class = "EHITimerTracker"
         })
     end
@@ -97,7 +99,8 @@ if level_id == "shoutout_raid" then
             if not show_waypoint_only then
                 managers.ehi_tracker:AddTracker({
                     id = self._ehi_key,
-                    class = "EHIVaultTemperatureTracker"
+                    class = "EHIVaultTemperatureTracker",
+                    hint = "timer"
                 })
             end
             if show_waypoint then
@@ -105,7 +108,8 @@ if level_id == "shoutout_raid" then
                     time = 500,
                     icon = Icon.Vault,
                     position = self._unit:position(),
-                    class = "EHIVaultTemperatureWaypoint"
+                    class = "EHIVaultTemperatureWaypoint",
+                    hint = "timer"
                 })
             end
             created = true
@@ -148,7 +152,8 @@ if level_id == "chill" then
             managers.ehi_tracker:AddTracker({
                 id = self._ehi_key,
                 time = 0,
-                class = "EHIStopwatchTracker"
+                class = "EHIStopwatchTracker",
+                hint = "timer"
             })
         end
     end
@@ -273,6 +278,11 @@ end
 
 function DigitalGui:SetIgnoreVisibility()
     self._ignore_visibility = true
+end
+
+---@param hint string
+function DigitalGui:SetHint(hint)
+    self._hint = hint
 end
 
 function DigitalGui:Finalize()

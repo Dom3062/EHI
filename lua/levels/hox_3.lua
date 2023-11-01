@@ -3,26 +3,27 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local drill_delay = 30 + 2 + 1.5
 local DrillWP = { icon = Icon.Drill, position_by_element = EHI:GetInstanceElementID(100002, 2835) }
 local escape_delay = 3 + 27 + 1
 local EscapeWP = { icon = Icon.Escape, position_by_element = EHI:GetInstanceElementID(100009, 2910) }
 ---@type ParseTriggerTable
 local triggers = {
-    [101855] = { time = 120 + drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP) },
-    [101854] = { time = 90 + drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP) },
-    [101853] = { time = 60 + drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP) },
-    [101849] = { time = 30 + drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP) },
+    [101855] = { time = 120 + drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP), hint = Hints.DrillDelivery },
+    [101854] = { time = 90 + drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP), hint = Hints.DrillDelivery },
+    [101853] = { time = 60 + drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP), hint = Hints.DrillDelivery },
+    [101849] = { time = 30 + drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP), hint = Hints.DrillDelivery },
     [101844] = { special_function = SF.Trigger, data = { 1018441, 1018442 } },
-    [1018441] = { time = drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP) },
-    [1018442] = { time = 25, id = "ForcedAlarm", icons = { Icon.Alarm }, class = TT.Warning, condition_function = CF.IsStealth },
+    [1018441] = { time = drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP), hint = Hints.DrillDelivery },
+    [1018442] = { time = 25, id = "ForcedAlarm", icons = { Icon.Alarm }, class = TT.Warning, condition_function = CF.IsStealth, hint = Hints.Alarm },
     [101629] = { id = "ForcedAlarm", special_function = SF.RemoveTracker },
 
-    [102223] = { time = 90 + escape_delay, id = "Escape", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP) },
-    [102188] = { time = 60 + escape_delay, id = "Escape", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP) },
-    [102187] = { time = 45 + escape_delay, id = "Escape", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP) },
-    [102186] = { time = 30 + escape_delay, id = "Escape", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP) },
-    [102190] = { time = escape_delay, id = "Escape", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP) }
+    [102223] = { time = 90 + escape_delay, id = "Escape", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP), hint = Hints.LootEscape },
+    [102188] = { time = 60 + escape_delay, id = "Escape", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP), hint = Hints.LootEscape },
+    [102187] = { time = 45 + escape_delay, id = "Escape", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP), hint = Hints.LootEscape },
+    [102186] = { time = 30 + escape_delay, id = "Escape", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP), hint = Hints.LootEscape },
+    [102190] = { time = escape_delay, id = "Escape", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP), hint = Hints.LootEscape }
 }
 
 local other =

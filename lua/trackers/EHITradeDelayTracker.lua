@@ -1,6 +1,9 @@
 ---@class EHITradeDelayTracker : EHITracker
+---@field FormatUnique fun(self: self, label: PanelText, time: number, civilians_killed: number)
+---@field FormatTime fun(self: self, time: number): string
 ---@field super EHITracker
 EHITradeDelayTracker = class(EHITracker)
+EHITradeDelayTracker._forced_hint_text = "trade_delay"
 EHITradeDelayTracker._update = false
 EHITradeDelayTracker._forced_icons = { "mugshot_in_custody" }
 ---@param panel Panel
@@ -9,7 +12,7 @@ EHITradeDelayTracker._forced_icons = { "mugshot_in_custody" }
 function EHITradeDelayTracker:init(panel, params, parent_class)
     self._pause_t = 0
     self._n_of_peers = 0
-    self._peers = {}
+    self._peers = {} ---@type table<number, { t: number, in_custody: boolean, civilians_killed: number, label: PanelText }?>
     self._tick = 0
     EHITradeDelayTracker.super.init(self, panel, params, parent_class)
     self._default_panel_w = self._panel:w()
@@ -42,7 +45,7 @@ function EHITradeDelayTracker:SetIconColor()
 end
 
 function EHITradeDelayTracker:Redraw()
-    for _, text in ipairs(self._bg_box:children()) do
+    for _, text in ipairs(self._bg_box:children()) do ---@cast text PanelText
         if text.set_text then
             self:FitTheText(text)
         end
@@ -58,7 +61,7 @@ end
 function EHITradeDelayTracker:AlignTextOnHalfPos()
     local pos = 0
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
-        local text = self._bg_box:child("text" .. i) --[[@as PanelText]]
+        local text = self._bg_box:child("text" .. i) --[[@as PanelText?]]
         if text then
             text:set_w(self._panel_half)
             text:set_x(self._panel_half * pos)
@@ -72,22 +75,23 @@ end
 ---@param time number
 ---@param civilians_killed number? Defaults to `1` if not provided
 function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time, civilians_killed)
+    local text = self:CreateText({
+        name = "text" .. peer_id,
+        w = self._default_bg_box_w
+    })
     local kills = civilians_killed or 1
     self._peers[peer_id] =
     {
         t = time,
         in_custody = false,
-        civilians_killed = kills
+        civilians_killed = kills,
+        label = text
     }
-    self:CreateText({
-        name = "text" .. peer_id,
-        w = self._default_bg_box_w
-    })
     self._n_of_peers = self._n_of_peers + 1
     if self._n_of_peers >= 2 then
         self:AnimateBG()
     end
-    self:FormatUnique(time, peer_id, kills)
+    self:FormatUnique(text, time, kills)
     self:Reorganize(true)
     self:SetIconColor()
     self:SetTextPeerColor()
@@ -122,12 +126,11 @@ end
 ---@param civilians_killed number? If provided, sets the number of killed civilians. Otherwise it adds 1 more civilian killed to the counter
 ---@param anim boolean?
 function EHITradeDelayTracker:SetPeerCustodyTime(peer_id, time, civilians_killed, anim)
-    self._peers[peer_id].t = time
-    local killed = self._peers[peer_id].civilians_killed
-    killed = civilians_killed or (killed + 1)
-    self._peers[peer_id].civilians_killed = killed
-    self:FormatUnique(time, peer_id, killed)
-    self:FitTheTextUnique(peer_id)
+    local peer_data = self._peers[peer_id] ---@cast peer_data -?
+    peer_data.t = time
+    peer_data.civilians_killed = civilians_killed or (peer_data.civilians_killed + 1)
+    self:FormatUnique(peer_data.label, time, killed)
+    self:FitTheText(peer_data.label)
     if anim then
         self:AnimateBG()
     end
@@ -136,7 +139,7 @@ end
 ---@param peer_id number
 ---@param time number
 function EHITradeDelayTracker:IncreasePeerCustodyTime(peer_id, time)
-    local t = self:GetPeerData(peer_id, "t", 0)
+    local t = self:GetPeerData(peer_id, "t", 0) ---@cast t -boolean
     self:SetPeerCustodyTime(peer_id, t + time, nil, true)
 end
 
@@ -144,7 +147,7 @@ end
 ---@param time number
 ---@param civilians_killed number?
 function EHITradeDelayTracker:UpdatePeerCustodyTime(peer_id, time, civilians_killed)
-    local t = self:GetPeerData(peer_id, "t", 0)
+    local t = self:GetPeerData(peer_id, "t", 0) ---@cast t -boolean
     if t == time then -- Don't blink on the player, son
         return
     end
@@ -199,20 +202,16 @@ function EHITradeDelayTracker:RemovePeerFromCustody(peer_id)
         self:delete()
         return
     end
+    self._bg_box:remove(self._peers[peer_id].label)
     self._peers[peer_id] = nil
-    self._bg_box:remove(self._bg_box:child("text" .. peer_id))
     if self._n_of_peers == 1 then
-        for i = 1, HUDManager.PLAYER_PANEL, 1 do
-            local text = self._bg_box:child("text" .. i) --[[@as PanelText]]
-            if text then
-                text:set_font_size(self._panel:h() * self._text_scale)
-                text:set_color(Color.white)
-                text:set_x(0)
-                text:set_w(self._bg_box:w())
-                self:FitTheText(text)
-                break
-            end
-        end
+        local _, peer_data = next(self._peers) ---@cast peer_data -?
+        local text = peer_data.label
+        text:set_font_size(self._panel:h() * self._text_scale)
+        text:set_color(Color.white)
+        text:set_x(0)
+        text:set_w(self._bg_box:w())
+        self:FitTheText(text)
     end
     self:AnimateBG()
     self:SetIconColor()
@@ -233,10 +232,11 @@ function EHITradeDelayTracker:PeerExists(peer_id)
     return self._peers[peer_id] ~= nil
 end
 
+---@generic T
 ---@param peer_id number
 ---@param field_name string
----@param default_value any
----@return any
+---@param default_value T
+---@return number|boolean|T
 function EHITradeDelayTracker:GetPeerData(peer_id, field_name, default_value)
     if self:PeerExists(peer_id) then
         return self._peers[peer_id][field_name] or default_value
@@ -244,18 +244,13 @@ function EHITradeDelayTracker:GetPeerData(peer_id, field_name, default_value)
     return default_value
 end
 
----@param i number
-function EHITradeDelayTracker:FitTheTextUnique(i)
-    self:FitTheText(self._bg_box:child("text" .. i) --[[@as PanelText]])
-end
-
 if EHI:GetOption("show_trade_delay_amount_of_killed_civilians") then
-    EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
-        self._bg_box:child("text" .. peer_id):set_text(string.format("%s (%d)", self:FormatTime(time), civilians_killed)) ---@diagnostic disable-line
+    function EHITradeDelayTracker:FormatUnique(label, time, civilians_killed)
+        label:set_text(string.format("%s (%d)", self:FormatTime(time), civilians_killed))
     end
 else
-    EHITradeDelayTracker.FormatUnique = function(self, time, peer_id, civilians_killed)
-        self._bg_box:child("text" .. peer_id):set_text(self:FormatTime(time)) ---@diagnostic disable-line
+    function EHITradeDelayTracker:FormatUnique(label, time, civilians_killed)
+        label:set_text(self:FormatTime(time))
     end
 end
 
@@ -277,8 +272,8 @@ function EHITradeDelayTracker:update(t, dt)
                 self:RemovePeerFromCustody(peer_id)
             else
                 data.t = time
-                self:FormatUnique(time, peer_id, data.civilians_killed)
-                self:FitTheTextUnique(peer_id)
+                self:FormatUnique(data.label, time, data.civilians_killed)
+                self:FitTheText(data.label)
             end
         end
     end
@@ -291,15 +286,22 @@ function EHITradeDelayTracker:SetAITrade(trade, t, force_t)
     if trade then
         if not self._trade then
             self:SetTick(t)
-            self:AddTrackerToUpdate()
+            if not self._respawn then
+                self:AddTrackerToUpdate()
+            end
         end
         if force_t then
             self:SetTick(t)
         end
         self._ai_trade = true
+        self._respawn = nil
     else
         if not self._trade then
-            self:RemoveTrackerFromUpdate()
+            if self:CanRespawn() then
+                self._respawn = true
+            else
+                self:RemoveTrackerFromUpdate()
+            end
         end
         self._ai_trade = false
     end
@@ -312,24 +314,35 @@ function EHITradeDelayTracker:SetTrade(trade, t, force_t)
     if trade then
         if not self._ai_trade then
             self:SetTick(t)
-            self:AddTrackerToUpdate()
+            if not self._respawn then
+                self:AddTrackerToUpdate()
+            end
         end
         if force_t then
             self:SetTick(t)
         end
         self._trade = true
+        self._respawn = nil
     else
         if not self._ai_trade then
-            self:RemoveTrackerFromUpdate()
+            if self:CanRespawn() then
+                self._respawn = true
+            else
+                self:RemoveTrackerFromUpdate()
+            end
         end
         self._trade = false
     end
 end
 
+function EHITradeDelayTracker:CanRespawn()
+    return tweak_data.player.damage.automatic_respawn_time and not Global.game_settings.single_player
+end
+
 local math_floor = math.floor
 local string_format = string.format
 if EHI:GetOption("time_format") == 1 then
-    EHITradeDelayTracker.FormatTime = function(_, time)
+    function EHITradeDelayTracker:FormatTime(time)
         local t = math_floor(time * 10) / 10
         if t < 0 then
             return string_format("%d", 0)
@@ -340,7 +353,7 @@ if EHI:GetOption("time_format") == 1 then
         end
     end
 else
-    EHITradeDelayTracker.FormatTime = function(_, time)
+    function EHITradeDelayTracker:FormatTime(time)
         local t = math_floor(time * 10) / 10
         if t < 0 then
             return string_format("%d", 0)

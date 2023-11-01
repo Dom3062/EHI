@@ -2,35 +2,36 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local escape_delay = 18
 local CarLootDrop = { Icon.Car, Icon.LootDrop }
 local triggers = {
-    [102873] = { time = 36 + 5 + 3 + 60 + 30 + 38 + 7, id = "CarPickupLoot", icons = CarLootDrop },
+    [102873] = { time = 36 + 5 + 3 + 60 + 30 + 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, hint = Hints.Loot },
 
-    [101256] = { time = 3 + 28 + 10 + 135/30 + 0.5 + 210/30, id = "CarEscape", icons = Icon.CarEscapeNoLoot },
+    [101256] = { time = 3 + 28 + 10 + 135/30 + 0.5 + 210/30, id = "CarEscape", icons = Icon.CarEscapeNoLoot, hint = Hints.Escape },
     [101088] = { id = "CarEscape", special_function = SF.RemoveTracker },
 
-    [101218] = { time = 60 + 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot },
-    [101219] = { time = 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot },
-    [101221] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot }
+    [101218] = { time = 60 + 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
+    [101219] = { time = 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
+    [101221] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape }
 }
 
 -- Not possible to include Car location waypoint as this is selected randomly
 -- See ´LootVehicleArrived´ MissionScriptElement 100658
 
 if EHI:IsClient() then
-    triggers[101307] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101308] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101309] = { time = 5 + 3 + 60 + 30 + 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[100944] = { time = 3 + 60 + 30 + 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101008] = { time = 60 + 30 + 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101072] = { time = 30 + 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101073] = { time = 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101307] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 })
+    triggers[101308] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 })
+    triggers[101309] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 })
+    triggers[100944] = EHI:ClientCopyTrigger(triggers[102873], { time = 3 + 60 + 30 + 38 + 7 })
+    triggers[101008] = EHI:ClientCopyTrigger(triggers[102873], { time = 60 + 30 + 38 + 7 })
+    triggers[101072] = EHI:ClientCopyTrigger(triggers[102873], { time = 30 + 38 + 7 })
+    triggers[101073] = EHI:ClientCopyTrigger(triggers[102873], { time = 38 + 7 })
 
-    triggers[103300] = { time = 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[103301] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[103302] = { time = 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101223] = { time = escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[103300] = EHI:ClientCopyTrigger(triggers[101218], { time = 60 + 30 + 30 + escape_delay })
+    triggers[103301] = EHI:ClientCopyTrigger(triggers[101218], { time = 30 + 30 + escape_delay })
+    triggers[103302] = EHI:ClientCopyTrigger(triggers[101218], { time = 30 + escape_delay })
+    triggers[101223] = EHI:ClientCopyTrigger(triggers[101218], { time = escape_delay })
 end
 
 ---@type ParseAchievementTable

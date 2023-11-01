@@ -2,16 +2,17 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local heli_anim = 35
 local heli_anim_full = 35 + 10 -- 10 seconds is hose lifting up animation when chopper goes refilling
-local heli_20 = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled }
-local heli_65 = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled }
+local heli_20 = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute }
+local heli_65 = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute }
 local HeliWaterFill = { Icon.Heli, Icon.Water }
 if EHI:GetOption("show_one_icon") then
     HeliWaterFill = { { icon = Icon.Heli, color = tweak_data.ehi.colors.WaterColor } }
 end
 local triggers = {
-    [101499] = { time = 155 + 25, id = "HeliEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 101525 } },
+    [101499] = { time = 155 + 25, id = "HeliEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 101525 }, hint = Hints.LootEscape },
     [101253] = heli_65,
     [101254] = heli_20,
     [101255] = heli_65,
@@ -21,35 +22,35 @@ local triggers = {
     [101279] = heli_65,
     [101280] = heli_20,
 
-    [101691] = { time = 10 + 700/30, id = "PlaneEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 100058 } },
+    [101691] = { time = 10 + 700/30, id = "PlaneEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 100058 }, hint = Hints.LootEscape },
 
-    [102996] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } },
+    [102996] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion },
 
-    [102825] = { id = "WaterFill", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 160, no = 300 } },
+    [102825] = { id = "WaterFill", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 160, no = 300 }, hint = Hints.crojob3_Water },
     [102905] = { id = "WaterFill", special_function = SF.PauseTracker },
     [102920] = { id = "WaterFill", special_function = SF.UnpauseTracker },
 
     [1] = { id = "HeliWaterFill", special_function = SF.PauseTracker },
-    [2] = { id = "HeliWaterReset", icons = { Icon.Heli, Icon.Water, Icon.Loop }, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 62 + heli_anim_full, no = 122 + heli_anim_full } },
+    [2] = { id = "HeliWaterReset", icons = { Icon.Heli, Icon.Water, Icon.Loop }, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 62 + heli_anim_full, no = 122 + heli_anim_full }, hint = Hints.crojob3_WaterRefill },
 
     -- Right
-    [100283] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100647 } },
-    [100284] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100648 } },
-    [100288] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100653 } },
+    [100283] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100647 }, hint = Hints.Thermite },
+    [100284] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100648 }, hint = Hints.Thermite },
+    [100288] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100653 }, hint = Hints.Thermite },
 
     -- Left
-    [100285] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100651 } },
-    [100286] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100652 } },
-    [100560] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100220 } },
+    [100285] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100651 }, hint = Hints.Thermite },
+    [100286] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100652 }, hint = Hints.Thermite },
+    [100560] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100220 }, hint = Hints.Thermite },
 
     -- Top
-    [100282] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100646 } },
-    [100287] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100653 } },
-    [100558] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100655 } },
-    [100559] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100656 } }
+    [100282] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100646 }, hint = Hints.Thermite },
+    [100287] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100653 }, hint = Hints.Thermite },
+    [100558] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100655 }, hint = Hints.Thermite },
+    [100559] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100656 }, hint = Hints.Thermite }
 }
 for _, index in ipairs({ 100, 150, 250, 300 }) do
-    triggers[EHI:GetInstanceElementID(100032, index)] = { time = 240, id = "HeliWaterFill", icons = HeliWaterFill, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists }
+    triggers[EHI:GetInstanceElementID(100032, index)] = { time = 240, id = "HeliWaterFill", icons = HeliWaterFill, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.crojob3_Water }
     triggers[EHI:GetInstanceElementID(100030, index)] = { id = "HeliWaterFill", special_function = SF.PauseTracker }
     triggers[EHI:GetInstanceElementID(100037, index)] = { special_function = SF.Trigger, data = { 1, 2 } }
 end

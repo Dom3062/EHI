@@ -3,35 +3,36 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local element_sync_triggers =
 {
     -- Time before the tear gas is removed
-    [102074] = { time = 3 + 2, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hook_element = 102073 }
+    [102074] = { time = 3 + 2, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hook_element = 102073, hint = Hints.Teargas }
 }
 local triggers = {
-    [102949] = { time = 17, id = "HeliDropWait", icons = { Icon.Wait } },
+    [102949] = { time = 17, id = "HeliDropWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [102335] = { time = 60, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = EHI:GetInstanceElementID(100029, 16950) } }, -- units/pd2_dlc_vit/props/security_shutter/vit_prop_branch_security_shutter
+    [102335] = { time = 60, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = EHI:GetInstanceElementID(100029, 16950) }, hint = Hints.Thermite }, -- units/pd2_dlc_vit/props/security_shutter/vit_prop_branch_security_shutter
 
-    [100246] = { time = 31, id = "TearGasOffice", icons = { Icon.Teargas }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "TearGasOfficeChance" } },
-    [101580] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, condition = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), class = TT.Chance },
+    [100246] = { time = 31, id = "TearGasOffice", icons = { Icon.Teargas }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "TearGasOfficeChance" }, hint = Hints.Teargas },
+    [101580] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, condition = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), class = TT.Chance, hint = Hints.vit_Teargas },
     -- Disabled in the mission script
     --[101394] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists }, -- It will not run on Hard and below
     [101377] = { amount = 20, id = "TearGasOfficeChance", special_function = SF.IncreaseChance },
     [101393] = { id = "TearGasOfficeChance", special_function = SF.RemoveTracker },
 
-    [102544] = { time = 8.3, id = "HumveeWestWingCrash", icons = { Icon.Car, Icon.Fire }, class = TT.Warning },
+    [102544] = { time = 8.3, id = "HumveeWestWingCrash", icons = { Icon.Car, Icon.Fire }, class = TT.Warning, hint = Hints.hox_1_Car },
 
-    [101504] = { time = 12 + 11, id = "AirlockOpenInside", icons = { Icon.Door } },
+    [101504] = { time = 12 + 11, id = "AirlockOpenInside", icons = { Icon.Door }, hint = Hints.Wait },
 
     [102095] = { special_function = SF.Trigger, data = { 1020951, 1020952 } },
-    [1020951] = { time = 26, id = "AirlockOpenOutside", icons = { Icon.Door }, condition_function = CF.IsStealth },
-    [1020952] = { time = 26, id = "AirlockOpenOutsideEndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning, condition_function = CF.IsLoud },
+    [1020951] = { time = 26, id = "AirlockOpenOutside", icons = { Icon.Door }, condition_function = CF.IsStealth, hint = Hints.Wait },
+    [1020952] = { time = 26, id = "AirlockOpenOutsideEndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning, condition_function = CF.IsLoud, hint = Hints.Wait },
 
-    [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 101914 } } -- 30s delay + 26s escape zone delay
+    [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 101914 }, hint = Hints.Escape } -- 30s delay + 26s escape zone delay
 }
 if EHI:IsClient() then
-    triggers[102073] = { additional_time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[102073] = { additional_time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }
     triggers[103500] = EHI:ClientCopyTrigger(triggers[102104], { time = 26 })
     EHI:SetSyncTriggers(element_sync_triggers)
 else

@@ -3,14 +3,15 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local WT = EHI.Waypoints
+local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
-    [101392] = { time = 120, id = "FireEvidence", icons = { Icon.Fire }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100024, 18900) } },
+    [101392] = { time = 120, id = "FireEvidence", icons = { Icon.Fire }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100024, 18900) }, hint = Hints.Fire },
     [101588] = { id = "FireEvidence", special_function = SF.PauseTracker },
 
-    [101460] = { time = 18, id = "DoorBreach", icons = { Icon.Door }, waypoint = { position_by_element_and_remove_vanilla_waypoint = 103837 } },
+    [101460] = { time = 18, id = "DoorBreach", icons = { Icon.Door }, waypoint = { position_by_element_and_remove_vanilla_waypoint = 103837 }, hint = Hints.Wait },
 
-    [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 101391 } }
+    [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 101391 }, hint = Hints.Escape }
 }
 ---@param self EHIManager
 ---@param trigger ElementTrigger
@@ -26,7 +27,7 @@ local function waypoint(self, trigger)
     managers.hud:SoftRemoveWaypoint2(trigger.element_ids.fix)
 end
 for _, index in ipairs({ 5300, 6300, 7300 }) do
-    triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint_f = waypoint, element_ids = { defend = EHI:GetInstanceElementID(100055, index), fix = EHI:GetInstanceElementID(100056, index) } }
+    triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint_f = waypoint, element_ids = { defend = EHI:GetInstanceElementID(100055, index), fix = EHI:GetInstanceElementID(100056, index) }, hint = Hints.Hack }
     triggers[EHI:GetInstanceElementID(100026, index)] = { id = "ArmoryHack", special_function = SF.PauseTracker }
 end
 if EHI:IsClient() then

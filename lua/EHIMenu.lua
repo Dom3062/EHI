@@ -22,15 +22,24 @@ end
 
 EHIMenu = class()
 EHIMenu.make_fine_text = BlackMarketGui.make_fine_text
+EHIMenu.AspectRatio =
+{
+    _16_10 = 1,
+    _4_3 = 2,
+    Other = 3
+}
 function EHIMenu:init()
     local aspect_ratio = RenderSettings.resolution.x / RenderSettings.resolution.y
     local _1_33 = 4 / 3
+    local AspectRatioEnum
     if aspect_ratio == 1.6 or aspect_ratio == _1_33 then -- 16:10 or 4:3
+        AspectRatioEnum = aspect_ratio == 1.6 and self.AspectRatio._16_10 or self.AspectRatio._4_3
         self._ws = managers.gui_data:create_fullscreen_16_9_workspace()
         self._convert_mouse_pos = function(menu, x, y)
             return managers.mouse_pointer:convert_fullscreen_16_9_mouse_pos(x, y)
         end
     else
+        AspectRatioEnum = self.AspectRatio.Other
         self._ws = managers.gui_data:create_fullscreen_workspace()
         self._convert_mouse_pos = function(menu, x, y)
             return x, y
@@ -138,7 +147,7 @@ function EHIMenu:init()
             alpha = 1
         })
     end
-    self._preview_panel = FakeEHITrackerManager:new(self._vr_panel or self._panel)
+    self._preview_panel = FakeEHITrackerManager:new(self._vr_panel or self._panel, AspectRatioEnum)
     self._buffs_preview_panel = FakeEHIBuffsManager:new(self._vr_panel or self._panel)
 
     self._menu_ver = 1
@@ -336,7 +345,7 @@ function EHIMenu:mouse_move(o, x, y)
         if self._open_choice_dialog and self._open_choice_dialog.panel then
             local selected = false
             for i, item in ipairs(self._open_choice_dialog.items) do
-                if alive(item) and item:inside(x,y) and not selected then
+                if alive(item) and item:inside(x, y) and not selected then
                     if self._open_choice_dialog.selected > 0 and self._open_choice_dialog.selected ~= i then
                         self._open_choice_dialog.items[self._open_choice_dialog.selected]:set_color(Color(0.6,0.6,0.6))
                     end
@@ -352,7 +361,7 @@ function EHIMenu:mouse_move(o, x, y)
                 managers.mouse_pointer:set_pointer_image("grab")
             else
                 for i, item in ipairs(self._open_color_dialog.items) do
-                    if alive(item) and item:inside(x,y) and item:child("bg"):alpha() ~= 0.1 then
+                    if alive(item) and item:inside(x, y) and item:child("bg"):alpha() ~= 0.1 then
                         if self._open_color_dialog.selected > 0 and self._open_color_dialog.selected ~= i then
                             self._open_color_dialog.items[self._open_color_dialog.selected]:child("bg"):set_alpha(0)
                         end
@@ -369,7 +378,7 @@ function EHIMenu:mouse_move(o, x, y)
             managers.mouse_pointer:set_pointer_image("link")
         else
             for _, item in ipairs(self._open_menu.items) do
-                if item.enabled and item.panel:inside(x,y) and item.panel:child("bg") then
+                if item.enabled and item.panel:inside(x, y) and item.panel:child("bg") then
                     self:HighlightItem(item)
                     if item.type == "slider" then
                         managers.mouse_pointer:set_pointer_image("hand")
@@ -386,9 +395,9 @@ function EHIMenu:mouse_press(o, button, x, y)
     x, y = self:_convert_mouse_pos(x, y)
     if button == Idstring("0") then
         if self._open_choice_dialog then
-            if self._open_choice_dialog.panel:inside(x,y) then
+            if self._open_choice_dialog.panel:inside(x, y) then
                 for i, item in ipairs(self._open_choice_dialog.items) do
-                    if alive(item) and item:inside(x,y) and item:alpha() == 1 then
+                    if alive(item) and item:inside(x, y) and item:alpha() == 1 then
                         local parent_item = self._open_choice_dialog.parent_item
                         parent_item.panel:child("title_selected"):set_text(self._open_choice_dialog.items[i]:text())
                         parent_item.value = i
@@ -399,9 +408,9 @@ function EHIMenu:mouse_press(o, button, x, y)
                 self:CloseMultipleChoicePanel()
             end
         elseif self._open_color_dialog then
-            if self._open_color_dialog.panel:inside(x,y) then
+            if self._open_color_dialog.panel:inside(x, y) then
                 for i, item in ipairs(self._open_color_dialog.items) do
-                    if alive(item) and item:inside(x,y) then
+                    if alive(item) and item:inside(x, y) then
                         if item:child("slider") then
                             self._slider = {slider = item, type = i}
                             self:SetColorSlider(item, x, i)
@@ -416,19 +425,17 @@ function EHIMenu:mouse_press(o, button, x, y)
             else
                 self:CloseColorMenu()
             end
-        elseif self._highlighted_item and self._highlighted_item.panel:inside(x,y) then
+        elseif self._highlighted_item and self._highlighted_item.panel:inside(x, y) then
             self:ActivateItem(self._highlighted_item, x)
         end
     end
 end
 
 function EHIMenu:mouse_release(o, button, x, y)
-    if button == Idstring("0") then
-        if self._slider then
-            self:CallCallback(self._slider, { to_n = true })
-            self._slider = nil
-            managers.mouse_pointer:set_pointer_image("hand")
-        end
+    if button == Idstring("0") and self._slider then
+        self:CallCallback(self._slider, { to_n = true })
+        self._slider = nil
+        managers.mouse_pointer:set_pointer_image("hand")
     end
 end
 
@@ -965,6 +972,8 @@ function EHIMenu:CreateOneLineItems(item, items, menu, settings_table)
     end
 end
 
+---@param params table
+---@return table
 function EHIMenu:CreateMenu(params)
     if self._menus[params.menu_id] then
         return self._menus[params.menu_id]

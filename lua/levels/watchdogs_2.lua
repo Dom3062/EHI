@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local WT = EHI.Waypoints
+local Hints = EHI.Hints
 local anim_delay = 450/30
 local boat_delay = 60 + 30 + 30 + 450/30
 local boat_icon = { Icon.Boat, Icon.LootDrop }
@@ -36,11 +37,11 @@ local SetBoatPosFromElement = EHI:RegisterCustomSpecialFunction(function(self, t
 end)
 ---@type ParseTriggerTable
 local triggers = {
-    [101560] = { time = 35 + 75 + 30 + boat_delay, id = "BoatLootFirst", waypoint_f = waypoint_f },
+    [101560] = { time = 35 + 75 + 30 + boat_delay, id = "BoatLootFirst", waypoint_f = waypoint_f, hint = Hints.Loot },
     -- 101127 tracked in 101560
-    [101117] = { time = 60 + 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f },
-    [101122] = { time = 40 + 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f },
-    [101119] = { time = 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f },
+    [101117] = { time = 60 + 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f, hint = Hints.Loot },
+    [101122] = { time = 40 + 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f, hint = Hints.Loot },
+    [101119] = { time = 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f, hint = Hints.Loot },
 
     [100474] = { special_function = SF.CustomCode, f = SetBoatPos, arg = 7 },
     [100472] = { special_function = SF.CustomCode, f = SetBoatPos, arg = 8 },
@@ -50,7 +51,7 @@ local triggers = {
     [101554] = { special_function = SetBoatPosFromElement }, -- 2
     [101555] = { special_function = SetBoatPosFromElement }, -- 3 
 
-    [100323] = { time = 50 + 23, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot },
+    [100323] = { time = 50 + 23, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
 
     [101129] = { time = 180 + anim_delay, special_function = AddToCache },
     [101134] = { time = 150 + anim_delay, special_function = AddToCache },
@@ -62,7 +63,7 @@ local triggers = {
 
     [1] = { special_function = SF.RemoveTrigger, data = { 101148, 101149, 101150, 1 }},
 
-    [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, waypoint_f = waypoint_f },
+    [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, waypoint_f = waypoint_f, hint = Hints.Loot },
 
     [100124] = { special_function = SF.CustomCode, f = function()
         local bags = managers.ehi_manager:CountLootbagsOnTheGround(10)
@@ -83,7 +84,7 @@ if EHI:IsClient() then
         elseif not (self:Exists(trigger.id2) or self:Exists(trigger.id3)) then
             self:CheckCondition(trigger)
         end
-    end), waypoint_f = waypoint_f }
+    end), waypoint_f = waypoint_f, hint = Hints.Loot }
     triggers[100686] = boat_return
     triggers[100695] = boat_return
     triggers[100704] = boat_return
@@ -117,8 +118,8 @@ local other =
     end),
     [103696] = EHI:AddAssaultDelay({ time = 5 + 15 + 30 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100457] = { time = 23 + 1, id = "Snipers", icons = { "snipers" }, class = TT.Warning }
+if EHI:GetOption("show_sniper_tracker") then
+    other[100457] = { time = 23 + 1, id = "Snipers", icons = { "snipers" }, class = TT.Warning, hint = Hints.EnemySnipers }
 end
 
 EHI:ParseTriggers({

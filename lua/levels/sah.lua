@@ -2,13 +2,14 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
-    [100643] = { time = 30, id = "CrowdAlert", icons = { Icon.Alarm }, class = TT.Warning },
+    [100643] = { time = 30, id = "CrowdAlert", icons = { Icon.Alarm }, class = TT.Warning, hint = Hints.Alarm },
     [100645] = { id = "CrowdAlert", special_function = SF.RemoveTracker },
 
-    [101725] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100013, 6200) } }, -- West
-    [101845] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100013, 6100) } } -- East
+    [101725] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100013, 6200) }, hint = Hints.LootEscape }, -- West
+    [101845] = { time = 120 + 24 + 5 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100013, 6100) }, hint = Hints.LootEscape } -- East
 }
 
 if EHI:IsClient() then

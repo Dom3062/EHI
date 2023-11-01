@@ -2,24 +2,26 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local HeliLootDropWait = { Icon.Heli, Icon.LootDrop, Icon.Wait }
 local element_sync_triggers =
 {
-    [102887] = { time = 1800/30, id = "HeliCage", icons = { Icon.Heli, Icon.LootDrop }, hook_element = 102892 }
+    [102887] = { time = 1800/30, id = "HeliCage", icons = { Icon.Heli, Icon.LootDrop }, hook_element = 102892, hint = Hints.Loot }
 }
+---@type ParseTriggerTable
 local triggers = {
     --[100240] = { id = "PAL", special_function = SF.RemoveTracker },
-    [102502] = { time = 60, id = "PAL", icons = { Icon.Money }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [102502] = { time = 60, id = "PAL", icons = { Icon.Money }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.pal_Money },
     [102505] = { id = "PAL", special_function = SF.RemoveTracker },
     [102749] = { id = "PAL", special_function = SF.PauseTracker },
     [102738] = { id = "PAL", special_function = SF.PauseTracker },
     [102744] = { id = "PAL", special_function = SF.UnpauseTracker },
     [102826] = { id = "PAL", special_function = SF.RemoveTracker },
 
-    [102301] = { time = 15, id = "Trap", icons = { Icon.C4 }, class = TT.Warning },
+    [102301] = { time = 15, id = "Trap", icons = { Icon.C4 }, class = TT.Warning, hint = Hints.Explosion },
     [101566] = { id = "Trap", special_function = SF.RemoveTracker },
 
-    [101230] = { time = 120, id = "Water", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [101230] = { time = 120, id = "Water", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.crojob3_Water },
     [101231] = { id = "Water", special_function = SF.PauseTracker }
 }
 
@@ -30,27 +32,26 @@ end
 
 local sync_triggers = {}
 if EHI:EscapeVehicleWillReturn("pal") then
-    local heli = { id = "HeliCageDelay", icons = HeliLootDropWait, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning }
+    local heli = { id = "HeliCageDelay", icons = HeliLootDropWait, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning, hint = Hints.LootTimed }
     sync_triggers[EHI:GetInstanceElementID(100013, 4700)] = heli
     sync_triggers[EHI:GetInstanceElementID(100013, 4750)] = heli
     sync_triggers[EHI:GetInstanceElementID(100013, 4800)] = heli
     sync_triggers[EHI:GetInstanceElementID(100013, 4850)] = heli
 end
 if EHI:IsClient() then
-    local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI:GetFreeCustomSpecialFunctionID()
-    triggers[102892] = { additional_time = 1800/30 + 120, random_time = 60, id = "HeliCage", icons = { Icon.Heli, Icon.LootDrop }, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[EHI:GetInstanceElementID(100013, 4700)] = { additional_time = 180, random_time = 60, id = "HeliCageDelay", icons = HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning }
-    triggers[EHI:GetInstanceElementID(100013, 4750)] = { additional_time = 180, random_time = 60, id = "HeliCageDelay", icons = HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning }
-    triggers[EHI:GetInstanceElementID(100013, 4800)] = { additional_time = 180, random_time = 60, id = "HeliCageDelay", icons = HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning }
-    triggers[EHI:GetInstanceElementID(100013, 4850)] = { additional_time = 180, random_time = 60, id = "HeliCageDelay", icons = HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning }
-    EHI:SetSyncTriggers(sync_triggers)
-    EHI:SetSyncTriggers(element_sync_triggers)
-    EHI:RegisterCustomSpecialFunction(ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, function(self, trigger, ...)
+    local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
         self._trackers:RemoveTracker(trigger.data.id)
         if self._trackers:TrackerDoesNotExist(trigger.id) then
             self:CheckCondition(trigger)
         end
     end)
+    triggers[102892] = { additional_time = 1800/30 + 120, random_time = 60, id = "HeliCage", icons = { Icon.Heli, Icon.LootDrop }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
+    triggers[EHI:GetInstanceElementID(100013, 4700)] = { additional_time = 180, random_time = 60, id = "HeliCageDelay", icons = HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning, hint = Hints.LootTimed }
+    triggers[EHI:GetInstanceElementID(100013, 4750)] = { additional_time = 180, random_time = 60, id = "HeliCageDelay", icons = HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning, hint = Hints.LootTimed }
+    triggers[EHI:GetInstanceElementID(100013, 4800)] = { additional_time = 180, random_time = 60, id = "HeliCageDelay", icons = HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning, hint = Hints.LootTimed }
+    triggers[EHI:GetInstanceElementID(100013, 4850)] = { additional_time = 180, random_time = 60, id = "HeliCageDelay", icons = HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning, hint = Hints.LootTimed }
+    EHI:SetSyncTriggers(sync_triggers)
+    EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(sync_triggers, "base")
     EHI:AddHostTriggers(element_sync_triggers, "element")

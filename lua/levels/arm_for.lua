@@ -2,19 +2,20 @@ local EHI = EHI
 local Icon = EHI.Icons
 local TT = EHI.Trackers
 local SF = EHI.SpecialFunctions
+local Hints = EHI.Hints
 local truck_delay = 524/30
 local boat_delay = 450/30
 ---@type ParseTriggerTable
 local triggers = {
-    [104082] = { time = 30 + 24 + 3, id = "HeliThermalDrill", icons = Icon.HeliDropDrill },
+    [104082] = { time = 30 + 24 + 3, id = "HeliThermalDrill", icons = Icon.HeliDropDrill, hint = Hints.DrillDelivery },
 
     -- Boat
-    [103273] = { time = boat_delay, id = "BoatSecureTurret", icons = { Icon.Boat, Icon.LootDrop } },
-    [103041] = { time = 30 + boat_delay, id = "BoatSecureAmmo", icons = { Icon.Boat, Icon.LootDrop } },
+    [103273] = { time = boat_delay, id = "BoatSecureTurret", icons = { Icon.Boat, Icon.LootDrop }, hint = Hints.Loot },
+    [103041] = { time = 30 + boat_delay, id = "BoatSecureAmmo", icons = { Icon.Boat, Icon.LootDrop }, hint = Hints.Loot },
 
     -- Truck
-    [105055] = { time = 15 + truck_delay, id = "TruckSecureTurret", icons = { Icon.Car, Icon.LootDrop } },
-    [105183] = { time = 30 + 524/30, id = "TruckSecureAmmo", icons = { Icon.Car, Icon.LootDrop } }
+    [105055] = { time = 15 + truck_delay, id = "TruckSecureTurret", icons = { Icon.Car, Icon.LootDrop }, hint = Hints.Loot },
+    [105183] = { time = 30 + 524/30, id = "TruckSecureAmmo", icons = { Icon.Car, Icon.LootDrop }, hint = Hints.Loot }
 }
 ---@type ParseAchievementTable
 local achievements =

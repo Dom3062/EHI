@@ -2,6 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local deal = { Icon.Car, Icon.Goto }
 local delay = 4 + 356/30
@@ -13,24 +14,24 @@ elseif ovk_and_up then
     -- OVERKILL+
     start_chance = 5
 end
-local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, Icon.PCHack }, flash_times = 1, class = TT.Chance }
+local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, Icon.PCHack }, flash_times = 1, class = TT.Chance, hint = Hints.man_Code }
 ---@type ParseTriggerTable
 local triggers = {
-    [101587] = { time = 30 + delay, id = "DealGoingDown", icons = deal },
-    [101588] = { time = 40 + delay, id = "DealGoingDown", icons = deal },
-    [101589] = { time = 50 + delay, id = "DealGoingDown", icons = deal },
-    [101590] = { time = 60 + delay, id = "DealGoingDown", icons = deal },
-    [101591] = { time = 70 + delay, id = "DealGoingDown", icons = deal },
+    [101587] = { time = 30 + delay, id = "DealGoingDown", icons = deal, hint = Hints.Wait },
+    [101588] = { time = 40 + delay, id = "DealGoingDown", icons = deal, hint = Hints.Wait },
+    [101589] = { time = 50 + delay, id = "DealGoingDown", icons = deal, hint = Hints.Wait },
+    [101590] = { time = 60 + delay, id = "DealGoingDown", icons = deal, hint = Hints.Wait },
+    [101591] = { time = 70 + delay, id = "DealGoingDown", icons = deal, hint = Hints.Wait },
 
     [102891] = { id = "CodeChance", special_function = SF.RemoveTracker },
 
     [101825] = CodeChance, -- First hack
     [102016] = CodeChance, -- Second and Third Hack
-    [102121] = { time = 10, id = "Escape", icons = { Icon.Escape } },
+    [102121] = { time = 10, id = "Escape", icons = { Icon.Escape }, hint = Hints.Escape },
 
-    [103163] = { additional_time = 1.5 + 25, random_time = 10, id = "Faint", icons = { "hostage", Icon.Wait } },
+    [103163] = { additional_time = 1.5 + 25, random_time = 10, id = "Faint", icons = { "hostage", Icon.Wait }, hint = Hints.Wait },
 
-    [102866] = { time = 5, id = "GotCode", icons = { Icon.Wait } },
+    [102866] = { time = 5, id = "GotCode", icons = { Icon.Wait }, hint = Hints.Wait },
 
     [102887] = { amount = 5, id = "CodeChance", special_function = SF.IncreaseChance }
 }

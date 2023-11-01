@@ -44,7 +44,7 @@ function EHITrackerManagerVR:IsLoading()
     return self._is_loading
 end
 
----@param params AddTrackerTable
+---@param params AddTrackerTable|ElementTrigger
 function EHITrackerManagerVR:PreloadTracker(params)
     if self:IsLoading() then
         self:AddToLoadQueue(params.id, params, callback(self, self, "_PreloadTracker"))
@@ -54,7 +54,7 @@ function EHITrackerManagerVR:PreloadTracker(params)
 end
 
 ---@param key string
----@param data AddTrackerTable
+---@param data AddTrackerTable|ElementTrigger
 function EHITrackerManagerVR:_PreloadTracker(key, data)
     self:old_PreloadTracker(data)
 end

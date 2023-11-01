@@ -2,10 +2,11 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local triggers = {
-    [102449] = { time = 240 },
-    [102450] = { time = 180 },
-    [102451] = { time = 300 },
+    [102449] = { time = 240, hint = Hints.LootEscape },
+    [102450] = { time = 180, hint = Hints.LootEscape },
+    [102451] = { time = 300, hint = Hints.LootEscape },
 
     [101285] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100786 } },
     [101286] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100783 } },
@@ -14,11 +15,11 @@ local triggers = {
 }
 
 if EHI:IsClient() then
-    triggers[100606] = { time = 240, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[100593] = { time = 180, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[100607] = { time = 120, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[100601] = { time = 60, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[100602] = { time = 30, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[100606] = { time = 240, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
+    triggers[100593] = { time = 180, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
+    triggers[100607] = { time = 120, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
+    triggers[100601] = { time = 60, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
+    triggers[100602] = { time = 30, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
 end
 
 ---@type ParseAchievementTable

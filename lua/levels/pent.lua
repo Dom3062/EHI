@@ -2,6 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local heli_element_timer = 102292
 local heli_delay = 60 -- Normal -> Very Hard
 -- Bugged because of braindead use of ElementTimerTrigger...
@@ -15,53 +16,53 @@ end]]
 ---@type ParseTriggerTable
 local triggers = {
     -- Loud Heli Escape
-    [101539] = { time = 5, id = "EndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning },
-    [102295] = { additional_time = 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = heli_element_timer },
+    [101539] = { time = 5, id = "EndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning, hint = Hints.EndlessAssault },
+    [102295] = { additional_time = 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = heli_element_timer, hint = Hints.LootEscape },
     [102296] = { id = "HeliEscape", special_function = SF.PauseTracker },
     [102297] = { id = "HeliEscape", special_function = SF.UnpauseTracker },
 
     -- Window Cleaning Platform
-    [EHI:GetInstanceElementID(100047, 9280)] = { time = 20, id = "PlatformLoweringDown", icons = { Icon.Wait } },
+    [EHI:GetInstanceElementID(100047, 9280)] = { time = 20, id = "PlatformLoweringDown", icons = { Icon.Wait }, hint = Hints.Wait },
 
     -- Elevator
-    [101277] = { time = 12, id = "ElevatorDown", icons = { Icon.Wait } },
-    [102061] = { time = 900/30, id = "ElevatorUp", icons = { Icon.Wait } },
+    [101277] = { time = 12, id = "ElevatorDown", icons = { Icon.Wait }, hint = Hints.Wait },
+    [102061] = { time = 900/30, id = "ElevatorUp", icons = { Icon.Wait }, hint = Hints.Wait },
 
     -- Elevator Generator
-    [EHI:GetInstanceElementID(100066, 13930)] = { id = "GeneratorStartChance", icons = { Icon.Power }, class = TT.Chance },
+    [EHI:GetInstanceElementID(100066, 13930)] = { id = "GeneratorStartChance", icons = { Icon.Power }, class = TT.Chance, hint = Hints.pent_Chance },
     [EHI:GetInstanceElementID(100018, 13930)] = { id = "GeneratorStartChance", special_function = SF.IncreaseChanceFromElement }, -- +33%
     [EHI:GetInstanceElementID(100016, 13930)] = { id = "GeneratorStartChance", special_function = SF.RemoveTracker },
 
     -- Thermite
-    [EHI:GetInstanceElementID(100035, 9930)] = { time = 22.5 * 3, id = "Thermite", icons = { Icon.Fire } },
+    [EHI:GetInstanceElementID(100035, 9930)] = { time = 22.5 * 3, id = "Thermite", icons = { Icon.Fire }, hint = Hints.Thermite },
 
     -- Car Platform
-    [EHI:GetInstanceElementID(100133, 7830)] = { time = 1200/30, id = "CarRotate", icons = { Icon.Car, Icon.Wait} },
-    [EHI:GetInstanceElementID(100002, 7830)] = { time = 300/30, id = "CarLiftUp", icons = { Icon.Car, Icon.Wait } },
-    [EHI:GetInstanceElementID(100002, 7830)] = { time = 5, id = "CarSpeedUp", icons = { Icon.Car, Icon.Wait } },
+    [EHI:GetInstanceElementID(100133, 7830)] = { time = 1200/30, id = "CarRotate", icons = { Icon.Car, Icon.Wait }, hint = Hints.Wait },
+    [EHI:GetInstanceElementID(100002, 7830)] = { time = 300/30, id = "CarLiftUp", icons = { Icon.Car, Icon.Wait }, hint = Hints.Wait },
+    [EHI:GetInstanceElementID(100002, 7830)] = { time = 5, id = "CarSpeedUp", icons = { Icon.Car, Icon.Wait }, hint = Hints.Wait },
 
     -- Lobby PCs
-    [EHI:GetInstanceElementID(100014, 8230)] = { time = 10 + 3, id = "PCHack1", icons = { Icon.PCHack } },
-    [EHI:GetInstanceElementID(100014, 13330)] = { time = 10 + 3, id = "PCHack2", icons = { Icon.PCHack } },
-    [EHI:GetInstanceElementID(100014, 14430)] = { time = 10 + 3, id = "PCHack3", icons = { Icon.PCHack } },
-    [EHI:GetInstanceElementID(100014, 17830)] = { time = 10 + 3, id = "PCHack4", icons = { Icon.PCHack } }
+    [EHI:GetInstanceElementID(100014, 8230)] = { time = 10 + 3, id = "PCHack1", icons = { Icon.PCHack }, hint = Hints.Hack },
+    [EHI:GetInstanceElementID(100014, 13330)] = { time = 10 + 3, id = "PCHack2", icons = { Icon.PCHack }, hint = Hints.Hack },
+    [EHI:GetInstanceElementID(100014, 14430)] = { time = 10 + 3, id = "PCHack3", icons = { Icon.PCHack }, hint = Hints.Hack },
+    [EHI:GetInstanceElementID(100014, 17830)] = { time = 10 + 3, id = "PCHack4", icons = { Icon.PCHack }, hint = Hints.Hack }
 }
 if EHI:IsClient() then
     -- FOR THE LOVE OF GOD
     -- OVERKILL
     -- STOP. USING. F... RANDOM DELAY, it's not funny
     triggers[102295].client = { time = heli_delay, random_time = 20 }
-    triggers[102303] = { time = 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
+    triggers[102303] = { time = 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate, hint = Hints.LootEscape }
     if EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL) then
-        triggers[103584] = { time = 70 + 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
+        triggers[103584] = { time = 70 + 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate, hint = Hints.LootEscape }
     else
-        triggers[103585] = { time = 90 + 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate }
+        triggers[103585] = { time = 90 + 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate, hint = Hints.LootEscape }
     end
 
     -- Thermite
-    triggers[EHI:GetInstanceElementID(100036, 9930)] = { time = 22.5 * 2, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[EHI:GetInstanceElementID(100036, 9930)] = { time = 22.5 * 2, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Thermite }
     -- 100037 has 0s delay for some reason...
-    triggers[EHI:GetInstanceElementID(100038, 9930)] = { time = 22.5, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[EHI:GetInstanceElementID(100038, 9930)] = { time = 22.5, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Thermite }
 end
 
 local DisableWaypoints = {}
@@ -159,6 +160,8 @@ local tbl =
         if EHI:CanShowAchievement("pent_10") then
             unit:digital_gui():SetIcons(EHI:GetAchievementIcon("pent_10"))
             unit:digital_gui():pent_10()
+        else
+            unit:digital_gui():SetIcons({ EHI.Icons.Trophy })
         end
     end },
     [103872] = { ignore = true }

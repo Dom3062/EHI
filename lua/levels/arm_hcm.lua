@@ -2,12 +2,13 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local van_delay = 363/30
 local triggers = {
-    [100215] = { time = 120 + van_delay },
-    [100216] = { time = 100 + van_delay },
-    [100218] = { time = 80 + van_delay },
-    [100219] = { time = 60 + van_delay },
+    [100215] = { time = 120 + van_delay, hint = Hints.LootEscape },
+    [100216] = { time = 100 + van_delay, hint = Hints.LootEscape },
+    [100218] = { time = 80 + van_delay, hint = Hints.LootEscape },
+    [100219] = { time = 60 + van_delay, hint = Hints.LootEscape },
 
     -- Heli
     [102200] = { special_function = SF.Trigger, data = { 1022001, 1022002 } },

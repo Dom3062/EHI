@@ -2,11 +2,12 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local heli_delay = 22 + 1 + 1.5
 local heli_icon = { Icon.Heli, Icon.Winch, Icon.Goto }
 local refill_icon = { Icon.Water, Icon.Loop }
-local heli_60 = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
-local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled }
+local heli_60 = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery }
+local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery }
 if EHI:GetOption("show_one_icon") then
     refill_icon = { { icon = Icon.Water, color = tweak_data.ehi.colors.WaterColor } }
 end
@@ -30,10 +31,10 @@ local keycode_units =
 }
 local preload =
 {
-    { id = "RefillLeft01", icons = refill_icon, hide_on_delete = true },
-    { id = "RefillLeft02", icons = refill_icon, hide_on_delete = true },
-    { id = "RefillRight01", icons = refill_icon, hide_on_delete = true },
-    { id = "RefillRight02", icons = refill_icon, hide_on_delete = true }
+    { id = "RefillLeft01", icons = refill_icon, hide_on_delete = true, hint = Hints.crojob3_Water },
+    { id = "RefillLeft02", icons = refill_icon, hide_on_delete = true, hint = Hints.crojob3_Water },
+    { id = "RefillRight01", icons = refill_icon, hide_on_delete = true, hint = Hints.crojob3_Water },
+    { id = "RefillRight02", icons = refill_icon, hide_on_delete = true, hint = Hints.crojob3_Water }
 }
 ---@type ParseTriggerTable
 local triggers = {
@@ -42,7 +43,7 @@ local triggers = {
             return
         end
         self:AddTracker(trigger)
-    end) },
+    end), hint = Hints.ColorCodes },
     [100091] = { id = "ColorCodes", special_function = SF.RemoveTracker }, -- Code entered (stealth)
     [101357] = { id = "ColorCodes", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
         if enabled then
@@ -50,11 +51,11 @@ local triggers = {
         end
     end) }, -- Code entered (loud)
 
-    [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, 66615) } },
-    [EHI:GetInstanceElementID(100193, 66615)] = { time = 30, id = "ArmoryKeypadRebootECM", icons = { Icon.Wait }, special_function = SF.TriggerIfEnabled, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, 66615) } },
+    [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, 66615) }, hint = Hints.KeypadReset },
+    [EHI:GetInstanceElementID(100193, 66615)] = { time = 30, id = "ArmoryKeypadRebootECM", icons = { Icon.Wait }, special_function = SF.TriggerIfEnabled, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, 66615) }, hint = Hints.KeypadReset },
 
-    [EHI:GetInstanceElementID(100030, 11750)] = { time = 5, id = "C4Lower", icons = { Icon.C4 } },
-    [EHI:GetInstanceElementID(100030, 11850)] = { time = 5, id = "C4Top", icons = { Icon.C4 } },
+    [EHI:GetInstanceElementID(100030, 11750)] = { time = 5, id = "C4Lower", icons = { Icon.C4 }, hint = Hints.Explosion },
+    [EHI:GetInstanceElementID(100030, 11850)] = { time = 5, id = "C4Top", icons = { Icon.C4 }, hint = Hints.Explosion },
 
     [EHI:GetInstanceElementID(100021, 29150)] = heli_60,
     [EHI:GetInstanceElementID(100042, 29150)] = heli_30,
@@ -79,19 +80,19 @@ local triggers = {
     [EHI:GetInstanceElementID(100167, 44535)] = { id = "DrillDrop", special_function = SF.PauseTracker },
 
     -- Water during drilling
-    [EHI:GetInstanceElementID(100148, 37575)] = { id = "WaterTimer1", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60 } },
+    [EHI:GetInstanceElementID(100148, 37575)] = { id = "WaterTimer1", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60 }, hint = Hints.Wait },
     [EHI:GetInstanceElementID(100146, 37575)] = { id = "WaterTimer1", special_function = SF.PauseTracker },
-    [EHI:GetInstanceElementID(100149, 37575)] = { id = "WaterTimer2", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60 } },
+    [EHI:GetInstanceElementID(100149, 37575)] = { id = "WaterTimer2", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60 }, hint = Hints.Wait },
     [EHI:GetInstanceElementID(100147, 37575)] = { id = "WaterTimer2", special_function = SF.PauseTracker },
 
     -- Skylight Hack
-    [EHI:GetInstanceElementID(100018, 29650)] = { time = 30, id = "SkylightHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists },
+    [EHI:GetInstanceElementID(100018, 29650)] = { time = 30, id = "SkylightHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Hack },
     [EHI:GetInstanceElementID(100037, 29650)] = { id = "SkylightHack", special_function = SF.PauseTracker },
 
-    [100159] = { id = "BlimpWithTheDrill", icons = { Icon.Blimp, Icon.Drill }, special_function = SF.SetTimeByPreplanning, data = { id = 101854, yes = 976/30, no = 1952/30 } },
-    [100426] = { time = 1000/30, id = "BlimpLowerTheDrill", icons = { Icon.Blimp, Icon.Drill, Icon.Goto } },
+    [100159] = { id = "BlimpWithTheDrill", icons = { Icon.Blimp, Icon.Drill }, special_function = SF.SetTimeByPreplanning, data = { id = 101854, yes = 976/30, no = 1952/30 }, hint = Hints.DrillDelivery },
+    [100426] = { time = 1000/30, id = "BlimpLowerTheDrill", icons = { Icon.Blimp, Icon.Drill, Icon.Goto }, hint = Hints.Wait },
 
-    [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { Icon.Loop } }
+    [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { Icon.Loop }, hint = Hints.KeypadReset }
 }
 if EHI:GetOption("show_mission_trackers") then
     local function hook(unit_id, color)
@@ -322,7 +323,8 @@ EHI:AddLoadSyncFunction(function(self)
     end
     self._trackers:AddTracker({
         id = "ColorCodes",
-        class = TT.ColoredCodes
+        class = TT.ColoredCodes,
+        hint = Hints.ColorCodes
     })
     local wd = managers.worlddefinition
     for color, data in pairs(keycode_units) do

@@ -1,18 +1,27 @@
 ---@class EHIcorp9Tracker : EHIColoredCodesTracker, EHIAchievementTracker
 ---@field super EHIColoredCodesTracker
 EHIcorp9Tracker = class(EHIColoredCodesTracker)
+EHIcorp9Tracker._forced_icons = EHI:GetAchievementIcon("corp_9")
 EHIcorp9Tracker._update = false
 EHIcorp9Tracker._popup_type = "achievement"
+EHIcorp9Tracker._forced_hint_text = "achievement_corp_9"
 EHIcorp9Tracker._show_started = EHIAchievementTracker._show_started
 EHIcorp9Tracker._show_failed = EHIAchievementTracker._show_failed
+EHIcorp9Tracker._show_desc = EHIAchievementTracker._show_desc
 EHIcorp9Tracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
+EHIcorp9Tracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
 ---@param panel Panel
 ---@param params EHITracker_params
 ---@param parent_class EHITrackerManager
 function EHIcorp9Tracker:init(panel, params, parent_class)
+    self._hint_showed = true
+    params.hint_vanilla_localization = true
     EHIcorp9Tracker.super.init(self, panel, params, parent_class)
     if self._show_started then
         self:ShowStartedPopup()
+    end
+    if self._show_desc then
+        self:ShowAchievementDescription()
     end
 end
 
@@ -77,13 +86,14 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseTriggerTable
 local triggers =
 {
-    [102406] = { additional_time = 22 + 6, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 102401 },
+    [102406] = { additional_time = 22 + 6, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 102401, hint = Hints.LootEscape },
 
-    [EHI:GetInstanceElementID(100018, 12190)] = { time = 10, id = "Thermite", icons = { Icon.Fire } }
+    [EHI:GetInstanceElementID(100018, 12190)] = { time = 10, id = "Thermite", icons = { Icon.Fire }, hint = Hints.Thermite }
 }
 if EHI:IsClient() then
     triggers[102406].client = { time = OVKorAbove and 30 or 15, random_time = 15 }
@@ -113,8 +123,7 @@ local achievements =
             [EHI:GetInstanceElementID(100021, 11090)] = { special_function = SF.SetAchievementFailed } -- Lab destroyed with C4
         },
         cleanup_callback = function()
-            ---@diagnostic disable-next-line
-            EHIcorp9Tracker = nil
+            EHIcorp9Tracker = nil ---@diagnostic disable-line
         end,
         parsed_callback = function()
             for i = 102867, 102869, 1 do
@@ -193,8 +202,7 @@ local achievements =
             [102740] = { special_function = SF.SetAchievementComplete }
         },
         cleanup_callback = function()
-            ---@diagnostic disable-next-line
-            EHIcorp12Tracker = nil
+            EHIcorp12Tracker = nil ---@diagnostic disable-line
         end
     }
 }

@@ -40,6 +40,7 @@ end
 
 local EHI = EHI
 local Icon = EHI.Icons
+local Hints = EHI.Hints
 
 for _, index in ipairs({ 8750, 17750, 33525, 36525 }) do
     local unit_index = EHI:GetInstanceUnitID(100334, index)
@@ -47,7 +48,8 @@ for _, index in ipairs({ 8750, 17750, 33525, 36525 }) do
         managers.ehi_tracker:AddTracker({
             id = tostring(unit_index),
             time = 10,
-            icons = { Icon.Fire }
+            icons = { Icon.Fire },
+            hint = Hints.Thermite
         })
     end)
 end
@@ -55,9 +57,9 @@ end
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local triggers = {
-    [106026] = { time = 10, id = "Van", icons = Icon.CarEscape },
+    [106026] = { time = 10, id = "Van", icons = Icon.CarEscape, hint = Hints.LootEscape },
 
-    [106036] = { time = 410/30, id = "Boat", icons = Icon.BoatEscape }
+    [106036] = { time = 410/30, id = "Boat", icons = Icon.BoatEscape, hint = Hints.LootEscape }
 }
 
 ---@type ParseAchievementTable

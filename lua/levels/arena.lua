@@ -1,5 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
+local Hints = EHI.Hints
 
 for _, unit_id in ipairs({ 100067, 100093, 100094 }) do
     for _, index in ipairs({ 4500, 5400, 5800, 6000, 6200, 6600 }) do
@@ -8,7 +9,8 @@ for _, unit_id in ipairs({ 100067, 100093, 100094 }) do
             managers.ehi_tracker:AddTracker({
                 id = tostring(fixed_unit_id),
                 time = 30,
-                icons = { Icon.Glasscutter }
+                icons = { Icon.Glasscutter },
+                hint = Hints.Cutter
             })
         end)
     end
@@ -19,9 +21,9 @@ local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseTriggerTable
 local triggers = {
-    [100241] = { time = 19, id = "HeliEscape", icons = Icon.HeliEscape },
+    [100241] = { time = 19, id = "HeliEscape", icons = Icon.HeliEscape, hint = Hints.LootEscape },
 
-    [EHI:GetInstanceElementID(100166, 4900)] = { time = 5, id = "WaitTime", icons = { Icon.Wait } },
+    [EHI:GetInstanceElementID(100166, 4900)] = { time = 5, id = "WaitTime", icons = { Icon.Wait }, hint = Hints.Wait },
 
     [EHI:GetInstanceElementID(100128, 4900)] = { time = 10, id = "PressSequence", icons = { Icon.Interact }, class = TT.Warning },
     [EHI:GetInstanceElementID(100069, 4900)] = { id = "PressSequence", special_function = SF.RemoveTracker },

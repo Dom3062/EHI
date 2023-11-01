@@ -1,3 +1,10 @@
+r191 (01. 11. 2023):
+Added options "Show Tracker Description", "Tracker Description (Time)", "Show Trophy Description" and "Show Daily Side Job Description"
+Fixed an issue where Xmas XP Bonus is visible when the event is not running
+Mission Briefing: Made toggling between "Stealth" and "Loud" accessible to players with controller
+Total XP Tracker: The tracker won't show up once you reach your XP limit
+Hotline Miami Day 2: Fixed an issue where the second sniper group does not count down timer at the start
+
 r190 (19. 10. 2023):
 Menu: Fixed 4:3 aspect ratio
 

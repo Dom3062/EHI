@@ -47,7 +47,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire } }
+local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire }, hint = EHI.Hints.Thermite }
 local triggers = {
     [101985] = thermite, -- First grate
     [101984] = thermite -- Second grate

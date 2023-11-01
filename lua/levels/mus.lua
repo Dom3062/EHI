@@ -2,23 +2,24 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local delay = 5
 local gas_delay = 0.5
 local heli_wp = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100028, 7200) }
 local gas_wp = { icon = Icon.Teargas, position_by_element = 100841 }
 local triggers = {
-    [102442] = { time = 130 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp) },
-    [102441] = { time = 120 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp) },
-    [102434] = { time = 110 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp) },
-    [102433] = { time = 80 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp) },
+    [102442] = { time = 130 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp), hint = Hints.LootEscape },
+    [102441] = { time = 120 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp), hint = Hints.LootEscape },
+    [102434] = { time = 110 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp), hint = Hints.LootEscape },
+    [102433] = { time = 80 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp), hint = Hints.LootEscape },
 
-    [102065] = { time = 50 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
-    [102067] = { time = 65 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
-    [102068] = { time = 80 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
-    [102069] = { time = 95 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
-    [102070] = { time = 110 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
-    [102071] = { time = 125 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) },
-    [102072] = { time = 140 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp) }
+    [102065] = { time = 50 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp), hint = Hints.Teargas },
+    [102067] = { time = 65 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp), hint = Hints.Teargas },
+    [102068] = { time = 80 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp), hint = Hints.Teargas },
+    [102069] = { time = 95 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp), hint = Hints.Teargas },
+    [102070] = { time = 110 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp), hint = Hints.Teargas },
+    [102071] = { time = 125 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp), hint = Hints.Teargas },
+    [102072] = { time = 140 + gas_delay, id = "DiamondChamberGas", icons = { Icon.Teargas }, waypoint = deep_clone(gas_wp), hint = Hints.Teargas }
 }
 
 local DisableWaypoints = {}

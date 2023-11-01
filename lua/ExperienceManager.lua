@@ -26,6 +26,21 @@ function ExperienceManager:GetRemainingPrestigeXP()
     return self:get_max_prestige_xp() - self:get_current_prestige_xp()
 end
 
+---Not possible in Vanilla, mod check
+function ExperienceManager:IsInfamyPoolOverflowed()
+    return self:get_current_prestige_xp() > self:get_max_prestige_xp()
+end
+
+function ExperienceManager:GetPlayerXPLimit()
+    if self:reached_level_cap() then
+        if self:IsInfamyPoolOverflowed() then
+            return self:get_current_prestige_xp()
+        end
+        return self:GetRemainingPrestigeXP()
+    end
+    return self:GetRemainingXPToMaxLevel()
+end
+
 if EHI:CheckNotLoad() or EHI:IsXPTrackerDisabled() then
     return
 end
@@ -58,7 +73,7 @@ function ExperienceManager:init(...)
         bonus_xp = 0,
         skill_xp_multiplier = 1, -- Recalculated in ExperienceManager:RecalculateSkillXPMultiplier()
         difficulty_multiplier = 1,
-        projob_multiplier = 1 -- Unavailable since Update 109, however mods can still enable Pro Job modifier in heists
+        projob_multiplier = 1 -- Unavailable since `Update 109`, however mods can still enable Pro Job modifier in heists
     }
     if xp_format == 3 then -- Multiply
         EHI:AddOnAlarmCallback(function()
@@ -110,9 +125,17 @@ function ExperienceManager:LoadData(managers)
     local mutator = managers.mutators
     if mutator:can_mutators_be_active() then
         self._ehi_xp.mutator_xp_reduction = mutator:get_experience_reduction() * -1
-        self._ehi_xp.MutatorPiggyRevenge = mutator:is_mutator_active(MutatorPiggyRevenge)
-        self._ehi_xp.MutatorPiggyBank = mutator:is_mutator_active(MutatorPiggyBank)
-        self._ehi_xp.MutatorCG22 = mutator:is_mutator_active(MutatorCG22)
+        if mutator:is_mutator_active(MutatorPiggyRevenge) then -- pda10
+            self._ehi_xp.MutatorPiggyRevenge = true
+            self._ehi_xp.pda10_rewards = tweak_data.mutators.piggyrevenge.pig_levels
+            self._ehi_xp.pda10_rewards_all = #self._ehi_xp.pda10_rewards
+        elseif mutator:is_mutator_active(MutatorPiggyBank) then -- pda9
+            self._ehi_xp.MutatorPiggyBank = true
+            self._ehi_xp.current_difficulty = Global.game_settings.difficulty
+            self._ehi_xp.pda9_rewards = tweak_data.mutators.piggybank.rewards
+        elseif mutator:is_mutator_active(MutatorCG22) then
+            self._ehi_xp.MutatorCG22 = true
+        end
     end
 end
 
@@ -187,16 +210,14 @@ function ExperienceManager:HookAwardXP()
         end
     end
     EHI:Hook(self, "mission_xp_award", f)
-    original.on_loot_drop_xp = self.on_loot_drop_xp
-    self.on_loot_drop_xp = function(self, value_id, ...)
-        original.on_loot_drop_xp(self, value_id, ...)
+    EHI:Hook(self, "on_loot_drop_xp", function(self, value_id)
         local amount = tweak_data:get_value("experience_manager", "loot_drop_value", value_id) or 0
         if amount <= 0 then
             return
         end
         self._ehi_xp.bonus_xp = self._ehi_xp.bonus_xp + amount
         self:RecalculateXP()
-    end
+    end)
 end
 
 ---@param multiplier number
@@ -221,7 +242,7 @@ function ExperienceManager:SetInCustody(in_custody)
     if in_custody then
         self._ehi_xp.alive_players = math.max(self._ehi_xp.alive_players - 1, 0)
     else
-        self._ehi_xp.alive_players = math.max(self._ehi_xp.alive_players + 1, 4)
+        self._ehi_xp.alive_players = math.min(self._ehi_xp.alive_players + 1, 4)
     end
     self:RecalculateXP()
 end
@@ -256,6 +277,8 @@ function ExperienceManager:DecreaseAlivePlayers(human_player)
     end
 end
 
+---@param base_xp number
+---@param xp_gained number?
 function ExperienceManager:ShowGainedXP(base_xp, xp_gained)
     BaseXP = BaseXP + base_xp
     TotalXP = xp_gained and (TotalXP + xp_gained) or self:MultiplyXPWithAllBonuses(BaseXP)
@@ -337,8 +360,7 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
     extra_bonus_dissect = math_round(total_xp * bonus_xp - total_xp)
     total_xp = total_xp + extra_bonus_dissect
 
-    -- pda10 event
-	--[[if self._ehi_xp.MutatorPiggyBank then
+	if self._ehi_xp.MutatorPiggyBank then
 	    local pig_level = self._ehi_xp.piggy_event_exploded_level or false
         local bonus_piggybank_dissect = math_round(pig_level and (self._ehi_xp.pda9_rewards[self._ehi_xp.current_difficulty] or self._ehi_xp.pda9_rewards.default) * tweak_data.mutators.piggybank.pig_levels[pig_level].bag_requirement or 0)
 	    total_xp = total_xp + bonus_piggybank_dissect
@@ -349,19 +371,20 @@ function ExperienceManager:MultiplyXPWithAllBonuses(xp)
         total_xp = total_xp + bonus_cg22_dissect
 	end
 
+    -- pda10 event
 	if self._ehi_xp.MutatorPiggyRevenge and self._ehi_xp.piggy_event_exploded_level then
-        local piggyrevenge_level = math.clamp(self._ehi_xp.piggy_event_exploded_level, 1, #self._ehi_xp.pda10_rewards)
+        local piggyrevenge_level = math.clamp(self._ehi_xp.piggy_event_exploded_level, 1, self._ehi_xp.pda10_rewards_all)
         local piggybank_rewards = piggyrevenge_level and self._ehi_xp.pda10_rewards[piggyrevenge_level].rewards
         local bonus_piggyrevenge_dissect = piggybank_rewards and total_xp * ((piggybank_rewards.xp_multiplier or 1) - 1) or 0
         total_xp = total_xp + bonus_piggyrevenge_dissect
-	end]]
+	end
 
     local bonus_mutators_dissect = total_xp * self._ehi_xp.mutator_xp_reduction
     total_xp = total_xp + bonus_mutators_dissect
 
-    --[[if self._ehi_xp.MutatorCG22 then
+    if self._ehi_xp.MutatorCG22 then
         total_xp = total_xp * 2
-    end]]
+    end
 
     total_xp = total_xp + self._ehi_xp.bonus_xp
     return total_xp
@@ -380,11 +403,13 @@ function ExperienceManager:RecalculateXP()
     end
 end
 
+---@param level number
 function ExperienceManager:SetPiggyBankExplodedLevel(level)
     self._ehi_xp.piggy_event_exploded_level = level
     self:RecalculateXP()
 end
 
+---@param xp number
 function ExperienceManager:SetCG22EventXPCollected(xp)
     self._ehi_xp.cg22_xp_collected = xp
     self:RecalculateXP()

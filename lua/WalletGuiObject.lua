@@ -25,9 +25,12 @@ function WalletGuiObject.refresh(...)
         local xp = managers.experience
         local s = ""
         if xp:reached_level_cap() then -- Level is maxed, show Infamy Pool instead
-            s = ", " .. infamy_pool .. " " .. xp:experience_string(xp:GetRemainingPrestigeXP()) .. " " .. _xp
-        elseif to_100_left then
-            -- calculate total XP to 100
+            if xp:IsInfamyPoolOverflowed() then
+                s = ", " .. infamy_pool .. " 0 " .. _xp
+            else
+                s = ", " .. infamy_pool .. " " .. xp:experience_string(xp:GetRemainingPrestigeXP()) .. " " .. _xp
+            end
+        elseif to_100_left then -- calculate total XP to 100
             local xpToNextText = xp:experience_string(math.max(xp:next_level_data_points() - xp:next_level_data_current_points(), 0))
             local xpTo100Text = xp:experience_string(xp:GetRemainingXPToMaxLevel())
             s = ", " .. next_level .. " " .. xpToNextText .. " " .. _xp .. ", " .. _100_in .. " " .. xpTo100Text .. " " .. _xp

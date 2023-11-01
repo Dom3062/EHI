@@ -1,6 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local Hints = EHI.Hints
 local c4_drop = { time = 120 + 25 + 0.25 + 2, id = "C4Drop", icons = Icon.HeliDropC4 }
 local EscapeWP = { icon = Icon.Escape, position_by_element = EHI:GetInstanceElementID(100029, 21250) }
 local HeliTimer = EHI:GetFreeCustomSpecialFunctionID()
@@ -17,11 +18,11 @@ local triggers = {
         [1] = 5 + 8,
         [2] = 8
     },
-    [101644] = { time = 60, id = "BainWait", icons = { Icon.Wait } },
-    [EHI:GetInstanceElementID(100075, 21250)] = { time = 60 + 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 1, waypoint = deep_clone(EscapeWP) },
-    [EHI:GetInstanceElementID(100076, 21250)] = { time = 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 2, waypoint = deep_clone(EscapeWP) },
-    [EHI:GetInstanceElementID(100078, 21250)] = { time = 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.SetTimeOrCreateTracker, waypoint = deep_clone(EscapeWP) },
-    [100795] = { time = 5, id = "C4", icons = { Icon.C4 }, waypoint = { position_by_element = 100804 } },
+    [101644] = { time = 60, id = "BainWait", icons = { Icon.Wait }, hint = Hints.Wait },
+    [EHI:GetInstanceElementID(100075, 21250)] = { time = 60 + 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 1, waypoint = deep_clone(EscapeWP), hint = Hints.Escape },
+    [EHI:GetInstanceElementID(100076, 21250)] = { time = 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 2, waypoint = deep_clone(EscapeWP), hint = Hints.Escape },
+    [EHI:GetInstanceElementID(100078, 21250)] = { time = 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.SetTimeOrCreateTracker, waypoint = deep_clone(EscapeWP), hint = Hints.Escape },
+    [100795] = { time = 5, id = "C4", icons = { Icon.C4 }, waypoint = { position_by_element = 100804 }, hint = Hints.Explosion },
 
     [101240] = c4_drop,
     [101241] = c4_drop,
@@ -35,7 +36,7 @@ for i = 26550, 26950, 100 do
 end
 
 if EHI:IsClient() then
-    triggers[EHI:GetInstanceElementID(100051, 21250)] = { time = 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP) }
+    triggers[EHI:GetInstanceElementID(100051, 21250)] = { time = 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP), hint = Hints.Escape }
 end
 
 local other =

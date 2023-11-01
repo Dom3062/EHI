@@ -32,30 +32,27 @@ local original =
 function ZipLine:init(unit, ...)
     original.init(self, unit, ...)
     local key = tostring(unit:key())
-    self._ehi_key_bag_half = key .. "_bag_drop"
-    self._ehi_key_bag_full = key .. "_bag_reset"
-    self._ehi_key_user_half = key .. "_person_drop"
-    self._ehi_key_user_full = key .. "_person_reset"
+    self._ehi_key_bag = key .. "_bag_drop"
+    self._ehi_key_user = key .. "_person_drop"
+    self._ehi_key_reset = key .. "_reset"
     if not show_waypoint_only then
         managers.ehi_tracker:PreloadTracker({
-            id = self._ehi_key_bag_half,
+            id = self._ehi_key_bag,
             icons = { "zipline_bag" },
-            hide_on_delete = true
+            hide_on_delete = true,
+            hint = "zipline_bag"
         })
         managers.ehi_tracker:PreloadTracker({
-            id = self._ehi_key_bag_full,
-            icons = { "zipline", Icon.Loop },
-            hide_on_delete = true
-        })
-        managers.ehi_tracker:PreloadTracker({
-            id = self._ehi_key_user_half,
+            id = self._ehi_key_user,
             icons = { "zipline", Icon.Escape, Icon.Goto },
-            hide_on_delete = true
+            hide_on_delete = true,
+            hint = "zipline_person"
         })
         managers.ehi_tracker:PreloadTracker({
-            id = self._ehi_key_user_full,
+            id = self._ehi_key_reset,
             icons = { "zipline", Icon.Loop },
-            hide_on_delete = true
+            hide_on_delete = true,
+            hint = "zipline_reset"
         })
     end
     if self:is_usage_type_bag() then
@@ -72,9 +69,9 @@ function ZipLine:HookUpdateLoop()
         if self.__ehi_bag_attached and not self._attached_bag then
             self.__ehi_bag_attached = nil
             local t = self:total_time() * self._current_time
-            managers.ehi_tracker:RemoveTracker(self._ehi_key_bag_half)
-            managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key_bag_full, t)
-            managers.ehi_waypoint:SetWaypointTime(self._ehi_key_bag_full, t)
+            managers.ehi_tracker:RemoveTracker(self._ehi_key_bag)
+            managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key_reset, t)
+            managers.ehi_waypoint:SetWaypointTime(self._ehi_key_reset, t)
         end
     end
     self.__ehi_update_hooked = true
@@ -107,10 +104,10 @@ function ZipLine:attach_bag(...)
     original.attach_bag(self, ...)
     local total_time = self:total_time()
     local total_time_2 = total_time * 2
-    managers.ehi_tracker:RunTracker(self._ehi_key_bag_half, { time = total_time })
-    managers.ehi_tracker:RunTracker(self._ehi_key_bag_full, { time = total_time_2 })
+    managers.ehi_tracker:RunTracker(self._ehi_key_bag, { time = total_time })
+    managers.ehi_tracker:RunTracker(self._ehi_key_reset, { time = total_time_2 })
     if show_waypoint then
-        managers.ehi_waypoint:AddWaypoint(self._ehi_key_bag_full, {
+        managers.ehi_waypoint:AddWaypoint(self._ehi_key_reset, {
             time = total_time_2,
             icon = "zipline_bag",
             unit = self:GetMovingObject()
@@ -127,11 +124,11 @@ local function AddUserZipline(self, unit)
     end
     local total_time = self:total_time()
     local total_time_2 = total_time * 2
-    managers.ehi_tracker:RunTracker(self._ehi_key_user_half, { time = total_time })
-    managers.ehi_tracker:RunTracker(self._ehi_key_user_full, { time = total_time_2 })
+    managers.ehi_tracker:RunTracker(self._ehi_key_user, { time = total_time })
+    managers.ehi_tracker:RunTracker(self._ehi_key_reset, { time = total_time_2 })
     if show_waypoint then
         local local_unit = unit == managers.player:player_unit()
-        managers.ehi_waypoint:AddWaypoint(self._ehi_key_user_full, {
+        managers.ehi_waypoint:AddWaypoint(self._ehi_key_reset, {
             time = total_time_2,
             present_timer = local_unit and total_time,
             icon = "zipline",
@@ -151,9 +148,8 @@ function ZipLine:sync_set_user(unit, ...)
 end
 
 function ZipLine:destroy(...)
-    managers.ehi_manager:ForceRemove(self._ehi_key_bag_full)
-    managers.ehi_manager:ForceRemove(self._ehi_key_user_full)
-    managers.ehi_tracker:ForceRemoveTracker(self._ehi_key_bag_half)
-    managers.ehi_tracker:ForceRemoveTracker(self._ehi_key_user_half)
+    managers.ehi_manager:ForceRemove(self._ehi_key_reset)
+    managers.ehi_tracker:ForceRemoveTracker(self._ehi_key_bag)
+    managers.ehi_tracker:ForceRemoveTracker(self._ehi_key_user)
     original.destroy(self, ...)
 end

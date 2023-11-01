@@ -2,8 +2,9 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local MethlabIndex = { 1100, 1400, 1700, 2000, 2300, 2600, 2900, 3500, 3800, 4100, 4400, 4700 }
-local interact = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop } }
+local interact = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.mia_1_NextMethIngredient }
 local element_sync_triggers = {}
 for _, index in ipairs(MethlabIndex) do
     for i = 100169, 100172, 1 do
@@ -14,21 +15,21 @@ for _, index in ipairs(MethlabIndex) do
 end
 local chopper_delay = 25 + 1 + 2.5
 local triggers = {
-    [102120] = { time = 5400/30, id = "ShipMove", icons = { Icon.Boat, Icon.Wait }, trigger_times = 1 },
+    [102120] = { time = 5400/30, id = "ShipMove", icons = { Icon.Boat, Icon.Wait }, trigger_times = 1, hint = Hints.Wait },
 
-    [101545] = { time = 100 + chopper_delay, id = "C4FasterPilot", icons = Icon.HeliDropC4 },
-    [101749] = { time = 160 + chopper_delay, id = "C4", icons = Icon.HeliDropC4 },
+    [101545] = { time = 100 + chopper_delay, id = "C4FasterPilot", icons = Icon.HeliDropC4, hint = Hints.C4Delivery },
+    [101749] = { time = 160 + chopper_delay, id = "C4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery },
 
-    [106295] = { time = 705/30, id = "VanEscape", icons = Icon.CarEscape, special_function = SF.ExecuteIfElementIsEnabled },
-    [106294] = { time = 1200/30, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.ExecuteIfElementIsEnabled },
-    [100339] = { time = 0.2 + 450/30, id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.ExecuteIfElementIsEnabled }
+    [106295] = { time = 705/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape },
+    [106294] = { time = 1200/30, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape },
+    [100339] = { time = 0.2 + 450/30, id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape }
 }
 for _, index in ipairs(MethlabIndex) do
-    triggers[EHI:GetInstanceElementID(100118, index)] = { time = 1, id = "MethlabRestart", icons = { Icon.Methlab, Icon.Loop } }
-    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, Icon.Interact } }
+    triggers[EHI:GetInstanceElementID(100118, index)] = { time = 1, id = "MethlabRestart", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.mia_1_NextMethIngredient }
+    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, Icon.Interact }, hint = Hints.mia_1_MethDone }
 end
 if EHI:IsClient() then
-    local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 } }
+    local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 }, hint = Hints.mia_1_NextMethIngredient }
     for _, index in ipairs(MethlabIndex) do
         triggers[EHI:GetInstanceElementID(100149, index)] = random_time
         triggers[EHI:GetInstanceElementID(100150, index)] = random_time

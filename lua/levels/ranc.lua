@@ -2,6 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local WinchCar = { { icon = Icon.Car, color = tweak_data.ehi.colors.CarBlue } }
 local ElementTimer = 102059
 local ElementTimerPickup = 102075
@@ -11,12 +12,12 @@ if OVKorAbove then
     ElementTimer = 102063
     ElementTimerPickup = 102076
 end
-local FultonCatchAgain = { id = "FultonCatchAgain", icons = WeaponsPickUp, special_function = SF.AddTrackerIfDoesNotExist }
+local FultonCatchAgain = { id = "FultonCatchAgain", icons = WeaponsPickUp, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootTimed }
 local FultonCatchSuccess = { time = 6.8, id = "FultonCatchSuccess", icons = WeaponsPickUp, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
     if self._trackers:TrackerDoesNotExist("FultonCatch") or self._trackers:TrackerDoesNotExist("FultonCatchAgain") then
         self:CheckCondition(trigger)
     end
-end) }
+end), hint = Hints.LootTimed }
 local FultonCatchIncreaseChance = { id = "FultonCatchChance", special_function = SF.IncreaseChanceFromElement }
 local FultonRemoveCatch = { id = "FultonCatch", special_function = SF.RemoveTracker }
 
@@ -28,26 +29,26 @@ local sync_triggers =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [EHI:GetInstanceElementID(100083, 12500)] = { time = 230/30, id = "CarPush1", icons = WinchCar },
-    [EHI:GetInstanceElementID(100084, 12500)] = { time = 230/30 + 1, id = "CarPush2", icons = WinchCar },
-    [EHI:GetInstanceElementID(100087, 12500)] = { time = 250/30, id = "CarWinchUsed", icons = { { icon = Icon.Car, color = tweak_data.ehi.colors.CarBlue }, Icon.Winch } },
+    [EHI:GetInstanceElementID(100083, 12500)] = { time = 230/30, id = "CarPush1", icons = WinchCar, hint = Hints.hox_1_Car },
+    [EHI:GetInstanceElementID(100084, 12500)] = { time = 230/30 + 1, id = "CarPush2", icons = WinchCar, hint = Hints.hox_1_Car },
+    [EHI:GetInstanceElementID(100087, 12500)] = { time = 250/30, id = "CarWinchUsed", icons = { { icon = Icon.Car, color = tweak_data.ehi.colors.CarBlue }, Icon.Winch }, hint = Hints.Winch },
 
     -- Thermite
-    [EHI:GetInstanceElementID(100012, 2850)] = { time = 0.5 + 0.5 + 0.5 + 0.5 + 1, id = "ThermiteOpenGate", icons = { Icon.Fire } },
-    [EHI:GetInstanceElementID(100012, 2950)] = { time = 0.5 + 0.5 + 0.5 + 0.5 + 1, id = "ThermiteOpenGate", icons = { Icon.Fire } },
+    [EHI:GetInstanceElementID(100012, 2850)] = { time = 0.5 + 0.5 + 0.5 + 0.5 + 1, id = "ThermiteOpenGate", icons = { Icon.Fire }, hint = Hints.Thermite },
+    [EHI:GetInstanceElementID(100012, 2950)] = { time = 0.5 + 0.5 + 0.5 + 0.5 + 1, id = "ThermiteOpenGate", icons = { Icon.Fire }, hint = Hints.Thermite },
 
     -- C4
-    [EHI:GetInstanceElementID(100044, 2850)] = { time = 5, icon = "C4OpenGate", icons = { Icon.C4 } },
-    [EHI:GetInstanceElementID(100044, 2950)] = { time = 5, icon = "C4OpenGate", icons = { Icon.C4 } },
+    [EHI:GetInstanceElementID(100044, 2850)] = { time = 5, icon = "C4OpenGate", icons = { Icon.C4 }, hint = Hints.Explosion },
+    [EHI:GetInstanceElementID(100044, 2950)] = { time = 5, icon = "C4OpenGate", icons = { Icon.C4 }, hint = Hints.Explosion },
 
     -- Fulton (Preplanning asset)
-    [102053] = { additional_time = 7, id = "FultonDropCage", icons = Icon.HeliDropBag, special_function = SF.GetElementTimerAccurate, element = ElementTimer },
+    [102053] = { additional_time = 7, id = "FultonDropCage", icons = Icon.HeliDropBag, special_function = SF.GetElementTimerAccurate, element = ElementTimer, hint = Hints.peta2_LootZoneDelivery },
     [EHI:GetInstanceElementID(100053, 14950)] = FultonCatchSuccess,
     [EHI:GetInstanceElementID(100053, 25500)] = FultonCatchSuccess,
     [EHI:GetInstanceElementID(100053, 25650)] = FultonCatchSuccess,
     [102070] = { special_function = SF.Trigger, data = { 1020701, 1020702 } },
-    [1020701] = { chance = 34, id = "FultonCatchChance", icons = { Icon.Heli }, class = TT.Chance },
-    [1020702] = { additional_time = 6.8, id = "FultonCatch", icons = WeaponsPickUp, special_function = SF.GetElementTimerAccurate, element = ElementTimerPickup },
+    [1020701] = { chance = 34, id = "FultonCatchChance", icons = { Icon.Heli }, class = TT.Chance, hint = Hints.ranc_Chance },
+    [1020702] = { additional_time = 6.8, id = "FultonCatch", icons = WeaponsPickUp, special_function = SF.GetElementTimerAccurate, element = ElementTimerPickup, hint = Hints.LootTimed },
     [103988] = { id = "FultonCatchChance", special_function = SF.RemoveTracker },
     [EHI:GetInstanceElementID(100055, 14950)] = FultonCatchIncreaseChance,
     [EHI:GetInstanceElementID(100055, 25500)] = FultonCatchIncreaseChance,
@@ -60,7 +61,7 @@ local triggers = {
 if EHI:IsClient() then
     triggers[102053].client = { time = OVKorAbove and 60 or 30, random_time = 5 }
     triggers[1020702].client = { time = OVKorAbove and 60 or 30, random_time = 5 }
-    local FultonCatchAgainClient = { additional_time = 30, random_time = 30, id = "FultonCatchAgain", icons = FultonCatchAgain, special_function = SF.AddTrackerIfDoesNotExist }
+    local FultonCatchAgainClient = { additional_time = 30, random_time = 30, id = "FultonCatchAgain", icons = FultonCatchAgain, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootTimed }
     triggers[EHI:GetInstanceElementID(100070, 14950)] = FultonCatchAgainClient
     triggers[EHI:GetInstanceElementID(100070, 25500)] = FultonCatchAgainClient
     triggers[EHI:GetInstanceElementID(100070, 25650)] = FultonCatchAgainClient

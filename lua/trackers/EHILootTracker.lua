@@ -2,6 +2,7 @@ local format = EHI:GetOption("variable_random_loot_format")
 ---@class EHILootTracker : EHIProgressTracker
 ---@field super EHIProgressTracker
 EHILootTracker = class(EHIProgressTracker)
+EHILootTracker._forced_hint_text = "loot_counter"
 EHILootTracker._forced_icons = { EHI.Icons.Loot }
 EHILootTracker._show_popup = EHI:GetOption("show_all_loot_secured_popup")
 ---@param panel Panel
@@ -143,6 +144,7 @@ EHILootTracker.FormatProgress = EHILootTracker.Format
 ---@field _icon2 PanelBitmap
 ---@field super EHILootTracker
 EHIAchievementLootCounterTracker = class(EHILootTracker)
+EHIAchievementLootCounterTracker._hint_on_fail = EHIAchievementLootCounterTracker._forced_hint_text
 EHIAchievementLootCounterTracker._popup_type = "achievement"
 EHIAchievementLootCounterTracker._show_started = EHIAchievementTracker._show_started
 EHIAchievementLootCounterTracker._show_failed = EHIAchievementTracker._show_failed
@@ -150,6 +152,8 @@ EHIAchievementLootCounterTracker._show_desc = EHIAchievementTracker._show_desc
 EHIAchievementLootCounterTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 EHIAchievementLootCounterTracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
 EHIAchievementLootCounterTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
+EHIAchievementLootCounterTracker.ShowHint = EHIAchievementTracker.ShowHint
+EHIAchievementLootCounterTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
 ---@param panel Panel
 ---@param params EHITracker_params
 ---@param parent_class EHITrackerManager
@@ -159,12 +163,18 @@ function EHIAchievementLootCounterTracker:init(panel, params, parent_class)
     self._loot_counter_on_fail = params.loot_counter_on_fail
     self._forced_icons[1] = params.icons[1]
     self._forced_icons[2] = "pd2_loot"
+    if not params.start_silent then
+        self._forced_hint_text = "achievement_" .. params.id
+        params.hint_vanilla_localization = true
+    end
     EHIAchievementLootCounterTracker.super.init(self, panel, params, parent_class)
+    self._hint_showed = true
     if params.start_silent then
         self._silent_start = true
         self._icon2:set_visible(true)
         self._icon1:set_visible(false)
         self._panel_override_w = self._bg_box:w() + self._icon_gap_size_scaled
+        self:SetHintX(self._panel_override_w)
         if not self._manually_created_icon2 then
             self._icon2:set_x(self._icon1:x())
         end
@@ -222,12 +232,16 @@ function EHIAchievementLootCounterTracker:SetFailedSilent()
     self._failed_on_sync = true
     self._show_failed = nil
     self._show_finish_after_reaching_target = nil
+    self._forced_hint_text = nil
     self:SetFailed()
 end
 
 function EHIAchievementLootCounterTracker:SetStarted()
     if self._show_started then
         self._failed_allowed = self._silent_start
+        if self._silent_start then
+            self:UpdateHint("achievement_" .. self._id, true)
+        end
         self:ShowStartedPopup()
         self._icon1:set_visible(true)
         if self._manually_created_icon2 then

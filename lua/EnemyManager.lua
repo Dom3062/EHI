@@ -80,15 +80,19 @@ if EHI:GetOption("show_enemy_count_tracker") then
 end
 
 if EHI:CanShowCivilianCountTracker() then
+    ---@param count number
     local function CreateTracker(count)
         managers.ehi_tracker:AddTracker({
             id = "CivilianCount",
             count = count,
             flash_times = 1,
             icons = { "civilians" },
+            hint = "civilians",
             class = EHI.Trackers.Counter
         })
     end
+    ---@param civilian_data table
+    ---@param from_destroy boolean?
     local function CivilianDied(civilian_data, from_destroy)
         if managers.ehi_tracker:TrackerExists("CivilianCount") then
             local count = managers.ehi_tracker:ReturnValue("CivilianCount", "GetCount")

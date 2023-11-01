@@ -2,6 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local triggers = {}
 ---@type ParseAchievementTable
 local achievements = {}
@@ -9,7 +10,7 @@ local other = {}
 local level_id = Global.game_settings.level_id
 local EscapeXP = 16000
 if level_id == "firestarter_3" then
-    triggers[102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire } }
+    triggers[102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire }, hint = Hints.Fire }
     achievements.slakt_5 =
     {
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
@@ -36,8 +37,8 @@ else
     end
     EscapeXP = 12000
 end
-triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
-triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning }
+triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning, hint = Hints.Teargas }
+triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning, hint = Hints.Teargas }
 
 achievements.voff_1 =
 {

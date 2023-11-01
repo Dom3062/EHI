@@ -2,15 +2,17 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
+---@param block boolean
 local function SetAssaultTrackerBlock(block)
     managers.hud:SetAssaultTrackerManualBlock(block)
 end
 ---@type ParseTriggerTable
 local triggers = {
-    [102685] = { id = "Refueling", icons = { Icon.Oil }, class = TT.Pausable, special_function = SF.SetTimeIfLoudOrStealth, data = { loud = 121, stealth = 91 }, trigger_times = 1 },
+    [102685] = { id = "Refueling", icons = { Icon.Oil }, class = TT.Pausable, special_function = SF.SetTimeIfLoudOrStealth, data = { loud = 121, stealth = 91 }, trigger_times = 1, hint = Hints.FuelTransfer },
     [102678] = { id = "Refueling", special_function = SF.UnpauseTracker },
     [102684] = { id = "Refueling", special_function = SF.PauseTracker },
-    [101983] = { time = 15, id = "C4Trap", icons = { Icon.C4 }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled },
+    [101983] = { time = 15, id = "C4Trap", icons = { Icon.C4 }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.Explosion },
     [101722] = { id = "C4Trap", special_function = SF.RemoveTracker }
 }
 ---@type ParseAchievementTable

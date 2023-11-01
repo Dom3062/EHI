@@ -444,7 +444,7 @@ function EHIManager:AddTriggers2(new_triggers, params, trigger_id_all, trigger_i
 end
 
 ---@param new_triggers table
----@param type string
+---@param type
 ---|"base" # Random delay is defined in the BASE DELAY
 ---|"element" # Random delay is defined when calling the elements
 ---@param trigger_id_all string?
@@ -779,8 +779,7 @@ function EHIManager:FilterOutNotLoadedTrackers(trigger_table, option)
     end
     for _, trigger in pairs(trigger_table) do
         if trigger.class then
-            ---@type string?
-            local key = table.get_key(not_loaded_tt, trigger.class)
+            local key = table.get_key(not_loaded_tt, trigger.class) --[[@as string?]]
             if key then
                 trigger.class = self.Trackers[key] --[[@as string]]
             end
@@ -800,7 +799,7 @@ function EHIManager:InitElements()
     self:AddPositionToWaypointFromLoad()
     local scripts = managers.mission._scripts or {}
     if next(base_delay_triggers) then
-        self._base_delay = {} ---@type table<number, fun(self: MissionScriptElement): number>
+        self._base_delay = {} ---@type table<number, fun(e: MissionScriptElement): number>
         for id, _ in pairs(base_delay_triggers) do
             for _, script in pairs(scripts) do
                 local element = script:element(id)
@@ -816,7 +815,7 @@ function EHIManager:InitElements()
         end
     end
     if next(element_delay_triggers) then
-        self._element_delay = {} ---@type table<number, fun(self: MissionScriptElement, params: table): number>
+        self._element_delay = {} ---@type table<number, fun(e: MissionScriptElement, params: table): number>
         for id, _ in pairs(element_delay_triggers) do
             for _, script in pairs(scripts) do
                 local element = script:element(id)
@@ -933,7 +932,7 @@ function EHIManager:SyncLoad()
 end
 
 ---@param trigger ElementTrigger
-local function AddTracker(self, trigger)
+function EHIManager:_AddTracker(trigger)
     if trigger.random_time then
         trigger.time = self:GetRandomTime(trigger)
         if trigger.waypoint then
@@ -956,7 +955,7 @@ function EHIManager:AddTracker(trigger)
     if trigger.run then
         self._trackers:RunTracker(trigger.id, trigger.run)
     else
-        AddTracker(self, trigger)
+        self:_AddTracker(trigger)
     end
     if trigger.waypoint_f then
         trigger.waypoint_f(self, trigger)
@@ -973,6 +972,7 @@ function EHIManager:AddTrackerAndSync(id, delay)
         id = trigger.id,
         time = (trigger.time or 0) + (delay or 0),
         icons = trigger.icons,
+        hint = trigger.hint,
         class = trigger.class
     }, id, delay)
     if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
@@ -1333,6 +1333,7 @@ function EHIManager:AddTrackerSynced(id, delay)
                 id = trigger_id,
                 time = t,
                 icons = trigger.icons,
+                hint = trigger.hint,
                 class = class
             }, trigger.pos)
             if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
@@ -1383,10 +1384,7 @@ end
 ---@param icon string
 function EHIManager:UpdateWaypointTriggerIcon(id, icon)
     local t = triggers[id]
-    if not t then
-        return
-    end
-    if not t.waypoint then
+    if not (t and t.waypoint) then
         return
     end
     t.waypoint.icon = icon
@@ -1429,7 +1427,7 @@ if EHI:GetWaypointOption("show_waypoints_only") then
         elseif trigger.run then
             self._trackers:RunTracker(trigger.id, trigger.run)
         else
-            AddTracker(self, trigger)
+            self:_AddTracker(trigger)
         end
     end
 end

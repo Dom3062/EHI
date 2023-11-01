@@ -25,6 +25,7 @@
 ---@field get_skill_exp_multiplier fun(self: self, stealth: boolean?): number
 ---@field upgrade_value_by_level fun(self: self, category: string, upgrade: string, level: number, default: any?): any|number
 ---@field equiptment_upgrade_value fun(self: self, category: string, upgrade: string, default: any?): any|number
+---@field has_deployable_been_used fun(self: self): boolean
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -200,10 +201,9 @@ original.activate_temporary_upgrade = PlayerManager.activate_temporary_upgrade
 function PlayerManager:activate_temporary_upgrade(category, upgrade, ...)
     original.activate_temporary_upgrade(self, category, upgrade, ...)
     local end_time = self._temporary_upgrades[category] and self._temporary_upgrades[category][upgrade] and self._temporary_upgrades[category][upgrade].expire_time
-    if not end_time then
-        return
+    if end_time then
+        managers.ehi_buff:AddBuff2(upgrade, Application:time(), end_time)
     end
-    managers.ehi_buff:AddBuff2(upgrade, Application:time(), end_time)
 end
 
 original.start_timer = PlayerManager.start_timer
@@ -593,10 +593,7 @@ if EHI:GetBuffOption("grinder") then
     function PlayerManager:_check_damage_to_hot(t, ...)
         local previouscooldown = self._next_allowed_doh_t or 0
         original._check_damage_to_hot(self, t, ...)
-        if not self._next_allowed_doh_t or not self:has_category_upgrade("player", "damage_to_hot") then
-            return
-        end
-        if self._next_allowed_doh_t > previouscooldown then
+        if self._next_allowed_doh_t and self._next_allowed_doh_t > previouscooldown then
             managers.ehi_buff:AddBuff2("GrinderStackCooldown", t, self._next_allowed_doh_t)
         end
     end

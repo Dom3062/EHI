@@ -9,10 +9,11 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local triggers = {
-    [101725] = { time = 25 + 0.25 + 2 + 2.35, id = "C4", icons = Icon.HeliDropC4 },
+    [101725] = { time = 25 + 0.25 + 2 + 2.35, id = "C4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery },
 
-    [100866] = { time = 5, id = "C4Explosion", icons = { Icon.C4 } }
+    [100866] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion }
 }
 for _, index in ipairs({ 2300, 5400, 10700 }) do
     local waypoint_id = EHI:GetInstanceElementID(100021, index)

@@ -43,7 +43,7 @@ end
 ---@return boolean
 function LevelsTweakData:IsLevelChristmas(level_id)
 	local level_data = self[level_id or Global.game_settings.level_id] or {}
-	return level_data.is_christmas_heist
+	return level_data.is_christmas_heist and managers.perpetual_event:get_holiday_tactics() == "BTN_XMAS"
 end
 
 ---@param level_id string?

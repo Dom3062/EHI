@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 ---@type Vector3?
 local TransferPosition = nil
 ---@param self EHIManager
@@ -47,14 +48,14 @@ local triggers =
             trigger.waypoint.time = trigger.time
         end
         self:CheckCondition(trigger)
-    end), fix_wp = EHI:GetInstanceElementID(100068, 4650), success_sequence = EHI:GetInstanceElementID(100016, 4650), waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100067, 4650) } },
+    end), fix_wp = EHI:GetInstanceElementID(100068, 4650), success_sequence = EHI:GetInstanceElementID(100016, 4650), waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100067, 4650) }, hint = Hints.Wait },
     [103055] = { id = "FuelChecking", special_function = SF.PauseTracker },
     [103070] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; loud
     [103071] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; stealth
 
-    [102454] = { id = "FuelTransferStealth", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsStealth, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 102438, waypoint_f = TransferWP, stealth = true },
+    [102454] = { id = "FuelTransferStealth", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsStealth, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 102438, waypoint_f = TransferWP, stealth = true, hint = Hints.FuelTransfer },
     [102439] = { id = "FuelTransferStealth", special_function = SF.PauseTracker },
-    [102656] = { id = "FuelTransferLoud", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsLoud, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101686, waypoint_f = TransferWP, loud = true },
+    [102656] = { id = "FuelTransferLoud", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsLoud, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101686, waypoint_f = TransferWP, loud = true, hint = Hints.FuelTransfer },
     [101684] = { id = "FuelTransferLoud", special_function = SF.PauseTracker },
 
     [101050] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
@@ -66,8 +67,8 @@ local triggers =
 if EHI:IsClient() then
     triggers[102454].client = { time = 60, random_time = 20, special_function = SF.UnpauseTrackerIfExists }
     triggers[102656].client = { time = 100, random_time = 30, special_function = SF.UnpauseTrackerIfExists }
-    triggers[101685] = { time = 80, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate }
-    triggers[104930] = { time = 20, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate }
+    triggers[101685] = { time = 80, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate, hint = Hints.FuelTransfer }
+    triggers[104930] = { time = 20, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate, hint = Hints.FuelTransfer }
 end
 
 ---@type ParseAchievementTable

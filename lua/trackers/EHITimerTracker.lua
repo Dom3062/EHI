@@ -13,6 +13,7 @@ EHITimerTracker = class(EHIWarningTracker)
 EHITimerTracker._update = false
 EHITimerTracker._autorepair_color = EHI:GetTWColor("drill_autorepair")
 EHITimerTracker._paused_color = EHIPausableTracker._paused_color
+---@param params EHITracker_params
 function EHITimerTracker:pre_init(params)
     if params.icons[1].icon then
         params.icons[2] = { icon = "faster", visible = false, alpha = 0.25 }
@@ -21,6 +22,7 @@ function EHITimerTracker:pre_init(params)
     end
 end
 
+---@param params EHITracker_params
 function EHITimerTracker:post_init(params)
     self._theme = params.theme
     self:SetUpgradeable(false)
@@ -39,6 +41,7 @@ function EHITimerTracker:post_init(params)
     end
 end
 
+---@param time number
 function EHITimerTracker:SetTimeNoAnim(time) -- No fit text function needed, these timers just run down
     self._time = time
     self._text:set_text(self:Format())
@@ -48,6 +51,8 @@ function EHITimerTracker:SetTimeNoAnim(time) -- No fit text function needed, the
     end
 end
 
+---@param t number
+---@param time string
 function EHITimerTracker:SetTimeNoFormat(t, time) -- No fit text function needed, these timers just run down
     self._time = t
     self._text:set_text(time)
@@ -57,6 +62,7 @@ function EHITimerTracker:SetTimeNoFormat(t, time) -- No fit text function needed
     end
 end
 
+---@param completion boolean
 function EHITimerTracker:SetAnimation(completion)
     self._animate_warning = true
     if completion then
@@ -68,6 +74,7 @@ function EHITimerTracker:SetAnimation(completion)
     end
 end
 
+---@param upgradeable boolean
 function EHITimerTracker:SetUpgradeable(upgradeable)
     self._upgradeable = upgradeable
     if self._icon2 then
@@ -82,6 +89,7 @@ function EHITimerTracker:SetUpgradeable(upgradeable)
     end
 end
 
+---@param upgrades table
 function EHITimerTracker:SetUpgrades(upgrades)
     if not (self._upgradeable and upgrades) then
         return
@@ -94,7 +102,7 @@ function EHITimerTracker:SetUpgrades(upgrades)
     }
     for upgrade, level in pairs(upgrades) do
         if level > 0 then
-            local icon = self["_icon" .. tostring(icon_definition[upgrade])]
+            local icon = self["_icon" .. tostring(icon_definition[upgrade])] --[[@as PanelBitmap?]]
             if icon then
                 icon:set_color(self:GetUpgradeColor(level))
                 icon:set_alpha(1)
@@ -103,6 +111,8 @@ function EHITimerTracker:SetUpgrades(upgrades)
     end
 end
 
+---@param level number
+---@return Color
 function EHITimerTracker:GetUpgradeColor(level)
     if not self._theme then
         return TimerGui.upgrade_colors["upgrade_color_" .. level]
@@ -111,6 +121,7 @@ function EHITimerTracker:GetUpgradeColor(level)
     return theme and theme["upgrade_color_" .. level] or TimerGui.upgrade_colors["upgrade_color_" .. level]
 end
 
+---@param state boolean
 function EHITimerTracker:SetAutorepair(state)
     self._icon1:set_color(state and self._autorepair_color or Color.white)
 end
@@ -152,6 +163,7 @@ function EHITimerTracker:SetTextColor()
     end
 end
 
+---@param t number
 function EHITimerTracker:StartTimer(t)
     self:SetTimeNoAnim(t)
     self:AnimatePanelW(self._panel_double)
@@ -199,6 +211,7 @@ function EHIProgressTimerTracker:post_init(params)
     end
 end
 
+---@param t number
 function EHIProgressTimerTracker:StartTimer(t)
     EHIProgressTimerTracker.super.StartTimer(self, t)
     if self._progress ~= self._max then
@@ -211,6 +224,7 @@ function EHIProgressTimerTracker:StopTimer()
     self:SetBad()
 end
 
+---@param force boolean?
 function EHIProgressTimerTracker:SetCompleted(force)
     if not self._status or force then
         self._status = "completed"
@@ -247,6 +261,7 @@ function EHIChanceTimerTracker:post_init(params)
     self._text:set_left(self._chance_text:right())
 end
 
+---@param amount number
 function EHIChanceTimerTracker:SetChance(amount)
     self._chance = math.max(0, amount)
     self._chance_text:set_text(self:FormatChance())
