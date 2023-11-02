@@ -1,3 +1,6 @@
+r192 (02. 11. 2023):
+Fixed a crash in Blackmarket
+
 r191 (01. 11. 2023):
 Added options "Show Tracker Description", "Tracker Description (Time)", "Show Trophy Description" and "Show Daily Side Job Description"
 Fixed an issue where Xmas XP Bonus is visible when the event is not running
