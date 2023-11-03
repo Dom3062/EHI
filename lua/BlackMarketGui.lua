@@ -489,7 +489,7 @@ function BlackMarketGui:populate_grenades(data, ...)
             grenade_data.name_localized = string.format("%s (x%s)", grenade_data.name_localized, tostring(projectile.max_amount or 1))
             RestoreVanillaText(grenade_desc)
             if projectile.ability or grenade == "smoke_screen_grenade" then
-                local duration = AbilityDuration[grenade] or 0
+                local duration = AbilityDuration[grenade] or 0 --[[@as number|string]]
                 if duration < 0 then
                     duration = strs.instant
                 elseif duration == 0 then

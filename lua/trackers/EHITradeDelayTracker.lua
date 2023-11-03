@@ -129,7 +129,7 @@ function EHITradeDelayTracker:SetPeerCustodyTime(peer_id, time, civilians_killed
     local peer_data = self._peers[peer_id] ---@cast peer_data -?
     peer_data.t = time
     peer_data.civilians_killed = civilians_killed or (peer_data.civilians_killed + 1)
-    self:FormatUnique(peer_data.label, time, killed)
+    self:FormatUnique(peer_data.label, time, peer_data.civilians_killed)
     self:FitTheText(peer_data.label)
     if anim then
         self:AnimateBG()

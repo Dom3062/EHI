@@ -1,3 +1,7 @@
+r193 (03. 11. 2023):
+Added tablet icon to portable hacking devices
+Fixed a crash after killing a civilian
+
 r192 (02. 11. 2023):
 Fixed a crash in Blackmarket
 

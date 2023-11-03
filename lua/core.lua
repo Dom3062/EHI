@@ -408,6 +408,7 @@ _G.EHI =
         Door = "pd2_door",
         USB = "equipment_usb_no_data",
         Destruction = "C_Vlad_H_Mallcrasher_Shoot",
+        Tablet = "tablet",
 
         EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
@@ -2006,6 +2007,7 @@ function EHI:UpdateUnits(tbl)
     self:UpdateUnitsNoCheck(tbl)
 end
 
+---@param tbl table
 function EHI:UpdateUnitsNoCheck(tbl)
     self:FinalizeUnits(tbl)
     for id, data in pairs(tbl) do

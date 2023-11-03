@@ -267,9 +267,11 @@ function TimerGui:DisableOnSetVisible()
     self.set_visible = original.set_visible
 end
 
----@param icons table
+---@param icons table?
 function TimerGui:SetIcons(icons)
-    self._icons = icons
+    if (icons and not self._icons) or icons then
+        self._icons = icons
+    end
 end
 
 ---@param remove_on_power_off boolean

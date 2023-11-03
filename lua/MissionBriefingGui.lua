@@ -20,8 +20,9 @@ local colors =
     optional = EHI:GetColor(EHI.settings.colors.mission_briefing.optional)
 }
 
-local percent_format = "%"
+local percent_format, localization = "%", "english"
 EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, loc_loaded)
+    localization = loc_loaded
     if loc_loaded == "czech" then
         percent_format = " %"
     end
@@ -31,9 +32,14 @@ end)
 local _params
 local TacticSelected, ToggleButtonAlpha = 1, 1
 ---@class XPBreakdownItem
----@field new fun(self: self, gui: MissionBriefingGui, panel: Panel, string: string, type: string, selected: boolean): self
-XPBreakdownItem = class()
-function XPBreakdownItem:init(gui, panel, string, type, selected)
+local XPBreakdownItem = {}
+---@param gui MissionBriefingGui
+---@param panel Panel
+---@param string string
+---@param type string
+---@param selected boolean
+---@return XPBreakdownItem
+function XPBreakdownItem:new(gui, panel, string, type, selected)
     self._gui = gui
     self._type = type
     self._panel = panel
@@ -62,6 +68,7 @@ function XPBreakdownItem:init(gui, panel, string, type, selected)
     if selected then
         self:Select(true)
     end
+    return self
 end
 
 function XPBreakdownItem:GetIndex()
@@ -1451,8 +1458,25 @@ function MissionBriefingGui:AddLootSecured(panel, loot, times, to_secure, value,
     panel.lines = panel.lines + 1
 end
 
+---@param max number
+---@return string
+function MissionBriefingGui:FormatRandomObjectivesHeader(max)
+    if localization == "czech" then
+        if max == 1 then
+            return self._loc:text("ehi_experience_random_objectives", { count = max, suffix1 = "ý", suffix2 = "" })
+        elseif max >= 2 and max <= 4 then
+            return self._loc:text("ehi_experience_random_objectives", { count = max, suffix1 = "é", suffix2 = "y" })
+        else
+            return self._loc:text("ehi_experience_random_objectives", { count = max, suffix1 = "ých", suffix2 = "ů" })
+        end
+    end
+    return self._loc:text("ehi_experience_random_objectives", { count = max })
+end
+
+---@param panel MissionBriefingPanel
+---@param max number?
 function MissionBriefingGui:AddRandomObjectivesHeader(panel, max)
-    local text = max and self._loc:text("ehi_experience_random_objectives", { count = max }) or self._loc:text("ehi_experience_random_objectives_no_count")
+    local text = max and self:FormatRandomObjectivesHeader(max) or self._loc:text("ehi_experience_random_objectives_no_count")
     panel.panel:text({
         name = tostring(panel.lines),
         blend_mode = "add",
@@ -1467,6 +1491,9 @@ function MissionBriefingGui:AddRandomObjectivesHeader(panel, max)
     panel.lines = panel.lines + 1
 end
 
+---@param panel MissionBriefingPanel
+---@param txt string
+---@param txt_color Color?
 function MissionBriefingGui:AddLine(panel, txt, txt_color)
     panel.panel:text({
         name = tostring(panel.lines),
