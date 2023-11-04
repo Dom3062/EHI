@@ -32,14 +32,14 @@ end)
 local _params
 local TacticSelected, ToggleButtonAlpha = 1, 1
 ---@class XPBreakdownItem
-local XPBreakdownItem = {}
+---@field new fun(self: self, gui: MissionBriefingGui, panel: Panel, string: string, type: string, selected: boolean): self
+local XPBreakdownItem = class()
 ---@param gui MissionBriefingGui
 ---@param panel Panel
 ---@param string string
 ---@param type string
 ---@param selected boolean
----@return XPBreakdownItem
-function XPBreakdownItem:new(gui, panel, string, type, selected)
+function XPBreakdownItem:init(gui, panel, string, type, selected)
     self._gui = gui
     self._type = type
     self._panel = panel
@@ -68,7 +68,6 @@ function XPBreakdownItem:new(gui, panel, string, type, selected)
     if selected then
         self:Select(true)
     end
-    return self
 end
 
 function XPBreakdownItem:GetIndex()
@@ -337,6 +336,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
             self._loud_button:SetVisibleWithOffset(offset)
             self._ehi_panel:set_y(self._ehi_panel:y() + offset)
             original.close = self.close
+            ---@param gui MissionBriefingGui
             self.close = function(gui, ...)
                 gui._stealth_button:destroy()
                 gui._loud_button:destroy()
@@ -1808,7 +1808,7 @@ function LobbyCodeMenuComponent:init(...)
     if self._panel:alpha() ~= 0 then
         self._panel:set_y(0)
         if managers.hud._hud_mission_briefing and managers.hud._hud_mission_briefing.MoveJobName then
-            managers.hud._hud_mission_briefing:MoveJobName()
+            managers.hud._hud_mission_briefing:MoveJobName(self._panel:w())
         end
     end
 end

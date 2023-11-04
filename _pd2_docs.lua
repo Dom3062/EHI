@@ -631,6 +631,7 @@ end
 ---@field parent fun(self: self): Panel
 ---@field color fun(self: self): Color
 ---@field set_color fun(self: self, color: Color)
+---@field inside fun(self: self, x: number, y: number): boolean Returns `true` or `false` if provided `x` and `y` are inside the object
 
 ---@class Panel : PanelBaseObject
 ---@field color nil Does not exist in Panel
@@ -642,7 +643,6 @@ end
 ---@field rect fun(self: self, params: table): PanelRectangle
 ---@field panel fun(self: self, params: table): self
 ---@field children fun(self: self): PanelBaseObject[] Returns an ipairs table of all items created on the panel
----@field inside fun(self: self, x: number, y: number): boolean Returns `true` or `false` if provided `x` and `y` are inside the panel
 ---@field clear fun(self: self) Removes all children in the panel
 
 ---@class PanelText : PanelBaseObject
@@ -651,13 +651,10 @@ end
 ---@field font_size fun(self: self): number
 ---@field set_font fun(self: self, font: userdata)
 ---@field set_font_size fun(self: self, font_size: number)
----@field set_size fun(self: self, w: number, h: number)
 ---@field text fun(self: self): string
 
 ---@class PanelBitmap : PanelBaseObject
 ---@field set_image fun(self: self, texture_path: string, texture_rect_x: number?, texture_rect_y: number?, texture_rect_w: number?, texture_rect_h: number?)
 ---@field set_texture_rect fun(self: self, x: number, y: number, w: number, h: number)
----@field set_size fun(self: self, w: number, h: number)
 
 ---@class PanelRectangle : PanelBaseObject
----@field set_size fun(self: self, w: number, h: number)
