@@ -4,7 +4,7 @@ local EHI = EHI
 EHIStopwatchTracker = class(EHITracker)
 EHIStopwatchTracker._forced_icons = { EHI.Icons.Wait }
 EHIStopwatchTracker.super._fade_time = nil
-function EHIStopwatchTracker:update(t, dt)
+function EHIStopwatchTracker:update(dt)
 	if self._fade_time then
 		self._fade_time = self._fade_time - dt
 		if self._fade_time <= 0 then

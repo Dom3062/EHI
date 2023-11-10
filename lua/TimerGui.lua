@@ -18,7 +18,7 @@ end
 local Icon = EHI.Icons
 
 local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
----@type { [string]: number|MissionDoorAdvancedTable }
+---@type { [string]: number|MissionDoorAdvancedTable? }
 local MissionDoor = {}
 
 ---@param tbl table<Vector3, number|MissionDoorAdvancedTable>
@@ -361,7 +361,7 @@ function TimerGui:SetCustomID(id)
 end
 
 ---@param id string
----@param destroy_on_done boolean
+---@param destroy_on_done boolean?
 function TimerGui:SetTrackerMergeID(id, destroy_on_done)
     self._tracker_merge_id = id
     self._destroy_tracker_merge_on_done = destroy_on_done

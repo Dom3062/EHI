@@ -16,7 +16,7 @@ function EHILaserTracker:pre_init(params)
     self._next_cycle_t = params.time
 end
 
-function EHILaserTracker:update(t, dt)
+function EHILaserTracker:update(dt)
     self._time = self._time - dt
     self._text:set_text(self:Format())
     if self._time <= 0 then

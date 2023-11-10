@@ -73,6 +73,7 @@ do
     end
 end
 
+---@return number
 function EHIAggregatedHealthEquipmentTracker:GetTotalAmount()
     local amount = 0
     for _, count in pairs(self._amount) do
@@ -81,6 +82,8 @@ function EHIAggregatedHealthEquipmentTracker:GetTotalAmount()
     return amount
 end
 
+---@param i number
+---@return number
 function EHIAggregatedHealthEquipmentTracker:GetIconPosition(i)
     local start = self._bg_box:w()
     local gap = self._gap_scaled
@@ -117,9 +120,13 @@ function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
     end
     local n = icons
     local panel_w = self._bg_box:w()
-    self:ChangeTrackerWidth(panel_w + ((self._icon_size_scaled + self._gap_scaled) * n))
+    self:ChangeTrackerWidth(panel_w + (self._icon_gap_size_scaled * n))
 end
 
+---@param id string
+---@param unit Unit
+---@param key string
+---@param amount number
 function EHIAggregatedHealthEquipmentTracker:UpdateAmount(id, unit, key, amount)
     if not key then
         EHI:DebugEquipment(self._id, unit, key, amount)

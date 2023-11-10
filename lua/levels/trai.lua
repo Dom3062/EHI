@@ -33,6 +33,7 @@ function EHICraneFixChanceTracker:OverridePanel()
     end
 end
 
+---@param amount number
 function EHICraneFixChanceTracker:SetChance(amount)
     self._chance = math.max(0, amount)
     self._chance_text:set_text(self:FormatChance())

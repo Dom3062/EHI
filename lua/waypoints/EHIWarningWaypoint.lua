@@ -24,10 +24,9 @@ end
 ---@field super EHIWaypoint
 EHIWarningWaypoint = class(EHIWaypoint)
 EHIWarningWaypoint._warning_color = EHI:GetTWColor("warning")
----@param t any Unused
 ---@param dt number
-function EHIWarningWaypoint:update(t, dt)
-    EHIWarningWaypoint.super.update(self, t, dt)
+function EHIWarningWaypoint:update(dt)
+    EHIWarningWaypoint.super.update(self, dt)
     if self._time <= 10 and not self._anim_started then
         self:AnimateColor()
         self._anim_started = true

@@ -1,5 +1,5 @@
 local EHI = EHI
-local player_manager
+local player_manager ---@type PlayerManager
 local detection_risk = 0
 ---@class EHICritChanceBuffTracker : EHIGaugeBuffTracker
 ---@field super EHIGaugeBuffTracker
@@ -16,8 +16,7 @@ function EHICritChanceBuffTracker:UpdateCrit()
     local total = player_manager:critical_hit_chance(detection_risk)
     if self._crit == total then
         return
-    end
-    if self._persistent or total > 0 then
+    elseif self._persistent or total > 0 then
         self:SetRatio(total)
         self:Activate()
     else
@@ -45,6 +44,7 @@ function EHICritChanceBuffTracker:PreUpdate()
     self:SetRatio(0)
 end
 
+---@param state boolean
 function EHICritChanceBuffTracker:SetCustody(state)
     if state then
         self:RemoveBuffFromUpdate()
@@ -57,7 +57,8 @@ function EHICritChanceBuffTracker:SetCustody(state)
     self._update_disabled = state
 end
 
-function EHICritChanceBuffTracker:update(t, dt)
+---@param dt number
+function EHICritChanceBuffTracker:update(dt)
     self._time = self._time - dt
     if self._time <= 0 then
         self:UpdateCrit()

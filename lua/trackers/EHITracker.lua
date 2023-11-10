@@ -703,9 +703,8 @@ function EHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
     end
 end
 
----@param t any Unused
 ---@param dt number
-function EHITracker:update(t, dt)
+function EHITracker:update(dt)
     self._time = self._time - dt
     self._text:set_text(self:Format())
     if self._time <= 0 then
@@ -713,9 +712,8 @@ function EHITracker:update(t, dt)
     end
 end
 
----@param t any Unused
 ---@param dt number
-function EHITracker:update_fade(t, dt)
+function EHITracker:update_fade(dt)
     self._fade_time = self._fade_time - dt
     if self._fade_time <= 0 then
         self:delete()

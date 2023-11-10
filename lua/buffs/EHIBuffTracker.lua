@@ -390,7 +390,7 @@ function EHIBuffTracker:PreUpdateCheck()
 end
 
 if progress then
-    function EHIBuffTracker:update(t, dt)
+    function EHIBuffTracker:update(dt)
         self._time = self._time - dt
         self._text:set_text(self:Format())
         self._progress_bar.red = self._time / self._time_set
@@ -400,7 +400,7 @@ if progress then
         end
     end
 else
-    function EHIBuffTracker:update(t, dt)
+    function EHIBuffTracker:update(dt)
         self._time = self._time - dt
         self._text:set_text(self:Format())
         if self._time <= 0 then

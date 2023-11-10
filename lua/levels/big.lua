@@ -191,7 +191,7 @@ EHI:AddXPBreakdown({
     {
         { amount = 8000, name = "correct_pc_hack" },
         { amount = 4000, name = "timelock_done" },
-        { amount = 10000, name = "escape_is_enabled" },
+        { amount = 10000, name = "fs_secured_required_bags" },
         { escape = 8000 }
     },
     loot_all = 1000

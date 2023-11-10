@@ -79,6 +79,7 @@ tweak_data.ehi =
         ["units/world/props/suburbia_hackbox/suburbia_hackbox"] = { icons = { Icon.Tablet } },
         ["units/pd2_dlc_dah/props/dah_prop_hack_box/dah_prop_hack_ipad_unit"] = { icons = { Icon.Tablet } },
         ["units/pd2_dlc_sah/props/sah_interactable_hackbox/sah_interactable_hackbox"] = { icons = { Icon.Tablet } },
+        ["units/pd2_dlc_vit/props/vit_prop_hacking_device/vit_prop_hacking_device"] = { icons = { Icon.Tablet } },
         ["units/pd2_dlc_trai/props/trai_int_prop_hacking_device/trai_int_prop_hacking_device"] = { icons = { Icon.Tablet } }
     },
     -- Definitions for buffs and their icons

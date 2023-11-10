@@ -39,10 +39,12 @@
             <post :hook_id="menumanager" :script_path="EHIMenu.lua" />
             <post :hook_id="menumanager" :script_path="EHIMenuCallbacks.lua" />
             <post :hook_id="menumanager" :script_path="menu.lua" />
-            <post :hook_id="menu/blackmarketgui" :script_path="BlackMarketGui.lua" />
-            <post :hook_id="menu/menunodegui" :script_path="MenuNodeMainGui.lua" />
-            <post :hook_id="menu/missionbriefinggui" :script_path="MissionBriefingGui.lua" />
-            <post :hook_id="menu/walletguiobject" :script_path="WalletGuiObject.lua" />
+            <group :hook_id="menu/">
+                <post :hook_id="blackmarketgui" :script_path="BlackMarketGui.lua" />
+                <post :hook_id="menunodegui" :script_path="MenuNodeMainGui.lua" />
+                <post :hook_id="missionbriefinggui" :script_path="MissionBriefingGui.lua" />
+                <post :hook_id="walletguiobject" :script_path="WalletGuiObject.lua" />
+            </group>
 
             <post :hook_id="playermanager" :script_path="PlayerManager.lua" />
             <post :hook_id="preplanningmanager" :script_path = "PrePlanningManager.lua" />

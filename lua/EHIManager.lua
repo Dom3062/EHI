@@ -212,18 +212,17 @@ function EHIManager:GetDropin()
     return not self:GetStartedFromBeginning()
 end
 
----@param t number
 ---@param dt number
 function EHIManager:update(t, dt)
-    self._trackers:update(t, dt)
-    self._waypoints:update(t, dt)
+    self._trackers:update(nil, dt)
+    self._waypoints:update(dt)
 end
 
 ---@param t number
 function EHIManager:update_client(t)
     local dt = t - self._t
     self._t = t
-    self:update(t, dt)
+    self:update(nil, dt)
 end
 
 ---@param id string
@@ -490,6 +489,8 @@ end
 function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     new_triggers = new_triggers or {}
     self:PreloadTrackers(new_triggers.preload or {}, trigger_id_all or "Trigger", trigger_icons_all or {})
+    ---@param data ParseAchievementDefinitionTable
+    ---@param id string
     local function ParseParams(data, id)
         if type(data.alarm_callback) == "function" then
             EHI:AddOnAlarmCallback(data.alarm_callback)
@@ -1405,6 +1406,7 @@ function EHIManager:RegisterCustomSpecialFunction(id, f)
     end
 end
 
+---@param id number
 function EHIManager:UnregisterCustomSpecialFunction(id)
     self.SFF[id] = nil
 end

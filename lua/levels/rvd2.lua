@@ -9,8 +9,7 @@ local element_sync_triggers =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [100903] = { time = 120, id = "LiquidNitrogen", icons = { Icon.LiquidNitrogen }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1009031 }, waypoint = { position_by_element = 100941 }, hint = Hints.rvd2_LiquidNitrogen },
-    [1009031] = { time = 63 + 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4, waypoint = { icon = Icon.C4, position_by_element = 100943 }, hint = Hints.C4Delivery },
+    [100903] = { time = 120, id = "LiquidNitrogen", icons = { Icon.LiquidNitrogen }, waypoint = { position_by_element = 100941 }, hint = Hints.rvd2_LiquidNitrogen },
 
     [100699] = { time = 8 + 25 + 13, id = "ObjectiveWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
@@ -40,10 +39,9 @@ if EHI:IsClient() then
     triggers[101366] = { additional_time = 5 + 40, random_time = 10, id = "VaultTeargas", icons = { Icon.Teargas }, hint = Hints.Teargas }
     local LiquidNitrogen = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
         if self._trackers:TrackerDoesNotExist("LiquidNitrogen") then
-            local t = trigger.time - 10
             self._trackers:AddTracker({
                 id = "LiquidNitrogen",
-                time = t,
+                time = trigger.time - 10,
                 icons = { Icon.LiquidNitrogen },
                 hint = Hints.rvd2_LiquidNitrogen
             })
@@ -63,6 +61,7 @@ if EHI:IsClient() then
     triggers[101629] = { time = 24 + 3, special_function = LiquidNitrogen, waypoint_f = WP }
 else
     EHI:AddHostTriggers(element_sync_triggers, "element")
+    triggers[101498] = { time = 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4, waypoint = { icon = Icon.C4, position_by_element = 100943 }, hint = Hints.C4Delivery }
 end
 local other =
 {

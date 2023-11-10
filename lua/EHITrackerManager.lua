@@ -4,7 +4,7 @@ local EHI = EHI
 ---@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) VR only (EHITrackerManagerVR)
 ---@field SetPanel fun(self: self, panel: Panel) VR only (EHITrackerManagerVR)
 EHITrackerManager = {}
-EHITrackerManager.GetAchievementIcon = EHI.GetAchievementIconString
+EHITrackerManager.GetAchievementIcon = EHI.GetAchievementIcon
 function EHITrackerManager:new()
     self:CreateWorkspace()
     self._t = 0
@@ -63,11 +63,10 @@ function EHITrackerManager:LoadSync()
     end)
 end
 
----@param t number
 ---@param dt number
 function EHITrackerManager:update(t, dt)
     for _, tracker in pairs(self._trackers_to_update) do
-        tracker:update(t, dt)
+        tracker:update(dt)
     end
 end
 
@@ -75,7 +74,7 @@ end
 function EHITrackerManager:update_client(t)
     local dt = t - self._t
     self._t = t
-    self:update(t, dt)
+    self:update(nil, dt)
 end
 
 function EHITrackerManager:destroy()
@@ -199,11 +198,10 @@ function EHITrackerManager:AddTimedAchievementTracker(id, time_max)
     if t <= 0 then
         return
     end
-    local icon = self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         time = t,
-        icons = { icon },
+        icons = self:GetAchievementIcon(id),
         class = EHI.Trackers.Achievement.Base
     })
 end
@@ -214,12 +212,11 @@ end
 ---@param show_finish_after_reaching_target boolean?
 ---@param class string?
 function EHITrackerManager:AddAchievementProgressTracker(id, max, progress, show_finish_after_reaching_target, class)
-    local icon = self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         progress = progress,
         max = max,
-        icons = { icon },
+        icons = self:GetAchievementIcon(id),
         show_finish_after_reaching_target = show_finish_after_reaching_target,
         class = class or EHI.Trackers.Achievement.Progress
     })
@@ -228,11 +225,10 @@ end
 ---@param id string
 ---@param status string?
 function EHITrackerManager:AddAchievementStatusTracker(id, status)
-    local icon = self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         status = status,
-        icons = { icon },
+        icons = self:GetAchievementIcon(id),
         class = EHI.Trackers.Achievement.Status
     })
 end
@@ -242,11 +238,10 @@ end
 ---@param loot_counter_on_fail boolean?
 ---@param start_silent boolean?
 function EHITrackerManager:AddAchievementLootCounter(id, max, loot_counter_on_fail, start_silent)
-    local icon = self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         max = max,
-        icons = { icon },
+        icons = self:GetAchievementIcon(id),
         loot_counter_on_fail = loot_counter_on_fail,
         start_silent = start_silent,
         class = EHI.Trackers.Achievement.LootCounter
@@ -257,12 +252,10 @@ end
 ---@param max number
 ---@param show_finish_after_reaching_target boolean?
 function EHITrackerManager:AddAchievementBagValueCounter(id, max, show_finish_after_reaching_target)
-    local icon = self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         max = max,
-        icons = { icon },
-        delay_popup = true,
+        icons = self:GetAchievementIcon(id),
         show_finish_after_reaching_target = show_finish_after_reaching_target,
         class = EHI.Trackers.Achievement.BagValue
     })
@@ -291,13 +284,11 @@ end
 ---@param progress number
 ---@param max number
 function EHITrackerManager:AddAchievementKillCounter(id, progress, max)
-    local icon = self:GetAchievementIcon(id)
     self:AddTracker({
         id = id,
         progress = progress,
         max = max,
-        icons = { icon },
-        delay_popup = true,
+        icons = self:GetAchievementIcon(id),
         class = EHI.Trackers.Achievement.Progress
     })
 end

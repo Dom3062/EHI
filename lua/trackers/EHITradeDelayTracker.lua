@@ -254,9 +254,8 @@ else
     end
 end
 
----@param t any Unused
 ---@param dt number
-function EHITradeDelayTracker:update(t, dt)
+function EHITradeDelayTracker:update(dt)
     if self._tick > 0 then
         self._tick = self._tick - dt
         return

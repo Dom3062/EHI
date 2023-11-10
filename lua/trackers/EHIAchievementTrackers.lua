@@ -8,6 +8,7 @@ EHIAchievementTracker._popup_type = "achievement"
 EHIAchievementTracker._show_started = EHI:GetUnlockableOption("show_achievement_started_popup")
 EHIAchievementTracker._show_failed = EHI:GetUnlockableOption("show_achievement_failed_popup")
 EHIAchievementTracker._show_desc = EHI:GetUnlockableOption("show_achievement_description")
+---@param params EHITracker_params
 function EHIAchievementTracker:post_init(params)
     self._beardlib = params.beardlib
     if self._show_started then
@@ -16,7 +17,18 @@ function EHIAchievementTracker:post_init(params)
     if self._show_desc then
         self:ShowAchievementDescription()
     end
-    self:ShowHint()
+    self:PrepareHint(params)
+end
+
+---@param params EHITracker_params
+function EHIAchievementTracker:PrepareHint(params)
+    local id = self._id or params.id
+    if self._beardlib then
+        params.hint = EHI._cache.Beardlib[id].name
+    else
+        params.hint = "achievement_" .. id
+    end
+    params.hint_vanilla_localization = true
 end
 
 function EHIAchievementTracker:SetCompleted()
@@ -86,32 +98,6 @@ function EHIAchievementTracker:ShowAchievementDescription(delay_popup)
     self._desc_showed = true
 end
 
----@param delay_popup boolean?
----@param from_delay boolean?
-function EHIAchievementTracker:ShowHint(delay_popup, from_delay)
-    if delay_popup or self._hint_showed then
-        self._from_delay = from_delay
-        return
-    end
-    local id
-    if self._failed_on_sync then ---@diagnostic disable-line
-        id = self._hint_on_fail ---@diagnostic disable-line
-    elseif self._popup_type == "daily" or self._popup_type == "trophy" then
-        id = self._id
-    elseif self._beardlib then
-        id = EHI._cache.Beardlib[self._id].name
-    else
-        id = "achievement_" .. self._id
-    end
-    self:CreateHint(id, not self._failed_on_sync) ---@diagnostic disable-line
-    if self._from_delay or from_delay then
-        local tracker_def = self._parent_class._trackers[self._id] ---@cast tracker_def -?
-        self:PositionHint(tracker_def.x, self._parent_class:GetY(tracker_def.pos))
-        self._from_delay = nil
-    end
-    self._hint_showed = true
-end
-
 function EHIAchievementTracker:PlayerSpawned()
     EHIAchievementTracker.super.PlayerSpawned(self)
     if self._show_started then
@@ -120,7 +106,6 @@ function EHIAchievementTracker:PlayerSpawned()
     if self._show_desc then
         self:ShowAchievementDescription()
     end
-    self:ShowHint()
 end
 
 ---@class EHIAchievementProgressTracker : EHIProgressTracker, EHIAchievementTracker
@@ -133,7 +118,7 @@ EHIAchievementProgressTracker._show_desc = EHIAchievementTracker._show_desc
 EHIAchievementProgressTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 EHIAchievementProgressTracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
 EHIAchievementProgressTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
-EHIAchievementProgressTracker.ShowHint = EHIAchievementTracker.ShowHint
+EHIAchievementProgressTracker.PrepareHint = EHIAchievementTracker.PrepareHint
 EHIAchievementProgressTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
 ---@param panel Panel
 ---@param params EHITracker_params
@@ -141,6 +126,7 @@ EHIAchievementProgressTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawne
 function EHIAchievementProgressTracker:init(panel, params, parent_class)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
+    self:PrepareHint(params)
     EHIAchievementProgressTracker.super.init(self, panel, params, parent_class)
     if self._show_started then
         self:ShowStartedPopup(params.delay_popup)
@@ -148,7 +134,6 @@ function EHIAchievementProgressTracker:init(panel, params, parent_class)
     if self._show_desc then
         self:ShowAchievementDescription(params.delay_popup)
     end
-    self:ShowHint(params.delay_popup)
 end
 
 function EHIAchievementProgressTracker:SetCompleted(force)
@@ -177,8 +162,9 @@ EHIAchievementUnlockTracker._show_desc = EHIAchievementTracker._show_desc
 EHIAchievementUnlockTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 EHIAchievementUnlockTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
 EHIAchievementUnlockTracker.SetFailed = EHIAchievementTracker.SetFailed
-EHIAchievementUnlockTracker.ShowHint = EHIAchievementTracker.ShowHint
+EHIAchievementUnlockTracker.PrepareHint = EHIAchievementTracker.PrepareHint
 EHIAchievementUnlockTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
+---@param params EHITracker_params
 function EHIAchievementUnlockTracker:post_init(params)
     self._beardlib = params.beardlib
     if self._show_started then
@@ -187,7 +173,7 @@ function EHIAchievementUnlockTracker:post_init(params)
     if self._show_desc then
         self:ShowAchievementDescription()
     end
-    self:ShowHint()
+    self:PrepareHint(params)
 end
 
 ---@class EHIAchievementBagValueTracker : EHINeededValueTracker, EHIAchievementTracker
@@ -200,8 +186,9 @@ EHIAchievementBagValueTracker._show_desc = EHIAchievementTracker._show_desc
 EHIAchievementBagValueTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 EHIAchievementBagValueTracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
 EHIAchievementBagValueTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
-EHIAchievementBagValueTracker.ShowHint = EHIAchievementTracker.ShowHint
+EHIAchievementBagValueTracker.PrepareHint = EHIAchievementTracker.PrepareHint
 EHIAchievementBagValueTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
+---@param params EHITracker_params
 function EHIAchievementBagValueTracker:post_init(params)
     self._beardlib = params.beardlib
     if self._show_started then
@@ -210,7 +197,7 @@ function EHIAchievementBagValueTracker:post_init(params)
     if self._show_desc then
         self:ShowAchievementDescription(params.delay_popup)
     end
-    self:ShowHint(params.delay_popup)
+    self:PrepareHint(params)
 end
 
 function EHIAchievementBagValueTracker:SetCompleted(force)

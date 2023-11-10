@@ -277,11 +277,10 @@ function EHIWaypointManager:RemoveWaypointFromUpdate(id)
     self._waypoints_to_update[id] = nil
 end
 
----@param t number
 ---@param dt number
-function EHIWaypointManager:update(t, dt)
+function EHIWaypointManager:update(dt)
     for _, waypoint in pairs(self._waypoints_to_update) do
-        waypoint:update(t, dt)
+        waypoint:update(dt)
     end
 end
 

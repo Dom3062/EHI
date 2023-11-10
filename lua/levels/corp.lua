@@ -14,7 +14,6 @@ EHIcorp9Tracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchieveme
 ---@param params EHITracker_params
 ---@param parent_class EHITrackerManager
 function EHIcorp9Tracker:init(panel, params, parent_class)
-    self._hint_showed = true
     params.hint_vanilla_localization = true
     EHIcorp9Tracker.super.init(self, panel, params, parent_class)
     if self._show_started then

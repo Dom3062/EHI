@@ -27,7 +27,7 @@ local triggers = {
 
     [102095] = { special_function = SF.Trigger, data = { 1020951, 1020952 } },
     [1020951] = { time = 26, id = "AirlockOpenOutside", icons = { Icon.Door }, condition_function = CF.IsStealth, hint = Hints.Wait },
-    [1020952] = { time = 26, id = "AirlockOpenOutsideEndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning, condition_function = CF.IsLoud, hint = Hints.Wait },
+    [1020952] = { time = 26, id = "AirlockOpenOutsideEndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning, condition_function = CF.IsLoud, hint = Hints.EndlessAssault },
 
     [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 101914 }, hint = Hints.Escape } -- 30s delay + 26s escape zone delay
 }

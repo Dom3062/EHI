@@ -291,7 +291,7 @@ _G.EHI =
         PickUpPhone = "pick_up_phone",
         Kills = "kills",
         Winch = "winch",
-        HeliDropC4 = "c4_delivery",
+        C4Delivery = "c4_delivery",
         ColorCodes = "color_codes",
         KeypadReset = "keypad_reset",
         FuelTransfer = "fuel_transfer",
@@ -311,9 +311,10 @@ _G.EHI =
         crojob3_WaterEnRoute = "crojob3_water_enroute",
         crojob3_WaterRefill = "crojob3_water_refill",
         des_Crane = "des_crane",
+        des_ChemSet = "des_chem_set",
         des_ChemSetRestart = "des_chem_set_restart",
         des_ChemSetInterrupt = "des_chem_set_interrupt",
-        des_ChemSet = "des_chem_set",
+        des_ChemSetCooking = "des_chem_set_cooking",
         election_day_3_CrashChance = "election_day_3_crash_chance",
         election_day_3_CrashChanceTime = "election_day_3_crash_chance_time",
         friend_Heli = "friend_heli",
@@ -2015,9 +2016,9 @@ function EHI:UpdateUnitsNoCheck(tbl)
     end
 end
 
----@param tbl table
+---@param tbl ParseUnitsTable
 ---@param instance_start_index number
----@param instance_continent_index? number Defaults to `100000`
+---@param instance_continent_index number? Defaults to `100000` if not provided
 function EHI:UpdateInstanceUnits(tbl, instance_start_index, instance_continent_index)
     if not self:GetOption("show_timers") then
         return
@@ -2025,19 +2026,20 @@ function EHI:UpdateInstanceUnits(tbl, instance_start_index, instance_continent_i
     self:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
 end
 
----@param tbl table
+---@param tbl table<number, UnitUpdateDefinition>
 ---@param instance_start_index number
----@param instance_continent_index? number Defaults to `100000`
+---@param instance_continent_index number? Defaults to `100000` if not provided
 function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
-    local new_tbl = {}
+    local new_tbl = {} ---@type ParseUnitsTable
     instance_continent_index = instance_continent_index or 100000
     for id, data in pairs(tbl) do
         local computed_id = self:GetInstanceElementID(id, instance_start_index, instance_continent_index)
-        new_tbl[computed_id] = deep_clone(data)
-        if new_tbl[computed_id].remove_vanilla_waypoint then
-            new_tbl[computed_id].remove_vanilla_waypoint = self:GetInstanceElementID(new_tbl[computed_id].remove_vanilla_waypoint, instance_start_index, instance_continent_index)
+        local cloned_data = deep_clone(data)
+        if cloned_data.remove_vanilla_waypoint then
+            cloned_data.remove_vanilla_waypoint = self:GetInstanceElementID(cloned_data.remove_vanilla_waypoint, instance_start_index, instance_continent_index)
         end
-        new_tbl[computed_id].base_index = id
+        cloned_data.base_index = id
+        new_tbl[computed_id] = cloned_data
     end
     self:FinalizeUnits(new_tbl)
     for id, data in pairs(new_tbl) do
@@ -2090,7 +2092,7 @@ end
 ---`deathwish = 30s`  
 ---`deathsentence = 40s`  
 ---@param time_override KeypadResetTimerTable? Overrides default keypad time reset for each difficulty
----@return integer
+---@return number
 function EHI:GetKeypadResetTimer(time_override)
     time_override = time_override or {}
     if self:IsDifficulty(self.Difficulties.Normal) then

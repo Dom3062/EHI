@@ -645,7 +645,6 @@
     "ehi_experience_loud_escape" : "Побег по-громкому",
     "ehi_experience_stealth_escape" : "Побег по-тихому",
     "ehi_experience_escape" : "Побег",
-    "ehi_experience_escape_is_enabled" : "Зона побега доступна",
     "ehi_experience_each_loot_secured" : "Каждая захваченная сумка",
     "ehi_experience_loot_else" : "Всё остальное",
     "ehi_experience_loot_secured" : "Захват сумки",

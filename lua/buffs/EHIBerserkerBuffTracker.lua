@@ -33,9 +33,10 @@ function EHIBerserkerBuffTracker:PreUpdate()
     self:AddBuffToUpdate()
 end
 
+---@param state boolean
 function EHIBerserkerBuffTracker:SetCustody(state)
     if state then
-        self._parent_class:RemoveBuffFromUpdate(self._id)
+        self:RemoveBuffFromUpdate()
         self:Deactivate()
     else
         self:Activate()
@@ -44,7 +45,7 @@ function EHIBerserkerBuffTracker:SetCustody(state)
     end
 end
 
-function EHIBerserkerBuffTracker:update(t, dt)
+function EHIBerserkerBuffTracker:update(dt)
     self._time = self._time - dt
     if self._time <= 0 then
         self:UpdateMultipliers()

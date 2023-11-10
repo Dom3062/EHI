@@ -29,6 +29,7 @@ if EHI:GetOption("show_difficulty_tracker") then
                 id = id,
                 icons = { "enemy" },
                 chance = diff,
+                hint = "diff",
                 class = EHI.Trackers.Chance
             })
         end

@@ -19,7 +19,7 @@ local instances =
 {
     ["levels/instances/shared/obj_skm/world"] = -- Hostage in the Holdout mode
     {
-        [100032] = { time = 7, id = "skm_HostageRescue", icons = { Icon.Kill }, class = TT.Warning, hint = Hints.Defend },
+        [100032] = { time = 7, id = "skm_HostageRescue", icons = { Icon.Kill }, class = TT.Warning, hint = Hints.roberts_GenSecWarning, special_function = SF.SetTimeOrCreateTracker },
         [100036] = { id = "skm_HostageRescue", special_function = SF.RemoveTracker }
     },
     ["levels/instances/unique/hlm_reader/world"] =

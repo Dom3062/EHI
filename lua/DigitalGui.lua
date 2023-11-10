@@ -217,9 +217,11 @@ function DigitalGui:OnAlarm()
     self:RemoveTracker()
 end
 
----@param icons table
+---@param icons table?
 function DigitalGui:SetIcons(icons)
-    self._icons = icons
+    if (icons and not self._icons) or icons then
+        self._icons = icons
+    end
 end
 
 ---@param icon string

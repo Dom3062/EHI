@@ -43,9 +43,8 @@ function EHITotalXPTracker:init(panel, params, parent_class)
     end
 end
 
----@param t any Unused
 ---@param dt number
-function EHITotalXPTracker:update(t, dt)
+function EHITotalXPTracker:update(dt)
     self:delete()
 end
 

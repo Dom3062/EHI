@@ -30,8 +30,9 @@ EHIWarningTracker._warning_color = EHI:GetTWColor("warning")
 EHIWarningTracker._completion_color = EHI:GetTWColor("completion")
 EHIWarningTracker._check_anim_progress = false
 EHIWarningTracker._show_completion_color = false
-function EHIWarningTracker:update(t, dt)
-    EHIWarningTracker.super.update(self, t, dt)
+---@param dt number
+function EHIWarningTracker:update(dt)
+    EHIWarningTracker.super.update(self, dt)
     if self._time <= 10 and not self._time_warning then
         self._time_warning = true
         self:AnimateColor(self._check_anim_progress)
@@ -45,11 +46,12 @@ function EHIWarningTracker:AnimateColor(check_progress, color)
     end
 end
 
-function EHIWarningTracker:Run(params)
+---@param time number
+function EHIWarningTracker:SetTimeNoAnim(time)
     self._time_warning = false
     self._text:stop()
-    self._check_anim_progress = (params.time or 0) <= 10
-    EHIWarningTracker.super.Run(self, params)
+    self._check_anim_progress = time <= 10
+    EHIWarningTracker.super.SetTimeNoAnim(self, time)
 end
 
 function EHIWarningTracker:delete()

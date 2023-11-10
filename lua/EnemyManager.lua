@@ -80,6 +80,23 @@ if EHI:GetOption("show_enemy_count_tracker") then
 end
 
 if EHI:CanShowCivilianCountTracker() then
+    ---@param unit_data table
+    ---@param key string?
+    local function CountCivilian(unit_data, key)
+        if not unit_data.unit then
+            return false
+        end
+        if unit_data.unit:base().unintimidateable then
+            return false
+        end
+        if not unit_data.char_tweak then
+            return false
+        end
+        if unit_data.char_tweak.is_escort or not unit_data.char_tweak.intimidateable then
+            return false
+        end
+        return true
+    end
     ---@param count number
     local function CreateTracker(count)
         managers.ehi_tracker:AddTracker({
@@ -102,44 +119,53 @@ if EHI:CanShowCivilianCountTracker() then
                 managers.ehi_tracker:DecreaseTrackerCount("CivilianCount")
             end
         else
-            local civilians_alive = table.size(civilian_data.unit_data) - (from_destroy and 1 or 0)
-            if civilians_alive > 1 then
+            local count = table.count(civilian_data, CountCivilian)
+            local civilians_alive = count - (from_destroy and 1 or 0)
+            if civilians_alive > 0 then
                 CreateTracker(civilians_alive)
             end
         end
     end
     original.register_civilian = EnemyManager.register_civilian
-    function EnemyManager:register_civilian(...)
-        original.register_civilian(self, ...)
-        if managers.ehi_tracker:TrackerExists("CivilianCount") then
-            managers.ehi_tracker:IncreaseTrackerCount("CivilianCount")
-        else
-            CreateTracker(table.size(self._civilian_data.unit_data))
+    function EnemyManager:register_civilian(unit, ...)
+        original.register_civilian(self, unit, ...)
+        if CountCivilian(self._civilian_data.unit_data[unit:key()]) then
+            if managers.ehi_tracker:TrackerExists("CivilianCount") then
+                managers.ehi_tracker:IncreaseTrackerCount("CivilianCount")
+            else
+                CreateTracker(table.size(self._civilian_data.unit_data))
+            end
         end
     end
 
     original.on_civilian_died = EnemyManager.on_civilian_died
-    function EnemyManager:on_civilian_died(...)
-        original.on_civilian_died(self, ...)
-        CivilianDied(self._civilian_data)
+    function EnemyManager:on_civilian_died(dead_unit, ...)
+        local unit_data = self._civilian_data.unit_data
+        if CountCivilian(unit_data[dead_unit:key()]) then
+            CivilianDied(unit_data)
+        end
+        original.on_civilian_died(self, dead_unit, ...)
     end
 
     original.on_civilian_destroyed = EnemyManager.on_civilian_destroyed
     function EnemyManager:on_civilian_destroyed(civilian, ...)
-        if self._civilian_data.unit_data[civilian:key()] then
-            CivilianDied(self._civilian_data, true)
+        local unit_data = self._civilian_data.unit_data[civilian:key()]
+        if unit_data and CountCivilian(unit_data) then
+            CivilianDied(self._civilian_data.unit_data, true)
         end
         original.on_civilian_destroyed(self, civilian, ...)
     end
     EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
-        local count = table.size(managers.enemy._civilian_data.unit_data)
-        if count <= 0 then
+        local units = managers.enemy._civilian_data.unit_data
+        local count = table.size(units)
+        local civilian_count = table.count(units, CountCivilian)
+        if count <= 0 or civilian_count <= 0 then
             managers.ehi_tracker:RemoveTracker("CivilianCount")
         elseif managers.ehi_tracker:TrackerExists("CivilianCount") then
             managers.ehi_tracker:CallFunction("CivilianCount", "ResetCounter")
-            managers.ehi_tracker:SetTrackerCount("CivilianCount", count)
+            managers.ehi_tracker:SetTrackerCount("CivilianCount", civilian_count)
         else
-            CreateTracker(count)
+            CreateTracker(civilian_count)
         end
     end)
 end

@@ -51,7 +51,7 @@ function EHIUppersRangeBuffTracker:Deactivate()
     self._active = false
 end
 
-function EHIUppersRangeBuffTracker:update(t, dt)
+function EHIUppersRangeBuffTracker:update(dt)
     self._time = self._time - dt
     if self._time <= 0 then
         self._time = self._refresh_time

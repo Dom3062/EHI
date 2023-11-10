@@ -3,7 +3,7 @@
 EHIMeleeChargeBuffTracker = class(EHIBuffTracker)
 EHIMeleeChargeBuffTracker._inverted_progress = true
 local string_format = string.format
-function EHIMeleeChargeBuffTracker:update(t, dt)
+function EHIMeleeChargeBuffTracker:update(dt)
     self._time = self._time - dt
     self._hint:set_text(self:Format())
     local progress = 1 - (self._time / self._time_set)

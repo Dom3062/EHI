@@ -87,13 +87,15 @@ function EHIAssaultTracker:init(panel, params, parent_class)
     self._update = not params.stop_counting
 end
 
-function EHIAssaultTracker:update_negative(t, dt)
+---@param dt number
+function EHIAssaultTracker:update_negative(dt)
     self._time = self._time + dt
     self._text:set_text("+" .. self:Format())
 end
 
-function EHIAssaultTracker:update_assault(t, dt)
-    EHIAssaultTracker.super.update(self, t, dt)
+---@param dt number
+function EHIAssaultTracker:update_assault(dt)
+    EHIAssaultTracker.super.update(self, dt)
     if self._to_next_state_t then
         self._to_next_state_t = self._to_next_state_t - dt
         if self._to_next_state_t <= 0 then

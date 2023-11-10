@@ -183,6 +183,44 @@ function XPBreakdownItem:destroy()
     self._panel:remove(self._tab_select_rect)
 end
 
+---@class XPBreakdownItemSwitch
+---@field new fun(self: self, panel: Panel, loc: LocalizationManager): self
+local XPBreakdownItemSwitch = class()
+---@param panel Panel
+---@param loc LocalizationManager
+function XPBreakdownItemSwitch:init(panel, loc)
+    self._panel = panel
+    self._text = panel:text({
+        name = "ehi_controller_switch_button",
+        text = string.format("%s %s", utf8.char(57346), loc:text("ehi_mission_briefing_toggle_tactic_text")),
+        blend_mode = "add",
+        layer = 2,
+        font_size = tweak_data.menu.pd2_large_font_size / 2,
+        font = tweak_data.menu.pd2_large_font,
+        color = Color.white,
+        alpha = ToggleButtonAlpha,
+        visible = false
+    })
+    EHIMenu:make_fine_text(self._text)
+end
+
+---@param alpha number
+function XPBreakdownItemSwitch:set_alpha(alpha)
+    self._text:set_alpha(alpha)
+    ToggleButtonAlpha = alpha
+end
+
+---@param button PanelText
+function XPBreakdownItemSwitch:set_visible(button)
+    self._text:set_bottom(button:bottom())
+    self._text:set_left(button:right() + 10)
+    self._text:set_visible(true)
+end
+
+function XPBreakdownItemSwitch:destroy()
+    self._panel:remove(self._text)
+end
+
 local reloading_outfit = false -- Fix for Beardlib stack overflow crash
 local xp_format = EHI:GetOption("xp_format")
 local diff_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", EHI:DifficultyIndex()) or 1
@@ -254,22 +292,7 @@ function MissionBriefingGui:init(...)
         end
     end
     if not managers.menu:is_pc_controller() then
-        if self._fullscreen_panel:child("ehi_controller_switch_button") then
-            self._ehi_controller_switch_button = self._fullscreen_panel:child("ehi_controller_switch_button")
-        else
-            self._ehi_controller_switch_button = self._fullscreen_panel:text({
-                id = "ehi_controller_switch_button",
-                text = string.format("%s %s", utf8.char(57346), self._loc:text("ehi_mission_briefing_toggle_tactic_text")),
-                blend_mode = "add",
-                layer = 2,
-                font_size = tweak_data.menu.pd2_large_font_size / 2,
-                font = tweak_data.menu.pd2_large_font,
-                color = Color.white,
-                alpha = ToggleButtonAlpha,
-                visible = false
-            })
-            EHIMenu:make_fine_text(self._ehi_controller_switch_button)
-        end
+        self._ehi_controller_switch_button = XPBreakdownItemSwitch:new(self._fullscreen_panel, self._loc)
     end
     self:ProcessXPBreakdown()
 end
@@ -324,11 +347,11 @@ function MissionBriefingGui:AddXPBreakdown(params)
             self:ProcessBreakDown(tactic.stealth, panel)
             self._panels[1] = panel
             -- Loud
-            self._ehi_panel:panel({
+            local v2_panel = self._ehi_panel:panel({
                 name = "panel_v2",
                 layer = 9,
             })
-            local panel_v2 = { panel = self._ehi_panel:child("panel_v2") --[[@as Panel]], lines = 0, adjust_h = true, selected = TacticSelected == 2 }
+            local panel_v2 = { panel = v2_panel, lines = 0, adjust_h = true, selected = TacticSelected == 2 }
             self:ProcessBreakDown(tactic.loud, panel_v2)
             self._panels[2] = panel_v2
             local offset = Global.game_settings.single_player and 20 or 25
@@ -340,6 +363,9 @@ function MissionBriefingGui:AddXPBreakdown(params)
             self.close = function(gui, ...)
                 gui._stealth_button:destroy()
                 gui._loud_button:destroy()
+                if gui._ehi_controller_switch_button then
+                    gui._ehi_controller_switch_button:destroy()
+                end
                 original.close(gui, ...)
                 -- Remove hooks; the gui will refresh or is closing
                 if original.mouse_pressed then
@@ -357,10 +383,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
                 original.assets_deselect = nil
             end
             if self._ehi_controller_switch_button then
-                local loud_button = self._loud_button:GetButton()
-                self._ehi_controller_switch_button:set_bottom(loud_button:bottom())
-                self._ehi_controller_switch_button:set_left(loud_button:right() + 10)
-                self._ehi_controller_switch_button:set_visible(true)
+                self._ehi_controller_switch_button:set_visible(self._loud_button:GetButton())
                 original.special_btn_pressed = self.special_btn_pressed
                 self.special_btn_pressed = function(gui, button, ...)
                     if not alive(gui._panel) or not alive(gui._fullscreen_panel) or not gui._enabled then
@@ -383,13 +406,11 @@ function MissionBriefingGui:AddXPBreakdown(params)
                 original.assets_select = self._assets_item.select
                 self._assets_item.select = function(...)
                     self._ehi_controller_switch_button:set_alpha(0.25)
-                    ToggleButtonAlpha = 0.25
                     original.assets_select(...)
                 end
                 original.assets_deselect = self._assets_item.deselect
                 self._assets_item.deselect = function(...)
                     self._ehi_controller_switch_button:set_alpha(1)
-                    ToggleButtonAlpha = 1
                     original.assets_deselect(...)
                 end
             else
@@ -1208,7 +1229,7 @@ function MissionBriefingGui:AddXPOverviewText(panel)
     end
     if self._skill_bonus > 1 then
         local passive_xp_reduction = managers.player:upgrade_value("player", "passive_xp_multiplier", 1) - 1
-        local real_bonus = self._skill_bonus - passive_xp_reduction - 1
+        local real_bonus = EHI:RoundNumber(self._skill_bonus - passive_xp_reduction - 1, 0.01)
         if real_bonus > 0 then
             local percent = real_bonus * 100
             local skill_icon = panel.panel:bitmap({

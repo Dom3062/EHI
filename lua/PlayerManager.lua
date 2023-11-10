@@ -11,6 +11,7 @@
 ---@field _damage_dealt_to_cops_decay_t number
 ---@field _dodge_shot_gain_value number
 ---@field _next_allowed_doh_t number
+---@field body_armor_value fun(self: self, category: string, override_value: number?, default: any?): number|any
 ---@field has_category_upgrade fun(self: self, category: string, upgrade: string): boolean
 ---@field _get_damage_health_ratio_threshold fun(self: self, category: string): number
 ---@field has_activate_temporary_upgrade fun(self: self, category: string, upgrade: string): boolean
@@ -26,6 +27,8 @@
 ---@field upgrade_value_by_level fun(self: self, category: string, upgrade: string, level: number, default: any?): any|number
 ---@field equiptment_upgrade_value fun(self: self, category: string, upgrade: string, default: any?): any|number
 ---@field has_deployable_been_used fun(self: self): boolean
+---@field skill_dodge_chance fun(self: self, running: boolean, crouching: boolean, on_zipline:boolean, override_armor: boolean?, detection_risk: number?): number
+---@field critical_hit_chance fun(self: self, detection_risk: number?): number
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then

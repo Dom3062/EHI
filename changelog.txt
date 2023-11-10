@@ -1,3 +1,9 @@
+r195 (10. 11. 2023):
+Fixed an issue where some achievement trackers do not shown tracker description
+Civilian Counter Tracker: Fixed an issue where indomitable civilians or escorts are counted
+Holdout: Fixed a possible log spam
+Mission Briefing: Fixed visible "+0%" XP boost
+
 r194 (04. 11. 2023):
 Fixed Mission Briefing tabs
 Fixed a case where Lobby Code panel could overlap with mission name

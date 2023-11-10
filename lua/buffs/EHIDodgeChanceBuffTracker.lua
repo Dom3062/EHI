@@ -1,5 +1,5 @@
 local EHI = EHI
-local player_manager
+local player_manager ---@type PlayerManager
 local DODGE_INIT = tweak_data.player.damage.DODGE_INIT or 0
 ---@class EHIDodgeChanceBuffTracker : EHIGaugeBuffTracker
 ---@field super EHIGaugeBuffTracker
@@ -12,21 +12,20 @@ function EHIDodgeChanceBuffTracker:init(panel, params)
 end
 
 function EHIDodgeChanceBuffTracker:UpdateDodge()
-    local player_movement = player_manager:player_unit()
+    local player = player_manager:player_unit()
+    if player == nil then
+        return
+    end
+    local player_movement = player:movement() ---@cast player_movement -HuskPlayerMovement
     if player_movement == nil then
         return
     end
-    player_movement = player_movement:movement()
-    if player_movement == nil then
-        return
-    end
-    local armorchance = player_manager:body_armor_value("dodge")
-    local skillchance = player_manager:skill_dodge_chance(player_movement:running(), player_movement:crouching(), player_movement:zipline_unit())
+    local armorchance = player_manager:body_armor_value("dodge") --[[@as number]]
+    local skillchance = player_manager:skill_dodge_chance(player_movement:running(), player_movement:crouching(), player_movement:zipline_unit() --[[@as boolean]])
     local total = DODGE_INIT + armorchance + skillchance
     if self._dodge == total then
         return
-    end
-    if self._persistent or total > 0 then
+    elseif self._persistent or total > 0 then
         self:SetRatio(total)
         self:Activate()
     else
@@ -42,10 +41,9 @@ end
 
 function EHIDodgeChanceBuffTracker:PreUpdate()
     player_manager = managers.player
-    local function f(state)
+    EHI:AddOnCustodyCallback(function(state)
         self:SetCustody(state)
-    end
-    EHI:AddOnCustodyCallback(f)
+    end)
     local function update()
         self:UpdateDodge()
         self._time = self._refresh_time
@@ -57,6 +55,7 @@ function EHIDodgeChanceBuffTracker:PreUpdate()
     self:SetRatio(0)
 end
 
+---@param state boolean
 function EHIDodgeChanceBuffTracker:SetCustody(state)
     if state then
         self:RemoveBuffFromUpdate()
@@ -68,7 +67,8 @@ function EHIDodgeChanceBuffTracker:SetCustody(state)
     end
 end
 
-function EHIDodgeChanceBuffTracker:update(t, dt)
+---@param dt number
+function EHIDodgeChanceBuffTracker:update(dt)
     self._time = self._time - dt
     if self._time <= 0 then
         self:UpdateDodge()

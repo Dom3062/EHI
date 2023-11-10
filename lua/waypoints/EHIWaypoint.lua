@@ -45,9 +45,8 @@ function EHIWaypoint:WaypointToRestore(id)
     self._vanilla_waypoint = id
 end
 
----@param t any Unused
 ---@param dt number
-function EHIWaypoint:update(t, dt)
+function EHIWaypoint:update(dt)
     self._time = self._time - dt
     self._timer:set_text(self:Format())
     if self._time <= 0 then
@@ -55,9 +54,8 @@ function EHIWaypoint:update(t, dt)
     end
 end
 
----@param t any Unused
 ---@param dt number
-function EHIWaypoint:update_fade(t, dt)
+function EHIWaypoint:update_fade(dt)
     self._fade_time = self._fade_time - dt
     if self._fade_time <= 0 then
         self:delete()

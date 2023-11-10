@@ -34,8 +34,9 @@ function EHIAssaultTimeTracker:init(panel, params, parent_class)
     end
 end
 
-function EHIAssaultTimeTracker:update(t, dt)
-    EHIAssaultTimeTracker.super.update(self, t, dt)
+---@param dt number
+function EHIAssaultTimeTracker:update(dt)
+    EHIAssaultTimeTracker.super.update(self, dt)
     if self._to_sustain_t then
         self._to_sustain_t = self._to_sustain_t - dt
         if self._to_sustain_t <= 0 then
@@ -59,8 +60,9 @@ function EHIAssaultTimeTracker:update(t, dt)
     end
 end
 
-function EHIAssaultTimeTracker:update_cs(t, dt)
-    EHIAssaultTimeTracker.super.update(self, t, dt)
+---@param dt number
+function EHIAssaultTimeTracker:update_cs(dt)
+    EHIAssaultTimeTracker.super.update(self, dt)
     self._assault_t = self._assault_t - dt
     if self._to_sustain_t then
         self._to_sustain_t = self._to_sustain_t - dt
@@ -85,11 +87,13 @@ function EHIAssaultTimeTracker:update_cs(t, dt)
     end
 end
 
-function EHIAssaultTimeTracker:update_negative(t, dt)
+---@param dt number
+function EHIAssaultTimeTracker:update_negative(dt)
     self._time = self._time + dt
     self._text:set_text("+" .. self:Format())
 end
 
+---@param diff number
 function EHIAssaultTimeTracker:CalculateDifficultyRamp(diff)
     local ramp = tweak_data.group_ai.difficulty_curve_points
     local i = 1
@@ -121,6 +125,7 @@ function EHIAssaultTimeTracker:CalculateAssaultTime()
     return build + sustain + fade
 end
 
+---@param diff number
 function EHIAssaultTimeTracker:RecalculateAssaultTime(diff)
     self:CalculateDifficultyRamp(diff)
     local t = self:CalculateAssaultTime()
@@ -131,6 +136,8 @@ function EHIAssaultTimeTracker:RecalculateAssaultTime(diff)
     self._time = t - build
 end
 
+---@param sustain number
+---@param n_of_hostages number?
 function EHIAssaultTimeTracker:CalculateCSSustainTime(sustain, n_of_hostages)
     n_of_hostages = n_of_hostages or managers.groupai:state():hostage_count()
     local n_of_jokers = managers.groupai:state():get_amount_enemies_converted_to_criminals()

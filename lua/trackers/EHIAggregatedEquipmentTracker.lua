@@ -102,6 +102,7 @@ do
     end
 end
 
+---@return number
 function EHIAggregatedEquipmentTracker:GetTotalAmount()
     local amount = 0
     for _, count in pairs(self._amount) do
@@ -110,6 +111,7 @@ function EHIAggregatedEquipmentTracker:GetTotalAmount()
     return amount
 end
 
+---@param id string
 function EHIAggregatedEquipmentTracker:AddToIgnore(id)
     self._ignore[id] = true
     self._deployables[id] = {}
@@ -118,6 +120,10 @@ function EHIAggregatedEquipmentTracker:AddToIgnore(id)
     self:CheckAmount(id)
 end
 
+---@param id string
+---@param unit Unit
+---@param key string
+---@param amount number
 function EHIAggregatedEquipmentTracker:UpdateAmount(id, unit, key, amount)
     if not key then
         EHI:DebugEquipment(self._id, unit, key, amount)
@@ -138,6 +144,7 @@ function EHIAggregatedEquipmentTracker:UpdateAmount(id, unit, key, amount)
     self:CheckAmount(id)
 end
 
+---@param id string
 function EHIAggregatedEquipmentTracker:CheckAmount(id)
     if self:GetTotalAmount() <= 0 then
         self:delete()
@@ -146,6 +153,7 @@ function EHIAggregatedEquipmentTracker:CheckAmount(id)
     end
 end
 
+---@param id string
 function EHIAggregatedEquipmentTracker:UpdateText(id)
     if self.text[id] then
         if self._amount[id] <= 0 then
@@ -164,6 +172,7 @@ function EHIAggregatedEquipmentTracker:UpdateText(id)
     end
 end
 
+---@param id string
 function EHIAggregatedEquipmentTracker:AddText(id)
     self._n_of_deployables = self._n_of_deployables + 1
     local text = self:CreateText({
@@ -175,6 +184,7 @@ function EHIAggregatedEquipmentTracker:AddText(id)
     self:Reorganize(true)
 end
 
+---@param id string
 function EHIAggregatedEquipmentTracker:RemoveText(id)
     self._bg_box:remove(self._bg_box:child(id))
     self.text[id] = false
@@ -213,6 +223,7 @@ function EHIAggregatedEquipmentTracker:AlignTextOnHalfPos()
     end
 end
 
+---@param addition boolean?
 function EHIAggregatedEquipmentTracker:Reorganize(addition)
     if self._n_of_deployables == 1 then
         if true then

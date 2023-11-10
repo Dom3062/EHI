@@ -208,7 +208,8 @@
 ---@field ignore_visibility boolean
 ---@field set_custom_id string
 ---@field tracker_merge_id string
----@field custom_callback table<string, string>
+---@field destroy_tracker_merge_on_done boolean? Depends on `tracker_merge_id`
+---@field custom_callback { id: string, f: string }
 ---@field position Vector3
 ---@field remove_on_pause boolean
 ---@field warning boolean
@@ -229,6 +230,7 @@
 ---@field flash_times number?
 ---@field flash_bg boolean?
 ---@field hint string?
+---@field delay_popup boolean Provided by `EHITrackerManager`
 ---@field [any] any
 
 ---@class EHITracker_CreateText

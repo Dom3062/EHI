@@ -1,4 +1,4 @@
-local max_kills = tweak_data.upgrades.wild_max_triggers_per_time or 10
+local max_kills = tweak_data.upgrades.wild_max_triggers_per_time or 4
 local pm
 local f
 ---@class EHIBikerBuffTracker : EHIBuffTracker
@@ -18,12 +18,12 @@ function EHIBikerBuffTracker:PreUpdate()
         end
     end
     self:CustodyState(false)
-    local function f2(state)
+    EHI:AddOnCustodyCallback(function(state)
         self:CustodyState(state)
-    end
-    EHI:AddOnCustodyCallback(f2)
+    end)
 end
 
+---@param state boolean
 function EHIBikerBuffTracker:CustodyState(state)
     if state then
         EHI:Unhook("BikerBuff_Post")
@@ -32,6 +32,7 @@ function EHIBikerBuffTracker:CustodyState(state)
     end
 end
 
+---@param kills number
 function EHIBikerBuffTracker:Trigger(kills)
     if kills < 1 then
         if self._active then
@@ -58,8 +59,9 @@ function EHIBikerBuffTracker:Trigger(kills)
     end
 end
 
+---@param color Color
 function EHIBikerBuffTracker:SetIconColor(color)
-    self._panel:child("icon"):set_color(color) ---@diagnostic disable-line
+    self._panel:child("icon"):set_color(color)
 end
 
 function EHIBikerBuffTracker:Activate(t)

@@ -55,16 +55,28 @@ _G.tweak_data.alarm_pager = {}
 ---@field automatic_respawn_time number?
 _G.tweak_data.player.damage = {
     base_respawn_time_penalty = 5,
+    DODGE_INIT = 0,
     respawn_time_penalty = 30
 }
 ---@class PlayerTweakData.omniscience
 ---@field start_t number
 ---@field target_resense_t number
 _G.tweak_data.player.damage.omniscience = {}
+---@class PrePlanningTweakData
+---@field get_type_texture_rect fun(self: self, num: number): { number: x, number: y, number: w, number: h }
+---@field types table
+_G.tweak_data.preplanning = {
+    gui = {
+        type_icons_path = "guis/dlcs/deep/textures/pd2/pre_planning/preplan_icon_types"
+    }
+}
 ---@class UpgradesTweakData
----@field max_cocaine_stacks_per_tick number
 ---@field values UpgradesTweakData.values
-_G.tweak_data.upgrades = {}
+_G.tweak_data.upgrades = {
+    player_damage_health_ratio_threshold = 0.5,
+    max_cocaine_stacks_per_tick = 240,
+    wild_max_triggers_per_time = 4
+}
 ---@class UpgradesTweakData.values
 ---@field player UpgradesTweakData.values.player
 ---@field team UpgradesTweakData.values.team
@@ -189,6 +201,12 @@ end
 ---@overload fun(self: self, category: string, upgrade: string, default: number): number
 function PlayerManager:upgrade_level(category, upgrade)
 end
+
+---@class TextureRect
+---@field [1] number X
+---@field [2] number Y
+---@field [3] number W
+---@field [4] number H
 
 ---@class Vector3
 ---@field x number
@@ -391,6 +409,7 @@ end
 ---@field world_instance CoreWorldInstanceManager
 
 ---@class AchievementsTweakData
+---@field complete_heist_achievements table
 ---@field persistent_stat_unlocks table<string, { [1]: { award: string, at: number } }>
 ---@field visual table<string, { icon_id: string }>
 
@@ -414,6 +433,7 @@ end
 ---@field menu MenuTweakData
 ---@field mutators table
 ---@field player PlayerTweakData
+---@field preplanning PrePlanningTweakData
 ---@field projectiles tweak_data.projectiles
 ---@field upgrades UpgradesTweakData
 
@@ -462,6 +482,7 @@ end
 
 ---@class tablelib
 ---@field size fun(tbl: table): number Returns size of the table
+---@field count fun(v: table, func: fun(item: any, key: any): boolean): number
 ---@field contains fun(v: table, e: string): boolean Returns `true` or `false` if `e` exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
 ---@field get_key fun(map: table, wanted_key_value: any): any? Returns `key name` if value exists
@@ -481,6 +502,13 @@ end
 ---@field equipped_unit fun(self: self): UnitWeapon
 
 ---@class HuskPlayerInventory : PlayerInventory
+
+---@class PlayerMovement
+---@field crouching fun(self: self): boolean
+---@field running fun(self: self): boolean
+---@field zipline_unit fun(self: self): UnitZipline
+
+---@class HuskPlayerMovement
 
 ---@class CopBase : UnitBase
 ---@field _unit UnitEnemy
@@ -551,6 +579,7 @@ end
 ---@field base fun(): PlayerBase|HuskPlayerBase
 ---@field character_damage fun(): PlayerDamage|HuskPlayerDamage
 ---@field inventory fun(): PlayerInventory|HuskPlayerInventory
+---@field movement fun(): PlayerMovement|HuskPlayerMovement
 
 ---@class UnitTeamAI : UnitBase
 
@@ -632,6 +661,11 @@ end
 ---@field color fun(self: self): Color
 ---@field set_color fun(self: self, color: Color)
 ---@field inside fun(self: self, x: number, y: number): boolean Returns `true` or `false` if provided `x` and `y` are inside the object
+---@field shape fun(self: self): x: number, y: number, w: number, h: number
+---@field set_shape fun(self: self, x: number, y: number, w: number, h: number)
+---@field set_blend_mode fun(self: self, mode: string)
+---@field show fun(self: self)
+---@field hide fun(self: self)
 
 ---@class Panel : PanelBaseObject
 ---@field color nil Does not exist in Panel

@@ -226,9 +226,9 @@ local tbl =
             tostring(Vector3(-2216.87, 2410.43, -382.711)), -- Keycard
             tostring(Vector3(-2217.05, 2415.52, -354.502)) -- ECM
         }
-        local playing, enabled = true, true
+        local execute = true
         EHI:HookWithID(MissionDoorDeviceInteractionExt, "set_active", "EHI_100003_6840_set_active", function(self, active, ...)
-            if playing and active == false and enabled then
+            if active == false and execute then
                 local u_pos = tostring(self._unit:position())
                 for _, unit_pos in ipairs(pos) do
                     if unit_pos == u_pos then
@@ -240,11 +240,11 @@ local tbl =
                         break
                     end
                 end
-                enabled = false
+                execute = false
             end
         end)
         EHI:PreHookWithID(MissionDoorDeviceInteractionExt, "destroy", "EHI_100003_6840_destroy", function(...)
-            playing = false
+            execute = false
         end)
     end}
 }

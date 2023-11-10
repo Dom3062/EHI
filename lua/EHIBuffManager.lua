@@ -307,11 +307,10 @@ function EHIBuffManager:RemoveAbilityCooldown(in_custody)
     end
 end
 
----@param t number
 ---@param dt number
 function EHIBuffManager:update(t, dt)
     for _, buff in pairs(self._update_buffs) do
-        buff:update(t, dt)
+        buff:update(dt)
     end
 end
 

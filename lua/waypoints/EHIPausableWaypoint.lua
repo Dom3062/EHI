@@ -7,11 +7,12 @@ function EHIPausableWaypoint:post_init(params)
     self:SetColor()
 end
 
-function EHIPausableWaypoint:update(t, dt)
+---@param dt number
+function EHIPausableWaypoint:update(dt)
     if self._paused then
         return
     end
-    EHIPausableWaypoint.super.update(self, t, dt)
+    EHIPausableWaypoint.super.update(self, dt)
 end
 
 ---@param pause boolean
