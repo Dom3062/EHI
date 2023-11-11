@@ -71,9 +71,8 @@ function EHIAssaultDelayTracker:ComputeHostageDelay(diff)
     self._hostage_delay = lerp(hostage_values[difficulty_point_index], hostage_values[difficulty_point_index + 1], difficulty_ramp)
 end
 
----@param t any Unused
 ---@param dt number
-function EHIAssaultDelayTracker:update_negative(t, dt)
+function EHIAssaultDelayTracker:update_negative(dt)
     self._time = self._time + dt
     self._text:set_text("+" .. self:Format())
 end
