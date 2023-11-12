@@ -1,3 +1,6 @@
+r197 (12. 11. 2023):
+Fixed a possible crash when achievement failed
+
 r196 (11. 11. 2023):
 Assault Delay Tracker: Fixed a crash
 
