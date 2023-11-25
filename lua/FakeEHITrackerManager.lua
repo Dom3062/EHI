@@ -661,7 +661,7 @@ function FakeEHITracker:SetIconX(previous_icon, icon)
     end
 end
 
----@param params EHITracker_CreateText?
+---@param params EHITracker.CreateText?
 ---@return PanelText
 function FakeEHITracker:CreateText(params)
     params = params or {}

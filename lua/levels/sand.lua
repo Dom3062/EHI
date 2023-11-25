@@ -3,7 +3,7 @@ local Color = Color
 ---@field super EHIAchievementProgressTracker
 EHIsand11Tracker = class(EHIAchievementProgressTracker)
 EHIsand11Tracker._forced_icons = EHI:GetAchievementIcon("sand_11")
-EHIsand11Tracker.FormatChance = EHIChanceTracker.Format
+EHIsand11Tracker.FormatChance = EHIChanceTracker.FormatChance
 function EHIsand11Tracker:pre_init(params)
     params.max = 100
     params.show_finish_after_reaching_target = true
@@ -47,7 +47,7 @@ local Hints = EHI.Hints
 local boat_anim = 614/30 + 12 + 1
 local skid = { { icon = Icon.Car, color = tweak_data.ehi.colors.CarBlue } }
 local triggers = {
-    [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { Icon.PCHack }, hint = Hints.Hack },
+    [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { Icon.Tablet }, hint = Hints.Hack },
 
     [EHI:GetInstanceElementID(100043, 4800)] = { special_function = SF.Trigger, data = { 1000431, 1000432 } },
     [1000431] = { time = 15, id = "DoorOpenGas", icons = { Icon.Door }, hint = Hints.Wait },

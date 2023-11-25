@@ -8,17 +8,16 @@ local assault_delay = 4 + 3 + 3 + 3 + 5 + 1 + 30
 local assault_delay_methlab = 20 + assault_delay
 local BagsCooked = 0
 local triggers = {
-    [101001] = { id = "CookChance", special_function = SF.RemoveTracker },
+    [101001] = { id = "CookingChance", special_function = SF.RemoveTracker },
 
     [101970] = { time = (240 + 12) - 3, waypoint = { position_by_element = 101454 }, hint = Hints.LootEscape },
-    [100721] = { time = 1, id = "CookDelay", icons = { Icon.Methlab, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
-    [1007211] = { chance = 5, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.alex_1_Methlab },
-    [100724] = { time = 25, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_element = 100212 } },
+    [100721] = { time = 1, chance = 5, id = "CookingChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, start_opened = EHI:ShowTimedTrackerOpened(), hint = Hints.alex_1_Methlab },
+    [100724] = { time = 25, id = "CookingChance", icons = { Icon.Methlab, Icon.Loop }, waypoint = { position_by_element = 100212 }, special_function = SF.SetTimeOrCreateTracker, tracker_merge = true },
     [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { icon = Icon.Loot, position_by_element = 100485 }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1001991 }, hint = Hints.mia_1_MethDone },
     [1001991] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
         BagsCooked = BagsCooked + 1
         if BagsCooked >= 7 then
-            self._trackers:RemoveTracker("CookChance")
+            self._trackers:ForceRemoveTracker("CookingChance")
             self:UnhookTrigger(100721)
             self:UnhookTrigger(100724)
         end
@@ -33,7 +32,7 @@ local triggers = {
 
     [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", Icon.Goto }, class = TT.Warning, hint = Hints.ScriptedBulldozer },
 
-    [100723] = { amount = 10, id = "CookChance", special_function = SF.IncreaseChance }
+    [100723] = { amount = 10, id = "CookingChance", special_function = SF.IncreaseChance }
 }
 ---@type ParseAchievementTable
 local achievements =
@@ -57,9 +56,7 @@ local other =
     [100707] = EHI:AddAssaultDelay({ time = assault_delay_methlab, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
         local tracker = self._trackers:GetTracker(trigger.id)
         if tracker then
-            if tracker._time >= trigger.time then
-                tracker:SetTime(trigger.time)
-            end
+            tracker:SetTimeIfLower(trigger.time)
         else
             self:CheckCondition(trigger)
         end
@@ -90,10 +87,11 @@ end
 
 if EHI:IsClient() then
     local EM = EHIManager
+    ---@param self LootManager
     local function SyncBagsCooked(self)
         BagsCooked = self:GetSecuredBagsAmount()
         if BagsCooked >= 7 then
-            managers.ehi_tracker:RemoveTracker("CookChance")
+            managers.ehi_tracker:ForceRemoveTracker("CookChance")
             EM:UnhookTrigger(100721)
             EM:UnhookTrigger(100724)
         end

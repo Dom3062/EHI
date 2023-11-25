@@ -73,6 +73,7 @@ function EHIProgressTracker:SetProgressRemaining(remaining)
     self:SetProgress(self._max - remaining)
 end
 
+---@param force boolean?
 function EHIProgressTracker:SetCompleted(force)
     if force or not self._status then
         self._status = "completed"

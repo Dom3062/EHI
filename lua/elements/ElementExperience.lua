@@ -11,7 +11,7 @@ function ElementExperience:init(...)
     end
 end
 
-if EHI.debug.gained_experience then
+if EHI.debug.gained_experience.enabled then
     local on_executed = ElementExperience.on_executed
     function ElementExperience:on_executed(...)
         if not self._values.enabled then

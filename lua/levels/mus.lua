@@ -128,7 +128,7 @@ local tbl =
 {
     --levels/instances/unique/mus_chamber_controller
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceUnitID(100347, 3575)] = { icons = { Icon.Wait }, remove_on_pause = true, warning = true },
+    [EHI:GetInstanceUnitID(100347, 3575)] = { icons = { Icon.Wait }, remove_on_pause = true, warning = true, hint = Hints.roberts_GenSecWarning },
 
     --levels/instances/unique/mus_security_room
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
@@ -148,15 +148,22 @@ local MissionDoor =
     [Vector3(8638, 193.001, -519)] = 100841
 }
 EHI:SetMissionDoorData(MissionDoor)
+local loot = { mus_artifact = 1000 }
 local xp_override =
 {
     params =
     {
-        min =
+        min_max =
         {
-            objectives = true
-        },
-        no_max = true
+            objectives =
+            {
+                mus_no_gas_trap = { min = 0, max = 1 }
+            },
+            loot =
+            {
+                mus_artifact = { max = 17 }
+            }
+        }
     }
 }
 EHI:AddXPBreakdown({
@@ -172,7 +179,7 @@ EHI:AddXPBreakdown({
                 { amount = 3000, name = "mus_no_gas_trap", optional = true },
                 { escape = 4000 }
             },
-            loot_all = 1000,
+            loot = loot,
             total_xp_override = xp_override
         },
         loud =
@@ -185,7 +192,7 @@ EHI:AddXPBreakdown({
                 { amount = 4000, name = "mus_no_gas_trap", optional = true },
                 { escape = 6000 }
             },
-            loot_all = 1000,
+            loot = loot,
             total_xp_override = xp_override
         }
     }

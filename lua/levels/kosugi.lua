@@ -4,7 +4,7 @@ local Hints = EHI.Hints
 ---@class EHIkosugi5Tracker : EHIAchievementProgressTracker
 EHIkosugi5Tracker = class(EHIAchievementProgressTracker)
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIkosugi5Tracker:init(panel, params, parent_class)
     params.show_progress_on_finish = true

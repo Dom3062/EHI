@@ -19,12 +19,12 @@ local CheckOkValueHostCheckOnly = EHI:RegisterCustomSpecialFunction(function(sel
         return
     end
     if self._trackers:TrackerExists(trigger.id) then
-        self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
-    elseif not trigger.data.dont_create then
+        self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
+    elseif not trigger.dont_create then
         self:CheckCondition(trigger)
-        self._trackers:SetTrackerProgress(trigger.id, trigger.data.progress)
+        self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
     end
-    CurrentHackNumber = trigger.data.progress
+    CurrentHackNumber = trigger.progress
 end)
 ---@type table<number, Vector3?>
 local PCVectors = {}
@@ -32,10 +32,10 @@ local PCVectors = {}
 local triggers = {
     [102016] = { time = 7, id = "Endless", icons = Icon.EndlessAssault, class = TT.Warning, hint = Hints.EndlessAssault },
 
-    [104579] = { time = 15, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait },
-    [104580] = { time = 25, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait },
-    [104581] = { time = 20, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait },
-    [104582] = { time = 30, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait }, -- Disabled in the mission script
+    [104579] = { time = 15, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait, tracker_merge = true },
+    [104580] = { time = 25, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait, tracker_merge = true },
+    [104581] = { time = 20, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait, tracker_merge = true },
+    [104582] = { time = 30, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait, tracker_merge = true }, -- Disabled in the mission script
 
     [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop }, waypoint_f = function(self, trigger)
         local vector = PCVectors[CurrentHackNumber]
@@ -53,15 +53,15 @@ local triggers = {
         EHI:CallCallback("hox_2_restore_waypoint_hack")
     end },
 
-    [104314] = { max = 4, id = "RequestCounter", icons = { Icon.PCHack }, class = TT.Progress, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.hox_2_Request },
-    [104599] = { id = "RequestCounter", special_function = SF.RemoveTracker },
-    [104591] = { id = "RequestCounter", special_function = SF.IncreaseProgress },
+    [104314] = { max = 4, id = "Request", icons = { Icon.PCHack }, class = TT.Timed.Progress, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.hox_2_Request },
+    [104591] = { id = "Request", special_function = SF.IncreaseProgress },
+    [104599] = { id = "Request", special_function = SF.RemoveTracker },
 
-    [104472] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, hint = Hints.Hack },
-    [104478] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 1 }, hint = Hints.Hack },
-    [104480] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 2 }, hint = Hints.Hack },
-    [104481] = { max = 4, show_progress_on_finish = true, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 3 }, hint = Hints.Hack },
-    [104482] = { max = 4, id = "HoxtonMaxHacks", icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, data = { progress = 4, dont_create = true } },
+    [104472] = { id = "HoxtonMaxHacks", max = 4, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, hint = Hints.Hack },
+    [104478] = { id = "HoxtonMaxHacks", max = 4, progress = 1, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, hint = Hints.Hack },
+    [104480] = { id = "HoxtonMaxHacks", max = 4, progress = 2, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, hint = Hints.Hack },
+    [104481] = { id = "HoxtonMaxHacks", max = 4, progress = 3, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, hint = Hints.Hack },
+    [104482] = { id = "HoxtonMaxHacks", max = 4, progress = 4, dont_create = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly },
 
     [105113] = { chance = 25, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance, hint = Hints.hox_2_Evidence },
     [102257] = { amount = 25, id = "ForensicsMatchChance", special_function = SF.IncreaseChance },

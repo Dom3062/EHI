@@ -233,3 +233,158 @@ EHI:AddLoadSyncFunction(function(self)
         self._trackers:DecreaseLootCounterProgressMax(16)
     end
 end)]]
+local min_loot = EHI:GetValueBasedOnDifficulty({
+    veryhard_or_below = 4,
+    overkill = 8,
+    mayhem = 8,
+    deathwish_or_above = 12
+})
+local stealth_objectives =
+{
+    { amount = 2000, name = "china3_met_insider", additional_name = "china3_guest_entrance", optional = true },
+    { amount = 2000, name = "ggc_gear_found", additional_name = "china3_guest_entrance", optional = true },
+    { amount = 500, name = "china3_found_insider_info", additional_name = "china3_crew_deck_entrance", optional = true },
+    { amount = 1000, name = "china3_found_lideng_or_xunkang" },
+    { amount = 2000, name = "china3_found_lideng_safe" },
+    { amount = 2000, name = "twh_safe_open" },
+    { amount = 4000, name = "china3_found_xunkang", optional = true },
+    { amount = 4000, name = "china3_bugged_meeting" },
+    { amount = 2000, name = "china3_found_phone_number" },
+    { amount = 2000, name = "china3_got_xunkang_hand" },
+    { amount = 1000, name = "china3_guards_distracted" },
+    { amount = 2000, name = "ggc_laser_disabled" },
+    { amount = 1000, name = "vault_open" },
+    { amount = 1000, name = "fs_secured_required_bags" },
+    { amount = 2000, name = "china3_vault_empty" },
+    { amount = 1000, name = "china3_lifeboat_lowered" }
+}
+local loud_objectives =
+{
+    { amount = 2000, name = "china3_met_insider", additional_name = "china3_guest_entrance", optional = true },
+    { amount = 2000, name = "ggc_gear_found", additional_name = "china3_guest_entrance", optional = true },
+    { amount = 500, name = "china3_found_insider_info", additional_name = "china3_crew_deck_entrance", optional = true },
+    { amount = 2000, name = "china3_found_lideng_or_xunkang" },
+    { amount = 500, name = "china3_found_lideng_safe" },
+    { amount = 2000, name = "twh_safe_open" },
+    { amount = 500, name = "china3_found_xunkang", optional = true },
+    { amount = 500, name = "china3_glass_broken" },
+    { amount = 500, name = "china3_glass_destroyed" },
+    { amount = 4000, name = "china3_got_xunkang_hand" },
+    { amount = 4000, name = "vault_found" },
+    { amount = 500, name = "pc_hack" },
+    { amount = 3000, name = "china3_firewall_disabled" },
+    { amount = 3000, name = "rvd2_hacking_done" },
+    { amount = 500, name = "vault_open" },
+    { amount = 500, name = "fs_secured_required_bags" },
+    { amount = 2000, name = "china3_vault_empty" },
+    { amount = 500, name = "china3_signaled_heli" },
+    { amount = 6000, name = "heli_arrival" }
+}
+local loud_c4_objectives =
+{
+    { amount = 2000, name = "china3_wall_exploded" },
+    { amount = 9000, name = "saws_done" },
+    { amount = 3000, name = "ggc_winch_set_up" },
+    { amount = 6000, name = "china3_vault_out" },
+    { amount = 5000, name = "china3_got_rid_of_police_heli" },
+    { amount = 3000, name = "heli_arrival" },
+    { amount = 1000, name = "china3_vault_secured" },
+    { amount = 1000, name = "china3_boat_escape" }
+}
+local total_xp_override =
+{
+    params =
+    {
+        min_max =
+        {
+            objectives =
+            {
+                china3_met_insider = { min = 0 },
+                ggc_gear_found = { min = 0 },
+                china3_found_insider_info = { max = 0 }
+            },
+            loot_all = { min = min_loot, max = 18 }
+        }
+    }
+}
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        custom =
+        {
+            {
+                name = "stealth",
+                tactic =
+                {
+                    objectives = stealth_objectives,
+                    loot_all = 500,
+                    total_xp_override = total_xp_override
+                }
+            },
+            {
+                name = "loud",
+                tactic =
+                {
+                    objectives = loud_objectives,
+                    loot_all = 500,
+                    total_xp_override = total_xp_override
+                }
+            },
+            {
+                name = "loud",
+                additional_name = "china3_c4",
+                tactic =
+                {
+                    objectives = loud_c4_objectives,
+                    loot_all = 500,
+                    total_xp_override =
+                    {
+                        params =
+                        {
+                            min_max =
+                            {
+                                loot_all = { max = 1 }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                name = "loud",
+                additional_name = "china3_most_xp",
+                tactic =
+                {
+                    objectives = loud_objectives,
+                    loot_all = 500,
+                    total_xp_override =
+                    {
+                        params =
+                        {
+                            min_max =
+                            {
+                                objectives =
+                                {
+                                    china3_met_insider = { min = 0 },
+                                    ggc_gear_found = { min = 0 },
+                                    china3_found_insider_info = { max = 0 }
+                                },
+                                loot_all = { max = 2 }
+                            }
+                        }
+                    }
+                },
+                objectives_override =
+                {
+                    stop_at_inclusive_and_add_objectives =
+                    {
+                        stop_at = "rvd2_hacking_done",
+                        add_objectives =
+                        {
+                            { amount = 30000, name = "china3_c4_route" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+})

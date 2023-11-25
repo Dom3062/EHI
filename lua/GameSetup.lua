@@ -22,7 +22,8 @@ local redirect =
     crojob3_night = "crojob3",
     -- Custom Missions
     ratdaylight = "levels/rat",
-    lid_cookoff_methslaves = "levels/rat"
+    lid_cookoff_methslaves = "levels/rat",
+    roberts_v2 = "levels/roberts"
 }
 
 local levels =
@@ -200,7 +201,8 @@ local custom_levels =
     street_new = true, -- Heat Street Rework (Heat Street True Classic in-game)
     office_strike = true, -- Office Strike
     tonmapjam22l = true, -- Hard Cash
-    SJamBank = true -- Branch Bank Initiative
+    SJamBank = true, -- Branch Bank Initiative
+    roberts_v2 = true -- GO Bank Remastered
 }
 
 local init_finalize = GameSetup.init_finalize
@@ -225,6 +227,11 @@ EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(...)
     EHI:FinalizeUnitsClient()
 end)
 
-EHI:HookWithID(GameSetup, "load", "EHI_GameSetup_load_Post", function(...)
+EHI:HookWithID(GameSetup, "load", "EHI_GameSetup_load_Post", function(self, data, ...)
     EM:load()
+    managers.ehi_tracker:load(data)
+end)
+
+EHI:HookWithID(GameSetup, "save", "EHI_GameSetup_save_Post", function(self, data, ...)
+    managers.ehi_tracker:save(data)
 end)

@@ -26,12 +26,11 @@ local triggers = {
     [103535] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion }
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local refresh_t = 60 -- Normal
-    if EHI:IsDifficulty(EHI.Difficulties.Hard) then
-        refresh_t = 50
-    elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
-        refresh_t = 40
-    end
+    local refresh_t = EHI:GetValueBasedOnDifficulty({
+        normal = 60,
+        hard = 50,
+        veryhard_or_above = 40
+    })
     other[100356] = { time = refresh_t, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
         if element:_check_mode() then
             if self._trackers:TrackerExists("Snipers") then

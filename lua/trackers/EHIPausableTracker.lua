@@ -3,7 +3,7 @@
 EHIPausableTracker = class(EHITracker)
 EHIPausableTracker._paused_color = EHI:GetTWColor("pause")
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIPausableTracker:init(panel, params, parent_class)
     EHIPausableTracker.super.init(self, panel, params, parent_class)

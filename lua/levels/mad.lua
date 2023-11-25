@@ -7,7 +7,7 @@ EHIdailycakeTracker.FormatProgress = EHIProgressTracker.Format
 EHIdailycakeTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIdailycakeTracker.SetProgress = EHIProgressTracker.SetProgress
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIdailycakeTracker:init(panel, params, parent_class)
     self._max = 4

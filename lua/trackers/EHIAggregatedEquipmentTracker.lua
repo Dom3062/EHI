@@ -20,14 +20,7 @@ function EHIAggregatedEquipmentTracker:pre_init(params)
     self._deployables = {}
     self._ignore = params.ignore or {}
     self._format = {}
-    self.text =
-    {
-        doctor_bag = false,
-        ammo_bag = false,
-        grenade_crate = false,
-        first_aid_kit = false,
-        bodybags_bag = false
-    }
+    self._equipment = {}
     for _, id in ipairs(self._ids) do
         self._amount[id] = 0
         self._placed[id] = 0
@@ -36,10 +29,11 @@ function EHIAggregatedEquipmentTracker:pre_init(params)
     end
 end
 
+---@param params EHITracker.params
 function EHIAggregatedEquipmentTracker:post_init(params)
     self._default_panel_w = self._panel:w()
     self._default_bg_box_w = self._bg_box:w()
-    self._panel_half = self._bg_box:w() / 2
+    self._panel_half = self._default_bg_box_w / 2
     self._panel_w = self._default_panel_w
     self._bg_box:remove(self._text)
 end
@@ -155,11 +149,11 @@ end
 
 ---@param id string
 function EHIAggregatedEquipmentTracker:UpdateText(id)
-    if self.text[id] then
+    if self._equipment[id] then
         if self._amount[id] <= 0 then
             self:RemoveText(id)
         else
-            local text = self._bg_box:child(id) --[[@as PanelText]]
+            local text = self._equipment[id] --[[@as PanelText]]
             text:set_text(self:FormatDeployable(id))
             self:FitTheText(text)
         end
@@ -179,33 +173,35 @@ function EHIAggregatedEquipmentTracker:AddText(id)
         name = id,
         color = color[id]
     })
-    self.text[id] = true
+    self._equipment[id] = text
     text:set_text(self:FormatDeployable(id))
     self:Reorganize(true)
 end
 
 ---@param id string
 function EHIAggregatedEquipmentTracker:RemoveText(id)
-    self._bg_box:remove(self._bg_box:child(id))
-    self.text[id] = false
+    self._bg_box:remove(self._equipment[id])
+    self._equipment[id] = nil
     self._n_of_deployables = self._n_of_deployables - 1
     if self._n_of_deployables == 1 then
-        for ID, _ in pairs(self.text) do
-            local text = self._bg_box:child(ID) --[[@as PanelText?]]
-            if text then
-                text:set_font_size(self._panel:h() * self._text_scale)
-                text:set_x(0)
-                text:set_w(self._bg_box:w())
-                self:FitTheText(text)
-                break
-            end
-        end
+        local _, text = next(self._equipment) ---@cast text PanelText
+        text:set_x(0)
+        text:set_w(self._bg_box:w())
+        self:FitTheText(text)
     end
     self:Reorganize()
 end
 
+function EHIAggregatedEquipmentTracker:Redraw()
+    for _, text in ipairs(self._bg_box:children()) do ---@cast text PanelText
+        if text.set_text then
+            self:FitTheText(text)
+        end
+    end
+end
+
 function EHIAggregatedEquipmentTracker:AnimateMovement()
-    self:AnimatePanelW(self._panel_w)
+    self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
     self:AnimIconX(self._panel_w - self._icon_size_scaled)
 end
@@ -226,33 +222,23 @@ end
 ---@param addition boolean?
 function EHIAggregatedEquipmentTracker:Reorganize(addition)
     if self._n_of_deployables == 1 then
-        if true then
-            return
-        end
-        for id, _ in pairs(self.text) do
-            local text = self._bg_box:child(id) --[[@as PanelText?]]
-            if text then
-                text:set_font_size(self._panel:h() * self._text_scale)
-                text:set_w(self._icon_size_scaled)
-                self:FitTheText(text)
-            end
-        end
+        return
     elseif self._n_of_deployables == 2 then
         self:AlignTextOnHalfPos()
         if not addition then
             self._panel_w = self._default_panel_w
-            self:AnimateMovement()
             self._bg_box:set_w(self._default_bg_box_w)
+            self:AnimateMovement()
         end
     elseif addition then
+        self:AlignTextOnHalfPos()
         self._panel_w = self._panel_w + self._panel_half
-        self:AnimateMovement()
         self._bg_box:set_w(self._bg_box:w() + self._panel_half)
-        self:AlignTextOnHalfPos()
-    else
-        self._panel_w = self._panel_w - self._panel_half
         self:AnimateMovement()
-        self._bg_box:set_w(self._bg_box:w() - self._panel_half)
+    else
         self:AlignTextOnHalfPos()
+        self._panel_w = self._panel_w - self._panel_half
+        self._bg_box:set_w(self._bg_box:w() - self._panel_half)
+        self:AnimateMovement()
     end
 end

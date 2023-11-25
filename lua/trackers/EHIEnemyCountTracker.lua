@@ -16,15 +16,6 @@ function EHIEnemyCountTracker:init(...)
     EHIEnemyCountTracker.super.init(self, ...)
 end
 
-function EHIEnemyCountTracker:OverridePanel()
-    if self._icon2 or self._forced_icons[1] == "enemy" then
-        return
-    end
-    local texture, text_rect = self:GetIcon("enemy")
-    self:CreateIcon("2", texture, text_rect, self._icon1:x(), false)
-    self._manually_created_icon2 = true
-end
-
 function EHIEnemyCountTracker:Update()
     self._text:set_text(self:Format())
     self:AnimateBG()
@@ -41,9 +32,10 @@ function EHIEnemyCountTracker:Alarm()
         self._icon2:set_x(self._icon1:x())
         self._icon2:set_visible(true)
         self._icon1:set_visible(false)
-        if not self._manually_created_icon2 then
-            self:ChangeTrackerWidth(self._bg_box:w() + self._icon_gap_size_scaled, true)
-        end
+        self:AnimateRepositionHintX(1)
+        self:ChangeTrackerWidth(self._bg_box:w() + self._icon_gap_size_scaled, true)
+    elseif self._forced_icons[1] ~= "enemy" then
+        self:SetIcon("enemy")
     end
 end
 

@@ -2,15 +2,16 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local escape_fly_in = 30 + 35 + 24
-local fire_wait = { time = 20, id = "FireWait", icons = { Icon.Fire, Icon.Wait } }
+local fire_wait = { time = 20, id = "FireWait", icons = { Icon.Fire, Icon.Wait }, hint = Hints.Wait }
 local triggers = {
-    [100201] = { time = 99, id = "AmbushWait", icons = { Icon.Wait } },
+    [100201] = { time = 99, id = "AmbushWait", icons = { Icon.Wait }, hint = Hints.Wait },
     [100218] = fire_wait,
     [100364] = fire_wait,
-    [100417] = { time = 78 + 25 + escape_fly_in, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, class = TT.Pausable },
+    [100417] = { time = 78 + 25 + escape_fly_in, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, class = TT.Pausable, hint = Hints.Escape },
     [100422] = { time = escape_fly_in, id = "EscapeHeli", special_function = SF.PauseTrackerWithTime },
-    [100423] = { time = escape_fly_in, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable }
+    [100423] = { time = escape_fly_in, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable, hint = Hints.Escape }
 }
 
 ---@type ParseAchievementTable

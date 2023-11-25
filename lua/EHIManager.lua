@@ -549,7 +549,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     local daily = new_triggers.daily or {}
     if EHI:GetUnlockableAndOption("show_dailies") and next(daily) then
         for id, data in pairs(daily) do
-            if data.difficulty_pass ~= false and EHI:IsDailyAvailable(id) then
+            if data.difficulty_pass ~= false and EHI:IsSFDailyAvailable(id) then
                 for _, element in pairs(data.elements or {}) do
                     if element.class and not data.icons then
                         data.icons = { EHI.Icons.Trophy }
@@ -955,6 +955,8 @@ end
 function EHIManager:AddTracker(trigger)
     if trigger.run then
         self._trackers:RunTracker(trigger.id, trigger.run)
+    elseif trigger.tracker_merge and self._trackers:TrackerExists(trigger.id) then
+        self._trackers:SetTrackerTime(trigger.id, trigger.time)
     else
         self:_AddTracker(trigger)
     end
@@ -1093,6 +1095,9 @@ function EHIManager:Trigger(id, element, enabled)
             elseif f == SF.SetChanceWhenTrackerExists then
                 if self._trackers:TrackerExists(trigger.id) then
                     self._trackers:SetChance(trigger.id, trigger.chance)
+                    if trigger.tracker_merge then
+                        self._trackers:SetTrackerTime(trigger.id, trigger.time)
+                    end
                 else
                     self:CheckCondition(trigger)
                 end
@@ -1114,7 +1119,22 @@ function EHIManager:Trigger(id, element, enabled)
                 end
             elseif f == SF.SetTimeOrCreateTracker then
                 local key = trigger.id
-                if self:Exists(key) then
+                if trigger.tracker_merge then
+                    if self._trackers:TrackerExists(key) then
+                        self._trackers:SetTrackerTime(key, trigger.time)
+                    else
+                        self:_AddTracker(trigger)
+                    end
+                    if trigger.waypoint_f then
+                        trigger.waypoint_f(self, trigger)
+                    elseif trigger.waypoint then
+                        if self._waypoints:WaypointExists(key) then
+                            self._waypoints:SetWaypointTime(key, trigger.time)
+                        else
+                            self._waypoints:AddWaypoint(key, trigger.waypoint)
+                        end
+                    end
+                elseif self:Exists(key) then
                     local time = trigger.run and trigger.run.time or trigger.time or 0
                     self:SetTime(key, time)
                 else
@@ -1180,13 +1200,6 @@ function EHIManager:Trigger(id, element, enabled)
                 self._trackers:DecreaseChance(trigger.id, element._values.chance)
             elseif f == SF.SetChanceFromElement then
                 self._trackers:SetChance(trigger.id, element._values.chance)
-            elseif f == SF.SetChanceFromElementWhenTrackerExists then
-                if self._trackers:TrackerExists(trigger.id) then
-                    self._trackers:SetChance(trigger.id, element._values.chance)
-                else
-                    trigger.chance = element._values.chance
-                    self:CheckCondition(trigger)
-                end
             elseif f == SF.PauseTrackerWithTime then
                 local t_id = trigger.id
                 self:Pause(t_id)
@@ -1428,6 +1441,8 @@ if EHI:GetWaypointOption("show_waypoints_only") then
             self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
         elseif trigger.run then
             self._trackers:RunTracker(trigger.id, trigger.run)
+        elseif trigger.tracker_merge and self._trackers:TrackerExists(trigger.id) then
+            self._trackers:SetTrackerTime(trigger.id, trigger.time)
         else
             self:_AddTracker(trigger)
         end

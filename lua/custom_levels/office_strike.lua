@@ -2,6 +2,7 @@ local EHI = EHI
 local Icons = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+local Hints = EHI.Hints
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local escape = "Heli"
 ---@type ParseTriggerTable
@@ -21,7 +22,8 @@ local triggers = {
             self._trackers:AddTracker({
                 id = trigger.id,
                 time = t,
-                icons = Icons.HeliEscape
+                icons = Icons.HeliEscape,
+                hint = Hints.LootEscape
             })
             if trigger.waypoint then
                 trigger.waypoint.time = t
@@ -32,7 +34,8 @@ local triggers = {
             self._trackers:AddTracker({
                 id = trigger.id,
                 time = 80,
-                icons = Icons.CarEscape
+                icons = Icons.CarEscape,
+                hint = Hints.LootEscape
             })
             if trigger.waypoint then
                 trigger.waypoint.time = 80

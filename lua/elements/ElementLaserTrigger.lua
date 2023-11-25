@@ -11,7 +11,7 @@ end
 ---@field super EHITracker
 EHILaserTracker = class(EHITracker)
 EHILaserTracker._forced_icons = { EHI.Icons.Lasers }
----@param params EHITracker_params
+---@param params EHITracker.params
 function EHILaserTracker:pre_init(params)
     self._next_cycle_t = params.time
 end

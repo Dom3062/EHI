@@ -13,7 +13,9 @@ EHITimerTracker = class(EHIWarningTracker)
 EHITimerTracker._update = false
 EHITimerTracker._autorepair_color = EHI:GetTWColor("drill_autorepair")
 EHITimerTracker._paused_color = EHIPausableTracker._paused_color
----@param params EHITracker_params
+EHITimerTracker.StartTimer = EHITimedChanceTracker.StartTimer
+EHITimerTracker.StopTimer = EHITimedChanceTracker.StopTimer
+---@param params EHITracker.params
 function EHITimerTracker:pre_init(params)
     if params.icons[1].icon then
         params.icons[2] = { icon = "faster", visible = false, alpha = 0.25 }
@@ -22,7 +24,7 @@ function EHITimerTracker:pre_init(params)
     end
 end
 
----@param params EHITracker_params
+---@param params EHITracker.params
 function EHITimerTracker:post_init(params)
     self._theme = params.theme
     self:SetUpgradeable(false)
@@ -82,7 +84,7 @@ function EHITimerTracker:SetUpgradeable(upgradeable)
         self._icon3:set_visible(upgradeable)
         self._icon4:set_visible(upgradeable)
     end
-    if upgradeable then
+    if upgradeable and self._icon2 then
         self._panel_override_w = self._panel:w()
     else
         self._panel_override_w = self._bg_box:w() + self._icon_gap_size_scaled
@@ -163,27 +165,11 @@ function EHITimerTracker:SetTextColor()
     end
 end
 
----@param t number
-function EHITimerTracker:StartTimer(t)
-    self:SetTimeNoAnim(t)
-    self:AnimatePanelW(self._panel_double)
-    self:ChangeTrackerWidth(self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons))
-    self:AnimIconX(self._bg_box_double + self._gap_scaled)
-    self._bg_box:set_w(self._bg_box_double)
-end
-
-function EHITimerTracker:StopTimer()
-    self:AnimatePanelW(self._panel_w)
-    self:ChangeTrackerWidth(self._bg_box_w + (self._icon_gap_size_scaled * self._n_of_icons))
-    self:AnimIconX(self._bg_box_w + self._gap_scaled)
-    self._bg_box:set_w(self._bg_box_w)
-end
-
 function EHITimerTracker:IsTimerRunning()
     return self._bg_box:w() == self._bg_box_double
 end
 
----@class EHIProgressTimerTracker : EHITimerTracker, EHIProgressTracker
+---@class EHIProgressTimerTracker : EHITimerTracker, EHIProgressTracker, EHITimedChanceTracker
 ---@field super EHITimerTracker
 EHIProgressTimerTracker = class(EHITimerTracker)
 EHIProgressTimerTracker.pre_init = EHIProgressTracker.pre_init
@@ -197,10 +183,7 @@ EHIProgressTimerTracker.DecreaseProgress = EHIProgressTracker.DecreaseProgress
 EHIProgressTimerTracker.SetProgress = EHIProgressTracker.SetProgress
 EHIProgressTimerTracker.SetProgressRemaining = EHIProgressTracker.SetProgressRemaining
 function EHIProgressTimerTracker:post_init(params)
-    self._bg_box_w = self._bg_box:w()
-    self._bg_box_double = self._bg_box_w * 2
-    self._panel_w = self._panel:w()
-    self._panel_double = self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons)
+    self:PrecomputeDoubleSize()
     self._progress_text = self:CreateText({
         name = "progress_text",
         text = self:FormatProgress()
@@ -246,24 +229,16 @@ end
 ---@field super EHIChanceTracker
 EHIChanceTimerTracker = class(EHITimerTracker)
 EHIChanceTimerTracker.pre_init = EHIChanceTracker.pre_init
-EHIChanceTimerTracker.FormatChance = EHIChanceTracker.Format
+EHIChanceTimerTracker.FormatChance = EHIChanceTracker.FormatChance
 EHIChanceTimerTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHIChanceTimerTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
+EHIChanceTimerTracker.SetChance = EHIChanceTracker.SetChance
+---@param params EHITracker.params
 function EHIChanceTimerTracker:post_init(params)
-    self._bg_box_w = self._bg_box:w()
-    self._bg_box_double = self._bg_box_w * 2
-    self._panel_w = self._panel:w()
-    self._panel_double = self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons)
+    self:PrecomputeDoubleSize()
     self._chance_text = self:CreateText({
         name = "chance_text",
         text = self:FormatChance()
     })
     self._text:set_left(self._chance_text:right())
-end
-
----@param amount number
-function EHIChanceTimerTracker:SetChance(amount)
-    self._chance = math.max(0, amount)
-    self._chance_text:set_text(self:FormatChance())
-    self:AnimateBG()
 end

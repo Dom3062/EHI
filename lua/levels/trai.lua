@@ -6,11 +6,12 @@ local Icon = EHI.Icons
 EHICraneFixChanceTracker = class(EHIWarningTracker)
 EHICraneFixChanceTracker._forced_icons = EHI:GetOption("show_one_icon") and { Icon.Fix } or { Icon.Winch, Icon.Fix }
 EHICraneFixChanceTracker._show_completion_color = true
-EHICraneFixChanceTracker.FormatChance = EHIChanceTracker.Format
+EHICraneFixChanceTracker.FormatChance = EHIChanceTracker.FormatChance
 EHICraneFixChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
+EHICraneFixChanceTracker.SetChance = EHIChanceTracker.SetChance
 EHICraneFixChanceTracker.SetFailed = EHIAchievementTracker.SetFailed
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHICraneFixChanceTracker:init(panel, params, parent_class)
     self._chance = 30
@@ -33,13 +34,6 @@ function EHICraneFixChanceTracker:OverridePanel()
     end
 end
 
----@param amount number
-function EHICraneFixChanceTracker:SetChance(amount)
-    self._chance = math.max(0, amount)
-    self._chance_text:set_text(self:FormatChance())
-    self:AnimateBG()
-end
-
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
@@ -52,7 +46,7 @@ local triggers =
     [101098] = { time = 5 + 7 + 2, id = "WalkieTalkie", icons = { Icon.Door }, hint = Hints.Wait },
     [100109] = { id = "WalkieTalkie", special_function = SF.RemoveTracker },
 
-    [EHI:GetInstanceElementID(100209, 10450)] = { time = 3, id = "KeygenHack", icons = { Icon.PCHack }, hint = Hints.Hack },
+    [EHI:GetInstanceElementID(100209, 10450)] = { time = 3, id = "KeygenHack", icons = { Icon.Tablet }, hint = Hints.Hack },
 
     [103130] = { time = 10, id = "LocomotiveRefuel", icons = { Icon.Oil }, hint = Hints.FuelTransfer },
 

@@ -6,7 +6,7 @@ local Color = Color
 EHIPiggyBankMutatorTracker = class(EHIProgressTracker)
 EHIPiggyBankMutatorTracker._forced_icons = { "piggy" }
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIPiggyBankMutatorTracker:init(panel, params, parent_class)
     self._current_level = 1
@@ -23,16 +23,10 @@ end
 
 function EHIPiggyBankMutatorTracker:OverridePanel()
     self:SetBGSize()
-    self._levels_text = self._bg_box:text({
-        name = "text2",
+    self._levels_text = self:CreateText({
+        name = "levels_text",
         text = self:FormatLevels(),
-        align = "center",
-        vertical = "center",
-        w = self._bg_box:w() / 2,
-        h = self._icon_size_scaled,
-        font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h() * self._text_scale,
-        color = self._text_color
+        w = self._bg_box:w() / 2
     })
     self:FitTheText(self._levels_text)
     self._levels_text:set_left(self._text:right())

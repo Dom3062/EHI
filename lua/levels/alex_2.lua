@@ -12,29 +12,41 @@ local other =
     [1045351] = EHI:AddAssaultDelay({ time = 30, special_function = SF.SetTimeOrCreateTracker }),
     [1045352] = { special_function = SF.RemoveTrigger, data = { 104488, 104489 } }
 }
-if EHI:IsLootCounterVisible() then
-    local loot_trigger = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
-        ---@type LootCounterSequenceTriggersTable
-        local SafeTriggers =
+if EHI:IsHost() then
+    ---@param self EHIManager
+    ---@param trigger table
+    ---@param element table
+    local function Sync(self, trigger, element, ...)
+        local spawned = element._values.value
+        local tbl =
         {
-            -- gen_interactable_sec_safe_05x05 - 7
-            -- gen_interactable_sec_safe_2x05 - 5
-            -- gen_interactable_sec_safe_1x1 - 2
-            -- gen_interactable_sec_safe_1x05 - 2
-            loot =
-            {
-                "spawn_loot_money"
-            },
-            no_loot =
-            {
-                "spawn_loot_value_a",
-                "spawn_loot_value_d",
-                "spawn_loot_value_e",
-                "spawn_loot_crap_b",
-                "spawn_loot_crap_c",
-                "spawn_loot_crap_d"
-            }
+            max = spawned + math.max(0, spawned - 3),
+            max_random = 1
         }
+        self._trackers:SetTrackerToSync2("LootCounter", tbl)
+    end
+    ---@type LootCounterSequenceTriggersTable
+    local SafeTriggers =
+    {
+        -- gen_interactable_sec_safe_05x05 - 7
+        -- gen_interactable_sec_safe_2x05 - 5
+        -- gen_interactable_sec_safe_1x1 - 2
+        -- gen_interactable_sec_safe_1x05 - 2
+        loot =
+        {
+            "spawn_loot_money"
+        },
+        no_loot =
+        {
+            "spawn_loot_value_a",
+            "spawn_loot_value_d",
+            "spawn_loot_value_e",
+            "spawn_loot_crap_b",
+            "spawn_loot_crap_c",
+            "spawn_loot_crap_d"
+        }
+    }
+    local loot_trigger = EHI:AddLootCounterSynced(function(self, trigger, element, ...)
         local spawned = element._values.value
         EHI:ShowLootCounterNoChecks({
             max = spawned + math.max(0, spawned - 3),
@@ -59,7 +71,7 @@ if EHI:IsLootCounterVisible() then
                 [101211] = SafeTriggers
             }
         })
-    end)}
+    end, SafeTriggers, Sync)
     for i = 103715, 103724, 1 do
         other[i] = loot_trigger
     end
@@ -72,11 +84,12 @@ end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104496] = { time = 120, count_on_refresh = 1, id = "Snipers", class = TT.Sniper.TimedCount, hint = Hints.EnemySnipers }
     other[100063] = { time = 90, id = "Snipers", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
-        if self._trackers:TrackerExists(trigger.id) then
-            self._trackers:CallFunction(trigger.id, "SetRespawnTime", trigger.time)
+        local id = trigger.id
+        if self._trackers:TrackerExists(id) then
+            self._trackers:CallFunction(id, "SetRespawnTime", trigger.time)
         else
             self._trackers:AddTracker({
-                id = trigger.id,
+                id = id,
                 time = trigger.time,
                 count_on_refresh = 1,
                 class = TT.Sniper.TimedCount,

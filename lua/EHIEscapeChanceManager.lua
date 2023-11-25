@@ -7,6 +7,7 @@ function EHIEscapeChanceManager:new(ehi_tracker)
     self._trackers = ehi_tracker
     self._civilians_killed = 0
     self._disabled = false
+    self._synced = false
     return self
 end
 
@@ -14,7 +15,7 @@ end
 ---@param chance number 0-100
 ---@param civilian_killed_multiplier number?
 function EHIEscapeChanceManager:AddEscapeChanceTracker(dropin, chance, civilian_killed_multiplier)
-    if dropin or managers.assets:IsEscapeDriverAssetUnlocked() then
+    if (dropin and not self._synced) or managers.assets:IsEscapeDriverAssetUnlocked() then
         return
     end
     self:DisableIncreaseCivilianKilled()
@@ -45,4 +46,20 @@ function EHIEscapeChanceManager:AddChanceWhenDoesNotExists(dropin, chance, civil
     if self._trackers:TrackerDoesNotExist("EscapeChance") then
         self:AddEscapeChanceTracker(dropin, chance, civilian_killed_multiplier)
     end
+end
+
+function EHIEscapeChanceManager:load(data)
+    local load_data = data.EHIEscapeChanceManager
+    if load_data then
+        self._disabled = load_data.disabled
+        self._civilians_killed = load_data.civilians_killed
+        self._synced = true
+    end
+end
+
+function EHIEscapeChanceManager:save(data)
+    local save_data = {}
+    save_data.disabled = self._disabled
+    save_data.civilians_killed = self._civilians_killed
+    data.EHIEscapeChanceManager = save_data
 end

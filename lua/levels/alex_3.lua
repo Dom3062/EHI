@@ -105,18 +105,5 @@ EHI:AddXPBreakdown({
         { amount = 14000, name = "all_bags_secured", optional = true },
         { escape = 2000 }
     },
-    total_xp_override =
-    {
-        params =
-        {
-            min =
-            {
-                objectives = true
-            },
-            max =
-            {
-                objectives = true
-            }
-        }
-    }
+    total_xp_override = { params = { min_max = {} } }
 })

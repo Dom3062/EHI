@@ -10,6 +10,7 @@ _G.Global = {}
 _G.World = {}
 ---@class tweak_data
 ---@field chat_colors Color[]
+---@field get_raw_value fun(self: self, ...): any
 ---@field get_value fun(self: self, ...): any
 _G.tweak_data = {}
 _G.tweak_data.hud = {}
@@ -27,8 +28,21 @@ _G.tweak_data.gage_assignment = {}
 ---@field stats_present_multiplier number
 _G.tweak_data.gui = {}
 ---@class GroupAITweakData
----@field difficulty_curve_points number[]
-_G.tweak_data.group_ai = {}
+_G.tweak_data.group_ai = {
+    difficulty_curve_points = {
+        0.5
+    },
+    phalanx = {
+        vip = {
+            damage_reduction = {
+                max = 0.5,
+                start = 0.1,
+                increase_intervall = 5,
+                increase = 0.05
+            }
+        }
+    }
+}
 ---@class HudIconsTweakData
 ---@field [string] { texture: string, texture_rect: { number: x, number: y, number: w, number: h } }
 ---@field get_icon_or fun(self: self, icon_id: string, ...): string, { number: x, number: y, number: w, number: h } If the provided icon is not found, `...` is returned
@@ -252,6 +266,7 @@ end
 
 ---@class BlackMarketManager
 ---@field equipped_grenade fun(self: self): string
+---@field equipped_grenade_allows_pickups fun(self: self): boolean
 ---@field equipped_mask fun(self: self): table
 ---@field equipped_melee_weapon fun(self: self): string
 ---@field equipped_primary fun(self: self): table
@@ -276,6 +291,13 @@ end
 ---@class CoroutineManager
 ---@field _buffer table
 
+---@class CustomSafehouseManager
+---@field get_daily_challenge fun(self: self): table?
+---@field is_trophy_unlocked fun(self: self, id: string): boolean
+
+---@class EnvironmentEffectsManager
+---@field _mission_effects table<number, boolean>
+
 ---@class GuiDataManager
 ---@field create_fullscreen_workspace fun(self: self): Workspace
 ---@field create_fullscreen_16_9_workspace fun(self: self): Workspace 16:9
@@ -296,6 +318,12 @@ end
 ---@class GroupAIManager
 ---@field state fun(self: self): GroupAIStateBase
 
+---@class ChallengeManager
+---@field can_progress_challenges fun(self: self): boolean
+---@field get_active_challenge fun(self: self, id: string, key: string?): table?
+---@field get_challenge fun(self: self, id: string, key: string?): table?
+---@field has_active_challenges fun(self: self, id: string, key: string?): boolean
+
 ---@class ChatManager
 ---@field _receive_message fun(self: self, channel_id: number, name: string, message: string, color: Color, icon: string?)
 
@@ -311,6 +339,7 @@ end
 ---@field add_runned_unit_sequence_trigger fun(self: self, unit_id: number, sequence: string, callback: function)
 ---@field check_mission_filter fun(self: self, value: number): boolean
 ---@field get_element_by_id fun(self: self, id: number): MissionScriptElement?
+---@field get_saved_job_value fun(self: self, key: string): number
 ---@field remove_global_event_listener fun(self: self, key: string)
 
 ---@class MenuManager
@@ -374,6 +403,7 @@ end
 ---@field blackmarket BlackMarketManager
 ---@field controller ControllerManager
 ---@field criminals CriminalsManager
+---@field custom_safehouse CustomSafehouseManager
 ---@field ehi_manager EHIManager
 ---@field ehi_tracker EHITrackerManager
 ---@field ehi_waypoint EHIWaypointManager
@@ -382,11 +412,13 @@ end
 ---@field ehi_escape EHIEscapeChanceManager
 ---@field ehi_deployable EHIDeployableManager
 ---@field enemy EnemyManager
+---@field environment_effects EnvironmentEffectsManager
 ---@field experience ExperienceManager
 ---@field game_play_central GamePlayCentralManager
 ---@field groupai GroupAIManager
 ---@field gui_data GuiDataManager
 ---@field hud HUDManager
+---@field challenge ChallengeManager
 ---@field chat ChatManager
 ---@field interaction ObjectInteractionManager
 ---@field job JobManager

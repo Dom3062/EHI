@@ -11,7 +11,7 @@ local triggers =
     -- Runs original trigger in run.lua -> 1028761
     -- Increases Gas count (original trigger in run.lua) -> 1
     [102876] = { special_function = SF.Trigger, data = { 1028762, 1028761, 1 } },
-    [1028762] = { id = "GasAmount", class = "EHIGasTracker" }
+    [1028762] = { id = "GasAmount", class = "EHIGasTracker", hint = EHI.Hints.run_Gas }
 }
 if EHI:MissionTrackersAndWaypointEnabled() then
     triggers[102876].data[4] = 3

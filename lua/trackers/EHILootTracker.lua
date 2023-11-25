@@ -6,7 +6,7 @@ EHILootTracker._forced_hint_text = "loot_counter"
 EHILootTracker._forced_icons = { EHI.Icons.Loot }
 EHILootTracker._show_popup = EHI:GetOption("show_all_loot_secured_popup")
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHILootTracker:init(panel, params, parent_class)
     self._mission_loot = 0
@@ -153,7 +153,7 @@ EHIAchievementLootCounterTracker.ShowFailedPopup = EHIAchievementTracker.ShowFai
 EHIAchievementLootCounterTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
 EHIAchievementLootCounterTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIAchievementLootCounterTracker:init(panel, params, parent_class)
     self._no_failure = params.no_failure
@@ -167,12 +167,14 @@ function EHIAchievementLootCounterTracker:init(panel, params, parent_class)
     EHIAchievementLootCounterTracker.super.init(self, panel, params, parent_class)
     if params.start_silent then
         self._silent_start = true
-        self._icon2:set_visible(true)
-        self._icon1:set_visible(false)
-        self._panel_override_w = self._bg_box:w() + self._icon_gap_size_scaled
-        self:SetHintX(self._panel_override_w)
-        if not self._manually_created_icon2 then
+        if self._icon2 then
+            self._icon2:set_visible(true)
+            self._icon1:set_visible(false)
+            self._panel_override_w = self._bg_box:w() + self._icon_gap_size_scaled
+            self:SetHintX(self._panel_override_w)
             self._icon2:set_x(self._icon1:x())
+        else
+            self:SetIcon("pd2_loot")
         end
     else
         if self._show_started then
@@ -184,16 +186,7 @@ function EHIAchievementLootCounterTracker:init(panel, params, parent_class)
     end
 end
 
-function EHIAchievementLootCounterTracker:OverridePanel()
-    if self._icon2 then
-        return
-    end
-    local texture, text_rect = self:GetIcon("pd2_loot")
-    self:CreateIcon("2", texture, text_rect, self._icon1:x(), false)
-    self._manually_created_icon2 = true
-end
-
----@param params EHITracker_params
+---@param params EHITracker.params
 function EHIAchievementLootCounterTracker:PrepareHint(params)
     EHIAchievementTracker.PrepareHint(self, params)
     self._forced_hint_text = params.hint
@@ -207,12 +200,14 @@ end
 function EHIAchievementLootCounterTracker:SetFailed()
     if self._loot_counter_on_fail then
         self:AnimateBG()
-        self._icon2:set_visible(true)
-        self._icon1:set_visible(false)
-        if not self._manually_created_icon2 then
+        if self._icon2 then
+            self._icon2:set_visible(true)
+            self._icon1:set_visible(false)
             self._icon2:set_x(self._icon1:x())
+            self:ChangeTrackerWidth(self._bg_box:w() + self._icon_gap_size_scaled, true)
+        else
+            self:SetIcon("pd2_loot")
         end
-        self:ChangeTrackerWidth(self._bg_box:w() + self._icon_gap_size_scaled, true)
     else
         EHIAchievementLootCounterTracker.super.SetFailed(self)
     end
@@ -234,6 +229,7 @@ function EHIAchievementLootCounterTracker:SetFailedSilent()
     self._failed_on_sync = true
     self._show_failed = nil
     self._show_finish_after_reaching_target = nil
+    self._hint_vanilla_localization = nil
     self:UpdateHint("loot_counter")
     self:SetFailed()
 end
@@ -242,16 +238,18 @@ function EHIAchievementLootCounterTracker:SetStarted()
     if self._show_started then
         self._failed_allowed = self._silent_start
         if self._silent_start then
-            self:UpdateHint("achievement_" .. self._id, true)
+            self._hint_vanilla_localization = true
+            self:UpdateHint("achievement_" .. self._id)
         end
         self:ShowStartedPopup()
         self._icon1:set_visible(true)
-        if self._manually_created_icon2 then
-            self._icon2:set_visible(false)
-        else
+        if self._icon2 then
+            self._icon2:set_visible(true)
             self:SetIconX(self._icon1, self._icon2)
             self._panel_override_w = nil
             self:ChangeTrackerWidth(nil, true)
+        else
+            self:SetIcon(self._forced_icons[1])
         end
     end
     if self._show_desc then

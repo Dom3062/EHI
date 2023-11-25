@@ -2,34 +2,34 @@ local EHI = EHI
 local SF = EHI.SpecialFunctions
 local Icon = EHI.Icons
 local TT = EHI.Trackers
-
+local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers =
 {
-    [100371] = { time = 8.25, id = "Wait", icons = { Icon.Wait } },
+    [100371] = { time = 8.25, id = "Wait", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [100534] = { time = 4, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_unit = 100828 } },
+    [100534] = { time = 4, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_unit = 100828 }, hint = Hints.Thermite },
 
-    [100083] = { time = 12, id = "Thermite2", icons = { Icon.Fire }, waypoint = { position_by_unit = 100606 } },
+    [100083] = { time = 12, id = "Thermite2", icons = { Icon.Fire }, waypoint = { position_by_unit = 100606 }, hint = Hints.Thermite },
 
-    [100374] = { time = 12 + 5, id = "Wait2", icons = { Icon.Wait } },
+    [100374] = { time = 12 + 5, id = "Wait2", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [100376] = { time = 7, id = "Wait3", icons = { Icon.Wait } },
+    [100376] = { time = 7, id = "Wait3", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [100689] = { time = 7 + 1, id = "Wait4", icons = { Icon.Wait } },
+    [100689] = { time = 7 + 1, id = "Wait4", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [100137] = { chance = 13, id = "USBChance", icons = { Icon.USB }, class = TT.Chance },
+    [100137] = { chance = 13, id = "USBChance", icons = { Icon.USB }, class = TT.Chance, hint = Hints.Chance },
     [100117] = { id = "USBChance", special_function = SF.IncreaseChanceFromElement }, -- +13%
     [100138] = { id = "USBChance", special_function = SF.RemoveTracker },
 
-    [100193] = { time = 20, id = "MotionSensorHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 102324 } },
+    [100193] = { time = 20, id = "MotionSensorHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 102324 }, hint = Hints.Hack },
 
-    [100236] = { time = 12, id = "Thermite3", icons = { Icon.Fire }, waypoint = { position_by_unit = 100722 } },
-    [100238] = { time = 12, id = "Thermite4", icons = { Icon.Fire }, waypoint = { position_by_unit = 100704 } },
-    [100239] = { time = 12, id = "Thermite5", icons = { Icon.Fire }, waypoint = { position_by_unit = 100717 } },
-    [100242] = { time = 12, id = "Thermite6", icons = { Icon.Fire }, waypoint = { position_by_unit = 100712 } },
+    [100236] = { time = 12, id = "Thermite3", icons = { Icon.Fire }, waypoint = { position_by_unit = 100722 }, hint = Hints.Thermite },
+    [100238] = { time = 12, id = "Thermite4", icons = { Icon.Fire }, waypoint = { position_by_unit = 100704 }, hint = Hints.Thermite },
+    [100239] = { time = 12, id = "Thermite5", icons = { Icon.Fire }, waypoint = { position_by_unit = 100717 }, hint = Hints.Thermite },
+    [100242] = { time = 12, id = "Thermite6", icons = { Icon.Fire }, waypoint = { position_by_unit = 100712 }, hint = Hints.Thermite },
 
-    [100087] = { time = 12, id = "Thermite7", icons = { Icon.Fire }, waypoint = { position_by_unit = 102346 } }
+    [100087] = { time = 12, id = "Thermite7", icons = { Icon.Fire }, waypoint = { position_by_unit = 102346 }, hint = Hints.Thermite }
 }
 
 local other =

@@ -20,7 +20,7 @@ EHIAssaultTimeTracker._is_client = EHI:IsClient()
 EHIAssaultTimeTracker._paused_color = EHIPausableTracker._paused_color
 EHIAssaultTimeTracker._show_completion_color = true
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIAssaultTimeTracker:init(panel, params, parent_class)
     self:CalculateDifficultyRamp(params.diff)

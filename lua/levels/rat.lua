@@ -30,7 +30,7 @@ local function SetFlarePos(element)
 end
 local element_sync_triggers =
 {
-    [100494] = { id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100724, set_time_when_tracker_exists = true }
+    [100494] = { id = "CookChance", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100724, set_time_when_tracker_exists = true }
 }
 local preload =
 {
@@ -47,9 +47,9 @@ local triggers = {
     [1010011] = { special_function = SF.RemoveTracker, data = { "CookChance", "VanStayDelay", "HeliMeth" } },
     [1010012] = { special_function = SF.RemoveTrigger, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238, 102197, 102167, 102168 } },
 
-    [102383] = { id = "CookDelay", run = { time = 2 + 5 } },
-    [100721] = { id = "CookDelay", run = { time = 1 }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1007211 } },
-    [1007211] = { chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.alex_1_Methlab },
+    [102383] = { time = 2 + 5, chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.alex_1_Methlab, start_opened = true },
+    [100721] = { time = 1, chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.alex_1_Methlab, tracker_merge = true, start_opened = true },
+    [100723] = { id = "CookChance", special_function = SF.IncreaseChanceFromElement },
 
     [100199] = { id = "CookingDone", run = { time = 5 + 1 } },
 
@@ -72,9 +72,7 @@ local triggers = {
     [1019821] = { id = "Van", special_function = SF.SetTimeOrCreateTracker, run = { time = 589/30 } },
     [1019822] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101281 } },
 
-    [101128] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101454 } },
-
-    [100723] = { id = "CookChance", special_function = SF.IncreaseChanceFromElement }
+    [101128] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101454 } }    
 }
 if EHI:EscapeVehicleWillReturn("rat") then
     table.insert(preload, { id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning, hide_on_delete = true, hint = Hints.LootTimed })
@@ -128,18 +126,28 @@ elseif EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVE
     triggers[102197] = { id = "HeliMeth", run = { time = 120 + heli_delay_full }, waypoint_f = ShowFlareWP }
 end
 if EHI:IsClient() then
+    ---@class EHICookingChanceTracker : EHITimedChanceTracker
+    ---@field super EHITimedChanceTracker
+    EHICookingChanceTracker = class(EHITimedChanceTracker)
+    ---@param time number
+    ---@param inaccurate boolean?
+    function EHICookingChanceTracker:SetTimeNoAnim(time, inaccurate)
+        EHICookingChanceTracker.super.SetTimeNoAnim(self, time)
+        self._tracker_type = inaccurate and "inaccurate" or "accurate"
+    end
     local SetTimeNoAnimOrCreateTrackerClient = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
-        local key = trigger.id
-        local value = self._trackers:ReturnValue(key, "GetTrackerType")
-        if value ~= "accurate" then
-            if self._trackers:TrackerExists(key) then
-                self._trackers:SetTrackerTimeNoAnim(key, self:GetRandomTime(trigger))
-            else
-                self:CheckCondition(trigger)
+        local id = trigger.id
+        local tracker = self._trackers:GetTracker(id) ---@cast tracker EHICookingChanceTracker
+        if tracker then
+            if tracker._tracker_type == "inaccurate" then
+                tracker:SetTimeNoAnim(self:GetRandomTime(trigger), true)
             end
+        else
+            self:CheckCondition(trigger)
         end
     end)
-    triggers[100724] = { additional_time = 20, random_time = 5, id = "CookChanceDelay", icons = { Icon.Methlab, Icon.Loop }, special_function = SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
+    triggers[100721].class = "EHICookingChanceTracker"
+    triggers[100724] = { additional_time = 20, random_time = 5, id = "CookChance", icons = { Icon.Methlab, Icon.Loop }, special_function = SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
     EHI:AddHostTriggers(element_sync_triggers, "element")

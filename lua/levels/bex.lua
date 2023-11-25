@@ -2,7 +2,7 @@ local EHI = EHI
 ---@class EHIbex11Tracker : EHIAchievementProgressTracker
 ---@field super EHIAchievementProgressTracker
 EHIbex11Tracker = class(EHIAchievementProgressTracker)
----@param params EHITracker_params
+---@param params EHITracker.params
 function EHIbex11Tracker:pre_init(params)
     params.max = 11 -- Loot
     params.show_progress_on_finish = true

@@ -1,13 +1,13 @@
 local EHI = EHI
 local Icon = EHI.Icons
-local SF = EHI.SpecialFunctions
+local Hints = EHI.Hints
 local EscapeArrivalDelay = 674/30
 local triggers = {
-    [100006] = { time = 120, id = "LiquidNitrogen", icons = { Icon.LiquidNitrogen } },
-    [100075] = { time = 120 + EscapeArrivalDelay, id = "Escape", icons = Icon.CarEscape, waypoint = { position_by_element = 100209 } }
+    [100006] = { time = 120, id = "LiquidNitrogen", icons = { Icon.LiquidNitrogen }, hint = Hints.rvd2_LiquidNitrogen },
+    [100075] = { time = 120 + EscapeArrivalDelay, id = "Escape", icons = Icon.CarEscape, waypoint = { position_by_element = 100209 }, hint = Hints.LootEscape }
 }
 if EHI:IsClient() then
-    triggers[100082] = { time = EscapeArrivalDelay, id = "Escape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { position_by_element = 100209 } }
+    triggers[100082] = EHI:ClientCopyTrigger(triggers[100075], { time = EscapeArrivalDelay })
 end
 
 local other = {

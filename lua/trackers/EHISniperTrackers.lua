@@ -12,13 +12,16 @@ EHISniperChanceTracker._forced_hint_text = "enemy_snipers"
 EHISniperChanceTracker._forced_icons = { "sniper" }
 EHISniperChanceTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperChanceTracker.DecreaseCount = EHICountTracker.DecreaseCount
+---@param params EHITracker.params
 function EHISniperChanceTracker:pre_init(params)
     EHISniperChanceTracker.super.pre_init(self, params)
     EHICountTracker.pre_init(self, params)
     self._additional_count = 0
 end
 
+---@param params EHITracker.params
 function EHISniperChanceTracker:post_init(params)
+    EHISniperChanceTracker.super.post_init(self, params)
     if params.chance_success then
         self:SniperSpawnsSuccess()
     end
@@ -152,7 +155,7 @@ end
 EHISniperTimedChanceTracker = class(EHITracker)
 EHISniperTimedChanceTracker._forced_hint_text = "enemy_snipers"
 EHISniperTimedChanceTracker._forced_icons = { "sniper" }
-EHISniperTimedChanceTracker.FormatChance = EHIChanceTracker.Format
+EHISniperTimedChanceTracker.FormatChance = EHIChanceTracker.FormatChance
 EHISniperTimedChanceTracker.FormatCount = EHICountTracker.Format
 EHISniperTimedChanceTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperTimedChanceTracker.DecreaseCount = EHICountTracker.DecreaseCount
@@ -252,7 +255,7 @@ end
 EHISniperLoopTracker = class(EHITracker)
 EHISniperLoopTracker._forced_hint_text = "enemy_snipers_loop"
 EHISniperLoopTracker._forced_icons = { "sniper" }
-EHISniperLoopTracker.FormatChance = EHIChanceTracker.Format
+EHISniperLoopTracker.FormatChance = EHIChanceTracker.FormatChance
 EHISniperLoopTracker.FormatCount = EHICountTracker.Format
 EHISniperLoopTracker.ResetCount = EHICountTracker.ResetCount
 EHISniperLoopTracker.IncreaseCount = EHICountTracker.IncreaseCount
@@ -324,6 +327,7 @@ function EHISniperLoopTracker:SetCountRemovalCheck(count)
     end
 end
 
+---@param amount number
 function EHISniperLoopTracker:SetChance(amount)
     self._chance = math.max(0, amount)
     self._chance_text:set_text(self:FormatChance())

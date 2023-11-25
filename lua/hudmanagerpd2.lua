@@ -3,7 +3,6 @@ if EHI:CheckLoadHook("HUDManagerPD2") then
     return
 end
 
----@type string
 local level_id = Global.game_settings.level_id
 
 local original =
@@ -43,17 +42,15 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     if tweak_data.levels:IsLevelSafehouse(level_id) then
         return
     end
-    if EHI:GetOption("show_captain_damage_reduction") then
+    if EHI:GetOptionAndLoadTracker("show_captain_damage_reduction") then
         EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
             if mode == "phalanx" then
                 self.ehi:AddTracker({
                     id = "PhalanxDamageReduction",
-                    icons = { "buff_shield" },
-                    hint = "damage_reduction",
-                    class = EHI.Trackers.Chance,
+                    class = "EHIPhalanxDamageReductionTracker",
                 })
             else
-                self.ehi:RemoveTracker("PhalanxDamageReduction")
+                self.ehi:ForceRemoveTracker("PhalanxDamageReduction")
             end
         end)
     end
@@ -379,20 +376,37 @@ function HUDManager:ShowTrophyFailedPopup(id)
 end
 
 ---@param id string
-function HUDManager:ShowTrophyDailyDescription(id)
+function HUDManager:ShowTrophyDescription(id)
     managers.chat:_receive_message(1, managers.localization:text(id), managers.localization:text(id .. "_objective"), Color.white)
 end
 
 ---@param id string
-function HUDManager:ShowDailyStartedPopup(id)
+---@param daily_job boolean
+function HUDManager:ShowDailyStartedPopup(id, daily_job)
+    local text = daily_job and ("menu_challenge_" .. id) or id
     local icon = tweak_data.ehi.icons[id] and id or "milestone_trophy"
-    self:custom_ingame_popup_text("DAILY SIDE JOB STARTED!", managers.localization:to_upper_text(id), icon)
+    self:custom_ingame_popup_text("DAILY SIDE JOB STARTED!", managers.localization:to_upper_text(text), icon)
 end
 
 ---@param id string
-function HUDManager:ShowDailyFailedPopup(id)
+---@param daily_job boolean
+function HUDManager:ShowDailyFailedPopup(id, daily_job)
+    local text = daily_job and ("menu_challenge_" .. id) or id
     local icon = tweak_data.ehi.icons[id] and id or "milestone_trophy"
-    self:custom_ingame_popup_text("DAILY SIDE JOB FAILED!", managers.localization:to_upper_text(id), icon)
+    self:custom_ingame_popup_text("DAILY SIDE JOB FAILED!", managers.localization:to_upper_text(text), icon)
+end
+
+---@param id string
+---@param daily_job boolean
+function HUDManager:ShowDailyDescription(id, daily_job)
+    local text = daily_job and ("menu_challenge_" .. id) or id
+    local objective
+    if daily_job then
+        objective = "menu_challenge_" .. id .. "_desc"
+    else
+        objective = id .. "_objective"
+    end
+    managers.chat:_receive_message(1, managers.localization:text(text), managers.localization:text(objective), Color.white)
 end
 
 function HUDManager:Debug(id)
@@ -412,7 +426,11 @@ function HUDManager:DebugElement(id, editor_name, enabled)
 end
 
 function HUDManager:DebugExperience(id, name, amount)
-    managers.chat:_receive_message(1, "[EHI]", string.format("`%s` ElementExperince %d: Gained %d XP", name, id, amount), Color.white)
+    local s = string.format("`%s` ElementExperince %d: Gained %d XP", name, id, amount)
+    managers.chat:_receive_message(1, "[EHI]", s, Color.white)
+    if EHI.debug.gained_experience.log then
+        EHI:Log(s)
+    end
 end
 
 function HUDManager:DebugBaseElement(id, instance_index, continent_index, element)

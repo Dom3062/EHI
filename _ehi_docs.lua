@@ -14,6 +14,7 @@
 ---@field remove_vanilla_waypoint number?
 ---@field position_by_element_and_remove_vanilla_waypoint number?
 ---@field restore_on_done boolean? Depends on `remove_vanilla_waypoint`
+---@field present_timer number
 
 ---@class ElementClientTriggerData
 ---@field time number Maps to `additional_time`. If the field already exists, it is added to the field (+)
@@ -42,6 +43,7 @@
 ---@field flash_times number?
 ---@field flash_bg boolean?
 ---@field hint string?
+---@field tracker_merge boolean
 ---@field [any] any
 
 ---@class ParseTriggerTable
@@ -86,7 +88,8 @@
 ---@field n_offset integer Provided via EHI:ShowLootCounterOffset(); DO NOT PROVIDE IT
 ---@field triggers table If loot is manipulated via Mission Script, also see field `hook_triggers`
 ---@field hook_triggers boolean If Loot Counter is created during spawn or gameplay, triggers must be hooked in order to work
----@field sequence_triggers table<number, LootCounterSequenceTriggersTable> Used for random loot spawning via sequences
+---@field sequence_triggers table<number, LootCounterSequenceTriggersTable> Used for random loot spawning via sequences (forces syncing via BLT and GameSetup)
+---@field is_synced boolean If the Loot Counter is synced from host (forces syncing via BLT and GameSetup)
 
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.LootCounter.CheckType`, defaults to `EHI.LootCounter.CheckType.BagsOnly` if not provided
@@ -141,6 +144,7 @@
 ---@field icon string|table
 ---@field texture string
 ---@field text_rect { number: x, number: y, number: w, number: h }
+---@field present_timer number
 
 ---@class _WaypointDataTable
 ---@field bitmap PanelBitmap
@@ -219,7 +223,7 @@
 ---@field hint string
 ---@field [any] any
 
----@class EHITracker_params
+---@class EHITracker.params
 ---@field id string
 ---@field icons table?
 ---@field time number?
@@ -233,7 +237,7 @@
 ---@field delay_popup boolean Provided by `EHITrackerManager`
 ---@field [any] any
 
----@class EHITracker_CreateText
+---@class EHITracker.CreateText
 ---@field name string? Text name
 ---@field status_text string? Sets status text, like in achievements
 ---@field text string? Text to display
@@ -241,58 +245,87 @@
 ---@field h number?
 ---@field color Color?
 
----@class XPBreakdown_tactic
+---@class XPBreakdown.tactic.i_custom.objectives_override.stop_at_inclusive_and_add_objectives
+---@field stop_at string
+---@field add_objectives XPBreakdown.objectives Has higher priority than `add_objectives_with_pos`
+---@field add_objectives_with_pos XPBreakdown.tactic.i_custom.objectives_override.add_objectives_with_pos
+---@field mark_optional table Depends on `stop_at`
+
+---@class XPBreakdown.tactic.i_custom.objectives_override.add_objectives_with_pos
+---@field [number] { objective: XPBreakdown.objectives, pos: number }
+
+---@class XPBreakdown.tactic.i_custom.objectives_override
+---@field stop_at string
+---@field stop_at_inclusive string
+---@field add_objectives XPBreakdown.objectives
+---@field add_objectives_with_pos XPBreakdown.tactic.i_custom.objectives_override.add_objectives_with_pos
+---@field mark_optional table Depends on `stop_at` or `stop_at_inclusive`
+---@field stop_at_inclusive_and_add_objectives XPBreakdown.tactic.i_custom.objectives_override.stop_at_inclusive_and_add_objectives
+
+---@class XPBreakdown.tactic.i_custom
+---@field name string `stealth` or `loud`
+---@field additional_name string? Place another string in brackets; `ehi_experience_<name>`
+---@field tactic _XPBreakdown
+---@field objectives_override XPBreakdown.tactic.i_custom.objectives_override
+
+---@class XPBreakdown.tactic.custom
+---@field [number] XPBreakdown.tactic.i_custom
+
+---@class XPBreakdown.tactic
+---@field custom XPBreakdown.tactic.custom
 ---@field stealth _XPBreakdown
 ---@field loud _XPBreakdown
 
----@class XPBreakdown_random
+---@class XPBreakdown.random
 ---@field max number?
----@field [string] XPBreakdown_objectives
+---@field [string] XPBreakdown.objectives
 
----@class _XPBreakdown_escape
+---@class _XPBreakdown.escape
 ---@field amount number
 ---@field stealth boolean
 ---@field loud boolean
 ---@field timer number `stealth` only
 ---@field c4_used boolean `loud` only
 
----@class XPBreakdown_escape
----@field [number] _XPBreakdown_escape
+---@class XPBreakdown.escape
+---@field [number] _XPBreakdown.escape
 
----@class XPBreakdown_objective
+---@class XPBreakdown.objective
 ---@field [string] number|table
----@field escape number|XPBreakdown_escape
+---@field escape number|XPBreakdown.escape
 
----@class _XPBreakdown_objectives
+---@class _XPBreakdown.objectives
 ---@field amount number XP Base
 ---@field name string `ehi_experience_<name>`
+---@field additional_name string? `ehi_experience_<name>`
 ---@field optional boolean?
 ---@field times number?
----@field escape number|XPBreakdown_escape
----@field random XPBreakdown_random
+---@field escape number|XPBreakdown.escape
+---@field random XPBreakdown.random
 ---@field stealth number
 ---@field loud number
 
----@class XPBreakdown_objectives
----@field [number] _XPBreakdown_objectives
+---@class XPBreakdown.objectives
+---@field [number] _XPBreakdown.objectives
 
----@class XPBreakdown_loot
+---@class XPBreakdown.loot
 ---@field [string] number|{amount: number, times: number}
 
 ---@class _XPBreakdown
----@field objective XPBreakdown_objective
----@field objectives XPBreakdown_objectives
----@field loot XPBreakdown_loot
+---@field objective XPBreakdown.objective
+---@field objectives XPBreakdown.objectives
+---@field loot XPBreakdown.loot
 ---@field loot_all number|{amount: number, times: number}
 ---@field wave number[]
 ---@field wave_all number|{amount: number, times: number}
 
 ---@class XPBreakdown
----@field objective XPBreakdown_objective
----@field objectives XPBreakdown_objectives
----@field loot XPBreakdown_loot
+---@field objective XPBreakdown.objective
+---@field objectives XPBreakdown.objectives
+---@field loot XPBreakdown.loot
 ---@field loot_all number|{amount: number, times: number}
 ---@field wave number[]
 ---@field wave_all number|{amount: number, times: number}
 ---@field no_total_xp boolean
----@field tactic XPBreakdown_tactic
+---@field tactic XPBreakdown.tactic
+---@field total_xp_override table

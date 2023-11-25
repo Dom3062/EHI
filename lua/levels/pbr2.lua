@@ -6,7 +6,7 @@ EHIcac33Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac33Tracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIcac33Tracker.SetProgress = EHIProgressTracker.SetProgress
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIcac33Tracker:init(panel, params, parent_class)
     self._progress = 0

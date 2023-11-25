@@ -52,6 +52,17 @@ EHI:ParseTriggers({
     other = other,
     preload = preload
 }, "Escape", Icon.CarEscape)
+local min_money = EHI:GetValueBasedOnDifficulty({
+    hard_or_below = 1,
+    veryhard_or_above = 2
+})
+local max_money = min_money * 2
+local max_bags = EHI:GetValueBasedOnDifficulty({
+    normal = max_money + 4,
+    hard = max_money + 5,
+    veryhard = max_money + 7,
+    overkill_or_above = max_money + 9
+})
 EHI:AddXPBreakdown({
     objective =
     {
@@ -62,5 +73,15 @@ EHI:AddXPBreakdown({
             { amount = 4000, loud = true, c4_used = true }
         }
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            escape =
+            {
+                loot_all = { min = min_money, max = max_bags }
+            }
+        }
+    }
 })

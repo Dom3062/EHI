@@ -671,25 +671,27 @@ tweak_data.ehi =
             end
             return n
         end,
-        HookArmoredTransportUnit = function(truck_id)
-            local exploded = {}
+        ---@param truck_id number
+        ---@param forced_loot string[]?
+        HookArmoredTransportUnit = function(truck_id, forced_loot)
+            local exploded
             local function GarbageFound()
-                managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined")
+                managers.ehi_tracker:SyncRandomLootDeclined()
             end
             local function LootFound()
-                managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
+                managers.ehi_tracker:SyncRandomLootSpawned()
             end
             local function LootFoundExplosionCheck()
-                if exploded[truck_id] then
+                if exploded then
                     GarbageFound()
                     return
                 end
-                managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
+                managers.ehi_tracker:SyncRandomLootSpawned()
             end
             managers.mission:add_runned_unit_sequence_trigger(truck_id, "set_exploded", function()
-                exploded[truck_id] = true
+                exploded = true
             end)
-            for _, loot in ipairs({ "gold", "money", "art" }) do
+            for _, loot in ipairs(forced_loot or { "gold", "money", "art" }) do
                 for i = 1, 9, 1 do
                     if i <= 2 then -- Explosion can disable this loot
                         managers.mission:add_runned_unit_sequence_trigger(truck_id, "spawn_loot_" .. loot .. "_" .. tostring(i), LootFoundExplosionCheck)

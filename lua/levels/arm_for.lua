@@ -89,11 +89,11 @@ local MissionDoor =
 }
 EHI:SetMissionDoorData(MissionDoor)
 EHI:AddXPBreakdown({
-    objective =
+    objectives =
     {
-        vault_open = { amount = 3000, times = 3 },
-        turret_secured = 7000,
-        escape = 4000
+        { amount = 3000, name = "vault_open", times = 3 },
+        { amount = 7000, name = "turret_secured" },
+        { escape = 4000 }
     },
     loot =
     {

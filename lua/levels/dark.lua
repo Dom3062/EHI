@@ -1,7 +1,7 @@
 ---@class EHIdark5Tracker : EHIProgressTracker
 ---@field super EHIProgressTracker
 EHIdark5Tracker = class(EHIProgressTracker)
----@param params EHITracker_params
+---@param params EHITracker.params
 function EHIdark5Tracker:pre_init(params)
     self._bodies = {}
     EHIdark5Tracker.super.pre_init(self, params)

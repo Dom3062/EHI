@@ -5,13 +5,20 @@ end
 
 ---@class MissionBriefingGui
 ---@field _assets_item table
+---@field _displaying_asset boolean
+---@field _enabled boolean
 ---@field _fullscreen_panel Panel
+---@field _items table
+---@field _panel Panel
+---@field _selected_item number
+---@field close_asset fun(self: self)
 
 ---@class MissionBriefingPanel
 ---@field panel Panel
 ---@field lines number
 ---@field h number
 ---@field selected boolean
+---@field multi_tactic boolean
 
 local colors =
 {
@@ -28,27 +35,32 @@ EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, loc_loaded)
     end
 end)
 
----@type XPBreakdown
+---@type XPBreakdown?
 local _params
-local TacticSelected, ToggleButtonAlpha = 1, 1
+local TacticSelected, TacticMax, ToggleButtonAlpha = 1, 2, 1
 ---@class XPBreakdownItem
----@field new fun(self: self, gui: MissionBriefingGui, panel: Panel, string: string, type: string, selected: boolean): self
+---@field new fun(self: self, gui: MissionBriefingGui, panel: Panel, string: string, add_string: string?, index: number, selected: boolean): self
 local XPBreakdownItem = class()
 ---@param gui MissionBriefingGui
 ---@param panel Panel
 ---@param string string
----@param type string
+---@param add_string string?
+---@param index number
 ---@param selected boolean
-function XPBreakdownItem:init(gui, panel, string, type, selected)
+function XPBreakdownItem:init(gui, panel, string, add_string, index, selected)
     self._gui = gui
-    self._type = type
+    self._index = index
     self._panel = panel
+    local text = gui._loc:text(string)
+    if add_string then
+        text = string.format("%s (%s)", text, gui._loc:text("ehi_experience_" .. add_string))
+    end
     self._button = panel:text({
         align = "center",
         name = string,
         blend_mode = "add",
         layer = 2,
-        text = gui._loc:text(string),
+        text = text,
         font_size = tweak_data.menu.pd2_large_font_size / 2,
         font = tweak_data.menu.pd2_large_font,
         color = tweak_data.screen_colors.button_stage_3,
@@ -71,12 +83,7 @@ function XPBreakdownItem:init(gui, panel, string, type, selected)
 end
 
 function XPBreakdownItem:GetIndex()
-    return self._type == "stealth" and 1 or 2
-end
-
----@param item XPBreakdownItem
-function XPBreakdownItem:SetPreviousItem(item)
-    self._previous_item = item
+    return self._index
 end
 
 ---@return PanelText
@@ -94,7 +101,6 @@ end
 
 ---@param item XPBreakdownItem
 function XPBreakdownItem:SetPosByPreviousItem(item)
-    self:SetPreviousItem(item)
     local button = item:GetButton()
     self._button:set_bottom(button:bottom())
     self._button:set_left(button:right() + 10)
@@ -121,7 +127,7 @@ function XPBreakdownItem:Select(no_change)
     if no_change then
         return
     end
-    self._gui:OnTacticChanged(self:GetIndex(), self._previous_item:GetIndex())
+    self._gui:OnTacticChanged(self:GetIndex())
 end
 
 function XPBreakdownItem:Unselect()
@@ -132,18 +138,6 @@ function XPBreakdownItem:Unselect()
     self._button:set_blend_mode("add")
     self._tab_select_rect:hide()
     self._selected = false
-end
-
-function XPBreakdownItem:UnselectPreviousItem()
-    self._previous_item:Unselect()
-end
-
-function XPBreakdownItem:ToggleSelection()
-    if self._selected then
-        self:Unselect()
-    else
-        self:Select()
-    end
 end
 
 ---@param x number
@@ -174,7 +168,6 @@ function XPBreakdownItem:mouse_pressed(button, x, y)
     end
     if not self._selected and self._button and alive(self._button) and self._button:inside(x, y) then
         self:Select()
-        self:UnselectPreviousItem()
     end
 end
 
@@ -201,6 +194,12 @@ function XPBreakdownItemSwitch:init(panel, loc)
         alpha = ToggleButtonAlpha,
         visible = false
     })
+    EHIMenu:make_fine_text(self._text)
+end
+
+---@param loc LocalizationManager
+function XPBreakdownItemSwitch:SetNextTacticText(loc)
+    self._text:set_text(loc:text("ehi_mission_briefing_next_tactic_text"))
     EHIMenu:make_fine_text(self._text)
 end
 
@@ -331,22 +330,147 @@ function MissionBriefingGui:AddXPBreakdown(params)
     end
     self:FakeExperienceMultipliers()
     if params.tactic then
+        self._ehi_buttons = {} ---@type table<number, XPBreakdownItem>
         local tactic = params.tactic
-        if self._panels then
+        if tactic.custom then
+            if self._ehi_controller_switch_button then
+                self._ehi_controller_switch_button:SetNextTacticText(self._loc)
+            end
+            if self._panels then
+                for i, custom in ipairs(t) do
+                    self:ProcessBreakDown(custom.tactic, self._panels[i])
+                end
+            else
+                self._panels = {}
+                TacticMax = table.size(tactic.custom)
+                for i, custom in ipairs(tactic.custom) do
+                    self._ehi_buttons[i] = XPBreakdownItem:new(self, self._fullscreen_panel, "ehi_experience_" .. custom.name, custom.additional_name, i, TacticSelected == i)
+                    if i == 1 then
+                        self._ehi_buttons[i]:SetPosByPanel(self._ehi_panel)
+                    else
+                        self._ehi_buttons[i]:SetPosByPreviousItem(self._ehi_buttons[i - 1])
+                    end
+                    ---@type MissionBriefingPanel
+                    local panel = { panel = i == 1 and self._ehi_panel_v2 or self._ehi_panel:panel({
+                        name = "panel_v" .. tostring(i),
+                        layer = 9
+                    }), lines = 0, adjust_h = i == TacticMax, selected = TacticSelected == i, multi_tactic = true }
+                    if custom.objectives_override then
+                        local new_objectives = {}
+                        local override = custom.objectives_override
+                        if override.stop_at then
+                            local delimiter = override.stop_at
+                            local mark_optional = override.mark_optional or {}
+                            for j, objective in ipairs(custom.tactic.objectives) do
+                                if objective.name == delimiter then
+                                    break
+                                end
+                                if mark_optional[objective.name] then
+                                    objective.optional = true
+                                end
+                                new_objectives[j] = objective
+                            end
+                            custom.tactic.objectives = new_objectives
+                        elseif override.stop_at_inclusive then
+                            local delimiter = override.stop_at_inclusive
+                            local mark_optional = override.mark_optional or {}
+                            for j, objective in ipairs(custom.tactic.objectives) do
+                                if objective.name == delimiter then
+                                    if mark_optional[objective.name] then
+                                        objective.optional = true
+                                    end
+                                    new_objectives[j] = objective
+                                    break
+                                end
+                                if mark_optional[objective.name] then
+                                    objective.optional = true
+                                end
+                                new_objectives[j] = objective
+                            end
+                            custom.tactic.objectives = new_objectives
+                        elseif override.stop_at_inclusive_and_add_objectives then
+                            local stop_and_add = override.stop_at_inclusive_and_add_objectives
+                            local delimiter = stop_and_add.stop_at
+                            local mark_optional = stop_and_add.mark_optional or {}
+                            local size = 0
+                            for j, objective in ipairs(custom.tactic.objectives) do
+                                if objective.name == delimiter then
+                                    if mark_optional[objective.name] then
+                                        objective.optional = true
+                                    end
+                                    new_objectives[j] = objective
+                                    size = j
+                                    break
+                                end
+                                if mark_optional[objective.name] then
+                                    objective.optional = true
+                                end
+                                new_objectives[j] = objective
+                                size = j
+                            end
+                            size = size + 1
+                            if stop_and_add.add_objectives then
+                                for _, value in ipairs(stop_and_add.add_objectives) do
+                                    new_objectives[size] = value
+                                    size = size + 1
+                                end
+                            elseif stop_and_add.add_objectives_with_pos then
+                                for _, value in ipairs(override.add_objectives_with_pos) do
+                                    if value.pos then
+                                        table.insert(new_objectives, value.pos, value.objective)
+                                    else
+                                        new_objectives[size] = value.objective
+                                    end
+                                    size = size + 1
+                                end
+                            end
+                            custom.tactic.objectives = new_objectives
+                        elseif override.add_objectives then
+                            local more_objectives = override.add_objectives
+                            local size = table.size(custom.tactic.objectives) + 1
+                            new_objectives = deep_clone(custom.tactic.objectives)
+                            for _, value in ipairs(more_objectives) do
+                                new_objectives[size] = value
+                                size = size + 1
+                            end
+                            custom.tactic.objectives = new_objectives
+                        elseif override.add_objectives_with_pos then
+                            new_objectives = deep_clone(custom.tactic.objectives)
+                            for _, value in ipairs(override.add_objectives_with_pos) do
+                                if value.pos then
+                                    table.insert(new_objectives, value.pos, value.objective)
+                                else
+                                    table.insert(new_objectives, value.objective)
+                                end
+                            end
+                            custom.tactic.objectives = new_objectives
+                        end
+                        custom.objectives_override = nil
+                    end
+                    self:ProcessBreakDown(custom.tactic, panel)
+                    self._panels[i] = panel
+                end
+                local offset = Global.game_settings.single_player and 20 or 25
+                for _, button in ipairs(self._ehi_buttons) do
+                    button:SetVisibleWithOffset(offset)
+                end
+                self._ehi_panel:set_y(self._ehi_panel:y() + offset)
+                self:HookMouseFunctions()
+            end
+        elseif self._panels then
             self:ProcessBreakDown(tactic.stealth, self._panels[1])
             self:ProcessBreakDown(tactic.loud, self._panels[2])
         else
-            self._stealth_button = XPBreakdownItem:new(self, self._fullscreen_panel, "ehi_experience_stealth", "stealth", TacticSelected == 1)
-            self._stealth_button:SetPosByPanel(self._ehi_panel)
-            self._loud_button = XPBreakdownItem:new(self, self._fullscreen_panel, "ehi_experience_loud", "loud", TacticSelected == 2)
-            self._loud_button:SetPosByPreviousItem(self._stealth_button)
-            self._stealth_button:SetPreviousItem(self._loud_button)
             self._panels = {}
             -- Process stealth tactic first, loud at the end
+            self._ehi_buttons[1] = XPBreakdownItem:new(self, self._fullscreen_panel, "ehi_experience_stealth", nil, 1, TacticSelected == 1)
+            self._ehi_buttons[1]:SetPosByPanel(self._ehi_panel)
             local panel = { panel = self._ehi_panel_v2, lines = 0 } -- Reuse the panel, memory efficiency
             self:ProcessBreakDown(tactic.stealth, panel)
             self._panels[1] = panel
             -- Loud
+            self._ehi_buttons[2] = XPBreakdownItem:new(self, self._fullscreen_panel, "ehi_experience_loud", nil, 2, TacticSelected == 2)
+            self._ehi_buttons[2]:SetPosByPreviousItem(self._ehi_buttons[1])
             local v2_panel = self._ehi_panel:panel({
                 name = "panel_v2",
                 layer = 9,
@@ -354,102 +478,113 @@ function MissionBriefingGui:AddXPBreakdown(params)
             local panel_v2 = { panel = v2_panel, lines = 0, adjust_h = true, selected = TacticSelected == 2 }
             self:ProcessBreakDown(tactic.loud, panel_v2)
             self._panels[2] = panel_v2
+            -- Done
             local offset = Global.game_settings.single_player and 20 or 25
-            self._stealth_button:SetVisibleWithOffset(offset)
-            self._loud_button:SetVisibleWithOffset(offset)
+            self._ehi_buttons[1]:SetVisibleWithOffset(offset)
+            self._ehi_buttons[2]:SetVisibleWithOffset(offset)
             self._ehi_panel:set_y(self._ehi_panel:y() + offset)
-            original.close = self.close
-            ---@param gui MissionBriefingGui
-            self.close = function(gui, ...)
-                gui._stealth_button:destroy()
-                gui._loud_button:destroy()
-                if gui._ehi_controller_switch_button then
-                    gui._ehi_controller_switch_button:destroy()
-                end
-                original.close(gui, ...)
-                -- Remove hooks; the gui will refresh or is closing
-                if original.mouse_pressed then
-                    gui.mouse_pressed = original.mouse_pressed
-                    gui.mouse_moved = original.mouse_moved
-                    original.mouse_pressed = nil
-                    original.mouse_moved = nil
-                end
-                if original.special_btn_pressed then
-                    gui.special_btn_pressed = original.special_btn_pressed
-                    original.special_btn_pressed = nil
-                end
-                -- No need to restore original function; these will get recreated
-                original.assets_select = nil
-                original.assets_deselect = nil
-            end
-            if self._ehi_controller_switch_button then
-                self._ehi_controller_switch_button:set_visible(self._loud_button:GetButton())
-                original.special_btn_pressed = self.special_btn_pressed
-                self.special_btn_pressed = function(gui, button, ...)
-                    if not alive(gui._panel) or not alive(gui._fullscreen_panel) or not gui._enabled then
-                        return false
-                    end
-                    if gui._displaying_asset then
-                        gui:close_asset()
-                        return false
-                    end
-                    if game_state_machine:current_state().blackscreen_started and game_state_machine:current_state():blackscreen_started() then
-                        return false
-                    end
-                    if button == Idstring("menu_toggle_pp_breakdown") then
-                        if gui._assets_item and gui._items[gui._selected_item] ~= gui._assets_item then
-                            gui:ToggleTacticSelection()
-                        end
-                    end
-                    return original.special_btn_pressed(gui, button, ...)
-                end
-                original.assets_select = self._assets_item.select
-                self._assets_item.select = function(...)
-                    self._ehi_controller_switch_button:set_alpha(0.25)
-                    original.assets_select(...)
-                end
-                original.assets_deselect = self._assets_item.deselect
-                self._assets_item.deselect = function(...)
-                    self._ehi_controller_switch_button:set_alpha(1)
-                    original.assets_deselect(...)
-                end
-            else
-                original.mouse_pressed = self.mouse_pressed
-                self.mouse_pressed = function(gui, button, x, y, ...)
-                    local result = original.mouse_pressed(gui, button, x, y, ...)
-                    if result then
-                        local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
-                        gui._stealth_button:mouse_pressed(button, fx, fy)
-                        gui._loud_button:mouse_pressed(button, fx, fy)
-                    end
-                    return result
-                end
-                original.mouse_moved = self.mouse_moved
-                self.mouse_moved = function(gui, x, y, ...)
-                    if not alive(gui._panel) or not alive(gui._fullscreen_panel) or not gui._enabled then
-                        return false, "arrow"
-                    end
-                    if gui._displaying_asset then
-                        return false, "arrow"
-                    end
-                    if game_state_machine:current_state().blackscreen_started and game_state_machine:current_state():blackscreen_started() then
-                        return false, "arrow"
-                    end
-                    local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
-                    if gui._stealth_button:mouse_moved(fx, fy) then
-                        return true, "link"
-                    end
-                    if gui._loud_button:mouse_moved(fx, fy) then
-                        return true, "link"
-                    end
-                    return original.mouse_moved(gui, x, y, ...)
-                end
-            end
+            self:HookMouseFunctions()
         end
     else
         self:ProcessBreakDown(params)
     end
     _params = params
+end
+
+function MissionBriefingGui:HookMouseFunctions()
+    original.close = self.close
+    ---@param gui MissionBriefingGui
+    self.close = function(gui, ...)
+        for _, button in ipairs(gui._ehi_buttons) do
+            button:destroy()
+        end
+        if gui._ehi_controller_switch_button then
+            gui._ehi_controller_switch_button:destroy()
+        end
+        original.close(gui, ...)
+        -- Remove hooks; the gui will refresh or is closing
+        if original.mouse_pressed then
+            gui.mouse_pressed = original.mouse_pressed
+            gui.mouse_moved = original.mouse_moved
+            original.mouse_pressed = nil
+            original.mouse_moved = nil
+        end
+        if original.special_btn_pressed then
+            gui.special_btn_pressed = original.special_btn_pressed
+            original.special_btn_pressed = nil
+        end
+        -- No need to restore original function; these will get recreated
+        original.assets_select = nil
+        original.assets_deselect = nil
+    end
+    if self._ehi_controller_switch_button then
+        self._ehi_controller_switch_button:set_visible(self._ehi_buttons[TacticMax]:GetButton())
+        original.special_btn_pressed = self.special_btn_pressed
+        ---@param gui MissionBriefingGui
+        ---@param button string
+        self.special_btn_pressed = function(gui, button, ...)
+            if not alive(gui._panel) or not alive(gui._fullscreen_panel) or not gui._enabled then
+                return false
+            end
+            if gui._displaying_asset then
+                gui:close_asset()
+                return false
+            end
+            if game_state_machine:current_state().blackscreen_started and game_state_machine:current_state():blackscreen_started() then
+                return false
+            end
+            if button == Idstring("menu_toggle_pp_breakdown") then
+                if gui._assets_item and gui._items[gui._selected_item] ~= gui._assets_item then
+                    gui:NextTacticSelection()
+                end
+            end
+            return original.special_btn_pressed(gui, button, ...)
+        end
+        original.assets_select = self._assets_item.select
+        self._assets_item.select = function(...)
+            self._ehi_controller_switch_button:set_alpha(0.25)
+            original.assets_select(...)
+        end
+        original.assets_deselect = self._assets_item.deselect
+        self._assets_item.deselect = function(...)
+            self._ehi_controller_switch_button:set_alpha(1)
+            original.assets_deselect(...)
+        end
+    else
+        original.mouse_pressed = self.mouse_pressed
+        ---@param gui MissionBriefingGui
+        ---@param button string
+        self.mouse_pressed = function(gui, button, ...)
+            local result = original.mouse_pressed(gui, button, ...)
+            if result then
+                local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
+                for _, ehi_button in ipairs(gui._ehi_buttons) do
+                    ehi_button:mouse_pressed(button, fx, fy)
+                end
+            end
+            return result
+        end
+        original.mouse_moved = self.mouse_moved
+        ---@param gui MissionBriefingGui
+        self.mouse_moved = function(gui, ...)
+            if not alive(gui._panel) or not alive(gui._fullscreen_panel) or not gui._enabled then
+                return false, "arrow"
+            end
+            if gui._displaying_asset then
+                return false, "arrow"
+            end
+            if game_state_machine:current_state().blackscreen_started and game_state_machine:current_state():blackscreen_started() then
+                return false, "arrow"
+            end
+            local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
+            for _, button in ipairs(gui._ehi_buttons) do
+                if button:mouse_moved(fx, fy) then
+                    return true, "link"
+                end
+            end
+            return original.mouse_moved(gui, ...)
+        end
+    end
 end
 
 ---@param params XPBreakdown|_XPBreakdown
@@ -536,7 +671,7 @@ function MissionBriefingGui:ProcessBreakDown(params, panel)
             if type(data) == "table" then
                 if type(data.stealth) == "number" and type(data.loud) == "number" then
                     total_xp.add = false
-                    local str = data.name and self:GetTranslatedKey(data.name) or "<Unknown objective>"
+                    local str = data.name and self:GetTranslatedKey(data.name, data.additional_name) or "<Unknown objective>"
                     if data.times then
                     else
                         local stealth_value = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.stealth), "+")
@@ -564,7 +699,7 @@ function MissionBriefingGui:ProcessBreakDown(params, panel)
                     if gage then
                         xp_with_gage = self:FormatXPWithAllGagePackages(amount)
                     end
-                    local str = data.name and self:GetTranslatedKey(data.name) or "<Unknown objective>"
+                    local str = data.name and self:GetTranslatedKey(data.name, data.additional_name) or "<Unknown objective>"
                     local text_color = data.optional and colors.optional --[[@as Color?]]
                     if data.times then
                         local times_formatted = self._loc:text("ehi_experience_trigger_times", { times = data.times })
@@ -605,7 +740,26 @@ function MissionBriefingGui:ProcessBreakDown(params, panel)
         end
     end
     if panel.lines > 0 and panel.adjust_h then
-        if self._panels then
+        if panel.multi_tactic then
+            for _, all_panels in ipairs(self._panels) do
+                local h = self:GetPanelHeight(all_panels.lines)
+                all_panels.h = h
+                all_panels.panel:set_visible(false)
+                all_panels.panel:set_h(h)
+            end
+            local h = self:GetPanelHeight(panel.lines)
+            panel.h = h
+            panel.panel:set_visible(false)
+            panel.panel:set_h(h)
+            local visible_panel = panel.selected and panel or self._panels[TacticSelected]
+            local hidden_panel = panel.selected and self._panels[TacticSelected] or panel
+            self._ehi_panel:set_h(visible_panel.h)
+            self._ehi_panel:set_visible(true)
+            visible_panel.panel:set_h(visible_panel.h)
+            visible_panel.panel:set_visible(true)
+            hidden_panel.panel:set_h(hidden_panel.h)
+            hidden_panel.panel:set_visible(false)
+        elseif self._panels then
             self._panels[1].h = self:GetPanelHeight(self._panels[1].lines)
             panel.h = self:GetPanelHeight(panel.lines)
             local visible_panel = panel.selected and panel or self._panels[1]
@@ -626,10 +780,15 @@ function MissionBriefingGui:ProcessBreakDown(params, panel)
     end
 end
 
+---@param lines number
 function MissionBriefingGui:GetPanelHeight(lines)
     return 10 + (lines * 22)
 end
 
+---@param panel MissionBriefingPanel
+---@param params XPBreakdown|_XPBreakdown
+---@param gage boolean
+---@param total_xp table
 function MissionBriefingGui:ProcessTotalXP(panel, params, gage, total_xp)
     if params.total_xp_override then
         local override = params.total_xp_override
@@ -639,13 +798,15 @@ function MissionBriefingGui:ProcessTotalXP(panel, params, gage, total_xp)
         local o_params = override.params
         if o_params then
             if o_params.custom then
-                self:ParamsCustom(panel, params, o_params.custom)
+                self:ParamsCustom(panel, params, gage, o_params.custom)
             elseif o_params.min_max then
                 self:ParamsMinMax(panel, params, o_params.min_max)
             elseif o_params.min then
-                self:ParamsMinWithMax(panel, params, o_params, override)
+                self:ParamsMinWithMax(panel, params, gage, o_params, override)
             elseif o_params.max_only then
                 self:ParamsMaxOnly(panel, params, o_params.max_only)
+            elseif o_params.escape then
+                self:ParamsEscape(panel, params, gage, o_params.escape)
             end
         else
             local base = 0
@@ -710,12 +871,16 @@ function MissionBriefingGui:ProcessTotalXP(panel, params, gage, total_xp)
     end
 end
 
-function MissionBriefingGui:ParamsCustom(panel, params, o_params)
+---@param panel MissionBriefingPanel
+---@param params table
+---@param gage boolean
+---@param o_params table
+function MissionBriefingGui:ParamsCustom(panel, params, gage, o_params)
     for _, c_params in ipairs(o_params) do
         if c_params.type == "min_max" then
             self:ParamsMinMax(panel, params, c_params)
         elseif c_params.type == "min_with_max" then
-            self:ParamsMinWithMax(panel, params, c_params, params.total_xp_override)
+            self:ParamsMinWithMax(panel, params, gage, c_params, params.total_xp_override)
         elseif c_params.type == "max_only" then
         else
             EHI:Log("Custom type not recognized! " .. tostring(c_params.type))
@@ -723,6 +888,9 @@ function MissionBriefingGui:ParamsCustom(panel, params, o_params)
     end
 end
 
+---@param panel MissionBriefingPanel
+---@param params table
+---@param o_params table
 function MissionBriefingGui:ParamsMinMax(panel, params, o_params)
     local min, max = 0, 0
     if o_params.objective then
@@ -798,9 +966,10 @@ end
 
 ---@param panel MissionBriefingPanel
 ---@param params table
+---@param gage boolean
 ---@param o_params table
 ---@param override table
-function MissionBriefingGui:ParamsMinWithMax(panel, params, o_params, override)
+function MissionBriefingGui:ParamsMinWithMax(panel, params, gage, o_params, override)
     local override_objective = override.objective or {}
     local override_objectives = override.objectives or {}
     --local override_loot = override.loot or {}
@@ -1006,6 +1175,19 @@ function MissionBriefingGui:ParamsMinWithMax(panel, params, o_params, override)
                     max = string.format("+%s %s (%s; %s %s)", max, xp, to_secure, self._loc:text("ehi_experience_all_gage_packages"), tostring(bags_to_secure_gage))
                 end
             end
+        elseif o_params.max_level_bags_with_objective then
+            local min_objective_xp = self:SumObjective(params.objective, {}, true)
+            local max_n_with_objectives = max_n + min_objective_xp
+            local loot_xp = self._xp:FakeMultiplyXPWithAllBonuses(params.loot_all)
+            local loot_xp_gage = gage and self:FormatXPWithAllGagePackagesNoString(params.loot_all) or loot_xp
+            local bags_to_secure = math.ceil(max_n_with_objectives / loot_xp)
+            local bags_to_secure_gage = math.ceil(max_n_with_objectives / loot_xp_gage)
+            local to_secure = self._loc:text("ehi_experience_to_secure", { amount = bags_to_secure })
+            if bags_to_secure == bags_to_secure_gage then -- Securing gage packages does not matter -> you still need to secure the same amount of bags
+                max = string.format("+%s %s (%s)", max, xp, to_secure)
+            else -- Securing gage packages will make a difference in bags, reflect it
+                max = string.format("+%s %s (%s; %s %s)", max, xp, to_secure, self._loc:text("ehi_experience_all_gage_packages"), tostring(bags_to_secure_gage))
+            end
         else
             max = "+" .. max .. " " .. xp
         end
@@ -1042,6 +1224,9 @@ function MissionBriefingGui:ParamsMinWithMax(panel, params, o_params, override)
     self:AddTotalMinMaxXP(panel, min, max, format_max, o_params.name)
 end
 
+---@param panel MissionBriefingPanel
+---@param params table
+---@param o_params table
 function MissionBriefingGui:ParamsMaxOnly(panel, params, o_params)
     local o_max = o_params.max or {}
     local max = 0
@@ -1090,7 +1275,68 @@ function MissionBriefingGui:ParamsMaxOnly(panel, params, o_params)
         end
         max = max + (amount * (data.min_max or data.max or 0))
     end
-    self:AddLine(panel, ("Max (" .. o_params.name .. "): +") .. self:FormatXPWithAllGagePackages(max) .. " " .. self._loc:text("ehi_experience_xp"), Color.green)
+    self:AddLine(panel, ("Max (" .. o_params.name .. "): +") .. self:FormatXPWithAllGagePackages(max) .. " " .. self._loc:text("ehi_experience_xp"), colors.total_xp)
+end
+
+function MissionBriefingGui:ParamsEscape(panel, params, gage, o_params)
+    local min, max, max_stealth = 0, 0, 0
+    if o_params.loot then
+        for key, data in pairs(o_params.loot) do
+            local loot = params.loot and params.loot[key]
+            if loot then
+                local amount = 0
+                if type(loot) == "table" then
+                    amount = loot.amount
+                elseif type(loot) == "number" then
+                    amount = loot
+                end
+                min = min + (amount * (data.min_max or data.min or 0))
+                max = max + (amount * (data.min_max or data.max or 0))
+                if data.no_loud_xp then
+                    max_stealth = max_stealth + (amount * (data.min_max or data.max or 0))
+                end
+            end
+        end
+    elseif o_params.loot_all then
+        local data = o_params.loot_all
+        local amount = 0
+        if type(params.loot_all) == "table" then
+            amount = params.loot_all.amount
+        elseif type(params.loot_all) == "number" then
+            amount = params.loot_all
+        end
+        min = amount * (data.min_max or data.min or 0)
+        max = amount * (data.min_max or data.max or 0)
+    end
+    self:AddTotalXP(panel)
+    for _, value in ipairs(params.escape or {}) do
+        local s
+        local max_xp = 0
+        if value.stealth then
+            s = self._loc:text("ehi_experience_stealth_escape")
+            if value.timer then
+                s = s .. " (<" .. self:FormatTime(value.timer) .. ")"
+            end
+            max_xp = max
+        else
+            s = self._loc:text("ehi_experience_loud_escape")
+            if value.c4_used then
+                s = s .. " (" .. self._loc:text("ehi_experience_c4_used") .. ")"
+            end
+            max_xp = max - max_stealth
+        end
+        local _min = self._xp:FakeMultiplyXPWithAllBonuses(value.amount + min)
+        local _max = self._xp:FakeMultiplyXPWithAllBonuses(value.amount + max_xp)
+        local xp_min = self._xp:cash_string(_min, "+")
+        local xp_max = self._xp:cash_string(_max, "+")
+        local xp_min_with_gage, xp_max_with_gage
+        if gage then
+            xp_min_with_gage = self:FormatXPWithAllGagePackages(value.amount + min)
+            xp_max_with_gage = self:FormatXPWithAllGagePackages(value.amount + max_xp)
+        end
+        self:AddXPText(panel, string.format("%s - Min: ", s), xp_min, xp_min_with_gage, colors.total_xp)
+        self:AddXPText(panel, string.format("%s - Max: ", s), xp_max, xp_max_with_gage, colors.total_xp)
+    end
 end
 
 ---@param panel MissionBriefingPanel
@@ -1360,7 +1606,7 @@ function MissionBriefingGui:AddXPText(panel, txt, value, value_with_gage, text_c
         name = tostring(panel.lines),
         blend_mode = "add",
         x = 10,
-        y = 10 + (panel.lines * 22),
+        y = self:GetPanelHeight(panel.lines),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
         color = text_color or Color.white,
@@ -1387,7 +1633,7 @@ function MissionBriefingGui:AddTotalXP(panel, total, total_with_gage)
         name = tostring(panel.lines),
         blend_mode = "add",
         x = 10,
-        y = 10 + (panel.lines * 22),
+        y = self:GetPanelHeight(panel.lines),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
         color = colors.total_xp,
@@ -1408,12 +1654,12 @@ function MissionBriefingGui:AddTotalMinMaxXP(panel, min, max, format_max, post_f
     if not post_fix then
         self:AddTotalXP(panel)
     end
-    self:AddLine(panel, (post_fix and ("Min (" .. post_fix_text .. "): ") or "Min: ") .. self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(min), "+") .. " " .. xp, Color.green)
+    self:AddLine(panel, (post_fix and ("Min (" .. post_fix_text .. "): ") or "Min: ") .. self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(min), "+") .. " " .. xp, colors.total_xp)
     if max then
         if format_max then
-            self:AddLine(panel, (post_fix and ("Max (" .. post_fix_text .. "): +") or "Max: +") .. self:FormatXPWithAllGagePackages(max or 0 --[[@as number]]) .. " " .. xp, Color.green)
+            self:AddLine(panel, (post_fix and ("Max (" .. post_fix_text .. "): +") or "Max: +") .. self:FormatXPWithAllGagePackages(max or 0 --[[@as number]]) .. " " .. xp, colors.total_xp)
         else
-            self:AddLine(panel, (post_fix and ("Max (" .. post_fix_text .. "): ") or "Max: ") .. tostring(max), Color.green)
+            self:AddLine(panel, (post_fix and ("Max (" .. post_fix_text .. "): ") or "Max: ") .. tostring(max), colors.total_xp)
         end
     end
 end
@@ -1424,7 +1670,7 @@ function MissionBriefingGui:AddLootSecuredHeader(panel)
         name = tostring(panel.lines),
         blend_mode = "add",
         x = 10,
-        y = 10 + (panel.lines * 22),
+        y = self:GetPanelHeight(panel.lines),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
         color = colors.loot_secured,
@@ -1469,7 +1715,7 @@ function MissionBriefingGui:AddLootSecured(panel, loot, times, to_secure, value,
         name = tostring(panel.lines),
         blend_mode = "add",
         x = 10,
-        y = 10 + (panel.lines * 22),
+        y = self:GetPanelHeight(panel.lines),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
         color = colors.loot_secured,
@@ -1502,7 +1748,7 @@ function MissionBriefingGui:AddRandomObjectivesHeader(panel, max)
         name = tostring(panel.lines),
         blend_mode = "add",
         x = 10,
-        y = 10 + (panel.lines * 22),
+        y = self:GetPanelHeight(panel.lines),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
         color = Color.white,
@@ -1520,7 +1766,7 @@ function MissionBriefingGui:AddLine(panel, txt, txt_color)
         name = tostring(panel.lines),
         blend_mode = "add",
         x = 10,
-        y = 10 + (panel.lines * 22),
+        y = self:GetPanelHeight(panel.lines),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
         color = txt_color or Color.white,
@@ -1573,11 +1819,28 @@ function MissionBriefingGui:RefreshXPOverview()
 end
 
 ---@param key string
+---@param additional_name string?
 ---@return string
-function MissionBriefingGui:GetTranslatedKey(key)
+function MissionBriefingGui:GetTranslatedKey(key, additional_name)
     local string_id = "ehi_experience_" .. key
+    local add_string_id = nil
+    if additional_name then
+        add_string_id = "ehi_experience_" .. additional_name
+    end
     if self._loc:exists(string_id) then
+        if add_string_id then
+            if self._loc:exists(add_string_id) then
+                return string.format("%s (%s)", self._loc:text(string_id), self._loc:text(add_string_id))
+            end
+            return string.format("%s (%s)", self._loc:text(string_id), additional_name)
+        end
         return self._loc:text(string_id)
+    end
+    if add_string_id then
+        if self._loc:exists(add_string_id) then
+            return string.format("%s (%s)", key, self._loc:text(add_string_id))
+        end
+        return string.format("%s (%s)", key, additional_name)
     end
     return key
 end
@@ -1799,16 +2062,22 @@ function MissionBriefingGui:SumObjectives(objectives, override_objectives, skip_
     return xp
 end
 
-function MissionBriefingGui:ToggleTacticSelection()
-    self._stealth_button:ToggleSelection()
-    self._loud_button:ToggleSelection()
+function MissionBriefingGui:NextTacticSelection()
+    self._ehi_buttons[TacticSelected]:Unselect()
+    TacticSelected = TacticSelected + 1
+    if TacticSelected > TacticMax then
+        TacticSelected = 1
+    end
+    self._ehi_buttons[TacticSelected]:Select()
 end
 
-function MissionBriefingGui:OnTacticChanged(index, previous_index)
+---@param index number
+function MissionBriefingGui:OnTacticChanged(index)
     local panel = self._panels[index]
     panel.panel:set_visible(true)
     self._ehi_panel:set_h(panel.h)
-    self._panels[previous_index].panel:set_visible(false)
+    self._panels[TacticSelected].panel:set_visible(false)
+    self._ehi_buttons[TacticSelected]:Unselect()
     TacticSelected = index
 end
 
@@ -1833,3 +2102,7 @@ function LobbyCodeMenuComponent:init(...)
         end
     end
 end
+
+EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+    _params = nil
+end)

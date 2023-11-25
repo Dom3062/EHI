@@ -19,7 +19,7 @@ local function waypoint(self, trigger)
     local pos = EHI:GetElementPosition(trigger.element_ids.defend) or Vector3()
     self._waypoints:AddWaypoint(trigger.id, {
         time = trigger.time,
-        icon = Icon.PCHack,
+        icon = Icon.Tablet,
         position = pos,
         class = WT.Pausable
     })
@@ -27,7 +27,7 @@ local function waypoint(self, trigger)
     managers.hud:SoftRemoveWaypoint2(trigger.element_ids.fix)
 end
 for _, index in ipairs({ 5300, 6300, 7300 }) do
-    triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint_f = waypoint, element_ids = { defend = EHI:GetInstanceElementID(100055, index), fix = EHI:GetInstanceElementID(100056, index) }, hint = Hints.Hack }
+    triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint_f = waypoint, element_ids = { defend = EHI:GetInstanceElementID(100055, index), fix = EHI:GetInstanceElementID(100056, index) }, hint = Hints.Hack }
     triggers[EHI:GetInstanceElementID(100026, index)] = { id = "ArmoryHack", special_function = SF.PauseTracker }
 end
 if EHI:IsClient() then

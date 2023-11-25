@@ -186,94 +186,20 @@ local min_bags = EHI:GetValueBasedOnDifficulty({
     overkill = 6,
     mayhem_or_above = 8
 })
-local loud_xp =
+local loud_objectives =
 {
-    objectives =
-    {
-        { amount = 2000, name = "fwb_server_room_open" },
-        { amount = 2000, name = "pc_hack" },
-        { amount = 4000, name = "fwb_gates_open" },
-        { amount = 6000, name = "thermite_done" },
-        { amount = 2000, name = "fwb_c4_escape" },
-        { escape = 4000 } -- 2000 + 2000 (loud escape)
-    }
+    { amount = 2000, name = "fwb_server_room_open" },
+    { amount = 2000, name = "pc_hack" },
+    { amount = 4000, name = "fwb_gates_open" },
+    { amount = 6000, name = "thermite_done" },
+    { amount = 2000, name = "fwb_c4_escape" },
+    { escape = 4000 } -- 2000 + 2000 (loud escape)
 }
-if EHI:IsMayhemOrAbove() then
-    local o_fwb_overdrill = { amount = 40000, name = "fwb_overdrill", optional = true }
-    loud_xp.objectives[7] = o_fwb_overdrill
-    loud_xp.loot =
+local custom_tactic =
+{
     {
-        money = 1000,
-        gold = 143
-    }
-    loud_xp.total_xp_override =
-    {
-        params =
-        {
-            custom =
-            {
-                {
-                    type = "min_with_max",
-                    min =
-                    {
-                        objectives = true,
-                        loot =
-                        {
-                            money = { times = min_bags }
-                        }
-                    },
-                    max =
-                    {
-                        objectives = true,
-                        loot =
-                        {
-                            money = { times = 14 }
-                        },
-                        bonus_xp = -o_fwb_overdrill.amount -- subtract OVERDRILL bonus xp
-                    }
-                },
-                {
-                    type = "min_with_max",
-                    name = "fwb_overdrill",
-                    min =
-                    {
-                        objectives = true,
-                        loot =
-                        {
-                            money = { times = min_bags }
-                        },
-                        bonus_xp = o_fwb_overdrill.amount -- OVERDRILL
-                    },
-                    max =
-                    {
-                        objectives = true,
-                        loot =
-                        {
-                            money = { times = 14 },
-                            gold = { times = 70 }
-                        }
-                    }
-                }
-            }
-        }
-    }
-else
-    loud_xp.loot_all = 1000
-    loud_xp.total_xp_override =
-    {
-        params =
-        {
-            min_max =
-            {
-                loot_all = { min = min_bags, max = 14 }
-            }
-        }
-    }
-end
-EHI:AddXPBreakdown({
-    tactic =
-    {
-        stealth =
+        name = "stealth",
+        tactic =
         {
             objectives =
             {
@@ -299,7 +225,66 @@ EHI:AddXPBreakdown({
                     }
                 }
             }
+        }
+    },
+    {
+        name = "loud",
+        tactic =
+        {
+            objectives = loud_objectives,
+            loot_all = 1000,
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        loot_all = { min = min_bags, max = 14 }
+                    }
+                }
+            }
+        }
+    }
+}
+if EHI:IsMayhemOrAbove() then
+    custom_tactic[3] = {
+        name = "loud",
+        additional_name = "fwb_overdrill",
+        tactic =
+        {
+            objectives = loud_objectives,
+            loot =
+            {
+                money = 1000,
+                gold = 143
+            },
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        loot =
+                        {
+                            money = { min = min_bags, max = 14 },
+                            gold = { min = 0, max = 70 }
+                        }
+                    }
+                }
+            }
         },
-        loud = loud_xp
+        objectives_override =
+        {
+            add_objectives_with_pos =
+            {
+                { objective = { amount = 40000, name = "fwb_overdrill" }, pos = 5 }
+            }
+        }
+    }
+end
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        custom = custom_tactic
     }
 })

@@ -5,7 +5,7 @@ EHIXPTracker._forced_icons = { "xp" }
 EHIXPTracker._forced_hint_text = "gained_xp"
 EHIXPTracker.update = EHIXPTracker.update_fade
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIXPTracker:init(panel, params, parent_class)
     self._xp = params.amount or 0
@@ -32,7 +32,7 @@ EHITotalXPTracker._forced_hint_text = "total_xp"
 EHITotalXPTracker._update = false
 EHITotalXPTracker._show_diff = EHI:GetOption("total_xp_show_difference")
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHITotalXPTracker:init(panel, params, parent_class)
     self._total_xp = params.amount or 0

@@ -1,7 +1,7 @@
 local EHI, EM = EHI, EHIManager
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local repair = { time = 90, id = "RepairWait", icons = { EHI.Icons.Fix } }
+local repair = { time = 90, id = "RepairWait", icons = { EHI.Icons.Fix }, hint = EHI.Hints.Wait }
 local triggers = {
     [100030] = repair,
     [100065] = repair,

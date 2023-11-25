@@ -85,5 +85,15 @@ EHI:AddXPBreakdown({
             { amount = 10000, loud = true }
         }
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            escape =
+            {
+                loot_all = { max = 16 }
+            }
+        }
+    }
 })

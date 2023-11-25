@@ -6,12 +6,10 @@ local Hints = EHI.Hints
 local pink_car = { { icon = Icon.Car, color = Color("D983D1") }, Icon.Goto }
 local ExecuteIfEnabled = EHI:GetFreeCustomSpecialFunctionID()
 local triggers = {
-    [100727] = { time = 6 + 18 + 8.5 + 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape, hint = Hints.LootEscape },
-    [100207] = { time = 260/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled, hint = Hints.LootEscape },
-    [100209] = { time = 250/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled, hint = Hints.LootEscape },
+    [100778] = { time = 10 + 17 + 13 + 15 + 17, id = "DefendWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
     --310/30 anim_crash_04; Waypoint ID 100490
-    [100169] = { time = 17 + 1 + 310/30, id = "PinkArrival", icons = pink_car, hint = Hints.rvd_Pink },
+    [100010] = { time = 8 + 17 + 1 + 310/30, id = "PinkArrival", icons = pink_car, hint = Hints.rvd_Pink },
     --260/30 anim_crash_02; Waypoint ID 101196
     [101114] = { time = 260/30, id = "PinkArrival", icons = pink_car, special_function = SF.SetTimeOrCreateTracker, hint = Hints.rvd_Pink },
     --201/30 anim_crash_05; Waypoint ID 101201
@@ -22,9 +20,18 @@ local triggers = {
     [101105] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100490 } },
     [101104] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101196 } },
     [101106] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101201 } },
-    [101102] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101138 } }
+    [101102] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101138 } },
+
+    [100727] = { time = 6 + 18 + 8.5 + 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape, hint = Hints.LootEscape },
+    [100207] = { time = 260/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled, hint = Hints.LootEscape },
+    [100209] = { time = 250/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled, hint = Hints.LootEscape }
 }
 if EHI:IsClient() then
+    triggers[100753] = EHI:ClientCopyTrigger(triggers[100778], { time = 17 + 13 + 15 + 17 })
+    triggers[100756] = EHI:ClientCopyTrigger(triggers[100778], { time = 13 + 15 + 17 })
+    triggers[100757] = EHI:ClientCopyTrigger(triggers[100778], { time = 15 + 17 })
+    triggers[100761] = EHI:ClientCopyTrigger(triggers[100778], { time = 17 })
+    triggers[100169] = EHI:ClientCopyTrigger(triggers[100010], { time = 17 + 1 + 310/30 })
     triggers[100731] = EHI:ClientCopyTrigger(triggers[100727], { time = 18 + 8.5 + 30 + 25 + 375/30 })
     triggers[100716] = EHI:ClientCopyTrigger(triggers[100727], { time = 8.5 + 30 + 25 + 375/30 })
     triggers[100286] = EHI:ClientCopyTrigger(triggers[100727], { time = 30 + 25 + 375/30 })

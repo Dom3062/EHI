@@ -3,7 +3,7 @@ local EHI = EHI
 ---@field super EHIWarningTracker
 EHIECMTracker = class(EHIWarningTracker)
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIECMTracker:init(panel, params, parent_class)
     EHIECMTracker.super.init(self, panel, params, parent_class)
@@ -11,11 +11,8 @@ function EHIECMTracker:init(panel, params, parent_class)
 end
 
 function EHIECMTracker:SetTime(time)
-    self._text:stop()
-    self._time_warning = false
-    self:SetTextColor(Color.white)
-    self._check_anim_progress = time <= 10
     EHIECMTracker.super.SetTime(self, time)
+    self:SetTextColor(Color.white)
 end
 
 function EHIECMTracker:SetTimeIfLower(time, owner_id, unit)

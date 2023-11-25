@@ -8,7 +8,7 @@ EHIAchievementTracker._popup_type = "achievement"
 EHIAchievementTracker._show_started = EHI:GetUnlockableOption("show_achievement_started_popup")
 EHIAchievementTracker._show_failed = EHI:GetUnlockableOption("show_achievement_failed_popup")
 EHIAchievementTracker._show_desc = EHI:GetUnlockableOption("show_achievement_description")
----@param params EHITracker_params
+---@param params EHITracker.params
 function EHIAchievementTracker:post_init(params)
     self._beardlib = params.beardlib
     if self._show_started then
@@ -20,15 +20,16 @@ function EHIAchievementTracker:post_init(params)
     self:PrepareHint(params)
 end
 
----@param params EHITracker_params
+---@param params EHITracker.params
 function EHIAchievementTracker:PrepareHint(params)
     local id = self._id or params.id
     if self._beardlib then
         params.hint = EHI._cache.Beardlib[id].name
+        self._hint_no_localization = true
     else
         params.hint = "achievement_" .. id
+        self._hint_vanilla_localization = true
     end
-    params.hint_vanilla_localization = true
 end
 
 function EHIAchievementTracker:SetCompleted()
@@ -62,7 +63,7 @@ function EHIAchievementTracker:ShowStartedPopup(delay_popup)
         return
     end
     if self._popup_type == "daily" then
-        managers.hud:ShowDailyStartedPopup(self._id)
+        managers.hud:ShowDailyStartedPopup(self._id, self._daily_job) ---@diagnostic disable-line
     elseif self._popup_type == "trophy" then
         managers.hud:ShowTrophyStartedPopup(self._id)
     else
@@ -77,7 +78,7 @@ function EHIAchievementTracker:ShowFailedPopup()
     end
     self._failed_popup_showed = true
     if self._popup_type == "daily" then
-        managers.hud:ShowDailyFailedPopup(self._id)
+        managers.hud:ShowDailyFailedPopup(self._id, self._daily_job) ---@diagnostic disable-line
     elseif self._popup_type == "trophy" then
         managers.hud:ShowTrophyFailedPopup(self._id)
     else
@@ -92,8 +93,10 @@ function EHIAchievementTracker:ShowAchievementDescription(delay_popup)
     end
     if self._popup_type == "achievement" then
         managers.hud:ShowAchievementDescription(self._id, self._beardlib)
+    elseif self._popup_type == "daily" then
+        managers.hud:ShowTrophyDailyDescription(self._id, self._daily_job) ---@diagnostic disable-line
     else
-        managers.hud:ShowTrophyDailyDescription(self._id)
+        managers.hud:ShowTrophyDescription(self._id)
     end
     self._desc_showed = true
 end
@@ -121,7 +124,7 @@ EHIAchievementProgressTracker.ShowAchievementDescription = EHIAchievementTracker
 EHIAchievementProgressTracker.PrepareHint = EHIAchievementTracker.PrepareHint
 EHIAchievementProgressTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIAchievementProgressTracker:init(panel, params, parent_class)
     self._no_failure = params.no_failure
@@ -165,7 +168,7 @@ EHIAchievementUnlockTracker.ShowAchievementDescription = EHIAchievementTracker.S
 EHIAchievementUnlockTracker.SetFailed = EHIAchievementTracker.SetFailed
 EHIAchievementUnlockTracker.PrepareHint = EHIAchievementTracker.PrepareHint
 EHIAchievementUnlockTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
----@param params EHITracker_params
+---@param params EHITracker.params
 function EHIAchievementUnlockTracker:post_init(params)
     self._beardlib = params.beardlib
     if self._show_started then
@@ -189,7 +192,7 @@ EHIAchievementBagValueTracker.ShowFailedPopup = EHIAchievementTracker.ShowFailed
 EHIAchievementBagValueTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
 EHIAchievementBagValueTracker.PrepareHint = EHIAchievementTracker.PrepareHint
 EHIAchievementBagValueTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
----@param params EHITracker_params
+---@param params EHITracker.params
 function EHIAchievementBagValueTracker:post_init(params)
     self._beardlib = params.beardlib
     if self._show_started then
@@ -219,7 +222,7 @@ EHIAchievementStatusTracker = class(EHIAchievementTracker)
 EHIAchievementStatusTracker.update = EHIAchievementStatusTracker.update_fade
 EHIAchievementStatusTracker._update = false
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIAchievementStatusTracker:init(panel, params, parent_class)
     self._status = params.status or "ok"

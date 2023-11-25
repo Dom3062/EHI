@@ -43,7 +43,7 @@ else
     end
 end
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIAssaultDelayTracker:init(panel, params, parent_class)
     if not params.time then

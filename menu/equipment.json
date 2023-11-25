@@ -44,6 +44,10 @@
             "default_value": true
         },
         {
+            "type" : "divider",
+            "size" : 10
+        },
+        {
             "type": "toggle",
             "id": "ehi_show_equipment_grenadecases_choice",
             "title": "ehi_show_equipment_grenadecases",
@@ -52,6 +56,21 @@
             "callback_arguments": "show_equipment_grenadecases",
             "value": "show_equipment_grenadecases",
             "default_value": true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_grenadecases_block_on_abilities_or_no_throwable_choice",
+            "title": "ehi_grenadecases_block_on_abilities_or_no_throwable",
+            "description": "ehi_grenadecases_block_on_abilities_or_no_throwable_desc",
+            "callback": "SetOption",
+            "callback_arguments": "grenadecases_block_on_abilities_or_no_throwable",
+            "value": "grenadecases_block_on_abilities_or_no_throwable",
+            "default_value": false,
+            "ehi_ver" : 198
+        },
+        {
+            "type" : "divider",
+            "size" : 10
         },
         {
             "type": "toggle",

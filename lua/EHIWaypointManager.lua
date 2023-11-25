@@ -51,7 +51,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
     params.timer = params.time or 0 ---@diagnostic disable-line
     params.pause_timer = 1 ---@diagnostic disable-line
     params.no_sync = true ---@diagnostic disable-line
-    params.present_timer = params.present_timer or self._present_timer ---@diagnostic disable-line
+    params.present_timer = params.present_timer or self._present_timer
     local waypoint = self._hud:AddWaypoint(id, params)
     if not waypoint then
         return

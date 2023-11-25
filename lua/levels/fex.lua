@@ -71,47 +71,116 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
+local stealth_objectives =
+{
+    { amount = 1000, name = "mex4_found_bulucs_office" },
+    { amount = 1000, name = "mex4_found_inner_sanctum" },
+    { amount = 1000, name = "mex4_discover_keycard_holder_mask_list", optional = true },
+    { amount = 1000, name = "mex4_found_keycard", optional = true },
+    { amount = 1000, name = "mex4_inner_sanctum_open" },
+    { amount = 1000, name = "mex4_codex_room_open" },
+    { amount = 10000, name = "mex4_bulucs_office_open" },
+    { amount = 1000, name = "mex4_interacted_with_safe" },
+    { amount = 2000, name = "mex4_contact_list_stolen" }
+}
+local loud_objectives =
+{
+    { amount = 1000, name = "mex4_found_bulucs_office" },
+    { amount = 2000, name = "mex4_found_inner_sanctum" },
+    { amount = 2000, name = "mex4_found_all_bomb_parts_hack_start" },
+    { amount = 2000, name = "mex4_inner_sanctum_open_bomb" },
+    { amount = 3000, name = "mex4_saw_placed" },
+    { amount = 3000, name = "saw_done" },
+    { amount = 4000, name = "mex4_bulucs_office_open" },
+    { amount = 1000, name = "mex4_interacted_with_safe" },
+    { escape = 1000 }
+}
+local total_xp_override =
+{
+    params =
+    {
+        min_max =
+        {
+            loot_all = { min = 0, max = 21 }
+        }
+    }
+}
 EHI:AddXPBreakdown({
     tactic =
     {
-        stealth =
+        custom =
         {
-            objectives =
             {
-                { amount = 1000, name = "mex4_found_bulucs_office" },
-                { amount = 1000, name = "mex4_found_inner_sanctum" },
-                { amount = 1000, name = "mex4_discover_keycard_holder_mask_list" },
-                { amount = 1000, name = "mex4_found_keycard" },
-                { amount = 1000, name = "mex4_inner_sanctum_open" },
-                { amount = 1000, name = "mex4_codex_room_open" },
-                { amount = 10000, name = "mex4_bulucs_office_open" },
-                { amount = 1000, name = "mex4_interacted_with_safe" },
-                { amount = 2000, name = "mex4_contact_list_stolen" },
-                { amount = 2000, name = "mex4_found_car_keys" },
-                { amount = 2000, name = "mex4_car_escape" },
-                { amount = 1000, name = "mex4_boat_escape" },
+                name = "stealth",
+                additional_name = "mex4_car_escape",
+                tactic =
+                {
+                    objectives = stealth_objectives,
+                    loot_all = { amount = 500 },
+                    total_xp_override = total_xp_override
+                },
+                objectives_override =
+                {
+                    add_objectives =
+                    {
+                        { amount = 2000, name = "mex4_found_car_keys" },
+                        { escape = 2000 }
+                    }
+                }
             },
-            loot_all = { amount = 500, times = 21 }
-        },
-        loud =
-        {
-            objectives =
             {
-                { amount = 1000, name = "mex4_found_bulucs_office" },
-                { amount = 2000, name = "mex4_found_inner_sanctum" },
-                { amount = 2000, name = "mex4_found_all_bomb_parts_hack_start" },
-                { amount = 2000, name = "mex4_inner_sanctum_open_bomb" },
-                { amount = 3000, name = "mex4_saw_placed" },
-                { amount = 3000, name = "saw_done" },
-                { amount = 4000, name = "mex4_bulucs_office_open" },
-                { amount = 1000, name = "mex4_interacted_with_safe" },
-                { amount = 1000, name = "mex4_contact_list_stolen_car_escape" },
-                { amount = 1000, name = "mex4_turret_discovered_car_escape" },
-                { amount = 3000, name = "mex4_turret_destroyed_car_escape" },
-                { amount = 3000, name = "mex4_flare_lit_heli_escape" },
-                { escape = 1000 }
+                name = "stealth",
+                additional_name = "mex4_boat_escape",
+                tactic =
+                {
+                    objectives = stealth_objectives,
+                    loot_all = { amount = 500 },
+                    total_xp_override = total_xp_override
+                },
+                objectives_override =
+                {
+                    add_objectives =
+                    {
+                        { escape = 1000 }
+                    }
+                }
             },
-            loot_all = { amount = 500, times = 21 }
+            {
+                name = "loud",
+                additional_name = "mex4_car_escape",
+                tactic =
+                {
+                    objectives = loud_objectives,
+                    loot_all = { amount = 500 },
+                    total_xp_override = total_xp_override
+                },
+                objectives_override =
+                {
+                    add_objectives_with_pos =
+                    {
+                        { objective = { amount = 1000, name = "mex4_contact_list_stolen_car_escape" }, pos = 9 },
+                        { objective = { amount = 1000, name = "mex4_turret_discovered_car_escape" }, pos = 10 },
+                        { objective = { amount = 3000, name = "mex4_turret_destroyed_car_escape" }, pos = 11 }
+                    }
+                }
+            },
+            {
+                name = "loud",
+                additional_name = "mex4_heli_escape",
+                tactic =
+                {
+                    objectives = loud_objectives,
+                    loot_all = { amount = 500 },
+                    total_xp_override = total_xp_override
+                },
+                objectives_override =
+                {
+                    add_objectives_with_pos =
+                    {
+                        { objective = { amount = 3000, name = "mex4_flare_lit_heli_escape" }, pos = 9 }
+                    }
+                }
+            }
         }
     }
 })

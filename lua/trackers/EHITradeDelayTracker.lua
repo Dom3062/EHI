@@ -7,7 +7,7 @@ EHITradeDelayTracker._forced_hint_text = "trade_delay"
 EHITradeDelayTracker._update = false
 EHITradeDelayTracker._forced_icons = { "mugshot_in_custody" }
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHITradeDelayTracker:init(panel, params, parent_class)
     self._pause_t = 0
@@ -44,6 +44,32 @@ function EHITradeDelayTracker:SetIconColor()
     end
 end
 
+---@param peer_id number
+---@param time number
+---@param civilians_killed number? Defaults to `1` if not provided
+function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time, civilians_killed)
+    local text = self:CreateText({
+        name = "text" .. peer_id,
+        w = self._default_bg_box_w
+    })
+    local kills = civilians_killed or 1
+    self._peers[peer_id] =
+    {
+        t = time,
+        in_custody = false,
+        civilians_killed = kills,
+        label = text
+    }
+    self._n_of_peers = self._n_of_peers + 1
+    if self._n_of_peers >= 2 then
+        self:AnimateBG()
+    end
+    self:FormatUnique(text, time, kills)
+    self:Reorganize(true)
+    self:SetIconColor()
+    self:SetTextPeerColor()
+end
+
 function EHITradeDelayTracker:Redraw()
     for _, text in ipairs(self._bg_box:children()) do ---@cast text PanelText
         if text.set_text then
@@ -69,32 +95,6 @@ function EHITradeDelayTracker:AlignTextOnHalfPos()
             pos = pos + 1
         end
     end
-end
-
----@param peer_id number
----@param time number
----@param civilians_killed number? Defaults to `1` if not provided
-function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time, civilians_killed)
-    local text = self:CreateText({
-        name = "text" .. peer_id,
-        w = self._default_bg_box_w
-    })
-    local kills = civilians_killed or 1
-    self._peers[peer_id] =
-    {
-        t = time,
-        in_custody = false,
-        civilians_killed = kills,
-        label = text
-    }
-    self._n_of_peers = self._n_of_peers + 1
-    if self._n_of_peers >= 2 then
-        self:AnimateBG()
-    end
-    self:FormatUnique(text, time, kills)
-    self:Reorganize(true)
-    self:SetIconColor()
-    self:SetTextPeerColor()
 end
 
 ---@param addition boolean?
@@ -207,7 +207,6 @@ function EHITradeDelayTracker:RemovePeerFromCustody(peer_id)
     if self._n_of_peers == 1 then
         local _, peer_data = next(self._peers) ---@cast peer_data -?
         local text = peer_data.label
-        text:set_font_size(self._panel:h() * self._text_scale)
         text:set_color(Color.white)
         text:set_x(0)
         text:set_w(self._bg_box:w())

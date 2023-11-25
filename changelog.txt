@@ -1,3 +1,12 @@
+r198 (25. 11. 2023):
+Added option "Block Grenade Crates Tracker on Abilities or no Throwable"
+Added syncing of Loot Counter from host if the heist uses safes with random loot in it
+Fixed an issue where tracker description is not properly aligned in timer trackers
+Fixed an issue where Beardlib achievements have "ERROR" text
+Breakfast in Tijuana: Fixed an issue where tracker icon and waypoint icon do not match
+Rats Day 1: Disabled Civilian Tracker
+Undercover: Added achievement tracker for "Blow-Out"
+
 r197 (12. 11. 2023):
 Fixed a possible crash when achievement failed
 

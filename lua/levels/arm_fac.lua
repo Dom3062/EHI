@@ -28,57 +28,21 @@ if EHI:GetOption("show_escape_chance") then
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 15)
     end)
 end
---[[if EHI:GetOption("show_loot_counter") then
-    local trucks =
-    {
-        100006, 100007, 100021, 100022, 100023, 100024, 100025, 100097, 100100, 100101, 100226, 100227
-    }
-    local exploded = {}
-    local function UsedC4(truck)
-        exploded[truck] = true
-    end
-    local function GarbageFound()
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootDeclined")
-    end
-    local function LootFound()
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
-    end
-    local function LootFoundExplosionCheck(truck)
-        if exploded[truck] then
-            GarbageFound()
-            return
-        end
-        managers.ehi_tracker:CallFunction("LootCounter", "RandomLootSpawned")
-    end
+if EHI:IsHost() then
+    local trucks = { 100006, 100007, 100021, 100022, 100023, 100024, 100025, 100097, 100100, 100101, 100226, 100227 }
+    ---@param count number
     local function LootCounter(count)
-        EHI:ShowLootCounterNoCheck({ max_random = count * 9 })
+        EHI:ShowLootCounterSynced({ max_random = count * 9 })
         local truck = 0
-        local loot = { "gold", "money", "art" }
         local wd = managers.worlddefinition
+        local hook_function = tweak_data.ehi.functions.HookArmoredTransportUnit
         for _, truck_id in ipairs(trucks) do
             local unit = wd:get_unit(truck_id)
             if unit and unit:damage() and unit:damage()._state and unit:damage()._state.graphic_group and unit:damage()._state.graphic_group.grp_truck then
                 local state = unit:damage()._state.graphic_group.grp_truck
                 if state[1] == "set_visibility" and state[2] then
                     truck = truck + 1
-                    managers.mission:add_runned_unit_sequence_trigger(truck_id, "set_exploded", function(...)
-                        UsedC4(truck_id)
-                    end)
-                    local function _lootcheck(...)
-                        LootFoundExplosionCheck(truck_id)
-                    end
-                    for _, _loot in ipairs(loot) do
-                        for i = 1, 9, 1 do
-                            if i <= 2 then -- Explosion can disable this loot
-                                managers.mission:add_runned_unit_sequence_trigger(truck_id, "spawn_loot_" .. _loot .. "_" .. tostring(i), _lootcheck)
-                            else
-                                managers.mission:add_runned_unit_sequence_trigger(truck_id, "spawn_loot_" .. _loot .. "_" .. tostring(i), LootFound)
-                            end
-                        end
-                    end
-                    for i = 1, 9, 1 do
-                        managers.mission:add_runned_unit_sequence_trigger(truck_id, "spawn_loot_empty_" .. tostring(i), GarbageFound)
-                    end
+                    hook_function(truck_id)
                     if truck == count then
                         break
                     end
@@ -90,7 +54,7 @@ end
     other[104891] = { special_function = SF.CustomCode, f = LootCounter, arg = 2 }
     other[104892] = { special_function = SF.CustomCode, f = LootCounter, arg = 3 }
     other[104893] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
-end]]
+end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }

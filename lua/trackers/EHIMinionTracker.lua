@@ -39,7 +39,7 @@ function EHIMinionTracker:SetIconColor()
 end
 
 function EHIMinionTracker:Redraw()
-    for _, text in ipairs(self._bg_box:children()) do
+    for _, text in ipairs(self._bg_box:children()) do ---@cast text PanelText
         if text.set_text then
             self:FitTheText(text)
         end
@@ -113,7 +113,6 @@ function EHIMinionTracker:RemovePeer(peer_id)
         for i = 0, HUDManager.PLAYER_PANEL, 1 do
             local text = self._bg_box:child("text" .. i) --[[@as PanelText?]]
             if text then
-                text:set_font_size(self._panel:h() * self._text_scale)
                 text:set_color(Color.white)
                 text:set_x(0)
                 text:set_w(self._bg_box:w())

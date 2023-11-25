@@ -1,6 +1,6 @@
 local EHI = EHI
 local TT = EHI.Trackers
-local ObjectiveWait = { time = 90, id = "ObjectiveWait", icons = { EHI.Icons.Wait } }
+local ObjectiveWait = { time = 90, id = "ObjectiveWait", icons = { EHI.Icons.Wait }, hint = EHI.Hints.Wait }
 local triggers = {
     [100271] = ObjectiveWait,
     [100269] = ObjectiveWait

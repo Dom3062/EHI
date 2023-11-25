@@ -16,7 +16,54 @@ local triggers = {
     [100939] = { time = 5, id = "C4Vault", icons = { Icon.C4 }, waypoint = { position_by_element = 100941 }, hint = Hints.Explosion },
     [EHI:GetInstanceElementID(100020, 6700)] = { time = 5, id = "C4Escape", icons = { Icon.C4 }, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100008, 6700) }, hint = Hints.Explosion }
 }
-if EHI:IsClient() then
+local other =
+{
+    [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
+}
+if EHI:IsHost() then
+    EHI:AddHostTriggers(element_sync_triggers, "element")
+    triggers[101498] = { time = 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4, waypoint = { icon = Icon.C4, position_by_element = 100943 }, hint = Hints.C4Delivery }
+    ---`mesh_variation "set_level_mia"`  
+    ---units/payday2/equipment/gen_interactable_sec_safe_2x05/gen_interactable_sec_safe_2x05 (buggy mesh_variation -> `"set_level_rat_2"` instead)
+    ---units/payday2/equipment/gen_interactable_sec_safe_2x05_titan/gen_interactable_sec_safe_2x05_titan
+    ---units/payday2/equipment/gen_interactable_sec_safe_05x05_titan/gen_interactable_sec_safe_05x05_titan
+    local SafeTriggers =
+    {
+        loot =
+        {
+            "spawn_loot_money"
+        },
+        no_loot =
+        {
+            "spawn_loot_value_a",
+            "spawn_loot_value_d",
+            "spawn_loot_value_e",
+            "spawn_loot_crap_b", -- titan
+            "spawn_loot_crap_c", -- titan
+            "spawn_loot_crap_d"
+        }
+    }
+    ---@param truck_id number
+    local function IncreaseMax(truck_id)
+        managers.ehi_tracker:SyncIncreaseLootCounterMaxRandom(9)
+        tweak_data.ehi.functions.HookArmoredTransportUnit(truck_id, { "money" })
+    end
+    EHI:ShowLootCounterSynced({
+        max = 19,
+        max_random = 3,
+        triggers =
+        {
+            [101287] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 101647 },
+            [101492] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 102104 }
+        },
+        sequence_triggers =
+        {
+            [300960] = SafeTriggers, -- art_reg continent
+            [500001] = SafeTriggers, -- mkp continent
+            [501562] = SafeTriggers -- mkp continent
+        }
+    })
+else
     EHI:SetSyncTriggers(element_sync_triggers)
     ---@param self EHIManager
     ---@param trigger ElementTrigger
@@ -59,14 +106,7 @@ if EHI:IsClient() then
     triggers[100035] = { time = 4 + 30 + 24 + 3, special_function = LiquidNitrogen, waypoint_f = WP }
     triggers[101630] = { time = 30 + 24 + 3, special_function = LiquidNitrogen, waypoint_f = WP }
     triggers[101629] = { time = 24 + 3, special_function = LiquidNitrogen, waypoint_f = WP }
-else
-    EHI:AddHostTriggers(element_sync_triggers, "element")
-    triggers[101498] = { time = 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4, waypoint = { icon = Icon.C4, position_by_element = 100943 }, hint = Hints.C4Delivery }
 end
-local other =
-{
-    [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
-}
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }

@@ -5,7 +5,7 @@ local Icon = EHI.Icons
 EHIElevatorTimerTracker = class(EHIPausableTracker)
 EHIElevatorTimerTracker._forced_icons = { Icon.Door }
 ---@param panel Panel
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIElevatorTimerTracker:init(panel, params, parent_class)
     self._floors = params.floors or 26

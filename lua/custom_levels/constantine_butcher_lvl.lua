@@ -1,12 +1,13 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
+local Hints = EHI.Hints
 local triggers =
 {
-    [100391] = { id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.SetTimeByPreplanning, data = { id = 100486, yes = 60 + 25, no = 120 + 25 }, waypoint = { icon = Icon.Escape, position_by_element = 100420 } }
+    [100391] = { id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.SetTimeByPreplanning, data = { id = 100486, yes = 60 + 25, no = 120 + 25 }, waypoint = { icon = Icon.Escape, position_by_element = 100420 }, hint = Hints.Escape }
 }
 if EHI:IsClient() then
-    triggers[100414] = { time = 25, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { icon = Icon.Escape, position_by_element = 100420 } }
+    triggers[100414] = EHI:ClientCopyTrigger(triggers[100391], { time = 25 }, true)
 end
 
 local other =

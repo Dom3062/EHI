@@ -119,42 +119,78 @@ for i = 30000, 31500, 300 do
     tbl[EHI:GetInstanceUnitID(100045, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100058, i) }
 end
 EHI:UpdateUnits(tbl)]]
+local stealth_objectives =
+{
+    { amount = 1000, name = "twh_entered" },
+    { amount = 2000, name = "twh_wireboxes_cut" },
+    { amount = 2000, name = "twh_enter_west_wing" },
+    { amount = 2000, name = "twh_enter_oval_office" },
+    { amount = 8000, name = "twh_safe_open" },
+    { amount = 4000, name = "twh_access_peoc" },
+    { amount = 8000, name = "twh_mainframe_hacked" },
+    { amount = 2000, name = "twh_pardons_stolen" },
+    { amount = 2000, name = "twh_left_peoc" },
+    { amount = 2000, name = "heli_arrival" }
+}
+local loud_objectives =
+{
+    { amount = 1000, name = "twh_entered" },
+    { amount = 4000, name = "twh_wireboxes_hacked" },
+    { amount = 2000, name = "twh_enter_west_wing" },
+    { amount = 2000, name = "twh_found_thermite" },
+    { amount = 1000, name = "thermite_done" },
+    { amount = 2000, name = "twh_enter_oval_office" },
+    { amount = 8000, name = "twh_safe_open" },
+    { amount = 4000, name = "twh_access_peoc" },
+    { amount = 8000, name = "twh_mainframe_hacked" },
+    { amount = 2000, name = "twh_pardons_stolen" },
+    { amount = 2000, name = "twh_left_peoc" },
+    { amount = 4000, name = "twh_disable_aa" },
+    { amount = 2000, name = "heli_arrival" }
+}
+local secret_objectives =
+{
+    stop_at_inclusive = "twh_pardons_stolen",
+    mark_optional = { twh_mainframe_hacked = true, twh_pardons_stolen = true }
+}
 EHI:AddXPBreakdown({
     tactic =
     {
-        stealth =
+        custom =
         {
-            objectives =
             {
-                { amount = 1000, name = "twh_entered" },
-                { amount = 2000, name = "twh_wireboxes_cut" },
-                { amount = 2000, name = "twh_enter_west_wing" },
-                { amount = 2000, name = "twh_enter_oval_office" },
-                { amount = 8000, name = "twh_safe_open" },
-                { amount = 4000, name = "twh_access_peoc" },
-                { amount = 8000, name = "twh_mainframe_hacked" },
-                { amount = 2000, name = "twh_pardons_stolen" },
-                { amount = 2000, name = "twh_left_peoc" },
-                { amount = 2000, name = "heli_arrival" }
-            }
-        },
-        loud =
-        {
-            objectives =
+                name = "stealth",
+                tactic =
+                {
+                    objectives = stealth_objectives
+                }
+            },
             {
-                { amount = 1000, name = "twh_entered" },
-                { amount = 4000, name = "twh_wireboxes_hacked" },
-                { amount = 2000, name = "twh_enter_west_wing" },
-                { amount = 2000, name = "twh_found_thermite" },
-                { amount = 1000, name = "thermite_done" },
-                { amount = 2000, name = "twh_enter_oval_office" },
-                { amount = 8000, name = "twh_safe_open" },
-                { amount = 4000, name = "twh_access_peoc" },
-                { amount = 8000, name = "twh_mainframe_hacked" },
-                { amount = 2000, name = "twh_pardons_stolen" },
-                { amount = 2000, name = "twh_left_peoc" },
-                { amount = 4000, name = "twh_disable_aa" },
-                { amount = 2000, name = "heli_arrival" }
+                name = "stealth",
+                additional_name = "twh_secret",
+                tactic =
+                {
+                    objectives = stealth_objectives,
+                    total_xp_override = { params = { min_max = {} } }
+                },
+                objectives_override = secret_objectives
+            },
+            {
+                name = "loud",
+                tactic =
+                {
+                    objectives = loud_objectives,
+                }
+            },
+            {
+                name = "loud",
+                additional_name = "twh_secret",
+                tactic =
+                {
+                    objectives = loud_objectives,
+                    total_xp_override = { params = { min_max = {} } }
+                },
+                objectives_override = secret_objectives
             }
         }
     }

@@ -248,6 +248,8 @@ end
 ---@field _forced_hint_text string? Forces specific hint text in the tracker
 ---@field _icon1 PanelBitmap
 ---@field _panel_override_w number?
+---@field _hint_no_localization boolean?
+---@field _hint_vanilla_localization boolean?
 EHITracker = class()
 EHITracker._update = true
 EHITracker._fade_time = 5
@@ -269,7 +271,7 @@ else
     EHITracker._hint_disabled = true
 end
 ---@param panel Panel Main panel provided by EHITrackerManager
----@param params EHITracker_params
+---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHITracker:init(panel, params, parent_class)
     self:pre_init(params)
@@ -319,18 +321,25 @@ function EHITracker:init(panel, params, parent_class)
     self._flash_times = params.flash_times or 3
     self._anim_flash = params.flash_bg ~= false
     self:post_init(params)
-    self:CreateHint(params.hint, params.hint_vanilla_localization, params.delay_popup)
+    self:CreateHint(params.hint, params.delay_popup)
 end
 
----@param params EHITracker_params
+---@param params EHITracker.params
 function EHITracker:pre_init(params)
 end
 
----@param params EHITracker_params
+---@param params EHITracker.params
 function EHITracker:post_init(params)
 end
 
 function EHITracker:OverridePanel()
+end
+
+function EHITracker:PrecomputeDoubleSize()
+    self._bg_box_w = self._bg_box:w()
+    self._bg_box_double = self._bg_box_w * 2
+    self._panel_w = self._panel:w()
+    self._panel_double = self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons)
 end
 
 ---@param new_id string
@@ -517,7 +526,7 @@ function EHITracker:CreateIcon(i, texture, texture_rect, x, visible, color, alph
     })
 end
 
----@param params EHITracker_CreateText?
+---@param params EHITracker.CreateText?
 ---@return PanelText
 function EHITracker:CreateText(params)
     params = params or {}
@@ -539,14 +548,18 @@ function EHITracker:CreateText(params)
 end
 
 ---@param text string
----@param vanilla_localization boolean?
 ---@param delay_popup boolean?
-function EHITracker:CreateHint(text, vanilla_localization, delay_popup)
+function EHITracker:CreateHint(text, delay_popup)
     text = self._forced_hint_text or text
     if self._hint_disabled or not text then
         return
     end
-    local loc = vanilla_localization and text or "ehi_hint_" .. text
+    local loc
+    if self._hint_no_localization then
+        loc = text
+    else
+        loc = self._hint_vanilla_localization and text or "ehi_hint_" .. text
+    end
     self._hint = self._parent_panel:text({
         name = self._id .. "_hint",
         text = managers.localization:text(loc),
@@ -566,12 +579,16 @@ function EHITracker:CreateHint(text, vanilla_localization, delay_popup)
 end
 
 ---@param text string
----@param vanilla_localization boolean?
-function EHITracker:UpdateHint(text, vanilla_localization)
+function EHITracker:UpdateHint(text)
     if self._hint_disabled or not text or not self._hint then
         return
     end
-    local loc = vanilla_localization and text or "ehi_hint_" .. text
+    local loc
+    if self._hint_no_localization then
+        loc = text
+    else
+        loc = self._hint_vanilla_localization and text or "ehi_hint_" .. text
+    end
     self._hint:set_text(managers.localization:text(loc))
     make_fine_text(self._hint)
     self._hint:set_x(self._hint_pos.x)
@@ -582,6 +599,15 @@ function EHITracker:ForceShowHint()
     if self._hint and self._hint_t > 0 then
         self._hint:animate(hint_wait, self._hint_t)
     end
+end
+
+---@param n_of_icons number?
+function EHITracker:AnimateRepositionHintX(n_of_icons)
+    if not self._hint then
+        return
+    end
+    local hint_x = self._panel_override_w or (self._bg_box:w() + (self._icon_gap_size_scaled * (n_of_icons or self._n_of_icons)))
+    self:AnimateHintX(hint_x)
 end
 
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] = true, [2] = true }) then
@@ -688,13 +714,16 @@ end
 ---@param type string?
 ---|"add" # Adds `w` to the BG; default `type` if not provided
 ---|"short" # Shorts `w` on the BG
+---|"set" # Sets `w` on the BG
 ---@param dont_recalculate_panel_w boolean? Setting this to `true` will not recalculate the total width on the main panel
 function EHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
     w = w or self._bg_box:w()
     if not type or type == "add" then
         self._bg_box:set_w(self._bg_box:w() + w)
-    else
+    elseif type == "short" then
         self._bg_box:set_w(self._bg_box:w() - w)
+    else
+        self._bg_box:set_w(w)
     end
     if not dont_recalculate_panel_w then
         local start = self._bg_box:w()
@@ -744,6 +773,13 @@ function EHITracker:SetTimeNoAnim(time)
     self:FitTheText()
 end
 
+---@param time number
+function EHITracker:SetTimeIfLower(time)
+    if self._time >= time then
+        self:SetTime(time)
+    end
+end
+
 ---@param params AddTrackerTable|ElementTrigger
 function EHITracker:Run(params)
     self:SetTimeNoAnim(params.time or 0)
@@ -780,12 +816,14 @@ function EHITracker:GetIcon(new_icon)
 end
 
 ---@param new_icon string
-function EHITracker:SetIcon(new_icon)
-    local icon, texture_rect = GetIcon(new_icon)
+---@param icon PanelBitmap?
+function EHITracker:SetIcon(new_icon, icon)
+    icon = icon or self._icon1
+    local texture, texture_rect = GetIcon(new_icon)
     if texture_rect then
-        self._icon1:set_image(icon, unpack(texture_rect))
+        icon:set_image(texture, unpack(texture_rect))
     else
-        self._icon1:set_image(icon)
+        icon:set_image(texture)
     end
 end
 
@@ -834,10 +872,6 @@ end
 
 function EHITracker:GetPanelW()
     return self._panel_override_w or self._panel:w()
-end
-
-function EHITracker:GetTrackerType()
-    return self._tracker_type
 end
 
 function EHITracker:StopPanelAnims()

@@ -87,6 +87,29 @@ function EHITrackerManager:destroy()
     end
 end
 
+function EHITrackerManager:load(data)
+    local load_data = data.EHITrackerManager
+    if load_data then
+        if load_data.LootCounter and EHI:GetOption("show_loot_counter") then
+            local params = deep_clone(load_data.LootCounter) --[[@as LootCounterTable]]
+            params.client_from_start = true
+            params.no_sync_load = true
+            EHI:ShowLootCounterNoCheck(params)
+            self:SyncSecuredLoot()
+        end
+    end
+end
+
+function EHITrackerManager:save(data)
+    if self._trackers_to_sync then
+        local sync_data = {}
+        for key, value in pairs(self._trackers_to_sync) do
+            sync_data[key] = value
+        end
+        data.EHITrackerManager = sync_data
+    end
+end
+
 ---@param params AddTrackerTable|ElementTrigger
 ---@param pos integer?
 function EHITrackerManager:AddTracker(params, pos)
@@ -619,11 +642,10 @@ end
 
 ---@param id string
 ---@param hint string
----@param vanilla_localization boolean?
-function EHITrackerManager:UpdateHint(id, hint, vanilla_localization)
+function EHITrackerManager:UpdateHint(id, hint)
     local tracker = self:GetTracker(id)
     if tracker then
-        tracker:UpdateHint(hint, vanilla_localization)
+        tracker:UpdateHint(hint)
     end
 end
 
@@ -977,6 +999,95 @@ function EHITrackerManager:RandomLootDeclinedCheck(id)
 end
 
 ---@param id string
+---@param data table
+function EHITrackerManager:SetTrackerToSync(id, data)
+    self._trackers_to_sync = self._trackers_to_sync or {}
+    data._id = id
+    self._trackers_to_sync[id] = data
+end
+
+---@param id string
+---@param data table
+function EHITrackerManager:SetTrackerToSync2(id, data)
+    self:SetTrackerToSync(id, data)
+    EHI:SyncTable(EHI.SyncMessages.TrackerManager.SyncAddTracker, self._trackers_to_sync[id])
+end
+
+---Shows Loot Counter, needs to be hooked to count correctly
+---@param max number?
+---@param max_random number?
+---@param offset number?
+function EHITrackerManager:SyncShowLootCounter(max, max_random, offset)
+    self:ShowLootCounter(max, max_random, offset)
+    self._trackers_to_sync = self._trackers_to_sync or {}
+    self._trackers_to_sync.LootCounter =
+    {
+        _id = "LootCounter",
+        max = max or 0,
+        max_random = max_random or 0,
+        offset = offset or 0
+    }
+    if not self._delay_popups then
+        EHI:SyncTable(EHI.SyncMessages.TrackerManager.SyncAddTracker, self._trackers_to_sync.LootCounter)
+    end
+end
+
+---@param random number?
+function EHITrackerManager:SyncIncreaseLootCounterMaxRandom(random)
+    self:IncreaseLootCounterMaxRandom(random)
+    local sync_data = self._trackers_to_sync and self._trackers_to_sync.LootCounter
+    if sync_data then
+        sync_data.max_random = sync_data.max_random + (random or 1)
+        EHI:SyncTable(EHI.SyncMessages.TrackerManager.SyncUpdateTracker, { _id = "LootCounter", type = "IncreaseMaxRandom", random = random })
+    end
+end
+
+---@param random number?
+function EHITrackerManager:SyncRandomLootSpawned(random)
+    self:RandomLootSpawned(random)
+    local sync_data = self._trackers_to_sync and self._trackers_to_sync.LootCounter
+    if sync_data then
+        local n = random or 1
+        sync_data.max = sync_data.max + n
+        sync_data.max_random = sync_data.max_random - n
+        EHI:SyncTable(EHI.SyncMessages.TrackerManager.SyncUpdateTracker, { _id = "LootCounter", type = "RandomLootSpawned", random = random })
+    end
+end
+
+---@param random number?
+function EHITrackerManager:SyncRandomLootDeclined(random)
+    self:RandomLootDeclined(random)
+    local sync_data = self._trackers_to_sync and self._trackers_to_sync.LootCounter
+    if sync_data then
+        sync_data.max_random = sync_data.max_random - (random or 1)
+        EHI:SyncTable(EHI.SyncMessages.TrackerManager.SyncUpdateTracker, { _id = "LootCounter", type = "RandomLootDeclined", random = random })
+    end
+end
+
+if EHI:IsClient() then
+    Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHITracker", function(_, id, data)
+        if id == EHI.SyncMessages.TrackerManager.SyncAddTracker then
+            local params = LuaNetworking:StringToTable(data)
+            if params._id == "LootCounter" and EHI:GetOption("show_loot_counter") then
+                managers.ehi_tracker:ShowLootCounter(tonumber(params.max), tonumber(params.max_random), tonumber(params.offset))
+                EHI:HookLootCounter(true)
+            end
+        elseif id == EHI.SyncMessages.TrackerManager.SyncUpdateTracker then
+            local params = LuaNetworking:StringToTable(data)
+            if params._id == "LootCounter" then
+                if params.type == "IncreaseMaxRandom" then
+                    managers.ehi_tracker:IncreaseLootCounterMaxRandom(tonumber(params.random))
+                elseif params.type == "RandomLootSpawned" then
+                    managers.ehi_tracker:RandomLootSpawned(tonumber(params.random))
+                elseif params.type == "RandomLootDeclined" then
+                    managers.ehi_tracker:RandomLootDeclined(tonumber(params.random))
+                end
+            end
+        end
+    end)
+end
+
+---@param id string
 ---@param f string
 ---@param ... any
 function EHITrackerManager:CallFunction(id, f, ...)
@@ -997,6 +1108,20 @@ function EHITrackerManager:ReturnValue(id, f, ...)
     end
 end
 
+---@generic T
+---@param id string
+---@param f string
+---@param default T
+---@param ... any
+---@return ...|T
+function EHITrackerManager:ReturnValueOrDefault(id, f, default, ...)
+    local tracker = self:GetTracker(id)
+    if tracker and tracker[f] then
+        return tracker[f](tracker, ...)
+    end
+    return default
+end
+
 do
     local path = EHI.LuaPath .. "trackers/"
     dofile(path .. "EHITracker.lua")
@@ -1008,6 +1133,7 @@ do
     dofile(path .. "EHINeededValueTracker.lua")
     dofile(path .. "EHIInaccurateTrackers.lua")
     dofile(path .. "EHIColoredCodesTracker.lua")
+    dofile(path .. "EHITimedTrackers.lua")
     dofile(path .. "EHIAchievementTrackers.lua")
     dofile(path .. "EHITrophyTrackers.lua")
     dofile(path .. "EHIDailyTrackers.lua")
