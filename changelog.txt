@@ -1,3 +1,6 @@
+r199 (28. 11. 2023):
+Mission Briefing: Fixed a crash
+
 r198 (25. 11. 2023):
 Added option "Block Grenade Crates Tracker on Abilities or no Throwable"
 Added syncing of Loot Counter from host if the heist uses safes with random loot in it

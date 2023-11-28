@@ -337,7 +337,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
                 self._ehi_controller_switch_button:SetNextTacticText(self._loc)
             end
             if self._panels then
-                for i, custom in ipairs(t) do
+                for i, custom in ipairs(tactic.custom) do
                     self:ProcessBreakDown(custom.tactic, self._panels[i])
                 end
             else
