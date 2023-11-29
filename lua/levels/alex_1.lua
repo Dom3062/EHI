@@ -11,7 +11,7 @@ local triggers = {
     [101001] = { id = "CookingChance", special_function = SF.RemoveTracker },
 
     [101970] = { time = (240 + 12) - 3, waypoint = { position_by_element = 101454 }, hint = Hints.LootEscape },
-    [100721] = { time = 1, chance = 5, id = "CookingChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, start_opened = EHI:ShowTimedTrackerOpened(), hint = Hints.alex_1_Methlab },
+    [100721] = { time = 1, chance = 5, id = "CookingChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, start_opened = EHI:ShowTimedTrackerOpened(), hint = Hints.alex_1_Methlab, tracker_merge = true },
     [100724] = { time = 25, id = "CookingChance", icons = { Icon.Methlab, Icon.Loop }, waypoint = { position_by_element = 100212 }, special_function = SF.SetTimeOrCreateTracker, tracker_merge = true },
     [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { icon = Icon.Loot, position_by_element = 100485 }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1001991 }, hint = Hints.mia_1_MethDone },
     [1001991] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
@@ -89,7 +89,7 @@ if EHI:IsClient() then
     local EM = EHIManager
     ---@param self LootManager
     local function SyncBagsCooked(self)
-        BagsCooked = self:GetSecuredBagsAmount()
+        BagsCooked = math.max(self:GetSecuredBagsAmount(), BagsCooked)
         if BagsCooked >= 7 then
             managers.ehi_tracker:ForceRemoveTracker("CookChance")
             EM:UnhookTrigger(100721)

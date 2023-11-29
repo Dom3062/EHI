@@ -1309,7 +1309,7 @@ function MissionBriefingGui:ParamsEscape(panel, params, gage, o_params)
         max = amount * (data.min_max or data.max or 0)
     end
     self:AddTotalXP(panel)
-    for _, value in ipairs(params.escape or {}) do
+    for _, value in ipairs(params.objective and params.objective.escape or {}) do
         local s
         local max_xp = 0
         if value.stealth then

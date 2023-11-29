@@ -245,13 +245,14 @@ local function AddAchievementTracker2(id_stat, dont_flash_bg, show_finish_after_
 end
 
 ---@param id string
----@param progress_id string?
+---@param progress number
+---@param max number
+---@param daily_job boolean?
 ---@param icon string?
-local function AddDailyJobTracker(id, progress_id, icon)
-    local progress, max = EHI:GetDailyJobProgressAndMax(id, progress_id)
+local function AddDailyProgressTracker(id, progress, max, daily_job, icon)
     managers.ehi_tracker:AddTracker({
         id = id,
-        daily_job = true,
+        daily_job = daily_job,
         progress = progress,
         max = max,
         icons = { icon or EHI.Icons.Trophy },
@@ -260,6 +261,22 @@ local function AddDailyJobTracker(id, progress_id, icon)
         no_failure = true,
         class = EHI.Trackers.Daily.Progress
     })
+end
+
+---@param id string
+---@param progress_id string?
+---@param icon string?
+local function AddDailyJobTracker(id, progress_id, icon)
+    local progress, max = EHI:GetDailyJobProgressAndMax(id, progress_id)
+    AddDailyProgressTracker(id, progress, max, true, icon)
+end
+
+---@param id string
+---@param progress_id string?
+---@param icon string?
+local function AddDailySFJobTracker(id, progress_id, icon)
+    local progress, max = EHI:GetSFDailyProgressAndMax(id, progress_id)
+    AddDailyProgressTracker(id, progress, max, false, icon)
 end
 
 ---@param achievement string
@@ -1130,18 +1147,8 @@ function IngameWaitingForPlayersState:at_exit(...)
     if EHI:GetUnlockableAndOption("show_dailies") then
         local daily = {}
         if HasMeleeEquipped("whiskey") and EHI:IsSFDailyAvailable("daily_hangover") then
-            local progress, max = EHI:GetSFDailyProgressAndMax("daily_hangover")
+            AddDailySFJobTracker("daily_hangover", nil, "daily_hangover")
             daily.daily_hangover = "daily_hangover"
-            managers.ehi_tracker:AddTracker({
-                id = "daily_hangover",
-                progress = progress,
-                max = max,
-                icons = { "daily_hangover" },
-                flash_bg = true,
-                flash_times = 1,
-                no_failure = true,
-                class = EHI.Trackers.Daily.Progress
-            })
         end
         if managers.challenge:can_progress_challenges() then
             local challenge_kills = {}

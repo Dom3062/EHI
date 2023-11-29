@@ -467,12 +467,32 @@ function EHITracker:AnimIconX(target_x)
     self._anim_icon1_x = self._icon1:animate(icon_x, target_x)
 end
 
+---@param target_x number
+function EHITracker:AnimIconsX(target_x)
+    self._icon_anims = self._icon_anims or {}
+    local offset = self._icon_gap_size_scaled
+    for i = 1, self._n_of_icons, 1 do
+        local icon = self["_icon" .. tostring(i)] ---@type PanelBitmap?
+        if icon then
+            if self._icon_anims[i] then
+                icon:stop(self._icon_anims[i])
+                self._icon_anims[i] = nil
+            end
+            self._icon_anims[i] = icon:animate(icon_x, target_x + (offset * (i - 1)))
+        end
+    end
+end
+
 if EHI:GetOption("time_format") == 1 then
     EHITracker.Format = tweak_data.ehi.functions.FormatSecondsOnly
     EHITracker.FormatTime = tweak_data.ehi.functions.ReturnSecondsOnly
+    EHITracker.ShortFormat = tweak_data.ehi.functions.ShortFormatSecondsOnly
+    EHITracker._time_format = 1 -- Seconds only
 else
     EHITracker.Format = tweak_data.ehi.functions.FormatMinutesAndSeconds
     EHITracker.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
+    EHITracker.ShortFormat = tweak_data.ehi.functions.ShortFormatMinutesAndSeconds
+    EHITracker._time_format = 2 -- Minutes and seconds
 end
 
 if EHI:GetOption("show_one_icon") then
@@ -539,7 +559,8 @@ function EHITracker:CreateText(params)
         h = params.h or self._bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
         font_size = self._panel:h() * self._text_scale,
-        color = params.color or self._text_color
+        color = params.color or self._text_color,
+        visible = params.visible
     })
     if params.status_text then
         self:SetStatusText(params.status_text, text)

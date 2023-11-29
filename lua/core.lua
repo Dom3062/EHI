@@ -2208,8 +2208,9 @@ function EHI:GetKeypadResetTimer(time_override)
 end
 
 ---Returns value for the current difficulty. If the value is not provided `-1` is returned
+---@generic T
 ---@param values ValueBasedOnDifficultyTable
----@return any
+---@return T|number
 function EHI:GetValueBasedOnDifficulty(values)
     if values.normal_or_above and self:IsDifficultyOrAbove(self.Difficulties.Normal) then
         return values.normal_or_above
@@ -2224,7 +2225,7 @@ function EHI:GetValueBasedOnDifficulty(values)
     elseif values.veryhard_or_below and self:IsDifficultyOrBelow(self.Difficulties.VeryHard) then
         return values.veryhard_or_below
     elseif values.veryhard_or_above and self:IsDifficultyOrAbove(self.Difficulties.VeryHard) then
-        return values.veryhard_or_below
+        return values.veryhard_or_above
     elseif self:IsDifficulty(self.Difficulties.VeryHard) then
         return values.veryhard or -1
     elseif values.overkill_or_below and self:IsDifficultyOrBelow(self.Difficulties.OVERKILL) then

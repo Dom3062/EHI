@@ -24,6 +24,7 @@
     "ehi_show_preview_text_desc" : "แสดงหรือซ่อนข้อความและไอคอนตัวอย่างในหน้าเมนู",
 
     "ehi_mission_briefing_toggle_tactic_text" : "เปิดใช้งาน",
+    "ehi_mission_briefing_next_tactic_text" : "NEXT",
 
     "ehi_popup_experience" : "ประสบการณ์",
     "ehi_popup_experience_base_gained" : "ค่าประสบการณ์เริ่มต้น: ",
@@ -126,6 +127,10 @@
     "ehi_hint_bodybags_counter" : "จำนวนกระเป๋าใส่ศพ",
     "ehi_hint_gage" : "Gage Packages",
     "ehi_hint_converts" : "ลูกน้อง",
+    "ehi_hint_sentry_reload" : "Turret (Reload)",
+    "ehi_hint_sentry_repair" : "Turret (Repair)",
+    "ehi_hint_sentry_teargas" : "Turret (Teargas)",
+    "ehi_hint_diff" : "Assault Difficulty",
     
     "ehi_hint_alex_1_methlab" : "โอกาสปรุงยา",
     "ehi_hint_big_piggy" : "พิคกี้เคลื่อนที่",
@@ -135,6 +140,7 @@
     "ehi_hint_crojob3_water_enroute" : "ฮ.ไปเอาน้ำ",
     "ehi_hint_crojob3_water_refill" : "ฮ.กำลังเติมน้ำ",
     "ehi_hint_des_crane" : "เครน",
+    "ehi_hint_des_chem_set" : "Chemistry Set",
     "ehi_hint_des_chem_set_restart" : "เริ่มต้นชุดปรุงยาใหม่",
     "ehi_hint_des_chem_set_interrupt" : "ชุดปรุงยาถูกยับยั้ง",
     "ehi_hint_des_chem_set_cooking" : "กำลังปรุงยา",
@@ -293,6 +299,9 @@
 
     "ehi_show_trophies" : "แสดงไอคอนถ้วยรางวัล",
     "ehi_show_trophies_desc" : "แสดงไอคอนถ้วยรางวัลในเกม\nบางด่านอาจไม่มีถ้วยรางวัลใดๆ",
+
+    "ehi_show_trophy_description" : "Show Trophy Description",
+    "ehi_show_trophy_description_desc" : "Shows trophy description in the game chat\n\nThe description is only visible to you",
      
     "ehi_hide_unlocked_trophies" : "อย่าแสดงไอคอนถ้วยรางวัล",
     "ehi_hide_unlocked_trophies_desc" : "เมื่อเลือกตัวเลือกนี้ EHI จะไม่แสดงถ้วยรางวัลที่ถูกปลดล็อคแล้ว\nเมื่อไม่ได้เลือก EHI จะแสดงไอคอนติดตามสำหรับถ้วยรางวัลทั้งหมด",
@@ -305,6 +314,9 @@
      
     "ehi_show_dailies" : "แสดงไอคอนรางวัลรายวัน",
     "ehi_show_dailies_desc" : "แสดงหน้าต่างรางวัลรายวัน(Daily Side Job) ที่สามารถดำเนินการได้\n\nรางวัลรายวันที่ทำสำเร็จแล้วจะไม่แสดงให้เห็น",
+
+    "ehi_show_daily_description" : "Show Daily Side Job Description",
+    "ehi_show_daily_description_desc" : "Shows daily side job description in the game chat\n\nThe description is only visible to you",
      
     "ehi_show_daily_failed_popup" : "แสดงไอคอน 'ล่ารางวัลรายวันล้มเหลว'",
     "ehi_show_daily_failed_popup_desc" : "หน้าต่างล่ารางวัลรายวันล้มเหลวจะแสดงเป็นข้อความสีแดง",
@@ -357,6 +369,9 @@
     "ehi_show_camera_loop" : "แสดงกล้องที่ถูกเล่นซ้ำ",
     "ehi_show_camera_loop_desc" : "แสดงหน้าต่างกล้องวงจรปิดที่กำลังถูกเล่นซ้ำ",
 
+    "ehi_show_enemy_turret_trackers" : "Show Enemy Turret Trackers",
+    "ehi_show_enemy_turret_trackers_desc" : "Shows a tracker when it is reloading or repairing",
+
     "ehi_show_zipline_timer" : "แสดงไอคอนติดตามการใช้โหนสลิง",
     "ehi_show_zipline_timer_desc" : "แสดงค่า 2 ไอคอนติดตามที่เกี่ยวข้องกับการใช้โหนสลิงหรือ Zipline\nไอคอนบรรทัดแรกแสดงเวลาที่ไอเท็มจะไปถึงผู้เล่นหรือตำแหน่งที่ปลายทาง, ไอคอนบรรทัดที่สองแสดงเวลาที่รอกจะกลับมาที่ตำแหน่งเริ่มต้นอีกครั้ง",
 
@@ -392,8 +407,11 @@
     "ehi_show_equipment_ammobag" : "แสดงกระเป๋ากระสุน",
     "ehi_show_equipment_ammobag_desc" : "แสดงจำนวนกระเป๋ากระสุน",
 
-    "ehi_show_equipment_grenadecases" : "แสดงกระเป๋าอาวุธขว้างปา ",
-    "ehi_show_equipment_grenadecases_desc" : "แสดงจำนวนอาวุธขว้างปาจากกระเป๋าอาวุธขว้างปา ",
+    "ehi_show_equipment_grenadecases" : "แสดงกระเป๋าอาวุธขว้างปา",
+    "ehi_show_equipment_grenadecases_desc" : "แสดงจำนวนอาวุธขว้างปาจากกระเป๋าอาวุธขว้างปา",
+
+    "ehi_grenadecases_block_on_abilities_or_no_throwable" : "Block Grenade Crates Tracker on Abilities or no Throwable",
+    "ehi_grenadecases_block_on_abilities_or_no_throwable_desc" : "Blocks Grenade Crates Tracker when you have equipped ability from perk deck or no throwable",
 
     "ehi_show_equipment_bodybags": "แสดงกระเป๋าใส่ศพ",
     "ehi_show_equipment_bodybags_desc": "แสดงจำนวนกระเป๋าใส่ศพ\nไอคอนติดตามนี้จะไม่แสดงค่าหากด่านเปลี่ยนจากลอบเร้นเป็นบู๊ล้างผลาญ",
@@ -425,6 +443,10 @@
     "ehi_show_minion_tracker" : "แสดงไอคอนจำนวนพันธมิตร",
     "ehi_show_minion_tracker_desc" : "แสดงไอคอนจำนวนพันธมิตรที่เปลี่ยนมาอยู่ฝั่งเราในด่านนั้นๆ",
 
+    "ehi_show_minion_option" : "Converts Format",
+    "ehi_show_minion_option_desc" : "",
+    "ehi_show_minion_option_1" : "Show Number of your Converts only",
+    "ehi_show_minion_option_2" : "Show Total Number of Converts on the map",
     "ehi_show_minion_option_3" : "แสดงไอคอนจำนวนพันธมิตรของแต่ละบุคคล",
 
     "ehi_show_minion_killed_message" : "แสดงข้อความ 'ลูกน้องถูกฆ่า'",

@@ -244,6 +244,7 @@
 ---@field w number?
 ---@field h number?
 ---@field color Color?
+---@field visible boolean?
 
 ---@class XPBreakdown.tactic.i_custom.objectives_override.stop_at_inclusive_and_add_objectives
 ---@field stop_at string

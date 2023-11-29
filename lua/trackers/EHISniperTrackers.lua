@@ -61,32 +61,32 @@ function EHISniperChanceTracker:SetCount(count)
     self:AnimateBG(1)
 end
 
----@class EHISniperTimedTracker : EHITracker
+---@class EHISniperTimedTracker : EHITracker, EHICountTracker
 ---@field super EHITracker
 EHISniperTimedTracker = class(EHITracker)
 EHISniperTimedTracker._forced_hint_text = "enemy_snipers"
 EHISniperTimedTracker._forced_icons = { "sniper" }
 EHISniperTimedTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperTimedTracker.DecreaseCount = EHICountTracker.DecreaseCount
+EHISniperTimedTracker.FormatCount = EHICountTracker.Format
+EHISniperTimedTracker.Format = EHISniperTimedTracker.ShortFormat
+---@param params EHITracker.params
 function EHISniperTimedTracker:pre_init(params)
     self._refresh_on_delete = true
     self._count = params.count or 0
-    self._additional_count = 0
-    self._count_on_refresh = params.count_on_refresh
     self._refresh_t = params.refresh_t or 0
 end
 
 function EHISniperTimedTracker:OverridePanel()
+    local w = self._bg_box:w() / 2
     self._count_text = self:CreateText({
         name = "count_text",
         text = self:FormatCount(),
-        color = EHIProgressTracker._progress_bad
+        color = EHIProgressTracker._progress_bad,
+        w = w
     })
-    self._text:set_w(self._bg_box:w() / 2)
-end
-
-function EHISniperTimedTracker:FormatCount()
-    return tostring(self._count + self._additional_count)
+    self._text:set_w(w)
+    self._count_text:set_left(self._text:right())
 end
 
 function EHISniperTimedTracker:SetCount(count)
@@ -126,9 +126,9 @@ function EHISniperTimedCountTracker:OverridePanel()
     self._count_text = self:CreateText({
         name = "count_text",
         text = self:FormatCount(),
-        color = EHIProgressTracker._progress_bad
+        color = EHIProgressTracker._progress_bad,
+        visible = false
     })
-    self._count_text:set_visible(false)
 end
 
 function EHISniperTimedCountTracker:SetRespawnTime(t)
@@ -161,6 +161,7 @@ EHISniperTimedChanceTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperTimedChanceTracker.DecreaseCount = EHICountTracker.DecreaseCount
 EHISniperTimedChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHISniperTimedChanceTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
+EHISniperTimedChanceTracker.Format = EHISniperTimedChanceTracker.ShortFormat
 function EHISniperTimedChanceTracker:pre_init(params)
     self._refresh_on_delete = true
     self._count = params.count or 0
@@ -188,18 +189,24 @@ function EHISniperTimedChanceTracker:OverridePanel()
     self._chance_text:set_x(0)
     self:FitTheText(self._chance_text)
     self._text:set_left(self._chance_text:right())
-    local t = self._time
-    self._time = 0.69 -- nice
     self._text:set_text(self:Format())
-    self:FitTheText()
-    self._time = t
-    self._text:set_text(self:Format())
+    local time_check = self._time_format == 1 and 100 or 60
+    if math.max(self._time, self._recheck_t) >= time_check then
+        if self._recheck_t >= time_check then
+            local t = self._time
+            self._time = self._recheck_t
+            self:FitTheText()
+            self._time = t
+        else
+            self:FitTheText()
+        end
+    end
     self._count_text = self:CreateText({
         name = "count_text",
         text = self:FormatCount(),
-        color = EHIProgressTracker._progress_bad
+        color = EHIProgressTracker._progress_bad,
+        visible = false
     })
-    self._count_text:set_visible(false)
 end
 
 function EHISniperTimedChanceTracker:SniperSpawnsSuccess()
@@ -262,6 +269,7 @@ EHISniperLoopTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperLoopTracker.DecreaseCount = EHICountTracker.DecreaseCount
 EHISniperLoopTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHISniperLoopTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
+EHISniperLoopTracker.Format = EHISniperLoopTracker.ShortFormat
 function EHISniperLoopTracker:pre_init(params)
     self._refresh_on_delete = true
     self._count = 0
@@ -282,12 +290,19 @@ function EHISniperLoopTracker:OverridePanel()
     self._chance_text:set_x(0)
     self:FitTheText(self._chance_text)
     self._text:set_left(self._chance_text:right())
-    local t = self._time
-    self._time = 0.69 -- nice
     self._text:set_text(self:Format())
-    self:FitTheText()
-    self._time = t
-    self._text:set_text(self:Format())
+    local time_check = self._time_format == 1 and 100 or 60
+    if math.max(self._time, self._on_fail_refresh_t, self._on_success_refresh_t) >= time_check then
+        local max_refresh_t = math.max(self._on_fail_refresh_t, self._on_success_refresh_t)
+        if max_refresh_t >= time_check then
+            local t = self._time
+            self._time = max_refresh_t
+            self:FitTheText()
+            self._time = t
+        else
+            self:FitTheText()
+        end
+    end
     self._count_text = self:CreateText({
         name = "count_text",
         text = self:FormatCount(),
@@ -386,9 +401,9 @@ function EHISniperHeliTracker:OverridePanel()
     self._count_text = self:CreateText({
         name = "count_text",
         text = "1",
-        color = EHIProgressTracker._progress_bad
+        color = EHIProgressTracker._progress_bad,
+        visible = false
     })
-    self._count_text:set_visible(false)
 end
 
 function EHISniperHeliTracker:SniperRespawn()

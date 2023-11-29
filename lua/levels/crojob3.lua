@@ -103,19 +103,14 @@ if EHI:IsLootCounterVisible() then
         other[EHI:GetInstanceElementID(100202, index)] = Trigger
     end
     other[101041] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
-        EHI:ShowLootCounterNoChecks({
-            -- 1 flipped wagon crate; guaranteed to have gold or 2x money; 15% chance to spawn 2x money, otherwise gold
+    EHI:ShowLootCounterNoChecks({
+            -- 1 flipped wagon crate; guaranteed to have gold or 2x money (15% chance)
             -- If second money bundle spawns, the maximum is increased in the Trigger above
             max = 5 -- 4 Bomb parts + 1
         })
     end)}
     -- 1 random loot in train wagon, 35% chance to spawn
     -- Wagons are selected randomly; sometimes 2 with possible loot spawns, sometimes 1
-    local function DelayRejection(crate)
-        EHI:DelayCall(tostring(crate), 2, function()
-            managers.ehi_tracker:RandomLootDeclinedCheck(crate)
-        end)
-    end
     local IncreaseMaxRandomLoot = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
         local index = trigger.index
         local crate = EHI:GetInstanceUnitID(100000, index)
@@ -125,7 +120,7 @@ if EHI:IsLootCounterVisible() then
         LootTrigger[EHI:GetInstanceElementID(100009, index)] = loot_trigger
         LootTrigger[EHI:GetInstanceElementID(100010, index)] = loot_trigger
         managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function(...)
-            DelayRejection(crate)
+            managers.ehi_tracker:AddDelayedLootDeclinedCheck(crate)
         end)
         self:AddTriggers2(LootTrigger, nil, "LootCounter")
         self:HookElements(LootTrigger)

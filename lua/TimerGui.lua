@@ -88,7 +88,7 @@ function TimerGui:StartTimer()
     local t = tonumber(self._current_timer) or self._time_left
     if not show_waypoint_only then
         if self.__ehi_merge then
-            managers.ehi_tracker:CallFunction(self._ehi_key, "StartTimer", t)
+            managers.ehi_tracker:CallFunction(self._ehi_key, "StartTimer", t, true)
         else
             managers.ehi_tracker:AddTracker({
                 id = self._ehi_key,

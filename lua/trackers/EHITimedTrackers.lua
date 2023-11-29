@@ -22,27 +22,47 @@ function EHITimedChanceTracker:post_init(params)
     if params.start_opened then
         self:SetBGSize(self._bg_box_double, "set")
         self:SetIconX()
+    elseif params.stop_timer_on_end then
+        self._stop_timer_on_end = true
+        self._update = false
     end
 end
 
 ---@param t number?
-function EHITimedChanceTracker:StartTimer(t)
+---@param no_update boolean?
+function EHITimedChanceTracker:StartTimer(t, no_update)
     if t then
         self:SetTimeNoAnim(t)
     end
     self:AnimatePanelW(self._panel_double)
     self:ChangeTrackerWidth(self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons))
-    self:AnimIconX(self._bg_box_double + self._gap_scaled)
+    if self._n_of_icons > 1 then
+        self:AnimIconsX(self._bg_box_double + self._gap_scaled)
+    else
+        self:AnimIconX(self._bg_box_double + self._gap_scaled)
+    end
     self._bg_box:set_w(self._bg_box_double)
-    self:AddTrackerToUpdate()
+    if not no_update then
+        self:AddTrackerToUpdate()
+    end
 end
 
 function EHITimedChanceTracker:StopTimer()
     self:AnimatePanelW(self._panel_w)
     self:ChangeTrackerWidth(self._bg_box_w + (self._icon_gap_size_scaled * self._n_of_icons))
-    self:AnimIconX(self._bg_box_w + self._gap_scaled)
+    if self._n_of_icons > 1 then
+        self:AnimIconsX(self._bg_box_w + self._gap_scaled)
+    else
+        self:AnimIconX(self._bg_box_w + self._gap_scaled)
+    end
     self._bg_box:set_w(self._bg_box_w)
     self:RemoveTrackerFromUpdate()
+end
+
+function EHITimedChanceTracker:Refresh()
+    if self._stop_timer_on_end then
+        self:StopTimer()
+    end
 end
 
 ---@class EHITimedWarningChanceTracker : EHITimedChanceTracker

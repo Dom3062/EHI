@@ -1,3 +1,6 @@
+r200 (29. 11. 2023):
+Hoxton Breakout Day 2: Fixed an issue where Hoxton Hack Counter tracker got deleted after few seconds
+
 r199 (28. 11. 2023):
 Mission Briefing: Fixed a crash
 

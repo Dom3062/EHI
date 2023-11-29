@@ -39,6 +39,8 @@ function EHIWarningTracker:update(dt)
     end
 end
 
+---@param check_progress boolean?
+---@param color Color?
 function EHIWarningTracker:AnimateColor(check_progress, color)
     if self._text and alive(self._text) then
         local start_t = check_progress and (1 - min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 1

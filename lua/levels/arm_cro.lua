@@ -92,12 +92,24 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
-
+local MinBags = EHI:GetValueBasedOnDifficulty({
+    normal = 2,
+    hard = 3,
+    veryhard = 4,
+    overkill_or_above = 5
+})
 EHI:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 EHI:AddXPBreakdown({
     objective =
     {
         escape = 12000
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min_max = { loot_all = { min = MinBags, max = 16 } }
+        }
+    }
 })

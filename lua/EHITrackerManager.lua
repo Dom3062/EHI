@@ -35,6 +35,28 @@ end
 function EHITrackerManager:init_finalize()
     EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "Spawned"))
+    if EHI:IsClient() then
+        Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHITracker", function(sender_id, id, data)
+            if id == EHI.SyncMessages.TrackerManager.SyncAddTracker then
+                local params = LuaNetworking:StringToTable(data)
+                if params._id == "LootCounter" and EHI:GetOption("show_loot_counter") then
+                    self:ShowLootCounter(tonumber(params.max), tonumber(params.max_random), tonumber(params.offset))
+                    EHI:HookLootCounter(true)
+                end
+            elseif id == EHI.SyncMessages.TrackerManager.SyncUpdateTracker then
+                local params = LuaNetworking:StringToTable(data)
+                if params._id == "LootCounter" then
+                    if params.type == "IncreaseMaxRandom" then
+                        self:IncreaseLootCounterMaxRandom(tonumber(params.random))
+                    elseif params.type == "RandomLootSpawned" then
+                        self:RandomLootSpawned(tonumber(params.random))
+                    elseif params.type == "RandomLootDeclined" then
+                        self:RandomLootDeclined(tonumber(params.random))
+                    end
+                end
+            end
+        end)
+    end
 end
 
 function EHITrackerManager:Spawned()
@@ -990,12 +1012,18 @@ end
 ---@param id string|number Element ID
 ---@param force boolean? Force loot spawn event if the element does not have "fail" state (desync workaround)
 function EHITrackerManager:RandomLootSpawnedCheck(id, force)
-    self:CallFunction("LootCounter", "RandomLootSpawned2", id, force)
+    self:CallFunction("LootCounter", "RandomLootSpawnedCheck", id, force)
+end
+
+---@param id number
+---@param t number? Defaults to `2` if not provided
+function EHITrackerManager:AddDelayedLootDeclinedCheck(id, t)
+    self:CallFunction("LootCounter", "AddDelayedLootDeclinedCheck", id, t)
 end
 
 ---@param id string|number Element ID
 function EHITrackerManager:RandomLootDeclinedCheck(id)
-    self:CallFunction("LootCounter", "RandomLootDeclined2", id)
+    self:CallFunction("LootCounter", "RandomLootDeclinedCheck", id)
 end
 
 ---@param id string
@@ -1062,29 +1090,6 @@ function EHITrackerManager:SyncRandomLootDeclined(random)
         sync_data.max_random = sync_data.max_random - (random or 1)
         EHI:SyncTable(EHI.SyncMessages.TrackerManager.SyncUpdateTracker, { _id = "LootCounter", type = "RandomLootDeclined", random = random })
     end
-end
-
-if EHI:IsClient() then
-    Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHITracker", function(_, id, data)
-        if id == EHI.SyncMessages.TrackerManager.SyncAddTracker then
-            local params = LuaNetworking:StringToTable(data)
-            if params._id == "LootCounter" and EHI:GetOption("show_loot_counter") then
-                managers.ehi_tracker:ShowLootCounter(tonumber(params.max), tonumber(params.max_random), tonumber(params.offset))
-                EHI:HookLootCounter(true)
-            end
-        elseif id == EHI.SyncMessages.TrackerManager.SyncUpdateTracker then
-            local params = LuaNetworking:StringToTable(data)
-            if params._id == "LootCounter" then
-                if params.type == "IncreaseMaxRandom" then
-                    managers.ehi_tracker:IncreaseLootCounterMaxRandom(tonumber(params.random))
-                elseif params.type == "RandomLootSpawned" then
-                    managers.ehi_tracker:RandomLootSpawned(tonumber(params.random))
-                elseif params.type == "RandomLootDeclined" then
-                    managers.ehi_tracker:RandomLootDeclined(tonumber(params.random))
-                end
-            end
-        end
-    end)
 end
 
 ---@param id string

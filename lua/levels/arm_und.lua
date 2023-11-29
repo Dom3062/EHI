@@ -65,10 +65,23 @@ if EHI:IsHost() then
 end
 
 EHI:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
+local MinBags = EHI:GetValueBasedOnDifficulty({
+    normal = 2,
+    hard = 3,
+    veryhard = 4,
+    overkill_or_above = 5
+})
 EHI:AddXPBreakdown({
     objective =
     {
         escape = 12000
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min_max = { loot_all = { min = MinBags, max = 16 } }
+        }
+    }
 })

@@ -16,6 +16,8 @@ function EHILootTracker:init(panel, params, parent_class)
     EHILootTracker.super.init(self, panel, params, parent_class)
     self._show_finish_after_reaching_target = self._stay_on_screen
     self._loot_id = {}
+    self._loot_check_delay = {} ---@type table<number, number>
+    self._loot_check_n = 0
 end
 
 if format == 1 then
@@ -43,6 +45,34 @@ else
     end
 end
 
+---@param dt number
+function EHILootTracker:update(dt)
+    for id, t in pairs(self._loot_check_delay) do
+        t = t - dt
+        if t <= 0 then
+            self._loot_check_delay[id] = nil
+            self._loot_check_n = self._loot_check_n - 1
+            if self._loot_check_n <= 0 then
+                self:RemoveTrackerFromUpdate()
+            end
+            self:RandomLootDeclinedCheck(id)
+        else
+            self._loot_check_delay[id] = t
+        end
+    end
+end
+
+---@param id number
+---@param t number? Defaults to `2` if not provided
+function EHILootTracker:AddDelayedLootDeclinedCheck(id, t)
+    self._loot_check_delay[id] = t or 2
+    if self._loot_check_n == 0 then
+        self:AddTrackerToUpdate()
+    end
+    self._loot_check_n = self._loot_check_n + 1
+end
+
+---@param progress number
 function EHILootTracker:SetProgress(progress)
     local fixed_progress = progress + self._mission_loot - self._offset
     EHILootTracker.super.SetProgress(self, fixed_progress)
@@ -55,6 +85,7 @@ function EHILootTracker:Finalize()
     self._progress = progress
 end
 
+---@param force boolean?
 function EHILootTracker:SetCompleted(force)
     EHILootTracker.super.SetCompleted(self, force)
     if self._stay_on_screen and self._status then
@@ -62,10 +93,12 @@ function EHILootTracker:SetCompleted(force)
         self:FitTheText()
         self._status = nil
     elseif self._show_popup then
+        self.update = self.update_fade
         managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_loot_secured"), "EHI_Loot")
     end
 end
 
+---@param max number
 function EHILootTracker:SetProgressMax(max)
     EHILootTracker.super.SetProgressMax(self, max)
     self:SetTextColor(Color.white)
@@ -81,6 +114,7 @@ function EHILootTracker:VerifyStatus()
     end
 end
 
+---@param random number?
 function EHILootTracker:RandomLootSpawned(random)
     if self._max_random <= 0 then
         return
@@ -90,6 +124,7 @@ function EHILootTracker:RandomLootSpawned(random)
     self:IncreaseProgressMax(n)
 end
 
+---@param random number?
 function EHILootTracker:RandomLootDeclined(random)
     if self._max_random <= 0 then
         return
@@ -98,20 +133,25 @@ function EHILootTracker:RandomLootDeclined(random)
     self:SetProgressMax(self._max)
 end
 
+---@param max number?
 function EHILootTracker:SetMaxRandom(max)
     self._max_random = max or 0
     self:SetProgressMax(self._max)
 end
 
+---@param progress number?
 function EHILootTracker:IncreaseMaxRandom(progress)
     self:SetMaxRandom(self._max_random + (progress or 1))
 end
 
+---@param progress number?
 function EHILootTracker:DecreaseMaxRandom(progress)
     self:SetMaxRandom(self._max_random - (progress or 1))
 end
 
-function EHILootTracker:RandomLootSpawned2(id, force)
+---@param id number
+---@param force boolean?
+function EHILootTracker:RandomLootSpawnedCheck(id, force)
     if self._loot_id[id] then
         if force then -- This is here to combat desync, use it if element does not have "fail" state
             self:IncreaseProgressMax()
@@ -122,13 +162,15 @@ function EHILootTracker:RandomLootSpawned2(id, force)
     self:RandomLootSpawned()
 end
 
-function EHILootTracker:RandomLootDeclined2(id)
+---@param id number
+function EHILootTracker:RandomLootDeclinedCheck(id)
     if self._loot_id[id] then
         return
     end
     self:RandomLootDeclined()
 end
 
+---@param id number
 function EHILootTracker:BlockRandomLoot(id)
     self._loot_id[id] = true
 end
@@ -192,6 +234,7 @@ function EHIAchievementLootCounterTracker:PrepareHint(params)
     self._forced_hint_text = params.hint
 end
 
+---@param force boolean?
 function EHIAchievementLootCounterTracker:SetCompleted(force)
     self._achieved_popup_showed = true
     EHIAchievementLootCounterTracker.super.SetCompleted(self, force)

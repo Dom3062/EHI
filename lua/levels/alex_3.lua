@@ -37,9 +37,7 @@ if EHI:IsLootCounterVisible() then
         if Exploded then
             return
         end
-        EHI:DelayCall(tostring(bag), 2, function()
-            managers.ehi_tracker:RandomLootDeclinedCheck(bag)
-        end)
+        managers.ehi_tracker:AddDelayedLootDeclinedCheck(bag)
     end
     local function Explosion() -- Someone forgot to defuse...
         Exploded = true

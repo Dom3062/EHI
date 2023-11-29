@@ -8,22 +8,37 @@ local CrashIcons = { Icon.PCHack, Icon.Fix, "pd2_question" }
 if EHI:GetOption("show_one_icon") then
     CrashIcons = { Icon.Fix }
 end
+local CrashChanceTime = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    if self._trackers:TrackerExists("CrashChance") then
+        self._trackers:CallFunction("CrashChance", "StartTimer", trigger.time)
+    else
+        self:CheckCondition(trigger)
+    end
+end)
 local triggers = {
-    [101284] = { chance = 50, id = "CrashChance", icons = { Icon.PCHack, Icon.Fix }, class = TT.Chance, hint = Hints.election_day_3_CrashChance },
+    [101284] = { chance = 50, id = "CrashChance", icons = { Icon.PCHack, Icon.Fix }, class = TT.Timed.Chance, hint = Hints.election_day_3_CrashChance, stop_timer_on_end = true },
+    [103570] = { id = "CrashChance", special_function = SF.DecreaseChanceFromElement }, -- -25%
+    [100741] = { id = "CrashChance", special_function = SF.RemoveTracker },
+    [103572] = { time = 50, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime, special_function = CrashChanceTime },
+    [103573] = { time = 40, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime, special_function = CrashChanceTime },
+    [103574] = { time = 30, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime, special_function = CrashChanceTime },
     [103568] = { time = 60, id = "Hack", icons = { Icon.PCHack }, hint = Hints.Hack },
     [103585] = { id = "Hack", special_function = SF.RemoveTracker },
-    [103579] = { amount = 25, id = "CrashChance", special_function = SF.DecreaseChance },
-    [100741] = { id = "CrashChance", special_function = SF.RemoveTracker },
-    [103572] = { time = 50, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime },
-    [103573] = { time = 40, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime },
-    [103574] = { time = 30, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime },
+
     [103478] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion },
+
     [103169] = drill_spawn_delay,
     [103179] = drill_spawn_delay,
     [103190] = drill_spawn_delay,
     [103195] = drill_spawn_delay,
 
     [103535] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion }
+}
+local other =
+{
+    [102735] = EHI:AddAssaultDelay({ time = 5 + 30 }),
+    [102736] = EHI:AddAssaultDelay({ time = 15 + 30 }),
+    [102737] = EHI:AddAssaultDelay({ time = 25 + 30 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local refresh_t = EHI:GetValueBasedOnDifficulty({
@@ -45,16 +60,45 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
                 })
             end
         end
-    end ) }
+    end)}
     other[100348] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[100351] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+if EHI:IsLootCounterVisible() then
+    other[103293] = EHI:AddLootCounter3(function(self, ...)
+        local count = self:CountInteractionAvailable("money_wrap")
+        if count > 0 then
+            EHI:ShowLootCounterNoChecks({ max = count })
+        end
+    end, true)
+end
 
-EHI:ParseTriggers({ mission = triggers })
+---@type MissionDoorTable
+local MissionDoor =
+{
+    -- Vault Doors
+    [Vector3(2350, -2320, 59.9998)] = 104556, -- Left
+    [Vector3(2250, -3121, 59.9998)] = 104611, -- Right
+
+    -- Gate inside the vault
+    [Vector3(2493.96, -2793.65, 84.8657)] = { w_id = 104645, restore = true, unit_id = 101581 }
+}
+EHI:SetMissionDoorData(MissionDoor)
+EHI:ParseTriggers({ mission = triggers, other = other })
 EHI:AddXPBreakdown({
     objective =
     {
         escape = 20000
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot_all = { max = 12 }
+            }
+        }
+    }
 })

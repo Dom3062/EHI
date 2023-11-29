@@ -693,10 +693,11 @@ tweak_data.ehi =
             end)
             for _, loot in ipairs(forced_loot or { "gold", "money", "art" }) do
                 for i = 1, 9, 1 do
+                    local sequence = string.format("spawn_loot_%s_%d", loot, i)
                     if i <= 2 then -- Explosion can disable this loot
-                        managers.mission:add_runned_unit_sequence_trigger(truck_id, "spawn_loot_" .. loot .. "_" .. tostring(i), LootFoundExplosionCheck)
+                        managers.mission:add_runned_unit_sequence_trigger(truck_id, sequence, LootFoundExplosionCheck)
                     else
-                        managers.mission:add_runned_unit_sequence_trigger(truck_id, "spawn_loot_" .. loot .. "_" .. tostring(i), LootFound)
+                        managers.mission:add_runned_unit_sequence_trigger(truck_id, sequence, LootFound)
                     end
                 end
             end
@@ -720,18 +721,14 @@ tweak_data.ehi =
         end,
         ---@param self table
         ---@return string
-        FormatMinutesAndSeconds = function(self)
+        ShortFormatSecondsOnly = function(self)
             local t = math_floor(self._time * 10) / 10
             if t < 0 then
                 return string_format("%d", 0)
-            elseif t < 1 then
-                return string_format("%.2f", self._time)
             elseif t < 10 then
                 return string_format("%.1f", t)
-            elseif t < 60 then
-                return string_format("%d", t)
             else
-                return string_format("%d:%02d", t / 60, t % 60)
+                return string_format("%d", t)
             end
         end,
         ---@param _ any Unused
@@ -747,6 +744,36 @@ tweak_data.ehi =
                 return string_format("%.1f", t)
             else
                 return string_format("%d", t)
+            end
+        end,
+        ---@param self table
+        ---@return string
+        FormatMinutesAndSeconds = function(self)
+            local t = math_floor(self._time * 10) / 10
+            if t < 0 then
+                return string_format("%d", 0)
+            elseif t < 1 then
+                return string_format("%.2f", self._time)
+            elseif t < 10 then
+                return string_format("%.1f", t)
+            elseif t < 60 then
+                return string_format("%d", t)
+            else
+                return string_format("%d:%02d", t / 60, t % 60)
+            end
+        end,
+        ---@param self table
+        ---@return string
+        ShortFormatMinutesAndSeconds = function(self)
+            local t = math_floor(self._time * 10) / 10
+            if t < 0 then
+                return string_format("%d", 0)
+            elseif t < 10 then
+                return string_format("%.1f", t)
+            elseif t < 60 then
+                return string_format("%d", t)
+            else
+                return string_format("%d:%02d", t / 60, t % 60)
             end
         end,
         ---@param _ any Unused

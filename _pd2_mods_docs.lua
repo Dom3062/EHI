@@ -1,6 +1,21 @@
 ---@meta
 
 ----------------
+--- SuperBLT ---
+----------------
+
+---@class Hooks
+---@field Add fun(self: self, key: string, id: string, func: function)
+---@field PostHook fun(self: self, object: table, func: string, id: string, post_call: function)
+---@field PreHook fun(self: self, object: table, func: string, id: string, pre_call: function)
+---@field RemovePostHook fun(self: self, id: string)
+_G.Hooks = {}
+
+-----------------------
+--- End of SuperBLT ---
+-----------------------
+
+----------------
 --- Beardlib ---
 ----------------
 
@@ -19,3 +34,15 @@ _G.CustomAchievement = {}
 -----------------------
 --- End of Beardlib ---
 -----------------------
+
+----------------------------
+--- Why Are You Running? ---
+----------------------------
+
+---@class SWAYRMod
+---@field included fun(level_id: string): boolean
+_G.SWAYRMod = {}
+
+-----------------------------------
+--- End of Why Are You Running? ---
+-----------------------------------

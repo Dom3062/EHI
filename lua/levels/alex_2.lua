@@ -46,32 +46,33 @@ if EHI:IsHost() then
             "spawn_loot_crap_d"
         }
     }
+    local SequenceTriggers =
+    {
+        [103640] = SafeTriggers,
+        [103641] = SafeTriggers,
+        [101741] = SafeTriggers,
+        [101751] = SafeTriggers,
+        [103645] = SafeTriggers,
+        [103646] = SafeTriggers,
+        [103647] = SafeTriggers,
+        [103648] = SafeTriggers,
+        [103649] = SafeTriggers,
+        [103650] = SafeTriggers,
+        [103651] = SafeTriggers,
+        [103777] = SafeTriggers,
+        [103643] = SafeTriggers,
+        [101099] = SafeTriggers,
+        [101031] = SafeTriggers,
+        [101211] = SafeTriggers
+    }
     local loot_trigger = EHI:AddLootCounterSynced(function(self, trigger, element, ...)
         local spawned = element._values.value
         EHI:ShowLootCounterNoChecks({
             max = spawned + math.max(0, spawned - 3),
             max_random = 1,
-            sequence_triggers =
-            {
-                [103640] = SafeTriggers,
-                [103641] = SafeTriggers,
-                [101741] = SafeTriggers,
-                [101751] = SafeTriggers,
-                [103645] = SafeTriggers,
-                [103646] = SafeTriggers,
-                [103647] = SafeTriggers,
-                [103648] = SafeTriggers,
-                [103649] = SafeTriggers,
-                [103650] = SafeTriggers,
-                [103651] = SafeTriggers,
-                [103777] = SafeTriggers,
-                [103643] = SafeTriggers,
-                [101099] = SafeTriggers,
-                [101031] = SafeTriggers,
-                [101211] = SafeTriggers
-            }
+            sequence_triggers = SequenceTriggers
         })
-    end, SafeTriggers, Sync)
+    end, SequenceTriggers, Sync)
     for i = 103715, 103724, 1 do
         other[i] = loot_trigger
     end

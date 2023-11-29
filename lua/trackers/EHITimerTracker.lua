@@ -195,8 +195,9 @@ function EHIProgressTimerTracker:post_init(params)
 end
 
 ---@param t number
-function EHIProgressTimerTracker:StartTimer(t)
-    EHIProgressTimerTracker.super.StartTimer(self, t)
+---@param no_update boolean?
+function EHIProgressTimerTracker:StartTimer(t, no_update)
+    EHIProgressTimerTracker.super.StartTimer(self, t, no_update)
     if self._progress ~= self._max then
         EHIProgressTimerTracker.super.super.super:SetTextColor(Color.white, self._progress_text)
     end
