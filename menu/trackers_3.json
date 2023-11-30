@@ -65,7 +65,7 @@
             "type": "toggle",
             "id": "ehi_aggregate_assault_delay_and_assault_time_choice",
             "title": "ehi_aggregate_assault_delay_and_assault_time",
-            "description": "ehi_show_assault_tracker_desc",
+            "description": "ehi_aggregate_assault_delay_and_assault_time_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "aggregate_assault_delay_and_assault_time",
             "focus_changed_callback": "SetFocus",

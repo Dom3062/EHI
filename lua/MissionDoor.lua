@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("MissionDoor") then
+if EHI:CheckLoadHook("MissionDoor") or not (EHI:GetOption("show_mission_trackers") or EHI.debug.mission_door) then
     return
 end
 local C4 = EHI.Icons.C4

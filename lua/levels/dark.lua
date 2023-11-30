@@ -42,16 +42,18 @@ local EHI = EHI
 local Icon = EHI.Icons
 local Hints = EHI.Hints
 
-for _, index in ipairs({ 8750, 17750, 33525, 36525 }) do
-    local unit_index = EHI:GetInstanceUnitID(100334, index)
-    managers.mission:add_runned_unit_sequence_trigger(unit_index, "interact", function(unit)
-        managers.ehi_tracker:AddTracker({
-            id = tostring(unit_index),
-            time = 10,
-            icons = { Icon.Fire },
-            hint = Hints.Thermite
-        })
-    end)
+if EHI:GetOption("show_mission_trackers") then
+    for _, index in ipairs({ 8750, 17750, 33525, 36525 }) do
+        local unit_index = EHI:GetInstanceUnitID(100334, index)
+        managers.mission:add_runned_unit_sequence_trigger(unit_index, "interact", function(unit)
+            managers.ehi_tracker:AddTracker({
+                id = tostring(unit_index),
+                time = 10,
+                icons = { Icon.Fire },
+                hint = Hints.Thermite
+            })
+        end)
+    end
 end
 
 local SF = EHI.SpecialFunctions

@@ -96,15 +96,17 @@ local function CheckForBrokenCocaine() -- Not working for drop-ins
     end
 end
 
-for _, unit_id in ipairs({ 100098, 102897, 102899, 102900 }) do
-    managers.mission:add_runned_unit_sequence_trigger(unit_id, "interact", function(unit)
-        managers.ehi_tracker:AddTracker({
-            id = tostring(unit_id),
-            time = 10,
-            icons = { Icon.Fire },
-            hint = Hints.Thermite
-        })
-    end)
+if EHI:GetOption("show_mission_trackers") then
+    for _, unit_id in ipairs({ 100098, 102897, 102899, 102900 }) do
+        managers.mission:add_runned_unit_sequence_trigger(unit_id, "interact", function(unit)
+            managers.ehi_tracker:AddTracker({
+                id = tostring(unit_id),
+                time = 10,
+                icons = { Icon.Fire },
+                hint = Hints.Thermite
+            })
+        end)
+    end
 end
 
 local SF = EHI.SpecialFunctions

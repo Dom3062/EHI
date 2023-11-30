@@ -21,28 +21,43 @@ if EHI:IsHost() then
     original.set_autorepair = Drill.set_autorepair
     function Drill:set_autorepair(...)
         original.set_autorepair(self, ...)
-        if self._autorepair == nil then
-            return
+        SetAutorepair(tostring(self._unit:key()), self._autorepair_clbk_id)
+        managers.network:session():send_to_peers_synched("sync_unit_event_id_16", self._unit, "base", self._autorepair_clbk_id and HasAutorepair or NoAutorepair)
+    end
+    original.clbk_autorepair = Drill.clbk_autorepair
+    function Drill:clbk_autorepair(...)
+        original.clbk_autorepair(self, ...)
+        if alive(self._unit) then
+            managers.network:session():send_to_peers_synched("sync_unit_event_id_16", self._unit, "base", NoAutorepair)
+            SetAutorepair(tostring(self._unit:key()), false)
         end
-        SetAutorepair(tostring(self._unit:key()), self._autorepair)
-        managers.network:session():send_to_peers_synched("sync_unit_event_id_16", self._unit, "base", self._autorepair and HasAutorepair or NoAutorepair)
+    end
+    original.set_jammed = Drill.set_jammed
+    function Drill:set_jammed(...)
+        original.set_jammed(self, ...)
+        if self._autorepair_chance and self._unit and alive(self._unit) then
+            SetAutorepair(tostring(self._unit:key()), self._autorepair_clbk_id)
+            managers.network:session():send_to_peers_synched("sync_unit_event_id_16", self._unit, "base", self._autorepair_clbk_id and HasAutorepair or NoAutorepair)
+        end
+    end
+    function Drill:CanAutorepair()
+        return self._autorepair_clbk_id
     end
 else
-    original.on_autorepair = Drill.on_autorepair
-    function Drill:on_autorepair(...)
-        original.on_autorepair(self, ...)
-        SetAutorepair(tostring(self._unit:key()), true)
-    end
-
+    -- Can't rely on Drill:on_autorepair() anymore as they changed autorepair chance to check every jam and not once the unit is placed or upgraded...
+    -- Very well done, OVK. WHYYYYYYYYYYYY
     original.sync_net_event = Drill.sync_net_event
     function Drill:sync_net_event(event_id, ...)
-        if event_id == HasAutorepair then
+        if event_id == HasAutorepair and self._unit and alive(self._unit) then
             self._autorepair_client = true
             SetAutorepair(tostring(self._unit:key()), true)
-        elseif event_id == NoAutorepair then
+        elseif event_id == NoAutorepair and self._unit and alive(self._unit) then
             self._autorepair_client = nil
             SetAutorepair(tostring(self._unit:key()), false)
         end
         original.sync_net_event(self, event_id, ...)
+    end
+    function Drill:CanAutorepair()
+        return self._autorepair_client
     end
 end

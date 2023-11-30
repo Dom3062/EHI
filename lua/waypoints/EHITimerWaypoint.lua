@@ -76,5 +76,8 @@ end
 
 function EHITimerWaypoint:SetAutorepair(state)
     self._default_color = state and self._autorepair_color or Color.white
+    if self._jammed or self._not_powered then
+        return
+    end
     self:SetColor()
 end

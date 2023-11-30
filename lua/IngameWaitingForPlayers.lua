@@ -696,7 +696,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
         end
         if OVKOrAbove then
-            if EHI:IsAchievementLocked2("pim_1") and HasWeaponEquipped("desertfox") then -- "Nothing Personal" achievement
+            if EHI:IsAchievementLocked2("pim_1") and HasWeaponTypeEquipped("snp") then -- "Nothing Personal" achievement
                 local function f()
                     AddAchievementTracker2("pim_1_stats")
                 end
@@ -728,7 +728,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                     end
                 end)
             end
-            if level == "mad" and EHI:IsAchievementLocked2("pim_3") and HasWeaponEquipped("schakal") then -- "UMP for Me, UMP for You" achievement
+            if level == "mad" and EHI:IsAchievementLocked2("pim_3") and HasWeaponTypeEquipped("smg") then -- "UMP for Me, UMP for You" achievement
                 AddAchievementTracker2("pim_3_stats")
             end
             if level == "sand" and EHI:IsAchievementLocked2("sand_11") and HasWeaponTypeEquipped("snp") then -- "This Calls for a Round of Sputniks!" achievement
@@ -861,7 +861,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         if EHI:IsAchievementLocked2("dec21_02") and HasNonExplosiveGrenadeEquipped() then -- "Gift Giver" achievement
             AddAchievementTracker2("dec21_02_stat")
         end
-        if level == "dark" and EHI:IsAchievementLocked2("pim_2") and HasGrenadeEquipped("wpn_prj_target") then -- Crouched and Hidden, Flying Dagger
+        if level == "dark" and EHI:IsAchievementLocked2("pim_2") then -- Crouched and Hidden, Flying Dagger
             local progress = EHI:GetAchievementProgress("pim_2_stats")
             AddAchievementTracker("pim_2", progress, 8, false, true, true)
             EHI:Hook(AchievmentManager, "add_heist_success_award_progress", function(am, id)

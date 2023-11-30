@@ -1931,8 +1931,8 @@ function EHI:ShowLootCounterSynced(params)
         self:AddTriggers2(params.triggers or {}, nil, "LootCounter")
         self:HookLootCounterSequenceTriggers(params.sequence_triggers or {})
         managers.ehi_tracker:SetTrackerToSync("LootCounter", {
-            max = params.max,
-            max_random = params.max_random,
+            max = params.max or 0,
+            max_random = params.max_random or 0,
             offset = params.offset and managers.loot:GetSecuredBagsAmount()
         })
         return

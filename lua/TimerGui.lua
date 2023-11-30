@@ -83,7 +83,7 @@ function TimerGui:StartTimer()
             return
         end
     end
-    local autorepair = self._unit:base()._autorepair or self._unit:base()._autorepair_client
+    local autorepair = self._unit:base().CanAutorepair and self._unit:base():CanAutorepair()
     -- In case the conversion fails, fallback to "self._time_left" which is a number
     local t = tonumber(self._current_timer) or self._time_left
     if not show_waypoint_only then
@@ -343,7 +343,7 @@ function TimerGui:SetCustomCallback(id, operation)
     elseif operation == "add_waypoint" then
         EHI:AddCallback(id, function()
             if self._started and not self._done then
-                self:AddWaypoint(self._time_left, self._unit:base()._autorepair or self._unit:base()._autorepair_client)
+                self:AddWaypoint(self._time_left, self._unit:base().CanAutorepair and self._unit:base():CanAutorepair())
             end
         end)
     end

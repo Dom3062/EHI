@@ -67,10 +67,17 @@ local function AddCustomText(id, t)
     LocalizationManager._custom_localizations[id] = t
 end
 
----@param dot_data table
+---@param dot_data_name string?
 ---@param variant string?
 ---@return string
-local function FormatDOTData(dot_data, variant)
+local function FormatDOTData(dot_data_name, variant)
+    if not dot_data_name then
+        return ""
+    end
+    local dot_data = tweak_data.dot:get_dot_data(dot_data_name)
+    if not dot_data then
+        return ""
+    end
     local str = string.format("%s: (%s)", variant or "<Unknown>", strs.dot)
     if dot_data.dot_trigger_chance then
         local chance = dot_data.dot_trigger_chance
@@ -180,7 +187,7 @@ local DeployableFormattingFunction =
                 str = string.format("%s\n> %s (%s):\n>> %s: %s\n>> %s: %ss\n>> %s: %sm", str, managers.localization:text("ehi_bm_trip_mine"), strs.fire,
                 strs.dmg, tostring((fire_trap_tweak.damage or 0) * 10), strs.duration, tostring((fire_trap_tweak.burn_duration or 0) + fire_trap_data[1]),
                 strs.range, tostring(((fire_trap_tweak.range or 0) * fire_trap_data[2]) * 0.01))
-                str = string.format("%s\n> %s", str, FormatDOTData(fire_trap_tweak.fire_dot_data or {}, strs.fire))
+                str = string.format("%s\n> %s", str, FormatDOTData(fire_trap_tweak.dot_data_name, strs.fire))
             end
         end
         return str
@@ -329,15 +336,11 @@ local GrenadeFormattingFunction =
 {
     molotov = function()
         local tweak = tweak_data.projectiles.molotov or {}
-        return string.format("\n> %s: %ss\n> %s", strs.duration, tostring(tweak.burn_duration or 0), FormatDOTData(tweak.fire_dot_data or {}, strs.fire))
+        return string.format("\n> %s: %ss\n> %s", strs.duration, tostring(tweak.burn_duration or 0), FormatDOTData(tweak.dot_data_name, strs.fire))
     end,
     wpn_prj_four = function()
-        local str = string.format("\n> %s", FormatDOTData({
-            -- Hardcoded from DOTBulletBase, PoisonBulletBase inherits the class
-            dot_damage = 0.5,
-            dot_length = 6,
-            dot_tick_period = 0.5
-        }, strs.poison))
+        local str = string.format("\n> %s", FormatDOTData("default_poison", -- Traced back in DOTManager:add_doted_enemy() [via BLT Hook]
+        strs.poison))
         return str
     end,
     concussion = function()
@@ -353,7 +356,7 @@ local GrenadeFormattingFunction =
     end,
     fir_com = function()
         local tweak = tweak_data.projectiles.fir_com or {}
-        return string.format("\n> %s\n> %s", managers.localization:text("ehi_bm_fir_com"), FormatDOTData(tweak.fire_dot_data or {}, strs.fire))
+        return string.format("\n> %s\n> %s", managers.localization:text("ehi_bm_fir_com"), FormatDOTData(tweak.dot_data_name, strs.fire))
     end,
     poison_gas_grenade = function()
         local tweak = tweak_data.projectiles.poison_gas_grenade or {}
@@ -366,7 +369,7 @@ local GrenadeFormattingFunction =
         if cloud_duration > 0 then
             str = string.format("%s\n>> %s: %ds", str, strs.duration, cloud_duration)
         end
-        str = string.format("%s\n> %s", str, FormatDOTData(tweak.poison_gas_dot_data or {}, strs.poison))
+        str = string.format("%s\n> %s", str, FormatDOTData(tweak.poison_gas_dot_data_name, strs.poison))
         return str
     end,
     sticky_grenade = function()

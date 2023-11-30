@@ -19,6 +19,9 @@ _G.tweak_data.screen_colors = {}
 ---@field small_loot table<string, number>
 ---@field [string] { name_id: string, is_unique_loot: boolean, skip_exit_secure: boolean }
 _G.tweak_data.carry = {}
+---@class DOTTweakData
+---@field get_dot_data fun(self: self, tweak_name: string): table?
+_G.tweak_data.dot = {}
 ---@class EHITweakData
 _G.tweak_data.ehi = {}
 ---@class GageAssignmentTweakData
@@ -455,6 +458,7 @@ end
 ---@field achievement AchievementsTweakData
 ---@field blackmarket BlackMarketTweakData
 ---@field carry CarryTweakData
+---@field dot DOTTweakData
 ---@field ehi EHITweakData
 ---@field experience_manager table
 ---@field gage_assignment GageAssignmentTweakData
