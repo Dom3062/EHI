@@ -21,17 +21,13 @@ if EHI:GetOption("show_pager_callback") then
     EHIPagerWaypoint = class(EHIWarningWaypoint)
     function EHIPagerWaypoint:SetAnswered()
         self:RemoveWaypointFromUpdate()
-        self:StopAnim()
-        self:SetColor(Color.green)
-    end
-
-    function EHIPagerWaypoint:StopAnim()
         self._timer:stop()
         self._bitmap:stop()
         self._arrow:stop()
         if self._bitmap_world then
             self._bitmap_world:stop()
         end
+        self:SetColor(Color.green)
     end
 
     local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_pager")

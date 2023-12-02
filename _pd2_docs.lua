@@ -90,26 +90,113 @@ _G.tweak_data.preplanning = {
 ---@class UpgradesTweakData
 ---@field values UpgradesTweakData.values
 _G.tweak_data.upgrades = {
-    player_damage_health_ratio_threshold = 0.5,
+    ammo_bag_base = 4,
+    bodybag_crate_base = 3,
+    copr_high_damage_multiplier = { 20, 2 },
+    doctor_bag_base = 2,
+    ecm_jammer_base_battery_life = 20,
+    first_aid_kit = {
+        first_aid_kit_auto_recovery = { 500 }
+    },
     max_cocaine_stacks_per_tick = 240,
+    sentry_gun_base_ammo = 100,
+    sentry_gun_base_armor = 10,
+    player_damage_health_ratio_threshold = 0.5,
     wild_max_triggers_per_time = 4
 }
 ---@class UpgradesTweakData.values
 ---@field player UpgradesTweakData.values.player
 ---@field team UpgradesTweakData.values.team
+---@field temporary UpgradesTweakData.values.temporary
 _G.tweak_data.upgrades.values = {}
 ---@class UpgradesTweakData.values.player
----@field dodge_shot_gain table
----@field melee_damage_stacking table
-_G.tweak_data.upgrades.values.player = {}
+_G.tweak_data.upgrades.values.player = {
+    copr_activate_bonus_health_ratio = { 0.4 },
+    copr_kill_life_leech = { 2, 2 },
+    copr_out_of_health_move_slow = { 0.2 },
+    copr_static_damage_ratio = { 0.2, 0.1 },
+    copr_speed_up_on_kill = { 1 },
+    damage_control_cooldown_drain = {
+        { 0, 1 },
+        { 35, 2 }
+    },
+    dodge_shot_gain = {
+        { 0.2, 4 }
+    },
+    chico_injector_low_health_multiplier = {
+        { 0.5, 0.25 }
+    },
+    chico_injector_health_to_speed = {
+        { 5, 1 }
+    },
+    melee_damage_stacking = {
+        {
+            max_multiplier = 16,
+            melee_multiplier = 1
+        }
+    },
+    pocket_ecm_jammer_base = {
+        {
+            affects_cameras = true,
+            cooldown_drain = 6,
+            affects_pagers = true,
+            feedback_interval = 1,
+            duration = 6,
+            feedback_range = 2500
+        }
+    },
+    pocket_ecm_heal_on_kill = { 2 },
+    smoke_screen_ally_dodge_bonus = { 0.1 },
+    tag_team_base = {
+        {
+            kill_health_gain = 1.5,
+            radius = 0.6,
+            distance = 18,
+            kill_extension = 1.3,
+            duration = 12,
+            tagged_health_gain_ratio = 0.5
+        }
+    },
+    tag_team_cooldown_drain = {
+        {
+            tagged = 0,
+            owner = 2
+        },
+        {
+            tagged = 2,
+            owner = 2
+        }
+    },
+    tag_team_damage_absorption = {
+        {
+            kill_gain = 0.2,
+            max = 2
+        }
+    }
+}
 ---@class UpgradesTweakData.values.team
----@field crew_throwable_regen table
----@field damage UpgradesTweakData.values.team.damage
-_G.tweak_data.upgrades.values.team = {}
----@class UpgradesTweakData.values.team.damage
----@field hostage_absorption table
----@field hostage_absorption_limit number
-_G.tweak_data.upgrades.values.team.damage = {}
+_G.tweak_data.upgrades.values.team = {
+    crew_throwable_regen = { 35 },
+    hostage_absorption = { 0.05 },
+    hostage_absorption_limit = 8,
+    pocket_ecm_heal_on_kill = { 1 }
+}
+---@class UpgradesTweakData.values.temporary
+_G.tweak_data.upgrades.values.temporary = {
+    copr_ability = {
+        { true, 6 },
+        { true, 10 }
+	},
+    first_aid_damage_reduction = {
+        { 0.9, 120 }
+	},
+    chico_injector = {
+        { 0.75, 6 }
+    },
+    pocket_ecm_kill_dodge = {
+        { 0.2, 30, 1 }
+    }
+}
 ---@class managers
 _G.managers = {}
 ---@type boolean

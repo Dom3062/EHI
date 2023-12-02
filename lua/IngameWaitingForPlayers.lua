@@ -414,7 +414,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         if EHI:IsAchievementLocked2("gage_3") and HasWeaponEquipped("aug") and mask_id == tweak_data.achievement.enemy_kill_achievements.commando.mask then -- "Commando" achievement
             AddAchievementTracker2("gage_3_stats")
         end
-        if EHI:IsAchievementLocked2("gage_4") and HasWeaponEquipped("m45") and mask_id == tweak_data.achievement.enemy_kill_achievements.public_enemies.mask then -- "Public Enemies" achievement
+        if EHI:IsAchievementLocked2("gage_4") and HasWeaponEquipped("colt_1911") and mask_id == tweak_data.achievement.enemy_kill_achievements.public_enemies.mask then -- "Public Enemies" achievement
             AddAchievementTracker2("gage_4_stats")
         end
         if EHI:IsAchievementLocked2("gage_5") and HasWeaponEquipped("scar") then -- "Inception" achievement
@@ -1188,13 +1188,3 @@ function IngameWaitingForPlayersState:at_exit(...)
         end)
     end
 end
-
---[[EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
-    EHI:DelayCall("HintTest", 3, function()
-        managers.ehi_tracker:AddTracker({
-            id = "PagerTest",
-            hint = "pager",
-            class = "EHIPagerTracker"
-        })
-    end)
-end)]]

@@ -1,3 +1,8 @@
+r202 (02. 12. 2023):
+Fixed an issue where Sicario smoke bomb tracker is visible when Mission Trackers are disabled
+Buffs: Fixed an issue where cooldown for Sicario Smoke Bomb is not visible
+Public Enemies achievement: Fixed an issue where the achievement tracker is not visible when the conditions are met
+
 r201 (30. 11. 2023):
 Updated to U240.3
 Fixed a crash when Armored Transport is opened and Loot Counter is disabled

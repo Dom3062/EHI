@@ -383,12 +383,12 @@ local GrenadeFormattingFunction =
             str = string.format("%s\n> %s", str, managers.localization:text("ehi_bm_kingpin_2"))
         end
         if managers.player:upgrade_level("player", "chico_injector_low_health_multiplier") ~= 0 then
-            local values = player_upgrades.chico_injector_low_health_multiplier[1]
+            local values = player_upgrades.chico_injector_low_health_multiplier[1] or {}
             str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_kingpin_3"),
             tostring((values[1] or 0) * 100), percent_format, tostring((values[2] or 0) * 100), percent_format))
         end
         if managers.player:upgrade_level("player", "chico_injector_health_to_speed") ~= 0 then
-            local values = player_upgrades.chico_injector_health_to_speed[1]
+            local values = player_upgrades.chico_injector_health_to_speed[1] or {}
             str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_kingpin_4"),
             tostring(values[2] or 0), tostring((values[1] or 0) * 10)))
         end
@@ -410,7 +410,7 @@ local GrenadeFormattingFunction =
     damage_control = function()
         local str = string.format("\n> %s\n> %s", string.format(strs.cooldown_drain, "1"), string.format(managers.localization:text("ehi_bm_stoic_1")))
         if managers.player:upgrade_level("player", "damage_control_cooldown_drain") == 2 then
-            local damage_control_cooldown_drain = player_upgrades.damage_control_cooldown_drain
+            local damage_control_cooldown_drain = player_upgrades.damage_control_cooldown_drain or {}
             str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_stoic_2"), tostring(damage_control_cooldown_drain[2][1] or 0), percent_format,
             tostring(damage_control_cooldown_drain[2][2] or 0), tostring(damage_control_cooldown_drain[1][2] or 0)))
         end
@@ -433,7 +433,7 @@ local GrenadeFormattingFunction =
             end
         end
         if managers.player:upgrade_level("player", "tag_team_damage_absorption") ~= 0 then
-            local values = player_upgrades.tag_team_damage_absorption[1]
+            local values = player_upgrades.tag_team_damage_absorption[1] or {}
             str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_tagteam_3"), tostring((values.kill_gain or 0) * 10), tostring((values.max or 0) * 10)))
         end
         return str
@@ -444,7 +444,7 @@ local GrenadeFormattingFunction =
             str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_hacker_1"), (player_upgrades.pocket_ecm_heal_on_kill[1] or 0) * 10))
         end
         if managers.player:upgrade_level("temporary", "pocket_ecm_kill_dodge") ~= 0 then
-            local values = temp_upgrades.pocket_ecm_kill_dodge[1]
+            local values = temp_upgrades.pocket_ecm_kill_dodge[1] or {}
             str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_hacker_2"), tostring((values[1] or 0) * 100),
             percent_format, tostring(values[2] or 0)))
         end

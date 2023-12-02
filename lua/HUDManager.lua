@@ -5,6 +5,7 @@ end
 
 local original =
 {
+    set_waypoint_timer_pause = HUDManager.set_waypoint_timer_pause,
     save = HUDManager.save,
     load = HUDManager.load
 }
@@ -88,6 +89,14 @@ end
 function HUDManager:RestoreWaypoint2(id)
     self:RestoreWaypoint(id)
     EHI:RestoreElementWaypoint(id)
+end
+
+---@param id string
+function HUDManager:set_waypoint_timer_pause(id, ...)
+    if id and managers.ehi_waypoint:WaypointExists(id) then -- Block attempts of pausing waypoints created in EHIWaypointManager
+        return
+    end
+    original.set_waypoint_timer_pause(self, id, ...)
 end
 
 function HUDManager:save(data, ...)

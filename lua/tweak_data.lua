@@ -546,7 +546,7 @@ tweak_data.ehi =
             folder = "chico",
             option = "kingpin"
         },
-        SmokeScreen =
+        smoke_screen_grenade =
         {
             deck = true,
             folder = "max",
@@ -803,6 +803,9 @@ tweak_data.ehi.buff.reload_weapon_faster = deep_clone(tweak_data.ehi.buff.swap_w
 tweak_data.ehi.buff.reload_weapon_faster.text = "Rld+"
 tweak_data.ehi.buff.chico_injector_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector)
 tweak_data.ehi.buff.chico_injector_cooldown.bad = true
+tweak_data.ehi.buff.smoke_screen_grenade_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
+tweak_data.ehi.buff.smoke_screen_grenade_cooldown.folder = "max"
+tweak_data.ehi.buff.smoke_screen_grenade_cooldown.option = "sicario"
 tweak_data.ehi.buff.tag_team_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.tag_team_cooldown.folder = "ecp"
 tweak_data.ehi.buff.tag_team_cooldown.option = "tag_team"

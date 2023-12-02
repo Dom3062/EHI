@@ -66,6 +66,7 @@ function EHITimerWaypoint:SetColorBasedOnStatus()
     if self._jammed or self._not_powered then
         self:SetColor(self._paused_color)
     else
+        self._timer:stop()
         self:SetColor()
         if self._time <= 10 and self._warning and not self._anim_started then
             self._anim_started = true
@@ -75,9 +76,14 @@ function EHITimerWaypoint:SetColorBasedOnStatus()
 end
 
 function EHITimerWaypoint:SetAutorepair(state)
-    self._default_color = state and self._autorepair_color or Color.white
     if self._jammed or self._not_powered then
+        if state then
+            self:AnimateColor(nil, self._autorepair_color)
+        end
         return
     end
-    self:SetColor()
+    if not self._anim_started then
+        self._timer:stop()
+        self:SetColor()
+    end
 end

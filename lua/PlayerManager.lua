@@ -35,11 +35,8 @@ if EHI:CheckLoadHook("PlayerManager") then
     return
 end
 
-local buffs = EHI:GetOption("show_buffs")
-
 local original =
 {
-    spawn_smoke_screen = PlayerManager.spawn_smoke_screen,
     start_custom_cooldown = PlayerManager.start_custom_cooldown
 }
 
@@ -51,36 +48,6 @@ if EHI:GetOption("show_bodybags_counter") then
     end
 end
 
-function PlayerManager:spawn_smoke_screen(position, normal, grenade_unit, ...)
-    original.spawn_smoke_screen(self, position, normal, grenade_unit, ...)
-    if grenade_unit:base():thrower_unit() then
-        local key, color_id, local_player
-        if alive(grenade_unit:base():thrower_unit()) then
-            local_player = grenade_unit:base():thrower_unit() == self:player_unit()
-            key = tostring(grenade_unit:base():thrower_unit():key())
-            color_id = managers.criminals:character_color_id_by_unit(grenade_unit:base():thrower_unit())
-        else
-            key = "ThrowerUnitInCustody_" .. TimerManager:game():time()
-            color_id = #tweak_data.chat_colors
-        end
-	    local color = tweak_data.chat_colors[color_id] or Color.white
-        local duration = tweak_data.projectiles.smoke_screen_grenade.duration --[[@as number]]
-        managers.ehi_tracker:AddTracker({
-            id = "SmokeScreenGrenade_" .. key,
-            time = duration,
-            icons = {
-                {
-                    icon = "smoke",
-                    color = color
-                }
-            }
-        })
-        if local_player and buffs then
-            managers.ehi_buff:AddBuff("SmokeScreen", duration)
-        end
-    end
-end
-
 function PlayerManager:start_custom_cooldown(category, upgrade, cooldown, ...)
     if upgrade == "crew_inspire" then
         managers.ehi_buff:SyncBuff("team_crew_inspire", cooldown)
@@ -88,7 +55,7 @@ function PlayerManager:start_custom_cooldown(category, upgrade, cooldown, ...)
     original.start_custom_cooldown(self, category, upgrade, cooldown, ...)
 end
 
-if not buffs then
+if not EHI:GetOption("show_buffs") then
     return
 end
 

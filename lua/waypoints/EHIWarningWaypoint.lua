@@ -34,9 +34,10 @@ function EHIWarningWaypoint:update(dt)
 end
 
 ---@param color Color?
-function EHIWarningWaypoint:AnimateColor(color)
+---@param default_color Color?
+function EHIWarningWaypoint:AnimateColor(color, default_color)
     if self._timer and alive(self._timer) then
-        self._timer:animate(anim, self._default_color, color or self._warning_color, self._bitmap, self._arrow, self._bitmap_world)
+        self._timer:animate(anim, default_color or self._default_color, color or self._warning_color, self._bitmap, self._arrow, self._bitmap_world)
     end
 end
 

@@ -47,6 +47,7 @@
             </group>
 
             <post :hook_id="playermanager" :script_path="PlayerManager.lua" />
+            <post :hook_id="player/smokescreeneffect" :script_path="SmokeScreenEffect.lua" />
             <post :hook_id="preplanningmanager" :script_path = "PrePlanningManager.lua" />
             <post :hook_id="trademanager" :script_path="TradeManager.lua" />
         </group>
