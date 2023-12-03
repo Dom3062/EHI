@@ -78,12 +78,14 @@ local achievements =
 
 local other =
 {
-    [100290] = EHI:AddAssaultDelay({ time = 30 }),
-    [102741] = EHI:AddLootCounter3(function(self, ...)
+    [100290] = EHI:AddAssaultDelay({ time = 30 })
+}
+if EHI:IsLootCounterVisible() then
+    other[102741] = EHI:AddLootCounter3(function(self, ...)
         local max = self:CountInteractionAvailable("gen_pku_cocaine")
         EHI:ShowLootCounterNoChecks({ max = max + 1 })
     end)
-}
+end
 
 --´drill defend waypoint001´ ElementWaypoint 101734
 EHI:DisableWaypoints({ [101734] = true })

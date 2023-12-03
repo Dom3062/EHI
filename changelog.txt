@@ -1,3 +1,6 @@
+r203 (03. 12. 2023):
+Panic Room: Fixed a crash when Loot Counter is disabled
+
 r202 (02. 12. 2023):
 Fixed an issue where Sicario smoke bomb tracker is visible when Mission Trackers are disabled
 Buffs: Fixed an issue where cooldown for Sicario Smoke Bomb is not visible
