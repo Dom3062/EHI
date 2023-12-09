@@ -19,31 +19,20 @@ local function GetIcon(params)
     return texture, texture_rect
 end
 
-local buff_w = 32
-local buff_h = 64
 ---@class EHIBuffManager
 EHIBuffManager = {}
-function EHIBuffManager:new()
+function EHIBuffManager:init()
     self._buffs = {} ---@type table<string, EHIBuffTracker?>
     self._update_buffs = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIBuffTracker?>
-    if EHI:IsVR() then
-        self._x = EHI:GetOption("buffs_vr_x_offset")
-        self._y = EHI:GetOption("buffs_vr_y_offset")
-    else
-        self._x = EHI:GetOption("buffs_x_offset")
-        self._y = EHI:GetOption("buffs_y_offset")
-    end
-    self._scale = EHI:GetOption("buffs_scale")
-    buff_w = buff_w * self._scale
-    buff_h = buff_h * self._scale
     self._visible_buffs = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIBuffTracker?>
     self._n_visible = 0
     self._cache = {}
     self._gap = 6
-    return self
+    self._x = EHI:IsVR() and EHI:GetOption("buffs_vr_x_offset") or EHI:GetOption("buffs_x_offset") --[[@as number]]
 end
 
 function EHIBuffManager:init_finalize(hud)
+    self:init()
     local path = EHI.LuaPath .. "buffs/"
     dofile(path .. "EHIBuffTracker.lua")
     dofile(path .. "EHIGaugeBuffTracker.lua")
@@ -55,8 +44,12 @@ function EHIBuffManager:init_finalize(hud)
     dofile(path .. "EHICritChanceBuffTracker.lua")
     dofile(path .. "SimpleBuffEdits.lua")
     self._panel = hud.panel --[[@as Panel]]
-    self:InitializeBuffs()
-    self:InitializeTagTeamBuffs()
+    local scale = EHI:GetOption("buffs_scale") --[[@as number]]
+    local buff_y = EHI:IsVR() and EHI:GetOption("buffs_vr_y_offset") or EHI:GetOption("buffs_y_offset") --[[@as number]]
+    local buff_w = 32 * scale
+    local buff_h = 64 * scale
+    self:InitializeBuffs(buff_y, buff_w, buff_h, scale)
+    self:InitializeTagTeamBuffs(buff_y, buff_w, buff_h, scale)
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "ActivateUpdatingBuffs"))
     EHI:AddOnCustodyCallback(callback(self, self, "RemoveAbilityCooldown"))
     if EHI:IsClient() then
@@ -69,14 +62,19 @@ function EHIBuffManager:init_finalize(hud)
     end
 end
 
-function EHIBuffManager:InitializeBuffs()
-    local tweak = tweak_data.ehi.buff
-    for id, buff in pairs(tweak) do
-        if not buff.option or EHI:GetBuffOption(buff.option) then
+---@param buff_y number
+---@param buff_w number
+---@param buff_h number
+---@param scale number
+function EHIBuffManager:InitializeBuffs(buff_y, buff_w, buff_h, scale)
+    for id, buff in pairs(tweak_data.ehi.buff) do
+        if buff.option and not EHI:GetBuffOption(buff.option) then
+        elseif buff.deck_option and not EHI:GetBuffDeckOption(buff.deck_option.deck, buff.deck_option.option) then
+        else
             local params = {}
             params.id = id
             params.x = self._x
-            params.y = self._y
+            params.y = buff_y
             params.w = buff_w
             params.h = buff_h
             params.text = buff.text
@@ -86,16 +84,18 @@ function EHIBuffManager:InitializeBuffs()
             params.no_progress = buff.no_progress
             params.max = buff.max
             params.class = buff.class
-            params.scale = self._scale
-            params.persistent = buff.persistent
-            params.parent_class = self
-            self:CreateBuff(params)
+            params.scale = scale
+            self:CreateBuff(params, buff.persistent, buff.deck_option)
         end
     end
 end
 
-function EHIBuffManager:InitializeTagTeamBuffs()
-    if not EHI:GetBuffOption("tag_team") then
+---@param buff_y number
+---@param buff_w number
+---@param buff_h number
+---@param scale number
+function EHIBuffManager:InitializeTagTeamBuffs(buff_y, buff_w, buff_h, scale)
+    if not EHI:GetBuffDeckOption("tag_team", "tagged") then
         return
     end
     local local_peer_id = managers.network:session():local_peer():id()
@@ -105,25 +105,28 @@ function EHIBuffManager:InitializeTagTeamBuffs()
             local params = {}
             params.id = "TagTeamTagged_" .. i .. local_peer_id
             params.x = self._x
-            params.y = self._y
+            params.y = buff_y
             params.w = buff_w
             params.h = buff_h
             params.texture = texture
             params.texture_rect = texture_rect
             params.good = true
             params.icon_color = tweak_data.chat_colors[i] or Color.white
-            params.scale = self._scale
-            params.parent_class = self
+            params.scale = scale
             self:CreateBuff(params)
         end
     end
 end
 
 ---@param params table
-function EHIBuffManager:CreateBuff(params)
-    local buff = _G[params.class or "EHIBuffTracker"]:new(self._panel, params) --[[@as EHIBuffTracker]]
+---@param persistent string?
+---@param deck_option table?
+function EHIBuffManager:CreateBuff(params, persistent, deck_option)
+    local buff = _G[params.class or "EHIBuffTracker"]:new(self._panel, params, self) --[[@as EHIBuffTracker]]
     self._buffs[params.id] = buff
-    if params.persistent and EHI:GetBuffOption(params.persistent) then
+    if persistent and EHI:GetBuffOption(persistent) then
+        buff:SetPersistent()
+    elseif deck_option and deck_option.persistent and EHI:GetBuffDeckOption(deck_option.deck, deck_option.persistent) then
         buff:SetPersistent()
     end
 end
@@ -160,7 +163,7 @@ function EHIBuffManager:ActivateUpdatingBuffs()
             local b = self._buffs[id]
             if b and b:PreUpdateCheck() then
                 b:PreUpdate()
-                self:AddBuffToUpdate(id, b)
+                self:AddBuffToUpdate(b)
             end
         elseif buff.check_after_spawn then
             local b = self._buffs[id]
@@ -219,7 +222,7 @@ end
 ---@param ratio number
 ---@param custom_value number?
 function EHIBuffManager:AddGauge(id, ratio, custom_value)
-    local buff = self._buffs[id] --[[@as EHIGaugeBuffTracker]]
+    local buff = self._buffs[id] --[[@as EHIGaugeBuffTracker?]]
     if buff then
         if buff:IsActive() then
             buff:SetRatio(ratio, custom_value)
@@ -242,36 +245,35 @@ end
 
 ---@param id string
 ---@param t number
-function EHIBuffManager:AppendTime(id, t)
+function EHIBuffManager:AddTime(id, t)
     local buff = self._buffs[id]
     if buff then
-        buff:Append(t)
+        buff:AddTime(t)
     end
 end
 
 ---@param id string
 ---@param t number
 ---@param max number
-function EHIBuffManager:AppendTimeCeil(id, t, max)
+function EHIBuffManager:AddTimeCeil(id, t, max)
     local buff = self._buffs[id]
     if buff then
-        buff:AppendCeil(t, max)
+        buff:AddTimeCeil(t, max)
     end
 end
 
 ---@param id string
 ---@param t number
-function EHIBuffManager:ShortenBuffTime(id, t)
+function EHIBuffManager:ShortBuffTime(id, t)
     local buff = self._buffs[id]
     if buff then
         buff:Shorten(t)
     end
 end
 
----@param id string
 ---@param buff EHIBuffTracker
-function EHIBuffManager:AddVisibleBuff(id, buff)
-    self._visible_buffs[id] = buff
+function EHIBuffManager:AddVisibleBuff(buff)
+    self._visible_buffs[buff._id] = buff
     buff:SetPos(self._n_visible)
     self._n_visible = self._n_visible + 1
     self:ReorganizeFast(self._n_visible, buff)
@@ -286,10 +288,9 @@ function EHIBuffManager:RemoveVisibleBuff(id, pos)
     self:Reorganize(pos, buff, true)
 end
 
----@param id string
 ---@param buff EHIBuffTracker
-function EHIBuffManager:AddBuffToUpdate(id, buff)
-    self._update_buffs[id] = buff
+function EHIBuffManager:AddBuffToUpdate(buff)
+    self._update_buffs[buff._id] = buff
 end
 
 ---@param id string

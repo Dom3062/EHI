@@ -70,6 +70,7 @@
 ---@field trophy table Triggers related to Safehouse trophies
 ---@field daily table Triggers related to Safehouse daily mission
 ---@field preload table Trackers to preload during game load, achievements not recommended
+---@field diff number?
 
 ---@class ParseUnitsTable
 ---@field [number] UnitUpdateDefinition

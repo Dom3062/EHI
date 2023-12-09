@@ -39,11 +39,8 @@ else
 end
 
 local function Run(value)
-    EHI._cache.diff = value
     Trigger(value)
-    managers.ehi_tracker:CallFunction("Assault", "UpdateDiff", value)
-    managers.ehi_tracker:CallFunction("AssaultDelay", "UpdateDiff", value)
-    managers.ehi_tracker:CallFunction("AssaultTime", "UpdateDiff", value)
+    managers.ehi_assault:SetDiff(value)
 end
 
 function ElementDifficulty:client_on_executed(...)

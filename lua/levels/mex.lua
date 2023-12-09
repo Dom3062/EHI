@@ -5,7 +5,7 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 ---@param block boolean
 local function SetAssaultTrackerBlock(block)
-    managers.hud:SetAssaultTrackerManualBlock(block)
+    managers.ehi_assault:SetAssaultBlock(block)
 end
 ---@type ParseTriggerTable
 local triggers = {

@@ -187,7 +187,7 @@ function EHITrackerManager:RunTracker(id, params)
     tbl.x = x
     tbl.w = w
     if tbl.tracker._update then
-        self:AddTrackerToUpdate(id, tbl.tracker)
+        self:AddTrackerToUpdate(tbl.tracker)
     end
     self._n_of_trackers = self._n_of_trackers + 1
 end
@@ -634,10 +634,9 @@ else -- Horizontal
     end
 end
 
----@param id string
 ---@param tracker EHITracker
-function EHITrackerManager:AddTrackerToUpdate(id, tracker)
-    self._trackers_to_update[id] = tracker
+function EHITrackerManager:AddTrackerToUpdate(tracker)
+    self._trackers_to_update[tracker._id] = tracker
 end
 
 ---@param id string
@@ -913,7 +912,7 @@ end
 function EHITrackerManager:StartTrackerCountdown(id)
     local tracker = self:GetTracker(id)
     if tracker then
-        self:AddTrackerToUpdate(id, tracker)
+        self:AddTrackerToUpdate(tracker)
     end
 end
 

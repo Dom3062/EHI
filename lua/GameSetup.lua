@@ -222,9 +222,10 @@ function GameSetup:init_finalize(...)
     EHI:DisableWaypointsOnInit()
 end
 
-EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(...)
+EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(self, data, ...)
     EM:SetInSync(true)
     EHI:FinalizeUnitsClient()
+    managers.ehi_assault:load(data)
 end)
 
 EHI:HookWithID(GameSetup, "load", "EHI_GameSetup_load_Post", function(self, data, ...)
@@ -234,4 +235,5 @@ end)
 
 EHI:HookWithID(GameSetup, "save", "EHI_GameSetup_save_Post", function(self, data, ...)
     managers.ehi_tracker:save(data)
+    managers.ehi_assault:save(data)
 end)

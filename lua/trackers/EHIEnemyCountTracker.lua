@@ -24,19 +24,19 @@ end
 function EHIEnemyCountTracker:Alarm()
     self._alarm_sounded = true
     self._count = self._count + self._alarm_count
-    self.Format = EHIEnemyCountTracker.super.Format
-    self:Update()
-    self:FitTheText()
-    self:AnimateBG()
     if self._icon2 then
         self._icon2:set_x(self._icon1:x())
         self._icon2:set_visible(true)
         self._icon1:set_visible(false)
         self:AnimateRepositionHintX(1)
         self:ChangeTrackerWidth(self._bg_box:w() + self._icon_gap_size_scaled, true)
+        self.Format = EHIEnemyCountTracker.super.Format
     elseif self._forced_icons[1] ~= "enemy" then
         self:SetIcon("enemy")
     end
+    self:Update()
+    self:FitTheText()
+    self:AnimateBG()
 end
 
 function EHIEnemyCountTracker:NormalEnemyRegistered()

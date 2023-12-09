@@ -6,13 +6,13 @@ local THRESHOLD = tweak_data.upgrades.player_damage_health_ratio_threshold or 0.
 ---@field super EHIGaugeBuffTracker
 EHIBerserkerBuffTracker = class(EHIGaugeBuffTracker)
 EHIBerserkerBuffTracker._refresh_time = 1 / EHI:GetBuffOption("berserker_refresh")
-function EHIBerserkerBuffTracker:init(panel, params)
-    EHIBerserkerBuffTracker.super.init(self, panel, params)
+function EHIBerserkerBuffTracker:init(...)
     self._time = 0.2
     self._damage_multiplier = 0
     self._melee_damage_multiplier = 0
     self._current_damage_multiplier = 0
     self._current_melee_damage_multiplier = 0
+    EHIBerserkerBuffTracker.super.init(self, ...)
 end
 
 function EHIBerserkerBuffTracker:PreUpdate()

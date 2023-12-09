@@ -5,8 +5,8 @@ local detection_risk = 0
 ---@field super EHIGaugeBuffTracker
 EHICritChanceBuffTracker = class(EHIGaugeBuffTracker)
 EHICritChanceBuffTracker._refresh_time = 1 / EHI:GetBuffOption("crit_refresh")
-function EHICritChanceBuffTracker:init(panel, params)
-    EHICritChanceBuffTracker.super.init(self, panel, params)
+function EHICritChanceBuffTracker:init(...)
+    EHICritChanceBuffTracker.super.init(self, ...)
     self._time = self._refresh_time
     self._crit = 0
     self._update_disabled = true
@@ -37,8 +37,8 @@ function EHICritChanceBuffTracker:PreUpdate()
     player_manager = managers.player
     detection_risk = managers.blackmarket:get_suspicion_offset_of_local(tweak_data.player.SUSPICION_OFFSET_LERP or 0.75)
     detection_risk = math.round(detection_risk * 100)
-    EHI:AddOnCustodyCallback(function(state)
-        self:SetCustody(state)
+    EHI:AddOnCustodyCallback(function(custody_state)
+        self:SetCustody(custody_state)
     end)
     self._update_disabled = false
     self:SetRatio(0)

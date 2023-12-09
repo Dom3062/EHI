@@ -41,7 +41,7 @@ local function set_right(o, x)
     o:set_right(target_right)
 end
 ---@class EHIBuffTracker
----@field _parent_class EHIBuffManager
+---@field _init_text string?
 ---@field _inverted_progress boolean
 EHIBuffTracker = class()
 ---@param o Panel
@@ -66,11 +66,12 @@ EHIBuffTracker._hide = function(o)
 end
 ---@param panel Panel
 ---@param params table
-function EHIBuffTracker:init(panel, params)
+---@param parent_class EHIBuffManager
+function EHIBuffTracker:init(panel, params, parent_class)
     local w_half = params.w / 2
     local progress_visible = progress and not params.no_progress
     self._id = params.id --[[@as string]]
-    self._parent_class = params.parent_class
+    self._parent_class = parent_class
     self._panel = panel:panel({
         name = self._id,
         w = params.w,
@@ -133,7 +134,7 @@ function EHIBuffTracker:init(panel, params)
     self:FitTheText(self._hint)
     self._text = self._panel:text({
         name = "text",
-        text = "100s",
+        text = self._init_text or "100s",
         w = self._panel:w(),
         h = self._panel:h() - self._bg_box:h() - w_half,
         font = tweak_data.menu.pd2_large_font,
@@ -242,7 +243,7 @@ function EHIBuffTracker:Activate(t, pos)
     self._active = true
     self._time = t
     self._time_set = t
-    self._parent_class:AddBuffToUpdate(self._id, self)
+    self:AddBuffToUpdate()
     self._panel:stop()
     self._panel:animate(self._show)
     self._pos = pos
@@ -262,7 +263,7 @@ function EHIBuffTracker:ActivateSoft()
     end
     self._panel:stop()
     self._panel:animate(self._show)
-    self._parent_class:AddVisibleBuff(self._id, self)
+    self:AddVisibleBuff()
     self._visible = true
 end
 
@@ -273,14 +274,14 @@ function EHIBuffTracker:Extend(t)
 end
 
 ---@param t number
-function EHIBuffTracker:Append(t)
+function EHIBuffTracker:AddTime(t)
     self._time = self._time + t
     self._time_set = self._time
 end
 
 ---@param t number
 ---@param max number
-function EHIBuffTracker:AppendCeil(t, max)
+function EHIBuffTracker:AddTimeCeil(t, max)
     self._time = math.min(self._time + t, max)
     self._time_set = self._time
 end
@@ -367,7 +368,7 @@ function EHIBuffTracker:SetRightXByPos(x, pos)
 end
 
 function EHIBuffTracker:AddBuffToUpdate()
-    self._parent_class:AddBuffToUpdate(self._id, self)
+    self._parent_class:AddBuffToUpdate(self)
 end
 
 function EHIBuffTracker:RemoveBuffFromUpdate()
@@ -375,7 +376,7 @@ function EHIBuffTracker:RemoveBuffFromUpdate()
 end
 
 function EHIBuffTracker:AddVisibleBuff()
-    self._parent_class:AddVisibleBuff(self._id, self)
+    self._parent_class:AddVisibleBuff(self)
 end
 
 function EHIBuffTracker:RemoveVisibleBuff()

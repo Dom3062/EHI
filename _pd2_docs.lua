@@ -441,6 +441,14 @@ end
 ---@field _mission_briefing_gui MissionBriefingGui
 ---@field post_event fun(self: self, event: string, unique: boolean?)
 
+---@class BaseModifier
+---@field _type string
+---@field value fun(self: self, id: string): number
+
+---@class ModifiersManager
+---@field _modifiers table<string, table<number, BaseModifier>?>
+---@field add_modifier fun(self: self, modifier: table, category: string?)
+
 ---@class MoneyManager
 ---@field get_secured_bonus_bag_value fun(self: self, carry_id: string, multiplier: number): number
 
@@ -501,6 +509,7 @@ end
 ---@field ehi_trade EHITradeManager
 ---@field ehi_escape EHIEscapeChanceManager
 ---@field ehi_deployable EHIDeployableManager
+---@field ehi_assault EHIAssaultManager
 ---@field enemy EnemyManager
 ---@field environment_effects EnvironmentEffectsManager
 ---@field experience ExperienceManager
@@ -515,6 +524,7 @@ end
 ---@field menu MenuManager
 ---@field menu_component MenuComponentManager
 ---@field mission MissionManager
+---@field modifiers ModifiersManager
 ---@field money MoneyManager
 ---@field mouse_pointer MousePointerManager
 ---@field network NetworkManager

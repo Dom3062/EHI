@@ -1,22 +1,26 @@
 local lerp = math.lerp
+---@class EHIGaugeBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
+EHIGaugeBuffTracker = class(EHIBuffTracker)
 ---@param o PanelBitmap
 ---@param ratio number
 ---@param progress Color
-local function anim(o, ratio, progress)
+EHIGaugeBuffTracker._anim = function(o, ratio, progress)
     local r = progress.red
     over(0.25, function(p, t)
         progress.red = lerp(r, ratio, p)
         o:set_color(progress)
     end)
 end
----@class EHIGaugeBuffTracker : EHIBuffTracker
----@field super EHIBuffTracker
-EHIGaugeBuffTracker = class(EHIBuffTracker)
 EHIGaugeBuffTracker._inverted_progress = true
-function EHIGaugeBuffTracker:init(panel, params)
+---@param panel Panel
+---@param params table
+---@param parent_class EHIBuffManager
+function EHIGaugeBuffTracker:init(panel, params, parent_class)
     self._ratio = 0
     self._format = params.format or "standard"
-    EHIGaugeBuffTracker.super.init(self, panel, params)
+    self._init_text = self:Format()
+    EHIGaugeBuffTracker.super.init(self, panel, params, parent_class)
 end
 
 ---@param ratio number
@@ -32,8 +36,10 @@ end
 
 function EHIGaugeBuffTracker:Deactivate()
     EHIGaugeBuffTracker.super.Deactivate(self)
+    self._progress:stop()
     self._progress_bar.red = 0 -- No need to animate this because the panel is no longer visible
     self._progress:set_color(self._progress_bar)
+    self._ratio = 0
 end
 
 ---@param ratio number
@@ -46,7 +52,7 @@ function EHIGaugeBuffTracker:SetRatio(ratio, custom_value)
     self._text:set_text(self:Format(custom_value))
     self:FitTheText(self._text)
     self._progress:stop()
-    self._progress:animate(anim, self._ratio, self._progress_bar)
+    self._progress:animate(self._anim, ratio, self._progress_bar)
 end
 
 ---@param value number?

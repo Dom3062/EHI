@@ -29,7 +29,7 @@ local triggers = {
     [101397] = { time = 22.6, id = "CarMoveRightFinal", icons = car, hint = Hints.hox_1_Car }
 }
 
-EHI:ParseTriggers({ mission = triggers })
+EHI:ParseTriggers({ mission = triggers, diff = 1 })
 
 local tbl =
 {
@@ -63,7 +63,6 @@ for i = 1350, 4950, 400 do
     tbl[EHI:GetInstanceElementID(100025, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100072, i), restore_waypoint_on_done = true }
 end
 EHI:UpdateUnits(tbl)
-EHI._cache.diff = 1
 EHI:AddXPBreakdown({
     objectives =
     {

@@ -6,7 +6,7 @@ local show_waypoint, show_waypoint_only = false, true
 if EHI:GetOption("show_mission_trackers") then
     show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_mission")
 end
-local buffs = EHI:GetOption("show_buffs")
+local buffs = EHI:GetOption("show_buffs") and EHI:GetBuffDeckOption("sicario", "smoke_bomb")
 
 EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers)
     ---@class EHISmokeBombWaypoint : EHIWaypoint

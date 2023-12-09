@@ -12,7 +12,7 @@ local Languages =
 	[6] = "russian",
 	[7] = "thai",
 	[8] = "schinese",
-	[9] = "portuguese-br",
+	[9] = "portuguese", -- Brazil
 	[10] = "spanish",
 	[11] = "japanese"
 }
@@ -29,7 +29,6 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
 		{
 			["PAYDAY 2 THAI LANGUAGE Mod"] = "thai",
 			--["Ultimate Localization Manager & 正體中文化"] = "tchinese",
-			["PAYDAY 2 BRAZILIAN PORTUGUESE"] = "portuguese-br",
 			--["Payday 2 Korean patch"] = "korean"
 		}
 		for _, mod in ipairs(BLT and BLT.Mods and BLT.Mods:Mods() or {}) do

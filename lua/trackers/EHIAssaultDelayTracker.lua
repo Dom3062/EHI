@@ -9,10 +9,8 @@ local hostage_values = assault_values.hostage_hesitation_delay
 ---@field super EHIWarningTracker
 EHIAssaultDelayTracker = class(EHIWarningTracker)
 EHIAssaultDelayTracker._forced_icons = { { icon = "assaultbox", color = Control } }
-EHIAssaultDelayTracker._show_completion_color = true
-if type(tweak_values) ~= "table" then -- If for some reason the assault delay is not a table, use the value directly
-    EHIAssaultDelayTracker._assault_delay = tonumber(tweak_values) or 30
-else
+EHIAssaultDelayTracker._forced_hint_text = "assault_delay"
+if type(tweak_values) == "table" then
     local first_value = tweak_values[1] or 0
     local match = true
     for _, value in pairs(tweak_values) do
@@ -24,11 +22,10 @@ else
     if match then -- All numbers are the same, use it and avoid computation because it is expensive
         EHIAssaultDelayTracker._assault_delay = first_value
     end
+else -- If for some reason the assault delay is not a table, use the value directly
+    EHIAssaultDelayTracker._assault_delay = tonumber(tweak_values) or 30
 end
-if type(hostage_values) ~= "table"  then -- If for some reason the hesitation delay is not a table, use the value directly
-    EHIAssaultDelayTracker._precomputed_hostage_delay = true
-    EHIAssaultDelayTracker._hostage_delay = tonumber(hostage_values) or 30
-else
+if type(hostage_values) == "table"  then
     local first_value = hostage_values[1] or 0
     local match = true
     for _, value in pairs(hostage_values) do
@@ -41,11 +38,15 @@ else
         EHIAssaultDelayTracker._precomputed_hostage_delay = true
         EHIAssaultDelayTracker._hostage_delay = first_value
     end
+else -- If for some reason the hesitation delay is not a table, use the value directly
+    EHIAssaultDelayTracker._precomputed_hostage_delay = true
+    EHIAssaultDelayTracker._hostage_delay = tonumber(hostage_values) or 30
 end
 ---@param panel Panel
 ---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIAssaultDelayTracker:init(panel, params, parent_class)
+    self._refresh_on_delete = true
     if not params.time then
         params.time = self:CalculateBreakTime(params.diff) + (2 * math.random())
     end
@@ -148,6 +149,23 @@ function EHIAssaultDelayTracker:StartAnticipation(t)
     end
 end
 
+---@param block boolean
+---@param t number
+function EHIAssaultDelayTracker:SetControlStateBlock(block, t)
+    if self._hostage_delay_disabled then
+        return
+    end
+    if block then
+        self:RemoveTrackerFromUpdate()
+        self._text:set_text("")
+        self._control_state_block = true
+    elseif self._control_state_block and not block then
+        self._control_state_block = nil
+        self:SetTimeNoAnim(t)
+        self:AddTrackerToUpdate()
+    end
+end
+
 ---@param time number
 function EHIAssaultDelayTracker:SetTime(time)
     if self._hostage_delay_disabled then
@@ -177,21 +195,16 @@ function EHIAssaultDelayTracker:UpdateDiff(diff)
 end
 
 function EHIAssaultDelayTracker:PoliceActivityBlocked()
-    self._hide_on_delete = nil
-    self._time = 1
-    EHIAssaultDelayTracker.super.delete(self)
+    self._refresh_on_delete = nil
+    self:delete()
 end
 
-function EHIAssaultDelayTracker:delete()
-    if self._time <= 0 then
-        self.update = self.update_negative
-        self._time = -self._time
-        self._text:stop()
-        self:SetTextColor(Color.white)
-        self:AnimateColor()
-        return
-    end
-    EHIAssaultDelayTracker.super.delete(self)
+function EHIAssaultDelayTracker:Refresh()
+    self.update = self.update_negative
+    self._time = -self._time
+    self._text:stop()
+    self:SetTextColor(Color.white)
+    self:AnimateColor(nil, self._completion_color)
 end
 
 ---@class EHIInaccurateAssaultDelayTracker : EHIAssaultDelayTracker

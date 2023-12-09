@@ -3,23 +3,22 @@ if EHI:CheckLoadHook("PlayerInventory") then
     return
 end
 
-if EHI:GetBuffAndOption("hacker") then
-    local buff_original =
-    {
-        _start_jammer_effect = PlayerInventory._start_jammer_effect,
-        _start_feedback_effect = PlayerInventory._start_feedback_effect
-    }
+if EHI:GetBuffDeckOption("hacker", "pecm_jammer") then
+    local original_start_jammer_effect = PlayerInventory._start_jammer_effect
     function PlayerInventory:_start_jammer_effect(end_time, ...)
-        local result = buff_original._start_jammer_effect(self, end_time, ...)
+        local result = original_start_jammer_effect(self, end_time, ...)
         end_time = end_time or self:get_jammer_time()
         if end_time ~= 0 and managers.player:player_unit() == self._unit and result then
             managers.ehi_buff:AddBuff("HackerJammerEffect", end_time)
         end
         return result
     end
+end
 
+if EHI:GetBuffDeckOption("hacker", "pecm_feedback") then
+    local original_start_feedback_effect = PlayerInventory._start_feedback_effect
     function PlayerInventory:_start_feedback_effect(end_time, ...)
-        local result = buff_original._start_feedback_effect(self, end_time, ...)
+        local result = original_start_feedback_effect(self, end_time, ...)
         end_time = end_time or self:get_jammer_time()
         if end_time ~= 0 and managers.player:player_unit() == self._unit and result then
             managers.ehi_buff:AddBuff("HackerFeedbackEffect", end_time)
@@ -28,13 +27,7 @@ if EHI:GetBuffAndOption("hacker") then
     end
 end
 
-if not EHI:GetOption("show_equipment_tracker") then
-    return
-end
-
-local jammer = EHI:GetOption("show_equipment_ecmjammer")
-
-if not jammer then
+if not EHI:GetEquipmentOption("show_equipment_ecmjammer") then
     return
 end
 
@@ -51,7 +44,7 @@ function PlayerInventory:load(load_data, ...)
         return
     end
     local jammer_data = my_load_data._jammer_data
-    if jammer_data and jammer_data.effect == "jamming" and jammer then
+    if jammer_data and jammer_data.effect == "jamming" then
         local peer = managers.network:session():peer_by_unit(self._unit)
         local peer_id = peer and peer:id() or 0
         if managers.ehi_tracker:TrackerExists("ECMJammer") then

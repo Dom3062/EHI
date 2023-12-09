@@ -7,21 +7,33 @@ if not EHI:GetOption("show_buffs") then
     return
 end
 
-local original = {}
+local original =
+{
+    init = PlayerDamage.init
+}
 
-if EHI:GetBuffOption("dire_need") then
-    original.init = PlayerDamage.init
-    function PlayerDamage:init(...)
-        original.init(self, ...)
-        if self._dire_need then
-            managers.player:register_message(Message.SetWeaponStagger, "EHI_Buff_DireNeed", function(stagger)
-                if stagger then
-                    managers.ehi_buff:AddBuffNoUpdate("DireNeed")
-                else
-                    managers.ehi_buff:RemoveBuff("DireNeed")
-                end
-            end)
+original.init = PlayerDamage.init
+function PlayerDamage:init(...)
+    original.init(self, ...)
+    if self._dire_need and EHI:GetBuffOption("dire_need") then
+        managers.player:register_message(Message.SetWeaponStagger, "EHI_Buff_DireNeed", function(stagger)
+            if stagger then
+                managers.ehi_buff:AddBuffNoUpdate("DireNeed")
+            else
+                managers.ehi_buff:RemoveBuff("DireNeed")
+            end
+        end)
+    end
+    if self._damage_to_armor and EHI:GetBuffDeckOption("anarchist", "kill_armor_regen_cooldown") then
+        self._damage_to_armor.ehi_cached_elapsed_t = 0
+        local function on_damage(damage_info)
+            local t = self._damage_to_armor.elapsed
+            if t > self._damage_to_armor.ehi_cached_elapsed_t then
+                self._damage_to_armor.ehi_cached_elapsed_t = t
+                managers.ehi_buff:AddBuff("damage_to_armor", self._damage_to_armor.target_tick)
+            end
         end
+        CopDamage.register_listener("EHI_anarchist_on_damage", { "on_damage" }, on_damage)
     end
 end
 
@@ -82,7 +94,7 @@ end
 --////////////////////--
 --//  Ex-President  //--
 --////////////////////--
-if EHI:GetBuffOption("expresident") then
+if EHI:GetBuffDeckOption("expresident", "stored_health") then
     original.update_armor_stored_health = PlayerDamage.update_armor_stored_health
     function PlayerDamage:update_armor_stored_health(...)
         original.update_armor_stored_health(self, ...)
@@ -110,17 +122,16 @@ end
 --/////////////////--
 --//  Anarchist  //--
 --/////////////////--
-if EHI:GetBuffOption("anarchist") then
+if EHI:GetBuffDeckOption("anarchist", "continuous_armor_regen") then
     -- This is necessary because of the incredibly awkward way OVK implemented this skill. It does not begin ticking until the very
     -- first time the player takes damage, after which it ticks forever - even when the player's armor is already at its maximum
     -- It does, however, get paused when the player is in bleedout, and is resumed the first time they take damage after they are
     -- revived (and not immediately upon revive)
-    local TrackAnarchistRegenTick = true
     original._on_damage_armor_grinding = PlayerDamage._on_damage_armor_grinding
     function PlayerDamage:_on_damage_armor_grinding(...)
         original._on_damage_armor_grinding(self, ...)
         if self._current_state == self._update_armor_grinding then
-            managers.ehi_buff:AddBuff("armor_grinding", self._armor_grinding.target_tick - self._armor_grinding.elapsed)
+            managers.ehi_buff:AddBuff("armor_grinding", self._armor_grinding.target_tick - self._armor_grinding.elapsed + 0.2)
         end
     end
 
@@ -135,19 +146,21 @@ if EHI:GetBuffOption("anarchist") then
     function PlayerDamage:_update_armor_grinding(...)
         local before = self:get_real_armor()
         original._update_armor_grinding(self, ...)
-        -- This can only occur once every several seconds so it doesn't need to be optimized as aggressively
+        -- This can only occur once every several seconds so it doesn't need to be optimized so aggressively
         if self._armor_grinding.elapsed == 0 then
             local after = self:get_real_armor()
             local delta = after - before
             if delta > 0 then
-                managers.ehi_buff:AddBuff("armor_grinding", self._armor_grinding.target_tick)
+                managers.ehi_buff:AddBuff("armor_grinding", self._armor_grinding.target_tick + 0.2)
             end
         end
     end
+end
 
-    --///////////////////////////--
-    --//  Armorer / Anarchist  //--
-    --///////////////////////////--
+--///////////////////////////--
+--//  Armorer / Anarchist  //--
+--///////////////////////////--
+if EHI:GetBuffDeckOption("anarchist", "immunity") then
     original._calc_armor_damage = PlayerDamage._calc_armor_damage
     function PlayerDamage:_calc_armor_damage(...)
         local previous = self._can_take_dmg_timer
@@ -162,7 +175,7 @@ end
 --/////////////--
 --//  Stoic  //--
 --/////////////--
-if EHI:GetBuffOption("stoic") then
+if EHI:GetBuffDeckOption("stoic", "dot") then
     original.delay_damage = PlayerDamage.delay_damage
     function PlayerDamage:delay_damage(damage, seconds, ...)
         managers.ehi_buff:AddBuff("damage_control", seconds)
@@ -193,7 +206,7 @@ end
 --///////////////--
 --//  Grinder  //--
 --///////////////--
-if EHI:GetBuffOption("grinder") then
+if EHI:GetBuffDeckOption("grinder", "regen_duration") then
     original.add_damage_to_hot = PlayerDamage.add_damage_to_hot
     function PlayerDamage:add_damage_to_hot(...)
         if self:got_max_doh_stacks() or self:need_revive() or self:dead() or self._check_berserker_done then

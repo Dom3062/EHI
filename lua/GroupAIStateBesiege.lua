@@ -13,15 +13,13 @@ if EHI:GetOption("show_captain_damage_reduction") then
     end
 end
 
-if EHI:CombineAssaultDelayAndAssaultTime() or EHI:AssaultDelayTrackerIsEnabled() then
+if EHI:AssaultDelayTrackerIsEnabled() then
     original._begin_assault_task = GroupAIStateBesiege._begin_assault_task
     function GroupAIStateBesiege:_begin_assault_task(...)
         original._begin_assault_task(self, ...)
         local end_t = self._task_data.assault.phase_end_t
         if end_t ~= 0 then
-            local t = end_t - self._t
-            managers.ehi_tracker:CallFunction("AssaultDelay", "StartAnticipation", t)
-            managers.ehi_tracker:CallFunction("Assault", "StartAnticipation", t)
+            managers.ehi_assault:AnticipationStartHost(end_t - self._t)
         end
     end
 end

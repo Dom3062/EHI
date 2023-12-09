@@ -52,11 +52,11 @@ local other =
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    diff = 1
 })
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 8 })
-EHI._cache.diff = 1
 EHI:AddXPBreakdown({
     objectives =
     {

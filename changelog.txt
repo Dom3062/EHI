@@ -1,3 +1,12 @@
+r204 (09. 12. 2023):
+Added option "Civilian Count Tracker Format"
+Implemented detection for Brazilian Portuguese translation
+Reworked Perk Deck buffs
+Fixed issues with synced trackers
+Buffs: Fixed an issue where some buffs had wrong text
+Buffs: Fixed an issue where gauge buffs sometimes do not animate progress properly
+The Alesso Heist: Fixed an issue where Cutter trackers are visible when Mission Trackers are disabled
+
 r203 (03. 12. 2023):
 Panic Room: Fixed a crash when Loot Counter is disabled
 

@@ -1,8 +1,8 @@
 ---@class EHIHealthRegenBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIHealthRegenBuffTracker = class(EHIBuffTracker)
-function EHIHealthRegenBuffTracker:init(panel, params)
-    EHIHealthRegenBuffTracker.super.init(self, panel, params)
+function EHIHealthRegenBuffTracker:init(...)
+    EHIHealthRegenBuffTracker.super.init(self, ...)
     local icon = self._panel:child("icon") -- Hostage Taker regen
     self._panel:bitmap({ -- Muscle regen
         name = "icon2",
@@ -27,6 +27,7 @@ function EHIHealthRegenBuffTracker:init(panel, params)
     self:SetIcon("hostage_taker")
 end
 
+---@param buff string
 function EHIHealthRegenBuffTracker:SetIcon(buff)
     if self._buff == buff then
         return
@@ -53,6 +54,7 @@ EHIStaminaBuffTracker = class(EHIGaugeBuffTracker)
 EHIStaminaBuffTracker.Activate = EHIDodgeChanceBuffTracker.Activate
 EHIStaminaBuffTracker.Deactivate = EHIDodgeChanceBuffTracker.Deactivate
 EHIStaminaBuffTracker.RoundNumber = EHI.RoundNumber
+---@param max_stamina number
 function EHIStaminaBuffTracker:Spawned(max_stamina)
     self:SetMaxStamina(max_stamina)
     self:PreUpdate()
@@ -63,10 +65,12 @@ function EHIStaminaBuffTracker:PreUpdate()
     self:Activate()
 end
 
+---@param value number
 function EHIStaminaBuffTracker:SetMaxStamina(value)
     self._max_stamina = value
 end
 
+---@param ratio number
 function EHIStaminaBuffTracker:SetRatio(ratio)
     local value = ratio / self._max_stamina
     local rounded = self:RoundNumber(value, 0.01)
@@ -76,14 +80,18 @@ end
 ---@class EHIStoicBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIStoicBuffTracker = class(EHIBuffTracker)
+---@param t number
+---@param pos number
 function EHIStoicBuffTracker:Activate(t, pos)
     EHIStoicBuffTracker.super.Activate(self, self._auto_shrug or t, pos)
 end
 
+---@param t number
 function EHIStoicBuffTracker:Extend(t)
     EHIStoicBuffTracker.super.Extend(self, self._auto_shrug or t)
 end
 
+---@param t number
 function EHIStoicBuffTracker:SetAutoShrug(t)
     self._auto_shrug = t
 end
@@ -125,12 +133,39 @@ function EHIExPresidentBuffTracker:PreUpdate()
     self._parent_class:AddBuffNoUpdate(self._id)
 end
 
+---@param max number
+---@param ratio number
 function EHIExPresidentBuffTracker:SetStoredHealthMaxAndUpdateRatio(max, ratio)
     self._stored_health_max = max
     self:SetRatio(nil, ratio)
 end
 
+---@param ratio nil
+---@param custom_value number
 function EHIExPresidentBuffTracker:SetRatio(ratio, custom_value)
     ratio = custom_value / self._stored_health_max
     EHIExPresidentBuffTracker.super.SetRatio(self, ratio, custom_value)
+end
+
+---@class EHIManiacBuffTracker : EHIGaugeBuffTracker
+---@field super EHIGaugeBuffTracker
+EHIManiacBuffTracker = class(EHIGaugeBuffTracker)
+function EHIManiacBuffTracker:PreUpdateCheck()
+    if self._persistent and managers.player:has_category_upgrade("player", "cocaine_stacking") then
+        self:ActivateSoft()
+    end
+end
+
+function EHIManiacBuffTracker:SetPersistent()
+    self._persistent = true
+end
+
+function EHIManiacBuffTracker:Deactivate()
+    if self._persistent then
+        self._ratio = 0
+        self._progress:stop()
+        self._progress:animate(self._anim, 0, self._progress_bar)
+        return
+    end
+    EHIManiacBuffTracker.super.Deactivate(self)
 end

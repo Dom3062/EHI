@@ -15,6 +15,7 @@ function EHIWaypointManager:new()
     self._waypoints = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIWaypoint?>
     self._waypoints_to_update = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIWaypoint?>
     self._pager_waypoints = {}
+    self._base_waypoint_class = EHI.Waypoints.Base
     return self
 end
 
@@ -68,7 +69,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
     end
     waypoint.timer_gui:set_font(self._font)
     waypoint.timer_gui:set_font_size(self._timer_font_size)
-    local w = _G[params.class or "EHIWaypoint"]:new(waypoint, params, self) --[[@as EHIWaypoint]]
+    local w = _G[params.class or self._base_waypoint_class]:new(waypoint, params, self) --[[@as EHIWaypoint]]
     if w._update then
         self._waypoints_to_update[id] = w
     end
@@ -266,10 +267,9 @@ function EHIWaypointManager:RemoveAllPagerWaypoints()
     end
 end
 
----@param id string
 ---@param wp EHIWaypoint
-function EHIWaypointManager:AddWaypointToUpdate(id, wp)
-    self._waypoints_to_update[id] = wp
+function EHIWaypointManager:AddWaypointToUpdate(wp)
+    self._waypoints_to_update[wp._id] = wp
 end
 
 ---@param id string

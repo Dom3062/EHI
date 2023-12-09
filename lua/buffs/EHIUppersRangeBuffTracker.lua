@@ -1,4 +1,4 @@
-local pm
+local pm ---@type PlayerManager
 local mvector3_distance = mvector3.distance
 local math_floor = math.floor
 local string_format = string.format
@@ -20,8 +20,8 @@ function EHIUppersRangeBuffTracker:PreUpdate()
     end
     EHI:HookWithID(FirstAidKitBase, "Add", "EHI_UppersRangeBuff_Add", Check)
     EHI:HookWithID(FirstAidKitBase, "Remove", "EHI_UppersRangeBuff_Remove", Check)
-    EHI:AddOnCustodyCallback(function(state)
-        self:CustodyState(state)
+    EHI:AddOnCustodyCallback(function(custody_state)
+        self:CustodyState(custody_state)
     end)
 end
 
@@ -33,6 +33,7 @@ function EHIUppersRangeBuffTracker:Activate()
     self:AddBuffToUpdate()
 end
 
+---@param state boolean?
 function EHIUppersRangeBuffTracker:CustodyState(state)
     if state then
         self:Deactivate()
@@ -51,6 +52,7 @@ function EHIUppersRangeBuffTracker:Deactivate()
     self._active = false
 end
 
+---@param dt number
 function EHIUppersRangeBuffTracker:update(dt)
     self._time = self._time - dt
     if self._time <= 0 then
@@ -71,9 +73,7 @@ function EHIUppersRangeBuffTracker:update(dt)
 end
 
 ---@param pos Vector3
----@return boolean
----@return number?
----@return number?
+---@return boolean, number?, number?
 function EHIUppersRangeBuffTracker:GetFirstAidKit(pos)
 	for _, o in ipairs(FirstAidKitBase.List) do
 		local dst = mvector3_distance(pos, o.pos)
@@ -85,5 +85,5 @@ function EHIUppersRangeBuffTracker:GetFirstAidKit(pos)
 end
 
 function EHIUppersRangeBuffTracker:Format()
-    return string_format("%dm", math_floor(self._distance))
+    return string_format("%dm", math_floor(self._distance or 0))
 end

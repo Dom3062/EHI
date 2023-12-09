@@ -5,8 +5,11 @@ local DODGE_INIT = tweak_data.player.damage.DODGE_INIT or 0
 ---@field super EHIGaugeBuffTracker
 EHIDodgeChanceBuffTracker = class(EHIGaugeBuffTracker)
 EHIDodgeChanceBuffTracker._refresh_time = 1 / EHI:GetBuffOption("dodge_refresh")
-function EHIDodgeChanceBuffTracker:init(panel, params)
-    EHIDodgeChanceBuffTracker.super.init(self, panel, params)
+---@param panel Panel
+---@param params table
+---@param parent_class EHIBuffManager
+function EHIDodgeChanceBuffTracker:init(panel, params, parent_class)
+    EHIDodgeChanceBuffTracker.super.init(self, panel, params, parent_class)
     self._time = self._refresh_time
     self._dodge = 0
 end

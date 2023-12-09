@@ -21,12 +21,11 @@ local hostage_values = assault_values.hostage_hesitation_delay
 ---@field super EHIWarningTracker
 EHIAssaultTracker = class(EHIWarningTracker)
 EHIAssaultTracker._forced_icons = { { icon = "assaultbox", color = Control } }
+EHIAssaultTracker._forced_hint_text = "assault"
 EHIAssaultTracker._is_client = EHI:IsClient()
 EHIAssaultTracker._inaccurate_text_color = EHI:GetTWColor("inaccurate")
 EHIAssaultTracker._paused_color = EHIPausableTracker._paused_color
-if type(tweak_values) ~= "table" then -- If for some reason the assault delay is not a table, use the value directly
-    EHIAssaultTracker._assault_delay = tonumber(tweak_values) or 30
-else
+if type(tweak_values) == "table" then
     local first_value = tweak_values[1] or 0
     local match = true
     for _, value in pairs(tweak_values) do
@@ -38,11 +37,10 @@ else
     if match then -- All numbers the same, use it and avoid computation because it is expensive
         EHIAssaultTracker._assault_delay = first_value
     end
+else -- If for some reason the assault delay is not a table, use the value directly
+    EHIAssaultTracker._assault_delay = tonumber(tweak_values) or 30
 end
-if type(hostage_values) ~= "table"  then -- If for some reason the hesitation delay is not a table, use the value directly
-    EHIAssaultTracker._precomputed_hostage_delay = true
-    EHIAssaultTracker._hostage_delay = tonumber(hostage_values) or 30
-else
+if type(hostage_values) == "table"  then
     local first_value = hostage_values[1] or 0
     local match = true
     for _, value in pairs(hostage_values) do
@@ -55,11 +53,15 @@ else
         EHIAssaultTracker._precomputed_hostage_delay = true
         EHIAssaultTracker._hostage_delay = first_value
     end
+else -- If for some reason the hesitation delay is not a table, use the value directly
+    EHIAssaultTracker._precomputed_hostage_delay = true
+    EHIAssaultTracker._hostage_delay = tonumber(hostage_values) or 30
 end
 ---@param panel Panel
 ---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIAssaultTracker:init(panel, params, parent_class)
+    self._refresh_on_delete = true
     self:CalculateDifficultyRamp(params.diff or 0)
     self.update_break = self.update
     if params.assault then
@@ -207,6 +209,22 @@ function EHIAssaultTracker:StartAnticipation(t)
     end
 end
 
+---@param block boolean
+---@param t number
+function EHIAssaultTracker:SetControlStateBlock(block, t)
+    if block then
+        if self._state == State.control then
+            self:RemoveTrackerFromUpdate()
+            self._text:set_text("")
+            self._control_state_block = true
+        end
+    elseif self._control_state_block and not block then
+        self._control_state_block = nil
+        self:SetTimeNoAnim(t)
+        self:AddTrackerToUpdate()
+    end
+end
+
 function EHIAssaultTracker:SetTime(time)
     if self._hostage_delay_disabled or self._assault then
         return
@@ -324,6 +342,9 @@ function EHIAssaultTracker:OnEnterSustain(t)
     if self._cs_assault_extender then
         self:UpdateSustainTime(self:CalculateCSSustainTime(self._assault_t))
     end
+    if self.update == self.update_negative then
+        self.update = self.update_assault
+    end
 end
 
 function EHIAssaultTracker:SetHook()
@@ -391,31 +412,27 @@ function EHIAssaultTracker:CaptainDefeated()
 end
 
 function EHIAssaultTracker:PoliceActivityBlocked()
-    self._hide_on_delete = nil
-    self._time = 1
-    EHIAssaultTracker.super.delete(self)
+    self._refresh_on_delete = nil
+    self:delete()
 end
 
+function EHIAssaultTracker:Refresh()
+    self.update = self.update_negative
+    self._time = -self._time
+    if not self._assault then
+        self:StopTextAnim()
+        self:AnimateColor(true)
+    end
+end
+
+--- The tracker `NEEDS TO BE DELETED` via `EHITrackerManager:ForceRemoveTracker()`!
 function EHIAssaultTracker:delete()
-    if self._time <= 0 then
-        self.update = self.update_negative
-        self._time = -self._time
-        if not self._assault then
-            self:StopTextAnim()
-            self:AnimateColor(true)
-        end
-        return
-    end
-    EHIAssaultTracker.super.delete(self)
-end
-
-EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
-    if mode == "phalanx" then
-        managers.ehi_tracker:CallFunction("Assault", "CaptainArrived")
+    if self._refresh_on_delete then
+        self:Refresh()
     else
-        managers.ehi_tracker:CallFunction("Assault", "CaptainDefeated")
+        EHIAssaultTracker.super.delete(self)
     end
-end)
+end
 
 local _Active = false
 local function ActivateHooks()

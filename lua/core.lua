@@ -93,7 +93,7 @@ _G.EHI =
     CallbackMessage =
     {
         Spawned = "Spawned",
-        -- Provides `loc` (a LocalizationManager class)
+        -- Provides `loc` (a LocalizationManager class) and `lang_name` (string)
         LocLoaded = "LocLoaded",
         -- Provides `success` (a boolean value)
         MissionEnd = "MissionEnd",
@@ -512,6 +512,7 @@ _G.EHI =
 
     Waypoints =
     {
+        Base = "EHIWaypoint",
         Warning = "EHIWarningWaypoint",
         Progress = "EHIProgressWaypoint",
         Pausable = "EHIPausableWaypoint",
@@ -760,6 +761,7 @@ local function LoadDefaultValues(self)
         show_enemy_count_tracker = true,
         show_enemy_count_show_pagers = true,
         show_civilian_count_tracker = true,
+        civilian_count_tracker_format = 2, -- 1 = No format; one number only; 2 = Tied|Untied; 3 = Untied|Tied
         show_laser_tracker = false,
         show_assault_delay_tracker = true,
         show_assault_time_tracker = true,
@@ -838,20 +840,85 @@ local function LoadDefaultValues(self)
             berserker_format = 1, -- 1 = Multiplier; 2 = Percent
 
             -- Perks
-            infiltrator = true,
-            gambler = true,
-            grinder = true,
-            maniac = true,
-            anarchist = true, -- +Armorer
-            expresident = true,
-            biker = true,
-            kingpin = true,
-            sicario = true,
-            stoic = true,
-            tag_team = true,
-            hacker = true,
-            leech = true,
-            copycat = true,
+            infiltrator =
+            {
+                melee_cooldown = true
+            },
+            gambler =
+            {
+                regain_health_cooldown = true,
+                ammo_give_out_cooldown = true
+            },
+            grinder =
+            {
+                regen_duration = true,
+                stack_cooldown = true
+            },
+            maniac =
+            {
+                stack = true,
+                stack_persistent = true,
+                stack_refresh = 1,
+                stack_update_rate = true,
+                stack_decay = true
+            },
+            anarchist =
+            {
+                continuous_armor_regen = true,
+                immunity = true,
+                immunity_cooldown = true,
+                kill_armor_regen_cooldown = true
+            }, -- +Armorer
+            expresident =
+            {
+                stored_health = true
+            },
+            biker =
+            {
+                kill_counter = true,
+                kill_counter_persistent = true
+            },
+            kingpin =
+            {
+                injector = true,
+                injector_cooldown = true
+            },
+            sicario =
+            {
+                smoke_bomb = true,
+                smoke_bomb_cooldown = true,
+                twitch = true,
+                twitch_cooldown = true
+            },
+            stoic =
+            {
+                dot = true,
+                cooldown = true
+            },
+            tag_team =
+            {
+                cooldown = true,
+                effect = true,
+                tagged = true
+            },
+            hacker =
+            {
+                pecm_cooldown = true,
+                pecm_dodge = true,
+                pecm_jammer = true,
+                pecm_feedback = true
+            },
+            leech =
+            {
+                ampule = true,
+                ampule_cooldown = true
+            },
+            copycat =
+            {
+                head_games_cooldown = true,
+                grace_period = true,
+                grace_period_cooldown = true
+            },
 
             -- Other
             interact = true,
@@ -905,7 +972,7 @@ local function Load()
                         if settings_table[k] ~= nil then
                             if type(v) == "table" then -- Load subtables in table and calls itself to load subtables or values in that subtable
                                 LoadValues(settings_table[k], v)
-                            else -- Load values to the table
+                            elseif type(settings_table[k]) == type(v) then -- Load values to the table if the type is the same
                                 settings_table[k] = v
                             end
                         end
@@ -1104,6 +1171,7 @@ function EHI:GetOption(option)
     end
 end
 
+---@param color string
 function EHI:GetTWColor(color)
     if color and self.settings.colors.tracker_waypoint[color] then
         return self:GetColor(self.settings.colors.tracker_waypoint[color])
@@ -1156,15 +1224,14 @@ function EHI:GetWaypointOption(waypoint)
     return self:GetOption("show_waypoints") and self:GetOption(waypoint)
 end
 
----@param waypoint any
----@return boolean
----@return boolean
+---@param waypoint string
+---@return boolean, boolean
 function EHI:GetWaypointOptionWithOnly(waypoint)
     local show = self:GetWaypointOption(waypoint)
     return show, show and self:GetOption("show_waypoints_only")
 end
 
----@param color {r: number, g: number, b: number}
+---@param color Color?
 ---@return Color
 function EHI:GetColor(color)
     if color and color.r and color.g and color.b then
@@ -1173,14 +1240,51 @@ function EHI:GetColor(color)
     return Color.white
 end
 
+---@param option string?
 function EHI:GetBuffOption(option)
     if option then
         return self.settings.buff_option[option]
     end
 end
 
+---@param option string?
 function EHI:GetBuffAndOption(option)
     return self:GetOption("show_buffs") and self:GetBuffOption(option)
+end
+
+---@param deck string?
+---@param option string?
+function EHI:GetBuffDeckOption(deck, option)
+    if deck and option and self.settings.buff_option[deck] then
+        return self.settings.buff_option[deck][option]
+    end
+end
+
+---@param deck string?
+function EHI:GetBuffDeckAllOptions(deck)
+    if deck and self.settings.buff_option[deck] then
+        for _, value in pairs(self.settings.buff_option[deck]) do
+            if value then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+---@param deck string?
+---@param ... string
+function EHI:GetBuffDeckSelectedOptions(deck, ...)
+    local deck_table = deck and self.settings.buff_option[deck]
+    if deck_table then
+        local selected_options = { ... }
+        for _, value in ipairs(selected_options) do
+            if deck_table[value] then
+                return true
+            end
+        end
+    end
+    return false
 end
 
 ---@return boolean
@@ -1771,6 +1875,7 @@ end
 ---@param trigger_icons_all table?
 function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     managers.ehi_manager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
+    managers.ehi_assault:SetDiff(new_triggers.diff or 0)
 end
 
 ---@param new_triggers table
@@ -2461,7 +2566,6 @@ end
 
 if EHI.debug.achievements then
     ---@param achievement string
-    ---@return boolean
     function EHI:IsAchievementLocked2(achievement)
         return true
     end

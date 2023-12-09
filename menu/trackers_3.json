@@ -16,6 +16,23 @@
             "ehi_ver" : 183
         },
         {
+            "type": "multiple_choice",
+            "id": "ehi_civilian_count_tracker_format_choice",
+            "title": "ehi_civilian_count_tracker_format",
+            "description": "ehi_civilian_count_tracker_format_desc",
+            "callback": ["SetOption", "UpdateCivilianPanelOption"],
+            "callback_arguments": "civilian_count_tracker_format",
+            "items": [
+                "ehi_civilian_count_tracker_format_1",
+                "ehi_civilian_count_tracker_format_2",
+                "ehi_civilian_count_tracker_format_3"
+            ],
+            "value": "civilian_count_tracker_format",
+            "parent": "ehi_show_civilian_count_tracker_choice",
+            "default_value": 2,
+            "ehi_ver" : 204
+        },
+        {
             "type" : "divider",
             "size" : 20
         },

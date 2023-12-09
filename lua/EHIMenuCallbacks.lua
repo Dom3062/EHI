@@ -15,12 +15,20 @@ function EHIMenu:SetBuffOption(value, option)
     EHI.settings.buff_option[option] = value
 end
 
+function EHIMenu:SetBuffDeckOption(value, deck, option)
+    EHI.settings.buff_option[deck][option] = value
+end
+
 function EHIMenu:SetXPPanelOption(value, option)
     self:UpdateTracker(option, value <= 2)
 end
 
 function EHIMenu:SetGagePanelOption(value, option)
     self:UpdateTracker(option, value == 1)
+end
+
+function EHIMenu:UpdateCivilianPanelOption(value)
+    self._preview_panel:UpdateTrackerFormat("show_civilian_count_tracker", value)
 end
 
 function EHIMenu:UpdateTracker(option, value)
@@ -133,6 +141,7 @@ function EHIMenu:UpdateBuffsShape(value)
     self._buffs_preview_panel:UpdateBuffs("UpdateBuffShape", value)
 end
 
+---@param visibility boolean
 function EHIMenu:UpdateBuffsProgressVisibility(visibility)
     self._buffs_preview_panel:UpdateBuffs("UpdateProgressVisibility", visibility)
 end

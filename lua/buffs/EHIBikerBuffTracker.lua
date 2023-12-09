@@ -21,14 +21,23 @@ function EHIBikerBuffTracker:PreUpdate()
     EHI:AddOnCustodyCallback(function(state)
         self:CustodyState(state)
     end)
+    if self._persistent then
+        self:ActivateSoft()
+    end
 end
 
 ---@param state boolean
 function EHIBikerBuffTracker:CustodyState(state)
     if state then
         EHI:Unhook("BikerBuff_Post")
+        if self._persistent then
+            EHIBikerBuffTracker.super.Deactivate(self)
+        end
     else
         EHI:HookWithID(PlayerManager, "chk_wild_kill_counter", "EHI_BikerBuff_Post", f)
+        if self._persistent then
+            self:ActivateSoft()
+        end
     end
 end
 
@@ -64,15 +73,28 @@ function EHIBikerBuffTracker:SetIconColor(color)
     self._panel:child("icon"):set_color(color)
 end
 
+---@param t number
 function EHIBikerBuffTracker:Activate(t)
-    EHIBikerBuffTracker.super.Activate(self, t)
-    self:AddVisibleBuff()
+    if self._persistent then
+        self._active = true
+        self._time = t
+        self._time_set = t
+        self:AddBuffToUpdate()
+    else
+        EHIBikerBuffTracker.super.Activate(self, t)
+        self:AddVisibleBuff()
+    end
 end
 
 function EHIBikerBuffTracker:Deactivate()
     if self._retrigger then
         self._retrigger = nil
         self:Retrigger()
+        return
+    elseif self._persistent then
+        self._active = false
+        self._hint:set_text("0")
+        self:RemoveBuffFromUpdate()
         return
     end
     EHIBikerBuffTracker.super.Deactivate(self)
@@ -86,4 +108,10 @@ function EHIBikerBuffTracker:Retrigger()
     end
     local n = #pm._wild_kill_triggers
     self:Trigger(n)
+end
+
+function EHIBikerBuffTracker:SetPersistent()
+    self._persistent = true
+    self._hint:set_text("0")
+    self._text:set_text("0")
 end

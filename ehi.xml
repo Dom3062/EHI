@@ -67,30 +67,39 @@
         <post hook_id="lib/player_actions/skills/playeractionexperthandling" :script_path="PlayerActionExpertHandling.lua" />
         <post hook_id="lib/player_actions/skills/playeractiontriggerhappy" :script_path="PlayerActionTriggerHappy.lua" />
 
-        <post hook_id="lib/units/beings/player/playerdamage" :script_path="PlayerDamage.lua" />
-        <post hook_id="lib/units/beings/player/playerinventory" :script_path="PlayerInventory.lua" />
-        <post hook_id="lib/units/beings/player/playermovement" :script_path="PlayerMovement.lua" />
-        <post hook_id="lib/units/beings/player/states/playerstandard" :script_path="PlayerStandard.lua" />
-        <post hook_id="lib/units/civilians/civiliandamage" :script_path="CivilianDamage.lua" />
-        <post hook_id="lib/units/interactions/interactionext" :script_path="InteractionExt.lua" />
-        <post hook_id="lib/units/equipment/ammo_bag/ammobagbase" :script_path="AmmoBagBase.lua" />
-        <post hook_id="lib/units/equipment/bodybags_bag/bodybagsbagbase" :script_path="BodyBagsBagBase.lua" />
-        <post hook_id="lib/units/equipment/doctor_bag/doctorbagbase" :script_path="DoctorBagBase.lua" />
-        <post hook_id="lib/units/equipment/ecm_jammer/ecmjammerbase" :script_path="ECMJammerBase.lua" />
-        <post hook_id="lib/units/equipment/grenade_crate/grenadecratebase" :script_path="GrenadeCrateBase.lua" />
-        <post hook_id="lib/units/equipment/first_aid_kit/firstaidkitbase" :script_path="FirstAidKitBase.lua" />
-        <!--<post hook_id="lib/units/equipment/sentry_gun/sentrygundamage" :script_path="SentryGunDamage.lua" />-->
-        <post hook_id="lib/units/equipment/sentry_gun/sentrygunmovement" :script_path="SentryGunMovement.lua" />
-        <post hook_id="lib/units/player_team/teamaibase" :script_path="TeamAIBase.lua" />
-        <post hook_id="lib/units/props/drill" :script_path="Drill.lua" />
-        <post hook_id="lib/units/props/digitalgui" :script_path="DigitalGui.lua" />
-        <post hook_id="lib/units/props/missiondoor" :script_path="MissionDoor.lua" />
-        <post hook_id="lib/units/props/securitycamera" :script_path="SecurityCamera.lua" />
-        <post hook_id="lib/units/props/timergui" :script_path="TimerGui.lua" />
-        <post hook_id="lib/units/props/securitylockgui" :script_path="SecurityLockGui.lua" />
-        <post hook_id="lib/units/props/zipline" :script_path="Zipline.lua" />
-        <post hook_id="lib/units/vehicles/vehicledrivingext" :script_path="VehicleDrivingExt.lua" />
-        <post hook_id="lib/units/weapons/grenades/quickcsgrenade" :script_path="QuickCsGrenade.lua" />
+        <group hook_id="lib/units/">
+            <post :hook_id="beings/player/playerdamage" :script_path="PlayerDamage.lua" />
+            <post :hook_id="beings/player/playerinventory" :script_path="PlayerInventory.lua" />
+            <post :hook_id="beings/player/playermovement" :script_path="PlayerMovement.lua" />
+            <post :hook_id="beings/player/states/playerstandard" :script_path="PlayerStandard.lua" />
+            <post :hook_id="civilians/logics/civilianlogicsurrender" :script_path="CivilianLogicSurrender.lua" />
+            <post :hook_id="civilians/civiliandamage" :script_path="CivilianDamage.lua" />
+            <post :hook_id="civilians/huskciviliandamage" :script_path="HuskCivilianDamage.lua" />
+            <post :hook_id="interactions/interactionext" :script_path="InteractionExt.lua" />
+            <post :hook_id="enemies/cop/huskcopbrain" :script_path="HuskCopBrain.lua" />
+            <group :hook_id="equipment/">
+                <post :hook_id="ammo_bag/ammobagbase" :script_path="AmmoBagBase.lua" />
+                <post :hook_id="bodybags_bag/bodybagsbagbase" :script_path="BodyBagsBagBase.lua" />
+                <post :hook_id="doctor_bag/doctorbagbase" :script_path="DoctorBagBase.lua" />
+                <post :hook_id="ecm_jammer/ecmjammerbase" :script_path="ECMJammerBase.lua" />
+                <post :hook_id="grenade_crate/grenadecratebase" :script_path="GrenadeCrateBase.lua" />
+                <post :hook_id="first_aid_kit/firstaidkitbase" :script_path="FirstAidKitBase.lua" />
+                <!--<post :hook_id="sentry_gun/sentrygundamage" :script_path="SentryGunDamage.lua" />-->
+                <post :hook_id="sentry_gun/sentrygunmovement" :script_path="SentryGunMovement.lua" />
+            </group>
+            <post :hook_id="player_team/teamaibase" :script_path="TeamAIBase.lua" />
+            <group :hook_id="props/">
+                <post :hook_id="drill" :script_path="Drill.lua" />
+                <post :hook_id="digitalgui" :script_path="DigitalGui.lua" />
+                <post :hook_id="missiondoor" :script_path="MissionDoor.lua" />
+                <post :hook_id="securitycamera" :script_path="SecurityCamera.lua" />
+                <post :hook_id="timergui" :script_path="TimerGui.lua" />
+                <post :hook_id="securitylockgui" :script_path="SecurityLockGui.lua" />
+                <post :hook_id="zipline" :script_path="Zipline.lua" />
+            </group>
+            <post :hook_id="vehicles/vehicledrivingext" :script_path="VehicleDrivingExt.lua" />
+            <post :hook_id="weapons/grenades/quickcsgrenade" :script_path="QuickCsGrenade.lua" />
+        </group>
 
         <post hook_id="lib/utils/dev/editor/worlddefinition" :script_path="WorldDefinition.lua" />
 

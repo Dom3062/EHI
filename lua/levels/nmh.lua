@@ -86,7 +86,7 @@ local triggers = {
     end), trigger_times = 1 },
 
     [104721] = { special_function = SF.CustomCode, f = function()
-        managers.hud:SetAssaultTrackerManualBlock(true)
+        managers.ehi_assault:SetAssaultBlock(true)
     end }
 }
 ---@type ParseTriggerTable

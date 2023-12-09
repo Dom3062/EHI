@@ -77,7 +77,7 @@ function EHIWaypoint:SetColor(color)
 end
 
 function EHIWaypoint:AddWaypointToUpdate()
-    self._parent_class:AddWaypointToUpdate(self._id, self)
+    self._parent_class:AddWaypointToUpdate(self)
 end
 
 function EHIWaypoint:RemoveWaypointFromUpdate()

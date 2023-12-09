@@ -29,6 +29,8 @@
 ---@field has_deployable_been_used fun(self: self): boolean
 ---@field skill_dodge_chance fun(self: self, running: boolean, crouching: boolean, on_zipline:boolean, override_armor: boolean?, detection_risk: number?): number
 ---@field critical_hit_chance fun(self: self, detection_risk: number?): number
+---@field health_regen fun(self: self): number
+---@field num_local_minions fun(self: self): number
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -44,7 +46,7 @@ if EHI:GetOption("show_bodybags_counter") then
     original._set_body_bags_amount = PlayerManager._set_body_bags_amount
     function PlayerManager:_set_body_bags_amount(...)
         original._set_body_bags_amount(self, ...)
-        managers.ehi_tracker:CallFunction("BodybagsCounter", "SetCount", self._local_player_body_bags)
+        managers.ehi_tracker:SetTrackerCount("BodybagsCounter", self._local_player_body_bags)
     end
 end
 
@@ -194,7 +196,7 @@ function PlayerManager:speed_up_grenade_cooldown(time, ...)
     if not AbilityKey then
         return original.speed_up_grenade_cooldown(self, time, ...)
     end
-    managers.ehi_buff:ShortenBuffTime(AbilityKey, time)
+    managers.ehi_buff:ShortBuffTime(AbilityKey, time)
     original.speed_up_grenade_cooldown(self, time, ...)
 end
 
@@ -243,7 +245,7 @@ if meele_boost_tweak then
     end
 end
 
-if EHI:GetBuffOption("painkillers") or EHI:GetBuffOption("copycat") then
+if EHI:GetBuffOption("painkillers") or EHI:GetBuffDeckOption("copycat", "grace_period_cooldown") then
     original.activate_temporary_property = PlayerManager.activate_temporary_property
     function PlayerManager:activate_temporary_property(name, time, ...)
         original.activate_temporary_property(self, name, time, ...)
@@ -288,73 +290,32 @@ end
 --////////////////--
 --//  Tag Team  //--
 --////////////////--
-if EHI:GetBuffOption("tag_team") then
-    local TagTeam =
+if EHI:GetBuffDeckOption("tag_team", "effect") then
+    local Effect =
     {
-        Effect =
-        {
-            Priority = 1,
-            Function = function(tagged, owner)
-                local base_values = managers.player:upgrade_value("player", "tag_team_base")
-                local timer = TimerManager:game()
-                local kill_extension = base_values.kill_extension
-                local duration = base_values.duration
-                local end_time = timer:time() + base_values.duration
-                local function on_damage(damage_info)
-                    local was_killed = damage_info.result.type == "death"
-                    local valid_player = damage_info.attacker_unit == owner or damage_info.attacker_unit == tagged
-                    if was_killed and valid_player then
-                        end_time = math.min(end_time + kill_extension, timer:time() + duration)
-                        managers.ehi_buff:AppendTimeCeil("TagTeamEffect", kill_extension, duration)
-                    end
+        Priority = 1,
+        Function = function(tagged, owner)
+            local base_values = managers.player:upgrade_value("player", "tag_team_base")
+            local timer = TimerManager:game()
+            local kill_extension = base_values.kill_extension
+            local duration = base_values.duration
+            local end_time = timer:time() + base_values.duration
+            local function on_damage(damage_info)
+                local was_killed = damage_info.result.type == "death"
+                local valid_player = damage_info.attacker_unit == owner or damage_info.attacker_unit == tagged
+                if was_killed and valid_player then
+                    end_time = math.min(end_time + kill_extension, timer:time() + duration)
+                    managers.ehi_buff:AddTimeCeil("TagTeamEffect", kill_extension, duration)
                 end
-                local on_damage_key = "TagTeam_EHI_on_damage"
-                CopDamage.register_listener(on_damage_key, { "on_damage" }, on_damage)
-                while alive(owner) and timer:time() < end_time do
-                    coroutine.yield()
-                end
-                CopDamage.unregister_listener(on_damage_key)
             end
-        },
-        Tagged =
-        {
-            Priority = 1,
-            Function = function (tagged, owner, BuffKey)
-                local base_values = owner:base():upgrade_value("player", "tag_team_base")
-                local timer = TimerManager:game()
-                local kill_extension = base_values.kill_extension
-                local duration = base_values.duration
-                local end_time = timer:time() + duration
-                local on_damage_key = "on_damage_" .. BuffKey .. "_EHI"
-                local function on_damage(damage_info)
-                    local was_killed = damage_info.result.type == "death"
-                    local valid_player = damage_info.attacker_unit == owner or damage_info.attacker_unit == tagged
-                    if was_killed and valid_player then
-                        end_time = math.min(end_time + kill_extension, timer:time() + duration)
-                        managers.ehi_buff:AppendTimeCeil(BuffKey, kill_extension, duration)
-                    end
-                end
-                CopDamage.register_listener(on_damage_key, { "on_damage" }, on_damage)
-                local ended_by_owner = false
-                local on_end_key = "on_end_tag_" .. BuffKey .. "_EHI"
-                local function on_action_end(end_tagged, end_owner)
-                    local tagged_match = tagged == end_tagged
-                    local owner_match = owner == end_owner
-                    ended_by_owner = tagged_match and owner_match
-                    if ended_by_owner then
-                        managers.ehi_buff:RemoveBuff(BuffKey)
-                    end
-                end
-                managers.player:add_listener(on_end_key, { "tag_team_end" }, on_action_end)
-                while not ended_by_owner and alive(tagged) and (alive(owner) or timer:time() < end_time) do
-                    coroutine.yield()
-                end
-                CopDamage.unregister_listener(on_damage_key)
-                managers.player:remove_listener(on_end_key)
+            local on_damage_key = "TagTeam_EHI_on_damage"
+            CopDamage.register_listener(on_damage_key, { "on_damage" }, on_damage)
+            while alive(owner) and timer:time() < end_time do
+                coroutine.yield()
             end
-        }
+            CopDamage.unregister_listener(on_damage_key)
+        end
     }
-
     original._attempt_tag_team = PlayerManager._attempt_tag_team
     function PlayerManager:_attempt_tag_team(...)
         local result = original._attempt_tag_team(self, ...)
@@ -366,11 +327,49 @@ if EHI:GetBuffOption("tag_team") then
             managers.ehi_buff:AddBuff("TagTeamEffect", duration)
             local args = self._coroutine_mgr._buffer.tag_team.arg
             local tagged, owner = unpack(args)
-            self:add_coroutine("tag_team_EHI", TagTeam.Effect, tagged, owner)
+            self:add_coroutine("tag_team_EHI", Effect, tagged, owner)
         end
         return result
     end
-
+end
+if EHI:GetBuffDeckOption("tag_team", "tagged") then
+    local Tagged =
+    {
+        Priority = 1,
+        Function = function(tagged, owner, BuffKey)
+            local base_values = owner:base():upgrade_value("player", "tag_team_base")
+            local timer = TimerManager:game()
+            local kill_extension = base_values.kill_extension
+            local duration = base_values.duration
+            local end_time = timer:time() + duration
+            local on_damage_key = "on_damage_" .. BuffKey .. "_EHI"
+            local function on_damage(damage_info)
+                local was_killed = damage_info.result.type == "death"
+                local valid_player = damage_info.attacker_unit == owner or damage_info.attacker_unit == tagged
+                if was_killed and valid_player then
+                    end_time = math.min(end_time + kill_extension, timer:time() + duration)
+                    managers.ehi_buff:AddTimeCeil(BuffKey, kill_extension, duration)
+                end
+            end
+            CopDamage.register_listener(on_damage_key, { "on_damage" }, on_damage)
+            local ended_by_owner = false
+            local on_end_key = "on_end_tag_" .. BuffKey .. "_EHI"
+            local function on_action_end(end_tagged, end_owner)
+                local tagged_match = tagged == end_tagged
+                local owner_match = owner == end_owner
+                ended_by_owner = tagged_match and owner_match
+                if ended_by_owner then
+                    managers.ehi_buff:RemoveBuff(BuffKey)
+                end
+            end
+            managers.player:add_listener(on_end_key, { "tag_team_end" }, on_action_end)
+            while not ended_by_owner and alive(tagged) and (alive(owner) or timer:time() < end_time) do
+                coroutine.yield()
+            end
+            CopDamage.unregister_listener(on_damage_key)
+            managers.player:remove_listener(on_end_key)
+        end
+    }
     original.sync_tag_team = PlayerManager.sync_tag_team
     function PlayerManager:sync_tag_team(tagged, owner, ...)
         original.sync_tag_team(self, tagged, owner, ...)
@@ -383,11 +382,12 @@ if EHI:GetBuffOption("tag_team") then
                 -- End the execution here because the vanilla coroutine will crash too (but silently)
                 return
             end
-            local tagged_id = managers.network:session():peer_by_unit(tagged):id()
-            local owner_id = managers.network:session():peer_by_unit(owner):id()
+            local session = managers.network:session()
+            local tagged_id = session:peer_by_unit(tagged):id()
+            local owner_id = session:peer_by_unit(owner):id()
             local coroutine_key = "TagTeamTagged_" .. owner_id .. tagged_id
             managers.ehi_buff:AddBuff(coroutine_key, duration)
-            self:add_coroutine(coroutine_key, TagTeam.Tagged, tagged, owner, coroutine_key)
+            self:add_coroutine(coroutine_key, Tagged, tagged, owner, coroutine_key)
         end
     end
 end
@@ -395,7 +395,7 @@ end
 --/////////////--
 --//  Leech  //--
 --/////////////--
-if EHI:GetBuffOption("leech") then
+if EHI:GetBuffDeckOption("leech", "ampule") then
     original.force_end_copr_ability = PlayerManager.force_end_copr_ability
     function PlayerManager:force_end_copr_ability(...)
         original.force_end_copr_ability(self, ...)
@@ -415,7 +415,7 @@ local function ResetAmmoEfficiencyStack()
     ammo_efficiency_counter = 0
     me:RemoveBuff("AmmoEfficiencyStack")
 end]]
-if EHI:GetBuffOption("bullseye") or EHI:GetBuffOption("copycat") then
+if EHI:GetBuffOption("bullseye") or EHI:GetBuffDeckOption("copycat", "head_games_cooldown") then
     original.on_headshot_dealt = PlayerManager.on_headshot_dealt
     function PlayerManager:on_headshot_dealt(...)
         local previouscooldown = self._on_headshot_dealt_t or 0
@@ -510,11 +510,12 @@ end
 --//////////////--
 --//  Maniac  //--
 --//////////////--
-if EHI:GetBuffOption("maniac") then
+if EHI:GetBuffDeckSelectedOptions("maniac", "stack", "stack_decay", "stack_convert_rate") then
     local next_maniac_stack_poll = 0
-    local ShowManiacStackTicks = true--O:get("buff", "showManiacStackTicks")
-    local ShowManiacDecayTicks = ShowManiacStackTicks--O:get("buff", "showManiacDecayTicks")
-    local ShowManiacAccumulatedStacks = ShowManiacStackTicks--O:get("buff", "showManiacAccumulatedStacks")
+    local ShowManiacStackTicks = EHI:GetBuffDeckOption("maniac", "stack_convert_rate")
+    local ShowManiacDecayTicks = EHI:GetBuffDeckOption("maniac", "stack_decay")
+    local ShowManiacAccumulatedStacks = EHI:GetBuffDeckOption("maniac", "stack")
+    local NextStackPoll = EHI:GetBuffDeckOption("maniac", "stack_refresh")
     original._update_damage_dealt = PlayerManager._update_damage_dealt
     function PlayerManager:_update_damage_dealt(t, dt, ...)
         local previousstack = self._damage_dealt_to_cops_t or 0
@@ -550,7 +551,7 @@ if EHI:GetBuffOption("maniac") then
                     managers.ehi_buff:RemoveBuff("ManiacAccumulatedStacks")
                 end
             end
-            next_maniac_stack_poll = t + 1
+            next_maniac_stack_poll = t + NextStackPoll
         end
     end
 end
@@ -558,7 +559,7 @@ end
 --///////////////--
 --//  Grinder  //--
 --///////////////--
-if EHI:GetBuffOption("grinder") then
+if EHI:GetBuffDeckOption("grinder", "stack_cooldown") then
     original._check_damage_to_hot = PlayerManager._check_damage_to_hot
     function PlayerManager:_check_damage_to_hot(t, ...)
         local previouscooldown = self._next_allowed_doh_t or 0
@@ -572,7 +573,7 @@ end
 --///////////////--
 --//  Sicario  //--
 --///////////////--
-if EHI:GetBuffOption("sicario") then
+if EHI:GetBuffDeckSelectedOptions("sicario", "twitch", "twitch_cooldown") then
     local twitch_gauge_previous = 0
     local cooldown = tweak_data.upgrades.values.player.dodge_shot_gain[1][2] or 4
     original._dodge_shot_gain = PlayerManager._dodge_shot_gain

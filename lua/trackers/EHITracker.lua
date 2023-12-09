@@ -487,15 +487,16 @@ if EHI:GetOption("time_format") == 1 then
     EHITracker.Format = tweak_data.ehi.functions.FormatSecondsOnly
     EHITracker.FormatTime = tweak_data.ehi.functions.ReturnSecondsOnly
     EHITracker.ShortFormat = tweak_data.ehi.functions.ShortFormatSecondsOnly
-    EHITracker._time_format = 1 -- Seconds only
+    EHITracker._TIME_FORMAT = 1 -- Seconds only
 else
     EHITracker.Format = tweak_data.ehi.functions.FormatMinutesAndSeconds
     EHITracker.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
     EHITracker.ShortFormat = tweak_data.ehi.functions.ShortFormatMinutesAndSeconds
-    EHITracker._time_format = 2 -- Minutes and seconds
+    EHITracker._TIME_FORMAT = 2 -- Minutes and seconds
 end
 
 if EHI:GetOption("show_one_icon") then
+    EHITracker._ONE_ICON = true
     function EHITracker:CreateIcons()
         self._n_of_icons = 1
         local icon_pos = self._bg_box:w() + self._gap_scaled
@@ -882,7 +883,7 @@ function EHITracker:RemoveTrackerFromUpdate()
 end
 
 function EHITracker:AddTrackerToUpdate()
-    self._parent_class:AddTrackerToUpdate(self._id, self)
+    self._parent_class:AddTrackerToUpdate(self)
 end
 
 ---@param w number? If not provided the width is then called from `EHITracker:GetPanelW()`

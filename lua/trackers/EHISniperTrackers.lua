@@ -190,7 +190,7 @@ function EHISniperTimedChanceTracker:OverridePanel()
     self:FitTheText(self._chance_text)
     self._text:set_left(self._chance_text:right())
     self._text:set_text(self:Format())
-    local time_check = self._time_format == 1 and 100 or 60
+    local time_check = self._TIME_FORMAT == 1 and 100 or 60
     if math.max(self._time, self._recheck_t) >= time_check then
         if self._recheck_t >= time_check then
             local t = self._time
@@ -291,7 +291,7 @@ function EHISniperLoopTracker:OverridePanel()
     self:FitTheText(self._chance_text)
     self._text:set_left(self._chance_text:right())
     self._text:set_text(self:Format())
-    local time_check = self._time_format == 1 and 100 or 60
+    local time_check = self._TIME_FORMAT == 1 and 100 or 60
     if math.max(self._time, self._on_fail_refresh_t, self._on_success_refresh_t) >= time_check then
         local max_refresh_t = math.max(self._on_fail_refresh_t, self._on_success_refresh_t)
         if max_refresh_t >= time_check then

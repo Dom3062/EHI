@@ -1,4 +1,5 @@
-if EHI:CheckLoadHook("QuickCsGrenade") then
+local EHI = EHI
+if EHI:CheckLoadHook("QuickCsGrenade") or not EHI:GetOption("show_mission_trackers") then
     return
 end
 local Icon = EHI.Icons

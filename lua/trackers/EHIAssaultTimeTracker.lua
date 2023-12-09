@@ -16,6 +16,7 @@ local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].
 ---@field super EHIWarningTracker
 EHIAssaultTimeTracker = class(EHIWarningTracker)
 EHIAssaultTimeTracker._forced_icons = { { icon = "assaultbox", color = Build } }
+EHIAssaultTimeTracker._forced_hint_text = "assault_time"
 EHIAssaultTimeTracker._is_client = EHI:IsClient()
 EHIAssaultTimeTracker._paused_color = EHIPausableTracker._paused_color
 EHIAssaultTimeTracker._show_completion_color = true
@@ -23,6 +24,7 @@ EHIAssaultTimeTracker._show_completion_color = true
 ---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHIAssaultTimeTracker:init(panel, params, parent_class)
+    self._refresh_on_delete = true
     self:CalculateDifficultyRamp(params.diff)
     params.time = self:CalculateAssaultTime()
     EHIAssaultTimeTracker.super.init(self, panel, params, parent_class)
@@ -191,6 +193,9 @@ function EHIAssaultTimeTracker:OnEnterSustain(t)
     if self._cs_assault_extender then
         self:UpdateSustainTime(self:CalculateCSSustainTime(self._assault_t))
     end
+    if self.update == self.update_negative then
+        self.update = self.update_normal
+    end
 end
 
 function EHIAssaultTimeTracker:CaptainArrived()
@@ -203,33 +208,28 @@ function EHIAssaultTimeTracker:CaptainArrived()
 end
 
 function EHIAssaultTimeTracker:CaptainDefeated()
-    self._time = 1
-    self:delete()
+    self:PoliceActivityBlocked()
 end
 
 function EHIAssaultTimeTracker:PoliceActivityBlocked()
-    self._hide_on_delete = nil
-    self._time = 1
-    EHIAssaultTimeTracker.super.delete(self)
+    self._refresh_on_delete = nil
+    self:delete()
 end
 
+function EHIAssaultTimeTracker:Refresh()
+    self.update = self.update_negative
+    self._time = -self._time
+end
+
+--- The tracker `NEEDS TO BE DELETED` via `EHITrackerManager:ForceRemoveTracker()`!
 function EHIAssaultTimeTracker:delete()
-    if self._time <= 0 then
-        self.update = self.update_negative
-        self._time = -self._time
-        return
-    end
-    EHI:Unhook("AssaultTime_set_control_info")
-    EHIAssaultTimeTracker.super.delete(self)
-end
-
-EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
-    if mode == "phalanx" then
-        managers.ehi_tracker:CallFunction("AssaultTime", "CaptainArrived")
+    if self._refresh_on_delete then
+        self:Refresh()
     else
-        managers.ehi_tracker:CallFunction("AssaultTime", "CaptainDefeated")
+        EHI:Unhook("AssaultTime_set_control_info")
+        EHIAssaultTimeTracker.super.delete(self)
     end
-end)
+end
 
 local _Active = false
 local function ActivateHooks()

@@ -13,6 +13,7 @@ if EHI:IsVR() then
 end
 dofile(EHI.LuaPath .. "EHITradeManager.lua")
 dofile(EHI.LuaPath .. "EHIEscapeChanceManager.lua")
+dofile(EHI.LuaPath .. "EHIAssaultManager.lua")
 dofile(EHI.LuaPath .. "EHIManager.lua")
 
 local original =
@@ -25,10 +26,11 @@ function Setup:init_managers(managers, ...)
     original.init_managers(self, managers, ...)
     managers.ehi_tracker = EHITrackerManager:new()
     managers.ehi_waypoint = EHIWaypointManager:new()
-    managers.ehi_buff = EHIBuffManager:new()
+    managers.ehi_buff = EHIBuffManager -- Variables creation is done in HUDManagerPD2
     managers.ehi_trade = EHITradeManager:new(managers.ehi_tracker)
     managers.ehi_escape = EHIEscapeChanceManager:new(managers.ehi_tracker)
     managers.ehi_deployable = EHIDeployableManager:new(managers.ehi_tracker)
+    managers.ehi_assault = EHIAssaultManager:new(managers.ehi_tracker)
     managers.ehi_manager = EHIManager:new(managers.ehi_tracker, managers.ehi_waypoint, managers.ehi_escape)
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitManagers, managers)
 end
@@ -37,6 +39,7 @@ function Setup:init_finalize(...)
     original.init_finalize(self, ...)
     managers.ehi_tracker:init_finalize()
     managers.ehi_deployable:init_finalize()
+    managers.ehi_assault:init_finalize()
     managers.ehi_waypoint:init_finalize()
     managers.ehi_manager:init_finalize()
 end

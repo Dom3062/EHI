@@ -229,7 +229,11 @@ tweak_data.ehi =
             bad = true,
             x = 7,
             y = 4,
-            option = "infiltrator"
+            deck_option =
+            {
+                deck = "infiltrator",
+                option = "melee_cooldown"
+            }
         },
         dmg_dampener_close_contact =
         {
@@ -244,7 +248,11 @@ tweak_data.ehi =
             bad = true,
             x = 5,
             y = 5,
-            option = "gambler"
+            deck_option =
+            {
+                deck = "gambler",
+                option = "ammo_give_out_cooldown"
+            }
         },
         loose_ammo_restore_health =
         {
@@ -252,7 +260,11 @@ tweak_data.ehi =
             bad = true,
             x = 4,
             y = 5,
-            option = "gambler"
+            deck_option =
+            {
+                deck = "gambler",
+                option = "regain_health_cooldown"
+            }
         },
         damage_speed_multiplier =
         {
@@ -374,23 +386,37 @@ tweak_data.ehi =
         {
             deck = true,
             folder = "coco",
-            option = "maniac"
+            deck_option =
+            {
+                deck = "maniac",
+                option = "stack_convert_rate"
+            }
         },
         ManiacDecayTicks =
         {
             deck = true,
             folder = "coco",
             x = 2,
-            option = "maniac"
+            deck_option =
+            {
+                deck = "maniac",
+                option = "stack_decay"
+            }
         },
         ManiacAccumulatedStacks =
         {
             deck = true,
             folder = "coco",
             x = 3,
-            class = "EHIGaugeBuffTracker",
+            class = "EHIManiacBuffTracker",
             format = "percent",
-            option = "maniac"
+            check_after_spawn = true,
+            deck_option =
+            {
+                deck = "maniac",
+                option = "stack",
+                persistent = "stack_persistent"
+            }
         },
         GrinderStackCooldown =
         {
@@ -398,14 +424,22 @@ tweak_data.ehi =
             bad = true,
             x = 5,
             y = 6,
-            option = "grinder"
+            deck_option =
+            {
+                deck = "grinder",
+                option = "stack_cooldown"
+            }
         },
         GrinderRegenPeriod =
         {
             deck = true,
             x = 5,
             y = 6,
-            option = "grinder"
+            deck_option =
+            {
+                deck = "grinder",
+                option = "regen_duration"
+            }
         },
         SicarioTwitchGauge =
         {
@@ -413,14 +447,24 @@ tweak_data.ehi =
             folder = "max",
             x = 1,
             class = "EHIGaugeBuffTracker",
-            format = "percent"
+            format = "percent",
+            deck_option =
+            {
+                deck = "sicario",
+                option = "twitch"
+            }
         },
         SicarioTwitchCooldown =
         {
             deck = true,
             folder = "max",
             bad = true,
-            x = 1
+            x = 1,
+            deck_option =
+            {
+                deck = "sicario",
+                option = "twitch_cooldown"
+            }
         },
         ammo_efficiency =
         {
@@ -435,7 +479,23 @@ tweak_data.ehi =
             bad = true,
             x = 6,
             y = 1,
-            option = "anarchist"
+            deck_option =
+            {
+                deck = "anarchist",
+                option = "immunity_cooldown"
+            }
+        },
+        damage_to_armor =
+        {
+            deck = true,
+            bad = true,
+            folder = "opera",
+            y = 1,
+            deck_option =
+            {
+                deck = "anarchist",
+                option = "kill_armor_regen_cooldown"
+            }
         },
         single_shot_fast_reload =
         {
@@ -482,7 +542,11 @@ tweak_data.ehi =
         {
             deck = true,
             x = 6,
-            option = "anarchist"
+            deck_option =
+            {
+                deck = "anarchist",
+                option = "immunity"
+            }
         },
         UppersCooldown =
         {
@@ -496,7 +560,11 @@ tweak_data.ehi =
         {
             deck = true,
             folder = "opera",
-            option = "anarchist"
+            deck_option =
+            {
+                deck = "anarchist",
+                option = "continuous_armor_regen"
+            }
         },
         HealthRegen =
         {
@@ -528,7 +596,11 @@ tweak_data.ehi =
             x = 3,
             y = 7,
             class = "EHIExPresidentBuffTracker",
-            option = "expresident",
+            deck_option =
+            {
+                deck = "expresident",
+                option = "stored_health"
+            },
             check_after_spawn = true,
             format = "damage"
         },
@@ -538,38 +610,66 @@ tweak_data.ehi =
             folder = "wild",
             class = "EHIBikerBuffTracker",
             check_after_spawn = true,
-            option = "biker"
+            deck_option =
+            {
+                deck = "biker",
+                option = "kill_counter",
+                persistent = "kill_counter_persistent"
+            }
         },
         chico_injector =
         {
             deck = true,
             folder = "chico",
-            option = "kingpin"
+            deck_option =
+            {
+                deck = "kingpin",
+                option = "injector"
+            }
         },
         smoke_screen_grenade =
         {
             deck = true,
             folder = "max",
-            option = "sicario"
+            deck_option =
+            {
+                deck = "sicario",
+                option = "smoke_bomb"
+            }
         },
         damage_control =
         {
             deck = true,
             folder = "myh",
-            class = "EHIStoicBuffTracker"
+            class = "EHIStoicBuffTracker",
+            deck_option =
+            {
+                deck = "stoic",
+                option = "duration"
+            }
         },
         damage_control_cooldown =
         {
             bad = true,
             deck = true,
             folder = "myh",
-            y = 1
+            y = 1,
+            deck_option =
+            {
+                deck = "stoic",
+                option = "cooldown"
+            }
         },
         TagTeamEffect =
         {
             deck = true,
             folder = "ecp",
-            y = 1
+            y = 1,
+            deck_option =
+            {
+                deck = "tag_team",
+                option = "effect"
+            }
         },
         pocket_ecm_kill_dodge =
         {
@@ -578,27 +678,43 @@ tweak_data.ehi =
             x = 3,
             text = "Dodge+",
             class = "EHIHackerTemporaryDodgeBuffTracker",
-            option = "hacker"
+            deck_option =
+            {
+                deck = "hacker",
+                option = "pecm_dodge",
+            }
         },
         HackerJammerEffect =
         {
             skills = true,
             x = 6,
             y = 3,
-            option = "hacker"
+            deck_option =
+            {
+                deck = "hacker",
+                option = "pecm_jammer"
+            }
         },
         HackerFeedbackEffect =
         {
             skills = true,
             x = 6,
             y = 2,
-            option = "hacker"
+            deck_option =
+            {
+                deck = "hacker",
+                option = "pecm_feedback"
+            }
         },
         copr_ability =
         {
             deck = true,
             folder = "copr",
-            option = "leech"
+            deck_option =
+            {
+                deck = "leech",
+                option = "ampule"
+            }
         },
         headshot_regen_health_bonus =
         {
@@ -606,14 +722,22 @@ tweak_data.ehi =
             folder = "mrwi",
             bad = true,
             x = 1,
-            option = "copycat"
+            deck_option =
+            {
+                deck = "copycat",
+                option = "head_games_cooldown"
+            }
         },
         mrwi_health_invulnerable =
         {
             deck = true,
             folder = "mrwi",
             x = 3,
-            option = "copycat"
+            deck_option =
+            {
+                deck = "copycat",
+                option = "grace_period"
+            }
         }
     },
     functions =
@@ -803,20 +927,25 @@ tweak_data.ehi.buff.reload_weapon_faster = deep_clone(tweak_data.ehi.buff.swap_w
 tweak_data.ehi.buff.reload_weapon_faster.text = "Rld+"
 tweak_data.ehi.buff.chico_injector_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector)
 tweak_data.ehi.buff.chico_injector_cooldown.bad = true
+tweak_data.ehi.buff.chico_injector_cooldown.deck_option.option = "injector_cooldown"
 tweak_data.ehi.buff.smoke_screen_grenade_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.smoke_screen_grenade_cooldown.folder = "max"
-tweak_data.ehi.buff.smoke_screen_grenade_cooldown.option = "sicario"
+tweak_data.ehi.buff.smoke_screen_grenade_cooldown.deck_option.deck = "sicario"
+tweak_data.ehi.buff.smoke_screen_grenade_cooldown.deck_option.option = "smoke_bomb_cooldown"
 tweak_data.ehi.buff.tag_team_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.tag_team_cooldown.folder = "ecp"
-tweak_data.ehi.buff.tag_team_cooldown.option = "tag_team"
+tweak_data.ehi.buff.tag_team_cooldown.deck_option.deck = "tag_team"
+tweak_data.ehi.buff.tag_team_cooldown.deck_option.option = "cooldown"
 tweak_data.ehi.buff.pocket_ecm_jammer_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.folder = "joy"
-tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.option = "hacker"
-tweak_data.ehi.buff.copr_ability_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
-tweak_data.ehi.buff.copr_ability_cooldown.folder = "copr"
-tweak_data.ehi.buff.copr_ability_cooldown.option = "leech"
+tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.deck_option.deck = "hacker"
+tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.deck_option.option = "pecm_cooldown"
+tweak_data.ehi.buff.copr_ability_cooldown = deep_clone(tweak_data.ehi.buff.copr_ability)
+tweak_data.ehi.buff.copr_ability_cooldown.bad = true
+tweak_data.ehi.buff.copr_ability_cooldown.deck_option.option = "ampule_cooldown"
 tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown = deep_clone(tweak_data.ehi.buff.mrwi_health_invulnerable)
 tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown.bad = true
+tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown.deck_option.option = "grace_period_cooldown"
 
 tweak_data.hud_icons.EHI_XP = { texture = tweak_data.ehi.icons.xp.texture }
 tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }

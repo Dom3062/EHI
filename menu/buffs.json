@@ -178,7 +178,7 @@
             "title": "ehi_buffs_perks_menu",
             "next_menu": "ehi_buffs_perks_menu",
             "parent": "ehi_show_buffs_choice",
-            "ehi_ver" : 111
+            "ehi_ver" : 204
         },
         {
             "type": "button",

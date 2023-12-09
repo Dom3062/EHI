@@ -3,11 +3,7 @@ if EHI:CheckLoadHook("ElementTerminateAssault") then
     return
 end
 
-local valid = false
-if EHI:CombineAssaultDelayAndAssaultTime() or EHI:GetOption("show_assault_delay_tracker") or EHI:GetOption("show_assault_time_tracker") then
-    valid = true
-end
-if not valid then
+if not (EHI:GetOption("show_assault_delay_tracker") or EHI:GetOption("show_assault_time_tracker")) then
     return
 end
 
@@ -19,12 +15,9 @@ local original =
 
 local function Block()
     local state = managers.groupai:state()
-	if not state.terminate_assaults then
-        return
-	end
-    managers.ehi_tracker:CallFunction("Assault", "PoliceActivityBlocked")
-    managers.ehi_tracker:CallFunction("AssaultDelay", "PoliceActivityBlocked")
-    managers.ehi_tracker:CallFunction("AssaultTime", "PoliceActivityBlocked")
+    if state.terminate_assaults then
+        managers.ehi_assault:SetAssaultBlock(true)
+    end
 end
 
 function ElementTerminateAssault:client_on_executed(...)
@@ -33,9 +26,6 @@ function ElementTerminateAssault:client_on_executed(...)
 end
 
 function ElementTerminateAssault:on_executed(...)
-    if not self._values.enabled then
-		return
-	end
-    original.on_executed(self, ...)
     Block()
+    original.on_executed(self, ...)
 end

@@ -188,6 +188,20 @@ function EHIMenu:init()
     self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills/ghost.json", EHI.settings.buff_option)
     self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills/fugitive.json", EHI.settings.buff_option)
     self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks.json", EHI.settings.buff_option)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/infiltrator.json", EHI.settings.buff_option.infiltrator)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/gambler.json", EHI.settings.buff_option.gambler)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/grinder.json", EHI.settings.buff_option.grinder)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/maniac.json", EHI.settings.buff_option.maniac)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/anarchist.json", EHI.settings.buff_option.anarchist)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/expresident.json", EHI.settings.buff_option.expresident)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/biker.json", EHI.settings.buff_option.biker)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/kingpin.json", EHI.settings.buff_option.kingpin)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/sicario.json", EHI.settings.buff_option.sicario)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/stoic.json", EHI.settings.buff_option.stoic)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/tag_team.json", EHI.settings.buff_option.tag_team)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/hacker.json", EHI.settings.buff_option.hacker)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/leech.json", EHI.settings.buff_option.leech)
+    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/copycat.json", EHI.settings.buff_option.copycat)
     self:GetMenuFromJson(EHI.MenuPath .. "buff_options/other.json", EHI.settings.buff_option)
     self:GetMenuFromJson(EHI.MenuPath .. "inventory.json")
     self:GetMenuFromJson(EHI.MenuPath .. "other.json")
@@ -209,19 +223,17 @@ function EHIMenu:CallCallback(item, params)
         end
         local var = item.callback_arguments and type(item.callback_arguments) == "table" or false
         if type(item.callback) == "table" then
-            for _, clbk in pairs(item.callback) do
+            for _, clbk in ipairs(item.callback) do
                 if var then
                     self[clbk](self, value, unpack(item.callback_arguments))
                 else
                     self[clbk](self, value, item.callback_arguments)
                 end
             end
+        elseif var then
+            self[item.callback](self, value, unpack(item.callback_arguments))
         else
-            if var then
-                self[item.callback](self, value, unpack(item.callback_arguments))
-            else
-                self[item.callback](self, value, item.callback_arguments)
-            end
+            self[item.callback](self, value, item.callback_arguments)
         end
     end
 end

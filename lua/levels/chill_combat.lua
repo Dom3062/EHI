@@ -28,7 +28,7 @@ local tbl =
     [101242] = { f = "IgnoreDeployable" }
 }
 EHI:UpdateUnits(tbl)
-EHI._cache.diff = 1
+EHIAssaultManager:SetDiff(1)
 EHI:AddXPBreakdown({
     wave_all = { amount = 14000, times = 3 }
 })

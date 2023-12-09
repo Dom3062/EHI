@@ -23,6 +23,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     local hud = self:script(PlayerBase.PLAYER_INFO_HUD_PD2)
     self.ehi = managers.ehi_tracker
     managers.ehi_waypoint:SetPlayerHUD(self)
+    managers.ehi_assault:init_hud(self)
     self.ehi_manager = managers.ehi_manager
     if server or level_id == "hvh" then
         if EHIWaypoints then
@@ -183,154 +184,21 @@ if EHI:IsClient() and level_id ~= "hvh" then
     end
 end
 
-if EHI:CombineAssaultDelayAndAssaultTime() then
-    local SyncFunction = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation"
-    local anticipation_delay = 30 -- Get it from tweak_data
-    local function VerifyHostageHesitationDelay()
-    end
-    local function set_assault_delay(self, data)
-        self.ehi:CallFunction("Assault", "SetHostages", data.nr_hostages > 0)
-    end
-    local is_skirmish = tweak_data.levels:IsLevelSkirmish(level_id)
-    local EndlessAssault = nil
+if EHI:GetOption("show_assault_delay_tracker") or EHI:GetOption("show_assault_time_tracker") then
     original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
     function HUDManager:sync_start_anticipation_music(...)
         original.sync_start_anticipation_music(self, ...)
-        self.ehi:CallFunction("Assault", SyncFunction, anticipation_delay)
-        EHI:Unhook("Assault_set_control_info")
+        managers.ehi_assault:AnticipationStart()
     end
     original.sync_start_assault = HUDManager.sync_start_assault
     function HUDManager:sync_start_assault(...)
         original.sync_start_assault(self, ...)
-        EHI:Unhook("Assault_set_control_info")
-        if EndlessAssault or self._ehi_assault_block then
-            return
-        elseif self.ehi:TrackerExists("Assault") then
-            self.ehi:CallFunction("Assault", "AssaultStart", EHI._cache.diff or 0)
-        elseif (EHI._cache.diff and EHI._cache.diff > 0) or is_skirmish then
-            self.ehi:AddTracker({
-                id = "Assault",
-                assault = true,
-                diff = EHI._cache.diff or 0,
-                class = EHI.Trackers.Assault.Assault,
-                hint = "assault"
-            }, 0)
-        end
+        managers.ehi_assault:AssaultStart()
     end
     original.sync_end_assault = HUDManager.sync_end_assault
     function HUDManager:sync_end_assault(...)
         original.sync_end_assault(self, ...)
-        if self._ehi_assault_block then
-            return
-        elseif is_skirmish or EndlessAssault then
-            self.ehi:RemoveTracker("Assault")
-        elseif self.ehi:TrackerExists("Assault") then
-            self.ehi:CallFunction("Assault", "AssaultEnd", EHI._cache.diff or 0)
-        elseif EHI._cache.diff and EHI._cache.diff > 0 then
-            self.ehi:AddTracker({
-                id = "Assault",
-                diff = EHI._cache.diff,
-                class = EHI.Trackers.Assault.Assault,
-                hint = "assault"
-            }, 0)
-        end
-        EHI:HookWithID(self, "set_control_info", "EHI_Assault_set_control_info", set_assault_delay)
-    end
-    EHI:HookWithID(HUDManager, "set_control_info", "EHI_Assault_set_control_info", set_assault_delay)
-    VerifyHostageHesitationDelay()
-    EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
-        if mode == "endless" then
-            EndlessAssault = true
-            managers.ehi_tracker:RemoveTracker("Assault")
-        else
-            EndlessAssault = nil
-        end
-    end)
-    EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
-        EndlessAssault = nil
-    end)
-else
-    if EHI:AssaultDelayTrackerIsEnabled() then
-        local SyncFunction = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation"
-        local anticipation_delay = 30 -- Get it from tweak_data
-        local function VerifyHostageHesitationDelay()
-        end
-        local function set_assault_delay(self, data)
-            self.ehi:CallFunction("AssaultDelay", "SetHostages", data.nr_hostages > 0)
-        end
-        original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
-        function HUDManager:sync_start_anticipation_music(...)
-            original.sync_start_anticipation_music(self, ...)
-            self.ehi:CallFunction("AssaultDelay", SyncFunction, anticipation_delay)
-            EHI:Unhook("AssaultDelay_set_control_info")
-        end
-        original.sync_start_assault = HUDManager.sync_start_assault
-        function HUDManager:sync_start_assault(...)
-            original.sync_start_assault(self, ...)
-            self.ehi:RemoveTracker("AssaultDelay")
-            EHI:Unhook("AssaultDelay_set_control_info")
-        end
-        original.sync_end_assault = HUDManager.sync_end_assault
-        function HUDManager:sync_end_assault(...)
-            original.sync_end_assault(self, ...)
-            if EHI._cache.diff and EHI._cache.diff > 0 and not self._ehi_assault_block then
-                self.ehi:AddTracker({
-                    id = "AssaultDelay",
-                    diff = EHI._cache.diff,
-                    class = EHI.Trackers.Assault.Delay,
-                    hint = "assault_delay"
-                })
-                EHI:HookWithID(HUDManager, "set_control_info", "EHI_AssaultDelay_set_control_info", set_assault_delay)
-            end
-        end
-        EHI:HookWithID(HUDManager, "set_control_info", "EHI_AssaultDelay_set_control_info", set_assault_delay)
-        VerifyHostageHesitationDelay()
-    end
-    if EHI:GetOption("show_assault_time_tracker") then
-        local start_original = HUDManager.sync_start_assault
-        local is_skirmish = tweak_data.levels:IsLevelSkirmish(level_id)
-        local EndlessAssault = nil
-        function HUDManager:sync_start_assault(...)
-            start_original(self, ...)
-            if self._ehi_assault_in_progress or self._ehi_assault_block then
-                return
-            elseif (EHI._cache.diff and EHI._cache.diff > 0 and not EndlessAssault) or is_skirmish then
-                self.ehi:AddTracker({
-                    id = "AssaultTime",
-                    diff = EHI._cache.diff or 0,
-                    class = EHI.Trackers.Assault.Time,
-                    hint = "assault_time",
-                })
-            end
-            self._ehi_assault_in_progress = true
-        end
-        local end_original = HUDManager.sync_end_assault
-        function HUDManager:sync_end_assault(...)
-            end_original(self, ...)
-            self.ehi:RemoveTracker("AssaultTime")
-            self._ehi_assault_in_progress = nil
-        end
-        EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
-            if mode == "endless" then
-                EndlessAssault = true
-                managers.ehi_tracker:RemoveTracker("AssaultTime")
-            else
-                EndlessAssault = nil
-            end
-        end)
-        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
-            EndlessAssault = nil
-        end)
-    end
-end
-
----@param block boolean?
-function HUDManager:SetAssaultTrackerManualBlock(block)
-    self._ehi_assault_block = block
-    if block then
-        self.ehi:CallFunction("Assault", "PoliceActivityBlocked")
-        self.ehi:CallFunction("AssaultDelay", "PoliceActivityBlocked")
-        self.ehi:CallFunction("AssaultTime", "PoliceActivityBlocked")
+        managers.ehi_assault:AssaultEnd()
     end
 end
 
