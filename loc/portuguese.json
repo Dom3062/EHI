@@ -55,9 +55,9 @@
 
     "ehi_xp_format" : "Formato do XP Ganho",
     "ehi_xp_format_desc" : "Exemplo: Valor inicial: 1000; Dificuldade Death Wish\nApenas o Valor inicial: 1000\nValor multiplicado com a dificuldade: 13000\nValor multiplicado com todos os Bônus: 13000+",
-    "ehi_xp_format_base" : "Mostrar apenas o Valor inicial",
-    "ehi_xp_format_difficulty_multiplier" : "Mostrar o valor multiplicado com a dificuldade",
-    "ehi_xp_format_all_bonuses" : "Mostra o valor multiplicado com todos os bônus de XP",
+    "ehi_xp_format_1" : "Mostrar apenas o Valor inicial",
+    "ehi_xp_format_2" : "Mostrar o valor multiplicado com a dificuldade",
+    "ehi_xp_format_3" : "Mostra o valor multiplicado com todos os bônus de XP",
 
     "ehi_xp_panel" : "Como mostra o XP Ganho",
     "ehi_xp_panel_desc" : "",

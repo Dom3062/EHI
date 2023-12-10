@@ -53,7 +53,7 @@ end
 
 function FakeEHITrackerManager:AddFakeTrackers()
     self._n_of_trackers = 0
-    self._fake_trackers = {} ---@type table<number, FakeEHITracker?>
+    self._fake_trackers = {} ---@type FakeEHITracker[]?
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.rand(0.5, 9.99), icons = { Icon.Wait } })
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.random(60, 180), icons = { Icon.Car, Icon.Escape } })
     self:AddFakeTracker({ id = "show_unlockables", time = math.random(60, 180), icons = { Icon.Trophy } })
@@ -63,7 +63,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
             self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, extend_half = xp_panel == 2, class = "FakeEHIXPTracker" })
         end
     end
-    self:AddFakeTracker({ id = "show_trade_delay", time = 5 + (math.random(1, 4) * 30), icons = { { icon = "mugshot_in_custody", color = self:GetPeerColor() } } })
+    self:AddFakeTracker({ id = "show_trade_delay", icons = { { icon = "mugshot_in_custody", color = self:GetPeerColor() } }, class = "FakeEHITradeDelayTracker" })
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { Icon.Drill, Icon.Wait, "silent", Icon.Loop } })
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack } })
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack }, extend = true, class = "FakeEHITimerTracker" })
@@ -216,7 +216,7 @@ function FakeEHITrackerManager:GetPos(pos)
             y = new_y
         end
     elseif pos and pos > 0 and self._tracker_alignment == 3 then -- Horizontal; Left to Right
-        local tracker = self._fake_trackers[pos] --[[@as FakeEHITracker]]
+        local tracker = self._fake_trackers[pos]
         x = tracker._panel:right() + (tracker:GetSize() - tracker._panel:w()) + panel_offset
     end
     return x, y
@@ -228,7 +228,7 @@ end
 function FakeEHITrackerManager:GetPos2(tracker, pos)
     local x = self._x
     if pos > 0 then
-        local previous_tracker = self._fake_trackers[pos] --[[@as FakeEHITracker]]
+        local previous_tracker = self._fake_trackers[pos]
         x = previous_tracker._panel:left() - tracker:GetSize() - panel_offset
     end
     return x, self._y
@@ -421,6 +421,15 @@ function FakeEHITrackerManager:ForceReposition()
     end
 end
 
+---@param id string
+---@param f string
+function FakeEHITrackerManager:CallFunction(id, f, ...)
+    local tracker = self:GetTracker(id)
+    if tracker and tracker[f] then
+        tracker[f](tracker, ...)
+    end
+end
+
 local icons = tweak_data.ehi and tweak_data.ehi.icons or {}
 
 local function GetIcon(icon)
@@ -473,7 +482,7 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
         visible = config.bg_visible
 	})
 
-	local left_top = box_panel:bitmap({
+	box_panel:bitmap({
 		texture = "guis/textures/pd2_mod_ehi/hud_corner",
 		name = "left_top",
 		visible = params.first or corner_visible,
@@ -707,7 +716,7 @@ function FakeEHITracker:FitTheText(text)
     end
 end
 
----@param format number
+---@param format number?
 function FakeEHITracker:UpdateFormat(format)
     self._text:set_text(self:Format(format))
     self:FitTheText()
@@ -803,6 +812,31 @@ function FakeEHITracker:destroy()
     if alive(self._panel) and alive(self._parent_panel) then
         self._parent_panel:remove(self._panel)
     end
+end
+
+---@class FakeEHITradeDelayTracker : FakeEHITracker
+---@field super FakeEHITracker
+FakeEHITradeDelayTracker = class(FakeEHITracker)
+---@param params EHITracker.params
+function FakeEHITradeDelayTracker:pre_init(params)
+    self._civilians_format = EHI:GetOption("show_trade_delay_amount_of_killed_civilians")
+    self._civilians_killed = math.random(1, 4)
+    params.time = 5 + (self._civilians_killed * 30)
+end
+
+---@param format boolean
+function FakeEHITradeDelayTracker:UpdateFormat(format)
+    self._civilians_format = format
+    FakeEHITradeDelayTracker.super.UpdateFormat(self)
+end
+
+---@param format number?
+function FakeEHITradeDelayTracker:Format(format)
+    local s = FakeEHITradeDelayTracker.super.Format(self, format)
+    if self._civilians_format then
+        return string.format("%s (%d)", s, self._civilians_killed)
+    end
+    return s
 end
 
 ---@class FakeEHIXPTracker : FakeEHITracker

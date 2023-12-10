@@ -175,9 +175,9 @@
 
     "ehi_xp_format" : "Formato de la EXP ganada",
     "ehi_xp_format_desc" : "Por ejemplo: Valor base: 1000, en dificultad ANIQUILACIÓN.\n'Solo valor base': 1000\n'Valor multiplicado por dificultad': 13000\n'Valor multiplicado por bonificaciones de EXP': 13000+",
-    "ehi_xp_format_base" : "Solo valor base",
-    "ehi_xp_format_difficulty_multiplier" : "Valor multiplicado por dificultad",
-    "ehi_xp_format_all_bonuses" : "Valor multiplicado por bonific. de EXP",
+    "ehi_xp_format_1" : "Solo valor base",
+    "ehi_xp_format_2" : "Valor multiplicado por dificultad",
+    "ehi_xp_format_3" : "Valor multiplicado por bonific. de EXP",
 
     "ehi_xp_panel" : "Cómo mostrar la EXP obtenida",
     "ehi_xp_panel_desc" : "",

@@ -175,9 +175,9 @@
 
     "ehi_xp_format" : "经验计算方式",
     "ehi_xp_format_desc" : "例如: 基础经验: 1000; 风险等级：死亡之愿\n仅计算基础经验: 1000\n计算风险等级加成: 13000\n计算所有经验加成: 13000+",
-    "ehi_xp_format_base" : "仅计算基础经验",
-    "ehi_xp_format_difficulty_multiplier" : "计算风险等级加成",
-    "ehi_xp_format_all_bonuses" : "计算所有经验加成",
+    "ehi_xp_format_1" : "仅计算基础经验",
+    "ehi_xp_format_2" : "计算风险等级加成",
+    "ehi_xp_format_3" : "计算所有经验加成",
 
     "ehi_xp_panel" : "经验显示模式",
     "ehi_xp_panel_desc" : "",

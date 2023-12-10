@@ -66,9 +66,9 @@
 
     "ehi_xp_format": "Comment indiquer l’EXP gagné",
     "ehi_xp_format_desc": "Exemple : Valeur de base : 1000; Difficultée suicidaire\nValeur de base seulement : 1000\nValeur multipliée avec la difficultée : 13000\nValeur multipliée avec touts les bonus d’EXP : 13000+",
-    "ehi_xp_format_base": "Montre la valeur de base uniquement",
-    "ehi_xp_format_difficulty_multiplier": "Montre la valeur multiplée par la difficultée",
-    "ehi_xp_format_all_bonuses": "Montre la valeur multiplée avec tous les bonus d’EXP",
+    "ehi_xp_format_1": "Montre la valeur de base uniquement",
+    "ehi_xp_format_2": "Montre la valeur multiplée par la difficultée",
+    "ehi_xp_format_3": "Montre la valeur multiplée avec tous les bonus d’EXP",
     
     "ehi_xp_panel": "Comment montrer l’EXP gagné",
     "ehi_xp_panel_desc": "",

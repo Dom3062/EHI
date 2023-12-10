@@ -71,9 +71,9 @@
  
     "ehi_xp_format" : "Formato dei PE Guadagnati",
     "ehi_xp_format_desc" : "Esempio: Valore base: 1000; Difficoltà Apocalisse\nSolo il valore base: 1000\nValore moltiplicato per la difficoltà: 13000\nValore moltiplicato con tutti i bonus PE: 13000+",
-    "ehi_xp_format_base" : "Mostra solo il valore base",
-    "ehi_xp_format_difficulty_multiplier" : "Mostra il valore moltiplicato per la difficoltà",
-    "ehi_xp_format_all_bonuses" : "Mostra il valore moltiplicato per i bonus PE",
+    "ehi_xp_format_1" : "Mostra solo il valore base",
+    "ehi_xp_format_2" : "Mostra il valore moltiplicato per la difficoltà",
+    "ehi_xp_format_3" : "Mostra il valore moltiplicato per i bonus PE",
  
     "ehi_xp_panel" : "Come Mostrare i PE Guadagnati",
     "ehi_xp_panel_desc" : "",

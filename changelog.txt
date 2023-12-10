@@ -1,3 +1,6 @@
+r205 (10. 12. 2023):
+Buffs: Fixed a crash with Pocket ECM
+
 r204 (09. 12. 2023):
 Added option "Civilian Count Tracker Format"
 Implemented detection for Brazilian Portuguese translation

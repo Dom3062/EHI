@@ -23,6 +23,10 @@ function EHIMenu:SetXPPanelOption(value, option)
     self:UpdateTracker(option, value <= 2)
 end
 
+function EHIMenu:UpdateTradeDelayFormat(value)
+    self._preview_panel:CallFunction("show_trade_delay", "UpdateFormat", value)
+end
+
 function EHIMenu:SetGagePanelOption(value, option)
     self:UpdateTracker(option, value == 1)
 end

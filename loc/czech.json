@@ -329,9 +329,9 @@
 
     "ehi_xp_format" : "Jak formátovat získané ZK",
     "ehi_xp_format_desc" : "Příklad: Základní hodnota: 1000; obtížnost Death Wish\nPouze základní hodnota: 1000\nHodnota vynásobená obtížností: 13000\nHodnota vynásobená všechny ZK bonusy: 13000+",
-    "ehi_xp_format_base" : "Zobrazit pouze základní hodnotu",
-    "ehi_xp_format_difficulty_multiplier" : "Zobrazit hodnotu vynásobenou obtížností",
-    "ehi_xp_format_all_bonuses" : "Zobrazit hodnotu vynásobenou všechny ZK bonusy",
+    "ehi_xp_format_1" : "Zobrazit pouze základní hodnotu",
+    "ehi_xp_format_2" : "Zobrazit hodnotu vynásobenou obtížností",
+    "ehi_xp_format_3" : "Zobrazit hodnotu vynásobenou všechny ZK bonusy",
 
     "ehi_xp_panel" : "Jak zobrazit ZK",
     "ehi_xp_panel_desc" : "",

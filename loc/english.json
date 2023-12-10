@@ -329,9 +329,9 @@
 
     "ehi_xp_format" : "How to format gained XP",
     "ehi_xp_format_desc" : "Example: Base value: 1000; Death Wish difficulty\nBase value only: 1000\nValue multiplied with difficulty: 13000\nValue multiplied with all XP bonuses: 13000+",
-    "ehi_xp_format_base" : "Show base value only",
-    "ehi_xp_format_difficulty_multiplier" : "Show value multiplied with difficulty",
-    "ehi_xp_format_all_bonuses" : "Show value multiplied with all XP bonuses",
+    "ehi_xp_format_1" : "Show base value only",
+    "ehi_xp_format_2" : "Show value multiplied with difficulty",
+    "ehi_xp_format_3" : "Show value multiplied with all XP bonuses",
 
     "ehi_xp_panel" : "How to show gained XP",
     "ehi_xp_panel_desc" : "",

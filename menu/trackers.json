@@ -102,9 +102,9 @@
             "callback": "SetOption",
             "callback_arguments": "xp_format",
             "items": [
-                "ehi_xp_format_base",
-                "ehi_xp_format_difficulty_multiplier",
-                "ehi_xp_format_all_bonuses"
+                "ehi_xp_format_1",
+                "ehi_xp_format_2",
+                "ehi_xp_format_3"
             ],
             "value": "xp_format",
             "parent" : "ehi_show_gained_xp_choice",
@@ -187,7 +187,7 @@
             "id": "ehi_show_trade_delay_amount_of_killed_civilians_choice",
             "title": "ehi_show_trade_delay_amount_of_killed_civilians",
             "description": "ehi_show_trade_delay_amount_of_killed_civilians_desc",
-            "callback": "SetOption",
+            "callback": ["SetOption", "UpdateTradeDelayFormat"],
             "callback_arguments": "show_trade_delay_amount_of_killed_civilians",
             "value": "show_trade_delay_amount_of_killed_civilians",
             "parent": "ehi_show_trade_delay_choice",

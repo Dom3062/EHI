@@ -118,9 +118,9 @@
 
   "ehi_xp_format": "XPのフォーマット方法",
   "ehi_xp_format_desc": "例: 基本値: 1000, 難易度Death Wish\n基本値のみ: 1000\n難易度別乗算値: 13000\n全XPボーナスと掛けた値: 13000+",
-  "ehi_xp_format_base": "基本値のみを表示",
-  "ehi_xp_format_difficulty_multiplier": "難易度別乗算値を表示",
-  "ehi_xp_format_all_bonuses": "全XPボーナスと掛けた値を表示",
+  "ehi_xp_format_1": "基本値のみを表示",
+  "ehi_xp_format_2": "難易度別乗算値を表示",
+  "ehi_xp_format_3": "全XPボーナスと掛けた値を表示",
 
   "ehi_xp_panel": "取得したXPの表示方法",
   "ehi_xp_panel_desc": "",

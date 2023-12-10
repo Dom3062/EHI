@@ -270,6 +270,10 @@ function EHIMenu:update(t, dt)
     self._axis_timer.x = math.max(self._axis_timer.x - dt, 0)
 end
 
+---@param axis string
+---@param delay number
+---@param input_delay number
+---@param input string
 function EHIMenu:SetAxisTimer(axis, delay, input_delay, input)
     self._axis_timer[axis] = delay
     if self._controller:get_input_pressed(input) then
@@ -301,11 +305,11 @@ function EHIMenu:Open()
 
     self._panel:stop()
     self._panel:animate(function(o)
-        local a = self._panel:alpha()
+        local a = o:alpha()
 
         do_animation(0.2, function(p)
             local alpha_lerp = math.lerp(a, 1, p)
-            self._panel:set_alpha(alpha_lerp)
+            o:set_alpha(alpha_lerp)
             self._preview_panel._hud_panel:set_alpha(alpha_lerp)
         end)
         self._controller:enable()
@@ -323,14 +327,14 @@ function EHIMenu:Close()
 
     self._panel:stop()
     self._panel:animate(function(o)
-        local a = self._panel:alpha()
+        local a = o:alpha()
 
         do_animation(0.2, function(p)
             local alpha_lerp = math.lerp(a, 0, p)
-            self._panel:set_alpha(alpha_lerp)
+            o:set_alpha(alpha_lerp)
             self._preview_panel._hud_panel:set_alpha(alpha_lerp)
         end)
-        self._panel:set_alpha(0)
+        o:set_alpha(0)
         self._preview_panel._hud_panel:set_alpha(0)
 
         managers.menu._input_enabled = true
