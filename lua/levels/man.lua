@@ -8,10 +8,8 @@ local deal = { Icon.Car, Icon.Goto }
 local delay = 4 + 356/30
 local start_chance = 15 -- Normal
 if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
-    -- Hard + Very Hard
     start_chance = 10
 elseif ovk_and_up then
-    -- OVERKILL+
     start_chance = 5
 end
 local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, Icon.PCHack }, flash_times = 1, class = TT.Chance, hint = Hints.man_Code }
@@ -85,7 +83,7 @@ local other =
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102161] = { chance = 20, time = 30 + 20, recheck_t = 20, id = "Snipers", class = TT.Sniper.TimedChance, trigger_times = 1 }
     other[103169] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[101756] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+    other[101756] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
         if EHI:IsHost() and not element:_values_ok() then
             return
         end

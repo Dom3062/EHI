@@ -3,11 +3,10 @@ local EHI = EHI
 ---@field super EHITracker
 EHIStopwatchTracker = class(EHITracker)
 EHIStopwatchTracker._forced_icons = { EHI.Icons.Wait }
-EHIStopwatchTracker.super._fade_time = nil
 function EHIStopwatchTracker:update(dt)
-	if self._fade_time then
-		self._fade_time = self._fade_time - dt
-		if self._fade_time <= 0 then
+	if self._to_delete then
+		self._to_delete = self._to_delete - dt
+		if self._to_delete <= 0 then
 			self:delete()
 		end
 		return
@@ -47,13 +46,13 @@ do
 end
 
 function EHIStopwatchTracker:Stop()
-	self._fade_time = 5
+	self._to_delete = 5
 	self:AnimateBG()
 end
 
 function EHIStopwatchTracker:Reset()
 	self._time = 0
-	self._fade_time = nil
+	self._to_delete = nil
 end
 
 local tbl =

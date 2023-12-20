@@ -16,12 +16,12 @@ local function f_PilotComingInAgain(self, trigger, ...)
         self:CheckCondition(trigger)
     end
 end
-local PilotComingInAgain = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+local PilotComingInAgain = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
     if enabled then
         f_PilotComingInAgain(self, trigger)
     end
 end)
-local PilotComingInAgain2 = EHI:RegisterCustomSpecialFunction(f_PilotComingInAgain)
+local PilotComingInAgain2 = EHI:RegisterCustomSF(f_PilotComingInAgain)
 ---@type ParseTriggerTable
 local triggers = {
     [EHI:GetInstanceElementID(100022, 2850)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag, hint = Hints.peta2_LootZoneDelivery },
@@ -85,7 +85,7 @@ local other =
     [100109] = EHI:AddAssaultDelay({ time = 100 + 30 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { chance = 10, time = 1 + 10 + 60, on_fail_refresh_t = 60, on_success_refresh_t = 20 + 10 + 60, id = "Snipers", class = TT.Sniper.Loop }
+    other[100015] = { chance = 10, time = 1 + 10 + 60, on_fail_refresh_t = 60, on_success_refresh_t = 20 + 10 + 60, id = "Snipers", class = TT.Sniper.Loop, single_sniper = EHI:IsDifficultyOrBelow(EHI.Difficulties.Hard) }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -94,7 +94,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101358] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "ResetCount" }
-    other[101733] = { id = "SniperHeli", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    other[101733] = { id = "SniperHeli", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         if self._trackers:TrackerExists(id) then
             self._trackers:CallFunction(id, "SniperRespawn")

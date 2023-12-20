@@ -4,7 +4,7 @@ local Icon = EHI.Icons
 ---@field super EHIWarningTracker
 ---@field _icon2 PanelBitmap?
 EHICraneFixChanceTracker = class(EHIWarningTracker)
-EHICraneFixChanceTracker._forced_icons = EHI:GetOption("show_one_icon") and { Icon.Fix } or { Icon.Winch, Icon.Fix }
+EHICraneFixChanceTracker._forced_icons = EHICraneFixChanceTracker._ONE_ICON and { Icon.Fix } or { Icon.Winch, Icon.Fix }
 EHICraneFixChanceTracker._show_completion_color = true
 EHICraneFixChanceTracker.FormatChance = EHIChanceTracker.FormatChance
 EHICraneFixChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
@@ -24,10 +24,10 @@ function EHICraneFixChanceTracker:OverridePanel()
     self._chance_text = self:CreateText({
         name = "text2",
         text = self:FormatChance(),
-        w = self._bg_box:w() / 2
+        w = self._bg_box:w() / 2,
+        left = self._text:right(),
+        FitTheText = true
     })
-    self:FitTheText(self._chance_text)
-    self._chance_text:set_left(self._text:right())
     self:SetIconX()
     if self._icon2 then
         self:SetIconX(self._icon1, self._icon2)
@@ -78,6 +78,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end

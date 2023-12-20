@@ -76,14 +76,12 @@ if EHI:IsLootCounterVisible() then
         for _, index in ipairs(MethlabIndex) do
             local unit_id = EHI:GetInstanceUnitID(100068, index) -- Acid 3
             if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
-                -- Unit is enabled, return 3
                 return 3
             end
         end
         for _, index in ipairs(MethlabIndex) do
             local unit_id = EHI:GetInstanceUnitID(100067, index) -- Acid 2
             if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
-                -- Unit is enabled, return 2
                 return 2
             end
         end
@@ -95,7 +93,7 @@ if EHI:IsLootCounterVisible() then
     local MethbagsCooked = 0
     local MethbagsPossibleToSpawn = 19
     local MethlabExploded = false
-    other[101218] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
+    other[101218] = { special_function = EHI:RegisterCustomSF(function(...)
         Methbags = GetNumberOfMethBags()
         EHI:ShowLootCounterNoChecks({
             max = money + Methbags,
@@ -114,23 +112,21 @@ if EHI:IsLootCounterVisible() then
         other[i] = IncreaseMaximumTrigger
     end
     -- Meth
-    local function IncreaseMaximum2()
+    local IncreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = function()
         if MethlabExploded then
             return
         end
         Methbags = Methbags + 1
         MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
         managers.ehi_tracker:RandomLootSpawned()
-    end
-    local function DecreaseMaximum()
+    end }
+    local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = function()
         if MethlabExploded then
             return
         end
         MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
         managers.ehi_tracker:RandomLootDeclined()
-    end
-    local IncreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = IncreaseMaximum2 }
-    local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = DecreaseMaximum }
+    end }
     for i = 9000, 16200, 400 do
         other[EHI:GetInstanceElementID(100007, i)] = DecreaseMaximumTrigger -- Empty
         other[EHI:GetInstanceElementID(100011, i)] = DecreaseMaximumTrigger -- Missiles
@@ -139,7 +135,6 @@ if EHI:IsLootCounterVisible() then
         other[EHI:GetInstanceElementID(100014, i)] = DecreaseMaximumTrigger -- Cigars
         other[EHI:GetInstanceElementID(100015, i)] = IncreaseMaximumTrigger2 -- Chemicals for meth
     end
-
     -- Methlab exploded
     local function BlockMeth()
         if Methbags == 0 then -- Dropin; impossible to tell how many bags were cooked
@@ -156,7 +151,6 @@ if EHI:IsLootCounterVisible() then
         other[EHI:GetInstanceElementID(100158, index)] = { special_function = SF.CustomCode, f = BlockMeth }
         other[EHI:GetInstanceElementID(100159, index)] = { special_function = SF.CustomCode, f = CookingDone }
     end
-
     -- Cars
     local CarLootBlocked = false
     local CarLootNumber = 2
@@ -164,14 +158,13 @@ if EHI:IsLootCounterVisible() then
         CarLootBlocked = true
         managers.ehi_tracker:DecreaseLootCounterMaxRandom(CarLootNumber)
     end }
-    local function DecreaseMaximum2()
+    local DecreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = function()
         if CarLootBlocked then
             return
         end
         CarLootNumber = CarLootNumber - 1
         managers.ehi_tracker:RandomLootDeclined()
-    end
-    local DecreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = DecreaseMaximum2 }
+    end }
     -- All cars; does not get triggered when maximum has been reached
     other[100721] = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootSpawned" }
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/001
@@ -184,7 +177,6 @@ if EHI:IsLootCounterVisible() then
     other[100918] = DecreaseMaximumTrigger2 -- Nothing spawned
     other[100912] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
     other[100553] = DecreaseMaximumTrigger2 -- Car set on fire
-
     -- Loot removal (Fire)
     -- coke, meth, money, weapon
     EHI:HookLootRemovalElement({ 104475, 106825, 106826, 106827 })
@@ -192,17 +184,19 @@ end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100159] = { chance = 100, time = 30 + 20, recheck_t = 20 + 20, id = "Snipers", class = TT.Sniper.TimedChance }
     other[104026] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[105008] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
-        if self._trackers:TrackerExists("Snipers") then
-            self._trackers:SetChance("Snipers", element._values.chance)
-            self._trackers:CallFunction("Snipers", "SnipersKilled")
+    other[105008] = { id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+        local id = trigger.id
+        local chance = element._values.chance
+        if self._trackers:TrackerExists(id) then
+            self._trackers:SetChance(id, chance)
+            self._trackers:CallFunction(id, "SnipersKilled")
         else
             local t = 20 + 20
             self._trackers:AddTracker({
-                id = "Snipers",
+                id = id,
                 time = t,
                 recheck_t = t,
-                chance = element._values.chance,
+                chance = chance,
                 class = TT.Sniper.TimedChance
             })
         end
@@ -245,7 +239,7 @@ EHI:AddXPBreakdown({
                 {
                     hm1_meth_cooked = { min = 0, max = 7 }
                 },
-                loot_all = { max = money + 7 + 3 + 2 } -- Money + 7 meth bags (3 in methlab, up to 4 in basement) + 3 coke/weapons + 2 random loot from cars
+                loot_all = { max = money + 7 + 3 + 2 } -- Money + 7 meth bags (3 (max; random) in methlab, up to 4 in basement) + 3 coke/weapons + 2 random loot from cars
             }
         }
     }

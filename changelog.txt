@@ -1,3 +1,13 @@
+r206 (20. 12. 2023):
+Added options "Show Floating Health Bar" and "Show 'SNIPERS!' Popup"
+Improved compatibility with custom heists
+Mission Briefing: Fixed issues with controller
+Diamond Heist: Fixed an issue where Color Codes tracker do not hide after correct code
+Firestarter Day 2: Fixed an issue where Sniper tracker overwrote first Assault delay tracker
+Golden Grin Casino: Fixed incorrect tracker descriptions
+Golden Grin Casino: Fixed an issue where Sniper tracker overwrote first Assault delay tracker
+Hostile Takeover: Fixed a crash when achievement failed
+
 r205 (10. 12. 2023):
 Buffs: Fixed a crash with Pocket ECM
 

@@ -7,9 +7,8 @@ local triggers = {}
 ---@type ParseAchievementTable
 local achievements = {}
 local other = {}
-local level_id = Global.game_settings.level_id
 local EscapeXP = 16000
-if level_id == "firestarter_3" then
+if Global.game_settings.level_id == "firestarter_3" then
     triggers[102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire }, hint = Hints.Fire }
     achievements.slakt_5 =
     {
@@ -56,11 +55,13 @@ achievements.voff_1 =
 
 other[105364] = EHI:AddAssaultDelay({ time = 10 + 60 + 30, special_function = SF.AddTimeByPreplanning, data = { id = 104875, yes = 30, no = 15 } })
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100438] = { chance = 10, time = 30 + 60, id = "Snipers", class = TT.Sniper.Loop }
+    other[100438] = { chance = 10, time = 30 + 60, id = "Snipers", class = TT.Sniper.Loop, single_sniper = true }
     other[105327] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[101481] = { id = "Snipers", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
-        self._trackers:SetChance(trigger.id, element._values.chance) -- 20%
-        self._trackers:SetTrackerTimeNoAnim(trigger.id, 60)
+    other[101481] = { id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+        local id = trigger.id
+        self._trackers:SetChance(id, element._values.chance) -- 20%
+        self._trackers:SetTrackerTimeNoAnim(id, 60)
+        self._trackers:CallFunction(id, "AnnounceSniperSpawn")
     end)}
     other[101446] = { special_function = SF.CallTrackerManagerFunction, f = "SetTrackerTimeNoAnim", arg = { "Snipers", 60 } }
     -- Sniper spawn

@@ -41,6 +41,10 @@
     "ehi_popup_daily_failed" : "DAILY SIDE JOB FAILED!",
     "ehi_popup_loot_counter" : "LOOT COUNTER",
     "ehi_popup_all_loot_secured" : "All loot bags have been secured",
+    "ehi_popup_sniper" : "SNIPER!",
+    "ehi_popup_sniper_spawned" : "Enemy Sniper has spawned",
+    "ehi_popup_snipers" : "SNIPERS!",
+    "ehi_popup_snipers_spawned" : "Enemy Snipers have spawned",
     "ehi_achievement_ok" : "OK",
     "ehi_achievement_done" : "DONE",
     "ehi_achievement_pass" : "PASS",
@@ -514,6 +518,9 @@
 
     "ehi_show_sniper_tracker" : "Show Scripted Snipers",
     "ehi_show_sniper_tracker_desc" : "Shows a tracker with scripted snipers that respawn\n\nNote:\nMarshal snipers are not counted\nEvery heist uses different sniper logic (if there is any) and tracker may look differently",
+
+    "ehi_show_sniper_spawned_popup" : "Show 'SNIPERS!' Popup",
+    "ehi_show_sniper_spawned_popup_desc" : "Shows a popup in orange when scripted snipers spawned",
     
     "ehi_waypoints_menu" : "Waypoints",
     "ehi_waypoints_menu_desc" : "",
@@ -824,6 +831,9 @@
 
     "ehi_other_show_mission_xp_overview" : "Show Mission XP Overview",
     "ehi_other_show_mission_xp_overview_desc" : "Shows a panel in Mission Briefing with possible XP you can get",
+
+    "ehi_other_show_floating_health_bar" : "Show Floating Health Bar",
+    "ehi_other_show_floating_health_bar_desc" : "Shows floating health bar when you aim at someone",
 
     "ehi_colors_menu" : "Colors",
     "ehi_colors_menu_desc" : "Changes used colors",

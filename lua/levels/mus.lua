@@ -57,7 +57,7 @@ if EHI:IsLootCounterVisible() then
     }
     local function PrintAllInteractions()
         local count = 0
-        local interactions = managers.interaction._interactive_units or {}
+        local interactions = managers.interaction._interactive_units or {} --[[@as UnitCarry[] ]]
         for _, unit in ipairs(interactions) do
             if unit:carry_data() and unit:interaction() then
                 local unit_id = unit:editor_id()
@@ -80,12 +80,12 @@ if EHI:IsLootCounterVisible() then
         return count
     end
 
-    other[100840] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
+    other[100840] = { special_function = EHI:RegisterCustomSF(function(...)
         EHI:ShowLootCounterNoChecks({ max = PrintAllInteractions() + 1 })
     end)}
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+    other[100015] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
         if EHI:IsHost() and element:counter_value() ~= 0 then
             return
         end

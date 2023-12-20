@@ -118,54 +118,29 @@ if EHI:IsLootCounterVisible() then
     other[101281] = CokeDestroyedTrigger
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    ---@class EHImia2SnipersTracker : EHISniperLoopTracker
-    ---@field super EHISniperLoopTracker
-    EHImia2SnipersTracker = class(EHISniperLoopTracker)
-    function EHImia2SnipersTracker:post_init(params)
-        EHImia2SnipersTracker.super.post_init(self, params)
-        self._sniper_respawn = true
-        if params.chance_success then
-            self:OnChanceSuccess()
-        end
-    end
-    function EHImia2SnipersTracker:OnChanceSuccess()
-        self:RemoveTrackerFromUpdate()
-        self._sniper_respawn = false
-    end
-    function EHImia2SnipersTracker:DecreaseCount()
-        EHImia2SnipersTracker.super.DecreaseCount(self)
-        self:SniperLoopStart()
-    end
-    function EHImia2SnipersTracker:SniperLoopStart()
-        if self._sniper_respawn then
-            return
-        end
-        self._sniper_respawn = true
-        self._time = 36 -- 1 + 35
-        self:AddTrackerToUpdate()
-    end
-    local ChanceSuccess = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+    local ChanceSuccess = EHI:RegisterCustomSF(function(self, trigger, element, ...)
         local id = trigger.id
+        local chance = element._values.chance
         if self._trackers:TrackerExists(id) then
-            self._trackers:SetChance(id, element._values.chance) -- 10%/15%
-            self._trackers:CallFunction(id, "OnChanceSuccess")
+            self._trackers:CallFunction(id, "OnChanceSuccess", chance) -- 10%/15%
         else
             self._trackers:AddTracker({
                 id = id,
-                chance = element._values.chance,
+                chance = chance,
                 on_fail_refresh_t = 0.5 + 35,
+                reset_t = 1 + 35,
                 chance_success = true,
-                class = "EHImia2SnipersTracker"
+                class = TT.Sniper.LoopRestart
             })
         end
     end)
-    other[100667] = { chance = 100, time = 35, on_fail_refresh_t = 0.5 + 35, id = "Snipers", class = "EHImia2SnipersTracker" }
+    other[100667] = { chance = 100, time = 35, on_fail_refresh_t = 0.5 + 35, reset_t = 1 + 35, id = "Snipers", class = TT.Sniper.LoopRestart }
     other[100682] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100683] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[100685] = { id = "Snipers", special_function = ChanceSuccess }
     other[100686] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +10%
     other[100687] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
-    other[100512] = { chance = 100, time = 35, on_fail_refresh_t = 0.5 + 35, id = "Snipers2", class = "EHImia2SnipersTracker" }
+    other[100512] = { chance = 100, time = 35, on_fail_refresh_t = 0.5 + 35, reset_t = 1 + 35, id = "Snipers2", class = TT.Sniper.LoopRestart }
     other[101202] = { id = "Snipers2", special_function = SF.IncreaseChanceFromElement } -- +10%
     other[101197] = { id = "Snipers2", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[101208] = { id = "Snipers2", special_function = ChanceSuccess }

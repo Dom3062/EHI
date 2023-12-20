@@ -70,7 +70,7 @@ local achievements =
     {
         elements =
         {
-            [101031] = { status = "defend", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+            [101031] = { status = "defend", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
                     self:CheckCondition(trigger)
                 end
@@ -102,7 +102,7 @@ if EHI:IsLootCounterVisible() then
         other[EHI:GetInstanceElementID(100201, index)] = Trigger
         other[EHI:GetInstanceElementID(100202, index)] = Trigger
     end
-    other[101041] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
+    other[101041] = { special_function = EHI:RegisterCustomSF(function(...)
     EHI:ShowLootCounterNoChecks({
             -- 1 flipped wagon crate; guaranteed to have gold or 2x money (15% chance)
             -- If second money bundle spawns, the maximum is increased in the Trigger above
@@ -111,7 +111,7 @@ if EHI:IsLootCounterVisible() then
     end)}
     -- 1 random loot in train wagon, 35% chance to spawn
     -- Wagons are selected randomly; sometimes 2 with possible loot spawns, sometimes 1
-    local IncreaseMaxRandomLoot = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    local IncreaseMaxRandomLoot = EHI:RegisterCustomSF(function(self, trigger, ...)
         local index = trigger.index
         local crate = EHI:GetInstanceUnitID(100000, index)
         local LootTrigger = {}
@@ -136,41 +136,9 @@ if EHI:IsLootCounterVisible() then
     other[104281] = { special_function = IncreaseMaxRandomLoot, index = 1300 }
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    ---@class EHIcrojob3SnipersTracker : EHISniperLoopTracker
-    ---@field super EHISniperLoopTracker
-    EHIcrojob3SnipersTracker = class(EHISniperLoopTracker)
-    function EHIcrojob3SnipersTracker:pre_init(params)
-        self._sniper_respawn = true
-        self._initial_spawn = true
-        EHIcrojob3SnipersTracker.super.pre_init(self, params)
-    end
-    function EHIcrojob3SnipersTracker:RequestRemoval()
-        self._sniper_respawn = true -- To disable the respawn
-        EHIcrojob3SnipersTracker.super.RequestRemoval(self)
-    end
-    function EHIcrojob3SnipersTracker:OnChanceSuccess()
-        self:SetChance(10) -- ´set10´ ElementLogicChanceOperator 100749
-        self:RemoveTrackerFromUpdate()
-        self._sniper_respawn = false
-    end
-    function EHIcrojob3SnipersTracker:SniperKilled()
-        if self._sniper_respawn then
-            return
-        end
-        self._sniper_respawn = true
-        self:OnChanceFail()
-        self:AddTrackerToUpdate()
-    end
-    function EHIcrojob3SnipersTracker:Refresh()
-        if self._initial_spawn then
-            self:OnChanceSuccess()
-            self._initial_spawn = nil
-        end
-    end
-    other[100750] = { chance = 100, time = 120, on_fail_refresh_t = 40, id = "Snipers", class = "EHIcrojob3SnipersTracker" }
+    other[100750] = { chance = 100, time = 120, on_fail_refresh_t = 40, initial_spawn_chance_set = 10, id = "Snipers", class = TT.Sniper.LoopRestart }
     other[100745] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
-    other[100749] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" } -- 10%
-    other[100518] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperKilled" }
+    other[100749] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess", arg = { 10 } } -- 10%
     other[102928] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "RequestRemoval" }
     other[100744] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100496] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%

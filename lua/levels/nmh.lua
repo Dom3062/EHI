@@ -77,7 +77,7 @@ local triggers = {
     [103006] = { chance = 100, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.nmh_PatientFileChance },
     [104752] = { id = "CorrectPaperChance", special_function = SF.RemoveTracker },
 
-    [102675] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+    [102675] = { special_function = EHI:RegisterCustomSF(function(self, ...)
         self._trackers:RemoveTracker("AnswerPhone")
         self._trackers:RemoveTracker("Patrol")
         self._trackers:RemoveTracker("ExtraCivilianElevatorLeft")

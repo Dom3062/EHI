@@ -5,23 +5,20 @@ EHIcac33Tracker = class(EHIAchievementStatusTracker)
 EHIcac33Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac33Tracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIcac33Tracker.SetProgress = EHIProgressTracker.SetProgress
----@param panel Panel
----@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIcac33Tracker:init(panel, params, parent_class)
+function EHIcac33Tracker:init(...)
     self._progress = 0
     self._max = 200
-    EHIcac33Tracker.super.init(self, panel, params, parent_class)
+    EHIcac33Tracker.super.init(self, ...)
     self._flash_times = 1
 end
 
 function EHIcac33Tracker:OverridePanel()
     self._progress_text = self:CreateText({
         name = "progress",
-        text = self:FormatProgress()
+        text = self:FormatProgress(),
+        visible = false,
+        FitTheText = true
     })
-    self._progress_text:set_visible(false)
-    self:FitTheText(self._progress_text)
 end
 
 function EHIcac33Tracker:Activate()

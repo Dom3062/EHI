@@ -84,7 +84,7 @@ else
         end
     end
     triggers[101366] = { additional_time = 5 + 40, random_time = 10, id = "VaultTeargas", icons = { Icon.Teargas }, hint = Hints.Teargas }
-    local LiquidNitrogen = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    local LiquidNitrogen = EHI:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:TrackerDoesNotExist("LiquidNitrogen") then
             self._trackers:AddTracker({
                 id = "LiquidNitrogen",

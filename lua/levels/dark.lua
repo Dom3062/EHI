@@ -103,10 +103,10 @@ local achievements =
         }
     }
 }
-local AddBodyBag = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+local AddBodyBag = EHI:RegisterCustomSF(function(self, trigger, ...)
     self._trackers:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
 end)
-local RemoveBodyBag = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+local RemoveBodyBag = EHI:RegisterCustomSF(function(self, trigger, ...)
     self._trackers:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
 end)
 for i = 12850, 13600, 250 do

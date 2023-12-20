@@ -11,9 +11,7 @@ local triggers = {
     [100654] = { time = 120, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Winch },
     [100655] = { id = "Winch", special_function = SF.PauseTracker },
     [100656] = { id = "Winch", special_function = SF.UnpauseTracker },
-    [EHI:GetInstanceElementID(100077, 2900)] = { time = 90, id = "Cutter", icons = { Icon.Glasscutter }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100021, 2900) }, hint = Hints.Cutter },
-    [EHI:GetInstanceElementID(100078, 2900)] = { id = "Cutter", special_function = SF.PauseTracker },
-    [EHI:GetInstanceElementID(100103, 2900)] = { time = 5, id = "C4OfficeFloor", icons = { Icon.C4 }, hint = Hints.Explosion },
+    -- Cutter and C4 handled in CoreWorldInstanceManager
 
     [100124] = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire }, hint = Hints.Thermite },
 
@@ -59,7 +57,7 @@ local achievements =
 
 local other =
 {
-    [100955] = EHI:AddAssaultDelay({ additional_time = 45 + 30, random_time = 15, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+    [100955] = EHI:AddAssaultDelay({ additional_time = 45 + 30, random_time = 15, special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
         if (EHI:IsHost() and element:counter_value() ~= 0) or self._trackers:TrackerExists(trigger.id) then
             return
         end
@@ -67,13 +65,14 @@ local other =
     end) })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[EHI:GetInstanceElementID(100025, 16400)] = { id = "Snipers", class = TT.Sniper.Count }
+    other[EHI:GetInstanceElementID(100025, 16400)] = { id = "Snipers", class = TT.Sniper.Count, single_sniper = true }
     other[EHI:GetInstanceElementID(100090, 16400)] = { id = "Snipers", class = TT.Sniper.Count }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[EHI:GetInstanceElementID(100056, 16400)] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
     other[EHI:GetInstanceElementID(100027, 16400)] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[EHI:GetInstanceElementID(100026, 16400)] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end

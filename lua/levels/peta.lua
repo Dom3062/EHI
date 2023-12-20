@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local SetTimeIfEnabled = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+local SetTimeIfEnabled = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
     if enabled then
         if self._trackers:TrackerExists(trigger.id) then
             self._trackers:SetTrackerTime(trigger.id, trigger.time)
@@ -12,7 +12,7 @@ local SetTimeIfEnabled = EHI:RegisterCustomSpecialFunction(function(self, trigge
         end
     end
 end)
-local ShowWaypoint = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+local ShowWaypoint = EHI:RegisterCustomSF(function(self, trigger, ...)
     trigger.data.distance = true
     trigger.data.state = "sneak_present"
     trigger.data.present_timer = 0

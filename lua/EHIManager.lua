@@ -138,7 +138,7 @@ function EHIManager:CountLootbagsOnTheGround(offset)
         end
     end
     local count = 0 - (offset or 0)
-    local interactions = managers.interaction._interactive_units
+    local interactions = managers.interaction._interactive_units ---@cast interactions UnitCarry[]
     for _, unit in ipairs(interactions) do
         if unit:carry_data() and lootbags[unit:carry_data():carry_id()] then
             count = count + 1
@@ -337,6 +337,7 @@ function EHIManager:SetTimeNoAnim(id, t)
     self._waypoints:SetWaypointTime(id, t)
 end
 
+---@param id string
 function EHIManager:IncreaseProgress(id)
     self._trackers:IncreaseTrackerProgress(id)
     self._waypoints:IncreaseWaypointProgress(id)
@@ -344,7 +345,6 @@ end
 
 ---@param id string
 ---@param f string
----@param ... any
 function EHIManager:Call(id, f, ...)
     self._trackers:CallFunction(id, f, ...)
     self._waypoints:CallFunction(id, f, ...)
@@ -526,7 +526,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     local function Cleanup(data)
         for _, element in pairs(data.elements or {}) do
             if element.special_function and element.special_function > SF.CustomSF then
-                self:UnregisterCustomSpecialFunction(element.special_function)
+                self:UnregisterCustomSF(element.special_function)
             end
         end
         if type(data.cleanup_callback) == "function" then
@@ -624,7 +624,7 @@ function EHIManager:ParseOtherTriggers(new_triggers, trigger_id_all, trigger_ico
         -- Unregister custom special function if it is there
         if data.condition == false then
             if data.special_function and data.special_function > SF.CustomSF then
-                self:UnregisterCustomSpecialFunction(data.special_function)
+                self:UnregisterCustomSF(data.special_function)
             end
             new_triggers[id] = nil
         end
@@ -643,7 +643,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
                 if self.SyncFunctions[data.special_function] then
                     self:AddTriggers2({ [id] = data }, nil, trigger_id_all or "Trigger", trigger_icons_all)
                 elseif data.special_function > SF.CustomSF then
-                    self:UnregisterCustomSpecialFunction(data.special_function)
+                    self:UnregisterCustomSF(data.special_function)
                 end
             end
         end
@@ -659,7 +659,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
         -- Unregister custom special function if it is there
         if data.condition == false then
             if data.special_function and data.special_function > SF.CustomSF then
-                self:UnregisterCustomSpecialFunction(data.special_function)
+                self:UnregisterCustomSF(data.special_function)
             end
             new_triggers[id] = nil
         else
@@ -883,7 +883,7 @@ function EHIManager:HookElements(elements_to_hook)
     local f = client and Client or Host
     local scripts = managers.mission._scripts or {}
     for id, _ in pairs(elements_to_hook) do
-        if id >= 100000 and id <= 999999 then
+        if math.within(id, 100000, 999999) then
             for _, script in pairs(scripts) do
                 local element = script:element(id)
                 if element then
@@ -1455,18 +1455,18 @@ end
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
 ---@return nil
 ---@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)): integer
-function EHIManager:RegisterCustomSpecialFunction(id, f)
+function EHIManager:RegisterCustomSF(id, f)
     if f then
         self.SFF[id] = f
     else
-        local f_id = EHI:GetFreeCustomSpecialFunctionID()
+        local f_id = EHI:GetFreeCustomSFID()
         self.SFF[f_id] = id
         return f_id
     end
 end
 
 ---@param id number
-function EHIManager:UnregisterCustomSpecialFunction(id)
+function EHIManager:UnregisterCustomSF(id)
     self.SFF[id] = nil
 end
 

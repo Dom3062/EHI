@@ -32,10 +32,10 @@ function EHIkosugi5Tracker:OverridePanel()
     self._armor_progress_text = self:CreateText({
         name = "text2",
         text = self:FormatArmorProgress(),
-        w = self._bg_box:w() / 2
+        w = self._bg_box:w() / 2,
+        left = self._text:right(),
+        FitTheText = true
     })
-    self:FitTheText(self._armor_progress_text)
-    self._armor_progress_text:set_left(self._text:right())
     self:SetIconX()
 end
 
@@ -74,7 +74,7 @@ end
 local function CheckForBrokenWeapons()
     local world = managers.worlddefinition
     for i = 100863, 100867, 1 do
-        local weapon = world:get_unit(i)
+        local weapon = world:get_unit(i) --[[@as UnitCarry?]]
         if weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
             local state = weapon:damage()._state.graphic_group.grp_wpn
             if state[1] == "set_visibility" and state[2] then
@@ -88,7 +88,7 @@ end
 local function CheckForBrokenCocaine() -- Not working for drop-ins
     local world = managers.worlddefinition
     for i = 100686, 100692, 1 do -- 2 - 8
-        local unit = world:get_unit(i)
+        local unit = world:get_unit(i) --[[@as UnitCarry?]]
         if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_hidden == 0 then
             --EHI:Log("Found broken unit cocaine with ID: " .. tostring(unit:editor_id()))
             managers.ehi_tracker:IncreaseLootCounterProgressMax()
@@ -111,7 +111,7 @@ end
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local DisableTriggerAndExecute = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+local DisableTriggerAndExecute = EHI:RegisterCustomSF(function(self, trigger, ...)
     self:UnhookTrigger(trigger.data.id)
     self:CheckCondition(trigger)
 end)

@@ -26,10 +26,10 @@ function EHIPiggyBankMutatorTracker:OverridePanel()
     self._levels_text = self:CreateText({
         name = "levels_text",
         text = self:FormatLevels(),
-        w = self._bg_box:w() / 2
+        w = self._bg_box:w() / 2,
+        left = self._text:right(),
+        FitTheText = true
     })
-    self:FitTheText(self._levels_text)
-    self._levels_text:set_left(self._text:right())
     self:SetIconX()
 end
 
@@ -105,7 +105,7 @@ function EHIPiggyBankMutatorTracker:AnimateNewLevel()
                     t = t + coroutine.yield()
                     local n = 1 - sin(t * 180)
                     --local r = lerp(1, 0, n)
-                    local g = lerp(1, 0, n)
+                    local g = lerp(1, 0, n) ---@cast g -Color
                     local c = Color(g, 1, g)
                     self:SetTextColor(c)
                 end

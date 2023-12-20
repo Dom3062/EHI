@@ -36,7 +36,7 @@ local triggers = {
     [100082] = { time = 30 + 10, id = "HeliComesWithMagnet", icons = { Icon.Heli, Icon.Winch }, hint = Hints.Winch },
 
     --- Add 0.2 delay here so the tracker does not hide first before this gets executed again; players won't notice 0.2 delay here
-    [100147] = { time = 18.2 + 0.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+    [100147] = { time = 18.2 + 0.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
         if enabled then
             if self._trackers:TrackerExists(trigger.id) then
                 self._trackers:SetTrackerTimeNoAnim(trigger.id, trigger.time)
@@ -47,7 +47,7 @@ local triggers = {
     end), hint = Hints.Wait },
     [102181] = { id = "HeliMagnetLoop", special_function = SF.RemoveTracker },
 
-    [100206] = { time = 30, id = "LoweringTheMagnet", icons = { Icon.Heli, Icon.Winch, Icon.Goto }, waypoint = { icon = Icon.Interact, position_by_element = 101016 }, hint = Hints.Winch },
+    [100206] = { time = 30, id = "LoweringTheMagnet", icons = Icon.HeliDropWinch, waypoint = { icon = Icon.Interact, position_by_element = 101016 }, hint = Hints.Winch },
 
     [103869] = { time = 600, id = "PanicRoomTakeoff", class = "EHIHeliTracker", hint = Hints.Defend },
     [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1004051 }, hint = Hints.Wait },

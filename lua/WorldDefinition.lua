@@ -16,7 +16,7 @@ end
 function EHI:FinalizeUnits(tbl)
     local wd = managers.worlddefinition
     for id, unit_data in pairs(tbl) do
-        local unit = wd:get_unit(id)
+        local unit = wd:get_unit(id) --[[@as UnitTimer|UnitDigitalTimer?]]
         if unit then
             if unit_data.f then
                 if type(unit_data.f) == "string" then

@@ -220,9 +220,25 @@
 ---@field warning boolean
 ---@field completion boolean
 ---@field icon_on_pause table
----@field f string|fun(id: number, unit_data: self, unit: Unit)
+---@field f string|fun(id: number, unit_data: self, unit: UnitTimer|UnitDigitalTimer)
 ---@field hint string
 ---@field [any] any
+
+---@class EHI.ColorTable.Color
+---@field unit_id number Unit ID (100000)
+---@field unit_ids number[] Unit ID (100000); higher priority than `unit_id`
+---@field index number Instance start index
+---@field indexes number[] Instance start index; higher priority than `index`
+
+---@class EHI.ColorTable.params
+---@field no_mission_check boolean
+---@field tracker_name string Defaults to `ColorCodes` if not provided
+---@field unit_id_all number Overrides `unit_id` and `unit_ids`
+
+---@class EHI.ColorTable
+---@field red EHI.ColorTable.Color
+---@field green EHI.ColorTable.Color
+---@field blue EHI.ColorTable.Color
 
 ---@class EHITracker.params
 ---@field id string
@@ -230,7 +246,6 @@
 ---@field time number?
 ---@field x number Provided by `EHITrackerManager`
 ---@field y number Provided by `EHITrackerManager`
----@field parent_class EHITrackerManager
 ---@field hide_on_delete boolean?
 ---@field flash_times number?
 ---@field flash_bg boolean?
@@ -242,10 +257,14 @@
 ---@field name string? Text name
 ---@field status_text string? Sets status text, like in achievements
 ---@field text string? Text to display
+---@field x number?
+---@field left number? Identical to `x`
 ---@field w number?
 ---@field h number?
 ---@field color Color?
 ---@field visible boolean?
+---@field FitTheText boolean? Fits the text in the text
+---@field FitTheText_FontSize number? Fits the text in the text with given font size, depends on `FitTheText`
 
 ---@class XPBreakdown.tactic.i_custom.objectives_override.stop_at_inclusive_and_add_objectives
 ---@field stop_at string

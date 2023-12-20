@@ -4,7 +4,15 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local pink_car = { { icon = Icon.Car, color = Color("D983D1") }, Icon.Goto }
-local ExecuteIfEnabled = EHI:GetFreeCustomSpecialFunctionID()
+local ExecuteIfEnabled = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+    if enabled then
+        if self._trackers:TrackerExists(trigger.id) then
+            self._trackers:SetTrackerTime(trigger.id, trigger.time)
+        else
+            self:CheckCondition(trigger)
+        end
+    end
+end)
 local triggers = {
     [100778] = { time = 10 + 17 + 13 + 15 + 17, id = "DefendWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
@@ -66,7 +74,7 @@ local other =
     [100179] = EHI:AddAssaultDelay({ time = 1 + 9.5 + 11 + 1 + 30 })
 }
 if EHI:IsLootCounterVisible() then
-    other[100107] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
+    other[100107] = { special_function = EHI:RegisterCustomSF(function(...)
         EHI:ShowLootCounterNoChecks({ max = 6 })
     end)}
     other[100037] = { special_function = SF.CallTrackerManagerFunction, f = "SecuredMissionLoot" } -- Secured diamonds at Mr. Blonde or in a Van
@@ -87,15 +95,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:RegisterCustomSpecialFunction(ExecuteIfEnabled, function(self, trigger, element, enabled)
-    if enabled then
-        if self._trackers:TrackerExists(trigger.id) then
-            self._trackers:SetTrackerTime(trigger.id, trigger.time)
-        else
-            self:CheckCondition(trigger)
-        end
-    end
-end)
 EHI:AddXPBreakdown({
     objectives =
     {

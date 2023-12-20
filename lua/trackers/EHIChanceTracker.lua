@@ -1,5 +1,6 @@
 ---@class EHIChanceTracker : EHITracker
 ---@field super EHITracker
+---@field _anim_flash_set_chance number?
 EHIChanceTracker = class(EHITracker)
 EHIChanceTracker._update = false
 ---@param params EHITracker.params
@@ -31,6 +32,6 @@ function EHIChanceTracker:SetChance(amount)
     self._chance = math.max(0, amount)
     self._chance_text:set_text(self:FormatChance())
     self:FitTheText(self._chance_text)
-    self:AnimateBG()
+    self:AnimateBG(self._anim_flash_set_chance)
 end
 EHIChanceTracker.FormatChance = EHIChanceTracker.Format

@@ -5,7 +5,22 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local heli_delay = 26 + 6
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local dah_laptop_codes = { red = 1900, green = 2100, blue = 2300 }
+---@type EHI.ColorTable
+local dah_laptop_codes =
+{
+    red =
+    {
+        index = 1900
+    },
+    green =
+    {
+        index = 2100
+    },
+    blue =
+    {
+        index = 2300
+    }
+}
 local element_sync_triggers =
 {
     [103569] = { time = 25, id = "CFOFall", icons = { Icon.Hostage, Icon.Goto }, hook_element = 100438, hint = Hints.Wait }
@@ -19,19 +34,11 @@ local triggers = {
     [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100475, remove_vanilla_waypoint = 104882 }, hint = Hints.Escape },
     [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element_and_remove_vanilla_waypoint = 103163 }, hint = Hints.Escape },
 
-    [103969] = { id = "ColorCodes", class = TT.ColoredCodes, hint = Hints.ColorCodes },
-    [102338] = { id = "ColorCodes", special_function = SF.RemoveTracker }
+    [103969] = { id = "ColorCodes", class = TT.ColoredCodes },
+    [102338] = { id = "ColorCodes", special_function = SF.RemoveTracker }, -- Alarm
+    [101652] = { id = "ColorCodes", special_function = SF.RemoveTracker } -- Vault opened
 }
-if EHI:GetOption("show_mission_trackers") then
-    for color, index in pairs(dah_laptop_codes) do
-        local unit_id = EHI:GetInstanceUnitID(100052, index)
-        for i = 0, 9, 1 do
-            managers.mission:add_runned_unit_sequence_trigger(unit_id, "set_" .. color .. "_0" .. tostring(i), function(...)
-                managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, i)
-            end)
-        end
-    end
-end
+EHI:HookColorCodes(dah_laptop_codes, { unit_id_all = 100052 })
 if EHI:IsClient() then
     EHI:SetSyncTriggers(element_sync_triggers)
 else
@@ -171,7 +178,7 @@ local xp =
 }
 EHI:AddXPBreakdown(xp)
 if EHI:IsHost() then
-    dah_laptop_codes = nil
+    dah_laptop_codes = nil ---@diagnostic disable-line
     return
 end
 local bg = Idstring("g_code_screen"):key()
@@ -203,8 +210,8 @@ EHI:AddLoadSyncFunction(function(self)
     if EHI.ConditionFunctions.IsStealth() then
         self:Trigger(103969)
         local wd = managers.worlddefinition
-        for color, index in pairs(dah_laptop_codes) do
-            local unit_id = EHI:GetInstanceUnitID(100052, index)
+        for color, data in pairs(dah_laptop_codes) do
+            local unit_id = EHI:GetInstanceUnitID(100052, data.index)
             local unit = wd:get_unit(unit_id)
             local code = CheckIfCodeIsVisible(unit, color)
             if code then
@@ -215,5 +222,5 @@ EHI:AddLoadSyncFunction(function(self)
     -- Clear memory
     bg = nil
     codes = nil
-    dah_laptop_codes = nil
+    dah_laptop_codes = nil ---@diagnostic disable-line
 end)

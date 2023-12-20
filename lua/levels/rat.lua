@@ -129,13 +129,14 @@ if EHI:IsClient() then
     ---@class EHICookingChanceTracker : EHITimedChanceTracker
     ---@field super EHITimedChanceTracker
     EHICookingChanceTracker = class(EHITimedChanceTracker)
+    EHICookingChanceTracker._tracker_type = "inaccurate"
     ---@param time number
     ---@param inaccurate boolean?
     function EHICookingChanceTracker:SetTimeNoAnim(time, inaccurate)
         EHICookingChanceTracker.super.SetTimeNoAnim(self, time)
         self._tracker_type = inaccurate and "inaccurate" or "accurate"
     end
-    local SetTimeNoAnimOrCreateTrackerClient = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    local SetTimeNoAnimOrCreateTrackerClient = EHI:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         local tracker = self._trackers:GetTracker(id) ---@cast tracker EHICookingChanceTracker
         if tracker then
@@ -146,6 +147,7 @@ if EHI:IsClient() then
             self:CheckCondition(trigger)
         end
     end)
+    triggers[102383].class = "EHICookingChanceTracker"
     triggers[100721].class = "EHICookingChanceTracker"
     triggers[100724] = { additional_time = 20, random_time = 5, id = "CookChance", icons = { Icon.Methlab, Icon.Loop }, special_function = SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
     EHI:SetSyncTriggers(element_sync_triggers)
@@ -173,7 +175,7 @@ local other =
     [102383] = EHI:AddAssaultDelay({ time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local SetRespawnTime = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    local SetRespawnTime = EHI:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         if self._trackers:TrackerExists(id) then
             self._trackers:CallFunction(id, "SetRespawnTime", trigger.time)

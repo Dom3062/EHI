@@ -31,10 +31,10 @@ function EHIameno3Tracker:OverridePanel()
     self._money_text = self:CreateText({
         name = "text2",
         text = self:FormatNumber(),
-        w = self._bg_box:w() / 2
+        w = self._bg_box:w() / 2,
+        left = 0,
+        FitTheText = true
     })
-    self:FitTheText(self._money_text)
-    self._money_text:set_left(0)
     self._text:set_left(self._money_text:right())
     self:SetIconX()
 end
@@ -91,7 +91,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local MoneyTrigger = { id = "MallDestruction", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+local MoneyTrigger = { id = "MallDestruction", special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
     self._trackers:IncreaseTrackerProgress(trigger.id, element._values.amount)
 end) }
 local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)

@@ -39,7 +39,7 @@ if EHI:EscapeVehicleWillReturn("pal") then
     sync_triggers[EHI:GetInstanceElementID(100013, 4850)] = heli
 end
 if EHI:IsClient() then
-    local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:RemoveTracker(trigger.data.id)
         if self._trackers:TrackerDoesNotExist(trigger.id) then
             self:CheckCondition(trigger)

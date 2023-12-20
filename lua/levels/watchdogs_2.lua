@@ -7,8 +7,8 @@ local Hints = EHI.Hints
 local anim_delay = 450/30
 local boat_delay = 60 + 30 + 30 + 450/30
 local boat_icon = { Icon.Boat, Icon.LootDrop }
-local AddToCache = EHI:GetFreeCustomSpecialFunctionID()
-local GetFromCache = EHI:GetFreeCustomSpecialFunctionID()
+local AddToCache = EHI:GetFreeCustomSFID()
+local GetFromCache = EHI:GetFreeCustomSFID()
 local BoatPos = 0
 local WPPos =
 {
@@ -32,7 +32,7 @@ end
 local function SetBoatPos(pos)
     BoatPos = pos
 end
-local SetBoatPosFromElement = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+local SetBoatPosFromElement = EHI:RegisterCustomSF(function(self, trigger, element, ...)
     BoatPos = element._values.amount + 6
 end)
 ---@type ParseTriggerTable
@@ -78,7 +78,7 @@ local triggers = {
     end}
 }
 if EHI:IsClient() then
-    local boat_return = { time = anim_delay, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    local boat_return = { time = anim_delay, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         if self:Exists(trigger.id) then
             self:SetAccurate(trigger.id, trigger.time)
         elseif not (self:Exists(trigger.id2) or self:Exists(trigger.id3)) then
@@ -98,7 +98,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100124] = { status = "defend", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+            [100124] = { status = "defend", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
                 local bags = self:CountLootbagsOnTheGround(10)
                 if bags == 12 then
                     self:CheckCondition(trigger)
@@ -120,6 +120,11 @@ local other =
 }
 if EHI:GetOption("show_sniper_tracker") then
     other[100457] = { time = 23 + 1, id = "Snipers", icons = { "snipers" }, class = TT.Warning, hint = Hints.EnemySnipers }
+    if EHI:GetOption("show_sniper_spawned_popup") then
+        other[100528] = { special_function = SF.CustomCode, f = function()
+            managers.hud:ShowSnipersSpawned() -- 2 snipers spawn
+        end}
+    end
 end
 
 EHI:ParseTriggers({
@@ -127,10 +132,10 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 }, "BoatLootDropReturn", boat_icon)
-EHI:RegisterCustomSpecialFunction(AddToCache, function(self, trigger, ...)
+EHI:RegisterCustomSF(AddToCache, function(self, trigger, ...)
     EHI._cache[trigger.id] = trigger.time
 end)
-EHI:RegisterCustomSpecialFunction(GetFromCache, function(self, trigger, ...)
+EHI:RegisterCustomSF(GetFromCache, function(self, trigger, ...)
     local t = EHI._cache[trigger.id]
     EHI._cache[trigger.id] = nil
     if t then

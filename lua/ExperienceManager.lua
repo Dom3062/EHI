@@ -80,8 +80,8 @@ function ExperienceManager:init(...)
             self._ehi_xp.stealth = false
             self:RecalculateSkillXPMultiplier()
         end)
-        EHI:AddOnCustodyCallback(function(state)
-            self:SetInCustody(state)
+        EHI:AddOnCustodyCallback(function(custody_state)
+            self:SetInCustody(custody_state)
         end)
         EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
     end
@@ -98,6 +98,7 @@ function ExperienceManager:init(...)
     end
 end
 
+---@param managers managers
 function ExperienceManager:LoadData(managers)
     -- Job
     local job = managers.job
@@ -144,7 +145,9 @@ function ExperienceManager:HookAwardXP()
         xp_panel = 1 -- Force one XP panel when the heist gives you the XP at the escape zone -> less screen clutter
     end
     if xp_panel == 1 then
-        Show = function(self, diff)
+        ---@param xp ExperienceManager
+        ---@param diff number
+        Show = function(xp, diff)
             if managers.ehi_tracker:TrackerExists("XP") then
                 managers.ehi_tracker:AddXPToTracker("XP", diff)
             else
@@ -156,67 +159,83 @@ function ExperienceManager:HookAwardXP()
             end
         end
     elseif xp_panel == 3 then
-        Show = function(self, diff)
+        ---@param xp ExperienceManager
+        ---@param diff number
+        Show = function(xp, diff)
             if managers.hud then
-                managers.hud:custom_ingame_popup_text(EXPERIENCE, EXPERIENCE_GAINED .. self:cash_string(diff, diff >= 0 and "+" or "") .. "\n" .. EXPERIENCE_TOTAL .. self:cash_string(TotalXP, "+"), "EHI_XP")
+                managers.hud:custom_ingame_popup_text(EXPERIENCE, EXPERIENCE_GAINED .. xp:cash_string(diff, diff >= 0 and "+" or "") .. "\n" .. EXPERIENCE_TOTAL .. xp:cash_string(TotalXP, "+"), "EHI_XP")
             end
         end
     elseif xp_panel == 4 then
-        Show = function(self, diff)
+        ---@param xp ExperienceManager
+        ---@param diff number
+        Show = function(xp, diff)
             if managers.hud and managers.hud._hud_hint then
-                managers.hud:show_hint({ text = EXPERIENCE_GAINED .. self:cash_string(diff, diff >= 0 and "+" or "") .. " XP; ".. EXPERIENCE_TOTAL .. self:cash_string(TotalXP, "+") .. " XP" })
+                managers.hud:show_hint({ text = EXPERIENCE_GAINED .. xp:cash_string(diff, diff >= 0 and "+" or "") .. " XP; ".. EXPERIENCE_TOTAL .. xp:cash_string(TotalXP, "+") .. " XP" })
             end
         end
     end
     local f
     if xp_panel == 2 then
         if xp_format == 1 then
-            f = function(self, amount)
+            ---@param xp ExperienceManager
+            ---@param amount number
+            f = function(xp, amount)
                 if amount > 0 then
                     managers.ehi_tracker:AddXPToTracker("XPTotal", amount)
                 end
             end
         elseif xp_format == 2 then
-            f = function(self, amount)
+            ---@param xp ExperienceManager
+            ---@param amount number
+            f = function(xp, amount)
                 if amount > 0 then
-                    managers.ehi_tracker:AddXPToTracker("XPTotal", amount * self._ehi_xp.difficulty_multiplier)
+                    managers.ehi_tracker:AddXPToTracker("XPTotal", amount * xp._ehi_xp.difficulty_multiplier)
                 end
             end
         else
-            f = function(self, amount)
+            ---@param xp ExperienceManager
+            ---@param amount number
+            f = function(xp, amount)
                 if amount > 0 then
                     BaseXP = BaseXP + amount
-                    managers.ehi_tracker:SetXPInTracker("XPTotal", self:MultiplyXPWithAllBonuses(BaseXP))
+                    managers.ehi_tracker:SetXPInTracker("XPTotal", xp:MultiplyXPWithAllBonuses(BaseXP))
                 end
             end
         end
     elseif xp_format == 1 then
-        f = function(self, amount)
+        ---@param xp ExperienceManager
+        ---@param amount number
+        f = function(xp, amount)
             if amount > 0 then
-                self:ShowGainedXP(amount, amount)
+                xp:ShowGainedXP(amount, amount)
             end
         end
     elseif xp_format == 2 then
-        f = function(self, amount)
+        ---@param xp ExperienceManager
+        ---@param amount number
+        f = function(xp, amount)
             if amount > 0 then
-                self:ShowGainedXP(amount, amount * self._ehi_xp.difficulty_multiplier)
+                xp:ShowGainedXP(amount, amount * xp._ehi_xp.difficulty_multiplier)
             end
         end
     else
-        f = function(self, amount)
+        ---@param xp ExperienceManager
+        ---@param amount number
+        f = function(xp, amount)
             if amount > 0 then
-                self:ShowGainedXP(amount)
+                xp:ShowGainedXP(amount)
             end
         end
     end
     EHI:Hook(self, "mission_xp_award", f)
-    EHI:Hook(self, "on_loot_drop_xp", function(self, value_id)
+    EHI:Hook(self, "on_loot_drop_xp", function(xp, value_id) ---@param xp ExperienceManager
         local amount = tweak_data:get_value("experience_manager", "loot_drop_value", value_id) or 0
         if amount <= 0 then
             return
         end
-        self._ehi_xp.bonus_xp = self._ehi_xp.bonus_xp + amount
-        self:RecalculateXP()
+        xp._ehi_xp.bonus_xp = xp._ehi_xp.bonus_xp + amount
+        xp:RecalculateXP()
     end)
 end
 

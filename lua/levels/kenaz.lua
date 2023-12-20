@@ -3,14 +3,11 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local heli_delay = 22 + 1 + 1.5
-local heli_icon = { Icon.Heli, Icon.Winch, Icon.Goto }
 local refill_icon = { Icon.Water, Icon.Loop }
-local heli_60 = { time = 60 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery }
-local heli_30 = { time = 30 + heli_delay, id = "HeliWithWinch", icons = heli_icon, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery }
 if EHI:GetOption("show_one_icon") then
     refill_icon = { { icon = Icon.Water, color = tweak_data.ehi.colors.WaterColor } }
 end
+---@type EHI.ColorTable
 local keycode_units =
 {
     red =
@@ -38,14 +35,14 @@ local preload =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [100282] = { id = "ColorCodes", class = TT.ColoredCodes, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    [100282] = { id = "ColorCodes", class = TT.ColoredCodes, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
             return
         end
         self:AddTracker(trigger)
-    end), hint = Hints.ColorCodes },
+    end) },
     [100091] = { id = "ColorCodes", special_function = SF.RemoveTracker }, -- Code entered (stealth)
-    [101357] = { id = "ColorCodes", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+    [101357] = { id = "ColorCodes", special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
         if enabled then
             self._trackers:RemoveTracker(trigger.id)
         end
@@ -57,14 +54,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100030, 11750)] = { time = 5, id = "C4Lower", icons = { Icon.C4 }, hint = Hints.Explosion },
     [EHI:GetInstanceElementID(100030, 11850)] = { time = 5, id = "C4Top", icons = { Icon.C4 }, hint = Hints.Explosion },
 
-    [EHI:GetInstanceElementID(100021, 29150)] = heli_60,
-    [EHI:GetInstanceElementID(100042, 29150)] = heli_30,
-    [EHI:GetInstanceElementID(100021, 29225)] = heli_60,
-    [EHI:GetInstanceElementID(100042, 29225)] = heli_30,
-    [EHI:GetInstanceElementID(100021, 15220)] = heli_60,
-    [EHI:GetInstanceElementID(100042, 15220)] = heli_30,
-    [EHI:GetInstanceElementID(100021, 15295)] = heli_60,
-    [EHI:GetInstanceElementID(100042, 15295)] = heli_30,
+    -- Heli Drop Winch handled in CoreWorldInstanceManager
 
     -- Toilets
     [EHI:GetInstanceElementID(100181, 13000)] = { id = "RefillLeft01", run = { time = 30 } },
@@ -80,13 +70,13 @@ local triggers = {
     [EHI:GetInstanceElementID(100167, 44535)] = { id = "DrillDrop", special_function = SF.PauseTracker },
 
     -- Water during drilling
-    [EHI:GetInstanceElementID(100148, 37575)] = { id = "WaterTimer1", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60 }, hint = Hints.Wait },
+    [EHI:GetInstanceElementID(100148, 37575)] = { id = "WaterTimer1", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60 }, hint = Hints.crojob3_Water },
     [EHI:GetInstanceElementID(100146, 37575)] = { id = "WaterTimer1", special_function = SF.PauseTracker },
-    [EHI:GetInstanceElementID(100149, 37575)] = { id = "WaterTimer2", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60 }, hint = Hints.Wait },
+    [EHI:GetInstanceElementID(100149, 37575)] = { id = "WaterTimer2", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60 }, hint = Hints.crojob3_Water },
     [EHI:GetInstanceElementID(100147, 37575)] = { id = "WaterTimer2", special_function = SF.PauseTracker },
 
     -- Skylight Hack
-    [EHI:GetInstanceElementID(100018, 29650)] = { time = 30, id = "SkylightHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Hack },
+    [EHI:GetInstanceElementID(100018, 29650)] = { time = 30, id = "SkylightHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Hack, waypoint = { position_by_element = EHI:GetInstanceElementID(100003, 29650) } },
     [EHI:GetInstanceElementID(100037, 29650)] = { id = "SkylightHack", special_function = SF.PauseTracker },
 
     [100159] = { id = "BlimpWithTheDrill", icons = { Icon.Blimp, Icon.Drill }, special_function = SF.SetTimeByPreplanning, data = { id = 101854, yes = 976/30, no = 1952/30 }, hint = Hints.DrillDelivery },
@@ -94,37 +84,7 @@ local triggers = {
 
     [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { Icon.Loop }, hint = Hints.KeypadReset }
 }
-if EHI:GetOption("show_mission_trackers") then
-    local function hook(unit_id, color)
-        for i = 0, 9, 1 do
-            managers.mission:add_runned_unit_sequence_trigger(unit_id, "set_" .. color .. "_0" .. tostring(i), function(...)
-                managers.ehi_tracker:CallFunction("ColorCodes", "SetCode", color, i)
-            end)
-        end
-    end
-    for color, data in pairs(keycode_units) do
-        if data.unit_ids then
-            for _, unit_id in ipairs(data.unit_ids) do
-                if data.indexes then
-                    for _, index in ipairs(data.indexes) do
-                        hook(EHI:GetInstanceUnitID(unit_id, index), color)
-                    end
-                else
-                    hook(EHI:GetInstanceUnitID(unit_id, data.index), color)
-                end
-            end
-        else
-            local unit_id = data.unit_id
-            if data.indexes then
-                for _, index in ipairs(data.indexes) do
-                    hook(EHI:GetInstanceUnitID(unit_id, index), color)
-                end
-            else
-                hook(EHI:GetInstanceUnitID(unit_id, data.index), color)
-            end
-        end
-    end
-end
+EHI:HookColorCodes(keycode_units)
 
 ---@type ParseAchievementTable
 local achievements =
@@ -165,7 +125,7 @@ local achievements =
 
 local other =
 {
-    [100228] = EHI:AddAssaultDelay({ time = 35 + 1 + 30, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    [100228] = EHI:AddAssaultDelay({ time = 35 + 1 + 30, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         local t = 0
         if managers.preplanning:IsAssetBought(101858) then
             t = 10
@@ -177,7 +137,7 @@ local other =
     end) })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100228] = { chance = 100, time = 150 + 120, on_fail_refresh_t = 120, on_success_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop }
+    other[100548] = { chance = 100, time = 150 + 120, on_fail_refresh_t = 120, on_success_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop }
     other[101405] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[101404] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[101406] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 25%
@@ -208,7 +168,10 @@ EHI:ShowLootCounter({ max = 2 + bags }) -- Dentist loot (mandatory) + Money + Pa
 
 local DisableWaypoints =
 {
-    -- Defend
+    -- Keycard panel Defend
+    [EHI:GetInstanceElementID(100022, 29650)] = true,
+
+    -- BFD Defend
     [EHI:GetInstanceElementID(100347, 37575)] = true,
     [EHI:GetInstanceElementID(100347, 44535)] = true
 }
@@ -218,8 +181,8 @@ local tbl =
 {
     --levels/instances/unique/kenaz/the_drill
     --units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill
-    [EHI:GetInstanceUnitID(100000, 37575)] = { icons = { Icon.Drill }, ignore_visibility = true },
-    [EHI:GetInstanceUnitID(100000, 44535)] = { icons = { Icon.Drill }, ignore_visibility = true }
+    [EHI:GetInstanceUnitID(100000, 37575)] = { icons = { Icon.Drill }, ignore_visibility = true, hint = "drill" },
+    [EHI:GetInstanceUnitID(100000, 44535)] = { icons = { Icon.Drill }, ignore_visibility = true, hint = "drill" }
 }
 EHI:UpdateUnits(tbl)
 local xp_override =
@@ -280,12 +243,12 @@ EHI:AddXPBreakdown({
 })
 
 if EHI:IsHost() then
-    keycode_units = nil
+    keycode_units = nil ---@diagnostic disable-line
     return
 end
 local bg = Idstring("g_top_opened"):key()
 local codes = {}
-for _, color in ipairs({ "red", "green", "blue" }) do
+for color, _ in pairs(keycode_units) do
     codes[color] = {}
     local _c = codes[color]
     for i = 0, 9, 1 do
@@ -309,7 +272,7 @@ local function CheckIfCodeIsVisible(unit, color)
     return nil -- Has not been interacted yet
 end
 local function Cleanup()
-    keycode_units = nil
+    keycode_units = nil ---@diagnostic disable-line
     codes = nil
     bg = nil
 end
@@ -323,8 +286,7 @@ EHI:AddLoadSyncFunction(function(self)
     end
     self._trackers:AddTracker({
         id = "ColorCodes",
-        class = TT.ColoredCodes,
-        hint = Hints.ColorCodes
+        class = TT.ColoredCodes
     })
     local wd = managers.worlddefinition
     for color, data in pairs(keycode_units) do

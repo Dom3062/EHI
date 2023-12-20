@@ -11,6 +11,7 @@ end
 ---@field super EHITracker
 EHILaserTracker = class(EHITracker)
 EHILaserTracker._forced_icons = { EHI.Icons.Lasers }
+EHILaserTracker._forced_hint_text = "laser"
 ---@param params EHITracker.params
 function EHILaserTracker:pre_init(params)
     self._next_cycle_t = params.time
@@ -46,7 +47,6 @@ function ElementLaserTrigger:add_callback(...)
         managers.ehi_tracker:AddLaserTracker({
             id = self._ehi_id,
             time = self._values.cycle_interval,
-            hint = "laser",
             class = "EHILaserTracker"
         })
     end

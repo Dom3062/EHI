@@ -3,8 +3,8 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local AddToCache = EHI:GetFreeCustomSpecialFunctionID()
-local GetFromCache = EHI:GetFreeCustomSpecialFunctionID()
+local AddToCache = EHI:GetFreeCustomSFID()
+local GetFromCache = EHI:GetFreeCustomSFID()
 local triggers = {
     [101145] = { time = 180, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape },
     [101158] = { time = 240, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape },
@@ -62,10 +62,10 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 }, "Escape")
-EHI:RegisterCustomSpecialFunction(AddToCache, function(self, trigger, ...)
+EHI:RegisterCustomSF(AddToCache, function(self, trigger, ...)
     EHI._cache[trigger.id] = trigger.data
 end)
-EHI:RegisterCustomSpecialFunction(GetFromCache, function(self, trigger, ...)
+EHI:RegisterCustomSF(GetFromCache, function(self, trigger, ...)
     local data = EHI._cache[trigger.id]
     EHI._cache[trigger.id] = nil
     if data and data.icon then

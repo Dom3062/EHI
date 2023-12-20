@@ -11,7 +11,7 @@ local debug_instance = EHI.debug.instance
 local debug_unit = false
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
-local TT = EHI.Trackers -- Tracker Type
+local TT = EHI.Trackers
 local Hints = EHI.Hints
 local used_start_indexes = {}
 ---@type ParseInstanceTable
@@ -22,6 +22,10 @@ local instances =
         [100032] = { time = 7, id = "skm_HostageRescue", icons = { Icon.Kill }, class = TT.Warning, hint = Hints.roberts_GenSecWarning, special_function = SF.SetTimeOrCreateTracker },
         [100036] = { id = "skm_HostageRescue", special_function = SF.RemoveTracker }
     },
+    ["levels/instances/unique/holly_2/heli_c4_drop/world"] =
+    {
+        [100000] = { time = 120 + 25 + 0.25 + 2 + 2, id = "jolly_C4Drop", icons = Icon.HeliDropC4, hint = Hints.C4Delivery, waypoint = { position_by_element = 100021 } }
+    },
     ["levels/instances/unique/hlm_reader/world"] =
     {
         [100038] = { time = 90 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true }, hint = Hints.Process },
@@ -29,6 +33,11 @@ local instances =
         [100040] = { time = 180 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true }, hint = Hints.Process },
         [100045] = { id = "mia_1_Reader", special_function = SF.PauseTracker },
         [100051] = { id = "mia_1_Reader", special_function = SF.UnpauseTracker }
+    },
+    ["levels/instances/unique/kenaz/chopper_incoming/world"] =
+    {
+        [100021] = { time = 60 + 22 + 1 + 1.5, id = "kenaz_HeliWinchDelivery", icons = Icon.HeliDropWinch, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery },
+        [100042] = { time = 30 + 22 + 1 + 1.5, id = "kenaz_HeliWinchDelivery", icons = Icon.HeliDropWinch, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery }
     },
     ["levels/instances/unique/pbr/pbr_mountain_comm_dish/world"] =
     {
@@ -42,15 +51,45 @@ local instances =
     {
         [100024] = { time = 60, id = "pbr2_Flare", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Winch, position_by_element = 100017 }, hint = Hints.Winch }
     },
-    ["levels/instances/unique/brb/single_door/world"] =
+    ["levels/instances/unique/red/red_hacking_computer/world"] =
     {
-        [100021] = { remove_vanilla_waypoint = true }, -- Defend
-        [100022] = { remove_vanilla_waypoint = true } -- Fix
+        [100024] = { remove_vanilla_waypoint = true } -- Computer WP
+    },
+    ["levels/instances/unique/cag_computer/world"] =
+    {
+        [100012] = { remove_vanilla_waypoint = true } -- Computer WP
     },
     ["levels/instances/unique/rvd/rvd_hackbox/world"] =
     {
         [100034] = { remove_vanilla_waypoint = true }, -- Defend
         [100031] = { remove_vanilla_waypoint = true } -- Fix
+    },
+    ["levels/instances/unique/brb/single_door/world"] =
+    {
+        [100021] = { remove_vanilla_waypoint = true }, -- Defend
+        [100022] = { remove_vanilla_waypoint = true } -- Fix
+    },
+    ["levels/instances/unique/brb/office_floor/world"] =
+    {
+        [100021] = { remove_vanilla_waypoint = true, mission = true }, -- Defend
+        [100022] = { remove_vanilla_waypoint = true, mission = true }, -- Fix
+        [100077] = { time = 90, id = "brb_Cutter", icons = { Icon.Glasscutter }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_by_element = 100021 }, hint = Hints.Cutter },
+        [100078] = { id = "brb_Cutter", special_function = SF.PauseTracker },
+        [100103] = { time = 5, id = "brb_C4", icons = { Icon.C4 }, waypoint = { position_by_element = 100021 }, hint = Hints.Explosion }
+    },
+    ["levels/instances/unique/bph/bph_drill_door/world"] =
+    {
+        [100037] = { remove_vanilla_waypoint = true } -- Defend
+    },
+    ["levels/instances/unique/bex/bex_computer/world"] =
+    {
+        [100006] = { time = 30, id = "bex_PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 100000 }, hint = Hints.Hack },
+        [100138] = { id = "bex_PCHack", special_function = SF.RemoveTracker } -- Alarm
+    },
+    ["levels/instances/unique/bex/bex_server/world"] =
+    {
+        [100015] = { id = "bex_ServerHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 100014, hint = Hints.Hack },
+        [100016] = { id = "bex_ServerHack", special_function = SF.PauseTracker }
     },
     ["levels/instances/unique/fex/fex_explosives/world"] =
     {
@@ -60,12 +99,23 @@ local instances =
     ["levels/instances/unique/sand/sand_helicopter_turret/world"] =
     {
         [100027] = { id = "sand_TurretTimer", icons = { Icon.Heli, Icon.Turret, Icon.Wait }, special_function = SF.GetElementTimerAccurate, element = 100012, hint = Hints.sand_HeliTurretTimer }
+    },
+    ["levels/instances/unique/corp/corp_display_case/world"] =
+    {
+        [100018] = { time = 10, id = "Thermite", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_by_unit = 100095 } }
+    },
+    ["levels/instances/unique/corp/corp_wall_hack/world"] =
+    {
+        [100031] = { remove_vanilla_waypoint = true }, -- Defend
+        [100056] = { remove_vanilla_waypoint = true } -- Fix
     }
 }
 instances["levels/instances/unique/brb/single_door_large/world"] = deep_clone(instances["levels/instances/unique/brb/single_door/world"])
 
 if EHI:IsClient() then
     instances["levels/instances/unique/pbr/pbr_flare/world"][100025] = EHI:ClientCopyTrigger(instances["levels/instances/unique/pbr/pbr_flare/world"][100024], { time = 27 })
+    instances["levels/instances/unique/bex/bex_server/world"][100015].client = { time = 90, random_time = 10, special_function = SF.UnpauseTrackerIfExists }
+    instances["levels/instances/unique/bex/bex_server/world"][100011] = { id = "bex_ServerHack", special_function = SF.RemoveTracker }
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].client = { time = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and 90 or 60, random_time = 30 }
     instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100024] = { id = "sand_TurretTimer", special_function = SF.RemoveTracker }
 end
@@ -78,7 +128,6 @@ local original =
 }
 
 ---@param instance { folder: string, start_index: number, continent: string, rotation: Rotation }
----@param ... unknown
 ---@return unknown
 function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
     local instance_data = original.prepare_mission_data(self, instance, ...)
@@ -93,11 +142,16 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
             local continent_data = managers.worlddefinition._continents[instance.continent]
             local triggers = {}
             local waypoints = {}
+            local mission_waypoints = {}
             local defer_loading_waypoints = false
             for id, trigger in pairs(instance_elements) do
                 local final_index = EHI:GetInstanceElementID(id, start_index, continent_data.base_id)
                 if trigger.remove_vanilla_waypoint then
-                    waypoints[final_index] = true
+                    if trigger.mission then
+                        mission_waypoints[final_index] = true
+                    else
+                        waypoints[final_index] = true
+                    end
                 else
                     local new_trigger = deep_clone(trigger)
                     new_trigger.id = new_trigger.id .. start_index
@@ -131,6 +185,9 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
             if next(waypoints) then
                 EHI:DisableWaypoints(waypoints)
             end
+            if next(mission_waypoints) then
+                EHI:DisableMissionWaypoints(mission_waypoints)
+            end
             used_start_indexes[start_index] = true
         end
     end
@@ -152,8 +209,8 @@ function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ..
             local unit_data = deep_clone(unit)
             unit_data.instance = instance
             unit_data.continent_index = continent_data.base_id
-            if unit_data.remove_vanilla_waypoint then
-                unit_data.remove_vanilla_waypoint = EHI:GetInstanceElementID(unit_data.remove_vanilla_waypoint, instance.start_index, continent_data.base_id)
+            if unit.remove_vanilla_waypoint then
+                unit_data.remove_vanilla_waypoint = EHI:GetInstanceElementID(unit.remove_vanilla_waypoint, instance.start_index, continent_data.base_id)
             end
             EHI._cache.InstanceUnits[entry.unit_data.unit_id] = unit_data
         end

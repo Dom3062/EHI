@@ -14,16 +14,8 @@ local other = {
     [100032] = EHI:AddAssaultDelay({ time = 1 + 30, trigger_times = 1 })
 }
 
-local function AddWaypoint(self, icon_name, pos_z_offset, ...)
-    if self._is_active then
-        self:remove_waypoint()
-    end
-    self._icon_name = icon_name
-    self._pos_z_offset = Vector3(0, 0, pos_z_offset)
-    self._is_active = true
-end
 local function ReplaceWaypointAddFunction(unit_id, unit_data, unit)
-    unit:waypoint().add_waypoint = AddWaypoint
+    unit:waypoint():ReplaceWaypointFunction()
 end
 local tbl =
 {

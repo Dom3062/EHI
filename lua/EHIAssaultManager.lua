@@ -50,6 +50,47 @@ function EHIAssaultManager:init_finalize()
             end
             self._endless_assault = nil
         end)
+        -- Crime Spree
+        local _Active = false
+        local function ActivateHooks()
+            local function f()
+                self._trackers:CallFunction(self._assault_time.name, "OnMinionCountChanged")
+            end
+            EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, f)
+            EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, f)
+        end
+        local function CheckIfModifierIsActive()
+            if _Active then
+                return
+            end
+            local tracker = EHIAssaultTimeTracker or EHIAssaultTracker or {}
+            local mod = managers.modifiers
+            for category, data in pairs(mod._modifiers) do
+                if category == "crime_spree" then
+                    for _, modifier in ipairs(data) do
+                        if modifier._type == "ModifierAssaultExtender" then
+                            tracker._cs_duration = modifier:value("duration") * 0.01
+                            tracker._cs_deduction = modifier:value("deduction") * 0.01
+                            tracker._cs_max_hostages = modifier:value("max_hostages")
+                            tracker._cs_assault_extender = true
+                            ActivateHooks()
+                            _Active = true
+                            break
+                        end
+                    end
+                end
+            end
+        end
+        if EHI:IsHost() then
+            ---@class ListenerModifier : BaseModifier
+            local ListenerModifier = class(BaseModifier)
+            ---@param duration number
+            function ListenerModifier:OnEnterSustainPhase(duration)
+                managers.ehi_assault:OnEnterSustain(duration)
+            end
+            managers.modifiers:add_modifier(ListenerModifier, "EHI")
+        end
+        EHI:AddCallback(EHI.CallbackMessage.Spawned, CheckIfModifierIsActive)
     end
 end
 
@@ -145,6 +186,11 @@ function EHIAssaultManager:AssaultEnd()
     end
     self._assault = false
     EHI:HookWithID(self._hud, "set_control_info", "EHI_Assault_set_control_info", self._control_info_f)
+end
+
+---@param t number
+function EHIAssaultManager:OnEnterSustain(t)
+    self._trackers:CallFunction(self._assault_time.name, "OnEnterSustain", t)
 end
 
 ---@param block boolean?

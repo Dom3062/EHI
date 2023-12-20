@@ -42,7 +42,7 @@ local original =
     hide = TimerGui.hide
 }
 
----@param unit Unit
+---@param unit UnitTimer
 function TimerGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
@@ -102,7 +102,7 @@ function TimerGui:StartTimer()
             })
         end
     end
-    self:AddWaypoint(t, autorepair)
+    self:AddWaypoint(t, autorepair --[[@as boolean]])
     self:PostStartTimer()
 end
 
@@ -191,8 +191,8 @@ function TimerGui:_set_done(...)
     self:RemoveTracker()
     original._set_done(self, ...)
     self:RestoreWaypoint()
-    if self.__ehi_parent then
-        for _, unit in ipairs(self.__ehi_child_units or {}) do
+    if self.__ehi_parent and self.__ehi_child_units then
+        for _, unit in ipairs(self.__ehi_child_units) do
             if unit:base() and unit:base().SetCountThisUnit then
                 unit:base():SetCountThisUnit()
             end
@@ -304,7 +304,7 @@ end
 function TimerGui:SetChildUnits(units, wd)
     if self._done then
         for _, unit_id in ipairs(units) do
-            local unit = wd:get_unit(unit_id)
+            local unit = wd:get_unit(unit_id) --[[@as UnitAmmoDeployable|UnitGrenadeDeployable]]
             if unit and unit:base() and unit:base().SetCountThisUnit then
                 unit:base():SetCountThisUnit()
             else
@@ -313,10 +313,10 @@ function TimerGui:SetChildUnits(units, wd)
         end
     else
         self.__ehi_parent = true
-        self.__ehi_child_units = {}
+        self.__ehi_child_units = {} ---@type UnitAmmoDeployable[]|UnitGrenadeDeployable[]
         local n = 1
         for _, unit_id in ipairs(units) do
-            local unit = wd:get_unit(unit_id)
+            local unit = wd:get_unit(unit_id) --[[@as UnitAmmoDeployable|UnitGrenadeDeployable]]
             if unit then
                 self.__ehi_child_units[n] = unit
                 n = n + 1
@@ -343,7 +343,7 @@ function TimerGui:SetCustomCallback(id, operation)
     elseif operation == "add_waypoint" then
         EHI:AddCallback(id, function()
             if self._started and not self._done then
-                self:AddWaypoint(self._time_left, self._unit:base().CanAutorepair and self._unit:base():CanAutorepair())
+                self:AddWaypoint(self._time_left, self._unit:base().CanAutorepair and self._unit:base():CanAutorepair() --[[@as boolean]])
             end
         end)
     end

@@ -14,7 +14,7 @@ local triggers = {
     [100721] = { time = 1, chance = 5, id = "CookingChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, start_opened = EHI:ShowTimedTrackerOpened(), hint = Hints.alex_1_Methlab, tracker_merge = true },
     [100724] = { time = 25, id = "CookingChance", icons = { Icon.Methlab, Icon.Loop }, waypoint = { position_by_element = 100212 }, special_function = SF.SetTimeOrCreateTracker, tracker_merge = true },
     [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { icon = Icon.Loot, position_by_element = 100485 }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1001991 }, hint = Hints.mia_1_MethDone },
-    [1001991] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+    [1001991] = { special_function = EHI:RegisterCustomSF(function(self, ...)
         BagsCooked = BagsCooked + 1
         if BagsCooked >= 7 then
             self._trackers:ForceRemoveTracker("CookingChance")
@@ -53,7 +53,7 @@ local other =
 {
     [100378] = EHI:AddAssaultDelay({ time = 42 + 50 + assault_delay }),
     [100380] = EHI:AddAssaultDelay({ time = 45 + 40 + assault_delay }),
-    [100707] = EHI:AddAssaultDelay({ time = assault_delay_methlab, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    [100707] = EHI:AddAssaultDelay({ time = assault_delay_methlab, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         local tracker = self._trackers:GetTracker(trigger.id)
         if tracker then
             tracker:SetTimeIfLower(trigger.time)
@@ -64,7 +64,7 @@ local other =
     [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local SetRespawnTime = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    local SetRespawnTime = EHI:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         if self._trackers:TrackerExists(id) then
             self._trackers:CallFunction(id, "SetRespawnTime", trigger.time)

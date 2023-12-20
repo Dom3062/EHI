@@ -15,7 +15,7 @@ local other =
 }
 
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local SetRespawnTime = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    local SetRespawnTime = EHI:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:TrackerExists(trigger.id) then
             self._trackers:CallFunction(trigger.id, "SetRespawnTime", trigger.time)
         else

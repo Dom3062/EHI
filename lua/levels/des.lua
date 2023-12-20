@@ -13,24 +13,26 @@ function EHIChemSetTracker:OverridePanel()
     self._first_ingredient = self:CreateText({
         name = "first_ingredient",
         text = "0.69",
-        w = third
+        w = third,
+        FitTheText = true
     })
-    self:FitTheText(self._first_ingredient)
     local font_size = self._first_ingredient:font_size()
     self._first_ingredient:set_text("")
     self._first_ingredient:set_left(0)
     self._second_ingredient = self:CreateText({
         name = "second_ingredient",
-        w = third
+        w = third,
+        left = self._first_ingredient:right(),
+        FitTheText = true,
+        FitTheText_FontSize = font_size
     })
-    self:FitTheText(self._second_ingredient, font_size)
-    self._second_ingredient:set_left(self._first_ingredient:right())
     self._third_ingredient = self:CreateText({
         name = "third_ingredient",
-        w = third
+        w = third,
+        left = self._second_ingredient:right(),
+        FitTheText = true,
+        FitTheText_FontSize = font_size
     })
-    self:FitTheText(self._third_ingredient, font_size)
-    self._third_ingredient:set_left(self._second_ingredient:right())
     self._progress = 0
     self._refresh_on_delete = true
     self._ingredients = {}
@@ -55,7 +57,7 @@ function EHIChemSetTracker:SetCooking(t)
     self:SetTextColor(Color.yellow)
     self._state = "cooking"
     self:AddTrackerToUpdate()
-    self:AnimateBG()
+    self:AnimateBG(1)
 end
 
 ---@param t number
@@ -65,7 +67,7 @@ function EHIChemSetTracker:SetReset(t)
     self:SetTextColor(Color.red)
     self._state = "reset"
     self:AddTrackerToUpdate()
-    self:AnimateBG()
+    self:AnimateBG(1)
 end
 
 ---@param t number
@@ -73,7 +75,7 @@ function EHIChemSetTracker:SetInterrupted(t)
     self._time = t
     self:SetTextColor(Color.red)
     self._state = "interrupted"
-    self:AnimateBG()
+    self:AnimateBG(1)
 end
 
 ---@param ingredient string
@@ -108,7 +110,7 @@ function EHIChemSetTracker:Refresh()
         self._text:set_text(self._ingredients[self._progress] or "?")
     end
     self._state = "idle"
-    self:AnimateBG()
+    self:AnimateBG(1)
 end
 
 local SF = EHI.SpecialFunctions
@@ -119,7 +121,7 @@ local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [108538] = { time = 60, id = "Gas", icons = { Icon.Teargas }, hint = Hints.Teargas },
 
-    [102520] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire }, hint = Hints.Thermite },
+    [102520] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_by_element = 100881 } },
 
     [100423] = { time = 60 + 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 100451 }, hint = Hints.LootEscape },
     -- 60s delay after flare has been placed
@@ -146,7 +148,7 @@ if EHI:GetOption("show_mission_trackers") then
     local function SetIngredient(arg)
         managers.ehi_tracker:CallFunction("ChemSet", "SetIngredient", arg[1], arg[2])
     end
-    local ChemSet = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    local ChemSet = EHI:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:TrackerExists("ChemSet") then
             if trigger.id == "ChemSetCooking" then
                 self._trackers:CallFunction("ChemSet", "SetCooking", trigger.time)
@@ -165,7 +167,7 @@ if EHI:GetOption("show_mission_trackers") then
     triggers[102593].special_function = ChemSet
     triggers[101217].special_function = ChemSet
     triggers[102595].special_function = ChemSet
-    triggers[EHI:GetInstanceElementID(100046, 15000)] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+    triggers[EHI:GetInstanceElementID(100046, 15000)] = { special_function = EHI:RegisterCustomSF(function(self, ...)
         self._trackers:AddTracker({
             id = "ChemSet",
             class = "EHIChemSetTracker"

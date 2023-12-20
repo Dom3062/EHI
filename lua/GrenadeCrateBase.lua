@@ -38,6 +38,11 @@ if EHI:IsVR() then
     end
 end
 
+---@class GrenadeCrateBase
+---@field _grenade_amount number
+---@field _max_grenade_amount number
+---@field _unit UnitGrenadeDeployable
+
 local original =
 {
     init = GrenadeCrateBase.init,

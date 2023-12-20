@@ -6,6 +6,7 @@ EHIbex11Tracker = class(EHIAchievementProgressTracker)
 function EHIbex11Tracker:pre_init(params)
     params.max = 11 -- Loot
     params.show_progress_on_finish = true
+    params.status_is_overridable = true
     self._box_max = 240
     self._box_progress = 0
     self._objectives_to_complete = 2 -- Loot and Deposit boxes
@@ -21,27 +22,21 @@ function EHIbex11Tracker:FormatBoxProgress()
 end
 
 function EHIbex11Tracker:OverridePanel()
-    self._icon_previous_pos = self._icon1 and self._icon1:x()
-    self._finish_status_text = self:CreateText({
-        name = "finish_status_text",
-        status_text = "finish",
-        color = Color.green
-    })
-    self._finish_status_text:set_visible(false)
+    self._bg_size = self._bg_box:w()
+    self:SetBGSize(self._bg_size)
     self._box_progress_text = self:CreateText({
         name = "box_progress_text",
-        text = self:FormatBoxProgress()
+        text = self:FormatBoxProgress(),
+        left = self._text:right()
     })
-    self:SetBGSize()
-    self._box_progress_text:set_left(self._text:right())
     self:SetIconX()
 end
 
 function EHIbex11Tracker:SetFailed()
     EHIbex11Tracker.super.SetFailed(self)
     self:SetTextColor(Color.red, self._box_progress_text)
-    self:SetTextColor(Color.red, self._finish_status_text)
-    self:SetStatusText("fail", self._finish_status_text)
+    self:SetTextColor(Color.red)
+    self:SetStatusText("fail")
 end
 
 function EHIbex11Tracker:SetCompleted(...)
@@ -65,8 +60,8 @@ function EHIbex11Tracker:SetBoxProgress(progress)
         self:AnimateBG(1)
         if self._box_progress == self._box_max then
             self._disable_counting_box = true
-            self:ObjectiveComplete()
             self:SetTextColor(Color.green, self._box_progress_text)
+            self:ObjectiveComplete()
         end
     end
 end
@@ -74,13 +69,12 @@ end
 function EHIbex11Tracker:ObjectiveComplete()
     self._objectives_to_complete = self._objectives_to_complete - 1
     if self._objectives_to_complete == 0 then -- Both objectives complete
-        self._finish_status_text:set_visible(true)
-        self._text:set_visible(false)
+        self:SetStatusText("finish")
         self._box_progress_text:set_visible(false)
-        self._bg_box:set_w(self._bg_box:w() / 2)
-        local panel_w = self._panel:w() / 2
+        self:SetBGSize(self._bg_size, "set", true)
+        local panel_w = self._bg_size + (self._icon_gap_size_scaled * self._n_of_icons)
         self:AnimatePanelW(panel_w)
-        self:AnimIconX(self._icon_previous_pos)
+        self:AnimIconX(self._bg_size + self._gap_scaled)
         self:ChangeTrackerWidth(panel_w)
         self:AnimateBG()
     end
@@ -95,30 +89,22 @@ local element_sync_triggers =
 {
     [102290] = { id = "VaultGas", icons = { Icon.Teargas }, hook_element = 102157, hint = Hints.Teargas }
 }
-local hack_start = EHI:GetInstanceElementID(100015, 20450)
 ---@type ParseTriggerTable
 local triggers = {
     [102302] = { time = 28.05 + 418/30, id = "Suprise", icons = { "pd2_question" }, hint = Hints.Question },
-    [EHI:GetInstanceElementID(100108, 35450)] = { time = 4.8, id = "SuprisePull", icons = { Icon.Wait } },
-
-    [hack_start] = { id = "ServerHack", icons = { Icon.PCHack }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = EHI:GetInstanceElementID(100014, 20450), hint = Hints.Hack },
-    [EHI:GetInstanceElementID(100016, 20450)] = { id = "ServerHack", special_function = SF.PauseTracker },
+    [EHI:GetInstanceElementID(100108, 35450)] = { time = 4.8, id = "SuprisePull", icons = { Icon.Wait }, hint = Hints.Wait },
 
     [101818] = { additional_time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill, hint = Hints.DrillPartsDelivery },
     [101820] = { time = 9.3, id = "HeliDropLance", icons = Icon.HeliDropDrill, special_function = SF.SetTrackerAccurate, hint = Hints.DrillPartsDelivery },
 
     [103919] = { additional_time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape, trigger_times = 1, hint = Hints.LootEscape },
     [100840] = { time = 1 + 13, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTrackerAccurate, hint = Hints.LootEscape }
+
+    -- levels/instances/unique/bex/bex_computer
+    -- levels/instances/unique/bex/bex_server
+    -- Handled in CoreWorldInstanceManager
 }
--- levels/instances/unique/bex/bex_computer
-for i = 7250, 9050, 150 do
-    local id = "PCHack" .. i
-    triggers[EHI:GetInstanceElementID(100006, i)] = { time = 30, id = id, icons = { Icon.PCHack }, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, i) } }
-    triggers[EHI:GetInstanceElementID(100138, i)] = { id = id, special_function = SF.RemoveTracker } -- Alarm
-end
 if EHI:IsClient() then
-    triggers[hack_start].client = { time = 90, random_time = 10, special_function = SF.UnpauseTrackerIfExists }
-    triggers[EHI:GetInstanceElementID(100011, 20450)] = { id = "ServerHack", special_function = SF.RemoveTracker }
     triggers[102157] = { additional_time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
@@ -133,7 +119,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [103701] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+            [103701] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
                     self._trackers:SetAchievementStatus("bex_10", "defend")
                     self:UnhookTrigger(103704)
@@ -174,6 +160,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100366] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end

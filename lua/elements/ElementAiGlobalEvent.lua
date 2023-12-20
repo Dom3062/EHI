@@ -10,7 +10,6 @@ local original =
 }
 
 local mode = "besiege"
-
 local function NotifyListeners(wave_mode)
     if wave_mode and wave_mode ~= mode then
         if wave_mode ~= "besiege" and wave_mode ~= "hunt" then

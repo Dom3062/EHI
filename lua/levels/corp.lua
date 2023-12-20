@@ -10,6 +10,7 @@ EHIcorp9Tracker._show_started = EHIAchievementTracker._show_started
 EHIcorp9Tracker._show_failed = EHIAchievementTracker._show_failed
 EHIcorp9Tracker._show_desc = EHIAchievementTracker._show_desc
 EHIcorp9Tracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
+EHIcorp9Tracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
 EHIcorp9Tracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
 ---@param panel Panel
 ---@param params EHITracker.params
@@ -65,6 +66,7 @@ function EHIcorp9Tracker:SetFailed()
     EHIAchievementTracker.SetFailed(self)
     self._text2:set_color(Color.red)
     self._text3:set_color(Color.red)
+    self:DelayForcedDelete()
 end
 
 ---@class EHIcorp12Tracker : EHIAchievementTracker
@@ -90,16 +92,14 @@ local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseTriggerTable
 local triggers =
 {
-    [102406] = { additional_time = 22 + 6, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 102401, hint = Hints.LootEscape },
-
-    [EHI:GetInstanceElementID(100018, 12190)] = { time = 10, id = "Thermite", icons = { Icon.Fire }, hint = Hints.Thermite }
+    [102406] = { additional_time = 22 + 6, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 102401, hint = Hints.LootEscape }
 }
 if EHI:IsClient() then
     triggers[102406].client = { time = OVKorAbove and 30 or 15, random_time = 15 }
 end
 
 local corp_11_StartVariable = true
-local corp_11_SetFailed = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+local corp_11_SetFailed = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
     if enabled then
         self._trackers:SetAchievementFailed("corp_11")
         corp_11_StartVariable = false
@@ -110,12 +110,10 @@ local achievements =
 {
     corp_9 =
     {
+        difficulty_pass = managers.mission:get_saved_job_value("usb_train") == 1,
         elements =
         {
-            [100107] = { class = "EHIcorp9Tracker", condition_function = function()
-                local value = managers.mission:get_saved_job_value("usb_train")
-                return value == 1
-            end },
+            [100107] = { class = "EHIcorp9Tracker" },
             [EHI:GetInstanceElementID(100010, 14610)] = { special_function = SF.CallCustomFunction, f = "LaptopInteracted" },
             [103518] = { special_function = SF.CallCustomFunction, f = "FindCodesStarted" },
             [103045] = { special_function = SF.SetAchievementComplete },
@@ -125,27 +123,20 @@ local achievements =
             EHIcorp9Tracker = nil ---@diagnostic disable-line
         end,
         parsed_callback = function()
-            for i = 102867, 102869, 1 do
-                for j = 0, 9, 1 do
-                    managers.mission:add_runned_unit_sequence_trigger(i, "set_red_0" .. tostring(j), function(...)
-                        managers.ehi_tracker:CallFunction("corp_9", "SetCode", "red", j)
-                    end)
-                end
-            end
-            for i = 102870, 102872, 1 do
-                for j = 0, 9, 1 do
-                    managers.mission:add_runned_unit_sequence_trigger(i, "set_green_0" .. tostring(j), function(...)
-                        managers.ehi_tracker:CallFunction("corp_9", "SetCode", "green", j)
-                    end)
-                end
-            end
-            for i = 102873, 102875, 1 do
-                for j = 0, 9, 1 do
-                    managers.mission:add_runned_unit_sequence_trigger(i, "set_blue_0" .. tostring(j), function(...)
-                        managers.ehi_tracker:CallFunction("corp_9", "SetCode", "blue", j)
-                    end)
-                end
-            end
+            EHI:HookColorCodes({
+                red =
+                {
+                    unit_ids = { 102867, 102868, 102869 }
+                },
+                green =
+                {
+                    unit_ids = { 102870, 102871, 102872 }
+                },
+                blue =
+                {
+                    unit_ids = { 102873, 102874, 102875 }
+                }
+            }, { no_mission_check = true, tracker_name = "corp_9" })
         end
     },
     corp_10 =
@@ -162,7 +153,7 @@ local achievements =
     {
         elements =
         {
-            [102728] = { icons = EHI:GetAchievementIcon("corp_11"), special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+            [102728] = { icons = EHI:GetAchievementIcon("corp_11"), special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
                 if corp_11_StartVariable then
                     self._trackers:AddTracker({
                         id = "corp_11",
@@ -183,7 +174,7 @@ local achievements =
         {
             -- SP (MP has 240s)
             [100107] = { time = 420, class = "EHIcorp12Tracker", special_function = SF.AddTrackerIfDoesNotExist },
-            [102739] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+            [102739] = { special_function = EHI:RegisterCustomSF(function(self, ...)
                 if EHI.ConditionFunctions.IsLoud() then
                     return
                 end
@@ -220,6 +211,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100565] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
@@ -236,14 +228,6 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
-local DisableWaypoints =
-{
-    [EHI:GetInstanceElementID(100031, 12610)] = true, -- Defend
-    [EHI:GetInstanceElementID(100056, 12610)] = true, -- Fix
-    [EHI:GetInstanceElementID(100031, 12710)] = true, -- Defend
-    [EHI:GetInstanceElementID(100056, 12710)] = true -- Fix
-}
-EHI:DisableWaypoints(DisableWaypoints)
 EHI:AddXPBreakdown({
     objectives =
     {

@@ -41,6 +41,10 @@
     "ehi_popup_daily_failed" : "DENNÍ VÝZVA SELHALA!",
     "ehi_popup_loot_counter" : "POČET LUPU",
     "ehi_popup_all_loot_secured" : "Všechny pytle s lupem jsou zajištěny",
+    "ehi_popup_sniper" : "ODSTŘELOVAČ!",
+    "ehi_popup_sniper_spawned" : "Objevil se nepřátelský odstřelovač",
+    "ehi_popup_snipers" : "ODSTŘELOVAČI!",
+    "ehi_popup_snipers_spawned" : "Objevili se nepřátelští odstřelovači",
     "ehi_achievement_ok" : "OK",
     "ehi_achievement_done" : "HOTOVO",
     "ehi_achievement_pass" : "SPLNĚNO",
@@ -514,6 +518,9 @@
 
     "ehi_show_sniper_tracker" : "Zobrazovat naskriptované odstřelovače",
     "ehi_show_sniper_tracker_desc" : "Zobrazuje sledovač s naskriptovanými odstřelovači, kteří se respawnují\n\nPoznámka:\nMarshal odstřelovači nejsou započteni\nKaždá mise používá jinou logiku na respawn odstřelovačů (pokud nějaká je) a sledovač může vypadat odlišně",
+
+    "ehi_show_sniper_spawned_popup" : "Zobrazovat vyskakovací okno 'ODSTŘELOVAČI!'",
+    "ehi_show_sniper_spawned_popup_desc" : "Zobrazuje vyskakovací okno oranžově když se zrodí naskriptovaní odstřelovači",
     
     "ehi_waypoints_menu" : "Ukazatele",
     "ehi_waypoints_menu_desc" : "",
@@ -824,6 +831,9 @@
 
     "ehi_other_show_mission_xp_overview" : "Zobrazovat přehled ZK v misi",
     "ehi_other_show_mission_xp_overview_desc" : "Zobrazuje panel v briefingu před loupeží s možnými ZK, které lze získat",
+
+    "ehi_other_show_floating_health_bar" : "Zobrazovat zdraví NPC",
+    "ehi_other_show_floating_health_bar_desc" : "Zobrazuje zdraví NPC když na něho zamíříš",
 
     "ehi_colors_menu" : "Barvy",
     "ehi_colors_menu_desc" : "Mění použité barvy",

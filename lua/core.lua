@@ -63,6 +63,13 @@ _G.EHI =
         ratdaylight = true,
         lid_cookoff_methslaves = true
     },
+    NoCivilianCounter =
+    {
+        alex_1 = true,
+        haunted = true,
+        man = true,
+        bph = true
+    },
 
     LootCounter =
     {
@@ -252,7 +259,7 @@ _G.EHI =
         -- Optional `arg (1 argument to pass to the function)` and `t`
         CustomCodeDelayed = 1004,
 
-        -- Don't use it directly! Instead, call `EHI:GetFreeCustomSpecialFunctionID()` and `EHI:RegisterCustomSpecialFunction()` respectively; or provide a function to `EHI:RegisterCustomSpecialFunction()` as a first argument
+        -- Don't use it directly! Instead, call `EHI:GetFreeCustomSFID()` and `EHI:RegisterCustomSF()` respectively; or provide a function to `EHI:RegisterCustomSF()` as a first argument
         CustomSF = 100000
     },
 
@@ -427,6 +434,7 @@ _G.EHI =
         HeliDropDrill = { "heli", "pd2_drill", "pd2_goto" },
         HeliDropBag = { "heli", "wp_bag", "pd2_goto" },
         HeliDropC4 = { "heli", "pd2_c4", "pd2_goto" },
+        HeliDropWinch = { "heli", "equipment_winch_hook", "pd2_goto" },
         HeliWait = { "heli", "pd2_escape", "pd2_lootdrop", "faster" },
         BoatEscape = { "boat", "pd2_escape", "pd2_lootdrop" },
         BoatEscapeNoLoot = { "boat", "pd2_escape" }
@@ -477,6 +485,9 @@ _G.EHI =
             TimedChanceOnce = "EHISniperTimedChanceOnceTracker",
             -- Requires `chance`, `time`, `on_fail_refresh_t` and `on_success_refresh_t`
             Loop = "EHISniperLoopTracker",
+            -- Requires `chance`, `time`, `on_fail_refresh_t` and `on_success_refresh_t`  
+            -- Optional `initial_spawn`, `initial_spawn_chance_set` (defaults to 0 if not provided), `reset_t` and `chance_success`
+            LoopRestart = "EHISniperLoopRestartTracker",
             -- Requires `time` and `refresh_t`
             Heli = "EHISniperHeliTracker",
             -- Requires `chance`, `time` and `recheck_t`
@@ -772,6 +783,7 @@ local function LoadDefaultValues(self)
         show_bodybags_counter = true,
         show_escape_chance = true,
         show_sniper_tracker = true,
+        show_sniper_spawned_popup = true,
 
         -- Waypoints
         show_waypoints = true,
@@ -945,7 +957,8 @@ local function LoadDefaultValues(self)
         -- Other
         show_remaining_xp = true,
         show_remaining_xp_to_100 = false,
-        show_mission_xp_overview = true
+        show_mission_xp_overview = true,
+        show_floating_health_bar = true
     }
 end
 
@@ -1011,7 +1024,7 @@ end
 function EHI:Init()
     local difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
     self._cache.DifficultyIndex = DifficultyToIndex(difficulty)
-    self:AddCallback(self.CallbackMessage.InitManagers, function(managers)
+    self:AddCallback(self.CallbackMessage.InitManagers, function(managers) ---@param managers managers
         local mutator = managers.mutators
         if mutator:can_mutators_be_active() then
             self._cache.UnlockablesAreDisabled = mutator:are_achievements_disabled()
@@ -1049,7 +1062,7 @@ function EHI:IsBetweenDifficulties(diff_1, diff_2)
     if diff_1 > diff_2 then -- Swap the numbers
         diff_1, diff_2 = diff_2, diff_1
     end
-    return self._cache.DifficultyIndex >= diff_1 and self._cache.DifficultyIndex <= diff_2
+    return math.within(self._cache.DifficultyIndex, diff_1, diff_2)
 end
 
 function EHI:DifficultyIndex()
@@ -1261,18 +1274,6 @@ function EHI:GetBuffDeckOption(deck, option)
 end
 
 ---@param deck string?
-function EHI:GetBuffDeckAllOptions(deck)
-    if deck and self.settings.buff_option[deck] then
-        for _, value in pairs(self.settings.buff_option[deck]) do
-            if value then
-                return true
-            end
-        end
-    end
-    return false
-end
-
----@param deck string?
 ---@param ... string
 function EHI:GetBuffDeckSelectedOptions(deck, ...)
     local deck_table = deck and self.settings.buff_option[deck]
@@ -1285,6 +1286,12 @@ function EHI:GetBuffDeckSelectedOptions(deck, ...)
         end
     end
     return false
+end
+
+---@param deck string?
+---@param option string?
+function EHI:GetBuffAndBuffDeckOption(deck, option)
+    return self:GetOption("show_buffs") and self:GetBuffDeckOption(deck, option)
 end
 
 ---@return boolean
@@ -1675,17 +1682,17 @@ end
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
 ---@return nil
 ---@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)): integer
-function EHI:RegisterCustomSpecialFunction(id, f)
-    return managers.ehi_manager:RegisterCustomSpecialFunction(id, f)
+function EHI:RegisterCustomSF(id, f)
+    return managers.ehi_manager:RegisterCustomSF(id, f)
 end
 
 ---Unregisters custom special function
 ---@param id number
-function EHI:UnregisterCustomSpecialFunction(id)
-    managers.ehi_manager:UnregisterCustomSpecialFunction(id)
+function EHI:UnregisterCustomSF(id)
+    managers.ehi_manager:UnregisterCustomSF(id)
 end
 
-function EHI:GetFreeCustomSpecialFunctionID()
+function EHI:GetFreeCustomSFID()
     local id = (self._cache.SFFUsed or self.SpecialFunctions.CustomSF) + 1
     self._cache.SFFUsed = id
     return id
@@ -1701,7 +1708,7 @@ end
 function EHI:AddAssaultDelay(params)
     if not self:GetOption("show_assault_delay_tracker") then
         if params.special_function and params.special_function > SF.CustomSF then
-            self:UnregisterCustomSpecialFunction(params.special_function)
+            self:UnregisterCustomSF(params.special_function)
         end
         return nil
     end
@@ -1778,7 +1785,7 @@ end
 function EHI:AddLootCounter3(f, trigger_once)
     local tbl =
     {
-        special_function = self:RegisterCustomSpecialFunction(f)
+        special_function = self:RegisterCustomSF(f)
     }
     if trigger_once then
         tbl.trigger_times = 1
@@ -1796,10 +1803,10 @@ function EHI:AddLootCounterSynced(f, sequence_triggers, loot_counter_data_functi
     end
     local special_function
     if self:GetOption("show_loot_counter") then
-        special_function = self:RegisterCustomSpecialFunction(f)
+        special_function = self:RegisterCustomSF(f)
     else
         self:HookLootCounterSequenceTriggers(sequence_triggers)
-        special_function = self:RegisterCustomSpecialFunction(loot_counter_data_function)
+        special_function = self:RegisterCustomSF(loot_counter_data_function)
     end
     local tbl =
     {
@@ -1823,7 +1830,7 @@ function EHI:AddLootCounterSynced2(f, sequence_triggers, loot_counter_data)
     end
     local tbl =
     {
-        special_function = self:RegisterCustomSpecialFunction(f),
+        special_function = self:RegisterCustomSF(f),
         trigger_times = 1
     }
     return tbl
@@ -1945,11 +1952,8 @@ function EHI:RestoreElementWaypoint(id)
     self._cache.ElementWaypointFunction[id] = nil
 end
 
----@param waypoints table<number, boolean>?
-function EHI:DisableWaypoints(waypoints)
-    if not self:ShouldDisableWaypoints() or waypoints == nil then
-        return
-    end
+---@param waypoints table<number, boolean>
+function EHI:CacheDisabledWaypoints(waypoints)
     if self.DisableOnLoad then
         for id, _ in pairs(waypoints) do
             self.DisableOnLoad[id] = true
@@ -1960,6 +1964,22 @@ function EHI:DisableWaypoints(waypoints)
     for id, _ in pairs(waypoints) do
         self._cache.IgnoreWaypoints[id] = true
     end
+end
+
+---@param waypoints table<number, boolean>?
+function EHI:DisableWaypoints(waypoints)
+    if not self:ShouldDisableWaypoints() or waypoints == nil then
+        return
+    end
+    self:CacheDisabledWaypoints(waypoints)
+end
+
+---@param waypoints table<number, boolean>?
+function EHI:DisableMissionWaypoints(waypoints)
+    if not self:GetOption("show_mission_trackers") or waypoints == nil then
+        return
+    end
+    self:CacheDisabledWaypoints(waypoints)
 end
 
 function EHI:DisableWaypointsOnInit()
@@ -2406,7 +2426,62 @@ function EHI:EscapeVehicleWillReturn(level_id)
 end
 
 function EHI:CanShowCivilianCountTracker()
-    return self:GetOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and self:IsNotPlayingSFN() and Global.game_settings.level_id ~= "alex_1"
+    return self:GetOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not self.NoCivilianCounter[Global.game_settings.level_id]
+end
+
+---@param color_table { ["red"]: EHI.ColorTable.Color, ["blue"]: EHI.ColorTable.Color, ["green"]: EHI.ColorTable.Color }
+---@param params EHI.ColorTable.params?
+function EHI:HookColorCodes(color_table, params)
+    params = params or {}
+    if not (params.no_mission_check or self:GetOption("show_mission_trackers")) then
+        return
+    end
+    local tracker_name = params.tracker_name or "ColorCodes"
+    local color_sequence_hash = {} -- Precache the sequence functions from provided colors
+    for color, _ in pairs(color_table) do
+        local sequences = {}
+        for i = 0, 9, 1 do
+            sequences[i] = string.format("set_%s_0%d", color, i)
+        end
+        color_sequence_hash[color] = sequences
+    end
+    ---@param unit_id number
+    ---@param color string
+    local function hook(unit_id, color)
+        local sequences = color_sequence_hash[color]
+        for i, sequence in ipairs(sequences) do
+            managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, function(...)
+                managers.ehi_tracker:CallFunction(tracker_name, "SetCode", color, i)
+            end)
+        end
+    end
+    for color, data in pairs(color_table) do
+        if data.unit_ids then
+            for _, unit_id in ipairs(data.unit_ids) do
+                local u_id = params.unit_id_all or unit_id
+                if data.indexes then
+                    for _, index in ipairs(data.indexes) do
+                        hook(self:GetInstanceUnitID(u_id, index), color)
+                    end
+                elseif data.index then
+                    hook(self:GetInstanceUnitID(u_id, data.index), color)
+                else
+                    hook(u_id, color)
+                end
+            end
+        else
+            local unit_id = params.unit_id_all or data.unit_id
+            if data.indexes then
+                for _, index in ipairs(data.indexes) do
+                    hook(self:GetInstanceUnitID(unit_id, index), color)
+                end
+            elseif data.index then
+                hook(self:GetInstanceUnitID(unit_id, data.index), color)
+            else
+                hook(unit_id, color)
+            end
+        end
+    end
 end
 
 Load()

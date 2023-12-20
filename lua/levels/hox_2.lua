@@ -14,7 +14,7 @@ local request = { Icon.PCHack, Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
 local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
 local CurrentHackNumber = 0
-local CheckOkValueHostCheckOnly = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+local CheckOkValueHostCheckOnly = EHI:RegisterCustomSF(function(self, trigger, element, ...)
     if EHI:IsHost() and not element:_values_ok() then
         return
     end
@@ -131,10 +131,10 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:AddLoadSyncFunction(function(self)
-    local pc = managers.worlddefinition:get_unit(104418) -- 1
-    local pc2 = managers.worlddefinition:get_unit(102413) -- 2
-    local pc3 = managers.worlddefinition:get_unit(102414) -- 3
-    local pc4 = managers.worlddefinition:get_unit(102415) -- 4
+    local pc = managers.worlddefinition:get_unit(104418) --[[@as UnitTimer?]]
+    local pc2 = managers.worlddefinition:get_unit(102413) --[[@as UnitTimer?]]
+    local pc3 = managers.worlddefinition:get_unit(102414) --[[@as UnitTimer?]]
+    local pc4 = managers.worlddefinition:get_unit(102415) --[[@as UnitTimer?]]
     if pc and pc2 and pc3 and pc4 then
         local timer = pc:timer_gui()
         local timer2 = pc2:timer_gui()
@@ -154,7 +154,7 @@ end)
 
 ---@param id number
 ---@param unit_data UnitUpdateDefinition
----@param unit Unit
+---@param unit UnitTimer
 local function PCPosition(id, unit_data, unit)
     ---@type number
     local pos = unit_data.pos
@@ -232,9 +232,9 @@ local tbl =
                 local u_pos = tostring(self._unit:position())
                 for _, unit_pos in ipairs(pos) do
                     if unit_pos == u_pos then
-                        for _, _unit in ipairs(units) do
-                            if _unit:base() and _unit:base().SetCountThisUnit then
-                                _unit:base():SetCountThisUnit()
+                        for _, u in ipairs(units) do
+                            if u:base() and u:base().SetCountThisUnit then
+                                u:base():SetCountThisUnit()
                             end
                         end
                         break

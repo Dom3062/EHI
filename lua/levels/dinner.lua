@@ -73,17 +73,16 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101179] = { chance = 15, id = "Snipers", class = TT.Sniper.Chance, flash_times = 1 }
     other[101227] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101228] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[101233] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+    other[101233] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
         if EHI:IsHost() and not element:_values_ok() then
             return
         end
         self._trackers:CallFunction("Snipers", "SnipersKilled")
     end)}
     other[101956] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[101957] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+    other[101957] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
         if self._trackers:TrackerExists("Snipers") then
-            self._trackers:SetChance("Snipers", element._values.chance) -- 0%
-            self._trackers:CallFunction("Snipers", "SniperSpawnsSuccess")
+            self._trackers:CallFunction("Snipers", "SniperSpawnsSuccess", element._values.chance) -- 0%
         else
             self._trackers:AddTracker({
                 id = "Snipers",

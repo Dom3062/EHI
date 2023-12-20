@@ -42,6 +42,21 @@
             "default_value": true,
             "depends_on" : "ehi_show_gained_xp",
             "ehi_ver" : 129
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_choice",
+            "title": "ehi_other_show_floating_health_bar",
+            "description": "ehi_other_show_floating_health_bar_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar",
+            "value": "show_floating_health_bar",
+            "default_value": true,
+            "ehi_ver" : 206
         }
     ]
 }

@@ -83,7 +83,7 @@ end
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 50 + 30, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    [100109] = EHI:AddAssaultDelay({ time = 50 + 30, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         local time_for_prefereds = self:IsMissionElementEnabled(104439) and 5 or 0
         self._trackers:AddTracker({
             id = trigger.id,
@@ -99,6 +99,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end

@@ -44,16 +44,17 @@ local other =
     [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100314] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+    other[100314] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
         if EHI:IsHost() and element:counter_value() ~= 0 then
             return
         end
+        local t = 20 + 10 + 25
         self._trackers:AddTracker({
             id = "Snipers",
             chance = 10,
-            time = 20 + 10 + 25,
+            time = t,
             on_fail_refresh_t = 25,
-            on_success_refresh_t = 20 + 10 + 25,
+            on_success_refresh_t = t,
             class = TT.Sniper.Loop
         })
     end) }

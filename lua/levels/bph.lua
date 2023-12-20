@@ -49,13 +49,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-local DisableWaypoints =
-{
-    --levels/instances/unique/bph/bph_drill_door
-    [EHI:GetInstanceElementID(100037, 3000)] = true,
-    [EHI:GetInstanceElementID(100037, 8000)] = true
-}
-EHI:DisableWaypoints(DisableWaypoints)
 -- 101399 units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer/001 (2050, -10250, 639.67)
 EHI:UpdateUnits({ [101399] = { icons = { "C_Locke_H_HellsIsland_Another" }, hint = Hints.Wait } })
 

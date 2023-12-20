@@ -8,7 +8,7 @@ local CrashIcons = { Icon.PCHack, Icon.Fix, "pd2_question" }
 if EHI:GetOption("show_one_icon") then
     CrashIcons = { Icon.Fix }
 end
-local CrashChanceTime = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+local CrashChanceTime = EHI:RegisterCustomSF(function(self, trigger, ...)
     if self._trackers:TrackerExists("CrashChance") then
         self._trackers:CallFunction("CrashChance", "StartTimer", trigger.time)
     else
@@ -46,10 +46,10 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         hard = 50,
         veryhard_or_above = 40
     })
-    other[100356] = { time = refresh_t, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+    other[100356] = { time = refresh_t, special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
         if element:_check_mode() then
             if self._trackers:TrackerExists("Snipers") then
-                self._trackers:SetTrackerCount("Snipers", 2)
+                self._trackers:CallFunction("Snipers", "SniperSpawnsSuccess", 2)
             else
                 self._trackers:AddTracker({
                     id = "Snipers",

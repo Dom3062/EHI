@@ -27,9 +27,9 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     self.ehi_manager = managers.ehi_manager
     if server or level_id == "hvh" then
         if EHIWaypoints then
-            self:add_updator("EHIManager_Update", callback(self.ehi_manager, self.ehi_manager, "update"))
+            self:AddEHIUpdator("EHIManager_Update", callback(self.ehi_manager, self.ehi_manager, "update"))
         else
-            self:add_updator("EHI_Update", callback(self.ehi, self.ehi, "update"))
+            self:AddEHIUpdator("EHI_Update", callback(self.ehi, self.ehi, "update"))
         end
     end
     if EHI:IsVR() then
@@ -37,8 +37,13 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     end
     if EHI:GetOption("show_buffs") then
         local buff = managers.ehi_buff
-        self:add_updator("EHI_Buff_Update", callback(buff, buff, "update"))
+        self:AddEHIUpdator("EHI_Buff_Update", callback(buff, buff, "update"))
         buff:init_finalize(hud)
+    end
+    if EHI:GetOption("show_floating_health_bar") then
+        dofile(EHI.LuaPath .. "EHIHealthFloatManager.lua")
+        local float = EHIHealthFloatManager:new()
+        self:AddEHIUpdator("EHI_HealthFloat_Update", callback(float, float, "update"))
     end
     if tweak_data.levels:IsLevelSafehouse(level_id) then
         return
@@ -126,6 +131,25 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 class = "EHITotalXPTracker"
             })
         end
+    end
+end
+
+---@param id string
+---@param callback function
+function HUDManager:AddEHIUpdator(id, callback)
+    self._ehi_updators = self._ehi_updators or {}
+    self._ehi_updators[id] = true
+    self:add_updator(id, callback)
+    if table.size(self._ehi_updators) == 1 then
+        EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function()
+            self:RemoveEHIUpdators()
+        end)
+    end
+end
+
+function HUDManager:RemoveEHIUpdators()
+    for id, _ in pairs(self._ehi_updators or {}) do
+        self:remove_updator(id)
     end
 end
 
@@ -277,6 +301,13 @@ function HUDManager:ShowDailyDescription(id, daily_job)
     managers.chat:_receive_message(1, managers.localization:text(text), managers.localization:text(objective), Color.white)
 end
 
+---@param single_sniper boolean?
+function HUDManager:ShowSnipersSpawned(single_sniper)
+    local id = single_sniper and "SNIPER!" or "SNIPERS!"
+    local desc = single_sniper and "ehi_popup_sniper_spawned" or "ehi_popup_snipers_spawned"
+    self:custom_ingame_popup_text(id, managers.localization:text(desc), "EHI_Sniper")
+end
+
 function HUDManager:Debug(id)
     local dt = 0
     if self._ehi_debug_time then
@@ -289,6 +320,9 @@ function HUDManager:Debug(id)
     managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; dt: " .. dt, Color.white)
 end
 
+---@param id number
+---@param editor_name string
+---@param enabled boolean
 function HUDManager:DebugElement(id, editor_name, enabled)
     managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; Editor Name: " .. tostring(editor_name) .. "; Enabled: " .. tostring(enabled), Color.white)
 end

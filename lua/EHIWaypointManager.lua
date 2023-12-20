@@ -10,7 +10,6 @@ EHIWaypointManager._bitmap_h = 32
 function EHIWaypointManager:new()
     self._enabled = EHI:GetOption("show_waypoints") --[[@as boolean]]
     self._present_timer = EHI:GetOption("show_waypoints_present_timer") --[[@as number]]
-    self._scale = 1
     self._stored_waypoints = {}
     self._waypoints = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIWaypoint?>
     self._waypoints_to_update = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIWaypoint?>
@@ -101,6 +100,8 @@ function EHIWaypointManager:RestoreVanillaWaypoint(id)
     self._hud:RestoreWaypoint2(id)
 end
 
+---@param id string
+---@param new_id string
 function EHIWaypointManager:UpdateWaypointID(id, new_id)
     if self._waypoints[new_id] or not self._waypoints[id] then
         return
@@ -177,13 +178,11 @@ function EHIWaypointManager:SetWaypointPosition(id, pos)
 end
 
 ---@param id string
----@return boolean
 function EHIWaypointManager:WaypointExists(id)
     return id and self._waypoints[id] ~= nil or false
 end
 
 ---@param id string
----@return boolean
 function EHIWaypointManager:WaypointDoesNotExist(id)
     return not self:WaypointExists(id)
 end

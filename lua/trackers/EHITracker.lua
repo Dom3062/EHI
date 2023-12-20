@@ -81,8 +81,8 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) the
             o:set_x(math_lerp(from_x, target_x, lerp))
             o:set_w(math_lerp(from_w, target_w, lerp))
         end
-        if self and self.Redraw then ---@diagnostic disable-line
-            self:Redraw() ---@diagnostic disable-line
+        if self and self.Redraw then
+            self:Redraw()
         end
     end
 else
@@ -100,8 +100,8 @@ else
             local lerp = t / TOTAL_T
             o:set_w(math_lerp(from_w, target_w, lerp))
         end
-        if self and self.Redraw then ---@diagnostic disable-line
-            self:Redraw() ---@diagnostic disable-line
+        if self and self.Redraw then
+            self:Redraw()
         end
     end
 end
@@ -556,6 +556,7 @@ function EHITracker:CreateText(params)
         text = params.text or "",
         align = "center",
         vertical = "center",
+        x = params.x or params.left,
         w = params.w or self._bg_box:w(),
         h = params.h or self._bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
@@ -565,6 +566,9 @@ function EHITracker:CreateText(params)
     })
     if params.status_text then
         self:SetStatusText(params.status_text, text)
+    end
+    if params.FitTheText then
+        self:FitTheText(text, params.FitTheText_FontSize)
     end
     return text
 end
@@ -782,6 +786,24 @@ function EHITracker:FitTheText(text, font_size)
     end
 end
 
+---@param ... number
+function EHITracker:FitTheTextBasedOnTime(...)
+    local time_check = self._TIME_FORMAT == 1 and 100 or 60
+    if math.max(self._time, ...) >= time_check then
+        local max_refresh_t = math.max(0, ...)
+        if max_refresh_t >= time_check then
+            local t = self._time
+            self._time = max_refresh_t
+            self._text:set_text(self:Format())
+            self:FitTheText()
+            self._time = t
+        else
+            self._text:set_text(self:Format())
+            self:FitTheText()
+        end
+    end
+end
+
 ---@param time number
 function EHITracker:SetTime(time)
     self:SetTimeNoAnim(time)
@@ -878,12 +900,18 @@ function EHITracker:SetTrackerAccurate(time)
     self:SetTimeNoAnim(time)
 end
 
+function EHITracker:AddTrackerToUpdate()
+    self._parent_class:AddTrackerToUpdate(self)
+end
+
 function EHITracker:RemoveTrackerFromUpdate()
     self._parent_class:RemoveTrackerFromUpdate(self._id)
 end
 
-function EHITracker:AddTrackerToUpdate()
-    self._parent_class:AddTrackerToUpdate(self)
+function EHITracker:DelayForcedDelete()
+    self._hide_on_delete = nil
+    self._refresh_on_delete = nil
+    self:AddTrackerToUpdate()
 end
 
 ---@param w number? If not provided the width is then called from `EHITracker:GetPanelW()`
@@ -939,6 +967,9 @@ end
 
 function EHITracker:PlayerSpawned()
     self:ForceShowHint()
+end
+
+function EHITracker:Redraw()
 end
 
 ---@param create_f fun(panel: Panel, params: table): Panel

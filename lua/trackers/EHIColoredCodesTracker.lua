@@ -3,6 +3,7 @@
 EHIColoredCodesTracker = class(EHITracker)
 EHIColoredCodesTracker._update = false
 EHIColoredCodesTracker._forced_icons = { EHI.Icons.Interact }
+EHIColoredCodesTracker._forced_hint_text = "color_codes"
 function EHIColoredCodesTracker:OverridePanel()
     local third = self._bg_box:w() / 3
     self._bg_box:remove(self._text)
@@ -11,34 +12,37 @@ function EHIColoredCodesTracker:OverridePanel()
         text = "?",
         w = third,
         h = self._icon_size_scaled,
-        color = Color.red
+        color = Color.red,
+        left = 0
     })
-    self._text:set_left(0)
     self._text2 = self:CreateText({
         name = "green",
         text = "?",
         w = third,
         h = self._icon_size_scaled,
-        color = Color.green
+        color = Color.green,
+        left = self._text:right()
     })
-    self._text2:set_left(self._text:right())
     self._text3 = self:CreateText({
         name = "blue",
         text = "?",
         w = third,
         h = self._icon_size_scaled,
-        color = Color(0, 1, 1) -- Aqua
+        color = Color(0, 1, 1), -- Aqua
+        left = self._text2:right()
     })
-    self._text3:set_left(self._text2:right())
 end
 
+---@param code string?
 function EHIColoredCodesTracker:Format(code)
-    if not code then
-        return "?"
+    if code then
+        return tostring(code)
     end
-    return tostring(code)
+    return "?"
 end
 
+---@param color string
+---@param code string
 function EHIColoredCodesTracker:SetCode(color, code)
     local text = self._bg_box:child(color) --[[@as PanelText]]
     text:set_text(self:Format(code))

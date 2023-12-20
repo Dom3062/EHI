@@ -772,7 +772,7 @@ tweak_data.ehi =
             local n = 0
             local world = managers.worlddefinition
             for _, index in ipairs(weapons or {}) do
-                local weapon = world:get_unit(index)
+                local weapon = world:get_unit(index) ---@cast weapon UnitCarry
                 if weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
                     local state = weapon:damage()._state.graphic_group.grp_wpn
                     if state[1] == "set_visibility" and state[2] then
@@ -788,7 +788,7 @@ tweak_data.ehi =
             local n = 0
             local world = managers.worlddefinition
             for _, index in ipairs(loot) do
-                local unit = world:get_unit(index)
+                local unit = world:get_unit(index) ---@cast unit UnitCarry
                 if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_hidden == 0 then
                     n = n + 1
                 end
@@ -951,6 +951,7 @@ tweak_data.hud_icons.EHI_XP = { texture = tweak_data.ehi.icons.xp.texture }
 tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }
 tweak_data.hud_icons.EHI_Minion = tweak_data.ehi.icons.minion
 tweak_data.hud_icons.EHI_Loot = tweak_data.hud_icons.pd2_loot
+tweak_data.hud_icons.EHI_Sniper = tweak_data.ehi.icons.sniper
 
 local preplanning = tweak_data.preplanning
 local path = preplanning.gui.type_icons_path

@@ -47,6 +47,11 @@ local original =
     custom_set_empty = CustomAmmoBagBase._set_empty
 }
 
+---@class AmmoBagBase
+---@field _ammo_amount number
+---@field _max_ammo_amount number
+---@field _unit UnitAmmoDeployable
+
 local ignored_pos = {}
 ---@param pos Vector3[]
 function AmmoBagBase.SetIgnoredPos(pos)

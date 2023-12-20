@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 ---@class EHIdailycakeTracker : EHIDailyTracker, EHIProgressTracker
 ---@field super EHIDailyTracker
 EHIdailycakeTracker = class(EHIDailyTracker)
-EHIdailycakeTracker.FormatProgress = EHIProgressTracker.Format
+EHIdailycakeTracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIdailycakeTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIdailycakeTracker.SetProgress = EHIProgressTracker.SetProgress
 ---@param panel Panel
@@ -20,10 +20,10 @@ function EHIdailycakeTracker:OverridePanel()
     self._progress_text = self:CreateText({
         name = "text2",
         text = self:FormatProgress(),
-        w = self._bg_box:w() / 2
+        w = self._bg_box:w() / 2,
+        left = 0,
+        FitTheText = true
     })
-    self:FitTheText(self._progress_text)
-    self._progress_text:set_left(0)
     self._text:set_left(self._progress_text:right())
     self:SetIconX()
 end

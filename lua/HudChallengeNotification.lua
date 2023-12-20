@@ -60,7 +60,7 @@ function EHI:SetNotificationAlert(ehi_title, localization, c)
     end
 end
 
-EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(l)
+EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(l) ---@param l LocalizationManager
     for title, loc in pairs(to_localize or {}) do
         titles[title] = { localization = l:text(loc.localization), color = loc.color }
     end
@@ -87,4 +87,9 @@ if EHI:GetUnlockableOption("show_daily_failed_popup") then
 end
 if EHI:GetUnlockableOption("show_daily_started_popup") then
     EHI:SetNotificationAlert("DAILY SIDE JOB STARTED!", "ehi_popup_daily_started", Color.green)
+end
+if EHI:GetOption("show_sniper_spawned_popup") then
+    local orange = Color(255, 255, 165, 0) / 255
+    EHI:SetNotificationAlert("SNIPER!", "ehi_popup_sniper", orange)
+    EHI:SetNotificationAlert("SNIPERS!", "ehi_popup_snipers", orange)
 end

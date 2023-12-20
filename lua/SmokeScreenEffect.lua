@@ -6,16 +6,18 @@ local show_waypoint, show_waypoint_only = false, true
 if EHI:GetOption("show_mission_trackers") then
     show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_mission")
 end
-local buffs = EHI:GetOption("show_buffs") and EHI:GetBuffDeckOption("sicario", "smoke_bomb")
+local buffs = EHI:GetBuffAndBuffDeckOption("sicario", "smoke_bomb")
 
-EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers)
-    ---@class EHISmokeBombWaypoint : EHIWaypoint
-    EHISmokeBombWaypoint = class(EHIWaypoint)
-    ---@param params table
-    function EHISmokeBombWaypoint:post_init(params)
-        self:SetColor(params.color)
-    end
-end)
+if show_waypoint then
+    EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers)
+        ---@class EHISmokeBombWaypoint : EHIWaypoint
+        EHISmokeBombWaypoint = class(EHIWaypoint)
+        ---@param params table
+        function EHISmokeBombWaypoint:post_init(params)
+            self:SetColor(params.color)
+        end
+    end)
+end
 
 local original_init = SmokeScreenEffect.init
 ---@param position Vector3

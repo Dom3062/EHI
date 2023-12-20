@@ -14,7 +14,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local very_hard_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
-local SetChanceWhenTrackerExists = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+local SetChanceWhenTrackerExists = EHI:RegisterCustomSF(function(self, trigger, element, ...)
     if self._trackers:TrackerExists(trigger.merge_id) then
         self._trackers:SetChance(trigger.merge_id, element._values.chance)
     elseif self._trackers:TrackerExists(trigger.id) then

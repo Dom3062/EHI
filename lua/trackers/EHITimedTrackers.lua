@@ -103,20 +103,7 @@ function EHITimedProgressTracker:SetTimeNoAnim(time)
     self:StartTimer()
 end
 
----@param force boolean?
-function EHITimedProgressTracker:SetCompleted(force)
-    if force or not self._status then
-        self.update = self.update_fade
-        self._refresh_on_delete = nil
-    end
-    EHITimedProgressTracker.super.SetCompleted(self, force)
-end
-
-function EHITimedProgressTracker:SetFailed()
-    if self._status and not self._status_is_overridable then
-        return
-    end
+function EHITimedProgressTracker:DelayForcedDelete()
     self.update = self.update_fade
-    self._refresh_on_delete = nil
-    EHITimedProgressTracker.super.SetFailed(self)
+    EHITimedProgressTracker.super.DelayForcedDelete(self)
 end

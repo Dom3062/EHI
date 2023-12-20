@@ -31,6 +31,7 @@
 ---@field critical_hit_chance fun(self: self, detection_risk: number?): number
 ---@field health_regen fun(self: self): number
 ---@field num_local_minions fun(self: self): number
+---@field get_infamy_exp_multiplier fun(self: self): number
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then

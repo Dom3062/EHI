@@ -1,3 +1,14 @@
+---@class Drill
+---@field _autorepair_clbk_id string?
+---@field _autorepair_chance number
+---@field _disable_upgrades boolean
+---@field _unit UnitTimer
+---@field EVENT_IDS table<string, number>
+---@field is_drill boolean
+---@field is_hacking_device boolean
+---@field is_saw boolean
+---@field get_skill_upgrades fun(self: self): table
+
 local EHI = EHI
 if EHI:CheckLoadHook("Drill") then
     return
@@ -13,6 +24,8 @@ local NoAutorepair = highest_id + 2
 
 local original = {}
 
+---@param unit_key string
+---@param autorepair boolean
 local function SetAutorepair(unit_key, autorepair)
     managers.ehi_manager:Call(unit_key, "SetAutorepair", autorepair)
 end
@@ -21,7 +34,7 @@ if EHI:IsHost() then
     original.set_autorepair = Drill.set_autorepair
     function Drill:set_autorepair(...)
         original.set_autorepair(self, ...)
-        SetAutorepair(tostring(self._unit:key()), self._autorepair_clbk_id)
+        SetAutorepair(tostring(self._unit:key()), self._autorepair_clbk_id --[[@as boolean]])
         managers.network:session():send_to_peers_synched("sync_unit_event_id_16", self._unit, "base", self._autorepair_clbk_id and HasAutorepair or NoAutorepair)
     end
     original.clbk_autorepair = Drill.clbk_autorepair
@@ -36,7 +49,7 @@ if EHI:IsHost() then
     function Drill:set_jammed(...)
         original.set_jammed(self, ...)
         if self._autorepair_chance and self._unit and alive(self._unit) then
-            SetAutorepair(tostring(self._unit:key()), self._autorepair_clbk_id)
+            SetAutorepair(tostring(self._unit:key()), self._autorepair_clbk_id --[[@as boolean]])
             managers.network:session():send_to_peers_synched("sync_unit_event_id_16", self._unit, "base", self._autorepair_clbk_id and HasAutorepair or NoAutorepair)
         end
     end

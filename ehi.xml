@@ -95,6 +95,7 @@
                 <post :hook_id="securitycamera" :script_path="SecurityCamera.lua" />
                 <post :hook_id="timergui" :script_path="TimerGui.lua" />
                 <post :hook_id="securitylockgui" :script_path="SecurityLockGui.lua" />
+                <post :hook_id="waypointext" :script_path="WaypointExt.lua" />
                 <post :hook_id="zipline" :script_path="Zipline.lua" />
             </group>
             <post :hook_id="vehicles/vehicledrivingext" :script_path="VehicleDrivingExt.lua" />

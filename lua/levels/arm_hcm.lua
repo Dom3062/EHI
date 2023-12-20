@@ -57,7 +57,7 @@ if EHI:IsHost() then
         if truck ~= count then
             local wd = managers.worlddefinition
             for _, truck_id in ipairs(trucks_body) do
-                local unit = wd:get_unit(truck_id)
+                local unit = wd:get_unit(truck_id) --[[@as UnitBase?]]
                 if unit and unit:damage() and unit:damage()._state and unit:damage()._state.graphic_group and unit:damage()._state.graphic_group.grp_truck then
                     local state = unit:damage()._state.graphic_group.grp_truck
                     if state[1] == "set_visibility" and state[2] then

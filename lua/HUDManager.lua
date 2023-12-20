@@ -19,6 +19,7 @@ local original =
 ---@field remove_waypoint fun(self: self, id: number|string)
 ---@field get_waypoint_data fun(self: self, id: string): WaypointDataTable?
 ---@field add_updator fun(self: self, id: string, cb: function)
+---@field remove_updator fun(self: self, id: string)
 ---@field script fun(self: self, name: string): { panel: Panel }
 ---@field custom_ingame_popup_text fun(self: self, title: string?, text: string, icon_id: string?)
 ---@field show_hint fun(self: self, params: table)

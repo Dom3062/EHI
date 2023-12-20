@@ -79,7 +79,7 @@ function EHIProgressTracker:SetCompleted(force)
         self._status = "completed"
         self:SetTextColor(Color.green, self._progress_text)
         if force or not self._show_finish_after_reaching_target then
-            self:AddTrackerToUpdate()
+            self:DelayForcedDelete()
         elseif not self._show_progress_on_finish then
             self:SetStatusText("finish")
         end
@@ -108,9 +108,5 @@ function EHIProgressTracker:SetFailed()
     self:AddTrackerToUpdate()
     self:AnimateBG()
     self._disable_counting = true
-end
-
-function EHIProgressTracker:GetProgress()
-    return self._progress
 end
 EHIProgressTracker.FormatProgress = EHIProgressTracker.Format

@@ -78,13 +78,13 @@ if EHI:IsHost() then
     end
 end
 if EHI:GetOption("show_escape_chance") then
-    other[100342] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+    other[100342] = { special_function = EHI:RegisterCustomSF(function(self, ...)
         self._escape:AddChanceWhenDoesNotExists(false, 25)
     end) }
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[104496] = { time = 120, count_on_refresh = 1, id = "Snipers", class = TT.Sniper.TimedCount, hint = Hints.EnemySnipers }
-    other[100063] = { time = 90, id = "Snipers", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, ...)
+    other[104496] = { time = 120, count_on_refresh = 1, id = "Snipers", class = TT.Sniper.TimedCount }
+    other[100063] = { time = 90, id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         if self._trackers:TrackerExists(id) then
             self._trackers:CallFunction(id, "SetRespawnTime", trigger.time)

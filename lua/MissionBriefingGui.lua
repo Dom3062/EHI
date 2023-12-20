@@ -82,10 +82,6 @@ function XPBreakdownItem:init(gui, panel, string, add_string, index, selected)
     end
 end
 
-function XPBreakdownItem:GetIndex()
-    return self._index
-end
-
 ---@return PanelText
 function XPBreakdownItem:GetButton()
     return self._button
@@ -116,7 +112,8 @@ function XPBreakdownItem:SetVisibleWithOffset(offset)
 end
 
 ---@param no_change boolean?
-function XPBreakdownItem:Select(no_change)
+---@param previous_tactic number?
+function XPBreakdownItem:Select(no_change, previous_tactic)
     if self._selected then
         return
     end
@@ -127,7 +124,7 @@ function XPBreakdownItem:Select(no_change)
     if no_change then
         return
     end
-    self._gui:OnTacticChanged(self:GetIndex())
+    self._gui:OnTacticChanged(self._index, previous_tactic)
 end
 
 function XPBreakdownItem:Unselect()
@@ -199,7 +196,7 @@ end
 
 ---@param loc LocalizationManager
 function XPBreakdownItemSwitch:SetNextTacticText(loc)
-    self._text:set_text(loc:text("ehi_mission_briefing_next_tactic_text"))
+    self._text:set_text(string.format("%s %s", utf8.char(57346), loc:text("ehi_mission_briefing_next_tactic_text")))
     EHIMenu:make_fine_text(self._text)
 end
 
@@ -333,9 +330,6 @@ function MissionBriefingGui:AddXPBreakdown(params)
         self._ehi_buttons = {} ---@type table<number, XPBreakdownItem>
         local tactic = params.tactic
         if tactic.custom then
-            if self._ehi_controller_switch_button then
-                self._ehi_controller_switch_button:SetNextTacticText(self._loc)
-            end
             if self._panels then
                 for i, custom in ipairs(tactic.custom) do
                     self:ProcessBreakDown(custom.tactic, self._panels[i])
@@ -456,6 +450,9 @@ function MissionBriefingGui:AddXPBreakdown(params)
                 end
                 self._ehi_panel:set_y(self._ehi_panel:y() + offset)
                 self:HookMouseFunctions()
+            end
+            if self._ehi_controller_switch_button and TacticMax > 2 then
+                self._ehi_controller_switch_button:SetNextTacticText(self._loc)
             end
         elseif self._panels then
             self:ProcessBreakDown(tactic.stealth, self._panels[1])
@@ -1731,7 +1728,7 @@ function MissionBriefingGui:FormatRandomObjectivesHeader(max)
     if localization == "czech" then
         if max == 1 then
             return self._loc:text("ehi_experience_random_objectives", { count = max, suffix1 = "ý", suffix2 = "" })
-        elseif max >= 2 and max <= 4 then
+        elseif math.within(max, 2, 4) then
             return self._loc:text("ehi_experience_random_objectives", { count = max, suffix1 = "é", suffix2 = "y" })
         else
             return self._loc:text("ehi_experience_random_objectives", { count = max, suffix1 = "ých", suffix2 = "ů" })
@@ -2064,20 +2061,23 @@ end
 
 function MissionBriefingGui:NextTacticSelection()
     self._ehi_buttons[TacticSelected]:Unselect()
+    local PreviousTactic = TacticSelected
     TacticSelected = TacticSelected + 1
     if TacticSelected > TacticMax then
         TacticSelected = 1
     end
-    self._ehi_buttons[TacticSelected]:Select()
+    self._ehi_buttons[TacticSelected]:Select(false, PreviousTactic)
 end
 
 ---@param index number
-function MissionBriefingGui:OnTacticChanged(index)
+---@param PreviousTactic number?
+function MissionBriefingGui:OnTacticChanged(index, PreviousTactic)
+    local tactic = PreviousTactic or TacticSelected
     local panel = self._panels[index]
     panel.panel:set_visible(true)
     self._ehi_panel:set_h(panel.h)
-    self._panels[TacticSelected].panel:set_visible(false)
-    self._ehi_buttons[TacticSelected]:Unselect()
+    self._panels[tactic].panel:set_visible(false)
+    self._ehi_buttons[tactic]:Unselect()
     TacticSelected = index
 end
 

@@ -37,7 +37,7 @@ if EHI:IsHost() then
         local wd = managers.worlddefinition
         local hook_function = tweak_data.ehi.functions.HookArmoredTransportUnit
         for _, truck_id in ipairs(trucks) do
-            local unit = wd:get_unit(truck_id)
+            local unit = wd:get_unit(truck_id) --[[@as UnitBase?]]
             if unit and unit:damage() and unit:damage()._state and unit:damage()._state.graphic_group and unit:damage()._state.graphic_group.grp_truck then
                 local state = unit:damage()._state.graphic_group.grp_truck
                 if state[1] == "set_visibility" and state[2] then
@@ -56,7 +56,8 @@ if EHI:IsHost() then
     other[104893] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
+    other[100362] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, single_sniper = true }
+    other[100358] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%

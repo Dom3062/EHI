@@ -11,6 +11,7 @@ if EHI:GetOption("civilian_count_tracker_format") >= 2 then
         function EHICivilianCountTracker:Format()
             return self._tied_count .. "|" .. self._count
         end
+        EHICivilianCountTracker.FormatCount = EHICivilianCountTracker.Format
     else
         if not EHICivilianCountTracker._ONE_ICON then
             EHICivilianCountTracker._forced_icons[2] = "hostage"
@@ -18,6 +19,7 @@ if EHI:GetOption("civilian_count_tracker_format") >= 2 then
         function EHICivilianCountTracker:Format()
             return self._count .. "|" .. self._tied_count
         end
+        EHICivilianCountTracker.FormatCount = EHICivilianCountTracker.Format
     end
 end
 function EHICivilianCountTracker:init(...)

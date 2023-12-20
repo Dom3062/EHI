@@ -19,6 +19,10 @@ local tweak_values = assault_values.delay
 local hostage_values = assault_values.hostage_hesitation_delay
 ---@class EHIAssaultTracker : EHIWarningTracker
 ---@field super EHIWarningTracker
+---@field _cs_assault_extender boolean
+---@field _cs_max_hostages number
+---@field _cs_duration number
+---@field _cs_deduction number
 EHIAssaultTracker = class(EHIWarningTracker)
 EHIAssaultTracker._forced_icons = { { icon = "assaultbox", color = Control } }
 EHIAssaultTracker._forced_hint_text = "assault"
@@ -432,46 +436,4 @@ function EHIAssaultTracker:delete()
     else
         EHIAssaultTracker.super.delete(self)
     end
-end
-
-local _Active = false
-local function ActivateHooks()
-    local function f()
-        managers.ehi_tracker:CallFunction("Assault", "OnMinionCountChanged")
-    end
-    EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, f)
-    EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, f)
-end
-local function CheckIfModifierIsActive()
-    if _Active then
-        return
-    end
-    local mod = managers.modifiers
-    for category, data in pairs(mod._modifiers) do
-        if category == "crime_spree" then
-            for _, modifier in ipairs(data) do
-                if modifier._type == "ModifierAssaultExtender" then
-                    EHIAssaultTracker._cs_duration = modifier:value("duration") * 0.01
-                    EHIAssaultTracker._cs_deduction = modifier:value("deduction") * 0.01
-                    EHIAssaultTracker._cs_max_hostages = modifier:value("max_hostages")
-                    EHIAssaultTracker._cs_assault_extender = true
-                    ActivateHooks()
-                    _Active = true
-                    break
-                end
-            end
-        end
-    end
-end
-if EHI:IsHost() then
-    local ListenerModifier = class(BaseModifier)
-    function ListenerModifier:OnEnterSustainPhase(duration)
-        managers.ehi_tracker:CallFunction("Assault", "OnEnterSustain", duration)
-    end
-    EHI:AddCallback(EHI.CallbackMessage.InitFinalize, function()
-        managers.modifiers:add_modifier(ListenerModifier, "EHI")
-        CheckIfModifierIsActive()
-    end)
-else
-    EHI:HookWithID(CrimeSpreeManager, "on_finalize_modifiers", "EHI_CrimeSpree_on_finalize_modifiers", CheckIfModifierIsActive)
 end

@@ -31,7 +31,7 @@ end
 function LootManager:GetSecuredBagsAmount()
     local mandatory = self:get_secured_mandatory_bags_amount()
     local bonus = self:get_secured_bonus_bags_amount()
-    local total = (mandatory or 0) + (bonus or 0)
+    local total = mandatory + bonus
     return total
 end
 

@@ -25,7 +25,7 @@ end
 ---@type ParseTriggerTable
 local triggers =
 {
-    [103053] = { id = "FuelChecking", icons = { Icon.Wait }, class = TT.Pausable, special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, enabled)
+    [103053] = { id = "FuelChecking", icons = { Icon.Wait }, class = TT.Pausable, special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
         if not enabled then
             return
         end
@@ -53,7 +53,7 @@ local triggers =
     [102656] = { id = "FuelTransferLoud", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsLoud, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101686, waypoint_f = TransferWP, hint = Hints.FuelTransfer },
     [101684] = { id = "FuelTransferLoud", special_function = SF.PauseTracker },
 
-    [101050] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+    [101050] = { special_function = EHI:RegisterCustomSF(function(self, ...)
         self._trackers:CallFunction("FuelChecking", "AddDelay", 20) -- Add 20s because stealth trigger is now disabled
         self._trackers:RemoveTracker("FuelTransferStealth") -- ElementTimer won't proceed because alarm has been raised, remove it from the screen
         self:UpdateWaypointTriggerIcon(103053, Icon.Defend) -- Cops can turn off the checking device, change the waypoint icon to reflect this
@@ -109,6 +109,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
+    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end

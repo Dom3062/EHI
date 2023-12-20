@@ -7,6 +7,7 @@ _G.Global = {}
 ---@class World
 ---@field find_units fun(self: self, ...): Unit[]
 ---@field find_units_quick fun(self: self, ...): Unit[]
+---@field make_slot_mask fun(self: self, ...: number): number
 _G.World = {}
 ---@class tweak_data
 ---@field chat_colors Color[]
@@ -201,12 +202,18 @@ _G.tweak_data.upgrades.values.temporary = {
 _G.managers = {}
 ---@type boolean
 _G.IS_VR = ...
+---@class AmmoBagBase
+_G.AmmoBagBase = {}
+---@class GrenadeCrateBase
+_G.GrenadeCrateBase = {}
 ---@class CoreWorldInstanceManager
 _G.CoreWorldInstanceManager = {}
 ---@class CivilianDamage
 _G.CivilianDamage = {}
 ---@class CopDamage
 _G.CopDamage = {}
+---@class Drill
+_G.Drill = {}
 ---@class TimerGui
 _G.TimerGui = {}
 ---@class DigitalGui
@@ -233,7 +240,7 @@ _G.HUDManager = {}
 ---@class HUDMissionBriefing
 _G.HUDMissionBriefing = {}
 ---@class ObjectInteractionManager
----@field _interactive_units Unit[]
+---@field _interactive_units UnitWithInteraction[]
 _G.ObjectInteractionManager = {}
 ---@class MissionAssetsManager
 _G.MissionAssetsManager = {}
@@ -366,6 +373,9 @@ end
 ---@field get_suspicion_offset_of_local fun(self: self, lerp: number, ignore_armor_kit: boolean?): number
 ---@field outfit_string fun(self: self): table
 
+---@class CarryData
+---@field carry_id fun(self: self): string
+
 ---@class ControllerWrapper
 ---@field add_trigger fun(self: self, connection_name: string, func: function)
 ---@field enable fun(self: self)
@@ -392,6 +402,7 @@ end
 ---@field create_fullscreen_workspace fun(self: self): Workspace
 ---@field create_fullscreen_16_9_workspace fun(self: self): Workspace 16:9
 ---@field destroy_workspace fun(self: self, ws: Workspace)
+---@field layout_fullscreen_workspace fun(self: self, ws: Workspace)
 ---@field safe_to_full fun(self: self, in_x: number, in_y: number): number, number
 ---@field safe_to_full_16_9 fun(self: self, in_x: number, in_y: number): number, number
 ---@field full_to_safe fun(self: self, in_x: number, in_y: number): number, number
@@ -419,7 +430,12 @@ end
 
 ---@class JobManager
 ---@field current_contact_id fun(self: self): string
+---@field current_difficulty_stars fun(self: self): number
 ---@field current_job_id fun(self: self): string
+---@field current_job_stars fun(self: self): number
+---@field get_ghost_bonus fun(self: self): number
+---@field get_job_heat_multipliers fun(self: self, job_id: string): number?
+---@field is_current_job_professional fun(self: self): boolean
 ---@field is_level_christmas fun(self: self, level_id: string): boolean
 ---@field on_last_stage fun(self: self): boolean
 
@@ -460,6 +476,12 @@ end
 ---@field use_mouse fun(self: self, params: table, position: number?)
 ---@field remove_mouse fun(self: self, id: number)
 
+---@class MutatorsManager
+---@field are_achievements_disabled fun(self: self): boolean
+---@field can_mutators_be_active fun(self: self): boolean
+---@field get_experience_reduction fun(self: self): number
+---@field is_mutator_active fun(self: self, mutator: table): boolean
+
 ---@class NetworkAccountBase
 ---@field get_stat fun(self: self, key: string): number
 
@@ -468,6 +490,7 @@ end
 ---@field id fun(self: self): number
 ---@field character fun(self: self): string
 ---@field set_outfit_string fun(self: self, outfit_string: table)
+---@field unit fun(self: self): UnitPlayer
 
 ---@class NetworkBaseSession
 ---@field amount_of_alive_players fun(self: self): number
@@ -492,6 +515,9 @@ end
 ---@class StatisticsManager
 ---@field is_dropin fun(self: self): boolean
 ---@field started_session_from_beginning fun(self: self): boolean
+
+---@class ViewportManager
+---@field add_resolution_changed_func fun(self: self, func: function): function
 
 ---@class WeaponFactoryManager
 ---@field get_ammo_data_from_weapon fun(self: self, factory_id: string, blueprint: table): table?
@@ -527,6 +553,7 @@ end
 ---@field modifiers ModifiersManager
 ---@field money MoneyManager
 ---@field mouse_pointer MousePointerManager
+---@field mutators MutatorsManager
 ---@field network NetworkManager
 ---@field localization LocalizationManager
 ---@field loot LootManager
@@ -536,6 +563,7 @@ end
 ---@field slot SlotManager
 ---@field statistics StatisticsManager
 ---@field trade TradeManager
+---@field viewport ViewportManager
 ---@field weapon_factory WeaponFactoryManager
 ---@field worlddefinition WorldDefinition
 ---@field world_instance CoreWorldInstanceManager
@@ -607,11 +635,20 @@ end
 ---@field PrintTable fun(tbl: table) Prints tables, provided by SuperBLT
 
 ---@class mathlib
----@field lerp fun(a: number, b: number, lerp: number): number Linearly interpolates between `a` and `b` by `lerp`
 ---@field round fun(n: number, precision: number?): number Rounds number with precision
 ---@field clamp fun(number: number, min: number, max: number): number Returns `number` clamped to the inclusive range of `min` and `max`
 ---@field rand fun(a: number, b: number?): number If `b` is provided, returns random number between `a` and `b`. Otherwise returns number between `0` and `a`
 ---@field mod fun(n: number, div: number): number Returns remainder of a division
+---@field within fun(x: number, min: number, max: number): boolean Returns `true` or `false` if `x` is within (inclusive) `min` and `max`
+
+---Linearly interpolates between `a` and `b` by `lerp`
+---@param a number
+---@param b number
+---@param lerp number
+---@return number
+---@overload fun(a: Color, b: Color, lerp: number): Color
+function math.lerp(a, b, lerp)
+end
 
 ---@class tablelib
 ---@field size fun(tbl: table): number Returns size of the table
@@ -623,6 +660,7 @@ end
 
 ---@class InteractionExt
 ---@field tweak_data string
+---@field active fun(self: self): boolean
 ---@field interact_position fun(self: self): Vector3
 
 ---@class PlayerBase
@@ -638,10 +676,12 @@ end
 
 ---@class PlayerMovement
 ---@field crouching fun(self: self): boolean
+---@field m_head_pos fun(self: self): Vector3
 ---@field running fun(self: self): boolean
 ---@field zipline_unit fun(self: self): UnitZipline
 
 ---@class HuskPlayerMovement
+---@field m_head_pos fun(self: self): Vector3
 
 ---@class CopBase : UnitBase
 ---@field _unit UnitEnemy
@@ -661,6 +701,11 @@ end
 ---@field unregister_listener fun(key: string)
 
 ---@class HuskCopDamage : CopDamage
+
+---@class CopMovement
+---@field m_head_pos fun(self: self): Vector3
+
+---@class HuskCopMovement : CopMovement
 
 ---@class CivilianBase : CopBase
 ---@field _unit UnitCivilian
@@ -689,18 +734,29 @@ end
 ---@field y fun(self: self): number
 ---@field z fun(self: self): number
 
----@class UnitBase
----@field add_destroy_listener fun(self: self, key: string, clbk: function)
----@field key fun(): string
+---@class Unit
 ---@field editor_id fun(): number
----@field position fun(): Vector3
+---@field key fun(): string
+---@field name fun(): string
+---@field position fun(self: self): Vector3
+---@field oobb fun(self: self): UnitOOBB Object Oriented Bounding Box
+
+---@class UnitBase : Unit
+---@field add_destroy_listener fun(self: self, key: string, clbk: function)
 ---@field damage fun(): UnitDamage
 ---@field in_slot fun(self: self, slotmask: number): boolean
----@field oobb fun(self: self): UnitOOBB Object Oriented Bounding Box
 ---@field remove_destroy_listener fun(self: self, key: string)
 
+---@class UnitDamage
+---@field _variables table
+---@field _state table
+
+---@class UnitCarry : UnitBase
+---@field carry_data fun(): CarryData
+---@field interaction fun(): InteractionExt
+
 ---@class UnitTimer : UnitBase
----@field base Drill
+---@field base fun(): Drill
 ---@field timer_gui fun(): TimerGui
 ---@field interaction fun(): InteractionExt
 ---@field mission_door_device fun(): MissionDoorDevice?
@@ -719,6 +775,7 @@ end
 ---@class UnitEnemy : UnitBase
 ---@field base fun(): CopBase|HuskCopBase
 ---@field character_damage fun(): CopDamage|HuskCopDamage
+---@field movement fun(): CopMovement|HuskCopMovement
 
 ---@class UnitCivilian : UnitEnemy
 ---@field base fun(): CivilianBase|HuskCivilianBase
@@ -727,21 +784,25 @@ end
 ---@class UnitVehicle : UnitBase
 ---@field vehicle fun(): C_Vehicle C++ method
 
+---@class UnitWithInteraction : UnitBase
+---@field interaction fun(): InteractionExt
+
 ---@class UnitWeapon : UnitBase
 ---@field base fun(): RaycastWeaponBase
 
 ---@class UnitZipline : UnitBase
 ---@field zipline fun(): ZipLine
 
---- Unit Template; use this if your function expects each time a different unit
----@class Unit
----@field base unknown
----@field timer_gui fun(): TimerGui
----@field digital_gui fun(): DigitalGui
+---@class UnitDeployable : UnitBase
 ---@field interaction fun(): InteractionExt
----@field in_slot fun(self: self, slotmask: number): boolean
----@field position fun(self: self): Vector3
----@field [unknown] unknown
+---@field SetCountThisUnit fun(self: self)
+---@field SetIgnoreChild fun(self: self)
+
+---@class UnitAmmoDeployable : UnitDeployable
+---@field base fun(): AmmoBagBase
+
+---@class UnitGrenadeDeployable : UnitDeployable
+---@field base fun(): GrenadeCrateBase
 
 ---@class LocalizationManager
 ---@field btn_macro fun(self: self, button: string, to_upper: boolean?, nil_if_empty: boolean?): string

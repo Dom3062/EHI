@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local DestructionTrigger = { id = "Destruction", special_function = EHI:RegisterCustomSpecialFunction(function(self, trigger, element, ...)
+local DestructionTrigger = { id = "Destruction", special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
     self._trackers:IncreaseTrackerProgress(trigger.id, element._values.amount)
 end) }
 ---@type ParseTriggerTable

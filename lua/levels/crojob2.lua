@@ -146,12 +146,26 @@ if EHI:IsLootCounterVisible() then
     end
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[101773] = { id = "Snipers", class = TT.Sniper.Count }
-    --[[other[100517] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
-    other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
-    other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 20%
-    other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +20%
-    other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }]]
+    other[101742] = { chance = 100, time = 150, on_fail_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop }
+    other[101773] = { id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+        local id = trigger.id
+        if self._trackers:TrackerDoesNotExist(id) then
+            self._trackers:AddTracker({
+                id = id,
+                time = 120,
+                chance = 25,
+                on_fail_refresh_t = 120,
+                class = TT.Sniper.Loop
+            })
+        end
+        self._trackers:CallFunction(id, "AnnounceSniperSpawn")
+        self._trackers:CallFunction(id, "OnChanceFail")
+    end) }
+    other[104336] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" } -- Both success and fail goes through this same element
+    other[104245] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "AnnounceSniperSpawn" }
+    other[104308] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 25%
+    other[104309] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
+    other[104310] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[104330] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[104331] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end

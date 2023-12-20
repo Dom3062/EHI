@@ -32,7 +32,7 @@ EHIZoneTracker.SetCompleted = EHIAchievementTracker.SetCompleted
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local SetProgressMax = EHI:GetFreeCustomSpecialFunctionID()
+local SetProgressMax = EHI:GetFreeCustomSFID()
 ---@type ParseTriggerTable
 local triggers = {
     [100377] = { time = 90, id = "ClearPickupZone", class = "EHIZoneTracker", hint = Hints.run_FinalZone },
@@ -122,7 +122,7 @@ local other =
 }
 
 local ProgressMaxSet = false
-EHI:RegisterCustomSpecialFunction(SetProgressMax, function(self, trigger, ...)
+EHI:RegisterCustomSF(SetProgressMax, function(self, trigger, ...)
     if ProgressMaxSet then
         return
     end

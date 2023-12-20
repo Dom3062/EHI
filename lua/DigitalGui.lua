@@ -9,7 +9,7 @@ end
 ---@field _timer number
 ---@field _timer_count_down boolean
 ---@field _timer_paused boolean
----@field is_timer fun(): boolean
+---@field is_timer fun(self: self): boolean
 
 local Icon = EHI.Icons
 

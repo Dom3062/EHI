@@ -14,10 +14,10 @@ function EHIcac10Tracker:OverridePanel()
     self._progress_text = self:CreateText({
         name = "text2",
         text = self:FormatProgress(),
-        w = self._bg_box:w() / 2
+        w = self._bg_box:w() / 2,
+        left = 0,
+        FitTheText = true
     })
-    self:FitTheText(self._progress_text)
-    self._progress_text:set_left(0)
     self._text:set_left(self._progress_text:right())
     self:SetIconX()
 end
@@ -102,10 +102,6 @@ local triggers = {
     [106680] = { id = "PCChance", special_function = SF.RemoveTracker },
     [102567] = { id = "PCChance", special_function = SF.RemoveTracker } -- Loud started
 }
-local DisableWaypoints = {}
-for i = 0, 300, 100 do
-    DisableWaypoints[EHI:GetInstanceElementID(100024, i)] = true -- Hacking PC (repair icon)
-end
 
 ---@type ParseAchievementTable
 local achievements =
@@ -159,7 +155,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({
     max = 14,
     triggers =

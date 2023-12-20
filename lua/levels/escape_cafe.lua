@@ -37,9 +37,9 @@ local other =
 -- https://steamcommunity.com/app/218620/discussions/14/3834297051382791123/
 --[[if EHI:IsLootCounterVisible() then
     local CreateCounter = true
-    local UpdateLootCounter = EHI:GetFreeCustomSpecialFunctionID()
+    local UpdateLootCounter = EHI:GetFreeCustomSFID()
     other[101419] = { special_function = UpdateLootCounter }
-    EHI:RegisterCustomSpecialFunction(UpdateLootCounter, function(self, ...)
+    EHI:RegisterCustomSF(UpdateLootCounter, function(self, ...)
         if CreateCounter then
             EHI:ShowLootCounterNoCheck({})
             CreateCounter = false

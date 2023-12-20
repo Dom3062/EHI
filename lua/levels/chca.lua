@@ -23,7 +23,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100210, 14670)] = { time = 3 + EHI:GetKeypadResetTimer(), id = "KeypadReset", icons = { Icon.Wait }, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) }, hint = Hints.KeypadReset },
     [EHI:GetInstanceElementID(100176, 14670)] = { time = 30, id = "KeypadResetECMJammer", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) }, hint = Hints.KeypadReset },
 
-    [102571] = { additional_time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = { Icon.Heli, Icon.Winch, Icon.Goto }, hint = Hints.brb_WinchDelivery },
+    [102571] = { additional_time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = Icon.HeliDropWinch, hint = Hints.brb_WinchDelivery },
 
     -- Winch (the element is actually in instance "chas_heli_drop")
     [EHI:GetInstanceElementID(100097, 21420)] = { time = 150, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable, hint = Hints.Winch },
@@ -197,7 +197,7 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:DisableWaypoints(DisableWaypoints)
---[[local LootLeft = EHI:GetFreeCustomSpecialFunctionID()
+--[[local LootLeft = EHI:GetFreeCustomSFID()
 EHI:ShowLootCounter({
     max = 18, -- 18 money bags, teaset and 1 money bundle in a safe
     triggers =
@@ -217,7 +217,7 @@ end
 for i = 100034, 100041, 1 do
     units[EHI:GetInstanceElementID(i, 15470)] = true
 end
-EHI:RegisterCustomSpecialFunction(LootLeft, function(self, ...)
+EHI:RegisterCustomSF(LootLeft, function(self, ...)
     local left_to_burn = 16
     for unit_id, _ in pairs(units) do
         local unit = managers.worlddefinition:get_unit(unit_id)

@@ -153,8 +153,12 @@ function EHITimerTracker:SetRunning()
     self:SetPowered(true)
 end
 
-function EHITimerTracker:SetTextColor()
-    if self._jammed or self._not_powered then
+---@param color Color? Color is set to `White` or tracker default color if not provided
+---@param text PanelText? Defaults to `self._text` if not provided
+function EHITimerTracker:SetTextColor(color, text)
+    if color then
+        EHITimerTracker.super.SetTextColor(self, color, text)
+    elseif self._jammed or self._not_powered then
         self._text:set_color(self._paused_color)
     else
         self._text:set_color(Color.white)
@@ -182,6 +186,9 @@ EHIProgressTimerTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIProgressTimerTracker.DecreaseProgress = EHIProgressTracker.DecreaseProgress
 EHIProgressTimerTracker.SetProgress = EHIProgressTracker.SetProgress
 EHIProgressTimerTracker.SetProgressRemaining = EHIProgressTracker.SetProgressRemaining
+EHIProgressTimerTracker.SetCompleted = EHIProgressTracker.SetCompleted
+EHIProgressTimerTracker.SetBad = EHIProgressTracker.SetBad
+---@param params EHITracker.params
 function EHIProgressTimerTracker:post_init(params)
     self:PrecomputeDoubleSize()
     self._progress_text = self:CreateText({
@@ -199,31 +206,13 @@ end
 function EHIProgressTimerTracker:StartTimer(t, no_update)
     EHIProgressTimerTracker.super.StartTimer(self, t, no_update)
     if self._progress ~= self._max then
-        EHIProgressTimerTracker.super.super.super:SetTextColor(Color.white, self._progress_text)
+        self:SetTextColor(Color.white, self._progress_text)
     end
 end
 
 function EHIProgressTimerTracker:StopTimer()
     EHIProgressTimerTracker.super.StopTimer(self)
     self:SetBad()
-end
-
----@param force boolean?
-function EHIProgressTimerTracker:SetCompleted(force)
-    if not self._status or force then
-        self._status = "completed"
-        EHIProgressTimerTracker.super.super.super:SetTextColor(Color.green, self._progress_text)
-        if force or not self._show_finish_after_reaching_target then
-            self:AddTrackerToUpdate()
-        elseif not self._show_progress_on_finish then
-            self:SetStatusText("finish", self._progress_text)
-        end
-        self._disable_counting = true
-    end
-end
-
-function EHIProgressTimerTracker:SetBad()
-    EHIProgressTimerTracker.super.super.super:SetTextColor(EHIProgressTracker._progress_bad, self._progress_text)
 end
 
 ---@class EHIChanceTimerTracker : EHITimerTracker, EHIChanceTracker

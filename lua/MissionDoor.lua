@@ -3,19 +3,24 @@ if EHI:CheckLoadHook("MissionDoor") or not (EHI:GetOption("show_mission_trackers
     return
 end
 local C4 = EHI.Icons.C4
+local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_mission")
 
 local function StartC4Sequence(unit)
     local key = tostring(unit:key())
-    managers.ehi_tracker:AddTracker({
-        id = key,
-        time = 5,
-        icons = { C4 }
-    })
-    managers.ehi_waypoint:AddWaypoint(key, {
-        time = 5,
-        icon = C4,
-        position = unit:position()
-    })
+    if not show_waypoint_only then
+        managers.ehi_tracker:AddTracker({
+            id = key,
+            time = 5,
+            icons = { C4 }
+        })
+    end
+    if show_waypoint then
+        managers.ehi_waypoint:AddWaypoint(key, {
+            time = 5,
+            icon = C4,
+            position = unit:position()
+        })
+    end
 end
 
 if EHI:IsHost() then

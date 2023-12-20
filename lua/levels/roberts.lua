@@ -37,7 +37,7 @@ local triggers = {
     [102940] = { time = 10, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning, hint = Hints.PickUpPhone },
     [102945] = { id = "AnswerPhone", special_function = SF.RemoveTracker },
 
-    [100052] = { special_function = EHI:RegisterCustomSpecialFunction(function(self, ...)
+    [100052] = { special_function = EHI:RegisterCustomSF(function(self, ...)
         self._trackers:RemoveTracker("CorrectPaperChance")
         self._trackers:RemoveTracker("GenSecArrivalWarning")
         self._trackers:RemoveTracker("GenSecArrival")
@@ -51,7 +51,7 @@ local other =
     [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
 if EHI:IsLootCounterVisible() then
-    other[106579] = { special_function = EHI:RegisterCustomSpecialFunction(function(...)
+    other[106579] = { special_function = EHI:RegisterCustomSF(function(...)
         local max = 0
         local wd = managers.worlddefinition
         for i = 103625, 103684, 1 do

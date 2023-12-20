@@ -23,6 +23,8 @@ function EHIuno7Tracker:SetTextColor()
     end
 end
 
+---@param check_progress boolean?
+---@param color Color?
 function EHIuno7Tracker:AnimateColor(check_progress, color)
     if self._blocked_warning then
         return
