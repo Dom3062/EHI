@@ -96,9 +96,9 @@ function EHISniperTimedTracker:pre_init(params)
     if self._snipers_spawned_popup then
         self._popup_title = params.single_sniper and "SNIPER!" or "SNIPERS!"
         self._popup_desc = params.single_sniper and managers.localization:text("ehi_popup_sniper_spawned") or managers.localization:text("ehi_popup_snipers_spawned")
-        if self._count > 0 then
-            self:SniperSpawnsSuccess(self._count)
-        end
+    end
+    if self._count > 0 then
+        self:AnnounceSniperSpawn()
     end
 end
 
@@ -121,6 +121,10 @@ end
 ---@param count number
 function EHISniperTimedTracker:SniperSpawnsSuccess(count)
     self:SetCount(count)
+    self:AnnounceSniperSpawn()
+end
+
+function EHISniperTimedTracker:AnnounceSniperSpawn()
     if self._snipers_spawned_popup then
         managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, "EHI_Sniper")
     end

@@ -1,3 +1,6 @@
+r207 (23. 12. 2023):
+Election Day 2 Plan C: Fixed a crash when snipers spawned
+
 r206 (20. 12. 2023):
 Added options "Show Floating Health Bar" and "Show 'SNIPERS!' Popup"
 Improved compatibility with custom heists
