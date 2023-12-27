@@ -214,7 +214,7 @@ function EHISniperTimedChanceTracker:pre_init(params)
     self._no_chance_reset = params.no_chance_reset
     self._delay_on_max_chance = params.delay_on_max_chance
     if self._snipers_spawned_popup then
-        local single_sniper = params.single_sniper or self._count == 1
+        local single_sniper = params.single_sniper or params.heli_sniper or self._count == 1
         self._popup_title = single_sniper and "SNIPER!" or "SNIPERS!"
         self._popup_desc = single_sniper and managers.localization:text("ehi_popup_sniper_spawned") or managers.localization:text("ehi_popup_snipers_spawned")
         self._popup_icon = params.heli_sniper and "EHI_Heli" or "EHI_Sniper"

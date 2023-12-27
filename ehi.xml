@@ -52,7 +52,6 @@
             <post :hook_id="trademanager" :script_path="TradeManager.lua" />
         </group>
 
-        <post hook_id="lib/mutators/mutatorcg22" :script_path="MutatorCG22.lua" />
         <post hook_id="lib/mutators/mutatorpiggybank" :script_path="MutatorPiggyBank.lua" />
         <post hook_id="lib/mutators/mutatorpiggyrevenge" :script_path="MutatorPiggyRevenge.lua" />
 

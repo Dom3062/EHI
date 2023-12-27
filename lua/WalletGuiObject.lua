@@ -7,7 +7,7 @@ local infamy_pool = ""
 local next_level = ""
 local _100_in = ""
 local _xp = ""
-EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc)
+EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, loc_loaded)
     infamy_pool = loc:text("ehi_experience_infamy_pool")
     next_level = loc:text("ehi_experience_next_level")
     _100_in = loc:text("ehi_experience_100_in")

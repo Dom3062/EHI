@@ -11,7 +11,6 @@ local original =
 }
 function MutatorPiggyBank:on_game_started(...)
     original.on_game_started(self, ...)
-    self._xp_tracker_is_visible = EHI:IsXPTrackerVisible()
     dofile(EHI.LuaPath .. "trackers/EHIPiggyBankMutatorTracker.lua")
     managers.ehi_tracker:AddTracker({
         id = "pda9_event",
@@ -35,7 +34,4 @@ function MutatorPiggyBank:sync_explode_piggybank(...)
     end
     original.sync_explode_piggybank(self, ...)
     managers.ehi_tracker:RemoveTracker("pda9_event")
-    if self._xp_tracker_is_visible then
-        managers.experience:SetPiggyBankExplodedLevel(self._exploded_pig_level)
-    end
 end

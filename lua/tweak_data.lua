@@ -967,3 +967,11 @@ tweak_data.ehi.icons.zipline_bag = { texture = path, texture_rect = preplanning:
 tweak_data.ehi.icons.tablet = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.crojob2_manifest.icon) }
 tweak_data.ehi.icons.daily_hangover = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.chca_spiked_drink.icon) }
 tweak_data.hud_icons.daily_hangover = tweak_data.ehi.icons.daily_hangover
+
+---@param number number
+---@param start number
+---@param limit number
+function math.increment_with_limit(number, start, limit)
+    number = number + 1
+    return number > limit and start or number
+end

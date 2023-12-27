@@ -1141,7 +1141,7 @@ do
     dofile(path .. "EHIAchievementTrackers.lua")
     dofile(path .. "EHITrophyTrackers.lua")
     dofile(path .. "EHIDailyTrackers.lua")
-    if EHI:GetOption("xp_panel") <= 2 and EHI:IsXPTrackerVisible() then
+    if EHI:GetOption("xp_panel") <= 2 and EHI:IsXPTrackerEnabledAndVisible() then
         dofile(path .. "EHIXPTracker.lua")
     end
     if EHI:GetOption("show_equipment_tracker") or (EHI:GetOption("show_minion_tracker") and EHI:GetOption("show_minion_option") == 2) then

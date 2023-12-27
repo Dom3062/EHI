@@ -56,6 +56,12 @@ function EHIHealthFloatManager:update(t, dt)
     self:_updateItems(t)
 end
 
+function EHIHealthFloatManager:update_last()
+    for _, float in pairs(self._floats) do
+        float:delete()
+    end
+end
+
 function EHIHealthFloatManager:_tryGetState()
     local unit = managers.player:player_unit()
     if unit then

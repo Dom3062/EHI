@@ -4,6 +4,7 @@ if EHI:CheckLoadHook("HuskCopBrain") or EHI:IsHost() or not EHI:CanShowCivilianC
 end
 
 local original = HuskCopBrain.sync_net_event
+---@param event_id number
 function HuskCopBrain:sync_net_event(event_id, ...)
     original(self, event_id, ...)
     if self._dead then

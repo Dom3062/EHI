@@ -60,7 +60,7 @@ function EHI:SetNotificationAlert(ehi_title, localization, c)
     end
 end
 
-EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(l) ---@param l LocalizationManager
+EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(l, loc_loaded) ---@param l LocalizationManager
     for title, loc in pairs(to_localize or {}) do
         titles[title] = { localization = l:text(loc.localization), color = loc.color }
     end

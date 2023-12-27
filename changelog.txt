@@ -1,3 +1,7 @@
+r208 (27. 12. 2023):
+Floating Health Bar: Fixed an issue where it could get stuck after mission end
+Mission Briefing: Reworked and optimized
+
 r207 (23. 12. 2023):
 Election Day 2 Plan C: Fixed a crash when snipers spawned
 

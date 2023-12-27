@@ -336,7 +336,7 @@
 ---@field objective XPBreakdown.objective
 ---@field objectives XPBreakdown.objectives
 ---@field loot XPBreakdown.loot
----@field loot_all number|{amount: number, times: number}
+---@field loot_all number|{amount: number, times: number, text: string}
 ---@field wave number[]
 ---@field wave_all number|{amount: number, times: number}
 

@@ -10,7 +10,6 @@ local original =
     _setup_player_info_hud_pd2 = HUDManager._setup_player_info_hud_pd2,
     sync_set_assault_mode = HUDManager.sync_set_assault_mode,
     destroy = HUDManager.destroy,
-    mark_cheater = HUDManager.mark_cheater,
     set_disabled = HUDManager.set_disabled,
     set_enabled = HUDManager.set_enabled
 }
@@ -27,9 +26,9 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     self.ehi_manager = managers.ehi_manager
     if server or level_id == "hvh" then
         if EHIWaypoints then
-            self:AddEHIUpdator("EHIManager_Update", callback(self.ehi_manager, self.ehi_manager, "update"))
+            self:AddEHIUpdator(self.ehi_manager, "EHIManager_Update")
         else
-            self:AddEHIUpdator("EHI_Update", callback(self.ehi, self.ehi, "update"))
+            self:AddEHIUpdator(self.ehi, "EHI_Update")
         end
     end
     if EHI:IsVR() then
@@ -37,13 +36,13 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     end
     if EHI:GetOption("show_buffs") then
         local buff = managers.ehi_buff
-        self:AddEHIUpdator("EHI_Buff_Update", callback(buff, buff, "update"))
         buff:init_finalize(hud)
+        self:AddEHIUpdator(buff, "EHI_Buff_Update")
     end
     if EHI:GetOption("show_floating_health_bar") then
         dofile(EHI.LuaPath .. "EHIHealthFloatManager.lua")
         local float = EHIHealthFloatManager:new()
-        self:AddEHIUpdator("EHI_HealthFloat_Update", callback(float, float, "update"))
+        self:AddEHIUpdator(float, "EHI_HealthFloat_Update")
     end
     if tweak_data.levels:IsLevelSafehouse(level_id) then
         return
@@ -122,7 +121,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             end)
         end
     end
-    if EHI:IsXPTrackerVisible() and EHI:GetOption("xp_panel") == 2 and not EHI:IsOneXPElementHeist(level_id) then
+    if EHI:IsXPTrackerEnabledAndVisible() and EHI:GetOption("xp_panel") == 2 and not EHI:IsOneXPElementHeist(level_id) then
         local xp_limit = managers.experience:GetPlayerXPLimit()
         if xp_limit > 0 then
             self.ehi:AddTracker({
@@ -134,12 +133,16 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     end
 end
 
+---@param class table
 ---@param id string
----@param callback function
-function HUDManager:AddEHIUpdator(id, callback)
+function HUDManager:AddEHIUpdator(class, id)
+    if not class.update then
+        EHI:Log("Class with ID '" .. id .. "' is missing update function!")
+        return
+    end
     self._ehi_updators = self._ehi_updators or {}
-    self._ehi_updators[id] = true
-    self:add_updator(id, callback)
+    self._ehi_updators[id] = class
+    self:add_updator(id, callback(class, class, "update"))
     if table.size(self._ehi_updators) == 1 then
         EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function()
             self:RemoveEHIUpdators()
@@ -148,9 +151,13 @@ function HUDManager:AddEHIUpdator(id, callback)
 end
 
 function HUDManager:RemoveEHIUpdators()
-    for id, _ in pairs(self._ehi_updators or {}) do
+    for id, class in pairs(self._ehi_updators or {}) do
         self:remove_updator(id)
+        if class and class.update_last then
+            class:update_last()
+        end
     end
+    self._ehi_updators = nil
 end
 
 function HUDManager:sync_set_assault_mode(mode, ...)
@@ -168,13 +175,6 @@ if EHI:GetBuffAndOption("stamina") then
     function HUDManager:set_max_stamina(value, ...)
         original.set_max_stamina(self, value, ...)
         managers.ehi_buff:CallFunction("Stamina", "SetMaxStamina", value)
-    end
-end
-
-function HUDManager:mark_cheater(...)
-    original.mark_cheater(self, ...)
-    if managers.experience.RecalculateSkillXPMultiplier then
-        managers.experience:RecalculateSkillXPMultiplier()
     end
 end
 

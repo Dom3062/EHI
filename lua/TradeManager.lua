@@ -9,7 +9,7 @@ if EHI:CheckLoadHook("TradeManager") then
     return
 end
 
-if EHI:IsXPTrackerVisible() then
+if EHI:IsXPTrackerEnabledAndVisible() then
     if EHI:IsRunningBB() or EHI:IsRunningUsefulBots() then
         EHI:HookWithID(TradeManager, "on_AI_criminal_death", "EHI_ExperienceManager_AICriminalDeath", function(...)
             managers.experience:DecreaseAlivePlayers()
