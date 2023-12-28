@@ -30,6 +30,13 @@ function EHITrackerManager:CreateWorkspace()
         name = "ehi_panel",
         layer = -10
     })
+    EHI:AddCallback(EHI.CallbackMessage.HUDVisibilityChanged, function(visibility)
+        if visibility then
+            self._ws:show()
+        else
+            self._ws:hide()
+        end
+    end)
 end
 
 function EHITrackerManager:init_finalize()
@@ -64,14 +71,6 @@ function EHITrackerManager:Spawned()
     for _, tbl in pairs(self._trackers) do
         tbl.tracker:PlayerSpawned()
     end
-end
-
-function EHITrackerManager:ShowPanel()
-    self._ws:show()
-end
-
-function EHITrackerManager:HidePanel()
-    self._ws:hide()
 end
 
 ---@param t number

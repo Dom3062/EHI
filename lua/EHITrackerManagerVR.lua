@@ -19,12 +19,6 @@ function EHITrackerManagerVR:CreateWorkspace()
     self._scale = EHI:GetOption("vr_scale") --[[@as number]]
 end
 
-function EHITrackerManagerVR:ShowPanel()
-end
-
-function EHITrackerManagerVR:HidePanel()
-end
-
 function EHITrackerManagerVR:SetPanel(panel)
     self._hud_panel = panel
     self._is_loading = false

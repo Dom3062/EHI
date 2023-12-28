@@ -1,3 +1,7 @@
+r209 (28. 12. 2023):
+"Swiss Cheese" achievement: Fixed an issue where civilian kills are not counted
+Goat Simulator Day 2: Fixed a load crash
+
 r208 (27. 12. 2023):
 Floating Health Bar: Fixed an issue where it could get stuck after mission end
 Mission Briefing: Reworked and optimized

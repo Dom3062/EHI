@@ -151,6 +151,7 @@ function XPBreakdownItem:mouse_moved(x, y)
     return false
 end
 
+---@param button string
 ---@param x number
 ---@param y number
 function XPBreakdownItem:mouse_pressed(button, x, y)
@@ -658,7 +659,7 @@ function XPBreakdownPanel:ProcessTotalXP(total_xp)
             elseif o_params.min_max then
                 self:ParamsMinMax(o_params.min_max)
             elseif o_params.min then
-                self:ParamsMinWithMax(o_params, override)
+                self:ParamsMinWithMax(o_params)
             elseif o_params.max_only then
                 self:ParamsMaxOnly(o_params.max_only)
             elseif o_params.escape then
@@ -733,7 +734,7 @@ function XPBreakdownPanel:ParamsCustom(o_params)
         if c_params.type == "min_max" then
             self:ParamsMinMax(c_params)
         elseif c_params.type == "min_with_max" then
-            self:ParamsMinWithMax(c_params, params.total_xp_override)
+            self:ParamsMinWithMax(c_params)
         elseif c_params.type == "max_only" then
         else
             EHI:Log("Custom type not recognized! " .. tostring(c_params.type))
@@ -816,11 +817,10 @@ function XPBreakdownPanel:ParamsMinMax(o_params)
 end
 
 ---@param o_params table
----@param override table
-function XPBreakdownPanel:ParamsMinWithMax(o_params, override)
-    local override_objective = override.objective or {}
-    local override_objectives = override.objectives or {}
-    --local override_loot = override.loot or {}
+function XPBreakdownPanel:ParamsMinWithMax(o_params)
+    local override_objective = self._params.total_xp_override.objective or {}
+    local override_objectives = self._params.total_xp_override.objectives or {}
+    --local override_loot = self._params.total_xp_override.loot or {}
     local min = 0
     local max
     local format_max = true
@@ -1929,8 +1929,7 @@ end
 ---@param PreviousTactic number?
 function MissionBriefingGui:OnTacticChanged(index, PreviousTactic)
     local tactic = PreviousTactic or TacticSelected
-    local breakdown = _panels[index] ---@diagnostic disable-line
-    breakdown._panel:set_visible(true)
+    _panels[index]._panel:set_visible(true) ---@diagnostic disable-line
     _panels[tactic]._panel:set_visible(false) ---@diagnostic disable-line
     _buttons[tactic]:Unselect() ---@diagnostic disable-line
     TacticSelected = index

@@ -857,19 +857,59 @@ end
 ---@field inside fun(self: self, x: number, y: number): boolean Returns `true` or `false` if provided `x` and `y` are inside the object
 ---@field shape fun(self: self): x: number, y: number, w: number, h: number
 ---@field set_shape fun(self: self, x: number, y: number, w: number, h: number)
----@field set_blend_mode fun(self: self, mode: string)
+---@field set_blend_mode fun(self: self, mode: "add"|"normal")
 ---@field show fun(self: self)
 ---@field hide fun(self: self)
+---@field name fun(self: self): string
+
+---@class PanelBaseObject_Params
+---@field name string
+---@field layer integer
+---@field x number
+---@field y number
+---@field w number
+---@field h number
+---@field visible boolean
+
+---@class PanelText_Params : PanelBaseObject_Params
+---@field align "center"|"right"|"left"
+---@field blend_mode "normal"|"add"
+---@field text string
+---@field font_size number
+---@field font string Idstring
+---@field color Color
+---@field vertical "center"
+---@field wrap boolean
+---@field word_wrap boolean
+
+---@class PanelBitmap_Params : PanelBaseObject_Params
+---@field texture string
+---@field text_rect number[]
+---@field render_template "VertexColorTexturedRadial"|"VertexColorTexturedBlur3D"
+---@field color Color
+---@field rotation number In degrees
+---@field alpha number
+
+---@class PanelRectangle_Params : PanelBaseObject_Params
+---@field alpha number
+---@field blend_mode "normal"|"add"
+---@field halign "grow"|"left"|"right"
+---@field valign "grow"|"top"|"bottom"
+---@field color Color
+
+---@class Panel_Params : PanelBaseObject_Params
+---@field alpha number
+---@field rotation number In degrees
 
 ---@class Panel : PanelBaseObject
 ---@field color nil Does not exist in Panel
 ---@field set_color nil Does not exist in Panel
 ---@field child fun(self: self, child_name: string): (PanelBaseObject)?
 ---@field remove fun(self: self, child_name: PanelBaseObject)
----@field text fun(self: self, params: table): PanelText
----@field bitmap fun(self: self, params: table): PanelBitmap
----@field rect fun(self: self, params: table): PanelRectangle
----@field panel fun(self: self, params: table): self
+---@field text fun(self: self, params: PanelText_Params): PanelText
+---@field bitmap fun(self: self, params: PanelBitmap_Params): PanelBitmap
+---@field rect fun(self: self, params: PanelRectangle_Params): PanelRectangle
+---@field panel fun(self: self, params: Panel_Params): self
 ---@field children fun(self: self): PanelBaseObject[] Returns an ipairs table of all items created on the panel
 ---@field clear fun(self: self) Removes all children in the panel
 

@@ -79,10 +79,27 @@ function EHIManager:InteractionExists(tweak_data)
     return false
 end
 
-function EHIManager:load()
+function EHIManager:load(data)
+    local state = data.EHIManager
+    if state and state.SyncedSFF then
+        for key, value in pairs(state.SyncedSFF) do
+            self.SyncedSFF[key] = value
+        end
+    end
     self:SyncLoad() -- Add missing positions from elements and remove waypoints
     self:LoadSync() -- Run LoadSync functions
     self:SetInSync(false)
+end
+
+function EHIManager:save(data)
+    if self.SyncedSFF and next(self.SyncedSFF) then
+        local state = {}
+        state.SyncedSFF = {}
+        for key, value in pairs(self.SyncedSFF) do
+            state.SyncedSFF[key] = value
+        end
+        data.EHIManager = state
+    end
 end
 
 ---@param t number
@@ -1468,6 +1485,28 @@ end
 ---@param id number
 function EHIManager:UnregisterCustomSF(id)
     self.SFF[id] = nil
+end
+
+---@param id number
+---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
+---@param sync_load_only boolean?
+---@return nil
+---@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean), sync_load_only: boolean?): integer
+function EHIManager:RegisterCustomSyncedSF(id, f, sync_load_only)
+    self.SyncedSFF = self.SyncedSFF or {}
+    if f then
+        self.SFF[id] = f
+        if EHI:IsHost() then
+            self.SyncFunctions[id] = true
+        end
+    else
+        local f_id = EHI:GetFreeCustomSyncedSFID()
+        self.SFF[f_id] = id
+        if EHI:IsHost() then
+            self.SyncFunctions[f_id] = true
+        end
+        return f_id
+    end
 end
 
 if EHI:GetWaypointOption("show_waypoints_only") then

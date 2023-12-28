@@ -281,6 +281,19 @@ end
 
 ---@param achievement string
 ---@param weapon_id string
+local function HookKillFunction(achievement, weapon_id)
+    EHI:HookWithID(StatisticsManager, "killed", "EHI_" .. achievement .. "_" .. weapon_id .. "_killed", function(self, data)
+        if data.variant ~= "melee" then
+            local name_id, _ = self:_get_name_id_and_throwable_id(data.weapon_unit)
+            if name_id == weapon_id then
+                managers.ehi_tracker:IncreaseTrackerProgress(achievement)
+            end
+        end
+    end)
+end
+
+---@param achievement string
+---@param weapon_id string
 local function HookKillFunctionNoCivilian(achievement, weapon_id)
     EHI:HookWithID(StatisticsManager, "killed", "EHI_" .. achievement .. "_" .. weapon_id .. "_killed", function(self, data)
         if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
@@ -359,7 +372,7 @@ local _f_at_exit = IngameWaitingForPlayersState.at_exit
 function IngameWaitingForPlayersState:at_exit(...)
     _f_at_exit(self, ...)
     if not Global.hud_disabled then
-        managers.ehi_tracker:ShowPanel()
+        EHI:CallCallback(EHI.CallbackMessage.HUDVisibilityChanged, true)
     end
     --[[if level == "flat" and EHI:IsAchievementLocked("flat_5") then
         managers.ehi_tracker:AddTracker({
@@ -574,7 +587,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         if EHI:IsAchievementLocked2("turtles_2") and HasWeaponEquipped("polymer") then -- "Swiss Cheese" achievement
             AddAchievementTracker("turtles_2", 0, 100)
-            HookKillFunctionNoCivilian("turtles_2", "polymer")
+            HookKillFunction("turtles_2", "polymer")
         end
         if EHI:IsAchievementLocked2("tango_achieve_2") and HasWeaponEquipped("arbiter") and ArbiterHasStandardAmmo() then -- "Let Them Fly" achievement
             local function f()

@@ -137,7 +137,7 @@ end
 ---@param id string
 function HUDManager:AddEHIUpdator(class, id)
     if not class.update then
-        EHI:Log("Class with ID '" .. id .. "' is missing update function!")
+        EHI:Log("Class with ID '" .. id .. "' is missing 'update' function!")
         return
     end
     self._ehi_updators = self._ehi_updators or {}
@@ -180,12 +180,12 @@ end
 
 function HUDManager:set_disabled(...)
     original.set_disabled(self, ...)
-    self.ehi:HidePanel()
+    EHI:CallCallback(EHI.CallbackMessage.HUDVisibilityChanged, false)
 end
 
 function HUDManager:set_enabled(...)
     original.set_enabled(self, ...)
-    self.ehi:ShowPanel()
+    EHI:CallCallback(EHI.CallbackMessage.HUDVisibilityChanged, true)
 end
 
 function HUDManager:destroy(...)

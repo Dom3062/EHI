@@ -10,5 +10,5 @@ local original =
 function MissionEndState:at_enter(...)
     EHI:CallCallbackOnce(EHI.CallbackMessage.MissionEnd, self._success)
     original.at_enter(self, ...)
-    managers.ehi_tracker:HidePanel()
+    EHI:CallCallbackOnce(EHI.CallbackMessage.HUDVisibilityChanged, false)
 end

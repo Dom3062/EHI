@@ -229,11 +229,12 @@ EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(self, da
 end)
 
 EHI:HookWithID(GameSetup, "load", "EHI_GameSetup_load_Post", function(self, data, ...)
-    EM:load()
+    managers.ehi_manager:load(data)
     managers.ehi_tracker:load(data)
 end)
 
 EHI:HookWithID(GameSetup, "save", "EHI_GameSetup_save_Post", function(self, data, ...)
+    managers.ehi_manager:save(data)
     managers.ehi_tracker:save(data)
     managers.ehi_assault:save(data)
 end)

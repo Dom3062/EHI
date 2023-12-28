@@ -121,7 +121,9 @@ _G.EHI =
         -- Provides `mode` (a string value -> `normal`, `phalanx`)
         AssaultModeChanged = "AssaultModeChanged",
         -- Provides `mode` (a string value -> `normal`, `endless`)
-        AssaultWaveModeChanged = "AssaultWaveModeChanged"
+        AssaultWaveModeChanged = "AssaultWaveModeChanged",
+        -- Provides `visibility` (a boolean value)
+        HUDVisibilityChanged = "HUDVisibilityChanged"
     },
 
     SyncMessages =
@@ -260,7 +262,8 @@ _G.EHI =
         CustomCodeDelayed = 1004,
 
         -- Don't use it directly! Instead, call `EHI:GetFreeCustomSFID()` and `EHI:RegisterCustomSF()` respectively; or provide a function to `EHI:RegisterCustomSF()` as a first argument
-        CustomSF = 100000
+        CustomSF = 100000,
+        CustomSyncedSF = 200000
     },
 
     ConditionFunctions =
@@ -1682,12 +1685,6 @@ function EHI:AddWaypointToTrigger(id, waypoint)
 end
 
 ---@param id number
----@param icon string
-function EHI:UpdateWaypointTriggerIcon(id, icon)
-    managers.ehi_manager:UpdateWaypointTriggerIcon(id, icon)
-end
-
----@param id number
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
 ---@return nil
 ---@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)): integer
@@ -1701,9 +1698,24 @@ function EHI:UnregisterCustomSF(id)
     managers.ehi_manager:UnregisterCustomSF(id)
 end
 
+---@param id number
+---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
+---@param sync_load_only boolean?
+---@return nil
+---@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean), sync_load_only: boolean?): integer
+function EHI:RegisterCustomSyncedSF(id, f, sync_load_only)
+    return managers.ehi_manager:RegisterCustomSyncedSF(id, f, sync_load_only)
+end
+
 function EHI:GetFreeCustomSFID()
     local id = (self._cache.SFFUsed or self.SpecialFunctions.CustomSF) + 1
     self._cache.SFFUsed = id
+    return id
+end
+
+function EHI:GetFreeCustomSyncedSFID()
+    local id = (self._cache.SyncedSFFUsed or self.SpecialFunctions.CustomSyncedSF) + 1
+    self._cache.SyncedSFFUsed = id
     return id
 end
 

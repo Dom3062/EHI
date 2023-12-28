@@ -7,9 +7,10 @@ local Hints = EHI.Hints
 local anim_delay = 450/30
 local boat_delay = 60 + 30 + 30 + 450/30
 local boat_icon = { Icon.Boat, Icon.LootDrop }
-local AddToCache = EHI:GetFreeCustomSFID()
-local GetFromCache = EHI:GetFreeCustomSFID()
-local BoatPos = 0
+local AddToCache = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
+    self.SyncedSFF.watchdogs_2_boat_time = trigger.time
+end)
+local GetFromCache = EHI:GetFreeCustomSyncedSFID()
 local WPPos =
 {
     [7] = Vector3(2991.02, 3771, -58),
@@ -19,37 +20,32 @@ local WPPos =
 ---@param self EHIManager
 ---@param trigger ElementTrigger
 local function waypoint_f(self, trigger)
-    if BoatPos == 0 then
-        return
+    if self.SyncedSFF.watchdogs_2_boat_pos then
+        self._waypoints:AddWaypoint(trigger.id, {
+            time = trigger.time,
+            icon = Icon.LootDrop,
+            position = WPPos[self.SyncedSFF.watchdogs_2_boat_pos],
+            class = trigger.additional_time and WT.Inaccurate
+        })
     end
-    self._waypoints:AddWaypoint(trigger.id, {
-        time = trigger.time,
-        icon = Icon.LootDrop,
-        position = WPPos[BoatPos],
-        class = trigger.additional_time and WT.Inaccurate
-    })
 end
-local function SetBoatPos(pos)
-    BoatPos = pos
-end
-local SetBoatPosFromElement = EHI:RegisterCustomSF(function(self, trigger, element, ...)
-    BoatPos = element._values.amount + 6
+local SetBoatPosDirectlyOrFromElement = EHI:RegisterCustomSyncedSF(function(self, trigger, element, ...)
+    self.SyncedSFF.watchdogs_2_boat_pos = trigger.pos or (element._values.amount + 6)
 end)
 ---@type ParseTriggerTable
 local triggers = {
     [101560] = { time = 35 + 75 + 30 + boat_delay, id = "BoatLootFirst", waypoint_f = waypoint_f, hint = Hints.Loot },
-    -- 101127 tracked in 101560
     [101117] = { time = 60 + 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f, hint = Hints.Loot },
     [101122] = { time = 40 + 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f, hint = Hints.Loot },
     [101119] = { time = 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f, hint = Hints.Loot },
 
-    [100474] = { special_function = SF.CustomCode, f = SetBoatPos, arg = 7 },
-    [100472] = { special_function = SF.CustomCode, f = SetBoatPos, arg = 8 },
-    [100470] = { special_function = SF.CustomCode, f = SetBoatPos, arg = 9 },
+    [100474] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 7 },
+    [100472] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 8 },
+    [100470] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 9 },
 
-    [101553] = { special_function = SetBoatPosFromElement }, -- 1
-    [101554] = { special_function = SetBoatPosFromElement }, -- 2
-    [101555] = { special_function = SetBoatPosFromElement }, -- 3 
+    [101553] = { special_function = SetBoatPosDirectlyOrFromElement }, -- 1
+    [101554] = { special_function = SetBoatPosDirectlyOrFromElement }, -- 2
+    [101555] = { special_function = SetBoatPosDirectlyOrFromElement }, -- 3 
 
     [100323] = { time = 50 + 23, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
 
@@ -78,6 +74,7 @@ local triggers = {
     end}
 }
 if EHI:IsClient() then
+    triggers[101127] = EHI:ClientCopyTrigger(triggers[101560], { time = 75 + 30 + boat_delay })
     local boat_return = { time = anim_delay, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         if self:Exists(trigger.id) then
             self:SetAccurate(trigger.id, trigger.time)
@@ -132,20 +129,23 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 }, "BoatLootDropReturn", boat_icon)
-EHI:RegisterCustomSF(AddToCache, function(self, trigger, ...)
-    EHI._cache[trigger.id] = trigger.time
-end)
-EHI:RegisterCustomSF(GetFromCache, function(self, trigger, ...)
-    local t = EHI._cache[trigger.id]
-    EHI._cache[trigger.id] = nil
-    if t then
-        trigger.time = t --[[@as number]]
-        self:CheckCondition(trigger)
-        trigger.time = nil
-    else
-        self:CheckCondition(triggers[1011480])
-    end
-end)
+if EHI:GetOption("show_mission_trackers") then
+    EHI:RegisterCustomSyncedSF(GetFromCache, function(self, trigger, ...)
+        local t = self.SyncedSFF.watchdogs_2_boat_time
+        self.SyncedSFF.watchdogs_2_boat_time = nil
+        if t then
+            trigger.time = t --[[@as number]]
+            self:CheckCondition(trigger)
+            trigger.time = nil
+        else
+            self:CheckCondition(triggers[1011480])
+        end
+    end)
+else
+    EHI:RegisterCustomSyncedSF(GetFromCache, function(self, ...)
+        self.SyncedSFF.watchdogs_2_boat_time = nil
+    end)
+end
 EHI:AddXPBreakdown({
     objectives =
     {
