@@ -15,8 +15,8 @@ local function visibility_hint(o, hint, end_a)
         local dt = coroutine.yield()
         t = math_min(t + dt, TOTAL_T)
         local lerp = t / TOTAL_T
-        o:set_alpha(math_lerp(o_start_a, end_a, lerp))
-        hint:set_alpha(math_lerp(hint_start_a, end_a, lerp))
+        o:set_alpha(math_lerp(o_start_a, end_a, lerp) --[[@as number]])
+        hint:set_alpha(math_lerp(hint_start_a, end_a, lerp) --[[@as number]])
     end
 end
 ---@param o PanelBaseObject
@@ -29,7 +29,7 @@ local function visibility(o, end_a) -- This is actually faster than manually re-
         local dt = coroutine.yield()
         t = math_min(t + dt, TOTAL_T)
         local lerp = t / TOTAL_T
-        o:set_alpha(math_lerp(start_a, end_a, lerp))
+        o:set_alpha(math_lerp(start_a, end_a, lerp) --[[@as number]])
     end
 end
 ---@param o PanelBaseObject
@@ -46,7 +46,7 @@ local function top(o, target_y)
     local from_y = o:y()
     while t < total do
         t = t + coroutine.yield()
-        o:set_y(math_lerp(from_y, target_y, t / total))
+        o:set_y(math_lerp(from_y, target_y, t / total) --[[@as number]])
     end
     o:set_y(target_y)
 end
@@ -58,7 +58,7 @@ local function left(o, target_x)
     local from_x = o:x()
     while t < total do
         t = t + coroutine.yield()
-        o:set_x(math_lerp(from_x, target_x, t / total))
+        o:set_x(math_lerp(from_x, target_x, t / total) --[[@as number]])
     end
     o:set_x(target_x)
 end
@@ -78,8 +78,8 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) the
             local dt = coroutine.yield()
             t = math_min(t + dt, TOTAL_T)
             local lerp = t / TOTAL_T
-            o:set_x(math_lerp(from_x, target_x, lerp))
-            o:set_w(math_lerp(from_w, target_w, lerp))
+            o:set_x(math_lerp(from_x, target_x, lerp) --[[@as number]])
+            o:set_w(math_lerp(from_w, target_w, lerp) --[[@as number]])
         end
         if self and self.Redraw then
             self:Redraw()
@@ -98,7 +98,7 @@ else
             local dt = coroutine.yield()
             t = math_min(t + dt, TOTAL_T)
             local lerp = t / TOTAL_T
-            o:set_w(math_lerp(from_w, target_w, lerp))
+            o:set_w(math_lerp(from_w, target_w, lerp) --[[@as number]])
         end
         if self and self.Redraw then
             self:Redraw()
@@ -116,7 +116,7 @@ local function icon_x(o, target_x)
         local dt = coroutine.yield()
         t = math_min(t + dt, TOTAL_T)
         local lerp = t / TOTAL_T
-        o:set_x(math_lerp(from_x, target_x, lerp))
+        o:set_x(math_lerp(from_x, target_x, lerp) --[[@as number]])
     end
     o:set_x(target_x)
 end
@@ -556,7 +556,7 @@ function EHITracker:CreateText(params)
         text = params.text or "",
         align = "center",
         vertical = "center",
-        x = params.x or params.left,
+        x = params.x or params.left --[[@as number]],
         w = params.w or self._bg_box:w(),
         h = params.h or self._bg_box:h(),
         font = tweak_data.menu.pd2_large_font,

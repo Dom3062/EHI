@@ -1,23 +1,26 @@
 local EHI = EHI
-if EHI:CheckLoadHook("ElementExperience") then
+if EHI:CheckLoadHook("ElementExperience") or EHI:IsXPTrackerDisabled() then
     return
 end
 
-local original = ElementExperience.init
+local original =
+{
+    init = ElementExperience.init,
+    on_executed = ElementExperience.on_executed
+}
+
 function ElementExperience:init(...)
-    original(self, ...)
-    if self._values.amount and self._values.amount > 0 then
-        EHI._cache.XPElement = EHI._cache.XPElement + 1
-    end
+    original.init(self, ...)
+    managers.ehi_experience:AddXPElement(self)
 end
 
-if EHI.debug.gained_experience.enabled then
-    local on_executed = ElementExperience.on_executed
-    function ElementExperience:on_executed(...)
-        if not self._values.enabled then
-            return
-        end
-        managers.hud:DebugExperience(self._id, self._editor_name, self._values.amount)
-        on_executed(self, ...)
+function ElementExperience:on_executed(...)
+    if not self._values.enabled then
+        return
     end
+    managers.ehi_experience:MissionXPAwarded(self._values.amount)
+    if EHI.debug.gained_experience.enabled then
+        managers.hud:DebugExperience(self._id, self._editor_name, self._values.amount)
+    end
+    original.on_executed(self, ...)
 end

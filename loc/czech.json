@@ -136,7 +136,6 @@
     "ehi_hint_sentry_teargas" : "Turret (Slzný plyn)",
     "ehi_hint_diff" : "Obtížnost vlny",
 
-    "ehi_hint_alex_1_methlab" : "Šance na vaření",
     "ehi_hint_big_piggy" : "Přesouvání čuníka",
     "ehi_hint_brb_winch_delivery" : "Dodání navijáku",
     "ehi_hint_cane_safe" : "Událost se Sejfem",
@@ -347,8 +346,10 @@
     "ehi_show_xp_in_mission_briefing_only" : "Zobrazovat ZK pouze v briefingu před loupeží",
     "ehi_show_xp_in_mission_briefing_only_desc" : "Povolením této funkce se ZK zobrazí v briefingu před loupeží, ale ne ve hře samotné",
 
-    "ehi_total_xp_show_difference" : "Zobrazovat rozdíl ZK",
-    "ehi_total_xp_show_difference_desc" : "Pouze funkce [Zobrazit sledovač s celkovou hodnotou ZK v loupeži]!\nZobrazuje kolik ZK jsi získal v samostatném sledovači",
+    "ehi_total_xp_difference" : "Zobrazovat rozdíl ZK",
+    "ehi_total_xp_difference_desc" : "Zobrazuje kolik ZK jsi získal",
+    "ehi_total_xp_difference_1" : "Nezobrazovat",
+    "ehi_total_xp_difference_2" : "V oznámení",
 
     "ehi_show_trade_delay" : "Zobrazovat sledovač s délkou pobytu ve vazbě",
     "ehi_show_trade_delay_desc" : "Zobrazuje sledovač když ty nebo tvůj spoluhráč zabijete civilistu",

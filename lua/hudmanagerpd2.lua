@@ -121,16 +121,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             end)
         end
     end
-    if EHI:IsXPTrackerEnabledAndVisible() and EHI:GetOption("xp_panel") == 2 and not EHI:IsOneXPElementHeist(level_id) then
-        local xp_limit = managers.experience:GetPlayerXPLimit()
-        if xp_limit > 0 then
-            self.ehi:AddTracker({
-                id = "XPTotal",
-                xp_limit = xp_limit,
-                class = "EHITotalXPTracker"
-            })
-        end
-    end
 end
 
 ---@param class table

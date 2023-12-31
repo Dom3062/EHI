@@ -186,8 +186,8 @@
     "ehi_xp_panel_3" : "En una ventana por cada EXP obtenida y EXP total",
     "ehi_xp_panel_4" : "En una pista por cada EXP obtenida y EXP total",
 
-    "ehi_total_xp_show_difference" : "Mostrar diferencia de EXP",
-    "ehi_total_xp_show_difference_desc" : "¡Requiere activar la opción ['En un contador por EXP total de la misión'] para funcionar!\nMostrar cuánta EXP has obtenido en un contador independiente.",
+    "ehi_total_xp_difference" : "Mostrar diferencia de EXP",
+    "ehi_total_xp_difference_desc" : "Mostrar cuánta EXP has obtenido.",
 
     "ehi_show_trade_delay" : "Mostrar contador de demora en custodia",
     "ehi_show_trade_delay_desc" : "Mostrar / ocultar un contador con la demora total en custodia por haber matado a un civil.",

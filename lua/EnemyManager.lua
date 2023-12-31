@@ -137,7 +137,6 @@ if EHI:CanShowCivilianCountTracker() then
             end
         end
     end
-
     original.on_civilian_died = EnemyManager.on_civilian_died
     function EnemyManager:on_civilian_died(dead_unit, ...)
         local unit_data = self._civilian_data.unit_data
@@ -147,7 +146,6 @@ if EHI:CanShowCivilianCountTracker() then
         end
         original.on_civilian_died(self, dead_unit, ...)
     end
-
     original.on_civilian_destroyed = EnemyManager.on_civilian_destroyed
     function EnemyManager:on_civilian_destroyed(civilian, ...)
         local civilian_data = self._civilian_data.unit_data

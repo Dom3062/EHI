@@ -132,7 +132,6 @@
     "ehi_hint_sentry_teargas" : "Turret (Teargas)",
     "ehi_hint_diff" : "Assault Difficulty",
     
-    "ehi_hint_alex_1_methlab" : "โอกาสปรุงยา",
     "ehi_hint_big_piggy" : "พิคกี้เคลื่อนที่",
     "ehi_hint_brb_winch_delivery" : "ส่งมอบเครื่องยก",
     "ehi_hint_cane_safe" : "อีเว้นต์ตู้เซฟ",
@@ -343,8 +342,7 @@
     "ehi_show_xp_in_mission_briefing_only" : "แสดงค่าประสบการณ์ที่ได้ในช่วงวางแผน",
     "ehi_show_xp_in_mission_briefing_only_desc" : "เปิดใช้ตัวเลือกนี้หากต้องการทราบค่าประสบการณ์แค่ในช่วงวางแผน (Mission Briefing) แต่ไม่ใช่ระหว่างอยู่ในด่าน",
 
-    "ehi_total_xp_show_difference" : "แสดงค่าประสบการณ์ที่ได้รับในแต่ละครั้ง",
-    "ehi_total_xp_show_difference_desc" : "เป็นตัวเลือกคู่กับ [แสดงค่าประสบการณ์ทั้งหมดที่ได้รับจากด่านนั้นๆ] เท่านั้น!\nแสดงค่าประสบการณ์ที่ได้รับในไอคอนติดตาม",
+    "ehi_total_xp_difference" : "แสดงค่าประสบการณ์ที่ได้รับในแต่ละครั้ง",
 
     "ehi_show_trade_delay" : "แสดงไอคอนติดตามความล่าช้าของการแลกเปลี่ยนตัวประกัน",
     "ehi_show_trade_delay_desc" : "แสดงไอคอนติดตามเวลา ความล่าช้าของการแลกเปลี่ยนตัวประกันเมื่อคุณหรือเพื่อนของคุณฆ่าพลเรือน",

@@ -129,8 +129,7 @@
   "ehi_xp_panel_3": "取得するごとにポップアップを表示し、合計XPを表示する",
   "ehi_xp_panel_4": "取得するごとにヒントを表示し、合計XPを表示する",
 
-  "ehi_total_xp_show_difference": "XPの差を表示",
-  "ehi_total_xp_show_difference_desc": "[Heistで得たXPの合計を表示する]オプション限定！\nスタンドアロントラッカーでXPをどれだけ獲得したか表示します。",
+  "ehi_total_xp_difference": "XPの差を表示",
 
   "ehi_show_trade_delay": "取引遅延トラッカー",
   "ehi_show_trade_delay_desc": "自分かチームメイトが市民を殺害した際に発生する取引の遅延トラッカーを表示します。",

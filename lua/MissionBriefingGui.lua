@@ -118,6 +118,7 @@ function XPBreakdownItem:Select(no_change, previous_tactic)
     if no_change then
         return
     end
+    managers.menu_component:post_event("menu_enter")
     self._gui:OnTacticChanged(self._index, previous_tactic)
 end
 
@@ -181,14 +182,13 @@ function XPBreakdownItemSwitch:new(ws_panel, max_tactics, loc, button)
     local text = max_tactics > 2 and "ehi_mission_briefing_next_tactic_text" or "ehi_mission_briefing_toggle_tactic_text"
     self._text = ws_panel:text({
         name = "ehi_controller_switch_button",
-        text = string.format("%s %s", utf8.char(57346), loc:text(text)),
+        text = string.format("%s %s", loc:get_default_macro("BTN_X"), loc:text(text)),
         blend_mode = "add",
         layer = 2,
         font_size = tweak_data.menu.pd2_large_font_size / 2,
         font = tweak_data.menu.pd2_large_font,
         color = Color.white,
-        alpha = 1,
-        visible = false
+        alpha = 1
     })
     EHIMenu:make_fine_text(self._text)
     self._text:set_bottom(button:bottom())
@@ -212,7 +212,7 @@ function XPBreakdownItemSwitch:destroy()
 end
 
 ---@class XPBreakdownPanel
----@field new fun(self: self, gui: MissionBriefingGui, panel: Panel, panel_params: table, loc: LocalizationManager, params: XPBreakdown|_XPBreakdown, index: number?): self
+---@field new fun(self: self, gui: MissionBriefingGui, panel: Panel, panel_params: table, xp_params: table, loc: LocalizationManager, params: XPBreakdown|_XPBreakdown, index: number?): self
 local XPBreakdownPanel = class()
 ---@param gui MissionBriefingGui
 ---@param ws_panel Panel
@@ -220,7 +220,7 @@ local XPBreakdownPanel = class()
 ---@param loc LocalizationManager
 ---@param params XPBreakdown|_XPBreakdown
 ---@param index number?
-function XPBreakdownPanel:init(gui, ws_panel, panel_params, loc, params, index)
+function XPBreakdownPanel:init(gui, ws_panel, panel_params, xp_params, loc, params, index)
     self._gui = gui
     self._panel = ws_panel:panel(panel_params)
     self._panel:set_rightbottom(40 + panel_params.w, 144)
@@ -236,13 +236,16 @@ function XPBreakdownPanel:init(gui, ws_panel, panel_params, loc, params, index)
     self._xp = gui._xp
     self._loc = loc
     self._params = params
-    self._gage = xp_format == 3 and EHI:AreGagePackagesSpawned()
+    self._gage = xp_params.gage --[[@as boolean]]
+    self._disable_updates = xp_params.disable_updates --[[@as boolean]]
+    self._diff_multiplier = xp_params.diff_multiplier --[[@as boolean]]
+    self._no_overview_multipliers = xp_params.no_overview_multipliers --[[@as boolean]]
     self._lines = 0
     self:ProcessBreakdown()
 end
 
 function XPBreakdownPanel:ProcessBreakdown()
-    if self._destroyed then
+    if self._destroyed or self._created_and_disable_updates then
         return
     end
     self:AddXPOverviewText()
@@ -398,6 +401,7 @@ function XPBreakdownPanel:ProcessBreakdown()
         end
     end
     self._panel:set_h(self:GetPanelHeight())
+    self._created_and_disable_updates = self._disable_updates
 end
 
 ---@return number
@@ -1292,15 +1296,36 @@ function XPBreakdownPanel:AddXPOverviewText()
         text = self._loc:text("ehi_experience_xp_overview"),
         layer = 10
     })
-    managers.hud:make_fine_text(text_panel)
     self._lines = self._lines + 1
+    if self._no_overview_multipliers then
+        return
+    end
+    managers.hud:make_fine_text(text_panel)
     local xp = self._xp._ehi_xp
     local last_modifier = text_panel
+    if self._diff_multiplier and diff_multiplier > 1 then
+        local diff = self._panel:text({
+            name = "0_diff",
+            blend_mode = "add",
+            x = text_panel:right() + 2,
+            y = 10,
+            font = tweak_data.menu.pd2_large_font,
+            font_size = tweak_data.menu.pd2_small_font_size,
+            color = tweak_data.screen_colors.risk,
+            text = string.format("%s +%d%s", self._loc:get_default_macro("BTN_SKULL"), diff_multiplier, "x"),
+            layer = 10
+        })
+        managers.hud:make_fine_text(diff)
+        if self._disable_updates then
+            return
+        end
+        last_modifier = diff
+    end
     if xp.projob_multiplier and xp.projob_multiplier > 1 then
         local pro = self._panel:text({
             name = "0_pro_job",
             blend_mode = "add",
-            x = text_panel:right() + 2,
+            x = last_modifier:right() + 2,
             y = 10,
             font = tweak_data.menu.pd2_large_font,
             font_size = tweak_data.menu.pd2_small_font_size,
@@ -1558,6 +1583,9 @@ end
 
 ---@param offset number
 function XPBreakdownPanel:AddOffset(offset)
+    if self._destroyed then
+        return
+    end
     self._panel:set_y(self._panel:y() + offset)
 end
 
@@ -1598,13 +1626,13 @@ end
 
 function MissionBriefingGui:ProcessXPBreakdown()
     if _panels then
+        if self._disable_panels_update then
+            return
+        end
         self:FakeExperienceMultipliers()
         for _, panel in ipairs(_panels) do
             panel:RefreshXPOverview()
             panel:ProcessBreakdown()
-        end
-        if TacticMax > 1 then
-            self:HookMouseFunctions()
         end
     elseif tweak_data.levels:IsLevelSkirmish() then
         -- Hardcoded in shared instance "obj_skm"
@@ -1621,34 +1649,42 @@ end
 
 ---@param params XPBreakdown
 function MissionBriefingGui:AddXPBreakdown(params)
-    if type(params) ~= "table" or not next(params) then
+    if type(params) ~= "table" or not next(params) or _panels then
         return
     end
     self:FakeExperienceMultipliers()
+    self._disable_panels_update = xp_format <= 2
     _panels = {}
     local panel_params =
     {
         layer = 9,
         w = self._fullscreen_panel:w() * 0.45
     }
+    local xp_params =
+    {
+        no_overview_multipliers = xp_format == 1,
+        disable_updates = self._disable_panels_update,
+        diff_multiplier = xp_format >= 2,
+        gage = xp_format == 3 and EHI:AreGagePackagesSpawned()
+    }
     local ws_panel = self._full_workspace:panel()
     local loc = managers.localization
-    self._xp = managers.experience
+    self._xp = managers.ehi_experience
     if xp_format == 1 then
-        ---@param ex ExperienceManager
+        ---@param ex EHIExperienceManager
         ---@param xp number
         self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp) ---@diagnostic disable-line
             return xp
         end
     elseif xp_format == 2 then
-        ---@param ex ExperienceManager
+        ---@param ex EHIExperienceManager
         ---@param xp number
         ---@return number
         self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp) ---@diagnostic disable-line
             return xp * diff_multiplier
         end
     else
-        ---@param ex ExperienceManager
+        ---@param ex EHIExperienceManager
         ---@param xp number
         self._xp.FakeMultiplyXPWithAllBonuses = function(ex, xp) ---@diagnostic disable-line
             local alive_original = ex._ehi_xp.alive_players
@@ -1762,7 +1798,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
                     end
                     custom.objectives_override = nil
                 end
-                _panels[i] = XPBreakdownPanel:new(self, ws_panel, panel_params, loc, custom.tactic, i)
+                _panels[i] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, custom.tactic, i)
                 _buttons[i] = XPBreakdownItem:new(self, ws_panel, "ehi_experience_" .. custom.name, custom.additional_name, loc, i)
                 if i == 1 then
                     _buttons[i]:SetPosByPanel(_panels[i]._panel)
@@ -1772,13 +1808,13 @@ function MissionBriefingGui:AddXPBreakdown(params)
             end
         else
             -- Process stealth tactic first
-            _panels[1] = XPBreakdownPanel:new(self, ws_panel, panel_params, loc, tactic.stealth)
+            _panels[1] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, tactic.stealth)
             _buttons[1] = XPBreakdownItem:new(self, ws_panel, "ehi_experience_stealth", nil, loc, 1)
             _buttons[1]:SetPosByPanel(_panels[1]._panel)
             -- Loud
             _buttons[2] = XPBreakdownItem:new(self, ws_panel, "ehi_experience_loud", nil, loc, 2)
             _buttons[2]:SetPosByPreviousItem(_buttons[1])
-            _panels[2] = XPBreakdownPanel:new(self, ws_panel, panel_params, loc, tactic.loud, 2)
+            _panels[2] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, tactic.loud, 2)
             TacticMax = 2
         end
         local offset = Global.game_settings.single_player and 20 or 25
@@ -1791,7 +1827,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
         end
         self:HookMouseFunctions()
     else
-        _panels[1] = XPBreakdownPanel:new(self, ws_panel, panel_params, loc, params)
+        _panels[1] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, params)
     end
 end
 
@@ -1855,7 +1891,7 @@ function MissionBriefingGui:HookMouseFunctions()
             local result = original.mouse_pressed(gui, button, ...)
             if result then
                 local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
-                for _, ehi_button in ipairs(_buttons) do ---@diagnostic disable-line
+                for _, ehi_button in ipairs(_buttons or {}) do
                     ehi_button:mouse_pressed(button, fx, fy)
                 end
             end
@@ -1874,7 +1910,7 @@ function MissionBriefingGui:HookMouseFunctions()
                 return false, "arrow"
             end
             local fx, fy = managers.mouse_pointer:modified_fullscreen_16_9_mouse_pos()
-            for _, button in ipairs(_buttons) do ---@diagnostic disable-line
+            for _, button in ipairs(_buttons or {}) do
                 if button:mouse_moved(fx, fy) then
                     return true, "link"
                 end

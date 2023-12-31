@@ -1,5 +1,7 @@
 local EHI = EHI
 EHI._cache.is_vr = _G.IS_VR
+dofile(EHI.LuaPath .. "EHIExperienceManager.lua")
+managers.ehi_experience = EHIExperienceManager
 if EHI:CheckLoadHook("Setup") then
     return
 end
@@ -31,6 +33,7 @@ function Setup:init_managers(managers, ...)
     managers.ehi_escape = EHIEscapeChanceManager:new(managers.ehi_tracker)
     managers.ehi_deployable = EHIDeployableManager:new(managers.ehi_tracker)
     managers.ehi_assault = EHIAssaultManager:new(managers.ehi_tracker)
+    managers.ehi_experience:TrackersInit(managers.ehi_tracker)
     managers.ehi_manager = EHIManager:new(managers.ehi_tracker, managers.ehi_waypoint, managers.ehi_escape)
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitManagers, managers)
 end

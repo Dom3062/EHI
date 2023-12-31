@@ -82,8 +82,8 @@
 	"ehi_xp_panel_3" : "Mostra una notifica per tutti i PE guadagnati ed i PE totali",
     "ehi_xp_panel_4" : "Mostra un consiglio per tutti i PE guadagnati ed i PE totali",
  
-    "ehi_total_xp_show_difference" : "Mostra Differenza PE",
-    "ehi_total_xp_show_difference_desc" : "Sola opzione: [Mostra i PE totali guadagnati dal colpo]!\nMostra quanti PE hai guadagnato in un tracciatore indipendente",
+    "ehi_total_xp_difference" : "Mostra Differenza PE",
+    "ehi_total_xp_difference_desc" : "Mostra quanti PE hai guadagnato",
  
     "ehi_show_trade_delay" : "Mostra tracciatore di ritardo nello scambio",
     "ehi_show_trade_delay_desc" : "Mostra il ritardo nello scambio quando te o un tuo compagno di squadra uccidete un civile",

@@ -1,3 +1,10 @@
+r210 (31. 12. 2023):
+Expanded option "Show XP difference"
+Mission Briefing: Optimization and reduction of redraw calls
+Mission Briefing: Fixed stack overflow
+Civilian Count Tracker: Fixed moving tied civilian makes the counter inaccurate (host only)
+XP Difference: Reduced amount of tracker spam when you get experience
+
 r209 (28. 12. 2023):
 "Swiss Cheese" achievement: Fixed an issue where civilian kills are not counted
 Goat Simulator Day 2: Fixed a load crash

@@ -47,8 +47,8 @@ local triggers = {
     [1010011] = { special_function = SF.RemoveTracker, data = { "CookChance", "VanStayDelay", "HeliMeth" } },
     [1010012] = { special_function = SF.RemoveTrigger, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238, 102197, 102167, 102168 } },
 
-    [102383] = { time = 2 + 5, chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.alex_1_Methlab, start_opened = true },
-    [100721] = { time = 1, chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.alex_1_Methlab, tracker_merge = true, start_opened = true },
+    [102383] = { time = 2 + 5, chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.CookingChance, start_opened = true },
+    [100721] = { time = 1, chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.CookingChance, tracker_merge = true, start_opened = true },
     [100723] = { id = "CookChance", special_function = SF.IncreaseChanceFromElement },
 
     [100199] = { id = "CookingDone", run = { time = 5 + 1 } },

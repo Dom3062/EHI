@@ -4,9 +4,11 @@ if EHI:CheckLoadHook("CivilianLogicSurrender") or EHI:IsClient() or not EHI:CanS
 end
 
 local original = CivilianLogicSurrender.exit
-function CivilianLogicSurrender.exit(data, ...)
-    if data.internal_data.is_hostage then
+---@param data table
+---@param new_logic_name string
+function CivilianLogicSurrender.exit(data, new_logic_name, ...)
+    if data.internal_data.is_hostage and new_logic_name ~= "travel" and new_logic_name ~= "surrender" then
         managers.ehi_tracker:CallFunction("CivilianCount", "CivilianUntied", data.key)
     end
-    original(data, ...)
+    original(data, new_logic_name, ...)
 end

@@ -536,6 +536,7 @@ end
 ---@field ehi_escape EHIEscapeChanceManager
 ---@field ehi_deployable EHIDeployableManager
 ---@field ehi_assault EHIAssaultManager
+---@field ehi_experience EHIExperienceManager
 ---@field enemy EnemyManager
 ---@field environment_effects EnvironmentEffectsManager
 ---@field experience ExperienceManager

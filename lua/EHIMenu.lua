@@ -308,7 +308,7 @@ function EHIMenu:Open()
         local a = o:alpha()
 
         do_animation(0.2, function(p)
-            local alpha_lerp = math.lerp(a, 1, p)
+            local alpha_lerp = math.lerp(a, 1, p) --[[@as number]]
             o:set_alpha(alpha_lerp)
             self._preview_panel._hud_panel:set_alpha(alpha_lerp)
         end)
@@ -330,7 +330,7 @@ function EHIMenu:Close()
         local a = o:alpha()
 
         do_animation(0.2, function(p)
-            local alpha_lerp = math.lerp(a, 0, p)
+            local alpha_lerp = math.lerp(a, 0, p) --[[@as number]]
             o:set_alpha(alpha_lerp)
             self._preview_panel._hud_panel:set_alpha(alpha_lerp)
         end)
@@ -1894,10 +1894,10 @@ function EHIMenu:GetXPEnabledValue()
 end
 
 function EHIMenu:UpdateXPEnabledValue(menu)
-    local enabled = EHI:GetOption("show_gained_xp") and not EHI:GetOption("show_xp_in_mission_briefing_only")
+    local enabled = self:GetXPEnabledValue()
     local items =
     {
-        ehi_total_xp_show_difference_choice = true,
+        ehi_total_xp_difference_choice = true,
         ehi_xp_panel_choice = true
     }
     for _, item in ipairs(menu.items) do
@@ -1918,7 +1918,7 @@ function EHIMenu:UpdateAllXPOptions(menu)
     }
     local items2 =
     {
-        ehi_total_xp_show_difference_choice = true,
+        ehi_total_xp_difference_choice = true,
         ehi_xp_panel_choice = true
     }
     for _, item in ipairs(menu.items) do
@@ -1926,6 +1926,19 @@ function EHIMenu:UpdateAllXPOptions(menu)
             self:AnimateItemEnabled(item, enabled)
         elseif items2[item.id or ""] then
             self:AnimateItemEnabled(item, enabled2)
+        end
+    end
+end
+
+function EHIMenu:UpdateXPDiffEnabled(menu)
+    local enabled = self:GetXPEnabledValue() and EHI:GetOption("xp_panel") == 2
+    local items =
+    {
+        ehi_total_xp_difference_choice = true
+    }
+    for _, item in ipairs(menu.items) do
+        if items[item.id or ""] then
+            self:AnimateItemEnabled(item, enabled)
         end
     end
 end

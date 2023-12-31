@@ -12,11 +12,11 @@ end
 if EHI:IsXPTrackerEnabledAndVisible() then
     if EHI:IsRunningBB() or EHI:IsRunningUsefulBots() then
         EHI:HookWithID(TradeManager, "on_AI_criminal_death", "EHI_ExperienceManager_AICriminalDeath", function(...)
-            managers.experience:DecreaseAlivePlayers()
+            managers.ehi_experience:DecreaseAlivePlayers()
         end)
     elseif not Global.game_settings.single_player then
         EHI:HookWithID(TradeManager, "on_player_criminal_death", "EHI_ExperienceManager_PlayerCriminalDeath", function(...)
-            managers.experience:DecreaseAlivePlayers(true)
+            managers.ehi_experience:DecreaseAlivePlayers(true)
         end)
     end
 end

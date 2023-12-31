@@ -148,8 +148,8 @@
     "ehi_hide_unlocked_achievements" : "Não Mostrar Conquistas já Alcançadas",
     "ehi_hide_unlocked_achievements_desc" : "Quando ativado, EHI não vai mostrar Trackers para conquistas que já foram alcançadas\nQuando desativado, EHI vai mostrar os Trackers para conquistas que já foram alcançadas",
     
-    "ehi_total_xp_show_difference" : "Mostrar Diferença de XP",
-    "ehi_total_xp_show_difference_desc" : "Só tem a opção [Mostrar o total do XP ganho da Heist]!\nMostra o quanto de XP você ganhou em um Tracker",
+    "ehi_total_xp_difference" : "Mostrar Diferença de XP",
+    "ehi_total_xp_difference_desc" : "Mostra o quanto de XP você ganhou",
     
     "ehi_show_trade_delay_suppress_in_stealth" : "Não Mostrar o Atraso da Troca em Stealth",
     "ehi_show_trade_delay_suppress_in_stealth_desc" : "Esconde o Atraso da Troca em Stealth quando ativado. Assim que o alarme for soado, o Tracker irá aparecer com o Atraso acumulado.",

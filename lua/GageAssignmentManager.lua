@@ -43,9 +43,7 @@ local function UpdateTracker(self, client_sync_load)
 		end
 	end
 	ShowProgress(picked_up, max_units, client_sync_load)
-	if managers.experience.SetGagePackageBonus then
-		managers.experience:SetGagePackageBonus(GetGageXPRatio(self, picked_up, max_units))
-	end
+	managers.ehi_experience:SetGagePackageBonus(GetGageXPRatio(self, picked_up, max_units))
 end
 
 function GageAssignmentManager:present_progress(...)

@@ -25,12 +25,67 @@ function EHIXPTracker:AddXP(amount)
     self:AnimateBG()
 end
 
+---@class EHIHiddenXPTracker : EHIXPTracker
+---@field super EHIXPTracker
+EHIHiddenXPTracker = class(EHIXPTracker)
+EHIHiddenXPTracker._update = false
+---@param params EHITracker.params
+function EHIHiddenXPTracker:pre_init(params)
+    self._total_xp = 0
+    self._refresh_t = params.refresh_t or 1
+    self._xp_panel = params.panel or 3
+    params.time = self._refresh_t
+    self._experience = managers.localization:text("ehi_popup_experience")
+    self._experience_total_text = managers.localization:text("ehi_popup_experience_total")
+    local gained = params.format == 1 and "ehi_popup_experience_base_gained" or "ehi_popup_experience_gained"
+    if self._xp_panel == 3 then
+        local xp = managers.localization:text("ehi_experience_xp")
+        self._experience_format = "%s%s " .. xp .. "\n%s%s " .. xp
+    else
+        local xp = managers.localization:text("ehi_experience_xp")
+        self._experience_format = "%s%s " .. xp .. ";%s%s " .. xp
+        gained = "ehi_popup_experience_gained"
+    end
+    self._experience_gained_text = managers.localization:text(gained)
+    self._xp_class = managers.experience
+    if (params.amount or 0) > 0 then
+        self:AddTrackerToUpdate()
+        self._updating = true
+    end
+end
+
+---@param dt number
+function EHIHiddenXPTracker:update(dt)
+    self._time = self._time - dt
+    if self._time <= 0 then
+        self:RemoveTrackerFromUpdate()
+        self._updating = false
+        local xp_string = string.format(self._experience_format, self._experience_gained_text, self._xp_class:cash_string(self._xp, self._xp >= 0 and "+" or ""), self._experience_total_text, self._xp_class:cash_string(self._total_xp, "+"))
+        if self._xp_panel == 3 then
+            managers.hud:custom_ingame_popup_text(self._experience, xp_string, "EHI_XP")
+        else
+            managers.hud:show_hint({ text = xp_string })
+        end
+        self._xp = 0
+    end
+end
+
+---@param amount number
+function EHIHiddenXPTracker:AddXP(amount)
+    self._time = self._refresh_t
+    self._xp = self._xp + amount
+    self._total_xp = self._total_xp + amount
+    if not self._updating then
+        self:AddTrackerToUpdate()
+        self._updating = true
+    end
+end
+
 ---@class EHITotalXPTracker : EHIXPTracker
 ---@field super EHIXPTracker
 EHITotalXPTracker = class(EHIXPTracker)
 EHITotalXPTracker._forced_hint_text = "total_xp"
 EHITotalXPTracker._update = false
-EHITotalXPTracker._show_diff = EHI:GetOption("total_xp_show_difference")
 ---@param panel Panel
 ---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
@@ -62,13 +117,6 @@ end
 function EHITotalXPTracker:SetXP(amount)
     self._xp = amount
     if self._total_xp ~= self._xp and not self._player_limit_reached then
-        if self._show_diff then
-            self._parent_class:AddTracker({
-                id = "XP_" .. self._total_xp .. "_" .. self._xp,
-                amount = self._xp - self._total_xp,
-                class = "EHIXPTracker"
-            })
-        end
         if self._xp >= self._player_xp_limit then
             self._total_xp = self._player_xp_limit
             self:SetTextColor(Color.green)

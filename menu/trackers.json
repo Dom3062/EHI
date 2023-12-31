@@ -83,16 +83,22 @@
             "ehi_ver" : 137
         },
         {
-            "type": "toggle",
-            "id": "ehi_total_xp_show_difference_choice",
-            "title": "ehi_total_xp_show_difference",
-            "description": "ehi_total_xp_show_difference_desc",
+            "type": "multiple_choice",
+            "id": "ehi_total_xp_difference_choice",
+            "title": "ehi_total_xp_difference",
+            "description": "ehi_total_xp_difference_desc",
             "callback": "SetOption",
-            "callback_arguments": "total_xp_show_difference",
-            "value": "total_xp_show_difference",
+            "callback_arguments": "total_xp_difference",
+            "items": [
+                "ehi_total_xp_difference_1",
+                "ehi_gage_tracker_panel_1",
+                "ehi_gage_tracker_panel_2",
+                "ehi_total_xp_difference_2"
+            ],
+            "value": "total_xp_difference",
             "parent_func" : "GetXPEnabledValue",
-            "default_value": true,
-            "ehi_ver" : 35
+            "default_value": 2,
+            "ehi_ver" : 210
         },
         {
             "type": "multiple_choice",
@@ -107,7 +113,9 @@
                 "ehi_xp_format_3"
             ],
             "value": "xp_format",
+            "is_parent" : true,
             "parent" : "ehi_show_gained_xp_choice",
+            "parent_func_update" : "UpdateXPDiffEnabled",
             "default_value": 3
         },
         {
@@ -125,7 +133,7 @@
             ],
             "value": "xp_panel",
             "parent_func" : "GetXPEnabledValue",
-            "default_value": 1,
+            "default_value": 2,
             "ehi_ver" : 53
         },
         {

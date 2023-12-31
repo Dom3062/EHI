@@ -156,6 +156,22 @@ function EHITrackerManager:AddTracker(params, pos)
 end
 
 ---@param params AddTrackerTable|ElementTrigger
+function EHITrackerManager:AddHiddenTracker(params)
+    if self._trackers[params.id] then
+        EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
+        EHI:LogTraceback()
+        self._trackers[params.id].tracker:ForceDelete()
+    end
+    local class = params.class or self._base_tracker_class
+    local tracker_class = _G[class] --[[@as EHITracker]]
+    local tracker = tracker_class:new(self._hud_panel, params, self)
+    if tracker._update then
+        self._trackers_to_update[params.id] = tracker
+    end
+    self._trackers[params.id] = { tracker = tracker }
+end
+
+---@param params AddTrackerTable|ElementTrigger
 function EHITrackerManager:PreloadTracker(params)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
@@ -1140,7 +1156,7 @@ do
     dofile(path .. "EHIAchievementTrackers.lua")
     dofile(path .. "EHITrophyTrackers.lua")
     dofile(path .. "EHIDailyTrackers.lua")
-    if EHI:GetOption("xp_panel") <= 2 and EHI:IsXPTrackerEnabledAndVisible() then
+    if EHI:IsXPTrackerEnabledAndVisible() then
         dofile(path .. "EHIXPTracker.lua")
     end
     if EHI:GetOption("show_equipment_tracker") or (EHI:GetOption("show_minion_tracker") and EHI:GetOption("show_minion_option") == 2) then

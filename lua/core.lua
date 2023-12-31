@@ -45,24 +45,6 @@ _G.EHI =
 
     _hooks = {},
 
-    XPElementLevel =
-    {
-        jewelry_store = true,
-        ukrainian_job = true,
-        election_day_1 = true,
-        alex_1 = true,
-        firestarter_1 = true,
-        safehouse = true
-    },
-    XPElementLevelNoCheck =
-    {
-        mallcrasher = true, -- Mallcrasher
-        rat = true, -- Cook Off
-
-        -- Custom Missions
-        ratdaylight = true,
-        lid_cookoff_methslaves = true
-    },
     NoCivilianCounter =
     {
         alex_1 = true,
@@ -319,7 +301,6 @@ _G.EHI =
         Restarting = "restarting",
 
         -- Heist specific hints
-        alex_1_Methlab = "alex_1_methlab",
         big_Piggy = "big_piggy",
         brb_WinchDelivery = "brb_winch_delivery",
         cane_Safe = "cane_safe",
@@ -703,8 +684,8 @@ local function LoadDefaultValues(self)
         show_gained_xp = true,
         show_xp_in_mission_briefing_only = false,
         xp_format = 3,
-        xp_panel = 1,
-        total_xp_show_difference = true,
+        xp_panel = 2,
+        total_xp_difference = 2,
         show_trade_delay = true,
         show_trade_delay_option = 1,
         show_trade_delay_other_players_only = true,
@@ -1441,6 +1422,25 @@ end
 
 ---@param object table
 ---@param func string
+---@param pre_call function
+---@param post_call function
+function EHI:PreHookAndHook(object, func, pre_call, post_call)
+    self:PreHook(object, func, pre_call)
+    self:Hook(object, func, post_call)
+end
+
+---@param object table
+---@param func string
+---@param id string
+---@param pre_call function
+---@param post_call function
+function EHI:PreHookAndHookWithID(object, func, id, pre_call, post_call)
+    self:PreHookWithID(object, func, id, pre_call)
+    self:HookWithID(object, func, id, post_call)
+end
+
+---@param object table
+---@param func string
 ---@param id string|number
 ---@param post_call function
 function EHI:HookElement(object, func, id, post_call)
@@ -1626,15 +1626,6 @@ function EHI:DebugEquipment(tracker_id, unit, key, amount, peer_id)
         self:Log("Peer ID: " .. tostring(peer_id))
     end
     self:Log(debug.traceback())
-end
-
----@param level_id string
----@return boolean
-function EHI:IsOneXPElementHeist(level_id)
-    if self.XPElementLevelNoCheck[level_id] then
-        return false
-    end
-    return self._cache.XPElement <= 1 or self.XPElementLevel[level_id]
 end
 
 ---@param id string

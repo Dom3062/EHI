@@ -20,7 +20,7 @@ if EHI:IsRunningBB() then
     function(self, name)
         local character = self:character_by_name(name)
         if character and character.taken and character.data.ai then
-            managers.experience:IncreaseAlivePlayers()
+            managers.ehi_experience:IncreaseAlivePlayers()
         end
     end)
     EHI:HookWithID(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit",
@@ -30,7 +30,7 @@ if EHI:IsRunningBB() then
     function(self, name, unit)
         local character = self:character_by_name(name)
         if character and character.taken and character.data.ai and not unit:base().is_local_player then
-            managers.experience:IncreaseAlivePlayers()
+            managers.ehi_experience:IncreaseAlivePlayers()
         end
     end)
     EHI:PreHookWithID(CriminalsManager, "_remove", "EHI_CriminalsManager_remove",
@@ -39,12 +39,12 @@ if EHI:IsRunningBB() then
     function(self, id)
         local char_data = self._characters[id]
         if char_data.data.ai then
-            managers.experience:DecreaseAlivePlayers()
+            managers.ehi_experience:DecreaseAlivePlayers()
         end
     end)
 elseif EHI:IsRunningUsefulBots() then
     local function Query(...)
-        managers.experience:QueryAmountOfAllPlayers()
+        managers.ehi_experience:QueryAmountOfAllPlayers()
     end
     EHI:Hook(CriminalsManager, "add_character", Query)
     EHI:Hook(CriminalsManager, "set_unit", Query)
@@ -54,12 +54,12 @@ elseif not Global.game_settings.single_player then
     local Query
     if EHI:IsRunningUsefulBots() then
         Query = function(...)
-            managers.experience:QueryAmountOfAllPlayers()
+            managers.ehi_experience:QueryAmountOfAllPlayers()
         end
         EHI:Hook(CriminalsManager, "_remove", Query)
     else
         Query = function(...)
-            managers.experience:QueryAmountOfAlivePlayers()
+            managers.ehi_experience:QueryAmountOfAlivePlayers()
         end
     end
     EHI:Hook(CriminalsManager, "add_character", Query)

@@ -136,7 +136,6 @@
     "ehi_hint_sentry_teargas" : "Turret (Teargas)",
     "ehi_hint_diff" : "Assault Difficulty",
 
-    "ehi_hint_alex_1_methlab" : "Cooking Chance",
     "ehi_hint_big_piggy" : "Moving Piggy",
     "ehi_hint_brb_winch_delivery" : "Winch Delivery",
     "ehi_hint_cane_safe" : "Safe Event",
@@ -347,8 +346,10 @@
     "ehi_show_xp_in_mission_briefing_only" : "Show gained XP in Mission Briefing only",
     "ehi_show_xp_in_mission_briefing_only_desc" : "Enable this function if you want to see XP in Mission Briefing, but not in-game",
 
-    "ehi_total_xp_show_difference" : "Show XP difference",
-    "ehi_total_xp_show_difference_desc" : "[Show total XP gained from the heist] option only!\nShows how much you gained XP in a standalone tracker",
+    "ehi_total_xp_difference" : "Show XP difference",
+    "ehi_total_xp_difference_desc" : "Shows how much you gained XP",
+    "ehi_total_xp_difference_1" : "Don't show",
+    "ehi_total_xp_difference_2" : "In hint",
 
     "ehi_show_trade_delay" : "Show Trade Delay Tracker",
     "ehi_show_trade_delay_desc" : "Shows trade delay when you or your teammates kill a civilian",

@@ -129,11 +129,11 @@ local function StealthCheck()
 end
 
 local function pre_set_active(self, ...)
-    self._ehi_active = self._active
+    self.__ehi_active = self._active
 end
 
 local function post_set_active(self, ...)
-    if self._ehi_active ~= self._active then
+    if self.__ehi_active ~= self._active then
         if self._active then -- Active
             if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 and (not self._ehi_load_check or self._ehi_load_check()) then -- The unit is active now, load it from cache and show it on screen
                 managers.ehi_deployable:LoadFromDeployableCache(self._ehi_tracker_id, self._ehi_key)
@@ -143,7 +143,7 @@ local function post_set_active(self, ...)
                 managers.ehi_deployable:AddToDeployableCache(self._ehi_tracker_id, self._ehi_key, self._unit, self._ehi_unit_check and self._ehi_unit)
             end
         end
-        self._ehi_active = self._active
+        self.__ehi_active = self._active
     end
 end
 
@@ -158,8 +158,7 @@ if EHI:GetOption("show_equipment_ammobag") then
         self._ehi_unit = "ammo_bag"
         self._ehi_unit_check = all
     end)
-    EHI:PreHook(AmmoBagInteractionExt, "set_active", pre_set_active)
-    EHI:Hook(AmmoBagInteractionExt, "set_active", post_set_active)
+    EHI:PreHookAndHook(AmmoBagInteractionExt, "set_active", pre_set_active, post_set_active)
     EHI:Hook(AmmoBagInteractionExt, "destroy", destroy)
 end
 
@@ -171,8 +170,7 @@ if EHI:GetOption("show_equipment_bodybags") then
         self._ehi_load_check = StealthCheck
         self._ehi_unit_check = all
     end)
-    EHI:PreHook(BodyBagsBagInteractionExt, "set_active", pre_set_active)
-    EHI:Hook(BodyBagsBagInteractionExt, "set_active", post_set_active)
+    EHI:PreHookAndHook(BodyBagsBagInteractionExt, "set_active", pre_set_active, post_set_active)
     EHI:Hook(BodyBagsBagInteractionExt, "destroy", destroy)
 end
 
@@ -192,7 +190,6 @@ if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_fi
         self._ehi_unit = self.tweak_data == "first_aid_kit" and "first_aid_kit" or "doctor_bag"
         self._ehi_unit_check = aggregate or all
     end)
-    EHI:PreHook(DoctorBagBaseInteractionExt, "set_active", pre_set_active)
-    EHI:Hook(DoctorBagBaseInteractionExt, "set_active", post_set_active)
+    EHI:PreHookAndHook(DoctorBagBaseInteractionExt, "set_active", pre_set_active, post_set_active)
     EHI:Hook(DoctorBagBaseInteractionExt, "destroy", destroy)
 end
