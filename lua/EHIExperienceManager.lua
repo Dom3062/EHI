@@ -462,7 +462,7 @@ function EHIExperienceManager:GetPlayerXPLimit()
         end
         return self._xp.prestige_xp_remaining
     end
-    return self._xp.level_to_100
+    return self._xp.level_xp_to_100
 end
 
 function EHIExperienceManager:IsInfamyPoolEnabled()

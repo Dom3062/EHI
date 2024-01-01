@@ -1,3 +1,6 @@
+r211 (01. 01. 2024):
+Experience Manager: Fixed a load crash
+
 r210 (31. 12. 2023):
 Expanded option "Show XP difference"
 Mission Briefing: Optimization and reduction of redraw calls
