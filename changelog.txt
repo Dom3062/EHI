@@ -1,3 +1,10 @@
+r212 (02. 01. 2024):
+Fixed a crash with enabled description in Daily jobs/Daily Side jobs
+Civilian Count Tracker: Fixed a crash when civilian died
+Experience Manager: Fixed a crash when then XP Tracker is disabled
+Experience Manager: Fixed an issue where the XP is inaccurate when Gage Packages Counter is disabled
+Loot Counter: Fixed an issue with "ALL LOOT SECURED" popup where it is possible to trigger it more than once
+
 r211 (01. 01. 2024):
 Experience Manager: Fixed a load crash
 

@@ -55,8 +55,11 @@
         <post hook_id="lib/mutators/mutatorpiggybank" :script_path="MutatorPiggyBank.lua" />
         <post hook_id="lib/mutators/mutatorpiggyrevenge" :script_path="MutatorPiggyRevenge.lua" />
 
-        <post hook_id="lib/setups/setup" :script_path="Setup.lua" />
-        <post hook_id="lib/setups/gamesetup" :script_path="GameSetup.lua" />
+        <group hook_id="lib/setups/">
+            <post :hook_id="setup" :script_path="EHIExperienceManager.lua" />
+            <post :hook_id="setup" :script_path="Setup.lua" />
+            <post :hook_id="gamesetup" :script_path="GameSetup.lua" />
+        </group>
 
         <post hook_id="lib/states/ingamewaitingforplayers" :script_path="IngameWaitingForPlayers.lua" />
         <post hook_id="lib/states/ingamewaitingforrespawn" :script_path="IngameWaitingForRespawn.lua" />

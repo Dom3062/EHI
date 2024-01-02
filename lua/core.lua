@@ -105,7 +105,9 @@ _G.EHI =
         -- Provides `mode` (a string value -> `normal`, `endless`)
         AssaultWaveModeChanged = "AssaultWaveModeChanged",
         -- Provides `visibility` (a boolean value)
-        HUDVisibilityChanged = "HUDVisibilityChanged"
+        HUDVisibilityChanged = "HUDVisibilityChanged",
+        -- Provides `picked_up` (a number value), `max_units` (a number value) and `client_sync_load` (a boolean value)
+        SyncGagePackagesCount = "SyncGagePackagesCount"
     },
 
     SyncMessages =

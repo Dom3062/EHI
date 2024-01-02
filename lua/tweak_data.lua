@@ -25,14 +25,14 @@ tweak_data.ehi =
 
         xp = { texture = "guis/textures/pd2/blackmarket/xp_drop" },
 
-        mad_scan = { texture = "guis/textures/pd2_mod_ehi/mad_scan" },
-        boat = { texture = "guis/textures/pd2_mod_ehi/boat" },
-        enemy = { texture = "guis/textures/pd2_mod_ehi/enemy" },
-        piggy = { texture = "guis/textures/pd2_mod_ehi/piggy" },
-        assaultbox = { texture = "guis/textures/pd2_mod_ehi/assaultbox" },
-        deployables = { texture = "guis/textures/pd2_mod_ehi/deployables" },
-        padlock = { texture = "guis/textures/pd2_mod_ehi/padlock" },
-        turret = { texture = "guis/textures/pd2_mod_ehi/turret" },
+        mad_scan = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 0, 85, 85} },
+        boat = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 85, 85, 85} },
+        enemy = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {213, 85, 64, 64} },
+        piggy = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {85, 0, 85, 85} },
+        assaultbox = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {96, 213, 32, 32} },
+        deployables = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {85, 85, 128, 128} },
+        padlock = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {64, 213, 32, 32} },
+        turret = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {170, 0, 85, 85} },
 
         reload = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {0, 576, 64, 64} },
         smoke = { texture = "guis/dlcs/max/textures/pd2/specialization/icons_atlas", texture_rect = {0, 0, 64, 64} },
@@ -95,7 +95,7 @@ tweak_data.ehi =
             class = "EHIGaugeBuffTracker",
             format = "damage",
             option = "health",
-            pos = 0,
+            pos = 0
         },
         Armor =
         {

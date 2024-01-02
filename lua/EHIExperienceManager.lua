@@ -87,6 +87,14 @@ function EHIExperienceManager:ExperienceInit(xp)
         EHI:HookWithID(HUDManager, "mark_cheater", "EHI_ExperienceManager_mark_cheater", function()
             self:RecalculateSkillXPMultiplier()
         end)
+        EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, function(picked_up, max_units, client_sync_load)
+            local multiplier = 1
+            if picked_up > 0 then -- Don't use the in-game function because it is inaccurate by one package
+                local ratio = 1 - (max_units - picked_up) / max_units
+                multiplier = managers.gage_assignment._tweak_data:get_experience_multiplier(ratio)
+            end
+            self:SetGagePackageBonus(multiplier)
+        end)
     end
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "LoadData"))
     if not EHI:GetOption("show_xp_in_mission_briefing_only") then

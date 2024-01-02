@@ -92,7 +92,8 @@ function EHILootTracker:SetCompleted(force)
         self._text:set_text(self:Format())
         self:FitTheText()
         self._status = nil
-    elseif self._show_popup then
+    elseif self._show_popup and not self._popup_showed then
+        self._popup_showed = true
         self.update = self.update_fade
         managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_loot_secured"), "EHI_Loot")
     end

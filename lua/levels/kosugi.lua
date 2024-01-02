@@ -205,7 +205,7 @@ if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKIL
     for i = 100539, 100555, 2 do
         elements[i] = IncreaseProgress
     end
-    tweak_data.ehi.icons.daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/daily_secret_identity" }
+    tweak_data.ehi.icons.daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 170, 64, 64} }
     tweak_data.hud_icons.daily_secret_identity = tweak_data.ehi.icons.daily_secret_identity
     dailies.daily_secret_identity = { elements = elements }
 end

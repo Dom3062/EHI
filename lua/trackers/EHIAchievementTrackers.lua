@@ -94,7 +94,7 @@ function EHIAchievementTracker:ShowAchievementDescription(delay_popup)
     if self._popup_type == "achievement" then
         managers.hud:ShowAchievementDescription(self._id, self._beardlib)
     elseif self._popup_type == "daily" then
-        managers.hud:ShowTrophyDailyDescription(self._id, self._daily_job) ---@diagnostic disable-line
+        managers.hud:ShowDailyDescription(self._id, self._daily_job) ---@diagnostic disable-line
     else
         managers.hud:ShowTrophyDescription(self._id)
     end

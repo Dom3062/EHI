@@ -26,6 +26,7 @@ _G.tweak_data.dot = {}
 ---@class EHITweakData
 _G.tweak_data.ehi = {}
 ---@class GageAssignmentTweakData
+---@field get_experience_multiplier fun(self: self, ratio: number): number
 ---@field get_num_assignment_units fun(self: self): number
 _G.tweak_data.gage_assignment = {}
 ---@class GuiTweakData
@@ -235,6 +236,8 @@ _G.EnemyManager = {}
 _G.PlayerManager = {}
 ---@class PrePlanningManager
 _G.PrePlanningManager = {}
+---@class GageAssignmentManager
+_G.GageAssignmentManager = {}
 ---@class HUDManager
 _G.HUDManager = {}
 ---@class HUDMissionBriefing
@@ -271,21 +274,21 @@ end
 ---@overload fun(x: number, y: number, z: number, w: number): Rotation
 _G.Rotation = function()
 end
+
 ---@class _G.Color
+---@overload fun(): Color
+---@overload fun(r: number, g: number, b: number): Color
+---@overload fun(a: number, r: number, g: number, b: number): Color
+---@overload fun(hex: string): Color
+---@operator div(number): Color
+---@operator div(integer): Color
 ---@field black Color
 ---@field red Color
 ---@field white Color
 ---@field green Color
 ---@field yellow Color
-
----@class _G.Color
 _G.Color = {}
----@return Color
----@overload fun(r: number, g: number, b: number): Color
----@overload fun(a: number, r: number, g: number, b: number): Color
----@overload fun(hex: string): Color
-_G.Color = function()
-end
+
 ---@generic T
 ---@param TC T
 ---@return T
@@ -325,6 +328,8 @@ end
 ---@field z number
 
 ---@class Color
+---@operator div(integer): self
+---@operator div(number): self
 ---@field r number
 ---@field red number
 ---@field g number
@@ -540,6 +545,7 @@ end
 ---@field enemy EnemyManager
 ---@field environment_effects EnvironmentEffectsManager
 ---@field experience ExperienceManager
+---@field gage_assignment GageAssignmentManager
 ---@field game_play_central GamePlayCentralManager
 ---@field groupai GroupAIManager
 ---@field gui_data GuiDataManager

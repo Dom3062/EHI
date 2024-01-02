@@ -2,6 +2,9 @@ local EHI = EHI
 local titles = {}
 local to_localize = {}
 local hooked = false
+---@param ehi_title string
+---@param localization string
+---@param c Color?
 function EHI:SetNotificationAlert(ehi_title, localization, c)
     if localization then
         if managers.localization then

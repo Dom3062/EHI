@@ -1,6 +1,5 @@
 local EHI = EHI
 EHI._cache.is_vr = _G.IS_VR
-dofile(EHI.LuaPath .. "EHIExperienceManager.lua")
 managers.ehi_experience = EHIExperienceManager
 if EHI:CheckLoadHook("Setup") then
     return

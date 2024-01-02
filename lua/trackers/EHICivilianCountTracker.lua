@@ -47,7 +47,7 @@ end
 function EHICivilianCountTracker:DecreaseCount(civilian_key)
     if self._tied_units[civilian_key] then
         self._tied_units[civilian_key] = nil
-        self._tied_units = self._tied_units - 1
+        self._tied_count = self._tied_count - 1
         self._count = self._count + 1
     end
     EHICivilianCountTracker.super.DecreaseCount(self)
