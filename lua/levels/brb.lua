@@ -66,7 +66,7 @@ local other =
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100025, 16400)] = { id = "Snipers", class = TT.Sniper.Count, single_sniper = true }
-    other[EHI:GetInstanceElementID(100090, 16400)] = { id = "Snipers", class = TT.Sniper.Count }
+    other[EHI:GetInstanceElementID(100090, 16400)] = { id = "Snipers", class = TT.Sniper.Count, single_sniper = true }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%

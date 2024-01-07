@@ -562,21 +562,21 @@ function FakeEHITracker:init(panel, params, parent_class)
     self._scale = params.scale --[[@as number]]
     self._text_scale = params.text_scale --[[@as number]]
     self._first = params.first
-    local number_of_icons = 0
+    self._n_of_icons = 0
     local gap = 0
     if params.icons then
-        number_of_icons = #params.icons
-        gap = self._gap * number_of_icons
+        self._n_of_icons = #params.icons
+        gap = self._gap * self._n_of_icons
     end
+    self._n = self._n_of_icons
     self._gap_scaled = self._gap * self._scale
     self._icon_size_scaled = 32 * self._scale
     self._icon_gap_size_scaled = (self._icon_size + self._gap) * self._scale -- (32 + 5) * self._scale
-    self._parent_panel = panel
     self._panel = panel:panel({
         name = params.id,
         x = params.x,
         y = params.y,
-        w = (64 + gap + (self._icon_size * number_of_icons)) * self._scale,
+        w = (64 + gap + (self._icon_size * self._n_of_icons)) * self._scale,
         h = self._icon_size_scaled
     })
     self._time = params.time or 0
@@ -590,21 +590,24 @@ function FakeEHITracker:init(panel, params, parent_class)
         corner_visible = params.corners,
         first = self._first
     })
+    if params.extend then
+        self:SetBGSize()
+    elseif params.extend_half then
+        self:SetBGSize(self._bg_box:w() / 2)
+    end
     self._text = self._bg_box:text({
         name = "text1",
         text = self:Format(),
         align = "center",
         vertical = "center",
-        w = self._bg_box:w(),
+        w = params.extend_half and self._bg_box:w() or (64 * self._scale),
         h = self._bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
         color = params.text_color or Color.white
     })
     self:FitTheText()
-    self._n_of_icons = number_of_icons
-    self._n = number_of_icons
-    if number_of_icons > 0 then
+    if self._n_of_icons > 0 then
         local start = self._bg_box:w()
         local icon_gap = self._gap_scaled
         for i, v in ipairs(params.icons) do
@@ -630,11 +633,6 @@ function FakeEHITracker:init(panel, params, parent_class)
     end
     self._id = params.id
     self._parent_class = parent_class
-    if params.extend then
-        self:SetBGSize()
-    elseif params.extend_half then
-        self:SetBGSize(self._bg_box:w() / 2)
-    end
     self._selected = false
     self:post_init(params)
 end
@@ -664,7 +662,6 @@ function FakeEHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
         local icons_with_gap = self._icon_gap_size_scaled * self._n_of_icons
         self._panel:set_w(start + icons_with_gap)
     end
-    self:SetIconsX()
 end
 
 function FakeEHITracker:SetIconsX()
@@ -693,16 +690,19 @@ end
 function FakeEHITracker:CreateText(params)
     params = params or {}
     local text = self._bg_box:text({
-        name = params.name or "",
         text = params.text or "",
         align = "center",
         vertical = "center",
+        x = params.x or params.left --[[@as number]],
         w = params.w or self._bg_box:w(),
         h = params.h or self._bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
         font_size = self._panel:h() * self._text_scale,
         color = params.color or Color.white
     })
+    if params.FitTheText then
+        self:FitTheText(text)
+    end
     return text
 end
 
@@ -771,9 +771,7 @@ end
 
 ---@param visibility boolean
 function FakeEHITracker:UpdateCornerVisibility(visibility)
-    if not self._first then
-        self._bg_box:child("left_top"):set_visible(visibility)
-    end
+    self._bg_box:child("left_top"):set_visible(self._first or visibility)
     self._bg_box:child("left_bottom"):set_visible(visibility)
     self._bg_box:child("right_top"):set_visible(visibility)
     self._bg_box:child("right_bottom"):set_visible(visibility)
@@ -809,8 +807,8 @@ function FakeEHITracker:Reposition()
 end
 
 function FakeEHITracker:destroy()
-    if alive(self._panel) and alive(self._parent_panel) then
-        self._parent_panel:remove(self._panel)
+    if alive(self._panel) then
+        self._panel:parent():remove(self._panel)
     end
 end
 
@@ -842,13 +840,9 @@ end
 ---@class FakeEHIXPTracker : FakeEHITracker
 ---@field super FakeEHITracker
 FakeEHIXPTracker = class(FakeEHITracker)
-function FakeEHIXPTracker:init(panel, params, parent_class)
+function FakeEHIXPTracker:init(...)
     self._xp = math.random(1000, 1000000)
-    FakeEHIXPTracker.super.init(self, panel, params, parent_class)
-    if params.extend_half then
-        self._text:set_w(self._bg_box:w())
-        self:FitTheText()
-    end
+    FakeEHIXPTracker.super.init(self, ...)
 end
 
 function FakeEHIXPTracker:Format(format)
@@ -946,7 +940,6 @@ function FakeEHIMinionCounterTracker:init(panel, params, parent_class)
     self._charges_second_player = math.random(params.min, params.charges)
     self._color_second_player = self._parent_class:GetOtherPeerColor()
     self._text_second_player = self:CreateText({
-        name = "text_second_player",
         text = tostring(self._charges_second_player),
         w = self._bg_box:w() / 2,
         color = self._color_second_player
@@ -954,7 +947,6 @@ function FakeEHIMinionCounterTracker:init(panel, params, parent_class)
     self._text_second_player:set_right(self._bg_box:right())
     self:FitTheText(self._text_second_player)
     self._text_total = self:CreateText({
-        name = "text_total",
         text = tostring(self._charges + self._charges_second_player)
     })
     self:UpdateFormat(EHI:GetOption("show_minion_option"))
@@ -1058,14 +1050,13 @@ function FakeEHITimerTracker:init(panel, params, parent_class)
     self._max = 3
     self._progress = math.random(0, 2)
     FakeEHITimerTracker.super.init(self, panel, params, parent_class)
-    self._progress_text = self:CreateText({
-        name = "text2",
-        text = self:FormatProgress(),
-        w = self._bg_box:w() / 2
-    })
     self._text:set_left(0)
-    self._progress_text:set_left(self._text:right())
-    self:FitTheText(self._progress_text)
+    self._progress_text = self:CreateText({
+        text = self:FormatProgress(),
+        w = self._bg_box:w() / 2,
+        left = self._text:right(),
+        FitTheText = true
+    })
 end
 
 ---@param selected boolean
@@ -1074,9 +1065,8 @@ function FakeEHITimerTracker:SetTextColor(selected)
     self._progress_text:set_color(selected and self._selected_color or Color.white)
 end
 
----@param scale number
-function FakeEHITimerTracker:UpdateTextScale(scale)
-    FakeEHITimerTracker.super.UpdateTextScale(self, scale)
+function FakeEHITimerTracker:UpdateTextScale(...)
+    FakeEHITimerTracker.super.UpdateTextScale(self, ...)
     self:FitTheText(self._progress_text)
 end
 

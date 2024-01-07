@@ -1,3 +1,8 @@
+r213 (07. 01. 2024):
+Added option "Show ECM Feedback Retrigger"
+Adjusted "SNIPERS!" popup to be less spammy
+Fixed an issue where disabled Minion Counter tracker could make Assault tracker inaccurate in Crime Spree
+
 r212 (02. 01. 2024):
 Fixed a crash with enabled description in Daily jobs/Daily Side jobs
 Civilian Count Tracker: Fixed a crash when civilian died

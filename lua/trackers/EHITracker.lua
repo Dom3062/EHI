@@ -188,7 +188,6 @@ local function CreateHUDBGBox(panel, params)
     if bg_visibility and corner_visibility then
         box_panel:bitmap({
             texture = "guis/textures/pd2/hud_corner",
-            name = "left_top",
             visible = true,
             layer = 0,
             y = 0,
@@ -199,7 +198,6 @@ local function CreateHUDBGBox(panel, params)
         })
         local left_bottom = box_panel:bitmap({
             texture = "guis/textures/pd2/hud_corner",
-            name = "left_bottom",
             visible = true,
             layer = 0,
             x = 0,
@@ -212,7 +210,6 @@ local function CreateHUDBGBox(panel, params)
         left_bottom:set_bottom(box_panel:h())
         local right_top = box_panel:bitmap({
             texture = "guis/textures/pd2/hud_corner",
-            name = "right_top",
             visible = true,
             layer = 0,
             x = 0,
@@ -225,7 +222,6 @@ local function CreateHUDBGBox(panel, params)
         right_top:set_right(box_panel:w())
         local right_bottom = box_panel:bitmap({
             texture = "guis/textures/pd2/hud_corner",
-            name = "right_bottom",
             visible = true,
             layer = 0,
             x = 0,
@@ -270,6 +266,7 @@ if EHI:GetOption("show_tracker_hint") then
 else
     EHITracker._hint_disabled = true
 end
+EHITracker._init_create_text = true
 ---@param panel Panel Main panel provided by EHITrackerManager
 ---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
@@ -300,18 +297,19 @@ function EHITracker:init(panel, params, parent_class)
         w = 64 * self._scale,
         h = self._icon_size_scaled
     })
-    self._text = self._bg_box:text({
-        name = "text1",
-        text = self:Format(),
-        align = "center",
-        vertical = "center",
-        w = self._bg_box:w(),
-        h = self._icon_size_scaled,
-        font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h() * self._text_scale,
-        color = self._text_color
-    })
-    self:FitTheText()
+    if self._init_create_text then
+        self._text = self._bg_box:text({
+            text = self:Format(),
+            align = "center",
+            vertical = "center",
+            w = self._bg_box:w(),
+            h = self._icon_size_scaled,
+            font = tweak_data.menu.pd2_large_font,
+            font_size = self._panel:h() * self._text_scale,
+            color = self._text_color
+        })
+        self:FitTheText()
+    end
     if self._n_of_icons > 0 then
         self:CreateIcons()
     end
@@ -487,11 +485,13 @@ if EHI:GetOption("time_format") == 1 then
     EHITracker.Format = tweak_data.ehi.functions.FormatSecondsOnly
     EHITracker.FormatTime = tweak_data.ehi.functions.ReturnSecondsOnly
     EHITracker.ShortFormat = tweak_data.ehi.functions.ShortFormatSecondsOnly
+    EHITracker.ShortFormatTime = tweak_data.ehi.functions.ReturnShortFormatSecondsOnly
     EHITracker._TIME_FORMAT = 1 -- Seconds only
 else
     EHITracker.Format = tweak_data.ehi.functions.FormatMinutesAndSeconds
     EHITracker.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
     EHITracker.ShortFormat = tweak_data.ehi.functions.ShortFormatMinutesAndSeconds
+    EHITracker.ShortFormatTime = tweak_data.ehi.functions.ReturnShortFormatMinutesAndSeconds
     EHITracker._TIME_FORMAT = 2 -- Minutes and seconds
 end
 
@@ -552,7 +552,7 @@ end
 function EHITracker:CreateText(params)
     params = params or {}
     local text = self._bg_box:text({
-        name = params.name or "",
+        name = params.name,
         text = params.text or "",
         align = "center",
         vertical = "center",

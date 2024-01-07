@@ -5,11 +5,11 @@ local Icon = EHI.Icons
 EHIChemSetTracker = class(EHITracker)
 EHIChemSetTracker._forced_icons = { Icon.Methlab }
 EHIChemSetTracker._update = false
+EHIChemSetTracker._init_create_text = false
 function EHIChemSetTracker:OverridePanel()
     self:SetBGSize(self._bg_box:w() / 2)
     self:SetIconX()
     local third = self._bg_box:w() / 3
-    self._bg_box:remove(self._text)
     self._first_ingredient = self:CreateText({
         name = "first_ingredient",
         text = "0.69",
@@ -229,7 +229,7 @@ local other =
     [102065] = EHI:AddAssaultDelay({ time = 2 + 30 + 2 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 30 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
+    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 30 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, sniper_count = 2 }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%

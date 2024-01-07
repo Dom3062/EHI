@@ -57,16 +57,11 @@ if EHI:IsLootCounterVisible() then
         })
     end)
 end
-if EHI:GetOption("show_sniper_tracker") then
-    other[102321] = { time = 30 + 1 + 5 + 30 + 45 + 45 + 120, id = "Snipers", icons = { "sniper" }, class = TT.Warning, hint = Hints.EnemySnipers }
-    other[105713] = { time = 60, id = "Snipers", icons = { "sniper" }, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker, hint = Hints.EnemySnipers }
-    other[105716] = { time = 90, id = "Snipers", icons = { "sniper" }, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker, hint = Hints.EnemySnipers }
-    other[105717] = { time = 30, id = "Snipers", icons = { "sniper" }, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker, hint = Hints.EnemySnipers }
-    if EHI:GetOption("show_sniper_spawned_popup") then
-        other[105714] = { special_function = SF.CustomCode, f = function()
-            managers.hud:ShowSnipersSpawned() -- 2 snipers spawn
-        end}
-    end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[102321] = { time = 30 + 1 + 5 + 30 + 45 + 45 + 120, id = "Snipers", class = TT.Sniper.Warning }
+    other[105713] = { time = 60, id = "Snipers", class = TT.Sniper.Warning, special_function = SF.SetTimeOrCreateTracker }
+    other[105716] = { time = 90, id = "Snipers", class = TT.Sniper.Warning, special_function = SF.SetTimeOrCreateTracker }
+    other[105717] = { time = 30, id = "Snipers", class = TT.Sniper.Warning, special_function = SF.SetTimeOrCreateTracker }
     if EHI:IsClient() then
         other[102177] = EHI:ClientCopyTrigger(other[102321], { time = 1 + 5 + 30 + 45 + 45 + 120, trigger_times = 1 })
         other[100973] = EHI:ClientCopyTrigger(other[102321], { time = 5 + 30 + 45 + 45 + 120 })

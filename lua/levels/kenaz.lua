@@ -137,7 +137,13 @@ local other =
     end) })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100548] = { chance = 100, time = 150 + 120, on_fail_refresh_t = 120, on_success_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop }
+    local sniper_count = EHI:GetValueBasedOnDifficulty({
+        normal = 2,
+        hard = 3,
+        veryhard = 3,
+        overkill_or_above = 5
+    })
+    other[100548] = { chance = 100, time = 150 + 120, on_fail_refresh_t = 120, on_success_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop, sniper_count = sniper_count }
     other[101405] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[101404] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[101406] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 25%
@@ -146,7 +152,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[101408] = { id = "Snipers", special_function = SF.DecreaseCounter }
     if EHI:IsClient() then
-        other[101038] = { chance = 25, time = 120, on_fail_refresh_t = 120, on_success_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop, special_function = SF.AddTrackerIfDoesNotExist }
+        other[101038] = EHI:CopyTrigger(other[100548], { chance = 25, time = 120 }, SF.AddTrackerIfDoesNotExist)
     end
 end
 

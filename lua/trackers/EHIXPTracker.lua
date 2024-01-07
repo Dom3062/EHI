@@ -29,6 +29,7 @@ end
 ---@field super EHIXPTracker
 EHIHiddenXPTracker = class(EHIXPTracker)
 EHIHiddenXPTracker._update = false
+EHIHiddenXPTracker._init_create_text = false
 ---@param params EHITracker.params
 function EHIHiddenXPTracker:pre_init(params)
     self._total_xp = 0

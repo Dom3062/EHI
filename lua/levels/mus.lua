@@ -85,22 +85,12 @@ if EHI:IsLootCounterVisible() then
     end)}
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
-        if EHI:IsHost() and element:counter_value() ~= 0 then
-            return
-        end
-        self._trackers:AddTracker({
-            id = "Snipers",
-            time = 0.05 + 10 + 25,
-            chance = 10,
-            on_fail_refresh_t = 25,
-            on_success_refresh_t = 20 + 10 + 25,
-            class = TT.Sniper.Loop
-        })
-    end) }
+    other[100358] = { time = 0.05 + 10 + 25, chance = 10, id = "Snipers", on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, class = TT.Sniper.Loop, single_sniper = true, sniper_count = 2 }
+    other[100359] = EHI:CopyTrigger(other[100358], { sniper_count = 3 })
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
+    other[100259] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SetMultipleSniperSpawns" } -- Starts with one sniper, more snipers get enabled after The Diamond is taken
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }

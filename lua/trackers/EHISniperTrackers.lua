@@ -1,3 +1,21 @@
+---@class EHISniperWarningTracker : EHIWarningTracker
+---@field super EHIWarningTracker
+EHISniperWarningTracker = class(EHIWarningTracker)
+EHISniperWarningTracker._forced_hint_text = "enemy_snipers"
+EHISniperWarningTracker._forced_icons = { "sniper" }
+EHISniperWarningTracker._snipers_spawned_popup = EHI:GetOption("show_sniper_spawned_popup")
+---@param params EHITracker.params
+function EHISniperWarningTracker:pre_init(params)
+    self._single_sniper = params.single_sniper
+end
+
+function EHISniperWarningTracker:delete()
+    if self._snipers_spawned_popup then
+        managers.hud:ShowSnipersSpawned(self._single_sniper)
+    end
+    EHISniperWarningTracker.super.delete(self)
+end
+
 ---@class EHISniperCountTracker : EHICountTracker
 ---@field super EHICountTracker
 EHISniperCountTracker = class(EHICountTracker)
@@ -9,15 +27,27 @@ EHISniperCountTracker._snipers_spawned_popup = EHI:GetOption("show_sniper_spawne
 function EHISniperCountTracker:pre_init(params)
     EHISniperCountTracker.super.pre_init(self, params)
     if self._snipers_spawned_popup then
+        self._current_sniper_count = 0
+        self._sniper_count = params.sniper_count or params.single_sniper and 1 or -1
         self._popup_title = params.single_sniper and "SNIPER!" or "SNIPERS!"
         self._popup_desc = params.single_sniper and managers.localization:text("ehi_popup_sniper_spawned") or managers.localization:text("ehi_popup_snipers_spawned")
+    end
+    if params.snipers_spawned then
+        self:SniperSpawnsSuccess()
     end
 end
 
 function EHISniperCountTracker:SniperSpawnsSuccess()
-    if self._snipers_spawned_popup then
+    if self._snipers_spawned_popup and self._sniper_count ~= self._count then
+        self._current_sniper_count = self._count
         managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, "EHI_Sniper")
     end
+end
+
+---@param count number?
+function EHISniperCountTracker:DecreaseCount(count)
+    EHISniperCountTracker.super.DecreaseCount(self, count)
+    self._current_sniper_count = self._current_sniper_count - (count or 1)
 end
 
 ---@class EHISniperChanceTracker : EHIChanceTracker, EHICountTracker
@@ -51,7 +81,6 @@ function EHISniperChanceTracker:OverridePanel()
     self._text:set_x(0)
     self:FitTheText()
     self._count_text = self:CreateText({
-        name = "count_text",
         text = self:FormatCount(),
         w = w,
         color = EHIProgressTracker._progress_bad,
@@ -94,6 +123,7 @@ function EHISniperTimedTracker:pre_init(params)
     self._refresh_t = params.refresh_t or 0
     self._anim_flash_set_count = 1
     if self._snipers_spawned_popup then
+        self._sniper_count = self._count
         self._popup_title = params.single_sniper and "SNIPER!" or "SNIPERS!"
         self._popup_desc = params.single_sniper and managers.localization:text("ehi_popup_sniper_spawned") or managers.localization:text("ehi_popup_snipers_spawned")
     end
@@ -106,7 +136,6 @@ function EHISniperTimedTracker:OverridePanel()
     local w = self._bg_box:w() / 2
     self._text:set_w(w)
     self._count_text = self:CreateText({
-        name = "count_text",
         text = self:FormatCount(),
         color = EHIProgressTracker._progress_bad,
         w = w,
@@ -120,12 +149,12 @@ end
 
 ---@param count number
 function EHISniperTimedTracker:SniperSpawnsSuccess(count)
-    self:SetCount(count)
     self:AnnounceSniperSpawn()
+    self:SetCount(count)
 end
 
 function EHISniperTimedTracker:AnnounceSniperSpawn()
-    if self._snipers_spawned_popup then
+    if self._snipers_spawned_popup and self._sniper_count ~= self._count then
         managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, "EHI_Sniper")
     end
 end
@@ -162,7 +191,6 @@ end
 
 function EHISniperTimedCountTracker:OverridePanel()
     self._count_text = self:CreateText({
-        name = "count_text",
         text = self:FormatCount(),
         color = EHIProgressTracker._progress_bad,
         visible = false
@@ -233,7 +261,6 @@ function EHISniperTimedChanceTracker:OverridePanel()
     local w = self._bg_box:w() / 2
     self._text:set_w(w)
     self._chance_text = self:CreateText({
-        name = "chance_text",
         text = self:FormatChance(),
         x = 0,
         w = w,
@@ -242,7 +269,6 @@ function EHISniperTimedChanceTracker:OverridePanel()
     self._text:set_left(self._chance_text:right())
     self:FitTheTextBasedOnTime(self._recheck_t)
     self._count_text = self:CreateText({
-        name = "count_text",
         text = self:FormatCount(),
         color = EHIProgressTracker._progress_bad,
         visible = false
@@ -312,7 +338,7 @@ EHISniperLoopTracker.FormatCount = EHICountTracker.FormatCount
 EHISniperLoopTracker.SetCount = EHICountTracker.SetCountNoNegative
 EHISniperLoopTracker.ResetCount = EHICountTracker.ResetCount
 EHISniperLoopTracker.IncreaseCount = EHICountTracker.IncreaseCount
-EHISniperLoopTracker.DecreaseCount = EHICountTracker.DecreaseCount
+EHISniperLoopTracker._DecreaseCount = EHICountTracker.DecreaseCount
 EHISniperLoopTracker.FormatChance = EHIChanceTracker.FormatChance
 EHISniperLoopTracker.SetChance = EHIChanceTracker.SetChance
 EHISniperLoopTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
@@ -329,6 +355,9 @@ function EHISniperLoopTracker:pre_init(params)
     self._on_fail_refresh_t = params.on_fail_refresh_t or 0
     self._on_success_refresh_t = params.on_success_refresh_t or 0
     if self._snipers_spawned_popup then
+        self._current_sniper_count = 0
+        self._sniper_count_multiple = params.single_sniper and params.sniper_count
+        self._sniper_count = params.single_sniper and 1 or params.sniper_count or -1
         self._popup_title = params.single_sniper and "SNIPER!" or "SNIPERS!"
         self._popup_desc = params.single_sniper and managers.localization:text("ehi_popup_sniper_spawned") or managers.localization:text("ehi_popup_snipers_spawned")
     end
@@ -340,7 +369,6 @@ function EHISniperLoopTracker:OverridePanel()
     local w = self._bg_box:w() / 3
     self._text:set_w(w)
     self._chance_text = self:CreateText({
-        name = "chance_text",
         text = self:FormatChance(),
         x = 0,
         w = w,
@@ -349,7 +377,6 @@ function EHISniperLoopTracker:OverridePanel()
     self._text:set_left(self._chance_text:right())
     self:FitTheTextBasedOnTime(self._on_fail_refresh_t, self._on_success_refresh_t)
     self._count_text = self:CreateText({
-        name = "count_text",
         text = self:FormatCount(),
         w = w,
         color = EHIProgressTracker._progress_bad,
@@ -364,6 +391,15 @@ function EHISniperLoopTracker:SetTimeNoAnim(time)
     self._text:set_text(self:Format())
 end
 
+function EHISniperLoopTracker:SetMultipleSniperSpawns()
+    if self._snipers_spawned_popup then
+        self._popup_title = "SNIPERS!"
+        self._popup_desc = managers.localization:text("ehi_popup_snipers_spawned")
+        self._sniper_count = self._sniper_count_multiple or self._sniper_count
+        self._sniper_count_multiple = nil
+    end
+end
+
 ---@param t number?
 function EHISniperLoopTracker:OnChanceFail(t)
     self:SetTimeNoAnim(t or self._on_fail_refresh_t)
@@ -375,9 +411,16 @@ function EHISniperLoopTracker:OnChanceSuccess()
 end
 
 function EHISniperLoopTracker:AnnounceSniperSpawn()
-    if self._snipers_spawned_popup then
+    if self._snipers_spawned_popup and self._sniper_count ~= self._current_sniper_count then
+        self._current_sniper_count = self._count
         managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, "EHI_Sniper")
     end
+end
+
+---@param count number?
+function EHISniperLoopTracker:DecreaseCount(count)
+    self:_DecreaseCount(count)
+    self._current_sniper_count = self._current_sniper_count - (count or 1)
 end
 
 ---@param count number
@@ -509,7 +552,6 @@ end
 
 function EHISniperHeliTracker:OverridePanel()
     self._count_text = self:CreateText({
-        name = "count_text",
         text = "1",
         color = EHIProgressTracker._progress_bad,
         visible = false

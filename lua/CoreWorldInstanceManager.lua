@@ -59,6 +59,14 @@ local instances =
     {
         [100012] = { remove_vanilla_waypoint = true } -- Computer WP
     },
+    ["levels/instances/unique/pet_lightpole/world"] =
+    {
+        [100039] = { remove_vanilla_waypoint = true } -- Saw WP
+    },
+    ["levels/instances/unique/pet_shutter/world"] =
+    {
+        [100020] = { remove_vanilla_waypoint = true } -- Drill WP
+    },
     ["levels/instances/unique/rvd/rvd_hackbox/world"] =
     {
         [100034] = { remove_vanilla_waypoint = true }, -- Defend
@@ -80,6 +88,16 @@ local instances =
     ["levels/instances/unique/bph/bph_drill_door/world"] =
     {
         [100037] = { remove_vanilla_waypoint = true } -- Defend
+    },
+    ["levels/instances/unique/vit/vit_targeting_computer/world"] =
+    {
+        [100002] = { remove_vanilla_waypoint = true }, -- Defend
+        [100003] = { remove_vanilla_waypoint = true } -- Fix
+    },
+    ["levels/instances/unique/vit/vit_wire_box/world"] =
+    {
+        [100074] = { remove_vanilla_waypoint = true }, -- Defend
+        [100050] = { remove_vanilla_waypoint = true } -- Fix
     },
     ["levels/instances/unique/bex/bex_computer/world"] =
     {

@@ -55,7 +55,7 @@ if EHI:IsLootCounterVisible() then
         local max = 0
         local wd = managers.worlddefinition
         for i = 103625, 103684, 1 do
-            local unit = wd:get_unit(i)
+            local unit = wd:get_unit(i) --[[@as UnitBase]]
             if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_random == 0 then -- Money will spawn here
                 max = max + 1
             end
@@ -68,7 +68,7 @@ if EHI:IsLootCounterVisible() then
     end)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { chance = 10, time = 1 + 15 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 15 + 25, id = "Snipers", class = TT.Sniper.Loop }
+    other[100015] = { chance = 10, time = 1 + 15 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 15 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 2 }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%

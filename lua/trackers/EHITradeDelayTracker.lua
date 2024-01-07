@@ -6,6 +6,7 @@ EHITradeDelayTracker = class(EHITracker)
 EHITradeDelayTracker._forced_hint_text = "trade_delay"
 EHITradeDelayTracker._update = false
 EHITradeDelayTracker._forced_icons = { "mugshot_in_custody" }
+EHITradeDelayTracker._init_create_text = false
 ---@param panel Panel
 ---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
@@ -19,18 +20,14 @@ function EHITradeDelayTracker:init(panel, params, parent_class)
     self._default_bg_box_w = self._bg_box:w()
     self._panel_half = self._default_bg_box_w / 2
     self._panel_w = self._default_panel_w
-    self._bg_box:remove(self._text)
 end
 
 function EHITradeDelayTracker:SetTextPeerColor()
     if self._n_of_peers == 1 then
         return
     end
-    for i = 1, HUDManager.PLAYER_PANEL, 1 do
-        if self._bg_box:child("text" .. i) then
-            local color = tweak_data.chat_colors[i] or Color.white
-            self._bg_box:child("text" .. i):set_color(color)
-        end
+    for peer_id, peer_data in pairs(self._peers) do
+        peer_data.label:set_color(tweak_data.chat_colors[peer_id] or Color.white)
     end
 end
 
@@ -39,8 +36,7 @@ function EHITradeDelayTracker:SetIconColor()
         self._icon1:set_color(Color.white)
     else
         local peer_id, _ = next(self._peers)
-        local color = tweak_data.chat_colors[peer_id] or Color.white
-        self._icon1:set_color(color)
+        self._icon1:set_color(tweak_data.chat_colors[peer_id] or Color.white)
     end
 end
 
@@ -48,10 +44,7 @@ end
 ---@param time number
 ---@param civilians_killed number? Defaults to `1` if not provided
 function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time, civilians_killed)
-    local text = self:CreateText({
-        name = "text" .. peer_id,
-        w = self._default_bg_box_w
-    })
+    local text = self:CreateText({ w = self._default_bg_box_w })
     local kills = civilians_killed or 1
     self._peers[peer_id] =
     {
@@ -87,8 +80,9 @@ end
 function EHITradeDelayTracker:AlignTextOnHalfPos()
     local pos = 0
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
-        local text = self._bg_box:child("text" .. i) --[[@as PanelText?]]
-        if text then
+        local peer_data = self._peers[i]
+        if peer_data then
+            local text = peer_data.label
             text:set_w(self._panel_half)
             text:set_x(self._panel_half * pos)
             self:FitTheText(text)
@@ -209,7 +203,7 @@ function EHITradeDelayTracker:RemovePeerFromCustody(peer_id)
         local text = peer_data.label
         text:set_color(Color.white)
         text:set_x(0)
-        text:set_w(self._bg_box:w())
+        text:set_w(self._default_bg_box_w)
         self:FitTheText(text)
     end
     self:AnimateBG()
@@ -245,11 +239,11 @@ end
 
 if EHI:GetOption("show_trade_delay_amount_of_killed_civilians") then
     function EHITradeDelayTracker:FormatUnique(label, time, civilians_killed)
-        label:set_text(string.format("%s (%d)", self:FormatTime(time), civilians_killed))
+        label:set_text(string.format("%s (%d)", self:ShortFormatTime(time), civilians_killed))
     end
 else
     function EHITradeDelayTracker:FormatUnique(label, time, civilians_killed)
-        label:set_text(self:FormatTime(time))
+        label:set_text(self:ShortFormatTime(time))
     end
 end
 
@@ -335,32 +329,4 @@ end
 
 function EHITradeDelayTracker:CanRespawn()
     return tweak_data.player.damage.automatic_respawn_time and not Global.game_settings.single_player
-end
-
-local math_floor = math.floor
-local string_format = string.format
-if EHI:GetOption("time_format") == 1 then
-    function EHITradeDelayTracker:FormatTime(time)
-        local t = math_floor(time * 10) / 10
-        if t < 0 then
-            return string_format("%d", 0)
-        elseif t < 10 then
-            return string_format("%.1f", t)
-        else
-            return string_format("%d", t)
-        end
-    end
-else
-    function EHITradeDelayTracker:FormatTime(time)
-        local t = math_floor(time * 10) / 10
-        if t < 0 then
-            return string_format("%d", 0)
-        elseif t < 10 then
-            return string_format("%.1f", t)
-        elseif t < 60 then
-            return string_format("%d", t)
-        else
-            return string_format("%d:%02d", t / 60, t % 60)
-        end
-    end
 end

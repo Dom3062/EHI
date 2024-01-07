@@ -433,6 +433,9 @@
     "ehi_show_equipment_ecmfeedback" : "Show ECM Feedback Duration Tracker",
     "ehi_show_equipment_ecmfeedback_desc" : "Shows a tracker for the remaining duration of an ECM Feedback\nAn ECM Feedback with the longest duration is shown in the tracker (host only)",
 
+    "ehi_show_ecmfeedback_refresh" : "Show ECM Feedback Retrigger",
+    "ehi_show_ecmfeedback_refresh_desc" : "Shows a tracker when ECM Feedback starts refreshing",
+    
     "ehi_show_equipment_aggregate_health" : "Aggregate Doctor Bags and First Aid Kits",
     "ehi_show_equipment_aggregate_health_desc" : "Aggregates Doctor Bags and First Aid Kits into one tracker",
 

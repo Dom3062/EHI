@@ -135,6 +135,17 @@
         },
         {
             "type": "toggle",
+            "id": "ehi_show_ecmfeedback_refresh_choice",
+            "title": "ehi_show_ecmfeedback_refresh",
+            "description": "ehi_show_ecmfeedback_refresh_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_ecmfeedback_refresh",
+            "value": "show_ecmfeedback_refresh",
+            "default_value": true,
+            "ehi_ver" : 213
+        },
+        {
+            "type": "toggle",
             "id": "ehi_show_equipment_aggregate_health_choice",
             "title": "ehi_show_equipment_aggregate_health",
             "description": "ehi_show_equipment_aggregate_health_desc",

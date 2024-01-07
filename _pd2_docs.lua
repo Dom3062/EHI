@@ -96,6 +96,7 @@ _G.tweak_data.upgrades = {
     bodybag_crate_base = 3,
     copr_high_damage_multiplier = { 20, 2 },
     doctor_bag_base = 2,
+    ecm_feedback_retrigger_interval = 240,
     ecm_jammer_base_battery_life = 20,
     first_aid_kit = {
         first_aid_kit_auto_recovery = { 500 }
@@ -215,6 +216,8 @@ _G.CivilianDamage = {}
 _G.CopDamage = {}
 ---@class Drill
 _G.Drill = {}
+---@class ECMJammerBase
+_G.ECMJammerBase = {}
 ---@class TimerGui
 _G.TimerGui = {}
 ---@class DigitalGui
@@ -810,6 +813,9 @@ end
 
 ---@class UnitGrenadeDeployable : UnitDeployable
 ---@field base fun(): GrenadeCrateBase
+
+---@class UnitECM : UnitBase
+---@field base fun(): ECMJammerBase
 
 ---@class LocalizationManager
 ---@field btn_macro fun(self: self, button: string, to_upper: boolean?, nil_if_empty: boolean?): string

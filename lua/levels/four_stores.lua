@@ -1,5 +1,5 @@
 local function LootSafeIsVisible()
-    local unit = managers.worlddefinition:get_unit(101153)
+    local unit = managers.worlddefinition:get_unit(101153) --[[@as UnitBase]]
     if not unit then
         return false
     end

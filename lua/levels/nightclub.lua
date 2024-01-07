@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local AssetLootDropOff = { Icon.Car, Icon.LootDrop }
+local AssetLootDropOff = Icon.CarLootDrop
 if EHI:GetOption("show_one_icon") then
     AssetLootDropOff = { Icon.LootDrop }
 end

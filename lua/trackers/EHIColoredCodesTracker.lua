@@ -4,9 +4,9 @@ EHIColoredCodesTracker = class(EHITracker)
 EHIColoredCodesTracker._update = false
 EHIColoredCodesTracker._forced_icons = { EHI.Icons.Interact }
 EHIColoredCodesTracker._forced_hint_text = "color_codes"
+EHIColoredCodesTracker._init_create_text = false
 function EHIColoredCodesTracker:OverridePanel()
     local third = self._bg_box:w() / 3
-    self._bg_box:remove(self._text)
     self._text = self:CreateText({
         name = "red",
         text = "?",

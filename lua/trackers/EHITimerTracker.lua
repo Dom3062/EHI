@@ -176,6 +176,7 @@ end
 ---@class EHIProgressTimerTracker : EHITimerTracker, EHIProgressTracker, EHITimedChanceTracker
 ---@field super EHITimerTracker
 EHIProgressTimerTracker = class(EHITimerTracker)
+EHIProgressTimerTracker._progress_bad = EHIProgressTracker._progress_bad
 EHIProgressTimerTracker.pre_init = EHIProgressTracker.pre_init
 EHIProgressTimerTracker.update = EHIProgressTimerTracker.update_fade
 EHIProgressTimerTracker.FormatProgress = EHIProgressTracker.FormatProgress
@@ -192,7 +193,6 @@ EHIProgressTimerTracker.SetBad = EHIProgressTracker.SetBad
 function EHIProgressTimerTracker:post_init(params)
     self:PrecomputeDoubleSize()
     self._progress_text = self:CreateText({
-        name = "progress_text",
         text = self:FormatProgress()
     })
     self._text:set_left(self._progress_text:right())
@@ -227,7 +227,6 @@ EHIChanceTimerTracker.SetChance = EHIChanceTracker.SetChance
 function EHIChanceTimerTracker:post_init(params)
     self:PrecomputeDoubleSize()
     self._chance_text = self:CreateText({
-        name = "chance_text",
         text = self:FormatChance()
     })
     self._text:set_left(self._chance_text:right())

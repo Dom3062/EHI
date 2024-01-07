@@ -10,12 +10,12 @@ local triggers = {
     [104082] = { time = 30 + 24 + 3, id = "HeliThermalDrill", icons = Icon.HeliDropDrill, hint = Hints.DrillDelivery },
 
     -- Boat
-    [103273] = { time = boat_delay, id = "BoatSecureTurret", icons = { Icon.Boat, Icon.LootDrop }, hint = Hints.Loot },
-    [103041] = { time = 30 + boat_delay, id = "BoatSecureAmmo", icons = { Icon.Boat, Icon.LootDrop }, hint = Hints.Loot },
+    [103273] = { time = boat_delay, id = "BoatSecureTurret", icons = Icon.BoatLootDrop, hint = Hints.Loot },
+    [103041] = { time = 30 + boat_delay, id = "BoatSecureAmmo", icons = Icon.BoatLootDrop, hint = Hints.Loot },
 
     -- Truck
-    [105055] = { time = 15 + truck_delay, id = "TruckSecureTurret", icons = { Icon.Car, Icon.LootDrop }, hint = Hints.Loot },
-    [105183] = { time = 30 + 524/30, id = "TruckSecureAmmo", icons = { Icon.Car, Icon.LootDrop }, hint = Hints.Loot }
+    [105055] = { time = 15 + truck_delay, id = "TruckSecureTurret", icons = Icon.CarLootDrop, hint = Hints.Loot },
+    [105183] = { time = 30 + 524/30, id = "TruckSecureAmmo", icons = Icon.CarLootDrop, hint = Hints.Loot }
 }
 ---@type ParseAchievementTable
 local achievements =
@@ -42,8 +42,8 @@ local other =
     [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100362] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, single_sniper = true }
-    other[100358] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
+    other[100358] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, sniper_count = 2 }
+    other[100362] = EHI:CopyTrigger(other[100358], { single_sniper = true, sniper_count = 1 })
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%

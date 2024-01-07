@@ -76,6 +76,10 @@ function TimerGui:GetUpgrades()
     return upgrade_table
 end
 
+function TimerGui:GetAutorepairState()
+    return self._unit:base().CanAutorepair and self._unit:base():CanAutorepair()
+end
+
 function TimerGui:StartTimer()
     if managers.ehi_manager:Exists(self._ehi_key) then
         if (self.__ehi_merge and managers.ehi_manager:IsTimerMergeRunning(self._ehi_key)) or not self.__ehi_merge then
@@ -83,7 +87,7 @@ function TimerGui:StartTimer()
             return
         end
     end
-    local autorepair = self._unit:base().CanAutorepair and self._unit:base():CanAutorepair()
+    local autorepair = self:GetAutorepairState()
     -- In case the conversion fails, fallback to "self._time_left" which is a number
     local t = tonumber(self._current_timer) or self._time_left
     if not show_waypoint_only then
@@ -102,12 +106,12 @@ function TimerGui:StartTimer()
             })
         end
     end
-    self:AddWaypoint(t, autorepair --[[@as boolean]])
+    self:AddWaypoint(t, autorepair)
     self:PostStartTimer()
 end
 
 ---@param t number
----@param autorepair boolean
+---@param autorepair boolean|string
 function TimerGui:AddWaypoint(t, autorepair)
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
@@ -172,17 +176,17 @@ end
 
 if show_waypoint_only then
     function TimerGui:update(...)
-        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._time_left)
+        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._time_left or self._current_timer)
         original.update(self, ...)
     end
 elseif show_waypoint then
     function TimerGui:update(...)
-        managers.ehi_manager:UpdateTimer(self._ehi_key, self._time_left)
+        managers.ehi_manager:UpdateTimer(self._ehi_key, self._time_left or self._current_timer)
         original.update(self, ...)
     end
 else
     function TimerGui:update(...)
-        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._time_left)
+        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._time_left or self._current_timer)
         original.update(self, ...)
     end
 end
@@ -263,10 +267,6 @@ function TimerGui:OnAlarm()
     self:RemoveTracker()
 end
 
-function TimerGui:DisableOnSetVisible()
-    self.set_visible = original.set_visible
-end
-
 ---@param icons table?
 function TimerGui:SetIcons(icons)
     if (icons and not self._icons) or icons then
@@ -343,7 +343,7 @@ function TimerGui:SetCustomCallback(id, operation)
     elseif operation == "add_waypoint" then
         EHI:AddCallback(id, function()
             if self._started and not self._done then
-                self:AddWaypoint(self._time_left, self._unit:base().CanAutorepair and self._unit:base():CanAutorepair() --[[@as boolean]])
+                self:AddWaypoint(self._time_left, self:GetAutorepairState())
             end
         end)
     end

@@ -72,9 +72,9 @@ tweak_data.ehi =
 
         ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { Icon.C4 }, warning = true },
         ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { Icon.C4 }, f = "chasC4" },
-        ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_01"] = { disable_set_visible = true },
-        ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"] = { disable_set_visible = true },
-        ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { disable_set_visible = true },
+        ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_01"] = { ignore_visibility = true },
+        ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"] = { ignore_visibility = true },
+        ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { ignore_visibility = true },
 
         ["units/world/props/suburbia_hackbox/suburbia_hackbox"] = { icons = { Icon.Tablet } },
         ["units/pd2_dlc_dah/props/dah_prop_hack_box/dah_prop_hack_ipad_unit"] = { icons = { Icon.Tablet } },
@@ -870,6 +870,19 @@ tweak_data.ehi =
                 return string_format("%d", t)
             end
         end,
+        ---@param _ any Unused
+        ---@param time number
+        ---@return string
+        ReturnShortFormatSecondsOnly = function(_, time)
+            local t = math_floor(time * 10) / 10
+            if t < 0 then
+                return string_format("%d", 0)
+            elseif t < 10 then
+                return string_format("%.1f", t)
+            else
+                return string_format("%d", t)
+            end
+        end,
         ---@param self table
         ---@return string
         FormatMinutesAndSeconds = function(self)
@@ -909,6 +922,21 @@ tweak_data.ehi =
                 return string_format("%d", 0)
             elseif t < 1 then
                 return string_format("%.2f", time)
+            elseif t < 10 then
+                return string_format("%.1f", t)
+            elseif t < 60 then
+                return string_format("%d", t)
+            else
+                return string_format("%d:%02d", t / 60, t % 60)
+            end
+        end,
+        ---@param _ any Unused
+        ---@param time number
+        ---@return string
+        ReturnShortFormatMinutesAndSeconds = function(_, time)
+            local t = math_floor(time * 10) / 10
+            if t < 0 then
+                return string_format("%d", 0)
             elseif t < 10 then
                 return string_format("%.1f", t)
             elseif t < 60 then

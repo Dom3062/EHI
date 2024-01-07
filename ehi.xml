@@ -29,6 +29,7 @@
                 <post :hook_id="elementlasertrigger" :script_path="ElementLaserTrigger.lua" />
                 <post :hook_id="elementspawngageassignment" :script_path="ElementSpawnGageAssignment.lua" />
                 <post :hook_id="elementterminateassault" :script_path="ElementTerminateAssault.lua" />
+                <post :hook_id="elementwaypoint" :script_path="ElementWaypoint.lua" />
             </group>
 
             <post :hook_id="missionassetsmanager" :script_path="MissionAssetsManager.lua" />

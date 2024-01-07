@@ -433,6 +433,9 @@
     "ehi_show_equipment_ecmfeedback" : "Zobrazovat sledovač pro ECM Feedback (zpětná vazba)",
     "ehi_show_equipment_ecmfeedback_desc" : "Zobrazuje sledovač pro zbývající dobu trvání ECM Feedback\nVe sledovači je zobrazen ECM Feedback s nejdelší dobou trvání (Pouze host)",
 
+    "ehi_show_ecmfeedback_refresh" : "Zobrazovat obnovení ECM Feedback (zpětná vazva)",
+    "ehi_show_ecmfeedback_refresh_desc" : "Zobrazuje sledovač když se ECM Feedback začne obnovovat",
+
     "ehi_show_equipment_aggregate_health" : "Spojit lékárničky a FAK",
     "ehi_show_equipment_aggregate_health_desc" : "Zobrazí lékárničku a FAK v jednom sledovači",
 

@@ -6,7 +6,6 @@ local WT = EHI.Waypoints
 local Hints = EHI.Hints
 local anim_delay = 450/30
 local boat_delay = 60 + 30 + 30 + 450/30
-local boat_icon = { Icon.Boat, Icon.LootDrop }
 local AddToCache = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
     self.SyncedSFF.watchdogs_2_boat_time = trigger.time
 end)
@@ -53,13 +52,13 @@ local triggers = {
     [101134] = { time = 150 + anim_delay, special_function = AddToCache },
     [101144] = { time = 130 + anim_delay, special_function = AddToCache },
 
-    [101148] = { icons = boat_icon, special_function = GetFromCache, waypoint_f = waypoint_f },
-    [101149] = { icons = boat_icon, special_function = GetFromCache, waypoint_f = waypoint_f },
-    [101150] = { icons = boat_icon, special_function = GetFromCache, waypoint_f = waypoint_f },
+    [101148] = { icons = Icon.BoatLootDrop, special_function = GetFromCache, waypoint_f = waypoint_f },
+    [101149] = { icons = Icon.BoatLootDrop, special_function = GetFromCache, waypoint_f = waypoint_f },
+    [101150] = { icons = Icon.BoatLootDrop, special_function = GetFromCache, waypoint_f = waypoint_f },
 
     [1] = { special_function = SF.RemoveTrigger, data = { 101148, 101149, 101150, 1 }},
 
-    [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = boat_icon, waypoint_f = waypoint_f, hint = Hints.Loot },
+    [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = Icon.BoatLootDrop, waypoint_f = waypoint_f, hint = Hints.Loot },
 
     [100124] = { special_function = SF.CustomCode, f = function()
         local bags = managers.ehi_manager:CountLootbagsOnTheGround(10)
@@ -115,20 +114,15 @@ local other =
     end),
     [103696] = EHI:AddAssaultDelay({ time = 5 + 15 + 30 })
 }
-if EHI:GetOption("show_sniper_tracker") then
-    other[100457] = { time = 23 + 1, id = "Snipers", icons = { "snipers" }, class = TT.Warning, hint = Hints.EnemySnipers }
-    if EHI:GetOption("show_sniper_spawned_popup") then
-        other[100528] = { special_function = SF.CustomCode, f = function()
-            managers.hud:ShowSnipersSpawned() -- 2 snipers spawn
-        end}
-    end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[100457] = { time = 23 + 1, id = "Snipers", class = TT.Sniper.Warning }
 end
 
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
-}, "BoatLootDropReturn", boat_icon)
+}, "BoatLootDropReturn", Icon.BoatLootDrop)
 if EHI:GetOption("show_mission_trackers") then
     EHI:RegisterCustomSyncedSF(GetFromCache, function(self, trigger, ...)
         local t = self.SyncedSFF.watchdogs_2_boat_time

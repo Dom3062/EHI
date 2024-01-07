@@ -74,7 +74,7 @@ _G.EHI =
         MissionUnits = {}, ---@type table<number, UnitUpdateDefinition>
         InstanceUnits = {}, ---@type table<number, UnitUpdateDefinition>
         IgnoreWaypoints = {}, ---@type table<number, boolean>
-        ElementWaypointFunction = {}, ---@type table<number, function?>
+        ElementWaypoint = {}, ---@type table<number, boolean>
         XPElement = 0
     },
 
@@ -94,7 +94,9 @@ _G.EHI =
         InitFinalize = "InitFinalize",
         -- Provides `self` (a LootManager class)
         LootLoadSync = "LootLoadSync",
+        -- Provides `key` (a unit key; a string value), `local_peer` (a boolean value) and `peer_id` (a number value)
         OnMinionAdded = "OnMinionAdded",
+        -- Provides `key` (a unit key; a string value), `local_peer` (a boolean value) and `peer_id` (a number value)
         OnMinionKilled = "OnMinionKilled",
         -- Provides `boost` (a string value) and `operation` (a string value -> `add`, `remove`)
         TeamAISkillBoostChange = "TeamAISkillBoostChanged",
@@ -414,6 +416,7 @@ _G.EHI =
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
         CarEscapeNoLoot = { "pd2_car", "pd2_escape" },
         CarWait = { "pd2_car", "pd2_escape", "pd2_lootdrop", "faster" },
+        CarLootDrop = { "pd2_car", "pd2_lootdrop" },
         HeliEscape = { "heli", "pd2_escape", "pd2_lootdrop" },
         HeliEscapeNoLoot = { "heli", "pd2_escape" },
         HeliLootDrop = { "heli", "pd2_lootdrop" },
@@ -423,7 +426,8 @@ _G.EHI =
         HeliDropWinch = { "heli", "equipment_winch_hook", "pd2_goto" },
         HeliWait = { "heli", "pd2_escape", "pd2_lootdrop", "faster" },
         BoatEscape = { "boat", "pd2_escape", "pd2_lootdrop" },
-        BoatEscapeNoLoot = { "boat", "pd2_escape" }
+        BoatEscapeNoLoot = { "boat", "pd2_escape" },
+        BoatLootDrop = { "boat", "pd2_lootdrop" }
     },
 
     Trackers =
@@ -456,9 +460,12 @@ _G.EHI =
         },
         Sniper =
         {
+            -- Optional `single_sniper`
+            Warning = "EHISniperWarningTracker",
+            -- Optional `count`
             Count = "EHISniperCountTracker",
             -- Requires `chance`  
-            -- Optional `chance_success`
+            -- Optional `chance_success` and `sniper_count`
             Chance = "EHISniperChanceTracker",
             -- Requires `time` and `refresh_t`
             Timed = "EHISniperTimedTracker",
@@ -467,12 +474,14 @@ _G.EHI =
             TimedCount = "EHISniperTimedCountTracker",
             -- Requires `chance`, `time` and `recheck_t`
             TimedChance = "EHISniperTimedChanceTracker",
-            -- Requires `chance`, `time` and `recheck_t`
+            -- Requires `chance`, `time` and `recheck_t`  
+            -- Optional `single_sniper` and `heli_sniper`
             TimedChanceOnce = "EHISniperTimedChanceOnceTracker",
-            -- Requires `chance`, `time`, `on_fail_refresh_t` and `on_success_refresh_t`
+            -- Requires `chance`, `time`, `on_fail_refresh_t` and `on_success_refresh_t`  
+            -- Optional `single_sniper` and `sniper_count`
             Loop = "EHISniperLoopTracker",
             -- Requires `chance`, `time`, `on_fail_refresh_t` and `on_success_refresh_t`  
-            -- Optional `initial_spawn`, `initial_spawn_chance_set` (defaults to 0 if not provided), `reset_t` and `chance_success`
+            -- Optional `initial_spawn`, `initial_spawn_chance_set` (defaults to 0 if not provided), `reset_t`, `chance_success`, `single_sniper` and `sniper_count`
             LoopRestart = "EHISniperLoopRestartTracker",
             -- Requires `time` and `refresh_t`
             Heli = "EHISniperHeliTracker",
@@ -711,6 +720,7 @@ local function LoadDefaultValues(self)
         show_equipment_ecmjammer = true,
         ecmjammer_block_ecm_without_pager_delay = false,
         show_equipment_ecmfeedback = true,
+        show_ecmfeedback_refresh = true,
         show_equipment_aggregate_health = true,
         show_equipment_aggregate_all = false,
         equipment_color =
@@ -1615,8 +1625,13 @@ function EHI:AddSyncTrigger(id, trigger)
     managers.ehi_manager:AddSyncTrigger(id, trigger)
 end
 
+---@param tracker_id string
+---@param unit Unit?
+---@param key string
+---@param amount number
+---@param peer_id number?
 function EHI:DebugEquipment(tracker_id, unit, key, amount, peer_id)
-    self:Log("Received garbage. Key is nil. Tracker ID: " .. tostring(tracker_id))
+    self:Log("Received garbage. Key is nil. Tracker ID: " .. tracker_id)
     self:Log("unit: " .. tostring(unit))
     if unit and alive(unit) then
         self:Log("unit:name(): " .. tostring(unit:name()))
@@ -1624,9 +1639,7 @@ function EHI:DebugEquipment(tracker_id, unit, key, amount, peer_id)
     end
     self:Log("key: " .. tostring(key))
     self:Log("amount: " .. tostring(amount))
-    if peer_id then
-        self:Log("Peer ID: " .. tostring(peer_id))
-    end
+    self:Log("Peer ID: " .. tostring(peer_id))
     self:Log(debug.traceback())
 end
 
@@ -1924,46 +1937,28 @@ function EHI:ShouldDisableWaypoints()
     return self:GetOption("show_timers") and self:GetWaypointOption("show_waypoints_timers")
 end
 
-local function Waypoint(self, instigator, ...)
-    if not self._values.enabled then
-        return
-    end
-    if self._values.only_on_instigator and instigator ~= managers.player:player_unit() then
-        ElementWaypoint.super.on_executed(self, instigator, ...)
-        return
-    end
-    if not self._values.only_in_civilian or managers.player:current_state() == "civilian" then
-        local text = managers.localization:text(self._values.text_id)
-        managers.hud:AddWaypointSoft(self._id, {
-            distance = true,
-            state = "sneak_present",
-            present_timer = 0,
-            text = text,
-            icon = self._values.icon,
-            position = self._values.position
-        })
-    elseif managers.hud:get_waypoint_data(self._id) then
-        managers.hud:remove_waypoint(self._id)
-    end
-    ElementWaypoint.super.on_executed(self, instigator, ...)
-end
+---@param id number
 function EHI:DisableElementWaypoint(id)
     local element = managers.mission:get_element_by_id(id)
-    if not element or self._cache.ElementWaypointFunction[id] then
+    if not element or self._cache.ElementWaypoint[id] then
         return
     end
-    self._cache.ElementWaypointFunction[id] = element.on_executed
-    element.on_executed = Waypoint
+    if not element.ehi_on_executed then ---@diagnostic disable-line
+        self:Log(string.format("Provided id %s is not an ElementWaypoint!", tostring(id)))
+        return
+    end
+    element.on_executed = element.ehi_on_executed --[[@as function]]
+    self._cache.ElementWaypoint[id] = true
 end
 
 ---@param id number
 function EHI:RestoreElementWaypoint(id)
     local element = managers.mission:get_element_by_id(id)
-    if not (element and self._cache.ElementWaypointFunction[id]) then
+    if not (element and self._cache.ElementWaypoint[id]) then
         return
     end
-    element.on_executed = self._cache.ElementWaypointFunction[id]
-    self._cache.ElementWaypointFunction[id] = nil
+    element.on_executed = element.original_on_executed --[[@as function]]
+    self._cache.ElementWaypoint[id] = nil
 end
 
 ---@param waypoints table<number, boolean>
@@ -2260,9 +2255,6 @@ function EHI:FinalizeUnits(tbl)
                     end
                     timer_gui:SetIcons(unit_data.icons)
                     timer_gui:SetRemoveOnPowerOff(unit_data.remove_on_power_off)
-                    if unit_data.disable_set_visible then
-                        timer_gui:DisableOnSetVisible()
-                    end
                     if unit_data.remove_on_alarm then
                         timer_gui:SetOnAlarm()
                     end
@@ -2323,7 +2315,7 @@ function EHI:FinalizeUnits(tbl)
     end
 end
 
----@param tbl table
+---@param tbl table<number, UnitUpdateDefinition>
 function EHI:UpdateUnits(tbl)
     if not self:GetOption("show_timers") then
         return
@@ -2331,7 +2323,7 @@ function EHI:UpdateUnits(tbl)
     self:UpdateUnitsNoCheck(tbl)
 end
 
----@param tbl table
+---@param tbl table<number, UnitUpdateDefinition>
 function EHI:UpdateUnitsNoCheck(tbl)
     self:FinalizeUnits(tbl)
     for id, data in pairs(tbl) do
@@ -2339,7 +2331,7 @@ function EHI:UpdateUnitsNoCheck(tbl)
     end
 end
 
----@param tbl ParseUnitsTable
+---@param tbl table<number, UnitUpdateDefinition>
 ---@param instance_start_index number
 ---@param instance_continent_index number? Defaults to `100000` if not provided
 function EHI:UpdateInstanceUnits(tbl, instance_start_index, instance_continent_index)
@@ -2483,9 +2475,9 @@ end
 
 ---@param trigger ElementTrigger?
 ---@param params ElementTrigger?
----@param overwrite_SF boolean?
+---@param overwrite_SF number?
 ---@return ElementTrigger?
-function EHI:ClientCopyTrigger(trigger, params, overwrite_SF)
+function EHI:CopyTrigger(trigger, params, overwrite_SF)
     if trigger == nil then
         return nil
     end
@@ -2494,16 +2486,31 @@ function EHI:ClientCopyTrigger(trigger, params, overwrite_SF)
     if trigger.waypoint then
         tbl.waypoint = deep_clone(trigger.waypoint)
     end
+    for key, value in pairs(trigger) do
+        tbl[key] = value
+    end
     for key, value in pairs(params or {}) do
         tbl[key] = value
     end
-    for key, value in pairs(trigger) do
-        tbl[key] = tbl[key] or value
-    end
-    if overwrite_SF or not tbl.special_function then
-        tbl.special_function = SF.AddTrackerIfDoesNotExist
+    if overwrite_SF then
+        tbl.special_function = overwrite_SF
     end
     return tbl
+end
+
+---@param trigger ElementTrigger?
+---@param params ElementTrigger?
+---@param overwrite_SF boolean?
+---@return ElementTrigger?
+function EHI:ClientCopyTrigger(trigger, params, overwrite_SF)
+    if trigger == nil then
+        return nil
+    end
+    local new_SF
+    if overwrite_SF or not trigger.special_function then
+        new_SF = SF.AddTrackerIfDoesNotExist
+    end
+    return self:CopyTrigger(trigger, params, new_SF)
 end
 
 ---@param type string
@@ -2532,7 +2539,7 @@ function EHI:CanShowCivilianCountTracker()
     return self:GetOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not self.NoCivilianCounter[Global.game_settings.level_id]
 end
 
----@param color_table { ["red"]: EHI.ColorTable.Color, ["blue"]: EHI.ColorTable.Color, ["green"]: EHI.ColorTable.Color }
+---@param color_table { ["red"]: number|boolean|EHI.ColorTable.Color, ["blue"]: number|boolean|EHI.ColorTable.Color, ["green"]: number|boolean|EHI.ColorTable.Color }
 ---@param params EHI.ColorTable.params?
 function EHI:HookColorCodes(color_table, params)
     params = params or {}
@@ -2559,7 +2566,11 @@ function EHI:HookColorCodes(color_table, params)
         end
     end
     for color, data in pairs(color_table) do
-        if data.unit_ids then
+        if type(data) == "boolean" and data then
+            hook(params.unit_id_all or 0, color)
+        elseif type(data) == "number" then
+            hook(self:GetInstanceUnitID(params.unit_id_all or 0, data), color)
+        elseif data.unit_ids then
             for _, unit_id in ipairs(data.unit_ids) do
                 local u_id = params.unit_id_all or unit_id
                 if data.indexes then

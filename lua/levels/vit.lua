@@ -44,6 +44,10 @@ local other =
     [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    local sniper_count = EHI:GetValueBasedOnDifficulty({
+        veryhard_or_below = 1,
+        overkill_or_above = 2
+    })
     other[100314] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
         if EHI:IsHost() and element:counter_value() ~= 0 then
             return
@@ -55,9 +59,11 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             time = t,
             on_fail_refresh_t = 25,
             on_success_refresh_t = t,
+            sniper_count = trigger.sniper_count,
+            single_sniper = trigger.sniper_count == 1,
             class = TT.Sniper.Loop
         })
-    end) }
+    end), sniper_count = sniper_count }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -72,54 +78,21 @@ end
 
 EHI:ParseTriggers({ mission = triggers, other = other })
 
-local DisableWaypoints =
-{
-    -- levels/instances/unique/vit/vit_targeting_computer/001
-    [EHI:GetInstanceElementID(100002, 10500)] = true, -- Defend
-    [EHI:GetInstanceElementID(100003, 10500)] = true -- Fix
-}
--- levels/instances/unique/vit/vit_wire_box
--- All 4 colors
-for i = 4150, 4450, 100 do
-    DisableWaypoints[EHI:GetInstanceElementID(100074, i)] = true -- Defend
-    DisableWaypoints[EHI:GetInstanceElementID(100050, i)] = true -- Fix
-end
+local DisableWaypoints = {}
+local tbl = {}
 -- levels/instances/unique/vit/vit_peoc_workstation/001-006
 for i = 30000, 31500, 300 do
     DisableWaypoints[EHI:GetInstanceElementID(100059, i)] = true -- Fix
-end
-EHI:DisableWaypoints(DisableWaypoints)
-
-local tbl = {}
-for i = 30000, 31500, 300 do
     tbl[EHI:GetInstanceUnitID(100045, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100058, i) }
 end
+tbl[EHI:GetInstanceUnitID(100058, 22250)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100018, 22250), restore_waypoint_on_done = true }
+tbl[EHI:GetInstanceUnitID(100191, 22250)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100018, 22250), restore_waypoint_on_done = true }
+tbl[EHI:GetInstanceUnitID(100192, 22250)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100018, 22250), restore_waypoint_on_done = true }
+--- Safe in Oval Office
+tbl[EHI:GetInstanceUnitID(100239, 12900)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100254, 12900) }
+EHI:DisableWaypoints(DisableWaypoints)
 EHI:UpdateUnits(tbl)
 
---[[local tbl =
-{
-    [EHI:GetInstanceUnitID(100239, 12900)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100255, 12900) }
-}
-for i = 14250, 15150, 300 do
-    tbl[EHI:GetInstanceUnitID(100239, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100255, i) }
-end
-EHI:UpdateUnits(tbl)]]
-
---[[local tbl =
-{
-    [EHI:GetInstanceUnitID(100239, 12900)] = { f = function(unit_id, unit_data, unit)
-        EHI:HookWithID(unit:timer_gui(), "set_jammed", "EHI_100239_12900_unjammed", function(self, jammed, ...)
-            if jammed == false then
-                self:_HideWaypoint(unit_data.remove_vanilla_waypoint)
-            end
-        end)
-        unit:timer_gui():RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
-    end, remove_vanilla_waypoint = EHI:GetInstanceElementID(100255, 12900) }
-}
-for i = 30000, 31500, 300 do
-    tbl[EHI:GetInstanceUnitID(100045, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100058, i) }
-end
-EHI:UpdateUnits(tbl)]]
 local stealth_objectives =
 {
     { amount = 1000, name = "twh_entered" },

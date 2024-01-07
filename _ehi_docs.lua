@@ -236,9 +236,9 @@
 ---@field unit_id_all number Overrides `unit_id` and `unit_ids`
 
 ---@class EHI.ColorTable
----@field red EHI.ColorTable.Color
----@field green EHI.ColorTable.Color
----@field blue EHI.ColorTable.Color
+---@field red number|boolean|EHI.ColorTable.Color
+---@field green number|boolean|EHI.ColorTable.Color
+---@field blue number|boolean|EHI.ColorTable.Color
 
 ---@class EHITracker.params
 ---@field id string

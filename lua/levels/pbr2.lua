@@ -93,7 +93,7 @@ local other =
     [100653] = EHI:AddAssaultDelay({ time = 2 + 15 + 30, trigger_times = 1 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100161] = { chance = 10, time = 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop }
+    other[100161] = { chance = 10, time = 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 3 }
     other[100153] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100159] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100155] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%

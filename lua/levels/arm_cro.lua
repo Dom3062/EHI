@@ -82,8 +82,8 @@ if EHI:GetOption("show_escape_chance") then
     end)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100122] = { chance = 10, time = 60 + 1 + 25 + 35, on_fail_refresh_t = 35, on_success_refresh_t = 20 + 25 + 35, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1 }
-    other[100015] = { chance = 10, time = 1 + 25 + 35, on_fail_refresh_t = 35, on_success_refresh_t = 20 + 25 + 35, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, special_function = SF.AddTrackerIfDoesNotExist }
+    other[100122] = { chance = 10, time = 60 + 1 + 25 + 35, on_fail_refresh_t = 35, on_success_refresh_t = 20 + 25 + 35, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, sniper_count = 2 }
+    other[100015] = EHI:CopyTrigger(other[100122], { time = 1 + 25 + 35 }, SF.AddTrackerIfDoesNotExist)
     other[100385] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100420] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%

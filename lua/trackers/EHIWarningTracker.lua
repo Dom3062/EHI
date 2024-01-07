@@ -15,9 +15,9 @@ local function anim(o, old_color, color, start_t)
         while t > 0 do
             t = t - coroutine.yield()
             local n = sin(t * 180)
-            c.r = lerp(old_color.r, color.r, n)
-            c.g = lerp(old_color.g, color.g, n)
-            c.b = lerp(old_color.b, color.b, n)
+            c.r = lerp(old_color.r, color.r, n) --[[@as number]]
+            c.g = lerp(old_color.g, color.g, n) --[[@as number]]
+            c.b = lerp(old_color.b, color.b, n) --[[@as number]]
             o:set_color(c)
         end
         t = 1

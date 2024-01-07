@@ -64,12 +64,13 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100019, 10950)] = { id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         if self._trackers:TrackerExists(id) then
-            self._trackers:SetTrackerCount(id, 1)
             self._trackers:CallFunction(id, "SniperSpawnsSuccess")
+            self._trackers:SetTrackerCount(id, 1)
         else
             self._trackers:AddTracker({
                 id = id,
                 count = 1,
+                snipers_spawned = true,
                 class = TT.Sniper.Count
             })
         end

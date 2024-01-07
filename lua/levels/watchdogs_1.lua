@@ -4,34 +4,35 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local escape_delay = 18
-local CarLootDrop = { Icon.Car, Icon.LootDrop }
+local longest_car_drop_delay = 751/30
 local triggers = {
-    [102873] = { time = 36 + 5 + 3 + 60 + 30 + 38 + 7, id = "CarPickupLoot", icons = CarLootDrop, hint = Hints.Loot },
+    [102873] = { time = 36 + 5 + 3 + 60 + 30 + 38 + 7 + longest_car_drop_delay, id = "CarPickupLoot", icons = Icon.CarLootDrop, hint = Hints.Loot },
+    [100936] = { time = 524/30, id = "CarPickupLoot", icons = Icon.CarLootDrop, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Loot },
+    [102686] = { time = 552/30, id = "CarPickupLoot", icons = Icon.CarLootDrop, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Loot },
 
     [101256] = { time = 3 + 28 + 10 + 135/30 + 0.5 + 210/30, id = "CarEscape", icons = Icon.CarEscapeNoLoot, hint = Hints.Escape },
     [101088] = { id = "CarEscape", special_function = SF.RemoveTracker },
 
     [101218] = { time = 60 + 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
     [101219] = { time = 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
-    [101221] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape }
+    [101221] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
+    [101223] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101231 } },
+    [102855] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 102862 } }
 }
 
--- Not possible to include Car location waypoint as this is selected randomly
--- See ´LootVehicleArrived´ MissionScriptElement 100658
-
 if EHI:IsClient() then
-    triggers[101307] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 })
-    triggers[101308] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 })
-    triggers[101309] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 })
-    triggers[100944] = EHI:ClientCopyTrigger(triggers[102873], { time = 3 + 60 + 30 + 38 + 7 })
-    triggers[101008] = EHI:ClientCopyTrigger(triggers[102873], { time = 60 + 30 + 38 + 7 })
-    triggers[101072] = EHI:ClientCopyTrigger(triggers[102873], { time = 30 + 38 + 7 })
-    triggers[101073] = EHI:ClientCopyTrigger(triggers[102873], { time = 38 + 7 })
+    triggers[101307] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 + longest_car_drop_delay })
+    triggers[101308] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 + longest_car_drop_delay })
+    triggers[101309] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 + longest_car_drop_delay })
+    triggers[100944] = EHI:ClientCopyTrigger(triggers[102873], { time = 3 + 60 + 30 + 38 + 7 + longest_car_drop_delay })
+    triggers[101008] = EHI:ClientCopyTrigger(triggers[102873], { time = 60 + 30 + 38 + 7 + longest_car_drop_delay })
+    triggers[101072] = EHI:ClientCopyTrigger(triggers[102873], { time = 30 + 38 + 7 + longest_car_drop_delay })
+    triggers[101073] = EHI:ClientCopyTrigger(triggers[102873], { time = 38 + 7 + longest_car_drop_delay })
 
     triggers[103300] = EHI:ClientCopyTrigger(triggers[101218], { time = 60 + 30 + 30 + escape_delay })
     triggers[103301] = EHI:ClientCopyTrigger(triggers[101218], { time = 30 + 30 + escape_delay })
     triggers[103302] = EHI:ClientCopyTrigger(triggers[101218], { time = 30 + escape_delay })
-    triggers[101223] = EHI:ClientCopyTrigger(triggers[101218], { time = escape_delay })
+    triggers[101222] = EHI:ClientCopyTrigger(triggers[101218], { time = escape_delay })
 end
 
 ---@type ParseAchievementTable
@@ -60,11 +61,7 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-local max = 8
-if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
-    max = 12
-end
-EHI:ShowLootCounter({ max = max })
+EHI:ShowLootCounter({ max = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) and 12 or 8 })
 EHI:AddXPBreakdown({
     objectives =
     {

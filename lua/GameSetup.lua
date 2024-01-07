@@ -136,7 +136,7 @@ local levels =
     sah = true, -- Shacklethorne Auction
     bph = true, -- Hell's Island
     nmh = true, -- No Mercy
-    vit = true, -- The White House; Oval office Drill wp, PEOC PC wp + Firewall PC wp
+    vit = true, -- The White House
     -- Silkroad campaign
     mex = true, -- Border Crossing
     mex_cooking = true, -- Border Crystals

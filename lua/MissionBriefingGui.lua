@@ -214,6 +214,7 @@ end
 ---@class XPBreakdownPanel
 ---@field new fun(self: self, gui: MissionBriefingGui, panel: Panel, panel_params: table, xp_params: table, loc: LocalizationManager, params: XPBreakdown|_XPBreakdown, index: number?): self
 local XPBreakdownPanel = class()
+XPBreakdownPanel.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
 ---@param gui MissionBriefingGui
 ---@param ws_panel Panel
 ---@param panel_params table
@@ -455,7 +456,7 @@ function XPBreakdownPanel:ProcessEscape(str, params, total_xp)
             if value.stealth then
                 s = self._loc:text("ehi_experience_stealth_escape")
                 if value.timer then
-                    s = s .. " (<" .. self._gui:FormatTime(value.timer) .. ")"
+                    s = s .. " (<" .. self:FormatTime(value.timer) .. ")"
                 end
                 s = s .. ": "
             else
@@ -740,6 +741,7 @@ function XPBreakdownPanel:ParamsCustom(o_params)
         elseif c_params.type == "min_with_max" then
             self:ParamsMinWithMax(c_params)
         elseif c_params.type == "max_only" then
+            self:ParamsMaxOnly(c_params)
         else
             EHI:Log("Custom type not recognized! " .. tostring(c_params.type))
         end
@@ -816,6 +818,11 @@ function XPBreakdownPanel:ParamsMinMax(o_params)
         end
         min = min + (amount * (data.min_max or data.min or 0))
         max = max + (amount * (data.min_max or data.max or 0))
+    end
+    if o_params.bonus_xp then
+        local bonus = o_params.bonus_xp
+        min = min + (bonus.min_max or bonus.min or 0)
+        max = max + (bonus.min_max or bonus.max or 0)
     end
     self:AddTotalMinMaxXP(min, max, true, o_params.name)
 end
@@ -1171,7 +1178,7 @@ function XPBreakdownPanel:ParamsEscape(o_params)
         if value.stealth then
             s = self._loc:text("ehi_experience_stealth_escape")
             if value.timer then
-                s = s .. " (<" .. self._gui:FormatTime(value.timer) .. ")"
+                s = s .. " (<" .. self:FormatTime(value.timer) .. ")"
             end
             max_xp = max
         else
@@ -1618,7 +1625,6 @@ local original =
     lobby_code_init = LobbyCodeMenuComponent.init
 }
 
-MissionBriefingGui.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
 function MissionBriefingGui:init(...)
     original.init(self, ...)
     self:ProcessXPBreakdown()

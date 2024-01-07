@@ -8,18 +8,9 @@ local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type EHI.ColorTable
 local dah_laptop_codes =
 {
-    red =
-    {
-        index = 1900
-    },
-    green =
-    {
-        index = 2100
-    },
-    blue =
-    {
-        index = 2300
-    }
+    red = 1900,
+    green = 2100,
+    blue = 2300
 }
 local element_sync_triggers =
 {
@@ -211,7 +202,7 @@ EHI:AddLoadSyncFunction(function(self)
         self:Trigger(103969)
         local wd = managers.worlddefinition
         for color, data in pairs(dah_laptop_codes) do
-            local unit_id = EHI:GetInstanceUnitID(100052, data.index)
+            local unit_id = EHI:GetInstanceUnitID(100052, data)
             local unit = wd:get_unit(unit_id)
             local code = CheckIfCodeIsVisible(unit, color)
             if code then

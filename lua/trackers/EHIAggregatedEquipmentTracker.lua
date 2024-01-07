@@ -13,6 +13,7 @@ EHIAggregatedEquipmentTracker = class(EHITracker)
 EHIAggregatedEquipmentTracker._update = false
 EHIAggregatedEquipmentTracker._dont_show_placed = { first_aid_kit = true }
 EHIAggregatedEquipmentTracker._ids = { "doctor_bag", "ammo_bag", "grenade_crate", "first_aid_kit", "bodybags_bag" }
+EHIAggregatedEquipmentTracker._init_create_text = false
 function EHIAggregatedEquipmentTracker:pre_init(params)
     self._n_of_deployables = 0
     self._amount = {}
@@ -35,7 +36,6 @@ function EHIAggregatedEquipmentTracker:post_init(params)
     self._default_bg_box_w = self._bg_box:w()
     self._panel_half = self._default_bg_box_w / 2
     self._panel_w = self._default_panel_w
-    self._bg_box:remove(self._text)
 end
 
 do

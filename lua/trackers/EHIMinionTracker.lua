@@ -4,6 +4,7 @@ EHIMinionTracker = class(EHITracker)
 EHIMinionTracker._forced_hint_text = "converts"
 EHIMinionTracker._forced_icons = { "minion" }
 EHIMinionTracker._update = false
+EHIMinionTracker._init_create_text = false
 function EHIMinionTracker:init(...)
     self._n_of_peers = 0
     self._peers = {}
@@ -13,7 +14,6 @@ function EHIMinionTracker:init(...)
     self._panel_half = self._bg_box:w() / 2
     self._panel_w = self._default_panel_w
     self._bg_box_w = self._default_bg_box_w
-    self._bg_box:remove(self._text)
 end
 
 function EHIMinionTracker:SetTextPeerColor()
@@ -22,8 +22,7 @@ function EHIMinionTracker:SetTextPeerColor()
     end
     for i = 0, HUDManager.PLAYER_PANEL, 1 do
         if self._bg_box:child("text" .. i) then
-            local color = tweak_data.chat_colors[i] or Color.white
-            self._bg_box:child("text" .. i):set_color(color)
+            self._bg_box:child("text" .. i):set_color(tweak_data.chat_colors[i] or Color.white)
         end
     end
 end
@@ -33,8 +32,7 @@ function EHIMinionTracker:SetIconColor()
         self._icon1:set_color(Color.white)
     else
         local peer_id, _ = next(self._peers)
-        local color = tweak_data.chat_colors[peer_id] or Color.white
-        self._icon1:set_color(color)
+        self._icon1:set_color(tweak_data.chat_colors[peer_id] or Color.white)
     end
 end
 
@@ -145,9 +143,9 @@ function EHIMinionTracker:GetNumberOfMinions(peer_id)
     return total
 end
 
-function EHIMinionTracker:AddMinion(unit, key, amount, peer_id)
+function EHIMinionTracker:AddMinion(key, amount, peer_id)
     if not key then
-        EHI:DebugEquipment(self._id, unit, key, amount, peer_id)
+        EHI:DebugEquipment(self._id, nil, key, amount, peer_id)
         return
     end
     if self._peers[peer_id] then
@@ -191,8 +189,7 @@ end
 function EHIMinionTracker:UpdatePeerColors()
     for i = 0, HUDManager.PLAYER_PANEL, 1 do
         if self._bg_box:child("text" .. i) then
-            local color = tweak_data.chat_colors[i] or Color.white
-            self._bg_box:child("text" .. i):set_color(color)
+            self._bg_box:child("text" .. i):set_color(tweak_data.chat_colors[i] or Color.white)
         end
     end
 end
