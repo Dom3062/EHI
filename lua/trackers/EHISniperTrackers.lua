@@ -47,7 +47,9 @@ end
 ---@param count number?
 function EHISniperCountTracker:DecreaseCount(count)
     EHISniperCountTracker.super.DecreaseCount(self, count)
-    self._current_sniper_count = self._current_sniper_count - (count or 1)
+    if self._current_sniper_count then
+        self._current_sniper_count = self._current_sniper_count - (count or 1)
+    end
 end
 
 ---@class EHISniperChanceTracker : EHIChanceTracker, EHICountTracker
@@ -420,7 +422,9 @@ end
 ---@param count number?
 function EHISniperLoopTracker:DecreaseCount(count)
     self:_DecreaseCount(count)
-    self._current_sniper_count = self._current_sniper_count - (count or 1)
+    if self._current_sniper_count then
+        self._current_sniper_count = self._current_sniper_count - (count or 1)
+    end
 end
 
 ---@param count number

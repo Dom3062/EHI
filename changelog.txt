@@ -1,3 +1,6 @@
+r214 (08. 01. 2024):
+Sniper Tracker: Fixed a crash with nil value
+
 r213 (07. 01. 2024):
 Added option "Show ECM Feedback Retrigger"
 Adjusted "SNIPERS!" popup to be less spammy
