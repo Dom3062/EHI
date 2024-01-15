@@ -13,7 +13,7 @@ end
 local preplan_reserved = nil
 local preplan_voted = nil
 
-local _f_on_execute_preplanning = PrePlanningManager.on_execute_preplanning
+local original = PrePlanningManager.on_execute_preplanning
 function PrePlanningManager:on_execute_preplanning(...)
     if self:has_current_level_preplanning() then
         preplan_reserved = deep_clone(self._reserved_mission_elements)
@@ -31,7 +31,7 @@ function PrePlanningManager:on_execute_preplanning(...)
             end
         end
     end
-    _f_on_execute_preplanning(self, ...)
+    original(self, ...)
 end
 
 ---@param asset_id number

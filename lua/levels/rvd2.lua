@@ -13,8 +13,7 @@ local triggers = {
 
     [100699] = { time = 8 + 25 + 13, id = "ObjectiveWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [100939] = { time = 5, id = "C4Vault", icons = { Icon.C4 }, waypoint = { position_by_element = 100941 }, hint = Hints.Explosion },
-    [EHI:GetInstanceElementID(100020, 6700)] = { time = 5, id = "C4Escape", icons = { Icon.C4 }, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100008, 6700) }, hint = Hints.Explosion }
+    [100939] = { time = 5, id = "C4Vault", icons = { Icon.C4 }, waypoint = { position_by_element = 100941 }, hint = Hints.Explosion }
 }
 local other =
 {
@@ -155,7 +154,7 @@ EHI:AddXPBreakdown({
         {
             min_max =
             {
-                -- max = 19 diamond bags, 3 money bags in the safes (random), 3 bags in GenSec transport
+                -- max = 19 diamond bags, 3 money bags in the safes (random), 3 bags in GenSec transport (random)
                 loot_all = { min = 6, max = 25 }
             }
         }

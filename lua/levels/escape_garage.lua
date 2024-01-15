@@ -24,7 +24,7 @@ local achievements =
 
 local triggers =
 {
-    [102510] = { time = 10 + 10, id = "EndlessAssault", icons = EHI.Icons.EndlessAssault, class = EHI.Trackers.Warning, hint = EHI.Hints.EndlessAssault }
+    [102510] = EHI:AddEndlessAssault(10 + 10)
 }
 
 local other = {}
@@ -44,10 +44,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
---[[EHI:AddLoadSyncFunction(function(self)
-    bilbo_baggin()
-    self._trackers:SetTrackerProgress("bilbo_baggin", managers.loot:GetSecuredBagsAmount())
-end)]]
 EHI:AddXPBreakdown({
     objective =
     {

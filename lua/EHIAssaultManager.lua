@@ -14,7 +14,7 @@ function EHIAssaultManager:init_finalize()
     self._anticipation =
     {
         sync_f = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation",
-        t = 30 -- Get it from tweak_data
+        t = 30 -- Get it from tweak_data; although `HUDManager:sync_start_anticipation_music()` checks if the time is less than 30s
     }
     self._assault_delay =
     {
@@ -31,17 +31,25 @@ function EHIAssaultManager:init_finalize()
         tracker = combine and EHI.Trackers.Assault.Assault or EHI.Trackers.Assault.Time,
         pos = combine and 0,
         delete_on_delay = not combine,
-        combine_skirmish_remove = combine and self._is_skirmish
+        combine_skirmish_remove = combine and self._is_skirmish,
+        show_endless_assault = EHI:GetOption("show_endless_assault")
     }
     if not self._assault_time.blocked then
-        EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
-            if mode == "endless" then
-                self._endless_assault = true
-                self._trackers:ForceRemoveTracker(self._assault_time.name)
-            else
-                self._endless_assault = nil
-            end
-        end)
+        if self._assault_time.show_endless_assault then
+            EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
+                self._endless_assault = mode == "endless"
+                self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", self._endless_assault)
+            end)
+        else
+            EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
+                if mode == "endless" then
+                    self._endless_assault = true
+                    self._trackers:ForceRemoveTracker(self._assault_time.name)
+                else
+                    self._endless_assault = nil
+                end
+            end)
+        end
         EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
             if mode == "phalanx" then
                 self._trackers:CallFunction(self._assault_time.name, "CaptainArrived")
@@ -112,18 +120,18 @@ end
 ---@param block boolean
 ---@param t number
 function EHIAssaultManager:SetControlStateBlock(block, t)
-    self._assault_block = block
+    self._control_block = block
     if self._trackers:TrackerExists(self._assault_delay.name) then
         self._trackers:CallFunction(self._assault_delay.name, "SetControlStateBlock", block, t)
     elseif not block then
-        self:StartAssaultCountdown(t)
+        self:StartAssaultCountdown(t, true)
     end
 end
 
 ---@param t number
 ---@param block_if_exists boolean?
 function EHIAssaultManager:StartAssaultCountdown(t, block_if_exists)
-    if self._assault_delay.blocked or self._assault_block then
+    if self._assault_delay.blocked or self._control_block then
         return
     end
     if block_if_exists and self._trackers:TrackerExists(self._assault_delay.name) then
@@ -154,15 +162,21 @@ function EHIAssaultManager:AssaultStart()
     if self._assault_delay.delete_on_assault then
         self._trackers:ForceRemoveTracker(self._assault_delay.name)
     end
-    if self._endless_assault or self._assault_time.blocked or self._assault or self._assault_block then
+    if self._assault_time.blocked or (self._endless_assault and not self._assault_time.show_endless_assault) or self._assault or self._assault_block then
         return
     elseif self._trackers:TrackerExists(self._assault_time.name) then
-        self._trackers:CallFunction(self._assault_time.name, "AssaultStart", self._diff)
+        if self._endless_assault then
+            self._trackers:CallFunction(self._assault_time.name, "CalculateDifficultyRamp", self._diff)
+            self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", true)
+        else
+            self._trackers:CallFunction(self._assault_time.name, "AssaultStart", self._diff)
+        end
     elseif self._diff > 0 or self._is_skirmish then
         self._trackers:AddTracker({
             id = self._assault_time.name,
             assault = true,
             diff = self._diff,
+            endless_assault = self._endless_assault,
             class = self._assault_time.tracker
         }, self._assault_time.pos)
     end
@@ -176,8 +190,9 @@ function EHIAssaultManager:AssaultEnd()
     if self._assault_block or self._assault_delay.blocked then
         return
     elseif self._trackers:TrackerExists(self._assault_delay.name) then
-        self._trackers:CallFunction(self._assault_delay.name, "AssaultEnd", self._diff)
-    elseif self._diff > 0 then
+        local f = self._control_block and "AssaultEndWithBlock" or "AssaultEnd"
+        self._trackers:CallFunction(self._assault_delay.name, f, self._diff)
+    elseif self._diff > 0 and not self._control_block then
         self._trackers:AddTracker({
             id = self._assault_delay.name,
             diff = self._diff,
@@ -209,9 +224,7 @@ function EHIAssaultManager:CallFunction(f, ...)
 end
 
 function EHIAssaultManager:SetEndlessAssaultFromLoad()
-    self._endless_assault = true
-    self._trackers:ForceRemoveTracker("Assault")
-    self._trackers:RemoveTracker("AssaultTime")
+    EHI:CallCallback(EHI.CallbackMessage.AssaultWaveModeChanged, "endless")
 end
 
 function EHIAssaultManager:save(data)

@@ -27,7 +27,7 @@ local triggers = {
 
     [102095] = { special_function = SF.Trigger, data = { 1020951, 1020952 } },
     [1020951] = { time = 26, id = "AirlockOpenOutside", icons = { Icon.Door }, condition_function = CF.IsStealth, hint = Hints.Wait },
-    [1020952] = { time = 26, id = "AirlockOpenOutsideEndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning, condition_function = CF.IsLoud, hint = Hints.EndlessAssault },
+    [1020952] = EHI:AddEndlessAssault(26, "AirlockOpenOutsideEndlessAssault", true),
 
     [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 101914 }, hint = Hints.Escape } -- 30s delay + 26s escape zone delay
 }
@@ -78,11 +78,9 @@ end
 
 EHI:ParseTriggers({ mission = triggers, other = other })
 
-local DisableWaypoints = {}
 local tbl = {}
 -- levels/instances/unique/vit/vit_peoc_workstation/001-006
 for i = 30000, 31500, 300 do
-    DisableWaypoints[EHI:GetInstanceElementID(100059, i)] = true -- Fix
     tbl[EHI:GetInstanceUnitID(100045, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100058, i) }
 end
 tbl[EHI:GetInstanceUnitID(100058, 22250)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100018, 22250), restore_waypoint_on_done = true }
@@ -90,7 +88,6 @@ tbl[EHI:GetInstanceUnitID(100191, 22250)] = { remove_vanilla_waypoint = EHI:GetI
 tbl[EHI:GetInstanceUnitID(100192, 22250)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100018, 22250), restore_waypoint_on_done = true }
 --- Safe in Oval Office
 tbl[EHI:GetInstanceUnitID(100239, 12900)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100254, 12900) }
-EHI:DisableWaypoints(DisableWaypoints)
 EHI:UpdateUnits(tbl)
 
 local stealth_objectives =

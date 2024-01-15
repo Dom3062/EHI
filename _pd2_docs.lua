@@ -418,7 +418,10 @@ end
 
 ---@class GroupAIStateBase
 ---@field _hostage_headcount number
+---@field _t number
+---@field _task_data table
 ---@field amount_of_winning_ai_criminals fun(self: self): number
+---@field assault_phase_end_time fun(self: self): number?
 ---@field get_amount_enemies_converted_to_criminals fun(self: self): number
 ---@field _get_balancing_multiplier fun(self: self, balance_multipliers: number[]): number
 ---@field hostage_count fun(self: self): number

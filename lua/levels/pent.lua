@@ -16,69 +16,35 @@ end]]
 ---@type ParseTriggerTable
 local triggers = {
     -- Loud Heli Escape
-    [101539] = { time = 5, id = "EndlessAssault", icons = Icon.EndlessAssault, class = TT.Warning, hint = Hints.EndlessAssault },
-    [102295] = { additional_time = 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = heli_element_timer, hint = Hints.LootEscape },
-    [102296] = { id = "HeliEscape", special_function = SF.PauseTracker },
-    [102297] = { id = "HeliEscape", special_function = SF.UnpauseTracker },
-
-    -- Window Cleaning Platform
-    [EHI:GetInstanceElementID(100047, 9280)] = { time = 20, id = "PlatformLoweringDown", icons = { Icon.Wait }, hint = Hints.Wait },
+    [101539] = EHI:AddEndlessAssault(5),
+    [102295] = { id = "DefendLights", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = heli_element_timer, hint = Hints.Defend },
+    [102296] = { id = "DefendLights", special_function = SF.PauseTracker },
+    [102297] = { id = "DefendLights", special_function = SF.UnpauseTracker },
+    [102303] = { time = 40, id = "HeliEscape", icons = Icon.HeliEscape, hint = Hints.LootEscape },
 
     -- Elevator
     [101277] = { time = 12, id = "ElevatorDown", icons = { Icon.Wait }, hint = Hints.Wait },
     [102061] = { time = 900/30, id = "ElevatorUp", icons = { Icon.Wait }, hint = Hints.Wait },
 
+    -- In CoreWorldInstanceManager:
+    -- Window Cleaning Platform
     -- Elevator Generator
-    [EHI:GetInstanceElementID(100066, 13930)] = { id = "GeneratorStartChance", icons = { Icon.Power }, class = TT.Chance, hint = Hints.pent_Chance },
-    [EHI:GetInstanceElementID(100018, 13930)] = { id = "GeneratorStartChance", special_function = SF.IncreaseChanceFromElement }, -- +33%
-    [EHI:GetInstanceElementID(100016, 13930)] = { id = "GeneratorStartChance", special_function = SF.RemoveTracker },
-
     -- Thermite
-    [EHI:GetInstanceElementID(100035, 9930)] = { time = 22.5 * 3, id = "Thermite", icons = { Icon.Fire }, hint = Hints.Thermite },
-
     -- Car Platform
-    [EHI:GetInstanceElementID(100133, 7830)] = { time = 1200/30, id = "CarRotate", icons = { Icon.Car, Icon.Wait }, hint = Hints.Wait },
-    [EHI:GetInstanceElementID(100002, 7830)] = { time = 300/30, id = "CarLiftUp", icons = { Icon.Car, Icon.Wait }, hint = Hints.Wait },
-    [EHI:GetInstanceElementID(100002, 7830)] = { time = 5, id = "CarSpeedUp", icons = { Icon.Car, Icon.Wait }, hint = Hints.Wait },
-
     -- Lobby PCs
-    [EHI:GetInstanceElementID(100014, 8230)] = { time = 10 + 3, id = "PCHack1", icons = { Icon.PCHack }, hint = Hints.Hack },
-    [EHI:GetInstanceElementID(100014, 13330)] = { time = 10 + 3, id = "PCHack2", icons = { Icon.PCHack }, hint = Hints.Hack },
-    [EHI:GetInstanceElementID(100014, 14430)] = { time = 10 + 3, id = "PCHack3", icons = { Icon.PCHack }, hint = Hints.Hack },
-    [EHI:GetInstanceElementID(100014, 17830)] = { time = 10 + 3, id = "PCHack4", icons = { Icon.PCHack }, hint = Hints.Hack }
 }
 if EHI:IsClient() then
     -- FOR THE LOVE OF GOD
     -- OVERKILL
     -- STOP. USING. F... RANDOM DELAY, it's not funny
     triggers[102295].client = { time = heli_delay, random_time = 20 }
-    triggers[102303] = { time = 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate, hint = Hints.LootEscape }
-    if EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL) then
-        triggers[103584] = { time = 70 + 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate, hint = Hints.LootEscape }
+    -- Bugged because of braindead use of ElementTimerTrigger...
+    triggers[103584] = { time = 70, id = "DefendLights", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.SetTrackerAccurate, hint = Hints.Defend }
+    --[[if EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL) then
+        triggers[103584] = { time = 70, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate, hint = Hints.LootEscape }
     else
-        triggers[103585] = { time = 90 + 40, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate, hint = Hints.LootEscape }
-    end
-
-    -- Thermite
-    triggers[EHI:GetInstanceElementID(100036, 9930)] = { time = 22.5 * 2, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Thermite }
-    -- 100037 has 0s delay for some reason...
-    triggers[EHI:GetInstanceElementID(100038, 9930)] = { time = 22.5, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Thermite }
-end
-
-local DisableWaypoints = {}
-
--- pent_editing_room
-for i = 11680, 12680, 500 do
-    DisableWaypoints[EHI:GetInstanceElementID(100016, i)] = true -- Defend
-    DisableWaypoints[EHI:GetInstanceElementID(100093, i)] = true -- Defend
-    DisableWaypoints[EHI:GetInstanceElementID(100044, i)] = true -- Fix
-    DisableWaypoints[EHI:GetInstanceElementID(100107, i)] = true -- Fix
-end
-
--- pent_security_box
-for _, index in ipairs({ 17930, 18330, 18830, 19230, 19630, 20030, 20430 }) do
-    DisableWaypoints[EHI:GetInstanceElementID(100081, index)] = true -- Defend
-    DisableWaypoints[EHI:GetInstanceElementID(100082, index)] = true -- Fix
+        triggers[103585] = { time = 90, id = "HeliEscape", icons = Icon.HeliEscape, class = TT.Pausable, special_function = SF.SetTrackerAccurate, hint = Hints.LootEscape }
+    end]]
 end
 
 local other =
@@ -109,7 +75,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
 end
 
 EHI:ParseTriggers({ mission = triggers, other = other })
-EHI:DisableWaypoints(DisableWaypoints)
 local loot_triggers = {}
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     if EHI:CanShowAchievement("pent_12") then
@@ -126,11 +91,11 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
             })
         end)
     end
-    loot_triggers[103616] = { special_function = SF.IncreaseProgressMax }
-    loot_triggers[103617] = { special_function = SF.IncreaseProgressMax }
+    loot_triggers[103616] = { special_function = SF.IncreaseProgressMax2 }
+    loot_triggers[103617] = { special_function = SF.IncreaseProgressMax2 }
 end
 
-local max = 8
+local max = 9 -- 8 gold + 1 teaset
 EHI:ShowLootCounter({
     max = max,
     triggers = loot_triggers
@@ -172,3 +137,122 @@ local tbl =
     [103872] = { ignore = true }
 }
 EHI:UpdateUnits(tbl)
+local stealth_loot =
+{
+    gold_mission = { amount = 500, name = "gold", mandatory = 4 },
+    gold_additional = { amount = 1000, name = "gold", additional = true },
+    chas_teaset = 500
+}
+local stealth_total_xp_override =
+{
+    params =
+    {
+        min_max =
+        {
+            loot =
+            {
+                gold_mission = { min_max = 4 },
+                gold_additional = { max = 4 },
+                chas_teaset = { max = 1 }
+            }
+        }
+    }
+}
+local loud_loot = deep_clone(stealth_loot)
+local loud_total_xp_override = deep_clone(stealth_total_xp_override)
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
+    loud_loot.gnome = 500
+    loud_total_xp_override.params.min_max.loot.gnome = { max = 1 }
+end
+local loud_objectives =
+{
+    { amount = 5000, name = "china4_hack_building_security" },
+    { amount = 1000, name = "china4_call_elevator_from_basement" },
+    { amount = 1000, name = "china4_disable_elevator_power" },
+    { amount = 2000, name = "china4_elevator_shaft" },
+    { amount = 2000, name = "china4_restart_and_call_elevator" },
+    { amount = 2000, name = "china4_force_open_penthouse_door" },
+    { amount = 2000, name = "china4_found_hidden_server_room" },
+    { amount = 8000, name = "china4_steal_harddrive" }
+}
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        custom =
+        {
+            {
+                name = "stealth",
+                tactic =
+                {
+                    objectives =
+                    {
+                        { amount = 1000, name = "china4_infiltrate_the_building" },
+                        { amount = 4000, name = "china4_flip_correct_switches" },
+                        { amount = 2000, name = "china4_call_elevator_from_basement" },
+                        { amount = 2000, name = "china4_disable_elevator_power" },
+                        { amount = 3000, name = "china4_elevator_shaft" },
+                        { amount = 2000, name = "china4_get_on_cleaning_platform" },
+                        { amount = 3000, name = "china4_found_hidden_server_room" },
+                        { amount = 2000, name = "china4_steal_harddrive" },
+                        { amount = 6000, name = "china4_decrypt_harddrive" },
+                        { amount = 1000, name = "china4_fire_alarm_on" },
+                        { amount = 4000, name = "china4_triad_leader_killed" },
+                        { amount = 6000, name = "fs_secured_required_bags" }
+                    },
+                    loot = stealth_loot,
+                    total_xp_override = stealth_total_xp_override
+                }
+            },
+            {
+                name = "loud",
+                additional_name = "mex4_car_escape",
+                tactic =
+                {
+                    objectives = loud_objectives,
+                    loot = loud_loot,
+                    total_xp_override = loud_total_xp_override
+                },
+                objectives_override =
+                {
+                    stop_at_inclusive_and_add_objectives =
+                    {
+                        stop_at = "china4_steal_harddrive",
+                        add_objectives =
+                        {
+                            { amount = 2000, name = "china4_car_is_in_position" },
+                            { amount = 1000, name = "china4_car_is_ready" },
+                            { amount = 5000, name = "china4_car_smashed_through" },
+                            { amount = 2000, name = "china4_triad_leader_killed" },
+                            { amount = 4000, name = "china4_defend_lights" },
+                            { amount = 2000, name = "fs_secured_required_bags" }
+                        }
+                    }
+                }
+            },
+            {
+                name = "loud",
+                additional_name = "china4_thermite_route",
+                tactic =
+                {
+                    objectives = loud_objectives,
+                    loot = loud_loot,
+                    total_xp_override = loud_total_xp_override
+                },
+                objectives_override =
+                {
+                    stop_at_inclusive_and_add_objectives =
+                    {
+                        stop_at = "china4_steal_harddrive",
+                        add_objectives =
+                        {
+                            { amount = 5000, name = "china4_put_thermite" },
+                            { amount = 2000, name = "china4_triad_leader_killed" },
+                            { amount = 4000, name = "china4_defend_lights" },
+                            { amount = 2000, name = "fs_secured_required_bags" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+})

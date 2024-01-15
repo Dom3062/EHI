@@ -14,17 +14,10 @@ local triggers = {
     [101725] = { time = 25 + 0.25 + 2 + 2.35, id = "C4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery },
 
     [100866] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion }
-}
-for _, index in ipairs({ 2300, 5400, 10700 }) do
-    local waypoint_id = EHI:GetInstanceElementID(100021, index)
-    triggers[EHI:GetInstanceElementID(100004, index)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.C4, position_by_element = waypoint_id } }
-end
 
-local DisableWaypoints = {}
-for _, index in ipairs({ 900, 1200, 1500, 4800, 13200 }) do
-    DisableWaypoints[EHI:GetInstanceElementID(100093, index)] = true -- Defend
-    DisableWaypoints[EHI:GetInstanceElementID(100212, index)] = true -- Fix
-end
+    -- C4 WP is in CoreWorldInstanceManager
+}
+
 local mayhem_and_up = EHI:IsMayhemOrAbove()
 ---@type ParseAchievementTable
 local achievements =
@@ -59,7 +52,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:DisableWaypoints(DisableWaypoints)
 local LotteryWheel = { icons = { Icon.Wait }, icon_on_pause = { Icon.Loop } }
 
 local tbl =

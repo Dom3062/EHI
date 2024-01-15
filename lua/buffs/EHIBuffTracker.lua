@@ -23,7 +23,7 @@ local function set_x(o, target_x)
     local from_x = o:x()
     while t < total do
         t = t + coroutine.yield()
-        o:set_x(lerp(from_x, target_x, t / total))
+        o:set_x(lerp(from_x, target_x, t / total)  --[[@as number]])
     end
     o:set_x(target_x)
 end
@@ -36,7 +36,7 @@ local function set_right(o, x)
     local target_right = o:parent():w() - x
     while t < total do
         t = t + coroutine.yield()
-        o:set_right(lerp(from_right, target_right, t / total))
+        o:set_right(lerp(from_right, target_right, t / total)  --[[@as number]])
     end
     o:set_right(target_right)
 end

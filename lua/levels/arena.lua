@@ -23,16 +23,9 @@ local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseTriggerTable
 local triggers = {
-    [100241] = { time = 19, id = "HeliEscape", icons = Icon.HeliEscape, hint = Hints.LootEscape },
+    [100241] = { time = 19, id = "HeliEscape", icons = Icon.HeliEscape, hint = Hints.LootEscape }
 
-    [EHI:GetInstanceElementID(100166, 4900)] = { time = 5, id = "WaitTime", icons = { Icon.Wait }, hint = Hints.Wait },
-
-    [EHI:GetInstanceElementID(100128, 4900)] = { time = 10, id = "PressSequence", icons = { Icon.Interact }, class = TT.Warning },
-    [EHI:GetInstanceElementID(100069, 4900)] = { id = "PressSequence", special_function = SF.RemoveTracker },
-    [EHI:GetInstanceElementID(100090, 4900)] = { id = "PressSequence", special_function = SF.RemoveTracker },
-
-    [EHI:GetInstanceElementID(100116, 4900)] = { max = 3, id = "C4Progress", icons = { Icon.C4 }, class = TT.Progress },
-    [EHI:GetInstanceElementID(100177, 4900)] = { id = "C4Progress", special_function = SF.IncreaseProgress }
+    -- Pyro booth sequence is in CoreWorldInstanceManager
 }
 
 ---@type ParseAchievementTable

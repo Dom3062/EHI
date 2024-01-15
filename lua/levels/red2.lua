@@ -31,9 +31,9 @@ function EHIcac10Tracker:AnimateColor()
                 while t > 0 do
                     t = t - coroutine.yield()
                     local n = sin(t * 180)
-                    c.r = lerp(self._text_color.r, self._warning_color.r, n)
-                    c.g = lerp(self._text_color.g, self._warning_color.g, n)
-                    c.b = lerp(self._text_color.b, self._warning_color.b, n)
+                    c.r = lerp(self._text_color.r, self._warning_color.r, n) --[[@as number]]
+                    c.g = lerp(self._text_color.g, self._warning_color.g, n) --[[@as number]]
+                    c.b = lerp(self._text_color.b, self._warning_color.b, n) --[[@as number]]
                     o:set_color(c)
                     self._progress_text:set_color(c)
                 end

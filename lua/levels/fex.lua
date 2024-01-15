@@ -9,33 +9,13 @@ local triggers = {
     -- Wanker car
     [EHI:GetInstanceElementID(100029, 27580)] = { time = 610/30 + 2, id = "CarEscape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
 
-    [EHI:GetInstanceElementID(100358, 10130)] = { time = 1 + 210/30, id = "MayanDoorOpen", icons = { Icon.Door }, hint = Hints.Wait },
-
-    [EHI:GetInstanceElementID(100016, 26980)] = { time = 180 + 2, id = "HeliEscape", icons = Icon.HeliEscape, hint = Hints.LootEscape },
-
-    [EHI:GetInstanceElementID(100007, 25580)] = { time = 6, id = "ThermiteWineCellarDoor1", icons = { Icon.Fire }, hint = Hints.Thermite },
-    [EHI:GetInstanceElementID(100007, 25780)] = { time = 6, id = "ThermiteWineCellarDoor2", icons = { Icon.Fire }, hint = Hints.Thermite },
-
-    [EHI:GetInstanceElementID(100026, 24580)] = { time = 26.5 + 5, id = "CarBurn", icons = { Icon.Car, Icon.Fire }, hint = Hints.Wait },
-
-    [EHI:GetInstanceElementID(100049, 5200)] = { time = 6, id = "ThermiteFrontGate", icons = { Icon.Fire }, hint = Hints.Thermite },
-
-    [EHI:GetInstanceElementID(100016, 23480)] = { time = 45, id = "SafeHackStealth", icons = { Icon.Vault }, hint = Hints.Hack }
-}
-if EHI:IsClient() then
-    triggers[EHI:GetInstanceElementID(100024, 26980)] = { time = 60 + 2, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape }
-    triggers[EHI:GetInstanceElementID(100030, 26980)] = { time = 25 + 2, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape }
-    triggers[EHI:GetInstanceElementID(100035, 26980)] = { time = 38 + 2, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape }
-    triggers[EHI:GetInstanceElementID(100036, 26980)] = { time = 120 + 2, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape }
-end
-local DisableWaypoints =
-{
-    -- fex_saw_reinforced_door
-    [EHI:GetInstanceElementID(100015, 27280)] = true, -- Defend
-    [EHI:GetInstanceElementID(100068, 27280)] = true, -- Fix
-    -- fex_safe
-    [EHI:GetInstanceElementID(100029, 23480)] = true, -- Defend
-    [EHI:GetInstanceElementID(100022, 23480)] = true -- Fix
+    -- In CoreWorldInstanceManager:
+    -- Mayan Door Open
+    -- Exploding car
+    -- Thermite in Front Game
+    -- Thermite in Wine Cellar Door
+    -- Safe Hack
+    -- Heli Escape
 }
 
 EHI:ShowAchievementLootCounter({
@@ -71,7 +51,6 @@ EHI:ParseTriggers({
     mission = triggers,
     other = other
 })
-EHI:DisableWaypoints(DisableWaypoints)
 local stealth_objectives =
 {
     { amount = 1000, name = "mex4_found_bulucs_office" },

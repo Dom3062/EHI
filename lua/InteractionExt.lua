@@ -134,14 +134,13 @@ end
 
 local function post_set_active(self, ...)
     if self.__ehi_active ~= self._active then
+        local amount_check = self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0
         if self._active then -- Active
-            if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 and (not self._ehi_load_check or self._ehi_load_check()) then -- The unit is active now, load it from cache and show it on screen
+            if amount_check and (not self._ehi_load_check or self._ehi_load_check()) then -- The unit is active now, load it from cache and show it on screen
                 managers.ehi_deployable:LoadFromDeployableCache(self._ehi_tracker_id, self._ehi_key)
             end
-        else -- Not Active
-            if self._unit:base().GetRealAmount and self._unit:base():GetRealAmount() > 0 then -- There is some amount left in the unit, let's cache it
-                managers.ehi_deployable:AddToDeployableCache(self._ehi_tracker_id, self._ehi_key, self._unit, self._ehi_unit_check and self._ehi_unit)
-            end
+        elseif amount_check then -- Not active; There is some amount left in the unit, let's cache it
+            managers.ehi_deployable:AddToDeployableCache(self._ehi_tracker_id, self._ehi_key, self._unit, self._ehi_unit_check and self._ehi_unit)
         end
         self.__ehi_active = self._active
     end

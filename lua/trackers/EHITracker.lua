@@ -145,9 +145,9 @@ local function destroy(o, skip, self)
         end
     end
     self._bg_box:child("bg"):stop()
-    self._parent_panel:remove(self._panel)
+    self._panel:parent():remove(self._panel)
     if self._hint then
-        self._parent_panel:remove(self._hint)
+        self._hint:parent():remove(self._hint)
     end
 end
 local icons = tweak_data.ehi.icons
@@ -280,7 +280,6 @@ function EHITracker:init(panel, params, parent_class)
         self._n_of_icons = #self._icons
         gap = self._gap * self._n_of_icons
     end
-    self._parent_panel = panel
     self._time = self._forced_time or params.time or 0
     self._panel = panel:panel({
         name = params.id,
@@ -586,7 +585,7 @@ function EHITracker:CreateHint(text, delay_popup)
     else
         loc = self._hint_vanilla_localization and text or "ehi_hint_" .. text
     end
-    self._hint = self._parent_panel:text({
+    self._hint = self._panel:parent():text({
         name = self._id .. "_hint",
         text = managers.localization:text(loc),
         align = "center",
@@ -794,14 +793,18 @@ function EHITracker:FitTheTextBasedOnTime(...)
         if max_refresh_t >= time_check then
             local t = self._time
             self._time = max_refresh_t
-            self._text:set_text(self:Format())
-            self:FitTheText()
+            self:SetAndFitTheText()
             self._time = t
         else
-            self._text:set_text(self:Format())
-            self:FitTheText()
+            self:SetAndFitTheText()
         end
     end
+end
+
+---@param text string? If not provided, `Format` function will be called
+function EHITracker:SetAndFitTheText(text)
+    self._text:set_text(text or self:Format())
+    self:FitTheText()
 end
 
 ---@param time number
@@ -813,8 +816,7 @@ end
 ---@param time number
 function EHITracker:SetTimeNoAnim(time)
     self._time = time
-    self._text:set_text(self:Format())
-    self:FitTheText()
+    self:SetAndFitTheText()
 end
 
 ---@param time number
@@ -871,7 +873,7 @@ function EHITracker:SetIcon(new_icon, icon)
     end
 end
 
----@param color any
+---@param color Color
 ---@param icon PanelBitmap?
 function EHITracker:SetIconColor(color, icon)
     icon = icon or self._icon1
@@ -884,7 +886,7 @@ end
 ---@param text PanelText?
 function EHITracker:SetStatusText(status, text)
     text = text or self._text
-    local txt = "ehi_achievement_" .. status
+    local txt = "ehi_status_" .. status
     if LocalizationManager._custom_localizations[txt] then
         text:set_text(managers.localization:text(txt))
     else
@@ -933,7 +935,7 @@ end
 
 ---@param skip boolean?
 function EHITracker:destroy(skip)
-    if alive(self._panel) and alive(self._parent_panel) then
+    if alive(self._panel) then
         if self._icon1 then
             self._icon1:stop()
         end

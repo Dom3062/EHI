@@ -23,12 +23,6 @@ else
 end
 local DisableWaypoints =
 {
-    -- chas_store_computer
-    [EHI:GetInstanceElementID(100018, 10675)] = true, -- Defend
-    -- "Fix" icon is in CoreWorldInstanceManager.lua
-    -- chas_vault_door
-    [EHI:GetInstanceElementID(100029, 5950)] = true, -- Defend
-    [EHI:GetInstanceElementID(100030, 5950)] = true, -- Fix
     -- chas_auction_room_door_hack
     [EHI:GetInstanceElementID(100031, 5550)] = true, -- Defend
     [EHI:GetInstanceElementID(100056, 5550)] = true, -- Fix
@@ -116,14 +110,9 @@ local xp_override =
 {
     params =
     {
-        min =
+        min_max =
         {
-            objectives = true
-        },
-        max =
-        {
-            objectives = true,
-            loot_all = { times = 14 }
+            loot_all = { max = 14 }
         }
     }
 }

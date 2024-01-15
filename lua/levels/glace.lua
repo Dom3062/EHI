@@ -10,7 +10,8 @@ local triggers = {
     [104290] = { id = "PickUpBalloonFirstTry", special_function = SF.PauseTracker },
     [103517] = { id = "PickUpBalloonFirstTry", special_function = SF.UnpauseTracker },
     [101205] = { id = "PickUpBalloonFirstTry", special_function = SF.UnpauseTracker },
-    [102370] = { id = "PickUpBalloonSecondTry", icons = { Icon.Escape }, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = 100732, hint = Hints.Escape }
+    [102370] = { id = "PickUpBalloonSecondTry", icons = { Icon.Escape }, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = 100732, hint = Hints.Escape },
+    [102324] = EHI:AddEndlessAssault(3)
 }
 if EHI:IsClient() then
     triggers[102368].client = { time = 120, random_time = 10 }

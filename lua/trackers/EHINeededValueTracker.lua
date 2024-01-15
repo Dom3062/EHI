@@ -46,8 +46,7 @@ function EHINeededValueTracker:SetProgress(progress)
     if self._progress ~= progress and not self._disable_counting then
         self._progress = progress
         self._progress_formatted = self:FormatNumber(progress)
-        self._text:set_text(self:Format())
-        self:FitTheText()
+        self:SetAndFitTheText()
         self:AnimateBG()
         if self._progress >= self._max then
             self:SetCompleted()

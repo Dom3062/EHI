@@ -69,7 +69,7 @@ function EHIAssaultDelayTracker:ComputeHostageDelay(diff)
     end
     local difficulty_point_index = i
     local difficulty_ramp = (diff - (ramp[i - 1] or 0)) / ((ramp[i] or 1) - (ramp[i - 1] or 0))
-    self._hostage_delay = lerp(hostage_values[difficulty_point_index], hostage_values[difficulty_point_index + 1], difficulty_ramp)
+    self._hostage_delay = lerp(hostage_values[difficulty_point_index], hostage_values[difficulty_point_index + 1], difficulty_ramp) --[[@as number]]
 end
 
 ---@param dt number

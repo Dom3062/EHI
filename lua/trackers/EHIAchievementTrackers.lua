@@ -231,7 +231,7 @@ function EHIAchievementStatusTracker:init(panel, params, parent_class)
 end
 
 function EHIAchievementStatusTracker:Format()
-    local status = "ehi_achievement_" .. self._status
+    local status = "ehi_status_" .. self._status
     if LocalizationManager._custom_localizations[status] then
         return managers.localization:text(status)
     else

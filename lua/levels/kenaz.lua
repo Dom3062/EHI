@@ -51,10 +51,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, 66615) }, hint = Hints.KeypadReset },
     [EHI:GetInstanceElementID(100193, 66615)] = { time = 30, id = "ArmoryKeypadRebootECM", icons = { Icon.Wait }, special_function = SF.TriggerIfEnabled, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, 66615) }, hint = Hints.KeypadReset },
 
-    [EHI:GetInstanceElementID(100030, 11750)] = { time = 5, id = "C4Lower", icons = { Icon.C4 }, hint = Hints.Explosion },
-    [EHI:GetInstanceElementID(100030, 11850)] = { time = 5, id = "C4Top", icons = { Icon.C4 }, hint = Hints.Explosion },
-
-    -- Heli Drop Winch handled in CoreWorldInstanceManager
+    -- Heli Winch Drop handled in CoreWorldInstanceManager
 
     -- Toilets
     [EHI:GetInstanceElementID(100181, 13000)] = { id = "RefillLeft01", run = { time = 30 } },

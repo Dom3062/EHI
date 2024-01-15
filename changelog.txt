@@ -1,3 +1,10 @@
+r215 (15. 01. 2024):
+Added option "Show Endless Assault in the Tracker"
+Further improved compatibility with custom heists
+Color Codes tracker: Fixed an issue where code "0" is formatted as "?"
+Mountain Master Heist: Fixed an issue where teaset is not counted correctly
+Shadow Raid: Fixed incorrect min XP
+
 r214 (08. 01. 2024):
 Sniper Tracker: Fixed a crash with nil value
 

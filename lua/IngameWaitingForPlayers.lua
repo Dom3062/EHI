@@ -669,8 +669,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                             local previous_selection = previous_weapon_id == 0 and "secondary" or "primary"
                             self._kills[previous_selection] = self._progress
                             self._progress = self._kills[current_selection]
-                            self._text:set_text(self:Format())
-                            self:FitTheText()
+                            self:SetAndFitTheText()
                             self:AnimateBG(1)
                         end
                         function EHItango_achieve_3Tracker:SetCompleted(force)

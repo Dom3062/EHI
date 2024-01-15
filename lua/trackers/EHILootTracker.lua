@@ -89,8 +89,7 @@ end
 function EHILootTracker:SetCompleted(force)
     EHILootTracker.super.SetCompleted(self, force)
     if self._stay_on_screen and self._status then
-        self._text:set_text(self:Format())
-        self:FitTheText()
+        self:SetAndFitTheText()
         self._status = nil
     elseif self._show_popup and not self._popup_showed then
         self._popup_showed = true

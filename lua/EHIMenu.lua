@@ -601,10 +601,10 @@ function EHIMenu:ActivateItem(item, x)
 end
 
 function EHIMenu:SetMenuItemsEnabled(menu, parent_item_id, enabled)
-    for _, item in pairs(menu.items) do
+    for _, item in ipairs(menu.items) do
         local parents = item.parent
         if item.parent_func_update then
-            self[item.parent_func_update](self, menu)
+            self[item.parent_func_update](self, menu, item)
         elseif parents then
             local e
             if type(parents) == "string" and parents == parent_item_id then
@@ -612,7 +612,7 @@ function EHIMenu:SetMenuItemsEnabled(menu, parent_item_id, enabled)
             elseif type(parents) == "table" then
                 e = true
                 for _, parent in pairs(parents) do
-                    for _, menu_item in pairs(menu.items) do
+                    for _, menu_item in ipairs(menu.items) do
                         if menu_item.id == parent and menu_item.value == false then
                             e = false
                             break
@@ -1893,21 +1893,21 @@ function EHIMenu:GetXPEnabledValue()
     return EHI:GetOption("show_gained_xp") and not EHI:GetOption("show_xp_in_mission_briefing_only")
 end
 
-function EHIMenu:UpdateXPEnabledValue(menu)
+function EHIMenu:UpdateXPEnabledValue(menu, item)
     local enabled = self:GetXPEnabledValue()
     local items =
     {
         ehi_total_xp_difference_choice = true,
         ehi_xp_panel_choice = true
     }
-    for _, item in ipairs(menu.items) do
-        if items[item.id or ""] then
-            self:AnimateItemEnabled(item, enabled)
+    for _, m_item in ipairs(menu.items) do
+        if items[m_item.id or ""] then
+            self:AnimateItemEnabled(m_item, enabled)
         end
     end
 end
 
-function EHIMenu:UpdateAllXPOptions(menu)
+function EHIMenu:UpdateAllXPOptions(menu, item)
     local enabled = EHI:GetOption("show_gained_xp")
     local enabled2 = enabled and not EHI:GetOption("show_xp_in_mission_briefing_only")
     local items =
@@ -1921,24 +1921,24 @@ function EHIMenu:UpdateAllXPOptions(menu)
         ehi_total_xp_difference_choice = true,
         ehi_xp_panel_choice = true
     }
-    for _, item in ipairs(menu.items) do
-        if items[item.id or ""] then
-            self:AnimateItemEnabled(item, enabled)
-        elseif items2[item.id or ""] then
-            self:AnimateItemEnabled(item, enabled2)
+    for _, m_item in ipairs(menu.items) do
+        if items[m_item.id or ""] then
+            self:AnimateItemEnabled(m_item, enabled)
+        elseif items2[m_item.id or ""] then
+            self:AnimateItemEnabled(m_item, enabled2)
         end
     end
 end
 
-function EHIMenu:UpdateXPDiffEnabled(menu)
+function EHIMenu:UpdateXPDiffEnabled(menu, item)
     local enabled = self:GetXPEnabledValue() and EHI:GetOption("xp_panel") == 2
     local items =
     {
         ehi_total_xp_difference_choice = true
     }
-    for _, item in ipairs(menu.items) do
-        if items[item.id or ""] then
-            self:AnimateItemEnabled(item, enabled)
+    for _, m_item in ipairs(menu.items) do
+        if items[m_item.id or ""] then
+            self:AnimateItemEnabled(m_item, enabled)
         end
     end
 end
@@ -1959,7 +1959,7 @@ function EHIMenu:GetBuffVROffsetEnabled()
     return EHI:GetOption("show_buffs") and EHI:IsVR()
 end
 
-function EHIMenu:UpdateAllBuffOffset(menu)
+function EHIMenu:UpdateAllBuffOffset(menu, item)
     local enabled = self:GetBuffVROffsetEnabled()
     local items =
     {
@@ -1971,11 +1971,20 @@ function EHIMenu:UpdateAllBuffOffset(menu)
         ehi_x_offset = true,
         ehi_y_offset = true
     }
-    for _, item in ipairs(menu.items) do
-        if items[item.id or ""] then
-            self:AnimateItemEnabled(item, enabled)
-        elseif items2[item.id or ""] then
-            self:AnimateItemEnabled(item, not enabled)
+    for _, m_item in ipairs(menu.items) do
+        if items[m_item.id or ""] then
+            self:AnimateItemEnabled(m_item, enabled)
+        elseif items2[m_item.id or ""] then
+            self:AnimateItemEnabled(m_item, not enabled)
         end
     end
+end
+
+function EHIMenu:EndlessAssaultToggle()
+    return EHI:GetOption("show_assault_time_tracker") or EHI:GetOption("aggregate_assault_delay_and_assault_time")
+end
+
+function EHIMenu:EndlessAssaultUpdateToggle(menu, item)
+    local enabled = self:EndlessAssaultToggle()
+    self:AnimateItemEnabled(item, enabled)
 end

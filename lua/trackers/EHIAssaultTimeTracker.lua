@@ -9,7 +9,8 @@ local State =
 {
     build = 1,
     sustain = 2,
-    fade = 3
+    fade = 3,
+    endless = 4
 }
 local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
 ---@class EHIAssaultTimeTracker : EHIWarningTracker
@@ -46,8 +47,7 @@ function EHIAssaultTimeTracker:update(dt)
     if self._to_sustain_t then
         self._to_sustain_t = self._to_sustain_t - dt
         if self._to_sustain_t <= 0 then
-            self._state = State.sustain
-            self:SetIconColor(Sustain)
+            self:SetState(State.sustain)
             if self._recalculate_on_sustain then
                 self:RecalculateAssaultTime(self._new_diff)
                 self._new_diff = nil
@@ -60,8 +60,7 @@ function EHIAssaultTimeTracker:update(dt)
         self._to_fade_t = self._to_fade_t - dt
         if self._to_fade_t <= 0 then
             self._to_fade_t = nil
-            self._state = State.fade
-            self:SetIconColor(Fade)
+            self:SetState(State.fade)
         end
     end
 end
@@ -73,8 +72,7 @@ function EHIAssaultTimeTracker:update_cs(dt)
     if self._to_sustain_t then
         self._to_sustain_t = self._to_sustain_t - dt
         if self._to_sustain_t <= 0 then
-            self._state = State.sustain
-            self:SetIconColor(Sustain)
+            self:SetState(State.sustain)
             if self._recalculate_on_sustain then
                 self:RecalculateAssaultTime(self._new_diff)
                 self._new_diff = nil
@@ -87,8 +85,7 @@ function EHIAssaultTimeTracker:update_cs(dt)
         self._to_fade_t = self._to_fade_t - dt
         if self._to_fade_t <= 0 then
             self._to_fade_t = nil
-            self._state = State.fade
-            self:SetIconColor(Fade)
+            self:SetState(State.fade)
         end
     end
 end
@@ -115,6 +112,7 @@ function EHIAssaultTimeTracker:CalculateDifficultyDependentValue(values)
     return lerp(values[self._difficulty_point_index], values[self._difficulty_point_index + 1], self._difficulty_ramp)
 end
 
+---@return number
 function EHIAssaultTimeTracker:CalculateAssaultTime()
     local build = assault_values.build_duration
     local sustain = lerp(self:CalculateDifficultyDependentValue(assault_values.sustain_duration_min), self:CalculateDifficultyDependentValue(assault_values.sustain_duration_max), math.random()) * managers.groupai:state():_get_balancing_multiplier(assault_values.sustain_duration_balance_mul)
@@ -184,17 +182,20 @@ function EHIAssaultTimeTracker:UpdateDiff(diff)
     end
 end
 
-function EHIAssaultTimeTracker:OnEnterSustain(t)
-    if self._captain_arrived or self._state ~= State.build then
+---@param t number
+---@param sustain_t number?
+---@param already_extended boolean?
+function EHIAssaultTimeTracker:OnEnterSustain(t, sustain_t, already_extended)
+    if self._captain_arrived or self._state ~= State.build or self._endless_assault then
         return
     end
-    self._to_fade_t = t
-    self._assault_t = t
+    sustain_t = sustain_t or t
+    self._to_fade_t = sustain_t
+    self._assault_t = sustain_t
     self._sustain_original_t = t
-    self._time = t + assault_values.fade_duration
-    self._state = State.sustain
-    self:SetIconColor(Sustain)
-    if self._cs_assault_extender then
+    self._time = sustain_t + assault_values.fade_duration
+    self:SetState(State.sustain)
+    if self._cs_assault_extender and not already_extended then
         self:UpdateSustainTime(self:CalculateCSSustainTime(self._assault_t))
     end
     if self.update == self.update_negative then
@@ -202,17 +203,96 @@ function EHIAssaultTimeTracker:OnEnterSustain(t)
     end
 end
 
+---@param text_color Color?
+function EHIAssaultTimeTracker:StopTextAnim(text_color)
+    self._text:stop()
+    self:SetTextColor(text_color or Color.white)
+end
+
+---@param state number
+function EHIAssaultTimeTracker:SetState(state)
+    if self._state == state then
+        return
+    end
+    self._state = state
+    if state == State.build then
+        self:SetIconColor(Build)
+    elseif state == State.sustain then
+        self:SetIconColor(Sustain)
+    elseif state == State.fade then
+        self:SetIconColor(Fade)
+    else
+        self:SetIconColor(Color.red)
+    end
+end
+
 function EHIAssaultTimeTracker:CaptainArrived()
     self._captain_arrived = true
     self:RemoveTrackerFromUpdate()
-    self._text:stop()
-    self:SetTextColor(self._paused_color)
+    if self._endless_assault then
+        self:SetAndFitTheText()
+        self:SetTextColor(self._paused_color)
+    else
+        self:StopTextAnim(self._paused_color)
+    end
     self:SetIconColor(Captain)
     self._time_warning = false
 end
 
 function EHIAssaultTimeTracker:CaptainDefeated()
     self:PoliceActivityBlocked()
+end
+
+---@param state boolean?
+function EHIAssaultTimeTracker:SetEndlessAssault(state)
+    if self._endless_assault == state then
+        return
+    end
+    self._endless_assault = state
+    if state then
+        self:RemoveTrackerFromUpdate()
+        self._time_warning = false
+        self:StopTextAnim(Color.red)
+        self:SetState(State.endless)
+        self:SetStatusText("endless")
+        self:AnimateBG()
+    elseif not self._is_client then
+        local ai_state = managers.groupai:state()
+        local assault_data = ai_state._task_data.assault or {}
+        local current_state = assault_data.phase
+        if current_state then
+            if current_state == "build" then
+                local t_correction = assault_values.build_duration - (assault_data.phase_end_t - ai_state._t)
+                self._time = self:CalculateAssaultTime() - t_correction
+                self._assault_t = self._assault_t - t_correction
+                self._to_fade_t = self._to_fade_t - t_correction
+                self:SetAndFitTheText()
+                self:SetTextColor()
+                self:SetState(State.build)
+                self:AddTrackerToUpdate()
+                self:AnimateBG()
+            elseif current_state == "sustain" then
+                local end_t = ai_state.assault_phase_end_time and ai_state:assault_phase_end_time()
+                if end_t then -- Already takes into account Crime Spree
+                    local t = ai_state._t
+                    self:SetTextColor()
+                    self:OnEnterSustain(assault_data.phase_end_t - t, end_t - t, true)
+                    self:SetAndFitTheText()
+                    self._check_anim_progress = self._time <= 10
+                    self:AddTrackerToUpdate()
+                    self:AnimateBG()
+                else
+                    self:PoliceActivityBlocked() -- Current phase does not have end time, refresh at the next Build state
+                end
+            else
+                self:PoliceActivityBlocked() -- Current phase is not an assault phase or Fade, refresh at the next Build state
+            end
+        else
+            self:PoliceActivityBlocked() -- Current phase does not exist for some reason, refresh at the next Build state
+        end
+    else
+        self:PoliceActivityBlocked() -- Refresh at the next Build state
+    end
 end
 
 function EHIAssaultTimeTracker:PoliceActivityBlocked()

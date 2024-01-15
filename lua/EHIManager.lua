@@ -1184,6 +1184,14 @@ function EHIManager:Trigger(id, element, enabled)
                 else
                     self:CheckCondition(trigger)
                 end
+            elseif f == SF.SetTimeOrCreateTrackerIfEnabled then
+                if enabled then
+                    if self:Exists(trigger.id) then
+                        self:SetTime(trigger.id, trigger.time)
+                    else
+                        self:CheckCondition(trigger)
+                    end
+                end
             elseif f == SF.ExecuteIfElementIsEnabled then
                 if enabled then
                     self:CheckCondition(trigger)

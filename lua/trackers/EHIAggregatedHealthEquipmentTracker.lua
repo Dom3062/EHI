@@ -144,9 +144,8 @@ function EHIAggregatedHealthEquipmentTracker:UpdateAmount(id, unit, key, amount)
     if self:GetTotalAmount() <= 0 then
         self:delete()
     else
-        self._text:set_text(self:Format())
+        self:SetAndFitTheText()
         self:UpdateIconsVisibility()
-        self:FitTheText()
         self:AnimateBG()
     end
 end

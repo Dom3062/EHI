@@ -3,15 +3,6 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local SetTimeIfEnabled = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
-    if enabled then
-        if self._trackers:TrackerExists(trigger.id) then
-            self._trackers:SetTrackerTime(trigger.id, trigger.time)
-        else
-            self:CheckCondition(trigger)
-        end
-    end
-end)
 local EscapeWaypoint = { id = EHI:GetInstanceElementID(100043, 2900), special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
     trigger.data.distance = true
     trigger.data.state = "sneak_present"
@@ -24,9 +15,9 @@ end), data = { icon = Icon.Car } }
 local triggers = {
     [100918] = { time = 11 + 3.5 + 100 + 1330/30, id = "Escape", icons = Icon.CarEscape, hint = Hints.LootEscape },
     [101892] = EscapeWaypoint,
-    [101727] = { time = 1283/30, id = "Escape", icons = Icon.CarEscape, special_function = SetTimeIfEnabled, hint = Hints.LootEscape },
+    [101727] = { time = 1283/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTrackerIfEnabled, hint = Hints.LootEscape },
     [101933] = EscapeWaypoint,
-    [101706] = { time = 895/30, id = "Escape", icons = Icon.CarEscape, special_function = SetTimeIfEnabled, hint = Hints.LootEscape },
+    [101706] = { time = 895/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTrackerIfEnabled, hint = Hints.LootEscape },
     [101394] = EscapeWaypoint,
     [105792] = { time = 20, id = "FireApartment1", icons = { Icon.Fire, Icon.Wait }, hint = Hints.Wait },
     [105804] = { time = 20, id = "FireApartment2", icons = { Icon.Fire, Icon.Wait }, hint = Hints.Wait },

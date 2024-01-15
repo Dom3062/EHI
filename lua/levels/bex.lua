@@ -91,8 +91,8 @@ local element_sync_triggers =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [102302] = { time = 28.05 + 418/30, id = "Suprise", icons = { "pd2_question" }, hint = Hints.Question },
-    [EHI:GetInstanceElementID(100108, 35450)] = { time = 4.8, id = "SuprisePull", icons = { Icon.Wait }, hint = Hints.Wait },
+    [102843] = { time = 28.05 + 418/30, id = "Suprise", icons = { "pd2_question" }, hint = Hints.Question },
+    -- Suprise pull is in CoreWorldInstanceManager
 
     [101818] = { additional_time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill, hint = Hints.DrillPartsDelivery },
     [101820] = { time = 9.3, id = "HeliDropLance", icons = Icon.HeliDropDrill, special_function = SF.SetTrackerAccurate, hint = Hints.DrillPartsDelivery },

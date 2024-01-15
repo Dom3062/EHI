@@ -71,31 +71,6 @@ function EHIkosugi5Tracker:ObjectiveComplete()
     end
 end
 
-local function CheckForBrokenWeapons()
-    local world = managers.worlddefinition
-    for i = 100863, 100867, 1 do
-        local weapon = world:get_unit(i) --[[@as UnitCarry?]]
-        if weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
-            local state = weapon:damage()._state.graphic_group.grp_wpn
-            if state[1] == "set_visibility" and state[2] then
-                --EHI:Log("Found broken unit weapon with ID: " .. tostring(i))
-                managers.ehi_tracker:IncreaseLootCounterProgressMax()
-            end
-        end
-    end
-end
-
-local function CheckForBrokenCocaine() -- Not working for drop-ins
-    local world = managers.worlddefinition
-    for i = 100686, 100692, 1 do -- 2 - 8
-        local unit = world:get_unit(i) --[[@as UnitCarry?]]
-        if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_hidden == 0 then
-            --EHI:Log("Found broken unit cocaine with ID: " .. tostring(unit:editor_id()))
-            managers.ehi_tracker:IncreaseLootCounterProgressMax()
-        end
-    end
-end
-
 if EHI:GetOption("show_mission_trackers") then
     for _, unit_id in ipairs({ 100098, 102897, 102899, 102900 }) do
         managers.mission:add_runned_unit_sequence_trigger(unit_id, "interact", function(unit)
@@ -210,50 +185,74 @@ if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKIL
     dailies.daily_secret_identity = { elements = elements }
 end
 
+local other = {}
+if EHI:IsLootCounterVisible() then
+    local function CheckForBrokenWeapons()
+        local count = 0
+        local world = managers.worlddefinition
+        for i = 100863, 100867, 1 do
+            local weapon = world:get_unit(i) --[[@as UnitCarry?]]
+            if weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
+                local state = weapon:damage()._state.graphic_group.grp_wpn
+                if state[1] == "set_visibility" and state[2] then
+                    --EHI:Log("Found broken unit weapon with ID: " .. tostring(i))
+                    count = count + 1
+                end
+            end
+        end
+        return count
+    end
+    local function CheckForBrokenCocaine()
+        local count = 0
+        local world = managers.worlddefinition
+        for i = 100686, 100692, 1 do -- 2 - 8
+            local unit = world:get_unit(i) --[[@as UnitCarry?]]
+            if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_hidden == 0 then
+                --EHI:Log("Found broken unit cocaine with ID: " .. tostring(unit:editor_id()))
+                count = count + 1
+            end
+        end
+        return count
+    end
+    -- Loot Counter
+    -- 2 cocaine
+    -- 1 server
+    -- 2 random money bundles inside the warehouse
+    -- 4 random money bundles outside
+    -- 4 pieces of armor
+    local base_amount = 2 + 1 + 2 + 4 + 4
+    local random_weapons = 2
+    local random_paintings = 2
+    local crates = 4 -- (Normal + Hard)
+    if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
+        crates = 5
+    elseif EHI:IsMayhemOrAbove() then
+        crates = 6
+        random_weapons = 1
+        random_paintings = 1
+    end
+    other[102700] = EHI:AddLootCounter2(function()
+        local loot_correction = CheckForBrokenWeapons() + CheckForBrokenCocaine()
+        EHI:ShowLootCounter({
+            max = base_amount + crates + random_weapons + random_paintings + loot_correction,
+            triggers =
+            {
+                [103396] = { special_function = SF.IncreaseProgressMax2 }
+            },
+            hook_triggers = true
+        })
+    end)
+    -- Not included bugged loot, this is checked after spawn -> 102700
+    -- Reported here:
+    -- https://steamcommunity.com/app/218620/discussions/14/5710018482972011532/
+end
+
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    daily = dailies
+    daily = dailies,
+    other = other
 })
-
--- Loot Counter
--- 2 cocaine
--- 1 server
--- 2 random money bundles inside the warehouse
--- 4 random money bundles outside
--- 4 pieces of armor
-local base_amount = 2 + 1 + 2 + 4 + 4
-local random_weapons = 2
-local random_paintings = 2
-local crates = 4 -- (Normal + Hard)
-if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
-    crates = 5
-elseif EHI:IsMayhemOrAbove() then
-    crates = 6
-    random_weapons = 1
-    random_paintings = 1
-end
-EHI:ShowLootCounter({
-    max = base_amount + crates + random_weapons + random_paintings,
-    triggers =
-    {
-        [103396] = { special_function = SF.IncreaseProgressMax2 },
-        [102700] = { special_function = SF.CustomCode, f = function()
-            CheckForBrokenWeapons()
-            CheckForBrokenCocaine()
-        end}
-    },
-    load_sync = function(self)
-        CheckForBrokenWeapons()
-        if managers.game_play_central:GetMissionEnabledUnit(103995) then
-            self._trackers:IncreaseLootCounterProgressMax()
-        end
-        self._trackers:SyncSecuredLoot()
-    end
-})
--- Not included bugged loot, this is checked after spawn -> 102700 in EHI:ShowLootCounter()
--- Reported here:
--- https://steamcommunity.com/app/218620/discussions/14/5710018482972011532/
 
 EHI:ShowAchievementLootCounter({
     achievement = "kosugi_1",
@@ -293,23 +292,15 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
                 loot =
                 {
-                    _else = { times = min_bags },
-                    xp_bonus = { times = 1 }
-                }
-            },
-            max =
-            {
-                loot =
-                {
-                    samurai_suit = { times = 1 },
-                    _else = { times = 16 },
-                    xp_bonus = { times = 1 }
+                    samurai_suit = { max = 1 },
+                    _else = { min = min_bags, max = 16 },
+                    xp_bonus = { min_max = 1 }
                 },
-                bonus_xp = 4000 -- Stealth Escape
+                bonus_xp = { max = 4000 } -- Stealth Escape
             }
         }
     }

@@ -7,12 +7,6 @@ local triggers = {
     [101335] = { time = 7, id = "C4BasementWall", icons = { Icon.C4 }, hint = Hints.Explosion },
     [101968] = { time = 10, id = "LureDelay", icons = { Icon.Wait }, hint = Hints.Wait }
 }
-local safe_reset_time = EHI:GetKeypadResetTimer({ normal = 10 })
-for _, index in ipairs({ 13350, 14450, 14950, 15450, 15950, 16450, 16950, 17450 }) do
-    local unit_id = EHI:GetInstanceElementID(100279, index)
-    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 5 + safe_reset_time, id = "KeypadReset", icons = { Icon.Wait }, waypoint = { position_by_unit = unit_id }, hint = Hints.KeypadReset }
-    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = unit_id }, hint = Hints.KeypadReset }
-end
 
 ---@type ParseAchievementTable
 local achievements =

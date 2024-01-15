@@ -44,8 +44,7 @@ function EHIPiggyBankMutatorTracker:SetNewMax()
         new_max = new_max + 1
     end
     self._max = new_max
-    self._text:set_text(self:Format())
-    self:FitTheText()
+    self:SetAndFitTheText()
 end
 
 function EHIPiggyBankMutatorTracker:CheckLevelFromKills()
@@ -60,8 +59,7 @@ function EHIPiggyBankMutatorTracker:CheckLevelFromKills()
         if max > self._progress then
             self._current_level = i
             self._max = max
-            self._text:set_text(self:Format())
-            self:FitTheText()
+            self:SetAndFitTheText()
             done = true
             break
         end
@@ -76,8 +74,7 @@ function EHIPiggyBankMutatorTracker:SetCompleted(force)
     self._current_level = self._current_level + 1
     if self._current_level == self._max_levels then
         self._disable_counting = true
-        self._text:set_text("MAX")
-        self:FitTheText()
+        self:SetAndFitTheText("MAX")
         self:SetTextColor(Color.green)
     else
         self:SetNewMax()

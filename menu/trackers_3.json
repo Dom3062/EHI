@@ -92,6 +92,20 @@
             "ehi_ver" : 163
         },
         {
+            "type": "toggle",
+            "id": "ehi_show_endless_assault_choice",
+            "title": "ehi_show_endless_assault",
+            "description": "ehi_show_endless_assault_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_endless_assault",
+            "value": "show_endless_assault",
+            "default_value": true,
+            "is_parent" : true,
+            "parent_func": "EndlessAssaultToggle",
+            "parent_func_update": "EndlessAssaultUpdateToggle",
+            "ehi_ver" : 215
+        },
+        {
             "type": "divider",
             "size": 20
         },

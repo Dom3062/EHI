@@ -20,8 +20,7 @@ end
 function EHIXPTracker:AddXP(amount)
     self._fade_time = 5
     self._xp = self._xp + amount
-    self._text:set_text(self:Format())
-    self:FitTheText()
+    self:SetAndFitTheText()
     self:AnimateBG()
 end
 
@@ -125,8 +124,7 @@ function EHITotalXPTracker:SetXP(amount)
         else
             self._total_xp = self._xp
         end
-        self._text:set_text(self:Format())
-        self:FitTheText()
+        self:SetAndFitTheText()
         self:AnimateBG()
     end
 end

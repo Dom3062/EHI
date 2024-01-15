@@ -30,7 +30,7 @@ end)
 local PCVectors = {}
 ---@type ParseTriggerTable
 local triggers = {
-    [102016] = { time = 7, id = "Endless", icons = Icon.EndlessAssault, class = TT.Warning, hint = Hints.EndlessAssault },
+    [102016] = EHI:AddEndlessAssault(7),
 
     [104579] = { time = 15, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait, tracker_merge = true },
     [104580] = { time = 25, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait, tracker_merge = true },

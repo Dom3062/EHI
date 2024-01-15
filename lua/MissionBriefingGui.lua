@@ -357,30 +357,37 @@ function XPBreakdownPanel:ProcessBreakdown()
                         xp_with_gage = self._gui:FormatXPWithAllGagePackages(amount)
                     end
                     local str = data.name and self:GetTranslatedKey(data.name, data.additional_name) or "<Unknown objective>"
-                    local text_color = data.optional and colors.optional --[[@as Color?]]
+                    local text_color = data.optional and colors.optional ---@cast text_color Color?
+                    local add_xp_to_base = true
                     if data.times then
                         local times_formatted = self._loc:text("ehi_experience_trigger_times", { times = data.times })
                         local s
                         if data.stealth then
                             total_xp.add = false
+                            add_xp_to_base = false
                             s = str .. " (" .. times_formatted .. "; " .. self._loc:text("ehi_experience_stealth") .. ")"
                         elseif data.loud then
                             total_xp.add = false
+                            add_xp_to_base = false
                             s = str .. " (" .. times_formatted .. "; " .. self._loc:text("ehi_experience_loud") .. ")"
                         else
                             s = str .. " (" .. times_formatted .. ")"
-                            total_xp.base = total_xp.base + (amount * data.times)
                         end
                         self:AddXPText(s .. ": ", xp, xp_with_gage, text_color)
                     elseif data.stealth then
                         total_xp.add = false
+                        add_xp_to_base = false
                         self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", xp, xp_with_gage, text_color)
                     elseif data.loud then
                         total_xp.add = false
+                        add_xp_to_base = false
                         self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", xp, xp_with_gage, text_color)
                     else
-                        total_xp.base = total_xp.base + amount
                         self:AddXPText(str .. ": ", xp, xp_with_gage, text_color)
+                    end
+                    if add_xp_to_base then
+                        local times = data.times or 1
+                        total_xp.base = total_xp.base + (amount * times)
                     end
                 end
             end
@@ -494,6 +501,12 @@ function XPBreakdownPanel:FormatRandomObjectivesHeader(max)
         else
             return self._loc:text("ehi_experience_random_objectives", { count = max, suffix1 = "ých", suffix2 = "ů" })
         end
+    elseif localization == "english" then
+        if max == 1 then
+            return self._loc:text("ehi_experience_random_objectives", { count = max, suffix = "" })
+        else
+            return self._loc:text("ehi_experience_random_objectives", { count = max, suffix = "s" })
+        end
     end
     return self._loc:text("ehi_experience_random_objectives", { count = max })
 end
@@ -554,12 +567,34 @@ function XPBreakdownPanel:ProcessRandomObjectives(random, total_xp)
     end
 end
 
+---@param mandatory number
+function XPBreakdownPanel:FormatLootMandatoryBags(mandatory)
+    if localization == "czech" then
+        if mandatory == 1 then
+            return self._loc:text("ehi_experience_mandatory_bags", { count = mandatory, suffix1 = "ý", suffix2 = "tel" })
+        elseif math.within(mandatory, 2, 4) then
+            return self._loc:text("ehi_experience_mandatory_bags", { count = mandatory, suffix1 = "é", suffix2 = "tle" })
+        else
+            return self._loc:text("ehi_experience_mandatory_bags", { count = mandatory, suffix1 = "ých", suffix2 = "tlů" })
+        end
+    elseif localization == "english" then
+        if mandatory == 1 then
+            return self._loc:text("ehi_experience_mandatory_bags", { count = mandatory, suffix = "" })
+        else
+            return self._loc:text("ehi_experience_mandatory_bags", { count = mandatory, suffix = "s" })
+        end
+    end
+    return self._loc:text("ehi_experience_mandatory_bags", { count = mandatory })
+end
+
 ---@param loot string
 ---@param times number
+---@param mandatory number
+---@param additional_bag boolean
 ---@param to_secure number
 ---@param value string
 ---@param value_with_gage string?
-function XPBreakdownPanel:AddLootSecured(loot, times, to_secure, value, value_with_gage)
+function XPBreakdownPanel:AddLootSecured(loot, times, to_secure, mandatory, additional_bag, value, value_with_gage)
     local loot_name
     if loot == "_else" then
         loot_name = self._loc:text("ehi_experience_loot_else")
@@ -570,13 +605,24 @@ function XPBreakdownPanel:AddLootSecured(loot, times, to_secure, value, value_wi
         loot_name = carry_data.name_id and self._loc:text(carry_data.name_id) or loot
     end
     local str = "- " .. loot_name
-    if times > 0 then
-        local postfix = to_secure > 0 and "" or ")"
-        str = str .. " (" .. self._loc:text("ehi_experience_trigger_times", { times = times }) .. postfix
-    end
-    if to_secure > 0 then
-        local prefix = times > 0 and "; " or " ("
-        str = str .. prefix .. self._loc:text("ehi_experience_to_secure", { amount = to_secure }) .. ")"
+    if times > 0 or to_secure > 0 or mandatory > 0 or additional_bag then
+        str = str .. " ("
+        if times > 0 then
+            str = str .. self._loc:text("ehi_experience_trigger_times", { times = times })
+        end
+        if to_secure > 0 then
+            local prefix = times > 0 and "; " or ""
+            str = str .. prefix .. self._loc:text("ehi_experience_to_secure", { amount = to_secure })
+        end
+        if mandatory > 0 then
+            local prefix = (times > 0 or to_secure > 0) and "; " or ""
+            str = str .. prefix .. self:FormatLootMandatoryBags(mandatory)
+        end
+        if additional_bag then
+            local prefix = (times > 0 or to_secure > 0 or mandatory > 0) and "; " or ""
+            str = str .. prefix .. self._loc:text("ehi_experience_additional_bag")
+        end
+        str = str .. ")"
     end
     local xp = self._loc:text("ehi_experience_xp")
     if value_with_gage then
@@ -631,7 +677,7 @@ function XPBreakdownPanel:ProcessLoot(total_xp)
                 if self._gage then
                     xp_with_gage = self._gui:FormatXPWithAllGagePackages(data.amount)
                 end
-                self:AddLootSecured(loot, data.times or 0, data.to_secure or 0, xp, xp_with_gage)
+                self:AddLootSecured(data.name or loot, data.times or 0, data.to_secure or 0, data.mandatory or 0, data.additional, xp, xp_with_gage)
                 if total_xp.add and not data.times then
                     total_xp.add = false
                 end
@@ -643,7 +689,7 @@ function XPBreakdownPanel:ProcessLoot(total_xp)
                 if self._gage then
                     xp_with_gage = self._gui:FormatXPWithAllGagePackages(data)
                 end
-                self:AddLootSecured(loot, 0, 0, xp, xp_with_gage)
+                self:AddLootSecured(loot, 0, 0, 0, false, xp, xp_with_gage)
                 total_xp.add = false
             end
         end
@@ -753,7 +799,7 @@ function XPBreakdownPanel:ParamsMinMax(o_params)
     local min, max = 0, 0
     if o_params.objective then
         local o_min, o_max = {}, {}
-        for key, value in pairs(o_params.objective or {}) do
+        for key, value in pairs(o_params.objective) do
             if value.min_max then
                 local times = { times = value.min_max }
                 o_min[key] = times
@@ -775,7 +821,7 @@ function XPBreakdownPanel:ParamsMinMax(o_params)
     end
     if o_params.objectives then
         local o_min, o_max = {}, {}
-        for key, value in pairs(o_params.objectives or {}) do
+        for key, value in pairs(o_params.objectives) do
             if value.min_max then
                 local times = { times = value.min_max }
                 o_min[key] = times
@@ -905,7 +951,7 @@ function XPBreakdownPanel:ParamsMinWithMax(o_params)
             local amount = 0
             if type(loot) == "table" then
                 amount = loot.amount
-                times = times ~= 1 and (loot.times or 1) or times
+                times = times == 1 and (loot.times or 1) or times
             elseif type(loot) == "number" then
                 amount = loot
             end
@@ -1214,7 +1260,7 @@ function XPBreakdownPanel:SumObjective(override_objective, skip_optional)
         local count = true
         local override = override_objective[key]
         if type(obj) == "table" then
-            actual_value = obj.amount
+            actual_value = obj.amount or 0
             times = obj.times or 1
             count = not obj.optional or (obj.optional and not skip_optional)
         elseif type(obj) == "number" then
@@ -1772,7 +1818,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
                                 size = size + 1
                             end
                         elseif stop_and_add.add_objectives_with_pos then
-                            for _, value in ipairs(override.add_objectives_with_pos) do
+                            for _, value in ipairs(stop_and_add.add_objectives_with_pos) do
                                 if value.pos then
                                     table.insert(new_objectives, value.pos, value.objective)
                                 else

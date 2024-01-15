@@ -4,15 +4,6 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local pink_car = { { icon = Icon.Car, color = Color("D983D1") }, Icon.Goto }
-local ExecuteIfEnabled = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
-    if enabled then
-        if self._trackers:TrackerExists(trigger.id) then
-            self._trackers:SetTrackerTime(trigger.id, trigger.time)
-        else
-            self:CheckCondition(trigger)
-        end
-    end
-end)
 local triggers = {
     [100778] = { time = 10 + 17 + 13 + 15 + 17, id = "DefendWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
@@ -31,8 +22,8 @@ local triggers = {
     [101102] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101138 } },
 
     [100727] = { time = 6 + 18 + 8.5 + 30 + 25 + 375/30, id = "Escape", icons = Icon.CarEscape, hint = Hints.LootEscape },
-    [100207] = { time = 260/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled, hint = Hints.LootEscape },
-    [100209] = { time = 250/30, id = "Escape", icons = Icon.CarEscape, special_function = ExecuteIfEnabled, hint = Hints.LootEscape }
+    [100207] = { time = 260/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTrackerIfEnabled, hint = Hints.LootEscape },
+    [100209] = { time = 250/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTrackerIfEnabled, hint = Hints.LootEscape }
 }
 if EHI:IsClient() then
     triggers[100753] = EHI:ClientCopyTrigger(triggers[100778], { time = 17 + 13 + 15 + 17 })

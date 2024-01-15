@@ -85,8 +85,7 @@ function EHIEquipmentTracker:UpdateAmount(unit, key, amount)
     if self._amount <= 0 then
         self:delete()
     else
-        self._text:set_text(self:Format())
-        self:FitTheText()
+        self:SetAndFitTheText()
         self:AnimateBG()
     end
 end

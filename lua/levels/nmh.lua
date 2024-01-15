@@ -128,7 +128,7 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 EHI:AddLoadSyncFunction(function(self)
-    local elevator_counter = managers.worlddefinition:get_unit(102296)
+    local elevator_counter = managers.worlddefinition:get_unit(102296) --[[@as UnitDigitalTimer]]
     if elevator_counter then
         local o = elevator_counter:digital_gui()
         if o and o._timer and o._timer ~= 30 then

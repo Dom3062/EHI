@@ -164,7 +164,9 @@ _G.EHI =
         RemoveTrigger = 18,
         -- Requires `id` and `time`
         SetTimeOrCreateTracker = 19,
-        ExecuteIfElementIsEnabled = 20,
+        -- Requires `id` and `time`
+        SetTimeOrCreateTrackerIfEnabled = 20,
+        ExecuteIfElementIsEnabled = 21,
         -- Requires `id` and `data.id (preplanning id)`  
         -- See: `ElementPreplanning` in Mission Script
         SetTimeByPreplanning = 24,
@@ -412,7 +414,7 @@ _G.EHI =
         Destruction = "C_Vlad_H_Mallcrasher_Shoot",
         Tablet = "tablet",
 
-        EndlessAssault = { { icon = "padlock", color = Color(1, 0, 0) } },
+        EndlessAssault = { { icon = "padlock", color = Color.red } },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
         CarEscapeNoLoot = { "pd2_car", "pd2_escape" },
         CarWait = { "pd2_car", "pd2_escape", "pd2_lootdrop", "faster" },
@@ -773,6 +775,7 @@ local function LoadDefaultValues(self)
         show_assault_delay_tracker = true,
         show_assault_time_tracker = true,
         aggregate_assault_delay_and_assault_time = true,
+        show_endless_assault = true,
         show_loot_counter = true,
         show_all_loot_secured_popup = true,
         variable_random_loot_format = 3, -- 1 = Max-(Max+Random)?; 2 = MaxRandom?; 3 = Max+Random?
@@ -2559,7 +2562,8 @@ function EHI:HookColorCodes(color_table, params)
     ---@param color string
     local function hook(unit_id, color)
         local sequences = color_sequence_hash[color]
-        for i, sequence in ipairs(sequences) do
+        for i = 0, 9, 1 do
+            local sequence = sequences[i]
             managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, function(...)
                 managers.ehi_tracker:CallFunction(tracker_name, "SetCode", color, i)
             end)
@@ -2596,6 +2600,25 @@ function EHI:HookColorCodes(color_table, params)
             end
         end
     end
+end
+
+---@param time number
+---@param trigger_name string?
+---@param include_loud_check boolean?
+function EHI:AddEndlessAssault(time, trigger_name, include_loud_check)
+    ---@type ElementTrigger
+    local tbl =
+    {
+        id = trigger_name or "EndlessAssault",
+        time = time,
+        icons = self.Icons.EndlessAssault,
+        class = self.Trackers.Warning,
+        hint = self.Hints.EndlessAssault
+    }
+    if include_loud_check then
+        tbl.condition_function = self.ConditionFunctions.IsLoud
+    end
+    return tbl
 end
 
 Load()

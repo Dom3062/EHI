@@ -12,7 +12,8 @@ local State =
     anticipation = 2,
     build = 3,
     sustain = 4,
-    fade = 5
+    fade = 5,
+    endless = 6
 }
 local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
 local tweak_values = assault_values.delay
@@ -90,7 +91,10 @@ function EHIAssaultTracker:init(panel, params, parent_class)
         self._text_color = self._inaccurate_text_color
     end
     EHIAssaultTracker.super.init(self, panel, params, parent_class)
-    self._update = not params.stop_counting
+    self._update = not (params.stop_counting or params.endless_assault)
+    if params.endless_assault then
+        self:SetEndlessAssault(true)
+    end
 end
 
 ---@param dt number
@@ -121,10 +125,13 @@ function EHIAssaultTracker:update_assault(dt)
     end
 end
 
+---@param assault_delay_bonus boolean?
 function EHIAssaultTracker:AnimateColor(assault_delay_bonus)
-    EHIAssaultTracker.super.AnimateColor(self, nil, (self._assault or assault_delay_bonus) and self._completion_color or self._warning_color)
+    EHIAssaultTracker.super.AnimateColor(self, self._check_anim_progress, (self._assault or assault_delay_bonus) and self._completion_color or self._warning_color)
+    self._check_anim_progress = nil
 end
 
+---@param diff number
 function EHIAssaultTracker:CalculateDifficultyRamp(diff)
     local ramp = tweak_data.group_ai.difficulty_curve_points
     local i = 1
@@ -140,7 +147,7 @@ function EHIAssaultTracker:ComputeHostageDelay()
     if self._precomputed_hostage_delay then
         return
     end
-    self._hostage_delay = lerp(hostage_values[self._difficulty_point_index], hostage_values[self._difficulty_point_index + 1], self._difficulty_ramp)
+    self._hostage_delay = lerp(hostage_values[self._difficulty_point_index], hostage_values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
 end
 
 function EHIAssaultTracker:SyncAnticipationColorInaccurate()
@@ -158,6 +165,7 @@ function EHIAssaultTracker:SyncAnticipationColor()
     self._hostage_delay_disabled = true
 end
 
+---@param t number
 function EHIAssaultTracker:SyncAnticipation(t)
     self._time = t - (2 * math.random())
     self:SyncAnticipationColor()
@@ -180,6 +188,7 @@ function EHIAssaultTracker:CalculateBreakTime()
     return base_delay + 30
 end
 
+---@param has_hostages boolean?
 function EHIAssaultTracker:SetHostages(has_hostages)
     if self._hostage_delay_disabled then
         return
@@ -193,6 +202,7 @@ function EHIAssaultTracker:SetHostages(has_hostages)
     end
 end
 
+---@param t number
 function EHIAssaultTracker:UpdateTime(t)
     if self._time then
         self._time = self._time + t
@@ -204,6 +214,7 @@ function EHIAssaultTracker:UpdateTime(t)
     end
 end
 
+---@param t number
 function EHIAssaultTracker:StartAnticipation(t)
     self:StopTextAnim()
     self._hostage_delay_disabled = true
@@ -229,6 +240,7 @@ function EHIAssaultTracker:SetControlStateBlock(block, t)
     end
 end
 
+---@param time number
 function EHIAssaultTracker:SetTime(time)
     if self._hostage_delay_disabled or self._assault then
         return
@@ -238,6 +250,7 @@ function EHIAssaultTracker:SetTime(time)
     self:CheckIfHostageIsPresent()
 end
 
+---@param diff number
 function EHIAssaultTracker:UpdateDiff(diff)
     if self._diff == diff then
         return
@@ -263,6 +276,7 @@ function EHIAssaultTracker:UpdateDiff(diff)
     end]]
 end
 
+---@param diff number
 function EHIAssaultTracker:AssaultStart(diff)
     if self._diff ~= diff then
         self:CalculateDifficultyRamp(diff)
@@ -277,12 +291,19 @@ function EHIAssaultTracker:AssaultStart(diff)
     if self._cs_assault_extender then
         self:SetHook()
     end
+    if self._control_state_block then
+        self._control_state_block = nil
+        self:AddTrackerToUpdate()
+    end
 end
 
+---@param values table
+---@return number
 function EHIAssaultTracker:CalculateDifficultyDependentValue(values)
-    return lerp(values[self._difficulty_point_index], values[self._difficulty_point_index + 1], self._difficulty_ramp)
+    return lerp(values[self._difficulty_point_index], values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
 end
 
+---@return number
 function EHIAssaultTracker:CalculateAssaultTime()
     local build = assault_values.build_duration
     local sustain = lerp(self:CalculateDifficultyDependentValue(assault_values.sustain_duration_min), self:CalculateDifficultyDependentValue(assault_values.sustain_duration_max), math.random()) * managers.groupai:state():_get_balancing_multiplier(assault_values.sustain_duration_balance_mul)
@@ -312,6 +333,8 @@ function EHIAssaultTracker:RecalculateAssaultTime()
     self._time = t - build
 end
 
+---@param sustain number
+---@param n_of_hostages number?
 function EHIAssaultTracker:CalculateCSSustainTime(sustain, n_of_hostages)
     n_of_hostages = n_of_hostages or managers.groupai:state():hostage_count()
     local n_of_jokers = managers.groupai:state():get_amount_enemies_converted_to_criminals()
@@ -326,6 +349,7 @@ function EHIAssaultTracker:OnMinionCountChanged()
     end
 end
 
+---@param new_sustain number
 function EHIAssaultTracker:UpdateSustainTime(new_sustain)
     if new_sustain ~= self._time then
         local time_diff = new_sustain - self._time
@@ -334,16 +358,20 @@ function EHIAssaultTracker:UpdateSustainTime(new_sustain)
     end
 end
 
-function EHIAssaultTracker:OnEnterSustain(t)
-    if self._captain_arrived then
+---@param t number
+---@param sustain_t number?
+---@param already_extended boolean?
+function EHIAssaultTracker:OnEnterSustain(t, sustain_t, already_extended)
+    if self._captain_arrived or self._endless_assault then
         return
     end
-    self._to_next_state_t = t
-    self._assault_t = t
+    sustain_t = sustain_t or t
+    self._to_next_state_t = sustain_t
+    self._assault_t = sustain_t
     self._sustain_original_t = t
-    self._time = t + assault_values.fade_duration
+    self._time = sustain_t + assault_values.fade_duration
     self:SetState(State.sustain)
-    if self._cs_assault_extender then
+    if self._cs_assault_extender and not already_extended then
         self:UpdateSustainTime(self:CalculateCSSustainTime(self._assault_t))
     end
     if self.update == self.update_negative then
@@ -360,6 +388,7 @@ function EHIAssaultTracker:SetHook()
     EHI:HookWithID(HUDManager, "set_control_info", "EHI_Assault_set_control_info", self._hook_f)
 end
 
+---@param diff number
 function EHIAssaultTracker:AssaultEnd(diff)
     if self._diff ~= diff then
         self:CalculateDifficultyRamp(diff)
@@ -376,11 +405,19 @@ function EHIAssaultTracker:AssaultEnd(diff)
     EHI:Unhook("Assault_set_control_info")
 end
 
+---@param diff number
+function EHIAssaultTracker:AssaultEndWithBlock(diff)
+    self:AssaultEnd(diff)
+    self:SetControlStateBlock(true, 0)
+end
+
+---@param text_color Color?
 function EHIAssaultTracker:StopTextAnim(text_color)
     self._text:stop()
     self:SetTextColor(text_color or Color.white)
 end
 
+---@param state number
 function EHIAssaultTracker:SetState(state)
     if self._state == state then
         return
@@ -394,25 +431,89 @@ function EHIAssaultTracker:SetState(state)
         self:SetIconColor(Build)
     elseif state == State.sustain then
         self:SetIconColor(Sustain)
-    else
+    elseif state == State.fade then
         self:SetIconColor(Fade)
+    else
+        self:SetIconColor(Color.red)
     end
 end
 
 function EHIAssaultTracker:CaptainArrived()
     self._captain_arrived = true
     self:RemoveTrackerFromUpdate()
-    self:StopTextAnim(self._paused_color)
+    if self._endless_assault then
+        self:SetAndFitTheText()
+        self:SetTextColor(self._paused_color)
+    else
+        self:StopTextAnim(self._paused_color)
+    end
     self:SetIconColor(Captain)
     self._time_warning = nil
+    self._endless_assault = nil
 end
 
 function EHIAssaultTracker:CaptainDefeated()
     self._captain_arrived = nil
     self._time = 5
-    self:SetTextColor(Color.white)
+    self:SetTextColor()
     self:SetIconColor(Fade)
     self:AddTrackerToUpdate()
+end
+
+---@param state boolean?
+function EHIAssaultTracker:SetEndlessAssault(state)
+    if self._endless_assault == state then
+        return
+    end
+    self._endless_assault = state
+    if state then
+        self:RemoveTrackerFromUpdate()
+        self:StopTextAnim(Color.red)
+        self:SetState(State.endless)
+        self:SetStatusText("endless")
+        self:AnimateBG()
+        self._time_warning = false
+    elseif not self._is_client then
+        local ai_state = managers.groupai:state()
+        local assault_data = ai_state._task_data.assault or {}
+        local current_state = assault_data.phase
+        if current_state then
+            if current_state == "build" then
+                local t_correction = assault_values.build_duration - (assault_data.phase_end_t - ai_state._t)
+                self._time = self:CalculateAssaultTime() - t_correction
+                self._assault_t = self._assault_t - t_correction
+                self._to_next_state_t = self._to_next_state_t - t_correction
+                self:SetAndFitTheText()
+                self:SetTextColor()
+                self:SetState(State.build)
+                self:AddTrackerToUpdate()
+                self:AnimateBG()
+            elseif current_state == "sustain" then
+                local end_t = ai_state.assault_phase_end_time and ai_state:assault_phase_end_time()
+                if end_t then -- Already takes into account Crime Spree
+                    local t = ai_state._t
+                    self:SetTextColor()
+                    self:OnEnterSustain(assault_data.phase_end_t - t, end_t - t, true)
+                    self:SetAndFitTheText()
+                    self._check_anim_progress = self._time <= 10
+                    self:AddTrackerToUpdate()
+                    self:AnimateBG()
+                else
+                    self:PoliceActivityBlocked() -- Current phase does not have end time, refresh at the next Control state
+                end
+            elseif current_state == "fade" then
+                self:CaptainDefeated() -- Faster than retyping it here
+                self:SetAndFitTheText()
+                self:AnimateBG()
+            else
+                self:PoliceActivityBlocked() -- Current phase is not an assault phase, refresh at the next Build state
+            end
+        else
+            self:PoliceActivityBlocked() -- Current phase does not exist for some reason, refresh at the next Control state
+        end
+    else
+        self:PoliceActivityBlocked() -- Refresh at the next Control state
+    end
 end
 
 function EHIAssaultTracker:PoliceActivityBlocked()

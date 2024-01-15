@@ -77,6 +77,7 @@ function AmmoBagBase:GetRealAmount()
     return (self._ammo_amount or self._max_ammo_amount) - self._offset
 end
 
+---@param offset number
 function AmmoBagBase:SetOffset(offset)
     self._offset = offset
     if self._unit:interaction():active() and not self._ignore then

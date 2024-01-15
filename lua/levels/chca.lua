@@ -8,32 +8,10 @@ local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [103030] = { time = 19, id = "InsideManTalk", icons = { "pd2_talk" }, hint = Hints.Wait },
 
-    -- C4 in the meeting room
-    [EHI:GetInstanceElementID(100025, 20420)] = { time = 5, id = "C4MeetingRoom", icons = { Icon.C4 }, hint = Hints.Explosion },
-
-    -- C4 in the vault room
-    [EHI:GetInstanceElementID(100022, 11770)] = { time = 5, id = "C4VaultWall", icons = { Icon.C4 }, hint = Hints.Explosion },
-
-    -- Chandelier swing
-    [EHI:GetInstanceElementID(100137, 20420)] = { time = 10 + 1 + 52/30, id = "Swing", icons = { Icon.Wait }, hint = Hints.Wait },
-
     -- Heli Extraction
     [101432] = { id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 101362, hint = Hints.Escape },
 
-    [EHI:GetInstanceElementID(100210, 14670)] = { time = 3 + EHI:GetKeypadResetTimer(), id = "KeypadReset", icons = { Icon.Wait }, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) }, hint = Hints.KeypadReset },
-    [EHI:GetInstanceElementID(100176, 14670)] = { time = 30, id = "KeypadResetECMJammer", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = EHI:GetInstanceElementID(100279, 14670) }, hint = Hints.KeypadReset },
-
     [102571] = { additional_time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = Icon.HeliDropWinch, hint = Hints.brb_WinchDelivery },
-
-    -- Winch (the element is actually in instance "chas_heli_drop")
-    [EHI:GetInstanceElementID(100097, 21420)] = { time = 150, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable, hint = Hints.Winch },
-    [EHI:GetInstanceElementID(100104, 21420)] = { id = "Winch", special_function = SF.UnpauseTracker },
-    [EHI:GetInstanceElementID(100105, 21420)] = { id = "Winch", special_function = SF.PauseTracker },
-    -- DON'T REMOVE THIS, because OVK's scripting skills suck
-    -- They pause the timer when it reaches zero for no reason. But the timer is already stopped via Lua...
-    [EHI:GetInstanceElementID(100101, 21420)] = { id = "Winch", special_function = SF.RemoveTracker },
-
-    [EHI:GetInstanceElementID(100096, 21420)] = { time = 5 + 15, id = "HeliRaise", icons = { Icon.Heli, Icon.Wait }, hint = Hints.Wait },
 
     [102675] = { additional_time = 5 + 10 + 14, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.GetElementTimerAccurate, element = 102674, hint = Hints.Wait },
 
@@ -62,59 +40,10 @@ if EHI:IsClient() then
     triggers[101372] = { time = 15, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape }
     triggers[102678] = { time = 45, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait }
     triggers[102679] = { time = 15, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait }
-    -- "pulling_timer_trigger_120sec" but the time is set to 80s...
-    triggers[EHI:GetInstanceElementID(100099, 21420)] = { time = 80, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Winch }
-    triggers[EHI:GetInstanceElementID(100100, 21420)] = { time = 90, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Winch }
-    triggers[EHI:GetInstanceElementID(100060, 21420)] = { time = 20, id = "Winch", icons = { Icon.Winch }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Winch }
-end
-
-if EHI:CanShowAchievement("chca_12") and ovk_and_up then
-    local active_saws = 0
-    local function chca_12(unit_id, unit_data, unit)
-        unit:timer_gui():chca_12()
-    end
-    local function check(...)
-        active_saws = active_saws + 1
-        if active_saws > 1 then
-            managers.ehi_tracker:SetAchievementFailed("chca_12")
-        end
-    end
-    local function saw_done()
-        active_saws = active_saws - 1
-    end
-    function TimerGui:chca_12()
-        local key = self._ehi_key or tostring(self._unit:key())
-        local hook_key = "EHI_saw_start_" .. key
-        if self.PostStartTimer then
-            EHI:HookWithID(self, "PostStartTimer", hook_key, check)
-        else
-            EHI:HookWithID(self, "_start", hook_key, check)
-        end
-    end
-    local tbl =
-    {
-        [100122] = { f = chca_12 },
-        [100011] = { f = chca_12 },
-        [100079] = { f = chca_12 },
-        [100080] = { f = chca_12 }
-    }
-    EHI:UpdateInstanceUnitsNoCheck(tbl, 15470)
-    local trigger = { special_function = SF.CustomCode, f = saw_done }
-    triggers[EHI:GetInstanceElementID(100082, 15470)] = trigger
-    triggers[EHI:GetInstanceElementID(100083, 15470)] = trigger
-    triggers[EHI:GetInstanceElementID(100084, 15470)] = trigger
-    triggers[EHI:GetInstanceElementID(100085, 15470)] = trigger
 end
 
 local DisableWaypoints =
 {
-    -- chca_spa
-    -- chca_spa_1
-    [EHI:GetInstanceElementID(100125, 11970)] = true, -- Defend
-    [EHI:GetInstanceElementID(100126, 11970)] = true, -- Fix
-    -- chca_spa_2
-    [EHI:GetInstanceElementID(100128, 12470)] = true, -- Defend
-    [EHI:GetInstanceElementID(100129, 12470)] = true, -- Fix
     -- chca_casino_hack
     -- chca_casino_hack/001
     [EHI:GetInstanceElementID(100034, 20620)] = true, -- Defend
@@ -180,6 +109,43 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 45 + 30 })
 }
+if EHI:CanShowAchievement("chca_12") and ovk_and_up then
+    local active_saws = 0
+    local function chca_12(unit_id, unit_data, unit)
+        unit:timer_gui():chca_12()
+    end
+    local function check(...)
+        active_saws = active_saws + 1
+        if active_saws > 1 then
+            managers.ehi_tracker:SetAchievementFailed("chca_12")
+        end
+    end
+    local function saw_done()
+        active_saws = active_saws - 1
+    end
+    function TimerGui:chca_12()
+        local key = self._ehi_key or tostring(self._unit:key())
+        local hook_key = "EHI_saw_start_" .. key
+        if self.PostStartTimer then
+            EHI:HookWithID(self, "PostStartTimer", hook_key, check)
+        else
+            EHI:HookWithID(self, "_start", hook_key, check)
+        end
+    end
+    local tbl =
+    {
+        [100122] = { f = chca_12 },
+        [100011] = { f = chca_12 },
+        [100079] = { f = chca_12 },
+        [100080] = { f = chca_12 }
+    }
+    EHI:UpdateInstanceUnitsNoCheck(tbl, 15470)
+    local trigger = { special_function = SF.CustomCode, f = saw_done }
+    other[EHI:GetInstanceElementID(100082, 15470)] = trigger
+    other[EHI:GetInstanceElementID(100083, 15470)] = trigger
+    other[EHI:GetInstanceElementID(100084, 15470)] = trigger
+    other[EHI:GetInstanceElementID(100085, 15470)] = trigger
+end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
         veryhard_or_below = 1,
