@@ -345,7 +345,9 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                     end
                 else
                     local new_trigger = deep_clone(trigger)
-                    new_trigger.id = new_trigger.id .. start_index
+                    if new_trigger.id then
+                        new_trigger.id = new_trigger.id .. start_index
+                    end
                     if trigger.element then
                         new_trigger.element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
                     end
