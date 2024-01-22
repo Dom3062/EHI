@@ -78,18 +78,6 @@ end
 
 EHI:ParseTriggers({ mission = triggers, other = other })
 
-local tbl = {}
--- levels/instances/unique/vit/vit_peoc_workstation/001-006
-for i = 30000, 31500, 300 do
-    tbl[EHI:GetInstanceUnitID(100045, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100058, i) }
-end
-tbl[EHI:GetInstanceUnitID(100058, 22250)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100018, 22250), restore_waypoint_on_done = true }
-tbl[EHI:GetInstanceUnitID(100191, 22250)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100018, 22250), restore_waypoint_on_done = true }
-tbl[EHI:GetInstanceUnitID(100192, 22250)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100018, 22250), restore_waypoint_on_done = true }
---- Safe in Oval Office
-tbl[EHI:GetInstanceUnitID(100239, 12900)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100254, 12900) }
-EHI:UpdateUnits(tbl)
-
 local stealth_objectives =
 {
     { amount = 1000, name = "twh_entered" },

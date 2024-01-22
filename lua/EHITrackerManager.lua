@@ -325,13 +325,14 @@ end
 ---@param max number?
 ---@param max_random number?
 ---@param offset number?
-function EHITrackerManager:ShowLootCounter(max, max_random, offset)
+---@param no_max boolean?
+function EHITrackerManager:ShowLootCounter(max, max_random, offset, no_max)
     self:AddTracker({
         id = "LootCounter",
         max = max or 0,
         max_random = max_random or 0,
         offset = offset or 0,
-        class = "EHILootTracker"
+        class = no_max and "EHILootCountTracker" or "EHILootTracker"
     })
 end
 
@@ -670,9 +671,8 @@ function EHITrackerManager:UpdateTrackerID(id, new_id)
     self._trackers[id] = nil
     self._trackers[new_id] = tbl
     if self._trackers_to_update[id] then
-        local update = self._trackers_to_update[id]
         self._trackers_to_update[id] = nil
-        self._trackers_to_update[new_id] = update
+        self._trackers_to_update[new_id] = tbl.tracker
     end
 end
 

@@ -26,7 +26,7 @@ local function AnimateBG(background, times)
         while TOTAL_T > t do
             local dt = coroutine.yield()
             t = t + dt
-            color = math.lerp(1, 0, t / TOTAL_T)
+            color = math.lerp(1, 0, t / TOTAL_T) --[[@as number]]
             background:set_color(Color(color, color, color))
         end
         t = 0

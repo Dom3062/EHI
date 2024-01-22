@@ -835,10 +835,11 @@ function XPBreakdownPanel:ParamsMinMax(o_params)
                 end
             end
         end
-        min = min + self:SumObjectives(o_min, true)
-        max = max + self:SumObjectives(o_max)
+        local random = o_params.objectives.random or {}
+        min = min + self:SumObjectives(o_min, random.min, true)
+        max = max + self:SumObjectives(o_max, random.max)
     else
-        min = min + self:SumObjectives({}, true)
+        min = min + self:SumObjectives({}, nil, true)
         max = max + self:SumObjectives()
     end
     for key, data in pairs(o_params.loot or {}) do
@@ -940,7 +941,7 @@ function XPBreakdownPanel:ParamsMinWithMax(o_params)
                 end
             end
         else
-            min = min + self:SumObjectives(override_objectives, true)
+            min = min + self:SumObjectives(override_objectives, nil, true)
         end
     end
     if o_params.min.loot then
@@ -1007,8 +1008,9 @@ function XPBreakdownPanel:ParamsMinWithMax(o_params)
                                 local r_data = data.random[random]
                                 if r_data and random ~= "max" then
                                     if type(random_data) == "table" and type(r_data) == "table" then
-                                        if #random_data == #r_data then
-                                            for i = 1, #random_data, 1 do
+                                        local n = #random_data
+                                        if n == #r_data then
+                                            for i = 1, n, 1 do
                                                 local r = r_data[i]
                                                 if type(random_data[i]) == "table" then
                                                     max = max + (r.amount * (random_data[i].times or r.times or 1))
@@ -1278,9 +1280,10 @@ function XPBreakdownPanel:SumObjective(override_objective, skip_optional)
 end
 
 ---@param override_objectives table?
+---@param random_objectives table?
 ---@param skip_optional boolean?
 ---@return number
-function XPBreakdownPanel:SumObjectives(override_objectives, skip_optional)
+function XPBreakdownPanel:SumObjectives(override_objectives, random_objectives, skip_optional)
     local xp = 0
     override_objectives = override_objectives or {}
     for _, data in ipairs(self._params.objectives or {}) do
@@ -1291,7 +1294,34 @@ function XPBreakdownPanel:SumObjectives(override_objectives, skip_optional)
                 EHI:Log("[XPBreakdownPanel] Unknown type for escape!")
             end
         elseif data.random then
-            EHI:Log("[XPBreakdownPanel] Random objectives cannot be counted! Use min or max and count them manually")
+            if type(random_objectives) == "table" then
+                for random, random_data in pairs(data.random) do
+                    local ro_data = random_objectives[random]
+                    if ro_data then
+                        if type(ro_data) == "table" then
+                            local n = #random_data
+                            if n == #ro_data then
+                                for i = 1, n, 1 do
+                                    local r = random_data[i]
+                                    if type(ro_data[i]) == "table" then
+                                        xp = xp + (r.amount * (ro_data[i].times or r.times or 1))
+                                    else -- Assume "true" value
+                                        xp = xp + (r.amount * (r.times or 1))
+                                    end
+                                end
+                            else
+                                EHI:Log("Table length does not match for random objective '" .. tostring(random) .. "'; skipping")
+                            end
+                        elseif type(ro_data) == "boolean" then -- Boolean, count all objectives
+                            for _, _ro_data in ipairs(random_data) do
+                                xp = xp + (_ro_data.amount * (_ro_data.times or 1))
+                            end
+                        end
+                    end
+                end
+            else
+                EHI:Log("[XPBreakdownPanel] Random objectives cannot be counted! Use min or max and count them manually")
+            end
         elseif not data.optional or (data.optional and not skip_optional) then
             local key = data.name or "unknown"
             local amount = data.amount or 0

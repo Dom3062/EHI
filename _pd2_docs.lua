@@ -14,6 +14,223 @@ _G.World = {}
 ---@field get_raw_value fun(self: self, ...): any
 ---@field get_value fun(self: self, ...): any
 _G.tweak_data = {}
+---@class AchievementsTweakData
+_G.tweak_data.achievement = {
+    gonna_find_them_all = 1,
+    no_we_cant = {
+        stat = "armored_10_stat",
+        mask = "obama"
+    },
+    witch_doctor = {
+        stat = "halloween_4_stats",
+        mask = "witch"
+    },
+    its_alive_its_alive = {
+        stat = "halloween_5_stats",
+        mask = "frank"
+    },
+    relation_with_bulldozer = {
+        stat = "armored_8_stat",
+        mask = "clinton"
+    },
+    pump_action = {
+        stat = "halloween_6_stats",
+        mask = "pumpkin_king"
+    },
+    cant_hear_you_scream = {
+        stat = "halloween_7_stats",
+        mask = "venomorph"
+    },
+    fire_in_the_hole = {
+        stat = "gage_9_stats",
+        grenade = {
+            "frag",
+            "frag_com",
+            "concussion",
+            "dada_com",
+            "fir_com"
+        }
+    }
+}
+---@class AchievementsTweakData.complete_heist_achievements
+_G.tweak_data.achievement.complete_heist_achievements = {
+    in_soviet_russia = {
+        contract = "vlad",
+        stat = "halloween_10_stats",
+        mask = "bear",
+        difficulty = overkill_and_above
+    },
+    i_take_scores = {
+        stat = "armored_4_stat",
+        mask = "heat",
+        difficulty = overkill_and_above,
+        jobs = {
+            "arm_cro",
+            "arm_und",
+            "arm_hcm",
+            "arm_par",
+            "arm_fac"
+        }
+    },
+    tango_3 = {
+        award = "tango_achieve_3",
+        difficulty = veryhard_and_above,
+        killed_by_blueprint = {
+            blueprint = "wpn_fps_upg_o_spot",
+            amount = 200
+        }
+    },
+    uno_1 = {
+        award = "uno_1",
+        bag_loot_value = 400000,
+        jobs = {
+            "branchbank_prof",
+            "branchbank_gold_prof",
+            "branchbank_cash",
+            "branchbank_deposit"
+        }
+    },
+    tawp_1 = {
+        mask = "flm",
+        award = "tawp_1",
+        job = "help",
+        difficulty = normal_and_above,
+        specials_killed = {
+            {
+                enemy = "spooc",
+                count = 1
+            }
+        }
+    }
+}
+---@class AchievementsTweakData.enemy_kill_achievements
+_G.tweak_data.achievement.enemy_kill_achievements = {
+    im_not_a_crook = {
+        weapon = "s552",
+        stat = "armored_7_stat",
+        enemy = "sniper",
+        mask = "nixon"
+    },
+    fool_me_once = {
+        weapon = "m45",
+        stat = "armored_9_stat",
+        mask = "bush",
+        enemy_tags_any = {
+            "shield"
+        }
+    },
+    wanted = {
+        weapon = "ak5",
+        stat = "gage_1_stats",
+        mask = "goat"
+    },
+    three_thousand_miles = {
+        weapon = "p90",
+        stat = "gage_2_stats",
+        mask = "panda"
+    },
+    commando = {
+        weapon = "aug",
+        stat = "gage_3_stats",
+        mask = "pitbull"
+    },
+    public_enemies = {
+        weapon = "colt_1911",
+        stat = "gage_4_stats",
+        mask = "eagle"
+    },
+    akm4_shootout = {
+        is_cop = true,
+        stat = "ameno_08_stats",
+        weapons = {
+            "ak74",
+            "akm",
+            "akm_gold",
+            "saiga",
+            "rpk",
+            "amcar",
+            "new_m4",
+            "m16",
+            "akmsu",
+            "olympic",
+            "flint"
+        }
+    },
+    grv_3 = {
+        stat = "grv_3_stats",
+        weapons = {
+            "siltstone",
+            "flint",
+            "coal"
+        }
+    },
+    pxp1_1 = {
+        kill = true,
+        stat = "pxp1_1_stats",
+        difficulties = overkill_and_above,
+        grenade_types = {
+            "wpn_prj_four",
+            "launcher_poison",
+            "launcher_poison_ms3gl_conversion",
+            "launcher_poison_gre_m79",
+            "launcher_poison_m32",
+            "launcher_poison_groza",
+            "launcher_poison_china",
+            "launcher_poison_arbiter",
+            "launcher_poison_slap",
+            "launcher_poison_contraband"
+        },
+        player_style = {
+            variation = "default",
+            style = "scrub"
+        }
+    }
+}
+---@class AchievementsTweakData.enemy_melee_hit_achievements
+_G.tweak_data.achievement.enemy_melee_hit_achievements = {
+    steel_2 = {
+        award = "steel_2",
+        result = "death",
+        melee_weapons = {
+            "morning",
+            "buck",
+            "beardy",
+            "great"
+        },
+        enemy_kills = {
+            enemy = "shield",
+            count = 10
+        }
+    },
+    sawp_1 = {
+        is_not_civilian = true,
+        result = "death",
+        stat = "sawp_stat",
+        melee_weapons = {
+            "taser",
+            "zeus"
+        },
+        player_style = {
+            variation = "default",
+            style = "cable_guy"
+        },
+        difficulty = overkill_and_above
+    },
+    pxp1_1 = {
+        is_not_civilian = true,
+        result = "death",
+        stat = "pxp1_1_stats",
+        difficulty = overkill_and_above,
+        melee_weapons = {
+            "cqc",
+            "fear"
+        },
+        player_style = {
+            variation = "default",
+            style = "scrub"
+        }
+    }
+}
 _G.tweak_data.hud = {}
 _G.tweak_data.screen_colors = {}
 ---@class CarryTweakData
@@ -189,10 +406,10 @@ _G.tweak_data.upgrades.values.temporary = {
     copr_ability = {
         { true, 6 },
         { true, 10 }
-	},
+    },
     first_aid_damage_reduction = {
         { 0.9, 120 }
-	},
+    },
     chico_injector = {
         { 0.75, 6 }
     },
@@ -218,6 +435,8 @@ _G.CopDamage = {}
 _G.Drill = {}
 ---@class ECMJammerBase
 _G.ECMJammerBase = {}
+---@class ElementWaypoint
+_G.ElementWaypoint = {}
 ---@class TimerGui
 _G.TimerGui = {}
 ---@class DigitalGui
@@ -258,6 +477,8 @@ _G.MoneyManager = {}
 _G.TradeManager = {}
 ---@class VehicleDrivingExt
 _G.VehicleDrivingExt = {}
+---@class WorldDefinition
+_G.WorldDefinition = {}
 ---@class ZipLine
 _G.ZipLine = {}
 ---@param o table? Can be used to provide `self` to the callback function
@@ -342,8 +563,19 @@ end
 ---@field unpack fun(self: self): r: number, g: number, b: number
 ---@field with_alpha fun(self: self, alpha: number): self
 
+---@class ElementWaypointValues : MissionScriptElementValues
+---@field only_in_civilian boolean
+---@field only_on_instigator boolean
+---@field icon string
+---@field text_id string
+
+---@class ElementWaypoint : MissionScriptElement
+---@field super MissionScriptElement
+---@field _values ElementWaypointValues
+
 ---@class MissionScriptElementValues
 ---@field amount number `ElementCounter` | `ElementCounterOperator`
+---@field enabled boolean
 ---@field chance number `ElementLogicChance` | `ElementLogicChanceOperator`
 ---@field value number `ElementJobValue`
 ---@field position Vector3
@@ -582,7 +814,7 @@ end
 ---@field world_instance CoreWorldInstanceManager
 
 ---@class AchievementsTweakData
----@field complete_heist_achievements table
+---@field collection_achievements table<string, { award: string, collection: string[] }>
 ---@field persistent_stat_unlocks table<string, { [1]: { award: string, at: number } }>
 ---@field visual table<string, { icon_id: string }>
 

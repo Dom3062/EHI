@@ -9,10 +9,7 @@ local element_sync_triggers = {
     [100883] = { time = 12.5, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, hook_element = 102453, remove_trigger_when_executed = true, hint = Hints.DrillDelivery }
 }
 local triggers = {
-    [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { Icon.Train, Icon.Drill, Icon.Goto }, hint = Hints.DrillDelivery },
-
-    [101660] = { time = 120, id = "Gas", icons = { Icon.Teargas }, hint = Hints.Teargas },
-    [EHI:GetInstanceElementID(100017, 11325)] = { id = "Gas", special_function = SF.RemoveTracker },
+    [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { Icon.Train, Icon.Drill, Icon.Goto }, hint = Hints.DrillDelivery }
 }
 if EHI:IsClient() then
     triggers[100602] = { additional_time = 90 + 5, random_time = 20, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
@@ -21,14 +18,6 @@ if EHI:IsClient() then
 else
     EHI:AddHostTriggers(element_sync_triggers, "element")
 end
-local DisableWaypoints =
-{
-    -- chas_auction_room_door_hack
-    [EHI:GetInstanceElementID(100031, 5550)] = true, -- Defend
-    [EHI:GetInstanceElementID(100056, 5550)] = true, -- Fix
-    [EHI:GetInstanceElementID(100031, 11900)] = true, -- Defend
-    [EHI:GetInstanceElementID(100056, 11900)] = true -- Fix
-}
 
 ---@type ParseAchievementTable
 local achievements =
@@ -93,19 +82,7 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:DisableWaypoints(DisableWaypoints)
 
-local tbl =
-{
-    --levels/instances/unique/chas/chas_store_computer
-    --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceUnitID(100037, 10675)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100017, 10675) },
-
-    --levels/instances/unique/chas/chas_vault_door
-    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceUnitID(100065, 5950)] = { icons = { Icon.Vault }, remove_on_pause = true }
-}
-EHI:UpdateUnits(tbl)
 local xp_override =
 {
     params =

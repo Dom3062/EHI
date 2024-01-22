@@ -60,18 +60,6 @@ EHI:ParseTriggers({
     other = other
 })
 EHI:ShowLootCounter({ max = 4 })
-
-local tbl =
-{
-    --levels/instances/unique/spa/spa_storage (6-10)
-    --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small
-    [EHI:GetInstanceUnitID(100063, 7800)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100061, 7800) },
-    [EHI:GetInstanceUnitID(100063, 2850)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100061, 2850) },
-    [EHI:GetInstanceUnitID(100063, 3000)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100061, 3000) },
-    [EHI:GetInstanceUnitID(100063, 3750)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100061, 3750) },
-    [EHI:GetInstanceUnitID(100063, 4050)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100061, 4050) }
-}
-EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     objectives =
     {

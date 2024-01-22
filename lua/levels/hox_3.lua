@@ -46,25 +46,26 @@ end
 EHI:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowLootCounter({ max = 8 })
 
-local tbl =
-{
-    --levels/instances/unique/hox_estate_panic_room
-    --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
-    [EHI:GetInstanceUnitID(100068, 2585)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100089, 2585) },
-    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceUnitID(100090, 2585)] = { icons = { Icon.Vault }, remove_on_pause = true },
-
-    --levels/instances/unique/hox_estate_alarmbox
-    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceUnitID(100021, 9685)] = { icons = { Icon.Alarm }, warning = true, remove_on_pause = true }
-}
-EHI:UpdateUnits(tbl)
 local required_bags = 4
 if EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
     required_bags = 5
 elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     required_bags = 6
 end
+local total_xp_override =
+{
+    params =
+    {
+        min_max =
+        {
+            objectives =
+            {
+                hox3_vault_objective = { min_max = 2 }
+            },
+            loot_all = { min = required_bags, max = 8 }
+        }
+    }
+}
 EHI:AddXPBreakdown({
     tactic =
     {
@@ -79,20 +80,7 @@ EHI:AddXPBreakdown({
                 { escape = 2000 }
             },
             loot_all = 1000,
-            total_xp_override =
-            {
-                params =
-                {
-                    min_max =
-                    {
-                        objectives =
-                        {
-                            hox3_vault_objective = { min_max = 2 }
-                        },
-                        loot_all = { min = required_bags, max = 8 }
-                    }
-                }
-            }
+            total_xp_override = total_xp_override
         },
         loud =
         {
@@ -104,16 +92,7 @@ EHI:AddXPBreakdown({
                 { escape = 2000 }
             },
             loot_all = 1000,
-            total_xp_override =
-            {
-                params =
-                {
-                    min_max =
-                    {
-                        loot_all = { min = required_bags, max = 8 }
-                    }
-                }
-            }
+            total_xp_override = total_xp_override
         }
     }
 })

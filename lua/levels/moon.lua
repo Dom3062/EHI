@@ -77,7 +77,7 @@ EHI:ShowAchievementLootCounter({
     max = 9,
     counter =
     {
-        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+        check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = { "money", "diamonds" }
     },
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
@@ -144,43 +144,30 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
                 objectives =
                 {
                     random =
                     {
-                        shoe_storage = true,
-                        jewelry = true,
-                        wine = true
-                    },
-                    flare = true,
-                    c4_drop = true,
-                    c4_set_up = true,
-                    heli_arrival = true,
-                    wires_attached = true
-                }
-            },
-            max =
-            {
-                objectives =
-                {
-                    random =
-                    {
-                        shoe_backroom = true,
-                        toy = true,
-                        vr = true
-                    },
-                    flare = true,
-                    c4_drop = true,
-                    c4_set_up = true,
-                    heli_arrival = true,
-                    wires_attached = true
+                        min =
+                        {
+                            shoe_storage = true,
+                            jewelry = true,
+                            wine = true
+                        },
+                        max =
+                        {
+                            shoe_backroom = true,
+                            toy = true,
+                            vr = true
+                        }
+                    }
                 },
                 loot =
                 {
-                    money = { times = 3 },
-                    diamonds = { times = 6 }
+                    money = { max = 3 },
+                    diamonds = { max = 6 }
                 }
             }
         }

@@ -263,7 +263,7 @@ EHI:ShowAchievementLootCounter({
     max = 4,
     counter =
     {
-        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+        check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = "samurai_suit"
     }
 })

@@ -79,6 +79,7 @@ function EHIManager:InteractionExists(tweak_data)
     return false
 end
 
+---@param data table
 function EHIManager:load(data)
     local state = data.EHIManager
     if state and state.SyncedSFF then
@@ -91,6 +92,7 @@ function EHIManager:load(data)
     self:SetInSync(false)
 end
 
+---@param data table
 function EHIManager:save(data)
     if self.SyncedSFF and next(self.SyncedSFF) then
         local state = {}
@@ -1497,10 +1499,9 @@ end
 
 ---@param id number
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
----@param sync_load_only boolean?
 ---@return nil
----@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean), sync_load_only: boolean?): integer
-function EHIManager:RegisterCustomSyncedSF(id, f, sync_load_only)
+---@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)): integer
+function EHIManager:RegisterCustomSyncedSF(id, f)
     self.SyncedSFF = self.SyncedSFF or {}
     if f then
         self.SFF[id] = f

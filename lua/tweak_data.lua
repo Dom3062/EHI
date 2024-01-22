@@ -745,15 +745,13 @@ tweak_data.ehi =
     {
         ---@param check_level? boolean
         uno_1 = function(check_level)
-            if check_level then
-                local current_job = managers.job:current_job_id()
-                if not table.contains(tweak_data.achievement.complete_heist_achievements.uno_1.jobs, current_job) then
-                    return
-                end
+            local achievement = tweak_data.achievement.complete_heist_achievements.uno_1
+            if check_level and not table.contains(achievement.jobs, managers.job:current_job_id()) then
+                return
             end
             EHI:ShowAchievementBagValueCounter({
-                achievement = "uno_1",
-                value = tweak_data.achievement.complete_heist_achievements.uno_1.bag_loot_value,
+                achievement = achievement.award,
+                value = achievement.bag_loot_value,
                 show_finish_after_reaching_target = true,
                 counter =
                 {

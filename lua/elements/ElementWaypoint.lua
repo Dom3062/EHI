@@ -1,8 +1,10 @@
+---@class ElementWaypoint
+
 local EHI = EHI
 if EHI:CheckLoadHook("ElementWaypoint") then
     return
 end
-ElementWaypoint.original_on_executed = ElementWaypoint.on_executed --[[@as function]]
+ElementWaypoint.original_on_executed = ElementWaypoint.on_executed
 function ElementWaypoint:ehi_on_executed(instigator, ...)
     if not self._values.enabled then
         return

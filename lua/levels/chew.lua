@@ -4,7 +4,10 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local triggers = {}
+local triggers =
+{
+    [100103] = EHI:AddEndlessAssault({ 5, 10 })
+}
 local sync_triggers =
 {
     [100558] = { id = "BileReturn", icons = Icon.HeliEscape, hint = Hints.LootEscape }
@@ -33,13 +36,21 @@ local achievements =
     }
 }
 
+local other = {}
+if EHI:IsLootCounterVisible() then
+    other[100482] = EHI:AddLootCounter2(function()
+        EHI:ShowLootCounter({
+            max = 9,
+            offset = true,
+            client_from_start = true
+        })
+    end)
+end
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
-})
-EHI:ShowLootCounter({
-    max = 9,
-    offset = true
+    achievement = achievements,
+    other = other
 })
 EHI:AddXPBreakdown({
     objectives =

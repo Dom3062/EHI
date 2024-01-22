@@ -85,7 +85,7 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
                 show_finish_after_reaching_target = true,
                 counter =
                 {
-                    check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+                    check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
                     loot_type = "gnome"
                 }
             })

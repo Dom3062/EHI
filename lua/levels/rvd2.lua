@@ -124,7 +124,7 @@ EHI:ShowAchievementLootCounter({
     max = 19,
     counter =
     {
-        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+        check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = { "diamonds_dah", "diamonds" }
     }
 })

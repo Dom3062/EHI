@@ -1,3 +1,6 @@
+r217 (22. 01. 2024):
+Further improved compatibility with custom heists
+
 r216 (16. 01. 2024):
 Prison Nightmare: Fixed a load crash
 

@@ -47,8 +47,6 @@ local Hints = EHI.Hints
 local boat_anim = 614/30 + 12 + 1
 local skid = { { icon = Icon.Car, color = tweak_data.ehi.colors.CarBlue } }
 local triggers = {
-    [EHI:GetInstanceElementID(100045, 7100)] = { time = 5, id = "RoomHack", icons = { Icon.Tablet }, hint = Hints.Hack },
-
     [EHI:GetInstanceElementID(100043, 4800)] = { special_function = SF.Trigger, data = { 1000431, 1000432 } },
     [1000431] = { time = 15, id = "DoorOpenGas", icons = { Icon.Door }, hint = Hints.Wait },
     [1000432] = { additional_time = 20, random_time = 5, id = "RoomGas", icons = { Icon.Teargas }, hint = Hints.Teargas },
@@ -75,30 +73,9 @@ local triggers = {
 
     [103925] = { id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.SetTimeIfLoudOrStealth, data = { loud = 30 + boat_anim, stealth = 19 + boat_anim }, hint = Hints.LootEscape }
 }
-local KeypadResetTimer = EHI:GetKeypadResetTimer()
-for _, index in ipairs({ 8530, 9180, 9680 }) do
-    local unit_id = EHI:GetInstanceUnitID(100279, index)
-    triggers[EHI:GetInstanceElementID(100176, index)] = { time = 30, id = "KeypadRebootECM", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.KeypadReset } -- ECM Jammer
-    triggers[EHI:GetInstanceElementID(100210, index)] = { time = 3 + KeypadResetTimer, id = "KeypadReboot", icons = { Icon.Loop }, waypoint = { position_by_unit = unit_id }, hint = Hints.KeypadReset }
-end
 for i = 16580, 16780, 100 do
     triggers[EHI:GetInstanceElementID(100057, i)] = { id = "ReviveVlad", special_function = SF.IncreaseChanceFromElement } -- +33%
 end
-
-local DisableWaypoints =
-{
-    -- sand_chinese_computer_hackable
-    [EHI:GetInstanceElementID(100018, 15680)] = true, -- Defend
-    -- Interact is in CoreWorldInstanceManager.lua
-    -- sand_server_hack
-    -- levels/instances/unique/sand/sand_server_hack/001 is used, others are not
-    [EHI:GetInstanceElementID(100018, 14280)] = true, -- Fix
-    -- Interact is in CoreWorldInstanceManager.lua
-    -- sand_defibrillator
-    [EHI:GetInstanceElementID(100051, 16580)] = true, -- Wait
-    [EHI:GetInstanceElementID(100051, 16680)] = true, -- Wait
-    [EHI:GetInstanceElementID(100051, 16780)] = true -- Wait
-}
 
 ---@type ParseAchievementTable
 local achievements =
@@ -161,36 +138,8 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:DisableWaypoints(DisableWaypoints)
 
-local tbl =
-{
-    --levels/instances/unique/sand/sand_computer_hackable
-    --units/pd2_dlc_sand/equipment/sand_interactable_hack_computer/sand_interactable_hack_computer
-    [EHI:GetInstanceUnitID(100140, 18680)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100034, 18680) },
-
-    --levels/instances/unique/sand/sand_swat_van_drillable
-    --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
-    [EHI:GetInstanceUnitID(100022, 15380)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100023, 15380) },
-
-    --levels/instances/unique/sand/sand_computer_code_display
-    --units/pd2_dlc_sand/equipment/sand_interactable_rotating_code_computer/sand_interactable_rotating_code_computer
-    [EHI:GetInstanceUnitID(100150, 9030)] = { remove_on_pause = true, remove_on_alarm = true },
-
-    --levels/instances/unique/sand/sand_server_hack
-    --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceUnitID(100037, 14280)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100017, 14280) },
-
-    --levels/instances/unique/sand/sand_chinese_computer_hackable
-    --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceUnitID(100037, 15680)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100017, 15680) },
-
-    --levels/instances/unique/sand/sand_defibrillator
-    --units/pd2_dlc_sand/equipment/sand_interactable_defibrillator/sand_interactable_defibrillator
-    [EHI:GetInstanceUnitID(100009, 16580)] = { icons = { Icon.Power }, hint = Hints.Charging },
-    [EHI:GetInstanceUnitID(100009, 16680)] = { icons = { Icon.Power }, hint = Hints.Charging },
-    [EHI:GetInstanceUnitID(100009, 16780)] = { icons = { Icon.Power }, hint = Hints.Charging }
-}
+local tbl = {}
 if EHI:GetOption("show_waypoints") then
     local function f(id, unit_data, unit)
         local trigger_id = unit_data.trigger_id

@@ -52,27 +52,13 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-local LotteryWheel = { icons = { Icon.Wait }, icon_on_pause = { Icon.Loop } }
+EHI:ShowLootCounter({ no_max = true })
 
 local tbl =
 {
     --units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large
-    [400003] = { ignore = true },
-
-    --levels/instances/unique/help/door_switch
-    --units/pd2_dlc_help/props/hlp_interactable_controlswitch/hlp_interactable_controlswitch
-    [EHI:GetInstanceUnitID(100072, 12400)] = { icons = { Icon.Wait }, warning = true },
-
-    --levels/instances/unique/help/lottery_wheel (6 + 8)
-    --units/pd2_dlc_help/props/hlp_interactable_wheel_timer/hlp_interactable_wheel_timer
-    [EHI:GetInstanceUnitID(100033, 4800)] = LotteryWheel,
-    [EHI:GetInstanceUnitID(100033, 13200)] = LotteryWheel
+    [400003] = { ignore = true }
 }
-for i = 900, 1500, 300 do
-    --levels/instances/unique/help/lottery_wheel (1, 4 + 5)
-    --units/pd2_dlc_help/props/hlp_interactable_wheel_timer/hlp_interactable_wheel_timer
-    tbl[EHI:GetInstanceUnitID(100033, i)] = LotteryWheel
-end
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     objectives =

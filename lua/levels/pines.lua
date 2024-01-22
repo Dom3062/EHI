@@ -83,6 +83,7 @@ EHI:ParseTriggers({
     other = other,
     preload = preload
 })
+EHI:ShowLootCounter({ no_max = true })
 EHI:AddXPBreakdown({
     objective =
     {

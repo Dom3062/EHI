@@ -5,12 +5,11 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local start_delay = 1
 local delay = 20 + math.rand(6.2, 7.5)
-local HeliDropLootZone = { Icon.Heli, Icon.LootDrop, Icon.Goto }
 ---@type ParseTriggerTable
 local triggers = {
-    [101931] = { time = 90 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker, hint = Hints.peta2_LootZoneDelivery },
-    [101932] = { time = 120 + delay, id = "CageDrop", icons = HeliDropLootZone, special_function = SF.SetTimeOrCreateTracker, hint = Hints.peta2_LootZoneDelivery },
-    [101929] = { time = 30 + 150 + delay, id = "CageDrop", icons = HeliDropLootZone, hint = Hints.peta2_LootZoneDelivery },
+    [101931] = { time = 90 + delay, id = "CageDrop", icons = Icon.HeliDropBag, special_function = SF.SetTimeOrCreateTracker, hint = Hints.peta2_LootZoneDelivery },
+    [101932] = { time = 120 + delay, id = "CageDrop", icons = Icon.HeliDropBag, special_function = SF.SetTimeOrCreateTracker, hint = Hints.peta2_LootZoneDelivery },
+    [101929] = { time = 30 + 150 + delay, id = "CageDrop", icons = Icon.HeliDropBag, hint = Hints.peta2_LootZoneDelivery },
 
     [102921] = { id = 101929, special_function = SF.RemoveTrigger }, ---@diagnostic disable-line
 
@@ -43,15 +42,18 @@ local triggers = {
         self._trackers:RemoveTracker("GenSecArrival")
         self._trackers:RemoveTracker("CallAgain")
         self._trackers:RemoveTracker("AnswerPhone")
-    end)}
+    end), trigger_times = 1 }
 }
+if EHI:IsClient() then
+    triggers[101934] = EHI:ClientCopyTrigger(trigger[101929], { time = delay })
+end
 
 local other =
 {
     [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
 }
 if EHI:IsLootCounterVisible() then
-    other[106579] = { special_function = EHI:RegisterCustomSF(function(...)
+    other[106579] = EHI:AddLootCounter2(function()
         local max = 0
         local wd = managers.worlddefinition
         for i = 103625, 103684, 1 do
@@ -61,7 +63,7 @@ if EHI:IsLootCounterVisible() then
             end
         end
         EHI:ShowLootCounterNoChecks({ max = max })
-    end)}
+    end)
     EHI:AddLoadSyncFunction(function(self)
         self:Trigger(106579)
         self._trackers:SyncSecuredLoot()

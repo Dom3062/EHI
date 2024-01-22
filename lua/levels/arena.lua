@@ -90,12 +90,6 @@ EHI:ParseTriggers({
     other = other
 })
 
-local DisableWaypoints =
-{
-    [EHI:GetInstanceElementID(100050, 4700)] = true -- PC
-}
-EHI:DisableWaypoints(DisableWaypoints)
-
 local max = 6
 local required_bags = 3
 local closets = 2

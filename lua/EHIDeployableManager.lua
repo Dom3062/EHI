@@ -76,9 +76,11 @@ function EHIDeployableManager:AddToDeployableCache(type, key, unit, tracker_type
     local tracker = self:GetTracker(type)
     if tracker then
         if tracker_type then
-            tracker:UpdateAmount(tracker_type, unit, key, 0) ---@diagnostic disable-line
+             ---@cast tracker -EHIEquipmentTracker
+            tracker:UpdateAmount(tracker_type, unit, key, 0)
         else
-            tracker:UpdateAmount(unit, key, 0) ---@diagnostic disable-line
+            ---@cast tracker EHIEquipmentTracker
+            tracker:UpdateAmount(unit, key, 0)
         end
     end
 end

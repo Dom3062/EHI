@@ -95,6 +95,7 @@ if EHI:GetOption("show_equipment_ecmjammer") then
                         time = battery_life,
                         icons = { { icon = "ecm_jammer", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
                         unit = self._unit,
+                        hint = "ecm_jammer",
                         class = "EHIECMTracker"
                     })
                 end
@@ -125,6 +126,7 @@ if EHI:GetOption("show_equipment_ecmfeedback") then
                     time = self._feedback_duration,
                     icons = { { icon = "ecm_feedback", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
                     unit = self._unit,
+                    hint = "ecm_feedback",
                     class = "EHIECMTracker"
                 })
             end
@@ -137,7 +139,7 @@ if EHI:GetOption("show_ecmfeedback_refresh") then
     ---@param self ECMJammerBase
     ---@param state boolean
     function(self, state)
-        if not state and not self._destroying then
+        if not state and not self.__ehi_destroying then
             if alive(self._owner) then
                 local retrigger = false
 				if self._ehi_local_peer then
@@ -152,7 +154,8 @@ if EHI:GetOption("show_ecmfeedback_refresh") then
                         managers.ehi_tracker:AddTracker({
                             id = key,
                             time = retrigger_t,
-                            icons = { { icon = "ecm_feedback", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) }, "restarter" }
+                            icons = { { icon = "ecm_feedback", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) }, "restarter" },
+                            hint = "ecm_feedback_refresh"
                         })
                     end
                     if show_waypoint then
@@ -169,7 +172,7 @@ if EHI:GetOption("show_ecmfeedback_refresh") then
 end
 
 function ECMJammerBase:destroy(...)
-    self._destroying = true
+    self.__ehi_destroying = true
     original.destroy(self, ...)
     managers.ehi_tracker:CallFunction("ECMJammer", "Destroyed", self._unit)
     managers.ehi_tracker:CallFunction("ECMFeedback", "Destroyed", self._unit)

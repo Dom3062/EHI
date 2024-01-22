@@ -56,6 +56,7 @@ function PlayerInventory:load(load_data, ...)
                 id = "ECMJammer",
                 time = jammer_data.t,
                 icons = { { icon = "ecm_jammer", color = EHI:GetPeerColorByPeerID(peer_id) } },
+                hint = "ecm_jammer",
                 class = "EHIECMTracker"
             })
         end
@@ -80,6 +81,7 @@ function PlayerInventory:_start_jammer_effect(end_time, ...)
             id = "ECMJammer",
             time = end_time,
             icons = { { icon = "ecm_jammer", color = EHI:GetPeerColorByPeerID(peer_id) } },
+            hint = "ecm_jammer",
             class = "EHIECMTracker"
         })
     end

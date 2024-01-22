@@ -6,13 +6,10 @@ EHIdailycakeTracker = class(EHIDailyTracker)
 EHIdailycakeTracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIdailycakeTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIdailycakeTracker.SetProgress = EHIProgressTracker.SetProgress
----@param panel Panel
----@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIdailycakeTracker:init(panel, params, parent_class)
+function EHIdailycakeTracker:init(...)
     self._max = 4
     self._progress = 0
-    EHIdailycakeTracker.super.init(self, panel, params, parent_class)
+    EHIdailycakeTracker.super.init(self, ...)
 end
 
 function EHIdailycakeTracker:OverridePanel()
@@ -42,18 +39,8 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
-    [100891] = { additional_time = 320/30 + 5, random_time = 5, id = "EMPBombDrop", icons = { Icon.Goto }, hint = Hints.mad_Bomb },
-
-    [EHI:GetInstanceElementID(100019, 3150)] = { time = 90, id = "Scan", icons = { "mad_scan" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.mad_Scan },
-    [EHI:GetInstanceElementID(100049, 3150)] = { id = "Scan", special_function = SF.PauseTracker },
-    [EHI:GetInstanceElementID(100030, 3150)] = { id = "Scan", special_function = SF.RemoveTracker }, -- Just in case
-
-    [EHI:GetInstanceElementID(100013, 1350)] = { time = 120, id = "EMP", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.mad_EMP },
-    [EHI:GetInstanceElementID(100023, 1350)] = { id = "EMP", special_function = SF.PauseTracker }
+    [100891] = { additional_time = 320/30 + 5, random_time = 5, id = "EMPBombDrop", icons = { Icon.Goto }, hint = Hints.mad_Bomb }
 }
-if EHI:IsClient() then
-    triggers[101410] = { id = "Scan", special_function = SF.RemoveTracker } -- Just in case
-end
 
 ---@type ParseAchievementTable
 local achievements =

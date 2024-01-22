@@ -28,6 +28,7 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
+EHI:ShowLootCounter({ no_max = true })
 
 local tbl =
 {
@@ -45,17 +46,6 @@ local tbl =
     [100029] = { ignore = true },
     [100878] = { icons = { Icon.Wait }, custom_callback = { id = "hvh_CleanUp", f = "remove" } }
 }
---levels/instances/unique/hvh/hvh_event
-for i = 9794, 11794, 500 do
-    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    for u = 100027, 100029, 1 do
-        if u == 100029 then
-            tbl[EHI:GetInstanceUnitID(u, i)] = { icons = { Icon.Vault }, completion = true }
-        else
-            tbl[EHI:GetInstanceUnitID(u, i)] = { ignore = true }
-        end
-    end
-end
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     objective =

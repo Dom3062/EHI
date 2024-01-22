@@ -73,18 +73,14 @@ end
 ---@param loot_type string|string[]
 ---@param f fun(loot: self, tracker_id: string)?
 function LootManager:EHIReportProgress(tracker_id, check_type, loot_type, f)
-    if check_type == check_types.AllLoot then
-        local bags = self:GetSecuredBagsValueAmount()
-        local small_loot = self:get_real_total_small_loot_value()
-        managers.ehi_tracker:SetTrackerProgress(tracker_id, bags + small_loot)
-    elseif check_type == check_types.BagsOnly then
+    if check_type == check_types.BagsOnly then
         managers.ehi_tracker:SetTrackerProgress(tracker_id, self:GetSecuredBagsAmount())
     elseif check_type == check_types.ValueOfBags then
         managers.ehi_tracker:SetTrackerProgress(tracker_id, self:GetSecuredBagsValueAmount())
     elseif check_type == check_types.SmallLootOnly then
     elseif check_type == check_types.ValueOfSmallLoot then
         managers.ehi_tracker:SetTrackerProgress(tracker_id, self:get_real_total_small_loot_value())
-    elseif check_type == check_types.OneTypeOfLoot then
+    elseif check_type == check_types.CheckTypeOfLoot then
         managers.ehi_tracker:SetTrackerProgress(tracker_id, self:GetSecuredBagsTypeAmount(loot_type))
     elseif check_type == check_types.CustomCheck then
         if f then

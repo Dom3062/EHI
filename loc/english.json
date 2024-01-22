@@ -136,6 +136,9 @@
     "ehi_hint_sentry_repair" : "Turret (Repair)",
     "ehi_hint_sentry_teargas" : "Turret (Teargas)",
     "ehi_hint_diff" : "Assault Difficulty",
+    "ehi_hint_ecm_jammer" : "ECM Jammer",
+    "ehi_hint_ecm_feedback" : "ECM Feedback",
+    "ehi_hint_ecm_feedback_refresh" : "ECM Feedback Refresh",
 
     "ehi_hint_big_piggy" : "Moving Piggy",
     "ehi_hint_brb_winch_delivery" : "Winch Delivery",

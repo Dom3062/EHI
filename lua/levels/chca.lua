@@ -42,17 +42,6 @@ if EHI:IsClient() then
     triggers[102679] = { time = 15, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait }
 end
 
-local DisableWaypoints =
-{
-    -- chca_casino_hack
-    -- chca_casino_hack/001
-    [EHI:GetInstanceElementID(100034, 20620)] = true, -- Defend
-    [EHI:GetInstanceElementID(100060, 20620)] = true, -- Fix
-    -- chca_casino_hack/002
-    [EHI:GetInstanceElementID(100034, 20820)] = true, -- Defend
-    [EHI:GetInstanceElementID(100060, 20820)] = true -- Fix
-}
-
 local function chca_9_fail()
     managers.ehi_tracker:SetAchievementFailed("chca_9")
     EHI:Unhook("chca_9_killed")
@@ -167,7 +156,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:DisableWaypoints(DisableWaypoints)
 --[[local LootLeft = EHI:GetFreeCustomSFID()
 EHI:ShowLootCounter({
     max = 18, -- 18 money bags, teaset and 1 money bundle in a safe

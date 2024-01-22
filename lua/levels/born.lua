@@ -135,38 +135,29 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
                 objectives =
                 {
-                    biker_mike_in_the_trailer = true,
                     random =
                     {
-                        exhaust_pipe = true,
-                        tools = true,
-                        engine = true
+                        min =
+                        {
+                            exhaust_pipe = true,
+                            engine = true,
+                            tools = true
+                        },
+                        max =
+                        {
+                            seat = true,
+                            skull = true,
+                            engine = true,
+                            cola = true
+                        }
                     },
-                    biker_defend_mike = { times = 3 },
-                    escape = true
+                    biker_defend_mike = { min_max = 3 }
                 },
-                loot_all = { times = 0 }
-            },
-            max =
-            {
-                objectives =
-                {
-                    biker_mike_in_the_trailer = true,
-                    random =
-                    {
-                        seat = true,
-                        skull = true,
-                        engine = true,
-                        cola = true
-                    },
-                    biker_defend_mike = { times = 3 },
-                    escape = true
-                },
-                loot_all = { times = 9 }
+                loot_all = { max = 9 }
             }
         }
     }

@@ -130,7 +130,7 @@ local function AddUserZipline(self, unit)
         local local_unit = unit == managers.player:player_unit()
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_reset, {
             time = total_time_2,
-            present_timer = local_unit and total_time,
+            present_timer = local_unit and total_time, ---@diagnostic disable-line
             icon = "zipline",
             unit = self:GetMovingObject()
         })

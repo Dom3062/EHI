@@ -57,14 +57,13 @@ _G.EHI =
     {
         CheckType =
         {
-            AllLoot = 1,
-            BagsOnly = 2,
-            ValueOfBags = 3,
-            SmallLootOnly = 4, -- Currently unused
-            ValueOfSmallLoot = 5,
-            OneTypeOfLoot = 6,
-            CustomCheck = 7,
-            Debug = 8
+            BagsOnly = 1,
+            ValueOfBags = 2,
+            SmallLootOnly = 3, -- Currently unused
+            ValueOfSmallLoot = 4,
+            CheckTypeOfLoot = 5,
+            CustomCheck = 6,
+            Debug = 7
         }
     },
 
@@ -73,6 +72,7 @@ _G.EHI =
         DisableAchievements = false,
         MissionUnits = {}, ---@type table<number, UnitUpdateDefinition>
         InstanceUnits = {}, ---@type table<number, UnitUpdateDefinition>
+        InstanceMissionUnits = {}, ---@type table<number, UnitUpdateDefinition>
         IgnoreWaypoints = {}, ---@type table<number, boolean>
         ElementWaypoint = {}, ---@type table<number, boolean>
         XPElement = 0
@@ -427,6 +427,7 @@ _G.EHI =
         HeliDropC4 = { "heli", "pd2_c4", "pd2_goto" },
         HeliDropWinch = { "heli", "equipment_winch_hook", "pd2_goto" },
         HeliWait = { "heli", "pd2_escape", "pd2_lootdrop", "faster" },
+        HeliLootDropWait = { "heli", "pd2_lootdrop", "faster" },
         BoatEscape = { "boat", "pd2_escape", "pd2_lootdrop" },
         BoatEscapeNoLoot = { "boat", "pd2_escape" },
         BoatLootDrop = { "boat", "pd2_lootdrop" }
@@ -1709,11 +1710,10 @@ end
 
 ---@param id number
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
----@param sync_load_only boolean?
 ---@return nil
----@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean), sync_load_only: boolean?): integer
-function EHI:RegisterCustomSyncedSF(id, f, sync_load_only)
-    return managers.ehi_manager:RegisterCustomSyncedSF(id, f, sync_load_only)
+---@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)): integer
+function EHI:RegisterCustomSyncedSF(id, f)
+    return managers.ehi_manager:RegisterCustomSyncedSF(id, f)
 end
 
 function EHI:GetFreeCustomSFID()
@@ -1796,7 +1796,7 @@ end
 
 ---@param f function Loot counter function
 ---@param trigger_once boolean? Should the trigger run once?
----@return table
+---@return ElementTrigger
 function EHI:AddLootCounter2(f, trigger_once)
     local tbl =
     {
@@ -1942,25 +1942,25 @@ end
 
 ---@param id number
 function EHI:DisableElementWaypoint(id)
-    local element = managers.mission:get_element_by_id(id)
+    local element = managers.mission:get_element_by_id(id) ---@cast element ElementWaypoint?
     if not element or self._cache.ElementWaypoint[id] then
         return
     end
-    if not element.ehi_on_executed then ---@diagnostic disable-line
+    if not element.ehi_on_executed then
         self:Log(string.format("Provided id %s is not an ElementWaypoint!", tostring(id)))
         return
     end
-    element.on_executed = element.ehi_on_executed --[[@as function]]
+    element.on_executed = element.ehi_on_executed
     self._cache.ElementWaypoint[id] = true
 end
 
 ---@param id number
 function EHI:RestoreElementWaypoint(id)
-    local element = managers.mission:get_element_by_id(id)
+    local element = managers.mission:get_element_by_id(id) ---@cast element ElementWaypoint?
     if not (element and self._cache.ElementWaypoint[id]) then
         return
     end
-    element.on_executed = element.original_on_executed --[[@as function]]
+    element.on_executed = element.original_on_executed
     self._cache.ElementWaypoint[id] = nil
 end
 
@@ -2000,7 +2000,7 @@ function EHI:DisableWaypointsOnInit()
     end
 end
 
--- Used on clients when offset is required
+-- Used on clients when offset is required  
 -- Do not call it directly!
 ---@param params LootCounterTable
 ---@param manager EHIManager
@@ -2042,7 +2042,7 @@ function EHI:ShowLootCounterNoChecks(params)
     if params.sequence_triggers or params.is_synced then
         managers.ehi_tracker:SyncShowLootCounter(params.max, params.max_random, n_offset)
     else
-        managers.ehi_tracker:ShowLootCounter(params.max, params.max_random, n_offset)
+        managers.ehi_tracker:ShowLootCounter(params.max, params.max_random, n_offset, params.no_max)
     end
     if params.load_sync then
         self:AddLoadSyncFunction(params.load_sync)
@@ -2177,12 +2177,15 @@ end
 
 ---@param params AchievementLootCounterTable|AchievementBagValueCounterTable
 function EHI:AddAchievementToCounter(params)
-    local check_type = params.counter and params.counter.check_type or self.LootCounter.CheckType.BagsOnly
-    local loot_type = params.counter and params.counter.loot_type
-    local f = params.counter and params.counter.f
+    local check_type, loot_type, f = self.LootCounter.CheckType.BagsOnly, nil, nil
+    if params.counter then
+        check_type = params.counter.check_type or self.LootCounter.CheckType.BagsOnly
+        loot_type = params.counter.loot_type
+        f = params.counter.f
+    end
     ---@param loot LootManager
     local function callback(loot)
-        loot:EHIReportProgress(params.achievement, check_type, loot_type, f)
+        loot:EHIReportProgress(params.achievement, check_type, loot_type, f) ---@diagnostic disable-line
     end
     self:AddCallback(self.CallbackMessage.LootSecured, callback)
     if not (params.load_sync or params.no_sync) then
@@ -2234,6 +2237,7 @@ end
 
 function EHI:FinalizeUnitsClient()
     self:FinalizeUnits(self._cache.MissionUnits)
+    self:FinalizeUnits(self._cache.InstanceMissionUnits)
     self:FinalizeUnits(self._cache.InstanceUnits)
 end
 
@@ -2331,6 +2335,20 @@ function EHI:UpdateUnitsNoCheck(tbl)
     self:FinalizeUnits(tbl)
     for id, data in pairs(tbl) do
         self._cache.MissionUnits[id] = data
+    end
+end
+
+---@param tbl table<number, UnitUpdateDefinition>
+---@param skip_finalize boolean
+function EHI:UpdateInstanceMissionUnits(tbl, skip_finalize)
+    if not self:GetOption("show_timers") then
+        return
+    end
+    if not skip_finalize then
+        self:FinalizeUnits(tbl)
+    end
+    for id, data in pairs(tbl) do
+        self._cache.InstanceMissionUnits[id] = data
     end
 end
 
@@ -2484,14 +2502,7 @@ function EHI:CopyTrigger(trigger, params, overwrite_SF)
     if trigger == nil then
         return nil
     end
-    ---@type ElementTrigger
-    local tbl = {}
-    if trigger.waypoint then
-        tbl.waypoint = deep_clone(trigger.waypoint)
-    end
-    for key, value in pairs(trigger) do
-        tbl[key] = value
-    end
+    local tbl = deep_clone(trigger)
     for key, value in pairs(params or {}) do
         tbl[key] = value
     end
@@ -2602,7 +2613,7 @@ function EHI:HookColorCodes(color_table, params)
     end
 end
 
----@param time number
+---@param time number|table
 ---@param trigger_name string?
 ---@param include_loud_check boolean?
 function EHI:AddEndlessAssault(time, trigger_name, include_loud_check)
@@ -2610,15 +2621,26 @@ function EHI:AddEndlessAssault(time, trigger_name, include_loud_check)
     local tbl =
     {
         id = trigger_name or "EndlessAssault",
-        time = time,
         icons = self.Icons.EndlessAssault,
         class = self.Trackers.Warning,
         hint = self.Hints.EndlessAssault
     }
+    if type(time) == "number" then
+        tbl.time = time
+    else
+        local start_t = time[1]
+        tbl.additional_time = start_t
+        tbl.random_time = time[2] - start_t
+    end
     if include_loud_check then
         tbl.condition_function = self.ConditionFunctions.IsLoud
     end
     return tbl
+end
+
+---@return boolean
+function EHI:IsHeistTimerInverted()
+    return self._cache._heist_timer_inverted
 end
 
 Load()

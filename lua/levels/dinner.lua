@@ -4,17 +4,15 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local c4 = { time = 5, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion }
----@type Vector3?
-local EscapePos = nil
 ---@type ParseTriggerTable
 local triggers = {
     [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position_by_element = 100836 }, hint = Hints.des_Crane },
     [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape }, waypoint_f = function(self, trigger)
-        if EscapePos then
+        if self.SyncedSFF.dinner_EscapePos then
             self._waypoints:AddWaypoint(trigger.id, {
                 time = trigger.time,
                 icon = Icon.Interact,
-                position = EscapePos
+                position = self.SyncedSFF.dinner_EscapePos
             })
             return
         end
@@ -26,12 +24,6 @@ local triggers = {
     [100830] = c4,
     [100961] = c4
 }
-local function CacheEscapePos(index)
-    EscapePos = EHI:GetElementPosition(EHI:GetInstanceElementID(100034, index))
-end
-for i = 2850, 3050, 100 do
-    triggers[EHI:GetInstanceElementID(100028, i)] = { special_function = SF.CustomCode, f = CacheEscapePos, arg = i }
-end
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseAchievementTable
@@ -93,6 +85,12 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         end
     end) }
 end
+local CacheEscapePos = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
+    self.SyncedSFF.dinner_EscapePos = EHI:GetElementPosition(EHI:GetInstanceElementID(100034, trigger.index))
+end)
+for i = 2850, 3050, 100 do
+    other[EHI:GetInstanceElementID(100028, i)] = { special_function = CacheEscapePos, index = i }
+end
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -109,7 +107,7 @@ if ovk_and_up then
         show_finish_after_reaching_target = true,
         counter =
         {
-            check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+            check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
             loot_type = "din_pig"
         }
     })

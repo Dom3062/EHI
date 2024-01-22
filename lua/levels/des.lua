@@ -261,25 +261,11 @@ local tbl =
 
     --units/pd2_dlc_dah/props/dah_prop_hack_box/dah_prop_hack_ipad_unit
     [101323] = { remove_on_power_off = true },
-    [101324] = { remove_on_power_off = true },
-
-    --levels/instances/unique/des/des_drill
-    --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small_no_jam
-    [EHI:GetInstanceUnitID(100030, 21000)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100009, 21000) }
+    [101324] = { remove_on_power_off = true }
 }
 
 local DisableWaypoints =
 {
-    -- Hackboxes at the start
-    [EHI:GetInstanceElementID(100007, 11000)] = true, -- Defend
-    [EHI:GetInstanceElementID(100008, 11000)] = true, -- Fix
-    [EHI:GetInstanceElementID(100007, 11500)] = true, -- Defend
-    [EHI:GetInstanceElementID(100008, 11500)] = true, -- Fix
-
-    -- Archaeology
-    [EHI:GetInstanceElementID(100008, 21000)] = true, -- Defend
-    -- Interact is disabled in CoreWorldInstanceManager.lua
-
     -- Turret charging computer
     [101122] = true, -- Defend
     [103191] = true, -- Fix
@@ -294,31 +280,20 @@ local DisableWaypoints =
 -- levels/instances/unique/des/des_computer/001-004
 for i = 3000, 4500, 500 do
     tbl[EHI:GetInstanceUnitID(100051, i)] = { tracker_merge_id = "HackChance" }
-    DisableWaypoints[EHI:GetInstanceElementID(100025, i)] = true -- Defend
-    DisableWaypoints[EHI:GetInstanceElementID(100026, i)] = true -- Fix
 end
-
 -- levels/instances/unique/des/des_computer/012
 tbl[EHI:GetInstanceUnitID(100051, 8500)] = { tracker_merge_id = "HackChance" }
-DisableWaypoints[EHI:GetInstanceElementID(100025, 8500)] = true -- Defend
-DisableWaypoints[EHI:GetInstanceElementID(100026, 8500)] = true -- Fix
 
 -- levels/instances/unique/des/des_computer_001/001
 -- levels/instances/unique/des/des_computer_002/001
 for i = 6000, 6500, 500 do
     tbl[EHI:GetInstanceUnitID(i == 6000 and 100000 or 100051, i)] = { tracker_merge_id = "HackChance" }
-    DisableWaypoints[EHI:GetInstanceElementID(100025, i)] = true -- Defend
-    DisableWaypoints[EHI:GetInstanceElementID(100026, i)] = true -- Fix
 end
-
 -- levels/instances/unique/des/des_computer_002/002
 tbl[EHI:GetInstanceUnitID(100051, 29550)] = { tracker_merge_id = "HackChance" }
-DisableWaypoints[EHI:GetInstanceElementID(100025, 29550)] = true -- Defend
-DisableWaypoints[EHI:GetInstanceElementID(100026, 29550)] = true -- Fix
 
 EHI:UpdateUnits(tbl)
 EHI:DisableWaypoints(DisableWaypoints)
-
 EHI:ShowLootCounter({
     max = 8, -- 2 main loot; 6 artifacts in crates, one in Archaeology room -> 400511
     triggers =
@@ -373,44 +348,31 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
                 objectives =
                 {
-                    diamond_heist_boxes_hack = true,
-                    ed1_hack_1 = true,
-                    henrys_rock_first_mission_bag_on_belt = true,
                     random =
                     {
-                        biolab = true,
-                        computer_lab = true
-                    },
-                    twh_disable_aa = true,
-                    escape = true
-                }
-            },
-            max =
-            {
-                objectives =
-                {
-                    diamond_heist_boxes_hack = true,
-                    ed1_hack_1 = true,
-                    henrys_rock_first_mission_bag_on_belt = true,
-                    random =
-                    {
-                        archaelogy = true,
-                        computer_lab =
+                        min =
                         {
-                            { times = 4 },
-                            true
+                            biolab = true,
+                            computer_lab = true
+                        },
+                        max =
+                        {
+                            archaelogy = true,
+                            computer_lab =
+                            {
+                                { times = 4 },
+                                true
+                            }
                         }
-                    },
-                    twh_disable_aa = true,
-                    escape = true
+                    }
                 },
                 loot =
                 {
-                    mus_artifact = { times = 7 }
+                    mus_artifact = { max = 7 }
                 }
             }
         }

@@ -50,23 +50,6 @@ EHI:RegisterCustomSF(HeliTimer, function(self, trigger, ...)
     end
 end)
 
-local tbl = {}
-for i = 9175, 11175, 500 do
-    --levels/instances/unique/holly_2/safe_van (1-5)
-    --units/pd2_dlc_jolly/equipment/gen_interactable_saw/gen_interactable_saw
-    tbl[EHI:GetInstanceUnitID(100019, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100070, i) }
-end
-for i = 12100, 16600, 500 do
-    --levels/instances/unique/holly_2/safe_van (6-15)
-    --units/pd2_dlc_jolly/equipment/gen_interactable_saw/gen_interactable_saw
-    tbl[EHI:GetInstanceUnitID(100019, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100070, i) }
-end
-for i = 19150, 20650, 500 do
-    --levels/instances/unique/holly_2/safe_van (16-19)
-    --units/pd2_dlc_jolly/equipment/gen_interactable_saw/gen_interactable_saw
-    tbl[EHI:GetInstanceUnitID(100019, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100070, i) }
-end
-EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     objectives =
     {

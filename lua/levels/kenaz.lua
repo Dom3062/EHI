@@ -72,10 +72,6 @@ local triggers = {
     [EHI:GetInstanceElementID(100149, 37575)] = { id = "WaterTimer2", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseOrSetTimeByPreplanning, data = { id = 101762, yes = 120, no = 60 }, hint = Hints.crojob3_Water },
     [EHI:GetInstanceElementID(100147, 37575)] = { id = "WaterTimer2", special_function = SF.PauseTracker },
 
-    -- Skylight Hack
-    [EHI:GetInstanceElementID(100018, 29650)] = { time = 30, id = "SkylightHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Hack, waypoint = { position_by_element = EHI:GetInstanceElementID(100003, 29650) } },
-    [EHI:GetInstanceElementID(100037, 29650)] = { id = "SkylightHack", special_function = SF.PauseTracker },
-
     [100159] = { id = "BlimpWithTheDrill", icons = { Icon.Blimp, Icon.Drill }, special_function = SF.SetTimeByPreplanning, data = { id = 101854, yes = 976/30, no = 1952/30 }, hint = Hints.DrillDelivery },
     [100426] = { time = 1000/30, id = "BlimpLowerTheDrill", icons = { Icon.Blimp, Icon.Drill, Icon.Goto }, hint = Hints.Wait },
 
@@ -180,14 +176,6 @@ local DisableWaypoints =
 }
 EHI:DisableWaypoints(DisableWaypoints)
 
-local tbl =
-{
-    --levels/instances/unique/kenaz/the_drill
-    --units/pd2_dlc_casino/props/cas_prop_drill/cas_prop_drill
-    [EHI:GetInstanceUnitID(100000, 37575)] = { icons = { Icon.Drill }, ignore_visibility = true, hint = "drill" },
-    [EHI:GetInstanceUnitID(100000, 44535)] = { icons = { Icon.Drill }, ignore_visibility = true, hint = "drill" }
-}
-EHI:UpdateUnits(tbl)
 local xp_override =
 {
     params =

@@ -53,9 +53,6 @@ if EHI:IsHost() then
             managers.network:session():send_to_peers_synched("sync_unit_event_id_16", self._unit, "base", self._autorepair_clbk_id and HasAutorepair or NoAutorepair)
         end
     end
-    function Drill:CanAutorepair()
-        return self._autorepair_clbk_id
-    end
 else
     -- Can't rely on Drill:on_autorepair() anymore as they changed autorepair chance to check every jam and not once the unit is placed or upgraded...
     -- Very well done, OVK. WHYYYYYYYYYYYY
@@ -70,7 +67,8 @@ else
         end
         original.sync_net_event(self, event_id, ...)
     end
-    function Drill:CanAutorepair()
-        return self._autorepair_client
-    end
+end
+
+function Drill:CanAutorepair()
+    return self._autorepair_clbk_id or self._autorepair_client
 end

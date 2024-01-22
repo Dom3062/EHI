@@ -56,18 +56,6 @@ EHI:ParseTriggers({
     other = other
 })
 
-local tbl =
-{
-    --levels/instances/unique/mex/mex_vault
-    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceUnitID(100003, 26850)] = { icons = { Icon.Vault }, remove_on_pause = true }
-}
-for i = 7950, 8550, 300 do
-    --levels/instances/unique/mex/mex_explosives
-    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    tbl[EHI:GetInstanceUnitID(100032, i)] = { icons = { Icon.C4 } }
-end
-EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     tactic =
     {

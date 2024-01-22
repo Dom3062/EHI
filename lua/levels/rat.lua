@@ -72,7 +72,7 @@ local triggers = {
     [1019821] = { id = "Van", special_function = SF.SetTimeOrCreateTracker, run = { time = 589/30 } },
     [1019822] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101281 } },
 
-    [101128] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101454 } }    
+    [101128] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101454 } }
 }
 if EHI:EscapeVehicleWillReturn("rat") then
     table.insert(preload, { id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning, hide_on_delete = true, hint = Hints.LootTimed })
@@ -87,31 +87,30 @@ end
 if EHI:IsMayhemOrAbove() then
     triggers[102197] = { id = "HeliMeth", run = { time = 180 + heli_delay_full }, waypoint_f = ShowFlareWP }
     if EHI:MissionTrackersAndWaypointEnabled() and EHI:EscapeVehicleWillReturn("rat") then
-        local VanPos = 1 -- 1 - Left; 2 - Center
-        triggers[101001].data[#triggers[101001].data + 1] = 1010013
+        local VanPos = 101454 -- 101454 - Left; 101449 - Center
         local function ResetWaypoint()
-            managers.hud:RestoreWaypoint(VanPos == 1 and 101454 or 101449)
-            VanPos = 1 -- Reset to default position
+            managers.hud:RestoreWaypoint(VanPos)
+            VanPos = 101454 -- Reset to default position
         end
+        triggers[101001].data[#triggers[101001].data + 1] = 1010013
         triggers[1010013] = { special_function = SF.CustomCode, f = ResetWaypoint }
         triggers[102320] = { special_function = SF.CustomCode, f = ResetWaypoint }
         triggers[101258] = { special_function = SF.CustomCode, f = ResetWaypoint }
         triggers[101982].data[#triggers[101982].data + 1] = 1019823
         triggers[1019823] = { special_function = SF.CustomCode, f = function()
-            VanPos = 2
+            VanPos = 101449
         end }
         local function DisableWaypoint()
-            local id = VanPos == 1 and 101454 or 101449
-            managers.hud:SoftRemoveWaypoint(id)
-            EHI._cache.IgnoreWaypoints[id] = true
-            EHI:DisableElementWaypoint(id)
+            managers.hud:SoftRemoveWaypoint(VanPos)
+            EHI._cache.IgnoreWaypoints[VanPos] = true
+            EHI:DisableElementWaypoint(VanPos)
         end
         triggers[100763] = { special_function = SF.CustomCode, f = DisableWaypoint }
         triggers[101453] = { special_function = SF.CustomCode, f = DisableWaypoint }
         ---@param self EHIManager
         ---@param trigger ElementTrigger
         local function ShowWaypoint(self, trigger)
-            local pos = VanPos == 1 and Vector3(-1374, -2388, 1135) or Vector3(-1283, 1470, 1285)
+            local pos = VanPos == 101454 and Vector3(-1374, -2388, 1135) or Vector3(-1283, 1470, 1285)
             self._waypoints:AddWaypoint(trigger.id, {
                 time = trigger.run.time,
                 icon = Icon.LootDrop,
@@ -206,6 +205,7 @@ EHI:ShowAchievementLootCounter({
     max = 7,
     difficulty_pass = ovk_and_up
 })
+EHI:ShowLootCounter({ no_max = true })
 EHI:AddXPBreakdown({
     loot_all = 8000,
     total_xp_override =

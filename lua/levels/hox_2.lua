@@ -157,8 +157,7 @@ end)
 ---@param unit_data UnitUpdateDefinition
 ---@param unit UnitTimer
 local function PCPosition(id, unit_data, unit)
-    ---@type number
-    local pos = unit_data.pos
+    local pos = unit_data.pos --[[@as number]]
     PCVectors[pos] = unit:interaction() and unit:interaction():interact_position() or unit:position()
     unit:timer_gui():SetCustomID("HoxtonHack")
     unit:timer_gui():SetCustomCallback("hox_2_restore_waypoint_hack", "add_waypoint")
@@ -177,11 +176,7 @@ local tbl =
 
     --levels/instances/unique/hox_fbi_forensic_device
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics
-    [EHI:GetInstanceUnitID(100018, 2650)] = { icons = { "equipment_evidence" }, remove_vanilla_waypoint = 101559, restore_waypoint_on_done = true, tracker_merge_id = "ForensicsMatchChance", hint = Hints.hox_2_Evidence },
-
-    --levels/instances/unique/hox_fbi_security_office
-    --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_security/stn_interactable_computer_security
-    [EHI:GetInstanceUnitID(100068, 6690)] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = EHI:GetInstanceElementID(100019, 6690) },
+    [EHI:GetInstanceUnitID(100018, 2650)] = { remove_vanilla_waypoint = 101559, restore_waypoint_on_done = true, tracker_merge_id = "ForensicsMatchChance" },
 
     --levels/instances/unique/hox_fbi_armory
     --units/pd2_dlc2/architecture/gov_d_int/gov_d_int_door_b/001

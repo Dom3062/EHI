@@ -7,7 +7,6 @@ local goat_pick_up = { Icon.Heli, Icon.Interact }
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@param self EHIManager
 ---@param trigger ElementTrigger
----@param ... unknown
 local function f_PilotComingInAgain(self, trigger, ...)
     self._trackers:RemoveTracker("PilotComingIn")
     if self._trackers:TrackerExists(trigger.id) then
@@ -24,9 +23,6 @@ end)
 local PilotComingInAgain2 = EHI:RegisterCustomSF(f_PilotComingInAgain)
 ---@type ParseTriggerTable
 local triggers = {
-    [EHI:GetInstanceElementID(100022, 2850)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag, hint = Hints.peta2_LootZoneDelivery },
-    [EHI:GetInstanceElementID(100022, 3150)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag, hint = Hints.peta2_LootZoneDelivery },
-    [EHI:GetInstanceElementID(100022, 3450)] = { time = 180 + 6.9, id = "BagsDropin", icons = Icon.HeliDropBag, hint = Hints.peta2_LootZoneDelivery },
     [100581] = { time = 9 + 30 + 6.9, id = "BagsDropinAgain", icons = Icon.HeliDropBag, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.peta2_LootZoneDelivery },
     [EHI:GetInstanceElementID(100072, 3750)] = { time = 120 + 6.5, id = "PilotComingIn", icons = goat_pick_up, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootTimed },
     [EHI:GetInstanceElementID(100072, 4250)] = { time = 120 + 6.5, id = "PilotComingIn", icons = goat_pick_up, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootTimed },

@@ -58,17 +58,17 @@ EHI:ShowAchievementLootCounter({
     max = 8,
     counter =
     {
-        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+        check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = { "coke", "gold", "money", "weapon", "weapons" }
     }
 })
 
-local max = 6 -- Normal to Very Hard; Mission Loot
+local mission_loot = 6 -- Normal to Very Hard
 if ovk_and_up then
-    max = 8
+    mission_loot = 8
 end
 EHI:ShowLootCounter({
-    max = max + 8
+    max = mission_loot + 8
 }) -- 14 or 16
 
 local tbl =
@@ -87,9 +87,23 @@ EHI:AddXPBreakdown({
     },
     loot =
     {
-        warhead = { amount = 8000, to_secure = max },
+        warhead = { amount = 8000, to_secure = mission_loot },
         _else = { amount = 1500 },
-        xp_bonus = { amount = 2000, to_secure = max + 8 }
+        xp_bonus = { amount = 2000, to_secure = mission_loot + 8 }
     },
-    no_total_xp = true
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot =
+                {
+                    warhead = { min_max = 1 },
+                    _else = { max = 8 },
+                    xp_bonus = { max = 1 }
+                }
+            }
+        }
+    }
 })

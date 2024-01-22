@@ -91,6 +91,7 @@
 ---@field hook_triggers boolean If Loot Counter is created during spawn or gameplay, triggers must be hooked in order to work
 ---@field sequence_triggers table<number, LootCounterSequenceTriggersTable> Used for random loot spawning via sequences (forces syncing via BLT and GameSetup)
 ---@field is_synced boolean If the Loot Counter is synced from host (forces syncing via BLT and GameSetup)
+---@field no_max boolean
 
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.LootCounter.CheckType`, defaults to `EHI.LootCounter.CheckType.BagsOnly` if not provided

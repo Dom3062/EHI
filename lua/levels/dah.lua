@@ -47,7 +47,7 @@ local function dah_8()
         max = 12,
         counter =
         {
-            check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+            check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
             loot_type = "diamondheist_big_diamond"
         }
     })
@@ -84,10 +84,6 @@ local DisableWaypoints =
 {
     [101368] = true -- Drill waypoint for vault with red diamond
 }
-for i = 2500, 2700, 200 do
-    DisableWaypoints[EHI:GetInstanceElementID(100011, i)] = true -- Defend
-    DisableWaypoints[EHI:GetInstanceElementID(100036, i)] = true -- Fix
-end
 EHI:DisableWaypoints(DisableWaypoints)
 
 EHI:ShowLootCounter({

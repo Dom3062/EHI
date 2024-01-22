@@ -101,27 +101,10 @@ EHI:ShowAchievementLootCounter({
     show_finish_after_reaching_target = true,
     counter =
     {
-        check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+        check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = { "mus_artifact_paint", "mus_artifact" }
     }
 })
-
-local tbl =
-{
-    --levels/instances/unique/mus_chamber_controller
-    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceUnitID(100347, 3575)] = { icons = { Icon.Wait }, remove_on_pause = true, warning = true, hint = Hints.roberts_GenSecWarning },
-
-    --levels/instances/unique/mus_security_room
-    --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    [EHI:GetInstanceUnitID(100041, 6950)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100050, 6950) }
-}
-for i = 300, 375, 75 do
-    --levels/instances/unique/mus_security_barrier
-    --units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock
-    tbl[EHI:GetInstanceUnitID(100020, i)] = { icons = { Icon.Keycard } }
-end
-EHI:UpdateUnits(tbl)
 
 ---@type MissionDoorTable
 local MissionDoor =

@@ -5,8 +5,8 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
-    [100128] = { time = 38, id = "WinchDropTrainA", icons = { Icon.Winch, Icon.Goto }, hint = Hints.brb_WinchDelivery },
-    [100164] = { time = 38, id = "WinchDropTrainB", icons = { Icon.Winch, Icon.Goto }, hint = Hints.brb_WinchDelivery },
+    [100128] = { time = 38, id = "WinchDropTrainA", icons = { Icon.Train, Icon.Winch, Icon.Goto }, hint = Hints.brb_WinchDelivery },
+    [100164] = { time = 38, id = "WinchDropTrainB", icons = { Icon.Train, Icon.Winch, Icon.Goto }, hint = Hints.brb_WinchDelivery },
 
     [100654] = { time = 120, id = "Winch", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Winch },
     [100655] = { id = "Winch", special_function = SF.PauseTracker },
@@ -47,7 +47,7 @@ local achievements =
         {
             [101136] = { max = 12, class = TT.Achievement.Progress, show_finish_after_reaching_target = true, special_function = SF.AddAchievementToCounter, data = {
                 counter = {
-                    check_type = EHI.LootCounter.CheckType.OneTypeOfLoot,
+                    check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
                     loot_type = "gold"
                 }
             }}
@@ -83,14 +83,6 @@ EHI:ParseTriggers({
     other = other
 })
 
-local tbl =
-{
-    --levels/instances/unique/brb/brb_vault
-    --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
-    [EHI:GetInstanceUnitID(100058, 1900)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100003, 1900) },
-    [EHI:GetInstanceUnitID(100058, 2400)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100003, 2400) }
-}
-EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     objectives =
     {

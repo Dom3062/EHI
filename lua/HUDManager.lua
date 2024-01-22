@@ -17,7 +17,7 @@ local original =
 ---@field PLAYER_PANEL number
 ---@field add_waypoint fun(self: self, id: number|string, params: table)
 ---@field remove_waypoint fun(self: self, id: number|string)
----@field get_waypoint_data fun(self: self, id: string): WaypointDataTable?
+---@field get_waypoint_data fun(self: self, id: number|string): WaypointDataTable?
 ---@field add_updator fun(self: self, id: string, cb: function)
 ---@field remove_updator fun(self: self, id: string)
 ---@field script fun(self: self, name: string): { panel: Panel }

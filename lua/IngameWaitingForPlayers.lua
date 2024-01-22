@@ -355,7 +355,7 @@ local function OnSetSavedJobValue(achievement_id, keys)
         if keys[key] and value == 1 then
             local progress = 0
             local to_secure = tweak_data.achievement.collection_achievements[achievement_id].collection
-            for _, item in pairs(to_secure) do
+            for _, item in ipairs(to_secure) do
                 if Global.mission_manager.saved_job_values[item] then
                     progress = progress + 1
                 end
@@ -1004,8 +1004,8 @@ function IngameWaitingForPlayersState:at_exit(...)
             function EHIovk3Tracker:Reset()
                 self:SetTime(25)
                 self._fade_time = 5
-                self:SetTextColor(Color.white)
-                self.update = self.super.update
+                self:StopAndSetTextColor(Color.white)
+                self.update = EHIovk3Tracker.super.update
             end
             EHI:HookWithID(RaycastWeaponBase, "start_shooting", "EHI_ovk_3_start_shooting", function(self, ...)
                 if self._shooting and self:get_name_id() == "m134" then

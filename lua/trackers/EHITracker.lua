@@ -452,6 +452,17 @@ function EHITracker:SetIconX(previous_icon, icon)
     end
 end
 
+function EHITracker:SetIconsX()
+    local previous_icon ---@type PanelBitmap?
+    for i = 1, self._n_of_icons, 1 do
+        local icon = self["_icon" .. tostring(i)] --[[@as PanelBitmap?]]
+        if icon then
+            self:SetIconX(previous_icon, icon)
+            previous_icon = icon
+        end
+    end
+end
+
 ---@param target_x number
 function EHITracker:AnimIconX(target_x)
     if not self._icon1 then
@@ -853,6 +864,14 @@ end
 function EHITracker:SetTextColor(color, text)
     text = text or self._text
     text:set_color(color or self._text_color)
+end
+
+---@param color Color? Color is set to `White` or tracker default color if not provided
+---@param text PanelText? Defaults to `self._text` if not provided
+function EHITracker:StopAndSetTextColor(color, text)
+    text = text or self._text
+    text:stop()
+    self:SetTextColor(color, text)
 end
 
 ---@param new_icon string

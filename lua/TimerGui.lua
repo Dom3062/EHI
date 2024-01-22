@@ -176,17 +176,17 @@ end
 
 if show_waypoint_only then
     function TimerGui:update(...)
-        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._time_left or self._current_timer)
+        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._time_left or self._current_timer or 0)
         original.update(self, ...)
     end
 elseif show_waypoint then
     function TimerGui:update(...)
-        managers.ehi_manager:UpdateTimer(self._ehi_key, self._time_left or self._current_timer)
+        managers.ehi_manager:UpdateTimer(self._ehi_key, self._time_left or self._current_timer or 0)
         original.update(self, ...)
     end
 else
     function TimerGui:update(...)
-        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._time_left or self._current_timer)
+        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._time_left or self._current_timer or 0)
         original.update(self, ...)
     end
 end

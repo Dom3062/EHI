@@ -6,21 +6,9 @@ local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local LootDrop = { Icon.Escape, Icon.LootDrop }
 local TimedLootDrop = { Icon.Escape, Icon.LootDrop, Icon.Wait }
-local FireTrapIndexes = { 0, 120, 240, 360, 480 }
 local triggers = {
-    [100647] = { time = 240 + 60, id = "Chimney", icons = LootDrop, hint = Hints.Loot },
-    [EHI:GetInstanceElementID(100135, 11300)] = { time = 12, id = "SafeEvent", icons = { Icon.Heli, Icon.Goto }, hint = Hints.cane_Safe }
+    [100647] = { time = 240 + 60, id = "Chimney", icons = LootDrop, hint = Hints.Loot }
 }
-local fire_recharge = { time = 180, id = "FireRecharge", icons = { Icon.Fire, Icon.Loop }, hint = Hints.FireRecharge }
-local fire_t = { time = 60, id = "Fire", icons = { Icon.Fire }, class = TT.Warning, hint = Hints.Fire }
-for _, index in ipairs(FireTrapIndexes) do
-    local recharge = deep_clone(fire_recharge)
-    recharge.id = recharge.id .. index
-    triggers[EHI:GetInstanceElementID(100024, index)] = recharge
-    local fire = deep_clone(fire_t)
-    fire.id = fire.id .. index
-    triggers[EHI:GetInstanceElementID(100022, index)] = fire
-end
 if EHI:EscapeVehicleWillReturn("cane") then
     triggers[EHI:GetInstanceElementID(100078, 10700)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
     triggers[EHI:GetInstanceElementID(100078, 11000)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
@@ -121,29 +109,14 @@ EHI:ShowAchievementLootCounter({
     show_finish_after_reaching_target = true,
     difficulty_pass = ovk_and_up
 })
+EHI:ShowLootCounter({ no_max = true })
 
-local tbl =
-{
-    --cane_santa_event
-    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [EHI:GetInstanceUnitID(100014, 11300)] = { ignore = true },
-    [EHI:GetInstanceUnitID(100056, 11300)] = { ignore = true },
-    [EHI:GetInstanceUnitID(100226, 11300)] = { ignore = true },
-    [EHI:GetInstanceUnitID(100227, 11300)] = { icons = { Icon.Vault }, remove_on_pause = true, completion = true }
-}
-for _, index in ipairs(FireTrapIndexes) do
-    --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    -- OVK decided to use one timer for fire and fire recharge
-	-- This ignores them and that timer is implemented in the for loop above
-    tbl[EHI:GetInstanceUnitID(100002, index)] = { ignore = true }
-end
-EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     objectives =
     {
         { amount = 1000, name = "present_finished" },
-        { escape = 4000 },
-        { amount = 4000, name = "safe_event_done", optional = true }
+        { amount = 4000, name = "safe_event_done", optional = true },
+        { escape = 4000 }
     },
     loot_all = 1000,
     total_xp_override =

@@ -12,7 +12,6 @@ function EHIcac10Tracker:OverridePanel()
     self._progress = 0
     self:SetBGSize()
     self._progress_text = self:CreateText({
-        name = "text2",
         text = self:FormatProgress(),
         w = self._bg_box:w() / 2,
         left = 0,
@@ -163,18 +162,6 @@ EHI:ShowLootCounter({
     }
 })
 
-local tbl = {}
-for i = 0, 300, 100 do
-    --levels/instances/unique/red/red_hacking_computer
-    --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
-    tbl[EHI:GetInstanceUnitID(100000, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100018, i) }
-end
-for i = 6000, 6200, 200 do
-    --levels/instances/unique/red/red_gates
-    --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
-    tbl[EHI:GetInstanceUnitID(100006, i)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100014, i) }
-end
-EHI:UpdateUnits(tbl)
 local min_bags = EHI:GetValueBasedOnDifficulty({
     hard_or_below = 4,
     veryhard = 6,
@@ -241,7 +228,7 @@ local custom_tactic =
         }
     }
 }
-if EHI:IsMayhemOrAbove() then
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
     custom_tactic[3] = {
         name = "loud",
         additional_name = "fwb_overdrill",

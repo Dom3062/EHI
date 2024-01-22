@@ -28,23 +28,12 @@ local function waypoint_f(self, trigger)
         })
     end
 end
-local SetBoatPosDirectlyOrFromElement = EHI:RegisterCustomSyncedSF(function(self, trigger, element, ...)
-    self.SyncedSFF.watchdogs_2_boat_pos = trigger.pos or (element._values.amount + 6)
-end)
 ---@type ParseTriggerTable
 local triggers = {
     [101560] = { time = 35 + 75 + 30 + boat_delay, id = "BoatLootFirst", waypoint_f = waypoint_f, hint = Hints.Loot },
     [101117] = { time = 60 + 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f, hint = Hints.Loot },
     [101122] = { time = 40 + 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f, hint = Hints.Loot },
     [101119] = { time = 30 + boat_delay, id = "BoatLootFirst", special_function = SF.SetTimeOrCreateTracker, waypoint_f = waypoint_f, hint = Hints.Loot },
-
-    [100474] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 7 },
-    [100472] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 8 },
-    [100470] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 9 },
-
-    [101553] = { special_function = SetBoatPosDirectlyOrFromElement }, -- 1
-    [101554] = { special_function = SetBoatPosDirectlyOrFromElement }, -- 2
-    [101555] = { special_function = SetBoatPosDirectlyOrFromElement }, -- 3 
 
     [100323] = { time = 50 + 23, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
 
@@ -106,13 +95,23 @@ local achievements =
     }
 }
 
+local SetBoatPosDirectlyOrFromElement = EHI:RegisterCustomSyncedSF(function(self, trigger, element, ...)
+    self.SyncedSFF.watchdogs_2_boat_pos = trigger.pos or (element._values.amount + 6)
+end)
 local other =
 {
     [100124] = EHI:AddLootCounter(function()
         local bags = managers.ehi_manager:CountLootbagsOnTheGround(10)
         EHI:ShowLootCounterNoCheck({ max = bags })
     end),
-    [103696] = EHI:AddAssaultDelay({ time = 5 + 15 + 30 })
+    [103696] = EHI:AddAssaultDelay({ time = 5 + 15 + 30 }),
+
+    [100474] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 7 },
+    [100472] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 8 },
+    [100470] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 9 },
+    [101553] = { special_function = SetBoatPosDirectlyOrFromElement }, -- 1
+    [101554] = { special_function = SetBoatPosDirectlyOrFromElement }, -- 2
+    [101555] = { special_function = SetBoatPosDirectlyOrFromElement } -- 3 
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100457] = { time = 23 + 1, id = "Snipers", class = TT.Sniper.Warning }

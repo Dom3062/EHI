@@ -14,8 +14,6 @@ local original =
     set_enabled = HUDManager.set_enabled
 }
 
-local EHIWaypoints = EHI:GetOption("show_waypoints")
-
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
     local server = EHI:IsHost()
@@ -24,11 +22,25 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     managers.ehi_waypoint:SetPlayerHUD(self)
     managers.ehi_assault:init_hud(self)
     self.ehi_manager = managers.ehi_manager
-    if server or level_id == "hvh" then
+    local EHIWaypoints = EHI:GetOption("show_waypoints")
+    if server or EHI:IsHeistTimerInverted() then
         if EHIWaypoints then
             self:AddEHIUpdator(self.ehi_manager, "EHIManager_Update")
         else
             self:AddEHIUpdator(self.ehi, "EHI_Update")
+        end
+    else
+        original.feed_heist_time = self.feed_heist_time
+        if EHIWaypoints then
+            function HUDManager:feed_heist_time(time, ...)
+                original.feed_heist_time(self, time, ...)
+                self.ehi_manager:update_client(time)
+            end
+        else
+            function HUDManager:feed_heist_time(time, ...)
+                original.feed_heist_time(self, time, ...)
+                self.ehi:update_client(time)
+            end
         end
     end
     if EHI:IsVR() then
@@ -183,27 +195,15 @@ function HUDManager:destroy(...)
     original.destroy(self, ...)
 end
 
-if EHI:IsClient() and level_id ~= "hvh" then
-    original.feed_heist_time = HUDManager.feed_heist_time
-    if EHIWaypoints then
-        function HUDManager:feed_heist_time(time, ...)
-            original.feed_heist_time(self, time, ...)
-            self.ehi_manager:update_client(time)
-        end
-    else
-        function HUDManager:feed_heist_time(time, ...)
-            original.feed_heist_time(self, time, ...)
-            self.ehi:update_client(time)
-        end
-    end
-end
-
-if EHI:GetOption("show_assault_delay_tracker") or EHI:GetOption("show_assault_time_tracker") then
+if EHI:AssaultDelayTrackerIsEnabled() then
     original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
     function HUDManager:sync_start_anticipation_music(...)
         original.sync_start_anticipation_music(self, ...)
         managers.ehi_assault:AnticipationStart()
     end
+end
+
+if EHI:GetOption("show_assault_time_tracker") then
     original.sync_start_assault = HUDManager.sync_start_assault
     function HUDManager:sync_start_assault(...)
         original.sync_start_assault(self, ...)

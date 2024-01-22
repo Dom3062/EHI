@@ -182,6 +182,12 @@ function EHILootTracker:SecuredMissionLoot()
 end
 EHILootTracker.FormatProgress = EHILootTracker.Format
 
+---@class EHILootCountTracker : EHICountTracker
+EHILootCountTracker = class(EHICountTracker)
+EHILootCountTracker._forced_hint_text = "loot_counter"
+EHILootCountTracker._forced_icons = { EHI.Icons.Loot }
+EHILootCountTracker.SetProgress = EHILootCountTracker.SetCount
+
 ---@class EHIAchievementLootCounterTracker : EHILootTracker, EHIAchievementTracker
 ---@field _icon2 PanelBitmap
 ---@field super EHILootTracker
@@ -288,7 +294,7 @@ function EHIAchievementLootCounterTracker:SetStarted()
         self._icon1:set_visible(true)
         if self._icon2 then
             self._icon2:set_visible(true)
-            self:SetIconX(self._icon1, self._icon2)
+            self:SetIconsX()
             self._panel_override_w = nil
             self:ChangeTrackerWidth(nil, true)
         else
