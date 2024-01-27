@@ -59,15 +59,18 @@ function(loc, loc_loaded)
     end
 end)
 
+---@param id string
 local function RestoreVanillaText(id)
     LocalizationManager._custom_localizations[id] = nil
 end
 
+---@param id string
+---@param t string
 local function AddCustomText(id, t)
     LocalizationManager._custom_localizations[id] = t
 end
 
----@param dot_data_name string?
+---@param dot_data_name string
 ---@param variant string?
 ---@return string
 local function FormatDOTData(dot_data_name, variant)
@@ -81,7 +84,7 @@ local function FormatDOTData(dot_data_name, variant)
     local str = string.format("%s: (%s)", variant or "<Unknown>", strs.dot)
     if dot_data.dot_trigger_chance then
         local chance = dot_data.dot_trigger_chance
-        if chance >= 0 and chance <= 1 then
+        if math.within(chance, 0, 1) then
             chance = chance * 100
         end
         str = string.format("%s\n>> %s: %d%s", str, strs.dot_chance, chance, percent_format)

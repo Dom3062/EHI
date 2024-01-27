@@ -88,7 +88,14 @@ EHI:ShowAchievementLootCounter({
     achievement = "pal_2",
     max = max
 })
-EHI:ShowLootCounter({ no_max = true })
+EHI:ShowLootCounter({
+    max_bags_for_level = {
+        mission_xp = 3000,
+        xp_per_bag_all = 1000,
+        objective_triggers = { 103154, 100427, 100428, 103187, 103188, 103189 }
+    },
+    no_max = true
+})
 
 local DisableWaypoints =
 {

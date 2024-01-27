@@ -205,7 +205,7 @@ EHI:ShowAchievementLootCounter({
     max = 7,
     difficulty_pass = ovk_and_up
 })
-EHI:ShowLootCounter({ no_max = true })
+EHI:ShowLootCounter({ max_bags_for_level = { xp_per_bag_all = 8000 }, no_max = true })
 EHI:AddXPBreakdown({
     loot_all = 8000,
     total_xp_override =

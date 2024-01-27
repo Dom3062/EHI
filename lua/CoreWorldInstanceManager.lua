@@ -530,6 +530,10 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                             new_trigger.waypoint.remove_vanilla_waypoint = EHI:GetInstanceElementID(trigger.waypoint.remove_vanilla_waypoint, start_index, continent_data.base_id)
                         end
                     end
+                    if trigger.special_function and trigger.special_function == SF.ShowWaypoint and trigger.data and trigger.data.position_by_element then
+                        new_trigger.data.position_by_element = EHI:GetInstanceElementID(trigger.data.position_by_element, start_index, continent_data.base_id)
+                        defer_loading_waypoints = true
+                    end
                     triggers[final_index] = new_trigger
                 end
             end

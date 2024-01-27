@@ -326,14 +326,23 @@ end
 ---@param max_random number?
 ---@param offset number?
 ---@param no_max boolean?
-function EHITrackerManager:ShowLootCounter(max, max_random, offset, no_max)
-    self:AddTracker({
-        id = "LootCounter",
-        max = max or 0,
-        max_random = max_random or 0,
-        offset = offset or 0,
-        class = no_max and "EHILootCountTracker" or "EHILootTracker"
-    })
+---@param max_bags_for_level table?
+function EHITrackerManager:ShowLootCounter(max, max_random, offset, no_max, max_bags_for_level)
+    if max_bags_for_level then
+        self:AddTracker({
+            id = "LootCounter",
+            xp_params = max_bags_for_level,
+            class = "EHILootMaxTracker"
+        })
+    else
+        self:AddTracker({
+            id = "LootCounter",
+            max = max or 0,
+            max_random = max_random or 0,
+            offset = offset or 0,
+            class = no_max and "EHILootCountTracker" or "EHILootTracker"
+        })
+    end
 end
 
 ---@param tracker_id string? Defaults to `LootCounter` if not provided

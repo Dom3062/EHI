@@ -1824,7 +1824,7 @@ function EHI:AddLootCounter3(f, trigger_once)
 end
 
 ---@param f fun(self: EHIManager, trigger: table, element: table, enabled: boolean) Loot Counter function
----@param sequence_triggers table<number, LootCounterSequenceTriggersTable> If the Loot Counter is not enabled, hook the sequence triggers so the syncing will still work
+---@param sequence_triggers table<number, LootCounterTable.SequenceTriggersTable> If the Loot Counter is not enabled, hook the sequence triggers so the syncing will still work
 ---@param loot_counter_data_function fun(self: EHIManager, trigger: table, element: table, enabled: boolean) If the Loot Counter is not enabled, sync the data to clients so the syncing will still work. The provided function `HAS TO SYNC` tracker creation so it will work on clients
 ---@return table?
 function EHI:AddLootCounterSynced(f, sequence_triggers, loot_counter_data_function)
@@ -2041,6 +2041,21 @@ function EHI:ShowLootCounterNoChecks(params)
     end
     if params.sequence_triggers or params.is_synced then
         managers.ehi_tracker:SyncShowLootCounter(params.max, params.max_random, n_offset)
+    elseif params.max_bags_for_level and EHI:IsXPTrackerEnabledAndVisible() then
+        if params.max_bags_for_level.objective_triggers then
+            local xp_trigger = { special_function = self:RegisterCustomSF(function(manager, trigger, element, enabled)
+                if enabled then
+                    manager._trackers:CallFunction(trigger.id, "ObjectiveXPAwarded", element._values.amount or 0)
+                end
+            end) }
+            local triggers = {}
+            for _, id in ipairs(params.max_bags_for_level.objective_triggers) do
+                triggers[id] = xp_trigger
+            end
+            self:AddTriggers2(triggers, nil, "LootCounter")
+            params.max_bags_for_level.objective_triggers = nil
+        end
+        managers.ehi_tracker:ShowLootCounter(0, 0, 0, false, params.max_bags_for_level)
     else
         managers.ehi_tracker:ShowLootCounter(params.max, params.max_random, n_offset, params.no_max)
     end
@@ -2057,7 +2072,12 @@ function EHI:ShowLootCounterNoChecks(params)
     if params.sequence_triggers then
         self:HookLootCounterSequenceTriggers(params.sequence_triggers)
     end
-    self:HookLootCounter(params.no_sync_load)
+    if params.max_bags_for_level and params.max_bags_for_level.custom_counter then
+        params.max_bags_for_level.custom_counter.achievement = "LootCounter"
+        self:AddAchievementToCounter(params.max_bags_for_level.custom_counter)
+    else
+        self:HookLootCounter(params.no_sync_load)
+    end
 end
 
 ---@param params LootCounterTable
@@ -2078,7 +2098,7 @@ function EHI:ShowLootCounterSynced(params)
     self:ShowLootCounterNoChecks(params)
 end
 
----@param sequence_triggers table<number, LootCounterSequenceTriggersTable>
+---@param sequence_triggers table<number, LootCounterTable.SequenceTriggersTable>
 function EHI:HookLootCounterSequenceTriggers(sequence_triggers)
     local function IncreaseMax(...)
         managers.ehi_tracker:SyncRandomLootSpawned()

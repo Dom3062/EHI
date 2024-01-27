@@ -75,9 +75,16 @@
 ---@class ParseUnitsTable
 ---@field [number] UnitUpdateDefinition
 
----@class LootCounterSequenceTriggersTable
+---@class LootCounterTable.SequenceTriggersTable
 ---@field loot string[] Sequences where loot spawns (ipairs); triggers "LootCounter:RandomLootSpawned()"
 ---@field no_loot string[] Sequences where no loot or garbage spawns (ipairs); triggers "LootCounter:RandomLootDeclined()"
+
+---@class LootCounterTable.MaxBagsForMaxLevel
+---@field mission_xp number Should include objectives that Host and Client will trigger all the time; e.g: `Escape XP`
+---@field xp_per_loot { [string]: number }
+---@field xp_per_bag_all number
+---@field objective_triggers number[]
+---@field custom_counter AchievementLootCounterTable|AchievementBagValueCounterTable
 
 ---@class LootCounterTable
 ---@field max integer Maximum number of loot
@@ -89,9 +96,10 @@
 ---@field n_offset integer Provided via EHI:ShowLootCounterOffset(); DO NOT PROVIDE IT
 ---@field triggers table If loot is manipulated via Mission Script, also see field `hook_triggers`
 ---@field hook_triggers boolean If Loot Counter is created during spawn or gameplay, triggers must be hooked in order to work
----@field sequence_triggers table<number, LootCounterSequenceTriggersTable> Used for random loot spawning via sequences (forces syncing via BLT and GameSetup)
+---@field sequence_triggers table<number, LootCounterTable.SequenceTriggersTable> Used for random loot spawning via sequences (forces syncing via BLT and GameSetup)
 ---@field is_synced boolean If the Loot Counter is synced from host (forces syncing via BLT and GameSetup)
 ---@field no_max boolean
+---@field max_bags_for_level LootCounterTable.MaxBagsForMaxLevel
 
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.LootCounter.CheckType`, defaults to `EHI.LootCounter.CheckType.BagsOnly` if not provided

@@ -21,6 +21,7 @@ if EHI:IsRunningBB() then
         local character = self:character_by_name(name)
         if character and character.taken and character.data.ai then
             managers.ehi_experience:IncreaseAlivePlayers()
+            EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
         end
     end)
     EHI:HookWithID(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit",
@@ -31,6 +32,7 @@ if EHI:IsRunningBB() then
         local character = self:character_by_name(name)
         if character and character.taken and character.data.ai and not unit:base().is_local_player then
             managers.ehi_experience:IncreaseAlivePlayers()
+            EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
         end
     end)
     EHI:PreHookWithID(CriminalsManager, "_remove", "EHI_CriminalsManager_remove",
@@ -40,11 +42,13 @@ if EHI:IsRunningBB() then
         local char_data = self._characters[id]
         if char_data.data.ai then
             managers.ehi_experience:DecreaseAlivePlayers()
+            EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
         end
     end)
 elseif EHI:IsRunningUsefulBots() then
     local function Query(...)
         managers.ehi_experience:QueryAmountOfAllPlayers()
+        EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
     end
     EHI:Hook(CriminalsManager, "add_character", Query)
     EHI:Hook(CriminalsManager, "set_unit", Query)
@@ -55,11 +59,13 @@ elseif not Global.game_settings.single_player then
     if EHI:IsRunningUsefulBots() then
         Query = function(...)
             managers.ehi_experience:QueryAmountOfAllPlayers()
+            EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
         end
         EHI:Hook(CriminalsManager, "_remove", Query)
     else
         Query = function(...)
             managers.ehi_experience:QueryAmountOfAlivePlayers()
+            EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
         end
     end
     EHI:Hook(CriminalsManager, "add_character", Query)

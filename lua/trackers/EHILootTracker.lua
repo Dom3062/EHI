@@ -1,26 +1,28 @@
-local format = EHI:GetOption("variable_random_loot_format")
 ---@class EHILootTracker : EHIProgressTracker
 ---@field super EHIProgressTracker
 EHILootTracker = class(EHIProgressTracker)
 EHILootTracker._forced_hint_text = "loot_counter"
 EHILootTracker._forced_icons = { EHI.Icons.Loot }
 EHILootTracker._show_popup = EHI:GetOption("show_all_loot_secured_popup")
----@param panel Panel
 ---@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHILootTracker:init(panel, params, parent_class)
+function EHILootTracker:pre_init(params)
+    EHILootTracker.super.pre_init(self, params)
     self._mission_loot = 0
     self._offset = params.offset or 0
     self._max_random = params.max_random or 0
     self._stay_on_screen = self._max_random > 0
-    EHILootTracker.super.init(self, panel, params, parent_class)
+end
+
+---@param params EHITracker.params
+function EHILootTracker:post_init(params)
+    EHILootTracker.super.post_init(self, params)
     self._show_finish_after_reaching_target = self._stay_on_screen
     self._loot_id = {}
     self._loot_check_delay = {} ---@type table<number, number>
     self._loot_check_n = 0
 end
 
-if format == 1 then
+if EHI:GetOption("variable_random_loot_format") == 1 then
     function EHILootTracker:Format()
         if self._max_random > 0 then
             local max = self._max + self._max_random
@@ -28,7 +30,7 @@ if format == 1 then
         end
         return EHILootTracker.super.Format(self)
     end
-elseif format == 2 then
+elseif EHI:GetOption("variable_random_loot_format") == 2 then
     function EHILootTracker:Format()
         if self._max_random > 0 then
             local max = self._max + self._max_random
@@ -52,7 +54,7 @@ function EHILootTracker:update(dt)
         if t <= 0 then
             self._loot_check_delay[id] = nil
             self._loot_check_n = self._loot_check_n - 1
-            if self._loot_check_n <= 0 then
+            if self:CanDisableUpdate() then
                 self:RemoveTrackerFromUpdate()
             end
             self:RandomLootDeclinedCheck(id)
@@ -60,6 +62,10 @@ function EHILootTracker:update(dt)
             self._loot_check_delay[id] = t
         end
     end
+end
+
+function EHILootTracker:CanDisableUpdate()
+    return self._loot_check_n <= 0
 end
 
 ---@param id number
@@ -91,7 +97,7 @@ function EHILootTracker:SetCompleted(force)
     if self._stay_on_screen and self._status then
         self:SetAndFitTheText()
         self._status = nil
-    elseif self._show_popup and not self._popup_showed then
+    elseif self._show_popup and not self._popup_showed and not self._show_finish_after_reaching_target then
         self._popup_showed = true
         self.update = self.update_fade
         managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_loot_secured"), "EHI_Loot")
@@ -187,6 +193,101 @@ EHILootCountTracker = class(EHICountTracker)
 EHILootCountTracker._forced_hint_text = "loot_counter"
 EHILootCountTracker._forced_icons = { EHI.Icons.Loot }
 EHILootCountTracker.SetProgress = EHILootCountTracker.SetCount
+
+---@class EHILootMaxTracker : EHILootTracker
+---@field super EHILootTracker
+EHILootMaxTracker = class(EHILootTracker)
+---@param params EHITracker.params
+function EHILootMaxTracker:post_init(params)
+    EHILootMaxTracker.super.post_init(self, params)
+    self._params = params.xp_params or {} ---@type LootCounterTable.MaxBagsForMaxLevel
+    self._refresh_max = 5
+    self._show_finish_after_reaching_target = true
+    local function refresh()
+        self:Refresh()
+    end
+    EHI:AddCallback("ExperienceManager_RefreshPlayerCount", refresh)
+    EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, refresh)
+    EHI:AddOnCustodyCallback(refresh)
+    EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+        self:AddTrackerToUpdate()
+    end)
+    if EHI:IsClient() then
+        EHI:AddCallback(EHI.CallbackMessage.LootLoadSync,
+        ---@param loot LootManager
+        function(loot)
+            self._offset = loot:GetSecuredBagsAmount()
+            self:SetProgress(self._progress)
+        end)
+    end
+end
+
+---@param dt number
+function EHILootMaxTracker:update(dt)
+    if self._refresh_max then
+        self._refresh_max = self._refresh_max - dt
+        if self._refresh_max <= 0 then
+            self._refresh_max = nil
+            self:CacheVariables()
+            self:Refresh()
+            if self:CanDisableUpdate() then
+                self:RemoveTrackerFromUpdate()
+                return
+            end
+        end
+    end
+    EHILootMaxTracker.super.update(self, dt)
+end
+
+function EHILootMaxTracker:VerifyStatus()
+    if self._progress == self._max then
+        self:SetCompleted()
+    end
+end
+
+function EHILootMaxTracker:CacheVariables()
+    self._xp_player_limit = managers.ehi_experience:GetPlayerXPLimit()
+end
+
+function EHILootMaxTracker:Refresh()
+    if self._refresh_max then
+        return
+    end
+    local xp_per_bags, current_secured_bags = 1, nil
+    if self._params.xp_per_loot then
+        local xp = 0
+        current_secured_bags = 0
+        for loot, value in pairs(self._params.xp_per_loot) do
+            local amount = managers.loot:GetSecuredBagsTypeAmount(loot)
+            xp = xp + (amount * value)
+            current_secured_bags = current_secured_bags + amount
+        end
+        xp_per_bags = managers.ehi_experience:MultiplyXPWithAllBonuses(xp, 1)
+    elseif self._params.xp_per_bag_all then
+        xp_per_bags = managers.ehi_experience:MultiplyXPWithAllBonuses(self._params.xp_per_bag_all, 1)
+    end
+    local xp_mission = managers.ehi_experience:MultiplyXPWithAllBonuses(self._params.mission_xp, 0)
+    local xp_remaining_to_max = self._xp_player_limit - xp_mission
+    local new_max = math.ceil(xp_remaining_to_max / xp_per_bags)
+    if new_max ~= self._max then
+        current_secured_bags = math.clamp((current_secured_bags or managers.loot:GetSecuredBagsAmount()) - self._offset, 0, math.huge)
+        local max_secured_bags = new_max
+        if new_max < self._max and self._progress > max_secured_bags then
+            current_secured_bags = new_max
+        end
+        self._progress = math.clamp(self._progress, current_secured_bags, max_secured_bags)
+        self:SetProgressMax(new_max)
+    end
+end
+
+---@param amount number
+function EHILootMaxTracker:ObjectiveXPAwarded(amount)
+    if amount <= 0 then
+        return
+    end
+    self._params.mission_xp = (self._params.mission_xp or 0) + amount
+    self:Refresh()
+end
 
 ---@class EHIAchievementLootCounterTracker : EHILootTracker, EHIAchievementTracker
 ---@field _icon2 PanelBitmap

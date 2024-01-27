@@ -70,6 +70,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             self._trackers:AddTracker({
                 id = id,
                 count = 1,
+                single_sniper = true,
                 snipers_spawned = true,
                 class = TT.Sniper.Count
             })

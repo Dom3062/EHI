@@ -231,6 +231,17 @@ _G.tweak_data.achievement.enemy_melee_hit_achievements = {
         }
     }
 }
+---@class AchievementsTweakData.loot_cash_achievements
+_G.tweak_data.achievement.loot_cash_achievements = {
+    pal_2 = {
+        award = "pal_2",
+        job = "pal",
+        secured = {
+            carry_id = "counterfeit_money",
+            value = 1000000
+        }
+    }
+}
 _G.tweak_data.hud = {}
 _G.tweak_data.screen_colors = {}
 ---@class CarryTweakData

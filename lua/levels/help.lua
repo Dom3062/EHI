@@ -52,7 +52,15 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:ShowLootCounter({ no_max = true })
+EHI:ShowLootCounter({
+    max_bags_for_level =
+    {
+        mission_xp = 8000,
+        xp_per_bag_all = 850,
+        objective_triggers = { 102461 }
+    },
+    no_max = true
+})
 
 local tbl =
 {
@@ -75,7 +83,8 @@ EHI:AddXPBreakdown({
             {
                 objectives = true
             },
-            no_max = true
+            max_level = true,
+            max_level_bags_with_objectives = true
         }
     }
 })

@@ -339,7 +339,7 @@ EHI:AddXPBreakdown({
                         stop_at = "rvd2_hacking_done",
                         add_objectives =
                         {
-                            { amount = 30000, name = "china3_c4_route" }
+                            { amount = table.ehi_get_objectives_xp_amount(loud_c4_objectives), name = "china3_c4_route" }
                         }
                     }
                 }

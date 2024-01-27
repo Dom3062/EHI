@@ -24,14 +24,12 @@ local triggers = {
 local other = {}
 if EHI:GetOption("show_escape_chance") then
     other[101433] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
-    local start_chance = 25 -- Normal
-    if EHI:IsDifficulty(EHI.Difficulties.Hard) then
-        start_chance = 27
-    elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
-        start_chance = 32
-    elseif ovk_and_up then
-        start_chance = 36
-    end
+    local start_chance = EHI:GetValueBasedOnDifficulty({
+        normal = 25,
+        hard = 27,
+        veryhard = 32,
+        overkill_or_above = 36
+    })
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, start_chance)
     end)

@@ -363,8 +363,12 @@ function EHIExperienceManager:ShowGainedXP(id, base_xp, xp_gained, xp_set)
 end
 
 local math_round = math.round
----@param xp number
-function EHIExperienceManager:MultiplyXPWithAllBonuses(xp)
+---@param xp number?
+---@param default_xp_if_zero number?
+function EHIExperienceManager:MultiplyXPWithAllBonuses(xp, default_xp_if_zero)
+    if not xp or xp <= 0 then
+        return default_xp_if_zero or 0
+    end
     local job_stars = self._ehi_xp.job_stars
     local num_winners = self._ehi_xp.alive_players
     local player_stars = self._ehi_xp.level_to_stars

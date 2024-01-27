@@ -17,7 +17,27 @@ local other =
 }
 
 EHI:ParseTriggers({ mission = triggers, other = other })
-EHI:ShowLootCounter({ no_max = true })
+EHI:ShowLootCounter({
+    max_bags_for_level =
+    {
+        mission_xp = 5000,
+        xp_per_loot = { meth_half = 500 },
+        objective_triggers = { 100187, 100188, 100189,
+            EHI:GetInstanceElementID(100504, 5020),
+            EHI:GetInstanceElementID(100505, 5020),
+            EHI:GetInstanceElementID(100506, 5020)
+        },
+        custom_counter =
+        {
+            counter =
+            {
+                check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
+                loot_type = "meth_half"
+            }
+        }
+    },
+    no_max = true
+})
 EHI:AddXPBreakdown({
     objectives =
     {

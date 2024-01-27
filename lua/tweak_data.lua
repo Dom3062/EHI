@@ -1002,3 +1002,17 @@ function math.increment_with_limit(number, start, limit)
     number = number + 1
     return number > limit and start or number
 end
+
+---@param objectives XPBreakdown.objectives
+function table.ehi_get_objectives_xp_amount(objectives)
+    local xp_amount = 0
+    for _, objective in ipairs(objectives) do
+        if objective.optional then
+        elseif objective.amount then
+            xp_amount = xp_amount + objective.amount
+        elseif objective.escape and type(objective.escape) == "number" then
+            xp_amount = xp_amount + objective.escape
+        end
+    end
+    return xp_amount
+end

@@ -1087,12 +1087,27 @@ function XPBreakdownPanel:ParamsMinWithMax(o_params)
                 end
             end
         elseif o_params.max_level_bags_with_objective then
-            local min_objective_xp = self:SumObjective({}, true)
-            local max_n_with_objectives = max_n + min_objective_xp
+            local sum_of_min_objective = self:SumObjective()
+            local min_objective_xp = self._xp:FakeMultiplyXPWithAllBonuses(sum_of_min_objective)
+            local min_objective_xp_gage = self._gage and self._gui:FormatXPWithAllGagePackagesNoString(sum_of_min_objective) or min_objective_xp
             local loot_xp = self._xp:FakeMultiplyXPWithAllBonuses(self._params.loot_all --[[@as number]])
             local loot_xp_gage = self._gage and self._gui:FormatXPWithAllGagePackagesNoString(self._params.loot_all --[[@as number]]) or loot_xp
-            local bags_to_secure = math.ceil(max_n_with_objectives / loot_xp)
-            local bags_to_secure_gage = math.ceil(max_n_with_objectives / loot_xp_gage)
+            local bags_to_secure = math.ceil((max_n - min_objective_xp) / loot_xp)
+            local bags_to_secure_gage = math.ceil((max_n - min_objective_xp_gage) / loot_xp_gage)
+            local to_secure = self._loc:text("ehi_experience_to_secure", { amount = bags_to_secure })
+            if bags_to_secure == bags_to_secure_gage then -- Securing gage packages does not matter -> you still need to secure the same amount of bags
+                max = string.format("+%s %s (%s)", max, xp, to_secure)
+            else -- Securing gage packages will make a difference in bags, reflect it
+                max = string.format("+%s %s (%s; %s %s)", max, xp, to_secure, self._loc:text("ehi_experience_all_gage_packages"), tostring(bags_to_secure_gage))
+            end
+        elseif o_params.max_level_bags_with_objectives then
+            local sum_of_min_objectives = self:SumObjectives()
+            local min_objectives_xp = self._xp:FakeMultiplyXPWithAllBonuses(sum_of_min_objectives)
+            local min_objectives_xp_gage = self._gage and self._gui:FormatXPWithAllGagePackagesNoString(sum_of_min_objective) or min_objectives_xp
+            local loot_xp = self._xp:FakeMultiplyXPWithAllBonuses(self._params.loot_all --[[@as number]])
+            local loot_xp_gage = self._gage and self._gui:FormatXPWithAllGagePackagesNoString(self._params.loot_all --[[@as number]]) or loot_xp
+            local bags_to_secure = math.ceil((max_n - min_objectives_xp) / loot_xp)
+            local bags_to_secure_gage = math.ceil((max_n - min_objectives_xp_gage) / loot_xp_gage)
             local to_secure = self._loc:text("ehi_experience_to_secure", { amount = bags_to_secure })
             if bags_to_secure == bags_to_secure_gage then -- Securing gage packages does not matter -> you still need to secure the same amount of bags
                 max = string.format("+%s %s (%s)", max, xp, to_secure)

@@ -25,7 +25,7 @@ if EHI:IsHost() then
         }
         self._trackers:SetTrackerToSync2("LootCounter", tbl)
     end
-    ---@type LootCounterSequenceTriggersTable
+    ---@type LootCounterTable.SequenceTriggersTable
     local SafeTriggers =
     {
         -- gen_interactable_sec_safe_05x05 - 7

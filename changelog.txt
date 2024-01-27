@@ -1,3 +1,7 @@
+r218 (27. 01. 2024):
+Loot Counter: The tracker in endless heists will show the maximum amount of bags for max level or infamy pool if possible
+Mission Briefing: Fixed an issue where the maximum of bags for max level is off
+
 r217 (22. 01. 2024):
 Further improved compatibility with custom heists
 

@@ -83,7 +83,7 @@ EHI:ParseTriggers({
     other = other,
     preload = preload
 })
-EHI:ShowLootCounter({ no_max = true })
+EHI:ShowLootCounter({ max_bags_for_level = { mission_xp = 8000, xp_per_bag_all = 2000 }, no_max = true })
 EHI:AddXPBreakdown({
     objective =
     {

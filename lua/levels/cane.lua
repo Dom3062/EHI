@@ -109,7 +109,15 @@ EHI:ShowAchievementLootCounter({
     show_finish_after_reaching_target = true,
     difficulty_pass = ovk_and_up
 })
-EHI:ShowLootCounter({ no_max = true })
+EHI:ShowLootCounter({
+    max_bags_for_level =
+    {
+        mission_xp = 4000,
+        xp_per_bag_all = 1000,
+        objective_triggers = { 100584, 101163 }
+    },
+    no_max = true
+})
 
 EHI:AddXPBreakdown({
     objectives =
