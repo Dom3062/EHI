@@ -15,14 +15,15 @@ function EHIEnemyCountTracker:init(...)
     self._alarm_count = 0
     self._alarm_count_answered = 0
     EHIEnemyCountTracker.super.init(self, ...)
+    self._update_on_alarm = true
 end
 
 function EHIEnemyCountTracker:Update()
-    self._text:set_text(self:Format())
+    self._text:set_text(self:FormatCount())
     self:AnimateBG()
 end
 
-function EHIEnemyCountTracker:Alarm()
+function EHIEnemyCountTracker:OnAlarm()
     self._alarm_sounded = true
     self._count = self._count + self._alarm_count
     if self._icon2 then

@@ -26,6 +26,7 @@ if EHI:EscapeVehicleWillReturn("cane") then
     end
 end
 
+---@param present_amount number?
 local function cane_5(present_amount)
     EHI:HookWithID(PlayerManager, "set_synced_deployable_equipment", "EHI_cane_5_fail_trigger", function(self, ...)
         if self._peer_used_deployable then
@@ -80,7 +81,7 @@ local achievements =
 
 local other =
 {
-    [EHI:GetInstanceElementID(100002, 10100)] = EHI:AddAssaultDelay({ additional_time = 20 + 15 + 405/30 + 15, random_time = 5 + 9 + 10 })
+    [EHI:GetInstanceElementID(100002, 10100)] = EHI:AddAssaultDelay({ additional_time = 20 + 15 + 405/30 + 15 + 30, random_time = 5 + 9 + 10 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102604] = { id = "Snipers", class = TT.Sniper.Count, single_sniper = true }

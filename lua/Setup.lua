@@ -23,6 +23,7 @@ local original =
     init_finalize = Setup.init_finalize
 }
 
+---@param managers managers
 function Setup:init_managers(managers, ...)
     original.init_managers(self, managers, ...)
     managers.ehi_tracker = EHITrackerManager:new()
@@ -33,7 +34,7 @@ function Setup:init_managers(managers, ...)
     managers.ehi_deployable = EHIDeployableManager:new(managers.ehi_tracker)
     managers.ehi_assault = EHIAssaultManager:new(managers.ehi_tracker)
     managers.ehi_experience:TrackersInit(managers.ehi_tracker)
-    managers.ehi_manager = EHIManager:new(managers.ehi_tracker, managers.ehi_waypoint, managers.ehi_escape)
+    managers.ehi_manager = EHIManager:new(managers)
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitManagers, managers)
 end
 
@@ -42,6 +43,5 @@ function Setup:init_finalize(...)
     managers.ehi_tracker:init_finalize()
     managers.ehi_deployable:init_finalize()
     managers.ehi_assault:init_finalize()
-    managers.ehi_waypoint:init_finalize()
     managers.ehi_manager:init_finalize()
 end

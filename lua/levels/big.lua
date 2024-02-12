@@ -171,9 +171,7 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
----@type MissionDoorTable
-local MissionDoor =
-{
+EHI:SetMissionDoorData({
     -- Server Room
     [Vector3(733.114, 1096.92, -907.557)] = { w_id = 103457, restore = true, unit_id = 104582 },
     [Vector3(1419.89, -1897.92, -907.557)] = { w_id = 103461, restore = true, unit_id = 104584 },
@@ -184,8 +182,7 @@ local MissionDoor =
     [Vector3(503.08, -1232.89, 327.432)] = { w_id = 106362, restore = true, unit_id = 103322 },
     [Vector3(3446.92, -1167.11, 327.432)] = { w_id = 106372, restore = true, unit_id = 105317 },
     [Vector3(3466.11, 1296.92, 327.432)] = { w_id = 106382, restore = true, unit_id = 106336 }
-}
-EHI:SetMissionDoorData(MissionDoor)
+})
 EHI:AddXPBreakdown({
     objectives =
     {

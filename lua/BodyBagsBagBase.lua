@@ -18,9 +18,6 @@ else
         end
         managers.ehi_deployable:CallFunction("BodyBags", "UpdateAmount", unit, key, amount)
     end
-    EHI:AddOnAlarmCallback(function()
-        managers.ehi_tracker:RemoveTracker("BodyBags")
-    end)
 end
 
 if EHI:IsVR() then

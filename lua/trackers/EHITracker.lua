@@ -317,6 +317,8 @@ function EHITracker:init(panel, params, parent_class)
     self._hide_on_delete = params.hide_on_delete
     self._flash_times = params.flash_times or 3
     self._anim_flash = params.flash_bg ~= false
+    self._remove_on_alarm = params.remove_on_alarm --Removes tracker when alarm sounds
+    self._update_on_alarm = params.update_on_alarm --Calls `OnAlarm` function when alarm sounds
     self:post_init(params)
     self:CreateHint(params.hint, params.delay_popup)
 end
@@ -594,11 +596,11 @@ function EHITracker:CreateHint(text, delay_popup)
     if self._hint_no_localization then
         loc = text
     else
-        loc = self._hint_vanilla_localization and text or "ehi_hint_" .. text
+        loc = managers.localization:text(self._hint_vanilla_localization and text or "ehi_hint_" .. text)
     end
     self._hint = self._panel:parent():text({
         name = self._id .. "_hint",
-        text = managers.localization:text(loc),
+        text = loc,
         align = "center",
         vertical = "center",
         w = 18,
@@ -988,6 +990,17 @@ end
 
 function EHITracker:PlayerSpawned()
     self:ForceShowHint()
+end
+
+function EHITracker:SwitchToLoudMode()
+    if self._remove_on_alarm then
+        self:ForceDelete()
+    elseif self._update_on_alarm then
+        self:OnAlarm()
+    end
+end
+
+function EHITracker:OnAlarm()
 end
 
 function EHITracker:Redraw()

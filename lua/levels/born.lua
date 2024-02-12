@@ -79,17 +79,14 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
----@type MissionDoorTable
-local MissionDoor =
-{
+EHI:SetMissionDoorData({
     -- Workshop
     [Vector3(-3798.92, -1094.9, -6.52779)] = 101580,
 
     -- Safe with a bike mask
     [Vector3(1570.02, -419.693, 185.724)] = EHI:GetInstanceElementID(100007, 4850),
     [Vector3(1570.02, -419.693, 585.724)] = EHI:GetInstanceElementID(100007, 5350)
-}
-EHI:SetMissionDoorData(MissionDoor)
+})
 EHI:AddXPBreakdown({
     objectives =
     {

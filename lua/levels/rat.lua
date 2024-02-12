@@ -9,25 +9,23 @@ local heli_delay = 19
 local anim_delay = 743/30 -- 743/30 is a animation duration; 3s is zone activation delay (never used when van is coming back)
 local heli_delay_full = 13 + 19 -- 13 = Base Delay; 19 = anim delay
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local FlarePos
 ---@param self EHIManager
 ---@param trigger ElementTrigger
 local function ShowFlareWP(self, trigger)
-    if FlarePos then
+    if self.SyncedSFF.rat_flare_pos then
         self._waypoints:AddWaypoint(trigger.id, {
             time = trigger.run.time,
             icon = Icon.Methlab,
-            position = FlarePos
+            position = self.SyncedSFF.rat_flare_pos
         })
-        FlarePos = nil
+        self.SyncedSFF.rat_flare_pos = nil
         return
     end
     self._trackers:RunTrackerIfDoesNotExist(trigger.id, trigger.run)
 end
----@param element number
-local function SetFlarePos(element)
-    FlarePos = EHI:GetElementPosition(element)
-end
+local SetFlarePos = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
+    self.SyncedSFF.rat_flare_pos = EHI:GetElementPosition(trigger.arg)
+end)
 local element_sync_triggers =
 {
     [100494] = { id = "CookChance", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100724, set_time_when_tracker_exists = true }
@@ -45,7 +43,7 @@ local triggers = {
     [102319] = { id = "Van", run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay } },
     [101001] = { special_function = SF.Trigger, data = { 1010011, 1010012 } },
     [1010011] = { special_function = SF.RemoveTracker, data = { "CookChance", "VanStayDelay", "HeliMeth" } },
-    [1010012] = { special_function = SF.RemoveTrigger, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238, 102197, 102167, 102168 } },
+    [1010012] = { special_function = SF.RemoveTrigger, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238, 102197, 102175, 102167, 102168 } },
 
     [102383] = { time = 2 + 5, chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.CookingChance, start_opened = true },
     [100721] = { time = 1, chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.CookingChance, tracker_merge = true, start_opened = true },
@@ -53,18 +51,15 @@ local triggers = {
 
     [100199] = { id = "CookingDone", run = { time = 5 + 1 } },
 
-    [102167] = { id = "HeliMeth", run = { time = 60 + heli_delay }, waypoint_f = ShowFlareWP },
-    [102168] = { id = "HeliMeth", run = { time = 90 + heli_delay }, waypoint_f = ShowFlareWP },
-
-    [102201] = { special_function = SF.CustomCode, f = SetFlarePos, arg = 102154 },
-    [102202] = { special_function = SF.CustomCode, f = SetFlarePos, arg = 102153 },
-    [102203] = { special_function = SF.CustomCode, f = SetFlarePos, arg = 102152 },
+    [102201] = { special_function = SetFlarePos, arg = 102154 },
+    [102202] = { special_function = SetFlarePos, arg = 102153 },
+    [102203] = { special_function = SetFlarePos, arg = 102152 },
 
     [1] = { special_function = SF.RemoveTrigger, data = { 101972, 101973, 101974, 101975 } },
-    [101972] = { run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
-    [101973] = { run = { time = 60 + 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
-    [101974] = { run = { time = 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
-    [101975] = { run = { time = 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+    [101972] = { id = "Van", run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+    [101973] = { id = "Van", run = { time = 60 + 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+    [101974] = { id = "Van", run = { time = 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
+    [101975] = { id = "Van", run = { time = 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
 
     [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", Icon.Goto }, class = TT.Warning, hint = Hints.ScriptedBulldozer },
 
@@ -121,8 +116,14 @@ if EHI:IsMayhemOrAbove() then
         triggers[102219].waypoint_f = ShowWaypoint
         triggers[102236].waypoint_f = ShowWaypoint
     end
-elseif EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
+elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
     triggers[102197] = { id = "HeliMeth", run = { time = 120 + heli_delay_full }, waypoint_f = ShowFlareWP }
+elseif EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
+    triggers[102175] = { id = "HeliMeth", run = { time = 120 + heli_delay }, waypoint_f = ShowFlareWP }
+    triggers[102168] = { id = "HeliMeth", run = { time = 90 + heli_delay }, waypoint_f = ShowFlareWP }
+else
+    triggers[102168] = { id = "HeliMeth", run = { time = 90 + heli_delay }, waypoint_f = ShowFlareWP }
+    triggers[102167] = { id = "HeliMeth", run = { time = 60 + heli_delay }, waypoint_f = ShowFlareWP }
 end
 if EHI:IsClient() then
     ---@class EHICookingChanceTracker : EHITimedChanceTracker
@@ -176,12 +177,11 @@ local other =
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local SetRespawnTime = EHI:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
-        if self._trackers:TrackerExists(id) then
-            self._trackers:CallFunction(id, "SetRespawnTime", trigger.time)
-        else
+        local t = trigger.time
+        if self._trackers:CallFunction2(id, "SetRespawnTime", t) then
             self._trackers:AddTracker({
                 id = id,
-                time = trigger.time,
+                time = t,
                 count_on_refresh = 2,
                 class = TT.Sniper.TimedCount
             })
@@ -199,7 +199,7 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other,
     preload = preload
-}, "Van", Icon.CarEscape)
+})
 EHI:ShowAchievementLootCounter({
     achievement = "halloween_2",
     max = 7,

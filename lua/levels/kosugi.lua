@@ -233,7 +233,7 @@ if EHI:IsLootCounterVisible() then
     end
     other[102700] = EHI:AddLootCounter2(function()
         local loot_correction = CheckForBrokenWeapons() + CheckForBrokenCocaine()
-        EHI:ShowLootCounter({
+        EHI:ShowLootCounterNoChecks({
             max = base_amount + crates + random_weapons + random_paintings + loot_correction,
             triggers =
             {

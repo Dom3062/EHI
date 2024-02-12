@@ -35,3 +35,19 @@ EHI:ParseTriggers({
     mission = triggers,
     other = other
 })
+EHI:AddXPBreakdown({
+    objectives =
+    {
+        { amount = 1000, name = "hm2_enter_building" }, -- Entered the bank
+        { amount = 2000, name = "vault_found" },
+        { amount = 2500, name = "vault_drills_done" },
+        { amount = 3500, name = "rvd2_vault_frozen" },
+        { amount = 5000, name = "vault_open" },
+        { amount = 3500, name = "fs_secured_required_bags" }
+    },
+    loot =
+    {
+        trai_printing_plates = 1250,
+        _else = 1000
+    }
+})

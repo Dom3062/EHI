@@ -20,23 +20,6 @@ local triggers = {
     [100142] = { time = 5, id = "C4Vault", icons = { Icon.C4 }, hint = Hints.Explosion }
 }
 
-if EHI:GetOption("show_mission_trackers") then
-    for index = 1900, 2400, 500 do
-        for _, unit_id in ipairs({ 100010, 100039, 100004, 100034 }) do
-            local fixed_unit_id = EHI:GetInstanceUnitID(unit_id, index)
-            managers.mission:add_runned_unit_sequence_trigger(fixed_unit_id, "interact", function(...)
-                managers.ehi_tracker:AddTracker({
-                    id = tostring(fixed_unit_id),
-                    time = 50 + math.rand(10),
-                    icons = { Icon.Fire },
-                    class = TT.Inaccurate,
-                    hint = Hints.Thermite
-                })
-            end)
-        end
-    end
-end
-
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -76,6 +59,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100027, 16400)] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[EHI:GetInstanceElementID(100026, 16400)] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+EHI:ShowLootCounter({ max = 24 })
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -95,11 +79,10 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
-                objectives = true
-            },
-            no_max = true
+                loot_all = { max = 24 } -- 3 bags in the deposit boxes (4 instances), random position, guaranteed + 12 gold in the vault
+            }
         }
     }
 })

@@ -20,20 +20,20 @@ EHIExperienceManager.XPElementLevelNoCheck =
     ratdaylight = true,
     lid_cookoff_methslaves = true
 }
-EHIExperienceManager.XPElement = 0
+EHIExperienceManager._XPElement = 0
 ---@param level_id string
 ---@return boolean
 function EHIExperienceManager:IsOneXPElementHeist(level_id)
     if self.XPElementLevelNoCheck[level_id] then
         return false
     end
-    return self.XPElement <= 1 or self.XPElementLevel[level_id]
+    return self._XPElement <= 1 or self.XPElementLevel[level_id]
 end
 
----@param element table
+---@param element MissionScriptElement
 function EHIExperienceManager:AddXPElement(element)
     if element._values.amount and element._values.amount > 0 then
-        self.XPElement = self.XPElement + 1
+        self._XPElement = self._XPElement + 1
     end
 end
 
@@ -75,27 +75,25 @@ function EHIExperienceManager:ExperienceInit(xp)
         difficulty_multiplier = 1,
         projob_multiplier = 1 -- Unavailable since `Update 109`, however mods can still enable Pro Job modifier in heists
     }
-    if self._config.xp_format == 3 then -- Multiply
-        EHI:AddOnAlarmCallback(function()
-            self._ehi_xp.stealth = false
-            self:RecalculateSkillXPMultiplier()
-        end)
-        EHI:AddOnCustodyCallback(function(custody_state)
-            self:SetInCustody(custody_state)
-        end)
-        EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
-        EHI:HookWithID(HUDManager, "mark_cheater", "EHI_ExperienceManager_mark_cheater", function()
-            self:RecalculateSkillXPMultiplier()
-        end)
-        EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, function(picked_up, max_units, client_sync_load)
-            local multiplier = 1
-            if picked_up > 0 then -- Don't use the in-game function because it is inaccurate by one package
-                local ratio = 1 - (max_units - picked_up) / max_units
-                multiplier = managers.gage_assignment._tweak_data:get_experience_multiplier(ratio)
-            end
-            self:SetGagePackageBonus(multiplier)
-        end)
-    end
+    EHI:AddOnAlarmCallback(function()
+        self._ehi_xp.stealth = false
+        self:RecalculateSkillXPMultiplier()
+    end)
+    EHI:AddOnCustodyCallback(function(custody_state)
+        self:SetInCustody(custody_state)
+    end)
+    EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
+    EHI:HookWithID(HUDManager, "mark_cheater", "EHI_ExperienceManager_mark_cheater", function()
+        self:RecalculateSkillXPMultiplier()
+    end)
+    EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, function(picked_up, max_units, client_sync_load)
+        local multiplier = 1
+        if picked_up > 0 then -- Don't use the in-game function because it is inaccurate by one package
+            local ratio = 1 - (max_units - picked_up) / max_units
+            multiplier = managers.gage_assignment._tweak_data:get_experience_multiplier(ratio)
+        end
+        self:SetGagePackageBonus(multiplier)
+    end)
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "LoadData"))
     if not EHI:GetOption("show_xp_in_mission_briefing_only") then
         EHI:AddCallback(EHI.CallbackMessage.InitFinalize, callback(self, self, "HookAwardXP"))
@@ -159,9 +157,7 @@ function EHIExperienceManager:HookAwardXP()
             ---@param diff number
             self._show = function(id, diff)
                 local _id = string.format("XP%d", id)
-                if self._trackers:TrackerExists(_id) then
-                    self._trackers:AddXPToTracker(_id, diff)
-                else
+                if self._trackers:CallFunction3(_id, "AddXPToTracker", diff) then
                     self._trackers:AddTracker({
                         id = _id,
                         amount = diff,
@@ -252,6 +248,7 @@ function EHIExperienceManager:HookAwardXP()
         end
         self._ehi_xp.bonus_xp = self._ehi_xp.bonus_xp + amount
         self:RecalculateXP(1)
+        EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
     end)
     if self._config.xp_panel ~= 1 then
         local one_element = self:IsOneXPElementHeist(level_id)

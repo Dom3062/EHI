@@ -32,7 +32,20 @@ EHIZoneTracker.SetCompleted = EHIAchievementTracker.SetCompleted
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local SetProgressMax = EHI:GetFreeCustomSFID()
+local SetProgressMax = EHI:RegisterCustomSF(function(self, trigger, ...)
+    if self._cache.ProgressMaxSet then
+        return
+    elseif self._trackers:CallFunction3(trigger.id, "SetTrackerProgressMax", trigger.max) then
+        self._trackers:AddTracker({
+            id = trigger.id,
+            progress = 1,
+            max = trigger.max,
+            class = "EHIGasTracker",
+            hint = Hints.run_Gas
+        })
+    end
+    self._cache.ProgressMaxSet = true
+end)
 ---@type ParseTriggerTable
 local triggers = {
     [100377] = { time = 90, id = "ClearPickupZone", class = "EHIZoneTracker", hint = Hints.run_FinalZone },
@@ -121,36 +134,27 @@ local other =
     [101486] = EHI:AddAssaultDelay({ time = 30, trigger_times = 1 })
 }
 
-local ProgressMaxSet = false
-EHI:RegisterCustomSF(SetProgressMax, function(self, trigger, ...)
-    if ProgressMaxSet then
-        return
-    end
-    if self._trackers:TrackerExists(trigger.id) then
-        self._trackers:SetTrackerProgressMax(trigger.id, trigger.max)
-    else
-        self._trackers:AddTracker({
-            id = trigger.id,
-            progress = 1,
-            max = trigger.max,
-            class = "EHIGasTracker",
-            hint = Hints.run_Gas
-        })
-    end
-    ProgressMaxSet = true
-end)
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
 })
+local objectives =
+{
+    { amount = 4000, name = "heat_street_reached_crashsite" },
+    { amount = 6000, name = "van_open" },
+    { amount = 4000, name = "heat_street_reached_parking" },
+    { amount = 6000, name = "heat_street_reached_hill" },
+    { escape = 6000 }
+}
+if EHI._cache.street_new then
+    objectives[1].amount = 7500
+    objectives[2].amount = 7500
+    objectives[3].amount = 7500
+    objectives[4].amount = 7500
+    objectives[5].escape = 10000
+    EHI._cache.street_new = nil
+end
 EHI:AddXPBreakdown({
-    objectives =
-    {
-        { amount = 4000, name = "heat_street_reached_crashsite" },
-        { amount = 6000, name = "van_open" },
-        { amount = 4000, name = "heat_street_reached_parking" },
-        { amount = 6000, name = "heat_street_reached_hill" },
-        { escape = 6000 }
-    }
+    objectives = objectives
 })

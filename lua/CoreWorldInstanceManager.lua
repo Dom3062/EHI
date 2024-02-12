@@ -44,6 +44,10 @@ local instances =
         [100045] = { id = "mia_1_Reader", special_function = SF.PauseTracker },
         [100051] = { id = "mia_1_Reader", special_function = SF.UnpauseTracker }
     },
+    ["levels/instances/unique/are_c4_vault_01/world"] =
+    {
+        [100067] = { add_runned_unit_sequence_trigger = true, time = 30, icons = { Icon.Glasscutter }, hint = Hints.Cutter }
+    },
     ["levels/instances/unique/are_pyro_booth/world"] =
     {
         [100166] = { time = 5, id = "arena_WaitTime", icons = { Icon.Wait }, hint = Hints.Wait },
@@ -59,6 +63,7 @@ local instances =
     },
     ["levels/instances/unique/kenaz/hackable_keycard_panel/world"] =
     {
+        [100022] = { remove_vanilla_waypoint = true, mission = true },
         [100018] = { time = 30, id = "kenaz_SkylightHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Hack, waypoint = { position_by_element = 100003 } },
         [100037] = { id = "kenaz_SkylightHack", special_function = SF.PauseTracker }
     },
@@ -66,6 +71,10 @@ local instances =
     {
         [100021] = { time = 60 + 22 + 1 + 1.5, id = "kenaz_HeliWinchDelivery", icons = Icon.HeliDropWinch, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery },
         [100042] = { time = 30 + 22 + 1 + 1.5, id = "kenaz_HeliWinchDelivery", icons = Icon.HeliDropWinch, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery }
+    },
+    ["levels/instances/unique/kenaz/the_drill/world"] =
+    {
+        [100347] = { remove_vanilla_waypoint = true } -- Defend
     },
     ["levels/instances/unique/kenaz/weak_floor/world"] =
     {
@@ -117,6 +126,15 @@ local instances =
     {
         [100022] = { time = 180 + 6.9, id = "peta2_BagsDropin", icons = Icon.HeliDropBag, hint = Hints.peta2_LootZoneDelivery }
     },
+    ["levels/instances/unique/dark/train_int_murky_emp/world"] =
+    {
+        [100334] = { add_runned_unit_sequence_trigger = true, time = 10, icons = { Icon.Fire }, hint = Hints.Fire }
+    },
+    ["levels/instances/unique/mad/mad_anti_air/world"] =
+    {
+        [100112] = { remove_vanilla_waypoint = true }, -- Defend
+        [100113] = { remove_vanilla_waypoint = true } -- Fix
+    },
     ["levels/instances/unique/mad/mad_emp/world"] =
     {
         [100013] = { time = 120, id = "mad_EMP", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.mad_EMP, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100112 } },
@@ -155,6 +173,10 @@ local instances =
     {
         [100021] = { remove_vanilla_waypoint = true }, -- Defend
         [100022] = { remove_vanilla_waypoint = true } -- Fix
+    },
+    ["levels/instances/unique/brb/brb_vault/world"] =
+    {
+        [100004] = { add_runned_unit_sequence_trigger = true, time = 50, time_random = 10, icons = { Icon.Fire }, hint = Hints.Thermite, class = TT.Inaccurate }
     },
     ["levels/instances/unique/brb/office_floor/world"] =
     {
@@ -202,6 +224,12 @@ local instances =
         [100087] = { remove_vanilla_waypoint = true }, -- PC - Fix; No defend icon, computer icon is disabled after computer unit has been interacted with
         [100320] = { remove_vanilla_waypoint = true } -- Drill - Fix; No defend icon, drill icon is disabled after drill unit has been placed
     },
+    ["levels/instances/unique/nmh/nmh_fuge/world"] =
+    {
+        [100013] = { additional_time = 15 + 15 + 10 + 40/30, random_time = 5, id = "nmh_VialFail", icons = { "equipment_bloodvial", Icon.Loop }, hint = Hints.nmh_VialFail, waypoint = { position_by_unit = 100008 } },
+        [100017] = { time = 30, id = "nmh_VialSuccess", icons = { "equipment_bloodvialok" }, hint = Hints.nmh_VialSuccess, waypoint = { position_by_unit = 100008 } },
+        [100014] = { time = 15 + 10 + 40/30, id = "nmh_VialFail", icons = { "equipment_bloodvial", Icon.Loop }, special_function = SF.SetTrackerAccurate, hint = Hints.nmh_VialFail, waypoint = { position_by_unit = 100008 } }
+    },
     ["levels/instances/unique/vit/vit_targeting_computer/world"] =
     {
         [100002] = { remove_vanilla_waypoint = true }, -- Defend
@@ -229,6 +257,31 @@ local instances =
     ["levels/instances/unique/bex/bex_vehicle_pull_gate/world"] =
     {
         [100108] = { time = 4.8, id = "bex_SuprisePull", icons = { Icon.Wait }, hint = Hints.Wait }
+    },
+    ["levels/instances/unique/pex/pex_armory_small/world"] =
+    {
+        [100025] = { time = 120, id = "pex_ArmoryHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint_f = function(self, trigger)
+            local pos = EHI:GetElementPosition(trigger.element_ids.defend) or Vector3()
+            self._waypoints:AddWaypoint(trigger.id, {
+                time = trigger.time,
+                icon = Icon.Tablet,
+                position = pos,
+                class = EHI.Waypoints.Pausable
+            })
+            managers.hud:SoftRemoveWaypoint2(trigger.element_ids.defend)
+            managers.hud:SoftRemoveWaypoint2(trigger.element_ids.fix)
+        end, element_ids = { defend = 100055, fix = 100056 }, hint = Hints.Hack },
+        [100026] = { id = "pex_ArmoryHack", special_function = SF.PauseTracker },
+    },
+    ["levels/instances/unique/pex/pex_evidence_room_1/world"] =
+    {
+        [100080] = { remove_vanilla_waypoint = true }, -- Defend
+        [100084] = { remove_vanilla_waypoint = true } -- Fix
+    },
+    ["levels/instances/unique/pex/pex_evidence_room_2/world"] =
+    {
+        [100072] = { remove_vanilla_waypoint = true }, -- Defend
+        [100079] = { remove_vanilla_waypoint = true } -- Fix
     },
     ["levels/instances/unique/fex/fex_exploding_car/world"] =
     {
@@ -437,8 +490,15 @@ local instances =
         [100056] = { remove_vanilla_waypoint = true } -- Fix
     }
 }
+instances["levels/instances/unique/are_c4_vault_01/world"][100093] = instances["levels/instances/unique/are_c4_vault_01/world"][100067]
+instances["levels/instances/unique/are_c4_vault_01/world"][100094] = instances["levels/instances/unique/are_c4_vault_01/world"][100067]
 instances["levels/instances/unique/brb/single_door_large/world"] = instances["levels/instances/unique/brb/single_door/world"]
+instances["levels/instances/unique/brb/brb_vault/world"][100010] = instances["levels/instances/unique/brb/brb_vault/world"][100004]
+instances["levels/instances/unique/brb/brb_vault/world"][100034] = instances["levels/instances/unique/brb/brb_vault/world"][100004]
+instances["levels/instances/unique/brb/brb_vault/world"][100039] = instances["levels/instances/unique/brb/brb_vault/world"][100004]
 instances["levels/instances/unique/des/des_computer_001/world"] = instances["levels/instances/unique/des/des_computer/world"]
+instances["levels/instances/unique/pex/pex_armory_medium/world"] = instances["levels/instances/unique/pex/pex_armory_small/world"]
+instances["levels/instances/unique/pex/pex_armory_large/world"] = instances["levels/instances/unique/pex/pex_armory_small/world"]
 instances["levels/instances/unique/sand/sand_rotating_keypad/world"] = deep_clone(instances["levels/instances/unique/tag/tag_keypad/world"])
 instances["levels/instances/unique/sand/sand_rotating_keypad/world"][100210].time = 3 + EHI:GetKeypadResetTimer()
 instances["levels/instances/unique/chca/chca_keypad/world"] = instances["levels/instances/unique/sand/sand_rotating_keypad/world"]
@@ -477,6 +537,11 @@ local original =
     custom_create_instance = CoreWorldInstanceManager.custom_create_instance
 }
 
+local EHIConfig =
+{
+    mission_trackers = EHI:GetOption("show_mission_trackers")
+}
+
 ---@param instance { folder: string, start_index: number, continent: string, rotation: Rotation }
 function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
     local instance_data = original.prepare_mission_data(self, instance, ...)
@@ -486,16 +551,26 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
         -- Don't compute the indexes again if the instance on this start_index has been computed already  
         -- `start_index` is unique for each instance in a heist, so this shouldn't break anything
         if not used_start_indexes[start_index] then
-            ---@type { base_id: number }
-            local continent_data = managers.worlddefinition._continents[instance.continent]
+            local continent_data = managers.worlddefinition._continents[instance.continent] --[[@as { base_id: number }]]
             local triggers = {}
             local waypoints = {}
             local mission_waypoints = {}
             local defer_loading_waypoints = false
             for id, trigger in pairs(instances[folder]) do
                 local final_index = EHI:GetInstanceElementID(id, start_index, continent_data.base_id)
-                if trigger.create_tracker_class then
+                if trigger.create_tracker_class and EHIConfig.mission_trackers then
                     trigger.create_tracker_class()
+                elseif trigger.add_runned_unit_sequence_trigger and EHIConfig.mission_trackers then
+                    managers.mission:add_runned_unit_sequence_trigger(final_index, "interact", function(unit)
+                        local time_random = trigger.time_random and math.rand(trigger.time_random) or 0
+                        managers.ehi_tracker:AddTracker({
+                            id = tostring(final_index),
+                            time = trigger.time + time_random,
+                            icons = trigger.icons,
+                            hint = trigger.hint,
+                            class = trigger.class
+                        })
+                    end)
                 elseif trigger.remove_vanilla_waypoint then
                     if trigger.mission then
                         mission_waypoints[final_index] = true
@@ -533,6 +608,11 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                     if trigger.special_function and trigger.special_function == SF.ShowWaypoint and trigger.data and trigger.data.position_by_element then
                         new_trigger.data.position_by_element = EHI:GetInstanceElementID(trigger.data.position_by_element, start_index, continent_data.base_id)
                         defer_loading_waypoints = true
+                    end
+                    if trigger.element_ids then
+                        for key, element_id in pairs(trigger.element_ids) do
+                            new_trigger.element_ids[key] = EHI:GetInstanceElementID(element_id, start_index, continent_data.base_id)
+                        end
                     end
                     triggers[final_index] = new_trigger
                 end

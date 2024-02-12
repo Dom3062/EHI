@@ -1009,9 +1009,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
             EHI:HookWithID(RaycastWeaponBase, "start_shooting", "EHI_ovk_3_start_shooting", function(self, ...)
                 if self._shooting and self:get_name_id() == "m134" then
-                    if managers.ehi_tracker:TrackerExists("ovk_3") then
-                        managers.ehi_tracker:CallFunction("ovk_3", "Reset")
-                    else
+                    if managers.ehi_tracker:CallFunction2("ovk_3", "Reset") then
                         managers.ehi_tracker:AddTracker({
                             id = "ovk_3",
                             time = 25,

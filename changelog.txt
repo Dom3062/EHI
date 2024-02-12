@@ -1,3 +1,10 @@
+r219 (12. 02. 2024):
+Memory optimization by reducing the amount of alarm callbacks
+Civilian Count Tracker: Fixed a crash in VR
+Enemy Counter Tracker: Fixed incorrect format after alarm when "Show enemies with pager (stealth)" option is enabled
+Cook Off: Fixed an issue where Heli timer is not visible on Hard difficulty
+Scarface Mansion: Fixed missing tracker description for achievement "Settling a Scar"
+
 r218 (27. 01. 2024):
 Loot Counter: The tracker in endless heists will show the maximum amount of bags for max level or infamy pool if possible
 Mission Briefing: Fixed an issue where the maximum of bags for max level is off

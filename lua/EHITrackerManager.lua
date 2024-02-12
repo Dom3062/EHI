@@ -9,7 +9,7 @@ function EHITrackerManager:new()
     self:CreateWorkspace()
     self._t = 0
     self._trackers = setmetatable({}, {__mode = "k"}) ---@type table<string, { tracker: EHITracker, pos: number, x: number, w: number }?>
-    self._stealth_trackers = { pagers = {}, lasers = {} }
+    self._stealth_trackers = { lasers = {} }
     self._trackers_to_update = setmetatable({}, {__mode = "k"}) ---@type table<string, EHITracker?>
     self._n_of_trackers = 0
     self._delay_popups = true
@@ -40,7 +40,6 @@ function EHITrackerManager:CreateWorkspace()
 end
 
 function EHITrackerManager:init_finalize()
-    EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "Spawned"))
     if EHI:IsClient() then
         Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHITracker", function(sender_id, id, data)
@@ -228,17 +227,17 @@ end
 
 ---@param id string
 function EHITrackerManager:AddPagerTracker(id)
-    self._stealth_trackers.pagers[id] = true
     local params =
     {
         id = id,
         hint = "pager",
+        remove_on_alarm = true,
         class = "EHIPagerTracker"
     }
     self:AddTracker(params)
 end
 
----@param params table
+---@param params AddTrackerTable|ElementTrigger
 function EHITrackerManager:AddLaserTracker(params)
     for id, _ in pairs(self._stealth_trackers.lasers) do
         -- Don't add this tracker if the "next_cycle_t" is the same as time to prevent duplication
@@ -381,22 +380,14 @@ function EHITrackerManager:RunTrackerIfDoesNotExist(id, params)
 end
 
 ---@param id string
----@param stealth_id string
-function EHITrackerManager:RemoveStealthTracker(id, stealth_id)
-    self._stealth_trackers[stealth_id][id] = nil
+function EHITrackerManager:RemoveLaserTracker(id)
+    self._stealth_trackers.lasers[id] = nil
     self:RemoveTracker(id)
 end
 
----@param id string
-function EHITrackerManager:RemoveLaserTracker(id)
-    self:RemoveStealthTracker(id, "lasers")
-end
-
 function EHITrackerManager:SwitchToLoudMode()
-    for _, trackers in pairs(self._stealth_trackers) do
-        for key, _ in pairs(trackers) do
-            self:RemoveTracker(key)
-        end
+    for _, def in pairs(self._trackers) do
+        def.tracker:SwitchToLoudMode()
     end
 end
 
@@ -1122,6 +1113,33 @@ function EHITrackerManager:CallFunction(id, f, ...)
     local tracker = self:GetTracker(id)
     if tracker and tracker[f] then
         tracker[f](tracker, ...)
+    end
+end
+
+---Returns `true` if the tracker does not exist
+---@param id string
+---@param f string
+---@param ... any
+function EHITrackerManager:CallFunction2(id, f, ...)
+    local tracker = self:GetTracker(id)
+    if not tracker then
+        return true
+    end
+    if tracker[f] then
+        tracker[f](tracker, ...)
+    end
+end
+
+---Returns `true` if the tracker does not exist
+---@param id string
+---@param f string Function from `EHITrackerManager`
+---@param ... any
+function EHITrackerManager:CallFunction3(id, f, ...)
+    if self:TrackerDoesNotExist(id) then
+        return true
+    end
+    if self[f] then
+        self[f](self, id, ...)
     end
 end
 

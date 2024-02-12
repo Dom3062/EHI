@@ -24,25 +24,17 @@ local triggers = {
     [102796] = { time = 10, id = "ObjectiveWait", icons = { Icon.Wait } },
 
     [102975] = { special_function = SF.Trigger, data = { 1029751, 1029752 } },
-    [1029751] = { chance = 5, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, hint = Hints.man_Code },
-    [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { Icon.Phone, "pd2_generic_look" }, class = TT.Warning, hint = Hints.roberts_GenSecWarning },
+    [1029751] = { chance = 5, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, hint = Hints.man_Code, remove_on_alarm = true },
+    [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { Icon.Phone, "pd2_generic_look" }, class = TT.Warning, hint = Hints.roberts_GenSecWarning, remove_on_alarm = true },
     [102986] = { special_function = SF.RemoveTracker, data = { "CorrectPaperChance", "GenSecArrivalWarning" } },
     [102985] = { id = "CorrectPaperChance", special_function = SF.IncreaseChanceFromElement }, -- +25%
-    [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, trigger_times = 1, hint = Hints.roberts_GenSec },
+    [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, trigger_times = 1, hint = Hints.roberts_GenSec, remove_on_alarm = true },
 
-    [102995] = { time = 30, id = "CallAgain", icons = { Icon.Phone, Icon.Loop }, hint = Hints.roberts_NextPhoneCall },
-    [102996] = { time = 50, id = "CallAgain", icons = { Icon.Phone, Icon.Loop }, hint = Hints.roberts_NextPhoneCall },
-    [102997] = { time = 60, id = "CallAgain", icons = { Icon.Phone, Icon.Loop }, hint = Hints.roberts_NextPhoneCall },
-    [102940] = { time = 10, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning, hint = Hints.PickUpPhone },
-    [102945] = { id = "AnswerPhone", special_function = SF.RemoveTracker },
-
-    [100052] = { special_function = EHI:RegisterCustomSF(function(self, ...)
-        self._trackers:RemoveTracker("CorrectPaperChance")
-        self._trackers:RemoveTracker("GenSecArrivalWarning")
-        self._trackers:RemoveTracker("GenSecArrival")
-        self._trackers:RemoveTracker("CallAgain")
-        self._trackers:RemoveTracker("AnswerPhone")
-    end), trigger_times = 1 }
+    [102995] = { time = 30, id = "CallAgain", icons = { Icon.Phone, Icon.Loop }, hint = Hints.roberts_NextPhoneCall, remove_on_alarm = true },
+    [102996] = { time = 50, id = "CallAgain", icons = { Icon.Phone, Icon.Loop }, hint = Hints.roberts_NextPhoneCall, remove_on_alarm = true },
+    [102997] = { time = 60, id = "CallAgain", icons = { Icon.Phone, Icon.Loop }, hint = Hints.roberts_NextPhoneCall, remove_on_alarm = true },
+    [102940] = { time = 10, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning, hint = Hints.PickUpPhone, remove_on_alarm = true },
+    [102945] = { id = "AnswerPhone", special_function = SF.RemoveTracker }
 }
 if EHI:IsClient() then
     triggers[101934] = EHI:ClientCopyTrigger(trigger[101929], { time = delay })
@@ -63,8 +55,7 @@ if EHI:IsLootCounterVisible() then
             end
         end
         EHI:ShowLootCounterNoChecks({ max = max })
-    end)
-    EHI:AddLoadSyncFunction(function(self)
+    end, function(self)
         self:Trigger(106579)
         self._trackers:SyncSecuredLoot()
     end)

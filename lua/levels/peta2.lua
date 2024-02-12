@@ -9,9 +9,7 @@ local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@param trigger ElementTrigger
 local function f_PilotComingInAgain(self, trigger, ...)
     self._trackers:RemoveTracker("PilotComingIn")
-    if self._trackers:TrackerExists(trigger.id) then
-        self._trackers:SetTrackerTime(trigger.id, trigger.time)
-    else
+    if self._trackers:CallFunction3(trigger.id, "SetTrackerTime", trigger.time) then
         self:CheckCondition(trigger)
     end
 end
@@ -39,7 +37,6 @@ local triggers = {
     [EHI:GetInstanceElementID(100011, 4750)] = { time = 15 + 1 + 60 + 6.5, id = "PilotComingInAgain", icons = goat_pick_up, special_function = PilotComingInAgain2, hint = Hints.LootTimed }
 }
 
-local peta_5_IncreaseEnabled = false
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -58,17 +55,17 @@ local achievements =
         elements =
         {
             [100002] = { max = (EHI:IsMayhemOrAbove() and 14 or 12), class = TT.Achievement.Progress, show_finish_after_reaching_target = true },
-            [102095] = { special_function = SF.CustomCode, f = function()
-                peta_5_IncreaseEnabled = true
-            end },
-            [102098] = { special_function = SF.CustomCode, f = function()
-                peta_5_IncreaseEnabled = false
-            end },
-            [100716] = { special_function = SF.CustomCode, f = function()
-                if peta_5_IncreaseEnabled then
-                    managers.ehi_tracker:IncreaseTrackerProgress("peta_5")
+            [102095] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+                self._cache.IncreaseEnabled = true
+            end) },
+            [102098] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+                self._cache.IncreaseEnabled = false
+            end) },
+            [100716] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+                if self._cache.IncreaseEnabled then
+                    self._trackers:IncreaseTrackerProgress("peta_5")
                 end
-            end },
+            end) },
             [100580] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
                 managers.ehi_tracker:CallFunction("peta_5", "Finalize")
             end}
@@ -96,9 +93,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101358] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "ResetCount" }
     other[101733] = { id = "SniperHeli", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
-        if self._trackers:TrackerExists(id) then
-            self._trackers:CallFunction(id, "SniperRespawn")
-        else
+        if self._trackers:CallFunction2(id, "SniperRespawn") then
             local t = 23 + 2
             self._trackers:AddTracker({
                 id = id,
@@ -121,12 +116,7 @@ EHI:ParseTriggers({
     other = other
 })
 
-local DisableWaypoints =
-{
-    -- Drill waypoint on mission door
-    [101738] = true
-}
-EHI:DisableWaypoints(DisableWaypoints)
+EHI:DisableWaypoints({ [101738] = true }) -- Drill waypoint on mission door
 local GoatsToSecure = EHI:GetValueBasedOnDifficulty({
     normal = 5,
     hard = 7,

@@ -4,19 +4,17 @@ local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
----@type Vector3?
-local TransferPosition = nil
 ---@param self EHIManager
 ---@param trigger ElementTrigger
 local function TransferWP(self, trigger)
     local index = managers.game_play_central:GetMissionDisabledUnit(EHI:GetInstanceUnitID(100087, 9340)) and 9590 or 9340
-    if not TransferPosition then
-        TransferPosition = EHI:GetElementPosition(EHI:GetInstanceElementID(100019, index)) or Vector3()
+    if not self._cache.TransferPosition then
+        self._cache.TransferPosition = EHI:GetElementPosition(EHI:GetInstanceElementID(100019, index)) or Vector3()
     end
     self._waypoints:AddWaypoint(trigger.id, {
         time = trigger.time,
         icon = trigger.element == 102438 and Icon.Wait or Icon.Defend,
-        position = TransferPosition,
+        position = self._cache.TransferPosition,
         class = self.TrackerWaypointsClass[trigger.class or ""],
         remove_vanilla_waypoint = EHI:GetInstanceElementID(100019, index)
     })
@@ -55,7 +53,7 @@ local triggers =
 
     [101050] = { special_function = EHI:RegisterCustomSF(function(self, ...)
         self._trackers:CallFunction("FuelChecking", "AddDelay", 20) -- Add 20s because stealth trigger is now disabled
-        self._trackers:RemoveTracker("FuelTransferStealth") -- ElementTimer won't proceed because alarm has been raised, remove it from the screen
+        self:Remove("FuelTransferStealth") -- ElementTimer won't proceed because alarm has been raised, remove it from the screen
         self:UpdateWaypointTriggerIcon(103053, Icon.Defend) -- Cops can turn off the checking device, change the waypoint icon to reflect this
     end), trigger_times = 1 } -- Alarm
 }
@@ -152,9 +150,7 @@ EHI:ParseTriggers({
     other = other
 })
 
----@type MissionDoorTable
-local MissionDoor =
-{
+EHI:SetMissionDoorData({
     -- Arrival
     [Vector3(2308.08, 3258.11, 4092.94)] = 104170,
 
@@ -163,8 +159,7 @@ local MissionDoor =
 
     -- Locker
     [Vector3(2358.11, 867.92, 4091.94)] = 104174
-}
-EHI:SetMissionDoorData(MissionDoor)
+})
 local total_xp_override =
 {
     params =

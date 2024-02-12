@@ -10,6 +10,23 @@ local AddToCache = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
     self.SyncedSFF.watchdogs_2_boat_time = trigger.time
 end)
 local GetFromCache = EHI:GetFreeCustomSyncedSFID()
+if EHI:GetOption("show_mission_trackers") then
+    EHI:RegisterCustomSyncedSF(GetFromCache, function(self, trigger, ...)
+        local t = self.SyncedSFF.watchdogs_2_boat_time --[[@as number]]
+        self.SyncedSFF.watchdogs_2_boat_time = nil
+        if t then
+            trigger.time = t
+            self:CheckCondition(trigger)
+            trigger.time = nil
+        else
+            self:Trigger(1011480)
+        end
+    end)
+else
+    EHI:RegisterCustomSyncedSF(GetFromCache, function(self, ...)
+        self.SyncedSFF.watchdogs_2_boat_time = nil
+    end)
+end
 local WPPos =
 {
     [7] = Vector3(2991.02, 3771, -58),
@@ -19,7 +36,7 @@ local WPPos =
 ---@param self EHIManager
 ---@param trigger ElementTrigger
 local function waypoint_f(self, trigger)
-    if self.SyncedSFF.watchdogs_2_boat_pos then
+    if self.SyncedSFF.watchdogs_2_boat_pos and WPPos[self.SyncedSFF.watchdogs_2_boat_pos] then
         self._waypoints:AddWaypoint(trigger.id, {
             time = trigger.time,
             icon = Icon.LootDrop,
@@ -122,27 +139,10 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 }, "BoatLootDropReturn", Icon.BoatLootDrop)
-if EHI:GetOption("show_mission_trackers") then
-    EHI:RegisterCustomSyncedSF(GetFromCache, function(self, trigger, ...)
-        local t = self.SyncedSFF.watchdogs_2_boat_time
-        self.SyncedSFF.watchdogs_2_boat_time = nil
-        if t then
-            trigger.time = t --[[@as number]]
-            self:CheckCondition(trigger)
-            trigger.time = nil
-        else
-            self:CheckCondition(triggers[1011480])
-        end
-    end)
-else
-    EHI:RegisterCustomSyncedSF(GetFromCache, function(self, ...)
-        self.SyncedSFF.watchdogs_2_boat_time = nil
-    end)
-end
 EHI:AddXPBreakdown({
     objectives =
     {
-        { amount = 1500, name = "watchdogs_bonus_xp" },
+        { amount = 1500, name = "watchdogs2_bonus_xp" },
         { escape = 12000 },
     },
     total_xp_override =
@@ -153,7 +153,7 @@ EHI:AddXPBreakdown({
             {
                 objectives =
                 {
-                    watchdogs_bonus_xp = { max = 9 }
+                    watchdogs2_bonus_xp = { max = 9 }
                 }
             }
         }

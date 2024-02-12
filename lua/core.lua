@@ -219,6 +219,7 @@ _G.EHI =
         -- Requires `id` and `progress`
         DecreaseProgress = 54,
         -- Requires `id`
+        -- Optional `count`
         IncreaseCounter = 55,
         -- Requires `id`
         DecreaseCounter = 56,
@@ -1733,6 +1734,22 @@ function EHI:HookElements(elements_to_hook)
     managers.ehi_manager:HookElements(elements_to_hook)
 end
 
+---@param chance number
+---@param check_if_does_not_exist boolean?
+---@return ElementTrigger
+function EHI:AddEscapeChance(chance, check_if_does_not_exist)
+    local tbl =
+    {
+        id = "EscapeChance",
+        chance = chance,
+        icons = { { icon = self.Icons.Car, color = Color.red } },
+        hint = "van_crash_chance",
+        special_function = check_if_does_not_exist and self.SpecialFunctions.AddTrackerIfDoesNotExist,
+        class = EHI.Trackers.Chance
+    }
+    return tbl
+end
+
 ---@param params ElementTrigger
 ---@return ElementTrigger?
 function EHI:AddAssaultDelay(params)
@@ -1772,10 +1789,11 @@ function EHI:AddAssaultDelay(params)
 end
 
 ---@param f function Loot counter function
----@param check any? Boolean value of option 'show_loot_counter'
+---@param check boolean? Boolean value of option 'show_loot_counter'
+---@param load_sync fun(self: EHIManager)? Load sync function for clients
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return table?
-function EHI:AddLootCounter(f, check, trigger_once)
+function EHI:AddLootCounter(f, check, load_sync, trigger_once)
     if self:IsPlayingCrimeSpree() then
         return nil
     elseif check ~= nil and check == false then
@@ -1791,13 +1809,17 @@ function EHI:AddLootCounter(f, check, trigger_once)
     if trigger_once then
         tbl.trigger_times = 1
     end
+    if load_sync then
+        self:AddLoadSyncFunction(load_sync)
+    end
     return tbl
 end
 
 ---@param f function Loot counter function
+---@param load_sync fun(self: EHIManager)? Load sync function for clients
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return ElementTrigger
-function EHI:AddLootCounter2(f, trigger_once)
+function EHI:AddLootCounter2(f, load_sync, trigger_once)
     local tbl =
     {
         special_function = SF.CustomCode,
@@ -1805,6 +1827,9 @@ function EHI:AddLootCounter2(f, trigger_once)
     }
     if trigger_once then
         tbl.trigger_times = 1
+    end
+    if load_sync then
+        self:AddLoadSyncFunction(load_sync)
     end
     return tbl
 end
@@ -2137,7 +2162,7 @@ end
 function EHI:ShowAchievementLootCounter(params)
     if self._cache.UnlockablesAreDisabled or self._cache.DisableAchievements or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false then
         if params.show_loot_counter then
-            self:ShowLootCounter({ max = params.max, load_sync = params.loot_counter_load_sync })
+            self:ShowLootCounter({ max = params.max, triggers = params.loot_counter_triggers, load_sync = params.loot_counter_load_sync })
         end
         return
     end

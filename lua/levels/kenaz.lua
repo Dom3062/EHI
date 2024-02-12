@@ -165,17 +165,6 @@ elseif EHI:IsMayhemOrAbove() then
 end
 EHI:ShowLootCounter({ max = 2 + bags }) -- Dentist loot (mandatory) + Money + Painting
 
-local DisableWaypoints =
-{
-    -- Keycard panel Defend
-    [EHI:GetInstanceElementID(100022, 29650)] = true,
-
-    -- BFD Defend
-    [EHI:GetInstanceElementID(100347, 37575)] = true,
-    [EHI:GetInstanceElementID(100347, 44535)] = true
-}
-EHI:DisableWaypoints(DisableWaypoints)
-
 local xp_override =
 {
     params =
@@ -270,7 +259,7 @@ end
 EHI:AddLoadSyncFunction(function(self)
     if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
         return Cleanup()
-    elseif EHI.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
+    elseif self.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
         return Cleanup()
     elseif managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
         return Cleanup()

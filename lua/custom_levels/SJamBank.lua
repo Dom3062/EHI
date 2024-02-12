@@ -55,9 +55,35 @@ EHI:UpdateUnits({
 
 local DisableWaypoints =
 {
+    --levels/instances/mods/Branch Bank Initiative/SJamB_HackBox/world
     [EHI:GetInstanceElementID(100034, 500)] = true, -- Defend
     [EHI:GetInstanceElementID(100031, 500)] = true, -- Fix
     [EHI:GetInstanceElementID(100034, 750)] = true, -- Defend
     [EHI:GetInstanceElementID(100031, 750)] = true -- Fix
 }
 EHI:DisableWaypoints(DisableWaypoints)
+EHI:AddXPBreakdown({
+    objectives =
+    {
+        { amount = 1500, name = "diamond_heist_boxes_hack" },
+        { amount = 2000, name = "thermite_done" },
+        { amount = 1500 * 4, name = "biker_tools_collected" },
+        { amount = 2000, name = "ed1_hack_1" },
+        { amount = 2000, name = "ed1_hack_2" },
+        { amount = 2000, name = "hox3_vault_objective" },
+        { amount = 2500, name_format = { id = "all_bags_destroyed", macros = { carry = tweak_data.carry:FormatCarryNameID("money") }}},
+        { amount = 1500, name = "custom_removed_gps_tracker" },
+        { escape = 2500 }
+    },
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot_all = { min = 4, max = 10 }
+            }
+        }
+    }
+})

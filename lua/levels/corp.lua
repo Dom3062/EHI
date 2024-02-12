@@ -28,7 +28,6 @@ end
 function EHIcorp9Tracker:OverridePanel()
     EHIcorp9Tracker.super.OverridePanel(self)
     self._text4 = self:CreateText({
-        name = "text4",
         status_text = "find",
         h = self._icon_size_scaled,
         color = Color.yellow
@@ -98,11 +97,10 @@ if EHI:IsClient() then
     triggers[102406].client = { time = OVKorAbove and 30 or 15, random_time = 15 }
 end
 
-local corp_11_StartVariable = true
 local corp_11_SetFailed = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
     if enabled then
         self._trackers:SetAchievementFailed("corp_11")
-        corp_11_StartVariable = false
+        self._cache.StartDisabled = true
     end
 end)
 ---@type ParseAchievementTable
@@ -153,15 +151,16 @@ local achievements =
     {
         elements =
         {
-            [102728] = { icons = EHI:GetAchievementIcon("corp_11"), special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
-                if corp_11_StartVariable then
-                    self._trackers:AddTracker({
-                        id = "corp_11",
-                        time = 60,
-                        icons = trigger.icons,
-                        class = TT.Achievement.Base
-                    })
+            [102728] = { class = TT.Achievement.Base, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+                if self._cache.StartDisabled then
+                    return
                 end
+                self._trackers:AddTracker({
+                    id = "corp_11",
+                    time = 60,
+                    icons = trigger.icons,
+                    class = trigger.class
+                })
             end) },
             [102683] = { special_function = corp_11_SetFailed },
             [102741] = { special_function = SF.SetAchievementComplete }
@@ -175,7 +174,7 @@ local achievements =
             -- SP (MP has 240s)
             [100107] = { time = 420, class = "EHIcorp12Tracker", special_function = SF.AddTrackerIfDoesNotExist },
             [102739] = { special_function = EHI:RegisterCustomSF(function(self, ...)
-                if EHI.ConditionFunctions.IsLoud() then
+                if self.ConditionFunctions.IsLoud() then
                     return
                 end
                 if self._trackers:TrackerDoesNotExist("corp_12") then

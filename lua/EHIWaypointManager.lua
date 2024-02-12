@@ -13,16 +13,8 @@ function EHIWaypointManager:new()
     self._stored_waypoints = {}
     self._waypoints = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIWaypoint?>
     self._waypoints_to_update = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIWaypoint?>
-    self._pager_waypoints = {}
     self._base_waypoint_class = EHI.Waypoints.Base
     return self
-end
-
-function EHIWaypointManager:init_finalize()
-    if not self._enabled then
-        return
-    end
-    EHI:AddOnAlarmCallback(callback(self, self, "RemoveAllPagerWaypoints"))
 end
 
 ---@param hud HUDManager
@@ -248,21 +240,9 @@ function EHIWaypointManager:IncreaseWaypointProgress(id)
     end
 end
 
----@param params AddWaypointTable
-function EHIWaypointManager:AddPagerWaypoint(params)
-    self._pager_waypoints[params.id] = true
-    self:AddWaypoint(params.id, params)
-end
-
----@param id string
-function EHIWaypointManager:RemovePagerWaypoint(id)
-    self._pager_waypoints[id] = nil
-    self:RemoveWaypoint(id)
-end
-
-function EHIWaypointManager:RemoveAllPagerWaypoints()
-    for key, _ in pairs(self._pager_waypoints) do
-        self:RemoveWaypoint(key)
+function EHIWaypointManager:SwitchToLoudMode()
+    for _, waypoint in pairs(self._waypoints) do
+        waypoint:SwitchToLoudMode()
     end
 end
 

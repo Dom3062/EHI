@@ -1,7 +1,6 @@
 ---@class EHITradeManager
 EHITradeManager = {}
 ---@param ehi_tracker EHITrackerManager
----@return self
 function EHITradeManager:new(ehi_tracker)
     self._trackers = ehi_tracker
     self._trade = {

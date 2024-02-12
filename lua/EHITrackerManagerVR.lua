@@ -58,26 +58,30 @@ end
 ---@param f function
 ---@param add boolean?
 function EHITrackerManagerVR:AddToLoadQueue(key, data, f, add)
+    local load_cbk = self._load_callback[key]
+    local new_cbk = { data = data, f = f }
     if add then
-        if self._load_callback[key] then
-            if self._load_callback[key].table then
-                table.insert(self._load_callback[key].table, { data = data, f = f })
+        if load_cbk then
+            if load_cbk.table then
+                table.insert(load_cbk.table, new_cbk)
             else
-                local previous = self._load_callback[key]
                 self._load_callback[key] = { table = {
-                    { data = previous.data, f = previous.f },
-                    { data = data, f = f }
+                    load_cbk,
+                    new_cbk
                 }}
             end
         else
-            self._load_callback[key] = { table = { { data = data, f = f } } }
+            self._load_callback[key] = { table = { new_cbk } }
         end
+    elseif load_cbk then -- Update the existing data when it already exists
+        load_cbk.data = data
+        load_cbk.f = f
     else
-        self._load_callback[key] = { data = data, f = f }
+        self._load_callback[key] = new_cbk
     end
 end
 
----@param params table
+---@param params AddTrackerTable|ElementTrigger
 function EHITrackerManagerVR:AddLaserTracker(params)
     if self:IsLoading() then
         self:AddToLoadQueue(params.id, params, callback(self, self, "_AddLaserTracker"))

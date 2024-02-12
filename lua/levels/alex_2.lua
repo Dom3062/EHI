@@ -78,17 +78,13 @@ if EHI:IsHost() then
     end
 end
 if EHI:GetOption("show_escape_chance") then
-    other[100342] = { special_function = EHI:RegisterCustomSF(function(self, ...)
-        self._escape:AddChanceWhenDoesNotExists(false, 25)
-    end) }
+    other[100342] = EHI:AddEscapeChance(25, true)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104496] = { time = 120, count_on_refresh = 1, id = "Snipers", class = TT.Sniper.TimedCount }
     other[100063] = { time = 90, id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
-        if self._trackers:TrackerExists(id) then
-            self._trackers:CallFunction(id, "SetRespawnTime", trigger.time)
-        else
+        if self._trackers:CallFunction2(id, "SetRespawnTime", trigger.time) then
             self._trackers:AddTracker({
                 id = id,
                 time = trigger.time,
@@ -114,8 +110,10 @@ EHI:AddXPBreakdown({
     objectives =
     {
         { amount = 4000, name = "rats2_info_destroyed" },
+        { _or = true },
         { amount = 6000, name = "rats2_trade" },
-        { amount = 4000, name = "rats2_trade_and_steal" }
+        { _or = true },
+        { amount = 6000 + 4000, name = "rats2_trade_and_steal" } -- Previous XP is counted too
     },
     total_xp_override =
     {
@@ -132,7 +130,6 @@ EHI:AddXPBreakdown({
             {
                 objectives =
                 {
-                    rats2_trade = true,
                     rats2_trade_and_steal = true
                 }
             }

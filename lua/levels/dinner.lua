@@ -73,9 +73,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end)}
     other[101956] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[101957] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
-        if self._trackers:TrackerExists("Snipers") then
-            self._trackers:CallFunction("Snipers", "SniperSpawnsSuccess", element._values.chance) -- 0%
-        else
+        if self._trackers:CallFunction2("Snipers", "SniperSpawnsSuccess", element._values.chance) then -- 0%
             self._trackers:AddTracker({
                 id = "Snipers",
                 flash_times = 1,

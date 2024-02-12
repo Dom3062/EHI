@@ -1,23 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local Hints = EHI.Hints
-
-if EHI:GetOption("show_mission_trackers") then
-    for _, unit_id in ipairs({ 100067, 100093, 100094 }) do
-        for _, index in ipairs({ 4500, 5400, 5800, 6000, 6200, 6600 }) do
-            local fixed_unit_id = EHI:GetInstanceUnitID(unit_id, index)
-            managers.mission:add_runned_unit_sequence_trigger(fixed_unit_id, "interact", function(unit)
-                managers.ehi_tracker:AddTracker({
-                    id = tostring(fixed_unit_id),
-                    time = 30,
-                    icons = { Icon.Glasscutter },
-                    hint = Hints.Cutter
-                })
-            end)
-        end
-    end
-end
-
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)

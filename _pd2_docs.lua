@@ -436,6 +436,8 @@ _G.IS_VR = ...
 _G.AmmoBagBase = {}
 ---@class GrenadeCrateBase
 _G.GrenadeCrateBase = {}
+---@class CarryTweakData
+_G.CarryTweakData = {}
 ---@class CoreWorldInstanceManager
 _G.CoreWorldInstanceManager = {}
 ---@class CivilianDamage
@@ -857,12 +859,15 @@ end
 ---@class TimerManager
 ---@field time fun(self: self): number
 
----@class Global_game_settings
+---@class Global.game_settings
 ---@field difficulty string
 ---@field gamemode string
 ---@field level_id string
 ---@field single_player boolean
 ---@field team_ai boolean
+
+---@class Global.statistics_manager
+---@field playing_from_start boolean
 
 ---@class Global
 ---@field achievment_manager table
@@ -870,9 +875,9 @@ end
 ---@field editor_mode boolean Only in `Beardlib Editor`
 ---@field load_level boolean
 ---@field hud_disabled boolean
----@field game_settings Global_game_settings
+---@field game_settings Global.game_settings
 ---@field mission_manager table
----@field statistics_manager table
+---@field statistics_manager Global.statistics_manager
 ---@field wallet_panel Panel?
 
 ---@class Gui

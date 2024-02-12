@@ -56,7 +56,7 @@ local achievements =
             [103958] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
-            if EHI.ConditionFunctions.IsStealth() then
+            if self.ConditionFunctions.IsStealth() then
                 self._trackers:AddAchievementStatusTracker("man_3")
             end
         end
@@ -87,9 +87,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         if EHI:IsHost() and not element:_values_ok() then
             return
         end
-        if self._trackers:TrackerExists("Snipers") then
-            self._trackers:CallFunction("Snipers", "SnipersKilled", 40) -- 20 + 20
-        else
+        if self._trackers:CallFunction2("Snipers", "SnipersKilled", 40) then -- 20 + 20
             self._trackers:AddTracker({
                 id = "Snipers",
                 time = 40,

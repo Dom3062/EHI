@@ -109,6 +109,7 @@
         <post hook_id="lib/utils/dev/editor/worlddefinition" :script_path="WorldDefinition.lua" />
 
         <post hook_id="lib/tweak_data/tweakdata" :script_path="tweak_data.lua"/>
+        <post hook_id="lib/tweak_data/carrytweakdata" :script_path="CarryTweakData.lua"/>
         <post hook_id="lib/tweak_data/levelstweakdata" :script_path="LevelsTweakData.lua"/>
     </hooks>
 

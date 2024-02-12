@@ -18,7 +18,6 @@ function EHIDeployableManager:new(ehi_tracker)
 end
 
 function EHIDeployableManager:init_finalize()
-    EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
     if EHI:GetOption("grenadecases_block_on_abilities_or_no_throwable") then
         EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "DisableGrenades"))
     end
@@ -26,7 +25,6 @@ end
 
 function EHIDeployableManager:SwitchToLoudMode()
     self:AddEquipmentToIgnore(self._equipment_map.bodybag)
-    self._trackers:RemoveTracker("BodyBags")
 end
 
 function EHIDeployableManager:DisableGrenades()
@@ -148,6 +146,7 @@ function EHIDeployableManager:CreateDeployableTracker(type)
             id = "BodyBags",
             icons = { "bodybags_bag" },
             hint = "bodybags_bag",
+            remove_on_alarm = true,
             class = "EHIEquipmentTracker"
         })
     elseif type == "FirstAidKits" then

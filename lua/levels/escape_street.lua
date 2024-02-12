@@ -35,11 +35,10 @@ local other =
     [101959] = EHI:AddAssaultDelay({ time = 10 + 30 })
 }
 if EHI:IsLootCounterVisible() then
-    local CreateCounter = true
     other[102091] = EHI:AddLootCounter3(function(self, ...)
-        if CreateCounter then
+        if self._cache.CreateCounter then
             EHI:ShowLootCounterNoChecks()
-            CreateCounter = false
+            self._cache.CreateCounter = false
         end
         self._trackers:IncreaseLootCounterProgressMax()
     end)

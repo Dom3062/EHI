@@ -13,7 +13,6 @@ local element_sync_triggers =
 local request = { Icon.PCHack, Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
 local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
-local CurrentHackNumber = 0
 local CheckOkValueHostCheckOnly = EHI:RegisterCustomSF(function(self, trigger, element, ...)
     if EHI:IsHost() and not element:_values_ok() then
         return
@@ -24,7 +23,7 @@ local CheckOkValueHostCheckOnly = EHI:RegisterCustomSF(function(self, trigger, e
         self:CheckCondition(trigger)
         self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
     end
-    CurrentHackNumber = trigger.progress
+    self._cache.CurrentHackNumber = trigger.progress
 end)
 ---@type table<number, Vector3?>
 local PCVectors = {}
@@ -38,7 +37,7 @@ local triggers = {
     [104582] = { time = 30, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait, tracker_merge = true }, -- Disabled in the mission script
 
     [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop }, waypoint_f = function(self, trigger)
-        local vector = PCVectors[CurrentHackNumber]
+        local vector = PCVectors[self._cache.CurrentHackNumber or 0]
         if vector then
             self._waypoints:AddWaypoint(trigger.id, {
                 time = trigger.time,
@@ -148,7 +147,7 @@ EHI:AddLoadSyncFunction(function(self)
         elseif (timer3._started or timer3._done) and not (timer4._started or timer4._done) then
             self:Trigger(104481)
         else
-            CurrentHackNumber = 4
+            self._cache.CurrentHackNumber = 4
         end -- Pointless to query the last PC
     end
 end)
@@ -258,9 +257,7 @@ end
 EHI:UpdateUnits(tbl)
 
 local SecurityOffice = EHI:GetInstanceElementID(100026, 6690)
----@type MissionDoorTable
-local MissionDoor =
-{
+EHI:SetMissionDoorData({
     -- Evidence
     [Vector3(-1552.84, 816.472, -9.11819)] = 101562,
 
@@ -273,8 +270,7 @@ local MissionDoor =
     -- Security Office
     [Vector3(-1207.53, 4234.84, -409.118)] = SecurityOffice,
     [Vector3(807.528, 4265.16, -9.11819)] = SecurityOffice
-}
-EHI:SetMissionDoorData(MissionDoor)
+})
 EHI:AddXPBreakdown({
     objectives =
     {

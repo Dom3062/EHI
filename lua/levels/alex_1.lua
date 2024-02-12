@@ -54,10 +54,7 @@ local other =
     [100378] = EHI:AddAssaultDelay({ time = 42 + 50 + assault_delay }),
     [100380] = EHI:AddAssaultDelay({ time = 45 + 40 + assault_delay }),
     [100707] = EHI:AddAssaultDelay({ time = assault_delay_methlab, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
-        local tracker = self._trackers:GetTracker(trigger.id)
-        if tracker then
-            tracker:SetTimeIfLower(trigger.time)
-        else
+        if self._trackers:CallFunction2(trigger.id, "SetTimeIfLower", trigger.time) then
             self:CheckCondition(trigger)
         end
     end), trigger_times = 1 }),
@@ -66,15 +63,13 @@ local other =
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local SetRespawnTime = EHI:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
-        if self._trackers:TrackerExists(id) then
-            self._trackers:CallFunction(id, "SetRespawnTime", trigger.time)
-        else
+        local t = trigger.time
+        if self._trackers:CallFunction2(id, "SetRespawnTime", t) then
             self._trackers:AddTracker({
                 id = id,
-                time = trigger.time,
+                time = t,
                 count_on_refresh = 2,
-                class = TT.Sniper.TimedCount,
-                hint = Hints.EnemySnipers
+                class = TT.Sniper.TimedCount
             })
         end
     end)
@@ -133,12 +128,26 @@ if EHI:GetOption("show_escape_chance") then
         end
     end)
 end
+local obj1_xp = 12000
+local min_xp =
+{
+    rats_lab_exploded = true
+}
+if EHI:IsMayhemOrAbove() then
+    obj1_xp = 0
+    min_xp =
+    {
+        rats_3_bags_cooked = true
+    }
+end
 EHI:AddXPBreakdown({
     objectives =
     {
-        { amount = 12000, name = "rats_lab_exploded" },
+        { amount = obj1_xp, name = "rats_lab_exploded" },
+        { _or = true },
         { amount = 30000, name = "rats_3_bags_cooked" },
-        { amount = 40000, name = "rats_all_7_bags_cooked" }
+        { _or = true },
+        { amount = 30000 + 40000, name = "rats_all_7_bags_cooked" } -- Previous XP is counted too
     },
     total_xp_override =
     {
@@ -146,16 +155,12 @@ EHI:AddXPBreakdown({
         {
             min =
             {
-                objectives =
-                {
-                    rats_lab_exploded = true
-                }
+                objectives = min_xp,
             },
             max =
             {
                 objectives =
                 {
-                    rats_3_bags_cooked = true,
                     rats_all_7_bags_cooked = true
                 }
             }

@@ -287,10 +287,14 @@ function WorldDefinition:SetDeployableOffset(unit_id, unit_data, unit)
     end
 end
 
+---@param unit_id number
+---@param unit_data UnitUpdateDefinition
+---@param unit UnitDigitalTimer
 function WorldDefinition:chasC4(unit_id, unit_data, unit)
     if not unit:digital_gui()._ehi_key then
         return
     end
+    unit:digital_gui():SetHint(Hints.Explosion)
     if not unit_data.instance then
         unit:digital_gui():SetIcons(unit_data.icons)
         return

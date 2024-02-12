@@ -6,7 +6,7 @@ local Hints = EHI.Hints
 local triggers = {
     [100931] = { time = 23, hint = Hints.Escape },
     [104910] = { time = 24, hint = Hints.Escape },
-    [100842] = { time = 50, id = "Lasers", icons = { Icon.Lasers }, class = TT.Warning }
+    [100842] = { time = 50, id = "Lasers", icons = { Icon.Lasers }, class = TT.Warning, remove_on_alarm = true }
 }
 
 local other =
@@ -16,9 +16,7 @@ local other =
 
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local SetRespawnTime = EHI:RegisterCustomSF(function(self, trigger, ...)
-        if self._trackers:TrackerExists(trigger.id) then
-            self._trackers:CallFunction(trigger.id, "SetRespawnTime", trigger.time)
-        else
+        if self._trackers:CallFunction2(trigger.id, "SetRespawnTime", trigger.time) then
             self._trackers:AddTracker({
                 id = trigger.id,
                 time = trigger.time,

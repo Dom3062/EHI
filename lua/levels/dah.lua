@@ -25,8 +25,7 @@ local triggers = {
     [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100475, remove_vanilla_waypoint = 104882 }, hint = Hints.Escape },
     [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element_and_remove_vanilla_waypoint = 103163 }, hint = Hints.Escape },
 
-    [103969] = { id = "ColorCodes", class = TT.ColoredCodes },
-    [102338] = { id = "ColorCodes", special_function = SF.RemoveTracker }, -- Alarm
+    [103969] = { id = "ColorCodes", class = TT.ColoredCodes, remove_on_alarm = true },
     [101652] = { id = "ColorCodes", special_function = SF.RemoveTracker } -- Vault opened
 }
 EHI:HookColorCodes(dah_laptop_codes, { unit_id_all = 100052 })
@@ -66,10 +65,13 @@ local achievements =
         },
         failed_on_alarm = true,
         load_sync = function(self)
-            if EHI.ConditionFunctions.IsStealth() then
+            if self.ConditionFunctions.IsStealth() then
                 dah_8()
                 self._trackers:SetTrackerProgress("dah_8", managers.loot:GetSecuredBagsTypeAmount("diamondheist_big_diamond"))
             end
+        end,
+        cleanup_callback = function()
+            dah_8 = nil ---@diagnostic disable-line
         end
     }
 }
@@ -193,21 +195,23 @@ local function CheckIfCodeIsVisible(unit, color)
     end
     return nil -- Has not been interacted yet
 end
-EHI:AddLoadSyncFunction(function(self)
-    if EHI.ConditionFunctions.IsStealth() then
-        self:Trigger(103969)
-        local wd = managers.worlddefinition
-        for color, data in pairs(dah_laptop_codes) do
-            local unit_id = EHI:GetInstanceUnitID(100052, data)
-            local unit = wd:get_unit(unit_id)
-            local code = CheckIfCodeIsVisible(unit, color)
-            if code then
-                self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
+if EHI:GetOption("show_mission_trackers") then
+    EHI:AddLoadSyncFunction(function(self)
+        if self.ConditionFunctions.IsStealth() then
+            self:Trigger(103969)
+            local wd = managers.worlddefinition
+            for color, data in pairs(dah_laptop_codes) do
+                local unit_id = EHI:GetInstanceUnitID(100052, data)
+                local unit = wd:get_unit(unit_id)
+                local code = CheckIfCodeIsVisible(unit, color)
+                if code then
+                    self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
+                end
             end
         end
-    end
-    -- Clear memory
-    bg = nil
-    codes = nil
-    dah_laptop_codes = nil ---@diagnostic disable-line
-end)
+        -- Clear memory
+        bg = nil
+        codes = nil
+        dah_laptop_codes = nil ---@diagnostic disable-line
+    end)
+end

@@ -34,7 +34,7 @@ function DigitalGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._ignore_visibility = false
-    self._hint = "timelock"
+    self._ehi_hint = "timelock"
     if not show_waypoint_only then
         EHI:OptionAndLoadTracker("show_timers")
     end
@@ -55,7 +55,7 @@ function DigitalGui:TimerStartCountDown()
             icons = self._icons or { Icon.PCHack },
             warning = self._warning,
             completion = self._completion,
-            hint = self._hint,
+            hint = self._ehi_hint,
             class = "EHITimerTracker"
         })
     end
@@ -146,9 +146,7 @@ if level_id == "chill" then
     original.timer_start_count_up = DigitalGui.timer_start_count_up
     function DigitalGui:timer_start_count_up(...)
         original.timer_start_count_up(self, ...)
-        if managers.ehi_tracker:TrackerExists(self._ehi_key) then
-            managers.ehi_tracker:CallFunction(self._ehi_key, "Reset")
-        else
+        if managers.ehi_tracker:CallFunction2(self._ehi_key, "Reset") then
             managers.ehi_tracker:AddTracker({
                 id = self._ehi_key,
                 time = 0,
@@ -284,7 +282,8 @@ end
 
 ---@param hint string
 function DigitalGui:SetHint(hint)
-    self._hint = hint
+    self._ehi_hint = hint
+    managers.ehi_tracker:UpdateHint(self._ehi_key, hint)
 end
 
 function DigitalGui:Finalize()

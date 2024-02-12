@@ -16,6 +16,7 @@ function EHIWaypoint:init(waypoint, params, parent_class)
     self._arrow = waypoint.arrow ---@type PanelBitmap
     self._bitmap_world = waypoint.bitmap_world ---@type PanelBitmap -- VR
     self._parent_class = parent_class
+    self._remove_on_alarm = params.remove_on_alarm --Removes tracker when alarm sounds
     self:post_init(params)
 end
 
@@ -82,6 +83,12 @@ end
 
 function EHIWaypoint:RemoveWaypointFromUpdate()
     self._parent_class:RemoveWaypointFromUpdate(self._id)
+end
+
+function EHIWaypoint:SwitchToLoudMode()
+    if self._remove_on_alarm then
+        self:delete()
+    end
 end
 
 function EHIWaypoint:delete()

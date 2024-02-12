@@ -8,6 +8,7 @@ local triggers = {
 
 local other =
 {
+    [101705] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, nil, nil, true),
     [102557] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 
@@ -31,5 +32,15 @@ EHI:AddXPBreakdown({
     {
         escape = 2000
     },
-    loot_all = 500
+    loot_all = 500,
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot_all = { min = 4, max = 9 }
+            }
+        }
+    }
 })

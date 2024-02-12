@@ -14,6 +14,11 @@ local other =
 {
     [100032] = EHI:AddAssaultDelay({ time = 60 })
 }
+if EHI:GetOption("show_sniper_tracker") and EHI:GetOption("show_sniper_spawned_popup") then
+    other[100442] = { special_function = EHI.SpecialFunctions.CustomCode, f = function()
+        managers.hud:ShowSnipersSpawned()
+    end }
+end
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -36,13 +41,36 @@ local tbl =
     end}
 }
 EHI:UpdateUnits(tbl)
-
 local DisableWaypoints =
 {
-    --levels/instances/unique/sand/sand_server_hack
-    --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
+    --levels/instances/mods/Constantine Scores/constantine_mobsterclub_server_computer/world
+    --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b_002
     [EHI:GetInstanceElementID(100018, 3750)] = true -- Defend
 }
--- levels/instances/unique/rvd/rvd_hackbox
--- Handled in CoreWorldInstanceManager.lua
 EHI:DisableWaypoints(DisableWaypoints)
+EHI:AddXPBreakdown({
+    objectives =
+    {
+        { amount = 2000, name = "china2_warehouse_open" },
+        { amount = 2000, name = "custom_opened_security_door" },
+        { amount = 2000, name = "custom_pc_powered_on" },
+        { amount = 2000, name = "hox2_random_obj" },
+        { amount = 2000, name = "pc_hack" },
+        { amount = 2000, name = "custom_opened_security_door" },
+        { amount = 2000, name = "china2_inject_adrenaline" },
+        { amount = 2000, name = "panic_room_killed_all_snipers" },
+        { amount = 2000, name = "custom_escort" },
+        { escape = 2000 }
+    },
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot_all = { max = 8 }
+            }
+        }
+    }
+})

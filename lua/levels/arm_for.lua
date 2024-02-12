@@ -30,7 +30,7 @@ local achievements =
             [103311] = { special_function = SF.SetAchievementFailed }
         },
         load_sync = function(self)
-            if EHI.ConditionFunctions.IsStealth() then
+            if self.ConditionFunctions.IsStealth() then
                 self._trackers:AddAchievementStatusTracker("armored_6")
             end
         end

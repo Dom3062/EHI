@@ -47,11 +47,10 @@ local other =
     [101975] = EHI:AddAssaultDelay({ time = 15 + 30, trigger_times = 1 })
 }
 if EHI:IsLootCounterVisible() then
-    local CreateCounter = true
     other[102564] = EHI:AddLootCounter3(function(self, ...)
-        if CreateCounter then
+        if self._cache.CreateCounter then
             EHI:ShowLootCounterNoChecks()
-            CreateCounter = false
+            self._cache.CreateCounter = false
         end
         self._trackers:IncreaseLootCounterProgressMax()
     end)
@@ -66,7 +65,7 @@ EHI:RegisterCustomSF(AddToCache, function(self, trigger, ...)
     EHI._cache[trigger.id] = trigger.data
 end)
 EHI:RegisterCustomSF(GetFromCache, function(self, trigger, ...)
-    local data = EHI._cache[trigger.id]
+    local data = EHI._cache[trigger.id] --[[@as { icon: string }? ]]
     EHI._cache[trigger.id] = nil
     if data and data.icon then
         trigger.icons[1] = data.icon

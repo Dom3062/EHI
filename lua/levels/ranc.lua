@@ -98,6 +98,12 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
 end
 
 EHI:ParseTriggers({ mission = triggers, other = other })
+EHI:ShowAchievementKillCounter({
+    achievement = "ranc_9", -- "Caddyshacked" achievement
+    achievement_stat = "ranc_9_stat", -- 100
+    achievement_option = "show_achievements_vehicle",
+    difficulty_pass = OVKorAbove
+})
 local ranc_10 = { special_function = SF.IncreaseProgress }
 local ranc_10_triggers =
 {
@@ -113,12 +119,6 @@ EHI:ShowAchievementLootCounter({
     load_sync = function(self)
         self._trackers:SetTrackerProgress("ranc_10", 5 - self:CountInteractionAvailable("ranc_press_pickup_horseshoe"))
     end
-})
-EHI:ShowAchievementKillCounter({
-    achievement = "ranc_9", -- "Caddyshacked" achievement
-    achievement_stat = "ranc_9_stat", -- 100
-    achievement_option = "show_achievements_vehicle",
-    difficulty_pass = OVKorAbove
 })
 EHI:ShowAchievementKillCounter({
     achievement = "ranc_11", -- "Marshal Law" achievement

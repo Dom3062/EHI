@@ -96,10 +96,9 @@ local triggers = {
     [1013251] = { time = 180, id = "Thermite", icons = { Icon.Fire }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Thermite },
     [1013252] = { id = "ThermiteShorterTime", special_function = SF.RemoveTracker },
     [101684] = { time = 5.1, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion },
-    [100211] = { chance = 10, id = "PCChance", icons = { Icon.PCHack }, class = TT.Chance, hint = Hints.man_Code },
+    [100211] = { chance = 10, id = "PCChance", icons = { Icon.PCHack }, class = TT.Chance, hint = Hints.man_Code, remove_on_alarm = true },
     [101226] = { id = "PCChance", special_function = SF.IncreaseChanceFromElement }, -- +17%
-    [106680] = { id = "PCChance", special_function = SF.RemoveTracker },
-    [102567] = { id = "PCChance", special_function = SF.RemoveTracker } -- Loud started
+    [106680] = { id = "PCChance", special_function = SF.RemoveTracker }
 }
 
 ---@type ParseAchievementTable
@@ -125,7 +124,7 @@ local achievements =
             [103491] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
-            if EHI.ConditionFunctions.IsStealth() then
+            if self.ConditionFunctions.IsStealth() then
                 self._trackers:AddTimedAchievementTracker("green_3", 817)
             end
         end

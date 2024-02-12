@@ -87,9 +87,7 @@ if EHI:GetOption("show_equipment_ecmjammer") then
                 end
             end
             if not show_waypoint_only then
-                if managers.ehi_tracker:TrackerExists("ECMJammer") then
-                    managers.ehi_tracker:CallFunction("ECMJammer", "SetTimeIfLower", battery_life, self._ehi_peer_id, self._unit)
-                else
+                if managers.ehi_tracker:CallFunction2("ECMJammer", "SetTimeIfLower", battery_life, self._ehi_peer_id, self._unit) then
                     managers.ehi_tracker:AddTracker({
                         id = "ECMJammer",
                         time = battery_life,
@@ -118,9 +116,7 @@ if EHI:GetOption("show_equipment_ecmfeedback") then
     ---@param state boolean
     function(self, state)
         if state and self._feedback_duration then
-            if managers.ehi_tracker:TrackerExists("ECMFeedback") then
-                managers.ehi_tracker:CallFunction("ECMFeedback", "SetTimeIfLower", self._feedback_duration, self._ehi_peer_id, self._unit)
-            else
+            if managers.ehi_tracker:CallFunction2("ECMFeedback", "SetTimeIfLower", self._feedback_duration, self._ehi_peer_id, self._unit) then
                 managers.ehi_tracker:AddTracker({
                     id = "ECMFeedback",
                     time = self._feedback_duration,

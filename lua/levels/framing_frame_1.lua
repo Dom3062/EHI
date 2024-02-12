@@ -3,6 +3,18 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 
 local other = {}
+---@param self EHIManager
+local LootCounterSyncFunction = function(self)
+    local max_reduction = 0
+    if self:IsMissionElementDisabled(104285) then
+        max_reduction = max_reduction + 1
+    end
+    if self:IsMissionElementDisabled(104286) then
+        max_reduction = max_reduction + 1
+    end
+    self._trackers:DecreaseLootCounterProgressMax(max_reduction)
+    self._trackers:SyncSecuredLoot()
+end
 
 local min_bags = 4
 if Global.game_settings.level_id == "gallery" then
@@ -38,46 +50,59 @@ if Global.game_settings.level_id == "gallery" then
         achievement = achievements
     })
 
+    EHI:ShowLootCounter({
+        max = 9,
+        triggers =
+        {
+            [102860] = { special_function = SF.DecreaseProgressMax } -- Painting flushed
+        },
+        load_sync = LootCounterSyncFunction
+    })
+
     min_bags = 6
 else -- Framing Frame Day 1
     EHI:ShowAchievementLootCounter({
         achievement = "pink_panther",
         max = 9,
         show_finish_after_reaching_target = true,
-        failed_on_alarm = true,
+        silent_failed_on_alarm = true,
+        start_silent = true,
         triggers =
         {
+            [100559] = { special_function = SF.CallCustomFunction, f = "SetStarted" },
             [102860] = { special_function = SF.SetAchievementFailed } -- Painting flushed
-        }
+        },
+        loot_counter_triggers =
+        {
+            [102860] = { special_function = SF.DecreaseProgressMax } -- Painting flushed
+        },
+        load_sync = function(self)
+            if self.ConditionFunctions.IsLoud() then
+                return
+            elseif self:IsMissionElementDisabled(104285) or self:IsMissionElementDisabled(104286) then
+                self._trackers:CallFunction("pink_panther", "SetFailed2")
+                return
+            end
+            self._trackers:CallFunction("pink_panther", "SetStarted")
+            self._trackers:SyncSecuredLoot("pink_panther")
+        end,
+        loot_counter_load_sync = LootCounterSyncFunction,
+        add_to_counter = true,
+        show_loot_counter = true,
+        loot_counter_on_fail = true
     })
 
     if EHI:GetOption("show_escape_chance") then
         other[102437] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement } -- +5%
         other[103884] = { id = "EscapeChance", special_function = SF.SetChanceFromElement } -- 100 %
-        EHI:AddOnAlarmCallback(function(dropin)
-            managers.ehi_escape:AddEscapeChanceTracker(dropin, 25)
-        end)
+        other[100905] = EHI:AddEscapeChance(25, true)
+        if EHI:IsClient() then
+            EHI:AddOnAlarmCallback(function(dropin)
+                managers.ehi_escape:AddChanceWhenDoesNotExists(dropin, 25)
+            end)
+        end
     end
 end
-
-EHI:ShowLootCounter({
-    max = 9,
-    triggers =
-    {
-        [102860] = { special_function = SF.DecreaseProgressMax } -- Painting flushed
-    },
-    load_sync = function(self)
-        local max_reduction = 0
-        if self:IsMissionElementDisabled(104285) then
-            max_reduction = max_reduction + 1
-        end
-        if self:IsMissionElementDisabled(104286) then
-            max_reduction = max_reduction + 1
-        end
-        self._trackers:DecreaseLootCounterProgressMax(max_reduction)
-        self._trackers:SyncSecuredLoot()
-    end
-})
 
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[103331] = { id = "Snipers", chance = 10, time = 15, recheck_t = 30, class = TT.Sniper.TimedChanceOnce }
@@ -89,15 +114,12 @@ end
 
 EHI:ParseTriggers({ other = other })
 
----@type MissionDoorTable
-local MissionDoor =
-{
+EHI:SetMissionDoorData({
     -- Security doors
     [Vector3(-827.08, 115.886, 92.4429)] = 103191,
     [Vector3(-60.1138, 802.08, 92.4429)] = 103188,
     [Vector3(-140.886, -852.08, 92.4429)] = 103202
-}
-EHI:SetMissionDoorData(MissionDoor)
+})
 local xp_override =
 {
     params =

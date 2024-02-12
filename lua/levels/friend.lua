@@ -4,9 +4,10 @@ function EHIuno7Tracker:post_init(...)
     self._obtainable = false
     self._blocked_warning = true
     self:SetTextColor()
+    self:PrepareHint(...)
 end
 
-function EHIuno7Tracker:SetObtainable()
+function EHIuno7Tracker:OnAlarm()
     self._obtainable = true
     self._blocked_warning = false
     self:SetTextColor()
@@ -101,8 +102,7 @@ local achievements =
         difficulty_pass = mayhem_and_up,
         elements =
         {
-            [100107] = { time = 901, class = "EHIuno7Tracker" },
-            [100801] = { special_function = SF.CallCustomFunction, f = "SetObtainable" }
+            [100107] = { time = 901, class = "EHIuno7Tracker", update_on_alarm = true }
         },
         cleanup_callback = function()
             EHIuno7Tracker = nil ---@diagnostic disable-line
@@ -160,7 +160,7 @@ EHI:AddXPBreakdown({
                 { amount = 1000, name = "scarface_entered_house" },
                 { amount = 1000, name = "scarface_shutters_open" },
                 { amount = 1000, name = "scarface_gathered_all_paintings" },
-                { amount = 2000, name = "scarface_all_paintings_burned" },
+                { amount = 2000, name_format = { id = "all_bags_destroyed", macros = { carry = tweak_data.carry:FormatCarryNameID("painting") } } },
                 { amount = 1000, name = "scarface_all_cars_hooked_up" },
                 { amount = 4000, name = "scarface_defeated_security" },
                 { amount = 1000, name = "scarface_sosa_killed" },

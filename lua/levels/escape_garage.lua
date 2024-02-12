@@ -29,11 +29,10 @@ local triggers =
 
 local other = {}
 if EHI:IsLootCounterVisible() then
-    local CreateCounter = true
     other[104263] = EHI:AddLootCounter3(function(self, ...)
-        if CreateCounter then
+        if self._cache.CreateCounter then
             EHI:ShowLootCounterNoCheck({})
-            CreateCounter = false
+            self._cache.CreateCounter = false
         end
         self._trackers:IncreaseLootCounterProgressMax()
     end)

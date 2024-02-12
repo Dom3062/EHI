@@ -90,12 +90,10 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                             id = "PagersChance",
                             chance = EHI:RoundChanceNumber(base[1] or 0),
                             icons = { EHI.Icons.Pager },
-                            class = EHI.Trackers.Chance,
-                            hint = "pager_chance"
+                            hint = "pager_chance",
+                            remove_on_alarm = true,
+                            class = EHI.Trackers.Chance
                         })
-                        EHI:AddOnAlarmCallback(function()
-                            self.ehi:RemoveTracker("PagersChance")
-                        end)
                         return
                     end
                 end
@@ -111,26 +109,22 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 max = max,
                 icons = { EHI.Icons.Pager },
                 set_color_bad_when_reached = true,
-                class = EHI.Trackers.Progress,
-                hint = "pager_counter"
+                hint = "pager_counter",
+                remove_on_alarm = true,
+                class = EHI.Trackers.Progress
             })
             if max == 0 then
                 self.ehi:CallFunction("Pagers", "SetBad")
             end
-            EHI:AddOnAlarmCallback(function()
-                self.ehi:RemoveTracker("Pagers")
-            end)
         end
         if EHI:GetOption("show_bodybags_counter") then
             self.ehi:AddTracker({
                 id = "BodybagsCounter",
                 icons = { "equipment_body_bag" },
                 hint = "bodybags_counter",
+                remove_on_alarm = true,
                 class = EHI.Trackers.Counter
             })
-            EHI:AddOnAlarmCallback(function()
-                self.ehi:RemoveTracker("BodybagsCounter")
-            end)
         end
     end
 end

@@ -67,9 +67,7 @@ local mission_loot = 6 -- Normal to Very Hard
 if ovk_and_up then
     mission_loot = 8
 end
-EHI:ShowLootCounter({
-    max = mission_loot + 8
-}) -- 14 or 16
+EHI:ShowLootCounter({ max = mission_loot + 8 }) -- 14 or 16
 
 local tbl =
 {

@@ -39,7 +39,7 @@ local original =
 
 function ElementLaserTrigger:init(...)
     original.init(self, ...)
-    self._ehi_id = self._id .. "_laser"
+    self._ehi_id = "laser_" .. self._id
 end
 
 function ElementLaserTrigger:add_callback(...)
@@ -47,6 +47,7 @@ function ElementLaserTrigger:add_callback(...)
         managers.ehi_tracker:AddLaserTracker({
             id = self._ehi_id,
             time = self._values.cycle_interval,
+            remove_on_alarm = true,
             class = "EHILaserTracker"
         })
     end

@@ -121,9 +121,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local ChanceSuccess = EHI:RegisterCustomSF(function(self, trigger, element, ...)
         local id = trigger.id
         local chance = element._values.chance
-        if self._trackers:TrackerExists(id) then
-            self._trackers:CallFunction(id, "OnChanceSuccess", chance) -- 10%/15%
-        else
+        if self._trackers:CallFunction2(id, "OnChanceSuccess", chance) then -- 10%/15%
             self._trackers:AddTracker({
                 id = id,
                 chance = chance,

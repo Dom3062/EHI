@@ -1,15 +1,16 @@
 local EHI, EM = EHI, EHIManager
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
+EHI._cache.street_new = true
 dofile(EHI.LuaPath .. "levels/run.lua")
 -- Triggers
 EM:UnhookTrigger(100144) -- Does not work in reworked version
 EM:UnhookTrigger(102876) -- Needs to be reworked -> 1st gas can
 local triggers =
 {
-    -- Creates Fire tracker -> 1028762, copy of 100144
-    -- Runs original trigger in run.lua -> 1028761
-    -- Increases Gas count (original trigger in run.lua) -> 1
+    -- 1028762 -> Creates Fire tracker -> copy of 100144
+    -- 1028761 -> Runs original trigger in run.lua
+    -- 1 -> Increases Gas count (original trigger in run.lua)
     [102876] = { special_function = SF.Trigger, data = { 1028762, 1028761, 1 } },
     [1028762] = { id = "GasAmount", class = "EHIGasTracker", hint = EHI.Hints.run_Gas }
 }
@@ -17,7 +18,6 @@ if EHI:MissionTrackersAndWaypointEnabled() then
     triggers[102876].data[4] = 3
 end
 
--- Achievements
 ---@type ParseAchievementTable
 local achievements =
 {

@@ -106,13 +106,10 @@ EHI:ShowAchievementLootCounter({
     }
 })
 
----@type MissionDoorTable
-local MissionDoor =
-{
+EHI:SetMissionDoorData({
     -- Diamond Room Hatch
     [Vector3(8638, 193.001, -519)] = 100841
-}
-EHI:SetMissionDoorData(MissionDoor)
+})
 local loot = { mus_artifact = 1000 }
 local xp_override =
 {

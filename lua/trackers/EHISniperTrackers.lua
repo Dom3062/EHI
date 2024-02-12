@@ -38,7 +38,7 @@ function EHISniperCountTracker:pre_init(params)
 end
 
 function EHISniperCountTracker:SniperSpawnsSuccess()
-    if self._snipers_spawned_popup and self._sniper_count ~= self._count then
+    if self._snipers_spawned_popup and self._sniper_count ~= self._current_sniper_count then
         self._current_sniper_count = self._count
         managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, "EHI_Sniper")
     end

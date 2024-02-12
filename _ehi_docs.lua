@@ -44,6 +44,8 @@
 ---@field flash_bg boolean?
 ---@field hint string?
 ---@field tracker_merge boolean
+---@field remove_on_alarm boolean
+---@field update_on_alarm boolean
 ---@field [any] any
 
 ---@class ParseTriggerTable
@@ -117,7 +119,8 @@
 ---@field loot_counter_load_sync fun(self: EHIManager) Synchronizes secured bags in the loot counter if achievement is not visible
 ---@field alarm_callback fun(dropin: boolean) Do some action when alarm is sounded
 ---@field failed_on_alarm boolean Fails achievement in tracker on alarm
----@field triggers table Adds triggers when counter is manipulated via Mission Script, prevents counting
+---@field triggers table<number, ElementTrigger> Adds triggers when counter is manipulated via Mission Script, prevents counting
+---@field loot_counter_triggers table<number, ElementTrigger> Adds triggers when counter is manipulated via Mission Script to the `Loot Counter` when achievement failed initial check
 ---@field hook_triggers boolean If tracker is created during spawn or gameplay, triggers must be hooked in order to work
 ---@field add_to_counter boolean Adds achievement to update loop when a loot is secured; applicable only to `triggers`, useful when standard loot counting is required with triggers
 ---@field no_counting boolean Prevents standard counting
@@ -259,6 +262,7 @@
 ---@field flash_times number?
 ---@field flash_bg boolean?
 ---@field hint string?
+---@field remove_on_alarm boolean?
 ---@field delay_popup boolean Provided by `EHITrackerManager`
 ---@field [any] any
 
@@ -324,9 +328,14 @@
 ---@field [string] number|table
 ---@field escape number|XPBreakdown.escape
 
+---@class _XPBreakdown.objectives.name_format
+---@field id string `ehi_experience_<name>`
+---@field macros table<string, string>
+
 ---@class _XPBreakdown.objectives
 ---@field amount number XP Base
 ---@field name string `ehi_experience_<name>`
+---@field name_format _XPBreakdown.objectives.name_format
 ---@field additional_name string? `ehi_experience_<name>`
 ---@field optional boolean?
 ---@field times number?
@@ -334,6 +343,7 @@
 ---@field random XPBreakdown.random
 ---@field stealth number
 ---@field loud number
+---@field _or boolean
 
 ---@class XPBreakdown.objectives
 ---@field [number] _XPBreakdown.objectives

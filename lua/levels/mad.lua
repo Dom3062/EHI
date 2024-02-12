@@ -81,14 +81,6 @@ local dailies =
     }
 }
 
-local DisableWaypoints =
-{
-    [EHI:GetInstanceElementID(100112, 7315)] = true, -- Defend
-    [EHI:GetInstanceElementID(100112, 7615)] = true, -- Defend
-    [EHI:GetInstanceElementID(100113, 7315)] = true, -- Fix
-    [EHI:GetInstanceElementID(100113, 7615)] = true -- Fix
-}
-EHI:DisableWaypoints(DisableWaypoints)
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,

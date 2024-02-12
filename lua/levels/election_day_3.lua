@@ -9,9 +9,7 @@ if EHI:GetOption("show_one_icon") then
     CrashIcons = { Icon.Fix }
 end
 local CrashChanceTime = EHI:RegisterCustomSF(function(self, trigger, ...)
-    if self._trackers:TrackerExists("CrashChance") then
-        self._trackers:CallFunction("CrashChance", "StartTimer", trigger.time)
-    else
+    if self._trackers:CallFunction2("CrashChance", "StartTimer", trigger.time) then
         self:CheckCondition(trigger)
     end
 end)
@@ -48,9 +46,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     })
     other[100356] = { time = refresh_t, special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
         if element:_check_mode() then
-            if self._trackers:TrackerExists("Snipers") then
-                self._trackers:CallFunction("Snipers", "SniperSpawnsSuccess", 2)
-            else
+            if self._trackers:CallFunction2("Snipers", "SniperSpawnsSuccess", 2) then
                 self._trackers:AddTracker({
                     id = "Snipers",
                     time = trigger.time,
@@ -73,17 +69,14 @@ if EHI:IsLootCounterVisible() then
     end, true)
 end
 
----@type MissionDoorTable
-local MissionDoor =
-{
+EHI:SetMissionDoorData({
     -- Vault Doors
     [Vector3(2350, -2320, 59.9998)] = 104556, -- Left
     [Vector3(2250, -3121, 59.9998)] = 104611, -- Right
 
     -- Gate inside the vault
     [Vector3(2493.96, -2793.65, 84.8657)] = { w_id = 104645, restore = true, unit_id = 101581 }
-}
-EHI:SetMissionDoorData(MissionDoor)
+})
 EHI:ParseTriggers({ mission = triggers, other = other })
 EHI:AddXPBreakdown({
     objective =

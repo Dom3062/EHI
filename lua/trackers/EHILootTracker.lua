@@ -97,11 +97,22 @@ function EHILootTracker:SetCompleted(force)
     if self._stay_on_screen and self._status then
         self:SetAndFitTheText()
         self._status = nil
-    elseif self._show_popup and not self._popup_showed and not self._show_finish_after_reaching_target then
-        self._popup_showed = true
-        self.update = self.update_fade
-        managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_loot_secured"), "EHI_Loot")
+    elseif self:CanShowLootSecuredPopup() then
+        self:ShowLootSecuredPopup()
     end
+end
+
+---@param no_update boolean?
+function EHILootTracker:ShowLootSecuredPopup(no_update)
+    self._popup_showed = true
+    if no_update then
+        self.update = self.update_fade
+    end
+    managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_loot_secured"), "EHI_Loot")
+end
+
+function EHILootTracker:CanShowLootSecuredPopup()
+    return self._show_popup and not self._popup_showed and not self._show_finish_after_reaching_target
 end
 
 ---@param max number
@@ -341,6 +352,14 @@ function EHIAchievementLootCounterTracker:PrepareHint(params)
     self._forced_hint_text = params.hint
 end
 
+function EHIAchievementLootCounterTracker:DelayForcedDelete()
+    EHIAchievementLootCounterTracker.super.DelayForcedDelete(self)
+    self._show_finish_after_reaching_target = nil
+    if self:CanShowLootSecuredPopup() then
+        self:ShowLootSecuredPopup(true)
+    end
+end
+
 ---@param force boolean?
 function EHIAchievementLootCounterTracker:SetCompleted(force)
     self._achieved_popup_showed = true
@@ -355,9 +374,16 @@ function EHIAchievementLootCounterTracker:SetFailed()
             self._icon1:set_visible(false)
             self._icon2:set_x(self._icon1:x())
             self:ChangeTrackerWidth(self._bg_box:w() + self._icon_gap_size_scaled, true)
+            self._hint_vanilla_localization = nil
+            self:UpdateHint("loot_counter")
+            self:AnimateRepositionHintX(1)
         else
             self:SetIcon("pd2_loot")
         end
+        self._show_finish_after_reaching_target = nil
+        self._status = nil
+        self._disable_counting = false
+        self:SetProgress(self._progress)
     else
         EHIAchievementLootCounterTracker.super.SetFailed(self)
     end
@@ -397,6 +423,7 @@ function EHIAchievementLootCounterTracker:SetStarted()
             self._icon2:set_visible(true)
             self:SetIconsX()
             self._panel_override_w = nil
+            self:AnimateRepositionHintX(3) -- Why 3 ? I have no clue
             self:ChangeTrackerWidth(nil, true)
         else
             self:SetIcon(self._forced_icons[1])

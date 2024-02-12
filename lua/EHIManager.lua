@@ -19,16 +19,16 @@ EHIManager.SyncFunctions = EHI.SyncFunctions
 EHIManager.ClientSyncFunctions = EHI.ClientSyncFunctions
 EHIManager.TriggerFunction = EHI.TriggerFunction
 EHIManager.FilterTracker = EHI.FilterTracker
+EHIManager.ConditionFunctions = EHI.ConditionFunctions
 EHIManager.SFF = {}
 EHIManager.HookOnLoad = {}
----@param ehi_tracker EHITrackerManager
----@param ehi_waypoints EHIWaypointManager
----@param ehi_escape EHIEscapeChanceManager
----@return EHIManager
-function EHIManager:new(ehi_tracker, ehi_waypoints, ehi_escape)
-    self._trackers = ehi_tracker
-    self._waypoints = ehi_waypoints
-    self._escape = ehi_escape
+EHIManager._cache = {}
+---@param managers managers
+function EHIManager:new(managers)
+    self._trackers = managers.ehi_tracker
+    self._waypoints = managers.ehi_waypoint
+    self._escape = managers.ehi_escape
+    self._deployable = managers.ehi_deployable
     self._level_started_from_beginning = true
     self._t = 0
     self.TrackerWaypointsClass =
@@ -56,6 +56,7 @@ function EHIManager:new(ehi_tracker, ehi_waypoints, ehi_escape)
 end
 
 function EHIManager:init_finalize()
+    EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
     managers.network:add_event_listener("EHIManagerDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
     if EHI:IsClient() then
         Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(_, id, data)
@@ -65,6 +66,12 @@ function EHIManager:init_finalize()
             end
         end)
     end
+end
+
+function EHIManager:SwitchToLoudMode()
+    self._trackers:SwitchToLoudMode()
+    self._waypoints:SwitchToLoudMode()
+    self._deployable:SwitchToLoudMode()
 end
 
 ---@param tweak_data string
@@ -294,12 +301,6 @@ end
 ---@param id string
 function EHIManager:Unpause(id)
     self:SetPaused(id, false)
-end
-
----@param id string
-function EHIManager:RemovePager(id)
-    self._trackers:RemoveStealthTracker(id, "pagers")
-    self._waypoints:RemovePagerWaypoint(id)
 end
 
 ---@param id string
@@ -692,7 +693,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
                 end
             end
             -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
-            if data.special_function == SF.ShowWaypoint then
+            if data.special_function == SF.ShowWaypoint and data.data then
                 data.data.distance = true
                 data.data.state = "sneak_present"
                 data.data.present_timer = 0
@@ -1303,7 +1304,7 @@ function EHIManager:Trigger(id, element, enabled)
             elseif f == SF.DecreaseProgress then
                 self._trackers:DecreaseTrackerProgress(trigger.id, trigger.progress)
             elseif f == SF.IncreaseCounter then
-                self._trackers:IncreaseTrackerCount(trigger.id)
+                self._trackers:IncreaseTrackerCount(trigger.id, trigger.count)
             elseif f == SF.DecreaseCounter then
                 self._trackers:DecreaseTrackerCount(trigger.id)
             elseif f == SF.SetCounter then

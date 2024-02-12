@@ -22,9 +22,7 @@ if EHI:GetOption("show_difficulty_tracker") then
     local id = "Difficulty"
     Trigger = function(value)
         local diff = EHI:RoundChanceNumber(value)
-        if managers.ehi_tracker:TrackerExists(id) then
-            managers.ehi_tracker:SetChance(id, diff)
-        else
+        if managers.ehi_tracker:CallFunction3(id, "SetChance", diff) then
             managers.ehi_tracker:AddTracker({
                 id = id,
                 icons = { "enemy" },

@@ -326,7 +326,9 @@ function XPBreakdownPanel:ProcessBreakdown()
         local total_xp = { base = 0, add = not self._params.no_total_xp }
         for _, data in ipairs(self._params.objectives) do
             if type(data) == "table" then
-                if type(data.stealth) == "number" and type(data.loud) == "number" then
+                if data._or then
+                    self:AddLine(self._loc:text("ehi_experience_or"))
+                elseif type(data.stealth) == "number" and type(data.loud) == "number" then
                     total_xp.add = false
                     local str = data.name and self:GetTranslatedKey(data.name, data.additional_name) or "<Unknown objective>"
                     if data.times then
@@ -356,7 +358,12 @@ function XPBreakdownPanel:ProcessBreakdown()
                     if self._gage then
                         xp_with_gage = self._gui:FormatXPWithAllGagePackages(amount)
                     end
-                    local str = data.name and self:GetTranslatedKey(data.name, data.additional_name) or "<Unknown objective>"
+                    local str = "<Unknown objective>"
+                    if data.name_format then
+                        str = self._loc:text("ehi_experience_" .. data.name_format.id, data.name_format.macros)
+                    elseif data.name then
+                        str = self:GetTranslatedKey(data.name, data.additional_name)
+                    end
                     local text_color = data.optional and colors.optional ---@cast text_color Color?
                     local add_xp_to_base = true
                     if data.times then
@@ -601,8 +608,7 @@ function XPBreakdownPanel:AddLootSecured(loot, times, to_secure, mandatory, addi
     elseif loot == "xp_bonus" then
         loot_name = self._loc:text("ehi_experience_xp_bonus")
     else
-        local carry_data = tweak_data.carry[loot] or {}
-        loot_name = carry_data.name_id and self._loc:text(carry_data.name_id) or loot
+        loot_name = tweak_data.carry:FormatCarryNameID(loot, loot)
     end
     local str = "- " .. loot_name
     if times > 0 or to_secure > 0 or mandatory > 0 or additional_bag then

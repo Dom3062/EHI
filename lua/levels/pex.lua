@@ -2,7 +2,6 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local WT = EHI.Waypoints
 local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
@@ -13,36 +12,9 @@ local triggers = {
 
     [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 101391 }, hint = Hints.Escape }
 }
----@param self EHIManager
----@param trigger ElementTrigger
-local function waypoint(self, trigger)
-    local pos = EHI:GetElementPosition(trigger.element_ids.defend) or Vector3()
-    self._waypoints:AddWaypoint(trigger.id, {
-        time = trigger.time,
-        icon = Icon.Tablet,
-        position = pos,
-        class = WT.Pausable
-    })
-    managers.hud:SoftRemoveWaypoint2(trigger.element_ids.defend)
-    managers.hud:SoftRemoveWaypoint2(trigger.element_ids.fix)
-end
-for _, index in ipairs({ 5300, 6300, 7300 }) do
-    triggers[EHI:GetInstanceElementID(100025, index)] = { time = 120, id = "ArmoryHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint_f = waypoint, element_ids = { defend = EHI:GetInstanceElementID(100055, index), fix = EHI:GetInstanceElementID(100056, index) }, hint = Hints.Hack }
-    triggers[EHI:GetInstanceElementID(100026, index)] = { id = "ArmoryHack", special_function = SF.PauseTracker }
-end
 if EHI:IsClient() then
     triggers[100233] = EHI:ClientCopyTrigger(triggers[101389], { time = 20 + 4 })
 end
-local DisableWaypoints =
-{
-    -- pex_evidence_room_1
-    [EHI:GetInstanceElementID(100080, 13300)] = true, -- Defend
-    [EHI:GetInstanceElementID(100084, 13300)] = true, -- Fix
-    -- pex_evidence_room_2
-    [EHI:GetInstanceElementID(100072, 14300)] = true, -- Defend
-    [EHI:GetInstanceElementID(100079, 14300)] = true -- Fix
-    -- Why they use 2 instances for one objective ???
-}
 
 local other =
 {
@@ -65,7 +37,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
 end
 
 EHI:ParseTriggers({ mission = triggers, other = other })
-EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowAchievementLootCounter({ -- Loot
     achievement = "pex_10",
     max = 6,
