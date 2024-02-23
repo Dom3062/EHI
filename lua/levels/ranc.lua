@@ -118,6 +118,7 @@ EHI:ShowAchievementLootCounter({
     triggers = ranc_10_triggers,
     load_sync = function(self)
         self._trackers:SetTrackerProgress("ranc_10", 5 - self:CountInteractionAvailable("ranc_press_pickup_horseshoe"))
+        self._trackers:CallFunction("ranc_10", "CheckCanDeleteAfterSync")
     end
 })
 EHI:ShowAchievementKillCounter({

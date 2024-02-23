@@ -95,7 +95,8 @@ local achievements =
             -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
             [103456] = { time = 5, class = TT.Achievement.Base, special_function = SF.ShowAchievementFromStart, trigger_times = 1 },
             [103460] = { special_function = SF.SetAchievementComplete }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 

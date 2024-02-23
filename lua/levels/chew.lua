@@ -31,7 +31,7 @@ local achievements =
             [101170] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
-            self._trackers:AddTimedAchievementTracker("born_5", 120)
+            self._achievements:AddTimedAchievementTracker("born_5", 120)
         end
     }
 }

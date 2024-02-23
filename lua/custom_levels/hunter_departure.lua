@@ -24,7 +24,8 @@ local achievements =
                 EM:UnhookElement(100416)
             end },
             [100416] = { special_function = SF.IncreaseProgress }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 EHI:PreparseBeardlibAchievements(achievements, "hunter_all")

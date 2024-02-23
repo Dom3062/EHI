@@ -84,7 +84,8 @@ local achievements =
             [103475] = { special_function = SF.SetAchievementFailed },
             [103487] = { special_function = SF.CallCustomFunction, f = "Activate" },
             [103477] = { special_function = SF.IncreaseProgress },
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 

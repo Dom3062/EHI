@@ -19,14 +19,16 @@ local achievements =
             [100107] = { class = TT.Achievement.Status },
             [100609] = { special_function = SF.SetAchievementComplete },
             [100617] = { special_function = SF.SetAchievementFailed }
-        }
+        },
+        sync_params = { from_start = true }
     },
     tag_10 =
     {
         elements =
         {
             [100107] = { status = "mark", class = TT.Achievement.Status },
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 for _, index in ipairs({ 4550, 5450 }) do

@@ -1,3 +1,9 @@
+r220 (23. 02. 2024):
+Attempt to fix stuck trackers after sync
+Loot Counter: Fixed an issue where the tracker won't destroy after all loot is secured
+Undercover: Fixed a visual failed on achievement "Blow-Out" even the game granted it after completion
+Slaughterhouse: Fixed an issue where "SNIPERS!" popup have incorrect color
+
 r219 (12. 02. 2024):
 Memory optimization by reducing the amount of alarm callbacks
 Civilian Count Tracker: Fixed a crash in VR

@@ -24,7 +24,8 @@ local achievements =
         {
             [100045] = { status = "ok", class = TT.Achievement.Status, special_function = SF.ShowAchievementFromStart },
             [100679] = { special_function = SF.SetAchievementFailed }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 EHI:PreparseBeardlibAchievements(achievements, "hunter_all")

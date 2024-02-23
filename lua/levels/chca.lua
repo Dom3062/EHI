@@ -43,7 +43,7 @@ if EHI:IsClient() then
 end
 
 local function chca_9_fail()
-    managers.ehi_tracker:SetAchievementFailed("chca_9")
+    managers.ehi_achievement:SetAchievementFailed("chca_9")
     EHI:Unhook("chca_9_killed")
     EHI:Unhook("chca_9_killed_by_anyone")
 end
@@ -81,7 +81,8 @@ local achievements =
             [102944] = { special_function = SF.IncreaseProgress }, -- Bodybag thrown
             [103371] = { special_function = SF.SetAchievementFailed } -- Civie killed
         },
-        failed_on_alarm = true
+        failed_on_alarm = true,
+        sync_params = { from_start = true }
     },
     chca_12 =
     {
@@ -90,7 +91,8 @@ local achievements =
         {
             [EHI:GetInstanceElementID(100041, 11770)] = { special_function = SF.ShowAchievementFromStart, class = TT.Achievement.Status },
             [103584] = { status = "finish", special_function = SF.SetAchievementStatus }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 
@@ -106,7 +108,7 @@ if EHI:CanShowAchievement("chca_12") and ovk_and_up then
     local function check(...)
         active_saws = active_saws + 1
         if active_saws > 1 then
-            managers.ehi_tracker:SetAchievementFailed("chca_12")
+            managers.ehi_achievement:SetAchievementFailed("chca_12")
         end
     end
     local function saw_done()

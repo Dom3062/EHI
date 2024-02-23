@@ -201,7 +201,8 @@ local achievements =
             [1024802] = { id = 102486, special_function = SF.RemoveTrigger }, ---@diagnostic disable-line
             [102710] = { special_function = SF.SetAchievementComplete },
             [102486] = { special_function = SF.SetAchievementFailed }
-        }
+        },
+        sync_params = { from_start = true }
     },
     des_11 =
     {

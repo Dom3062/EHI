@@ -10,7 +10,7 @@ local achievements =
             [101412] = { special_function = EHI.SpecialFunctions.SetAchievementComplete }
         },
         load_sync = function(self)
-            self._trackers:AddTimedAchievementTracker("fort_4", 240)
+            self._achievements:AddTimedAchievementTracker("fort_4", 240)
         end
     }
 }

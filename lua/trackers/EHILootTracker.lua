@@ -105,7 +105,7 @@ end
 ---@param no_update boolean?
 function EHILootTracker:ShowLootSecuredPopup(no_update)
     self._popup_showed = true
-    if no_update then
+    if not no_update then
         self.update = self.update_fade
     end
     managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_loot_secured"), "EHI_Loot")
@@ -197,6 +197,10 @@ function EHILootTracker:SecuredMissionLoot()
     self._mission_loot = self._mission_loot + 1
     self:SetProgress(progress)
 end
+
+function EHILootTracker:CheckCanDeleteAfterSync()
+    self._force_delete_on_spawn = self._max_random <= 0 and self._progress >= self._max
+end
 EHILootTracker.FormatProgress = EHILootTracker.Format
 
 ---@class EHILootCountTracker : EHICountTracker
@@ -220,9 +224,9 @@ function EHILootMaxTracker:post_init(params)
     EHI:AddCallback("ExperienceManager_RefreshPlayerCount", refresh)
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, refresh)
     EHI:AddOnCustodyCallback(refresh)
-    EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+    --[[EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
         self:AddTrackerToUpdate()
-    end)
+    end)]]
     if EHI:IsClient() then
         EHI:AddCallback(EHI.CallbackMessage.LootLoadSync,
         ---@param loot LootManager
@@ -231,6 +235,11 @@ function EHILootMaxTracker:post_init(params)
             self:SetProgress(self._progress)
         end)
     end
+end
+
+function EHILootMaxTracker:PlayerSpawned()
+    EHILootMaxTracker.super.PlayerSpawned(self)
+    self:AddTrackerToUpdate()
 end
 
 ---@param dt number

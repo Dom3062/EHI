@@ -5,6 +5,7 @@ end
 
 ---@class GamePlayCentralManager
 ---@field _mission_disabled_units table
+---@field get_heist_timer fun(self: self): number
 
 local original =
 {

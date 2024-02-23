@@ -90,7 +90,7 @@ local achievements =
         },
         load_sync = function(self)
             if self:IsMissionElementEnabled(100270) then -- No keycard achievement
-                self._trackers:AddAchievementStatusTracker("slakt_3")
+                self._achievements:AddAchievementStatusTracker("slakt_3")
             end
         end
     },
@@ -105,7 +105,8 @@ local achievements =
             [101884] = { status = "finish", special_function = SF.SetAchievementStatus },
             [100320] = { special_function = SF.SetAchievementComplete },
             [100322] = { special_function = SF.SetAchievementFailed }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 

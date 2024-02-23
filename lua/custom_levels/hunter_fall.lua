@@ -8,7 +8,8 @@ local achievements = {
         elements =
         {
             [100077] = { time = 62, class = TT.Achievement.Base, special_function = SF.ShowAchievementFromStart }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 EHI:PreparseBeardlibAchievements(achievements, "hunter_all")

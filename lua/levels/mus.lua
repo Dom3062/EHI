@@ -33,7 +33,7 @@ local achievements =
             [102531] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
-            self._trackers:AddTimedAchievementTracker("bat_4", 600)
+            self._achievements:AddTimedAchievementTracker("bat_4", 600)
         end
     }
 }

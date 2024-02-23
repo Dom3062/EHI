@@ -53,7 +53,8 @@ local achievements =
             [100547] = { status = "no_down", class = TT.Achievement.Status },
             [101400] = { special_function = SF.SetAchievementFailed },
             [101823] = { special_function = SF.SetAchievementComplete }
-        }
+        },
+        sync_params = { from_start = true }
     },
     cac_13 =
     {
@@ -63,7 +64,8 @@ local achievements =
             [100547] = { status = "defend", class = TT.Achievement.Status },
             [101925] = { special_function = SF.SetAchievementFailed },
             [101924] = { special_function = SF.SetAchievementComplete }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 

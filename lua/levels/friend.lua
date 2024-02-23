@@ -95,7 +95,8 @@ local achievements =
         {
             [102430] = { time = 780, class = TT.Achievement.Base },
             [100801] = { special_function = SF.SetAchievementFailed }
-        }
+        },
+        sync_params = { from_start = true }
     },
     uno_7 =
     {
@@ -106,7 +107,8 @@ local achievements =
         },
         cleanup_callback = function()
             EHIuno7Tracker = nil ---@diagnostic disable-line
-        end
+        end,
+        sync_params = { from_start = true }
     }
 }
 

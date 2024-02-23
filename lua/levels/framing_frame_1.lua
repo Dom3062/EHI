@@ -29,20 +29,14 @@ if Global.game_settings.level_id == "gallery" then
                 [104288] = { special_function = SF.SetAchievementComplete },
                 [104290] = { special_function = SF.SetAchievementFailed }, -- Alarm
                 [102860] = { special_function = SF.SetAchievementFailed } -- Painting flushed
-            }
+            },
+            sync_params = { from_start = true }
         }
     }
     if TheFixes then
         local Preventer = TheFixesPreventer or {}
         if not Preventer.achi_masterpiece then -- Fixed
-            managers.mission:add_global_event_listener("EHI_ArtGallery_TheFixes", { "TheFixes_AchievementFailed" }, function(id)
-                if id == "cac_19" then
-                    managers.ehi_tracker:SetAchievementFailed(id)
-                end
-            end)
-            achievements.cac_19.cleanup_callback = function()
-                managers.mission:remove_global_event_listener("EHI_ArtGallery_TheFixes")
-            end
+            achievements.cac_19.cleanup_callback = EHIAchievementManager:AddTFCallback("cac_19", "EHI_ArtGallery_TheFixes")
         end
     end
 

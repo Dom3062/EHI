@@ -40,9 +40,11 @@ local other =
     [100479] = EHI:AddAssaultDelay({ time = 30 + 2 + 30 })
 }
 
-local function dah_8()
+---@param progress number?
+local function dah_8(progress)
     EHI:ShowAchievementLootCounterNoCheck({
         achievement = "dah_8",
+        progress = progress or 0,
         max = 12,
         counter =
         {
@@ -66,8 +68,7 @@ local achievements =
         failed_on_alarm = true,
         load_sync = function(self)
             if self.ConditionFunctions.IsStealth() then
-                dah_8()
-                self._trackers:SetTrackerProgress("dah_8", managers.loot:GetSecuredBagsTypeAmount("diamondheist_big_diamond"))
+                dah_8(managers.loot:GetSecuredBagsTypeAmount("diamondheist_big_diamond"))
             end
         end,
         cleanup_callback = function()

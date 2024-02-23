@@ -723,13 +723,14 @@ function IngameWaitingForPlayersState:at_exit(...)
                     class = EHI.Trackers.Achievement.Status
                 })
                 local function fail()
-                    managers.ehi_tracker:SetAchievementFailed("man_5")
+                    managers.ehi_achievement:SetAchievementFailed("man_5")
                     EHI:Unhook("man_5_killed")
                     EHI:Unhook("man_5_shot_fired")
                 end
                 EHI:HookWithID(StatisticsManager, "killed", "EHI_man_5_killed", function(sm, data)
-                    local _, is_throwable = sm:_get_name_id_and_throwable_id(data.weapon_unit)
-                    if (data.weapon_unit and data.weapon_unit:base().is_category and not data.weapon_unit:base():is_category("grenade_launcher")) or data.variant == "melee" or is_throwable then
+                    local is_not_explosion = data.variant ~= "explosion"
+                    local name_id, is_throwable = sm:_get_name_id_and_throwable_id(data.weapon_unit)
+                    if is_not_explosion or (name_id and not table.contains(sm:_get_boom_guns(), name_id)) or is_throwable then
                         fail()
                     end
                 end)
@@ -1020,7 +1021,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end
             end)
             EHI:HookWithID(RaycastWeaponBase, "stop_shooting", "EHI_ovk_3_stop_shooting", function(...)
-                managers.ehi_tracker:SetAchievementFailed("ovk_3")
+                managers.ehi_achievement:SetAchievementFailed("ovk_3")
             end)
             EHI:HookWithID(AchievmentManager, "award", "EHI_ovk_3_award", function(self, id)
                 if id == "ovk_3" then
@@ -1149,7 +1150,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                     managers.ehi_tracker:IncreaseTrackerProgress("gage4_3")
                 end
             else
-                managers.ehi_tracker:SetAchievementFailed("gage4_3")
+                managers.ehi_achievement:SetAchievementFailed("gage4_3")
                 EHI:Unhook("gage4_3_killed")
             end
         end)

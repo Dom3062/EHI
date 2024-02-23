@@ -34,7 +34,8 @@ local achievements =
                     loot_type = "gold"
                 }
             }}
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 

@@ -67,6 +67,7 @@ EHI:ShowAchievementLootCounter({ -- Medals
             This is more accurate and reliable
         ]]
         self._trackers:SetTrackerProgressRemaining("pex_11", self:CountUnitsAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5)
+        self._trackers:CallFunction("pex_11", "CheckCanDeleteAfterSync")
     end
 })
 local xp_override =

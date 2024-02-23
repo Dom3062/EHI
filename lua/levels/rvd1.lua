@@ -47,7 +47,8 @@ local achievements =
             [100107] = { status = "defend", class = TT.Achievement.Status },
             [100839] = { special_function = SF.SetAchievementFailed },
             [100869] = { special_function = SF.SetAchievementComplete },
-        }
+        },
+        sync_params = { from_start = true }
     },
     rvd_10 =
     {
@@ -56,7 +57,8 @@ local achievements =
         {
             [100057] = { time = 60, class = TT.Achievement.Base, special_function = SF.ShowAchievementFromStart },
             [100247] = { special_function = SF.SetAchievementComplete }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 

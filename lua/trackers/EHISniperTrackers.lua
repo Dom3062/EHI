@@ -98,7 +98,7 @@ function EHISniperChanceTracker:SniperSpawnsSuccess(chance)
     end
     self:AnimateBG()
     if self._snipers_spawned_popup then
-        managers.hud:custom_ingame_popup_text("SNIPERS", managers.localization:text("ehi_popup_snipers_spawned"), "EHI_Sniper")
+        managers.hud:custom_ingame_popup_text("SNIPERS!", managers.localization:text("ehi_popup_snipers_spawned"), "EHI_Sniper")
     end
 end
 

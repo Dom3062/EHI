@@ -98,7 +98,7 @@ local achievements =
             [100282] = { time = 840, class = TT.Achievement.Base }
         },
         load_sync = function(self)
-            self._trackers:AddTimedAchievementTracker("kenaz_4", 840)
+            self._achievements:AddTimedAchievementTracker("kenaz_4", 840)
         end,
         mission_end_callback = true
     },

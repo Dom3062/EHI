@@ -71,14 +71,14 @@ else
             self._waypoints:AddWaypoint("LiquidNitrogen", {
                 time = trigger.time - 10,
                 icon = Icon.LiquidNitrogen,
-                position = EHI:GetElementPosition(100941) or Vector3()
+                position = EHI:GetElementPositionOrDefault(100941)
             })
         end
         if self._waypoints:WaypointDoesNotExist("HeliC4") then
             self._waypoints:AddWaypoint("HeliC4", {
                 time = trigger.time,
                 icon = Icon.C4,
-                position = EHI:GetElementPosition(100943) or Vector3()
+                position = EHI:GetElementPositionOrDefault(100943)
             })
         end
     end

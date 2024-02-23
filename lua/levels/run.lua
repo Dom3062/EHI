@@ -104,7 +104,8 @@ local achievements =
         {
             [102426] = { max = 8, class = TT.Achievement.Progress },
             [100658] = { special_function = SF.IncreaseProgress }
-        }
+        },
+        sync_params = { from_start = true }
     },
     run_9 =
     {

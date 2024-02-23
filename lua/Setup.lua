@@ -15,6 +15,7 @@ end
 dofile(EHI.LuaPath .. "EHITradeManager.lua")
 dofile(EHI.LuaPath .. "EHIEscapeChanceManager.lua")
 dofile(EHI.LuaPath .. "EHIAssaultManager.lua")
+dofile(EHI.LuaPath .. "EHIAchievementManager.lua")
 dofile(EHI.LuaPath .. "EHIManager.lua")
 
 local original =
@@ -34,6 +35,7 @@ function Setup:init_managers(managers, ...)
     managers.ehi_deployable = EHIDeployableManager:new(managers.ehi_tracker)
     managers.ehi_assault = EHIAssaultManager:new(managers.ehi_tracker)
     managers.ehi_experience:TrackersInit(managers.ehi_tracker)
+    managers.ehi_achievement = EHIAchievementManager:new(managers.ehi_tracker)
     managers.ehi_manager = EHIManager:new(managers)
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitManagers, managers)
 end

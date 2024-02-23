@@ -121,7 +121,7 @@ local achievements =
         {
             [103701] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
-                    self._trackers:SetAchievementStatus("bex_10", "defend")
+                    self._achievements:SetAchievementStatus("bex_10", "defend")
                     self:UnhookTrigger(103704)
                 end
             end) },

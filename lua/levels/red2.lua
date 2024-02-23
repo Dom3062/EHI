@@ -125,7 +125,7 @@ local achievements =
         },
         load_sync = function(self)
             if self.ConditionFunctions.IsStealth() then
-                self._trackers:AddTimedAchievementTracker("green_3", 817)
+                self._achievements:AddTimedAchievementTracker("green_3", 817)
             end
         end
     },

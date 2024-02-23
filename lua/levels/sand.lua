@@ -99,14 +99,16 @@ local achievements =
                 managers.ehi_tracker:SetTrackerProgress("sand_9", managers.loot:GetSecuredBagsAmount())
             end },
             [103208] = { special_function = SF.FinalizeAchievement }
-        }
+        },
+        sync_params = { from_start = true }
     },
     sand_10 =
     {
         elements =
         {
             [100107] = { max = 8, class = TT.Achievement.Progress },
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 for i = 105290, 105329, 1 do

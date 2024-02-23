@@ -543,7 +543,7 @@
     "ehi_bm_kingpin_1" : "Al estar activada, regeneras un %s%s de salud cada vez que recibes daño.",
     "ehi_bm_kingpin_2" : "Al estar activada, eres el objetivo de enemigos cercanos siempre que sea posible.",
     "ehi_bm_kingpin_3" : "Al estar activada, y cuando tu salud está por debajo del %s%s, el efecto de la adrenalina aumenta un %s%s.",
-    "ehi_bm_kingpin_4" : "Al estar activada, y cuando tu salud está al máximo, el tiempo de enfriamiento es reducido por %ss por cada %s de salud adicional.",
+    "ehi_bm_kingpin_4" : "Al estar activada, y cuando tu salud está al máximo, el tiempo de enfriamiento es reducido por $duration;s por cada $heal de salud adicional.",
     "ehi_bm_sicario_1" : "Todo jugador dentro del humo puede esquivar un %s%s de las balas y ataques cuerpo a cuerpo.",
     "ehi_bm_sicario_2" : "La puntería de cualquier enemigo dentro del humo es reducida por un %s%s.",
 	"ehi_bm_sicario_3" : "Todos los efectos de estos talentos son aumentados por un %s%s al estar dentro del humo, pero solo para ti.",

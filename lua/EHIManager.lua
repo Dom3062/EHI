@@ -29,6 +29,7 @@ function EHIManager:new(managers)
     self._waypoints = managers.ehi_waypoint
     self._escape = managers.ehi_escape
     self._deployable = managers.ehi_deployable
+    self._achievements = managers.ehi_achievement
     self._level_started_from_beginning = true
     self._t = 0
     self.TrackerWaypointsClass =
@@ -526,15 +527,15 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
         end
         if data.failed_on_alarm then
             EHI:AddOnAlarmCallback(function()
-                self._trackers:SetAchievementFailed(id)
+                self._achievements:SetAchievementFailed(id)
             end)
         end
         if data.mission_end_callback then
             EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
                 if success then
-                    self._trackers:SetAchievementComplete(id, true)
+                    self._achievements:SetAchievementComplete(id, true)
                 else
-                    self._trackers:SetAchievementFailed(id)
+                    self._achievements:SetAchievementFailed(id)
                 end
             end)
         end
@@ -593,42 +594,45 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
         end
     end
     local achievement_triggers = new_triggers.achievement or {}
-    if EHI:ShowMissionAchievements() and next(achievement_triggers) then
-        ---@param data ParseAchievementDefinitionTable
-        ---@param id string
-        local function Parser(data, id)
-            for _, element in pairs(data.elements or {}) do
-                if element.class then
-                    element.beardlib = data.beardlib
-                    if not element.icons then
-                        if data.beardlib then
-                            element.icons = { "ehi_" .. id }
-                        else
-                            element.icons = EHI:GetAchievementIcon(id)
+    if next(achievement_triggers) then
+        self._achievements:ParseAchievementDefinition(achievement_triggers)
+        if EHI:ShowMissionAchievements() then
+            ---@param data ParseAchievementDefinitionTable
+            ---@param id string
+            local function Parser(data, id)
+                for _, element in pairs(data.elements or {}) do
+                    if element.class then
+                        element.beardlib = data.beardlib
+                        if not element.icons then
+                            if data.beardlib then
+                                element.icons = { "ehi_" .. id }
+                            else
+                                element.icons = EHI:GetAchievementIcon(id)
+                            end
                         end
                     end
                 end
+                self:AddTriggers2(data.elements or {}, nil, id)
+                ParseParams(data, id)
             end
-            self:AddTriggers2(data.elements or {}, nil, id)
-            ParseParams(data, id)
-        end
-        local function IsAchievementLocked(data, id)
-            if data.beardlib then
-                return not EHI:IsBeardLibAchievementUnlocked(data.package, id)
-            else
-                return EHI:IsAchievementLocked(id)
+            local function IsAchievementLocked(data, id)
+                if data.beardlib then
+                    return not EHI:IsBeardLibAchievementUnlocked(data.package, id)
+                else
+                    return EHI:IsAchievementLocked(id)
+                end
             end
-        end
-        for id, data in pairs(achievement_triggers) do
-            if data.difficulty_pass ~= false and IsAchievementLocked(data, id) then
-                Parser(data, id)
-            else
+            for id, data in pairs(achievement_triggers) do
+                if data.difficulty_pass ~= false and IsAchievementLocked(data, id) then
+                    Parser(data, id)
+                else
+                    Cleanup(data)
+                end
+            end
+        else
+            for _, data in pairs(achievement_triggers) do
                 Cleanup(data)
             end
-        end
-    else
-        for _, data in pairs(achievement_triggers) do
-            Cleanup(data)
         end
     end
     self:ParseMissionTriggers(new_triggers.mission or {}, trigger_id_all, trigger_icons_all)
@@ -1114,11 +1118,11 @@ function EHIManager:Trigger(id, element, enabled)
                     self:CheckCondition(trigger)
                 end
             elseif f == SF.SetAchievementComplete then
-                self._trackers:SetAchievementComplete(trigger.id, true)
+                self._achievements:SetAchievementComplete(trigger.id, true)
             elseif f == SF.SetAchievementStatus then
-                self._trackers:SetAchievementStatus(trigger.id, trigger.status or "ok")
+                self._achievements:SetAchievementStatus(trigger.id, trigger.status or "ok")
             elseif f == SF.SetAchievementFailed then
-                self._trackers:SetAchievementFailed(trigger.id)
+                self._achievements:SetAchievementFailed(trigger.id)
             elseif f == SF.AddAchievementToCounter then
                 local data = trigger.data or {}
                 data.achievement = data.achievement or trigger.id

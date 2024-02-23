@@ -12,7 +12,8 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
                 [100979] = { status = "defend", class = TT.Achievement.Status },
                 [102831] = { special_function = SF.SetAchievementComplete },
                 [102829] = { special_function = SF.SetAchievementFailed }
-            }
+            },
+            sync_params = { from_start = true }
         }
     }
 

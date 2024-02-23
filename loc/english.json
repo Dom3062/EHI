@@ -809,7 +809,7 @@
     "ehi_bm_kingpin_1" : "Heals you for %s%s per every damage (active)",
     "ehi_bm_kingpin_2" : "Nearby enemies will prefer targeting you (active)",
     "ehi_bm_kingpin_3" : "When below %s%s HP, effect is increased by %s%s (active)",
-    "ehi_bm_kingpin_4" : "If max HP, cooldown is reduced by additional %ss for %s HP gained (active)",
+    "ehi_bm_kingpin_4" : "If max HP, cooldown is reduced by additional $duration;s for $heal HP gained (active)",
     "ehi_bm_sicario_1" : "While inside the smoke screen, you and your allies avoid %s%s of all bullets",
     "ehi_bm_sicario_2" : "Enemies inside the smoke screen have their accuracy reduced by %s%s",
     "ehi_bm_sicario_3" : "All of your perk deck effects are increased by %s%s while you are in the smoke screen",

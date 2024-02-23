@@ -25,7 +25,7 @@ local achievements = {
             [100244] = { time = 360, class = TT.Achievement.Base },
         },
         load_sync = function(self)
-            self._trackers:AddTimedAchievementTracker("fish_4", 360)
+            self._achievements:AddTimedAchievementTracker("fish_4", 360)
         end,
         mission_end_callback = true
     },
@@ -36,7 +36,8 @@ local achievements = {
             [100244] = { class = TT.Achievement.Status },
             [100395] = { special_function = SF.SetAchievementFailed },
             [100842] = { special_function = SF.SetAchievementComplete }
-        }
+        },
+        sync_params = { from_start = true }
     },
     fish_6 =
     {
@@ -46,7 +47,8 @@ local achievements = {
         },
         cleanup_callback = function()
             EHIfish6Tracker = nil ---@diagnostic disable-line
-        end
+        end,
+        sync_params = { from_start = true }
     }
 }
 

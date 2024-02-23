@@ -261,11 +261,10 @@ local instances =
     ["levels/instances/unique/pex/pex_armory_small/world"] =
     {
         [100025] = { time = 120, id = "pex_ArmoryHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint_f = function(self, trigger)
-            local pos = EHI:GetElementPosition(trigger.element_ids.defend) or Vector3()
             self._waypoints:AddWaypoint(trigger.id, {
                 time = trigger.time,
                 icon = Icon.Tablet,
-                position = pos,
+                position = EHI:GetElementPositionOrDefault(trigger.element_ids.defend),
                 class = EHI.Waypoints.Pausable
             })
             managers.hud:SoftRemoveWaypoint2(trigger.element_ids.defend)
@@ -497,6 +496,7 @@ instances["levels/instances/unique/brb/brb_vault/world"][100010] = instances["le
 instances["levels/instances/unique/brb/brb_vault/world"][100034] = instances["levels/instances/unique/brb/brb_vault/world"][100004]
 instances["levels/instances/unique/brb/brb_vault/world"][100039] = instances["levels/instances/unique/brb/brb_vault/world"][100004]
 instances["levels/instances/unique/des/des_computer_001/world"] = instances["levels/instances/unique/des/des_computer/world"]
+instances["levels/instances/unique/des/des_computer_002/world"] = instances["levels/instances/unique/des/des_computer/world"]
 instances["levels/instances/unique/pex/pex_armory_medium/world"] = instances["levels/instances/unique/pex/pex_armory_small/world"]
 instances["levels/instances/unique/pex/pex_armory_large/world"] = instances["levels/instances/unique/pex/pex_armory_small/world"]
 instances["levels/instances/unique/sand/sand_rotating_keypad/world"] = deep_clone(instances["levels/instances/unique/tag/tag_keypad/world"])

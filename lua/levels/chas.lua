@@ -39,7 +39,7 @@ local achievements =
             [100107] = { time = 360, class = TT.Achievement.Base }
         },
         load_sync = function(self)
-            self._trackers:AddTimedAchievementTracker("chas_11", 360)
+            self._achievements:AddTimedAchievementTracker("chas_11", 360)
         end
     }
 }

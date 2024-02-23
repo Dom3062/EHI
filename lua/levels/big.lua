@@ -79,7 +79,7 @@ local achievements =
             [106150] = bigbank_4,
         },
         load_sync = function(self)
-            self._trackers:AddTimedAchievementTracker("bigbank_4", 720)
+            self._achievements:AddTimedAchievementTracker("bigbank_4", 720)
         end
     },
     cac_22 =
@@ -94,21 +94,15 @@ local achievements =
             if dropin or not managers.preplanning:IsAssetBought(106594) then -- C4 Escape
                 return
             end
-            managers.ehi_tracker:AddAchievementStatusTracker("cac_22")
-        end
+            managers.ehi_achievement:AddAchievementStatusTracker("cac_22")
+        end,
+        sync_params = { from_start = true }
     }
 }
 if TheFixes then
     local Preventer = TheFixesPreventer or {}
     if not Preventer.achi_matrix_with_lasers and achievements.cac_22.difficulty_pass then -- Fixed
-        managers.mission:add_global_event_listener("EHI_BigBank_TheFixes", { "TheFixes_AchievementFailed" }, function(id)
-            if id == "cac_22" then
-                managers.ehi_tracker:SetAchievementFailed(id)
-            end
-        end)
-        achievements.cac_22.cleanup_callback = function()
-            managers.mission:remove_global_event_listener("EHI_BigBank_TheFixes")
-        end
+        achievements.cac_22.cleanup_callback = EHIAchievementManager:AddTFCallback("cac_22", "EHI_BigBank_TheFixes")
     end
 end
 

@@ -319,6 +319,7 @@ function EHITracker:init(panel, params, parent_class)
     self._anim_flash = params.flash_bg ~= false
     self._remove_on_alarm = params.remove_on_alarm --Removes tracker when alarm sounds
     self._update_on_alarm = params.update_on_alarm --Calls `OnAlarm` function when alarm sounds
+    self._force_delete_on_spawn = false
     self:post_init(params)
     self:CreateHint(params.hint, params.delay_popup)
 end
@@ -989,6 +990,10 @@ function EHITracker:ForceDelete()
 end
 
 function EHITracker:PlayerSpawned()
+    if self._force_delete_on_spawn then
+        self:ForceDelete()
+        return
+    end
     self:ForceShowHint()
 end
 
@@ -1004,6 +1009,9 @@ function EHITracker:OnAlarm()
 end
 
 function EHITracker:Redraw()
+end
+
+function EHITracker:CheckCanDeleteAfterSync()
 end
 
 ---@param create_f fun(panel: Panel, params: table): Panel

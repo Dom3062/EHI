@@ -22,7 +22,8 @@ local achievements =
             [100107] = { time = 300, class = TT.Achievement.Base },
             [101878] = { special_function = SF.SetAchievementComplete },
             [101400] = { special_function = SF.SetAchievementFailed, trigger_times = 1 }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 

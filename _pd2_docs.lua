@@ -793,6 +793,7 @@ end
 ---@field ehi_deployable EHIDeployableManager
 ---@field ehi_assault EHIAssaultManager
 ---@field ehi_experience EHIExperienceManager
+---@field ehi_achievement EHIAchievementManager
 ---@field enemy EnemyManager
 ---@field environment_effects EnvironmentEffectsManager
 ---@field experience ExperienceManager

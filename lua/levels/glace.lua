@@ -34,7 +34,8 @@ local achievements =
             [105758] = { special_function = SF.SetAchievementFailed },
             [105756] = { status = "ok", special_function = SF.SetAchievementStatus },
             [105759] = { special_function = SF.SetAchievementComplete }
-        }
+        },
+        sync_params = { from_start = true }
     },
     glace_10 =
     {
@@ -43,7 +44,8 @@ local achievements =
             [101732] = { max = 6, class = TT.Achievement.Progress },
             [105761] = { special_function = SF.IncreaseProgress }, -- ElementInstanceOutputEvent
             [105721] = { special_function = SF.IncreaseProgress } -- ElementEnemyDummyTrigger
-        }
+        },
+        sync_params = { from_start = true }
     },
     uno_4 =
     {

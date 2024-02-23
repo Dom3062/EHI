@@ -137,7 +137,7 @@ local achievements =
                 counter = counter + math.min(amount, 1)
             end
             if counter < 7 then
-                self._trackers:AddAchievementProgressTracker("kosugi_3", 7, counter)
+                self._achievements:AddAchievementProgressTracker("kosugi_3", 7, counter)
             end
         end
     },
@@ -151,7 +151,7 @@ local achievements =
             local counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")
             local counter_loot = managers.loot:GetSecuredBagsAmount()
             if counter_loot < 16 or counter_armor < 4 then
-                self._trackers:AddAchievementProgressTracker("kosugi_5", 0, math.min(counter_loot, 16)) -- Max is passed in the tracker "init" function
+                self._achievements:AddAchievementProgressTracker("kosugi_5", 0, math.min(counter_loot, 16)) -- Max is passed in the tracker "init" function
                 self._trackers:CallFunction("kosugi_5", "SetProgressArmor", math.min(counter_armor, 4))
             end
         end,

@@ -1599,6 +1599,11 @@ function EHI:GetElementPosition(id)
     return element and element:value("position")
 end
 
+---@param id number Element ID
+function EHI:GetElementPositionOrDefault(id)
+    return self:GetElementPosition(id) or Vector3()
+end
+
 ---@param id number Unit ID
 ---@return Vector3?
 function EHI:GetUnitPosition(id)
@@ -2145,14 +2150,18 @@ end
 function EHI:HookLootCounter(no_sync_load)
     if not self._cache.LootCounter then
         local BagsOnly = self.LootCounter.CheckType.BagsOnly
-        local function Callback(loot)
+        ---@param loot LootManager
+        self:AddCallback(self.CallbackMessage.LootSecured, function(loot)
             loot:EHIReportProgress("LootCounter", BagsOnly)
-        end
-        self:AddCallback(self.CallbackMessage.LootSecured, Callback)
+        end)
         -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
         if not no_sync_load then
-            self:AddCallback(self.CallbackMessage.LootLoadSync, Callback)
+            ---@param loot LootManager
+            self:AddCallback(self.CallbackMessage.LootLoadSync, function(loot)
+                loot:EHIReportProgress("LootCounter", BagsOnly)
+                managers.ehi_tracker:CallFunction("LootCounter", "CheckCanDeleteAfterSync")
+            end)
         end
         self._cache.LootCounter = true
     end
@@ -2172,9 +2181,9 @@ end
 ---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounterNoCheck(params)
     if params.show_loot_counter and self:GetOption("show_loot_counter") then
-        managers.ehi_tracker:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail, params.start_silent)
+        managers.ehi_achievement:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail, params.start_silent)
     else
-        managers.ehi_tracker:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target, params.class)
+        managers.ehi_achievement:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target, params.class)
     end
     if params.load_sync then
         self:AddLoadSyncFunction(params.load_sync)
@@ -2184,15 +2193,15 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
     end
     if params.failed_on_alarm then
         self:AddOnAlarmCallback(function()
-            managers.ehi_tracker:SetAchievementFailed(params.achievement)
+            managers.ehi_achievement:SetAchievementFailed(params.achievement)
         end)
     end
     if params.silent_failed_on_alarm then
         self:AddOnAlarmCallback(function()
             if managers.ehi_manager:GetInSyncState() then
-                managers.ehi_tracker:CallFunction(params.achievement, "SetFailedSilent")
+                managers.ehi_achievement:SetAchievementFailedSilent(params.achievement)
             else
-                managers.ehi_tracker:SetAchievementFailed(params.achievement)
+                managers.ehi_achievement:SetAchievementFailed(params.achievement)
             end
         end)
     end
@@ -2216,7 +2225,7 @@ function EHI:ShowAchievementBagValueCounter(params)
     if self._cache.UnlockablesAreDisabled or self._cache.DisableAchievements or self:IsAchievementUnlocked(params.achievement) then
         return
     end
-    managers.ehi_tracker:AddAchievementBagValueCounter(params.achievement, params.value, params.show_finish_after_reaching_target)
+    managers.ehi_achievement:AddAchievementBagValueCounter(params.achievement, params.value, params.show_finish_after_reaching_target)
     self:AddAchievementToCounter(params)
 end
 
@@ -2229,12 +2238,15 @@ function EHI:AddAchievementToCounter(params)
         f = params.counter.f
     end
     ---@param loot LootManager
-    local function callback(loot)
-        loot:EHIReportProgress(params.achievement, check_type, loot_type, f) ---@diagnostic disable-line
-    end
-    self:AddCallback(self.CallbackMessage.LootSecured, callback)
+    self:AddCallback(self.CallbackMessage.LootSecured, function(loot)
+        loot:EHIReportProgress(params.achievement, check_type, loot_type, f)
+    end)
     if not (params.load_sync or params.no_sync) then
-        self:AddCallback(self.CallbackMessage.LootLoadSync, callback)
+        ---@param loot LootManager
+        self:AddCallback(self.CallbackMessage.LootLoadSync, function(loot)
+            loot:EHIReportProgress(params.achievement, check_type, loot_type, f)
+            managers.ehi_tracker:CallFunction(params.achievement, "CheckCanDeleteAfterSync")
+        end)
     end
 end
 
@@ -2261,7 +2273,7 @@ function EHI:ShowAchievementKillCounter(params)
         self:Log(string.format("progress: %d; max: %d", progress, max))
         return
     end
-    managers.ehi_tracker:AddAchievementKillCounter(id, progress, max)
+    managers.ehi_achievement:AddAchievementKillCounter(id, progress, max)
     self.KillCounter = self.KillCounter or {}
     self.KillCounter[id_stat] = id
     if not self.KillCounterHook then

@@ -99,7 +99,7 @@ end
 
 local corp_11_SetFailed = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
     if enabled then
-        self._trackers:SetAchievementFailed("corp_11")
+        self._achievements:SetAchievementFailed("corp_11")
         self._cache.StartDisabled = true
     end
 end)
@@ -192,7 +192,8 @@ local achievements =
         },
         cleanup_callback = function()
             EHIcorp12Tracker = nil ---@diagnostic disable-line
-        end
+        end,
+        sync_params = { from_start = true }
     }
 }
 for i = 102699, 102712, 1 do

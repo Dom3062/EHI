@@ -103,12 +103,23 @@ end
 
 function EHIAchievementTracker:PlayerSpawned()
     EHIAchievementTracker.super.PlayerSpawned(self)
+    if self._force_delete_on_spawn then
+        return
+    end
     if self._show_started then
         self:ShowStartedPopup()
     end
     if self._show_desc then
         self:ShowAchievementDescription()
     end
+end
+
+function EHIAchievementTracker:save(data)
+    data.time = self._time
+end
+
+function EHIAchievementTracker:load(data)
+    self:SetTimeNoAnim(data.time)
 end
 
 ---@class EHIAchievementProgressTracker : EHIProgressTracker, EHIAchievementTracker
@@ -125,12 +136,11 @@ EHIAchievementProgressTracker.PrepareHint = EHIAchievementTracker.PrepareHint
 EHIAchievementProgressTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
 ---@param panel Panel
 ---@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIAchievementProgressTracker:init(panel, params, parent_class)
+function EHIAchievementProgressTracker:init(panel, params, ...)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
     self:PrepareHint(params)
-    EHIAchievementProgressTracker.super.init(self, panel, params, parent_class)
+    EHIAchievementProgressTracker.super.init(self, panel, params, ...)
     if self._show_started then
         self:ShowStartedPopup(params.delay_popup)
     end
@@ -152,6 +162,18 @@ function EHIAchievementProgressTracker:SetFailed()
     if self._show_failed then
         self:ShowFailedPopup()
     end
+end
+
+function EHIAchievementProgressTracker:CheckCanDeleteAfterSync()
+    self._force_delete_on_spawn = self._progress >= self._max
+end
+
+function EHIAchievementProgressTracker:save(data)
+    data.progress = self._progress
+end
+
+function EHIAchievementProgressTracker:load(data)
+    self:SetProgress(data.progress or 0)
 end
 
 ---@class EHIAchievementUnlockTracker : EHIWarningTracker, EHIAchievementTracker
@@ -178,6 +200,14 @@ function EHIAchievementUnlockTracker:post_init(params)
         self:ShowAchievementDescription()
     end
     self:PrepareHint(params)
+end
+
+function EHIAchievementUnlockTracker:save(data)
+    data.time = self._time
+end
+
+function EHIAchievementUnlockTracker:load(data)
+    self:SetTimeNoAnim(data.time)
 end
 
 ---@class EHIAchievementBagValueTracker : EHINeededValueTracker, EHIAchievementTracker
@@ -214,6 +244,10 @@ function EHIAchievementBagValueTracker:SetFailed()
     if self._show_failed then
         self:ShowFailedPopup()
     end
+end
+
+function EHIAchievementBagValueTracker:CheckCanDeleteAfterSync()
+    self._force_delete_on_spawn = self._progress >= self._max
 end
 
 ---@class EHIAchievementStatusTracker : EHIAchievementTracker
@@ -302,4 +336,12 @@ function EHIAchievementStatusTracker:SetTextColor(color)
         c = Color.red
     end
     EHIAchievementStatusTracker.super.SetTextColor(self, c)
+end
+
+function EHIAchievementStatusTracker:save(data)
+    data.status = self._status
+end
+
+function EHIAchievementStatusTracker:load(data)
+    self:SetStatus(data.status or "ok")
 end

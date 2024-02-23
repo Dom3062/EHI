@@ -29,7 +29,8 @@ local achievements =
         {
             [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, class = TT.Achievement.Base },
             [EHI:GetInstanceElementID(100461, 21700)] = { special_function = SF.SetAchievementComplete },
-        }
+        },
+        sync_params = { from_start = true }
     },
     orange_5 =
     {
@@ -40,7 +41,8 @@ local achievements =
             [EHI:GetInstanceElementID(100471, 21700)] = { special_function = SF.SetAchievementFailed },
             [EHI:GetInstanceElementID(100474, 21700)] = { special_function = SF.IncreaseProgress },
             [EHI:GetInstanceElementID(100005, 12200)] = { special_function = SF.FinalizeAchievement }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 local other =

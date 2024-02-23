@@ -141,13 +141,13 @@ EHI:AddLoadSyncFunction(function(self)
     if (secure_area_1:_is_inside(pos_1) and secure_area_1:_is_inside(pos_2)) or
         (secure_area_2:_is_inside(pos_1) and secure_area_2:_is_inside(pos_2)) or
         (secure_area_3:_is_inside(pos_1) and secure_area_3:_is_inside(pos_2)) then
-        self._trackers:SetAchievementStatus("voff_1", "finish")
+        self._achievements:SetAchievementStatus("voff_1", "finish")
     end
 end)
 EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
     if EHI:IsPlayingFromStart() then
         local function fail(...)
-            managers.ehi_tracker:SetAchievementFailed("voff_1")
+            managers.ehi_achievement:SetAchievementFailed("voff_1")
         end
         local civies = managers.enemy:all_civilians()
         for _, data in pairs(civies or {}) do

@@ -9,7 +9,6 @@ EHITimedChanceTracker.FormatChance = EHIChanceTracker.FormatChance
 function EHITimedChanceTracker:OverridePanel()
     self:PrecomputeDoubleSize()
     self._chance_text = self:CreateText({
-        name = "chance_text",
         text = self:FormatChance()
     })
     self._text:set_left(self._chance_text:right())

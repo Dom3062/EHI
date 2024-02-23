@@ -110,22 +110,16 @@ if ovk_and_up then
         }
     })
     if EHI:CanShowAchievement("farm_1") then
-        local farm_1 = EHI:GetAchievementIcon("farm_1")
         EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
             if mode == "phalanx" then
-                managers.ehi_tracker:AddTracker({
-                    id = "farm_1",
-                    status = "finish",
-                    icons = farm_1,
-                    class = EHI.Trackers.Achievement.Status,
-                })
+                managers.ehi_achievement:AddAchievementStatusTracker("farm_1", "finish")
             else
-                managers.ehi_tracker:SetAchievementFailed("farm_1")
+                managers.ehi_achievement:SetAchievementFailed("farm_1")
             end
         end)
         EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
             if success then
-                managers.ehi_tracker:SetAchievementComplete("farm_1")
+                managers.ehi_achievement:SetAchievementComplete("farm_1")
             end
         end)
     end

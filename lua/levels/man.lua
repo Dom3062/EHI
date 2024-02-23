@@ -57,7 +57,7 @@ local achievements =
         },
         load_sync = function(self)
             if self.ConditionFunctions.IsStealth() then
-                self._trackers:AddAchievementStatusTracker("man_3")
+                self._achievements:AddAchievementStatusTracker("man_3")
             end
         end
     },
@@ -71,7 +71,7 @@ local achievements =
         load_sync = function(self)
             -- Achievement count used planks on windows, vents, ...
             -- There are total 49 positions and 10 planks
-            self._trackers:AddAchievementProgressTracker("man_4", 10, 49 - self:CountInteractionAvailable("stash_planks"))
+            self._achievements:AddAchievementProgressTracker("man_4", 10, 49 - self:CountInteractionAvailable("stash_planks"))
         end
     }
 }

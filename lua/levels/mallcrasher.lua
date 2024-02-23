@@ -165,7 +165,8 @@ local achievements =
         {
             [301148] = { time = 180, class = TT.Achievement.Base },
             [300241] = { special_function = SF.SetAchievementComplete }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 

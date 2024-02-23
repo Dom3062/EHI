@@ -392,8 +392,7 @@ local GrenadeFormattingFunction =
         end
         if managers.player:upgrade_level("player", "chico_injector_health_to_speed") ~= 0 then
             local values = player_upgrades.chico_injector_health_to_speed[1] or {}
-            str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_kingpin_4"),
-            tostring(values[2] or 0), tostring((values[1] or 0) * 10)))
+            str = string.format("%s\n> %s", str, managers.localization:text("ehi_bm_kingpin_4", { duration = (values[2] or 0), heal = ((values[1] or 0) * 10) }))
         end
         return str
     end,

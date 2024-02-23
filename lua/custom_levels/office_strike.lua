@@ -27,7 +27,7 @@ local triggers = {
             if trigger.waypoint then
                 trigger.waypoint.time = t
                 trigger.waypoint.icon = Icons.Heli
-                trigger.waypoint.position = EHI:GetElementPosition(200179) or Vector3()
+                trigger.waypoint.position = EHI:GetElementPositionOrDefault(200179)
             end
         else -- Van
             self._trackers:AddTracker({
@@ -39,7 +39,7 @@ local triggers = {
             if trigger.waypoint then
                 trigger.waypoint.time = 80
                 trigger.waypoint.icon = Icons.Car
-                trigger.waypoint.position = EHI:GetElementPosition(200178) or Vector3()
+                trigger.waypoint.position = EHI:GetElementPositionOrDefault(200178)
             end
         end
         if trigger.waypoint then

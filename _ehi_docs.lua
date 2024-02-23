@@ -51,6 +51,10 @@
 ---@class ParseTriggerTable
 ---@field [number] ElementTrigger
 
+---@class ParseAchievementDefinitionTable.sync_params
+---@field from_start boolean
+---@field x boolean
+
 ---@class ParseAchievementDefinitionTable
 ---@field beardlib boolean If the achievement is from Beardlib
 ---@field difficulty_pass boolean Difficulty check, setting this to `false` will disable the achievement to show on the screen
@@ -61,6 +65,8 @@
 ---@field parsed_callback fun() Function runs after the achievement is parsed
 ---@field cleanup_callback fun() Function runs during achievement traversal when difficulty check or unlock check is false; intended to delete remnants so they don't occupy memory
 ---@field mission_end_callback boolean Achieves or fails achievement on mission end
+---@field sync_params ParseAchievementDefinitionTable.sync_params Params to adjust syncing between host and clients
+---@field data_sync table<string, any> Params to sync to other players
 
 ---@class ParseAchievementTable
 ---@field [string] ParseAchievementDefinitionTable Achievement Definition

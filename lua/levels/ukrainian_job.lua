@@ -34,7 +34,7 @@ local achievements =
             [101784] = { special_function = SF.SetAchievementComplete },
         },
         load_sync = function(self)
-            self._trackers:AddTimedAchievementTracker("lets_do_this", 36)
+            self._achievements:AddTimedAchievementTracker("lets_do_this", 36)
         end
     },
     cac_12 =
@@ -50,7 +50,8 @@ local achievements =
             [104408] = { special_function = SF.SetAchievementComplete },
             [104409] = { special_function = SF.SetAchievementFailed },
             [103116] = { special_function = SF.SetAchievementFailed }
-        }
+        },
+        sync_params = { from_start = true }
     }
 }
 

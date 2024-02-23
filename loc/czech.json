@@ -806,7 +806,7 @@
     "ehi_bm_kingpin_1" : "Z každého poškození ti obnoví %s%s (aktivní)",
     "ehi_bm_kingpin_2" : "Nepřátelé poblíž budou mířit na tebe (aktivní)",
     "ehi_bm_kingpin_3" : "Když máš méně než %s%s HP, efekt je zvýšen o %s%s (aktivní)",
-    "ehi_bm_kingpin_4" : "Když máš max HP, nabití je zrychleno o další %ss za každých vyléčených %s HP (aktivní)",
+    "ehi_bm_kingpin_4" : "Když máš max HP, nabití je zrychleno o další $duration;s za každých vyléčených $heal HP (aktivní)",
     "ehi_bm_sicario_1" : "Uvnitř kouře ty a tvoji spoluhráči se vyhnete z %s%s všem kulkách",
     "ehi_bm_sicario_2" : "Nepřátelé uvnitř kouře mají sníženou přesnost o %s%s",
     "ehi_bm_sicario_3" : "Všechny efektu tvého perku jsou zvýšeny o %s%s zatímco jsi v kouři",
