@@ -1,3 +1,8 @@
+r221 (25. 02. 2024):
+Assault Delay Tracker: Fixed an issue on Assault start
+Achievement Loot Counter: Fixed an issue where the tracker won't destroy after all loot is secured
+Daily Side Jobs: Fixed 0 progress in the tracker
+
 r220 (23. 02. 2024):
 Attempt to fix stuck trackers after sync
 Loot Counter: Fixed an issue where the tracker won't destroy after all loot is secured

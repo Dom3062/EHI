@@ -69,6 +69,11 @@ function EHIWaypoint:SetTime(t)
     self._timer:set_text(self:Format())
 end
 
+---@param delay number
+function EHIWaypoint:AddDelay(delay)
+    self:SetTime(self._time + delay)
+end
+
 ---@param color Color?
 function EHIWaypoint:SetColor(color)
     local c = color or self._default_color

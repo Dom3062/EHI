@@ -131,7 +131,7 @@ end
 ---@param t number
 ---@param block_if_exists boolean?
 function EHIAssaultManager:StartAssaultCountdown(t, block_if_exists)
-    if self._assault_delay.blocked or self._control_block then
+    if self._assault_delay.blocked or self._control_block or self._assault then
         return
     end
     if block_if_exists and self._trackers:TrackerExists(self._assault_delay.name) then
@@ -163,6 +163,7 @@ function EHIAssaultManager:AssaultStart()
         self._trackers:ForceRemoveTracker(self._assault_delay.name)
     end
     if self._assault_time.blocked or (self._endless_assault and not self._assault_time.show_endless_assault) or self._assault or self._assault_block then
+        self._assault = true
         return
     elseif self._trackers:TrackerExists(self._assault_time.name) then
         if self._endless_assault then
@@ -184,12 +185,13 @@ function EHIAssaultManager:AssaultStart()
 end
 
 function EHIAssaultManager:AssaultEnd()
+    self._assault = false
     if self._assault_time.combine_skirmish_remove or self._assault_time.delete_on_delay or self._endless_assault then
         self._trackers:ForceRemoveTracker(self._assault_time.name)
     end
     if self._assault_block or self._assault_delay.blocked then
         return
-    elseif self._trackers:TrackerExists(self._assault_delay.name) then
+    elseif self._trackers:TrackerExists(self._assault_delay.name) and self._assault_delay.pos then
         local f = self._control_block and "AssaultEndWithBlock" or "AssaultEnd"
         self._trackers:CallFunction(self._assault_delay.name, f, self._diff)
     elseif self._diff > 0 and not self._control_block then
@@ -199,7 +201,6 @@ function EHIAssaultManager:AssaultEnd()
             class = self._assault_delay.tracker
         }, self._assault_delay.pos)
     end
-    self._assault = false
     EHI:HookWithID(self._hud, "set_control_info", "EHI_Assault_set_control_info", self._control_info_f)
 end
 

@@ -52,7 +52,7 @@ local triggers =
     [101684] = { id = "FuelTransferLoud", special_function = SF.PauseTracker },
 
     [101050] = { special_function = EHI:RegisterCustomSF(function(self, ...)
-        self._trackers:CallFunction("FuelChecking", "AddDelay", 20) -- Add 20s because stealth trigger is now disabled
+        self:Call("FuelChecking", "AddDelay", 20) -- Add 20s because stealth trigger is now disabled
         self:Remove("FuelTransferStealth") -- ElementTimer won't proceed because alarm has been raised, remove it from the screen
         self:UpdateWaypointTriggerIcon(103053, Icon.Defend) -- Cops can turn off the checking device, change the waypoint icon to reflect this
     end), trigger_times = 1 } -- Alarm

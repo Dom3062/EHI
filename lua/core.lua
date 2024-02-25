@@ -2793,7 +2793,7 @@ end
 ---@param progress_id string?
 ---@return number, number
 function EHI:GetDailyJobProgressAndMax(daily_id, progress_id)
-    local current_job = managers.challenge:get_challenge(daily_id)
+    local current_job = managers.challenge:get_active_challenge(daily_id)
     if current_job and current_job.id == daily_id and current_job.objectives then
         progress_id = progress_id or daily_id
         for _, objective in ipairs(current_job.objectives) do

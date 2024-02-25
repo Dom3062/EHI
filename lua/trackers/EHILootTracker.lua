@@ -365,7 +365,7 @@ function EHIAchievementLootCounterTracker:DelayForcedDelete()
     EHIAchievementLootCounterTracker.super.DelayForcedDelete(self)
     self._show_finish_after_reaching_target = nil
     if self:CanShowLootSecuredPopup() then
-        self:ShowLootSecuredPopup(true)
+        self:ShowLootSecuredPopup()
     end
 end
 

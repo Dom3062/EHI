@@ -100,9 +100,7 @@
             "callback_arguments": "show_endless_assault",
             "value": "show_endless_assault",
             "default_value": true,
-            "is_parent" : true,
-            "parent_func": "EndlessAssaultToggle",
-            "parent_func_update": "EndlessAssaultUpdateToggle",
+            "parent": "ehi_show_assault_time_tracker_choice",
             "ehi_ver" : 215
         },
         {

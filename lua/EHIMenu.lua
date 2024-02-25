@@ -1979,12 +1979,3 @@ function EHIMenu:UpdateAllBuffOffset(menu, item)
         end
     end
 end
-
-function EHIMenu:EndlessAssaultToggle()
-    return EHI:GetOption("show_assault_time_tracker") or EHI:GetOption("aggregate_assault_delay_and_assault_time")
-end
-
-function EHIMenu:EndlessAssaultUpdateToggle(menu, item)
-    local enabled = self:EndlessAssaultToggle()
-    self:AnimateItemEnabled(item, enabled)
-end
