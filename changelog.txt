@@ -1,3 +1,6 @@
+r222 (02. 03. 2024):
+Shadow Raid: Adjusted count of possible loot bags
+
 r221 (25. 02. 2024):
 Assault Delay Tracker: Fixed an issue on Assault start
 Achievement Loot Counter: Fixed an issue where the tracker won't destroy after all loot is secured

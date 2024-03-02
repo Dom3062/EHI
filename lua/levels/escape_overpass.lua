@@ -48,9 +48,9 @@ local other =
 }
 if EHI:IsLootCounterVisible() then
     other[102564] = EHI:AddLootCounter3(function(self, ...)
-        if self._cache.CreateCounter then
-            EHI:ShowLootCounterNoChecks()
-            self._cache.CreateCounter = false
+        if not self._cache.CreateCounter then
+            EHI:ShowLootCounterNoCheck({})
+            self._cache.CreateCounter = true
         end
         self._trackers:IncreaseLootCounterProgressMax()
     end)

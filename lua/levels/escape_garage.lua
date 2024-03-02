@@ -4,7 +4,7 @@ local bilbo_baggin_bags = 8
 local function bilbo_baggin()
     bilbo_baggin_bags = bilbo_baggin_bags - 1
     if bilbo_baggin_bags == 0 then
-        managers.ehi_tracker:AddAchievementProgressTracker("bilbo_baggin", 8, 0, true)
+        managers.ehi_achievement:AddAchievementProgressTracker("bilbo_baggin", 8, 0, true)
         EHI:AddAchievementToCounter({
             achievement = "bilbo_baggin"
         })
@@ -30,9 +30,9 @@ local triggers =
 local other = {}
 if EHI:IsLootCounterVisible() then
     other[104263] = EHI:AddLootCounter3(function(self, ...)
-        if self._cache.CreateCounter then
+        if not self._cache.CreateCounter then
             EHI:ShowLootCounterNoCheck({})
-            self._cache.CreateCounter = false
+            self._cache.CreateCounter = true
         end
         self._trackers:IncreaseLootCounterProgressMax()
     end)

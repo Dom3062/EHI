@@ -188,47 +188,28 @@ end
 local other = {}
 if EHI:IsLootCounterVisible() then
     local function CheckForBrokenWeapons()
-        local count = 0
-        local world = managers.worlddefinition
-        for i = 100863, 100867, 1 do
-            local weapon = world:get_unit(i) --[[@as UnitCarry?]]
-            if weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
-                local state = weapon:damage()._state.graphic_group.grp_wpn
-                if state[1] == "set_visibility" and state[2] then
-                    --EHI:Log("Found broken unit weapon with ID: " .. tostring(i))
-                    count = count + 1
-                end
-            end
-        end
-        return count
+        local table_of_weapons = { 100863, 100864, 100865, 100866, 100867, 100372 }
+        return tweak_data.ehi.functions.GetNumberOfVisibleWeapons(table_of_weapons)
     end
     local function CheckForBrokenCocaine()
-        local count = 0
-        local world = managers.worlddefinition
-        for i = 100686, 100692, 1 do -- 2 - 8
-            local unit = world:get_unit(i) --[[@as UnitCarry?]]
-            if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_hidden == 0 then
-                --EHI:Log("Found broken unit cocaine with ID: " .. tostring(unit:editor_id()))
-                count = count + 1
-            end
-        end
-        return count
+        local table_of_coke = { 100686, 100687, 100688, 100689, 100690, 100691, 100692, 100374 }
+        return tweak_data.ehi.functions.GetNumberOfVisibleOtherLoot(table_of_coke)
     end
-    -- Loot Counter
-    -- 2 cocaine
-    -- 1 server
-    -- 2 random money bundles inside the warehouse
-    -- 4 random money bundles outside
+    -- Loot Counter  
+    -- 2 cocaine; disabled due to check above  
+    -- 1 server  
+    -- 2 random money bundles inside the warehouse  
+    -- 4 random money bundles outside  
     -- 4 pieces of armor
-    local base_amount = 2 + 1 + 2 + 4 + 4
-    local random_weapons = 2
+    local base_amount = 0 + 1 + 2 + 4 + 4
+    local random_weapons = 0 -- Disabled due to check above; should be 2
     local random_paintings = 2
     local crates = 4 -- (Normal + Hard)
     if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
         crates = 5
     elseif EHI:IsMayhemOrAbove() then
         crates = 6
-        random_weapons = 1
+        --random_weapons = 1
         random_paintings = 1
     end
     other[102700] = EHI:AddLootCounter2(function()

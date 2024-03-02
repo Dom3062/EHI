@@ -772,11 +772,9 @@ tweak_data.ehi =
             local world = managers.worlddefinition
             for _, index in ipairs(weapons or {}) do
                 local weapon = world:get_unit(index) ---@cast weapon UnitCarry
-                if weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn then
-                    local state = weapon:damage()._state.graphic_group.grp_wpn
-                    if state[1] == "set_visibility" and state[2] then
-                        n = n + 1
-                    end
+                local state = weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn
+                if state and state[1] == "set_visibility" and state[2] then
+                    n = n + 1
                 end
             end
             return n
