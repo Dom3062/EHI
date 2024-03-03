@@ -1,3 +1,6 @@
+r223 (03. 03. 2024):
+Loot Counter: Possible fix to crashing after spawn
+
 r222 (02. 03. 2024):
 Shadow Raid: Adjusted count of possible loot bags
 
