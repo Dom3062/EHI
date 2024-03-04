@@ -79,6 +79,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
         self:AddFakeTracker({ id = "show_gage_tracker", icons = { "gage" }, class = "FakeEHIProgressTracker" })
     end
     self:AddFakeTracker({ id = "show_captain_damage_reduction", icons = { "buff_shield" }, class = "FakeEHIChanceTracker" })
+    self:AddFakeTracker({ id = "show_captain_spawn_chance", time = math.random(0, 120), icons = { "buff_shield" }, extend = true, class = "FakeEHIPhalanxChanceTracker" })
     self:AddFakeTracker({ id = "show_equipment_tracker", show_placed = true, icons = { "doctor_bag" }, class = "FakeEHIEquipmentTracker" })
     self:AddFakeTracker({ id = "show_minion_tracker", min = 1, charges = 4, icons = { "minion" }, class = "FakeEHIMinionCounterTracker" })
     self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "enemy" }, class = "FakeEHIChanceTracker" })
@@ -165,8 +166,7 @@ function FakeEHITrackerManager:AddPreviewText()
     if self._n_of_trackers == 0 then
         self:UpdatePreviewTextVisibility(false)
         return
-    end
-    if not self._preview_text then
+    elseif not self._preview_text then
         self._preview_text = self._hud_panel:text({
             name = "preview_text",
             text = managers.localization:text("ehi_preview"),
@@ -1165,4 +1165,15 @@ end
 ---@param selected boolean
 function FakeEHISniperTracker:SetTextColor(selected)
     self._text:set_color(selected and self._selected_color or self._text_color)
+end
+
+---@class FakeEHIPhalanxChanceTracker : FakeEHITimerTracker
+---@field super FakeEHITimerTracker
+FakeEHIPhalanxChanceTracker = class(FakeEHITimerTracker)
+FakeEHIPhalanxChanceTracker.FormatProgress = FakeEHIChanceTracker.Format
+function FakeEHIPhalanxChanceTracker:init(...)
+    self._chance = 5 + (9 * math.random(0, 5))
+    FakeEHIPhalanxChanceTracker.super.init(self, ...)
+    self._progress_text:set_left(0)
+    self._text:set_left(self._progress_text:right())
 end

@@ -16,21 +16,17 @@ end
 function EHIuno7Tracker:SetTextColor()
     if self._obtainable then
         self._text:set_color(Color.white)
-        if self._time <= 10 then
-            self:AnimateColor(true)
-        end
+        self:AnimateColor(self._time <= 10)
     else
         self._text:set_color(Color.red)
     end
 end
 
----@param check_progress boolean?
----@param color Color?
-function EHIuno7Tracker:AnimateColor(check_progress, color)
+function EHIuno7Tracker:AnimateColor(...)
     if self._blocked_warning then
         return
     end
-    EHIuno7Tracker.super.AnimateColor(self, check_progress, color)
+    EHIuno7Tracker.super.AnimateColor(self, ...)
 end
 
 local EHI = EHI

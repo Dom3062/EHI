@@ -176,8 +176,7 @@ local achievements =
             [102739] = { special_function = EHI:RegisterCustomSF(function(self, ...)
                 if self.ConditionFunctions.IsLoud() then
                     return
-                end
-                if self._trackers:TrackerDoesNotExist("corp_12") then
+                elseif self._trackers:TrackerDoesNotExist("corp_12") then
                     self._trackers:AddTracker({
                         id = "corp_12",
                         time = 420,

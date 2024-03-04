@@ -8,6 +8,27 @@ EHIameno3Tracker = class(EHIAchievementTracker)
 EHIameno3Tracker.FormatNumber = EHINeededValueTracker.Format
 EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
 EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+---@param o PanelText
+---@param old_color Color
+---@param color Color
+---@param class EHIameno3Tracker
+EHIameno3Tracker._anim = function(o, old_color, color, start_t, class)
+    local c = Color(old_color.r, old_color.g, old_color.b)
+    local money = class._money_text
+    while true do
+        local t = 1
+        while t > 0 do
+            t = t - coroutine.yield()
+            local n = sin(t * 180)
+            c.r = lerp(old_color.r, color.r, n) --[[@as number]]
+            c.g = lerp(old_color.g, color.g, n) --[[@as number]]
+            c.b = lerp(old_color.b, color.b, n) --[[@as number]]
+            o:set_color(c)
+            money:set_color(c)
+        end
+        t = 1
+    end
+end
 function EHIameno3Tracker:pre_init(params)
     self._cash_sign = managers.localization:text("cash_sign")
     self._max = params.max or 0
@@ -29,7 +50,6 @@ end
 function EHIameno3Tracker:OverridePanel()
     self:SetBGSize()
     self._money_text = self:CreateText({
-        name = "text2",
         text = self:FormatNumber(),
         w = self._bg_box:w() / 2,
         left = 0,
@@ -37,27 +57,6 @@ function EHIameno3Tracker:OverridePanel()
     })
     self._text:set_left(self._money_text:right())
     self:SetIconX()
-end
-
-function EHIameno3Tracker:AnimateColor()
-    if self._text and alive(self._text) then
-        self._text:animate(function(o)
-            local c = Color(self._text_color.r, self._text_color.g, self._text_color.b)
-            while true do
-                local t = 1
-                while t > 0 do
-                    t = t - coroutine.yield()
-                    local n = sin(t * 180)
-                    c.r = lerp(self._text_color.r, self._warning_color.r, n) --[[@as number]]
-                    c.g = lerp(self._text_color.g, self._warning_color.g, n) --[[@as number]]
-                    c.b = lerp(self._text_color.b, self._warning_color.b, n) --[[@as number]]
-                    o:set_color(c)
-                    self._money_text:set_color(c)
-                end
-                t = 1
-            end
-        end)
-    end
 end
 
 function EHIameno3Tracker:SetProgress(progress)

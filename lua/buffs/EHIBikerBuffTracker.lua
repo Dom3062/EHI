@@ -1,40 +1,40 @@
-local max_kills = tweak_data.upgrades.wild_max_triggers_per_time or 4
 local pm
-local f
 ---@class EHIBikerBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIBikerBuffTracker = class(EHIBuffTracker)
+EHIBikerBuffTracker._max_kills = tweak_data.upgrades.wild_max_triggers_per_time or 4
 function EHIBikerBuffTracker:PreUpdateCheck()
     pm = managers.player
-    return pm:has_category_upgrade("player", "wild_health_amount") or pm:has_category_upgrade("player", "wild_armor_amount")
+    if pm:has_category_upgrade("player", "wild_health_amount") or pm:has_category_upgrade("player", "wild_armor_amount") then
+        return true
+    else
+        self:delete()
+    end
 end
 
 function EHIBikerBuffTracker:PreUpdate()
-    f = function(...)
+    self._f = function(...)
         if pm._wild_kill_triggers then
             -- Old kills were purged here before our post hook is called, no need to purge them again
             local kills = #pm._wild_kill_triggers
             self:Trigger(kills)
         end
     end
-    self:CustodyState(false)
-    EHI:AddOnCustodyCallback(function(state)
-        self:CustodyState(state)
-    end)
+    self:SetCustodyState(false)
     if self._persistent then
         self:ActivateSoft()
     end
 end
 
 ---@param state boolean
-function EHIBikerBuffTracker:CustodyState(state)
+function EHIBikerBuffTracker:SetCustodyState(state)
     if state then
         EHI:Unhook("BikerBuff_Post")
         if self._persistent then
             EHIBikerBuffTracker.super.Deactivate(self)
         end
     else
-        EHI:HookWithID(PlayerManager, "chk_wild_kill_counter", "EHI_BikerBuff_Post", f)
+        EHI:HookWithID(PlayerManager, "chk_wild_kill_counter", "EHI_BikerBuff_Post", self._f)
         if self._persistent then
             self:ActivateSoft()
         end
@@ -51,14 +51,14 @@ function EHIBikerBuffTracker:Trigger(kills)
     end
     local t = Application:time()
     local cd
-    if kills < max_kills then
+    if kills < self._max_kills then
         cd = pm._wild_kill_triggers[kills] - t
         self:SetIconColor(Color.white)
         self._hint:set_text(tostring(kills))
     else
         cd = pm._wild_kill_triggers[1] - t
         self:SetIconColor(Color.red)
-        self._hint:set_text(tostring(max_kills))
+        self._hint:set_text(tostring(self._max_kills))
         self._retrigger = true
     end
     if self._active then

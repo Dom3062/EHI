@@ -26,7 +26,6 @@ local hostage_values = assault_values.hostage_hesitation_delay
 ---@field _cs_deduction number
 EHIAssaultTracker = class(EHIWarningTracker)
 EHIAssaultTracker._forced_icons = { { icon = "assaultbox", color = Control } }
-EHIAssaultTracker._forced_hint_text = "assault"
 EHIAssaultTracker._is_client = EHI:IsClient()
 EHIAssaultTracker._inaccurate_text_color = EHI:GetTWColor("inaccurate")
 EHIAssaultTracker._paused_color = EHIPausableTracker._paused_color
@@ -75,6 +74,7 @@ function EHIAssaultTracker:init(panel, params, parent_class)
         self._forced_icons[1].color = Build
         self.update = self.update_assault
     else
+        self._forced_icons[1].color = Control
         if not params.time then
             params.time = self:CalculateBreakTime() + (2 * math.random())
         end
@@ -317,6 +317,8 @@ function EHIAssaultTracker:CalculateAssaultTime()
         self._to_next_state_t = build
         self._next_state = State.sustain
         self._next_state_t = sustain
+        self._parent_class:SaveInternalData("assault", "sustain_t", self._assault_t)
+        self._parent_class:SaveInternalData("assault", "sustain_app_t", managers.game_play_central:get_heist_timer())
     else
         self._to_next_state_t = build + sustain
         self._next_state = State.fade
@@ -462,7 +464,7 @@ end
 
 ---@param state boolean?
 function EHIAssaultTracker:SetEndlessAssault(state)
-    if self._endless_assault == state then
+    if self._endless_assault == state or self._captain_arrived then
         return
     end
     self._endless_assault = state
@@ -473,6 +475,7 @@ function EHIAssaultTracker:SetEndlessAssault(state)
         self:SetStatusText("endless")
         self:AnimateBG()
         self._time_warning = false
+        self._assault = true
     elseif not self._is_client then
         local ai_state = managers.groupai:state()
         local assault_data = ai_state._task_data.assault or {}

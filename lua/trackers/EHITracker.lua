@@ -389,18 +389,13 @@ function EHITracker:AnimateTop(target_y)
         self._anim_move = nil
     end
     self._anim_move = self._panel:animate(top, target_y)
-end
-
----@param target_y number
-function EHITracker:AnimateHintTop(target_y)
-    if not self._hint then
-        return
+    if self._hint then
+        if self._anim_hint_move then
+            self._hint:stop(self._anim_hint_move)
+            self._anim_hint_move = nil
+        end
+        self._anim_hint_move = self._hint:animate(top, target_y - self._hint_pos.y_diff)
     end
-    if self._anim_hint_move then
-        self._hint:stop(self._anim_hint_move)
-        self._anim_hint_move = nil
-    end
-    self._anim_hint_move = self._hint:animate(top, target_y - self._hint_pos.y_diff)
 end
 
 ---@param target_x number
@@ -410,19 +405,14 @@ function EHITracker:AnimateLeft(target_x)
         self._anim_move = nil
     end
     self._anim_move = self._panel:animate(left, target_x)
-end
-
----@param target_x number
-function EHITracker:AnimateHintLeft(target_x)
-    if not self._hint then
-        return
+    if self._hint then
+        if self._anim_hint_move then
+            self._hint:stop(self._anim_hint_move)
+            self._anim_hint_move = nil
+        end
+        self._anim_hint_move = self._hint:animate(left, target_x)
+        self._hint_pos.x = target_x
     end
-    if self._anim_hint_move then
-        self._hint:stop(self._anim_hint_move)
-        self._anim_hint_move = nil
-    end
-    self._anim_hint_move = self._hint:animate(left, target_x)
-    self._hint_pos.x = target_x
 end
 
 ---@param target_w number
@@ -1006,6 +996,10 @@ function EHITracker:SwitchToLoudMode()
 end
 
 function EHITracker:OnAlarm()
+end
+
+---@param state boolean
+function EHITracker:OnPlayerCustody(state)
 end
 
 function EHITracker:Redraw()

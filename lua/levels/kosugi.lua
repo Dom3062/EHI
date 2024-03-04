@@ -30,7 +30,6 @@ end
 function EHIkosugi5Tracker:OverridePanel()
     self:SetBGSize()
     self._armor_progress_text = self:CreateText({
-        name = "text2",
         text = self:FormatArmorProgress(),
         w = self._bg_box:w() / 2,
         left = self._text:right(),

@@ -173,6 +173,18 @@
             "parent": "ehi_buffs_skills_fugitive_berserker_choice",
             "default_value": 1,
             "ehi_ver" : 182
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_fugitive_berserker_persistent_choice",
+            "title": "ehi_buffs_skills_fugitive_berserker_persistent",
+            "description": "ehi_buffs_skills_fugitive_berserker_persistent_desc",
+            "callback": "SetBuffOption",
+            "callback_arguments": "berserker_persistent",
+            "value": "berserker_persistent",
+            "parent": "ehi_buffs_skills_fugitive_berserker_choice",
+            "default_value": false,
+            "ehi_ver" : 224
         }
     ]
 }

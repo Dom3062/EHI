@@ -15,7 +15,6 @@ end
 function EHIdailycakeTracker:OverridePanel()
     self:SetBGSize()
     self._progress_text = self:CreateText({
-        name = "text2",
         text = self:FormatProgress(),
         w = self._bg_box:w() / 2,
         left = 0,

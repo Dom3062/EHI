@@ -41,12 +41,10 @@ end
 
 function SecurityCamera:_deactivate_tape_loop(...)
     original._deactivate_tape_loop(self, ...)
-    managers.ehi_tracker:RemoveTracker(self._ehi_key)
-    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    managers.ehi_manager:Remove(self._ehi_key)
 end
 
 function SecurityCamera:destroy(...)
-    managers.ehi_tracker:RemoveTracker(self._ehi_key)
-    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
+    managers.ehi_manager:Remove(self._ehi_key)
     original.destroy(self, ...)
 end

@@ -36,12 +36,6 @@ function EHIBuffManager:init_finalize(hud)
     local path = EHI.LuaPath .. "buffs/"
     dofile(path .. "EHIBuffTracker.lua")
     dofile(path .. "EHIGaugeBuffTracker.lua")
-    dofile(path .. "EHIDodgeChanceBuffTracker.lua")
-    dofile(path .. "EHIBikerBuffTracker.lua")
-    dofile(path .. "EHIMeleeChargeBuffTracker.lua")
-    dofile(path .. "EHIUppersRangeBuffTracker.lua")
-    dofile(path .. "EHIBerserkerBuffTracker.lua")
-    dofile(path .. "EHICritChanceBuffTracker.lua")
     dofile(path .. "SimpleBuffEdits.lua")
     self._panel = hud.panel --[[@as Panel]]
     local scale = EHI:GetOption("buffs_scale") --[[@as number]]
@@ -50,8 +44,7 @@ function EHIBuffManager:init_finalize(hud)
     local buff_h = 64 * scale
     self:InitializeBuffs(buff_y, buff_w, buff_h, scale)
     self:InitializeTagTeamBuffs(buff_y, buff_w, buff_h, scale)
-    EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "ActivateUpdatingBuffs"))
-    EHI:AddOnCustodyCallback(callback(self, self, "RemoveAbilityCooldown"))
+    self:UnusedBuffClassesCleanup()
     if EHI:IsClient() then
         Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHIBuff", function(_, id, data)
             if id == EHI.SyncMessages.EHISyncAddBuff then
@@ -84,6 +77,7 @@ function EHIBuffManager:InitializeBuffs(buff_y, buff_w, buff_h, scale)
             params.no_progress = buff.no_progress
             params.max = buff.max
             params.class = buff.class
+            params.class_to_load = buff.class_to_load
             params.scale = scale
             self:CreateBuff(params, buff.persistent, buff.deck_option)
         end
@@ -122,12 +116,34 @@ end
 ---@param persistent string?
 ---@param deck_option table?
 function EHIBuffManager:CreateBuff(params, persistent, deck_option)
-    local buff = _G[params.class or "EHIBuffTracker"]:new(self._panel, params, self) --[[@as EHIBuffTracker]]
+    local buff
+    if params.class_to_load then
+        if params.class_to_load.prerequisite and not _G[params.class_to_load.prerequisite] then
+            dofile(string.format("%s%s%s.lua", EHI.LuaPath, "buffs/", params.class_to_load.prerequisite))
+        end
+        if params.class_to_load.load_class then
+            dofile(string.format("%s%s%s.lua", EHI.LuaPath, "buffs/", params.class_to_load.load_class))
+        end
+        buff = _G[params.class_to_load.class]:new(self._panel, params, self) --[[@as EHIBuffTracker]]
+    else
+        buff = _G[params.class or "EHIBuffTracker"]:new(self._panel, params, self) --[[@as EHIBuffTracker]]
+    end
     self._buffs[params.id] = buff
     if persistent and EHI:GetBuffOption(persistent) then
         buff:SetPersistent()
     elseif deck_option and deck_option.persistent and EHI:GetBuffDeckOption(deck_option.deck, deck_option.persistent) then
         buff:SetPersistent()
+    end
+end
+
+function EHIBuffManager:UnusedBuffClassesCleanup()
+    for id, buff in pairs(tweak_data.ehi.buff) do
+        if buff.class_to_load and buff.class_to_load.prerequisite then
+            local class = buff.class_to_load.class
+            if _G[class] and not self._buffs[id] then -- Tracker class exists, but the tracker is not created because it is disabled; remove the class
+                _G[class] = nil
+            end
+        end
     end
 end
 
@@ -158,6 +174,9 @@ function EHIBuffManager:SyncBuff(id, t)
 end
 
 function EHIBuffManager:ActivateUpdatingBuffs()
+    if not self._buffs then
+        return
+    end
     for id, buff in pairs(tweak_data.ehi.buff) do
         if buff.activate_after_spawn then
             local b = self._buffs[id]
@@ -172,6 +191,14 @@ function EHIBuffManager:ActivateUpdatingBuffs()
             end
         end
     end
+end
+
+---@param state boolean
+function EHIBuffManager:SetCustodyState(state)
+    for _, buff in pairs(self._buffs or {}) do
+        buff:SetCustodyState(state)
+    end
+    self:RemoveAbilityCooldown(state)
 end
 
 ---@param id string
@@ -301,7 +328,7 @@ end
 ---@param in_custody boolean
 function EHIBuffManager:RemoveAbilityCooldown(in_custody)
     if in_custody then
-        local ability = self._cache.Ability
+        local ability = self._cache and self._cache.Ability
         if ability then
             self:RemoveBuff(ability)
         end

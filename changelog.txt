@@ -1,3 +1,7 @@
+r224 (04. 03. 2024):
+Added options "Persistent Berserker", "Show Captain Spawn Chance" and "Damage Absorption"
+Buffs: Added count of how many cooldowns are currently running in Hacker PECM
+
 r223 (03. 03. 2024):
 Loot Counter: Possible fix to crashing after spawn
 

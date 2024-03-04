@@ -23,13 +23,19 @@ EHIManager.ConditionFunctions = EHI.ConditionFunctions
 EHIManager.SFF = {}
 EHIManager.HookOnLoad = {}
 EHIManager._cache = {}
+EHIManager._internal = {}
+EHIManager._internal_listeners = {}
 ---@param managers managers
 function EHIManager:new(managers)
     self._trackers = managers.ehi_tracker
     self._waypoints = managers.ehi_waypoint
+    self._buff = managers.ehi_buff
     self._escape = managers.ehi_escape
     self._deployable = managers.ehi_deployable
     self._achievements = managers.ehi_achievement
+    self._experience = managers.ehi_experience
+    self._assault = managers.ehi_assault
+    self._phalanx = managers.ehi_phalanx
     self._level_started_from_beginning = true
     self._t = 0
     self.TrackerWaypointsClass =
@@ -57,7 +63,12 @@ function EHIManager:new(managers)
 end
 
 function EHIManager:init_finalize()
+    self._trackers:init_finalize(self)
+    self._assault:init_finalize(self)
+    self._phalanx:init_finalize(self)
     EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
+    EHI:AddOnCustodyCallback(callback(self, self, "SetCustodyState"))
+    EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "Spawned"))
     managers.network:add_event_listener("EHIManagerDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
     if EHI:IsClient() then
         Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(_, id, data)
@@ -69,10 +80,83 @@ function EHIManager:init_finalize()
     end
 end
 
-function EHIManager:SwitchToLoudMode()
+---@param name string
+function EHIManager:CreateInternal(name)
+    self._internal[name] = {}
+end
+
+---@param name string
+function EHIManager:CreateAndCopyInternal(name)
+    self:CreateInternal(name)
+    return self._internal[name]
+end
+
+---@param name string
+---@param data_name string
+function EHIManager:SaveInternalData(name, data_name, value)
+    if not self._internal[name] then
+        return
+    end
+    self._internal[name][data_name] = value
+end
+
+---@param name string
+---@param data_name string
+function EHIManager:GetInternalData(name, data_name)
+    local tbl = self._internal[name] or {}
+    return tbl[data_name]
+end
+
+---@param name string
+---@param data_name string
+function EHIManager:NotifyInternalListeners(name, data_name, value)
+    self:SaveInternalData(name, data_name, value)
+    for key, tbl in pairs(self._internal_listeners[name] or {}) do
+        if key == data_name then
+            for _, f in ipairs(tbl) do
+                f(value)
+            end
+        end
+    end
+end
+
+---@param name string
+---@param data_name string
+---@param f function
+function EHIManager:AddInternalListener(name, data_name, f)
+    local tbl = self._internal_listeners[name]
+    if tbl then
+        local tbl_name = tbl[data_name]
+        if tbl_name then
+            table.insert(tbl_name, f)
+        else
+            tbl[data_name] = { f }
+        end
+    else
+        self._internal_listeners[name] = { [data_name] = { f } }
+    end
+end
+
+---@param state boolean
+function EHIManager:SetCustodyState(state)
+    self._trackers:OnPlayerCustody(state)
+    self._buff:SetCustodyState(state)
+    self._experience:SetInCustody(state)
+end
+
+---@param dropin boolean
+function EHIManager:SwitchToLoudMode(dropin)
     self._trackers:SwitchToLoudMode()
     self._waypoints:SwitchToLoudMode()
     self._deployable:SwitchToLoudMode()
+    self._experience:SwitchToLoudMode()
+    self._phalanx:SwitchToLoudMode(dropin)
+end
+
+function EHIManager:Spawned()
+    self._trackers:Spawned()
+    self._deployable:DisableGrenades()
+    self._buff:ActivateUpdatingBuffs()
 end
 
 ---@param tweak_data string
@@ -724,6 +808,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
                 if data.waypoint then
                     data.waypoint.class = data.waypoint.class or self.TrackerWaypointsClass[data.class or ""]
                     data.waypoint.time = data.waypoint.time or data.time
+                    data.waypoint.remove_on_alarm = data.remove_on_alarm
                     if not data.waypoint.icon then
                         local icon
                         if data.icons then

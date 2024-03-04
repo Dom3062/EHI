@@ -234,12 +234,15 @@ EHISniperTimedChanceTracker.DecreaseCount = EHICountTracker.DecreaseCount
 EHISniperTimedChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHISniperTimedChanceTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHISniperTimedChanceTracker.Format = EHISniperTimedChanceTracker.ShortFormat
+EHISniperTimedChanceTracker._anim = EHIChanceTracker._anim
+EHISniperTimedChanceTracker.delete = EHIChanceTracker.delete
 EHISniperTimedChanceTracker._snipers_spawned_popup = EHISniperCountTracker._snipers_spawned_popup
 ---@param params EHITracker.params
 function EHISniperTimedChanceTracker:pre_init(params)
     self._refresh_on_delete = true
     self._count = params.count or 0
     self._chance = params.chance or 0
+    self._anim_chance = self._chance
     self._recheck_t = params.recheck_t or 0
     self._no_chance_reset = params.no_chance_reset
     self._delay_on_max_chance = params.delay_on_max_chance
@@ -324,6 +327,9 @@ function EHISniperTimedChanceTracker:SetChance(amount)
         self._text:set_x(0)
         self:SetTimeNoAnim(self._delay_on_max_chance)
         self._chance_text:set_visible(false)
+    elseif self._anim_chance then
+        self._chance_text:stop()
+        self._chance_text:animate(self._anim, self)
     else
         self._chance_text:set_text(self:FormatChance())
         self:FitTheText(self._chance_text)
@@ -345,6 +351,8 @@ EHISniperLoopTracker.FormatChance = EHIChanceTracker.FormatChance
 EHISniperLoopTracker.SetChance = EHIChanceTracker.SetChance
 EHISniperLoopTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHISniperLoopTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
+EHISniperLoopTracker._anim = EHIChanceTracker._anim
+EHISniperLoopTracker.delete = EHIChanceTracker.delete
 EHISniperLoopTracker.Format = EHISniperLoopTracker.ShortFormat
 EHISniperLoopTracker._snipers_spawned_popup = EHISniperCountTracker._snipers_spawned_popup
 ---@param params EHITracker.params
@@ -353,6 +361,7 @@ function EHISniperLoopTracker:pre_init(params)
     self._count = 0
     self._anim_flash_set_count = 1
     self._chance = params.chance or 0
+    self._anim_chance = self._chance
     self._anim_flash_set_chance = 1
     self._on_fail_refresh_t = params.on_fail_refresh_t or 0
     self._on_success_refresh_t = params.on_success_refresh_t or 0

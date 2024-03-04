@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("ElementLaserTrigger") then
-    return
-end
-
-if not EHI:GetOption("show_laser_tracker") then
+if EHI:CheckLoadHook("ElementLaserTrigger") or not EHI:GetOption("show_laser_tracker") then
     return
 end
 

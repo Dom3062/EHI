@@ -313,6 +313,11 @@ function EHIMenu:Open()
             self._preview_panel._hud_panel:set_alpha(alpha_lerp)
         end)
         self._controller:enable()
+
+        if PocoHud3 and PocoHud3.dbgLbl then
+            self._poco_time_visibility = PocoHud3.dbgLbl:visible()
+            PocoHud3.dbgLbl:set_visible(false)
+        end
     end)
 end
 
@@ -336,6 +341,11 @@ function EHIMenu:Close()
         end)
         o:set_alpha(0)
         self._preview_panel._hud_panel:set_alpha(0)
+
+        if PocoHud3 and PocoHud3.dbgLbl then
+            PocoHud3.dbgLbl:set_visible(self._poco_time_visibility)
+            self._poco_time_visibility = nil
+        end
 
         managers.menu._input_enabled = true
         for _, menu in ipairs(managers.menu._open_menus) do

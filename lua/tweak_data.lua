@@ -113,12 +113,16 @@ tweak_data.ehi =
             u100skill = true,
             x = 1,
             y = 12,
-            class = "EHIDodgeChanceBuffTracker",
             text = "Dodge",
             format = "percent",
             activate_after_spawn = true,
             option = "dodge",
-            persistent = "dodge_persistent"
+            persistent = "dodge_persistent",
+            class_to_load =
+            {
+                prerequisite = "EHISkillRefreshBuffTracker",
+                class = "EHIDodgeChanceBuffTracker"
+            }
         },
         CritChance =
         {
@@ -126,20 +130,29 @@ tweak_data.ehi =
             x = 0,
             y = 12,
             text = "Crit",
-            class = "EHICritChanceBuffTracker",
             format = "percent",
             activate_after_spawn = true,
             option = "crit",
-            persistent = "crit_persistent"
+            persistent = "crit_persistent",
+            class_to_load =
+            {
+                prerequisite = "EHISkillRefreshBuffTracker",
+                class = "EHICritChanceBuffTracker"
+            }
         },
         Berserker =
         {
             skills = true,
             x = 2,
             y = 2,
-            class = "EHIBerserkerBuffTracker",
             check_after_spawn = true,
-            option = "berserker"
+            option = "berserker",
+            persistent = "berserker_persistent",
+            class_to_load =
+            {
+                load_class = "EHIBerserkerBuffTracker",
+                class = "EHIBerserkerBuffTracker"
+            }
         },
         Reload =
         {
@@ -167,8 +180,12 @@ tweak_data.ehi =
             skills = true,
             x = 4,
             y = 12,
-            class = "EHIMeleeChargeBuffTracker",
-            option = "melee_charge"
+            option = "melee_charge",
+            class_to_load =
+            {
+                load_class = "EHIMeleeChargeBuffTracker",
+                class = "EHIMeleeChargeBuffTracker"
+            }
         },
         headshot_regen_armor_bonus =
         {
@@ -214,8 +231,12 @@ tweak_data.ehi =
             x = 2,
             y = 11,
             check_after_spawn = true,
-            class = "EHIUppersRangeBuffTracker",
-            option = "uppers_range"
+            option = "uppers_range",
+            class_to_load =
+            {
+                load_class = "EHIUppersRangeBuffTracker",
+                class = "EHIUppersRangeBuffTracker"
+            }
         },
         fast_learner =
         {
@@ -409,7 +430,6 @@ tweak_data.ehi =
             deck = true,
             folder = "coco",
             x = 3,
-            class = "EHIManiacBuffTracker",
             format = "percent",
             check_after_spawn = true,
             deck_option =
@@ -417,7 +437,8 @@ tweak_data.ehi =
                 deck = "maniac",
                 option = "stack",
                 persistent = "stack_persistent"
-            }
+            },
+            class = "EHIManiacBuffTracker"
         },
         GrinderStackCooldown =
         {
@@ -572,8 +593,8 @@ tweak_data.ehi =
             skills = true,
             x = 2,
             y = 10,
-            class = "EHIHealthRegenBuffTracker",
-            option = "hostage_taker_muscle"
+            option = "hostage_taker_muscle",
+            class = "EHIHealthRegenBuffTracker"
         },
         crew_throwable_regen =
         {
@@ -596,26 +617,30 @@ tweak_data.ehi =
             deck = true,
             x = 3,
             y = 7,
-            class = "EHIExPresidentBuffTracker",
             deck_option =
             {
                 deck = "expresident",
                 option = "stored_health"
             },
             check_after_spawn = true,
-            format = "damage"
+            format = "damage",
+            class = "EHIExPresidentBuffTracker"
         },
         BikerBuff =
         {
             deck = true,
             folder = "wild",
-            class = "EHIBikerBuffTracker",
             check_after_spawn = true,
             deck_option =
             {
                 deck = "biker",
                 option = "kill_counter",
                 persistent = "kill_counter_persistent"
+            },
+            class_to_load =
+            {
+                load_class = "EHIBikerBuffTracker",
+                class = "EHIBikerBuffTracker"
             }
         },
         chico_injector =
@@ -647,7 +672,7 @@ tweak_data.ehi =
             {
                 deck = "stoic",
                 option = "duration"
-            }
+            },
         },
         damage_control_cooldown =
         {
@@ -738,6 +763,20 @@ tweak_data.ehi =
             {
                 deck = "copycat",
                 option = "grace_period"
+            }
+        },
+        DamageAbsorption =
+        {
+            skills = true,
+            x = 6,
+            y = 4,
+            activate_after_spawn = true,
+            option = "damage_absorption",
+            persistent = "damage_absorption_persistent",
+            class_to_load =
+            {
+                prerequisite = "EHISkillRefreshBuffTracker",
+                class = "EHIDamageAbsorptionBuffTracker"
             }
         }
     },
@@ -953,6 +992,7 @@ tweak_data.ehi.buff.reload_weapon_faster.text = "Rld+"
 tweak_data.ehi.buff.chico_injector_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector)
 tweak_data.ehi.buff.chico_injector_cooldown.bad = true
 tweak_data.ehi.buff.chico_injector_cooldown.deck_option.option = "injector_cooldown"
+tweak_data.ehi.buff.chico_injector_cooldown.class = "EHIReplenishThrowableBuffTracker"
 tweak_data.ehi.buff.smoke_screen_grenade_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.smoke_screen_grenade_cooldown.folder = "max"
 tweak_data.ehi.buff.smoke_screen_grenade_cooldown.deck_option.deck = "sicario"
@@ -968,9 +1008,11 @@ tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.deck_option.option = "pecm_cooldo
 tweak_data.ehi.buff.copr_ability_cooldown = deep_clone(tweak_data.ehi.buff.copr_ability)
 tweak_data.ehi.buff.copr_ability_cooldown.bad = true
 tweak_data.ehi.buff.copr_ability_cooldown.deck_option.option = "ampule_cooldown"
+tweak_data.ehi.buff.copr_ability_cooldown.class = "EHIReplenishThrowableBuffTracker"
 tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown = deep_clone(tweak_data.ehi.buff.mrwi_health_invulnerable)
 tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown.bad = true
 tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown.deck_option.option = "grace_period_cooldown"
+tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown.class = "EHIReplenishThrowableBuffTracker"
 
 tweak_data.hud_icons.EHI_XP = { texture = tweak_data.ehi.icons.xp.texture }
 tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }

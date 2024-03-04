@@ -11,6 +11,7 @@
 ---@field _damage_dealt_to_cops_decay_t number
 ---@field _dodge_shot_gain_value number
 ---@field _next_allowed_doh_t number
+---@field _cached_detection_risk number?
 ---@field body_armor_value fun(self: self, category: string, override_value: number?, default: any?): number|any
 ---@field has_category_upgrade fun(self: self, category: string, upgrade: string): boolean
 ---@field _get_damage_health_ratio_threshold fun(self: self, category: string): number
@@ -32,6 +33,7 @@
 ---@field health_regen fun(self: self): number
 ---@field num_local_minions fun(self: self): number
 ---@field get_infamy_exp_multiplier fun(self: self): number
+---@field damage_absorption fun(self: self): number
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -65,31 +67,6 @@ end
 original.init = PlayerManager.init
 function PlayerManager:init(...)
     original.init(self, ...)
-    if EHI:GetBuffOption("forced_friendship") then
-        local hostage_limit = tweak_data.upgrades.values.team.damage.hostage_absorption_limit
-        local absorption_gain = tweak_data.upgrades.values.team.damage.hostage_absorption[1]
-        local max_absorption = hostage_limit * absorption_gain
-        local _t = self._damage_absorption
-        self._damage_absorption = {}
-        local _mt = {
-            __index = function(table, key)
-                return _t[key]
-            end,
-            __newindex = function(table, key, value)
-                _t[key] = value
-                if key == "hostage_absorption" and value then
-                    local raw = Application:digest_value(value, false)
-                    if raw > 0 then
-                        local ratio = raw / max_absorption
-                        managers.ehi_buff:AddGauge("hostage_absorption", ratio, raw * 10)
-                    else
-                        managers.ehi_buff:RemoveBuff("hostage_absorption")
-                    end
-                end
-            end
-        }
-        setmetatable(self._damage_absorption, _mt)
-    end
     if EHI:GetBuffOption("regen_throwable_ai") then
         local value = tweak_data.upgrades.values.team.crew_throwable_regen
         local max = (value and value[1] or 35) + 1
@@ -116,7 +93,25 @@ function PlayerManager:init(...)
     end
 end
 
-if EHI:GetBuffAndOption("unseen_strike_initial") then
+if EHI:GetBuffOption("forced_friendship") then
+    local hostage_limit = tweak_data.upgrades.values.team.damage.hostage_absorption_limit
+    local absorption_gain = tweak_data.upgrades.values.team.damage.hostage_absorption[1]
+    local max_absorption = hostage_limit * absorption_gain
+    original.set_damage_absorption = PlayerManager.set_damage_absorption
+    function PlayerManager:set_damage_absorption(key, value, ...)
+        if key == "hostage_absorption" then
+            if value and value > 0 then
+                local ratio = value / max_absorption
+                managers.ehi_buff:AddGauge("hostage_absorption", ratio, value * 10)
+            else
+                managers.ehi_buff:RemoveBuff("hostage_absorption")
+            end
+        end
+        original.set_damage_absorption(self, key, value, ...)
+    end
+end
+
+if EHI:GetBuffOption("unseen_strike_initial") then
     EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
         local self = managers.player
         if self:has_category_upgrade("player", "unseen_increased_crit_chance") then
@@ -132,6 +127,14 @@ if EHI:GetBuffAndOption("unseen_strike_initial") then
             end)
         end
     end)
+end
+
+if EHI:GetBuffOption("crit") then
+    original.update_cached_detection_risk = PlayerManager.update_cached_detection_risk
+    function PlayerManager:update_cached_detection_risk(...)
+        original.update_cached_detection_risk(self, ...)
+        managers.ehi_buff:CallFunction("CritChance", "UpdateDetectionRisk", self._cached_detection_risk)
+    end
 end
 
 local AbilityKey, AbilitySpeedUp
@@ -167,6 +170,13 @@ EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
     if AbilityKey then
         AbilityKey = AbilityKey .. "_cooldown"
         managers.ehi_buff._cache.Ability = AbilityKey
+        EHI:PreHookWithID(self, "add_grenade_amount", "EHI_Replenish_Throwable", function(pm, amount, ...)
+            if amount > 0 then
+                managers.ehi_buff:CallFunction(AbilityKey, "Replenished")
+            elseif amount < 0 then
+                managers.ehi_buff:CallFunction(AbilityKey, "AddToReplenish")
+            end
+        end)
     end
 end)
 

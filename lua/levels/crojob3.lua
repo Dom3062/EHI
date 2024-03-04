@@ -103,7 +103,7 @@ if EHI:IsLootCounterVisible() then
         other[EHI:GetInstanceElementID(100202, index)] = Trigger
     end
     other[101041] = { special_function = EHI:RegisterCustomSF(function(...)
-    EHI:ShowLootCounterNoChecks({
+        EHI:ShowLootCounterNoChecks({
             -- 1 flipped wagon crate; guaranteed to have gold or 2x money (15% chance)
             -- If second money bundle spawns, the maximum is increased in the Trigger above
             max = 5 -- 4 Bomb parts + 1

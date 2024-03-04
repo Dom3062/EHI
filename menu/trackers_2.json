@@ -74,6 +74,22 @@
         },
         {
             "type": "toggle",
+            "id": "ehi_show_captain_spawn_chance_choice",
+            "title": "ehi_show_captain_spawn_chance",
+            "description": "ehi_show_captain_spawn_chance_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_captain_spawn_chance",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_captain_spawn_chance",
+            "default_value": true,
+            "ehi_ver" : 224
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
             "id": "ehi_show_equipment_tracker_choice",
             "title": "ehi_show_equipment_tracker",
             "description": "ehi_show_equipment_tracker_desc",
@@ -212,36 +228,6 @@
             "value": "show_pager_callback",
             "default_value": true,
             "ehi_ver" : 13
-        },
-        {
-            "type": "divider",
-            "size": 20
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_enemy_count_tracker_choice",
-            "title": "ehi_show_enemy_count_tracker",
-            "description": "ehi_show_enemy_count_tracker_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_enemy_count_tracker",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_enemy_count_tracker",
-            "is_parent" : true,
-            "default_value": true,
-            "ehi_ver" : 6
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_enemy_count_show_pagers_choice",
-            "title": "ehi_show_enemy_count_show_pagers",
-            "description": "ehi_show_enemy_count_show_pagers_desc",
-            "callback": ["SetOption", "UpdateEnemyCountTracker"],
-            "callback_arguments": "show_enemy_count_show_pagers",
-            "focus_changed_callback": "SetFocus2",
-            "value": "show_enemy_count_show_pagers",
-            "parent" : "ehi_show_enemy_count_tracker_choice",
-            "default_value": true,
-            "ehi_ver" : 115
         }
     ]
 }

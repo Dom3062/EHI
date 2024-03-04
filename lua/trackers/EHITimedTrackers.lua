@@ -6,6 +6,8 @@ EHITimedChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHITimedChanceTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHITimedChanceTracker.SetChance = EHIChanceTracker.SetChance
 EHITimedChanceTracker.FormatChance = EHIChanceTracker.FormatChance
+EHITimedChanceTracker._anim = EHIChanceTracker._anim
+EHITimedChanceTracker.delete = EHIChanceTracker.delete
 function EHITimedChanceTracker:OverridePanel()
     self:PrecomputeDoubleSize()
     self._chance_text = self:CreateText({
@@ -72,6 +74,7 @@ EHITimedWarningChanceTracker.update = EHIWarningTracker.update
 EHITimedWarningChanceTracker.AnimateColor = EHIWarningTracker.AnimateColor
 EHITimedWarningChanceTracker.SetTimeNoAnim = EHIWarningTracker.SetTimeNoAnim
 EHITimedWarningChanceTracker.delete = EHIWarningTracker.delete
+EHITimedWarningChanceTracker._anim = EHIWarningTracker._anim
 
 ---@class EHITimedProgressTracker : EHIProgressTracker, EHITimedChanceTracker
 ---@field super EHIProgressTracker
@@ -84,7 +87,6 @@ EHITimedProgressTracker.StopTimer = EHITimedChanceTracker.StopTimer
 function EHITimedProgressTracker:OverridePanel()
     self:PrecomputeDoubleSize()
     self._progress_text = self:CreateText({
-        name = "progress_text",
         text = self:FormatProgress()
     })
     self._text:set_left(self._progress_text:right())

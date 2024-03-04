@@ -273,7 +273,16 @@ _G.tweak_data.group_ai = {
                 increase_intervall = 5,
                 increase = 0.05
             }
-        }
+        },
+        spawn_chance = {
+            decrease = 0, -- 0/0.7/1
+            start = 0, -- 0/0.01/0.05
+            respawn_delay = 0, -- 120/300000
+            increase = 0, -- 0/0.09
+            max = 0 -- 0/1
+        },
+        check_spawn_intervall = 120,
+	    chance_increase_intervall = 120
     }
 }
 ---@class HudIconsTweakData
@@ -469,6 +478,8 @@ _G.CriminalsManager = {}
 _G.EnemyManager = {}
 ---@class PlayerManager
 _G.PlayerManager = {}
+---@class PlayerDamage
+_G.PlayerDamage = {}
 ---@class PrePlanningManager
 _G.PrePlanningManager = {}
 ---@class GageAssignmentManager
@@ -585,6 +596,13 @@ end
 ---@class ElementWaypoint : MissionScriptElement
 ---@field super MissionScriptElement
 ---@field _values ElementWaypointValues
+
+---@class ElementSpecialObjectiveValues : MissionScriptElementValues
+---@field so_action string
+
+---@class ElementSpecialObjective : MissionScriptElement
+---@field super MissionScriptElement
+---@field _values ElementSpecialObjectiveValues
 
 ---@class MissionScriptElementValues
 ---@field amount number `ElementCounter` | `ElementCounterOperator`
@@ -748,19 +766,10 @@ end
 ---@field set_outfit_string fun(self: self, outfit_string: table)
 ---@field unit fun(self: self): UnitPlayer
 
----@class NetworkBaseSession
----@field amount_of_alive_players fun(self: self): number
----@field amount_of_players fun(self: self): number
----@field local_peer fun(self: self): NetworkPeer
----@field peer fun(self: self, peer_id: number): NetworkPeer
----@field peer_by_unit fun(self: self, Unit: UnitPlayer): NetworkPeer
----@field peers fun(self: self): table<number, NetworkPeer>
----@field send_to_peers_synched fun(self: self, ...: any)
-
 ---@class NetworkManager
 ---@field account NetworkAccountBase
 ---@field add_event_listener fun(self: self, key: string, event_types: string, clbk: function)
----@field session fun(self: self): NetworkBaseSession
+---@field session fun(self: self): BaseNetworkSession
 
 ---@class PerpetualEventManager
 ---@field get_holiday_tactics fun(self: self): string
@@ -794,6 +803,7 @@ end
 ---@field ehi_assault EHIAssaultManager
 ---@field ehi_experience EHIExperienceManager
 ---@field ehi_achievement EHIAchievementManager
+---@field ehi_phalanx EHIPhalanxManager
 ---@field enemy EnemyManager
 ---@field environment_effects EnvironmentEffectsManager
 ---@field experience ExperienceManager
@@ -833,7 +843,7 @@ end
 ---@field visual table<string, { icon_id: string }>
 
 ---@class BlackMarketTweakData
----@field melee_weapons { [string]: { type: string } }
+---@field melee_weapons { [string]: { attack_allowed_expire_t: number?, stats: { charge_time: number }, type: string } }
 
 ---@class tweak_data.projectiles
 ---@field [string] table?

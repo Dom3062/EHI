@@ -136,6 +136,9 @@
     "ehi_hint_sentry_repair" : "Turret (Opravování)",
     "ehi_hint_sentry_teargas" : "Turret (Slzný plyn)",
     "ehi_hint_diff" : "Obtížnost vlny",
+    "ehi_hint_ecm_jammer" : "ECM Jammer",
+    "ehi_hint_ecm_feedback" : "ECM Feedback",
+    "ehi_hint_ecm_feedback_refresh" : "Znovunabití ECM Feedback",
 
     "ehi_hint_big_piggy" : "Přesouvání čuníka",
     "ehi_hint_brb_winch_delivery" : "Dodání navijáku",
@@ -391,6 +394,9 @@
 
     "ehi_show_captain_damage_reduction" : "Zobrazovat snížení poškození nepřátel",
     "ehi_show_captain_damage_reduction_desc" : "Zobrazuje sledovač, který ukazuje snížené poškození nepřátel, když je Kapitán Winters aktivní",
+
+    "ehi_show_captain_spawn_chance" : "Zobrazovat procentuální šanci na Kapitána (Pouze host)",
+    "ehi_show_captain_spawn_chance_desc" : "Zobrazuje aktuální procentuální šanci na příchod Kapitána Winterse",
 
     "ehi_show_equipment_tracker" : "Zobrazovat sledovač pro vybavení",
     "ehi_show_equipment_tracker_desc" : "Zobrazuje samostatný sledovač pro položenou lékárničku, náboje, granáty, taška s pytlema na těla a 'záchranné jednohubky' (First Aid Kit neboli FAK)",
@@ -659,6 +665,8 @@
     "ehi_buffs_skills_fugitive_berserker_format_desc" : "Nastavuje jak formátovat buff Berserker, jak formátovat poškození zbraní či melee zbraní\n\nNásobitel: 1.4x 2.6x\n\nProcenta: 40% 160%",
     "ehi_buffs_skills_fugitive_berserker_format_1" : "Násobitel",
     "ehi_buffs_skills_fugitive_berserker_format_2" : "Procenta",
+    "ehi_buffs_skills_fugitive_berserker_persistent" : "Neschovávat Berserker",
+    "ehi_buffs_skills_fugitive_berserker_persistent_desc" : "Buff zůstane na obrazovce, když je hodnota menší než minimální hodnota k aktivaci",
 
     "ehi_buffs_perks_menu" : "Perky",
     "ehi_buffs_perks_infiltrator" : "Infiltrator",
@@ -746,6 +754,11 @@
     "ehi_buffs_other_crit_refresh_desc" : "Nastavuje jak často se má šance aktualizovat za sekundu",
     "ehi_buffs_other_crit_persistent" : "Neschovávat šanci na Crit",
     "ehi_buffs_other_crit_persistent_desc" : "Buff zůstane na obrazovce, když je tvoje šance na Crit méně než 0 %",
+    "ehi_buffs_other_damage_absorption" : "Absorpce poškození",
+    "ehi_buffs_other_damage_absorption_refresh" : "Aktualizace absorpce poškození",
+    "ehi_buffs_other_damage_absorption_refresh_desc" : "Nastavuje jak často se má buff aktualizovat za sekundu",
+    "ehi_buffs_other_damage_absorption_persistent" : "Neschovávat Absorpci poškození",
+    "ehi_buffs_other_damage_absorption_persistent_desc" : "Buff zůstane na obrazovce když je tvoje absorpce nižší než 0",
     "ehi_buffs_other_inspire_ai" : "Inspire (AI)",
     "ehi_buffs_other_regen_throwable_ai" : "Obnovení granátu (AI)",
     "ehi_buffs_other_health" : "Tvoje hodnota zdraví",

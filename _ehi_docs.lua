@@ -15,6 +15,7 @@
 ---@field position_by_element_and_remove_vanilla_waypoint number?
 ---@field restore_on_done boolean? Depends on `remove_vanilla_waypoint`
 ---@field present_timer number
+---@field remove_on_alarm boolean Removes the waypoint on alarm
 
 ---@class ElementClientTriggerData
 ---@field time number Maps to `additional_time`. If the field already exists, it is added to the field (+)
@@ -23,6 +24,10 @@
 
 ---@class ParseInstanceTable
 ---@field [string] table<number, ElementTrigger>
+
+---@class EHIRandomTime
+---@field [1] number Left time operand in BASE DELAY or delay (start time); mapped to ˙additional_time˙
+---@field [2] number Right time operand in BASE DELAY or delay (end time); mapped to `random_time`
 
 ---@class ElementTrigger
 ---@field id string Tracker ID
@@ -44,8 +49,8 @@
 ---@field flash_bg boolean?
 ---@field hint string?
 ---@field tracker_merge boolean
----@field remove_on_alarm boolean
----@field update_on_alarm boolean
+---@field remove_on_alarm boolean Removes the tracker on alarm; calls `EHITracker:ForceDelete()`
+---@field update_on_alarm boolean Updates the tracker on alarm; calls `EHITracker:OnAlarm()`
 ---@field [any] any
 
 ---@class ParseTriggerTable

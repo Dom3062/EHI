@@ -48,11 +48,9 @@ function EHIHealthRegenBuffTracker:SetIcon(buff)
     self._buff = buff
 end
 
----@class EHIStaminaBuffTracker : EHIGaugeBuffTracker, EHIDodgeChanceBuffTracker
+---@class EHIStaminaBuffTracker : EHIGaugeBuffTracker
 ---@field super EHIGaugeBuffTracker
 EHIStaminaBuffTracker = class(EHIGaugeBuffTracker)
-EHIStaminaBuffTracker.Activate = EHIDodgeChanceBuffTracker.Activate
-EHIStaminaBuffTracker.Deactivate = EHIDodgeChanceBuffTracker.Deactivate
 EHIStaminaBuffTracker.RoundNumber = EHI.RoundNumber
 ---@param max_stamina number
 function EHIStaminaBuffTracker:Spawned(max_stamina)
@@ -75,6 +73,26 @@ function EHIStaminaBuffTracker:SetRatio(ratio)
     local value = ratio / self._max_stamina
     local rounded = self:RoundNumber(value, 0.01)
     EHIStaminaBuffTracker.super.SetRatio(self, value, rounded)
+end
+
+function EHIStaminaBuffTracker:Activate()
+    if self._active then
+        return
+    end
+    self._active = true
+    self._panel:stop()
+    self._panel:animate(self._show)
+    self:AddVisibleBuff()
+end
+
+function EHIStaminaBuffTracker:Deactivate()
+    if not self._active then
+        return
+    end
+    self:RemoveVisibleBuff()
+    self._panel:stop()
+    self._panel:animate(self._hide)
+    self._active = false
 end
 
 ---@class EHIStoicBuffTracker : EHIBuffTracker
@@ -168,4 +186,29 @@ function EHIManiacBuffTracker:Deactivate()
         return
     end
     EHIManiacBuffTracker.super.Deactivate(self)
+end
+
+---@class EHIReplenishThrowableBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
+EHIReplenishThrowableBuffTracker = class(EHIBuffTracker)
+function EHIReplenishThrowableBuffTracker:init(...)
+    self._replenish_count_running = 0
+    EHIReplenishThrowableBuffTracker.super.init(self, ...)
+    self._hint:set_visible(false)
+end
+
+function EHIReplenishThrowableBuffTracker:AddToReplenish()
+    self._replenish_count_running = self._replenish_count_running + 1
+    if self._replenish_count_running >= 2 then
+        self:SetHintText(self._replenish_count_running)
+        self._hint:set_visible(true)
+    end
+end
+
+function EHIReplenishThrowableBuffTracker:Replenished()
+    self._replenish_count_running = math.max(0, self._replenish_count_running - 1)
+    if self._replenish_count_running <= 1 then
+        self:SetHintText(self._replenish_count_running)
+        self._hint:set_visible(false)
+    end
 end

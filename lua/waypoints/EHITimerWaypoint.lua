@@ -1,4 +1,4 @@
----@class EHITimerWaypoint: EHIWarningWaypoint
+---@class EHITimerWaypoint : EHIWarningWaypoint
 ---@field super EHIWarningWaypoint
 EHITimerWaypoint = class(EHIWarningWaypoint)
 EHITimerWaypoint._update = false
@@ -81,8 +81,7 @@ function EHITimerWaypoint:SetAutorepair(state)
             self:AnimateColor(nil, self._autorepair_color)
         end
         return
-    end
-    if not self._anim_started then
+    elseif not self._anim_started then
         self._timer:stop()
         self:SetColor()
     end

@@ -29,6 +29,7 @@
                 <post :hook_id="elementheisttimer" :script_path="ElementHeistTimer.lua" />
                 <post :hook_id="elementlasertrigger" :script_path="ElementLaserTrigger.lua" />
                 <post :hook_id="elementspawngageassignment" :script_path="ElementSpawnGageAssignment.lua" />
+                <post :hook_id="elementspecialobjective" :script_path="ElementSpecialObjective.lua" />
                 <post :hook_id="elementterminateassault" :script_path="ElementTerminateAssault.lua" />
                 <post :hook_id="elementwaypoint" :script_path="ElementWaypoint.lua" />
             </group>
@@ -56,6 +57,8 @@
 
         <post hook_id="lib/mutators/mutatorpiggybank" :script_path="MutatorPiggyBank.lua" />
         <post hook_id="lib/mutators/mutatorpiggyrevenge" :script_path="MutatorPiggyRevenge.lua" />
+
+        <post hook_id="lib/network/base/basenetworksession" :script_path="BaseNetworkSession.lua" />
 
         <group hook_id="lib/setups/">
             <post :hook_id="setup" :script_path="EHIExperienceManager.lua" />

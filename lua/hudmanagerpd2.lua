@@ -197,7 +197,7 @@ if EHI:AssaultDelayTrackerIsEnabled() then
     end
 end
 
-if EHI:GetOption("show_assault_delay_tracker") or EHI:GetOption("show_assault_time_tracker") then
+if EHI:IsAssaultTrackerEnabled() then
     original.sync_start_assault = HUDManager.sync_start_assault
     function HUDManager:sync_start_assault(...)
         original.sync_start_assault(self, ...)

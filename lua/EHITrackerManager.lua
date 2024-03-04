@@ -38,8 +38,11 @@ function EHITrackerManager:CreateWorkspace()
     end)
 end
 
-function EHITrackerManager:init_finalize()
-    EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "Spawned"))
+---@param manager EHIManager
+function EHITrackerManager:init_finalize(manager)
+    self._internal = manager._internal
+    self.SaveInternalData = manager.SaveInternalData --[[@as fun(self: self, name: string, data_name: string, value: any)]]
+    self.GetInternalData = manager.GetInternalData --[[@as fun(self: self, name: string, data_name: string)]]
     if EHI:IsClient() then
         Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHITracker", function(sender_id, id, data)
             if id == EHI.SyncMessages.TrackerManager.SyncAddTracker then
@@ -68,6 +71,13 @@ function EHITrackerManager:Spawned()
     self._delay_popups = false
     for _, tbl in pairs(self._trackers) do
         tbl.tracker:PlayerSpawned()
+    end
+end
+
+---@param state boolean
+function EHITrackerManager:OnPlayerCustody(state)
+    for _, tbl in pairs(self._trackers) do
+        tbl.tracker:OnPlayerCustody(state)
     end
 end
 
@@ -249,6 +259,12 @@ function EHITrackerManager:AddLaserTracker(params)
     self:AddTracker(params)
 end
 
+---@param id string
+function EHITrackerManager:RemoveLaserTracker(id)
+    self._stealth_trackers.lasers[id] = nil
+    self:RemoveTracker(id)
+end
+
 ---Shows Loot Counter, needs to be hooked to count correctly
 ---@param max number?
 ---@param max_random number?
@@ -297,12 +313,6 @@ function EHITrackerManager:RunTrackerIfDoesNotExist(id, params)
     end
 end
 
----@param id string
-function EHITrackerManager:RemoveLaserTracker(id)
-    self._stealth_trackers.lasers[id] = nil
-    self:RemoveTracker(id)
-end
-
 function EHITrackerManager:SwitchToLoudMode()
     for _, def in pairs(self._trackers) do
         def.tracker:SwitchToLoudMode()
@@ -343,7 +353,6 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
                     local final_pos = tbl.pos + 1
                     local y = self:GetY(final_pos)
                     tbl.tracker:AnimateTop(y)
-                    tbl.tracker:AnimateHintTop(y)
                     tbl.pos = final_pos
                 end
             end
@@ -365,7 +374,6 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
                 local final_pos = value.pos - 1
                 local y = self:GetY(final_pos)
                 value.tracker:AnimateTop(y)
-                value.tracker:AnimateHintTop(y)
                 value.pos = final_pos
             end
         end
@@ -412,7 +420,6 @@ else -- Horizontal
                     if tbl.pos and tbl.pos >= pos then
                         local final_x = tbl.x + w + self._panel_offset
                         tbl.tracker:AnimateLeft(final_x)
-                        tbl.tracker:AnimateHintLeft(final_x)
                         tbl.x = final_x
                         tbl.pos = tbl.pos + 1
                     end
@@ -436,7 +443,6 @@ else -- Horizontal
                 if value.pos and value.pos > pos then
                     local final_x = value.x - w - panel_offset_move
                     value.tracker:AnimateLeft(final_x)
-                    value.tracker:AnimateHintLeft(final_x)
                     value.x = final_x
                     value.pos = value.pos - pos_move
                 end
@@ -497,7 +503,6 @@ else -- Horizontal
                     if on_pos then
                         previous_x = on_pos.x - w - self._panel_offset
                         on_pos.tracker:AnimateLeft(previous_x)
-                        on_pos.tracker:AnimateHintLeft(previous_x)
                         on_pos.x = previous_x
                         on_pos.pos = on_pos.pos + 1
                         start_pos = pos + 1
@@ -512,7 +517,6 @@ else -- Horizontal
                     local final_x = previous_x - t_pos.w - self._panel_offset
                     previous_x = final_x
                     t_pos.tracker:AnimateLeft(final_x)
-                    t_pos.tracker:AnimateHintLeft(final_x)
                     t_pos.x = final_x
                     t_pos.pos = t_pos.pos + 1
                 end
@@ -535,7 +539,6 @@ else -- Horizontal
                 if value.pos and value.pos > pos then
                     local final_x = value.x + w + panel_offset_move
                     value.tracker:AnimateLeft(final_x)
-                    value.tracker:AnimateHintLeft(final_x)
                     value.x = final_x
                     value.pos = value.pos - pos_move
                 end
@@ -1089,15 +1092,8 @@ do
     if EHI:GetOption("show_loot_counter") then
         dofile(path .. "EHILootTracker.lua")
     end
-    if EHI:CombineAssaultDelayAndAssaultTime() then
+    if EHI:IsAssaultTrackerEnabled() then
         dofile(path .. "EHIAssaultTracker.lua")
-    else
-        if EHI:AssaultDelayTrackerIsEnabled() then
-            dofile(path .. "EHIAssaultDelayTracker.lua")
-        end
-        if EHI:GetOption("show_assault_time_tracker") then
-            dofile(path .. "EHIAssaultTimeTracker.lua")
-        end
     end
 end
 

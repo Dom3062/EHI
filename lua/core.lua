@@ -40,6 +40,11 @@ _G.EHI =
         {
             file = "EHIPhalanxDamageReductionTracker",
             count = 1
+        },
+        show_captain_spawn_chance =
+        {
+            file = "EHIPhalanxChanceTracker",
+            count = 1
         }
     },
 
@@ -69,7 +74,7 @@ _G.EHI =
 
     _cache =
     {
-        DisableAchievements = false,
+        AchievementsDisabled = false,
         MissionUnits = {}, ---@type table<number, UnitUpdateDefinition>
         InstanceUnits = {}, ---@type table<number, UnitUpdateDefinition>
         InstanceMissionUnits = {}, ---@type table<number, UnitUpdateDefinition>
@@ -502,12 +507,7 @@ _G.EHI =
             BagValue = "EHIAchievementBagValueTracker",
             LootCounter = "EHIAchievementLootCounterTracker"
         },
-        Assault =
-        {
-            Time = "EHIAssaultTimeTracker",
-            Delay = "EHIAssaultDelayTracker",
-            Assault = "EHIAssaultTracker"
-        },
+        Assault = "EHIAssaultTracker",
         ColoredCodes = "EHIColoredCodesTracker",
         Inaccurate = "EHIInaccurateTracker",
         InaccurateWarning = "EHIInaccurateWarningTracker",
@@ -713,6 +713,7 @@ local function LoadDefaultValues(self)
         show_gage_tracker = true,
         gage_tracker_panel = 1,
         show_captain_damage_reduction = true,
+        show_captain_spawn_chance = true,
         show_equipment_tracker = true,
         equipment_format = 1,
         show_equipment_doctorbag = true,
@@ -851,6 +852,7 @@ local function LoadDefaultValues(self)
             berserker = true,
             berserker_refresh = 4, -- 1 / value
             berserker_format = 1, -- 1 = Multiplier; 2 = Percent
+            berserker_persistent = true,
 
             -- Perks
             infiltrator =
@@ -945,6 +947,9 @@ local function LoadDefaultValues(self)
             crit = true,
             crit_refresh = 1, -- 1 / value
             crit_persistent = false,
+            damage_absorption = true,
+            damage_absorption_refresh = 1, -- 1 / value
+            damage_absorption_persistent = false,
             inspire_ai = true,
             regen_throwable_ai = true,
             health = false,
@@ -1003,7 +1008,7 @@ local function Load()
         end
     end
     self._cache.__loaded = true
-    self._cache.DisableAchievements = not self:ShowMissionAchievements()
+    self._cache.AchievementsDisabled = not self:ShowMissionAchievements()
 end
 
 ---@param difficulty string
@@ -1035,6 +1040,19 @@ function EHI:Init()
             self._cache.UnlockablesAreDisabled = true
         end
     end)
+end
+
+---@param name string
+---@param author string
+function EHI:IsModInstalled(name, author)
+    if BLT and BLT.Mods then
+        for _, mod in ipairs(BLT.Mods:Mods()) do
+            if mod:IsEnabled() and mod:GetName() == name and mod:GetAuthor() == author then
+                return true
+            end
+        end
+    end
+    return false
 end
 
 ---@return boolean
@@ -1116,6 +1134,10 @@ end
 
 function EHI:LogTraceback()
     log("[EHI] " .. debug.traceback())
+end
+
+function EHI:LogToChat(s)
+    managers.chat:_receive_message(1, "[EHI]", tostring(s), Color.white)
 end
 
 function EHI:Save()
@@ -1335,6 +1357,10 @@ end
 
 function EHI:IsPlayingCrimeSpree()
     return Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree"
+end
+
+function EHI:IsAssaultTrackerEnabled()
+    return self:GetOption("show_assault_delay_tracker") or self:GetOption("show_assault_time_tracker")
 end
 
 function EHI:AssaultDelayTrackerIsEnabled()
@@ -1765,16 +1791,10 @@ function EHI:AddAssaultDelay(params)
         return nil
     end
     local id = "AssaultDelay"
-    local class = self.Trackers.Assault.Delay
     local hint = "assault_delay"
-    local pos = nil
     if self:CombineAssaultDelayAndAssaultTime() then
         id = "Assault"
-        class = self.Trackers.Assault.Assault
-        pos = 0
         hint = "assault"
-    elseif params.random_time then
-        class = "EHIInaccurateAssaultDelayTracker"
     end
     local tbl = {}
     -- Copy every passed value to the trigger
@@ -1787,8 +1807,8 @@ function EHI:AddAssaultDelay(params)
         tbl.time = tbl.time or 30
     end
     tbl.id = id
-    tbl.class = class
-    tbl.pos = pos
+    tbl.class = self.Trackers.Assault
+    tbl.pos = 0
     tbl.hint = hint
     return tbl
 end
@@ -2169,7 +2189,7 @@ end
 
 ---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounter(params)
-    if self._cache.UnlockablesAreDisabled or self._cache.DisableAchievements or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false then
+    if self._cache.UnlockablesAreDisabled or self._cache.AchievementsDisabled or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false then
         if params.show_loot_counter then
             self:ShowLootCounter({ max = params.max, triggers = params.loot_counter_triggers, load_sync = params.loot_counter_load_sync })
         end
@@ -2222,7 +2242,7 @@ end
 
 ---@param params AchievementBagValueCounterTable
 function EHI:ShowAchievementBagValueCounter(params)
-    if self._cache.UnlockablesAreDisabled or self._cache.DisableAchievements or self:IsAchievementUnlocked(params.achievement) then
+    if self._cache.UnlockablesAreDisabled or self._cache.AchievementsDisabled or self:IsAchievementUnlocked(params.achievement) then
         return
     end
     managers.ehi_achievement:AddAchievementBagValueCounter(params.achievement, params.value, params.show_finish_after_reaching_target)
@@ -2255,7 +2275,7 @@ function EHI:ShowAchievementKillCounter(params)
     if params.achievement_option and not self:GetUnlockableAndOption(params.achievement_option) then
         return
     end
-    if self._cache.UnlockablesAreDisabled or self._cache.DisableAchievements or self:IsAchievementUnlocked2(params.achievement) or params.difficulty_pass == false then
+    if self._cache.UnlockablesAreDisabled or self._cache.AchievementsDisabled or self:IsAchievementUnlocked2(params.achievement) or params.difficulty_pass == false then
         self:Log("Achievement disabled! id: " .. tostring(params.achievement))
         return
     end
@@ -2670,7 +2690,7 @@ function EHI:HookColorCodes(color_table, params)
     end
 end
 
----@param time number|table
+---@param time number|EHIRandomTime
 ---@param trigger_name string?
 ---@param include_loud_check boolean?
 function EHI:AddEndlessAssault(time, trigger_name, include_loud_check)

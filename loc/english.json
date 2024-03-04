@@ -395,6 +395,9 @@
     "ehi_show_captain_damage_reduction" : "Show Enemy Damage Reduction",
     "ehi_show_captain_damage_reduction_desc" : "Shows tracker for damage reduction when Captain is present",
 
+    "ehi_show_captain_spawn_chance" : "Show Captain Spawn Chance (Host only)",
+    "ehi_show_captain_spawn_chance_desc" : "Shows current spawn chance for Captain Winters",
+
     "ehi_show_equipment_tracker" : "Show Equipment Tracker",
     "ehi_show_equipment_tracker_desc" : "Shows a separate tracker for deployed Doctor Bags, Ammo Bags, Grenade Cases, Body Bags and First Aid Kits",
 
@@ -652,7 +655,7 @@
     "ehi_buffs_skills_fugitive_swan_song" : "Swan Song",
     "ehi_buffs_skills_fugitive_brawler_subclass" : "Brawler",
     "ehi_buffs_skills_fugitive_bloodthirst" : "Bloodthirst",
-    "ehi_buffs_skills_fugitive_bloodthirst_ratio" : "รูปแบบค่า Bloodthirst",
+    "ehi_buffs_skills_fugitive_bloodthirst_ratio" : "Bloodthirst Ratio",
     "ehi_buffs_skills_fugitive_bloodthirst_ratio_desc" : "Sets percentual ratio to show Bloodthirst gauge\nSetting it to 0% makes the buff always visible\n\nDefault value is 34%, which are 6 kills in Vanilla",
     "ehi_buffs_skills_fugitive_bloodthirst_reload" : "Bloodthirst (Reload)",
     "ehi_buffs_skills_fugitive_berserker" : "Berserker",
@@ -662,6 +665,8 @@
     "ehi_buffs_skills_fugitive_berserker_format_desc" : "Sets how to format Berserker buff, both ranged damage and melee damage\n\nMultiplier: 1.4x 2.6x\n\nPercent: 140% 260%",
     "ehi_buffs_skills_fugitive_berserker_format_1" : "Multiplier",
     "ehi_buffs_skills_fugitive_berserker_format_2" : "Percent",
+    "ehi_buffs_skills_fugitive_berserker_persistent" : "Persistent Berserker",
+    "ehi_buffs_skills_fugitive_berserker_persistent_desc" : "'Berserker' gauge will stay on your screen when the value is lower than minimum value to activate the skill",
 
     "ehi_buffs_perks_menu" : "Perk Decks",
     "ehi_buffs_perks_infiltrator" : "Infiltrator",
@@ -749,6 +754,11 @@
     "ehi_buffs_other_crit_refresh_desc" : "Sets how often 'Crit Chance' gauge should be updated per second",
     "ehi_buffs_other_crit_persistent" : "Persistent Crit Chance",
     "ehi_buffs_other_crit_persistent_desc" : "'Crit Chance' gauge will stay on your screen when your crit is lower than 0%",
+    "ehi_buffs_other_damage_absorption" : "Damage Absorption",
+    "ehi_buffs_other_damage_absorption_refresh" : "Damage Absorption Refresh",
+    "ehi_buffs_other_damage_absorption_refresh_desc" : "Sets how often 'Damage Absorption' gauge should be updated per second",
+    "ehi_buffs_other_damage_absorption_persistent" : "Persistent Damage Absorption",
+    "ehi_buffs_other_damage_absorption_persistent_desc" : "'Damage Absorption' gauge will stay on your screen when your absorption is lower than 0",
     "ehi_buffs_other_inspire_ai" : "Inspire (AI)",
     "ehi_buffs_other_regen_throwable_ai" : "Regen Throwable (AI)",
     "ehi_buffs_other_health" : "Your Health Value",

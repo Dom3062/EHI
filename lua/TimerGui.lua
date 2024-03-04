@@ -269,9 +269,7 @@ end
 
 ---@param icons table?
 function TimerGui:SetIcons(icons)
-    if (icons and not self._icons) or icons then
-        self._icons = icons
-    end
+    self._icons = icons or self._icons
 end
 
 ---@param remove_on_power_off boolean

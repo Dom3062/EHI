@@ -7,6 +7,33 @@ if not EHI:GetOption("show_buffs") then
     return
 end
 
+---@class PlayerDamage
+---@field _armor_change_blocked boolean
+---@field _armor_grinding table
+---@field _armor_stored_health number?
+---@field _can_take_dmg_timer number
+---@field _current_state function?
+---@field _damage_to_armor table
+---@field _damage_to_hot_stack table
+---@field _dire_need boolean
+---@field _doh_data table
+---@field _health_regen_update_timer number?
+---@field _check_berserker_done boolean?
+---@field _regenerate_timer number
+---@field _regenerate_speed number
+---@field _revives number
+---@field _supperssion_data table
+---@field _UPPERS_COOLDOWN 20
+---@field _uppers_elapsed number
+---@field dead fun(self: self): boolean
+---@field get_real_armor fun(self: self): number
+---@field get_real_health fun(self: self): number
+---@field got_max_doh_stacks fun(self: self): boolean
+---@field max_armor_stored_health fun(self: self): number
+---@field need_revive fun(self: self): boolean
+---@field _max_armor fun(self: self): number
+---@field _max_health fun(self: self): number
+
 local original =
 {
     init = PlayerDamage.init
@@ -98,9 +125,7 @@ if EHI:GetBuffDeckOption("expresident", "stored_health") then
     original.update_armor_stored_health = PlayerDamage.update_armor_stored_health
     function PlayerDamage:update_armor_stored_health(...)
         original.update_armor_stored_health(self, ...)
-        if managers.hud then -- Vanilla check
-            managers.ehi_buff:CallFunction("ExPresident", "SetStoredHealthMaxAndUpdateRatio", self:max_armor_stored_health(), self._armor_stored_health)
-        end
+        managers.ehi_buff:CallFunction("ExPresident", "SetStoredHealthMaxAndUpdateRatio", self:max_armor_stored_health(), self._armor_stored_health)
     end
 
     original.add_armor_stored_health = PlayerDamage.add_armor_stored_health

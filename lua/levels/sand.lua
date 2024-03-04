@@ -15,7 +15,6 @@ end
 function EHIsand11Tracker:OverridePanel()
     self:SetBGSize()
     self._text_chance = self._bg_box:text({
-        name = "chance",
         text = self:FormatChance(),
         align = "center",
         vertical = "center",

@@ -14,7 +14,6 @@ end
 
 function EHIcac33Tracker:OverridePanel()
     self._progress_text = self:CreateText({
-        name = "progress",
         text = self:FormatProgress(),
         visible = false,
         FitTheText = true

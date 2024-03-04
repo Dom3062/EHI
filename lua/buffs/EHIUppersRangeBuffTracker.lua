@@ -1,4 +1,3 @@
-local pm ---@type PlayerManager
 local mvector3_distance = mvector3.distance
 local math_floor = math.floor
 local string_format = string.format
@@ -7,22 +6,19 @@ local string_format = string.format
 EHIUppersRangeBuffTracker = class(EHIGaugeBuffTracker)
 EHIUppersRangeBuffTracker._refresh_time = 1 / EHI:GetBuffOption("uppers_range_refresh")
 function EHIUppersRangeBuffTracker:PreUpdate()
-    pm = managers.player
+    self._player_manager = managers.player
     local function Check(...)
         if self._in_custody then
             return
         end
-        if table.size(FirstAidKitBase.List) == 0 then
-            self:Deactivate()
-        else
+        if next(FirstAidKitBase.List) then
             self:Activate()
+        else
+            self:Deactivate()
         end
     end
     EHI:HookWithID(FirstAidKitBase, "Add", "EHI_UppersRangeBuff_Add", Check)
     EHI:HookWithID(FirstAidKitBase, "Remove", "EHI_UppersRangeBuff_Remove", Check)
-    EHI:AddOnCustodyCallback(function(custody_state)
-        self:CustodyState(custody_state)
-    end)
 end
 
 function EHIUppersRangeBuffTracker:Activate()
@@ -34,7 +30,7 @@ function EHIUppersRangeBuffTracker:Activate()
 end
 
 ---@param state boolean?
-function EHIUppersRangeBuffTracker:CustodyState(state)
+function EHIUppersRangeBuffTracker:SetCustodyState(state)
     if state then
         self:Deactivate()
     elseif next(FirstAidKitBase.List) then
@@ -57,7 +53,7 @@ function EHIUppersRangeBuffTracker:update(dt)
     self._time = self._time - dt
     if self._time <= 0 then
         self._time = self._refresh_time
-        local player_unit = pm:player_unit()
+        local player_unit = self._player_manager:player_unit()
         if alive(player_unit) then
             local found, distance, min_distance = self:GetFirstAidKit(player_unit:position())
             if found then

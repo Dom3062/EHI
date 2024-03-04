@@ -17,18 +17,12 @@ function EHIDeployableManager:new(ehi_tracker)
     return self
 end
 
-function EHIDeployableManager:init_finalize()
-    if EHI:GetOption("grenadecases_block_on_abilities_or_no_throwable") then
-        EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "DisableGrenades"))
-    end
-end
-
 function EHIDeployableManager:SwitchToLoudMode()
     self:AddEquipmentToIgnore(self._equipment_map.bodybag)
 end
 
 function EHIDeployableManager:DisableGrenades()
-    if not managers.blackmarket:equipped_grenade_allows_pickups() then
+    if EHI:GetOption("grenadecases_block_on_abilities_or_no_throwable") and not managers.blackmarket:equipped_grenade_allows_pickups() then
         self:AddEquipmentToIgnore(self._equipment_map.grenade)
         self._trackers:RemoveTracker("GrenadeCases")
     end

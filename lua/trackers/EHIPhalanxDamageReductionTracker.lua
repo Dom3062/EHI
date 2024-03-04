@@ -28,23 +28,6 @@ function EHIPhalanxDamageReductionTracker:SetChance(amount)
         self:SetTimeNoAnim(self._tweak_data.increase_intervall + math.rand(2))
     else
         self._enabled = true
-        self:StartTimer()
+        self:StartTimer(self._tweak_data.increase_intervall + math.rand(2))
     end
-end
-
-function EHIPhalanxDamageReductionTracker:StartTimer()
-    self:SetTimeNoAnim(self._tweak_data.increase_intervall + math.rand(2))
-    self:AnimatePanelW(self._panel_double)
-    self:ChangeTrackerWidth(self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons))
-    self:AnimIconX(self._bg_box_double + self._gap_scaled)
-    self._bg_box:set_w(self._bg_box_double)
-    self:AddTrackerToUpdate()
-end
-
-function EHIPhalanxDamageReductionTracker:StopTimer()
-    self:AnimatePanelW(self._panel_w)
-    self:ChangeTrackerWidth(self._bg_box_w + (self._icon_gap_size_scaled * self._n_of_icons))
-    self:AnimIconX(self._bg_box_w + self._gap_scaled)
-    self._bg_box:set_w(self._bg_box_w)
-    self:RemoveTrackerFromUpdate()
 end

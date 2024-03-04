@@ -14,9 +14,9 @@ function EHIWaypoint:init(waypoint, params, parent_class)
     self._timer = waypoint.timer_gui ---@type PanelText
     self._bitmap = waypoint.bitmap ---@type PanelBitmap
     self._arrow = waypoint.arrow ---@type PanelBitmap
-    self._bitmap_world = waypoint.bitmap_world ---@type PanelBitmap -- VR
+    self._bitmap_world = waypoint.bitmap_world ---@type PanelBitmap? -- VR
     self._parent_class = parent_class
-    self._remove_on_alarm = params.remove_on_alarm --Removes tracker when alarm sounds
+    self._remove_on_alarm = params.remove_on_alarm --Removes waypoint when alarm sounds
     self:post_init(params)
 end
 

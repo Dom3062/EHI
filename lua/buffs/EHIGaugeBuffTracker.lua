@@ -8,7 +8,7 @@ EHIGaugeBuffTracker = class(EHIBuffTracker)
 EHIGaugeBuffTracker._anim = function(o, ratio, progress)
     local r = progress.red
     over(0.25, function(p, t)
-        progress.red = lerp(r, ratio, p)
+        progress.red = lerp(r, ratio, p) --[[@as number]]
         o:set_color(progress)
     end)
 end

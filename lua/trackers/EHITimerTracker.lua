@@ -201,10 +201,8 @@ function EHIProgressTimerTracker:post_init(params)
     end
 end
 
----@param t number
----@param no_update boolean?
-function EHIProgressTimerTracker:StartTimer(t, no_update)
-    EHIProgressTimerTracker.super.StartTimer(self, t, no_update)
+function EHIProgressTimerTracker:StartTimer(...)
+    EHIProgressTimerTracker.super.StartTimer(self, ...)
     if self._progress ~= self._max then
         self:SetTextColor(Color.white, self._progress_text)
     end
@@ -223,6 +221,8 @@ EHIChanceTimerTracker.FormatChance = EHIChanceTracker.FormatChance
 EHIChanceTimerTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHIChanceTimerTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHIChanceTimerTracker.SetChance = EHIChanceTracker.SetChance
+EHIChanceTimerTracker._anim = EHIChanceTracker._anim
+EHIChanceTimerTracker.delete = EHIChanceTracker.delete
 ---@param params EHITracker.params
 function EHIChanceTimerTracker:post_init(params)
     self:PrecomputeDoubleSize()

@@ -11,7 +11,6 @@ function EHIChemSetTracker:OverridePanel()
     self:SetIconX()
     local third = self._bg_box:w() / 3
     self._first_ingredient = self:CreateText({
-        name = "first_ingredient",
         text = "0.69",
         w = third,
         FitTheText = true
@@ -20,14 +19,12 @@ function EHIChemSetTracker:OverridePanel()
     self._first_ingredient:set_text("")
     self._first_ingredient:set_left(0)
     self._second_ingredient = self:CreateText({
-        name = "second_ingredient",
         w = third,
         left = self._first_ingredient:right(),
         FitTheText = true,
         FitTheText_FontSize = font_size
     })
     self._third_ingredient = self:CreateText({
-        name = "third_ingredient",
         w = third,
         left = self._second_ingredient:right(),
         FitTheText = true,

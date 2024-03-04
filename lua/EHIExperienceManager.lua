@@ -51,6 +51,7 @@ function EHIExperienceManager:ExperienceInit(xp)
     self._cash_tousand_separator = xp._cash_tousand_separator
     self:ExperienceReload(xp)
     if EHI:CheckNotLoad() or EHI:IsXPTrackerDisabled() then
+        self._xp_disabled = true
         return
     end
     self._config =
@@ -75,13 +76,6 @@ function EHIExperienceManager:ExperienceInit(xp)
         difficulty_multiplier = 1,
         projob_multiplier = 1 -- Unavailable since `Update 109`, however mods can still enable Pro Job modifier in heists
     }
-    EHI:AddOnAlarmCallback(function()
-        self._ehi_xp.stealth = false
-        self:RecalculateSkillXPMultiplier()
-    end)
-    EHI:AddOnCustodyCallback(function(custody_state)
-        self:SetInCustody(custody_state)
-    end)
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
     EHI:HookWithID(HUDManager, "mark_cheater", "EHI_ExperienceManager_mark_cheater", function()
         self:RecalculateSkillXPMultiplier()
@@ -213,10 +207,8 @@ function EHIExperienceManager:HookAwardXP()
         self._show = function(id, amount)
             if self._trackers:TrackerExists("XPHidden") then
                 self._trackers:AddXPToTracker("XPHidden", amount)
-            elseif self._xp_to_award then
-                self._xp_to_award = self._xp_to_award + amount
             else
-                self._xp_to_award = amount
+                self._xp_to_award = (self._xp_to_award or 0) + amount
             end
         end
     end
@@ -276,6 +268,14 @@ function EHIExperienceManager:HookAwardXP()
     end
 end
 
+function EHIExperienceManager:SwitchToLoudMode()
+    if self._xp_disabled then
+        return
+    end
+    self._ehi_xp.stealth = false
+    self:RecalculateSkillXPMultiplier()
+end
+
 ---@param amount number
 function EHIExperienceManager:MissionXPAwarded(amount)
     if amount <= 0 then
@@ -304,6 +304,9 @@ end
 
 ---@param in_custody boolean
 function EHIExperienceManager:SetInCustody(in_custody)
+    if self._xp_disabled then
+        return
+    end
     self._ehi_xp.in_custody = in_custody
     if in_custody then
         self._ehi_xp.alive_players = math.max(self._ehi_xp.alive_players - 1, 0)

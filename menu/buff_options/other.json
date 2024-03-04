@@ -92,7 +92,7 @@
             "callback_arguments": "dodge_persistent",
             "value": "dodge_persistent",
             "parent" : "ehi_buffs_other_dodge_choice",
-            "default_value": true,
+            "default_value": false,
             "ehi_ver" : 79
         },
         {
@@ -134,8 +134,50 @@
             "callback_arguments": "crit_persistent",
             "value": "crit_persistent",
             "parent" : "ehi_buffs_other_crit_choice",
-            "default_value": true,
+            "default_value": false,
             "ehi_ver" : 79
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_other_damage_absorption_choice",
+            "title": "ehi_buffs_other_damage_absorption",
+            "callback": "SetBuffOption",
+            "callback_arguments": "damage_absorption",
+            "value": "damage_absorption",
+            "is_parent" : true,
+            "default_value": true,
+            "ehi_ver" : 224
+        },
+        {
+            "type": "slider",
+            "id": "ehi_buffs_other_damage_absorption_refresh_choice",
+            "title": "ehi_buffs_other_damage_absorption_refresh",
+            "description": "ehi_buffs_other_damage_absorption_refresh_desc",
+            "callback": "SetBuffOption",
+            "callback_arguments": "damage_absorption_refresh",
+            "value": "damage_absorption_refresh",
+            "parent" : "ehi_buffs_other_damage_absorption_choice",
+            "default_value": 1,
+            "max": 10,
+            "min": 1,
+            "step": 0,
+            "ehi_ver" : 224
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_other_damage_absorption_persistent_choice",
+            "title": "ehi_buffs_other_damage_absorption_persistent",
+            "description" : "ehi_buffs_other_damage_absorption_persistent_desc",
+            "callback": "SetBuffOption",
+            "callback_arguments": "damage_absorption_persistent",
+            "value": "damage_absorption_persistent",
+            "parent" : "ehi_buffs_other_damage_absorption_choice",
+            "default_value": false,
+            "ehi_ver" : 224
         },
         {
             "type": "divider",

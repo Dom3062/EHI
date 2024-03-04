@@ -22,11 +22,6 @@ local achievements =
     }
 }
 
-local triggers =
-{
-    [102510] = EHI:AddEndlessAssault(10 + 10)
-}
-
 local other = {}
 if EHI:IsLootCounterVisible() then
     other[104263] = EHI:AddLootCounter3(function(self, ...)
@@ -39,7 +34,6 @@ if EHI:IsLootCounterVisible() then
 end
 
 EHI:ParseTriggers({
-    mission = triggers,
     achievement = achievements,
     other = other
 })

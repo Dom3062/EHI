@@ -8,7 +8,9 @@ function EHIAssaultManager:new(ehi_tracker)
     return self
 end
 
-function EHIAssaultManager:init_finalize()
+---@param manager EHIManager
+function EHIAssaultManager:init_finalize(manager)
+    self._internal = manager:CreateAndCopyInternal("assault")
     self._is_skirmish = tweak_data.levels:IsLevelSkirmish()
     local combine = EHI:CombineAssaultDelayAndAssaultTime()
     self._anticipation =
@@ -20,19 +22,17 @@ function EHIAssaultManager:init_finalize()
     {
         blocked = not (combine or EHI:GetOption("show_assault_delay_tracker")),
         name = combine and "Assault" or "AssaultDelay",
-        tracker = combine and EHI.Trackers.Assault.Assault or EHI.Trackers.Assault.Delay,
-        pos = combine and 0,
-        delete_on_assault = not combine
+        delete_on_assault = not combine,
+        hint = combine and "assault" or "assault_delay"
     }
     self._assault_time =
     {
         blocked = not (combine or EHI:GetOption("show_assault_time_tracker")),
         name = combine and "Assault" or "AssaultTime",
-        tracker = combine and EHI.Trackers.Assault.Assault or EHI.Trackers.Assault.Time,
-        pos = combine and 0,
         delete_on_delay = not combine,
         combine_skirmish_remove = combine and self._is_skirmish,
-        show_endless_assault = EHI:GetOption("show_endless_assault")
+        show_endless_assault = EHI:GetOption("show_endless_assault"),
+        hint = combine and "assault" or "assault_time"
     }
     if not self._assault_time.blocked then
         if self._assault_time.show_endless_assault then
@@ -71,7 +71,7 @@ function EHIAssaultManager:init_finalize()
             if _Active then
                 return
             end
-            local tracker = EHIAssaultTimeTracker or EHIAssaultTracker or {}
+            local tracker = EHIAssaultTracker or {}
             local mod = managers.modifiers
             for category, data in pairs(mod._modifiers) do
                 if category == "crime_spree" then
@@ -89,16 +89,20 @@ function EHIAssaultManager:init_finalize()
                 end
             end
         end
-        if EHI:IsHost() then
-            ---@class ListenerModifier : BaseModifier
-            local ListenerModifier = class(BaseModifier)
-            ---@param duration number
-            function ListenerModifier:OnEnterSustainPhase(duration)
-                managers.ehi_assault:OnEnterSustain(duration)
-            end
-            managers.modifiers:add_modifier(ListenerModifier, "EHI")
-        end
         EHI:AddCallback(EHI.CallbackMessage.Spawned, CheckIfModifierIsActive)
+        manager:AddInternalListener("assault", "sustain_t", function(duration)
+            self:OnEnterSustain(duration)
+        end)
+    end
+    if EHI:IsHost() then
+        ---@class ListenerModifier : BaseModifier
+        local ListenerModifier = class(BaseModifier)
+        ---@param duration number
+        function ListenerModifier:OnEnterSustainPhase(duration)
+            manager:NotifyInternalListeners("assault", "sustain_t", duration)
+            managers.ehi_assault._internal.sustain_app_t = managers.game_play_central:get_heist_timer()
+        end
+        managers.modifiers:add_modifier(ListenerModifier, "EHI")
     end
 end
 
@@ -131,7 +135,7 @@ end
 ---@param t number
 ---@param block_if_exists boolean?
 function EHIAssaultManager:StartAssaultCountdown(t, block_if_exists)
-    if self._assault_delay.blocked or self._control_block or self._assault then
+    if self._assault_delay.blocked or self._control_block or self._internal.is_assault then
         return
     end
     if block_if_exists and self._trackers:TrackerExists(self._assault_delay.name) then
@@ -140,8 +144,9 @@ function EHIAssaultManager:StartAssaultCountdown(t, block_if_exists)
     self._trackers:AddTracker({
         id = self._assault_delay.name,
         time = t,
-        class = self._assault_delay.tracker
-    }, self._assault_delay.pos)
+        hint = self._assault_delay.hint,
+        class = EHI.Trackers.Assault
+    }, 0)
 end
 
 ---@param t number
@@ -162,8 +167,8 @@ function EHIAssaultManager:AssaultStart()
     if self._assault_delay.delete_on_assault then
         self._trackers:ForceRemoveTracker(self._assault_delay.name)
     end
-    if self._assault_time.blocked or (self._endless_assault and not self._assault_time.show_endless_assault) or self._assault or self._assault_block then
-        self._assault = true
+    if self._assault_time.blocked or (self._endless_assault and not self._assault_time.show_endless_assault) or self._internal.is_assault or self._assault_block then
+        self._internal.is_assault = true
         return
     elseif self._trackers:TrackerExists(self._assault_time.name) then
         if self._endless_assault then
@@ -178,28 +183,30 @@ function EHIAssaultManager:AssaultStart()
             assault = true,
             diff = self._diff,
             endless_assault = self._endless_assault,
-            class = self._assault_time.tracker
-        }, self._assault_time.pos)
+            hint = self._assault_time.hint,
+            class = EHI.Trackers.Assault
+        }, 0)
     end
-    self._assault = true
+    self._internal.is_assault = true
 end
 
 function EHIAssaultManager:AssaultEnd()
-    self._assault = false
+    self._internal.is_assault = false
     if self._assault_time.combine_skirmish_remove or self._assault_time.delete_on_delay or self._endless_assault then
         self._trackers:ForceRemoveTracker(self._assault_time.name)
     end
     if self._assault_block or self._assault_delay.blocked then
         return
-    elseif self._trackers:TrackerExists(self._assault_delay.name) and self._assault_delay.pos then
+    elseif self._trackers:TrackerExists(self._assault_delay.name) and not self._assault_delay.delete_on_assault then
         local f = self._control_block and "AssaultEndWithBlock" or "AssaultEnd"
         self._trackers:CallFunction(self._assault_delay.name, f, self._diff)
     elseif self._diff > 0 and not self._control_block then
         self._trackers:AddTracker({
             id = self._assault_delay.name,
             diff = self._diff,
-            class = self._assault_delay.tracker
-        }, self._assault_delay.pos)
+            hint = self._assault_delay.hint,
+            class = EHI.Trackers.Assault
+        }, 0)
     end
     EHI:HookWithID(self._hud, "set_control_info", "EHI_Assault_set_control_info", self._control_info_f)
 end

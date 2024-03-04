@@ -6,10 +6,9 @@ EHIXPTracker._forced_hint_text = "gained_xp"
 EHIXPTracker.update = EHIXPTracker.update_fade
 ---@param panel Panel
 ---@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIXPTracker:init(panel, params, parent_class)
+function EHIXPTracker:init(panel, params, ...)
     self._xp = params.amount or 0
-    EHIXPTracker.super.init(self, panel, params, parent_class)
+    EHIXPTracker.super.init(self, panel, params, ...)
 end
 
 function EHIXPTracker:Format() -- Formats the amount of XP in the panel

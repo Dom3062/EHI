@@ -7,6 +7,27 @@ EHIcac10Tracker._update = false
 EHIcac10Tracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIcac10Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac10Tracker.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
+---@param o PanelText
+---@param old_color Color
+---@param color Color
+---@param class EHIcac10Tracker
+EHIcac10Tracker._anim = function(o, old_color, color, start_t, class)
+    local c = Color(old_color.r, old_color.g, old_color.b)
+    local progress = class._progress_text
+    local t = 1
+    while true do
+        while t > 0 do
+            t = t - coroutine.yield()
+            local n = sin(t * 180)
+            c.r = lerp(old_color.r, color.r, n) --[[@as number]]
+            c.g = lerp(old_color.g, color.g, n) --[[@as number]]
+            c.b = lerp(old_color.b, color.b, n) --[[@as number]]
+            o:set_color(c)
+            progress:set_color(c)
+        end
+        t = 1
+    end
+end
 function EHIcac10Tracker:OverridePanel()
     self._max = 0
     self._progress = 0
@@ -19,27 +40,6 @@ function EHIcac10Tracker:OverridePanel()
     })
     self._text:set_left(self._progress_text:right())
     self:SetIconX()
-end
-
-function EHIcac10Tracker:AnimateColor()
-    if self._text and alive(self._text) then
-        self._text:animate(function(o)
-            local c = Color(self._text_color.r, self._text_color.g, self._text_color.b)
-            local t = 1
-            while true do
-                while t > 0 do
-                    t = t - coroutine.yield()
-                    local n = sin(t * 180)
-                    c.r = lerp(self._text_color.r, self._warning_color.r, n) --[[@as number]]
-                    c.g = lerp(self._text_color.g, self._warning_color.g, n) --[[@as number]]
-                    c.b = lerp(self._text_color.b, self._warning_color.b, n) --[[@as number]]
-                    o:set_color(c)
-                    self._progress_text:set_color(c)
-                end
-                t = 1
-            end
-        end)
-    end
 end
 
 function EHIcac10Tracker:SetProgressMax(max)

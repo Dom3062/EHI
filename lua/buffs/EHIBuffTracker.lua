@@ -390,6 +390,10 @@ function EHIBuffTracker:PreUpdateCheck()
     return true
 end
 
+---@param state boolean
+function EHIBuffTracker:SetCustodyState(state)
+end
+
 if progress then
     function EHIBuffTracker:update(dt)
         self._time = self._time - dt
@@ -414,4 +418,16 @@ if EHI:GetOption("time_format") == 1 then
     EHIBuffTracker.Format = tweak_data.ehi.functions.FormatSecondsOnly
 else
     EHIBuffTracker.Format = tweak_data.ehi.functions.FormatMinutesAndSeconds
+end
+
+function EHIBuffTracker:delete()
+    if self._panel and alive(self._panel) then
+        self._panel:stop()
+        self._panel:parent():remove(self._panel)
+    end
+    self:RemoveBuffFromUpdate()
+    if self._pos then
+        self:RemoveVisibleBuff()
+    end
+    self._parent_class._buffs[self._id] = nil
 end

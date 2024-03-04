@@ -212,9 +212,10 @@ EHILootCountTracker.SetProgress = EHILootCountTracker.SetCount
 ---@class EHILootMaxTracker : EHILootTracker
 ---@field super EHILootTracker
 EHILootMaxTracker = class(EHILootTracker)
+EHILootMaxTracker.CheckCanDeleteAfterSync = EHITracker.CheckCanDeleteAfterSync
 ---@param params EHITracker.params
-function EHILootMaxTracker:pre_init(params)
-    EHILootMaxTracker.super.pre_init(self, params)
+function EHILootMaxTracker:post_init(params)
+    EHILootMaxTracker.super.post_init(self, params)
     self._params = params.xp_params or {} ---@type LootCounterTable.MaxBagsForMaxLevel
     self._refresh_max = 5
     self._show_finish_after_reaching_target = true
@@ -223,7 +224,6 @@ function EHILootMaxTracker:pre_init(params)
     end
     EHI:AddCallback("ExperienceManager_RefreshPlayerCount", refresh)
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, refresh)
-    EHI:AddOnCustodyCallback(refresh)
     if EHI:IsClient() then
         EHI:AddCallback(EHI.CallbackMessage.LootLoadSync,
         ---@param loot LootManager
@@ -236,7 +236,15 @@ end
 
 function EHILootMaxTracker:PlayerSpawned()
     EHILootMaxTracker.super.PlayerSpawned(self)
+    if self._force_delete_on_spawn then
+        return
+    end
     self:AddTrackerToUpdate()
+end
+
+---@param state boolean
+function EHILootMaxTracker:OnPlayerCustody(state)
+    self:Refresh()
 end
 
 ---@param dt number

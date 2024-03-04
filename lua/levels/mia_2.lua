@@ -168,14 +168,9 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min =
+            min_max =
             {
-                objectives = true -- Optional objective not counted
-            },
-            max =
-            {
-                objectives = true,
-                loot_all = { times = 10 }
+                loot_all = { max = 10 }
             }
         }
     }

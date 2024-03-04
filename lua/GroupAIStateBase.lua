@@ -57,11 +57,12 @@ if EHI:ShowDramaTracker() and not tweak_data.levels:IsStealthRequired() then
         if managers.ehi_tracker:TrackerExists("Drama") then
             return
         end
-        local pos = managers.ehi_tracker:TrackerExists("Assault") and 1 or 0
+        local pos = (managers.ehi_tracker:TrackerExists("Assault") or managers.ehi_tracker:TrackerExists("AssaultDelay") or managers.ehi_tracker:TrackerExists("AssaultTime")) and 1 or 0
         managers.ehi_tracker:AddTracker({
             id = "Drama",
             icons = { "C_Escape_H_Street_Bullet" },
             class = EHI.Trackers.Chance,
+            disable_anim = true,
             flash_bg = false,
             hint = "drama"
         }, pos)

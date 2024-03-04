@@ -4,6 +4,18 @@
 --- SuperBLT ---
 ----------------
 
+---@class BLT
+---@field Mods BLTModManager
+_G.BLT = {}
+
+---@class BLTModManager
+---@field Mods fun(self: self): BLTMod[]
+
+---@class BLTMod
+---@field GetAuthor fun(self: self): string
+---@field GetName fun(self: self): string
+---@field IsEnabled fun(self: self): boolean
+
 ---@class Hooks
 ---@field Add fun(self: self, key: string, id: string, func: function)
 ---@field PostHook fun(self: self, object: table, func: string, id: string, post_call: function)

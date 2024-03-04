@@ -24,7 +24,6 @@ end
 function EHIPiggyBankMutatorTracker:OverridePanel()
     self:SetBGSize()
     self._levels_text = self:CreateText({
-        name = "levels_text",
         text = self:FormatLevels(),
         w = self._bg_box:w() / 2,
         left = self._text:right(),

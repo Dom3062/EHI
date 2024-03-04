@@ -25,7 +25,6 @@ function EHIbex11Tracker:OverridePanel()
     self._bg_size = self._bg_box:w()
     self:SetBGSize(self._bg_size)
     self._box_progress_text = self:CreateText({
-        name = "box_progress_text",
         text = self:FormatBoxProgress(),
         left = self._text:right()
     })
