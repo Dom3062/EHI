@@ -70,7 +70,7 @@ function EHIAssaultTracker:init(panel, params, parent_class)
     self.update_break = self.update
     if params.assault then
         self._assault = true
-        params.time = self:CalculateAssaultTime()
+        params.time = self:CalculateAssaultTime(parent_class)
         self._forced_icons[1].color = Build
         self.update = self.update_assault
     else
@@ -303,8 +303,9 @@ function EHIAssaultTracker:CalculateDifficultyDependentValue(values)
     return lerp(values[self._difficulty_point_index], values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
 end
 
+---@param parent_class EHITrackerManager?
 ---@return number
-function EHIAssaultTracker:CalculateAssaultTime()
+function EHIAssaultTracker:CalculateAssaultTime(parent_class)
     local build = assault_values.build_duration
     local sustain = lerp(self:CalculateDifficultyDependentValue(assault_values.sustain_duration_min), self:CalculateDifficultyDependentValue(assault_values.sustain_duration_max), math.random()) * managers.groupai:state():_get_balancing_multiplier(assault_values.sustain_duration_balance_mul)
     local fade = assault_values.fade_duration
@@ -317,8 +318,9 @@ function EHIAssaultTracker:CalculateAssaultTime()
         self._to_next_state_t = build
         self._next_state = State.sustain
         self._next_state_t = sustain
-        self._parent_class:SaveInternalData("assault", "sustain_t", self._assault_t)
-        self._parent_class:SaveInternalData("assault", "sustain_app_t", managers.game_play_central:get_heist_timer())
+        local parent = parent_class or self._parent_class
+        parent:SaveInternalData("assault", "sustain_t", self._assault_t)
+        parent:SaveInternalData("assault", "sustain_app_t", managers.game_play_central:get_heist_timer())
     else
         self._to_next_state_t = build + sustain
         self._next_state = State.fade

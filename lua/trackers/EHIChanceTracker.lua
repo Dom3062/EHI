@@ -18,6 +18,7 @@ EHIChanceTracker._anim = function(o, self)
             o:set_text(self:FormatChance(n))
         end
         o:set_text(self:FormatChance())
+        self:FitTheText(o)
     end
 end
 ---@param params EHITracker.params

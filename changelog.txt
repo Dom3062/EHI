@@ -1,3 +1,8 @@
+r225 (05. 03. 2024):
+Fixed a visual issue with animated chance in trackers
+Assault Tracker: Fixed a crash when assault started (client only)
+Slaughterhouse: Fixed a crash outside (client only)
+
 r224 (04. 03. 2024):
 Added options "Persistent Berserker", "Show Captain Spawn Chance" and "Damage Absorption"
 Buffs: Added count of how many cooldowns are currently running in Hacker PECM
