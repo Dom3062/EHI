@@ -35,6 +35,7 @@ function DigitalGui:init(unit, ...)
     self._ehi_key = tostring(unit:key())
     self._ignore_visibility = false
     self._ehi_hint = "timelock"
+    self._ehi_group = "timer"
     if not show_waypoint_only then
         EHI:OptionAndLoadTracker("show_timers")
     end
@@ -49,13 +50,15 @@ function DigitalGui:TimerStartCountDown()
         return
     end
     if not show_waypoint_only then
-        managers.ehi_tracker:AddTracker({
+        managers.ehi_timer:StartTimer({
             id = self._ehi_key,
+            key = self._ehi_key,
             time = self._timer,
             icons = self._icons or { Icon.PCHack },
             warning = self._warning,
             completion = self._completion,
             hint = self._ehi_hint,
+            group = self._ehi_group,
             class = "EHITimerTracker"
         })
     end
@@ -130,14 +133,14 @@ else
         end
     else
         function DigitalGui:_update_timer_text(...)
-            managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._timer)
+            managers.ehi_timer:SetTimerTime(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
     end
     ---@param timer number
     function DigitalGui:timer_set(timer, ...)
         original.timer_set(self, timer, ...)
-        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, timer)
+        managers.ehi_timer:SetTimerTime(self._ehi_key, timer)
         managers.ehi_waypoint:SetWaypointTime(self._ehi_key, timer)
     end
 end
@@ -195,7 +198,7 @@ function DigitalGui:set_visible(visible, ...)
 end
 
 function DigitalGui:RemoveTracker()
-    managers.ehi_manager:Remove(self._ehi_key)
+    managers.ehi_manager:RemoveTimer(self._ehi_key)
 end
 
 ---@param data table
@@ -264,7 +267,7 @@ end
 function DigitalGui:SetWarning(warning)
     self._warning = warning
     if self._timer_count_down and warning then
-        managers.ehi_tracker:CallFunction(self._ehi_key, "SetAnimation")
+        managers.ehi_tracker:CallFunction(self._ehi_key, "SetAnimation", false, self._ehi_key)
     end
 end
 
@@ -272,7 +275,7 @@ end
 function DigitalGui:SetCompletion(completion)
     self._completion = completion
     if self._timer_count_down and completion then
-        managers.ehi_tracker:CallFunction(self._ehi_key, "SetAnimation", true)
+        managers.ehi_tracker:CallFunction(self._ehi_key, "SetAnimation", true, self._ehi_key)
     end
 end
 

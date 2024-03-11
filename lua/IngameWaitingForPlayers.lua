@@ -371,9 +371,7 @@ end
 local _f_at_exit = IngameWaitingForPlayersState.at_exit
 function IngameWaitingForPlayersState:at_exit(...)
     _f_at_exit(self, ...)
-    if not Global.hud_disabled then
-        EHI:CallCallback(EHI.CallbackMessage.HUDVisibilityChanged, true)
-    end
+    EHI:CallCallback(EHI.CallbackMessage.HUDVisibilityChanged, not Global.hud_disabled)
     --[[if level == "flat" and EHI:IsAchievementLocked("flat_5") then
         managers.ehi_tracker:AddTracker({
             id = "flat_5",

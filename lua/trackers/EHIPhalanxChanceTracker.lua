@@ -50,6 +50,8 @@ function EHIPhalanxChanceTracker:AssaultStart()
             self:IncreaseChance(self._chance_increase)
         end
         self._increase_chance_at_next_assault = nil
+    elseif self._first_assault then
+        self:SetTimeNoAnim(self._t_refresh)
     end
     self._chance_increase_enabled = true
     self._color_lock = false

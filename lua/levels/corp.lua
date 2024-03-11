@@ -12,17 +12,10 @@ EHIcorp9Tracker._show_desc = EHIAchievementTracker._show_desc
 EHIcorp9Tracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
 EHIcorp9Tracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
 EHIcorp9Tracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
----@param panel Panel
----@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIcorp9Tracker:init(panel, params, parent_class)
-    EHIcorp9Tracker.super.init(self, panel, params, parent_class)
-    if self._show_started then
-        self:ShowStartedPopup()
-    end
-    if self._show_desc then
-        self:ShowAchievementDescription()
-    end
+function EHIcorp9Tracker:init(...)
+    EHIcorp9Tracker.super.init(self, ...)
+    self:ShowStartedPopup()
+    self:ShowAchievementDescription()
 end
 
 function EHIcorp9Tracker:OverridePanel()

@@ -185,6 +185,48 @@
         },
         {
             "type": "toggle",
+            "id": "ehi_buffs_other_damage_reduction_choice",
+            "title": "ehi_buffs_other_damage_reduction",
+            "callback": "SetBuffOption",
+            "callback_arguments": "damage_reduction",
+            "value": "damage_reduction",
+            "is_parent" : true,
+            "default_value": true,
+            "ehi_ver" : 226
+        },
+        {
+            "type": "slider",
+            "id": "ehi_buffs_other_damage_reduction_refresh_choice",
+            "title": "ehi_buffs_other_damage_reduction_refresh",
+            "description": "ehi_buffs_other_damage_reduction_refresh_desc",
+            "callback": "SetBuffOption",
+            "callback_arguments": "damage_reduction_refresh",
+            "value": "damage_reduction_refresh",
+            "parent" : "ehi_buffs_other_damage_reduction_choice",
+            "default_value": 1,
+            "max": 10,
+            "min": 1,
+            "step": 0,
+            "ehi_ver" : 226
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_other_damage_reduction_persistent_choice",
+            "title": "ehi_buffs_other_damage_reduction_persistent",
+            "description" : "ehi_buffs_other_damage_reduction_persistent_desc",
+            "callback": "SetBuffOption",
+            "callback_arguments": "damage_reduction_persistent",
+            "value": "damage_reduction_persistent",
+            "parent" : "ehi_buffs_other_damage_reduction_choice",
+            "default_value": false,
+            "ehi_ver" : 226
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
             "id": "ehi_buffs_other_inspire_ai_choice",
             "title": "ehi_buffs_other_inspire_ai",
             "description": "ehi_buffs_skills_cooldown",

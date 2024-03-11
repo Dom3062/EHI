@@ -64,11 +64,10 @@ _G.EHI =
         {
             BagsOnly = 1,
             ValueOfBags = 2,
-            SmallLootOnly = 3, -- Currently unused
-            ValueOfSmallLoot = 4,
-            CheckTypeOfLoot = 5,
-            CustomCheck = 6,
-            Debug = 7
+            ValueOfSmallLoot = 3,
+            CheckTypeOfLoot = 4,
+            CustomCheck = 5,
+            Debug = 6
         }
     },
 
@@ -707,6 +706,7 @@ local function LoadDefaultValues(self)
         show_trade_delay_suppress_in_stealth = true,
         show_trade_delay_amount_of_killed_civilians = false,
         show_timers = true,
+        show_timers_max_in_group = 4, -- 1 - 10
         show_camera_loop = true,
         show_enemy_turret_trackers = true,
         show_zipline_timer = true,
@@ -950,6 +950,9 @@ local function LoadDefaultValues(self)
             damage_absorption = true,
             damage_absorption_refresh = 1, -- 1 / value
             damage_absorption_persistent = false,
+            damage_reduction = true,
+            damage_reduction_refresh = 1, -- 1 / value
+            damage_reduction_persistent = false,
             inspire_ai = true,
             regen_throwable_ai = true,
             health = false,

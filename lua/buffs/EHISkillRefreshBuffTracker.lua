@@ -1,12 +1,11 @@
 ---@class EHISkillRefreshBuffTracker : EHIGaugeBuffTracker
 ---@field super EHIGaugeBuffTracker
+---@field _refresh_option string?
 EHISkillRefreshBuffTracker = class(EHIGaugeBuffTracker)
----@param panel Panel
----@param params table
-function EHISkillRefreshBuffTracker:init(panel, params, ...)
-    EHISkillRefreshBuffTracker.super.init(self, panel, params, ...)
+function EHISkillRefreshBuffTracker:init(...)
+    EHISkillRefreshBuffTracker.super.init(self, ...)
     self._skill_value = 0
-    self._refresh_time = params.refresh_option and (1 / EHI:GetBuffOption(params.refresh_option)) or 1
+    self._refresh_time = self._refresh_option and (1 / EHI:GetBuffOption(self._refresh_option)) or 1
     self._time = self._refresh_time
 end
 
@@ -19,7 +18,7 @@ end
 function EHISkillRefreshBuffTracker:SetCustodyState(state)
     if state then
         self:RemoveBuffFromUpdate()
-        self._skill_value = 0
+        self._skill_value = -1
         self:Deactivate()
     else
         self._time = self._refresh_time
@@ -63,13 +62,7 @@ end
 ---@field super EHISkillRefreshBuffTracker
 EHIDodgeChanceBuffTracker = class(EHISkillRefreshBuffTracker)
 EHIDodgeChanceBuffTracker._DODGE_INIT = tweak_data.player.damage.DODGE_INIT or 0
----@param panel Panel
----@param params table
-function EHIDodgeChanceBuffTracker:init(panel, params, ...)
-    params.refresh_option = "dodge_refresh"
-    EHIDodgeChanceBuffTracker.super.init(self, panel, params, ...)
-end
-
+EHIDodgeChanceBuffTracker._refresh_option = "dodge_refresh"
 function EHIDodgeChanceBuffTracker:UpdateValue()
     local player = self._player_manager:player_unit()
     if player == nil then
@@ -113,12 +106,9 @@ end
 ---@class EHICritChanceBuffTracker : EHISkillRefreshBuffTracker
 ---@field super EHISkillRefreshBuffTracker
 EHICritChanceBuffTracker = class(EHISkillRefreshBuffTracker)
----@param panel Panel
----@param params table
-function EHICritChanceBuffTracker:init(panel, params, ...)
-    params.refresh_option = "crit_refresh"
-    EHICritChanceBuffTracker.super.init(self, panel, params, ...)
-    self._detection_risk = 0
+EHICritChanceBuffTracker._refresh_option = "crit_refresh"
+function EHICritChanceBuffTracker:init(...)
+    EHICritChanceBuffTracker.super.init(self, ...)
     self._update_disabled = true
 end
 
@@ -162,15 +152,8 @@ function EHICritChanceBuffTracker:SetCustodyState(state)
 end
 
 ---@class EHIDamageAbsorptionBuffTracker : EHISkillRefreshBuffTracker
----@field super EHISkillRefreshBuffTracker
 EHIDamageAbsorptionBuffTracker = class(EHISkillRefreshBuffTracker)
----@param panel Panel
----@param params table
-function EHIDamageAbsorptionBuffTracker:init(panel, params, ...)
-    params.refresh_option = "damage_absorption_refresh"
-    EHIDamageAbsorptionBuffTracker.super.init(self, panel, params, ...)
-end
-
+EHIDamageAbsorptionBuffTracker._refresh_option = "damage_absorption_refresh"
 function EHIDamageAbsorptionBuffTracker:UpdateValue()
     local absorption = self._player_manager:damage_absorption()
     if self._skill_value == absorption then
@@ -195,4 +178,20 @@ end
 
 function EHIDamageAbsorptionBuffTracker:NetworkClosed()
     self:RemoveBuffFromUpdate()
+end
+
+---@class EHIDamageReductionBuffTracker : EHISkillRefreshBuffTracker
+EHIDamageReductionBuffTracker = class(EHISkillRefreshBuffTracker)
+EHIDamageReductionBuffTracker._refresh_option = "damage_reduction_refresh"
+function EHIDamageReductionBuffTracker:UpdateValue()
+    local reduction = 1 - self._player_manager:damage_reduction_skill_multiplier("bullet")
+    if self._skill_value == reduction then
+        return
+    elseif self._persistent or reduction > 0 then
+        self:SetRatio(reduction)
+        self:Activate()
+    else
+        self:Deactivate()
+    end
+    self._skill_value = reduction
 end

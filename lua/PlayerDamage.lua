@@ -118,32 +118,6 @@ if EHI:GetBuffOption("hostage_taker_muscle") then
     end
 end
 
---////////////////////--
---//  Ex-President  //--
---////////////////////--
-if EHI:GetBuffDeckOption("expresident", "stored_health") then
-    original.update_armor_stored_health = PlayerDamage.update_armor_stored_health
-    function PlayerDamage:update_armor_stored_health(...)
-        original.update_armor_stored_health(self, ...)
-        managers.ehi_buff:CallFunction("ExPresident", "SetStoredHealthMaxAndUpdateRatio", self:max_armor_stored_health(), self._armor_stored_health)
-    end
-
-    original.add_armor_stored_health = PlayerDamage.add_armor_stored_health
-    function PlayerDamage:add_armor_stored_health(...)
-        local previous = self._armor_stored_health
-        original.add_armor_stored_health(self, ...)
-        if previous ~= self._armor_stored_health and not self._check_berserker_done then
-            managers.ehi_buff:CallFunction("ExPresident", "SetRatio", nil, self._armor_stored_health)
-        end
-    end
-
-    original.clear_armor_stored_health = PlayerDamage.clear_armor_stored_health
-    function PlayerDamage:clear_armor_stored_health(...)
-        original.clear_armor_stored_health(self, ...)
-        managers.ehi_buff:CallFunction("ExPresident", "SetRatio", nil, self._armor_stored_health)
-    end
-end
-
 --/////////////////--
 --//  Anarchist  //--
 --/////////////////--

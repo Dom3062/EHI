@@ -1,5 +1,8 @@
 local EHI = EHI
 local Color = Color
+
+---@alias EHITimerGroupTracker.Timer { label: PanelText, time: number, jammed: boolean, powered: boolean, autorepair: boolean, animate_warning: boolean?, animate_completion: boolean?, anim_started: boolean, pos: number }
+
 ---@class EHITimerTracker : EHIWarningTracker
 ---@field super EHIWarningTracker
 ---@field _icon2 PanelBitmap?
@@ -28,7 +31,6 @@ end
 function EHITimerTracker:post_init(params)
     self._theme = params.theme
     self:SetUpgradeable(false)
-    self._paused = false
     self._jammed = false
     self._not_powered = false
     if params.upgrades then
@@ -171,6 +173,231 @@ end
 
 function EHITimerTracker:IsTimerRunning()
     return self._bg_box:w() == self._bg_box_double
+end
+
+---@class EHITimerGroupTracker : EHITimerTracker
+---@field super EHITimerTracker
+EHITimerGroupTracker = class(EHITimerTracker)
+EHITimerGroupTracker._init_create_text = false
+---@param params EHITracker.params
+function EHITimerGroupTracker:pre_init(params)
+    self._timer_parent = params.timer_parent --[[@as EHITimerManager]]
+    self._group = params.group --[[@as string]]
+    self._subgroup = params.subgroup or 1 --[[@as number]]
+    self._i_subgroup = params.i_subgroup or 1 --[[@as number]]
+    EHITimerGroupTracker.super.pre_init(self, params)
+end
+
+---@param params EHITracker.params
+function EHITimerGroupTracker:post_init(params)
+    self._bg_box_w = self._bg_box:w()
+    self._timers = {} --[[@as table<string, EHITimerGroupTracker.Timer?>]]
+    self._timers_n = 0
+    if params.key and params.time then
+        self:AddTimer(params.time, params.key)
+    end
+    EHITimerGroupTracker.super.post_init(self, params)
+end
+
+---@param timer EHITimerGroupTracker.Timer
+---@param check_progress boolean?
+---@param color Color?
+function EHITimerGroupTracker:AnimateColor(timer, check_progress, color)
+    local start_t = check_progress and (1 - math.min(EHI:RoundNumber(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
+    timer.label:animate(self._anim, self._text_color, color or (timer.animate_completion and self._completion_color or self._warning_color), start_t, self)
+end
+
+---@param t number
+---@param id string Unit Key
+---@param warning boolean?
+function EHITimerGroupTracker:AddTimer(t, id, warning)
+    local label = self:CreateText({
+        text = self:FormatTime(t),
+        x = self._timers_n * self._bg_box_w,
+        w = self._bg_box_w
+    })
+    self._timers[id] =
+    {
+        label = label,
+        time = t,
+        powered = true,
+        animate_warning = warning,
+        pos = self._timers_n
+    }
+    self._timers_n = self._timers_n + 1
+    if self._timers_n >= 2 then
+        self:AnimateMovement(self._timers_n)
+    end
+end
+
+---@param time number
+---@param id string Unit Key
+function EHITimerGroupTracker:SetTimeNoAnim(time, id) -- No fit text function needed, these timers just run down
+    local timer = self._timers[id]
+    if timer then
+        timer.time = time
+        timer.label:set_text(self:FormatTime(time))
+        if time <= 10 and timer.animate_warning and not timer.anim_started then
+            timer.anim_started = true
+            self:AnimateColor(timer)
+        end
+    end
+end
+
+---@param t number
+---@param time string
+---@param id string Unit Key
+function EHITimerGroupTracker:SetTimeNoFormat(t, time, id) -- No fit text function needed, these timers just run down
+    local timer = self._timers[id]
+    if timer then
+        timer.time = t
+        timer.label:set_text(time)
+        if t <= 10 and timer.animate_warning and not timer.anim_started then
+            timer.anim_started = true
+            self:AnimateColor(timer)
+        end
+    end
+end
+
+---@param id string Unit Key
+function EHITimerGroupTracker:StopTimer(id)
+    local timer = self._timers[id]
+    if not timer or self._timers_n <= 1 then -- If the amount of timers in this tracker is 1, the manager will delete the tracker
+        return
+    end
+    timer.label:stop()
+    timer.label:parent():remove(timer.label)
+    local pos = timer.pos
+    self._timers[id] = nil
+    for _, t in pairs(self._timers) do
+        if t.pos > pos then
+            local new_pos = t.pos - 1
+            t.pos = new_pos
+            t.label:set_x(new_pos * self._bg_box_w)
+        end
+    end
+    if self._timers_n >= 2 then
+        self:AnimateMovement(self._timers_n - 1, true)
+    end
+    self._timers_n = self._timers_n - 1
+end
+
+function EHITimerGroupTracker:Redraw()
+    for _, timer in ipairs(self._timers) do
+        self:FitTheText(timer.label)
+    end
+end
+
+---@param n number
+---@param delete boolean?
+function EHITimerGroupTracker:AnimateMovement(n, delete)
+    local w = self._bg_box_w * n
+    if delete then
+        self._panel_override_w = self._panel_override_w - self._bg_box_w
+    else
+        self._panel_override_w = self._panel_override_w + self._bg_box_w
+    end
+    self:AnimatePanelWAndRefresh(self._panel_override_w)
+    self:ChangeTrackerWidth(self._panel_override_w)
+    self:AnimIconsX(w)
+    self:SetBGSize(w, "set", true)
+end
+
+---@param jammed boolean
+---@param id string
+function EHITimerGroupTracker:SetJammed(jammed, id)
+    local timer = self._timers[id]
+    if timer then
+        if timer.anim_started then
+            timer.label:stop()
+            timer.anim_started = false
+        end
+        timer.jammed = jammed
+        self:SetTextColor(timer)
+    end
+end
+
+---@param powered boolean
+---@param id string
+function EHITimerGroupTracker:SetPowered(powered, id)
+    local timer = self._timers[id]
+    if timer then
+        if timer.anim_started then
+            timer.label:stop()
+            timer.anim_started = false
+        end
+        timer.powered = powered
+        self:SetTextColor(timer)
+    end
+end
+
+---@param id string
+function EHITimerGroupTracker:SetRunning(id)
+    self:SetJammed(false, id)
+    self:SetPowered(true, id)
+end
+
+---@param timer EHITimerGroupTracker.Timer
+function EHITimerGroupTracker:SetTextColor(timer)
+    local text = timer.label
+    if timer.jammed or not timer.powered then
+        text:set_color(self._paused_color)
+    else
+        text:set_color(Color.white)
+        if timer.time <= 10 and timer.animate_warning and not timer.anim_started then
+            timer.anim_started = true
+            self:AnimateColor(timer, true)
+        end
+    end
+end
+
+---@param state boolean
+---@param id string
+function EHITimerGroupTracker:SetAutorepair(state, id)
+    local timer = self._timers[id]
+    if timer then
+        if timer.jammed or not timer.powered then
+            if state then
+                self:AnimateColor(timer, false, self._autorepair_color)
+            end
+            return
+        elseif not timer.anim_started then
+            timer.label:stop()
+            timer.label:set_color(Color.white)
+        end
+    end
+end
+
+---@param completion boolean
+---@param id string Unit Key
+function EHITimerGroupTracker:SetAnimation(completion, id)
+    local timer = self._timers[id]
+    if timer then
+        timer.animate_warning = true
+        timer.animate_completion = completion
+        if timer.time <= 10 and not timer.anim_started then
+            timer.anim_started = true
+            self:AnimateColor(timer, true)
+        end
+    end
+end
+
+function EHITimerGroupTracker:GetGroupData()
+    return self._group, self._subgroup, self._i_subgroup
+end
+
+---@param id string Unit Key
+function EHITimerGroupTracker:IsTimerRunning(id)
+    return self._timers[id] ~= nil
+end
+
+function EHITimerGroupTracker:delete()
+    for _, timer in pairs(self._timers) do
+        if timer.label and alive(timer.label) then
+            timer.label:stop()
+        end
+    end
+    EHITimerGroupTracker.super.delete(self)
 end
 
 ---@class EHIProgressTimerTracker : EHITimerTracker, EHIProgressTracker, EHITimedChanceTracker

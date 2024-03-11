@@ -375,6 +375,9 @@
     "ehi_show_timers" : "Zobrazovat časovače",
     "ehi_show_timers_desc" : "Zobrazuje časovače, když zařízení hackuje, vrtá, řeže a tak dále...",
 
+    "ehi_show_timers_max_in_group" : "Počet časovaců ve skupině",
+    "ehi_show_timers_max_in_group_desc" : "Nastavuje maximální počet časovaců v jednom sledovači. Pokud je maximum překročeno, je vytvořen další sledovač, kde se tento časovač (a nebo další) objeví.\n\nChcete-li tuto funkci zakázat, nastavte hodnotu na '1'.",
+
     "ehi_show_camera_loop" : "Zobrazovat kameru se zpětnou smyčkou",
     "ehi_show_camera_loop_desc" : "Zobrazuje sledovač, když je bezpečnostní kamera ve smyčce",
 
@@ -759,6 +762,11 @@
     "ehi_buffs_other_damage_absorption_refresh_desc" : "Nastavuje jak často se má buff aktualizovat za sekundu",
     "ehi_buffs_other_damage_absorption_persistent" : "Neschovávat Absorpci poškození",
     "ehi_buffs_other_damage_absorption_persistent_desc" : "Buff zůstane na obrazovce když je tvoje absorpce nižší než 0",
+    "ehi_buffs_other_damage_reduction" : "Snížení utrženého poškození",
+    "ehi_buffs_other_damage_reduction_refresh" : "Aktualizace snížení utrženého poškození",
+    "ehi_buffs_other_damage_reduction_refresh_desc" : "Nastavuje jak často se má buff aktualizovat za sekundu",
+    "ehi_buffs_other_damage_reduction_persistent" : "Neschovávat Snížení utrženého poškození",
+    "ehi_buffs_other_damage_reduction_persistent_desc" : "Buff zůstane na obrazovce, když je tvoje snížení menší než 0 %",
     "ehi_buffs_other_inspire_ai" : "Inspire (AI)",
     "ehi_buffs_other_regen_throwable_ai" : "Obnovení granátu (AI)",
     "ehi_buffs_other_health" : "Tvoje hodnota zdraví",

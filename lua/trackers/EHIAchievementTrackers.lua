@@ -11,12 +11,8 @@ EHIAchievementTracker._show_desc = EHI:GetUnlockableOption("show_achievement_des
 ---@param params EHITracker.params
 function EHIAchievementTracker:post_init(params)
     self._beardlib = params.beardlib
-    if self._show_started then
-        self:ShowStartedPopup()
-    end
-    if self._show_desc then
-        self:ShowAchievementDescription()
-    end
+    self:ShowStartedPopup()
+    self:ShowAchievementDescription()
     self:PrepareHint(params)
 end
 
@@ -45,21 +41,17 @@ function EHIAchievementTracker:SetFailed()
     self.update = self.update_fade
     self:SetTextColor(Color.red)
     self:AnimateBG()
-    if self._show_failed then
-        self:ShowFailedPopup()
-    end
+    self:ShowFailedPopup()
 end
 
 function EHIAchievementTracker:delete()
-    if self._show_failed then
-        self:ShowFailedPopup()
-    end
+    self:ShowFailedPopup()
     EHIAchievementTracker.super.delete(self)
 end
 
 ---@param delay_popup boolean?
 function EHIAchievementTracker:ShowStartedPopup(delay_popup)
-    if delay_popup or self._started_popup_showed or self._failed_on_sync then ---@diagnostic disable-line
+    if delay_popup or self._started_popup_showed or self._failed_on_sync or not self._show_started then ---@diagnostic disable-line
         return
     end
     if self._popup_type == "daily" then
@@ -73,7 +65,7 @@ function EHIAchievementTracker:ShowStartedPopup(delay_popup)
 end
 
 function EHIAchievementTracker:ShowFailedPopup()
-    if self._failed_popup_showed or self._achieved_popup_showed or self._no_failure then ---@diagnostic disable-line
+    if self._failed_popup_showed or self._achieved_popup_showed or self._no_failure or not self._show_failed then ---@diagnostic disable-line
         return
     end
     self._failed_popup_showed = true
@@ -88,7 +80,7 @@ end
 
 ---@param delay_popup boolean?
 function EHIAchievementTracker:ShowAchievementDescription(delay_popup)
-    if delay_popup or self._desc_showed or self._failed_on_sync then ---@diagnostic disable-line
+    if delay_popup or self._desc_showed or self._failed_on_sync or not self._show_desc then ---@diagnostic disable-line
         return
     end
     if self._popup_type == "achievement" then
@@ -106,12 +98,8 @@ function EHIAchievementTracker:PlayerSpawned()
     if self._force_delete_on_spawn then
         return
     end
-    if self._show_started then
-        self:ShowStartedPopup()
-    end
-    if self._show_desc then
-        self:ShowAchievementDescription()
-    end
+    self:ShowStartedPopup()
+    self:ShowAchievementDescription()
 end
 
 function EHIAchievementTracker:save(data)
@@ -141,14 +129,11 @@ function EHIAchievementProgressTracker:init(panel, params, ...)
     self._beardlib = params.beardlib
     self:PrepareHint(params)
     EHIAchievementProgressTracker.super.init(self, panel, params, ...)
-    if self._show_started then
-        self:ShowStartedPopup(params.delay_popup)
-    end
-    if self._show_desc then
-        self:ShowAchievementDescription(params.delay_popup)
-    end
+    self:ShowStartedPopup(params.delay_popup)
+    self:ShowAchievementDescription(params.delay_popup)
 end
 
+---@param force boolean?
 function EHIAchievementProgressTracker:SetCompleted(force)
     self._achieved_popup_showed = true
     EHIAchievementProgressTracker.super.SetCompleted(self, force)
@@ -159,9 +144,7 @@ function EHIAchievementProgressTracker:SetFailed()
     if self._status_is_overridable then
         self._achieved_popup_showed = nil
     end
-    if self._show_failed then
-        self:ShowFailedPopup()
-    end
+    self:ShowFailedPopup()
 end
 
 function EHIAchievementProgressTracker:CheckCanDeleteAfterSync()
@@ -193,12 +176,8 @@ EHIAchievementUnlockTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
 ---@param params EHITracker.params
 function EHIAchievementUnlockTracker:post_init(params)
     self._beardlib = params.beardlib
-    if self._show_started then
-        self:ShowStartedPopup()
-    end
-    if self._show_desc then
-        self:ShowAchievementDescription()
-    end
+    self:ShowStartedPopup()
+    self:ShowAchievementDescription()
     self:PrepareHint(params)
 end
 
@@ -225,12 +204,8 @@ EHIAchievementBagValueTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawne
 ---@param params EHITracker.params
 function EHIAchievementBagValueTracker:post_init(params)
     self._beardlib = params.beardlib
-    if self._show_started then
-        self:ShowStartedPopup(params.delay_popup)
-    end
-    if self._show_desc then
-        self:ShowAchievementDescription(params.delay_popup)
-    end
+    self:ShowStartedPopup(params.delay_popup)
+    self:ShowAchievementDescription(params.delay_popup)
     self:PrepareHint(params)
 end
 
@@ -257,10 +232,9 @@ EHIAchievementStatusTracker.update = EHIAchievementStatusTracker.update_fade
 EHIAchievementStatusTracker._update = false
 ---@param panel Panel
 ---@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIAchievementStatusTracker:init(panel, params, parent_class)
+function EHIAchievementStatusTracker:init(panel, params, ...)
     self._status = params.status or "ok"
-    EHIAchievementStatusTracker.super.init(self, panel, params, parent_class)
+    EHIAchievementStatusTracker.super.init(self, panel, params, ...)
     self:SetTextColor()
 end
 
@@ -295,9 +269,7 @@ function EHIAchievementStatusTracker:SetFailed()
     self:SetStatus("fail")
     self:AddTrackerToUpdate()
     self._dont_override_status = true
-    if self._show_failed then
-        self:ShowFailedPopup()
-    end
+    self:ShowFailedPopup()
 end
 
 local green_status =
@@ -324,6 +296,7 @@ local yellow_status =
     mark = true,
     objective = true
 }
+---@param color Color?
 function EHIAchievementStatusTracker:SetTextColor(color)
     local c
     if color then

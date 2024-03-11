@@ -36,6 +36,7 @@ function EHIManager:new(managers)
     self._experience = managers.ehi_experience
     self._assault = managers.ehi_assault
     self._phalanx = managers.ehi_phalanx
+    self._timer = managers.ehi_timer
     self._level_started_from_beginning = true
     self._t = 0
     self.TrackerWaypointsClass =
@@ -405,27 +406,43 @@ end
 ---@param id string
 ---@param jammed boolean
 function EHIManager:SetTimerJammed(id, jammed)
-    self._trackers:SetTimerJammed(id, jammed)
+    self._timer:SetTimerJammed(id, jammed)
     self._waypoints:SetTimerWaypointJammed(id, jammed)
 end
 
 ---@param id string
 ---@param powered boolean
 function EHIManager:SetTimerPowered(id, powered)
-    self._trackers:SetTimerPowered(id, powered)
+    self._timer:SetTimerPowered(id, powered)
     self._waypoints:SetTimerWaypointPowered(id, powered)
 end
 
 ---@param id string
 function EHIManager:SetTimerRunning(id)
-    self._trackers:SetTimerRunning(id)
+    self._timer:SetTimerRunning(id)
     self._waypoints:SetTimerWaypointRunning(id)
+end
+
+---@param id string
+---@param state boolean
+function EHIManager:SetTimerAutorepair(id, state)
+    self._timer:SetTimerAutorepair(id, state)
+    self._waypoints:CallFunction(id, "SetAutorepair", state)
 end
 
 ---@param id string
 ---@return boolean
 function EHIManager:IsTimerMergeRunning(id)
-    return self._trackers:ReturnValue(id, "IsTimerRunning") or self._waypoints:WaypointExists(id)
+    return self._timer:IsTimerMergeRunning(id) or self._waypoints:WaypointExists(id)
+end
+
+function EHIManager:TimerExists(id)
+    return self._timer:TimerExists(id) or self._waypoints:WaypointExists(id)
+end
+
+function EHIManager:RemoveTimer(id)
+    self._timer:StopTimer(id)
+    self._waypoints:RemoveWaypoint(id)
 end
 
 ---@param id string
@@ -1686,7 +1703,7 @@ if EHI:GetOption("show_timers") and EHI:GetWaypointOption("show_waypoints_timers
     ---@param t number
     function EHIManager:UpdateTimer(id, t)
         local t_string = self:FormatTimer(t)
-        self._trackers:CallFunction(id, "SetTimeNoFormat", t, t_string)
+        self._timer:SetTimerTimeNoFormat(id, t, t_string)
         self._waypoints:CallFunction(id, "SetTimeNoFormat", t, t_string)
     end
 end

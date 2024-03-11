@@ -2,6 +2,8 @@
 ---@field get_instance_data_by_name fun(self: self, instance_name: string): table?
 ---@field instance_data fun(self: self): table
 
+---@alias CoreWorldInstanceManager.Instance { folder: string, start_index: number, continent: string, rotation: Rotation }
+
 local EHI = EHI
 if EHI:CheckLoadHook("CoreWorldInstanceManager") then
     return
@@ -542,7 +544,7 @@ local EHIConfig =
     mission_trackers = EHI:GetOption("show_mission_trackers")
 }
 
----@param instance { folder: string, start_index: number, continent: string, rotation: Rotation }
+---@param instance CoreWorldInstanceManager.Instance
 function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
     local instance_data = original.prepare_mission_data(self, instance, ...)
     local folder = instance.folder
@@ -551,7 +553,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
         -- Don't compute the indexes again if the instance on this start_index has been computed already  
         -- `start_index` is unique for each instance in a heist, so this shouldn't break anything
         if not used_start_indexes[start_index] then
-            local continent_data = managers.worlddefinition._continents[instance.continent] --[[@as { base_id: number }]]
+            local continent_data = managers.worlddefinition._continents[instance.continent]
             local triggers = {}
             local waypoints = {}
             local mission_waypoints = {}

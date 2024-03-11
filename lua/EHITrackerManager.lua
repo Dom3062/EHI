@@ -711,32 +711,6 @@ function EHITrackerManager:SetTrackerTimeNoAnim(id, time)
 end
 
 ---@param id string
----@param jammed boolean
-function EHITrackerManager:SetTimerJammed(id, jammed)
-    local tracker = self:GetTracker(id) --[[@as EHITimerTracker]]
-    if tracker and tracker.SetJammed then
-        tracker:SetJammed(jammed)
-    end
-end
-
----@param id string
----@param powered boolean
-function EHITrackerManager:SetTimerPowered(id, powered)
-    local tracker = self:GetTracker(id) --[[@as EHITimerTracker]]
-    if tracker and tracker.SetPowered then
-        tracker:SetPowered(powered)
-    end
-end
-
----@param id string
-function EHITrackerManager:SetTimerRunning(id)
-    local tracker = self:GetTracker(id) --[[@as EHITimerTracker]]
-    if tracker and tracker.SetRunning then
-        tracker:SetRunning()
-    end
-end
-
----@param id string
 ---@param icon string
 function EHITrackerManager:SetTrackerIcon(id, icon)
     local tracker = self:GetTracker(id)

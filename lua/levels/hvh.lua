@@ -1,12 +1,6 @@
 local EHI = EHI
-local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local other = {
-    [100181] = { special_function = SF.CustomCode, f = function()
-        EHI:CallCallback("hvh_CleanUp")
-    end}
-}
 
 ---@type ParseAchievementTable
 local achievements =
@@ -26,8 +20,7 @@ local achievements =
     }
 }
 EHI:ParseTriggers({
-    achievement = achievements,
-    other = other
+    achievement = achievements
 })
 EHI:ShowLootCounter({ no_max = true })
 
@@ -45,7 +38,7 @@ local tbl =
 
     --units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small
     [100029] = { ignore = true },
-    [100878] = { icons = { Icon.Wait }, custom_callback = { id = "hvh_CleanUp", f = "remove" } }
+    [100878] = { ignore = true }
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({

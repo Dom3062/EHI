@@ -804,6 +804,7 @@ end
 ---@field ehi_experience EHIExperienceManager
 ---@field ehi_achievement EHIAchievementManager
 ---@field ehi_phalanx EHIPhalanxManager
+---@field ehi_timer EHITimerManager
 ---@field enemy EnemyManager
 ---@field environment_effects EnvironmentEffectsManager
 ---@field experience ExperienceManager

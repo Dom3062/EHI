@@ -34,6 +34,7 @@
 ---@field num_local_minions fun(self: self): number
 ---@field get_infamy_exp_multiplier fun(self: self): number
 ---@field damage_absorption fun(self: self): number
+---@field damage_reduction_skill_multiplier fun(self: self, damage_type: string): number
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then

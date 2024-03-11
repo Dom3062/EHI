@@ -372,11 +372,12 @@ elseif alignment == 2 then -- Center
         if self._n_visible == 0 then
             return
         elseif self._n_visible == 1 then
+            local center_x = self._panel:center_x()
             if removal then
                 local _, v_buff = next(self._visible_buffs) ---@cast v_buff -?
-                v_buff:SetCenterDefaultX(self._panel:center_x())
+                v_buff:SetCenterDefaultX(center_x)
             else
-                buff:SetCenterDefaultX(self._panel:center_x())
+                buff:SetCenterDefaultX(center_x)
             end
         else
             local even = self._n_visible % 2 == 0

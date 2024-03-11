@@ -3,13 +3,13 @@ if EHI:CheckLoadHook("CriminalsManager") or EHI:IsXPTrackerHidden() then
     return
 end
 
----@class CriminalsManager_CharacterData
+---@class CriminalsManager.CharacterData
 ---@field taken boolean
 ---@field data { ai: boolean }
 
 ---@class CriminalsManager
----@field _characters CriminalsManager_CharacterData[]
----@field character_by_name fun(self: self, name: string): CriminalsManager_CharacterData?
+---@field _characters CriminalsManager.CharacterData[]
+---@field character_by_name fun(self: self, name: string): CriminalsManager.CharacterData?
 ---@field character_color_id_by_unit fun(self: self, unit: UnitPlayer|UnitTeamAI): number?
 ---@field character_peer_id_by_unit fun(self: self, unit: UnitPlayer|UnitTeamAI): number?
 

@@ -28,7 +28,7 @@ if EHI:GetOption("show_escape_chance") then
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 15)
     end)
 end
-if EHI:IsHost() then
+if EHI:IsHost() and not EHI:IsPlayingCrimeSpree() then
     local trucks = { 100006, 100007, 100021, 100022, 100023, 100024, 100025, 100097, 100100, 100101, 100226, 100227 }
     ---@param count number
     local function LootCounter(count)

@@ -375,6 +375,9 @@
     "ehi_show_timers" : "Show Timers",
     "ehi_show_timers_desc" : "Shows timers for hacking, drilling, sawing, etc...",
 
+    "ehi_show_timers_max_in_group" : "Count of Timers in a Group",
+    "ehi_show_timers_max_in_group_desc" : "Sets a maximum count of timers in one tracker. If the maximum is exceeded, another tracker will get created to hold that timer (or more) on screen.\n\nTo disable this feature, set the value to '1'.",
+
     "ehi_show_camera_loop" : "Show Camera Loop",
     "ehi_show_camera_loop_desc" : "Shows a tracker when a security camera is looped",
 
@@ -759,6 +762,11 @@
     "ehi_buffs_other_damage_absorption_refresh_desc" : "Sets how often 'Damage Absorption' gauge should be updated per second",
     "ehi_buffs_other_damage_absorption_persistent" : "Persistent Damage Absorption",
     "ehi_buffs_other_damage_absorption_persistent_desc" : "'Damage Absorption' gauge will stay on your screen when your absorption is lower than 0",
+    "ehi_buffs_other_damage_reduction" : "Damage Reduction",
+    "ehi_buffs_other_damage_reduction_refresh" : "Damage Reduction Refresh",
+    "ehi_buffs_other_damage_reduction_refresh_desc" : "Sets how often 'Damage Reduction' gauge should be updated per second",
+    "ehi_buffs_other_damage_reduction_persistent" : "Persistent Damage Reduction",
+    "ehi_buffs_other_damage_reduction_persistent_desc" : "'Damage Reduction' gauge will stay on your screen when your reduction is lower than 0%",
     "ehi_buffs_other_inspire_ai" : "Inspire (AI)",
     "ehi_buffs_other_regen_throwable_ai" : "Regen Throwable (AI)",
     "ehi_buffs_other_health" : "Your Health Value",

@@ -41,8 +41,31 @@ local triggers = {
     [103594] = { run = { time = 200 + van_anim_delay } },
 
     [102505] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101006 } },
-    [103200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103234 } }
+    [103200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103234 } },
+
+    [101443] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._trackers:AddTracker({
+            id = "ObjectiveSteal",
+            max = 15000,
+            icons = { Icon.Money },
+            flash_times = 1,
+            hint = "loot_counter",
+            class = EHI.Trackers.NeededValue
+        })
+        ---@param loot LootManager
+        EHI:AddCallback(EHI.CallbackMessage.LootSecured, function(loot)
+            loot:EHIReportProgress("ObjectiveSteal", EHI.LootCounter.CheckType.ValueOfSmallLoot)
+        end)
+    end), trigger_times = 1 }
 }
+EHI:AddLoadSyncFunction(function(self)
+    local objective = managers.loot:get_real_total_small_loot_value()
+    if objective >= 15000 then
+        return
+    end
+    self:Trigger(101443)
+    self._trackers:SetTrackerProgress("ObjectiveSteal", objective)
+end)
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 30)

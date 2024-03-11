@@ -215,7 +215,23 @@
             "callback_arguments": "show_timers",
             "focus_changed_callback": "SetFocus",
             "value": "show_timers",
+            "is_parent" : true,
             "default_value": true
+        },
+        {
+            "type": "slider",
+            "id": "ehi_show_timers_max_in_group_choice",
+            "title": "ehi_show_timers_max_in_group",
+            "description": "ehi_show_timers_max_in_group_desc",
+            "callback": "SetOption",
+            "callback_arguments" : "show_timers_max_in_group",
+            "value": "show_timers_max_in_group",
+            "default_value": 4,
+            "max": 10,
+            "min": 1,
+            "step": 0,
+            "parent" : "ehi_show_timers_choice",
+            "ehi_ver" : 226
         },
         {
             "type": "divider",

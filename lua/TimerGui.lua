@@ -49,17 +49,25 @@ function TimerGui:init(unit, ...)
     local icon = unit:base().is_drill and Icon.Drill or unit:base().is_hacking_device and Icon.PCHack or unit:base().is_saw and "pd2_generic_saw" or Icon.Wait
     self._ehi_icon = { { icon = icon } }
     self._ehi_hint = icon == Icon.Drill and "drill" or icon == Icon.PCHack and "hack" or icon == "pd2_generic_saw" and "saw" or "process"
+    self._ehi_group = icon == Icon.Drill and "drill" or icon == Icon.PCHack and "hack" or icon == "pd2_generic_saw" and "saw" or "process"
     if not show_waypoint_only then
         EHI:OptionAndLoadTracker("show_timers")
     end
 end
 
-function TimerGui:set_background_icons(...)
-    original.set_background_icons(self, ...)
-    managers.ehi_tracker:CallFunction(self._ehi_key, "SetUpgrades", self:GetUpgrades())
+function TimerGui:GetVisibilityData()
+    return {
+        hint = self._ehi_hint,
+        theme = self.THEME
+    }
 end
 
----@return table?
+function TimerGui:set_background_icons(...)
+    original.set_background_icons(self, ...)
+    managers.ehi_timer:SetTimerUpgrades(self)
+end
+
+---@return table?, table?
 function TimerGui:GetUpgrades()
     if self._unit:base()._disable_upgrades or not (self._unit:base().is_drill or self._unit:base().is_saw) or table.size(self._original_colors or {}) == 0 then
         return nil
@@ -73,7 +81,7 @@ function TimerGui:GetUpgrades()
             silent = (skills.reduced_alert and 1 or 0) + (skills.silent_drill and 1 or 0)
         }
     end
-    return upgrade_table
+    return upgrade_table, skills
 end
 
 function TimerGui:GetAutorepairState()
@@ -81,7 +89,7 @@ function TimerGui:GetAutorepairState()
 end
 
 function TimerGui:StartTimer()
-    if managers.ehi_manager:Exists(self._ehi_key) then
+    if managers.ehi_manager:TimerExists(self._ehi_key) then
         if (self.__ehi_merge and managers.ehi_manager:IsTimerMergeRunning(self._ehi_key)) or not self.__ehi_merge then
             managers.ehi_manager:SetTimerRunning(self._ehi_key)
             return
@@ -94,14 +102,18 @@ function TimerGui:StartTimer()
         if self.__ehi_merge then
             managers.ehi_tracker:CallFunction(self._ehi_key, "StartTimer", t, true)
         else
-            managers.ehi_tracker:AddTracker({
+            local upgrades, skills = self:GetUpgrades()
+            managers.ehi_timer:StartTimer({
                 id = self._ehi_key,
+                key = self._ehi_key,
                 time = t,
                 icons = self._icons or self._ehi_icon,
                 theme = self.THEME,
                 class = EHI.Trackers.Timer.Base,
                 hint = self._ehi_hint,
-                upgrades = self:GetUpgrades(),
+                group = self._ehi_group,
+                upgrades = upgrades,
+                skills = skills,
                 autorepair = autorepair
             })
         end
@@ -186,7 +198,7 @@ elseif show_waypoint then
     end
 else
     function TimerGui:update(...)
-        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._time_left or self._current_timer or 0)
+        managers.ehi_timer:SetTimerTime(self._ehi_key, self._time_left or self._current_timer or 0)
         original.update(self, ...)
     end
 end
@@ -258,7 +270,7 @@ function TimerGui:RemoveTracker(destroy)
         end
         managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
     else
-        managers.ehi_manager:Remove(self._ehi_key)
+        managers.ehi_manager:RemoveTimer(self._ehi_key)
     end
 end
 

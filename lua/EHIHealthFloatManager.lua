@@ -20,7 +20,8 @@ function EHIHealthFloatManager:new()
     self._smokes = {}
     self._unit_slot_mask = World:make_slot_mask(1, 8, 11, 12, 14, 16, 18, 21, 22, 24, 25, 26, 33, 34, 35)
     EHI:HookWithID(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_detonate", function(base, ...)
-        self._smokes[base._unit:key()] = { base._unit:position(), base._remove_t }
+        local unit = base._unit
+        self._smokes[unit:key()] = unit:position()
     end)
     EHI:HookWithID(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_destroy", function(base, ...)
         self._smokes[base._unit:key()] = nil
@@ -130,8 +131,7 @@ function EHIHealthFloatManager:_visibility(uPos)
     end
     local minDis = 9999
     local sRad = 300
-    for i, obj in pairs(self._smokes) do
-        local sPos = obj[1]
+    for i, sPos in pairs(self._smokes) do
         local cPos = self._camPos
         local disR, dotR = 1, 1
         local sDir = sPos - cPos
@@ -195,12 +195,12 @@ function EHIHealthFloatBar:_lbl(lbl, txts)
             local pos = 0
             local posEnd = 0
             local ranges = {}
-            for _, txtObj in ipairs(txts or {}) do
+            for i, txtObj in ipairs(txts) do
                 txtObj[1] = tostring(txtObj[1])
                 result = result .. txtObj[1]
                 local _, count = txtObj[1]:gsub('[^\128-\193]', '')
                 posEnd = pos + count
-                table.insert(ranges, {pos, posEnd, txtObj[2] or Color.white})
+                ranges[i] = { pos, posEnd, txtObj[2] or Color.white }
                 pos = posEnd
             end
             lbl:set_text(result)
@@ -211,14 +211,12 @@ function EHIHealthFloatBar:_lbl(lbl, txts)
             result = txts
             lbl:set_text(txts)
         end
-    else
-        if type(txts) == 'table' then
-            for _, t in pairs(txts) do
-                result = result .. tostring(t[1])
-            end
-        else
-            result = txts
+    elseif type(txts) == 'table' then
+        for _, t in ipairs(txts) do
+            result = result .. tostring(t[1])
         end
+    else
+        result = txts
     end
     return result
 end

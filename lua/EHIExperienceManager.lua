@@ -144,6 +144,9 @@ function EHIExperienceManager:HookAwardXP()
         return
     elseif self:IsOneXPElementHeist(level_id) and self._config.xp_panel == 2 then
         self._config.xp_panel = 1 -- Force one XP panel when the heist gives you the XP at the escape zone -> less screen clutter
+        if self._config.show_xp_diff and self._config.show_total_xp_diff > 1 then
+            self._config.xp_panel = self._config.show_total_xp_diff
+        end
     end
     if self._config.xp_panel <= 2 then
         if self._config.xp_panel == 1 or self._config.show_total_xp_diff == 2 then

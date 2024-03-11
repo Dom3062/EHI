@@ -95,8 +95,7 @@ tweak_data.ehi =
             y = 0,
             class = "EHIGaugeBuffTracker",
             format = "damage",
-            option = "health",
-            pos = 0
+            option = "health"
         },
         Armor =
         {
@@ -105,8 +104,7 @@ tweak_data.ehi =
             y = 12,
             class = "EHIGaugeBuffTracker",
             format = "damage",
-            option = "armor",
-            pos = 1
+            option = "armor"
         },
         DodgeChance =
         {
@@ -770,6 +768,7 @@ tweak_data.ehi =
             skills = true,
             x = 6,
             y = 4,
+            text = "Absorption",
             activate_after_spawn = true,
             option = "damage_absorption",
             persistent = "damage_absorption_persistent",
@@ -777,6 +776,22 @@ tweak_data.ehi =
             {
                 prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHIDamageAbsorptionBuffTracker"
+            }
+        },
+        DamageReduction =
+        {
+            skills = true,
+            x = 6,
+            y = 4,
+            text = "Reduction",
+            format = "percent",
+            activate_after_spawn = true,
+            option = "damage_reduction",
+            persistent = "damage_reduction_persistent",
+            class_to_load =
+            {
+                prerequisite = "EHISkillRefreshBuffTracker",
+                class = "EHIDamageReductionBuffTracker"
             }
         }
     },

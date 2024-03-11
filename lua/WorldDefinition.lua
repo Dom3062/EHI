@@ -3,9 +3,11 @@ if EHI:CheckLoadHook("WorldDefinition") then
     return
 end
 
+---@alias WorldDefinition.Continent { base_id: number }
+
 ---@class WorldDefinition
 ---@field _all_units table
----@field _continents table
+---@field _continents table<string, WorldDefinition.Continent>
 ---@field get_unit fun(self: self, id: number): Unit?
 
 local units = {}
@@ -186,6 +188,10 @@ local instances =
         [100101] = { remove_vanilla_waypoint = 100038, restore_waypoint_on_done = true }, -- PC
         [100102] = { remove_vanilla_waypoint = 100038, restore_waypoint_on_done = true } -- PC
     },
+    ["levels/instances/unique/chas/chas_vault_crate/world"] =
+    {
+        [100140] = { hint = Hints.Explosion }
+    },
     ["levels/instances/unique/chas/chas_vault_door/world"] =
     {
         [100065] = { icons = { Icon.Vault }, remove_on_pause = true }
@@ -224,7 +230,7 @@ local instances =
     }
 }
 instances["levels/instances/unique/cane/cane_santa_event/world"] = instances["levels/instances/unique/nail_cloaker_safe/world"]
----@param instance { folder: string, start_index: number, continent: string, rotation: Rotation }
+---@param instance CoreWorldInstanceManager.Instance
 function WorldDefinition:OverrideUnitsInTheInstance(instance)
     --EHI:PrintTable(instance, "Overriding instance")
     local start_index = instance.start_index
@@ -246,7 +252,7 @@ function WorldDefinition:OverrideUnitsInTheInstance(instance)
     end
 end
 
----@param instance { folder: string, start_index: number, continent: string, rotation: Rotation }
+---@param instance CoreWorldInstanceManager.Instance
 function WorldDefinition:OverrideUnitsInMissionPlacedInstance(instance)
     if instances[instance.folder or ""] then
         self:OverrideUnitsInTheInstance(instance)

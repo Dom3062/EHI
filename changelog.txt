@@ -1,3 +1,10 @@
+r226 (11. 03. 2024):
+Added options "Count of Timers in a Group" and "Damage Reduction"
+Improved performance with Ex-President perk deck
+Fixed an issue where some heists do not load correct settings for XP Tracker
+Assault Tracker: Fixed an issue with animations after endless assault
+Crude Awakening: Fixed an issue with achievement popup showing up even when conditions are not met
+
 r225 (05. 03. 2024):
 Fixed a visual issue with animated chance in trackers
 Assault Tracker: Fixed a crash when assault started (client only)

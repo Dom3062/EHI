@@ -144,7 +144,28 @@ end
 ---@field super EHIGaugeBuffTracker
 EHIExPresidentBuffTracker = class(EHIGaugeBuffTracker)
 function EHIExPresidentBuffTracker:PreUpdateCheck()
-    return managers.player:has_category_upgrade("player", "armor_health_store_amount")
+    if managers.player:has_category_upgrade("player", "armor_health_store_amount") then
+        local buff, original = self, {}
+        original.update_armor_stored_health = PlayerDamage.update_armor_stored_health
+        function PlayerDamage:update_armor_stored_health(...)
+            original.update_armor_stored_health(self, ...)
+            buff:SetStoredHealthMaxAndUpdateRatio(self:max_armor_stored_health(), self._armor_stored_health)
+        end
+        original.add_armor_stored_health = PlayerDamage.add_armor_stored_health
+        function PlayerDamage:add_armor_stored_health(...)
+            local previous = self._armor_stored_health
+            original.add_armor_stored_health(self, ...)
+            if previous ~= self._armor_stored_health and not self._check_berserker_done then
+                buff:SetRatio(nil, self._armor_stored_health)
+            end
+        end
+        original.clear_armor_stored_health = PlayerDamage.clear_armor_stored_health
+        function PlayerDamage:clear_armor_stored_health(...)
+            original.clear_armor_stored_health(self, ...)
+            buff:SetRatio(nil, self._armor_stored_health)
+        end
+        return true
+    end
 end
 
 function EHIExPresidentBuffTracker:PreUpdate()

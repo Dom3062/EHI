@@ -276,12 +276,7 @@ end
 ---@param daily_job boolean
 function HUDManager:ShowDailyDescription(id, daily_job)
     local text = daily_job and ("menu_challenge_" .. id) or id
-    local objective
-    if daily_job then
-        objective = "menu_challenge_" .. id .. "_desc"
-    else
-        objective = id .. "_objective"
-    end
+    local objective = daily_job and ("menu_challenge_" .. id .. "_desc") or (id .. "_objective")
     managers.chat:_receive_message(1, managers.localization:text(text), managers.localization:text(objective), Color.white)
 end
 

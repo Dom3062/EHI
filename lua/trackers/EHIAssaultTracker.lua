@@ -13,7 +13,8 @@ local State =
     build = 3,
     sustain = 4,
     fade = 5,
-    endless = 6
+    endless = 6,
+    captain = 7
 }
 local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
 local tweak_values = assault_values.delay
@@ -437,8 +438,18 @@ function EHIAssaultTracker:SetState(state)
         self:SetIconColor(Sustain)
     elseif state == State.fade then
         self:SetIconColor(Fade)
-    else
+    elseif state == State.endless then
+        self:RemoveTrackerFromUpdate()
+        self:StopTextAnim(Color.red)
         self:SetIconColor(Color.red)
+        self:SetStatusText("endless")
+        self._time_warning = nil
+        self._assault = true
+        self:AnimateBG()
+    else
+        self:SetIconColor(Captain)
+        self._time_warning = nil
+        self._endless_assault = nil
     end
 end
 
@@ -451,9 +462,7 @@ function EHIAssaultTracker:CaptainArrived()
     else
         self:StopTextAnim(self._paused_color)
     end
-    self:SetIconColor(Captain)
-    self._time_warning = nil
-    self._endless_assault = nil
+    self:SetState(State.captain)
 end
 
 function EHIAssaultTracker:CaptainDefeated()
@@ -471,13 +480,7 @@ function EHIAssaultTracker:SetEndlessAssault(state)
     end
     self._endless_assault = state
     if state then
-        self:RemoveTrackerFromUpdate()
-        self:StopTextAnim(Color.red)
         self:SetState(State.endless)
-        self:SetStatusText("endless")
-        self:AnimateBG()
-        self._time_warning = false
-        self._assault = true
     elseif not self._is_client then
         local ai_state = managers.groupai:state()
         local assault_data = ai_state._task_data.assault or {}
@@ -495,12 +498,27 @@ function EHIAssaultTracker:SetEndlessAssault(state)
                 self:AnimateBG()
             elseif current_state == "sustain" then
                 local end_t = ai_state.assault_phase_end_time and ai_state:assault_phase_end_time()
-                if end_t then -- Already takes into account Crime Spree
+                if end_t then -- Already takes Crime Spree into account
                     local t = ai_state._t
-                    self:SetTextColor()
                     self:OnEnterSustain(assault_data.phase_end_t - t, end_t - t, true)
                     self:SetAndFitTheText()
-                    self._check_anim_progress = self._time <= 10
+                    if self._time <= 10 then
+                        self._check_anim_progress = true
+                        if self._time > 0 then
+                            if self._time > assault_values.fade_duration then
+                                self._to_next_state_t = self._time - assault_values.fade_duration
+                            else
+                                self._to_next_state_t = nil
+                                self:SetState(State.fade)
+                            end
+                        else
+                            self:StartNegativeUpdate()
+                            self:SetState(State.fade)
+                        end
+                        self:AnimateColor()
+                    else
+                        self:SetTextColor()
+                    end
                     self:AddTrackerToUpdate()
                     self:AnimateBG()
                 else
@@ -526,9 +544,13 @@ function EHIAssaultTracker:PoliceActivityBlocked()
     self:delete()
 end
 
-function EHIAssaultTracker:Refresh()
+function EHIAssaultTracker:StartNegativeUpdate()
     self.update = self.update_negative
     self._time = -self._time
+end
+
+function EHIAssaultTracker:Refresh()
+    self:StartNegativeUpdate()
     if not self._assault then
         self:StopTextAnim()
         self:AnimateColor(true)
