@@ -1,3 +1,8 @@
+r227 (12. 03. 2024):
+Buffs: Fixed a crash with Ex-President perk deck
+Lost in Transit: Fixed a crash
+Mission Briefing: Fixed tabs not registering input after changing profile
+
 r226 (11. 03. 2024):
 Added options "Count of Timers in a Group" and "Damage Reduction"
 Improved performance with Ex-President perk deck

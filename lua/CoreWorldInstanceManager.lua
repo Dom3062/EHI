@@ -446,6 +446,7 @@ local instances =
             EHICraneFixChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
             EHICraneFixChanceTracker.SetChance = EHIChanceTracker.SetChance
             EHICraneFixChanceTracker.SetFailed = EHIAchievementTracker.SetFailed
+            EHICraneFixChanceTracker.ShowFailedPopup = function(...) end
             function EHICraneFixChanceTracker:pre_init(...)
                 self._chance = 30
             end

@@ -164,6 +164,9 @@ function EHIExPresidentBuffTracker:PreUpdateCheck()
             original.clear_armor_stored_health(self, ...)
             buff:SetRatio(nil, self._armor_stored_health)
         end
+        local player_unit = managers.player:player_unit()
+        local character_damage = player_unit and player_unit:character_damage() ---@cast character_damage -HuskPlayerDamage
+        self:SetStoredHealthMaxAndUpdateRatio(character_damage and character_damage:max_armor_stored_health() or 0, 0)
         return true
     end
 end

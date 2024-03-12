@@ -33,11 +33,8 @@ local reloading_outfit = false -- Fix for Beardlib stack overflow crash
 local xp_format = EHI:GetOption("xp_format")
 local diff_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", EHI:DifficultyIndex()) or 1
 
----@type XPBreakdownPanel[]?
-local _panels
----@type XPBreakdownItem[]?
-local _buttons
-local TacticSelected, TacticMax = 1, 1
+---@type XPBreakdownPanel[]?, XPBreakdownItem[]?
+local _panels, _buttons, TacticSelected, TacticMax = nil, nil, 1, 1
 ---@class XPBreakdownItem
 ---@field new fun(self: self, gui: MissionBriefingGui, ws_panel: Panel, string: string, add_string: string?, loc: LocalizationManager, index: number): self
 local XPBreakdownItem = class()
@@ -214,7 +211,7 @@ end
 ---@class XPBreakdownPanel
 ---@field new fun(self: self, gui: MissionBriefingGui, panel: Panel, panel_params: table, xp_params: table, loc: LocalizationManager, params: XPBreakdown|_XPBreakdown, index: number?): self
 local XPBreakdownPanel = class()
-XPBreakdownPanel.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
+XPBreakdownPanel._format_time = tweak_data.ehi.functions.ReturnMinutesAndSeconds
 ---@param gui MissionBriefingGui
 ---@param ws_panel Panel
 ---@param panel_params table
@@ -249,34 +246,34 @@ function XPBreakdownPanel:ProcessBreakdown()
     if self._destroyed or self._created_and_disable_updates then
         return
     end
-    self:AddXPOverviewText()
+    self:_add_xp_overview_text()
     if self._params.wave_all then
         local data = self._params.wave_all
         if type(data) == "table" then
             local xp_multiplied = self._xp:FakeMultiplyXPWithAllBonuses(data.amount)
             local total_xp = self._xp:cash_string(xp_multiplied, "+")
-            self:AddXPText(string.format("%s (%s): ", self._loc:text("ehi_experience_each_wave_survived"), self._loc:text("ehi_experience_trigger_times", { times = data.times })), total_xp)
-            self:AddTotalXP(self._xp:cash_string(xp_multiplied * data.times, "+"))
+            self:_add_xp_text(string.format("%s (%s): ", self._loc:text("ehi_experience_each_wave_survived"), self._loc:text("ehi_experience_trigger_times", { times = data.times })), total_xp)
+            self:_add_total_xp(self._xp:cash_string(xp_multiplied * data.times, "+"))
         else
             local total_xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
-            self:AddXPText(string.format("%s: %s", self._loc:text("ehi_experience_each_wave_survived")), total_xp)
+            self:_add_xp_text(string.format("%s: %s", self._loc:text("ehi_experience_each_wave_survived")), total_xp)
         end
     elseif self._params.wave then
         local total_xp = 0
         for wave, xp in ipairs(self._params.wave) do
             local xp_computed = self._xp:FakeMultiplyXPWithAllBonuses(xp)
             total_xp = total_xp + xp_computed
-            self:AddXPText(self._loc:text("ehi_experience_wave_survived", { wave = wave }), self._xp:cash_string(xp_computed, "+"))
+            self:_add_xp_text(self._loc:text("ehi_experience_wave_survived", { wave = wave }), self._xp:cash_string(xp_computed, "+"))
         end
-        self:AddTotalXP(self._xp:cash_string(total_xp, "+"))
+        self:_add_total_xp(self._xp:cash_string(total_xp, "+"))
     elseif self._params.objective then
         local total_xp = { base = 0, add = not self._params.no_total_xp }
         for key, data in pairs(self._params.objective) do
-            local str = self:GetTranslatedKey(key)
+            local str = self:_get_translated_key(key)
             if key == "escape" then
-                self:ProcessEscape(str, data, total_xp)
+                self:_process_escape(str, data, total_xp)
             elseif key == "random" then
-                self:ProcessRandomObjectives(data, total_xp)
+                self:_process_random_objectives(data, total_xp)
             elseif type(data) == "table" then
                 local value = self._xp:FakeMultiplyXPWithAllBonuses(data.amount)
                 local xp = self._xp:cash_string(value, "+")
@@ -298,16 +295,16 @@ function XPBreakdownPanel:ProcessBreakdown()
                         s = str .. " (" .. times_formatted .. ")"
                         total_xp.base = total_xp.base + (data.amount * data.times)
                     end
-                    self:AddXPText(s .. ": ", xp, xp_with_gage, text_color)
+                    self:_add_xp_text(s .. ": ", xp, xp_with_gage, text_color)
                 elseif data.stealth then
                     total_xp.add = false
-                    self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", xp, xp_with_gage, text_color)
+                    self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", xp, xp_with_gage, text_color)
                 elseif data.loud then
                     total_xp.add = false
-                    self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", xp, xp_with_gage, text_color)
+                    self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", xp, xp_with_gage, text_color)
                 else
                     total_xp.base = total_xp.base + data
-                    self:AddXPText(str .. ": ", xp, xp_with_gage, text_color)
+                    self:_add_xp_text(str .. ": ", xp, xp_with_gage, text_color)
                 end
             else
                 total_xp.base = total_xp.base + data
@@ -317,20 +314,20 @@ function XPBreakdownPanel:ProcessBreakdown()
                 if self._gage then
                     xp_with_gage = self._gui:FormatXPWithAllGagePackages(data)
                 end
-                self:AddXPText(str .. ": ", xp, xp_with_gage)
+                self:_add_xp_text(str .. ": ", xp, xp_with_gage)
             end
         end
-        self:ProcessLoot(total_xp)
-        self:ProcessTotalXP(total_xp)
+        self:_process_loot(total_xp)
+        self:_process_total_xp(total_xp)
     elseif self._params.objectives then
         local total_xp = { base = 0, add = not self._params.no_total_xp }
         for _, data in ipairs(self._params.objectives) do
             if type(data) == "table" then
                 if data._or then
-                    self:AddLine(self._loc:text("ehi_experience_or"))
+                    self:_add_line(self._loc:text("ehi_experience_or"))
                 elseif type(data.stealth) == "number" and type(data.loud) == "number" then
                     total_xp.add = false
-                    local str = data.name and self:GetTranslatedKey(data.name, data.additional_name) or "<Unknown objective>"
+                    local str = data.name and self:_get_translated_key(data.name, data.additional_name) or "<Unknown objective>"
                     if data.times then
                     else
                         local stealth_value = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.stealth), "+")
@@ -338,18 +335,18 @@ function XPBreakdownPanel:ProcessBreakdown()
                         if self._gage then
                             stealth_value_gage = self._gui:FormatXPWithAllGagePackages(data.stealth)
                         end
-                        self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", stealth_value, stealth_value_gage)
+                        self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", stealth_value, stealth_value_gage)
                         local loud_value = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.loud), "+")
                         local loud_value_gage
                         if self._gage then
                             loud_value_gage = self._gui:FormatXPWithAllGagePackages(data.loud)
                         end
-                        self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", loud_value, loud_value_gage)
+                        self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", loud_value, loud_value_gage)
                     end
                 elseif data.escape then
-                    self:ProcessEscape(self:GetTranslatedKey("escape"), data.escape, total_xp)
+                    self:_process_escape(self:_get_translated_key("escape"), data.escape, total_xp)
                 elseif data.random then
-                    self:ProcessRandomObjectives(data.random, total_xp)
+                    self:_process_random_objectives(data.random, total_xp)
                 else
                     local amount = data.amount or 0
                     local value = self._xp:FakeMultiplyXPWithAllBonuses(amount)
@@ -362,7 +359,7 @@ function XPBreakdownPanel:ProcessBreakdown()
                     if data.name_format then
                         str = self._loc:text("ehi_experience_" .. data.name_format.id, data.name_format.macros)
                     elseif data.name then
-                        str = self:GetTranslatedKey(data.name, data.additional_name)
+                        str = self:_get_translated_key(data.name, data.additional_name)
                     end
                     local text_color = data.optional and colors.optional ---@cast text_color Color?
                     local add_xp_to_base = true
@@ -380,17 +377,17 @@ function XPBreakdownPanel:ProcessBreakdown()
                         else
                             s = str .. " (" .. times_formatted .. ")"
                         end
-                        self:AddXPText(s .. ": ", xp, xp_with_gage, text_color)
+                        self:_add_xp_text(s .. ": ", xp, xp_with_gage, text_color)
                     elseif data.stealth then
                         total_xp.add = false
                         add_xp_to_base = false
-                        self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", xp, xp_with_gage, text_color)
+                        self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", xp, xp_with_gage, text_color)
                     elseif data.loud then
                         total_xp.add = false
                         add_xp_to_base = false
-                        self:AddXPText(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", xp, xp_with_gage, text_color)
+                        self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", xp, xp_with_gage, text_color)
                     else
-                        self:AddXPText(str .. ": ", xp, xp_with_gage, text_color)
+                        self:_add_xp_text(str .. ": ", xp, xp_with_gage, text_color)
                     end
                     if add_xp_to_base then
                         local times = data.times or 1
@@ -399,12 +396,12 @@ function XPBreakdownPanel:ProcessBreakdown()
                 end
             end
         end
-        self:ProcessLoot(total_xp)
-        self:ProcessTotalXP(total_xp)
+        self:_process_loot(total_xp)
+        self:_process_total_xp(total_xp)
     elseif self._params.loot or self._params.loot_all then
         local total_xp = { base = 0, add = not self._params.no_total_xp }
-        self:ProcessLoot(total_xp)
-        self:ProcessTotalXP(total_xp)
+        self:_process_loot(total_xp)
+        self:_process_total_xp(total_xp)
     else
         for key, params in pairs(self._params) do
             EHI:Log("[XPBreakdownPanel] Unknown key! " .. tostring(key))
@@ -415,12 +412,12 @@ function XPBreakdownPanel:ProcessBreakdown()
             end
         end
     end
-    self._panel:set_h(self:GetPanelHeight())
+    self._panel:set_h(self:_get_panel_height())
     self._created_and_disable_updates = self._disable_updates
 end
 
 ---@return number
-function XPBreakdownPanel:GetPanelHeight()
+function XPBreakdownPanel:_get_panel_height()
     return 10 + (self._lines * 22)
 end
 
@@ -428,7 +425,7 @@ end
 ---@param value string
 ---@param value_with_gage string?
 ---@param text_color Color?
-function XPBreakdownPanel:AddXPText(txt, value, value_with_gage, text_color)
+function XPBreakdownPanel:_add_xp_text(txt, value, value_with_gage, text_color)
     local xp = self._loc:text("ehi_experience_xp")
     local text
     if value_with_gage then
@@ -436,12 +433,12 @@ function XPBreakdownPanel:AddXPText(txt, value, value_with_gage, text_color)
     else
         text = string.format("%s%s %s", txt, value, xp)
     end
-    self:AddLine(text, text_color)
+    self:_add_line(text, text_color)
 end
 
 ---@param total string?
 ---@param total_with_gage string?
-function XPBreakdownPanel:AddTotalXP(total, total_with_gage)
+function XPBreakdownPanel:_add_total_xp(total, total_with_gage)
     local xp = self._loc:text("ehi_experience_xp")
     local txt
     if total_with_gage then
@@ -451,13 +448,13 @@ function XPBreakdownPanel:AddTotalXP(total, total_with_gage)
     else
         txt = self._loc:text("ehi_experience_total_xp")
     end
-    self:AddLine(txt, colors.total_xp)
+    self:_add_line(txt, colors.total_xp)
 end
 
 ---@param str string
 ---@param params table|number
 ---@param total_xp table
-function XPBreakdownPanel:ProcessEscape(str, params, total_xp)
+function XPBreakdownPanel:_process_escape(str, params, total_xp)
     if type(params) == "table" then
         for _, value in ipairs(params) do
             local s
@@ -470,7 +467,7 @@ function XPBreakdownPanel:ProcessEscape(str, params, total_xp)
             if value.stealth then
                 s = self._loc:text("ehi_experience_stealth_escape")
                 if value.timer then
-                    s = s .. " (<" .. self:FormatTime(value.timer) .. ")"
+                    s = s .. " (<" .. self:_format_time(value.timer) .. ")"
                 end
                 s = s .. ": "
             else
@@ -480,7 +477,7 @@ function XPBreakdownPanel:ProcessEscape(str, params, total_xp)
                 end
                 s = s .. ": "
             end
-            self:AddXPText(s, xp, xp_with_gage)
+            self:_add_xp_text(s, xp, xp_with_gage)
         end
         if next(params) then
             total_xp.add = false
@@ -492,14 +489,14 @@ function XPBreakdownPanel:ProcessEscape(str, params, total_xp)
         if self._gage then
             xp_with_gage = self._gui:FormatXPWithAllGagePackages(params)
         end
-        self:AddXPText(str .. ": ", xp, xp_with_gage)
+        self:_add_xp_text(str .. ": ", xp, xp_with_gage)
         total_xp.base = total_xp.base + params
     end
 end
 
 ---@param max number
 ---@return string
-function XPBreakdownPanel:FormatRandomObjectivesHeader(max)
+function XPBreakdownPanel:_format_random_objectives_header(max)
     if localization == "czech" then
         if max == 1 then
             return self._loc:text("ehi_experience_random_objectives", { count = max, suffix1 = "ý", suffix2 = "" })
@@ -519,19 +516,19 @@ function XPBreakdownPanel:FormatRandomObjectivesHeader(max)
 end
 
 ---@param max number?
-function XPBreakdownPanel:AddRandomObjectivesHeader(max)
-    local text = max and self:FormatRandomObjectivesHeader(max) or self._loc:text("ehi_experience_random_objectives_no_count")
-    self:AddLine(text)
+function XPBreakdownPanel:_add_random_objectives_header(max)
+    local text = max and self:_format_random_objectives_header(max) or self._loc:text("ehi_experience_random_objectives_no_count")
+    self:_add_line(text)
 end
 
 ---@param random table
 ---@param total_xp table
-function XPBreakdownPanel:ProcessRandomObjectives(random, total_xp)
+function XPBreakdownPanel:_process_random_objectives(random, total_xp)
     if type(random) ~= "table" then
         return
     end
     total_xp.add = false
-    self:AddRandomObjectivesHeader(random.max)
+    self:_add_random_objectives_header(random.max)
     local c1 = Color("bfdd7d") -- Dark green
     local c2 = Color.yellow
     local final_color = c2
@@ -547,7 +544,7 @@ function XPBreakdownPanel:ProcessRandomObjectives(random, total_xp)
             end
             if type(data) == "table" then
                 for _, xp in ipairs(data) do
-                    local str = "- " .. self:GetTranslatedKey(xp.name)
+                    local str = "- " .. self:_get_translated_key(xp.name)
                     local value = self._xp:FakeMultiplyXPWithAllBonuses(xp.amount)
                     local _xp = self._xp:cash_string(value, "+")
                     local xp_with_gage
@@ -555,27 +552,27 @@ function XPBreakdownPanel:ProcessRandomObjectives(random, total_xp)
                         xp_with_gage = self._gui:FormatXPWithAllGagePackages(xp.amount)
                     end
                     if data.times then
-                        self:AddXPText(str .. " (" .. tostring(data.times) .. "): ", _xp, xp_with_gage, final_color)
+                        self:_add_xp_text(str .. " (" .. tostring(data.times) .. "): ", _xp, xp_with_gage, final_color)
                     else
-                        self:AddXPText(str .. ": ", _xp, xp_with_gage, final_color)
+                        self:_add_xp_text(str .. ": ", _xp, xp_with_gage, final_color)
                     end
                 end
             else
-                local str = "- " .. self:GetTranslatedKey(obj)
+                local str = "- " .. self:_get_translated_key(obj)
                 local value = self._xp:FakeMultiplyXPWithAllBonuses(data)
                 local _xp = self._xp:cash_string(value, "+")
                 local xp_with_gage
                 if self._gage then
                     xp_with_gage = self._gui:FormatXPWithAllGagePackages(data)
                 end
-                self:AddXPText(str .. ": ", _xp, xp_with_gage, final_color)
+                self:_add_xp_text(str .. ": ", _xp, xp_with_gage, final_color)
             end
         end
     end
 end
 
 ---@param mandatory number
-function XPBreakdownPanel:FormatLootMandatoryBags(mandatory)
+function XPBreakdownPanel:_format_loot_mandatory_bags(mandatory)
     if localization == "czech" then
         if mandatory == 1 then
             return self._loc:text("ehi_experience_mandatory_bags", { count = mandatory, suffix1 = "ý", suffix2 = "tel" })
@@ -601,7 +598,7 @@ end
 ---@param to_secure number
 ---@param value string
 ---@param value_with_gage string?
-function XPBreakdownPanel:AddLootSecured(loot, times, to_secure, mandatory, additional_bag, value, value_with_gage)
+function XPBreakdownPanel:_add_loot_secured(loot, times, to_secure, mandatory, additional_bag, value, value_with_gage)
     local loot_name
     if loot == "_else" then
         loot_name = self._loc:text("ehi_experience_loot_else")
@@ -622,7 +619,7 @@ function XPBreakdownPanel:AddLootSecured(loot, times, to_secure, mandatory, addi
         end
         if mandatory > 0 then
             local prefix = (times > 0 or to_secure > 0) and "; " or ""
-            str = str .. prefix .. self:FormatLootMandatoryBags(mandatory)
+            str = str .. prefix .. self:_format_loot_mandatory_bags(mandatory)
         end
         if additional_bag then
             local prefix = (times > 0 or to_secure > 0 or mandatory > 0) and "; " or ""
@@ -636,11 +633,11 @@ function XPBreakdownPanel:AddLootSecured(loot, times, to_secure, mandatory, addi
     else
         str = str .. ": " .. tostring(value) .. " " .. xp
     end
-    self:AddLine(str, colors.loot_secured)
+    self:_add_line(str, colors.loot_secured)
 end
 
 ---@param total_xp table
-function XPBreakdownPanel:ProcessLoot(total_xp)
+function XPBreakdownPanel:_process_loot(total_xp)
     if self._params.loot_all then
         local data = self._params.loot_all
         local secured_bag = self._loc:text("ehi_experience_each_loot_secured")
@@ -655,9 +652,9 @@ function XPBreakdownPanel:ProcessLoot(total_xp)
                 secured_bag = self._loc:text("ehi_experience_" .. data.text)
             end
             if data.times then
-                self:AddXPText(string.format("%s (%s): ", secured_bag, self._loc:text("ehi_experience_trigger_times", { times = data.times })), xp, xp_with_gage, colors.loot_secured)
+                self:_add_xp_text(string.format("%s (%s): ", secured_bag, self._loc:text("ehi_experience_trigger_times", { times = data.times })), xp, xp_with_gage, colors.loot_secured)
             else
-                self:AddXPText(string.format("%s: ", secured_bag), xp, xp_with_gage, colors.loot_secured)
+                self:_add_xp_text(string.format("%s: ", secured_bag), xp, xp_with_gage, colors.loot_secured)
             end
             if total_xp.add and not data.times then
                 total_xp.add = false
@@ -670,11 +667,11 @@ function XPBreakdownPanel:ProcessLoot(total_xp)
             if self._gage then
                 xp_with_gage = self._gui:FormatXPWithAllGagePackages(data)
             end
-            self:AddXPText(string.format("%s: ", secured_bag), xp, xp_with_gage, colors.loot_secured)
+            self:_add_xp_text(string.format("%s: ", secured_bag), xp, xp_with_gage, colors.loot_secured)
             total_xp.add = false
         end
     elseif self._params.loot then
-        self:AddLine(self._loc:text("ehi_experience_loot_secured"), colors.loot_secured)
+        self:_add_line(self._loc:text("ehi_experience_loot_secured"), colors.loot_secured)
         for loot, data in pairs(self._params.loot) do
             if type(data) == "table" then
                 local value = self._xp:FakeMultiplyXPWithAllBonuses(data.amount)
@@ -683,7 +680,7 @@ function XPBreakdownPanel:ProcessLoot(total_xp)
                 if self._gage then
                     xp_with_gage = self._gui:FormatXPWithAllGagePackages(data.amount)
                 end
-                self:AddLootSecured(data.name or loot, data.times or 0, data.to_secure or 0, data.mandatory or 0, data.additional, xp, xp_with_gage)
+                self:_add_loot_secured(data.name or loot, data.times or 0, data.to_secure or 0, data.mandatory or 0, data.additional, xp, xp_with_gage)
                 if total_xp.add and not data.times then
                     total_xp.add = false
                 end
@@ -695,7 +692,7 @@ function XPBreakdownPanel:ProcessLoot(total_xp)
                 if self._gage then
                     xp_with_gage = self._gui:FormatXPWithAllGagePackages(data)
                 end
-                self:AddLootSecured(loot, 0, 0, 0, false, xp, xp_with_gage)
+                self:_add_loot_secured(loot, 0, 0, 0, false, xp, xp_with_gage)
                 total_xp.add = false
             end
         end
@@ -703,7 +700,7 @@ function XPBreakdownPanel:ProcessLoot(total_xp)
 end
 
 ---@param total_xp table
-function XPBreakdownPanel:ProcessTotalXP(total_xp)
+function XPBreakdownPanel:_process_total_xp(total_xp)
     if self._params.total_xp_override then
         local override = self._params.total_xp_override
         local override_objective = override.objective or {}
@@ -712,15 +709,15 @@ function XPBreakdownPanel:ProcessTotalXP(total_xp)
         local o_params = override.params
         if o_params then
             if o_params.custom then
-                self:ParamsCustom(o_params.custom)
+                self:_params_custom(o_params.custom)
             elseif o_params.min_max then
-                self:ParamsMinMax(o_params.min_max)
+                self:_params_minmax(o_params.min_max)
             elseif o_params.min then
-                self:ParamsMinWithMax(o_params)
+                self:_params_min_with_max(o_params)
             elseif o_params.max_only then
-                self:ParamsMaxOnly(o_params.max_only)
+                self:_params_max_only(o_params.max_only)
             elseif o_params.escape then
-                self:ParamsEscape(o_params.escape)
+                self:_params_escape(o_params.escape)
             end
         else
             local base = 0
@@ -773,7 +770,7 @@ function XPBreakdownPanel:ProcessTotalXP(total_xp)
             if self._gage then
                 xp_with_gage = self._gui:FormatXPWithAllGagePackages(base)
             end
-            self:AddTotalXP(xp, xp_with_gage)
+            self:_add_total_xp(xp, xp_with_gage)
         end
     elseif total_xp.add and total_xp.base > 0 then
         local total = self._xp:FakeMultiplyXPWithAllBonuses(total_xp.base)
@@ -781,19 +778,19 @@ function XPBreakdownPanel:ProcessTotalXP(total_xp)
         if self._gage then
             xp_with_gage = self._gui:FormatXPWithAllGagePackages(total_xp.base)
         end
-        self:AddTotalXP(self._xp:cash_string(total, "+"), xp_with_gage)
+        self:_add_total_xp(self._xp:cash_string(total, "+"), xp_with_gage)
     end
 end
 
 ---@param o_params table
-function XPBreakdownPanel:ParamsCustom(o_params)
+function XPBreakdownPanel:_params_custom(o_params)
     for _, c_params in ipairs(o_params) do
         if c_params.type == "min_max" then
-            self:ParamsMinMax(c_params)
+            self:_params_minmax(c_params)
         elseif c_params.type == "min_with_max" then
-            self:ParamsMinWithMax(c_params)
+            self:_params_min_with_max(c_params)
         elseif c_params.type == "max_only" then
-            self:ParamsMaxOnly(c_params)
+            self:_params_max_only(c_params)
         else
             EHI:Log("Custom type not recognized! " .. tostring(c_params.type))
         end
@@ -801,7 +798,7 @@ function XPBreakdownPanel:ParamsCustom(o_params)
 end
 
 ---@param o_params table
-function XPBreakdownPanel:ParamsMinMax(o_params)
+function XPBreakdownPanel:_params_minmax(o_params)
     local min, max = 0, 0
     if o_params.objective then
         local o_min, o_max = {}, {}
@@ -819,11 +816,11 @@ function XPBreakdownPanel:ParamsMinMax(o_params)
                 end
             end
         end
-        min = self:SumObjective(o_min, true)
-        max = self:SumObjective(o_max)
+        min = self:_sum_objective(o_min, true)
+        max = self:_sum_objective(o_max)
     else
-        min = self:SumObjective({}, true)
-        max = self:SumObjective()
+        min = self:_sum_objective({}, true)
+        max = self:_sum_objective()
     end
     if o_params.objectives then
         local o_min, o_max = {}, {}
@@ -842,11 +839,11 @@ function XPBreakdownPanel:ParamsMinMax(o_params)
             end
         end
         local random = o_params.objectives.random or {}
-        min = min + self:SumObjectives(o_min, random.min, true)
-        max = max + self:SumObjectives(o_max, random.max)
+        min = min + self:_sum_objectives(o_min, random.min, true)
+        max = max + self:_sum_objectives(o_max, random.max)
     else
-        min = min + self:SumObjectives({}, nil, true)
-        max = max + self:SumObjectives()
+        min = min + self:_sum_objectives({}, nil, true)
+        max = max + self:_sum_objectives()
     end
     for key, data in pairs(o_params.loot or {}) do
         local loot = self._params.loot and self._params.loot[key]
@@ -877,11 +874,11 @@ function XPBreakdownPanel:ParamsMinMax(o_params)
         min = min + (bonus.min_max or bonus.min or 0)
         max = max + (bonus.min_max or bonus.max or 0)
     end
-    self:AddTotalMinMaxXP(min, max, true, o_params.name)
+    self:_add_total_minmax_xp(min, max, true, o_params.name)
 end
 
 ---@param o_params table
-function XPBreakdownPanel:ParamsMinWithMax(o_params)
+function XPBreakdownPanel:_params_min_with_max(o_params)
     local override_objective = self._params.total_xp_override.objective or {}
     local override_objectives = self._params.total_xp_override.objectives or {}
     --local override_loot = self._params.total_xp_override.loot or {}
@@ -908,7 +905,7 @@ function XPBreakdownPanel:ParamsMinWithMax(o_params)
                 end
             end
         else
-            min = min + self:SumObjective(override_objective, true)
+            min = min + self:_sum_objective(override_objective, true)
         end
     end
     if o_params.min.objectives then
@@ -947,7 +944,7 @@ function XPBreakdownPanel:ParamsMinWithMax(o_params)
                 end
             end
         else
-            min = min + self:SumObjectives(override_objectives, nil, true)
+            min = min + self:_sum_objectives(override_objectives, nil, true)
         end
     end
     if o_params.min.loot then
@@ -993,7 +990,7 @@ function XPBreakdownPanel:ParamsMinWithMax(o_params)
                     end
                 end
             else
-                max = max + self:SumObjective(override_objective)
+                max = max + self:_sum_objective(override_objective)
             end
         end
         if o_params.max.objectives then
@@ -1046,7 +1043,7 @@ function XPBreakdownPanel:ParamsMinWithMax(o_params)
                     end
                 end
             else
-                max = max + self:SumObjectives(override_objectives)
+                max = max + self:_sum_objectives(override_objectives)
             end
         end
         if o_params.max.loot then
@@ -1093,7 +1090,7 @@ function XPBreakdownPanel:ParamsMinWithMax(o_params)
                 end
             end
         elseif o_params.max_level_bags_with_objective then
-            local sum_of_min_objective = self:SumObjective()
+            local sum_of_min_objective = self:_sum_objective()
             local min_objective_xp = self._xp:FakeMultiplyXPWithAllBonuses(sum_of_min_objective)
             local min_objective_xp_gage = self._gage and self._gui:FormatXPWithAllGagePackagesNoString(sum_of_min_objective) or min_objective_xp
             local loot_xp = self._xp:FakeMultiplyXPWithAllBonuses(self._params.loot_all --[[@as number]])
@@ -1107,7 +1104,7 @@ function XPBreakdownPanel:ParamsMinWithMax(o_params)
                 max = string.format("+%s %s (%s; %s %s)", max, xp, to_secure, self._loc:text("ehi_experience_all_gage_packages"), tostring(bags_to_secure_gage))
             end
         elseif o_params.max_level_bags_with_objectives then
-            local sum_of_min_objectives = self:SumObjectives()
+            local sum_of_min_objectives = self:_sum_objectives()
             local min_objectives_xp = self._xp:FakeMultiplyXPWithAllBonuses(sum_of_min_objectives)
             local min_objectives_xp_gage = self._gage and self._gui:FormatXPWithAllGagePackagesNoString(sum_of_min_objective) or min_objectives_xp
             local loot_xp = self._xp:FakeMultiplyXPWithAllBonuses(self._params.loot_all --[[@as number]])
@@ -1153,15 +1150,15 @@ function XPBreakdownPanel:ParamsMinWithMax(o_params)
             end
         end
     end
-    self:AddTotalMinMaxXP(min, max, format_max, o_params.name)
+    self:_add_total_minmax_xp(min, max, format_max, o_params.name)
 end
 
 ---@param o_params table
-function XPBreakdownPanel:ParamsMaxOnly(o_params)
+function XPBreakdownPanel:_params_max_only(o_params)
     local o_max = o_params.max or {}
     local max = 0
     if type(self._params.objective) == "table" then
-        max = self:SumObjective(o_max)
+        max = self:_sum_objective(o_max)
     end
     if type(self._params.objectives) == "table" then
         for _, data in ipairs(self._params.objectives or {}) do
@@ -1181,7 +1178,7 @@ function XPBreakdownPanel:ParamsMaxOnly(o_params)
             end
         end
     else
-        max = max + self:SumObjectives(o_max)
+        max = max + self:_sum_objectives(o_max)
     end
     for key, data in pairs(o_params.loot or {}) do
         local loot = self._params.loot and self._params.loot[key]
@@ -1205,11 +1202,11 @@ function XPBreakdownPanel:ParamsMaxOnly(o_params)
         end
         max = max + (amount * (data.min_max or data.max or 0))
     end
-    self:AddLine(("Max (" .. o_params.name .. "): +") .. self._gui:FormatXPWithAllGagePackages(max) .. " " .. self._loc:text("ehi_experience_xp"), colors.total_xp)
+    self:_add_line(("Max (" .. o_params.name .. "): +") .. self._gui:FormatXPWithAllGagePackages(max) .. " " .. self._loc:text("ehi_experience_xp"), colors.total_xp)
 end
 
 ---@param o_params table
-function XPBreakdownPanel:ParamsEscape(o_params)
+function XPBreakdownPanel:_params_escape(o_params)
     local min, max, max_stealth = 0, 0, 0
     if o_params.loot then
         local params_loot = self._params.loot
@@ -1240,14 +1237,14 @@ function XPBreakdownPanel:ParamsEscape(o_params)
         min = amount * (data.min_max or data.min or 0)
         max = amount * (data.min_max or data.max or 0)
     end
-    self:AddTotalXP()
+    self:_add_total_xp()
     for _, value in ipairs(self._params.objective and self._params.objective.escape or {}) do ---@diagnostic disable-line
         local s
         local max_xp = 0
         if value.stealth then
             s = self._loc:text("ehi_experience_stealth_escape")
             if value.timer then
-                s = s .. " (<" .. self:FormatTime(value.timer) .. ")"
+                s = s .. " (<" .. self:_format_time(value.timer) .. ")"
             end
             max_xp = max
         else
@@ -1266,15 +1263,15 @@ function XPBreakdownPanel:ParamsEscape(o_params)
             xp_min_with_gage = self._gui:FormatXPWithAllGagePackages(value.amount + min)
             xp_max_with_gage = self._gui:FormatXPWithAllGagePackages(value.amount + max_xp)
         end
-        self:AddXPText(string.format("%s - Min: ", s), xp_min, xp_min_with_gage, colors.total_xp)
-        self:AddXPText(string.format("%s - Max: ", s), xp_max, xp_max_with_gage, colors.total_xp)
+        self:_add_xp_text(string.format("%s - Min: ", s), xp_min, xp_min_with_gage, colors.total_xp)
+        self:_add_xp_text(string.format("%s - Max: ", s), xp_max, xp_max_with_gage, colors.total_xp)
     end
 end
 
 ---@param override_objective table?
 ---@param skip_optional boolean?
 ---@return number
-function XPBreakdownPanel:SumObjective(override_objective, skip_optional)
+function XPBreakdownPanel:_sum_objective(override_objective, skip_optional)
     local xp = 0
     override_objective = override_objective or {}
     for key, obj in pairs(self._params.objective or {}) do
@@ -1304,7 +1301,7 @@ end
 ---@param random_objectives table?
 ---@param skip_optional boolean?
 ---@return number
-function XPBreakdownPanel:SumObjectives(override_objectives, random_objectives, skip_optional)
+function XPBreakdownPanel:_sum_objectives(override_objectives, random_objectives, skip_optional)
     local xp = 0
     override_objectives = override_objectives or {}
     for _, data in ipairs(self._params.objectives or {}) do
@@ -1357,29 +1354,29 @@ end
 ---@param max number|string?
 ---@param format_max boolean
 ---@param post_fix string?
-function XPBreakdownPanel:AddTotalMinMaxXP(min, max, format_max, post_fix)
+function XPBreakdownPanel:_add_total_minmax_xp(min, max, format_max, post_fix)
     local post_fix_text = post_fix and self._loc:text("ehi_experience_" .. post_fix) or ""
     local xp = self._loc:text("ehi_experience_xp")
     if not post_fix then
-        self:AddTotalXP()
+        self:_add_total_xp()
     end
-    self:AddLine((post_fix and ("Min (" .. post_fix_text .. "): ") or "Min: ") .. self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(min), "+") .. " " .. xp, colors.total_xp)
+    self:_add_line((post_fix and ("Min (" .. post_fix_text .. "): ") or "Min: ") .. self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(min), "+") .. " " .. xp, colors.total_xp)
     if max then
         if format_max then
-            self:AddLine((post_fix and ("Max (" .. post_fix_text .. "): +") or "Max: +") .. self._gui:FormatXPWithAllGagePackages(max or 0 --[[@as number]]) .. " " .. xp, colors.total_xp)
+            self:_add_line((post_fix and ("Max (" .. post_fix_text .. "): +") or "Max: +") .. self._gui:FormatXPWithAllGagePackages(max or 0 --[[@as number]]) .. " " .. xp, colors.total_xp)
         else
-            self:AddLine((post_fix and ("Max (" .. post_fix_text .. "): ") or "Max: ") .. tostring(max), colors.total_xp)
+            self:_add_line((post_fix and ("Max (" .. post_fix_text .. "): ") or "Max: ") .. tostring(max), colors.total_xp)
         end
     end
 end
 
 ---@param txt string
 ---@param txt_color Color?
-function XPBreakdownPanel:AddLine(txt, txt_color)
+function XPBreakdownPanel:_add_line(txt, txt_color)
     self._panel:text({
         blend_mode = "add",
         x = 10,
-        y = self:GetPanelHeight(),
+        y = self:_get_panel_height(),
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.menu.pd2_small_font_size,
         color = txt_color or Color.white,
@@ -1389,7 +1386,7 @@ function XPBreakdownPanel:AddLine(txt, txt_color)
     self._lines = self._lines + 1
 end
 
-function XPBreakdownPanel:AddXPOverviewText()
+function XPBreakdownPanel:_add_xp_overview_text()
     local text_panel = self._panel:text({
         blend_mode = "add",
         x = 10,
@@ -1416,7 +1413,7 @@ function XPBreakdownPanel:AddXPOverviewText()
             font = tweak_data.menu.pd2_large_font,
             font_size = tweak_data.menu.pd2_small_font_size,
             color = tweak_data.screen_colors.risk,
-            text = string.format("%s +%d%s", self._loc:get_default_macro("BTN_SKULL"), diff_multiplier, "x"),
+            text = string.format("%s +%dx", self._loc:get_default_macro("BTN_SKULL"), diff_multiplier),
             layer = 10
         })
         managers.hud:make_fine_text(diff)
@@ -1661,7 +1658,7 @@ end
 ---@param key string
 ---@param additional_name string?
 ---@return string
-function XPBreakdownPanel:GetTranslatedKey(key, additional_name)
+function XPBreakdownPanel:_get_translated_key(key, additional_name)
     local string_id = "ehi_experience_" .. key
     local add_string_id = nil
     if additional_name then
@@ -1729,6 +1726,9 @@ end
 
 function MissionBriefingGui:ProcessXPBreakdown()
     if _panels then
+        if TacticMax > 1 then
+            self:HookMouseFunctions()
+        end
         if self._disable_panels_update then
             return
         end
@@ -2057,22 +2057,24 @@ function MissionBriefingGui:RefreshXPOverview()
     self:ProcessXPBreakdown()
 end
 
+---@diagnostic disable
 function MissionBriefingGui:NextTacticSelection()
-    _buttons[TacticSelected]:Unselect() ---@diagnostic disable-line
+    _buttons[TacticSelected]:Unselect()
     local PreviousTactic = TacticSelected
     TacticSelected = math.increment_with_limit(TacticSelected, 1, TacticMax)
-    _buttons[TacticSelected]:Select(false, PreviousTactic) ---@diagnostic disable-line
+    _buttons[TacticSelected]:Select(false, PreviousTactic)
 end
 
 ---@param index number
 ---@param PreviousTactic number?
 function MissionBriefingGui:OnTacticChanged(index, PreviousTactic)
     local tactic = PreviousTactic or TacticSelected
-    _panels[index]._panel:set_visible(true) ---@diagnostic disable-line
-    _panels[tactic]._panel:set_visible(false) ---@diagnostic disable-line
-    _buttons[tactic]:Unselect() ---@diagnostic disable-line
+    _panels[index]._panel:set_visible(true)
+    _panels[tactic]._panel:set_visible(false)
+    _buttons[tactic]:Unselect()
     TacticSelected = index
 end
+---@diagnostic enable
 
 function TeamLoadoutItem:set_slot_outfit(slot, ...)
     original.set_slot_outfit(self, slot, ...)
