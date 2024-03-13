@@ -1,6 +1,23 @@
 local EHI = EHI
 local Color = Color
 
+---@generic T: table
+---@param super T? A base class which `class` will derive from
+---@return T
+function ehi_achievement_class(super)
+    local klass = class(super)
+    klass._popup_type = "achievement"
+    klass._show_started = EHIAchievementTracker._show_started
+    klass._show_failed = EHIAchievementTracker._show_failed
+    klass._show_desc = EHIAchievementTracker._show_desc
+    klass.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
+    klass.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
+    klass.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
+    klass.PrepareHint = EHIAchievementTracker.PrepareHint
+    klass.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
+    return klass
+end
+
 ---@class EHIAchievementTracker : EHIWarningTracker
 ---@field super EHIWarningTracker
 EHIAchievementTracker = class(EHIWarningTracker)
@@ -110,18 +127,15 @@ function EHIAchievementTracker:load(data)
     self:SetTimeNoAnim(data.time)
 end
 
+---@class EHIAchievementUnlockTracker : EHIAchievementTracker
+---@field super EHIAchievementTracker
+EHIAchievementUnlockTracker = class(EHIAchievementTracker)
+EHIAchievementUnlockTracker.delete = EHIAchievementUnlockTracker.super.super.delete
+EHIAchievementUnlockTracker._show_completion_color = true
+
 ---@class EHIAchievementProgressTracker : EHIProgressTracker, EHIAchievementTracker
 ---@field super EHIProgressTracker
-EHIAchievementProgressTracker = class(EHIProgressTracker)
-EHIAchievementProgressTracker._popup_type = "achievement"
-EHIAchievementProgressTracker._show_started = EHIAchievementTracker._show_started
-EHIAchievementProgressTracker._show_failed = EHIAchievementTracker._show_failed
-EHIAchievementProgressTracker._show_desc = EHIAchievementTracker._show_desc
-EHIAchievementProgressTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
-EHIAchievementProgressTracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
-EHIAchievementProgressTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
-EHIAchievementProgressTracker.PrepareHint = EHIAchievementTracker.PrepareHint
-EHIAchievementProgressTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
+EHIAchievementProgressTracker = ehi_achievement_class(EHIProgressTracker)
 ---@param panel Panel
 ---@param params EHITracker.params
 function EHIAchievementProgressTracker:init(panel, params, ...)
@@ -159,48 +173,9 @@ function EHIAchievementProgressTracker:load(data)
     self:SetProgress(data.progress or 0)
 end
 
----@class EHIAchievementUnlockTracker : EHIWarningTracker, EHIAchievementTracker
----@field super EHIWarningTracker
-EHIAchievementUnlockTracker = class(EHIWarningTracker)
-EHIAchievementUnlockTracker._popup_type = "achievement"
-EHIAchievementUnlockTracker._show_completion_color = true
-EHIAchievementUnlockTracker._show_started = EHIAchievementTracker._show_started
-EHIAchievementUnlockTracker._show_failed = EHIAchievementTracker._show_failed
-EHIAchievementUnlockTracker._show_desc = EHIAchievementTracker._show_desc
-EHIAchievementUnlockTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
-EHIAchievementUnlockTracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
-EHIAchievementUnlockTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
-EHIAchievementUnlockTracker.SetFailed = EHIAchievementTracker.SetFailed
-EHIAchievementUnlockTracker.PrepareHint = EHIAchievementTracker.PrepareHint
-EHIAchievementUnlockTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
----@param params EHITracker.params
-function EHIAchievementUnlockTracker:post_init(params)
-    self._beardlib = params.beardlib
-    self:ShowStartedPopup()
-    self:ShowAchievementDescription()
-    self:PrepareHint(params)
-end
-
-function EHIAchievementUnlockTracker:save(data)
-    data.time = self._time
-end
-
-function EHIAchievementUnlockTracker:load(data)
-    self:SetTimeNoAnim(data.time)
-end
-
 ---@class EHIAchievementBagValueTracker : EHINeededValueTracker, EHIAchievementTracker
 ---@field super EHINeededValueTracker
-EHIAchievementBagValueTracker = class(EHINeededValueTracker)
-EHIAchievementBagValueTracker._popup_type = "achievement"
-EHIAchievementBagValueTracker._show_started = EHIAchievementTracker._show_started
-EHIAchievementBagValueTracker._show_failed = EHIAchievementTracker._show_failed
-EHIAchievementBagValueTracker._show_desc = EHIAchievementTracker._show_desc
-EHIAchievementBagValueTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
-EHIAchievementBagValueTracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
-EHIAchievementBagValueTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
-EHIAchievementBagValueTracker.PrepareHint = EHIAchievementTracker.PrepareHint
-EHIAchievementBagValueTracker.PlayerSpawned = EHIAchievementTracker.PlayerSpawned
+EHIAchievementBagValueTracker = ehi_achievement_class(EHINeededValueTracker)
 ---@param params EHITracker.params
 function EHIAchievementBagValueTracker:post_init(params)
     self._beardlib = params.beardlib

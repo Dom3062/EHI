@@ -1,17 +1,10 @@
 ---@class EHIcorp9Tracker : EHIColoredCodesTracker, EHIAchievementTracker
 ---@field super EHIColoredCodesTracker
-EHIcorp9Tracker = class(EHIColoredCodesTracker)
+EHIcorp9Tracker = ehi_achievement_class(EHIColoredCodesTracker)
 EHIcorp9Tracker._forced_icons = EHI:GetAchievementIcon("corp_9")
 EHIcorp9Tracker._update = false
-EHIcorp9Tracker._popup_type = "achievement"
 EHIcorp9Tracker._forced_hint_text = "achievement_corp_9"
 EHIcorp9Tracker._hint_vanilla_localization = true
-EHIcorp9Tracker._show_started = EHIAchievementTracker._show_started
-EHIcorp9Tracker._show_failed = EHIAchievementTracker._show_failed
-EHIcorp9Tracker._show_desc = EHIAchievementTracker._show_desc
-EHIcorp9Tracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
-EHIcorp9Tracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
-EHIcorp9Tracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
 function EHIcorp9Tracker:init(...)
     EHIcorp9Tracker.super.init(self, ...)
     self:ShowStartedPopup()

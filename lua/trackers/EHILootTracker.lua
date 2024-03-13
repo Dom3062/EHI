@@ -317,14 +317,8 @@ end
 ---@class EHIAchievementLootCounterTracker : EHILootTracker, EHIAchievementTracker
 ---@field _icon2 PanelBitmap
 ---@field super EHILootTracker
-EHIAchievementLootCounterTracker = class(EHILootTracker)
-EHIAchievementLootCounterTracker._popup_type = "achievement"
-EHIAchievementLootCounterTracker._show_started = EHIAchievementTracker._show_started
-EHIAchievementLootCounterTracker._show_failed = EHIAchievementTracker._show_failed
-EHIAchievementLootCounterTracker._show_desc = EHIAchievementTracker._show_desc
-EHIAchievementLootCounterTracker.ShowStartedPopup = EHIAchievementTracker.ShowStartedPopup
-EHIAchievementLootCounterTracker.ShowFailedPopup = EHIAchievementTracker.ShowFailedPopup
-EHIAchievementLootCounterTracker.ShowAchievementDescription = EHIAchievementTracker.ShowAchievementDescription
+EHIAchievementLootCounterTracker = ehi_achievement_class(EHILootTracker)
+EHIAchievementLootCounterTracker._PrepareHint = EHIAchievementTracker.PrepareHint
 EHIAchievementLootCounterTracker._PlayerSpawned = EHIAchievementTracker.PlayerSpawned
 ---@param panel Panel
 ---@param params EHITracker.params
@@ -357,7 +351,7 @@ end
 
 ---@param params EHITracker.params
 function EHIAchievementLootCounterTracker:PrepareHint(params)
-    EHIAchievementTracker.PrepareHint(self, params)
+    self:_PrepareHint(params)
     self._forced_hint_text = params.hint
 end
 

@@ -58,7 +58,8 @@ end
 function TimerGui:GetVisibilityData()
     return {
         hint = self._ehi_hint,
-        theme = self.THEME
+        theme = self.THEME,
+        icons = self._icons or self._ehi_icon
     }
 end
 

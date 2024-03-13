@@ -44,7 +44,7 @@ function ZipLine:init(unit, ...)
         })
         managers.ehi_tracker:PreloadTracker({
             id = self._ehi_key_user,
-            icons = { "zipline", Icon.Escape, Icon.Goto },
+            icons = { "Other_H_Any_DidntSee" }, -- gage3_13 achievement icon
             hide_on_delete = true,
             hint = "zipline_person"
         })
@@ -131,7 +131,7 @@ local function AddUserZipline(self, unit)
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_reset, {
             time = total_time_2,
             present_timer = local_unit and total_time, ---@diagnostic disable-line
-            icon = "zipline",
+            icon = "Other_H_Any_DidntSee",
             unit = self:GetMovingObject()
         })
     end

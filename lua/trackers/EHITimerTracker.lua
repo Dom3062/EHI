@@ -283,7 +283,7 @@ function EHITimerGroupTracker:StopTimer(id)
 end
 
 function EHITimerGroupTracker:Redraw()
-    for _, timer in ipairs(self._timers) do
+    for _, timer in pairs(self._timers) do
         self:FitTheText(timer.label)
     end
 end

@@ -20,6 +20,7 @@ function EHITimerManager:AddTimerSubgroup(id, group, subgroup, i_subgroup, upgra
     local tracker_id = self._get_tracker_id(group, subgroup, i_subgroup)
     self._trackers:AddTracker({
         id = tracker_id,
+        icons = visibility_data.icons,
         key = id,
         time = 100, -- Set the initial time to 100, the timer will get accurate the next frame
         upgrades = upgrades,
@@ -47,6 +48,7 @@ function EHITimerManager:AddTimer_iSubgroup(id, group, subgroup, i_subgroup, upg
     local tracker_id = self._get_tracker_id(group, subgroup, i_subgroup)
     self._trackers:AddTracker({
         id = tracker_id,
+        icons = visibility_data.icons,
         key = id,
         time = 100, -- Set the initial time to 100, the timer will get accurate the next frame
         upgrades = upgrades,

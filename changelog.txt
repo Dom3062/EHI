@@ -1,3 +1,7 @@
+r228 (13. 03. 2024):
+Updated Zipline icons for players
+Fixed a crash in Timer Group
+
 r227 (12. 03. 2024):
 Buffs: Fixed a crash with Ex-President perk deck
 Lost in Transit: Fixed a crash

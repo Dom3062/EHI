@@ -16,7 +16,9 @@ end
 function EHIuno7Tracker:SetTextColor()
     if self._obtainable then
         self._text:set_color(Color.white)
-        self:AnimateColor(self._time <= 10)
+        if self._time <= 10 then
+            self:AnimateColor(true)
+        end
     else
         self._text:set_color(Color.red)
     end
