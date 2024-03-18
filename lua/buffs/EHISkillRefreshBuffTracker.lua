@@ -176,10 +176,6 @@ function EHIDamageAbsorptionBuffTracker:UpdateValue()
     self._skill_value = absorption
 end
 
-function EHIDamageAbsorptionBuffTracker:NetworkClosed()
-    self:RemoveBuffFromUpdate()
-end
-
 ---@class EHIDamageReductionBuffTracker : EHISkillRefreshBuffTracker
 EHIDamageReductionBuffTracker = class(EHISkillRefreshBuffTracker)
 EHIDamageReductionBuffTracker._refresh_option = "damage_reduction_refresh"

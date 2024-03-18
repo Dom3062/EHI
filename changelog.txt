@@ -1,3 +1,6 @@
+r229 (18. 03. 2024):
+Attempt to fix crash when quiting heists
+
 r228 (13. 03. 2024):
 Updated Zipline icons for players
 Fixed a crash in Timer Group

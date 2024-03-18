@@ -13,6 +13,6 @@ end
 
 local on_network_stopped = BaseNetworkSession.on_network_stopped
 function BaseNetworkSession:on_network_stopped(...)
-    managers.ehi_buff:CallFunction("DamageAbsorption", "NetworkClosed")
+    managers.ehi_buff:NetworkClosed()
     on_network_stopped(self, ...)
 end

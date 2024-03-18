@@ -201,6 +201,10 @@ function EHIBuffManager:SetCustodyState(state)
     self:RemoveAbilityCooldown(state)
 end
 
+function EHIBuffManager:NetworkClosed()
+    self._update_buffs = {}
+end
+
 ---@param id string
 ---@param t number
 function EHIBuffManager:AddBuff(id, t)
