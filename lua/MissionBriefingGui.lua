@@ -34,7 +34,7 @@ local xp_format = EHI:GetOption("xp_format")
 local diff_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", EHI:DifficultyIndex()) or 1
 
 ---@type XPBreakdownPanel[]?, XPBreakdownItem[]?
-local _panels, _buttons, TacticSelected, TacticMax = nil, nil, 1, 1
+local _panels, _buttons, TacticSelected, TacticMax, _MouseEventsHooked = nil, nil, 1, 1, nil
 ---@class XPBreakdownItem
 ---@field new fun(self: self, gui: MissionBriefingGui, ws_panel: Panel, string: string, add_string: string?, loc: LocalizationManager, index: number): self
 local XPBreakdownItem = class()
@@ -1935,6 +1935,9 @@ function MissionBriefingGui:AddXPBreakdown(params)
 end
 
 function MissionBriefingGui:HookMouseFunctions()
+    if _MouseEventsHooked then
+        return
+    end
     original.close = self.close
     ---@param gui MissionBriefingGui
     self.close = function(gui, ...)
@@ -1953,6 +1956,7 @@ function MissionBriefingGui:HookMouseFunctions()
         -- No need to restore original function; these will get recreated
         original.assets_select = nil
         original.assets_deselect = nil
+        _MouseEventsHooked = nil
     end
     if XPBreakdownItemSwitch:IsCreated() then
         original.special_btn_pressed = self.special_btn_pressed
@@ -2021,6 +2025,7 @@ function MissionBriefingGui:HookMouseFunctions()
             return original.mouse_moved(gui, ...)
         end
     end
+    _MouseEventsHooked = true
 end
 
 function MissionBriefingGui:FakeExperienceMultipliers()

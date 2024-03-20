@@ -1,3 +1,6 @@
+r230 (20. 03. 2024):
+Mission Briefing: Attempt to fix game freezes
+
 r229 (18. 03. 2024):
 Attempt to fix crash when quiting heists
 
