@@ -91,6 +91,7 @@ _G.EHI =
         -- Provides `success` (a boolean value)
         MissionEnd = "MissionEnd",
         GameRestart = "GameRestart",
+        GameEnd = "GameEnd",
         -- Provides `self` (a LootManager class)
         LootSecured = "LootSecured",
         -- Provides `managers` (a global table with all managers)
@@ -216,19 +217,17 @@ _G.EHI =
         -- Autosets Vanilla settings for Waypoints  
         ---@see EHIManager.ParseMissionTriggers
         ShowWaypoint = 51,
-        --- Requires `id` and `waypoint (table)`
-        ShowEHIWaypoint = 52,
         -- Requires `id` and `max`
-        DecreaseProgressMax = 53,
+        DecreaseProgressMax = 52,
         -- Requires `id` and `progress`
-        DecreaseProgress = 54,
+        DecreaseProgress = 53,
         -- Requires `id`
         -- Optional `count`
-        IncreaseCounter = 55,
+        IncreaseCounter = 54,
         -- Requires `id`
-        DecreaseCounter = 56,
+        DecreaseCounter = 55,
         -- Requires `id` and `count`
-        SetCounter = 57,
+        SetCounter = 56,
 
         -- Requires `id` and `f (function name as string)`  
         -- Optional `arg (table of arguments to pass to the function)`
@@ -792,6 +791,7 @@ local function LoadDefaultValues(self)
         show_waypoints_only = false,
         show_waypoints_present_timer = 2,
         show_waypoints_mission = true,
+        show_waypoints_escape = true,
         show_waypoints_enemy_turret = true,
         show_waypoints_timers = true,
         show_waypoints_pager = true,
@@ -1366,7 +1366,7 @@ function EHI:IsAssaultTrackerEnabled()
     return self:GetOption("show_assault_delay_tracker") or self:GetOption("show_assault_time_tracker")
 end
 
-function EHI:AssaultDelayTrackerIsEnabled()
+function EHI:IsAssaultDelayTrackerEnabled()
     return self:GetOption("show_assault_delay_tracker") and not tweak_data.levels:IsLevelSkirmish()
 end
 
@@ -1683,14 +1683,12 @@ function EHI:DebugEquipment(tracker_id, unit, key, amount, peer_id)
 end
 
 ---@param id string
----@return table
 function EHI:GetAchievementIcon(id)
     local achievement = tweak_data.achievement.visual[id]
     return achievement and { achievement.icon_id }
 end
 
 ---@param id string
----@return string
 function EHI:GetAchievementIconString(id)
     local achievement = tweak_data.achievement.visual[id]
     return achievement and achievement.icon_id
@@ -1872,6 +1870,27 @@ function EHI:AddLootCounter3(f, trigger_once)
     }
     if trigger_once then
         tbl.trigger_times = 1
+    end
+    return tbl
+end
+
+---@param f function Loot counter function
+---@param t number Delays the loot counter
+---@param load_sync fun(self: EHIManager)? Load sync function for clients
+---@param trigger_once boolean? Should the trigger run once?
+---@return ElementTrigger
+function EHI:AddLootCounter4(f, t, load_sync, trigger_once)
+    local tbl =
+    {
+        special_function = SF.CustomCodeDelayed,
+        t = t,
+        f = f
+    }
+    if trigger_once then
+        tbl.trigger_times = 1
+    end
+    if load_sync then
+        self:AddLoadSyncFunction(load_sync)
     end
     return tbl
 end

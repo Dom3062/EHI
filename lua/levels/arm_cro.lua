@@ -12,10 +12,7 @@ local triggers = {
     [101880] = { run = { time = 120 + van_delay } },
     [101881] = { run = { time = 100 + van_delay } },
     [101882] = { run = { time = 80 + van_delay } },
-    [101883] = { run = { time = 60 + van_delay } },
-
-    [100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } },
-    [100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100008 } }
+    [101883] = { run = { time = 60 + van_delay } }
 }
 
 local other =
@@ -74,7 +71,10 @@ if EHI:IsHost() and not EHI:IsPlayingCrimeSpree() then
     other[102181] = { special_function = SF.CustomCode, f = LootCounter, arg = 3 }
     other[102182] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
 end
-
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } }
+    other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100008 } }
+end
 if EHI:GetOption("show_escape_chance") then
     other[100916] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     EHI:AddOnAlarmCallback(function(dropin)

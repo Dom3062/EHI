@@ -44,7 +44,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
     params.pause_timer = 1 ---@diagnostic disable-line
     params.no_sync = true ---@diagnostic disable-line
     params.present_timer = params.present_timer or self._present_timer
-    local waypoint = self._hud:AddWaypoint(id, params)
+    local waypoint = self._hud:AddEHIWaypoint(id, params)
     if not waypoint then
         return
     end
@@ -95,10 +95,10 @@ end
 ---@param id string
 ---@param new_id string
 function EHIWaypointManager:UpdateWaypointID(id, new_id)
-    if self._waypoints[new_id] or not self._waypoints[id] then
+    local wp = self._waypoints[id]
+    if self._waypoints[new_id] or not wp then
         return
     end
-    local wp = self._waypoints[id] --[[@as EHIWaypoint]]
     wp:UpdateID(new_id)
     self._waypoints[id] = nil
     self._waypoints[new_id] = wp

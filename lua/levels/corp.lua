@@ -150,7 +150,13 @@ local achievements =
             end) },
             [102683] = { special_function = corp_11_SetFailed },
             [102741] = { special_function = SF.SetAchievementComplete }
-        }
+        },
+        preparse_callback = function(data)
+            local trigger = data.elements[102683]
+            for i = 102699, 102712, 1 do
+                data.elements[i] = trigger
+            end
+        end
     },
     corp_12 =
     {
@@ -181,9 +187,6 @@ local achievements =
         sync_params = { from_start = true }
     }
 }
-for i = 102699, 102712, 1 do
-    achievements.corp_11.elements[i] = { special_function = corp_11_SetFailed }
-end
 
 local other =
 {

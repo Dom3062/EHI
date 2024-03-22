@@ -96,6 +96,39 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+if EHI:IsLootCounterVisible() then
+    local instances = { 4350, 5350, 5500, 5650, 5800, 5950, 6500, 13600, 13750, 13900, 14050, 23050, 23950, 24100, 24250, 24400, 25800, 7400, 25950, 26100, 26250, 26400, 26550, 26700, 26850, 27000, 27150, 27300, 27450, 27600 }
+    other[103097] = EHI:AddLootCounter4(function()
+        local barrels = 0
+        local stocks = 0
+        local receivers = 0
+        local wd = managers.worlddefinition
+        local red = Idstring("units/pd2_dlc_ranc/equipment/ranc_int_weapon_box_2x1x1m/ranc_weapon_box_marking_red")
+        local blue = Idstring("units/pd2_dlc_ranc/equipment/ranc_int_weapon_box_2x1x1m/ranc_weapon_box_marking_blue")
+        for _, index in ipairs(instances) do
+            local unit_id = EHI:GetInstanceElementID(100042, index)
+            if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
+                local unit = wd:get_unit(unit_id + 9) -- 100051
+                if unit then
+                    local material_config = unit:material_config()
+                    if material_config == red then
+                        barrels = barrels + 1
+                    elseif material_config == blue then
+                        stocks = stocks + 1
+                    else
+                        receivers = receivers + 1
+                    end
+                end
+            end
+        end
+        EHI:ShowLootCounterNoChecks({
+            max = math.min(barrels, stocks, receivers) + tweak_data.ehi.functions.GetNumberOfVisibleWeapons2(103574, 103588)
+        })
+        managers.ehi_tracker:SyncSecuredLoot()
+    end, 5, function(self)
+        self:Trigger(103097)
+    end, true)
+end
 
 EHI:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowAchievementKillCounter({
@@ -126,4 +159,71 @@ EHI:ShowAchievementKillCounter({
     achievement_stat = "ranc_11_stat", -- 4
     achievement_option = "show_achievements_weapon",
     difficulty_pass = OVKorAbove
+})
+local min_bags = EHI:GetValueBasedOnDifficulty({
+    veryhard_or_below = 6,
+    overkill_or_above = 8
+})
+local max_loot = EHI:GetValueBasedOnDifficulty({
+    veryhard_or_below = 16, -- 16 with a preplanning asset; 11 without it
+    overkill_or_above = 14 -- 14 with a preplanning asset; 9 without it
+})
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "texas1_entered_ranch_house" },
+                { amount = 2000, name = "texas1_found_laptop" },
+                { amount = 2000, name = "texas1_collected_biometrics", optional = true },
+                { amount = 2000, name = "texas1_laptop_decrypted" },
+                { amount = 1000, name = "texas1_found_gates_workshop", optional = true },
+                { amount = 2000, name = "texas1_gates_open" },
+                { amount = 2000, name = "texas1_picked_up_weapons", times = 1 },
+                { amount = 7000, name = "fs_secured_required_bags" },
+                { amount = 2000, name = "texas1_sabotaged_workbenches" },
+                { escape = 2000 }
+            },
+            loot_all = 1000,
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        loot_all = { min = min_bags, max = max_loot }
+                    }
+                }
+            }
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "texas1_entered_ranch_house" },
+                { amount = 3000, name = "texas1_entered_office" },
+                { amount = 2000, name = "texas1_laptop_decrypted" },
+                { amount = 1000, name = "texas1_found_gates_workshop" },
+                { amount = 2000, name = "hox1_blockade_cleared" },
+                { amount = 4000, name = "c4_set_up" },
+                { amount = 1000, name = "texas1_fulton_cage_assembled", optional = true },
+                { amount = 1000, name = "texas1_defended_fulton_cage", optional = true },
+                { amount = 7000, name = "fs_secured_required_bags" },
+                { escape = 2000 }
+            },
+            loot_all = 1000,
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        loot_all = { min = min_bags, max = max_loot }
+                    }
+                }
+            }
+        }
+    }
 })

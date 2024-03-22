@@ -8,7 +8,11 @@ EHIPhalanxChanceTracker.IsHost = EHI:IsHost()
 function EHIPhalanxChanceTracker:post_init(params)
     self._t_refresh = params.time
     self._chance_increase = params.chance_increase
-    self._assault_t = self._parent_class:GetInternalData("assault", "is_assault") and self:ComputeAssaultTime(true) or 0
+    if self._parent_class:GetInternalData("assault", "is_assault") then
+        self:ComputeAssaultTime(true)
+    else
+        self._assault_t = 0
+    end
     self._first_assault = params.first_assault
     EHIPhalanxChanceTracker.super.post_init(self, params)
 end

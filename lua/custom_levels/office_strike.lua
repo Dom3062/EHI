@@ -84,12 +84,15 @@ local achievements =
                     loot_type = "money"
                 }
             }}
-        }
+        },
+        preparse_callback = function(data)
+            local trigger = { special_function = SF.DecreaseProgressMax }
+            for i = 200502, 200519, 1 do
+                data.elements[i] = trigger
+            end
+        end
     }
 }
-for i = 200502, 200519, 1 do
-    achievements.os_clearedout.elements[i] = { special_function = SF.DecreaseProgressMax }
-end
 EHI:PreparseBeardlibAchievements(achievements, "os_achievements")
 
 local other =

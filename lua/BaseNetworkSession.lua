@@ -7,12 +7,13 @@
 ---@field peers fun(self: self): table<number, NetworkPeer>
 ---@field send_to_peers_synched fun(self: self, ...: any)
 
-if EHI:CheckLoadHook("BaseNetworkSession") or not EHI:GetOption("show_buffs") then
+local EHI = EHI
+if EHI:CheckLoadHook("BaseNetworkSession") then
     return
 end
 
 local on_network_stopped = BaseNetworkSession.on_network_stopped
 function BaseNetworkSession:on_network_stopped(...)
-    managers.ehi_buff:NetworkClosed()
+    EHI:CallCallbackOnce(EHI.CallbackMessage.GameEnd)
     on_network_stopped(self, ...)
 end

@@ -24,11 +24,6 @@ local triggers = {
     [101231] = { id = "Water", special_function = SF.PauseTracker }
 }
 
-for i = 4700, 4850, 50 do
-    local waypoint_id = EHI:GetInstanceElementID(100019, i)
-    triggers[EHI:GetInstanceElementID(100004, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = waypoint_id } }
-end
-
 local sync_triggers = {}
 if EHI:EscapeVehicleWillReturn("pal") then
     local heli = { id = "HeliCageDelay", icons = Icon.HeliLootDropWait, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning, hint = Hints.LootTimed }
@@ -75,7 +70,12 @@ local other =
 {
     [100658] = EHI:AddAssaultDelay({ time = 30 })
 }
-
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    for i = 4700, 4850, 50 do
+        local waypoint_id = EHI:GetInstanceElementID(100019, i)
+        other[EHI:GetInstanceElementID(100004, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = waypoint_id } }
+    end
+end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,

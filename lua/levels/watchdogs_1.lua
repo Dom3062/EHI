@@ -15,9 +15,7 @@ local triggers = {
 
     [101218] = { time = 60 + 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
     [101219] = { time = 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
-    [101221] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
-    [101223] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101231 } },
-    [102855] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 102862 } }
+    [101221] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape }
 }
 
 if EHI:IsClient() then
@@ -55,7 +53,10 @@ local other =
     [101245] = EHI:AddAssaultDelay({ time = 45 + 30 }),
     [101249] = EHI:AddAssaultDelay({ time = 50 + 30 })
 }
-
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    other[101223] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101231 } }
+    other[102855] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 102862 } }
+end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,

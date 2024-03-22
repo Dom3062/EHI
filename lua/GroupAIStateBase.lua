@@ -144,6 +144,7 @@ if EHI:GetOption("show_minion_killed_message") then
         game_is_running = false
     end
     EHI:AddCallback(EHI.CallbackMessage.GameRestart, GameEnd)
+    EHI:AddCallback(EHI.CallbackMessage.GameEnd, GameEnd)
     EHI:AddCallback(EHI.CallbackMessage.MissionEnd, GameEnd)
     EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, local_peer, peer_id)
         if game_is_running and local_peer then

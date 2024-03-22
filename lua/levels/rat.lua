@@ -23,9 +23,6 @@ local function ShowFlareWP(self, trigger)
     end
     self._trackers:RunTrackerIfDoesNotExist(trigger.id, trigger.run)
 end
-local SetFlarePos = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
-    self.SyncedSFF.rat_flare_pos = EHI:GetElementPosition(trigger.arg)
-end)
 local element_sync_triggers =
 {
     [100494] = { id = "CookChance", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100724, set_time_when_tracker_exists = true }
@@ -51,10 +48,6 @@ local triggers = {
 
     [100199] = { id = "CookingDone", run = { time = 5 + 1 } },
 
-    [102201] = { special_function = SetFlarePos, arg = 102154 },
-    [102202] = { special_function = SetFlarePos, arg = 102153 },
-    [102203] = { special_function = SetFlarePos, arg = 102152 },
-
     [1] = { special_function = SF.RemoveTrigger, data = { 101972, 101973, 101974, 101975 } },
     [101972] = { id = "Van", run = { time = 60 + 60 + 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
     [101973] = { id = "Van", run = { time = 60 + 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
@@ -63,11 +56,7 @@ local triggers = {
 
     [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", Icon.Goto }, class = TT.Warning, hint = Hints.ScriptedBulldozer },
 
-    [101982] = { special_function = SF.Trigger, data = { 1019821, 1019822 } },
-    [1019821] = { id = "Van", special_function = SF.SetTimeOrCreateTracker, run = { time = 589/30 } },
-    [1019822] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101281 } },
-
-    [101128] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101454 } }
+    [101982] = { id = "Van", special_function = SF.SetTimeOrCreateTracker, run = { time = 589/30 } }
 }
 if EHI:EscapeVehicleWillReturn("rat") then
     table.insert(preload, { id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning, hide_on_delete = true, hint = Hints.LootTimed })
@@ -91,8 +80,10 @@ if EHI:IsMayhemOrAbove() then
         triggers[1010013] = { special_function = SF.CustomCode, f = ResetWaypoint }
         triggers[102320] = { special_function = SF.CustomCode, f = ResetWaypoint }
         triggers[101258] = { special_function = SF.CustomCode, f = ResetWaypoint }
-        triggers[101982].data[#triggers[101982].data + 1] = 1019823
-        triggers[1019823] = { special_function = SF.CustomCode, f = function()
+        local original_trigger = triggers[101982]
+        triggers[101982] = { special_function = SF.Trigger, data = { 1019821, 1019822 } }
+        triggers[1019821] = original_trigger
+        triggers[1019822] = { special_function = SF.CustomCode, f = function()
             VanPos = 101449
         end }
         local function DisableWaypoint()
@@ -170,9 +161,16 @@ local achievements =
     }
 }
 
+local SetFlarePos = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
+    self.SyncedSFF.rat_flare_pos = EHI:GetElementPosition(trigger.arg)
+end)
 local other =
 {
-    [102383] = EHI:AddAssaultDelay({ time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30 })
+    [102383] = EHI:AddAssaultDelay({ time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30 }),
+
+    [102201] = { special_function = SetFlarePos, arg = 102154 },
+    [102202] = { special_function = SetFlarePos, arg = 102153 },
+    [102203] = { special_function = SetFlarePos, arg = 102152 },
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local SetRespawnTime = EHI:RegisterCustomSF(function(self, trigger, ...)
@@ -193,7 +191,10 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101141] = { time = 140, id = "Snipers", special_function = SetRespawnTime }
     other[101134] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
-
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    other[101982] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101281 } }
+    other[101128] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101454 } }
+end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,

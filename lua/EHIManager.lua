@@ -645,6 +645,13 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
             data.parsed_callback = nil
         end
     end
+    ---@param data ParseAchievementDefinitionTable
+    local function PreparseParams(data)
+        if type(data.preparse_callback) == "function" then
+            data.preparse_callback(data)
+            data.preparse_callback = nil
+        end
+    end
     local function Cleanup(data)
         for _, element in pairs(data.elements or {}) do
             if element.special_function and element.special_function > SF.CustomSF then
@@ -660,6 +667,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     if EHI:GetUnlockableAndOption("show_trophies") and next(trophy) then
         for id, data in pairs(trophy) do
             if data.difficulty_pass ~= false and EHI:IsTrophyLocked(id) then
+                PreparseParams(data)
                 for _, element in pairs(data.elements or {}) do
                     if element.class and not data.icons then
                         data.icons = { EHI.Icons.Trophy }
@@ -678,6 +686,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     if EHI:GetUnlockableAndOption("show_dailies") and next(daily) then
         for id, data in pairs(daily) do
             if data.difficulty_pass ~= false and EHI:IsSFDailyAvailable(id) then
+                PreparseParams(data)
                 for _, element in pairs(data.elements or {}) do
                     if element.class and not data.icons then
                         data.icons = { EHI.Icons.Trophy }
@@ -701,6 +710,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
             ---@param data ParseAchievementDefinitionTable
             ---@param id string
             local function Parser(data, id)
+                PreparseParams(data)
                 for _, element in pairs(data.elements or {}) do
                     if element.class then
                         element.beardlib = data.beardlib
@@ -1403,8 +1413,6 @@ function EHIManager:Trigger(id, element, enabled)
                 self:CheckCondition(trigger)
             elseif f == SF.ShowWaypoint then
                 managers.hud:AddWaypointFromTrigger(trigger.id, trigger.data)
-            elseif f == SF.ShowEHIWaypoint then
-                self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
             elseif f == SF.DecreaseProgressMax then
                 self._trackers:DecreaseTrackerProgressMax(trigger.id, trigger.max)
             elseif f == SF.DecreaseProgress then

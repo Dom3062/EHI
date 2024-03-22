@@ -6,12 +6,7 @@ local Hints = EHI.Hints
 local triggers = {
     [102449] = { time = 240, hint = Hints.LootEscape },
     [102450] = { time = 180, hint = Hints.LootEscape },
-    [102451] = { time = 300, hint = Hints.LootEscape },
-
-    [101285] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100786 } },
-    [101286] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100783 } },
-    [101287] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100784 } },
-    [101284] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100785 } }
+    [102451] = { time = 300, hint = Hints.LootEscape }
 }
 
 if EHI:IsClient() then
@@ -49,7 +44,12 @@ if EHI:IsLootCounterVisible() then
         self._trackers:IncreaseLootCounterProgressMax()
     end)
 end
-
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    other[101285] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100786 } }
+    other[101286] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100783 } }
+    other[101287] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100784 } }
+    other[101284] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100785 } }
+end
 EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.CarEscape)
 
 tweak_data.ehi.functions.uno_1(true)

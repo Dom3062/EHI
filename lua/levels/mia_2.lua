@@ -8,19 +8,21 @@ local element_sync_triggers =
     [100428] = { time = 24, id = "HeliDropDrill", icons = Icon.HeliDropDrill, hook_element = 100427, hint = Hints.DrillDelivery }, -- 20s
     [100430] = { time = 24, id = "HeliDropDrill", icons = Icon.HeliDropDrill, hook_element = 100427, hint = Hints.DrillDelivery } -- 30s
 }
+---@type ParseTriggerTable
 local triggers = {
-    [100225] = { time = 5 + 5 + 22, id = Icon.Heli, icons = Icon.HeliEscape, hint = Hints.LootEscape },
     -- 5 = Base Delay
     -- 5 = Delay when executed
     -- 22 = Heli door anim delay
     -- Total: 32 s
-    [100224] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 100926 } },
-    [101858] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101854 } },
+    [100224] = { time = 5 + 5 + 22, id = "EscapeHeli", icons = Icon.HeliEscape, hint = Hints.LootEscape, waypoint = { icon = Icon.Escape, position_by_element = 100926 } },
+    [101858] = { time = 5 + 5 + 22, id = "EscapeHeli", icons = Icon.HeliEscape, hint = Hints.LootEscape, waypoint = { icon = Icon.Escape, position_by_element = 101854 } },
 
     -- Bugged because of retarded use of ENABLED in ElementTimer and ElementTimerTrigger
     [101240] = { time = 540, id = "CokeTimer", icons = { { icon = Icon.Loot, color = Color.red } }, class = TT.Warning, hint = Hints.mia_2_Loot },
     [101282] = { id = "CokeTimer", special_function = SF.RemoveTracker }
 }
+
+local start_index = { 3500, 3750, 3900, 4450, 4900, 6100, 17600, 17650 }
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -32,21 +34,31 @@ local achievements =
             [101228] = { time = 210, class = TT.Achievement.Base },
             [100788] = { special_function = SF.SetAchievementComplete }
         }
+    },
+    pig_7 =
+    {
+        preparse_callback = function(data)
+            data.elements = {}
+            local start = { time = 5, class = TT.Achievement.Base }
+            local fail = { special_function = SF.SetAchievementFailed } -- Hostage blew out
+            local complete = { special_function = SF.SetAchievementComplete } -- Hostage saved
+            for _, index in ipairs(start_index) do
+                data.elements[EHI:GetInstanceElementID(100024, index)] = start
+                data.elements[EHI:GetInstanceElementID(100016, index)] = fail
+                data.elements[EHI:GetInstanceElementID(100027, index)] = complete
+            end
+        end
     }
 }
-local start_index = { 3500, 3750, 3900, 4450, 4900, 6100, 17600, 17650 }
-if EHI:CanShowAchievement("pig_7") then
-    achievements.pig_7 = { elements = {} }
+
+if not EHI:CanShowAchievement("pig_7") then
+    local start = { time = 5, id = "HostageBomb", icons = { Icon.Hostage, Icon.C4 }, class = TT.Warning, hint = Hints.Explosion }
+    local fail = { id = "HostageBomb", special_function = SF.RemoveTracker } -- Hostage blew out
+    local complete = { id = "HostageBomb", special_function = SF.RemoveTracker } -- Hostage saved
     for _, index in ipairs(start_index) do
-        achievements.pig_7.elements[EHI:GetInstanceElementID(100024, index)] = { time = 5, class = TT.Achievement.Base }
-        achievements.pig_7.elements[EHI:GetInstanceElementID(100016, index)] = { special_function = SF.SetAchievementFailed } -- Hostage blew out
-        achievements.pig_7.elements[EHI:GetInstanceElementID(100027, index)] = { special_function = SF.SetAchievementComplete } -- Hostage saved
-    end
-else
-    for _, index in ipairs(start_index) do
-        triggers[EHI:GetInstanceElementID(100024, index)] = { time = 5, id = "HostageBomb", icons = { Icon.Hostage, Icon.C4 }, class = TT.Warning, hint = Hints.Explosion }
-        triggers[EHI:GetInstanceElementID(100016, index)] = { id = "HostageBomb", special_function = SF.RemoveTracker } -- Hostage blew out
-        triggers[EHI:GetInstanceElementID(100027, index)] = { id = "HostageBomb", special_function = SF.RemoveTracker } -- Hostage saved
+        triggers[EHI:GetInstanceElementID(100024, index)] = start
+        triggers[EHI:GetInstanceElementID(100016, index)] = fail
+        triggers[EHI:GetInstanceElementID(100027, index)] = complete
     end
 end
 
@@ -145,7 +157,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101266] = { id = "Snipers2", special_function = SF.DecreaseCounter }
     other[101267] = { id = "Snipers2", special_function = SF.IncreaseCounter }
 end
-
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,

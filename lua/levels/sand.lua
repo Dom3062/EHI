@@ -107,12 +107,15 @@ local achievements =
         {
             [100107] = { max = 8, class = TT.Achievement.Progress },
         },
+        preparse_callback = function(data)
+            local trigger = { special_function = SF.IncreaseProgress }
+            for i = 105290, 105329, 1 do
+                data.elements[i] = trigger
+            end
+        end,
         sync_params = { from_start = true }
     }
 }
-for i = 105290, 105329, 1 do
-    achievements.sand_10.elements[i] = { special_function = SF.IncreaseProgress }
-end
 
 local other =
 {

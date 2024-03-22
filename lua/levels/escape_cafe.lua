@@ -5,11 +5,7 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local triggers = {
     [100247] = { time = 180, hint = Hints.LootEscape },
-    [100248] = { time = 120, hint = Hints.LootEscape },
-
-    [100154] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100318 } },
-    [100157] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100314 } },
-    [100156] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100367 } }
+    [100248] = { time = 120, hint = Hints.LootEscape }
 }
 
 ---@type ParseAchievementTable
@@ -31,6 +27,11 @@ local other =
     [100969] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
     [100970] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround)
 }
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    other[100154] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100318 } }
+    other[100157] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100314 } }
+    other[100156] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100367 } }
+end
 
 -- Bugged because one loot bag is not counted
 -- Reported in:

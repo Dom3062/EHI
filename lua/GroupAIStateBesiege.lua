@@ -13,7 +13,7 @@ if EHI:GetOption("show_captain_damage_reduction") then
     end
 end
 
-if EHI:AssaultDelayTrackerIsEnabled() then
+if EHI:IsAssaultDelayTrackerEnabled() then
     original._begin_assault_task = GroupAIStateBesiege._begin_assault_task
     function GroupAIStateBesiege:_begin_assault_task(...)
         original._begin_assault_task(self, ...)

@@ -68,6 +68,7 @@
 ---@field load_sync fun(self: EHIManager) Function to run if client drops-in to the game
 ---@field alarm_callback fun(dropin: boolean) Function to run after alarm has sounded
 ---@field parsed_callback fun() Function runs after the achievement is parsed
+---@field preparse_callback fun(data: self) Function runs before the achievement is parsed and achievement is enabled
 ---@field cleanup_callback fun() Function runs during achievement traversal when difficulty check or unlock check is false; intended to delete remnants so they don't occupy memory
 ---@field mission_end_callback boolean Achieves or fails achievement on mission end
 ---@field sync_params ParseAchievementDefinitionTable.sync_params Params to adjust syncing between host and clients
@@ -274,6 +275,7 @@
 ---@field flash_bg boolean?
 ---@field hint string?
 ---@field remove_on_alarm boolean?
+---@field update_on_alarm boolean?
 ---@field delay_popup boolean Provided by `EHITrackerManager`
 ---@field [any] any
 

@@ -76,7 +76,20 @@ local achievements =
         elements =
         {
             [100296] = { max = 4, class = "EHIdark5Tracker", show_finish_after_reaching_target = true },
-        }
+        },
+        preparse_callback = function(data)
+            local AddBodyBag = EHI:RegisterCustomSF(function(self, trigger, ...)
+                self._trackers:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
+            end)
+            local RemoveBodyBag = EHI:RegisterCustomSF(function(self, trigger, ...)
+                self._trackers:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
+            end)
+            for i = 12850, 13600, 250 do
+                local inc = EHI:GetInstanceElementID(100011, i)
+                data.elements[inc] = { special_function = AddBodyBag, element = i }
+                data.elements[inc + 1] = { special_function = RemoveBodyBag, element = i }
+            end
+        end
     },
     voff_3 =
     {
@@ -88,17 +101,7 @@ local achievements =
         }
     }
 }
-local AddBodyBag = EHI:RegisterCustomSF(function(self, trigger, ...)
-    self._trackers:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
-end)
-local RemoveBodyBag = EHI:RegisterCustomSF(function(self, trigger, ...)
-    self._trackers:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
-end)
-for i = 12850, 13600, 250 do
-    local inc = EHI:GetInstanceElementID(100011, i)
-    achievements.dark_5.elements[inc] = { special_function = AddBodyBag, element = i }
-    achievements.dark_5.elements[inc + 1] = { special_function = RemoveBodyBag, element = i }
-end
+
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements

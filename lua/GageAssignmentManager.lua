@@ -17,14 +17,17 @@ local original =
 ---@param self GageAssignmentManager
 ---@param client_sync_load boolean?
 local function UpdateTracker(self, client_sync_load)
-    local max_units = self:count_all_units()
-    local remaining = self:count_active_units() - 1
-    local picked_up = max_units - remaining
+    local picked_up = self:GetCountOfRemainingPackages()
     if client_sync_load and not Global.statistics_manager.playing_from_start then
         picked_up = math.max(picked_up - 1, 0)
-        EHI._cache.GagePackagesProgress = picked_up
     end
     EHI:CallCallback(EHI.CallbackMessage.SyncGagePackagesCount, picked_up, max_units, client_sync_load)
+end
+
+function GageAssignmentManager:GetCountOfRemainingPackages()
+    local max_units = self:count_all_units()
+    local remaining = self:count_active_units() - 1
+    return max_units - remaining
 end
 
 function GageAssignmentManager:present_progress(...)

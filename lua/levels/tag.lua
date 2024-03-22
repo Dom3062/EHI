@@ -28,14 +28,16 @@ local achievements =
         {
             [100107] = { status = "mark", class = TT.Achievement.Status },
         },
+        preparse_callback = function(data)
+            for i = 4550, 5450, 900 do
+                data.elements[EHI:GetInstanceElementID(100319, i)] = { special_function = SF.SetAchievementFailed }
+                data.elements[EHI:GetInstanceElementID(100321, i)] = { status = "ok", special_function = SF.SetAchievementStatus }
+                data.elements[EHI:GetInstanceElementID(100282, i)] = { special_function = SF.SetAchievementComplete }
+            end
+        end,
         sync_params = { from_start = true }
     }
 }
-for _, index in ipairs({ 4550, 5450 }) do
-    achievements.tag_10.elements[EHI:GetInstanceElementID(100319, index)] = { special_function = SF.SetAchievementFailed }
-    achievements.tag_10.elements[EHI:GetInstanceElementID(100321, index)] = { status = "ok", special_function = SF.SetAchievementStatus }
-    achievements.tag_10.elements[EHI:GetInstanceElementID(100282, index)] = { special_function = SF.SetAchievementComplete }
-end
 
 EHI:ParseTriggers({
     mission = triggers,

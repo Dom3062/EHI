@@ -542,7 +542,8 @@ local original =
 
 local EHIConfig =
 {
-    mission_trackers = EHI:GetOption("show_mission_trackers")
+    mission_trackers = EHI:GetOption("show_mission_trackers"),
+    escape_waypoints = EHI:GetWaypointOption("show_waypoints_escape")
 }
 
 ---@param instance CoreWorldInstanceManager.Instance
@@ -608,7 +609,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                             new_trigger.waypoint.remove_vanilla_waypoint = EHI:GetInstanceElementID(trigger.waypoint.remove_vanilla_waypoint, start_index, continent_data.base_id)
                         end
                     end
-                    if trigger.special_function and trigger.special_function == SF.ShowWaypoint and trigger.data and trigger.data.position_by_element then
+                    if trigger.special_function and trigger.special_function == SF.ShowWaypoint and trigger.data and trigger.data.position_by_element and EHIConfig.escape_waypoints then
                         new_trigger.data.position_by_element = EHI:GetInstanceElementID(trigger.data.position_by_element, start_index, continent_data.base_id)
                         defer_loading_waypoints = true
                     end

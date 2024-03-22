@@ -69,6 +69,18 @@
         },
         {
             "type": "toggle",
+            "id": "ehi_show_waypoints_escape_choice",
+            "title": "ehi_show_waypoints_escape",
+            "description": "ehi_show_waypoints_escape_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints_escape",
+            "value": "show_waypoints_escape",
+            "default_value": true,
+            "parent" : "ehi_show_waypoints_choice",
+            "ehi_ver" : 231
+        },
+        {
+            "type": "toggle",
             "id": "ehi_show_waypoints_enemy_turret_choice",
             "title": "ehi_show_waypoints_enemy_turret",
             "description": "ehi_show_waypoints_enemy_turret_desc",

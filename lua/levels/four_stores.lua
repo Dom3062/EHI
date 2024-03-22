@@ -40,9 +40,6 @@ local triggers = {
     [103593] = { run = { time = 180 + van_anim_delay } },
     [103594] = { run = { time = 200 + van_anim_delay } },
 
-    [102505] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101006 } },
-    [103200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103234 } },
-
     [101443] = { special_function = EHI:RegisterCustomSF(function(self, ...)
         self._trackers:AddTracker({
             id = "ObjectiveSteal",
@@ -102,6 +99,10 @@ if EHI:IsLootCounterVisible() then
             EHI:ShowLootCounterNoChecks({ max = 1 })
         end
     end)
+end
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    other[102505] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101006 } }
+    other[103200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103234 } }
 end
 EHI:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 EHI:AddXPBreakdown({

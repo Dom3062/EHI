@@ -47,9 +47,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         self.ehi:SetPanel(hud.panel)
     end
     if EHI:GetOption("show_buffs") then
-        local buff = managers.ehi_buff
-        buff:init_finalize(hud)
-        self:AddEHIUpdator(buff, "EHI_Buff_Update")
+        managers.ehi_buff:init_finalize(self, hud.panel)
     end
     if EHI:GetOption("show_floating_health_bar") then
         dofile(EHI.LuaPath .. "EHIHealthFloatManager.lua")
@@ -189,7 +187,7 @@ function HUDManager:destroy(...)
     original.destroy(self, ...)
 end
 
-if EHI:AssaultDelayTrackerIsEnabled() then
+if EHI:IsAssaultDelayTrackerEnabled() then
     original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
     function HUDManager:sync_start_anticipation_music(...)
         original.sync_start_anticipation_music(self, ...)

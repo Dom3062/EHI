@@ -11,16 +11,9 @@ local triggers = {
     [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint), hint = Hints.LootTimed },
 
     [103172] = { time = 2 + 830/30, id = "Van", icons = Icon.CarEscape, hint = Hints.LootEscape },
-    [103183] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103194 } },
-    [103182] = { special_function = SF.Trigger, data = { 1031821, 1031822 } },
-    [1031821] = { time = 600/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
-    [1031822] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103193 } },
-    [103181] = { special_function = SF.Trigger, data = { 1031811, 1031812 } },
-    [1031811] = { time = 580/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
-    [1031812] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103192 } },
-    [101770] = { special_function = SF.Trigger, data = { 1017701, 1017702 } },
-    [1017701] = { time = 650/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
-    [1017702] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101776 } }
+    [103182] = { time = 600/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
+    [103181] = { time = 580/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
+    [101770] = { time = 650/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape }
 }
 
 ---@type ParseAchievementTable
@@ -74,7 +67,12 @@ if EHI:GetOption("show_escape_chance") then
     end)
     other[101614] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 end
-
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    other[103183] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103194 } }
+    other[103182] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103193 } }
+    other[103181] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103192 } }
+    other[101770] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101776 } }
+end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,

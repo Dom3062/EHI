@@ -11,11 +11,7 @@ local triggers = {
     [100219] = { time = 60 + van_delay, hint = Hints.LootEscape },
 
     -- Heli
-    [102200] = { special_function = SF.Trigger, data = { 1022001, 1022002 } },
-    [1022001] = { time = 23, special_function = SF.SetTimeOrCreateTracker },
-    [1022002] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = 102650 } },
-
-    [100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } }
+    [102200] = { time = 23, special_function = SF.SetTimeOrCreateTracker }
 }
 local other =
 {
@@ -86,7 +82,10 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
-
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    other[102200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = 102650 } }
+    other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } }
+end
 EHI:ParseTriggers({ mission = triggers, other = other }, "Escape", { Icon.Escape, Icon.LootDrop })
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,

@@ -23,12 +23,15 @@ local achievements =
         elements =
         {
             [100107] = { max = 4, class = TT.Achievement.Progress }
-        }
+        },
+        preparse_callback = function(data)
+            local trigger = { special_function = SF.IncreaseProgress }
+            for i = 101502, 101509, 1 do
+                data.elements[i] = trigger
+            end
+        end
     }
 }
-for i = 101502, 101509, 1 do
-    achievements.mex_9.elements[i] = { special_function = SF.IncreaseProgress }
-end
 
 local other =
 {

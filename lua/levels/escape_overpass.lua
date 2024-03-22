@@ -10,11 +10,7 @@ local triggers = {
     [101158] = { time = 240, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape },
     [101977] = { special_function = AddToCache, data = { icon = Icon.Heli } },
     [101978] = { special_function = AddToCache, data = { icon = Icon.Heli } },
-    [101979] = { special_function = AddToCache, data = { icon = Icon.Car } },
-
-    [102110] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102120 } }, -- Heli
-    [102130] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102138 } }, -- Heli
-    [100953] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102141 } } -- Van
+    [101979] = { special_function = AddToCache, data = { icon = Icon.Car } }
 }
 
 if EHI:IsClient() then
@@ -55,18 +51,22 @@ if EHI:IsLootCounterVisible() then
         self._trackers:IncreaseLootCounterProgressMax()
     end)
 end
-
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    other[102110] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102120 } } -- Heli
+    other[102130] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102138 } } -- Heli
+    other[100953] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102141 } } -- Van
+end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
 }, "Escape")
 EHI:RegisterCustomSF(AddToCache, function(self, trigger, ...)
-    EHI._cache[trigger.id] = trigger.data
+    self._cache[trigger.id] = trigger.data
 end)
 EHI:RegisterCustomSF(GetFromCache, function(self, trigger, ...)
-    local data = EHI._cache[trigger.id] --[[@as { icon: string }? ]]
-    EHI._cache[trigger.id] = nil
+    local data = self._cache[trigger.id] --[[@as { icon: string }? ]]
+    self._cache[trigger.id] = nil
     if data and data.icon then
         trigger.icons[1] = data.icon
     end

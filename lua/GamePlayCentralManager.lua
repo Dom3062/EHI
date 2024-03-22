@@ -9,13 +9,21 @@ end
 
 local original =
 {
-    restart_the_game = GamePlayCentralManager.restart_the_game,
     load = GamePlayCentralManager.load
 }
 
-function GamePlayCentralManager:restart_the_game(...)
-    EHI:CallCallback(EHI.CallbackMessage.GameRestart)
-    original.restart_the_game(self, ...)
+if EHI:IsHost() then
+    original.restart_the_game = GamePlayCentralManager.restart_the_game
+    function GamePlayCentralManager:restart_the_game(...)
+        EHI:CallCallbackOnce(EHI.CallbackMessage.GameRestart)
+        original.restart_the_game(self, ...)
+    end
+else
+    original.stop_the_game = GamePlayCentralManager.stop_the_game
+    function GamePlayCentralManager:stop_the_game(...)
+        EHI:CallCallbackOnce(EHI.CallbackMessage.GameRestart)
+        original.stop_the_game(self, ...)
+    end
 end
 
 function GamePlayCentralManager:load(data, ...)

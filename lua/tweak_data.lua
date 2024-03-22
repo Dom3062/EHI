@@ -70,7 +70,7 @@ tweak_data.ehi =
         ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetDeployableOffset" },
         ["units/pd2_dlc_hvh/props/hvh_prop_armory_shelf_ammo/hvh_prop_armory_shelf_ammo"] = { f = "SetDeployableOffset" },
 
-        ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { Icon.C4 }, warning = true },
+        ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { Icon.C4 }, warning = true, hint = EHI.Hints.Explosion },
         ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { Icon.C4 }, f = "chasC4" },
         ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_01"] = { ignore_visibility = true },
         ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"] = { ignore_visibility = true },
@@ -820,6 +820,7 @@ tweak_data.ehi =
             end
             EHI:ShowLootCounterNoCheck({ max = max })
         end,
+        ---Checks if graphic group `grp_wpn` is set (mission script calls both `state_visible` and `state_hide` during level init)
         ---@param weapons number[]
         GetNumberOfVisibleWeapons = function(weapons)
             local n = 0
@@ -828,6 +829,21 @@ tweak_data.ehi =
                 local weapon = world:get_unit(index) ---@cast weapon UnitCarry
                 local state = weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group and weapon:damage()._state.graphic_group.grp_wpn
                 if state and state[1] == "set_visibility" and state[2] then
+                    n = n + 1
+                end
+            end
+            return n
+        end,
+        ---Checks if graphic group `grp_wpn` is not set (mission script calls only `state_hide` during level init)
+        ---@param from_weapon number
+        ---@param to_weapon number
+        GetNumberOfVisibleWeapons2 = function(from_weapon, to_weapon)
+            local n = 0
+            local world = managers.worlddefinition
+            for i = from_weapon, to_weapon, 1 do
+                local weapon = world:get_unit(i) ---@cast weapon UnitCarry
+                local group = weapon and weapon:damage() and weapon:damage()._state and weapon:damage()._state.graphic_group
+                if not (group and group.grp_wpn) then
                     n = n + 1
                 end
             end

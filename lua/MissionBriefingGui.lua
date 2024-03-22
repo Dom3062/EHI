@@ -34,26 +34,25 @@ local xp_format = EHI:GetOption("xp_format")
 local diff_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", EHI:DifficultyIndex()) or 1
 
 ---@type XPBreakdownPanel[]?, XPBreakdownItem[]?
-local _panels, _buttons, TacticSelected, TacticMax, _MouseEventsHooked = nil, nil, 1, 1, nil
+local _panels, _buttons, TacticSelected, TacticMax = nil, nil, 1, 1
 ---@class XPBreakdownItem
----@field new fun(self: self, gui: MissionBriefingGui, ws_panel: Panel, string: string, add_string: string?, loc: LocalizationManager, index: number): self
+---@field new fun(self: self, gui: MissionBriefingGui, ws_panel: Panel, string: string, add_string: string?, loc: LocalizationManager, index: number?): self
 local XPBreakdownItem = class()
 ---@param gui MissionBriefingGui
 ---@param ws_panel Panel
 ---@param string string
 ---@param add_string string?
 ---@param loc LocalizationManager
----@param index number
+---@param index number?
 function XPBreakdownItem:init(gui, ws_panel, string, add_string, loc, index)
     self._gui = gui
-    self._index = index
+    self._index = index or 1
     local text = loc:text(string)
     if add_string then
         text = string.format("%s (%s)", text, loc:text("ehi_experience_" .. add_string))
     end
     self._button = ws_panel:text({
         align = "center",
-        name = string,
         blend_mode = "add",
         layer = 2,
         text = text,
@@ -69,11 +68,10 @@ function XPBreakdownItem:init(gui, ws_panel, string, add_string, loc, index)
         texture = "guis/textures/pd2/shared_tab_box",
         visible = false,
         layer = 1,
-        name = string .. "_selected",
         color = tweak_data.screen_colors.text
     })
     self._tab_select_rect:set_shape(self._button:shape())
-    if index == 1 then
+    if self._index == 1 then
         self:Select(true)
     end
 end
@@ -178,7 +176,6 @@ local XPBreakdownItemSwitch = {}
 function XPBreakdownItemSwitch:new(ws_panel, max_tactics, loc, button)
     local text = max_tactics > 2 and "ehi_mission_briefing_next_tactic_text" or "ehi_mission_briefing_toggle_tactic_text"
     self._text = ws_panel:text({
-        name = "ehi_controller_switch_button",
         text = string.format("%s %s", loc:get_default_macro("BTN_X"), loc:text(text)),
         blend_mode = "add",
         layer = 2,
@@ -223,13 +220,7 @@ function XPBreakdownPanel:init(gui, ws_panel, panel_params, xp_params, loc, para
     self._panel = ws_panel:panel(panel_params)
     self._panel:set_rightbottom(40 + panel_params.w, 144)
     self._panel:set_top(75)
-    self._panel:rect({
-        name = "bg",
-        halign = "grow",
-        valign = "grow",
-        layer = 1,
-        color = Color(0.5, 0, 0, 0)
-    })
+    self:_recreate_bg()
     self._panel:set_visible((index or 1) == 1)
     self._xp = gui._xp
     self._loc = loc
@@ -240,6 +231,16 @@ function XPBreakdownPanel:init(gui, ws_panel, panel_params, xp_params, loc, para
     self._no_overview_multipliers = xp_params.no_overview_multipliers --[[@as boolean]]
     self._lines = 0
     self:ProcessBreakdown()
+end
+
+function XPBreakdownPanel:_recreate_bg()
+    self._panel:rect({
+        name = "bg",
+        halign = "grow",
+        valign = "grow",
+        layer = 1,
+        color = Color(0.5, 0, 0, 0)
+    })
 end
 
 function XPBreakdownPanel:ProcessBreakdown()
@@ -1695,13 +1696,7 @@ function XPBreakdownPanel:RefreshXPOverview()
         return
     end
     self._panel:clear()
-    self._panel:rect({
-        name = "bg",
-        halign = "grow",
-        valign = "grow",
-        layer = 1,
-        color = Color(0.5, 0, 0, 0)
-    })
+    self:_recreate_bg()
     self._lines = 0
 end
 
@@ -1902,17 +1897,18 @@ function MissionBriefingGui:AddXPBreakdown(params)
                     custom.objectives_override = nil
                 end
                 _panels[i] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, custom.tactic, i)
-                _buttons[i] = XPBreakdownItem:new(self, ws_panel, "ehi_experience_" .. custom.name, custom.additional_name, loc, i)
+                local button = XPBreakdownItem:new(self, ws_panel, "ehi_experience_" .. custom.name, custom.additional_name, loc, i)
                 if i == 1 then
-                    _buttons[i]:SetPosByPanel(_panels[i]._panel)
+                    button:SetPosByPanel(_panels[i]._panel)
                 else
-                    _buttons[i]:SetPosByPreviousItem(_buttons[i - 1])
+                    button:SetPosByPreviousItem(_buttons[i - 1])
                 end
+                _buttons[i] = button
             end
         else
             -- Process stealth tactic first
             _panels[1] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, tactic.stealth)
-            _buttons[1] = XPBreakdownItem:new(self, ws_panel, "ehi_experience_stealth", nil, loc, 1)
+            _buttons[1] = XPBreakdownItem:new(self, ws_panel, "ehi_experience_stealth", nil, loc)
             _buttons[1]:SetPosByPanel(_panels[1]._panel)
             -- Loud
             _buttons[2] = XPBreakdownItem:new(self, ws_panel, "ehi_experience_loud", nil, loc, 2)
@@ -1935,7 +1931,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
 end
 
 function MissionBriefingGui:HookMouseFunctions()
-    if _MouseEventsHooked then
+    if original.mouse_pressed or original.special_btn_pressed then
         return
     end
     original.close = self.close
@@ -1956,7 +1952,6 @@ function MissionBriefingGui:HookMouseFunctions()
         -- No need to restore original function; these will get recreated
         original.assets_select = nil
         original.assets_deselect = nil
-        _MouseEventsHooked = nil
     end
     if XPBreakdownItemSwitch:IsCreated() then
         original.special_btn_pressed = self.special_btn_pressed
@@ -2025,7 +2020,6 @@ function MissionBriefingGui:HookMouseFunctions()
             return original.mouse_moved(gui, ...)
         end
     end
-    _MouseEventsHooked = true
 end
 
 function MissionBriefingGui:FakeExperienceMultipliers()

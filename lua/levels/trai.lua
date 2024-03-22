@@ -48,6 +48,78 @@ if EHI:IsMayhemOrAbove() then
     required_bags = 9
     bag_multiplier = 3
 end
-EHI:ShowLootCounter({
-    max = required_bags + ((6 * bag_multiplier) + 8) -- (4 secondary wagons with 2 money bags); total 5 wagons, one is disabled
+local max_bags = required_bags + ((6 * bag_multiplier) + 8) -- (4 secondary wagons with 2 money bags); total 5 wagons, one is disabled
+EHI:ShowLootCounter({ max = max_bags })
+EHI:AddXPBreakdown({
+    tactic =
+    {
+        stealth =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "texas2_used_walkie_talkie" },
+                { amount = 1000, name = "texas2_enter_rail_yard" },
+                { amount = 1000, name = "texas2_got_inside_office" },
+                { amount = 1000, name = "pc_hack" },
+                { amount = 2000, name = "texas2_found_motion_sensor" },
+                { amount = 3000, name = "texas2_motion_sensor_disabled" },
+                { amount = 2000, name = "texas2_found_correct_wagon" },
+                { amount = 5000, name = "fs_secured_required_bags" },
+                { amount = 1000, name = "texas2_use_pa_system" },
+                { amount = 2000, name = "texas2_loco_prepared" },
+                { amount = 2000, name = "diamond_heist_found_keycard" },
+                { amount = 3000, name = "texas2_rotated_the_turntable" },
+                { escape = 1000 }
+            },
+            loot_all = 250,
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        objectives =
+                        {
+                            texas2_found_correct_wagon = { min_max = 3 }
+                        },
+                        loot_all = { min = required_bags, max = max_bags }
+                    }
+                }
+            }
+        },
+        loud =
+        {
+            objectives =
+            {
+                { amount = 1000, name = "texas2_used_thermite" },
+                { amount = 1000, name = "ggc_c4_taken" },
+                { amount = 3000, name = "texas2_blocked_train_tracks" },
+                { amount = 1000, name = "texas2_got_inside_office" },
+                { amount = 1000, name = "pc_hack" },
+                { amount = 1000, name = "texas2_found_correct_wagon" },
+                { amount = 5000, name = "fs_secured_required_bags" },
+                { amount = 2000, name = "texas2_loco_prepared" },
+                { amount = 1000, name = "texas2_crane_moved" },
+                { amount = 2000, name = "texas2_crane_attached" },
+                { amount = 5000, name = "texas2_loco_moved" },
+                { amount = 1000, name = "texas2_loco_started" },
+                { escape = 1000 }
+            },
+            loot_all = 250,
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        objectives =
+                        {
+                            texas2_found_correct_wagon = { min_max = 3 }
+                        },
+                        loot_all = { min = required_bags, max = max_bags }
+                    }
+                }
+            }
+        }
+    }
 })

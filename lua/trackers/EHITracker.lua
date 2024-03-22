@@ -352,33 +352,21 @@ end
 function EHITracker:PosAndSetVisible(x, y)
     self._panel:set_x(x)
     self._panel:set_y(y)
-    self:SetPanelVisible()
+    self:SetPanelAlpha(1)
     self:PositionHint(x, y)
 end
 
-function EHITracker:SetPanelVisible()
+---@param alpha number
+function EHITracker:SetPanelAlpha(alpha)
     if self._anim_visibility then
         self._panel:stop(self._anim_visibility)
         self._anim_visibility = nil
     end
     if self._hint then
         self._hint:stop()
-        self._anim_visibility = self._panel:animate(visibility_hint, self._hint, 1)
+        self._anim_visibility = self._panel:animate(visibility_hint, self._hint, alpha)
     else
-        self._anim_visibility = self._panel:animate(visibility, 1)
-    end
-end
-
-function EHITracker:SetPanelHidden()
-    if self._anim_visibility then
-        self._panel:stop(self._anim_visibility)
-        self._anim_visibility = nil
-    end
-    if self._hint then
-        self._hint:stop()
-        self._anim_visibility = self._panel:animate(visibility_hint, self._hint, 0)
-    else
-        self._anim_visibility = self._panel:animate(visibility, 0)
+        self._anim_visibility = self._panel:animate(visibility, alpha)
     end
 end
 
@@ -843,13 +831,12 @@ end
 
 ---@param t number?
 function EHITracker:AnimateBG(t)
-    if not self._anim_flash then
-        return
+    if self._anim_flash then
+        local bg = self._bg_box:child("bg") --[[@as PanelBitmap]]
+        bg:stop()
+        bg:set_color(Color(1, 0, 0, 0))
+        bg:animate(bg_attention, t or self._flash_times)
     end
-    local bg = self._bg_box:child("bg") --[[@as PanelBitmap]]
-    bg:stop()
-    bg:set_color(Color(1, 0, 0, 0))
-    bg:animate(bg_attention, t or self._flash_times)
 end
 
 ---@param color Color? Color is set to `White` or tracker default color if not provided
@@ -959,7 +946,7 @@ end
 function EHITracker:delete()
     if self._hide_on_delete then
         self:StopPanelAnims()
-        self:SetPanelHidden()
+        self:SetPanelAlpha(0)
         self._parent_class:HideTracker(self._id)
         return
     elseif self._refresh_on_delete then

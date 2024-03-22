@@ -5,10 +5,7 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local triggers = {
     [101961] = { time = 120, hint = Hints.LootEscape },
-    [101962] = { time = 90, hint = Hints.LootEscape },
-
-    [102065] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102675 }},
-    [102080] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102674 }}
+    [101962] = { time = 90, hint = Hints.LootEscape }
 }
 
 if EHI:IsClient() then
@@ -48,7 +45,10 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102431] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[102428] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SetRespawnTime", arg = { 15 + 20 }}
 end
-
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    other[102065] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102675 }}
+    other[102080] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102674 }}
+end
 EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.HeliEscape)
 
 tweak_data.ehi.functions.uno_1(true)

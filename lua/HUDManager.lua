@@ -28,7 +28,7 @@ local original =
 ---@param id string
 ---@param params AddWaypointTable|ElementWaypointTrigger
 ---@return WaypointDataTable?
-function HUDManager:AddWaypoint(id, params)
+function HUDManager:AddEHIWaypoint(id, params)
     self:add_waypoint(id, params)
     return self:get_waypoint_data(id)
 end
@@ -37,11 +37,8 @@ end
 ---@param params table
 function HUDManager:AddWaypointFromTrigger(id, params)
     if params.icon_redirect then
-        local wp = self:AddWaypoint(id, params)
-        if not wp then
-            return
-        end
-        if wp.bitmap then
+        local wp = self:AddEHIWaypoint(id, params)
+        if wp and wp.bitmap then
             managers.ehi_waypoint:SetWaypointInitialIcon(wp, params)
         else -- Remove the waypoint as it does not have bitmap
             self:remove_waypoint(id)

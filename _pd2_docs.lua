@@ -1010,6 +1010,7 @@ end
 ---@class Unit
 ---@field editor_id fun(): number
 ---@field key fun(): string
+---@field material_config fun(): Idstring
 ---@field name fun(): string
 ---@field position fun(self: self): Vector3
 ---@field oobb fun(self: self): UnitOOBB Object Oriented Bounding Box

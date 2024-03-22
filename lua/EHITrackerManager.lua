@@ -584,10 +584,10 @@ end
 ---@param id string
 ---@param new_id string
 function EHITrackerManager:UpdateTrackerID(id, new_id)
-    if self:TrackerExists(new_id) or self:TrackerDoesNotExist(id) then
+    local tbl = self._trackers[id]
+    if self:TrackerExists(new_id) or not tbl then
         return
     end
-    local tbl = self._trackers[id] ---@cast tbl -?
     tbl.tracker:UpdateID(new_id)
     self._trackers[id] = nil
     self._trackers[new_id] = tbl

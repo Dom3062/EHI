@@ -3,22 +3,10 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local EscapeWaypoint = { id = EHI:GetInstanceElementID(100043, 2900), special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
-    trigger.data.distance = true
-    trigger.data.state = "sneak_present"
-    trigger.data.present_timer = 0
-    trigger.data.no_sync = true
-    local e = managers.mission:get_element_by_id(trigger.id --[[@as number]])
-    trigger.data.position = e and e._values.position or Vector3()
-    managers.hud:add_waypoint(trigger.id, trigger.data)
-end), data = { icon = Icon.Car } }
 local triggers = {
     [100918] = { time = 11 + 3.5 + 100 + 1330/30, id = "Escape", icons = Icon.CarEscape, hint = Hints.LootEscape },
-    [101892] = EscapeWaypoint,
     [101727] = { time = 1283/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTrackerIfEnabled, hint = Hints.LootEscape },
-    [101933] = EscapeWaypoint,
     [101706] = { time = 895/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTrackerIfEnabled, hint = Hints.LootEscape },
-    [101394] = EscapeWaypoint,
     [105792] = { time = 20, id = "FireApartment1", icons = { Icon.Fire, Icon.Wait }, hint = Hints.Wait },
     [105804] = { time = 20, id = "FireApartment2", icons = { Icon.Fire, Icon.Wait }, hint = Hints.Wait },
     [105824] = { time = 20, id = "FireApartment3", icons = { Icon.Fire, Icon.Wait }, hint = Hints.Wait },
@@ -60,7 +48,12 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
-
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    local EscapeWaypoint = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = EHI:GetInstanceElementID(100043, 2900) } }
+    other[101892] = EscapeWaypoint
+    other[101933] = EscapeWaypoint
+    other[101394] = EscapeWaypoint
+end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,

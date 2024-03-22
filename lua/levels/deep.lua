@@ -76,7 +76,13 @@ local achievements =
             [104408] = { special_function = SF.IncreaseProgress },
             [104442] = { special_function = SF.IncreaseProgress },
             [104456] = { special_function = SF.IncreaseProgress }
-        }
+        },
+        preparse_callback = function(data)
+            local trigger = data.elements[104408]
+            for i = 104410, 104428, 1 do
+                data.elements[i] = trigger
+            end
+        end
     },
     deep_12 =
     {
@@ -92,9 +98,6 @@ local achievements =
         }
     }
 }
-for i = 104410, 104428, 1 do
-    achievements.deep_9.elements[i] = { special_function = SF.IncreaseProgress }
-end
 
 local other =
 {

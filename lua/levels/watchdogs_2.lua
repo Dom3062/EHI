@@ -6,9 +6,6 @@ local WT = EHI.Waypoints
 local Hints = EHI.Hints
 local anim_delay = 450/30
 local boat_delay = 60 + 30 + 30 + 450/30
-local AddToCache = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
-    self.SyncedSFF.watchdogs_2_boat_time = trigger.time
-end)
 local GetFromCache = EHI:GetFreeCustomSyncedSFID()
 if EHI:GetOption("show_mission_trackers") then
     EHI:RegisterCustomSyncedSF(GetFromCache, function(self, trigger, ...)
@@ -54,15 +51,7 @@ local triggers = {
 
     [100323] = { time = 50 + 23, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
 
-    [101129] = { time = 180 + anim_delay, special_function = AddToCache },
-    [101134] = { time = 150 + anim_delay, special_function = AddToCache },
-    [101144] = { time = 130 + anim_delay, special_function = AddToCache },
-
-    [101148] = { icons = Icon.BoatLootDrop, special_function = GetFromCache, waypoint_f = waypoint_f },
-    [101149] = { icons = Icon.BoatLootDrop, special_function = GetFromCache, waypoint_f = waypoint_f },
-    [101150] = { icons = Icon.BoatLootDrop, special_function = GetFromCache, waypoint_f = waypoint_f },
-
-    [1] = { special_function = SF.RemoveTrigger, data = { 101148, 101149, 101150, 1 }},
+    [1] = { special_function = SF.RemoveTrigger, data = { 101148, 101149, 101150, 1 } },
 
     [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = Icon.BoatLootDrop, waypoint_f = waypoint_f, hint = Hints.Loot },
 
@@ -115,6 +104,9 @@ local achievements =
 local SetBoatPosDirectlyOrFromElement = EHI:RegisterCustomSyncedSF(function(self, trigger, element, ...)
     self.SyncedSFF.watchdogs_2_boat_pos = trigger.pos or (element._values.amount + 6)
 end)
+local AddToCache = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
+    self.SyncedSFF.watchdogs_2_boat_time = trigger.time
+end)
 local other =
 {
     [100124] = EHI:AddLootCounter(function()
@@ -128,8 +120,24 @@ local other =
     [100470] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 9 },
     [101553] = { special_function = SetBoatPosDirectlyOrFromElement }, -- 1
     [101554] = { special_function = SetBoatPosDirectlyOrFromElement }, -- 2
-    [101555] = { special_function = SetBoatPosDirectlyOrFromElement } -- 3 
+    [101555] = { special_function = SetBoatPosDirectlyOrFromElement }, -- 3
+
+    [101129] = { time = 180 + anim_delay, special_function = AddToCache },
+    [101134] = { time = 150 + anim_delay, special_function = AddToCache },
+    [101144] = { time = 130 + anim_delay, special_function = AddToCache },
+
+    [101148] = { special_function = GetFromCache },
+    [101149] = { special_function = GetFromCache },
+    [101150] = { special_function = GetFromCache }
 }
+if EHI:GetOption("show_mission_trackers") then
+    other[101148].icons = Icon.BoatLootDrop
+    other[101148].waypoint_f = waypoint_f
+    other[101149].icons = Icon.BoatLootDrop
+    other[101149].waypoint_f = waypoint_f
+    other[101150].icons = Icon.BoatLootDrop
+    other[101150].waypoint_f = waypoint_f
+end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100457] = { time = 23 + 1, id = "Snipers", class = TT.Sniper.Warning }
 end

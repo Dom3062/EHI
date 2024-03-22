@@ -130,8 +130,9 @@ end
 ---@class EHIAchievementUnlockTracker : EHIAchievementTracker
 ---@field super EHIAchievementTracker
 EHIAchievementUnlockTracker = class(EHIAchievementTracker)
-EHIAchievementUnlockTracker.delete = EHIAchievementUnlockTracker.super.super.delete
 EHIAchievementUnlockTracker._show_completion_color = true
+EHIAchievementUnlockTracker.delete = EHIAchievementUnlockTracker.super.super.delete
+EHIAchievementUnlockTracker.SetCompleted = function(...) end
 
 ---@class EHIAchievementProgressTracker : EHIProgressTracker, EHIAchievementTracker
 ---@field super EHIProgressTracker

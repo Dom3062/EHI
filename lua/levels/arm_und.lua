@@ -12,13 +12,9 @@ local triggers = {
     [100209] = { run = { time = 80 + van_delay } },
     [100208] = { run = { time = 60 + van_delay } },
 
-    [1] = { run = { time = van_delay }, special_function = SF.AddTrackerIfDoesNotExist },
-    [100214] = { special_function = SF.Trigger, data = { 1, 1002141 } },
-    [1002141] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } },
-    [100215] = { special_function = SF.Trigger, data = { 1, 1002151 } },
-    [1002151] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101268 } },
-    [100216] = { special_function = SF.Trigger, data = { 1, 1002161 } },
-    [1002161] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100008 } }
+    [100214] = { run = { time = van_delay }, special_function = SF.AddTrackerIfDoesNotExist },
+    [100215] = { run = { time = van_delay }, special_function = SF.AddTrackerIfDoesNotExist },
+    [100216] = { run = { time = van_delay }, special_function = SF.AddTrackerIfDoesNotExist }
 }
 local other =
 {
@@ -63,7 +59,11 @@ if EHI:IsHost() and not EHI:IsPlayingCrimeSpree() then
     other[101947] = { special_function = SF.CustomCode, f = LootCounter, arg = 3 }
     other[102037] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
 end
-
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } }
+    other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101268 } }
+    other[100216] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100008 } }
+end
 EHI:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,

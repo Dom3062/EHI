@@ -31,13 +31,16 @@ function EHIBuffManager:init()
     self._x = EHI:IsVR() and EHI:GetOption("buffs_vr_x_offset") or EHI:GetOption("buffs_x_offset") --[[@as number]]
 end
 
-function EHIBuffManager:init_finalize(hud)
+---@param hud HUDManager
+---@param panel Panel
+function EHIBuffManager:init_finalize(hud, panel)
     self:init()
     local path = EHI.LuaPath .. "buffs/"
     dofile(path .. "EHIBuffTracker.lua")
     dofile(path .. "EHIGaugeBuffTracker.lua")
     dofile(path .. "SimpleBuffEdits.lua")
-    self._panel = hud.panel --[[@as Panel]]
+    hud:AddEHIUpdator(self, "EHI_Buff_Update")
+    self._panel = panel
     local scale = EHI:GetOption("buffs_scale") --[[@as number]]
     local buff_y = EHI:IsVR() and EHI:GetOption("buffs_vr_y_offset") or EHI:GetOption("buffs_y_offset") --[[@as number]]
     local buff_w = 32 * scale
@@ -45,6 +48,11 @@ function EHIBuffManager:init_finalize(hud)
     self:InitializeBuffs(buff_y, buff_w, buff_h, scale)
     self:InitializeTagTeamBuffs(buff_y, buff_w, buff_h, scale)
     self:UnusedBuffClassesCleanup()
+    local function destroy()
+        self._update_buffs = {}
+    end
+    EHI:AddCallback(EHI.CallbackMessage.GameEnd, destroy)
+    EHI:AddCallback(EHI.CallbackMessage.GameRestart, destroy)
     if EHI:IsClient() then
         Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHIBuff", function(_, id, data)
             if id == EHI.SyncMessages.EHISyncAddBuff then
@@ -199,10 +207,6 @@ function EHIBuffManager:SetCustodyState(state)
         buff:SetCustodyState(state)
     end
     self:RemoveAbilityCooldown(state)
-end
-
-function EHIBuffManager:NetworkClosed()
-    self._update_buffs = {}
 end
 
 ---@param id string

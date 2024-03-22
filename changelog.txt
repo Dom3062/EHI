@@ -1,3 +1,6 @@
+r231 (22. 03. 2024):
+Added option "Show Waypoints for Escape Vehicles"
+
 r230 (20. 03. 2024):
 Mission Briefing: Attempt to fix game freezes
 
