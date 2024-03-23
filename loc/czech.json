@@ -232,6 +232,11 @@
     "ehi_tracker_alignment_3" : "Vodorovně; Zleva doprava",
     "ehi_tracker_alignment_4" : "Vodorovně; Zprava doleva",
 
+    "ehi_tracker_vertical_w_anim" : "(Svisle) Animace šířky panelu",
+    "ehi_tracker_vertical_w_anim_desc" : "Nastavuje směr animace panelu při změně šířky sledovače",
+    "ehi_tracker_vertical_w_anim_1" : "Zleva doprava",
+    "ehi_tracker_vertical_w_anim_2" : "Zprava doleva",
+
     "ehi_vr_x_offset" : "Posun X (VR)",
     "ehi_vr_y_offset" : "Posun Y (VR)",
 

@@ -593,6 +593,7 @@ local function LoadDefaultValues(self)
         scale = 1,
         time_format = 2, -- 1 = Seconds only, 2 = Minutes and seconds
         tracker_alignment = 1, -- 1 = Vertical; Top to Bottom, 2 = Vertical; Bottom to Top, 3 = Horizontal; Left to Right, 4 = Horizontal; Right to Left
+        tracker_vertical_w_anim = 1, -- 1 = Left to Right; 2 = Right to Left
         vr_x_offset = 0,
         vr_y_offset = 150,
         vr_scale = 1,
@@ -1208,6 +1209,14 @@ function EHI:GetOption(option)
     if option then
         return self.settings[option]
     end
+end
+
+---@param option string
+function EHI:IsVerticalAlignmentAndOption(option)
+    if self:GetOption("tracker_alignment") <= 2 then
+        return self:GetOption(option)
+    end
+    return -1
 end
 
 ---@param option string

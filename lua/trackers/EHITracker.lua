@@ -63,10 +63,10 @@ local function left(o, target_x)
     o:set_x(target_x)
 end
 local panel_w
-if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) then -- Horizontal; Right to Left
+if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or EHI:IsVerticalAlignmentAndOption("tracker_vertical_w_anim") == 2 then -- Horizontal; Right to Left or Panel W anim is Right to Left and Vertical alignment
     ---@param o PanelBaseObject
     ---@param target_w number
-    ---@param self EHITracker
+    ---@param self EHITracker?
     panel_w = function(o, target_w, self)
         local TOTAL_T = 0.18
         local from_w = o:w()
@@ -88,7 +88,7 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) the
 else
     ---@param o PanelBaseObject
     ---@param target_w number
-    ---@param self EHITracker
+    ---@param self EHITracker?
     panel_w = function(o, target_w, self)
         local TOTAL_T = 0.18
         local from_w = o:w()
@@ -628,28 +628,38 @@ function EHITracker:AnimateRepositionHintX(n_of_icons)
 end
 
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] = true, [2] = true }) then
-    ---@param target_w number
-    function EHITracker:AnimateHintX(target_w)
-        if not self._hint then
-            return
+    if EHI:GetOption("tracker_vertical_w_anim") == 2 then
+        ---@param target_w number
+        function EHITracker:AnimateHintX(target_w)
         end
-        if self._anim_hint_x then
-            self._hint:stop(self._anim_hint_x)
-            self._anim_hint_x = nil
-        end
-        local x = self._hint_pos.x + (target_w - self._panel:w())
-        self._anim_hint_x = self._hint:animate(left, x)
-        self._hint_pos.x = x
-    end
 
-    ---@param target_w number
-    function EHITracker:SetHintX(target_w)
-        if not self._hint then
-            return
+        ---@param target_w number
+        function EHITracker:SetHintX(target_w)
         end
-        local x = self._hint_pos.x + (target_w - self._panel:w())
-        self._hint:set_x(x)
-        self._hint_pos.x = x
+    else
+        ---@param target_w number
+        function EHITracker:AnimateHintX(target_w)
+            if not self._hint then
+                return
+            end
+            if self._anim_hint_x then
+                self._hint:stop(self._anim_hint_x)
+                self._anim_hint_x = nil
+            end
+            local x = self._hint_pos.x + (target_w - self._panel:w())
+            self._anim_hint_x = self._hint:animate(left, x)
+            self._hint_pos.x = x
+        end
+
+        ---@param target_w number
+        function EHITracker:SetHintX(target_w)
+            if not self._hint then
+                return
+            end
+            local x = self._hint_pos.x + (target_w - self._panel:w())
+            self._hint:set_x(x)
+            self._hint_pos.x = x
+        end
     end
 
     ---@param x number World X

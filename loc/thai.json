@@ -224,6 +224,9 @@
     "ehi_tracker_alignment_3" : "แนวนอน; ซ้ายไปขวา",
     "ehi_tracker_alignment_4" : "แนวนอน; ขวาไปซ้าย",
 
+    "ehi_tracker_vertical_w_anim_1" : "ซ้ายไปขวา",
+    "ehi_tracker_vertical_w_anim_2" : "ขวาไปซ้าย",
+
     "ehi_vr_x_offset" : "ตำแหน่งแกน X (VR)",
     "ehi_vr_y_offset" : "ตำแหน่งแกน Y (VR)",
 

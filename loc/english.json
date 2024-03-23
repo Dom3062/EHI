@@ -232,6 +232,11 @@
     "ehi_tracker_alignment_3" : "Horizontal; Left to Right",
     "ehi_tracker_alignment_4" : "Horizontal; Right to Left",
 
+    "ehi_tracker_vertical_w_anim" : "(Vertical) Panel Width Animation",
+    "ehi_tracker_vertical_w_anim_desc" : "Sets panel animation direction when tracker's width changes",
+    "ehi_tracker_vertical_w_anim_1" : "Left to Right",
+    "ehi_tracker_vertical_w_anim_2" : "Right to Left",
+
     "ehi_vr_x_offset" : "X offset (VR)",
     "ehi_vr_y_offset" : "Y offset (VR)",
 

@@ -1,3 +1,7 @@
+r232 (23. 03. 2024):
+Added option "(Vertical) Panel Width Animation"
+Gage Tracker: Fixed a crash
+
 r231 (22. 03. 2024):
 Added option "Show Waypoints for Escape Vehicles"
 

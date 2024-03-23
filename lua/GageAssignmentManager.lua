@@ -17,6 +17,7 @@ local original =
 ---@param self GageAssignmentManager
 ---@param client_sync_load boolean?
 local function UpdateTracker(self, client_sync_load)
+    local max_units = self:count_all_units()
     local picked_up = self:GetCountOfRemainingPackages()
     if client_sync_load and not Global.statistics_manager.playing_from_start then
         picked_up = math.max(picked_up - 1, 0)
