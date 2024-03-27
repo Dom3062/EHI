@@ -1,3 +1,6 @@
+r233 (27. 03. 2024):
+Made adjustments to "(Vertical) Panel Width Animation"
+
 r232 (23. 03. 2024):
 Added option "(Vertical) Panel Width Animation"
 Gage Tracker: Fixed a crash

@@ -10,10 +10,8 @@ function EHIMinionTracker:init(...)
     self._peers = {}
     EHIMinionTracker.super.init(self, ...)
     self._default_panel_w = self._panel:w()
-    self._default_bg_box_w = self._bg_box:w()
     self._panel_half = self._bg_box:w() / 2
     self._panel_w = self._default_panel_w
-    self._bg_box_w = self._default_bg_box_w
 end
 
 function EHIMinionTracker:SetTextPeerColor()
@@ -81,7 +79,7 @@ function EHIMinionTracker:Reorganize(addition)
         if not addition then
             self._panel_w = self._default_panel_w
             self:AnimateMovement()
-            self._bg_box:set_w(self._default_bg_box_w)
+            self._bg_box:set_w(self._default_bg_size)
         end
     elseif addition then
         self._panel_w = self._panel_w + self._panel_half

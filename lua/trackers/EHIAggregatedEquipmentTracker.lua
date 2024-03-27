@@ -33,8 +33,7 @@ end
 ---@param params EHITracker.params
 function EHIAggregatedEquipmentTracker:post_init(params)
     self._default_panel_w = self._panel:w()
-    self._default_bg_box_w = self._bg_box:w()
-    self._panel_half = self._default_bg_box_w / 2
+    self._panel_half = self._default_bg_size / 2
     self._panel_w = self._default_panel_w
 end
 
@@ -227,7 +226,7 @@ function EHIAggregatedEquipmentTracker:Reorganize(addition)
         self:AlignTextOnHalfPos()
         if not addition then
             self._panel_w = self._default_panel_w
-            self._bg_box:set_w(self._default_bg_box_w)
+            self._bg_box:set_w(self._default_bg_size)
             self:AnimateMovement()
         end
     elseif addition then

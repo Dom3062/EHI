@@ -260,6 +260,7 @@ EHITracker._icon_gap_size_scaled = (EHITracker._icon_size + EHITracker._gap) * E
 EHITracker._icon_size_scaled = EHITracker._icon_size * EHITracker._scale
 -- 5 * self._scale
 EHITracker._gap_scaled = EHITracker._gap * EHITracker._scale
+EHITracker._default_bg_size = 64 * EHITracker._scale
 EHITracker._text_color = Color.white
 if EHI:GetOption("show_tracker_hint") then
     EHITracker._hint_t = EHI:GetOption("show_tracker_hint_t") --[[@as number]]
@@ -282,7 +283,6 @@ function EHITracker:init(panel, params, parent_class)
     end
     self._time = self._forced_time or params.time or 0
     self._panel = panel:panel({
-        name = params.id,
         x = 0,
         y = 0,
         w = (64 + gap + (self._icon_size * self._n_of_icons)) * self._scale,
@@ -293,7 +293,7 @@ function EHITracker:init(panel, params, parent_class)
     self._bg_box = CreateHUDBGBox(self._panel, {
         x = 0,
         y = 0,
-        w = 64 * self._scale,
+        w = self._default_bg_size,
         h = self._icon_size_scaled
     })
     if self._init_create_text then
@@ -337,7 +337,7 @@ end
 
 function EHITracker:PrecomputeDoubleSize()
     self._bg_box_w = self._bg_box:w()
-    self._bg_box_double = self._bg_box_w * 2
+    self._bg_box_double = self._default_bg_size * 2
     self._panel_w = self._panel:w()
     self._panel_double = self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons)
 end
@@ -350,6 +350,10 @@ end
 ---@param x number
 ---@param y number
 function EHITracker:PosAndSetVisible(x, y)
+    if self.__vertical_anim_w_left_diff then
+        x = x + self.__vertical_anim_w_left_diff
+        self.__vertical_anim_w_left_diff = nil
+    end
     self._panel:set_x(x)
     self._panel:set_y(y)
     self:SetPanelAlpha(1)
@@ -578,7 +582,6 @@ function EHITracker:CreateHint(text, delay_popup)
         loc = managers.localization:text(self._hint_vanilla_localization and text or "ehi_hint_" .. text)
     end
     self._hint = self._panel:parent():text({
-        name = self._id .. "_hint",
         text = loc,
         align = "center",
         vertical = "center",
@@ -629,6 +632,7 @@ end
 
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] = true, [2] = true }) then
     if EHI:GetOption("tracker_vertical_w_anim") == 2 then
+        EHITracker._VERTICAL_ANIM_W_LEFT = true
         ---@param target_w number
         function EHITracker:AnimateHintX(target_w)
         end
@@ -744,7 +748,8 @@ end
 ---|"set" # Sets `w` on the BG
 ---@param dont_recalculate_panel_w boolean? Setting this to `true` will not recalculate the total width on the main panel
 function EHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
-    w = w or self._bg_box:w()
+    local original_w = self._bg_box:w()
+    w = w or original_w
     if not type or type == "add" then
         self._bg_box:set_w(self._bg_box:w() + w)
     elseif type == "short" then
@@ -756,6 +761,11 @@ function EHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
         local start = self._bg_box:w()
         local icons_with_gap = self._icon_gap_size_scaled * self._n_of_icons
         self._panel:set_w(start + icons_with_gap)
+    end
+    if self._VERTICAL_ANIM_W_LEFT and self._panel:alpha() == 0 then
+        -- Panel is not visible, adjust will be performed when manager calls the `EHITracker:PosAndSetVisible()` function  
+        -- Otherwise you need to adjust panel position via animation
+        self.__vertical_anim_w_left_diff = original_w - self._bg_box:w()
     end
 end
 
@@ -928,7 +938,7 @@ end
 ---@param w number? If not provided the width is then called from `EHITracker:GetPanelW()`
 ---@param move_the_tracker boolean? If the tracker should move too, useful if number icons change and tracker needs to be rearranged to fit properly
 function EHITracker:ChangeTrackerWidth(w, move_the_tracker)
-    self._parent_class:ChangeTrackerWidth(self._id, w or self:GetPanelW(), move_the_tracker)
+    self._parent_class:_change_tracker_width(self._id, w or self:GetPanelW(), move_the_tracker)
 end
 
 function EHITracker:GetPanelW()

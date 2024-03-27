@@ -190,7 +190,6 @@ end
 
 ---@param params EHITracker.params
 function EHITimerGroupTracker:post_init(params)
-    self._bg_box_w = self._bg_box:w()
     self._timers = {} --[[@as table<string, EHITimerGroupTracker.Timer?>]]
     self._timers_n = 0
     if params.key and params.time then
@@ -213,8 +212,8 @@ end
 function EHITimerGroupTracker:AddTimer(t, id, warning)
     local label = self:CreateText({
         text = self:FormatTime(t),
-        x = self._timers_n * self._bg_box_w,
-        w = self._bg_box_w
+        x = self._timers_n * self._default_bg_size,
+        w = self._default_bg_size
     })
     self._timers[id] =
     {
@@ -273,7 +272,7 @@ function EHITimerGroupTracker:StopTimer(id)
         if t.pos > pos then
             local new_pos = t.pos - 1
             t.pos = new_pos
-            t.label:set_x(new_pos * self._bg_box_w)
+            t.label:set_x(new_pos * self._default_bg_size)
         end
     end
     if self._timers_n >= 2 then
@@ -291,11 +290,11 @@ end
 ---@param n number
 ---@param delete boolean?
 function EHITimerGroupTracker:AnimateMovement(n, delete)
-    local w = self._bg_box_w * n
+    local w = self._default_bg_size * n
     if delete then
-        self._panel_override_w = self._panel_override_w - self._bg_box_w
+        self._panel_override_w = self._panel_override_w - self._default_bg_size
     else
-        self._panel_override_w = self._panel_override_w + self._bg_box_w
+        self._panel_override_w = self._panel_override_w + self._default_bg_size
     end
     self:AnimatePanelWAndRefresh(self._panel_override_w)
     self:ChangeTrackerWidth(self._panel_override_w)

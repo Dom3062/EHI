@@ -50,13 +50,13 @@ end
 
 function EHITimedChanceTracker:StopTimer()
     self:AnimatePanelW(self._panel_w)
-    self:ChangeTrackerWidth(self._bg_box_w + (self._icon_gap_size_scaled * self._n_of_icons))
+    self:ChangeTrackerWidth(self._default_bg_size + (self._icon_gap_size_scaled * self._n_of_icons))
     if self._n_of_icons > 1 then
-        self:AnimIconsX(self._bg_box_w + self._gap_scaled)
+        self:AnimIconsX(self._default_bg_size + self._gap_scaled)
     else
-        self:AnimIconX(self._bg_box_w + self._gap_scaled)
+        self:AnimIconX(self._default_bg_size + self._gap_scaled)
     end
-    self._bg_box:set_w(self._bg_box_w)
+    self._bg_box:set_w(self._default_bg_size)
     self:RemoveTrackerFromUpdate()
 end
 

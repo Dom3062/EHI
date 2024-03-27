@@ -1,11 +1,19 @@
 local EHI = EHI
 local Icon = EHI.Icons
 ---@class EHIrun9Tracker : EHIAchievementUnlockTracker
+---@field super EHIAchievementUnlockTracker
 EHIrun9Tracker = class(EHIAchievementUnlockTracker)
-function EHIrun9Tracker:delete()
-    self:SetCompleted()
-    self:SetStatusText("finish")
-    self:RemoveTrackerFromUpdate()
+---@param dt number
+function EHIrun9Tracker:update(dt)
+    EHIrun9Tracker.super.update(self, dt)
+    if self._time <= 0 then
+        self._text:stop()
+        self._achieved_popup_showed = true
+        self:SetTextColor(Color.green)
+        self:SetStatusText("finish")
+        self:AnimateBG()
+        self:RemoveTrackerFromUpdate()
+    end
 end
 
 ---@class EHIGasTracker : EHIProgressTracker

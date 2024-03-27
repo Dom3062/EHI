@@ -1,3 +1,5 @@
+---@alias EHITrackerManager.Tracker { tracker: EHITracker, pos: number, x: number, w: number }
+
 local EHI = EHI
 ---@class EHITrackerManager
 ---@field IsLoading fun(self: self): boolean `VR only (EHITrackerManagerVR)`
@@ -7,7 +9,7 @@ EHITrackerManager = {}
 function EHITrackerManager:new()
     self:CreateWorkspace()
     self._t = 0
-    self._trackers = setmetatable({}, {__mode = "k"}) ---@type table<string, { tracker: EHITracker, pos: number, x: number, w: number }?>
+    self._trackers = setmetatable({}, {__mode = "k"}) ---@type table<string, EHITrackerManager.Tracker?>
     self._stealth_trackers = { lasers = {} }
     self._trackers_to_update = setmetatable({}, {__mode = "k"}) ---@type table<string, EHITracker?>
     self._n_of_trackers = 0
@@ -383,7 +385,7 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
     ---@param id string
     ---@param new_w number
     ---@param move_the_tracker boolean?
-    function EHITrackerManager:ChangeTrackerWidth(id, new_w, move_the_tracker)
+    function EHITrackerManager:_change_tracker_width(id, new_w, move_the_tracker)
     end
 else -- Horizontal
     ---@param pos number?
@@ -453,7 +455,7 @@ else -- Horizontal
         ---@param id string
         ---@param new_w number
         ---@param move_the_tracker boolean?
-        function EHITrackerManager:ChangeTrackerWidth(id, new_w, move_the_tracker)
+        function EHITrackerManager:_change_tracker_width(id, new_w, move_the_tracker)
             local tracker = self._trackers[id]
             if not tracker then
                 return
@@ -490,7 +492,7 @@ else -- Horizontal
         ---@return number?
         function EHITrackerManager:MoveTracker(pos, w)
             if type(pos) == "number" and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
-                local list = {} ---@type table<number, { tracker: EHITracker, pos: number, x: number, w: number }>
+                local list = {} ---@type table<number, EHITrackerManager.Tracker>
                 for _, value in pairs(self._trackers) do
                     if value.pos then
                         list[value.pos] = value
@@ -549,7 +551,7 @@ else -- Horizontal
         ---@param id string
         ---@param new_w number
         ---@param move_the_tracker boolean?
-        function EHITrackerManager:ChangeTrackerWidth(id, new_w, move_the_tracker)
+        function EHITrackerManager:_change_tracker_width(id, new_w, move_the_tracker)
             local tracker = self._trackers[id]
             if not tracker then
                 return
