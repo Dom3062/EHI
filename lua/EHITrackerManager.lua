@@ -154,9 +154,9 @@ function EHITrackerManager:AddTracker(params, pos)
     local tracker_class = _G[class] --[[@as EHITracker]]
     local tracker = tracker_class:new(self._hud_panel, params, self)
     local w = tracker:GetPanelW()
-    pos = self:MoveTracker(pos, w)
-    local x = self:GetX(pos, w)
-    local y = self:GetY(pos)
+    pos = self:_move_tracker(pos, w)
+    local x = self:_get_x(pos, w)
+    local y = self:_get_y(pos)
     if tracker._update then
         self._trackers_to_update[params.id] = tracker
     end
@@ -205,14 +205,14 @@ function EHITrackerManager:RunTracker(id, params)
         return
     end
     local w = tbl.tracker:GetPanelW()
-    local x = self:GetX(nil, w)
-    local y = self:GetY()
+    local x = self:_get_x(nil, w)
+    local y = self:_get_y()
     tbl.tracker:PosAndSetVisible(x, y)
     tbl.pos = self._n_of_trackers
     tbl.x = x
     tbl.w = w
     if tbl.tracker._update then
-        self:AddTrackerToUpdate(tbl.tracker)
+        self:_add_tracker_to_update(tbl.tracker)
     end
     self._n_of_trackers = self._n_of_trackers + 1
 end
@@ -270,10 +270,11 @@ end
 ---Shows Loot Counter, needs to be hooked to count correctly
 ---@param max number?
 ---@param max_random number?
+---@param max_xp_bags number?
 ---@param offset number?
 ---@param no_max boolean?
 ---@param max_bags_for_level table?
-function EHITrackerManager:ShowLootCounter(max, max_random, offset, no_max, max_bags_for_level)
+function EHITrackerManager:ShowLootCounter(max, max_random, max_xp_bags, offset, no_max, max_bags_for_level)
     if max_bags_for_level then
         self:AddTracker({
             id = "LootCounter",
@@ -285,6 +286,7 @@ function EHITrackerManager:ShowLootCounter(max, max_random, offset, no_max, max_
             id = "LootCounter",
             max = max or 0,
             max_random = max_random or 0,
+            max_xp_bags = max_xp_bags,
             offset = offset or 0,
             class = no_max and "EHILootCountTracker" or "EHILootTracker"
         })
@@ -324,22 +326,19 @@ end
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] = true, [2] = true }) then -- Vertical in VR or in non-VR
     ---@param pos number?
     ---@param w number
-    ---@return number
-    function EHITrackerManager:GetX(pos, w)
+    function EHITrackerManager:_get_x(pos, w)
         return self._x
     end
 
     if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) then -- Top to Bottom
         ---@param pos number?
-        ---@return number
-        function EHITrackerManager:GetY(pos)
+        function EHITrackerManager:_get_y(pos)
             pos = pos or self._n_of_trackers
             return self._y + (pos * (self._panel_size + self._panel_offset))
         end
     else -- Bottom to Top
         ---@param pos number?
-        ---@return number
-        function EHITrackerManager:GetY(pos)
+        function EHITrackerManager:_get_y(pos)
             pos = pos or self._n_of_trackers
             return self._y - (pos * (self._panel_size + self._panel_offset))
         end
@@ -347,13 +346,12 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
 
     ---@param pos number?
     ---@param w number
-    ---@return number?
-    function EHITrackerManager:MoveTracker(pos, w)
+    function EHITrackerManager:_move_tracker(pos, w)
         if type(pos) == "number" and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
             for _, tbl in pairs(self._trackers) do
                 if tbl.pos and tbl.pos >= pos then
                     local final_pos = tbl.pos + 1
-                    local y = self:GetY(final_pos)
+                    local y = self:_get_y(final_pos)
                     tbl.tracker:AnimateTop(y)
                     tbl.pos = final_pos
                 end
@@ -367,14 +365,14 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
     ---@param w number
     ---@param pos_move number?
     ---@param panel_offset_move number?
-    function EHITrackerManager:RearrangeTrackers(pos, w, pos_move, panel_offset_move)
+    function EHITrackerManager:_rearrange_trackers(pos, w, pos_move, panel_offset_move)
         if not pos then
             return
         end
         for _, value in pairs(self._trackers) do
             if value.pos and value.pos > pos then
                 local final_pos = value.pos - 1
-                local y = self:GetY(final_pos)
+                local y = self:_get_y(final_pos)
                 value.tracker:AnimateTop(y)
                 value.pos = final_pos
             end
@@ -389,16 +387,14 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
     end
 else -- Horizontal
     ---@param pos number?
-    ---@return number
-    function EHITrackerManager:GetY(pos)
+    function EHITrackerManager:_get_y(pos)
         return self._y
     end
 
     if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 3) then -- Left to Right
         ---@param pos number?
         ---@param w number
-        ---@return number
-        function EHITrackerManager:GetX(pos, w)
+        function EHITrackerManager:_get_x(pos, w)
             if self._n_of_trackers == 0 or pos and pos <= 0 then
                 return self._x
             end
@@ -415,8 +411,7 @@ else -- Horizontal
 
         ---@param pos number?
         ---@param w number
-        ---@return number?
-        function EHITrackerManager:MoveTracker(pos, w)
+        function EHITrackerManager:_move_tracker(pos, w)
             if type(pos) == "number" and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
                 for _, tbl in pairs(self._trackers) do
                     if tbl.pos and tbl.pos >= pos then
@@ -435,7 +430,7 @@ else -- Horizontal
         ---@param w number
         ---@param pos_move number?
         ---@param panel_offset_move number?
-        function EHITrackerManager:RearrangeTrackers(pos, w, pos_move, panel_offset_move)
+        function EHITrackerManager:_rearrange_trackers(pos, w, pos_move, panel_offset_move)
             if not pos then
                 return
             end
@@ -466,13 +461,12 @@ else -- Horizontal
                 return
             end
             tracker.w = new_w
-            self:RearrangeTrackers(tracker.pos, w_diff, 0, 0)
+            self:_rearrange_trackers(tracker.pos, w_diff, 0, 0)
         end
     else -- Right to Left
         ---@param pos number?
         ---@param w number
-        ---@return number
-        function EHITrackerManager:GetX(pos, w)
+        function EHITrackerManager:_get_x(pos, w)
             if self._n_of_trackers == 0 or pos and pos <= 0 then
                 return self._x
             end
@@ -489,8 +483,7 @@ else -- Horizontal
 
         ---@param pos number?
         ---@param w number
-        ---@return number?
-        function EHITrackerManager:MoveTracker(pos, w)
+        function EHITrackerManager:_move_tracker(pos, w)
             if type(pos) == "number" and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
                 local list = {} ---@type table<number, EHITrackerManager.Tracker>
                 for _, value in pairs(self._trackers) do
@@ -531,7 +524,7 @@ else -- Horizontal
         ---@param w number
         ---@param pos_move number?
         ---@param panel_offset_move number?
-        function EHITrackerManager:RearrangeTrackers(pos, w, pos_move, panel_offset_move)
+        function EHITrackerManager:_rearrange_trackers(pos, w, pos_move, panel_offset_move)
             if not pos then
                 return
             end
@@ -568,18 +561,18 @@ else -- Horizontal
             else
                 tracker.x = tracker.x + w_diff
             end
-            self:RearrangeTrackers(pos, w_diff, 0, 0)
+            self:_rearrange_trackers(pos, w_diff, 0, 0)
         end
     end
 end
 
 ---@param tracker EHITracker
-function EHITrackerManager:AddTrackerToUpdate(tracker)
+function EHITrackerManager:_add_tracker_to_update(tracker)
     self._trackers_to_update[tracker._id] = tracker
 end
 
 ---@param id string
-function EHITrackerManager:RemoveTrackerFromUpdate(id)
+function EHITrackerManager:_remove_tracker_from_update(id)
     self._trackers_to_update[id] = nil
 end
 
@@ -640,7 +633,7 @@ function EHITrackerManager:HideTracker(id)
         local w = tracker.w
         tracker.pos = nil
         self._n_of_trackers = self._n_of_trackers - 1
-        self:RearrangeTrackers(pos, w)
+        self:_rearrange_trackers(pos, w)
     end
 end
 
@@ -653,7 +646,7 @@ function EHITrackerManager:DestroyTracker(id)
         local pos = tracker.pos
         local w = tracker.w
         self._n_of_trackers = self._n_of_trackers - 1
-        self:RearrangeTrackers(pos, w)
+        self:_rearrange_trackers(pos, w)
     end
 end
 
@@ -824,7 +817,7 @@ end
 function EHITrackerManager:StartTrackerCountdown(id)
     local tracker = self:GetTracker(id)
     if tracker then
-        self:AddTrackerToUpdate(tracker)
+        self:_add_tracker_to_update(tracker)
     end
 end
 

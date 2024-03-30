@@ -15,15 +15,6 @@ _G.EHI =
     },
     settings = {},
 
-    FilterTracker =
-    {
-        show_timers =
-        {
-            waypoint = "show_waypoints_timers",
-            table_name = "Timer"
-        }
-    },
-
     OptionTracker =
     {
         show_timers =
@@ -78,8 +69,7 @@ _G.EHI =
         InstanceUnits = {}, ---@type table<number, UnitUpdateDefinition>
         InstanceMissionUnits = {}, ---@type table<number, UnitUpdateDefinition>
         IgnoreWaypoints = {}, ---@type table<number, boolean>
-        ElementWaypoint = {}, ---@type table<number, boolean>
-        XPElement = 0
+        ElementWaypoint = {} ---@type table<number, boolean>
     },
 
     Callback = {}, ---@type table<string|number, function[]>
@@ -781,7 +771,8 @@ local function LoadDefaultValues(self)
         show_endless_assault = true,
         show_loot_counter = true,
         show_all_loot_secured_popup = true,
-        variable_random_loot_format = 3, -- 1 = Max-(Max+Random)?; 2 = MaxRandom?; 3 = Max+Random?
+        variable_random_loot_format = 3, -- 1 = Progress/Max-(Max+Random)?; 2 = Progress/MaxRandom?; 3 = Progress/Max+Random?
+        show_loot_max_xp_bags = true,
         show_bodybags_counter = true,
         show_escape_chance = true,
         show_sniper_tracker = true,
@@ -1320,10 +1311,9 @@ end
 ---@param deck string?
 ---@param ... string
 function EHI:GetBuffDeckSelectedOptions(deck, ...)
-    local deck_table = deck and self.settings.buff_option[deck]
+    local deck_table = self:GetBuffOption(deck)
     if deck_table then
-        local selected_options = { ... }
-        for _, value in ipairs(selected_options) do
+        for _, value in ipairs({ ... }) do
             if deck_table[value] then
                 return true
             end
@@ -1786,7 +1776,7 @@ function EHI:AddEscapeChance(chance, check_if_does_not_exist)
         icons = { { icon = self.Icons.Car, color = Color.red } },
         hint = "van_crash_chance",
         special_function = check_if_does_not_exist and self.SpecialFunctions.AddTrackerIfDoesNotExist,
-        class = EHI.Trackers.Chance
+        class = self.Trackers.Chance
     }
     return tbl
 end
@@ -2122,7 +2112,7 @@ function EHI:ShowLootCounterNoChecks(params)
     end
     if params.sequence_triggers or params.is_synced then
         managers.ehi_tracker:SyncShowLootCounter(params.max, params.max_random, n_offset)
-    elseif params.max_bags_for_level and EHI:IsXPTrackerEnabledAndVisible() then
+    elseif params.max_bags_for_level and self:IsXPTrackerEnabledAndVisible() then
         if params.max_bags_for_level.objective_triggers then
             local xp_trigger = { special_function = self:RegisterCustomSF(function(manager, trigger, element, enabled)
                 if enabled then
@@ -2136,9 +2126,12 @@ function EHI:ShowLootCounterNoChecks(params)
             self:AddTriggers2(triggers, nil, "LootCounter")
             params.max_bags_for_level.objective_triggers = nil
         end
-        managers.ehi_tracker:ShowLootCounter(0, 0, 0, false, params.max_bags_for_level)
+        managers.ehi_tracker:ShowLootCounter(0, 0, 0, 0, false, params.max_bags_for_level)
     else
-        managers.ehi_tracker:ShowLootCounter(params.max, params.max_random, n_offset, params.no_max)
+        if not self:GetOption("show_loot_max_xp_bags") then
+            params.max_xp_bags = 0
+        end
+        managers.ehi_tracker:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, n_offset, params.no_max)
     end
     if params.load_sync then
         self:AddLoadSyncFunction(params.load_sync)
@@ -2640,7 +2633,6 @@ end
 ---@param pos Vector3[] Table with positions that should be ignored
 function EHI:SetDeployableIgnorePos(type, pos)
     if not type then
-        self:Log("[EHI:SetDeployableIgnorePos()] Type is nil")
         return
     end
     if type == "ammo_bag" and AmmoBagBase.SetIgnoredPos then
@@ -2873,10 +2865,7 @@ end
 ---@param skip_check boolean?
 function EHI:IsBeardLibAchievementLocked(package_id, achievement_id, skip_check)
     local Achievement = CustomAchievementPackage:new(package_id):Achievement(achievement_id)
-    if not Achievement then
-        return false
-    end
-    if Achievement:IsUnlocked() and not skip_check then
+    if not Achievement or (Achievement:IsUnlocked() and not skip_check) then
         return false
     end
     self._cache.Beardlib = self._cache.Beardlib or {}

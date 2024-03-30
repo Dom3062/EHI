@@ -813,6 +813,16 @@ function EHITracker:FitTheTextBasedOnTime(...)
     end
 end
 
+---@param t number
+---@param default_text string?
+function EHITracker:FitTheTime(t, default_text)
+    self._text:set_text(self:FormatTime(t))
+    self:FitTheText()
+    if default_text then
+        self._text:set_text(default_text)
+    end
+end
+
 ---@param text string? If not provided, `Format` function will be called
 function EHITracker:SetAndFitTheText(text)
     self._text:set_text(text or self:Format())
@@ -922,11 +932,11 @@ function EHITracker:SetTrackerAccurate(time)
 end
 
 function EHITracker:AddTrackerToUpdate()
-    self._parent_class:AddTrackerToUpdate(self)
+    self._parent_class:_add_tracker_to_update(self)
 end
 
 function EHITracker:RemoveTrackerFromUpdate()
-    self._parent_class:RemoveTrackerFromUpdate(self._id)
+    self._parent_class:_remove_tracker_from_update(self._id)
 end
 
 function EHITracker:DelayForcedDelete()

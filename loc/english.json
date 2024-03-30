@@ -41,6 +41,7 @@
     "ehi_popup_daily_failed" : "DAILY SIDE JOB FAILED!",
     "ehi_popup_loot_counter" : "LOOT COUNTER",
     "ehi_popup_all_loot_secured" : "All loot bags have been secured",
+    "ehi_popup_all_xp_loot_secured" : "All possible XP from secured loot bags have been awarded",
     "ehi_popup_sniper" : "SNIPER!",
     "ehi_popup_sniper_spawned" : "Enemy Sniper has spawned",
     "ehi_popup_snipers" : "SNIPERS!",
@@ -381,7 +382,7 @@
     "ehi_show_timers_desc" : "Shows timers for hacking, drilling, sawing, etc...",
 
     "ehi_show_timers_max_in_group" : "Count of Timers in a Group",
-    "ehi_show_timers_max_in_group_desc" : "Sets a maximum count of timers in one tracker. If the maximum is exceeded, another tracker will get created to hold that timer (or more) on screen.\n\nTo disable this feature, set the value to '1'.",
+    "ehi_show_timers_max_in_group_desc" : "Sets a maximum count of timers in one tracker. If the maximum is exceeded, another tracker will get created to hold that timer (or more) on screen\n\nTo disable this feature, set the value to '1'",
 
     "ehi_show_camera_loop" : "Show Camera Loop",
     "ehi_show_camera_loop_desc" : "Shows a tracker when a security camera is looped",
@@ -531,6 +532,9 @@
     "ehi_variable_random_loot_format_1" : "Progress / Max - (Max + Random)?",
     "ehi_variable_random_loot_format_2" : "Progress / (Max + Random)?",
     "ehi_variable_random_loot_format_3" : "Progress / Max + Random?",
+
+    "ehi_show_loot_max_xp_bags" : "Show XP Limited Max of Loot Bags",
+    "ehi_show_loot_max_xp_bags_desc" : "When the gained experience from loot bags is limited in the mission script, show the maximum amount of loot bags you will get experience from\nIf the maximum is limited, the text will also be yellow",
 
     "ehi_show_bodybags_counter" : "Show Bodybags Counter",
     "ehi_show_bodybags_counter_desc" : "Shows a tracker for how many bodybags you have",

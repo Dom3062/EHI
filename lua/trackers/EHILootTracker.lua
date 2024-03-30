@@ -11,6 +11,7 @@ function EHILootTracker:pre_init(params)
     self._offset = params.offset or 0
     self._max_random = params.max_random or 0
     self._stay_on_screen = self._max_random > 0
+    self._max_xp_bags = params.max_xp_bags or 0
 end
 
 ---@param params EHITracker.params
@@ -20,11 +21,17 @@ function EHILootTracker:post_init(params)
     self._loot_id = {}
     self._loot_check_delay = {} ---@type table<number, number>
     self._loot_check_n = 0
+    if self._max_xp_bags > 0 then
+        self:SetTextColor(Color.yellow)
+    end
 end
 
 if EHI:GetOption("variable_random_loot_format") == 1 then
     function EHILootTracker:Format()
-        if self._max_random > 0 then
+        if self._max_xp_bags > 0 then
+            local max = math.min(self._max, self._max_xp_bags)
+            return self._progress .. "/" .. max
+        elseif self._max_random > 0 then
             local max = self._max + self._max_random
             return self._progress .. "/" .. self._max .. "-" .. max .. "?"
         end
@@ -32,7 +39,10 @@ if EHI:GetOption("variable_random_loot_format") == 1 then
     end
 elseif EHI:GetOption("variable_random_loot_format") == 2 then
     function EHILootTracker:Format()
-        if self._max_random > 0 then
+        if self._max_xp_bags > 0 then
+            local max = math.min(self._max, self._max_xp_bags)
+            return self._progress .. "/" .. max
+        elseif self._max_random > 0 then
             local max = self._max + self._max_random
             return self._progress .. "/" .. max .. "?"
         end
@@ -40,7 +50,10 @@ elseif EHI:GetOption("variable_random_loot_format") == 2 then
     end
 else
     function EHILootTracker:Format()
-        if self._max_random > 0 then
+        if self._max_xp_bags > 0 then
+            local max = math.min(self._max, self._max_xp_bags)
+            return self._progress .. "/" .. max
+        elseif self._max_random > 0 then
             return self._progress .. "/" .. self._max .. "+" .. self._max_random .. "?"
         end
         return EHILootTracker.super.Format(self)
@@ -81,7 +94,12 @@ end
 ---@param progress number
 function EHILootTracker:SetProgress(progress)
     local fixed_progress = progress + self._mission_loot - self._offset
+    local original_max = self._max
+    if self._max_xp_bags > 0 then
+        self._max = math.min(self._max, self._max_xp_bags)
+    end
     EHILootTracker.super.SetProgress(self, fixed_progress)
+    self._max = original_max
 end
 
 function EHILootTracker:Finalize()
@@ -108,7 +126,11 @@ function EHILootTracker:ShowLootSecuredPopup(no_update)
     if not no_update then
         self.update = self.update_fade
     end
-    managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_loot_secured"), "EHI_Loot")
+    if self._max_xp_bags then
+        managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_xp_loot_secured"), "EHI_Loot")
+    else
+        managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_loot_secured"), "EHI_Loot")
+    end
 end
 
 function EHILootTracker:CanShowLootSecuredPopup()
@@ -117,8 +139,13 @@ end
 
 ---@param max number
 function EHILootTracker:SetProgressMax(max)
+    if self._max_xp_bags > 0 and self._max_xp_bags < max then
+        self._max_xp_bags = 0
+    end
     EHILootTracker.super.SetProgressMax(self, max)
-    self:SetTextColor(Color.white)
+    if self._max_xp_bags == 0 then
+        self:SetTextColor(Color.white)
+    end
     self._disable_counting = nil
     self:VerifyStatus()
 end

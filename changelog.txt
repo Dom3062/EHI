@@ -1,3 +1,7 @@
+r234 (30. 03. 2024):
+Added option "Show XP Limited Max of Loot Bags"
+Possible fix for crashes in Experience Manager
+
 r233 (27. 03. 2024):
 Made adjustments to "(Vertical) Panel Width Animation"
 

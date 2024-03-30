@@ -44,6 +44,9 @@ end
 
 ---@param xp ExperienceManager
 function EHIExperienceManager:ExperienceInit(xp)
+    if self._xp_class then
+        return
+    end
     self._xp_class = xp
     self.cash_string = xp.cash_string
     self.experience_string = xp.experience_string
@@ -52,6 +55,9 @@ function EHIExperienceManager:ExperienceInit(xp)
     self:ExperienceReload(xp)
     if EHI:CheckNotLoad() or EHI:IsXPTrackerDisabled() then
         self._xp_disabled = true
+        if Global.load_level and not Global.editor_mode and EHI:GetOption("show_xp_in_mission_briefing_only") then
+            EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "LoadData"))
+        end
         return
     end
     self._config =
@@ -151,13 +157,13 @@ function EHIExperienceManager:HookAwardXP()
     if self._config.xp_panel <= 2 then
         if self._config.xp_panel == 1 or self._config.show_total_xp_diff == 2 then
             ---@param id number
-            ---@param diff number
-            self._show = function(id, diff)
+            ---@param amount number
+            self._show = function(id, amount)
                 local _id = string.format("XP%d", id)
-                if self._trackers:CallFunction3(_id, "AddXPToTracker", diff) then
+                if self._trackers:CallFunction3(_id, "AddXPToTracker", amount) then
                     self._trackers:AddTracker({
                         id = _id,
-                        amount = diff,
+                        amount = amount,
                         class = "EHIXPTracker"
                     })
                 end
@@ -281,7 +287,7 @@ end
 
 ---@param amount number
 function EHIExperienceManager:MissionXPAwarded(amount)
-    if amount <= 0 then
+    if amount <= 0 or self._xp_disabled then
         return
     end
     if self._xp_awarded then

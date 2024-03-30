@@ -41,6 +41,7 @@
     "ehi_popup_daily_failed" : "DENNÍ VÝZVA SELHALA!",
     "ehi_popup_loot_counter" : "POČET LUPU",
     "ehi_popup_all_loot_secured" : "Všechny pytle s lupem jsou zajištěny",
+    "ehi_popup_all_xp_loot_secured" : "Všechny možné ZK ze zajištěných pytlů byly uděleny",
     "ehi_popup_sniper" : "ODSTŘELOVAČ!",
     "ehi_popup_sniper_spawned" : "Objevil se nepřátelský odstřelovač",
     "ehi_popup_snipers" : "ODSTŘELOVAČI!",
@@ -531,6 +532,9 @@
     "ehi_variable_random_loot_format_1" : "Postup / Max - (Max + Náhodně)?",
     "ehi_variable_random_loot_format_2" : "Postup / (Max + Náhodně)?",
     "ehi_variable_random_loot_format_3" : "Postup / Max + Náhodně?",
+
+    "ehi_show_loot_max_xp_bags" : "Zobrazovat limit maximum pytlů když jsou ZK limitované",
+    "ehi_show_loot_max_xp_bags_desc" : "Pokud získané zkušenosti z pytů jsou limitované skriptem, zobrazí se maximum počet potlů ze kterých dostaneš zkušenosti\nPokud je maximum limitované, text se také vybarví žlutě",
 
     "ehi_show_bodybags_counter" : "Zobrazovat počet pytlů na mrtvá těla",
     "ehi_show_bodybags_counter_desc" : "Zobrazuje sledovač s počtem pytlů na mrtvá těla",

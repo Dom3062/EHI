@@ -18,7 +18,14 @@ EHIManager.Waypoints = EHI.Waypoints
 EHIManager.SyncFunctions = EHI.SyncFunctions
 EHIManager.ClientSyncFunctions = EHI.ClientSyncFunctions
 EHIManager.TriggerFunction = EHI.TriggerFunction
-EHIManager.FilterTracker = EHI.FilterTracker
+EHIManager.FilterTracker =
+{
+    show_timers =
+    {
+        waypoint = "show_waypoints_timers",
+        table_name = "Timer"
+    }
+}
 EHIManager.ConditionFunctions = EHI.ConditionFunctions
 EHIManager.SFF = {}
 EHIManager.HookOnLoad = {}

@@ -103,7 +103,6 @@ local triggers = {
     [100967] = { special_function = SF.RemoveTracker, data = { "KeycardLeft", "KeycardRight" } }
 }
 
-local kosugi_3 = { id = "kosugi_3", special_function = SF.IncreaseProgress }
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -120,14 +119,7 @@ local achievements =
     {
         elements =
         {
-            [102700] = { max = 7, class = TT.Achievement.Progress },
-            [104040] = kosugi_3, -- Artifact
-            [104041] = kosugi_3, -- Money
-            [104042] = kosugi_3, -- Coke
-            [104044] = kosugi_3, -- Server
-            [104047] = kosugi_3, -- Gold
-            [104048] = kosugi_3, -- Weapon
-            [104049] = kosugi_3 -- Painting
+            [102700] = { max = 7, class = TT.Achievement.Progress }
         },
         load_sync = function(self)
             local counter = 0
@@ -137,6 +129,13 @@ local achievements =
             end
             if counter < 7 then
                 self._achievements:AddAchievementProgressTracker("kosugi_3", 7, counter)
+            end
+        end,
+        preparse_callback = function(data)
+            local trigger = { special_function = SF.IncreaseProgress }
+            -- Artifact, Money, Coke, Server, Gold, Weapon, Painting
+            for _, id in ipairs({ 104040, 104041, 104042, 104044, 104047, 104048, 104049 }) do
+                data.elements[id] = trigger
             end
         end
     },
@@ -215,6 +214,7 @@ if EHI:IsLootCounterVisible() then
         local loot_correction = CheckForBrokenWeapons() + CheckForBrokenCocaine()
         EHI:ShowLootCounterNoChecks({
             max = base_amount + crates + random_weapons + random_paintings + loot_correction,
+            max_xp_bags = 16,
             triggers =
             {
                 [103396] = { special_function = SF.IncreaseProgressMax2 }

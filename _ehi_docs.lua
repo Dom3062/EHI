@@ -107,13 +107,14 @@
 ---@field no_sync_load boolean Prevents Loot Counter from sync after joining
 ---@field offset boolean If offset is required, used in multi-day heists if loot is brought to next days
 ---@field client_from_start boolean If client is playing from mission briefing; does not do anything on host
----@field n_offset integer Provided via EHI:ShowLootCounterOffset(); DO NOT PROVIDE IT
+---@field n_offset integer Provided via `EHI:ShowLootCounterOffset()`; DO NOT PROVIDE IT
 ---@field triggers table If loot is manipulated via Mission Script, also see field `hook_triggers`
 ---@field hook_triggers boolean If Loot Counter is created during spawn or gameplay, triggers must be hooked in order to work
 ---@field sequence_triggers table<number, LootCounterTable.SequenceTriggersTable> Used for random loot spawning via sequences (forces syncing via BLT and GameSetup)
 ---@field is_synced boolean If the Loot Counter is synced from host (forces syncing via BLT and GameSetup)
 ---@field no_max boolean
 ---@field max_bags_for_level LootCounterTable.MaxBagsForMaxLevel
+---@field max_xp_bags number Force maximum count if the heist limits maximum experience from loot bags
 
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.LootCounter.CheckType`, defaults to `EHI.LootCounter.CheckType.BagsOnly` if not provided

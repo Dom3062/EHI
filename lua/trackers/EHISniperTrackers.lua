@@ -518,6 +518,7 @@ function EHISniperLoopRestartTracker:Refresh()
         self:OnChanceSuccess(self._initial_spawn_chance_set or 0)
         self._initial_spawn = nil
         self._initial_spawn_chance_set = nil
+        self:FitTheTime(self._reset_t or self._on_fail_refresh_t or 0, "0")
     end
 end
 

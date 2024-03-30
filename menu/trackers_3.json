@@ -181,6 +181,18 @@
             "ehi_ver" : 82
         },
         {
+            "type": "toggle",
+            "id": "ehi_show_loot_max_xp_bags_choice",
+            "title": "ehi_show_loot_max_xp_bags",
+            "description": "ehi_show_loot_max_xp_bags_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_loot_max_xp_bags",
+            "value": "show_loot_max_xp_bags",
+            "default_value": true,
+            "parent": "ehi_show_loot_counter_choice",
+            "ehi_ver" : 234
+        },
+        {
             "type": "divider",
             "size": 20
         },
