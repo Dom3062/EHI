@@ -115,6 +115,7 @@ end
 
 ---@param managers managers
 function EHIExperienceManager:LoadData(managers)
+    self._ehi_xp = self._ehi_xp or {}
     -- Job
     local job = managers.job
     local difficulty_stars = job:current_difficulty_stars()

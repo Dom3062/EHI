@@ -141,11 +141,9 @@ end
 function EHILootTracker:SetProgressMax(max)
     if self._max_xp_bags > 0 and self._max_xp_bags < max then
         self._max_xp_bags = 0
-    end
-    EHILootTracker.super.SetProgressMax(self, max)
-    if self._max_xp_bags == 0 then
         self:SetTextColor(Color.white)
     end
+    EHILootTracker.super.SetProgressMax(self, max)
     self._disable_counting = nil
     self:VerifyStatus()
 end
