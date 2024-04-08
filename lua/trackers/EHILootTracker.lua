@@ -126,11 +126,8 @@ function EHILootTracker:ShowLootSecuredPopup(no_update)
     if not no_update then
         self.update = self.update_fade
     end
-    if self._max_xp_bags then
-        managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_xp_loot_secured"), "EHI_Loot")
-    else
-        managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_loot_secured"), "EHI_Loot")
-    end
+    local xp_text = self._max_xp_bags > 0 and "ehi_popup_all_xp_loot_secured" or "ehi_popup_all_loot_secured"
+    managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text(xp_text), "EHI_Loot")
 end
 
 function EHILootTracker:CanShowLootSecuredPopup()
@@ -139,7 +136,7 @@ end
 
 ---@param max number
 function EHILootTracker:SetProgressMax(max)
-    if self._max_xp_bags > 0 and self._max_xp_bags < max then
+    if self._max_xp_bags > 0 and self._max_xp_bags >= max then
         self._max_xp_bags = 0
         self:SetTextColor(Color.white)
     end

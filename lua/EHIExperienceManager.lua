@@ -69,19 +69,7 @@ function EHIExperienceManager:ExperienceInit(xp)
     self._config.show_xp_diff = self._config.show_total_xp_diff ~= 1
     self._base_xp = 0
     self._total_xp = 0
-    self._ehi_xp =
-    {
-        mutator_xp_reduction = 0,
-        level_to_stars = math.clamp(math.ceil((self._xp.level + 1) / 10), 1, 10),
-        in_custody = false,
-        alive_players = Global.game_settings.single_player and 1 or 0,
-        gage_bonus = 1,
-        stealth = true,
-        bonus_xp = 0,
-        skill_xp_multiplier = 1, -- Recalculated in `EHIExperienceManager:RecalculateSkillXPMultiplier()`
-        difficulty_multiplier = 1,
-        projob_multiplier = 1 -- Unavailable since `Update 109`, however mods can still enable Pro Job modifier in heists
-    }
+    self._ehi_xp = self:CreateXPTable()
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
     EHI:HookWithID(HUDManager, "mark_cheater", "EHI_ExperienceManager_mark_cheater", function()
         self:RecalculateSkillXPMultiplier()
@@ -100,6 +88,22 @@ function EHIExperienceManager:ExperienceInit(xp)
     end
 end
 
+function EHIExperienceManager:CreateXPTable()
+    return
+    {
+        mutator_xp_reduction = 0,
+        level_to_stars = math.clamp(math.ceil((self._xp.level + 1) / 10), 1, 10),
+        in_custody = false,
+        alive_players = Global.game_settings.single_player and 1 or 0,
+        gage_bonus = 1,
+        stealth = true,
+        bonus_xp = 0,
+        skill_xp_multiplier = 1, -- Recalculated in `EHIExperienceManager:RecalculateSkillXPMultiplier()`
+        difficulty_multiplier = 1,
+        projob_multiplier = 1 -- Unavailable since `Update 109`, however mods can still enable Pro Job modifier in heists
+    }
+end
+
 ---@param xp ExperienceManager
 function EHIExperienceManager:ExperienceReload(xp)
     self._xp = self._xp or {}
@@ -115,7 +119,7 @@ end
 
 ---@param managers managers
 function EHIExperienceManager:LoadData(managers)
-    self._ehi_xp = self._ehi_xp or {}
+    self._ehi_xp = self._ehi_xp or self:CreateXPTable()
     -- Job
     local job = managers.job
     local difficulty_stars = job:current_difficulty_stars()
