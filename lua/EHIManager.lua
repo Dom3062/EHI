@@ -15,9 +15,6 @@ local EHI = EHI
 EHIManager = {}
 EHIManager.Trackers = EHI.Trackers
 EHIManager.Waypoints = EHI.Waypoints
-EHIManager.SyncFunctions = EHI.SyncFunctions
-EHIManager.ClientSyncFunctions = EHI.ClientSyncFunctions
-EHIManager.TriggerFunction = EHI.TriggerFunction
 EHIManager.FilterTracker =
 {
     show_timers =
@@ -28,7 +25,6 @@ EHIManager.FilterTracker =
 }
 EHIManager.ConditionFunctions = EHI.ConditionFunctions
 EHIManager.SFF = {}
-EHIManager.HookOnLoad = {}
 EHIManager._cache = {}
 EHIManager._internal = {}
 EHIManager._internal_listeners = {}
@@ -67,6 +63,29 @@ function EHIManager:new(managers)
         [self.Waypoints.Pausable] = self.Waypoints.InaccuratePausable,
         [self.Waypoints.Warning] = self.Waypoints.InaccurateWarning
     }
+    self.WaypointIconRedirect =
+    {
+        [EHI.Icons.Heli] = "EHI_Heli"
+    }
+    local SF = EHI.SpecialFunctions
+    self.TriggerFunction =
+    {
+        [SF.TriggerIfEnabled] = true,
+        [SF.Trigger] = true
+    }
+    self.SyncFunctions =
+    {
+        [SF.GetElementTimerAccurate] = true,
+        [SF.UnpauseTrackerIfExistsAccurate] = true
+    }
+    self.ClientSyncFunctions =
+    {
+        [SF.GetElementTimerAccurate] = true,
+        [SF.UnpauseTrackerIfExistsAccurate] = true
+    }
+    if EHI:IsClient() then
+        self.HookOnLoad = {}
+    end
     return self
 end
 
@@ -488,9 +507,8 @@ end
 local SF = EHI.SpecialFunctions
 ---@type table<number, ElementTrigger?>
 local triggers = {}
-local host_triggers = {}
-local base_delay_triggers = {}
-local element_delay_triggers = {}
+---@type table<number, ElementTrigger>
+local host_triggers, base_delay_triggers, element_delay_triggers = nil, nil, nil
 ---Adds trigger to mission element when they run
 ---@param new_triggers table<number, ElementTrigger>
 ---@param trigger_id_all string
@@ -577,32 +595,38 @@ function EHIManager:AddTriggers2(new_triggers, params, trigger_id_all, trigger_i
     end
 end
 
----@param new_triggers table
 ---@param type
 ---|"base" # Random delay is defined in the BASE DELAY
 ---|"element" # Random delay is defined when calling the elements
+---@param new_triggers table
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
-function EHIManager:AddHostTriggers(new_triggers, type, trigger_id_all, trigger_icons_all)
+function EHIManager:AddHostTriggers(type, new_triggers, trigger_id_all, trigger_icons_all)
+    if EHI:IsClient() then
+        return
+    end
+    host_triggers = host_triggers or {}
     for key, value in pairs(new_triggers) do
         if host_triggers[key] then
             EHI:Log("key: " .. tostring(key) .. " already exists in host triggers!")
         else
             host_triggers[key] = value
             if not value.id then
-                host_triggers[key].id = trigger_id_all
+                host_triggers[key].id = trigger_id_all --[[@as string]]
             end
             if not value.icons then
                 host_triggers[key].icons = trigger_icons_all
             end
         end
         if type == "base" then
+            base_delay_triggers = base_delay_triggers or {}
             if base_delay_triggers[key] then
                 EHI:Log("key: " .. tostring(key) .. " already exists in host base delay triggers!")
             else
                 base_delay_triggers[key] = true
             end
         elseif value.hook_element or value.hook_elements then
+            element_delay_triggers = element_delay_triggers or {}
             if value.hook_element then
                 element_delay_triggers[value.hook_element] = element_delay_triggers[value.hook_element] or {}
                 element_delay_triggers[value.hook_element][key] = true
@@ -827,7 +851,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
                     EHI:AddPositionFromUnit(data.data, data.id, host)
                 end
                 if data.data.icon then
-                    local redirect = EHI.WaypointIconRedirect[data.data.icon]
+                    local redirect = self.WaypointIconRedirect[data.data.icon]
                     if redirect then
                         data.data.icon = redirect
                         data.data.icon_redirect = true
@@ -851,7 +875,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
                             icon = trigger_icons_all[1] and trigger_icons_all[1].icon or trigger_icons_all[1]
                         end
                         if icon then
-                            data.waypoint.icon = EHI.WaypointIconRedirect[icon] or icon
+                            data.waypoint.icon = self.WaypointIconRedirect[icon] or icon
                         end
                     end
                     if data.waypoint.position_by_element_and_remove_vanilla_waypoint then
@@ -960,7 +984,7 @@ function EHIManager:InitElements()
     end
     self:AddPositionToWaypointFromLoad()
     local scripts = managers.mission._scripts or {}
-    if next(base_delay_triggers) then
+    if base_delay_triggers and next(base_delay_triggers) then
         self._base_delay = {} ---@type table<number, fun(e: MissionScriptElement): number>
         for id, _ in pairs(base_delay_triggers) do
             for _, script in pairs(scripts) do
@@ -969,14 +993,15 @@ function EHIManager:InitElements()
                     self._base_delay[id] = element._calc_base_delay
                     element._calc_base_delay = function(e)
                         local delay = self._base_delay[e._id](e)
-                        self:AddTrackerAndSync(e._id, delay)
+                        self:CreateTrackerAndSync(e._id, delay)
                         return delay
                     end
                 end
             end
         end
+        base_delay_triggers = nil
     end
-    if next(element_delay_triggers) then
+    if element_delay_triggers and next(element_delay_triggers) then
         self._element_delay = {} ---@type table<number, fun(e: MissionScriptElement, params: table): number>
         for id, _ in pairs(element_delay_triggers) do
             for _, script in pairs(scripts) do
@@ -989,20 +1014,20 @@ function EHIManager:InitElements()
                             if host_triggers[params.id] then
                                 local trigger = host_triggers[params.id]
                                 if trigger.remove_trigger_when_executed then
-                                    self:AddTrackerAndSync(params.id, delay)
+                                    self:CreateTrackerAndSync(params.id, delay)
                                     element_delay_triggers[e._id][params.id] = nil
                                 elseif trigger.set_time_when_tracker_exists then
                                     if self._trackers:TrackerExists(trigger.id) then
                                         self._trackers:SetTrackerTimeNoAnim(trigger.id, delay)
                                         EHI:SyncTable(EHI.SyncMessages.EHISyncAddTracker, { id = id, delay = delay or 0 })
                                     else
-                                        self:AddTrackerAndSync(params.id, delay)
+                                        self:CreateTrackerAndSync(params.id, delay)
                                     end
                                 else
-                                    self:AddTrackerAndSync(params.id, delay)
+                                    self:CreateTrackerAndSync(params.id, delay)
                                 end
                             else
-                                self:AddTrackerAndSync(params.id, delay)
+                                self:CreateTrackerAndSync(params.id, delay)
                             end
                         end
                         return delay
@@ -1122,7 +1147,10 @@ function EHIManager:GetRandomTime(trigger)
 end
 
 ---@param trigger ElementTrigger
-function EHIManager:AddTracker(trigger)
+function EHIManager:CreateTracker(trigger)
+    if trigger.condition_function and not trigger.condition_function() then
+        return
+    end
     if trigger.run then
         self._trackers:RunTracker(trigger.id, trigger.run)
     elseif trigger.tracker_merge and self._trackers:TrackerExists(trigger.id) then
@@ -1139,7 +1167,7 @@ end
 
 ---@param id number
 ---@param delay number
-function EHIManager:AddTrackerAndSync(id, delay)
+function EHIManager:CreateTrackerAndSync(id, delay)
     local trigger = host_triggers[id]
     self._trackers:AddTrackerAndSync({
         id = trigger.id,
@@ -1155,17 +1183,6 @@ function EHIManager:AddTrackerAndSync(id, delay)
     end
 end
 
----@param trigger ElementTrigger
-function EHIManager:CheckCondition(trigger)
-    if trigger.condition_function then
-        if trigger.condition_function() then
-            self:AddTracker(trigger)
-        end
-    else
-        self:AddTracker(trigger)
-    end
-end
-
 ---@param self EHIManager
 ---@param trigger ElementTrigger
 ---@param id number
@@ -1178,11 +1195,11 @@ local function GetElementTimer(self, trigger, id)
             if trigger.waypoint then
                 trigger.waypoint.time = t
             end
-            self:CheckCondition(trigger)
+            self:CreateTracker(trigger)
             self._trackers:Sync(id, t)
         end
     else
-        self:CheckCondition(trigger)
+        self:CreateTracker(trigger)
     end
 end
 
@@ -1205,8 +1222,8 @@ end
 function EHIManager:Trigger(id, element, enabled)
     local trigger = triggers[id]
     if trigger then
-        if trigger.special_function then
-            local f = trigger.special_function
+        local f = trigger.special_function
+        if f then
             if f == SF.RemoveTracker then
                 if trigger.data then
                     for _, tracker in ipairs(trigger.data) do
@@ -1223,18 +1240,18 @@ function EHIManager:Trigger(id, element, enabled)
                 if self:Exists(trigger.id) then
                     self:Unpause(trigger.id)
                 else
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             elseif f == SF.AddTrackerIfDoesNotExist then
                 if self:DoesNotExist(trigger.id) then
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             elseif f == SF.ReplaceTrackerWithTracker then
                 self:ForceRemove(trigger.data.id)
-                self:CheckCondition(trigger)
+                self:CreateTracker(trigger)
             elseif f == SF.ShowAchievementFromStart then -- Achievement unlock is checked during level load
                 if not managers.statistics:is_dropin() then
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             elseif f == SF.SetAchievementComplete then
                 self._achievements:SetAchievementComplete(trigger.id, true)
@@ -1246,7 +1263,7 @@ function EHIManager:Trigger(id, element, enabled)
                 local data = trigger.data or {}
                 data.achievement = data.achievement or trigger.id
                 EHI:AddAchievementToCounter(data)
-                self:CheckCondition(trigger)
+                self:CreateTracker(trigger)
             elseif f == SF.IncreaseChance then
                 self._trackers:IncreaseChance(trigger.id, trigger.amount)
             elseif f == SF.TriggerIfEnabled then
@@ -1260,7 +1277,7 @@ function EHIManager:Trigger(id, element, enabled)
                     end
                 end
             elseif f == SF.CreateAnotherTrackerWithTracker then
-                self:CheckCondition(trigger)
+                self:CreateTracker(trigger)
                 self:Trigger(trigger.data.fake_id, element, enabled)
             elseif f == SF.SetChanceWhenTrackerExists then
                 if self._trackers:TrackerExists(trigger.id) then
@@ -1269,7 +1286,7 @@ function EHIManager:Trigger(id, element, enabled)
                         self._trackers:SetTrackerTime(trigger.id, trigger.time)
                     end
                 else
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             elseif f == SF.Trigger then
                 if trigger.data then
@@ -1308,19 +1325,19 @@ function EHIManager:Trigger(id, element, enabled)
                     local time = trigger.run and trigger.run.time or trigger.time or 0
                     self:SetTime(key, time)
                 else
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             elseif f == SF.SetTimeOrCreateTrackerIfEnabled then
                 if enabled then
                     if self:Exists(trigger.id) then
                         self:SetTime(trigger.id, trigger.time)
                     else
-                        self:CheckCondition(trigger)
+                        self:CreateTracker(trigger)
                     end
                 end
             elseif f == SF.ExecuteIfElementIsEnabled then
                 if enabled then
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             elseif f == SF.SetTimeByPreplanning then
                 if managers.preplanning:IsAssetBought(trigger.data.id) then
@@ -1331,19 +1348,19 @@ function EHIManager:Trigger(id, element, enabled)
                 if trigger.waypoint then
                     trigger.waypoint.time = trigger.time
                 end
-                self:CheckCondition(trigger)
+                self:CreateTracker(trigger)
             elseif f == SF.IncreaseProgress then
                 self:IncreaseProgress(trigger.id)
             elseif f == SF.SetTrackerAccurate then
                 if self:Exists(trigger.id) then
                     self:SetAccurate(trigger.id, trigger.time)
                 else
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             elseif f == SF.SetRandomTime then
                 if self._trackers:TrackerDoesNotExist(trigger.id) then
                     trigger.time = trigger.data[math.random(#trigger.data)]
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             elseif f == SF.DecreaseChance then
                 self._trackers:DecreaseChance(trigger.id, trigger.amount)
@@ -1360,7 +1377,7 @@ function EHIManager:Trigger(id, element, enabled)
                     self:Unpause(trigger.id)
                 else
                     if trigger.time then
-                        self:CheckCondition(trigger)
+                        self:CreateTracker(trigger)
                         return
                     end
                     if managers.preplanning:IsAssetBought(trigger.data.id) then
@@ -1368,7 +1385,7 @@ function EHIManager:Trigger(id, element, enabled)
                     else
                         trigger.time = trigger.data.no
                     end
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             elseif f == SF.FinalizeAchievement then
                 self._trackers:CallFunction(trigger.id, "Finalize")
@@ -1394,7 +1411,7 @@ function EHIManager:Trigger(id, element, enabled)
                         max = trigger.max or 1,
                         class = trigger.class or "EHILootTracker"
                     }
-                    self:CheckCondition(new_trigger)
+                    self:CreateTracker(new_trigger)
                 end
             elseif f == SF.SetTimeIfLoudOrStealth then
                 if managers.groupai:state():whisper_mode() then
@@ -1405,7 +1422,7 @@ function EHIManager:Trigger(id, element, enabled)
                 if trigger.waypoint then
                     trigger.waypoint.time = trigger.time
                 end
-                self:CheckCondition(trigger)
+                self:CreateTracker(trigger)
             elseif f == SF.AddTimeByPreplanning then
                 local t = 0
                 if managers.preplanning:IsAssetBought(trigger.data.id) then
@@ -1417,7 +1434,7 @@ function EHIManager:Trigger(id, element, enabled)
                 if trigger.waypoint then
                     trigger.waypoint.time = trigger.time
                 end
-                self:CheckCondition(trigger)
+                self:CreateTracker(trigger)
             elseif f == SF.ShowWaypoint then
                 managers.hud:AddWaypointFromTrigger(trigger.id, trigger.data)
             elseif f == SF.DecreaseProgressMax then
@@ -1470,7 +1487,7 @@ function EHIManager:Trigger(id, element, enabled)
                 self.SFF[f](self, trigger, element, enabled)
             end
         else
-            self:CheckCondition(trigger)
+            self:CreateTracker(trigger)
         end
         if trigger.trigger_times and trigger.trigger_times > 0 then
             trigger.trigger_times = trigger.trigger_times - 1
@@ -1499,7 +1516,7 @@ end
 ---@param id number
 ---@param trigger ElementTrigger
 function EHIManager:AddSyncTrigger(id, trigger)
-    self._sync_triggers = self._sync_triggers or {}
+    self._sync_triggers = self._sync_triggers or {} ---@type table<number, ElementTrigger>
     if self._sync_triggers[id] then
         EHI:Log(tostring(id) .. " already exists in sync!")
         return
@@ -1524,7 +1541,6 @@ end
 ---@param delay number
 function EHIManager:AddTrackerSynced(id, delay)
     if self._sync_triggers and self._sync_triggers[id] then
-        ---@type ElementTrigger
         local trigger = self._sync_triggers[id]
         local trigger_id = trigger.id
         if self:Exists(trigger_id) then
@@ -1534,7 +1550,7 @@ function EHIManager:AddTrackerSynced(id, delay)
                 self:SetAccurate(trigger_id, (trigger.time or trigger.additional_time or 0) + delay)
             end
         else
-            self:AddSyncedTracker(trigger, delay)
+            self:CreateSyncedTracker(trigger, delay)
         end
         if trigger.client_on_executed then
             -- Right now there is only SF.RemoveTriggerWhenExecuted
@@ -1545,7 +1561,7 @@ end
 
 ---@param trigger ElementTrigger
 ---@param delay number
-function EHIManager:AddSyncedTracker(trigger, delay)
+function EHIManager:CreateSyncedTracker(trigger, delay)
     local t = trigger.delay_only and delay or ((trigger.time or trigger.additional_time or 0) + delay)
     self._trackers:AddTracker({
         id = trigger.id,
@@ -1642,7 +1658,10 @@ end
 
 if EHI:GetWaypointOption("show_waypoints_only") then
     ---@param trigger ElementTrigger
-    function EHIManager:AddTracker(trigger)
+    function EHIManager:CreateTracker(trigger)
+        if trigger.condition_function and not trigger.condition_function() then
+            return
+        end
         if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
             if not trigger.run then
                 if trigger.random_time then
@@ -1666,7 +1685,7 @@ if EHI:GetWaypointOption("show_waypoints_only") then
 
     ---@param trigger ElementTrigger
     ---@param delay number
-    function EHIManager:AddSyncedTracker(trigger, delay)
+    function EHIManager:CreateSyncedTracker(trigger, delay)
         local t = trigger.delay_only and delay or ((trigger.time or trigger.additional_time or 0) + delay)
         if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
             trigger.time = t
@@ -1690,7 +1709,7 @@ end
 if not EHI:GetOption("show_mission_trackers") then
     ---@param id number
     ---@param delay number
-    function EHIManager:AddTrackerAndSync(id, delay)
+    function EHIManager:CreateTrackerAndSync(id, delay)
         self._trackers:Sync(id, delay)
     end
 

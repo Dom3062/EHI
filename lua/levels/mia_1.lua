@@ -56,7 +56,7 @@ if client then
     triggers[104955] = EHI:ClientCopyTrigger(triggers[106013], { time = 30 })
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, "element")
+    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 local other =

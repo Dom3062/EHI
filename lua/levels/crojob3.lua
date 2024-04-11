@@ -72,7 +72,7 @@ local achievements =
         {
             [101031] = { status = "defend", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             end) },
             [103468] = { special_function = SF.SetAchievementFailed, trigger_times = 1 },

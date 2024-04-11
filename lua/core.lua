@@ -546,26 +546,6 @@ _G.EHI =
     SettingsSaveFilePath = BLTModManager.Constants:SavesDirectory() .. "ehi.json",
     SaveDataVer = 1
 }
-local SF = EHI.SpecialFunctions
-EHI.SyncFunctions =
-{
-    [SF.GetElementTimerAccurate] = true,
-    [SF.UnpauseTrackerIfExistsAccurate] = true
-}
-EHI.ClientSyncFunctions =
-{
-    [SF.GetElementTimerAccurate] = true,
-    [SF.UnpauseTrackerIfExistsAccurate] = true
-}
-EHI.TriggerFunction =
-{
-    [SF.TriggerIfEnabled] = true,
-    [SF.Trigger] = true
-}
-EHI.WaypointIconRedirect =
-{
-    [EHI.Icons.Heli] = "EHI_Heli"
-}
 
 ---@param self table
 local function LoadDefaultValues(self)
@@ -651,6 +631,7 @@ local function LoadDefaultValues(self)
         show_tracker_bg = true,
         show_tracker_corners = true,
         show_one_icon = false,
+        show_icon_position = 2, -- 1 = Left; 2 = Right
         show_tracker_hint = true,
         show_tracker_hint_t = 15,
 
@@ -1710,14 +1691,14 @@ function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_al
     managers.ehi_manager:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_all)
 end
 
----@param new_triggers table
 ---@param type string
 ---|"base" # Random delay is defined in the BASE DELAY
 ---|"element" # Random delay is defined when calling the elements
+---@param new_triggers table
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
-function EHI:AddHostTriggers(new_triggers, type, trigger_id_all, trigger_icons_all)
-    managers.ehi_manager:AddHostTriggers(new_triggers, type, trigger_id_all, trigger_icons_all)
+function EHI:AddHostTriggers(type, new_triggers, trigger_id_all, trigger_icons_all)
+    managers.ehi_manager:AddHostTriggers(type, new_triggers, trigger_id_all, trigger_icons_all)
 end
 
 ---@param id number
@@ -1785,7 +1766,7 @@ end
 ---@return ElementTrigger?
 function EHI:AddAssaultDelay(params)
     if not self:GetOption("show_assault_delay_tracker") then
-        if params.special_function and params.special_function > SF.CustomSF then
+        if params.special_function and params.special_function > self.SpecialFunctions.CustomSF then
             self:UnregisterCustomSF(params.special_function)
         end
         return nil
@@ -1828,7 +1809,7 @@ function EHI:AddLootCounter(f, check, load_sync, trigger_once)
     end
     local tbl =
     {
-        special_function = SF.CustomCode,
+        special_function = self.SpecialFunctions.CustomCode,
         f = f
     }
     if trigger_once then
@@ -1847,7 +1828,7 @@ end
 function EHI:AddLootCounter2(f, load_sync, trigger_once)
     local tbl =
     {
-        special_function = SF.CustomCode,
+        special_function = self.SpecialFunctions.CustomCode,
         f = f
     }
     if trigger_once then
@@ -1881,7 +1862,7 @@ end
 function EHI:AddLootCounter4(f, t, load_sync, trigger_once)
     local tbl =
     {
-        special_function = SF.CustomCodeDelayed,
+        special_function = self.SpecialFunctions.CustomCodeDelayed,
         t = t,
         f = f
     }
@@ -2110,6 +2091,7 @@ function EHI:ShowLootCounterNoChecks(params)
             return
         end
     end
+    local show_loot_max_xp_bags = self:GetOption("show_loot_max_xp_bags") --[[@as boolean]]
     if params.sequence_triggers or params.is_synced then
         managers.ehi_tracker:SyncShowLootCounter(params.max, params.max_random, n_offset)
     elseif params.max_bags_for_level and self:IsXPTrackerEnabledAndVisible() then
@@ -2128,7 +2110,7 @@ function EHI:ShowLootCounterNoChecks(params)
         end
         managers.ehi_tracker:ShowLootCounter(0, 0, 0, 0, false, params.max_bags_for_level)
     else
-        if not self:GetOption("show_loot_max_xp_bags") then
+        if not show_loot_max_xp_bags then
             params.max_xp_bags = 0
         end
         managers.ehi_tracker:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, n_offset, params.no_max)
@@ -2137,7 +2119,7 @@ function EHI:ShowLootCounterNoChecks(params)
         self:AddLoadSyncFunction(params.load_sync)
         params.no_sync_load = true
     end
-    if params.triggers then
+    if params.triggers and (not params.no_triggers_if_max_xp_bags_gt_max or (params.max_xp_bags or 0) >= (params.max or 0)) then
         self:AddTriggers2(params.triggers, nil, "LootCounter")
         if params.hook_triggers then
             self:HookElements(params.triggers)
@@ -2623,7 +2605,7 @@ function EHI:ClientCopyTrigger(trigger, params, overwrite_SF)
     end
     local new_SF
     if overwrite_SF or not trigger.special_function then
-        new_SF = SF.AddTrackerIfDoesNotExist
+        new_SF = self.SpecialFunctions.AddTrackerIfDoesNotExist
     end
     return self:CopyTrigger(trigger, params, new_SF)
 end

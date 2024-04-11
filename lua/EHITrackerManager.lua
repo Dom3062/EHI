@@ -217,7 +217,7 @@ function EHITrackerManager:RunTracker(id, params)
     self._n_of_trackers = self._n_of_trackers + 1
 end
 
----Called by host only. Clients with EHI call EHITrackerManager:AddTracker() when synced
+---Called by host only. Clients with EHI call `EHITrackerManager:AddTracker()` when synced
 ---@param params AddTrackerTable
 ---@param id integer
 ---@param delay number
@@ -286,7 +286,7 @@ function EHITrackerManager:ShowLootCounter(max, max_random, max_xp_bags, offset,
             id = "LootCounter",
             max = max or 0,
             max_random = max_random or 0,
-            max_xp_bags = max_xp_bags,
+            max_xp_bags = max_xp_bags or 0,
             offset = offset or 0,
             class = no_max and "EHILootCountTracker" or "EHILootTracker"
         })

@@ -24,7 +24,7 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100184, 7750)] = { id = "MethlabInteract", special_function = SF.RemoveTracker }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, "element")
+    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 EHI:ParseTriggers({ mission = triggers })

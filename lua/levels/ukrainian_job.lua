@@ -36,7 +36,7 @@ local achievements =
         {
             [100074] = { status = "alarm", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
                 if self:InteractionExists("circuit_breaker_off") then
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             end) },
             [104406] = { status = "finish", special_function = SF.SetAchievementStatus },

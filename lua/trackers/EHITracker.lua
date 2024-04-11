@@ -81,8 +81,8 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or 
             o:set_x(math_lerp(from_x, target_x, lerp) --[[@as number]])
             o:set_w(math_lerp(from_w, target_w, lerp) --[[@as number]])
         end
-        if self and self.Redraw then
-            self:Redraw()
+        if self and self.RedrawPanel then
+            self:RedrawPanel()
         end
     end
 else
@@ -100,8 +100,8 @@ else
             local lerp = t / TOTAL_T
             o:set_w(math_lerp(from_w, target_w, lerp) --[[@as number]])
         end
-        if self and self.Redraw then
-            self:Redraw()
+        if self and self.RedrawPanel then
+            self:RedrawPanel()
         end
     end
 end
@@ -268,6 +268,10 @@ else
     EHITracker._hint_disabled = true
 end
 EHITracker._init_create_text = true
+if EHI:GetOption("show_icon_position") == 1 then
+    EHITracker._ICON_LEFT_SIDE_START = true
+    EHITracker._ICON_ANIM_BLOCKED = true
+end
 ---@param panel Panel Main panel provided by EHITrackerManager
 ---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
@@ -291,7 +295,7 @@ function EHITracker:init(panel, params, parent_class)
         visible = true
     })
     self._bg_box = CreateHUDBGBox(self._panel, {
-        x = 0,
+        x = self._ICON_LEFT_SIDE_START and (self._icon_gap_size_scaled * self._n_of_icons) or 0,
         y = 0,
         w = self._default_bg_size,
         h = self._icon_size_scaled
@@ -432,8 +436,9 @@ end
 function EHITracker:SetIconX(previous_icon, icon)
     icon = icon or self._icon1
     if icon then
-        local x = previous_icon and previous_icon:right() or self._bg_box:w()
-        icon:set_x(x + self._gap_scaled)
+        local x = previous_icon and previous_icon:right() or (self._ICON_LEFT_SIDE_START and 0 or self._bg_box:w())
+        local gap = previous_icon and self._gap_scaled or (self._ICON_LEFT_SIDE_START and 0 or self._gap_scaled)
+        icon:set_x(x + gap)
     end
 end
 
@@ -450,18 +455,22 @@ end
 
 ---@param target_x number
 function EHITracker:AnimIconX(target_x)
-    if not self._icon1 then
+    if self._ICON_ANIM_BLOCKED or not self._icon1 then
         return
     end
-    if self._anim_icon1_x then
-        self._icon1:stop(self._anim_icon1_x)
-        self._anim_icon1_x = nil
+    self._icon_anims = self._icon_anims or {}
+    if self._icon_anims[1] then
+        self._icon1:stop(self._icon_anims[1])
+        self._icon_anims[1] = nil
     end
-    self._anim_icon1_x = self._icon1:animate(icon_x, target_x)
+    self._icon_anims[1] = self._icon1:animate(icon_x, target_x)
 end
 
 ---@param target_x number
 function EHITracker:AnimIconsX(target_x)
+    if self._ICON_ANIM_BLOCKED then
+        return
+    end
     self._icon_anims = self._icon_anims or {}
     local offset = self._icon_gap_size_scaled
     for i = 1, self._n_of_icons, 1 do
@@ -494,7 +503,7 @@ if EHI:GetOption("show_one_icon") then
     EHITracker._ONE_ICON = true
     function EHITracker:CreateIcons()
         self._n_of_icons = 1
-        local icon_pos = self._bg_box:w() + self._gap_scaled
+        local icon_pos = self._ICON_LEFT_SIDE_START and 0 or (self._bg_box:w() + self._gap_scaled)
         local first_icon = self._icons[1]
         if type(first_icon) == "string" then
             local texture, rect = GetIcon(first_icon)
@@ -506,7 +515,7 @@ if EHI:GetOption("show_one_icon") then
     end
 else
     function EHITracker:CreateIcons()
-        local icon_pos = self._bg_box:w() + self._gap_scaled
+        local icon_pos = self._ICON_LEFT_SIDE_START and 0 or (self._bg_box:w() + self._gap_scaled)
         for i, v in ipairs(self._icons) do
             local s_i = tostring(i)
             if type(v) == "string" then
@@ -633,6 +642,7 @@ end
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] = true, [2] = true }) then
     if EHI:GetOption("tracker_vertical_w_anim") == 2 then
         EHITracker._VERTICAL_ANIM_W_LEFT = true
+        EHITracker._ICON_ANIM_BLOCKED = nil
         ---@param target_w number
         function EHITracker:AnimateHintX(target_w)
         end
@@ -1019,7 +1029,7 @@ end
 function EHITracker:OnPlayerCustody(state)
 end
 
-function EHITracker:Redraw()
+function EHITracker:RedrawPanel()
 end
 
 function EHITracker:CheckCanDeleteAfterSync()
@@ -1030,4 +1040,8 @@ end
 function EHITracker.SetCustomBGFunctions(create_f, animate_f)
     CreateHUDBGBox = create_f
     bg_attention = animate_f
+end
+
+if EHITracker._ICON_LEFT_SIDE_START then
+    EHITracker.AnimatePanelW = EHITracker.AnimatePanelWAndRefresh
 end

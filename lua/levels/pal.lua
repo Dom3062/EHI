@@ -36,7 +36,7 @@ if EHI:IsClient() then
     local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:RemoveTracker(trigger.data.id)
         if self._trackers:TrackerDoesNotExist(trigger.id) then
-            self:CheckCondition(trigger)
+            self:CreateTracker(trigger)
         end
     end)
     triggers[102892] = { additional_time = 1800/30 + 120, random_time = 60, id = "HeliCage", icons = Icon.HeliLootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
@@ -47,8 +47,8 @@ if EHI:IsClient() then
     EHI:SetSyncTriggers(sync_triggers)
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(sync_triggers, "base")
-    EHI:AddHostTriggers(element_sync_triggers, "element")
+    EHI:AddHostTriggers("base", sync_triggers)
+    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 ---@type ParseAchievementTable

@@ -5,14 +5,13 @@ local Hints = EHI.Hints
 EHIkosugi5Tracker = class(EHIAchievementProgressTracker)
 ---@param panel Panel
 ---@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIkosugi5Tracker:init(panel, params, parent_class)
+function EHIkosugi5Tracker:init(panel, params, ...)
     params.show_progress_on_finish = true
     params.max = 16 -- Random loot (with armor)
     self._armor_max = 4 -- Armor
     self._armor_counter = 0
     self._objectives_to_complete = 2
-    EHIkosugi5Tracker.super.init(self, panel, params, parent_class)
+    EHIkosugi5Tracker.super.init(self, panel, params, ...)
     EHI:AddAchievementToCounter({
         achievement = "kosugi_5",
         counter =
@@ -42,6 +41,7 @@ function EHIkosugi5Tracker:FormatArmorProgress()
     return self._armor_counter .. "/" .. self._armor_max
 end
 
+---@param force boolean?
 function EHIkosugi5Tracker:SetCompleted(force)
     EHIkosugi5Tracker.super.SetCompleted(self, force)
     if self._status then
@@ -49,6 +49,7 @@ function EHIkosugi5Tracker:SetCompleted(force)
     end
 end
 
+---@param progress number
 function EHIkosugi5Tracker:SetProgressArmor(progress)
     if self._armor_counter ~= progress and not self._armor_counting_disabled then
         self._armor_counter = progress
@@ -87,7 +88,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local DisableTriggerAndExecute = EHI:RegisterCustomSF(function(self, trigger, ...)
     self:UnhookTrigger(trigger.data.id)
-    self:CheckCondition(trigger)
+    self:CreateTracker(trigger)
 end)
 local Trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local triggers = {
@@ -219,7 +220,8 @@ if EHI:IsLootCounterVisible() then
             {
                 [103396] = { special_function = SF.IncreaseProgressMax2 }
             },
-            hook_triggers = true
+            hook_triggers = true,
+            no_triggers_if_max_xp_bags_gt_max = true
         })
     end)
     -- Not included bugged loot, this is checked after spawn -> 102700

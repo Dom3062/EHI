@@ -88,8 +88,14 @@ function EHITimerTracker:SetUpgradeable(upgradeable)
     end
     if upgradeable and self._icon2 then
         self._panel_override_w = self._panel:w()
+        if self._ICON_LEFT_SIDE_START then
+            self._bg_box:set_x(self._icon_gap_size_scaled * self._n_of_icons)
+        end
     else
         self._panel_override_w = self._bg_box:w() + self._icon_gap_size_scaled
+        if self._ICON_LEFT_SIDE_START then
+            self._bg_box:set_x(self._icon_gap_size_scaled)
+        end
     end
 end
 
@@ -281,7 +287,7 @@ function EHITimerGroupTracker:StopTimer(id)
     self._timers_n = self._timers_n - 1
 end
 
-function EHITimerGroupTracker:Redraw()
+function EHITimerGroupTracker:RedrawPanel()
     for _, timer in pairs(self._timers) do
         self:FitTheText(timer.label)
     end
@@ -298,7 +304,7 @@ function EHITimerGroupTracker:AnimateMovement(n, delete)
     end
     self:AnimatePanelWAndRefresh(self._panel_override_w)
     self:ChangeTrackerWidth(self._panel_override_w)
-    self:AnimIconsX(w)
+    self:AnimIconsX(self._ICON_LEFT_SIDE_START and 0 or w)
     self:SetBGSize(w, "set", true)
 end
 

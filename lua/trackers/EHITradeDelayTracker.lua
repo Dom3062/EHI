@@ -63,7 +63,7 @@ function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time, civilians_killed
     self:SetTextPeerColor()
 end
 
-function EHITradeDelayTracker:Redraw()
+function EHITradeDelayTracker:RedrawPanel()
     for _, text in ipairs(self._bg_box:children()) do ---@cast text PanelText
         if text.set_text then
             self:FitTheText(text)

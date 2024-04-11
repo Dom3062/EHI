@@ -34,6 +34,7 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
     self._corner_visibility = EHI:GetOption("show_tracker_corners")
     self._icons_visibility = EHI:GetOption("show_one_icon")
     self._tracker_alignment = EHI:GetOption("tracker_alignment")
+    self._icons_pos = EHI:GetOption("show_icon_position")
     panel_size = panel_size_original * self._scale
     panel_offset = panel_offset_original * self._scale
     self._horizontal = {
@@ -120,6 +121,7 @@ function FakeEHITrackerManager:CreateFakeTracker(params)
     params.bg = self._bg_visibility
     params.corners = self._corner_visibility
     params.one_icon = self._icons_visibility
+    params.icon_pos = self._icons_pos
     local tracker = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params, self) --[[@as FakeEHITracker]]
     self._n_of_trackers = self._n_of_trackers + 1
     self._fake_trackers[self._n_of_trackers] = tracker
@@ -384,6 +386,13 @@ function FakeEHITrackerManager:UpdateIconsVisibility(visibility)
     end
 end
 
+function FakeEHITrackerManager:UpdateIconsPosition(position)
+    self._icons_pos = position
+    for _, tracker in ipairs(self._fake_trackers) do
+        tracker:UpdateIconsPos(position)
+    end
+end
+
 function FakeEHITrackerManager:UpdateTrackerAlignment(alignment)
     if self._tracker_alignment == alignment then
         return
@@ -569,8 +578,8 @@ function FakeEHITracker:init(panel, params, parent_class)
         gap = self._gap * self._n_of_icons
     end
     self._n = self._n_of_icons
-    self._gap_scaled = self._gap * self._scale
-    self._icon_size_scaled = 32 * self._scale
+    self._gap_scaled = self._gap * self._scale -- 5 * self._scale
+    self._icon_size_scaled = 32 * self._scale -- 32 * self._scale
     self._icon_gap_size_scaled = (self._icon_size + self._gap) * self._scale -- (32 + 5) * self._scale
     self._panel = panel:panel({
         name = params.id,
@@ -581,7 +590,7 @@ function FakeEHITracker:init(panel, params, parent_class)
     })
     self._time = params.time or 0
     self._bg_box = HUDBGBox_create(self._panel, {
-        x = 0,
+        x = params.icon_pos == 1 and (self._icon_gap_size_scaled * self._n_of_icons) or 0,
         y = 0,
         w = 64 * self._scale,
         h = self._icon_size_scaled
@@ -608,8 +617,8 @@ function FakeEHITracker:init(panel, params, parent_class)
     })
     self:FitTheText()
     if self._n_of_icons > 0 then
-        local start = self._bg_box:w()
-        local icon_gap = self._gap_scaled
+        local start = params.icon_pos == 1 and 0 or self._bg_box:w()
+        local icon_gap = params.icon_pos == 1 and 0 or self._gap_scaled
         for i, v in ipairs(params.icons) do
             local s_i = tostring(i)
             if type(v) == "string" then
@@ -628,8 +637,8 @@ function FakeEHITracker:init(panel, params, parent_class)
         self:UpdateIcons()
         if params.one_icon then
             self:UpdateIconsVisibility(true)
-            self._n = 1
         end
+        self.__icon_pos_left = params.icon_pos == 1
     end
     self._id = params.id
     self._parent_class = parent_class
@@ -664,6 +673,17 @@ function FakeEHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
     end
 end
 
+---@param previous_icon PanelBitmap?
+---@param icon PanelBitmap? Defaults to `self._icon1` if not provided
+function FakeEHITracker:SetIconX(previous_icon, icon)
+    icon = icon or self._icon1
+    if icon then
+        local x = previous_icon and previous_icon:right() or (self.__icon_pos_left and 0 or self._bg_box:w())
+        local gap = previous_icon and self._gap_scaled or (self.__icon_pos_left and 0 or self._gap_scaled)
+        icon:set_x(x + gap)
+    end
+end
+
 function FakeEHITracker:SetIconsX()
     local previous_icon ---@type PanelBitmap?
     for i = 1, self._n_of_icons, 1 do
@@ -672,16 +692,6 @@ function FakeEHITracker:SetIconsX()
             self:SetIconX(previous_icon, icon)
             previous_icon = icon
         end
-    end
-end
-
----@param previous_icon PanelBitmap?
----@param icon PanelBitmap? Defaults to `self._icon1` if not provided
-function FakeEHITracker:SetIconX(previous_icon, icon)
-    icon = icon or self._icon1
-    if icon then
-        local x = previous_icon and previous_icon:right() or self._bg_box:w()
-        icon:set_x(x + self._gap_scaled)
     end
 end
 
@@ -784,9 +794,19 @@ function FakeEHITracker:UpdateIconsVisibility(visibility)
     for i = i_start, self._n_of_icons, 1 do
         self["_icon" .. i]:set_visible(not visibility)
     end
+    if self.__icon_pos_left then
+        self._bg_box:set_x(self._icon_gap_size_scaled * self._n)
+    end
 end
 
 function FakeEHITracker:UpdateIcons()
+end
+
+---@param pos number
+function FakeEHITracker:UpdateIconsPos(pos)
+    self.__icon_pos_left = pos == 1
+    self._bg_box:set_x(pos == 1 and (self._icon_gap_size_scaled * self._n) or 0)
+    self:SetIconsX()
 end
 
 ---@param scale number

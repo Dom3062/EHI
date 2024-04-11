@@ -158,7 +158,7 @@ if EHI:GetOption("show_mission_trackers") then
         elseif trigger.id == "ChemSetReset" then
             self:ForceRemove(trigger.data.id)
         end
-        self:CheckCondition(trigger)
+        self:CreateTracker(trigger)
     end)
     triggers[102593].special_function = ChemSet
     triggers[101217].special_function = ChemSet

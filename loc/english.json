@@ -140,6 +140,7 @@
     "ehi_hint_ecm_jammer" : "ECM Jammer",
     "ehi_hint_ecm_feedback" : "ECM Feedback",
     "ehi_hint_ecm_feedback_refresh" : "ECM Feedback Refresh",
+    "ehi_hint_phalanx_chance" : "Captain Chance",
 
     "ehi_hint_big_piggy" : "Moving Piggy",
     "ehi_hint_brb_winch_delivery" : "Winch Delivery",
@@ -258,6 +259,11 @@
 
     "ehi_show_one_icon" : "Show 1 Icon in Tracker",
     "ehi_show_one_icon_desc" : "Shows 1 icon in tracker when enabled\nAll icons are visible when this option is disabled",
+
+    "ehi_show_icon_position" : "Icons Position",
+    "ehi_show_icon_position_desc" : "Sets Icons Position in the Tracker",
+    "ehi_show_icon_position_1" : "Left",
+    "ehi_show_icon_position_2" : "Right",
 
     "ehi_show_tracker_hint" : "Show Tracker Description",
     "ehi_show_tracker_hint_desc" : "Shows a description for the tracker if exists",

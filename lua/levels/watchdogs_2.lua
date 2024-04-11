@@ -13,7 +13,7 @@ if EHI:GetOption("show_mission_trackers") then
         self.SyncedSFF.watchdogs_2_boat_time = nil
         if t then
             trigger.time = t
-            self:CheckCondition(trigger)
+            self:CreateTracker(trigger)
             trigger.time = nil
         else
             self:Trigger(1011480)
@@ -73,7 +73,7 @@ if EHI:IsClient() then
         if self:Exists(trigger.id) then
             self:SetAccurate(trigger.id, trigger.time)
         elseif not (self:Exists(trigger.id2) or self:Exists(trigger.id3)) then
-            self:CheckCondition(trigger)
+            self:CreateTracker(trigger)
         end
     end), waypoint_f = waypoint_f, hint = Hints.Loot }
     triggers[100686] = boat_return
@@ -92,7 +92,7 @@ local achievements =
             [100124] = { status = "defend", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
                 local bags = self:CountLootbagsOnTheGround(10)
                 if bags == 12 then
-                    self:CheckCondition(trigger)
+                    self:CreateTracker(trigger)
                 end
             end) },
             [102382] = { special_function = SF.SetAchievementFailed },

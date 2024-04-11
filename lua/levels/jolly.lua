@@ -46,7 +46,7 @@ EHI:RegisterCustomSF(HeliTimer, function(self, trigger, ...)
     if self:Exists(trigger.id) then
         self:SetTimeNoAnim(trigger.id, trigger.time)
     else
-        self:CheckCondition(trigger)
+        self:CreateTracker(trigger)
     end
 end)
 

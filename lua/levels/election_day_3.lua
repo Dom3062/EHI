@@ -10,7 +10,7 @@ if EHI:GetOption("show_one_icon") then
 end
 local CrashChanceTime = EHI:RegisterCustomSF(function(self, trigger, ...)
     if self._trackers:CallFunction2("CrashChance", "StartTimer", trigger.time) then
-        self:CheckCondition(trigger)
+        self:CreateTracker(trigger)
     end
 end)
 local triggers = {

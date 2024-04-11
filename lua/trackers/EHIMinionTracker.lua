@@ -34,7 +34,7 @@ function EHIMinionTracker:SetIconColor()
     end
 end
 
-function EHIMinionTracker:Redraw()
+function EHIMinionTracker:RedrawPanel()
     for _, text in ipairs(self._bg_box:children()) do ---@cast text PanelText
         if text.set_text then
             self:FitTheText(text)

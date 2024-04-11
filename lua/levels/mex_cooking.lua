@@ -32,7 +32,7 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100174, 56850)] = meth_ready
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, "element")
+    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 local other =

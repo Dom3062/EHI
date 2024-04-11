@@ -70,7 +70,7 @@ EHI:RegisterCustomSF(GetFromCache, function(self, trigger, ...)
     if data and data.icon then
         trigger.icons[1] = data.icon
     end
-    self:CheckCondition(trigger)
+    self:CreateTracker(trigger)
 end)
 EHI:AddXPBreakdown({
     objective =

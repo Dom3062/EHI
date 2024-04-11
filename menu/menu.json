@@ -140,7 +140,7 @@
             "title": "ehi_visuals_menu",
             "description": "ehi_visuals_menu_desc",
             "next_menu": "ehi_visuals_menu",
-            "ehi_ver" : 78
+            "ehi_ver" : 237
         },
         {
             "type" : "divider",

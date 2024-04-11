@@ -191,7 +191,7 @@ function EHIAggregatedEquipmentTracker:RemoveText(id)
     self:Reorganize()
 end
 
-function EHIAggregatedEquipmentTracker:Redraw()
+function EHIAggregatedEquipmentTracker:RedrawPanel()
     for _, text in ipairs(self._bg_box:children()) do ---@cast text PanelText
         if text.set_text then
             self:FitTheText(text)

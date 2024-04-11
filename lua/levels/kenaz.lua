@@ -39,7 +39,7 @@ local triggers = {
         if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
             return
         end
-        self:AddTracker(trigger)
+        self:CreateTracker(trigger)
     end) },
     [100091] = { id = "ColorCodes", special_function = SF.RemoveTracker }, -- Code entered (stealth)
     [101357] = { id = "ColorCodes", special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
@@ -126,7 +126,7 @@ local other =
             t = 30
         end
         trigger.time = trigger.time + t
-        self:CheckCondition(trigger)
+        self:CreateTracker(trigger)
     end) })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

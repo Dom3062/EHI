@@ -66,7 +66,7 @@ if EHI:IsClient() then
     triggers[100426] = { id = "HeliDropDrill", icons = Icon.HeliDropDrill, special_function = SF.SetRandomTime, data = { 44, 54 } }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, "element")
+    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 local other =

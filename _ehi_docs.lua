@@ -115,6 +115,7 @@
 ---@field no_max boolean
 ---@field max_bags_for_level LootCounterTable.MaxBagsForMaxLevel
 ---@field max_xp_bags number Force maximum count if the heist limits maximum experience from loot bags
+---@field no_triggers_if_max_xp_bags_gt_max boolean Disables triggers if provided `max_xp_bags` is greater than max
 
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.LootCounter.CheckType`, defaults to `EHI.LootCounter.CheckType.BagsOnly` if not provided

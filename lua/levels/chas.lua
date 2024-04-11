@@ -16,7 +16,7 @@ if EHI:IsClient() then
     triggers[102453] = { additional_time = 60 + 12.5, random_time = 20, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.DrillDelivery }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, "element")
+    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 ---@type ParseAchievementTable

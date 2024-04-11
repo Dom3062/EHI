@@ -140,6 +140,7 @@
     "ehi_hint_ecm_jammer" : "ECM Jammer",
     "ehi_hint_ecm_feedback" : "ECM Feedback",
     "ehi_hint_ecm_feedback_refresh" : "Znovunabití ECM Feedback",
+    "ehi_hint_phalanx_chance" : "Šance na Kapitána",
 
     "ehi_hint_big_piggy" : "Přesouvání čuníka",
     "ehi_hint_brb_winch_delivery" : "Dodání navijáku",
@@ -258,6 +259,11 @@
 
     "ehi_show_one_icon" : "Zobrazovat pouze 1 ikonu ve sledovači",
     "ehi_show_one_icon_desc" : "Je-li povoleno, pouze 1 ikona je zobrazena\nJe-li zakázána, všechny ikony jsou viditelné",
+
+    "ehi_show_icon_position" : "Pozice ikon",
+    "ehi_show_icon_position_desc" : "Nastavuje pozici ikon ve sledovači",
+    "ehi_show_icon_position_1" : "Vlevo",
+    "ehi_show_icon_position_2" : "Vpravo",
 
     "ehi_show_tracker_hint" : "Zobrazovat popis sledovače",
     "ehi_show_tracker_hint_desc" : "Zobrazuje popis sledovače, pokud existuje",

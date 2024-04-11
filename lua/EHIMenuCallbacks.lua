@@ -95,6 +95,10 @@ function EHIMenu:UpdateIconsVisibility(visibility)
     self._preview_panel:UpdateIconsVisibility(visibility)
 end
 
+function EHIMenu:UpdateIconsPosition(pos)
+    self._preview_panel:UpdateIconsPosition(pos)
+end
+
 function EHIMenu:UpdateTrackerAlignment(alignment)
     self._preview_panel:UpdateTrackerAlignment(alignment)
 end

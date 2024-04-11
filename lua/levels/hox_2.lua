@@ -20,7 +20,7 @@ local CheckOkValueHostCheckOnly = EHI:RegisterCustomSF(function(self, trigger, e
     if self._trackers:TrackerExists(trigger.id) then
         self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
     elseif not trigger.dont_create then
-        self:CheckCondition(trigger)
+        self:CreateTracker(trigger)
         self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
     end
     self._cache.CurrentHackNumber = trigger.progress
@@ -70,7 +70,7 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100055, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, special_function = SF.SetRandomTime, data = { 45, 55, 65 }, hint = Hints.Teargas }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, "element")
+    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 EHI:FilterOutNotLoadedTrackers(triggers, "show_timers")
 

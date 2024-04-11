@@ -3,6 +3,7 @@
 EHIPhalanxChanceTracker = class(EHITimedChanceTracker)
 EHIPhalanxChanceTracker._forced_icons = { "buff_shield" }
 EHIPhalanxChanceTracker._paused_color = EHIPausableTracker._paused_color
+EHIPhalanxChanceTracker._forced_hint_text = "phalanx_chance"
 EHIPhalanxChanceTracker.IsHost = EHI:IsHost()
 ---@param params EHITracker.params
 function EHIPhalanxChanceTracker:post_init(params)

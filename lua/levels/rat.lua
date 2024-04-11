@@ -135,7 +135,7 @@ if EHI:IsClient() then
                 tracker:SetTimeNoAnim(self:GetRandomTime(trigger), true)
             end
         else
-            self:CheckCondition(trigger)
+            self:CreateTracker(trigger)
         end
     end)
     triggers[102383].class = "EHICookingChanceTracker"
@@ -143,7 +143,7 @@ if EHI:IsClient() then
     triggers[100724] = { additional_time = 20, random_time = 5, id = "CookChance", icons = { Icon.Methlab, Icon.Loop }, special_function = SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, "element")
+    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 ---@type ParseAchievementTable

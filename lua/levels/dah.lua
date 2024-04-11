@@ -32,7 +32,7 @@ EHI:HookColorCodes(dah_laptop_codes, { unit_id_all = 100052 })
 if EHI:IsClient() then
     EHI:SetSyncTriggers(element_sync_triggers)
 else
-    EHI:AddHostTriggers(element_sync_triggers, "element")
+    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 local other =

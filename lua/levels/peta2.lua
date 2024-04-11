@@ -10,7 +10,7 @@ local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local function f_PilotComingInAgain(self, trigger, ...)
     self._trackers:RemoveTracker("PilotComingIn")
     if self._trackers:CallFunction3(trigger.id, "SetTrackerTime", trigger.time) then
-        self:CheckCondition(trigger)
+        self:CreateTracker(trigger)
     end
 end
 local PilotComingInAgain = EHI:RegisterCustomSF(function(self, trigger, element, enabled)

@@ -55,7 +55,7 @@ local other =
     [100380] = EHI:AddAssaultDelay({ time = 45 + 40 + assault_delay }),
     [100707] = EHI:AddAssaultDelay({ time = assault_delay_methlab, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:CallFunction2(trigger.id, "SetTimeIfLower", trigger.time) then
-            self:CheckCondition(trigger)
+            self:CreateTracker(trigger)
         end
     end), trigger_times = 1 }),
     [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }

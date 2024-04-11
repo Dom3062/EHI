@@ -39,6 +39,21 @@
             "ehi_ver" : 6
         },
         {
+            "type": "multiple_choice",
+            "id": "ehi_show_icon_position_choice",
+            "title": "ehi_show_icon_position",
+            "description": "ehi_show_icon_position_desc",
+            "callback": ["SetOption", "UpdateIconsPosition"],
+            "callback_arguments": "show_icon_position",
+            "items": [
+                "ehi_show_icon_position_1",
+                "ehi_show_icon_position_2"
+            ],
+            "value": "show_icon_position",
+            "default_value": 2,
+            "ehi_ver" : 237
+        },
+        {
             "type" : "divider",
             "size" : 20
         },

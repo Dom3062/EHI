@@ -38,7 +38,7 @@ local triggers = {
     --- Add 0.2 delay here so the tracker does not hide first before this gets executed again; players won't notice 0.2 delay here
     [100147] = { time = 18.2 + 0.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
         if enabled and self._trackers:CallFunction3(trigger.id, "SetTrackerTimeNoAnim", trigger.time) then
-            self:CheckCondition(trigger)
+            self:CreateTracker(trigger)
         end
     end), hint = Hints.Wait },
     [102181] = { id = "HeliMagnetLoop", special_function = SF.RemoveTracker },

@@ -20,7 +20,7 @@ local other =
     [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
 }
 if EHI:IsHost() then
-    EHI:AddHostTriggers(element_sync_triggers, "element")
+    EHI:AddHostTriggers("element", element_sync_triggers)
     triggers[101498] = { time = 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4, waypoint = { icon = Icon.C4, position_by_element = 100943 }, hint = Hints.C4Delivery }
     ---`mesh_variation "set_level_mia"`  
     ---units/payday2/equipment/gen_interactable_sec_safe_2x05/gen_interactable_sec_safe_2x05 (buggy mesh_variation -> `"set_level_rat_2"` instead)
