@@ -1473,6 +1473,7 @@ function EHI:HookElement(object, func, id, post_call)
     Hooks:PostHook(object, func, "EHI_Element_" .. id, post_call)
 end
 
+---Includes `EHI_`
 ---@param id string
 function EHI:Unhook(id)
     Hooks:RemovePostHook("EHI_" .. id)
@@ -1946,7 +1947,7 @@ function EHI:AddPositionFromUnit(data, id, check)
     end
 end
 
----@param achievements table Table with achievements
+---@param achievements ParseAchievementTable Table with achievements
 ---@param package string Beardlib package where achievements are stored
 ---@param exclude table? If the achievement table contains vanilla achievements, provide their ID so they don't get marked as from Beardlib
 function EHI:PreparseBeardlibAchievements(achievements, package, exclude)
@@ -2311,6 +2312,27 @@ function EHI:ShowAchievementKillCounter(params)
         end)
         self.KillCounterHook = true
     end
+end
+
+---Currently one custom mission is using this, if any other custom will be using this, the function should be rewritten
+---@param achievement string
+---@param max number
+---@param difficulty_check number Difficulty or above
+function EHI:ShowBeardLibAchievementLootCounter_Mallbank(achievement, max, difficulty_check)
+    if self:IsBeardLibAchievementUnlocked("Mallbank", achievement) or not self:IsDifficultyOrAbove(difficulty_check) then
+        return
+    end
+    managers.ehi_tracker:AddTracker({
+        beardlib = true,
+        id = achievement,
+        max = max,
+        icons = { "ehi_" .. achievement },
+        show_finish_after_reaching_target = true,
+        class = self.Trackers.Achievement.Progress
+    })
+    self:AddAchievementToCounter({
+        achievement = achievement
+    })
 end
 
 ---@param f fun(self: EHIManager)
@@ -2951,4 +2973,16 @@ function EHI:PrintTable2(tbl, tables_to_ignore, ...)
         end
         _G.PrintTable(tbl)
     end
+end
+
+---@param tbl table
+---@param ... any
+function EHI:PrintClass(tbl, ...)
+    if ... then
+        local _tbl = { ... }
+        for _, _s in ipairs(_tbl) do
+            self:Log(_s)
+        end
+    end
+    _G.PrintTable(tbl)
 end

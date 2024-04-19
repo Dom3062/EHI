@@ -113,6 +113,7 @@ function EHIManager:CreateInternal(name)
 end
 
 ---@param name string
+---@return table
 function EHIManager:CreateAndCopyInternal(name)
     self:CreateInternal(name)
     return self._internal[name]

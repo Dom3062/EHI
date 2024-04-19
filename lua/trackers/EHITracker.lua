@@ -7,8 +7,7 @@ local math_lerp = math.lerp
 ---@param hint PanelText
 ---@param end_a number End alpha
 local function visibility_hint(o, hint, end_a)
-    local TOTAL_T = 0.18
-    local t = 0
+    local t, TOTAL_T = 0, 0.18
     local o_start_a = o:alpha()
     local hint_start_a = hint:alpha()
     while TOTAL_T > t do
@@ -22,8 +21,7 @@ end
 ---@param o PanelBaseObject
 ---@param end_a number End alpha
 local function visibility(o, end_a) -- This is actually faster than manually re-typing optimized "over" function
-    local TOTAL_T = 0.18
-    local t = 0
+    local t, TOTAL_T = 0, 0.18
     local start_a = o:alpha()
     while TOTAL_T > t do
         local dt = coroutine.yield()
@@ -41,8 +39,7 @@ end
 ---@param o PanelBaseObject
 ---@param target_y number
 local function top(o, target_y)
-    local t = 0
-    local total = 0.18
+    local t, total = 0, 0.18
     local from_y = o:y()
     while t < total do
         t = t + coroutine.yield()
@@ -53,8 +50,7 @@ end
 ---@param o PanelBaseObject
 ---@param target_x number
 local function left(o, target_x)
-    local t = 0
-    local total = 0.18
+    local t, total = 0, 0.18
     local from_x = o:x()
     while t < total do
         t = t + coroutine.yield()
@@ -172,7 +168,6 @@ local corner_visibility = EHI:GetOption("show_tracker_corners")
 
 ---@param panel Panel
 ---@param params table
----@return Panel
 local function CreateHUDBGBox(panel, params)
     local box_panel = panel:panel(params)
 	box_panel:rect({
@@ -552,7 +547,6 @@ function EHITracker:CreateIcon(i, texture, texture_rect, x, visible, color, alph
 end
 
 ---@param params EHITracker.CreateText?
----@return PanelText
 function EHITracker:CreateText(params)
     params = params or {}
     local text = self._bg_box:text({

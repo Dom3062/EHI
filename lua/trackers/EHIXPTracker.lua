@@ -9,8 +9,8 @@ function EHIXPTracker:pre_init(params)
     self._xp = params.amount or 0
 end
 
-function EHIXPTracker:Format() -- Formats the amount of XP in the panel
-    return managers.experience:cash_string(self._xp, self._xp >= 0 and "+" or "") -- May show up a negative value because it is called from EHITotalXPTracker (diff)
+function EHIXPTracker:Format()
+    return managers.experience:cash_string(self._xp, self._xp >= 0 and "+" or "")
 end
 
 ---@param amount number
@@ -94,11 +94,29 @@ end
 EHITotalXPTracker = class(EHIXPTracker)
 EHITotalXPTracker._forced_hint_text = "total_xp"
 EHITotalXPTracker._update = false
+---@param o PanelText
+---@param self EHITotalXPTracker
+EHITotalXPTracker._anim = function(o, self)
+    local xp = math.min(self._xp, self._player_xp_limit)
+    local previous_xp = self._total_xp_anim
+    local t = 0
+    while t < 1 do
+        t = t + coroutine.yield()
+        local n = math.lerp(previous_xp, xp, t) --[[@as number]]
+        o:set_text(self:Format(n))
+        self._total_xp_anim = n
+    end
+    self._total_xp = xp
+    self._total_xp_anim = xp
+    o:set_text(self:Format())
+    self:FitTheText(o)
+end
 ---@param panel Panel
 ---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHITotalXPTracker:init(panel, params, parent_class)
     self._total_xp = params.amount or 0
+    self._total_xp_anim = self._total_xp
     self._player_xp_limit = params.xp_limit or 0
     EHITotalXPTracker.super.init(self, panel, params, parent_class)
     if self._player_xp_limit <= 0 then
@@ -117,8 +135,9 @@ function EHITotalXPTracker:OverridePanel()
     self:SetIconX()
 end
 
-function EHITotalXPTracker:Format() -- Formats the amount of XP in the panel
-    return managers.experience:cash_string(self._total_xp, "+") -- Will never show a negative value
+---@param amount number?
+function EHITotalXPTracker:Format(amount)
+    return managers.experience:cash_string(amount or self._total_xp, "+") -- Will never show a negative value
 end
 
 ---@param amount number
@@ -126,13 +145,18 @@ function EHITotalXPTracker:SetXP(amount)
     self._xp = amount
     if self._total_xp ~= self._xp and not self._player_limit_reached then
         if self._xp >= self._player_xp_limit then
-            self._total_xp = self._player_xp_limit
-            self:SetTextColor(Color.green)
             self._player_limit_reached = true
-        else
-            self._total_xp = self._xp
+            self:SetTextColor(Color.green)
         end
-        self:SetAndFitTheText()
+        self._text:stop()
+        self._text:animate(self._anim, self)
         self:AnimateBG()
     end
+end
+
+function EHITotalXPTracker:delete()
+    if self._text and alive(self._text) then
+        self._text:stop()
+    end
+    EHITotalXPTracker.super.delete(self)
 end

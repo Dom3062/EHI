@@ -121,6 +121,11 @@ function EHIAssaultManager:SetDiff(diff)
     self:CallFunction("UpdateDiff", diff)
 end
 
+---@param state boolean
+function EHIAssaultManager:SetForceAssaultStart(state)
+    self._force_assault_start = state
+end
+
 ---@param block boolean
 ---@param t number
 function EHIAssaultManager:SetControlStateBlock(block, t)
@@ -169,6 +174,9 @@ function EHIAssaultManager:AssaultStart()
     end
     if self._assault_time.blocked or (self._endless_assault and not self._assault_time.show_endless_assault) or self._internal.is_assault or self._assault_block then
         self._internal.is_assault = true
+        if self._force_assault_start then
+            self._trackers:CallFunction(self._assault_time.name, "AssaultStart", self._diff)
+        end
         return
     elseif self._trackers:TrackerExists(self._assault_time.name) then
         if self._endless_assault then

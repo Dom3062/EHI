@@ -21,18 +21,6 @@ local triggers = {
     [100578] = { time = 9, id = "C4", icons = { Icon.Heli, Icon.C4, Icon.Goto }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.C4Delivery }
 }
 
-local DisableWaypoints =
-{
-    -- Drill WP in the tech store
-    [100241] = true,
-
-    -- Fix Jewelry Store PC hack WP
-    [100828] = true,
-
-    -- Drill WP in the cage (shoe objective)
-    [100664] = true
-}
-
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -71,7 +59,16 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:DisableWaypoints(DisableWaypoints)
+EHI:DisableWaypoints({
+    -- Drill WP in the tech store
+    [100241] = true,
+
+    -- Fix Jewelry Store PC hack WP
+    [100828] = true,
+
+    -- Drill WP in the cage (shoe objective)
+    [100664] = true
+})
 EHI:ShowAchievementLootCounter({
     achievement = "moon_5",
     max = 9,
@@ -84,13 +81,11 @@ EHI:ShowAchievementLootCounter({
 })
 EHI:ShowLootCounter({ max = 12 })
 
-local tbl =
-{
+EHI:UpdateUnits({
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
     --Jewelry Store
     [105874] = { remove_vanilla_waypoint = 100776 }
-}
-EHI:UpdateUnits(tbl)
+})
 EHI:AddXPBreakdown({
     objectives =
     {

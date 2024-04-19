@@ -6,6 +6,15 @@ EHIPhalanxChanceTracker._paused_color = EHIPausableTracker._paused_color
 EHIPhalanxChanceTracker._forced_hint_text = "phalanx_chance"
 EHIPhalanxChanceTracker.IsHost = EHI:IsHost()
 ---@param params EHITracker.params
+function EHIPhalanxChanceTracker:pre_init(params)
+    if params.first_assault then
+        self._first_assault = true
+        self._captain_start_chance = params.chance or 0
+        params.chance = 0
+    end
+    EHIPhalanxChanceTracker.super.pre_init(self, params)
+end
+---@param params EHITracker.params
 function EHIPhalanxChanceTracker:post_init(params)
     self._t_refresh = params.time
     self._chance_increase = params.chance_increase
@@ -14,7 +23,6 @@ function EHIPhalanxChanceTracker:post_init(params)
     else
         self._assault_t = 0
     end
-    self._first_assault = params.first_assault
     EHIPhalanxChanceTracker.super.post_init(self, params)
 end
 
@@ -57,6 +65,8 @@ function EHIPhalanxChanceTracker:AssaultStart()
         self._increase_chance_at_next_assault = nil
     elseif self._first_assault then
         self:SetTimeNoAnim(self._t_refresh)
+        self:SetChance(self._captain_start_chance or 0)
+        self._captain_start_chance = nil
     end
     self._chance_increase_enabled = true
     self._color_lock = false
@@ -72,6 +82,17 @@ end
 ---@param state boolean
 function EHIPhalanxChanceTracker:SetEndlessAssault(state)
     self._endless_assault = state
+    if self._increase_chance_at_next_assault then
+        self:SetTimeNoAnim(self._t_refresh)
+        if not self._first_assault then
+            self:IncreaseChance(self._chance_increase)
+        end
+        self._increase_chance_at_next_assault = nil
+    end
+    if self._color_lock then
+        self._chance_increase_enabled = true
+        self:SetTextColor(Color.white, self._chance_text)
+    end
 end
 
 ---@param t number

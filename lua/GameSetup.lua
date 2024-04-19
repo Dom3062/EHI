@@ -202,7 +202,8 @@ local custom_levels =
     office_strike = true, -- Office Strike
     tonmapjam22l = true, -- Hard Cash
     SJamBank = true, -- Branch Bank Initiative
-    roberts_v2 = true -- GO Bank Remastered
+    roberts_v2 = true, -- GO Bank Remastered
+    lvl_friday = true -- Crashing Capitol
 }
 
 local init_finalize = GameSetup.init_finalize

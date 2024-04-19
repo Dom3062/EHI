@@ -605,6 +605,8 @@ function XPBreakdownPanel:_add_loot_secured(loot, times, to_secure, mandatory, a
         loot_name = self._loc:text("ehi_experience_loot_else")
     elseif loot == "xp_bonus" then
         loot_name = self._loc:text("ehi_experience_xp_bonus")
+    elseif loot == "any" then
+        loot_name = self._loc:text("ehi_experience_loot_any")
     else
         loot_name = tweak_data.carry:FormatCarryNameID(loot, loot)
     end

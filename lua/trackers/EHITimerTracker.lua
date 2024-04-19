@@ -304,7 +304,7 @@ function EHITimerGroupTracker:AnimateMovement(n, delete)
     end
     self:AnimatePanelWAndRefresh(self._panel_override_w)
     self:ChangeTrackerWidth(self._panel_override_w)
-    self:AnimIconsX(self._ICON_LEFT_SIDE_START and 0 or w)
+    self:AnimIconsX(w)
     self:SetBGSize(w, "set", true)
 end
 
