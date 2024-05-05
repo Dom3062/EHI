@@ -68,7 +68,7 @@ local achievements =
 
 local other =
 {
-    [100658] = EHI:AddAssaultDelay({ time = 30 })
+    [100658] = EHI:AddAssaultDelay({}) -- 30s
 }
 if EHI:GetWaypointOption("show_waypoints_escape") then
     for i = 4700, 4850, 50 do

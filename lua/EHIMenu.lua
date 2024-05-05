@@ -20,6 +20,16 @@ local function do_animation(TOTAL_T, clbk)
     clbk(1, TOTAL_T)
 end
 
+---@param o PanelBaseObject
+---@param target_alpha number
+local function animate_alpha(o, target_alpha)
+    local alpha = o:alpha()
+    do_animation(0.2, function(p)
+        o:set_alpha(math.lerp(alpha, target_alpha, p) --[[@as number]])
+    end)
+    o:set_alpha(target_alpha)
+end
+
 EHIMenu = class()
 EHIMenu.make_fine_text = BlackMarketGui.make_fine_text
 EHIMenu.AspectRatio =
@@ -282,6 +292,9 @@ function EHIMenu:SetAxisTimer(axis, delay, input_delay, input)
 end
 
 function EHIMenu:Open()
+    if self._enabled then
+        return
+    end
     self._enabled = true
     managers.menu._input_enabled = false
     for _, menu in ipairs(managers.menu._open_menus) do
@@ -322,6 +335,9 @@ function EHIMenu:Open()
 end
 
 function EHIMenu:Close()
+    if not self._enabled then
+        return
+    end
     self._enabled = false
     managers.mouse_pointer:remove_mouse(self._mouse_id)
     if self._controller then
@@ -643,13 +659,7 @@ function EHIMenu:AnimateItemEnabled(item, enabled)
     if item.panel and enabled ~= nil and enabled ~= item.enabled then
         item.enabled = enabled
         item.panel:stop()
-        item.panel:animate(function(o)
-            local alpha = o:alpha()
-            do_animation(0.2, function (p)
-                o:set_alpha(math.lerp(alpha, enabled and 1 or 0.5, p))
-            end)
-            o:set_alpha(enabled and 1 or 0.5)
-        end)
+        item.panel:animate(animate_alpha, enabled and 1 or 0.5)
     end
 end
 
@@ -661,13 +671,7 @@ function EHIMenu:HighlightItem(item)
         self:UnhighlightItem(self._highlighted_item)
     end
     item.panel:child("bg"):stop()
-    item.panel:child("bg"):animate(function(o)
-        local alpha = o:alpha()
-        do_animation(0.2, function (p)
-            o:set_alpha(math.lerp(alpha, 0.3, p))
-        end)
-        o:set_alpha(0.3)
-    end)
+    item.panel:child("bg"):animate(animate_alpha, 0.3)
     self._highlighted_item = item
 
     self._tooltip:set_text(self._highlighted_item.desc or "")
@@ -681,13 +685,7 @@ function EHIMenu:UnhighlightItem(item)
         self[item.focus_changed_callback](self, false, "")
     end
     item.panel:child("bg"):stop()
-    item.panel:child("bg"):animate(function(o)
-        local alpha = o:alpha()
-        do_animation(0.2, function (p)
-            o:set_alpha(math.lerp(alpha, 0, p))
-        end)
-        o:set_alpha(0)
-    end)
+    item.panel:child("bg"):animate(animate_alpha, 0)
     self._highlighted_item = nil
 end
 

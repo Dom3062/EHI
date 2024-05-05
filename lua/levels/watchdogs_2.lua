@@ -113,7 +113,7 @@ local other =
         local bags = managers.ehi_manager:CountLootbagsOnTheGround(10)
         EHI:ShowLootCounterNoCheck({ max = bags })
     end),
-    [100220] = EHI:AddAssaultDelay({ time = 5 + 15 + 30 }),
+    [100220] = EHI:AddAssaultDelay({ control = 5 + 15 }),
 
     [100474] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 7 },
     [100472] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 8 },

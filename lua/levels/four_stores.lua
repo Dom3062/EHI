@@ -77,16 +77,16 @@ elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
 elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     CopArrivalDelay = 0
 end
-local FirstAssaultBreak = 15 + 2.5 + 3 + 2 + 30 + 20 + 30
+local FirstAssaultBreak = 15 + 2.5 + 3 + 2 + 30 + 20
 local other =
 {
     [103501] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
-    [101167] = EHI:AddAssaultDelay({ time = FirstAssaultBreak, special_function = SF.AddTrackerIfDoesNotExist, trigger_times = 1 }), -- 15s (55s delay)
-    [101166] = EHI:AddAssaultDelay({ time = FirstAssaultBreak - 5, special_function = SF.SetTimeOrCreateTracker, trigger_times = 1 }), -- 10s (65s delay)
-    [101159] = EHI:AddAssaultDelay({ time = FirstAssaultBreak - 2, special_function = SF.SetTimeOrCreateTracker, trigger_times = 1 }) -- 13s (60s delay)
+    [101167] = EHI:AddAssaultDelay({ control = FirstAssaultBreak, special_function = SF.AddTrackerIfDoesNotExist, trigger_times = 1 }), -- 15s (55s delay)
+    [101166] = EHI:AddAssaultDelay({ control = FirstAssaultBreak - 5, special_function = SF.SetTimeOrCreateTracker, trigger_times = 1 }), -- 10s (65s delay)
+    [101159] = EHI:AddAssaultDelay({ control = FirstAssaultBreak - 2, special_function = SF.SetTimeOrCreateTracker, trigger_times = 1 }) -- 13s (60s delay)
 }
 if CopArrivalDelay > 0 then
-    other[103278] = EHI:AddAssaultDelay({ time = FirstAssaultBreak + CopArrivalDelay, trigger_times = 1 }) -- Full assault break; 15s (55s delay)
+    other[103278] = EHI:AddAssaultDelay({ control = FirstAssaultBreak + CopArrivalDelay, trigger_times = 1 }) -- Full assault break; 15s (55s delay)
 end
 if EHI:IsLootCounterVisible() then
     other[101890] = { special_function = SF.CustomCodeDelayed, t = 4, f = function()

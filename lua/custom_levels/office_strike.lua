@@ -27,7 +27,7 @@ local triggers = {
             if trigger.waypoint then
                 trigger.waypoint.time = t
                 trigger.waypoint.icon = Icons.Heli
-                trigger.waypoint.position = EHI:GetElementPositionOrDefault(200179)
+                trigger.waypoint.position = self:GetElementPositionOrDefault(200179)
             end
         else -- Van
             self._trackers:AddTracker({
@@ -39,7 +39,7 @@ local triggers = {
             if trigger.waypoint then
                 trigger.waypoint.time = 80
                 trigger.waypoint.icon = Icons.Car
-                trigger.waypoint.position = EHI:GetElementPositionOrDefault(200178)
+                trigger.waypoint.position = self:GetElementPositionOrDefault(200178)
             end
         end
         if trigger.waypoint then
@@ -97,7 +97,7 @@ EHI:PreparseBeardlibAchievements(achievements, "os_achievements")
 
 local other =
 {
-    [200018] = EHI:AddAssaultDelay({ time = 5 + 30 })
+    [200018] = EHI:AddAssaultDelay({ control = 5 })
 }
 if EHI:IsLootCounterVisible() then
     other[200106] = EHI:AddLootCounter2(function()
@@ -110,12 +110,9 @@ if EHI:IsLootCounterVisible() then
     other[100092] = { max = 5, id = "LootCounter", special_function = SF.IncreaseProgressMax2 }
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    ---@class EHISniperLoopBufferTracker : EHICountTracker
+    ---@class EHISniperLoopBufferTracker : EHICountTracker, EHISniperBaseTracker
     ---@field super EHICountTracker
-    EHISniperLoopBufferTracker = class(EHICountTracker)
-    EHISniperLoopBufferTracker._forced_icons = EHISniperWarningTracker._forced_icons
-    EHISniperLoopBufferTracker._forced_hint_text = EHISniperLoopTracker._forced_hint_text
-    EHISniperLoopBufferTracker._snipers_spawned_popup = EHISniperWarningTracker._snipers_spawned_popup
+    EHISniperLoopBufferTracker = ehi_sniper_class(EHICountTracker)
     ---@param params EHITracker.params
     function EHISniperLoopBufferTracker:post_init(params)
         EHISniperLoopBufferTracker.super.post_init(self, params)
@@ -135,6 +132,9 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         if self._snipers_spawned_popup then
             self._popup_title = "SNIPER!"
             self._popup_desc = managers.localization:text("ehi_popup_sniper_spawned")
+        end
+        if self._snipers_logic_started then
+            managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_START", managers.localization:text("ehi_popup_sniper_logic_started"), "EHI_Sniper")
         end
     end
     ---@param dt number

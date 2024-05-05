@@ -4,7 +4,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local anim_delay = 2 + 727/30 + 2 -- 2s is function delay; 727/30 is a animation duration; 2s is zone activation delay; total 28,23333
-local assault_delay = 4 + 3 + 3 + 3 + 5 + 1 + 30
+local assault_delay = 4 + 3 + 3 + 3 + 5 + 1
 local assault_delay_methlab = 20 + assault_delay
 local BagsCooked = 0
 local triggers = {
@@ -51,9 +51,9 @@ local achievements =
 }
 local other =
 {
-    [100378] = EHI:AddAssaultDelay({ time = 42 + 50 + assault_delay }),
-    [100380] = EHI:AddAssaultDelay({ time = 45 + 40 + assault_delay }),
-    [100707] = EHI:AddAssaultDelay({ time = assault_delay_methlab, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    [100378] = EHI:AddAssaultDelay({ control = 42 + 50 + assault_delay }),
+    [100380] = EHI:AddAssaultDelay({ control = 45 + 40 + assault_delay }),
+    [100707] = EHI:AddAssaultDelay({ control = assault_delay_methlab, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:CallFunction2(trigger.id, "SetTimeIfLower", trigger.time) then
             self:CreateTracker(trigger)
         end

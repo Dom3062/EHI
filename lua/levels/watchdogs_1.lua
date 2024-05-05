@@ -49,9 +49,9 @@ local achievements =
 
 local other =
 {
-    [101244] = EHI:AddAssaultDelay({ time = 60 + 30 }),
-    [101245] = EHI:AddAssaultDelay({ time = 45 + 30 }),
-    [101249] = EHI:AddAssaultDelay({ time = 50 + 30 })
+    [101244] = EHI:AddAssaultDelay({ control = 60 }),
+    [101245] = EHI:AddAssaultDelay({ control = 45 }),
+    [101249] = EHI:AddAssaultDelay({ control = 50 })
 }
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101223] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101231 } }

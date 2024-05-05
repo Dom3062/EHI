@@ -9,7 +9,7 @@ local Hints = EHI.Hints
 local function TransferWP(self, trigger)
     local index = managers.game_play_central:GetMissionDisabledUnit(EHI:GetInstanceUnitID(100087, 9340)) and 9590 or 9340
     if not self._cache.TransferPosition then
-        self._cache.TransferPosition = EHI:GetElementPositionOrDefault(EHI:GetInstanceElementID(100019, index))
+        self._cache.TransferPosition = self:GetElementPositionOrDefault(EHI:GetInstanceElementID(100019, index))
     end
     self._waypoints:AddWaypoint(trigger.id, {
         time = trigger.time,
@@ -101,7 +101,7 @@ local achievements =
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 60 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local sniper_count = EHI:GetValueBasedOnDifficulty({

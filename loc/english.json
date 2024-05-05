@@ -46,6 +46,10 @@
     "ehi_popup_sniper_spawned" : "Enemy Sniper has spawned",
     "ehi_popup_snipers" : "SNIPERS!",
     "ehi_popup_snipers_spawned" : "Enemy Snipers have spawned",
+    "ehi_popup_sniper_logic_start" : "SNIPER LOGIC STARTED",
+    "ehi_popup_sniper_logic_started" : "Enemy Sniper logic has started",
+    "ehi_popup_sniper_logic_end" : "SNIPER LOGIC ENDED",
+    "ehi_popup_sniper_logic_ended" : "Enemy Sniper logic has ended",
     "ehi_status_ok" : "OK",
     "ehi_status_done" : "DONE",
     "ehi_status_pass" : "PASS",
@@ -553,6 +557,12 @@
 
     "ehi_show_sniper_spawned_popup" : "Show 'SNIPERS!' Popup",
     "ehi_show_sniper_spawned_popup_desc" : "Shows a popup in orange when scripted snipers spawned",
+
+    "ehi_show_sniper_logic_start_popup" : "Show 'SNIPER LOGIC STARTED' Popup",
+    "ehi_show_sniper_logic_start_popup_desc" : "Shows a popup in yellow when tracker with scripted snipers is created",
+
+    "ehi_show_sniper_logic_end_popup" : "Show 'SNIPER LOGIC ENDED' Popup",
+    "ehi_show_sniper_logic_end_popup_desc" : "Shows a popup in green when tracker with scripted snipers is deleted",
     
     "ehi_waypoints_menu" : "Waypoints",
     "ehi_waypoints_menu_desc" : "",

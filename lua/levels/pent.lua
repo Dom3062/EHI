@@ -49,7 +49,7 @@ end
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 50 + 30, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    [100109] = EHI:AddAssaultDelay({ control = 50, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         local time_for_prefereds = self:IsMissionElementEnabled(104439) and 5 or 0
         self._trackers:AddTracker({
             id = trigger.id,

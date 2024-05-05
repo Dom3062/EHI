@@ -40,7 +40,7 @@ local achievements =
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 35 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 35 })
 }
 if EHI:IsLootCounterVisible() then
     local ignore_units = {

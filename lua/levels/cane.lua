@@ -81,7 +81,7 @@ local achievements =
 
 local other =
 {
-    [EHI:GetInstanceElementID(100002, 10100)] = EHI:AddAssaultDelay({ additional_time = 20 + 15 + 405/30 + 15 + 30, random_time = 5 + 9 + 10 })
+    [EHI:GetInstanceElementID(100002, 10100)] = EHI:AddAssaultDelay({ control_additional_time = 20 + 15 + 405/30 + 15, random_time = 5 + 9 + 10 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102604] = { id = "Snipers", class = TT.Sniper.Count, single_sniper = true }

@@ -59,7 +59,7 @@ local achievements =
 
 local other =
 {
-    [101346] = EHI:AddAssaultDelay({ time = 45 + 30 })
+    [101346] = EHI:AddAssaultDelay({ control = 45 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101179] = { chance = 15, id = "Snipers", class = TT.Sniper.Chance, flash_times = 1 }
@@ -84,7 +84,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end) }
 end
 local CacheEscapePos = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
-    self.SyncedSFF.dinner_EscapePos = EHI:GetElementPosition(EHI:GetInstanceElementID(100034, trigger.index))
+    self.SyncedSFF.dinner_EscapePos = self:GetElementPosition(EHI:GetInstanceElementID(100034, trigger.index))
 end)
 for i = 2850, 3050, 100 do
     other[EHI:GetInstanceElementID(100028, i)] = { special_function = CacheEscapePos, index = i }

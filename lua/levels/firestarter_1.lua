@@ -56,7 +56,7 @@ local other =
     -- This needs to be delayed because the number of required weapons are decided upon spawn
     [103240] = { special_function = SF.CustomCodeDelayed, t = 5, f = LordOfWarAchievement },
 
-    [100531] = EHI:AddAssaultDelay({ time = 30 })
+    [100531] = EHI:AddAssaultDelay({}) -- 30s
 }
 
 EHI:ParseTriggers({

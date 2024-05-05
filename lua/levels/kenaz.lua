@@ -118,7 +118,7 @@ local achievements =
 
 local other =
 {
-    [100228] = EHI:AddAssaultDelay({ time = 35 + 1 + 30, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    [100228] = EHI:AddAssaultDelay({ control = 35 + 1, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         local t = 0
         if managers.preplanning:IsAssetBought(101858) then
             t = 10

@@ -12,8 +12,8 @@ local triggers = {
 
 local other =
 {
-    [101612] = EHI:AddAssaultDelay({ time = 30 + 30 }),
-    [101613] = EHI:AddAssaultDelay({ time = 30, special_function = SF.SetTimeOrCreateTracker })
+    [101612] = EHI:AddAssaultDelay({ control = 30 }),
+    [101613] = EHI:AddAssaultDelay({ special_function = SF.SetTimeOrCreateTracker }) -- 30s
 }
 
 EHI:ParseTriggers({ mission = triggers, other = other })

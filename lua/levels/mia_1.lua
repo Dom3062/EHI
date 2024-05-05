@@ -61,7 +61,7 @@ end
 
 local other =
 {
-    [101937] = EHI:AddAssaultDelay({ time = 10 + 1 + 40 + 30, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 } })
+    [101937] = EHI:AddAssaultDelay({ control = 10 + 1 + 40, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 } })
 }
 if EHI:IsLootCounterVisible() then
     local money = 5

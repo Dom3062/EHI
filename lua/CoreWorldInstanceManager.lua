@@ -266,7 +266,7 @@ local instances =
             self._waypoints:AddWaypoint(trigger.id, {
                 time = trigger.time,
                 icon = Icon.Tablet,
-                position = EHI:GetElementPositionOrDefault(trigger.element_ids.defend),
+                position = self:GetElementPositionOrDefault(trigger.element_ids.defend),
                 class = EHI.Waypoints.Pausable
             })
             managers.hud:SoftRemoveWaypoint2(trigger.element_ids.defend)

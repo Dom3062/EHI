@@ -31,7 +31,7 @@ EHI:ShowAchievementLootCounter({
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 60 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, single_player = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL) }

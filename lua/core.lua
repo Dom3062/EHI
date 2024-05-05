@@ -459,7 +459,7 @@ _G.EHI =
         {
             -- Optional `single_sniper`
             Warning = "EHISniperWarningTracker",
-            -- Optional `count`
+            -- Optional `count` and `remaining_snipers`
             Count = "EHISniperCountTracker",
             -- Requires `chance`  
             -- Optional `chance_success` and `sniper_count`
@@ -758,6 +758,8 @@ local function LoadDefaultValues(self)
         show_escape_chance = true,
         show_sniper_tracker = true,
         show_sniper_spawned_popup = true,
+        show_sniper_logic_start_popup = true,
+        show_sniper_logic_end_popup = true,
 
         -- Waypoints
         show_waypoints = true,
@@ -1602,25 +1604,6 @@ function EHI:RoundChanceNumber(n)
     return self:RoundNumber(n, 0.01) * 100
 end
 
----@param id number Element ID
----@return Vector3?
-function EHI:GetElementPosition(id)
-    local element = managers.mission:get_element_by_id(id)
-    return element and element:value("position")
-end
-
----@param id number Element ID
-function EHI:GetElementPositionOrDefault(id)
-    return self:GetElementPosition(id) or Vector3()
-end
-
----@param id number Unit ID
----@return Vector3?
-function EHI:GetUnitPosition(id)
-    local unit = managers.worlddefinition:get_unit(id)
-    return unit and unit.position and unit:position()
-end
-
 ---@param message string
 ---@param data any
 function EHI:Sync(message, data)
@@ -1763,7 +1746,7 @@ function EHI:AddEscapeChance(chance, check_if_does_not_exist)
     return tbl
 end
 
----@param params ElementTrigger
+---@param params AssaultElementTrigger
 ---@return ElementTrigger?
 function EHI:AddAssaultDelay(params)
     if not self:GetOption("show_assault_delay_tracker") then
@@ -1784,9 +1767,9 @@ function EHI:AddAssaultDelay(params)
         tbl[key] = value
     end
     if params.random_time then
-        tbl.additional_time = tbl.additional_time or 30
+        tbl.additional_time = (params.control_additional_time or 0) + (tbl.additional_time or 30)
     else
-        tbl.time = tbl.time or 30
+        tbl.time = (params.control or 0) + (tbl.time or 30)
     end
     tbl.id = id
     tbl.class = self.Trackers.Assault
@@ -1917,34 +1900,6 @@ function EHI:AddLootCounterSynced2(f, sequence_triggers, loot_counter_data)
         trigger_times = 1
     }
     return tbl
-end
-
----@param data ElementWaypointTrigger
----@param id number|string
----@param check boolean?
-function EHI:AddPositionFromElement(data, id, check)
-    local vector = self:GetElementPosition(data.position_by_element)
-    if vector then
-        data.position = vector
-        data.position_by_element = nil
-    elseif check then
-        data.position = Vector3()
-        self:Log(string.format("Element with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_by_element, tostring(id)))
-    end
-end
-
----@param data ElementWaypointTrigger
----@param id number|string
----@param check boolean?
-function EHI:AddPositionFromUnit(data, id, check)
-    local vector = self:GetUnitPosition(data.position_by_unit)
-    if vector then
-        data.position = vector
-        data.position_by_unit = nil
-    elseif check then
-        data.position = Vector3()
-        self:Log(string.format("Unit with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_by_unit, tostring(id)))
-    end
 end
 
 ---@param achievements ParseAchievementTable Table with achievements

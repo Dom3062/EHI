@@ -31,7 +31,7 @@ end
 
 local other =
 {
-    [100217] = EHI:AddAssaultDelay({ time = 30 + 30, trigger_times = 1 }) -- Starting the saw early forces the assault to start
+    [100217] = EHI:AddAssaultDelay({ control = 30, trigger_times = 1 }) -- Starting the saw early forces the assault to start
 }
 
 EHI:ParseTriggers({ mission = triggers, other = other })

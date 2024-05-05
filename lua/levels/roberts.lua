@@ -38,7 +38,7 @@ end
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 60 })
 }
 if EHI:IsLootCounterVisible() then
     other[106579] = EHI:AddLootCounter2(function()

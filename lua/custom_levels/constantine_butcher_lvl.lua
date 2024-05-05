@@ -12,7 +12,7 @@ end
 
 local other =
 {
-    [100032] = EHI:AddAssaultDelay({ time = 60 })
+    [100032] = EHI:AddAssaultDelay({ control = 30 })
 }
 if EHI:GetOption("show_sniper_tracker") and EHI:GetOption("show_sniper_spawned_popup") then
     other[100442] = { special_function = EHI.SpecialFunctions.CustomCode, f = function()

@@ -98,7 +98,7 @@ local achievements =
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 45 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 45 })
 }
 if EHI:CanShowAchievement("chca_12") and ovk_and_up then
     local active_saws = 0

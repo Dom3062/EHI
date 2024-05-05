@@ -35,8 +35,8 @@ local achievements =
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 30 + 30 }), -- Arizona (When alarm is raised in Mexico (for the first time), run this trigger instead)
-    [100697] = EHI:AddAssaultDelay({ additional_time = 30 + 30, random_time = 10, condition_function = EHI.ConditionFunctions.IsLoud }), -- Mexico (ElementDifficulty already exists)
+    [100109] = EHI:AddAssaultDelay({ control = 30 }), -- Arizona (When alarm is raised in Mexico (for the first time), run this trigger instead)
+    [100697] = EHI:AddAssaultDelay({ control_additional_time = 30, random_time = 10, condition_function = EHI.ConditionFunctions.IsLoud }), -- Mexico (ElementDifficulty already exists)
 
     [100880] = { special_function = SF.CustomCode, f = SetAssaultTrackerBlock, arg = true }, -- Entered the tunnel
     [103212] = { special_function = SF.CustomCode, f = SetAssaultTrackerBlock, arg = false } -- Entered in Mexico

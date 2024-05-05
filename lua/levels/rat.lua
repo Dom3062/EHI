@@ -162,11 +162,11 @@ local achievements =
 }
 
 local SetFlarePos = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
-    self.SyncedSFF.rat_flare_pos = EHI:GetElementPosition(trigger.arg)
+    self.SyncedSFF.rat_flare_pos = self:GetElementPosition(trigger.arg)
 end)
 local other =
 {
-    [102383] = EHI:AddAssaultDelay({ time = 2 + 20 + 4 + 3 + 3 + 3 + 5 + 30 }),
+    [102383] = EHI:AddAssaultDelay({ control = 2 + 20 + 4 + 3 + 3 + 3 + 5 }),
 
     [102201] = { special_function = SetFlarePos, arg = 102154 },
     [102202] = { special_function = SetFlarePos, arg = 102153 },

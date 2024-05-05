@@ -61,8 +61,8 @@ local achievements =
 
 local other =
 {
-    [101132] = EHI:AddAssaultDelay({ time = 59 + 30 }),
-    [100487] = EHI:AddAssaultDelay({ time = 30, special_function = SF.SetTimeOrCreateTracker })
+    [101132] = EHI:AddAssaultDelay({ control = 59 }),
+    [100487] = EHI:AddAssaultDelay({ special_function = SF.SetTimeOrCreateTracker }) -- 30s
 }
 
 EHI:ParseTriggers({

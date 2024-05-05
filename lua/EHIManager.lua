@@ -311,6 +311,53 @@ function EHIManager:GetUnits(path, slotmask)
     return tbl, tbl_i
 end
 
+---@param id number Element ID
+---@return Vector3?
+function EHIManager:GetElementPosition(id)
+    local element = managers.mission:get_element_by_id(id)
+    return element and element:value("position")
+end
+
+---@param id number Element ID
+function EHIManager:GetElementPositionOrDefault(id)
+    return self:GetElementPosition(id) or Vector3()
+end
+
+---@param id number Unit ID
+---@return Vector3?
+function EHIManager:GetUnitPosition(id)
+    local unit = managers.worlddefinition:get_unit(id)
+    return unit and unit.position and unit:position()
+end
+
+---@param data ElementWaypointTrigger
+---@param id number|string
+---@param check boolean?
+function EHIManager:AddPositionFromElement(data, id, check)
+    local vector = self:GetElementPosition(data.position_by_element)
+    if vector then
+        data.position = vector
+        data.position_by_element = nil
+    elseif check then
+        data.position = Vector3()
+        EHI:Log(string.format("Element with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_by_element, tostring(id)))
+    end
+end
+
+---@param data ElementWaypointTrigger
+---@param id number|string
+---@param check boolean?
+function EHIManager:AddPositionFromUnit(data, id, check)
+    local vector = self:GetUnitPosition(data.position_by_unit)
+    if vector then
+        data.position = vector
+        data.position_by_unit = nil
+    elseif check then
+        data.position = Vector3()
+        EHI:Log(string.format("Unit with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_by_unit, tostring(id)))
+    end
+end
+
 ---@param f fun(self: EHIManager)
 function EHIManager:AddLoadSyncFunction(f)
     if EHI:IsHost() then
@@ -794,6 +841,8 @@ function EHIManager:ParseOtherTriggers(new_triggers, trigger_id_all, trigger_ico
                 self:UnregisterCustomSF(data.special_function)
             end
             new_triggers[id] = nil
+        elseif data.special_function == SF.ShowWaypoint and data.data then
+            self:_parse_vanilla_waypoint_trigger(data) -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
         end
     end
     self:AddTriggers(new_triggers, trigger_id_all or "Trigger", trigger_icons_all)
@@ -841,23 +890,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
             end
             -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
             if data.special_function == SF.ShowWaypoint and data.data then
-                data.data.distance = true
-                data.data.state = "sneak_present"
-                data.data.present_timer = 0
-                data.data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
-                if data.data.position_by_element then
-                    data.id = data.id or data.data.position_by_element
-                    EHI:AddPositionFromElement(data.data, data.id, host)
-                elseif data.data.position_by_unit then
-                    EHI:AddPositionFromUnit(data.data, data.id, host)
-                end
-                if data.data.icon then
-                    local redirect = self.WaypointIconRedirect[data.data.icon]
-                    if redirect then
-                        data.data.icon = redirect
-                        data.data.icon_redirect = true
-                    end
-                end
+                self:_parse_vanilla_waypoint_trigger(data)
             -- Fill the rest table properties if SF.SetRandomTime is provided
             elseif data.special_function == SF.SetRandomTime then
                 data.class = self.Trackers.Inaccurate
@@ -886,9 +919,9 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
                         data.waypoint.position_by_element_and_remove_vanilla_waypoint = nil
                     end
                     if data.waypoint.position_by_element then
-                        EHI:AddPositionFromElement(data.waypoint, data.id, host)
+                        self:AddPositionFromElement(data.waypoint, data.id, host)
                     elseif data.waypoint.position_by_unit then
-                        EHI:AddPositionFromUnit(data.waypoint, data.id, host)
+                        self:AddPositionFromUnit(data.waypoint, data.id, host)
                     end
                 end
             else
@@ -938,6 +971,27 @@ function EHIManager:PreloadTrackers(preload, trigger_id_all, trigger_icons_all)
         params.id = params.id or trigger_id_all
         params.icons = params.icons or trigger_icons_all
         self._trackers:PreloadTracker(params)
+    end
+end
+
+---@param data ElementTrigger
+function EHIManager:_parse_vanilla_waypoint_trigger(data)
+    data.data.distance = true
+    data.data.state = "sneak_present"
+    data.data.present_timer = 0
+    data.data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
+    if data.data.position_by_element then
+        data.id = data.id or data.data.position_by_element
+        self:AddPositionFromElement(data.data, data.id, host)
+    elseif data.data.position_by_unit then
+        self:AddPositionFromUnit(data.data, data.id, host)
+    end
+    if data.data.icon then
+        local redirect = self.WaypointIconRedirect[data.data.icon]
+        if redirect then
+            data.data.icon = redirect
+            data.data.icon_redirect = true
+        end
     end
 end
 
@@ -1077,24 +1131,24 @@ function EHIManager:AddPositionToWaypointFromLoad()
     for _, trigger in pairs(triggers) do
         if trigger.special_function == SF.ShowWaypoint and trigger.data and not trigger.data.position then
             if trigger.data.position_by_element then
-                EHI:AddPositionFromElement(trigger.data, trigger.id, true)
+                self:AddPositionFromElement(trigger.data, trigger.id, true)
             elseif trigger.data.position_by_unit then
-                EHI:AddPositionFromUnit(trigger.data, trigger.id, true)
+                self:AddPositionFromUnit(trigger.data, trigger.id, true)
             end
         elseif trigger.waypoint and not trigger.waypoint.position then
             if trigger.waypoint.position_by_element then
-                EHI:AddPositionFromElement(trigger.waypoint, trigger.id, true)
+                self:AddPositionFromElement(trigger.waypoint, trigger.id, true)
             elseif trigger.waypoint.position_by_unit then
-                EHI:AddPositionFromUnit(trigger.waypoint, trigger.id, true)
+                self:AddPositionFromUnit(trigger.waypoint, trigger.id, true)
             end
         end
     end
     for _, sync_trigger in pairs(self._sync_triggers or {}) do
         if sync_trigger.waypoint and not sync_trigger.waypoint.position then
             if sync_trigger.waypoint.position_by_element then
-                EHI:AddPositionFromElement(sync_trigger.waypoint, sync_trigger.id, true)
+                self:AddPositionFromElement(sync_trigger.waypoint, sync_trigger.id, true)
             elseif sync_trigger.waypoint.position_by_unit then
-                EHI:AddPositionFromUnit(sync_trigger.waypoint, sync_trigger.id, true)
+                self:AddPositionFromUnit(sync_trigger.waypoint, sync_trigger.id, true)
             end
         end
     end
@@ -1108,15 +1162,15 @@ function EHIManager:SyncLoad()
             if trigger.special_function == SF.ShowWaypoint and trigger.data then
                 if trigger.data.position_by_element then
                     trigger.id = trigger.id or trigger.data.position_by_element
-                    EHI:AddPositionFromElement(trigger.data, trigger.id, true)
+                    self:AddPositionFromElement(trigger.data, trigger.id, true)
                 elseif trigger.data.position_by_unit then
-                    EHI:AddPositionFromUnit(trigger.data, trigger.id, true)
+                    self:AddPositionFromUnit(trigger.data, trigger.id, true)
                 end
             elseif trigger.waypoint then
                 if trigger.waypoint.position_by_element then
-                    EHI:AddPositionFromElement(trigger.waypoint, trigger.id, true)
+                    self:AddPositionFromElement(trigger.waypoint, trigger.id, true)
                 elseif trigger.waypoint.position_by_unit then
-                    EHI:AddPositionFromUnit(trigger.waypoint, trigger.id, true)
+                    self:AddPositionFromUnit(trigger.waypoint, trigger.id, true)
                 end
             end
         end

@@ -53,7 +53,7 @@ achievements.voff_1 =
     }
 }
 
-other[105364] = EHI:AddAssaultDelay({ time = 10 + 60 + 30, special_function = SF.AddTimeByPreplanning, data = { id = 104875, yes = 30, no = 15 } })
+other[105364] = EHI:AddAssaultDelay({ control = 10 + 60, special_function = SF.AddTimeByPreplanning, data = { id = 104875, yes = 30, no = 15 } })
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100438] = { chance = 10, time = 30 + 60, id = "Snipers", class = TT.Sniper.Loop, single_sniper = true }
     other[105327] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%

@@ -149,7 +149,7 @@ EHI:UpdateInstanceUnits(tbl, 22450)
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 60 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 60 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100358] = { id = "Snipers", class = TT.Sniper.Count, sniper_count = 2 }

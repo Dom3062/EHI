@@ -1,3 +1,8 @@
+r239 (05. 05. 2024):
+Added options "Show 'SNIPER LOGIC STARTED' Popup" and "Show 'SNIPER LOGIC ENDED' Popup"
+Fixed an issue where waypoints do not work correctly
+Ukrainian Job: Fixed an issue where Assault tracker is not accurate
+
 r238 (19. 04. 2024):
 Watchdogs Day 2: Fixed Assault Tracker not working correctly
 

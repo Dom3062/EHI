@@ -23,7 +23,8 @@ local redirect =
     -- Custom Missions
     ratdaylight = "levels/rat",
     lid_cookoff_methslaves = "levels/rat",
-    roberts_v2 = "levels/roberts"
+    roberts_v2 = "levels/roberts",
+    ["Henry's Rock (Better Spawns)"] = "levels/des"
 }
 
 local levels =
@@ -203,7 +204,8 @@ local custom_levels =
     tonmapjam22l = true, -- Hard Cash
     SJamBank = true, -- Branch Bank Initiative
     roberts_v2 = true, -- GO Bank Remastered
-    lvl_friday = true -- Crashing Capitol
+    lvl_friday = true, -- Crashing Capitol
+    ["Henry's Rock (Better Spawns)"] = true
 }
 
 local init_finalize = GameSetup.init_finalize

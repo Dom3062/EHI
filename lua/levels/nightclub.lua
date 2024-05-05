@@ -31,12 +31,12 @@ local triggers = {
     -- 40/3: Animation finish delay
     -- Total 33.33 s
 }
-local BaseAssaultDelay = 3.5 + 2.5 + 3 + 2 + 30
+local BaseAssaultDelay = 3.5 + 2.5 + 3 + 2
 local other =
 {
-    [101159] = EHI:AddAssaultDelay({ time = 12 + BaseAssaultDelay }),
-    [101166] = EHI:AddAssaultDelay({ time = 10 + BaseAssaultDelay }),
-    [101167] = EHI:AddAssaultDelay({ time = 15 + BaseAssaultDelay })
+    [101159] = EHI:AddAssaultDelay({ control = 12 + BaseAssaultDelay }),
+    [101166] = EHI:AddAssaultDelay({ control = 10 + BaseAssaultDelay }),
+    [101167] = EHI:AddAssaultDelay({ control = 15 + BaseAssaultDelay })
 }
 if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)

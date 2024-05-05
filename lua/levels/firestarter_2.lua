@@ -26,7 +26,7 @@ EHI:SetMissionDoorData({
 
 local other =
 {
-    [104618] = EHI:AddAssaultDelay({ time = 30 + 1 + 5 + 30 + 30 })
+    [104618] = EHI:AddAssaultDelay({ control = 30 + 1 + 5 + 30 })
 }
 if EHI:IsLootCounterVisible() then
     local Weapons = { 101473, 102717, 102718, 102720 }

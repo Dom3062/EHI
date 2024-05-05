@@ -71,7 +71,7 @@ end
 
 local other =
 {
-    --[100520] = EHI:AddAssaultDelay({ time = 30 }) -- Diff is applied earlier
+    --[100520] = EHI:AddAssaultDelay({}) -- 30s; Diff is applied earlier
 }
 if EHI:IsLootCounterVisible() then
     local MoneyBagsInVault = 1

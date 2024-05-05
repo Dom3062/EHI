@@ -46,14 +46,14 @@ local achievements =
 
 local other =
 {
-    [EHI:GetInstanceElementID(100003, 7950)] = EHI:AddAssaultDelay({ additional_time = 3 + 12 + 12 + 4 + 10 + 30, random_time = 5, trigger_times = 1 })
+    [EHI:GetInstanceElementID(100003, 7950)] = EHI:AddAssaultDelay({ control_additional_time = 3 + 12 + 12 + 4 + 10, random_time = 5, trigger_times = 1 })
 }
 if EHI:IsClient() then
     local original = other[EHI:GetInstanceElementID(100003, 7950)]
-    other[EHI:GetInstanceElementID(100024, 7950)] = EHI:ClientCopyTrigger(original, { additional_time = 12 + 12 + 4 + 10 + 30 })
-    other[EHI:GetInstanceElementID(100053, 7950)] = EHI:ClientCopyTrigger(original, { additional_time = 12 + 4 + 10 + 30 })
-    other[EHI:GetInstanceElementID(100026, 7950)] = EHI:ClientCopyTrigger(original, { additional_time = 4 + 10 + 30 })
-    other[EHI:GetInstanceElementID(100179, 7950)] = EHI:ClientCopyTrigger(original, { additional_time = 10 + 30 })
+    other[EHI:GetInstanceElementID(100024, 7950)] = EHI:ClientCopyTrigger(original, { control_additional_time = 12 + 12 + 4 + 10 })
+    other[EHI:GetInstanceElementID(100053, 7950)] = EHI:ClientCopyTrigger(original, { control_additional_time = 12 + 4 + 10 })
+    other[EHI:GetInstanceElementID(100026, 7950)] = EHI:ClientCopyTrigger(original, { control_additional_time = 4 + 10 })
+    other[EHI:GetInstanceElementID(100179, 7950)] = EHI:ClientCopyTrigger(original, { control_additional_time = 10 })
 end
 
 EHI:ParseTriggers({

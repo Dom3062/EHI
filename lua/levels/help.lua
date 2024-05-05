@@ -47,7 +47,7 @@ local achievements =
 }
 local other =
 {
-    [101315] = EHI:AddAssaultDelay({ time = 30 })
+    [101315] = EHI:AddAssaultDelay({}) -- 30s
 }
 EHI:ParseTriggers({
     mission = triggers,

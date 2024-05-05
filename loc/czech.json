@@ -46,6 +46,10 @@
     "ehi_popup_sniper_spawned" : "Objevil se nepřátelský odstřelovač",
     "ehi_popup_snipers" : "ODSTŘELOVAČI!",
     "ehi_popup_snipers_spawned" : "Objevili se nepřátelští odstřelovači",
+    "ehi_popup_sniper_logic_start" : "SPUŠTĚNA LOGIKA ODSTŘELOVAČŮ",
+    "ehi_popup_sniper_logic_started" : "Logika nepřátelských odstřelovačů byla spuštěna",
+    "ehi_popup_sniper_logic_end" : "UKONČENA LOGIKA ODSTŘELOVAČŮ",
+    "ehi_popup_sniper_logic_ended" : "Logika nepřátelských odstřelovačů byla ukončena",
     "ehi_status_ok" : "OK",
     "ehi_status_done" : "HOTOVO",
     "ehi_status_pass" : "SPLNĚNO",
@@ -553,6 +557,12 @@
 
     "ehi_show_sniper_spawned_popup" : "Zobrazovat vyskakovací okno 'ODSTŘELOVAČI!'",
     "ehi_show_sniper_spawned_popup_desc" : "Zobrazuje vyskakovací okno oranžově když se zrodí naskriptovaní odstřelovači",
+
+    "ehi_show_sniper_logic_start_popup" : "Zobrazovat vyskakovací okno 'SPUŠTĚNA LOGIKA ODSTŘELOVAČŮ'",
+    "ehi_show_sniper_logic_start_popup_desc" : "Zobrazuje vyskakovací okno žlutě když se vytvoří sledovač s naskriptovanými odstřelovači",
+
+    "ehi_show_sniper_logic_end_popup" : "Zobrazovat vyskakovací okno 'UKONČENA LOGIKA ODSTŘELOVAČŮ'",
+    "ehi_show_sniper_logic_end_popup_desc" : "Zobrazuje vyskakovací okno zeleně když se smaže sledovač s naskriptovanými odstřelovači",
     
     "ehi_waypoints_menu" : "Ukazatele",
     "ehi_waypoints_menu_desc" : "",

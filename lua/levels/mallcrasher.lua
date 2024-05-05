@@ -169,16 +169,16 @@ local achievements =
     }
 }
 
-local FirstAssaultDelay = 10 + 30
+local FirstAssaultDelay = 10
 local other = {}
 if EHI:IsMayhemOrAbove() then
-    other[301049] = EHI:AddAssaultDelay({ time = FirstAssaultDelay })
+    other[301049] = EHI:AddAssaultDelay({ control = FirstAssaultDelay })
 else
-    other[301138] = EHI:AddAssaultDelay({ time = 50 + FirstAssaultDelay })
-    other[301766] = EHI:AddAssaultDelay({ time = 40 + FirstAssaultDelay })
-    other[301771] = EHI:AddAssaultDelay({ time = 30 + FirstAssaultDelay })
-    other[301772] = EHI:AddAssaultDelay({ time = 20 + FirstAssaultDelay })
-    other[301773] = EHI:AddAssaultDelay({ time = 10 + FirstAssaultDelay })
+    other[301138] = EHI:AddAssaultDelay({ control = 50 + FirstAssaultDelay })
+    other[301766] = EHI:AddAssaultDelay({ control = 40 + FirstAssaultDelay })
+    other[301771] = EHI:AddAssaultDelay({ control = 30 + FirstAssaultDelay })
+    other[301772] = EHI:AddAssaultDelay({ control = 20 + FirstAssaultDelay })
+    other[301773] = EHI:AddAssaultDelay({ control = 10 + FirstAssaultDelay })
 end
 
 EHI:ParseTriggers({

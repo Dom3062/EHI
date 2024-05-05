@@ -75,7 +75,7 @@ local achievements =
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 100 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 100 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local sniper_count = EHI:GetValueBasedOnDifficulty({

@@ -59,7 +59,7 @@ local achievements =
 
 local other =
 {
-    [100179] = EHI:AddAssaultDelay({ time = 1 + 9.5 + 11 + 1 + 30 })
+    [100179] = EHI:AddAssaultDelay({ control = 1 + 9.5 + 11 + 1 })
 }
 if EHI:IsLootCounterVisible() then
     other[100107] = { special_function = EHI:RegisterCustomSF(function(...)

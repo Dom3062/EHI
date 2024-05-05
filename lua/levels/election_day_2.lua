@@ -3,7 +3,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local other =
 {
-    [100116] = EHI:AddAssaultDelay({ time = 60 + 30 })
+    [100116] = EHI:AddAssaultDelay({ control = 60 })
 }
 if EHI:IsLootCounterVisible() then
     other[100107] = { special_function = SF.CustomCode, trigger_times = 1, f = function()

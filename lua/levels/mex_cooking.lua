@@ -37,7 +37,7 @@ end
 
 local other =
 {
-    [101374] = EHI:AddAssaultDelay({ time = 3 + 30 + 30 })
+    [101374] = EHI:AddAssaultDelay({ control = 3 + 30 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102495] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal) }

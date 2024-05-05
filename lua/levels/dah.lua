@@ -37,7 +37,7 @@ end
 
 local other =
 {
-    [100479] = EHI:AddAssaultDelay({ time = 30 + 2 + 30 })
+    [100479] = EHI:AddAssaultDelay({ control = 30 + 2 })
 }
 
 ---@param progress number?

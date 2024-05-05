@@ -2,14 +2,13 @@ local EHI, EM = EHI, EHIManager
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local assault_delay = 15 + 1 + 30
 local other =
 {
-    [104488] = EHI:AddAssaultDelay({ time = assault_delay, special_function = SF.SetTimeOrCreateTracker }),
-    [104489] = EHI:AddAssaultDelay({ time = assault_delay, special_function = SF.AddTrackerIfDoesNotExist }),
+    [104488] = EHI:AddAssaultDelay({ control = 16, special_function = SF.SetTimeOrCreateTracker }),
+    [104489] = EHI:AddAssaultDelay({ control = 16, special_function = SF.AddTrackerIfDoesNotExist }),
     -- Police ambush
     [104535] = { special_function = SF.Trigger, data = { 1045351, 1045352 } },
-    [1045351] = EHI:AddAssaultDelay({ time = 30, special_function = SF.SetTimeOrCreateTracker }),
+    [1045351] = EHI:AddAssaultDelay({ special_function = SF.SetTimeOrCreateTracker }), -- 30s
     [1045352] = { special_function = SF.RemoveTrigger, data = { 104488, 104489 } }
 }
 if EHI:IsHost() then

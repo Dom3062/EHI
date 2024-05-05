@@ -2,7 +2,7 @@ local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local other = {
-    [102064] = EHI:AddAssaultDelay({ time = 60 + 1 + 30, trigger_times = 1 })
+    [102064] = EHI:AddAssaultDelay({ control = 60 + 1, trigger_times = 1 })
 }
 
 ---@type ParseAchievementTable

@@ -23,7 +23,7 @@ if EHI:GetOption("show_escape_chance") then
 end
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
 if EHI:IsHost() and not EHI:IsPlayingCrimeSpree() then
     -- [ID of disabled unit when truck is visible] = truck ID

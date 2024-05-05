@@ -51,7 +51,7 @@ local function ToggleAssaultTracker(disable)
 end
 local other =
 {
-    [102292] = EHI:AddAssaultDelay({ time = 75 + 30 }),
+    [102292] = EHI:AddAssaultDelay({ control = 75 }),
     [101492] = { special_function = SF.CustomCode, f = ToggleAssaultTracker, arg = true },
     [101491] = { special_function = SF.CustomCode, f = ToggleAssaultTracker, arg = false }
 }

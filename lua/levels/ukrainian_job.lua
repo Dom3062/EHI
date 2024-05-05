@@ -50,8 +50,8 @@ local achievements =
 
 local other =
 {
-    [104176] = EHI:AddAssaultDelay({ time = 25 + 90 }),
-    [104178] = EHI:AddAssaultDelay({ time = 35 + 90 })
+    [104176] = EHI:AddAssaultDelay({ control = 25 + 90 }),
+    [104178] = EHI:AddAssaultDelay({ control = 35 + 90 })
 }
 if EHI:GetOption("show_escape_chance") then
     local start_chance = 30 -- Normal

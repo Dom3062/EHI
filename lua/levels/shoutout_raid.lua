@@ -46,7 +46,7 @@ local trophy = {
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 20 + 60 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 20 + 60 })
 }
 
 EHI:ParseTriggers({
@@ -63,10 +63,7 @@ EHI:ShowAchievementLootCounter({
     }
 })
 
-local mission_loot = 6 -- Normal to Very Hard
-if ovk_and_up then
-    mission_loot = 8
-end
+local mission_loot = ovk_and_up and 8 or 6
 EHI:ShowLootCounter({ max = mission_loot + 8 }) -- 14 or 16
 
 local tbl =

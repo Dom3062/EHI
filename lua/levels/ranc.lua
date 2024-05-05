@@ -79,7 +79,7 @@ end
 ]]
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ additional_time = 20 + 215/30 + 2 + 10 + 10 + 10 + 30, random_time = 5 + 10 })
+    [100109] = EHI:AddAssaultDelay({ control_additional_time = 20 + 215/30 + 2 + 10 + 10 + 10, random_time = 5 + 10 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local sniper_count = EHI:GetValueBasedOnDifficulty({

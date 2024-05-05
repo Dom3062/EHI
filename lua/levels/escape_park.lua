@@ -33,7 +33,7 @@ local achievements =
 
 local other =
 {
-    [102444] = EHI:AddAssaultDelay({ time = 25 + 30 })
+    [102444] = EHI:AddAssaultDelay({ control = 25 })
 }
 if EHI:IsLootCounterVisible() then
     other[102293] = EHI:AddLootCounter3(function(self, ...)

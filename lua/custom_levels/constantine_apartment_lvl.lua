@@ -2,7 +2,7 @@ local EHI = EHI
 
 local other =
 {
-    [100122] = EHI:AddAssaultDelay({ time = 30 + 30, trigger_times = 1 })
+    [100122] = EHI:AddAssaultDelay({ control = 30, trigger_times = 1 })
 }
 EHI:ParseTriggers({
     other = other

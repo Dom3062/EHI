@@ -28,7 +28,7 @@ local triggers = {
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 25 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 25 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100358] = { chance = 20, time = 1 + 10 + 45, on_fail_refresh_t = 45, on_success_refresh_t = 20 + 10 + 45, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 2 }

@@ -96,3 +96,9 @@ if EHI:GetOption("show_sniper_spawned_popup") then
     EHI:SetNotificationAlert("SNIPER!", "ehi_popup_sniper", orange)
     EHI:SetNotificationAlert("SNIPERS!", "ehi_popup_snipers", orange)
 end
+if EHI:GetOption("show_sniper_logic_start_popup") then
+    EHI:SetNotificationAlert("SNIPER_LOGIC_START", "ehi_popup_sniper_logic_start", Color.yellow)
+end
+if EHI:GetOption("show_sniper_logic_end_popup") then
+    EHI:SetNotificationAlert("SNIPER_LOGIC_END", "ehi_popup_sniper_logic_end", Color.green)
+end

@@ -53,6 +53,10 @@
 ---@field update_on_alarm boolean Updates the tracker on alarm; calls `EHITracker:OnAlarm()`
 ---@field [any] any
 
+---@class AssaultElementTrigger : ElementTrigger
+---@field control_additional_time number? Time in the `Control` stage before the first assault, `30s` from the `Anticipation` stage is added too; used with conjuction with `random_time`
+---@field control number? Time in the `Control` stage before the first assault, `30s` from the `Anticipation` stage is added too
+
 ---@class ParseTriggerTable
 ---@field [number] ElementTrigger
 

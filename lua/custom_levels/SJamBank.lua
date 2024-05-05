@@ -34,7 +34,7 @@ local triggers =
 
 local other =
 {
-    [100028] = EHI:AddAssaultDelay({ time = 20 + 30 })
+    [100028] = EHI:AddAssaultDelay({ control = 20 })
 }
 
 EHI:ShowLootCounter({ max = 10 })

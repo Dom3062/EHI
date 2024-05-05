@@ -15,7 +15,7 @@ local triggers = {
 }
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
 if EHI:GetOption("show_escape_chance") then
     other[101620] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement, trigger_times = 1 }

@@ -12,7 +12,7 @@ local triggers = {
 
 local other =
 {
-    [100782] = EHI:AddAssaultDelay({ time = 20 + 10 + 30 })
+    [100782] = EHI:AddAssaultDelay({ control = 20 + 10 })
 }
 
 EHI:ParseTriggers({ mission = triggers, other = other }, "HeliLootDrop", EHI.Icons.HeliLootDrop)

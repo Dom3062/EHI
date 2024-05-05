@@ -11,7 +11,7 @@ if EHI:IsClient() then
 end
 
 local other = {
-    [100032] = EHI:AddAssaultDelay({ time = 1 + 30, trigger_times = 1 })
+    [100032] = EHI:AddAssaultDelay({ control = 1, trigger_times = 1 })
 }
 
 local function ReplaceWaypointAddFunction(unit_id, unit_data, unit)

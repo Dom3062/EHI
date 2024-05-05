@@ -48,7 +48,7 @@ local achievements =
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
 if EHI:IsHost() then
     -- units/payday2/equipment/gen_interactable_sec_safe_05x05_titan/gen_interactable_sec_safe_05x05_titan

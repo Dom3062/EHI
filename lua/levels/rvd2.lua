@@ -17,7 +17,7 @@ local triggers = {
 }
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ time = 30 + 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
 if EHI:IsHost() then
     EHI:AddHostTriggers("element", element_sync_triggers)
@@ -71,14 +71,14 @@ else
             self._waypoints:AddWaypoint("LiquidNitrogen", {
                 time = trigger.time - 10,
                 icon = Icon.LiquidNitrogen,
-                position = EHI:GetElementPositionOrDefault(100941)
+                position = self:GetElementPositionOrDefault(100941)
             })
         end
         if self._waypoints:WaypointDoesNotExist("HeliC4") then
             self._waypoints:AddWaypoint("HeliC4", {
                 time = trigger.time,
                 icon = Icon.C4,
-                position = EHI:GetElementPositionOrDefault(100943)
+                position = self:GetElementPositionOrDefault(100943)
             })
         end
     end

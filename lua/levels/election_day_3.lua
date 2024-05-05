@@ -34,9 +34,9 @@ local triggers = {
 }
 local other =
 {
-    [102735] = EHI:AddAssaultDelay({ time = 5 + 30 }),
-    [102736] = EHI:AddAssaultDelay({ time = 15 + 30 }),
-    [102737] = EHI:AddAssaultDelay({ time = 25 + 30 })
+    [102735] = EHI:AddAssaultDelay({ control = 5 }),
+    [102736] = EHI:AddAssaultDelay({ control = 15 }),
+    [102737] = EHI:AddAssaultDelay({ control = 25 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local refresh_t = EHI:GetValueBasedOnDifficulty({

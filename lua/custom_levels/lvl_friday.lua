@@ -44,16 +44,16 @@ local achievements =
 EHI:PreparseBeardlibAchievements(achievements, "Mallbank")
 EHI:ShowBeardLibAchievementLootCounter_Mallbank("shopper", 15, EHI.Difficulties.OVERKILL)
 
-local FirstAssaultDelay = 350/30 + 20 + 30
+local FirstAssaultDelay = 350/30 + 20
 local other = {}
 if EHI:IsMayhemOrAbove() then
-    other[301049] = EHI:AddAssaultDelay({ time = FirstAssaultDelay })
+    other[301049] = EHI:AddAssaultDelay({ control = FirstAssaultDelay })
 else
-    other[301138] = EHI:AddAssaultDelay({ time = 50 + 8 + FirstAssaultDelay })
-    other[301766] = EHI:AddAssaultDelay({ time = 40 + 8 + FirstAssaultDelay })
-    other[301771] = EHI:AddAssaultDelay({ time = 30 + 8 + FirstAssaultDelay })
-    other[301772] = EHI:AddAssaultDelay({ time = 20 + 8 + FirstAssaultDelay })
-    other[301773] = EHI:AddAssaultDelay({ time = 10 + 8 + FirstAssaultDelay })
+    other[301138] = EHI:AddAssaultDelay({ control = 50 + 8 + FirstAssaultDelay })
+    other[301766] = EHI:AddAssaultDelay({ control = 40 + 8 + FirstAssaultDelay })
+    other[301771] = EHI:AddAssaultDelay({ control = 30 + 8 + FirstAssaultDelay })
+    other[301772] = EHI:AddAssaultDelay({ control = 20 + 8 + FirstAssaultDelay })
+    other[301773] = EHI:AddAssaultDelay({ control = 10 + 8 + FirstAssaultDelay })
 end
 
 local DisableWaypoints = {
@@ -66,7 +66,7 @@ local units = {}
 for i = 0, 1500, 250 do --levels/instances/mods/fri_computer_hack/world
     if i ~= 1250 then -- Does not exist on 1250
         local id = "CrashChance" .. tostring(i)
-        triggers[EHI:GetInstanceElementID(100006, i, 300000)] = { id = id, chance = OVKOrBelow and 20 or 60, icons = CrashIcons, class = TT.Chance, hint = Hints.election_day_3_CrashChance }
+        triggers[EHI:GetInstanceElementID(100006, i, 300000)] = { id = id, chance = OVKOrBelow and 20 or 60, icons = CrashIcons, class = TT.Chance, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.election_day_3_CrashChance }
         if OVKOrBelow then
             triggers[EHI:GetInstanceElementID(100015, i, 300000)] = { id = id, special_function = SF.IncreaseChanceFromElement }
         end

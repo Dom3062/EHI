@@ -65,7 +65,7 @@ local achievements =
 
 local other =
 {
-    [101742] = EHI:AddAssaultDelay({ time = 30 })
+    [101742] = EHI:AddAssaultDelay({}) -- 30s
     -- Delay assault preplanning does not help as Captain Winter's group is there from the start, causing assaults to start prematurely
     -- See ´phalanx_start´ MissionScriptElement 106209
 }

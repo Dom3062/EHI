@@ -92,7 +92,7 @@ local achievements =
 
 local other =
 {
-    [100475] = EHI:AddAssaultDelay({ time = 30, special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 } })
+    [100475] = EHI:AddAssaultDelay({ special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 } }) -- 30s
 }
 if EHI:IsLootCounterVisible() then
     local Trigger = { id = "LootCounter", special_function = SF.IncreaseProgressMax } -- Money spawned
