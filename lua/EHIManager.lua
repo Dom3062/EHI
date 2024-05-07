@@ -10,9 +10,10 @@ local function table_icontains(tbl, val)
 end
 
 local EHI = EHI
----@class EHIManager
+---@class EHIManager : EHIBaseManager
+---@field new fun(self: self, managers: managers): self
 ---@field FormatTimer fun(self: self, t: number): string
-EHIManager = {}
+EHIManager = class(EHIBaseManager)
 EHIManager.Trackers = EHI.Trackers
 EHIManager.Waypoints = EHI.Waypoints
 EHIManager.FilterTracker =
@@ -28,8 +29,9 @@ EHIManager.SFF = {}
 EHIManager._cache = {}
 EHIManager._internal = {}
 EHIManager._internal_listeners = {}
+EHIManager._sync_tracker = "EHISyncAddTracker"
 ---@param managers managers
-function EHIManager:new(managers)
+function EHIManager:init(managers)
     self._trackers = managers.ehi_tracker
     self._waypoints = managers.ehi_waypoint
     self._buff = managers.ehi_buff
@@ -86,7 +88,6 @@ function EHIManager:new(managers)
     if EHI:IsClient() then
         self.HookOnLoad = {}
     end
-    return self
 end
 
 function EHIManager:init_finalize()
@@ -99,8 +100,8 @@ function EHIManager:init_finalize()
     managers.network:add_event_listener("EHIManagerDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
     if EHI:IsClient() then
         Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(_, id, data)
-            if id == EHI.SyncMessages.EHISyncAddTracker then
-                local tbl = LuaNetworking:StringToTable(data)
+            if id == self._sync_tracker then
+                local tbl = json.decode(data)
                 self:AddTrackerSynced(tonumber(tbl.id) --[[@as number]], tonumber(tbl.delay) --[[@as number]])
             end
         end)
@@ -176,6 +177,7 @@ end
 function EHIManager:SwitchToLoudMode(dropin)
     self._trackers:SwitchToLoudMode()
     self._waypoints:SwitchToLoudMode()
+    self._buff:SwitchToLoudMode()
     self._deployable:SwitchToLoudMode()
     self._experience:SwitchToLoudMode()
     self._phalanx:SwitchToLoudMode(dropin)
@@ -1074,7 +1076,7 @@ function EHIManager:InitElements()
                                 elseif trigger.set_time_when_tracker_exists then
                                     if self._trackers:TrackerExists(trigger.id) then
                                         self._trackers:SetTrackerTimeNoAnim(trigger.id, delay)
-                                        EHI:SyncTable(EHI.SyncMessages.EHISyncAddTracker, { id = id, delay = delay or 0 })
+                                        self._trackers:Sync(id, delay)
                                     else
                                         self:CreateTrackerAndSync(params.id, delay)
                                     end

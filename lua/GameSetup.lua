@@ -2,7 +2,6 @@ local EHI = EHI
 if EHI:CheckLoadHook("GameSetup") then
     return
 end
-local EM = EHIManager
 
 local redirect =
 {
@@ -24,7 +23,12 @@ local redirect =
     ratdaylight = "levels/rat",
     lid_cookoff_methslaves = "levels/rat",
     roberts_v2 = "levels/roberts",
-    ["Henry's Rock (Better Spawns)"] = "levels/des"
+    ["Henry's Rock (Better Spawns)"] = "levels/des",
+    sahv2 = "levels/sah",
+    ["Auction Edit"] = "levels/sah",
+    ["Auction Heist No Rain"] = "levels/sah",
+    ["Auction Edit Rain"] = "levels/sah",
+    fexbetterspawns = "levels/fex"
 }
 
 local levels =
@@ -205,7 +209,12 @@ local custom_levels =
     SJamBank = true, -- Branch Bank Initiative
     roberts_v2 = true, -- GO Bank Remastered
     lvl_friday = true, -- Crashing Capitol
-    ["Henry's Rock (Better Spawns)"] = true
+    ["Henry's Rock (Better Spawns)"] = true,
+    sahv2 = true,
+    ["Auction Edit"] = true,
+    ["Auction Heist No Rain"] = true,
+    ["Auction Edit Rain"] = true,
+    fexbetterspawns = true
 }
 
 local init_finalize = GameSetup.init_finalize
@@ -221,12 +230,12 @@ function GameSetup:init_finalize(...)
         local fixed_path = redirect[level_id] or ("custom_levels/" .. level_id)
         dofile(EHI.LuaPath .. fixed_path .. ".lua")
     end
-    EM:InitElements()
+    managers.ehi_manager:InitElements()
     EHI:DisableWaypointsOnInit()
 end
 
 EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(self, data, ...)
-    EM:SetInSync(true)
+    managers.ehi_manager:SetInSync(true)
     EHI:FinalizeUnitsClient()
     managers.ehi_assault:load(data)
 end)

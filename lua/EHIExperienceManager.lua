@@ -264,6 +264,7 @@ function EHIExperienceManager:HookAwardXP()
                 self._trackers:AddTracker({
                     id = "XPTotal",
                     xp_limit = xp_limit,
+                    xp_overflow_enabled = self._xp.prestige_enabled and EHI:IsModInstalled("Infamy Pool Overflow", "Dr_Newbie"),
                     class = "EHITotalXPTracker"
                 })
             end

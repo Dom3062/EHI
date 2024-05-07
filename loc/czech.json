@@ -501,6 +501,11 @@
     "ehi_show_pager_callback_trackers" : "Zobrazovat sledovač odpovědi pageru",
     "ehi_show_pager_callback_trackers_desc" : "Zobrazuje sledovač pro pager, na který se musí odpovědět",
 
+    "ehi_show_pager_callback_answered_behavior" : "Když se odpoví na pager",
+    "ehi_show_pager_callback_answered_behavior_desc" : "Definuje, co se má stát se sledovačem a ukazetelem, když se odpoví na pager",
+    "ehi_show_pager_callback_answered_behavior_1" : "Nastavit zeleně, potom smazat",
+    "ehi_show_pager_callback_answered_behavior_2" : "Smazat",
+
     "ehi_show_enemy_count_tracker" : "Zobrazovat sledovač s počtem nepřátel",
     "ehi_show_enemy_count_tracker_desc" : "Zobrazuje sledovač s počtem nepřátel na mapě",
 

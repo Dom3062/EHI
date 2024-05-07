@@ -72,6 +72,7 @@ function EHIBuffTracker:init(panel, params, parent_class)
     local progress_visible = progress and not params.no_progress
     self._id = params.id --[[@as string]]
     self._parent_class = parent_class
+    self._enable_in_loud = params.enable_in_loud
     self._panel = panel:panel({
         name = self._id,
         w = params.w,
@@ -392,6 +393,9 @@ end
 
 ---@param state boolean
 function EHIBuffTracker:SetCustodyState(state)
+end
+
+function EHIBuffTracker:SwitchToLoudMode()
 end
 
 if progress then

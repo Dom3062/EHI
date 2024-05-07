@@ -1,4 +1,4 @@
-local EHI, EM = EHI, EHIManager
+local EHI, EM = EHI, managers.ehi_manager
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers

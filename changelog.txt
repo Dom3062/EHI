@@ -1,3 +1,8 @@
+r240 (07. 05. 2024):
+Added option "When a Pager is answered"
+Reworked some buffs to show only in loud as they do not matter in stealth
+Captain Chance Tracker: Fixed an issue where the tracker is inaccurate in some heists
+
 r239 (05. 05. 2024):
 Added options "Show 'SNIPER LOGIC STARTED' Popup" and "Show 'SNIPER LOGIC ENDED' Popup"
 Fixed an issue where waypoints do not work correctly

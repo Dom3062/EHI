@@ -113,12 +113,12 @@ EHITotalXPTracker._anim = function(o, self)
 end
 ---@param panel Panel
 ---@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHITotalXPTracker:init(panel, params, parent_class)
+function EHITotalXPTracker:init(panel, params, ...)
     self._total_xp = params.amount or 0
     self._total_xp_anim = self._total_xp
     self._player_xp_limit = params.xp_limit or 0
-    EHITotalXPTracker.super.init(self, panel, params, parent_class)
+    self._xp_overflow_enabled = params.xp_overflow_enabled
+    EHITotalXPTracker.super.init(self, panel, params, ...)
     if self._player_xp_limit <= 0 then
         self._update = true -- Request deletion next frame
     end
@@ -144,7 +144,7 @@ end
 function EHITotalXPTracker:SetXP(amount)
     self._xp = amount
     if self._total_xp ~= self._xp and not self._player_limit_reached then
-        if self._xp >= self._player_xp_limit then
+        if self._xp >= self._player_xp_limit and not self._xp_overflow_enabled then
             self._player_limit_reached = true
             self:SetTextColor(Color.green)
         end

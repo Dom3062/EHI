@@ -57,16 +57,17 @@ function EHIPhalanxChanceTracker:ComputeAssaultTime(from_create)
 end
 
 function EHIPhalanxChanceTracker:AssaultStart()
-    if self._increase_chance_at_next_assault then
+    if self._first_assault then
+        self:SetTimeNoAnim(self._t_refresh)
+        self:SetChance(self._captain_start_chance or 0)
+        self._captain_start_chance = nil
+        self._increase_chance_at_next_assault = nil
+    elseif self._increase_chance_at_next_assault then
         self:SetTimeNoAnim(self._t_refresh)
         if not self._first_assault then
             self:IncreaseChance(self._chance_increase)
         end
         self._increase_chance_at_next_assault = nil
-    elseif self._first_assault then
-        self:SetTimeNoAnim(self._t_refresh)
-        self:SetChance(self._captain_start_chance or 0)
-        self._captain_start_chance = nil
     end
     self._chance_increase_enabled = true
     self._color_lock = false

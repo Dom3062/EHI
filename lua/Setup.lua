@@ -4,6 +4,7 @@ managers.ehi_experience = EHIExperienceManager
 if EHI:CheckLoadHook("Setup") then
     return
 end
+dofile(EHI.LuaPath .. "EHIBaseManager.lua")
 dofile(EHI.LuaPath .. "EHITrackerManager.lua")
 dofile(EHI.LuaPath .. "EHIWaypointManager.lua")
 dofile(EHI.LuaPath .. "EHIBuffManager.lua")
@@ -31,7 +32,7 @@ function Setup:init_managers(managers, ...)
     original.init_managers(self, managers, ...)
     managers.ehi_tracker = EHITrackerManager:new()
     managers.ehi_waypoint = EHIWaypointManager:new()
-    managers.ehi_buff = EHIBuffManager -- Variables creation is done in HUDManagerPD2
+    managers.ehi_buff = EHIBuffManager:new()
     managers.ehi_trade = EHITradeManager:new(managers.ehi_tracker)
     managers.ehi_escape = EHIEscapeChanceManager:new(managers.ehi_tracker)
     managers.ehi_deployable = EHIDeployableManager:new(managers.ehi_tracker)

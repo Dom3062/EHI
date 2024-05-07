@@ -3,6 +3,8 @@
     This file is not loaded, it is here to provide code completion in VSCode
 ]]
 
+---@class AnyExceptNil : table, string, boolean, number, userdata
+
 ---@class ElementWaypointTrigger
 ---@field id number|string? ID of the waypoint, if not provided, `id` is then copied from the trigger
 ---@field icon string? 

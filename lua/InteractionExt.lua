@@ -4,6 +4,7 @@ if EHI:CheckLoadHook("InteractionExt") then
 end
 
 if EHI:GetOption("show_pager_callback") then
+    local answered_behavior = EHI:GetOption("show_pager_callback_answered_behavior") --[[@as number]]
     ---@class EHIPagerTracker : EHIWarningTracker
     ---@field super EHIWarningTracker
     EHIPagerTracker = class(EHIWarningTracker)
@@ -63,14 +64,22 @@ if EHI:GetOption("show_pager_callback") then
 
     EHI:HookWithID(IntimitateInteractionExt, "_at_interact_start", "EHI_pager_at_interact_start", function(self, ...)
         if self.tweak_data == "corpse_alarm_pager" then
-            managers.ehi_manager:Call(self._ehi_key, "SetAnswered")
+            if answered_behavior == 1 then
+                managers.ehi_manager:Call(self._ehi_key, "SetAnswered")
+            else
+                managers.ehi_manager:Remove(self._ehi_key)
+            end
         end
     end)
 
     EHI:PreHookWithID(IntimitateInteractionExt, "sync_interacted", "EHI_pager_sync_interacted", function(self, peer, player, status, ...)
         if self.tweak_data == "corpse_alarm_pager" then
             if status == "started" or status == 1 then
-                managers.ehi_manager:Call(self._ehi_key, "SetAnswered")
+                if answered_behavior == 1 then
+                    managers.ehi_manager:Call(self._ehi_key, "SetAnswered")
+                else
+                    managers.ehi_manager:Remove(self._ehi_key)
+                end
             else -- complete or interrupted
                 managers.ehi_manager:Remove(self._ehi_key)
             end

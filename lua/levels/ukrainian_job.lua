@@ -53,6 +53,29 @@ local other =
     [104176] = EHI:AddAssaultDelay({ control = 25 + 90 }),
     [104178] = EHI:AddAssaultDelay({ control = 35 + 90 })
 }
+if EHI:GetOption("show_loot_counter") and not EHI:IsPlayingCrimeSpree() then
+    other[100073] = EHI:AddLootCounter(function()
+        EHI:ShowLootCounterNoCheck({ max = 10 })
+    end, true, function(self)
+        local jewelry = { 102948, 102949, 102950, 100005, 100006, 100013, 100014, 100007, 100008 }
+        local jewelry_to_subtract = 0
+        for _, jewelry_id in ipairs(jewelry) do
+            if self:IsMissionElementDisabled(jewelry_id) then
+                jewelry_to_subtract = jewelry_to_subtract + 1
+            end
+        end
+        EHI:ShowLootCounterNoChecks({ max = 10 - jewelry_to_subtract })
+    end, true)
+    other[101613] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
+    other[101617] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
+    other[101637] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
+    other[101754] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
+    other[101852] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
+    other[102018] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
+    other[102091] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
+    other[102098] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
+    other[102126] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
+end
 if EHI:GetOption("show_escape_chance") then
     local start_chance = 30 -- Normal
     if EHI:IsDifficulty(EHI.Difficulties.Hard) then

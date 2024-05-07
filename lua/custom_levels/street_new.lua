@@ -1,4 +1,4 @@
-local EHI, EM = EHI, EHIManager
+local EHI, EM = EHI, managers.ehi_manager
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 EHI._cache.street_new = true

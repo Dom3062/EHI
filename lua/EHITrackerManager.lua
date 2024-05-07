@@ -1,12 +1,17 @@
 ---@alias EHITrackerManager.Tracker { tracker: EHITracker, pos: number, x: number, w: number }
 
 local EHI = EHI
----@class EHITrackerManager
+---@class EHITrackerManager : EHIBaseManager
+---@field new fun(self: self): self
+---@field super EHIBaseManager
 ---@field IsLoading fun(self: self): boolean `VR only (EHITrackerManagerVR)`
 ---@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) `VR only (EHITrackerManagerVR)`
 ---@field SetPanel fun(self: self, panel: Panel) `VR only (EHITrackerManagerVR)`
-EHITrackerManager = {}
-function EHITrackerManager:new()
+EHITrackerManager = class(EHIBaseManager)
+EHITrackerManager._sync_tracker = "EHISyncAddTracker"
+EHITrackerManager._sync_tm_add_tracker = "EHI_TM_SyncAddTracker"
+EHITrackerManager._sync_tm_update_tracker = "EHI_TM_SyncUpdateTracker"
+function EHITrackerManager:init()
     self:CreateWorkspace()
     self._t = 0
     self._trackers = setmetatable({}, {__mode = "k"}) ---@type table<string, EHITrackerManager.Tracker?>
@@ -17,7 +22,6 @@ function EHITrackerManager:new()
     self._panel_size = 32 * self._scale
     self._panel_offset = 6 * self._scale
     self._base_tracker_class = EHI.Trackers.Base
-    return self
 end
 
 function EHITrackerManager:CreateWorkspace()
@@ -45,24 +49,20 @@ function EHITrackerManager:init_finalize(manager)
     self._internal = manager._internal
     self.SaveInternalData = manager.SaveInternalData --[[@as fun(self: self, name: string, data_name: string, value: any)]]
     self.GetInternalData = manager.GetInternalData --[[@as fun(self: self, name: string, data_name: string)]]
-    if EHI:IsClient() then
+    if EHI:IsClient() and EHI:GetOption("show_loot_counter") then
         Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHITracker", function(sender_id, id, data)
-            if id == EHI.SyncMessages.TrackerManager.SyncAddTracker then
-                local params = LuaNetworking:StringToTable(data)
-                if params._id == "LootCounter" and EHI:GetOption("show_loot_counter") then
-                    self:ShowLootCounter(tonumber(params.max), tonumber(params.max_random), tonumber(params.offset))
-                    EHI:HookLootCounter(true)
-                end
-            elseif id == EHI.SyncMessages.TrackerManager.SyncUpdateTracker then
-                local params = LuaNetworking:StringToTable(data)
-                if params._id == "LootCounter" then
-                    if params.type == "IncreaseMaxRandom" then
-                        self:IncreaseLootCounterMaxRandom(tonumber(params.random))
-                    elseif params.type == "RandomLootSpawned" then
-                        self:RandomLootSpawned(tonumber(params.random))
-                    elseif params.type == "RandomLootDeclined" then
-                        self:RandomLootDeclined(tonumber(params.random))
-                    end
+            if id == self._sync_tm_add_tracker then
+                local params = json.decode(data)
+                self:ShowLootCounter(tonumber(params.max), tonumber(params.max_random), tonumber(params.offset))
+                EHI:HookLootCounter(true)
+            elseif id == self._sync_tm_update_tracker then
+                local params = json.decode(data)
+                if params.type == "IncreaseMaxRandom" then
+                    self:IncreaseLootCounterMaxRandom(tonumber(params.random))
+                elseif params.type == "RandomLootSpawned" then
+                    self:RandomLootSpawned(tonumber(params.random))
+                elseif params.type == "RandomLootDeclined" then
+                    self:RandomLootDeclined(tonumber(params.random))
                 end
             end
         end)
@@ -229,11 +229,7 @@ end
 ---@param id integer
 ---@param delay number
 function EHITrackerManager:Sync(id, delay)
-    EHI:SyncTable(EHI.SyncMessages.EHISyncAddTracker, { id = id, delay = delay or 0 })
-end
-
-if Global.game_settings.single_player then
-    EHITrackerManager.Sync = function(...) end
+    self:SyncTable(self._sync_tracker, { id = id, delay = delay or 0 })
 end
 
 ---@param id string
@@ -916,7 +912,7 @@ end
 ---@param data table
 function EHITrackerManager:SetTrackerToSync2(id, data)
     self:SetTrackerToSync(id, data)
-    EHI:SyncTable(EHI.SyncMessages.TrackerManager.SyncAddTracker, self._trackers_to_sync[id])
+    self:SyncTable(self._sync_tm_add_tracker, self._trackers_to_sync[id])
 end
 
 ---Shows Loot Counter, needs to be hooked to count correctly
@@ -934,7 +930,7 @@ function EHITrackerManager:SyncShowLootCounter(max, max_random, offset)
         offset = offset or 0
     }
     if not self._delay_popups then
-        EHI:SyncTable(EHI.SyncMessages.TrackerManager.SyncAddTracker, self._trackers_to_sync.LootCounter)
+        self:SyncTable(self._sync_tm_add_tracker, self._trackers_to_sync.LootCounter)
     end
 end
 
@@ -944,7 +940,7 @@ function EHITrackerManager:SyncIncreaseLootCounterMaxRandom(random)
     local sync_data = self._trackers_to_sync and self._trackers_to_sync.LootCounter
     if sync_data then
         sync_data.max_random = sync_data.max_random + (random or 1)
-        EHI:SyncTable(EHI.SyncMessages.TrackerManager.SyncUpdateTracker, { _id = "LootCounter", type = "IncreaseMaxRandom", random = random })
+        self:SyncTable(self._sync_tm_update_tracker, { _id = "LootCounter", type = "IncreaseMaxRandom", random = random })
     end
 end
 
@@ -956,7 +952,7 @@ function EHITrackerManager:SyncRandomLootSpawned(random)
         local n = random or 1
         sync_data.max = sync_data.max + n
         sync_data.max_random = sync_data.max_random - n
-        EHI:SyncTable(EHI.SyncMessages.TrackerManager.SyncUpdateTracker, { _id = "LootCounter", type = "RandomLootSpawned", random = random })
+        self:SyncTable(self._sync_tm_update_tracker, { _id = "LootCounter", type = "RandomLootSpawned", random = random })
     end
 end
 
@@ -966,7 +962,7 @@ function EHITrackerManager:SyncRandomLootDeclined(random)
     local sync_data = self._trackers_to_sync and self._trackers_to_sync.LootCounter
     if sync_data then
         sync_data.max_random = sync_data.max_random - (random or 1)
-        EHI:SyncTable(EHI.SyncMessages.TrackerManager.SyncUpdateTracker, { _id = "LootCounter", type = "RandomLootDeclined", random = random })
+        self:SyncTable(self._sync_tm_update_tracker, { _id = "LootCounter", type = "RandomLootDeclined", random = random })
     end
 end
 

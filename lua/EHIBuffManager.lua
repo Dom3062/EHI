@@ -19,9 +19,14 @@ local function GetIcon(params)
     return texture, texture_rect
 end
 
----@class EHIBuffManager
-EHIBuffManager = {}
-function EHIBuffManager:init()
+---@class EHIBuffManager : EHIBaseManager
+---@field new fun(self: self): self
+EHIBuffManager = class(EHIBaseManager)
+EHIBuffManager._sync_add_buff = "EHISyncAddBuff"
+
+---@param hud HUDManager
+---@param panel Panel
+function EHIBuffManager:init_finalize(hud, panel)
     self._buffs = {} ---@type table<string, EHIBuffTracker?>
     self._update_buffs = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIBuffTracker?>
     self._visible_buffs = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIBuffTracker?>
@@ -29,12 +34,6 @@ function EHIBuffManager:init()
     self._cache = {}
     self._gap = 6
     self._x = EHI:IsVR() and EHI:GetOption("buffs_vr_x_offset") or EHI:GetOption("buffs_x_offset") --[[@as number]]
-end
-
----@param hud HUDManager
----@param panel Panel
-function EHIBuffManager:init_finalize(hud, panel)
-    self:init()
     local path = EHI.LuaPath .. "buffs/"
     dofile(path .. "EHIBuffTracker.lua")
     dofile(path .. "EHIGaugeBuffTracker.lua")
@@ -55,9 +54,9 @@ function EHIBuffManager:init_finalize(hud, panel)
     EHI:AddCallback(EHI.CallbackMessage.GameRestart, destroy)
     if EHI:IsClient() then
         Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHIBuff", function(_, id, data)
-            if id == EHI.SyncMessages.EHISyncAddBuff then
-                local tbl = LuaNetworking:StringToTable(data)
-                self:AddBuff(tbl.id, tonumber(tbl.t) or 0)
+            if id == self._sync_add_buff then
+                local tbl = json.decode(data)
+                self:AddBuff(tbl.id, tbl.t or 0)
             end
         end)
     end
@@ -87,6 +86,7 @@ function EHIBuffManager:InitializeBuffs(buff_y, buff_w, buff_h, scale)
             params.class = buff.class
             params.class_to_load = buff.class_to_load
             params.scale = scale
+            params.enable_in_loud = buff.enable_in_loud
             self:CreateBuff(params, buff.persistent, buff.deck_option)
         end
     end
@@ -178,7 +178,7 @@ end
 ---@param id string
 ---@param t number
 function EHIBuffManager:SyncBuff(id, t)
-    EHI:SyncTable(EHI.SyncMessages.EHISyncAddBuff, { id = id, t = t })
+    self:SyncTable(self._sync_add_buff, { id = id, t = t })
 end
 
 function EHIBuffManager:ActivateUpdatingBuffs()
@@ -190,7 +190,9 @@ function EHIBuffManager:ActivateUpdatingBuffs()
             local b = self._buffs[id]
             if b and b:PreUpdateCheck() then
                 b:PreUpdate()
-                self:AddBuffToUpdate(b)
+                if not b._enable_in_loud then
+                    self:AddBuffToUpdate(b)
+                end
             end
         elseif buff.check_after_spawn then
             local b = self._buffs[id]
@@ -207,6 +209,12 @@ function EHIBuffManager:SetCustodyState(state)
         buff:SetCustodyState(state)
     end
     self:RemoveAbilityCooldown(state)
+end
+
+function EHIBuffManager:SwitchToLoudMode()
+    for _, buff in pairs(self._buffs or {}) do
+        buff:SwitchToLoudMode()
+    end
 end
 
 ---@param id string

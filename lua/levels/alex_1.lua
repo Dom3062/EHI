@@ -81,7 +81,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
 end
 
 if EHI:IsClient() then
-    local EM = EHIManager
+    local EM = managers.ehi_manager
     ---@param self LootManager
     local function SyncBagsCooked(self)
         BagsCooked = math.max(self:GetSecuredBagsAmount(), BagsCooked)

@@ -107,18 +107,6 @@ _G.EHI =
         SyncGagePackagesCount = "SyncGagePackagesCount"
     },
 
-    SyncMessages =
-    {
-        EHISyncAddBuff = "EHISyncAddBuff",
-        EHISyncAddTracker = "EHISyncAddTracker",
-
-        TrackerManager =
-        {
-            SyncAddTracker = "EHI_TM_SyncAddTracker",
-            SyncUpdateTracker = "EHI_TM_SyncUpdateTracker"
-        }
-    },
-
     SpecialFunctions =
     {
         -- Requires `id` or `data (table of strings)`
@@ -741,6 +729,7 @@ local function LoadDefaultValues(self)
         show_drama_tracker = true,
         show_pager_tracker = true,
         show_pager_callback = true,
+        show_pager_callback_answered_behavior = 1, -- 1 = Set green, then delete; 2 = Delete
         show_enemy_count_tracker = true,
         show_enemy_count_show_pagers = true,
         show_civilian_count_tracker = true,
@@ -1101,6 +1090,12 @@ end
 
 function EHI:Log(s)
     log("[EHI] " .. (s or "nil"))
+end
+
+---@param prefix AnyExceptNil
+---@param s AnyExceptNil
+function EHI:Log2(prefix, s)
+    log(string.format("[EHI] [%s] %s", prefix, s))
 end
 
 ---Works the same way as EHI:Log(), but the string is not saved on HDD
@@ -1602,21 +1597,6 @@ end
 ---@param n number
 function EHI:RoundChanceNumber(n)
     return self:RoundNumber(n, 0.01) * 100
-end
-
----@param message string
----@param data any
-function EHI:Sync(message, data)
-    LuaNetworking:SendToPeersExcept(1, message, data or "")
-end
----@param message string
----@param tbl table?
-function EHI:SyncTable(message, tbl)
-    LuaNetworking:SendToPeersExcept(1, message, LuaNetworking:TableToString(tbl or {}))
-end
-if Global.game_settings and Global.game_settings.single_player then
-    EHI.Sync = function(...) end
-    EHI.SyncTable = function(...) end
 end
 
 ---@param triggers table
@@ -2905,7 +2885,7 @@ function EHI:PrintTable(tbl, ...)
         if s ~= "" then
             self:Log(s)
         end
-        _G.PrintTable(tbl)
+        Utils.PrintTable(tbl)
     end
 end
 
@@ -2926,7 +2906,7 @@ function EHI:PrintTable2(tbl, tables_to_ignore, ...)
         if s ~= "" then
             self:Log(s)
         end
-        _G.PrintTable(tbl)
+        Utils.PrintTable(tbl)
     end
 end
 
@@ -2939,5 +2919,5 @@ function EHI:PrintClass(tbl, ...)
             self:Log(_s)
         end
     end
-    _G.PrintTable(tbl)
+    Utils.PrintTable(tbl)
 end

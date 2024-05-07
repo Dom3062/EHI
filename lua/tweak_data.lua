@@ -120,7 +120,8 @@ tweak_data.ehi =
             {
                 prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHIDodgeChanceBuffTracker"
-            }
+            },
+            enable_in_loud = true
         },
         CritChance =
         {
@@ -136,7 +137,8 @@ tweak_data.ehi =
             {
                 prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHICritChanceBuffTracker"
-            }
+            },
+            enable_in_loud = true
         },
         Berserker =
         {
@@ -148,7 +150,7 @@ tweak_data.ehi =
             persistent = "berserker_persistent",
             class_to_load =
             {
-                load_class = "EHIBerserkerBuffTracker",
+                prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHIBerserkerBuffTracker"
             }
         },
@@ -232,7 +234,7 @@ tweak_data.ehi =
             option = "uppers_range",
             class_to_load =
             {
-                load_class = "EHIUppersRangeBuffTracker",
+                prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHIUppersRangeBuffTracker"
             }
         },
@@ -776,7 +778,8 @@ tweak_data.ehi =
             {
                 prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHIDamageAbsorptionBuffTracker"
-            }
+            },
+            enable_in_loud = true
         },
         DamageReduction =
         {
@@ -792,7 +795,8 @@ tweak_data.ehi =
             {
                 prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHIDamageReductionBuffTracker"
-            }
+            },
+            enable_in_loud = true
         }
     },
     functions =

@@ -1,15 +1,14 @@
 local EHI = EHI
 ---@class EHITrackerManager
 EHITrackerManagerVR = EHITrackerManager
-EHITrackerManagerVR.old_new = EHITrackerManager.new
+EHITrackerManagerVR.old_init = EHITrackerManager.init
 EHITrackerManagerVR.old_PreloadTracker = EHITrackerManager.PreloadTracker
 EHITrackerManagerVR.old_AddLaserTracker = EHITrackerManager.AddLaserTracker
 EHITrackerManagerVR.old_RemoveLaserTracker = EHITrackerManager.RemoveLaserTracker
-function EHITrackerManagerVR:new()
-    self:old_new()
+function EHITrackerManagerVR:init()
+    self:old_init()
     self._is_loading = true
     self._load_callback = {}
-    return self
 end
 
 function EHITrackerManagerVR:CreateWorkspace()
