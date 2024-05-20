@@ -27,7 +27,6 @@ function EHITimerManager:AddTimerSubgroup(id, group, subgroup, i_subgroup, upgra
         group = group,
         subgroup = subgroup,
         i_subgroup = i_subgroup,
-        timer_parent = self,
         hint = visibility_data.hint,
         theme = visibility_data.theme,
         class = "EHITimerGroupTracker"
@@ -55,7 +54,6 @@ function EHITimerManager:AddTimer_iSubgroup(id, group, subgroup, i_subgroup, upg
         group = group,
         subgroup = subgroup,
         i_subgroup = i_subgroup,
-        timer_parent = self,
         hint = visibility_data.hint,
         theme = visibility_data.theme,
         class = "EHITimerGroupTracker"
@@ -136,7 +134,6 @@ function EHITimerManager:StartTimer(params)
         local tracker_id = self._get_tracker_id(group, subgroup, i_subgroup)
         self:_add_active_unit(params.id, tracker_id)
         params.id = tracker_id
-        params.timer_parent = self
         params.class = "EHITimerGroupTracker"
         params.subgroup = subgroup
         params.i_subgroup = i_subgroup

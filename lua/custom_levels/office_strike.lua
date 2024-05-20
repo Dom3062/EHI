@@ -3,6 +3,7 @@ local Icons = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseTriggerTable
 local triggers = {
@@ -47,7 +48,7 @@ local triggers = {
         end
     end), waypoint = {} }
 }
-EHIManager.SyncedSFF.office_strike_escape = "Heli"
+managers.ehi_manager.SyncedSFF.office_strike_escape = "Heli"
 
 ---@type ParseAchievementTable
 local achievements =
@@ -57,7 +58,7 @@ local achievements =
         difficulty_pass = OVKorAbove,
         elements =
         {
-            [200134] = { status = "defend", class = TT.Achievement.Status },
+            [200134] = { status = Status.Defend, class = TT.Achievement.Status },
             [100604] = { special_function = SF.SetAchievementComplete },
             [100621] = { special_function = SF.SetAchievementFailed }
         }
@@ -67,7 +68,7 @@ local achievements =
         difficulty_pass = OVKorAbove,
         elements =
         {
-            [200106] = { status = "defend", class = TT.Achievement.Status },
+            [200106] = { status = Status.Defend, class = TT.Achievement.Status },
             [100606] = { special_function = SF.SetAchievementComplete },
             [100630] = { special_function = SF.SetAchievementFailed }
         }

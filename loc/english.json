@@ -273,7 +273,7 @@
     "ehi_show_tracker_hint_desc" : "Shows a description for the tracker if exists",
 
     "ehi_show_tracker_hint_t" : "Tracker Description (Time)",
-    "ehi_show_tracker_hint_t_desc" : "Defines how long the description will stay on the screen before it hides\n\nSetting this option to 0 makes the description permanetly stay on the screen",
+    "ehi_show_tracker_hint_t_desc" : "Defines how long the description will stay on the screen before it hides\n\nSetting this option to 0 makes the description permanently stay on the screen",
 
     "ehi_trackers_menu" : "Trackers",
     "ehi_trackers_menu_desc" : "",

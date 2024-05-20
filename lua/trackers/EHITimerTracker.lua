@@ -186,16 +186,10 @@ end
 EHITimerGroupTracker = class(EHITimerTracker)
 EHITimerGroupTracker._init_create_text = false
 ---@param params EHITracker.params
-function EHITimerGroupTracker:pre_init(params)
-    self._timer_parent = params.timer_parent --[[@as EHITimerManager]]
+function EHITimerGroupTracker:post_init(params)
     self._group = params.group --[[@as string]]
     self._subgroup = params.subgroup or 1 --[[@as number]]
     self._i_subgroup = params.i_subgroup or 1 --[[@as number]]
-    EHITimerGroupTracker.super.pre_init(self, params)
-end
-
----@param params EHITracker.params
-function EHITimerGroupTracker:post_init(params)
     self._timers = {} --[[@as table<string, EHITimerGroupTracker.Timer?>]]
     self._timers_n = 0
     if params.key and params.time then
@@ -304,7 +298,7 @@ function EHITimerGroupTracker:AnimateMovement(n, delete)
     end
     self:AnimatePanelWAndRefresh(self._panel_override_w)
     self:ChangeTrackerWidth(self._panel_override_w)
-    self:AnimIconsX(w)
+    self:AnimIconsX(w + self._gap_scaled)
     self:SetBGSize(w, "set", true)
 end
 

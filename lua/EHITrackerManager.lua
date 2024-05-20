@@ -49,21 +49,12 @@ function EHITrackerManager:init_finalize(manager)
     self._internal = manager._internal
     self.SaveInternalData = manager.SaveInternalData --[[@as fun(self: self, name: string, data_name: string, value: any)]]
     self.GetInternalData = manager.GetInternalData --[[@as fun(self: self, name: string, data_name: string)]]
-    if EHI:IsClient() and EHI:GetOption("show_loot_counter") then
-        Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHITracker", function(sender_id, id, data)
-            if id == self._sync_tm_add_tracker then
-                local params = json.decode(data)
-                self:ShowLootCounter(tonumber(params.max), tonumber(params.max_random), tonumber(params.offset))
-                EHI:HookLootCounter(true)
-            elseif id == self._sync_tm_update_tracker then
-                local params = json.decode(data)
-                if params.type == "IncreaseMaxRandom" then
-                    self:IncreaseLootCounterMaxRandom(tonumber(params.random))
-                elseif params.type == "RandomLootSpawned" then
-                    self:RandomLootSpawned(tonumber(params.random))
-                elseif params.type == "RandomLootDeclined" then
-                    self:RandomLootDeclined(tonumber(params.random))
-                end
+    if CustomNameColor and not Global.game_settings.single_player then
+        self:AddReceiveHook(CustomNameColor.ModID, function(data, sender)
+            if data and data ~= "" then
+                local col = NetworkHelper:StringToColour(data)
+                self:CallFunction("Converts", "UpdatePeerColor", sender, col)
+                self:CallFunction("CustodyTime", "UpdateTextPeerColor", sender, col)
             end
         end)
     end
@@ -86,12 +77,6 @@ end
 ---@param t number
 function EHITrackerManager:LoadTime(t)
     self._t = t
-end
-
-function EHITrackerManager:LoadSync()
-    EHI:DelayCall("EHI_Converts_UpdatePeerColors", 2, function()
-        self:CallFunction("Converts", "UpdatePeerColors")
-    end)
 end
 
 ---@param dt number
@@ -121,13 +106,6 @@ end
 function EHITrackerManager:load(data)
     local load_data = data.EHITrackerManager
     if load_data then
-        if load_data.LootCounter and EHI:GetOption("show_loot_counter") then
-            local params = deep_clone(load_data.LootCounter) --[[@as LootCounterTable]]
-            params.client_from_start = true
-            params.no_sync_load = true
-            EHI:ShowLootCounterNoCheck(params)
-            self:SyncSecuredLoot()
-        end
     end
 end
 
@@ -261,39 +239,6 @@ end
 function EHITrackerManager:RemoveLaserTracker(id)
     self._stealth_trackers.lasers[id] = nil
     self:RemoveTracker(id)
-end
-
----Shows Loot Counter, needs to be hooked to count correctly
----@param max number?
----@param max_random number?
----@param max_xp_bags number?
----@param offset number?
----@param no_max boolean?
----@param max_bags_for_level table?
-function EHITrackerManager:ShowLootCounter(max, max_random, max_xp_bags, offset, no_max, max_bags_for_level)
-    if max_bags_for_level then
-        self:AddTracker({
-            id = "LootCounter",
-            xp_params = max_bags_for_level,
-            class = "EHILootMaxTracker"
-        })
-    else
-        self:AddTracker({
-            id = "LootCounter",
-            max = max or 0,
-            max_random = max_random or 0,
-            max_xp_bags = max_xp_bags or 0,
-            offset = offset or 0,
-            class = no_max and "EHILootCountTracker" or "EHILootTracker"
-        })
-    end
-end
-
----@param tracker_id string? Defaults to `LootCounter` if not provided
-function EHITrackerManager:SyncSecuredLoot(tracker_id)
-    local id = tracker_id or "LootCounter"
-    self:SetTrackerProgress(id, managers.loot:GetSecuredBagsAmount())
-    self:CallFunction(id, "CheckCanDeleteAfterSync")
 end
 
 ---@param params AddTrackerTable|ElementTrigger
@@ -844,62 +789,6 @@ function EHITrackerManager:DecreaseTrackerCount(id, count)
     end
 end
 
-function EHITrackerManager:SecuredMissionLoot()
-    self:CallFunction("LootCounter", "SecuredMissionLoot")
-end
-
----@param max number?
-function EHITrackerManager:IncreaseLootCounterProgressMax(max)
-    self:IncreaseTrackerProgressMax("LootCounter", max)
-end
-
----@param max number?
-function EHITrackerManager:DecreaseLootCounterProgressMax(max)
-    self:DecreaseTrackerProgressMax("LootCounter", max)
-end
-
----@param max_random number?
-function EHITrackerManager:SetLootCounterMaxRandom(max_random)
-    self:CallFunction("LootCounter", "SetMaxRandom", max_random)
-end
-
----@param progress number?
-function EHITrackerManager:IncreaseLootCounterMaxRandom(progress)
-    self:CallFunction("LootCounter", "IncreaseMaxRandom", progress)
-end
-
----@param progress number?
-function EHITrackerManager:DecreaseLootCounterMaxRandom(progress)
-    self:CallFunction("LootCounter", "DecreaseMaxRandom", progress)
-end
-
----@param random number?
-function EHITrackerManager:RandomLootSpawned(random)
-    self:CallFunction("LootCounter", "RandomLootSpawned", random)
-end
-
----@param random number?
-function EHITrackerManager:RandomLootDeclined(random)
-    self:CallFunction("LootCounter", "RandomLootDeclined", random)
-end
-
----@param id string|number Element ID
----@param force boolean? Force loot spawn event if the element does not have "fail" state (desync workaround)
-function EHITrackerManager:RandomLootSpawnedCheck(id, force)
-    self:CallFunction("LootCounter", "RandomLootSpawnedCheck", id, force)
-end
-
----@param id number
----@param t number? Defaults to `2` if not provided
-function EHITrackerManager:AddDelayedLootDeclinedCheck(id, t)
-    self:CallFunction("LootCounter", "AddDelayedLootDeclinedCheck", id, t)
-end
-
----@param id string|number Element ID
-function EHITrackerManager:RandomLootDeclinedCheck(id)
-    self:CallFunction("LootCounter", "RandomLootDeclinedCheck", id)
-end
-
 ---@param id string
 ---@param data table
 function EHITrackerManager:SetTrackerToSync(id, data)
@@ -913,57 +802,6 @@ end
 function EHITrackerManager:SetTrackerToSync2(id, data)
     self:SetTrackerToSync(id, data)
     self:SyncTable(self._sync_tm_add_tracker, self._trackers_to_sync[id])
-end
-
----Shows Loot Counter, needs to be hooked to count correctly
----@param max number?
----@param max_random number?
----@param offset number?
-function EHITrackerManager:SyncShowLootCounter(max, max_random, offset)
-    self:ShowLootCounter(max, max_random, offset)
-    self._trackers_to_sync = self._trackers_to_sync or {}
-    self._trackers_to_sync.LootCounter =
-    {
-        _id = "LootCounter",
-        max = max or 0,
-        max_random = max_random or 0,
-        offset = offset or 0
-    }
-    if not self._delay_popups then
-        self:SyncTable(self._sync_tm_add_tracker, self._trackers_to_sync.LootCounter)
-    end
-end
-
----@param random number?
-function EHITrackerManager:SyncIncreaseLootCounterMaxRandom(random)
-    self:IncreaseLootCounterMaxRandom(random)
-    local sync_data = self._trackers_to_sync and self._trackers_to_sync.LootCounter
-    if sync_data then
-        sync_data.max_random = sync_data.max_random + (random or 1)
-        self:SyncTable(self._sync_tm_update_tracker, { _id = "LootCounter", type = "IncreaseMaxRandom", random = random })
-    end
-end
-
----@param random number?
-function EHITrackerManager:SyncRandomLootSpawned(random)
-    self:RandomLootSpawned(random)
-    local sync_data = self._trackers_to_sync and self._trackers_to_sync.LootCounter
-    if sync_data then
-        local n = random or 1
-        sync_data.max = sync_data.max + n
-        sync_data.max_random = sync_data.max_random - n
-        self:SyncTable(self._sync_tm_update_tracker, { _id = "LootCounter", type = "RandomLootSpawned", random = random })
-    end
-end
-
----@param random number?
-function EHITrackerManager:SyncRandomLootDeclined(random)
-    self:RandomLootDeclined(random)
-    local sync_data = self._trackers_to_sync and self._trackers_to_sync.LootCounter
-    if sync_data then
-        sync_data.max_random = sync_data.max_random - (random or 1)
-        self:SyncTable(self._sync_tm_update_tracker, { _id = "LootCounter", type = "RandomLootDeclined", random = random })
-    end
 end
 
 ---@param id string

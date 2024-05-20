@@ -98,11 +98,14 @@ if EHI:IsLootCounterVisible() then
         EHI:ShowLootCounterNoChecks({
             max = money + Methbags,
              -- 19 + 2 // 19 boxes of contrabant, that can spawn chemicals (up to 4); 2 cars with possible loot
-            max_random = 19 + 2
+            max_random = 19 + 2,
+            unknown_random = true
         })
     end)}
     -- Basement
-    local IncreaseMaximumTrigger = { special_function = SF.CallTrackerManagerFunction, f = "IncreaseLootCounterProgressMax" }
+    local IncreaseMaximumTrigger = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._loot:IncreaseLootCounterProgressMax()
+    end) }
     -- Coke
     for i = 102832, 102841, 1 do
         other[i] = IncreaseMaximumTrigger
@@ -111,6 +114,9 @@ if EHI:IsLootCounterVisible() then
     for i = 104498, 104506, 1 do
         other[i] = IncreaseMaximumTrigger
     end
+    other[101204] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._loot:SetUnknownRandomLoot()
+    end) }
     -- Meth
     local IncreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = function()
         if MethlabExploded then
@@ -118,14 +124,14 @@ if EHI:IsLootCounterVisible() then
         end
         Methbags = Methbags + 1
         MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
-        managers.ehi_tracker:RandomLootSpawned()
+        managers.ehi_loot:RandomLootSpawned()
     end }
     local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = function()
         if MethlabExploded then
             return
         end
         MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
-        managers.ehi_tracker:RandomLootDeclined()
+        managers.ehi_loot:RandomLootDeclined()
     end }
     for i = 9000, 16200, 400 do
         other[EHI:GetInstanceElementID(100007, i)] = DecreaseMaximumTrigger -- Empty
@@ -140,8 +146,8 @@ if EHI:IsLootCounterVisible() then
         if Methbags == 0 then -- Dropin; impossible to tell how many bags were cooked
             return
         end
-        managers.ehi_tracker:DecreaseLootCounterProgressMax(Methbags - MethbagsCooked)
-        managers.ehi_tracker:DecreaseLootCounterMaxRandom(MethbagsPossibleToSpawn)
+        managers.ehi_loot:DecreaseLootCounterProgressMax(Methbags - MethbagsCooked)
+        managers.ehi_loot:DecreaseLootCounterMaxRandom(MethbagsPossibleToSpawn)
         MethlabExploded = true
     end
     local function CookingDone()
@@ -156,17 +162,19 @@ if EHI:IsLootCounterVisible() then
     local CarLootNumber = 2
     other[100724] = { special_function = SF.CustomCode, f = function()
         CarLootBlocked = true
-        managers.ehi_tracker:DecreaseLootCounterMaxRandom(CarLootNumber)
+        managers.ehi_loot:DecreaseLootCounterMaxRandom(CarLootNumber)
     end }
     local DecreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = function()
         if CarLootBlocked then
             return
         end
         CarLootNumber = CarLootNumber - 1
-        managers.ehi_tracker:RandomLootDeclined()
+        managers.ehi_loot:RandomLootDeclined()
     end }
     -- All cars; does not get triggered when maximum has been reached
-    other[100721] = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootSpawned" }
+    other[100721] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._loot:RandomLootSpawned()
+    end) }
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/001
     other[100523] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
     other[100550] = DecreaseMaximumTrigger2 -- Car set on fire -- 103846
@@ -184,7 +192,7 @@ end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100159] = { chance = 100, time = 30 + 20, recheck_t = 20 + 20, id = "Snipers", class = TT.Sniper.TimedChance }
     other[104026] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[105008] = { id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+    other[105008] = { id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
         local id = trigger.id
         local chance = element._values.chance
         if self._trackers:TrackerExists(id) then

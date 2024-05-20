@@ -89,7 +89,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100124] = { status = "defend", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+            [100124] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
                 local bags = self:CountLootbagsOnTheGround(10)
                 if bags == 12 then
                     self:CreateTracker(trigger)

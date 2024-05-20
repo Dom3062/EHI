@@ -98,9 +98,9 @@ EHI:ShowLootCounter({
     load_sync = function(self)
         -- Red Diamond spawns on OVK or above only
         if OVKorAbove and managers.game_play_central:GetMissionDisabledUnit(100950) then -- Red Diamond
-            self._trackers:IncreaseLootCounterProgressMax()
+            self._loot:IncreaseLootCounterProgressMax()
         end
-        self._trackers:SyncSecuredLoot()
+        self._loot:SyncSecuredLoot()
     end
 })
 local loot, loot_all

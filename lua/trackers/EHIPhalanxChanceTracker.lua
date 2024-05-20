@@ -12,6 +12,7 @@ function EHIPhalanxChanceTracker:pre_init(params)
         self._captain_start_chance = params.chance or 0
         params.chance = 0
     end
+    params.start_opened = not self._first_assault
     EHIPhalanxChanceTracker.super.pre_init(self, params)
 end
 ---@param params EHITracker.params
@@ -58,10 +59,11 @@ end
 
 function EHIPhalanxChanceTracker:AssaultStart()
     if self._first_assault then
-        self:SetTimeNoAnim(self._t_refresh)
+        self:StartTimer(self._t_refresh)
         self:SetChance(self._captain_start_chance or 0)
         self._captain_start_chance = nil
         self._increase_chance_at_next_assault = nil
+        self._first_assault = nil
     elseif self._increase_chance_at_next_assault then
         self:SetTimeNoAnim(self._t_refresh)
         if not self._first_assault then
@@ -73,7 +75,6 @@ function EHIPhalanxChanceTracker:AssaultStart()
     self._color_lock = false
     self:SetTextColor(Color.white, self._chance_text)
     self:ComputeAssaultTime()
-    self._first_assault = nil
 end
 
 function EHIPhalanxChanceTracker:AssaultEnd()

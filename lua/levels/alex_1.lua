@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local anim_delay = 2 + 727/30 + 2 -- 2s is function delay; 727/30 is a animation duration; 2s is zone activation delay; total 28,23333
 local assault_delay = 4 + 3 + 3 + 3 + 5 + 1
 local assault_delay_methlab = 20 + assault_delay
@@ -41,8 +42,8 @@ local achievements =
     {
         elements =
         {
-            [101088] = { status = "ready", class = TT.Achievement.Status },
-            [101907] = { status = "defend", special_function = SF.SetAchievementStatus },
+            [101088] = { status = Status.Ready, class = TT.Achievement.Status },
+            [101907] = { status = Status.Defend, special_function = SF.SetAchievementStatus },
             [101917] = { special_function = SF.SetAchievementComplete },
             [101914] = { special_function = SF.SetAchievementFailed },
             [101001] = { special_function = SF.SetAchievementFailed } -- Methlab exploded

@@ -97,7 +97,7 @@ EHITotalXPTracker._update = false
 ---@param o PanelText
 ---@param self EHITotalXPTracker
 EHITotalXPTracker._anim = function(o, self)
-    local xp = math.min(self._xp, self._player_xp_limit)
+    local xp = self._player_xp_limit > 0 and math.min(self._xp, self._player_xp_limit) or self._xp
     local previous_xp = self._total_xp_anim
     local t = 0
     while t < 1 do
@@ -119,7 +119,9 @@ function EHITotalXPTracker:init(panel, params, ...)
     self._player_xp_limit = params.xp_limit or 0
     self._xp_overflow_enabled = params.xp_overflow_enabled
     EHITotalXPTracker.super.init(self, panel, params, ...)
-    if self._player_xp_limit <= 0 then
+    if self._xp_overflow_enabled then
+        self._player_xp_limit = 0
+    elseif self._player_xp_limit <= 0 then
         self._update = true -- Request deletion next frame
     end
 end

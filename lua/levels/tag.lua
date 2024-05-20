@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local triggers = {
     [101335] = { time = 7, id = "C4BasementWall", icons = { Icon.C4 }, hint = Hints.Explosion },
     [101968] = { time = 10, id = "LureDelay", icons = { Icon.Wait }, hint = Hints.Wait }
@@ -26,12 +27,12 @@ local achievements =
     {
         elements =
         {
-            [100107] = { status = "mark", class = TT.Achievement.Status },
+            [100107] = { status = Status.Mark, class = TT.Achievement.Status },
         },
         preparse_callback = function(data)
             for i = 4550, 5450, 900 do
                 data.elements[EHI:GetInstanceElementID(100319, i)] = { special_function = SF.SetAchievementFailed }
-                data.elements[EHI:GetInstanceElementID(100321, i)] = { status = "ok", special_function = SF.SetAchievementStatus }
+                data.elements[EHI:GetInstanceElementID(100321, i)] = { status = Status.Ok, special_function = SF.SetAchievementStatus }
                 data.elements[EHI:GetInstanceElementID(100282, i)] = { special_function = SF.SetAchievementComplete }
             end
         end,

@@ -22,8 +22,7 @@ function EHIPhalanxManager:OnSOPhalanxCreated(element)
     if self._disabled_in_levels[level_id] then
         return
     elseif self._requires_manual_on_exec[level_id] then
-        local func = EHI:IsClient() and EHI.ClientElement or EHI.HostElement
-        EHI:HookElement(element, func, element._id, function(e, ...)
+        self._manager:HookElement(element, function(e, ...)
             if EHI:IsHost() and not e._values.enabled then
                 return
             end
@@ -77,7 +76,6 @@ function EHIPhalanxManager:AddTracker()
         time = self._phalanx_spawn_time_check,
         chance = self._phalanx_spawn_chance.start * 100,
         chance_increase = self._phalanx_spawn_chance.increase * 100,
-        start_opened = true,
         first_assault = self._first_assault,
         class = "EHIPhalanxChanceTracker"
     })

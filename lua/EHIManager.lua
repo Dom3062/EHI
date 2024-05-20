@@ -14,6 +14,7 @@ local EHI = EHI
 ---@field new fun(self: self, managers: managers): self
 ---@field FormatTimer fun(self: self, t: number): string
 EHIManager = class(EHIBaseManager)
+EHIManager._element_hook_function = EHI:IsClient() and EHI.ClientElement or EHI.HostElement
 EHIManager.Trackers = EHI.Trackers
 EHIManager.Waypoints = EHI.Waypoints
 EHIManager.FilterTracker =
@@ -42,6 +43,7 @@ function EHIManager:init(managers)
     self._assault = managers.ehi_assault
     self._phalanx = managers.ehi_phalanx
     self._timer = managers.ehi_timer
+    self._loot = managers.ehi_loot
     self._level_started_from_beginning = true
     self._t = 0
     self.TrackerWaypointsClass =
@@ -94,18 +96,19 @@ function EHIManager:init_finalize()
     self._trackers:init_finalize(self)
     self._assault:init_finalize(self)
     self._phalanx:init_finalize(self)
+    self._loot:init_finalize()
     EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
     EHI:AddOnCustodyCallback(callback(self, self, "SetCustodyState"))
     EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "Spawned"))
     managers.network:add_event_listener("EHIManagerDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
     if EHI:IsClient() then
-        Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHI", function(_, id, data)
-            if id == self._sync_tracker then
-                local tbl = json.decode(data)
-                self:AddTrackerSynced(tonumber(tbl.id) --[[@as number]], tonumber(tbl.delay) --[[@as number]])
-            end
-        end)
+        self:AddReceiveHook(self._sync_tracker, callback(self, self, "SyncAddTracker"))
     end
+end
+
+function EHIManager:SyncAddTracker(data, sender)
+    local tbl = json.decode(data)
+    self:AddTrackerSynced(tbl.id, tbl.delay)
 end
 
 ---@param name string
@@ -187,6 +190,7 @@ function EHIManager:Spawned()
     self._trackers:Spawned()
     self._deployable:DisableGrenades()
     self._buff:ActivateUpdatingBuffs()
+    self._loot:Spawned()
 end
 
 ---@param tweak_data string
@@ -298,7 +302,6 @@ end
 
 ---@param path string
 ---@param slotmask integer
----@return table, integer
 function EHIManager:GetUnits(path, slotmask)
     local tbl = {}
     local tbl_i = 1
@@ -387,7 +390,6 @@ function EHIManager:LoadSync()
         for _, f in ipairs(self._load_sync or {}) do
             f(self)
         end
-        self._trackers:LoadSync()
     end
     -- Clear used memory
     self._full_sync = nil
@@ -1095,24 +1097,27 @@ function EHIManager:InitElements()
     end
 end
 
+---@param element MissionScriptElement
+---@param post_call fun(element: MissionScriptElement, instigator: Unit?)
+function EHIManager:HookElement(element, post_call)
+    Hooks:PostHook(element, self._element_hook_function, "EHI_Element_" .. element._id, post_call)
+end
+
 ---@param elements_to_hook table<number, _>
 function EHIManager:HookElements(elements_to_hook)
-    local function Client(element, ...)
+    local client = EHI:IsClient()
+    local f = client and function(element, ...)
         self:Trigger(element._id, element, true)
-    end
-    local function Host(element, ...)
+    end or function(element, ...)
         self:Trigger(element._id, element, element._values.enabled)
     end
-    local client = EHI:IsClient()
-    local func = client and EHI.ClientElement or EHI.HostElement
-    local f = client and Client or Host
     local scripts = managers.mission._scripts or {}
     for id, _ in pairs(elements_to_hook) do
         if math.within(id, 100000, 999999) then
             for _, script in pairs(scripts) do
                 local element = script:element(id)
                 if element then
-                    EHI:HookElement(element, func, id, f)
+                    self:HookElement(element, f)
                 elseif client then
                     --[[
                         On client, the element was not found
@@ -1274,8 +1279,8 @@ end
 ---@param id number
 ---@param element MissionScriptElement
 ---@param enabled boolean
----@overload fun(self, id: number)
----@overload fun(self, id: number, element: MissionScriptElement)
+---@overload fun(self: EHIManager, id: number)
+---@overload fun(self: EHIManager, id: number, element: MissionScriptElement)
 function EHIManager:Trigger(id, element, enabled)
     local trigger = triggers[id]
     if trigger then

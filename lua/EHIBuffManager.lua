@@ -53,12 +53,7 @@ function EHIBuffManager:init_finalize(hud, panel)
     EHI:AddCallback(EHI.CallbackMessage.GameEnd, destroy)
     EHI:AddCallback(EHI.CallbackMessage.GameRestart, destroy)
     if EHI:IsClient() then
-        Hooks:Add("NetworkReceivedData", "NetworkReceivedData_EHIBuff", function(_, id, data)
-            if id == self._sync_add_buff then
-                local tbl = json.decode(data)
-                self:AddBuff(tbl.id, tbl.t or 0)
-            end
-        end)
+        self:AddReceiveHook(self._sync_add_buff, callback(self, self, "SyncAddBuff"))
     end
 end
 
@@ -215,6 +210,11 @@ function EHIBuffManager:SwitchToLoudMode()
     for _, buff in pairs(self._buffs or {}) do
         buff:SwitchToLoudMode()
     end
+end
+
+function EHIBuffManager:SyncAddBuff(data, sender)
+    local tbl = json.decode(data)
+    self:AddBuff(tbl.id, tbl.t or 0)
 end
 
 ---@param id string

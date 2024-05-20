@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseTriggerTable
 local triggers = {
@@ -30,9 +31,9 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101732] = { status = "find", class = TT.Achievement.Status },
+            [101732] = { status = Status.Find, class = TT.Achievement.Status },
             [105758] = { special_function = SF.SetAchievementFailed },
-            [105756] = { status = "ok", special_function = SF.SetAchievementStatus },
+            [105756] = { status = Status.Ok, special_function = SF.SetAchievementStatus },
             [105759] = { special_function = SF.SetAchievementComplete }
         },
         sync_params = { from_start = true }
@@ -52,7 +53,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100765] = { status = "destroy", class = TT.Achievement.Status },
+            [100765] = { status = Status.Destroy, class = TT.Achievement.Status },
             [103397] = { special_function = SF.SetAchievementComplete },
             [102323] = { special_function = SF.SetAchievementFailed }
         }

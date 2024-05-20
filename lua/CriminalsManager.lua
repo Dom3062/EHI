@@ -46,29 +46,7 @@ if EHI:IsRunningBB() then
         end
     end)
 elseif EHI:IsRunningUsefulBots() then
-    local function Query(...)
-        managers.ehi_experience:QueryAmountOfAllPlayers()
-        EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
-    end
-    EHI:Hook(CriminalsManager, "add_character", Query)
-    EHI:Hook(CriminalsManager, "set_unit", Query)
-    EHI:Hook(CriminalsManager, "on_peer_left", Query)
-    EHI:Hook(CriminalsManager, "_remove", Query)
+    EHIExperienceManager:SetCriminalsListener(true)
 elseif not Global.game_settings.single_player then
-    local Query
-    if EHI:IsRunningUsefulBots() then
-        Query = function(...)
-            managers.ehi_experience:QueryAmountOfAllPlayers()
-            EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
-        end
-        EHI:Hook(CriminalsManager, "_remove", Query)
-    else
-        Query = function(...)
-            managers.ehi_experience:QueryAmountOfAlivePlayers()
-            EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
-        end
-    end
-    EHI:Hook(CriminalsManager, "add_character", Query)
-    EHI:Hook(CriminalsManager, "set_unit", Query)
-    EHI:Hook(CriminalsManager, "on_peer_left", Query)
+    EHIExperienceManager:SetCriminalsListener()
 end

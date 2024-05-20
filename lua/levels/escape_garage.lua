@@ -29,7 +29,7 @@ if EHI:IsLootCounterVisible() then
             EHI:ShowLootCounterNoCheck({})
             self._cache.CreateCounter = true
         end
-        self._trackers:IncreaseLootCounterProgressMax()
+        self._loot:IncreaseLootCounterProgressMax()
     end)
 end
 

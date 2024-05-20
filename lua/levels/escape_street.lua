@@ -20,7 +20,7 @@ local achievements =
     {
         elements =
         {
-            [101959] = { status = "finish", class = TT.Achievement.Status },
+            [101959] = { status = EHI.Const.Trackers.Achievement.Status.Finish, class = TT.Achievement.Status },
             [101872] = { special_function = SF.SetAchievementFailed },
             [101874] = { special_function = SF.SetAchievementComplete }
         }
@@ -37,7 +37,7 @@ if EHI:IsLootCounterVisible() then
             EHI:ShowLootCounterNoCheck({})
             self._cache.CreateCounter = true
         end
-        self._trackers:IncreaseLootCounterProgressMax()
+        self._loot:IncreaseLootCounterProgressMax()
     end)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

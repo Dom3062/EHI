@@ -42,7 +42,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100698] = { status = "no_down", class = TT.Achievement.Status, trigger_times = 1 },
+            [100698] = { status = EHI.Const.Trackers.Achievement.Status.NoDown, class = TT.Achievement.Status, trigger_times = 1 },
             [103963] = { special_function = SF.SetAchievementFailed },
             [103964] = { special_function = SF.SetAchievementComplete }
         }
@@ -78,7 +78,7 @@ local achievements =
 
 local other =
 {
-    [100116] = EHI:AddAssaultDelay({ random_time = 10, control_additional_time = 20 + 1 })
+    [100116] = EHI:AddAssaultDelay({ control_additional_time = 20 + 1, random_time = 10 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102161] = { chance = 20, time = 30 + 20, recheck_t = 20, id = "Snipers", class = TT.Sniper.TimedChance, trigger_times = 1 }

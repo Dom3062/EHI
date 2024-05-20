@@ -59,6 +59,7 @@
         <post hook_id="lib/mutators/mutatorpiggyrevenge" :script_path="MutatorPiggyRevenge.lua" />
 
         <post hook_id="lib/network/base/basenetworksession" :script_path="BaseNetworkSession.lua" />
+        <post hook_id="lib/network/base/networkpeer" :script_path="NetworkPeer.lua" />
 
         <group hook_id="lib/setups/">
             <post :hook_id="setup" :script_path="EHIExperienceManager.lua" />

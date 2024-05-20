@@ -109,7 +109,8 @@
 ---@class LootCounterTable
 ---@field max integer Maximum number of loot
 ---@field max_random integer Defines a variable number of loot
----@field load_sync fun(self: EHIManager)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true and you have to sync the progress manually via `EHITrackerManager:SyncSecuredLoot()`
+---@field unknown_random boolean Defines if heist will spawn additional random loot during gameplay
+---@field load_sync fun(self: EHIManager)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true and you have to sync the progress manually via `EHILootManager:SyncSecuredLoot()`
 ---@field no_sync_load boolean Prevents Loot Counter from sync after joining
 ---@field offset boolean If offset is required, used in multi-day heists if loot is brought to next days
 ---@field client_from_start boolean If client is playing from mission briefing; does not do anything on host
@@ -318,8 +319,8 @@
 ---@field stop_at_inclusive_and_add_objectives XPBreakdown.tactic.i_custom.objectives_override.stop_at_inclusive_and_add_objectives
 
 ---@class XPBreakdown.tactic.i_custom
----@field name string `stealth` or `loud`
----@field additional_name string? Place another string in brackets; `ehi_experience_<name>`
+---@field name "stealth"|"loud"
+---@field additional_name string? Places another string in brackets; `ehi_experience_<name>`
 ---@field tactic _XPBreakdown
 ---@field objectives_override XPBreakdown.tactic.i_custom.objectives_override
 

@@ -33,7 +33,7 @@ local triggers = {
     [102945] = { id = "AnswerPhone", special_function = SF.RemoveTracker }
 }
 if EHI:IsClient() then
-    triggers[101934] = EHI:ClientCopyTrigger(trigger[101929], { time = delay })
+    triggers[101934] = EHI:ClientCopyTrigger(triggers[101929], { time = delay })
 end
 
 local other =
@@ -42,18 +42,10 @@ local other =
 }
 if EHI:IsLootCounterVisible() then
     other[106579] = EHI:AddLootCounter2(function()
-        local max = 0
-        local wd = managers.worlddefinition
-        for i = 103625, 103684, 1 do
-            local unit = wd:get_unit(i) --[[@as UnitBase]]
-            if unit and unit:damage() and unit:damage()._variables and unit:damage()._variables.var_random == 0 then -- Money will spawn here
-                max = max + 1
-            end
-        end
-        EHI:ShowLootCounterNoChecks({ max = max })
+        EHI:ShowLootCounterNoChecks({ max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot(103625, 103684) })
     end, function(self)
         self:Trigger(106579)
-        self._trackers:SyncSecuredLoot()
+        self._loot:SyncSecuredLoot()
     end)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

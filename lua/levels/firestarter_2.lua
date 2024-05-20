@@ -33,7 +33,7 @@ if EHI:IsLootCounterVisible() then
     local OtherLoot = { 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }
     local FilterIsOk = EHI:RegisterCustomSF(function(self, trigger, element, ...)
         if element:_check_difficulty() then
-            self._trackers:SecuredMissionLoot() -- Server secured
+            self._loot:SecuredMissionLoot() -- Server secured
         end
     end)
     other[107124] = EHI:AddLootCounter2(function()

@@ -31,6 +31,18 @@ function EHITradeDelayTracker:SetTextPeerColor()
     end
 end
 
+---@param peer_id number
+---@param color Color
+function EHITradeDelayTracker:UpdateTextPeerColor(peer_id, color)
+    if self._n_of_peers == 1 or not color then
+        return
+    end
+    local peer_data = self._peers[peer_id]
+    if peer_data then
+        peer_data.label:set_color(color)
+    end
+end
+
 function EHITradeDelayTracker:SetIconColor()
     if self._n_of_peers >= 2 then
         self._icon1:set_color(Color.white)

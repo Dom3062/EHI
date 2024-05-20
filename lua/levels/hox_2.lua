@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local SecurityTearGasRandomElement = EHI:GetInstanceElementID(100061, 6690)
 local element_sync_triggers =
 {
@@ -84,7 +85,7 @@ local achievements =
         elements =
         {
             [100107] = { class = TT.Achievement.Status },
-            [101892] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [101892] = { status = Status.Finish, special_function = SF.SetAchievementStatus },
             [100256] = { special_function = SF.SetAchievementFailed },
             [100258] = { special_function = SF.SetAchievementComplete }
         },
@@ -99,10 +100,10 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100107] = { status = "objective", class = TT.Achievement.Status },
-            [104485] = { status = "defend", special_function = SF.SetAchievementStatus },
-            [104520] = { status = "objective", special_function = SF.SetAchievementStatus },
-            [101884] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [100107] = { status = Status.Objective, class = TT.Achievement.Status },
+            [104485] = { status = Status.Defend, special_function = SF.SetAchievementStatus },
+            [104520] = { status = Status.Objective, special_function = SF.SetAchievementStatus },
+            [101884] = { status = Status.Finish, special_function = SF.SetAchievementStatus },
             [100320] = { special_function = SF.SetAchievementComplete },
             [100322] = { special_function = SF.SetAchievementFailed }
         },

@@ -22,7 +22,7 @@ EHI:ShowAchievementLootCounter({
     achievement = "fex_10",
     max = 21,
     load_sync = function(self)
-        self._trackers:SyncSecuredLoot("fex_10")
+        self._loot:SyncSecuredLoot("fex_10")
     end,
     show_loot_counter = true,
     loot_counter_on_fail = true,

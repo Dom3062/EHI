@@ -83,11 +83,11 @@ function EHIWaypoint:SetColor(color)
 end
 
 function EHIWaypoint:AddWaypointToUpdate()
-    self._parent_class:AddWaypointToUpdate(self)
+    self._parent_class:_add_waypoint_to_update(self)
 end
 
 function EHIWaypoint:RemoveWaypointFromUpdate()
-    self._parent_class:RemoveWaypointFromUpdate(self._id)
+    self._parent_class:_remove_waypoint_from_update(self._id)
 end
 
 function EHIWaypoint:SwitchToLoudMode()

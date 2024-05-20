@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local refill_icon = { Icon.Water, Icon.Loop }
 if EHI:GetOption("show_one_icon") then
     refill_icon = { { icon = Icon.Water, color = tweak_data.ehi.colors.WaterColor } }
@@ -86,9 +87,9 @@ local achievements =
     {
         elements =
         {
-            [102807] = { status = "defend", class = TT.Achievement.Status },
+            [102807] = { status = Status.Defend, class = TT.Achievement.Status },
             [102809] = { special_function = SF.SetAchievementFailed },
-            [103163] = { status = "finish", special_function = SF.SetAchievementStatus }
+            [103163] = { status = Status.Finish, special_function = SF.SetAchievementStatus }
         }
     },
     kenaz_4 =
@@ -110,7 +111,7 @@ local achievements =
             [EHI:GetInstanceElementID(100008, 12580)] = { class = TT.Achievement.Status },
             [EHI:GetInstanceElementID(100008, 12660)] = { class = TT.Achievement.Status },
             [EHI:GetInstanceElementID(100008, 18700)] = { class = TT.Achievement.Status },
-            [102806] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [102806] = { status = Status.Finish, special_function = SF.SetAchievementStatus },
             [102808] = { special_function = SF.SetAchievementFailed }
         }
     }

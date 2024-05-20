@@ -3,8 +3,6 @@ if EHI:CheckLoadHook("HUDManagerPD2") then
     return
 end
 
-local level_id = Global.game_settings.level_id
-
 local original =
 {
     _setup_player_info_hud_pd2 = HUDManager._setup_player_info_hud_pd2,
@@ -23,6 +21,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     managers.ehi_assault:init_hud(self)
     self.ehi_manager = managers.ehi_manager
     local EHIWaypoints = EHI:GetOption("show_waypoints")
+    local level_id = Global.game_settings.level_id
     if server or EHI:IsHeistTimerInverted() then
         if EHIWaypoints then
             self:AddEHIUpdator(self.ehi_manager, "EHIManager_Update")
@@ -51,8 +50,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     end
     if EHI:GetOption("show_floating_health_bar") then
         dofile(EHI.LuaPath .. "EHIHealthFloatManager.lua")
-        local float = EHIHealthFloatManager:new()
-        self:AddEHIUpdator(float, "EHI_HealthFloat_Update")
+        EHIHealthFloatManager:new(self)
     end
     if tweak_data.levels:IsLevelSafehouse(level_id) then
         return
@@ -133,15 +131,14 @@ function HUDManager:AddEHIUpdator(class, id)
     if not class.update then
         EHI:Log("Class with ID '" .. id .. "' is missing 'update' function!")
         return
-    end
-    self._ehi_updators = self._ehi_updators or {}
-    self._ehi_updators[id] = class
-    self:add_updator(id, callback(class, class, "update"))
-    if table.size(self._ehi_updators) == 1 then
+    elseif not self._ehi_updators then
         EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function()
             self:RemoveEHIUpdators()
         end)
     end
+    self._ehi_updators = self._ehi_updators or {}
+    self._ehi_updators[id] = class
+    self:add_updator(id, callback(class, class, "update"))
 end
 
 function HUDManager:RemoveEHIUpdators()

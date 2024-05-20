@@ -12,6 +12,7 @@ function EHILootTracker:pre_init(params)
     self._max_random = params.max_random or 0
     self._stay_on_screen = self._max_random > 0
     self._max_xp_bags = params.max_xp_bags or 0
+    self._unknown_random = params.unknown_random
 end
 
 ---@param params EHITracker.params
@@ -26,6 +27,59 @@ function EHILootTracker:post_init(params)
     end
 end
 
+function EHILootTracker:OverridePanel()
+    if self._max_random > 0 and self._unknown_random then
+        self:IncreaseTrackerSize()
+    end
+end
+
+---@param animate boolean?
+function EHILootTracker:IncreaseTrackerSize(animate)
+    if self.__tracker_size_increased then
+        return
+    end
+    self.__tracker_size_increased = true
+    if animate then
+        self:SetBGSize(self._bg_box:w() / 2, "add", true)
+        local new_w = self._bg_box:w()
+        local new_panel_w = self:GetTrackerSize()
+        self._text:set_w(new_w)
+        self:AnimIconX(new_w + self._gap_scaled)
+        self:AnimatePanelWAndRefresh(new_panel_w)
+        self:ChangeTrackerWidth(new_panel_w)
+        self:AnimateRepositionHintX()
+    else
+        self:SetBGSize(self._bg_box:w() / 2, "add")
+        self._text:set_w(self._bg_box:w())
+        self:SetIconX()
+        self:SetAndFitTheText()
+    end
+end
+
+---@param animate boolean?
+function EHILootTracker:DecreaseTrackerSize(animate)
+    if not self.__tracker_size_increased then
+        return
+    end
+    self.__tracker_size_increased = nil
+    if animate then
+        self:SetBGSize(self._default_bg_size, "set", true)
+        local new_w = self._bg_box:w()
+        local new_panel_w = self:GetTrackerSize()
+        self._text:set_w(new_w)
+        self:AnimIconX(new_w + self._gap_scaled)
+        self:AnimatePanelWAndRefresh(new_panel_w)
+        self:ChangeTrackerWidth(new_panel_w)
+        self:AnimateRepositionHintX()
+    else
+        self:SetBGSize(self._default_bg_size, "set", animate)
+        self._text:set_w(self._bg_box:w())
+        self:SetIconX()
+        self:SetAndFitTheText()
+        self:SetHintX(self:GetTrackerSize())
+    end
+end
+
 if EHI:GetOption("variable_random_loot_format") == 1 then
     function EHILootTracker:Format()
         if self._max_xp_bags > 0 then
@@ -33,7 +87,13 @@ if EHI:GetOption("variable_random_loot_format") == 1 then
             return self._progress .. "/" .. max
         elseif self._max_random > 0 then
             local max = self._max + self._max_random
-            return self._progress .. "/" .. self._max .. "-" .. max .. "?"
+            if self._unknown_random then
+                return self._progress .. "/" .. self._max .. "-" .. max .. "?+?"
+            else
+                return self._progress .. "/" .. self._max .. "-" .. max .. "?"
+            end
+        elseif self._unknown_random then
+            return self._progress .. "/" .. self._max .. "+?"
         end
         return EHILootTracker.super.Format(self)
     end
@@ -44,7 +104,13 @@ elseif EHI:GetOption("variable_random_loot_format") == 2 then
             return self._progress .. "/" .. max
         elseif self._max_random > 0 then
             local max = self._max + self._max_random
-            return self._progress .. "/" .. max .. "?"
+            if self._unknown_random then
+                return self._progress .. "/" .. max .. "?+?"
+            else
+                return self._progress .. "/" .. max .. "?"
+            end
+        elseif self._unknown_random then
+            return self._progress .. "/" .. self._max .. "+?"
         end
         return EHILootTracker.super.Format(self)
     end
@@ -54,7 +120,13 @@ else
             local max = math.min(self._max, self._max_xp_bags)
             return self._progress .. "/" .. max
         elseif self._max_random > 0 then
-            return self._progress .. "/" .. self._max .. "+" .. self._max_random .. "?"
+            if self._unknown_random then
+                return self._progress .. "/" .. self._max .. "+" .. self._max_random .. "?+?"
+            else
+                return self._progress .. "/" .. self._max .. "+" .. self._max_random .. "?"
+            end
+        elseif self._unknown_random then
+            return self._progress .. "/" .. self._max .. "+?"
         end
         return EHILootTracker.super.Format(self)
     end
@@ -160,6 +232,7 @@ function EHILootTracker:RandomLootSpawned(random)
     end
     local n = random or 1
     self._max_random = self._max_random - n
+    self:CheckUnknownRandomAndMaxRandom()
     self:IncreaseProgressMax(n)
 end
 
@@ -169,12 +242,14 @@ function EHILootTracker:RandomLootDeclined(random)
         return
     end
     self._max_random = self._max_random - (random or 1)
+    self:CheckUnknownRandomAndMaxRandom()
     self:SetProgressMax(self._max)
 end
 
 ---@param max number?
 function EHILootTracker:SetMaxRandom(max)
     self._max_random = max or 0
+    self:CheckUnknownRandomAndMaxRandom()
     self:SetProgressMax(self._max)
 end
 
@@ -186,6 +261,18 @@ end
 ---@param progress number?
 function EHILootTracker:DecreaseMaxRandom(progress)
     self:SetMaxRandom(self._max_random - (progress or 1))
+end
+
+function EHILootTracker:CheckUnknownRandomAndMaxRandom()
+    local random_check = self._max_random > 0 and self._unknown_random
+    if self.__tracker_size_increased then
+        if random_check then
+            return
+        end
+        self:DecreaseTrackerSize(true)
+    elseif random_check then
+        self:IncreaseTrackerSize(true)
+    end
 end
 
 ---@param id number
@@ -212,6 +299,17 @@ end
 ---@param id number
 function EHILootTracker:BlockRandomLoot(id)
     self._loot_id[id] = true
+end
+
+---@param state boolean
+function EHILootTracker:SetUnknownRandomLoot(state)
+    if state and not self._unknown_random then
+        self:IncreaseTrackerSize(true)
+    elseif self._unknown_random and not state then
+        self:DecreaseTrackerSize(true)
+    end
+    self._unknown_random = state
+    self:SetAndFitTheText()
 end
 
 function EHILootTracker:SecuredMissionLoot()

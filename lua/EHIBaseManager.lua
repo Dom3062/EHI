@@ -1,15 +1,27 @@
 ---@class EHIBaseManager
 EHIBaseManager = class()
+---@param message_id string A message to sync data to
+---@param hook_id string
+---@param f fun(data: string, sender: integer)
+---@overload fun(self: self, message_id: string, f: fun(data: string, sender: integer))
+function EHIBaseManager:AddReceiveHook(message_id, hook_id, f)
+    if f then
+        NetworkHelper:AddReceiveHook(message_id, hook_id, f)
+    else
+        NetworkHelper:AddReceiveHook(message_id, message_id, hook_id --[[@as function]])
+    end
+end
+
 ---@param message string
 ---@param data any
 function EHIBaseManager:Sync(message, data)
-    LuaNetworking:SendToPeersExcept(1, message, data or "")
+    NetworkHelper:SendToPeersExcept(1, message, data or "")
 end
 
 ---@param message string
 ---@param tbl table?
 function EHIBaseManager:SyncTable(message, tbl)
-    LuaNetworking:SendToPeersExcept(1, message, json.encode(tbl or {}))
+    NetworkHelper:SendToPeersExcept(1, message, json.encode(tbl or {}))
 end
 
 if Global.game_settings and Global.game_settings.single_player then

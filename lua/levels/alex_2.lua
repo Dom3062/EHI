@@ -22,7 +22,7 @@ if EHI:IsHost() then
             max = spawned + math.max(0, spawned - 3),
             max_random = 1
         }
-        self._trackers:SetTrackerToSync2("LootCounter", tbl)
+        self._loot:SetSyncDataAndSync(tbl)
     end
     ---@type LootCounterTable.SequenceTriggersTable
     local SafeTriggers =

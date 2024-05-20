@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local triggers = {}
 ---@type ParseAchievementTable
 local achievements = {}
@@ -15,8 +16,8 @@ if Global.game_settings.level_id == "firestarter_3" then
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
         elements =
         {
-            [102144] = { status = "ok", class = TT.Achievement.Status },
-            [102146] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [102144] = { class = TT.Achievement.Status },
+            [102146] = { status = Status.Finish, special_function = SF.SetAchievementStatus },
             [105237] = { special_function = SF.SetAchievementComplete },
             [105235] = { special_function = SF.SetAchievementFailed }
         }
@@ -44,11 +45,11 @@ achievements.voff_1 =
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
     elements =
     {
-        [101539] = { status = "bring", class = TT.Achievement.Status },
+        [101539] = { status = Status.Bring, class = TT.Achievement.Status },
         [105686] = { special_function = SF.SetAchievementComplete },
-        [105691] = { status = "finish", special_function = SF.SetAchievementStatus }, -- Entered area again
-        [105694] = { status = "finish", special_function = SF.SetAchievementStatus }, -- Both secured
-        [105698] = { status = "bring", special_function = SF.SetAchievementStatus }, -- Left the area
+        [105691] = { status = Status.Finish, special_function = SF.SetAchievementStatus }, -- Entered area again
+        [105694] = { status = Status.Finish, special_function = SF.SetAchievementStatus }, -- Both secured
+        [105698] = { status = Status.Bring, special_function = SF.SetAchievementStatus }, -- Left the area
         [105704] = { special_function = SF.SetAchievementFailed } -- Killed
     }
 }
@@ -79,6 +80,48 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101645] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101627] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+if EHI:IsLootCounterVisible() then
+    local deposit_boxes = {
+        104218, 104188, 103939, 100663, 101241, 104247, 104219, 104217, 104189, 104187,
+        103940, 101390, 100664, 104261, 101247, 104244, 104220, 104214, 104190, 104184,
+        103986, 101388, 101094, 104256, 101252, 104245, 104222, 104215, 104192, 104185,
+        103988, 101389, 101240, 104251, 101257, 104243, 104223, 104213, 104193, 104183,
+        104036, 101263, 101242, 104246, 101262, 104242, 104224, 104212, 104194, 104182,
+        104038, 101261, 101243, 104241, 104146, 104240, 104225, 104210, 104195, 104180,
+        104086, 101260, 101244, 104236, 104176, 104239, 104227, 104209, 104197, 104179,
+        104088, 101259, 101245, 104231, 104181, 104238, 104228, 104208, 104198, 104178,
+        104136, 101258, 101248, 104226, 104186, 104237, 104229, 104207, 104199, 104177,
+        104138, 101256, 101249, 104221, 104191, 104235, 104230, 104205, 104200, 104175,
+        104147, 101255, 101250, 104216, 104196, 104234, 104232, 104204, 104202, 104150,
+        104148, 101254, 101251, 104211, 104201, 104233, 104203, 104149, 101253, 104206
+    }
+    other[105762] = EHI:AddLootCounter2(function()
+        local firestarter = Global.game_settings.level_id == "firestarter_3"
+        EHI:ShowLootCounterNoChecks({
+            max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot2(deposit_boxes),
+            offset = firestarter,
+            client_from_start = true,
+            unknown_random = not firestarter
+        })
+    end)
+    other[103372] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        if not self._trackers:TrackerExists("LootCounter") then
+            self:Trigger(105762) --- You had your last chance here, son.
+        end
+        self._loot:SetUnknownRandomLoot()
+    end) }
+    other[104647] = other[103372]
+    local LootVisible = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._loot:IncreaseLootCounterProgressMax()
+    end) }
+    for i = 104543, 104553, 1 do
+        other[i] = LootVisible
+    end
+    other[104577] = LootVisible
+    other[104578] = LootVisible
+    other[104579] = LootVisible
+    other[104594] = LootVisible
+end
 
 EHI:ParseTriggers({
     mission = triggers,
@@ -98,7 +141,17 @@ EHI:AddXPBreakdown({
     {
         escape = EscapeXP
     },
-    loot_all = 500
+    loot_all = 500,
+    total_xp_override =
+    {
+        params =
+        {
+            min_max =
+            {
+                loot_all = { min = EscapeXP == 12000 and 1 or 0, max = 5 + (EscapeXP == 12000 and 8 or 0) }
+            }
+        }
+    }
 })
 
 if not EHI:CanShowAchievement("voff_1") then

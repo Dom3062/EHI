@@ -31,7 +31,7 @@ local achievements =
     {
         elements =
         {
-            [101148] = { status = "defend", class = TT.Achievement.Status },
+            [101148] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status },
             [102471] = { special_function = SF.SetAchievementFailed },
             [100426] = { special_function = SF.SetAchievementComplete }
         }
@@ -48,7 +48,7 @@ if EHI:IsLootCounterVisible() then
             EHI:ShowLootCounterNoCheck({})
             self._cache.CreateCounter = true
         end
-        self._trackers:IncreaseLootCounterProgressMax()
+        self._loot:IncreaseLootCounterProgressMax()
     end)
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then

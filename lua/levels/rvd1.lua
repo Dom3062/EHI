@@ -39,7 +39,7 @@ local achievements =
     {
         elements =
         {
-            [100107] = { status = "defend", class = TT.Achievement.Status },
+            [100107] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status },
             [100839] = { special_function = SF.SetAchievementFailed },
             [100869] = { special_function = SF.SetAchievementComplete },
         },
@@ -65,7 +65,9 @@ if EHI:IsLootCounterVisible() then
     other[100107] = { special_function = EHI:RegisterCustomSF(function(...)
         EHI:ShowLootCounterNoChecks({ max = 6 })
     end)}
-    other[100037] = { special_function = SF.CallTrackerManagerFunction, f = "SecuredMissionLoot" } -- Secured diamonds at Mr. Blonde or in a Van
+    other[100037] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._loot:SecuredMissionLoot() -- Secured diamonds at Mr. Blonde or in a Van
+    end) }
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100358] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 3 }

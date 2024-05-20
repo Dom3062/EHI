@@ -10,7 +10,8 @@ end
 
 ---@class EHIHealthFloatManager
 EHIHealthFloatManager = {}
-function EHIHealthFloatManager:new()
+---@param hud HUDManager
+function EHIHealthFloatManager:new(hud)
     self._ws = managers.gui_data:create_fullscreen_workspace()
     self._pnl = self._ws:panel():panel({ name = 'dmg_sheet', layer = 4 })
     self._ww = self._pnl:w()
@@ -26,7 +27,7 @@ function EHIHealthFloatManager:new()
     EHI:HookWithID(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_destroy", function(base, ...)
         self._smokes[base._unit:key()] = nil
     end)
-    return self
+    hud:AddEHIUpdator(self, "EHI_HealthFloat_Update")
 end
 
 function EHIHealthFloatManager:onResolutionChanged()
@@ -59,7 +60,7 @@ end
 
 function EHIHealthFloatManager:update_last()
     for _, float in pairs(self._floats) do
-        float:delete()
+        float:force_delete()
     end
 end
 
@@ -178,6 +179,7 @@ function EHIHealthFloatBar:init(owner, key, unit, t)
     self:_make()
 end
 
+---@param x number?
 function EHIHealthFloatBar:__shadow(x)
     if x then
         self.lblShadow1:set_x(x + 1)
@@ -329,8 +331,8 @@ function EHIHealthFloatBar:draw(t)
         local fHealth = cHealth > 0 and unit:character_damage() and (unit:character_damage()._HEALTH_INIT and unit:character_damage()._HEALTH_INIT * 10 or unit:character_damage()._health_max and unit:character_damage()._health_max * 10) or 1
         local prog = cHealth / fHealth
         local isEnemy = managers.enemy:is_enemy(unit)
-        local isConverted = unit:brain() and unit:brain()._logic_data and unit:brain()._logic_data.is_converted
-        local isTurret = unit:base() and unit:base().get_type and unit:base():get_type() == "swat_turret"
+        local isConverted = unit:brain() and unit:brain().converted and unit:brain():converted()
+        local isTurret = unit:base() and unit:base().get_type and unit:base():get_type() == "swat_turret" ---@diagnostic disable-line
         local color = ((isEnemy and not isConverted) or isTurret) and math.lerp(self._color_end, self._color_start, prog) or self._color_friendly
         if pDist <= 100000 and cHealth > 0 then
             txts[1] = { round(cHealth, 2) .. '/' .. round(fHealth, 2), color }
@@ -359,7 +361,7 @@ function EHIHealthFloatBar:draw(t)
         self._pnl:set_center(pPos.x, pPos.y)
         d = isADS and math.clamp((pDist - 1000) / 2000, 0.4, 1) or 1
         d = math.min(d, self._opacity)
-        if not (unit and unit:contour() and #(unit:contour()._contour_list or {}) > 0) then
+        if not (unit and unit:contour() and next(unit:contour()._contour_list or {})) then
             d = math.min(d, self._parent:_visibility(pos))
         end
         if not self._dying then
@@ -369,6 +371,7 @@ function EHIHealthFloatBar:draw(t)
     end
 end
 
+---@param t number
 function EHIHealthFloatBar:renew(t)
     self._lastT = math.max(self._lastT, t)
     self._dead = false
@@ -378,11 +381,16 @@ end
 
 function EHIHealthFloatBar:delete()
     local pnl = self._pnl
-    if alive(self._ppnl) and alive(pnl) and not self._dying then
+    if alive(pnl) and not self._dying then
         self._dying = true
         pnl:stop()
         pnl:animate(self._fade, self.lastD or 1, self._destroy_callback, 0.2)
     end
+end
+
+function EHIHealthFloatBar:force_delete()
+    self._dead = true
+    self:delete()
 end
 
 function EHIHealthFloatBar:destroy()

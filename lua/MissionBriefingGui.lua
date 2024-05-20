@@ -1574,7 +1574,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
     if math.clamp(self._gui._num_winners, 1, 4) > 1 then
         local bonus = (tweak_data:get_value("experience_manager", "alive_humans_multiplier", self._gui._num_winners) or 1) - 1
         if bonus > 0 then
-            local percent = bonus * 100
+            local percent = EHI:RoundNumber(bonus, 0.01) * 100
             local player_icon = self._panel:bitmap({
                 name = "0_player_icon",
                 blend_mode = "add",

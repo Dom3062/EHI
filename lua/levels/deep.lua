@@ -136,13 +136,13 @@ EHI:ShowAchievementLootCounter({
         if managers.preplanning:IsAssetBought(102474) then
             self:Trigger(101084)
         end
-        self._trackers:SyncSecuredLoot("deep_11")
+        self._loot:SyncSecuredLoot("deep_11")
     end,
     loot_counter_load_sync = function(self)
         if managers.preplanning:IsAssetBought(102474) then
-            self._trackers:IncreaseLootCounterProgressMax(4)
+            self._loot:IncreaseLootCounterProgressMax(4)
         end
-        self._trackers:SyncSecuredLoot()
+        self._loot:SyncSecuredLoot()
     end,
     show_loot_counter = true
 })

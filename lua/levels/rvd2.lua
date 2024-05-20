@@ -44,7 +44,7 @@ if EHI:IsHost() then
     }
     ---@param truck_id number
     local function IncreaseMax(truck_id)
-        managers.ehi_tracker:SyncIncreaseLootCounterMaxRandom(9)
+        managers.ehi_loot:SyncIncreaseLootCounterMaxRandom(9)
         tweak_data.ehi.functions.HookArmoredTransportUnit(truck_id, { "money" })
     end
     EHI:ShowLootCounterSynced({

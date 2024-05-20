@@ -12,8 +12,8 @@ local LootCounterSyncFunction = function(self)
     if self:IsMissionElementDisabled(104286) then
         max_reduction = max_reduction + 1
     end
-    self._trackers:DecreaseLootCounterProgressMax(max_reduction)
-    self._trackers:SyncSecuredLoot()
+    self._loot:DecreaseLootCounterProgressMax(max_reduction)
+    self._loot:SyncSecuredLoot()
 end
 
 local min_bags = 4
@@ -78,7 +78,7 @@ else -- Framing Frame Day 1
                 return
             end
             self._trackers:CallFunction("pink_panther", "SetStarted")
-            self._trackers:SyncSecuredLoot("pink_panther")
+            self._loot:SyncSecuredLoot("pink_panther")
         end,
         loot_counter_load_sync = LootCounterSyncFunction,
         add_to_counter = true,

@@ -9,7 +9,7 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
         {
             elements =
             {
-                [100979] = { status = "defend", class = TT.Achievement.Status },
+                [100979] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status },
                 [102831] = { special_function = SF.SetAchievementComplete },
                 [102829] = { special_function = SF.SetAchievementFailed }
             },

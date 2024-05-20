@@ -1,3 +1,8 @@
+r241 (20. 05. 2024):
+Updated to latest SuperBLT version (1.4.3)
+GO Bank: Fixed trackers not appearing
+Timer Group Tracker: Fixed missing gap between tracker and icons
+
 r240 (07. 05. 2024):
 Added option "When a Pager is answered"
 Reworked some buffs to show only in loud as they do not matter in stealth

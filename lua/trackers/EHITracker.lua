@@ -767,7 +767,7 @@ function EHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
         self._panel:set_w(start + icons_with_gap)
     end
     if self._VERTICAL_ANIM_W_LEFT and self._panel:alpha() == 0 then
-        -- Panel is not visible, adjust will be performed when manager calls the `EHITracker:PosAndSetVisible()` function  
+        -- Panel is not visible, adjustment will be performed when manager calls the `EHITracker:PosAndSetVisible()` function  
         -- Otherwise you need to adjust panel position via animation
         self.__vertical_anim_w_left_diff = original_w - self._bg_box:w()
     end
@@ -1027,6 +1027,14 @@ function EHITracker:RedrawPanel()
 end
 
 function EHITracker:CheckCanDeleteAfterSync()
+end
+
+---Returns current real tracker size and not of what is reported via `self._panel:w()`
+---@param n_of_icons number?
+function EHITracker:GetTrackerSize(n_of_icons)
+    local w = self._bg_box:w()
+    local n = n_of_icons or self._n_of_icons
+    return w + self._gap_scaled + (n * self._icon_gap_size_scaled)
 end
 
 ---@param create_f fun(panel: Panel, params: table): Panel

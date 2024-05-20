@@ -82,6 +82,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers =
 {
@@ -119,14 +120,14 @@ local achievements =
         {
             [103701] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
-                    self._achievements:SetAchievementStatus("bex_10", "defend")
+                    self._achievements:SetAchievementStatus("bex_10", Status.Defend)
                     self:UnhookTrigger(103704)
                 end
             end) },
             [103702] = { special_function = SF.SetAchievementFailed },
             [103704] = { special_function = SF.SetAchievementFailed },
             [102602] = { special_function = SF.SetAchievementComplete },
-            [100107] = { status = "loud", class = TT.Achievement.Status },
+            [100107] = { status = Status.Loud, class = TT.Achievement.Status },
         }
     },
     bex_11 =

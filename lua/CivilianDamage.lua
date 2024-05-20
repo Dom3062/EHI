@@ -5,10 +5,10 @@ end
 
 --- If this function is in `CivilianDamage`, then it is not visible from `HuskCivilianDamage`, because that
 --- class inherits `HuskCopDamage` and not `CivilianDamage`
----@param self CivilianDamage|HuskCivilianDamage
+---@param unit UnitCivilian
 ---@return boolean
-function PenaltyWhenKilled(self)
-    return not tweak_data.character[self._unit:base()._tweak_table].no_civ_penalty
+local function PenaltyWhenKilled(unit)
+    return not tweak_data.character[unit:base()._tweak_table].no_civ_penalty
 end
 
 local original = {}
@@ -17,7 +17,7 @@ if EHI:GetOption("show_escape_chance") then
     original._unregister_from_enemy_manager = CivilianDamage._unregister_from_enemy_manager
     function CivilianDamage:_unregister_from_enemy_manager(...)
         original._unregister_from_enemy_manager(self, ...)
-        if PenaltyWhenKilled(self) then
+        if PenaltyWhenKilled(self._unit) then
             managers.ehi_escape:IncreaseCivilianKilled()
         end
     end
@@ -60,7 +60,7 @@ original._f_on_damage_received = CivilianDamage._on_damage_received
 function CivilianDamage:_on_damage_received(damage_info, ...)
     original._f_on_damage_received(self, damage_info, ...)
     local attacker_unit = damage_info and damage_info.attacker_unit
-    if damage_info.result.type == "death" and attacker_unit and PenaltyWhenKilled(self) then
+    if damage_info.result.type == "death" and attacker_unit and PenaltyWhenKilled(self._unit) then
         AddTracker(managers.criminals:character_peer_id_by_unit(attacker_unit))
     end
 end
@@ -71,7 +71,7 @@ end
 
 ---@param attacker_unit UnitPlayer?
 function CivilianDamage:_on_car_damage_received(attacker_unit)
-    if attacker_unit and PenaltyWhenKilled(self) then
+    if attacker_unit and PenaltyWhenKilled(self._unit) then
         AddTracker(managers.criminals:character_peer_id_by_unit(attacker_unit))
     end
 end

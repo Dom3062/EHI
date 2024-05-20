@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local zone_delay = 12
 local LootDropWaypoint = { icon = Icon.LootDrop, position_by_element_and_remove_vanilla_waypoint = 104215 }
 ---@type ParseTriggerTable
@@ -34,12 +35,12 @@ local achievements =
     {
         elements =
         {
-            [100074] = { status = "alarm", class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+            [100074] = { status = Status.Alarm, class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
                 if self:InteractionExists("circuit_breaker_off") then
                     self:CreateTracker(trigger)
                 end
             end) },
-            [104406] = { status = "finish", special_function = SF.SetAchievementStatus },
+            [104406] = { status = Status.Finish, special_function = SF.SetAchievementStatus },
             [104408] = { special_function = SF.SetAchievementComplete },
             [104409] = { special_function = SF.SetAchievementFailed },
             [103116] = { special_function = SF.SetAchievementFailed }
@@ -66,15 +67,18 @@ if EHI:GetOption("show_loot_counter") and not EHI:IsPlayingCrimeSpree() then
         end
         EHI:ShowLootCounterNoChecks({ max = 10 - jewelry_to_subtract })
     end, true)
-    other[101613] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
-    other[101617] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
-    other[101637] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
-    other[101754] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
-    other[101852] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
-    other[102018] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
-    other[102091] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
-    other[102098] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
-    other[102126] = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
+    local DecreaseProgressMax = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._loot:DecreaseLootCounterProgressMax()
+    end) }
+    other[101613] = { special_function = DecreaseProgressMax }
+    other[101617] = { special_function = DecreaseProgressMax }
+    other[101637] = { special_function = DecreaseProgressMax }
+    other[101754] = { special_function = DecreaseProgressMax }
+    other[101852] = { special_function = DecreaseProgressMax }
+    other[102018] = { special_function = DecreaseProgressMax }
+    other[102091] = { special_function = DecreaseProgressMax }
+    other[102098] = { special_function = DecreaseProgressMax }
+    other[102126] = { special_function = DecreaseProgressMax }
 end
 if EHI:GetOption("show_escape_chance") then
     local start_chance = 30 -- Normal

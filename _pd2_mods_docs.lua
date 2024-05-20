@@ -17,11 +17,35 @@ _G.BLT = {}
 ---@field IsEnabled fun(self: self): boolean
 
 ---@class Hooks
+---@field _function_hooks table
 ---@field Add fun(self: self, key: string, id: string, func: function)
 ---@field PostHook fun(self: self, object: table, func: string, id: string, post_call: function)
 ---@field PreHook fun(self: self, object: table, func: string, id: string, pre_call: function)
 ---@field RemovePostHook fun(self: self, id: string)
 _G.Hooks = {}
+
+---@class NetworkHelper
+_G.NetworkHelper = {}
+
+---Sends networked data with a message id to all connected players except specific ones
+---@param peer_id integer|integer[] @Peer ID or table of peer IDs of the player(s) to exclude
+---@param id string @Unique name of the data to send
+---@param data string @Data to send
+function NetworkHelper:SendToPeersExcept(peer_id, id, data)
+end
+
+---Registers a function to be called when network data with a specific message id is received
+---@param message_id string @The message id to hook to
+---@param hook_id string @A unique name for this hook
+---@param func fun(data: string, sender: integer) @Function to be called when network data for that specific message id is received
+function NetworkHelper:AddReceiveHook(message_id, hook_id, func)
+end
+
+---Converts a string representation of a color to a color
+---@param str string
+---@return Color?
+function NetworkHelper:StringToColour(str)
+end
 
 -----------------------
 --- End of SuperBLT ---

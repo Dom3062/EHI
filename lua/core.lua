@@ -41,6 +41,33 @@ _G.EHI =
 
     _hooks = {},
 
+    Const =
+    {
+        Trackers =
+        {
+            Achievement =
+            {
+                Status =
+                {
+                    Alarm = "alarm",
+                    Bring = "bring",
+                    Defend = "defend",
+                    Destroy = "destroy",
+                    Find = "find",
+                    Finish = "finish",
+                    Loud = "loud",
+                    Mark = "mark",
+                    NoDown = "no_down",
+                    Ok = "ok",
+                    Ready = "ready",
+                    Objective = "objective",
+                    Push = "push",
+                    Secure = "secure"
+                }
+            }
+        }
+    },
+
     NoCivilianCounter =
     {
         alex_1 = true,
@@ -1360,8 +1387,7 @@ end
 function EHI:AddXPBreakdown(params)
     if self:IsXPTrackerDisabled() or not managers.menu_component then
         return
-    end
-    if not managers.menu_component._mission_briefing_gui then
+    elseif not managers.menu_component._mission_briefing_gui then
         self:AddCallback("MissionBriefingGuiInit", function(gui)
             gui:AddXPBreakdown(params)
         end)
@@ -1462,14 +1488,6 @@ function EHI:PreHookAndHookWithID(object, func, id, pre_call, post_call)
     self:HookWithID(object, func, id, post_call)
 end
 
----@param object table
----@param func string
----@param id string|number
----@param post_call function
-function EHI:HookElement(object, func, id, post_call)
-    Hooks:PostHook(object, func, "EHI_Element_" .. id, post_call)
-end
-
 ---Includes `EHI_`
 ---@param id string
 function EHI:Unhook(id)
@@ -1504,14 +1522,14 @@ function EHI:HookLootRemovalElement(elements)
                     return
                 end
             end
-            managers.ehi_tracker:DecreaseLootCounterProgressMax()
+            managers.ehi_loot:DecreaseLootCounterProgressMax()
         end
     else
         HookFunction = self.HookWithID
         ElementFunction = self.ClientElement
         id = "EHI_Element_"
         f = function(...)
-            managers.ehi_tracker:DecreaseLootCounterProgressMax()
+            managers.ehi_loot:DecreaseLootCounterProgressMax()
         end
     end
     if type(elements) == "table" then
@@ -1542,18 +1560,13 @@ end
 function EHI:IsRunningUsefulBots()
     if self:IsHost() then
         return UsefulBots and Global.game_settings.team_ai
-    elseif self._cache.HostHasUsefulBots ~= nil then
-        return self._cache.HostHasUsefulBots
     end
-    return false
+    return self._cache.HostHasUsefulBots and self._cache.HostHasBots
 end
 
 ---@param peer_id number
 function EHI:GetPeerColorByPeerID(peer_id)
-    local color = Color.white
-    if peer_id then
-        color = tweak_data.chat_colors[peer_id] or Color.white
-    end
+    local color = peer_id and tweak_data.chat_colors[peer_id] or Color.white
     return color
 end
 
@@ -1636,14 +1649,6 @@ end
 function EHI:GetAchievementIconString(id)
     local achievement = tweak_data.achievement.visual[id]
     return achievement and achievement.icon_id
-end
-
----Adds trigger to mission element when they run
----@param new_triggers table
----@param trigger_id_all string
----@param trigger_icons_all table?
-function EHI:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-    managers.ehi_manager:AddTriggers(new_triggers, trigger_id_all, trigger_icons_all)
 end
 
 ---Adds trigger to mission element when they run. If trigger already exists, it is moved and added into table
@@ -1871,7 +1876,7 @@ function EHI:AddLootCounterSynced2(f, sequence_triggers, loot_counter_data)
         return nil
     elseif not self:GetOption("show_loot_counter") then
         self:HookLootCounterSequenceTriggers(sequence_triggers)
-        managers.ehi_tracker:SetTrackerToSync("LootCounter", loot_counter_data)
+        managers.ehi_loot:SetSyncData(loot_counter_data)
         return nil
     end
     local tbl =
@@ -2029,7 +2034,7 @@ function EHI:ShowLootCounterNoChecks(params)
     end
     local show_loot_max_xp_bags = self:GetOption("show_loot_max_xp_bags") --[[@as boolean]]
     if params.sequence_triggers or params.is_synced then
-        managers.ehi_tracker:SyncShowLootCounter(params.max, params.max_random, n_offset)
+        managers.ehi_loot:SyncShowLootCounter(params.max, params.max_random, n_offset)
     elseif params.max_bags_for_level and self:IsXPTrackerEnabledAndVisible() then
         if params.max_bags_for_level.objective_triggers then
             local xp_trigger = { special_function = self:RegisterCustomSF(function(manager, trigger, element, enabled)
@@ -2044,12 +2049,12 @@ function EHI:ShowLootCounterNoChecks(params)
             self:AddTriggers2(triggers, nil, "LootCounter")
             params.max_bags_for_level.objective_triggers = nil
         end
-        managers.ehi_tracker:ShowLootCounter(0, 0, 0, 0, false, params.max_bags_for_level)
+        managers.ehi_loot:ShowLootCounter(0, 0, 0, 0, false, false, params.max_bags_for_level)
     else
         if not show_loot_max_xp_bags then
             params.max_xp_bags = 0
         end
-        managers.ehi_tracker:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, n_offset, params.no_max)
+        managers.ehi_loot:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, n_offset, params.unknown_random, params.no_max)
     end
     if params.load_sync then
         self:AddLoadSyncFunction(params.load_sync)
@@ -2079,7 +2084,7 @@ function EHI:ShowLootCounterSynced(params)
     elseif not self:GetOption("show_loot_counter") then
         self:AddTriggers2(params.triggers or {}, nil, "LootCounter")
         self:HookLootCounterSequenceTriggers(params.sequence_triggers or {})
-        managers.ehi_tracker:SetTrackerToSync("LootCounter", {
+        managers.ehi_loot:SetSyncData({
             max = params.max or 0,
             max_random = params.max_random or 0,
             offset = params.offset and managers.loot:GetSecuredBagsAmount()
@@ -2093,10 +2098,10 @@ end
 ---@param sequence_triggers table<number, LootCounterTable.SequenceTriggersTable>
 function EHI:HookLootCounterSequenceTriggers(sequence_triggers)
     local function IncreaseMax(...)
-        managers.ehi_tracker:SyncRandomLootSpawned()
+        managers.ehi_loot:SyncRandomLootSpawned()
     end
     local function DecreaseRandom(...)
-        managers.ehi_tracker:SyncRandomLootDeclined()
+        managers.ehi_loot:SyncRandomLootDeclined()
     end
     for unit_id, sequences in pairs(sequence_triggers) do
         for _, sequence in ipairs(sequences.loot or {}) do
@@ -2567,8 +2572,7 @@ function EHI:ClientCopyTrigger(trigger, params, overwrite_SF)
     return self:CopyTrigger(trigger, params, new_SF)
 end
 
----@param type string
----|"ammo_bag" # Ignore ammo bags
+---@param type "ammo_bag"
 ---@param pos Vector3[] Table with positions that should be ignored
 function EHI:SetDeployableIgnorePos(type, pos)
     if not type then
@@ -2680,6 +2684,70 @@ end
 ---@return boolean
 function EHI:IsHeistTimerInverted()
     return self._cache._heist_timer_inverted
+end
+
+---Checks if EHI hook for given object and function exists
+---@param object any
+---@param func string
+---@param id string
+function EHI:HookExists(object, func, id)
+    local Hooks = Hooks
+    if not Hooks._function_hooks[object] then
+        return false
+    end
+    if not Hooks._function_hooks[object][func] then
+        return false
+    end
+    local overrides = Hooks._function_hooks[object][func].overrides
+    for _, func_tbl in ipairs(overrides.pre) do
+        if func_tbl.id == id then
+            return true
+        end
+    end
+    for _, func_tbl in ipairs(overrides.post) do
+        if func_tbl.id == id then
+            return true
+        end
+    end
+    return false
+end
+
+---Updates existing EHI hook for given object and function
+---@param object any
+---@param func string
+---@param id string
+---@param new_f function
+function EHI:UpdateExistingHook(object, func, id, new_f)
+    local Hooks = Hooks
+    if not (Hooks._function_hooks[object] and Hooks._function_hooks[object][func]) then
+        return
+    end
+    local overrides = Hooks._function_hooks[object][func].overrides
+    for _, func_tbl in ipairs(overrides.pre) do
+        if func_tbl.id == id then
+            func_tbl.func = new_f
+            return
+        end
+    end
+    for _, func_tbl in ipairs(overrides.post) do
+        if func_tbl.id == id then
+            func_tbl.func = new_f
+            return
+        end
+    end
+end
+
+---Checks if EHI hook for given object and function exists and updates its function; else if will create a new hook
+---@param object any
+---@param func string
+---@param id string
+---@param new_f function
+function EHI:UpdateExistingHookIfExistsOrHook(object, func, id, new_f)
+    if self:HookExists(object, func, id) then
+        self:UpdateExistingHook(object, func, id, new_f)
+    else
+        self:HookWithID(object, func, id, new_f)
+    end
 end
 
 Load()

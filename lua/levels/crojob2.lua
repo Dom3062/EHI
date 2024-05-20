@@ -80,12 +80,16 @@ if EHI:IsLootCounterVisible() then
         })
         if managers.game_play_central:GetMissionDisabledUnit(107388) then -- Collision (8th position)
             -- Collision is visible, less loot spawned
-            self._trackers:DecreaseLootCounterMaxRandom(2)
+            self._loot:DecreaseLootCounterMaxRandom(2)
         end
     end, true)
     -- Random loot in crates
-    local IncreaseMaximumTrigger = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootSpawned" }
-    local DecreaseMaximumTrigger = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootDeclined" }
+    local IncreaseMaximumTrigger = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._loot:RandomLootSpawned()
+    end) }
+    local DecreaseMaximumTrigger = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._loot:RandomLootDeclined()
+    end) }
     for i = 103232, 103264, 1 do -- 1 - 11 Cocaine / Money / Gold
         other[i] = IncreaseMaximumTrigger
     end

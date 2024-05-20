@@ -93,7 +93,7 @@ if EHI:IsLootCounterVisible() then
         _HostageExploded = true
         local count = MoneyAroundHostage - HostageMoneyTaken
         if count > 0 then
-            managers.ehi_tracker:DecreaseLootCounterProgressMax(count)
+            managers.ehi_loot:DecreaseLootCounterProgressMax(count)
         end
     end
     other[100043] = EHI:AddLootCounter3(function(self, ...)
@@ -119,7 +119,9 @@ if EHI:IsLootCounterVisible() then
     end)
     -- coke, money, meth
     EHI:HookLootRemovalElement({ 101681, 101700, 101701 })
-    local CokeDestroyedTrigger = { special_function = SF.CallTrackerManagerFunction, f = "DecreaseLootCounterProgressMax" }
+    local CokeDestroyedTrigger = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._loot:DecreaseLootCounterProgressMax()
+    end) }
     other[101264] = CokeDestroyedTrigger
     other[101271] = CokeDestroyedTrigger
     other[101272] = CokeDestroyedTrigger

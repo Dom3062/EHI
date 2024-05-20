@@ -66,7 +66,7 @@ function EHIMinionTracker:Reorganize(addition)
             return
         end
         for i = 0, HUDManager.PLAYER_PANEL, 1 do
-            local text = self._bg_box:child("text" .. i) --[[@as PanelText]]
+            local text = self._bg_box:child("text" .. i) --[[@as PanelText?]]
             if text then
                 text:set_font_size(self._panel:h() * self._text_scale)
                 text:set_w(self._bg_box:w())
@@ -184,10 +184,14 @@ function EHIMinionTracker:RemoveMinion(key)
     end
 end
 
-function EHIMinionTracker:UpdatePeerColors()
-    for i = 0, HUDManager.PLAYER_PANEL, 1 do
-        if self._bg_box:child("text" .. i) then
-            self._bg_box:child("text" .. i):set_color(tweak_data.chat_colors[i] or Color.white)
-        end
+---@param peer_id number
+---@param color Color
+function EHIMinionTracker:UpdatePeerColor(peer_id, color)
+    if self._n_of_peers == 1 or not color then
+        return
+    end
+    local text = self._bg_box:child("text" .. peer_id)
+    if text then
+        text:set_color(color)
     end
 end

@@ -36,6 +36,7 @@ end
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [100891] = { additional_time = 320/30 + 5, random_time = 5, id = "EMPBombDrop", icons = { Icon.Goto }, hint = Hints.mad_Bomb }
@@ -49,7 +50,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100547] = { status = "no_down", class = TT.Achievement.Status },
+            [100547] = { status = Status.NoDown, class = TT.Achievement.Status },
             [101400] = { special_function = SF.SetAchievementFailed },
             [101823] = { special_function = SF.SetAchievementComplete }
         },
@@ -60,7 +61,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100547] = { status = "defend", class = TT.Achievement.Status },
+            [100547] = { status = Status.Defend, class = TT.Achievement.Status },
             [101925] = { special_function = SF.SetAchievementFailed },
             [101924] = { special_function = SF.SetAchievementComplete }
         },

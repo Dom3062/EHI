@@ -26,7 +26,7 @@ local achievements =
     {
         elements =
         {
-            [100781] = { status = "defend", class = TT.Achievement.Status },
+            [100781] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status },
             [100907] = { special_function = SF.SetAchievementFailed },
             [100906] = { special_function = SF.SetAchievementComplete }
         }
@@ -69,7 +69,7 @@ EHI:ShowAchievementLootCounter({
     max = 15,
     show_finish_after_reaching_target = true,
     load_sync = function(self)
-        self._trackers:SyncSecuredLoot("chas_10")
+        self._loot:SyncSecuredLoot("chas_10")
     end,
     show_loot_counter = true,
     loot_counter_on_fail = true,

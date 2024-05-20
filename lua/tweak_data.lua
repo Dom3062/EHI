@@ -866,22 +866,49 @@ tweak_data.ehi =
             end
             return n
         end,
+        ---Checks provided deposit boxes that scripted to spawn loot when opened
+        ---@param from_box number
+        ---@param to_box number
+        GetNumberOfDepositBoxesWithLoot = function(from_box, to_box)
+            local n = 0
+            local world = managers.worlddefinition
+            for i = from_box, to_box, 1 do
+                local box = world:get_unit(i) ---@cast box UnitCarry
+                if box and box:damage() and box:damage()._variables and box:damage()._variables.var_random == 0 then
+                    n = n + 1
+                end
+            end
+            return n
+        end,
+        ---Checks provided deposit boxes that scripted to spawn loot when opened
+        ---@param boxes number[]
+        GetNumberOfDepositBoxesWithLoot2 = function(boxes)
+            local n = 0
+            local world = managers.worlddefinition
+            for _, index in ipairs(boxes) do
+                local box = world:get_unit(index) ---@cast box UnitCarry
+                if box and box:damage() and box:damage()._variables and box:damage()._variables.var_random == 0 then
+                    n = n + 1
+                end
+            end
+            return n
+        end,
         ---@param truck_id number
         ---@param forced_loot string[]?
         HookArmoredTransportUnit = function(truck_id, forced_loot)
             local exploded
             local function GarbageFound()
-                managers.ehi_tracker:SyncRandomLootDeclined()
+                managers.ehi_loot:SyncRandomLootDeclined()
             end
             local function LootFound()
-                managers.ehi_tracker:SyncRandomLootSpawned()
+                managers.ehi_loot:SyncRandomLootSpawned()
             end
             local function LootFoundExplosionCheck()
                 if exploded then
                     GarbageFound()
                     return
                 end
-                managers.ehi_tracker:SyncRandomLootSpawned()
+                managers.ehi_loot:SyncRandomLootSpawned()
             end
             managers.mission:add_runned_unit_sequence_trigger(truck_id, "set_exploded", function()
                 exploded = true

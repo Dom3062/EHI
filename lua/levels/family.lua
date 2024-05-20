@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local TT = EHI.Trackers
 local SF = EHI.SpecialFunctions
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local VanDelay = 475/30
 local triggers = {
     [102611] = { time = 1, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
@@ -37,9 +38,9 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100108] = { status = "secure", class = TT.Achievement.Status },
-            [100022] = { status = "defend", special_function = SF.SetAchievementStatus }, -- Alarm has been raised, defend the hostages until the escape vehicle arrives
-            [101095] = { status = "secure", special_function = SF.SetAchievementStatus }, -- Escape vehicle is here, secure the remaining bags
+            [100108] = { status = Status.Secure, class = TT.Achievement.Status },
+            [100022] = { status = Status.Defend, special_function = SF.SetAchievementStatus }, -- Alarm has been raised, defend the hostages until the escape vehicle arrives
+            [101095] = { status = Status.Secure, special_function = SF.SetAchievementStatus }, -- Escape vehicle is here, secure the remaining bags
             [102206] = { special_function = SF.SetAchievementFailed },
             [102207] = { special_function = SF.SetAchievementComplete }
         }

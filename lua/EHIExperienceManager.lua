@@ -500,3 +500,33 @@ end
 function EHIExperienceManager:IsInfamyPoolOverflowed()
     return self._xp.prestige_xp_overflowed
 end
+
+function EHIExperienceManager:SetAIOnDeathListener()
+    EHI:UpdateExistingHookIfExistsOrHook(TradeManager, "on_AI_criminal_death", "EHI_ExperienceManager_AICriminalDeath", function(...)
+        self:DecreaseAlivePlayers()
+        EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+    end)
+end
+
+---@param ub boolean?
+function EHIExperienceManager:SetCriminalsListener(ub)
+    if ub then
+        local EHIHookFunction = EHI:HookExists(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character") and EHI.UpdateExistingHook or EHI.HookWithID
+        local function Query(...)
+            self:QueryAmountOfAllPlayers()
+            EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+        end
+        EHIHookFunction(EHI, CriminalsManager, "add_character", "EHI_CriminalsManager_add_character", Query)
+        EHIHookFunction(EHI, CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit", Query)
+        EHIHookFunction(EHI, CriminalsManager, "on_peer_left", "EHI_CriminalsManager_on_peer_left", Query)
+        EHI:UpdateExistingHookIfExistsOrHook(CriminalsManager, "_remove", "EHI_CriminalsManager_remove", Query)
+    else
+        local function Query(...)
+            self:QueryAmountOfAlivePlayers()
+            EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+        end
+        EHI:HookWithID(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character", Query)
+        EHI:HookWithID(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit", Query)
+        EHI:HookWithID(CriminalsManager, "on_peer_left", "EHI_CriminalsManager_on_peer_left", Query)
+    end
+end

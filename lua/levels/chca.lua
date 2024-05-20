@@ -58,7 +58,7 @@ local achievements =
             -- Players spawned
             [100264] = { special_function = SF.Trigger, data = { 1, 2 } }, -- Guest Rooms (civilian mode)
             [102955] = { special_function = SF.Trigger, data = { 1, 2 } }, -- Crew Deck
-            [1] = { status = "ok", class = TT.Achievement.Status },
+            [1] = { class = TT.Achievement.Status },
             [2] = { special_function = SF.CustomCode, f = function()
                 local function check(_, data)
                     if data.variant ~= "melee" then
@@ -90,7 +90,7 @@ local achievements =
         elements =
         {
             [EHI:GetInstanceElementID(100041, 11770)] = { special_function = SF.ShowAchievementFromStart, class = TT.Achievement.Status },
-            [103584] = { status = "finish", special_function = SF.SetAchievementStatus }
+            [103584] = { status = EHI.Const.Trackers.Achievement.Status.Finish, special_function = SF.SetAchievementStatus }
         },
         sync_params = { from_start = true }
     }
@@ -187,11 +187,11 @@ EHI:RegisterCustomSF(LootLeft, function(self, ...)
             left_to_burn = left_to_burn - 1
         end
     end
-    self._trackers:DecreaseLootCounterProgressMax(left_to_burn)
+    self._loot:DecreaseLootCounterProgressMax(left_to_burn)
 end)
 EHI:AddLoadSyncFunction(function(self)
     if managers.game_play_central:GetMissionDisabledUnit(200942) then -- AI Vision Blocker; "editor_only" continent
-        self._trackers:DecreaseLootCounterProgressMax(16)
+        self._loot:DecreaseLootCounterProgressMax(16)
     end
 end)]]
 local min_loot = EHI:GetValueBasedOnDifficulty({

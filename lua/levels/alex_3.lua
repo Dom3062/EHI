@@ -25,7 +25,7 @@ if EHI:IsLootCounterVisible() then
             return
         end
         Money = Money + 1
-        managers.ehi_tracker:RandomLootSpawnedCheck(bag, true)
+        managers.ehi_loot:RandomLootSpawnedCheck(bag, true)
     end
     local function MoneyTakenFromLuggage(...)
         if Exploded then
@@ -37,15 +37,15 @@ if EHI:IsLootCounterVisible() then
         if Exploded then
             return
         end
-        managers.ehi_tracker:AddDelayedLootDeclinedCheck(bag)
+        managers.ehi_loot:AddDelayedLootDeclinedCheck(bag)
     end
     local function Explosion() -- Someone forgot to defuse...
         Exploded = true
-        managers.ehi_tracker:SetLootCounterMaxRandom()
+        managers.ehi_loot:SetLootCounterMaxRandom()
         if Money == MoneyTaken then
             return
         end
-        managers.ehi_tracker:DecreaseLootCounterProgressMax(Money - MoneyTaken) -- Someone forgot money in the luggage, too bad, it is lost now for good
+        managers.ehi_loot:DecreaseLootCounterProgressMax(Money - MoneyTaken) -- Someone forgot money in the luggage, too bad, it is lost now for good
     end
     local loot_triggers =
     {

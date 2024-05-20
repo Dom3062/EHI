@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [101541] = { time = 2, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
@@ -42,10 +43,10 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100073] = { status = "loud", class = TT.Achievement.Status },
+            [100073] = { status = Status.Loud, class = TT.Achievement.Status },
             [100624] = { special_function = SF.SetAchievementFailed },
             [100634] = { special_function = SF.SetAchievementComplete },
-            [100149] = { status = "defend", special_function = SF.SetAchievementStatus }
+            [100149] = { status = Status.Defend, special_function = SF.SetAchievementStatus }
         }
     }
 }

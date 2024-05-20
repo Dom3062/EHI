@@ -88,7 +88,7 @@ function EHIAchievementManager:ParseAchievementDefinition(def)
     for key, value in pairs(def) do
         if value.difficulty_pass ~= false and not ((value.sync_params and value.sync_params.from_start) or value.load_sync) then -- Don't sync achievements that requires playing from start or clients have defined syncing function
             local achievement = { data = {} }
-            for _, trigger in pairs(value.elements) do
+            for _, trigger in pairs(value.elements or {}) do
                 if trigger.class then
                     achievement.class = trigger.class
                     local data_sync = value.data_sync or self._achievement_data_sync[trigger.class or ""] or self._achievement_data_sync[EHI.Trackers.Achievement.Base]

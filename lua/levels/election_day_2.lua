@@ -12,8 +12,12 @@ if EHI:IsLootCounterVisible() then
             max_random = 7
         })
     end}
-    other[100109] = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootDeclined", arg = { 7 } }
-    other[107260] = { special_function = SF.CallTrackerManagerFunction, f = "RandomLootSpawned", arg = { 7 } }
+    other[100109] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._loot:RandomLootDeclined(7)
+    end) }
+    other[107260] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+        self._loot:RandomLootSpawned(7)
+    end) }
 end
 
 EHI:ParseTriggers({

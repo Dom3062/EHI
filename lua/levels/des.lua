@@ -299,9 +299,9 @@ EHI:ShowLootCounter({
     },
     load_sync = function(self)
         if self:IsMissionElementDisabled(101506) then
-            self._trackers:IncreaseLootCounterProgressMax()
+            self._loot:IncreaseLootCounterProgressMax()
         end
-        self._trackers:SyncSecuredLoot()
+        self._loot:SyncSecuredLoot()
     end
 })
 EHI:AddXPBreakdown({

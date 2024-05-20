@@ -43,7 +43,7 @@ end
             EHI:ShowLootCounterNoCheck({})
             CreateCounter = false
         end
-        self._trackers:IncreaseLootCounterProgressMax()
+        self._loot:IncreaseLootCounterProgressMax()
     end)
 end]]
 

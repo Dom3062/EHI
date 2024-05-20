@@ -3,6 +3,7 @@
 EHIProgressWaypoint = class(EHIWaypoint)
 EHIProgressWaypoint._update = false
 EHIProgressWaypoint.Format = EHIProgressTracker.Format
+EHIProgressWaypoint.update = EHIProgressWaypoint.update_fade
 EHIProgressWaypoint.FormatProgress = EHIProgressTracker.FormatProgress
 EHIProgressWaypoint.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIProgressWaypoint.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
@@ -35,6 +36,5 @@ end
 
 function EHIProgressWaypoint:SetCompleted()
     self:SetColor(Color.green)
-    self.update = self.update_fade
     self:AddWaypointToUpdate()
 end

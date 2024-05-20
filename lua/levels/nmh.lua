@@ -105,15 +105,13 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 EHI:AddLoadSyncFunction(function(self)
-    local elevator_counter = managers.worlddefinition:get_unit(102296) --[[@as UnitDigitalTimer]]
-    if elevator_counter then
-        local o = elevator_counter:digital_gui()
-        if o and o._timer and o._timer ~= 30 then
-            self:Trigger(103443)
-            self:Call("EscapeElevator", "SetFloors", o._timer - 4)
-            if self:InteractionExists("circuit_breaker") or self:InteractionExists("press_call_elevator") then
-                self:Pause("EscapeElevator")
-            end
+    local elevator_counter = managers.worlddefinition:get_unit(102296) --[[@as UnitDigitalTimer?]]
+    local o = elevator_counter and elevator_counter:digital_gui()
+    if o and o._timer and o._timer ~= 30 then
+        self:Trigger(103443)
+        self:Call("EscapeElevator", "SetFloors", o._timer - 4)
+        if self:InteractionExists("circuit_breaker") or self:InteractionExists("press_call_elevator") then
+            self:Pause("EscapeElevator")
         end
     end
 end)

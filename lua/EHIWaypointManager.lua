@@ -109,6 +109,14 @@ function EHIWaypointManager:UpdateWaypointID(id, new_id)
     end
 end
 
+---@param id string
+function EHIWaypointManager:ForceFormatInWaypoint(id)
+    local wp = self._waypoints[id]
+    if wp then
+        wp:ForceFormat()
+    end
+end
+
 ---@param wp WaypointDataTable
 ---@param params AddWaypointTable|ElementWaypointTrigger
 function EHIWaypointManager:SetWaypointInitialIcon(wp, params)
@@ -247,12 +255,12 @@ function EHIWaypointManager:SwitchToLoudMode()
 end
 
 ---@param wp EHIWaypoint
-function EHIWaypointManager:AddWaypointToUpdate(wp)
+function EHIWaypointManager:_add_waypoint_to_update(wp)
     self._waypoints_to_update[wp._id] = wp
 end
 
 ---@param id string
-function EHIWaypointManager:RemoveWaypointFromUpdate(id)
+function EHIWaypointManager:_remove_waypoint_from_update(id)
     self._waypoints_to_update[id] = nil
 end
 

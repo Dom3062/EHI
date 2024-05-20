@@ -805,6 +805,7 @@ end
 ---@field ehi_achievement EHIAchievementManager
 ---@field ehi_phalanx EHIPhalanxManager
 ---@field ehi_timer EHITimerManager
+---@field ehi_loot EHILootManager
 ---@field enemy EnemyManager
 ---@field environment_effects EnvironmentEffectsManager
 ---@field experience ExperienceManager
@@ -931,6 +932,9 @@ end
 ---@field get_key fun(map: table, wanted_key_value: any): any? Returns `key name` if value exists
 ---@field list_to_set fun(list: table): table Maps values as keys
 
+---@class ContourExt
+---@field _contour_list table?
+
 ---@class InteractionExt
 ---@field tweak_data string
 ---@field active fun(self: self): boolean
@@ -960,15 +964,26 @@ end
 ---@field _unit UnitEnemy
 ---@field _tweak_table string
 ---@field has_tag fun(self: self, tag: string): boolean
+
 ---@class HuskCopBase : CopBase
 
+---@class CopBrain
+---@field _logic_data table
+---@field converted fun(self: self): boolean
+
+---@class HuskCopBrain
+---@field converted fun(self: self): boolean
+
 ---@class CopDamage
----@field is_civilian fun(type: string): boolean
+---@field _health number
+---@field _HEALTH_INIT number
+---@field _health_max number
 ---@field _ON_STUN_ACCURACY_DECREASE number
 ---@field _ON_STUN_ACCURACY_DECREASE_TIME number
 ---@field _unit UnitEnemy
 ---@field add_listener fun(self: self, key: string, events: string[]?, clbk: function)
 ---@field dead fun(self: self): boolean
+---@field is_civilian fun(type: string): boolean
 ---@field register_listener fun(key: string, event_types: string[], clbk: function)
 ---@field remove_listener fun(self: self, key: string)
 ---@field unregister_listener fun(key: string)
@@ -991,6 +1006,10 @@ end
 
 ---@class HuskCivilianDamage : HuskCopDamage
 ---@field _unit UnitCivilian
+
+---@class TeamAIBase : CopBase
+
+---@class HuskTeamAIBase : HuskCopBase
 
 ---@class C_VehicleVelocity
 ---@field length fun(self: self): number
@@ -1045,9 +1064,12 @@ end
 ---@field movement fun(): PlayerMovement|HuskPlayerMovement
 
 ---@class UnitTeamAI : UnitBase
+---@field base fun(): TeamAIBase|HuskTeamAIBase
 
 ---@class UnitEnemy : UnitBase
 ---@field base fun(): CopBase|HuskCopBase
+---@field brain fun(): CopBrain|HuskCopBrain
+---@field contour fun(): ContourExt
 ---@field character_damage fun(): CopDamage|HuskCopDamage
 ---@field movement fun(): CopMovement|HuskCopMovement
 
@@ -1126,6 +1148,7 @@ end
 ---@field stop fun(self: self, anim_thread: thread?)
 ---@field animate fun(self: self, f: function, ...:any?): thread
 ---@field set_size fun(self: self, w: number, h: number)
+---@field size fun(self: self): w: number, h: number
 ---@field visible fun(self: self): boolean
 ---@field set_visible fun(self: self, visible: boolean)
 ---@field parent fun(self: self): Panel
