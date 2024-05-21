@@ -22,8 +22,8 @@ local triggers = {
     [100832] = { run = { time = 270 } },
 
     -- Fire
-    [101412] = { time = 300, id = "Fire1", icons = { Icon.Fire }, class = TT.Warning, waypoint = { position_by_unit = 101758 }, hint = Hints.Fire },
-    [101453] = { time = 300, id = "Fire2", icons = { Icon.Fire }, class = TT.Warning, waypoint = { position_by_unit = 101759 }, hint = Hints.Fire },
+    [101412] = { time = 300, id = "Fire", timer_id = "Fire1", icons = { Icon.Fire }, class = TT.Group.Warning, waypoint = { position_by_unit = 101758 }, hint = Hints.Fire },
+    [101453] = { time = 300, id = "Fire", timer_id = "Fire2", icons = { Icon.Fire }, class = TT.Group.Warning, waypoint = { position_by_unit = 101759 }, hint = Hints.Fire },
 
     -- Asset
     [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = AssetLootDropOff, waypoint = { position_by_element = 103152 }, hint = Hints.Loot }
@@ -57,11 +57,11 @@ local min_money = EHI:GetValueBasedOnDifficulty({
     veryhard_or_above = 2
 })
 local max_money = min_money * 2
-local max_bags = EHI:GetValueBasedOnDifficulty({
-    normal = max_money + 4,
-    hard = max_money + 5,
-    veryhard = max_money + 7,
-    overkill_or_above = max_money + 9
+local max_bags = max_money + EHI:GetValueBasedOnDifficulty({
+    normal = 4,
+    hard = 5,
+    veryhard = 7,
+    overkill_or_above = 9
 })
 EHI:AddXPBreakdown({
     objective =

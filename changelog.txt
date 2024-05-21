@@ -1,3 +1,8 @@
+r242 (21. 05. 2024):
+Hell's Island: Fixed an issue where Assault Tracker does not work correctly
+Ukrainian Job: Fixed a crash with enabled Loot Counter
+Slaughterhouse: Fixed a load crash
+
 r241 (20. 05. 2024):
 Updated to latest SuperBLT version (1.4.3)
 GO Bank: Fixed trackers not appearing

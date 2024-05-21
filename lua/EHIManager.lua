@@ -53,7 +53,8 @@ function EHIManager:init(managers)
         [self.Trackers.Warning] = self.Waypoints.Warning,
         [self.Trackers.Inaccurate] = self.Waypoints.Inaccurate,
         [self.Trackers.InaccuratePausable] = self.Waypoints.InaccuratePausable,
-        [self.Trackers.InaccurateWarning] = self.Waypoints.InaccurateWarning
+        [self.Trackers.InaccurateWarning] = self.Waypoints.InaccurateWarning,
+        [self.Trackers.Group.Warning] = self.Waypoints.Warning
     }
     self.TrackerToInaccurate =
     {
@@ -87,15 +88,23 @@ function EHIManager:init(managers)
         [SF.GetElementTimerAccurate] = true,
         [SF.UnpauseTrackerIfExistsAccurate] = true
     }
+    self.GroupingTrackers =
+    {
+        [self.Trackers.Group.Warning] = true
+    }
     if EHI:IsClient() then
         self.HookOnLoad = {}
     end
+    self:_post_init()
+end
+
+function EHIManager:_post_init()
+    self._phalanx:init_finalize(self)
 end
 
 function EHIManager:init_finalize()
     self._trackers:init_finalize(self)
     self._assault:init_finalize(self)
-    self._phalanx:init_finalize(self)
     self._loot:init_finalize()
     EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
     EHI:AddOnCustodyCallback(callback(self, self, "SetCustodyState"))
@@ -333,6 +342,11 @@ end
 function EHIManager:GetUnitPosition(id)
     local unit = managers.worlddefinition:get_unit(id)
     return unit and unit.position and unit:position()
+end
+
+---@param id number Unit ID
+function EHIManager:GetUnitPositionOrDefault(id)
+    return self:GetUnitPosition(id) or Vector3()
 end
 
 ---@param data ElementWaypointTrigger
@@ -932,6 +946,9 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
                 data.waypoint = nil
                 data.waypoint_f = nil
             end
+            if data.class and self.GroupingTrackers[data.class] then
+                data.tracker_group = true
+            end
             if data.client and self.ClientSyncFunctions[data.special_function or 0] then
                 data.additional_time = (data.additional_time or 0) + data.client.time
                 data.random_time = data.client.random_time
@@ -1217,13 +1234,19 @@ function EHIManager:CreateTracker(trigger)
         self._trackers:RunTracker(trigger.id, trigger.run)
     elseif trigger.tracker_merge and self._trackers:TrackerExists(trigger.id) then
         self._trackers:SetTrackerTime(trigger.id, trigger.time)
+    elseif trigger.tracker_group then
+        if self._trackers:TrackerExists(trigger.id) then
+            self._trackers:CallFunction(trigger.id, "AddFromTrigger", trigger)
+        else
+            self:_AddTracker(trigger)
+        end
     else
         self:_AddTracker(trigger)
     end
     if trigger.waypoint_f then
         trigger.waypoint_f(self, trigger)
     elseif trigger.waypoint then
-        self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
+        self._waypoints:AddWaypoint(trigger.timer_id or trigger.id, trigger.waypoint)
     end
 end
 
@@ -1735,11 +1758,17 @@ if EHI:GetWaypointOption("show_waypoints_only") then
             if trigger.random_time then
                 trigger.waypoint.time = self:GetRandomTime(trigger)
             end
-            self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
+            self._waypoints:AddWaypoint(trigger.timer_id or trigger.id, trigger.waypoint)
         elseif trigger.run then
             self._trackers:RunTracker(trigger.id, trigger.run)
         elseif trigger.tracker_merge and self._trackers:TrackerExists(trigger.id) then
             self._trackers:SetTrackerTime(trigger.id, trigger.time)
+        elseif trigger.tracker_group then
+            if self._trackers:TrackerExists(trigger.id) then
+                self._trackers:CallFunction(trigger.id, "AddFromTrigger", trigger)
+            else
+                self:_AddTracker(trigger)
+            end
         else
             self:_AddTracker(trigger)
         end

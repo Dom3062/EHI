@@ -51,6 +51,7 @@
 ---@field flash_bg boolean?
 ---@field hint string?
 ---@field tracker_merge boolean
+---@field tracker_group boolean
 ---@field remove_on_alarm boolean Removes the tracker on alarm; calls `EHITracker:ForceDelete()`
 ---@field update_on_alarm boolean Updates the tracker on alarm; calls `EHITracker:OnAlarm()`
 ---@field [any] any

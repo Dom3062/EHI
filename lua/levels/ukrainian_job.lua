@@ -67,9 +67,9 @@ if EHI:GetOption("show_loot_counter") and not EHI:IsPlayingCrimeSpree() then
         end
         EHI:ShowLootCounterNoChecks({ max = 10 - jewelry_to_subtract })
     end, true)
-    local DecreaseProgressMax = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    local DecreaseProgressMax = EHI:RegisterCustomSF(function(self, ...)
         self._loot:DecreaseLootCounterProgressMax()
-    end) }
+    end)
     other[101613] = { special_function = DecreaseProgressMax }
     other[101617] = { special_function = DecreaseProgressMax }
     other[101637] = { special_function = DecreaseProgressMax }

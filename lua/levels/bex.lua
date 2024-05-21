@@ -1,81 +1,36 @@
 local EHI = EHI
----@class EHIbex11Tracker : EHIAchievementProgressTracker
----@field super EHIAchievementProgressTracker
-EHIbex11Tracker = class(EHIAchievementProgressTracker)
+---@class EHIbex11Tracker : EHIAchievementProgressGroupTracker
+---@field super EHIAchievementProgressGroupTracker
+EHIbex11Tracker = class(EHIAchievementProgressGroupTracker)
 ---@param params EHITracker.params
 function EHIbex11Tracker:pre_init(params)
-    params.max = 11 -- Loot
-    params.show_progress_on_finish = true
+    params.call_done_function = true
     params.status_is_overridable = true
-    self._box_max = 240
-    self._box_progress = 0
-    self._objectives_to_complete = 2 -- Loot and Deposit boxes
     EHIbex11Tracker.super.pre_init(self, params)
     EHI:AddAchievementToCounter({
         achievement = "bex_11",
+        counter =
+        {
+            check_type = EHI.LootCounter.CheckType.CustomCheck,
+            f = function(loot, tracker_id)
+                self:SetProgress(loot:GetSecuredBagsAmount(), "bags")
+            end
+        },
         no_sync = true
     })
 end
 
-function EHIbex11Tracker:FormatBoxProgress()
-    return self._box_progress .. "/" .. self._box_max
-end
-
-function EHIbex11Tracker:OverridePanel()
-    self:SetBGSize(self._default_bg_size)
-    self._box_progress_text = self:CreateText({
-        text = self:FormatBoxProgress(),
-        left = self._text:right()
-    })
-    self:SetIconX()
-end
-
-function EHIbex11Tracker:SetFailed()
-    EHIbex11Tracker.super.SetFailed(self)
-    self:SetTextColor(Color.red, self._box_progress_text)
-    self:SetTextColor(Color.red)
-    self:SetStatusText("fail")
-end
-
-function EHIbex11Tracker:SetCompleted(...)
-    EHIbex11Tracker.super.SetCompleted(self, ...)
-    if self._status and self._status == "completed" and not self._loot_objective_done then
-        self._loot_objective_done = true
-        self:ObjectiveComplete()
-    end
-end
-
-function EHIbex11Tracker:IncreaseBoxProgress()
-    self:SetBoxProgress(self._box_progress + 1)
-end
-
----@param progress number
-function EHIbex11Tracker:SetBoxProgress(progress)
-    if self._box_progress ~= progress and not self._disable_counting_box then
-        self._box_progress = progress
-        self._box_progress_text:set_text(self:FormatBoxProgress())
-        self:FitTheText(self._box_progress_text)
-        self:AnimateBG(1)
-        if self._box_progress == self._box_max then
-            self._disable_counting_box = true
-            self:SetTextColor(Color.green, self._box_progress_text)
-            self:ObjectiveComplete()
-        end
-    end
-end
-
-function EHIbex11Tracker:ObjectiveComplete()
-    self._objectives_to_complete = self._objectives_to_complete - 1
-    if self._objectives_to_complete == 0 then -- Both objectives complete
-        self:SetStatusText("finish")
-        self._box_progress_text:set_visible(false)
-        self:SetBGSize(self._default_bg_size, "set", true)
-        local panel_w = self._default_bg_size + (self._icon_gap_size_scaled * self._n_of_icons)
-        self:AnimatePanelW(panel_w)
-        self:AnimIconX(self._default_bg_size + self._gap_scaled)
-        self:ChangeTrackerWidth(panel_w)
-        self:AnimateBG()
-    end
+function EHIbex11Tracker:CountersDone()
+    self:SetStatusText("finish", self._counters_table.bags.label)
+    self:SetBGSize(self._default_bg_size, "set", true)
+    local panel_w = self._default_bg_size + (self._icon_gap_size_scaled * self._n_of_icons)
+    self:AnimatePanelW(panel_w)
+    self:AnimIconX(self._default_bg_size + self._gap_scaled)
+    self:ChangeTrackerWidth(panel_w)
+    self:AnimateBG()
+    local boxes_label = self._counters_table.boxes.label
+    boxes_label:parent():remove(boxes_label)
+    self._counters_table.boxes = nil
 end
 
 local Icon = EHI.Icons
@@ -135,8 +90,13 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100107] = { class = "EHIbex11Tracker" },
-            [103677] = { special_function = SF.CallCustomFunction, f = "IncreaseBoxProgress" },
+            [100107] = { class = "EHIbex11Tracker", counter = {
+                { max = 11, id = "bags" },
+                { max = 240, id = "boxes" }
+            } },
+            [103677] = { special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+                self._trackers:CallFunction(trigger.id, "SetProgress", 1, "boxes")
+            end) },
             [103772] = { special_function = SF.SetAchievementFailed }
         }
     }

@@ -878,6 +878,7 @@ do
     dofile(path .. "EHIInaccurateTrackers.lua")
     dofile(path .. "EHIColoredCodesTracker.lua")
     dofile(path .. "EHITimedTrackers.lua")
+    dofile(path .. "EHIGroupTrackers.lua")
     dofile(path .. "EHIAchievementTrackers.lua")
     dofile(path .. "EHITrophyTrackers.lua")
     dofile(path .. "EHIDailyTrackers.lua")

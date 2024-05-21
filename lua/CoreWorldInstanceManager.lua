@@ -543,6 +543,8 @@ local original =
 local EHIConfig =
 {
     mission_trackers = EHI:GetOption("show_mission_trackers"),
+    show_waypoints = EHI:GetWaypointOption("show_waypoints_mission"),
+    show_waypoints_only = EHI:GetWaypointOption("show_waypoints_only"),
     escape_waypoints = EHI:GetWaypointOption("show_waypoints_escape")
 }
 
@@ -567,13 +569,23 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                 elseif trigger.add_runned_unit_sequence_trigger and EHIConfig.mission_trackers then
                     managers.mission:add_runned_unit_sequence_trigger(final_index, "interact", function(unit)
                         local time_random = trigger.time_random and math.rand(trigger.time_random) or 0
-                        managers.ehi_tracker:AddTracker({
-                            id = tostring(final_index),
-                            time = trigger.time + time_random,
-                            icons = trigger.icons,
-                            hint = trigger.hint,
-                            class = trigger.class
-                        })
+                        if not EHIConfig.show_waypoints_only then
+                            managers.ehi_tracker:AddTracker({
+                                id = tostring(final_index),
+                                time = trigger.time + time_random,
+                                icons = trigger.icons,
+                                hint = trigger.hint,
+                                class = trigger.class
+                            })
+                        end
+                        if EHIConfig.show_waypoints then
+                            managers.ehi_waypoint:AddWaypoint(tostring(final_index), {
+                                time = trigger.time + time_random,
+                                icon = trigger.icons[1],
+                                position = managers.ehi_manager:GetUnitPositionOrDefault(final_index),
+                                class = trigger.class and managers.ehi_manager.TrackerWaypointsClass[trigger.class]
+                            })
+                        end
                     end)
                 elseif trigger.remove_vanilla_waypoint then
                     if trigger.mission then

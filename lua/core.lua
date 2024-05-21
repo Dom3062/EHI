@@ -126,7 +126,7 @@ _G.EHI =
         TeamAIAbilityBoostChange = "TeamAIAbilityBoostChanged",
         -- Provides `mode` (a string value -> `normal`, `phalanx`)
         AssaultModeChanged = "AssaultModeChanged",
-        -- Provides `mode` (a string value -> `normal`, `endless`)
+        -- Provides `mode` (a string value -> `normal`, `endless`) and `element_id` (a number value)
         AssaultWaveModeChanged = "AssaultWaveModeChanged",
         -- Provides `visibility` (a boolean value)
         HUDVisibilityChanged = "HUDVisibilityChanged",
@@ -520,6 +520,11 @@ _G.EHI =
         {
             Base = "EHIDailyTracker",
             Progress = "EHIDailyProgressTracker"
+        },
+        Group =
+        {
+            Warning = "EHIWarningGroupTracker",
+            Progress = "EHIProgressGroupTracker"
         }
     },
 

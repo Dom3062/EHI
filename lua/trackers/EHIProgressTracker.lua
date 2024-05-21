@@ -17,8 +17,10 @@ function EHIProgressTracker:post_init(params)
     self._progress_text = self._text
 end
 
-function EHIProgressTracker:Format()
-    return self._progress .. "/" .. self._max
+---@param progress number?
+---@param max number?
+function EHIProgressTracker:Format(progress, max)
+    return string.format("%d/%d", progress or self._progress, max or self._max)
 end
 
 ---@param max number

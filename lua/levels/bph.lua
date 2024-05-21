@@ -8,12 +8,12 @@ local triggers = {
     [100109] = { max = (ovk_and_up and 40 or 30), id = "EnemyDeathShowers", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress, hint = Hints.Kills },
     [101339] = { id = "EnemyDeathShowers", special_function = SF.IncreaseProgress },
 
-    [101815] = { time = 10, id = "MoveWalkway", icons = { Icon.Wait }, hint = Hints.Wait },
-
     [101221] = { time = 11, id = "Thermite1", icons = { Icon.Fire }, hint = Hints.Thermite },
     [101714] = { time = 11, id = "Thermite2", icons = { Icon.Fire }, hint = Hints.Thermite },
     [101715] = { time = 11, id = "Thermite3", icons = { Icon.Fire }, hint = Hints.Thermite },
     [101716] = { time = 11, id = "Thermite4", icons = { Icon.Fire }, hint = Hints.Thermite },
+
+    [101815] = { time = 10, id = "MoveWalkway", icons = { Icon.Wait }, hint = Hints.Wait },
 
     [101137] = { max = 10, id = "EnemyDeathOutside", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress, hint = Hints.Kills },
     [101412] = { id = "EnemyDeathOutside", special_function = SF.IncreaseProgress }
@@ -72,3 +72,6 @@ EHI:AddXPBreakdown({
         { amount = ovk_and_up and 4000 or 3000, name = "bph_helipad_is_accessible" }
     }
 })
+EHIAssaultManager:SetWaveModeElementsBlock(101325, 100115)
+EHIAssaultManager:SetFakeAssaultBlock()
+EHIAssaultManager:SetForceAssaultStart(true)

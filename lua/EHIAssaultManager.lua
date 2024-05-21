@@ -13,6 +13,7 @@ function EHIAssaultManager:init_finalize(manager)
     self._internal = manager:CreateAndCopyInternal("assault")
     self._is_skirmish = tweak_data.levels:IsLevelSkirmish()
     local combine = EHI:CombineAssaultDelayAndAssaultTime()
+    self._blocked_wave_mode_elements = {}
     self._anticipation =
     {
         sync_f = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation",
@@ -36,12 +37,18 @@ function EHIAssaultManager:init_finalize(manager)
     }
     if not self._assault_time.blocked then
         if self._assault_time.show_endless_assault then
-            EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
+            EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode, element_id)
+                if self._blocked_wave_mode_elements[element_id] then
+                    return
+                end
                 self._endless_assault = mode == "endless"
                 self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", self._endless_assault)
             end)
         else
-            EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
+            EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode, element_id)
+                if self._blocked_wave_mode_elements[element_id] then
+                    return
+                end
                 if mode == "endless" then
                     self._endless_assault = true
                     self._trackers:ForceRemoveTracker(self._assault_time.name)
@@ -174,7 +181,7 @@ function EHIAssaultManager:AssaultStart()
     end
     if self._assault_time.blocked or (self._endless_assault and not self._assault_time.show_endless_assault) or self._internal.is_assault or self._assault_block then
         self._internal.is_assault = true
-        if self._force_assault_start then
+        if self._force_assault_start and not self._endless_assault then
             self._trackers:CallFunction(self._assault_time.name, "AssaultStart", self._diff)
         end
         return
@@ -230,6 +237,19 @@ function EHIAssaultManager:SetAssaultBlock(block)
     if block then
         self:CallFunction("PoliceActivityBlocked")
     end
+end
+
+---@param ... number
+function EHIAssaultManager:SetWaveModeElementsBlock(...)
+    local elements = { ... }
+    for _, element in ipairs(elements) do
+        self._blocked_wave_mode_elements[element] = true
+    end
+end
+
+function EHIAssaultManager:SetFakeAssaultBlock()
+    self._assault_block = true
+    EHI:AddOnAlarmCallback(callback(self, self, "SetAssaultBlock", false))
 end
 
 ---@param f string

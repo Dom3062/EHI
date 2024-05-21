@@ -3,7 +3,7 @@ local Color = Color
 
 ---@alias EHITimerGroupTracker.Timer { label: PanelText, time: number, jammed: boolean, powered: boolean, autorepair: boolean, animate_warning: boolean?, animate_completion: boolean?, anim_started: boolean, pos: number }
 
----@class EHITimerTracker : EHIWarningTracker
+---@class EHITimerTracker : EHIWarningTracker, EHIWarningGroupTracker
 ---@field super EHIWarningTracker
 ---@field _icon2 PanelBitmap?
 ---@field _icon3 PanelBitmap?
@@ -18,6 +18,7 @@ EHITimerTracker._autorepair_color = EHI:GetTWColor("drill_autorepair")
 EHITimerTracker._paused_color = EHIPausableTracker._paused_color
 EHITimerTracker.StartTimer = EHITimedChanceTracker.StartTimer
 EHITimerTracker.StopTimer = EHITimedChanceTracker.StopTimer
+EHITimerTracker.AnimateMovement = EHIWarningGroupTracker.AnimateMovement
 ---@param params EHITracker.params
 function EHITimerTracker:pre_init(params)
     if params.icons[1].icon then
@@ -285,21 +286,6 @@ function EHITimerGroupTracker:RedrawPanel()
     for _, timer in pairs(self._timers) do
         self:FitTheText(timer.label)
     end
-end
-
----@param n number
----@param delete boolean?
-function EHITimerGroupTracker:AnimateMovement(n, delete)
-    local w = self._default_bg_size * n
-    if delete then
-        self._panel_override_w = self._panel_override_w - self._default_bg_size
-    else
-        self._panel_override_w = self._panel_override_w + self._default_bg_size
-    end
-    self:AnimatePanelWAndRefresh(self._panel_override_w)
-    self:ChangeTrackerWidth(self._panel_override_w)
-    self:AnimIconsX(w + self._gap_scaled)
-    self:SetBGSize(w, "set", true)
 end
 
 ---@param jammed boolean

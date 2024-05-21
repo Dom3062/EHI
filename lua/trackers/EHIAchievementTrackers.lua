@@ -174,6 +174,35 @@ function EHIAchievementProgressTracker:load(data)
     self:SetProgress(data.progress or 0)
 end
 
+---@class EHIAchievementProgressGroupTracker : EHIProgressGroupTracker, EHIAchievementTracker
+EHIAchievementProgressGroupTracker = ehi_achievement_class(EHIProgressGroupTracker)
+---@param panel Panel
+---@param params EHITracker.params
+function EHIAchievementProgressGroupTracker:init(panel, params, ...)
+    self._beardlib = params.beardlib
+    self:PrepareHint(params)
+    EHIAchievementProgressGroupTracker.super.init(self, panel, params, ...)
+    self:ShowStartedPopup(params.delay_popup)
+    self:ShowAchievementDescription(params.delay_popup)
+end
+
+function EHIAchievementProgressGroupTracker:save(data)
+    local counters = {}
+    for key, tbl in pairs(self._counters_table) do
+        local counter = {}
+        counter.progress = tbl.progress
+        counters[key] = counter
+    end
+    data.counters = counters
+end
+
+function EHIAchievementProgressGroupTracker:load(data)
+    local counters = data.counters or {}
+    for key, counter in pairs(counters) do
+        self:SetProgress(counter.progress or 0, key)
+    end
+end
+
 ---@class EHIAchievementBagValueTracker : EHINeededValueTracker, EHIAchievementTracker
 ---@field super EHINeededValueTracker
 EHIAchievementBagValueTracker = ehi_achievement_class(EHINeededValueTracker)

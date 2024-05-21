@@ -1,85 +1,45 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local Hints = EHI.Hints
----@class EHIkosugi5Tracker : EHIAchievementProgressTracker
-EHIkosugi5Tracker = class(EHIAchievementProgressTracker)
----@param panel Panel
+---@class EHIkosugi5Tracker : EHIAchievementProgressGroupTracker
+---@field super EHIAchievementProgressGroupTracker
+EHIkosugi5Tracker = class(EHIAchievementProgressGroupTracker)
 ---@param params EHITracker.params
-function EHIkosugi5Tracker:init(panel, params, ...)
-    params.show_progress_on_finish = true
-    params.max = 16 -- Random loot (with armor)
-    self._armor_max = 4 -- Armor
-    self._armor_counter = 0
-    self._objectives_to_complete = 2
-    EHIkosugi5Tracker.super.init(self, panel, params, ...)
+function EHIkosugi5Tracker:post_init(params)
+    EHIkosugi5Tracker.super.post_init(self, params)
     EHI:AddAchievementToCounter({
         achievement = "kosugi_5",
         counter =
         {
             check_type = EHI.LootCounter.CheckType.CustomCheck,
             f = function(loot, tracker_id)
-                self:SetProgressArmor(loot:GetSecuredBagsTypeAmount("samurai_suit"))
-                self:SetProgress(loot:GetSecuredBagsAmount())
+                self:SetProgress(loot:GetSecuredBagsTypeAmount("samurai_suit"), "armor")
+                self:SetProgress(loot:GetSecuredBagsAmount(), "bags")
             end
         },
         no_sync = true
     })
 end
 
-function EHIkosugi5Tracker:OverridePanel()
-    self:SetBGSize()
-    self._armor_progress_text = self:CreateText({
-        text = self:FormatArmorProgress(),
-        w = self._bg_box:w() / 2,
-        left = self._text:right(),
-        FitTheText = true
-    })
-    self:SetIconX()
-end
-
-function EHIkosugi5Tracker:FormatArmorProgress()
-    return self._armor_counter .. "/" .. self._armor_max
-end
-
----@param force boolean?
-function EHIkosugi5Tracker:SetCompleted(force)
-    EHIkosugi5Tracker.super.SetCompleted(self, force)
-    if self._status then
-        self:ObjectiveComplete()
-    end
-end
-
----@param progress number
-function EHIkosugi5Tracker:SetProgressArmor(progress)
-    if self._armor_counter ~= progress and not self._armor_counting_disabled then
-        self._armor_counter = progress
-        self._armor_progress_text:set_text(self:FormatArmorProgress())
-        self:FitTheText(self._armor_progress_text)
-        if self._armor_counter == self._armor_max then
-            self._armor_progress_text:set_color(Color.green)
-            self._armor_counting_disabled = true
-            self:ObjectiveComplete()
-        end
-        self:AnimateBG()
-    end
-end
-
-function EHIkosugi5Tracker:ObjectiveComplete()
-    self._objectives_to_complete = self._objectives_to_complete - 1
-    if self._objectives_to_complete == 0 then
-        self:AddTrackerToUpdate()
-    end
-end
-
 if EHI:GetOption("show_mission_trackers") then
+    local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_mission")
     for _, unit_id in ipairs({ 100098, 102897, 102899, 102900 }) do
         managers.mission:add_runned_unit_sequence_trigger(unit_id, "interact", function(unit)
-            managers.ehi_tracker:AddTracker({
-                id = tostring(unit_id),
-                time = 10,
-                icons = { Icon.Fire },
-                hint = Hints.Thermite
-            })
+            if not show_waypoint_only then
+                managers.ehi_tracker:AddTracker({
+                    id = tostring(unit_id),
+                    time = 10,
+                    icons = { Icon.Fire },
+                    hint = Hints.Thermite
+                })
+            end
+            if show_waypoint then
+                managers.ehi_waypoint:AddWaypoint(tostring(unit_id), {
+                    time = 10,
+                    icon = Icon.Fire,
+                    position = managers.ehi_manager:GetUnitPositionOrDefault(unit_id)
+                })
+            end
         end)
     end
 end
@@ -144,14 +104,20 @@ local achievements =
     {
         elements =
         {
-            [102700] = { class = "EHIkosugi5Tracker" }
+            [102700] = { class = "EHIkosugi5Tracker", counter = {
+                { max = 16, id = "bags" },
+                { max = 4, id = "armor" }
+            } }
         },
         load_sync = function(self)
             local counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")
             local counter_loot = managers.loot:GetSecuredBagsAmount()
             if counter_loot < 16 or counter_armor < 4 then
-                self._achievements:AddAchievementProgressTracker("kosugi_5", 0, math.min(counter_loot, 16)) -- Max is passed in the tracker "init" function
-                self._trackers:CallFunction("kosugi_5", "SetProgressArmor", math.min(counter_armor, 4))
+                self._achievements:AddAchievementProgressTracker("kosugi_5", 0, 0, nil, "EHIkosugi5Tracker")
+                self._trackers:CallFunction("kosugi_5", "AddFromSync", {
+                    { progress = math.min(counter_loot, 16), max = 16, id = "bags" },
+                    { progress = math.min(counter_armor, 4), max = 4, id = "armor" }
+                })
             end
         end,
         cleanup_callback = function()
