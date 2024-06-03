@@ -132,7 +132,7 @@ local triggers = {
     [102009] = { time = 60, id = "Crane", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.des_Crane },
     [101702] = { id = "Crane", special_function = SF.PauseTracker },
 
-    [100729] = { chance = 20, id = "HackChance", icons = { Icon.PCHack }, class = TT.Timer.Chance, hint = Hints.Hack },
+    [102473] = { chance = 20, id = "HackChance", icons = { Icon.PCHack }, class = TT.Timer.Chance, hint = Hints.Hack },
     [108694] = { id = "HackChance", special_function = SF.IncreaseChanceFromElement }, -- +33%
     [101485] = { id = "HackChance", special_function = SF.RemoveTracker }
 }
@@ -163,12 +163,7 @@ if EHI:GetOption("show_mission_trackers") then
     triggers[102593].special_function = ChemSet
     triggers[101217].special_function = ChemSet
     triggers[102595].special_function = ChemSet
-    triggers[EHI:GetInstanceElementID(100046, 15000)] = { special_function = EHI:RegisterCustomSF(function(self, ...)
-        self._trackers:AddTracker({
-            id = "ChemSet",
-            class = "EHIChemSetTracker"
-        })
-    end) }
+    triggers[EHI:GetInstanceElementID(100046, 15000)] = { id = "ChemSet", class = "EHIChemSetTracker" }
     triggers[EHI:GetInstanceElementID(100048, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "A", 1 } }
     triggers[EHI:GetInstanceElementID(100049, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "B", 1 } }
     triggers[EHI:GetInstanceElementID(100050, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "C", 1 } }

@@ -145,6 +145,7 @@
     "ehi_hint_ecm_feedback" : "ECM Feedback",
     "ehi_hint_ecm_feedback_refresh" : "ECM Feedback Refresh",
     "ehi_hint_phalanx_chance" : "Captain Chance",
+    "ehi_hint_hostage" : "Hostage Counter",
 
     "ehi_hint_big_piggy" : "Moving Piggy",
     "ehi_hint_brb_winch_delivery" : "Winch Delivery",
@@ -521,6 +522,17 @@
     "ehi_civilian_count_tracker_format_2" : "Tied | Untied",
     "ehi_civilian_count_tracker_format_3" : "Untied | Tied",
 
+    "ehi_show_hostage_count_tracker" : "Show Hostage Count Tracker",
+    "ehi_show_hostage_count_tracker_desc" : "Shows a tracker for how many hostages are on the map",
+
+    "ehi_hostage_count_tracker_format" : "Civilian Count Tracker Format",
+    "ehi_hostage_count_tracker_format_desc" : "",
+    "ehi_hostage_count_tracker_format_1" : "Total only",
+    "ehi_hostage_count_tracker_format_2" : "Total | Police",
+    "ehi_hostage_count_tracker_format_3" : "Police | Total",
+    "ehi_hostage_count_tracker_format_4" : "Civilians | Police",
+    "ehi_hostage_count_tracker_format_5" : "Police | Civilians",
+
     "ehi_show_laser_tracker" : "Show Laser Tracker",
     "ehi_show_laser_tracker_desc" : "Shows a tracker for lasers that cycle every few seconds",
 
@@ -530,8 +542,8 @@
     "ehi_show_assault_time_tracker" : "Show Assault Duration Tracker",
     "ehi_show_assault_time_tracker_desc" : "Shows a tracker for how long the assault duration will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
 
-    "ehi_aggregate_assault_delay_and_assault_time" : "Aggregate Assault Delay and Duration into one tracker",
-    "ehi_aggregate_assault_delay_and_assault_time_desc" : "Aggregates both 'Assault Delay' and 'Assault Duration' into one tracker\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
+    "ehi_show_assault_diff_in_assault_trackers" : "Show Assault Difficulty in Assault Trackers",
+    "ehi_show_assault_diff_in_assault_trackers_desc" : "",
 
     "ehi_show_endless_assault" : "Show Endless Assault in the Tracker",
     "ehi_show_endless_assault_desc" : "Shows 'ENDLESS' in the Assault tracker when endless assault is on",

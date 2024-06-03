@@ -25,7 +25,7 @@ end
 local function animate_alpha(o, target_alpha)
     local alpha = o:alpha()
     do_animation(0.2, function(p)
-        o:set_alpha(math.lerp(alpha, target_alpha, p) --[[@as number]])
+        o:set_alpha(math.lerp(alpha, target_alpha, p))
     end)
     o:set_alpha(target_alpha)
 end
@@ -168,7 +168,7 @@ function EHIMenu:init()
     end
 
     if Utils:IsInHeist() then
-        self._restart_required = self._panel:text({
+        local restart = self._panel:text({
             name = "restart_required",
             text = managers.localization:text("ehi_level_restart_required"),
             font_size = 24,
@@ -179,8 +179,8 @@ function EHIMenu:init()
             wrap = true,
             word_wrap = true
         })
-        self._restart_required:set_right(self._options_panel:x() - 20)
-        self._restart_required:set_top(self._options_panel:bottom())
+        restart:set_right(self._options_panel:x() - 20)
+        restart:set_top(self._options_panel:bottom())
     end
 
     self:GetMenuFromJson(EHI.MenuPath .. "menu.json")
@@ -188,6 +188,7 @@ function EHIMenu:init()
     self:GetMenuFromJson(EHI.MenuPath .. "trackers.json")
     self:GetMenuFromJson(EHI.MenuPath .. "trackers_2.json")
     self:GetMenuFromJson(EHI.MenuPath .. "trackers_3.json")
+    self:GetMenuFromJson(EHI.MenuPath .. "trackers_4.json")
     self:GetMenuFromJson(EHI.MenuPath .. "unlockables.json", EHI.settings.unlockables)
     self:GetMenuFromJson(EHI.MenuPath .. "equipment.json")
     self:GetMenuFromJson(EHI.MenuPath .. "waypoints.json")
@@ -321,7 +322,7 @@ function EHIMenu:Open()
         local a = o:alpha()
 
         do_animation(0.2, function(p)
-            local alpha_lerp = math.lerp(a, 1, p) --[[@as number]]
+            local alpha_lerp = math.lerp(a, 1, p)
             o:set_alpha(alpha_lerp)
             self._preview_panel._hud_panel:set_alpha(alpha_lerp)
         end)
@@ -351,7 +352,7 @@ function EHIMenu:Close()
         local a = o:alpha()
 
         do_animation(0.2, function(p)
-            local alpha_lerp = math.lerp(a, 0, p) --[[@as number]]
+            local alpha_lerp = math.lerp(a, 0, p)
             o:set_alpha(alpha_lerp)
             self._preview_panel._hud_panel:set_alpha(alpha_lerp)
         end)
@@ -1984,6 +1985,20 @@ function EHIMenu:UpdateAllBuffOffset(menu, item)
             self:AnimateItemEnabled(m_item, enabled)
         elseif items2[m_item.id or ""] then
             self:AnimateItemEnabled(m_item, not enabled)
+        end
+    end
+end
+
+function EHIMenu:IsAssaultTrackerEnabled()
+    return EHI:IsAssaultTrackerEnabled()
+end
+
+function EHIMenu:UpdateAssaultDiff(menu, item)
+    local enabled = self:IsAssaultTrackerEnabled()
+    for _, m_item in ipairs(menu.items) do
+        if m_item.id == "ehi_show_assault_diff_in_assault_trackers_choice" then
+            self:AnimateItemEnabled(m_item, enabled)
+            break
         end
     end
 end

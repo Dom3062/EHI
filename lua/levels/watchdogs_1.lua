@@ -54,8 +54,8 @@ local other =
     [101249] = EHI:AddAssaultDelay({ control = 50 })
 }
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[101223] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101231 } }
-    other[102855] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 102862 } }
+    other[101223] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101231 } }
+    other[102855] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102862 } }
 end
 EHI:ParseTriggers({
     mission = triggers,

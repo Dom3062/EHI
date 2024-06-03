@@ -157,7 +157,8 @@ function EHITimerManager:StopTimer(id)
     local active_group = self._units_in_active_group[id]
     if active_group then
         self._units_in_active_group[id] = nil
-        self:RemoveTimerFromGroup2(id, active_group)
+        local group, subgroup, i_subgroup = self._trackers:ReturnValue(active_group, "GetGroupData")
+        self:RemoveTimerFromGroup(id, group, subgroup, i_subgroup)
     else
         self._trackers:RemoveTracker(id)
     end
@@ -188,13 +189,6 @@ function EHITimerManager:RemoveTimerFromGroup(id, group, subgroup, i_subgroup)
             self._trackers:CallFunction(i.name, "StopTimer", id)
         end
     end
-end
-
----@param id string Unit Key
----@param tracker_id string
-function EHITimerManager:RemoveTimerFromGroup2(id, tracker_id)
-    local group, subgroup, i_subgroup = self._trackers:ReturnValue(tracker_id, "GetGroupData")
-    self:RemoveTimerFromGroup(id, group, subgroup, i_subgroup)
 end
 
 ---@param id string Unit Key

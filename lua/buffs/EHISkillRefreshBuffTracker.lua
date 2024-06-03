@@ -246,7 +246,6 @@ end
 ---@class EHIBerserkerBuffTracker : EHISkillRefreshBuffTracker
 ---@field super EHISkillRefreshBuffTracker
 EHIBerserkerBuffTracker = class(EHISkillRefreshBuffTracker)
-EHIBerserkerBuffTracker.RoundNumber = EHI.RoundNumber
 EHIBerserkerBuffTracker._refresh_option = "berserker_refresh"
 function EHIBerserkerBuffTracker:init(...)
     EHIBerserkerBuffTracker.super.init(self, ...)
@@ -304,7 +303,7 @@ function EHIBerserkerBuffTracker:UpdateValue()
         return
     end
     local health_ratio = character_damage:health_ratio()
-    if health_ratio and health_ratio <= self._THRESHOLD then
+    if health_ratio <= self._THRESHOLD then
         local damage_ratio = 1 - (health_ratio / math.max(0.01, self._THRESHOLD))
         self._current_melee_damage_multiplier = 1 + self._melee_damage_multiplier * damage_ratio
         self._current_damage_multiplier = 1 + self._damage_multiplier * damage_ratio
@@ -356,8 +355,8 @@ end
 
 if EHI:GetBuffOption("berserker_format") == 1 then
     function EHIBerserkerBuffTracker:Format()
-        local dmg = self:RoundNumber(self._current_damage_multiplier or 0, 0.1)
-        local mdmg = self:RoundNumber(self._current_melee_damage_multiplier or 0, 0.1)
+        local dmg = self._parent_class:RoundNumber(self._current_damage_multiplier or 0, 0.1)
+        local mdmg = self._parent_class:RoundNumber(self._current_melee_damage_multiplier or 0, 0.1)
         local s
         if dmg == 0 and mdmg == 0 then
             s = "1x 1x"
@@ -368,8 +367,8 @@ if EHI:GetBuffOption("berserker_format") == 1 then
     end
 else
     function EHIBerserkerBuffTracker:Format()
-        local dmg = self:RoundNumber((self._current_damage_multiplier or 1) - 1, 0.01) * 100
-        local mdmg = self:RoundNumber((self._current_melee_damage_multiplier or 1) - 1, 0.01) * 100
+        local dmg = self._parent_class:RoundChanceNumber((self._current_damage_multiplier or 1) - 1)
+        local mdmg = self._parent_class:RoundChanceNumber((self._current_melee_damage_multiplier or 1) - 1)
         local s
         if dmg == 0 and mdmg == 0 then
             s = "0% 0%"
@@ -385,8 +384,6 @@ end
 EHIUppersRangeBuffTracker = class(EHISkillRefreshBuffTracker)
 EHIUppersRangeBuffTracker._refresh_option = "uppers_range_refresh"
 function EHIUppersRangeBuffTracker:init(...)
-    self._s_format = string.format
-    self._m_floor = math.floor
     self._mv3_distance = mvector3.distance
     EHIUppersRangeBuffTracker.super.init(self, ...)
 end
@@ -463,5 +460,5 @@ function EHIUppersRangeBuffTracker:GetFirstAidKit(pos)
 end
 
 function EHIUppersRangeBuffTracker:Format()
-    return self._s_format("%dm", self._m_floor(self._distance or 0))
+    return string.format("%dm", math.floor(self._distance or 0))
 end

@@ -145,6 +145,7 @@
     "ehi_hint_ecm_feedback" : "ECM Feedback",
     "ehi_hint_ecm_feedback_refresh" : "Znovunabití ECM Feedback",
     "ehi_hint_phalanx_chance" : "Šance na Kapitána",
+    "ehi_hint_hostage" : "Počet rukojmích",
 
     "ehi_hint_big_piggy" : "Přesouvání čuníka",
     "ehi_hint_brb_winch_delivery" : "Dodání navijáku",
@@ -521,6 +522,17 @@
     "ehi_civilian_count_tracker_format_2" : "Svázaní | Nesvázaní",
     "ehi_civilian_count_tracker_format_3" : "Nesvázaní | Svázaní",
 
+    "ehi_show_hostage_count_tracker" : "Zobrazovat sledovač s počtem rukojmích",
+    "ehi_show_hostage_count_tracker_desc" : "Zobrazuje sledovač s počtem rukojmích na mapě",
+
+    "ehi_hostage_count_tracker_format" : "Formát sledovače s počtem rukojmích",
+    "ehi_hostage_count_tracker_format_desc" : "",
+    "ehi_hostage_count_tracker_format_1" : "Pouze celkem",
+    "ehi_hostage_count_tracker_format_2" : "Celkem | Policie",
+    "ehi_hostage_count_tracker_format_3" : "Policie | Celkem",
+    "ehi_hostage_count_tracker_format_4" : "Civilisté | Policie",
+    "ehi_hostage_count_tracker_format_5" : "Policie | Civilisté",
+
     "ehi_show_laser_tracker" : "Zobrazovat sledovač laserů",
     "ehi_show_laser_tracker_desc" : "Zobrazuje sledovač na lasery, které cyklí každých pár vteřin",
 
@@ -530,8 +542,8 @@
     "ehi_show_assault_time_tracker" : "Zobrazovat sledovač délky útoku",
     "ehi_show_assault_time_tracker_desc" : "Zobrazuje sledovač s délkou útoku\n\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
 
-    "ehi_aggregate_assault_delay_and_assault_time" : "Spojit délku pauzy před útokem a délku útoku do jednoho sledovače",
-    "ehi_aggregate_assault_delay_and_assault_time_desc" : "Spojí oba sledovače 'Délka pauzy před dalším útokem' a 'Délka útoku' do jednoho sledovače\n\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
+    "ehi_show_assault_diff_in_assault_trackers" : "Zobrazovat obtížnost vlny ve sledovačích s útokem",
+    "ehi_show_assault_diff_in_assault_trackers_desc" : "",
 
     "ehi_show_endless_assault" : "Zobrazovat nekonečný útok ve sledovači",
     "ehi_show_endless_assault_desc" : "Zobrazuje 'NEKONEČNÝ' ve sledovači jakmile se spustí nekonečný útok",
@@ -549,7 +561,7 @@
     "ehi_variable_random_loot_format_3" : "Postup / Max + Náhodně?",
 
     "ehi_show_loot_max_xp_bags" : "Zobrazovat limit maximum pytlů když jsou ZK limitované",
-    "ehi_show_loot_max_xp_bags_desc" : "Pokud získané zkušenosti z pytů jsou limitované skriptem, zobrazí se maximum počet potlů ze kterých dostaneš zkušenosti\nPokud je maximum limitované, text se také vybarví žlutě",
+    "ehi_show_loot_max_xp_bags_desc" : "Pokud získané zkušenosti z pytů jsou limitované skriptem, zobrazí se maximum počet pytlů ze kterých dostaneš zkušenosti\nPokud je maximum limitované, text se také vybarví žlutě",
 
     "ehi_show_bodybags_counter" : "Zobrazovat počet pytlů na mrtvá těla",
     "ehi_show_bodybags_counter_desc" : "Zobrazuje sledovač s počtem pytlů na mrtvá těla",

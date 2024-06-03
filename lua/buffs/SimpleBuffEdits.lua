@@ -3,7 +3,7 @@
 EHIHealthRegenBuffTracker = class(EHIBuffTracker)
 function EHIHealthRegenBuffTracker:init(...)
     EHIHealthRegenBuffTracker.super.init(self, ...)
-    local icon = self._panel:child("icon") -- Hostage Taker regen
+    local icon = self._panel:child("icon") --[[@as PanelBitmap]] -- Hostage Taker regen
     self._panel:bitmap({ -- Muscle regen
         name = "icon2",
         texture = "guis/textures/pd2/specialization/icons_atlas",
@@ -51,7 +51,6 @@ end
 ---@class EHIStaminaBuffTracker : EHIGaugeBuffTracker
 ---@field super EHIGaugeBuffTracker
 EHIStaminaBuffTracker = class(EHIGaugeBuffTracker)
-EHIStaminaBuffTracker.RoundNumber = EHI.RoundNumber
 ---@param max_stamina number
 function EHIStaminaBuffTracker:Spawned(max_stamina)
     self:SetMaxStamina(max_stamina)
@@ -71,7 +70,7 @@ end
 ---@param ratio number
 function EHIStaminaBuffTracker:SetRatio(ratio)
     local value = ratio / self._max_stamina
-    local rounded = self:RoundNumber(value, 0.01)
+    local rounded = self._parent_class:RoundNumber(value, 0.01)
     EHIStaminaBuffTracker.super.SetRatio(self, value, rounded)
 end
 

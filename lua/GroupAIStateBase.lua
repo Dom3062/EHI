@@ -4,10 +4,6 @@ if EHI:CheckLoadHook("GroupAIStateBase") then
 end
 
 local dropin = false
-local function Execute()
-    EHI:RunOnAlarmCallbacks(dropin)
-end
-
 local original =
 {
     init = GroupAIStateBase.init,
@@ -21,13 +17,15 @@ local original =
 
 function GroupAIStateBase:init(...)
 	original.init(self, ...)
-    self:add_listener("EHI_EnemyWeaponsHot", { "enemy_weapons_hot" }, Execute)
+    self:add_listener("EHI_EnemyWeaponsHot", { "enemy_weapons_hot" }, function()
+        EHI:RunOnAlarmCallbacks(dropin)
+    end)
 end
 
 function GroupAIStateBase:on_successful_alarm_pager_bluff(...) -- Called by host
     original.on_successful_alarm_pager_bluff(self, ...)
     managers.ehi_tracker:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
-    managers.ehi_tracker:SetChance("PagersChance", (EHI:RoundChanceNumber(tweak_data.player.alarm_pager.bluff_success_chance_w_skill[self._nr_successful_alarm_pager_bluffs + 1] or 0)))
+    managers.ehi_tracker:SetChancePercent("PagersChance", tweak_data.player.alarm_pager.bluff_success_chance_w_skill[self._nr_successful_alarm_pager_bluffs + 1] or 0)
 end
 
 function GroupAIStateBase:sync_alarm_pager_bluff(...) -- Called by client
@@ -42,7 +40,7 @@ function GroupAIStateBase:load(...)
         EHI:RunOnAlarmCallbacks(dropin)
         local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
         if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets set; see GameSetup:load()
-            managers.ehi_tracker:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(law1team.damage_reduction or 0)))
+            managers.ehi_tracker:SetChancePercent("PhalanxDamageReduction", law1team.damage_reduction or 0)
         elseif self._hunt_mode then -- Assault and AssaultTime is created before this is checked; see GameSetup:load()
             managers.ehi_assault:SetEndlessAssaultFromLoad()
         end
@@ -70,7 +68,7 @@ if EHI:ShowDramaTracker() and not tweak_data.levels:IsStealthRequired() then
     original._add_drama = GroupAIStateBase._add_drama
     function GroupAIStateBase:_add_drama(...)
         original._add_drama(self, ...)
-        managers.ehi_tracker:SetChance("Drama", EHI:RoundChanceNumber(self._drama_data.amount))
+        managers.ehi_tracker:SetChance("Drama", self._drama_data.amount, 2)
     end
     EHI:AddOnAlarmCallback(Create)
     EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
@@ -222,10 +220,39 @@ function GroupAIStateBase:remove_minion(minion_key, ...)
     original.remove_minion(self, minion_key, ...)
 end
 
-if EHI:GetOption("civilian_count_tracker_format") >= 2 and EHI:IsHost() then
+if EHI:IsHost() and EHI:GetOption("civilian_count_tracker_format") >= 2 then
     original.on_civilian_tied = GroupAIStateBase.on_civilian_tied
     function GroupAIStateBase:on_civilian_tied(u_key, ...)
         original.on_civilian_tied(self, u_key, ...)
         managers.ehi_tracker:CallFunction("CivilianCount", "CivilianTied", u_key)
     end
+end
+
+if EHI:GetOption("show_hostage_count_tracker") then
+    dofile(EHI.LuaPath .. "trackers/EHIHostageCountTracker.lua")
+    if EHI:IsHost() then
+        original.on_hostage_state = GroupAIStateBase.on_hostage_state
+        function GroupAIStateBase:on_hostage_state(state, key, police, ...)
+            local original_count = self._hostage_headcount
+            original.on_hostage_state(self, state, key, police, ...)
+            if original_count == self._hostage_headcount then
+                return
+            end
+            managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", self._hostage_headcount, self._police_hostage_headcount)
+        end
+    else
+        original.sync_hostage_headcount = GroupAIStateBase.sync_hostage_headcount
+        function GroupAIStateBase:sync_hostage_headcount(...)
+            original.sync_hostage_headcount(self, ...)
+            managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", self._hostage_headcount)
+        end
+    end
+    EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+        managers.ehi_tracker:AddTracker({
+            id = "HostageCount",
+            class = "EHIHostageCountTracker"
+        })
+        local police = EHI:IsHost() and managers.groupai:state():police_hostage_count()
+        managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", managers.groupai:state():hostage_count(), police)
+    end)
 end

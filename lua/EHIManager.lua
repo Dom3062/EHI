@@ -458,6 +458,14 @@ function EHIManager:Remove(id)
     self._waypoints:RemoveWaypoint(id)
 end
 
+---@param timer_id string
+---@param unit_id string
+---@param remove boolean?
+function EHIManager:RemoveUnit(timer_id, unit_id, remove)
+    self._trackers:CallFunction(timer_id, remove and "RemoveUnit" or "RemoveByID", unit_id)
+    self._waypoints:RemoveWaypoint(unit_id)
+end
+
 ---@param id string
 function EHIManager:ForceRemove(id)
     self._trackers:ForceRemoveTracker(id)

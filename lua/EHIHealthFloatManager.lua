@@ -18,7 +18,7 @@ function EHIHealthFloatManager:new(hud)
     self._hh = self._pnl:h()
     managers.viewport:add_resolution_changed_func(callback(self, self, "onResolutionChanged"))
     self._floats = {} ---@type table<string, EHIHealthFloatBar?>
-    self._smokes = {}
+    self._smokes = {} ---@type table<string, Vector3>
     self._unit_slot_mask = World:make_slot_mask(1, 8, 11, 12, 14, 16, 18, 21, 22, 24, 25, 26, 33, 34, 35)
     EHI:HookWithID(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_detonate", function(base, ...)
         local unit = base._unit
@@ -125,6 +125,7 @@ function EHIHealthFloatManager:_pos(something)
     return pos
 end
 
+---@param uPos Vector3?
 function EHIHealthFloatManager:_visibility(uPos)
     local result = 1 - math.min(0.9, managers.environment_controller._current_flashbang or 1)
     if not uPos then

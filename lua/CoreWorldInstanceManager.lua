@@ -272,7 +272,7 @@ local instances =
             managers.hud:SoftRemoveWaypoint2(trigger.element_ids.defend)
             managers.hud:SoftRemoveWaypoint2(trigger.element_ids.fix)
         end, element_ids = { defend = 100055, fix = 100056 }, hint = Hints.Hack },
-        [100026] = { id = "pex_ArmoryHack", special_function = SF.PauseTracker },
+        [100026] = { id = "pex_ArmoryHack", special_function = SF.PauseTracker }
     },
     ["levels/instances/unique/pex/pex_evidence_room_1/world"] =
     {

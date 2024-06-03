@@ -1,4 +1,3 @@
-local lerp = math.lerp
 local Color = Color
 local Captain = Color(255, 255, 128, 0) / 255
 local Control = Color.white
@@ -19,7 +18,7 @@ local State =
 local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
 local tweak_values = assault_values.delay
 local hostage_values = assault_values.hostage_hesitation_delay
----@class EHIAssaultTracker : EHIWarningTracker
+---@class EHIAssaultTracker : EHIWarningTracker, EHIChanceTracker
 ---@field super EHIWarningTracker
 ---@field _cs_assault_extender boolean
 ---@field _cs_max_hostages number
@@ -30,6 +29,12 @@ EHIAssaultTracker._forced_icons = { { icon = "assaultbox", color = Control } }
 EHIAssaultTracker._is_client = EHI:IsClient()
 EHIAssaultTracker._inaccurate_text_color = EHI:GetTWColor("inaccurate")
 EHIAssaultTracker._paused_color = EHIPausableTracker._paused_color
+if EHI:GetOption("show_assault_diff_in_assault_trackers") and not tweak_data.levels:IsLevelSkirmish() then
+    EHIAssaultTracker._show_assault_diff = true
+    EHIAssaultTracker.FormatChance = EHIChanceTracker.Format
+    EHIAssaultTracker.SetChance = EHIChanceTracker.SetChance
+    EHIAssaultTracker._custom_chance_anim = EHIChanceTracker._anim
+end
 if type(tweak_values) == "table" then
     local first_value = tweak_values[1] or 0
     local match = true
@@ -98,6 +103,24 @@ function EHIAssaultTracker:init(panel, params, parent_class)
     end
 end
 
+---@param params EHITracker.params
+function EHIAssaultTracker:post_init(params)
+    if self._show_assault_diff then
+        local corrected_diff = self._parent_class:RoundChanceNumber(params.diff_visual or managers.ehi_assault._diff or self._diff)
+        self._anim_flash_set_chance = 0
+        self._chance = corrected_diff
+        self._anim_chance = corrected_diff
+        self:SetBGSize()
+        self._chance_text = self:CreateText({
+            text = self:FormatChance(corrected_diff),
+            left = self._text:right(),
+            w = self._bg_box:w() / 2,
+            color = Color.white
+        })
+        self:SetIconsX()
+    end
+end
+
 ---@param dt number
 function EHIAssaultTracker:update_negative(dt)
     self._time = self._time + dt
@@ -142,13 +165,16 @@ function EHIAssaultTracker:CalculateDifficultyRamp(diff)
     self._diff = diff
     self._difficulty_point_index = i
     self._difficulty_ramp = (diff - (ramp[i - 1] or 0)) / ((ramp[i] or 1) - (ramp[i - 1] or 0))
+    if self._chance_text then
+        self:SetChance(self._parent_class:RoundChanceNumber(diff))
+    end
 end
 
 function EHIAssaultTracker:ComputeHostageDelay()
     if self._precomputed_hostage_delay then
         return
     end
-    self._hostage_delay = lerp(hostage_values[self._difficulty_point_index], hostage_values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
+    self._hostage_delay = math.lerp(hostage_values[self._difficulty_point_index], hostage_values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
 end
 
 function EHIAssaultTracker:SyncAnticipationColorInaccurate()
@@ -185,7 +211,7 @@ function EHIAssaultTracker:CalculateBreakTime()
     if self._assault_delay then
         return self._assault_delay + 30
     end
-    local base_delay = lerp(tweak_values[self._difficulty_point_index], tweak_values[self._difficulty_point_index + 1], self._difficulty_ramp)
+    local base_delay = math.lerp(tweak_values[self._difficulty_point_index], tweak_values[self._difficulty_point_index + 1], self._difficulty_ramp)
     return base_delay + 30
 end
 
@@ -301,14 +327,14 @@ end
 ---@param values table
 ---@return number
 function EHIAssaultTracker:CalculateDifficultyDependentValue(values)
-    return lerp(values[self._difficulty_point_index], values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
+    return math.lerp(values[self._difficulty_point_index], values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
 end
 
 ---@param parent_class EHITrackerManager?
 ---@return number
 function EHIAssaultTracker:CalculateAssaultTime(parent_class)
     local build = assault_values.build_duration
-    local sustain = lerp(self:CalculateDifficultyDependentValue(assault_values.sustain_duration_min), self:CalculateDifficultyDependentValue(assault_values.sustain_duration_max), math.random()) * managers.groupai:state():_get_balancing_multiplier(assault_values.sustain_duration_balance_mul)
+    local sustain = math.lerp(self:CalculateDifficultyDependentValue(assault_values.sustain_duration_min), self:CalculateDifficultyDependentValue(assault_values.sustain_duration_max), math.random()) * managers.groupai:state():_get_balancing_multiplier(assault_values.sustain_duration_balance_mul)
     local fade = assault_values.fade_duration
     self._assault_t = build + sustain
     self._sustain_original_t = sustain

@@ -1,24 +1,11 @@
----@class EHIAggregatedHealthEquipmentTracker : EHITracker
----@field super EHITracker
-EHIAggregatedHealthEquipmentTracker = class(EHITracker)
-EHIAggregatedHealthEquipmentTracker._update = false
-EHIAggregatedHealthEquipmentTracker._pos = { "doctor_bag", "first_aid_kit" }
-EHIAggregatedHealthEquipmentTracker._dont_show_placed = { first_aid_kit = true }
+---@class EHIAggregatedHealthEquipmentTracker : EHIAggregatedEquipmentTracker
+---@field super EHIAggregatedEquipmentTracker
+EHIAggregatedHealthEquipmentTracker = class(EHIAggregatedEquipmentTracker)
+EHIAggregatedHealthEquipmentTracker._ids = { "doctor_bag", "first_aid_kit" }
 EHIAggregatedHealthEquipmentTracker._forced_icons = { { icon = "doctor_bag", visible = false }, { icon = "first_aid_kit", visible = false } }
-function EHIAggregatedHealthEquipmentTracker:pre_init(params)
-    self._amount = {}
-    self._placed = {}
-    self._deployables = {}
-    for _, id in ipairs(self._pos) do
-        self._amount[id] = 0
-        self._placed[id] = 0
-        self._deployables[id] = {}
-    end
-end
-
 function EHIAggregatedHealthEquipmentTracker:Format()
     local s = ""
-    for _, id in ipairs(self._pos) do
+    for _, id in ipairs(self._ids) do
         if self._amount[id] > 0 then
             if s ~= "" then
                 s = s .. " | "
@@ -27,59 +14,6 @@ function EHIAggregatedHealthEquipmentTracker:Format()
         end
     end
     return s
-end
-
-do
-    local format = EHI:GetOption("equipment_format")
-    if format == 1 then -- Uses (Bags placed)
-        function EHIAggregatedHealthEquipmentTracker:FormatDeployable(id)
-            if self._dont_show_placed[id] then
-                return self._amount[id]
-            end
-            return self._amount[id] .. " (" .. self._placed[id] .. ")"
-        end
-    elseif format == 2 then -- (Bags placed) Uses
-        function EHIAggregatedHealthEquipmentTracker:FormatDeployable(id)
-            if self._dont_show_placed[id] then
-                return self._amount[id]
-            end
-            return "(" .. self._placed[id] .. ") " .. self._amount[id]
-        end
-    elseif format == 3 then -- (Uses) Bags placed
-        function EHIAggregatedHealthEquipmentTracker:FormatDeployable(id)
-            if self._dont_show_placed[id] then
-                return self._amount[id]
-            end
-            return "(" .. self._amount[id] .. ") " .. self._placed[id]
-        end
-    elseif format == 4 then -- Bags placed (Uses)
-        function EHIAggregatedHealthEquipmentTracker:FormatDeployable(id)
-            if self._dont_show_placed[id] then
-                return self._amount[id]
-            end
-            return self._placed[id] .. " (" .. self._amount[id] .. ")"
-        end
-    elseif format == 5 then -- Uses
-        function EHIAggregatedHealthEquipmentTracker:FormatDeployable(id)
-            return tostring(self._amount[id])
-        end
-    else -- Bags placed
-        function EHIAggregatedHealthEquipmentTracker:FormatDeployable(id)
-            if self._dont_show_placed[id] then
-                return tostring(self._amount[id])
-            end
-            return tostring(self._placed[id])
-        end
-    end
-end
-
----@return number
-function EHIAggregatedHealthEquipmentTracker:GetTotalAmount()
-    local amount = 0
-    for _, count in pairs(self._amount) do
-        amount = amount + count
-    end
-    return amount
 end
 
 ---@param i number
@@ -94,19 +28,19 @@ end
 
 function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
     local visibility = {}
-    for i = 1, #self._pos, 1 do
+    for i = 1, 2, 1 do
         local s_i = tostring(i)
         local icon = self["_icon" .. s_i]
         if icon then
             icon:set_visible(false)
         end
     end
-    for i, id in ipairs(self._pos) do
+    for i, id in ipairs(self._ids) do
         if self._amount[id] > 0 then
             visibility[#visibility + 1] = i
         end
     end
-    local move_x = 1
+    local move_x = 0
     local icons = 0
     for _, i in pairs(visibility) do
         local s_i = tostring(i)
@@ -114,38 +48,17 @@ function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
         if icon then
             icons = icons + 1
             icon:set_visible(true)
-            icon:set_x(self:GetIconPosition(move_x - 1))
+            icon:set_x(self:GetIconPosition(move_x))
         end
         move_x = move_x + 1
     end
-    local n = icons
     local panel_w = self._bg_box:w()
-    self:ChangeTrackerWidth(panel_w + (self._icon_gap_size_scaled * n))
+    self:ChangeTrackerWidth(panel_w + (self._icon_gap_size_scaled * icons))
 end
 
 ---@param id string
----@param unit Unit
----@param key string
----@param amount number
-function EHIAggregatedHealthEquipmentTracker:UpdateAmount(id, unit, key, amount)
-    if not key then
-        EHI:DebugEquipment(self._id, unit, key, amount)
-        return
-    end
-    self._deployables[id][key] = amount
-    self._amount[id] = 0
-    self._placed[id] = 0
-    for _, value in pairs(self._deployables[id]) do
-        if value > 0 then
-            self._amount[id] = self._amount[id] + value
-            self._placed[id] = self._placed[id] + 1
-        end
-    end
-    if self:GetTotalAmount() <= 0 then
-        self:delete()
-    else
-        self:SetAndFitTheText()
-        self:UpdateIconsVisibility()
-        self:AnimateBG()
-    end
+function EHIAggregatedHealthEquipmentTracker:UpdateText(id)
+    self:SetAndFitTheText()
+    self:UpdateIconsVisibility()
+    self:AnimateBG()
 end

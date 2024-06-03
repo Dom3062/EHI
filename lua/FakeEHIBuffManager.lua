@@ -261,7 +261,6 @@ function FakeEHIBuffTracker:init(panel, params)
         h = buff_w
     })
 	self._bg_box = self._panel:panel({
-		name = "bg_box",
 		x = 0,
         y = buff_w_half,
         w = buff_w,
@@ -282,8 +281,7 @@ function FakeEHIBuffTracker:init(panel, params)
         layer = -1,
         w = self._bg_box:w(),
         h = self._bg_box:h(),
-        texture = "guis/textures/pd2/hud_tabs",
-        texture_rect = {105, 34, 19, 19},
+        texture = "guis/textures/pd2_mod_ehi/buff_cframe_bg",
         color = Color.black:with_alpha(0.2),
         visible = self._shape == 2
     })
@@ -439,7 +437,7 @@ function FakeEHIBuffTracker:UpdateProgressVisibility(visibility, dont_force)
     if dont_force then
         return
     end
-    local icon = self._panel:child("icon")
+    local icon = self._panel:child("icon") --[[@as PanelBitmap]]
     if self._show_progress then
         local size = 24 * self._scale
         local move = 4 * self._scale

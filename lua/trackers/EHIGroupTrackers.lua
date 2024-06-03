@@ -10,7 +10,12 @@ function EHIWarningGroupTracker:post_init(params)
     self._timers = {} --[[@as EHIWarningGroupTracker.Timer[] ]]
     self._timers_n = 0
     self._panel_override_w = self._panel:w()
-    self:Add(params.time or 0, params.timer_id)
+    if params.unit then
+        self:AddUnit()
+    end
+    if not self._hide_on_delete then
+        self:Add(params.time or 0, params.timer_id)
+    end
 end
 
 ---@param dt number
@@ -31,7 +36,7 @@ end
 ---@param check_progress boolean?
 ---@param color Color?
 function EHIWarningGroupTracker:AnimateColor(timer, check_progress, color)
-    local start_t = check_progress and (1 - math.min(EHI:RoundNumber(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
+    local start_t = check_progress and (1 - math.min(self._parent_class:RoundNumber(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
     timer.label:animate(self._anim, self._text_color, color or (self._show_completion_color and self._completion_color or self._warning_color), start_t, self)
 end
 
@@ -62,9 +67,14 @@ function EHIWarningGroupTracker:AddFromTrigger(trigger)
     self:Add(trigger.time or 0, trigger.timer_id)
 end
 
+---@param params AddTrackerTable|ElementTrigger
+function EHIWarningGroupTracker:Run(params)
+    self:Add(params.time, params.id)
+end
+
 ---@param i number
 function EHIWarningGroupTracker:Remove(i)
-    if self._timers_n == 1 then
+    if self._timers_n <= 1 then
         self:delete()
         return
     end
@@ -83,6 +93,19 @@ function EHIWarningGroupTracker:Remove(i)
         self:AnimateMovement(self._timers_n - 1, true)
     end
     self._timers_n = self._timers_n - 1
+end
+
+---@param id string
+function EHIWarningGroupTracker:RemoveByID(id)
+    if not id then
+        return
+    end
+    for i, timer in ipairs(self._timers) do
+        if timer.id == id then
+            self:Remove(i)
+            return
+        end
+    end
 end
 
 ---@param n number
@@ -116,16 +139,37 @@ function EHIWarningGroupTracker:SetTimeNoAnim(time, id)
     end
 end
 
+function EHIWarningGroupTracker:AddUnit()
+    self._units = (self._units or 0) + 1
+end
+
+---@param id string
+function EHIWarningGroupTracker:RemoveUnit(id)
+    self._units = (self._units or 0) - 1
+    self._hide_on_delete = self._units > 0
+    if self._units <= 0 then
+        self:delete()
+    else
+        self:RemoveByID(id)
+    end
+end
+
 function EHIWarningGroupTracker:delete()
-    for _, timer in pairs(self._timers) do
+    for _, timer in ipairs(self._timers) do
         if timer.label and alive(timer.label) then
             timer.label:stop()
+            timer.label:parent():remove(timer.label)
         end
+    end
+    if self._hide_on_delete then
+        self._timers = nil
+        self._timers = {}
+        self._timers_n = 0
     end
     EHIWarningGroupTracker.super.delete(self)
 end
 
----@class EHIProgressGroupTracker : EHIProgressTracker, EHIWarningGroupTracker
+---@class EHIProgressGroupTracker : EHIProgressTracker
 ---@field super EHIProgressTracker
 EHIProgressGroupTracker = class(EHIProgressTracker)
 EHIProgressGroupTracker._init_create_text = false

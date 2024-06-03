@@ -80,7 +80,7 @@ end
 if EHI:CanShowCivilianCountTracker() then
     dofile(EHI.LuaPath .. "trackers/EHICivilianCountTracker.lua")
     ---@param unit_data table
-    ---@param key string?
+    ---@param key any Unused
     local function CountCivilian(unit_data, key)
         if not unit_data.unit then
             return false

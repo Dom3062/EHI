@@ -145,7 +145,11 @@ end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    assault = {
+        force_assault_start = true,
+        wave_move_elements_block = { 100171, 101115 }
+    }
 }, "BoatLootDropReturn", Icon.BoatLootDrop)
 EHI:AddXPBreakdown({
     objectives =
@@ -167,4 +171,3 @@ EHI:AddXPBreakdown({
         }
     }
 })
-EHIAssaultManager:SetForceAssaultStart(true)

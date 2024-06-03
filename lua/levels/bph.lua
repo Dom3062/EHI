@@ -59,7 +59,12 @@ EHI:UpdateUnits({ [101399] = { icons = { "C_Locke_H_HellsIsland_Another" }, hint
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    assault = {
+        force_assault_start = true,
+        wave_move_elements_block = { 101325, 100115 },
+        fake_assault_block = true
+    }
 })
 EHI:AddXPBreakdown({
     objectives =
@@ -72,6 +77,3 @@ EHI:AddXPBreakdown({
         { amount = ovk_and_up and 4000 or 3000, name = "bph_helipad_is_accessible" }
     }
 })
-EHIAssaultManager:SetWaveModeElementsBlock(101325, 100115)
-EHIAssaultManager:SetFakeAssaultBlock()
-EHIAssaultManager:SetForceAssaultStart(true)

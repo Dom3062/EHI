@@ -8,19 +8,22 @@ EHIGaugeBuffTracker = class(EHIBuffTracker)
 EHIGaugeBuffTracker._anim = function(o, ratio, progress)
     local r = progress.red
     over(0.25, function(p, t)
-        progress.red = lerp(r, ratio, p) --[[@as number]]
+        progress.red = lerp(r, ratio, p)
         o:set_color(progress)
     end)
 end
 EHIGaugeBuffTracker._inverted_progress = true
 ---@param panel Panel
 ---@param params table
----@param parent_class EHIBuffManager
-function EHIGaugeBuffTracker:init(panel, params, parent_class)
+function EHIGaugeBuffTracker:init(panel, params, ...)
     self._ratio = 0
     self._format = params.format or "standard"
-    self._init_text = self:Format()
-    EHIGaugeBuffTracker.super.init(self, panel, params, parent_class)
+    EHIGaugeBuffTracker.super.init(self, panel, params, ...)
+end
+
+---@param params table
+function EHIGaugeBuffTracker:post_init(params)
+    self._text:set_text(self:Format())
 end
 
 ---@param ratio number

@@ -13,7 +13,6 @@ function EHIAssaultManager:init_finalize(manager)
     self._internal = manager:CreateAndCopyInternal("assault")
     self._is_skirmish = tweak_data.levels:IsLevelSkirmish()
     local combine = EHI:CombineAssaultDelayAndAssaultTime()
-    self._blocked_wave_mode_elements = {}
     self._anticipation =
     {
         sync_f = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation",
@@ -38,7 +37,7 @@ function EHIAssaultManager:init_finalize(manager)
     if not self._assault_time.blocked then
         if self._assault_time.show_endless_assault then
             EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode, element_id)
-                if self._blocked_wave_mode_elements[element_id] then
+                if self._blocked_wave_mode_elements and self._blocked_wave_mode_elements[element_id] then
                     return
                 end
                 self._endless_assault = mode == "endless"
@@ -46,10 +45,9 @@ function EHIAssaultManager:init_finalize(manager)
             end)
         else
             EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode, element_id)
-                if self._blocked_wave_mode_elements[element_id] then
+                if self._blocked_wave_mode_elements and self._blocked_wave_mode_elements[element_id] then
                     return
-                end
-                if mode == "endless" then
+                elseif mode == "endless" then
                     self._endless_assault = true
                     self._trackers:ForceRemoveTracker(self._assault_time.name)
                 else
@@ -107,7 +105,7 @@ function EHIAssaultManager:init_finalize(manager)
         ---@param duration number
         function ListenerModifier:OnEnterSustainPhase(duration)
             manager:NotifyInternalListeners("assault", "sustain_t", duration)
-            managers.ehi_assault._internal.sustain_app_t = managers.game_play_central:get_heist_timer()
+            manager._assault._internal.sustain_app_t = managers.game_play_central:get_heist_timer()
         end
         managers.modifiers:add_modifier(ListenerModifier, "EHI")
     end
@@ -122,15 +120,32 @@ function EHIAssaultManager:init_hud(hud)
     EHI:HookWithID(hud, "set_control_info", "EHI_Assault_set_control_info", self._control_info_f)
 end
 
----@param diff number
-function EHIAssaultManager:SetDiff(diff)
-    self._diff = diff
-    self:CallFunction("UpdateDiff", diff)
+---@param params ParseTriggersTable.assault?
+function EHIAssaultManager:Parse(params)
+    if not params then
+        return
+    end
+    self:SetDiff(params.diff or 0)
+    self._force_assault_start = params.force_assault_start
+    if params.wave_move_elements_block then
+        self._blocked_wave_mode_elements = {}
+        for _, element in ipairs(params.wave_move_elements_block) do
+            self._blocked_wave_mode_elements[element] = true
+        end
+    end
+    if params.fake_assault_block then
+        self._assault_block = true
+        EHI:AddOnAlarmCallback(callback(self, self, "SetAssaultBlock", false))
+    end
 end
 
----@param state boolean
-function EHIAssaultManager:SetForceAssaultStart(state)
-    self._force_assault_start = state
+---@param diff number
+function EHIAssaultManager:SetDiff(diff)
+    if self._diff == diff then
+        return
+    end
+    self._diff = diff
+    self:CallFunction("UpdateDiff", diff)
 end
 
 ---@param block boolean
@@ -156,6 +171,7 @@ function EHIAssaultManager:StartAssaultCountdown(t, block_if_exists)
     self._trackers:AddTracker({
         id = self._assault_delay.name,
         time = t,
+        diff_visual = self._diff,
         hint = self._assault_delay.hint,
         class = EHI.Trackers.Assault
     }, 0)
@@ -237,19 +253,6 @@ function EHIAssaultManager:SetAssaultBlock(block)
     if block then
         self:CallFunction("PoliceActivityBlocked")
     end
-end
-
----@param ... number
-function EHIAssaultManager:SetWaveModeElementsBlock(...)
-    local elements = { ... }
-    for _, element in ipairs(elements) do
-        self._blocked_wave_mode_elements[element] = true
-    end
-end
-
-function EHIAssaultManager:SetFakeAssaultBlock()
-    self._assault_block = true
-    EHI:AddOnAlarmCallback(callback(self, self, "SetAssaultBlock", false))
 end
 
 ---@param f string

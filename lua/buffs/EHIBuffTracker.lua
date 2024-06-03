@@ -23,7 +23,7 @@ local function set_x(o, target_x)
     local from_x = o:x()
     while t < total do
         t = t + coroutine.yield()
-        o:set_x(lerp(from_x, target_x, t / total)  --[[@as number]])
+        o:set_x(lerp(from_x, target_x, t / total))
     end
     o:set_x(target_x)
 end
@@ -36,7 +36,7 @@ local function set_right(o, x)
     local target_right = o:parent():w() - x
     while t < total do
         t = t + coroutine.yield()
-        o:set_right(lerp(from_right, target_right, t / total)  --[[@as number]])
+        o:set_right(lerp(from_right, target_right, t / total))
     end
     o:set_right(target_right)
 end
@@ -92,24 +92,23 @@ function EHIBuffTracker:init(panel, params, parent_class)
         w = params.w,
         h = params.w
     })
-    self._bg_box = self._panel:panel({
-		name = "bg_box",
+    local bg_box = self._panel:panel({
 		x = 0,
         y = icon:y(),
         w = icon:w(),
         h = icon:h()
 	})
     if circle_shape then
-        self._bg_box:bitmap({
+        bg_box:bitmap({
             name = "bg",
             layer = -1,
-            w = self._bg_box:w(),
-            h = self._bg_box:h(),
+            w = bg_box:w(),
+            h = bg_box:h(),
             texture = "guis/textures/pd2_mod_ehi/buff_cframe_bg",
             color = Color.black:with_alpha(0.2)
         })
     else
-        self._bg_box:rect({
+        bg_box:rect({
             blend_mode = "normal",
             name = "bg",
             halign = "grow",
@@ -121,7 +120,6 @@ function EHIBuffTracker:init(panel, params, parent_class)
         })
     end
     self._hint = self._panel:text({
-        name = "hint",
         text = params.text or "",
         w = self._panel:w(),
         h = w_half,
@@ -134,10 +132,9 @@ function EHIBuffTracker:init(panel, params, parent_class)
     })
     self:FitTheText(self._hint)
     self._text = self._panel:text({
-        name = "text",
-        text = self._init_text or "100s",
+        text = "100s",
         w = self._panel:w(),
-        h = self._panel:h() - self._bg_box:h() - w_half,
+        h = self._panel:h() - bg_box:h() - w_half,
         font = tweak_data.menu.pd2_large_font,
 		font_size = w_half,
         color = Color.white,
@@ -148,7 +145,6 @@ function EHIBuffTracker:init(panel, params, parent_class)
     })
     self._progress_bar = Color(1, 0, 1, 1)
     self._progress = self._panel:bitmap({
-        name = "progress",
         render_template = "VertexColorTexturedRadial",
         layer = 5,
         y = icon:y(),
@@ -176,6 +172,11 @@ function EHIBuffTracker:init(panel, params, parent_class)
     local panel_w = self._panel:w()
     self._panel_w_gap = panel_w + 6
     self._panel_move_gap = (panel_w / 2) + 3 -- add only half of the gap
+    self:post_init(params)
+end
+
+---@param params table
+function EHIBuffTracker:post_init(params)
 end
 
 ---@param text PanelText

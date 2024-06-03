@@ -35,6 +35,15 @@ function EHIMenu:UpdateCivilianPanelOption(value)
     self._preview_panel:UpdateTrackerFormat("show_civilian_count_tracker", value)
 end
 
+function EHIMenu:UpdateHostagePanelOption(value)
+    self._preview_panel:UpdateTrackerFormat("show_hostage_count_tracker", value)
+end
+
+function EHIMenu:UpdateAssaultTracker(value)
+    self._preview_panel:CallFunction("show_assault_delay_tracker", "UpdateFormat", value, true)
+    self._preview_panel:CallFunction("show_assault_time_tracker", "UpdateFormat", value, true)
+end
+
 function EHIMenu:UpdateTracker(option, value)
     self._preview_panel:UpdateTracker(option, value)
 end

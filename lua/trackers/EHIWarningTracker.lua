@@ -23,9 +23,9 @@ EHIWarningTracker._anim = function(o, old_color, color, start_t, class)
         while t > 0 do
             t = t - coroutine.yield()
             local n = sin(t * 180)
-            c.r = lerp(old_color.r, color.r, n) --[[@as number]]
-            c.g = lerp(old_color.g, color.g, n) --[[@as number]]
-            c.b = lerp(old_color.b, color.b, n) --[[@as number]]
+            c.r = lerp(old_color.r, color.r, n)
+            c.g = lerp(old_color.g, color.g, n)
+            c.b = lerp(old_color.b, color.b, n)
             o:set_color(c)
         end
         t = 1
@@ -44,7 +44,7 @@ end
 ---@param color Color?
 function EHIWarningTracker:AnimateColor(check_progress, color)
     if self._text and alive(self._text) then
-        local start_t = check_progress and (1 - min(EHI:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 1
+        local start_t = check_progress and (1 - min(self._parent_class:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 1
         self._text:animate(self._anim, self._text_color, color or (self._show_completion_color and self._completion_color or self._warning_color), start_t, self)
     end
 end

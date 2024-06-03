@@ -20,13 +20,12 @@ local original =
 local Trigger
 if EHI:GetOption("show_difficulty_tracker") then
     local id = "Difficulty"
-    Trigger = function(value)
-        local diff = EHI:RoundChanceNumber(value)
-        if managers.ehi_tracker:CallFunction3(id, "SetChance", diff) then
+    Trigger = function(diff)
+        if managers.ehi_tracker:CallFunction3(id, "SetChance", diff, EHITrackerManager.Rounding.Chance) then
             managers.ehi_tracker:AddTracker({
                 id = id,
                 icons = { "enemy" },
-                chance = diff,
+                chance = managers.ehi_tracker:RoundChanceNumber(diff),
                 hint = "diff",
                 class = EHI.Trackers.Chance
             })

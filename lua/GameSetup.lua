@@ -238,6 +238,7 @@ EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(self, da
     managers.ehi_manager:SetInSync(true)
     EHI:FinalizeUnitsClient()
     managers.ehi_assault:load(data)
+    managers.ehi_sync:load(data)
 end)
 
 EHI:HookWithID(GameSetup, "load", "EHI_GameSetup_load_Post", function(self, data, ...)
@@ -251,4 +252,5 @@ EHI:HookWithID(GameSetup, "save", "EHI_GameSetup_save_Post", function(self, data
     managers.ehi_tracker:save(data)
     managers.ehi_assault:save(data)
     managers.ehi_loot:save(data)
+    managers.ehi_sync:save(data)
 end)

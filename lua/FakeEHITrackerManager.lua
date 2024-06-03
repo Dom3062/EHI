@@ -89,13 +89,10 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_pager_callback", time = math.rand(0.5, 12), icons = { "pager_icon" } })
     self:AddFakeTracker({ id = "show_enemy_count_tracker", count = math.random(20, 80), icons = { "pager_icon", { icon = "enemy", visible = false } }, class = "FakeEHIEnemyCountTracker" })
     self:AddFakeTracker({ id = "show_civilian_count_tracker", count = math.random(1, 15), icons = { "civilians", "hostage" }, class = "FakeEHICivilianCountTracker" })
+    self:AddFakeTracker({ id = "show_hostage_count_tracker", count = math.random(4, 10), icons = { "hostage", { icon = "hostage", color = Color(0, 1, 1) } }, class = "FakeEHIHostageCountTracker" })
     self:AddFakeTracker({ id = "show_laser_tracker", time = math.rand(0.5, 4), icons = { EHI.Icons.Lasers } })
-    if EHI:CombineAssaultDelayAndAssaultTime() then
-        self:AddFakeTracker({ id = "aggregate_assault_delay_and_assault_time", time = math.random(0, 240), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker" })
-    else
-        self:AddFakeTracker({ id = "show_assault_delay_tracker", time = math.random(30, 120), icons = { "assaultbox" } })
-        self:AddFakeTracker({ id = "show_assault_time_tracker", time = math.random(0, 240), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker" })
-    end
+    self:AddFakeTracker({ id = "show_assault_delay_tracker", time = math.random(30, 120), diff = math.random(0, 100), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker", control = true })
+    self:AddFakeTracker({ id = "show_assault_time_tracker", time = math.random(0, 240), diff = math.random(0, 100), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker" })
     self:AddFakeTracker({ id = "show_loot_counter", icons = { Icon.Loot }, class = "FakeEHIProgressTracker" })
     self:AddFakeTracker({ id = "show_bodybags_counter", count = math.random(1, 3), icons = { "equipment_body_bag" }, class = "FakeEHICountTracker" })
     self:AddFakeTracker({ id = "show_escape_chance", icons = { { icon = Icon.Car, color = Color.red } }, chance = math.random(100), class = "FakeEHIChanceTracker" })
@@ -253,7 +250,7 @@ end
 function FakeEHITrackerManager:GetTrackerSize(n_of_icons)
     local panel_with_offset = panel_size + panel_offset
     local gap = 5 * n_of_icons
-    local icons = 32 * n_of_icons
+    local icons = panel_size_original * n_of_icons
     local final_size = (64 + panel_with_offset + gap + icons) * self._scale
     return final_size
 end
@@ -368,11 +365,10 @@ end
 
 function FakeEHITrackerManager:UpdateCornerVisibility(visibility)
     self._corner_visibility = visibility
-    if not self._bg_visibility then
-        return
-    end
-    for _, tracker in ipairs(self._fake_trackers) do
-        tracker:UpdateCornerVisibility(visibility)
+    if self._bg_visibility then
+        for _, tracker in ipairs(self._fake_trackers) do
+            tracker:UpdateCornerVisibility(visibility)
+        end
     end
 end
 
@@ -658,13 +654,16 @@ end
 ---@param type string?
 ---|"add" # Adds `w` to the BG; default `type` if not provided
 ---|"short" # Shorts `w` on the BG
+---|"set" # Sets `w` on the BG
 ---@param dont_recalculate_panel_w boolean? Setting this to `true` will not recalculate the total width on the main panel
 function FakeEHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
     w = w or self._bg_box:w()
     if not type or type == "add" then
         self._bg_box:set_w(self._bg_box:w() + w)
-    else
+    elseif type == "short" then
         self._bg_box:set_w(self._bg_box:w() - w)
+    else
+        self._bg_box:set_w(w)
     end
     if not dont_recalculate_panel_w then
         local start = self._bg_box:w()
@@ -1094,11 +1093,12 @@ end
 ---@field super FakeEHICountTracker
 ---@field _icon2 PanelBitmap
 FakeEHICivilianCountTracker = class(FakeEHICountTracker)
+FakeEHICivilianCountTracker._ehi_option = "civilian_count_tracker_format"
 ---@param params EHITracker.params
 function FakeEHICivilianCountTracker:pre_init(params)
     FakeEHICivilianCountTracker.super.pre_init(self, params)
     self._tied_count = math.random(0, self._count)
-    self._format_civilian = EHI:GetOption("civilian_count_tracker_format")
+    self._format_civilian = EHI:GetOption(self._ehi_option)
 end
 
 function FakeEHICivilianCountTracker:GetSize()
@@ -1157,17 +1157,85 @@ function FakeEHICivilianCountTracker:UpdateIconsVisibility(visibility)
     self:UpdateIconPos()
 end
 
----@class FakeEHIAssaultTimeTracker : FakeEHITracker
+---@class FakeEHIHostageCountTracker : FakeEHICivilianCountTracker
+---@field super FakeEHICivilianCountTracker
+FakeEHIHostageCountTracker = class(FakeEHICivilianCountTracker)
+FakeEHIHostageCountTracker._ehi_option = "hostage_count_tracker_format"
+---@param params EHITracker.params
+function FakeEHIHostageCountTracker:pre_init(params)
+    FakeEHIHostageCountTracker.super.pre_init(self, params)
+    self._tied_count = math.random(0, math.floor(self._count / 2))
+end
+
+function FakeEHIHostageCountTracker:Format(format)
+    format = format or self._format_civilian
+    if format == 1 then
+        return tostring(self._count)
+    else
+        local civilian_hostages = self._count - self._tied_count
+        if format == 2 then
+            return self._count .. "|" .. self._tied_count
+        elseif format == 3 then
+            return self._tied_count .. "|" .. self._count
+        elseif format == 4 then
+            return civilian_hostages .. "|" .. self._tied_count
+        else
+            return self._tied_count .. "|" .. civilian_hostages
+        end
+    end
+end
+
+function FakeEHIHostageCountTracker:UpdateIconPos(...)
+    local original_format = self._format_civilian
+    if self._format_civilian == 2 then
+        self._format_civilian = 3
+    elseif self._format_civilian == 3 or self._format_civilian == 5 then
+        self._format_civilian = 2
+    end
+    FakeEHIHostageCountTracker.super.UpdateIconPos(self, ...)
+    self._format_civilian = original_format
+end
+
+---@class FakeEHIAssaultTimeTracker : FakeEHITracker, FakeEHIChanceTracker
 ---@field super FakeEHITracker
 FakeEHIAssaultTimeTracker = class(FakeEHITracker)
+FakeEHIAssaultTimeTracker.FormatChance = FakeEHIChanceTracker.Format
 ---@param params EHITracker.params
 function FakeEHIAssaultTimeTracker:post_init(params)
-    if self._time <= 5 then -- Fade
+    if params.control then
+        self._icon1:set_color(Color.white)
+    elseif self._time <= 5 then -- Fade
         self._icon1:set_color(Color(255, 0, 255, 255) / 255)
     elseif self._time >= 205 then -- Build
         self._icon1:set_color(Color.yellow)
     else
         self._icon1:set_color(Color(255, 237, 127, 127) / 255)
+    end
+    self._bg_size = self._bg_box:w()
+    self._chance = params.diff
+    self._diff_chance_text = self:CreateText({
+        text = self:FormatChance(),
+        left = self._text:right()
+    })
+    self:UpdateFormat(EHI:GetOption("show_assault_diff_in_assault_trackers"))
+end
+
+---@param format boolean
+---@param reposition boolean?
+function FakeEHIAssaultTimeTracker:UpdateFormat(format, reposition)
+    if self._show_diff == format then
+        return
+    end
+    self._show_diff = format
+    self._diff_chance_text:set_visible(format)
+    if format then
+        self:SetBGSize()
+    else
+        self:SetBGSize(self._bg_size, "set")
+    end
+    self:SetIconX()
+    if reposition then
+        self:Reposition()
     end
 end
 

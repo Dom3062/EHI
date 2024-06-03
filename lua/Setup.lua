@@ -20,6 +20,7 @@ dofile(EHI.LuaPath .. "EHIAchievementManager.lua")
 dofile(EHI.LuaPath .. "EHIPhalanxManager.lua")
 dofile(EHI.LuaPath .. "EHITimerManager.lua")
 dofile(EHI.LuaPath .. "EHILootManager.lua")
+dofile(EHI.LuaPath .. "EHISyncManager.lua")
 dofile(EHI.LuaPath .. "EHIManager.lua")
 
 local original =
@@ -43,6 +44,7 @@ function Setup:init_managers(managers, ...)
     managers.ehi_phalanx = EHIPhalanxManager
     managers.ehi_timer = EHITimerManager:new(managers.ehi_tracker)
     managers.ehi_loot = EHILootManager:new(managers.ehi_tracker)
+    managers.ehi_sync = EHISyncManager
     managers.ehi_manager = EHIManager:new(managers)
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitManagers, managers)
 end

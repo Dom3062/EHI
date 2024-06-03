@@ -9,7 +9,7 @@ if EHI:GetOption("show_captain_damage_reduction") then
     original.set_phalanx_damage_reduction_buff = GroupAIStateBesiege.set_phalanx_damage_reduction_buff
     function GroupAIStateBesiege:set_phalanx_damage_reduction_buff(damage_reduction, ...)
         original.set_phalanx_damage_reduction_buff(self, damage_reduction, ...)
-        managers.ehi_tracker:SetChance("PhalanxDamageReduction", (EHI:RoundChanceNumber(damage_reduction or 0)))
+        managers.ehi_tracker:SetChancePercent("PhalanxDamageReduction", damage_reduction or 0)
     end
 end
 

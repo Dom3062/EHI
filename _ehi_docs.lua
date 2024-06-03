@@ -91,7 +91,13 @@
 ---@field trophy table Triggers related to Safehouse trophies
 ---@field daily table Triggers related to Safehouse daily mission
 ---@field preload table Trackers to preload during game load, achievements not recommended
+---@field assault ParseTriggersTable.assault? Assault params to be loaded during game load
+
+---@class ParseTriggersTable.assault
 ---@field diff number?
+---@field fake_assault_block boolean
+---@field force_assault_start boolean
+---@field wave_move_elements_block number[]
 
 ---@class ParseUnitsTable
 ---@field [number] UnitUpdateDefinition

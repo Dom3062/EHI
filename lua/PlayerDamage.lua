@@ -29,6 +29,7 @@ end
 ---@field get_real_armor fun(self: self): number
 ---@field get_real_health fun(self: self): number
 ---@field got_max_doh_stacks fun(self: self): boolean
+---@field health_ratio fun(self: self): number
 ---@field max_armor_stored_health fun(self: self): number
 ---@field need_revive fun(self: self): boolean
 ---@field _max_armor fun(self: self): number

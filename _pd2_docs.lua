@@ -459,6 +459,13 @@ _G.Drill = {}
 _G.ECMJammerBase = {}
 ---@class ElementWaypoint
 _G.ElementWaypoint = {}
+---@class EventListenerHolder
+---@field new fun(self: self): self
+---@field add fun(self: self, key: string, event_types: table|string|number, clbk: function)
+---@field call fun(self: self, event: string, ...)
+_G.EventListenerHolder = {}
+---@class FirstAidKitBase
+_G.FirstAidKitBase = {}
 ---@class TimerGui
 _G.TimerGui = {}
 ---@class DigitalGui
@@ -497,6 +504,12 @@ _G.MissionAssetsManager = {}
 _G.MissionBriefingGui = {}
 ---@class MoneyManager
 _G.MoneyManager = {}
+---@class mvector3
+---@field distance fun(vec1: Vector3, vec2: Vector3): number
+---@field normalize fun(vec: Vector3)
+---@field set fun(vec1: Vector3, vec2: Vector3) Sets `vec2` into `vec1`
+---@field set_z fun(vec: Vector3, z: number) Sets `z` in `vec`
+_G.mvector3 = {}
 ---@class TradeManager
 _G.TradeManager = {}
 ---@class VehicleDrivingExt
@@ -537,6 +550,17 @@ end
 ---@field yellow Color
 _G.Color = {}
 
+---@class Vector3
+---@operator sub(self): Vector3
+---@field length fun(self: self): number
+
+---@class Rotation
+---@field y fun(self: self): number
+
+---@class Camera
+---@field position fun(self: self): Vector3
+---@field rotation fun(self: self): Rotation
+
 ---@generic T
 ---@param TC T
 ---@return T
@@ -576,8 +600,8 @@ end
 ---@field z number
 
 ---@class Color
----@operator div(integer): self
----@operator div(number): self
+---@operator div(integer): Color
+---@operator div(number): Color
 ---@field r number
 ---@field red number
 ---@field g number
@@ -688,6 +712,7 @@ end
 ---@field get_amount_enemies_converted_to_criminals fun(self: self): number
 ---@field _get_balancing_multiplier fun(self: self, balance_multipliers: number[]): number
 ---@field hostage_count fun(self: self): number
+---@field police_hostage_count fun(self: self): number
 ---@field whisper_mode fun(self: self): boolean
 
 ---@class GroupAIManager
@@ -783,6 +808,7 @@ end
 
 ---@class ViewportManager
 ---@field add_resolution_changed_func fun(self: self, func: function): function
+---@field get_current_camera fun(self: self): Camera
 
 ---@class WeaponFactoryManager
 ---@field get_ammo_data_from_weapon fun(self: self, factory_id: string, blueprint: table): table?
@@ -806,6 +832,7 @@ end
 ---@field ehi_phalanx EHIPhalanxManager
 ---@field ehi_timer EHITimerManager
 ---@field ehi_loot EHILootManager
+---@field ehi_sync EHISyncManager
 ---@field enemy EnemyManager
 ---@field environment_effects EnvironmentEffectsManager
 ---@field experience ExperienceManager
@@ -952,13 +979,23 @@ end
 ---@class HuskPlayerInventory : PlayerInventory
 
 ---@class PlayerMovement
+---@field current_state fun(self: self): PlayerStandard?
 ---@field crouching fun(self: self): boolean
 ---@field m_head_pos fun(self: self): Vector3
+---@field m_head_rot fun(self: self): Rotation
 ---@field running fun(self: self): boolean
 ---@field zipline_unit fun(self: self): UnitZipline
 
 ---@class HuskPlayerMovement
+---@field current_state fun(self: self): self
 ---@field m_head_pos fun(self: self): Vector3
+---@field m_head_rot fun(self: self): Rotation
+
+---@class PlayerStandard
+---@field _state_data PlayerStandard._state_data
+
+---@class PlayerStandard._state_data
+---@field in_steelsight boolean
 
 ---@class CopBase : UnitBase
 ---@field _unit UnitEnemy
@@ -1020,7 +1057,7 @@ end
 ---@class RaycastWeaponBase
 ---@field selection_index fun(self: self): number
 
----@class UnitOOBB
+---@class C_UnitOOBB
 ---@field center fun(self: self): number
 ---@field x fun(self: self): number
 ---@field y fun(self: self): number
@@ -1032,7 +1069,7 @@ end
 ---@field material_config fun(): Idstring
 ---@field name fun(): string
 ---@field position fun(self: self): Vector3
----@field oobb fun(self: self): UnitOOBB Object Oriented Bounding Box
+---@field oobb fun(self: self): C_UnitOOBB Object Oriented Bounding Box
 
 ---@class UnitBase : Unit
 ---@field add_destroy_listener fun(self: self, key: string, clbk: function)
@@ -1102,6 +1139,9 @@ end
 
 ---@class UnitECM : UnitBase
 ---@field base fun(): ECMJammerBase
+
+---@class UnitFAKDeployable : UnitDeployable
+---@field base fun(): FirstAidKitBase
 
 ---@class LocalizationManager
 ---@field btn_macro fun(self: self, button: string, to_upper: boolean?, nil_if_empty: boolean?): string
@@ -1204,7 +1244,7 @@ end
 ---@class Panel : PanelBaseObject
 ---@field color nil Does not exist in Panel
 ---@field set_color nil Does not exist in Panel
----@field child fun(self: self, child_name: string): (PanelBaseObject)?
+---@field child fun(self: self, child_name: string): PanelBaseObject?
 ---@field remove fun(self: self, child_name: PanelBaseObject)
 ---@field text fun(self: self, params: PanelText_Params): PanelText
 ---@field bitmap fun(self: self, params: PanelBitmap_Params): PanelBitmap

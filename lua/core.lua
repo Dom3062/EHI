@@ -766,10 +766,12 @@ local function LoadDefaultValues(self)
         show_enemy_count_show_pagers = true,
         show_civilian_count_tracker = true,
         civilian_count_tracker_format = 2, -- 1 = No format; one number only; 2 = Tied|Untied; 3 = Untied|Tied
+        show_hostage_count_tracker = true,
+        hostage_count_tracker_format = 4, -- 1 = Total only; 2 = Total | Police; 3 = Police | Total; 4 = Civilians | Police; 5 = Police | Civilians
         show_laser_tracker = false,
         show_assault_delay_tracker = true,
         show_assault_time_tracker = true,
-        aggregate_assault_delay_and_assault_time = true,
+        show_assault_diff_in_assault_trackers = true,
         show_endless_assault = true,
         show_loot_counter = true,
         show_all_loot_secured_popup = true,
@@ -1371,6 +1373,7 @@ function EHI:IsPlayingCrimeSpree()
     return Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree"
 end
 
+---@return boolean
 function EHI:IsAssaultTrackerEnabled()
     return self:GetOption("show_assault_delay_tracker") or self:GetOption("show_assault_time_tracker")
 end
@@ -1381,7 +1384,7 @@ end
 
 ---@return boolean
 function EHI:CombineAssaultDelayAndAssaultTime()
-    return self:GetOption("show_assault_delay_tracker") and self:GetOption("show_assault_time_tracker") and self:GetOption("aggregate_assault_delay_and_assault_time")
+    return self:GetOption("show_assault_delay_tracker") and self:GetOption("show_assault_time_tracker")
 end
 
 function EHI:IsTradeTrackerDisabled()
@@ -1910,7 +1913,7 @@ end
 ---@param trigger_icons_all table?
 function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     managers.ehi_manager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-    managers.ehi_assault:SetDiff(new_triggers.diff or 0)
+    managers.ehi_assault:Parse(new_triggers.assault)
 end
 
 ---@param new_triggers table
@@ -2449,10 +2452,7 @@ end
 
 ---@param hook string
 function EHI:CheckLoadHook(hook)
-    if not Global.load_level or Global.editor_mode then
-        return true
-    end
-    if self._hooks[hook] then
+    if not Global.load_level or Global.editor_mode or self._hooks[hook] then
         return true
     end
     self._hooks[hook] = true

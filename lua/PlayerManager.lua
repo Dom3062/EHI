@@ -41,10 +41,7 @@ if EHI:CheckLoadHook("PlayerManager") then
     return
 end
 
-local original =
-{
-    start_custom_cooldown = PlayerManager.start_custom_cooldown
-}
+local original = {}
 
 if EHI:GetOption("show_bodybags_counter") then
     original._set_body_bags_amount = PlayerManager._set_body_bags_amount
@@ -52,13 +49,6 @@ if EHI:GetOption("show_bodybags_counter") then
         original._set_body_bags_amount(self, ...)
         managers.ehi_tracker:SetTrackerCount("BodybagsCounter", self._local_player_body_bags)
     end
-end
-
-function PlayerManager:start_custom_cooldown(category, upgrade, cooldown, ...)
-    if upgrade == "crew_inspire" then
-        managers.ehi_buff:SyncBuff("team_crew_inspire", cooldown)
-    end
-    original.start_custom_cooldown(self, category, upgrade, cooldown, ...)
 end
 
 if not EHI:GetOption("show_buffs") then
@@ -195,6 +185,7 @@ function PlayerManager:start_timer(key, duration, ...)
     if key == "replenish_grenades" and AbilityKey then
         managers.ehi_buff:AddBuff(AbilityKey, duration)
     elseif key == "team_crew_inspire" then
+        managers.ehi_buff:SyncBuff(key, duration)
         managers.ehi_buff:AddBuff(key, duration)
     end
     original.start_timer(self, key, duration, ...)

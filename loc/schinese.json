@@ -502,9 +502,6 @@
 
     "ehi_show_assault_time_tracker" : "显示突击持续时间追踪器",
     "ehi_show_assault_time_tracker_desc" : "显示突击持续的时间\n\n若为客机中途加入游戏，此追踪器在突击难度提升后不再显示",
-    
-    "ehi_aggregate_assault_delay_and_assault_time" : "整合突击持续与延迟追踪器",
-    "ehi_aggregate_assault_delay_and_assault_time_desc" : "将突击延迟追踪器和突击持续时间追踪器整合为一个追踪器\n\n若为客机中途加入游戏，此追踪器在突击难度提升后不再显示",
 	
     "ehi_show_endless_assault" : "在追踪器中显示无尽突击",
     "ehi_show_endless_assault_desc" : "无尽突击开始后在突击追踪器中显示无尽突击文本",

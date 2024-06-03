@@ -48,6 +48,11 @@ local original =
     destroy = FirstAidKitBase.destroy
 }
 
+---@class FirstAidKitBase
+---@field _empty boolean
+---@field _unit UnitFAKDeployable
+---@field List { obj: UnitFAKDeployable, pos: Vector3, min_distance: number }[]
+
 function FirstAidKitBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())

@@ -11,6 +11,11 @@ EHITrackerManager = class(EHIBaseManager)
 EHITrackerManager._sync_tracker = "EHISyncAddTracker"
 EHITrackerManager._sync_tm_add_tracker = "EHI_TM_SyncAddTracker"
 EHITrackerManager._sync_tm_update_tracker = "EHI_TM_SyncUpdateTracker"
+EHITrackerManager.Rounding =
+{
+    Standard = 1,
+    Chance = 2
+}
 function EHITrackerManager:init()
     self:CreateWorkspace()
     self._t = 0
@@ -657,29 +662,63 @@ end
 
 ---@param id string
 ---@param amount number
-function EHITrackerManager:IncreaseChance(id, amount)
+---@param rounding number?
+---@param bracket number?
+function EHITrackerManager:IncreaseChance(id, amount, rounding, bracket)
     local tracker = self:GetTracker(id) --[[@as EHIChanceTracker]]
     if tracker and tracker.IncreaseChance then
+        if rounding then
+            if rounding == self.Rounding.Standard then
+                amount = self:RoundNumber(amount, bracket)
+            else
+                amount = self:RoundChanceNumber(amount)
+            end
+        end
         tracker:IncreaseChance(amount)
     end
 end
 
 ---@param id string
 ---@param amount number
-function EHITrackerManager:DecreaseChance(id, amount)
+---@param rounding number?
+---@param bracket number?
+function EHITrackerManager:DecreaseChance(id, amount, rounding, bracket)
     local tracker = self:GetTracker(id) --[[@as EHIChanceTracker]]
     if tracker and tracker.DecreaseChance then
+        if rounding then
+            if rounding == self.Rounding.Standard then
+                amount = self:RoundNumber(amount, bracket)
+            else
+                amount = self:RoundChanceNumber(amount)
+            end
+        end
         tracker:DecreaseChance(amount)
     end
 end
 
 ---@param id string
 ---@param amount number
-function EHITrackerManager:SetChance(id, amount)
+---@param rounding number?
+---@param bracket number?
+function EHITrackerManager:SetChance(id, amount, rounding, bracket)
     local tracker = self:GetTracker(id) --[[@as EHIChanceTracker]]
     if tracker and tracker.SetChance then
+        if rounding then
+            if rounding == self.Rounding.Standard then
+                amount = self:RoundNumber(amount, bracket)
+            else
+                amount = self:RoundChanceNumber(amount)
+            end
+        end
         tracker:SetChance(amount)
     end
+end
+
+---Rounds the number as percent before it is passed to a tracker
+---@param id string
+---@param amount number
+function EHITrackerManager:SetChancePercent(id, amount)
+    self:SetChance(id, self:RoundChanceNumber(amount))
 end
 
 ---@param id string

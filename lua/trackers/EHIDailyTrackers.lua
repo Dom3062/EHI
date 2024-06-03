@@ -29,8 +29,7 @@ EHIDailyProgressTracker._show_desc = EHIDailyTracker._show_desc
 EHIDailyProgressTracker.PrepareHint = EHIDailyTracker.PrepareHint
 ---@param panel Panel
 ---@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIDailyProgressTracker:init(panel, params, parent_class)
+function EHIDailyProgressTracker:init(panel, params, ...)
     self._daily_job = params.daily_job
-    EHIDailyProgressTracker.super.init(self, panel, params, parent_class)
+    EHIDailyProgressTracker.super.init(self, panel, params, ...)
 end

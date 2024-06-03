@@ -4,6 +4,17 @@
     "title": "ehi_trackers_menu",
     "items": [
         {
+            "type": "button",
+            "id": "ehi_trackers_next_menu",
+            "title": "ehi_menu_next_page",
+            "next_menu": "ehi_trackers_4_menu",
+            "ehi_ver" : 243
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
             "type": "toggle",
             "id": "ehi_show_enemy_count_tracker_choice",
             "title": "ehi_show_enemy_count_tracker",
@@ -31,13 +42,13 @@
         },
         {
             "type": "divider",
-            "size": 10
+            "size": 20
         },
         {
             "type": "toggle",
             "id": "ehi_show_civilian_count_tracker_choice",
             "title": "ehi_show_civilian_count_tracker",
-            "description": "ehi_show_civilian_count_tracker",
+            "description": "ehi_show_civilian_count_tracker_desc",
             "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_civilian_count_tracker",
             "focus_changed_callback": "SetFocus",
@@ -64,7 +75,42 @@
         },
         {
             "type" : "divider",
-            "size" : 10
+            "size" : 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_hostage_count_tracker_choice",
+            "title": "ehi_show_hostage_count_tracker",
+            "description": "ehi_show_hostage_count_tracker_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_hostage_count_tracker",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_hostage_count_tracker",
+            "default_value": true,
+            "ehi_ver" : 243
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hostage_count_tracker_format_choice",
+            "title": "ehi_hostage_count_tracker_format",
+            "description": "ehi_hostage_count_tracker_format_desc",
+            "callback": ["SetOption", "UpdateHostagePanelOption"],
+            "callback_arguments": "hostage_count_tracker_format",
+            "items": [
+                "ehi_hostage_count_tracker_format_1",
+                "ehi_hostage_count_tracker_format_2",
+                "ehi_hostage_count_tracker_format_3",
+                "ehi_hostage_count_tracker_format_4",
+                "ehi_hostage_count_tracker_format_5"
+            ],
+            "value": "hostage_count_tracker_format",
+            "parent": "ehi_show_hostage_count_tracker_choice",
+            "default_value": 4,
+            "ehi_ver" : 243
+        },
+        {
+            "type" : "divider",
+            "size" : 20
         },
         {
             "type": "toggle",
@@ -80,7 +126,7 @@
         },
         {
             "type" : "divider",
-            "size" : 10
+            "size" : 20
         },
         {
             "type": "toggle",
@@ -93,6 +139,7 @@
             "value": "show_assault_delay_tracker",
             "default_value": true,
             "is_parent" : true,
+            "parent_func_update" : "UpdateAssaultDiff",
             "ehi_ver" : 78
         },
         {
@@ -106,20 +153,21 @@
             "value": "show_assault_time_tracker",
             "default_value": true,
             "is_parent" : true,
+            "parent_func_update" : "UpdateAssaultDiff",
             "ehi_ver" : 146
         },
         {
             "type": "toggle",
-            "id": "ehi_aggregate_assault_delay_and_assault_time_choice",
-            "title": "ehi_aggregate_assault_delay_and_assault_time",
-            "description": "ehi_aggregate_assault_delay_and_assault_time_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "aggregate_assault_delay_and_assault_time",
+            "id": "ehi_show_assault_diff_in_assault_trackers_choice",
+            "title": "ehi_show_assault_diff_in_assault_trackers",
+            "description": "ehi_show_assault_diff_in_assault_trackers_desc",
+            "callback": ["SetOption", "UpdateAssaultTracker"],
+            "callback_arguments": "show_assault_diff_in_assault_trackers",
             "focus_changed_callback": "SetFocus",
-            "value": "aggregate_assault_delay_and_assault_time",
+            "value": "show_assault_diff_in_assault_trackers",
             "default_value": true,
-            "parent": ["ehi_show_assault_delay_tracker_choice", "ehi_show_assault_time_tracker_choice"],
-            "ehi_ver" : 163
+            "parent_func" : "IsAssaultTrackerEnabled",
+            "ehi_ver" : 243
         },
         {
             "type": "toggle",
@@ -135,7 +183,7 @@
         },
         {
             "type": "divider",
-            "size": 10
+            "size": 20
         },
         {
             "type": "toggle",
@@ -194,7 +242,7 @@
         },
         {
             "type": "divider",
-            "size": 10
+            "size": 20
         },
         {
             "type": "toggle",
@@ -207,75 +255,6 @@
             "value": "show_bodybags_counter",
             "default_value": true,
             "ehi_ver" : 83
-        },
-        {
-            "type": "divider",
-            "size": 10
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_escape_chance_choice",
-            "title": "ehi_show_escape_chance",
-            "description": "ehi_show_escape_chance_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_escape_chance",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_escape_chance",
-            "default_value": true,
-            "ehi_ver" : 84
-        },
-        {
-            "type": "divider",
-            "size": 10
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_sniper_tracker_choice",
-            "title": "ehi_show_sniper_tracker",
-            "description": "ehi_show_sniper_tracker_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_sniper_tracker",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_sniper_tracker",
-            "default_value": true,
-            "is_parent" :  true,
-            "ehi_ver" : 168
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_sniper_spawned_popup_choice",
-            "title": "ehi_show_sniper_spawned_popup",
-            "description": "ehi_show_sniper_spawned_popup_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_sniper_spawned_popup",
-            "value": "show_sniper_spawned_popup",
-            "default_value": true,
-            "parent" : "ehi_show_sniper_spawned_popup_choice",
-            "ehi_ver" : 206
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_sniper_logic_start_popup_choice",
-            "title": "ehi_show_sniper_logic_start_popup",
-            "description": "ehi_show_sniper_logic_start_popup_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_sniper_logic_start_popup",
-            "value": "show_sniper_logic_start_popup",
-            "default_value": true,
-            "parent" : "ehi_show_sniper_spawned_popup_choice",
-            "ehi_ver" : 239
-        },
-        {
-            "type": "toggle",
-            "id": "show_sniper_logic_end_popup_choice",
-            "title": "ehi_show_sniper_logic_end_popup",
-            "description": "show_sniper_logic_end_popup_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_sniper_logic_end_popup",
-            "value": "show_sniper_logic_end_popup",
-            "default_value": true,
-            "parent" : "ehi_show_sniper_spawned_popup_choice",
-            "ehi_ver" : 239
         }
     ]
 }

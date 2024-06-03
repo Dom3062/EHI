@@ -42,43 +42,43 @@ do
     if format == 1 then -- Uses (Bags placed)
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
             if self._format[id] == "percent" then
-                return EHI:RoundNumber(self._amount[id], 0.1) .. " (" .. self._placed[id] .. ")"
+                return string.format("%g (%d)", self._parent_class:RoundNumber(self._amount[id], 0.1), self._placed[id])
             elseif self._dont_show_placed[id] then
-                return self._amount[id]
+                return tostring(self._amount[id])
             end
-            return self._amount[id] .. " (" .. self._placed[id] .. ")"
+            return string.format("%d (%d)", self._amount[id], self._placed[id])
         end
     elseif format == 2 then -- (Bags placed) Uses
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
             if self._format[id] == "percent" then
-                return "(" .. self._placed[id] .. ") " .. EHI:RoundNumber(self._amount[id], 0.1)
+                return string.format("(%d) %g", self._placed[id], self._parent_class:RoundNumber(self._amount[id], 0.1))
             elseif self._dont_show_placed[id] then
-                return self._amount[id]
+                return tostring(self._amount[id])
             end
-            return "(" .. self._placed[id] .. ") " .. self._amount[id]
+            return string.format("(%d) %d", self._placed[id], self._amount[id])
         end
     elseif format == 3 then -- (Uses) Bags placed
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
             if self._format[id] == "percent" then
-                return "(" .. EHI:RoundNumber(self._amount[id], 0.1) .. ") " .. self._placed[id]
+                return string.format("(%g) %d", self._parent_class:RoundNumber(self._amount[id], 0.1), self._placed[id])
             elseif self._dont_show_placed[id] then
-                return self._amount[id]
+                return tostring(self._amount[id])
             end
-            return "(" .. self._amount[id] .. ") " .. self._placed[id]
+            return string.format("(%d) %d", self._amount[id], self._placed[id])
         end
     elseif format == 4 then -- Bags placed (Uses)
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
             if self._format[id] == "percent" then
-                return self._placed[id] .. " (" .. EHI:RoundNumber(self._amount[id], 0.1) .. ")"
+                return string.format("%d (%g)", self._placed[id], self._parent_class:RoundNumber(self._amount[id], 0.1))
             elseif self._dont_show_placed[id] then
-                return self._amount[id]
+                return tostring(self._amount[id])
             end
-            return self._placed[id] .. " (" .. self._amount[id] .. ")"
+            return string.format("%d (%d)", self._placed[id], self._amount[id])
         end
     elseif format == 5 then -- Uses
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
             if self._format[id] == "percent" then
-                return tostring(EHI:RoundNumber(self._amount[id], 0.01))
+                return tostring(self._parent_class:RoundNumber(self._amount[id], 0.01))
             end
             return tostring(self._amount[id])
         end
@@ -86,7 +86,7 @@ do
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
             if self._dont_show_placed[id] then
                 if self._format[id] == "percent" then
-                    return tostring(EHI:RoundNumber(self._amount[id], 0.01))
+                    return tostring(self._parent_class:RoundNumber(self._amount[id], 0.01))
                 end
                 return tostring(self._amount[id])
             end

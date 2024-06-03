@@ -101,7 +101,7 @@ function EHIPiggyBankMutatorTracker:AnimateNewLevel()
                     t = t + coroutine.yield()
                     local n = 1 - sin(t * 180)
                     --local r = lerp(1, 0, n)
-                    local g = lerp(1, 0, n) ---@cast g -Color
+                    local g = lerp(1, 0, n)
                     local c = Color(g, 1, g)
                     self:SetTextColor(c)
                 end

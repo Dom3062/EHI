@@ -3,6 +3,7 @@ local lerp = math.lerp
 ---@class EHIChanceTracker : EHITracker
 ---@field super EHITracker
 ---@field _anim_flash_set_chance number?
+---@field _custom_chance_anim function?
 EHIChanceTracker = class(EHITracker)
 EHIChanceTracker._update = false
 ---@param o PanelText
@@ -37,7 +38,7 @@ end
 
 ---@param chance number?
 function EHIChanceTracker:Format(chance)
-    return (chance or self._chance) .. "%"
+    return string.format("%d%%", chance or self._chance)
 end
 
 ---@param amount number
@@ -55,7 +56,7 @@ function EHIChanceTracker:SetChance(amount)
     self._chance = math.max(0, amount)
     if self._anim_chance then
         self._chance_text:stop()
-        self._chance_text:animate(self._anim, self)
+        self._chance_text:animate(self._custom_chance_anim or self._anim, self)
     else
         self._chance_text:set_text(self:FormatChance())
         self:FitTheText(self._chance_text)

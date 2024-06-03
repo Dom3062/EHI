@@ -106,7 +106,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[103761] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({ other = other })
+EHI:ParseTriggers({ other = other, assault = { wave_move_elements_block = { 100352, 100353 } } })
 
 EHI:SetMissionDoorData({
     -- Security doors

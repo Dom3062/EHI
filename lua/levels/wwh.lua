@@ -61,7 +61,7 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
-    diff = 1
+    assault = { diff = 1 }
 })
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 8 })

@@ -84,7 +84,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                         -- Random Chance
                         self.ehi:AddTracker({
                             id = "PagersChance",
-                            chance = EHI:RoundChanceNumber(base[1] or 0),
+                            chance = self.ehi:RoundChanceNumber(base[1] or 0),
                             icons = { EHI.Icons.Pager },
                             hint = "pager_chance",
                             remove_on_alarm = true,

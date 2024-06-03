@@ -24,7 +24,7 @@ if EHI:GetOption("show_sniper_tracker") and EHI:GetOption("show_sniper_spawned_p
     end, trigger_times = 1 }
 end
 
-EHI:ParseTriggers({ mission = triggers, other = other, diff = 1 })
+EHI:ParseTriggers({ mission = triggers, other = other, assault = { diff = 1 } })
 
 local tbl =
 {

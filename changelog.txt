@@ -1,3 +1,8 @@
+r243 (03. 06. 2024):
+Added options "Show Assault Difficulty in Assault Trackers" and "Show Hostage Count Tracker"
+Removed option "Aggregate Assault Delay and Duration into one tracker"; EHI will aggregate assault trackers automatically by default
+Enabled grouping for Enemy Sentry Turret; further improving memory consumption with 2 or more turrets on the map
+
 r242 (21. 05. 2024):
 Hell's Island: Fixed an issue where Assault Tracker does not work correctly
 Ukrainian Job: Fixed a crash with enabled Loot Counter

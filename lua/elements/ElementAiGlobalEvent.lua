@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("ElementAiGlobalEvent") or (Global.game_settings.level_id == "watchdogs_2" or Global.game_settings.level_id == "watchdogs_2_day") then
+if EHI:CheckLoadHook("ElementAiGlobalEvent") then
     return
 end
 

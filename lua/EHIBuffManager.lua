@@ -134,7 +134,7 @@ function EHIBuffManager:CreateBuff(params, persistent, deck_option)
     self._buffs[params.id] = buff
     if persistent and EHI:GetBuffOption(persistent) then
         buff:SetPersistent()
-    elseif deck_option and deck_option.persistent and EHI:GetBuffDeckOption(deck_option.deck, deck_option.persistent) then
+    elseif deck_option and EHI:GetBuffDeckOption(deck_option.deck, deck_option.persistent) then
         buff:SetPersistent()
     end
 end

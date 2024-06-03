@@ -102,7 +102,7 @@ EHITotalXPTracker._anim = function(o, self)
     local t = 0
     while t < 1 do
         t = t + coroutine.yield()
-        local n = math.lerp(previous_xp, xp, t) --[[@as number]]
+        local n = math.lerp(previous_xp, xp, t)
         o:set_text(self:Format(n))
         self._total_xp_anim = n
     end
