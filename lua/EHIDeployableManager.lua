@@ -177,6 +177,7 @@ end
 function EHIDeployableManager:AddAggregatedHealthTracker()
     self._trackers:AddTracker({
         id = "Health",
+        format = {},
         hint = "doctor_fak",
         class = "EHIAggregatedHealthEquipmentTracker"
     })

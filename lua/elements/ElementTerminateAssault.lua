@@ -3,7 +3,7 @@ if EHI:CheckLoadHook("ElementTerminateAssault") then
     return
 end
 
-if not (EHI:GetOption("show_assault_delay_tracker") or EHI:GetOption("show_assault_time_tracker")) then
+if not EHI:IsAssaultTrackerEnabled() then
     return
 end
 

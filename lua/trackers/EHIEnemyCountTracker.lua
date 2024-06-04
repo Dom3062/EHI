@@ -18,6 +18,14 @@ function EHIEnemyCountTracker:init(...)
     self._update_on_alarm = true
 end
 
+---@param params EHITracker.params
+function EHIEnemyCountTracker:post_init(params)
+    EHIEnemyCountTracker.super.post_init(self, params)
+    if params.alarm_sounded then
+        self:OnAlarm()
+    end
+end
+
 function EHIEnemyCountTracker:Update()
     self._text:set_text(self:FormatCount())
     self:AnimateBG()
@@ -81,16 +89,4 @@ function EHIEnemyCountTracker:AlarmEnemyPagerKilled()
     self._alarm_count_answered = self._alarm_count_answered - 1
     self:Update()
     self:FitTheText()
-end
-
-function EHIEnemyCountTracker:GetEnemyCount()
-    if self._alarm_sounded then
-        return self._count
-    end
-    return self._count + self._alarm_count
-end
-
-function EHIEnemyCountTracker:ResetCounter()
-    self._count = 0
-    self._alarm_count = 0
 end

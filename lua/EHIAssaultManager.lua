@@ -109,6 +109,7 @@ function EHIAssaultManager:init_finalize(manager)
         end
         managers.modifiers:add_modifier(ListenerModifier, "EHI")
     end
+    EHI:AddCallback(EHI.CallbackMessage.SyncAssaultDiff, callback(self, self, "SetDiff"))
 end
 
 ---@param hud HUDManager
@@ -264,6 +265,10 @@ end
 
 function EHIAssaultManager:SetEndlessAssaultFromLoad()
     EHI:CallCallback(EHI.CallbackMessage.AssaultWaveModeChanged, "endless")
+end
+
+function EHIAssaultManager:TrackerExists()
+    return self._trackers:TrackerExists("Assault") or self._trackers:TrackerExists("AssaultDelay") or self._trackers:TrackerExists("AssaultTime")
 end
 
 function EHIAssaultManager:save(data)

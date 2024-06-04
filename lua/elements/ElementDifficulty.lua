@@ -17,38 +17,30 @@ local original =
     on_executed = ElementDifficulty.on_executed
 }
 
-local Trigger
 if EHI:GetOption("show_difficulty_tracker") then
-    local id = "Difficulty"
-    Trigger = function(diff)
-        if managers.ehi_tracker:CallFunction3(id, "SetChance", diff, EHITrackerManager.Rounding.Chance) then
+    ---@param diff number
+    EHI:AddCallback(EHI.CallbackMessage.SyncAssaultDiff, function(diff)
+        if managers.ehi_tracker:CallFunction3("AssaultDiff", "SetChance", diff, EHITrackerManager.Rounding.Chance) then
             managers.ehi_tracker:AddTracker({
-                id = id,
+                id = "AssaultDiff",
                 icons = { "enemy" },
                 chance = managers.ehi_tracker:RoundChanceNumber(diff),
                 hint = "diff",
                 class = EHI.Trackers.Chance
             })
         end
-    end
-else
-    Trigger = function(value) end
-end
-
-local function Run(value)
-    Trigger(value)
-    managers.ehi_assault:SetDiff(value)
+    end)
 end
 
 function ElementDifficulty:client_on_executed(...)
     original.client_on_executed(self, ...)
-    Run(self._values.difficulty)
+    EHI:CallCallback(EHI.CallbackMessage.SyncAssaultDiff, self._values.difficulty)
 end
 
 function ElementDifficulty:on_executed(...)
     if not self._values.enabled then
         return
     end
-    Run(self._values.difficulty)
+    EHI:CallCallback(EHI.CallbackMessage.SyncAssaultDiff, self._values.difficulty)
     original.on_executed(self, ...)
 end

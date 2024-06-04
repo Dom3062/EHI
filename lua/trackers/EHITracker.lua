@@ -274,6 +274,7 @@ function EHITracker:init(panel, params, parent_class)
     self:pre_init(params)
     self._id = params.id
     self._icons = self._forced_icons or params.icons
+    self._parent_class = parent_class
     self._n_of_icons = 0
     local gap = 0
     if type(self._icons) == "table" then
@@ -312,7 +313,6 @@ function EHITracker:init(panel, params, parent_class)
         self:CreateIcons()
     end
     self:OverridePanel()
-    self._parent_class = parent_class
     self._hide_on_delete = params.hide_on_delete
     self._flash_times = params.flash_times or 3
     self._anim_flash = params.flash_bg ~= false

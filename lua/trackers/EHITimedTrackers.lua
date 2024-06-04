@@ -14,7 +14,6 @@ function EHITimedChanceTracker:OverridePanel()
         text = self:FormatChance()
     })
     self._text:set_left(self._chance_text:right())
-    self._enabled = false
     self._refresh_on_delete = true
 end
 
@@ -22,7 +21,7 @@ end
 function EHITimedChanceTracker:post_init(params)
     if params.start_opened then
         self:SetBGSize(self._bg_box_double, "set")
-        self:SetIconX()
+        self:SetIconsX()
     elseif params.stop_timer_on_end then
         self._stop_timer_on_end = true
         self._update = false
@@ -67,6 +66,7 @@ EHITimedWarningChanceTracker.AnimateColor = EHIWarningTracker.AnimateColor
 EHITimedWarningChanceTracker.SetTimeNoAnim = EHIWarningTracker.SetTimeNoAnim
 EHITimedWarningChanceTracker.delete = EHIWarningTracker.delete
 EHITimedWarningChanceTracker._anim = EHIWarningTracker._anim
+EHITimedWarningChanceTracker._custom_chance_anim = EHIChanceTracker._anim
 
 ---@class EHITimedProgressTracker : EHIProgressTracker, EHITimedChanceTracker
 ---@field super EHIProgressTracker
@@ -82,7 +82,6 @@ function EHITimedProgressTracker:OverridePanel()
         text = self:FormatProgress()
     })
     self._text:set_left(self._progress_text:right())
-    self._enabled = false
     self._refresh_on_delete = true
 end
 

@@ -99,7 +99,7 @@ _G.EHI =
         ElementWaypoint = {} ---@type table<number, boolean>
     },
 
-    Callback = {}, ---@type table<string|number, function[]>
+    _callback = {}, ---@type table<string|number, function[]>
     CallbackMessage =
     {
         Spawned = "Spawned",
@@ -131,7 +131,9 @@ _G.EHI =
         -- Provides `visibility` (a boolean value)
         HUDVisibilityChanged = "HUDVisibilityChanged",
         -- Provides `picked_up` (a number value), `max_units` (a number value) and `client_sync_load` (a boolean value)
-        SyncGagePackagesCount = "SyncGagePackagesCount"
+        SyncGagePackagesCount = "SyncGagePackagesCount",
+        -- Provides `diff` (a number value between 0-1)
+        SyncAssaultDiff = "SyncAssaultDiff"
     },
 
     SpecialFunctions =
@@ -266,12 +268,10 @@ _G.EHI =
     ConditionFunctions =
     {
         ---Checks if loud is active
-        ---@return boolean
         IsLoud = function()
             return managers.groupai and not managers.groupai:state():whisper_mode()
         end,
         ---Checks if stealth is active
-        ---@return boolean
         IsStealth = function()
             return managers.groupai and managers.groupai:state():whisper_mode()
         end
@@ -1012,10 +1012,8 @@ local function Load()
     self._cache.AchievementsDisabled = not self:ShowMissionAchievements()
 end
 
----@param difficulty string
----@return integer
-local function DifficultyToIndex(difficulty)
-    local difficulties = {
+function EHI:Init()
+    self._cache.DifficultyIndex = table.index_of({
         "easy", -- Leftover from PD:TH
         "normal",
         "hard",
@@ -1024,13 +1022,7 @@ local function DifficultyToIndex(difficulty)
         "easy_wish",
         "overkill_290",
         "sm_wish"
-    }
-    return table.index_of(difficulties, difficulty) - 2
-end
-
-function EHI:Init()
-    local difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
-    self._cache.DifficultyIndex = DifficultyToIndex(difficulty)
+    }, Global.game_settings and Global.game_settings.difficulty or "normal") - 2
     self:AddCallback(self.CallbackMessage.InitManagers, function(managers) ---@param managers managers
         local mutator = managers.mutators
         if mutator:can_mutators_be_active() then
@@ -1407,14 +1399,14 @@ end
 ---@param id string|number
 ---@param f function
 function EHI:AddCallback(id, f)
-    self.Callback[id] = self.Callback[id] or {}
-    self.Callback[id][#self.Callback[id] + 1] = f
+    self._callback[id] = self._callback[id] or {}
+    self._callback[id][#self._callback[id] + 1] = f
 end
 
 ---@param id string|number
 ---@param ... any
 function EHI:CallCallback(id, ...)
-    for _, callback in ipairs(self.Callback[id] or {}) do
+    for _, callback in ipairs(self._callback[id] or {}) do
         callback(...)
     end
 end
@@ -1424,7 +1416,7 @@ end
 ---@param ... any
 function EHI:CallCallbackOnce(id, ...)
     self:CallCallback(id, ...)
-    self.Callback[id] = nil
+    self._callback[id] = nil
 end
 
 ---@param f fun(dropin: boolean)
@@ -1503,15 +1495,12 @@ function EHI:Unhook(id)
 end
 
 ---Hooks elements that removes loot bags (due to fire or out of bounds)
----@param elements number|number[] Index or indices of ElementCarry that removes loot bags with operation "remove"
+---@param elements number|number[] Index or indices of ElementCarry that removes loot bags with operation `remove`
 function EHI:HookLootRemovalElement(elements)
     if type(elements) ~= "table" and type(elements) ~= "number" then
         return
     end
-    local f
-    local HookFunction
-    local ElementFunction
-    local id
+    local f, HookFunction, ElementFunction, id
     if self:IsHost() then
         HookFunction = self.PreHookWithID
         ElementFunction = self.HostElement

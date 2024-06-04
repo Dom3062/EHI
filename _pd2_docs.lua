@@ -461,8 +461,10 @@ _G.ECMJammerBase = {}
 _G.ElementWaypoint = {}
 ---@class EventListenerHolder
 ---@field new fun(self: self): self
----@field add fun(self: self, key: string, event_types: table|string|number, clbk: function)
----@field call fun(self: self, event: string, ...)
+---@field add fun(self: self, key: string|number, event_types: table|string|number, clbk: function)
+---@field call fun(self: self, event: string|number, ...)
+---@field _set_trash fun(self: self, key: string|number)
+---@field _listeners table
 _G.EventListenerHolder = {}
 ---@class FirstAidKitBase
 _G.FirstAidKitBase = {}

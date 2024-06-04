@@ -436,29 +436,18 @@ local instances =
     ["levels/instances/unique/trai/trai_crane/world"] =
     {
         [0] = { create_tracker_class = function()
-            ---@class EHICraneFixChanceTracker : EHIWarningTracker, EHIChanceTracker
-            ---@field super EHIWarningTracker
-            ---@field _icon2 PanelBitmap?
-            EHICraneFixChanceTracker = class(EHIWarningTracker)
+            ---@class EHICraneFixChanceTracker : EHITimedWarningChanceTracker
+            ---@field super EHITimedWarningChanceTracker
+            EHICraneFixChanceTracker = class(EHITimedWarningChanceTracker)
             EHICraneFixChanceTracker._forced_icons = EHICraneFixChanceTracker._ONE_ICON and { Icon.Fix } or { Icon.Winch, Icon.Fix }
             EHICraneFixChanceTracker._show_completion_color = true
-            EHICraneFixChanceTracker.FormatChance = EHIChanceTracker.FormatChance
-            EHICraneFixChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
-            EHICraneFixChanceTracker.SetChance = EHIChanceTracker.SetChance
             EHICraneFixChanceTracker.SetFailed = EHIAchievementTracker.SetFailed
             EHICraneFixChanceTracker.ShowFailedPopup = function(...) end
-            function EHICraneFixChanceTracker:pre_init(...)
-                self._chance = 30
-            end
             function EHICraneFixChanceTracker:OverridePanel()
-                self:SetBGSize()
-                self._chance_text = self:CreateText({
-                    text = self:FormatChance(),
-                    w = self._bg_box:w() / 2,
-                    left = self._text:right(),
-                    FitTheText = true
-                })
-                self:SetIconsX()
+                EHICraneFixChanceTracker.super.OverridePanel(self)
+                self._text:set_x(0)
+                self._chance_text:set_left(self._text:right())
+                self._refresh_on_delete = false
             end
         end },
         [100089] = { time = 0.1 + 400/30, id = "trai_CraneLowerHooks", icons = { Icon.Winch }, hint = Hints.des_Crane },
@@ -466,7 +455,7 @@ local instances =
         [100047] = { id = "trai_CraneMove", special_function = SF.PauseTracker },
         [100059] = { id = "trai_CraneMove", special_function = SF.UnpauseTracker },
         [100060] = { id = "trai_CraneMove", special_function = SF.PauseTracker },
-        [100046] = { time = 20, id = "trai_CraneFixChance", class = "EHICraneFixChanceTracker", trigger_times = 1, hint = Hints.trai_Crane },
+        [100046] = { time = 20, chance = 30, id = "trai_CraneFixChance", class = "EHICraneFixChanceTracker", trigger_times = 1, start_opened = true, hint = Hints.trai_Crane },
         [100035] = { id = "trai_CraneFixChance", special_function = SF.IncreaseChanceFromElement }, -- +10%
         [100039] = { id = "trai_CraneFixChance", special_function = SF.SetAchievementFailed }, -- Players need to fix the crane, runs once (Won't trigger "ACHIEVEMENT FAILED!" popup)
         [100220] = { chance = 33, id = "trai_LocomotiveStartChance", icons = { Icon.Power }, class = TT.Chance, hint = Hints.trai_LocoStart },

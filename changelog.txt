@@ -1,3 +1,7 @@
+r244 (04. 06. 2024):
+Aggregated Health Equipment Tracker: Fixed crashes
+Equipment Tracker: Fixed a crash
+
 r243 (03. 06. 2024):
 Added options "Show Assault Difficulty in Assault Trackers" and "Show Hostage Count Tracker"
 Removed option "Aggregate Assault Delay and Duration into one tracker"; EHI will aggregate assault trackers automatically by default

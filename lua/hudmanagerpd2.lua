@@ -67,14 +67,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             end
         end)
     end
-    if EHI:GetOption("show_enemy_count_tracker") then
-        self.ehi:AddTracker({
-            id = "EnemyCount",
-            flash_bg = false,
-            hint = "enemy_count",
-            class = "EHIEnemyCountTracker"
-        })
-    end
     if tweak_data.levels:IsStealthAvailable(level_id) then
         if EHI:GetOption("show_pager_tracker") then
             local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill

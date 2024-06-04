@@ -3,6 +3,7 @@
 EHIAggregatedHealthEquipmentTracker = class(EHIAggregatedEquipmentTracker)
 EHIAggregatedHealthEquipmentTracker._ids = { "doctor_bag", "first_aid_kit" }
 EHIAggregatedHealthEquipmentTracker._forced_icons = { { icon = "doctor_bag", visible = false }, { icon = "first_aid_kit", visible = false } }
+EHIAggregatedHealthEquipmentTracker._init_create_text = true
 function EHIAggregatedHealthEquipmentTracker:Format()
     local s = ""
     for _, id in ipairs(self._ids) do

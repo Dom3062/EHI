@@ -48,12 +48,14 @@ if EHI:GetOption("show_enemy_count_tracker") then
             end
         end
         EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+            managers.ehi_tracker:AddTracker({
+                id = "EnemyCount",
+                alarm_sounded = EHI.ConditionFunctions.IsLoud(),
+                flash_bg = false,
+                hint = "enemy_count",
+                class = "EHIEnemyCountTracker"
+            })
             local enemy_data = managers.enemy._enemy_data
-            local enemy_counted = managers.ehi_tracker:ReturnValueOrDefault("EnemyCount", "GetEnemyCount", -1)
-            if enemy_data.nr_units == enemy_counted then
-                return
-            end
-            managers.ehi_tracker:CallFunction("EnemyCount", "ResetCounter")
             for _, data in pairs(enemy_data.unit_data or {}) do
                 if alarm_unit[data.unit:base()._tweak_table] then
                     managers.ehi_tracker:CallFunction("EnemyCount", "AlarmEnemyRegistered")
@@ -72,7 +74,13 @@ if EHI:GetOption("show_enemy_count_tracker") then
             managers.ehi_tracker:SetTrackerCount("EnemyCount", self._enemy_data.nr_units)
         end
         EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
-            managers.ehi_tracker:SetTrackerCount("EnemyCount", managers.enemy:GetNumberOfEnemies())
+            managers.ehi_tracker:AddTracker({
+                id = "EnemyCount",
+                count = managers.enemy:GetNumberOfEnemies(),
+                flash_bg = false,
+                hint = "enemy_count",
+                class = "EHIEnemyCountTracker"
+            })
         end)
     end
 end
