@@ -65,9 +65,6 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100070, 14950)] = FultonCatchAgainClient
     triggers[EHI:GetInstanceElementID(100070, 25500)] = FultonCatchAgainClient
     triggers[EHI:GetInstanceElementID(100070, 25650)] = FultonCatchAgainClient
-    EHI:SetSyncTriggers(sync_triggers)
-else
-    EHI:AddHostTriggers("base", sync_triggers)
 end
 
 --[[
@@ -130,7 +127,11 @@ if EHI:IsLootCounterVisible() then
     end, true)
 end
 
-EHI:ParseTriggers({ mission = triggers, other = other })
+EHI:ParseTriggers({
+    mission = triggers,
+    other = other,
+    sync_triggers = { base = sync_triggers }
+})
 EHI:ShowAchievementKillCounter({
     achievement = "ranc_9", -- "Caddyshacked" achievement
     achievement_stat = "ranc_9_stat", -- 100
@@ -150,8 +151,7 @@ EHI:ShowAchievementLootCounter({
     max = 5,
     triggers = ranc_10_triggers,
     load_sync = function(self)
-        self._trackers:SetTrackerProgress("ranc_10", 5 - self:CountInteractionAvailable("ranc_press_pickup_horseshoe"))
-        self._trackers:CallFunction("ranc_10", "CheckCanDeleteAfterSync")
+        self._trackers:SetTrackerSyncData("ranc_10", 5 - self:CountInteractionAvailable("ranc_press_pickup_horseshoe"))
     end
 })
 EHI:ShowAchievementKillCounter({

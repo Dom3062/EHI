@@ -1084,18 +1084,23 @@ tweak_data.hud_icons.EHI_Sniper = tweak_data.ehi.icons.sniper
 
 local preplanning = tweak_data.preplanning
 local path = preplanning.gui.type_icons_path
-local text_rect_blimp = preplanning:get_type_texture_rect(preplanning.types.kenaz_faster_blimp.icon)
-text_rect_blimp[1] = text_rect_blimp[1] + text_rect_blimp[3] -- Add the negated "w" value so it will correctly show blimp
-text_rect_blimp[3] = -text_rect_blimp[3] -- Flip the image so it will face correctly
-tweak_data.ehi.icons.blimp = { texture = path, texture_rect = text_rect_blimp }
+do
+    local text_rect_blimp = preplanning:get_type_texture_rect(preplanning.types.kenaz_faster_blimp.icon)
+    text_rect_blimp[1] = text_rect_blimp[1] + text_rect_blimp[3] -- Add the negated "w" value so it will correctly show blimp
+    text_rect_blimp[3] = -text_rect_blimp[3] -- Flip the image so it will face correctly
+    tweak_data.ehi.icons.blimp = { texture = path, texture_rect = text_rect_blimp }
+end
 tweak_data.ehi.icons.heli = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.kenaz_ace_pilot.icon) }
 tweak_data.hud_icons.EHI_Heli = tweak_data.ehi.icons.heli
 tweak_data.ehi.icons.oil = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.kenaz_drill_improved_cooling_system.icon) }
 tweak_data.ehi.icons.zipline = { texture = path, texture_rect = preplanning:get_type_texture_rect(81) } -- Zipline, currently unused -> hardcoded number
 tweak_data.ehi.icons.zipline_bag = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.corp_zipline_north.icon) }
 tweak_data.ehi.icons.tablet = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.crojob2_manifest.icon) }
-tweak_data.ehi.icons.daily_hangover = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.chca_spiked_drink.icon) }
-tweak_data.hud_icons.daily_hangover = tweak_data.ehi.icons.daily_hangover
+tweak_data.ehi.icons.code = { texture = path, texture_rect = preplanning:get_type_texture_rect(84) } -- Code, currently unused -> hardcoded number
+if EHI:GetUnlockableAndOption("show_dailies") then
+    tweak_data.ehi.icons.daily_hangover = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.chca_spiked_drink.icon) }
+    tweak_data.hud_icons.daily_hangover = tweak_data.ehi.icons.daily_hangover
+end
 
 ---@param number number
 ---@param start number

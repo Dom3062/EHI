@@ -101,6 +101,24 @@ _G.tweak_data.achievement.complete_heist_achievements = {
                 count = 1
             }
         }
+    },
+    daily_classics = {
+        trophy_stat = "daily_classics",
+        jobs = {
+            "red2",
+            "flat",
+            "dinner",
+            "pal",
+            "man",
+            "run",
+            "glace",
+            "dah",
+            "nmh"
+        }
+    },
+    daily_discord = {
+        converted_cops = 1,
+        trophy_stat = "daily_discord"
     }
 }
 ---@class AchievementsTweakData.enemy_kill_achievements
@@ -239,6 +257,39 @@ _G.tweak_data.achievement.loot_cash_achievements = {
         secured = {
             carry_id = "counterfeit_money",
             value = 1000000
+        }
+    },
+    daily_mortage = {
+        trophy_stat = "daily_mortage",
+        is_dropin = false,
+        jobs = {
+            "family"
+        },
+        secured = {
+            carry_id = "diamonds",
+            total_amount = 16
+        }
+    },
+    daily_candy = {
+        trophy_stat = "daily_candy",
+        secured = {
+            {
+                amount = 1,
+                carry_id = {
+                    "coke",
+                    "coke_light",
+                    "coke_pure",
+                    "present",
+                    "yayo"
+                }
+            }
+        }
+    },
+    daily_lodsofemone = {
+        trophy_stat = "daily_lodsofemone",
+        secured = {
+            carry_id = "money",
+            amount = 1
         }
     }
 }
@@ -463,8 +514,8 @@ _G.ElementWaypoint = {}
 ---@field new fun(self: self): self
 ---@field add fun(self: self, key: string|number, event_types: table|string|number, clbk: function)
 ---@field call fun(self: self, event: string|number, ...)
----@field _set_trash fun(self: self, key: string|number)
----@field _listeners table
+---@field remove fun(self: self, key: string|number)
+---@field has_listeners_for_event fun(self: self, event: string): table?
 _G.EventListenerHolder = {}
 ---@class FirstAidKitBase
 _G.FirstAidKitBase = {}
@@ -689,8 +740,13 @@ end
 ---@field _buffer table
 
 ---@class CustomSafehouseManager
----@field get_daily_challenge fun(self: self): table?
+---@field get_daily_challenge fun(self: self): CustomSafehouseManager._global.daily
 ---@field is_trophy_unlocked fun(self: self, id: string): boolean
+
+---@class CustomSafehouseManager._global.daily
+---@field id string
+---@field state "unstarted"|"seen"|"accepted"|"completed"|"rewarded"
+---@field trophy table
 
 ---@class EnvironmentEffectsManager
 ---@field _mission_effects table<number, boolean>
@@ -723,8 +779,13 @@ end
 ---@class ChallengeManager
 ---@field can_progress_challenges fun(self: self): boolean
 ---@field get_active_challenge fun(self: self, id: string, key: string?): table?
+---@field get_all_active_challenges fun(self: self): table<string, ChallengeManager.get_all_active_challenges?>
 ---@field get_challenge fun(self: self, id: string, key: string?): table?
 ---@field has_active_challenges fun(self: self, id: string, key: string?): boolean
+
+---@class ChallengeManager.get_all_active_challenges
+---@field completed boolean
+---@field id string
 
 ---@class ChatManager
 ---@field _receive_message fun(self: self, channel_id: number, name: string, message: string, color: Color, icon: string?)
@@ -959,7 +1020,7 @@ end
 ---@field contains fun(v: table, e: string): boolean Returns `true` or `false` if `e` exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
 ---@field get_key fun(map: table, wanted_key_value: any): any? Returns `key name` if value exists
----@field list_to_set fun(list: table): table Maps values as keys
+---@field list_to_set fun(list: table): table Maps values as keys with value `true`
 
 ---@class ContourExt
 ---@field _contour_list table?

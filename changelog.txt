@@ -1,3 +1,6 @@
+r245 (12. 06. 2024):
+Added icon color distinction for achievement tracker, side job tracker or trophy tracker
+
 r244 (04. 06. 2024):
 Aggregated Health Equipment Tracker: Fixed crashes
 Equipment Tracker: Fixed a crash

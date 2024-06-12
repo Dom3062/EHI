@@ -96,7 +96,7 @@ EHITotalXPTracker._forced_hint_text = "total_xp"
 EHITotalXPTracker._update = false
 ---@param o PanelText
 ---@param self EHITotalXPTracker
-EHITotalXPTracker._anim = function(o, self)
+EHITotalXPTracker._anim_xp = function(o, self)
     local xp = self._player_xp_limit > 0 and math.min(self._xp, self._player_xp_limit) or self._xp
     local previous_xp = self._total_xp_anim
     local t = 0
@@ -151,7 +151,7 @@ function EHITotalXPTracker:SetXP(amount)
             self:SetTextColor(Color.green)
         end
         self._text:stop()
-        self._text:animate(self._anim, self)
+        self._text:animate(self._anim_xp, self)
         self:AnimateBG()
     end
 end

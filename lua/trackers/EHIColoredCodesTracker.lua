@@ -2,7 +2,7 @@
 ---@field super EHITracker
 EHIColoredCodesTracker = class(EHITracker)
 EHIColoredCodesTracker._update = false
-EHIColoredCodesTracker._forced_icons = { EHI.Icons.Interact }
+EHIColoredCodesTracker._forced_icons = { "code" }
 EHIColoredCodesTracker._forced_hint_text = "color_codes"
 EHIColoredCodesTracker._init_create_text = false
 function EHIColoredCodesTracker:OverridePanel()

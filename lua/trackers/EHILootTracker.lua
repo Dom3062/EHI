@@ -318,9 +318,6 @@ function EHILootTracker:SecuredMissionLoot()
     self:SetProgress(progress)
 end
 
-function EHILootTracker:CheckCanDeleteAfterSync()
-    self._force_delete_on_spawn = self._max_random <= 0 and self._progress >= self._max
-end
 EHILootTracker.FormatProgress = EHILootTracker.Format
 
 ---@class EHILootCountTracker : EHICountTracker
@@ -332,7 +329,6 @@ EHILootCountTracker.SetProgress = EHILootCountTracker.SetCount
 ---@class EHILootMaxTracker : EHILootTracker
 ---@field super EHILootTracker
 EHILootMaxTracker = class(EHILootTracker)
-EHILootMaxTracker.CheckCanDeleteAfterSync = EHITracker.CheckCanDeleteAfterSync
 ---@param params EHITracker.params
 function EHILootMaxTracker:post_init(params)
     EHILootMaxTracker.super.post_init(self, params)
@@ -345,9 +341,8 @@ function EHILootMaxTracker:post_init(params)
     EHI:AddCallback("ExperienceManager_RefreshPlayerCount", refresh)
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, refresh)
     if EHI:IsClient() then
-        EHI:AddCallback(EHI.CallbackMessage.LootLoadSync,
         ---@param loot LootManager
-        function(loot)
+        EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, function(loot)
             self._offset = loot:GetSecuredBagsAmount()
             self:SetProgress(self._progress)
         end)
@@ -356,9 +351,6 @@ end
 
 function EHILootMaxTracker:PlayerSpawned()
     EHILootMaxTracker.super.PlayerSpawned(self)
-    if self._force_delete_on_spawn then
-        return
-    end
     self:AddTrackerToUpdate()
 end
 
@@ -476,7 +468,7 @@ function EHIAchievementLootCounterTracker:PrepareHint(params)
 end
 
 function EHIAchievementLootCounterTracker:PlayerSpawned()
-    if self._silent_start or self._force_delete_on_spawn then
+    if self._silent_start then
         EHIAchievementLootCounterTracker.super.PlayerSpawned(self)
         return
     end

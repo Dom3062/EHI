@@ -16,7 +16,7 @@ EHIWarningTracker._show_completion_color = false
 ---@param color Color
 ---@param start_t number
 ---@param class EHIWarningTracker
-EHIWarningTracker._anim = function(o, old_color, color, start_t, class)
+EHIWarningTracker._anim_warning = function(o, old_color, color, start_t, class)
     local c = Color(old_color.r, old_color.g, old_color.b)
     local t = start_t
     while true do
@@ -44,8 +44,8 @@ end
 ---@param color Color?
 function EHIWarningTracker:AnimateColor(check_progress, color)
     if self._text and alive(self._text) then
-        local start_t = check_progress and (1 - min(self._parent_class:RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 1
-        self._text:animate(self._anim, self._text_color, color or (self._show_completion_color and self._completion_color or self._warning_color), start_t, self)
+        local start_t = check_progress and (1 - min(self._parent_class.RoundNumber(self._time, 1) - floor(self._time), 0.99)) or 1
+        self._text:animate(self._anim_warning, self._text_color, color or (self._show_completion_color and self._completion_color or self._warning_color), start_t, self)
     end
 end
 

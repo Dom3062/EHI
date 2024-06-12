@@ -47,6 +47,13 @@ end
 function NetworkHelper:StringToColour(str)
 end
 
+---Rounds a number to the specified precision (decimal places)
+---@param num number @The number to round
+---@param idp integer? @The number of decimal places to round to (defaults to `0`)
+---@return number @The input number rounded to the input precision
+function math.round_with_precision(num, idp)
+end
+
 -----------------------
 --- End of SuperBLT ---
 -----------------------

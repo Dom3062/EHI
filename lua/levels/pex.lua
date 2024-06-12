@@ -65,9 +65,9 @@ EHI:ShowAchievementLootCounter({ -- Medals
 
             Can't use function "CountInteractionAvailable" because the medal in the locker room is not interactable first
             This is more accurate and reliable
+            This sets remaining from the maximum
         ]]
-        self._trackers:SetTrackerProgressRemaining("pex_11", self:CountUnitsAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5)
-        self._trackers:CallFunction("pex_11", "CheckCanDeleteAfterSync")
+        self._trackers:SetTrackerSyncData("pex_11", self:CountUnitsAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5, true)
     end
 })
 local xp_override =

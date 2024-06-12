@@ -1,8 +1,24 @@
 local EHI = EHI
+
+---@generic T: table
+---@param super T? A base achievement class
+---@return T
+function ehi_daily_class(super)
+    local klass = class(super)
+    klass._popup_type = "daily"
+    klass._forced_icon_color = EHIDailyTracker._forced_icon_color
+    klass._show_started = EHIDailyTracker._show_started
+    klass._show_failed = EHIDailyTracker._show_failed
+    klass._show_desc = EHIDailyTracker._show_desc
+    klass.PrepareHint = EHIDailyTracker.PrepareHint
+    return klass
+end
+
 ---@class EHIDailyTracker : EHIAchievementTracker
 ---@field super EHIAchievementTracker
 EHIDailyTracker = class(EHIAchievementTracker)
 EHIDailyTracker._popup_type = "daily"
+EHIDailyTracker._forced_icon_color = { EHI:GetColorFromOption("unlockables", "sidejob") }
 EHIDailyTracker._show_started = EHI:GetUnlockableOption("show_daily_started_popup")
 EHIDailyTracker._show_failed = EHI:GetUnlockableOption("show_daily_failed_popup")
 EHIDailyTracker._show_desc = EHI:GetUnlockableOption("show_daily_description")
@@ -21,12 +37,7 @@ end
 
 ---@class EHIDailyProgressTracker : EHIAchievementProgressTracker
 ---@field super EHIAchievementProgressTracker
-EHIDailyProgressTracker = class(EHIAchievementProgressTracker)
-EHIDailyProgressTracker._popup_type = "daily"
-EHIDailyProgressTracker._show_started = EHIDailyTracker._show_started
-EHIDailyProgressTracker._show_failed = EHIDailyTracker._show_failed
-EHIDailyProgressTracker._show_desc = EHIDailyTracker._show_desc
-EHIDailyProgressTracker.PrepareHint = EHIDailyTracker.PrepareHint
+EHIDailyProgressTracker = ehi_daily_class(EHIAchievementProgressTracker)
 ---@param panel Panel
 ---@param params EHITracker.params
 function EHIDailyProgressTracker:init(panel, params, ...)

@@ -4,16 +4,18 @@ local EHI = EHI
 EHIbex11Tracker = class(EHIAchievementProgressGroupTracker)
 ---@param params EHITracker.params
 function EHIbex11Tracker:pre_init(params)
-    params.call_done_function = true
-    params.status_is_overridable = true
     EHIbex11Tracker.super.pre_init(self, params)
     EHI:AddAchievementToCounter({
         achievement = "bex_11",
         counter =
         {
             check_type = EHI.LootCounter.CheckType.CustomCheck,
-            f = function(loot, tracker_id)
-                self:SetProgress(loot:GetSecuredBagsAmount(), "bags")
+            f = function(loot)
+                local progress = loot:GetSecuredBagsAmount()
+                self:SetProgress(progress, "bags")
+                if progress >= self._max then
+                    EHI:RemoveEventListener("bex_11")
+                end
             end
         },
         no_sync = true
@@ -60,9 +62,6 @@ local triggers = {
 }
 if EHI:IsClient() then
     triggers[102157] = { additional_time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 ---@type ParseAchievementTable
@@ -93,7 +92,7 @@ local achievements =
             [100107] = { class = "EHIbex11Tracker", counter = {
                 { max = 11, id = "bags" },
                 { max = 240, id = "boxes" }
-            } },
+            }, call_done_function = true, status_is_overridable = true },
             [103677] = { special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
                 self._trackers:CallFunction(trigger.id, "SetProgress", 1, "boxes")
             end) },
@@ -128,7 +127,8 @@ end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    sync_triggers = { element = element_sync_triggers }
 })
 EHI:ShowLootCounter({ max = 11 })
 local xp_override =

@@ -11,7 +11,7 @@ EHIcac10Tracker.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
 ---@param old_color Color
 ---@param color Color
 ---@param class EHIcac10Tracker
-EHIcac10Tracker._anim = function(o, old_color, color, start_t, class)
+EHIcac10Tracker._anim_warning = function(o, old_color, color, start_t, class)
     local c = Color(old_color.r, old_color.g, old_color.b)
     local progress = class._progress_text
     local t = 1

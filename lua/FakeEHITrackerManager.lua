@@ -182,11 +182,13 @@ function FakeEHITrackerManager:AddPreviewText()
 end
 
 function FakeEHITrackerManager:SetPreviewTextPosition()
-    self._preview_text:set_x(self._x)
-    if self._tracker_alignment == 2 then -- Vertical; Bottom to Top
-        self._preview_text:set_top(self:GetY(1) + panel_offset)
-    else
-        self._preview_text:set_bottom(self:GetY(0) - panel_offset)
+    if self._preview_text then
+        self._preview_text:set_x(self._x)
+        if self._tracker_alignment == 2 then -- Vertical; Bottom to Top
+            self._preview_text:set_top(self:GetY(1) + panel_offset)
+        else
+            self._preview_text:set_bottom(self:GetY(0) - panel_offset)
+        end
     end
 end
 
@@ -287,9 +289,9 @@ function FakeEHITrackerManager:UpdateFormat(format)
 end
 
 function FakeEHITrackerManager:UpdateEquipmentFormat(format)
-    for _, tracker in ipairs(self._fake_trackers) do
-        if tracker.UpdateEquipmentFormat then ---@diagnostic disable-line
-            tracker:UpdateEquipmentFormat(format) ---@diagnostic disable-line
+    for _, tracker in ipairs(self._fake_trackers) do ---@cast tracker FakeEHIEquipmentTracker
+        if tracker.UpdateEquipmentFormat then
+            tracker:UpdateEquipmentFormat(format)
         end
     end
 end
@@ -330,9 +332,7 @@ function FakeEHITrackerManager:UpdateYOffset(y)
             tracker:SetPos(x_new, y_new)
         end
     end
-    if self._preview_text then
-        self:SetPreviewTextPosition()
-    end
+    self:SetPreviewTextPosition()
 end
 
 function FakeEHITrackerManager:SetSelected(id)
@@ -553,7 +553,7 @@ end
 
 ---@class FakeEHITracker
 ---@field _icon1 PanelBitmap
----@field _parent_class FakeEHITrackerManager
+---@field _text_color Color?
 FakeEHITracker = class()
 FakeEHITracker._gap = 5
 FakeEHITracker._icon_size = 32
@@ -609,7 +609,7 @@ function FakeEHITracker:init(panel, params, parent_class)
         h = self._bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._panel:h() * self._text_scale,
-        color = params.text_color or Color.white
+        color = params.text_color or self._text_color or Color.white
     })
     self:FitTheText()
     if self._n_of_icons > 0 then
@@ -1246,7 +1246,6 @@ FakeEHISniperTracker._selected_color = Color.yellow
 FakeEHISniperTracker._text_color = FakeEHITracker._selected_color
 ---@param params EHITracker.params
 function FakeEHISniperTracker:post_init(params)
-    self._text:set_color(self._text_color)
     self._text:set_text(tostring(math.random(1, 4)))
 end
 

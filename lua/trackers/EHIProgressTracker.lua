@@ -4,6 +4,7 @@ EHIProgressTracker = class(EHITracker)
 EHIProgressTracker.update = EHIProgressTracker.update_fade
 EHIProgressTracker._progress_bad = Color(255, 255, 165, 0) / 255
 EHIProgressTracker._update = false
+---@param params EHITracker.params
 function EHIProgressTracker:pre_init(params)
     self._max = params.max or 0
     self._progress = params.progress or 0
@@ -13,6 +14,7 @@ function EHIProgressTracker:pre_init(params)
     self._show_progress_on_finish = params.show_progress_on_finish
 end
 
+---@param params EHITracker.params
 function EHIProgressTracker:post_init(params)
     self._progress_text = self._text
 end
@@ -98,6 +100,20 @@ function EHIProgressTracker:Finalize()
         self:SetCompleted(true)
     else
         self:SetFailed()
+    end
+end
+
+---Called during GameSetup:load()
+---@param progress number
+---@param set_progress_remaining boolean?
+function EHIProgressTracker:SyncData(progress, set_progress_remaining)
+    if set_progress_remaining then
+        progress = self._max - progress
+    end
+    if progress >= self._max then
+        self:delete()
+    else
+        self:SetProgress(progress)
     end
 end
 

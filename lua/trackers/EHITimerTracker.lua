@@ -203,8 +203,8 @@ end
 ---@param check_progress boolean?
 ---@param color Color?
 function EHITimerGroupTracker:AnimateColor(timer, check_progress, color)
-    local start_t = check_progress and (1 - math.min(self._parent_class:RoundNumber(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
-    timer.label:animate(self._anim, self._text_color, color or (timer.animate_completion and self._completion_color or self._warning_color), start_t, self)
+    local start_t = check_progress and (1 - math.min(self._parent_class.RoundNumber(timer.time, 1) - math.floor(timer.time), 0.99)) or 1
+    timer.label:animate(self._anim_warning, self._text_color, color or (timer.animate_completion and self._completion_color or self._warning_color), start_t, self)
 end
 
 ---@param t number
@@ -433,7 +433,7 @@ EHIChanceTimerTracker.FormatChance = EHIChanceTracker.FormatChance
 EHIChanceTimerTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHIChanceTimerTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHIChanceTimerTracker.SetChance = EHIChanceTracker.SetChance
-EHIChanceTimerTracker._anim = EHIChanceTracker._anim
+EHIChanceTimerTracker._anim_chance = EHIChanceTracker._anim_chance
 EHIChanceTimerTracker.delete = EHIChanceTracker.delete
 ---@param params EHITracker.params
 function EHIChanceTimerTracker:post_init(params)

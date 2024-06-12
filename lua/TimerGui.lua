@@ -245,8 +245,7 @@ function TimerGui:set_visible(visible, ...)
     original.set_visible(self, visible, ...)
     if self._ignore_visibility then
         return
-    end
-    if visible == false then
+    elseif visible == false then
         self:RemoveTracker()
     end
 end

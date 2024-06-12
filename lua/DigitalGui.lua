@@ -117,7 +117,7 @@ if level_id == "shoutout_raid" then
             end
             created = true
         end
-        local t = EHI:RoundNumber(timer, 0.1)
+        local t = EHI.RoundNumber(timer, 1)
         managers.ehi_manager:Call(self._ehi_key, "CheckTime", t)
     end
 else

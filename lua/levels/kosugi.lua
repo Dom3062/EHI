@@ -12,9 +12,12 @@ function EHIkosugi5Tracker:post_init(params)
         counter =
         {
             check_type = EHI.LootCounter.CheckType.CustomCheck,
-            f = function(loot, tracker_id)
+            f = function(loot)
                 self:SetProgress(loot:GetSecuredBagsTypeAmount("samurai_suit"), "armor")
                 self:SetProgress(loot:GetSecuredBagsAmount(), "bags")
+                if self._counters == self._completed_counters then
+                    EHI:RemoveEventListener("kosugi_5")
+                end
             end
         },
         no_sync = true
@@ -50,12 +53,8 @@ local DisableTriggerAndExecute = EHI:RegisterCustomSF(function(self, trigger, ..
     self:UnhookTrigger(trigger.data.id)
     self:CreateTracker(trigger)
 end)
-local Trigger = { special_function = SF.Trigger, data = { 1, 2 } }
 local triggers = {
-    [1] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto }, hint = Hints.kosugi_Heli },
-    [2] = { special_function = SF.RemoveTrigger, data = { 101131, 100900 } },
-    [101131] = Trigger,
-    [100900] = Trigger,
+    [103492] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto }, hint = Hints.kosugi_Heli, trigger_times = 1 },
     [101219] = { time = 27, id = "BlackhawkDropLoot", icons = { Icon.Heli, Icon.Loot, Icon.Goto }, hint = Hints.kosugi_Loot },
     [100303] = { time = 30, id = "BlackhawkDropGuards", icons = { Icon.Heli, "pager_icon", Icon.Goto }, class = TT.Warning, hint = Hints.kosugi_Guards },
 

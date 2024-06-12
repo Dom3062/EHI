@@ -54,9 +54,6 @@ for _, index in ipairs(MethlabIndex) do
 end
 if client then
     triggers[104955] = EHI:ClientCopyTrigger(triggers[106013], { time = 30 })
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 local other =
@@ -216,7 +213,8 @@ end
 
 EHI:ParseTriggers({
     mission = triggers,
-    other = other
+    other = other,
+    sync_triggers = { element = element_sync_triggers }
 })
 local money = EHI:GetValueBasedOnDifficulty({
     normal = 5,

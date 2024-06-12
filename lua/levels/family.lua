@@ -47,6 +47,33 @@ local achievements =
     }
 }
 
+local dailies =
+{
+    daily_mortage =
+    {
+        elements =
+        {
+            [100108] = { special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+                local trophy = tweak_data.achievement.loot_cash_achievements.daily_mortage.secured
+                self._trackers:AddTracker({
+                    id = trigger.id,
+                    max = trophy.total_amount,
+                    icons = { EHI.Icons.Trophy },
+                    class = TT.Daily.Progress
+                })
+                ---@param loot LootManager
+                EHI:AddEventListener(trigger.id, EHI.CallbackMessage.LootSecured, function(loot)
+                    local progress = loot:GetSecuredBagsTypeAmount(trophy.carry_id)
+                    self._trackers:SetTrackerProgress(trigger.id, progress)
+                    if progress >= trophy.total_amount then
+                        EHI:RemoveEventListener(trigger.id)
+                    end
+                end)
+            end) }
+        }
+    }
+}
+
 local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 30 })
@@ -105,7 +132,8 @@ local min_bags = EHI:GetValueBasedOnDifficulty({
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    daily = dailies
 })
 EHI:AddXPBreakdown({
     objective =

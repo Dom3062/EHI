@@ -6,7 +6,7 @@ EHITimedChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHITimedChanceTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHITimedChanceTracker.SetChance = EHIChanceTracker.SetChance
 EHITimedChanceTracker.FormatChance = EHIChanceTracker.FormatChance
-EHITimedChanceTracker._anim = EHIChanceTracker._anim
+EHITimedChanceTracker._anim_chance = EHIChanceTracker._anim_chance
 EHITimedChanceTracker.delete = EHIChanceTracker.delete
 function EHITimedChanceTracker:OverridePanel()
     self:PrecomputeDoubleSize()
@@ -65,8 +65,8 @@ EHITimedWarningChanceTracker.update = EHIWarningTracker.update
 EHITimedWarningChanceTracker.AnimateColor = EHIWarningTracker.AnimateColor
 EHITimedWarningChanceTracker.SetTimeNoAnim = EHIWarningTracker.SetTimeNoAnim
 EHITimedWarningChanceTracker.delete = EHIWarningTracker.delete
-EHITimedWarningChanceTracker._anim = EHIWarningTracker._anim
-EHITimedWarningChanceTracker._custom_chance_anim = EHIChanceTracker._anim
+EHITimedWarningChanceTracker._anim_warning = EHIWarningTracker._anim_warning
+EHITimedWarningChanceTracker._anim_chance = EHIChanceTracker._anim_chance
 
 ---@class EHITimedProgressTracker : EHIProgressTracker, EHITimedChanceTracker
 ---@field super EHIProgressTracker

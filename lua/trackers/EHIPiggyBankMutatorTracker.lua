@@ -93,6 +93,7 @@ end
 
 function EHIPiggyBankMutatorTracker:AnimateNewLevel()
     if self._text and alive(self._text) then
+        self._text:stop()
         self._text:animate(function(o)
             local spins = 1
             while spins <= 3 do

@@ -41,9 +41,7 @@ end
 
 if EHI.debug.mission_door and EHI:IsHost() then
     EHI._cache.MissionDoor = {}
-    local _f_init = MissionDoor.init
-    function MissionDoor:init(...)
-        _f_init(self, ...)
+    EHI:HookWithID(MissionDoor, "init", "EHI_MissionDoorDebug_Init", function(self, ...)
         if self.tweak_data then
             local devices_data = tweak_data.mission_door[self.tweak_data].devices or {}
             local drill_data = devices_data.drill
@@ -60,7 +58,7 @@ if EHI.debug.mission_door and EHI:IsHost() then
                 tbl.positions[i] = position
             end
         end
-    end
+    end)
 
     local definition = {}
     local continent_definitions = {}

@@ -1,7 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
-local TT = EHI.Trackers
 local Hints = EHI.Hints
 local interact = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.mia_1_NextMethIngredient }
 local element_sync_triggers = {}
@@ -22,9 +21,9 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100149, 7750)] = random_time
     triggers[EHI:GetInstanceElementID(100150, 7750)] = random_time
     triggers[EHI:GetInstanceElementID(100184, 7750)] = { id = "MethlabInteract", special_function = SF.RemoveTracker }
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
-EHI:ParseTriggers({ mission = triggers })
+EHI:ParseTriggers({
+    mission = triggers,
+    sync_triggers = { element = element_sync_triggers }
+})

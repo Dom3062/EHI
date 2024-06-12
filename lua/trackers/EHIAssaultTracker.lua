@@ -33,7 +33,7 @@ if EHI:GetOption("show_assault_diff_in_assault_trackers") and not tweak_data.lev
     EHIAssaultTracker._show_assault_diff = true
     EHIAssaultTracker.FormatChance = EHIChanceTracker.Format
     EHIAssaultTracker.SetChance = EHIChanceTracker.SetChance
-    EHIAssaultTracker._custom_chance_anim = EHIChanceTracker._anim
+    EHIAssaultTracker._anim_chance = EHIChanceTracker._anim_chance
 end
 if type(tweak_values) == "table" then
     local first_value = tweak_values[1] or 0
@@ -109,7 +109,7 @@ function EHIAssaultTracker:post_init(params)
         local corrected_diff = self._parent_class:RoundChanceNumber(params.diff_visual or managers.ehi_assault._diff or self._diff)
         self._anim_flash_set_chance = 0
         self._chance = corrected_diff
-        self._anim_chance = corrected_diff
+        self._anim_static_chance = corrected_diff
         self:SetBGSize()
         self._chance_text = self:CreateText({
             text = self:FormatChance(corrected_diff),

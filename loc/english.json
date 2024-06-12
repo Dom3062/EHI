@@ -940,6 +940,15 @@
     "ehi_colors_optional" : "Optional objective",
     "ehi_colors_optional_desc" : "Changes color of optional objective that is not required to complete the mission\nBut completing it will give you more experience",
 
+    "ehi_colors_achievement" : "Achievement",
+    "ehi_colors_achievement_desc" : "Changes color of a tracker icon if it is tracking an achievement",
+
+    "ehi_colors_sidejob" : "Side Job",
+    "ehi_colors_sidejob_desc" : "Changes color of a tracker icon if it is tracking a side job",
+
+    "ehi_colors_trophy" : "Trophy",
+    "ehi_colors_trophy_desc" : "Changes color of a tracker icon if it is tracking a trophy",
+
     "ehi_experience_infamy_pool" : "Infamy Pool in:",
     "ehi_experience_next_level" : "Next in:",
     "ehi_experience_100_in" : "100 in:",

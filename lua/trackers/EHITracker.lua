@@ -237,6 +237,7 @@ end
 ---@field _forced_icons table? Forces specific icons in the tracker
 ---@field _forced_time number? Forces specific time in the tracker
 ---@field _forced_hint_text string? Forces specific hint text in the tracker
+---@field _forced_icon_color Color[]? Forces specific icon color in the tracker
 ---@field _icon1 PanelBitmap
 ---@field _panel_override_w number?
 ---@field _hint_no_localization boolean?
@@ -318,7 +319,6 @@ function EHITracker:init(panel, params, parent_class)
     self._anim_flash = params.flash_bg ~= false
     self._remove_on_alarm = params.remove_on_alarm --Removes tracker when alarm sounds
     self._update_on_alarm = params.update_on_alarm --Calls `OnAlarm` function when alarm sounds
-    self._force_delete_on_spawn = false
     self:post_init(params)
     self:CreateHint(params.hint, params.delay_popup)
 end
@@ -363,7 +363,6 @@ end
 function EHITracker:SetPanelAlpha(alpha)
     if self._anim_visibility then
         self._panel:stop(self._anim_visibility)
-        self._anim_visibility = nil
     end
     if self._hint then
         self._hint:stop()
@@ -377,13 +376,11 @@ end
 function EHITracker:AnimateTop(target_y)
     if self._anim_move then
         self._panel:stop(self._anim_move)
-        self._anim_move = nil
     end
     self._anim_move = self._panel:animate(top, target_y)
     if self._hint then
         if self._anim_hint_move then
             self._hint:stop(self._anim_hint_move)
-            self._anim_hint_move = nil
         end
         self._anim_hint_move = self._hint:animate(top, target_y - self._hint_pos.y_diff)
     end
@@ -393,13 +390,11 @@ end
 function EHITracker:AnimateLeft(target_x)
     if self._anim_move then
         self._panel:stop(self._anim_move)
-        self._anim_move = nil
     end
     self._anim_move = self._panel:animate(left, target_x)
     if self._hint then
         if self._anim_hint_move then
             self._hint:stop(self._anim_hint_move)
-            self._anim_hint_move = nil
         end
         self._anim_hint_move = self._hint:animate(left, target_x)
         self._hint_pos.x = target_x
@@ -410,7 +405,6 @@ end
 function EHITracker:AnimatePanelW(target_w)
     if self._anim_set_w then
         self._panel:stop(self._anim_set_w)
-        self._anim_set_w = nil
     end
     self:AnimateHintX(target_w)
     self._anim_set_w = self._panel:animate(panel_w, target_w)
@@ -420,7 +414,6 @@ end
 function EHITracker:AnimatePanelWAndRefresh(target_w)
     if self._anim_set_w then
         self._panel:stop(self._anim_set_w)
-        self._anim_set_w = nil
     end
     self:AnimateHintX(target_w)
     self._anim_set_w = self._panel:animate(panel_w, target_w, self)
@@ -456,7 +449,6 @@ function EHITracker:AnimIconX(target_x)
     self._icon_anims = self._icon_anims or {}
     if self._icon_anims[1] then
         self._icon1:stop(self._icon_anims[1])
-        self._icon_anims[1] = nil
     end
     self._icon_anims[1] = self._icon1:animate(icon_x, target_x)
 end
@@ -473,7 +465,6 @@ function EHITracker:AnimIconsX(target_x)
         if icon then
             if self._icon_anims[i] then
                 icon:stop(self._icon_anims[i])
-                self._icon_anims[i] = nil
             end
             self._icon_anims[i] = icon:animate(icon_x, target_x + (offset * (i - 1)))
         end
@@ -502,10 +493,10 @@ if EHI:GetOption("show_one_icon") then
         local first_icon = self._icons[1]
         if type(first_icon) == "string" then
             local texture, rect = GetIcon(first_icon)
-            self:CreateIcon("1", texture, rect, icon_pos)
+            self:CreateIcon(1, "1", texture, rect, icon_pos)
         elseif type(first_icon) == "table" then
             local texture, rect = GetIcon(first_icon.icon or "default")
-            self:CreateIcon("1", texture, rect, icon_pos, first_icon.visible, first_icon.color, first_icon.alpha)
+            self:CreateIcon(1, "1", texture, rect, icon_pos, first_icon.visible, first_icon.color, first_icon.alpha)
         end
     end
 else
@@ -515,29 +506,29 @@ else
             local s_i = tostring(i)
             if type(v) == "string" then
                 local texture, rect = GetIcon(v)
-                self:CreateIcon(s_i, texture, rect, icon_pos)
+                self:CreateIcon(i, s_i, texture, rect, icon_pos)
             elseif type(v) == "table" then -- table
                 local texture, rect = GetIcon(v.icon or "default")
-                self:CreateIcon(s_i, texture, rect, icon_pos, v.visible, v.color, v.alpha)
+                self:CreateIcon(i, s_i, texture, rect, icon_pos, v.visible, v.color, v.alpha)
             end
             icon_pos = icon_pos + self._icon_gap_size_scaled
         end
     end
 end
 
----@param i string
+---@param i number
+---@param s_i string
 ---@param texture string
 ---@param texture_rect number[]
 ---@param x number
 ---@param visible boolean?
 ---@param color Color?
 ---@param alpha number?
-function EHITracker:CreateIcon(i, texture, texture_rect, x, visible, color, alpha)
-    self["_icon" .. i] = self._panel:bitmap({
-        name = "icon" .. i,
+function EHITracker:CreateIcon(i, s_i, texture, texture_rect, x, visible, color, alpha)
+    self["_icon" .. s_i] = self._panel:bitmap({
         texture = texture,
         texture_rect = texture_rect,
-        color = color or Color.white,
+        color = self._forced_icon_color and self._forced_icon_color[i] or color or Color.white,
         alpha = alpha or 1,
         visible = visible ~= false,
         x = x,
@@ -652,7 +643,6 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
             end
             if self._anim_hint_x then
                 self._hint:stop(self._anim_hint_x)
-                self._anim_hint_x = nil
             end
             local x = self._hint_pos.x + (target_w - self._panel:w())
             self._anim_hint_x = self._hint:animate(left, x)
@@ -722,7 +712,6 @@ else
             end
             if self._anim_hint_x then
                 self._hint:stop(self._anim_hint_x)
-                self._anim_hint_x = nil
             end
             self._hint:set_w(target_w)
             self:FitTheText(self._hint, 18)
@@ -1002,10 +991,6 @@ function EHITracker:ForceDelete()
 end
 
 function EHITracker:PlayerSpawned()
-    if self._force_delete_on_spawn then
-        self:ForceDelete()
-        return
-    end
     self:ForceShowHint()
 end
 
@@ -1025,9 +1010,6 @@ function EHITracker:OnPlayerCustody(state)
 end
 
 function EHITracker:RedrawPanel()
-end
-
-function EHITracker:CheckCanDeleteAfterSync()
 end
 
 ---Returns current real tracker size and not of what is reported via `self._panel:w()`

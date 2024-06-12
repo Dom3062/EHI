@@ -8,9 +8,9 @@ EHIChanceTracker = class(EHITracker)
 EHIChanceTracker._update = false
 ---@param o PanelText
 ---@param self EHIChanceTracker
-EHIChanceTracker._anim = function(o, self)
-    local chance_to_anim = self._anim_chance
-    self._anim_chance = self._chance
+EHIChanceTracker._anim_chance = function(o, self)
+    local chance_to_anim = self._anim_static_chance
+    self._anim_static_chance = self._chance
     if chance_to_anim ~= self._chance then
         local t = 0
         while t < 1 do
@@ -25,9 +25,9 @@ end
 ---@param params EHITracker.params
 function EHIChanceTracker:pre_init(params)
     self._chance = params.chance or 0
-    self._anim_chance = self._chance
+    self._anim_static_chance = self._chance
     if params.disable_anim then
-        self._anim_chance = nil
+        self._anim_static_chance = nil
     end
 end
 
@@ -38,7 +38,7 @@ end
 
 ---@param chance number?
 function EHIChanceTracker:Format(chance)
-    return string.format("%d%%", chance or self._chance)
+    return string.format("%g%%", chance or self._chance)
 end
 
 ---@param amount number
@@ -54,9 +54,9 @@ end
 ---@param amount number
 function EHIChanceTracker:SetChance(amount)
     self._chance = math.max(0, amount)
-    if self._anim_chance then
+    if self._anim_static_chance then
         self._chance_text:stop()
-        self._chance_text:animate(self._custom_chance_anim or self._anim, self)
+        self._chance_text:animate(self._anim_chance, self)
     else
         self._chance_text:set_text(self:FormatChance())
         self:FitTheText(self._chance_text)
@@ -65,7 +65,7 @@ function EHIChanceTracker:SetChance(amount)
 end
 
 function EHIChanceTracker:delete()
-    if self._anim_chance and self._chance_text and alive(self._chance_text) then
+    if self._anim_static_chance and self._chance_text and alive(self._chance_text) then
         self._chance_text:stop()
     end
     EHIChanceTracker.super.delete(self)

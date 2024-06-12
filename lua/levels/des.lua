@@ -129,7 +129,7 @@ local triggers = {
     [101217] = { time = 30, id = "ChemSetInterrupted", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "ChemSetCooking" }, hint = Hints.des_ChemSetInterrupt },
     [102595] = { time = 30, id = "ChemSetCooking", icons = { Icon.Methlab }, hint = Hints.des_ChemSetCooking },
 
-    [102009] = { time = 60, id = "Crane", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.des_Crane },
+    [102009] = { time = 60, id = "Crane", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.des_Crane, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 102470 } },
     [101702] = { id = "Crane", special_function = SF.PauseTracker },
 
     [102473] = { chance = 20, id = "HackChance", icons = { Icon.PCHack }, class = TT.Timer.Chance, hint = Hints.Hack },
@@ -140,7 +140,6 @@ if EHI:IsClient() then
     triggers[100564] = EHI:ClientCopyTrigger(triggers[100423], { time = 25 + 3 })
     -- Not worth adding the 3s delay here
 end
-EHI:FilterOutNotLoadedTrackers(triggers, "show_timers")
 if EHI:GetOption("show_mission_trackers") then
     local function SetIngredient(arg)
         managers.ehi_tracker:CallFunction("ChemSet", "SetIngredient", arg[1], arg[2])
@@ -243,7 +242,8 @@ end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    pre_parse = { filter_out_not_loaded_trackers = "show_timers" }
 })
 
 local tbl =
@@ -258,6 +258,9 @@ local tbl =
 
 local DisableWaypoints =
 {
+    -- Crane Fix WP
+    [102467] = true,
+
     -- Turret charging computer
     [101122] = true, -- Defend
     [103191] = true, -- Fix

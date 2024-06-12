@@ -35,9 +35,6 @@ if EHI:IsClient() then
         triggers[EHI:GetInstanceElementID(100150, index)] = random_time
         triggers[EHI:GetInstanceElementID(100184, index)] = { id = "MethlabInteract", special_function = SF.RemoveTracker }
     end
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 ---@type ParseAchievementTable
@@ -177,7 +174,8 @@ end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    sync_triggers = { element = element_sync_triggers }
 })
 EHI:ShowAchievementLootCounter({
     achievement = "voff_2",

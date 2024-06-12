@@ -92,12 +92,21 @@
 ---@field daily table Triggers related to Safehouse daily mission
 ---@field preload table Trackers to preload during game load, achievements not recommended
 ---@field assault ParseTriggersTable.assault? Assault params to be loaded during game load
+---@field pre_parse ParseTriggersTable.pre_parse?
+---@field sync_triggers ParseTriggersTable.sync_triggers?
 
 ---@class ParseTriggersTable.assault
 ---@field diff number?
 ---@field fake_assault_block boolean
 ---@field force_assault_start boolean
 ---@field wave_move_elements_block number[]
+
+---@class ParseTriggersTable.pre_parse
+---@field filter_out_not_loaded_trackers "show_timers"|string[] Only in mission triggers
+
+---@class ParseTriggersTable.sync_triggers
+---@field base { [number]: ElementTrigger } Random delay is defined in the BASE DELAY
+---@field element { [number]: ElementTrigger } Random delay is defined when calling the elements
 
 ---@class ParseUnitsTable
 ---@field [number] UnitUpdateDefinition

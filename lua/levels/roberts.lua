@@ -36,17 +36,29 @@ if EHI:IsClient() then
     triggers[101934] = EHI:ClientCopyTrigger(triggers[101929], { time = delay })
 end
 
+local dailies =
+{
+    daily_rush =
+    {
+        elements =
+        {
+            [106579] = { time = 391, class = TT.Daily.Base },
+            [106580] = { special_function = SF.SetAchievementComplete }
+        }
+    }
+}
+
 local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 60 })
 }
 if EHI:IsLootCounterVisible() then
-    other[106579] = EHI:AddLootCounter2(function()
+    other[103610] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({ max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot(103625, 103684) })
     end, function(self)
-        self:Trigger(106579)
+        self:Trigger(103610)
         self._loot:SyncSecuredLoot()
-    end)
+    end, true)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100015] = { chance = 10, time = 1 + 15 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 15 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 2 }
@@ -63,7 +75,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[103061] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103438 } }
     other[104809] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103443 } }
 end
-EHI:ParseTriggers({ mission = triggers, other = other })
+EHI:ParseTriggers({ mission = triggers, other = other, daily = dailies })
 
 local tbl =
 {

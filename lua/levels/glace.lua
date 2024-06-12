@@ -50,7 +50,7 @@ local achievements =
     },
     uno_4 =
     {
-        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+        difficulty_pass = ovk_and_up,
         elements =
         {
             [100765] = { status = Status.Destroy, class = TT.Achievement.Status },

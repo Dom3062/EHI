@@ -355,8 +355,8 @@ end
 
 if EHI:GetBuffOption("berserker_format") == 1 then
     function EHIBerserkerBuffTracker:Format()
-        local dmg = self._parent_class:RoundNumber(self._current_damage_multiplier or 0, 0.1)
-        local mdmg = self._parent_class:RoundNumber(self._current_melee_damage_multiplier or 0, 0.1)
+        local dmg = self._parent_class.RoundNumber(self._current_damage_multiplier or 0, 1)
+        local mdmg = self._parent_class.RoundNumber(self._current_melee_damage_multiplier or 0, 1)
         local s
         if dmg == 0 and mdmg == 0 then
             s = "1x 1x"

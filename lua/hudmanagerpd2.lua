@@ -245,22 +245,24 @@ end
 
 ---@param id string
 ---@param daily_job boolean
-function HUDManager:ShowDailyStartedPopup(id, daily_job)
+---@param icon string?
+function HUDManager:ShowDailyStartedPopup(id, daily_job, icon)
     local text = daily_job and ("menu_challenge_" .. id) or id
-    local icon = tweak_data.ehi.icons[id] and id or "milestone_trophy"
+    icon = icon or tweak_data.ehi.icons[id] and id or "milestone_trophy"
     self:custom_ingame_popup_text("DAILY SIDE JOB STARTED!", managers.localization:to_upper_text(text), icon)
 end
 
 ---@param id string
 ---@param daily_job boolean
-function HUDManager:ShowDailyFailedPopup(id, daily_job)
+---@param icon string?
+function HUDManager:ShowDailyFailedPopup(id, daily_job, icon)
     local text = daily_job and ("menu_challenge_" .. id) or id
-    local icon = tweak_data.ehi.icons[id] and id or "milestone_trophy"
+    icon = tweak_data.ehi.icons[id] and id or "milestone_trophy"
     self:custom_ingame_popup_text("DAILY SIDE JOB FAILED!", managers.localization:to_upper_text(text), icon)
 end
 
 ---@param id string
----@param daily_job boolean
+---@param daily_job boolean?
 function HUDManager:ShowDailyDescription(id, daily_job)
     local text = daily_job and ("menu_challenge_" .. id) or id
     local objective = daily_job and ("menu_challenge_" .. id .. "_desc") or (id .. "_objective")

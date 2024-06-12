@@ -663,13 +663,13 @@ end
 ---@param id string
 ---@param amount number
 ---@param rounding number?
----@param bracket number?
+---@param bracket integer?
 function EHITrackerManager:IncreaseChance(id, amount, rounding, bracket)
     local tracker = self:GetTracker(id) --[[@as EHIChanceTracker]]
     if tracker and tracker.IncreaseChance then
         if rounding then
             if rounding == self.Rounding.Standard then
-                amount = self:RoundNumber(amount, bracket)
+                amount = self.RoundNumber(amount, bracket)
             else
                 amount = self:RoundChanceNumber(amount)
             end
@@ -687,7 +687,7 @@ function EHITrackerManager:DecreaseChance(id, amount, rounding, bracket)
     if tracker and tracker.DecreaseChance then
         if rounding then
             if rounding == self.Rounding.Standard then
-                amount = self:RoundNumber(amount, bracket)
+                amount = self.RoundNumber(amount, bracket)
             else
                 amount = self:RoundChanceNumber(amount)
             end
@@ -705,7 +705,7 @@ function EHITrackerManager:SetChance(id, amount, rounding, bracket)
     if tracker and tracker.SetChance then
         if rounding then
             if rounding == self.Rounding.Standard then
-                amount = self:RoundNumber(amount, bracket)
+                amount = self.RoundNumber(amount, bracket)
             else
                 amount = self:RoundChanceNumber(amount)
             end
@@ -826,6 +826,11 @@ function EHITrackerManager:DecreaseTrackerCount(id, count)
     if tracker and tracker.DecreaseCount then
         tracker:DecreaseCount(count)
     end
+end
+
+---@param id string
+function EHITrackerManager:SetTrackerSyncData(id, ...)
+    self:CallFunction(id, "SyncData", ...)
 end
 
 ---@param id string

@@ -70,7 +70,7 @@ end
 ---@param ratio number
 function EHIStaminaBuffTracker:SetRatio(ratio)
     local value = ratio / self._max_stamina
-    local rounded = self._parent_class:RoundNumber(value, 0.01)
+    local rounded = self._parent_class.RoundNumber(value, 2)
     EHIStaminaBuffTracker.super.SetRatio(self, value, rounded)
 end
 

@@ -20,7 +20,6 @@ local other =
     [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
 if EHI:IsHost() then
-    EHI:AddHostTriggers("element", element_sync_triggers)
     triggers[101498] = { time = 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4, waypoint = { icon = Icon.C4, position_by_element = 100943 }, hint = Hints.C4Delivery }
     ---`mesh_variation "set_level_mia"`  
     ---units/payday2/equipment/gen_interactable_sec_safe_2x05/gen_interactable_sec_safe_2x05 (buggy mesh_variation -> `"set_level_rat_2"` instead)
@@ -63,7 +62,6 @@ if EHI:IsHost() then
         }
     })
 else
-    EHI:SetSyncTriggers(element_sync_triggers)
     ---@param self EHIManager
     ---@param trigger ElementTrigger
     local function WP(self, trigger)
@@ -118,7 +116,11 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({ mission = triggers, other = other })
+EHI:ParseTriggers({
+    mission = triggers,
+    other = other,
+    sync_triggers = { element = element_sync_triggers }
+})
 EHI:ShowAchievementLootCounter({
     achievement = "rvd_11",
     max = 19,

@@ -59,9 +59,10 @@ local triggers = {
         local bags = managers.ehi_manager:CountLootbagsOnTheGround(10)
         if bags % 4 == 0 then -- 4/8/12
             local trigger = bags - 3
-            EHI:AddCallback(EHI.CallbackMessage.LootSecured, function(self)
+            EHI:AddEventListener("watchdogs_2", EHI.CallbackMessage.LootSecured, function(self)
                 if self:GetSecuredBagsAmount() == trigger then
                     EM:Trigger(1)
+                    EHI:RemoveEventListener("watchdogs_2")
                 end
             end)
         end

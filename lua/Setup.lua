@@ -4,6 +4,7 @@ managers.ehi_experience = EHIExperienceManager
 if EHI:CheckLoadHook("Setup") then
     return
 end
+EHI:InitEventListener()
 dofile(EHI.LuaPath .. "EHIBaseManager.lua")
 dofile(EHI.LuaPath .. "EHITrackerManager.lua")
 dofile(EHI.LuaPath .. "EHIWaypointManager.lua")

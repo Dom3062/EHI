@@ -24,13 +24,22 @@ function EHIdailycakeTracker:OverridePanel()
     self:SetIconX()
 end
 
-function EHIdailycakeTracker:SetCompleted()
+---@param force boolean?
+function EHIdailycakeTracker:SetCompleted(force)
     if not self._status then
         self._status = "completed"
         self._progress_text:set_color(Color.green)
         self:SetStatusText("finish", self._progress_text)
         self._disable_counting = true
+    elseif force then
+        self._text:set_color(Color.green)
+        self:DelayForcedDelete()
     end
+end
+
+function EHIdailycakeTracker:DelayForcedDelete()
+    self.update = self.update_fade
+    EHIdailycakeTracker.super.DelayForcedDelete(self)
 end
 
 local SF = EHI.SpecialFunctions
@@ -79,7 +88,10 @@ local dailies =
             [101906] = { time = 1200, class = "EHIdailycakeTracker" },
             [101898] = { special_function = SF.SetAchievementComplete },
             [EHI:GetInstanceElementID(100038, 3150)] = { special_function = SF.IncreaseProgress }
-        }
+        },
+        cleanup_callback = function()
+            EHIdailycakeTracker = nil ---@diagnostic disable-line
+        end
     }
 }
 

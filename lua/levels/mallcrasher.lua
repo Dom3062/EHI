@@ -12,7 +12,7 @@ EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 ---@param old_color Color
 ---@param color Color
 ---@param class EHIameno3Tracker
-EHIameno3Tracker._anim = function(o, old_color, color, start_t, class)
+EHIameno3Tracker._anim_warning = function(o, old_color, color, start_t, class)
     local c = Color(old_color.r, old_color.g, old_color.b)
     local money = class._money_text
     while true do

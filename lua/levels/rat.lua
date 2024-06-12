@@ -141,9 +141,6 @@ if EHI:IsClient() then
     triggers[102383].class = "EHICookingChanceTracker"
     triggers[100721].class = "EHICookingChanceTracker"
     triggers[100724] = { additional_time = 20, random_time = 5, id = "CookChance", icons = { Icon.Methlab, Icon.Loop }, special_function = SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 ---@type ParseAchievementTable
@@ -157,6 +154,27 @@ local achievements =
             [101780] = { max = 25, class = TT.Achievement.Progress },
             [101001] = { special_function = SF.SetAchievementFailed }, -- Methlab exploded
             [102611] = { special_function = SF.IncreaseProgress }
+        }
+    }
+}
+
+local dailies =
+{
+    daily_tasty =
+    {
+        elements =
+        {
+            [101780] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+                local progress, max = EHI:GetSFDailyProgressAndMax("daily_tasty")
+                self._trackers:AddTracker({
+                    id = "daily_tasty",
+                    progress = progress,
+                    max = max,
+                    icons = { EHI.Icons.Trophy },
+                    class = TT.Daily.Progress
+                })
+            end) },
+            [101382] = { special_function = SF.IncreaseProgress }
         }
     }
 }
@@ -199,7 +217,9 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
-    preload = preload
+    daily = dailies,
+    preload = preload,
+    sync_triggers = { element = element_sync_triggers }
 })
 EHI:ShowAchievementLootCounter({
     achievement = "halloween_2",

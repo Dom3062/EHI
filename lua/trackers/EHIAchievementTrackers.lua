@@ -7,6 +7,7 @@ local Color = Color
 function ehi_achievement_class(super)
     local klass = class(super)
     klass._popup_type = "achievement"
+    klass._forced_icon_color = EHIAchievementTracker._forced_icon_color
     klass._show_started = EHIAchievementTracker._show_started
     klass._show_failed = EHIAchievementTracker._show_failed
     klass._show_desc = EHIAchievementTracker._show_desc
@@ -22,6 +23,7 @@ end
 ---@field super EHIWarningTracker
 EHIAchievementTracker = class(EHIWarningTracker)
 EHIAchievementTracker._popup_type = "achievement"
+EHIAchievementTracker._forced_icon_color = { EHI:GetColorFromOption("unlockables", "achievement") }
 EHIAchievementTracker._show_started = EHI:GetUnlockableOption("show_achievement_started_popup")
 EHIAchievementTracker._show_failed = EHI:GetUnlockableOption("show_achievement_failed_popup")
 EHIAchievementTracker._show_desc = EHI:GetUnlockableOption("show_achievement_description")
@@ -112,9 +114,6 @@ end
 
 function EHIAchievementTracker:PlayerSpawned()
     EHIAchievementTracker.super.PlayerSpawned(self)
-    if self._force_delete_on_spawn then
-        return
-    end
     self:ShowStartedPopup()
     self:ShowAchievementDescription()
 end
@@ -160,10 +159,6 @@ function EHIAchievementProgressTracker:SetFailed()
         self._achieved_popup_showed = nil
     end
     self:ShowFailedPopup()
-end
-
-function EHIAchievementProgressTracker:CheckCanDeleteAfterSync()
-    self._force_delete_on_spawn = self._progress >= self._max
 end
 
 function EHIAchievementProgressTracker:save(data)
@@ -224,10 +219,6 @@ function EHIAchievementBagValueTracker:SetFailed()
     if self._show_failed then
         self:ShowFailedPopup()
     end
-end
-
-function EHIAchievementBagValueTracker:CheckCanDeleteAfterSync()
-    self._force_delete_on_spawn = self._progress >= self._max
 end
 
 ---@class EHIAchievementStatusTracker : EHIAchievementTracker

@@ -1,18 +1,10 @@
 ---@class EHIBaseManager
 EHIBaseManager = class()
-
----@param n number
----@param bracket number? Number in `*10` or `/10`
----@return number
-function EHIBaseManager:RoundNumber(n, bracket)
-    bracket = bracket or 1
-    local sign = n >= 0 and 1 or -1
-    return math.floor(n / bracket + sign * 0.5) * bracket
-end
+EHIBaseManager.RoundNumber = math.round_with_precision
 
 ---@param n number
 function EHIBaseManager:RoundChanceNumber(n)
-    return self:RoundNumber(n, 0.01) * 100
+    return self.RoundNumber(n, 2) * 100
 end
 
 ---@param message_id string A message to sync data to

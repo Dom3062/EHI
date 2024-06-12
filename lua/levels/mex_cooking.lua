@@ -30,9 +30,6 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100173, 56850)] = next_ingredient
     triggers[EHI:GetInstanceElementID(100174, 55850)] = meth_ready
     triggers[EHI:GetInstanceElementID(100174, 56850)] = meth_ready
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 local other =
@@ -51,7 +48,11 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102480] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({ mission = triggers, other = other })
+EHI:ParseTriggers({
+    mission = triggers,
+    other = other,
+    sync_triggers = { element = element_sync_triggers }
+})
 EHI:ShowAchievementLootCounter({
     achievement = "mex2_9",
     max = 25,

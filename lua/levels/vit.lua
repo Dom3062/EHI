@@ -34,9 +34,6 @@ local triggers = {
 if EHI:IsClient() then
     triggers[102073] = { additional_time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }
     triggers[103500] = EHI:ClientCopyTrigger(triggers[102104], { time = 26 })
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 local other =
@@ -76,7 +73,11 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102596] = { id = "Snipers", special_function = SF.RemoveTracker }
 end
 
-EHI:ParseTriggers({ mission = triggers, other = other })
+EHI:ParseTriggers({
+    mission = triggers,
+    other = other,
+    sync_triggers = { element = element_sync_triggers }
+})
 
 local stealth_objectives =
 {

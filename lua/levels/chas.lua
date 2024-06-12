@@ -14,9 +14,6 @@ local triggers = {
 if EHI:IsClient() then
     triggers[100602] = { additional_time = 90 + 5, random_time = 20, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
     triggers[102453] = { additional_time = 60 + 12.5, random_time = 20, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.DrillDelivery }
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 ---@type ParseAchievementTable
@@ -80,7 +77,8 @@ EHI:ShowAchievementLootCounter({
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    sync_triggers = { element = element_sync_triggers }
 })
 
 local xp_override =

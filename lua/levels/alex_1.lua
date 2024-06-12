@@ -87,12 +87,13 @@ if EHI:IsClient() then
     local function SyncBagsCooked(self)
         BagsCooked = math.max(self:GetSecuredBagsAmount(), BagsCooked)
         if BagsCooked >= 7 then
-            managers.ehi_tracker:ForceRemoveTracker("CookChance")
+            EM._trackers:ForceRemoveTracker("CookChance")
             EM:UnhookTrigger(100721)
             EM:UnhookTrigger(100724)
+            EHI:RemoveEventListener("alex_1")
         end
     end
-    EHI:AddCallback(EHI.CallbackMessage.LootSecured, SyncBagsCooked)
+    EHI:AddEventListener("alex_1", EHI.CallbackMessage.LootSecured, SyncBagsCooked)
     EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, SyncBagsCooked)
 end
 

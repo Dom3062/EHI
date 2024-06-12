@@ -69,11 +69,7 @@ local triggers = {
 }
 if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100055, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, special_function = SF.SetRandomTime, data = { 45, 55, 65 }, hint = Hints.Teargas }
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("element", element_sync_triggers)
 end
-EHI:FilterOutNotLoadedTrackers(triggers, "show_timers")
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseAchievementTable
@@ -130,7 +126,9 @@ end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    pre_parse = { filter_out_not_loaded_trackers = "show_timers" },
+    sync_triggers = { element = element_sync_triggers }
 })
 EHI:AddLoadSyncFunction(function(self)
     local pc = managers.worlddefinition:get_unit(104418) --[[@as UnitTimer?]]

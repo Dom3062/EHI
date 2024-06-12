@@ -1,19 +1,3 @@
-local function LootSafeIsVisible()
-    local unit = managers.worlddefinition:get_unit(101153) --[[@as UnitBase]]
-    if not unit then
-        return false
-    end
-    if not unit:damage() then
-        return false
-    end
-    if unit:damage()._state then
-        local group = unit:damage()._state.graphic_group
-        return not group.safe -- If the "safe" group does not exist, the safe is visible
-    else
-        return false
-    end
-end
-
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -50,8 +34,12 @@ local triggers = {
             class = EHI.Trackers.NeededValue
         })
         ---@param loot LootManager
-        EHI:AddCallback(EHI.CallbackMessage.LootSecured, function(loot)
-            loot:EHIReportProgress("ObjectiveSteal", EHI.LootCounter.CheckType.ValueOfSmallLoot)
+        EHI:AddEventListener("four_stores", EHI.CallbackMessage.LootSecured, function(loot)
+            local progress = loot:get_real_total_small_loot_value()
+            self._trackers:SetTrackerProgress("ObjectiveSteal", progress)
+            if progress >= 15000 then
+                EHI:RemoveEventListener("four_stores")
+            end
         end)
     end), trigger_times = 1 }
 }
@@ -89,6 +77,21 @@ if CopArrivalDelay > 0 then
     other[103278] = EHI:AddAssaultDelay({ control = FirstAssaultBreak + CopArrivalDelay, trigger_times = 1 }) -- Full assault break; 15s (55s delay)
 end
 if EHI:IsLootCounterVisible() then
+    local function LootSafeIsVisible()
+        local unit = managers.worlddefinition:get_unit(101153) --[[@as UnitBase]]
+        if not unit then
+            return false
+        end
+        if not unit:damage() then
+            return false
+        end
+        if unit:damage()._state then
+            local group = unit:damage()._state.graphic_group
+            return not group.safe -- If the "safe" group does not exist, the safe is visible
+        else
+            return false
+        end
+    end
     other[101890] = { special_function = SF.CustomCodeDelayed, t = 4, f = function()
         if LootSafeIsVisible() then
             EHI:ShowLootCounterNoChecks({ max = 1 })

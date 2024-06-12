@@ -1,3 +1,5 @@
+local EHI = EHI
+
 ---@class EHILootManager : EHIBaseManager
 ---@field new fun(self: self, ehi_tracker: EHITrackerManager): self
 EHILootManager = class(EHIBaseManager)
@@ -8,6 +10,7 @@ EHILootManager._sync_lm_update_loot_counter = "EHI_LM_SyncUpdateLootCounter"
 function EHILootManager:init(ehi_tracker)
     self._trackers = ehi_tracker
     self._delay_popups = true
+    self._max = 0
 end
 
 function EHILootManager:init_finalize()
@@ -24,7 +27,7 @@ end
 function EHILootManager:SyncAddLootCounter(data, sender)
     local params = json.decode(data)
     self:ShowLootCounter(params.max, params.max_random, 0, params.offset)
-    EHI:HookLootCounter(true)
+    self:AddListener(true)
 end
 
 function EHILootManager:SyncUpdateLootCounter(data, sender)
@@ -57,15 +60,17 @@ function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, un
         if no_max then
             unknown_random = false
         end
+        max = max or 0
         self._trackers:AddTracker({
             id = "LootCounter",
-            max = max or 0,
+            max = max,
             max_random = max_random or 0,
             max_xp_bags = max_xp_bags or 0,
             offset = offset or 0,
             unknown_random = unknown_random,
             class = no_max and "EHILootCountTracker" or "EHILootTracker"
         })
+        self._max = max
     end
 end
 
@@ -85,15 +90,38 @@ function EHILootManager:SyncShowLootCounter(max, max_random, offset)
     end
 end
 
+---@param no_sync_load boolean?
+function EHILootManager:AddListener(no_sync_load)
+    if not EHI:HasEventListener("LootCounter") then
+        local BagsOnly = EHI.LootCounter.CheckType.BagsOnly
+        ---@param loot LootManager
+        EHI:AddEventListener("LootCounter", EHI.CallbackMessage.LootSecured, function(loot)
+            local progress = loot:EHIReportProgress(BagsOnly)
+            self._trackers:SetTrackerProgress("LootCounter", progress)
+            if progress >= self._max then
+                EHI:RemoveEventListener("LootCounter")
+            end
+        end)
+        -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot
+        -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
+        if not no_sync_load then
+            ---@param loot LootManager
+            EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, function(loot)
+                self._trackers:SetTrackerSyncData("LootCounter", loot:EHIReportProgress(BagsOnly))
+            end)
+        end
+    end
+end
+
 function EHILootManager:SecuredMissionLoot()
     self._trackers:CallFunction("LootCounter", "SecuredMissionLoot")
+    self._max = self._max - 1
 end
 
 ---@param tracker_id string? Defaults to `LootCounter` if not provided
 function EHILootManager:SyncSecuredLoot(tracker_id)
     local id = tracker_id or "LootCounter"
-    self._trackers:SetTrackerProgress(id, managers.loot:GetSecuredBagsAmount())
-    self._trackers:CallFunction(id, "CheckCanDeleteAfterSync")
+    self._trackers:SetTrackerSyncData(id, managers.loot:GetSecuredBagsAmount())
 end
 
 ---@param id number
@@ -104,11 +132,13 @@ end
 
 ---@param max number?
 function EHILootManager:IncreaseLootCounterProgressMax(max)
+    self._max = self._max + (max or 1)
     self._trackers:IncreaseTrackerProgressMax("LootCounter", max)
 end
 
 ---@param max number?
 function EHILootManager:DecreaseLootCounterProgressMax(max)
+    self._max = self._max - (max or 1)
     self._trackers:DecreaseTrackerProgressMax("LootCounter", max)
 end
 
@@ -140,6 +170,7 @@ end
 
 ---@param random number?
 function EHILootManager:RandomLootSpawned(random)
+    self._max = self._max + (max or 1)
     self._trackers:CallFunction("LootCounter", "RandomLootSpawned", random)
 end
 
@@ -196,6 +227,27 @@ function EHILootManager:SyncIncreaseLootCounterMaxRandom(random)
         local n = random or 1
         sync_data.max_random = sync_data.max_random + n
         self:SyncTable(self._sync_lm_update_loot_counter, { type = "IncreaseMaxRandom", random = n })
+    end
+end
+
+---@param sequence_triggers table<number, LootCounterTable.SequenceTriggersTable>
+function EHILootManager:AddSequenceTriggers(sequence_triggers)
+    if not next(sequence_triggers) then
+        return
+    end
+    local function IncreaseMax(...)
+        self:SyncRandomLootSpawned()
+    end
+    local function DecreaseRandom(...)
+        self:SyncRandomLootDeclined()
+    end
+    for unit_id, sequences in pairs(sequence_triggers) do
+        for _, sequence in ipairs(sequences.loot or {}) do
+            managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, IncreaseMax)
+        end
+        for _, sequence in ipairs(sequences.no_loot or {}) do
+            managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, DecreaseRandom)
+        end
     end
 end
 

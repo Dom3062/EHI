@@ -38,7 +38,7 @@ local trophy = {
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100107] = { time = 420 }
+            [100107] = { time = 420, class = EHI.Trackers.Trophy }
         },
         mission_end_callback = true
     }

@@ -14,9 +14,6 @@ local sync_triggers =
 }
 if EHI:IsClient() then
     triggers[100558] = { additional_time = 5, random_time = 5, id = "BileReturn", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
-    EHI:SetSyncTriggers(sync_triggers)
-else
-    EHI:AddHostTriggers("base", sync_triggers)
 end
 
 ---@type ParseAchievementTable
@@ -50,7 +47,8 @@ end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    sync_triggers = { base = sync_triggers }
 })
 EHI:AddXPBreakdown({
     objectives =

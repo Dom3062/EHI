@@ -675,7 +675,7 @@ end
 ---@param new_triggers table
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
-function EHIManager:AddHostTriggers(type, new_triggers, trigger_id_all, trigger_icons_all)
+function EHIManager:_add_host_triggers(type, new_triggers, trigger_id_all, trigger_icons_all)
     if EHI:IsClient() then
         return
     end
@@ -721,6 +721,27 @@ end
 ---@param trigger_icons_all table?
 function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     new_triggers = new_triggers or {}
+    if new_triggers.pre_parse and new_triggers.pre_parse.filter_out_not_loaded_trackers then
+        local filter = new_triggers.pre_parse.filter_out_not_loaded_trackers
+        if type(filter) == "string" then
+            self:FilterOutNotLoadedTrackers(new_triggers.mission, filter)
+        else
+            for _, option in ipairs(filter) do
+                self:FilterOutNotLoadedTrackers(new_triggers.mission, option)
+            end
+        end
+    end
+    if new_triggers.sync_triggers then
+        local host = EHI:IsHost()
+        for key, tbl in pairs(new_triggers.sync_triggers) do
+            if host then
+                self:_add_host_triggers(key, tbl)
+            else
+                self:_set_sync_triggers(tbl)
+            end
+        end
+    end
+    self._assault:Parse(new_triggers.assault)
     self:PreloadTrackers(new_triggers.preload or {}, trigger_id_all or "Trigger", trigger_icons_all or {})
     ---@param data ParseAchievementDefinitionTable
     ---@param id string
@@ -774,8 +795,8 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
             if data.difficulty_pass ~= false and EHI:IsTrophyLocked(id) then
                 PreparseParams(data)
                 for _, element in pairs(data.elements or {}) do
-                    if element.class and not data.icons then
-                        data.icons = { EHI.Icons.Trophy }
+                    if element.class and not element.icons then
+                        element.icons = { EHI.Icons.Trophy }
                     end
                 end
                 self:AddTriggers2(data.elements or {}, nil, id)
@@ -793,8 +814,8 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
             if data.difficulty_pass ~= false and EHI:IsSFDailyAvailable(id) then
                 PreparseParams(data)
                 for _, element in pairs(data.elements or {}) do
-                    if element.class and not data.icons then
-                        data.icons = { EHI.Icons.Trophy }
+                    if element.class and not element.icons then
+                        element.icons = { EHI.Icons.Trophy }
                     end
                 end
                 self:AddTriggers2(data.elements or {}, nil, id)
@@ -1125,7 +1146,7 @@ end
 ---@param element MissionScriptElement
 ---@param post_call fun(element: MissionScriptElement, instigator: Unit?)
 function EHIManager:HookElement(element, post_call)
-    Hooks:PostHook(element, self._element_hook_function, "EHI_Element_" .. element._id, post_call)
+    Hooks:PostHook(element, self._element_hook_function, string.format("EHI_Element_%d", element._id), post_call)
 end
 
 ---@param elements_to_hook table<number, _>
@@ -1237,17 +1258,12 @@ end
 function EHIManager:CreateTracker(trigger)
     if trigger.condition_function and not trigger.condition_function() then
         return
-    end
-    if trigger.run then
+    elseif trigger.run then
         self._trackers:RunTracker(trigger.id, trigger.run)
     elseif trigger.tracker_merge and self._trackers:TrackerExists(trigger.id) then
         self._trackers:SetTrackerTime(trigger.id, trigger.time)
-    elseif trigger.tracker_group then
-        if self._trackers:TrackerExists(trigger.id) then
-            self._trackers:CallFunction(trigger.id, "AddFromTrigger", trigger)
-        else
-            self:_AddTracker(trigger)
-        end
+    elseif trigger.tracker_group and self._trackers:TrackerExists(trigger.id) then
+        self._trackers:CallFunction(trigger.id, "AddFromTrigger", trigger)
     else
         self:_AddTracker(trigger)
     end
@@ -1298,7 +1314,7 @@ end
 
 ---@param id number
 function EHIManager:UnhookElement(id)
-    Hooks:RemovePostHook("EHI_Element_" .. id)
+    Hooks:RemovePostHook(string.format("EHI_Element_%d", id))
 end
 
 ---@param id number
@@ -1592,7 +1608,7 @@ function EHIManager:Trigger(id, element, enabled)
 end
 
 ---@param sync_triggers table
-function EHIManager:SetSyncTriggers(sync_triggers)
+function EHIManager:_set_sync_triggers(sync_triggers)
     if self._sync_triggers then
         for key, value in pairs(sync_triggers) do
             if self._sync_triggers[key] then

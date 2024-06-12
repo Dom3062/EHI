@@ -1544,7 +1544,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
     end
     if self._gui._skill_bonus > 1 then
         local passive_xp_reduction = managers.player:upgrade_value("player", "passive_xp_multiplier", 1) - 1
-        local real_bonus = EHI:RoundNumber(self._gui._skill_bonus - passive_xp_reduction - 1, 0.01)
+        local real_bonus = EHI.RoundNumber(self._gui._skill_bonus - passive_xp_reduction - 1, 2)
         if real_bonus > 0 then
             local percent = real_bonus * 100
             local skill_icon = self._panel:bitmap({
@@ -1574,7 +1574,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
     if math.clamp(self._gui._num_winners, 1, 4) > 1 then
         local bonus = (tweak_data:get_value("experience_manager", "alive_humans_multiplier", self._gui._num_winners) or 1) - 1
         if bonus > 0 then
-            local percent = EHI:RoundNumber(bonus, 0.01) * 100
+            local percent = EHI:RoundChanceNumber(bonus)
             local player_icon = self._panel:bitmap({
                 name = "0_player_icon",
                 blend_mode = "add",

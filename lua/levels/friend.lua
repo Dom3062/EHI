@@ -69,9 +69,6 @@ local triggers = {
 }
 if EHI:IsClient() then
     triggers[100216] = { additional_time = 662/30, random_time = 10, id = "EscapeBoat", icons = Icon.BoatEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 local mayhem_and_up = EHI:IsMayhemOrAbove()
@@ -118,7 +115,8 @@ local other =
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    sync_triggers = { element = element_sync_triggers }
 })
 EHI:ShowLootCounter({ max = 16 })
 local xp_override =

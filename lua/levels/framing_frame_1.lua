@@ -2,6 +2,8 @@ local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 
+---@type ParseAchievementTable
+local achievements = nil
 local other = {}
 ---@param self EHIManager
 local LootCounterSyncFunction = function(self)
@@ -18,8 +20,7 @@ end
 
 local min_bags = 4
 if Global.game_settings.level_id == "gallery" then
-    ---@type ParseAchievementTable
-    local achievements =
+    achievements =
     {
         cac_19 =
         {
@@ -39,10 +40,6 @@ if Global.game_settings.level_id == "gallery" then
             achievements.cac_19.cleanup_callback = EHIAchievementManager:AddTFCallback("cac_19", "EHI_ArtGallery_TheFixes")
         end
     end
-
-    EHI:ParseTriggers({
-        achievement = achievements
-    })
 
     EHI:ShowLootCounter({
         max = 9,
@@ -106,7 +103,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[103761] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({ other = other, assault = { wave_move_elements_block = { 100352, 100353 } } })
+EHI:ParseTriggers({ achievement = achievements, other = other, assault = { wave_move_elements_block = { 100352, 100353 } } })
 
 EHI:SetMissionDoorData({
     -- Security doors

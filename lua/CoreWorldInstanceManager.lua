@@ -157,6 +157,11 @@ local instances =
         [100093] = { remove_vanilla_waypoint = true }, -- Defend
         [100212] = { remove_vanilla_waypoint = true } -- Fix
     },
+    ["levels/instances/unique/dah/dah_keypad/world"] =
+    {
+        [100176] = { time = 30, id = "dah_KeypadRebootECM", icons = { Icon.Loop }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = 100000 }, hint = Hints.KeypadReset },
+        [100210] = { time = 5 + 25, id = "dah_KeypadReset", icons = { Icon.Wait }, waypoint = { position_by_unit = 100000 }, hint = Hints.KeypadReset }
+    },
     ["levels/instances/unique/dah/dah_security_box/world"] =
     {
         [100011] = { remove_vanilla_waypoint = true }, -- Defend
@@ -191,11 +196,6 @@ local instances =
     ["levels/instances/unique/bph/bph_drill_door/world"] =
     {
         [100037] = { remove_vanilla_waypoint = true } -- Defend
-    },
-    ["levels/instances/unique/tag/tag_keypad/world"] =
-    {
-        [100176] = { time = 30, id = "tag_KeypadRebootECM", icons = { Icon.Loop }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = 100279 }, hint = Hints.KeypadReset },
-        [100210] = { time = 5 + EHI:GetKeypadResetTimer({ normal = 10 }), id = "tag_KeypadReset", icons = { Icon.Wait }, waypoint = { position_by_unit = 100279 }, hint = Hints.KeypadReset }
     },
     ["levels/instances/unique/des/des_computer/world"] =
     {
@@ -487,6 +487,10 @@ instances["levels/instances/unique/brb/single_door_large/world"] = instances["le
 instances["levels/instances/unique/brb/brb_vault/world"][100010] = instances["levels/instances/unique/brb/brb_vault/world"][100004]
 instances["levels/instances/unique/brb/brb_vault/world"][100034] = instances["levels/instances/unique/brb/brb_vault/world"][100004]
 instances["levels/instances/unique/brb/brb_vault/world"][100039] = instances["levels/instances/unique/brb/brb_vault/world"][100004]
+instances["levels/instances/unique/tag/tag_keypad/world"] = deep_clone(instances["levels/instances/unique/dah/dah_keypad/world"])
+instances["levels/instances/unique/tag/tag_keypad/world"][100176].waypoint.position_by_unit = 100279
+instances["levels/instances/unique/tag/tag_keypad/world"][100210].time = 5 + EHI:GetKeypadResetTimer({ normal = 10 })
+instances["levels/instances/unique/tag/tag_keypad/world"][100210].waypoint.position_by_unit = 100279
 instances["levels/instances/unique/des/des_computer_001/world"] = instances["levels/instances/unique/des/des_computer/world"]
 instances["levels/instances/unique/des/des_computer_002/world"] = instances["levels/instances/unique/des/des_computer/world"]
 instances["levels/instances/unique/pex/pex_armory_medium/world"] = instances["levels/instances/unique/pex/pex_armory_small/world"]

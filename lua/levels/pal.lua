@@ -44,11 +44,6 @@ if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100013, 4750)] = { additional_time = 180, random_time = 60, id = "HeliCageDelay", icons = Icon.HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning, hint = Hints.LootTimed }
     triggers[EHI:GetInstanceElementID(100013, 4800)] = { additional_time = 180, random_time = 60, id = "HeliCageDelay", icons = Icon.HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning, hint = Hints.LootTimed }
     triggers[EHI:GetInstanceElementID(100013, 4850)] = { additional_time = 180, random_time = 60, id = "HeliCageDelay", icons = Icon.HeliLootDropWait, special_function = ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists, data = { id = "HeliCage" }, class = TT.Warning, hint = Hints.LootTimed }
-    EHI:SetSyncTriggers(sync_triggers)
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("base", sync_triggers)
-    EHI:AddHostTriggers("element", element_sync_triggers)
 end
 
 ---@type ParseAchievementTable
@@ -79,7 +74,11 @@ end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    sync_triggers = {
+        base = sync_triggers,
+        element = element_sync_triggers
+    }
 })
 local value_max = tweak_data.achievement.loot_cash_achievements.pal_2.secured.value
 local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)

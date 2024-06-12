@@ -269,11 +269,11 @@ _G.EHI =
     {
         ---Checks if loud is active
         IsLoud = function()
-            return managers.groupai and not managers.groupai:state():whisper_mode()
+            return not managers.groupai:state():whisper_mode()
         end,
         ---Checks if stealth is active
         IsStealth = function()
-            return managers.groupai and managers.groupai:state():whisper_mode()
+            return managers.groupai:state():whisper_mode()
         end
     },
 
@@ -643,6 +643,27 @@ local function LoadDefaultValues(self)
                     r = 137,
                     g = 209,
                     b = 254
+                }
+            },
+            unlockables =
+            {
+                achievement =
+                {
+                    r = 255,
+                    g = 184,
+                    b = 78
+                },
+                sidejob =
+                {
+                    r = 135,
+                    g = 206,
+                    b = 235
+                },
+                trophy =
+                {
+                    r = 214,
+                    g = 116,
+                    b = 0
                 }
             }
         },
@@ -1035,6 +1056,10 @@ function EHI:Init()
     end)
 end
 
+function EHI:InitEventListener()
+    self._event_listener = EventListenerHolder:new()
+end
+
 ---@param name string
 ---@param author string
 function EHI:IsModInstalled(name, author)
@@ -1125,7 +1150,7 @@ function EHI:Log2(prefix, s)
 end
 
 ---Works the same way as EHI:Log(), but the string is not saved on HDD
----@param s any
+---@param s AnyExceptNil
 function EHI:LogFast(s)
     local prefix = os.date("%I:%M:%S %p")
     io.stdout:write(prefix .. " Lua: [EHI] " .. (s or "nil") .. "\n")
@@ -1362,7 +1387,7 @@ function EHI:IsLootCounterVisible()
 end
 
 function EHI:IsPlayingCrimeSpree()
-    return Global.game_settings and Global.game_settings.gamemode and Global.game_settings.gamemode == "crime_spree"
+    return Global.game_settings and Global.game_settings.gamemode == "crime_spree"
 end
 
 ---@return boolean
@@ -1437,6 +1462,28 @@ end
 ---@param custody_state boolean
 function EHI:RunOnCustodyCallback(custody_state)
     self:CallCallback("Custody", custody_state)
+end
+
+---@param id string
+---@param event string|string[]
+---@param f function
+function EHI:AddEventListener(id, event, f)
+    self._event_listener:add(id, event, f)
+end
+
+---@param event string
+function EHI:CallEvent(event, ...)
+    self._event_listener:call(event, ...)
+end
+
+---@param id string
+function EHI:HasEventListener(id)
+    return self._event_listener:has_listeners_for_event(id) ~= nil
+end
+
+---@param id string
+function EHI:RemoveEventListener(id)
+    self._event_listener:remove(id)
 end
 
 ---@param object table
@@ -1594,28 +1641,11 @@ function EHI:GetBaseUnitID(final_index, start_index, continent_index)
     return (final_index - 30000 - start_index - continent_index) + 100000
 end
 
-local math_floor = math.floor
----@param n number
----@param bracket number? Number in `*10` or `/10`
----@return number
-function EHI:RoundNumber(n, bracket)
-    bracket = bracket or 1
-    local sign = n >= 0 and 1 or -1
-    return math_floor(n / bracket + sign * 0.5) * bracket
-end
+EHI.RoundNumber = math.round_with_precision
 
 ---@param n number
 function EHI:RoundChanceNumber(n)
-    return self:RoundNumber(n, 0.01) * 100
-end
-
----@param triggers table
-function EHI:SetSyncTriggers(triggers)
-    managers.ehi_manager:SetSyncTriggers(triggers)
-end
-
-function EHI:AddSyncTrigger(id, trigger)
-    managers.ehi_manager:AddSyncTrigger(id, trigger)
+    return self.RoundNumber(n, 2) * 100
 end
 
 ---@param tracker_id string
@@ -1657,16 +1687,6 @@ function EHI:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_al
     managers.ehi_manager:AddTriggers2(new_triggers, params, trigger_id_all, trigger_icons_all)
 end
 
----@param type string
----|"base" # Random delay is defined in the BASE DELAY
----|"element" # Random delay is defined when calling the elements
----@param new_triggers table
----@param trigger_id_all string?
----@param trigger_icons_all table?
-function EHI:AddHostTriggers(type, new_triggers, trigger_id_all, trigger_icons_all)
-    managers.ehi_manager:AddHostTriggers(type, new_triggers, trigger_id_all, trigger_icons_all)
-end
-
 ---@param id number
 ---@param waypoint table
 function EHI:AddWaypointToTrigger(id, waypoint)
@@ -1705,11 +1725,6 @@ function EHI:GetFreeCustomSyncedSFID()
     local id = (self._cache.SyncedSFFUsed or self.SpecialFunctions.CustomSyncedSF) + 1
     self._cache.SyncedSFFUsed = id
     return id
-end
-
----@param elements_to_hook table
-function EHI:HookElements(elements_to_hook)
-    managers.ehi_manager:HookElements(elements_to_hook)
 end
 
 ---@param chance number
@@ -1853,7 +1868,7 @@ function EHI:AddLootCounterSynced(f, sequence_triggers, loot_counter_data_functi
     if self:GetOption("show_loot_counter") then
         special_function = self:RegisterCustomSF(f)
     else
-        self:HookLootCounterSequenceTriggers(sequence_triggers)
+        managers.ehi_loot:AddSequenceTriggers(sequence_triggers)
         special_function = self:RegisterCustomSF(loot_counter_data_function)
     end
     local tbl =
@@ -1872,7 +1887,7 @@ function EHI:AddLootCounterSynced2(f, sequence_triggers, loot_counter_data)
     if self:IsPlayingCrimeSpree() then
         return nil
     elseif not self:GetOption("show_loot_counter") then
-        self:HookLootCounterSequenceTriggers(sequence_triggers)
+        managers.ehi_loot:AddSequenceTriggers(sequence_triggers)
         managers.ehi_loot:SetSyncData(loot_counter_data)
         return nil
     end
@@ -1902,27 +1917,12 @@ end
 ---@param trigger_icons_all table?
 function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
     managers.ehi_manager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-    managers.ehi_assault:Parse(new_triggers.assault)
-end
-
----@param new_triggers table
----@param trigger_id_all string?
----@param trigger_icons_all table?
-function EHI:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-    managers.ehi_manager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all)
 end
 
 ---@param new_triggers table
 ---@param defer_loading_waypoints boolean?
 function EHI:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
     managers.ehi_manager:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
-end
-
----@param triggers table<number, ElementTrigger>
----@param option string
----| "show_timers" Filters out not loaded trackers with option show_timers
-function EHI:FilterOutNotLoadedTrackers(triggers, option)
-    managers.ehi_manager:FilterOutNotLoadedTrackers(triggers, option)
 end
 
 ---@return boolean
@@ -2060,17 +2060,17 @@ function EHI:ShowLootCounterNoChecks(params)
     if params.triggers and (not params.no_triggers_if_max_xp_bags_gt_max or (params.max_xp_bags or 0) >= (params.max or 0)) then
         self:AddTriggers2(params.triggers, nil, "LootCounter")
         if params.hook_triggers then
-            self:HookElements(params.triggers)
+            managers.ehi_manager:HookElements(params.triggers)
         end
     end
     if params.sequence_triggers then
-        self:HookLootCounterSequenceTriggers(params.sequence_triggers)
+        managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers)
     end
     if params.max_bags_for_level and params.max_bags_for_level.custom_counter then
         params.max_bags_for_level.custom_counter.achievement = "LootCounter"
         self:AddAchievementToCounter(params.max_bags_for_level.custom_counter)
     else
-        self:HookLootCounter(params.no_sync_load)
+        managers.ehi_loot:AddListener(params.no_sync_load)
     end
 end
 
@@ -2080,7 +2080,7 @@ function EHI:ShowLootCounterSynced(params)
         return
     elseif not self:GetOption("show_loot_counter") then
         self:AddTriggers2(params.triggers or {}, nil, "LootCounter")
-        self:HookLootCounterSequenceTriggers(params.sequence_triggers or {})
+        managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers or {})
         managers.ehi_loot:SetSyncData({
             max = params.max or 0,
             max_random = params.max_random or 0,
@@ -2090,45 +2090,6 @@ function EHI:ShowLootCounterSynced(params)
     end
     params.is_synced = true
     self:ShowLootCounterNoChecks(params)
-end
-
----@param sequence_triggers table<number, LootCounterTable.SequenceTriggersTable>
-function EHI:HookLootCounterSequenceTriggers(sequence_triggers)
-    local function IncreaseMax(...)
-        managers.ehi_loot:SyncRandomLootSpawned()
-    end
-    local function DecreaseRandom(...)
-        managers.ehi_loot:SyncRandomLootDeclined()
-    end
-    for unit_id, sequences in pairs(sequence_triggers) do
-        for _, sequence in ipairs(sequences.loot or {}) do
-            managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, IncreaseMax)
-        end
-        for _, sequence in ipairs(sequences.no_loot or {}) do
-            managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, DecreaseRandom)
-        end
-    end
-end
-
----@param no_sync_load boolean?
-function EHI:HookLootCounter(no_sync_load)
-    if not self._cache.LootCounter then
-        local BagsOnly = self.LootCounter.CheckType.BagsOnly
-        ---@param loot LootManager
-        self:AddCallback(self.CallbackMessage.LootSecured, function(loot)
-            loot:EHIReportProgress("LootCounter", BagsOnly)
-        end)
-        -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot
-        -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
-        if not no_sync_load then
-            ---@param loot LootManager
-            self:AddCallback(self.CallbackMessage.LootLoadSync, function(loot)
-                loot:EHIReportProgress("LootCounter", BagsOnly)
-                managers.ehi_tracker:CallFunction("LootCounter", "CheckCanDeleteAfterSync")
-            end)
-        end
-        self._cache.LootCounter = true
-    end
 end
 
 ---@param params AchievementLootCounterTable
@@ -2172,7 +2133,7 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
     if params.triggers then
         self:AddTriggers2(params.triggers, nil, params.achievement)
         if params.hook_triggers then
-            self:HookElements(params.triggers)
+            managers.ehi_manager:HookElements(params.triggers)
         end
         if params.add_to_counter then
             self:AddAchievementToCounter(params)
@@ -2202,14 +2163,25 @@ function EHI:AddAchievementToCounter(params)
         f = params.counter.f
     end
     ---@param loot LootManager
-    self:AddCallback(self.CallbackMessage.LootSecured, function(loot)
-        loot:EHIReportProgress(params.achievement, check_type, loot_type, f)
+    self:AddEventListener(params.achievement, self.CallbackMessage.LootSecured, function(loot)
+        if f then
+            loot:EHIReportProgress(check_type, loot_type, f)
+        else
+            local progress = loot:EHIReportProgress(check_type, loot_type)
+            managers.ehi_tracker:SetTrackerProgress(params.achievement, progress)
+            if progress >= params.max then
+                self:RemoveEventListener(params.achievement)
+            end
+        end
     end)
     if not (params.load_sync or params.no_sync) then
         ---@param loot LootManager
         self:AddCallback(self.CallbackMessage.LootLoadSync, function(loot)
-            loot:EHIReportProgress(params.achievement, check_type, loot_type, f)
-            managers.ehi_tracker:CallFunction(params.achievement, "CheckCanDeleteAfterSync")
+            if f then
+                loot:EHIReportProgress(check_type, loot_type, f)
+            else
+                managers.ehi_tracker:SetTrackerSyncData(params.achievement, loot:EHIReportProgress(check_type, loot_type))
+            end
         end)
     end
 end
@@ -2240,14 +2212,13 @@ function EHI:ShowAchievementKillCounter(params)
     managers.ehi_achievement:AddAchievementKillCounter(id, progress, max)
     self.KillCounter = self.KillCounter or {}
     self.KillCounter[id_stat] = id
-    if not self.KillCounterHook then
-        EHI:HookWithID(AchievmentManager, "award_progress", "EHI_award_progress_KillCounter", function(am, stat, value)
-            local s = EHI.KillCounter[stat]
+    if not self:HookExists(AchievmentManager, "award_progress", "EHI_award_progress_KillCounter") then
+        self:HookWithID(AchievmentManager, "award_progress", "EHI_award_progress_KillCounter", function(am, stat, value)
+            local s = self.KillCounter[stat]
             if s then
                 managers.ehi_tracker:IncreaseTrackerProgress(s, value)
             end
         end)
-        self.KillCounterHook = true
     end
 end
 
@@ -2611,8 +2582,7 @@ function EHI:HookColorCodes(color_table, params)
     local function hook(unit_id, color)
         local sequences = color_sequence_hash[color]
         for i = 0, 9, 1 do
-            local sequence = sequences[i]
-            managers.mission:add_runned_unit_sequence_trigger(unit_id, sequence, function(...)
+            managers.mission:add_runned_unit_sequence_trigger(unit_id, sequences[i], function(...)
                 managers.ehi_tracker:CallFunction(tracker_name, "SetCode", color, i)
             end)
         end
@@ -2755,7 +2725,6 @@ if EHI:GetUnlockableOption("hide_unlocked_achievements") then
     end
     ---@param package_id string
     ---@param achievement_id string
-    ---@return boolean
     function EHI:IsBeardLibAchievementUnlocked(package_id, achievement_id)
         return not self:IsBeardLibAchievementLocked(package_id, achievement_id)
     end
@@ -2767,7 +2736,6 @@ else -- Always show trackers for achievements
     end
     ---@param package_id string
     ---@param achievement_id string
-    ---@return boolean
     function EHI:IsBeardLibAchievementUnlocked(package_id, achievement_id)
         self:IsBeardLibAchievementLocked(package_id, achievement_id, true)
         return false
@@ -2776,13 +2744,11 @@ end
 
 if EHI:GetUnlockableOption("hide_unlocked_trophies") then
     ---@param trophy string
-    ---@return boolean
     function EHI:IsTrophyUnlocked(trophy)
         return managers.custom_safehouse:is_trophy_unlocked(trophy)
     end
 else
     ---@param trophy string
-    ---@return boolean
     function EHI:IsTrophyUnlocked(trophy)
         return false
     end
@@ -2792,7 +2758,7 @@ end
 ---@param skip_unlockables_check boolean?
 function EHI:IsSFDailyAvailable(daily_id, skip_unlockables_check)
     local current_daily = managers.custom_safehouse:get_daily_challenge()
-    if current_daily and current_daily.id == daily_id then
+    if current_daily.id == daily_id then
         if current_daily.state == "completed" or current_daily.state == "rewarded" then
             return false
         end
@@ -2806,7 +2772,7 @@ end
 
 ---@param daily_id string
 ---@param progress_id string?
----@return number, number
+---@return number progress, number max
 function EHI:GetSFDailyProgressAndMax(daily_id, progress_id)
     local current_daily = managers.custom_safehouse:get_daily_challenge()
     if current_daily and current_daily.id == daily_id then
@@ -2820,23 +2786,10 @@ function EHI:GetSFDailyProgressAndMax(daily_id, progress_id)
     return 0, 0
 end
 
----@param challenge string
----@return boolean
-function EHI:IsDailyJobAvailable(challenge)
-    if managers.challenge:has_active_challenges(challenge) then
-        local c = managers.challenge:get_active_challenge(challenge) ---@cast c -?
-        if c.completed or c.rewarded then
-            return false
-        end
-        return true
-    end
-    return false
-end
-
 ---@param daily_id string
 ---@param progress_id string?
----@return number, number
-function EHI:GetDailyJobProgressAndMax(daily_id, progress_id)
+---@return number progress, number max
+function EHI:GetDailyChallengeProgressAndMax(daily_id, progress_id)
     local current_job = managers.challenge:get_active_challenge(daily_id)
     if current_job and current_job.id == daily_id and current_job.objectives then
         progress_id = progress_id or daily_id
@@ -2850,13 +2803,11 @@ function EHI:GetDailyJobProgressAndMax(daily_id, progress_id)
 end
 
 ---@param trophy string
----@return boolean
 function EHI:IsTrophyLocked(trophy)
     return not self:IsTrophyUnlocked(trophy) and not self._cache.UnlockablesAreDisabled
 end
 
 ---@param achievement string
----@return boolean
 function EHI:IsAchievementLocked(achievement)
     return not self:IsAchievementUnlocked(achievement) and not self._cache.UnlockablesAreDisabled
 end

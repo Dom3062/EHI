@@ -133,10 +133,7 @@ if EHI:CanShowCivilianCountTracker() then
     ---@param civilian_key string
     ---@param from_destroy boolean?
     local function CivilianDied(civilian_data, civilian_key, from_destroy)
-        local tracker = managers.ehi_tracker:GetTracker("CivilianCount") --[[@as EHICivilianCountTracker?]]
-        if tracker then
-            tracker:DecreaseCount(civilian_key) -- Deletion is handled in the tracker
-        else
+        if managers.ehi_tracker:CallFunction3("CivilianCount", "DecreaseTrackerCount", civilian_key) then
             local count = table.count(civilian_data, CountCivilian)
             local civilians_alive = count - (from_destroy and 1 or 0)
             if civilians_alive > 0 then

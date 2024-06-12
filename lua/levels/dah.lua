@@ -18,9 +18,7 @@ local element_sync_triggers =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [100276] = { time = 25 + 3 + 11, id = "CFOInChopper", icons = { Icon.Heli, Icon.Goto }, hint = Hints.Wait },
-
-    [101343] = { time = 30, id = "KeypadReset", icons = { Icon.Loop }, waypoint = { position_by_element = EHI:GetInstanceElementID(100179, 9100) }, hint = Hints.KeypadReset },
+    [100276] = { time = 25 + 3 + 11, id = "CFOInChopper", icons = { Icon.Heli, Icon.Goto }, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 102822 }, hint = Hints.Wait },
 
     [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100475, remove_vanilla_waypoint = 104882 }, hint = Hints.Escape },
     [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element_and_remove_vanilla_waypoint = 103163 }, hint = Hints.Escape },
@@ -29,11 +27,6 @@ local triggers = {
     [101652] = { id = "ColorCodes", special_function = SF.RemoveTracker } -- Vault opened
 }
 EHI:HookColorCodes(dah_laptop_codes, { unit_id_all = 100052 })
-if EHI:IsClient() then
-    EHI:SetSyncTriggers(element_sync_triggers)
-else
-    EHI:AddHostTriggers("element", element_sync_triggers)
-end
 
 local other =
 {
@@ -42,9 +35,13 @@ local other =
 
 ---@param progress number?
 local function dah_8(progress)
+    progress = progress or 0
+    if progress >= 12 then
+        return
+    end
     EHI:ShowAchievementLootCounterNoCheck({
         achievement = "dah_8",
-        progress = progress or 0,
+        progress = progress,
         max = 12,
         counter =
         {
@@ -80,7 +77,8 @@ local achievements =
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    sync_triggers = { element = element_sync_triggers }
 })
 
 local DisableWaypoints =
@@ -171,32 +169,32 @@ if EHI:IsHost() then
     dah_laptop_codes = nil ---@diagnostic disable-line
     return
 end
-local bg = Idstring("g_code_screen"):key()
-local codes = {}
-for color, _ in pairs(dah_laptop_codes) do
-    codes[color] = {}
-    local _c = codes[color]
-    for i = 0, 9, 1 do
-        local str = "g_number_" .. color .. "_0" .. tostring(i)
-        _c[i] = Idstring(str):key()
-    end
-end
-local function CheckIfCodeIsVisible(unit, color)
-    if not unit then
-        return nil
-    end
-    local color_codes = codes[color]
-    local object = unit:damage() and unit:damage()._state and unit:damage()._state.object
-    if object and object[bg] then
+if EHI:GetOption("show_mission_trackers") then
+    local bg = Idstring("g_code_screen"):key()
+    local codes = {}
+    for color, _ in pairs(dah_laptop_codes) do
+        codes[color] = {}
+        local _c = codes[color]
         for i = 0, 9, 1 do
-            if object[color_codes[i]] then
-                return i
-            end
+            local str = "g_number_" .. color .. "_0" .. tostring(i)
+            _c[i] = Idstring(str):key()
         end
     end
-    return nil -- Has not been interacted yet
-end
-if EHI:GetOption("show_mission_trackers") then
+    local function CheckIfCodeIsVisible(unit, color)
+        if not unit then
+            return nil
+        end
+        local color_codes = codes[color]
+        local object = unit:damage() and unit:damage()._state and unit:damage()._state.object
+        if object and object[bg] then
+            for i = 0, 9, 1 do
+                if object[color_codes[i]] then
+                    return i
+                end
+            end
+        end
+        return nil -- Has not been interacted yet
+    end
     EHI:AddLoadSyncFunction(function(self)
         if self.ConditionFunctions.IsStealth() then
             self:Trigger(103969)
@@ -215,4 +213,6 @@ if EHI:GetOption("show_mission_trackers") then
         codes = nil
         dah_laptop_codes = nil ---@diagnostic disable-line
     end)
+else
+    dah_laptop_codes = nil ---@diagnostic disable-line
 end

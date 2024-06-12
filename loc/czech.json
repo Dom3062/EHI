@@ -940,6 +940,15 @@
     "ehi_colors_optional" : "Nepovinný úkol",
     "ehi_colors_optional_desc" : "Mění barvu úkolu, který není vyžadovaný k dokončení mise\nAle jeho dokončením získáš více zkušeností",
 
+    "ehi_colors_achievement" : "Achievement",
+    "ehi_colors_achievement_desc" : "Mění barvu ikony sledovače pokud sleduje achievement",
+
+    "ehi_colors_sidejob" : "Side Job",
+    "ehi_colors_sidejob_desc" : "Mění barvu ikony sledovače pokud sleduje side job",
+
+    "ehi_colors_trophy" : "Trofej",
+    "ehi_colors_trophy_desc" : "Mění barvu ikony sledovače pokud sleduje trofej",
+
     "ehi_experience_infamy_pool" : "Infamy Pool za:",
     "ehi_experience_next_level" : "Další za:",
     "ehi_experience_100_in" : "100 za:",

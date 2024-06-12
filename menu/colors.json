@@ -123,6 +123,53 @@
             "color_type" : "mission_briefing",
             "setting_value": "colors",
             "ehi_ver" : 155
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type" : "label",
+            "title" : "ehi_unlockables_menu"
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_achievement_choice",
+            "title": "ehi_colors_achievement",
+            "description": "ehi_colors_achievement_desc",
+            "value": "achievement",
+            "default_value": [255, 184, 78],
+            "callback": "SetColor",
+            "callback_arguments": ["achievement", "unlockables"],
+            "color_type" : "unlockables",
+            "setting_value": "colors",
+            "ehi_ver" : 245
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_sidejob_choice",
+            "title": "ehi_colors_sidejob",
+            "description": "ehi_colors_sidejob_desc",
+            "value": "sidejob",
+            "default_value": [135, 206, 235],
+            "callback": "SetColor",
+            "callback_arguments": ["sidejob", "unlockables"],
+            "color_type" : "unlockables",
+            "setting_value": "colors",
+            "ehi_ver" : 245
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_trophy_choice",
+            "title": "ehi_colors_trophy",
+            "description": "ehi_colors_trophy_desc",
+            "value": "trophy",
+            "default_value": [214, 116, 0],
+            "callback": "SetColor",
+            "callback_arguments": ["trophy", "unlockables"],
+            "color_type" : "unlockables",
+            "setting_value": "colors",
+            "ehi_ver" : 245
         }
     ]
 }
