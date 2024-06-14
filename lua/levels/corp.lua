@@ -83,12 +83,6 @@ if EHI:IsClient() then
     triggers[102406].client = { time = OVKorAbove and 30 or 15, random_time = 15 }
 end
 
-local corp_11_SetFailed = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
-    if enabled then
-        self._achievements:SetAchievementFailed("corp_11")
-        self._cache.StartDisabled = true
-    end
-end)
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -148,7 +142,12 @@ local achievements =
                     class = trigger.class
                 })
             end) },
-            [102683] = { special_function = corp_11_SetFailed },
+            [102683] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+                if enabled then
+                    self._achievements:SetAchievementFailed("corp_11")
+                    self._cache.StartDisabled = true
+                end
+            end) },
             [102741] = { special_function = SF.SetAchievementComplete }
         },
         preparse_callback = function(data)

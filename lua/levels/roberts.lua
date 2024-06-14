@@ -36,13 +36,13 @@ if EHI:IsClient() then
     triggers[101934] = EHI:ClientCopyTrigger(triggers[101929], { time = delay })
 end
 
-local dailies =
+local sidejob =
 {
     daily_rush =
     {
         elements =
         {
-            [106579] = { time = 391, class = TT.Daily.Base },
+            [106579] = { time = 391, class = TT.SideJob.Base },
             [106580] = { special_function = SF.SetAchievementComplete }
         }
     }
@@ -75,7 +75,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[103061] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103438 } }
     other[104809] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103443 } }
 end
-EHI:ParseTriggers({ mission = triggers, other = other, daily = dailies })
+EHI:ParseTriggers({ mission = triggers, other = other, sidejob = sidejob })
 
 local tbl =
 {

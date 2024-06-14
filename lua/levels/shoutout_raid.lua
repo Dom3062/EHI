@@ -24,12 +24,8 @@ end
 ---@class EHIVaultTemperatureWaypoint : EHIWaypoint
 ---@field super EHIWaypoint
 EHIVaultTemperatureWaypoint = class(EHIWaypoint)
+EHIVaultTemperatureWaypoint.pre_init = EHIVaultTemperatureTracker.pre_init
 EHIVaultTemperatureWaypoint.CheckTime = EHIVaultTemperatureTracker.CheckTime
-function EHIVaultTemperatureWaypoint:init(...)
-    EHIVaultTemperatureWaypoint.super.init(self, ...)
-    self._synced_time = 0
-    self._tick = 0.1
-end
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local trophy = {

@@ -1,14 +1,3 @@
----@param tbl table
----@return boolean
-local function table_icontains(tbl, val)
-    for _, value in ipairs(tbl) do
-        if value == val then
-            return true
-        end
-    end
-    return false
-end
-
 local EHI = EHI
 ---@class EHIManager : EHIBaseManager
 ---@field new fun(self: self, managers: managers): self
@@ -157,6 +146,7 @@ function EHIManager:NotifyInternalListeners(name, data_name, value)
             for _, f in ipairs(tbl) do
                 f(value)
             end
+            break
         end
     end
 end
@@ -644,7 +634,7 @@ function EHIManager:AddTriggers2(new_triggers, params, trigger_id_all, trigger_i
             elseif value.special_function and self.TriggerFunction[value.special_function] then
                 if value.data then
                     local new_key = (key * 10) + 1
-                    while table_icontains(value.data, new_key) or new_triggers[new_key] or triggers[new_key] do
+                    while table.get_vector_index(value.data, new_key) or new_triggers[new_key] or triggers[new_key] do
                         new_key = new_key + 1
                     end
                     triggers[new_key] = t
@@ -790,43 +780,47 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     end
     self:ParseOtherTriggers(new_triggers.other or {}, trigger_id_all or "Trigger", trigger_icons_all)
     local trophy = new_triggers.trophy or {}
-    if EHI:GetUnlockableAndOption("show_trophies") and next(trophy) then
-        for id, data in pairs(trophy) do
-            if data.difficulty_pass ~= false and EHI:IsTrophyLocked(id) then
-                PreparseParams(data)
-                for _, element in pairs(data.elements or {}) do
-                    if element.class and not element.icons then
-                        element.icons = { EHI.Icons.Trophy }
+    if next(trophy) then
+        if EHI:GetUnlockableAndOption("show_trophies") then
+            for id, data in pairs(trophy) do
+                if data.difficulty_pass ~= false and EHI:IsTrophyLocked(id) then
+                    PreparseParams(data)
+                    for _, element in pairs(data.elements or {}) do
+                        if element.class and not element.icons then
+                            element.icons = { EHI.Icons.Trophy }
+                        end
                     end
+                    self:AddTriggers2(data.elements or {}, nil, id)
+                    ParseParams(data, id)
                 end
-                self:AddTriggers2(data.elements or {}, nil, id)
-                ParseParams(data, id)
             end
-        end
-    else
-        for _, data in pairs(trophy) do
-            Cleanup(data)
-        end
-    end
-    local daily = new_triggers.daily or {}
-    if EHI:GetUnlockableAndOption("show_dailies") and next(daily) then
-        for id, data in pairs(daily) do
-            if data.difficulty_pass ~= false and EHI:IsSFDailyAvailable(id) then
-                PreparseParams(data)
-                for _, element in pairs(data.elements or {}) do
-                    if element.class and not element.icons then
-                        element.icons = { EHI.Icons.Trophy }
-                    end
-                end
-                self:AddTriggers2(data.elements or {}, nil, id)
-                ParseParams(data, id)
-            else
+        else
+            for _, data in pairs(trophy) do
                 Cleanup(data)
             end
         end
-    else
-        for _, data in pairs(daily) do
-            Cleanup(data)
+    end
+    local sidejob = new_triggers.sidejob or {}
+    if next(sidejob) then
+        if EHI:GetUnlockableAndOption("show_dailies") then
+            for id, data in pairs(sidejob) do
+                if data.difficulty_pass ~= false and EHI:IsSHSideJobAvailable(id) then
+                    PreparseParams(data)
+                    for _, element in pairs(data.elements or {}) do
+                        if element.class and not element.icons then
+                            element.icons = { EHI.Icons.Trophy }
+                        end
+                    end
+                    self:AddTriggers2(data.elements or {}, nil, id)
+                    ParseParams(data, id)
+                else
+                    Cleanup(data)
+                end
+            end
+        else
+            for _, data in pairs(sidejob) do
+                Cleanup(data)
+            end
         end
     end
     local achievement_triggers = new_triggers.achievement or {}
@@ -873,7 +867,6 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
         end
     end
     self:ParseMissionTriggers(new_triggers.mission or {}, trigger_id_all, trigger_icons_all)
-    --EHI:PrintTable(triggers)
 end
 
 ---@param new_triggers table<number, ElementTrigger>
@@ -1371,6 +1364,7 @@ function EHIManager:Trigger(id, element, enabled)
             elseif f == SF.AddAchievementToCounter then
                 local data = trigger.data or {}
                 data.achievement = data.achievement or trigger.id
+                data.max = data.max or trigger.max or 0
                 EHI:AddAchievementToCounter(data)
                 self:CreateTracker(trigger)
             elseif f == SF.IncreaseChance then

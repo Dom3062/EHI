@@ -125,11 +125,11 @@ local achievements =
     }
 }
 
-local dailies = {}
+local sidejob = {}
 if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
     local IncreaseProgress = { special_function = SF.IncreaseProgress }
     local elements = {
-        [103427] = { max = 9, icons = { "daily_secret_identity" }, class = TT.Daily.Progress, show_finish_after_reaching_target = true },
+        [103427] = { max = 9, icons = { "daily_secret_identity" }, class = TT.SideJob.Progress, show_finish_after_reaching_target = true },
         [100484] = IncreaseProgress,
         [100515] = IncreaseProgress,
         [100534] = IncreaseProgress,
@@ -146,7 +146,7 @@ if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKIL
     end
     tweak_data.ehi.icons.daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 170, 64, 64} }
     tweak_data.hud_icons.daily_secret_identity = tweak_data.ehi.icons.daily_secret_identity
-    dailies.daily_secret_identity = { elements = elements }
+    sidejob.daily_secret_identity = { elements = elements }
 end
 
 local other = {}
@@ -197,7 +197,7 @@ end
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    daily = dailies,
+    sidejob = sidejob,
     other = other
 })
 

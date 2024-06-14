@@ -89,7 +89,7 @@
 ---@field achievement { [string]: ParseAchievementDefinitionTable } Triggers related to achievements in the mission
 ---@field other table Triggers not related to mission or achievements
 ---@field trophy table Triggers related to Safehouse trophies
----@field daily table Triggers related to Safehouse daily mission
+---@field sidejob table Triggers related to Safehouse Side Job missions
 ---@field preload table Trackers to preload during game load, achievements not recommended
 ---@field assault ParseTriggersTable.assault? Assault params to be loaded during game load
 ---@field pre_parse ParseTriggersTable.pre_parse?

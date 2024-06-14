@@ -47,7 +47,7 @@ local achievements =
     }
 }
 
-local dailies =
+local sidejob =
 {
     daily_mortage =
     {
@@ -59,7 +59,7 @@ local dailies =
                     id = trigger.id,
                     max = trophy.total_amount,
                     icons = { EHI.Icons.Trophy },
-                    class = TT.Daily.Progress
+                    class = TT.SideJob.Progress
                 })
                 ---@param loot LootManager
                 EHI:AddEventListener(trigger.id, EHI.CallbackMessage.LootSecured, function(loot)
@@ -133,7 +133,7 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
-    daily = dailies
+    sidejob = sidejob
 })
 EHI:AddXPBreakdown({
     objective =

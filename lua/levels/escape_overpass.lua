@@ -65,8 +65,7 @@ EHI:RegisterCustomSF(AddToCache, function(self, trigger, ...)
     self._cache[trigger.id] = trigger.data
 end)
 EHI:RegisterCustomSF(GetFromCache, function(self, trigger, ...)
-    local data = self._cache[trigger.id] --[[@as { icon: string }? ]]
-    self._cache[trigger.id] = nil
+    local data = table.remove_key(self._cache, trigger.id) --[[@as { icon: string }? ]]
     if data and data.icon then
         trigger.icons[1] = data.icon
     end

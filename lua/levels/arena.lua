@@ -82,11 +82,7 @@ if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) t
     closets = 3
 elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     max = 18
-    if EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
-        required_bags = 9
-    else
-        required_bags = 12
-    end
+    required_bags = EHI:IsDifficulty(EHI.Difficulties.OVERKILL) and 9 or 12
     closets = 5
 end
 EHI:ShowLootCounter({ max = max })

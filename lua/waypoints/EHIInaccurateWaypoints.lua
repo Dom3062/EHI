@@ -1,5 +1,5 @@
 local color = EHI:GetTWColor("inaccurate")
----@class EHIInaccurateWaypoint: EHIWaypoint
+---@class EHIInaccurateWaypoint : EHIWaypoint
 ---@field super EHIWaypoint
 EHIInaccurateWaypoint = class(EHIWaypoint)
 EHIInaccurateWaypoint._default_color = color

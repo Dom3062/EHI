@@ -5,6 +5,7 @@ EHITimerWaypoint._update = false
 EHITimerWaypoint._autorepair_color = EHI:GetTWColor("drill_autorepair")
 EHITimerWaypoint._completion_color = EHI:GetTWColor("completion")
 EHITimerWaypoint._paused_color = EHIPausableWaypoint._paused_color
+---@param params table
 function EHITimerWaypoint:post_init(params)
     self._warning = params.warning
     self._jammed = false
@@ -18,6 +19,7 @@ function EHITimerWaypoint:post_init(params)
     end
 end
 
+---@param t number
 function EHITimerWaypoint:SetTime(t)
     if self._time == t then
         return
@@ -29,6 +31,8 @@ function EHITimerWaypoint:SetTime(t)
     end
 end
 
+---@param t number
+---@param time string
 function EHITimerWaypoint:SetTimeNoFormat(t, time)
     if self._time == t then
         return
@@ -75,6 +79,7 @@ function EHITimerWaypoint:SetColorBasedOnStatus()
     end
 end
 
+---@param state boolean
 function EHITimerWaypoint:SetAutorepair(state)
     if self._jammed or self._not_powered then
         if state then

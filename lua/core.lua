@@ -96,7 +96,7 @@ _G.EHI =
         InstanceUnits = {}, ---@type table<number, UnitUpdateDefinition>
         InstanceMissionUnits = {}, ---@type table<number, UnitUpdateDefinition>
         IgnoreWaypoints = {}, ---@type table<number, boolean>
-        ElementWaypoint = {} ---@type table<number, boolean>
+        ElementWaypoint = {} ---@type table<number, ElementWaypoint?>
     },
 
     _callback = {}, ---@type table<string|number, function[]>
@@ -516,10 +516,10 @@ _G.EHI =
         InaccurateWarning = "EHIInaccurateWarningTracker",
         InaccuratePausable = "EHIInaccuratePausableTracker",
         Trophy = "EHITrophyTracker",
-        Daily =
+        SideJob =
         {
-            Base = "EHIDailyTracker",
-            Progress = "EHIDailyProgressTracker"
+            Base = "EHISideJobTracker",
+            Progress = "EHISideJobProgressTracker"
         },
         Group =
         {
@@ -1941,17 +1941,15 @@ function EHI:DisableElementWaypoint(id)
         return
     end
     element.on_executed = element.ehi_on_executed
-    self._cache.ElementWaypoint[id] = true
+    self._cache.ElementWaypoint[id] = element
 end
 
 ---@param id number
 function EHI:RestoreElementWaypoint(id)
-    local element = managers.mission:get_element_by_id(id) ---@cast element ElementWaypoint?
-    if not (element and self._cache.ElementWaypoint[id]) then
-        return
+    local element = table.remove_key(self._cache.ElementWaypoint, id)
+    if element then
+        element.on_executed = element.original_on_executed
     end
-    element.on_executed = element.original_on_executed
-    self._cache.ElementWaypoint[id] = nil
 end
 
 ---@param waypoints table<number, boolean>
@@ -2068,9 +2066,9 @@ function EHI:ShowLootCounterNoChecks(params)
     end
     if params.max_bags_for_level and params.max_bags_for_level.custom_counter then
         params.max_bags_for_level.custom_counter.achievement = "LootCounter"
-        self:AddAchievementToCounter(params.max_bags_for_level.custom_counter)
+        self:AddAchievementToCounter(params.max_bags_for_level.custom_counter, true)
     else
-        managers.ehi_loot:AddListener(params.no_sync_load)
+        managers.ehi_loot:AddListener(params.no_sync_load, params.max_bags_for_level ~= nil)
     end
 end
 
@@ -2155,25 +2153,37 @@ function EHI:ShowAchievementBagValueCounter(params)
 end
 
 ---@param params AchievementLootCounterTable|AchievementBagValueCounterTable
-function EHI:AddAchievementToCounter(params)
+---@param endless_counter boolean?
+function EHI:AddAchievementToCounter(params, endless_counter)
     local check_type, loot_type, f = self.LootCounter.CheckType.BagsOnly, nil, nil
     if params.counter then
         check_type = params.counter.check_type or self.LootCounter.CheckType.BagsOnly
         loot_type = params.counter.loot_type
         f = params.counter.f
     end
-    ---@param loot LootManager
-    self:AddEventListener(params.achievement, self.CallbackMessage.LootSecured, function(loot)
-        if f then
-            loot:EHIReportProgress(check_type, loot_type, f)
-        else
-            local progress = loot:EHIReportProgress(check_type, loot_type)
-            managers.ehi_tracker:SetTrackerProgress(params.achievement, progress)
-            if progress >= params.max then
-                self:RemoveEventListener(params.achievement)
+    if endless_counter then
+        ---@param loot LootManager
+        self:AddEventListener(params.achievement, self.CallbackMessage.LootSecured, function(loot)
+            if f then
+                loot:EHIReportProgress(check_type, loot_type, f)
+            else
+                managers.ehi_tracker:SetTrackerProgress(params.achievement, loot:EHIReportProgress(check_type, loot_type))
             end
-        end
-    end)
+        end)
+    else
+        ---@param loot LootManager
+        self:AddEventListener(params.achievement, self.CallbackMessage.LootSecured, function(loot)
+            if f then
+                loot:EHIReportProgress(check_type, loot_type, f)
+            else
+                local progress = loot:EHIReportProgress(check_type, loot_type)
+                managers.ehi_tracker:SetTrackerProgress(params.achievement, progress)
+                if progress >= params.max then
+                    self:RemoveEventListener(params.achievement)
+                end
+            end
+        end)
+    end
     if not (params.load_sync or params.no_sync) then
         ---@param loot LootManager
         self:AddCallback(self.CallbackMessage.LootLoadSync, function(loot)
@@ -2754,9 +2764,17 @@ else
     end
 end
 
+---@return string?
+function EHI:GetActiveSHDaily()
+    local current_daily = managers.custom_safehouse:get_daily_challenge()
+    if current_daily and not (current_daily.state == "completed" or current_daily.state == "rewarded") then
+        return current_daily.id
+    end
+end
+
 ---@param daily_id string
 ---@param skip_unlockables_check boolean?
-function EHI:IsSFDailyAvailable(daily_id, skip_unlockables_check)
+function EHI:IsSHSideJobAvailable(daily_id, skip_unlockables_check)
     local current_daily = managers.custom_safehouse:get_daily_challenge()
     if current_daily.id == daily_id then
         if current_daily.state == "completed" or current_daily.state == "rewarded" then
@@ -2773,7 +2791,7 @@ end
 ---@param daily_id string
 ---@param progress_id string?
 ---@return number progress, number max
-function EHI:GetSFDailyProgressAndMax(daily_id, progress_id)
+function EHI:GetSHSideJobProgressAndMax(daily_id, progress_id)
     local current_daily = managers.custom_safehouse:get_daily_challenge()
     if current_daily and current_daily.id == daily_id then
         progress_id = progress_id or daily_id

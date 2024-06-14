@@ -91,17 +91,25 @@ function EHILootManager:SyncShowLootCounter(max, max_random, offset)
 end
 
 ---@param no_sync_load boolean?
-function EHILootManager:AddListener(no_sync_load)
+---@param endless_counter boolean?
+function EHILootManager:AddListener(no_sync_load, endless_counter)
     if not EHI:HasEventListener("LootCounter") then
         local BagsOnly = EHI.LootCounter.CheckType.BagsOnly
-        ---@param loot LootManager
-        EHI:AddEventListener("LootCounter", EHI.CallbackMessage.LootSecured, function(loot)
-            local progress = loot:EHIReportProgress(BagsOnly)
-            self._trackers:SetTrackerProgress("LootCounter", progress)
-            if progress >= self._max then
-                EHI:RemoveEventListener("LootCounter")
-            end
-        end)
+        if endless_counter then
+            ---@param loot LootManager
+            EHI:AddEventListener("LootCounter", EHI.CallbackMessage.LootSecured, function(loot)
+                self._trackers:SetTrackerProgress("LootCounter", loot:EHIReportProgress(BagsOnly))
+            end)
+        else
+            ---@param loot LootManager
+            EHI:AddEventListener("LootCounter", EHI.CallbackMessage.LootSecured, function(loot)
+                local progress = loot:EHIReportProgress(BagsOnly)
+                self._trackers:SetTrackerProgress("LootCounter", progress)
+                if progress >= self._max then
+                    EHI:RemoveEventListener("LootCounter")
+                end
+            end)
+        end
         -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
         if not no_sync_load then

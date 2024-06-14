@@ -584,9 +584,8 @@ function EHITrackerManager:HideTracker(id)
 end
 
 ---@param id string
-function EHITrackerManager:DestroyTracker(id)
-    local tracker = self._trackers[id]
-    self._trackers[id] = nil
+function EHITrackerManager:_destroy_tracker(id)
+    local tracker = table.remove_key(self._trackers, id)
     self._trackers_to_update[id] = nil
     if tracker and tracker.pos then
         local pos = tracker.pos
@@ -925,7 +924,7 @@ do
     dofile(path .. "EHIGroupTrackers.lua")
     dofile(path .. "EHIAchievementTrackers.lua")
     dofile(path .. "EHITrophyTrackers.lua")
-    dofile(path .. "EHIDailyTrackers.lua")
+    dofile(path .. "EHISideJobTrackers.lua")
     if EHI:IsXPTrackerEnabledAndVisible() then
         dofile(path .. "EHIXPTracker.lua")
     end

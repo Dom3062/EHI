@@ -66,10 +66,10 @@ local pent_11_levels =
 -- Daily challenges activated in ChallengeManager
 local challenges =
 {
-    any_25_spooc_kills = { progress_id = "any_spooc_kills", icon = "Other_H_Any_Holy", loud_only = true },
-    any_25_shield_kills = { progress_id = "any_shield_kills", icon = "Other_H_Any_Maximum", loud_only = true },
-    any_25_tank_kills = { progress_id = "any_tank_kills", icon = "heavy", loud_only = true },
-    any_25_taser_kills = { progress_id = "any_taser_kills", loud_only = true },
+    any_25_spooc_kills = { progress_id = "any_spooc_kills", icon = "Other_H_Any_Holy", loud_only = true, check = { enemy_check = "spooc" } },
+    any_25_shield_kills = { progress_id = "any_shield_kills", icon = "Other_H_Any_Maximum", loud_only = true, check = { enemy_check = "shield" } },
+    any_25_tank_kills = { progress_id = "any_tank_kills", icon = "heavy", loud_only = true, check = { enemy_check = "tank" } },
+    any_25_taser_kills = { progress_id = "any_taser_kills", loud_only = true, check = { enemy_check = "taser" } },
     any_25_sniper_kills = { progress_id = "any_sniper_kills", icon = "sniper", loud_only = true },
     any_50_headshot_kills = { progress_id = "any_headshot_kills" },
     any_300_kills = { progress_id = "any_kills", icon = "C_All_H_All_AllJobs_D0" },
@@ -95,6 +95,18 @@ for _, challenge in pairs(challenges) do
         challenge.icon = string.format("C_%s_H_All_AllDiffs_D0", select(1, string.gsub(challenge.contact_short_name or challenge.contact, "^%l", string.upper)))
     end
 end
+
+-- Daily challenges activated in CustomSafehouseManager
+local sh_dailies =
+{
+    daily_hangover = { track = true, icon = "daily_hangover", check = { melee = "whiskey" } }, -- Kill with a bottle
+    daily_lodsofemone = { hook_secured = true, achievement_icon = "cac_30" }, -- Secure money
+    daily_classics = { hook_end = true, icon = "C_Classics_H_All_AllDiffs_D0" }, -- Complete Classics
+    daily_discord = { hook_end = true, achievement_icon = "cac_11" }, -- Finish heists with at least 1 convert
+    daily_grenades = { track = true, check = { grenades = { "frag", "frag_com", "dada_com", "dynamite" } } }, -- Kill with grenades
+    daily_honorable = { track = true, icon = "Other_H_Any_IAintGotTime" }, -- Melee to death surrendered enemies
+    daily_candy = { hook_secured = true, first_entry = true } -- Secure cocaine
+}
 
 local armored_4_levels = table.list_to_set(tweak_data.achievement.complete_heist_achievements.i_take_scores.jobs)
 
@@ -292,7 +304,7 @@ local function AddDailyProgressTracker(id, progress, max, daily_job, icon)
         flash_bg = true,
         flash_times = 1,
         no_failure = true,
-        class = EHI.Trackers.Daily.Progress
+        class = EHI.Trackers.SideJob.Progress
     })
 end
 
@@ -309,9 +321,23 @@ end
 ---@param id string
 ---@param progress_id string?
 ---@param icon string?
-local function AddDailySFChallengeTracker(id, progress_id, icon)
-    local progress, max = EHI:GetSFDailyProgressAndMax(id, progress_id)
+local function AddDailySHChallengeTracker(id, progress_id, icon)
+    local progress, max = EHI:GetSHSideJobProgressAndMax(id, progress_id)
     AddDailyProgressTracker(id, progress, max, false, icon)
+end
+
+---@param id string
+---@param icon string?
+local function HookMissionEndSHDailyProgress(id, icon)
+    local progress, max = EHI:GetSHSideJobProgressAndMax(id)
+    if progress + 1 < max then
+        icon = icon or "milestone_trophy"
+        EHI:HookWithID(CustomSafehouseManager, "award", string.format("EHI_%s_AwardProgress", id), function(csm, id_stat)
+            if id_stat == id then
+                managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text(id), tostring(progress + 1) .. "/" .. tostring(max), icon)
+            end
+        end)
+    end
 end
 
 ---@param id string
@@ -320,12 +346,12 @@ end
 local function HookSecuredChallenge(id, trophy, icon)
     icon = icon or "milestone_trophy"
     if EHI:GetUnlockableOption("show_daily_started_popup") then
-        managers.hud:ShowDailyStartedPopup(id, false, icon)
+        managers.hud:ShowSideJobStartedPopup(id, false, icon)
     end
     if EHI:GetUnlockableOption("show_daily_description") then
-        managers.hud:ShowDailyDescription(id)
+        managers.hud:ShowSideJobDescription(id)
     end
-    local progress, max = EHI:GetSFDailyProgressAndMax(id)
+    local progress, max = EHI:GetSHSideJobProgressAndMax(id)
     local current_progress = progress
     ---@param loot LootManager
     EHI:AddEventListener(id, EHI.CallbackMessage.LootSecured, function(loot)
@@ -445,6 +471,7 @@ function IngameWaitingForPlayersState:at_exit(...)
     EHI:CallCallbackOnce(EHI.CallbackMessage.Spawned)
     if EHI._cache.UnlockablesAreDisabled or GunGameGame or TIM then -- Twitch Integration Mod
         challenges = nil
+        sh_dailies = nil
         return
     end
     primary = managers.blackmarket:equipped_primary()
@@ -1219,48 +1246,38 @@ function IngameWaitingForPlayersState:at_exit(...)
         end]]
     end
     if EHI:GetUnlockableAndOption("show_dailies") then
-        local daily = {}
-        if HasMeleeEquipped("whiskey") and EHI:IsSFDailyAvailable("daily_hangover") then -- Kill with a bottle
-            AddDailySFChallengeTracker("daily_hangover", nil, "daily_hangover")
-            daily.daily_hangover = "daily_hangover"
-        end
-        if EHI:IsSFDailyAvailable("daily_lodsofemone") then -- Secure money
-            HookSecuredChallenge("daily_lodsofemone", tweak_data.achievement.loot_cash_achievements.daily_lodsofemone.secured, EHI:GetAchievementIconString("cac_30"))
-        end
-        if EHI:IsSFDailyAvailable("daily_classics") then
-            local progress, max = EHI:GetSFDailyProgressAndMax("daily_classics")
-            ---@param success boolean
-            EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
-                if success and table.contains(tweak_data.achievement.complete_heist_achievements.daily_classics.jobs, managers.job:current_job_id()) then
-                    progress = progress + 1
-                    if progress < max then
-                        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("daily_classics"), tostring(progress) .. "/" .. tostring(max), "C_Classics_H_All_AllDiffs_D0")
-                    end
+        local active_sh_daily = EHI:GetActiveSHDaily() ---@cast active_sh_daily -?
+        local sh_daily = active_sh_daily and sh_dailies and sh_dailies[active_sh_daily]
+        if sh_daily then
+            local all_pass = true
+            if sh_daily.check then
+                if sh_daily.check.melee and not HasMeleeEquipped(sh_daily.check.melee) then
+                    all_pass = false
+                elseif sh_daily.check.grenades and not table.contains(sh_daily.check.grenades, grenade) then
+                    all_pass = false
                 end
-            end)
-        end
-        if EHI:IsSFDailyAvailable("daily_discord") then -- Finish heists with at least 1 convert
-            local progress, max = EHI:GetSFDailyProgressAndMax("daily_discord")
-            ---@param success boolean
-            EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
-                if success and tweak_data.achievement.complete_heist_achievements.daily_discord.converted_cops <= managers.groupai:state():get_amount_enemies_converted_to_criminals() then
-                    progress = progress + 1
-                    if progress < max then
-                        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("daily_discord"), tostring(progress) .. "/" .. tostring(max), EHI:GetAchievementIconString("cac_11"))
+            end
+            if all_pass then
+                local icon = sh_daily.achievement_icon and EHI:GetAchievementIconString(sh_daily.achievement_icon) or sh_daily.icon
+                if sh_daily.track then
+                    AddDailySHChallengeTracker(active_sh_daily, nil, icon)
+                    EHI:HookWithID(CustomSafehouseManager, "award", string.format("EHI_%s_AwardProgress", active_sh_daily), function(csm, id)
+                        if id == active_sh_daily then
+                            managers.ehi_tracker:IncreaseTrackerProgress(active_sh_daily)
+                        end
+                    end)
+                elseif sh_daily.hook_secured then
+                    local data
+                    if sh_daily.first_entry then
+                        data = tweak_data.achievement.loot_cash_achievements[active_sh_daily].secured[1]
+                    else
+                        data = tweak_data.achievement.loot_cash_achievements[active_sh_daily].secured
                     end
+                    HookSecuredChallenge(active_sh_daily, data, icon)
+                elseif sh_daily.hook_end then
+                    HookMissionEndSHDailyProgress(active_sh_daily, icon)
                 end
-            end)
-        end
-        if EHI:IsSFDailyAvailable("daily_grenades") and (HasGrenadeEquipped("frag") or HasGrenadeEquipped("frag_com") or HasGrenadeEquipped("dada_com") or HasGrenadeEquipped("dynamite")) then -- Kill with grenades
-            AddDailySFChallengeTracker("daily_grenades", nil)
-            daily.daily_grenades = "daily_grenades"
-        end
-        if EHI:IsSFDailyAvailable("daily_honorable") then -- Melee to death surrendered enemies
-            AddDailySFChallengeTracker("daily_honorable", nil, "Other_H_Any_IAintGotTime")
-            daily.daily_honorable = "daily_honorable"
-        end
-        if EHI:IsSFDailyAvailable("daily_candy") then -- Secure cocaine
-            HookSecuredChallenge("daily_candy", tweak_data.achievement.loot_cash_achievements.daily_candy.secured[1])
+            end
         end
         if managers.challenge:can_progress_challenges() and challenges then
             local tracked_challenges = {}
@@ -1271,6 +1288,8 @@ function IngameWaitingForPlayersState:at_exit(...)
                     local all_pass = true
                     if c.check then
                         if c.check.weapon_type and not HasWeaponTypeEquipped(c.check.weapon_type) then
+                            all_pass = false
+                        elseif c.check.enemy_check and not tweak_data.group_ai:IsSpecialEnemyAllowedToSpawn(c.check.enemy_check) then
                             all_pass = false
                         end
                     end
@@ -1314,15 +1333,9 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end)
             end
         end
-        if next(daily) then
-            EHI:HookWithID(CustomSafehouseManager, "award", "EHI_SFDailyChallenge_AwardProgress", function(csm, id)
-                if daily[id] then
-                    managers.ehi_tracker:IncreaseTrackerProgress(daily[id])
-                end
-            end)
-        end
     end
     challenges = nil
+    sh_dailies = nil
     if next(stats) then
         HookAwardAchievement("IngameWaitingForPlayers", function(am, stat, value)
             local achievement = stats[stat]

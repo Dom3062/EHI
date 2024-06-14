@@ -1,8 +1,8 @@
 local EHI = EHI
 local Icon = EHI.Icons
----@class EHIdailycakeTracker : EHIDailyTracker, EHIProgressTracker
----@field super EHIDailyTracker
-EHIdailycakeTracker = class(EHIDailyTracker)
+---@class EHIdailycakeTracker : EHISideJobTracker, EHIProgressTracker
+---@field super EHISideJobTracker
+EHIdailycakeTracker = class(EHISideJobTracker)
 EHIdailycakeTracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIdailycakeTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIdailycakeTracker.SetProgress = EHIProgressTracker.SetProgress
@@ -78,7 +78,7 @@ local achievements =
     }
 }
 
-local dailies =
+local sidejob =
 {
     daily_cake =
     {
@@ -98,7 +98,7 @@ local dailies =
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    daily = dailies
+    sidejob = sidejob
 })
 EHI:AddXPBreakdown({
     objectives =

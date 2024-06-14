@@ -527,6 +527,8 @@ _G.DigitalGui = {}
 _G.ExperienceManager = {}
 ---@class GamePlayCentralManager
 _G.GamePlayCentralManager = {}
+---@class GroupAITweakData
+_G.GroupAITweakData = {}
 ---@class LevelsTweakData
 ---@field get_default_team_ID fun(self: self, type: string): string
 _G.LevelsTweakData = {}
@@ -1020,6 +1022,7 @@ end
 ---@field contains fun(v: table, e: string): boolean Returns `true` or `false` if `e` exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
 ---@field get_key fun(map: table, wanted_key_value: any): any? Returns `key name` if value exists
+---@field get_vector_index fun(v: table, e: any): number?
 ---@field list_to_set fun(list: table): table Maps values as keys with value `true`
 
 ---@class ContourExt

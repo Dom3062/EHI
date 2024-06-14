@@ -73,8 +73,8 @@ function EHIAchievementTracker:ShowStartedPopup(delay_popup)
     if delay_popup or self._started_popup_showed or self._failed_on_sync or not self._show_started then ---@diagnostic disable-line
         return
     end
-    if self._popup_type == "daily" then
-        managers.hud:ShowDailyStartedPopup(self._id, self._daily_job) ---@diagnostic disable-line
+    if self._popup_type == "sidejob" then
+        managers.hud:ShowSideJobStartedPopup(self._id, self._daily_job) ---@diagnostic disable-line
     elseif self._popup_type == "trophy" then
         managers.hud:ShowTrophyStartedPopup(self._id)
     else
@@ -88,8 +88,8 @@ function EHIAchievementTracker:ShowFailedPopup()
         return
     end
     self._failed_popup_showed = true
-    if self._popup_type == "daily" then
-        managers.hud:ShowDailyFailedPopup(self._id, self._daily_job) ---@diagnostic disable-line
+    if self._popup_type == "sidejob" then
+        managers.hud:ShowSideJobFailedPopup(self._id, self._daily_job) ---@diagnostic disable-line
     elseif self._popup_type == "trophy" then
         managers.hud:ShowTrophyFailedPopup(self._id)
     else
@@ -104,8 +104,8 @@ function EHIAchievementTracker:ShowAchievementDescription(delay_popup)
     end
     if self._popup_type == "achievement" then
         managers.hud:ShowAchievementDescription(self._id, self._beardlib)
-    elseif self._popup_type == "daily" then
-        managers.hud:ShowDailyDescription(self._id, self._daily_job) ---@diagnostic disable-line
+    elseif self._popup_type == "sidejob" then
+        managers.hud:ShowSideJobDescription(self._id, self._daily_job) ---@diagnostic disable-line
     else
         managers.hud:ShowTrophyDescription(self._id)
     end

@@ -1,5 +1,5 @@
 ---@class EHIWaypoint
----@field new fun(waypoint: WaypointDataTable, params: table, parent_class: EHIWaypointManager): self
+---@field new fun(self: self, waypoint: WaypointDataTable, params: table, parent_class: EHIWaypointManager): self
 EHIWaypoint = class()
 EHIWaypoint._update = true
 EHIWaypoint._fade_time = 5
@@ -11,12 +11,18 @@ function EHIWaypoint:init(waypoint, params, parent_class)
     self:pre_init(params)
     self._id = params.id
     self._time = params.time or 0
-    self._timer = waypoint.timer_gui ---@type PanelText
-    self._bitmap = waypoint.bitmap ---@type PanelBitmap
-    self._arrow = waypoint.arrow ---@type PanelBitmap
-    self._bitmap_world = waypoint.bitmap_world ---@type PanelBitmap? -- VR
+    self._timer = waypoint.timer_gui
+    self._bitmap = waypoint.bitmap
+    self._arrow = waypoint.arrow
+    self._bitmap_world = waypoint.bitmap_world -- VR
     self._parent_class = parent_class
     self._remove_on_alarm = params.remove_on_alarm --Removes waypoint when alarm sounds
+    if params.force_format then
+        self._timer:set_text(self:Format())
+    end
+    if params.remove_vanilla_waypoint and params.restore_on_done then
+        self._vanilla_waypoint = params.remove_vanilla_waypoint
+    end
     self:post_init(params)
 end
 
@@ -35,15 +41,6 @@ if EHI:GetOption("time_format") == 1 then
     EHIWaypoint.Format = tweak_data.ehi.functions.FormatSecondsOnly
 else
     EHIWaypoint.Format = tweak_data.ehi.functions.FormatMinutesAndSeconds
-end
-
-function EHIWaypoint:ForceFormat()
-    self._timer:set_text(self:Format())
-end
-
----@param id number
-function EHIWaypoint:WaypointToRestore(id)
-    self._vanilla_waypoint = id
 end
 
 ---@param dt number

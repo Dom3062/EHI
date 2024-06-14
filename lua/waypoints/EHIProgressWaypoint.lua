@@ -11,10 +11,7 @@ EHIProgressWaypoint.DecreaseProgressMax = EHIProgressTracker.DecreaseProgressMax
 function EHIProgressWaypoint:pre_init(params)
     self._max = params.max or 0
     self._progress = params.progress or 0
-end
-
-function EHIProgressWaypoint:post_init(params)
-    self:ForceFormat()
+    params.force_format = true
 end
 
 ---@param progress number?

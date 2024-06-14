@@ -35,10 +35,9 @@ local original =
 
 local strs = {}
 local percent_format = "%"
-EHI:AddCallback(EHI.CallbackMessage.LocLoaded,
 ---@param loc LocalizationManager
 ---@param loc_loaded string
-function(loc, loc_loaded)
+EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, loc_loaded)
     strs.poison = loc:text("ehi_bm_poison")
     strs.fire = loc:text("ehi_bm_fire")
     strs.explosion = loc:text("ehi_bm_explosion")

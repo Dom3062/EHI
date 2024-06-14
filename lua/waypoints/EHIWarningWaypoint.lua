@@ -11,7 +11,7 @@ EHIWarningWaypoint._warning_color = EHI:GetTWColor("warning")
 ---@param icon PanelBitmap
 ---@param arrow PanelBitmap
 ---@param bitmap_world PanelBitmap?
-EHIWarningWaypoint._anim = function(o, old_color, color, icon, arrow, bitmap_world)
+EHIWarningWaypoint._anim_warning = function(o, old_color, color, icon, arrow, bitmap_world)
     local c = Color(old_color.r, old_color.g, old_color.b)
     while true do
         local t = 1
@@ -30,6 +30,7 @@ EHIWarningWaypoint._anim = function(o, old_color, color, icon, arrow, bitmap_wor
         end
     end
 end
+
 ---@param dt number
 function EHIWarningWaypoint:update(dt)
     EHIWarningWaypoint.super.update(self, dt)
@@ -43,7 +44,7 @@ end
 ---@param default_color Color?
 function EHIWarningWaypoint:AnimateColor(color, default_color)
     if self._timer and alive(self._timer) then
-        self._timer:animate(self._anim, default_color or self._default_color, color or self._warning_color, self._bitmap, self._arrow, self._bitmap_world)
+        self._timer:animate(self._anim_warning, default_color or self._default_color, color or self._warning_color, self._bitmap, self._arrow, self._bitmap_world)
     end
 end
 

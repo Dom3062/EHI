@@ -158,20 +158,20 @@ local achievements =
     }
 }
 
-local dailies =
+local sidejob =
 {
     daily_tasty =
     {
         elements =
         {
             [101780] = { special_function = EHI:RegisterCustomSF(function(self, ...)
-                local progress, max = EHI:GetSFDailyProgressAndMax("daily_tasty")
+                local progress, max = EHI:GetSHSideJobProgressAndMax("daily_tasty")
                 self._trackers:AddTracker({
                     id = "daily_tasty",
                     progress = progress,
                     max = max,
                     icons = { EHI.Icons.Trophy },
-                    class = TT.Daily.Progress
+                    class = TT.SideJob.Progress
                 })
             end) },
             [101382] = { special_function = SF.IncreaseProgress }
@@ -217,7 +217,7 @@ EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
-    daily = dailies,
+    sidejob = sidejob,
     preload = preload,
     sync_triggers = { element = element_sync_triggers }
 })

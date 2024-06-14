@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local Status = EHI.Const.Trackers.Achievement.Status
 ---@type ParseTriggerTable
 local triggers = {
     [101034] = { id = "MikeDefendTruck", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033, waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100483, 1350) }, hint = Hints.Defend },
@@ -28,12 +29,12 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [101048] = { status = "objective", class = TT.Achievement.Status },
-            [101001] = { status = "finish", special_function = SF.SetAchievementStatus },
-            [101022] = { status = "objective", special_function = SF.SetAchievementStatus },
-            [100728] = { status = "defend", special_function = SF.SetAchievementStatus }, -- Truck
-            [101589] = { status = "defend", special_function = SF.SetAchievementStatus }, -- Garage
-            [101446] = { status = "objective", special_function = SF.SetAchievementStatus }, -- Garage done
+            [101048] = { status = Status.Objective, class = TT.Achievement.Status },
+            [101001] = { status = Status.Finish, special_function = SF.SetAchievementStatus },
+            [101022] = { status = Status.Objective, special_function = SF.SetAchievementStatus },
+            [100728] = { status = Status.Defend, special_function = SF.SetAchievementStatus }, -- Truck
+            [101589] = { status = Status.Defend, special_function = SF.SetAchievementStatus }, -- Garage
+            [101446] = { status = Status.Objective, special_function = SF.SetAchievementStatus }, -- Garage done
             [102777] = { special_function = SF.SetAchievementComplete },
             [102779] = { special_function = SF.SetAchievementFailed }
         }

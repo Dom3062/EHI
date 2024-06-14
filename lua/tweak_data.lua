@@ -1123,3 +1123,13 @@ function table.ehi_get_objectives_xp_amount(objectives)
     end
     return xp_amount
 end
+
+---@generic K, V
+---@param map table<K, V>
+---@param key K
+---@return V?
+function table.remove_key(map, key)
+    local value = map[key]
+    map[key] = nil
+    return value
+end

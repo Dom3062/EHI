@@ -40,7 +40,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
         self:RemoveWaypoint(id)
     end
     params.id = id
-    params.timer = params.time or 0 ---@diagnostic disable-line
+    params.timer = 0 ---@diagnostic disable-line
     params.pause_timer = 1 ---@diagnostic disable-line
     params.no_sync = true ---@diagnostic disable-line
     params.present_timer = params.present_timer or self._present_timer
@@ -67,9 +67,6 @@ function EHIWaypointManager:AddWaypoint(id, params)
     self._waypoints[id] = w
     if params.remove_vanilla_waypoint then
         self._hud:SoftRemoveWaypoint2(params.remove_vanilla_waypoint)
-        if params.restore_on_done then
-            w:WaypointToRestore(params.remove_vanilla_waypoint)
-        end
     end
 end
 
@@ -106,14 +103,6 @@ function EHIWaypointManager:UpdateWaypointID(id, new_id)
         local update = self._waypoints_to_update[id]
         self._waypoints_to_update[id] = nil
         self._waypoints_to_update[new_id] = update
-    end
-end
-
----@param id string
-function EHIWaypointManager:ForceFormatInWaypoint(id)
-    local wp = self._waypoints[id]
-    if wp then
-        wp:ForceFormat()
     end
 end
 

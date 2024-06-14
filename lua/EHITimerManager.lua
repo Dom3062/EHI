@@ -112,7 +112,7 @@ function EHITimerManager:StartTimer(params)
     if self._grouping_is_enabled and not params.no_grouping then
         local group = params.group
         local subgroup = self._compute_subgroup(params.skills)
-        local create_group, add_subgroup, add_i_subgroup, i_subgroup = true, false, false, 1
+        local add_subgroup, add_i_subgroup, i_subgroup = false, false, 1
         if self._groups[group] then
             if self._groups[group][subgroup] then
                 local group_i = 0
@@ -145,7 +145,7 @@ function EHITimerManager:StartTimer(params)
             local active_group = self._groups[group]
             active_group.count = active_group.count + 1
             active_group[subgroup] = { count = 1, { name = tracker_id, timer_count = 1 } }
-        elseif create_group then
+        else -- add group
             self._groups[group] = { [subgroup] = { count = 1, { name = tracker_id, timer_count = 1 } }, count = 1 }
         end
     end
@@ -154,9 +154,8 @@ end
 
 ---@param id string Unit Key
 function EHITimerManager:StopTimer(id)
-    local active_group = self._units_in_active_group[id]
+    local active_group = table.remove_key(self._units_in_active_group, id)
     if active_group then
-        self._units_in_active_group[id] = nil
         local group, subgroup, i_subgroup = self._trackers:ReturnValue(active_group, "GetGroupData")
         self:RemoveTimerFromGroup(id, group, subgroup, i_subgroup)
     else

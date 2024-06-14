@@ -104,10 +104,10 @@ local function HeliWaterRefillWPRestore(id)
             icon = Icon.Water,
             position = self._cache.HeliWaterFillPos,
             class = self.Waypoints.Pausable,
-            remove_vanilla_waypoint = self._cache.HeliWaterRestoreWP
+            remove_vanilla_waypoint = self._cache.HeliWaterRestoreWP,
+            force_format = true,
+            paused = true
         })
-        self._waypoints:SetWaypointPause(id, true)
-        self._waypoints:ForceFormatInWaypoint(id)
         self._cache.HeliWaterFillPos = nil
         self._cache.HeliWaterRestoreWP = nil
     end

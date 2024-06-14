@@ -978,7 +978,7 @@ function EHITracker:delete()
         return
     end
     self:destroy()
-    self._parent_class:DestroyTracker(self._id)
+    self._parent_class:_destroy_tracker(self._id)
 end
 
 function EHITracker:Refresh()
