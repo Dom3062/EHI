@@ -304,6 +304,21 @@ _G.tweak_data.carry = {}
 _G.tweak_data.dot = {}
 ---@class EHITweakData
 _G.tweak_data.ehi = {}
+---@class EquipmentsTweakData
+_G.tweak_data.equipments = {
+    ammo_bag = {
+		deploy_time = 2,
+		use_function_name = "use_ammo_bag",
+		dummy_unit = "units/payday2/equipment/gen_equipment_ammobag/gen_equipment_ammobag_dummy_unit",
+		text_id = "debug_ammo_bag",
+		icon = "equipment_ammo_bag",
+		description_id = "des_ammo_bag",
+		visual_object = "g_ammobag",
+		quantity = {
+			1
+		}
+	}
+}
 ---@class GageAssignmentTweakData
 ---@field get_experience_multiplier fun(self: self, ratio: number): number
 ---@field get_num_assignment_units fun(self: self): number

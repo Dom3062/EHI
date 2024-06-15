@@ -6,7 +6,8 @@ local function bilbo_baggin()
     if bilbo_baggin_bags == 0 then
         managers.ehi_achievement:AddAchievementProgressTracker("bilbo_baggin", 8, 0, true)
         EHI:AddAchievementToCounter({
-            achievement = "bilbo_baggin"
+            achievement = "bilbo_baggin",
+            max = 8
         })
     end
 end

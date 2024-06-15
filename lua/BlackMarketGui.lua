@@ -103,7 +103,7 @@ local function FormatDOTData(dot_data_name, variant)
     local divider = dot_tick_period == 0 and 1 or dot_tick_period
     local dot_trigger_times = math.floor(dot_length / divider)
     local remainder = math.fmod(dot_length, divider)
-    if remainder > 0 then -- Incendiary Grenade for some reason triggers 3 times and not 4 times, most likely due to grace period and fire dot counter in FireManager
+    if remainder > 0 then -- Incendiary Grenade for some reason triggers 3 times and not 4 times, most likely due to grace period and fire dot counter in FireManager class
         dot_trigger_times = dot_trigger_times - 1
     end
     local total_damage = dot_damage * dot_trigger_times
@@ -480,8 +480,6 @@ local GrenadeFormattingFunction =
 function BlackMarketGui:populate_grenades(data, ...)
     original.populate_grenades(self, data, ...)
     --EHI:PrintTable(data, "data")
-    --local sort_data = managers.blackmarket:get_sorted_grenades()
-    --local max_items = math.ceil(#sort_data / (data.override_slots[1] or 3)) * (data.override_slots[1] or 3)
     AbilityDuration.copr_ability = managers.player:upgrade_value("temporary", "copr_ability", temp_upgrades.copr_ability[1] or {})[2] or 0
     local projectile_tweak = tweak_data.blackmarket.projectiles
     local grenade_tweak = tweak_data.projectiles

@@ -93,7 +93,8 @@ local achievements =
                 -- Reported in:
                 -- https://steamcommunity.com/app/218620/discussions/14/3182363463067457019/
                 EHI:AddAchievementToCounter({
-                    achievement = "sand_9"
+                    achievement = "sand_9",
+                    max = 10
                 })
                 managers.ehi_tracker:SetTrackerProgress("sand_9", managers.loot:GetSecuredBagsAmount())
             end },

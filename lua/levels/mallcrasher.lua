@@ -40,6 +40,7 @@ end
 function EHIameno3Tracker:post_init(params)
     EHI:AddAchievementToCounter({
         achievement = "ameno_3",
+        max = self._max,
         counter =
         {
             check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
