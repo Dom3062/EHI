@@ -19,10 +19,14 @@ local original =
 local function UpdateTracker(self, client_sync_load)
     local max_units = self:count_all_units()
     local picked_up = self:GetCountOfRemainingPackages()
-    if client_sync_load and not Global.statistics_manager.playing_from_start then
+    if client_sync_load then
         picked_up = math.max(picked_up - 1, 0)
     end
-    EHI:CallCallback(EHI.CallbackMessage.SyncGagePackagesCount, picked_up, max_units, client_sync_load)
+    if picked_up >= max_units then
+        EHI:CallCallbackOnce(EHI.CallbackMessage.SyncGagePackagesCount, picked_up, max_units, client_sync_load)
+    else
+        EHI:CallCallback(EHI.CallbackMessage.SyncGagePackagesCount, picked_up, max_units, client_sync_load)
+    end
 end
 
 function GageAssignmentManager:GetCountOfRemainingPackages()

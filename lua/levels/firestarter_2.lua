@@ -59,7 +59,6 @@ if EHI:IsLootCounterVisible() then
                 [100251] = { special_function = FilterIsOk } -- MH+
             },
             hook_triggers = true,
-            offset = true,
             client_from_start = true
         })
     end)

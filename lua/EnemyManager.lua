@@ -47,7 +47,7 @@ if EHI:GetOption("show_enemy_count_tracker") then
                 alarm_unit[name] = true
             end
         end
-        EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+        EHI:AddOnSpawnedCallback(function()
             managers.ehi_tracker:AddTracker({
                 id = "EnemyCount",
                 alarm_sounded = EHI.ConditionFunctions.IsLoud(),
@@ -73,7 +73,7 @@ if EHI:GetOption("show_enemy_count_tracker") then
             original.on_enemy_unregistered(self, ...)
             managers.ehi_tracker:SetTrackerCount("EnemyCount", self._enemy_data.nr_units)
         end
-        EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+        EHI:AddOnSpawnedCallback(function()
             managers.ehi_tracker:AddTracker({
                 id = "EnemyCount",
                 count = managers.enemy:GetNumberOfEnemies(),
@@ -133,7 +133,7 @@ if EHI:CanShowCivilianCountTracker() then
     ---@param civilian_key string
     ---@param from_destroy boolean?
     local function CivilianDied(civilian_data, civilian_key, from_destroy)
-        if managers.ehi_tracker:CallFunction3("CivilianCount", "DecreaseTrackerCount", civilian_key) then
+        if managers.ehi_tracker:CallFunction2("CivilianCount", "DecreaseCount", tostring(civilian_key)) then
             local count = table.count(civilian_data, CountCivilian)
             local civilians_alive = count - (from_destroy and 1 or 0)
             if civilians_alive > 0 then
@@ -145,7 +145,7 @@ if EHI:CanShowCivilianCountTracker() then
     function EnemyManager:register_civilian(unit, ...)
         original.register_civilian(self, unit, ...)
         local unit_data = self._civilian_data.unit_data
-        if CountCivilian(unit_data[unit:key()]) and managers.ehi_tracker:CallFunction3("CivilianCount", "IncreaseTrackerCount") then
+        if CountCivilian(unit_data[unit:key()]) and managers.ehi_tracker:CallFunction2("CivilianCount", "IncreaseCount") then
             CreateTracker(table.size(unit_data))
         end
     end
@@ -168,7 +168,7 @@ if EHI:CanShowCivilianCountTracker() then
         end
         original.on_civilian_destroyed(self, civilian, ...)
     end
-    EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+    EHI:AddOnSpawnedCallback(function()
         local units = managers.enemy._civilian_data.unit_data
         local count = table.size(units)
         local civilian_count = table.count(units, CountCivilian)

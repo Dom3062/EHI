@@ -186,7 +186,8 @@ if EHI:IsLootCounterVisible() then
                 [103396] = { special_function = SF.IncreaseProgressMax2 }
             },
             hook_triggers = true,
-            no_triggers_if_max_xp_bags_gt_max = true
+            no_triggers_if_max_xp_bags_gt_max = true,
+            client_from_start = true
         })
     end)
     -- Not included bugged loot, this is checked after spawn -> 102700

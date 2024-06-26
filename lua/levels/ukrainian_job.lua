@@ -54,9 +54,9 @@ local other =
     [104176] = EHI:AddAssaultDelay({ control = 25 + 90 }),
     [104178] = EHI:AddAssaultDelay({ control = 35 + 90 })
 }
-if EHI:GetOption("show_loot_counter") and not EHI:IsPlayingCrimeSpree() then
+if EHI:IsLootCounterVisible() then
     other[100073] = EHI:AddLootCounter(function()
-        EHI:ShowLootCounterNoCheck({ max = 10 })
+        EHI:ShowLootCounterNoCheck({ max = 10, client_from_start = true })
     end, true, function(self)
         local jewelry = { 102948, 102949, 102950, 100005, 100006, 100013, 100014, 100007, 100008 }
         local jewelry_to_subtract = 0
@@ -65,7 +65,7 @@ if EHI:GetOption("show_loot_counter") and not EHI:IsPlayingCrimeSpree() then
                 jewelry_to_subtract = jewelry_to_subtract + 1
             end
         end
-        EHI:ShowLootCounterNoChecks({ max = 10 - jewelry_to_subtract })
+        EHI:ShowLootCounterNoChecks({ max = 10 - jewelry_to_subtract, client_from_start = true })
     end, true)
     local DecreaseProgressMax = EHI:RegisterCustomSF(function(self, ...)
         self._loot:DecreaseLootCounterProgressMax()

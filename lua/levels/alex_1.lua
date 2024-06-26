@@ -7,17 +7,16 @@ local Status = EHI.Const.Trackers.Achievement.Status
 local anim_delay = 2 + 727/30 + 2 -- 2s is function delay; 727/30 is a animation duration; 2s is zone activation delay; total 28,23333
 local assault_delay = 4 + 3 + 3 + 3 + 5 + 1
 local assault_delay_methlab = 20 + assault_delay
-local BagsCooked = 0
 local triggers = {
     [101001] = { id = "CookingChance", special_function = SF.RemoveTracker },
 
     [101970] = { time = (240 + 12) - 3, waypoint = { position_by_element = 101454 }, hint = Hints.LootEscape },
     [100721] = { time = 1, chance = 5, id = "CookingChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, start_opened = EHI:ShowTimedTrackerOpened(), hint = Hints.CookingChance, tracker_merge = true },
     [100724] = { time = 25, id = "CookingChance", icons = { Icon.Methlab, Icon.Loop }, waypoint = { position_by_element = 100212 }, special_function = SF.SetTimeOrCreateTracker, tracker_merge = true },
-    [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { icon = Icon.Loot, position_by_element = 100485 }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1001991 }, hint = Hints.mia_1_MethDone },
-    [1001991] = { special_function = EHI:RegisterCustomSF(function(self, ...)
-        BagsCooked = BagsCooked + 1
-        if BagsCooked >= 7 then
+    [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { icon = Icon.Loot, position_by_element = 100485 }, hint = Hints.mia_1_MethDone, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+        self:CreateTracker(trigger)
+        self._cache.BagsCooked = (self._cache.BagsCooked or 0) + 1
+        if self._cache.BagsCooked >= 7 then
             self._trackers:ForceRemoveTracker("CookingChance")
             self:UnhookTrigger(100721)
             self:UnhookTrigger(100724)
@@ -85,15 +84,15 @@ if EHI:IsClient() then
     local EM = managers.ehi_manager
     ---@param self LootManager
     local function SyncBagsCooked(self)
-        BagsCooked = math.max(self:GetSecuredBagsAmount(), BagsCooked)
-        if BagsCooked >= 7 then
+        EM._cache.BagsCooked = math.max(self:GetSecuredBagsAmount(), EM._cache.BagsCooked or 0)
+        if EM._cache.BagsCooked >= 7 then
             EM._trackers:ForceRemoveTracker("CookChance")
             EM:UnhookTrigger(100721)
             EM:UnhookTrigger(100724)
-            EHI:RemoveEventListener("alex_1")
+            EM._loot:RemoveEventListener("alex_1")
         end
     end
-    EHI:AddEventListener("alex_1", EHI.CallbackMessage.LootSecured, SyncBagsCooked)
+    EM._loot:AddEventListener("alex_1", SyncBagsCooked)
     EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, SyncBagsCooked)
 end
 

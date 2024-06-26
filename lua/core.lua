@@ -102,7 +102,6 @@ _G.EHI =
     _callback = {}, ---@type table<string|number, function[]>
     CallbackMessage =
     {
-        Spawned = "Spawned",
         -- Provides `loc` (a LocalizationManager class) and `lang_name` (string)
         LocLoaded = "LocLoaded",
         -- Provides `success` (a boolean value)
@@ -253,12 +252,15 @@ _G.EHI =
         -- Requires `f (function)`  
         -- Optional `arg (1 argument to pass to the function)`
         CustomCode = 1002,
+        -- Requires `f (function that accepts EHIManager)`  
+        -- Optional `arg (1 argument to pass to the function as a second argument)`
+        CustomCode2 = 1003,
         -- Requires `f (function)`  
         -- Optional `arg (1 argument to pass to the function)`
-        CustomCodeIfEnabled = 1003,
+        CustomCodeIfEnabled = 1004,
         -- Requires `f (function)`  
         -- Optional `arg (1 argument to pass to the function)` and `t`
-        CustomCodeDelayed = 1004,
+        CustomCodeDelayed = 1005,
 
         -- Don't use it directly! Instead, call `EHI:GetFreeCustomSFID()` and `EHI:RegisterCustomSF()` respectively; or provide a function to `EHI:RegisterCustomSF()` as a first argument
         CustomSF = 100000,
@@ -523,6 +525,7 @@ _G.EHI =
         },
         Group =
         {
+            Base = "EHIGroupTracker",
             Warning = "EHIWarningGroupTracker",
             Progress = "EHIProgressGroupTracker"
         }
@@ -1460,8 +1463,17 @@ function EHI:AddOnCustodyCallback(f)
 end
 
 ---@param custody_state boolean
-function EHI:RunOnCustodyCallback(custody_state)
+function EHI:RunOnCustodyCallbacks(custody_state)
     self:CallCallback("Custody", custody_state)
+end
+
+---@param f function
+function EHI:AddOnSpawnedCallback(f)
+    self:AddCallback("Spawned", f)
+end
+
+function EHI:RunOnSpawnedCallbacks()
+    self:CallCallbackOnce("Spawned")
 end
 
 ---@param id string
@@ -1620,7 +1632,7 @@ end
 ---@return number
 function EHI:GetInstanceElementID(id, start_index, continent_index)
     if continent_index then
-        return continent_index + math.mod(id, 100000) + 30000 + start_index
+        return continent_index + math.mod(continent_index + id, 100000) + 30000 + start_index
     end
     return id + 30000 + start_index
 end
@@ -1727,6 +1739,22 @@ function EHI:GetFreeCustomSyncedSFID()
     return id
 end
 
+---@param trigger ElementTrigger
+function EHI:CleanupCustomSFTrigger(trigger)
+    if trigger.special_function and trigger.special_function > self.SpecialFunctions.CustomSF then
+        self:UnregisterCustomSF(trigger.special_function)
+    end
+end
+
+---@param triggers table<number, ElementTrigger>
+function EHI:CleanupCustomSFTriggers(triggers)
+    for _, trigger in pairs(triggers) do
+        if trigger.special_function and trigger.special_function > self.SpecialFunctions.CustomSF then
+            self:UnregisterCustomSF(trigger.special_function)
+        end
+    end
+end
+
 ---@param chance number
 ---@param check_if_does_not_exist boolean?
 ---@return ElementTrigger
@@ -1747,9 +1775,7 @@ end
 ---@return ElementTrigger?
 function EHI:AddAssaultDelay(params)
     if not self:GetOption("show_assault_delay_tracker") then
-        if params.special_function and params.special_function > self.SpecialFunctions.CustomSF then
-            self:UnregisterCustomSF(params.special_function)
-        end
+        self:CleanupCustomSFTrigger(params)
         return nil
     end
     local id = "AssaultDelay"
@@ -1993,8 +2019,8 @@ end
 ---@param params LootCounterTable
 ---@param manager EHIManager
 function EHI:ShowLootCounterOffset(params, manager)
-    params.offset = nil
-    params.n_offset = managers.loot:GetSecuredBagsAmount()
+    params.skip_offset = true
+    params.offset = managers.loot:GetSecuredBagsAmount()
     params.hook_triggers = params.triggers ~= nil
     self:ShowLootCounterNoChecks(params)
 end
@@ -2018,10 +2044,10 @@ end
 ---@param params LootCounterTable?
 function EHI:ShowLootCounterNoChecks(params)
     params = params or {}
-    local n_offset = params.n_offset or 0
-    if params.offset then
+    local offset = params.offset or 0
+    if not params.skip_offset and managers.job:IsPlayingMultidayHeist() then
         if self:IsHost() or params.client_from_start then
-            n_offset = managers.loot:GetSecuredBagsAmount()
+            offset = managers.loot:GetSecuredBagsAmount()
         else
             managers.ehi_manager:AddFullSyncFunction(callback(self, self, "ShowLootCounterOffset", params))
             return
@@ -2029,7 +2055,8 @@ function EHI:ShowLootCounterNoChecks(params)
     end
     local show_loot_max_xp_bags = self:GetOption("show_loot_max_xp_bags") --[[@as boolean]]
     if params.sequence_triggers or params.is_synced then
-        managers.ehi_loot:SyncShowLootCounter(params.max, params.max_random, n_offset)
+        managers.ehi_loot:SyncShowLootCounter(params.max, params.max_random, offset)
+        managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers or {})
     elseif params.max_bags_for_level and self:IsXPTrackerEnabledAndVisible() then
         if params.max_bags_for_level.objective_triggers then
             local xp_trigger = { special_function = self:RegisterCustomSF(function(manager, trigger, element, enabled)
@@ -2049,7 +2076,7 @@ function EHI:ShowLootCounterNoChecks(params)
         if not show_loot_max_xp_bags then
             params.max_xp_bags = 0
         end
-        managers.ehi_loot:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, n_offset, params.unknown_random, params.no_max)
+        managers.ehi_loot:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, offset, params.unknown_random, params.no_max)
     end
     if params.load_sync then
         self:AddLoadSyncFunction(params.load_sync)
@@ -2061,14 +2088,11 @@ function EHI:ShowLootCounterNoChecks(params)
             managers.ehi_manager:HookElements(params.triggers)
         end
     end
-    if params.sequence_triggers then
-        managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers)
-    end
     if params.max_bags_for_level and params.max_bags_for_level.custom_counter then
         params.max_bags_for_level.custom_counter.achievement = "LootCounter"
-        self:AddAchievementToCounter(params.max_bags_for_level.custom_counter, true)
+        managers.ehi_loot:AddAchievementListener(params.max_bags_for_level.custom_counter, true)
     else
-        managers.ehi_loot:AddListener(params.no_sync_load, params.max_bags_for_level ~= nil)
+        managers.ehi_loot:AddListener(params.no_sync_load)
     end
 end
 
@@ -2095,6 +2119,8 @@ function EHI:ShowAchievementLootCounter(params)
     if self._cache.UnlockablesAreDisabled or self._cache.AchievementsDisabled or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false then
         if params.show_loot_counter then
             self:ShowLootCounter({ max = params.max, triggers = params.loot_counter_triggers, load_sync = params.loot_counter_load_sync })
+        elseif params.triggers then
+            self:CleanupCustomSFTriggers(params.triggers)
         end
         return
     end
@@ -2134,13 +2160,13 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
             managers.ehi_manager:HookElements(params.triggers)
         end
         if params.add_to_counter then
-            self:AddAchievementToCounter(params)
+            managers.ehi_loot:AddAchievementListener(params)
         end
         return
     elseif params.no_counting then
         return
     end
-    self:AddAchievementToCounter(params)
+    managers.ehi_loot:AddAchievementListener(params)
 end
 
 ---@param params AchievementBagValueCounterTable
@@ -2149,7 +2175,7 @@ function EHI:ShowAchievementBagValueCounter(params)
         return
     end
     managers.ehi_achievement:AddAchievementBagValueCounter(params.achievement, params.value, params.show_finish_after_reaching_target)
-    self:AddAchievementToCounter(params)
+    managers.ehi_loot:AddAchievementListener(params)
 end
 
 ---@param params AchievementLootCounterTable|AchievementBagValueCounterTable
@@ -2162,8 +2188,7 @@ function EHI:AddAchievementToCounter(params, endless_counter)
         f = params.counter.f
     end
     if endless_counter then
-        ---@param loot LootManager
-        self:AddEventListener(params.achievement, self.CallbackMessage.LootSecured, function(loot)
+        managers.ehi_loot:AddEventListener(params.achievement, function(loot)
             if f then
                 loot:EHIReportProgress(check_type, loot_type, f)
             else
@@ -2171,14 +2196,13 @@ function EHI:AddAchievementToCounter(params, endless_counter)
             end
         end)
     else
-        ---@param loot LootManager
-        self:AddEventListener(params.achievement, self.CallbackMessage.LootSecured, function(loot)
+        managers.ehi_loot:AddEventListener(params.achievement, function(loot)
             if f then
                 loot:EHIReportProgress(check_type, loot_type, f)
             else
                 local progress = loot:EHIReportProgress(check_type, loot_type)
                 managers.ehi_tracker:SetTrackerProgress(params.achievement, progress)
-                if progress >= params.max then
+                if progress >= (params.max or params.value) then
                     self:RemoveEventListener(params.achievement)
                 end
             end
@@ -2248,8 +2272,9 @@ function EHI:ShowBeardLibAchievementLootCounter_Mallbank(achievement, max, diffi
         show_finish_after_reaching_target = true,
         class = self.Trackers.Achievement.Progress
     })
-    self:AddAchievementToCounter({
-        achievement = achievement
+    managers.ehi_loot:AddAchievementListener({
+        achievement = achievement,
+        max = max
     })
 end
 

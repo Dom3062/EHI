@@ -108,7 +108,6 @@ if EHI:IsLootCounterVisible() then
         EHI:ShowLootCounterNoChecks({
             max = 9 + MoneyBagsInVault + MoneyAroundHostage,
             max_xp_bags = 10,
-            offset = true,
             triggers = loot_triggers,
             hook_triggers = true,
             client_from_start = true

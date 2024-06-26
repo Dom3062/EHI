@@ -1,3 +1,11 @@
+r248 (26. 06. 2024):
+Bank Heist: Fixed a crash after securing bags or picking up small loot
+Experience Tracker: Fixed an issue when you lost XP after picking up Gage package (visual; client only)
+Civilian Counter: Fixed an issue when civilian is deleted by mission script and counter is showing negative value (client only)
+Loot Counter: Fixed issues with counter getting stuck
+Loot Counter: Improved mod compatibility that load heists that need an offset to stay accurate
+Trade Delay Tracker: Fixed an issue where text can overflow in the panel
+
 r247 (15. 06. 2024):
 Fixed crashes related to achievement progress counters
 

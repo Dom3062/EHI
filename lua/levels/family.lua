@@ -61,8 +61,7 @@ local sidejob =
                     icons = { EHI.Icons.Trophy },
                     class = TT.SideJob.Progress
                 })
-                ---@param loot LootManager
-                EHI:AddEventListener(trigger.id, EHI.CallbackMessage.LootSecured, function(loot)
+                self._loot:AddEventListener(trigger.id, function(loot)
                     local progress = loot:GetSecuredBagsTypeAmount(trophy.carry_id)
                     self._trackers:SetTrackerProgress(trigger.id, progress)
                     if progress >= trophy.total_amount then

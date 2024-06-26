@@ -31,14 +31,13 @@ local triggers = {
             icons = { Icon.Money },
             flash_times = 1,
             hint = "loot_counter",
-            class = EHI.Trackers.NeededValue
+            class = self.Trackers.NeededValue
         })
-        ---@param loot LootManager
-        EHI:AddEventListener("four_stores", EHI.CallbackMessage.LootSecured, function(loot)
+        self._loot:AddEventListener("four_stores", function(loot)
             local progress = loot:get_real_total_small_loot_value()
             self._trackers:SetTrackerProgress("ObjectiveSteal", progress)
             if progress >= 15000 then
-                EHI:RemoveEventListener("four_stores")
+                self._loot:RemoveEventListener("four_stores")
             end
         end)
     end), trigger_times = 1 }
@@ -94,12 +93,12 @@ if EHI:IsLootCounterVisible() then
     end
     other[101890] = { special_function = SF.CustomCodeDelayed, t = 4, f = function()
         if LootSafeIsVisible() then
-            EHI:ShowLootCounterNoChecks({ max = 1 })
+            EHI:ShowLootCounterNoChecks({ max = 1, client_from_start = true })
         end
     end}
     EHI:AddLoadSyncFunction(function(self)
         if LootSafeIsVisible() and managers.loot:GetSecuredBagsAmount() == 0 then
-            EHI:ShowLootCounterNoChecks({ max = 1 })
+            EHI:ShowLootCounterNoChecks({ max = 1, client_from_start = true })
         end
     end)
 end

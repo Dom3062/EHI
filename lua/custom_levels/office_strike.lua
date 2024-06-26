@@ -103,7 +103,7 @@ local other =
 if EHI:IsLootCounterVisible() then
     other[200106] = EHI:AddLootCounter2(function()
         local servers = EHI:IsMayhemOrAbove() and 2 or 1
-        EHI:ShowLootCounterNoChecks({ max = servers + 18 })
+        EHI:ShowLootCounterNoChecks({ max = servers + 18, client_from_start = true })
     end)
     for i = 200502, 200519, 1 do
         other[i] = { id = "LootCounter", special_function = SF.DecreaseProgressMax }
@@ -144,7 +144,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             local new_t = t - dt
             if new_t <= 0 then
                 if self:RemoveFromRespawn(element) then
-                    self._sniper_respawn_element = 0
                     self:RemoveTrackerFromUpdate()
                     return
                 elseif self._sniper_respawn_element == element then

@@ -25,10 +25,7 @@ EHI:ParseTriggers({
     other = other
 })
 
-EHI:ShowLootCounter({
-    max = 8,
-    offset = managers.job:current_job_id() ~= "constantine_butcher_nar"
-})
+EHI:ShowLootCounter({ max = 8 })
 
 local tbl =
 {

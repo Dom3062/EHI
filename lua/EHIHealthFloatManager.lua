@@ -27,7 +27,7 @@ function EHIHealthFloatManager:new(hud)
     EHI:HookWithID(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_destroy", function(base, ...)
         self._smokes[base._unit:key()] = nil
     end)
-    hud:AddEHIUpdator(self, "EHI_HealthFloat_Update")
+    hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
 end
 
 function EHIHealthFloatManager:onResolutionChanged()

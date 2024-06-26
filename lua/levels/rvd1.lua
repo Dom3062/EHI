@@ -63,7 +63,7 @@ local other =
 }
 if EHI:IsLootCounterVisible() then
     other[100107] = { special_function = EHI:RegisterCustomSF(function(...)
-        EHI:ShowLootCounterNoChecks({ max = 6 })
+        EHI:ShowLootCounterNoChecks({ max = 6, client_from_start = true })
     end)}
     other[100037] = { special_function = EHI:RegisterCustomSF(function(self, ...)
         self._loot:SecuredMissionLoot() -- Secured diamonds at Mr. Blonde or in a Van

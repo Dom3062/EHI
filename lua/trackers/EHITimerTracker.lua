@@ -3,7 +3,7 @@ local Color = Color
 
 ---@alias EHITimerGroupTracker.Timer { label: PanelText, time: number, jammed: boolean, powered: boolean, autorepair: boolean, animate_warning: boolean?, animate_completion: boolean?, anim_started: boolean, pos: number }
 
----@class EHITimerTracker : EHIWarningTracker, EHIWarningGroupTracker
+---@class EHITimerTracker : EHIWarningTracker, EHIGroupTracker
 ---@field super EHIWarningTracker
 ---@field _icon2 PanelBitmap?
 ---@field _icon3 PanelBitmap?
@@ -18,7 +18,7 @@ EHITimerTracker._autorepair_color = EHI:GetTWColor("drill_autorepair")
 EHITimerTracker._paused_color = EHIPausableTracker._paused_color
 EHITimerTracker.StartTimer = EHITimedChanceTracker.StartTimer
 EHITimerTracker.StopTimer = EHITimedChanceTracker.StopTimer
-EHITimerTracker.AnimateMovement = EHIWarningGroupTracker.AnimateMovement
+EHITimerTracker.AnimateMovement = EHIGroupTracker.AnimateMovement
 ---@param params EHITracker.params
 function EHITimerTracker:pre_init(params)
     if params.icons[1].icon then

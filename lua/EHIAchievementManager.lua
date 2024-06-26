@@ -204,6 +204,7 @@ function EHIAchievementManager:AddAchievementLootCounter(id, max, loot_counter_o
         icons = self:GetAchievementIcon(id),
         loot_counter_on_fail = loot_counter_on_fail,
         start_silent = start_silent,
+        loot_parent = managers.ehi_loot,
         class = EHI.Trackers.Achievement.LootCounter
     })
 end

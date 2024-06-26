@@ -892,6 +892,7 @@
     "ehi_experience_random_objectives" : "随机目标($count;):",
     "ehi_experience_random_objectives_no_count" : "随机目标:",
     "ehi_experience_or" : "---或---",
+    "ehi_experience_modifier_projob" : "专家级",
     "ehi_experience_heli_escape" : "直升机撤离",
     "ehi_experience_loud_escape" : "强袭撤离",
     "ehi_experience_stealth_escape" : "潜入撤离",

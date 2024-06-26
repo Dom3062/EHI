@@ -13,6 +13,7 @@ function EHILootTracker:pre_init(params)
     self._stay_on_screen = self._max_random > 0
     self._max_xp_bags = params.max_xp_bags or 0
     self._unknown_random = params.unknown_random
+    self._loot_parent = params.loot_parent --[[@as EHILootManager]]
 end
 
 ---@param params EHITracker.params
@@ -218,7 +219,7 @@ function EHILootTracker:SetProgressMax(max)
 end
 
 function EHILootTracker:VerifyStatus()
-    self._stay_on_screen = self._max_random > 0
+    self._stay_on_screen = self._max_random > 0 or self._unknown_random
     self._show_finish_after_reaching_target = self._stay_on_screen
     if self._progress == self._max then
         self:SetCompleted()
@@ -318,6 +319,10 @@ function EHILootTracker:SecuredMissionLoot()
     self:SetProgress(progress)
 end
 
+function EHILootTracker:delete()
+    self._loot_parent:RemoveEventListener(self._id)
+    EHILootTracker.super.delete(self)
+end
 EHILootTracker.FormatProgress = EHILootTracker.Format
 
 ---@class EHILootCountTracker : EHICountTracker

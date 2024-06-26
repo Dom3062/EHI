@@ -819,10 +819,10 @@ tweak_data.ehi =
         end,
         ShowNumberOfLootbagsOnTheGround = function()
             local max = managers.ehi_manager:CountLootbagsOnTheGround()
-            if max == 0 then
+            if max <= 0 then
                 return
             end
-            EHI:ShowLootCounterNoCheck({ max = max })
+            EHI:ShowLootCounterNoCheck({ max = max, client_from_start = true })
         end,
         ---Checks if graphic group `grp_wpn` is set (mission script calls both `state_visible` and `state_hide` during level init)
         ---@param weapons number[]

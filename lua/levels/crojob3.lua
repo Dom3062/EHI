@@ -95,9 +95,9 @@ local function HeliWaterRefillWPAdd(self, trigger)
     end
     self._trackers:AddTrackerIfDoesNotExist(trigger, trigger.pos)
 end
+---@param self EHIManager
 ---@param id string
-local function HeliWaterRefillWPRestore(id)
-    local self = managers.ehi_manager
+local function HeliWaterRefillWPRestore(self, id)
     if self._cache.HeliWaterFillPos then
         self._waypoints:AddWaypoint(id, {
             time = 120,
@@ -116,7 +116,7 @@ for _, index in ipairs({ 100, 150, 250, 300 }) do
     triggers[EHI:GetInstanceElementID(100032, index)] = { time = 240, id = "HeliWaterFill", icons = HeliWaterFill, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.crojob3_Water, waypoint_f = HeliWaterRefillWPAdd, index = index }
     triggers[EHI:GetInstanceElementID(100030, index)] = { id = "HeliWaterFill", special_function = SF.PauseTracker }
     triggers[EHI:GetInstanceElementID(100037, index)] = { special_function = SF.Trigger, data = { 1, 2 } }
-    triggers[EHI:GetInstanceElementID(100006, index)] = { special_function = SF.CustomCode, f = HeliWaterRefillWPRestore, arg = "HeliWaterFill" }
+    triggers[EHI:GetInstanceElementID(100006, index)] = { special_function = SF.CustomCode2, f = HeliWaterRefillWPRestore, arg = "HeliWaterFill" }
 end
 
 ---@type ParseAchievementTable
@@ -166,13 +166,14 @@ if EHI:IsLootCounterVisible() then
         other[EHI:GetInstanceElementID(100201, index)] = Trigger
         other[EHI:GetInstanceElementID(100202, index)] = Trigger
     end
-    other[101041] = { special_function = EHI:RegisterCustomSF(function(...)
+    other[101041] = { special_function = SF.CustomCode, f = function()
         EHI:ShowLootCounterNoChecks({
             -- 1 flipped wagon crate; guaranteed to have gold or 2x money (15% chance)
             -- If second money bundle spawns, the maximum is increased in the Trigger above
-            max = 5 -- 4 Bomb parts + 1
+            max = 5, -- 4 Bomb parts + 1
+            client_from_start = true
         })
-    end)}
+    end }
     local RandomLootSpawnedCheck = EHI:RegisterCustomSF(function(self, trigger, ...)
         self._loot:RandomLootSpawnedCheck(trigger.crate, true)
     end)
@@ -181,10 +182,11 @@ if EHI:IsLootCounterVisible() then
     local IncreaseMaxRandomLoot = EHI:RegisterCustomSF(function(self, trigger, ...)
         local index = trigger.index
         local crate = EHI:GetInstanceUnitID(100000, index)
-        local LootTrigger = {}
         local loot_trigger = { special_function = RandomLootSpawnedCheck, crate = crate }
-        LootTrigger[EHI:GetInstanceElementID(100009, index)] = loot_trigger
-        LootTrigger[EHI:GetInstanceElementID(100010, index)] = loot_trigger
+        local LootTrigger = {
+            [EHI:GetInstanceElementID(100009, index)] = loot_trigger,
+            [EHI:GetInstanceElementID(100010, index)] = loot_trigger
+        }
         managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function(...)
             managers.ehi_loot:AddDelayedLootDeclinedCheck(crate)
         end)

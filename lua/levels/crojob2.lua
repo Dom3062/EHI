@@ -73,7 +73,8 @@ if EHI:IsLootCounterVisible() then
         EHI:ShowLootCounterNoChecks({
             max = 6 + tweak_data.ehi.functions.GetNumberOfVisibleWeapons(Weapons), -- 4 Bomb parts; 2 Meth and Weapons
             -- Assume no collision spawned, more loot
-            max_random = MayhemOrAbove and 14 or 18
+            max_random = MayhemOrAbove and 14 or 18,
+            client_from_start = true
         })
         if managers.game_play_central:GetMissionDisabledUnit(107388) then -- Collision (8th position)
             -- Collision is visible, less loot spawned

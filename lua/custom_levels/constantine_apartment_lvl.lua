@@ -25,7 +25,4 @@ local tbl =
     [EHI:GetInstanceUnitID(100037, 6750)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100017, 6750) }
 }
 EHI:UpdateUnits(tbl)
-EHI:ShowLootCounter({
-    max = 5,
-    offset = managers.job:current_job_id() ~= "constantine_apartment_nar"
-})
+EHI:ShowLootCounter({ max = 5 })

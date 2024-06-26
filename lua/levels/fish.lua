@@ -55,9 +55,7 @@ local achievements = {
 EHI:ParseTriggers({
     achievement = achievements
 })
-EHI:ShowLootCounter({
-    max = 8 + 7 -- Mission bags + Artifacts
-})
+EHI:ShowLootCounter({ max = 8 + 7 }) -- Mission bags + Artifacts
 EHI:AddXPBreakdown({
     objective =
     {

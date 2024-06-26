@@ -46,7 +46,7 @@
 ---@field trigger_times number? How many times the trigger should run. If the number is provided and once it hits `0`, the trigger is unhooked from the Element and removed from memory
 ---@field client ElementClientTriggerData? Table for clients only to prepopulate fields for tracker syncing. Only applicable to `SF.GetElementTimerAccurate` and `SF.UnpauseTrackerIfExistsAccurate`
 ---@field pos number? Tracker position
----@field f string|fun(arg: any?)? Arguments are unsupported in `SF.CustomCodeDelayed`
+---@field f string|fun(arg: any?)|fun(self: EHIManager, arg: any?)? Arguments are unsupported in `SF.CustomCodeDelayed`; `EHIManager` is for `SF.CustomCode2`
 ---@field flash_times number?
 ---@field flash_bg boolean?
 ---@field hint string?
@@ -128,9 +128,9 @@
 ---@field unknown_random boolean Defines if heist will spawn additional random loot during gameplay
 ---@field load_sync fun(self: EHIManager)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true and you have to sync the progress manually via `EHILootManager:SyncSecuredLoot()`
 ---@field no_sync_load boolean Prevents Loot Counter from sync after joining
----@field offset boolean If offset is required, used in multi-day heists if loot is brought to next days
+---@field skip_offset boolean Skip offset calculation if mission resets all secured bags
 ---@field client_from_start boolean If client is playing from mission briefing; does not do anything on host
----@field n_offset integer Provided via `EHI:ShowLootCounterOffset()`; DO NOT PROVIDE IT
+---@field offset integer Used in multi-day heists if loot is brought to next days; Provided via `EHI:ShowLootCounterOffset()`; DO NOT PROVIDE IT
 ---@field triggers table If loot is manipulated via Mission Script, also see field `hook_triggers`
 ---@field hook_triggers boolean If Loot Counter is created during spawn or gameplay, triggers must be hooked in order to work
 ---@field sequence_triggers table<number, LootCounterTable.SequenceTriggersTable> Used for random loot spawning via sequences (forces syncing via BLT and GameSetup)
@@ -357,6 +357,7 @@
 ---@field stealth boolean
 ---@field loud boolean
 ---@field timer number `stealth` only
+---@field xp_bonus number `stealth` only
 ---@field c4_used boolean `loud` only
 
 ---@class XPBreakdown.escape

@@ -68,6 +68,9 @@ do
     end
 end
 
+---@param unit Unit
+---@param key string
+---@param amount number
 function EHIEquipmentTracker:UpdateAmount(unit, key, amount)
     if not key then
         EHI:DebugEquipment(self._id, unit, key, amount)

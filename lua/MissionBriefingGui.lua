@@ -1434,7 +1434,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
             font = tweak_data.menu.pd2_large_font,
             font_size = tweak_data.menu.pd2_small_font_size,
             color = tweak_data.screen_colors.pro_color,
-            text = string.format("PRO +%d%s", (xp.projob_multiplier - 1) * 100, percent_format),
+            text = string.format("%s +%d%s", self._loc:text("ehi_experience_modifier_projob"), EHI:RoundChanceNumber(xp.projob_multiplier - 1), percent_format),
             layer = 10
         })
         managers.hud:make_fine_text(pro)
@@ -2099,7 +2099,7 @@ function LobbyCodeMenuComponent:init(...)
     end
 end
 
-EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+EHI:AddOnSpawnedCallback(function()
     if _panels then
         for _, panel in ipairs(_panels) do
             panel:destroy()

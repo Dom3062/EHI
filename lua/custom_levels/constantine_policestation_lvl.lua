@@ -9,10 +9,7 @@ EHI:ParseTriggers({
     other = other
 })
 
-EHI:ShowLootCounter({
-    max = 10,
-    offset = managers.job:current_job_id() ~= "constantine_policestation_nar"
-})
+EHI:ShowLootCounter({ max = 10 })
 local function AdjustServerHackInstance(unit_id, unit_data, unit)
     EHI:HookWithID(unit:timer_gui(), "set_jammed", "EHI_100037_" .. tostring(unit_data.instance_id) .. "_unjammed", function(self, jammed, ...)
         if jammed == false then

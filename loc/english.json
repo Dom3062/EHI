@@ -967,6 +967,7 @@
     "ehi_experience_random_objectives" : "$count Random objective$suffix;:",
     "ehi_experience_random_objectives_no_count" : "Random objectives:",
     "ehi_experience_or" : "---OR---",
+    "ehi_experience_modifier_projob" : "PRO",
     "ehi_experience_heli_escape" : "Heli Escape",
     "ehi_experience_loud_escape" : "Loud Escape",
     "ehi_experience_stealth_escape" : "Stealth Escape",

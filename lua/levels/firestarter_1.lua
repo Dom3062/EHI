@@ -41,13 +41,14 @@ local function LordOfWarAchievement()
         triggers =
         {
             [103427] = { special_function = SF.DecreaseProgressMax }, -- Weapons destroyed
-            -- Why make 1 ElementCarry (remove) elements when you can make 4...
+            -- Why make 1 ElementCarry (remove) element when you can make 4...
             [104470] = { special_function = SF.DecreaseProgressMax }, -- Money destroyed
             [104471] = { special_function = SF.DecreaseProgressMax }, -- Money destroyed
             [104472] = { special_function = SF.DecreaseProgressMax }, -- Money destroyed
             [104473] = { special_function = SF.DecreaseProgressMax } -- Money destroyed
         },
-        hook_triggers = true
+        hook_triggers = true,
+        client_from_start = true
     })
 end
 

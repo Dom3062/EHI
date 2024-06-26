@@ -141,9 +141,9 @@ if EHI:IsClient() then
     -- Not worth adding the 3s delay here
 end
 if EHI:GetOption("show_mission_trackers") then
-    local function SetIngredient(arg)
-        managers.ehi_tracker:CallFunction("ChemSet", "SetIngredient", arg[1], arg[2])
-    end
+    local SetIngredient = EHI:RegisterCustomSF(function(self, trigger, ...)
+        self._trackers:CallFunction("ChemSet", "SetIngredient", trigger.id, trigger.pos or 1)
+    end)
     local ChemSet = EHI:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:TrackerExists("ChemSet") then
             if trigger.id == "ChemSetCooking" then
@@ -163,18 +163,18 @@ if EHI:GetOption("show_mission_trackers") then
     triggers[101217].special_function = ChemSet
     triggers[102595].special_function = ChemSet
     triggers[EHI:GetInstanceElementID(100046, 15000)] = { id = "ChemSet", class = "EHIChemSetTracker" }
-    triggers[EHI:GetInstanceElementID(100048, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "A", 1 } }
-    triggers[EHI:GetInstanceElementID(100049, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "B", 1 } }
-    triggers[EHI:GetInstanceElementID(100050, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "C", 1 } }
-    triggers[EHI:GetInstanceElementID(100051, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "D", 1 } }
-    triggers[EHI:GetInstanceElementID(100066, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "A", 2 } }
-    triggers[EHI:GetInstanceElementID(100068, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "B", 2 } }
-    triggers[EHI:GetInstanceElementID(100070, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "C", 2 } }
-    triggers[EHI:GetInstanceElementID(100072, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "D", 2 } }
-    triggers[EHI:GetInstanceElementID(100074, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "A", 3 } }
-    triggers[EHI:GetInstanceElementID(100076, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "B", 3 } }
-    triggers[EHI:GetInstanceElementID(100078, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "C", 3 } }
-    triggers[EHI:GetInstanceElementID(100080, 15000)] = { special_function = SF.CustomCode, f = SetIngredient, arg = { "D", 3 } }
+    triggers[EHI:GetInstanceElementID(100048, 15000)] = { special_function = SetIngredient, id = "A" }
+    triggers[EHI:GetInstanceElementID(100049, 15000)] = { special_function = SetIngredient, id = "B" }
+    triggers[EHI:GetInstanceElementID(100050, 15000)] = { special_function = SetIngredient, id = "C" }
+    triggers[EHI:GetInstanceElementID(100051, 15000)] = { special_function = SetIngredient, id = "D" }
+    triggers[EHI:GetInstanceElementID(100066, 15000)] = { special_function = SetIngredient, id = "A", pos = 2 }
+    triggers[EHI:GetInstanceElementID(100068, 15000)] = { special_function = SetIngredient, id = "B", pos = 2 }
+    triggers[EHI:GetInstanceElementID(100070, 15000)] = { special_function = SetIngredient, id = "C", pos = 2 }
+    triggers[EHI:GetInstanceElementID(100072, 15000)] = { special_function = SetIngredient, id = "D", pos = 2 }
+    triggers[EHI:GetInstanceElementID(100074, 15000)] = { special_function = SetIngredient, id = "A", pos = 3 }
+    triggers[EHI:GetInstanceElementID(100076, 15000)] = { special_function = SetIngredient, id = "B", pos = 3 }
+    triggers[EHI:GetInstanceElementID(100078, 15000)] = { special_function = SetIngredient, id = "C", pos = 3 }
+    triggers[EHI:GetInstanceElementID(100080, 15000)] = { special_function = SetIngredient, id = "D", pos = 3 }
     triggers[100715] = { id = "ChemSet", special_function = SF.RemoveTracker }
 end
 

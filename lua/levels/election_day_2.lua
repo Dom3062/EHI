@@ -9,7 +9,8 @@ if EHI:IsLootCounterVisible() then
     other[100107] = { special_function = SF.CustomCode, trigger_times = 1, f = function()
         EHI:ShowLootCounterNoChecks({
             max = 6,
-            max_random = 7
+            max_random = 7,
+            client_from_start = true
         })
     end}
     other[100109] = { special_function = EHI:RegisterCustomSF(function(self, ...)

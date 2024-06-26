@@ -2,17 +2,17 @@
 ---@field IsLoading fun(self: self): boolean VR only (EHIDeployableManagerVR)
 ---@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) VR only (EHIDeployableManagerVR)
 EHIDeployableManager = {}
+EHIDeployableManager._equipment_map =
+{
+    doctor = "doctor_bag",
+    ammo = "ammo_bag",
+    fak = "first_aid_kit",
+    grenade = "grenade_crate",
+    bodybag = "bodybags_bag"
+}
 ---@param ehi_tracker EHITrackerManager
 function EHIDeployableManager:new(ehi_tracker)
     self._trackers = ehi_tracker
-    self._equipment_map =
-    {
-        doctor = "doctor_bag",
-        ammo = "ammo_bag",
-        fak = "first_aid_kit",
-        grenade = "grenade_crate",
-        bodybag = "bodybags_bag"
-    }
     self._deployables = {}
     return self
 end
@@ -21,7 +21,7 @@ function EHIDeployableManager:SwitchToLoudMode()
     self:AddEquipmentToIgnore(self._equipment_map.bodybag)
 end
 
-function EHIDeployableManager:DisableGrenades()
+function EHIDeployableManager:Spawned()
     if EHI:GetOption("grenadecases_block_on_abilities_or_no_throwable") and not managers.blackmarket:equipped_grenade_allows_pickups() then
         self:AddEquipmentToIgnore(self._equipment_map.grenade)
         self._trackers:RemoveTracker("GrenadeCases")

@@ -38,7 +38,7 @@ function SentryGunMovement:Preload()
                 hide_on_delete = true,
                 unit = true,
                 hint = "sentry_reload",
-                class = "EHIWarningGroupTracker"
+                class = EHI.Trackers.Group.Warning
             })
         end
         if self._tweak.AUTO_REPAIR and managers.ehi_tracker:CallFunction2("EnemySentryGunRepair", "AddUnit") then
@@ -48,7 +48,7 @@ function SentryGunMovement:Preload()
                 hide_on_delete = true,
                 unit = true,
                 hint = "sentry_repair",
-                class = "EHIWarningGroupTracker"
+                class = EHI.Trackers.Group.Warning
             })
         end
     end

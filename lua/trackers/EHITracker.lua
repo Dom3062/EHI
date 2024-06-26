@@ -998,6 +998,7 @@ function EHITracker:SwitchToLoudMode()
     if self._remove_on_alarm then
         self:ForceDelete()
     elseif self._update_on_alarm then
+        self._update_on_alarm = nil
         self:OnAlarm()
     end
 end

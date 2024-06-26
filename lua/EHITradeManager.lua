@@ -7,7 +7,7 @@ function EHITradeManager:new(ehi_tracker)
         ai = false,
         normal = false
     }
-    self._trade_delay = {}
+    self._trade_delay = {} --[[@as table<number, { respawn_t: number, in_custody: boolean?, civilians_killed: number }>]]
     return self
 end
 

@@ -44,5 +44,5 @@ end
 
 function ExperienceManager:reset(...)
     original.reset(self, ...)
-	managers.ehi_experience:ExperienceReload(self)
+    managers.ehi_experience:ExperienceReload(self)
 end

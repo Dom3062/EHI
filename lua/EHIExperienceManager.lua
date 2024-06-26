@@ -70,7 +70,7 @@ function EHIExperienceManager:ExperienceInit(xp)
     self._base_xp = 0
     self._total_xp = 0
     self._ehi_xp = self:CreateXPTable()
-    EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "RecalculateSkillXPMultiplier"))
+    EHI:AddOnSpawnedCallback(callback(self, self, "RecalculateSkillXPMultiplier"))
     EHI:HookWithID(HUDManager, "mark_cheater", "EHI_ExperienceManager_mark_cheater", function()
         self:RecalculateSkillXPMultiplier()
     end)
@@ -81,6 +81,9 @@ function EHIExperienceManager:ExperienceInit(xp)
             multiplier = managers.gage_assignment._tweak_data:get_experience_multiplier(ratio)
         end
         self:SetGagePackageBonus(multiplier)
+    end)
+    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function()
+        self._xp_disabled = true -- Block any XP updates if the mission ended
     end)
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "LoadData"))
     if not EHI:GetOption("show_xp_in_mission_briefing_only") then
@@ -460,7 +463,7 @@ end
 
 ---@param id number
 function EHIExperienceManager:RecalculateXP(id)
-    if self._base_xp == 0 then
+    if self._base_xp == 0 or self._xp_disabled then
         return
     elseif self._config.xp_format == 3 then
         if self._config.xp_panel == 2 then

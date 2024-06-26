@@ -19,7 +19,7 @@ local original =
 
 function LootManager:sync_secure_loot(...)
     original.sync_secure_loot(self, ...)
-    EHI:CallEvent(EHI.CallbackMessage.LootSecured, self)
+    managers.ehi_loot:CallEvent(EHI.CallbackMessage.LootSecured, self)
 end
 
 function LootManager:sync_load(...)
@@ -29,10 +29,7 @@ end
 
 ---@return integer
 function LootManager:GetSecuredBagsAmount()
-    local mandatory = self:get_secured_mandatory_bags_amount()
-    local bonus = self:get_secured_bonus_bags_amount()
-    local total = mandatory + bonus
-    return total
+    return self:get_secured_mandatory_bags_amount() + self:get_secured_bonus_bags_amount()
 end
 
 ---@param t string|string[]?

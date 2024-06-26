@@ -141,6 +141,7 @@ EHIAchievementProgressTracker = ehi_achievement_class(EHIProgressTracker)
 function EHIAchievementProgressTracker:init(panel, params, ...)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
+    self._loot_parent = params.loot_parent --[[@as EHILootManager?]]
     self:PrepareHint(params)
     EHIAchievementProgressTracker.super.init(self, panel, params, ...)
     self:ShowStartedPopup(params.delay_popup)
@@ -159,6 +160,13 @@ function EHIAchievementProgressTracker:SetFailed()
         self._achieved_popup_showed = nil
     end
     self:ShowFailedPopup()
+end
+
+function EHIAchievementProgressTracker:delete()
+    if self._loot_parent then
+        self._loot_parent:RemoveEventListener(self._id)
+    end
+    EHIAchievementProgressTracker.super.delete(self)
 end
 
 function EHIAchievementProgressTracker:save(data)

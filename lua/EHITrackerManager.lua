@@ -3,7 +3,6 @@
 local EHI = EHI
 ---@class EHITrackerManager : EHIBaseManager
 ---@field new fun(self: self): self
----@field super EHIBaseManager
 ---@field IsLoading fun(self: self): boolean `VR only (EHITrackerManagerVR)`
 ---@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) `VR only (EHITrackerManagerVR)`
 ---@field SetPanel fun(self: self, panel: Panel) `VR only (EHITrackerManagerVR)`
@@ -827,6 +826,7 @@ function EHITrackerManager:DecreaseTrackerCount(id, count)
     end
 end
 
+---Synces data to trackers from GameSetup:load()
 ---@param id string
 function EHITrackerManager:SetTrackerSyncData(id, ...)
     self:CallFunction(id, "SyncData", ...)

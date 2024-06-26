@@ -1,6 +1,7 @@
 local EHI = EHI
 
 ---@class EHILootManager : EHIBaseManager
+---@field super EHIBaseManager
 ---@field new fun(self: self, ehi_tracker: EHITrackerManager): self
 EHILootManager = class(EHIBaseManager)
 EHILootManager._sync_lm_add_loot_counter = "EHI_LM_AddLootCounter"
@@ -10,7 +11,7 @@ EHILootManager._sync_lm_update_loot_counter = "EHI_LM_SyncUpdateLootCounter"
 function EHILootManager:init(ehi_tracker)
     self._trackers = ehi_tracker
     self._delay_popups = true
-    self._max = 0
+    self:CreateEventListener()
 end
 
 function EHILootManager:init_finalize()
@@ -54,23 +55,23 @@ function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, un
         self._trackers:AddTracker({
             id = "LootCounter",
             xp_params = max_bags_for_level,
+            loot_parent = self,
             class = "EHILootMaxTracker"
         })
     else
         if no_max then
             unknown_random = false
         end
-        max = max or 0
         self._trackers:AddTracker({
             id = "LootCounter",
-            max = max,
+            max = max or 0,
             max_random = max_random or 0,
             max_xp_bags = max_xp_bags or 0,
             offset = offset or 0,
             unknown_random = unknown_random,
+            loot_parent = self,
             class = no_max and "EHILootCountTracker" or "EHILootTracker"
         })
-        self._max = max
     end
 end
 
@@ -91,25 +92,13 @@ function EHILootManager:SyncShowLootCounter(max, max_random, offset)
 end
 
 ---@param no_sync_load boolean?
----@param endless_counter boolean?
-function EHILootManager:AddListener(no_sync_load, endless_counter)
-    if not EHI:HasEventListener("LootCounter") then
+function EHILootManager:AddListener(no_sync_load)
+    if not self:HasEventListener("LootCounter") then
         local BagsOnly = EHI.LootCounter.CheckType.BagsOnly
-        if endless_counter then
-            ---@param loot LootManager
-            EHI:AddEventListener("LootCounter", EHI.CallbackMessage.LootSecured, function(loot)
-                self._trackers:SetTrackerProgress("LootCounter", loot:EHIReportProgress(BagsOnly))
-            end)
-        else
-            ---@param loot LootManager
-            EHI:AddEventListener("LootCounter", EHI.CallbackMessage.LootSecured, function(loot)
-                local progress = loot:EHIReportProgress(BagsOnly)
-                self._trackers:SetTrackerProgress("LootCounter", progress)
-                if progress >= self._max then
-                    EHI:RemoveEventListener("LootCounter")
-                end
-            end)
-        end
+        ---@param loot LootManager
+        self:AddEventListener("LootCounter", function(loot)
+            self._trackers:SetTrackerProgress("LootCounter", loot:EHIReportProgress(BagsOnly))
+        end)
         -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
         if not no_sync_load then
@@ -121,9 +110,56 @@ function EHILootManager:AddListener(no_sync_load, endless_counter)
     end
 end
 
+---@param params AchievementLootCounterTable|AchievementBagValueCounterTable
+---@param endless_counter boolean?
+function EHILootManager:AddAchievementListener(params, endless_counter)
+    local check_type, loot_type, f = EHI.LootCounter.CheckType.BagsOnly, nil, nil
+    if params.counter then
+        check_type = params.counter.check_type or EHI.LootCounter.CheckType.BagsOnly
+        loot_type = params.counter.loot_type
+        f = params.counter.f
+    end
+    if endless_counter then
+        self:AddEventListener(params.achievement, function(loot)
+            if f then
+                loot:EHIReportProgress(check_type, loot_type, f)
+            else
+                self._trackers:SetTrackerProgress(params.achievement, loot:EHIReportProgress(check_type, loot_type))
+            end
+        end)
+    else
+        self:AddEventListener(params.achievement, function(loot)
+            if f then
+                loot:EHIReportProgress(check_type, loot_type, f)
+            else
+                local progress = loot:EHIReportProgress(check_type, loot_type)
+                self._trackers:SetTrackerProgress(params.achievement, progress)
+                if progress >= (params.max or params.value) then
+                    self:RemoveEventListener(params.achievement)
+                end
+            end
+        end)
+    end
+    if not (params.load_sync or params.no_sync) then
+        ---@param loot LootManager
+        EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, function(loot)
+            if f then
+                loot:EHIReportProgress(check_type, loot_type, f)
+            else
+                self._trackers:SetTrackerSyncData(params.achievement, loot:EHIReportProgress(check_type, loot_type))
+            end
+        end)
+    end
+end
+
+---@param id string
+---@param f fun(loot: LootManager)
+function EHILootManager:AddEventListener(id, f)
+    EHILootManager.super.AddEventListener(self, id, EHI.CallbackMessage.LootSecured, f)
+end
+
 function EHILootManager:SecuredMissionLoot()
     self._trackers:CallFunction("LootCounter", "SecuredMissionLoot")
-    self._max = self._max - 1
 end
 
 ---@param tracker_id string? Defaults to `LootCounter` if not provided
@@ -140,13 +176,11 @@ end
 
 ---@param max number?
 function EHILootManager:IncreaseLootCounterProgressMax(max)
-    self._max = self._max + (max or 1)
     self._trackers:IncreaseTrackerProgressMax("LootCounter", max)
 end
 
 ---@param max number?
 function EHILootManager:DecreaseLootCounterProgressMax(max)
-    self._max = self._max - (max or 1)
     self._trackers:DecreaseTrackerProgressMax("LootCounter", max)
 end
 
@@ -178,7 +212,6 @@ end
 
 ---@param random number?
 function EHILootManager:RandomLootSpawned(random)
-    self._max = self._max + (max or 1)
     self._trackers:CallFunction("LootCounter", "RandomLootSpawned", random)
 end
 

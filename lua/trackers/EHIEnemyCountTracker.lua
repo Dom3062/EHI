@@ -5,7 +5,7 @@ EHIEnemyCountTracker = class(EHICountTracker)
 if EHI:GetOption("show_enemy_count_show_pagers") then
     EHIEnemyCountTracker._forced_icons = { "pager_icon", "enemy" }
     function EHIEnemyCountTracker:Format()
-        return (self._alarm_count - self._alarm_count_answered) .. "|" .. self._count
+        return string.format("%d|%d", self._alarm_count - self._alarm_count_answered, self._count)
     end
     EHIEnemyCountTracker.FormatCount = EHIEnemyCountTracker.Format
 else
@@ -28,7 +28,6 @@ end
 
 function EHIEnemyCountTracker:Update()
     self._text:set_text(self:FormatCount())
-    self:AnimateBG()
 end
 
 function EHIEnemyCountTracker:OnAlarm()
@@ -46,7 +45,6 @@ function EHIEnemyCountTracker:OnAlarm()
     end
     self:Update()
     self:FitTheText()
-    self:AnimateBG()
 end
 
 function EHIEnemyCountTracker:NormalEnemyRegistered()

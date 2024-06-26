@@ -247,7 +247,7 @@ if EHI:GetOption("show_hostage_count_tracker") then
             managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", self._hostage_headcount)
         end
     end
-    EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+    EHI:AddOnSpawnedCallback(function()
         managers.ehi_tracker:AddTracker({
             id = "HostageCount",
             class = "EHIHostageCountTracker"

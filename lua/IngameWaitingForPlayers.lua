@@ -5,7 +5,7 @@ end
 
 if EHI:GetOption("show_gage_tracker") then
     if EHI:GetOption("gage_tracker_panel") == 1 then
-        EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+        EHI:AddOnSpawnedCallback(function()
             if managers.ehi_tracker:TrackerDoesNotExist("Gage") and EHI:AreGagePackagesSpawned() then
                 local progress = math.max(managers.gage_assignment:GetCountOfRemainingPackages() - 1, 0)
                 local max = tweak_data.gage_assignment:get_num_assignment_units()
@@ -22,7 +22,7 @@ if EHI:GetOption("show_gage_tracker") then
             end
         end)
     else
-        EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+        EHI:AddOnSpawnedCallback(function()
             if EHI:AreGagePackagesSpawned() and EHI:IsPlayingFromStart() then
                 local max = tweak_data.gage_assignment:get_num_assignment_units()
                 managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), "0/" .. tostring(max), "EHI_Gage")
@@ -353,8 +353,7 @@ local function HookSecuredChallenge(id, trophy, icon)
     end
     local progress, max = EHI:GetSHSideJobProgressAndMax(id)
     local current_progress = progress
-    ---@param loot LootManager
-    EHI:AddEventListener(id, EHI.CallbackMessage.LootSecured, function(loot)
+    managers.ehi_loot:AddEventListener(id, function(loot)
         local new_current_progress = progress + loot:GetSecuredBagsTypeAmount(trophy.carry_id)
         if current_progress == new_current_progress then
             return
@@ -468,7 +467,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             class = "EHIChanceTracker"
         })
     else]]
-    EHI:CallCallbackOnce(EHI.CallbackMessage.Spawned)
+    EHI:RunOnSpawnedCallbacks()
     if EHI._cache.UnlockablesAreDisabled or GunGameGame or TIM then -- Twitch Integration Mod
         challenges = nil
         sh_dailies = nil

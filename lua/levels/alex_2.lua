@@ -69,7 +69,8 @@ if EHI:IsHost() then
         EHI:ShowLootCounterNoChecks({
             max = spawned + math.max(0, spawned - 3),
             max_random = 1,
-            sequence_triggers = SequenceTriggers
+            sequence_triggers = SequenceTriggers,
+            skip_offset = true
         })
     end, SequenceTriggers, Sync)
     for i = 103715, 103724, 1 do

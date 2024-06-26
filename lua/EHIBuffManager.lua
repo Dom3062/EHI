@@ -38,7 +38,7 @@ function EHIBuffManager:init_finalize(hud, panel)
     dofile(path .. "EHIBuffTracker.lua")
     dofile(path .. "EHIGaugeBuffTracker.lua")
     dofile(path .. "SimpleBuffEdits.lua")
-    hud:AddEHIUpdator(self, "EHI_Buff_Update")
+    hud:AddEHIUpdator("EHI_Buff_Update", self)
     self._panel = panel
     local scale = EHI:GetOption("buffs_scale") --[[@as number]]
     local buff_y = EHI:IsVR() and EHI:GetOption("buffs_vr_y_offset") or EHI:GetOption("buffs_y_offset") --[[@as number]]
@@ -379,8 +379,6 @@ if alignment == 1 then -- Left
         buff:SetLeftXByPos(self._x, pos)
     end
 elseif alignment == 2 then -- Center
-    local ceil = math.ceil
-    local floor = math.floor
     ---@param pos number?
     ---@param buff EHIBuffTracker
     ---@param removal boolean?
@@ -397,7 +395,7 @@ elseif alignment == 2 then -- Center
             end
         else
             local even = self._n_visible % 2 == 0
-            local center_pos = even and ceil(self._n_visible / 2) or floor(self._n_visible / 2)
+            local center_pos = even and math.ceil(self._n_visible / 2) or math.floor(self._n_visible / 2)
             local center_x = self._panel:center_x()
             pos = pos or self._n_visible
             for _, v_buff in pairs(self._visible_buffs) do

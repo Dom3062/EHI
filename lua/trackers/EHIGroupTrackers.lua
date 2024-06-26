@@ -1,12 +1,12 @@
 ---@alias EHIWarningGroupTracker.Timer { label: PanelText, time: number, pos: number, warning: boolean, id: string, check_timer_progress: boolean }
 ---@alias EHIProgressGroupTracker.Counter { label: PanelText, progress: number, max: number, disable_counter: boolean, set_color_bad_when_reached: boolean }
 
----@class EHIWarningGroupTracker : EHIWarningTracker
----@field super EHIWarningTracker
-EHIWarningGroupTracker = class(EHIWarningTracker)
-EHIWarningGroupTracker._init_create_text = false
+---@class EHIGroupTracker : EHITracker
+---@field super EHITracker
+EHIGroupTracker = class(EHITracker)
+EHIGroupTracker._init_create_text = false
 ---@param params EHITracker.params
-function EHIWarningGroupTracker:post_init(params)
+function EHIGroupTracker:post_init(params)
     self._timers = {} --[[@as EHIWarningGroupTracker.Timer[] ]]
     self._timers_n = 0
     self._panel_override_w = self._panel:w()
@@ -17,6 +17,163 @@ function EHIWarningGroupTracker:post_init(params)
         self:Add(params.time or 0, params.timer_id)
     end
 end
+
+---@param dt number
+function EHIGroupTracker:update(dt)
+    for i, timer in ipairs(self._timers) do
+        timer.time = timer.time - dt
+        timer.label:set_text(self:FormatTime(timer.time))
+        if timer.time <= 0 then
+            self:Remove(i)
+        end
+    end
+end
+
+---@param t number
+---@param id string?
+function EHIGroupTracker:Add(t, id)
+    local n = self._timers_n + 1
+    local label = self:CreateText({
+        text = self:FormatTime(t),
+        x = self._timers_n * self._default_bg_size,
+        w = self._default_bg_size
+    })
+    self._timers[n] =
+    {
+        label = label,
+        time = t,
+        pos = self._timers_n,
+        id = id or ""
+    }
+    self._timers_n = n
+    if n >= 2 then
+        self:AnimateMovement(n)
+    end
+end
+
+---@param trigger ElementTrigger
+function EHIGroupTracker:AddFromTrigger(trigger)
+    self:Add(trigger.time or 0, trigger.timer_id)
+end
+
+---@param params AddTrackerTable|ElementTrigger
+function EHIGroupTracker:Run(params)
+    self:Add(params.time, params.id)
+end
+
+---@param time number
+---@param id string
+function EHIGroupTracker:SetTimeNoAnim(time, id)
+    if not id then
+        return
+    end
+    for _, timer in ipairs(self._timers) do
+        if timer.id == id then
+            self:_SetTimeNoAnim(timer, time)
+        end
+    end
+end
+
+---@param timer EHIWarningGroupTracker.Timer
+---@param time number
+function EHIGroupTracker:_SetTimeNoAnim(timer, time)
+    timer.time = time
+end
+
+---@param i number
+function EHIGroupTracker:Remove(i)
+    if self._timers_n <= 1 then
+        self:delete()
+        return
+    end
+    local timer = table.remove(self._timers, i) --[[@as EHIWarningGroupTracker.Timer]]
+    timer.label:stop()
+    timer.label:parent():remove(timer.label)
+    local pos = timer.pos
+    for _, t in ipairs(self._timers) do
+        if t.pos > pos then
+            local new_pos = t.pos - 1
+            t.pos = new_pos
+            t.label:set_x(new_pos * self._default_bg_size)
+        end
+    end
+    if self._timers_n >= 2 then
+        self:AnimateMovement(self._timers_n - 1, true)
+    end
+    self._timers_n = self._timers_n - 1
+end
+
+---@param id string
+function EHIGroupTracker:RemoveByID(id)
+    if not id then
+        return
+    end
+    for i, timer in ipairs(self._timers) do
+        if timer.id == id then
+            self:Remove(i)
+            return
+        end
+    end
+end
+
+---@param n number
+---@param delete boolean?
+function EHIGroupTracker:AnimateMovement(n, delete)
+    local w = self._default_bg_size * n
+    if delete then
+        self._panel_override_w = self._panel_override_w - self._default_bg_size
+    else
+        self._panel_override_w = self._panel_override_w + self._default_bg_size
+    end
+    self:AnimatePanelWAndRefresh(self._panel_override_w)
+    self:ChangeTrackerWidth(self._panel_override_w)
+    self:AnimIconsX(w + self._gap_scaled)
+    self:SetBGSize(w, "set", true)
+end
+
+function EHIGroupTracker:AddUnit()
+    self._units = (self._units or 0) + 1
+end
+
+---@param id string
+function EHIGroupTracker:RemoveUnit(id)
+    self._units = (self._units or 0) - 1
+    self._hide_on_delete = self._units > 0
+    if self._units <= 0 then
+        self:delete()
+    else
+        self:RemoveByID(id)
+    end
+end
+
+function EHIGroupTracker:delete()
+    for _, timer in ipairs(self._timers) do
+        if timer.label and alive(timer.label) then
+            timer.label:parent():remove(timer.label)
+        end
+    end
+    if self._hide_on_delete then
+        self._timers = nil
+        self._timers = {}
+        self._timers_n = 0
+    end
+    EHIGroupTracker.super.delete(self)
+end
+
+---@class EHIWarningGroupTracker : EHIWarningTracker, EHIGroupTracker
+---@field super EHIWarningTracker
+EHIWarningGroupTracker = class(EHIWarningTracker)
+EHIWarningGroupTracker._init_create_text = false
+EHIWarningGroupTracker.post_init = EHIGroupTracker.post_init
+EHIWarningGroupTracker.Add = EHIGroupTracker.Add
+EHIWarningGroupTracker.AddFromTrigger = EHIGroupTracker.AddFromTrigger
+EHIWarningGroupTracker.Run = EHIGroupTracker.Run
+EHIWarningGroupTracker.SetTimeNoAnim = EHIGroupTracker.SetTimeNoAnim
+EHIWarningGroupTracker.Remove = EHIGroupTracker.Remove
+EHIWarningGroupTracker.RemoveByID = EHIGroupTracker.RemoveByID
+EHIWarningGroupTracker.AnimateMovement = EHIGroupTracker.AnimateMovement
+EHIWarningGroupTracker.AddUnit = EHIGroupTracker.AddUnit
+EHIWarningGroupTracker.RemoveUnit = EHIGroupTracker.RemoveUnit
 
 ---@param dt number
 function EHIWarningGroupTracker:update(dt)
@@ -40,118 +197,13 @@ function EHIWarningGroupTracker:AnimateColor(timer, check_progress, color)
     timer.label:animate(self._anim_warning, self._text_color, color or (self._show_completion_color and self._completion_color or self._warning_color), start_t, self)
 end
 
----@param t number
----@param id string?
-function EHIWarningGroupTracker:Add(t, id)
-    local n = self._timers_n + 1
-    local label = self:CreateText({
-        text = self:FormatTime(t),
-        x = self._timers_n * self._default_bg_size,
-        w = self._default_bg_size
-    })
-    self._timers[n] =
-    {
-        label = label,
-        time = t,
-        pos = self._timers_n,
-        id = id or ""
-    }
-    self._timers_n = n
-    if n >= 2 then
-        self:AnimateMovement(n)
-    end
-end
-
----@param trigger ElementTrigger
-function EHIWarningGroupTracker:AddFromTrigger(trigger)
-    self:Add(trigger.time or 0, trigger.timer_id)
-end
-
----@param params AddTrackerTable|ElementTrigger
-function EHIWarningGroupTracker:Run(params)
-    self:Add(params.time, params.id)
-end
-
----@param i number
-function EHIWarningGroupTracker:Remove(i)
-    if self._timers_n <= 1 then
-        self:delete()
-        return
-    end
-    local timer = table.remove(self._timers, i) --[[@as EHIWarningGroupTracker.Timer]]
-    timer.label:stop()
-    timer.label:parent():remove(timer.label)
-    local pos = timer.pos
-    for _, t in ipairs(self._timers) do
-        if t.pos > pos then
-            local new_pos = t.pos - 1
-            t.pos = new_pos
-            t.label:set_x(new_pos * self._default_bg_size)
-        end
-    end
-    if self._timers_n >= 2 then
-        self:AnimateMovement(self._timers_n - 1, true)
-    end
-    self._timers_n = self._timers_n - 1
-end
-
----@param id string
-function EHIWarningGroupTracker:RemoveByID(id)
-    if not id then
-        return
-    end
-    for i, timer in ipairs(self._timers) do
-        if timer.id == id then
-            self:Remove(i)
-            return
-        end
-    end
-end
-
----@param n number
----@param delete boolean?
-function EHIWarningGroupTracker:AnimateMovement(n, delete)
-    local w = self._default_bg_size * n
-    if delete then
-        self._panel_override_w = self._panel_override_w - self._default_bg_size
-    else
-        self._panel_override_w = self._panel_override_w + self._default_bg_size
-    end
-    self:AnimatePanelWAndRefresh(self._panel_override_w)
-    self:ChangeTrackerWidth(self._panel_override_w)
-    self:AnimIconsX(w + self._gap_scaled)
-    self:SetBGSize(w, "set", true)
-end
-
+---@param timer EHIWarningGroupTracker.Timer
 ---@param time number
----@param id string
-function EHIWarningGroupTracker:SetTimeNoAnim(time, id)
-    if not id then
-        return
-    end
-    for _, timer in ipairs(self._timers) do
-        if timer.id == id then
-            timer.time = time
-            timer.warning = false
-            timer.check_timer_progress = time <= 10
-            timer.label:stop()
-        end
-    end
-end
-
-function EHIWarningGroupTracker:AddUnit()
-    self._units = (self._units or 0) + 1
-end
-
----@param id string
-function EHIWarningGroupTracker:RemoveUnit(id)
-    self._units = (self._units or 0) - 1
-    self._hide_on_delete = self._units > 0
-    if self._units <= 0 then
-        self:delete()
-    else
-        self:RemoveByID(id)
-    end
+function EHIWarningGroupTracker:_SetTimeNoAnim(timer, time)
+    timer.time = time
+    timer.warning = false
+    timer.check_timer_progress = time <= 10
+    timer.label:stop()
 end
 
 function EHIWarningGroupTracker:delete()

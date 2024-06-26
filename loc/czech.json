@@ -967,6 +967,7 @@
     "ehi_experience_random_objectives" : "$count Náhodn$suffix1 úkol$suffix2;:",
     "ehi_experience_random_objectives_no_count" : "Náhodné úkoly:",
     "ehi_experience_or" : "---NEBO---",
+    "ehi_experience_modifier_projob" : "PRO",
     "ehi_experience_heli_escape" : "Únik helikoptérou",
     "ehi_experience_loud_escape" : "Dokončení mise po alarmu",
     "ehi_experience_stealth_escape" : "Dokončení mise bez alarmu",

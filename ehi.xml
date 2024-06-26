@@ -20,6 +20,8 @@
 
             <post :hook_id="experiencemanager" :script_path="ExperienceManager.lua" />
 
+            <post :hook_id="jobmanager" :script_path="JobManager.lua" />
+
             <post :hook_id="lootmanager" :script_path="LootManager.lua" />
 
             <group :hook_id="mission/" :script_path="elements/">

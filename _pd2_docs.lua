@@ -307,17 +307,17 @@ _G.tweak_data.ehi = {}
 ---@class EquipmentsTweakData
 _G.tweak_data.equipments = {
     ammo_bag = {
-		deploy_time = 2,
-		use_function_name = "use_ammo_bag",
-		dummy_unit = "units/payday2/equipment/gen_equipment_ammobag/gen_equipment_ammobag_dummy_unit",
-		text_id = "debug_ammo_bag",
-		icon = "equipment_ammo_bag",
-		description_id = "des_ammo_bag",
-		visual_object = "g_ammobag",
-		quantity = {
-			1
-		}
-	}
+        deploy_time = 2,
+        use_function_name = "use_ammo_bag",
+        dummy_unit = "units/payday2/equipment/gen_equipment_ammobag/gen_equipment_ammobag_dummy_unit",
+        text_id = "debug_ammo_bag",
+        icon = "equipment_ammo_bag",
+        description_id = "des_ammo_bag",
+        visual_object = "g_ammobag",
+        quantity = {
+            1
+        }
+    }
 }
 ---@class GageAssignmentTweakData
 ---@field get_experience_multiplier fun(self: self, ratio: number): number
@@ -348,7 +348,7 @@ _G.tweak_data.group_ai = {
             max = 0 -- 0/1
         },
         check_spawn_intervall = 120,
-	    chance_increase_intervall = 120
+        chance_increase_intervall = 120
     }
 }
 ---@class HudIconsTweakData
@@ -544,6 +544,8 @@ _G.ExperienceManager = {}
 _G.GamePlayCentralManager = {}
 ---@class GroupAITweakData
 _G.GroupAITweakData = {}
+---@class JobManager
+_G.JobManager = {}
 ---@class LevelsTweakData
 ---@field get_default_team_ID fun(self: self, type: string): string
 _G.LevelsTweakData = {}
@@ -806,17 +808,6 @@ end
 
 ---@class ChatManager
 ---@field _receive_message fun(self: self, channel_id: number, name: string, message: string, color: Color, icon: string?)
-
----@class JobManager
----@field current_contact_id fun(self: self): string
----@field current_difficulty_stars fun(self: self): number
----@field current_job_id fun(self: self): string
----@field current_job_stars fun(self: self): number
----@field get_ghost_bonus fun(self: self): number
----@field get_job_heat_multipliers fun(self: self, job_id: string): number?
----@field is_current_job_professional fun(self: self): boolean
----@field is_level_christmas fun(self: self, level_id: string): boolean
----@field on_last_stage fun(self: self): boolean
 
 ---@class MissionManager
 ---@field _scripts table<string, MissionScript> All running scripts in a mission

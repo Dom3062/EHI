@@ -96,12 +96,10 @@ if EHI:IsLootCounterVisible() then
         104148, 101254, 101251, 104211, 104201, 104233, 104203, 104149, 101253, 104206
     }
     other[105762] = EHI:AddLootCounter2(function()
-        local firestarter = Global.game_settings.level_id == "firestarter_3"
         EHI:ShowLootCounterNoChecks({
             max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot2(deposit_boxes),
-            offset = firestarter,
             client_from_start = true,
-            unknown_random = not firestarter
+            unknown_random = Global.game_settings.level_id ~= "firestarter_3"
         })
     end)
     other[103372] = { special_function = EHI:RegisterCustomSF(function(self, ...)
@@ -197,7 +195,7 @@ EHI:AddLoadSyncFunction(function(self)
         self._achievements:SetAchievementStatus("voff_1", "finish")
     end
 end)
-EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+EHI:AddOnSpawnedCallback(function()
     if EHI:IsPlayingFromStart() then
         local function fail(...)
             managers.ehi_achievement:SetAchievementFailed("voff_1")

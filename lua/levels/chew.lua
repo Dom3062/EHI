@@ -38,7 +38,6 @@ if EHI:IsLootCounterVisible() then
     other[100482] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({
             max = 9,
-            offset = true,
             client_from_start = true
         })
     end)

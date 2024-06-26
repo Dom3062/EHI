@@ -1,6 +1,4 @@
 ---@class EHITradeDelayTracker : EHITracker
----@field FormatUnique fun(self: self, label: PanelText, time: number, civilians_killed: number)
----@field FormatTime fun(self: self, time: number): string
 ---@field super EHITracker
 EHITradeDelayTracker = class(EHITracker)
 EHITradeDelayTracker._forced_hint_text = "trade_delay"
@@ -70,6 +68,9 @@ function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time, civilians_killed
         self:AnimateBG()
     end
     self:FormatUnique(text, time, kills)
+    if self._n_of_peers == 1 then
+        self:FitTheText(text)
+    end
     self:Reorganize(true)
     self:SetIconColor()
     self:SetTextPeerColor()
@@ -250,10 +251,16 @@ function EHITradeDelayTracker:GetPeerData(peer_id, field_name, default_value)
 end
 
 if EHI:GetOption("show_trade_delay_amount_of_killed_civilians") then
+    ---@param label PanelText
+    ---@param time number
+    ---@param civilians_killed number
     function EHITradeDelayTracker:FormatUnique(label, time, civilians_killed)
         label:set_text(string.format("%s (%d)", self:ShortFormatTime(time), civilians_killed))
     end
 else
+    ---@param label PanelText
+    ---@param time number
+    ---@param civilians_killed number
     function EHITradeDelayTracker:FormatUnique(label, time, civilians_killed)
         label:set_text(self:ShortFormatTime(time))
     end

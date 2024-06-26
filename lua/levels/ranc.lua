@@ -119,7 +119,8 @@ if EHI:IsLootCounterVisible() then
             end
         end
         EHI:ShowLootCounterNoChecks({
-            max = math.min(barrels, stocks, receivers) + tweak_data.ehi.functions.GetNumberOfVisibleWeapons2(103574, 103588)
+            max = math.min(barrels, stocks, receivers) + tweak_data.ehi.functions.GetNumberOfVisibleWeapons2(103574, 103588),
+            client_from_start = true
         })
         managers.ehi_loot:SyncSecuredLoot()
     end, 5, function(self)

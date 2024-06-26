@@ -20,7 +20,7 @@ local computed_duration_civilian = 4.5
 local computed_duration_security = 13.5
 local target_resense_delay = tweak_data.player.omniscience.target_resense_t or 15
 local sense_latch = false
-EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+EHI:AddOnSpawnedCallback(function()
     local playermanager = managers.player
     local ContourExt = ContourExt
     local tmp = ContourExt._types

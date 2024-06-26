@@ -28,9 +28,7 @@ end
 
 function GamePlayCentralManager:load(data, ...)
     original.load(self, data, ...)
-	local state = data.GamePlayCentralManager
-    local heist_timer = state.heist_timer or 0
-    managers.ehi_manager:LoadTime(heist_timer)
+    managers.ehi_manager:LoadTime(data.GamePlayCentralManager.heist_timer or 0)
 end
 
 ---@param id number

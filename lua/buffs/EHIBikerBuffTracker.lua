@@ -1,11 +1,10 @@
-local pm
 ---@class EHIBikerBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIBikerBuffTracker = class(EHIBuffTracker)
 EHIBikerBuffTracker._max_kills = tweak_data.upgrades.wild_max_triggers_per_time or 4
 function EHIBikerBuffTracker:PreUpdateCheck()
-    pm = managers.player
-    if pm:has_category_upgrade("player", "wild_health_amount") or pm:has_category_upgrade("player", "wild_armor_amount") then
+    self._player_manager = managers.player
+    if self._player_manager:has_category_upgrade("player", "wild_health_amount") or self._player_manager:has_category_upgrade("player", "wild_armor_amount") then
         return true
     else
         self:delete()
@@ -14,16 +13,12 @@ end
 
 function EHIBikerBuffTracker:PreUpdate()
     self._f = function(...)
-        if pm._wild_kill_triggers then
-            -- Old kills were purged here before our post hook is called, no need to purge them again
-            local kills = #pm._wild_kill_triggers
-            self:Trigger(kills)
-        end
+        -- Old kills were purged here before our post hook is called, no need to purge them again
+        local kills = #self._player_manager._wild_kill_triggers
+        self:Trigger(kills)
     end
+    self._player_manager._wild_kill_triggers = self._player_manager._wild_kill_triggers or {} -- Force creation to not crash if the first kill is a civilian
     self:SetCustodyState(false)
-    if self._persistent then
-        self:ActivateSoft()
-    end
 end
 
 ---@param state boolean
@@ -52,11 +47,11 @@ function EHIBikerBuffTracker:Trigger(kills)
     local t = Application:time()
     local cd
     if kills < self._max_kills then
-        cd = pm._wild_kill_triggers[kills] - t
+        cd = self._player_manager._wild_kill_triggers[kills] - t
         self:SetIconColor(Color.white)
         self._hint:set_text(tostring(kills))
     else
-        cd = pm._wild_kill_triggers[1] - t
+        cd = self._player_manager._wild_kill_triggers[1] - t
         self:SetIconColor(Color.red)
         self._hint:set_text(tostring(self._max_kills))
         self._retrigger = true
@@ -100,13 +95,14 @@ function EHIBikerBuffTracker:Deactivate()
     EHIBikerBuffTracker.super.Deactivate(self)
 end
 
+-- Check again if there are still kills, but first, purge old kills so they don't mess up with the calculation
 function EHIBikerBuffTracker:Retrigger()
-    -- Check again if there are still kills, but first, purge old kills so they don't mess up with the calculation
+    local kills = self._player_manager._wild_kill_triggers -- Optimized for speed access
     local t = Application:time()
-    while pm._wild_kill_triggers[1] and t >= pm._wild_kill_triggers[1] do
-        table.remove(pm._wild_kill_triggers, 1)
+    while kills[1] and t >= kills[1] do
+        table.remove(kills, 1)
     end
-    local n = #pm._wild_kill_triggers
+    local n = #kills
     self:Trigger(n)
 end
 

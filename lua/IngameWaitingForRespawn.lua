@@ -11,10 +11,10 @@ local original =
 
 function IngameWaitingForRespawnState:at_enter(...)
     original.at_enter(self, ...)
-    EHI:RunOnCustodyCallback(true)
+    EHI:RunOnCustodyCallbacks(true)
 end
 
 function IngameWaitingForRespawnState:finish_trade(...)
     original.finish_trade(self, ...)
-    EHI:RunOnCustodyCallback(false)
+    EHI:RunOnCustodyCallbacks(false)
 end

@@ -134,14 +134,13 @@ local tbl =
     [100949] = { remove_vanilla_waypoint = 103174 }
 }
 EHI:UpdateUnits(tbl)
-local required_bags = 2 -- Normal
-if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
-    required_bags = 4
-elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
-    required_bags = 6
-elseif EHI:IsMayhemOrAbove() then
-    required_bags = 8
-end
+local required_bags = EHI:GetValueBasedOnDifficulty({
+    normal = 2,
+    hard = 4,
+    veryhard = 4,
+    overkill = 6,
+    mayhem_or_above = 8
+})
 EHI:AddXPBreakdown({
     objectives =
     {

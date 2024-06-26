@@ -24,9 +24,9 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     local level_id = Global.game_settings.level_id
     if server or EHI:IsHeistTimerInverted() then
         if EHIWaypoints then
-            self:AddEHIUpdator(self.ehi_manager, "EHIManager_Update")
+            self:AddEHIUpdator("EHIManager_Update", self.ehi_manager)
         else
-            self:AddEHIUpdator(self.ehi, "EHI_Update")
+            self:AddEHIUpdator("EHI_Update", self.ehi)
         end
     else
         original.feed_heist_time = self.feed_heist_time
@@ -117,9 +117,9 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     end
 end
 
----@param class table
 ---@param id string
-function HUDManager:AddEHIUpdator(class, id)
+---@param class table
+function HUDManager:AddEHIUpdator(id, class)
     if not class.update then
         EHI:Log("Class with ID '" .. id .. "' is missing 'update' function!")
         return
@@ -257,7 +257,7 @@ end
 ---@param icon string?
 function HUDManager:ShowSideJobFailedPopup(id, daily_job, icon)
     local text = daily_job and ("menu_challenge_" .. id) or id
-    icon = tweak_data.ehi.icons[id] and id or "milestone_trophy"
+    icon = icon or tweak_data.ehi.icons[id] and id or "milestone_trophy"
     self:custom_ingame_popup_text("DAILY SIDE JOB FAILED!", managers.localization:to_upper_text(text), icon)
 end
 

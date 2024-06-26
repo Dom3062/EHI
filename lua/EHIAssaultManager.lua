@@ -94,7 +94,7 @@ function EHIAssaultManager:init_finalize(manager)
                 end
             end
         end
-        EHI:AddCallback(EHI.CallbackMessage.Spawned, CheckIfModifierIsActive)
+        EHI:AddOnSpawnedCallback(CheckIfModifierIsActive)
         manager:AddInternalListener("assault", "sustain_t", function(duration)
             self:OnEnterSustain(duration)
         end)

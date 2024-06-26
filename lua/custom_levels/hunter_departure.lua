@@ -20,7 +20,7 @@ local achievements =
             [100132] = { special_function = SF.Trigger, data = { 1001321, 1001322 } },
             [1001321] = { max = 21, class = TT.Achievement.Progress, special_function = SF.ShowAchievementFromStart },
             [1001322] = { special_function = SF.CustomCode, f = function()
-                EHI:ShowLootCounter({ max = 21 })
+                EHI:ShowLootCounter({ max = 21, client_from_start = true })
                 EM:UnhookElement(100416)
             end },
             [100416] = { special_function = SF.IncreaseProgress }
@@ -35,7 +35,7 @@ EHI:ParseTriggers({
     achievement = achievements
 })
 EHI:AddLoadSyncFunction(function(self)
-    EHI:ShowLootCounter({ max = 21 })
+    EHI:ShowLootCounter({ max = 21, client_from_start = true })
     self:UnhookElement(100416)
     self._loot:SyncSecuredLoot()
 end)

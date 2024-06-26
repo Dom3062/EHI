@@ -79,6 +79,7 @@ function EHIManager:init(managers)
     }
     self.GroupingTrackers =
     {
+        [self.Trackers.Group.Base] = true,
         [self.Trackers.Group.Warning] = true
     }
     if EHI:IsClient() then
@@ -97,7 +98,7 @@ function EHIManager:init_finalize()
     self._loot:init_finalize()
     EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
     EHI:AddOnCustodyCallback(callback(self, self, "SetCustodyState"))
-    EHI:AddCallback(EHI.CallbackMessage.Spawned, callback(self, self, "Spawned"))
+    EHI:AddOnSpawnedCallback(callback(self, self, "Spawned"))
     managers.network:add_event_listener("EHIManagerDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
     if EHI:IsClient() then
         self:AddReceiveHook(self._sync_tracker, callback(self, self, "SyncAddTracker"))
@@ -187,7 +188,7 @@ end
 
 function EHIManager:Spawned()
     self._trackers:Spawned()
-    self._deployable:DisableGrenades()
+    self._deployable:Spawned()
     self._buff:ActivateUpdatingBuffs()
     self._loot:Spawned()
 end
@@ -1362,10 +1363,11 @@ function EHIManager:Trigger(id, element, enabled)
             elseif f == SF.SetAchievementFailed then
                 self._achievements:SetAchievementFailed(trigger.id)
             elseif f == SF.AddAchievementToCounter then
-                local data = trigger.data or {}
+                local data = trigger.data or {} ---@cast data AchievementLootCounterTable
                 data.achievement = data.achievement or trigger.id
                 data.max = data.max or trigger.max or 0
-                EHI:AddAchievementToCounter(data)
+                data.no_sync = true
+                self._loot:AddAchievementListener(data)
                 self:CreateTracker(trigger)
             elseif f == SF.IncreaseChance then
                 self._trackers:IncreaseChance(trigger.id, trigger.amount)
@@ -1580,6 +1582,8 @@ function EHIManager:Trigger(id, element, enabled)
                 managers.hud:DebugElement(element:id(), element:editor_name(), enabled)
             elseif f == SF.CustomCode then
                 trigger.f(trigger.arg)
+            elseif f == SF.CustomCode2 then
+                trigger.f(self, trigger.arg)
             elseif f == SF.CustomCodeIfEnabled then
                 if enabled then
                     trigger.f(trigger.arg)
@@ -1781,12 +1785,8 @@ if EHI:GetWaypointOption("show_waypoints_only") then
             self._trackers:RunTracker(trigger.id, trigger.run)
         elseif trigger.tracker_merge and self._trackers:TrackerExists(trigger.id) then
             self._trackers:SetTrackerTime(trigger.id, trigger.time)
-        elseif trigger.tracker_group then
-            if self._trackers:TrackerExists(trigger.id) then
-                self._trackers:CallFunction(trigger.id, "AddFromTrigger", trigger)
-            else
-                self:_AddTracker(trigger)
-            end
+        elseif trigger.tracker_group and self._trackers:TrackerExists(trigger.id) then
+            self._trackers:CallFunction(trigger.id, "AddFromTrigger", trigger)
         else
             self:_AddTracker(trigger)
         end

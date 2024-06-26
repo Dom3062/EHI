@@ -93,8 +93,7 @@ if EHI:IsLootCounterVisible() then
     end
     EHI:ShowLootCounterNoChecks({
         max_random = 14,
-        triggers = loot_triggers,
-        offset = true
+        triggers = loot_triggers
     })
 end
 EHI:AddXPBreakdown({

@@ -36,24 +36,36 @@ function ZipLine:init(unit, ...)
     self._ehi_key_user = key .. "_person_drop"
     self._ehi_key_reset = key .. "_reset"
     if not show_waypoint_only then
-        managers.ehi_tracker:PreloadTracker({
-            id = self._ehi_key_bag,
-            icons = { "zipline_bag" },
-            hide_on_delete = true,
-            hint = "zipline_bag"
-        })
-        managers.ehi_tracker:PreloadTracker({
-            id = self._ehi_key_user,
-            icons = { "Other_H_Any_DidntSee" }, -- gage3_13 achievement icon
-            hide_on_delete = true,
-            hint = "zipline_person"
-        })
-        managers.ehi_tracker:PreloadTracker({
-            id = self._ehi_key_reset,
-            icons = { "zipline", Icon.Loop },
-            hide_on_delete = true,
-            hint = "zipline_reset"
-        })
+        if managers.ehi_tracker:CallFunction2("ZipLineBag", "AddUnit") then
+            managers.ehi_tracker:PreloadTracker({
+                id = "ZipLineBag",
+                icons = { "zipline_bag" },
+                hide_on_delete = true,
+                unit = true,
+                hint = "zipline_bag",
+                class = EHI.Trackers.Group.Base
+            })
+        end
+        if managers.ehi_tracker:CallFunction2("ZipLineUser", "AddUnit") then
+            managers.ehi_tracker:PreloadTracker({
+                id = "ZipLineUser",
+                icons = { "Other_H_Any_DidntSee" }, -- gage3_13 achievement icon
+                hide_on_delete = true,
+                unit = true,
+                hint = "zipline_person",
+                class = EHI.Trackers.Group.Base
+            })
+        end
+        if managers.ehi_tracker:CallFunction2("ZipLineReset", "AddUnit") then
+            managers.ehi_tracker:PreloadTracker({
+                id = "ZipLineReset",
+                icons = { "zipline", Icon.Loop },
+                hide_on_delete = true,
+                unit = true,
+                hint = "zipline_reset",
+                class = EHI.Trackers.Group.Base
+            })
+        end
     end
     if self:is_usage_type_bag() then
         self:HookUpdateLoop()
@@ -78,6 +90,9 @@ function ZipLine:HookUpdateLoop()
 end
 
 function ZipLine:UnhookUpdateLoop()
+    if not self.__ehi_update_hooked then
+        return
+    end
     self.update = original.update
     self.__ehi_update_hooked = nil
 end
@@ -104,8 +119,8 @@ function ZipLine:attach_bag(...)
     original.attach_bag(self, ...)
     local total_time = self:total_time()
     local total_time_2 = total_time * 2
-    managers.ehi_tracker:RunTracker(self._ehi_key_bag, { time = total_time })
-    managers.ehi_tracker:RunTracker(self._ehi_key_reset, { time = total_time_2 })
+    managers.ehi_tracker:RunTracker("ZipLineBag", { id = self._ehi_key_bag, time = total_time })
+    managers.ehi_tracker:RunTracker("ZipLineReset", { id = self._ehi_key_reset, time = total_time_2 })
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_reset, {
             time = total_time_2,
@@ -124,8 +139,8 @@ local function AddUserZipline(self, unit)
     end
     local total_time = self:total_time()
     local total_time_2 = total_time * 2
-    managers.ehi_tracker:RunTracker(self._ehi_key_user, { time = total_time })
-    managers.ehi_tracker:RunTracker(self._ehi_key_reset, { time = total_time_2 })
+    managers.ehi_tracker:RunTracker("ZipLineUser", { id = self._ehi_key_user, time = total_time })
+    managers.ehi_tracker:RunTracker("ZipLineReset", { id = self._ehi_key_reset, time = total_time_2 })
     if show_waypoint then
         local local_unit = unit == managers.player:player_unit()
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_reset, {
@@ -148,8 +163,8 @@ function ZipLine:sync_set_user(unit, ...)
 end
 
 function ZipLine:destroy(...)
-    managers.ehi_manager:ForceRemove(self._ehi_key_reset)
-    managers.ehi_tracker:ForceRemoveTracker(self._ehi_key_bag)
-    managers.ehi_tracker:ForceRemoveTracker(self._ehi_key_user)
+    managers.ehi_manager:RemoveUnit("ZipLineBag", self._ehi_key_bag, true)
+    managers.ehi_manager:RemoveUnit("ZipLineUser", self._ehi_key_user, true)
+    managers.ehi_manager:RemoveUnit("ZipLineReset", self._ehi_key_reset, true)
     original.destroy(self, ...)
 end

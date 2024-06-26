@@ -35,6 +35,7 @@
 ---@field get_infamy_exp_multiplier fun(self: self): number
 ---@field damage_absorption fun(self: self): number
 ---@field damage_reduction_skill_multiplier fun(self: self, damage_type: string): number
+---@field _wild_kill_triggers table
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -103,7 +104,7 @@ if EHI:GetBuffOption("forced_friendship") then
 end
 
 if EHI:GetBuffOption("unseen_strike_initial") then
-    EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+    EHI:AddOnSpawnedCallback(function()
         local self = managers.player
         if self:has_category_upgrade("player", "unseen_increased_crit_chance") then
             local data = self:upgrade_value("player", "unseen_increased_crit_chance", 0) --[[@as table|number]]
@@ -129,7 +130,7 @@ if EHI:GetBuffOption("crit") then
 end
 
 local AbilityKey, AbilitySpeedUp
-EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+EHI:AddOnSpawnedCallback(function()
     local self = managers.player
     local grenade = managers.blackmarket:equipped_grenade()
     if grenade == "chico_injector" then -- Kingpin
@@ -212,7 +213,7 @@ if meele_boost_tweak then
     local bloodthirst_max = false
     tweak_data.ehi.buff.melee_damage_stacking.max = max_multiplier
     if bloodthirst_ratio == 0 then
-        EHI:AddCallback(EHI.CallbackMessage.Spawned, function()
+        EHI:AddOnSpawnedCallback(function()
             if managers.player:has_category_upgrade("player", "melee_damage_stacking") then
                 managers.ehi_buff:AddGauge("melee_damage_stacking", 1 / max_multiplier, 1)
             end
