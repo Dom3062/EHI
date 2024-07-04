@@ -3,9 +3,10 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+---@param self EHIManager
 ---@param block boolean
-local function SetAssaultTrackerBlock(block)
-    managers.ehi_assault:SetAssaultBlock(block)
+local function SetAssaultTrackerBlock(self, block)
+    self._assault:SetAssaultBlock(block)
 end
 ---@type ParseTriggerTable
 local triggers = {
@@ -38,8 +39,8 @@ local other =
     [100109] = EHI:AddAssaultDelay({ control = 30 }), -- Arizona (When alarm is raised in Mexico (for the first time), run this trigger instead)
     [100697] = EHI:AddAssaultDelay({ control_additional_time = 30, random_time = 10, condition_function = EHI.ConditionFunctions.IsLoud }), -- Mexico (ElementDifficulty already exists)
 
-    [100880] = { special_function = SF.CustomCode, f = SetAssaultTrackerBlock, arg = true }, -- Entered the tunnel
-    [103212] = { special_function = SF.CustomCode, f = SetAssaultTrackerBlock, arg = false } -- Entered in Mexico
+    [100880] = { special_function = SF.CustomCode2, f = SetAssaultTrackerBlock, arg = true }, -- Entered the tunnel
+    [103212] = { special_function = SF.CustomCode2, f = SetAssaultTrackerBlock, arg = false } -- Entered in Mexico
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102495] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal) }

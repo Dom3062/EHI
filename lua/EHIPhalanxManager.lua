@@ -22,7 +22,7 @@ function EHIPhalanxManager:OnSOPhalanxCreated(element)
     if self._disabled_in_levels[level_id] then
         return
     elseif self._requires_manual_on_exec[level_id] then
-        self._manager:HookElement(element, function(e, ...)
+        self._manager._hook:HookElement(element, function(e, ...)
             if EHI:IsHost() and not e._values.enabled then
                 return
             end

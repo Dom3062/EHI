@@ -77,12 +77,16 @@ function EHISniperCountTracker:DecreaseCount(count)
     if self._remaining_snipers ~= 0 then
         self._remaining_snipers = self._remaining_snipers - n
         if self._remaining_snipers == 0 then -- No more snipers will spawn, delete the tracker
-            if self._snipers_logic_ended then
-                managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_END", managers.localization:text("ehi_popup_sniper_logic_ended"), "EHI_Sniper")
-            end
             self:delete()
         end
     end
+end
+
+function EHISniperCountTracker:delete()
+    if self._snipers_logic_ended then
+        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_END", managers.localization:text("ehi_popup_sniper_logic_ended"), "EHI_Sniper")
+    end
+    EHISniperCountTracker.super.delete(self)
 end
 
 ---@class EHISniperChanceTracker : EHIChanceTracker, EHICountTracker, EHISniperBaseTracker
@@ -366,6 +370,13 @@ function EHISniperTimedChanceTracker:SetChance(amount)
         self:FitTheText(self._chance_text)
     end
     self:AnimateBG(1)
+end
+
+function EHISniperTimedChanceTracker:ForceDelete()
+    if self._snipers_logic_ended then
+        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_END", managers.localization:text("ehi_popup_sniper_logic_ended"), "EHI_Sniper")
+    end
+    EHISniperTimedChanceTracker.super.ForceDelete(self)
 end
 
 ---@class EHISniperLoopTracker : EHITracker, EHIChanceTracker, EHICountTracker, EHISniperBaseTracker

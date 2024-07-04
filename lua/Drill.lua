@@ -10,7 +10,7 @@
 ---@field get_skill_upgrades fun(self: self): table
 
 local EHI = EHI
-if EHI:CheckLoadHook("Drill") then
+if EHI:CheckLoadHook("Drill") or not EHI:GetOption("show_timers") then
     return
 end
 local highest_id = 0

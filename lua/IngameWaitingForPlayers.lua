@@ -3,34 +3,6 @@ if EHI:CheckLoadHook("IngameWaitingForPlayersState") then
     return
 end
 
-if EHI:GetOption("show_gage_tracker") then
-    if EHI:GetOption("gage_tracker_panel") == 1 then
-        EHI:AddOnSpawnedCallback(function()
-            if managers.ehi_tracker:TrackerDoesNotExist("Gage") and EHI:AreGagePackagesSpawned() then
-                local progress = math.max(managers.gage_assignment:GetCountOfRemainingPackages() - 1, 0)
-                local max = tweak_data.gage_assignment:get_num_assignment_units()
-                if progress < max then
-                    managers.ehi_tracker:AddTracker({
-                        id = "Gage",
-                        icons = { "gage" },
-                        progress = progress,
-                        max = max,
-                        hint = "gage",
-                        class = EHI.Trackers.Progress
-                    })
-                end
-            end
-        end)
-    else
-        EHI:AddOnSpawnedCallback(function()
-            if EHI:AreGagePackagesSpawned() and EHI:IsPlayingFromStart() then
-                local max = tweak_data.gage_assignment:get_num_assignment_units()
-                managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), "0/" .. tostring(max), "EHI_Gage")
-            end
-        end)
-    end
-end
-
 local gage3_13_levels =
 {
     pbr = true,
@@ -113,7 +85,6 @@ local armored_4_levels = table.list_to_set(tweak_data.achievement.complete_heist
 local primary, secondary, melee, grenade, is_stealth = nil, nil, nil, nil, false ---@type table, table, string, string, boolean
 local VeryHardOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
 local OVKOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
---local MayhemOrAbove = EHI:IsMayhemOrAbove()
 local stats = {}
 
 ---@param weapon_id string
@@ -214,7 +185,7 @@ end
 local function HasViperGrenadesOnLauncherEquipped()
     local function HasViperAmmo(factory_id, blueprint)
         local t = managers.weapon_factory:get_ammo_data_from_weapon(factory_id, blueprint)
-        if t and table.size(t) > 0 then
+        if t and next(t) then
             return table.contains(t, "launcher_poison") or table.contains(t, "launcher_poison_ms3gl_conversion")
         end
         return false
@@ -327,20 +298,6 @@ local function AddDailySHChallengeTracker(id, progress_id, icon)
 end
 
 ---@param id string
----@param icon string?
-local function HookMissionEndSHDailyProgress(id, icon)
-    local progress, max = EHI:GetSHSideJobProgressAndMax(id)
-    if progress + 1 < max then
-        icon = icon or "milestone_trophy"
-        EHI:HookWithID(CustomSafehouseManager, "award", string.format("EHI_%s_AwardProgress", id), function(csm, id_stat)
-            if id_stat == id then
-                managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text(id), tostring(progress + 1) .. "/" .. tostring(max), icon)
-            end
-        end)
-    end
-end
-
----@param id string
 ---@param trophy { carry_id: string|string[] }
 ---@param icon string?
 local function HookSecuredChallenge(id, trophy, icon)
@@ -351,45 +308,7 @@ local function HookSecuredChallenge(id, trophy, icon)
     if EHI:GetUnlockableOption("show_daily_description") then
         managers.hud:ShowSideJobDescription(id)
     end
-    local progress, max = EHI:GetSHSideJobProgressAndMax(id)
-    local current_progress = progress
-    managers.ehi_loot:AddEventListener(id, function(loot)
-        local new_current_progress = progress + loot:GetSecuredBagsTypeAmount(trophy.carry_id)
-        if current_progress == new_current_progress then
-            return
-        elseif new_current_progress < max then
-            managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text(id), tostring(new_current_progress) .. "/" .. tostring(max), icon)
-            current_progress = new_current_progress
-        else
-            EHI:RemoveEventListener(id)
-        end
-    end)
-end
-
----@param achievement string
----@param weapon_id string
-local function HookKillFunction(achievement, weapon_id)
-    EHI:HookWithID(StatisticsManager, "killed", string.format("EHI_%s_%s_killed", achievement, weapon_id), function(self, data)
-        if data.variant ~= "melee" then
-            local name_id, _ = self:_get_name_id_and_throwable_id(data.weapon_unit)
-            if name_id == weapon_id then
-                managers.ehi_tracker:IncreaseTrackerProgress(achievement)
-            end
-        end
-    end)
-end
-
----@param achievement string
----@param weapon_id string
-local function HookKillFunctionNoCivilian(achievement, weapon_id)
-    EHI:HookWithID(StatisticsManager, "killed", string.format("EHI_%s_%s_killed", achievement, weapon_id), function(self, data)
-        if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
-            local name_id, _ = self:_get_name_id_and_throwable_id(data.weapon_unit)
-            if name_id == weapon_id then
-                managers.ehi_tracker:IncreaseTrackerProgress(achievement)
-            end
-        end
-    end)
+    managers.ehi_hook:HookSecuredBag(id, trophy, icon)
 end
 
 ---@param f function
@@ -666,7 +585,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
             if EHI:IsAchievementLocked2("turtles_1") and HasWeaponEquipped("wa2000") then -- "Names Are for Friends, so I Don't Need One" achievement
                 AddAchievementTracker("turtles_1", 0, 11)
-                HookKillFunctionNoCivilian("turtles_1", "wa2000")
+                managers.ehi_hook:HookKillFunction("turtles_1", "wa2000", true)
                 EHI:Hook(RaycastWeaponBase, "on_reload", function(self, amount)
                     if self:get_name_id() == "wa2000" then
                         managers.ehi_tracker:SetTrackerProgress("turtles_1", 0)
@@ -675,7 +594,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
             if EHI:IsAchievementLocked2("turtles_2") and HasWeaponEquipped("polymer") then -- "Swiss Cheese" achievement
                 AddAchievementTracker("turtles_2", 0, 100)
-                HookKillFunction("turtles_2", "polymer")
+                managers.ehi_hook:HookKillFunction("turtles_2", "polymer")
             end
             if EHI:IsAchievementLocked2("tango_achieve_2") and HasWeaponEquipped("arbiter") and ArbiterHasStandardAmmo() then -- "Let Them Fly" achievement
                 local function f()
@@ -686,7 +605,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
             if EHI:IsAchievementLocked2("grv_2") and HasWeaponEquipped("coal") then -- "Spray Control" achievement
                 AddAchievementTracker("grv_2", 0, 32)
-                HookKillFunctionNoCivilian("grv_2", "coal")
+                managers.ehi_hook:HookKillFunction("grv_2", "coal", true)
                 EHI:Hook(RaycastWeaponBase, "on_reload", function(self, amount)
                     if self:get_name_id() == "coal" then
                         managers.ehi_tracker:SetTrackerProgress("grv_2", 0)
@@ -710,15 +629,14 @@ function IngameWaitingForPlayersState:at_exit(...)
                         local function on_enemy_killed(...)
                             managers.ehi_tracker:IncreaseTrackerProgress("cac_2")
                         end
-                        local function on_player_state_changed(state_name)
+                        managers.player:register_message("player_state_changed", "EHI_cac_2_state_changed_key", function(state_name)
                             managers.ehi_tracker:SetTrackerProgress("cac_2", 0)
                             if state_name == "bipod" then
                                 managers.player:register_message(Message.OnEnemyKilled, enemy_killed_key, on_enemy_killed)
                             else
                                 managers.player:unregister_message(Message.OnEnemyKilled, enemy_killed_key)
                             end
-                        end
-                        managers.player:register_message("player_state_changed", "EHI_cac_2_state_changed_key", on_player_state_changed)
+                        end)
                     end
                     ShowTrackerInLoud(f)
                 end
@@ -738,15 +656,16 @@ function IngameWaitingForPlayersState:at_exit(...)
                             ---@field super EHIAchievementProgressTracker
                             EHItango_achieve_3Tracker = class(EHIAchievementProgressTracker)
                             EHItango_achieve_3Tracker._forced_icons = EHI:GetAchievementIcon("tango_achieve_3")
-                            function EHItango_achieve_3Tracker:init(panel, params, parent_class)
+                            function EHItango_achieve_3Tracker:init(...)
                                 self._kills =
                                 {
                                     primary = 0,
                                     secondary = 0
                                 }
                                 self._weapon_id = 0
-                                EHItango_achieve_3Tracker.super.init(self, panel, params, parent_class)
+                                EHItango_achieve_3Tracker.super.init(self, ...)
                             end
+                            ---@param id number
                             function EHItango_achieve_3Tracker:WeaponSwitched(id)
                                 if self._weapon_id == id or self._finished then
                                     return
@@ -760,8 +679,8 @@ function IngameWaitingForPlayersState:at_exit(...)
                                 self:SetAndFitTheText()
                                 self:AnimateBG(1)
                             end
-                            function EHItango_achieve_3Tracker:SetCompleted(force)
-                                EHItango_achieve_3Tracker.super.SetCompleted(self, force)
+                            function EHItango_achieve_3Tracker:SetCompleted(...)
+                                EHItango_achieve_3Tracker.super.SetCompleted(self, ...)
                                 if self._status == "completed" then
                                     self._finished = true
                                 end
@@ -774,9 +693,9 @@ function IngameWaitingForPlayersState:at_exit(...)
                                 show_finish_after_reaching_target = true,
                                 class = "EHItango_achieve_3Tracker"
                             })
-                            HookKillFunctionNoCivilian("tango_achieve_3", primary.weapon_id)
-                            HookKillFunctionNoCivilian("tango_achieve_3", secondary.weapon_id)
-                            local function switch()
+                            managers.ehi_hook:HookKillFunction("tango_achieve_3", primary.weapon_id, true)
+                            managers.ehi_hook:HookKillFunction("tango_achieve_3", secondary.weapon_id, true)
+                            managers.player:register_message(Message.OnSwitchWeapon, "EHI_tango_achieve_3", function()
                                 local player = managers.player:local_player()
                                 if not player then
                                     return
@@ -785,12 +704,11 @@ function IngameWaitingForPlayersState:at_exit(...)
                                 if weapon and (weapon == 1 or weapon == 2) then
                                     managers.ehi_tracker:CallFunction("tango_achieve_3", "WeaponSwitched", weapon - 1)
                                 end
-                            end
-                            managers.player:register_message(Message.OnSwitchWeapon, "EHI_tango_achieve_3", switch)
+                            end)
                         else
                             AddAchievementTracker("tango_achieve_3", 0, 200)
                             local weapon_required = primary_index and primary.weapon_id or secondary.weapon_id
-                            HookKillFunctionNoCivilian("tango_achieve_3", weapon_required)
+                            managers.ehi_hook:HookKillFunction("tango_achieve_3", weapon_required, true)
                         end
                     end
                 end
@@ -940,8 +858,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         if EHI:GetUnlockableOption("show_achievements_grenade") then -- Kill with grenades
             if EHI:IsAchievementLocked2("gage_9") then -- "Fire in the Hole!" achievement
-                local eligible_grenades = tweak_data.achievement.fire_in_the_hole.grenade
-                for _, eligible_grenade in ipairs(eligible_grenades) do
+                for _, eligible_grenade in ipairs(tweak_data.achievement.fire_in_the_hole.grenade) do
                     if grenade == eligible_grenade then
                         local progress = EHI:GetAchievementProgress("gage_9_stats")
                         HookAwardAchievement("gage_9", function(am, stat, value)
@@ -1122,7 +1039,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             if EHI:IsAchievementLocked2("cac_3") then -- "Denied" achievement
                 local listener_key = "EHI_cac_3_listener"
                 local progress = EHI:GetAchievementProgress("cac_3_stats")
-                local function on_flash_grenade_destroyed(attacker_unit)
+                managers.player:register_message("flash_grenade_destroyed", listener_key, function(attacker_unit)
                     local local_player = managers.player:player_unit()
                     if local_player and attacker_unit == local_player then
                         progress = progress + 1
@@ -1132,8 +1049,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                             managers.player:unregister_message("flash_grenade_destroyed", listener_key)
                         end
                     end
-                end
-                managers.player:register_message("flash_grenade_destroyed", listener_key, on_flash_grenade_destroyed)
+                end)
                 ShowTrackerInLoud(function() -- Show progress when alarm went off
                     ShowPopup("cac_3", progress, 30)
                 end)
@@ -1141,7 +1057,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             if EHI:IsAchievementLocked2("cac_34") then -- "Lieutenant Colonel" achievement
                 local listener_key = "EHI_cac_34_listener_key"
                 local progress = EHI:GetAchievementProgress("cac_34_stats")
-                local function on_cop_converted(converted_unit, converting_unit)
+                managers.player:register_message("cop_converted", listener_key, function(converted_unit, converting_unit)
                     if not alive(converting_unit) then
                         return
                     end
@@ -1151,8 +1067,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                         return
                     end
                     ShowPopup("cac_34", progress, 300)
-                end
-                managers.player:register_message("cop_converted", listener_key, on_cop_converted)
+                end)
                 ShowPopup("cac_34", progress, 300)
             end
             if eng_1_levels[level] then
@@ -1274,7 +1189,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                     end
                     HookSecuredChallenge(active_sh_daily, data, icon)
                 elseif sh_daily.hook_end then
-                    HookMissionEndSHDailyProgress(active_sh_daily, icon)
+                    managers.ehi_hook:HookMissionEndCSMAward(active_sh_daily, icon)
                 end
             end
         end

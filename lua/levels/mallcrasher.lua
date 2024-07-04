@@ -2,12 +2,13 @@ local EHI = EHI
 local lerp = math.lerp
 local sin = math.sin
 local Color = Color
----@class EHIameno3Tracker : EHIAchievementTracker, EHINeededValueTracker
+---@class EHIameno3Tracker : EHIAchievementTracker, EHINeededValueTracker, EHIAchievementProgressTracker
 ---@field super EHIAchievementTracker
 EHIameno3Tracker = class(EHIAchievementTracker)
 EHIameno3Tracker.FormatNumber = EHINeededValueTracker.Format
 EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
 EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+EHIameno3Tracker.AddLootListener = EHIAchievementProgressTracker.AddLootListener
 ---@param o PanelText
 ---@param old_color Color
 ---@param color Color
@@ -35,10 +36,8 @@ function EHIameno3Tracker:pre_init(params)
     self._progress = params.progress or 0
     self._progress_formatted = self:FormatNumber2(0)
     self._max_formatted = self:FormatNumber2(self._max)
-end
-
-function EHIameno3Tracker:post_init(params)
-    EHI:AddAchievementToCounter({
+    self._loot_parent = managers.ehi_loot
+    self:AddLootListener({
         achievement = "ameno_3",
         max = self._max,
         counter =
@@ -85,6 +84,11 @@ end
 function EHIameno3Tracker:SetTextColor(color)
     EHINeededValueTracker.super.SetTextColor(self, color)
     self._money_text:set_color(color)
+end
+
+function EHIameno3Tracker:delete()
+    self._loot_parent:RemoveEventListener("ameno_3")
+    EHIameno3Tracker.super.delete(self)
 end
 
 local Icon = EHI.Icons

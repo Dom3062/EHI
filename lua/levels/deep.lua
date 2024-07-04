@@ -124,10 +124,10 @@ EHI:ShowAchievementLootCounter({
     max = 4,
     triggers =
     {
-        [101084] = { special_function = SF.CustomCode, f = function()
-            managers.ehi_tracker:IncreaseTrackerProgressMax("deep_11", 4)
-            managers.ehi_tracker:CallFunction("deep_11", "SetStarted")
-        end },
+        [101084] = EHI:AddCustomCode(function(self)
+            self._trackers:IncreaseTrackerProgressMax("deep_11", 4)
+            self._trackers:CallFunction("deep_11", "SetStarted")
+        end),
         [102062] = { special_function = SF.CallCustomFunction, f = "SetFailed2" }
     },
     add_to_counter = true,

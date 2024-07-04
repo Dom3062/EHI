@@ -18,9 +18,10 @@ end
 function JobManager:IsPlayingMultidayHeist()
     if not self._global.current_job then
         return false
-    end
-    if self._global.current_job.current_stage == 1 then
+    elseif self._global.current_job.current_stage == 1 then
         return false
+    elseif string.sub(self._global.current_job.job_id or "", 1, -4) == "dayselect_random_" then -- `Any Day Any Heist` mod check
+        return self._global.current_job.current_stage == self._global.current_job.stages
     end
     return self._global.current_job.stages >= 2
 end

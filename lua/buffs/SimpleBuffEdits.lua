@@ -1,8 +1,7 @@
 ---@class EHIHealthRegenBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIHealthRegenBuffTracker = class(EHIBuffTracker)
-function EHIHealthRegenBuffTracker:init(...)
-    EHIHealthRegenBuffTracker.super.init(self, ...)
+function EHIHealthRegenBuffTracker:post_init(...)
     local icon = self._panel:child("icon") --[[@as PanelBitmap]] -- Hostage Taker regen
     self._panel:bitmap({ -- Muscle regen
         name = "icon2",
@@ -167,6 +166,8 @@ function EHIExPresidentBuffTracker:PreUpdateCheck()
         local character_damage = player_unit and player_unit:character_damage() ---@cast character_damage -HuskPlayerDamage
         self:SetStoredHealthMaxAndUpdateRatio(character_damage and character_damage:max_armor_stored_health() or 0, 0)
         return true
+    else
+        self:delete()
     end
 end
 

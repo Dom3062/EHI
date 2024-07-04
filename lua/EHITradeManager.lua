@@ -89,8 +89,7 @@ end
 function EHITradeManager:SetCachedPeerInCustody(peer_id)
     if not self._trade_delay[peer_id] then
         return
-    end
-    if self._trade_processed_after_alarm then
+    elseif self._trade_processed_after_alarm then
         local data = self._trade_delay[peer_id]
         self:PostPeerCustodyTime(peer_id, data.respawn_t, data.civilians_killed, true)
         return
@@ -107,12 +106,13 @@ function EHITradeManager:IncreaseCachedPeerCustodyTime(peer_id, time)
     local data = self._trade_delay[peer_id]
     local respawn_t = data.respawn_t
     local new_t = respawn_t + time
+    local new_civies = data.civilians_killed + 1
     if self._trade_processed_after_alarm then
-        self:PostPeerCustodyTime(peer_id, new_t, 1)
+        self:PostPeerCustodyTime(peer_id, new_t, new_civies)
         return
     end
     data.respawn_t = new_t
-    data.civilians_killed = data.civilians_killed + 1
+    data.civilians_killed = new_civies
 end
 
 ---@param peer_id number
@@ -121,8 +121,7 @@ end
 function EHITradeManager:SetCachedPeerCustodyTime(peer_id, time, civilians_killed)
     if not self._trade_delay[peer_id] then
         return
-    end
-    if self._trade_processed_after_alarm then
+    elseif self._trade_processed_after_alarm then
         self:PostPeerCustodyTime(peer_id, time, civilians_killed)
         return
     end

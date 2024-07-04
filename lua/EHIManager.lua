@@ -1,9 +1,9 @@
 local EHI = EHI
 ---@class EHIManager : EHIBaseManager
+---@field super EHIBaseManager
 ---@field new fun(self: self, managers: managers): self
 ---@field FormatTimer fun(self: self, t: number): string
 EHIManager = class(EHIBaseManager)
-EHIManager._element_hook_function = EHI:IsClient() and EHI.ClientElement or EHI.HostElement
 EHIManager.Trackers = EHI.Trackers
 EHIManager.Waypoints = EHI.Waypoints
 EHIManager.FilterTracker =
@@ -22,6 +22,7 @@ EHIManager._internal_listeners = {}
 EHIManager._sync_tracker = "EHISyncAddTracker"
 ---@param managers managers
 function EHIManager:init(managers)
+    self:CreateEventListener()
     self._trackers = managers.ehi_tracker
     self._waypoints = managers.ehi_waypoint
     self._buff = managers.ehi_buff
@@ -33,6 +34,7 @@ function EHIManager:init(managers)
     self._phalanx = managers.ehi_phalanx
     self._timer = managers.ehi_timer
     self._loot = managers.ehi_loot
+    self._hook = managers.ehi_hook
     self._level_started_from_beginning = true
     self._t = 0
     self.TrackerWaypointsClass =
@@ -83,7 +85,7 @@ function EHIManager:init(managers)
         [self.Trackers.Group.Warning] = true
     }
     if EHI:IsClient() then
-        self.HookOnLoad = {}
+        self._HookOnLoad = {}
     end
     self:_post_init()
 end
@@ -1137,12 +1139,6 @@ function EHIManager:InitElements()
     end
 end
 
----@param element MissionScriptElement
----@param post_call fun(element: MissionScriptElement, instigator: Unit?)
-function EHIManager:HookElement(element, post_call)
-    Hooks:PostHook(element, self._element_hook_function, string.format("EHI_Element_%d", element._id), post_call)
-end
-
 ---@param elements_to_hook table<number, _>
 function EHIManager:HookElements(elements_to_hook)
     local client = EHI:IsClient()
@@ -1157,7 +1153,7 @@ function EHIManager:HookElements(elements_to_hook)
             for _, script in pairs(scripts) do
                 local element = script:element(id)
                 if element then
-                    self:HookElement(element, f)
+                    self._hook:HookElement(element, f)
                 elseif client then
                     --[[
                         On client, the element was not found
@@ -1167,7 +1163,7 @@ function EHIManager:HookElements(elements_to_hook)
                         These instances are synced when you join
                         Delay the hook until the sync is complete (see: EHIManager:SyncLoad())
                     ]]
-                    self.HookOnLoad[id] = true
+                    self._HookOnLoad[id] = true
                 end
             end
         end
@@ -1203,7 +1199,7 @@ end
 
 function EHIManager:SyncLoad()
     self:AddPositionToWaypointFromLoad()
-    for id, _ in pairs(self.HookOnLoad) do
+    for id, _ in pairs(self._HookOnLoad) do
         local trigger = triggers[id]
         if trigger then
             if trigger.special_function == SF.ShowWaypoint and trigger.data then
@@ -1222,8 +1218,8 @@ function EHIManager:SyncLoad()
             end
         end
     end
-    self:HookElements(self.HookOnLoad)
-    self.HookOnLoad = nil
+    self:HookElements(self._HookOnLoad)
+    self._HookOnLoad = nil
     EHI:DisableWaypoints(EHI.DisableOnLoad)
     EHI:DisableWaypointsOnInit()
     EHI.DisableOnLoad = nil
@@ -1286,10 +1282,9 @@ function EHIManager:CreateTrackerAndSync(id, delay)
     end
 end
 
----@param self EHIManager
 ---@param trigger ElementTrigger
 ---@param id number
-local function GetElementTimer(self, trigger, id)
+function EHIManager:_get_element_timer_accurate(trigger, id)
     if EHI:IsHost() then
         local element = managers.mission:get_element_by_id(trigger.element)
         if element then
@@ -1307,13 +1302,8 @@ local function GetElementTimer(self, trigger, id)
 end
 
 ---@param id number
-function EHIManager:UnhookElement(id)
-    Hooks:RemovePostHook(string.format("EHI_Element_%d", id))
-end
-
----@param id number
 function EHIManager:UnhookTrigger(id)
-    self:UnhookElement(id)
+    self._hook:UnhookElement(id)
     triggers[id] = nil
 end
 
@@ -1470,12 +1460,12 @@ function EHIManager:Trigger(id, element, enabled)
             elseif f == SF.DecreaseChance then
                 self._trackers:DecreaseChance(trigger.id, trigger.amount)
             elseif f == SF.GetElementTimerAccurate then
-                GetElementTimer(self, trigger, id)
+                self:_get_element_timer_accurate(trigger, id)
             elseif f == SF.UnpauseTrackerIfExistsAccurate then
                 if self:Exists(trigger.id) then
                     self:Unpause(trigger.id)
                 else
-                    GetElementTimer(self, trigger, id)
+                    self:_get_element_timer_accurate(trigger, id)
                 end
             elseif f == SF.UnpauseOrSetTimeByPreplanning then
                 if self:Exists(trigger.id) then
@@ -1723,18 +1713,13 @@ function EHIManager:UpdateWaypointTriggerIcon(id, icon)
     self._waypoints:SetWaypointIcon(t.id, icon)
 end
 
----@param id number
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
----@return nil
----@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)): integer
-function EHIManager:RegisterCustomSF(id, f)
-    if f then
-        self.SFF[id] = f
-    else
-        local f_id = EHI:GetFreeCustomSFID()
-        self.SFF[f_id] = id
-        return f_id
-    end
+---@return number
+function EHIManager:RegisterCustomSF(f)
+    local f_id = (self._cache.SFFUsed or SF.CustomSF) + 1
+    self.SFF[f_id] = f
+    self._cache.SFFUsed = f_id
+    return f_id
 end
 
 ---@param id number
@@ -1742,25 +1727,17 @@ function EHIManager:UnregisterCustomSF(id)
     self.SFF[id] = nil
 end
 
----@param id number
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
----@return nil
----@overload fun(self, f: fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)): integer
-function EHIManager:RegisterCustomSyncedSF(id, f)
+---@return number
+function EHIManager:RegisterCustomSyncedSF(f)
     self.SyncedSFF = self.SyncedSFF or {}
-    if f then
-        self.SFF[id] = f
-        if EHI:IsHost() then
-            self.SyncFunctions[id] = true
-        end
-    else
-        local f_id = EHI:GetFreeCustomSyncedSFID()
-        self.SFF[f_id] = id
-        if EHI:IsHost() then
-            self.SyncFunctions[f_id] = true
-        end
-        return f_id
+    local f_id = (self._cache.SyncedSFFUsed or SF.CustomSyncedSF) + 1
+    self.SFF[f_id] = f
+    if EHI:IsHost() then
+        self.SyncFunctions[f_id] = true
     end
+    self._cache.SyncedSFFUsed = f_id
+    return f_id
 end
 
 if EHI:GetWaypointOption("show_waypoints_only") then
@@ -1822,10 +1799,9 @@ if not EHI:GetOption("show_mission_trackers") then
         self._trackers:Sync(id, delay)
     end
 
-    ---@param self EHIManager
     ---@param trigger ElementTrigger
     ---@param id number
-    GetElementTimer = function(self, trigger, id)
+    function EHIManager:_get_element_timer_accurate(trigger, id)
         if EHI:IsHost() then
             local element = managers.mission:get_element_by_id(trigger.element)
             if element then

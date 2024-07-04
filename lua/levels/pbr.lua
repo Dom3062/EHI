@@ -45,15 +45,16 @@ local achievements =
     }
 }
 
+---@param self EHIManager
 ---@param disable boolean
-local function ToggleAssaultTracker(disable)
-    managers.ehi_assault:SetControlStateBlock(disable, 30)
+local function ToggleAssaultTracker(self, disable)
+    self._assault:SetControlStateBlock(disable, 30)
 end
 local other =
 {
     [102292] = EHI:AddAssaultDelay({ control = 75 }),
-    [101492] = { special_function = SF.CustomCode, f = ToggleAssaultTracker, arg = true },
-    [101491] = { special_function = SF.CustomCode, f = ToggleAssaultTracker, arg = false }
+    [101492] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = true },
+    [101491] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = false }
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(101410, 10950)] = { id = "Snipers", class = TT.Sniper.Count, single_sniper = true }

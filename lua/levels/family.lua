@@ -65,7 +65,7 @@ local sidejob =
                     local progress = loot:GetSecuredBagsTypeAmount(trophy.carry_id)
                     self._trackers:SetTrackerProgress(trigger.id, progress)
                     if progress >= trophy.total_amount then
-                        EHI:RemoveEventListener(trigger.id)
+                        self._loot:RemoveEventListener(trigger.id)
                     end
                 end)
             end) }

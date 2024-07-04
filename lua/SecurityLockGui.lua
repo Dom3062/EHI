@@ -30,7 +30,7 @@ function SecurityLockGui:_start(...)
     original._start(self, ...)
     if not show_waypoint_only then
         if self._bars > 1 and self._current_bar then
-            if managers.ehi_tracker:CallFunction3(self._ehi_key, "SetTrackerProgress", self._current_bar) then
+            if managers.ehi_tracker:CallFunction2(self._ehi_key, "SetProgress", self._current_bar) then
                 managers.ehi_tracker:AddTracker({
                     id = self._ehi_key,
                     progress = self._current_bar,

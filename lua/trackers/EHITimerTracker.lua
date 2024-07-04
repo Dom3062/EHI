@@ -1,8 +1,6 @@
 local EHI = EHI
 local Color = Color
 
----@alias EHITimerGroupTracker.Timer { label: PanelText, time: number, jammed: boolean, powered: boolean, autorepair: boolean, animate_warning: boolean?, animate_completion: boolean?, anim_started: boolean, pos: number }
-
 ---@class EHITimerTracker : EHIWarningTracker, EHIGroupTracker
 ---@field super EHIWarningTracker
 ---@field _icon2 PanelBitmap?

@@ -69,10 +69,10 @@ function EHIDeployableManager:AddToDeployableCache(type, key, unit, tracker_type
     if tracker then
         if tracker_type then
              ---@cast tracker -EHIEquipmentTracker
-            tracker:UpdateAmount(tracker_type, unit, key, 0)
+            tracker:UpdateAmount(tracker_type, key, 0)
         else
             ---@cast tracker EHIEquipmentTracker
-            tracker:UpdateAmount(unit, key, 0)
+            tracker:UpdateAmount(key, 0)
         end
     end
 end
@@ -94,9 +94,9 @@ function EHIDeployableManager:LoadFromDeployableCache(type, key)
             local tracker = self:GetTracker(type)
             if tracker then
                 if deployable.tracker_type then
-                    tracker:UpdateAmount(deployable.tracker_type, unit, key, unit:base():GetRealAmount())
+                    tracker:UpdateAmount(deployable.tracker_type, key, unit:base():GetRealAmount())
                 else
-                    tracker:UpdateAmount(unit, key, unit:base():GetRealAmount())
+                    tracker:UpdateAmount(key, unit:base():GetRealAmount())
                 end
             end
         end

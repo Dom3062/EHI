@@ -173,12 +173,11 @@ if EHI:GetOption("show_mission_trackers") then
     local bg = Idstring("g_code_screen"):key()
     local codes = {}
     for color, _ in pairs(dah_laptop_codes) do
-        codes[color] = {}
-        local _c = codes[color]
+        local c = {}
         for i = 0, 9, 1 do
-            local str = "g_number_" .. color .. "_0" .. tostring(i)
-            _c[i] = Idstring(str):key()
+            c[i] = Idstring(string.format("g_number_%s_0%d", color, i)):key()
         end
+        codes[color] = c
     end
     local function CheckIfCodeIsVisible(unit, color)
         if not unit then

@@ -20,11 +20,12 @@ local original =
 if EHI:GetOption("show_difficulty_tracker") then
     ---@param diff number
     EHI:AddCallback(EHI.CallbackMessage.SyncAssaultDiff, function(diff)
-        if managers.ehi_tracker:CallFunction3("AssaultDiff", "SetChance", diff, EHITrackerManager.Rounding.Chance) then
+        local chance = managers.ehi_tracker:RoundChanceNumber(diff)
+        if managers.ehi_tracker:CallFunction2("AssaultDiff", "SetChance", chance) then
             managers.ehi_tracker:AddTracker({
                 id = "AssaultDiff",
                 icons = { "enemy" },
-                chance = managers.ehi_tracker:RoundChanceNumber(diff),
+                chance = chance,
                 hint = "diff",
                 class = EHI.Trackers.Chance
             })

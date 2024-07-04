@@ -85,8 +85,7 @@ if EHI:IsLootCounterVisible() then
             return false
         end
         if unit:damage()._state then
-            local group = unit:damage()._state.graphic_group
-            return not group.safe -- If the "safe" group does not exist, the safe is visible
+            return not unit:damage()._state.graphic_group.safe -- If the "safe" group does not exist, the safe is visible
         else
             return false
         end

@@ -105,6 +105,7 @@
     "ehi_hint_kills" : "Vyžadované zabití",
     "ehi_hint_winch" : "Naviják",
     "ehi_hint_c4_delivery" : "Dodání C4",
+    "ehi_hint_code" : "Kód",
     "ehi_hint_color_codes" : "Barevné kódy",
     "ehi_hint_keypad_reset" : "Resetování klávesnice",
     "ehi_hint_fuel_transfer" : "Přesun paliva",

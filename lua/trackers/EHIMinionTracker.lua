@@ -143,7 +143,6 @@ end
 
 function EHIMinionTracker:AddMinion(key, amount, peer_id)
     if not key then
-        EHI:DebugEquipment(self._id, nil, key, amount, peer_id)
         return
     end
     if self._peers[peer_id] then

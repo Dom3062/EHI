@@ -47,8 +47,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
     local waypoint = self._hud:AddEHIWaypoint(id, params)
     if not waypoint then
         return
-    end
-    if not (waypoint.bitmap and waypoint.timer_gui) then
+    elseif not (waypoint.bitmap and waypoint.timer_gui) then
         self._enabled = false -- Disable waypoints as they don't have correct fields
         self._hud:remove_waypoint(id)
         return
@@ -72,21 +71,20 @@ end
 
 ---@param id string
 function EHIWaypointManager:RemoveWaypoint(id)
-    if not self._waypoints[id] then
+    local wp = table.remove_key(self._waypoints, id)
+    if wp then
+        wp:destroy()
+        self._waypoints_to_update[id] = nil
+        self._hud:remove_waypoint(id)
         return
     end
-    self._waypoints[id]:destroy()
-    self._waypoints[id] = nil
-    self._waypoints_to_update[id] = nil
-    self._hud:remove_waypoint(id)
 end
 
 ---@param id number
 function EHIWaypointManager:RestoreVanillaWaypoint(id)
-    if not id then
-        return
+    if id then
+        self._hud:RestoreWaypoint2(id)
     end
-    self._hud:RestoreWaypoint2(id)
 end
 
 ---@param id string
@@ -144,7 +142,7 @@ end
 ---@param id string
 ---@param new_icon string
 function EHIWaypointManager:SetWaypointIcon(id, new_icon)
-    if id and self._waypoints[id] and self._waypoints[id]._bitmap then
+    if id and self._waypoints[id] then
         local wp = self._hud:get_waypoint_data(id)
         if not wp then
             return

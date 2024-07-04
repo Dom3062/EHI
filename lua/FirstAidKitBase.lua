@@ -6,39 +6,39 @@ end
 local UpdateTracker
 
 if EHI:GetOption("show_equipment_aggregate_all") then
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:TrackerDoesNotExist("Deployables") then
             managers.ehi_deployable:AddAggregatedDeployablesTracker()
         end
-        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "first_aid_kit", unit, key, amount)
+        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "first_aid_kit", key, amount)
     end
 elseif EHI:GetOption("show_equipment_aggregate_health") then
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:TrackerDoesNotExist("Health") then
             managers.ehi_deployable:AddAggregatedHealthTracker()
         end
-        managers.ehi_deployable:CallFunction("Health", "UpdateAmount", "first_aid_kit", unit, key, amount)
+        managers.ehi_deployable:CallFunction("Health", "UpdateAmount", "first_aid_kit", key, amount)
     end
 else
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:TrackerDoesNotExist("FirstAidKits") then
             managers.ehi_deployable:CreateDeployableTracker("FirstAidKits")
         end
-        managers.ehi_deployable:CallFunction("FirstAidKits", "UpdateAmount", unit, key, amount)
+        managers.ehi_deployable:CallFunction("FirstAidKits", "UpdateAmount", key, amount)
     end
 end
 
 if EHI:IsVR() then
     local old_UpdateTracker = UpdateTracker
     local function Reload(key, data)
-        old_UpdateTracker(data.unit, key, data.amount)
+        old_UpdateTracker(key, data.amount)
     end
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:IsLoading() then
-            managers.ehi_deployable:AddToLoadQueue(key, { unit = unit, amount = amount }, Reload)
+            managers.ehi_deployable:AddToLoadQueue(key, { amount = amount }, Reload)
             return
         end
-        old_UpdateTracker(unit, key, amount)
+        old_UpdateTracker(key, amount)
     end
 end
 
@@ -56,7 +56,7 @@ local original =
 function FirstAidKitBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    UpdateTracker(self._unit, self._ehi_key, 1)
+    UpdateTracker(self._ehi_key, 1)
 end
 
 function FirstAidKitBase:GetEHIKey()
@@ -68,6 +68,6 @@ function FirstAidKitBase:GetRealAmount()
 end
 
 function FirstAidKitBase:destroy(...)
-    UpdateTracker(self._unit, self._ehi_key, 0)
+    UpdateTracker(self._ehi_key, 0)
     original.destroy(self, ...)
 end

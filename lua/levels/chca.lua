@@ -15,8 +15,53 @@ local triggers = {
 
     [102675] = { additional_time = 5 + 10 + 14, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.GetElementTimerAccurate, element = 102674, hint = Hints.Wait },
 
-    [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot, hint = Hints.Escape }
+    [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot, hint = Hints.Escape },
+
+    [101073] = EHI:AddCustomCode(function(self)
+        if self._cache.chca_C4Route or self._cache.chca_CodeUsed then
+            return
+        end
+        local paper_unit = managers.worlddefinition:get_unit(EHI:GetInstanceElementID(100000, 14470)) ---@cast paper_unit UnitBase?
+        if not paper_unit then
+            return
+        end
+        local object = paper_unit:damage() and paper_unit:damage()._state and paper_unit:damage()._state.object
+        if not object then
+            return
+        end
+        local code = {}
+        for i = 1, 4, 1 do
+            local c = {}
+            for j = 1, 10, 1 do
+                c[j] = Idstring(string.format("g_%d_%d", i, j - 1)):key()
+            end
+            code[i] = c
+        end
+        self._trackers:AddTracker({
+            id = "VaultCode",
+            class = TT.Code
+        })
+        for i, code_body in ipairs(code) do
+            for j, code_id in ipairs(code_body) do
+                local body = object[code_id] or {}
+                local visibility = body and body.set_visibility or {}
+                if visibility[2] then -- If code is visible
+                    self._trackers:CallFunction("VaultCode", "SetCodePart", i, tostring(j - 1), 4)
+                    break
+                end
+            end
+        end
+    end, true), -- Spa first; Handprint second
+    [103761] = EHI:AddCustomCode(function(self)
+        self._cache.chca_C4Route = true
+        self._trackers:RemoveTracker("VaultCode")
+    end),
+    [EHI:GetInstanceElementID(100023, 15470)] = EHI:AddCustomCode(function(self)
+        self._cache.chca_CodeUsed = true
+        self._trackers:RemoveTracker("VaultCode")
+    end)
 }
+triggers[100688] = triggers[101073] -- Handprint first; Spa second
 if EHI:IsClient() then
     local wait_time = 90 -- Very Hard and below
     local pickup_wait_time = 25 -- Normal and Hard
@@ -41,6 +86,16 @@ if EHI:IsClient() then
     triggers[102678] = { time = 45, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait }
     triggers[102679] = { time = 15, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait }
 end
+EHI:AddEventListener("chca_Winch", "chca_Winch",
+---@param self EHIManager
+---@param waypoint_id string
+function(self, waypoint_id)
+    local wp_defend = EHI:GetInstanceElementID(100070, 21220)
+    self._waypoints:SetWaypointPosition(waypoint_id, self:GetElementPositionOrDefault(wp_defend))
+    managers.hud:SoftRemoveWaypoint2(wp_defend)
+    managers.hud:SoftRemoveWaypoint2(EHI:GetInstanceElementID(100046, 21220)) -- Interact
+    self:RemoveEventListener("chca_Winch")
+end)
 
 local function chca_9_fail()
     managers.ehi_achievement:SetAchievementFailed("chca_9")
@@ -152,48 +207,69 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+if EHI:IsLootCounterVisible() then
+    local units = {}
+    for i = 100017, 100020, 1 do
+        units[EHI:GetInstanceUnitID(i, 15470)] = true
+    end
+    for i = 100028, 100030, 1 do
+        units[EHI:GetInstanceUnitID(i, 15470)] = true
+    end
+    for i = 100034, 100041, 1 do
+        units[EHI:GetInstanceUnitID(i, 15470)] = true
+    end
+    local LootLeftInVault = EHI:RegisterCustomSF(function(self, ...)
+        local left_to_burn = 16
+        for unit_id, _ in pairs(units) do
+            local unit = managers.worlddefinition:get_unit(unit_id) ---@cast unit UnitBase
+            -- If the unit has "body" table, then players bagged it
+            if unit and unit:damage()._state and unit:damage()._state.body then
+                left_to_burn = left_to_burn - 1
+            end
+        end
+        self._loot:DecreaseLootCounterProgressMax(left_to_burn)
+    end)
+    local C4Plan = EHI:RegisterCustomSF(function(self, ...)
+        local bags = 16
+        if self._cache.chca_TeasetInMeetingRoom and not self._cache.chca_GlassDestroyed then
+            bags = bags + 1
+        end
+        if not self._cache.chca_MinisafeMoneyBagFound then
+            bags = bags + 1
+        end
+        self._loot:DecreaseLootCounterProgressMax(bags)
+    end)
+    other[100107] = EHI:AddLootCounter3(function(self, ...)
+        EHI:ShowLootCounterNoChecks({
+            max = 18, -- 16 money bags, teaset and 1 money bundle in a safe
+            triggers =
+            {
+                [103761] = { special_function = C4Plan },
+                [EHI:GetInstanceElementID(100014, 15470)] = { special_function = LootLeftInVault }, -- Ink (Stealth)
+                [EHI:GetInstanceElementID(100063, 15470)] = { special_function = LootLeftInVault } -- Burn (Loud)
+            },
+            hook_triggers = true,
+            client_from_start = true
+        })
+        if managers.game_play_central:GetMissionEnabledUnit(103818) then
+            self._cache.chca_TeasetInMeetingRoom = true
+        end
+    end, true)
+    other[102751] = EHI:AddCustomCode(function(self)
+        self._cache.chca_GlassDestroyed = true
+    end)
+    local MiniSafeMoneyBagFound = EHI:AddCustomCode(function(self)
+        self._cache.chca_MinisafeMoneyBagFound = true
+    end)
+    other[101138] = MiniSafeMoneyBagFound
+    other[101413] = MiniSafeMoneyBagFound
+end
 
 EHI:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
 })
---[[local LootLeft = EHI:GetFreeCustomSFID()
-EHI:ShowLootCounter({
-    max = 18, -- 18 money bags, teaset and 1 money bundle in a safe
-    triggers =
-    {
-        [103761] = { max = 16, special_function = SF.DecreaseProgressMax }, -- C4 Plan
-        [EHI:GetInstanceElementID(100014, 15470)] = { special_function = LootLeft }, -- Ink (Stealth)
-        [EHI:GetInstanceElementID(100063, 15470)] = { special_function = LootLeft } -- Burn (Loud)
-    }
-})
-local units = {}
-for i = 100017, 100020, 1 do
-    units[EHI:GetInstanceElementID(i, 15470)] = true
-end
-for i = 100028, 100030, 1 do
-    units[EHI:GetInstanceElementID(i, 15470)] = true
-end
-for i = 100034, 100041, 1 do
-    units[EHI:GetInstanceElementID(i, 15470)] = true
-end
-EHI:RegisterCustomSF(LootLeft, function(self, ...)
-    local left_to_burn = 16
-    for unit_id, _ in pairs(units) do
-        local unit = managers.worlddefinition:get_unit(unit_id)
-        -- If the unit has "body" table, then players bagged it
-        if unit and unit:damage()._state and unit:damage()._state.body then
-            left_to_burn = left_to_burn - 1
-        end
-    end
-    self._loot:DecreaseLootCounterProgressMax(left_to_burn)
-end)
-EHI:AddLoadSyncFunction(function(self)
-    if managers.game_play_central:GetMissionDisabledUnit(200942) then -- AI Vision Blocker; "editor_only" continent
-        self._loot:DecreaseLootCounterProgressMax(16)
-    end
-end)]]
 local min_loot = EHI:GetValueBasedOnDifficulty({
     veryhard_or_below = 4,
     overkill = 8,

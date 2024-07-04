@@ -162,6 +162,14 @@ function EHIAchievementProgressTracker:SetFailed()
     self:ShowFailedPopup()
 end
 
+---@param counter AchievementBagValueCounterTable|AchievementLootCounterTable
+function EHIAchievementProgressTracker:AddLootListener(counter)
+    if self._loot_parent then
+        counter.no_sync = true
+        self._loot_parent:AddAchievementListener(counter)
+    end
+end
+
 function EHIAchievementProgressTracker:delete()
     if self._loot_parent then
         self._loot_parent:RemoveEventListener(self._id)
@@ -177,8 +185,9 @@ function EHIAchievementProgressTracker:load(data)
     self:SetProgress(data.progress or 0)
 end
 
----@class EHIAchievementProgressGroupTracker : EHIProgressGroupTracker, EHIAchievementTracker
+---@class EHIAchievementProgressGroupTracker : EHIProgressGroupTracker, EHIAchievementTracker, EHIAchievementProgressTracker
 EHIAchievementProgressGroupTracker = ehi_achievement_class(EHIProgressGroupTracker)
+EHIAchievementProgressGroupTracker.AddLootListener = EHIAchievementProgressTracker.AddLootListener
 ---@param panel Panel
 ---@param params EHITracker.params
 function EHIAchievementProgressGroupTracker:init(panel, params, ...)

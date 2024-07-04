@@ -105,6 +105,7 @@
     "ehi_hint_kills" : "Required kills",
     "ehi_hint_winch" : "Winch",
     "ehi_hint_c4_delivery" : "C4 Delivery",
+    "ehi_hint_code" : "Code",
     "ehi_hint_color_codes" : "Color Codes",
     "ehi_hint_keypad_reset" : "Keypad Reset",
     "ehi_hint_fuel_transfer" : "Fuel Transfer",

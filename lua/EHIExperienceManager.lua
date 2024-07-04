@@ -168,7 +168,7 @@ function EHIExperienceManager:HookAwardXP()
             ---@param amount number
             self._show = function(id, amount)
                 local _id = string.format("XP%d", id)
-                if self._trackers:CallFunction3(_id, "AddXPToTracker", amount) then
+                if self._trackers:CallFunction2(_id, "AddXP", amount) then
                     self._trackers:AddTracker({
                         id = _id,
                         amount = amount,

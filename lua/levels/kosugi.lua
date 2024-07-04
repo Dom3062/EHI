@@ -4,10 +4,10 @@ local Hints = EHI.Hints
 ---@class EHIkosugi5Tracker : EHIAchievementProgressGroupTracker
 ---@field super EHIAchievementProgressGroupTracker
 EHIkosugi5Tracker = class(EHIAchievementProgressGroupTracker)
----@param params EHITracker.params
-function EHIkosugi5Tracker:post_init(params)
-    EHIkosugi5Tracker.super.post_init(self, params)
-    EHI:AddAchievementToCounter({
+function EHIkosugi5Tracker:post_init(...)
+    EHIkosugi5Tracker.super.post_init(self, ...)
+    self._loot_parent = managers.ehi_loot
+    self:AddLootListener({
         achievement = "kosugi_5",
         counter =
         {
@@ -16,11 +16,10 @@ function EHIkosugi5Tracker:post_init(params)
                 self:SetProgress(loot:GetSecuredBagsTypeAmount("samurai_suit"), "armor")
                 self:SetProgress(loot:GetSecuredBagsAmount(), "bags")
                 if self._counters == self._completed_counters then
-                    EHI:RemoveEventListener("kosugi_5")
+                    self._loot_parent:RemoveEventListener("kosugi_5")
                 end
             end
-        },
-        no_sync = true
+        }
     })
 end
 

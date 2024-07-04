@@ -39,7 +39,12 @@ if EHI:GetOption("show_pager_callback") then
     EHI:HookWithID(IntimitateInteractionExt, "set_tweak_data", "EHI_pager_set_tweak_data", function(self, id)
         if id == "corpse_alarm_pager" and not self._pager_has_run then
             if not show_waypoint_only then
-                managers.ehi_tracker:AddPagerTracker(self._ehi_key)
+                managers.ehi_tracker:AddTracker({
+                    id = self._ehi_key,
+                    hint = "pager",
+                    remove_on_alarm = true,
+                    class = "EHIPagerTracker"
+                })
             end
             if show_waypoint then
                 managers.ehi_waypoint:AddWaypoint(self._ehi_key, {

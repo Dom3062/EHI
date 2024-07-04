@@ -114,15 +114,10 @@ function EHIAggregatedEquipmentTracker:AddToIgnore(id)
 end
 
 ---@param id string
----@param unit Unit
 ---@param key string
 ---@param amount number
-function EHIAggregatedEquipmentTracker:UpdateAmount(id, unit, key, amount)
-    if not key then
-        EHI:DebugEquipment(self._id, unit, key, amount)
-        return
-    end
-    if self._ignore[id] then
+function EHIAggregatedEquipmentTracker:UpdateAmount(id, key, amount)
+    if not key or self._ignore[id] then
         return
     end
     self._deployables[id][key] = amount

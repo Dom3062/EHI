@@ -26,7 +26,8 @@ function WalletGuiObject.refresh(...)
         local s = ""
         if xp:IsInfamyPoolEnabled() then -- Level is maxed, show Infamy Pool instead if possible
             if xp:IsInfamyPoolOverflowed() then
-                s = ", " .. infamy_pool .. " 0 " .. _xp
+                local lvl_up_times = math.floor(xp._xp.prestige_xp / xp._xp_class:get_max_prestige_xp())
+                s = ", " .. infamy_pool .. " " .. xp:experience_string((lvl_up_times + 1) * xp._xp_class:get_max_prestige_xp() - xp._xp.prestige_xp) .. " " .. _xp .. " +" .. tostring(lvl_up_times)
             else
                 s = ", " .. infamy_pool .. " " .. xp:experience_string(xp._xp.prestige_xp_remaining) .. " " .. _xp
             end

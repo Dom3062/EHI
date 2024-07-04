@@ -3,6 +3,12 @@
     This file is not loaded, it is here to provide code completion in VSCode
 ]]
 
+---
+--- Aliases
+---
+---@alias CoreWorldInstanceManager.Instance { folder: string, start_index: number, continent: string, rotation: Rotation }
+---@alias WorldDefinition.Continent { base_id: number }
+
 _G.Global = {}
 ---@class World
 ---@field find_units fun(self: self, ...): Unit[]
@@ -904,6 +910,7 @@ end
 ---@field ehi_timer EHITimerManager
 ---@field ehi_loot EHILootManager
 ---@field ehi_sync EHISyncManager
+---@field ehi_hook EHIHookManager
 ---@field enemy EnemyManager
 ---@field environment_effects EnvironmentEffectsManager
 ---@field experience ExperienceManager

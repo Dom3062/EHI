@@ -17,8 +17,7 @@ local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) 
 local CheckOkValueHostCheckOnly = EHI:RegisterCustomSF(function(self, trigger, element, ...)
     if EHI:IsHost() and not element:_values_ok() then
         return
-    end
-    if self._trackers:TrackerExists(trigger.id) then
+    elseif self._trackers:TrackerExists(trigger.id) then
         self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
     elseif not trigger.dont_create then
         self:CreateTracker(trigger)

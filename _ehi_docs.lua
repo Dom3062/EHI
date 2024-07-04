@@ -3,6 +3,14 @@
     This file is not loaded, it is here to provide code completion in VSCode
 ]]
 
+---
+--- Aliases
+---
+---@alias EHITrackerManager.Tracker { tracker: EHITracker, pos: number, x: number, w: number }
+---@alias EHIWarningGroupTracker.Timer { label: PanelText, time: number, pos: number, warning: boolean, id: string, check_timer_progress: boolean }
+---@alias EHIProgressGroupTracker.Counter { label: PanelText, progress: number, max: number, disable_counter: boolean, set_color_bad_when_reached: boolean }
+---@alias EHITimerGroupTracker.Timer { label: PanelText, time: number, jammed: boolean, powered: boolean, autorepair: boolean, animate_warning: boolean?, animate_completion: boolean?, anim_started: boolean, pos: number }
+
 ---@class AnyExceptNil : table, string, boolean, number, userdata
 
 ---@class ElementWaypointTrigger

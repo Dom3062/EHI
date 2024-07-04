@@ -3,8 +3,16 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local AddToCache = EHI:GetFreeCustomSFID()
-local GetFromCache = EHI:GetFreeCustomSFID()
+local AddToCache = EHI:RegisterCustomSF(function(self, trigger, ...)
+    self._cache[trigger.id] = trigger.data
+end)
+local GetFromCache = EHI:RegisterCustomSF(function(self, trigger, ...)
+    local data = table.remove_key(self._cache, trigger.id) --[[@as { icon: string }? ]]
+    if data and data.icon then
+        trigger.icons[1] = data.icon
+    end
+    self:CreateTracker(trigger)
+end)
 local triggers = {
     [101145] = { time = 180, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape },
     [101158] = { time = 240, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape },
@@ -61,16 +69,7 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 }, "Escape")
-EHI:RegisterCustomSF(AddToCache, function(self, trigger, ...)
-    self._cache[trigger.id] = trigger.data
-end)
-EHI:RegisterCustomSF(GetFromCache, function(self, trigger, ...)
-    local data = table.remove_key(self._cache, trigger.id) --[[@as { icon: string }? ]]
-    if data and data.icon then
-        trigger.icons[1] = data.icon
-    end
-    self:CreateTracker(trigger)
-end)
+
 EHI:AddXPBreakdown({
     objective =
     {

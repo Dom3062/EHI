@@ -41,13 +41,11 @@ local function set_right(o, x)
     o:set_right(target_right)
 end
 ---@class EHIBuffTracker
----@field _init_text string?
 ---@field _inverted_progress boolean
 EHIBuffTracker = class()
 ---@param o Panel
 EHIBuffTracker._show = function(o)
-    local t = 0
-    local total = 0.15
+    local t, total = 0, 0.15
     while t < total do
         t = t + coroutine.yield()
         o:set_alpha(t / total)
@@ -56,11 +54,10 @@ EHIBuffTracker._show = function(o)
 end
 ---@param o Panel
 EHIBuffTracker._hide = function(o)
-    local t = 0
-    local total = 0.15
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_alpha(1 - (t / total))
+    local t, total = 0.15, 0.15
+    while t > 0 do
+        t = t - coroutine.yield()
+        o:set_alpha(t / total)
     end
     o:set_alpha(0)
 end

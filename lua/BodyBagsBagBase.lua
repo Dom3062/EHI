@@ -5,32 +5,32 @@ end
 
 local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:TrackerDoesNotExist("Deployables") and amount ~= 0 then
             managers.ehi_deployable:AddAggregatedDeployablesTracker("bodybags_bag")
         end
-        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "bodybags_bag", unit, key, amount)
+        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "bodybags_bag", key, amount)
     end
 else
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:TrackerDoesNotExist("BodyBags") and amount ~= 0 then
             managers.ehi_deployable:CreateDeployableTracker("BodyBags")
         end
-        managers.ehi_deployable:CallFunction("BodyBags", "UpdateAmount", unit, key, amount)
+        managers.ehi_deployable:CallFunction("BodyBags", "UpdateAmount", key, amount)
     end
 end
 
 if EHI:IsVR() then
     local old_UpdateTracker = UpdateTracker
     local function Reload(key, data)
-        old_UpdateTracker(data.unit, key, data.amount)
+        old_UpdateTracker(key, data.amount)
     end
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:IsLoading() then
-            managers.ehi_deployable:AddToLoadQueue(key, { unit = unit, amount = amount }, Reload)
+            managers.ehi_deployable:AddToLoadQueue(key, { amount = amount }, Reload)
             return
         end
-        old_UpdateTracker(unit, key, amount)
+        old_UpdateTracker(key, amount)
     end
 end
 
@@ -57,10 +57,10 @@ end
 
 function BodyBagsBagBase:_set_visual_stage(...)
     original._set_visual_stage(self, ...)
-    UpdateTracker(self._unit, self._ehi_key, self._bodybag_amount)
+    UpdateTracker(self._ehi_key, self._bodybag_amount)
 end
 
 function CustomBodyBagsBagBase:_set_empty(...)
     original.custom_set_empty(self, ...)
-	UpdateTracker(self._unit, self._ehi_key, 0)
+	UpdateTracker(self._ehi_key, 0)
 end

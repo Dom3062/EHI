@@ -2,8 +2,6 @@
 ---@field get_instance_data_by_name fun(self: self, instance_name: string): table?
 ---@field instance_data fun(self: self): table
 
----@alias CoreWorldInstanceManager.Instance { folder: string, start_index: number, continent: string, rotation: Rotation }
-
 local EHI = EHI
 if EHI:CheckLoadHook("CoreWorldInstanceManager") then
     return
@@ -371,12 +369,26 @@ local instances =
     ["levels/instances/unique/chca/chca_heli_drop/world"] =
     {
         [100096] = { time = 5 + 15, id = "chca_HeliRaise", icons = { Icon.Heli, Icon.Wait }, hint = Hints.Wait },
-        [100097] = { time = 150, id = "chca_Winch", icons = { Icon.Winch }, class = TT.Pausable, hint = Hints.Winch },
+        [100097] = { time = 150, id = "chca_Winch", icons = { Icon.Winch }, class = TT.Pausable, hint = Hints.Winch, waypoint_f = function(self, trigger)
+            self._waypoints:AddWaypoint(trigger.id, {
+                time = trigger.time,
+                icon = Icon.Defend,
+                position = Vector3(), -- Needs to be manually updated
+                class = EHI.Waypoints.Pausable
+            })
+            self:CallEvent("chca_Winch", self, trigger.id)
+        end },
         [100104] = { id = "chca_Winch", special_function = SF.UnpauseTracker },
         [100105] = { id = "chca_Winch", special_function = SF.PauseTracker },
         -- DON'T REMOVE THIS, because OVK's scripting skills suck
         -- They pause the timer when it reaches zero for no reason. But the timer is already stopped via Lua...
         [100101] = { id = "chca_Winch", special_function = SF.RemoveTracker }
+    },
+    ["levels/instances/unique/chca/chca_helicopter_turret/world"] =
+    {
+        [100036] = { id = "chca_TurretTimer", icons = { Icon.Heli, Icon.Turret, Icon.Wait }, special_function = SF.GetElementTimerAccurate, element = 100055, hint = Hints.sand_HeliTurretTimer },
+        [100027] = { id = "chca_BattleTurretTimer", icons = { Icon.Heli, Icon.Turret, Icon.Wait }, special_function = SF.GetElementTimerAccurate, element = 100012, hint = Hints.sand_HeliTurretTimer },
+        [100035] = { id = "chca_TurretTimer", special_function = SF.RemoveTracker }
     },
     ["levels/instances/unique/chca/chca_meeting_room/world"] =
     {
@@ -440,7 +452,7 @@ local instances =
             ---@field super EHITimedWarningChanceTracker
             EHICraneFixChanceTracker = class(EHITimedWarningChanceTracker)
             EHICraneFixChanceTracker._forced_icons = EHICraneFixChanceTracker._ONE_ICON and { Icon.Fix } or { Icon.Winch, Icon.Fix }
-            EHICraneFixChanceTracker._show_completion_color = true
+            EHICraneFixChanceTracker._warning_color = EHIWarningTracker._completion_color
             EHICraneFixChanceTracker.SetFailed = EHIAchievementTracker.SetFailed
             EHICraneFixChanceTracker.ShowFailedPopup = function(...) end
             function EHICraneFixChanceTracker:OverridePanel()
@@ -516,11 +528,15 @@ if EHI:IsClient() then
     instances["levels/instances/unique/fex/fex_helicopter_escape/world"][100030] = EHI:CopyTrigger(instances["levels/instances/unique/fex/fex_helicopter_escape/world"][100016], { time = 25 + 2 }, SF.SetTimeOrCreateTracker)
     instances["levels/instances/unique/fex/fex_helicopter_escape/world"][100035] = EHI:CopyTrigger(instances["levels/instances/unique/fex/fex_helicopter_escape/world"][100016], { time = 38 + 2 }, SF.SetTimeOrCreateTracker)
     instances["levels/instances/unique/fex/fex_helicopter_escape/world"][100036] = EHI:CopyTrigger(instances["levels/instances/unique/fex/fex_helicopter_escape/world"][100016], { time = 120 + 2 }, SF.SetTimeOrCreateTracker)
+    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].client = { time = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and 90 or 60, random_time = 30 }
+    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100024] = { id = "sand_TurretTimer", special_function = SF.RemoveTracker }
     instances["levels/instances/unique/chca/chca_heli_drop/world"][100099] = EHI:ClientCopyTrigger(instances["levels/instances/unique/chca/chca_heli_drop/world"][100097], { time = 80 }) -- "pulling_timer_trigger_120sec" but the time is set to 80s...
     instances["levels/instances/unique/chca/chca_heli_drop/world"][100100] = EHI:ClientCopyTrigger(instances["levels/instances/unique/chca/chca_heli_drop/world"][100097], { time = 90 })
     instances["levels/instances/unique/chca/chca_heli_drop/world"][100060] = EHI:ClientCopyTrigger(instances["levels/instances/unique/chca/chca_heli_drop/world"][100097], { time = 20 })
-    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100027].client = { time = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and 90 or 60, random_time = 30 }
-    instances["levels/instances/unique/sand/sand_helicopter_turret/world"][100024] = { id = "sand_TurretTimer", special_function = SF.RemoveTracker }
+    instances["levels/instances/unique/chca/chca_helicopter_turret/world"][100036].client = { time = 330, random_time = 30 }
+    instances["levels/instances/unique/chca/chca_helicopter_turret/world"][100059] = { id = "chca_TurretTimer", special_function = SF.RemoveTracker }
+    instances["levels/instances/unique/chca/chca_helicopter_turret/world"][100027].client = { time = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and 90 or 60, random_time = 30 }
+    instances["levels/instances/unique/chca/chca_helicopter_turret/world"][100029] = { id = "chca_BattleTurretTimer", special_function = SF.RemoveTracker }
     instances["levels/instances/unique/pent/pent_meeting_room_door_thermite/world"][100036] = EHI:ClientCopyTrigger(instances["levels/instances/unique/pent/pent_meeting_room_door_thermite/world"][100035], { time = 22.5 * 2 })
     -- 100037 has 0s delay for some reason...
     instances["levels/instances/unique/pent/pent_meeting_room_door_thermite/world"][100038] = EHI:ClientCopyTrigger(instances["levels/instances/unique/pent/pent_meeting_room_door_thermite/world"][100035], { time = 22.5 })

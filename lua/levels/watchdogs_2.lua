@@ -1,4 +1,4 @@
-local EHI, EM = EHI, managers.ehi_manager
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -6,9 +6,9 @@ local WT = EHI.Waypoints
 local Hints = EHI.Hints
 local anim_delay = 450/30
 local boat_delay = 60 + 30 + 30 + 450/30
-local GetFromCache = EHI:GetFreeCustomSyncedSFID()
+local GetFromCache
 if EHI:GetOption("show_mission_trackers") then
-    EHI:RegisterCustomSyncedSF(GetFromCache, function(self, trigger, ...)
+    GetFromCache = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
         local t = self.SyncedSFF.watchdogs_2_boat_time --[[@as number]]
         self.SyncedSFF.watchdogs_2_boat_time = nil
         if t then
@@ -20,7 +20,7 @@ if EHI:GetOption("show_mission_trackers") then
         end
     end)
 else
-    EHI:RegisterCustomSyncedSF(GetFromCache, function(self, ...)
+    GetFromCache = EHI:RegisterCustomSyncedSF(function(self, ...)
         self.SyncedSFF.watchdogs_2_boat_time = nil
     end)
 end
@@ -55,14 +55,14 @@ local triggers = {
 
     [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = Icon.BoatLootDrop, waypoint_f = waypoint_f, hint = Hints.Loot },
 
-    [100124] = { special_function = SF.CustomCode, f = function()
-        local bags = managers.ehi_manager:CountLootbagsOnTheGround(10)
+    [100124] = { special_function = SF.CustomCode2, f = function(self) ---@param self EHIManager
+        local bags = self:CountLootbagsOnTheGround(10)
         if bags % 4 == 0 then -- 4/8/12
             local trigger = bags - 3
-            managers.ehi_manager._loot:AddEventListener("watchdogs_2", function(self)
-                if self:GetSecuredBagsAmount() == trigger then
-                    EM:Trigger(1)
-                    EHI:RemoveEventListener("watchdogs_2")
+            self._loot:AddEventListener("watchdogs_2", function(loot)
+                if loot:GetSecuredBagsAmount() == trigger then
+                    self:Trigger(1)
+                    self._loot:RemoveEventListener("watchdogs_2")
                 end
             end)
         end
@@ -112,7 +112,7 @@ local other =
 {
     [100124] = EHI:AddLootCounter(function()
         local bags = managers.ehi_manager:CountLootbagsOnTheGround(10)
-        EHI:ShowLootCounterNoCheck({ max = bags, client_from_start = true })
+        EHI:ShowLootCounterNoChecks({ max = bags, client_from_start = true })
     end),
     [100220] = EHI:AddAssaultDelay({ control = 5 + 15 }),
 

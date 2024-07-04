@@ -5,39 +5,39 @@ end
 
 local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:TrackerDoesNotExist("Deployables") then
             managers.ehi_deployable:AddAggregatedDeployablesTracker()
         end
-        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "doctor_bag", unit, key, amount)
+        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "doctor_bag", key, amount)
     end
 elseif EHI:GetOption("show_equipment_aggregate_health") then
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:TrackerDoesNotExist("Health") then
             managers.ehi_deployable:AddAggregatedHealthTracker()
         end
-        managers.ehi_deployable:CallFunction("Health", "UpdateAmount", "doctor_bag", unit, key, amount)
+        managers.ehi_deployable:CallFunction("Health", "UpdateAmount", "doctor_bag", key, amount)
     end
 else
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:TrackerDoesNotExist("DoctorBags") then
             managers.ehi_deployable:CreateDeployableTracker("DoctorBags")
         end
-        managers.ehi_deployable:CallFunction("DoctorBags", "UpdateAmount", unit, key, amount)
+        managers.ehi_deployable:CallFunction("DoctorBags", "UpdateAmount", key, amount)
     end
 end
 
 if EHI:IsVR() then
     local old_UpdateTracker = UpdateTracker
     local function Reload(key, data)
-        old_UpdateTracker(data.unit, key, data.amount)
+        old_UpdateTracker(key, data.amount)
     end
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:IsLoading() then
-            managers.ehi_deployable:AddToLoadQueue(key, { unit = unit, amount = amount }, Reload)
+            managers.ehi_deployable:AddToLoadQueue(key, { amount = amount }, Reload)
             return
         end
-        old_UpdateTracker(unit, key, amount)
+        old_UpdateTracker(key, amount)
     end
 end
 
@@ -58,7 +58,7 @@ end
 
 function DoctorBagBase:_set_visual_stage(...)
     original._set_visual_stage(self, ...)
-    UpdateTracker(self._unit, self._ehi_key, self:GetRealAmount())
+    UpdateTracker(self._ehi_key, self:GetRealAmount())
 end
 
 function DoctorBagBase:GetEHIKey()
@@ -72,16 +72,16 @@ end
 function DoctorBagBase:SetOffset(offset)
     self._offset = offset
     if self._unit:interaction():active() and not self._ignore then
-        UpdateTracker(self._unit, self._ehi_key, self:GetRealAmount())
+        UpdateTracker(self._ehi_key, self:GetRealAmount())
     end
 end
 
 function DoctorBagBase:destroy(...)
-    UpdateTracker(self._unit, self._ehi_key, 0)
+    UpdateTracker(self._ehi_key, 0)
     original.destroy(self, ...)
 end
 
 function CustomDoctorBagBase:_set_empty(...)
     original.custom_set_empty(self, ...)
-    UpdateTracker(self._unit, self._ehi_key, 0)
+    UpdateTracker(self._ehi_key, 0)
 end

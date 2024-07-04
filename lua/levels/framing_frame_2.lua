@@ -8,8 +8,7 @@ local triggers = {
 
 local other =
 {
-    [101705] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, nil, nil, true),
-    [102557] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    [101705] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, nil, nil, true)
 }
 
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
@@ -23,6 +22,7 @@ EHI:ParseTriggers({
     other = other
 })
 if EHI:GetOption("show_escape_chance") then
+    other[102557] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 24)
     end)

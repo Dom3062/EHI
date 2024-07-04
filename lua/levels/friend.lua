@@ -1,26 +1,16 @@
 ---@class EHIuno7Tracker : EHIAchievementTracker
 EHIuno7Tracker = class(EHIAchievementTracker)
 function EHIuno7Tracker:post_init(...)
-    self._obtainable = false
     self._blocked_warning = true
-    self:SetTextColor()
+    self._text:set_color(Color.red)
     self:PrepareHint(...)
 end
 
 function EHIuno7Tracker:OnAlarm()
-    self._obtainable = true
     self._blocked_warning = false
-    self:SetTextColor()
-end
-
-function EHIuno7Tracker:SetTextColor()
-    if self._obtainable then
-        self._text:set_color(Color.white)
-        if self._time <= 10 then
-            self:AnimateColor(true)
-        end
-    else
-        self._text:set_color(Color.red)
+    self._text:set_color(Color.white)
+    if self._time <= 10 then
+        self:AnimateColor(true)
     end
 end
 

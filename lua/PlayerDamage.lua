@@ -69,10 +69,10 @@ end
 --//  Muscle / Hostage Taker  //--
 --//////////////////////////////--
 if EHI:GetBuffOption("hostage_taker_muscle") then
-    local TeamAIHealhRegen = false
+    local TeamAIHealthRegen = false
     EHI:AddCallback(EHI.CallbackMessage.TeamAISkillBoostChange, function(boost, operation)
         if boost == "crew_regen" then
-            TeamAIHealhRegen = operation == "add"
+            TeamAIHealthRegen = operation == "add"
         end
     end)
     original._upd_health_regen = PlayerDamage._upd_health_regen
@@ -101,14 +101,14 @@ if EHI:GetBuffOption("hostage_taker_muscle") then
         -- Determine which icon to use. This is fine to do here since this code only runs once every few seconds (thanks to the
         -- above checks)
         local icon = "muscle"
-        if TeamAIHealhRegen then
+        if TeamAIHealthRegen then
             icon = "team_ai_health_regen"
         else
             local hostage_taker = playermanager:has_category_upgrade("player", "hostage_health_regen_addend")
             if hostage_taker then
                 -- Sure the player has the skill, but are there actually any hostages around to provide that regen benefit?
                 local state = managers.groupai and managers.groupai:state()
-                hostage_taker = ((state and state:hostage_count() or 0) + (playermanager:num_local_minions() or 0) > 0)
+                hostage_taker = ((state and state:hostage_count() or 0) + playermanager:num_local_minions() > 0)
             end
             if hostage_taker then
                 icon = "hostage_taker"

@@ -9,7 +9,7 @@ local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@param trigger ElementTrigger
 local function f_PilotComingInAgain(self, trigger, ...)
     self._trackers:RemoveTracker("PilotComingIn")
-    if self._trackers:CallFunction3(trigger.id, "SetTrackerTime", trigger.time) then
+    if self._trackers:CallFunction2(trigger.id, "SetTime", trigger.time) then
         self:CreateTracker(trigger)
     end
 end
@@ -55,20 +55,20 @@ local achievements =
         elements =
         {
             [100002] = { max = (EHI:IsMayhemOrAbove() and 14 or 12), class = TT.Achievement.Progress, show_finish_after_reaching_target = true },
-            [102095] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+            [102095] = EHI:AddCustomCode(function(self)
                 self._cache.IncreaseEnabled = true
-            end) },
-            [102098] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+            end),
+            [102098] = EHI:AddCustomCode(function(self)
                 self._cache.IncreaseEnabled = false
-            end) },
-            [100716] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+            end),
+            [100716] = EHI:AddCustomCode(function(self)
                 if self._cache.IncreaseEnabled then
                     self._trackers:IncreaseTrackerProgress("peta_5")
                 end
-            end) },
+            end),
             [100580] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
                 managers.ehi_tracker:CallFunction("peta_5", "Finalize")
-            end}
+            end }
         }
     }
 }
@@ -103,11 +103,9 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             })
         end
     end) }
-    if EHI:IsDifficultyOrBelow(EHI.Difficulties.Hard) then
-        local trigger = { id = "SniperHeli", special_function = SF.CallCustomFunction, f = "SniperKilledUpdateCount" }
-        other[EHI:GetInstanceElementID(100007, 8400)] = trigger
-        other[EHI:GetInstanceElementID(100007, 8550)] = trigger
-    end
+    local trigger = { id = "SniperHeli", special_function = SF.CallCustomFunction, f = "SniperKilledUpdateCount" }
+    other[EHI:GetInstanceElementID(100007, 8400)] = trigger
+    other[EHI:GetInstanceElementID(100007, 8550)] = trigger
 end
 
 EHI:ParseTriggers({

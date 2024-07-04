@@ -3,9 +3,8 @@ local Icon = EHI.Icons
 ---@class EHIrun9Tracker : EHIAchievementUnlockTracker
 ---@field super EHIAchievementUnlockTracker
 EHIrun9Tracker = class(EHIAchievementUnlockTracker)
----@param dt number
-function EHIrun9Tracker:update(dt)
-    EHIrun9Tracker.super.update(self, dt)
+function EHIrun9Tracker:update(...)
+    EHIrun9Tracker.super.update(self, ...)
     if self._time <= 0 then
         self._text:stop()
         self._achieved_popup_showed = true
@@ -39,7 +38,7 @@ local Hints = EHI.Hints
 local SetProgressMax = EHI:RegisterCustomSF(function(self, trigger, ...)
     if self._cache.ProgressMaxSet then
         return
-    elseif self._trackers:CallFunction3(trigger.id, "SetTrackerProgressMax", trigger.max) then
+    elseif self._trackers:CallFunction2(trigger.id, "SetProgressMax", trigger.max) then
         self._trackers:AddTracker({
             id = trigger.id,
             progress = 1,

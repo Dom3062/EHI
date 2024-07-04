@@ -1,39 +1,36 @@
 ---@class EHIdark5Tracker : EHIProgressTracker
 ---@field super EHIProgressTracker
 EHIdark5Tracker = class(EHIProgressTracker)
----@param params EHITracker.params
-function EHIdark5Tracker:pre_init(params)
+function EHIdark5Tracker:pre_init(...)
     self._bodies = {}
-    EHIdark5Tracker.super.pre_init(self, params)
+    EHIdark5Tracker.super.pre_init(self, ...)
 end
 
-function EHIdark5Tracker:SetProgress(progress)
+function EHIdark5Tracker:SetProgress(...)
     self:SetTextColor(Color.white)
-    EHIdark5Tracker.super.SetProgress(self, progress)
+    EHIdark5Tracker.super.SetProgress(self, ...)
 end
 
-function EHIdark5Tracker:GetTotalProgress()
-    local total = 0
-    for _, value in pairs(self._bodies or {}) do
-        if value == 1 then -- Mission Script expects exactly 1 body bag in dumpster
-            total = total + 1
-        end
-    end
-    return total
+---@param value number
+---@param key any Unused
+function EHIdark5Tracker.is_in_dumpster(value, key)
+    return value == 1 -- Mission Script expects exactly 1 body bag in dumpster
 end
 
+---@param element number
 function EHIdark5Tracker:IncreaseProgress(element)
     self._bodies[element] = (self._bodies[element] or 0) + 1
-    self:SetProgress(self:GetTotalProgress())
+    self:SetProgress(table.count(self._bodies, self.is_in_dumpster))
 end
 
+---@param element number
 function EHIdark5Tracker:DecreaseProgress(element)
     self._bodies[element] = (self._bodies[element] or 1) - 1
-    self:SetProgress(self:GetTotalProgress())
+    self:SetProgress(table.count(self._bodies, self.is_in_dumpster))
 end
 
-function EHIdark5Tracker:SetCompleted(force)
-    EHIdark5Tracker.super.SetCompleted(self, force)
+function EHIdark5Tracker:SetCompleted(...)
+    EHIdark5Tracker.super.SetCompleted(self, ...)
     self._disable_counting = false
     self._status = nil
 end
@@ -97,7 +94,7 @@ local achievements =
         elements =
         {
             [100296] = { max = 16, class = TT.Achievement.Progress, show_finish_after_reaching_target = true, special_function = SF.AddAchievementToCounter },
-            [100470] = { special_function = SF.SetAchievementFailed },
+            [100470] = { special_function = SF.SetAchievementFailed }
         }
     }
 }

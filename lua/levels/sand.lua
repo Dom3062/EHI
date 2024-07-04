@@ -85,14 +85,14 @@ local achievements =
         {
             [EHI:GetInstanceElementID(100024, 31755)] = { special_function = SF.Trigger, data = { 1, 2 } },
             [1] = { max = 10, show_finish_after_reaching_target = true, class = TT.Achievement.Progress, special_function = SF.ShowAchievementFromStart },
-            [2] = { special_function = SF.CustomCode, f = function()
-                if managers.ehi_tracker:TrackerDoesNotExist("sand_9") then
+            [2] = { special_function = SF.CustomCode2, f = function(self) ---@param self EHIManager
+                if self._trackers:TrackerDoesNotExist("sand_9") then
                     return
                 end
                 -- Counter is bugged. Teaset is counted too.
                 -- Reported in:
                 -- https://steamcommunity.com/app/218620/discussions/14/3182363463067457019/
-                managers.ehi_loot:AddAchievementListener({
+                self._loot:AddAchievementListener({
                     achievement = "sand_9",
                     max = 10
                 })

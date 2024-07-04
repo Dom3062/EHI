@@ -62,12 +62,12 @@ local other =
     [100179] = EHI:AddAssaultDelay({ control = 1 + 9.5 + 11 + 1 })
 }
 if EHI:IsLootCounterVisible() then
-    other[100107] = { special_function = EHI:RegisterCustomSF(function(...)
+    other[100107] = { special_function = SF.CustomCode, f = function()
         EHI:ShowLootCounterNoChecks({ max = 6, client_from_start = true })
-    end)}
-    other[100037] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    end }
+    other[100037] = EHI:AddCustomCode(function(self)
         self._loot:SecuredMissionLoot() -- Secured diamonds at Mr. Blonde or in a Van
-    end) }
+    end)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100358] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 3 }

@@ -3,8 +3,6 @@ if EHI:CheckLoadHook("WorldDefinition") then
     return
 end
 
----@alias WorldDefinition.Continent { base_id: number }
-
 ---@class WorldDefinition
 ---@field _all_units table
 ---@field _continents table<string, WorldDefinition.Continent>

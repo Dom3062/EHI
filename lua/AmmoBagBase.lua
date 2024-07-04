@@ -9,32 +9,32 @@ end
 
 local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:TrackerDoesNotExist("Deployables") and amount ~= 0 then
             managers.ehi_deployable:AddAggregatedDeployablesTracker()
         end
-        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "ammo_bag", unit, key, amount)
+        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "ammo_bag", key, amount)
     end
 else
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:TrackerDoesNotExist("AmmoBags") and amount ~= 0 then
             managers.ehi_deployable:CreateDeployableTracker("AmmoBags")
         end
-        managers.ehi_deployable:CallFunction("AmmoBags", "UpdateAmount", unit, key, amount)
+        managers.ehi_deployable:CallFunction("AmmoBags", "UpdateAmount", key, amount)
     end
 end
 
 if EHI:IsVR() then
     local old_UpdateTracker = UpdateTracker
     local function Reload(key, data)
-        old_UpdateTracker(data.unit, key, data.amount)
+        old_UpdateTracker(key, data.amount)
     end
-    UpdateTracker = function(unit, key, amount)
+    UpdateTracker = function(key, amount)
         if managers.ehi_deployable:IsLoading() then
-            managers.ehi_deployable:AddToLoadQueue(key, { unit = unit, amount = amount }, Reload)
+            managers.ehi_deployable:AddToLoadQueue(key, { amount = amount }, Reload)
             return
         end
-        old_UpdateTracker(unit, key, amount)
+        old_UpdateTracker(key, amount)
     end
 end
 
@@ -81,7 +81,7 @@ end
 function AmmoBagBase:SetOffset(offset)
     self._offset = offset
     if self._unit:interaction():active() and not self._ignore then
-        UpdateTracker(self._unit, self._ehi_key, self:GetRealAmount())
+        UpdateTracker(self._ehi_key, self:GetRealAmount())
     end
 end
 
@@ -90,7 +90,7 @@ function AmmoBagBase:SetIgnore()
         return
     end
     self._ignore = true
-    UpdateTracker(self._unit, self._ehi_key, 0)
+    UpdateTracker(self._ehi_key, 0)
 end
 
 function AmmoBagBase:SetIgnoreChild()
@@ -111,16 +111,16 @@ end
 function AmmoBagBase:_set_visual_stage(...)
     original._set_visual_stage(self, ...)
     if not self._ignore then
-        UpdateTracker(self._unit, self._ehi_key, self:GetRealAmount())
+        UpdateTracker(self._ehi_key, self:GetRealAmount())
     end
 end
 
 function AmmoBagBase:destroy(...)
-    UpdateTracker(self._unit, self._ehi_key, 0)
+    UpdateTracker(self._ehi_key, 0)
     original.destroy(self, ...)
 end
 
 function CustomAmmoBagBase:_set_empty(...)
     original.custom_set_empty(self, ...)
-    UpdateTracker(self._unit, self._ehi_key, 0)
+    UpdateTracker(self._ehi_key, 0)
 end

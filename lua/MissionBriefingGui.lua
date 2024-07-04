@@ -429,7 +429,9 @@ end
 function XPBreakdownPanel:_add_xp_text(txt, value, value_with_gage, text_color)
     local xp = self._loc:text("ehi_experience_xp")
     local text
-    if value_with_gage then
+    if value == "+0" then
+        text = string.format("%s+0 %s", txt, xp)
+    elseif value_with_gage then
         text = string.format("%s%s-%s %s", txt, value, value_with_gage, xp)
     else
         text = string.format("%s%s %s", txt, value, xp)
@@ -1205,7 +1207,7 @@ function XPBreakdownPanel:_params_max_only(o_params)
         end
         max = max + (amount * (data.min_max or data.max or 0))
     end
-    self:_add_line(("Max (" .. o_params.name .. "): +") .. self._gui:FormatXPWithAllGagePackages(max) .. " " .. self._loc:text("ehi_experience_xp"), colors.total_xp)
+    self:_add_line(("Max (" .. self._loc:text("ehi_experience_" .. o_params.name) .. "): +") .. self._gui:FormatXPWithAllGagePackages(max) .. " " .. self._loc:text("ehi_experience_xp"), colors.total_xp)
 end
 
 ---@param o_params table

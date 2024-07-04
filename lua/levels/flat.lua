@@ -1,7 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
 ---@class EHIHeliTracker : EHIWarningTracker
----@field super EHIWarningTracker
 EHIHeliTracker = class(EHIWarningTracker)
 EHIHeliTracker._forced_icons = { Icon.Heli }
 EHIHeliTracker._show_completion_color = true
@@ -37,7 +36,7 @@ local triggers = {
 
     --- Add 0.2 delay here so the tracker does not hide first before this gets executed again; players won't notice 0.2 delay here
     [100147] = { time = 18.2 + 0.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
-        if enabled and self._trackers:CallFunction3(trigger.id, "SetTrackerTimeNoAnim", trigger.time) then
+        if enabled and self._trackers:CallFunction2(trigger.id, "SetTimeNoAnim", trigger.time) then
             self:CreateTracker(trigger)
         end
     end), hint = Hints.Wait },

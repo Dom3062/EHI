@@ -41,7 +41,7 @@
             "callback_arguments": "show_sniper_spawned_popup",
             "value": "show_sniper_spawned_popup",
             "default_value": true,
-            "parent" : "ehi_show_sniper_spawned_popup_choice",
+            "parent" : "ehi_show_sniper_tracker_choice",
             "ehi_ver" : 206
         },
         {
@@ -53,7 +53,7 @@
             "callback_arguments": "show_sniper_logic_start_popup",
             "value": "show_sniper_logic_start_popup",
             "default_value": true,
-            "parent" : "ehi_show_sniper_spawned_popup_choice",
+            "parent" : "ehi_show_sniper_tracker_choice",
             "ehi_ver" : 239
         },
         {
@@ -65,7 +65,7 @@
             "callback_arguments": "show_sniper_logic_end_popup",
             "value": "show_sniper_logic_end_popup",
             "default_value": true,
-            "parent" : "ehi_show_sniper_spawned_popup_choice",
+            "parent" : "ehi_show_sniper_tracker_choice",
             "ehi_ver" : 239
         }
     ]

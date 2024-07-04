@@ -100,9 +100,9 @@ if EHI:IsLootCounterVisible() then
         })
     end)}
     -- Basement
-    local IncreaseMaximumTrigger = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    local IncreaseMaximumTrigger = EHI:AddCustomCode(function(self)
         self._loot:IncreaseLootCounterProgressMax()
-    end) }
+    end)
     -- Coke
     for i = 102832, 102841, 1 do
         other[i] = IncreaseMaximumTrigger
@@ -111,9 +111,9 @@ if EHI:IsLootCounterVisible() then
     for i = 104498, 104506, 1 do
         other[i] = IncreaseMaximumTrigger
     end
-    other[101204] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    other[101204] = EHI:AddCustomCode(function(self)
         self._loot:SetUnknownRandomLoot()
-    end) }
+    end)
     -- Meth
     local IncreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = function()
         if MethlabExploded then
@@ -169,9 +169,9 @@ if EHI:IsLootCounterVisible() then
         managers.ehi_loot:RandomLootDeclined()
     end }
     -- All cars; does not get triggered when maximum has been reached
-    other[100721] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    other[100721] = EHI:AddCustomCode(function(self)
         self._loot:RandomLootSpawned()
-    end) }
+    end)
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/001
     other[100523] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
     other[100550] = DecreaseMaximumTrigger2 -- Car set on fire -- 103846

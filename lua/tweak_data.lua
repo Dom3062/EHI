@@ -672,7 +672,7 @@ tweak_data.ehi =
             {
                 deck = "stoic",
                 option = "duration"
-            },
+            }
         },
         damage_control_cooldown =
         {

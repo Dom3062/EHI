@@ -9,8 +9,7 @@ function HuskCopBrain:sync_net_event(event_id, ...)
     original(self, event_id, ...)
     if self._dead then
         return
-    end
-    if event_id == self._NET_EVENTS.surrender_civilian_tied then
+    elseif event_id == self._NET_EVENTS.surrender_civilian_tied then
         managers.ehi_tracker:CallFunction("CivilianCount", "CivilianTied", tostring(self._unit:key()))
     elseif event_id == self._NET_EVENTS.surrender_civilian_untied then
         managers.ehi_tracker:CallFunction("CivilianCount", "CivilianUntied", tostring(self._unit:key()))

@@ -27,10 +27,12 @@ function EHIBikerBuffTracker:SetCustodyState(state)
         EHI:Unhook("BikerBuff_Post")
         if self._persistent then
             EHIBikerBuffTracker.super.Deactivate(self)
+            self._visible = false
         end
     else
         EHI:HookWithID(PlayerManager, "chk_wild_kill_counter", "EHI_BikerBuff_Post", self._f)
         if self._persistent then
+            self:SetPersistent() -- Cheap text reset
             self:ActivateSoft()
         end
     end

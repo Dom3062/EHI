@@ -71,7 +71,11 @@ local achievements =
         load_sync = function(self)
             -- Achievement count used planks on windows, vents, ...
             -- There are total 49 positions and 10 planks
-            self._achievements:AddAchievementProgressTracker("man_4", 10, 49 - self:CountInteractionAvailable("stash_planks"))
+            local progress = 49 - self:CountInteractionAvailable("stash_planks")
+            if progress >= 10 then
+                return
+            end
+            self._achievements:AddAchievementProgressTracker("man_4", 10, progress)
         end
     }
 }

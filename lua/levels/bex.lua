@@ -2,10 +2,10 @@ local EHI = EHI
 ---@class EHIbex11Tracker : EHIAchievementProgressGroupTracker
 ---@field super EHIAchievementProgressGroupTracker
 EHIbex11Tracker = class(EHIAchievementProgressGroupTracker)
----@param params EHITracker.params
-function EHIbex11Tracker:pre_init(params)
-    EHIbex11Tracker.super.pre_init(self, params)
-    EHI:AddAchievementToCounter({
+function EHIbex11Tracker:pre_init(...)
+    EHIbex11Tracker.super.pre_init(self, ...)
+    self._loot_parent = managers.ehi_loot
+    self:AddLootListener({
         achievement = "bex_11",
         counter =
         {
@@ -14,12 +14,16 @@ function EHIbex11Tracker:pre_init(params)
                 local progress = loot:GetSecuredBagsAmount()
                 self:SetProgress(progress, "bags")
                 if progress >= self._max then
-                    EHI:RemoveEventListener("bex_11")
+                    self._loot_parent:RemoveEventListener("bex_11")
                 end
             end
-        },
-        no_sync = true
+        }
     })
+end
+
+function EHIbex11Tracker:delete()
+    self._loot_parent:RemoveEventListener("bex_11")
+    EHIbex11Tracker.super.delete(self)
 end
 
 function EHIbex11Tracker:CountersDone()
@@ -74,7 +78,7 @@ local achievements =
         {
             [103701] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
-                    self._achievements:SetAchievementStatus("bex_10", Status.Defend)
+                    self._achievements:SetAchievementStatus(trigger.id, Status.Defend)
                     self:UnhookTrigger(103704)
                 end
             end) },

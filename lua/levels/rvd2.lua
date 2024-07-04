@@ -41,9 +41,10 @@ if EHI:IsHost() then
             "spawn_loot_crap_d"
         }
     }
+    ---@param self EHIManager
     ---@param truck_id number
-    local function IncreaseMax(truck_id)
-        managers.ehi_loot:SyncIncreaseLootCounterMaxRandom(9)
+    local function IncreaseMax(self, truck_id)
+        self._loot:SyncIncreaseLootCounterMaxRandom(9)
         tweak_data.ehi.functions.HookArmoredTransportUnit(truck_id, { "money" })
     end
     EHI:ShowLootCounterSynced({
@@ -51,8 +52,8 @@ if EHI:IsHost() then
         max_random = 3,
         triggers =
         {
-            [101287] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 101647 },
-            [101492] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 102104 }
+            [101287] = { special_function = SF.CustomCode2, f = IncreaseMax, arg = 101647 },
+            [101492] = { special_function = SF.CustomCode2, f = IncreaseMax, arg = 102104 }
         },
         sequence_triggers =
         {

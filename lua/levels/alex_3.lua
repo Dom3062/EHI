@@ -20,12 +20,12 @@ if EHI:IsLootCounterVisible() then
     local Money = 0
     local MoneyTaken = 0
     local Exploded = false
-    local function MoneySpawned(bag)
+    local function MoneySpawned(self, bag)
         if Exploded then
             return
         end
         Money = Money + 1
-        managers.ehi_loot:RandomLootSpawnedCheck(bag, true)
+        self._loot:RandomLootSpawnedCheck(bag, true)
     end
     local function MoneyTakenFromLuggage(...)
         if Exploded then
@@ -39,17 +39,17 @@ if EHI:IsLootCounterVisible() then
         end
         managers.ehi_loot:AddDelayedLootDeclinedCheck(bag)
     end
-    local function Explosion() -- Someone forgot to defuse...
-        Exploded = true
-        managers.ehi_loot:SetLootCounterMaxRandom()
-        if Money == MoneyTaken then
-            return
-        end
-        managers.ehi_loot:DecreaseLootCounterProgressMax(Money - MoneyTaken) -- Someone forgot money in the luggage, too bad, it is lost now for good
-    end
+    ---@type ParseTriggerTable
     local loot_triggers =
     {
-        [100118] = { special_function = SF.CustomCode, f = Explosion, trigger_times = 1 }, -- Bus explosion, removes all random loot
+        [100118] = EHI:AddCustomCode(function(self) -- Someone forgot to defuse...
+            Exploded = true
+            self._loot:SetLootCounterMaxRandom()
+            if Money == MoneyTaken then
+                return
+            end
+            self._loot:DecreaseLootCounterProgressMax(Money - MoneyTaken) -- Someone forgot money in the luggage, too bad, it is lost now for good
+        end, true),
         [101520] = { special_function = SF.DecreaseProgressMax } -- Loot burned, triggers for every bag if it satisfies condition
     }
     local Luggage =
@@ -85,7 +85,7 @@ if EHI:IsLootCounterVisible() then
         [101514] = 100459,
         [101515] = 100458
     }) do
-        loot_triggers[element] = { special_function = SF.CustomCode, f = MoneySpawned, arg = unit }
+        loot_triggers[element] = { special_function = SF.CustomCode2, f = MoneySpawned, arg = unit }
         managers.mission:add_runned_unit_sequence_trigger(unit, "load", MoneyTakenFromLuggage)
         managers.mission:add_runned_unit_sequence_trigger(Luggage[unit], "open", function(...)
             DelayRejection(unit)

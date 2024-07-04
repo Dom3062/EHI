@@ -77,9 +77,9 @@ local triggers = {
     [103006] = { chance = 100, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.nmh_PatientFileChance, remove_on_alarm = true },
     [104752] = { id = "CorrectPaperChance", special_function = SF.RemoveTracker },
 
-    [104721] = { special_function = SF.CustomCode, f = function()
-        managers.ehi_assault:SetAssaultBlock(true)
-    end }
+    [104721] = EHI:AddCustomCode(function(self)
+        self._assault:SetAssaultBlock(true)
+    end)
 }
 
 ---@type ParseAchievementTable

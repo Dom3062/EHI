@@ -16,8 +16,9 @@ local original =
 
 ---@param self GageAssignmentManager
 ---@param client_sync_load boolean?
-local function UpdateTracker(self, client_sync_load)
-    local max_units = self:count_all_units()
+---@param max_units number?
+local function UpdateTracker(self, client_sync_load, max_units)
+    max_units = max_units or self:count_all_units()
     local picked_up = self:GetCountOfRemainingPackages()
     if client_sync_load then
         picked_up = math.max(picked_up - 1, 0)
@@ -42,7 +43,7 @@ end
 
 function GageAssignmentManager:sync_load(...)
     original.sync_load(self, ...)
-    UpdateTracker(self, true)
+    UpdateTracker(self, true, EHI._cache.GagePackagesSpawned and tweak_data.gage_assignment:get_num_assignment_units() or 0)
 end
 
 if not EHI:GetOption("show_gage_tracker") then
@@ -53,11 +54,33 @@ if EHI:GetOption("gage_tracker_panel") == 1 then
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, function(picked_up, max_units, client_sync_load)
         managers.ehi_tracker:SetTrackerProgress("Gage", picked_up)
     end)
+    EHI:AddOnSpawnedCallback(function()
+        if managers.ehi_tracker:TrackerDoesNotExist("Gage") and EHI:AreGagePackagesSpawned() then
+            local progress = math.max(managers.gage_assignment:GetCountOfRemainingPackages() - 1, 0)
+            local max = tweak_data.gage_assignment:get_num_assignment_units()
+            if progress < max then
+                managers.ehi_tracker:AddTracker({
+                    id = "Gage",
+                    icons = { "gage" },
+                    progress = progress,
+                    max = max,
+                    hint = "gage",
+                    class = EHI.Trackers.Progress
+                })
+            end
+        end
+    end)
 else
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, function(picked_up, max_units, client_sync_load)
         if (client_sync_load and Global.statistics_manager.playing_from_start) or not EHI:AreGagePackagesSpawned() then
             return
         end
         managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), tostring(picked_up) .. "/" .. tostring(max_units), "EHI_Gage")
+    end)
+    EHI:AddOnSpawnedCallback(function()
+        if EHI:AreGagePackagesSpawned() and EHI:IsPlayingFromStart() then
+            local max = tweak_data.gage_assignment:get_num_assignment_units()
+            managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), "0/" .. tostring(max), "EHI_Gage")
+        end
     end)
 end

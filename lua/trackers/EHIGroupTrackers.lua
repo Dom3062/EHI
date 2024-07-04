@@ -1,6 +1,3 @@
----@alias EHIWarningGroupTracker.Timer { label: PanelText, time: number, pos: number, warning: boolean, id: string, check_timer_progress: boolean }
----@alias EHIProgressGroupTracker.Counter { label: PanelText, progress: number, max: number, disable_counter: boolean, set_color_bad_when_reached: boolean }
-
 ---@class EHIGroupTracker : EHITracker
 ---@field super EHITracker
 EHIGroupTracker = class(EHITracker)

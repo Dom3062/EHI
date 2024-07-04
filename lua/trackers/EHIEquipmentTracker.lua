@@ -68,12 +68,10 @@ do
     end
 end
 
----@param unit Unit
 ---@param key string
 ---@param amount number
-function EHIEquipmentTracker:UpdateAmount(unit, key, amount)
+function EHIEquipmentTracker:UpdateAmount(key, amount)
     if not key then
-        EHI:DebugEquipment(self._id, unit, key, amount)
         return
     end
     self._deployables[key] = amount

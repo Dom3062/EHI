@@ -1,5 +1,3 @@
----@alias EHITrackerManager.Tracker { tracker: EHITracker, pos: number, x: number, w: number }
-
 local EHI = EHI
 ---@class EHITrackerManager : EHIBaseManager
 ---@field new fun(self: self): self
@@ -53,7 +51,7 @@ function EHITrackerManager:init_finalize(manager)
     self._internal = manager._internal
     self.SaveInternalData = manager.SaveInternalData --[[@as fun(self: self, name: string, data_name: string, value: any)]]
     self.GetInternalData = manager.GetInternalData --[[@as fun(self: self, name: string, data_name: string)]]
-    if CustomNameColor and not Global.game_settings.single_player then
+    if CustomNameColor and CustomNameColor.ModID and not Global.game_settings.single_player then
         self:AddReceiveHook(CustomNameColor.ModID, function(data, sender)
             if data and data ~= "" then
                 local col = NetworkHelper:StringToColour(data)
@@ -214,18 +212,6 @@ function EHITrackerManager:Sync(id, delay)
     self:SyncTable(self._sync_tracker, { id = id, delay = delay or 0 })
 end
 
----@param id string
-function EHITrackerManager:AddPagerTracker(id)
-    local params =
-    {
-        id = id,
-        hint = "pager",
-        remove_on_alarm = true,
-        class = "EHIPagerTracker"
-    }
-    self:AddTracker(params)
-end
-
 ---@param params AddTrackerTable|ElementTrigger
 function EHITrackerManager:AddLaserTracker(params)
     for id, _ in pairs(self._stealth_trackers.lasers) do
@@ -292,7 +278,7 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
     ---@param pos number?
     ---@param w number
     function EHITrackerManager:_move_tracker(pos, w)
-        if type(pos) == "number" and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
+        if pos and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
             for _, tbl in pairs(self._trackers) do
                 if tbl.pos and tbl.pos >= pos then
                     local final_pos = tbl.pos + 1
@@ -357,7 +343,7 @@ else -- Horizontal
         ---@param pos number?
         ---@param w number
         function EHITrackerManager:_move_tracker(pos, w)
-            if type(pos) == "number" and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
+            if pos and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
                 for _, tbl in pairs(self._trackers) do
                     if tbl.pos and tbl.pos >= pos then
                         local final_x = tbl.x + w + self._panel_offset
@@ -429,7 +415,7 @@ else -- Horizontal
         ---@param pos number?
         ---@param w number
         function EHITrackerManager:_move_tracker(pos, w)
-            if type(pos) == "number" and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
+            if pos and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
                 local list = {} ---@type table<number, EHITrackerManager.Tracker>
                 for _, value in pairs(self._trackers) do
                     if value.pos then
@@ -871,19 +857,6 @@ function EHITrackerManager:CallFunction2(id, f, ...)
     end
 end
 
----Returns `true` if the tracker does not exist
----@param id string
----@param f string Function from `EHITrackerManager`
----@param ... any
-function EHITrackerManager:CallFunction3(id, f, ...)
-    if self:TrackerDoesNotExist(id) then
-        return true
-    end
-    if self[f] then
-        self[f](self, id, ...)
-    end
-end
-
 ---@param id string
 ---@param f string
 ---@param ... any
@@ -919,7 +892,7 @@ do
     dofile(path .. "EHICountTracker.lua")
     dofile(path .. "EHINeededValueTracker.lua")
     dofile(path .. "EHIInaccurateTrackers.lua")
-    dofile(path .. "EHIColoredCodesTracker.lua")
+    dofile(path .. "EHICodesTracker.lua")
     dofile(path .. "EHITimedTrackers.lua")
     dofile(path .. "EHIGroupTrackers.lua")
     dofile(path .. "EHIAchievementTrackers.lua")

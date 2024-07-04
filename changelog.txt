@@ -1,4 +1,13 @@
+r249 (04. 07. 2024):
+Biker Buff: Fixed an issue where the buff was no longer visible after getting out of custody and buff visibility is set to persistent
+Gage Package Tracker: Possible fix for an issue where the current count is stuck at 0 (client only)
+Improved compatibility with "Any Day Any Heist" mod
+Infamy Pool: Improved the counter to show next available and count of passing maximum Infamy Pool XP
+Further memory optimization by removing unused buff classes from the memory
+Fixed an issue where option "Buff -> Stoic -> Applied damage over-time" has no effect
+
 r248 (26. 06. 2024):
+Enabled grouping for Ziplines; further improving memory consumption with 2 or more ziplines on the map
 Bank Heist: Fixed a crash after securing bags or picking up small loot
 Experience Tracker: Fixed an issue when you lost XP after picking up Gage package (visual; client only)
 Civilian Counter: Fixed an issue when civilian is deleted by mission script and counter is showing negative value (client only)

@@ -115,9 +115,9 @@ if EHI:IsLootCounterVisible() then
     end)
     -- coke, money, meth
     EHI:HookLootRemovalElement({ 101681, 101700, 101701 })
-    local CokeDestroyedTrigger = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    local CokeDestroyedTrigger = EHI:AddCustomCode(function(self)
         self._loot:DecreaseLootCounterProgressMax()
-    end) }
+    end)
     other[101264] = CokeDestroyedTrigger
     other[101271] = CokeDestroyedTrigger
     other[101272] = CokeDestroyedTrigger
