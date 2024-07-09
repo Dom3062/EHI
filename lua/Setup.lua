@@ -1,7 +1,14 @@
 local EHI = EHI
 EHI._cache.is_vr = _G.IS_VR
 managers.ehi_experience = EHIExperienceManager
+dofile(EHI.LuaPath .. "CallbackEventHandler.lua")
 if EHI:CheckLoadHook("Setup") then
+    EHI:Hook(Setup, "init_managers", function(self, managers, ...) ---@param managers managers
+        local achievements = tweak_data.achievement
+        local check_uno = callback(achievements, achievements, "_check_uno")
+        managers.savefile:add_load_done_callback(check_uno)
+        managers.savefile:add_load_sequence_done_callback_handler(check_uno)
+    end)
     return
 end
 dofile(EHI.LuaPath .. "EHIBaseManager.lua")

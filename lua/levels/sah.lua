@@ -6,10 +6,29 @@ local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
     [100643] = { time = 30, id = "CrowdAlert", icons = { Icon.Alarm }, class = TT.Warning, hint = Hints.Alarm },
-    [100645] = { id = "CrowdAlert", special_function = SF.RemoveTracker },
+    [100645] = { id = "CrowdAlert", special_function = SF.RemoveTracker }
 
     -- Heli Escape is in CoreWorldInstanceManager
 }
+if EHI:GetOption("show_mission_trackers") then
+    triggers[EHI:GetInstanceElementID(100088, 18200)] = { id = "VaultCode", class = TT.Code }
+    ---@param self EHIManager
+    local function ShowCodePart(self, arg)
+        self._trackers:CallFunction("VaultCode", "SetCodePart", arg[1] + 1, arg[2], 4)
+    end
+    local num, pos = 0, 0
+    for i = 100169, 100208, 1 do
+        num = num + 1
+        if num == 10 then
+            num = 0
+        end
+        triggers[EHI:GetInstanceElementID(i, 18200)] = { special_function = SF.CustomCode2, f = ShowCodePart, arg = { pos, num } }
+        if num == 0 then
+            pos = pos + 1
+        end
+    end
+    triggers[EHI:GetInstanceElementID(100281, 20000)] = { id = "VaultCode", special_function = SF.RemoveTracker }
+end
 
 ---@type ParseAchievementTable
 local achievements =

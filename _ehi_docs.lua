@@ -26,6 +26,7 @@
 ---@field restore_on_done boolean? Depends on `remove_vanilla_waypoint`
 ---@field present_timer number
 ---@field remove_on_alarm boolean Removes the waypoint on alarm
+---@field skip_if_not_found boolean Skips error message if the instance is not placed on the map
 
 ---@class ElementClientTriggerData
 ---@field time number Maps to `additional_time`. If the field already exists, it is added to the field (+)

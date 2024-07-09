@@ -1,3 +1,8 @@
+r250 (09. 07. 2024):
+Added achievement progress filters in Achievement List Screen - "Tracked in EHI" and "The Secret"
+Gage Package Tracker: Fixed for real current count is stuck at 0 (client only)
+Zipline: Fixed an issue where time is not properly updated when a loot bag is "eaten" by ElementAreaTrigger
+
 r249 (04. 07. 2024):
 Biker Buff: Fixed an issue where the buff was no longer visible after getting out of custody and buff visibility is set to persistent
 Gage Package Tracker: Possible fix for an issue where the current count is stuck at 0 (client only)

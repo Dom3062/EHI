@@ -433,3 +433,8 @@ function EHIBuffTracker:delete()
     end
     self._parent_class._buffs[self._id] = nil
 end
+
+function EHIBuffTracker:delete_with_class()
+    self:delete()
+    _G[tweak_data.ehi.buff[self._id].class] = nil
+end

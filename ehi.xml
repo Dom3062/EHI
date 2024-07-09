@@ -51,6 +51,7 @@
                 <post :hook_id="walletguiobject" :script_path="WalletGuiObject.lua" />
             </group>
 
+            <post :hook_id="modifiersmanager" :script_path="ModifiersManager.lua" />
             <post :hook_id="playermanager" :script_path="PlayerManager.lua" />
             <post :hook_id="player/smokescreeneffect" :script_path="SmokeScreenEffect.lua" />
             <post :hook_id="preplanningmanager" :script_path = "PrePlanningManager.lua" />
@@ -115,6 +116,7 @@
 
         <group hook_id="lib/tweak_data/">
             <post :hook_id="tweakdata" :script_path="tweak_data.lua"/>
+            <post :hook_id="achievementstweakdata" :script_path="AchievementsTweakData.lua"/>
             <post :hook_id="carrytweakdata" :script_path="CarryTweakData.lua"/>
             <post :hook_id="groupaitweakdata" :script_path="GroupAITweakData.lua"/>
             <post :hook_id="levelstweakdata" :script_path="LevelsTweakData.lua"/>

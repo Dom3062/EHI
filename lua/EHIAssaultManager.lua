@@ -64,38 +64,22 @@ function EHIAssaultManager:init_finalize(manager)
             self._endless_assault = nil
         end)
         -- Crime Spree
-        local _Active = false
-        local function ActivateHooks()
-            local function f()
-                self._trackers:CallFunction(self._assault_time.name, "OnMinionCountChanged")
-            end
-            EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, f)
-            EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, f)
-        end
-        local function CheckIfModifierIsActive()
-            if _Active then
-                return
-            end
-            local tracker = EHIAssaultTracker or {}
-            local mod = managers.modifiers
-            for category, data in pairs(mod._modifiers) do
-                if category == "crime_spree" then
-                    for _, modifier in ipairs(data) do
-                        if modifier._type == "ModifierAssaultExtender" then
-                            tracker._cs_duration = modifier:value("duration") * 0.01
-                            tracker._cs_deduction = modifier:value("deduction") * 0.01
-                            tracker._cs_max_hostages = modifier:value("max_hostages")
-                            tracker._cs_assault_extender = true
-                            ActivateHooks()
-                            _Active = true
-                            break
-                        end
-                    end
+        EHI:AddOnSpawnedCallback(function()
+            local modifier = managers.modifiers:GetModifier("ModifierAssaultExtender", "crime_spree")
+            if modifier then
+                local tracker = EHIAssaultTracker or {}
+                tracker._cs_duration = modifier:value("duration") * 0.01
+                tracker._cs_deduction = modifier:value("deduction") * 0.01
+                tracker._cs_max_hostages = modifier:value("max_hostages")
+                tracker._cs_assault_extender = true
+                local function f()
+                    self._trackers:CallFunction(self._assault_time.name, "OnMinionCountChanged")
                 end
+                EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, f)
+                EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, f)
             end
-        end
-        EHI:AddOnSpawnedCallback(CheckIfModifierIsActive)
-        manager:AddInternalListener("assault", "sustain_t", function(duration)
+        end)
+        manager:AddEventListener("EHIAssaultManager", "AssaultOnSustain", function(duration)
             self:OnEnterSustain(duration)
         end)
     end
@@ -104,7 +88,7 @@ function EHIAssaultManager:init_finalize(manager)
         local ListenerModifier = class(BaseModifier)
         ---@param duration number
         function ListenerModifier:OnEnterSustainPhase(duration)
-            manager:NotifyInternalListeners("assault", "sustain_t", duration)
+            manager:NotifyInternalListeners("AssaultOnSustain", "assault", "sustain_t", duration)
             manager._assault._internal.sustain_app_t = managers.game_play_central:get_heist_timer()
         end
         managers.modifiers:add_modifier(ListenerModifier, "EHI")

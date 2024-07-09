@@ -48,8 +48,8 @@ local triggers = {
             self._waypoints:RemoveWaypoint("HoxtonMaxHacks") -- In case the timer is merged with the progress
         end
     end, hint = Hints.Restarting },
-    [102189] = { special_function = SF.CustomCode, f = function()
-        EHI:CallCallback("hox_2_restore_waypoint_hack")
+    [102189] = { special_function = SF.CustomCode2, f = function(self) ---@param self EHIManager
+        self:CallEvent("hox_2_restore_waypoint_hack")
     end },
 
     [104314] = { max = 4, id = "Request", icons = { Icon.PCHack }, class = TT.Timed.Progress, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.hox_2_Request },
@@ -158,8 +158,8 @@ local function PCPosition(id, unit_data, unit)
     local pos = unit_data.pos --[[@as number]]
     PCVectors[pos] = unit:interaction() and unit:interaction():interact_position() or unit:position()
     unit:timer_gui():SetCustomID("HoxtonHack")
-    unit:timer_gui():SetCustomCallback("hox_2_restore_waypoint_hack", "add_waypoint")
     unit:timer_gui():SetTrackerMergeID("HoxtonMaxHacks", pos == 4)
+    unit:timer_gui():SetCustomCallback("hox_2_restore_waypoint_hack", "add_waypoint")
 end
 ---@type ParseUnitsTable
 local tbl =

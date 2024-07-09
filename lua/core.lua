@@ -99,7 +99,7 @@ _G.EHI =
         ElementWaypoint = {} ---@type table<number, ElementWaypoint?>
     },
 
-    _callback = {}, ---@type table<string|number, function[]>
+    _callback = {}, ---@type table<string|number, CallbackEventHandler>
     CallbackMessage =
     {
         -- Provides `loc` (a LocalizationManager class) and `lang_name` (string)
@@ -1416,15 +1416,16 @@ end
 ---@param id string|number
 ---@param f function
 function EHI:AddCallback(id, f)
-    self._callback[id] = self._callback[id] or {}
-    self._callback[id][#self._callback[id] + 1] = f
+    self._callback[id] = self._callback[id] or CallbackEventHandler:new()
+    self._callback[id]:add(f)
 end
 
 ---@param id string|number
 ---@param ... any
 function EHI:CallCallback(id, ...)
-    for _, callback in ipairs(self._callback[id] or {}) do
-        callback(...)
+    local handler = self._callback[id]
+    if handler then
+        handler:dispatch(...)
     end
 end
 
@@ -1432,8 +1433,15 @@ end
 ---@param id string|number
 ---@param ... any
 function EHI:CallCallbackOnce(id, ...)
-    self:CallCallback(id, ...)
+    self:_dispatch_and_clear_event_handler(self._callback[id], ...)
     self._callback[id] = nil
+end
+
+---@param event_handler CallbackEventHandler?
+function EHI:_dispatch_and_clear_event_handler(event_handler, ...)
+    if event_handler then
+        event_handler:dispatch_and_clear(...)
+    end
 end
 
 ---@param f fun(dropin: boolean)
@@ -2334,9 +2342,20 @@ function EHI:CheckNotLoad()
     return true
 end
 
+---Disables code if level has not been loaded
 ---@param hook string
 function EHI:CheckLoadHook(hook)
     if not Global.load_level or Global.editor_mode or self._hooks[hook] then
+        return true
+    end
+    self._hooks[hook] = true
+    return false
+end
+
+---Disables code if level has been loaded
+---@param hook string
+function EHI:CheckMenuHook(hook)
+    if Global.load_level or Global.editor_mode or self._hooks[hook] then
         return true
     end
     self._hooks[hook] = true

@@ -40,7 +40,7 @@ local other =
     [100697] = EHI:AddAssaultDelay({ control_additional_time = 30, random_time = 10, condition_function = EHI.ConditionFunctions.IsLoud }), -- Mexico (ElementDifficulty already exists)
 
     [100880] = { special_function = SF.CustomCode2, f = SetAssaultTrackerBlock, arg = true }, -- Entered the tunnel
-    [103212] = { special_function = SF.CustomCode2, f = SetAssaultTrackerBlock, arg = false } -- Entered in Mexico
+    [103212] = { special_function = SF.CustomCode2, f = SetAssaultTrackerBlock, arg = false } -- Arrived in Mexico
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102495] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal) }

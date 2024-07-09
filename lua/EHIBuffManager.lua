@@ -363,8 +363,7 @@ function EHIBuffManager:update(t, dt)
     end
 end
 
-local alignment = EHI:GetOption("buffs_alignment")
-if alignment == 1 then -- Left
+if EHI:GetOption("buffs_alignment") == 1 then -- Left
     ---@param pos number?
     ---@param buff EHIBuffTracker
     ---@param removal boolean?
@@ -383,7 +382,7 @@ if alignment == 1 then -- Left
     function EHIBuffManager:ReorganizeFast(pos, buff)
         buff:SetLeftXByPos(self._x, pos)
     end
-elseif alignment == 2 then -- Center
+elseif EHI:GetOption("buffs_alignment") == 2 then -- Center
     ---@param pos number?
     ---@param buff EHIBuffTracker
     ---@param removal boolean?

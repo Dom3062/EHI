@@ -345,13 +345,13 @@ function TimerGui:SetWaypointPosition(pos)
     end
 end
 
----@param id number|string
+---@param id string
 ---@param operation string
 function TimerGui:SetCustomCallback(id, operation)
     if operation == "remove" then
         EHI:AddCallback(id, callback(self, self, "OnAlarm"))
     elseif operation == "add_waypoint" then
-        EHI:AddCallback(id, function()
+        managers.ehi_manager:AddEventListener(self._tracker_merge_id and tostring(self._unit:key()) or self._ehi_key, id, function()
             if self._started and not self._done then
                 self:AddWaypoint(self._time_left, self:GetAutorepairState())
             end

@@ -18,7 +18,7 @@ local triggers = {
     [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot, hint = Hints.Escape },
 
     [101073] = EHI:AddCustomCode(function(self)
-        if self._cache.chca_C4Route or self._cache.chca_CodeUsed then
+        if self._cache.chca_C4Route or self._cache.chca_CodeUsed or self._cache.chca_CodeSeen then
             return
         end
         local paper_unit = managers.worlddefinition:get_unit(EHI:GetInstanceElementID(100000, 14470)) ---@cast paper_unit UnitBase?
@@ -51,6 +51,7 @@ local triggers = {
                 end
             end
         end
+        self._cache.chca_CodeSeen = true
     end, true), -- Spa first; Handprint second
     [103761] = EHI:AddCustomCode(function(self)
         self._cache.chca_C4Route = true

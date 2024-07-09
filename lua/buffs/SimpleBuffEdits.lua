@@ -167,7 +167,7 @@ function EHIExPresidentBuffTracker:PreUpdateCheck()
         self:SetStoredHealthMaxAndUpdateRatio(character_damage and character_damage:max_armor_stored_health() or 0, 0)
         return true
     else
-        self:delete()
+        self:delete_with_class()
     end
 end
 

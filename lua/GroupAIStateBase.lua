@@ -3,6 +3,28 @@ if EHI:CheckLoadHook("GroupAIStateBase") then
     return
 end
 
+---@class GroupAIStateBase
+---@field _converted_police table
+---@field _drama_data table
+---@field _enemy_weapons_hot number
+---@field _hostage_headcount number
+---@field _hunt_mode boolean
+---@field _nr_successful_alarm_pager_bluffs number
+---@field _police table
+---@field _police_hostage_headcount number
+---@field _t number
+---@field _task_data table
+---@field _teams table
+---@field add_listener fun(self: self, key: string, events: string|string[], clbk: function)
+---@field amount_of_winning_ai_criminals fun(self: self): number
+---@field assault_phase_end_time fun(self: self): number?
+---@field get_amount_enemies_converted_to_criminals fun(self: self): number
+---@field _get_balancing_multiplier fun(self: self, balance_multipliers: number[]): number
+---@field hostage_count fun(self: self): number
+---@field police_hostage_count fun(self: self): number
+---@field remove_listener fun(self: self, key: string)
+---@field whisper_mode fun(self: self): boolean
+
 local dropin = false
 local original =
 {
@@ -17,8 +39,9 @@ local original =
 
 function GroupAIStateBase:init(...)
 	original.init(self, ...)
-    self:add_listener("EHI_EnemyWeaponsHot", { "enemy_weapons_hot" }, function()
+    self:add_listener("EHI_EnemyWeaponsHot", "enemy_weapons_hot", function()
         EHI:RunOnAlarmCallbacks(dropin)
+        self:remove_listener("EHI_EnemyWeaponsHot")
     end)
 end
 
@@ -38,6 +61,7 @@ function GroupAIStateBase:load(...)
     original.load(self, ...)
     if self._enemy_weapons_hot then
         EHI:RunOnAlarmCallbacks(dropin)
+        self:remove_listener("EHI_EnemyWeaponsHot")
         local law1team = self._teams[tweak_data.levels:get_default_team_ID("combatant")]
         if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets set; see GameSetup:load()
             managers.ehi_tracker:SetChancePercent("PhalanxDamageReduction", law1team.damage_reduction or 0)

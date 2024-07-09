@@ -1412,5 +1412,8 @@
     "ehi_experience_custom_opened_security_door" : "Otevřeny bezpečnostní dveře",
     "ehi_experience_custom_pc_powered_on" : "Zprovozněn PC",
     "ehi_experience_custom_escort" : "Týpek doprovoden",
-    "ehi_experience_custom_removed_gps_tracker" : "Odstraněn sledovač GPS"
+    "ehi_experience_custom_removed_gps_tracker" : "Odstraněn sledovač GPS",
+
+    "menu_achievements_progress_ehi_tracked" : "Sledováno v EHI",
+    "menu_achievements_progress_ehi_secret" : "The Secret"
 }

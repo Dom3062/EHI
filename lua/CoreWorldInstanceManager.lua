@@ -260,17 +260,9 @@ local instances =
     },
     ["levels/instances/unique/pex/pex_armory_small/world"] =
     {
-        [100025] = { time = 120, id = "pex_ArmoryHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint_f = function(self, trigger)
-            self._waypoints:AddWaypoint(trigger.id, {
-                time = trigger.time,
-                icon = Icon.Tablet,
-                position = self:GetElementPositionOrDefault(trigger.element_ids.defend),
-                class = EHI.Waypoints.Pausable
-            })
-            managers.hud:SoftRemoveWaypoint2(trigger.element_ids.defend)
-            managers.hud:SoftRemoveWaypoint2(trigger.element_ids.fix)
-        end, element_ids = { defend = 100055, fix = 100056 }, hint = Hints.Hack },
-        [100026] = { id = "pex_ArmoryHack", special_function = SF.PauseTracker }
+        [100025] = { time = 120, id = "pex_ArmoryHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100055, skip_if_not_found = true }, hint = Hints.Hack },
+        [100026] = { id = "pex_ArmoryHack", special_function = SF.PauseTracker },
+        [100056] = { remove_vanilla_waypoint = true } -- Fix
     },
     ["levels/instances/unique/pex/pex_evidence_room_1/world"] =
     {
@@ -288,8 +280,9 @@ local instances =
     },
     ["levels/instances/unique/fex/fex_explosives/world"] =
     {
-        [100008] = { time = 60, id = "fex_ExplosivesTimer", icons = { "equipment_timer" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Explosion },
-        [100007] = { id = "fex_ExplosivesTimer", special_function = SF.PauseTracker }
+        [100008] = { time = 60, id = "fex_ExplosivesTimer", icons = { "equipment_timer" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Explosion, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100022 } },
+        [100007] = { id = "fex_ExplosivesTimer", special_function = SF.PauseTracker },
+        [100023] = { remove_vanilla_waypoint = true } -- Defend
     },
     ["levels/instances/unique/fex/fex_front_gate/world"] =
     {
@@ -503,13 +496,15 @@ instances["levels/instances/unique/tag/tag_keypad/world"] = deep_clone(instances
 instances["levels/instances/unique/tag/tag_keypad/world"][100176].waypoint.position_by_unit = 100279
 instances["levels/instances/unique/tag/tag_keypad/world"][100210].time = 5 + EHI:GetKeypadResetTimer({ normal = 10 })
 instances["levels/instances/unique/tag/tag_keypad/world"][100210].waypoint.position_by_unit = 100279
+instances["levels/instances/unique/sah/sah_keypad_vault/world"] = instances["levels/instances/unique/tag/tag_keypad/world"]
+instances["levels/instances/unique/sah/sah_keypad_vault_new/world"] = deep_clone(instances["levels/instances/unique/sah/sah_keypad_vault/world"])
+instances["levels/instances/unique/sah/sah_keypad_vault_new/world"][100210].time = 3 + EHI:GetKeypadResetTimer()
 instances["levels/instances/unique/des/des_computer_001/world"] = instances["levels/instances/unique/des/des_computer/world"]
 instances["levels/instances/unique/des/des_computer_002/world"] = instances["levels/instances/unique/des/des_computer/world"]
 instances["levels/instances/unique/pex/pex_armory_medium/world"] = instances["levels/instances/unique/pex/pex_armory_small/world"]
 instances["levels/instances/unique/pex/pex_armory_large/world"] = instances["levels/instances/unique/pex/pex_armory_small/world"]
-instances["levels/instances/unique/sand/sand_rotating_keypad/world"] = deep_clone(instances["levels/instances/unique/tag/tag_keypad/world"])
-instances["levels/instances/unique/sand/sand_rotating_keypad/world"][100210].time = 3 + EHI:GetKeypadResetTimer()
-instances["levels/instances/unique/chca/chca_keypad/world"] = instances["levels/instances/unique/sand/sand_rotating_keypad/world"]
+instances["levels/instances/unique/sand/sand_rotating_keypad/world"] = instances["levels/instances/unique/sah/sah_keypad_vault_new/world"]
+instances["levels/instances/unique/chca/chca_keypad/world"] = instances["levels/instances/unique/sah/sah_keypad_vault_new/world"]
 instances["levels/instances/unique/xmn/xmn_breakout_road001/world"] = instances["levels/instances/unique/hox_breakout_road001/world"]
 
 if EHI:IsClient() then
@@ -633,11 +628,6 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                     if trigger.special_function and trigger.special_function == SF.ShowWaypoint and trigger.data and trigger.data.position_by_element and EHIConfig.escape_waypoints then
                         new_trigger.data.position_by_element = EHI:GetInstanceElementID(trigger.data.position_by_element, start_index, continent_data.base_id)
                         defer_loading_waypoints = true
-                    end
-                    if trigger.element_ids then
-                        for key, element_id in pairs(trigger.element_ids) do
-                            new_trigger.element_ids[key] = EHI:GetInstanceElementID(element_id, start_index, continent_data.base_id)
-                        end
                     end
                     triggers[final_index] = new_trigger
                 end

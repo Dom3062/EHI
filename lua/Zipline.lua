@@ -81,8 +81,8 @@ function ZipLine:HookUpdateLoop()
         if self.__ehi_bag_attached and not self._attached_bag then
             self.__ehi_bag_attached = nil
             local t = self:total_time() * self._current_time
-            managers.ehi_tracker:RemoveTracker(self._ehi_key_bag)
-            managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key_reset, t)
+            managers.ehi_tracker:CallFunction("ZipLineBag", "RemoveByID", self._ehi_key_bag)
+            managers.ehi_tracker:CallFunction("ZipLineReset", "SetTimeNoAnim", t, self._ehi_key_reset)
             managers.ehi_waypoint:SetWaypointTime(self._ehi_key_reset, t)
         end
     end

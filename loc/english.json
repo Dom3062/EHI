@@ -1412,5 +1412,8 @@
     "ehi_experience_custom_opened_security_door" : "Opened security door",
     "ehi_experience_custom_pc_powered_on" : "PC powered on",
     "ehi_experience_custom_escort" : "Guy escorted",
-    "ehi_experience_custom_removed_gps_tracker" : "Removed GPS tracker"
+    "ehi_experience_custom_removed_gps_tracker" : "Removed GPS tracker",
+
+    "menu_achievements_progress_ehi_tracked" : "Tracked in EHI",
+    "menu_achievements_progress_ehi_secret" : "The Secret"
 }

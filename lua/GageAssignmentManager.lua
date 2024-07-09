@@ -4,6 +4,7 @@ if EHI:CheckLoadHook("GageAssignmentManager") then
 end
 
 ---@class GageAssignmentManager
+---@field _progressed_assignments { [string]: number }
 ---@field _tweak_data GageAssignmentTweakData
 ---@field count_all_units fun(self: self): number
 ---@field count_active_units fun(self: self): number
@@ -15,14 +16,11 @@ local original =
 }
 
 ---@param self GageAssignmentManager
+---@param picked_up number?
 ---@param client_sync_load boolean?
----@param max_units number?
-local function UpdateTracker(self, client_sync_load, max_units)
-    max_units = max_units or self:count_all_units()
-    local picked_up = self:GetCountOfRemainingPackages()
-    if client_sync_load then
-        picked_up = math.max(picked_up - 1, 0)
-    end
+local function UpdateTracker(self, picked_up, client_sync_load)
+    local max_units = self:count_all_units()
+    picked_up = picked_up or self:GetCountOfRemainingPackages()
     if picked_up >= max_units then
         EHI:CallCallbackOnce(EHI.CallbackMessage.SyncGagePackagesCount, picked_up, max_units, client_sync_load)
     else
@@ -43,7 +41,13 @@ end
 
 function GageAssignmentManager:sync_load(...)
     original.sync_load(self, ...)
-    UpdateTracker(self, true, EHI._cache.GagePackagesSpawned and tweak_data.gage_assignment:get_num_assignment_units() or 0)
+    -- Counting secured packages needs to be done manually as the function above is sometimes incorrect during sync for some very weird reason  
+    -- Possible theory is that the packages were synced late than data from GageAssignmentManager
+    local secured_packages = 0
+    for _, secured in pairs(self._progressed_assignments or {}) do
+        secured_packages = secured_packages + secured
+    end
+    UpdateTracker(self, secured_packages, true)
 end
 
 if not EHI:GetOption("show_gage_tracker") then

@@ -85,7 +85,7 @@ function EHIPhalanxManager:AddTracker()
         end
     end)
     if EHI:IsHost() then
-        self._manager:AddInternalListener("assault", "sustain_t", function(duration)
+        self._manager:AddEventListener("EHIPhalanxManager", "AssaultOnSustain", function(duration)
             self._trackers:CallFunction("CaptainChance", "OnEnterSustain", duration)
         end)
     end

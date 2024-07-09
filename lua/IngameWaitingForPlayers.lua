@@ -327,10 +327,10 @@ local function ShowPopup(id, progress, max)
     managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_" .. id), tostring(progress) .. "/" .. tostring(max), EHI:GetAchievementIconString(id))
 end
 
-local pxp_1_checked = false
+local pxp1_1_checked = false
 -- "Plague Doctor" achievement
-local function pxp_1()
-    if pxp_1_checked then
+local function pxp1_1()
+    if pxp1_1_checked then
         return
     end
     if EHI:IsAchievementLocked2("pxp1_1") then
@@ -345,13 +345,7 @@ local function pxp_1()
             AddAchievementTracker2("pxp1_1_stats")
         end
     end
-    pxp_1_checked = true
-end
-
----@param achievement_id string
----@param f fun(am: AchievmentManager, stat: string, value: number?)
-local function HookAwardAchievement(achievement_id, f)
-    EHI:HookWithID(AchievmentManager, "award_progress", "EHI_" .. achievement_id .. "_AwardProgress", f)
+    pxp1_1_checked = true
 end
 
 ---@param achievement_id string
@@ -721,8 +715,8 @@ function IngameWaitingForPlayersState:at_exit(...)
                     ShowTrackerInLoud(f)
                     stats.pim_1_stats = "pim_1"
                 end
-                pxp_1()
-                if level == "man" and EHI:IsAchievementLocked2("man_5") and HasWeaponTypeEquipped("grenade_launcher") and from_beginning then
+                pxp1_1()
+                if level == "man" and EHI:IsAchievementLocked2("man_5") and HasWeaponTypeEquipped("grenade_launcher") and from_beginning then -- "Blow-Out" achievement
                     managers.ehi_tracker:AddTracker({
                         id = "man_5",
                         icons = EHI:GetAchievementIcon("man_5"),
@@ -733,7 +727,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                         EHI:Unhook("man_5_killed")
                         EHI:Unhook("man_5_shot_fired")
                     end
-                    EHI:HookWithID(StatisticsManager, "killed", "EHI_man_5_killed", function(sm, data)
+                    managers.ehi_hook:HookKillFunction("man_5", nil, nil, function(sm, data)
                         local is_not_explosion = data.variant ~= "explosion"
                         local name_id, is_throwable = sm:_get_name_id_and_throwable_id(data.weapon_unit)
                         if is_not_explosion or (name_id and not table.contains(sm:_get_boom_guns(), name_id)) or is_throwable then
@@ -847,7 +841,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                         AddAchievementTracker2("sawp_stat")
                     end
                 end
-                pxp_1()
+                pxp1_1()
                 if (level == "rvd1" or level == "rvd2") and EHI:IsAchievementLocked2("rvd_12") and HasMeleeEquipped("clean") then -- "Close Shave" achievement
                     AddAchievementTracker2("rvd_12_stats")
                 end
@@ -861,7 +855,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 for _, eligible_grenade in ipairs(tweak_data.achievement.fire_in_the_hole.grenade) do
                     if grenade == eligible_grenade then
                         local progress = EHI:GetAchievementProgress("gage_9_stats")
-                        HookAwardAchievement("gage_9", function(am, stat, value)
+                        managers.ehi_hook:HookAchievementAwardProgress("gage_9", function(am, stat, value)
                             if stat == "gage_9_stats" then
                                 progress = progress + (value or 1)
                                 if progress >= 100 then
@@ -897,7 +891,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end)
             end
             if OVKOrAbove then
-                pxp_1()
+                pxp1_1()
                 if EHI:IsAchievementLocked2("pxp2_3") and HasGrenadeEquipped("poison_gas_grenade") then -- "Snake Charmer" achievement
                     AddAchievementTracker2("pxp2_3_stats")
                 end
@@ -926,7 +920,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 ShowTrackerInLoud(function()
                     ShowPopup("armored_10", progress, 61)
                 end)
-                HookAwardAchievement("armored_10", function(am, stat, value)
+                managers.ehi_hook:HookAchievementAwardProgress("armored_10", function(am, stat, value)
                     if stat == "armored_10_stat" and progress < 61 then
                         progress = progress + (value or 1)
                         ShowPopup("armored_10", progress, 61)
@@ -935,7 +929,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
             if EHI:IsAchievementLocked2("gmod_1") then -- "Praying Mantis" achievement
                 local progress = EHI:GetAchievementProgress("gmod_1_stats")
-                HookAwardAchievement("gmod_1", function(am, stat, value)
+                managers.ehi_hook:HookAchievementAwardProgress("gmod_1", function(am, stat, value)
                     if stat == "gmod_1_stats" then
                         progress = progress + value
                         if progress < 5 then
@@ -946,7 +940,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
             if EHI:IsAchievementLocked2("gmod_2") then -- "Bullseye" achievement
                 local progress = EHI:GetAchievementProgress("gmod_2_stats")
-                HookAwardAchievement("gmod_2", function(am, stat, value)
+                managers.ehi_hook:HookAchievementAwardProgress("gmod_2", function(am, stat, value)
                     if stat == "gmod_2_stats" then
                         progress = progress + value
                         if progress < 10 then
@@ -957,7 +951,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
             if EHI:IsAchievementLocked2("gmod_3") then -- "My Spider Sense is Tingling" achievement
                 local progress = EHI:GetAchievementProgress("gmod_3_stats")
-                HookAwardAchievement("gmod_3", function(am, stat, value)
+                managers.ehi_hook:HookAchievementAwardProgress("gmod_3", function(am, stat, value)
                     if stat == "gmod_3_stats" then
                         progress = progress + value
                         if progress < 15 then
@@ -968,7 +962,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
             if EHI:IsAchievementLocked2("gmod_4") then -- "Eagle Eyes" achievement
                 local progress = EHI:GetAchievementProgress("gmod_4_stats")
-                HookAwardAchievement("gmod_4", function(am, stat, value)
+                managers.ehi_hook:HookAchievementAwardProgress("gmod_4", function(am, stat, value)
                     if stat == "gmod_4_stats" then
                         progress = progress + value
                         if progress < 20 then
@@ -979,7 +973,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
             if EHI:IsAchievementLocked2("gmod_5") then -- "Like A Boy Killing Snakes" achievement
                 local progress = EHI:GetAchievementProgress("gmod_5_stats")
-                HookAwardAchievement("gmod_5", function(am, stat, value)
+                managers.ehi_hook:HookAchievementAwardProgress("gmod_5", function(am, stat, value)
                     if stat == "gmod_5_stats" then
                         progress = progress + value
                         if progress < 25 then
@@ -1028,7 +1022,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 EHI:HookWithID(RaycastWeaponBase, "stop_shooting", "EHI_ovk_3_stop_shooting", function(...)
                     managers.ehi_achievement:SetAchievementFailed("ovk_3")
                 end)
-                EHI:HookWithID(AchievmentManager, "award", "EHI_ovk_3_award", function(self, id)
+                EHI:HookWithID(AchievmentManager, "award", "EHI_ovk_3_award", function(am, id)
                     if id == "ovk_3" then
                         EHI:Unhook("ovk_3_start_shooting")
                         EHI:Unhook("ovk_3_stop_shooting")
@@ -1073,7 +1067,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             if eng_1_levels[level] then
                 if EHI:IsAchievementLocked2("eng_1") then -- "The only one that is true" achievement
                     local progress = EHI:GetAchievementProgress("eng_1_stats") + 1
-                    HookAwardAchievement("eng_1",  function(am, stat, value)
+                    managers.ehi_hook:HookAchievementAwardProgress("eng_1",  function(am, stat, value)
                         if stat == "eng_1_stats" and progress < 5 then
                             ShowPopup("eng_1", progress, 5)
                         end
@@ -1083,7 +1077,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             if level == "kosugi" or level == "red2" then
                 if EHI:IsAchievementLocked2("eng_2") then -- "The one that had many names" achievement
                     local progress = EHI:GetAchievementProgress("eng_2_stats") + 1
-                    HookAwardAchievement("eng_2",  function(am, stat, value)
+                    managers.ehi_hook:HookAchievementAwardProgress("eng_2",  function(am, stat, value)
                         if stat == "eng_2_stats" and progress < 5 then
                             ShowPopup("eng_2", progress, 5)
                         end
@@ -1093,7 +1087,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             if level == "roberts" or level == "four_stores" then
                 if EHI:IsAchievementLocked2("eng_3") then -- "The one that survived" achievement
                     local progress = EHI:GetAchievementProgress("eng_3_stats") + 1
-                    HookAwardAchievement("eng_3", function(am, stat, value)
+                    managers.ehi_hook:HookAchievementAwardProgress("eng_3", function(am, stat, value)
                         if stat == "eng_3_stats" and progress < 5 then
                             ShowPopup("eng_3", progress, 5)
                         end
@@ -1103,7 +1097,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             if level == "family" or level == "hox_1" then
                 if EHI:IsAchievementLocked2("eng_4") then -- "The one who declared himself the hero" achievement
                     local progress = EHI:GetAchievementProgress("eng_4_stats") + 1
-                    HookAwardAchievement("eng_4", function(am, stat, value)
+                    managers.ehi_hook:HookAchievementAwardProgress("eng_4", function(am, stat, value)
                         if stat == "eng_4_stats" and progress < 5 then
                             ShowPopup("eng_4", progress, 5)
                         end
@@ -1119,7 +1113,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             if VeryHardOrAbove then
                 if level == "help" and EHI:IsAchievementLocked2("tawp_1") and mask_id == tweak_data.achievement.complete_heist_achievements.tawp_1.mask then -- "Cloaker Charmer" achievement
                     AddAchievementTracker("tawp_1", 0, 1, false, true)
-                    EHI:HookWithID(StatisticsManager, "killed", "EHI_tawp_1_killed", function (self, data)
+                    managers.ehi_hook:HookKillFunction("tawp_1", nil, nil, function(sm, data)
                         if data.name == "spooc" then
                             managers.ehi_tracker:IncreaseTrackerProgress("tawp_1")
                         end
@@ -1250,11 +1244,10 @@ function IngameWaitingForPlayersState:at_exit(...)
     end
     challenges = nil
     sh_dailies = nil
-    if next(stats) then
-        HookAwardAchievement("IngameWaitingForPlayers", function(am, stat, value)
-            local achievement = stats[stat]
-            if achievement then
-                managers.ehi_tracker:IncreaseTrackerProgress(achievement, value)
+    for stat_id, id in pairs(stats) do
+        managers.ehi_hook:HookAchievementAwardProgress(id, function(am, stat, value)
+            if stat == stat_id then
+                managers.ehi_tracker:IncreaseTrackerProgress(id, value)
             end
         end)
     end

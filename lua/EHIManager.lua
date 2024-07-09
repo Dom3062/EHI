@@ -18,7 +18,6 @@ EHIManager.ConditionFunctions = EHI.ConditionFunctions
 EHIManager.SFF = {}
 EHIManager._cache = {}
 EHIManager._internal = {}
-EHIManager._internal_listeners = {}
 EHIManager._sync_tracker = "EHISyncAddTracker"
 ---@param managers managers
 function EHIManager:init(managers)
@@ -86,6 +85,8 @@ function EHIManager:init(managers)
     }
     if EHI:IsClient() then
         self._HookOnLoad = {}
+        self._load_sync = CallbackEventHandler:new()
+        self._full_sync = CallbackEventHandler:new()
     end
     self:_post_init()
 end
@@ -140,35 +141,12 @@ function EHIManager:GetInternalData(name, data_name)
     return tbl[data_name]
 end
 
+---@param event string
 ---@param name string
 ---@param data_name string
-function EHIManager:NotifyInternalListeners(name, data_name, value)
+function EHIManager:NotifyInternalListeners(event, name, data_name, value)
     self:SaveInternalData(name, data_name, value)
-    for key, tbl in pairs(self._internal_listeners[name] or {}) do
-        if key == data_name then
-            for _, f in ipairs(tbl) do
-                f(value)
-            end
-            break
-        end
-    end
-end
-
----@param name string
----@param data_name string
----@param f function
-function EHIManager:AddInternalListener(name, data_name, f)
-    local tbl = self._internal_listeners[name]
-    if tbl then
-        local tbl_name = tbl[data_name]
-        if tbl_name then
-            table.insert(tbl_name, f)
-        else
-            tbl[data_name] = { f }
-        end
-    else
-        self._internal_listeners[name] = { [data_name] = { f } }
-    end
+    self:CallEvent(event, value)
 end
 
 ---@param state boolean
@@ -350,7 +328,7 @@ function EHIManager:AddPositionFromElement(data, id, check)
     if vector then
         data.position = vector
         data.position_by_element = nil
-    elseif check then
+    elseif check and not data.skip_if_not_found then
         data.position = Vector3()
         EHI:Log(string.format("Element with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_by_element, tostring(id)))
     end
@@ -364,7 +342,7 @@ function EHIManager:AddPositionFromUnit(data, id, check)
     if vector then
         data.position = vector
         data.position_by_unit = nil
-    elseif check then
+    elseif check and not data.skip_if_not_found then
         data.position = Vector3()
         EHI:Log(string.format("Unit with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_by_unit, tostring(id)))
     end
@@ -375,8 +353,7 @@ function EHIManager:AddLoadSyncFunction(f)
     if EHI:IsHost() then
         return
     end
-    self._load_sync = self._load_sync or {}
-    self._load_sync[#self._load_sync + 1] = f
+    self._load_sync:add(f)
 end
 
 ---@param f fun(self: EHIManager)
@@ -384,22 +361,18 @@ function EHIManager:AddFullSyncFunction(f)
     if EHI:IsHost() then
         return
     end
-    self._full_sync = self._full_sync or {}
-    self._full_sync[#self._full_sync + 1] = f
+    self._full_sync:add(f)
 end
 
 function EHIManager:LoadSync()
     if self._level_started_from_beginning then
-        for _, f in ipairs(self._full_sync or {}) do
-            f(self)
-        end
+        self._full_sync:dispatch(self)
     else
-        for _, f in ipairs(self._load_sync or {}) do
-            f(self)
-        end
+        self._load_sync:dispatch(self)
     end
-    -- Clear used memory
+    self._full_sync:clear()
     self._full_sync = nil
+    self._load_sync:clear()
     self._load_sync = nil
 end
 
@@ -1184,6 +1157,7 @@ function EHIManager:AddPositionToWaypointFromLoad()
             elseif trigger.waypoint.position_by_unit then
                 self:AddPositionFromUnit(trigger.waypoint, trigger.id, true)
             end
+            trigger.waypoint.skip_if_not_found = nil
         end
     end
     for _, sync_trigger in pairs(self._sync_triggers or {}) do
@@ -1237,11 +1211,8 @@ function EHIManager:_AddTracker(trigger)
 end
 
 ---@param trigger ElementTrigger
----@return number
 function EHIManager:GetRandomTime(trigger)
-    local full_time = trigger.additional_time or 0
-    full_time = full_time + math.rand(trigger.random_time)
-    return full_time
+    return (trigger.additional_time or 0) + math.rand(trigger.random_time)
 end
 
 ---@param trigger ElementTrigger
@@ -1454,7 +1425,7 @@ function EHIManager:Trigger(id, element, enabled)
                 end
             elseif f == SF.SetRandomTime then
                 if self._trackers:TrackerDoesNotExist(trigger.id) then
-                    trigger.time = trigger.data[math.random(#trigger.data)]
+                    trigger.time = table.random(trigger.data)
                     self:CreateTracker(trigger)
                 end
             elseif f == SF.DecreaseChance then

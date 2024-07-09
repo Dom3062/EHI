@@ -24,10 +24,15 @@ function EHIHookManager:UnhookElement(id)
 end
 
 ---@param tracker_id string
----@param weapon_id string
+---@param weapon_id string?
 ---@param no_civilian boolean?
-function EHIHookManager:HookKillFunction(tracker_id, weapon_id, no_civilian)
-    if no_civilian then
+---@param custom_f fun(sm: StatisticsManager, data: table)
+---@overload fun(self: self, tracker_id: string, weapon_id: string)
+---@overload fun(self: self, tracker_id: string, weapon_id: string, no_civilian: boolean)
+function EHIHookManager:HookKillFunction(tracker_id, weapon_id, no_civilian, custom_f)
+    if custom_f then
+        EHI:HookWithID(StatisticsManager, "killed", string.format("EHI_%s_killed", tracker_id), custom_f)
+    elseif no_civilian then
         EHI:HookWithID(StatisticsManager, "killed", string.format("EHI_%s_%s_killed", tracker_id, weapon_id), function(sm, data)
             if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
                 local name_id, _ = sm:_get_name_id_and_throwable_id(data.weapon_unit)
@@ -79,4 +84,10 @@ function EHIHookManager:HookMissionEndCSMAward(id, icon)
             end
         end)
     end
+end
+
+---@param id string
+---@param f fun(am: AchievmentManager, stat: string, value: number?)
+function EHIHookManager:HookAchievementAwardProgress(id, f)
+    EHI:HookWithID(AchievmentManager, "award_progress", string.format("EHI_%s_AwardProgress", id), f)
 end

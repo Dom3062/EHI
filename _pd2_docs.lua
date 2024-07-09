@@ -21,6 +21,8 @@ _G.World = {}
 ---@field get_value fun(self: self, ...): any
 _G.tweak_data = {}
 ---@class AchievementsTweakData
+_G.AchievementsTweakData = {}
+---@class AchievementsTweakData
 _G.tweak_data.achievement = {
     gonna_find_them_all = 1,
     no_we_cant = {
@@ -517,6 +519,8 @@ _G.IS_VR = ...
 _G.AmmoBagBase = {}
 ---@class GrenadeCrateBase
 _G.GrenadeCrateBase = {}
+---@class CallbackEventHandler
+_G.CallbackEventHandler = {}
 ---@class CarryTweakData
 _G.CarryTweakData = {}
 ---@class CoreWorldInstanceManager
@@ -550,6 +554,8 @@ _G.ExperienceManager = {}
 _G.GamePlayCentralManager = {}
 ---@class GroupAITweakData
 _G.GroupAITweakData = {}
+---@class GroupAIStateBase
+_G.GroupAIStateBase = {}
 ---@class JobManager
 _G.JobManager = {}
 ---@class LevelsTweakData
@@ -580,6 +586,8 @@ _G.ObjectInteractionManager = {}
 _G.MissionAssetsManager = {}
 ---@class MissionBriefingGui
 _G.MissionBriefingGui = {}
+---@class ModifiersManager
+_G.ModifiersManager = {}
 ---@class MoneyManager
 _G.MoneyManager = {}
 ---@class mvector3
@@ -767,6 +775,7 @@ end
 ---@class CustomSafehouseManager
 ---@field get_daily_challenge fun(self: self): CustomSafehouseManager._global.daily
 ---@field is_trophy_unlocked fun(self: self, id: string): boolean
+---@field uno_achievement_challenge fun(self: self): UnoAchievementChallenge
 
 ---@class CustomSafehouseManager._global.daily
 ---@field id string
@@ -785,18 +794,6 @@ end
 ---@field safe_to_full_16_9 fun(self: self, in_x: number, in_y: number): number, number
 ---@field full_to_safe fun(self: self, in_x: number, in_y: number): number, number
 ---@field full_scaled_size fun(self: self): { x: number, y: number, w: number, h: number }
-
----@class GroupAIStateBase
----@field _hostage_headcount number
----@field _t number
----@field _task_data table
----@field amount_of_winning_ai_criminals fun(self: self): number
----@field assault_phase_end_time fun(self: self): number?
----@field get_amount_enemies_converted_to_criminals fun(self: self): number
----@field _get_balancing_multiplier fun(self: self, balance_multipliers: number[]): number
----@field hostage_count fun(self: self): number
----@field police_hostage_count fun(self: self): number
----@field whisper_mode fun(self: self): boolean
 
 ---@class GroupAIManager
 ---@field state fun(self: self): GroupAIStateBase
@@ -837,10 +834,6 @@ end
 ---@field _type string
 ---@field value fun(self: self, id: string): number
 
----@class ModifiersManager
----@field _modifiers table<string, table<number, BaseModifier>?>
----@field add_modifier fun(self: self, modifier: table, category: string?)
-
 ---@class MoneyManager
 ---@field get_secured_bonus_bag_value fun(self: self, carry_id: string, multiplier: number): number
 
@@ -876,12 +869,21 @@ end
 ---@class PerpetualEventManager
 ---@field get_holiday_tactics fun(self: self): string
 
+---@class SavefileManager
+---@field add_load_done_callback fun(self: self, callback_func: function)
+---@field add_load_sequence_done_callback_handler fun(self: self, callback_func: function)
+
 ---@class SlotManager
 ---@field get_mask fun(self: self, ...: string): number
 
 ---@class StatisticsManager
+---@field _get_boom_guns fun(self: self): string[]
+---@field _get_name_id_and_throwable_id fun(self: self, weapon_unit: UnitWeapon): string?, string?
 ---@field is_dropin fun(self: self): boolean
 ---@field started_session_from_beginning fun(self: self): boolean
+
+---@class UnoAchievementChallenge
+---@field challenge fun(self: self): string[]?
 
 ---@class ViewportManager
 ---@field add_resolution_changed_func fun(self: self, func: function): function
@@ -936,6 +938,7 @@ end
 ---@field perpetual_event PerpetualEventManager
 ---@field player PlayerManager
 ---@field preplanning PrePlanningManager
+---@field savefile SavefileManager
 ---@field slot SlotManager
 ---@field statistics StatisticsManager
 ---@field trade TradeManager
@@ -943,11 +946,6 @@ end
 ---@field weapon_factory WeaponFactoryManager
 ---@field worlddefinition WorldDefinition
 ---@field world_instance CoreWorldInstanceManager
-
----@class AchievementsTweakData
----@field collection_achievements table<string, { award: string, collection: string[] }>
----@field persistent_stat_unlocks table<string, { [1]: { award: string, at: number } }>
----@field visual table<string, { icon_id: string }>
 
 ---@class BlackMarketTweakData
 ---@field melee_weapons { [string]: { attack_allowed_expire_t: number?, stats: { charge_time: number }, type: string } }
@@ -1037,6 +1035,7 @@ end
 ---@field get_key fun(map: table, wanted_key_value: any): any? Returns `key name` if value exists
 ---@field get_vector_index fun(v: table, e: any): number?
 ---@field list_to_set fun(list: table): table Maps values as keys with value `true`
+---@field random fun(t: table): any Returns random value from a list
 
 ---@class ContourExt
 ---@field _contour_list table?
