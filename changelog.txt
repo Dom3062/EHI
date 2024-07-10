@@ -1,3 +1,6 @@
+r251 (10. 07. 2024):
+Black Cat: Fixed a crash when money in the vault is destroyed
+
 r250 (09. 07. 2024):
 Added achievement progress filters in Achievement List Screen - "Tracked in EHI" and "The Secret"
 Gage Package Tracker: Fixed for real current count is stuck at 0 (client only)

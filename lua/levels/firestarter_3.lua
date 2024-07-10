@@ -96,11 +96,12 @@ if EHI:IsLootCounterVisible() then
         104148, 101254, 101251, 104211, 104201, 104233, 104203, 104149, 101253, 104206
     }
     local is_not_firestarter_3 = Global.game_settings.level_id ~= "firestarter_3"
+    local is_not_deposit = Global.game_settings.level_id ~= "branchbank_deposit"
     other[105762] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({
             max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot2(deposit_boxes),
             client_from_start = true,
-            unknown_random = is_not_firestarter_3
+            unknown_random = is_not_firestarter_3 and is_not_deposit
         })
     end)
     other[103372] = { special_function = EHI:RegisterCustomSF(function(self, ...)
@@ -109,7 +110,7 @@ if EHI:IsLootCounterVisible() then
         end
         self._loot:SetUnknownRandomLoot()
     end) }
-    if is_not_firestarter_3 and Global.game_settings.level_id ~= "branchbank_deposit" then
+    if is_not_firestarter_3 and is_not_deposit then
         other[104647] = other[103372]
         local LootVisible = { special_function = EHI:RegisterCustomSF(function(self, ...)
             self._loot:IncreaseLootCounterProgressMax()

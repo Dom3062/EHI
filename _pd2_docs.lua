@@ -1142,6 +1142,7 @@ end
 ---@field z fun(self: self): number
 
 ---@class Unit
+---@field alive fun(): boolean
 ---@field editor_id fun(): number
 ---@field key fun(): string
 ---@field material_config fun(): Idstring

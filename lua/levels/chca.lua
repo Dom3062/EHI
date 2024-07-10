@@ -209,7 +209,10 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 if EHI:IsLootCounterVisible() then
-    local units = {}
+    local units =
+    {
+        [EHI:GetInstanceElementID(100009, 15470)] = true
+    }
     for i = 100017, 100020, 1 do
         units[EHI:GetInstanceUnitID(i, 15470)] = true
     end
@@ -220,15 +223,14 @@ if EHI:IsLootCounterVisible() then
         units[EHI:GetInstanceUnitID(i, 15470)] = true
     end
     local LootLeftInVault = EHI:RegisterCustomSF(function(self, ...)
-        local left_to_burn = 16
+        local destroyed = 0
         for unit_id, _ in pairs(units) do
-            local unit = managers.worlddefinition:get_unit(unit_id) ---@cast unit UnitBase
-            -- If the unit has "body" table, then players bagged it
-            if unit and unit:damage()._state and unit:damage()._state.body then
-                left_to_burn = left_to_burn - 1
+            local unit = managers.worlddefinition:get_unit(unit_id) ---@cast unit UnitBase?
+            if unit and unit.alive and unit:alive() then -- If the unit is alive, then players left it unbagged
+                destroyed = destroyed + 1
             end
         end
-        self._loot:DecreaseLootCounterProgressMax(left_to_burn)
+        self._loot:DecreaseLootCounterProgressMax(destroyed)
     end)
     local C4Plan = EHI:RegisterCustomSF(function(self, ...)
         local bags = 16
@@ -246,8 +248,7 @@ if EHI:IsLootCounterVisible() then
             triggers =
             {
                 [103761] = { special_function = C4Plan },
-                [EHI:GetInstanceElementID(100014, 15470)] = { special_function = LootLeftInVault }, -- Ink (Stealth)
-                [EHI:GetInstanceElementID(100063, 15470)] = { special_function = LootLeftInVault } -- Burn (Loud)
+                [EHI:GetInstanceElementID(100065, 15470)] = { special_function = LootLeftInVault } -- Ink (Stealth) / Burn (Loud)
             },
             hook_triggers = true,
             client_from_start = true
