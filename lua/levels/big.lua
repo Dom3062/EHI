@@ -8,10 +8,10 @@ local ThermiteWP = { icon = Icon.Fire, position_by_element = 104326 }
 local triggers = {
     [105842] = { time = 16.7 * 18, id = "Thermite", icons = { Icon.Fire }, waypoint = deep_clone(ThermiteWP), hint = Hints.Thermite },
 
-    [105197] = { time = 45, id = "PickUpAPhone", icons = { Icon.Phone, Icon.Interact }, class = TT.Warning, hint = Hints.PickUpPhone },
+    [105197] = { time = 45, id = "PickUpAPhone", icons = { Icon.Phone, Icon.Interact }, class = TT.Warning, hint = Hints.PickUpPhone, remove_on_alarm = true },
     [105219] = { id = "PickUpAPhone", special_function = SF.RemoveTracker },
 
-    [103050] = { time = 60, id = "PickUpManagersPhone", icons = { Icon.Phone, Icon.Interact }, class = TT.Warning, hint = Hints.PickUpPhone },
+    [103050] = { time = 60, id = "PickUpManagersPhone", icons = { Icon.Phone, Icon.Interact }, class = TT.Warning, hint = Hints.PickUpPhone, remove_on_alarm = true },
     [105248] = { id = "PickUpManagersPhone", special_function = SF.RemoveTracker },
 
     [101377] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion },
@@ -63,7 +63,6 @@ if EHI:IsClient() then
     end
 end
 
-local bigbank_4 = { special_function = SF.Trigger, data = { 1, 2 } }
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -73,13 +72,16 @@ local achievements =
         elements =
         {
             [1] = { time = 720, class = TT.Achievement.Base },
-            [2] = { special_function = SF.RemoveTrigger, data = { 100107, 106140, 106150 } },
-            [100107] = bigbank_4,
-            [106140] = bigbank_4,
-            [106150] = bigbank_4,
+            [2] = { special_function = SF.RemoveTrigger, data = { 100107, 106140, 106150 } }
         },
         load_sync = function(self)
             self._achievements:AddTimedAchievementTracker("bigbank_4", 720)
+        end,
+        preparse_callback = function(data)
+            local trigger = { special_function = SF.Trigger, data = { 1, 2 } }
+            for _, id in ipairs({ 100107, 106140, 106150 }) do
+                data.elements[id] = trigger
+            end
         end
     },
     cac_22 =
@@ -145,13 +147,11 @@ local tbl =
     [105318] = { remove_vanilla_waypoint = 103700 },
     [105319] = { remove_vanilla_waypoint = 103702 },
     [105320] = { remove_vanilla_waypoint = 103704 },
-    [105321] = { remove_vanilla_waypoint = 103705 },
-
+    [105321] = { remove_vanilla_waypoint = 103705 }
+}
+if EHI:GetOption("show_waypoints") then
     --units/payday2/props/gen_prop_construction_crane/gen_prop_construction_crane_arm
-    [105111] = { f = function(id, unit_data, unit)
-        if not EHI:GetOption("show_waypoints") then
-            return
-        end
+    tbl[105111] = { f = function(id, unit_data, unit)
         local t = { unit = unit }
         EHI:AddWaypointToTrigger(104091, t)
         EHI:AddWaypointToTrigger(104261, t)
@@ -162,7 +162,7 @@ local tbl =
             managers.ehi_waypoint:RemoveWaypoint("CraneMoveRight")
         end)
     end }
-}
+end
 EHI:UpdateUnits(tbl)
 
 EHI:SetMissionDoorData({

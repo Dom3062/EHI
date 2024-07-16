@@ -11,11 +11,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local triggers = {
-    [101725] = { time = 25 + 0.25 + 2 + 2.35, id = "C4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery },
-
     [100866] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion }
-
-    -- C4 WP is in CoreWorldInstanceManager
 }
 
 local mayhem_and_up = EHI:IsMayhemOrAbove()

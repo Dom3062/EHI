@@ -1,3 +1,7 @@
+r252 (16. 07. 2024):
+Prison Nightmare: Fixed out of place waypoint
+Prison Nightmare: Fixed excessive number of timers
+
 r251 (10. 07. 2024):
 Black Cat: Fixed a crash when money in the vault is destroyed
 

@@ -1,5 +1,5 @@
 ---@class CoreWorldInstanceManager
----@field get_instance_data_by_name fun(self: self, instance_name: string): table?
+---@field get_instance_data_by_name fun(self: self, instance_name: string): CoreWorldInstanceManager.Instance?
 ---@field instance_data fun(self: self): table
 
 local EHI = EHI
@@ -148,7 +148,7 @@ local instances =
     },
     ["levels/instances/unique/help/heli_c4_drop_short/world"] =
     {
-        [100004] = { special_function = SF.ShowWaypoint, data = { icon = Icon.C4, position_by_element = 100021 } }
+        [100005] = { time = 25 + 0.25 + 2 + 2.35, id = "help_HeliC4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery, waypoint = { icon = Icon.C4, position_by_element = 100021 } }
     },
     ["levels/instances/unique/help/lottery_wheel/world"] =
     {
@@ -652,7 +652,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
 end
 
 local units = {}
----@param instance { folder: string, start_index: number, continent: string, rotation: Rotation }
+---@param instance CoreWorldInstanceManager.Instance
 ---@param continent_data { base_id: number }
 function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ...)
     local instance_data = original.prepare_unit_data(self, instance, continent_data, ...)
@@ -671,6 +671,7 @@ function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ..
     return instance_data
 end
 
+---@param instance_name string
 function CoreWorldInstanceManager:custom_create_instance(instance_name, ...)
     original.custom_create_instance(self, instance_name, ...)
     local instance = self:get_instance_data_by_name(instance_name)

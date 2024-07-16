@@ -26,7 +26,7 @@ if EHI:GetOption("show_escape_chance") then
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 10)
     end)
 end
-if EHI:IsHost() and not EHI:IsPlayingCrimeSpree() then
+if EHI:IsSyncedLootCounterVisible() then
     -- [ID of disabled unit when truck is visible] = truck ID
     local trucks =
     {

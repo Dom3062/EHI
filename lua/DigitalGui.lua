@@ -42,10 +42,10 @@ function DigitalGui:init(unit, ...)
 end
 
 function DigitalGui:TimerStartCountDown()
-    if (self._ignore or not self._visible) and not self._ignore_visibility then
+    if (self._ignore or not self._visible) and not self._ignore_visibility or self._timer <= 0 then
         return
     end
-    if managers.ehi_manager:Exists(self._ehi_key) then
+    if managers.ehi_manager:TimerExists(self._ehi_key) then
         managers.ehi_manager:SetTimerJammed(self._ehi_key, false)
         return
     end
@@ -59,7 +59,7 @@ function DigitalGui:TimerStartCountDown()
             completion = self._completion,
             hint = self._ehi_hint,
             group = self._ehi_group,
-            class = "EHITimerTracker"
+            class = EHI.Trackers.Timer.Base
         })
     end
     if show_waypoint then
@@ -72,6 +72,7 @@ function DigitalGui:TimerStartCountDown()
             class = "EHITimerWaypoint"
         })
     end
+
     self:HideWaypoint()
 end
 

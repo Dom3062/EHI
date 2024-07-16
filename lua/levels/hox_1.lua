@@ -26,13 +26,10 @@ end
 
 EHI:ParseTriggers({ mission = triggers, other = other, assault = { diff = 1 } })
 
-local tbl =
-{
+local tbl = {}
+if EHI:GetOption("show_waypoints") then
     --units/payday2/vehicles/anim_vehicle_pickup_sportcab_armored/anim_vehicle_pickup_sportcab_armored/the_car
-    [102482] = { f = function(id, unit_data, unit)
-        if not EHI:GetOption("show_waypoints") then
-            return
-        end
+    tbl[102482] = { f = function(id, unit_data, unit)
         local t = { unit = unit }
         EHI:AddWaypointToTrigger(102626, t)
         EHI:AddWaypointToTrigger(102627, t)
@@ -47,7 +44,7 @@ local tbl =
             managers.ehi_waypoint:RemoveWaypoint("CarMoveRightFinal")
         end)
     end}
-}
+end
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     objectives =

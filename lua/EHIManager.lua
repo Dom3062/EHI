@@ -982,7 +982,7 @@ function EHIManager:ParseMissionInstanceTriggers(new_triggers, defer_loading_way
     self:ParseMissionTriggers(new_triggers, nil, nil, defer_loading_waypoints)
 end
 
----@param preload table
+---@param preload ElementTrigger[]
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
 function EHIManager:PreloadTrackers(preload, trigger_id_all, trigger_icons_all)
@@ -1649,7 +1649,7 @@ function EHIManager:CreateSyncedTracker(trigger, delay)
 end
 
 ---@param id number
----@param waypoint table
+---@param waypoint ElementWaypointTrigger
 function EHIManager:AddWaypointToTrigger(id, waypoint)
     if not EHI:GetOption("show_waypoints_mission") then
         return

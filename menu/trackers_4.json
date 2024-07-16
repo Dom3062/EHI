@@ -60,7 +60,7 @@
             "type": "toggle",
             "id": "show_sniper_logic_end_popup_choice",
             "title": "ehi_show_sniper_logic_end_popup",
-            "description": "show_sniper_logic_end_popup_desc",
+            "description": "ehi_show_sniper_logic_end_popup_desc",
             "callback": "SetOption",
             "callback_arguments": "show_sniper_logic_end_popup",
             "value": "show_sniper_logic_end_popup",

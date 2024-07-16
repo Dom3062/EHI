@@ -41,10 +41,15 @@
     "ehi_popup_daily_failed" : "每日挑战失败!",
     "ehi_popup_loot_counter" : "战利品计数器",
     "ehi_popup_all_loot_secured" : "所有战利品已被你收入囊中",
+	"ehi_popup_all_xp_loot_secured" : "已获得所有来自战利品的经验",
     "ehi_popup_sniper" : "狙击手!",
     "ehi_popup_sniper_spawned" : "敌对狙击手入场",
     "ehi_popup_snipers" : "狙击手!",
     "ehi_popup_snipers_spawned" : "数名狙击手入场",
+    "ehi_popup_sniper_logic_start" : "狙击手开始刷新",
+    "ehi_popup_sniper_logic_started" : "已开始敌对狙击手刷新逻辑",
+    "ehi_popup_sniper_logic_end" : "狙击手结束刷新",
+    "ehi_popup_sniper_logic_ended" : "已结束敌对狙击手刷新逻辑",
     "ehi_status_ok" : "OK",
     "ehi_status_done" : "完成",
     "ehi_status_pass" : "通过",
@@ -64,7 +69,7 @@
     "ehi_status_bring" : "带走",
     "ehi_status_objective" : "目标",
     "ehi_status_fail" : "失败",
-    "ehi_status_endless" : "无尽突击中",
+    "ehi_status_endless" : "无尽",
     "ehi_hint_drill" : "钻机",
     "ehi_hint_hack" : "黑入",
     "ehi_hint_laser" : "镭射",
@@ -100,6 +105,7 @@
     "ehi_hint_kills" : "需要击杀数",
     "ehi_hint_winch" : "绞盘",
     "ehi_hint_c4_delivery" : "投送C4",
+    "ehi_hint_code" : "密码",
     "ehi_hint_color_codes" : "颜色密码",
     "ehi_hint_keypad_reset" : "键盘重置",
     "ehi_hint_fuel_transfer" : "输送原油",
@@ -139,6 +145,8 @@
     "ehi_hint_ecm_jammer" : "ECM",
     "ehi_hint_ecm_feedback" : "ECM啸叫",
     "ehi_hint_ecm_feedback_refresh" : "ECM啸叫充能",
+    "ehi_hint_phalanx_chance" : "队长入场概率",
+    "ehi_hint_hostage" : "人质计数",
 
     "ehi_hint_big_piggy" : "移动小猪",
     "ehi_hint_brb_winch_delivery" : "投送绞盘",
@@ -232,6 +240,11 @@
     "ehi_tracker_alignment_3" : "水平; 从左至右",
     "ehi_tracker_alignment_4" : "水平; 从右至左",
 
+    "ehi_tracker_vertical_w_anim" : "(垂直)界面宽度变化动画",
+    "ehi_tracker_vertical_w_anim_desc" : "设置追踪器界面变化时动画的方向",
+    "ehi_tracker_vertical_w_anim_1" : "从左至右",
+    "ehi_tracker_vertical_w_anim_2" : "从右至左",
+
     "ehi_vr_x_offset" : "X轴偏移 (VR)",
     "ehi_vr_y_offset" : "Y轴偏移 (VR)",
 
@@ -253,8 +266,13 @@
     "ehi_show_one_icon" : "精简追踪器",
     "ehi_show_one_icon_desc" : "每个追踪器仅显示1个图标\n如果取消勾选将显示该追踪器的所有图标",
 
+    "ehi_show_icon_position" : "图标位置",
+    "ehi_show_icon_position_desc" : "设置追踪器中图标的位置",
+    "ehi_show_icon_position_1" : "左侧",
+    "ehi_show_icon_position_2" : "右侧",
+
     "ehi_show_tracker_hint" : "显示追踪器简介",
-    "ehi_show_tracker_hint_desc" : "如追踪器有简介，显示之",
+    "ehi_show_tracker_hint_desc" : "如果追踪器有简介则显示简介",
 
     "ehi_show_tracker_hint_t" : "简介显示时间",
     "ehi_show_tracker_hint_t_desc" : "设置追踪器简介在屏幕上显示多久后隐藏\n\n若设置为0则永久显示",
@@ -374,6 +392,9 @@
 
     "ehi_show_timers" : "显示计时器",
     "ehi_show_timers_desc" : "显示地图上正在进行的黑入，钻机，电锯等进程的剩余时间",
+	
+    "ehi_show_timers_max_in_group" : "一组计时器数量上限",
+    "ehi_show_timers_max_in_group_desc" : "设置追踪器中最多有几个计时器。如追踪器内计时器已达最大值则创建一个或数个追踪器以显示。\n\n若要禁用此功能则将数值设置为“1”",
 
     "ehi_show_camera_loop" : "显示摄像头回路追踪器",
     "ehi_show_camera_loop_desc" : "显示地图上已被设置回路的摄像头的回路持续时间",
@@ -394,6 +415,9 @@
 
     "ehi_show_captain_damage_reduction" : "显示敌人伤害减免",
     "ehi_show_captain_damage_reduction_desc" : "显示冬日队长列阵后为敌人提供的伤害减免效果",
+
+    "ehi_show_captain_spawn_chance" : "显示队长入场几率(仅主机)",
+    "ehi_show_captain_spawn_chance_desc" : "显示当前冬日队长入场几率",
 
     "ehi_show_equipment_tracker" : "显示随身装备追踪器",
     "ehi_show_equipment_tracker_desc" : "为医疗箱，急救包，弹药包，手雷箱，尸体袋箱等随身装备显示追踪器",
@@ -478,6 +502,11 @@
     
     "ehi_show_pager_callback_trackers" : "显示应答时限追踪器",
     "ehi_show_pager_callback_trackers_desc" : "显示需应答对讲机的时限",
+
+    "ehi_show_pager_callback_answered_behavior" : "当对讲机被应答时",
+    "ehi_show_pager_callback_answered_behavior_desc" : "决定在对讲机正在应答时如何处理导航点和追踪器",
+    "ehi_show_pager_callback_answered_behavior_1" : "变为绿色，完毕后删除",
+    "ehi_show_pager_callback_answered_behavior_2" : "直接删除",
     
     "ehi_show_enemy_count_tracker" : "显示敌人追踪器",
     "ehi_show_enemy_count_tracker_desc" : "显示地图上正在行动的敌人数量追踪器",
@@ -493,6 +522,17 @@
     "ehi_civilian_count_tracker_format_1" : "平民总数",
     "ehi_civilian_count_tracker_format_2" : "已捆绑 | 未捆绑",
     "ehi_civilian_count_tracker_format_3" : "未捆绑 | 已捆绑",
+
+    "ehi_show_hostage_count_tracker" : "显示人质计数追踪器",
+    "ehi_show_hostage_count_tracker_desc" : "显示地图上人质数量的追踪器",
+
+    "ehi_hostage_count_tracker_format" : "人质追踪器显示格式",
+    "ehi_hostage_count_tracker_format_desc" : "",
+    "ehi_hostage_count_tracker_format_1" : "人质总数",
+    "ehi_hostage_count_tracker_format_2" : "总数 | 警察",
+    "ehi_hostage_count_tracker_format_3" : "警察 | 总数",
+    "ehi_hostage_count_tracker_format_4" : "平民 | 警察",
+    "ehi_hostage_count_tracker_format_5" : "警察 | 平民",
     
     "ehi_show_laser_tracker" : "显示镭射循环追踪器",
     "ehi_show_laser_tracker_desc" : "显示地图上传感器镭射的循环时间追踪器",
@@ -502,6 +542,9 @@
 
     "ehi_show_assault_time_tracker" : "显示突击持续时间追踪器",
     "ehi_show_assault_time_tracker_desc" : "显示突击持续的时间\n\n若为客机中途加入游戏，此追踪器在突击难度提升后不再显示",
+
+    "ehi_show_assault_diff_in_assault_trackers" : "在突击追踪器中显示突击难度",
+    "ehi_show_assault_diff_in_assault_trackers_desc" : "",
 	
     "ehi_show_endless_assault" : "在追踪器中显示无尽突击",
     "ehi_show_endless_assault_desc" : "无尽突击开始后在突击追踪器中显示无尽突击文本",
@@ -518,6 +561,9 @@
     "ehi_variable_random_loot_format_2" : "已劫获数 / (最大战利品数 + 可能战利品数)?",
     "ehi_variable_random_loot_format_3" : "已劫获数 / 最大战利品数 + 可能战利品数?",
 
+    "ehi_show_loot_max_xp_bags" : "显示战利品经验获取最大值",
+    "ehi_show_loot_max_xp_bags_desc" : "当地图限制战利品获取的经验最大值时显示其值\n若已达最大值则文本变为黄色",
+
     "ehi_show_bodybags_counter" : "显示尸体袋追踪器",
     "ehi_show_bodybags_counter_desc" : "显示你当前持有尸体袋数量追踪器",
 
@@ -529,7 +575,13 @@
 
     "ehi_show_sniper_spawned_popup" : "显示'狙击手！'弹出窗口",
     "ehi_show_sniper_spawned_popup_desc" : "在预设狙击手生成时弹出窗口",
-    
+
+    "ehi_show_sniper_logic_start_popup" : "显示'狙击手开始刷新'弹出窗口",
+    "ehi_show_sniper_logic_start_popup_desc" : "当地图预设狙击手刷新逻辑开始时显示黄色弹窗",
+
+    "ehi_show_sniper_logic_end_popup" : "显示'狙击手结束刷新'弹出窗口",
+    "ehi_show_sniper_logic_end_popup_desc" : "当地图预设狙击手刷新逻辑结束时显示绿色弹窗",
+ 
     "ehi_waypoints_menu" : "路径导航",
     "ehi_waypoints_menu_desc" : "",
 
@@ -544,6 +596,9 @@
 
     "ehi_show_waypoints_mission" : "显示劫案事件的导航点",
     "ehi_show_waypoints_mission_desc" : "在劫案中将发生的事件处显示导航点",
+
+    "ehi_show_waypoints_escape" : "显示撤离载具的导航点",
+    "ehi_show_waypoints_escape_desc" : "在载具到达处显示导航点（无计时器）",
     
     "ehi_show_waypoints_enemy_turret" : "显示敌方机枪塔导航点",
     "ehi_show_waypoints_enemy_turret_desc" : "在敌方炮塔装弹或修理时显示一个导航点",
@@ -659,6 +714,8 @@
     "ehi_buffs_skills_fugitive_berserker_format_desc" : "显示狂战士近战于远程效果的显示格式\n\n倍数: 1.4x 2.6x\n\n百分比: 140% 260%",
     "ehi_buffs_skills_fugitive_berserker_format_1" : "倍数",
     "ehi_buffs_skills_fugitive_berserker_format_2" : "百分比",
+    "ehi_buffs_skills_fugitive_berserker_persistent" : "常驻狂战士显示",
+    "ehi_buffs_skills_fugitive_berserker_persistent_desc" : "当血量大于狂战士触发条件时也显示狂战士效果图标",
 
     "ehi_buffs_perks_menu" : "天赋牌组",
     "ehi_buffs_perks_infiltrator" : "渗透者",
@@ -746,6 +803,16 @@
     "ehi_buffs_other_crit_refresh_desc" : "设置每秒内刷新多少次暴击概率显示",
     "ehi_buffs_other_crit_persistent" : "常驻暴击概率显示",
     "ehi_buffs_other_crit_persistent_desc" : "即使你的暴击概率低于 0% 依旧会显示当前闪避概率",
+    "ehi_buffs_other_damage_absorption" : "伤害吸收",
+    "ehi_buffs_other_damage_absorption_refresh" : "伤害吸收刷新频率",
+    "ehi_buffs_other_damage_absorption_refresh_desc" : "设置每秒内刷新多少次伤害吸收显示",
+    "ehi_buffs_other_damage_absorption_persistent" : "常驻伤害吸收显示",
+    "ehi_buffs_other_damage_absorption_persistent_desc" : "即使你的伤害吸收低于0依旧会显示当前伤害吸收",
+    "ehi_buffs_other_damage_reduction" : "伤害减免",
+    "ehi_buffs_other_damage_reduction_refresh" : "伤害减免刷新频率",
+    "ehi_buffs_other_damage_reduction_refresh_desc" : "设置每秒内刷新多少次伤害减免显示",
+    "ehi_buffs_other_damage_reduction_persistent" : "常驻伤害伤害减免",
+    "ehi_buffs_other_damage_reduction_persistent_desc" : "即使你的伤害减免低于0%依旧会显示当前伤害减免",
     "ehi_buffs_other_inspire_ai" : "鼓舞士气 (AI小队)",
     "ehi_buffs_other_regen_throwable_ai" : "有备无患 (AI小队)",
     "ehi_buffs_other_health" : "你的生命值",
@@ -874,6 +941,15 @@
     "ehi_colors_optional" : "可选目标",
     "ehi_colors_optional_desc" : "设置非必要的目标的颜色\n但完成这些目标会有奖励",
 
+    "ehi_colors_achievement" : "成就",
+    "ehi_colors_achievement_desc" : "设置追踪器正在追踪成就时图标的颜色",
+
+    "ehi_colors_sidejob" : "额外挑战",
+    "ehi_colors_sidejob_desc" : "设置追踪器正在追踪额外挑战时图标的颜色",
+
+    "ehi_colors_trophy" : "安全屋奖杯",
+    "ehi_colors_trophy_desc" : "设置追踪器正在追踪安全屋奖杯时图标的颜色",
+
     "ehi_experience_infamy_pool" : "距恶名池满:",
     "ehi_experience_next_level" : "距下一级还有:",
     "ehi_experience_100_in" : "距满级还有:",
@@ -899,6 +975,7 @@
     "ehi_experience_escape" : "撤离",
     "ehi_experience_each_goat_secured" : "每个劫获的山羊",
     "ehi_experience_each_loot_secured" : "每个劫获的战利品",
+    "ehi_experience_loot_any" : "任意",
     "ehi_experience_loot_else" : "其它战利品",
     "ehi_experience_loot_secured" : "劫获战利品",
     "ehi_experience_each_wave_survived" : "每个突击波次存活",
@@ -1280,6 +1357,32 @@
     "ehi_experience_china4_car_smashed_through" : "车撞开大门",
     "ehi_experience_china4_thermite_route" : "铝热剂",
     "ehi_experience_china4_defend_lights" : "坚守避障灯",
+    "ehi_experience_texas1_entered_ranch_house" : "进入牧场小屋",
+    "ehi_experience_texas1_found_laptop" : "找到埃斯特班的笔记本电脑",
+    "ehi_experience_texas1_collected_biometrics" : "收集埃斯特班的指纹或声音样本",
+    "ehi_experience_texas1_gates_open" : "打开前往工坊的大门",
+    "ehi_experience_texas1_picked_up_weapons" : "收集武器",
+    "ehi_experience_texas1_sabotaged_workbenches" : "破坏工作台",
+    "ehi_experience_texas1_entered_office" : "找到并进入埃斯特班的办公室",
+    "ehi_experience_texas1_laptop_decrypted" : "解密笔记本电脑",
+    "ehi_experience_texas1_found_gates_workshop" : "找到通向工坊的大门",
+    "ehi_experience_texas1_fulton_cage_assembled" : "组装富尔顿回收系统",
+    "ehi_experience_texas1_defended_fulton_cage" : "坚守富尔顿系统直到其撤离",
+    "ehi_experience_texas2_used_walkie_talkie" : "使用对讲机",
+    "ehi_experience_texas2_enter_rail_yard" : "进入铁路车厂",
+    "ehi_experience_texas2_got_inside_office" : "进入管理员办公室",
+    "ehi_experience_texas2_found_motion_sensor" : "找到运动传感器",
+    "ehi_experience_texas2_motion_sensor_disabled" : "禁用运动传感器",
+    "ehi_experience_texas2_found_correct_wagon" : "找到正确的车厢",
+    "ehi_experience_texas2_use_pa_system" : "使用PA系统",
+    "ehi_experience_texas2_loco_prepared" : "准备出发的机车",
+    "ehi_experience_texas2_rotated_the_turntable" : "旋转调度转盘",
+    "ehi_experience_texas2_used_thermite" : "使用铝热剂",
+    "ehi_experience_texas2_blocked_train_tracks" : "阻止列车离开",
+    "ehi_experience_texas2_crane_moved" : "移动吊臂",
+    "ehi_experience_texas2_crane_attached" : "吊臂连接机车",
+    "ehi_experience_texas2_loco_moved" : "机车移动完毕",
+    "ehi_experience_texas2_loco_started" : "启动引擎",
     "ehi_experience_texas3_evidences_found" : "找到证据",
     "ehi_experience_texas3_prototype_secured" : "劫获原型机",
     "ehi_experience_texas3_documents_secured" : "劫获研究文件",
@@ -1309,5 +1412,8 @@
     "ehi_experience_custom_opened_security_door" : "打开安全门",
     "ehi_experience_custom_pc_powered_on" : "打开PC电源",
     "ehi_experience_custom_escort" : "护送人员",
-    "ehi_experience_custom_removed_gps_tracker" : "移除GPS追踪器"
+    "ehi_experience_custom_removed_gps_tracker" : "移除GPS追踪器",
+
+    "menu_achievements_progress_ehi_tracked" : "于EHI中追踪",
+    "menu_achievements_progress_ehi_secret" : "隐藏结局"
 }

@@ -1378,6 +1378,10 @@ function EHI:IsLootCounterVisible()
     return self:GetOption("show_loot_counter") and not self:IsPlayingCrimeSpree()
 end
 
+function EHI:IsSyncedLootCounterVisible()
+    return self:IsHost() and not self:IsPlayingCrimeSpree()
+end
+
 function EHI:IsPlayingCrimeSpree()
     return Global.game_settings and Global.game_settings.gamemode == "crime_spree"
 end
@@ -1597,8 +1601,7 @@ end
 
 ---@param peer_id number
 function EHI:GetPeerColorByPeerID(peer_id)
-    local color = peer_id and tweak_data.chat_colors[peer_id] or Color.white
-    return color
+    return peer_id and tweak_data.chat_colors[peer_id] or Color.white
 end
 
 ---@param id number

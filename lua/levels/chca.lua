@@ -4,16 +4,18 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+local escape_wp = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100023, 11170) }
+local vault_pickup_wp = { Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 102690 }
 ---@type ParseTriggerTable
 local triggers = {
     [103030] = { time = 19, id = "InsideManTalk", icons = { "pd2_talk" }, hint = Hints.Wait },
 
     -- Heli Extraction
-    [101432] = { id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 101362, hint = Hints.Escape },
+    [101432] = { id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 101362, hint = Hints.Escape, waypoint = deep_clone(escape_wp) },
 
     [102571] = { additional_time = 10 + 15.25 + 0.5 + 0.2, random_time = 5, id = "WinchDrop", icons = Icon.HeliDropWinch, hint = Hints.brb_WinchDelivery },
 
-    [102675] = { additional_time = 5 + 10 + 14, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.GetElementTimerAccurate, element = 102674, hint = Hints.Wait },
+    [102675] = { additional_time = 5 + 10 + 14, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.GetElementTimerAccurate, element = 102674, hint = Hints.Wait, waypoint = deep_clone(vault_pickup_wp) },
 
     [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot, hint = Hints.Escape },
 
@@ -64,28 +66,28 @@ local triggers = {
 }
 triggers[100688] = triggers[101073] -- Handprint first; Spa second
 if EHI:IsClient() then
-    local wait_time = 90 -- Very Hard and below
-    local pickup_wait_time = 25 -- Normal and Hard
+    local escape_wait_time = 90 -- Very Hard and below
+    local vault_pickup_wait_time = 25 -- Normal and Hard
     if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.Mayhem) then -- Very Hard to Mayhem
-        pickup_wait_time = 40
+        vault_pickup_wait_time = 40
     end
     if EHI:IsBetweenDifficulties(EHI.Difficulties.OVERKILL, EHI.Difficulties.Mayhem) then -- OVERKILL or Mayhem
-        wait_time = 120
+        escape_wait_time = 120
     elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
-        wait_time = 150
-        pickup_wait_time = 55
+        escape_wait_time = 150
+        vault_pickup_wait_time = 55
     end
-    triggers[101432].client = { time = wait_time, random_time = 30 }
-    triggers[102675].client = { time = pickup_wait_time, random_time = 15 }
+    triggers[101432].client = { time = escape_wait_time, random_time = 30 }
+    triggers[102675].client = { time = vault_pickup_wait_time, random_time = 15 }
     if ovk_and_up then -- OVK and up
-        triggers[101456] = { time = 120, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape }
+        triggers[101456] = { time = 120, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape, waypoint = deep_clone(escape_wp) }
     end
-    triggers[101366] = { time = 60, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape }
-    triggers[101463] = { time = 45, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape }
-    triggers[101367] = { time = 30, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape }
-    triggers[101372] = { time = 15, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape }
-    triggers[102678] = { time = 45, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait }
-    triggers[102679] = { time = 15, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait }
+    triggers[101366] = { time = 60, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape, waypoint = deep_clone(escape_wp) }
+    triggers[101463] = { time = 45, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape, waypoint = deep_clone(escape_wp) }
+    triggers[101367] = { time = 30, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape, waypoint = deep_clone(escape_wp) }
+    triggers[101372] = { time = 15, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.SetTrackerAccurate, hint = Hints.Escape, waypoint = deep_clone(escape_wp) }
+    triggers[102678] = { time = 45, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait, waypoint = deep_clone(vault_pickup_wp) }
+    triggers[102679] = { time = 15, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait, waypoint = deep_clone(vault_pickup_wp) }
 end
 EHI:AddEventListener("chca_Winch", "chca_Winch",
 ---@param self EHIManager
@@ -171,8 +173,7 @@ if EHI:CanShowAchievement("chca_12") and ovk_and_up then
         active_saws = active_saws - 1
     end
     function TimerGui:chca_12()
-        local key = self._ehi_key or tostring(self._unit:key())
-        local hook_key = "EHI_saw_start_" .. key
+        local hook_key = string.format("EHI_saw_start_%s", self._ehi_key or tostring(self._unit:key()))
         if self.PostStartTimer then
             EHI:HookWithID(self, "PostStartTimer", hook_key, check)
         else

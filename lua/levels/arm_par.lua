@@ -25,7 +25,7 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
-if EHI:IsHost() and not EHI:IsPlayingCrimeSpree() then
+if EHI:IsSyncedLootCounterVisible() then
     -- [ID of disabled unit when truck is visible] = truck ID
     local trucks =
     {

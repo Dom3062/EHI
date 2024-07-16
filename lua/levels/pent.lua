@@ -95,15 +95,13 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     loot_triggers[103617] = { special_function = SF.IncreaseProgressMax2 }
 end
 
-local max = 9 -- 8 gold + 1 teaset
 EHI:ShowLootCounter({
-    max = max,
+    max = 9, -- 8 gold + 1 teaset
     triggers = loot_triggers
 })
 
 function DigitalGui:pent_10()
-    local key = self._ehi_key or tostring(self._unit:key())
-    local hook_key = "EHI_pent_10_" .. key
+    local hook_key = string.format("EHI_pent_10_%s", self._ehi_key or tostring(self._unit:key()))
     if EHI:GetUnlockableOption("show_achievement_started_popup") then
         local function AchievementStarted(...)
             managers.hud:ShowAchievementStartedPopup("pent_10")
