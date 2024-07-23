@@ -8,6 +8,12 @@
 ---
 ---@alias CoreWorldInstanceManager.Instance { folder: string, start_index: number, continent: string, rotation: Rotation }
 ---@alias WorldDefinition.Continent { base_id: number }
+---@alias UnitObject UnitPlayer|UnitEnemy|UnitTeamAI|UnitCivilian|UnitBase
+
+---@param obj (Unit|Workspace|PanelBaseObject)?
+---@return boolean
+function alive(obj)
+end
 
 _G.Global = {}
 ---@class World
@@ -592,6 +598,7 @@ _G.ModifiersManager = {}
 _G.MoneyManager = {}
 ---@class mvector3
 ---@field distance fun(vec1: Vector3, vec2: Vector3): number
+---@field dot fun(cam_fwd: number|Vector3, test_vec: Vector3): number
 ---@field normalize fun(vec: Vector3)
 ---@field set fun(vec1: Vector3, vec2: Vector3) Sets `vec2` into `vec1`
 ---@field set_z fun(vec: Vector3, z: number) Sets `z` in `vec`
@@ -639,6 +646,7 @@ _G.Color = {}
 ---@class Vector3
 ---@operator sub(self): Vector3
 ---@field length fun(self: self): number
+---@field with_y fun(self: self, y: number): Vector3
 
 ---@class Rotation
 ---@field y fun(self: self): number
@@ -1032,10 +1040,17 @@ end
 ---@field count fun(v: table, func: fun(item: any, key: any): boolean): number
 ---@field contains fun(v: table, e: string): boolean Returns `true` or `false` if `e` exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
----@field get_key fun(map: table, wanted_key_value: any): any? Returns `key name` if value exists
 ---@field get_vector_index fun(v: table, e: any): number?
 ---@field list_to_set fun(list: table): table Maps values as keys with value `true`
 ---@field random fun(t: table): any Returns random value from a list
+
+---Returns `key name` if value exists
+---@generic K, V
+---@param map table<K, V>
+---@param wanted_key_value V
+---@return K?
+function table.get_key(map, wanted_key_value)
+end
 
 ---@class ContourExt
 ---@field _contour_list table?
@@ -1084,10 +1099,12 @@ end
 
 ---@class CopBrain
 ---@field _logic_data table
+---@field convert_to_criminal fun(self: self, mastermind_criminal: UnitPlayer?)
 ---@field converted fun(self: self): boolean
 
 ---@class HuskCopBrain
 ---@field converted fun(self: self): boolean
+---@field sync_converted fun(self: self): boolean
 
 ---@class CopDamage
 ---@field _health number
@@ -1126,11 +1143,8 @@ end
 
 ---@class HuskTeamAIBase : HuskCopBase
 
----@class C_VehicleVelocity
----@field length fun(self: self): number
-
 ---@class C_Vehicle
----@field velocity fun(self: self): C_VehicleVelocity
+---@field velocity fun(self: self): Vector3
 
 ---@class RaycastWeaponBase
 ---@field selection_index fun(self: self): number
@@ -1147,6 +1161,7 @@ end
 ---@field key fun(): string
 ---@field material_config fun(): Idstring
 ---@field name fun(): string
+---@field parent fun(): UnitBase?
 ---@field position fun(self: self): Vector3
 ---@field oobb fun(self: self): C_UnitOOBB Object Oriented Bounding Box
 
@@ -1207,8 +1222,8 @@ end
 
 ---@class UnitDeployable : UnitBase
 ---@field interaction fun(): InteractionExt
----@field SetCountThisUnit fun(self: self)
----@field SetIgnoreChild fun(self: self)
+---@field SetCountThisUnit fun(self: self) EHI added function
+---@field SetIgnoreChild fun(self: self) EHI added function
 
 ---@class UnitAmmoDeployable : UnitDeployable
 ---@field base fun(): AmmoBagBase
@@ -1234,6 +1249,7 @@ end
 ---@field hide fun(self: self)
 ---@field panel fun(self: self): Panel
 ---@field connect_keyboard fun(self: self, keyboard: userdata)
+---@field world_to_screen fun(self: self, cam: Camera, pos: Vector3): Vector3
 
 ---@class PanelBaseObject
 ---@field x fun(self: self): number

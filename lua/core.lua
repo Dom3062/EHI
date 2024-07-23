@@ -990,7 +990,9 @@ local function LoadDefaultValues(self)
         show_remaining_xp = true,
         show_remaining_xp_to_100 = false,
         show_mission_xp_overview = true,
-        show_floating_health_bar = true
+        show_floating_health_bar = true,
+        show_floating_health_bar_converts = true,
+        show_floating_health_bar_civilians = true
     }
 end
 
@@ -1425,7 +1427,6 @@ function EHI:AddCallback(id, f)
 end
 
 ---@param id string|number
----@param ... any
 function EHI:CallCallback(id, ...)
     local handler = self._callback[id]
     if handler then
@@ -1435,7 +1436,6 @@ end
 
 ---Calls all callbacks, after that they are deleted from memory
 ---@param id string|number
----@param ... any
 function EHI:CallCallbackOnce(id, ...)
     self:_dispatch_and_clear_event_handler(self._callback[id], ...)
     self._callback[id] = nil
@@ -2494,10 +2494,9 @@ function EHI:SetDeployableIgnorePos(type, pos)
     end
 end
 
----@param level_id string
 ---@return boolean
-function EHI:EscapeVehicleWillReturn(level_id)
-    if self:IsHost() and SWAYRMod and SWAYRMod.included(level_id) then
+function EHI:EscapeVehicleWillReturn()
+    if self:IsHost() and SWAYRMod and SWAYRMod.included(Global.game_settings.level_id) then
         return false
     end
     return true

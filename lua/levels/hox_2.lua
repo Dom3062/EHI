@@ -21,7 +21,6 @@ local CheckOkValueHostCheckOnly = EHI:RegisterCustomSF(function(self, trigger, e
         self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
     elseif not trigger.dont_create then
         self:CreateTracker(trigger)
-        self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
     end
     self._cache.CurrentHackNumber = trigger.progress
 end)
@@ -48,9 +47,9 @@ local triggers = {
             self._waypoints:RemoveWaypoint("HoxtonMaxHacks") -- In case the timer is merged with the progress
         end
     end, hint = Hints.Restarting },
-    [102189] = { special_function = SF.CustomCode2, f = function(self) ---@param self EHIManager
+    [102189] = EHI:AddCustomCode(function(self)
         self:CallEvent("hox_2_restore_waypoint_hack")
-    end },
+    end),
 
     [104314] = { max = 4, id = "Request", icons = { Icon.PCHack }, class = TT.Timed.Progress, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.hox_2_Request },
     [104591] = { id = "Request", special_function = SF.IncreaseProgress },
@@ -62,8 +61,10 @@ local triggers = {
     [104481] = { id = "HoxtonMaxHacks", max = 4, progress = 3, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, hint = Hints.Hack },
     [104482] = { id = "HoxtonMaxHacks", max = 4, progress = 4, dont_create = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly },
 
-    [105113] = { chance = 25, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance, hint = Hints.hox_2_Evidence },
-    [102257] = { amount = 25, id = "ForensicsMatchChance", special_function = SF.IncreaseChance },
+    [105113] = { chances = { 25, 34, 50, 100 }, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance, hint = Hints.hox_2_Evidence },
+    [102257] = EHI:AddCustomCode(function(self)
+        self._trackers:CallFunction("ForensicsMatchChance", "IncreaseChance2")
+    end),
     [105137] = { id = "ForensicsMatchChance", special_function = SF.RemoveTracker }
 }
 if EHI:IsClient() then
@@ -139,7 +140,9 @@ EHI:AddLoadSyncFunction(function(self)
         local timer2 = pc2:timer_gui()
         local timer3 = pc3:timer_gui()
         local timer4 = pc4:timer_gui()
-        if (timer._started or timer._done) and not (timer2._started or timer2._done) then
+        if not timer._started then
+            self:Trigger(104472)
+        elseif (timer._started or timer._done) and not (timer2._started or timer2._done) then
             self:Trigger(104478)
         elseif (timer2._started or timer2._done) and not (timer3._started or timer3._done) then
             self:Trigger(104480)
@@ -179,8 +182,7 @@ local tbl =
     --levels/instances/unique/hox_fbi_armory
     --units/pd2_dlc2/architecture/gov_d_int/gov_d_int_door_b/001
     [EHI:GetInstanceUnitID(100003, 6840)] = { f = function(...)
-        local units = {}
-        local n = 1
+        local units, n = {}, 1
         local wd = managers.worlddefinition
         for i = 100004, 100007, 1 do
             local _unit = wd:get_unit(EHI:GetInstanceUnitID(i, 6840))

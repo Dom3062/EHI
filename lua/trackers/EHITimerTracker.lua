@@ -429,6 +429,7 @@ EHIChanceTimerTracker = class(EHITimerTracker)
 EHIChanceTimerTracker.pre_init = EHIChanceTracker.pre_init
 EHIChanceTimerTracker.FormatChance = EHIChanceTracker.FormatChance
 EHIChanceTimerTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
+EHIChanceTimerTracker.IncreaseChance2 = EHIChanceTracker.IncreaseChance2
 EHIChanceTimerTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHIChanceTimerTracker.SetChance = EHIChanceTracker.SetChance
 EHIChanceTimerTracker._anim_chance = EHIChanceTracker._anim_chance

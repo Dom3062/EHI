@@ -24,7 +24,13 @@ EHIChanceTracker._anim_chance = function(o, self)
 end
 ---@param params EHITracker.params
 function EHIChanceTracker:pre_init(params)
-    self._chance = params.chance or 0
+    if params.chances then
+        self._current_chance_index = 1
+        self._chances = params.chances
+        self._chance = self._chances[1] or 0
+    else
+        self._chance = params.chance or 0
+    end
     self._anim_static_chance = self._chance
     if params.disable_anim then
         self._anim_static_chance = nil
@@ -44,6 +50,11 @@ end
 ---@param amount number
 function EHIChanceTracker:IncreaseChance(amount)
     self:SetChance(self._chance + amount)
+end
+
+function EHIChanceTracker:IncreaseChance2()
+    self._current_chance_index = self._current_chance_index + 1
+    self:SetChance(self._chances[self._current_chance_index] or 0)
 end
 
 ---@param amount number

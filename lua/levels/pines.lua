@@ -58,7 +58,7 @@ local achievements =
         }
     }
 }
-if EHI:EscapeVehicleWillReturn("pines") then
+if EHI:EscapeVehicleWillReturn() then
     preload[1] = { id = "HeliLootTakeOff", icons = Icon.HeliWait, class = TT.Warning, hide_on_delete = true }
     -- Hooked to 105072 instead of 105076 to track the take off accurately
     triggers[105072] = { id = "HeliLootTakeOff", run = { time = 82 } }

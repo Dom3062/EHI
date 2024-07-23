@@ -7,7 +7,8 @@ end
 ---@field _enemy_data table
 ---@field _civilian_data table
 ---@field all_civilians fun(self: self): table
----@field is_enemy fun(self: self, unit: Unit|UnitEnemy|UnitPlayer): boolean
+---@field is_civilian fun(self: self, unit: Unit|UnitEnemy|UnitPlayer|UnitCivilian|UnitTeamAI): boolean
+---@field is_enemy fun(self: self, unit: Unit|UnitEnemy|UnitPlayer|UnitCivilian|UnitTeamAI): boolean
 
 ---@return number
 function EnemyManager:GetNumberOfEnemies()

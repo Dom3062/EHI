@@ -9,7 +9,7 @@ local TimedLootDrop = { Icon.Escape, Icon.LootDrop, Icon.Wait }
 local triggers = {
     [100647] = { time = 240 + 60, id = "Chimney", icons = LootDrop, hint = Hints.Loot }
 }
-if EHI:EscapeVehicleWillReturn("cane") then
+if EHI:EscapeVehicleWillReturn() then
     triggers[EHI:GetInstanceElementID(100078, 10700)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
     triggers[EHI:GetInstanceElementID(100078, 11000)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
     triggers[EHI:GetInstanceElementID(100011, 10700)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" }, hint = Hints.LootTimed }

@@ -31,7 +31,7 @@ local triggers = {
 
     [102866] = { time = 5, id = "GotCode", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [102887] = { amount = 5, id = "CodeChance", special_function = SF.IncreaseChance }
+    [102887] = { id = "CodeChance", special_function = SF.IncreaseChanceFromElement } -- +5%
 }
 
 ---@type ParseAchievementTable

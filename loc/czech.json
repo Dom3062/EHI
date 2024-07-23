@@ -910,6 +910,9 @@
     "ehi_other_show_floating_health_bar" : "Zobrazovat zdraví NPC",
     "ehi_other_show_floating_health_bar_desc" : "Zobrazuje zdraví NPC když na něho zamíříš",
 
+    "ehi_other_show_floating_health_bar_converts" : "Zobrazovat zdraví převedenců",
+    "ehi_other_show_floating_health_bar_civilians" : "Zobrazovat zdraví civilistů",
+
     "ehi_colors_menu" : "Barvy",
     "ehi_colors_menu_desc" : "Mění použité barvy",
 

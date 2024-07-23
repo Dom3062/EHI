@@ -690,10 +690,10 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     if new_triggers.pre_parse and new_triggers.pre_parse.filter_out_not_loaded_trackers then
         local filter = new_triggers.pre_parse.filter_out_not_loaded_trackers
         if type(filter) == "string" then
-            self:FilterOutNotLoadedTrackers(new_triggers.mission, filter)
+            self:_filter_out_not_loaded_trackers(new_triggers.mission, filter)
         else
             for _, option in ipairs(filter) do
-                self:FilterOutNotLoadedTrackers(new_triggers.mission, option)
+                self:_filter_out_not_loaded_trackers(new_triggers.mission, option)
             end
         end
     end
@@ -1017,7 +1017,7 @@ end
 ---@param trigger_table table<number, ElementTrigger>
 ---@param option string
 ---| "show_timers" Filters out not loaded trackers with option show_timers
-function EHIManager:FilterOutNotLoadedTrackers(trigger_table, option)
+function EHIManager:_filter_out_not_loaded_trackers(trigger_table, option)
     local config = option and self.FilterTracker[option]
     if not config then
         return
@@ -1039,7 +1039,7 @@ function EHIManager:FilterOutNotLoadedTrackers(trigger_table, option)
     end
     for _, trigger in pairs(trigger_table) do
         if trigger.class then
-            local key = table.get_key(not_loaded_tt, trigger.class) --[[@as string?]]
+            local key = table.get_key(not_loaded_tt, trigger.class)
             if key then
                 trigger.class = self.Trackers[key] --[[@as string]]
             end
@@ -1056,7 +1056,7 @@ function EHIManager:InitElements()
     if EHI:IsClient() then
         return
     end
-    self:AddPositionToWaypointFromLoad()
+    self:_add_position_to_waypoint_from_load()
     local scripts = managers.mission._scripts or {}
     if base_delay_triggers and next(base_delay_triggers) then
         self._base_delay = {} ---@type table<number, fun(e: MissionScriptElement): number>
@@ -1143,7 +1143,7 @@ function EHIManager:HookElements(elements_to_hook)
     end
 end
 
-function EHIManager:AddPositionToWaypointFromLoad()
+function EHIManager:_add_position_to_waypoint_from_load()
     for _, trigger in pairs(triggers) do
         if trigger.special_function == SF.ShowWaypoint and trigger.data and not trigger.data.position then
             if trigger.data.position_by_element then
@@ -1172,7 +1172,7 @@ function EHIManager:AddPositionToWaypointFromLoad()
 end
 
 function EHIManager:SyncLoad()
-    self:AddPositionToWaypointFromLoad()
+    self:_add_position_to_waypoint_from_load()
     for id, _ in pairs(self._HookOnLoad) do
         local trigger = triggers[id]
         if trigger then

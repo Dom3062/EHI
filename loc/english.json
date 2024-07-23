@@ -910,6 +910,9 @@
     "ehi_other_show_floating_health_bar" : "Show Floating Health Bar",
     "ehi_other_show_floating_health_bar_desc" : "Shows floating health bar when you aim at someone",
 
+    "ehi_other_show_floating_health_bar_converts" : "Show Floating Health Bars for Converts",
+    "ehi_other_show_floating_health_bar_civilians" : "Show Floating Health Bars for Civilians",
+
     "ehi_colors_menu" : "Colors",
     "ehi_colors_menu_desc" : "Changes used colors",
 

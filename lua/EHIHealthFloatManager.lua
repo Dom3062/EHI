@@ -19,7 +19,10 @@ function EHIHealthFloatManager:new(hud)
     managers.viewport:add_resolution_changed_func(callback(self, self, "onResolutionChanged"))
     self._floats = {} ---@type table<string, EHIHealthFloatBar?>
     self._smokes = {} ---@type table<string, Vector3>
-    self._unit_slot_mask = World:make_slot_mask(1, 8, 11, 12, 14, 16, 18, 21, 22, 24, 25, 26, 33, 34, 35)
+    self._unit_slot_mask = World:make_slot_mask(1, 8, 11, 12, 14, 16, 18, 22, 24, 25, 26, 33, 34, 35)
+    if EHI:GetOption("show_floating_health_bar_civilians") then -- +Slot mask 21
+        self._unit_slot_mask = self._unit_slot_mask + managers.slot:get_mask("civilians")
+    end
     EHI:HookWithID(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_detonate", function(base, ...)
         local unit = base._unit
         self._smokes[unit:key()] = unit:position()
@@ -38,6 +41,8 @@ function EHIHealthFloatManager:onResolutionChanged()
     end
 end
 
+---@param unit UnitObject
+---@param t number
 function EHIHealthFloatManager:Float(unit, t)
     local key = unit.key and unit:key()
     if not key then return end
@@ -49,6 +54,7 @@ function EHIHealthFloatManager:Float(unit, t)
     end
 end
 
+---@param t number
 function EHIHealthFloatManager:update(t, dt)
     self._cam = managers.viewport:get_current_camera()
     if not self._cam then return end
@@ -66,15 +72,13 @@ end
 
 function EHIHealthFloatManager:_tryGetState()
     local unit = managers.player:player_unit()
-    if unit then
-        local movement = unit:movement()
-        if movement then
-            return movement:current_state()
-        end
+    if unit and unit:movement() then
+        return unit:movement():current_state()
     end
     return nil
 end
 
+---@param t number
 function EHIHealthFloatManager:_updateItems(t)
     self.state = self.state or self:_tryGetState()
     self.ADS = self.state and self.state._state_data.in_steelsight
@@ -83,16 +87,15 @@ function EHIHealthFloatManager:_updateItems(t)
     local from = alive(managers.player:player_unit()) and managers.player:player_unit():movement():m_head_pos()
     if from then
         local to = from + managers.player:player_unit():movement():m_head_rot():y() * 30000
-        r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask)
+        r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask) --[[@as { unit: UnitObject? }]]
     end
-    if r and r.unit then
-        local unit = r.unit
-        if unit and unit:in_slot(8) and alive(unit:parent()) then
+    local unit = r and r.unit
+    if unit then
+        if unit:in_slot(8) and alive(unit:parent()) then
             unit = unit:parent()
         end
-        unit = unit and unit:movement() and unit
-        if unit then
-            local cHealth = unit:character_damage() and unit:character_damage()._health or false
+        if unit and unit:movement() then
+            local cHealth = unit:character_damage() and unit:character_damage()._health
             if cHealth and cHealth > 0 and not Global.hud_disabled then
                 self:Float(unit, t)
             end
@@ -105,7 +108,7 @@ function EHIHealthFloatManager:_updateItems(t)
 end
 
 local UnitVector = Vector3()
----@param something number|UnitEnemy
+---@param something number|UnitObject
 function EHIHealthFloatManager:_pos(something)
     local t, unit = type(something)
     if t == 'number' then
@@ -118,7 +121,7 @@ function EHIHealthFloatManager:_pos(something)
     end
     local pos = UnitVector
     mvector3.set(pos, unit:position())
-    local head_pos = unit.movement and unit:movement():m_head_pos()
+    local head_pos = unit:movement() and unit:movement():m_head_pos()
     if head_pos then
         mvector3.set_z(pos, head_pos.z)
     end
@@ -145,8 +148,7 @@ function EHIHealthFloatManager:_visibility(uPos)
         elseif sDir:length() < uDir:length() then
             mvector3.normalize(sDir)
             mvector3.normalize(uDir)
-            local dot = mvector3.dot(sDir, uDir)
-            dotR = 1 - math.pow(dot, 3)
+            dotR = 1 - math.pow(mvector3.dot(sDir, uDir), 3)
         end
         result = math.min(result, math.min(disR, dotR))
     end
@@ -154,12 +156,13 @@ function EHIHealthFloatManager:_visibility(uPos)
     return result
 end
 
+---@param pos Vector3
 function EHIHealthFloatManager:_v2p(pos)
     return alive(self._ws) and pos and self._ws:world_to_screen(self._cam, pos)
 end
 
 ---@class EHIHealthFloatBar
----@field new fun(self: self, owner: EHIHealthFloatManager, key: string, unit: UnitEnemy, t: number): self
+---@field new fun(self: self, owner: EHIHealthFloatManager, key: string, unit: UnitObject, t: number): self
 EHIHealthFloatBar = class()
 EHIHealthFloatBar._size = 16
 EHIHealthFloatBar._margin = 2
@@ -167,9 +170,11 @@ EHIHealthFloatBar._opacity = 0.9
 EHIHealthFloatBar._color_start = Color("FFA500"):with_alpha(1)
 EHIHealthFloatBar._color_end = Color("FF0000"):with_alpha(1)
 EHIHealthFloatBar._color_friendly = Color("00FF00"):with_alpha(1)
+EHIHealthFloatBar._converts_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Team AI shares the same slot mask (16) with converts, workaround
+EHIHealthFloatBar._civilians_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Tied civilians share the same slot mask (22) with tied cops, workaround
 ---@param owner EHIHealthFloatManager
 ---@param key string
----@param unit UnitEnemy
+---@param unit UnitObject
 ---@param t number
 function EHIHealthFloatBar:init(owner, key, unit, t)
     self._parent = owner
@@ -318,48 +323,52 @@ function EHIHealthFloatBar:draw(t)
     local nl_dir = pos - self._parent._camPos
     mvector3.normalize(nl_dir)
     local dot_visible = mvector3.dot(self._parent._nl_cam_forward, nl_dir) > 0
-    local pPos = self._parent:_v2p(pos)
+    local pPos = self._parent:_v2p(pos) ---@cast pPos -false
     dx = pPos.x - ww / 2
     dy = pPos.y - hh / 2
     pDist = dx * dx + dy * dy
     self._pnl:set_visible(dot_visible)
     if dot_visible then
-        local size = self._size
-        local m = self._margin
         local isADS = self._parent.ADS
-        local txts = {}
         local cHealth = unit:character_damage() and unit:character_damage()._health and unit:character_damage()._health * 10 or 0
-        local fHealth = cHealth > 0 and unit:character_damage() and (unit:character_damage()._HEALTH_INIT and unit:character_damage()._HEALTH_INIT * 10 or unit:character_damage()._health_max and unit:character_damage()._health_max * 10) or 1
+        local fHealth = cHealth > 0 and (unit:character_damage()._HEALTH_INIT and unit:character_damage()._HEALTH_INIT * 10 or unit:character_damage()._health_max and unit:character_damage()._health_max * 10) or 1
         local prog = cHealth / fHealth
-        local isEnemy = managers.enemy:is_enemy(unit)
         local isConverted = unit:brain() and unit:brain().converted and unit:brain():converted()
-        local isTurret = unit:base() and unit:base().get_type and unit:base():get_type() == "swat_turret" ---@diagnostic disable-line
-        local color = ((isEnemy and not isConverted) or isTurret) and math.lerp(self._color_end, self._color_start, prog) or self._color_friendly
-        if pDist <= 100000 and cHealth > 0 then
-            txts[1] = { round(cHealth, 2) .. '/' .. round(fHealth, 2), color }
+        local isEnemy = managers.enemy:is_enemy(unit)
+        if (isConverted and self._converts_disabled) or (managers.enemy:is_civilian(unit) and self._civilians_disabled) then
+            prog = 0
         end
-        pPos = pPos:with_y(pPos.y - size * 2)
         if prog > 0 then
+            local size = self._size
+            local txts = {}
+            local m = self._margin
+            local isTurret = unit:base() and unit:base().get_type and unit:base():get_type() == "swat_turret" ---@diagnostic disable-line
+            local color = ((isEnemy and not isConverted) or isTurret) and math.lerp(self._color_end, self._color_start, prog) or self._color_friendly
+            if pDist <= 100000 and cHealth > 0 then
+                txts[1] = { round(cHealth, 2) .. '/' .. round(fHealth, 2), color }
+            end
+            pPos = pPos:with_y(pPos.y - size * 2)
             self.pie:set_current(prog)
             self.pieBg:set_visible(true)
             local x = 2 * m + size
             self.lbl:set_x(x)
             self:__shadow(x)
+            if self._txts ~= self:_lbl(nil, txts) then
+                self._txts = self:_lbl(self.lbl, txts)
+                self:__shadow()
+            end
+            local _, _, w, h = self.lbl:text_rect()
+            h = math.max(h, size)
+            self._pnl:set_size(m * 2 + (w > 0 and w + m + 1 or 0) + (prog > 0 and size or 0), h + 2 * m)
+            self.bg:set_size(self._pnl:size())
+            self._pnl:set_center(pPos.x, pPos.y)
         else
             self.pie:set_visible(false)
             self.pieBg:set_visible(false)
-            self.lbl:set_x(m)
-            self:__shadow(m)
+            self.lbl:set_visible(false)
+            self.lblShadow1:set_visible(false)
+            self.lblShadow2:set_visible(false)
         end
-        if self._txts ~= self:_lbl(nil, txts) then
-            self._txts = self:_lbl(self.lbl, txts)
-            self:__shadow()
-        end
-        local _, _, w, h = self.lbl:text_rect()
-        h = math.max(h, size)
-        self._pnl:set_size(m * 2 + (w > 0 and w + m + 1 or 0) + (prog > 0 and size or 0), h + 2 * m)
-        self.bg:set_size(self._pnl:size())
-        self._pnl:set_center(pPos.x, pPos.y)
         d = isADS and math.clamp((pDist - 1000) / 2000, 0.4, 1) or 1
         d = math.min(d, self._opacity)
         if not (unit and unit:contour() and next(unit:contour()._contour_list or {})) then

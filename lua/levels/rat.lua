@@ -58,7 +58,7 @@ local triggers = {
 
     [101982] = { id = "Van", special_function = SF.SetTimeOrCreateTracker, run = { time = 589/30 } }
 }
-if EHI:EscapeVehicleWillReturn("rat") then
+if EHI:EscapeVehicleWillReturn() then
     table.insert(preload, { id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning, hide_on_delete = true, hint = Hints.LootTimed })
     triggers[102220] = { id = "VanStayDelay", run = { time = 60 + van_delay_ovk } }
     triggers[102219] = { id = "VanStayDelay", run = { time = 45 + van_delay } }
@@ -70,7 +70,7 @@ if EHI:EscapeVehicleWillReturn("rat") then
 end
 if EHI:IsMayhemOrAbove() then
     triggers[102197] = { id = "HeliMeth", run = { time = 180 + heli_delay_full }, waypoint_f = ShowFlareWP }
-    if EHI:MissionTrackersAndWaypointEnabled() and EHI:EscapeVehicleWillReturn("rat") then
+    if EHI:MissionTrackersAndWaypointEnabled() and EHI:EscapeVehicleWillReturn() then
         local VanPos = 101454 -- 101454 - Left; 101449 - Center
         local function ResetWaypoint()
             managers.hud:RestoreWaypoint(VanPos)

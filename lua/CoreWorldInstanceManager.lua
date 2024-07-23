@@ -417,13 +417,20 @@ local instances =
     },
     ["levels/instances/unique/pent/pent_generator/world"] =
     {
-        [100066] = { id = "pent_GeneratorStartChance", icons = { Icon.Power }, class = TT.Chance, hint = Hints.pent_Chance },
+        [100066] = { id = "pent_GeneratorStartChance", icons = { Icon.Power }, class = TT.Chance, hint = Hints.pent_Chance }, -- Starts at 0%
         [100018] = { id = "pent_GeneratorStartChance", special_function = SF.IncreaseChanceFromElement }, -- +33%
         [100016] = { id = "pent_GeneratorStartChance", special_function = SF.RemoveTracker }
     },
     ["levels/instances/unique/pent/pent_keyboard/world"] =
     {
-        [100014] = { time = 10 + 3, id = "pent_PCHack", icons = { Icon.PCHack }, hint = Hints.Hack, waypoint = { position_by_unit = 100012, remove_vanilla_waypoint = 102955, remove_vanilla_waypoint_no_instance = true } }
+        [100014] = { time = 10 + 3, id = "pent_PCHack", icons = { Icon.PCHack }, hint = Hints.Hack, element = 100012, waypoint_f = function(self, trigger)
+            self._waypoints:AddWaypoint(trigger.id, {
+                time = trigger.time,
+                icon = Icon.PCHack,
+                position = self:GetElementPositionOrDefault(trigger.element)
+            })
+            self:CallEvent("pent_PCHack")
+        end }
     },
     ["levels/instances/unique/pent/pent_meeting_room_door_thermite/world"] =
     {
@@ -506,6 +513,26 @@ instances["levels/instances/unique/pex/pex_armory_large/world"] = instances["lev
 instances["levels/instances/unique/sand/sand_rotating_keypad/world"] = instances["levels/instances/unique/sah/sah_keypad_vault_new/world"]
 instances["levels/instances/unique/chca/chca_keypad/world"] = instances["levels/instances/unique/sah/sah_keypad_vault_new/world"]
 instances["levels/instances/unique/xmn/xmn_breakout_road001/world"] = instances["levels/instances/unique/hox_breakout_road001/world"]
+EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param managers managers
+    --[[
+        Can't check if the interaction is/was enabled because after ECM has been triggered because it will enable interaction regardless if it is visible or not -> see element 100176
+        A big oversight from OVK, very bad
+        Checking if buttons have body visible is much more reliable
+        It has to stay like this until OVK fixes it
+    ]]
+    instances["levels/instances/unique/tag/tag_keypad/world"][100176].element = 100012 -- "0" button
+    instances["levels/instances/unique/tag/tag_keypad/world"][100176].special_function = managers.ehi_manager:RegisterCustomSF(function(self, trigger, ...)
+        local button = managers.worlddefinition:get_unit(trigger.element)
+        local state = button and button:damage() and button:damage()._state and button:damage()._state.graphic_group and button:damage()._state.graphic_group.button_grp
+        if state and state[1] == "set_visibility" and state[2] then
+            if self:Exists(trigger.id) then
+                self:SetTime(trigger.id, trigger.time)
+            else
+                self:CreateTracker(trigger)
+            end
+        end
+    end)
+end)
 
 if EHI:IsClient() then
     instances["levels/instances/unique/pbr/pbr_flare/world"][100025] = EHI:ClientCopyTrigger(instances["levels/instances/unique/pbr/pbr_flare/world"][100024], { time = 27 })
@@ -599,9 +626,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                     end
                 else
                     local new_trigger = deep_clone(trigger)
-                    if new_trigger.id then
-                        new_trigger.id = new_trigger.id .. start_index
-                    end
+                    new_trigger.id = new_trigger.id .. start_index
                     if trigger.element then
                         new_trigger.element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
                     end
@@ -624,10 +649,6 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                         if trigger.waypoint.remove_vanilla_waypoint and not trigger.waypoint.remove_vanilla_waypoint_no_instance then
                             new_trigger.waypoint.remove_vanilla_waypoint = EHI:GetInstanceElementID(trigger.waypoint.remove_vanilla_waypoint, start_index, continent_data.base_id)
                         end
-                    end
-                    if trigger.special_function and trigger.special_function == SF.ShowWaypoint and trigger.data and trigger.data.position_by_element and EHIConfig.escape_waypoints then
-                        new_trigger.data.position_by_element = EHI:GetInstanceElementID(trigger.data.position_by_element, start_index, continent_data.base_id)
-                        defer_loading_waypoints = true
                     end
                     triggers[final_index] = new_trigger
                 end

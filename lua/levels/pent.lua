@@ -33,6 +33,9 @@ local triggers = {
     -- Car Platform
     -- Lobby PCs
 }
+EHI:AddEventListener("pent_PCHack", "pent_PCHack", function()
+    managers.hud:SoftRemoveWaypoint2(102955)
+end)
 if EHI:IsClient() then
     -- FOR THE LOVE OF GOD
     -- OVERKILL

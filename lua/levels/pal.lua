@@ -25,7 +25,7 @@ local triggers = {
 }
 
 local sync_triggers = {}
-if EHI:EscapeVehicleWillReturn("pal") then
+if EHI:EscapeVehicleWillReturn() then
     local heli = { id = "HeliCageDelay", icons = Icon.HeliLootDropWait, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning, hint = Hints.LootTimed }
     sync_triggers[EHI:GetInstanceElementID(100013, 4700)] = heli
     sync_triggers[EHI:GetInstanceElementID(100013, 4750)] = heli
