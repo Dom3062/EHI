@@ -1,3 +1,6 @@
+r254 (25. 07. 2024):
+Fixed a crash when mission trackers are disabled
+
 r253 (23. 07. 2024):
 Added options "Show Floating Health Bars for Converts" and "Show Floating Health Bars for Civilians"
 Breakin' Feds: Fixed excessive number of timers

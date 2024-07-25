@@ -522,7 +522,7 @@ EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param m
     ]]
     instances["levels/instances/unique/tag/tag_keypad/world"][100176].element = 100012 -- "0" button
     instances["levels/instances/unique/tag/tag_keypad/world"][100176].special_function = managers.ehi_manager:RegisterCustomSF(function(self, trigger, ...)
-        local button = managers.worlddefinition:get_unit(trigger.element)
+        local button = managers.worlddefinition:get_unit(trigger.element) --[[@as UnitBase]]
         local state = button and button:damage() and button:damage()._state and button:damage()._state.graphic_group and button:damage()._state.graphic_group.button_grp
         if state and state[1] == "set_visibility" and state[2] then
             if self:Exists(trigger.id) then
@@ -595,29 +595,33 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
             local defer_loading_waypoints = false
             for id, trigger in pairs(instances[folder]) do
                 local final_index = EHI:GetInstanceElementID(id, start_index, continent_data.base_id)
-                if trigger.create_tracker_class and EHIConfig.mission_trackers then
-                    trigger.create_tracker_class()
-                elseif trigger.add_runned_unit_sequence_trigger and EHIConfig.mission_trackers then
-                    managers.mission:add_runned_unit_sequence_trigger(final_index, "interact", function(unit)
-                        local time_random = trigger.time_random and math.rand(trigger.time_random) or 0
-                        if not EHIConfig.show_waypoints_only then
-                            managers.ehi_tracker:AddTracker({
-                                id = tostring(final_index),
-                                time = trigger.time + time_random,
-                                icons = trigger.icons,
-                                hint = trigger.hint,
-                                class = trigger.class
-                            })
-                        end
-                        if EHIConfig.show_waypoints then
-                            managers.ehi_waypoint:AddWaypoint(tostring(final_index), {
-                                time = trigger.time + time_random,
-                                icon = trigger.icons[1],
-                                position = managers.ehi_manager:GetUnitPositionOrDefault(final_index),
-                                class = trigger.class and managers.ehi_manager.TrackerWaypointsClass[trigger.class]
-                            })
-                        end
-                    end)
+                if trigger.create_tracker_class then
+                    if EHIConfig.mission_trackers then -- It cannot be in the same if line because the game will crash later
+                        trigger.create_tracker_class()
+                    end
+                elseif trigger.add_runned_unit_sequence_trigger then
+                    if EHIConfig.mission_trackers then -- It cannot be in the same if line because the game will crash later
+                        managers.mission:add_runned_unit_sequence_trigger(final_index, "interact", function(unit)
+                            local time_random = trigger.time_random and math.rand(trigger.time_random) or 0
+                            if not EHIConfig.show_waypoints_only then
+                                managers.ehi_tracker:AddTracker({
+                                    id = tostring(final_index),
+                                    time = trigger.time + time_random,
+                                    icons = trigger.icons,
+                                    hint = trigger.hint,
+                                    class = trigger.class
+                                })
+                            end
+                            if EHIConfig.show_waypoints then
+                                managers.ehi_waypoint:AddWaypoint(tostring(final_index), {
+                                    time = trigger.time + time_random,
+                                    icon = trigger.icons[1],
+                                    position = managers.ehi_manager:GetUnitPositionOrDefault(final_index),
+                                    class = trigger.class and managers.ehi_manager.TrackerWaypointsClass[trigger.class]
+                                })
+                            end
+                        end)
+                    end
                 elseif trigger.remove_vanilla_waypoint then
                     if trigger.mission then
                         mission_waypoints[final_index] = true
@@ -646,7 +650,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                             new_trigger.waypoint.position_by_unit = EHI:GetInstanceUnitID(trigger.waypoint.position_by_unit, start_index, continent_data.base_id)
                             defer_loading_waypoints = true
                         end
-                        if trigger.waypoint.remove_vanilla_waypoint and not trigger.waypoint.remove_vanilla_waypoint_no_instance then
+                        if trigger.waypoint.remove_vanilla_waypoint then
                             new_trigger.waypoint.remove_vanilla_waypoint = EHI:GetInstanceElementID(trigger.waypoint.remove_vanilla_waypoint, start_index, continent_data.base_id)
                         end
                     end
