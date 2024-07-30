@@ -1,3 +1,6 @@
+r255 (30. 07. 2024):
+Border Crystals: Fixed missing trackers
+
 r254 (25. 07. 2024):
 Fixed a crash when mission trackers are disabled
 
