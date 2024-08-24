@@ -6,10 +6,8 @@
 ---
 --- Aliases
 ---
----@alias CoreWorldInstanceManager.Instance { folder: string, start_index: number, continent: string, rotation: Rotation }
----@alias WorldDefinition.Continent { base_id: number }
+---@alias CoreWorldInstanceManager.Instance { name: string, folder: string, start_index: number, index_size: number, continent: string, rotation: Rotation, mission_placed: boolean }
 ---@alias UnitObject UnitPlayer|UnitEnemy|UnitTeamAI|UnitCivilian|UnitBase
-
 ---@param obj (Unit|Workspace|PanelBaseObject)?
 ---@return boolean
 function alive(obj)
@@ -539,6 +537,8 @@ _G.CopDamage = {}
 _G.Drill = {}
 ---@class ECMJammerBase
 _G.ECMJammerBase = {}
+---@class ElementExperience
+_G.ElementExperience = {}
 ---@class ElementWaypoint
 _G.ElementWaypoint = {}
 ---@class EventListenerHolder
@@ -722,6 +722,13 @@ end
 ---@field super MissionScriptElement
 ---@field _values ElementSpecialObjectiveValues
 
+---@class ElementExperienceValues : MissionScriptElementValues
+---@field amount number
+
+---@class ElementExperience : MissionScriptElement
+---@field super MissionScriptElement
+---@field _values ElementExperienceValues
+
 ---@class MissionScriptElementValues
 ---@field amount number `ElementCounter` | `ElementCounterOperator`
 ---@field enabled boolean
@@ -732,6 +739,7 @@ end
 
 ---@class MissionScriptElement
 ---@field _id number
+---@field _editor_name string
 ---@field counter_value fun(self: self): number `ElementCounter`
 ---@field enabled fun(self: self): boolean
 ---@field value fun(self: self, value: string): any
@@ -1041,8 +1049,13 @@ end
 ---@field contains fun(v: table, e: string): boolean Returns `true` or `false` if `e` exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
 ---@field get_vector_index fun(v: table, e: any): number?
----@field list_to_set fun(list: table): table Maps values as keys with value `true`
----@field random fun(t: table): any Returns random value from a list
+
+---Maps values as keys with value `true`
+---@generic K
+---@param list K[]
+---@return table<K, true>
+function table.list_to_set(list)
+end
 
 ---Returns `key name` if value exists
 ---@generic K, V
@@ -1050,6 +1063,19 @@ end
 ---@param wanted_key_value V
 ---@return K?
 function table.get_key(map, wanted_key_value)
+end
+
+---Returns random value from a list
+---@generic T
+---@param t T[]
+---@return T
+function table.random(t)
+end
+
+---@generic K, V
+---@param t table<K, V>
+---@return K
+function table.random_key(t)
 end
 
 ---@class ContourExt

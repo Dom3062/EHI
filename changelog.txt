@@ -1,3 +1,9 @@
+r256 (24. 08. 2024):
+Henry's Rock: Fixed a crash in Biolab
+Menu: Added trophy and sidejob trackers
+Menu: Achievement tracker will now show random achievement icon
+Menu: Tracker icon color is now applied to achievement, sidejob and trophy tracker
+
 r255 (30. 07. 2024):
 Border Crystals: Fixed missing trackers
 

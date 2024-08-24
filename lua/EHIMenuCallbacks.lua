@@ -173,3 +173,8 @@ function EHIMenu:SetColor(color, option, color_type)
     c.g = color.green
     c.b = color.blue
 end
+
+function EHIMenu:SetUnlockableColor(color, option, color_type)
+    self:SetColor(color, option, color_type)
+    self._preview_panel:CallFunction(option, "UpdateIconColor", Color(255, color.red, color.green, color.blue) / 255)
+end

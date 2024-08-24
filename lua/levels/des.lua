@@ -154,7 +154,7 @@ if EHI:GetOption("show_mission_trackers") then
                 self._trackers:CallFunction("ChemSet", "SetReset", trigger.time)
             end
             return
-        elseif trigger.id == "ChemSetReset" then
+        elseif trigger.id == "ChemSetInterrupted" then
             self:ForceRemove(trigger.data.id)
         end
         self:CreateTracker(trigger)

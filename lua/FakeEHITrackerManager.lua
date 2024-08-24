@@ -57,14 +57,25 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self._fake_trackers = {} ---@type FakeEHITracker[]?
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.rand(0.5, 9.99), icons = { Icon.Wait } })
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.random(60, 180), icons = { Icon.Car, Icon.Escape } })
-    self:AddFakeTracker({ id = "show_unlockables", time = math.random(60, 180), icons = { Icon.Trophy } })
+    if EHI:GetOption("show_unlockables") then
+        if EHI:GetUnlockableOption("show_achievements") then
+            local icon = table.random_key(tweak_data.achievement.visual)
+            self:AddFakeTracker({ force_id = "achievement", time = math.random(60, 180), icons = { { icon = EHI:GetAchievementIconString(icon), color = EHI:GetColorFromOption("unlockables", "achievement") } } })
+        end
+        if EHI:GetUnlockableOption("show_dailies") then
+            self:AddFakeTracker({ force_id = "sidejob", time = math.random(60, 180), icons = { { icon = Icon.Trophy, color = EHI:GetColorFromOption("unlockables", "sidejob") } } })
+        end
+        if EHI:GetUnlockableOption("show_trophies") then
+            self:AddFakeTracker({ force_id = "trophy", time = math.random(60, 180), icons = { { icon = Icon.Trophy, color = EHI:GetColorFromOption("unlockables", "trophy") } } })
+        end
+    end
     do
         local xp_panel = EHI:GetOption("xp_panel")
         if xp_panel <= 2 then
             self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, extend_half = xp_panel == 2, class = "FakeEHIXPTracker" })
         end
     end
-    self:AddFakeTracker({ id = "show_trade_delay", icons = { { icon = "mugshot_in_custody", color = self:GetPeerColor() } }, class = "FakeEHITradeDelayTracker" })
+    self:AddFakeTracker({ id = "show_trade_delay", icons = { { icon = "mugshot_in_custody", color = self:GetLocalPeerColor() } }, class = "FakeEHITradeDelayTracker" })
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { Icon.Drill, Icon.Wait, "silent", Icon.Loop } })
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack } })
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack }, extend = true, class = "FakeEHITimerTracker" })
@@ -101,10 +112,9 @@ function FakeEHITrackerManager:AddFakeTrackers()
 end
 
 function FakeEHITrackerManager:AddFakeTracker(params)
-    if not EHI:GetOption(params.id) then
+    if params.id and not EHI:GetOption(params.id) then
         return
-    end
-    if self._n_of_trackers == 0 then
+    elseif self._n_of_trackers == 0 then
         self:CreateFirstFakeTracker(params)
     else
         self:CreateFakeTracker(params)
@@ -138,7 +148,7 @@ function FakeEHITrackerManager:CreateFirstFakeTracker(params)
     end
 end
 
-function FakeEHITrackerManager:GetPeerColor()
+function FakeEHITrackerManager:GetLocalPeerColor()
     if CustomNameColor and CustomNameColor.GetOwnColor then
         return CustomNameColor:GetOwnColor()
     end
@@ -636,7 +646,7 @@ function FakeEHITracker:init(panel, params, parent_class)
         end
         self.__icon_pos_left = params.icon_pos == 1
     end
-    self._id = params.id
+    self._id = params.force_id or params.id
     self._parent_class = parent_class
     self._selected = false
     self:post_init(params)
@@ -808,6 +818,13 @@ function FakeEHITracker:UpdateIconsPos(pos)
     self:SetIconsX()
 end
 
+---@param color Color?
+function FakeEHITracker:UpdateIconColor(color)
+    if self._icon1 then
+        self._icon1:set_color(color or Color.white)
+    end
+end
+
 ---@param scale number
 function FakeEHITracker:UpdateTextScale(scale)
     self._text_scale = scale
@@ -972,11 +989,11 @@ function FakeEHIMinionCounterTracker:init(panel, params, parent_class)
 end
 
 function FakeEHIMinionCounterTracker:UpdateFormat(value)
-    self._icon1:set_color(value == 1 and self._parent_class:GetPeerColor() or Color.white)
+    self._icon1:set_color(value == 1 and self._parent_class:GetLocalPeerColor() or Color.white)
     self._text_second_player:set_visible(value == 3)
     self._text_total:set_visible(value == 2)
     self._text:set_visible(value ~= 2)
-    self._text:set_color(value == 3 and self._parent_class:GetPeerColor() or Color.white)
+    self._text:set_color(value == 3 and self._parent_class:GetLocalPeerColor() or Color.white)
     self._format = value
     if value == 3 then
         self._text:set_w(self._bg_box:w() / 2)
@@ -988,7 +1005,7 @@ end
 
 ---@param selected boolean
 function FakeEHIMinionCounterTracker:SetTextColor(selected)
-    self._text:set_color(selected and self._selected_color or (self._format == 3 and self._parent_class:GetPeerColor() or Color.white))
+    self._text:set_color(selected and self._selected_color or (self._format == 3 and self._parent_class:GetLocalPeerColor() or Color.white))
     self._text_second_player:set_color(selected and self._selected_color or self._color_second_player)
 end
 
