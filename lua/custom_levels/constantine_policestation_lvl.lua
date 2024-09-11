@@ -10,8 +10,11 @@ EHI:ParseTriggers({
 })
 
 EHI:ShowLootCounter({ max = 10 })
+---@param unit_id number
+---@param unit_data UnitUpdateDefinition
+---@param unit UnitTimer
 local function AdjustServerHackInstance(unit_id, unit_data, unit)
-    EHI:HookWithID(unit:timer_gui(), "set_jammed", "EHI_100037_" .. tostring(unit_data.instance_id) .. "_unjammed", function(self, jammed, ...)
+    Hooks:PostHook(unit:timer_gui(), "set_jammed", "EHI_100037_" .. tostring(unit_data.instance_id) .. "_unjammed", function(self, jammed, ...)
         if jammed == false then
             self:_HideWaypoint(EHI:GetInstanceElementID(100017, unit_data.instance_id)) -- Interact (Computer Icon)
         end

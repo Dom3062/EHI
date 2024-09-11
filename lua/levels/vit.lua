@@ -29,7 +29,7 @@ local triggers = {
     [1020951] = { time = 26, id = "AirlockOpenOutside", icons = { Icon.Door }, condition_function = CF.IsStealth, hint = Hints.Wait },
     [1020952] = EHI:AddEndlessAssault(26, "AirlockOpenOutsideEndlessAssault", true),
 
-    [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 101914 }, hint = Hints.Escape } -- 30s delay + 26s escape zone delay
+    [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element = 101914 }, hint = Hints.Escape } -- 30s delay + 26s escape zone delay
 }
 if EHI:IsClient() then
     triggers[102073] = { additional_time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }

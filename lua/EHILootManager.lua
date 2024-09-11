@@ -3,6 +3,7 @@ local EHI = EHI
 ---@class EHILootManager : EHIBaseManager
 ---@field super EHIBaseManager
 ---@field new fun(self: self, ehi_tracker: EHITrackerManager): self
+---@field _loot_counter_sync_data LootCounterTable
 EHILootManager = class(EHIBaseManager)
 EHILootManager._sync_lm_add_loot_counter = "EHI_LM_AddLootCounter"
 EHILootManager._sync_lm_update_loot_counter = "EHI_LM_SyncUpdateLootCounter"
@@ -16,30 +17,26 @@ end
 
 function EHILootManager:init_finalize()
     if EHI:IsClient() and EHI:GetOption("show_loot_counter") then
-        self:AddReceiveHook(self._sync_lm_add_loot_counter, callback(self, self, "SyncAddLootCounter"))
-        self:AddReceiveHook(self._sync_lm_update_loot_counter, callback(self, self, "SyncUpdateLootCounter"))
+        self:AddReceiveHook(self._sync_lm_add_loot_counter, function(data, sender)
+            local params = json.decode(data)
+            self:ShowLootCounter(params.max, params.max_random, 0, params.offset)
+            self:AddListener(true)
+        end)
+        self:AddReceiveHook(self._sync_lm_update_loot_counter, function(data, sender)
+            local params = json.decode(data)
+            if params.type == "IncreaseMaxRandom" then
+                self:IncreaseLootCounterMaxRandom(params.random)
+            elseif params.type == "RandomLootSpawned" then
+                self:RandomLootSpawned(params.random)
+            elseif params.type == "RandomLootDeclined" then
+                self:RandomLootDeclined(params.random)
+            end
+        end)
     end
 end
 
 function EHILootManager:Spawned()
     self._delay_popups = nil
-end
-
-function EHILootManager:SyncAddLootCounter(data, sender)
-    local params = json.decode(data)
-    self:ShowLootCounter(params.max, params.max_random, 0, params.offset)
-    self:AddListener(true)
-end
-
-function EHILootManager:SyncUpdateLootCounter(data, sender)
-    local params = json.decode(data)
-    if params.type == "IncreaseMaxRandom" then
-        self:IncreaseLootCounterMaxRandom(params.random)
-    elseif params.type == "RandomLootSpawned" then
-        self:RandomLootSpawned(params.random)
-    elseif params.type == "RandomLootDeclined" then
-        self:RandomLootDeclined(params.random)
-    end
 end
 
 ---Shows Loot Counter, needs to be hooked to count correctly
@@ -94,7 +91,7 @@ end
 ---@param no_sync_load boolean?
 function EHILootManager:AddListener(no_sync_load)
     if not self:HasEventListener("LootCounter") then
-        local BagsOnly = EHI.LootCounter.CheckType.BagsOnly
+        local BagsOnly = EHI.Const.LootCounter.CheckType.BagsOnly
         ---@param loot LootManager
         self:AddEventListener("LootCounter", function(loot)
             self._trackers:SetTrackerProgress("LootCounter", loot:EHIReportProgress(BagsOnly))
@@ -113,9 +110,9 @@ end
 ---@param params AchievementLootCounterTable|AchievementBagValueCounterTable
 ---@param endless_counter boolean?
 function EHILootManager:AddAchievementListener(params, endless_counter)
-    local check_type, loot_type, f = EHI.LootCounter.CheckType.BagsOnly, nil, nil
+    local check_type, loot_type, f = EHI.Const.LootCounter.CheckType.BagsOnly, nil, nil
     if params.counter then
-        check_type = params.counter.check_type or EHI.LootCounter.CheckType.BagsOnly
+        check_type = params.counter.check_type or EHI.Const.LootCounter.CheckType.BagsOnly
         loot_type = params.counter.loot_type
         f = params.counter.f
     end
@@ -292,6 +289,7 @@ function EHILootManager:AddSequenceTriggers(sequence_triggers)
     end
 end
 
+---@param data SyncData
 function EHILootManager:load(data)
     local load_data = data.EHILootManager
     if load_data and EHI:GetOption("show_loot_counter") then
@@ -303,6 +301,7 @@ function EHILootManager:load(data)
     end
 end
 
+---@param data SyncData
 function EHILootManager:save(data)
     if self._loot_counter_sync_data then
         data.EHILootManager = deep_clone(self._loot_counter_sync_data)

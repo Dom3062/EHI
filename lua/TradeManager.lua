@@ -14,7 +14,7 @@ if EHI:IsXPTrackerEnabledAndVisible() then
         EHIExperienceManager:SetAIOnDeathListener()
     end
     if not Global.game_settings.single_player then
-        EHI:HookWithID(TradeManager, "on_player_criminal_death", "EHI_ExperienceManager_PlayerCriminalDeath", function(...)
+        Hooks:PostHook(TradeManager, "on_player_criminal_death", "EHI_ExperienceManager_PlayerCriminalDeath", function(...)
             managers.ehi_experience:DecreaseAlivePlayers(true)
             EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
         end)
@@ -25,7 +25,7 @@ if EHI:IsTradeTrackerDisabled() then
     return
 end
 
-dofile(EHI.LuaPath .. "trackers/EHITradeDelayTracker.lua")
+EHI:LoadTracker("EHITradeDelayTracker")
 local show_trade_for_other_players = EHI:GetOption("show_trade_delay_other_players_only") --[[@as boolean]]
 local on_death_show = EHI:GetOption("show_trade_delay_option") == 2
 local suppress_in_stealth = EHI:GetOption("show_trade_delay_suppress_in_stealth") --[[@as boolean]]
@@ -71,7 +71,7 @@ end
 
 function TradeManager:init(...)
     original.init(self, ...)
-    EHI:Hook(self, "set_trade_countdown", function(s, enabled)
+    EHI:Hook(self, "set_trade_countdown", function(_, enabled)
         managers.ehi_trade:SetTrade("normal", enabled, self._trade_counter_tick)
         if not enabled then
             for _, crim in ipairs(self._criminals_to_respawn) do

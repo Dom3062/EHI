@@ -12,14 +12,9 @@ end
 
 local other =
 {
-    [100032] = EHI:AddAssaultDelay({ control = 30 })
+    [100032] = EHI:AddAssaultDelay({ control = 30 }),
+    [100442] = EHI:AddSniperSpawnedPopup()
 }
-if EHI:GetOption("show_sniper_tracker") and EHI:GetOption("show_sniper_spawned_popup") then
-    other[100442] = { special_function = EHI.SpecialFunctions.CustomCode, f = function()
-        managers.hud:ShowSnipersSpawned()
-    end }
-end
-
 EHI:ParseTriggers({
     mission = triggers,
     other = other
@@ -29,8 +24,8 @@ EHI:ShowLootCounter({ max = 8 })
 
 local tbl =
 {
-    [EHI:GetInstanceUnitID(100037, 3750)] = { f = function(unit_id, unit_data, unit)
-        EHI:HookWithID(unit:timer_gui(), "set_jammed", "EHI_100037_3750_unjammed", function(self, jammed, ...)
+    [EHI:GetInstanceUnitID(100037, 3750)] = { f = function(unit_id, unit_data, unit) ---@param unit UnitTimer
+        Hooks:PostHook(unit:timer_gui(), "set_jammed", "EHI_100037_3750_unjammed", function(self, jammed, ...)
             if jammed == false then
                 self:_HideWaypoint(EHI:GetInstanceElementID(100017, 3750)) -- Interact (Computer Icon)
             end

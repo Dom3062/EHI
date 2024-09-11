@@ -2,11 +2,11 @@
 ---@field super EHIGaugeBuffTracker
 ---@field _refresh_option string?
 EHISkillRefreshBuffTracker = class(EHIGaugeBuffTracker)
-function EHISkillRefreshBuffTracker:init(...)
-    EHISkillRefreshBuffTracker.super.init(self, ...)
+function EHISkillRefreshBuffTracker:post_init(...)
     self._skill_value = 0
     self._refresh_time = self._refresh_option and (1 / EHI:GetBuffOption(self._refresh_option)) or 1
     self._time = self._refresh_time
+    EHISkillRefreshBuffTracker.super.post_init(self, ...)
 end
 
 function EHISkillRefreshBuffTracker:PreUpdate()
@@ -90,10 +90,7 @@ end
 
 function EHIDodgeChanceBuffTracker:UpdateValue()
     local player = self._player_manager:player_unit()
-    if player == nil then
-        return
-    end
-    local player_movement = player:movement() ---@cast player_movement -HuskPlayerMovement
+    local player_movement = player and player:movement() ---@cast player_movement -HuskPlayerMovement
     if player_movement == nil then
         return
     end
@@ -124,10 +121,10 @@ function EHIDodgeChanceBuffTracker:PreUpdate2()
         self:UpdateValue()
         self._time = self._refresh_time
     end
-    EHI:HookWithID(PlayerStandard, "_start_action_zipline", "EHI_DodgeBuff_start_action_zipline", update)
-    EHI:HookWithID(PlayerStandard, "_end_action_zipline", "EHI_DodgeBuff_end_action_zipline", update)
-    EHI:HookWithID(PlayerStandard, "_start_action_ducking", "EHI_DodgeBuff_start_action_ducking", update)
-    EHI:HookWithID(PlayerStandard, "_end_action_ducking", "EHI_DodgeBuff_end_action_ducking", update)
+    Hooks:PostHook(PlayerStandard, "_start_action_zipline", "EHI_DodgeBuff_start_action_zipline", update)
+    Hooks:PostHook(PlayerStandard, "_end_action_zipline", "EHI_DodgeBuff_end_action_zipline", update)
+    Hooks:PostHook(PlayerStandard, "_start_action_ducking", "EHI_DodgeBuff_start_action_ducking", update)
+    Hooks:PostHook(PlayerStandard, "_end_action_ducking", "EHI_DodgeBuff_end_action_ducking", update)
     self._update_disabled = false
 end
 
@@ -247,17 +244,17 @@ end
 ---@field super EHISkillRefreshBuffTracker
 EHIBerserkerBuffTracker = class(EHISkillRefreshBuffTracker)
 EHIBerserkerBuffTracker._refresh_option = "berserker_refresh"
-function EHIBerserkerBuffTracker:init(...)
-    EHIBerserkerBuffTracker.super.init(self, ...)
+function EHIBerserkerBuffTracker:post_init(...)
     self._time = 0.2
     self._damage_multiplier = 0
     self._melee_damage_multiplier = 0
+    EHIBerserkerBuffTracker.super.post_init(self, ...)
 end
 
 function EHIBerserkerBuffTracker:PreUpdate()
     EHIBerserkerBuffTracker.super.PreUpdate(self)
     if self._player_manager:upgrade_value("player", "melee_damage_health_ratio_multiplier", 0) == 0 then
-        self:delete()
+        self:delete_with_class()
         return
     end
     self._THRESHOLD = tweak_data.upgrades.player_damage_health_ratio_threshold or 0.5
@@ -295,10 +292,7 @@ end
 
 function EHIBerserkerBuffTracker:UpdateValue()
     local player_unit = self._player_manager:player_unit()
-    if not player_unit then
-        return
-    end
-    local character_damage = player_unit:character_damage() ---@cast character_damage -HuskPlayerDamage
+    local character_damage = player_unit and player_unit:character_damage() ---@cast character_damage -HuskPlayerDamage
     if not character_damage then
         return
     end
@@ -355,8 +349,8 @@ end
 
 if EHI:GetBuffOption("berserker_format") == 1 then
     function EHIBerserkerBuffTracker:Format()
-        local dmg = self._parent_class.RoundNumber(self._current_damage_multiplier or 0, 1)
-        local mdmg = self._parent_class.RoundNumber(self._current_melee_damage_multiplier or 0, 1)
+        local dmg = self._parent_class.RoundNumber(self._current_damage_multiplier or 0, 0.1)
+        local mdmg = self._parent_class.RoundNumber(self._current_melee_damage_multiplier or 0, 0.1)
         local s
         if dmg == 0 and mdmg == 0 then
             s = "1x 1x"
@@ -383,9 +377,9 @@ end
 ---@field super EHISkillRefreshBuffTracker
 EHIUppersRangeBuffTracker = class(EHISkillRefreshBuffTracker)
 EHIUppersRangeBuffTracker._refresh_option = "uppers_range_refresh"
-function EHIUppersRangeBuffTracker:init(...)
+function EHIUppersRangeBuffTracker:post_init(...)
     self._mv3_distance = mvector3.distance
-    EHIUppersRangeBuffTracker.super.init(self, ...)
+    EHIUppersRangeBuffTracker.super.post_init(self, ...)
 end
 
 function EHIUppersRangeBuffTracker:PreUpdate()
@@ -393,15 +387,14 @@ function EHIUppersRangeBuffTracker:PreUpdate()
     local function Check(...)
         if self._in_custody then
             return
-        end
-        if next(FirstAidKitBase.List) then
+        elseif next(FirstAidKitBase.List) then
             self:Activate()
         else
             self:Deactivate()
         end
     end
-    EHI:HookWithID(FirstAidKitBase, "Add", "EHI_UppersRangeBuff_Add", Check)
-    EHI:HookWithID(FirstAidKitBase, "Remove", "EHI_UppersRangeBuff_Remove", Check)
+    Hooks:PostHook(FirstAidKitBase, "Add", "EHI_UppersRangeBuff_Add", Check)
+    Hooks:PostHook(FirstAidKitBase, "Remove", "EHI_UppersRangeBuff_Remove", Check)
     self:SetCustodyState(false)
 end
 
@@ -438,7 +431,7 @@ function EHIUppersRangeBuffTracker:UpdateValue()
         local found, distance, min_distance = self:GetFirstAidKit(player_unit:position())
         if found then
             local ratio = 1 - (distance / min_distance)
-            self._distance = distance / 100
+            self._skill_value = distance / 100
             self:ActivateSoft()
             self:SetRatio(ratio)
         else
@@ -460,5 +453,5 @@ function EHIUppersRangeBuffTracker:GetFirstAidKit(pos)
 end
 
 function EHIUppersRangeBuffTracker:Format()
-    return string.format("%dm", math.floor(self._distance or 0))
+    return string.format("%dm", math.floor(self._skill_value))
 end

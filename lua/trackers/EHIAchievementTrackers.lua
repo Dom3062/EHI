@@ -4,7 +4,7 @@ local Color = Color
 ---@generic T: table
 ---@param super T? A base class which `class` will derive from
 ---@return T
-function ehi_achievement_class(super)
+function _G.ehi_achievement_class(super)
     local klass = class(super)
     klass._popup_type = "achievement"
     klass._forced_icon_color = EHIAchievementTracker._forced_icon_color
@@ -74,7 +74,7 @@ function EHIAchievementTracker:ShowStartedPopup(delay_popup)
         return
     end
     if self._popup_type == "sidejob" then
-        managers.hud:ShowSideJobStartedPopup(self._id, self._daily_job) ---@diagnostic disable-line
+        managers.hud:ShowSideJobStartedPopup(self._id, self._daily_job, self._desc) ---@diagnostic disable-line
     elseif self._popup_type == "trophy" then
         managers.hud:ShowTrophyStartedPopup(self._id)
     else
@@ -89,7 +89,7 @@ function EHIAchievementTracker:ShowFailedPopup()
     end
     self._failed_popup_showed = true
     if self._popup_type == "sidejob" then
-        managers.hud:ShowSideJobFailedPopup(self._id, self._daily_job) ---@diagnostic disable-line
+        managers.hud:ShowSideJobFailedPopup(self._id, self._daily_job, self._desc) ---@diagnostic disable-line
     elseif self._popup_type == "trophy" then
         managers.hud:ShowTrophyFailedPopup(self._id)
     else

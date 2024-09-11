@@ -6,11 +6,11 @@ local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
 ---@type ParseTriggerTable
 local triggers = {
-    [101034] = { id = "MikeDefendTruck", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033, waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100483, 1350) }, hint = Hints.Defend },
+    [101034] = { id = "MikeDefendTruck", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101033, waypoint = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100483, 1350) }, hint = Hints.Defend },
     [101038] = { id = "MikeDefendTruck", special_function = SF.PauseTracker },
     [101070] = { id = "MikeDefendTruck", special_function = SF.UnpauseTracker },
 
-    [101535] = { id = "MikeDefendGarage", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101532, waypoint = { position_by_element_and_remove_vanilla_waypoint = 101445 }, hint = Hints.Defend },
+    [101535] = { id = "MikeDefendGarage", class = TT.Pausable, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101532, waypoint = { data_from_element_and_remove_vanilla_waypoint = 101445 }, hint = Hints.Defend },
     [101534] = { id = "MikeDefendGarage", special_function = SF.UnpauseTracker },
     [101533] = { id = "MikeDefendGarage", special_function = SF.PauseTracker },
 
@@ -79,7 +79,6 @@ local tbl =
     [101473] = { f = "IgnoreChildDeployable" }
 }
 EHI:UpdateUnits(tbl)
-
 EHI:SetMissionDoorData({
     -- Workshop
     [Vector3(-3798.92, -1094.9, -6.52779)] = 101580,

@@ -4,7 +4,7 @@ local Color = Color
 ---@class EHIWarningWaypoint : EHIWaypoint
 ---@field super EHIWaypoint
 EHIWarningWaypoint = class(EHIWaypoint)
-EHIWarningWaypoint._warning_color = EHI:GetTWColor("warning")
+EHIWarningWaypoint._warning_color = EHI:GetColorFromOption("tracker_waypoint", "warning")
 ---@param o PanelText
 ---@param old_color Color
 ---@param color Color

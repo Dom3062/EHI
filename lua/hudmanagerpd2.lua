@@ -121,26 +121,22 @@ end
 ---@param class table
 function HUDManager:AddEHIUpdator(id, class)
     if not class.update then
-        EHI:Log("Class with ID '" .. id .. "' is missing 'update' function!")
+        EHI:Log(string.format("Class with ID '%s' is missing 'update' function!", id))
         return
     elseif not self._ehi_updators then
+        self._ehi_updators = {}
         EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function()
-            self:RemoveEHIUpdators()
+            for _id, _class in pairs(self._ehi_updators or {}) do
+                self:remove_updator(_id)
+                if _class.update_last then
+                    _class:update_last()
+                end
+            end
+            self._ehi_updators = nil
         end)
     end
-    self._ehi_updators = self._ehi_updators or {}
     self._ehi_updators[id] = class
     self:add_updator(id, callback(class, class, "update"))
-end
-
-function HUDManager:RemoveEHIUpdators()
-    for id, class in pairs(self._ehi_updators or {}) do
-        self:remove_updator(id)
-        if class and class.update_last then
-            class:update_last()
-        end
-    end
-    self._ehi_updators = nil
 end
 
 function HUDManager:sync_set_assault_mode(mode, ...)
@@ -176,7 +172,7 @@ function HUDManager:destroy(...)
     original.destroy(self, ...)
 end
 
-if EHI:IsAssaultDelayTrackerEnabled() then
+if EHI:GetOption("show_assault_delay_tracker") then
     original.sync_start_anticipation_music = HUDManager.sync_start_anticipation_music
     function HUDManager:sync_start_anticipation_music(...)
         original.sync_start_anticipation_music(self, ...)
@@ -245,94 +241,45 @@ end
 
 ---@param id string
 ---@param daily_job boolean
+---@param desc string? Custom challenge description
 ---@param icon string?
-function HUDManager:ShowSideJobStartedPopup(id, daily_job, icon)
-    local text = daily_job and ("menu_challenge_" .. id) or id
+function HUDManager:ShowSideJobStartedPopup(id, daily_job, desc, icon)
+    local text = desc or (daily_job and ("menu_challenge_" .. id) or id)
     icon = icon or tweak_data.ehi.icons[id] and id or "milestone_trophy"
     self:custom_ingame_popup_text("DAILY SIDE JOB STARTED!", managers.localization:to_upper_text(text), icon)
 end
 
 ---@param id string
 ---@param daily_job boolean
+---@param desc string? Custom challenge description
 ---@param icon string?
-function HUDManager:ShowSideJobFailedPopup(id, daily_job, icon)
-    local text = daily_job and ("menu_challenge_" .. id) or id
+function HUDManager:ShowSideJobFailedPopup(id, daily_job, desc, icon)
+    local text = desc or (daily_job and ("menu_challenge_" .. id) or id)
     icon = icon or tweak_data.ehi.icons[id] and id or "milestone_trophy"
     self:custom_ingame_popup_text("DAILY SIDE JOB FAILED!", managers.localization:to_upper_text(text), icon)
 end
 
 ---@param id string
 ---@param daily_job boolean?
-function HUDManager:ShowSideJobDescription(id, daily_job)
-    local text = daily_job and ("menu_challenge_" .. id) or id
-    local objective = daily_job and ("menu_challenge_" .. id .. "_desc") or (id .. "_objective")
+---@param desc string? Custom challenge description
+function HUDManager:ShowSideJobDescription(id, daily_job, desc)
+    local text = desc or (daily_job and ("menu_challenge_" .. id) or id)
+    local objective = daily_job and ((desc or ("menu_challenge_" .. id)) .. "_desc") or (id .. "_objective")
     managers.chat:_receive_message(1, managers.localization:text(text), managers.localization:text(objective), Color.white)
 end
 
 ---@param single_sniper boolean?
-function HUDManager:ShowSnipersSpawned(single_sniper)
+---@param icon string?
+function HUDManager:ShowSnipersSpawned(single_sniper, icon)
     local id = single_sniper and "SNIPER!" or "SNIPERS!"
     local desc = single_sniper and "ehi_popup_sniper_spawned" or "ehi_popup_snipers_spawned"
-    self:custom_ingame_popup_text(id, managers.localization:text(desc), "EHI_Sniper")
+    self:custom_ingame_popup_text(id, managers.localization:text(desc), icon or "EHI_Sniper")
 end
 
-function HUDManager:Debug(id)
-    local dt = 0
-    if self._ehi_debug_time then
-        local new_time = TimerManager:game():time()
-        dt = new_time - self._ehi_debug_time
-        self._ehi_debug_time = new_time
-    else
-        self._ehi_debug_time = TimerManager:game():time()
-    end
-    managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; dt: " .. dt, Color.white)
+---@param logic_started boolean?
+---@param icon string?
+function HUDManager:ShowSniperLogic(logic_started, icon)
+    local id = logic_started and "SNIPER_LOGIC_START" or "SNIPER_LOGIC_END"
+    local desc = logic_started and "ehi_popup_sniper_logic_started" or "ehi_popup_sniper_logic_ended"
+    self:custom_ingame_popup_text(id, managers.localization:text(desc), icon or "EHI_Sniper")
 end
-
----@param id number
----@param editor_name string
----@param enabled boolean
-function HUDManager:DebugElement(id, editor_name, enabled)
-    managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(id) .. "; Editor Name: " .. tostring(editor_name) .. "; Enabled: " .. tostring(enabled), Color.white)
-end
-
-function HUDManager:DebugExperience(id, name, amount)
-    local s = string.format("`%s` ElementExperince %d: Gained %d XP", name, id, amount)
-    managers.chat:_receive_message(1, "[EHI]", s, Color.white)
-    if EHI.debug.gained_experience.log then
-        EHI:Log(s)
-    end
-end
-
-function HUDManager:DebugBaseElement(id, instance_index, continent_index, element)
-    managers.chat:_receive_message(1, "[EHI]", "ID: " .. tostring(EHI:GetBaseUnitID(id, instance_index, continent_index or 100000)) .. "; Element: " .. tostring(element), Color.white)
-end
-
-function HUDManager:DebugBaseElement2(base_id, instance_index, continent_index, element, instance_name)
-    managers.chat:_receive_message(1, "[EHI]", "Base ID: " .. tostring(EHI:GetBaseUnitID(base_id, instance_index, continent_index or 100000)) .. "; ID: " .. tostring(base_id) .. "; Element: " .. tostring(element) .. "; Instance: " .. tostring(instance_name), Color.white)
-end
-
---[[local animation = { start_t = {}, end_t = {} }
-function HUDManager:DebugAnimation(id, type)
-    if type == "start" then
-        animation.start_t[id] = TimerManager:game():time()
-    else -- "end"
-        animation.end_t[id] = TimerManager:game():time()
-    end
-    if animation.start_t[id] and animation.end_t[id] then
-        local diff = animation.end_t[id] - animation.start_t[id]
-        managers.chat:_receive_message(1, "[EHI]", "Animation: " .. tostring(id) .. "; Time: " .. tostring(diff), Color.white)
-        animation.end_t[id] = nil
-        animation.start_t[id] = nil
-    end
-end
-
-local last_id = ""
-function HUDManager:DebugAnimation2(id, type)
-    if id then
-        last_id = id
-    end
-    self:DebugAnimation(last_id, type)
-    if type == "end" then
-        last_id = ""
-    end
-end]]

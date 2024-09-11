@@ -20,7 +20,11 @@ function ElementExperience:on_executed(...)
     end
     managers.ehi_experience:MissionXPAwarded(self._values.amount)
     if EHI.debug.gained_experience.enabled then
-        managers.hud:DebugExperience(self._id, self._editor_name, self._values.amount)
+        local s = string.format("`%s` ElementExperience %d: Gained %d XP", self._editor_name, self._id, self._values.amount)
+        managers.chat:_receive_message(1, "[EHI]", s, Color.white)
+        if EHI.debug.gained_experience.log then
+            EHI:Log(s)
+        end
     end
     original.on_executed(self, ...)
 end

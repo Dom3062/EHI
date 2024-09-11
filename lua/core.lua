@@ -19,23 +19,27 @@ _G.EHI =
     {
         show_timers =
         {
-            file = "EHITimerTracker",
-            count = 1
+            file = "EHITimerTracker"
         },
         show_sniper_tracker =
         {
-            file = "EHISniperTrackers",
-            count = 1
+            file = "EHISniperTrackers"
         },
         show_captain_damage_reduction =
         {
-            file = "EHIPhalanxDamageReductionTracker",
-            count = 1
+            file = "EHIPhalanxDamageReductionTracker"
         },
         show_captain_spawn_chance =
         {
-            file = "EHIPhalanxChanceTracker",
-            count = 1
+            file = "EHIPhalanxChanceTracker"
+        },
+        show_enemy_count_tracker =
+        {
+            file = "EHIEnemyCountTracker"
+        },
+        show_hostage_count_tracker =
+        {
+            file = "EHIHostageCountTracker"
         }
     },
 
@@ -65,27 +69,18 @@ _G.EHI =
                     Secure = "secure"
                 }
             }
-        }
-    },
-
-    NoCivilianCounter =
-    {
-        alex_1 = true,
-        haunted = true,
-        man = true,
-        bph = true
-    },
-
-    LootCounter =
-    {
-        CheckType =
+        },
+        LootCounter =
         {
-            BagsOnly = 1,
-            ValueOfBags = 2,
-            ValueOfSmallLoot = 3,
-            CheckTypeOfLoot = 4,
-            CustomCheck = 5,
-            Debug = 6
+            CheckType =
+            {
+                BagsOnly = 1,
+                ValueOfBags = 2,
+                ValueOfSmallLoot = 3,
+                CheckTypeOfLoot = 4,
+                CustomCheck = 5,
+                Debug = 6
+            }
         }
     },
 
@@ -247,20 +242,19 @@ _G.EHI =
         ---@see EHIWaypointManager
         CallWaypointManagerFunction = 102,
 
-        Debug = 1000,
-        DebugElement = 1001,
+        DebugElement = 1000,
         -- Requires `f (function)`  
         -- Optional `arg (1 argument to pass to the function)`
-        CustomCode = 1002,
+        CustomCode = 1001,
         -- Requires `f (function that accepts EHIManager)`  
         -- Optional `arg (1 argument to pass to the function as a second argument)`
-        CustomCode2 = 1003,
+        CustomCode2 = 1002,
         -- Requires `f (function)`  
         -- Optional `arg (1 argument to pass to the function)`
-        CustomCodeIfEnabled = 1004,
+        CustomCodeIfEnabled = 1003,
         -- Requires `f (function)`  
         -- Optional `arg (1 argument to pass to the function)` and `t`
-        CustomCodeDelayed = 1005,
+        CustomCodeDelayed = 1004,
 
         -- Don't use it directly! Instead, call `EHI:RegisterCustomSF()`
         CustomSF = 100000,
@@ -282,7 +276,6 @@ _G.EHI =
     Hints =
     {
         -- Generic hints
-        Question = "question",
         EndlessAssault = "endless_assault",
         Fire = "fire",
         FireRecharge = "fire_recharge",
@@ -554,10 +547,7 @@ _G.EHI =
         DeathSentence = 6
     },
 
-    HostElement = "on_executed",
-    ClientElement = "client_on_executed",
-
-    ModVersion = ModInstance and tonumber(ModInstance:GetVersion()) or "N/A",
+    ModVersion = ModInstance and tonumber(ModInstance:GetVersion()) or 0,
     -- PAYDAY 2/mods/Extra Heist Info/
     ModPath = ModPath,
     -- PAYDAY 2/mods/Extra Heist Info/loc/
@@ -669,6 +659,39 @@ local function LoadDefaultValues(self)
                     g = 116,
                     b = 0
                 }
+            },
+            equipment =
+            {
+                doctor_bag =
+                {
+                    r = 255,
+                    g = 0,
+                    b = 0
+                },
+                ammo_bag =
+                {
+                    r = 255,
+                    g = 255,
+                    b = 0
+                },
+                grenade_crate =
+                {
+                    r = 0,
+                    g = 255,
+                    b = 0
+                },
+                first_aid_kit =
+                {
+                    r = 255,
+                    g = 102,
+                    b = 102
+                },
+                bodybags_bag =
+                {
+                    r = 51,
+                    g = 204,
+                    b = 255
+                }
             }
         },
 
@@ -744,39 +767,6 @@ local function LoadDefaultValues(self)
         show_ecmfeedback_refresh = true,
         show_equipment_aggregate_health = true,
         show_equipment_aggregate_all = false,
-        equipment_color =
-        {
-            doctor_bag =
-            {
-                r = 255,
-                g = 0,
-                b = 0
-            },
-            ammo_bag =
-            {
-                r = 255,
-                g = 255,
-                b = 0
-            },
-            grenade_crate =
-            {
-                r = 0,
-                g = 255,
-                b = 0
-            },
-            first_aid_kit =
-            {
-                r = 255,
-                g = 102,
-                b = 102
-            },
-            bodybags_bag =
-            {
-                r = 51,
-                g = 204,
-                b = 255
-            }
-        },
         show_minion_tracker = true,
         show_minion_option = 3, -- 1 = You only; 2 = Total number of minions in one number; 3 = Number of minions per player
         show_minion_per_player = true,
@@ -1168,14 +1158,6 @@ function EHI:Save()
     end
 end
 
----Delays execution of a function
----@param name string ID
----@param t number time
----@param func function
-function EHI:DelayCall(name, t, func)
-    DelayedCalls:Add(name, t, func)
-end
-
 ---@param vr_option string Option to be checked if the game is running in VR version
 ---@param option string Option to be checked if the game is running in non-VR version
 ---@param expected_value { [any]: boolean }|any What the expected value in the option should be
@@ -1198,9 +1180,10 @@ end
 function EHI:OptionAndLoadTracker(option)
     if self.OptionTracker[option] then
         local tracker = self.OptionTracker[option]
-        tracker.count = tracker.count - 1
+        tracker.count = (tracker.count or 1) - 1
         if tracker.count == 0 then
-            dofile(string.format("%s%s%s.lua", self.LuaPath, "trackers/", tracker.file))
+            self:LoadTracker(tracker.file)
+            self.OptionTracker[option] = nil
         end
     end
 end
@@ -1210,12 +1193,18 @@ function EHI:GetOptionAndLoadTracker(option)
     local result = self:GetOption(option)
     if result and self.OptionTracker[option] then
         local tracker = self.OptionTracker[option]
-        tracker.count = tracker.count - 1
+        tracker.count = (tracker.count or 1) - 1
         if tracker.count == 0 then
-            dofile(string.format("%s%s%s.lua", self.LuaPath, "trackers/", tracker.file))
+            self:LoadTracker(tracker.file)
+            self.OptionTracker[option] = nil
         end
     end
     return result
+end
+
+---@param filename string
+function EHI:LoadTracker(filename)
+    dofile(string.format("%s%s%s.lua", self.LuaPath, "trackers/", filename))
 end
 
 ---@param option string
@@ -1238,14 +1227,6 @@ end
 function EHI:GetColorFromOption(option, color)
     if option and self.settings.colors[option] then
         return self:GetColor(self.settings.colors[option][color])
-    end
-    return Color.white
-end
-
----@param color string
-function EHI:GetTWColor(color)
-    if color and self.settings.colors.tracker_waypoint[color] then
-        return self:GetColor(self.settings.colors.tracker_waypoint[color])
     end
     return Color.white
 end
@@ -1282,15 +1263,8 @@ function EHI:GetEquipmentOption(option)
     return self:GetOption("show_equipment_tracker") and self:GetOption(option)
 end
 
----@param equipment string
----@return Color
-function EHI:GetEquipmentColor(equipment)
-    if equipment then
-        return self:GetColor(self.settings.equipment_color[equipment])
-    end
-    return Color.white
-end
-
+---@param waypoint string
+---@return boolean
 function EHI:GetWaypointOption(waypoint)
     return self:GetOption("show_waypoints") and self:GetOption(waypoint)
 end
@@ -1353,7 +1327,7 @@ end
 
 ---@return boolean
 function EHI:MissionTrackersAndWaypointEnabled()
-    return self:GetOption("show_mission_trackers") and self:GetOption("show_waypoints")
+    return self:GetOption("show_mission_trackers") and self:GetWaypointOption("show_waypoints_mission")
 end
 
 function EHI:IsXPTrackerEnabled()
@@ -1393,10 +1367,6 @@ function EHI:IsAssaultTrackerEnabled()
     return self:GetOption("show_assault_delay_tracker") or self:GetOption("show_assault_time_tracker")
 end
 
-function EHI:IsAssaultDelayTrackerEnabled()
-    return self:GetOption("show_assault_delay_tracker") and not tweak_data.levels:IsLevelSkirmish()
-end
-
 ---@return boolean
 function EHI:CombineAssaultDelayAndAssaultTime()
     return self:GetOption("show_assault_delay_tracker") and self:GetOption("show_assault_time_tracker")
@@ -1411,7 +1381,7 @@ function EHI:AddXPBreakdown(params)
     if self:IsXPTrackerDisabled() or not managers.menu_component then
         return
     elseif not managers.menu_component._mission_briefing_gui then
-        self:AddCallback("MissionBriefingGuiInit", function(gui)
+        self:AddCallback("MissionBriefingGuiInit", function(gui) ---@param gui MissionBriefingGui
             gui:AddXPBreakdown(params)
         end)
         return
@@ -1437,15 +1407,10 @@ end
 ---Calls all callbacks, after that they are deleted from memory
 ---@param id string|number
 function EHI:CallCallbackOnce(id, ...)
-    self:_dispatch_and_clear_event_handler(self._callback[id], ...)
-    self._callback[id] = nil
-end
-
----@param event_handler CallbackEventHandler?
-function EHI:_dispatch_and_clear_event_handler(event_handler, ...)
-    if event_handler then
-        event_handler:dispatch_and_clear(...)
+    if self._callback[id] then
+        self._callback[id]:dispatch_and_clear(...)
     end
+    self._callback[id] = nil
 end
 
 ---@param f fun(dropin: boolean)
@@ -1477,53 +1442,41 @@ function EHI:RunOnSpawnedCallbacks()
     self:CallCallbackOnce("Spawned")
 end
 
----@param object table
+---@generic T
+---@param object T
 ---@param func string
----@param post_call function
+---@param post_call fun(self: T, ...)
 function EHI:Hook(object, func, post_call)
-    self:HookWithID(object, func, "EHI_" .. func, post_call)
+    Hooks:PostHook(object, func, string.format("EHI_%s", func), post_call)
 end
 
----@param object table
+---@generic T
+---@param object T
 ---@param func string
----@param id string
----@param post_call function
-function EHI:HookWithID(object, func, id, post_call)
-    Hooks:PostHook(object, func, id, post_call)
-end
-
----@param object table
----@param func string
----@param pre_call function
+---@param pre_call fun(self: T, ...)
 function EHI:PreHook(object, func, pre_call)
-    self:PreHookWithID(object, func, "EHI_Pre_" .. func, pre_call)
+    Hooks:PreHook(object, func, string.format("EHI_Pre_%s", func), pre_call)
 end
 
----@param object table
+---@generic T
+---@param object T
 ---@param func string
----@param id string
----@param pre_call function
-function EHI:PreHookWithID(object, func, id, pre_call)
-    Hooks:PreHook(object, func, id, pre_call)
-end
-
----@param object table
----@param func string
----@param pre_call function
----@param post_call function
+---@param pre_call fun(self: T, ...)
+---@param post_call fun(self: T, ...)
 function EHI:PreHookAndHook(object, func, pre_call, post_call)
     self:PreHook(object, func, pre_call)
     self:Hook(object, func, post_call)
 end
 
----@param object table
+---@generic T
+---@param object T
 ---@param func string
 ---@param id string
----@param pre_call function
----@param post_call function
+---@param pre_call fun(self: T, ...)
+---@param post_call fun(self: T, ...)
 function EHI:PreHookAndHookWithID(object, func, id, pre_call, post_call)
-    self:PreHookWithID(object, func, id, pre_call)
-    self:HookWithID(object, func, id, post_call)
+    Hooks:PreHook(object, func, id, pre_call)
+    Hooks:PostHook(object, func, id, post_call)
 end
 
 ---Includes `EHI_`
@@ -1538,11 +1491,10 @@ function EHI:HookLootRemovalElement(elements)
     if type(elements) ~= "table" and type(elements) ~= "number" then
         return
     end
-    local f, HookFunction, ElementFunction, id
+    local hook = managers.ehi_hook
+    local f, HookFunction
     if self:IsHost() then
-        HookFunction = self.PreHookWithID
-        ElementFunction = self.HostElement
-        id = "EHI_Prehook_Element_"
+        HookFunction = hook.PrehookElement
         f = function(e, instigator, ...)
             if not e._values.enabled or not alive(instigator) then
                 return
@@ -1560,9 +1512,7 @@ function EHI:HookLootRemovalElement(elements)
             managers.ehi_loot:DecreaseLootCounterProgressMax()
         end
     else
-        HookFunction = self.HookWithID
-        ElementFunction = self.ClientElement
-        id = "EHI_Element_"
+        HookFunction = hook.HookElement
         f = function(...)
             managers.ehi_loot:DecreaseLootCounterProgressMax()
         end
@@ -1571,13 +1521,13 @@ function EHI:HookLootRemovalElement(elements)
         for _, index in ipairs(elements) do
             local element = managers.mission:get_element_by_id(index)
             if element then
-                HookFunction(self, element, ElementFunction, id .. tostring(index), f)
+                HookFunction(hook, element, f)
             end
         end
     else -- number
         local element = managers.mission:get_element_by_id(elements)
         if element then
-            HookFunction(self, element, ElementFunction, id .. tostring(elements), f)
+            HookFunction(hook, element, f)
         end
     end
 end
@@ -1657,10 +1607,15 @@ function EHI:AddWaypointToTrigger(id, waypoint)
 end
 
 ---@param id string
----@param event string|string[]
+---@param events string|string[]
 ---@param f function
-function EHI:AddEventListener(id, event, f)
-    managers.ehi_manager:AddEventListener(id, event, f)
+---@overload fun(self: EHI, id: string, f: function)
+function EHI:AddEventListener(id, events, f)
+    if f then
+        managers.ehi_manager:AddEventListener(id, events, f)
+    else
+        managers.ehi_manager:AddEventListener(id, id, events --[[@as function]])
+    end
 end
 
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
@@ -1784,14 +1739,10 @@ end
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return ElementTrigger
 function EHI:AddLootCounter3(f, trigger_once)
-    local tbl =
-    {
-        special_function = self:RegisterCustomSF(f)
+    return {
+        special_function = self:RegisterCustomSF(f),
+        trigger_times = trigger_once and 1
     }
-    if trigger_once then
-        tbl.trigger_times = 1
-    end
-    return tbl
 end
 
 ---@param f function Loot counter function
@@ -1818,7 +1769,7 @@ end
 ---@param f fun(self: EHIManager, trigger: table, element: table, enabled: boolean) Loot Counter function
 ---@param sequence_triggers table<number, LootCounterTable.SequenceTriggersTable> If the Loot Counter is not enabled, hook the sequence triggers so the syncing will still work
 ---@param loot_counter_data_function fun(self: EHIManager, trigger: table, element: table, enabled: boolean) If the Loot Counter is not enabled, sync the data to clients so the syncing will still work. The provided function `HAS TO SYNC` tracker creation so it will work on clients
----@return table?
+---@return ElementTrigger?
 function EHI:AddLootCounterSynced(f, sequence_triggers, loot_counter_data_function)
     if self:IsPlayingCrimeSpree() then
         return nil
@@ -1830,18 +1781,16 @@ function EHI:AddLootCounterSynced(f, sequence_triggers, loot_counter_data_functi
         managers.ehi_loot:AddSequenceTriggers(sequence_triggers)
         special_function = self:RegisterCustomSF(loot_counter_data_function)
     end
-    local tbl =
-    {
+    return {
         special_function = special_function,
         trigger_times = 1
     }
-    return tbl
 end
 
 ---@param f fun(self: EHIManager, trigger: table, element: table, enabled: boolean) Loot Counter function
 ---@param sequence_triggers table<number, LootCounterTable.SequenceTriggersTable> If the Loot Counter is not enabled, hook the sequence triggers so the syncing will still work
 ---@param loot_counter_data table If the Loot Counter is not enabled, sync the data to clients so the syncing will still work
----@return table?
+---@return ElementTrigger?
 function EHI:AddLootCounterSynced2(f, sequence_triggers, loot_counter_data)
     if self:IsPlayingCrimeSpree() then
         return nil
@@ -1850,25 +1799,10 @@ function EHI:AddLootCounterSynced2(f, sequence_triggers, loot_counter_data)
         managers.ehi_loot:SetSyncData(loot_counter_data)
         return nil
     end
-    local tbl =
-    {
+    return {
         special_function = self:RegisterCustomSF(f),
         trigger_times = 1
     }
-    return tbl
-end
-
----@param achievements ParseAchievementTable Table with achievements
----@param package string Beardlib package where achievements are stored
----@param exclude table? If the achievement table contains vanilla achievements, provide their ID so they don't get marked as from Beardlib
-function EHI:PreparseBeardlibAchievements(achievements, package, exclude)
-    exclude = exclude or {}
-    for id, data in pairs(achievements or {}) do
-        if not exclude[id] then
-            data.beardlib = true
-            data.package = package
-        end
-    end
 end
 
 ---@param new_triggers ParseTriggersTable
@@ -1908,8 +1842,7 @@ function EHI:DisableElementWaypoint(id)
     local element = managers.mission:get_element_by_id(id) ---@cast element ElementWaypoint?
     if not element or self._cache.ElementWaypoint[id] then
         return
-    end
-    if not element.ehi_on_executed then
+    elseif not element.ehi_on_executed then
         self:Log(string.format("Provided id %s is not an ElementWaypoint!", tostring(id)))
         return
     end
@@ -2006,7 +1939,7 @@ function EHI:ShowLootCounterNoChecks(params)
         managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers or {})
     elseif params.max_bags_for_level and self:IsXPTrackerEnabledAndVisible() then
         if params.max_bags_for_level.objective_triggers then
-            local xp_trigger = { special_function = self:RegisterCustomSF(function(manager, trigger, element, enabled)
+            local xp_trigger = { special_function = self:RegisterCustomSF(function(manager, trigger, element, enabled) ---@cast element ElementExperience
                 if enabled then
                     manager._trackers:CallFunction(trigger.id, "ObjectiveXPAwarded", element._values.amount or 0)
                 end
@@ -2015,7 +1948,7 @@ function EHI:ShowLootCounterNoChecks(params)
             for _, id in ipairs(params.max_bags_for_level.objective_triggers) do
                 triggers[id] = xp_trigger
             end
-            managers.ehi_manager:AddTriggers2(triggers, nil, "LootCounter")
+            managers.ehi_manager:AddTriggers2(triggers, "LootCounter")
             params.max_bags_for_level.objective_triggers = nil
         end
         managers.ehi_loot:ShowLootCounter(0, 0, 0, 0, false, false, params.max_bags_for_level)
@@ -2030,7 +1963,7 @@ function EHI:ShowLootCounterNoChecks(params)
         params.no_sync_load = true
     end
     if params.triggers and (not params.no_triggers_if_max_xp_bags_gt_max or (params.max_xp_bags or 0) >= (params.max or 0)) then
-        managers.ehi_manager:AddTriggers2(params.triggers, nil, "LootCounter")
+        managers.ehi_manager:AddTriggers2(params.triggers, "LootCounter")
         if params.hook_triggers then
             managers.ehi_manager:HookElements(params.triggers)
         end
@@ -2048,7 +1981,7 @@ function EHI:ShowLootCounterSynced(params)
     if self:IsPlayingCrimeSpree() then
         return
     elseif not self:GetOption("show_loot_counter") then
-        managers.ehi_manager:AddTriggers2(params.triggers or {}, nil, "LootCounter")
+        managers.ehi_manager:AddTriggers2(params.triggers or {}, "LootCounter")
         managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers or {})
         managers.ehi_loot:SetSyncData({
             max = params.max or 0,
@@ -2102,7 +2035,7 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
         end)
     end
     if params.triggers then
-        managers.ehi_manager:AddTriggers2(params.triggers, nil, params.achievement)
+        managers.ehi_manager:AddTriggers2(params.triggers, params.achievement)
         if params.hook_triggers then
             managers.ehi_manager:HookElements(params.triggers)
         end
@@ -2149,33 +2082,11 @@ function EHI:ShowAchievementKillCounter(params)
         return
     end
     managers.ehi_achievement:AddAchievementKillCounter(id, progress, max)
-    self:HookWithID(AchievmentManager, "award_progress", string.format("EHI_award_progress_%s", id), function(am, stat, value)
+    Hooks:PostHook(AchievmentManager, "award_progress", string.format("EHI_award_progress_%s", id), function(am, stat, value)
         if stat == id_stat then
             managers.ehi_tracker:IncreaseTrackerProgress(id, value)
         end
     end)
-end
-
----Currently one custom mission is using this, if any other custom will be using this, the function should be rewritten
----@param achievement string
----@param max number
----@param difficulty_check number Difficulty or above
-function EHI:ShowBeardLibAchievementLootCounter_Mallbank(achievement, max, difficulty_check)
-    if self:IsBeardLibAchievementUnlocked("Mallbank", achievement) or not self:IsDifficultyOrAbove(difficulty_check) then
-        return
-    end
-    managers.ehi_tracker:AddTracker({
-        beardlib = true,
-        id = achievement,
-        max = max,
-        icons = { "ehi_" .. achievement },
-        show_finish_after_reaching_target = true,
-        class = self.Trackers.Achievement.Progress
-    })
-    managers.ehi_loot:AddAchievementListener({
-        achievement = achievement,
-        max = max
-    })
 end
 
 ---@param f fun(self: EHIManager)
@@ -2214,10 +2125,7 @@ function EHI:FinalizeUnits(tbl)
                         timer_gui:SetOnAlarm()
                     end
                     if unit_data.remove_vanilla_waypoint then
-                        timer_gui:RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
-                        if unit_data.restore_waypoint_on_done then
-                            timer_gui:SetRestoreVanillaWaypointOnDone()
-                        end
+                        timer_gui:RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint, unit_data.restore_waypoint_on_done)
                     end
                     if unit_data.ignore_visibility then
                         timer_gui:SetIgnoreVisibility()
@@ -2238,28 +2146,31 @@ function EHI:FinalizeUnits(tbl)
                     timer_gui:Finalize()
                 end
                 if digital_gui and digital_gui._ehi_key then
-                    digital_gui:SetIcons(unit_data.icons)
-                    digital_gui:SetIgnore(unit_data.ignore)
-                    digital_gui:SetRemoveOnPause(unit_data.remove_on_pause)
-                    digital_gui:SetWarning(unit_data.warning)
-                    digital_gui:SetCompletion(unit_data.completion)
-                    if unit_data.remove_on_alarm then
-                        digital_gui:SetOnAlarm()
-                    end
-                    if unit_data.custom_callback then
-                        digital_gui:SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
-                    end
-                    if unit_data.icon_on_pause then
-                        digital_gui:SetIconOnPause(unit_data.icon_on_pause[1])
-                    end
-                    if unit_data.remove_vanilla_waypoint then
-                        digital_gui:RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
-                    end
-                    if unit_data.ignore_visibility then
-                        digital_gui:SetIgnoreVisibility()
-                    end
-                    if unit_data.hint then
-                        digital_gui:SetHint(unit_data.hint)
+                    if unit_data.ignore then
+                        digital_gui:SetIgnore()
+                    else
+                        digital_gui:SetIcons(unit_data.icons)
+                        digital_gui:SetRemoveOnPause(unit_data.remove_on_pause)
+                        digital_gui:SetWarning(unit_data.warning)
+                        digital_gui:SetCompletion(unit_data.completion)
+                        if unit_data.remove_on_alarm then
+                            digital_gui:SetOnAlarm()
+                        end
+                        if unit_data.custom_callback then
+                            digital_gui:SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
+                        end
+                        if unit_data.icon_on_pause then
+                            digital_gui:SetIconOnPause(unit_data.icon_on_pause)
+                        end
+                        if unit_data.remove_vanilla_waypoint then
+                            digital_gui:RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
+                        end
+                        if unit_data.ignore_visibility then
+                            digital_gui:SetIgnoreVisibility()
+                        end
+                        if unit_data.hint then
+                            digital_gui:SetHint(unit_data.hint)
+                        end
                     end
                     digital_gui:Finalize()
                 end
@@ -2291,8 +2202,7 @@ end
 function EHI:UpdateInstanceMissionUnits(tbl, skip_finalize)
     if not self:GetOption("show_timers") then
         return
-    end
-    if not skip_finalize then
+    elseif not skip_finalize then
         self:FinalizeUnits(tbl)
     end
     for id, data in pairs(tbl) do
@@ -2399,9 +2309,8 @@ function EHI:GetKeypadResetTimer(time_override)
         return time_override.mayhem or 30
     elseif self:IsDifficulty(self.Difficulties.DeathWish) then
         return time_override.deathwish or 30
-    else
-        return time_override.deathsentence or 40
     end
+    return time_override.deathsentence or 40
 end
 
 ---Returns value for the current difficulty. If the value is not provided `-1` is returned
@@ -2445,9 +2354,8 @@ function EHI:GetValueBasedOnDifficulty(values)
         return values.deathwish or -1
     elseif values.deathsentence_or_below and self:IsDifficultyOrBelow(self.Difficulties.DeathSentence) then
         return values.deathsentence_or_below
-    else
-        return values.deathsentence or -1
     end
+    return values.deathsentence or -1
 end
 
 ---@param trigger ElementTrigger?
@@ -2494,7 +2402,6 @@ function EHI:SetDeployableIgnorePos(type, pos)
     end
 end
 
----@return boolean
 function EHI:EscapeVehicleWillReturn()
     if self:IsHost() and SWAYRMod and SWAYRMod.included(Global.game_settings.level_id) then
         return false
@@ -2503,7 +2410,12 @@ function EHI:EscapeVehicleWillReturn()
 end
 
 function EHI:CanShowCivilianCountTracker()
-    return self:GetOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not self.NoCivilianCounter[Global.game_settings.level_id]
+    return self:GetOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not tweak_data.levels:IsLevelSkirmish() and not table.contains({
+        alex_1 = true,
+        haunted = true,
+        man = true,
+        bph = true
+    }, Global.game_settings.level_id)
 end
 
 ---@param color_table { ["red"]: number|boolean|EHI.ColorTable.Color, ["blue"]: number|boolean|EHI.ColorTable.Color, ["green"]: number|boolean|EHI.ColorTable.Color }
@@ -2569,8 +2481,7 @@ end
 ---@param trigger_name string?
 ---@param include_loud_check boolean?
 function EHI:AddEndlessAssault(time, trigger_name, include_loud_check)
-    ---@type ElementTrigger
-    local tbl =
+    local tbl = ---@type ElementTrigger
     {
         id = trigger_name or "EndlessAssault",
         icons = self.Icons.EndlessAssault,
@@ -2588,6 +2499,22 @@ function EHI:AddEndlessAssault(time, trigger_name, include_loud_check)
         tbl.condition_function = self.ConditionFunctions.IsLoud
     end
     return tbl
+end
+
+---@param single_sniper boolean?
+---@param trigger_once boolean?
+---@return ElementTrigger?
+function EHI:AddSniperSpawnedPopup(single_sniper, trigger_once)
+    if not (self:GetOption("show_sniper_tracker") and self:GetOption("show_sniper_spawned_popup")) then
+        return
+    end
+    return {
+        special_function = self.SpecialFunctions.CustomCode,
+        f = function()
+            managers.hud:ShowSnipersSpawned(single_sniper)
+        end,
+        trigger_times = trigger_once and 1
+    }
 end
 
 ---@return boolean
@@ -2622,10 +2549,11 @@ function EHI:HookExists(object, func, id)
 end
 
 ---Updates existing EHI hook for given object and function
----@param object any
+---@generic T
+---@param object T
 ---@param func string
 ---@param id string
----@param new_f function
+---@param new_f fun(self: T, ...)
 function EHI:UpdateExistingHook(object, func, id, new_f)
     local Hooks = Hooks
     if not (Hooks._function_hooks[object] and Hooks._function_hooks[object][func]) then
@@ -2647,15 +2575,16 @@ function EHI:UpdateExistingHook(object, func, id, new_f)
 end
 
 ---Checks if EHI hook for given object and function exists and updates its function; else if will create a new hook
----@param object any
+---@generic T
+---@param object T
 ---@param func string
 ---@param id string
----@param new_f function
+---@param new_f fun(self: T, ...)
 function EHI:UpdateExistingHookIfExistsOrHook(object, func, id, new_f)
     if self:HookExists(object, func, id) then
         self:UpdateExistingHook(object, func, id, new_f)
     else
-        self:HookWithID(object, func, id, new_f)
+        Hooks:PostHook(object, func, id, new_f)
     end
 end
 
@@ -2668,21 +2597,10 @@ if EHI:GetUnlockableOption("hide_unlocked_achievements") then
         local a = G.achievment_manager.achievments[achievement]
         return a and a.awarded
     end
-    ---@param package_id string
-    ---@param achievement_id string
-    function EHI:IsBeardLibAchievementUnlocked(package_id, achievement_id)
-        return not self:IsBeardLibAchievementLocked(package_id, achievement_id)
-    end
 else -- Always show trackers for achievements
     ---@param achievement string
     ---@return boolean
     function EHI:IsAchievementUnlocked(achievement)
-        return false
-    end
-    ---@param package_id string
-    ---@param achievement_id string
-    function EHI:IsBeardLibAchievementUnlocked(package_id, achievement_id)
-        self:IsBeardLibAchievementLocked(package_id, achievement_id, true)
         return false
     end
 end
@@ -2714,13 +2632,22 @@ function EHI:IsSHSideJobAvailable(daily_id, skip_unlockables_check)
     if current_daily.id == daily_id then
         if current_daily.state == "completed" or current_daily.state == "rewarded" then
             return false
-        end
-        if skip_unlockables_check then
+        elseif skip_unlockables_check then
             return true
         end
         return not self._cache.UnlockablesAreDisabled
     end
     return false
+end
+
+---@param objectives table
+---@param progress_id string
+function EHI:_get_objective_progress(objectives, progress_id)
+    for _, objective in ipairs(objectives) do
+        if objective.progress_id == progress_id then
+            return objective.progress, objective.max_progress
+        end
+    end
 end
 
 ---@param daily_id string
@@ -2729,12 +2656,7 @@ end
 function EHI:GetSHSideJobProgressAndMax(daily_id, progress_id)
     local current_daily = managers.custom_safehouse:get_daily_challenge()
     if current_daily and current_daily.id == daily_id then
-        progress_id = progress_id or daily_id
-        for _, objective in ipairs(current_daily.trophy.objectives) do
-            if objective.progress_id == progress_id then
-                return objective.progress, objective.max_progress
-            end
-        end
+        return self:_get_objective_progress(current_daily.trophy.objectives, progress_id or daily_id)
     end
     return 0, 0
 end
@@ -2745,12 +2667,7 @@ end
 function EHI:GetDailyChallengeProgressAndMax(daily_id, progress_id)
     local current_job = managers.challenge:get_active_challenge(daily_id)
     if current_job and current_job.id == daily_id and current_job.objectives then
-        progress_id = progress_id or daily_id
-        for _, objective in ipairs(current_job.objectives) do
-            if objective.progress_id == progress_id then
-                return objective.progress, objective.max_progress
-            end
-        end
+        return self:_get_objective_progress(current_job.objectives, progress_id or daily_id)
     end
     return 0, 0
 end
@@ -2765,26 +2682,12 @@ function EHI:IsAchievementLocked(achievement)
     return not self:IsAchievementUnlocked(achievement) and not self._cache.UnlockablesAreDisabled
 end
 
----@param package_id string Package ID in Beardlib
----@param achievement_id string
----@param skip_check boolean?
-function EHI:IsBeardLibAchievementLocked(package_id, achievement_id, skip_check)
-    local Achievement = CustomAchievementPackage:new(package_id):Achievement(achievement_id)
-    if not Achievement or (Achievement:IsUnlocked() and not skip_check) then
-        return false
-    end
-    self._cache.Beardlib = self._cache.Beardlib or {}
-    self._cache.Beardlib[achievement_id] = { name = Achievement:GetName(), objective = Achievement:GetObjective() }
-    tweak_data.hud_icons["ehi_" .. achievement_id] = { texture = Achievement:GetIcon() }
-    return true
-end
-
 ---@param achievement string Achievement ID in Vanilla; Beardlib is not supported
 function EHI:GetAchievementProgress(achievement)
     return managers.network.account:get_stat(achievement)
 end
 
---- Used for achievements that has in the description "Kill X enemies in an heist" and etc... to show them only once  
+--- Used for achievements that has in the description `Kill X enemies in an heist` and etc... to show them only once  
 --- This is done to prevent tracker spam if the player decides to replay the same heist with a similar weapon or weapon category  
 --- Once the achievement has been awarded, the achievement will no longer show on the screen
 ---@param achievement string
@@ -2795,7 +2698,6 @@ function EHI:IsAchievementLocked2(achievement)
 end
 
 ---@param achievement string
----@return boolean
 function EHI:IsAchievementUnlocked2(achievement)
     return not self:IsAchievementLocked2(achievement)
 end
@@ -2812,20 +2714,21 @@ if EHI.debug.all_instances then -- For testing purposes
     function EHI:DebugInstance(instance_name)
         local scripts = managers.mission._scripts or {}
         local instances = managers.world_instance:instance_data()
+        local element_f = managers.ehi_hook._element_hook_function
         for _, instance in ipairs(instances) do
             if instance.name == instance_name then
-                self:PrintTable(instance or {})
+                self:PrintTable(instance)
                 local start = self:GetInstanceElementID(100000, instance.start_index)
                 local _end = start + instance.index_size - 1
-                local f = function(e, ...)
-                    managers.hud:DebugBaseElement2(e._id, instance.start_index, nil, e:editor_name(), instance_name)
+                local f = function(e, ...) ---@param e MissionScriptElement
+                    managers.chat:_receive_message(1, "[EHI]", string.format("Base ID: %d; ID: %d; Element: %s; Instance: %s", EHI:GetBaseUnitID(e._id, instance.start_index, 100000), e._id, e:editor_name(), instance_name), Color.white)
                 end
                 self:Log(string.format("Hooking elements in instance '%s'", instance_name))
                 for _, script in pairs(scripts) do
                     for i = start, _end, 1 do
                         local element = script:element(i)
                         if element then
-                            self:HookWithID(element, self.HostElement, "EHI_Debug_Element_" .. tostring(i), f)
+                            Hooks:PostHook(element, element_f, "EHI_Debug_Element_" .. tostring(i), f)
                         end
                     end
                 end

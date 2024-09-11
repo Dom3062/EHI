@@ -23,11 +23,11 @@ function EHIHealthFloatManager:new(hud)
     if EHI:GetOption("show_floating_health_bar_civilians") then -- +Slot mask 21
         self._unit_slot_mask = self._unit_slot_mask + managers.slot:get_mask("civilians")
     end
-    EHI:HookWithID(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_detonate", function(base, ...)
+    Hooks:PostHook(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_detonate", function(base, ...)
         local unit = base._unit
         self._smokes[unit:key()] = unit:position()
     end)
-    EHI:HookWithID(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_destroy", function(base, ...)
+    Hooks:PostHook(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_destroy", function(base, ...)
         self._smokes[base._unit:key()] = nil
     end)
     hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
@@ -131,28 +131,26 @@ end
 ---@param uPos Vector3?
 function EHIHealthFloatManager:_visibility(uPos)
     local result = 1 - math.min(0.9, managers.environment_controller._current_flashbang or 1)
-    if not uPos then
-        return result
-    end
-    local minDis = 9999
-    local sRad = 300
-    for i, sPos in pairs(self._smokes) do
-        local cPos = self._camPos
-        local disR, dotR = 1, 1
-        local sDir = sPos - cPos
-        local uDir = uPos - cPos
-        local xDir = sPos - uPos
-        minDis = math.min(sDir:length(), xDir:length())
-        if minDis <= sRad then
-            disR = math.pow(minDis / sRad, 3)
-        elseif sDir:length() < uDir:length() then
-            mvector3.normalize(sDir)
-            mvector3.normalize(uDir)
-            dotR = 1 - math.pow(mvector3.dot(sDir, uDir), 3)
+    if uPos then
+        local minDis = 9999
+        local sRad = 300
+        for _, sPos in pairs(self._smokes) do
+            local cPos = self._camPos
+            local disR, dotR = 1, 1
+            local sDir = sPos - cPos
+            local uDir = uPos - cPos
+            local xDir = sPos - uPos
+            minDis = math.min(sDir:length(), xDir:length())
+            if minDis <= sRad then
+                disR = math.pow(minDis / sRad, 3)
+            elseif sDir:length() < uDir:length() then
+                mvector3.normalize(sDir)
+                mvector3.normalize(uDir)
+                dotR = 1 - math.pow(mvector3.dot(sDir, uDir), 3)
+            end
+            result = math.min(result, math.min(disR, dotR))
         end
-        result = math.min(result, math.min(disR, dotR))
     end
-
     return result
 end
 
@@ -170,7 +168,7 @@ EHIHealthFloatBar._opacity = 0.9
 EHIHealthFloatBar._color_start = Color("FFA500"):with_alpha(1)
 EHIHealthFloatBar._color_end = Color("FF0000"):with_alpha(1)
 EHIHealthFloatBar._color_friendly = Color("00FF00"):with_alpha(1)
-EHIHealthFloatBar._converts_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Team AI shares the same slot mask (16) with converts, workaround
+EHIHealthFloatBar._converts_disabled = not EHI:GetOption("show_floating_health_bar_converts") -- Team AI shares the same slot mask (16) with converts, workaround
 EHIHealthFloatBar._civilians_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Tied civilians share the same slot mask (22) with tied cops, workaround
 ---@param owner EHIHealthFloatManager
 ---@param key string
@@ -180,59 +178,10 @@ function EHIHealthFloatBar:init(owner, key, unit, t)
     self._parent = owner
     self._unit = unit
     self._key = key
-    self._ppnl = owner._pnl
     self._lastT = t
-    self:_make()
-end
-
----@param x number?
-function EHIHealthFloatBar:__shadow(x)
-    if x then
-        self.lblShadow1:set_x(x + 1)
-        self.lblShadow2:set_x(x - 1)
-    else
-        self.lblShadow1:set_text(self._txts)
-        self.lblShadow2:set_text(self._txts)
-    end
-end
-
-function EHIHealthFloatBar:_lbl(lbl, txts)
-    local result = ''
-    if alive(lbl) then
-        if type(txts) == 'table' then
-            local pos = 0
-            local posEnd = 0
-            local ranges = {}
-            for i, txtObj in ipairs(txts) do
-                txtObj[1] = tostring(txtObj[1])
-                result = result .. txtObj[1]
-                local _, count = txtObj[1]:gsub('[^\128-\193]', '')
-                posEnd = pos + count
-                ranges[i] = { pos, posEnd, txtObj[2] or Color.white }
-                pos = posEnd
-            end
-            lbl:set_text(result)
-            for _, range in ipairs(ranges) do
-                lbl:set_range_color(range[1], range[2], range[3] or Color.green)
-            end
-        elseif type(txts) == 'string' then
-            result = txts
-            lbl:set_text(txts)
-        end
-    elseif type(txts) == 'table' then
-        for _, t in ipairs(txts) do
-            result = result .. tostring(t[1])
-        end
-    else
-        result = txts
-    end
-    return result
-end
-
-function EHIHealthFloatBar:_make()
     local size = self._size
     local m = self._margin
-    local pnl = self._ppnl:panel({
+    local pnl = owner._pnl:panel({
         x = 0,
         y = -size,
         w = 300,
@@ -300,6 +249,50 @@ function EHIHealthFloatBar:_make()
         layer = 2,
         blend_mode = "normal"
     }
+end
+
+---@param x number?
+function EHIHealthFloatBar:__shadow(x)
+    if x then
+        self.lblShadow1:set_x(x + 1)
+        self.lblShadow2:set_x(x - 1)
+    else
+        self.lblShadow1:set_text(self._txts)
+        self.lblShadow2:set_text(self._txts)
+    end
+end
+
+function EHIHealthFloatBar:_lbl(lbl, txts)
+    local result = ''
+    if alive(lbl) then
+        if type(txts) == 'table' then
+            local pos = 0
+            local posEnd = 0
+            local ranges = {}
+            for i, txtObj in ipairs(txts) do
+                txtObj[1] = tostring(txtObj[1])
+                result = result .. txtObj[1]
+                local _, count = txtObj[1]:gsub('[^\128-\193]', '')
+                posEnd = pos + count
+                ranges[i] = { pos, posEnd, txtObj[2] or Color.white }
+                pos = posEnd
+            end
+            lbl:set_text(result)
+            for _, range in ipairs(ranges) do
+                lbl:set_range_color(range[1], range[2], range[3] or Color.green)
+            end
+        elseif type(txts) == 'string' then
+            result = txts
+            lbl:set_text(txts)
+        end
+    elseif type(txts) == 'table' then
+        for _, t in ipairs(txts) do
+            result = result .. tostring(t[1])
+        end
+    else
+        result = txts
+    end
+    return result
 end
 
 ---@param t number
@@ -405,8 +398,9 @@ end
 
 function EHIHealthFloatBar:destroy()
     local pnl = self._pnl
-    if alive(self._ppnl) and alive(pnl) then
-        self._ppnl:remove(self._pnl)
+    if alive(pnl) then
+        pnl:stop()
+        pnl:parent():remove(pnl)
     end
     self._parent._floats[self._key] = nil
 end

@@ -5,12 +5,12 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
-    [101392] = { time = 120, id = "FireEvidence", icons = { Icon.Fire }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100024, 18900) }, hint = Hints.Fire },
+    [101392] = { time = 120, id = "FireEvidence", icons = { Icon.Fire }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100024, 18900) }, hint = Hints.Fire },
     [101588] = { id = "FireEvidence", special_function = SF.PauseTracker },
 
-    [101460] = { time = 18, id = "DoorBreach", icons = { Icon.Door }, waypoint = { position_by_element_and_remove_vanilla_waypoint = 103837 }, hint = Hints.Wait },
+    [101460] = { time = 18, id = "DoorBreach", icons = { Icon.Door }, waypoint = { data_from_element_and_remove_vanilla_waypoint = 103837 }, hint = Hints.Wait },
 
-    [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 101391 }, hint = Hints.Escape }
+    [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, waypoint = { data_from_element_and_remove_vanilla_waypoint = 101391 }, hint = Hints.Escape }
 }
 if EHI:IsClient() then
     triggers[100233] = EHI:ClientCopyTrigger(triggers[101389], { time = 20 + 4 })

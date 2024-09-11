@@ -5,7 +5,7 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
 local zone_delay = 12
-local LootDropWaypoint = { icon = Icon.LootDrop, position_by_element_and_remove_vanilla_waypoint = 104215 }
+local LootDropWaypoint = { data_from_element_and_remove_vanilla_waypoint = 104215 }
 ---@type ParseTriggerTable
 local triggers = {
     [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint), hint = Hints.LootTimed },

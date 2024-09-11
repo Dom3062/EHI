@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("PlayerActionTriggerHappy") then
-    return
-end
-
-if not EHI:GetBuffAndOption("trigger_happy") then
+if EHI:CheckLoadHook("PlayerActionTriggerHappy") or not EHI:GetBuffAndOption("trigger_happy") then
     return
 end
 

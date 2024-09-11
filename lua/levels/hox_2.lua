@@ -13,7 +13,6 @@ local element_sync_triggers =
 }
 local request = { Icon.PCHack, Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
-local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
 local CheckOkValueHostCheckOnly = EHI:RegisterCustomSF(function(self, trigger, element, ...)
     if EHI:IsHost() and not element:_values_ok() then
         return
@@ -29,11 +28,6 @@ local PCVectors = {}
 ---@type ParseTriggerTable
 local triggers = {
     [102016] = EHI:AddEndlessAssault(7),
-
-    [104579] = { time = 15, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait, tracker_merge = true },
-    [104580] = { time = 25, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait, tracker_merge = true },
-    [104581] = { time = 20, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait, tracker_merge = true },
-    [104582] = { time = 30, id = "Request", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait, tracker_merge = true }, -- Disabled in the mission script
 
     [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop }, waypoint_f = function(self, trigger)
         local vector = PCVectors[self._cache.CurrentHackNumber or 0]
@@ -51,21 +45,34 @@ local triggers = {
         self:CallEvent("hox_2_restore_waypoint_hack")
     end),
 
-    [104314] = { max = 4, id = "Request", icons = { Icon.PCHack }, class = TT.Timed.Progress, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.hox_2_Request },
-    [104591] = { id = "Request", special_function = SF.IncreaseProgress },
-    [104599] = { id = "Request", special_function = SF.RemoveTracker },
-
     [104472] = { id = "HoxtonMaxHacks", max = 4, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, hint = Hints.Hack },
     [104478] = { id = "HoxtonMaxHacks", max = 4, progress = 1, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, hint = Hints.Hack },
     [104480] = { id = "HoxtonMaxHacks", max = 4, progress = 2, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, hint = Hints.Hack },
     [104481] = { id = "HoxtonMaxHacks", max = 4, progress = 3, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, hint = Hints.Hack },
     [104482] = { id = "HoxtonMaxHacks", max = 4, progress = 4, dont_create = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly },
 
-    [105113] = { chances = { 25, 34, 50, 100 }, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance, hint = Hints.hox_2_Evidence },
+    [105113] = { chances = EHI.Utils:GetTableChance(4), id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance, hint = Hints.hox_2_Evidence },
     [102257] = EHI:AddCustomCode(function(self)
         self._trackers:CallFunction("ForensicsMatchChance", "IncreaseChance2")
     end),
     [105137] = { id = "ForensicsMatchChance", special_function = SF.RemoveTracker }
+}
+local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
+local tracker_merge =
+{
+    RequestCounter =
+    {
+        elements =
+        {
+            [104314] = { max = 4, icons = { Icon.PCHack }, class = TT.Timed.Progress, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.hox_2_Request },
+            [104591] = { special_function = SF.IncreaseProgress },
+            [104599] = { special_function = SF.RemoveTracker },
+            [104579] = { time = 15, id = "RequestDelay", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait },
+            [104580] = { time = 25, id = "RequestDelay", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait },
+            [104581] = { time = 20, id = "RequestDelay", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait },
+            [104582] = { time = 30, id = "RequestDelay", icons = request, waypoint = deep_clone(PCHackWaypoint), hint = Hints.Wait }, -- Disabled in the mission script
+        }
+    }
 }
 if EHI:IsClient() then
     triggers[EHI:GetInstanceElementID(100055, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, special_function = SF.SetRandomTime, data = { 45, 55, 65 }, hint = Hints.Teargas }
@@ -128,7 +135,8 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other,
     pre_parse = { filter_out_not_loaded_trackers = "show_timers" },
-    sync_triggers = { element = element_sync_triggers }
+    sync_triggers = { element = element_sync_triggers },
+    tracker_merge = tracker_merge
 })
 EHI:AddLoadSyncFunction(function(self)
     local pc = managers.worlddefinition:get_unit(104418) --[[@as UnitTimer?]]
@@ -223,7 +231,7 @@ local tbl =
             tostring(Vector3(-2217.05, 2415.52, -354.502)) -- ECM
         }
         local execute = true
-        EHI:HookWithID(MissionDoorDeviceInteractionExt, "set_active", "EHI_100003_6840_set_active", function(self, active, ...)
+        Hooks:PostHook(MissionDoorDeviceInteractionExt, "set_active", "EHI_100003_6840_set_active", function(self, active, ...)
             if active == false and execute then
                 local u_pos = tostring(self._unit:position())
                 for _, unit_pos in ipairs(pos) do
@@ -239,7 +247,7 @@ local tbl =
                 execute = false
             end
         end)
-        EHI:PreHookWithID(MissionDoorDeviceInteractionExt, "destroy", "EHI_100003_6840_destroy", function(...)
+        Hooks:PreHook(MissionDoorDeviceInteractionExt, "destroy", "EHI_100003_6840_destroy", function(...)
             execute = false
         end)
     end}

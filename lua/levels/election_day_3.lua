@@ -3,34 +3,36 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local drill_spawn_delay = { time = 30, id = "DrillSpawnDelay", icons = { Icon.Drill, Icon.Goto }, hint = Hints.DrillDelivery }
-local CrashIcons = { Icon.PCHack, Icon.Fix, "pd2_question" }
-if EHI:GetOption("show_one_icon") then
-    CrashIcons = { Icon.Fix }
-end
-local CrashChanceTime = EHI:RegisterCustomSF(function(self, trigger, ...)
-    if self._trackers:CallFunction2("CrashChance", "StartTimer", trigger.time) then
-        self:CreateTracker(trigger)
-    end
-end)
+---@type ParseTriggerTable
 local triggers = {
-    [101284] = { chance = 50, id = "CrashChance", icons = { Icon.PCHack, Icon.Fix }, class = TT.Timed.Chance, hint = Hints.election_day_3_CrashChance, stop_timer_on_end = true },
-    [103570] = { id = "CrashChance", special_function = SF.DecreaseChanceFromElement }, -- -25%
-    [100741] = { id = "CrashChance", special_function = SF.RemoveTracker },
-    [103572] = { time = 50, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime, special_function = CrashChanceTime },
-    [103573] = { time = 40, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime, special_function = CrashChanceTime },
-    [103574] = { time = 30, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime, special_function = CrashChanceTime },
     [103568] = { time = 60, id = "Hack", icons = { Icon.PCHack }, hint = Hints.Hack },
     [103585] = { id = "Hack", special_function = SF.RemoveTracker },
 
     [103478] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion },
 
-    [103169] = drill_spawn_delay,
-    [103179] = drill_spawn_delay,
-    [103190] = drill_spawn_delay,
-    [103195] = drill_spawn_delay,
+    [103169] = { time = 30, id = "DrillSpawnDelay", icons = { Icon.Drill, Icon.Goto }, hint = Hints.DrillDelivery, waypoint = { data_from_element_and_remove_vanilla_waypoint = 103185, restore_on_done = true } },
+    [103179] = { time = 30, id = "DrillSpawnDelay", icons = { Icon.Drill, Icon.Goto }, hint = Hints.DrillDelivery, waypoint = { data_from_element_and_remove_vanilla_waypoint = 101912, restore_on_done = true } },
+    [103190] = { time = 30, id = "DrillSpawnDelay", icons = { Icon.Drill, Icon.Goto }, hint = Hints.DrillDelivery, waypoint = { data_from_element_and_remove_vanilla_waypoint = 103183, restore_on_done = true } },
+    [103195] = { time = 30, id = "DrillSpawnDelay", icons = { Icon.Drill, Icon.Goto }, hint = Hints.DrillDelivery, waypoint = { data_from_element_and_remove_vanilla_waypoint = 103184, restore_on_done = true } },
 
     [103535] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion }
+}
+local CrashIcons = EHI:GetOption("show_one_icon") and { Icon.Fix } or { Icon.PCHack, Icon.Fix, "pd2_question" }
+local tracker_merge =
+{
+    CrashChance =
+    {
+        start_timer = true,
+        elements =
+        {
+            [101284] = { chance = 50, icons = { Icon.PCHack, Icon.Fix }, class = TT.Timed.Chance, hint = Hints.election_day_3_CrashChance, stop_timer_on_end = true },
+            [103570] = { special_function = SF.DecreaseChanceFromElement }, -- -25%
+            [100741] = { special_function = SF.RemoveTracker },
+            [103572] = { time = 50, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime },
+            [103573] = { time = 40, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime },
+            [103574] = { time = 30, id = "CrashChanceTime", icons = CrashIcons, hint = Hints.election_day_3_CrashChanceTime },
+        }
+    }
 }
 local other =
 {
@@ -45,30 +47,44 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         veryhard_or_above = 40
     })
     other[100356] = { time = refresh_t, special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+        local t = trigger.time ---@cast t -?
         if element:_check_mode() then
+            if self._cache.election_day_3_RefreshSniperTime then
+                self._cache.election_day_3_RefreshSniperTime = nil
+                self._trackers:SetTrackerTimeNoAnim("Snipers", t)
+                self._trackers:StartTrackerCountdown("Snipers")
+            end
             if self._trackers:CallFunction2("Snipers", "SniperSpawnsSuccess", 2) then
                 self._trackers:AddTracker({
                     id = "Snipers",
-                    time = trigger.time,
-                    refresh_t = trigger.time,
+                    time = t,
+                    refresh_t = t,
                     count = 2,
                     class = TT.Sniper.Timed
                 })
             end
+        else
+            self._trackers:_remove_tracker_from_update("Snipers")
+            self._trackers:CallFunction("Snipers", "FitTheTime", t, "0")
+            self._cache.election_day_3_RefreshSniperTime = true
         end
     end)}
     other[100348] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[100351] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI:GetOption("show_sniper_logic_start_popup") then
+        other[100446] = { special_function = SF.CustomCode, f = function()
+            managers.hud:ShowSniperLogic(true)
+        end, trigger_times = 1 }
+    end
 end
 if EHI:IsLootCounterVisible() then
-    other[103293] = EHI:AddLootCounter3(function(self, ...)
+    other[103293] = EHI:AddCustomCode(function(self)
         local count = self:CountInteractionAvailable("money_wrap")
         if count > 0 then
             EHI:ShowLootCounterNoChecks({ max = count, client_from_start = true })
         end
     end, true)
 end
-
 EHI:SetMissionDoorData({
     -- Vault Doors
     [Vector3(2350, -2320, 59.9998)] = 104556, -- Left
@@ -77,7 +93,7 @@ EHI:SetMissionDoorData({
     -- Gate inside the vault
     [Vector3(2493.96, -2793.65, 84.8657)] = { w_id = 104645, restore = true, unit_id = 101581 }
 })
-EHI:ParseTriggers({ mission = triggers, other = other })
+EHI:ParseTriggers({ mission = triggers, other = other, tracker_merge = tracker_merge })
 EHI:AddXPBreakdown({
     objective =
     {

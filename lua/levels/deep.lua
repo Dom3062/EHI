@@ -8,15 +8,16 @@ local Hints = EHI.Hints
 ---@param trigger ElementTrigger
 local function TransferWP(self, trigger)
     local index = managers.game_play_central:GetMissionDisabledUnit(EHI:GetInstanceUnitID(100087, 9340)) and 9590 or 9340
+    local vanilla_wp = EHI:GetInstanceElementID(100019, index)
     if not self._cache.TransferPosition then
-        self._cache.TransferPosition = self:GetElementPositionOrDefault(EHI:GetInstanceElementID(100019, index))
+        self._cache.TransferPosition = self:GetElementPositionOrDefault(vanilla_wp)
     end
     self._waypoints:AddWaypoint(trigger.id, {
         time = trigger.time,
         icon = trigger.element == 102438 and Icon.Wait or Icon.Defend,
         position = self._cache.TransferPosition,
-        class = self.TrackerWaypointsClass[trigger.class or ""],
-        remove_vanilla_waypoint = EHI:GetInstanceElementID(100019, index)
+        class = self._TrackerToWaypoint[trigger.class or ""],
+        remove_vanilla_waypoint = vanilla_wp
     })
 end
 
@@ -41,7 +42,7 @@ local triggers =
             trigger.waypoint.time = trigger.time
         end
         self:CreateTracker(trigger)
-    end), fix_wp = EHI:GetInstanceElementID(100068, 4650), success_sequence = EHI:GetInstanceElementID(100016, 4650), waypoint = { position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100067, 4650) }, hint = Hints.Wait },
+    end), fix_wp = EHI:GetInstanceElementID(100068, 4650), success_sequence = EHI:GetInstanceElementID(100016, 4650), waypoint = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100067, 4650) }, hint = Hints.Wait },
     [103055] = { id = "FuelChecking", special_function = SF.PauseTracker },
     [103070] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; loud
     [103071] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; stealth
@@ -152,7 +153,6 @@ EHI:ParseTriggers({
     achievement = achievements,
     other = other
 })
-
 EHI:SetMissionDoorData({
     -- Arrival
     [Vector3(2308.08, 3258.11, 4092.94)] = 104170,

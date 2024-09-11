@@ -1,4 +1,4 @@
-local color = EHI:GetTWColor("inaccurate")
+local color = EHI:GetColorFromOption("tracker_waypoint", "inaccurate")
 ---@class EHIInaccurateWaypoint : EHIWaypoint
 ---@field super EHIWaypoint
 EHIInaccurateWaypoint = class(EHIWaypoint)

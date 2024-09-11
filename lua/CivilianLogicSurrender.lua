@@ -8,7 +8,7 @@ local original = CivilianLogicSurrender.exit
 ---@param new_logic_name string
 function CivilianLogicSurrender.exit(data, new_logic_name, ...)
     if data.internal_data.is_hostage and new_logic_name ~= "travel" and new_logic_name ~= "surrender" then
-        managers.ehi_tracker:CallFunction("CivilianCount", "CivilianUntied", data.key)
+        managers.ehi_tracker:CallFunction("CivilianCount", "CivilianUntied", tostring(data.key))
     end
     original(data, new_logic_name, ...)
 end

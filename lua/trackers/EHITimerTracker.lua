@@ -12,7 +12,7 @@ local Color = Color
 ---@field _panel_double number Inherited class needs to populate this field
 EHITimerTracker = class(EHIWarningTracker)
 EHITimerTracker._update = false
-EHITimerTracker._autorepair_color = EHI:GetTWColor("drill_autorepair")
+EHITimerTracker._autorepair_color = EHI:GetColorFromOption("tracker_waypoint", "drill_autorepair")
 EHITimerTracker._paused_color = EHIPausableTracker._paused_color
 EHITimerTracker.StartTimer = EHITimedChanceTracker.StartTimer
 EHITimerTracker.StopTimer = EHITimedChanceTracker.StopTimer
@@ -201,7 +201,7 @@ end
 ---@param check_progress boolean?
 ---@param color Color?
 function EHITimerGroupTracker:AnimateColor(timer, check_progress, color)
-    local start_t = check_progress and (1 - math.min(self._parent_class.RoundNumber(timer.time, 1) - math.floor(timer.time), 0.99)) or 1
+    local start_t = check_progress and (1 - math.min(self._parent_class.RoundNumber(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
     timer.label:animate(self._anim_warning, self._text_color, color or (timer.animate_completion and self._completion_color or self._warning_color), start_t, self)
 end
 

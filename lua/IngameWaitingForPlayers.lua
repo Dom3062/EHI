@@ -19,22 +19,6 @@ local eng_1_levels =
     jewelry_store = true
 }
 
-local xm20_1_levels =
-{
-    mex = true,
-    bex = true,
-    pex = true,
-    fex = true
-}
-
-local pent_11_levels =
-{
-    chas = true,
-    sand = true,
-    chca = true,
-    pent = true
-}
-
 -- Daily challenges activated in ChallengeManager
 local challenges =
 {
@@ -61,7 +45,8 @@ local challenges =
     sniper_100_kills = { progress_id = "sniper_kills", check = { weapon_type = "snp" } }
 }
 challenges.any_100_headshot_kills = challenges.any_50_headshot_kills
-challenges.melee_100_kills = challenges.melee_35_kills
+challenges.melee_100_kills = deep_clone(challenges.melee_35_kills)
+challenges.melee_35_kills.desc = "menu_challenge_melee_kills"
 for _, challenge in pairs(challenges) do
     if challenge.contact then
         challenge.icon = string.format("C_%s_H_All_AllDiffs_D0", select(1, string.gsub(challenge.contact_short_name or challenge.contact, "^%l", string.upper)))
@@ -264,8 +249,9 @@ end
 ---@param progress number
 ---@param max number
 ---@param daily_job boolean?
+---@param desc string? Custom challenge description
 ---@param icon string?
-local function AddDailyProgressTracker(id, progress, max, daily_job, icon)
+local function AddDailyProgressTracker(id, progress, max, daily_job, desc, icon)
     managers.ehi_tracker:AddTracker({
         id = id,
         daily_job = daily_job,
@@ -275,17 +261,19 @@ local function AddDailyProgressTracker(id, progress, max, daily_job, icon)
         flash_bg = true,
         flash_times = 1,
         no_failure = true,
+        desc = desc,
         class = EHI.Trackers.SideJob.Progress
     })
 end
 
 ---Challenges active in ChallengeManager
 ---@param id string
+---@param desc string? Custom challenge description
 ---@param progress_id string?
 ---@param icon string?
-local function AddDailyChallengeTracker(id, progress_id, icon)
+local function AddDailyChallengeTracker(id, desc, progress_id, icon)
     local progress, max = EHI:GetDailyChallengeProgressAndMax(id, progress_id)
-    AddDailyProgressTracker(id, progress, max, true, icon)
+    AddDailyProgressTracker(id, progress, max, true, desc, icon)
 end
 
 ---Challenges active in CustomSafehouseManager
@@ -294,7 +282,7 @@ end
 ---@param icon string?
 local function AddDailySHChallengeTracker(id, progress_id, icon)
     local progress, max = EHI:GetSHSideJobProgressAndMax(id, progress_id)
-    AddDailyProgressTracker(id, progress, max, false, icon)
+    AddDailyProgressTracker(id, progress, max, false, nil, icon)
 end
 
 ---@param id string
@@ -303,7 +291,7 @@ end
 local function HookSecuredChallenge(id, trophy, icon)
     icon = icon or "milestone_trophy"
     if EHI:GetUnlockableOption("show_daily_started_popup") then
-        managers.hud:ShowSideJobStartedPopup(id, false, icon)
+        managers.hud:ShowSideJobStartedPopup(id, false, nil, icon)
     end
     if EHI:GetUnlockableOption("show_daily_description") then
         managers.hud:ShowSideJobDescription(id)
@@ -338,7 +326,7 @@ local function pxp1_1()
         local grenade_pass = table.index_of(grenade_data.grenade_types, grenade) ~= -1
         local enemy_kills_data = tweak_data.achievement.enemy_kill_achievements.pxp1_1
         local parts_pass, _, _ = CheckWeaponsBlueprint(enemy_kills_data.parts)
-        local melee_pass = table.index_of(tweak_data.achievement.enemy_melee_hit_achievements.pxp1_1.melee_weapons, melee) ~= 1
+        local melee_pass = table.index_of(tweak_data.achievement.enemy_melee_hit_achievements.pxp1_1.melee_weapons, melee) ~= -1
         local player_style_pass = HasPlayerStyleEquipped(grenade_data.player_style.style)
         local variation_pass = HasSuitVariationEquipped(grenade_data.player_style.variation)
         if (grenade_pass or parts_pass or melee_pass or HasViperGrenadesOnLauncherEquipped()) and player_style_pass and variation_pass then
@@ -349,28 +337,36 @@ local function pxp1_1()
 end
 
 ---@param achievement_id string
----@param keys table
+---@param keys string[]
 local function OnSetSavedJobValue(achievement_id, keys)
-    EHI:PreHookWithID(MissionManager, "on_set_saved_job_value", "EHI_" .. achievement_id .. "_Achievement", function(mm, key, value)
-        if keys[key] and value == 1 then
-            local progress = 0
-            local to_secure = tweak_data.achievement.collection_achievements[achievement_id].collection
-            for _, item in ipairs(to_secure) do
+    Hooks:PreHook(MissionManager, "on_set_saved_job_value", "EHI_" .. achievement_id .. "_Achievement",
+    ---@param key string
+    ---@param value number
+    function(mm, key, value)
+        if table.contains(keys, key) and value == 1 then
+            local progress, max = 0, 0
+            for _, item in ipairs(keys) do
+                max = max + 1 -- To not rely on hardcoded max number
                 if Global.mission_manager.saved_job_values[item] then
                     progress = progress + 1
                 end
             end
-            if progress == 4 then
+            if progress == max then
                 return
             end
-            ShowPopup(achievement_id, progress, 4)
+            ShowPopup(achievement_id, progress, max)
         end
     end)
 end
 
 local _f_at_exit = IngameWaitingForPlayersState.at_exit
-function IngameWaitingForPlayersState:at_exit(...)
-    _f_at_exit(self, ...)
+function IngameWaitingForPlayersState:at_exit(next_state, ...)
+    _f_at_exit(self, next_state, ...)
+    if not game_state_machine:verify_game_state(GameStateFilters.any_ingame_playing, next_state:name()) then --- Don't do anything if host disconnected before spawn / closed game in Singleplayer
+        challenges = nil
+        sh_dailies = nil
+        return
+    end
     EHI:CallCallback(EHI.CallbackMessage.HUDVisibilityChanged, not Global.hud_disabled)
     --[[if level == "flat" and EHI:IsAchievementLocked("flat_5") then
         managers.ehi_tracker:AddTracker({
@@ -442,7 +438,7 @@ function IngameWaitingForPlayersState:at_exit(...)
             end
             if EHI:IsAchievementLocked2("gage2_5") and HasWeaponTypeEquipped("lmg") then -- "The Eighth and Final Rule" achievement
                 AddAchievementTracker("gage2_5", 0, 220)
-                EHI:HookWithID(StatisticsManager, "killed", "EHI_gage2_5_killed", function(self, data)
+                Hooks:PostHook(StatisticsManager, "killed", "EHI_gage2_5_killed", function(self, data)
                     if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("lmg") and not CopDamage.is_civilian(data.name) then
                         managers.ehi_tracker:IncreaseTrackerProgress("gage2_5")
                     end
@@ -485,7 +481,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                     if unit:zipline():is_usage_type_person() then
                         local progress = EHI:GetAchievementProgress("gage3_13_stats")
                         if gage3_13_levels[level] then
-                            EHI:HookWithID(AchievmentManager, "award_progress", "EHI_gage3_13_AwardProgress", function(am, stat, value)
+                            Hooks:PostHook(AchievmentManager, "award_progress", "EHI_gage3_13_AwardProgress", function(am, stat, value)
                                 if stat == "gage3_13_stats" then
                                     progress = progress + (value or 1)
                                     if progress >= 10 then
@@ -734,7 +730,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                             fail()
                         end
                     end)
-                    EHI:HookWithID(StatisticsManager, "shot_fired", "EHI_man_5_shot_fired", function(sm, data)
+                    Hooks:PostHook(StatisticsManager, "shot_fired", "EHI_man_5_shot_fired", function(sm, data)
                         local name_id = data.name_id or data.weapon_unit:base():get_name_id()
                         if tweak_data:get_raw_value("weapon", name_id, "categories", 1) ~= "grenade_launcher" then
                             fail()
@@ -750,12 +746,12 @@ function IngameWaitingForPlayersState:at_exit(...)
                         flash_times = 1,
                         class = "EHIsand11Tracker"
                     })
-                    EHI:HookWithID(StatisticsManager, "killed", "EHI_sand_11_killed", function(_, data)
+                    Hooks:PostHook(StatisticsManager, "killed", "EHI_sand_11_killed", function(_, data)
                         if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("snp") then
                             managers.ehi_tracker:IncreaseTrackerProgress("sand_11")
                         end
                     end)
-                    EHI:HookWithID(StatisticsManager, "shot_fired", "EHI_sand_11_accuracy", function(sm, _)
+                    Hooks:PostHook(StatisticsManager, "shot_fired", "EHI_sand_11_accuracy", function(sm, _)
                         managers.ehi_tracker:SetChance("sand_11", sm:session_hit_accuracy())
                     end)
                 end
@@ -795,7 +791,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 local pass = table.index_of(melee_required, melee) ~= -1
                 if pass then
                     AddAchievementTracker("steel_2", 0, 10)
-                    EHI:HookWithID(StatisticsManager, "killed", "EHI_steel_2_killed", function(_, data)
+                    Hooks:PostHook(StatisticsManager, "killed", "EHI_steel_2_killed", function(_, data)
                         if data.variant == "melee" and data.name == "shield" then
                             managers.ehi_tracker:IncreaseTrackerProgress("steel_2")
                         end
@@ -983,7 +979,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end)
             end
             if EHI:IsAchievementLocked2("gmod_6") then -- "There and Back Again" achievement
-                EHI:HookWithID(GageAssignmentManager, "_give_rewards", "EHI_gmod_6_achievement", function(gam, assignment, ...)
+                Hooks:PostHook(GageAssignmentManager, "_give_rewards", "EHI_gmod_6_achievement", function(gam, assignment, ...)
                     local progress = 0
                     for i, dvalue in pairs(gam._global.completed_assignments) do
                         if Application:digest_value(dvalue, false) >= tweak_data.achievement.gonna_find_them_all then
@@ -1007,7 +1003,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                     self:StopAndSetTextColor(Color.white)
                     self.update = EHIovk3Tracker.super.update
                 end
-                EHI:HookWithID(RaycastWeaponBase, "start_shooting", "EHI_ovk_3_start_shooting", function(self, ...)
+                Hooks:PostHook(RaycastWeaponBase, "start_shooting", "EHI_ovk_3_start_shooting", function(self, ...)
                     if self._shooting and self:get_name_id() == "m134" then
                         if managers.ehi_tracker:CallFunction2("ovk_3", "Reset") then
                             managers.ehi_tracker:AddTracker({
@@ -1019,10 +1015,10 @@ function IngameWaitingForPlayersState:at_exit(...)
                         end
                     end
                 end)
-                EHI:HookWithID(RaycastWeaponBase, "stop_shooting", "EHI_ovk_3_stop_shooting", function(...)
+                Hooks:PostHook(RaycastWeaponBase, "stop_shooting", "EHI_ovk_3_stop_shooting", function(...)
                     managers.ehi_achievement:SetAchievementFailed("ovk_3")
                 end)
-                EHI:HookWithID(AchievmentManager, "award", "EHI_ovk_3_award", function(am, id)
+                Hooks:PostHook(AchievmentManager, "award", "EHI_ovk_3_award", function(am, id)
                     if id == "ovk_3" then
                         EHI:Unhook("ovk_3_start_shooting")
                         EHI:Unhook("ovk_3_stop_shooting")
@@ -1104,11 +1100,11 @@ function IngameWaitingForPlayersState:at_exit(...)
                     end)
                 end
             end
-            if EHI:IsAchievementLocked2("xm20_1") and xm20_1_levels[level] then
-                OnSetSavedJobValue("xm20_1", { present_mex = true, present_bex = true, present_pex = true, present_fex = true })
+            if EHI:IsAchievementLocked2("xm20_1") and EHI._cache.xm20_1_active then
+                OnSetSavedJobValue("xm20_1", tweak_data.achievement.collection_achievements.xm20_1.collection)
             end
-            if EHI:IsAchievementLocked2("pent_11") and pent_11_levels[level] then
-                OnSetSavedJobValue("pent_11", { tea_chas = true, tea_sand = true, tea_chca = true, tea_pent = true })
+            if EHI:IsAchievementLocked2("pent_11") and EHI._cache.pent_11_active then
+                OnSetSavedJobValue("pent_11", tweak_data.achievement.collection_achievements.pent_11.collection)
             end
             if VeryHardOrAbove then
                 if level == "help" and EHI:IsAchievementLocked2("tawp_1") and mask_id == tweak_data.achievement.complete_heist_achievements.tawp_1.mask then -- "Cloaker Charmer" achievement
@@ -1141,7 +1137,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         --[[if EHI:IsAchievementLocked2("gage4_3") then -- "Swing Dancing" achievement
             AddAchievementTracker("gage4_3", 0, 50)
-            EHI:HookWithID(StatisticsManager, "killed", "EHI_gage4_3_killed", function (self, data)
+            Hooks:PostHook(StatisticsManager, "killed", "EHI_gage4_3_killed", function (self, data)
                 if data.variant == "melee" then
                     if not CopDamage.is_civilian(data.name) then
                         managers.ehi_tracker:IncreaseTrackerProgress("gage4_3")
@@ -1169,7 +1165,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 local icon = sh_daily.achievement_icon and EHI:GetAchievementIconString(sh_daily.achievement_icon) or sh_daily.icon
                 if sh_daily.track then
                     AddDailySHChallengeTracker(active_sh_daily, nil, icon)
-                    EHI:HookWithID(CustomSafehouseManager, "award", string.format("EHI_%s_AwardProgress", active_sh_daily), function(csm, id)
+                    Hooks:PostHook(CustomSafehouseManager, "award", string.format("EHI_%s_AwardProgress", active_sh_daily), function(csm, id)
                         if id == active_sh_daily then
                             managers.ehi_tracker:IncreaseTrackerProgress(active_sh_daily)
                         end
@@ -1189,8 +1185,7 @@ function IngameWaitingForPlayersState:at_exit(...)
         end
         if managers.challenge:can_progress_challenges() and challenges then
             local tracked_challenges = {}
-            local active_challenges = managers.challenge:get_all_active_challenges()
-            for _, challenge in pairs(active_challenges) do
+            for _, challenge in pairs(managers.challenge:get_all_active_challenges()) do
                 local c = challenges[challenge.id or ""]
                 if c and not challenge.completed then
                     local all_pass = true
@@ -1214,17 +1209,17 @@ function IngameWaitingForPlayersState:at_exit(...)
                                     if success and managers.job:on_last_stage() and managers.statistics:started_session_from_beginning() then
                                         local progress, max = EHI:GetDailyChallengeProgressAndMax(challenge.id, c.progress_id)
                                         if progress + 1 < max then
-                                            managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("menu_challenge_" .. challenge.id), tostring(progress) .. "/" .. tostring(max), c.icon)
+                                            managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("menu_challenge_" .. challenge.id), tostring(progress + 1) .. "/" .. tostring(max), c.icon)
                                         end
                                     end
                                 end)
                             end
                         elseif c.loud_only then
                             ShowTrackerInLoud(function()
-                                AddDailyChallengeTracker(challenge.id, c.progress_id, c.icon)
+                                AddDailyChallengeTracker(challenge.id, c.desc, c.progress_id, c.icon)
                             end)
                         else
-                            AddDailyChallengeTracker(challenge.id, c.progress_id, c.icon)
+                            AddDailyChallengeTracker(challenge.id, c.desc, c.progress_id, c.icon)
                         end
                         if not c.do_not_track then
                             tracked_challenges[c.progress_id] = challenge.id
@@ -1233,7 +1228,7 @@ function IngameWaitingForPlayersState:at_exit(...)
                 end
             end
             if next(tracked_challenges) then
-                EHI:HookWithID(ChallengeManager, "award_progress", "EHI_DailyChallenge_AwardProgress", function(c, progress_id, amount)
+                Hooks:PostHook(ChallengeManager, "award_progress", "EHI_DailyChallenge_AwardProgress", function(c, progress_id, amount)
                     local challenge = tracked_challenges[progress_id]
                     if challenge then
                         managers.ehi_tracker:IncreaseTrackerProgress(challenge, amount)

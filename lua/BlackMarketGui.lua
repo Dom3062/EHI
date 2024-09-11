@@ -3,6 +3,9 @@ if EHI:CheckHook("BlackMarketGui") or not EHI:GetOption("show_inventory_detailed
     return
 end
 
+---@class BlackMarketGui
+---@field make_fine_text fun(self: self|any, text: PanelText)
+
 local function LoadClasses()
     if Global.load_level then
         return
@@ -252,8 +255,8 @@ function BlackMarketGui:populate_deployables(data, ...)
             local name = deployable_data.name
             local deployable_tweak = equipment[name] or {}
             local deployable_desc = blackmarket[name].desc_id
-            RestoreVanillaText(deployable_desc)
             local equipment_amount = 0
+            RestoreVanillaText(deployable_desc)
             if deployable_tweak.upgrade_name then
                 local quantity = deployable_tweak.quantity
                 local size_quantity = #quantity
@@ -341,9 +344,8 @@ local GrenadeFormattingFunction =
         return string.format("\n> %s: %ss\n> %s", strs.duration, tostring(tweak.burn_duration or 0), FormatDOTData(tweak.dot_data_name, strs.fire))
     end,
     wpn_prj_four = function()
-        local str = string.format("\n> %s", FormatDOTData("default_poison", -- Traced back in DOTManager:add_doted_enemy() [via BLT Hook]
+        return string.format("\n> %s", FormatDOTData("default_poison", -- Traced back in DOTManager:add_doted_enemy() [via BLT Hook]
         strs.poison))
-        return str
     end,
     concussion = function()
         local accuracy = 0.5

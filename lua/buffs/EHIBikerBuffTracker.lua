@@ -7,7 +7,7 @@ function EHIBikerBuffTracker:PreUpdateCheck()
     if self._player_manager:has_category_upgrade("player", "wild_health_amount") or self._player_manager:has_category_upgrade("player", "wild_armor_amount") then
         return true
     else
-        self:delete()
+        self:delete_with_class()
     end
 end
 
@@ -30,7 +30,7 @@ function EHIBikerBuffTracker:SetCustodyState(state)
             self._visible = false
         end
     else
-        EHI:HookWithID(PlayerManager, "chk_wild_kill_counter", "EHI_BikerBuff_Post", self._f)
+        Hooks:PostHook(PlayerManager, "chk_wild_kill_counter", "EHI_BikerBuff_Post", self._f)
         if self._persistent then
             self:SetPersistent() -- Cheap text reset
             self:ActivateSoft()

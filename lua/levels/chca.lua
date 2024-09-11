@@ -4,8 +4,8 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local escape_wp = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100023, 11170) }
-local vault_pickup_wp = { Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 102690 }
+local escape_wp = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100023, 11170) }
+local vault_pickup_wp = { data_from_element_and_remove_vanilla_waypoint = 102690 }
 ---@type ParseTriggerTable
 local triggers = {
     [103030] = { time = 19, id = "InsideManTalk", icons = { "pd2_talk" }, hint = Hints.Wait },
@@ -89,7 +89,7 @@ if EHI:IsClient() then
     triggers[102678] = { time = 45, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait, waypoint = deep_clone(vault_pickup_wp) }
     triggers[102679] = { time = 15, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait, waypoint = deep_clone(vault_pickup_wp) }
 end
-EHI:AddEventListener("chca_Winch", "chca_Winch",
+EHI:AddEventListener("chca_Winch",
 ---@param self EHIManager
 ---@param waypoint_id string
 function(self, waypoint_id)
@@ -123,8 +123,8 @@ local achievements =
                         chca_9_fail()
                     end
                 end
-                EHI:HookWithID(StatisticsManager, "killed", "EHI_chca_9_killed", check)
-                EHI:HookWithID(StatisticsManager, "killed_by_anyone", "EHI_chca_9_killed_by_anyone", check)
+                Hooks:PostHook(StatisticsManager, "killed", "EHI_chca_9_killed", check)
+                Hooks:PostHook(StatisticsManager, "killed_by_anyone", "EHI_chca_9_killed_by_anyone", check)
             end }
         },
         alarm_callback = chca_9_fail
@@ -175,9 +175,9 @@ if EHI:CanShowAchievement("chca_12") and ovk_and_up then
     function TimerGui:chca_12()
         local hook_key = string.format("EHI_saw_start_%s", self._ehi_key or tostring(self._unit:key()))
         if self.PostStartTimer then
-            EHI:HookWithID(self, "PostStartTimer", hook_key, check)
+            Hooks:PostHook(self, "PostStartTimer", hook_key, check)
         else
-            EHI:HookWithID(self, "_start", hook_key, check)
+            Hooks:PostHook(self, "_start", hook_key, check)
         end
     end
     local tbl =

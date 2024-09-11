@@ -20,7 +20,7 @@ local other =
     [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
 if EHI:IsHost() then
-    triggers[101498] = { time = 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4, waypoint = { icon = Icon.C4, position_by_element = 100943 }, hint = Hints.C4Delivery }
+    triggers[101498] = { time = 6 + 4 + 30 + 24 + 3, id = "HeliC4", icons = Icon.HeliDropC4, waypoint = { data_from_element = 100943 }, hint = Hints.C4Delivery }
     ---`mesh_variation "set_level_mia"`  
     ---units/payday2/equipment/gen_interactable_sec_safe_2x05/gen_interactable_sec_safe_2x05 (buggy mesh_variation -> `"set_level_rat_2"` instead)
     ---units/payday2/equipment/gen_interactable_sec_safe_2x05_titan/gen_interactable_sec_safe_2x05_titan
@@ -127,7 +127,7 @@ EHI:ShowAchievementLootCounter({
     max = 19,
     counter =
     {
-        check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
+        check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = { "diamonds_dah", "diamonds" }
     }
 })

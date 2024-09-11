@@ -273,12 +273,6 @@ function EHIBuffTracker:Extend(t)
 end
 
 ---@param t number
-function EHIBuffTracker:AddTime(t)
-    self._time = self._time + t
-    self._time_set = self._time
-end
-
----@param t number
 ---@param max number
 function EHIBuffTracker:AddTimeCeil(t, max)
     self._time = math.min(self._time + t, max)
@@ -286,8 +280,8 @@ function EHIBuffTracker:AddTimeCeil(t, max)
 end
 
 function EHIBuffTracker:Deactivate()
-    self._parent_class:RemoveBuffFromUpdate(self._id)
-    self._parent_class:RemoveVisibleBuff(self._id, self._pos)
+    self._parent_class:_remove_buff_from_update(self._id)
+    self._parent_class:_remove_visible_buff(self._id, self._pos)
     self._panel:stop()
     self._panel:animate(self._hide)
     self._active = false
@@ -297,7 +291,7 @@ function EHIBuffTracker:DeactivateSoft()
     if not self._visible then
         return
     end
-    self._parent_class:RemoveVisibleBuff(self._id, self._pos)
+    self._parent_class:_remove_visible_buff(self._id, self._pos)
     self._panel:stop()
     self._panel:animate(self._hide)
     self._visible = false
@@ -327,7 +321,6 @@ function EHIBuffTracker:SetLeftXByPos(x, pos)
     self:SetX(x + (self._panel_w_gap * self._pos))
 end
 
-local abs = math.abs
 ---@param center_x number
 ---@param pos number
 ---@param center_pos number
@@ -338,7 +331,7 @@ function EHIBuffTracker:SetCenterXByPos(center_x, pos, center_pos, even)
         self._pos = self._pos - 1
     end
     if even then
-        local n = abs(center_pos - self._pos)
+        local n = math.abs(center_pos - self._pos)
         local final_x = self._panel_move_gap + (self._panel_w_gap * n)
         if self._pos < center_pos then -- Left side
             final_x = final_x - self._panel_w_gap
@@ -347,7 +340,7 @@ function EHIBuffTracker:SetCenterXByPos(center_x, pos, center_pos, even)
             self:MovePanelRight(final_x)
         end
     elseif self._pos ~= center_pos then -- Not center
-        local n = abs(center_pos - self._pos)
+        local n = math.abs(center_pos - self._pos)
         local final_x = self._panel_w_gap * n
         if self._pos < center_pos then -- Left side
             self:MovePanelLeft(final_x)
@@ -367,19 +360,19 @@ function EHIBuffTracker:SetRightXByPos(x, pos)
 end
 
 function EHIBuffTracker:AddBuffToUpdate()
-    self._parent_class:AddBuffToUpdate(self)
+    self._parent_class:_add_buff_to_update(self)
 end
 
 function EHIBuffTracker:RemoveBuffFromUpdate()
-    self._parent_class:RemoveBuffFromUpdate(self._id)
+    self._parent_class:_remove_buff_from_update(self._id)
 end
 
 function EHIBuffTracker:AddVisibleBuff()
-    self._parent_class:AddVisibleBuff(self)
+    self._parent_class:_add_visible_buff(self)
 end
 
 function EHIBuffTracker:RemoveVisibleBuff()
-    self._parent_class:RemoveVisibleBuff(self._id, self._pos)
+    self._parent_class:_remove_visible_buff(self._id, self._pos)
 end
 
 function EHIBuffTracker:PreUpdate()
@@ -397,6 +390,7 @@ function EHIBuffTracker:SwitchToLoudMode()
 end
 
 if progress then
+    ---@param dt number
     function EHIBuffTracker:update(dt)
         self._time = self._time - dt
         self._text:set_text(self:Format())
@@ -407,6 +401,7 @@ if progress then
         end
     end
 else
+    ---@param dt number
     function EHIBuffTracker:update(dt)
         self._time = self._time - dt
         self._text:set_text(self:Format())
@@ -436,5 +431,6 @@ end
 
 function EHIBuffTracker:delete_with_class()
     self:delete()
-    _G[tweak_data.ehi.buff[self._id].class] = nil
+    local buff = tweak_data.ehi.buff[self._id]
+    _G[buff.class_to_load and buff.class_to_load.class or buff.class] = nil
 end

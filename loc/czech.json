@@ -80,7 +80,6 @@
     "ehi_hint_timer" : "Časovač",
     "ehi_hint_gained_xp" : "Získané ZK",
     "ehi_hint_total_xp" : "Celkem ZK",
-    "ehi_hint_question" : "?",
     "ehi_hint_endless_assault" : "Nekonečný útok",
     "ehi_hint_fire" : "Oheň",
     "ehi_hint_fire_recharge" : "Obnovení ohně",
@@ -147,6 +146,7 @@
     "ehi_hint_ecm_feedback_refresh" : "Znovunabití ECM Feedback",
     "ehi_hint_phalanx_chance" : "Šance na Kapitána",
     "ehi_hint_hostage" : "Počet rukojmích",
+    "ehi_hint_looped_camera" : "Kamera ve zpětné smyčce",
 
     "ehi_hint_big_piggy" : "Přesouvání čuníka",
     "ehi_hint_brb_winch_delivery" : "Dodání navijáku",
@@ -304,7 +304,7 @@
     "ehi_show_achievements_weapon" : "Zobrazovat Achievementy (Zbraně)",
     "ehi_show_achievements_weapon_desc" : "Zobrazuje achievementy které vyžadují zabití nepřátel zbraní\n\nPo splnění achievementu se sledovač už nezobrazí",
 
-    "ehi_show_achievements_melee" : "Zobrazovat Achievementy (Příruční zbraně neboli Melee)",
+    "ehi_show_achievements_melee" : "Zobrazovat Achievementy (Melee)",
     "ehi_show_achievements_melee_desc" : "Zobrazuje achievementy které vyžadují zabití nepřátel příruční zbraní na blízko\n\nPo splnění achievementu se sledovač už nezobrazí",
 
     "ehi_show_achievements_grenade" : "Zobrazovat Achievementy (Granáty a jiné hoditelné předměty)",
@@ -544,7 +544,7 @@
     "ehi_show_assault_time_tracker_desc" : "Zobrazuje sledovač s délkou útoku\n\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
 
     "ehi_show_assault_diff_in_assault_trackers" : "Zobrazovat obtížnost vlny ve sledovačích s útokem",
-    "ehi_show_assault_diff_in_assault_trackers_desc" : "",
+    "ehi_show_assault_diff_in_assault_trackers_desc" : "V herním režimu Holdout tato možnost zobrazí zvýšení uděleného poškození a zdraví nepřátel, v tomto pořadí\n\nV ostatních herních režimech tato možnost zobrazí obtížnost vlny v procentech",
 
     "ehi_show_endless_assault" : "Zobrazovat nekonečný útok ve sledovači",
     "ehi_show_endless_assault_desc" : "Zobrazuje 'NEKONEČNÝ' ve sledovači jakmile se spustí nekonečný útok",
@@ -792,7 +792,7 @@
     "ehi_buffs_other_reload" : "Nabití zbraně",
     "ehi_buffs_other_melee_charge" : "Prodleva nabití melee",
     "ehi_buffs_other_shield_regen" : "Prodleva na obnovení armoru",
-    "ehi_buffs_other_stamina" : "Výdrž",
+    "ehi_buffs_other_stamina" : "Stamina",
     "ehi_buffs_other_dodge" : "Šance na Dodge",
     "ehi_buffs_other_dodge_refresh" : "Aktualizace šance na Dodge",
     "ehi_buffs_other_dodge_refresh_desc" : "Nastavuje jak často se má šance aktualizovat za sekundu",

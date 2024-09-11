@@ -10,41 +10,35 @@ function EHIChemSetTracker:OverridePanel()
     self:SetBGSize(self._bg_box:w() / 2)
     self:SetIconX()
     local third = self._bg_box:w() / 3
-    self._first_ingredient = self:CreateText({
+    self._ingredients = { {}, {}, {} } ---@type table<number, { text: PanelText, ingredient: string }>
+    self._ingredients[1].text = self:CreateText({
         text = "0.69",
         w = third,
         FitTheText = true
     })
-    local font_size = self._first_ingredient:font_size()
-    self._first_ingredient:set_text("")
-    self._first_ingredient:set_left(0)
-    self._second_ingredient = self:CreateText({
+    local font_size = self._ingredients[1].text:font_size()
+    self._ingredients[1].text:set_text("")
+    self._ingredients[1].text:set_left(0)
+    self._ingredients[2].text = self:CreateText({
         w = third,
-        left = self._first_ingredient:right(),
+        left = self._ingredients[1].text:right(),
         FitTheText = true,
         FitTheText_FontSize = font_size
     })
-    self._third_ingredient = self:CreateText({
+    self._ingredients[3].text = self:CreateText({
         w = third,
-        left = self._second_ingredient:right(),
+        left = self._ingredients[2].text:right(),
         FitTheText = true,
         FitTheText_FontSize = font_size
     })
     self._progress = 0
     self._refresh_on_delete = true
-    self._ingredients = {}
     self._state = "idle"
 end
 
 function EHIChemSetTracker:IncreaseProgress()
     self._progress = self._progress + 1
-    if self._progress == 1 then
-        self._text = self._first_ingredient
-    elseif self._progress == 2 then
-        self._text = self._second_ingredient
-    else
-        self._text = self._third_ingredient
-    end
+    self._text = self._ingredients[math.clamp(self._progress, 1, 3)].text
 end
 
 ---@param t number
@@ -75,36 +69,22 @@ function EHIChemSetTracker:SetInterrupted(t)
     self:AnimateBG(1)
 end
 
----@param ingredient string
 ---@param pos number
-function EHIChemSetTracker:SetIngredient(ingredient, pos)
-    self._ingredients[pos] = ingredient
-    if pos == 1 then
-        self._first_ingredient:set_text(ingredient)
-    elseif pos == 2 then
-        self._second_ingredient:set_text(ingredient)
-    else
-        self._third_ingredient:set_text(ingredient)
-    end
+---@param ingredient string
+function EHIChemSetTracker:SetIngredient(pos, ingredient)
+    local tbl = self._ingredients[math.clamp(pos, 1, 3)]
+    tbl.ingredient = tbl.ingredient or ingredient
+    tbl.text:set_text(tbl.ingredient)
 end
 
 function EHIChemSetTracker:Refresh()
     self:RemoveTrackerFromUpdate()
-    if self._state == "reset" then
-        self:SetTextColor(Color.white)
-        self._text:set_text(self._ingredients[self._progress] or "?")
-        self._progress = self._progress - 1
-    elseif self._state == "interrupted" then
-        self:SetTextColor(Color.white, self._first_ingredient)
-        self:SetTextColor(Color.white, self._second_ingredient)
-        self:SetTextColor(Color.white, self._third_ingredient)
-        self._first_ingredient:set_text(self._ingredients[1] or "?")
-        self._second_ingredient:set_text(self._ingredients[2] or "?")
-        self._third_ingredient:set_text(self._ingredients[3] or "?")
-        self._progress = 0
-    else
+    self:SetIngredient(self._progress, "?")
+    if self._state == "cooking" then
         self:SetTextColor(Color.green)
-        self._text:set_text(self._ingredients[self._progress] or "?")
+    else
+        self:SetTextColor(Color.white)
+        self._progress = self._progress - 1
     end
     self._state = "idle"
     self:AnimateBG(1)
@@ -120,16 +100,16 @@ local triggers = {
 
     [102520] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_by_element = 100881 } },
 
-    [100423] = { time = 60 + 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 100451 }, hint = Hints.LootEscape },
+    [100423] = { time = 60 + 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { data_from_element = 100451 }, hint = Hints.LootEscape },
     -- 60s delay after flare has been placed
     -- 25s to land
     -- 3s to open the heli doors
 
-    [102593] = { time = 30, id = "ChemSetReset", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.des_ChemSetRestart },
-    [101217] = { time = 30, id = "ChemSetInterrupted", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "ChemSetCooking" }, hint = Hints.des_ChemSetInterrupt },
-    [102595] = { time = 30, id = "ChemSetCooking", icons = { Icon.Methlab }, hint = Hints.des_ChemSetCooking },
+    [102593] = { time = 30, id = "ChemSetReset", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.des_ChemSetRestart, waypoint = { icon = Icon.Loop, position_by_element = EHI:GetInstanceElementID(100156, 26050) } },
+    [101217] = { time = 30, id = "ChemSetInterrupted", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "ChemSetCooking" }, hint = Hints.des_ChemSetInterrupt, waypoint = { icon = Icon.Loop, position_by_element = EHI:GetInstanceElementID(100156, 26050) } },
+    [102595] = { time = 30, id = "ChemSetCooking", icons = { Icon.Methlab }, hint = Hints.des_ChemSetCooking, waypoint = { data_from_element = EHI:GetInstanceElementID(100156, 26050) } },
 
-    [102009] = { time = 60, id = "Crane", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.des_Crane, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 102470 } },
+    [102009] = { time = 60, id = "Crane", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.des_Crane, waypoint = { data_from_element_and_remove_vanilla_waypoint = 102470 } },
     [101702] = { id = "Crane", special_function = SF.PauseTracker },
 
     [102473] = { chance = 20, id = "HackChance", icons = { Icon.PCHack }, class = TT.Timer.Chance, hint = Hints.Hack },
@@ -142,14 +122,18 @@ if EHI:IsClient() then
 end
 if EHI:GetOption("show_mission_trackers") then
     local SetIngredient = EHI:RegisterCustomSF(function(self, trigger, ...)
-        self._trackers:CallFunction("ChemSet", "SetIngredient", trigger.id, trigger.pos or 1)
+        self._trackers:CallFunction("ChemSet", "SetIngredient", trigger.pos or 1, trigger.id)
     end)
     local ChemSet = EHI:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:TrackerExists("ChemSet") then
+            if trigger.waypoint then
+                self._waypoints:RemoveWaypoint("ChemSetCooking")
+                self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
+            end
             if trigger.id == "ChemSetCooking" then
                 self._trackers:CallFunction("ChemSet", "SetCooking", trigger.time)
             elseif trigger.id == "ChemSetInterrupted" then
-                self._trackers:CallFunction("ChemSet", "SetInterruped", trigger.time)
+                self._trackers:CallFunction("ChemSet", "SetInterrupted", trigger.time)
             else
                 self._trackers:CallFunction("ChemSet", "SetReset", trigger.time)
             end
@@ -162,7 +146,7 @@ if EHI:GetOption("show_mission_trackers") then
     triggers[102593].special_function = ChemSet
     triggers[101217].special_function = ChemSet
     triggers[102595].special_function = ChemSet
-    triggers[EHI:GetInstanceElementID(100046, 15000)] = { id = "ChemSet", class = "EHIChemSetTracker" }
+    triggers[EHI:GetInstanceElementID(100046, 15000)] = { id = "ChemSet", class = "EHIChemSetTracker", hint = Hints.des_ChemSet }
     triggers[EHI:GetInstanceElementID(100048, 15000)] = { special_function = SetIngredient, id = "A" }
     triggers[EHI:GetInstanceElementID(100049, 15000)] = { special_function = SetIngredient, id = "B" }
     triggers[EHI:GetInstanceElementID(100050, 15000)] = { special_function = SetIngredient, id = "C" }
@@ -271,6 +255,7 @@ local DisableWaypoints =
     [102926] = true, -- Defend
     [102927] = true -- Fix
 }
+EHI:DisableMissionWaypoints({ [EHI:GetInstanceElementID(100156, 26050)] = true }) -- Defend WP Methlab
 
 -- levels/instances/unique/des/des_computer/001-004
 for i = 3000, 4500, 500 do

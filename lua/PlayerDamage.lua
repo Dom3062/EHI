@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("PlayerDamage") then
-    return
-end
-
-if not EHI:GetOption("show_buffs") then
+if EHI:CheckLoadHook("PlayerDamage") or not EHI:GetOption("show_buffs") then
     return
 end
 
@@ -76,10 +72,10 @@ if EHI:GetBuffOption("hostage_taker_muscle") then
         end
     end)
     original._upd_health_regen = PlayerDamage._upd_health_regen
-    function PlayerDamage:_upd_health_regen(t, dt, ...)
+    function PlayerDamage:_upd_health_regen(...)
         local previoustimer = self._health_regen_update_timer or 0
 
-        original._upd_health_regen(self, t, dt, ...)
+        original._upd_health_regen(self, ...)
 
         if not self._health_regen_update_timer or self._health_regen_update_timer <= previoustimer then
             return

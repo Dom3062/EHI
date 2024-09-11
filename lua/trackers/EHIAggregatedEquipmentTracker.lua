@@ -1,10 +1,10 @@
 local color =
 {
-    doctor_bag = EHI:GetEquipmentColor("doctor_bag"),
-    ammo_bag = EHI:GetEquipmentColor("ammo_bag"),
-    grenade_crate = EHI:GetEquipmentColor("grenade_crate"),
-    first_aid_kit = EHI:GetEquipmentColor("first_aid_kit"),
-    bodybags_bag = EHI:GetEquipmentColor("bodybags_bag")
+    doctor_bag = EHI:GetColorFromOption("equipment", "doctor_bag"),
+    ammo_bag = EHI:GetColorFromOption("equipment", "ammo_bag"),
+    grenade_crate = EHI:GetColorFromOption("equipment", "grenade_crate"),
+    first_aid_kit = EHI:GetColorFromOption("equipment", "first_aid_kit"),
+    bodybags_bag = EHI:GetColorFromOption("equipment", "bodybags_bag")
 }
 
 ---@class EHIAggregatedEquipmentTracker : EHITracker
@@ -16,17 +16,13 @@ EHIAggregatedEquipmentTracker._ids = { "doctor_bag", "ammo_bag", "grenade_crate"
 EHIAggregatedEquipmentTracker._init_create_text = false
 function EHIAggregatedEquipmentTracker:pre_init(params)
     self._n_of_deployables = 0
-    self._amount = {}
-    self._placed = {}
+    self._count = {} ---@type table<string, { amount: number, placed: number, format: string }>
     self._deployables = {}
     self._ignore = params.ignore or {}
-    self._format = {}
-    self._equipment = {}
+    self._equipment = {} ---@type table<string, PanelText>
     for _, id in ipairs(self._ids) do
-        self._amount[id] = 0
-        self._placed[id] = 0
+        self._count[id] = { amount = 0, placed = 0, format = params.format[id] or "charges" }
         self._deployables[id] = {}
-        self._format[id] = params.format[id] or "charges"
     end
 end
 
@@ -41,56 +37,62 @@ do
     local format = EHI:GetOption("equipment_format")
     if format == 1 then -- Uses (Bags placed)
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
-            if self._format[id] == "percent" then
-                return string.format("%g (%d)", self._parent_class.RoundNumber(self._amount[id], 1), self._placed[id])
+            local deployable = self._count[id]
+            if deployable.format == "percent" then
+                return string.format("%g (%d)", self._parent_class.RoundNumber(deployable.amount, 0.1), deployable.placed)
             elseif self._dont_show_placed[id] then
-                return tostring(self._amount[id])
+                return tostring(deployable.amount)
             end
-            return string.format("%d (%d)", self._amount[id], self._placed[id])
+            return string.format("%d (%d)", deployable.amount, deployable.placed)
         end
     elseif format == 2 then -- (Bags placed) Uses
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
-            if self._format[id] == "percent" then
-                return string.format("(%d) %g", self._placed[id], self._parent_class.RoundNumber(self._amount[id], 1))
+            local deployable = self._count[id]
+            if deployable.format == "percent" then
+                return string.format("(%d) %g", deployable.placed, self._parent_class.RoundNumber(deployable.amount, 0.1))
             elseif self._dont_show_placed[id] then
-                return tostring(self._amount[id])
+                return tostring(deployable.amount)
             end
-            return string.format("(%d) %d", self._placed[id], self._amount[id])
+            return string.format("(%d) %d", deployable.placed, deployable.amount)
         end
     elseif format == 3 then -- (Uses) Bags placed
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
-            if self._format[id] == "percent" then
-                return string.format("(%g) %d", self._parent_class.RoundNumber(self._amount[id], 1), self._placed[id])
+            local deployable = self._count[id]
+            if deployable.format == "percent" then
+                return string.format("(%g) %d", self._parent_class.RoundNumber(deployable.amount, 0.1), deployable.placed)
             elseif self._dont_show_placed[id] then
-                return tostring(self._amount[id])
+                return tostring(deployable.amount)
             end
-            return string.format("(%d) %d", self._amount[id], self._placed[id])
+            return string.format("(%d) %d", deployable.amount, deployable.placed)
         end
     elseif format == 4 then -- Bags placed (Uses)
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
-            if self._format[id] == "percent" then
-                return string.format("%d (%g)", self._placed[id], self._parent_class.RoundNumber(self._amount[id], 1))
+            local deployable = self._count[id]
+            if deployable.format == "percent" then
+                return string.format("%d (%g)", deployable.placed, self._parent_class.RoundNumber(deployable.amount, 0.1))
             elseif self._dont_show_placed[id] then
-                return tostring(self._amount[id])
+                return tostring(deployable.amount)
             end
-            return string.format("%d (%d)", self._placed[id], self._amount[id])
+            return string.format("%d (%d)", deployable.placed, deployable.amount)
         end
     elseif format == 5 then -- Uses
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
-            if self._format[id] == "percent" then
-                return tostring(self._parent_class.RoundNumber(self._amount[id], 2))
+            local deployable = self._count[id]
+            if deployable.format == "percent" then
+                return tostring(self._parent_class.RoundNumber(deployable.amount, 0.01))
             end
-            return tostring(self._amount[id])
+            return tostring(deployable.amount)
         end
     else -- Bags placed
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
+            local deployable = self._count[id]
             if self._dont_show_placed[id] then
-                if self._format[id] == "percent" then
-                    return tostring(self._parent_class.RoundNumber(self._amount[id], 2))
+                if deployable.format == "percent" then
+                    return tostring(self._parent_class.RoundNumber(deployable.amount, 0.01))
                 end
-                return tostring(self._amount[id])
+                return tostring(deployable.amount)
             end
-            return tostring(self._placed[id])
+            return tostring(deployable.placed)
         end
     end
 end
@@ -98,8 +100,8 @@ end
 ---@return number
 function EHIAggregatedEquipmentTracker:GetTotalAmount()
     local amount = 0
-    for _, count in pairs(self._amount) do
-        amount = amount + count
+    for _, deployable in pairs(self._count) do
+        amount = amount + deployable.amount
     end
     return amount
 end
@@ -108,8 +110,7 @@ end
 function EHIAggregatedEquipmentTracker:AddToIgnore(id)
     self._ignore[id] = true
     self._deployables[id] = {}
-    self._amount[id] = 0
-    self._placed[id] = 0
+    self._count[id] = { amount = 0, placed = 0 }
     self:CheckAmount(id)
 end
 
@@ -121,12 +122,13 @@ function EHIAggregatedEquipmentTracker:UpdateAmount(id, key, amount)
         return
     end
     self._deployables[id][key] = amount
-    self._amount[id] = 0
-    self._placed[id] = 0
+    local deployable = self._count[id]
+    deployable.amount = 0
+    deployable.placed = 0
     for _, value in pairs(self._deployables[id]) do
         if value > 0 then
-            self._amount[id] = self._amount[id] + value
-            self._placed[id] = self._placed[id] + 1
+            deployable.amount = deployable.amount + value
+            deployable.placed = deployable.placed + 1
         end
     end
     self:CheckAmount(id)
@@ -144,16 +146,16 @@ end
 ---@param id string
 function EHIAggregatedEquipmentTracker:UpdateText(id)
     if self._equipment[id] then
-        if self._amount[id] <= 0 then
+        if self._count[id].amount <= 0 then
             self:RemoveText(id)
         else
-            local text = self._equipment[id] --[[@as PanelText]]
+            local text = self._equipment[id]
             text:set_text(self:FormatDeployable(id))
             self:FitTheText(text)
         end
         self:AnimateBG()
     elseif not self._ignore[id] then
-        if self._amount[id] > 0 then
+        if self._count[id].amount > 0 then
             self:AddText(id)
             self:AnimateBG()
         end
@@ -174,8 +176,8 @@ end
 
 ---@param id string
 function EHIAggregatedEquipmentTracker:RemoveText(id)
-    self._bg_box:remove(self._equipment[id])
-    self._equipment[id] = nil
+    local _text = table.remove_key(self._equipment, id)
+    self._bg_box:remove(_text)
     self._n_of_deployables = self._n_of_deployables - 1
     if self._n_of_deployables == 1 then
         local _, text = next(self._equipment) ---@cast text PanelText

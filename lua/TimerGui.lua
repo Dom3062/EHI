@@ -71,7 +71,7 @@ end
 ---@return table?, table?
 function TimerGui:GetUpgrades()
     if self._unit:base()._disable_upgrades or not (self._unit:base().is_drill or self._unit:base().is_saw) or table.size(self._original_colors or {}) == 0 then
-        return nil
+        return nil, nil
     end
     local upgrade_table = nil
     local skills = self._unit:base().get_skill_upgrades and self._unit:base():get_skill_upgrades()
@@ -178,8 +178,7 @@ function TimerGui:_start(...)
     original._start(self, ...)
     if self._ignore then
         return
-    end
-    if self._tracker_merge_id and managers.ehi_tracker:TrackerExists(self._tracker_merge_id) then
+    elseif self._tracker_merge_id and managers.ehi_tracker:TrackerExists(self._tracker_merge_id) then
         self._ehi_key = self._tracker_merge_id
         self.__ehi_merge = true
         self._tracker_merge_id = nil
@@ -208,9 +207,9 @@ function TimerGui:_set_done(...)
     self:RemoveTracker()
     original._set_done(self, ...)
     self:RestoreWaypoint()
-    if self.__ehi_parent and self.__ehi_child_units then
+    if self.__ehi_child_units then
         for _, unit in ipairs(self.__ehi_child_units) do
-            if unit:base() and unit:base().SetCountThisUnit then
+            if unit and unit:base() and unit:base().SetCountThisUnit then
                 unit:base():SetCountThisUnit()
             end
         end
@@ -294,22 +293,20 @@ function TimerGui:SetOnAlarm()
 end
 
 ---@param waypoint_id number
-function TimerGui:RemoveVanillaWaypoint(waypoint_id)
+---@param restore_waypoint_on_done boolean?
+function TimerGui:RemoveVanillaWaypoint(waypoint_id, restore_waypoint_on_done)
     self._remove_vanilla_waypoint = waypoint_id
     if self._started then
         self:HideWaypoint()
     end
+    self._restore_vanilla_waypoint_on_done = restore_waypoint_on_done
 end
 
 function TimerGui:SetIgnoreVisibility()
     self._ignore_visibility = true
 end
 
-function TimerGui:SetRestoreVanillaWaypointOnDone()
-    self._restore_vanilla_waypoint_on_done = true
-end
-
----@param units table
+---@param units number[]
 ---@param wd WorldDefinition
 function TimerGui:SetChildUnits(units, wd)
     if self._done then
@@ -322,15 +319,13 @@ function TimerGui:SetChildUnits(units, wd)
             end
         end
     else
-        self.__ehi_parent = true
-        self.__ehi_child_units = {} ---@type UnitAmmoDeployable[]|UnitGrenadeDeployable[]
-        local n = 1
-        for _, unit_id in ipairs(units) do
+        self.__ehi_child_units = {} ---@type UnitAmmoDeployable[]|UnitGrenadeDeployable[]|false[]
+        for i, unit_id in ipairs(units) do
             local unit = wd:get_unit(unit_id) --[[@as UnitAmmoDeployable|UnitGrenadeDeployable]]
             if unit then
-                self.__ehi_child_units[n] = unit
-                n = n + 1
+                self.__ehi_child_units[i] = unit
             else
+                self.__ehi_child_units[i] = false
                 EHI:Log("[TimerGui] Cannot find unit with ID " .. tostring(unit_id))
             end
         end
@@ -363,8 +358,7 @@ end
 function TimerGui:SetCustomID(id)
     if not id then
         return
-    end
-    if self._started then
+    elseif self._started then
         managers.ehi_manager:UpdateID(self._ehi_key, id)
     end
     self._ehi_key = id

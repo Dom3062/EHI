@@ -121,7 +121,7 @@ function EHITrackerManager:save(data)
     end
 end
 
----@param params AddTrackerTable|ElementTrigger
+---@param params ElementTrigger
 ---@param pos integer?
 function EHITrackerManager:AddTracker(params, pos)
     if self._trackers[params.id] then
@@ -145,7 +145,7 @@ function EHITrackerManager:AddTracker(params, pos)
     self._n_of_trackers = self._n_of_trackers + 1
 end
 
----@param params AddTrackerTable|ElementTrigger
+---@param params ElementTrigger
 function EHITrackerManager:AddHiddenTracker(params)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
@@ -161,7 +161,7 @@ function EHITrackerManager:AddHiddenTracker(params)
     self._trackers[params.id] = { tracker = tracker }
 end
 
----@param params AddTrackerTable|ElementTrigger
+---@param params ElementTrigger
 function EHITrackerManager:PreloadTracker(params)
     if self._trackers[params.id] then
         EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
@@ -174,7 +174,7 @@ function EHITrackerManager:PreloadTracker(params)
 end
 
 ---@param id string
----@param params AddTrackerTable|ElementTrigger
+---@param params ElementTrigger
 function EHITrackerManager:RunTracker(id, params)
     local tbl = self._trackers[id]
     if not tbl then
@@ -197,22 +197,13 @@ function EHITrackerManager:RunTracker(id, params)
     self._n_of_trackers = self._n_of_trackers + 1
 end
 
----Called by host only. Clients with EHI call `EHITrackerManager:AddTracker()` when synced
----@param params AddTrackerTable
----@param id integer
----@param delay number
-function EHITrackerManager:AddTrackerAndSync(params, id, delay)
-    self:AddTracker(params)
-    self:Sync(id, delay)
-end
-
----@param id integer
+---@param id number
 ---@param delay number
 function EHITrackerManager:Sync(id, delay)
     self:SyncTable(self._sync_tracker, { id = id, delay = delay or 0 })
 end
 
----@param params AddTrackerTable|ElementTrigger
+---@param params ElementTrigger
 function EHITrackerManager:AddLaserTracker(params)
     for id, _ in pairs(self._stealth_trackers.lasers) do
         -- Don't add this tracker if the "next_cycle_t" is the same as time to prevent duplication
@@ -231,7 +222,7 @@ function EHITrackerManager:RemoveLaserTracker(id)
     self:RemoveTracker(id)
 end
 
----@param params AddTrackerTable|ElementTrigger
+---@param params ElementTrigger
 ---@param pos integer?
 function EHITrackerManager:AddTrackerIfDoesNotExist(params, pos)
     if self:TrackerDoesNotExist(params.id) then
@@ -240,7 +231,7 @@ function EHITrackerManager:AddTrackerIfDoesNotExist(params, pos)
 end
 
 ---@param id string
----@param params AddTrackerTable|ElementTrigger
+---@param params ElementTrigger
 function EHITrackerManager:RunTrackerIfDoesNotExist(id, params)
     local tbl = id and self._trackers[id]
     if tbl and not tbl.pos then

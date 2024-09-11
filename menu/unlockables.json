@@ -11,6 +11,7 @@
             "callback": ["SetUnlockableOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_achievements",
             "value": "show_achievements",
+            "focus_changed_callback": "SetFocus",
             "default_value": true,
             "is_parent" : true
         },
@@ -155,6 +156,7 @@
             "callback": ["SetUnlockableOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_trophies",
             "value": "show_trophies",
+            "focus_changed_callback": "SetFocus",
             "default_value": true,
             "is_parent" : true,
             "ehi_ver" : 84
@@ -219,6 +221,7 @@
             "callback": ["SetUnlockableOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_dailies",
             "value": "show_dailies",
+            "focus_changed_callback": "SetFocus",
             "default_value": true,
             "is_parent" : true,
             "ehi_ver" : 84

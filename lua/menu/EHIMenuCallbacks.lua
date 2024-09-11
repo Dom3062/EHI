@@ -56,13 +56,6 @@ function EHIMenu:SetFocus2(focus, value)
     self:SetFocus(focus, "show_enemy_count_tracker")
 end
 
-function EHIMenu:SetEquipmentColor(color, option)
-    local c = EHI.settings.equipment_color[option]
-    c.r = color.red
-    c.g = color.green
-    c.b = color.blue
-end
-
 function EHIMenu:UpdateXOffset(x)
     self._preview_panel:UpdateXOffset(x)
 end
@@ -121,7 +114,7 @@ function EHIMenu:fcc_equipment_tracker(focus, ...)
 end
 
 function EHIMenu:fcc_equipment_tracker_menu(focus, ...)
-    EHI:DelayCall("HighlightDelay", 0.5, function()
+    DelayedCalls:Add("HighlightDelay", 0.5, function()
         self:SetFocus(focus, focus and "show_equipment_tracker" or "")
     end)
 end
@@ -177,4 +170,14 @@ end
 function EHIMenu:SetUnlockableColor(color, option, color_type)
     self:SetColor(color, option, color_type)
     self._preview_panel:CallFunction(option, "UpdateIconColor", Color(255, color.red, color.green, color.blue) / 255)
+end
+
+local id_redirect =
+{
+    show_achievements = "achievement",
+    show_trophies = "trophy",
+    show_dailies = "sidejob"
+}
+function EHIMenu:SetUnlockableFocus(focus, value)
+    self:SetFocus(focus, id_redirect[value])
 end

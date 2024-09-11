@@ -7,8 +7,8 @@ local Color = Color
 ---@class EHIWarningTracker : EHITracker
 ---@field super EHITracker
 EHIWarningTracker = class(EHITracker)
-EHIWarningTracker._warning_color = EHI:GetTWColor("warning")
-EHIWarningTracker._completion_color = EHI:GetTWColor("completion")
+EHIWarningTracker._warning_color = EHI:GetColorFromOption("tracker_waypoint", "warning")
+EHIWarningTracker._completion_color = EHI:GetColorFromOption("tracker_waypoint", "completion")
 EHIWarningTracker._check_anim_progress = false
 EHIWarningTracker._show_completion_color = false
 ---@param o PanelText
@@ -31,6 +31,7 @@ EHIWarningTracker._anim_warning = function(o, old_color, color, start_t, class)
         t = 1
     end
 end
+
 ---@param dt number
 function EHIWarningTracker:update(dt)
     EHIWarningTracker.super.update(self, dt)
@@ -44,7 +45,7 @@ end
 ---@param color Color?
 function EHIWarningTracker:AnimateColor(check_progress, color)
     if self._text and alive(self._text) then
-        local start_t = check_progress and (1 - min(self._parent_class.RoundNumber(self._time, 1) - floor(self._time), 0.99)) or 1
+        local start_t = check_progress and (1 - min(self._parent_class.RoundNumber(self._time, 0.1) - floor(self._time), 0.99)) or 1
         self._text:animate(self._anim_warning, self._text_color, color or (self._show_completion_color and self._completion_color or self._warning_color), start_t, self)
     end
 end

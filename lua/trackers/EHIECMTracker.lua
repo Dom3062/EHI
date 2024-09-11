@@ -4,14 +4,13 @@ local EHI = EHI
 EHIECMTracker = class(EHIWarningTracker)
 ---@param panel Panel
 ---@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIECMTracker:init(panel, params, parent_class)
-    EHIECMTracker.super.init(self, panel, params, parent_class)
+function EHIECMTracker:init(panel, params, ...)
+    EHIECMTracker.super.init(self, panel, params, ...)
     self._unit = params.unit
 end
 
-function EHIECMTracker:SetTime(time)
-    EHIECMTracker.super.SetTime(self, time)
+function EHIECMTracker:SetTime(...)
+    EHIECMTracker.super.SetTime(self, ...)
     self:SetTextColor(Color.white)
 end
 

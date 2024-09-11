@@ -60,7 +60,6 @@ function EHIMenu:init()
     self._menus = {}
     self._axis_timer = { x = 0, y = 0 }
     self._panel = self._ws:panel():panel({
-        name = "EHIMenu",
         layer = 500,
         alpha = 0
     })
@@ -75,7 +74,6 @@ function EHIMenu:init()
     })
     bg:set_center_x(self._panel:w() / 2)
     local blur_bg = self._panel:bitmap({
-        name = "blur_bg",
         texture = "guis/textures/test_blur_df",
         render_template = "VertexColorTexturedBlur3D",
         w = background_size.w,
@@ -85,7 +83,6 @@ function EHIMenu:init()
     })
     blur_bg:set_center_x(self._panel:w() / 2)
     self._tooltip = self._panel:text({
-        name = "tooltip",
         font_size = 18,
         font = tweak_data.menu.pd2_medium_font,
         y = 10,
@@ -95,14 +92,12 @@ function EHIMenu:init()
         word_wrap = true,
     })
     local options_bg = self._panel:bitmap({
-        name = "options_bg",
         texture = "guis/textures/pd2_mod_ehi/menu_background",
         w = self._panel:w() / 2.5,
         h = self._panel:h(),
     })
     options_bg:set_right(self._panel:w())
     self._options_panel = self._panel:panel({
-        name = "options_panel",
         y = 5,
         w = options_bg:w() - 20,
         h = options_bg:h() - 45,
@@ -111,7 +106,6 @@ function EHIMenu:init()
     self._tooltip:set_right(self._options_panel:x() - 20)
     if managers.menu:is_pc_controller() then
         local back_button = self._panel:panel({
-            name = "back_button",
             w = 100,
             h = 25,
             layer = 2
@@ -135,7 +129,6 @@ function EHIMenu:init()
         self._back_button = { type = "button", panel = back_button, callback = "Cancel", num = 0 }
     else
         self._button_legends = self._panel:text({
-            name = "legends",
             layer = 2,
             w = options_bg:w() - 20,
             h = 25,
@@ -147,18 +140,8 @@ function EHIMenu:init()
         self._button_legends:set_right(self._options_panel:right() - 5)
         self._button_legends:set_top(self._options_panel:bottom())
     end
-    if EHI:IsVR() then
-        self._gui_vr = World:newgui()
-        --self._ws_vr = managers.gui_data:create_fullscreen_workspace(nil, MenuRoom:gui())
-        self._ws_vr = self._gui_vr:create_world_workspace(1280, 720, Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0))
-        self._vr_panel = self._ws_vr:panel():panel({
-            name = "vr_panel",
-            layer = 500,
-            alpha = 1
-        })
-    end
-    self._preview_panel = FakeEHITrackerManager:new(self._vr_panel or self._panel, AspectRatioEnum)
-    self._buffs_preview_panel = FakeEHIBuffsManager:new(self._vr_panel or self._panel)
+    self._preview_panel = FakeEHITrackerManager:new(self._panel, AspectRatioEnum)
+    self._buffs_preview_panel = FakeEHIBuffsManager:new(self._panel)
 
     self._menu_ver = 1
     if EHI.settings.ModVersion and EHI.settings.ModVersion ~= "N/A" then
@@ -169,7 +152,6 @@ function EHIMenu:init()
 
     if Utils:IsInHeist() then
         local restart = self._panel:text({
-            name = "restart_required",
             text = managers.localization:text("ehi_level_restart_required"),
             font_size = 24,
             font = tweak_data.menu.pd2_large_font,
@@ -183,42 +165,52 @@ function EHIMenu:init()
         restart:set_top(self._options_panel:bottom())
     end
 
-    self:GetMenuFromJson(EHI.MenuPath .. "menu.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "visuals.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "trackers.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "trackers_2.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "trackers_3.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "trackers_4.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "unlockables.json", EHI.settings.unlockables)
-    self:GetMenuFromJson(EHI.MenuPath .. "equipment.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "waypoints.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "buffs.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills/mastermind.json", EHI.settings.buff_option)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills/enforcer.json", EHI.settings.buff_option)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills/ghost.json", EHI.settings.buff_option)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/skills/fugitive.json", EHI.settings.buff_option)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks.json", EHI.settings.buff_option)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/infiltrator.json", EHI.settings.buff_option.infiltrator)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/gambler.json", EHI.settings.buff_option.gambler)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/grinder.json", EHI.settings.buff_option.grinder)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/maniac.json", EHI.settings.buff_option.maniac)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/anarchist.json", EHI.settings.buff_option.anarchist)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/expresident.json", EHI.settings.buff_option.expresident)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/biker.json", EHI.settings.buff_option.biker)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/kingpin.json", EHI.settings.buff_option.kingpin)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/sicario.json", EHI.settings.buff_option.sicario)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/stoic.json", EHI.settings.buff_option.stoic)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/tag_team.json", EHI.settings.buff_option.tag_team)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/hacker.json", EHI.settings.buff_option.hacker)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/leech.json", EHI.settings.buff_option.leech)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/perks/copycat.json", EHI.settings.buff_option.copycat)
-    self:GetMenuFromJson(EHI.MenuPath .. "buff_options/other.json", EHI.settings.buff_option)
-    self:GetMenuFromJson(EHI.MenuPath .. "inventory.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "other.json")
-    self:GetMenuFromJson(EHI.MenuPath .. "colors.json", EHI.settings.colors)
+    self:_get_menu_from_json(EHI.MenuPath .. "menu.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "visuals.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "trackers.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "trackers_2.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "trackers_3.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "trackers_4.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "unlockables.json", EHI.settings.unlockables)
+    self:_get_menu_from_json(EHI.MenuPath .. "equipment.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "waypoints.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "buffs.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills/mastermind.json", EHI.settings.buff_option)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills/enforcer.json", EHI.settings.buff_option)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills/ghost.json", EHI.settings.buff_option)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills/fugitive.json", EHI.settings.buff_option)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks.json", EHI.settings.buff_option)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/infiltrator.json", EHI.settings.buff_option.infiltrator)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/gambler.json", EHI.settings.buff_option.gambler)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/grinder.json", EHI.settings.buff_option.grinder)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/maniac.json", EHI.settings.buff_option.maniac)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/anarchist.json", EHI.settings.buff_option.anarchist)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/expresident.json", EHI.settings.buff_option.expresident)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/biker.json", EHI.settings.buff_option.biker)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/kingpin.json", EHI.settings.buff_option.kingpin)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/sicario.json", EHI.settings.buff_option.sicario)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/stoic.json", EHI.settings.buff_option.stoic)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/tag_team.json", EHI.settings.buff_option.tag_team)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/hacker.json", EHI.settings.buff_option.hacker)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/leech.json", EHI.settings.buff_option.leech)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/copycat.json", EHI.settings.buff_option.copycat)
+    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/other.json", EHI.settings.buff_option)
+    self:_get_menu_from_json(EHI.MenuPath .. "inventory.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "other.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "colors.json", EHI.settings.colors)
 
     self:OpenMenu("ehi_menu")
+
+    Hooks:Add("MenuUpdate", "MenuUpdate_EHIMenu", function(t, dt)
+        if self._enabled then
+            self:update(t, dt)
+        end
+    end)
+    Hooks:PostHook(MenuManager, "destroy", "destroy_menu_EHIMenu", function(...)
+        self._enabled = false
+        EHI.Menu = nil
+    end)
 end
 
 function EHIMenu:CallCallback(item, params)
@@ -370,14 +362,6 @@ function EHIMenu:Close()
         end
     end)
     self:SetFocus(false, "")
-end
-
-function EHIMenu:destroy()
-    if self._gui_vr and self._ws_vr then
-        self._gui_vr:destroy_workspace(self._ws_vr)
-        self._ws_vr = nil
-        self._gui_vr = nil
-    end
 end
 
 -- Mouse Functions
@@ -757,15 +741,14 @@ function EHIMenu:SetItem(item, value, menu)
     end
 end
 
---Menu Creation and activation
-function EHIMenu:GetMenuFromJson(path, settings_table)
-    local file = io.open(path, "r")
-    if file then
+---Menu Creation and activation
+---@param path string
+---@param settings_table table?
+function EHIMenu:_get_menu_from_json(path, settings_table)
+    local content = io.load_as_json(path)
+    if content then
         settings_table = settings_table or EHI.settings
-        local file_content = file:read("*all")
-        file:close()
 
-        local content = json.decode(file_content)
         local menu_title = managers.localization:text(content.title)
         local items = content.items
 
@@ -773,7 +756,7 @@ function EHIMenu:GetMenuFromJson(path, settings_table)
             menu_title = menu_title .. " r" .. EHI.ModVersion
         end
 
-        local menu = self:CreateMenu({
+        local menu = self:_create_menu({
             menu_id = content.menu_id,
             parent_menu = content.parent_menu,
             title = menu_title,
@@ -782,9 +765,9 @@ function EHIMenu:GetMenuFromJson(path, settings_table)
 
         for _, item in ipairs(items) do
             if item.table then
-                self:CreateOneLineItems(item, items, menu, settings_table)
+                self:_create_one_line_items(item, items, menu, settings_table)
             else
-                self:CreateItem(item, items, menu, settings_table)
+                self:_create_item(item, items, menu, settings_table)
             end
         end
         menu.panel:set_h(content.h or menu.items[#menu.items].panel:bottom())
@@ -794,7 +777,7 @@ function EHIMenu:GetMenuFromJson(path, settings_table)
     end
 end
 
-function EHIMenu:CreateItem(item, items, menu, settings_table)
+function EHIMenu:_create_item(item, items, menu, settings_table)
     if not menu then
         return
     end
@@ -931,15 +914,11 @@ function EHIMenu:CreateItem(item, items, menu, settings_table)
         })
     elseif item_type == "color_select" then
         local stored_value = EHI.settings
-        if item.setting_value then
-            if item.setting_value == "equipment" then
-                stored_value = EHI.settings.equipment_color
-            elseif item.setting_value == "colors" then
-                if item.color_type then
-                    stored_value = EHI.settings.colors[item.color_type]
-                else
-                    stored_value = EHI.settings.colors
-                end
+        if item.setting_value and item.setting_value == "colors" then
+            if item.color_type then
+                stored_value = EHI.settings.colors[item.color_type]
+            else
+                stored_value = EHI.settings.colors
             end
         end
         value = EHI:GetColor(stored_value[item.value])
@@ -961,7 +940,7 @@ function EHIMenu:CreateItem(item, items, menu, settings_table)
     return itm
 end
 
-function EHIMenu:CreateOneLineItems(item, items, menu, settings_table)
+function EHIMenu:_create_one_line_items(item, items, menu, settings_table)
     if not menu then
         return
     end
@@ -976,7 +955,7 @@ function EHIMenu:CreateOneLineItems(item, items, menu, settings_table)
     local n = table.size(item.table)
     local previous_item
     for _, v in ipairs(item.table) do
-        local itm = self:CreateItem(v, items, menu, settings_table)
+        local itm = self:_create_item(v, items, menu, settings_table)
         if itm then
             itm.panel:set_w(itm.panel:w() / n)
             local item_title = itm.panel:child("title")
@@ -999,7 +978,7 @@ end
 
 ---@param params table
 ---@return table
-function EHIMenu:CreateMenu(params)
+function EHIMenu:_create_menu(params)
     if self._menus[params.menu_id] then
         return self._menus[params.menu_id]
     end

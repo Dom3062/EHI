@@ -5,7 +5,7 @@ local TT = EHI.Trackers
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseTriggerTable
 local triggers = {
-    [100322] = { time = 120, id = "Fuel", icons = { Icon.Oil }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100038, 8075) }, hint = EHI.Hints.FuelTransfer },
+    [100322] = { time = 120, id = "Fuel", icons = { Icon.Oil }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100038, 8075) }, hint = EHI.Hints.FuelTransfer },
     [100323] = { id = "Fuel", special_function = SF.PauseTracker }
 }
 

@@ -63,7 +63,7 @@ EHI:ShowAchievementLootCounter({
     max = 20,
     counter =
     {
-        check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
+        check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = "ammo"
     }
 })
@@ -76,10 +76,7 @@ for i = 0, 500, 100 do
     tbl[EHI:GetInstanceUnitID(100022, i)] = { icons = { Icon.Vault }, remove_on_alarm = true }
 end
 EHI:UpdateUnits(tbl)
-
----@type MissionDoorTable
-local MissionDoor =
-{
+EHI:SetMissionDoorData({
     -- Vaults
     [Vector3(-150, -1100, 685)] = 100835,
     [Vector3(-1750, -1200, 685)] = 100253,
@@ -87,8 +84,7 @@ local MissionDoor =
     [Vector3(2350, -1100, 685)] = 100840,
     [Vector3(-2650, -1100, 685)] = 102288,
     [Vector3(3250, -1200, 685)] = 102593
-}
-EHI:SetMissionDoorData(MissionDoor)
+})
 EHI:AddXPBreakdown({
     objectives =
     {

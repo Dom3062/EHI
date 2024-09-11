@@ -100,9 +100,19 @@ local achievements =
     }
 }
 
+local other =
+{
+    [102344] = EHI:AddAssaultDelay({ special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+        if EHI:IsPlayingFromStart() and not managers.ehi_assault:TrackerExists() then
+            self:CreateTracker(trigger)
+        end
+    end), trigger_times = 1 })
+}
+
 EHI:ParseTriggers({
     mission = triggers,
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 EHI:AddLoadSyncFunction(function(self)
     local elevator_counter = managers.worlddefinition:get_unit(102296) --[[@as UnitDigitalTimer?]]

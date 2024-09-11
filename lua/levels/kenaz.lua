@@ -4,10 +4,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
-local refill_icon = { Icon.Water, Icon.Loop }
-if EHI:GetOption("show_one_icon") then
-    refill_icon = { { icon = Icon.Water, color = tweak_data.ehi.colors.WaterColor } }
-end
+local refill_icon = EHI:GetOption("show_one_icon") and { { icon = Icon.Water, color = tweak_data.ehi.colors.WaterColor } } or { Icon.Water, Icon.Loop }
 ---@type EHI.ColorTable
 local keycode_units =
 {

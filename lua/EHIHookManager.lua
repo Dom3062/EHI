@@ -2,10 +2,9 @@ local EHI = EHI
 
 ---@class EHIHookManager
 EHIHookManager = {}
-EHIHookManager._element_hook_function = EHI:IsClient() and EHI.ClientElement or EHI.HostElement
+EHIHookManager._element_hook_function = EHI:IsClient() and "client_on_executed" or "on_executed"
 ---@param ehi_tracker EHITrackerManager
 ---@param ehi_loot EHILootManager
----@return EHIHookManager
 function EHIHookManager:new(ehi_tracker, ehi_loot)
     self._trackers = ehi_tracker
     self._loot = ehi_loot
@@ -16,6 +15,12 @@ end
 ---@param post_call fun(element: MissionScriptElement, instigator: Unit?)
 function EHIHookManager:HookElement(element, post_call)
     Hooks:PostHook(element, self._element_hook_function, string.format("EHI_Element_%d", element._id), post_call)
+end
+
+---@param element MissionScriptElement
+---@param pre_call fun(element: MissionScriptElement, instigator: Unit?)
+function EHIHookManager:PrehookElement(element, pre_call)
+    Hooks:PreHook(element, self._element_hook_function, string.format("EHI_Prehook_Element_%d", element._id), pre_call)
 end
 
 ---@param id number
@@ -31,9 +36,9 @@ end
 ---@overload fun(self: self, tracker_id: string, weapon_id: string, no_civilian: boolean)
 function EHIHookManager:HookKillFunction(tracker_id, weapon_id, no_civilian, custom_f)
     if custom_f then
-        EHI:HookWithID(StatisticsManager, "killed", string.format("EHI_%s_killed", tracker_id), custom_f)
+        Hooks:PostHook(StatisticsManager, "killed", string.format("EHI_%s_killed", tracker_id), custom_f)
     elseif no_civilian then
-        EHI:HookWithID(StatisticsManager, "killed", string.format("EHI_%s_%s_killed", tracker_id, weapon_id), function(sm, data)
+        Hooks:PostHook(StatisticsManager, "killed", string.format("EHI_%s_%s_killed", tracker_id, weapon_id), function(sm, data)
             if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
                 local name_id, _ = sm:_get_name_id_and_throwable_id(data.weapon_unit)
                 if name_id == weapon_id then
@@ -42,7 +47,7 @@ function EHIHookManager:HookKillFunction(tracker_id, weapon_id, no_civilian, cus
             end
         end)
     else
-        EHI:HookWithID(StatisticsManager, "killed", string.format("EHI_%s_%s_killed", tracker_id, weapon_id), function(sm, data)
+        Hooks:PostHook(StatisticsManager, "killed", string.format("EHI_%s_%s_killed", tracker_id, weapon_id), function(sm, data)
             if data.variant ~= "melee" then
                 local name_id, _ = sm:_get_name_id_and_throwable_id(data.weapon_unit)
                 if name_id == weapon_id then
@@ -78,7 +83,7 @@ function EHIHookManager:HookMissionEndCSMAward(id, icon)
     local progress, max = EHI:GetSHSideJobProgressAndMax(id)
     if progress + 1 < max then
         icon = icon or "milestone_trophy"
-        EHI:HookWithID(CustomSafehouseManager, "award", string.format("EHI_%s_AwardProgress", id), function(csm, id_stat)
+        Hooks:PostHook(CustomSafehouseManager, "award", string.format("EHI_%s_AwardProgress", id), function(csm, id_stat)
             if id_stat == id then
                 managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text(id), tostring(progress + 1) .. "/" .. tostring(max), icon)
             end
@@ -89,5 +94,5 @@ end
 ---@param id string
 ---@param f fun(am: AchievmentManager, stat: string, value: number?)
 function EHIHookManager:HookAchievementAwardProgress(id, f)
-    EHI:HookWithID(AchievmentManager, "award_progress", string.format("EHI_%s_AwardProgress", id), f)
+    Hooks:PostHook(AchievmentManager, "award_progress", string.format("EHI_%s_AwardProgress", id), f)
 end

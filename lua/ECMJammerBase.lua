@@ -111,30 +111,22 @@ if EHI:GetOption("show_equipment_ecmjammer") then
 end
 
 if EHI:GetOption("show_equipment_ecmfeedback") then
-    EHI:HookWithID(ECMJammerBase, "_set_feedback_active", "EHI_ECMJammerBase_set_feedback_active_true",
-    ---@param self ECMJammerBase
-    ---@param state boolean
-    function(self, state)
-        if state and self._feedback_duration then
-            if managers.ehi_tracker:CallFunction2("ECMFeedback", "SetTimeIfLower", self._feedback_duration, self._ehi_peer_id, self._unit) then
-                managers.ehi_tracker:AddTracker({
-                    id = "ECMFeedback",
-                    time = self._feedback_duration,
-                    icons = { { icon = "ecm_feedback", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
-                    unit = self._unit,
-                    hint = "ecm_feedback",
-                    class = "EHIECMTracker"
-                })
-            end
+    Hooks:PostHook(ECMJammerBase, "_set_feedback_active", "EHI_ECMJammerBase_set_feedback_active_true", function(self, state) ---@param state boolean
+        if state and self._feedback_duration and managers.ehi_tracker:CallFunction2("ECMFeedback", "SetTimeIfLower", self._feedback_duration, self._ehi_peer_id, self._unit) then
+            managers.ehi_tracker:AddTracker({
+                id = "ECMFeedback",
+                time = self._feedback_duration,
+                icons = { { icon = "ecm_feedback", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
+                unit = self._unit,
+                hint = "ecm_feedback",
+                class = "EHIECMTracker"
+            })
         end
     end)
 end
 
 if EHI:GetOption("show_ecmfeedback_refresh") then
-    EHI:HookWithID(ECMJammerBase, "_set_feedback_active", "EHI_ECMJammerBase_set_feedback_active_false",
-    ---@param self ECMJammerBase
-    ---@param state boolean
-    function(self, state)
+    Hooks:PostHook(ECMJammerBase, "_set_feedback_active", "EHI_ECMJammerBase_set_feedback_active_false", function(self, state) ---@param state boolean
         if not state and not self.__ehi_destroying then
             if alive(self._owner) then
                 local retrigger = false

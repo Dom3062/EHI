@@ -9,7 +9,7 @@ function EHIbex11Tracker:pre_init(...)
         achievement = "bex_11",
         counter =
         {
-            check_type = EHI.LootCounter.CheckType.CustomCheck,
+            check_type = EHI.Const.LootCounter.CheckType.CustomCheck,
             f = function(loot)
                 local progress = loot:GetSecuredBagsAmount()
                 self:SetProgress(progress, "bags")
@@ -51,7 +51,7 @@ local element_sync_triggers =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [102843] = { time = 28.05 + 418/30, id = "Suprise", icons = { "pd2_question" }, hint = Hints.Question },
+    [102843] = { time = 28.05 + 418/30, id = "Suprise", icons = { "pd2_question" } },
     -- Suprise pull is in CoreWorldInstanceManager
 
     [101818] = { additional_time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill, hint = Hints.DrillPartsDelivery },

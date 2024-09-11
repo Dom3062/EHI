@@ -36,6 +36,9 @@
 ---@field damage_absorption fun(self: self): number
 ---@field damage_reduction_skill_multiplier fun(self: self, damage_type: string): number
 ---@field _wild_kill_triggers table
+---@field _peer_used_deployable boolean
+---@field count_up_player_minions fun(self: self)
+---@field count_down_player_minions fun(self: self)
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -162,7 +165,7 @@ EHI:AddOnSpawnedCallback(function()
     if AbilityKey then
         AbilityKey = AbilityKey .. "_cooldown"
         managers.ehi_buff._cache.Ability = AbilityKey
-        EHI:PreHookWithID(self, "add_grenade_amount", "EHI_Replenish_Throwable", function(pm, amount, ...)
+        Hooks:PreHook(self, "add_grenade_amount", "EHI_Replenish_Throwable", function(pm, amount, ...)
             if amount > 0 then
                 managers.ehi_buff:CallFunction(AbilityKey, "Replenished")
             elseif amount < 0 then

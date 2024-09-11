@@ -1,13 +1,14 @@
 ---@class EHINeededValueTracker : EHIProgressTracker
 ---@field super EHIProgressTracker
 EHINeededValueTracker = class(EHIProgressTracker)
+---@param params EHITracker.params
 function EHINeededValueTracker:pre_init(params)
     EHINeededValueTracker.super.pre_init(self, params)
     if params.short_format then
         self.FormatNumber = self.FormatNumberShort
         self._cash_sign = managers.localization:text("cash_sign")
     end
-    self._progress_formatted = self:FormatNumber(0)
+    self._progress_formatted = "0"
     self._max_formatted = self:FormatNumber(self._max)
 end
 

@@ -42,7 +42,7 @@ local triggers = {
     end), hint = Hints.Wait },
     [102181] = { id = "HeliMagnetLoop", special_function = SF.RemoveTracker },
 
-    [100206] = { time = 30, id = "LoweringTheMagnet", icons = Icon.HeliDropWinch, waypoint = { icon = Icon.Interact, position_by_element = 101016 }, hint = Hints.Winch },
+    [100206] = { time = 30, id = "LoweringTheMagnet", icons = Icon.HeliDropWinch, waypoint = { data_from_element = 101016 }, hint = Hints.Winch },
 
     [103869] = { time = 600, id = "PanicRoomTakeoff", class = "EHIHeliTracker", hint = Hints.Defend },
     [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1004051 }, hint = Hints.Wait },

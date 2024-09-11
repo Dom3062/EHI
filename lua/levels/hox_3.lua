@@ -5,9 +5,9 @@ local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local drill_delay = 30 + 2 + 1.5
-local DrillWP = { icon = Icon.Drill, position_by_element = EHI:GetInstanceElementID(100002, 2835) }
+local DrillWP = { data_from_element = EHI:GetInstanceElementID(100002, 2835) }
 local escape_delay = 3 + 27 + 1
-local EscapeWP = { icon = Icon.Escape, position_by_element = EHI:GetInstanceElementID(100009, 2910) }
+local EscapeWP = { data_from_element = EHI:GetInstanceElementID(100009, 2910) }
 ---@type ParseTriggerTable
 local triggers = {
     [101855] = { time = 120 + drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP), hint = Hints.DrillDelivery },

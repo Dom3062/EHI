@@ -11,18 +11,16 @@ if EHI:GetOption("show_enemy_count_show_pagers") then
 else
     EHIEnemyCountTracker._forced_icons = { "enemy" }
 end
-function EHIEnemyCountTracker:init(...)
+---@param panel Panel
+---@param params EHITracker.params
+function EHIEnemyCountTracker:init(panel, params, ...)
     self._alarm_count = 0
     self._alarm_count_answered = 0
-    EHIEnemyCountTracker.super.init(self, ...)
-    self._update_on_alarm = true
-end
-
----@param params EHITracker.params
-function EHIEnemyCountTracker:post_init(params)
-    EHIEnemyCountTracker.super.post_init(self, params)
+    EHIEnemyCountTracker.super.init(self, panel, params, ...)
     if params.alarm_sounded then
         self:OnAlarm()
+    else
+        self._update_on_alarm = true
     end
 end
 

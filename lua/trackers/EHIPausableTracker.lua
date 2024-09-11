@@ -1,19 +1,18 @@
 ---@class EHIPausableTracker : EHITracker
 ---@field super EHITracker
 EHIPausableTracker = class(EHITracker)
-EHIPausableTracker._paused_color = EHI:GetTWColor("pause")
+EHIPausableTracker._paused_color = EHI:GetColorFromOption("tracker_waypoint", "pause")
 ---@param panel Panel
 ---@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIPausableTracker:init(panel, params, parent_class)
-    EHIPausableTracker.super.init(self, panel, params, parent_class)
+function EHIPausableTracker:init(panel, params, ...)
+    EHIPausableTracker.super.init(self, panel, params, ...)
     self._update = not params.paused
-    self:_SetPause(not self._update)
+    self:_set_pause(not self._update)
 end
 
 ---@param pause boolean
 function EHIPausableTracker:SetPause(pause)
-    self:_SetPause(pause)
+    self:_set_pause(pause)
     if pause then
         self:RemoveTrackerFromUpdate()
     else
@@ -21,7 +20,7 @@ function EHIPausableTracker:SetPause(pause)
     end
 end
 
-function EHIPausableTracker:_SetPause(pause)
+function EHIPausableTracker:_set_pause(pause)
     self._paused = pause
     self:SetTextColor()
 end

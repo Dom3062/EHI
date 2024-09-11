@@ -2,8 +2,8 @@
 ---@field super EHIWarningWaypoint
 EHITimerWaypoint = class(EHIWarningWaypoint)
 EHITimerWaypoint._update = false
-EHITimerWaypoint._autorepair_color = EHI:GetTWColor("drill_autorepair")
-EHITimerWaypoint._completion_color = EHI:GetTWColor("completion")
+EHITimerWaypoint._autorepair_color = EHI:GetColorFromOption("tracker_waypoint", "drill_autorepair")
+EHITimerWaypoint._completion_color = EHI:GetColorFromOption("tracker_waypoint", "completion")
 EHITimerWaypoint._paused_color = EHIPausableWaypoint._paused_color
 ---@param params table
 function EHITimerWaypoint:post_init(params)

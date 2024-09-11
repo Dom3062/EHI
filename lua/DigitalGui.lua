@@ -33,9 +33,6 @@ local level_id = Global.game_settings.level_id
 function DigitalGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    self._ignore_visibility = false
-    self._ehi_hint = "timelock"
-    self._ehi_group = "timer"
     if not show_waypoint_only then
         EHI:OptionAndLoadTracker("show_timers")
     end
@@ -44,8 +41,7 @@ end
 function DigitalGui:TimerStartCountDown()
     if (self._ignore or not self._visible) and not self._ignore_visibility or self._timer <= 0 then
         return
-    end
-    if managers.ehi_manager:TimerExists(self._ehi_key) then
+    elseif managers.ehi_manager:TimerExists(self._ehi_key) then
         managers.ehi_manager:SetTimerJammed(self._ehi_key, false)
         return
     end
@@ -57,8 +53,8 @@ function DigitalGui:TimerStartCountDown()
             icons = self._icons or { Icon.PCHack },
             warning = self._warning,
             completion = self._completion,
-            hint = self._ehi_hint,
-            group = self._ehi_group,
+            hint = self._ehi_hint or "timelock",
+            group = "timer",
             class = EHI.Trackers.Timer.Base
         })
     end
@@ -171,7 +167,7 @@ else
             self:RemoveTracker()
         else
             managers.ehi_manager:SetTimerJammed(self._ehi_key, true)
-            if self._change_icon_on_pause then
+            if self._icon_on_pause then
                 managers.ehi_manager:SetIcon(self._ehi_key, self._icon_on_pause)
             end
         end
@@ -228,15 +224,11 @@ end
 
 ---@param icon string
 function DigitalGui:SetIconOnPause(icon)
-    if icon then
-        self._icon_on_pause = icon
-        self._change_icon_on_pause = true
-    end
+    self._icon_on_pause = icon
 end
 
----@param ignore boolean
-function DigitalGui:SetIgnore(ignore)
-    self._ignore = ignore
+function DigitalGui:SetIgnore()
+    self._ignore = true
 end
 
 ---@param remove_on_pause boolean
@@ -293,7 +285,7 @@ end
 function DigitalGui:Finalize()
     if self._ignore or (self._remove_on_pause and self._timer_paused) then
         self:RemoveTracker()
-    elseif self._change_icon_on_pause and self._timer_paused then
+    elseif self._icon_on_pause and self._timer_paused then
         managers.ehi_manager:SetIcon(self._ehi_key, self._icon_on_pause)
     elseif self._icons then
         managers.ehi_manager:SetIcon(self._ehi_key, self._icons[1])

@@ -1,23 +1,24 @@
 ---@class EHIPausableWaypoint : EHIWaypoint
 ---@field super EHIWaypoint
 EHIPausableWaypoint = class(EHIWaypoint)
-EHIPausableWaypoint._paused_color = EHI:GetTWColor("pause")
+EHIPausableWaypoint._paused_color = EHI:GetColorFromOption("tracker_waypoint", "pause")
 ---@param params table
 function EHIPausableWaypoint:post_init(params)
-    self._paused = params.paused
-    self:SetColor()
-end
-
----@param dt number
-function EHIPausableWaypoint:update(dt)
-    if self._paused then
-        return
-    end
-    EHIPausableWaypoint.super.update(self, dt)
+    self._update = not params.paused
+    self:_set_pause(not self._update)
 end
 
 ---@param pause boolean
 function EHIPausableWaypoint:SetPaused(pause)
+    self:_set_pause(pause)
+    if pause then
+        self:RemoveWaypointFromUpdate()
+    else
+        self:AddWaypointToUpdate()
+    end
+end
+
+function EHIPausableWaypoint:_set_pause(pause)
     self._paused = pause
     self:SetColor()
 end

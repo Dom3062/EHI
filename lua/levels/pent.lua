@@ -33,7 +33,7 @@ local triggers = {
     -- Car Platform
     -- Lobby PCs
 }
-EHI:AddEventListener("pent_PCHack", "pent_PCHack", function()
+EHI:AddEventListener("pent_PCHack", function()
     managers.hud:SoftRemoveWaypoint2(102955)
 end)
 if EHI:IsClient() then
@@ -88,7 +88,7 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
                 show_finish_after_reaching_target = true,
                 counter =
                 {
-                    check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
+                    check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
                     loot_type = "gnome"
                 }
             })
@@ -110,13 +110,13 @@ function DigitalGui:pent_10()
             managers.hud:ShowAchievementStartedPopup("pent_10")
         end
         if self.TimerStartCountDown then
-            EHI:HookWithID(self, "TimerStartCountDown", hook_key .. "_start", AchievementStarted)
+            Hooks:PostHook(self, "TimerStartCountDown", hook_key .. "_start", AchievementStarted)
         else
-            EHI:HookWithID(self, "timer_start_count_down", hook_key .. "_start", AchievementStarted)
+            Hooks:PostHook(self, "timer_start_count_down", hook_key .. "_start", AchievementStarted)
         end
     end
     if EHI:GetUnlockableOption("show_achievement_failed_popup") then
-        EHI:HookWithID(self, "_timer_stop", hook_key .. "_end", function(...)
+        Hooks:PostHook(self, "_timer_stop", hook_key .. "_end", function(...)
             managers.hud:ShowAchievementFailedPopup("pent_10")
         end)
     end

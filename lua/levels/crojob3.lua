@@ -8,13 +8,10 @@ local heli_anim = 35
 local heli_anim_full = 35 + 10 -- 10 seconds is hose lifting up animation when chopper goes refilling
 local heli_20 = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute }
 local heli_65 = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute }
-local HeliWaterFill = { Icon.Heli, Icon.Water }
-if EHI:GetOption("show_one_icon") then
-    HeliWaterFill = { { icon = Icon.Heli, color = tweak_data.ehi.colors.WaterColor } }
-end
+local HeliWaterFill = EHI:GetOption("show_one_icon") and { { icon = Icon.Heli, color = tweak_data.ehi.colors.WaterColor } } or { Icon.Heli, Icon.Water }
 ---@type ParseTriggerTable
 local triggers = {
-    [101499] = { time = 155 + 25, id = "HeliEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 101525 }, hint = Hints.LootEscape },
+    [101499] = { time = 155 + 25, id = "HeliEscape", icons = Icon.HeliEscape, waypoint = { data_from_element = 101525 }, hint = Hints.LootEscape },
     [101253] = heli_65,
     [101254] = heli_20,
     [101255] = heli_65,
@@ -24,7 +21,7 @@ local triggers = {
     [101279] = heli_65,
     [101280] = heli_20,
 
-    [101691] = { time = 10 + 700/30, id = "PlaneEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.Heli, position_by_element = 100058 }, hint = Hints.LootEscape },
+    [101691] = { time = 10 + 700/30, id = "PlaneEscape", icons = Icon.HeliEscape, waypoint = { data_from_element = 100058 }, hint = Hints.LootEscape },
 
     [102996] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion },
 
@@ -55,7 +52,7 @@ local triggers = {
     -- Right
     [100283] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100647 }, hint = Hints.Thermite },
     [100284] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100648 }, hint = Hints.Thermite },
-    [100288] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100653 }, hint = Hints.Thermite },
+    [100288] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100654 }, hint = Hints.Thermite },
 
     -- Left
     [100285] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100651 }, hint = Hints.Thermite },
@@ -112,7 +109,7 @@ local function HeliWaterRefillWPRestore(self, id)
         self._cache.HeliWaterRestoreWP = nil
     end
 end
-for _, index in ipairs({ 100, 150, 250, 300 }) do
+for index, _ in pairs(IndexToWP) do
     triggers[EHI:GetInstanceElementID(100032, index)] = { time = 240, id = "HeliWaterFill", icons = HeliWaterFill, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.crojob3_Water, waypoint_f = HeliWaterRefillWPAdd, index = index }
     triggers[EHI:GetInstanceElementID(100030, index)] = { id = "HeliWaterFill", special_function = SF.PauseTracker }
     triggers[EHI:GetInstanceElementID(100037, index)] = { special_function = SF.Trigger, data = { 1, 2 } }
@@ -190,7 +187,7 @@ if EHI:IsLootCounterVisible() then
         managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function(...)
             managers.ehi_loot:AddDelayedLootDeclinedCheck(crate)
         end)
-        self:AddTriggers2(LootTrigger, nil, "LootCounter")
+        self:AddTriggers2(LootTrigger, "LootCounter")
         self:HookElements(LootTrigger)
         self._loot:IncreaseLootCounterMaxRandom()
     end)

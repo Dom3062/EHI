@@ -34,12 +34,9 @@ function EHICodeTracker:SetCodePart(pos, code, n_of_code_parts)
     end
 end
 
----@class EHIColoredCodesTracker : EHITracker, EHICodeTracker
----@field super EHITracker
-EHIColoredCodesTracker = class(EHITracker)
-EHIColoredCodesTracker.Format = EHICodeTracker.Format
-EHIColoredCodesTracker._update = false
-EHIColoredCodesTracker._forced_icons = { "code" }
+---@class EHIColoredCodesTracker : EHICodeTracker
+---@field super EHICodeTracker
+EHIColoredCodesTracker = class(EHICodeTracker)
 EHIColoredCodesTracker._forced_hint_text = "color_codes"
 EHIColoredCodesTracker._init_create_text = false
 function EHIColoredCodesTracker:OverridePanel()

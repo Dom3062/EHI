@@ -20,23 +20,13 @@ local triggers =
     [100207] = DestructionTrigger, -- +1000
     [100226] = DestructionTrigger, -- +10000
 
-    [100460] = { time = 24, id = "Reinforcements1", icons = { Icon.Kill }, hint = Hints.Kills },
-    [100501] = { time = 20 + 24, id = "Reinforcements2", icons = { Icon.Kill }, hint = Hints.Kills },
+    [100460] = { time = 24, id = "Reinforcements1", icons = { Icon.Kill }, hint = Hints.Kills, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100507 } },
+    [100501] = { time = 20 + 24, id = "Reinforcements2", icons = { Icon.Kill }, hint = Hints.Kills, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100508 } },
 
-    [100518] = { time = 70 + 26, id = "Escape", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Heli, position_by_element = 100515 }, hint = Hints.Escape }
+    [100518] = { time = 70 + 26, id = "Escape", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element = 100515 }, hint = Hints.Escape }
 }
 if EHI:IsClient() then
     triggers[100513] = EHI:ClientCopyTrigger(triggers[100518], { time = 26 })
-end
-if EHI:MissionTrackersAndWaypointEnabled() then
-    triggers[100460].waypoint = { position_by_element = 100507 }
-    triggers[100501].waypoint = { position_by_element = 100508 }
-    local DisableWaypoints =
-    {
-        [100507] = true,
-        [100508] = true
-    }
-    EHI:DisableWaypoints(DisableWaypoints)
 end
 
 EHI:ParseTriggers({ mission = triggers })

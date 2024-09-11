@@ -32,11 +32,11 @@ if EHI:GetOption("show_pager_callback") then
     end
 
     local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_pager")
-    EHI:HookWithID(IntimitateInteractionExt, "init", "EHI_pager_init", function(self, unit, ...)
+    Hooks:PostHook(IntimitateInteractionExt, "init", "EHI_pager_init", function(self, unit, ...)
         self._ehi_key = "pager_" .. tostring(unit:key())
     end)
 
-    EHI:HookWithID(IntimitateInteractionExt, "set_tweak_data", "EHI_pager_set_tweak_data", function(self, id)
+    Hooks:PostHook(IntimitateInteractionExt, "set_tweak_data", "EHI_pager_set_tweak_data", function(self, id)
         if id == "corpse_alarm_pager" and not self._pager_has_run then
             if not show_waypoint_only then
                 managers.ehi_tracker:AddTracker({
@@ -61,13 +61,13 @@ if EHI:GetOption("show_pager_callback") then
         end
     end)
 
-    EHI:PreHookWithID(IntimitateInteractionExt, "interact", "EHI_pager_interact", function(self, ...)
+    Hooks:PreHook(IntimitateInteractionExt, "interact", "EHI_pager_interact", function(self, ...)
         if self.tweak_data == "corpse_alarm_pager" then
             managers.ehi_manager:Remove(self._ehi_key)
         end
     end)
 
-    EHI:HookWithID(IntimitateInteractionExt, "_at_interact_start", "EHI_pager_at_interact_start", function(self, ...)
+    Hooks:PostHook(IntimitateInteractionExt, "_at_interact_start", "EHI_pager_at_interact_start", function(self, ...)
         if self.tweak_data == "corpse_alarm_pager" then
             if answered_behavior == 1 then
                 managers.ehi_manager:Call(self._ehi_key, "SetAnswered")
@@ -77,7 +77,7 @@ if EHI:GetOption("show_pager_callback") then
         end
     end)
 
-    EHI:PreHookWithID(IntimitateInteractionExt, "sync_interacted", "EHI_pager_sync_interacted", function(self, peer, player, status, ...)
+    Hooks:PreHook(IntimitateInteractionExt, "sync_interacted", "EHI_pager_sync_interacted", function(self, peer, player, status, ...)
         if self.tweak_data == "corpse_alarm_pager" then
             if status == "started" or status == 1 then
                 if answered_behavior == 1 then
@@ -112,14 +112,14 @@ if EHI:GetOption("show_enemy_count_tracker") and EHI:GetOption("show_enemy_count
         managers.ehi_tracker:CallFunction(CallbackKey, "AlarmEnemyPagerKilled")
         unit:character_damage():remove_listener(CallbackKey)
     end
-    EHI:HookWithID(IntimitateInteractionExt, "_at_interact_start", "EHI_EnemyCounter_pager_at_interact_start", function(self, ...)
+    Hooks:PostHook(IntimitateInteractionExt, "_at_interact_start", "EHI_EnemyCounter_pager_at_interact_start", function(self, ...)
         if self.tweak_data == "corpse_alarm_pager" and not self._unit:character_damage():dead() then
             managers.ehi_tracker:CallFunction(CallbackKey, "AlarmEnemyPagerAnswered")
             self._unit:base():add_destroy_listener(CallbackKey, PagerEnemyDestroyed)
             self._unit:character_damage():add_listener(CallbackKey, { "death" }, PagerEnemyKilled)
         end
     end)
-    EHI:PreHookWithID(IntimitateInteractionExt, "sync_interacted", "EHI_EnemyCounter_pager_sync_interacted", function(self, peer, player, status, ...)
+    Hooks:PreHook(IntimitateInteractionExt, "sync_interacted", "EHI_EnemyCounter_pager_sync_interacted", function(self, peer, player, status, ...)
         if self.tweak_data == "corpse_alarm_pager" and (status == "started" or status == 1) and not self._unit:character_damage():dead() then
             managers.ehi_tracker:CallFunction(CallbackKey, "AlarmEnemyPagerAnswered")
             self._unit:base():add_destroy_listener(CallbackKey, PagerEnemyDestroyed)

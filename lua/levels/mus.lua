@@ -5,7 +5,7 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local delay = 5
 local gas_delay = 0.5
-local heli_wp = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100028, 7200) }
+local heli_wp = { data_from_element = EHI:GetInstanceElementID(100028, 7200) }
 local gas_wp = { icon = Icon.Teargas, position_by_element = 100841 }
 local triggers = {
     [102442] = { time = 130 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp), hint = Hints.LootEscape },
@@ -101,7 +101,7 @@ EHI:ShowAchievementLootCounter({
     show_finish_after_reaching_target = true,
     counter =
     {
-        check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
+        check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = { "mus_artifact_paint", "mus_artifact" }
     }
 })

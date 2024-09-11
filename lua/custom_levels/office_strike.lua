@@ -81,7 +81,7 @@ local achievements =
             [200106] = { max = 18, class = TT.Achievement.Progress, special_function = SF.AddAchievementToCounter, data = {
                 counter =
                 {
-                    check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
+                    check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
                     loot_type = "money"
                 }
             }}
@@ -114,29 +114,23 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     ---@class EHISniperLoopBufferTracker : EHICountTracker, EHISniperBaseTracker
     ---@field super EHICountTracker
     EHISniperLoopBufferTracker = ehi_sniper_class(EHICountTracker)
-    ---@param params EHITracker.params
-    function EHISniperLoopBufferTracker:post_init(params)
-        EHISniperLoopBufferTracker.super.post_init(self, params)
+    EHISniperLoopBufferTracker._single_sniper = true
+    function EHISniperLoopBufferTracker:post_init(...)
+        EHISniperLoopBufferTracker.super.post_init(self, ...)
         self._sniper_respawn_buffer = {}
         self._sniper_respawn_buffer_size = 0
         self._sniper_respawn_element = 0
         self:SetBGSize(self._bg_box:w() / 2)
         self:SetIconX()
         local half = self._bg_box:w() / 2
-        self._count_text:set_color(EHIProgressTracker._progress_bad)
+        self._count_text:set_color(self._sniper_text_color)
         self._count_text:set_w(half)
         self._text = self:CreateText({
             w = half,
             left = self._count_text:right(),
             FitTheText = true
         })
-        if self._snipers_spawned_popup then
-            self._popup_title = "SNIPER!"
-            self._popup_desc = managers.localization:text("ehi_popup_sniper_spawned")
-        end
-        if self._snipers_logic_started then
-            managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_START", managers.localization:text("ehi_popup_sniper_logic_started"), "EHI_Sniper")
-        end
+        self:SniperLogicStarted()
     end
     ---@param dt number
     function EHISniperLoopBufferTracker:update(dt)
@@ -191,12 +185,9 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         end
         return t
     end
-    ---@param count number?
-    function EHISniperLoopBufferTracker:IncreaseCount(count)
-        if self._snipers_spawned_popup then
-            managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, "EHI_Sniper")
-        end
-        EHISniperLoopBufferTracker.super.IncreaseCount(self, count)
+    function EHISniperLoopBufferTracker:IncreaseCount(...)
+        self:SniperSpawned()
+        EHISniperLoopBufferTracker.super.IncreaseCount(self, ...)
     end
     -- ! element is Sniper ID (ElementSpawnEnemyDummy)
     local AddToRespawnFromDeath = EHI:RegisterCustomSF(function(self, trigger, ...)
@@ -235,13 +226,9 @@ local tbl =
     [102776] = { remove_vanilla_waypoint = 200310 }
 }
 EHI:UpdateUnits(tbl)
-
----@type MissionDoorTable
-local MissionDoor =
-{
+EHI:SetMissionDoorData({
     [Vector3(945.08, 3403.11, 92.4429)] = 200160
-}
-EHI:SetMissionDoorData(MissionDoor)
+})
 
 EHI:ParseTriggers({
     mission = triggers,

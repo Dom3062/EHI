@@ -261,6 +261,199 @@ _G.tweak_data.achievement.enemy_melee_hit_achievements = {
         }
     }
 }
+---@class AchievementsTweakData.grenade_achievements
+_G.tweak_data.achievement.grenade_achievements = {
+        bada_boom = {
+            kill = true,
+            grenade_type = "launcher_frag",
+            count = 4,
+            award = "gage5_2"
+        },
+        artillery_barrage = {
+            kill = true,
+            grenade_type = "launcher_frag",
+            distance = 4000,
+            stat = "gage5_5_stats"
+        },
+        boom_shakalaka = {
+            kill = true,
+            flying_strike = true,
+            award = "gage5_7",
+            enemy = "spooc",
+            grenade_type = "launcher_frag"
+        },
+        not_invited = {
+            timer = 10,
+            grenade_type = "launcher_frag_m32",
+            award = "grill_3",
+            kill_count = 10
+        },
+        threemite = {
+            kill = true,
+            grenade_type = "dynamite",
+            count = 3,
+            award = "scorpion_2"
+        },
+        steel_3 = {
+            kill = true,
+            grenade_type = "wpn_prj_jav",
+            award = "steel_3",
+            enemy = "spooc"
+        },
+        pim_2 = {
+            kill = true,
+            is_civilian = false,
+            success = true,
+            job = "dark",
+            crouching = true,
+            stat = "pim_2_stats"
+        },
+        tango_2 = {
+            kill = true,
+            stat = "tango_2_stats",
+            enemy = "sniper",
+            grenade_type = "launcher_frag_arbiter"
+        },
+        any_kills = {
+            kill = true,
+            challenge_stat = "any_kills"
+        },
+        any_sniper_kills = {
+            kill = true,
+            enemy = "sniper",
+            challenge_stat = "any_sniper_kills"
+        },
+        any_shield_kills = {
+            kill = true,
+            challenge_stat = "any_shield_kills",
+            enemy_tags_any = {
+                "shield"
+            }
+        },
+        any_taser_kills = {
+            kill = true,
+            enemy = "taser",
+            challenge_stat = "any_taser_kills"
+        },
+        any_tank_kills = {
+            kill = true,
+            challenge_stat = "any_tank_kills",
+            enemy_tags_any = {
+                "tank"
+            }
+        },
+        any_spooc_kills = {
+            kill = true,
+            enemy = "spooc",
+            challenge_stat = "any_spooc_kills"
+        },
+        trophy_special_kills = {
+            kill = true,
+            trophy_stat = "trophy_special_kills",
+            enemy_tags_any = {
+                "special"
+            }
+        },
+        trophy_ace = {
+            kill = true,
+            trophy_stat = "trophy_ace",
+            grenade_type = "wpn_prj_ace",
+            difficulties = overkill_and_above
+        },
+        trophy_washington = {
+            kill = true,
+            trophy_stat = "trophy_washington"
+        },
+        trophy_medic = {
+            kill = true,
+            trophy_stat = "trophy_medic",
+            enemies = {
+                "medic"
+            }
+        },
+        daily_grenades = {
+            kill = true,
+            trophy_stat = "daily_grenades",
+            grenade_type = "frag",
+            is_civilian = false
+        },
+        daily_grenades_community = {
+            kill = true,
+            trophy_stat = "daily_grenades",
+            grenade_type = "frag_com",
+            is_civilian = false
+        },
+        daily_grenades_dynamite = {
+            kill = true,
+            trophy_stat = "daily_grenades",
+            grenade_type = "dynamite",
+            is_civilian = false
+        },
+        daily_grenades_dada = {
+            kill = true,
+            trophy_stat = "daily_grenades",
+            grenade_type = "dada_com",
+            is_civilian = false
+        },
+        explosive_kills = {
+            kill = true,
+            explosive = true,
+            challenge_stat = "explosive_kills"
+        },
+        cac_1 = {
+            kill = true,
+            grenade_type = "launcher_frag_slap",
+            distance = 4000,
+            enemy = "sniper",
+            award = "cac_1"
+        },
+        cac_35 = {
+            player_state = "driving",
+            stat = "cac_35_stats",
+            enemy_tags_all = {
+                "law"
+            }
+        },
+        dec21_02 = {
+            kill = true,
+            stat = "dec21_02_stat",
+            explosive = false
+        },
+        pxp1_1 = {
+            kill = true,
+            stat = "pxp1_1_stats",
+            difficulties = overkill_and_above,
+            grenade_types = {
+                "wpn_prj_four",
+                "launcher_poison",
+                "launcher_poison_ms3gl_conversion",
+                "launcher_poison_gre_m79",
+                "launcher_poison_m32",
+                "launcher_poison_groza",
+                "launcher_poison_china",
+                "launcher_poison_arbiter",
+                "launcher_poison_slap",
+                "launcher_poison_contraband"
+            },
+            player_style = {
+                variation = "default",
+                style = "scrub"
+            }
+        },
+        pxp2_3 = {
+            kill = true,
+            stat = "pxp2_3_stats",
+            grenade_type = "poison_gas_grenade",
+            difficulties = overkill_and_above
+        },
+        cg22_personal_1 = {
+            grenade_type = "xmas_snowball",
+            stat = "cg22_personal_1",
+            mutators = {
+                "MutatorCG22"
+            }
+        }
+    }
 ---@class AchievementsTweakData.loot_cash_achievements
 _G.tweak_data.achievement.loot_cash_achievements = {
     pal_2 = {
@@ -302,6 +495,36 @@ _G.tweak_data.achievement.loot_cash_achievements = {
         secured = {
             carry_id = "money",
             amount = 1
+        }
+    }
+}
+---@class AchievementsTweakData.collection_achievements
+_G.tweak_data.achievement.collection_achievements = {
+    xm20_1 = {
+        award = "xm20_1",
+        collection = {
+            "present_mex",
+            "present_bex",
+            "present_pex",
+            "present_fex"
+        }
+    },
+    pent_11 = {
+        award = "pent_11",
+        collection = {
+            "tea_chas",
+            "tea_sand",
+            "tea_chca",
+            "tea_pent"
+        }
+    },
+    lrfo_1 = {
+        award = "lrfo_1",
+        collection = {
+            "LRON_played",
+            "LRTW_played",
+            "LRTH_played",
+            "LRFO_played"
         }
     }
 }
@@ -521,6 +744,8 @@ _G.managers = {}
 _G.IS_VR = ...
 ---@class AmmoBagBase
 _G.AmmoBagBase = {}
+---@class BlackMarketGui
+_G.BlackMarketGui = {}
 ---@class GrenadeCrateBase
 _G.GrenadeCrateBase = {}
 ---@class CallbackEventHandler
@@ -655,6 +880,12 @@ _G.Color = {}
 ---@field position fun(self: self): Vector3
 ---@field rotation fun(self: self): Rotation
 
+---@class SyncData
+---@field EHIAssaultManager EHIAssaultManagerSyncData
+---@field EHILootManager LootCounterTable
+---@field EHIManager EHIManagerSyncData
+---@field EHISyncManager EHISyncManagerSyncData
+
 ---@generic T
 ---@param TC T
 ---@return T
@@ -714,6 +945,10 @@ end
 ---@class ElementWaypoint : MissionScriptElement
 ---@field super MissionScriptElement
 ---@field _values ElementWaypointValues
+
+---@class ElementTimer : MissionScriptElement
+---@field super MissionScriptElement
+---@field _timer number
 
 ---@class ElementSpecialObjectiveValues : MissionScriptElementValues
 ---@field so_action string
@@ -1286,13 +1521,13 @@ end
 ---@field set_w fun(self: self, w: number)
 ---@field h fun(self: self): number
 ---@field set_h fun(self: self, h: number)
----@field top fun(self: self): number
+---@field top fun(self: self): number Returns `y`
 ---@field set_top fun(self: self, top: number)
----@field bottom fun(self: self): number
+---@field bottom fun(self: self): number Returns `y + h`
 ---@field set_bottom fun(self: self, bottom: number)
----@field left fun(self: self): number
+---@field left fun(self: self): number Returns `x`
 ---@field set_left fun(self: self, left: number)
----@field right fun(self: self): number
+---@field right fun(self: self): number Returns `x + w`
 ---@field set_right fun(self: self, right: number)
 ---@field center fun(self: self): x: number, y: number
 ---@field set_center fun(self: self, x: number, y: number)

@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("PlayerStandard") then
-    return
-end
-
-if not EHI:GetOption("show_buffs") then
+if EHI:CheckLoadHook("PlayerStandard") or not EHI:GetOption("show_buffs") then
     return
 end
 
@@ -54,13 +50,12 @@ function PlayerStandard:_update_omniscience(t, dt, ...)
         return
     end
 
-    -- Player does not have the skill or alarm has been raised
+    -- Player does not have the skill or alarm has been raised; do not set update function back to vanilla function as this will break the buff if the condition is true
     if previoustime == nil and self._state_data.omniscience_t == nil then
         return
     end
 
-    if previoustime == nil and self._state_data.omniscience_t then
-        -- Delay prior to initial poll
+    if previoustime == nil and self._state_data.omniscience_t then -- Delay prior to initial poll
         if DoNotTrackSixthSenseInitial then
             return
         end

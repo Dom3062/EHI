@@ -7,8 +7,7 @@ EHIPiggyBankMutatorTracker = class(EHIProgressTracker)
 EHIPiggyBankMutatorTracker._forced_icons = { "piggy" }
 ---@param panel Panel
 ---@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIPiggyBankMutatorTracker:init(panel, params, parent_class)
+function EHIPiggyBankMutatorTracker:init(panel, params, ...)
     self._current_level = 1
     self._max_levels = 7
     params.flash_times = 1
@@ -17,7 +16,7 @@ function EHIPiggyBankMutatorTracker:init(panel, params, parent_class)
     else
         self._piggy_tweak_data = tweak_data.mutators.piggybank.pig_levels
     end
-    EHIPiggyBankMutatorTracker.super.init(self, panel, params, parent_class)
+    EHIPiggyBankMutatorTracker.super.init(self, panel, params, ...)
     self:SetNewMax()
 end
 

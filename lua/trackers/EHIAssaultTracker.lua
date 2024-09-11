@@ -18,7 +18,7 @@ local State =
 local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
 local tweak_values = assault_values.delay
 local hostage_values = assault_values.hostage_hesitation_delay
----@class EHIAssaultTracker : EHIWarningTracker, EHIChanceTracker
+---@class EHIAssaultTracker : EHIWarningTracker, EHIChanceTracker, EHIProgressTracker
 ---@field super EHIWarningTracker
 ---@field _cs_assault_extender boolean
 ---@field _cs_max_hostages number
@@ -27,13 +27,27 @@ local hostage_values = assault_values.hostage_hesitation_delay
 EHIAssaultTracker = class(EHIWarningTracker)
 EHIAssaultTracker._forced_icons = { { icon = "assaultbox", color = Control } }
 EHIAssaultTracker._is_client = EHI:IsClient()
-EHIAssaultTracker._inaccurate_text_color = EHI:GetTWColor("inaccurate")
+EHIAssaultTracker._inaccurate_text_color = EHI:GetColorFromOption("tracker_waypoint", "inaccurate")
 EHIAssaultTracker._paused_color = EHIPausableTracker._paused_color
-if EHI:GetOption("show_assault_diff_in_assault_trackers") and not tweak_data.levels:IsLevelSkirmish() then
-    EHIAssaultTracker._show_assault_diff = true
-    EHIAssaultTracker.FormatChance = EHIChanceTracker.Format
-    EHIAssaultTracker.SetChance = EHIChanceTracker.SetChance
-    EHIAssaultTracker._anim_chance = EHIChanceTracker._anim_chance
+if EHI:GetOption("show_assault_diff_in_assault_trackers") then
+    if tweak_data.levels:IsLevelSkirmish() then
+        EHIAssaultTracker._SHOW_ASSAULT_DIFF_SKIRMISH = true
+        EHIAssaultTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+        for _, wave_modifier in pairs(tweak_data.skirmish.wave_modifiers) do
+            for _, modifier in ipairs(wave_modifier) do
+                if modifier.data and modifier.data.waves then
+                    EHIAssaultTracker._SKIRMISH_WAVE_DATA = modifier.data.waves
+                    break
+                end
+            end
+        end
+        EHIAssaultTracker._SKIRMISH_WAVE_DATA = EHIAssaultTracker._SKIRMISH_WAVE_DATA or {}
+    else
+        EHIAssaultTracker._SHOW_ASSAULT_DIFF = true
+        EHIAssaultTracker.FormatChance = EHIChanceTracker.Format
+        EHIAssaultTracker.SetChance = EHIChanceTracker.SetChance
+        EHIAssaultTracker._anim_chance = EHIChanceTracker._anim_chance
+    end
 end
 if type(tweak_values) == "table" then
     local first_value = tweak_values[1] or 0
@@ -48,7 +62,7 @@ if type(tweak_values) == "table" then
         EHIAssaultTracker._assault_delay = first_value
     end
 else -- If for some reason the assault delay is not a table, use the value directly
-    EHIAssaultTracker._assault_delay = tonumber(tweak_values) or 30
+    EHIAssaultTracker._assault_delay = tonumber(tweak_values) or tweak_data.levels:IsLevelSkirmish() and 25 or 30
 end
 if type(hostage_values) == "table"  then
     local first_value = hostage_values[1] or 0
@@ -67,6 +81,7 @@ else -- If for some reason the hesitation delay is not a table, use the value di
     EHIAssaultTracker._precomputed_hostage_delay = true
     EHIAssaultTracker._hostage_delay = tonumber(hostage_values) or 30
 end
+EHIAssaultTracker._anticipation_delay = tweak_data.levels:IsLevelSkirmish() and 15 or 30
 ---@param panel Panel
 ---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
@@ -105,7 +120,7 @@ end
 
 ---@param params EHITracker.params
 function EHIAssaultTracker:post_init(params)
-    if self._show_assault_diff then
+    if self._SHOW_ASSAULT_DIFF then
         local corrected_diff = self._parent_class:RoundChanceNumber(params.diff_visual or managers.ehi_assault._diff or self._diff)
         self._anim_flash_set_chance = 0
         self._chance = corrected_diff
@@ -118,6 +133,44 @@ function EHIAssaultTracker:post_init(params)
             color = Color.white
         })
         self:SetIconsX()
+    elseif self._SHOW_ASSAULT_DIFF_SKIRMISH then
+        self._progress = params.current_assault_number or managers.skirmish:current_wave_number()
+        self:SetBGSize()
+        self._progress_text = self:CreateText({
+            text = self:FormatWaveDiff(),
+            left = self._text:right(),
+            w = self._bg_box:w() / 2,
+            color = Color.white,
+            FitTheText = true
+        })
+        self:SetIconsX()
+    end
+end
+
+if EHIAssaultTracker._SHOW_ASSAULT_DIFF_SKIRMISH then
+    ---@param progress number
+    function EHIAssaultTracker:SetProgress(progress)
+        self._progress = progress
+        self._progress_text:set_text(self:FormatWaveDiff())
+        self:FitTheText(self._progress_text)
+    end
+
+    function EHIAssaultTracker:FormatWaveDiff()
+        local wave
+        if self._progress <= 0 then
+            wave = { damage = 1, health = 1 }
+        else
+            wave = self._SKIRMISH_WAVE_DATA[math.min(self._progress, managers.job:current_level_wave_count())]
+        end
+        if wave and wave.damage and wave.health then
+            return string.format("%gx|%gx", wave.damage, wave.health)
+        elseif wave then
+            if wave.damage then
+                return string.format("%gx|?x", wave.damage)
+            end
+            return string.format("?x|%gx", wave.health)
+        end
+        return "?x|?x"
     end
 end
 
@@ -209,10 +262,10 @@ end
 
 function EHIAssaultTracker:CalculateBreakTime()
     if self._assault_delay then
-        return self._assault_delay + 30
+        return self._assault_delay + self._anticipation_delay
     end
     local base_delay = math.lerp(tweak_values[self._difficulty_point_index], tweak_values[self._difficulty_point_index + 1], self._difficulty_ramp)
-    return base_delay + 30
+    return base_delay + self._anticipation_delay
 end
 
 ---@param has_hostages boolean?
@@ -305,6 +358,9 @@ end
 
 ---@param diff number
 function EHIAssaultTracker:AssaultStart(diff)
+    if self._SHOW_ASSAULT_DIFF_SKIRMISH then
+        self:IncreaseProgress()
+    end
     if self._diff ~= diff then
         self:CalculateDifficultyRamp(diff)
     end
@@ -325,7 +381,6 @@ function EHIAssaultTracker:AssaultStart(diff)
 end
 
 ---@param values table
----@return number
 function EHIAssaultTracker:CalculateDifficultyDependentValue(values)
     return math.lerp(values[self._difficulty_point_index], values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
 end
@@ -411,12 +466,12 @@ function EHIAssaultTracker:OnEnterSustain(t, sustain_t, already_extended)
 end
 
 function EHIAssaultTracker:SetHook()
-    self._hook_f = self._hook_f or function(hud, data)
+    self._hook_f = self._hook_f or function(_, data)
         if self._state == State.sustain then
             self:UpdateSustainTime(self:CalculateCSSustainTime(self._assault_t, data.nr_hostages))
         end
     end
-    EHI:HookWithID(HUDManager, "set_control_info", "EHI_Assault_set_control_info", self._hook_f)
+    Hooks:PostHook(HUDManager, "set_control_info", "EHI_Assault_set_control_info", self._hook_f)
 end
 
 ---@param diff number
@@ -495,7 +550,7 @@ function EHIAssaultTracker:CaptainDefeated()
     self._captain_arrived = nil
     self._time = 5
     self:SetTextColor()
-    self:SetIconColor(Fade)
+    self:SetState(State.fade)
     self:AddTrackerToUpdate()
 end
 
@@ -555,7 +610,7 @@ function EHIAssaultTracker:SetEndlessAssault(state)
                 self:SetAndFitTheText()
                 self:AnimateBG()
             else
-                self:PoliceActivityBlocked() -- Current phase is not an assault phase, refresh at the next Build state
+                self:PoliceActivityBlocked() -- Current phase is not an assault phase, refresh at the next Control state
             end
         else
             self:PoliceActivityBlocked() -- Current phase does not exist for some reason, refresh at the next Control state

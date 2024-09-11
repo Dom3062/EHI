@@ -7,7 +7,7 @@ local infamy_pool = ""
 local next_level = ""
 local _100_in = ""
 local _xp = ""
-EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, loc_loaded)
+EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, lang_name)
     infamy_pool = loc:text("ehi_experience_infamy_pool")
     next_level = loc:text("ehi_experience_next_level")
     _100_in = loc:text("ehi_experience_100_in")
@@ -26,8 +26,9 @@ function WalletGuiObject.refresh(...)
         local s = ""
         if xp:IsInfamyPoolEnabled() then -- Level is maxed, show Infamy Pool instead if possible
             if xp:IsInfamyPoolOverflowed() then
-                local lvl_up_times = math.floor(xp._xp.prestige_xp / xp._xp_class:get_max_prestige_xp())
-                s = ", " .. infamy_pool .. " " .. xp:experience_string((lvl_up_times + 1) * xp._xp_class:get_max_prestige_xp() - xp._xp.prestige_xp) .. " " .. _xp .. " +" .. tostring(lvl_up_times)
+                local max_prestige_xp = xp._xp_class:get_max_prestige_xp()
+                local lvl_up_times = math.floor(xp._xp.prestige_xp / max_prestige_xp)
+                s = ", " .. infamy_pool .. " " .. xp:experience_string((lvl_up_times + 1) * max_prestige_xp - xp._xp.prestige_xp) .. " " .. _xp .. " +" .. tostring(lvl_up_times)
             else
                 s = ", " .. infamy_pool .. " " .. xp:experience_string(xp._xp.prestige_xp_remaining) .. " " .. _xp
             end

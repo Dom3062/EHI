@@ -25,7 +25,6 @@ if EHI:GetOption("show_mission_trackers") then
         end)
     end
 end
-
 EHI:SetMissionDoorData({
     -- Security doors
     [Vector3(-2357.87, -3621.42, 489.107)] = 101899,

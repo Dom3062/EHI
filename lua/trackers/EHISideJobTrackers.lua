@@ -3,7 +3,7 @@ local EHI = EHI
 ---@generic T: table
 ---@param super T? A base achievement class
 ---@return T
-function ehi_sidejob_class(super)
+function _G.ehi_sidejob_class(super)
     local klass = class(super)
     klass._popup_type = "sidejob"
     klass._forced_icon_color = EHISideJobTracker._forced_icon_color
@@ -31,7 +31,8 @@ end
 ---@param params EHITracker.params
 function EHISideJobTracker:PrepareHint(params)
     local id = self._id or params.id
-    params.hint = params.daily_job and ("menu_challenge_" .. id) or id
+    params.hint = params.desc or (params.daily_job and ("menu_challenge_" .. id) or id)
+    self._desc = params.desc
     self._hint_vanilla_localization = true
 end
 

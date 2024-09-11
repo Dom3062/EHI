@@ -1,3 +1,20 @@
+r257 (11. 09. 2024):
+Achievement Loot Counter: Fixed an issue where after alarm a tracker icon color is still visible as achievement
+Assault Tracker: In Holdout game mode, expanded option "Show Assault Difficulty in Assault Trackers" to show enemy damage and health boost respectively
+Assault Tracker: In Holdout game mode, added support for "Control" and "Anticipation" state
+Assault Tracker: Made accurate "Anticipation" and "Sustain" state by syncing time from host
+Civilian Counter Tracker: Disabled in Holdout game mode
+Menu: Improved memory consumption by deferring loading preview trackers and buffs when they are really needed
+Menu: Fixed a gap in preview trackers when icon position is set to left
+Menu: Fixed an issue in Converts tracker preview that prevented a number for another player to be visible
+Election Day D2 Plan C: Fixed issues with Sniper tracker
+Show Floating Health Bars: Fixed an issue where disabled civilians also disabled converts
+The Bomb: Forest: Fixed a misplaced thermite waypoint
+Trade Delay Tracker: Increased tracker size when number of killed civilians is enabled
+Fixed a gap in trackers when icon position is set to left and one icon only is enabled
+Fixed an issue in daily side jobs that requires completing heists and showing incorrect progress (visual issue)
+Fixed error string in daily side job "Target Practise: Melee (35 kills)"
+
 r256 (24. 08. 2024):
 Henry's Rock: Fixed a crash in Biolab
 Menu: Added trophy and sidejob trackers

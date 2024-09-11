@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("PlayerMovement") then
-    return
-end
-
-if not EHI:GetOption("show_buffs") then
+if EHI:CheckLoadHook("PlayerMovement") or not EHI:GetOption("show_buffs") then
     return
 end
 
@@ -11,7 +7,6 @@ local original =
 {
     init = PlayerMovement.init
 }
-
 function PlayerMovement:init(...)
     original.init(self, ...)
     managers.ehi_buff:CallFunction("Stamina", "Spawned", self._stamina)

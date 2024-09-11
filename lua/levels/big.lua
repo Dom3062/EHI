@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local ThermiteWP = { icon = Icon.Fire, position_by_element = 104326 }
+local ThermiteWP = { position_by_element = 104326 }
 ---@type ParseTriggerTable
 local triggers = {
     [105842] = { time = 16.7 * 18, id = "Thermite", icons = { Icon.Fire }, waypoint = deep_clone(ThermiteWP), hint = Hints.Thermite },
@@ -164,7 +164,6 @@ if EHI:GetOption("show_waypoints") then
     end }
 end
 EHI:UpdateUnits(tbl)
-
 EHI:SetMissionDoorData({
     -- Server Room
     [Vector3(733.114, 1096.92, -907.557)] = { w_id = 103457, restore = true, unit_id = 104582 },

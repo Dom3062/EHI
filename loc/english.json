@@ -80,7 +80,6 @@
     "ehi_hint_timer" : "Timer",
     "ehi_hint_gained_xp" : "Gained XP",
     "ehi_hint_total_xp" : "Total XP",
-    "ehi_hint_question" : "?",
     "ehi_hint_endless_assault" : "Endless Assault",
     "ehi_hint_fire" : "Fire",
     "ehi_hint_fire_recharge" : "Fire Recharge",
@@ -147,6 +146,7 @@
     "ehi_hint_ecm_feedback_refresh" : "ECM Feedback Refresh",
     "ehi_hint_phalanx_chance" : "Captain Chance",
     "ehi_hint_hostage" : "Hostage Counter",
+    "ehi_hint_looped_camera" : "Looped Camera",
 
     "ehi_hint_big_piggy" : "Moving Piggy",
     "ehi_hint_brb_winch_delivery" : "Winch Delivery",
@@ -544,7 +544,7 @@
     "ehi_show_assault_time_tracker_desc" : "Shows a tracker for how long the assault duration will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
 
     "ehi_show_assault_diff_in_assault_trackers" : "Show Assault Difficulty in Assault Trackers",
-    "ehi_show_assault_diff_in_assault_trackers_desc" : "",
+    "ehi_show_assault_diff_in_assault_trackers_desc" : "In Holdout game mode, this option will show enemy damage and health boost, respectively\n\nIn other game modes, this option will show assault difficulty, in percent",
 
     "ehi_show_endless_assault" : "Show Endless Assault in the Tracker",
     "ehi_show_endless_assault_desc" : "Shows 'ENDLESS' in the Assault tracker when endless assault is on",

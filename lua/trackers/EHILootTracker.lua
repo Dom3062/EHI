@@ -458,6 +458,7 @@ function EHIAchievementLootCounterTracker:init(panel, params, ...)
             self:SetHintX(self._panel_override_w)
             self._icon2:set_x(self._icon1:x())
         else
+            self:SetIconColor(Color.white)
             self:SetIcon("pd2_loot")
         end
     else
@@ -506,6 +507,7 @@ function EHIAchievementLootCounterTracker:SetFailed()
             self:UpdateHint("loot_counter")
             self:AnimateRepositionHintX(1)
         else
+            self:SetIconColor(Color.white)
             self:SetIcon("pd2_loot")
         end
         self._show_finish_after_reaching_target = nil
@@ -552,6 +554,7 @@ function EHIAchievementLootCounterTracker:SetStarted()
             self:AnimateRepositionHintX(3) -- Why 3 ? I have no clue
             self:ChangeTrackerWidth(nil, true)
         else
+            self:SetIconColor(self._forced_icon_color[1])
             self:SetIcon(self._forced_icons[1])
         end
     end

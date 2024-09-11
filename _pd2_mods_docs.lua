@@ -4,6 +4,9 @@
 --- SuperBLT ---
 ----------------
 
+---@class BLTMod
+_G.ModInstance = {}
+
 ---@class BLT
 ---@field Mods BLTModManager
 _G.BLT = {}
@@ -14,15 +17,34 @@ _G.BLT = {}
 ---@class BLTMod
 ---@field GetAuthor fun(self: self): string
 ---@field GetName fun(self: self): string
+---@field GetVersion fun(self: self): string
 ---@field IsEnabled fun(self: self): boolean
+
+---@class DelayedCalls
+---@field Add fun(self: self, id: any, time: number, func: function)
+_G.DelayedCalls = {}
 
 ---@class Hooks
 ---@field _function_hooks table
 ---@field Add fun(self: self, key: string, id: string, func: function)
----@field PostHook fun(self: self, object: table, func: string, id: string, post_call: function)
----@field PreHook fun(self: self, object: table, func: string, id: string, pre_call: function)
 ---@field RemovePostHook fun(self: self, id: string)
 _G.Hooks = {}
+
+---@generic T
+---@param object T
+---@param func string
+---@param id string
+---@param post_call fun(self: T, ...)
+function Hooks:PostHook(object, func, id, post_call)
+end
+
+---@generic T
+---@param object T
+---@param func string
+---@param id string
+---@param pre_call fun(self: T, ...)
+function Hooks:PreHook(object, func, id, pre_call)
+end
 
 ---@class NetworkHelper
 _G.NetworkHelper = {}
@@ -54,6 +76,12 @@ end
 function math.round_with_precision(num, idp)
 end
 
+---Loads a file containing JSON data and converts it into a Lua table
+---@param path string @The path (relative to payday2_win32_release.exe) and file name to load the data from
+---@return table? @The table containing the data, or `nil` if loading wasn't successful
+function io.load_as_json(path)
+end
+
 -----------------------
 --- End of SuperBLT ---
 -----------------------
@@ -77,6 +105,18 @@ _G.CustomAchievement = {}
 -----------------------
 --- End of Beardlib ---
 -----------------------
+
+-------------------------
+--- Custom Name Color ---
+-------------------------
+---@class CustomNameColor
+---@field GetOwnColor fun(): Color
+---@field ModID string
+_G.CustomNameColor = {}
+
+--------------------------------
+--- End of Custom Name Color ---
+--------------------------------
 
 ----------------------------
 --- Why Are You Running? ---

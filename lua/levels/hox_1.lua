@@ -17,12 +17,10 @@ local triggers = {
     [101383] = { time = 44.3, id = "CarGoingIntoGarage", icons = car, hint = Hints.hox_1_Car },
     [101397] = { time = 22.6, id = "CarMoveRightFinal", icons = car, hint = Hints.hox_1_Car }
 }
-local other = {}
-if EHI:GetOption("show_sniper_tracker") and EHI:GetOption("show_sniper_spawned_popup") then
-    other[100332] = { special_function = EHI.SpecialFunctions.CustomCode, f = function()
-        managers.hud:ShowSnipersSpawned(true)
-    end, trigger_times = 1 }
-end
+local other =
+{
+    [100332] = EHI:AddSniperSpawnedPopup(true, true)
+}
 
 EHI:ParseTriggers({ mission = triggers, other = other, assault = { diff = 1 } })
 

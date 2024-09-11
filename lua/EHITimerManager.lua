@@ -16,7 +16,7 @@ end
 ---@param i_subgroup number
 ---@param upgrades table?
 ---@param visibility_data table
-function EHITimerManager:AddTimerSubgroup(id, group, subgroup, i_subgroup, upgrades, visibility_data)
+function EHITimerManager:_add_timer_subgroup(id, group, subgroup, i_subgroup, upgrades, visibility_data)
     local tracker_id = self._get_tracker_id(group, subgroup, i_subgroup)
     self._trackers:AddTracker({
         id = tracker_id,
@@ -43,7 +43,7 @@ end
 ---@param i_subgroup number
 ---@param upgrades table?
 ---@param visibility_data table
-function EHITimerManager:AddTimer_iSubgroup(id, group, subgroup, i_subgroup, upgrades, visibility_data)
+function EHITimerManager:_add_timer_isubgroup(id, group, subgroup, i_subgroup, upgrades, visibility_data)
     local tracker_id = self._get_tracker_id(group, subgroup, i_subgroup)
     self._trackers:AddTracker({
         id = tracker_id,
@@ -157,7 +157,7 @@ function EHITimerManager:StopTimer(id)
     local active_group = table.remove_key(self._units_in_active_group, id)
     if active_group then
         local group, subgroup, i_subgroup = self._trackers:ReturnValue(active_group, "GetGroupData")
-        self:RemoveTimerFromGroup(id, group, subgroup, i_subgroup)
+        self:_remove_timer_from_group(id, group, subgroup, i_subgroup)
     else
         self._trackers:RemoveTracker(id)
     end
@@ -167,7 +167,7 @@ end
 ---@param group string
 ---@param subgroup number
 ---@param i_subgroup number
-function EHITimerManager:RemoveTimerFromGroup(id, group, subgroup, i_subgroup)
+function EHITimerManager:_remove_timer_from_group(id, group, subgroup, i_subgroup)
     local g = self._groups[group]
     local s = g and g[subgroup]
     local i = s and s[i_subgroup]
@@ -255,18 +255,18 @@ function EHITimerManager:SetTimerUpgrades(timer_gui)
                             new_i_group = i
                             if sub.timer_count < self._max_timers then
                                 sub.timer_count = sub.timer_count + 1
-                                -- Set the initial time to 100, the timer will get accurate the next frame
+                                -- Set the initial time to 100, the timer will get accurate next frame
                                 self._trackers:CallFunction(sub.name, "AddTimer", 100, id)
-                                self:RemoveTimerFromGroup(id, group, subgroup, i_subgroup)
+                                self:_remove_timer_from_group(id, group, subgroup, i_subgroup)
                                 self._units_in_active_group[id] = sub.name
                                 return
                             end
                         end -- Unfortunately all active subgroups are full, create a new i_subgroup
-                        self:AddTimer_iSubgroup(id, group, subgroup, new_i_group + 1, upgrades, visibility_data)
+                        self:_add_timer_isubgroup(id, group, subgroup, new_i_group + 1, upgrades, visibility_data)
                     else -- New subgroup does not exist, needs to be created
-                        self:AddTimerSubgroup(id, group, new_subgroup, 1, upgrades, visibility_data)
+                        self:_add_timer_subgroup(id, group, new_subgroup, 1, upgrades, visibility_data)
                     end
-                    self:RemoveTimerFromGroup(id, group, subgroup, i_subgroup)
+                    self:_remove_timer_from_group(id, group, subgroup, i_subgroup)
                 end
             end
         end

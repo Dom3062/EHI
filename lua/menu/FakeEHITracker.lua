@@ -1,0 +1,762 @@
+if not EHITracker then
+    EHI:LoadTracker("EHITracker")
+end
+
+local icons = tweak_data.ehi and tweak_data.ehi.icons or {}
+local function GetIcon(icon)
+    if icons[icon] then
+        return icons[icon].texture, icons[icon].texture_rect
+    end
+    return tweak_data.hud_icons:get_icon_or(icon, icons.default.texture, icons.default.texture_rect)
+end
+
+---@param panel Panel
+---@param params table
+---@param config table
+---@return Panel
+local function HUDBGBox_create(panel, params, config) -- Not available when called from menu
+	local box_panel = panel:panel(params)
+	local color = config and config.color or Color.white
+	local bg_color = config and config.bg_color or Color(1, 0, 0, 0)
+    local corner_visible = config.bg_visible and config.corner_visible
+
+	box_panel:rect({
+		blend_mode = "normal",
+		name = "bg",
+		halign = "grow",
+		alpha = 0.25,
+		layer = -1,
+		valign = "grow",
+		color = bg_color,
+        visible = config.bg_visible
+	})
+
+	box_panel:bitmap({
+		texture = "guis/textures/pd2_mod_ehi/hud_corner",
+		name = "left_top",
+		visible = params.first or corner_visible,
+		layer = 0,
+		y = 0,
+		halign = "left",
+		x = 0,
+		valign = "top",
+		color = color,
+		blend_mode = "add"
+	})
+	local left_bottom = box_panel:bitmap({
+		texture = "guis/textures/pd2_mod_ehi/hud_corner",
+		name = "left_bottom",
+		visible = corner_visible,
+		layer = 0,
+		x = 0,
+		y = 0,
+		halign = "left",
+		rotation = -90,
+		valign = "bottom",
+		color = color,
+		blend_mode = "add"
+	})
+
+	left_bottom:set_bottom(box_panel:h())
+
+	local right_top = box_panel:bitmap({
+		texture = "guis/textures/pd2_mod_ehi/hud_corner",
+		name = "right_top",
+		visible = corner_visible,
+		layer = 0,
+		x = 0,
+		y = 0,
+		halign = "right",
+		rotation = 90,
+		valign = "top",
+		color = color,
+		blend_mode = "add"
+	})
+
+	right_top:set_right(box_panel:w())
+
+	local right_bottom = box_panel:bitmap({
+		texture = "guis/textures/pd2_mod_ehi/hud_corner",
+		name = "right_bottom",
+		visible = corner_visible,
+		layer = 0,
+		x = 0,
+		y = 0,
+		halign = "right",
+		rotation = 180,
+		valign = "bottom",
+		color = color,
+		blend_mode = "add"
+	})
+
+	right_bottom:set_right(box_panel:w())
+	right_bottom:set_bottom(box_panel:h())
+
+	return box_panel
+end
+
+---@class FakeEHITracker : EHITracker
+---@field _icon1 PanelBitmap
+---@field _text_color Color?
+FakeEHITracker = class()
+FakeEHITracker.CreateIcon = EHITracker.CreateIcon
+FakeEHITracker.CreateText = EHITracker.CreateText
+FakeEHITracker.FitTheText = EHITracker.FitTheText
+FakeEHITracker.SetBGSize = EHITracker.SetBGSize
+FakeEHITracker.SetIconsX = EHITracker.SetIconsX
+FakeEHITracker._gap = 5
+FakeEHITracker._icon_size = 32
+FakeEHITracker._icon_gap_size = FakeEHITracker._icon_size + FakeEHITracker._gap
+FakeEHITracker._selected_color = Color(255, 255, 165, 0) / 255
+---@param panel Panel
+---@param params EHITracker.params
+---@param parent_class FakeEHITrackerManager
+function FakeEHITracker:init(panel, params, parent_class)
+    self:pre_init(params)
+    self._scale = params.scale --[[@as number]]
+    self._text_scale = params.text_scale --[[@as number]]
+    self._first = params.first
+    self._n_of_icons = 0
+    self.__icon_pos_left = params.icon_pos == 1
+    local gap = 0
+    if params.icons then
+        self._n_of_icons = #params.icons
+        gap = self._gap * self._n_of_icons
+    end
+    self._n = self._n_of_icons
+    self._gap_scaled = self._gap * self._scale -- 5 * self._scale
+    self._icon_size_scaled = 32 * self._scale -- 32 * self._scale
+    self._icon_gap_size_scaled = (self._icon_size + self._gap) * self._scale -- (32 + 5) * self._scale
+    self._panel = panel:panel({
+        x = params.x,
+        y = params.y,
+        w = (64 + gap + (self._icon_size * self._n_of_icons)) * self._scale,
+        h = self._icon_size_scaled,
+        alpha = 1,
+        visible = true
+    })
+    self._time = params.time or 0
+    self._bg_box = HUDBGBox_create(self._panel, {
+        x = self.__icon_pos_left and (self._icon_gap_size_scaled * self._n_of_icons) or 0,
+        y = 0,
+        w = 64 * self._scale,
+        h = self._icon_size_scaled
+    }, {
+        bg_visible = params.bg,
+        corner_visible = params.corners,
+        first = self._first
+    })
+    if params.extend then
+        self:SetBGSize()
+    elseif params.extend_half then
+        self:SetBGSize(self._bg_box:w() / 2)
+    end
+    self._text = self._bg_box:text({
+        text = self:Format(),
+        align = "center",
+        vertical = "center",
+        w = params.extend_half and self._bg_box:w() or (64 * self._scale),
+        h = self._bg_box:h(),
+        font = tweak_data.menu.pd2_large_font,
+		font_size = self._panel:h() * self._text_scale,
+        color = params.text_color or self._text_color or Color.white
+    })
+    self:FitTheText()
+    if self._n_of_icons > 0 then
+        local start = self.__icon_pos_left and 0 or self._bg_box:w()
+        local icon_gap = self.__icon_pos_left and 0 or self._gap_scaled
+        for i, v in ipairs(params.icons) do
+            local s_i = tostring(i)
+            if type(v) == "string" then
+                local texture, rect = GetIcon(v)
+                self:CreateIcon(i, s_i, texture, rect, start + icon_gap, true, Color.white, 1)
+            else -- table
+                local texture, rect = GetIcon(v.icon)
+                self:CreateIcon(i, s_i, texture, rect, start + icon_gap,
+                    v.visible ~= false,
+                    v.color,
+                    v.alpha or 1)
+            end
+            start = start + self._icon_size_scaled
+            icon_gap = icon_gap + self._gap_scaled
+        end
+        self:UpdateIcons()
+        if params.one_icon then
+            self:UpdateIconsVisibility(true)
+        end
+    end
+    self._id = params.ids or params.id
+    self._parent_class = parent_class
+    self:post_init(params)
+end
+
+---@param params EHITracker.params
+function FakeEHITracker:pre_init(params)
+end
+
+---@param params EHITracker.params
+function FakeEHITracker:post_init(params)
+end
+
+---@param previous_icon PanelBitmap?
+---@param icon PanelBitmap? Defaults to `self._icon1` if not provided
+function FakeEHITracker:SetIconX(previous_icon, icon)
+    icon = icon or self._icon1
+    if icon then
+        local x = previous_icon and previous_icon:right() or (self.__icon_pos_left and 0 or self._bg_box:w())
+        local gap = previous_icon and self._gap_scaled or (self.__icon_pos_left and 0 or self._gap_scaled)
+        icon:set_x(x + gap)
+    end
+end
+
+---@param format number?
+function FakeEHITracker:UpdateFormat(format)
+    self._text:set_text(self:Format(format))
+    self:FitTheText()
+end
+
+---@param format number?
+function FakeEHITracker:Format(format)
+    format = format or EHI:GetOption("time_format") --[[@as number]]
+    if format == 1 then
+        return tweak_data.ehi.functions.FormatSecondsOnly(self)
+    else
+        return tweak_data.ehi.functions.FormatMinutesAndSeconds(self)
+    end
+end
+
+---@param x number
+function FakeEHITracker:SetX(x)
+    self._panel:set_x(x)
+end
+
+---@param y number
+function FakeEHITracker:SetY(y)
+    self._panel:set_y(y)
+end
+
+---@param x number
+---@param y number
+function FakeEHITracker:SetPos(x, y)
+    self:SetX(x)
+    self:SetY(y)
+end
+
+---@param id string
+function FakeEHITracker:SetSelected(id)
+    local previous = self._selected
+    self._selected = self:CompareID(id)
+    if previous == self._selected then
+        return
+    end
+    self:SetTextColor()
+end
+
+function FakeEHITracker:SetTextColor()
+    self._text:set_color(self._selected and self._selected_color or Color.white)
+end
+
+function FakeEHITracker:UpdateBGVisibility(visibility, corners)
+    self._bg_box:child("bg"):set_visible(visibility)
+    self:UpdateCornerVisibility(visibility and corners)
+end
+
+---@param visibility boolean
+function FakeEHITracker:UpdateCornerVisibility(visibility)
+    self._bg_box:child("left_top"):set_visible(self._first or visibility)
+    self._bg_box:child("left_bottom"):set_visible(visibility)
+    self._bg_box:child("right_top"):set_visible(visibility)
+    self._bg_box:child("right_bottom"):set_visible(visibility)
+end
+
+---@param visibility boolean
+function FakeEHITracker:UpdateIconsVisibility(visibility)
+    local i_start = visibility and 2 or 1
+    self._n = visibility and 1 or self._n_of_icons
+    for i = i_start, self._n_of_icons, 1 do
+        self["_icon" .. i]:set_visible(not visibility)
+    end
+    if self.__icon_pos_left then
+        self._bg_box:set_x(self._icon_gap_size_scaled * self._n)
+    end
+end
+
+function FakeEHITracker:UpdateIcons()
+end
+
+---@param pos number
+function FakeEHITracker:UpdateIconsPos(pos)
+    self.__icon_pos_left = pos == 1
+    self._bg_box:set_x(pos == 1 and (self._icon_gap_size_scaled * self._n) or 0)
+    self:SetIconsX()
+end
+
+---@param color Color?
+function FakeEHITracker:UpdateIconColor(color)
+    if self._icon1 then
+        self._icon1:set_color(color or Color.white)
+    end
+end
+
+---@param scale number
+function FakeEHITracker:UpdateTextScale(scale)
+    self._text_scale = scale
+    self:FitTheText()
+end
+
+function FakeEHITracker:GetSize()
+    if self._n == 1 then
+        return self._bg_box:w() + self._icon_gap_size_scaled
+    end
+    return self._panel:w()
+end
+
+function FakeEHITracker:Reposition()
+    self._parent_class:ForceReposition()
+end
+
+---@param id string
+function FakeEHITracker:CompareID(id)
+    if type(self._id) == "string" then
+        return id == self._id
+    end
+    return table.contains(self._id, id)
+end
+
+function FakeEHITracker:destroy()
+    if alive(self._panel) then
+        self._panel:parent():remove(self._panel)
+    end
+end
+
+---@class FakeEHITradeDelayTracker : FakeEHITracker
+---@field super FakeEHITracker
+FakeEHITradeDelayTracker = class(FakeEHITracker)
+---@param params EHITracker.params
+function FakeEHITradeDelayTracker:pre_init(params)
+    self._civilians_format = EHI:GetOption("show_trade_delay_amount_of_killed_civilians") --[[@as boolean]]
+    self._civilians_killed = math.random(1, 8)
+    params.time = 5 + (self._civilians_killed * 30)
+end
+
+---@param format boolean
+function FakeEHITradeDelayTracker:UpdateFormat(format)
+    if self._civilians_format == format then
+        return
+    end
+    self._civilians_format = format
+    if format then
+        self:SetBGSize(self._bg_box:w() / 2)
+    else
+        self:SetBGSize(64 * self._scale, "set")
+    end
+    self._text:set_w(self._bg_box:w())
+    self:Reposition()
+    FakeEHITradeDelayTracker.super.UpdateFormat(self)
+end
+
+---@param format number?
+function FakeEHITradeDelayTracker:Format(format)
+    local s = FakeEHITradeDelayTracker.super.Format(self, format)
+    return self._civilians_format and string.format("%s (%d)", s, self._civilians_killed) or s
+end
+
+---@class FakeEHIXPTracker : FakeEHITracker
+---@field super FakeEHITracker
+FakeEHIXPTracker = class(FakeEHITracker)
+function FakeEHIXPTracker:pre_init(...)
+    self._xp = math.random(1000, 1000000)
+end
+
+function FakeEHIXPTracker:Format(format)
+    return managers.experience:cash_string(self._xp, "+")
+end
+
+---@class FakeEHIProgressTracker : FakeEHITracker
+---@field super FakeEHITracker
+FakeEHIProgressTracker = class(FakeEHITracker)
+function FakeEHIProgressTracker:pre_init(params)
+    self._progress = math.random(0, params.progress or 9)
+    self._max = params.max or 10
+end
+
+function FakeEHIProgressTracker:Format(format)
+    return self._progress .. "/" .. self._max
+end
+
+---@class FakeEHIChanceTracker : FakeEHITracker
+---@field super FakeEHITracker
+FakeEHIChanceTracker = class(FakeEHITracker)
+---@param params EHITracker.params
+function FakeEHIChanceTracker:pre_init(params)
+    self._chance = params.chance or (math.random(1, 10) * 5)
+end
+
+function FakeEHIChanceTracker:Format(format)
+    return self._chance .. "%"
+end
+
+---@class FakeEHIEquipmentTracker : FakeEHITracker
+---@field super FakeEHITracker
+FakeEHIEquipmentTracker = class(FakeEHITracker)
+---@param params EHITracker.params
+function FakeEHIEquipmentTracker:pre_init(params)
+    self._show_placed = params.show_placed
+    self._charges = math.random(params.min or 2, params.charges or 16)
+    self._placed = self._charges > 4 and math.ceil(self._charges / 4) or 1
+end
+
+function FakeEHIEquipmentTracker:Format(format)
+    return self:EquipmentFormat()
+end
+
+function FakeEHIEquipmentTracker:EquipmentFormat(format)
+    format = format or EHI:GetOption("equipment_format")
+    if format == 1 then -- Uses (Bags placed)
+        if self._show_placed then
+            return self._charges .. " (" .. self._placed .. ")"
+        else
+            return tostring(self._charges)
+        end
+    elseif format == 2 then -- (Bags placed) Uses
+        if self._show_placed then
+            return "(" .. self._placed .. ") " .. self._charges
+        else
+            return tostring(self._charges)
+        end
+    elseif format == 3 then -- (Uses) Bags placed
+        if self._show_placed then
+            return "(" .. self._charges .. ") " .. self._placed
+        else
+            return tostring(self._charges)
+        end
+    elseif format == 4 then -- Bags placed (Uses)
+        if self._show_placed then
+            return self._placed .. " (" .. self._charges .. ")"
+        else
+            return tostring(self._charges)
+        end
+    elseif format == 5 then -- Uses
+        return tostring(self._charges)
+    else -- Bags placed
+        if self._show_placed then
+            return tostring(self._placed)
+        else
+            return tostring(self._charges)
+        end
+    end
+end
+
+function FakeEHIEquipmentTracker:UpdateEquipmentFormat(format)
+    self._text:set_font_size(self._panel:h() * self._text_scale)
+    self._text:set_text(self:EquipmentFormat(format))
+    self:FitTheText()
+end
+
+---@class FakeEHIMinionCounterTracker : FakeEHIEquipmentTracker
+---@field super FakeEHIEquipmentTracker
+FakeEHIMinionCounterTracker = class(FakeEHIEquipmentTracker)
+---@param params EHITracker.params
+function FakeEHIMinionCounterTracker:post_init(params)
+    self._charges_second_player = math.random(params.min, params.charges)
+    self._color_second_player = self._parent_class:GetOtherPeerColor()
+    self._text_second_player = self:CreateText({
+        text = tostring(self._charges_second_player),
+        w = self._bg_box:w() / 2,
+        color = self._color_second_player,
+        FitTheText = true
+    })
+    self._text_second_player:set_right(self._bg_box:right() - self._bg_box:x())
+    self:UpdateFormat(EHI:GetOption("show_minion_option"))
+end
+
+---@param value number
+function FakeEHIMinionCounterTracker:UpdateFormat(value)
+    self._icon1:set_color(value == 1 and self._parent_class:GetLocalPeerColor() or Color.white)
+    self._text_second_player:set_visible(value == 3)
+    self._text:set_text(tostring(value == 2 and (self._charges + self._charges_second_player) or self._charges))
+    self._text:set_color(value == 3 and self._parent_class:GetLocalPeerColor() or Color.white)
+    self._format = value
+    if value == 3 then
+        self._text:set_w(self._bg_box:w() / 2)
+    else
+        self._text:set_w(self._bg_box:w())
+    end
+    self:FitTheText()
+end
+
+function FakeEHIMinionCounterTracker:SetTextColor()
+    self._text:set_color(self._selected and self._selected_color or (self._format == 3 and self._parent_class:GetLocalPeerColor() or Color.white))
+    self._text_second_player:set_color(self._selected and self._selected_color or self._color_second_player)
+end
+
+---@class FakeEHICountTracker : FakeEHITracker
+---@field super FakeEHITracker
+FakeEHICountTracker = class(FakeEHITracker)
+---@param params EHITracker.params
+function FakeEHICountTracker:pre_init(params)
+    self._count = params.count
+end
+
+function FakeEHICountTracker:Format(format)
+    return tostring(self._count)
+end
+
+---@class FakeEHIEnemyCountTracker : FakeEHICountTracker
+---@field super FakeEHICountTracker
+---@field _icon2 PanelBitmap
+FakeEHIEnemyCountTracker = class(FakeEHICountTracker)
+function FakeEHIEnemyCountTracker:init(panel, params, parent_class)
+    self._alarm_count = math.random(0, 10)
+    self._format_alarm = EHI:GetOption("show_enemy_count_show_pagers")
+    FakeEHIEnemyCountTracker.super.init(self, panel, params, parent_class)
+end
+
+function FakeEHIEnemyCountTracker:GetSize()
+    if self._n >= 2 and not self._format_alarm then
+        return self._bg_box:w() + self._icon_gap_size_scaled
+    end
+    return FakeEHIEnemyCountTracker.super.GetSize(self)
+end
+
+function FakeEHIEnemyCountTracker:Format(format)
+    if self._format_alarm then
+        return self._alarm_count .. "|" .. self._count
+    end
+    return FakeEHIEnemyCountTracker.super.Format(self, format)
+end
+
+function FakeEHIEnemyCountTracker:UpdateFormat(format)
+    self._format_alarm = format
+    FakeEHIEnemyCountTracker.super.UpdateFormat(self, format)
+    self:UpdateIconPos(true)
+end
+
+---@param reposition boolean?
+function FakeEHIEnemyCountTracker:UpdateIconPos(reposition)
+    if self._n == 1 then -- 1 icon
+        self._icon1:set_visible(self._format_alarm)
+        self._icon2:set_visible(not self._format_alarm)
+        self._icon2:set_x(self._icon1:x())
+    else
+        self._icon1:set_visible(self._format_alarm)
+        self._icon2:set_visible(true)
+        if self._format_alarm then
+            self._icon2:set_x(self._icon1:x() + self._icon_gap_size_scaled)
+        else
+            self._icon2:set_x(self._icon1:x())
+        end
+    end
+    if reposition then
+        self:Reposition()
+    end
+end
+
+---@param visibility boolean
+function FakeEHIEnemyCountTracker:UpdateIconsVisibility(visibility)
+    FakeEHIEnemyCountTracker.super.UpdateIconsVisibility(self, visibility)
+    self:UpdateIconPos()
+end
+FakeEHIEnemyCountTracker.UpdateIcons = FakeEHIEnemyCountTracker.UpdateIconPos
+
+---@class FakeEHITimerTracker : FakeEHITracker, FakeEHIProgressTracker
+---@field super FakeEHITracker
+FakeEHITimerTracker = class(FakeEHITracker)
+FakeEHITimerTracker.FormatProgress = FakeEHIProgressTracker.Format
+function FakeEHITimerTracker:init(panel, params, parent_class)
+    self._max = 3
+    self._progress = math.random(0, 2)
+    FakeEHITimerTracker.super.init(self, panel, params, parent_class)
+    self._text:set_left(0)
+    self._progress_text = self:CreateText({
+        text = self:FormatProgress(),
+        w = self._bg_box:w() / 2,
+        left = self._text:right(),
+        FitTheText = true
+    })
+end
+
+function FakeEHITimerTracker:SetTextColor()
+    FakeEHITimerTracker.super.SetTextColor(self)
+    self._progress_text:set_color(self._selected and self._selected_color or Color.white)
+end
+
+function FakeEHITimerTracker:UpdateTextScale(...)
+    FakeEHITimerTracker.super.UpdateTextScale(self, ...)
+    self:FitTheText(self._progress_text)
+end
+
+---@class FakeEHICivilianCountTracker : FakeEHICountTracker
+---@field super FakeEHICountTracker
+---@field _icon2 PanelBitmap
+FakeEHICivilianCountTracker = class(FakeEHICountTracker)
+FakeEHICivilianCountTracker._ehi_option = "civilian_count_tracker_format"
+---@param params EHITracker.params
+function FakeEHICivilianCountTracker:pre_init(params)
+    FakeEHICivilianCountTracker.super.pre_init(self, params)
+    self._tied_count = math.random(0, self._count)
+    self._format_civilian = EHI:GetOption(self._ehi_option)
+end
+
+function FakeEHICivilianCountTracker:GetSize()
+    if self._n >= 2 and self._format_civilian == 1 then
+        return self._bg_box:w() + self._icon_gap_size_scaled
+    end
+    return FakeEHICivilianCountTracker.super.GetSize(self)
+end
+
+function FakeEHICivilianCountTracker:UpdateFormat(format)
+    self._format_civilian = format
+    FakeEHICivilianCountTracker.super.UpdateFormat(self, format)
+    self:UpdateIconPos(true)
+end
+
+function FakeEHICivilianCountTracker:Format(format)
+    format = format or self._format_civilian
+    if format == 1 then
+        return tostring(self._count)
+    else
+        local untied = self._count - self._tied_count
+        if format == 2 then
+            return self._tied_count .. "|" .. untied
+        else
+            return untied .. "|" .. self._tied_count
+        end
+    end
+end
+
+---@param reposition boolean?
+function FakeEHICivilianCountTracker:UpdateIconPos(reposition)
+    if self._n == 1 then -- 1 icon
+        self:SetIconX()
+        self._icon2:set_visible(false)
+    else
+        self._icon2:set_visible(self._format_civilian >= 2)
+        if self._format_civilian == 2 then
+            self:SetIconX(nil, self._icon2)
+            self:SetIconX(self._icon2)
+        else
+            self:SetIconsX()
+        end
+    end
+    if reposition then
+        self:Reposition()
+    end
+end
+
+function FakeEHICivilianCountTracker:UpdateIcons()
+    self._icon2:set_visible(self._format_civilian >= 2)
+end
+
+---@param visibility boolean
+function FakeEHICivilianCountTracker:UpdateIconsVisibility(visibility)
+    FakeEHICivilianCountTracker.super.UpdateIconsVisibility(self, visibility)
+    self:UpdateIconPos()
+end
+
+---@class FakeEHIHostageCountTracker : FakeEHICivilianCountTracker
+---@field super FakeEHICivilianCountTracker
+FakeEHIHostageCountTracker = class(FakeEHICivilianCountTracker)
+FakeEHIHostageCountTracker._ehi_option = "hostage_count_tracker_format"
+---@param params EHITracker.params
+function FakeEHIHostageCountTracker:pre_init(params)
+    FakeEHIHostageCountTracker.super.pre_init(self, params)
+    self._tied_count = math.random(0, math.floor(self._count / 2))
+end
+
+function FakeEHIHostageCountTracker:Format(format)
+    format = format or self._format_civilian
+    if format == 1 then
+        return tostring(self._count)
+    else
+        local civilian_hostages = self._count - self._tied_count
+        if format == 2 then
+            return self._count .. "|" .. self._tied_count
+        elseif format == 3 then
+            return self._tied_count .. "|" .. self._count
+        elseif format == 4 then
+            return civilian_hostages .. "|" .. self._tied_count
+        else
+            return self._tied_count .. "|" .. civilian_hostages
+        end
+    end
+end
+
+function FakeEHIHostageCountTracker:UpdateIconPos(...)
+    local original_format = self._format_civilian
+    if self._format_civilian == 2 then
+        self._format_civilian = 3
+    elseif self._format_civilian == 3 or self._format_civilian == 5 then
+        self._format_civilian = 2
+    end
+    FakeEHIHostageCountTracker.super.UpdateIconPos(self, ...)
+    self._format_civilian = original_format
+end
+
+---@class FakeEHIAssaultTimeTracker : FakeEHITracker, FakeEHIChanceTracker
+---@field super FakeEHITracker
+FakeEHIAssaultTimeTracker = class(FakeEHITracker)
+FakeEHIAssaultTimeTracker.FormatChance = FakeEHIChanceTracker.Format
+---@param params EHITracker.params
+function FakeEHIAssaultTimeTracker:post_init(params)
+    if params.control then
+        self._icon1:set_color(Color.white)
+    elseif self._time <= 5 then -- Fade
+        self._icon1:set_color(Color(255, 0, 255, 255) / 255)
+    elseif self._time >= 205 then -- Build
+        self._icon1:set_color(Color.yellow)
+    else
+        self._icon1:set_color(Color(255, 237, 127, 127) / 255)
+    end
+    self._bg_size = self._bg_box:w()
+    self._chance = params.diff
+    self._diff_chance_text = self:CreateText({
+        text = self:FormatChance(),
+        left = self._text:right()
+    })
+    self:UpdateFormat(EHI:GetOption("show_assault_diff_in_assault_trackers"))
+end
+
+---@param format boolean
+---@param reposition boolean?
+function FakeEHIAssaultTimeTracker:UpdateFormat(format, reposition)
+    if self._show_diff == format then
+        return
+    end
+    self._show_diff = format
+    self._diff_chance_text:set_visible(format)
+    if format then
+        self:SetBGSize()
+    else
+        self:SetBGSize(self._bg_size, "set")
+    end
+    self:SetIconX()
+    if reposition then
+        self:Reposition()
+    end
+end
+
+---@class FakeEHISniperTracker : FakeEHITracker
+---@field super FakeEHITracker
+FakeEHISniperTracker = class(FakeEHITracker)
+FakeEHISniperTracker._selected_color = Color.yellow
+FakeEHISniperTracker._text_color = FakeEHITracker._selected_color
+---@param params EHITracker.params
+function FakeEHISniperTracker:post_init(params)
+    self._text:set_text(tostring(math.random(1, 4)))
+end
+
+function FakeEHISniperTracker:SetTextColor()
+    self._text:set_color(self._selected and self._selected_color or self._text_color)
+end
+
+---@class FakeEHIPhalanxChanceTracker : FakeEHITimerTracker
+---@field super FakeEHITimerTracker
+FakeEHIPhalanxChanceTracker = class(FakeEHITimerTracker)
+FakeEHIPhalanxChanceTracker.FormatProgress = FakeEHIChanceTracker.Format
+function FakeEHIPhalanxChanceTracker:init(...)
+    self._chance = 5 + (9 * math.random(0, 5))
+    FakeEHIPhalanxChanceTracker.super.init(self, ...)
+    self._progress_text:set_left(0)
+    self._text:set_left(self._progress_text:right())
+end

@@ -49,8 +49,7 @@ local original =
     _set_visual_stage = GrenadeCrateBase._set_visual_stage,
     destroy = GrenadeCrateBase.destroy,
 
-    init_custom = CustomGrenadeCrateBase.init,
-    _set_empty_custom = CustomGrenadeCrateBase._set_empty
+    init_custom = CustomGrenadeCrateBase.init
 }
 function GrenadeCrateBase:init(unit, ...)
     self._ehi_key = tostring(unit:key())
@@ -103,9 +102,4 @@ end
 function CustomGrenadeCrateBase:init(unit, ...)
     self._ehi_key = tostring(unit:key())
     original.init_custom(self, unit, ...)
-end
-
-function CustomGrenadeCrateBase:_set_empty(...)
-    original._set_empty_custom(self, ...)
-    UpdateTracker(self._ehi_key, 0)
 end

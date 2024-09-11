@@ -14,18 +14,14 @@ end
 ---@field character_peer_id_by_unit fun(self: self, unit: UnitPlayer|UnitTeamAI): number?
 
 if EHI:IsRunningBB() then
-    EHI:HookWithID(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character",
-    ---@param self CriminalsManager
-    ---@param name string
-    function(self, name)
+    Hooks:PostHook(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character", function(self, name) ---@param name string
         local character = self:character_by_name(name)
         if character and character.taken and character.data.ai then
             managers.ehi_experience:IncreaseAlivePlayers()
             EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
         end
     end)
-    EHI:HookWithID(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit",
-    ---@param self CriminalsManager
+    Hooks:PostHook(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit",
     ---@param name string
     ---@param unit UnitPlayer|UnitTeamAI
     function(self, name, unit)
@@ -35,10 +31,7 @@ if EHI:IsRunningBB() then
             EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
         end
     end)
-    EHI:PreHookWithID(CriminalsManager, "_remove", "EHI_CriminalsManager_remove",
-    ---@param self CriminalsManager
-    ---@param id number
-    function(self, id)
+    Hooks:PreHook(CriminalsManager, "_remove", "EHI_CriminalsManager_remove", function(self, id) ---@param id number
         local char_data = self._characters[id]
         if char_data.data.ai then
             managers.ehi_experience:DecreaseAlivePlayers()

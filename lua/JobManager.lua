@@ -14,6 +14,7 @@ end
 ---@field is_current_job_professional fun(self: self): boolean
 ---@field is_level_christmas fun(self: self, level_id: string): boolean
 ---@field on_last_stage fun(self: self): boolean
+---@field current_level_wave_count fun(self: self): number
 
 function JobManager:IsPlayingMultidayHeist()
     if not self._global.current_job then

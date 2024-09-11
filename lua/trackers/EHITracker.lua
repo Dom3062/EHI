@@ -1,8 +1,4 @@
 local Color = Color
-local math_abs = math.abs
-local math_min = math.min
-local math_sin = math.sin
-local math_lerp = math.lerp
 ---@param o PanelBaseObject
 ---@param hint PanelText
 ---@param end_a number End alpha
@@ -12,10 +8,10 @@ local function visibility_hint(o, hint, end_a)
     local hint_start_a = hint:alpha()
     while TOTAL_T > t do
         local dt = coroutine.yield()
-        t = math_min(t + dt, TOTAL_T)
+        t = math.min(t + dt, TOTAL_T)
         local lerp = t / TOTAL_T
-        o:set_alpha(math_lerp(o_start_a, end_a, lerp))
-        hint:set_alpha(math_lerp(hint_start_a, end_a, lerp))
+        o:set_alpha(math.lerp(o_start_a, end_a, lerp))
+        hint:set_alpha(math.lerp(hint_start_a, end_a, lerp))
     end
 end
 ---@param o PanelBaseObject
@@ -25,9 +21,9 @@ local function visibility(o, end_a) -- This is actually faster than manually re-
     local start_a = o:alpha()
     while TOTAL_T > t do
         local dt = coroutine.yield()
-        t = math_min(t + dt, TOTAL_T)
+        t = math.min(t + dt, TOTAL_T)
         local lerp = t / TOTAL_T
-        o:set_alpha(math_lerp(start_a, end_a, lerp))
+        o:set_alpha(math.lerp(start_a, end_a, lerp))
     end
 end
 ---@param o PanelBaseObject
@@ -43,7 +39,7 @@ local function top(o, target_y)
     local from_y = o:y()
     while t < total do
         t = t + coroutine.yield()
-        o:set_y(math_lerp(from_y, target_y, t / total))
+        o:set_y(math.lerp(from_y, target_y, t / total))
     end
     o:set_y(target_y)
 end
@@ -54,7 +50,7 @@ local function left(o, target_x)
     local from_x = o:x()
     while t < total do
         t = t + coroutine.yield()
-        o:set_x(math_lerp(from_x, target_x, t / total))
+        o:set_x(math.lerp(from_x, target_x, t / total))
     end
     o:set_x(target_x)
 end
@@ -72,12 +68,12 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or 
         local t = (1 - abs / abs) * TOTAL_T
         while TOTAL_T > t do
             local dt = coroutine.yield()
-            t = math_min(t + dt, TOTAL_T)
+            t = math.min(t + dt, TOTAL_T)
             local lerp = t / TOTAL_T
-            o:set_x(math_lerp(from_x, target_x, lerp))
-            o:set_w(math_lerp(from_w, target_w, lerp))
+            o:set_x(math.lerp(from_x, target_x, lerp))
+            o:set_w(math.lerp(from_w, target_w, lerp))
         end
-        if self and self.RedrawPanel then
+        if self then
             self:RedrawPanel()
         end
     end
@@ -92,11 +88,11 @@ else
         local t = (1 - abs / abs) * TOTAL_T
         while TOTAL_T > t do
             local dt = coroutine.yield()
-            t = math_min(t + dt, TOTAL_T)
+            t = math.min(t + dt, TOTAL_T)
             local lerp = t / TOTAL_T
-            o:set_w(math_lerp(from_w, target_w, lerp))
+            o:set_w(math.lerp(from_w, target_w, lerp))
         end
-        if self and self.RedrawPanel then
+        if self then
             self:RedrawPanel()
         end
     end
@@ -107,12 +103,12 @@ end
 local function icon_x(o, target_x)
     local TOTAL_T = 0.18
     local from_x = o:x()
-    local t = (1 - math_abs(from_x - target_x) / math_abs(from_x - target_x)) * TOTAL_T
+    local t = (1 - math.abs(from_x - target_x) / math.abs(from_x - target_x)) * TOTAL_T
     while TOTAL_T > t do
         local dt = coroutine.yield()
-        t = math_min(t + dt, TOTAL_T)
+        t = math.min(t + dt, TOTAL_T)
         local lerp = t / TOTAL_T
-        o:set_x(math_lerp(from_x, target_x, lerp))
+        o:set_x(math.lerp(from_x, target_x, lerp))
     end
     o:set_x(target_x)
 end
@@ -124,7 +120,7 @@ local function bg_attention(bg, total_t)
 	while t > 0 do
 		local dt = coroutine.yield()
 		t = t - dt
-		local cv = math_abs(math_sin(t * 180 * 1))
+		local cv = math.abs(math.sin(t * 180 * 1))
 		bg:set_color(Color(1, color.red * cv, color.green * cv, color.blue * cv))
 	end
 	bg:set_color(Color(1, 0, 0, 0))
@@ -154,13 +150,6 @@ local function GetIcon(icon)
         return icons[icon].texture, icons[icon].texture_rect
     end
     return tweak_data.hud_icons:get_icon_or(icon, icons.default.texture, icons.default.texture_rect)
-end
-
----@param text PanelText
-local function make_fine_text(text)
-    local _, _, w, h = text:text_rect()
-    text:set_size(w, h)
-    text:set_position(math.round(text:x()), math.round(text:y()))
 end
 
 local bg_visibility = EHI:GetOption("show_tracker_bg")
@@ -233,7 +222,7 @@ local function CreateHUDBGBox(panel, params)
 end
 
 ---@class EHITracker
----@field new fun(self: self, panel: Panel, params: AddTrackerTable|ElementTrigger, parent_class: EHITrackerManager): self
+---@field new fun(self: self, panel: Panel, params: ElementTrigger, parent_class: EHITrackerManager): self
 ---@field _forced_icons table? Forces specific icons in the tracker
 ---@field _forced_time number? Forces specific time in the tracker
 ---@field _forced_hint_text string? Forces specific hint text in the tracker
@@ -268,7 +257,8 @@ if EHI:GetOption("show_icon_position") == 1 then
     EHITracker._ICON_LEFT_SIDE_START = true
     EHITracker._ICON_ANIM_BLOCKED = true
 end
----@param panel Panel Main panel provided by EHITrackerManager
+EHITracker.make_fine_text = BlackMarketGui.make_fine_text
+---@param panel Panel Main panel provided by `EHITrackerManager`
 ---@param params EHITracker.params
 ---@param parent_class EHITrackerManager
 function EHITracker:init(panel, params, parent_class)
@@ -280,6 +270,9 @@ function EHITracker:init(panel, params, parent_class)
     local gap = 0
     if type(self._icons) == "table" then
         self._n_of_icons = #self._icons
+        if self._ONE_ICON and self._n_of_icons > 1 then
+            self._n_of_icons = 1
+        end
         gap = self._gap * self._n_of_icons
     end
     self._time = self._forced_time or params.time or 0
@@ -488,7 +481,6 @@ end
 if EHI:GetOption("show_one_icon") then
     EHITracker._ONE_ICON = true
     function EHITracker:CreateIcons()
-        self._n_of_icons = 1
         local icon_pos = self._ICON_LEFT_SIDE_START and 0 or (self._bg_box:w() + self._gap_scaled)
         local first_icon = self._icons[1]
         if type(first_icon) == "string" then
@@ -587,7 +579,7 @@ function EHITracker:CreateHint(text, delay_popup)
         visible = true,
         alpha = 0
     })
-    make_fine_text(self._hint)
+    self:make_fine_text(self._hint)
     self._hint_pos = { x = self._hint:x(), y_diff = 0 }
     self._delay_hint = delay_popup
 end
@@ -604,7 +596,7 @@ function EHITracker:UpdateHint(text)
         loc = self._hint_vanilla_localization and text or "ehi_hint_" .. text
     end
     self._hint:set_text(managers.localization:text(loc))
-    make_fine_text(self._hint)
+    self:make_fine_text(self._hint)
     self._hint:set_x(self._hint_pos.x)
 end
 
@@ -841,7 +833,7 @@ function EHITracker:SetTimeIfLower(time)
     end
 end
 
----@param params AddTrackerTable|ElementTrigger
+---@param params ElementTrigger
 function EHITracker:Run(params)
     self:SetTimeNoAnim(params.time or 0)
     self:SetTextColor()

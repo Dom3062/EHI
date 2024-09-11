@@ -37,7 +37,7 @@ function EHITrackerManagerVR:IsLoading()
     return self._is_loading
 end
 
----@param params AddTrackerTable|ElementTrigger
+---@param params ElementTrigger
 function EHITrackerManagerVR:PreloadTracker(params)
     if self:IsLoading() then
         self:AddToLoadQueue(params.id, params, callback(self, self, "_PreloadTracker"))
@@ -47,7 +47,7 @@ function EHITrackerManagerVR:PreloadTracker(params)
 end
 
 ---@param key string
----@param data AddTrackerTable|ElementTrigger
+---@param data ElementTrigger
 function EHITrackerManagerVR:_PreloadTracker(key, data)
     self:old_PreloadTracker(data)
 end
@@ -80,7 +80,7 @@ function EHITrackerManagerVR:AddToLoadQueue(key, data, f, add)
     end
 end
 
----@param params AddTrackerTable|ElementTrigger
+---@param params ElementTrigger
 function EHITrackerManagerVR:AddLaserTracker(params)
     if self:IsLoading() then
         self:AddToLoadQueue(params.id, params, callback(self, self, "_AddLaserTracker"))
@@ -90,7 +90,7 @@ function EHITrackerManagerVR:AddLaserTracker(params)
 end
 
 ---@param key string
----@param params table
+---@param params ElementTrigger
 function EHITrackerManagerVR:_AddLaserTracker(key, params)
     self:old_AddLaserTracker(params)
 end

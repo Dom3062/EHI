@@ -108,8 +108,10 @@ function HUDManager:save(data, ...)
     end
 end
 
-function HUDManager:load(...)
-    original.load(self, ...)
+function HUDManager:load(data, ...)
+    local state = data.HUDManager
+    managers.ehi_assault:SetCurrentAssaultNumber(state.assault_number or 1, state.in_assault)
+    original.load(self, data, ...)
     for id, _ in pairs(self._hud.waypoints or {}) do
         if EHI._cache.IgnoreWaypoints[id] then
             self:SoftRemoveWaypoint(id)

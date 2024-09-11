@@ -136,7 +136,6 @@ local achievements = {
 
 ---@class AchievementsTweakData
 ---@field tags table
----@field collection_achievements table<string, { award: string, collection: string[] }>
 ---@field persistent_stat_unlocks table<string, { [1]: { award: string, at: number } }>
 ---@field visual table<string, { icon_id: string, tags: string[] }>
 

@@ -21,8 +21,10 @@
 ---@field position Vector3
 ---@field position_by_element number?
 ---@field position_by_unit number?
----@field remove_vanilla_waypoint number?
+---@field remove_vanilla_waypoint number? Removes waypoint in the game
 ---@field position_by_element_and_remove_vanilla_waypoint number?
+---@field data_from_element number?
+---@field data_from_element_and_remove_vanilla_waypoint number?
 ---@field restore_on_done boolean? Depends on `remove_vanilla_waypoint`
 ---@field present_timer number
 ---@field remove_on_alarm boolean Removes the waypoint on alarm
@@ -46,7 +48,7 @@
 ---@field additional_time number? Time to add when the time is randomized. Used with conjuction with `random_time`
 ---@field random_time number? Auto converts tracker class to inaccurate tracker
 ---@field condition boolean?
----@field condition_function function? Function has to return `boolean` value
+---@field condition_function fun(): boolean?
 ---@field icons table? Icons to show in the tracker
 ---@field class string? Class of tracker. If not provided it defaults to `EHITracker` in `EHITrackerManager`
 ---@field special_function number? Special function the trigger should do
@@ -59,7 +61,7 @@
 ---@field flash_times number?
 ---@field flash_bg boolean?
 ---@field hint string?
----@field tracker_merge boolean
+---@field tracker_merge boolean|{ id: string, start_timer: boolean }
 ---@field tracker_group boolean
 ---@field remove_on_alarm boolean Removes the tracker on alarm; calls `EHITracker:ForceDelete()`
 ---@field update_on_alarm boolean Updates the tracker on alarm; calls `EHITracker:OnAlarm()`
@@ -103,6 +105,7 @@
 ---@field assault ParseTriggersTable.assault? Assault params to be loaded during game load
 ---@field pre_parse ParseTriggersTable.pre_parse?
 ---@field sync_triggers ParseTriggersTable.sync_triggers?
+---@field tracker_merge table<string, { start_timer: boolean, elements: { [number]: ElementTrigger } }>?
 
 ---@class ParseTriggersTable.assault
 ---@field diff number?
@@ -116,6 +119,9 @@
 ---@class ParseTriggersTable.sync_triggers
 ---@field base { [number]: ElementTrigger } Random delay is defined in the BASE DELAY
 ---@field element { [number]: ElementTrigger } Random delay is defined when calling the elements
+
+---@class ParseTriggersTable.tracker_merge
+---@field [string] { start_timer: boolean, elements: { [number]: ElementTrigger } }
 
 ---@class ParseUnitsTable
 ---@field [number] UnitUpdateDefinition
@@ -150,9 +156,9 @@
 ---@field no_triggers_if_max_xp_bags_gt_max boolean Disables triggers if provided `max_xp_bags` is greater than max
 
 ---@class AchievementCounterTable
----@field check_type integer See `EHI.LootCounter.CheckType`, defaults to `EHI.LootCounter.CheckType.BagsOnly` if not provided
+---@field check_type integer See `EHI.Const.LootCounter.CheckType`, defaults to `EHI.Const.LootCounter.CheckType.BagsOnly` if not provided
 ---@field loot_type string|string[] What loot should be counted
----@field f fun(loot: LootManager, tracker_id: string) Function for custom calculation when `check_type` is set to `EHI.LootCounter.CheckType.CustomCheck`
+---@field f fun(loot: LootManager, tracker_id: string) Function for custom calculation when `check_type` is set to `EHI.Const.LootCounter.CheckType.CustomCheck`
 
 ---@class AchievementLootCounterTable
 ---@field achievement string Achievement ID
@@ -188,11 +194,6 @@
 ---@field achievement_stat string Achievement Counter
 ---@field achievement_option string? If achievement belongs to some EHI setting
 ---@field difficulty_pass boolean?
-
----@class AddTrackerTable
----@field id string Tracker ID
----@field icons table? Icons in the tracker
----@field class string? Tracker class, defaults to `EHITracker` if not provided
 
 ---@class AddWaypointTable
 ---@field id string Waypoint ID
@@ -277,7 +278,7 @@
 ---@field remove_on_pause boolean
 ---@field warning boolean
 ---@field completion boolean
----@field icon_on_pause table
+---@field icon_on_pause string
 ---@field f string|fun(id: number, unit_data: self, unit: UnitTimer|UnitDigitalTimer)
 ---@field hint string
 ---@field [any] any
@@ -323,8 +324,8 @@
 ---@field h number?
 ---@field color Color?
 ---@field visible boolean?
----@field FitTheText boolean? Fits the text in the text
----@field FitTheText_FontSize number? Fits the text in the text with given font size, depends on `FitTheText`
+---@field FitTheText boolean? Fits the text in the text panel
+---@field FitTheText_FontSize number? Fits the text in the text panel with given font size, depends on `FitTheText`
 
 ---@class XPBreakdown.tactic.i_custom.objectives_override.stop_at_inclusive_and_add_objectives
 ---@field stop_at string

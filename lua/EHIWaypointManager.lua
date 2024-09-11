@@ -76,7 +76,6 @@ function EHIWaypointManager:RemoveWaypoint(id)
         wp:destroy()
         self._waypoints_to_update[id] = nil
         self._hud:remove_waypoint(id)
-        return
     end
 end
 
@@ -144,11 +143,9 @@ end
 function EHIWaypointManager:SetWaypointIcon(id, new_icon)
     if id and self._waypoints[id] then
         local wp = self._hud:get_waypoint_data(id)
-        if not wp then
-            return
+        if wp then
+            self:SetWaypointInitialIcon(wp, { icon = new_icon })
         end
-        local icon = { icon = new_icon }
-        self:SetWaypointInitialIcon(wp, icon)
     end
 end
 
@@ -286,9 +283,7 @@ end
 
 if EHI:IsVR() then
     return
-end
-
-if VoidUI and VoidUI.options.enable_waypoints then
+elseif VoidUI and VoidUI.options.enable_waypoints then
     dofile(EHI.LuaPath .. "hud/waypoint/void_ui.lua")
 elseif restoration and restoration.Options and restoration.Options:GetValue("HUD/Waypoints") then
     dofile(EHI.LuaPath .. "hud/waypoint/restoration_mod.lua")

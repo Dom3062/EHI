@@ -41,7 +41,7 @@ end
 
 if EHI.debug.mission_door and EHI:IsHost() then
     EHI._cache.MissionDoor = {}
-    EHI:HookWithID(MissionDoor, "init", "EHI_MissionDoorDebug_Init", function(self, ...)
+    Hooks:PostHook(MissionDoor, "init", "EHI_MissionDoorDebug_Init", function(self, ...)
         if self.tweak_data then
             local devices_data = tweak_data.mission_door[self.tweak_data].devices or {}
             local drill_data = devices_data.drill
@@ -63,7 +63,7 @@ if EHI.debug.mission_door and EHI:IsHost() then
     local definition = {}
     local continent_definitions = {}
     local continents = {}
-    EHI:HookWithID(IngameWaitingForPlayersState, "at_enter", "EHI_MissionDoorDebug", function(...)
+    Hooks:PostHook(IngameWaitingForPlayersState, "at_enter", "EHI_MissionDoorDebug", function(...)
         local MissionDoor = EHI._cache.MissionDoor
         local world_instance = managers.world_instance
         local instance_data = world_instance:instance_data()
@@ -98,7 +98,7 @@ if EHI.debug.mission_door and EHI:IsHost() then
                     end
                     if not name_found then -- Path not found
                         if unit_id >= 130000 then
-                            for i, instance in ipairs(instance_data) do
+                            for _, instance in ipairs(instance_data) do
                                 local continent_data = continents[instance.continent] or {}
                                 local continent_base_id = continent_data.base_id or 100000
                                 local computed_instance_range_start = EHI:GetInstanceElementID(100000, instance.start_index, continent_base_id)
@@ -137,7 +137,7 @@ if EHI.debug.mission_door and EHI:IsHost() then
         continents = nil
     end)
 
-    EHI:PreHookWithID(WorldDefinition, "init_done", "EHI_MissionDoorDebug_WorldDefinition", function(self, ...)
+    Hooks:PreHook(WorldDefinition, "init_done", "EHI_MissionDoorDebug_WorldDefinition", function(self, ...)
         -- These fields are nilled when loading finishes, clone them so I can check for path
         definition = deep_clone(self._definition)
         continent_definitions = deep_clone(self._continent_definitions)

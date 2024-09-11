@@ -1,6 +1,11 @@
+---@class EHIAssaultManagerSyncData
+---@field diff number
+
 local EHI = EHI
 ---@class EHIAssaultManager
 EHIAssaultManager = {}
+EHIAssaultManager._sync_anticipation_start = "EHI_AM_SyncAnticipationStart"
+EHIAssaultManager._sync_sustain_start = "EHI_AM_SyncSustainStart"
 ---@param ehi_tracker EHITrackerManager
 function EHIAssaultManager:new(ehi_tracker)
     self._trackers = ehi_tracker
@@ -15,8 +20,8 @@ function EHIAssaultManager:init_finalize(manager)
     local combine = EHI:CombineAssaultDelayAndAssaultTime()
     self._anticipation =
     {
-        sync_f = EHI:IsHost() and "SyncAnticipationColor" or "SyncAnticipation",
-        t = 30 -- Get it from tweak_data; although `HUDManager:sync_start_anticipation_music()` checks if the time is less than 30s
+        sync_f = (EHI:IsHost() or self._is_skirmish) and "SyncAnticipationColor" or "SyncAnticipation",
+        t = 30 -- Get it from tweak_data; although `HUDManager:sync_start_anticipation_music()` checks if the time is less than 30s; Time is disabled in Holdout as the time is accurate enough even for clients
     }
     self._assault_delay =
     {
@@ -30,7 +35,6 @@ function EHIAssaultManager:init_finalize(manager)
         blocked = not (combine or EHI:GetOption("show_assault_time_tracker")),
         name = combine and "Assault" or "AssaultTime",
         delete_on_delay = not combine,
-        combine_skirmish_remove = combine and self._is_skirmish,
         show_endless_assault = EHI:GetOption("show_endless_assault"),
         hint = combine and "assault" or "assault_time"
     }
@@ -90,8 +94,24 @@ function EHIAssaultManager:init_finalize(manager)
         function ListenerModifier:OnEnterSustainPhase(duration)
             manager:NotifyInternalListeners("AssaultOnSustain", "assault", "sustain_t", duration)
             manager._assault._internal.sustain_app_t = managers.game_play_central:get_heist_timer()
+            if not manager._assault._is_skirmish then
+                manager:SyncTable(manager._assault._sync_sustain_start, { t = duration })
+            end
         end
         managers.modifiers:add_modifier(ListenerModifier, "EHI")
+    else
+        if not self._assault_delay.blocked then
+            manager:AddReceiveHook(self._sync_anticipation_start, function(data, sender)
+                local tbl = json.decode(data)
+                self:AnticipationStartHost(tbl.t)
+            end)
+        end
+        if not (self._assault_time.blocked or self._is_skirmish) then
+            manager:AddReceiveHook(self._sync_sustain_start, function(data, sender)
+                local tbl = json.decode(data)
+                self:OnEnterSustain(tbl.t)
+            end)
+        end
     end
     EHI:AddCallback(EHI.CallbackMessage.SyncAssaultDiff, callback(self, self, "SetDiff"))
 end
@@ -102,7 +122,7 @@ function EHIAssaultManager:init_hud(hud)
     self._control_info_f = function(_, data)
         self._trackers:CallFunction(self._assault_delay.name, "SetHostages", data.nr_hostages > 0)
     end
-    EHI:HookWithID(hud, "set_control_info", "EHI_Assault_set_control_info", self._control_info_f)
+    Hooks:PostHook(hud, "set_control_info", "EHI_Assault_set_control_info", self._control_info_f)
 end
 
 ---@param params ParseTriggersTable.assault?
@@ -113,10 +133,7 @@ function EHIAssaultManager:Parse(params)
     self:SetDiff(params.diff or 0)
     self._force_assault_start = params.force_assault_start
     if params.wave_move_elements_block then
-        self._blocked_wave_mode_elements = {}
-        for _, element in ipairs(params.wave_move_elements_block) do
-            self._blocked_wave_mode_elements[element] = true
-        end
+        self._blocked_wave_mode_elements = table.list_to_set(params.wave_move_elements_block)
     end
     if params.fake_assault_block then
         self._assault_block = true
@@ -167,6 +184,11 @@ function EHIAssaultManager:AnticipationStartHost(t)
     self._trackers:CallFunction(self._assault_delay.name, "StartAnticipation", t)
 end
 
+---@param t number
+function EHIAssaultManager:SyncAnticipationStartHost(t)
+    self._trackers:SyncTable(self._sync_anticipation_start, { t = t })
+end
+
 function EHIAssaultManager:AnticipationStart()
     if self._assault_delay.blocked then
         return
@@ -200,6 +222,7 @@ function EHIAssaultManager:AssaultStart()
             diff = self._diff,
             endless_assault = self._endless_assault,
             hint = self._assault_time.hint,
+            current_assault_number = self._current_assault_number,
             class = EHI.Trackers.Assault
         }, 0)
     end
@@ -208,7 +231,10 @@ end
 
 function EHIAssaultManager:AssaultEnd()
     self._internal.is_assault = false
-    if self._assault_time.combine_skirmish_remove or self._assault_time.delete_on_delay or self._endless_assault then
+    if self._is_skirmish then
+        self._current_assault_number = (self._current_assault_number or 0) + 1
+    end
+    if self._assault_time.delete_on_delay or self._endless_assault then
         self._trackers:ForceRemoveTracker(self._assault_time.name)
     end
     if self._assault_block or self._assault_delay.blocked then
@@ -221,10 +247,21 @@ function EHIAssaultManager:AssaultEnd()
             id = self._assault_delay.name,
             diff = self._diff,
             hint = self._assault_delay.hint,
+            current_assault_number = self._current_assault_number,
             class = EHI.Trackers.Assault
         }, 0)
     end
-    EHI:HookWithID(self._hud, "set_control_info", "EHI_Assault_set_control_info", self._control_info_f)
+    Hooks:PostHook(self._hud, "set_control_info", "EHI_Assault_set_control_info", self._control_info_f)
+end
+
+---@param n number
+---@param in_assault boolean
+function EHIAssaultManager:SetCurrentAssaultNumber(n, in_assault)
+    if n == 0 or not in_assault then
+        n = n + 1
+    end
+    self._current_assault_number = n
+    self:CallFunction("SetProgress", n)
 end
 
 ---@param t number
@@ -247,23 +284,24 @@ function EHIAssaultManager:CallFunction(f, ...)
     self._trackers:CallFunction("AssaultTime", f, ...)
 end
 
-function EHIAssaultManager:SetEndlessAssaultFromLoad()
-    EHI:CallCallback(EHI.CallbackMessage.AssaultWaveModeChanged, "endless")
-end
-
 function EHIAssaultManager:TrackerExists()
     return self._trackers:TrackerExists("Assault") or self._trackers:TrackerExists("AssaultDelay") or self._trackers:TrackerExists("AssaultTime")
 end
 
+---@param data SyncData
 function EHIAssaultManager:save(data)
-    local state = {}
-    state.diff = self._diff
-    data.EHIAssaultManager = state
+    if not self._is_skirmish then
+        local state = {}
+        state.diff = self._diff
+        data.EHIAssaultManager = state
+    end
 end
 
+---@param data SyncData
 function EHIAssaultManager:load(data)
     local state = data.EHIAssaultManager
     if state then
         self._diff = state.diff
+        self._anticipation.sync_f = "SyncAnticipationColor"
     end
 end

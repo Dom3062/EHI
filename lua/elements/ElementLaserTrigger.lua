@@ -13,6 +13,7 @@ function EHILaserTracker:pre_init(params)
     self._next_cycle_t = params.time
 end
 
+---@param dt number
 function EHILaserTracker:update(dt)
     self._time = self._time - dt
     self._text:set_text(self:Format())
@@ -21,6 +22,7 @@ function EHILaserTracker:update(dt)
     end
 end
 
+---@param t number
 function EHILaserTracker:UpdateInterval(t)
     self._time = t
 end

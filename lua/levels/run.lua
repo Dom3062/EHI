@@ -57,7 +57,7 @@ local triggers = {
     -- Parking lot
     [102543] = { time = 6.5 + 8 + 4, id = "ObjectiveWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [101967] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, waypoint = { icon = Icon.Goto, position_by_element_and_remove_vanilla_waypoint = 100372, restore_on_done = true }, hint = Hints.friend_Heli },
+    [101967] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, waypoint = { data_from_element_and_remove_vanilla_waypoint = 100372, restore_on_done = true }, hint = Hints.friend_Heli },
 
     [100144] = { id = "GasAmount", class = "EHIGasTracker", trigger_times = 1, hint = Hints.run_Gas },
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins

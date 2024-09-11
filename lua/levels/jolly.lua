@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local Hints = EHI.Hints
-local EscapeWP = { icon = Icon.Escape, position_by_element = EHI:GetInstanceElementID(100029, 21250) }
+local EscapeWP = { data_from_element = EHI:GetInstanceElementID(100029, 21250) }
 -- Why in the flying fuck, OVK, you decided to execute the timer AFTER the dialogue has finished ?  
 -- You realize how much pain this is to account for ?  
 -- I'm used to bullshit, but this is next level; 10/10 for effort  

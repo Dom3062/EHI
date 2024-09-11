@@ -1,7 +1,12 @@
+---@class EHISyncManagerSyncData
+---@field has_useful_bots boolean
+---@field has_bots_enabled boolean
+
 local EHI = EHI
 
 ---@class EHISyncManager
 EHISyncManager = {}
+---@param data SyncData
 function EHISyncManager:save(data)
     local state = {}
     state.has_useful_bots = UsefulBots ~= nil
@@ -9,6 +14,7 @@ function EHISyncManager:save(data)
     data.EHISyncManager = state
 end
 
+---@param data SyncData
 function EHISyncManager:load(data)
     local state = data.EHISyncManager
     if state and state.has_useful_bots then

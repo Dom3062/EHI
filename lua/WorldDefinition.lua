@@ -3,18 +3,25 @@ if EHI:CheckLoadHook("WorldDefinition") then
     return
 end
 
+---@alias WorldDefinition._continent { base_id: number }
+---@alias WorldDefinition._continent_definition { instances: CoreWorldInstanceManager.Instance[]?, statics: WorldDefinition._continent_definition.statics[] }
+---@alias WorldDefinition._continent_definition.statics { unit_data: { name: string, instance: string?, unit_id: number } }
+---@alias WorldDefinition._definition { statics: WorldDefinition._continent_definition.statics[]? }
+
 ---@class WorldDefinition
 ---@field _all_units table
----@field _continents table<string, WorldDefinition.Continent>
+---@field _continent_definitions table<string, WorldDefinition._continent_definition>
+---@field _continents table<string, WorldDefinition._continent?>
+---@field _definition WorldDefinition._definition
 ---@field get_unit fun(self: self, id: number): Unit?
 
 local units = {}
-EHI:HookWithID(WorldDefinition, "init", "EHI_WorldDefinition_init", function(...)
+Hooks:PostHook(WorldDefinition, "init", "EHI_WorldDefinition_init", function(...)
     units = tweak_data.ehi.units
 end)
 
-EHI:HookWithID(WorldDefinition, "create", "EHI_WorldDefinition_create", function(self, ...)
-    if self._definition.statics then
+Hooks:PostHook(WorldDefinition, "create", "EHI_WorldDefinition_create", function(self, ...)
+    if self._definition.statics then -- Appears to be unused; every unit appears to be in their own continents
         for _, values in ipairs(self._definition.statics) do
             if units[values.unit_data.name] and not values.unit_data.instance then
                 EHI._cache.MissionUnits[values.unit_data.unit_id] = units[values.unit_data.name]
@@ -135,7 +142,7 @@ local instances =
     },
     ["levels/instances/unique/help/lottery_wheel/world"] =
     {
-        [100033] = { icons = { Icon.Wait }, icon_on_pause = { Icon.Loop } }
+        [100033] = { icons = { Icon.Wait }, icon_on_pause = Icon.Loop }
     },
     ["levels/instances/unique/spa/spa_storage/world"] =
     {
@@ -257,7 +264,7 @@ function WorldDefinition:OverrideUnitsInMissionPlacedInstance(instance)
     end
 end
 
-EHI:HookWithID(WorldDefinition, "_insert_instances", "EHI_WorldDefinition_insert_instances", function(self, ...)
+Hooks:PostHook(WorldDefinition, "_insert_instances", "EHI_WorldDefinition_insert_instances", function(self, ...)
     for _, data in pairs(self._continent_definitions) do
         if data.instances then
             for _, instance in ipairs(data.instances) do
@@ -269,22 +276,31 @@ EHI:HookWithID(WorldDefinition, "_insert_instances", "EHI_WorldDefinition_insert
     end
 end)
 
-EHI:PreHookWithID(WorldDefinition, "init_done", "EHI_WorldDefinition_init_done", function(...)
+Hooks:PreHook(WorldDefinition, "init_done", "EHI_WorldDefinition_init_done", function(...)
     EHI:FinalizeUnitsClient()
 end)
 
+---@param unit_id number
+---@param unit_data UnitUpdateDefinition
+---@param unit UnitAmmoDeployable|UnitGrenadeDeployable
 function WorldDefinition:IgnoreDeployable(unit_id, unit_data, unit)
     if unit:base() and unit:base().SetIgnore then
         unit:base():SetIgnore()
     end
 end
 
+---@param unit_id number
+---@param unit_data UnitUpdateDefinition
+---@param unit UnitAmmoDeployable|UnitGrenadeDeployable
 function WorldDefinition:IgnoreChildDeployable(unit_id, unit_data, unit)
     if unit:base() and unit:base().SetIgnoreChild then
         unit:base():SetIgnoreChild()
     end
 end
 
+---@param unit_id number
+---@param unit_data UnitUpdateDefinition
+---@param unit UnitAmmoDeployable|UnitDoctorDeployable
 function WorldDefinition:SetDeployableOffset(unit_id, unit_data, unit)
     if unit:base() and unit:base().SetOffset then
         unit:base():SetOffset(unit_data.offset or 1)
@@ -306,6 +322,6 @@ function WorldDefinition:chasC4(unit_id, unit_data, unit)
     if EHI:GetBaseUnitID(unit_id, unit_data.instance.start_index, unit_data.continent_index) == 100054 then
         unit:digital_gui():SetIcons(unit_data.icons)
     else
-        unit:digital_gui():SetIgnore(true)
+        unit:digital_gui():SetIgnore()
     end
 end

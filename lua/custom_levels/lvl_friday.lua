@@ -5,10 +5,7 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local OVKOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local OVKOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
-local CrashIcons = { Icon.PCHack, Icon.Fix, "pd2_question" }
-if EHI:GetOption("show_one_icon") then
-    CrashIcons = { Icon.Fix }
-end
+local CrashIcons = EHI:GetOption("show_one_icon") and { Icon.Fix } or { Icon.PCHack, Icon.Fix, "pd2_question" }
 
 ---@type ParseTriggerTable
 local triggers =

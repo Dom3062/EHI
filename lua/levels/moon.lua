@@ -74,7 +74,7 @@ EHI:ShowAchievementLootCounter({
     max = 9,
     counter =
     {
-        check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
+        check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = { "money", "diamonds" }
     },
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)

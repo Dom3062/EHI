@@ -7,7 +7,7 @@ EHIAggregatedHealthEquipmentTracker._init_create_text = true
 function EHIAggregatedHealthEquipmentTracker:Format()
     local s = ""
     for _, id in ipairs(self._ids) do
-        if self._amount[id] > 0 then
+        if self._count[id].amount > 0 then
             if s ~= "" then
                 s = s .. " | "
             end
@@ -37,7 +37,7 @@ function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
         end
     end
     for i, id in ipairs(self._ids) do
-        if self._amount[id] > 0 then
+        if self._count[id].amount > 0 then
             visibility[#visibility + 1] = i
         end
     end

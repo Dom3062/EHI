@@ -13,8 +13,6 @@ if EHI:CheckLoadHook("ZipLine") or not EHI:GetOption("show_zipline_timer") then
     return
 end
 
-local Icon = EHI.Icons
-
 local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_zipline")
 
 local original =
@@ -59,7 +57,7 @@ function ZipLine:init(unit, ...)
         if managers.ehi_tracker:CallFunction2("ZipLineReset", "AddUnit") then
             managers.ehi_tracker:PreloadTracker({
                 id = "ZipLineReset",
-                icons = { "zipline", Icon.Loop },
+                icons = { "zipline", EHI.Icons.Loop },
                 hide_on_delete = true,
                 unit = true,
                 hint = "zipline_reset",

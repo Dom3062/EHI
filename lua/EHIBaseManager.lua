@@ -1,10 +1,21 @@
 ---@class EHIBaseManager
 EHIBaseManager = class()
-EHIBaseManager.RoundNumber = math.round_with_precision
+---@param n number
+---@param bracket number?
+EHIBaseManager.RoundNumber = function(n, bracket)
+    bracket = bracket or 1
+    local sign = n >= 0 and 1 or -1
+    return math.floor(n / bracket + sign * 0.5) * bracket
+end
+
+---@param n number
+function EHIBaseManager:RoundHealthNumber(n)
+    return self.RoundNumber(n * 10, 0.1)
+end
 
 ---@param n number
 function EHIBaseManager:RoundChanceNumber(n)
-    return self.RoundNumber(n, 2) * 100
+    return self.RoundNumber(n, 0.01) * 100
 end
 
 function EHIBaseManager:CreateEventListener()

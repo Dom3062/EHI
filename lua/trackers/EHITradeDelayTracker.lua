@@ -5,15 +5,16 @@ EHITradeDelayTracker._forced_hint_text = "trade_delay"
 EHITradeDelayTracker._update = false
 EHITradeDelayTracker._forced_icons = { "mugshot_in_custody" }
 EHITradeDelayTracker._init_create_text = false
----@param panel Panel
----@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHITradeDelayTracker:init(panel, params, parent_class)
+function EHITradeDelayTracker:init(...)
     self._pause_t = 0
     self._n_of_peers = 0
     self._peers = {} ---@type table<number, { t: number, in_custody: boolean, civilians_killed: number, label: PanelText }?>
     self._tick = 0
-    EHITradeDelayTracker.super.init(self, panel, params, parent_class)
+    EHITradeDelayTracker.super.init(self, ...)
+    if self._SIZE_INCREASE_NEEDED then
+        self:SetBGSize(self._bg_box:w() / 2)
+        self:SetIconX()
+    end
     self._default_panel_w = self._panel:w()
     self._default_bg_box_w = self._bg_box:w()
     self._panel_half = self._default_bg_box_w / 2
@@ -131,14 +132,13 @@ end
 ---@param peer_id number
 ---@param time number
 ---@param civilians_killed number? If provided, sets the number of killed civilians. Otherwise it adds 1 more civilian killed to the counter
----@param anim boolean?
-function EHITradeDelayTracker:SetPeerCustodyTime(peer_id, time, civilians_killed, anim)
+function EHITradeDelayTracker:SetPeerCustodyTime(peer_id, time, civilians_killed)
     local peer_data = self._peers[peer_id] ---@cast peer_data -?
     peer_data.t = time
     peer_data.civilians_killed = civilians_killed or (peer_data.civilians_killed + 1)
     self:FormatUnique(peer_data.label, time, peer_data.civilians_killed)
     self:FitTheText(peer_data.label)
-    if anim then
+    if not civilians_killed then
         self:AnimateBG()
     end
 end
@@ -147,7 +147,7 @@ end
 ---@param time number
 function EHITradeDelayTracker:IncreasePeerCustodyTime(peer_id, time)
     local t = self:GetPeerData(peer_id, "t", 0) ---@cast t -boolean
-    self:SetPeerCustodyTime(peer_id, t + time, nil, true)
+    self:SetPeerCustodyTime(peer_id, t + time)
 end
 
 ---@param peer_id number
@@ -251,6 +251,7 @@ function EHITradeDelayTracker:GetPeerData(peer_id, field_name, default_value)
 end
 
 if EHI:GetOption("show_trade_delay_amount_of_killed_civilians") then
+    EHITradeDelayTracker._SIZE_INCREASE_NEEDED = true
     ---@param label PanelText
     ---@param time number
     ---@param civilians_killed number
@@ -271,8 +272,7 @@ function EHITradeDelayTracker:update(dt)
     if self._tick > 0 then
         self._tick = self._tick - dt
         return
-    end
-    if self._pause_t > 0 then
+    elseif self._pause_t > 0 then
         self._pause_t = self._pause_t - dt
         return
     end

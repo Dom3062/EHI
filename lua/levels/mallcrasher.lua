@@ -42,7 +42,7 @@ function EHIameno3Tracker:pre_init(params)
         max = self._max,
         counter =
         {
-            check_type = EHI.LootCounter.CheckType.ValueOfSmallLoot
+            check_type = EHI.Const.LootCounter.CheckType.ValueOfSmallLoot
         }
     })
 end
@@ -102,7 +102,7 @@ local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
 local triggers =
 {
     -- Time before escape vehicle arrives
-    [300248] = { time = (OverkillOrBelow and 120 or 300) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 300322 }, hint = Hints.Escape },
+    [300248] = { time = (OverkillOrBelow and 120 or 300) + 25, id = "EscapeHeli", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element = 300322 }, hint = Hints.Escape },
     -- 120: Base Delay on OVK or below
     -- 300: Base Delay on Mayhem or above
     -- 25: Escape zone activation delay

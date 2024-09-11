@@ -21,10 +21,9 @@ end
 
 local original = {}
 
-if EHI:GetOption("show_enemy_count_tracker") then
+if EHI:GetOptionAndLoadTracker("show_enemy_count_tracker") then
     original.on_enemy_registered = EnemyManager.on_enemy_registered
     original.on_enemy_unregistered = EnemyManager.on_enemy_unregistered
-    dofile(EHI.LuaPath .. "trackers/EHIEnemyCountTracker.lua")
     if EHI:GetOption("show_enemy_count_show_pagers") then
         local alarm_unit = {}
         function EnemyManager:on_enemy_registered(unit, ...)

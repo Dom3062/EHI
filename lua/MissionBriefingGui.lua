@@ -129,7 +129,6 @@ end
 
 ---@param x number
 ---@param y number
----@return boolean
 function XPBreakdownItem:mouse_moved(x, y)
     if not self._selected then
         if self._button:inside(x, y) then

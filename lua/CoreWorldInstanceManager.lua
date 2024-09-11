@@ -1,6 +1,7 @@
 ---@class CoreWorldInstanceManager
+---@field _get_instance_continent_data fun(self: self, path: string): WorldDefinition._continent_definition
 ---@field get_instance_data_by_name fun(self: self, instance_name: string): CoreWorldInstanceManager.Instance?
----@field instance_data fun(self: self): table
+---@field instance_data fun(self: self): CoreWorldInstanceManager.Instance[]
 
 local EHI = EHI
 if EHI:CheckLoadHook("CoreWorldInstanceManager") then
@@ -588,7 +589,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
         -- Don't compute the indexes again if the instance on this start_index has been computed already  
         -- `start_index` is unique for each instance in a heist, so this shouldn't break anything
         if not used_start_indexes[start_index] then
-            local continent_data = managers.worlddefinition._continents[instance.continent]
+            local continent_data = managers.worlddefinition._continents[instance.continent] or {}
             local triggers = {}
             local waypoints = {}
             local mission_waypoints = {}
@@ -617,7 +618,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                                     time = trigger.time + time_random,
                                     icon = trigger.icons[1],
                                     position = managers.ehi_manager:GetUnitPositionOrDefault(final_index),
-                                    class = trigger.class and managers.ehi_manager.TrackerWaypointsClass[trigger.class]
+                                    class = trigger.class and managers.ehi_manager._TrackerToWaypoint[trigger.class]
                                 })
                             end
                         end)
@@ -671,7 +672,6 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
         EHI:Log("---------------SEPARATOR---------------")
         EHI:Log("Instance Folder: " .. tostring(folder))
         EHI:Log("Instance Start Index: " .. tostring(instance.start_index))
-        EHI:Log("Instance Rotation: " .. tostring(instance.rotation))
     end
     return instance_data
 end
@@ -707,6 +707,6 @@ function CoreWorldInstanceManager:custom_create_instance(instance_name, ...)
     end
 end
 
-EHI:HookWithID(CoreWorldInstanceManager, "init", "EHI_CoreWorldInstanceManager_init", function(...)
+Hooks:PostHook(CoreWorldInstanceManager, "init", "EHI_CoreWorldInstanceManager_init", function(...)
     units = tweak_data.ehi.units
 end)

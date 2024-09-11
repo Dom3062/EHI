@@ -64,22 +64,6 @@ Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_EHI", func
     MenuCallbackHandler.OpenEHIModOptions = function(self, item)
         EHI.Menu = EHI.Menu or EHIMenu:new()
         EHI.Menu:Open()
-
-        -- Add Hook when menu is created
-        if not EHI.MenuHooks then
-            Hooks:PostHook(MenuManager, "update", "update_menu_EHI", function(self, t, dt)
-                if EHI.Menu and EHI.Menu.update and EHI.Menu._enabled then
-                    EHI.Menu:update(t, dt)
-                end
-            end)
-            Hooks:PostHook(MenuManager, "destroy", "destroy_menu_EHI", function(...)
-                if EHI.Menu then
-                    EHI.Menu:destroy()
-                    EHI.Menu = nil
-                end
-            end)
-            EHI.MenuHooks = true
-        end
     end
 
     local node = nodes["blt_options"]

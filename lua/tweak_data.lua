@@ -594,6 +594,7 @@ tweak_data.ehi =
             x = 2,
             y = 10,
             option = "hostage_taker_muscle",
+            check_after_spawn = true,
             class = "EHIHealthRegenBuffTracker"
         },
         crew_throwable_regen =
@@ -813,7 +814,7 @@ tweak_data.ehi =
                 show_finish_after_reaching_target = true,
                 counter =
                 {
-                    check_type = EHI.LootCounter.CheckType.ValueOfBags
+                    check_type = EHI.Const.LootCounter.CheckType.ValueOfBags
                 }
             })
         end,

@@ -20,15 +20,15 @@ if EHI:EscapeVehicleWillReturn() then
             [EHI:GetInstanceElementID(100016, 10700)] = true,
             [EHI:GetInstanceElementID(100016, 11000)] = true
         }
-        EHI:DisableWaypoints(DisableWaypoints)
-        triggers[EHI:GetInstanceElementID(100011, 10700)].waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100016, 10700) }
-        triggers[EHI:GetInstanceElementID(100011, 11000)].waypoint = { icon = Icon.LootDrop, position_by_element = EHI:GetInstanceElementID(100016, 11000) }
+        EHI:DisableMissionWaypoints(DisableWaypoints)
+        triggers[EHI:GetInstanceElementID(100011, 10700)].waypoint = { data_from_element = EHI:GetInstanceElementID(100016, 10700) }
+        triggers[EHI:GetInstanceElementID(100011, 11000)].waypoint = { data_from_element = EHI:GetInstanceElementID(100016, 11000) }
     end
 end
 
 ---@param present_amount number?
 local function cane_5(present_amount)
-    EHI:HookWithID(PlayerManager, "set_synced_deployable_equipment", "EHI_cane_5_fail_trigger", function(self, ...)
+    Hooks:PostHook(PlayerManager, "set_synced_deployable_equipment", "EHI_cane_5_fail_trigger", function(self, ...)
         if self._peer_used_deployable then
             managers.ehi_achievement:SetAchievementFailed("cane_5")
             EHI:Unhook("cane_5_fail_trigger")

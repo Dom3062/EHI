@@ -10,7 +10,7 @@ end
 ---@field get_secured_bonus_bags_amount fun(self: self): integer
 ---@field get_secured_mandatory_bags_amount fun(self: self): integer
 
-local check_types = EHI.LootCounter.CheckType
+local check_types = EHI.Const.LootCounter.CheckType
 local original =
 {
     sync_secure_loot = LootManager.sync_secure_loot,

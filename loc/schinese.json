@@ -80,7 +80,6 @@
     "ehi_hint_timer" : "计时器",
     "ehi_hint_gained_xp" : "获得经验",
     "ehi_hint_total_xp" : "总计经验",
-    "ehi_hint_question" : "?",
     "ehi_hint_endless_assault" : "无尽突击",
     "ehi_hint_fire" : "火焰",
     "ehi_hint_fire_recharge" : "火焰充能",
@@ -544,7 +543,7 @@
     "ehi_show_assault_time_tracker_desc" : "显示突击持续的时间\n\n若为客机中途加入游戏，此追踪器在突击难度提升后不再显示",
 
     "ehi_show_assault_diff_in_assault_trackers" : "在突击追踪器中显示突击难度",
-    "ehi_show_assault_diff_in_assault_trackers_desc" : "",
+    "ehi_show_assault_diff_in_assault_trackers_desc" : "In Holdout game mode, this option will show enemy damage and health boost, respectively\n\nIn other game modes, this option will show assault difficulty, in percent",
 	
     "ehi_show_endless_assault" : "在追踪器中显示无尽突击",
     "ehi_show_endless_assault_desc" : "无尽突击开始后在突击追踪器中显示无尽突击文本",

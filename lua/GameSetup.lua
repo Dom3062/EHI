@@ -220,36 +220,45 @@ local custom_levels =
 local init_finalize = GameSetup.init_finalize
 function GameSetup:init_finalize(...)
     init_finalize(self, ...)
+    if managers.ehi_manager.__init_done then
+        return
+    end
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitFinalize)
     local level_id = Global.game_settings.level_id
+    if tweak_data.levels:IsLevelCustom(level_id) then
+        dofile(EHI.LuaPath .. "core_beardlib.lua")
+    end
     if levels[level_id] then
         local fixed_name = redirect[level_id] or level_id
-        dofile(EHI.LuaPath .. "levels/" .. fixed_name .. ".lua")
+        dofile(string.format("%s%s%s.lua", EHI.LuaPath, "levels/", fixed_name))
     end
     if custom_levels[level_id] then
         local fixed_path = redirect[level_id] or ("custom_levels/" .. level_id)
-        dofile(EHI.LuaPath .. fixed_path .. ".lua")
+        dofile(string.format("%s%s.lua", EHI.LuaPath, fixed_path))
     end
     managers.ehi_manager:InitElements()
     EHI:DisableWaypointsOnInit()
+    redirect = nil
+    levels = nil
+    custom_levels = nil
 end
 
-EHI:PreHookWithID(GameSetup, "load", "EHI_GameSetup_load_Pre", function(self, data, ...)
+Hooks:PreHook(GameSetup, "load", "EHI_GameSetup_load_Pre", function(self, data, ...) ---@param data SyncData
     managers.ehi_manager:SetInSync(true)
     EHI:FinalizeUnitsClient()
     managers.ehi_assault:load(data)
     managers.ehi_sync:load(data)
 end)
 
-EHI:HookWithID(GameSetup, "load", "EHI_GameSetup_load_Post", function(self, data, ...)
+Hooks:PostHook(GameSetup, "load", "EHI_GameSetup_load_Post", function(self, data, ...) ---@param data SyncData
     managers.ehi_manager:load(data)
-    managers.ehi_tracker:load(data)
+    --managers.ehi_tracker:load(data)
     managers.ehi_loot:load(data)
 end)
 
-EHI:HookWithID(GameSetup, "save", "EHI_GameSetup_save_Post", function(self, data, ...)
+Hooks:PostHook(GameSetup, "save", "EHI_GameSetup_save_Post", function(self, data, ...) ---@param data SyncData
     managers.ehi_manager:save(data)
-    managers.ehi_tracker:save(data)
+    --managers.ehi_tracker:save(data)
     managers.ehi_assault:save(data)
     managers.ehi_loot:save(data)
     managers.ehi_sync:save(data)

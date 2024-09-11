@@ -3,6 +3,7 @@
     <hooks script_path="lua/">
         <!-- Main code -->
         <pre hook_id="core/lib/utils/coreapp" :script_path="core.lua"/>
+        <pre hook_id="core/lib/utils/coreapp" :script_path="core_utils.lua"/>
 
         <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
 
@@ -29,6 +30,7 @@
                 <post :hook_id="elementdifficulty" :script_path="ElementDifficulty.lua" />
                 <post :hook_id="elementexperience" :script_path="ElementExperience.lua" />
                 <post :hook_id="elementheisttimer" :script_path="ElementHeistTimer.lua" />
+                <post :hook_id="elementjobvalue" :script_path="ElementJobValue.lua" />
                 <post :hook_id="elementlasertrigger" :script_path="ElementLaserTrigger.lua" />
                 <post :hook_id="elementspawngageassignment" :script_path="ElementSpawnGageAssignment.lua" />
                 <post :hook_id="elementspecialobjective" :script_path="ElementSpecialObjective.lua" />
@@ -39,11 +41,11 @@
             <post :hook_id="missionassetsmanager" :script_path="MissionAssetsManager.lua" />
     
             <!-- Menu code -->
-            <post :hook_id="menumanager" :script_path="FakeEHITrackerManager.lua" />
-            <post :hook_id="menumanager" :script_path="FakeEHIBuffManager.lua" />
-            <post :hook_id="menumanager" :script_path="EHIMenu.lua" />
-            <post :hook_id="menumanager" :script_path="EHIMenuCallbacks.lua" />
-            <post :hook_id="menumanager" :script_path="menu.lua" />
+            <post :hook_id="menumanager" :script_path="menu/FakeEHITrackerManager.lua" />
+            <post :hook_id="menumanager" :script_path="menu/FakeEHIBuffManager.lua" />
+            <post :hook_id="menumanager" :script_path="menu/EHIMenu.lua" />
+            <post :hook_id="menumanager" :script_path="menu/EHIMenuCallbacks.lua" />
+            <post :hook_id="menumanager" :script_path="MenuManager.lua" />
             <group :hook_id="menu/">
                 <post :hook_id="blackmarketgui" :script_path="BlackMarketGui.lua" />
                 <post :hook_id="menunodegui" :script_path="MenuNodeMainGui.lua" />

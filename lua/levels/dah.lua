@@ -18,9 +18,9 @@ local element_sync_triggers =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [100276] = { time = 25 + 3 + 11, id = "CFOInChopper", icons = { Icon.Heli, Icon.Goto }, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 102822 }, hint = Hints.Wait },
+    [100276] = { time = 25 + 3 + 11, id = "CFOInChopper", icons = { Icon.Heli, Icon.Goto }, waypoint = { data_from_element_and_remove_vanilla_waypoint = 102822 }, hint = Hints.Wait },
 
-    [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element = 100475, remove_vanilla_waypoint = 104882 }, hint = Hints.Escape },
+    [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element = 100475, remove_vanilla_waypoint = 104882 }, hint = Hints.Escape },
     [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_by_element_and_remove_vanilla_waypoint = 103163 }, hint = Hints.Escape },
 
     [103969] = { id = "ColorCodes", class = TT.ColoredCodes, remove_on_alarm = true },
@@ -45,7 +45,7 @@ local function dah_8(progress)
         max = 12,
         counter =
         {
-            check_type = EHI.LootCounter.CheckType.CheckTypeOfLoot,
+            check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
             loot_type = "diamondheist_big_diamond"
         }
     })

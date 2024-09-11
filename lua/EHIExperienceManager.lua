@@ -2,7 +2,7 @@ local EHI = EHI
 
 ---@class EHIExperienceManager
 EHIExperienceManager = {}
-EHIExperienceManager.XPElementLevel =
+EHIExperienceManager._XPElementLevel =
 {
     jewelry_store = true,
     ukrainian_job = true,
@@ -11,7 +11,7 @@ EHIExperienceManager.XPElementLevel =
     firestarter_1 = true,
     safehouse = true
 }
-EHIExperienceManager.XPElementLevelNoCheck =
+EHIExperienceManager._XPElementLevelNoCheck =
 {
     mallcrasher = true, -- Mallcrasher
     rat = true, -- Cook Off
@@ -24,13 +24,13 @@ EHIExperienceManager._XPElement = 0
 ---@param level_id string
 ---@return boolean
 function EHIExperienceManager:IsOneXPElementHeist(level_id)
-    if self.XPElementLevelNoCheck[level_id] then
+    if self._XPElementLevelNoCheck[level_id] then
         return false
     end
-    return self._XPElement <= 1 or self.XPElementLevel[level_id]
+    return self._XPElement <= 1 or self._XPElementLevel[level_id]
 end
 
----@param element MissionScriptElement
+---@param element ElementExperience
 function EHIExperienceManager:AddXPElement(element)
     if element._values.amount and element._values.amount > 0 then
         self._XPElement = self._XPElement + 1
@@ -71,7 +71,7 @@ function EHIExperienceManager:ExperienceInit(xp)
     self._total_xp = 0
     self._ehi_xp = self:CreateXPTable()
     EHI:AddOnSpawnedCallback(callback(self, self, "RecalculateSkillXPMultiplier"))
-    EHI:HookWithID(HUDManager, "mark_cheater", "EHI_ExperienceManager_mark_cheater", function()
+    Hooks:PostHook(HUDManager, "mark_cheater", "EHI_ExperienceManager_mark_cheater", function()
         self:RecalculateSkillXPMultiplier()
     end)
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, function(picked_up, max_units, client_sync_load)
@@ -514,22 +514,27 @@ end
 ---@param ub boolean?
 function EHIExperienceManager:SetCriminalsListener(ub)
     if ub then
-        local EHIHookFunction = EHI:HookExists(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character") and EHI.UpdateExistingHook or EHI.HookWithID
         local function Query(...)
             self:QueryAmountOfAllPlayers()
             EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
         end
-        EHIHookFunction(EHI, CriminalsManager, "add_character", "EHI_CriminalsManager_add_character", Query)
-        EHIHookFunction(EHI, CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit", Query)
-        EHIHookFunction(EHI, CriminalsManager, "on_peer_left", "EHI_CriminalsManager_on_peer_left", Query)
+        if EHI:HookExists(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character") then
+            EHI:UpdateExistingHook(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character", Query)
+            EHI:UpdateExistingHook(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit", Query)
+            EHI:UpdateExistingHook(CriminalsManager, "on_peer_left", "EHI_CriminalsManager_on_peer_left", Query)
+        else
+            Hooks:PostHook(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character", Query)
+            Hooks:PostHook(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit", Query)
+            Hooks:PostHook(CriminalsManager, "on_peer_left", "EHI_CriminalsManager_on_peer_left", Query)
+        end
         EHI:UpdateExistingHookIfExistsOrHook(CriminalsManager, "_remove", "EHI_CriminalsManager_remove", Query)
     else
         local function Query(...)
             self:QueryAmountOfAlivePlayers()
             EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
         end
-        EHI:HookWithID(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character", Query)
-        EHI:HookWithID(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit", Query)
-        EHI:HookWithID(CriminalsManager, "on_peer_left", "EHI_CriminalsManager_on_peer_left", Query)
+        Hooks:PostHook(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character", Query)
+        Hooks:PostHook(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit", Query)
+        Hooks:PostHook(CriminalsManager, "on_peer_left", "EHI_CriminalsManager_on_peer_left", Query)
     end
 end

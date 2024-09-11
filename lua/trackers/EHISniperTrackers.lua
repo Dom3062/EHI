@@ -1,20 +1,65 @@
 ---@class EHISniperBaseTracker
+---@field _count number
+---@field _sniper_count number
+---@field _single_sniper boolean
+---@field _sniper_text_color Color
 ---@field _snipers_spawned_popup boolean
 ---@field _snipers_logic_started boolean
 ---@field _snipers_logic_ended boolean
+---@field _popup_icon string?
+---@field SniperLogicStarted fun(self: self) `self._popup_icon` (string)
+---@field SniperLogicEnded fun(self: self) `self._popup_icon` (string)
+---@field SniperSpawned fun(self: self) `self._single_sniper` (boolean), `self._popup_icon` (string)
+---@field SniperSpawnedCheckCount fun(self: self) `self._single_sniper` (boolean), `self._popup_icon` (string), `self._sniper_count` (number), `self._count` (number)
+
+---@param self EHISniperBaseTracker
+local function SniperLogicStarted(self)
+    if self._snipers_logic_started then
+        managers.hud:ShowSniperLogic(true, self._popup_icon)
+    end
+end
+
+---@param self EHISniperBaseTracker
+local function SniperLogicEnded(self)
+    if self._snipers_logic_ended then
+        managers.hud:ShowSniperLogic(false, self._popup_icon)
+    end
+end
+
+---@param self EHISniperBaseTracker
+local function SniperSpawned(self)
+    if self._snipers_spawned_popup then
+        managers.hud:ShowSnipersSpawned(self._single_sniper, self._popup_icon)
+    end
+end
+
+---@param self EHISniperBaseTracker
+local function SniperSpawnedCheckCount(self)
+    if self._snipers_spawned_popup and self._sniper_count ~= self._count then
+        managers.hud:ShowSnipersSpawned(self._single_sniper, self._popup_icon)
+    end
+end
 
 ---@generic T: table
 ---@param super T? A base class which `class` will derive from
----@param forced_hint_text string?
----@param forced_icons string[]?
+---@param params { hint: string, icons: table, override_text_color: boolean, check_sniper_count: boolean }?
 ---@return T
-function ehi_sniper_class(super, forced_hint_text, forced_icons)
+function _G.ehi_sniper_class(super, params)
+    params = params or {}
     local klass = class(super)
-    klass._forced_hint_text = forced_hint_text or "enemy_snipers"
-    klass._forced_icons = forced_icons or { "sniper" }
+    klass._forced_hint_text = params.hint or "enemy_snipers"
+    klass._forced_icons = params.icons or { "sniper" }
     klass._snipers_spawned_popup = EHI:GetOption("show_sniper_spawned_popup") --[[@as boolean]]
     klass._snipers_logic_started = EHI:GetOption("show_sniper_logic_start_popup") --[[@as boolean]]
+    klass.SniperLogicStarted = SniperLogicStarted
     klass._snipers_logic_ended = EHI:GetOption("show_sniper_logic_end_popup") --[[@as boolean]]
+    klass.SniperLogicEnded = SniperLogicEnded
+    klass.SniperSpawned = params.check_sniper_count and SniperSpawnedCheckCount or SniperSpawned
+    if params.override_text_color then
+        klass._text_color = EHIProgressTracker._progress_bad
+    else
+        klass._sniper_text_color = EHIProgressTracker._progress_bad
+    end
     return klass
 end
 
@@ -27,31 +72,27 @@ function EHISniperWarningTracker:pre_init(params)
 end
 
 function EHISniperWarningTracker:delete()
-    if self._snipers_spawned_popup then
-        managers.hud:ShowSnipersSpawned(self._single_sniper)
-    end
+    self:SniperSpawned()
     EHISniperWarningTracker.super.delete(self)
 end
 
 ---@class EHISniperCountTracker : EHICountTracker, EHISniperBaseTracker
 ---@field super EHICountTracker
-EHISniperCountTracker = ehi_sniper_class(EHICountTracker)
-EHISniperCountTracker._text_color = EHIProgressTracker._progress_bad
+EHISniperCountTracker = ehi_sniper_class(EHICountTracker, { override_text_color = true })
 ---@param params EHITracker.params
 function EHISniperCountTracker:pre_init(params)
     EHISniperCountTracker.super.pre_init(self, params)
     if self._snipers_spawned_popup then
         self._current_sniper_count = 0
+        self._single_sniper = params.single_sniper
         self._sniper_count = params.sniper_count or params.single_sniper and 1 or -1
-        self._popup_title = params.single_sniper and "SNIPER!" or "SNIPERS!"
-        self._popup_desc = params.single_sniper and managers.localization:text("ehi_popup_sniper_spawned") or managers.localization:text("ehi_popup_snipers_spawned")
         self._snipers_enabled = true
     end
     self._remaining_snipers = params.remaining_snipers or 0
     if params.snipers_spawned then
         self:SniperSpawnsSuccess()
-    elseif self._snipers_logic_started then
-        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_START", managers.localization:text("ehi_popup_sniper_logic_started"), "EHI_Sniper")
+    else
+        self:SniperLogicStarted()
     end
 end
 
@@ -63,7 +104,7 @@ function EHISniperCountTracker:SniperSpawnsSuccess()
         else
             self._current_sniper_count = self._count
         end
-        managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, "EHI_Sniper")
+        self:SniperSpawned()
     end
 end
 
@@ -77,16 +118,10 @@ function EHISniperCountTracker:DecreaseCount(count)
     if self._remaining_snipers ~= 0 then
         self._remaining_snipers = self._remaining_snipers - n
         if self._remaining_snipers == 0 then -- No more snipers will spawn, delete the tracker
+            self:SniperLogicEnded()
             self:delete()
         end
     end
-end
-
-function EHISniperCountTracker:delete()
-    if self._snipers_logic_ended then
-        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_END", managers.localization:text("ehi_popup_sniper_logic_ended"), "EHI_Sniper")
-    end
-    EHISniperCountTracker.super.delete(self)
 end
 
 ---@class EHISniperChanceTracker : EHIChanceTracker, EHICountTracker, EHISniperBaseTracker
@@ -108,8 +143,8 @@ function EHISniperChanceTracker:post_init(params)
     EHISniperChanceTracker.super.post_init(self, params)
     if params.chance_success then
         self:SniperSpawnsSuccess()
-    elseif self._snipers_logic_started then
-        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_START", managers.localization:text("ehi_popup_sniper_logic_started"), "EHI_Sniper")
+    else
+        self:SniperLogicStarted()
     end
 end
 
@@ -121,7 +156,7 @@ function EHISniperChanceTracker:OverridePanel()
     self._count_text = self:CreateText({
         text = self:FormatCount(),
         w = w,
-        color = EHIProgressTracker._progress_bad,
+        color = self._sniper_text_color,
         left = self._text:right()
     })
     self:FitTheText(self._count_text)
@@ -133,9 +168,7 @@ function EHISniperChanceTracker:SniperSpawnsSuccess(chance)
         self:SetChance(chance)
     end
     self:AnimateBG()
-    if self._snipers_spawned_popup then
-        managers.hud:custom_ingame_popup_text("SNIPERS!", managers.localization:text("ehi_popup_snipers_spawned"), "EHI_Sniper")
-    end
+    self:SniperSpawned()
 end
 
 function EHISniperChanceTracker:SnipersKilled()
@@ -145,7 +178,7 @@ end
 
 ---@class EHISniperTimedTracker : EHITracker, EHICountTracker, EHISniperBaseTracker
 ---@field super EHITracker
-EHISniperTimedTracker = ehi_sniper_class(EHITracker)
+EHISniperTimedTracker = ehi_sniper_class(EHITracker, { check_sniper_count = true })
 EHISniperTimedTracker.SetCount = EHICountTracker.SetCountNoNegative
 EHISniperTimedTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperTimedTracker.DecreaseCount = EHICountTracker.DecreaseCount
@@ -159,13 +192,12 @@ function EHISniperTimedTracker:pre_init(params)
     self._anim_flash_set_count = 1
     if self._snipers_spawned_popup then
         self._sniper_count = self._count
-        self._popup_title = params.single_sniper and "SNIPER!" or "SNIPERS!"
-        self._popup_desc = params.single_sniper and managers.localization:text("ehi_popup_sniper_spawned") or managers.localization:text("ehi_popup_snipers_spawned")
+        self._single_sniper = params.single_sniper
     end
     if self._count > 0 then
-        self:AnnounceSniperSpawn()
-    elseif self._snipers_logic_started then
-        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_START", managers.localization:text("ehi_popup_sniper_logic_started"), "EHI_Sniper")
+        self:SniperSpawned()
+    else
+        self:SniperLogicStarted()
     end
 end
 
@@ -174,7 +206,7 @@ function EHISniperTimedTracker:OverridePanel()
     self._text:set_w(w)
     self._count_text = self:CreateText({
         text = self:FormatCount(),
-        color = EHIProgressTracker._progress_bad,
+        color = self._sniper_text_color,
         w = w,
         left = self._text:right()
     })
@@ -186,14 +218,8 @@ end
 
 ---@param count number
 function EHISniperTimedTracker:SniperSpawnsSuccess(count)
-    self:AnnounceSniperSpawn()
+    self:SniperSpawned()
     self:SetCount(count)
-end
-
-function EHISniperTimedTracker:AnnounceSniperSpawn()
-    if self._snipers_spawned_popup and self._sniper_count ~= self._count then
-        managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, "EHI_Sniper")
-    end
 end
 
 ---@class EHISniperTimedCountTracker : EHIWarningTracker, EHISniperTimedTracker, EHISniperBaseTracker
@@ -209,13 +235,9 @@ function EHISniperTimedCountTracker:pre_init(params)
     self._count = params.count or 0
     self._count_on_refresh = params.count_on_refresh
     if self._snipers_spawned_popup then
-        local single = params.single_sniper or (self._count_on_refresh and self._count_on_refresh == 1)
-        self._popup_title = single and "SNIPER!" or "SNIPERS!"
-        self._popup_desc = single and managers.localization:text("ehi_popup_sniper_spawned") or managers.localization:text("ehi_popup_snipers_spawned")
+        self._single_sniper = params.single_sniper or (self._count_on_refresh and self._count_on_refresh == 1)
     end
-    if self._snipers_logic_started then
-        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_START", managers.localization:text("ehi_popup_sniper_logic_started"), "EHI_Sniper")
-    end
+    self:SniperLogicStarted()
 end
 
 ---@param params EHITracker.params
@@ -229,7 +251,7 @@ end
 function EHISniperTimedCountTracker:OverridePanel()
     self._count_text = self:CreateText({
         text = self:FormatCount(),
-        color = EHIProgressTracker._progress_bad,
+        color = self._sniper_text_color,
         visible = false
     })
 end
@@ -252,9 +274,7 @@ function EHISniperTimedCountTracker:Refresh()
     if self._count_on_refresh then
         self:SetCount(self._count_on_refresh)
     end
-    if self._snipers_spawned_popup then
-        managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, "EHI_Sniper")
-    end
+    self:SniperSpawned()
 end
 
 ---@class EHISniperTimedChanceTracker : EHITracker, EHIChanceTracker, EHICountTracker, EHISniperBaseTracker
@@ -278,12 +298,9 @@ function EHISniperTimedChanceTracker:pre_init(params)
     self._recheck_t = params.recheck_t or 0
     self._no_chance_reset = params.no_chance_reset
     self._delay_on_max_chance = params.delay_on_max_chance
-    self._heli_sniper = params.heli_sniper
     if self._snipers_spawned_popup then
-        local single_sniper = params.single_sniper or self._heli_sniper or self._count == 1
-        self._popup_title = single_sniper and "SNIPER!" or "SNIPERS!"
-        self._popup_desc = single_sniper and managers.localization:text("ehi_popup_sniper_spawned") or managers.localization:text("ehi_popup_snipers_spawned")
-        self._popup_icon = self._heli_sniper and "EHI_Heli" or "EHI_Sniper"
+        self._single_sniper = params.single_sniper or params.heli_sniper or self._count == 1
+        self._popup_icon = params.heli_sniper and "EHI_Heli" or "EHI_Sniper"
     end
 end
 
@@ -292,8 +309,8 @@ function EHISniperTimedChanceTracker:post_init(params)
     if params.chance_success then
         self._update = false
         self:SniperSpawnsSuccess()
-    elseif self._snipers_logic_started then
-        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_START", managers.localization:text("ehi_popup_sniper_logic_started"), self._heli_sniper and "EHI_Heli" or "EHI_Sniper")
+    else
+        self:SniperLogicStarted()
     end
 end
 
@@ -310,7 +327,7 @@ function EHISniperTimedChanceTracker:OverridePanel()
     self:FitTheTextBasedOnTime(self._recheck_t)
     self._count_text = self:CreateText({
         text = self:FormatCount(),
-        color = EHIProgressTracker._progress_bad,
+        color = self._sniper_text_color,
         visible = false
     })
 end
@@ -321,12 +338,10 @@ function EHISniperTimedChanceTracker:SniperSpawnsSuccess()
     self._text:set_visible(false)
     self:RemoveTrackerFromUpdate()
     self:AnimateBG()
-    if self._snipers_spawned_popup then
-        managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, self._popup_icon)
-    end
+    self:SniperSpawned()
 end
 
----@param t number
+---@param t number?
 function EHISniperTimedChanceTracker:SnipersKilled(t)
     self._count_text:set_visible(false)
     if self._max_chance_reached then
@@ -373,15 +388,13 @@ function EHISniperTimedChanceTracker:SetChance(amount)
 end
 
 function EHISniperTimedChanceTracker:ForceDelete()
-    if self._snipers_logic_ended then
-        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_END", managers.localization:text("ehi_popup_sniper_logic_ended"), "EHI_Sniper")
-    end
+    self:SniperLogicEnded()
     EHISniperTimedChanceTracker.super.ForceDelete(self)
 end
 
 ---@class EHISniperLoopTracker : EHITracker, EHIChanceTracker, EHICountTracker, EHISniperBaseTracker
 ---@field super EHITracker
-EHISniperLoopTracker = ehi_sniper_class(EHITracker, "enemy_snipers_loop")
+EHISniperLoopTracker = ehi_sniper_class(EHITracker, { hint = "enemy_snipers_loop", check_sniper_count = true })
 EHISniperLoopTracker.FormatCount = EHICountTracker.FormatCount
 EHISniperLoopTracker.SetCount = EHICountTracker.SetCountNoNegative
 EHISniperLoopTracker.ResetCount = EHICountTracker.ResetCount
@@ -406,14 +419,11 @@ function EHISniperLoopTracker:pre_init(params)
     self._on_success_refresh_t = params.on_success_refresh_t or 0
     if self._snipers_spawned_popup then
         self._current_sniper_count = 0
+        self._single_sniper = params.single_sniper
         self._sniper_count_multiple = params.single_sniper and params.sniper_count
         self._sniper_count = params.single_sniper and 1 or params.sniper_count or -1
-        self._popup_title = params.single_sniper and "SNIPER!" or "SNIPERS!"
-        self._popup_desc = params.single_sniper and managers.localization:text("ehi_popup_sniper_spawned") or managers.localization:text("ehi_popup_snipers_spawned")
     end
-    if self._snipers_logic_started then
-        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_START", managers.localization:text("ehi_popup_sniper_logic_started"), "EHI_Sniper")
-    end
+    self:SniperLogicStarted()
 end
 
 function EHISniperLoopTracker:OverridePanel()
@@ -432,7 +442,7 @@ function EHISniperLoopTracker:OverridePanel()
     self._count_text = self:CreateText({
         text = self:FormatCount(),
         w = w,
-        color = EHIProgressTracker._progress_bad,
+        color = self._sniper_text_color,
         left = self._text:right()
     })
     self:SetIconX()
@@ -446,9 +456,8 @@ end
 
 function EHISniperLoopTracker:SetMultipleSniperSpawns()
     if self._snipers_spawned_popup then
-        self._popup_title = "SNIPERS!"
-        self._popup_desc = managers.localization:text("ehi_popup_snipers_spawned")
         self._sniper_count = self._sniper_count_multiple or self._sniper_count
+        self._single_sniper = nil
         self._sniper_count_multiple = nil
     end
 end
@@ -464,9 +473,9 @@ function EHISniperLoopTracker:OnChanceSuccess()
 end
 
 function EHISniperLoopTracker:AnnounceSniperSpawn()
-    if self._snipers_spawned_popup and self._sniper_count ~= self._current_sniper_count then
+    self:SniperSpawned()
+    if self._snipers_spawned_popup then
         self._current_sniper_count = self._count
-        managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, "EHI_Sniper")
     end
 end
 
@@ -515,7 +524,7 @@ end
 
 function EHISniperLoopTracker:ForceDelete()
     if self._snipers_logic_ended then
-        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_END", managers.localization:text("ehi_popup_sniper_logic_ended"), "EHI_Sniper")
+        managers.hud:ShowSniperLogic()
     end
     EHISniperLoopTracker.super.ForceDelete(self)
 end
@@ -543,9 +552,7 @@ function EHISniperLoopRestartTracker:OnChanceSuccess(chance_reset)
     self:SetChance(chance_reset)
     self:RemoveTrackerFromUpdate()
     self._sniper_respawn = false
-    if self._snipers_spawned_popup then
-        managers.hud:custom_ingame_popup_text(self._popup_title, self._popup_desc, "EHI_Sniper")
-    end
+    self:SniperSpawned()
 end
 
 function EHISniperLoopRestartTracker:DecreaseCount()
@@ -600,23 +607,17 @@ end
 
 ---@class EHISniperHeliTracker : EHITracker, EHISniperBaseTracker
 ---@field super EHITracker
-EHISniperHeliTracker = ehi_sniper_class(EHITracker, "enemy_snipers_heli", EHITracker._ONE_ICON and { { icon = EHI.Icons.Heli, color = Color.red } } or { EHI.Icons.Heli, "sniper" })
+EHISniperHeliTracker = ehi_sniper_class(EHITracker, { hint = "enemy_snipers_heli", icon = EHITracker._ONE_ICON and { { icon = EHI.Icons.Heli, color = Color.red } } or { EHI.Icons.Heli, "sniper" } })
 EHISniperHeliTracker._refresh_on_delete = true
+EHISniperHeliTracker._single_sniper = true
+EHISniperHeliTracker._popup_icon = "EHI_Heli"
 ---@param params EHITracker.params
-function EHISniperHeliTracker:pre_init(params)
+function EHISniperHeliTracker:post_init(params)
     self._refresh_t = params.refresh_t or 0
-    if self._snipers_spawned_popup then
-        self._popup_desc = managers.localization:text("ehi_popup_sniper_spawned")
-    end
-    if self._snipers_logic_started then
-        managers.hud:custom_ingame_popup_text("SNIPER_LOGIC_START", managers.localization:text("ehi_popup_sniper_logic_started"), "EHI_Sniper")
-    end
-end
-
-function EHISniperHeliTracker:OverridePanel()
+    self:SniperLogicStarted()
     self._count_text = self:CreateText({
         text = "1",
-        color = EHIProgressTracker._progress_bad,
+        color = self._sniper_text_color,
         visible = false
     })
 end
@@ -640,9 +641,7 @@ function EHISniperHeliTracker:Refresh()
     self._text:set_visible(false)
     self:RemoveTrackerFromUpdate()
     self:AnimateBG()
-    if self._snipers_spawned_popup then
-        managers.hud:custom_ingame_popup_text("SNIPER!", self._popup_desc, "EHI_Heli")
-    end
+    self:SniperSpawned()
 end
 
 ---@class EHISniperHeliTimedChanceTracker : EHISniperTimedChanceTracker

@@ -53,7 +53,7 @@ function EHIGroupTracker:AddFromTrigger(trigger)
     self:Add(trigger.time or 0, trigger.timer_id)
 end
 
----@param params AddTrackerTable|ElementTrigger
+---@param params ElementTrigger
 function EHIGroupTracker:Run(params)
     self:Add(params.time, params.id)
 end
@@ -102,9 +102,6 @@ end
 
 ---@param id string
 function EHIGroupTracker:RemoveByID(id)
-    if not id then
-        return
-    end
     for i, timer in ipairs(self._timers) do
         if timer.id == id then
             self:Remove(i)
@@ -190,7 +187,7 @@ end
 ---@param check_progress boolean?
 ---@param color Color?
 function EHIWarningGroupTracker:AnimateColor(timer, check_progress, color)
-    local start_t = check_progress and (1 - math.min(self._parent_class.RoundNumber(timer.time, 1) - math.floor(timer.time), 0.99)) or 1
+    local start_t = check_progress and (1 - math.min(self._parent_class.RoundNumber(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
     timer.label:animate(self._anim_warning, self._text_color, color or (self._show_completion_color and self._completion_color or self._warning_color), start_t, self)
 end
 

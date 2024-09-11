@@ -1,9 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("PlayerActionExpertHandling") then
-    return
-end
-
-if not EHI:GetBuffAndOption("desperado") then
+if EHI:CheckLoadHook("PlayerActionExpertHandling") or not EHI:GetBuffAndOption("desperado") then
     return
 end
 
