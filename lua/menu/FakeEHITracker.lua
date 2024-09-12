@@ -744,10 +744,30 @@ FakeEHISniperTracker._text_color = FakeEHITracker._selected_color
 ---@param params EHITracker.params
 function FakeEHISniperTracker:post_init(params)
     self._text:set_text(tostring(math.random(1, 4)))
+    self._text:set_w(self._bg_box:w() / 2)
+    self._chance_text = self:CreateText({
+        text = string.format("%d%%", math.random(0, 100)),
+        color = EHI:GetColorFromOption("tracker_waypoint", "sniper_chance"),
+        x = 0,
+        w = self._bg_box:w() / 2,
+        FitTheText = true
+    })
+    self._text:set_right(self._bg_box:right() - self._bg_box:x())
+    self._text:set_color(EHI:GetColorFromOption("tracker_waypoint", "sniper_count"))
 end
 
 function FakeEHISniperTracker:SetTextColor()
-    self._text:set_color(self._selected and self._selected_color or self._text_color)
+    self._icon1:set_color(self._selected and self._text_color or Color.white)
+end
+
+---@param color Color
+function FakeEHISniperTracker:UpdateSniperCountColor(color)
+    self._text:set_color(color)
+end
+
+---@param color Color
+function FakeEHISniperTracker:UpdateSniperChanceColor(color)
+    self._chance_text:set_color(color)
 end
 
 ---@class FakeEHIPhalanxChanceTracker : FakeEHITimerTracker

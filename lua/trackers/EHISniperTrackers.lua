@@ -2,6 +2,7 @@
 ---@field _count number
 ---@field _sniper_count number
 ---@field _single_sniper boolean
+---@field _sniper_chance_color Color
 ---@field _sniper_text_color Color
 ---@field _snipers_spawned_popup boolean
 ---@field _snipers_logic_started boolean
@@ -56,10 +57,11 @@ function _G.ehi_sniper_class(super, params)
     klass.SniperLogicEnded = SniperLogicEnded
     klass.SniperSpawned = params.check_sniper_count and SniperSpawnedCheckCount or SniperSpawned
     if params.override_text_color then
-        klass._text_color = EHIProgressTracker._progress_bad
+        klass._text_color = EHI:GetColorFromOption("tracker_waypoint", "sniper_count")
     else
-        klass._sniper_text_color = EHIProgressTracker._progress_bad
+        klass._sniper_text_color = EHI:GetColorFromOption("tracker_waypoint", "sniper_count")
     end
+    klass._sniper_chance_color = EHI:GetColorFromOption("tracker_waypoint", "sniper_chance")
     return klass
 end
 
@@ -141,6 +143,7 @@ end
 ---@param params EHITracker.params
 function EHISniperChanceTracker:post_init(params)
     EHISniperChanceTracker.super.post_init(self, params)
+    self._chance_text:set_color(self._sniper_chance_color)
     if params.chance_success then
         self:SniperSpawnsSuccess()
     else
@@ -319,6 +322,7 @@ function EHISniperTimedChanceTracker:OverridePanel()
     self._text:set_w(w)
     self._chance_text = self:CreateText({
         text = self:FormatChance(),
+        color = self._sniper_chance_color,
         x = 0,
         w = w,
         FitTheText = true
@@ -433,6 +437,7 @@ function EHISniperLoopTracker:OverridePanel()
     self._text:set_w(w)
     self._chance_text = self:CreateText({
         text = self:FormatChance(),
+        color = self._sniper_chance_color,
         x = 0,
         w = w,
         FitTheText = true

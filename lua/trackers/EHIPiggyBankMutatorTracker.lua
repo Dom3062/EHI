@@ -5,6 +5,7 @@ local Color = Color
 ---@field super EHIProgressTracker
 EHIPiggyBankMutatorTracker = class(EHIProgressTracker)
 EHIPiggyBankMutatorTracker._forced_icons = { "piggy" }
+EHIPiggyBankMutatorTracker._forced_hint_text = "piggy"
 ---@param panel Panel
 ---@param params EHITracker.params
 function EHIPiggyBankMutatorTracker:init(panel, params, ...)
@@ -45,7 +46,25 @@ function EHIPiggyBankMutatorTracker:SetNewMax()
     self:SetAndFitTheText()
 end
 
-function EHIPiggyBankMutatorTracker:CheckLevelFromKills()
+function EHIPiggyBankMutatorTracker:SetCompleted(force)
+    self._current_level = self._current_level + 1
+    if self._current_level == self._max_levels then
+        self._disable_counting = true
+        self:SetAndFitTheText("MAX")
+        self:SetTextColor(Color.green)
+    else
+        self:SetNewMax()
+        self:AnimateNewLevel()
+    end
+    self._levels_text:set_text(self:FormatLevels())
+end
+
+function EHIPiggyBankMutatorTracker:SyncLoad(data)
+    if data.exploded_pig_level then
+        self:delete()
+        return
+    end
+    self._progress = data.pig_fed_count
     if self._progress == 0 then -- The game has not started yet or players haven't secured bags yet
         return
     end
@@ -66,28 +85,6 @@ function EHIPiggyBankMutatorTracker:CheckLevelFromKills()
         self._current_level = 6
         self:SetCompleted()
     end
-end
-
-function EHIPiggyBankMutatorTracker:SetCompleted(force)
-    self._current_level = self._current_level + 1
-    if self._current_level == self._max_levels then
-        self._disable_counting = true
-        self:SetAndFitTheText("MAX")
-        self:SetTextColor(Color.green)
-    else
-        self:SetNewMax()
-        self:AnimateNewLevel()
-    end
-    self._levels_text:set_text(self:FormatLevels())
-end
-
-function EHIPiggyBankMutatorTracker:SyncLoad(data)
-    if data.exploded_pig_level then
-        self:delete()
-        return
-    end
-    self._progress = data.pig_fed_count
-    self:CheckLevelFromKills()
 end
 
 function EHIPiggyBankMutatorTracker:AnimateNewLevel()

@@ -147,6 +147,7 @@
     "ehi_hint_phalanx_chance" : "Šance na Kapitána",
     "ehi_hint_hostage" : "Počet rukojmích",
     "ehi_hint_looped_camera" : "Kamera ve zpětné smyčce",
+    "ehi_hint_piggy" : "Piggy Bank",
 
     "ehi_hint_big_piggy" : "Přesouvání čuníka",
     "ehi_hint_brb_winch_delivery" : "Dodání navijáku",
@@ -932,6 +933,12 @@
 
     "ehi_colors_completion" : "Dokončení",
     "ehi_colors_completion_desc" : "Animuje barvu textu když zbývá 10 vteřin",
+
+    "ehi_colors_sniper_chance" : "Odstřelovači (Aktuální šance)",
+    "ehi_colors_sniper_chance_desc" : "Mění barvu textu aktuální šance",
+
+    "ehi_colors_sniper_count" : "Odstřelovači (Počet)",
+    "ehi_colors_sniper_count_desc" : "Mění barvu text aktuálního počtu odstřelovačů",
 
     "ehi_colors_mission_briefing" : "Briefing před loupeží",
 

@@ -616,6 +616,18 @@ local function LoadDefaultValues(self)
                     r = 0,
                     g = 255,
                     b = 0
+                },
+                sniper_chance =
+                {
+                    r = 0,
+                    g = 255,
+                    b = 255
+                },
+                sniper_count =
+                {
+                    r = 255,
+                    g = 165,
+                    b = 0
                 }
             },
             mission_briefing =

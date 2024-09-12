@@ -11,8 +11,8 @@ local triggers = {
     [101001] = { id = "CookingChance", special_function = SF.RemoveTracker },
 
     [101970] = { time = (240 + 12) - 3, waypoint = { position_by_element = 101454 }, hint = Hints.LootEscape },
-    [100721] = { time = 1, chance = 5, id = "CookingChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, start_opened = EHI:ShowTimedTrackerOpened(), hint = Hints.CookingChance, tracker_merge = true },
-    [100724] = { time = 25, id = "CookingChance", icons = { Icon.Methlab, Icon.Loop }, waypoint = { position_by_element = 100212 }, special_function = SF.SetTimeOrCreateTracker, tracker_merge = true },
+    [100721] = { time = 1, chance = 5, id = "CookingChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, start_opened = EHI:ShowTimedTrackerOpened(), hint = Hints.CookingChance, tracker_merge = {} },
+    [100724] = { time = 25, id = "CookingChance", icons = { Icon.Methlab, Icon.Loop }, waypoint = { position_by_element = 100212 }, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
     [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { data_from_element = 100485 }, hint = Hints.mia_1_MethDone, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
         self:CreateTracker(trigger)
         self._cache.BagsCooked = (self._cache.BagsCooked or 0) + 1

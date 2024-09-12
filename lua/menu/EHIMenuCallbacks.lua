@@ -172,12 +172,12 @@ function EHIMenu:SetUnlockableColor(color, option, color_type)
     self._preview_panel:CallFunction(option, "UpdateIconColor", Color(255, color.red, color.green, color.blue) / 255)
 end
 
-local id_redirect =
-{
-    show_achievements = "achievement",
-    show_trophies = "trophy",
-    show_dailies = "sidejob"
-}
-function EHIMenu:SetUnlockableFocus(focus, value)
-    self:SetFocus(focus, id_redirect[value])
+function EHIMenu:SetSniperCountColor(color, option, color_type)
+    self:SetColor(color, option, color_type)
+    self._preview_panel:CallFunction("show_sniper_tracker", "UpdateSniperCountColor", Color(255, color.red, color.green, color.blue) / 255)
+end
+
+function EHIMenu:SetSniperChanceColor(color, option, color_type)
+    self:SetColor(color, option, color_type)
+    self._preview_panel:CallFunction("show_sniper_tracker", "UpdateSniperChanceColor", Color(255, color.red, color.green, color.blue) / 255)
 end

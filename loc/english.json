@@ -147,6 +147,7 @@
     "ehi_hint_phalanx_chance" : "Captain Chance",
     "ehi_hint_hostage" : "Hostage Counter",
     "ehi_hint_looped_camera" : "Looped Camera",
+    "ehi_hint_piggy" : "Piggy Bank",
 
     "ehi_hint_big_piggy" : "Moving Piggy",
     "ehi_hint_brb_winch_delivery" : "Winch Delivery",
@@ -933,6 +934,12 @@
     "ehi_colors_completion" : "Completion",
     "ehi_colors_completion_desc" : "Animates text color when there is 10 seconds left",
 
+    "ehi_colors_sniper_chance" : "Snipers (Current Chance)",
+    "ehi_colors_sniper_chance_desc" : "Chances text color of the current sniper chance",
+
+    "ehi_colors_sniper_count" : "Snipers (Count)",
+    "ehi_colors_sniper_count_desc" : "Chances text color of current visible snipers",
+    
     "ehi_colors_mission_briefing" : "Mission Briefing",
 
     "ehi_colors_loot_secured" : "Loot Secured",

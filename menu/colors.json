@@ -2,7 +2,6 @@
     "menu_id": "ehi_colors_menu",
     "parent_menu" : "ehi_menu",
     "title": "ehi_colors_menu",
-    "h" : 500,
     "items": [
         {
             "type" : "label",
@@ -76,6 +75,36 @@
             "color_type" : "tracker_waypoint",
             "setting_value": "colors",
             "ehi_ver" : 145
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_sniper_chance_choice",
+            "title": "ehi_colors_sniper_chance",
+            "description": "ehi_colors_sniper_chance_desc",
+            "value": "sniper_chance",
+            "default_value": [0, 255, 255],
+            "callback": "SetSniperChanceColor",
+            "callback_arguments": ["sniper_chance", "tracker_waypoint"],
+            "color_type" : "tracker_waypoint",
+            "setting_value": "colors",
+            "ehi_ver" : 258
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_sniper_count_choice",
+            "title": "ehi_colors_sniper_count",
+            "description": "ehi_colors_sniper_count_desc",
+            "value": "sniper_count",
+            "default_value": [255, 165, 0],
+            "callback": "SetSniperCountColor",
+            "callback_arguments": ["sniper_count", "tracker_waypoint"],
+            "color_type" : "tracker_waypoint",
+            "setting_value": "colors",
+            "ehi_ver" : 258
         },
         {
             "type": "divider",

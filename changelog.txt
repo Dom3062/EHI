@@ -1,3 +1,7 @@
+r258 (12. 09. 2024):
+Added color options "Snipers (Current Chance)" and "Snipers (Count)"
+Rats Day 1: Fixed a crash after reaching the lab
+
 r257 (11. 09. 2024):
 Achievement Loot Counter: Fixed an issue where after alarm a tracker icon color is still visible as achievement
 Assault Tracker: In Holdout game mode, expanded option "Show Assault Difficulty in Assault Trackers" to show enemy damage and health boost respectively
