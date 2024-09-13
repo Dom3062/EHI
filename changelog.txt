@@ -1,3 +1,6 @@
+r259 (13. 09. 2024):
+Updated to U240.6
+
 r258 (12. 09. 2024):
 Added color options "Snipers (Current Chance)" and "Snipers (Count)"
 Rats Day 1: Fixed a crash after reaching the lab

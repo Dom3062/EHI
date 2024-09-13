@@ -45,7 +45,7 @@ achievements.voff_1 =
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
     elements =
     {
-        [101539] = { status = Status.Bring, class = TT.Achievement.Status },
+        [105665] = { status = Status.Bring, class = TT.Achievement.Status },
         [105686] = { special_function = SF.SetAchievementComplete },
         [105691] = { status = Status.Finish, special_function = SF.SetAchievementStatus }, -- Entered area again
         [105694] = { status = Status.Finish, special_function = SF.SetAchievementStatus }, -- Both secured
@@ -190,7 +190,14 @@ EHI:AddLoadSyncFunction(function(self)
     if not (secure_area_1 and secure_area_2 and secure_area_3) then
         return
     end
-    self:Trigger(101539)
+    local function fail(...)
+        managers.ehi_achievement:SetAchievementFailed("voff_1")
+    end
+    for _, dog_hater in ipairs(dog_haters_unit) do
+        local name_key = dog_hater:name():key()
+        dog_hater:base():add_destroy_listener("EHI_" .. tostring(name_key), fail)
+    end
+    self:Trigger(105665)
     local pos_1 = dog_haters_unit[1]:position()
     local pos_2 = dog_haters_unit[2]:position()
     if (secure_area_1:_is_inside(pos_1) and secure_area_1:_is_inside(pos_2)) or
