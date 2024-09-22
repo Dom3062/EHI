@@ -134,7 +134,7 @@ function EHIExperienceManager:LoadData(managers)
     local heat = job:get_job_heat_multipliers(job:current_job_id())
     self._ehi_xp.heat = heat and heat ~= 0 and heat or 1
     self._ehi_xp.is_level_limited = self._ehi_xp.level_to_stars < self._ehi_xp.job_stars
-    if xp_format ~= 1 then
+    if self._config.xp_format ~= 1 then
         self._ehi_xp.difficulty_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", difficulty_stars) or 1
     end
     -- Player

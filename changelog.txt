@@ -1,3 +1,6 @@
+r260 (22. 09. 2024):
+Experience Manager: Fixed a possible crash
+
 r259 (13. 09. 2024):
 Updated to U240.6
 
