@@ -3,10 +3,13 @@ if EHI:CheckLoadHook("EnemyManager") then
     return
 end
 
+---@alias EnemyManager._civilian_data.Civilian { unit: UnitCivilian }
+---@alias EnemyManager._civilian_data table<string, EnemyManager._civilian_data.Civilian?>
+
 ---@class EnemyManager
 ---@field _enemy_data table
----@field _civilian_data table
----@field all_civilians fun(self: self): table
+---@field _civilian_data { unit_data: EnemyManager._civilian_data }
+---@field all_civilians fun(self: self): EnemyManager._civilian_data
 ---@field is_civilian fun(self: self, unit: Unit|UnitEnemy|UnitPlayer|UnitCivilian|UnitTeamAI): boolean
 ---@field is_enemy fun(self: self, unit: Unit|UnitEnemy|UnitPlayer|UnitCivilian|UnitTeamAI): boolean
 
@@ -52,7 +55,6 @@ if EHI:GetOptionAndLoadTracker("show_enemy_count_tracker") then
                 id = "EnemyCount",
                 alarm_sounded = EHI.ConditionFunctions.IsLoud(),
                 flash_bg = false,
-                hint = "enemy_count",
                 class = "EHIEnemyCountTracker"
             })
             local enemy_data = managers.enemy._enemy_data
@@ -78,7 +80,6 @@ if EHI:GetOptionAndLoadTracker("show_enemy_count_tracker") then
                 id = "EnemyCount",
                 count = managers.enemy:GetNumberOfEnemies(),
                 flash_bg = false,
-                hint = "enemy_count",
                 class = "EHIEnemyCountTracker"
             })
         end)
@@ -86,8 +87,8 @@ if EHI:GetOptionAndLoadTracker("show_enemy_count_tracker") then
 end
 
 if EHI:CanShowCivilianCountTracker() then
-    dofile(EHI.LuaPath .. "trackers/EHICivilianCountTracker.lua")
-    ---@param unit_data table
+    EHI:LoadTracker("EHICivilianCountTracker")
+    ---@param unit_data EnemyManager._civilian_data.Civilian
     ---@param key any Unused
     local function CountCivilian(unit_data, key)
         if not unit_data.unit then
@@ -115,7 +116,7 @@ if EHI:CanShowCivilianCountTracker() then
             class = "EHICivilianCountTracker"
         })
     end
-    if EHI:IsVR() then
+    if _G.IS_VR then
         local old_CreateTracker = CreateTracker
         local function Reload(key, data)
             old_CreateTracker(data.count)

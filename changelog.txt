@@ -1,3 +1,7 @@
+r261 (23. 09. 2024):
+Aggregated Health Equipment Tracker: Fixed visual issues
+Enemy Counter: Fixed visual issues
+
 r260 (22. 09. 2024):
 Experience Manager: Fixed a possible crash
 

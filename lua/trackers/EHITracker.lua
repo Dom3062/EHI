@@ -237,7 +237,7 @@ EHITracker._fade_time = 5
 EHITracker._tracker_type = "accurate"
 EHITracker._gap = 5
 EHITracker._icon_size = 32
-EHITracker._scale = EHI:IsVR() and EHI:GetOption("vr_scale") or EHI:GetOption("scale") --[[@as number]]
+EHITracker._scale = EHI:GetOption(_G.IS_VR and "vr_scale" or "scale") --[[@as number]]
 EHITracker._text_scale = EHI:GetOption("text_scale") --[[@as number]]
 -- (32 + 5) * self._scale
 EHITracker._icon_gap_size_scaled = (EHITracker._icon_size + EHITracker._gap) * EHITracker._scale
@@ -605,6 +605,15 @@ function EHITracker:ForceShowHint()
     if self._hint and self._hint_t > 0 then
         self._hint:animate(hint_wait, self._hint_t)
     end
+end
+
+---@param x number
+function EHITracker:AdjustHintX(x)
+    if not self._hint then
+        return
+    end
+    self._hint:set_x(self._hint:x() + x)
+    self._hint_pos.x = self._hint_pos.x + x
 end
 
 ---@param n_of_icons number?
