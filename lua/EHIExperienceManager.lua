@@ -55,6 +55,10 @@ function EHIExperienceManager:ExperienceInit(xp)
     self:ExperienceReload(xp)
     if EHI:CheckNotLoad() or EHI:IsXPTrackerDisabled() then
         self._xp_disabled = true
+        self._config =
+        {
+            xp_format = EHI:GetOption("xp_format") --[[@as 1|2|3]]
+        }
         if Global.load_level and not Global.editor_mode and EHI:GetOption("show_xp_in_mission_briefing_only") then
             EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "LoadData"))
         end

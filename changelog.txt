@@ -1,3 +1,6 @@
+r262 (24. 09. 2024):
+Experience Manager: Fixed a crash when visible experience are enabled in Mission Briefing only
+
 r261 (23. 09. 2024):
 Aggregated Health Equipment Tracker: Fixed visual issues
 Enemy Counter: Fixed visual issues
