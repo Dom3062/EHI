@@ -43,7 +43,7 @@ local triggers = {
     [1010012] = { special_function = SF.RemoveTrigger, data = { 102220, 102219, 102229, 102235, 102236, 102237, 102238, 102197, 102175, 102167, 102168 } },
 
     [102383] = { time = 2 + 5, chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.CookingChance, start_opened = true },
-    [100721] = { time = 1, chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.CookingChance, tracker_merge = true, start_opened = true },
+    [100721] = { time = 1, chance = 7, id = "CookChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.CookingChance, tracker_merge = {}, start_opened = true },
     [100723] = { id = "CookChance", special_function = SF.IncreaseChanceFromElement },
 
     [100199] = { id = "CookingDone", run = { time = 5 + 1 } },
@@ -74,9 +74,10 @@ if EHI:IsMayhemOrAbove() then
         local VanPos = 101454 -- 101454 - Left; 101449 - Center
         local function ResetWaypoint()
             managers.hud:RestoreWaypoint(VanPos)
+            EHI._cache.IgnoreWaypoints[VanPos] = nil
             VanPos = 101454 -- Reset to default position
         end
-        triggers[101001].data[#triggers[101001].data + 1] = 1010013
+        table.insert(triggers[101001].data, 1010013)
         triggers[1010013] = { special_function = SF.CustomCode, f = ResetWaypoint }
         triggers[102320] = { special_function = SF.CustomCode, f = ResetWaypoint }
         triggers[101258] = { special_function = SF.CustomCode, f = ResetWaypoint }
@@ -87,9 +88,8 @@ if EHI:IsMayhemOrAbove() then
             VanPos = 101449
         end }
         local function DisableWaypoint()
-            managers.hud:SoftRemoveWaypoint(VanPos)
+            managers.hud:SoftRemoveWaypoint2(VanPos)
             EHI._cache.IgnoreWaypoints[VanPos] = true
-            EHI:DisableElementWaypoint(VanPos)
         end
         triggers[100763] = { special_function = SF.CustomCode, f = DisableWaypoint }
         triggers[101453] = { special_function = SF.CustomCode, f = DisableWaypoint }
@@ -121,7 +121,6 @@ if EHI:IsClient() then
     ---@field super EHITimedChanceTracker
     EHICookingChanceTracker = class(EHITimedChanceTracker)
     EHICookingChanceTracker._tracker_type = "inaccurate"
-    ---@param time number
     ---@param inaccurate boolean?
     function EHICookingChanceTracker:SetTimeNoAnim(time, inaccurate)
         EHICookingChanceTracker.super.SetTimeNoAnim(self, time)

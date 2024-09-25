@@ -1,3 +1,7 @@
+r263 (25. 09. 2024):
+Cook Off: Fixed a crash
+White Xmas: Fixed a crash
+
 r262 (24. 09. 2024):
 Experience Manager: Fixed a crash when visible experience are enabled in Mission Briefing only
 

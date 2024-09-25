@@ -1,7 +1,6 @@
 ---@class EHIPresentChance : EHITimedWarningChanceTracker
 ---@field super EHITimedWarningChanceTracker
 EHIPresentChance = class(EHITimedWarningChanceTracker)
----@param amount number
 function EHIPresentChance:SetChance(amount)
     EHIPresentChance.super.SetChance(self, amount)
     if amount <= 20 then
@@ -13,8 +12,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local very_hard_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
-local SetChanceWhenTrackerExists = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+local SetChanceWhenTrackerExists = EHI:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
     if self._trackers:TrackerExists(trigger.merge_id) then
         self._trackers:SetChance(trigger.merge_id, element._values.chance)
     elseif self._trackers:TrackerExists(trigger.id) then
@@ -31,11 +29,11 @@ local preload = {}
 local triggers = {
     [100109] = EHI:AddEndlessAssault(25),
     [100021] = EHI:AddEndlessAssault(180, "EndlessAssault2"),
-    [103707] = { time = 1800, id = "BulldozerSpawn", icons = { "heavy" }, class = TT.Warning, condition = very_hard_and_up, special_function = SF.SetTimeOrCreateTracker, hint = Hints.ScriptedBulldozer },
+    [103707] = { time = 1800, id = "BulldozerSpawn", icons = { "heavy" }, class = TT.Warning, condition = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), special_function = SF.SetTimeOrCreateTracker, hint = Hints.ScriptedBulldozer },
     [101001] = { time = 1200, chance = 100, id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = "EHIPresentChance", start_opened = true, hint = Hints.pines_ChanceReduction },
-    [101002] = { time = 600, id = "PresentDrop", icons = PresentDropTimer, class = TT.Warning, hint = Hints.pines_ChanceReduction, special_function = SF.SetTimeOrCreateTracker, tracker_merge = true },
-    [101003] = { time = 600, id = "PresentDrop", icons = PresentDropTimer, class = TT.Warning, hint = Hints.pines_ChanceReduction, special_function = SF.SetTimeOrCreateTracker, tracker_merge = true },
-    [101004] = { time = 600, id = "PresentDrop", icons = PresentDropTimer, class = TT.Warning, hint = Hints.pines_ChanceReduction, special_function = SF.SetTimeOrCreateTracker, tracker_merge = true },
+    [101002] = { time = 600, id = "PresentDrop", icons = PresentDropTimer, class = TT.Warning, hint = Hints.pines_ChanceReduction, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
+    [101003] = { time = 600, id = "PresentDrop", icons = PresentDropTimer, class = TT.Warning, hint = Hints.pines_ChanceReduction, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
+    [101004] = { time = 600, id = "PresentDrop", icons = PresentDropTimer, class = TT.Warning, hint = Hints.pines_ChanceReduction, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
     [101045] = { additional_time = 50, random_time = 10, id = "WaitTime", icons = { Icon.Heli, Icon.Wait }, hint = Hints.Wait },
     [100024] = { time = 23, id = "HeliSanta", icons = { Icon.Heli, "Other_H_None_Merry" }, trigger_times = 1, hint = Hints.pines_Santa },
     [105102] = { time = 30, id = "HeliLoot", icons = Icon.HeliEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape },
