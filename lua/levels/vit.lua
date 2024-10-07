@@ -45,7 +45,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         veryhard_or_below = 1,
         overkill_or_above = 2
     })
-    other[100314] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+    other[100314] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
         if EHI:IsHost() and element:counter_value() ~= 0 then
             return
         end
@@ -73,7 +73,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102596] = { id = "Snipers", special_function = SF.RemoveTracker }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     other = other,
     sync_triggers = { element = element_sync_triggers }
@@ -114,13 +114,13 @@ local secret_objectives =
     mark_optional = { twh_mainframe_hacked = true, twh_pardons_stolen = true }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         custom =
         {
             {
                 name = "stealth",
-                tactic =
+                plan =
                 {
                     objectives = stealth_objectives
                 }
@@ -128,16 +128,16 @@ EHI:AddXPBreakdown({
             {
                 name = "stealth",
                 additional_name = "twh_secret",
-                tactic =
+                plan =
                 {
-                    objectives = stealth_objectives,
+                    objectives = deep_clone(stealth_objectives),
                     total_xp_override = { params = { min_max = {} } }
                 },
                 objectives_override = secret_objectives
             },
             {
                 name = "loud",
-                tactic =
+                plan =
                 {
                     objectives = loud_objectives,
                 }
@@ -145,9 +145,9 @@ EHI:AddXPBreakdown({
             {
                 name = "loud",
                 additional_name = "twh_secret",
-                tactic =
+                plan =
                 {
-                    objectives = loud_objectives,
+                    objectives = deep_clone(loud_objectives),
                     total_xp_override = { params = { min_max = {} } }
                 },
                 objectives_override = secret_objectives

@@ -8,12 +8,8 @@ local anim_delay = 2 + 727/30 + 2 -- 2s is function delay; 727/30 is a animation
 local assault_delay = 4 + 3 + 3 + 3 + 5 + 1
 local assault_delay_methlab = 20 + assault_delay
 local triggers = {
-    [101001] = { id = "CookingChance", special_function = SF.RemoveTracker },
-
     [101970] = { time = (240 + 12) - 3, waypoint = { position_by_element = 101454 }, hint = Hints.LootEscape },
-    [100721] = { time = 1, chance = 5, id = "CookingChance", icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, start_opened = EHI:ShowTimedTrackerOpened(), hint = Hints.CookingChance, tracker_merge = {} },
-    [100724] = { time = 25, id = "CookingChance", icons = { Icon.Methlab, Icon.Loop }, waypoint = { position_by_element = 100212 }, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
-    [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { data_from_element = 100485 }, hint = Hints.mia_1_MethDone, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { data_from_element = 100485 }, hint = Hints.mia_1_MethDone, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self:CreateTracker(trigger)
         self._cache.BagsCooked = (self._cache.BagsCooked or 0) + 1
         if self._cache.BagsCooked >= 7 then
@@ -30,9 +26,7 @@ local triggers = {
     [101975] = { special_function = SF.Trigger, data = { 1019751, 1 } },
     [1019751] = { time = 30 + anim_delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { position_by_element = 101454 }, hint = Hints.LootEscape },
 
-    [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", Icon.Goto }, class = TT.Warning, hint = Hints.ScriptedBulldozer },
-
-    [100723] = { amount = 10, id = "CookingChance", special_function = SF.IncreaseChance }
+    [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", Icon.Goto }, class = TT.Warning, hint = Hints.ScriptedBulldozer }
 }
 ---@type ParseAchievementTable
 local achievements =
@@ -53,15 +47,15 @@ local other =
 {
     [100378] = EHI:AddAssaultDelay({ control = 42 + 50 + assault_delay }),
     [100380] = EHI:AddAssaultDelay({ control = 45 + 40 + assault_delay }),
-    [100707] = EHI:AddAssaultDelay({ control = assault_delay_methlab, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    [100707] = EHI:AddAssaultDelay({ control = assault_delay_methlab, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:CallFunction2(trigger.id, "SetTimeIfLower", trigger.time) then
             self:CreateTracker(trigger)
         end
-    end), trigger_times = 1 }),
+    end), trigger_once = true }),
     [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local SetRespawnTime = EHI:RegisterCustomSF(function(self, trigger, ...)
+    local SetRespawnTime = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         local t = trigger.time
         if self._trackers:CallFunction2(id, "SetRespawnTime", t) then
@@ -73,7 +67,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             })
         end
     end)
-    other[101257] = { time = 90 + 140, id = "Snipers", count_on_refresh = 2, class = TT.Sniper.TimedCount, trigger_times = 1, hint = Hints.EnemySnipers }
+    other[101257] = { time = 90 + 140, id = "Snipers", count_on_refresh = 2, class = TT.Sniper.TimedCount, trigger_once = true, hint = Hints.EnemySnipers }
     other[101137] = { time = 60, id = "Snipers", special_function = SetRespawnTime }
     other[101138] = { time = 90, id = "Snipers", special_function = SetRespawnTime }
     other[101141] = { time = 140, id = "Snipers", special_function = SetRespawnTime }
@@ -96,10 +90,25 @@ if EHI:IsClient() then
     EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, SyncBagsCooked)
 end
 
-EHI:ParseTriggers({
+local tracker_merge =
+{
+    CookingChance =
+    {
+        elements =
+        {
+            [101001] = { special_function = SF.RemoveTracker },
+            [100721] = { time = 1, chance = 5, icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, start_opened = EHI:ShowTimedTrackerOpened(), hint = Hints.CookingChance, tracker_merge = {} },
+            [100724] = { time = 25, icons = { Icon.Methlab, Icon.Loop }, waypoint = { position_by_element = 100212 }, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
+            [100723] = { amount = 10, special_function = SF.IncreaseChance }
+        }
+    }
+}
+
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    tracker_merge = tracker_merge
 }, "Van", Icon.CarEscape)
 EHI:ShowAchievementLootCounter({
     achievement = "halloween_2",
@@ -117,7 +126,7 @@ if EHI:GetOption("show_escape_chance") then
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 25)
     end)
-    EHI:AddLoadSyncFunction(function(self)
+    EHI.Manager:AddLoadSyncFunction(function(self)
         if managers.environment_effects._mission_effects[101437] then
             self._escape:AddEscapeChanceTracker(false, 105)
             self:UnhookTrigger(101863)

@@ -4,7 +4,6 @@ EHILootTracker = class(EHIProgressTracker)
 EHILootTracker._forced_hint_text = "loot_counter"
 EHILootTracker._forced_icons = { EHI.Icons.Loot }
 EHILootTracker._show_popup = EHI:GetOption("show_all_loot_secured_popup")
----@param params EHITracker.params
 function EHILootTracker:pre_init(params)
     EHILootTracker.super.pre_init(self, params)
     self._mission_loot = 0
@@ -16,7 +15,6 @@ function EHILootTracker:pre_init(params)
     self._loot_parent = params.loot_parent --[[@as EHILootManager]]
 end
 
----@param params EHITracker.params
 function EHILootTracker:post_init(params)
     EHILootTracker.super.post_init(self, params)
     self._show_finish_after_reaching_target = self._stay_on_screen
@@ -48,7 +46,7 @@ function EHILootTracker:IncreaseTrackerSize(animate)
         self:AnimIconX(new_w + self._gap_scaled)
         self:AnimatePanelWAndRefresh(new_panel_w)
         self:ChangeTrackerWidth(new_panel_w)
-        self:AnimateRepositionHintX()
+        self:AnimateAdjustHintX(self._default_bg_size / 2)
     else
         self:SetBGSize(self._bg_box:w() / 2, "add")
         self._text:set_w(self._bg_box:w())
@@ -71,7 +69,7 @@ function EHILootTracker:DecreaseTrackerSize(animate)
         self:AnimIconX(new_w + self._gap_scaled)
         self:AnimatePanelWAndRefresh(new_panel_w)
         self:ChangeTrackerWidth(new_panel_w)
-        self:AnimateRepositionHintX()
+        self:AnimateAdjustHintX(-(self._default_bg_size / 2))
     else
         self:SetBGSize(self._default_bg_size, "set", animate)
         self._text:set_w(self._bg_box:w())
@@ -133,7 +131,6 @@ else
     end
 end
 
----@param dt number
 function EHILootTracker:update(dt)
     for id, t in pairs(self._loot_check_delay) do
         t = t - dt
@@ -164,7 +161,6 @@ function EHILootTracker:AddDelayedLootDeclinedCheck(id, t)
     self._loot_check_n = self._loot_check_n + 1
 end
 
----@param progress number
 function EHILootTracker:SetProgress(progress)
     local fixed_progress = progress + self._mission_loot - self._offset
     local original_max = self._max
@@ -182,7 +178,6 @@ function EHILootTracker:Finalize()
     self._progress = progress
 end
 
----@param force boolean?
 function EHILootTracker:SetCompleted(force)
     EHILootTracker.super.SetCompleted(self, force)
     if self._stay_on_screen and self._status then
@@ -230,6 +225,8 @@ end
 function EHILootTracker:RandomLootSpawned(random)
     if self._max_random <= 0 then
         return
+    elseif self._progress == self._max then
+        self:SetTextColor(Color.white)
     end
     local n = random or 1
     self._max_random = self._max_random - n
@@ -304,7 +301,9 @@ end
 
 ---@param state boolean
 function EHILootTracker:SetUnknownRandomLoot(state)
-    if state and not self._unknown_random then
+    if state == self._unknown_random then
+        return
+    elseif state and not self._unknown_random then
         self:IncreaseTrackerSize(true)
     elseif self._unknown_random and not state then
         self:DecreaseTrackerSize(true)
@@ -334,7 +333,6 @@ EHILootCountTracker.SetProgress = EHILootCountTracker.SetCount
 ---@class EHILootMaxTracker : EHILootTracker
 ---@field super EHILootTracker
 EHILootMaxTracker = class(EHILootTracker)
----@param params EHITracker.params
 function EHILootMaxTracker:post_init(params)
     EHILootMaxTracker.super.post_init(self, params)
     self._params = params.xp_params or {} ---@type LootCounterTable.MaxBagsForMaxLevel
@@ -359,12 +357,10 @@ function EHILootMaxTracker:PlayerSpawned()
     self:AddTrackerToUpdate()
 end
 
----@param state boolean
 function EHILootMaxTracker:OnPlayerCustody(state)
     self:Refresh()
 end
 
----@param dt number
 function EHILootMaxTracker:update(dt)
     if self._refresh_max then
         self._refresh_max = self._refresh_max - dt
@@ -437,8 +433,6 @@ end
 EHIAchievementLootCounterTracker = ehi_achievement_class(EHILootTracker)
 EHIAchievementLootCounterTracker._PrepareHint = EHIAchievementTracker.PrepareHint
 EHIAchievementLootCounterTracker._PlayerSpawned = EHIAchievementTracker.PlayerSpawned
----@param panel Panel
----@param params EHITracker.params
 function EHIAchievementLootCounterTracker:init(panel, params, ...)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
@@ -467,7 +461,6 @@ function EHIAchievementLootCounterTracker:init(panel, params, ...)
     end
 end
 
----@param params EHITracker.params
 function EHIAchievementLootCounterTracker:PrepareHint(params)
     self:_PrepareHint(params)
     self._forced_hint_text = params.hint
@@ -489,10 +482,9 @@ function EHIAchievementLootCounterTracker:DelayForcedDelete()
     end
 end
 
----@param force boolean?
-function EHIAchievementLootCounterTracker:SetCompleted(force)
+function EHIAchievementLootCounterTracker:SetCompleted(...)
     self._achieved_popup_showed = true
-    EHIAchievementLootCounterTracker.super.SetCompleted(self, force)
+    EHIAchievementLootCounterTracker.super.SetCompleted(self, ...)
 end
 
 function EHIAchievementLootCounterTracker:SetFailed()
@@ -505,7 +497,7 @@ function EHIAchievementLootCounterTracker:SetFailed()
             self:ChangeTrackerWidth(self._bg_box:w() + self._icon_gap_size_scaled, true)
             self._hint_vanilla_localization = nil
             self:UpdateHint("loot_counter")
-            self:AnimateRepositionHintX(1)
+            self:AnimateAdjustHintX(-self._icon_gap_size_scaled, true)
         else
             self:SetIconColor(Color.white)
             self:SetIcon("pd2_loot")
@@ -530,7 +522,6 @@ function EHIAchievementLootCounterTracker:SetFailed2()
 end
 
 function EHIAchievementLootCounterTracker:SetFailedSilent()
-    self._failed_on_sync = true
     self._show_failed = nil
     self._show_finish_after_reaching_target = nil
     self._hint_vanilla_localization = nil
@@ -551,7 +542,7 @@ function EHIAchievementLootCounterTracker:SetStarted()
             self._icon2:set_visible(true)
             self:SetIconsX()
             self._panel_override_w = nil
-            self:AnimateRepositionHintX(3) -- Why 3 ? I have no clue
+            self:AnimateAdjustHintX(self._icon_gap_size_scaled, true)
             self:ChangeTrackerWidth(nil, true)
         else
             self:SetIconColor(self._forced_icon_color[1])

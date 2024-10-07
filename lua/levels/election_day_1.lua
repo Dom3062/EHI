@@ -23,7 +23,7 @@ local achievements =
     }
 }
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     achievement = achievements
 })
 
@@ -39,7 +39,7 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

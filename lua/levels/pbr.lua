@@ -26,7 +26,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [102292] = { special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+            [102292] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
                 local function berry_4_fail()
                     managers.player:remove_listener("EHI_berry_4_fail")
                     EHI:Unhook("berry_4_HuskPlayerMovement_sync_bleed_out")
@@ -58,7 +58,7 @@ local other =
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(101410, 10950)] = { id = "Snipers", class = TT.Sniper.Count, single_sniper = true }
-    other[EHI:GetInstanceElementID(100019, 10950)] = { id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    other[EHI:GetInstanceElementID(100019, 10950)] = { id = "Snipers", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         if self._trackers:TrackerExists(id) then
             self._trackers:CallFunction(id, "SniperSpawnsSuccess")
@@ -76,7 +76,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100021, 10950)] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

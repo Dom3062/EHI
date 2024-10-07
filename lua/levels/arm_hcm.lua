@@ -18,7 +18,7 @@ local other =
     [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
 if EHI:GetOption("show_escape_chance") then
-    other[101620] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement, trigger_times = 1 }
+    other[101620] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement, trigger_once = true }
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 10)
     end)
@@ -42,7 +42,7 @@ if EHI:IsSyncedLootCounterVisible() then
         local truck = 0
         local hook_function = tweak_data.ehi.functions.HookArmoredTransportUnit
         for disabled_unit_id, truck_id in pairs(trucks) do
-            if managers.game_play_central:GetMissionDisabledUnit(disabled_unit_id) then
+            if managers.game_play_central:IsMissionUnitDisabled(disabled_unit_id) then
                 truck = truck + 1
                 hook_function(truck_id)
                 if truck == count then
@@ -73,7 +73,7 @@ if EHI:IsSyncedLootCounterVisible() then
     other[101204] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { chance = 10, time = 1 + 35 + 30, on_fail_refresh_t = 30, on_success_refresh_t = 20 + 35 + 30, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, sniper_count = 2 }
+    other[100015] = { chance = 10, time = 1 + 35 + 30, on_fail_refresh_t = 30, on_success_refresh_t = 20 + 35 + 30, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 2 }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -86,7 +86,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = 102650 } }
     other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } }
 end
-EHI:ParseTriggers({ mission = triggers, other = other }, "Escape", { Icon.Escape, Icon.LootDrop })
+EHI.Manager:ParseTriggers({ mission = triggers, other = other }, "Escape", { Icon.Escape, Icon.LootDrop })
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,
     hard = 3,

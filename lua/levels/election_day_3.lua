@@ -46,7 +46,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         hard = 50,
         veryhard_or_above = 40
     })
-    other[100356] = { time = refresh_t, special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+    other[100356] = { time = refresh_t, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementFilter
         local t = trigger.time ---@cast t -?
         if element:_check_mode() then
             if self._cache.election_day_3_RefreshSniperTime then
@@ -71,11 +71,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end)}
     other[100348] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[100351] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    if EHI:GetOption("show_sniper_logic_start_popup") then
-        other[100446] = { special_function = SF.CustomCode, f = function()
-            managers.hud:ShowSniperLogic(true)
-        end, trigger_times = 1 }
-    end
+    other[100446] = EHI:AddSniperSpawnedPopup(true, true)
 end
 if EHI:IsLootCounterVisible() then
     other[103293] = EHI:AddCustomCode(function(self)
@@ -93,7 +89,7 @@ EHI:SetMissionDoorData({
     -- Gate inside the vault
     [Vector3(2493.96, -2793.65, 84.8657)] = { w_id = 104645, restore = true, unit_id = 101581 }
 })
-EHI:ParseTriggers({ mission = triggers, other = other, tracker_merge = tracker_merge })
+EHI.Manager:ParseTriggers({ mission = triggers, other = other, tracker_merge = tracker_merge })
 EHI:AddXPBreakdown({
     objective =
     {

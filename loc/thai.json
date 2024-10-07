@@ -23,8 +23,8 @@
     "ehi_show_preview_text" : "แสดงข้อความตัวอย่าง",
     "ehi_show_preview_text_desc" : "แสดงหรือซ่อนข้อความและไอคอนตัวอย่างในหน้าเมนู",
 
-    "ehi_mission_briefing_toggle_tactic_text" : "เปิดใช้งาน",
-    "ehi_mission_briefing_next_tactic_text" : "NEXT",
+    "ehi_mission_briefing_toggle_plan_text" : "เปิดใช้งาน",
+    "ehi_mission_briefing_next_plan_text" : "NEXT",
 
     "ehi_popup_experience" : "ประสบการณ์",
     "ehi_popup_experience_base_gained" : "ค่าประสบการณ์เริ่มต้น: ",

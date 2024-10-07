@@ -13,12 +13,12 @@ local function f_PilotComingInAgain(self, trigger, ...)
         self:CreateTracker(trigger)
     end
 end
-local PilotComingInAgain = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+local PilotComingInAgain = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
     if enabled then
         f_PilotComingInAgain(self, trigger)
     end
 end)
-local PilotComingInAgain2 = EHI:RegisterCustomSF(f_PilotComingInAgain)
+local PilotComingInAgain2 = EHI.Manager:RegisterCustomSF(f_PilotComingInAgain)
 ---@type ParseTriggerTable
 local triggers = {
     [100581] = { time = 9 + 30 + 6.9, id = "BagsDropinAgain", icons = Icon.HeliDropBag, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.peta2_LootZoneDelivery },
@@ -91,7 +91,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101358] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "ResetCount" }
-    other[101733] = { id = "SniperHeli", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    other[101733] = { id = "SniperHeli", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         if self._trackers:CallFunction2(id, "SniperRespawn") then
             local t = 23 + 2
@@ -108,7 +108,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100007, 8550)] = trigger
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

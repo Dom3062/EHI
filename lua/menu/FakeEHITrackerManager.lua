@@ -15,7 +15,7 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
         --layer = -10,
         alpha = 1
     })
-    if EHI:IsVR() then
+    if _G.IS_VR then
         self._scale = EHI:GetOption("vr_scale") --[[@as number]]
         local x, y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
         self._x = x
@@ -33,7 +33,8 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
     self._bg_visibility = EHI:GetOption("show_tracker_bg")
     self._corner_visibility = EHI:GetOption("show_tracker_corners")
     self._icons_visibility = EHI:GetOption("show_one_icon")
-    self._tracker_alignment = EHI:GetOption("tracker_alignment")
+    self._tracker_alignment = EHI:GetOption("tracker_alignment") --[[@as 1|2|3|4]]
+    self._tracker_vertical_anim = EHI:GetOption("tracker_vertical_w_anim") --[[@as 1|2]]
     self._icons_pos = EHI:GetOption("show_icon_position")
     panel_size = panel_size_original * self._scale
     panel_offset = panel_offset_original * self._scale
@@ -129,6 +130,8 @@ function FakeEHITrackerManager:CreateFakeTracker(params)
     params.corners = self._corner_visibility
     params.one_icon = self._icons_visibility
     params.icon_pos = self._icons_pos
+    params.tracker_alignment = self._tracker_alignment
+    params.tracker_vertical_anim = self._tracker_vertical_anim
     local tracker = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params, self) --[[@as FakeEHITracker]]
     self._n_of_trackers = self._n_of_trackers + 1
     self._fake_trackers[self._n_of_trackers] = tracker
@@ -218,7 +221,12 @@ function FakeEHITrackerManager:GetPos(pos)
         local h = from_bottom and (new_y - panel_offset - panel_size) or (new_y + panel_offset + panel_size)
         if (from_bottom and h < 0) or h > self._hud_panel:h() then
             self._vertical.y_offset = pos
-            local new_x = self._vertical.x + self:GetTrackerSize(self._vertical.max_icons)
+            local new_x
+            if self._tracker_vertical_anim == 2 then
+                new_x = self._vertical.x - self:GetTrackerSize(self._vertical.max_icons)
+            else
+                new_x = self._vertical.x + self:GetTrackerSize(self._vertical.max_icons)
+            end
             self._vertical.x = new_x
             x = new_x
         else

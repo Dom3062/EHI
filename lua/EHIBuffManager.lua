@@ -33,7 +33,7 @@ function EHIBuffManager:init_finalize(hud, panel)
     self._n_visible = 0
     self._cache = {}
     self._gap = 6
-    self._x = EHI:IsVR() and EHI:GetOption("buffs_vr_x_offset") or EHI:GetOption("buffs_x_offset") --[[@as number]]
+    self._x = EHI:GetOption(_G.IS_VR and "buffs_vr_x_offset" or "buffs_x_offset") --[[@as number]]
     local path = EHI.LuaPath .. "buffs/"
     dofile(path .. "EHIBuffTracker.lua")
     dofile(path .. "EHIGaugeBuffTracker.lua")
@@ -41,12 +41,12 @@ function EHIBuffManager:init_finalize(hud, panel)
     hud:AddEHIUpdator("EHI_Buff_Update", self)
     self._panel = panel
     local scale = EHI:GetOption("buffs_scale") --[[@as number]]
-    local buff_y = EHI:IsVR() and EHI:GetOption("buffs_vr_y_offset") or EHI:GetOption("buffs_y_offset") --[[@as number]]
+    local buff_y = EHI:GetOption(_G.IS_VR and "buffs_vr_y_offset" or "buffs_y_offset") --[[@as number]]
     local buff_w = 32 * scale
     local buff_h = 64 * scale
     self:_init_buffs(buff_y, buff_w, buff_h, scale)
     self:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
-    self:UnusedBuffClassesCleanup()
+    self:_cleanup_unused_buff_classes()
     local function destroy()
         self._update_buffs = {}
     end
@@ -98,7 +98,10 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
     if not EHI:GetBuffDeckOption("tag_team", "tagged") then
         return
     end
-    local local_peer_id = managers.network:session():local_peer():id()
+    local local_peer_id = EHI:IsHost() and 1 or EHI._cache.LocalPeerID
+    if not local_peer_id then
+        return
+    end
     local texture, texture_rect = GetIcon(tweak_data.ehi.buff.TagTeamEffect)
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
         if i ~= local_peer_id then -- You cannot tag yourself...
@@ -125,10 +128,10 @@ function EHIBuffManager:_create_buff(params, persistent, deck_option)
     local buff
     if params.class_to_load then
         if params.class_to_load.prerequisite and not _G[params.class_to_load.prerequisite] then
-            dofile(string.format("%s%s%s.lua", EHI.LuaPath, "buffs/", params.class_to_load.prerequisite))
+            EHI:LoadBuff(params.class_to_load.prerequisite)
         end
         if params.class_to_load.load_class then
-            dofile(string.format("%s%s%s.lua", EHI.LuaPath, "buffs/", params.class_to_load.load_class))
+            EHI:LoadBuff(params.class_to_load.load_class)
         end
         buff = _G[params.class_to_load.class]:new(self._panel, params, self) --[[@as EHIBuffTracker]]
     else
@@ -142,7 +145,7 @@ function EHIBuffManager:_create_buff(params, persistent, deck_option)
     end
 end
 
-function EHIBuffManager:UnusedBuffClassesCleanup()
+function EHIBuffManager:_cleanup_unused_buff_classes()
     for id, buff in pairs(tweak_data.ehi.buff) do
         if buff.class and buff.class ~= "EHIGaugeBuffTracker" then
             local class = buff.class
@@ -185,7 +188,7 @@ function EHIBuffManager:SyncBuff(id, t)
 end
 
 function EHIBuffManager:ActivateUpdatingBuffs()
-    if not self._buffs then
+    if table.empty(self._buffs) then
         return
     end
     for id, buff in pairs(tweak_data.ehi.buff) do
@@ -208,14 +211,14 @@ end
 
 ---@param state boolean
 function EHIBuffManager:SetCustodyState(state)
-    for _, buff in pairs(self._buffs or {}) do
+    for _, buff in pairs(self._buffs) do
         buff:SetCustodyState(state)
     end
     self:RemoveAbilityCooldown(state)
 end
 
 function EHIBuffManager:SwitchToLoudMode()
-    for _, buff in pairs(self._buffs or {}) do
+    for _, buff in pairs(self._buffs) do
         buff:SwitchToLoudMode()
     end
 end

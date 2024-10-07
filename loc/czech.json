@@ -23,12 +23,13 @@
     "ehi_show_preview_text" : "Zobrazit text 'Náhled'",
     "ehi_show_preview_text_desc" : "Zobrazuje nebo skrývá náhledový text",
 
-    "ehi_mission_briefing_toggle_tactic_text" : "PŘEPNOUT",
-    "ehi_mission_briefing_next_tactic_text" : "DALŠÍ",
+    "ehi_mission_briefing_toggle_plan_text" : "PŘEPNOUT",
+    "ehi_mission_briefing_next_plan_text" : "DALŠÍ",
 
     "ehi_popup_experience" : "ZKUŠENOSTI",
     "ehi_popup_experience_base_gained" : "Získán základ ZK: ",
     "ehi_popup_experience_gained" : "Získáno: ",
+    "ehi_popup_experience_lost" : "Ztraceno: ",
     "ehi_popup_experience_total" : "Celkem: ",
     "ehi_popup_gage_packages" : "GAGE BALÍČKY",
     "ehi_popup_minion" : "PŘEVEDENEC",
@@ -493,7 +494,7 @@
     "ehi_show_minion_killed_message_type_2" : "V oznamovacím panelu",
 
     "ehi_show_difficulty_tracker" : "Zobrazovat sledovač s obtížností vlny",
-    "ehi_show_difficulty_tracker_desc" : "Zobrazuje sledovač, jak moc obtížná je aktuální vlna",
+    "ehi_show_difficulty_tracker_desc" : "Zobrazuje sledovač, jak moc obtížná je aktuální vlna\n\nV herním režimu Holdout tato možnost zobrazí zvýšení uděleného poškození a zdraví nepřátel, v tomto pořadí",
 
     "ehi_show_drama_tracker" : "Zobrazovat sledovač ohledně Drama",
     "ehi_show_drama_tracker_desc" : "Zobrazuje sledovač, který ukazuje nahromaděné drama (pouze host)",
@@ -985,6 +986,7 @@
     "ehi_experience_escape" : "Dokončení mise",
     "ehi_experience_each_goat_secured" : "Každá zajištěná koza",
     "ehi_experience_each_loot_secured" : "Každý zajištěný pytel",
+    "ehi_experience_each_safe_secured" : "Každý zajištěný sejf",
     "ehi_experience_loot_any" : "Jakýkoliv",
     "ehi_experience_loot_else" : "Ostatní lup",
     "ehi_experience_loot_secured" : "Lup zajištěn:",
@@ -1034,7 +1036,6 @@
     "ehi_experience_rats2_trade" : "Předání perníku",
     "ehi_experience_rats2_trade_and_steal" : "Předání a potom ukradení perníku zpět",
     "ehi_experience_big_oil_intel_pickup" : "Sebrání informací",
-    "ehi_experience_big_oil_safe_open" : "Správný sejf otevřen",
     "ehi_experience_big_oil2_correct_engine" : "Správný motor nalezen",
     "ehi_experience_ff3_item_deployed" : "Předmět nachystán (Střecha)",
     "ehi_experience_ff3_cocaine_placed" : "Umístěn kokain",

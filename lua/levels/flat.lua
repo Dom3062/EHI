@@ -35,7 +35,7 @@ local triggers = {
     [100082] = { time = 30 + 10, id = "HeliComesWithMagnet", icons = { Icon.Heli, Icon.Winch }, hint = Hints.Winch },
 
     --- Add 0.2 delay here so the tracker does not hide first before this gets executed again; players won't notice 0.2 delay here
-    [100147] = { time = 18.2 + 0.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+    [100147] = { time = 18.2 + 0.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
         if enabled and self._trackers:CallFunction2(trigger.id, "SetTimeNoAnim", trigger.time) then
             self:CreateTracker(trigger)
         end
@@ -65,7 +65,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100809] = { time = 60, class = TT.Achievement.Base, trigger_times = 1, special_function = SF.ShowAchievementFromStart },
+            [100809] = { time = 60, class = TT.Achievement.Base, trigger_once = true, special_function = SF.ShowAchievementFromStart },
             [100805] = { special_function = SF.SetAchievementComplete },
         },
         sync_params = { from_start = true }
@@ -86,7 +86,7 @@ end
 --´drill defend waypoint001´ ElementWaypoint 101734
 EHI:DisableWaypoints({ [101734] = true })
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

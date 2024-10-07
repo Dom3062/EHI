@@ -8,7 +8,7 @@ EHITradeDelayTracker._init_create_text = false
 function EHITradeDelayTracker:init(...)
     self._pause_t = 0
     self._n_of_peers = 0
-    self._peers = {} ---@type table<number, { t: number, in_custody: boolean, civilians_killed: number, label: PanelText }?>
+    self._peers = {} ---@type table<number, { t: number, in_custody: boolean, civilians_killed: number, label: PanelText }>
     self._tick = 0
     EHITradeDelayTracker.super.init(self, ...)
     if self._SIZE_INCREASE_NEEDED then
@@ -25,8 +25,8 @@ function EHITradeDelayTracker:SetTextPeerColor()
     if self._n_of_peers == 1 then
         return
     end
-    for peer_id, peer_data in pairs(self._peers) do
-        peer_data.label:set_color(tweak_data.chat_colors[peer_id] or Color.white)
+    for id, data in pairs(self._peers) do
+        data.label:set_color(tweak_data.chat_colors[id] or Color.white)
     end
 end
 
@@ -85,10 +85,12 @@ function EHITradeDelayTracker:RedrawPanel()
     end
 end
 
-function EHITradeDelayTracker:AnimateMovement()
+---@param addition boolean?
+function EHITradeDelayTracker:AnimateMovement(addition)
     self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
     self:AnimIconX(self._panel_w - self._icon_size_scaled)
+    self:AnimateAdjustHintX(addition and self._panel_half or -self._panel_half)
 end
 
 function EHITradeDelayTracker:AlignTextOnHalfPos()
@@ -120,7 +122,7 @@ function EHITradeDelayTracker:Reorganize(addition)
         self:AlignTextOnHalfPos()
         self._panel_w = self._panel_w + self._panel_half
         self._bg_box:set_w(self._bg_box:w() + self._panel_half)
-        self:AnimateMovement()
+        self:AnimateMovement(true)
     else
         self:AlignTextOnHalfPos()
         self._panel_w = self._panel_w - self._panel_half
@@ -133,7 +135,7 @@ end
 ---@param time number
 ---@param civilians_killed number? If provided, sets the number of killed civilians. Otherwise it adds 1 more civilian killed to the counter
 function EHITradeDelayTracker:SetPeerCustodyTime(peer_id, time, civilians_killed)
-    local peer_data = self._peers[peer_id] ---@cast peer_data -?
+    local peer_data = self._peers[peer_id]
     peer_data.t = time
     peer_data.civilians_killed = civilians_killed or (peer_data.civilians_killed + 1)
     self:FormatUnique(peer_data.label, time, peer_data.civilians_killed)
@@ -209,10 +211,10 @@ function EHITradeDelayTracker:RemovePeerFromCustody(peer_id)
         self:delete()
         return
     end
-    self._bg_box:remove(self._peers[peer_id].label)
-    self._peers[peer_id] = nil
+    local peer = table.remove_key(self._peers, peer_id)
+    self._bg_box:remove(peer.label)
     if self._n_of_peers == 1 then
-        local _, peer_data = next(self._peers) ---@cast peer_data -?
+        local _, peer_data = next(self._peers)
         local text = peer_data.label
         text:set_color(Color.white)
         text:set_x(0)
@@ -267,7 +269,6 @@ else
     end
 end
 
----@param dt number
 function EHITradeDelayTracker:update(dt)
     if self._tick > 0 then
         self._tick = self._tick - dt

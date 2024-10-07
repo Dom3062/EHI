@@ -44,7 +44,7 @@ if EHI:GetOption("show_escape_chance") then
     other[104285] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     other = other,
     preload = preload

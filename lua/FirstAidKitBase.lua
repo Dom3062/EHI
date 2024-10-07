@@ -7,35 +7,35 @@ local UpdateTracker
 
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(key, amount)
-        if managers.ehi_deployable:TrackerDoesNotExist("Deployables") then
+        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") then
             managers.ehi_deployable:AddAggregatedDeployablesTracker()
         end
         managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "first_aid_kit", key, amount)
     end
 elseif EHI:GetOption("show_equipment_aggregate_health") then
     UpdateTracker = function(key, amount)
-        if managers.ehi_deployable:TrackerDoesNotExist("Health") then
+        if managers.ehi_tracker:TrackerDoesNotExist("Health") then
             managers.ehi_deployable:AddAggregatedHealthTracker()
         end
         managers.ehi_deployable:CallFunction("Health", "UpdateAmount", "first_aid_kit", key, amount)
     end
 else
     UpdateTracker = function(key, amount)
-        if managers.ehi_deployable:TrackerDoesNotExist("FirstAidKits") then
+        if managers.ehi_tracker:TrackerDoesNotExist("FirstAidKits") then
             managers.ehi_deployable:CreateDeployableTracker("FirstAidKits")
         end
         managers.ehi_deployable:CallFunction("FirstAidKits", "UpdateAmount", key, amount)
     end
 end
 
-if EHI:IsVR() then
+if _G.IS_VR then
     local old_UpdateTracker = UpdateTracker
     local function Reload(key, data)
         old_UpdateTracker(key, data.amount)
     end
     UpdateTracker = function(key, amount)
-        if managers.ehi_deployable:IsLoading() then
-            managers.ehi_deployable:AddToLoadQueue(key, { amount = amount }, Reload)
+        if managers.ehi_tracker:IsLoading() then
+            managers.ehi_tracker:AddToLoadQueue(key, { amount = amount }, Reload)
             return
         end
         old_UpdateTracker(key, amount)

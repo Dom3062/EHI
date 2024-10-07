@@ -93,13 +93,12 @@ function EHIWaypointManager:UpdateWaypointID(id, new_id)
     if self._waypoints[new_id] or not wp then
         return
     end
-    wp:UpdateID(new_id)
+    wp._id = new_id
     self._waypoints[id] = nil
     self._waypoints[new_id] = wp
     if self._waypoints_to_update[id] then
-        local update = self._waypoints_to_update[id]
         self._waypoints_to_update[id] = nil
-        self._waypoints_to_update[new_id] = update
+        self._waypoints_to_update[new_id] = wp
     end
 end
 
@@ -281,7 +280,7 @@ do
     dofile(path .. "EHIInaccurateWaypoints.lua")
 end
 
-if EHI:IsVR() then
+if _G.IS_VR then
     return
 elseif VoidUI and VoidUI.options.enable_waypoints then
     dofile(EHI.LuaPath .. "hud/waypoint/void_ui.lua")

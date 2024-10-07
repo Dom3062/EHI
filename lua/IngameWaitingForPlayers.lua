@@ -206,7 +206,8 @@ end
 ---@param dont_flash_bg boolean?
 ---@param show_finish_after_reaching_target boolean?
 ---@param status_is_overridable boolean?
-local function AddAchievementTracker(id, progress, max, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
+---@param remove_on_alarm boolean?
+local function AddAchievementTracker(id, progress, max, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable, remove_on_alarm)
     managers.ehi_tracker:AddTracker({
         id = id,
         progress = progress,
@@ -216,6 +217,7 @@ local function AddAchievementTracker(id, progress, max, dont_flash_bg, show_fini
         flash_times = 1,
         show_finish_after_reaching_target = show_finish_after_reaching_target,
         status_is_overridable = status_is_overridable,
+        remove_on_alarm = remove_on_alarm,
         no_failure = true,
         class = EHI.Trackers.Achievement.Progress
     })
@@ -223,10 +225,11 @@ end
 
 local persistent_stat_unlocks = tweak_data.achievement.persistent_stat_unlocks
 ---@param id_stat string
+---@param remove_on_alarm boolean?
 ---@param dont_flash_bg boolean?
 ---@param show_finish_after_reaching_target boolean?
 ---@param status_is_overridable boolean?
-local function AddAchievementTracker2(id_stat, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
+local function AddAchievementTracker2(id_stat, remove_on_alarm, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
     local achievement = persistent_stat_unlocks[id_stat] or {}
     local stat = achievement[1]
     if not stat then
@@ -242,7 +245,7 @@ local function AddAchievementTracker2(id_stat, dont_flash_bg, show_finish_after_
         return
     end
     stats[id_stat] = stat.award
-    AddAchievementTracker(stat.award, EHI:GetAchievementProgress(id_stat), stat.at, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
+    AddAchievementTracker(stat.award, EHI:GetAchievementProgress(id_stat), stat.at, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable, remove_on_alarm)
 end
 
 ---@param id string
@@ -320,8 +323,7 @@ local pxp1_1_checked = false
 local function pxp1_1()
     if pxp1_1_checked then
         return
-    end
-    if EHI:IsAchievementLocked2("pxp1_1") then
+    elseif EHI:IsAchievementLocked2("pxp1_1") then
         local grenade_data = tweak_data.achievement.grenade_achievements.pxp1_1
         local grenade_pass = table.index_of(grenade_data.grenade_types, grenade) ~= -1
         local enemy_kills_data = tweak_data.achievement.enemy_kill_achievements.pxp1_1
@@ -368,14 +370,6 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
         return
     end
     EHI:CallCallback(EHI.CallbackMessage.HUDVisibilityChanged, not Global.hud_disabled)
-    --[[if level == "flat" and EHI:IsAchievementLocked("flat_5") then
-        managers.ehi_tracker:AddTracker({
-            id = "flat_5",
-            icons = { "C_Classics_H_PanicRoom_DontYouDare" },
-            flash_bg = false,
-            class = "EHIChanceTracker"
-        })
-    else]]
     EHI:RunOnSpawnedCallbacks()
     if EHI._cache.UnlockablesAreDisabled or GunGameGame or TIM then -- Twitch Integration Mod
         challenges = nil
@@ -638,7 +632,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 AddAchievementTracker2("pxp2_2_stats")
             end
             if VeryHardOrAbove then
-                if EHI:IsAchievementLocked2("tango_achieve_3") and managers.ehi_manager:GetStartedFromBeginning() then -- "The Reckoning" achievement
+                if EHI:IsAchievementLocked2("tango_achieve_3") and not self:check_is_dropin() then -- "The Reckoning" achievement
                     local pass, primary_index, secondary_index = CheckWeaponsBlueprint(tweak_data.achievement.complete_heist_achievements.tango_3.killed_by_blueprint.blueprint)
                     if pass then
                         if primary_index and secondary_index then
@@ -765,26 +759,14 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             end
         end
         if EHI:GetUnlockableOption("show_achievements_melee") then -- Kill with melee
-            if EHI:IsAchievementLocked2("halloween_7") and mask_id == tweak_data.achievement.cant_hear_you_scream.mask then -- "No One Can Hear You Scream" achievement
-                if is_stealth then
-                    AddAchievementTracker2("halloween_7_stats")
-                    EHI:AddOnAlarmCallback(function()
-                        managers.ehi_tracker:RemoveTracker("halloween_7")
-                        stats.halloween_7_stats = nil
-                    end)
-                end
+            if EHI:IsAchievementLocked2("halloween_7") and mask_id == tweak_data.achievement.cant_hear_you_scream.mask and is_stealth then -- "No One Can Hear You Scream" achievement
+                AddAchievementTracker2("halloween_7_stats", true)
             end
             if EHI:IsAchievementLocked2("gage5_8") and HasMeleeEquipped("dingdong") then -- "Hammertime" achievement
                 AddAchievementTracker2("gage5_8_stats")
             end
-            if EHI:IsAchievementLocked2("eagle_2") and HasMeleeEquipped("fairbair") then -- "Special Operations Execution" achievement
-                if is_stealth then
-                    AddAchievementTracker2("eagle_2_stats")
-                    EHI:AddOnAlarmCallback(function()
-                        managers.ehi_tracker:RemoveTracker("eagle_2")
-                        stats.eagle_2_stats = nil
-                    end)
-                end
+            if EHI:IsAchievementLocked2("eagle_2") and HasMeleeEquipped("fairbair") and is_stealth then -- "Special Operations Execution" achievement
+                AddAchievementTracker2("eagle_2_stats", true)
             end
             if EHI:IsAchievementLocked2("steel_2") then -- "Their Armor Is Thick and Their Shields Broad" achievement
                 local melee_required = tweak_data.achievement.enemy_melee_hit_achievements.steel_2.melee_weapons
@@ -838,7 +820,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     end
                 end
                 pxp1_1()
-                if (level == "rvd1" or level == "rvd2") and EHI:IsAchievementLocked2("rvd_12") and HasMeleeEquipped("clean") then -- "Close Shave" achievement
+                if (level == "rvd1" or level == "rvd2") and EHI:IsAchievementLocked2("rvd_12") then -- "Close Shave" achievement
                     AddAchievementTracker2("rvd_12_stats")
                 end
                 if level == "bph" and EHI:IsAchievementLocked2("bph_9") and HasMeleeEquipped("toothbrush") then -- "Prison Rules, Bitch!" achievement
@@ -1135,19 +1117,6 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 end
             end
         end
-        --[[if EHI:IsAchievementLocked2("gage4_3") then -- "Swing Dancing" achievement
-            AddAchievementTracker("gage4_3", 0, 50)
-            Hooks:PostHook(StatisticsManager, "killed", "EHI_gage4_3_killed", function (self, data)
-                if data.variant == "melee" then
-                    if not CopDamage.is_civilian(data.name) then
-                        managers.ehi_tracker:IncreaseTrackerProgress("gage4_3")
-                    end
-                else
-                    managers.ehi_achievement:SetAchievementFailed("gage4_3")
-                    EHI:Unhook("gage4_3_killed")
-                end
-            end)
-        end]]
     end
     if EHI:GetUnlockableAndOption("show_dailies") then
         local active_sh_daily = EHI:GetActiveSHDaily() ---@cast active_sh_daily -?
@@ -1184,7 +1153,6 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             end
         end
         if managers.challenge:can_progress_challenges() and challenges then
-            local tracked_challenges = {}
             for _, challenge in pairs(managers.challenge:get_all_active_challenges()) do
                 local c = challenges[challenge.id or ""]
                 if c and not challenge.completed then
@@ -1204,8 +1172,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                         end
                         if c.check_on_completion then
                             if not c.contact or managers.job:current_contact_id() == c.contact then
-                                ---@param success boolean
-                                EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
+                                EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
                                     if success and managers.job:on_last_stage() and managers.statistics:started_session_from_beginning() then
                                         local progress, max = EHI:GetDailyChallengeProgressAndMax(challenge.id, c.progress_id)
                                         if progress + 1 < max then
@@ -1222,18 +1189,14 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                             AddDailyChallengeTracker(challenge.id, c.desc, c.progress_id, c.icon)
                         end
                         if not c.do_not_track then
-                            tracked_challenges[c.progress_id] = challenge.id
+                            managers.ehi_hook:HookChallengeAwardProgress(challenge.id, function(am, stat, value)
+                                if stat == c.progress_id then
+                                    managers.ehi_tracker:IncreaseTrackerProgress(challenge.id, value)
+                                end
+                            end)
                         end
                     end
                 end
-            end
-            if next(tracked_challenges) then
-                Hooks:PostHook(ChallengeManager, "award_progress", "EHI_DailyChallenge_AwardProgress", function(c, progress_id, amount)
-                    local challenge = tracked_challenges[progress_id]
-                    if challenge then
-                        managers.ehi_tracker:IncreaseTrackerProgress(challenge, amount)
-                    end
-                end)
             end
         end
     end

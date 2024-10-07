@@ -13,15 +13,12 @@ EHIGaugeBuffTracker._anim = function(o, ratio, progress)
     end)
 end
 EHIGaugeBuffTracker._inverted_progress = true
----@param panel Panel
----@param params table
 function EHIGaugeBuffTracker:init(panel, params, ...)
     self._ratio = 0
     self._format = params.format or "standard"
     EHIGaugeBuffTracker.super.init(self, panel, params, ...)
 end
 
----@param params table
 function EHIGaugeBuffTracker:post_init(params)
     self._text:set_text(self:Format())
 end

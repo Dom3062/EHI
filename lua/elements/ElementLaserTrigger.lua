@@ -8,12 +8,10 @@ end
 EHILaserTracker = class(EHITracker)
 EHILaserTracker._forced_icons = { EHI.Icons.Lasers }
 EHILaserTracker._forced_hint_text = "laser"
----@param params EHITracker.params
 function EHILaserTracker:pre_init(params)
     self._next_cycle_t = params.time
 end
 
----@param dt number
 function EHILaserTracker:update(dt)
     self._time = self._time - dt
     self._text:set_text(self:Format())

@@ -1,9 +1,12 @@
 <?xml version="1.0"?>
 <mod>
+    <tweak definition="ehi_units.xml"/>
     <hooks script_path="lua/">
+
         <!-- Main code -->
         <pre hook_id="core/lib/utils/coreapp" :script_path="core.lua"/>
         <pre hook_id="core/lib/utils/coreapp" :script_path="core_utils.lua"/>
+        <pre hook_id="core/lib/utils/coreapp" :script_path="core_mod_utils.lua"/>
 
         <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
 
@@ -64,6 +67,7 @@
         <post hook_id="lib/mutators/mutatorpiggyrevenge" :script_path="MutatorPiggyRevenge.lua" />
 
         <post hook_id="lib/network/base/basenetworksession" :script_path="BaseNetworkSession.lua" />
+        <post hook_id="lib/network/base/networkpeer" :script_path="NetworkPeer.lua" />
 
         <group hook_id="lib/setups/">
             <post :hook_id="setup" :script_path="EHIExperienceManager.lua" />
@@ -122,6 +126,7 @@
             <post :hook_id="carrytweakdata" :script_path="CarryTweakData.lua"/>
             <post :hook_id="groupaitweakdata" :script_path="GroupAITweakData.lua"/>
             <post :hook_id="levelstweakdata" :script_path="LevelsTweakData.lua"/>
+            <post :hook_id="skirmishtweakdata" :script_path="SkirmishTweakData.lua"/>
         </group>
     </hooks>
 

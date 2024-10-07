@@ -17,8 +17,7 @@ function EHIEnemyCountTracker:init(panel, params, ...)
     self._alarm_count_answered = 0
     EHIEnemyCountTracker.super.init(self, panel, params, ...)
     if params.alarm_sounded then
-        self._manual_hint_position = true
-        self:OnAlarm()
+        self:OnAlarm(true)
     else
         self._update_on_alarm = true
     end
@@ -28,15 +27,16 @@ function EHIEnemyCountTracker:Update()
     self._text:set_text(self:FormatCount())
 end
 
-function EHIEnemyCountTracker:OnAlarm()
+---@param no_hint_position boolean?
+function EHIEnemyCountTracker:OnAlarm(no_hint_position)
     self._alarm_sounded = true
     self._count = self._count + self._alarm_count
     if self._icon2 then
         self._icon2:set_x(self._icon1:x())
         self._icon2:set_visible(true)
         self._icon1:set_visible(false)
-        if not self._manual_hint_position then
-            self:AnimateRepositionHintX(1)
+        if not no_hint_position then
+            self:AnimateAdjustHintX(-self._icon_gap_size_scaled, true)
         end
         self:ChangeTrackerWidth(self._bg_box:w() + self._icon_gap_size_scaled, true)
         self.FormatCount = EHIEnemyCountTracker.super.FormatCount
@@ -92,9 +92,14 @@ function EHIEnemyCountTracker:AlarmEnemyPagerKilled()
     self:FitTheText()
 end
 
-function EHIEnemyCountTracker:PositionHint(...)
-    EHIEnemyCountTracker.super.PositionHint(self, ...)
+function EHIEnemyCountTracker:HintPositioned()
     if self._alarm_sounded and self._icon2 then
-        self:AdjustHintX(-self._icon_gap_size_scaled)
+        if self._VERTICAL_ANIM_W_LEFT then
+            if self._ICON_LEFT_SIDE_START then
+                self:AdjustHintX(self._icon_gap_size_scaled)
+            end
+        else
+            self:AdjustHintX(-self._icon_gap_size_scaled)
+        end
     end
 end

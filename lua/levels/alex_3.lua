@@ -15,7 +15,7 @@ local other =
     [100782] = EHI:AddAssaultDelay({ control = 20 + 10 })
 }
 
-EHI:ParseTriggers({ mission = triggers, other = other }, "HeliLootDrop", EHI.Icons.HeliLootDrop)
+EHI.Manager:ParseTriggers({ mission = triggers, other = other }, "HeliLootDrop", EHI.Icons.HeliLootDrop)
 if EHI:IsLootCounterVisible() then
     local Money = 0
     local MoneyTaken = 0

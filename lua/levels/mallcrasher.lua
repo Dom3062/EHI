@@ -95,7 +95,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local MoneyTrigger = { id = "MallDestruction", special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+local MoneyTrigger = { id = "MallDestruction", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
     self._trackers:IncreaseTrackerProgress(trigger.id, element._values.amount)
 end) }
 local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
@@ -159,7 +159,7 @@ local achievements =
             end
         end,
         cleanup_callback = function()
-            EHIameno3Tracker = nil ---@diagnostic disable-line
+            _G.EHIameno3Tracker = nil
         end
     },
     uno_3 =
@@ -186,7 +186,7 @@ else
     other[301773] = EHI:AddAssaultDelay({ control = 10 + FirstAssaultDelay })
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

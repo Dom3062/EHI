@@ -25,15 +25,11 @@ local triggers = {
 
     [102996] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion },
 
-    [102825] = { id = "WaterFill", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 160, no = 300 }, hint = Hints.crojob3_Water },
+    [102825] = { id = "WaterFill", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 160, no = 300 }, hint = Hints.crojob3_Water, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 102789 } },
     [102905] = { id = "WaterFill", special_function = SF.PauseTracker },
     [102920] = { id = "WaterFill", special_function = SF.UnpauseTracker },
 
-    [1] = { id = "HeliWaterFill", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
-        local wp = self._waypoints._hud:get_waypoint_data(trigger.id)
-        if wp then
-            self._cache.HeliWaterFillPos = wp.position
-        end
+    [1] = { id = "HeliWaterFill", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self._waypoints:RemoveWaypoint(trigger.id)
         self._trackers:SetTrackerPaused(trigger.id, true)
     end) },
@@ -75,22 +71,18 @@ local IndexToWP =
 ---@param self EHIManager
 ---@param trigger ElementTrigger
 local function HeliWaterRefillWPAdd(self, trigger)
-    local element = IndexToWP[trigger.index]
-    if element then
-        local pos = self:GetElementPositionOrDefault(element)
-        self._waypoints:AddWaypoint(trigger.id, {
-            time = trigger.time,
-            icon = Icon.Water,
-            position = pos,
-            class = self.Waypoints.Pausable,
-            remove_vanilla_waypoint = element,
-            restore_on_done = true
-        })
-        self._cache.HeliWaterFillPos = pos
-        self._cache.HeliWaterRestoreWP = element
-        return
-    end
-    self._trackers:AddTrackerIfDoesNotExist(trigger, trigger.pos)
+    local element = trigger.element
+    local pos = self:GetElementPositionOrDefault(element)
+    self._waypoints:AddWaypoint(trigger.id, {
+        time = trigger.time,
+        icon = Icon.Water,
+        position = pos,
+        class = self.Waypoints.Pausable,
+        remove_vanilla_waypoint = element,
+        restore_on_done = true
+    })
+    self._cache.HeliWaterFillPos = pos
+    self._cache.HeliWaterRestoreWP = element
 end
 ---@param self EHIManager
 ---@param id string
@@ -109,8 +101,8 @@ local function HeliWaterRefillWPRestore(self, id)
         self._cache.HeliWaterRestoreWP = nil
     end
 end
-for index, _ in pairs(IndexToWP) do
-    triggers[EHI:GetInstanceElementID(100032, index)] = { time = 240, id = "HeliWaterFill", icons = HeliWaterFill, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.crojob3_Water, waypoint_f = HeliWaterRefillWPAdd, index = index }
+for index, element in pairs(IndexToWP) do
+    triggers[EHI:GetInstanceElementID(100032, index)] = { time = 240, id = "HeliWaterFill", icons = HeliWaterFill, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.crojob3_Water, waypoint_f = HeliWaterRefillWPAdd, element = element }
     triggers[EHI:GetInstanceElementID(100030, index)] = { id = "HeliWaterFill", special_function = SF.PauseTracker }
     triggers[EHI:GetInstanceElementID(100037, index)] = { special_function = SF.Trigger, data = { 1, 2 } }
     triggers[EHI:GetInstanceElementID(100006, index)] = { special_function = SF.CustomCode2, f = HeliWaterRefillWPRestore, arg = "HeliWaterFill" }
@@ -123,7 +115,7 @@ local achievements =
     {
         elements =
         {
-            [103461] = { time = 5, class = TT.Achievement.Base, trigger_times = 1 },
+            [103461] = { time = 5, class = TT.Achievement.Base, trigger_once = true },
             [103458] = { special_function = SF.SetAchievementComplete }
         }
     },
@@ -131,12 +123,12 @@ local achievements =
     {
         elements =
         {
-            [101031] = { status = Status.Defend, class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+            [101031] = { status = Status.Defend, class = TT.Achievement.Status, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
                     self:CreateTracker(trigger)
                 end
             end) },
-            [103468] = { special_function = SF.SetAchievementFailed, trigger_times = 1 },
+            [103468] = { special_function = SF.SetAchievementFailed, trigger_once = true },
             [104357] = { special_function = SF.SetAchievementComplete }
         }
     },
@@ -146,7 +138,7 @@ local achievements =
         {
             [101041] = { status = Status.Defend, class = TT.Achievement.Status },
             [104426] = { special_function = SF.SetAchievementComplete },
-            [104364] = { special_function = SF.SetAchievementFailed, trigger_times = 1 }
+            [104364] = { special_function = SF.SetAchievementFailed, trigger_once = true }
         }
     }
 }
@@ -171,12 +163,12 @@ if EHI:IsLootCounterVisible() then
             client_from_start = true
         })
     end }
-    local RandomLootSpawnedCheck = EHI:RegisterCustomSF(function(self, trigger, ...)
+    local RandomLootSpawnedCheck = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self._loot:RandomLootSpawnedCheck(trigger.crate, true)
     end)
     -- 1 random loot in train wagon, 35% chance to spawn
     -- Wagons are selected randomly; sometimes 2 with possible loot spawns, sometimes 1
-    local IncreaseMaxRandomLoot = EHI:RegisterCustomSF(function(self, trigger, ...)
+    local IncreaseMaxRandomLoot = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         local index = trigger.index
         local crate = EHI:GetInstanceUnitID(100000, index)
         local loot_trigger = { special_function = RandomLootSpawnedCheck, crate = crate }
@@ -211,7 +203,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100521] = { id = "Snipers", special_function = SF.IncreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

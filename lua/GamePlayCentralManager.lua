@@ -4,7 +4,7 @@ if EHI:CheckLoadHook("GamePlayCentralManager") then
 end
 
 ---@class GamePlayCentralManager
----@field _mission_disabled_units table
+---@field _mission_disabled_units table<number, boolean>
 ---@field get_heist_timer fun(self: self): number
 
 local original =
@@ -32,13 +32,11 @@ function GamePlayCentralManager:load(data, ...)
 end
 
 ---@param id number
----@return boolean
-function GamePlayCentralManager:GetMissionDisabledUnit(id)
+function GamePlayCentralManager:IsMissionUnitDisabled(id)
     return self._mission_disabled_units[id]
 end
 
 ---@param id number
----@return boolean
-function GamePlayCentralManager:GetMissionEnabledUnit(id)
-    return not self:GetMissionDisabledUnit(id)
+function GamePlayCentralManager:IsMissionUnitEnabled(id)
+    return not self:IsMissionUnitDisabled(id)
 end

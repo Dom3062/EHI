@@ -9,7 +9,7 @@ EHIWaypoint._default_color = Color.white
 ---@param parent_class EHIWaypointManager
 function EHIWaypoint:init(waypoint, params, parent_class)
     self:pre_init(params)
-    self._id = params.id
+    self._id = params.id --[[@as string]]
     self._time = params.time or 0
     self._timer = waypoint.timer_gui
     self._bitmap = waypoint.bitmap
@@ -30,11 +30,6 @@ function EHIWaypoint:pre_init(params)
 end
 
 function EHIWaypoint:post_init(params)
-end
-
----@param new_id string
-function EHIWaypoint:UpdateID(new_id)
-    self._id = new_id
 end
 
 if EHI:GetOption("time_format") == 1 then
@@ -103,7 +98,7 @@ function EHIWaypoint:destroy()
     end
 end
 
-if EHI:IsVR() then
+if _G.IS_VR then
     EHIWaypointVR = EHIWaypoint
     EHIWaypointVR.old_SetColor = EHIWaypoint.SetColor
     ---@param color Color?

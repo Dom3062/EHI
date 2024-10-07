@@ -45,7 +45,7 @@ if EHI:IsSyncedLootCounterVisible() then
         local truck = 0
         local hook_function = tweak_data.ehi.functions.HookArmoredTransportUnit
         for enabled_unit_id, truck_id in pairs(trucks) do
-            if managers.game_play_central:GetMissionEnabledUnit(enabled_unit_id) then
+            if managers.game_play_central:IsMissionUnitEnabled(enabled_unit_id) then
                 truck = truck + 1
                 hook_function(truck_id)
                 if truck == count then
@@ -83,7 +83,7 @@ end
 if EHI:IsClient() then
     triggers[102379] = { run = { time = 30 + van_delay }, special_function = SF.AddTrackerIfDoesNotExist }
 end
-EHI:ParseTriggers({ mission = triggers, preload = preload, other = other }, "Escape", Icon.CarEscape)
+EHI.Manager:ParseTriggers({ mission = triggers, preload = preload, other = other }, "Escape", Icon.CarEscape)
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,
     hard = 3,

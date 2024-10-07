@@ -6,26 +6,26 @@ local other =
     [100116] = EHI:AddAssaultDelay({ control = 60 })
 }
 if EHI:IsLootCounterVisible() then
-    other[100107] = { special_function = SF.CustomCode, trigger_times = 1, f = function()
+    other[100107] = { special_function = SF.CustomCode, trigger_once = true, f = function()
         EHI:ShowLootCounterNoChecks({
             max = 6,
             max_random = 7,
             client_from_start = true
         })
     end}
-    other[100109] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    other[100109] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
         self._loot:RandomLootDeclined(7)
     end) }
-    other[107260] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    other[107260] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
         self._loot:RandomLootSpawned(7)
     end) }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     other = other
 })
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100358] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, sniper_count = 2 }
+    other[100358] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 2 }
     other[100359] = EHI:CopyTrigger(other[100358], { sniper_count = 3 })
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }

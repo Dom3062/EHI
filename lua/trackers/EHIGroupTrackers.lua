@@ -2,7 +2,6 @@
 ---@field super EHITracker
 EHIGroupTracker = class(EHITracker)
 EHIGroupTracker._init_create_text = false
----@param params EHITracker.params
 function EHIGroupTracker:post_init(params)
     self._timers = {} --[[@as EHIWarningGroupTracker.Timer[] ]]
     self._timers_n = 0
@@ -15,7 +14,6 @@ function EHIGroupTracker:post_init(params)
     end
 end
 
----@param dt number
 function EHIGroupTracker:update(dt)
     for i, timer in ipairs(self._timers) do
         timer.time = timer.time - dt
@@ -53,7 +51,6 @@ function EHIGroupTracker:AddFromTrigger(trigger)
     self:Add(trigger.time or 0, trigger.timer_id)
 end
 
----@param params ElementTrigger
 function EHIGroupTracker:Run(params)
     self:Add(params.time, params.id)
 end
@@ -122,6 +119,7 @@ function EHIGroupTracker:AnimateMovement(n, delete)
     self:AnimatePanelWAndRefresh(self._panel_override_w)
     self:ChangeTrackerWidth(self._panel_override_w)
     self:AnimIconsX(w + self._gap_scaled)
+    self:AnimateAdjustHintX(delete and -self._default_bg_size or self._default_bg_size)
     self:SetBGSize(w, "set", true)
 end
 
@@ -168,8 +166,6 @@ EHIWarningGroupTracker.RemoveByID = EHIGroupTracker.RemoveByID
 EHIWarningGroupTracker.AnimateMovement = EHIGroupTracker.AnimateMovement
 EHIWarningGroupTracker.AddUnit = EHIGroupTracker.AddUnit
 EHIWarningGroupTracker.RemoveUnit = EHIGroupTracker.RemoveUnit
-
----@param dt number
 function EHIWarningGroupTracker:update(dt)
     for i, timer in ipairs(self._timers) do
         timer.time = timer.time - dt
@@ -219,7 +215,6 @@ end
 ---@field super EHIProgressTracker
 EHIProgressGroupTracker = class(EHIProgressTracker)
 EHIProgressGroupTracker._init_create_text = false
----@param params EHITracker.params
 function EHIProgressGroupTracker:post_init(params)
     self._call_done_function_on_completion = params.call_done_function
     self._counters = 0
@@ -256,14 +251,33 @@ function EHIProgressGroupTracker:Add(progress, max, id)
     end
 end
 
----@param counters table
+---@param counters { progress: number, max: number, id: string }[]
 function EHIProgressGroupTracker:AddFromSync(counters)
+    local previous_counter = self._counters
     for _, counter in ipairs(counters) do
         self:Add(counter.progress or 0, counter.max or 0, counter.id)
     end
     for _, counter in pairs(self._counters_table) do
         if counter.progress == counter.max then
             self:_SetCompleted(counter.label)
+        end
+    end
+    if self._counters ~= previous_counter and self._counters >= 2 then
+        if previous_counter >= 1 then
+            previous_counter = previous_counter - 1
+        end
+        local x_diff = (self._default_bg_size * (self._counters - previous_counter - 1))
+        self:AdjustHintX(self._VERTICAL_ANIM_W_LEFT and -x_diff or x_diff)
+        if self._VERTICAL_ANIM_W_LEFT or self._PANEL_RIGHT_TO_LEFT then
+            self._panel:set_x(self._panel:x() - x_diff)
+            self:SetIconsX()
+            if self._PANEL_RIGHT_TO_LEFT and self._hint then
+                local hint_x = self._panel:x()
+                self._hint:set_w(self._panel:w())
+                self:FitTheText(self._hint, 18)
+                self._hint:set_x(hint_x)
+                self._hint_pos.x = hint_x
+            end
         end
     end
 end

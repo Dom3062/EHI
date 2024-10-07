@@ -121,10 +121,10 @@ if EHI:IsClient() then
     -- Not worth adding the 3s delay here
 end
 if EHI:GetOption("show_mission_trackers") then
-    local SetIngredient = EHI:RegisterCustomSF(function(self, trigger, ...)
+    local SetIngredient = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:CallFunction("ChemSet", "SetIngredient", trigger.pos or 1, trigger.id)
     end)
-    local ChemSet = EHI:RegisterCustomSF(function(self, trigger, ...)
+    local ChemSet = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:TrackerExists("ChemSet") then
             if trigger.waypoint then
                 self._waypoints:RemoveWaypoint("ChemSetCooking")
@@ -183,7 +183,7 @@ local achievements =
     {
         elements =
         {
-            [103025] = { time = 3, class = TT.Achievement.Base, trigger_times = 1 },
+            [103025] = { time = 3, class = TT.Achievement.Base, trigger_once = true },
             [102822] = { special_function = SF.SetAchievementComplete }
         }
     },
@@ -204,7 +204,7 @@ local other =
     [102065] = EHI:AddAssaultDelay({ control = 2 + 2 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 30 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, sniper_count = 2 }
+    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 30 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 2 }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -223,7 +223,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100025, 8000)] = { id = "SnipersBlackhawk", special_function = SF.CallCustomFunction, f = "SnipersKilled", arg = { 23 } }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

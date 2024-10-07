@@ -1,6 +1,6 @@
 ---@class EHISniperBaseTracker
 ---@field _count number
----@field _sniper_count number
+---@field _current_sniper_count number
 ---@field _single_sniper boolean
 ---@field _sniper_chance_color Color
 ---@field _sniper_text_color Color
@@ -36,7 +36,7 @@ end
 
 ---@param self EHISniperBaseTracker
 local function SniperSpawnedCheckCount(self)
-    if self._snipers_spawned_popup and self._sniper_count ~= self._count then
+    if self._snipers_spawned_popup and self._current_sniper_count ~= self._count then
         managers.hud:ShowSnipersSpawned(self._single_sniper, self._popup_icon)
     end
 end
@@ -68,7 +68,6 @@ end
 ---@class EHISniperWarningTracker : EHIWarningTracker, EHISniperBaseTracker
 ---@field super EHIWarningTracker
 EHISniperWarningTracker = ehi_sniper_class(EHIWarningTracker)
----@param params EHITracker.params
 function EHISniperWarningTracker:pre_init(params)
     self._single_sniper = params.single_sniper
 end
@@ -81,7 +80,6 @@ end
 ---@class EHISniperCountTracker : EHICountTracker, EHISniperBaseTracker
 ---@field super EHICountTracker
 EHISniperCountTracker = ehi_sniper_class(EHICountTracker, { override_text_color = true })
----@param params EHITracker.params
 function EHISniperCountTracker:pre_init(params)
     EHISniperCountTracker.super.pre_init(self, params)
     if self._snipers_spawned_popup then
@@ -110,7 +108,6 @@ function EHISniperCountTracker:SniperSpawnsSuccess()
     end
 end
 
----@param count number?
 function EHISniperCountTracker:DecreaseCount(count)
     EHISniperCountTracker.super.DecreaseCount(self, count)
     local n = count or 1
@@ -133,14 +130,12 @@ EHISniperChanceTracker.SetCount = EHICountTracker.SetCountNoNegative
 EHISniperChanceTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperChanceTracker.DecreaseCount = EHICountTracker.DecreaseCount
 EHISniperChanceTracker.FormatCount = EHICountTracker.FormatCount
----@param params EHITracker.params
 function EHISniperChanceTracker:pre_init(params)
     EHISniperChanceTracker.super.pre_init(self, params)
     EHICountTracker.pre_init(self, params)
     self._anim_flash_set_count = 1
 end
 
----@param params EHITracker.params
 function EHISniperChanceTracker:post_init(params)
     EHISniperChanceTracker.super.post_init(self, params)
     self._chance_text:set_color(self._sniper_chance_color)
@@ -187,7 +182,6 @@ EHISniperTimedTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperTimedTracker.DecreaseCount = EHICountTracker.DecreaseCount
 EHISniperTimedTracker.FormatCount = EHICountTracker.FormatCount
 EHISniperTimedTracker.Format = EHISniperTimedTracker.ShortFormat
----@param params EHITracker.params
 function EHISniperTimedTracker:pre_init(params)
     self._refresh_on_delete = true
     self._count = params.count or 0
@@ -232,7 +226,6 @@ EHISniperTimedCountTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperTimedCountTracker.DecreaseCount = EHICountTracker.DecreaseCount
 EHISniperTimedCountTracker.FormatCount = EHICountTracker.FormatCount
 EHISniperTimedCountTracker.SetCount = EHISniperTimedTracker.SetCount
----@param params EHITracker.params
 function EHISniperTimedCountTracker:pre_init(params)
     self._refresh_on_delete = true
     self._count = params.count or 0
@@ -243,7 +236,6 @@ function EHISniperTimedCountTracker:pre_init(params)
     self:SniperLogicStarted()
 end
 
----@param params EHITracker.params
 function EHISniperTimedCountTracker:post_init(params)
     if params.snipers_spawned then
         self._update = false
@@ -292,7 +284,6 @@ EHISniperTimedChanceTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHISniperTimedChanceTracker.Format = EHISniperTimedChanceTracker.ShortFormat
 EHISniperTimedChanceTracker._anim_chance = EHIChanceTracker._anim_chance
 EHISniperTimedChanceTracker.delete = EHIChanceTracker.delete
----@param params EHITracker.params
 function EHISniperTimedChanceTracker:pre_init(params)
     self._refresh_on_delete = true
     self._count = params.count or 0
@@ -307,12 +298,11 @@ function EHISniperTimedChanceTracker:pre_init(params)
     end
 end
 
----@param params EHITracker.params
 function EHISniperTimedChanceTracker:post_init(params)
     if params.chance_success then
         self._update = false
         self:SniperSpawnsSuccess()
-    else
+    elseif not params.no_logic_annoucement then
         self:SniperLogicStarted()
     end
 end
@@ -365,14 +355,12 @@ function EHISniperTimedChanceTracker:Refresh()
     end
 end
 
----@param count number
 function EHISniperTimedChanceTracker:SetCount(count)
     self._count = math.max(0, count)
     self._count_text:set_text(self:FormatCount())
     self:AnimateBG(1)
 end
 
----@param amount number
 function EHISniperTimedChanceTracker:SetChance(amount)
     self._chance = math.max(0, amount)
     if self._no_chance_reset and self._chance >= 100 then
@@ -411,7 +399,6 @@ EHISniperLoopTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHISniperLoopTracker._anim_chance = EHIChanceTracker._anim_chance
 EHISniperLoopTracker.delete = EHIChanceTracker.delete
 EHISniperLoopTracker.Format = EHISniperLoopTracker.ShortFormat
----@param params EHITracker.params
 function EHISniperLoopTracker:pre_init(params)
     self._refresh_on_delete = true
     self._count = 0
@@ -453,7 +440,6 @@ function EHISniperLoopTracker:OverridePanel()
     self:SetIconX()
 end
 
----@param time number
 function EHISniperLoopTracker:SetTimeNoAnim(time)
     self._time = time
     self._text:set_text(self:Format())
@@ -525,6 +511,7 @@ function EHISniperLoopTracker:RequestRemoval()
     self:AnimatePanelW(panel_w)
     self:AnimIconX(self._original_bg_size + self._gap_scaled)
     self:ChangeTrackerWidth(panel_w)
+    self:AnimateAdjustHintX(self._bg_box:w() - self._original_bg_size)
 end
 
 function EHISniperLoopTracker:ForceDelete()
@@ -537,7 +524,6 @@ end
 ---@class EHISniperLoopRestartTracker : EHISniperLoopTracker
 ---@field super EHISniperLoopTracker
 EHISniperLoopRestartTracker = class(EHISniperLoopTracker)
----@param params EHITracker.params
 function EHISniperLoopRestartTracker:post_init(params)
     EHISniperLoopRestartTracker.super.post_init(self, params)
     self._sniper_respawn = true
@@ -600,7 +586,6 @@ function EHISniperTimedChanceOnceTracker:SniperSpawnsSuccess(count)
     end
 end
 
----@param count number
 function EHISniperTimedChanceOnceTracker:SetCount(count)
     EHISniperTimedChanceOnceTracker.super.SetCount(self, count)
     if self._count == 0 then
@@ -612,11 +597,10 @@ end
 
 ---@class EHISniperHeliTracker : EHITracker, EHISniperBaseTracker
 ---@field super EHITracker
-EHISniperHeliTracker = ehi_sniper_class(EHITracker, { hint = "enemy_snipers_heli", icon = EHITracker._ONE_ICON and { { icon = EHI.Icons.Heli, color = Color.red } } or { EHI.Icons.Heli, "sniper" } })
+EHISniperHeliTracker = ehi_sniper_class(EHITracker, { hint = "enemy_snipers_heli", icons = EHITracker._ONE_ICON and { { icon = EHI.Icons.Heli, color = Color.red } } or { EHI.Icons.Heli, "sniper" } })
 EHISniperHeliTracker._refresh_on_delete = true
 EHISniperHeliTracker._single_sniper = true
 EHISniperHeliTracker._popup_icon = "EHI_Heli"
----@param params EHITracker.params
 function EHISniperHeliTracker:post_init(params)
     self._refresh_t = params.refresh_t or 0
     self:SniperLogicStarted()
@@ -654,7 +638,6 @@ end
 EHISniperHeliTimedChanceTracker = class(EHISniperTimedChanceTracker)
 EHISniperHeliTimedChanceTracker._forced_hint_text = "enemy_snipers_heli"
 EHISniperHeliTimedChanceTracker._forced_icons = EHISniperHeliTracker._forced_icons
----@param params EHITracker.params
 function EHISniperHeliTimedChanceTracker:pre_init(params)
     params.heli_sniper = true
     EHISniperHeliTimedChanceTracker.super.pre_init(self, params)

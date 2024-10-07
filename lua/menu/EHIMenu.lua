@@ -337,7 +337,7 @@ function EHIMenu:Close()
         self._controller:destroy()
         self._controller = nil
     end
-    EHI:Save()
+    EHI:SaveOptions()
 
     self._panel:stop()
     self._panel:animate(function(o)
@@ -1932,19 +1932,19 @@ function EHIMenu:UpdateXPDiffEnabled(menu, item)
 end
 
 function EHIMenu:IsVR()
-    return EHI:IsVR()
+    return _G.IS_VR
 end
 
 function EHIMenu:IsNotVR()
-    return not self:IsVR()
+    return not _G.IS_VR
 end
 
 function EHIMenu:GetBuffOffsetEnabled()
-    return EHI:GetOption("show_buffs") and not EHI:IsVR()
+    return EHI:GetOption("show_buffs") and not _G.IS_VR
 end
 
 function EHIMenu:GetBuffVROffsetEnabled()
-    return EHI:GetOption("show_buffs") and EHI:IsVR()
+    return EHI:GetOption("show_buffs") and _G.IS_VR
 end
 
 function EHIMenu:UpdateAllBuffOffset(menu, item)

@@ -22,7 +22,7 @@ local other =
     [100332] = EHI:AddSniperSpawnedPopup(true, true)
 }
 
-EHI:ParseTriggers({ mission = triggers, other = other, assault = { diff = 1 } })
+EHI.Manager:ParseTriggers({ mission = triggers, other = other, assault = { diff = 1 } })
 
 local tbl = {}
 if EHI:GetOption("show_waypoints") then

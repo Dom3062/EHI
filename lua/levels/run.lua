@@ -1,24 +1,24 @@
-local EHI = EHI
-local Icon = EHI.Icons
 ---@class EHIrun9Tracker : EHIAchievementUnlockTracker
 ---@field super EHIAchievementUnlockTracker
 EHIrun9Tracker = class(EHIAchievementUnlockTracker)
-function EHIrun9Tracker:update(...)
-    EHIrun9Tracker.super.update(self, ...)
-    if self._time <= 0 then
-        self._text:stop()
-        self._achieved_popup_showed = true
-        self:SetTextColor(Color.green)
-        self:SetStatusText("finish")
-        self:AnimateBG()
-        self:RemoveTrackerFromUpdate()
-    end
+EHIrun9Tracker._refresh_on_delete = true
+function EHIrun9Tracker:Refresh()
+    self._text:stop()
+    self._achieved_popup_showed = true
+    self:SetTextColor(Color.green)
+    self:SetStatusText("finish")
+    self:AnimateBG()
+    self:RemoveTrackerFromUpdate()
 end
 
+local EHI = EHI
+local Icon = EHI.Icons
+local Hints = EHI.Hints
 ---@class EHIGasTracker : EHIProgressTracker
 ---@field super EHIProgressTracker
 EHIGasTracker = class(EHIProgressTracker)
 EHIGasTracker._forced_icons = { Icon.Fire }
+EHIGasTracker._forced_hint_text = Hints.run_Gas
 function EHIGasTracker:Format()
     if self._max == 0 then
         return self._progress .. "/?"
@@ -34,8 +34,7 @@ EHIZoneTracker.SetCompleted = EHIAchievementTracker.SetCompleted
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local Hints = EHI.Hints
-local SetProgressMax = EHI:RegisterCustomSF(function(self, trigger, ...)
+local SetProgressMax = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
     if self._cache.ProgressMaxSet then
         return
     elseif self._trackers:CallFunction2(trigger.id, "SetProgressMax", trigger.max) then
@@ -43,8 +42,7 @@ local SetProgressMax = EHI:RegisterCustomSF(function(self, trigger, ...)
             id = trigger.id,
             progress = 1,
             max = trigger.max,
-            class = "EHIGasTracker",
-            hint = Hints.run_Gas
+            class = "EHIGasTracker"
         })
     end
     self._cache.ProgressMaxSet = true
@@ -59,7 +57,7 @@ local triggers = {
 
     [101967] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, waypoint = { data_from_element_and_remove_vanilla_waypoint = 100372, restore_on_done = true }, hint = Hints.friend_Heli },
 
-    [100144] = { id = "GasAmount", class = "EHIGasTracker", trigger_times = 1, hint = Hints.run_Gas },
+    [100144] = { id = "GasAmount", class = "EHIGasTracker", trigger_once = true },
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins
 
     [1] = { id = "GasAmount", special_function = SF.IncreaseProgress },
@@ -118,7 +116,7 @@ local achievements =
             [100144] = { special_function = SF.SetAchievementFailed }
         },
         cleanup_callback = function()
-            EHIrun9Tracker = nil ---@diagnostic disable-line
+            _G.EHIrun9Tracker = nil
         end
     },
     run_10 =
@@ -135,10 +133,49 @@ local achievements =
 
 local other =
 {
-    [101486] = EHI:AddAssaultDelay({ trigger_times = 1 }) -- 30s
+    [101486] = EHI:AddAssaultDelay({ trigger_once = true }), -- 30s
+    [101406] = EHI:AddSniperSpawnedPopup(true),
+    [103455] = EHI:AddSniperSpawnedPopup(true),
+    [103575] = EHI:AddSniperSpawnedPopup(),
+    [103576] = EHI:AddSniperSpawnedPopup(),
+    [103577] = EHI:AddSniperSpawnedPopup(true),
+    [100567] = EHI:AddSniperSpawnedPopup(true)
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    local SetRespawnTime = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+        local id = trigger.id
+        local t = trigger.time
+        if self._trackers:CallFunction2(id, "SetRespawnTime", t) then
+            self._trackers:AddTracker({
+                id = id,
+                time = t,
+                count_on_refresh = 1,
+                class = TT.Sniper.TimedCount
+            })
+        end
+    end)
+    if EHI:IsHost() then
+        local element = managers.mission:get_element_by_id(103674) --[[@as ElementLogicChance?]]
+        if element then
+            element:add_trigger("EHITrigger", "success", function()
+                managers.ehi_tracker:AddTracker({
+                    id = "Snipers",
+                    count_on_refresh = 1,
+                    snipers_spawned = true,
+                    class = TT.Sniper.TimedCount
+                })
+            end)
+        end
+    else
+        other[103674] = { id = "Snipers", count_on_refresh = 1, class = TT.Sniper.TimedCount, trigger_once = true, snipers_spawned = true }
+    end
+    other[103671] = { time = 30, id = "Snipers", special_function = SetRespawnTime }
+    other[103672] = { time = 45, id = "Snipers", special_function = SetRespawnTime }
+    other[103673] = { time = 60, id = "Snipers", special_function = SetRespawnTime }
+    other[103670] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

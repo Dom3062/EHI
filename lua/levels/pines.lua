@@ -12,7 +12,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local SetChanceWhenTrackerExists = EHI:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
+local SetChanceWhenTrackerExists = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
     if self._trackers:TrackerExists(trigger.merge_id) then
         self._trackers:SetChance(trigger.merge_id, element._values.chance)
     elseif self._trackers:TrackerExists(trigger.id) then
@@ -35,7 +35,7 @@ local triggers = {
     [101003] = { time = 600, id = "PresentDrop", icons = PresentDropTimer, class = TT.Warning, hint = Hints.pines_ChanceReduction, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
     [101004] = { time = 600, id = "PresentDrop", icons = PresentDropTimer, class = TT.Warning, hint = Hints.pines_ChanceReduction, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
     [101045] = { additional_time = 50, random_time = 10, id = "WaitTime", icons = { Icon.Heli, Icon.Wait }, hint = Hints.Wait },
-    [100024] = { time = 23, id = "HeliSanta", icons = { Icon.Heli, "Other_H_None_Merry" }, trigger_times = 1, hint = Hints.pines_Santa },
+    [100024] = { time = 23, id = "HeliSanta", icons = { Icon.Heli, "Other_H_None_Merry" }, trigger_once = true, hint = Hints.pines_Santa },
     [105102] = { time = 30, id = "HeliLoot", icons = Icon.HeliEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape },
 
     [101005] = chance,
@@ -56,8 +56,8 @@ local achievements =
         }
     }
 }
-if EHI:EscapeVehicleWillReturn() then
-    preload[1] = { id = "HeliLootTakeOff", icons = Icon.HeliWait, class = TT.Warning, hide_on_delete = true }
+if EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn() then
+    table.insert(preload, { id = "HeliLootTakeOff", icons = Icon.HeliWait, class = TT.Warning, hint = Hints.LootTimed, hide_on_delete = true })
     -- Hooked to 105072 instead of 105076 to track the take off accurately
     triggers[105072] = { id = "HeliLootTakeOff", run = { time = 82 } }
 end
@@ -75,7 +75,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

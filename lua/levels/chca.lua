@@ -199,7 +199,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         veryhard_or_below = 1,
         overkill_or_above = 2
     })
-    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, single_sniper = sniper_count == 1, sniper_count = sniper_count }
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, single_sniper = sniper_count == 1, sniper_count = sniper_count }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -223,7 +223,7 @@ if EHI:IsLootCounterVisible() then
     for i = 100034, 100041, 1 do
         units[EHI:GetInstanceUnitID(i, 15470)] = true
     end
-    local LootLeftInVault = EHI:RegisterCustomSF(function(self, ...)
+    local LootLeftInVault = EHI.Manager:RegisterCustomSF(function(self, ...)
         local destroyed = 0
         for unit_id, _ in pairs(units) do
             local unit = managers.worlddefinition:get_unit(unit_id) ---@cast unit UnitBase?
@@ -233,7 +233,7 @@ if EHI:IsLootCounterVisible() then
         end
         self._loot:DecreaseLootCounterProgressMax(destroyed)
     end)
-    local C4Plan = EHI:RegisterCustomSF(function(self, ...)
+    local C4Plan = EHI.Manager:RegisterCustomSF(function(self, ...)
         local bags = 16
         if self._cache.chca_TeasetInMeetingRoom and not self._cache.chca_GlassDestroyed then
             bags = bags + 1
@@ -254,7 +254,7 @@ if EHI:IsLootCounterVisible() then
             hook_triggers = true,
             client_from_start = true
         })
-        if managers.game_play_central:GetMissionEnabledUnit(103818) then
+        if managers.game_play_central:IsMissionUnitEnabled(103818) then
             self._cache.chca_TeasetInMeetingRoom = true
         end
     end, true)
@@ -268,7 +268,7 @@ if EHI:IsLootCounterVisible() then
     other[101413] = MiniSafeMoneyBagFound
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -348,13 +348,13 @@ local total_xp_override =
     }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         custom =
         {
             {
                 name = "stealth",
-                tactic =
+                plan =
                 {
                     objectives = stealth_objectives,
                     loot_all = 500,
@@ -363,7 +363,7 @@ EHI:AddXPBreakdown({
             },
             {
                 name = "loud",
-                tactic =
+                plan =
                 {
                     objectives = loud_objectives,
                     loot_all = 500,
@@ -373,7 +373,7 @@ EHI:AddXPBreakdown({
             {
                 name = "loud",
                 additional_name = "china3_c4",
-                tactic =
+                plan =
                 {
                     objectives = loud_c4_objectives,
                     loot_all = 500,
@@ -392,7 +392,7 @@ EHI:AddXPBreakdown({
             {
                 name = "loud",
                 additional_name = "china3_most_xp",
-                tactic =
+                plan =
                 {
                     objectives = loud_objectives,
                     loot_all = 500,

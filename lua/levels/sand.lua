@@ -126,7 +126,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         overkill_or_below = 2,
         mayhem_or_above = 3
     })
-    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, sniper_count = sniper_count }
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, sniper_count = sniper_count }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -137,7 +137,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -179,7 +179,7 @@ if EHI:GetOption("show_waypoints") then
 end
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

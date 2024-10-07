@@ -97,7 +97,6 @@ function EHIBuffTracker:init(panel, params, parent_class)
 	})
     if circle_shape then
         bg_box:bitmap({
-            name = "bg",
             layer = -1,
             w = bg_box:w(),
             h = bg_box:h(),
@@ -107,7 +106,6 @@ function EHIBuffTracker:init(panel, params, parent_class)
     else
         bg_box:rect({
             blend_mode = "normal",
-            name = "bg",
             halign = "grow",
             alpha = 0.25,
             layer = -1,

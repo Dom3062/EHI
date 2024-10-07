@@ -41,7 +41,7 @@ local achievements =
 }
 EHI:PreparseBeardlibAchievements(achievements, "street_new_achievements", { run_9 = true })
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })

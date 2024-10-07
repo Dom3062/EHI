@@ -103,7 +103,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[103761] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({ achievement = achievements, other = other, assault = { wave_move_elements_block = { 100352, 100353 } } })
+EHI.Manager:ParseTriggers({ achievement = achievements, other = other, assault = { wave_move_elements_block = { 100352, 100353 } } })
 
 EHI:SetMissionDoorData({
     -- Security doors
@@ -122,7 +122,7 @@ local xp_override =
     }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

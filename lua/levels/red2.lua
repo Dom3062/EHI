@@ -136,7 +136,7 @@ local achievements =
         {
             [101341] = { time = 30, class = "EHIcac10Tracker", condition_function = CF.IsLoud },
             [107072] = { special_function = SF.SetAchievementComplete },
-            [101544] = { special_function = SF.CallTrackerManagerFunction, f = "StartTrackerCountdown", arg = { "cac_10" }, trigger_times = 1 },
+            [101544] = { special_function = SF.CallTrackerManagerFunction, f = "StartTrackerCountdown", arg = { "cac_10" }, trigger_once = true },
             [107066] = { special_function = SF.IncreaseProgressMax },
             [107067] = { special_function = SF.IncreaseProgress },
         }
@@ -145,10 +145,10 @@ local achievements =
 
 local other =
 {
-    [100850] = EHI:AddAssaultDelay({ control = 20, trigger_times = 1 }),
+    [100850] = EHI:AddAssaultDelay({ control = 20, trigger_once = true }),
 }
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -176,11 +176,11 @@ local loud_objectives =
     { amount = 2000, name = "fwb_c4_escape" },
     { escape = 4000 } -- 2000 + 2000 (loud escape)
 }
-local custom_tactic =
+local custom_plan =
 {
     {
         name = "stealth",
-        tactic =
+        plan =
         {
             objectives =
             {
@@ -210,7 +210,7 @@ local custom_tactic =
     },
     {
         name = "loud",
-        tactic =
+        plan =
         {
             objectives = loud_objectives,
             loot_all = 1000,
@@ -228,12 +228,12 @@ local custom_tactic =
     }
 }
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
-    custom_tactic[3] = {
+    custom_plan[3] = {
         name = "loud",
         additional_name = "fwb_overdrill",
-        tactic =
+        plan =
         {
-            objectives = loud_objectives,
+            objectives = deep_clone(loud_objectives),
             loot =
             {
                 money = 1000,
@@ -258,13 +258,13 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
         {
             add_objectives_with_pos =
             {
-                { objective = { amount = 40000, name = "fwb_overdrill" }, pos = 5 }
+                { objective = { amount = 40000, name = "fwb_overdrill", optional = true }, pos = 5 }
             }
         }
     }
 end
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         custom = custom_tactic
     }

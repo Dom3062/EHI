@@ -35,7 +35,7 @@ local achievements =
     {
         elements =
         {
-            [100074] = { status = Status.Alarm, class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+            [100074] = { status = Status.Alarm, class = TT.Achievement.Status, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
                 if self:InteractionExists("circuit_breaker_off") then
                     self:CreateTracker(trigger)
                 end
@@ -67,7 +67,7 @@ if EHI:IsLootCounterVisible() then
         end
         EHI:ShowLootCounterNoChecks({ max = 10 - jewelry_to_subtract, client_from_start = true })
     end, true)
-    local DecreaseProgressMax = EHI:RegisterCustomSF(function(self, ...)
+    local DecreaseProgressMax = EHI.Manager:RegisterCustomSF(function(self, ...)
         self._loot:DecreaseLootCounterProgressMax()
     end)
     other[101613] = { special_function = DecreaseProgressMax }
@@ -100,7 +100,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[103181] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103192 } }
     other[101770] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101776 } }
 end
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

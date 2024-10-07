@@ -39,6 +39,8 @@ else
 end
 triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning, hint = Hints.Teargas }
 triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning, hint = Hints.Teargas }
+triggers[104736] = { time = 616/30, id = "SWATTurretArrival2", icons = { Icon.Turret, Icon.Goto }, class = EHI.Trackers.Warning, waypoint = { icon = Icon.Turret, position = Vector3(-420.226, -1011.89, 225.056) }, trigger_once = true }
+triggers[104737] = { time = 752/30, id = "SWATTurretArrival1", icons = { Icon.Turret, Icon.Goto }, class = EHI.Trackers.Warning, waypoint = { icon = Icon.Turret, position = Vector3(805.013, 2253.48, 224.916) }, trigger_once = true }
 
 achievements.voff_1 =
 {
@@ -58,7 +60,7 @@ other[105364] = EHI:AddAssaultDelay({ control = 10 + 60, special_function = SF.A
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100438] = { chance = 10, time = 30 + 60, id = "Snipers", class = TT.Sniper.Loop, single_sniper = true }
     other[105327] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[101481] = { id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+    other[101481] = { id = "Snipers", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         local id = trigger.id
         self._trackers:SetChance(id, element._values.chance) -- 20%
         self._trackers:SetTrackerTimeNoAnim(id, 60)
@@ -95,26 +97,25 @@ if EHI:IsLootCounterVisible() then
         104147, 101255, 101250, 104216, 104196, 104234, 104232, 104204, 104202, 104150,
         104148, 101254, 101251, 104211, 104201, 104233, 104203, 104149, 101253, 104206
     }
-    local is_not_firestarter_3 = Global.game_settings.level_id ~= "firestarter_3"
-    local is_not_deposit = Global.game_settings.level_id ~= "branchbank_deposit"
+    local has_bags = Global.game_settings.level_id ~= "firestarter_3" and Global.game_settings.level_id ~= "branchbank_deposit"
     other[105762] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({
             max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot2(deposit_boxes),
             client_from_start = true,
-            unknown_random = is_not_firestarter_3 and is_not_deposit
+            unknown_random = has_bags
         })
     end)
-    other[103372] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    other[103372] = EHI:AddCustomCode(function(self)
         if not self._trackers:TrackerExists("LootCounter") then
             self:Trigger(105762) --- You had your last chance here, son.
         end
         self._loot:SetUnknownRandomLoot()
-    end) }
-    if is_not_firestarter_3 and is_not_deposit then
-        other[104647] = other[103372]
-        local LootVisible = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    end)
+    other[104647] = other[103372] -- Second vault position
+    if has_bags then
+        local LootVisible = EHI:AddCustomCode(function(self)
             self._loot:IncreaseLootCounterProgressMax()
-        end) }
+        end)
         for i = 104543, 104553, 1 do
             other[i] = LootVisible
         end
@@ -125,7 +126,7 @@ if EHI:IsLootCounterVisible() then
     end
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -164,11 +165,10 @@ local dog_haters =
     [Idstring("units/payday2/characters/civ_male_dog_abuser_1/civ_male_dog_abuser_1"):key()] = true,
     [Idstring("units/payday2/characters/civ_male_dog_abuser_2/civ_male_dog_abuser_2"):key()] = true
 }
-EHI:AddLoadSyncFunction(function(self)
-    local dog_haters_unit = {}
+EHI.Manager:AddLoadSyncFunction(function(self)
+    local dog_haters_unit = {} ---@type UnitCivilian[]
     local count = 0
-    local civies = managers.enemy:all_civilians()
-    for _, data in pairs(civies or {}) do
+    for _, data in pairs(managers.enemy:all_civilians()) do
         local name_key = data.unit:name():key()
         if dog_haters[name_key] then
             count = count + 1
@@ -184,9 +184,9 @@ EHI:AddLoadSyncFunction(function(self)
         return
     end
     -- Exit areas share the same space
-    local secure_area_1 = managers.mission:get_element_by_id(105674) -- ´dog_abuse_trigger_enter_001´ ElementAreaTrigger 105674
-    local secure_area_2 = managers.mission:get_element_by_id(105678) -- ´dog_abuse_trigger_enter_002´ ElementAreaTrigger 105678
-    local secure_area_3 = managers.mission:get_element_by_id(105679) -- ´dog_abuse_trigger_enter_003´ ElementAreaTrigger 105679
+    local secure_area_1 = managers.mission:get_element_by_id(105674) --[[@as ElementAreaTrigger?]] -- ´dog_abuse_trigger_enter_001´ ElementAreaTrigger 105674
+    local secure_area_2 = managers.mission:get_element_by_id(105678) --[[@as ElementAreaTrigger?]] -- ´dog_abuse_trigger_enter_002´ ElementAreaTrigger 105678
+    local secure_area_3 = managers.mission:get_element_by_id(105679) --[[@as ElementAreaTrigger?]] -- ´dog_abuse_trigger_enter_003´ ElementAreaTrigger 105679
     if not (secure_area_1 and secure_area_2 and secure_area_3) then
         return
     end
@@ -211,13 +211,21 @@ EHI:AddOnSpawnedCallback(function()
         local function fail(...)
             managers.ehi_achievement:SetAchievementFailed("voff_1")
         end
-        local civies = managers.enemy:all_civilians()
-        for _, data in pairs(civies or {}) do
+        local count = 0
+        for _, data in pairs(managers.enemy:all_civilians()) do
             local name_key = data.unit:name():key()
             if dog_haters[name_key] then
                 data.unit:base():add_destroy_listener("EHI_" .. tostring(name_key), fail)
+                count = count + 1
+                if count == 2 then
+                    break
+                end
             end
         end
         dog_haters = nil
+        if count ~= 2 or EHI:IsHost() or managers.ehi_tracker:TrackerExists("voff_1") then
+            return
+        end
+        managers.ehi_manager:Trigger(105665)
     end
 end)

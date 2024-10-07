@@ -46,7 +46,6 @@ end
 function EHISkillRefreshBuffTracker:PreUpdate2()
 end
 
----@param dt number
 function EHISkillRefreshBuffTracker:update(dt)
     self._time = self._time - dt
     if self._time <= 0 then

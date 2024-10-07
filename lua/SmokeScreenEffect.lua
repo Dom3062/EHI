@@ -12,7 +12,6 @@ if show_waypoint then
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers)
         ---@class EHISmokeBombWaypoint : EHIWaypoint
         EHISmokeBombWaypoint = class(EHIWaypoint)
-        ---@param params table
         function EHISmokeBombWaypoint:post_init(params)
             self:SetColor(params.color)
         end

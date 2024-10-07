@@ -92,11 +92,10 @@ end
 function EHILootManager:AddListener(no_sync_load)
     if not self:HasEventListener("LootCounter") then
         local BagsOnly = EHI.Const.LootCounter.CheckType.BagsOnly
-        ---@param loot LootManager
         self:AddEventListener("LootCounter", function(loot)
             self._trackers:SetTrackerProgress("LootCounter", loot:EHIReportProgress(BagsOnly))
         end)
-        -- If sync load is disabled, the counter needs to be updated via EHIManager:AddLoadSyncFunction() to properly show number of secured loot
+        -- If sync load is disabled, the counter needs to be updated via `EHIManager:AddLoadSyncFunction()` to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
         if not no_sync_load then
             ---@param loot LootManager
@@ -149,7 +148,6 @@ function EHILootManager:AddAchievementListener(params, endless_counter)
     end
 end
 
----@param id string
 ---@param f fun(loot: LootManager)
 function EHILootManager:AddEventListener(id, f)
     EHILootManager.super.AddEventListener(self, id, EHI.CallbackMessage.LootSecured, f)

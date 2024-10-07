@@ -2,7 +2,6 @@
 ---@field super EHIBuffTracker
 EHIMeleeChargeBuffTracker = class(EHIBuffTracker)
 EHIMeleeChargeBuffTracker._inverted_progress = true
----@param dt number
 function EHIMeleeChargeBuffTracker:update(dt)
     self._time = self._time - dt
     self._hint:set_text(self:Format())

@@ -5,7 +5,6 @@ EHIPhalanxChanceTracker._forced_icons = { "buff_shield" }
 EHIPhalanxChanceTracker._paused_color = EHIPausableTracker._paused_color
 EHIPhalanxChanceTracker._forced_hint_text = "phalanx_chance"
 EHIPhalanxChanceTracker.IsHost = EHI:IsHost()
----@param params EHITracker.params
 function EHIPhalanxChanceTracker:pre_init(params)
     if params.first_assault then
         self._first_assault = true
@@ -15,7 +14,7 @@ function EHIPhalanxChanceTracker:pre_init(params)
     params.start_opened = not self._first_assault
     EHIPhalanxChanceTracker.super.pre_init(self, params)
 end
----@param params EHITracker.params
+
 function EHIPhalanxChanceTracker:post_init(params)
     self._t_refresh = params.time
     self._chance_increase = params.chance_increase
@@ -27,7 +26,6 @@ function EHIPhalanxChanceTracker:post_init(params)
     EHIPhalanxChanceTracker.super.post_init(self, params)
 end
 
----@param dt number
 function EHIPhalanxChanceTracker:update(dt)
     EHIPhalanxChanceTracker.super.update(self, dt)
     self._assault_t = self._assault_t - dt

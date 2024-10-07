@@ -73,18 +73,31 @@ end
 
 ---@param id number
 function HUDManager:RestoreWaypoint(id)
-    local data = self._hud.stored_waypoints[id]
-    if data then
-        self:add_waypoint(id, data)
-        self._hud.stored_waypoints[id] = nil
+    local wp_data = table.remove_key(self._hud.stored_waypoints, id)
+    if wp_data then
+        self:add_waypoint(id, wp_data)
     end
-    if type(self._hud.ehi_removed_waypoints) == "table" then
+    if self._hud.ehi_removed_waypoints then
         self._hud.ehi_removed_waypoints[id] = nil
     end
 end
 
 ---@param id number
 function HUDManager:RestoreWaypoint2(id)
+    self:RestoreWaypoint(id)
+    EHI:RestoreElementWaypoint(id)
+end
+
+---@param id number
+function HUDManager:RemoveTimerWaypoint(id)
+    self:SoftRemoveWaypoint(id)
+    EHI._cache.IgnoreWaypoints[id] = true
+    EHI:DisableElementWaypoint(id)
+end
+
+---@param id number
+function HUDManager:RestoreTimerWaypoint(id)
+    EHI._cache.IgnoreWaypoints[id] = nil
     self:RestoreWaypoint(id)
     EHI:RestoreElementWaypoint(id)
 end

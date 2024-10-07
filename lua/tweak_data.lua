@@ -802,10 +802,10 @@ tweak_data.ehi =
     },
     functions =
     {
-        ---@param check_level? boolean
-        uno_1 = function(check_level)
+        ---@param check_job? boolean
+        uno_1 = function(check_job)
             local achievement = tweak_data.achievement.complete_heist_achievements.uno_1
-            if check_level and not table.contains(achievement.jobs, managers.job:current_job_id()) then
+            if check_job and not table.contains(achievement.jobs, managers.job:current_job_id()) then
                 return
             end
             EHI:ShowAchievementBagValueCounter({
@@ -867,7 +867,7 @@ tweak_data.ehi =
             end
             return n
         end,
-        ---Checks provided deposit boxes that scripted to spawn loot when opened
+        ---Checks provided deposit boxes that are scripted to spawn loot when opened
         ---@param from_box number
         ---@param to_box number
         GetNumberOfDepositBoxesWithLoot = function(from_box, to_box)
@@ -881,7 +881,7 @@ tweak_data.ehi =
             end
             return n
         end,
-        ---Checks provided deposit boxes that scripted to spawn loot when opened
+        ---Checks provided deposit boxes that are scripted to spawn loot when opened
         ---@param boxes number[]
         GetNumberOfDepositBoxesWithLoot2 = function(boxes)
             local n = 0

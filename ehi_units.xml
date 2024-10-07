@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<tweaks>
+    <!-- Loot -->
+    <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_special_money" extension="unit">
+        <search>
+            <?xml version="1.0"?>
+            <unit type="bnk" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHICarryData"/>
+        </target>
+    </tweak>
+    <!-- <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_special_gold" extension="unit">
+        <search>
+            <?xml version="1.0"?>
+            <unit type="bnk" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHICarryData"/>
+        </target>
+    </tweak> -->
+    <!-- Small loot (no lootbag) -->
+    <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_a" extension="unit">
+        <search>
+            <unit type="bnk" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHINoCarryData"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_b" extension="unit">
+        <search>
+            <unit type="bnk" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHINoCarryData"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_c" extension="unit">
+        <search>
+            <unit type="bnk" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHINoCarryData"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_d" extension="unit">
+        <search>
+            <unit type="bnk" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHINoCarryData"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_e" extension="unit">
+        <search>
+            <unit type="bnk" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHINoCarryData"/>
+        </target>
+    </tweak>
+    <!-- Crap (no loot) -->
+    <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_a" extension="unit">
+        <search>
+            <unit type="bnk" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHINoCarryData"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_b" extension="unit">
+        <search>
+            <unit type="bnk" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHINoCarryData"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_c" extension="unit">
+        <search>
+            <unit type="bnk" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHINoCarryData"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_d" extension="unit">
+        <search>
+            <unit type="bnk" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHINoCarryData"/>
+        </target>
+    </tweak>
+    <!-- Fixes -->
+    <!-- Reservoir Dogs Day 2 (Warehouse) / Buluc's Mansion -->
+    <tweak version="2" name="units/pd2_dlc_rvd/equipment/rvd_interactable_saw_no_jam/rvd_interactable_saw_no_jam" extension="unit">
+        <search>
+            <?xml version="1.0"?>
+            <unit type="apa" slot="1"/>
+            <extensions/>
+            <extension name="base" class="Drill"/>
+        </search>
+        <target mode="attach">
+            <var name="_disable_upgrades" value="true" />
+        </target>
+    </tweak>
+</tweaks>

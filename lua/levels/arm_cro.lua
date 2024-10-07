@@ -41,7 +41,7 @@ if EHI:IsSyncedLootCounterVisible() then
         local truck = 0
         local hook_function = tweak_data.ehi.functions.HookArmoredTransportUnit
         for enabled_unit_id, truck_id in pairs(trucks) do
-            if managers.game_play_central:GetMissionEnabledUnit(enabled_unit_id) then
+            if managers.game_play_central:IsMissionUnitEnabled(enabled_unit_id) then
                 truck = truck + 1
                 hook_function(truck_id)
                 if truck == count then
@@ -82,7 +82,7 @@ if EHI:GetOption("show_escape_chance") then
     end)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100122] = { chance = 10, time = 60 + 1 + 25 + 35, on_fail_refresh_t = 35, on_success_refresh_t = 20 + 25 + 35, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, sniper_count = 2 }
+    other[100122] = { chance = 10, time = 60 + 1 + 25 + 35, on_fail_refresh_t = 35, on_success_refresh_t = 20 + 25 + 35, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 2 }
     other[100015] = EHI:CopyTrigger(other[100122], { time = 1 + 25 + 35 }, SF.AddTrackerIfDoesNotExist)
     other[100385] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
@@ -98,7 +98,7 @@ local MinBags = EHI:GetValueBasedOnDifficulty({
     veryhard = 4,
     overkill_or_above = 5
 })
-EHI:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
+EHI.Manager:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 EHI:AddXPBreakdown({
     objective =
     {

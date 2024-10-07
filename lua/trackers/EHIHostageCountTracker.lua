@@ -32,7 +32,6 @@ else -- Police | Civilians
 end
 EHIHostageCountTracker.FormatCount = EHIHostageCountTracker.Format
 
----@param params EHITracker.params
 function EHIHostageCountTracker:pre_init(params)
     self._total_hostages = 0
     self._civilian_hostages = 0

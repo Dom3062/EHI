@@ -1,3 +1,5 @@
+---@alias CoreWorldInstanceManager.Instance { name: string, folder: string, start_index: number, index_size: number, continent: string, rotation: Rotation, mission_placed: boolean }
+
 ---@class CoreWorldInstanceManager
 ---@field _get_instance_continent_data fun(self: self, path: string): WorldDefinition._continent_definition
 ---@field get_instance_data_by_name fun(self: self, instance_name: string): CoreWorldInstanceManager.Instance?
@@ -468,7 +470,7 @@ local instances =
         [100047] = { id = "trai_CraneMove", special_function = SF.PauseTracker },
         [100059] = { id = "trai_CraneMove", special_function = SF.UnpauseTracker },
         [100060] = { id = "trai_CraneMove", special_function = SF.PauseTracker },
-        [100046] = { time = 20, chance = 30, id = "trai_CraneFixChance", class = "EHICraneFixChanceTracker", trigger_times = 1, start_opened = true, hint = Hints.trai_Crane },
+        [100046] = { time = 20, chance = 30, id = "trai_CraneFixChance", class = "EHICraneFixChanceTracker", trigger_once = true, start_opened = true, hint = Hints.trai_Crane },
         [100035] = { id = "trai_CraneFixChance", special_function = SF.IncreaseChanceFromElement }, -- +10%
         [100039] = { id = "trai_CraneFixChance", special_function = SF.SetAchievementFailed }, -- Players need to fix the crane, runs once (Won't trigger "ACHIEVEMENT FAILED!" popup)
         [100220] = { chance = 33, id = "trai_LocomotiveStartChance", icons = { Icon.Power }, class = TT.Chance, hint = Hints.trai_LocoStart },
@@ -517,7 +519,7 @@ instances["levels/instances/unique/xmn/xmn_breakout_road001/world"] = instances[
 EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param managers managers
     --[[
         Can't check if the interaction is/was enabled because after ECM has been triggered because it will enable interaction regardless if it is visible or not -> see element 100176
-        A big oversight from OVK, very bad
+        A big oversight from OVK, very bad  
         Checking if buttons have body visible is much more reliable
         It has to stay like this until OVK fixes it
     ]]
@@ -568,8 +570,7 @@ end
 local original =
 {
     prepare_mission_data = CoreWorldInstanceManager.prepare_mission_data,
-    prepare_unit_data = CoreWorldInstanceManager.prepare_unit_data,
-    custom_create_instance = CoreWorldInstanceManager.custom_create_instance
+    prepare_unit_data = CoreWorldInstanceManager.prepare_unit_data
 }
 
 local EHIConfig =
@@ -658,7 +659,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                     triggers[final_index] = new_trigger
                 end
             end
-            EHI:ParseMissionInstanceTriggers(triggers, defer_loading_waypoints)
+            managers.ehi_manager:ParseMissionInstanceTriggers(triggers, defer_loading_waypoints)
             if next(waypoints) then
                 EHI:DisableWaypoints(waypoints)
             end
@@ -697,15 +698,14 @@ function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ..
 end
 
 ---@param instance_name string
-function CoreWorldInstanceManager:custom_create_instance(instance_name, ...)
-    original.custom_create_instance(self, instance_name, ...)
+Hooks:PostHook(CoreWorldInstanceManager, "custom_create_instance", "EHI_CoreWorldInstanceManager_custom_create_instance", function(self, instance_name, ...)
     local instance = self:get_instance_data_by_name(instance_name)
     if instance then
         managers.worlddefinition:OverrideUnitsInMissionPlacedInstance(instance)
         EHI:FinalizeUnits(EHI._cache.InstanceMissionUnits)
         EHI:FinalizeUnits(EHI._cache.InstanceUnits)
     end
-end
+end)
 
 Hooks:PostHook(CoreWorldInstanceManager, "init", "EHI_CoreWorldInstanceManager_init", function(...)
     units = tweak_data.ehi.units

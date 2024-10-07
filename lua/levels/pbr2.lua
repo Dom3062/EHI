@@ -90,7 +90,7 @@ local achievements =
 
 local other =
 {
-    [100653] = EHI:AddAssaultDelay({ control = 2 + 15, trigger_times = 1 })
+    [100653] = EHI:AddAssaultDelay({ control = 2 + 15, trigger_once = true })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100161] = { chance = 10, time = 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 3 }
@@ -103,7 +103,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100146] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

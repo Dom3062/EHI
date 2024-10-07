@@ -75,10 +75,10 @@ local achievements =
             [100296] = { max = 4, class = "EHIdark5Tracker", show_finish_after_reaching_target = true },
         },
         preparse_callback = function(data)
-            local AddBodyBag = EHI:RegisterCustomSF(function(self, trigger, ...)
+            local AddBodyBag = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
                 self._trackers:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
             end)
-            local RemoveBodyBag = EHI:RegisterCustomSF(function(self, trigger, ...)
+            local RemoveBodyBag = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
                 self._trackers:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
             end)
             for i = 12850, 13600, 250 do
@@ -99,7 +99,7 @@ local achievements =
     }
 }
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })

@@ -45,7 +45,7 @@ if EHI:IsSyncedLootCounterVisible() then
         local truck = 0
         local hook_function = tweak_data.ehi.functions.HookArmoredTransportUnit
         for disabled_unit_id, truck_id in pairs(trucks) do
-            if managers.game_play_central:GetMissionDisabledUnit(disabled_unit_id) then
+            if managers.game_play_central:IsMissionUnitDisabled(disabled_unit_id) then
                 truck = truck + 1
                 hook_function(truck_id)
                 if truck == count then
@@ -64,7 +64,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101268 } }
     other[100216] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100008 } }
 end
-EHI:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
+EHI.Manager:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,
     hard = 3,

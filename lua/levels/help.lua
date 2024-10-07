@@ -45,7 +45,7 @@ local other =
 {
     [101315] = EHI:AddAssaultDelay({}) -- 30s
 }
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

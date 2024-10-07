@@ -97,7 +97,7 @@ if EHI:IsLootCounterVisible() then
         local loot_triggers = {}
         MoneyAroundHostage = self:CountInteractionAvailable("money_small")
         for _, index in ipairs(start_index) do
-            if managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceElementID(100000, index)) then -- Bomb guy is here
+            if managers.game_play_central:IsMissionUnitEnabled(EHI:GetInstanceElementID(100000, index)) then -- Bomb guy is here
                 for i = 100003, 100006, 1 do
                     managers.mission:add_runned_unit_sequence_trigger(EHI:GetInstanceElementID(i, index), "interact", HostageMoneyInteracted )
                 end
@@ -129,7 +129,7 @@ if EHI:IsLootCounterVisible() then
     other[101281] = CokeDestroyedTrigger
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local ChanceSuccess = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+    local ChanceSuccess = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
         local id = trigger.id
         local chance = element._values.chance
         if self._trackers:CallFunction2(id, "OnChanceSuccess", chance) then -- 10%/15%
@@ -156,7 +156,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101266] = { id = "Snipers2", special_function = SF.DecreaseCounter }
     other[101267] = { id = "Snipers2", special_function = SF.IncreaseCounter }
 end
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

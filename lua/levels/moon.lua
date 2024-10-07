@@ -28,7 +28,7 @@ local achievements =
     {
         elements =
         {
-            [100107] = { max = 2, class = TT.Achievement.Progress, trigger_times = 1 },
+            [100107] = { max = 2, class = TT.Achievement.Progress, trigger_once = true },
             [104219] = { special_function = SF.IncreaseProgress }, -- Chains
             [104220] = { special_function = SF.IncreaseProgress } -- Dallas
         }
@@ -44,7 +44,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         veryhard_or_below = 1,
         overkill_or_above = 2
     })
-    other[100015] = { time = 1 + 10 + 35, on_fail_refresh_t = 35, on_success_refresh_t = 20 + 10 + 35, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, single_sniper = sniper_count == 1, sniper_count = sniper_count }
+    other[100015] = { time = 1 + 10 + 35, on_fail_refresh_t = 35, on_success_refresh_t = 20 + 10 + 35, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, single_sniper = sniper_count == 1, sniper_count = sniper_count }
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
@@ -54,7 +54,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

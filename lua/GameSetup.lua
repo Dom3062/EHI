@@ -19,6 +19,9 @@ local redirect =
     escape_park_day = "escape_park",
     gallery = "framing_frame_1",
     crojob3_night = "crojob3",
+    skm_arena = "skm_base",
+    skm_cas = "skm_base",
+    skm_watchdogs_stage2 = "skm_base",
     -- Custom Missions
     ratdaylight = "levels/rat",
     lid_cookoff_methslaves = "levels/rat",
@@ -28,7 +31,8 @@ local redirect =
     ["Auction Edit"] = "levels/sah",
     ["Auction Heist No Rain"] = "levels/sah",
     ["Auction Edit Rain"] = "levels/sah",
-    fexbetterspawns = "levels/fex"
+    fexbetterspawns = "levels/fex",
+    slaughter_house_new = "levels/dinner"
 }
 
 local levels =
@@ -157,7 +161,17 @@ local levels =
     ranc = true, -- Midland Ranch
     trai = true, -- Lost in Transit
     corp = true, -- Hostile Takeover
-    deep = true -- Crude Awakening
+    deep = true, -- Crude Awakening
+    -- Holdout
+    skm_arena = true, -- Holdout: The Alesso Heist
+    skm_bex = true, -- Holdout: San Martín Bank
+    skm_big2 = true, -- Holdout: The Big Bank
+    skm_cas = true, -- Holdout: Golden Grin Casino
+    skm_mallcrasher = true, -- Holdout: Mallcrasher
+    skm_mus = true, -- Holdout: The Diamond
+    skm_red2 = true, -- Holdout: First World Bank
+    skm_run = true, -- Holdout: Heat Street
+    skm_watchdogs_stage2 = true -- Holdout: Watchdogs Day 2 (Day)
 }
 
 local custom_levels =
@@ -214,13 +228,15 @@ local custom_levels =
     ["Auction Edit"] = true,
     ["Auction Heist No Rain"] = true,
     ["Auction Edit Rain"] = true,
-    fexbetterspawns = true
+    fexbetterspawns = true,
+    slaughter_house_new = true
 }
 
 local init_finalize = GameSetup.init_finalize
 function GameSetup:init_finalize(...)
     init_finalize(self, ...)
-    if managers.ehi_manager.__init_done then
+    EHI.Manager = managers.ehi_manager
+    if EHI.Manager.__init_done then
         return
     end
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitFinalize)
@@ -236,11 +252,12 @@ function GameSetup:init_finalize(...)
         local fixed_path = redirect[level_id] or ("custom_levels/" .. level_id)
         dofile(string.format("%s%s.lua", EHI.LuaPath, fixed_path))
     end
-    managers.ehi_manager:InitElements()
+    EHI.Manager:InitElements()
     EHI:DisableWaypointsOnInit()
     redirect = nil
     levels = nil
     custom_levels = nil
+    EHI.Manager = nil
 end
 
 Hooks:PreHook(GameSetup, "load", "EHI_GameSetup_load_Pre", function(self, data, ...) ---@param data SyncData

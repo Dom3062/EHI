@@ -256,7 +256,7 @@ _G.EHI =
         -- Optional `arg (1 argument to pass to the function)` and `t`
         CustomCodeDelayed = 1004,
 
-        -- Don't use it directly! Instead, call `EHI:RegisterCustomSF()`
+        -- Don't use it directly! Instead, call `EHIManager:RegisterCustomSF()`
         CustomSF = 100000,
         CustomSyncedSF = 200000
     },
@@ -1054,9 +1054,7 @@ function EHI:Init()
     }, Global.game_settings and Global.game_settings.difficulty or "normal") - 2
     self:AddCallback(self.CallbackMessage.InitManagers, function(managers) ---@param managers managers
         local mutator = managers.mutators
-        if mutator:can_mutators_be_active() then
-            self._cache.UnlockablesAreDisabled = mutator:are_achievements_disabled()
-        end
+        self._cache.UnlockablesAreDisabled = mutator:can_mutators_be_active() and mutator:are_achievements_disabled()
         local level = Global.game_settings.level_id
         if level == "Enemy_Spawner" or level == "enemy_spawner2" or level == "modders_devmap" then -- These 3 maps disable achievements
             self._cache.UnlockablesAreDisabled = true
@@ -1075,11 +1073,6 @@ function EHI:IsModInstalled(name, author)
         end
     end
     return false
-end
-
----@return boolean
-function EHI:IsVR()
-    return self._cache.is_vr
 end
 
 ---@param difficulty number
@@ -1160,7 +1153,7 @@ function EHI:LogToChat(s)
     managers.chat:_receive_message(1, "[EHI]", tostring(s), Color.white)
 end
 
-function EHI:Save()
+function EHI:SaveOptions()
     self.settings.SaveDataVer = self.SaveDataVer
     self.settings.ModVersion = self.ModVersion
     local file = io.open(self.SettingsSaveFilePath, "w+")
@@ -1176,7 +1169,7 @@ end
 ---@param vr_expected_value { [any]: boolean }|any? What the expected value in the VR option should be in VR (don't pass a value if the same value is expected for both options)
 ---@return boolean
 function EHI:CheckVRAndNonVROption(vr_option, option, expected_value, vr_expected_value)
-    if self:IsVR() then
+    if _G.IS_VR then
         if type(vr_expected_value or expected_value) == "table" then
             local tbl = vr_expected_value or expected_value
             return tbl[self:GetOption(vr_option)]
@@ -1217,6 +1210,11 @@ end
 ---@param filename string
 function EHI:LoadTracker(filename)
     dofile(string.format("%s%s%s.lua", self.LuaPath, "trackers/", filename))
+end
+
+---@param filename string
+function EHI:LoadBuff(filename)
+    dofile(string.format("%s%s%s.lua", self.LuaPath, "buffs/", filename))
 end
 
 ---@param option string
@@ -1261,16 +1259,19 @@ function EHI:CanShowAchievement(id)
     return false
 end
 
+---@param option string
 function EHI:GetUnlockableOption(option)
     if option then
         return self.settings.unlockables[option]
     end
 end
 
+---@param option string
 function EHI:GetUnlockableAndOption(option)
     return self:GetOption("show_unlockables") and self:GetUnlockableOption(option)
 end
 
+---@param option string
 function EHI:GetEquipmentOption(option)
     return self:GetOption("show_equipment_tracker") and self:GetOption(option)
 end
@@ -1358,10 +1359,6 @@ function EHI:IsXPTrackerHidden()
     return not self:IsXPTrackerEnabledAndVisible()
 end
 
-function EHI:AreGagePackagesSpawned()
-    return self._cache.GagePackagesSpawned or false
-end
-
 function EHI:IsLootCounterVisible()
     return self:GetOption("show_loot_counter") and not self:IsPlayingCrimeSpree()
 end
@@ -1419,10 +1416,10 @@ end
 ---Calls all callbacks, after that they are deleted from memory
 ---@param id string|number
 function EHI:CallCallbackOnce(id, ...)
-    if self._callback[id] then
-        self._callback[id]:dispatch_and_clear(...)
+    local handler = table.remove_key(self._callback, id)
+    if handler then
+        handler:dispatch_and_clear(...)
     end
-    self._callback[id] = nil
 end
 
 ---@param f fun(dropin: boolean)
@@ -1510,8 +1507,7 @@ function EHI:HookLootRemovalElement(elements)
         f = function(e, instigator, ...)
             if not e._values.enabled or not alive(instigator) then
                 return
-            end
-            if e._values.type_filter and e._values.type_filter ~= "none" then
+            elseif e._values.type_filter and e._values.type_filter ~= "none" then
                 local carry_ext = instigator:carry_data()
                 if not carry_ext then
                     return
@@ -1613,7 +1609,7 @@ function EHI:GetAchievementIconString(id)
 end
 
 ---@param id number
----@param waypoint table
+---@param waypoint ElementWaypointTrigger
 function EHI:AddWaypointToTrigger(id, waypoint)
     managers.ehi_manager:AddWaypointToTrigger(id, waypoint)
 end
@@ -1633,11 +1629,6 @@ end
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
 function EHI:RegisterCustomSF(f)
     return managers.ehi_manager:RegisterCustomSF(f)
-end
-
----@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
-function EHI:RegisterCustomSyncedSF(f)
-    return managers.ehi_manager:RegisterCustomSyncedSF(f)
 end
 
 ---@param trigger ElementTrigger
@@ -1717,13 +1708,11 @@ function EHI:AddLootCounter(f, check, load_sync, trigger_once)
     local tbl =
     {
         special_function = self.SpecialFunctions.CustomCode,
-        f = f
+        f = f,
+        trigger_once = trigger_once
     }
-    if trigger_once then
-        tbl.trigger_times = 1
-    end
     if load_sync then
-        self:AddLoadSyncFunction(load_sync)
+        managers.ehi_manager:AddLoadSyncFunction(load_sync)
     end
     return tbl
 end
@@ -1731,18 +1720,15 @@ end
 ---@param f function Loot counter function
 ---@param load_sync fun(self: EHIManager)? Load sync function for clients
 ---@param trigger_once boolean? Should the trigger run once?
----@return ElementTrigger
 function EHI:AddLootCounter2(f, load_sync, trigger_once)
-    local tbl =
+    local tbl = ---@type ElementTrigger
     {
         special_function = self.SpecialFunctions.CustomCode,
-        f = f
+        f = f,
+        trigger_once = trigger_once
     }
-    if trigger_once then
-        tbl.trigger_times = 1
-    end
     if load_sync then
-        self:AddLoadSyncFunction(load_sync)
+        managers.ehi_manager:AddLoadSyncFunction(load_sync)
     end
     return tbl
 end
@@ -1752,8 +1738,8 @@ end
 ---@return ElementTrigger
 function EHI:AddLootCounter3(f, trigger_once)
     return {
-        special_function = self:RegisterCustomSF(f),
-        trigger_times = trigger_once and 1
+        special_function = managers.ehi_manager:RegisterCustomSF(f),
+        trigger_once = trigger_once
     }
 end
 
@@ -1767,13 +1753,11 @@ function EHI:AddLootCounter4(f, t, load_sync, trigger_once)
     {
         special_function = self.SpecialFunctions.CustomCodeDelayed,
         t = t,
-        f = f
+        f = f,
+        trigger_once = trigger_once
     }
-    if trigger_once then
-        tbl.trigger_times = 1
-    end
     if load_sync then
-        self:AddLoadSyncFunction(load_sync)
+        managers.ehi_manager:AddLoadSyncFunction(load_sync)
     end
     return tbl
 end
@@ -1788,60 +1772,27 @@ function EHI:AddLootCounterSynced(f, sequence_triggers, loot_counter_data_functi
     end
     local special_function
     if self:GetOption("show_loot_counter") then
-        special_function = self:RegisterCustomSF(f)
+        special_function = managers.ehi_manager:RegisterCustomSF(f)
     else
         managers.ehi_loot:AddSequenceTriggers(sequence_triggers)
-        special_function = self:RegisterCustomSF(loot_counter_data_function)
+        special_function = managers.ehi_manager:RegisterCustomSF(loot_counter_data_function)
     end
     return {
         special_function = special_function,
-        trigger_times = 1
+        trigger_once = true
     }
-end
-
----@param f fun(self: EHIManager, trigger: table, element: table, enabled: boolean) Loot Counter function
----@param sequence_triggers table<number, LootCounterTable.SequenceTriggersTable> If the Loot Counter is not enabled, hook the sequence triggers so the syncing will still work
----@param loot_counter_data table If the Loot Counter is not enabled, sync the data to clients so the syncing will still work
----@return ElementTrigger?
-function EHI:AddLootCounterSynced2(f, sequence_triggers, loot_counter_data)
-    if self:IsPlayingCrimeSpree() then
-        return nil
-    elseif not self:GetOption("show_loot_counter") then
-        managers.ehi_loot:AddSequenceTriggers(sequence_triggers)
-        managers.ehi_loot:SetSyncData(loot_counter_data)
-        return nil
-    end
-    return {
-        special_function = self:RegisterCustomSF(f),
-        trigger_times = 1
-    }
-end
-
----@param new_triggers ParseTriggersTable
----@param trigger_id_all string?
----@param trigger_icons_all table?
-function EHI:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-    managers.ehi_manager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-end
-
----@param new_triggers table
----@param defer_loading_waypoints boolean?
-function EHI:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
-    managers.ehi_manager:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
 end
 
 ---@param f fun(self: EHIManager)
 ---@param trigger_once boolean?
+---@return ElementTrigger
 function EHI:AddCustomCode(f, trigger_once)
-    local trigger = ---@type ElementTrigger
+    return
     {
         special_function = self.SpecialFunctions.CustomCode2,
-        f = f
+        f = f,
+        trigger_once = trigger_once
     }
-    if trigger_once then
-        trigger.trigger_times = 1
-    end
-    return trigger
 end
 
 ---@return boolean
@@ -1951,7 +1902,7 @@ function EHI:ShowLootCounterNoChecks(params)
         managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers or {})
     elseif params.max_bags_for_level and self:IsXPTrackerEnabledAndVisible() then
         if params.max_bags_for_level.objective_triggers then
-            local xp_trigger = { special_function = self:RegisterCustomSF(function(manager, trigger, element, enabled) ---@cast element ElementExperience
+            local xp_trigger = { special_function = managers.ehi_manager:RegisterCustomSF(function(manager, trigger, element, enabled) ---@cast element ElementExperience
                 if enabled then
                     manager._trackers:CallFunction(trigger.id, "ObjectiveXPAwarded", element._values.amount or 0)
                 end
@@ -1971,7 +1922,7 @@ function EHI:ShowLootCounterNoChecks(params)
         managers.ehi_loot:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, offset, params.unknown_random, params.no_max)
     end
     if params.load_sync then
-        self:AddLoadSyncFunction(params.load_sync)
+        managers.ehi_manager:AddLoadSyncFunction(params.load_sync)
         params.no_sync_load = true
     end
     if params.triggers and (not params.no_triggers_if_max_xp_bags_gt_max or (params.max_xp_bags or 0) >= (params.max or 0)) then
@@ -1985,6 +1936,14 @@ function EHI:ShowLootCounterNoChecks(params)
         managers.ehi_loot:AddAchievementListener(params.max_bags_for_level.custom_counter, true)
     else
         managers.ehi_loot:AddListener(params.no_sync_load)
+    end
+    if params.carry_data then
+        if params.carry_data.loot and EHICarryData then
+            EHICarryData._enabled = true
+        end
+        if params.carry_data.no_loot and EHINoCarryData then
+            EHINoCarryData._enabled = true
+        end
     end
 end
 
@@ -2024,10 +1983,10 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
     if params.show_loot_counter and self:GetOption("show_loot_counter") then
         managers.ehi_achievement:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail, params.start_silent)
     else
-        managers.ehi_achievement:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target, params.class)
+        managers.ehi_achievement:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target)
     end
     if params.load_sync then
-        self:AddLoadSyncFunction(params.load_sync)
+        managers.ehi_manager:AddLoadSyncFunction(params.load_sync)
     end
     if params.alarm_callback then
         self:AddOnAlarmCallback(params.alarm_callback)
@@ -2099,11 +2058,6 @@ function EHI:ShowAchievementKillCounter(params)
             managers.ehi_tracker:IncreaseTrackerProgress(id, value)
         end
     end)
-end
-
----@param f fun(self: EHIManager)
-function EHI:AddLoadSyncFunction(f)
-    managers.ehi_manager:AddLoadSyncFunction(f)
 end
 
 function EHI:FinalizeUnitsClient()
@@ -2195,10 +2149,9 @@ end
 
 ---@param tbl table<number, UnitUpdateDefinition>
 function EHI:UpdateUnits(tbl)
-    if not self:GetOption("show_timers") then
-        return
+    if self:GetOption("show_timers") then
+        self:UpdateUnitsNoCheck(tbl)
     end
-    self:UpdateUnitsNoCheck(tbl)
 end
 
 ---@param tbl table<number, UnitUpdateDefinition>
@@ -2226,10 +2179,9 @@ end
 ---@param instance_start_index number
 ---@param instance_continent_index number? Defaults to `100000` if not provided
 function EHI:UpdateInstanceUnits(tbl, instance_start_index, instance_continent_index)
-    if not self:GetOption("show_timers") then
-        return
+    if self:GetOption("show_timers") then
+        self:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
     end
-    self:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
 end
 
 ---@param tbl table<number, UnitUpdateDefinition>
@@ -2414,13 +2366,6 @@ function EHI:SetDeployableIgnorePos(type, pos)
     end
 end
 
-function EHI:EscapeVehicleWillReturn()
-    if self:IsHost() and SWAYRMod and SWAYRMod.included(Global.game_settings.level_id) then
-        return false
-    end
-    return true
-end
-
 function EHI:CanShowCivilianCountTracker()
     return self:GetOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not tweak_data.levels:IsLevelSkirmish() and not table.contains({
         alex_1 = true,
@@ -2525,13 +2470,8 @@ function EHI:AddSniperSpawnedPopup(single_sniper, trigger_once)
         f = function()
             managers.hud:ShowSnipersSpawned(single_sniper)
         end,
-        trigger_times = trigger_once and 1
+        trigger_once = trigger_once
     }
-end
-
----@return boolean
-function EHI:IsHeistTimerInverted()
-    return self._cache._heist_timer_inverted
 end
 
 ---Checks if EHI hook for given object and function exists
@@ -2539,14 +2479,11 @@ end
 ---@param func string
 ---@param id string
 function EHI:HookExists(object, func, id)
-    local Hooks = Hooks
-    if not Hooks._function_hooks[object] then
+    local function_hooks = Hooks._function_hooks[object] and Hooks._function_hooks[object][func]
+    if not function_hooks then
         return false
     end
-    if not Hooks._function_hooks[object][func] then
-        return false
-    end
-    local overrides = Hooks._function_hooks[object][func].overrides
+    local overrides = function_hooks.overrides
     for _, func_tbl in ipairs(overrides.pre) do
         if func_tbl.id == id then
             return true
@@ -2567,11 +2504,11 @@ end
 ---@param id string
 ---@param new_f fun(self: T, ...)
 function EHI:UpdateExistingHook(object, func, id, new_f)
-    local Hooks = Hooks
-    if not (Hooks._function_hooks[object] and Hooks._function_hooks[object][func]) then
+    local function_hooks = Hooks._function_hooks[object] and Hooks._function_hooks[object][func]
+    if not function_hooks then
         return
     end
-    local overrides = Hooks._function_hooks[object][func].overrides
+    local overrides = function_hooks.overrides
     for _, func_tbl in ipairs(overrides.pre) do
         if func_tbl.id == id then
             func_tbl.func = new_f
@@ -2654,7 +2591,7 @@ end
 
 ---@param objectives table
 ---@param progress_id string
-function EHI:_get_objective_progress(objectives, progress_id)
+function EHI._get_objective_progress(objectives, progress_id)
     for _, objective in ipairs(objectives) do
         if objective.progress_id == progress_id then
             return objective.progress, objective.max_progress
@@ -2668,7 +2605,7 @@ end
 function EHI:GetSHSideJobProgressAndMax(daily_id, progress_id)
     local current_daily = managers.custom_safehouse:get_daily_challenge()
     if current_daily and current_daily.id == daily_id then
-        return self:_get_objective_progress(current_daily.trophy.objectives, progress_id or daily_id)
+        return self._get_objective_progress(current_daily.trophy.objectives, progress_id or daily_id)
     end
     return 0, 0
 end
@@ -2679,7 +2616,7 @@ end
 function EHI:GetDailyChallengeProgressAndMax(daily_id, progress_id)
     local current_job = managers.challenge:get_active_challenge(daily_id)
     if current_job and current_job.id == daily_id and current_job.objectives then
-        return self:_get_objective_progress(current_job.objectives, progress_id or daily_id)
+        return self._get_objective_progress(current_job.objectives, progress_id or daily_id)
     end
     return 0, 0
 end
@@ -2755,8 +2692,7 @@ end
 function EHI:PrintTable(tbl, ...)
     local s = ""
     if ... then
-        local _tbl = { ... }
-        for _, _s in ipairs(_tbl) do
+        for _, _s in ipairs({ ... }) do
             s = s .. " " .. tostring(_s)
         end
     end
@@ -2776,8 +2712,7 @@ end
 function EHI:PrintTable2(tbl, tables_to_ignore, ...)
     local s = ""
     if ... then
-        local _tbl = { ... }
-        for _, _s in ipairs(_tbl) do
+        for _, _s in ipairs({ ... }) do
             s = s .. " " .. tostring(_s)
         end
     end
@@ -2795,8 +2730,7 @@ end
 ---@param ... any
 function EHI:PrintClass(tbl, ...)
     if ... then
-        local _tbl = { ... }
-        for _, _s in ipairs(_tbl) do
+        for _, _s in ipairs({ ... }) do
             self:Log(_s)
         end
     end

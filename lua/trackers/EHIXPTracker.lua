@@ -4,7 +4,6 @@ EHIXPTracker = class(EHITracker)
 EHIXPTracker._forced_icons = { "xp" }
 EHIXPTracker._forced_hint_text = "gained_xp"
 EHIXPTracker.update = EHIXPTracker.update_fade
----@param params EHITracker.params
 function EHIXPTracker:pre_init(params)
     self._xp = params.amount or 0
 end
@@ -26,7 +25,6 @@ end
 EHIHiddenXPTracker = class(EHIXPTracker)
 EHIHiddenXPTracker._update = false
 EHIHiddenXPTracker._init_create_text = false
----@param params EHITracker.params
 function EHIHiddenXPTracker:pre_init(params)
     self._total_xp = 0
     self._refresh_t = params.refresh_t or 1
@@ -44,6 +42,7 @@ function EHIHiddenXPTracker:pre_init(params)
         gained = "ehi_popup_experience_gained"
     end
     self._experience_gained_text = managers.localization:text(gained)
+    self._experience_lost_text = managers.localization:text("ehi_popup_experience_lost")
     self._xp_class = managers.experience
     if (params.amount or 0) > 0 then
         if self._refresh_t == 0 then
@@ -58,7 +57,8 @@ end
 ---@param xp number?
 function EHIHiddenXPTracker:ShowPopup(xp)
     xp = xp or self._xp or 0
-    local xp_string = string.format(self._experience_format, self._experience_gained_text, self._xp_class:cash_string(xp, xp >= 0 and "+" or ""), self._experience_total_text, self._xp_class:cash_string(self._total_xp, "+"))
+    local positive_xp = xp >= 0
+    local xp_string = string.format(self._experience_format, positive_xp and self._experience_gained_text or self._experience_lost_text, self._xp_class:cash_string(xp, positive_xp and "+" or ""), self._experience_total_text, self._xp_class:cash_string(self._total_xp, "+"))
     if self._xp_panel == 3 then
         managers.hud:custom_ingame_popup_text(self._experience, xp_string, "EHI_XP")
     else
@@ -66,7 +66,6 @@ function EHIHiddenXPTracker:ShowPopup(xp)
     end
 end
 
----@param dt number
 function EHIHiddenXPTracker:update(dt)
     self._time = self._time - dt
     if self._time <= 0 then
@@ -111,8 +110,7 @@ EHITotalXPTracker._anim_xp = function(o, self)
     o:set_text(self:Format())
     self:FitTheText(o)
 end
----@param panel Panel
----@param params EHITracker.params
+
 function EHITotalXPTracker:init(panel, params, ...)
     self._total_xp = params.amount or 0
     self._total_xp_anim = self._total_xp
@@ -126,7 +124,6 @@ function EHITotalXPTracker:init(panel, params, ...)
     end
 end
 
----@param dt number
 function EHITotalXPTracker:update(dt)
     self:delete()
 end

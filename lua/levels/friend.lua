@@ -91,7 +91,7 @@ local achievements =
             [100107] = { time = 901, class = "EHIuno7Tracker", update_on_alarm = true }
         },
         cleanup_callback = function()
-            EHIuno7Tracker = nil ---@diagnostic disable-line
+            _G.EHIuno7Tracker = nil
         end,
         sync_params = { from_start = true }
     }
@@ -99,10 +99,10 @@ local achievements =
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ control = 30 + 1, trigger_times = 1 })
+    [100109] = EHI:AddAssaultDelay({ control = 30 + 1, trigger_once = true })
 }
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -120,7 +120,7 @@ local xp_override =
     }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

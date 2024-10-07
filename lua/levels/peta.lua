@@ -54,7 +54,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101933] = EscapeWaypoint
     other[101394] = EscapeWaypoint
 end
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

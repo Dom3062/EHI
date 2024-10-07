@@ -59,7 +59,7 @@ if EHI:GetOption("gage_tracker_panel") == 1 then
         managers.ehi_tracker:SetTrackerProgress("Gage", picked_up)
     end)
     EHI:AddOnSpawnedCallback(function()
-        if managers.ehi_tracker:TrackerDoesNotExist("Gage") and EHI:AreGagePackagesSpawned() then
+        if managers.ehi_tracker:TrackerDoesNotExist("Gage") and EHI.GagePackagesSpawned then
             local progress = math.max(managers.gage_assignment:GetCountOfRemainingPackages() - 1, 0)
             local max = tweak_data.gage_assignment:get_num_assignment_units()
             if progress < max then
@@ -76,13 +76,13 @@ if EHI:GetOption("gage_tracker_panel") == 1 then
     end)
 else
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, function(picked_up, max_units, client_sync_load)
-        if (client_sync_load and Global.statistics_manager.playing_from_start) or not EHI:AreGagePackagesSpawned() then
+        if (client_sync_load and Global.statistics_manager.playing_from_start) or not EHI.GagePackagesSpawned then
             return
         end
         managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), tostring(picked_up) .. "/" .. tostring(max_units), "EHI_Gage")
     end)
     EHI:AddOnSpawnedCallback(function()
-        if EHI:AreGagePackagesSpawned() and EHI:IsPlayingFromStart() then
+        if EHI.GagePackagesSpawned and EHI:IsPlayingFromStart() then
             local max = tweak_data.gage_assignment:get_num_assignment_units()
             managers.hud:custom_ingame_popup_text(managers.localization:text("ehi_popup_gage_packages"), "0/" .. tostring(max), "EHI_Gage")
         end

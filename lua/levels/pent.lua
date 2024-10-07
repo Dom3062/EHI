@@ -52,7 +52,7 @@ end
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ control = 50, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    [100109] = EHI:AddAssaultDelay({ control = 50, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         local time_for_prefereds = self:IsMissionElementEnabled(104439) and 5 or 0
         self._trackers:AddTracker({
             id = trigger.id,
@@ -66,7 +66,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         veryhard_or_below = 2,
         overkill_or_above = 3
     })
-    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, sniper_count = sniper_count }
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, sniper_count = sniper_count }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -77,7 +77,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({ mission = triggers, other = other })
+EHI.Manager:ParseTriggers({ mission = triggers, other = other })
 local loot_triggers = {}
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     if EHI:CanShowAchievement("pent_12") then
@@ -177,13 +177,13 @@ local loud_objectives =
     { amount = 8000, name = "china4_steal_harddrive" }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         custom =
         {
             {
                 name = "stealth",
-                tactic =
+                plan =
                 {
                     objectives =
                     {
@@ -207,7 +207,7 @@ EHI:AddXPBreakdown({
             {
                 name = "loud",
                 additional_name = "mex4_car_escape",
-                tactic =
+                plan =
                 {
                     objectives = loud_objectives,
                     loot = loud_loot,
@@ -233,7 +233,7 @@ EHI:AddXPBreakdown({
             {
                 name = "loud",
                 additional_name = "china4_thermite_route",
-                tactic =
+                plan =
                 {
                     objectives = loud_objectives,
                     loot = loud_loot,

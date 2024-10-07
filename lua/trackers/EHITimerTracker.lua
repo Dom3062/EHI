@@ -17,7 +17,6 @@ EHITimerTracker._paused_color = EHIPausableTracker._paused_color
 EHITimerTracker.StartTimer = EHITimedChanceTracker.StartTimer
 EHITimerTracker.StopTimer = EHITimedChanceTracker.StopTimer
 EHITimerTracker.AnimateMovement = EHIGroupTracker.AnimateMovement
----@param params EHITracker.params
 function EHITimerTracker:pre_init(params)
     if params.icons[1].icon then
         params.icons[2] = { icon = "faster", visible = false, alpha = 0.25 }
@@ -26,7 +25,6 @@ function EHITimerTracker:pre_init(params)
     end
 end
 
----@param params EHITracker.params
 function EHITimerTracker:post_init(params)
     self._theme = params.theme
     self:SetUpgradeable(false)
@@ -184,7 +182,6 @@ end
 ---@field super EHITimerTracker
 EHITimerGroupTracker = class(EHITimerTracker)
 EHITimerGroupTracker._init_create_text = false
----@param params EHITracker.params
 function EHITimerGroupTracker:post_init(params)
     self._group = params.group --[[@as string]]
     self._subgroup = params.subgroup or 1 --[[@as number]]
@@ -399,7 +396,6 @@ EHIProgressTimerTracker.SetProgress = EHIProgressTracker.SetProgress
 EHIProgressTimerTracker.SetProgressRemaining = EHIProgressTracker.SetProgressRemaining
 EHIProgressTimerTracker.SetCompleted = EHIProgressTracker.SetCompleted
 EHIProgressTimerTracker.SetBad = EHIProgressTracker.SetBad
----@param params EHITracker.params
 function EHIProgressTimerTracker:post_init(params)
     self:PrecomputeDoubleSize()
     self._progress_text = self:CreateText({
@@ -434,7 +430,6 @@ EHIChanceTimerTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHIChanceTimerTracker.SetChance = EHIChanceTracker.SetChance
 EHIChanceTimerTracker._anim_chance = EHIChanceTracker._anim_chance
 EHIChanceTimerTracker.delete = EHIChanceTracker.delete
----@param params EHITracker.params
 function EHIChanceTimerTracker:post_init(params)
     self:PrecomputeDoubleSize()
     self._chance_text = self:CreateText({

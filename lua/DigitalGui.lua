@@ -68,15 +68,12 @@ function DigitalGui:TimerStartCountDown()
             class = "EHITimerWaypoint"
         })
     end
-
     self:HideWaypoint()
 end
 
 function DigitalGui:HideWaypoint()
     if self._remove_vanilla_waypoint and show_waypoint then
-        managers.hud:SoftRemoveWaypoint(self._remove_vanilla_waypoint)
-        EHI._cache.IgnoreWaypoints[self._remove_vanilla_waypoint] = true
-        EHI:DisableElementWaypoint(self._remove_vanilla_waypoint)
+        managers.hud:RemoveTimerWaypoint(self._remove_vanilla_waypoint)
     end
 end
 
@@ -207,7 +204,7 @@ function DigitalGui:load(data, ...)
             managers.ehi_manager:SetTimerJammed(self._ehi_key, true)
         end
     end
-    original.load(self, data, ...)
+    original.load(self, data, ...) -- Timer's time is updated in the Vanilla function
 end
 
 function DigitalGui:OnAlarm()

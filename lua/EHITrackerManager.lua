@@ -34,7 +34,6 @@ function EHITrackerManager:CreateWorkspace()
     self._ws:hide()
     self._scale = EHI:GetOption("scale") --[[@as number]]
     self._hud_panel = self._ws:panel():panel({
-        name = "ehi_panel",
         layer = -10
     })
     EHI:AddCallback(EHI.CallbackMessage.HUDVisibilityChanged, function(visibility)
@@ -130,9 +129,7 @@ function EHITrackerManager:AddTracker(params, pos)
         self._trackers[params.id].tracker:ForceDelete()
     end
     params.delay_popup = self._delay_popups
-    local class = params.class or self._base_tracker_class
-    local tracker_class = _G[class] --[[@as EHITracker]]
-    local tracker = tracker_class:new(self._hud_panel, params, self)
+    local tracker = _G[params.class or self._base_tracker_class]:new(self._hud_panel, params, self) --[[@as EHITracker]]
     local w = tracker:GetPanelW()
     pos = self:_move_tracker(pos, w)
     local x = self:_get_x(pos, w)
@@ -152,9 +149,7 @@ function EHITrackerManager:AddHiddenTracker(params)
         EHI:LogTraceback()
         self._trackers[params.id].tracker:ForceDelete()
     end
-    local class = params.class or self._base_tracker_class
-    local tracker_class = _G[class] --[[@as EHITracker]]
-    local tracker = tracker_class:new(self._hud_panel, params, self)
+    local tracker = _G[params.class or self._base_tracker_class]:new(self._hud_panel, params, self) --[[@as EHITracker]]
     if tracker._update then
         self._trackers_to_update[params.id] = tracker
     end
@@ -168,8 +163,7 @@ function EHITrackerManager:PreloadTracker(params)
         EHI:LogTraceback()
         self._trackers[params.id].tracker:ForceDelete()
     end
-    local class = params.class or self._base_tracker_class
-    local tracker = _G[class]:new(self._hud_panel, params, self) --[[@as EHITracker]]
+    local tracker = _G[params.class or self._base_tracker_class]:new(self._hud_panel, params, self) --[[@as EHITracker]]
     self._trackers[params.id] = { tracker = tracker }
 end
 
@@ -291,12 +285,12 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
         if not pos then
             return
         end
-        for _, value in pairs(self._trackers) do
-            if value.pos and value.pos > pos then
-                local final_pos = value.pos - 1
+        for _, tbl in pairs(self._trackers) do
+            if tbl.pos and tbl.pos > pos then
+                local final_pos = tbl.pos - 1
                 local y = self:_get_y(final_pos)
-                value.tracker:AnimateTop(y)
-                value.pos = final_pos
+                tbl.tracker:AnimateTop(y)
+                tbl.pos = final_pos
             end
         end
     end
@@ -322,9 +316,9 @@ else -- Horizontal
             end
             local x = 0
             local pos_create = pos and (pos - 1) or (self._n_of_trackers - 1)
-            for _, value in pairs(self._trackers) do
-                if value.pos and value.pos == pos_create then
-                    x = value.x + value.w + self._panel_offset
+            for _, tbl in pairs(self._trackers) do
+                if tbl.pos and tbl.pos == pos_create then
+                    x = tbl.x + tbl.w + self._panel_offset
                     break
                 end
             end
@@ -358,12 +352,12 @@ else -- Horizontal
             end
             pos_move = pos_move or 1
             panel_offset_move = panel_offset_move or self._panel_offset
-            for _, value in pairs(self._trackers) do
-                if value.pos and value.pos > pos then
-                    local final_x = value.x - w - panel_offset_move
-                    value.tracker:AnimateLeft(final_x)
-                    value.x = final_x
-                    value.pos = value.pos - pos_move
+            for _, tbl in pairs(self._trackers) do
+                if tbl.pos and tbl.pos > pos then
+                    local final_x = tbl.x - w - panel_offset_move
+                    tbl.tracker:AnimateLeft(final_x)
+                    tbl.x = final_x
+                    tbl.pos = tbl.pos - pos_move
                 end
             end
         end
@@ -394,9 +388,9 @@ else -- Horizontal
             end
             local x = 0
             local pos_create = pos and (pos - 1) or (self._n_of_trackers - 1)
-            for _, value in pairs(self._trackers) do
-                if value.pos and value.pos == pos_create then
-                    x = value.x - w - self._panel_offset
+            for _, tbl in pairs(self._trackers) do
+                if tbl.pos and tbl.pos == pos_create then
+                    x = tbl.x - w - self._panel_offset
                     break
                 end
             end
@@ -408,9 +402,9 @@ else -- Horizontal
         function EHITrackerManager:_move_tracker(pos, w)
             if pos and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
                 local list = {} ---@type table<number, EHITrackerManager.Tracker>
-                for _, value in pairs(self._trackers) do
-                    if value.pos then
-                        list[value.pos] = value
+                for _, tbl in pairs(self._trackers) do
+                    if tbl.pos then
+                        list[tbl.pos] = tbl
                     end
                 end
                 local start_pos = 0
@@ -452,12 +446,12 @@ else -- Horizontal
             end
             pos_move = pos_move or 1
             panel_offset_move = panel_offset_move or self._panel_offset
-            for _, value in pairs(self._trackers) do
-                if value.pos and value.pos > pos then
-                    local final_x = value.x + w + panel_offset_move
-                    value.tracker:AnimateLeft(final_x)
-                    value.x = final_x
-                    value.pos = value.pos - pos_move
+            for _, tbl in pairs(self._trackers) do
+                if tbl.pos and tbl.pos > pos then
+                    local final_x = tbl.x + w + panel_offset_move
+                    tbl.tracker:AnimateLeft(final_x)
+                    tbl.x = final_x
+                    tbl.pos = tbl.pos - pos_move
                 end
             end
         end
@@ -505,7 +499,7 @@ function EHITrackerManager:UpdateTrackerID(id, new_id)
     if self:TrackerExists(new_id) or not tbl then
         return
     end
-    tbl.tracker:UpdateID(new_id)
+    tbl.tracker._id = new_id
     self._trackers[id] = nil
     self._trackers[new_id] = tbl
     if self._trackers_to_update[id] then
@@ -552,10 +546,9 @@ function EHITrackerManager:HideTracker(id)
     self._trackers_to_update[id] = nil
     if tracker and tracker.pos then
         local pos = tracker.pos
-        local w = tracker.w
         tracker.pos = nil
         self._n_of_trackers = self._n_of_trackers - 1
-        self:_rearrange_trackers(pos, w)
+        self:_rearrange_trackers(pos, tracker.w)
     end
 end
 
@@ -564,10 +557,8 @@ function EHITrackerManager:_destroy_tracker(id)
     local tracker = table.remove_key(self._trackers, id)
     self._trackers_to_update[id] = nil
     if tracker and tracker.pos then
-        local pos = tracker.pos
-        local w = tracker.w
         self._n_of_trackers = self._n_of_trackers - 1
-        self:_rearrange_trackers(pos, w)
+        self:_rearrange_trackers(tracker.pos, tracker.w)
     end
 end
 

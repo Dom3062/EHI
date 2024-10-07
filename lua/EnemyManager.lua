@@ -24,7 +24,7 @@ end
 
 local original = {}
 
-if EHI:GetOptionAndLoadTracker("show_enemy_count_tracker") then
+if not tweak_data.levels:IsLevelSafehouse() and EHI:GetOptionAndLoadTracker("show_enemy_count_tracker") then
     original.on_enemy_registered = EnemyManager.on_enemy_registered
     original.on_enemy_unregistered = EnemyManager.on_enemy_unregistered
     if EHI:GetOption("show_enemy_count_show_pagers") then

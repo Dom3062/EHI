@@ -35,7 +35,7 @@ local achievements =
 }
 EHI:PreparseBeardlibAchievements(achievements, "Rogue_Company")
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })

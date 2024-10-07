@@ -1,5 +1,5 @@
 if not EHIBuffTracker then
-    dofile(string.format("%s%s%s.lua", EHI.LuaPath, "buffs/", "EHIBuffTracker"))
+    EHI:LoadBuff("EHIBuffTracker")
 end
 
 ---@class FakeEHIBuffTracker : EHIBuffTracker

@@ -15,11 +15,10 @@ function EHIPhalanxDamageReductionTracker:OverridePanel()
     self._enabled = false
 end
 
----@param amount number
 function EHIPhalanxDamageReductionTracker:SetChance(amount)
-    self:_SetChance(amount)
     if amount <= 0 then
         self:ForceDelete()
+        return
     elseif amount == (self._tweak_data.max * 100) then
         if self._enabled then
             self:StopTimer()
@@ -30,4 +29,5 @@ function EHIPhalanxDamageReductionTracker:SetChance(amount)
         self._enabled = true
         self:StartTimer(self._tweak_data.increase_intervall + math.rand(2))
     end
+    self:_SetChance(amount)
 end

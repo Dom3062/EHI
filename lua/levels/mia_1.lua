@@ -72,13 +72,13 @@ if EHI:IsLootCounterVisible() then
     local function GetNumberOfMethBags()
         for _, index in ipairs(MethlabIndex) do
             local unit_id = EHI:GetInstanceUnitID(100068, index) -- Acid 3
-            if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
+            if managers.game_play_central:IsMissionUnitEnabled(unit_id) then
                 return 3
             end
         end
         for _, index in ipairs(MethlabIndex) do
             local unit_id = EHI:GetInstanceUnitID(100067, index) -- Acid 2
-            if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
+            if managers.game_play_central:IsMissionUnitEnabled(unit_id) then
                 return 2
             end
         end
@@ -90,7 +90,7 @@ if EHI:IsLootCounterVisible() then
     local MethbagsCooked = 0
     local MethbagsPossibleToSpawn = 19
     local MethlabExploded = false
-    other[101218] = { special_function = EHI:RegisterCustomSF(function(...)
+    other[101218] = { special_function = EHI.Manager:RegisterCustomSF(function(...)
         Methbags = GetNumberOfMethBags()
         EHI:ShowLootCounterNoChecks({
             max = money + Methbags,
@@ -189,7 +189,7 @@ end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100159] = { chance = 100, time = 30 + 20, recheck_t = 20 + 20, id = "Snipers", class = TT.Sniper.TimedChance }
     other[104026] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[105008] = { id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+    other[105008] = { id = "Snipers", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         local id = trigger.id
         local chance = element._values.chance
         if self._trackers:TrackerExists(id) then
@@ -211,7 +211,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104303] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     other = other,
     sync_triggers = { element = element_sync_triggers }

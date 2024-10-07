@@ -74,7 +74,7 @@ local achievements =
     }
 }
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -95,7 +95,7 @@ EHI:ShowLootCounter({
     },
     load_sync = function(self)
         -- Red Diamond spawns on OVK or above only
-        if OVKorAbove and managers.game_play_central:GetMissionDisabledUnit(100950) then -- Red Diamond
+        if OVKorAbove and managers.game_play_central:IsMissionUnitDisabled(100950) then -- Red Diamond
             self._loot:IncreaseLootCounterProgressMax()
         end
         self._loot:SyncSecuredLoot()
@@ -133,7 +133,7 @@ local xp_override =
 }
 local xp =
 {
-    tactic =
+    plan =
     {
         stealth =
         {
@@ -194,7 +194,7 @@ if EHI:GetOption("show_mission_trackers") then
         end
         return nil -- Has not been interacted yet
     end
-    EHI:AddLoadSyncFunction(function(self)
+    EHI.Manager:AddLoadSyncFunction(function(self)
         if self.ConditionFunctions.IsStealth() then
             self:Trigger(103969)
             local wd = managers.worlddefinition
@@ -208,7 +208,7 @@ if EHI:GetOption("show_mission_trackers") then
             end
         end
         -- Clear memory
-        bg = nil
+        bg = nil ---@diagnostic disable-line
         codes = nil
         dah_laptop_codes = nil ---@diagnostic disable-line
     end)

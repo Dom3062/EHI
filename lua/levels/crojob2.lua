@@ -15,7 +15,7 @@ for _, index in ipairs(MethlabIndex) do
 end
 local chopper_delay = 25 + 1 + 2.5
 local triggers = {
-    [102120] = { time = 5400/30, id = "ShipMove", icons = { Icon.Boat, Icon.Wait }, trigger_times = 1, hint = Hints.Wait },
+    [102120] = { time = 5400/30, id = "ShipMove", icons = { Icon.Boat, Icon.Wait }, trigger_once = true, hint = Hints.Wait },
 
     [101545] = { time = 100 + chopper_delay, id = "C4FasterPilot", icons = Icon.HeliDropC4, hint = Hints.C4Delivery },
     [101749] = { time = 160 + chopper_delay, id = "C4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery },
@@ -69,23 +69,22 @@ local other =
 if EHI:IsLootCounterVisible() then
     local Weapons = { 100857, 103374 }
     other[101737] = EHI:AddLootCounter3(function(self, ...)
-        local MayhemOrAbove = EHI:IsMayhemOrAbove()
         EHI:ShowLootCounterNoChecks({
             max = 6 + tweak_data.ehi.functions.GetNumberOfVisibleWeapons(Weapons), -- 4 Bomb parts; 2 Meth and Weapons
             -- Assume no collision spawned, more loot
-            max_random = MayhemOrAbove and 14 or 18,
+            max_random = EHI:IsMayhemOrAbove() and 14 or 18,
             client_from_start = true
         })
-        if managers.game_play_central:GetMissionDisabledUnit(107388) then -- Collision (8th position)
+        if managers.game_play_central:IsMissionUnitDisabled(107388) then -- Collision (8th position)
             -- Collision is visible, less loot spawned
             self._loot:DecreaseLootCounterMaxRandom(2)
         end
     end, true)
     -- Random loot in crates
-    local IncreaseMaximumTrigger = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    local IncreaseMaximumTrigger = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
         self._loot:RandomLootSpawned()
     end) }
-    local DecreaseMaximumTrigger = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    local DecreaseMaximumTrigger = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
         self._loot:RandomLootDeclined()
     end) }
     for i = 103232, 103264, 1 do -- 1 - 11 Cocaine / Money / Gold
@@ -149,7 +148,7 @@ if EHI:IsLootCounterVisible() then
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101742] = { chance = 100, time = 150, on_fail_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop }
-    other[101773] = { id = "Snipers", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    other[101773] = { id = "Snipers", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         if self._trackers:TrackerDoesNotExist(id) then
             self._trackers:AddTracker({
@@ -172,7 +171,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104331] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -218,7 +217,7 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

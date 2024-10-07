@@ -6,7 +6,6 @@
 ---
 --- Aliases
 ---
----@alias CoreWorldInstanceManager.Instance { name: string, folder: string, start_index: number, index_size: number, continent: string, rotation: Rotation, mission_placed: boolean }
 ---@alias UnitObject UnitPlayer|UnitEnemy|UnitTeamAI|UnitCivilian|UnitBase
 ---@param obj (Unit|Workspace|PanelBaseObject)?
 ---@return boolean
@@ -596,7 +595,7 @@ _G.tweak_data.hud_icons = {}
 ---@field pd2_small_font_size number
 ---@field pd2_medium_font string
 ---@field pd2_large_font string
----@field pd2_large_font_id userdata
+---@field pd2_large_font_id Idstring
 ---@field pd2_large_font_size number
 _G.tweak_data.menu = {}
 ---@class PlayerTweakData
@@ -746,6 +745,8 @@ _G.IS_VR = ...
 _G.AmmoBagBase = {}
 ---@class BlackMarketGui
 _G.BlackMarketGui = {}
+---@class BaseNetworkSession
+_G.BaseNetworkSession = {}
 ---@class GrenadeCrateBase
 _G.GrenadeCrateBase = {}
 ---@class CallbackEventHandler
@@ -828,6 +829,10 @@ _G.MoneyManager = {}
 ---@field set fun(vec1: Vector3, vec2: Vector3) Sets `vec2` into `vec1`
 ---@field set_z fun(vec: Vector3, z: number) Sets `z` in `vec`
 _G.mvector3 = {}
+---@class NetworkPeer
+_G.NetworkPeer = {}
+---@class SkirmishTweakData
+_G.SkirmishTweakData = {}
 ---@class TradeManager
 _G.TradeManager = {}
 ---@class VehicleDrivingExt
@@ -868,6 +873,10 @@ end
 ---@field yellow Color
 _G.Color = {}
 
+---@class _G.Idstring
+---@overload fun(path_or_name: string): Idstring
+_G.Idstring = {}
+
 ---@class Vector3
 ---@operator sub(self): Vector3
 ---@field length fun(self: self): number
@@ -896,7 +905,8 @@ CoreTable.deep_clone = _G.deep_clone
 ---@generic T: table
 ---@param super T? A base class which `class` will derive from
 ---@return T
-function class(super) end
+function class(super)
+end
 
 ---@generic T
 ---@param category string
@@ -936,6 +946,29 @@ end
 ---@field unpack fun(self: self): r: number, g: number, b: number
 ---@field with_alpha fun(self: self, alpha: number): self
 
+---@class Idstring
+---@field key fun(): string
+
+---@class ElementAreaTrigger : MissionScriptElement
+---@field _is_inside fun(self: self, position: Vector3): boolean
+
+---@class ElementCounterFilter : MissionScriptElement
+---@field _values_ok fun(self: self): boolean
+
+---@class ElementFilter : MissionScriptElement
+---@field _check_difficulty fun(self: self): boolean
+---@field _check_mode fun(self: self): boolean
+
+---@class ElementLogicChance : MissionScriptElement
+---@field _values ElementLogicChanceOperatorValues
+---@field add_trigger fun(self: self, id: any, outcome: "success"|"fail", callback: function)
+
+---@class ElementLogicChanceOperator : MissionScriptElement
+---@field _values ElementLogicChanceValues
+
+---@class ElementLogicChanceValues : MissionScriptElementValues
+---@field chance number
+
 ---@class ElementWaypointValues : MissionScriptElementValues
 ---@field only_in_civilian boolean
 ---@field only_on_instigator boolean
@@ -964,10 +997,15 @@ end
 ---@field super MissionScriptElement
 ---@field _values ElementExperienceValues
 
+---@class ElementJobValueValues : MissionScriptElementValues
+---@field value number
+
+---@class ElementJobValue : MissionScriptElement
+---@field _values ElementJobValueValues
+
 ---@class MissionScriptElementValues
 ---@field amount number `ElementCounter` | `ElementCounterOperator`
 ---@field enabled boolean
----@field chance number `ElementLogicChance` | `ElementLogicChanceOperator`
 ---@field value number `ElementJobValue`
 ---@field position Vector3
 ---@field rotation Rotation
@@ -982,13 +1020,11 @@ end
 ---@field editor_name fun(self: self): string
 ---@field on_executed function
 ---@field _is_inside fun(self: self, position: Vector3): boolean `ElementAreaReportTrigger `
----@field _values_ok fun(self: self): boolean `ElementCounterFilter` | `ElementStopwatchFilter`
+---@field _values_ok fun(self: self): boolean `ElementStopwatchFilter`
 ---@field _values MissionScriptElementValues
 ---@field _calc_base_delay fun(self: self): number
 ---@field _calc_element_delay fun(self: self, params: table): number
 ---@field _timer number `ElementTimer` | `ElementTimerOperator`
----@field _check_difficulty fun(self: self): boolean `ElementDifficulty`
----@field _check_mode fun(self: self): boolean `ElementFilter`
 
 ---@class MissionScript
 ---@field element fun(self: self, id: number): MissionScriptElement?
@@ -1105,17 +1141,11 @@ end
 ---@class NetworkAccountBase
 ---@field get_stat fun(self: self, key: string): number
 
----@class NetworkPeer
----@field _unit UnitPlayer
----@field id fun(self: self): number
----@field character fun(self: self): string
----@field set_outfit_string fun(self: self, outfit_string: table)
----@field unit fun(self: self): UnitPlayer
-
 ---@class NetworkManager
 ---@field account NetworkAccountBase
 ---@field add_event_listener fun(self: self, key: string, event_types: string, clbk: function)
 ---@field session fun(self: self): BaseNetworkSession
+---@field remove_event_listener fun(self: self, key: string)
 
 ---@class PerpetualEventManager
 ---@field get_holiday_tactics fun(self: self): string
@@ -1221,6 +1251,7 @@ end
 ---@field player PlayerTweakData
 ---@field preplanning PrePlanningTweakData
 ---@field projectiles tweak_data.projectiles
+---@field skirmish SkirmishTweakData
 ---@field upgrades UpgradesTweakData
 
 ---@class TimerManager
@@ -1279,11 +1310,12 @@ function math.lerp(a, b, lerp)
 end
 
 ---@class tablelib
----@field size fun(tbl: table): number Returns size of the table
+---@field size fun(tbl: table): number Returns number of elements in the table
 ---@field count fun(v: table, func: fun(item: any, key: any): boolean): number
 ---@field contains fun(v: table, e: string): boolean Returns `true` or `false` if `e` exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
 ---@field get_vector_index fun(v: table, e: any): number?
+---@field empty fun(v: table): boolean
 
 ---Maps values as keys with value `true`
 ---@generic K
@@ -1312,6 +1344,9 @@ end
 ---@return K
 function table.random_key(t)
 end
+
+---@class string
+---@field key fun(self: self): string Returns IdString
 
 ---@class ContourExt
 ---@field _contour_list table?
@@ -1362,9 +1397,11 @@ end
 ---@field _logic_data table
 ---@field convert_to_criminal fun(self: self, mastermind_criminal: UnitPlayer?)
 ---@field converted fun(self: self): boolean
+---@field is_hostage fun(self: self): boolean
 
 ---@class HuskCopBrain
 ---@field converted fun(self: self): boolean
+---@field is_hostage fun(self: self): boolean
 ---@field sync_converted fun(self: self): boolean
 
 ---@class CopDamage
@@ -1376,6 +1413,7 @@ end
 ---@field _unit UnitEnemy
 ---@field add_listener fun(self: self, key: string, events: string[]?, clbk: function)
 ---@field dead fun(self: self): boolean
+---@field immortal boolean
 ---@field is_civilian fun(type: string): boolean
 ---@field register_listener fun(key: string, event_types: string[], clbk: function)
 ---@field remove_listener fun(self: self, key: string)
@@ -1390,9 +1428,11 @@ end
 
 ---@class CivilianBase : CopBase
 ---@field _unit UnitCivilian
+---@field unintimidateable boolean
 
 ---@class HuskCivilianBase : HuskCopBase
 ---@field _unit UnitCivilian
+---@field unintimidateable boolean
 
 ---@class CivilianDamage : CopDamage
 ---@field _unit UnitCivilian
@@ -1421,10 +1461,11 @@ end
 ---@field editor_id fun(): number
 ---@field key fun(): string
 ---@field material_config fun(): Idstring
----@field name fun(): string
+---@field name fun(): Idstring
 ---@field parent fun(): UnitBase?
 ---@field position fun(self: self): Vector3
 ---@field oobb fun(self: self): C_UnitOOBB Object Oriented Bounding Box
+---@field set_extension_update_enabled fun(self: self, class_name: Idstring, state: boolean)
 
 ---@class UnitBase : Unit
 ---@field add_destroy_listener fun(self: self, key: string, clbk: function)
@@ -1542,7 +1583,7 @@ end
 ---@field alpha fun(self: self) : number
 ---@field set_alpha fun(self: self, alpha: number)
 ---@field stop fun(self: self, anim_thread: thread?)
----@field animate fun(self: self, f: function, ...:any?): thread
+---@field animate fun(self: self, f: fun(o: self, ...: any?), ...:any?): thread
 ---@field set_size fun(self: self, w: number, h: number)
 ---@field size fun(self: self): w: number, h: number
 ---@field visible fun(self: self): boolean
@@ -1613,7 +1654,7 @@ end
 ---@field set_text fun(self: self, text: string)
 ---@field text_rect fun(self: self): x: number, y: number, w: number, h: number Returns rectangle of the text
 ---@field font_size fun(self: self): number
----@field set_font fun(self: self, font: userdata)
+---@field set_font fun(self: self, font: Idstring)
 ---@field set_font_size fun(self: self, font_size: number)
 ---@field text fun(self: self): string
 

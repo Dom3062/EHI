@@ -18,7 +18,6 @@ function EHITimedChanceTracker:OverridePanel()
     self._refresh_on_delete = true
 end
 
----@param params EHITracker.params
 function EHITimedChanceTracker:post_init(params)
     if params.start_opened then
         self:SetBGSize(self._bg_box_double, "set")
@@ -32,6 +31,10 @@ end
 ---@param t number?
 ---@param no_update boolean?
 function EHITimedChanceTracker:StartTimer(t, no_update)
+    if self._started then
+        return
+    end
+    self._started = true
     if t then
         self:SetTimeNoAnim(t)
     end
@@ -39,16 +42,22 @@ function EHITimedChanceTracker:StartTimer(t, no_update)
     self:ChangeTrackerWidth(self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons))
     self:AnimIconsX(self._bg_box_double + self._gap_scaled)
     self._bg_box:set_w(self._bg_box_double)
+    self:AnimateAdjustHintX(self._default_bg_size)
     if not no_update then
         self:AddTrackerToUpdate()
     end
 end
 
 function EHITimedChanceTracker:StopTimer()
+    if not self._started then
+        return
+    end
+    self._started = nil
     self:AnimatePanelW(self._panel_w)
     self:ChangeTrackerWidth(self._default_bg_size + (self._icon_gap_size_scaled * self._n_of_icons))
     self:AnimIconsX(self._default_bg_size + self._gap_scaled)
     self._bg_box:set_w(self._default_bg_size)
+    self:AnimateAdjustHintX(-self._default_bg_size)
     self:RemoveTrackerFromUpdate()
 end
 

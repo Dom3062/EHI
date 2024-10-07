@@ -24,7 +24,6 @@ function EHIdailycakeTracker:OverridePanel()
     self:SetIconX()
 end
 
----@param force boolean?
 function EHIdailycakeTracker:SetCompleted(force)
     if not self._status then
         self._status = "completed"
@@ -90,12 +89,12 @@ local sidejob =
             [EHI:GetInstanceElementID(100038, 3150)] = { special_function = SF.IncreaseProgress }
         },
         cleanup_callback = function()
-            EHIdailycakeTracker = nil ---@diagnostic disable-line
+            _G.EHIdailycakeTracker = nil
         end
     }
 }
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     sidejob = sidejob

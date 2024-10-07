@@ -40,7 +40,7 @@ local other =
 if EHI:IsLootCounterVisible() then
     local Weapons = { 101473, 102717, 102718, 102720 }
     local OtherLoot = { 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }
-    local FilterIsOk = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+    local FilterIsOk = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementFilter
         if element:_check_difficulty() then
             self._loot:SecuredMissionLoot() -- Server secured
         end
@@ -68,7 +68,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[105716] = { time = 90, id = "Snipers", class = TT.Sniper.Warning, special_function = SF.SetTimeOrCreateTracker }
     other[105717] = { time = 30, id = "Snipers", class = TT.Sniper.Warning, special_function = SF.SetTimeOrCreateTracker }
     if EHI:IsClient() then
-        other[102177] = EHI:ClientCopyTrigger(other[102321], { time = 1 + 5 + 30 + 45 + 45 + 120, trigger_times = 1 })
+        other[102177] = EHI:ClientCopyTrigger(other[102321], { time = 1 + 5 + 30 + 45 + 45 + 120, trigger_once = true })
         other[100973] = EHI:ClientCopyTrigger(other[102321], { time = 5 + 30 + 45 + 45 + 120 })
         other[101190] = EHI:ClientCopyTrigger(other[102321], { time = 30 + 45 + 45 + 120 })
         other[102078] = EHI:ClientCopyTrigger(other[102321], { time = 45 + 45 + 120 })
@@ -77,7 +77,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     other = other
 })
 EHI:AddXPBreakdown({

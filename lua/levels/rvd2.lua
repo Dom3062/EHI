@@ -82,7 +82,7 @@ else
         end
     end
     triggers[101366] = { additional_time = 5 + 40, random_time = 10, id = "VaultTeargas", icons = { Icon.Teargas }, hint = Hints.Teargas }
-    local LiquidNitrogen = EHI:RegisterCustomSF(function(self, trigger, ...)
+    local LiquidNitrogen = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:TrackerDoesNotExist("LiquidNitrogen") then
             self._trackers:AddTracker({
                 id = "LiquidNitrogen",
@@ -117,7 +117,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     other = other,
     sync_triggers = { element = element_sync_triggers }

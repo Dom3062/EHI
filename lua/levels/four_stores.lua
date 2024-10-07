@@ -24,7 +24,7 @@ local triggers = {
     [103593] = { run = { time = 180 + van_anim_delay } },
     [103594] = { run = { time = 200 + van_anim_delay } },
 
-    [101443] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    [101443] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
         self._trackers:AddTracker({
             id = "ObjectiveSteal",
             max = 15000,
@@ -40,9 +40,11 @@ local triggers = {
                 self._loot:RemoveEventListener("four_stores")
             end
         end)
-    end), trigger_times = 1 }
+    end), trigger_once = true },
+
+    [103629] = { time = 540/30, id = "SWATTurretArrival", icons = { Icon.Turret, Icon.Goto }, class = EHI.Trackers.Warning, waypoint = { icon = Icon.Turret, position = Vector3(0.425327, -3362.29, 254.634) } }
 }
-EHI:AddLoadSyncFunction(function(self)
+EHI.Manager:AddLoadSyncFunction(function(self)
     local objective = managers.loot:get_real_total_small_loot_value()
     if objective >= 15000 then
         return
@@ -50,11 +52,6 @@ EHI:AddLoadSyncFunction(function(self)
     self:Trigger(101443)
     self._trackers:SetTrackerProgress("ObjectiveSteal", objective)
 end)
-if EHI:GetOption("show_escape_chance") then
-    EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi_escape:AddEscapeChanceTracker(dropin, 30)
-    end)
-end
 
 local CopArrivalDelay = 30 -- Normal
 if EHI:IsDifficulty(EHI.Difficulties.Hard) then
@@ -67,37 +64,26 @@ end
 local FirstAssaultBreak = 15 + 2.5 + 3 + 2 + 30 + 20
 local other =
 {
-    [103501] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement },
-    [101167] = EHI:AddAssaultDelay({ control = FirstAssaultBreak, special_function = SF.AddTrackerIfDoesNotExist, trigger_times = 1 }), -- 15s (55s delay)
-    [101166] = EHI:AddAssaultDelay({ control = FirstAssaultBreak - 5, special_function = SF.SetTimeOrCreateTracker, trigger_times = 1 }), -- 10s (65s delay)
-    [101159] = EHI:AddAssaultDelay({ control = FirstAssaultBreak - 2, special_function = SF.SetTimeOrCreateTracker, trigger_times = 1 }) -- 13s (60s delay)
+    [101167] = EHI:AddAssaultDelay({ control = FirstAssaultBreak, special_function = SF.AddTrackerIfDoesNotExist, trigger_once = true }), -- 15s (55s delay)
+    [101166] = EHI:AddAssaultDelay({ control = FirstAssaultBreak - 5, special_function = SF.SetTimeOrCreateTracker, trigger_once = true }), -- 10s (65s delay)
+    [101159] = EHI:AddAssaultDelay({ control = FirstAssaultBreak - 2, special_function = SF.SetTimeOrCreateTracker, trigger_once = true }) -- 13s (60s delay)
 }
 if CopArrivalDelay > 0 then
-    other[103278] = EHI:AddAssaultDelay({ control = FirstAssaultBreak + CopArrivalDelay, trigger_times = 1 }) -- Full assault break; 15s (55s delay)
+    other[103278] = EHI:AddAssaultDelay({ control = FirstAssaultBreak + CopArrivalDelay, trigger_once = true }) -- Full assault break; 15s (55s delay)
+end
+if EHI:GetOption("show_escape_chance") then
+    other[103501] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    EHI:AddOnAlarmCallback(function(dropin)
+        managers.ehi_escape:AddEscapeChanceTracker(dropin, 30)
+    end)
 end
 if EHI:IsLootCounterVisible() then
-    local function LootSafeIsVisible()
-        local unit = managers.worlddefinition:get_unit(101153) --[[@as UnitBase]]
-        if not unit then
-            return false
-        end
-        if not unit:damage() then
-            return false
-        end
-        if unit:damage()._state then
-            return not unit:damage()._state.graphic_group.safe -- If the "safe" group does not exist, the safe is visible
-        else
-            return false
-        end
-    end
-    other[101890] = { special_function = SF.CustomCodeDelayed, t = 4, f = function()
-        if LootSafeIsVisible() then
-            EHI:ShowLootCounterNoChecks({ max = 1, client_from_start = true })
-        end
-    end}
-    EHI:AddLoadSyncFunction(function(self)
-        if LootSafeIsVisible() and managers.loot:GetSecuredBagsAmount() == 0 then
-            EHI:ShowLootCounterNoChecks({ max = 1, client_from_start = true })
+    other[101479] = { special_function = SF.CustomCode, f = function()
+        EHI:ShowLootCounterNoChecks({ max = 1, client_from_start = true })
+    end }
+    EHI.Manager:AddLoadSyncFunction(function(self)
+        if self:IsMissionElementDisabled(101804) and managers.loot:GetSecuredBagsAmount() == 0 then
+            self:Trigger(101479)
         end
     end)
 end
@@ -105,7 +91,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102505] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101006 } }
     other[103200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103234 } }
 end
-EHI:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
+EHI.Manager:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 EHI:AddXPBreakdown({
     objective =
     {

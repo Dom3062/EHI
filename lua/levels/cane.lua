@@ -9,7 +9,7 @@ local TimedLootDrop = { Icon.Escape, Icon.LootDrop, Icon.Wait }
 local triggers = {
     [100647] = { time = 240 + 60, id = "Chimney", icons = LootDrop, hint = Hints.Loot }
 }
-if EHI:EscapeVehicleWillReturn() then
+if EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn() then
     triggers[EHI:GetInstanceElementID(100078, 10700)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
     triggers[EHI:GetInstanceElementID(100078, 11000)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
     triggers[EHI:GetInstanceElementID(100011, 10700)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" }, hint = Hints.LootTimed }
@@ -96,10 +96,10 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102361] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[102362] = { id = "Snipers", special_function = SF.DecreaseCounter }
     if EHI:IsClient() then
-        other[102369] = { id = "Snipers", class = TT.Sniper.Count, special_function = SF.AddTrackerIfDoesNotExist, trigger_times = 1 }
+        other[102369] = { id = "Snipers", class = TT.Sniper.Count, special_function = SF.AddTrackerIfDoesNotExist, trigger_once = true }
     end
 end
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

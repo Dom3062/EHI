@@ -10,23 +10,21 @@ local original =
 function PlayerMovement:init(...)
     original.init(self, ...)
     managers.ehi_buff:CallFunction("Stamina", "Spawned", self._stamina)
-    if EHI:GetBuffOption("inspire_basic") then
-        if self._rally_skill_data and self._rally_skill_data.morale_boost_delay_t then
-            local _t = self._rally_skill_data
-            self._rally_skill_data = {}
-            local _mt = {
-                __index = function(table, key)
-                    return _t[key]
-                end,
-                __newindex = function(table, key, value)
-                    _t[key] = value
-                    if key == "morale_boost_delay_t" then
-                        local t = value - managers.player:player_timer():time()
-                        managers.ehi_buff:AddBuff("morale_boost", t)
-                    end
+    if EHI:GetBuffOption("inspire_basic") and self._rally_skill_data and self._rally_skill_data.morale_boost_delay_t then
+        local _t = self._rally_skill_data
+        self._rally_skill_data = {}
+        local _mt = {
+            __index = function(table, key)
+                return _t[key]
+            end,
+            __newindex = function(table, key, value)
+                _t[key] = value
+                if key == "morale_boost_delay_t" then
+                    local t = value - managers.player:player_timer():time()
+                    managers.ehi_buff:AddBuff("morale_boost", t)
                 end
-            }
-            setmetatable(self._rally_skill_data, _mt)
-        end
+            end
+        }
+        setmetatable(self._rally_skill_data, _mt)
     end
 end

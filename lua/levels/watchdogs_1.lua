@@ -57,7 +57,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101223] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101231 } }
     other[102855] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102862 } }
 end
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -68,7 +68,7 @@ EHI:AddXPBreakdown({
     {
         { amount = 2000, name = "all_bags_secured" },
         { escape = 12000 },
-        { amount = 2000, name = "heli_escape" }
+        { amount = 2000, name = "heli_escape", optional = true }
     },
     total_xp_override =
     {

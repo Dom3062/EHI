@@ -32,16 +32,8 @@ EHIAssaultTracker._paused_color = EHIPausableTracker._paused_color
 if EHI:GetOption("show_assault_diff_in_assault_trackers") then
     if tweak_data.levels:IsLevelSkirmish() then
         EHIAssaultTracker._SHOW_ASSAULT_DIFF_SKIRMISH = true
+        EHIAssaultTracker._SKIRMISH_WAVE_DATA = tweak_data.skirmish:GetWaveData()
         EHIAssaultTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-        for _, wave_modifier in pairs(tweak_data.skirmish.wave_modifiers) do
-            for _, modifier in ipairs(wave_modifier) do
-                if modifier.data and modifier.data.waves then
-                    EHIAssaultTracker._SKIRMISH_WAVE_DATA = modifier.data.waves
-                    break
-                end
-            end
-        end
-        EHIAssaultTracker._SKIRMISH_WAVE_DATA = EHIAssaultTracker._SKIRMISH_WAVE_DATA or {}
     else
         EHIAssaultTracker._SHOW_ASSAULT_DIFF = true
         EHIAssaultTracker.FormatChance = EHIChanceTracker.Format
@@ -82,9 +74,6 @@ else -- If for some reason the hesitation delay is not a table, use the value di
     EHIAssaultTracker._hostage_delay = tonumber(hostage_values) or 30
 end
 EHIAssaultTracker._anticipation_delay = tweak_data.levels:IsLevelSkirmish() and 15 or 30
----@param panel Panel
----@param params EHITracker.params
----@param parent_class EHITrackerManager
 function EHIAssaultTracker:init(panel, params, parent_class)
     self._refresh_on_delete = true
     self:CalculateDifficultyRamp(params.diff or 0)
@@ -118,7 +107,6 @@ function EHIAssaultTracker:init(panel, params, parent_class)
     end
 end
 
----@param params EHITracker.params
 function EHIAssaultTracker:post_init(params)
     if self._SHOW_ASSAULT_DIFF then
         local corrected_diff = self._parent_class:RoundChanceNumber(params.diff_visual or managers.ehi_assault._diff or self._diff)
@@ -148,7 +136,6 @@ function EHIAssaultTracker:post_init(params)
 end
 
 if EHIAssaultTracker._SHOW_ASSAULT_DIFF_SKIRMISH then
-    ---@param progress number
     function EHIAssaultTracker:SetProgress(progress)
         self._progress = progress
         self._progress_text:set_text(self:FormatWaveDiff())

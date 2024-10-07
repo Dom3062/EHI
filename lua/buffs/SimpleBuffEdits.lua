@@ -114,7 +114,6 @@ function EHIHealthRegenBuffTracker:PreUpdateCheck()
     return true
 end
 
----@param state boolean
 function EHIHealthRegenBuffTracker:SetCustodyState(state)
     --[[if state then
         self:RemoveBuffFromUpdate2()

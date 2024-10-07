@@ -1,15 +1,3 @@
----@param o PanelBaseObject
----@param target_x number
-local function left(o, target_x)
-    local t, total = 0, 0.18
-    local from_x = o:x()
-    while t < total do
-        t = t + coroutine.yield()
-        o:set_x(math.lerp(from_x, target_x, t / total))
-    end
-    o:set_x(target_x)
-end
-
 ---@class EHIAggregatedHealthEquipmentTracker : EHIAggregatedEquipmentTracker
 ---@field _icon2 PanelBitmap?
 ---@field super EHIAggregatedEquipmentTracker
@@ -66,40 +54,34 @@ function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
             icons = icons + 1
         end
     end
-    local icon_size = (self._icon_gap_size_scaled * icons)
-    if self._hint_positioned then
-        self:AnimateRepositionHintX(icons)
-    end
-    self:ChangeTrackerWidth(self._bg_box:w() + icon_size, self._active_icons ~= icons)
-    self._active_icons = icons
-    if self._ICON_LEFT_SIDE_START then
-        self._bg_box:set_x(icon_size)
+    if self._active_icons ~= icons then
+        local icon_size = (self._icon_gap_size_scaled * icons)
+        if self._hint_positioned then
+            self:AnimateAdjustHintX(self._active_icons < icons and self._icon_gap_size_scaled or -self._icon_gap_size_scaled, true)
+        end
+        self:ChangeTrackerWidth(self._bg_box:w() + icon_size, true)
+        self._active_icons = icons
+        if self._ICON_LEFT_SIDE_START then
+            self._bg_box:set_x(icon_size)
+        end
     end
 end
 
----@param id string
 function EHIAggregatedHealthEquipmentTracker:UpdateText(id)
     self:SetAndFitTheText()
     self:UpdateIconsVisibility()
     self:AnimateBG()
 end
 
-function EHIAggregatedHealthEquipmentTracker:PositionHint(...)
-    EHIAggregatedHealthEquipmentTracker.super.PositionHint(self, ...)
+function EHIAggregatedHealthEquipmentTracker:HintPositioned()
     self._hint_positioned = true
     if self._icon2 then
-        self:AdjustHintX(-self._icon_gap_size_scaled)
+        if self._VERTICAL_ANIM_W_LEFT then
+            if self._ICON_LEFT_SIDE_START then
+                self:AdjustHintX(self._icon_gap_size_scaled)
+            end
+        else
+            self:AdjustHintX(-self._icon_gap_size_scaled)
+        end
     end
-end
-
-function EHIAggregatedHealthEquipmentTracker:AnimateRepositionHintX(n_of_icons)
-    if not self._hint or self._active_icons == n_of_icons then
-        return
-    end
-    if self._anim_hint_x then
-        self._hint:stop(self._anim_hint_x)
-    end
-    local x = self._hint_pos.x + (self._active_icons < n_of_icons and (self._icon_gap_size_scaled * (n_of_icons - self._active_icons)) or -(self._icon_gap_size_scaled * (self._active_icons - n_of_icons)))
-    self._anim_hint_x = self._hint:animate(left, x)
-    self._hint_pos.x = x
 end

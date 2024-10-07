@@ -33,18 +33,18 @@ local reloading_outfit = false -- Fix for Beardlib stack overflow crash
 local xp_format = EHI:GetOption("xp_format")
 local diff_multiplier = tweak_data:get_value("experience_manager", "difficulty_multiplier", EHI:DifficultyIndex()) or 1
 
----@type XPBreakdownPanel[]?, XPBreakdownItem[]?
-local _panels, _buttons, TacticSelected, TacticMax = nil, nil, 1, 1
----@class XPBreakdownItem
+---@type XPBreakdownPanel[]?, XPBreakdownButton[]?
+local _panels, _buttons, PlanSelected, PlanMax = nil, nil, 1, 1
+---@class XPBreakdownButton
 ---@field new fun(self: self, gui: MissionBriefingGui, ws_panel: Panel, string: string, add_string: string?, loc: LocalizationManager, index: number?): self
-local XPBreakdownItem = class()
+local XPBreakdownButton = class()
 ---@param gui MissionBriefingGui
 ---@param ws_panel Panel
 ---@param string string
 ---@param add_string string?
 ---@param loc LocalizationManager
 ---@param index number?
-function XPBreakdownItem:init(gui, ws_panel, string, add_string, loc, index)
+function XPBreakdownButton:init(gui, ws_panel, string, add_string, loc, index)
     self._gui = gui
     self._index = index or 1
     local text = loc:text(string)
@@ -77,15 +77,15 @@ function XPBreakdownItem:init(gui, ws_panel, string, add_string, loc, index)
 end
 
 ---@param panel Panel
-function XPBreakdownItem:SetPosByPanel(panel)
+function XPBreakdownButton:SetPosByPanel(panel)
     self._button:set_bottom(panel:top())
     self._button:set_left(panel:left())
     self._tab_select_rect:set_bottom(self._button:bottom())
     self._tab_select_rect:set_left(self._button:left())
 end
 
----@param item XPBreakdownItem
-function XPBreakdownItem:SetPosByPreviousItem(item)
+---@param item XPBreakdownButton
+function XPBreakdownButton:SetPosByPreviousItem(item)
     local button = item._button
     self._button:set_bottom(button:bottom())
     self._button:set_left(button:right() + 10)
@@ -94,15 +94,15 @@ function XPBreakdownItem:SetPosByPreviousItem(item)
 end
 
 ---@param offset number
-function XPBreakdownItem:SetVisibleWithOffset(offset)
+function XPBreakdownButton:SetVisibleWithOffset(offset)
     self._button:set_y(self._button:y() + offset)
     self._button:set_visible(true)
     self._tab_select_rect:set_y(self._button:y())
 end
 
 ---@param no_change boolean?
----@param previous_tactic number?
-function XPBreakdownItem:Select(no_change, previous_tactic)
+---@param previous_plan number?
+function XPBreakdownButton:Select(no_change, previous_plan)
     if self._selected then
         return
     end
@@ -114,10 +114,10 @@ function XPBreakdownItem:Select(no_change, previous_tactic)
         return
     end
     managers.menu_component:post_event("menu_enter")
-    self._gui:OnTacticChanged(self._index, previous_tactic)
+    self._gui:OnPlanChanged(self._index, previous_plan)
 end
 
-function XPBreakdownItem:Unselect()
+function XPBreakdownButton:Unselect()
     if not self._selected then
         return
     end
@@ -129,7 +129,7 @@ end
 
 ---@param x number
 ---@param y number
-function XPBreakdownItem:mouse_moved(x, y)
+function XPBreakdownButton:mouse_moved(x, y)
     if not self._selected then
         if self._button:inside(x, y) then
             if not self._highlighted then
@@ -146,10 +146,10 @@ function XPBreakdownItem:mouse_moved(x, y)
     return false
 end
 
----@param button string
+---@param button Idstring
 ---@param x number
 ---@param y number
-function XPBreakdownItem:mouse_pressed(button, x, y)
+function XPBreakdownButton:mouse_pressed(button, x, y)
     if button ~= Idstring("0") then
         return
     end
@@ -158,7 +158,7 @@ function XPBreakdownItem:mouse_pressed(button, x, y)
     end
 end
 
-function XPBreakdownItem:destroy()
+function XPBreakdownButton:destroy()
     if self._button and alive(self._button) then
         self._button:parent():remove(self._button)
     end
@@ -167,13 +167,13 @@ function XPBreakdownItem:destroy()
     end
 end
 
-local XPBreakdownItemSwitch = {}
+local XPBreakdownButtonSwitch = {}
 ---@param ws_panel Panel
----@param max_tactics number
+---@param max_plans number
 ---@param loc LocalizationManager
 ---@param button PanelText
-function XPBreakdownItemSwitch:new(ws_panel, max_tactics, loc, button)
-    local text = max_tactics > 2 and "ehi_mission_briefing_next_tactic_text" or "ehi_mission_briefing_toggle_tactic_text"
+function XPBreakdownButtonSwitch:new(ws_panel, max_plans, loc, button)
+    local text = max_plans > 2 and "ehi_mission_briefing_next_plan_text" or "ehi_mission_briefing_toggle_plan_text"
     self._text = ws_panel:text({
         text = string.format("%s %s", loc:get_default_macro("BTN_X"), loc:text(text)),
         blend_mode = "add",
@@ -189,16 +189,16 @@ function XPBreakdownItemSwitch:new(ws_panel, max_tactics, loc, button)
     self._text:set_visible(true)
 end
 
-function XPBreakdownItemSwitch:IsCreated()
+function XPBreakdownButtonSwitch:IsCreated()
     return self._text ~= nil
 end
 
 ---@param alpha number
-function XPBreakdownItemSwitch:set_alpha(alpha)
+function XPBreakdownButtonSwitch:set_alpha(alpha)
     self._text:set_alpha(alpha)
 end
 
-function XPBreakdownItemSwitch:destroy()
+function XPBreakdownButtonSwitch:destroy()
     if self._text and alive(self._text) then
         self._text:parent():remove(self._text)
     end
@@ -1498,7 +1498,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
     if tweak_data.levels:IsLevelChristmas() then
         local bonus = (tweak_data:get_value("experience_manager", "limited_xmas_bonus_multiplier") or 1) - 1
         if bonus > 0 then
-            local percent = tostring(bonus * 100)
             local xmas = self._panel:text({
                 name = "0_xmas",
                 blend_mode = "add",
@@ -1507,7 +1506,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
                 font = tweak_data.menu.pd2_large_font,
                 font_size = tweak_data.menu.pd2_small_font_size,
                 color = tweak_data.screen_colors.event_color,
-                text = string.format("%s +%s%s", self._loc:get_default_macro("BTN_XMAS"), percent, percent_format),
+                text = string.format("%s +%s%s", self._loc:get_default_macro("BTN_XMAS"), tostring(bonus * 100), percent_format),
                 layer = 10
             })
             managers.hud:make_fine_text(xmas)
@@ -1518,7 +1517,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
         local diff_in_stars = xp.job_stars - xp.level_to_stars
         local tweak_multiplier = tweak_data:get_value("experience_manager", "level_limit", "pc_difference_multipliers", diff_in_stars) or 0
         if tweak_multiplier > 0 then
-            local reduction_percent = tostring((1 - tweak_multiplier) * 100)
             local level_limit_icon = self._panel:bitmap({
                 name = "0_level_limit_icon",
                 blend_mode = "add",
@@ -1536,7 +1534,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
                 font = tweak_data.menu.pd2_large_font,
                 font_size = tweak_data.menu.pd2_small_font_size,
                 color = tweak_data.screen_colors.important_1,
-                text = string.format("-%s%s", reduction_percent, percent_format),
+                text = string.format("-%s%s", tostring((1 - tweak_multiplier) * 100), percent_format),
                 layer = 10
             })
             managers.hud:make_fine_text(level_limit)
@@ -1724,7 +1722,7 @@ end
 
 function MissionBriefingGui:ProcessXPBreakdown()
     if _panels then
-        if TacticMax > 1 then
+        if PlanMax > 1 then
             self:HookMouseFunctions()
         end
         if self._disable_panels_update then
@@ -1766,7 +1764,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
         no_overview_multipliers = xp_format == 1,
         disable_updates = self._disable_panels_update,
         diff_multiplier = xp_format >= 2,
-        gage = xp_format == 3 and EHI:AreGagePackagesSpawned()
+        gage = xp_format == 3 and EHI.GagePackagesSpawned
     }
     local ws_panel = self._full_workspace:panel()
     local loc = managers.localization
@@ -1801,19 +1799,19 @@ function MissionBriefingGui:AddXPBreakdown(params)
             return value
         end
     end
-    if params.tactic then
+    if params.plan then
         _buttons = {}
-        local tactic = params.tactic
-        if tactic.custom then
-            TacticMax = table.size(tactic.custom)
-            for i, custom in ipairs(tactic.custom) do
+        local plan = params.plan
+        if plan.custom then
+            PlanMax = table.size(plan.custom)
+            for i, custom in ipairs(plan.custom) do
                 if custom.objectives_override then
                     local new_objectives = {}
                     local override = custom.objectives_override
                     if override.stop_at then
                         local delimiter = override.stop_at
                         local mark_optional = override.mark_optional or {}
-                        for j, objective in ipairs(custom.tactic.objectives) do
+                        for j, objective in ipairs(custom.plan.objectives) do
                             if objective.name == delimiter then
                                 break
                             end
@@ -1822,11 +1820,11 @@ function MissionBriefingGui:AddXPBreakdown(params)
                             end
                             new_objectives[j] = objective
                         end
-                        custom.tactic.objectives = new_objectives
+                        custom.plan.objectives = new_objectives
                     elseif override.stop_at_inclusive then
                         local delimiter = override.stop_at_inclusive
                         local mark_optional = override.mark_optional or {}
-                        for j, objective in ipairs(custom.tactic.objectives) do
+                        for j, objective in ipairs(custom.plan.objectives) do
                             if objective.name == delimiter then
                                 if mark_optional[objective.name] then
                                     objective.optional = true
@@ -1839,13 +1837,13 @@ function MissionBriefingGui:AddXPBreakdown(params)
                             end
                             new_objectives[j] = objective
                         end
-                        custom.tactic.objectives = new_objectives
+                        custom.plan.objectives = new_objectives
                     elseif override.stop_at_inclusive_and_add_objectives then
                         local stop_and_add = override.stop_at_inclusive_and_add_objectives
                         local delimiter = stop_and_add.stop_at
                         local mark_optional = stop_and_add.mark_optional or {}
                         local size = 0
-                        for j, objective in ipairs(custom.tactic.objectives) do
+                        for j, objective in ipairs(custom.plan.objectives) do
                             if objective.name == delimiter then
                                 if mark_optional[objective.name] then
                                     objective.optional = true
@@ -1876,18 +1874,18 @@ function MissionBriefingGui:AddXPBreakdown(params)
                                 size = size + 1
                             end
                         end
-                        custom.tactic.objectives = new_objectives
+                        custom.plan.objectives = new_objectives
                     elseif override.add_objectives then
                         local more_objectives = override.add_objectives
-                        local size = table.size(custom.tactic.objectives) + 1
-                        new_objectives = deep_clone(custom.tactic.objectives)
+                        local size = table.size(custom.plan.objectives) + 1
+                        new_objectives = deep_clone(custom.plan.objectives)
                         for _, value in ipairs(more_objectives) do
                             new_objectives[size] = value
                             size = size + 1
                         end
-                        custom.tactic.objectives = new_objectives
+                        custom.plan.objectives = new_objectives
                     elseif override.add_objectives_with_pos then
-                        new_objectives = deep_clone(custom.tactic.objectives)
+                        new_objectives = deep_clone(custom.plan.objectives)
                         for _, value in ipairs(override.add_objectives_with_pos) do
                             if value.pos then
                                 table.insert(new_objectives, value.pos, value.objective)
@@ -1895,12 +1893,12 @@ function MissionBriefingGui:AddXPBreakdown(params)
                                 table.insert(new_objectives, value.objective)
                             end
                         end
-                        custom.tactic.objectives = new_objectives
+                        custom.plan.objectives = new_objectives
                     end
                     custom.objectives_override = nil
                 end
-                _panels[i] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, custom.tactic, i)
-                local button = XPBreakdownItem:new(self, ws_panel, "ehi_experience_" .. custom.name, custom.additional_name, loc, i)
+                _panels[i] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, custom.plan, i)
+                local button = XPBreakdownButton:new(self, ws_panel, "ehi_experience_" .. custom.name, custom.additional_name, loc, i)
                 if i == 1 then
                     button:SetPosByPanel(_panels[i]._panel)
                 else
@@ -1909,23 +1907,23 @@ function MissionBriefingGui:AddXPBreakdown(params)
                 _buttons[i] = button
             end
         else
-            -- Process stealth tactic first
-            _panels[1] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, tactic.stealth)
-            _buttons[1] = XPBreakdownItem:new(self, ws_panel, "ehi_experience_stealth", nil, loc)
+            -- Process stealth plan first
+            _panels[1] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, plan.stealth)
+            _buttons[1] = XPBreakdownButton:new(self, ws_panel, "ehi_experience_stealth", nil, loc)
             _buttons[1]:SetPosByPanel(_panels[1]._panel)
             -- Loud
-            _buttons[2] = XPBreakdownItem:new(self, ws_panel, "ehi_experience_loud", nil, loc, 2)
+            _buttons[2] = XPBreakdownButton:new(self, ws_panel, "ehi_experience_loud", nil, loc, 2)
             _buttons[2]:SetPosByPreviousItem(_buttons[1])
-            _panels[2] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, tactic.loud, 2)
-            TacticMax = 2
+            _panels[2] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, plan.loud, 2)
+            PlanMax = 2
         end
         local offset = Global.game_settings.single_player and 20 or 25
-        for i = 1, TacticMax, 1 do
+        for i = 1, PlanMax, 1 do
             _panels[i]:AddOffset(offset)
             _buttons[i]:SetVisibleWithOffset(offset)
         end
         if not managers.menu:is_pc_controller() then
-            XPBreakdownItemSwitch:new(ws_panel, TacticMax, loc, _buttons[TacticMax]._button)
+            XPBreakdownButtonSwitch:new(ws_panel, PlanMax, loc, _buttons[PlanMax]._button)
         end
         self:HookMouseFunctions()
     else
@@ -1956,10 +1954,10 @@ function MissionBriefingGui:HookMouseFunctions()
         original.assets_select = nil
         original.assets_deselect = nil
     end
-    if XPBreakdownItemSwitch:IsCreated() then
+    if XPBreakdownButtonSwitch:IsCreated() then
         original.special_btn_pressed = self.special_btn_pressed
         ---@param gui MissionBriefingGui
-        ---@param button string
+        ---@param button Idstring
         self.special_btn_pressed = function(gui, button, ...)
             if not alive(gui._panel) or not alive(gui._fullscreen_panel) or not gui._enabled then
                 return false
@@ -1973,25 +1971,25 @@ function MissionBriefingGui:HookMouseFunctions()
             end
             if button == Idstring("menu_toggle_pp_breakdown") then
                 if gui._assets_item and gui._items[gui._selected_item] ~= gui._assets_item then
-                    gui:NextTacticSelection()
+                    gui:NextPlanSelection()
                 end
             end
             return original.special_btn_pressed(gui, button, ...)
         end
         original.assets_select = self._assets_item.select
         self._assets_item.select = function(...)
-            XPBreakdownItemSwitch:set_alpha(0.25)
+            XPBreakdownButtonSwitch:set_alpha(0.25)
             original.assets_select(...)
         end
         original.assets_deselect = self._assets_item.deselect
         self._assets_item.deselect = function(...)
-            XPBreakdownItemSwitch:set_alpha(1)
+            XPBreakdownButtonSwitch:set_alpha(1)
             original.assets_deselect(...)
         end
     else
         original.mouse_pressed = self.mouse_pressed
         ---@param gui MissionBriefingGui
-        ---@param button string
+        ---@param button Idstring
         self.mouse_pressed = function(gui, button, ...)
             local result = original.mouse_pressed(gui, button, ...)
             if result then
@@ -2060,21 +2058,21 @@ function MissionBriefingGui:RefreshXPOverview()
 end
 
 ---@diagnostic disable
-function MissionBriefingGui:NextTacticSelection()
-    _buttons[TacticSelected]:Unselect()
-    local PreviousTactic = TacticSelected
-    TacticSelected = math.increment_with_limit(TacticSelected, 1, TacticMax)
-    _buttons[TacticSelected]:Select(false, PreviousTactic)
+function MissionBriefingGui:NextPlanSelection()
+    _buttons[PlanSelected]:Unselect()
+    local PreviousPlan = PlanSelected
+    PlanSelected = math.increment_with_limit(PlanSelected, 1, PlanMax)
+    _buttons[PlanSelected]:Select(false, PreviousPlan)
 end
 
 ---@param index number
----@param PreviousTactic number?
-function MissionBriefingGui:OnTacticChanged(index, PreviousTactic)
-    local tactic = PreviousTactic or TacticSelected
+---@param PreviousPlan number?
+function MissionBriefingGui:OnPlanChanged(index, PreviousPlan)
+    local plan = PreviousPlan or PlanSelected
     _panels[index]._panel:set_visible(true)
-    _panels[tactic]._panel:set_visible(false)
-    _buttons[tactic]:Unselect()
-    TacticSelected = index
+    _panels[plan]._panel:set_visible(false)
+    _buttons[plan]:Unselect()
+    PlanSelected = index
 end
 ---@diagnostic enable
 
@@ -2100,7 +2098,7 @@ function LobbyCodeMenuComponent:init(...)
     end
 end
 
-EHI:AddOnSpawnedCallback(function()
+local function f()
     if _panels then
         for _, panel in ipairs(_panels) do
             panel:destroy()
@@ -2113,6 +2111,11 @@ EHI:AddOnSpawnedCallback(function()
         end
         _buttons = nil
     end
-    XPBreakdownItemSwitch:destroy()
-    XPBreakdownItemSwitch = nil
-end)
+    XPBreakdownButtonSwitch:destroy()
+    XPBreakdownButtonSwitch = nil
+end
+if _G.IS_VR then
+    Hooks:PostHook(MissionBriefingGui, "set_enabled", "EHI_VR_MissionBriefingGui_set_enabled", f)
+else
+    EHI:AddOnSpawnedCallback(f)
+end

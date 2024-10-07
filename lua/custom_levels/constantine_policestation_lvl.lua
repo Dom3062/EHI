@@ -5,7 +5,7 @@ local other =
     [100193] = EHI:AddAssaultDelay({ control = 30 })
 }
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     other = other
 })
 
@@ -16,7 +16,7 @@ EHI:ShowLootCounter({ max = 10 })
 local function AdjustServerHackInstance(unit_id, unit_data, unit)
     Hooks:PostHook(unit:timer_gui(), "set_jammed", "EHI_100037_" .. tostring(unit_data.instance_id) .. "_unjammed", function(self, jammed, ...)
         if jammed == false then
-            self:_HideWaypoint(EHI:GetInstanceElementID(100017, unit_data.instance_id)) -- Interact (Computer Icon)
+            managers.hud:RemoveTimerWaypoint(EHI:GetInstanceElementID(100017, unit_data.instance_id)) -- Interact (Computer Icon)
         end
     end)
 end

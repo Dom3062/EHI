@@ -63,17 +63,17 @@ if EHI:IsLootCounterVisible() then
                     managers.mission:add_runned_unit_sequence_trigger(unit_id, "interact", function(...)
                         managers.hud:remove_waypoint(unit_id)
                     end)]]
-                    EHI:LogFast("Unit is a bag; interaction: " .. tostring(unit:interaction().tweak_data))
+                    EHI:LogFast("Unit is a bag; interaction: " .. tostring(unit:interaction().tweak_data)) ---@diagnostic disable-line
                     count = count + 1
                 else
-                    EHI:LogFast("Unit with ID '" .. tostring(unit_id) .. "' ignored")
+                    EHI:LogFast("Unit with ID '" .. tostring(unit_id) .. "' ignored") ---@diagnostic disable-line
                 end
             end
         end
         return count
     end
 
-    other[100840] = { special_function = EHI:RegisterCustomSF(function(...)
+    other[100840] = { special_function = EHI.Manager:RegisterCustomSF(function(...)
         EHI:ShowLootCounterNoChecks({ max = PrintAllInteractions() + 1 })
     end)}
 end
@@ -90,7 +90,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -129,7 +129,7 @@ local xp_override =
     }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

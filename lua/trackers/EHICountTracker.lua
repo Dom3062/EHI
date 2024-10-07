@@ -3,12 +3,10 @@
 ---@field _anim_flash_set_count number?
 EHICountTracker = class(EHITracker)
 EHICountTracker._update = false
----@param params EHITracker.params
 function EHICountTracker:pre_init(params)
     self._count = params.count or 0
 end
 
----@param params EHITracker.params
 function EHICountTracker:post_init(params)
     self._count_text = self._text
 end

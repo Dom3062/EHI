@@ -41,7 +41,7 @@ local achievements =
 
 local other =
 {
-    [100955] = EHI:AddAssaultDelay({ control_additional_time = 45, random_time = 15, special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+    [100955] = EHI:AddAssaultDelay({ control_additional_time = 45, random_time = 15, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
         if (EHI:IsHost() and element:counter_value() ~= 0) or self._trackers:TrackerExists(trigger.id) then
             return
         end
@@ -62,7 +62,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
 end
 EHI:ShowLootCounter({ max = 24 })
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

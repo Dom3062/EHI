@@ -46,7 +46,7 @@ local achievements =
 
 local other =
 {
-    [EHI:GetInstanceElementID(100003, 7950)] = EHI:AddAssaultDelay({ control_additional_time = 3 + 12 + 12 + 4 + 10, random_time = 5, trigger_times = 1 })
+    [EHI:GetInstanceElementID(100003, 7950)] = EHI:AddAssaultDelay({ control_additional_time = 3 + 12 + 12 + 4 + 10, random_time = 5, trigger_once = true })
 }
 if EHI:IsClient() then
     local original = other[EHI:GetInstanceElementID(100003, 7950)]
@@ -56,7 +56,7 @@ if EHI:IsClient() then
     other[EHI:GetInstanceElementID(100179, 7950)] = EHI:ClientCopyTrigger(original, { control_additional_time = 10 })
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

@@ -13,7 +13,7 @@ if OVKorAbove then
     ElementTimerPickup = 102076
 end
 local FultonCatchAgain = { id = "FultonCatchAgain", icons = WeaponsPickUp, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootTimed }
-local FultonCatchSuccess = { time = 6.8, id = "FultonCatchSuccess", icons = WeaponsPickUp, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+local FultonCatchSuccess = { time = 6.8, id = "FultonCatchSuccess", icons = WeaponsPickUp, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
     if self._trackers:TrackerDoesNotExist("FultonCatch") or self._trackers:TrackerDoesNotExist("FultonCatchAgain") then
         self:CreateTracker(trigger)
     end
@@ -83,7 +83,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         veryhard_or_below = 2,
         overkill_or_above = 3
     })
-    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, sniper_count = sniper_count }
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, sniper_count = sniper_count }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -96,15 +96,13 @@ end
 if EHI:IsLootCounterVisible() then
     local instances = { 4350, 5350, 5500, 5650, 5800, 5950, 6500, 13600, 13750, 13900, 14050, 23050, 23950, 24100, 24250, 24400, 25800, 7400, 25950, 26100, 26250, 26400, 26550, 26700, 26850, 27000, 27150, 27300, 27450, 27600 }
     other[103097] = EHI:AddLootCounter4(function()
-        local barrels = 0
-        local stocks = 0
-        local receivers = 0
+        local barrels, stocks, receivers = 0, 0, 0
         local wd = managers.worlddefinition
         local red = Idstring("units/pd2_dlc_ranc/equipment/ranc_int_weapon_box_2x1x1m/ranc_weapon_box_marking_red")
         local blue = Idstring("units/pd2_dlc_ranc/equipment/ranc_int_weapon_box_2x1x1m/ranc_weapon_box_marking_blue")
         for _, index in ipairs(instances) do
             local unit_id = EHI:GetInstanceElementID(100042, index)
-            if managers.game_play_central:GetMissionEnabledUnit(unit_id) then
+            if managers.game_play_central:IsMissionUnitEnabled(unit_id) then
                 local unit = wd:get_unit(unit_id + 9) -- 100051
                 if unit then
                     local material_config = unit:material_config()
@@ -128,7 +126,7 @@ if EHI:IsLootCounterVisible() then
     end, true)
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     other = other,
     sync_triggers = { base = sync_triggers }
@@ -170,7 +168,7 @@ local max_loot = EHI:GetValueBasedOnDifficulty({
     overkill_or_above = 14 -- 14 with a preplanning asset; 9 without it
 })
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

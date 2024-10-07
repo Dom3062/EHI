@@ -23,8 +23,8 @@
     "ehi_show_preview_text" : "显示预览文本",
     "ehi_show_preview_text_desc" : "隐藏/显示预览文本",
 
-    "ehi_mission_briefing_toggle_tactic_text" : "切换",
-    "ehi_mission_briefing_next_tactic_text" : "下一个",
+    "ehi_mission_briefing_toggle_plan_text" : "切换",
+    "ehi_mission_briefing_next_plan_text" : "下一个",
     
     "ehi_popup_experience" : "经验获取",
     "ehi_popup_experience_base_gained" : "基础经验获取: ",
@@ -1023,7 +1023,6 @@
     "ehi_experience_rats2_trade" : "交易",
     "ehi_experience_rats2_trade_and_steal" : "交易后偷回",
     "ehi_experience_big_oil_intel_pickup" : "拿取情报",
-    "ehi_experience_big_oil_safe_open" : "打开正确保险箱",
     "ehi_experience_big_oil2_correct_engine" : "找到正确引擎",
     "ehi_experience_ff3_item_deployed" : "在屋顶放置设备",
     "ehi_experience_ff3_cocaine_placed" : "放置可卡因",

@@ -3,10 +3,9 @@
     "description": "",
     "author": "Dom",
     "contact": "http://steamcommunity.com/profiles/76561198078556212/",
-    "version": "263",
+    "version": "264",
     "blt_version" : 2,
     "priority" : -100,
-    "supermod_definition" : "ehi.xml",
     "image" : "ehi.png",
     "color" : "0 0.58 1",
     "updates" :

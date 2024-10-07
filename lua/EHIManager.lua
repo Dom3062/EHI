@@ -37,7 +37,6 @@ function EHIManager:init(managers)
     self._timer = managers.ehi_timer
     self._loot = managers.ehi_loot
     self._hook = managers.ehi_hook
-    self._level_started_from_beginning = true
     self._t = 0
     self._TrackerToWaypoint =
     {
@@ -105,8 +104,11 @@ function EHIManager:init_finalize()
     EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
     EHI:AddOnCustodyCallback(callback(self, self, "SetCustodyState"))
     EHI:AddOnSpawnedCallback(callback(self, self, "Spawned"))
-    managers.network:add_event_listener("EHIManagerDropIn", "on_set_dropin", callback(self, self, "DisableStartFromBeginning"))
     if EHI:IsClient() then
+        managers.network:add_event_listener("EHIManagerDropIn", "on_set_dropin", function()
+            self._is_dropin = true
+            managers.network:remove_event_listener("EHIManagerDropIn")
+        end)
         self:AddReceiveHook(self._sync_tracker, function(data, sender)
             local tbl = json.decode(data)
             if tbl and tbl.id and tbl.delay then
@@ -196,10 +198,10 @@ function EHIManager:load(data)
         end
     end
     self:SyncLoad() -- Add missing positions from elements and remove waypoints
-    if self._level_started_from_beginning then
-        self._full_sync:dispatch(self)
-    else
+    if self._is_dropin then
         self._load_sync:dispatch(self)
+    else
+        self._full_sync:dispatch(self)
     end
     self._full_sync:clear()
     self._full_sync = nil
@@ -386,16 +388,8 @@ function EHIManager:AddFullSyncFunction(f)
     end
 end
 
-function EHIManager:DisableStartFromBeginning()
-    self._level_started_from_beginning = false
-end
-
-function EHIManager:GetStartedFromBeginning()
-    return self._level_started_from_beginning
-end
-
 function EHIManager:GetDropin()
-    return not self:GetStartedFromBeginning()
+    return self._is_dropin
 end
 
 ---@param dt number
@@ -1438,11 +1432,11 @@ function EHIManager:Trigger(id, element, enabled)
             elseif f == SF.FinalizeAchievement then
                 self._trackers:CallFunction(trigger.id, "Finalize")
             elseif f == SF.IncreaseChanceFromElement then
-                self._trackers:IncreaseChance(trigger.id, element._values.chance)
+                self._trackers:IncreaseChance(trigger.id, element._values.chance) ---@diagnostic disable-line
             elseif f == SF.DecreaseChanceFromElement then
-                self._trackers:DecreaseChance(trigger.id, element._values.chance)
+                self._trackers:DecreaseChance(trigger.id, element._values.chance) ---@diagnostic disable-line
             elseif f == SF.SetChanceFromElement then
-                self._trackers:SetChance(trigger.id, element._values.chance)
+                self._trackers:SetChance(trigger.id, element._values.chance) ---@diagnostic disable-line
             elseif f == SF.PauseTrackerWithTime then
                 local t_id = trigger.id
                 self:Pause(t_id)
@@ -1537,11 +1531,8 @@ function EHIManager:Trigger(id, element, enabled)
         else
             self:CreateTracker(trigger)
         end
-        if trigger.trigger_times and trigger.trigger_times > 0 then
-            trigger.trigger_times = trigger.trigger_times - 1
-            if trigger.trigger_times == 0 then
-                self:UnhookTrigger(id)
-            end
+        if trigger.trigger_once then
+            self:UnhookTrigger(id)
         end
     end
 end

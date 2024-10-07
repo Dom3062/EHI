@@ -8,7 +8,7 @@ local anim_delay = 450/30
 local boat_delay = 60 + 30 + 30 + 450/30
 local GetFromCache
 if EHI:GetOption("show_mission_trackers") then
-    GetFromCache = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
+    GetFromCache = EHI.Manager:RegisterCustomSyncedSF(function(self, trigger, ...)
         local t = self.SyncedSFF.watchdogs_2_boat_time --[[@as number]]
         self.SyncedSFF.watchdogs_2_boat_time = nil
         if t then
@@ -20,7 +20,7 @@ if EHI:GetOption("show_mission_trackers") then
         end
     end)
 else
-    GetFromCache = EHI:RegisterCustomSyncedSF(function(self, ...)
+    GetFromCache = EHI.Manager:RegisterCustomSyncedSF(function(self, ...)
         self.SyncedSFF.watchdogs_2_boat_time = nil
     end)
 end
@@ -70,7 +70,7 @@ local triggers = {
 }
 if EHI:IsClient() then
     triggers[101127] = EHI:ClientCopyTrigger(triggers[101560], { time = 75 + 30 + boat_delay })
-    local boat_return = { time = anim_delay, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    local boat_return = { time = anim_delay, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         if self:Exists(trigger.id) then
             self:SetAccurate(trigger.id, trigger.time)
         elseif not (self:Exists(trigger.id2) or self:Exists(trigger.id3)) then
@@ -90,7 +90,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100124] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+            [100124] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
                 local bags = self:CountLootbagsOnTheGround(10)
                 if bags == 12 then
                     self:CreateTracker(trigger)
@@ -102,10 +102,10 @@ local achievements =
     }
 }
 
-local SetBoatPosDirectlyOrFromElement = EHI:RegisterCustomSyncedSF(function(self, trigger, element, ...)
+local SetBoatPosDirectlyOrFromElement = EHI.Manager:RegisterCustomSyncedSF(function(self, trigger, element, ...)
     self.SyncedSFF.watchdogs_2_boat_pos = trigger.pos or (element._values.amount + 6)
 end)
-local AddToCache = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
+local AddToCache = EHI.Manager:RegisterCustomSyncedSF(function(self, trigger, ...)
     self.SyncedSFF.watchdogs_2_boat_time = trigger.time
 end)
 local other =
@@ -143,7 +143,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100457] = { time = 23 + 1, id = "Snipers", class = TT.Sniper.Warning }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

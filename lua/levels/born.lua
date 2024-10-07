@@ -61,7 +61,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, nil, { Icon.Defend })
+EHI.Manager:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, nil, { Icon.Defend })
 EHI:ShowLootCounter({ max = 9 })
 
 local tbl =

@@ -1,3 +1,15 @@
+r264 (07. 10. 2024):
+Added proper support for Vanilla Holdout levels
+Fixed Tag Team buffs not working correctly on clients
+Fixed position issues in Tracker Description
+Tracker Description will be on the left side when option "(Vertical) Panel Width Animation" is set to "Right to Left"
+Difficulty Tracker: Enabled in Holdout to show enemy damage and health boost respectively
+Enemy Counter: Disabled in Safehouse
+Loot Counter: Fixed green text when all possible loot is secured and random loot bag in safe spawned after
+Menu: Fixed option "(Vertical) Panel Width Animation" set to "Right to Left" not properly visible in the preview
+Diamond Store: Improved random loot detection in safes
+Rats Day 2: Improved random loot detection in safes
+
 r263 (25. 09. 2024):
 Cook Off: Fixed a crash
 White Xmas: Fixed a crash

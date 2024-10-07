@@ -8,10 +8,10 @@ local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseTriggerTable
 local triggers = {
     --heli_escape_OFF
-    [200534] = { special_function = EHI:RegisterCustomSyncedSF(function(self, ...)
+    [200534] = { special_function = EHI.Manager:RegisterCustomSyncedSF(function(self, ...)
         self.SyncedSFF.office_strike_escape = "Van"
     end) },
-    [200148] = { id = "Escape", special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    [200148] = { id = "Escape", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         if not EHI:IsPlayingFromStart() then -- Not playing from the start, try to determine the escape vehicle
             if self:IsMissionElementDisabled(200171) then -- Heli show sequence is disabled, Van escape it is
                 self.SyncedSFF.office_strike_escape = "Van"
@@ -132,7 +132,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         })
         self:SniperLogicStarted()
     end
-    ---@param dt number
     function EHISniperLoopBufferTracker:update(dt)
         for element, t in pairs(self._sniper_respawn_buffer) do
             local new_t = t - dt
@@ -190,27 +189,27 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         EHISniperLoopBufferTracker.super.IncreaseCount(self, ...)
     end
     -- ! element is Sniper ID (ElementSpawnEnemyDummy)
-    local AddToRespawnFromDeath = EHI:RegisterCustomSF(function(self, trigger, ...)
+    local AddToRespawnFromDeath = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:CallFunction("Snipers", "AddToRespawnFromDeath", trigger.element, trigger.time or 65)
     end)
-    other[200021] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    other[200021] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
         self._trackers:AddTracker({
             id = "Snipers",
             class = "EHISniperLoopBufferTracker"
         })
         self._trackers:CallFunction("Snipers", "AddToRespawnInitial", 200051, 60)
         self._trackers:CallFunction("Snipers", "AddToRespawnInitial", 200061, 60)
-    end), trigger_times = 1 }
+    end), trigger_once = true }
     other[200053] = { element = 200051, special_function = AddToRespawnFromDeath }
     other[200062] = { element = 200061, special_function = AddToRespawnFromDeath }
     other[200588] = { count = 3, id = "Snipers", special_function = SF.IncreaseCounter } -- 3 additional snipers spawn; 0s delay
     other[200079] = { element = 200064, special_function = AddToRespawnFromDeath }
     other[200490] = { element = 200489, special_function = AddToRespawnFromDeath }
     other[200493] = { element = 200492, special_function = AddToRespawnFromDeath }
-    other[200139] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    other[200139] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
         self._trackers:CallFunction("Snipers", "AddToRespawnInitial", 100512, 25)
         self._trackers:CallFunction("Snipers", "AddToRespawnInitial", 100515, 25)
-    end), trigger_times = 1 }
+    end), trigger_once = true }
     other[100513] = { time = 55, element = 100512, special_function = AddToRespawnFromDeath }
     other[100516] = { time = 55, element = 100515, special_function = AddToRespawnFromDeath }
 end
@@ -230,7 +229,7 @@ EHI:SetMissionDoorData({
     [Vector3(945.08, 3403.11, 92.4429)] = 200160
 })
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

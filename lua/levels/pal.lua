@@ -25,7 +25,7 @@ local triggers = {
 }
 
 local sync_triggers = {}
-if EHI:EscapeVehicleWillReturn() then
+if EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn() then
     local heli = { id = "HeliCageDelay", icons = Icon.HeliLootDropWait, special_function = SF.ReplaceTrackerWithTracker, data = { id = "HeliCage" }, class = TT.Warning, hint = Hints.LootTimed }
     sync_triggers[EHI:GetInstanceElementID(100013, 4700)] = heli
     sync_triggers[EHI:GetInstanceElementID(100013, 4750)] = heli
@@ -33,7 +33,7 @@ if EHI:EscapeVehicleWillReturn() then
     sync_triggers[EHI:GetInstanceElementID(100013, 4850)] = heli
 end
 if EHI:IsClient() then
-    local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI:RegisterCustomSF(function(self, trigger, ...)
+    local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:RemoveTracker(trigger.data.id)
         if self._trackers:TrackerDoesNotExist(trigger.id) then
             self:CreateTracker(trigger)
@@ -71,7 +71,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
         other[EHI:GetInstanceElementID(100004, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = waypoint_id } }
     end
 end
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

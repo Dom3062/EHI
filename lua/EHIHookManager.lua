@@ -96,3 +96,9 @@ end
 function EHIHookManager:HookAchievementAwardProgress(id, f)
     Hooks:PostHook(AchievmentManager, "award_progress", string.format("EHI_%s_AwardProgress", id), f)
 end
+
+---@param id string
+---@param f fun(am: AchievmentManager, stat: string, value: number?)
+function EHIHookManager:HookChallengeAwardProgress(id, f)
+    Hooks:PostHook(ChallengeManager, "award_progress", string.format("EHI_%s_AwardProgress", id), f)
+end

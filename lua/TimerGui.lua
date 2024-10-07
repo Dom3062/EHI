@@ -163,15 +163,8 @@ end
 
 function TimerGui:HideWaypoint()
     if self._remove_vanilla_waypoint and show_waypoint then
-        self:_HideWaypoint(self._remove_vanilla_waypoint)
+        managers.hud:RemoveTimerWaypoint(self._remove_vanilla_waypoint)
     end
-end
-
----@param waypoint number
-function TimerGui:_HideWaypoint(waypoint)
-    managers.hud:SoftRemoveWaypoint(waypoint)
-    EHI._cache.IgnoreWaypoints[waypoint] = true
-    EHI:DisableElementWaypoint(waypoint)
 end
 
 function TimerGui:_start(...)
@@ -207,20 +200,16 @@ function TimerGui:_set_done(...)
     self:RemoveTracker()
     original._set_done(self, ...)
     self:RestoreWaypoint()
-    if self.__ehi_child_units then
-        for _, unit in ipairs(self.__ehi_child_units) do
-            if unit and unit:base() and unit:base().SetCountThisUnit then
-                unit:base():SetCountThisUnit()
-            end
+    for _, unit in ipairs(self.__ehi_child_units or {}) do
+        if unit and unit:base() and unit:base().SetCountThisUnit then
+            unit:base():SetCountThisUnit()
         end
     end
 end
 
 function TimerGui:RestoreWaypoint()
     if self._restore_vanilla_waypoint_on_done and self._remove_vanilla_waypoint then
-        EHI._cache.IgnoreWaypoints[self._remove_vanilla_waypoint] = nil
-        managers.hud:RestoreWaypoint(self._remove_vanilla_waypoint)
-        EHI:RestoreElementWaypoint(self._remove_vanilla_waypoint)
+        managers.hud:RestoreTimerWaypoint(self._remove_vanilla_waypoint)
     end
 end
 
@@ -296,10 +285,10 @@ end
 ---@param restore_waypoint_on_done boolean?
 function TimerGui:RemoveVanillaWaypoint(waypoint_id, restore_waypoint_on_done)
     self._remove_vanilla_waypoint = waypoint_id
+    self._restore_vanilla_waypoint_on_done = restore_waypoint_on_done
     if self._started then
         self:HideWaypoint()
     end
-    self._restore_vanilla_waypoint_on_done = restore_waypoint_on_done
 end
 
 function TimerGui:SetIgnoreVisibility()

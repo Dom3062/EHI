@@ -24,7 +24,7 @@ local triggers = {
     [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { Icon.Phone, "pd2_generic_look" }, class = TT.Warning, hint = Hints.roberts_GenSecWarning, remove_on_alarm = true },
     [102986] = { special_function = SF.RemoveTracker, data = { "CorrectPaperChance", "GenSecArrivalWarning" } },
     [102985] = { id = "CorrectPaperChance", special_function = SF.IncreaseChanceFromElement }, -- +25%
-    [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, trigger_times = 1, hint = Hints.roberts_GenSec, remove_on_alarm = true },
+    [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, trigger_once = true, hint = Hints.roberts_GenSec, remove_on_alarm = true },
 
     [102995] = { time = 30, id = "CallAgain", icons = { Icon.Phone, Icon.Loop }, hint = Hints.roberts_NextPhoneCall, remove_on_alarm = true },
     [102996] = { time = 50, id = "CallAgain", icons = { Icon.Phone, Icon.Loop }, hint = Hints.roberts_NextPhoneCall, remove_on_alarm = true },
@@ -75,7 +75,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[103061] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103438 } }
     other[104809] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103443 } }
 end
-EHI:ParseTriggers({ mission = triggers, other = other, sidejob = sidejob })
+EHI.Manager:ParseTriggers({ mission = triggers, other = other, sidejob = sidejob })
 
 EHI:UpdateUnits({
     --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
@@ -94,7 +94,7 @@ local xp_override =
     }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

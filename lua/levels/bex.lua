@@ -32,6 +32,7 @@ function EHIbex11Tracker:CountersDone()
     local panel_w = self._default_bg_size + (self._icon_gap_size_scaled * self._n_of_icons)
     self:AnimatePanelW(panel_w)
     self:AnimIconX(self._default_bg_size + self._gap_scaled)
+    self:AnimateAdjustHintX(-self._default_bg_size)
     self:ChangeTrackerWidth(panel_w)
     self:AnimateBG()
     local boxes_label = self._counters_table.boxes.label
@@ -57,7 +58,7 @@ local triggers = {
     [101818] = { additional_time = 50 + 9.3, random_time = 30, id = "HeliDropLance", icons = Icon.HeliDropDrill, hint = Hints.DrillPartsDelivery },
     [101820] = { time = 9.3, id = "HeliDropLance", icons = Icon.HeliDropDrill, special_function = SF.SetTrackerAccurate, hint = Hints.DrillPartsDelivery },
 
-    [103919] = { additional_time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape, trigger_times = 1, hint = Hints.LootEscape },
+    [103919] = { additional_time = 25 + 1 + 13, random_time = 5, id = "Van", icons = Icon.CarEscape, trigger_once = true, hint = Hints.LootEscape },
     [100840] = { time = 1 + 13, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTrackerAccurate, hint = Hints.LootEscape }
 
     -- levels/instances/unique/bex/bex_computer
@@ -76,7 +77,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [103701] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+            [103701] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
                     self._achievements:SetAchievementStatus(trigger.id, Status.Defend)
                     self:UnhookTrigger(103704)
@@ -97,7 +98,7 @@ local achievements =
                 { max = 11, id = "bags" },
                 { max = 240, id = "boxes" }
             }, call_done_function = true, status_is_overridable = true },
-            [103677] = { special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+            [103677] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
                 self._trackers:CallFunction(trigger.id, "SetProgress", 1, "boxes")
             end) },
             [103772] = { special_function = SF.SetAchievementFailed }
@@ -128,7 +129,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -146,7 +147,7 @@ local xp_override =
     }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

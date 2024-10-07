@@ -1,4 +1,6 @@
 local EHI = EHI
+---@class EHIfish6Tracker : EHIAchievementProgressTracker
+---@field super EHIAchievementProgressTracker
 EHIfish6Tracker = class(EHIAchievementProgressTracker)
 EHIfish6Tracker._forced_icons = EHI:GetAchievementIcon("fish_6")
 function EHIfish6Tracker:init(panel, params, ...)
@@ -46,13 +48,13 @@ local achievements = {
             [100244] = { class = "EHIfish6Tracker", show_finish_after_reaching_target = true } -- Maximum is set in the tracker; difficulty dependant
         },
         cleanup_callback = function()
-            EHIfish6Tracker = nil ---@diagnostic disable-line
+            _G.EHIfish6Tracker = nil
         end,
         sync_params = { from_start = true }
     }
 }
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     achievement = achievements
 })
 EHI:ShowLootCounter({ max = 8 + 7 }) -- Mission bags + Artifacts

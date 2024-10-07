@@ -33,14 +33,14 @@ local preload =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [100282] = { id = "ColorCodes", class = TT.ColoredCodes, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    [100282] = { id = "ColorCodes", class = TT.ColoredCodes, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
             return
         end
         self:CreateTracker(trigger)
     end) },
     [100091] = { id = "ColorCodes", special_function = SF.RemoveTracker }, -- Code entered (stealth)
-    [101357] = { id = "ColorCodes", special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+    [101357] = { id = "ColorCodes", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
         if enabled then
             self._trackers:RemoveTracker(trigger.id)
         end
@@ -116,7 +116,7 @@ local achievements =
 
 local other =
 {
-    [100228] = EHI:AddAssaultDelay({ control = 35 + 1, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    [100228] = EHI:AddAssaultDelay({ control = 35 + 1, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         local t = 0
         if managers.preplanning:IsAssetBought(101858) then
             t = 10
@@ -147,7 +147,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -178,7 +178,7 @@ local xp_override =
     }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {
@@ -252,14 +252,14 @@ end
 local function Cleanup()
     keycode_units = nil ---@diagnostic disable-line
     codes = nil
-    bg = nil
+    bg = nil ---@diagnostic disable-line
 end
-EHI:AddLoadSyncFunction(function(self)
+EHI.Manager:AddLoadSyncFunction(function(self)
     if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
         return Cleanup()
     elseif self.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
         return Cleanup()
-    elseif managers.game_play_central:GetMissionEnabledUnit(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
+    elseif managers.game_play_central:IsMissionUnitEnabled(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
         return Cleanup()
     end
     self._trackers:AddTracker({

@@ -1,3 +1,5 @@
+---@alias EHIMinionTracker.PeerData { label: PanelText, minions: table<string, number> }
+
 ---@class EHIMinionTracker : EHITracker
 ---@field super EHITracker
 EHIMinionTracker = class(EHITracker)
@@ -5,10 +7,9 @@ EHIMinionTracker._forced_hint_text = "converts"
 EHIMinionTracker._forced_icons = { "minion" }
 EHIMinionTracker._update = false
 EHIMinionTracker._init_create_text = false
-function EHIMinionTracker:init(...)
+function EHIMinionTracker:post_init(...)
     self._n_of_peers = 0
-    self._peers = {}
-    EHIMinionTracker.super.init(self, ...)
+    self._peers = {} ---@type table<number, EHIMinionTracker.PeerData>
     self._default_panel_w = self._panel:w()
     self._panel_half = self._bg_box:w() / 2
     self._panel_w = self._default_panel_w
@@ -18,10 +19,8 @@ function EHIMinionTracker:SetTextPeerColor()
     if self._n_of_peers == 1 then
         return
     end
-    for i = 0, HUDManager.PLAYER_PANEL, 1 do
-        if self._bg_box:child("text" .. i) then
-            self._bg_box:child("text" .. i):set_color(tweak_data.chat_colors[i] or Color.white)
-        end
+    for i, peer in pairs(self._peers) do
+        peer.label:set_color(tweak_data.chat_colors[i] or Color.white)
     end
 end
 
@@ -42,38 +41,37 @@ function EHIMinionTracker:RedrawPanel()
     end
 end
 
-function EHIMinionTracker:AnimateMovement()
+---@param addition boolean?
+function EHIMinionTracker:AnimateMovement(addition)
     self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
     self:AnimIconX(self._panel_w - self._icon_size_scaled)
+    self:AnimateAdjustHintX(addition and self._panel_half or -self._panel_half)
 end
 
 function EHIMinionTracker:AlignTextOnHalfPos()
     local pos = 0
     for i = 0, HUDManager.PLAYER_PANEL, 1 do
-        local text = self._bg_box:child("text" .. i)
-        if text then
-            text:set_w(self._panel_half)
-            text:set_x(self._panel_half * pos)
+        local peer_data = self._peers[i]
+        if peer_data then
+            peer_data.label:set_w(self._panel_half)
+            peer_data.label:set_x(self._panel_half * pos)
             pos = pos + 1
         end
     end
 end
 
+---@param addition boolean?
 function EHIMinionTracker:Reorganize(addition)
     if self._n_of_peers == 1 then
-        if true then
+        if addition then
             return
         end
-        for i = 0, HUDManager.PLAYER_PANEL, 1 do
-            local text = self._bg_box:child("text" .. i) --[[@as PanelText?]]
-            if text then
-                text:set_font_size(self._panel:h() * self._text_scale)
-                text:set_w(self._bg_box:w())
-                self:FitTheText(text)
-                break
-            end
-        end
+        local _, peer_data = next(self._peers)
+        peer_data.label:set_color(Color.white)
+        peer_data.label:set_x(0)
+        peer_data.label:set_w(self._bg_box:w())
+        self:FitTheText(peer_data.label)
     elseif self._n_of_peers == 2 then
         self:AlignTextOnHalfPos()
         if not addition then
@@ -83,7 +81,7 @@ function EHIMinionTracker:Reorganize(addition)
         end
     elseif addition then
         self._panel_w = self._panel_w + self._panel_half
-        self:AnimateMovement()
+        self:AnimateMovement(true)
         self:SetBGSize(self._panel_half, "add", true)
         self:AlignTextOnHalfPos()
     else
@@ -94,6 +92,7 @@ function EHIMinionTracker:Reorganize(addition)
     end
 end
 
+---@param peer_id number
 function EHIMinionTracker:RemovePeer(peer_id)
     if not self._peers[peer_id] then
         return
@@ -103,37 +102,24 @@ function EHIMinionTracker:RemovePeer(peer_id)
         self:delete()
         return
     end
-    self._peers[peer_id] = nil
-    self._bg_box:remove(self._bg_box:child("text" .. peer_id))
-    if self._n_of_peers == 1 then
-        for i = 0, HUDManager.PLAYER_PANEL, 1 do
-            local text = self._bg_box:child("text" .. i) --[[@as PanelText?]]
-            if text then
-                text:set_color(Color.white)
-                text:set_x(0)
-                text:set_w(self._bg_box:w())
-                self:FitTheText(text)
-                break
-            end
-        end
-    end
+    local peer = table.remove_key(self._peers, peer_id)
+    self._bg_box:remove(peer.label)
     self:AnimateBG()
     self:SetIconColor()
     self:SetTextPeerColor()
     self:Reorganize()
 end
 
-function EHIMinionTracker:FitTheTextUnique(i)
-    self:FitTheText(self._bg_box:child("text" .. i) --[[@as PanelText]])
+---@param peer_data EHIMinionTracker.PeerData
+function EHIMinionTracker:FormatUnique(peer_data)
+    peer_data.label:set_text(tostring(self:GetNumberOfMinions(peer_data.minions)))
+    self:FitTheText(peer_data.label)
 end
 
-function EHIMinionTracker:FormatUnique(peer_id)
-    self._bg_box:child("text" .. peer_id):set_text(tostring(self:GetNumberOfMinions(peer_id))) ---@diagnostic disable-line
-end
-
-function EHIMinionTracker:GetNumberOfMinions(peer_id)
+---@param minions table<string, number>
+function EHIMinionTracker:GetNumberOfMinions(minions)
     local total = 0
-    for _, value in pairs(self._peers[peer_id] or {}) do
+    for _, value in pairs(minions) do
         if value > 0 then
             total = total + value
         end
@@ -141,41 +127,48 @@ function EHIMinionTracker:GetNumberOfMinions(peer_id)
     return total
 end
 
+---@param key string
+---@param amount number
+---@param peer_id number
 function EHIMinionTracker:AddMinion(key, amount, peer_id)
     if not key then
         return
     end
     if self._peers[peer_id] then
-        self._peers[peer_id][key] = amount
-        self:FormatUnique(peer_id)
-        self:FitTheTextUnique(peer_id)
+        local peer_data = self._peers[peer_id]
+        peer_data.minions[key] = amount
+        self:FormatUnique(peer_data)
         self:AnimateBG()
         return
     end
-    self._peers[peer_id] = { [key] = amount }
-    self:CreateText({ name = "text" .. peer_id })
+    local peer_data =
+    {
+        label = self:CreateText(),
+        minions = { [key] = amount }
+    }
     self._n_of_peers = self._n_of_peers + 1
     if self._n_of_peers >= 2 then
         self:AnimateBG()
     end
-    self:FormatUnique(peer_id)
-    self:FitTheTextUnique(peer_id)
+    self._peers[peer_id] = peer_data
+    self:FormatUnique(peer_data)
     self:Reorganize(true)
     self:SetIconColor()
     self:SetTextPeerColor()
 end
 
+---@param key string
 function EHIMinionTracker:RemoveMinion(key)
     if not key then
         return
     end
-    for peer, tbl in pairs(self._peers) do
-        if tbl[key] then
-            tbl[key] = 0
-            if self:GetNumberOfMinions(peer) == 0 then
-                self:RemovePeer(peer)
+    for id, data in pairs(self._peers) do
+        if data.minions[key] then
+            data.minions[key] = 0
+            if self:GetNumberOfMinions(data.minions) == 0 then
+                self:RemovePeer(id)
             else
-                self:FormatUnique(peer)
+                self:FormatUnique(data)
                 self:AnimateBG()
             end
             break
@@ -189,8 +182,8 @@ function EHIMinionTracker:UpdatePeerColor(peer_id, color)
     if self._n_of_peers == 1 or not color then
         return
     end
-    local text = self._bg_box:child("text" .. peer_id)
-    if text then
-        text:set_color(color)
+    local peer_data = self._peers[peer_id]
+    if peer_data then
+        peer_data.label:set_color(color)
     end
 end

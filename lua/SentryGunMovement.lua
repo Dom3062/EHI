@@ -92,7 +92,7 @@ end
 
 function SentryGunMovement:load(save_data, ...)
     original.load(self, save_data, ...)
-    if not save_data or not save_data.movement then
+    if not (save_data and save_data.movement) then
 		return
 	end
     self:Preload()

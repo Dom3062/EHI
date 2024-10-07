@@ -1,7 +1,7 @@
 local EHI = EHI
 ---@class EHIPhalanxManager
 EHIPhalanxManager = {}
-EHIPhalanxManager._requires_manual_on_exec = { dinner = true }
+EHIPhalanxManager._requires_manual_on_exec = { dinner = true, slaughter_house_new = true }
 EHIPhalanxManager._disabled_in_levels = { born = true }
 EHIPhalanxManager._counter_trigger = 2
 EHIPhalanxManager._first_assault = true

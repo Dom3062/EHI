@@ -26,7 +26,6 @@ function EHIAggregatedEquipmentTracker:pre_init(params)
     end
 end
 
----@param params EHITracker.params
 function EHIAggregatedEquipmentTracker:post_init(params)
     self._default_panel_w = self._panel:w()
     self._panel_half = self._default_bg_size / 2
@@ -196,10 +195,12 @@ function EHIAggregatedEquipmentTracker:RedrawPanel()
     end
 end
 
-function EHIAggregatedEquipmentTracker:AnimateMovement()
+---@param addition boolean?
+function EHIAggregatedEquipmentTracker:AnimateMovement(addition)
     self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
     self:AnimIconX(self._panel_w - self._icon_size_scaled)
+    self:AnimateAdjustHintX(addition and self._panel_half or -self._panel_half)
 end
 
 function EHIAggregatedEquipmentTracker:AlignTextOnHalfPos()
@@ -230,7 +231,7 @@ function EHIAggregatedEquipmentTracker:Reorganize(addition)
         self:AlignTextOnHalfPos()
         self._panel_w = self._panel_w + self._panel_half
         self._bg_box:set_w(self._bg_box:w() + self._panel_half)
-        self:AnimateMovement()
+        self:AnimateMovement(true)
     else
         self:AlignTextOnHalfPos()
         self._panel_w = self._panel_w - self._panel_half

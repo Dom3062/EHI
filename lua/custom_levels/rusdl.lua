@@ -6,5 +6,5 @@ local triggers = {
     [100138] = { time = 20, id = "ObjectiveWait", icons = { Icon.Wait }, hint = Hints.Wait }
 }
 
-EHI:ParseTriggers({ mission = triggers })
+EHI.Manager:ParseTriggers({ mission = triggers })
 EHI:ShowLootCounter({ max = 20 })

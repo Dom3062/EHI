@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local DestructionTrigger = { id = "Destruction", special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+local DestructionTrigger = { id = "Destruction", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
     self._trackers:IncreaseTrackerProgress(trigger.id, element._values.amount)
 end) }
 ---@type ParseTriggerTable
@@ -29,4 +29,4 @@ if EHI:IsClient() then
     triggers[100513] = EHI:ClientCopyTrigger(triggers[100518], { time = 26 })
 end
 
-EHI:ParseTriggers({ mission = triggers })
+EHI.Manager:ParseTriggers({ mission = triggers })

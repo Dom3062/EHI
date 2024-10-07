@@ -11,7 +11,7 @@ local EscapeWP = { data_from_element = EHI:GetInstanceElementID(100029, 21250) }
 --
 -- Reported in:  
 -- https://steamcommunity.com/app/218620/discussions/14/3182362958583578588/
-local HeliTimer = EHI:RegisterCustomSF(function(self, trigger, ...)
+local HeliTimer = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
     local t_correction =
     {
         [1] = 5 + 8,
@@ -45,10 +45,10 @@ end
 
 local other =
 {
-    [100217] = EHI:AddAssaultDelay({ control = 30, trigger_times = 1 }) -- Starting the saw early forces the assault to start
+    [100217] = EHI:AddAssaultDelay({ control = 30, trigger_once = true }) -- Starting the saw early forces the assault to start
 }
 
-EHI:ParseTriggers({ mission = triggers, other = other })
+EHI.Manager:ParseTriggers({ mission = triggers, other = other })
 
 EHI:AddXPBreakdown({
     objectives =
@@ -57,7 +57,7 @@ EHI:AddXPBreakdown({
         { amount = 6000, name = "c4_set_up" }, -- Wall blown up
         { escape = 6000 }
     },
-    loot_all = 500,
+    loot_all = { amount = 500, text = "each_safe_secured" },
     total_xp_override =
     {
         loot_all = { times = 4 + (2 * math.min(EHI:DifficultyIndex(), 4)) }

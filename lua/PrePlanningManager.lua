@@ -35,7 +35,6 @@ function PrePlanningManager:on_execute_preplanning(...)
 end
 
 ---@param asset_id number
----@return boolean
 function PrePlanningManager:IsAssetBought(asset_id)
     if self._finished_preplan then
         local voted = self._finished_preplan[1]

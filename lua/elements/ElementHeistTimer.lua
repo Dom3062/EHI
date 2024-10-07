@@ -5,5 +5,5 @@ end
 local original = ElementHeistTimer.init
 function ElementHeistTimer:init(...)
     original(self, ...)
-    EHI._cache._heist_timer_inverted = true
+    EHI.HeistTimerIsInverted = true
 end

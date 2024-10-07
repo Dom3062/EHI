@@ -1,5 +1,3 @@
-local floor = math.floor
-local lerp = math.lerp
 ---@class EHIChanceTracker : EHITracker
 ---@field super EHITracker
 ---@field _anim_flash_set_chance number?
@@ -15,14 +13,14 @@ EHIChanceTracker._anim_chance = function(o, self)
         local t = 0
         while t < 1 do
             t = t + coroutine.yield()
-            local n = floor(lerp(chance_to_anim, self._chance, t) --[[@as number]])
+            local n = math.floor(math.lerp(chance_to_anim, self._chance, t) --[[@as number]])
             o:set_text(self:FormatChance(n))
         end
         o:set_text(self:FormatChance())
         self:FitTheText(o)
     end
 end
----@param params EHITracker.params
+
 function EHIChanceTracker:pre_init(params)
     if params.chances then
         self._current_chance_index = 1
@@ -37,7 +35,6 @@ function EHIChanceTracker:pre_init(params)
     end
 end
 
----@param params EHITracker.params
 function EHIChanceTracker:post_init(params)
     self._chance_text = self._text
 end

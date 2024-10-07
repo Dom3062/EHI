@@ -30,11 +30,11 @@ local achievements =
 }
 EHI:PreparseBeardlibAchievements(achievements, "hunter_all")
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
-EHI:AddLoadSyncFunction(function(self)
+EHI.Manager:AddLoadSyncFunction(function(self)
     EHI:ShowLootCounter({ max = 21, client_from_start = true })
     self:UnhookTrigger(100416)
     self._loot:SyncSecuredLoot()

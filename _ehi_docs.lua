@@ -3,6 +3,11 @@
     This file is not loaded, it is here to provide code completion in VSCode
 ]]
 
+_G.EHI._cache.LocalPeerID = math.random()
+_G.EHI.HeistTimerIsInverted = math.random() == math.random()
+_G.EHI.GagePackagesSpawned = math.random() == math.random()
+_G.EHI.Manager = managers.ehi_manager
+
 ---
 --- Aliases
 ---
@@ -48,13 +53,13 @@
 ---@field additional_time number? Time to add when the time is randomized. Used with conjuction with `random_time`
 ---@field random_time number? Auto converts tracker class to inaccurate tracker
 ---@field condition boolean?
----@field condition_function fun(): boolean?
+---@field condition_function fun(): boolean
 ---@field icons table? Icons to show in the tracker
 ---@field class string? Class of tracker. If not provided it defaults to `EHITracker` in `EHITrackerManager`
 ---@field special_function number? Special function the trigger should do
 ---@field waypoint ElementWaypointTrigger? Waypoint definition
 ---@field waypoint_f fun(self: EHIManager, trigger: self)? In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
----@field trigger_times number? How many times the trigger should run. If the number is provided and once it hits `0`, the trigger is unhooked from the Element and removed from memory
+---@field trigger_once boolean? If the trigger should run once. After execution it is unhooked from the Element and removed from memory
 ---@field client ElementClientTriggerData? Table for clients only to prepopulate fields for tracker syncing. Only applicable to `SF.GetElementTimerAccurate` and `SF.UnpauseTrackerIfExistsAccurate`
 ---@field pos number? Tracker position
 ---@field f string|fun(arg: any?)|fun(self: EHIManager, arg: any?)? Arguments are unsupported in `SF.CustomCodeDelayed`; `EHIManager` is for `SF.CustomCode2`
@@ -63,8 +68,8 @@
 ---@field hint string?
 ---@field tracker_merge boolean|{ id: string, start_timer: boolean }
 ---@field tracker_group boolean
----@field remove_on_alarm boolean Removes the tracker on alarm; calls `EHITracker:ForceDelete()`
----@field update_on_alarm boolean Updates the tracker on alarm; calls `EHITracker:OnAlarm()`
+---@field remove_on_alarm boolean? Removes the tracker on alarm; calls `EHITracker:ForceDelete()`
+---@field update_on_alarm boolean? Updates the tracker on alarm; calls `EHITracker:OnAlarm()`
 ---@field [any] any
 
 ---@class AssaultElementTrigger : ElementTrigger
@@ -141,7 +146,7 @@
 ---@field max integer Maximum number of loot
 ---@field max_random integer Defines a variable number of loot
 ---@field unknown_random boolean Defines if heist will spawn additional random loot during gameplay
----@field load_sync fun(self: EHIManager)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true and you have to sync the progress manually via `EHILootManager:SyncSecuredLoot()`
+---@field load_sync fun(self: EHIManager)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true and you have to sync the progress manually via `self._loot:SyncSecuredLoot()`
 ---@field no_sync_load boolean Prevents Loot Counter from sync after joining
 ---@field skip_offset boolean Skip offset calculation if mission resets all secured bags
 ---@field client_from_start boolean If client is playing from mission briefing; does not do anything on host
@@ -154,6 +159,7 @@
 ---@field max_bags_for_level LootCounterTable.MaxBagsForMaxLevel
 ---@field max_xp_bags number Force maximum count if the heist limits maximum experience from loot bags
 ---@field no_triggers_if_max_xp_bags_gt_max boolean Disables triggers if provided `max_xp_bags` is greater than max
+---@field carry_data { loot: boolean, no_loot: boolean } Enables tracking via `EHICarryData` and `EHINoCarryData` classes
 
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.Const.LootCounter.CheckType`, defaults to `EHI.Const.LootCounter.CheckType.BagsOnly` if not provided
@@ -327,34 +333,34 @@
 ---@field FitTheText boolean? Fits the text in the text panel
 ---@field FitTheText_FontSize number? Fits the text in the text panel with given font size, depends on `FitTheText`
 
----@class XPBreakdown.tactic.i_custom.objectives_override.stop_at_inclusive_and_add_objectives
+---@class XPBreakdown.plan.i_custom.objectives_override.stop_at_inclusive_and_add_objectives
 ---@field stop_at string
 ---@field add_objectives XPBreakdown.objectives Has higher priority than `add_objectives_with_pos`
----@field add_objectives_with_pos XPBreakdown.tactic.i_custom.objectives_override.add_objectives_with_pos
+---@field add_objectives_with_pos XPBreakdown.plan.i_custom.objectives_override.add_objectives_with_pos
 ---@field mark_optional table Depends on `stop_at`
 
----@class XPBreakdown.tactic.i_custom.objectives_override.add_objectives_with_pos
+---@class XPBreakdown.plan.i_custom.objectives_override.add_objectives_with_pos
 ---@field [number] { objective: XPBreakdown.objectives, pos: number }
 
----@class XPBreakdown.tactic.i_custom.objectives_override
+---@class XPBreakdown.plan.i_custom.objectives_override
 ---@field stop_at string
 ---@field stop_at_inclusive string
 ---@field add_objectives XPBreakdown.objectives
----@field add_objectives_with_pos XPBreakdown.tactic.i_custom.objectives_override.add_objectives_with_pos
+---@field add_objectives_with_pos XPBreakdown.plan.i_custom.objectives_override.add_objectives_with_pos
 ---@field mark_optional table Depends on `stop_at` or `stop_at_inclusive`
----@field stop_at_inclusive_and_add_objectives XPBreakdown.tactic.i_custom.objectives_override.stop_at_inclusive_and_add_objectives
+---@field stop_at_inclusive_and_add_objectives XPBreakdown.plan.i_custom.objectives_override.stop_at_inclusive_and_add_objectives
 
----@class XPBreakdown.tactic.i_custom
+---@class XPBreakdown.plan.i_custom
 ---@field name "stealth"|"loud"
 ---@field additional_name string? Places another string in brackets; `ehi_experience_<name>`
----@field tactic _XPBreakdown
----@field objectives_override XPBreakdown.tactic.i_custom.objectives_override
+---@field plan _XPBreakdown
+---@field objectives_override XPBreakdown.plan.i_custom.objectives_override
 
----@class XPBreakdown.tactic.custom
----@field [number] XPBreakdown.tactic.i_custom
+---@class XPBreakdown.plan.custom
+---@field [number] XPBreakdown.plan.i_custom
 
----@class XPBreakdown.tactic
----@field custom XPBreakdown.tactic.custom
+---@class XPBreakdown.plan
+---@field custom XPBreakdown.plan.custom
 ---@field stealth _XPBreakdown
 ---@field loud _XPBreakdown
 
@@ -416,5 +422,5 @@
 ---@field wave number[]
 ---@field wave_all number|{amount: number, times: number}
 ---@field no_total_xp boolean
----@field tactic XPBreakdown.tactic
+---@field plan XPBreakdown.plan
 ---@field total_xp_override table

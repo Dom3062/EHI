@@ -14,6 +14,6 @@ local achievements = {
 }
 EHI:PreparseBeardlibAchievements(achievements, "hunter_all")
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     achievement = achievements
 })

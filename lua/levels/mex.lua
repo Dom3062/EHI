@@ -10,7 +10,7 @@ local function SetAssaultTrackerBlock(self, block)
 end
 ---@type ParseTriggerTable
 local triggers = {
-    [102685] = { id = "Refueling", icons = { Icon.Oil }, class = TT.Pausable, special_function = SF.SetTimeIfLoudOrStealth, data = { loud = 121, stealth = 91 }, trigger_times = 1, hint = Hints.FuelTransfer },
+    [102685] = { id = "Refueling", icons = { Icon.Oil }, class = TT.Pausable, special_function = SF.SetTimeIfLoudOrStealth, data = { loud = 121, stealth = 91 }, trigger_once = true, hint = Hints.FuelTransfer },
     [102678] = { id = "Refueling", special_function = SF.UnpauseTracker },
     [102684] = { id = "Refueling", special_function = SF.PauseTracker },
     [101983] = { time = 15, id = "C4Trap", icons = { Icon.C4 }, class = TT.Warning, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.Explosion },
@@ -43,7 +43,7 @@ local other =
     [103212] = { special_function = SF.CustomCode2, f = SetAssaultTrackerBlock, arg = false } -- Arrived in Mexico
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[102495] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal) }
+    other[102495] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal) }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -54,14 +54,14 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102480] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
 })
 
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

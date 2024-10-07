@@ -33,7 +33,7 @@ local achievements =
         elements =
         {
             [303036] = { class = TT.Achievement.Status },
-            [303039] = { special_function = SF.SetAchievementFailed, trigger_times = 1 }
+            [303039] = { special_function = SF.SetAchievementFailed, trigger_once = true }
         },
         sync_params = { from_start = true }
     }
@@ -81,7 +81,7 @@ end
 EHI:DisableWaypoints(DisableWaypoints)
 EHI:UpdateUnits(units)
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

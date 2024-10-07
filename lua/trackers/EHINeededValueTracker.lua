@@ -1,7 +1,6 @@
 ---@class EHINeededValueTracker : EHIProgressTracker
 ---@field super EHIProgressTracker
 EHINeededValueTracker = class(EHIProgressTracker)
----@param params EHITracker.params
 function EHINeededValueTracker:pre_init(params)
     EHINeededValueTracker.super.pre_init(self, params)
     if params.short_format then
@@ -23,10 +22,12 @@ function EHINeededValueTracker:Format()
     return self._progress_formatted .. "/" .. self._max_formatted
 end
 
+---@param n number
 function EHINeededValueTracker:FormatNumber(n)
     return managers.experience:cash_string(n)
 end
 
+---@param n number
 function EHINeededValueTracker:FormatNumberShort(n)
     local divisor = 1
     local post_fix = ""

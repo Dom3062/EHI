@@ -27,7 +27,6 @@ EHIAchievementTracker._forced_icon_color = { EHI:GetColorFromOption("unlockables
 EHIAchievementTracker._show_started = EHI:GetUnlockableOption("show_achievement_started_popup")
 EHIAchievementTracker._show_failed = EHI:GetUnlockableOption("show_achievement_failed_popup")
 EHIAchievementTracker._show_desc = EHI:GetUnlockableOption("show_achievement_description")
----@param params EHITracker.params
 function EHIAchievementTracker:post_init(params)
     self._beardlib = params.beardlib
     self:ShowStartedPopup()
@@ -136,8 +135,6 @@ EHIAchievementUnlockTracker.SetCompleted = function(...) end
 ---@class EHIAchievementProgressTracker : EHIProgressTracker, EHIAchievementTracker
 ---@field super EHIProgressTracker
 EHIAchievementProgressTracker = ehi_achievement_class(EHIProgressTracker)
----@param panel Panel
----@param params EHITracker.params
 function EHIAchievementProgressTracker:init(panel, params, ...)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
@@ -148,7 +145,6 @@ function EHIAchievementProgressTracker:init(panel, params, ...)
     self:ShowAchievementDescription(params.delay_popup)
 end
 
----@param force boolean?
 function EHIAchievementProgressTracker:SetCompleted(force)
     self._achieved_popup_showed = true
     EHIAchievementProgressTracker.super.SetCompleted(self, force)
@@ -188,8 +184,6 @@ end
 ---@class EHIAchievementProgressGroupTracker : EHIProgressGroupTracker, EHIAchievementTracker, EHIAchievementProgressTracker
 EHIAchievementProgressGroupTracker = ehi_achievement_class(EHIProgressGroupTracker)
 EHIAchievementProgressGroupTracker.AddLootListener = EHIAchievementProgressTracker.AddLootListener
----@param panel Panel
----@param params EHITracker.params
 function EHIAchievementProgressGroupTracker:init(panel, params, ...)
     self._beardlib = params.beardlib
     self:PrepareHint(params)
@@ -218,7 +212,6 @@ end
 ---@class EHIAchievementBagValueTracker : EHINeededValueTracker, EHIAchievementTracker
 ---@field super EHINeededValueTracker
 EHIAchievementBagValueTracker = ehi_achievement_class(EHINeededValueTracker)
----@param params EHITracker.params
 function EHIAchievementBagValueTracker:post_init(params)
     self._beardlib = params.beardlib
     self:ShowStartedPopup(params.delay_popup)
@@ -243,8 +236,6 @@ end
 EHIAchievementStatusTracker = class(EHIAchievementTracker)
 EHIAchievementStatusTracker.update = EHIAchievementStatusTracker.update_fade
 EHIAchievementStatusTracker._update = false
----@param panel Panel
----@param params EHITracker.params
 function EHIAchievementStatusTracker:init(panel, params, ...)
     self._status = params.status or "ok"
     EHIAchievementStatusTracker.super.init(self, panel, params, ...)

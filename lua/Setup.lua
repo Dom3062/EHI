@@ -1,5 +1,4 @@
 local EHI = EHI
-EHI._cache.is_vr = _G.IS_VR
 managers.ehi_experience = EHIExperienceManager
 dofile(EHI.LuaPath .. "CallbackEventHandler.lua")
 if EHI:CheckLoadHook("Setup") then
@@ -11,12 +10,13 @@ if EHI:CheckLoadHook("Setup") then
     end)
     return
 end
+dofile(EHI.LuaPath .. "EHICarryData.lua")
 dofile(EHI.LuaPath .. "EHIBaseManager.lua")
 dofile(EHI.LuaPath .. "EHITrackerManager.lua")
 dofile(EHI.LuaPath .. "EHIWaypointManager.lua")
 dofile(EHI.LuaPath .. "EHIBuffManager.lua")
 dofile(EHI.LuaPath .. "EHIDeployableManager.lua")
-if EHI:IsVR() then
+if _G.IS_VR then
     dofile(EHI.LuaPath .. "EHITrackerManagerVR.lua")
     dofile(EHI.LuaPath .. "EHIDeployableManagerVR.lua")
 end

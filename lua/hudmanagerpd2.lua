@@ -22,7 +22,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     self.ehi_manager = managers.ehi_manager
     local EHIWaypoints = EHI:GetOption("show_waypoints")
     local level_id = Global.game_settings.level_id
-    if server or EHI:IsHeistTimerInverted() then
+    if server or EHI.HeistTimerIsInverted then
         if EHIWaypoints then
             self:AddEHIUpdator("EHIManager_Update", self.ehi_manager)
         else
@@ -42,7 +42,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             end
         end
     end
-    if EHI:IsVR() then
+    if _G.IS_VR then
         self.ehi:SetPanel(hud.panel)
     end
     if EHI:GetOption("show_buffs") then
@@ -54,20 +54,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     end
     if tweak_data.levels:IsLevelSafehouse(level_id) then
         return
-    end
-    if EHI:GetOptionAndLoadTracker("show_captain_damage_reduction") then
-        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
-            if mode == "phalanx" then
-                self.ehi:AddTracker({
-                    id = "PhalanxDamageReduction",
-                    class = "EHIPhalanxDamageReductionTracker",
-                })
-            else
-                self.ehi:ForceRemoveTracker("PhalanxDamageReduction")
-            end
-        end)
-    end
-    if tweak_data.levels:IsStealthAvailable(level_id) then
+    elseif tweak_data.levels:IsStealthAvailable(level_id) then
         if EHI:GetOption("show_pager_tracker") then
             local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
             if server then
@@ -92,17 +79,16 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                     max = max + 1
                 end
             end
-            self.ehi:AddTracker({
-                id = "Pagers",
-                max = max,
-                icons = { EHI.Icons.Pager },
-                set_color_bad_when_reached = true,
-                hint = "pager_counter",
-                remove_on_alarm = true,
-                class = EHI.Trackers.Progress
-            })
-            if max == 0 then
-                self.ehi:CallFunction("Pagers", "SetBad")
+            if max > 0 then
+                self.ehi:AddTracker({
+                    id = "Pagers",
+                    max = EHI.ModUtils:SELH_GetModifiedPagerCount(max),
+                    icons = { EHI.Icons.Pager },
+                    set_color_bad_when_reached = true,
+                    hint = "pager_counter",
+                    remove_on_alarm = true,
+                    class = EHI.Trackers.Progress
+                })
             end
         end
         if EHI:GetOption("show_bodybags_counter") then

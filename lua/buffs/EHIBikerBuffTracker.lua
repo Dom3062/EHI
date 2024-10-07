@@ -21,7 +21,6 @@ function EHIBikerBuffTracker:PreUpdate()
     self:SetCustodyState(false)
 end
 
----@param state boolean
 function EHIBikerBuffTracker:SetCustodyState(state)
     if state then
         EHI:Unhook("BikerBuff_Post")

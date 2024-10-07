@@ -19,7 +19,7 @@ local achievements =
         sync_params = { from_start = true }
     }
 }
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     achievement = achievements
 })
 EHI:ShowLootCounter({ no_max = true })

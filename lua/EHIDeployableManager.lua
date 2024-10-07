@@ -1,7 +1,6 @@
 ---@class EHIDeployableManager
----@field IsLoading fun(self: self): boolean VR only (EHIDeployableManagerVR)
----@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) VR only (EHIDeployableManagerVR)
 EHIDeployableManager = {}
+EHIDeployableManager._block_abilities_or_no_throwable = EHI:GetOption("grenadecases_block_on_abilities_or_no_throwable")
 EHIDeployableManager._equipment_map =
 {
     doctor = "doctor_bag",
@@ -22,7 +21,7 @@ function EHIDeployableManager:SwitchToLoudMode()
 end
 
 function EHIDeployableManager:Spawned()
-    if EHI:GetOption("grenadecases_block_on_abilities_or_no_throwable") and not managers.blackmarket:equipped_grenade_allows_pickups() then
+    if self._block_abilities_or_no_throwable and not managers.blackmarket:equipped_grenade_allows_pickups() then
         self:AddEquipmentToIgnore(self._equipment_map.grenade)
         self._trackers:RemoveTracker("GrenadeCases")
     end
@@ -50,11 +49,6 @@ function EHIDeployableManager:GetTracker(id)
     return self._trackers:GetTracker(id) --[[@as EHIAggregatedEquipmentTracker|EHIAggregatedHealthEquipmentTracker|EHIEquipmentTracker]]
 end
 
----@param id string
-function EHIDeployableManager:TrackerDoesNotExist(id)
-    return self._trackers:TrackerDoesNotExist(id)
-end
-
 ---@param type string
 ---@param key string
 ---@param unit Unit
@@ -68,10 +62,8 @@ function EHIDeployableManager:AddToDeployableCache(type, key, unit, tracker_type
     local tracker = self:GetTracker(type)
     if tracker then
         if tracker_type then
-             ---@cast tracker -EHIEquipmentTracker
             tracker:UpdateAmount(tracker_type, key, 0)
         else
-            ---@cast tracker EHIEquipmentTracker
             tracker:UpdateAmount(key, 0)
         end
     end
@@ -84,15 +76,15 @@ function EHIDeployableManager:LoadFromDeployableCache(type, key)
         return
     end
     self._deployables[type] = self._deployables[type] or {}
-    local deployable = self._deployables[type][key]
+    local deployable = table.remove_key(self._deployables[type], key)
     if deployable then
         if self:IsDeployableAllowed(deployable.tracker_type) then
-            if self:TrackerDoesNotExist(type) then
+            if self._trackers:TrackerDoesNotExist(type) then
                 self:CreateDeployableTracker(type)
             end
-            local unit = deployable.unit
             local tracker = self:GetTracker(type)
             if tracker then
+                local unit = deployable.unit
                 if deployable.tracker_type then
                     tracker:UpdateAmount(deployable.tracker_type, key, unit:base():GetRealAmount())
                 else
@@ -100,7 +92,6 @@ function EHIDeployableManager:LoadFromDeployableCache(type, key)
                 end
             end
         end
-        self._deployables[type][key] = nil
     end
 end
 
@@ -155,6 +146,7 @@ function EHIDeployableManager:CreateDeployableTracker(type)
         self._trackers:AddTracker({
             id = "GrenadeCases",
             icons = { "frag_grenade" },
+            hint = "throwables",
             class = "EHIEquipmentTracker"
         })
     end

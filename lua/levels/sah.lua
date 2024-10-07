@@ -40,7 +40,7 @@ local achievements =
         {
             [100107] = { time = 300, class = TT.Achievement.Base },
             [101878] = { special_function = SF.SetAchievementComplete },
-            [101400] = { special_function = SF.SetAchievementFailed, trigger_times = 1 }
+            [101400] = { special_function = SF.SetAchievementFailed, trigger_once = true }
         },
         sync_params = { from_start = true }
     }
@@ -51,7 +51,7 @@ local other =
     [100109] = EHI:AddAssaultDelay({ control = 1 })
 }
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -63,11 +63,6 @@ local tbl =
     [400178] = { f = "IgnoreDeployable" }
 }
 EHI:UpdateUnits(tbl)
-local loot =
-{
-    black_tablet = 1000,
-    mus_artifact = 1000
-}
 local xp_override =
 {
     params =
@@ -84,7 +79,7 @@ local xp_override =
     }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {
@@ -95,7 +90,7 @@ EHI:AddXPBreakdown({
                 { amount = 4000, name = "sah_retrieved_tablet" },
                 { escape = 1000 }
             },
-            loot = loot,
+            loot_all = 1000,
             total_xp_override = xp_override
         },
         loud =
@@ -107,7 +102,7 @@ EHI:AddXPBreakdown({
                 { amount = 6000, name = "sah_retrieved_tablet" },
                 { escape = 4000 }
             },
-            loot = loot,
+            loot_all = 1000,
             total_xp_override = xp_override
         }
     }

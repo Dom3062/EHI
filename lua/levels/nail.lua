@@ -16,7 +16,7 @@ local other =
     [101613] = EHI:AddAssaultDelay({ special_function = SF.SetTimeOrCreateTracker }) -- 30s
 }
 
-EHI:ParseTriggers({ mission = triggers, other = other })
+EHI.Manager:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowLootCounter({
     max_bags_for_level =
     {

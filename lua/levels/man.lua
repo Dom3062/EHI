@@ -42,7 +42,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100698] = { status = EHI.Const.Trackers.Achievement.Status.NoDown, class = TT.Achievement.Status, trigger_times = 1 },
+            [100698] = { status = EHI.Const.Trackers.Achievement.Status.NoDown, class = TT.Achievement.Status, trigger_once = true },
             [103963] = { special_function = SF.SetAchievementFailed },
             [103964] = { special_function = SF.SetAchievementComplete }
         }
@@ -51,7 +51,7 @@ local achievements =
     {
         elements =
         {
-            [100698] = { class = TT.Achievement.Status, trigger_times = 1 },
+            [100698] = { class = TT.Achievement.Status, trigger_once = true },
             [103957] = { special_function = SF.SetAchievementFailed },
             [103958] = { special_function = SF.SetAchievementComplete }
         },
@@ -65,7 +65,7 @@ local achievements =
     {
         elements =
         {
-            [100698] = { max = 10, class = TT.Achievement.Progress, trigger_times = 1 },
+            [100698] = { max = 10, class = TT.Achievement.Progress, trigger_once = true },
             [103989] = { special_function = SF.IncreaseProgress }
         },
         load_sync = function(self)
@@ -85,13 +85,12 @@ local other =
     [104037] = EHI:AddAssaultDelay({ control = 1 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[102161] = { chance = 20, time = 30 + 20, recheck_t = 20, id = "Snipers", class = TT.Sniper.TimedChance, trigger_times = 1 }
+    other[102161] = { chance = 20, time = 30 + 20, recheck_t = 20, id = "Snipers", class = TT.Sniper.TimedChance, trigger_once = true }
     other[103169] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[101756] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+    other[101756] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
         if EHI:IsHost() and not element:_values_ok() then
             return
-        end
-        if self._trackers:CallFunction2("Snipers", "SnipersKilled", 40) then -- 20 + 20
+        elseif self._trackers:CallFunction2("Snipers", "SnipersKilled", 40) then -- 20 + 20
             self._trackers:AddTracker({
                 id = "Snipers",
                 time = 40,
@@ -109,7 +108,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102180] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -133,7 +132,7 @@ EHI:AddXPBreakdown({
         { amount = 4000, name = "undercover_limo_open" },
         { amount = 4000, name = "undercover_taxman_is_in_chair" },
         { amount = 4000, name = "pc_hack", times = 3 },
-        { amount = 1000, name = "undercover_hack_fixed" },
+        { amount = 1000, name = "undercover_hack_fixed", optional = true },
         { escape = 3000 }
     },
     total_xp_override =

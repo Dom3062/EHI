@@ -7,7 +7,7 @@ local Hints = EHI.Hints
 ---@param self EHIManager
 ---@param trigger ElementTrigger
 local function TransferWP(self, trigger)
-    local index = managers.game_play_central:GetMissionDisabledUnit(EHI:GetInstanceUnitID(100087, 9340)) and 9590 or 9340
+    local index = managers.game_play_central:IsMissionUnitDisabled(EHI:GetInstanceUnitID(100087, 9340)) and 9590 or 9340
     local vanilla_wp = EHI:GetInstanceElementID(100019, index)
     if not self._cache.TransferPosition then
         self._cache.TransferPosition = self:GetElementPositionOrDefault(vanilla_wp)
@@ -24,7 +24,7 @@ end
 ---@type ParseTriggerTable
 local triggers =
 {
-    [103053] = { id = "FuelChecking", icons = { Icon.Wait }, class = TT.Pausable, special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+    [103053] = { id = "FuelChecking", icons = { Icon.Wait }, class = TT.Pausable, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
         if not enabled then
             return
         end
@@ -52,11 +52,11 @@ local triggers =
     [102656] = { id = "FuelTransferLoud", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsLoud, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101686, waypoint_f = TransferWP, hint = Hints.FuelTransfer },
     [101684] = { id = "FuelTransferLoud", special_function = SF.PauseTracker },
 
-    [101050] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+    [101050] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
         self:Call("FuelChecking", "AddDelay", 20) -- Add 20s because stealth trigger is now disabled
         self:Remove("FuelTransferStealth") -- ElementTimer won't proceed because alarm has been raised, remove it from the screen
         self:UpdateWaypointTriggerIcon(103053, Icon.Defend) -- Cops can turn off the checking device, change the waypoint icon to reflect this
-    end), trigger_times = 1 } -- Alarm
+    end), trigger_once = true } -- Alarm
 }
 if EHI:IsClient() then
     triggers[102454].client = { time = 60, random_time = 20, special_function = SF.UnpauseTrackerIfExists }
@@ -90,7 +90,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100610] = { max = 3, set_color_bad_when_reached = true, class = TT.Achievement.Progress, condition_function = CF.IsLoud, trigger_times = 1 },
+            [100610] = { max = 3, set_color_bad_when_reached = true, class = TT.Achievement.Progress, condition_function = CF.IsLoud, trigger_once = true },
             [EHI:GetInstanceElementID(100225, 9840)] = { special_function = SF.IncreaseProgress }, -- 1st pump used
             [EHI:GetInstanceElementID(100228, 9840)] = { special_function = SF.IncreaseProgress }, -- 2nd pump used
             [EHI:GetInstanceElementID(100229, 9840)] = { special_function = SF.IncreaseProgress }, -- 3rd pump used
@@ -109,7 +109,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         veryhard_or_below = 2,
         overkill_or_above = 3
     })
-    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, sniper_count = sniper_count }
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, sniper_count = sniper_count }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -148,7 +148,7 @@ EHI:ShowAchievementLootCounter({
     show_loot_counter = true
 })
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -179,7 +179,7 @@ local total_xp_override =
     }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

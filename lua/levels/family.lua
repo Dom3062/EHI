@@ -53,7 +53,7 @@ local sidejob =
     {
         elements =
         {
-            [100108] = { special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+            [100108] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
                 local trophy = tweak_data.achievement.loot_cash_achievements.daily_mortage.secured
                 self._trackers:AddTracker({
                     id = trigger.id,
@@ -77,33 +77,19 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
-if EHI:IsHost() then
-    -- units/payday2/equipment/gen_interactable_sec_safe_05x05_titan/gen_interactable_sec_safe_05x05_titan
-    local SafeTriggers =
-    {
-        loot =
-        {
-            "spawn_loot_money"
-        },
-        no_loot =
-        {
-            "spawn_loot_value_c",
-            "spawn_loot_value_d",
-            "spawn_loot_value_e",
-            "spawn_loot_crap_c"
-        }
-    }
-    EHI:ShowLootCounterSynced({
-        max = 18,
-        max_random = 2,
-        sequence_triggers =
-        {
-            [101239] = SafeTriggers,
-            [101541] = SafeTriggers,
-            [101543] = SafeTriggers,
-            [101544] = SafeTriggers
-        }
-    })
+if EHI:IsLootCounterVisible() then
+    other[100107] = EHI:AddLootCounter2(function()
+        EHI:ShowLootCounterNoChecks({
+            max = 18,
+            max_random = 2,
+            carry_data =
+            {
+                loot = true,
+                no_loot = true
+            },
+            client_from_start = true
+        })
+    end)
 end
 if EHI:GetOption("show_escape_chance") then
     other[102622] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
@@ -112,7 +98,7 @@ if EHI:GetOption("show_escape_chance") then
     end)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { chance = 20, time = 1 + 30 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 30 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_times = 1, sniper_count = 2 }
+    other[100015] = { chance = 20, time = 1 + 30 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 30 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 2 }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -128,7 +114,7 @@ local min_bags = EHI:GetValueBasedOnDifficulty({
     veryhard = 10,
     overkill_or_above = 14
 })
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -139,22 +125,14 @@ EHI:AddXPBreakdown({
     {
         escape = 2000
     },
-    loot =
-    {
-        money = 1000,
-        diamonds = 1000
-    },
+    loot_all = 1000,
     total_xp_override =
     {
         params =
         {
             min_max =
             {
-                loot =
-                {
-                    money = { max = 2 },
-                    diamonds = { min = min_bags, max = 18 }
-                }
+                loot_all = { min = min_bags, max = 20 } -- 18 diamonds + 2 money (random)
             }
         }
     }

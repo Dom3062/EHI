@@ -13,7 +13,7 @@ local element_sync_triggers =
 }
 local request = { Icon.PCHack, Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
-local CheckOkValueHostCheckOnly = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+local CheckOkValueHostCheckOnly = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
     if EHI:IsHost() and not element:_values_ok() then
         return
     elseif self._trackers:TrackerExists(trigger.id) then
@@ -130,7 +130,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -138,7 +138,7 @@ EHI:ParseTriggers({
     sync_triggers = { element = element_sync_triggers },
     tracker_merge = tracker_merge
 })
-EHI:AddLoadSyncFunction(function(self)
+EHI.Manager:AddLoadSyncFunction(function(self)
     local pc = managers.worlddefinition:get_unit(104418) --[[@as UnitTimer?]]
     local pc2 = managers.worlddefinition:get_unit(102413) --[[@as UnitTimer?]]
     local pc3 = managers.worlddefinition:get_unit(102414) --[[@as UnitTimer?]]

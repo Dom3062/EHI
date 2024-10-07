@@ -5,7 +5,7 @@
 ---@field peer fun(self: self, peer_id: number): NetworkPeer
 ---@field peer_by_unit fun(self: self, Unit: UnitPlayer): NetworkPeer
 ---@field peers fun(self: self): table<number, NetworkPeer>
----@field send_to_peers_synched fun(self: self, ...: any)
+---@field send_to_peers_synched fun(self: self, func_name: string, ...: any)
 
 local EHI = EHI
 if EHI:CheckLoadHook("BaseNetworkSession") then

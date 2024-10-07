@@ -4,13 +4,10 @@ local Icon = EHI.Icons
 ---@field super EHIPausableTracker
 EHIElevatorTimerTracker = class(EHIPausableTracker)
 EHIElevatorTimerTracker._forced_icons = { Icon.Door }
----@param panel Panel
----@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHIElevatorTimerTracker:init(panel, params, parent_class)
+function EHIElevatorTimerTracker:init(panel, params, ...)
     self._floors = params.floors or 26
     params.time = self:GetElevatorTime()
-    EHIElevatorTimerTracker.super.init(self, panel, params, parent_class)
+    EHIElevatorTimerTracker.super.init(self, panel, params, ...)
 end
 
 function EHIElevatorTimerTracker:GetElevatorTime()
@@ -36,13 +33,10 @@ EHIElevatorTimerWaypoint = class(EHIPausableWaypoint)
 EHIElevatorTimerWaypoint.GetElevatorTime = EHIElevatorTimerTracker.GetElevatorTime
 EHIElevatorTimerWaypoint.SetFloors = EHIElevatorTimerTracker.SetFloors
 EHIElevatorTimerWaypoint.LowerFloor = EHIElevatorTimerTracker.LowerFloor
----@param panel WaypointDataTable
----@param params table
----@param parent_class EHIWaypointManager
-function EHIElevatorTimerWaypoint:init(panel, params, parent_class)
+function EHIElevatorTimerWaypoint:init(waypoint, params, ...) ---@cast waypoint -Panel
     self._floors = params.floors or 26
     params.time = self:GetElevatorTime()
-    EHIElevatorTimerWaypoint.super.init(self, panel, params, parent_class)
+    EHIElevatorTimerWaypoint.super.init(self, waypoint, params, ...)
 end
 
 local SF = EHI.SpecialFunctions
@@ -93,7 +87,7 @@ local achievements =
             -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before mission restart
             -- Reported in:
             -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
-            [103456] = { time = 5, class = TT.Achievement.Base, special_function = SF.ShowAchievementFromStart, trigger_times = 1 },
+            [103456] = { time = 5, class = TT.Achievement.Base, special_function = SF.ShowAchievementFromStart, trigger_once = true },
             [103460] = { special_function = SF.SetAchievementComplete }
         },
         sync_params = { from_start = true }
@@ -102,19 +96,19 @@ local achievements =
 
 local other =
 {
-    [102344] = EHI:AddAssaultDelay({ special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+    [102344] = EHI:AddAssaultDelay({ special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         if EHI:IsPlayingFromStart() and not managers.ehi_assault:TrackerExists() then
             self:CreateTracker(trigger)
         end
-    end), trigger_times = 1 })
+    end), trigger_once = true })
 }
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
 })
-EHI:AddLoadSyncFunction(function(self)
+EHI.Manager:AddLoadSyncFunction(function(self)
     local elevator_counter = managers.worlddefinition:get_unit(102296) --[[@as UnitDigitalTimer?]]
     local o = elevator_counter and elevator_counter:digital_gui()
     if o and o._timer and o._timer ~= 30 then
@@ -129,7 +123,7 @@ end)
 --units/pd2_dlc_nmh/props/nmh_interactable_teddy_saw/nmh_interactable_teddy_saw
 EHI:UpdateUnits({ [101387] = { remove_vanilla_waypoint = 104494 } })
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         stealth =
         {

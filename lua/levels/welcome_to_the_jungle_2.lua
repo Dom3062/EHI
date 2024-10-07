@@ -32,7 +32,7 @@ local other =
     [100531] = EHI:AddAssaultDelay({ control = 35 })
 }
 
-EHI:ParseTriggers({ mission = triggers, other = other })
+EHI.Manager:ParseTriggers({ mission = triggers, other = other })
 
 local tbl =
 {

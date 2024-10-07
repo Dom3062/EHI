@@ -48,12 +48,12 @@ end
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local DisableTriggerAndExecute = EHI:RegisterCustomSF(function(self, trigger, ...)
+local DisableTriggerAndExecute = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
     self:UnhookTrigger(trigger.data.id)
     self:CreateTracker(trigger)
 end)
 local triggers = {
-    [103492] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto }, hint = Hints.kosugi_Heli, trigger_times = 1 },
+    [103492] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto }, hint = Hints.kosugi_Heli, trigger_once = true },
     [101219] = { time = 27, id = "BlackhawkDropLoot", icons = { Icon.Heli, Icon.Loot, Icon.Goto }, hint = Hints.kosugi_Loot },
     [100303] = { time = 30, id = "BlackhawkDropGuards", icons = { Icon.Heli, "pager_icon", Icon.Goto }, class = TT.Warning, hint = Hints.kosugi_Guards },
 
@@ -119,7 +119,7 @@ local achievements =
             end
         end,
         cleanup_callback = function()
-            EHIkosugi5Tracker = nil ---@diagnostic disable-line
+            _G.EHIkosugi5Tracker = nil
         end
     }
 }
@@ -194,7 +194,7 @@ if EHI:IsLootCounterVisible() then
     -- https://steamcommunity.com/app/218620/discussions/14/5710018482972011532/
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     sidejob = sidejob,

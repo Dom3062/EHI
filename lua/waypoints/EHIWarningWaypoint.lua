@@ -31,7 +31,6 @@ EHIWarningWaypoint._anim_warning = function(o, old_color, color, icon, arrow, bi
     end
 end
 
----@param dt number
 function EHIWarningWaypoint:update(dt)
     EHIWarningWaypoint.super.update(self, dt)
     if self._time <= 10 and not self._anim_started then

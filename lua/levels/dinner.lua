@@ -34,7 +34,7 @@ local achievements =
         elements =
         {
             [100484] = { time = 300, class = TT.Achievement.Unlock },
-            [100319] = { special_function = SF.SetAchievementFailed }
+            [101881] = { special_function = SF.SetAchievementFailed }
         }
     },
     farm_3 =
@@ -65,14 +65,14 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101179] = { chance = 15, id = "Snipers", class = TT.Sniper.Chance, flash_times = 1 }
     other[101227] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101228] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[101233] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+    other[101233] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
         if EHI:IsHost() and not element:_values_ok() then
             return
         end
         self._trackers:CallFunction("Snipers", "SnipersKilled")
     end)}
     other[101956] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[101957] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, ...)
+    other[101957] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         if self._trackers:CallFunction2("Snipers", "SniperSpawnsSuccess", element._values.chance) then -- 0%
             self._trackers:AddTracker({
                 id = "Snipers",
@@ -83,14 +83,14 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         end
     end) }
 end
-local CacheEscapePos = EHI:RegisterCustomSyncedSF(function(self, trigger, ...)
+local CacheEscapePos = EHI.Manager:RegisterCustomSyncedSF(function(self, trigger, ...)
     self.SyncedSFF.dinner_EscapePos = self:GetElementPosition(EHI:GetInstanceElementID(100034, trigger.index))
 end)
 for i = 2850, 3050, 100 do
     other[EHI:GetInstanceElementID(100028, i)] = { special_function = CacheEscapePos, index = i }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -146,7 +146,7 @@ EHI:AddXPBreakdown({
     {
         { amount = 4000, name = "slaughterhouse_entered" },
         { amount = 6000, name = "vault_drill_done" },
-        { amount = 6000, name = "slaughterhouse_tires_burn" },
+        { amount = 4000, name = "slaughterhouse_tires_burn" },
         { amount = 6000, name = "slaughterhouse_trap_lifted" },
         { amount = 6000, name = "slaughterhouse_gold_lifted" },
         { escape = 6000 }

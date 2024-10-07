@@ -34,7 +34,7 @@ local other =
     [100109] = EHI:AddAssaultDelay({ control = 60 })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, single_player = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL) }
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, single_player = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL) }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -47,7 +47,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102725] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     other = other
 })
@@ -86,14 +86,14 @@ local total_xp_override =
     }
 }
 EHI:AddXPBreakdown({
-    tactic =
+    plan =
     {
         custom =
         {
             {
                 name = "stealth",
                 additional_name = "mex4_car_escape",
-                tactic =
+                plan =
                 {
                     objectives = stealth_objectives,
                     loot_all = { amount = 500 },
@@ -111,7 +111,7 @@ EHI:AddXPBreakdown({
             {
                 name = "stealth",
                 additional_name = "mex4_boat_escape",
-                tactic =
+                plan =
                 {
                     objectives = stealth_objectives,
                     loot_all = { amount = 500 },
@@ -128,7 +128,7 @@ EHI:AddXPBreakdown({
             {
                 name = "loud",
                 additional_name = "mex4_car_escape",
-                tactic =
+                plan =
                 {
                     objectives = loud_objectives,
                     loot_all = { amount = 500 },
@@ -147,7 +147,7 @@ EHI:AddXPBreakdown({
             {
                 name = "loud",
                 additional_name = "mex4_heli_escape",
-                tactic =
+                plan =
                 {
                     objectives = loud_objectives,
                     loot_all = { amount = 500 },

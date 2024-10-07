@@ -98,7 +98,7 @@ local achievements =
             [EHI:GetInstanceElementID(100021, 11090)] = { special_function = SF.SetAchievementFailed } -- Lab destroyed with C4
         },
         cleanup_callback = function()
-            EHIcorp9Tracker = nil ---@diagnostic disable-line
+            _G.EHIcorp9Tracker = nil
         end,
         parsed_callback = function()
             EHI:HookColorCodes({
@@ -131,7 +131,7 @@ local achievements =
     {
         elements =
         {
-            [102728] = { class = TT.Achievement.Base, special_function = EHI:RegisterCustomSF(function(self, trigger, ...)
+            [102728] = { class = TT.Achievement.Base, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
                 if self._cache.StartDisabled then
                     return
                 end
@@ -142,7 +142,7 @@ local achievements =
                     class = trigger.class
                 })
             end) },
-            [102683] = { special_function = EHI:RegisterCustomSF(function(self, trigger, element, enabled)
+            [102683] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
                     self._achievements:SetAchievementFailed("corp_11")
                     self._cache.StartDisabled = true
@@ -164,7 +164,7 @@ local achievements =
         {
             -- SP (MP has 240s)
             [100107] = { time = 420, class = "EHIcorp12Tracker", special_function = SF.AddTrackerIfDoesNotExist },
-            [102739] = { special_function = EHI:RegisterCustomSF(function(self, ...)
+            [102739] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
                 if self.ConditionFunctions.IsLoud() then
                     return
                 elseif self._trackers:TrackerDoesNotExist("corp_12") then
@@ -181,7 +181,7 @@ local achievements =
             [102740] = { special_function = SF.SetAchievementComplete }
         },
         cleanup_callback = function()
-            EHIcorp12Tracker = nil ---@diagnostic disable-line
+            _G.EHIcorp12Tracker = nil
         end,
         sync_params = { from_start = true }
     }
@@ -196,7 +196,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         veryhard_or_below = 2,
         overkill_or_above = 3
     })
-    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_times = 1, sniper_count = sniper_count }
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, sniper_count = sniper_count }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -207,7 +207,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

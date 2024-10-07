@@ -27,7 +27,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101742] = { max = 3, class = TT.Achievement.Progress, trigger_times = 1 },
+            [101742] = { max = 3, class = TT.Achievement.Progress, trigger_once = true },
             [101885] = { special_function = SF.SetAchievementFailed },
             [102171] = { special_function = SF.IncreaseProgress }
         }
@@ -56,7 +56,7 @@ end
 -- 101399 units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer/001 (2050, -10250, 639.67)
 EHI:UpdateUnits({ [101399] = { icons = { "C_Locke_H_HellsIsland_Another" }, hint = Hints.Wait } })
 
-EHI:ParseTriggers({
+EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

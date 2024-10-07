@@ -17,7 +17,7 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
         }
     }
 
-    EHI:ParseTriggers({
+    EHI.Manager:ParseTriggers({
         achievement = achievements
     })
 end
