@@ -1,3 +1,7 @@
+r265 (08. 10. 2024):
+Buffs: Fixed a crash on alarm
+First World Bank: Fixed a load crash
+
 r264 (07. 10. 2024):
 Added proper support for Vanilla Holdout levels
 Fixed Tag Team buffs not working correctly on clients

@@ -188,7 +188,7 @@ function EHIBuffManager:SyncBuff(id, t)
 end
 
 function EHIBuffManager:ActivateUpdatingBuffs()
-    if table.empty(self._buffs) then
+    if not self._buffs or table.empty(self._buffs) then
         return
     end
     for id, buff in pairs(tweak_data.ehi.buff) do
@@ -211,14 +211,14 @@ end
 
 ---@param state boolean
 function EHIBuffManager:SetCustodyState(state)
-    for _, buff in pairs(self._buffs) do
+    for _, buff in pairs(self._buffs or {}) do
         buff:SetCustodyState(state)
     end
     self:RemoveAbilityCooldown(state)
 end
 
 function EHIBuffManager:SwitchToLoudMode()
-    for _, buff in pairs(self._buffs) do
+    for _, buff in pairs(self._buffs or {}) do
         buff:SwitchToLoudMode()
     end
 end

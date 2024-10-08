@@ -266,6 +266,6 @@ end
 EHI:AddXPBreakdown({
     plan =
     {
-        custom = custom_tactic
+        custom = custom_plan
     }
 })
