@@ -5,9 +5,12 @@ EHIAggregatedHealthEquipmentTracker = class(EHIAggregatedEquipmentTracker)
 EHIAggregatedHealthEquipmentTracker._ids = { "doctor_bag", "first_aid_kit" }
 EHIAggregatedHealthEquipmentTracker._forced_icons = { { icon = "doctor_bag", visible = false }, { icon = "first_aid_kit", visible = false } }
 EHIAggregatedHealthEquipmentTracker._init_create_text = true
-function EHIAggregatedHealthEquipmentTracker:pre_init(...)
-    EHIAggregatedHealthEquipmentTracker.super.pre_init(self, ...)
+function EHIAggregatedHealthEquipmentTracker:post_init(...)
+    EHIAggregatedHealthEquipmentTracker.super.post_init(self, ...)
     self._active_icons = 1
+    if self._ICON_LEFT_SIDE_START and self._n_of_icons > 1 then
+        self._bg_box:set_x(self._bg_box:x() - self._icon_gap_size_scaled)
+    end
 end
 
 function EHIAggregatedHealthEquipmentTracker:Format()
