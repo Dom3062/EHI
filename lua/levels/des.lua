@@ -8,7 +8,7 @@ EHIChemSetTracker._update = false
 EHIChemSetTracker._init_create_text = false
 function EHIChemSetTracker:OverridePanel()
     self:SetBGSize(self._bg_box:w() / 2)
-    self:SetIconX()
+    self:SetIconsX()
     local third = self._bg_box:w() / 3
     self._ingredients = { {}, {}, {} } ---@type table<number, { text: PanelText, ingredient: string }>
     self._ingredients[1].text = self:CreateText({

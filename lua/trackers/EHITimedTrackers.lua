@@ -8,7 +8,6 @@ EHITimedChanceTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHITimedChanceTracker.SetChance = EHIChanceTracker.SetChance
 EHITimedChanceTracker.FormatChance = EHIChanceTracker.FormatChance
 EHITimedChanceTracker._anim_chance = EHIChanceTracker._anim_chance
-EHITimedChanceTracker.delete = EHIChanceTracker.delete
 function EHITimedChanceTracker:OverridePanel()
     self:PrecomputeDoubleSize()
     self._chance_text = self:CreateText({
@@ -40,7 +39,7 @@ function EHITimedChanceTracker:StartTimer(t, no_update)
     end
     self:AnimatePanelW(self._panel_double)
     self:ChangeTrackerWidth(self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons))
-    self:AnimIconsX(self._bg_box_double + self._gap_scaled)
+    self:AnimIconsX(self._default_bg_size)
     self._bg_box:set_w(self._bg_box_double)
     self:AnimateAdjustHintX(self._default_bg_size)
     if not no_update then
@@ -55,7 +54,7 @@ function EHITimedChanceTracker:StopTimer()
     self._started = nil
     self:AnimatePanelW(self._panel_w)
     self:ChangeTrackerWidth(self._default_bg_size + (self._icon_gap_size_scaled * self._n_of_icons))
-    self:AnimIconsX(self._default_bg_size + self._gap_scaled)
+    self:AnimIconsX(-self._default_bg_size)
     self._bg_box:set_w(self._default_bg_size)
     self:AnimateAdjustHintX(-self._default_bg_size)
     self:RemoveTrackerFromUpdate()
@@ -74,7 +73,6 @@ EHITimedWarningChanceTracker._warning_color = EHIWarningTracker._warning_color
 EHITimedWarningChanceTracker.update = EHIWarningTracker.update
 EHITimedWarningChanceTracker.AnimateColor = EHIWarningTracker.AnimateColor
 EHITimedWarningChanceTracker.SetTimeNoAnim = EHIWarningTracker.SetTimeNoAnim
-EHITimedWarningChanceTracker.delete = EHIWarningTracker.delete
 EHITimedWarningChanceTracker._anim_warning = EHIWarningTracker._anim_warning
 EHITimedWarningChanceTracker._anim_chance = EHIChanceTracker._anim_chance
 
@@ -99,7 +97,6 @@ function EHITimedProgressTracker:Refresh()
     self:StopTimer()
 end
 
----@param time number
 function EHITimedProgressTracker:SetTimeNoAnim(time)
     EHITimedProgressTracker.super.SetTimeNoAnim(self, time)
     self:StartTimer()

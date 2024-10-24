@@ -35,7 +35,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100075, 21250)] = { time = 60 + 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 1, waypoint = deep_clone(EscapeWP), hint = Hints.Escape },
     [EHI:GetInstanceElementID(100076, 21250)] = { time = 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 2, waypoint = deep_clone(EscapeWP), hint = Hints.Escape },
     [EHI:GetInstanceElementID(100078, 21250)] = { time = 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.SetTimeOrCreateTracker, waypoint = deep_clone(EscapeWP), hint = Hints.Escape },
-    [100795] = { time = 5, id = "C4", icons = { Icon.C4 }, waypoint = { position_by_element = 100804 }, hint = Hints.Explosion },
+    [100795] = { time = 5, id = "C4", icons = { Icon.C4 }, waypoint = { position_by_element = 100804 }, hint = Hints.Explosion }
 
     -- C4 Drop handled in CoreWorldInstanceManager
 }
@@ -53,13 +53,17 @@ EHI.Manager:ParseTriggers({ mission = triggers, other = other })
 EHI:AddXPBreakdown({
     objectives =
     {
-        { amount = 16000, name = "van_open" },
+        { amount = 8000, name = "van_open" },
         { amount = 6000, name = "c4_set_up" }, -- Wall blown up
         { escape = 6000 }
     },
     loot_all = { amount = 500, text = "each_safe_secured" },
     total_xp_override =
     {
+        objectives =
+        {
+            van_open = { times = 2 }
+        },
         loot_all = { times = 4 + (2 * math.min(EHI:DifficultyIndex(), 4)) }
     }
 })

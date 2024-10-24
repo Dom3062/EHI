@@ -4,6 +4,7 @@ EHITimerWaypoint = class(EHIWarningWaypoint)
 EHITimerWaypoint._update = false
 EHITimerWaypoint._autorepair_color = EHI:GetColorFromOption("tracker_waypoint", "drill_autorepair")
 EHITimerWaypoint._completion_color = EHI:GetColorFromOption("tracker_waypoint", "completion")
+EHITimerWaypoint._not_powered_color = EHI:GetColorFromOption("tracker_waypoint", "drill_not_powered")
 EHITimerWaypoint._paused_color = EHIPausableWaypoint._paused_color
 ---@param params table
 function EHITimerWaypoint:post_init(params)
@@ -67,7 +68,9 @@ function EHITimerWaypoint:SetRunning()
 end
 
 function EHITimerWaypoint:SetColorBasedOnStatus()
-    if self._jammed or self._not_powered then
+    if self._not_powered then
+        self:SetColor(self._not_powered_color)
+    elseif self._jammed then
         self:SetColor(self._paused_color)
     else
         self._timer:stop()

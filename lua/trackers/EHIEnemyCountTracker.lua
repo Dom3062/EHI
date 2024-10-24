@@ -1,5 +1,4 @@
 ---@class EHIEnemyCountTracker : EHICountTracker
----@field _icon2 PanelBitmap?
 ---@field super EHICountTracker
 EHIEnemyCountTracker = class(EHICountTracker)
 EHIEnemyCountTracker._forced_hint_text = "enemy_count"
@@ -31,10 +30,10 @@ end
 function EHIEnemyCountTracker:OnAlarm(no_hint_position)
     self._alarm_sounded = true
     self._count = self._count + self._alarm_count
-    if self._icon2 then
-        self._icon2:set_x(self._icon1:x())
-        self._icon2:set_visible(true)
-        self._icon1:set_visible(false)
+    if self._icons[2] then
+        self._icons[2]:set_x(self._icons[1]:x())
+        self._icons[2]:set_visible(true)
+        self._icons[1]:set_visible(false)
         if not no_hint_position then
             self:AnimateAdjustHintX(-self._icon_gap_size_scaled, true)
         end
@@ -93,7 +92,7 @@ function EHIEnemyCountTracker:AlarmEnemyPagerKilled()
 end
 
 function EHIEnemyCountTracker:HintPositioned()
-    if self._alarm_sounded and self._icon2 then
+    if self._alarm_sounded and self._icons[2] then
         if self._VERTICAL_ANIM_W_LEFT then
             if self._ICON_LEFT_SIDE_START then
                 self:AdjustHintX(self._icon_gap_size_scaled)

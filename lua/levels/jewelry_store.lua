@@ -4,7 +4,6 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [101541] = { time = 2, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
     [101558] = { time = 5, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
@@ -34,13 +33,42 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[103181] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103192 } }
     other[101770] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101776 } }
 end
+if EHI:IsLootCounterVisible() then
+    local jewelry = { 102948, 102949, 102950, 100005, 100006, 100013, 100014, 100007, 100008 }
+    other[100073] = EHI:AddLootCounter3(function(...)
+        local jewelry_to_subtract = 0
+        for _, jewelry_id in ipairs(jewelry) do
+            if managers.game_play_central:IsMissionUnitDisabled(jewelry_id) then
+                jewelry_to_subtract = jewelry_to_subtract + 1
+            end
+        end
+        EHI:ShowLootCounterNoChecks({
+            max = 10 - jewelry_to_subtract,
+            max_random = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 2 or 0,
+            client_from_start = true
+        })
+    end, true)
+    other[102029] = EHI:AddCustomCode(function(self)
+        self._loot:SetLootCounterMaxRandom(2)
+    end)
+    if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
+        other[102131] = other[102029]
+    end
+    other[102182] = EHI:AddCustomCode(function(self)
+        self._loot:RandomLootSpawned(1)
+        self._loot:RandomLootDeclined(1)
+    end)
+    other[102183] = EHI:AddCustomCode(function(self)
+        self._loot:RandomLootSpawned(2)
+    end)
+end
 
 ---@type ParseAchievementTable
 local achievements =
 {
     ameno_7 =
     {
-        difficulty_pass = ovk_and_up,
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
             [100073] = { status = Status.Loud, class = TT.Achievement.Status },

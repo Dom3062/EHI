@@ -85,6 +85,18 @@ function EHIManager:init(managers)
         [self.Trackers.Group.Base] = true,
         [self.Trackers.Group.Warning] = true
     }
+    self._WaypointDataCopy =
+    {
+        Base =
+        {
+            time = true
+        },
+        [self.Waypoints.Progress] =
+        {
+            progress = true,
+            max = true
+        }
+    }
     if EHI:IsClient() then
         self._HookOnLoad = {}
         self._load_sync = CallbackEventHandler:new()
@@ -934,8 +946,10 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
             if configure_waypoints then
                 if data.waypoint then
                     data.waypoint.class = data.waypoint.class or self._TrackerToWaypoint[data.class or ""]
-                    data.waypoint.time = data.waypoint.time or data.time
                     data.waypoint.remove_on_alarm = data.remove_on_alarm
+                    for key, _ in pairs(self._WaypointDataCopy[data.waypoint.class] or self._WaypointDataCopy.Base) do
+                        data.waypoint[key] = data.waypoint[key] or data[key]
+                    end
                     if data.waypoint.data_from_element then
                         self:_add_data_from_element(data.waypoint, data.id, host)
                     elseif data.waypoint.data_from_element_and_remove_vanilla_waypoint then

@@ -6,13 +6,9 @@ EHIdailycakeTracker = class(EHISideJobTracker)
 EHIdailycakeTracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIdailycakeTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIdailycakeTracker.SetProgress = EHIProgressTracker.SetProgress
-function EHIdailycakeTracker:init(...)
+function EHIdailycakeTracker:OverridePanel()
     self._max = 4
     self._progress = 0
-    EHIdailycakeTracker.super.init(self, ...)
-end
-
-function EHIdailycakeTracker:OverridePanel()
     self:SetBGSize()
     self._progress_text = self:CreateText({
         text = self:FormatProgress(),
@@ -21,7 +17,7 @@ function EHIdailycakeTracker:OverridePanel()
         FitTheText = true
     })
     self._text:set_left(self._progress_text:right())
-    self:SetIconX()
+    self:SetIconsX()
 end
 
 function EHIdailycakeTracker:SetCompleted(force)

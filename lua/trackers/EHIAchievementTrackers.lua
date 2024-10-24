@@ -62,9 +62,8 @@ function EHIAchievementTracker:SetFailed()
     self:ShowFailedPopup()
 end
 
-function EHIAchievementTracker:delete()
+function EHIAchievementTracker:pre_delete()
     self:ShowFailedPopup()
-    EHIAchievementTracker.super.delete(self)
 end
 
 ---@param delay_popup boolean?
@@ -166,11 +165,10 @@ function EHIAchievementProgressTracker:AddLootListener(counter)
     end
 end
 
-function EHIAchievementProgressTracker:delete()
+function EHIAchievementProgressTracker:pre_delete()
     if self._loot_parent then
         self._loot_parent:RemoveEventListener(self._id)
     end
-    EHIAchievementProgressTracker.super.delete(self)
 end
 
 function EHIAchievementProgressTracker:save(data)

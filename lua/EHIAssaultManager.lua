@@ -35,30 +35,17 @@ function EHIAssaultManager:init_finalize(manager)
         blocked = not (combine or EHI:GetOption("show_assault_time_tracker")),
         name = combine and "Assault" or "AssaultTime",
         delete_on_delay = not combine,
-        show_endless_assault = EHI:GetOption("show_endless_assault"),
+        show_endless_assault = true,
         hint = combine and "assault" or "assault_time"
     }
     if not self._assault_time.blocked then
-        if self._assault_time.show_endless_assault then
-            EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode, element_id)
-                if self._blocked_wave_mode_elements and self._blocked_wave_mode_elements[element_id] then
-                    return
-                end
-                self._endless_assault = mode == "endless"
-                self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", self._endless_assault)
-            end)
-        else
-            EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode, element_id)
-                if self._blocked_wave_mode_elements and self._blocked_wave_mode_elements[element_id] then
-                    return
-                elseif mode == "endless" then
-                    self._endless_assault = true
-                    self._trackers:ForceRemoveTracker(self._assault_time.name)
-                else
-                    self._endless_assault = nil
-                end
-            end)
-        end
+        EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode, element_id)
+            if self._blocked_wave_mode_elements and self._blocked_wave_mode_elements[element_id] then
+                return
+            end
+            self._endless_assault = mode == "endless"
+            self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", self._endless_assault)
+        end)
         EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
             if mode == "phalanx" then
                 self._trackers:CallFunction(self._assault_time.name, "CaptainArrived")

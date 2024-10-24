@@ -71,11 +71,4 @@ function EHIChanceTracker:SetChance(amount)
     end
     self:AnimateBG(self._anim_flash_set_chance)
 end
-
-function EHIChanceTracker:delete()
-    if self._anim_static_chance and self._chance_text and alive(self._chance_text) then
-        self._chance_text:stop()
-    end
-    EHIChanceTracker.super.delete(self)
-end
 EHIChanceTracker.FormatChance = EHIChanceTracker.Format

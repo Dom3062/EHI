@@ -3,9 +3,6 @@ local Color = Color
 
 ---@class EHITimerTracker : EHIWarningTracker, EHIGroupTracker
 ---@field super EHIWarningTracker
----@field _icon2 PanelBitmap?
----@field _icon3 PanelBitmap?
----@field _icon4 PanelBitmap?
 ---@field _bg_box_w number Inherited class needs to populate this field
 ---@field _bg_box_double number Inherited class needs to populate this field
 ---@field _panel_w number Inherited class needs to populate this field
@@ -14,11 +11,12 @@ EHITimerTracker = class(EHIWarningTracker)
 EHITimerTracker._update = false
 EHITimerTracker._autorepair_color = EHI:GetColorFromOption("tracker_waypoint", "drill_autorepair")
 EHITimerTracker._paused_color = EHIPausableTracker._paused_color
+EHITimerTracker._not_powered_color = EHI:GetColorFromOption("tracker_waypoint", "drill_not_powered")
 EHITimerTracker.StartTimer = EHITimedChanceTracker.StartTimer
 EHITimerTracker.StopTimer = EHITimedChanceTracker.StopTimer
-EHITimerTracker.AnimateMovement = EHIGroupTracker.AnimateMovement
+EHITimerTracker._AnimateMovement = EHIGroupTracker.AnimateMovement
 function EHITimerTracker:pre_init(params)
-    if params.icons[1].icon then
+    if params.icons[1] and params.icons[1].icon then
         params.icons[2] = { icon = "faster", visible = false, alpha = 0.25 }
         params.icons[3] = { icon = "silent", visible = false, alpha = 0.25 }
         params.icons[4] = { icon = "restarter", visible = false, alpha = 0.25 }
@@ -78,22 +76,27 @@ end
 ---@param upgradeable boolean
 function EHITimerTracker:SetUpgradeable(upgradeable)
     self._upgradeable = upgradeable
-    if self._icon2 then
-        self._icon2:set_visible(upgradeable)
-        self._icon3:set_visible(upgradeable)
-        self._icon4:set_visible(upgradeable)
+    if self._icons[2] then
+        for i = 2, 4, 1 do
+            self._icons[i]:set_visible(upgradeable)
+        end
     end
-    if upgradeable and self._icon2 then
+    if upgradeable and self._icons[2] then
         self._panel_override_w = self._panel:w()
         if self._ICON_LEFT_SIDE_START then
             self._bg_box:set_x(self._icon_gap_size_scaled * self._n_of_icons)
+        end
+        if self._VERTICAL_ANIM_W_LEFT and self._ICON_LEFT_SIDE_START and self._n_of_icons > 1 then
+            self.__vertical_anim_w_left_diff = -(self._icon_gap_size_scaled * (self._n_of_icons - 1))
         end
     else
         self._panel_override_w = self._bg_box:w() + self._icon_gap_size_scaled
         if self._ICON_LEFT_SIDE_START then
             self._bg_box:set_x(self._icon_gap_size_scaled)
         end
+        self.__vertical_anim_w_left_diff = nil
     end
+    self._panel_from_w = self._panel_override_w
 end
 
 ---@param upgrades table
@@ -109,7 +112,7 @@ function EHITimerTracker:SetUpgrades(upgrades)
     }
     for upgrade, level in pairs(upgrades) do
         if level > 0 then
-            local icon = self["_icon" .. tostring(icon_definition[upgrade])] --[[@as PanelBitmap?]]
+            local icon = self._icons[icon_definition[upgrade]]
             if icon then
                 icon:set_color(self:GetUpgradeColor(level))
                 icon:set_alpha(1)
@@ -130,7 +133,7 @@ end
 
 ---@param state boolean
 function EHITimerTracker:SetAutorepair(state)
-    self._icon1:set_color(state and self._autorepair_color or Color.white)
+    self:SetIconColor(state and self._autorepair_color or Color.white)
 end
 
 ---@param jammed boolean
@@ -163,7 +166,9 @@ end
 function EHITimerTracker:SetTextColor(color, text)
     if color then
         EHITimerTracker.super.SetTextColor(self, color, text)
-    elseif self._jammed or self._not_powered then
+    elseif self._not_powered then
+        self._text:set_color(self._not_powered_color)
+    elseif self._jammed then
         self._text:set_color(self._paused_color)
     else
         self._text:set_color(Color.white)
@@ -172,6 +177,11 @@ function EHITimerTracker:SetTextColor(color, text)
             self:AnimateColor(true)
         end
     end
+end
+
+function EHITimerTracker:AnimateMovement(...)
+    self:_AnimateMovement(...)
+    self._panel_from_w = self._panel_override_w
 end
 
 function EHITimerTracker:IsTimerRunning()
@@ -215,7 +225,7 @@ function EHITimerGroupTracker:AddTimer(t, id, warning)
     {
         label = label,
         time = t,
-        powered = true,
+        not_powered = false,
         animate_warning = warning,
         pos = self._timers_n
     }
@@ -306,7 +316,7 @@ function EHITimerGroupTracker:SetPowered(powered, id)
             timer.label:stop()
             timer.anim_started = false
         end
-        timer.powered = powered
+        timer.not_powered = not powered
         self:SetTextColor(timer)
     end
 end
@@ -320,7 +330,9 @@ end
 ---@param timer EHITimerGroupTracker.Timer
 function EHITimerGroupTracker:SetTextColor(timer)
     local text = timer.label
-    if timer.jammed or not timer.powered then
+    if timer.not_powered then
+        text:set_color(self._not_powered_color)
+    elseif timer.jammed then
         text:set_color(self._paused_color)
     else
         text:set_color(Color.white)
@@ -336,7 +348,7 @@ end
 function EHITimerGroupTracker:SetAutorepair(state, id)
     local timer = self._timers[id]
     if timer then
-        if timer.jammed or not timer.powered then
+        if timer.jammed or timer.not_powered then
             if state then
                 self:AnimateColor(timer, false, self._autorepair_color)
             end
@@ -369,15 +381,6 @@ end
 ---@param id string Unit Key
 function EHITimerGroupTracker:IsTimerRunning(id)
     return self._timers[id] ~= nil
-end
-
-function EHITimerGroupTracker:delete()
-    for _, timer in pairs(self._timers) do
-        if timer.label and alive(timer.label) then
-            timer.label:stop()
-        end
-    end
-    EHITimerGroupTracker.super.delete(self)
 end
 
 ---@class EHIProgressTimerTracker : EHITimerTracker, EHIProgressTracker, EHITimedChanceTracker
@@ -429,7 +432,6 @@ EHIChanceTimerTracker.IncreaseChance2 = EHIChanceTracker.IncreaseChance2
 EHIChanceTimerTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHIChanceTimerTracker.SetChance = EHIChanceTracker.SetChance
 EHIChanceTimerTracker._anim_chance = EHIChanceTracker._anim_chance
-EHIChanceTimerTracker.delete = EHIChanceTracker.delete
 function EHIChanceTimerTracker:post_init(params)
     self:PrecomputeDoubleSize()
     self._chance_text = self:CreateText({

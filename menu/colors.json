@@ -47,6 +47,19 @@
             "ehi_ver" : 145
         },
         {
+            "type": "color_select",
+            "id": "ehi_colors_drill_not_powered_choice",
+            "title": "ehi_colors_drill_not_powered",
+            "description": "ehi_colors_drill_not_powered_desc",
+            "value": "drill_not_powered",
+            "default_value": [255, 95, 21],
+            "callback": "SetColor",
+            "callback_arguments": ["drill_not_powered", "tracker_waypoint"],
+            "color_type" : "tracker_waypoint",
+            "setting_value": "colors",
+            "ehi_ver" : 267
+        },
+        {
             "type": "divider",
             "size": 20
         },

@@ -14,7 +14,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@alias EHITrackerManager.Tracker { tracker: EHITracker, pos: number, x: number, w: number }
 ---@alias EHIWarningGroupTracker.Timer { label: PanelText, time: number, pos: number, warning: boolean, id: string, check_timer_progress: boolean }
 ---@alias EHIProgressGroupTracker.Counter { label: PanelText, progress: number, max: number, disable_counter: boolean, set_color_bad_when_reached: boolean }
----@alias EHITimerGroupTracker.Timer { label: PanelText, time: number, jammed: boolean, powered: boolean, autorepair: boolean, animate_warning: boolean?, animate_completion: boolean?, anim_started: boolean, pos: number }
+---@alias EHITimerGroupTracker.Timer { label: PanelText, time: number, jammed: boolean, not_powered: boolean, autorepair: boolean, animate_warning: boolean?, animate_completion: boolean?, anim_started: boolean, pos: number }
 
 ---@class AnyExceptNil : table, string, boolean, number, userdata
 
@@ -132,8 +132,8 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field [number] UnitUpdateDefinition
 
 ---@class LootCounterTable.SequenceTriggersTable
----@field loot string[] Sequences where loot spawns (ipairs); triggers "LootCounter:RandomLootSpawned()"
----@field no_loot string[] Sequences where no loot or garbage spawns (ipairs); triggers "LootCounter:RandomLootDeclined()"
+---@field loot string[] Sequences where loot spawns (ipairs); triggers `LootCounter:RandomLootSpawned()`
+---@field no_loot string[] Sequences where no loot or garbage spawns (ipairs); triggers `LootCounter:RandomLootDeclined()`
 
 ---@class LootCounterTable.MaxBagsForMaxLevel
 ---@field mission_xp number Should include objectives that Host and Client will trigger all the time; e.g: `Escape XP`
@@ -159,7 +159,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field max_bags_for_level LootCounterTable.MaxBagsForMaxLevel
 ---@field max_xp_bags number Force maximum count if the heist limits maximum experience from loot bags
 ---@field no_triggers_if_max_xp_bags_gt_max boolean Disables triggers if provided `max_xp_bags` is greater than max
----@field carry_data { loot: boolean, no_loot: boolean } Enables tracking via `EHICarryData` and `EHINoCarryData` classes
+---@field carry_data { loot: boolean, no_loot: boolean, at_loot: boolean, no_at_loot: boolean } Enables tracking via `EHICarryData`, `EHINoCarryData`, `EHIATCarryData` and `EHIATNoCarryData` classes
 
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.Const.LootCounter.CheckType`, defaults to `EHI.Const.LootCounter.CheckType.BagsOnly` if not provided
@@ -228,13 +228,10 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field init_data _WaypointDataTable
 ---@field distance boolean
 
----@class MissionDoorAdvancedTable
+---@class MissionDoorTable
 ---@field w_id number Waypoint ID
 ---@field restore boolean? If the waypoint should be restored when the drill finishes
 ---@field unit_id number? ID of the MissionDoor device (safe, door, vault, ...)
-
----@class MissionDoorTable
----@field [Vector3] number|MissionDoorAdvancedTable
 
 ---@class ValueBasedOnDifficultyTable
 ---@field normal_or_above any Normal or above
@@ -271,6 +268,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field child_units table
 ---@field icons table
 ---@field remove_on_power_off boolean
+---@field power_off_override boolean
 ---@field disable_set_visible boolean
 ---@field remove_on_alarm boolean
 ---@field remove_vanilla_waypoint number

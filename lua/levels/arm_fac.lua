@@ -23,27 +23,19 @@ if EHI:GetOption("show_escape_chance") then
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 15)
     end)
 end
-if EHI:IsSyncedLootCounterVisible() then
-    local trucks = { 100006, 100007, 100021, 100022, 100023, 100024, 100025, 100097, 100100, 100101, 100226, 100227 }
+if EHI:IsLootCounterVisible() then
     ---@param count number
     local function LootCounter(count)
-        EHI:ShowLootCounterSynced({ max_random = count * 9 })
-        local truck = 0
-        local wd = managers.worlddefinition
-        local hook_function = tweak_data.ehi.functions.HookArmoredTransportUnit
-        for _, truck_id in ipairs(trucks) do
-            local unit = wd:get_unit(truck_id) --[[@as UnitBase?]]
-            if unit and unit:damage() and unit:damage()._state and unit:damage()._state.graphic_group and unit:damage()._state.graphic_group.grp_truck then
-                local state = unit:damage()._state.graphic_group.grp_truck
-                if state[1] == "set_visibility" and state[2] then
-                    truck = truck + 1
-                    hook_function(truck_id)
-                    if truck == count then
-                        break
-                    end
-                end
-            end
-        end
+        EHI:ShowLootCounterNoChecks({
+            max_random = count * 9,
+            carry_data =
+            {
+                at_loot = true,
+                no_at_loot = true
+            },
+            client_from_start = true
+        })
+        managers.ehi_loot:SetCountOfArmoredTransports(count)
     end
     other[100238] = { special_function = SF.CustomCode, f = LootCounter, arg = 1 }
     other[104891] = { special_function = SF.CustomCode, f = LootCounter, arg = 2 }

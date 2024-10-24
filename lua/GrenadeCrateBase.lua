@@ -3,6 +3,10 @@ if EHI:CheckLoadHook("GrenadeCrateBase") then
     return
 end
 
+function GrenadeCrateBase:GetRealAmount()
+    return self._grenade_amount or self._max_grenade_amount
+end
+
 if not EHI:GetEquipmentOption("show_equipment_grenadecases") then
     return
 end
@@ -61,14 +65,6 @@ function GrenadeCrateBase:_set_visual_stage(...)
     if not self._ignore then
         UpdateTracker(self._ehi_key, self:GetRealAmount())
     end
-end
-
-function GrenadeCrateBase:GetEHIKey()
-    return self._ehi_key
-end
-
-function GrenadeCrateBase:GetRealAmount()
-    return self._grenade_amount or self._max_grenade_amount
 end
 
 function GrenadeCrateBase:SetIgnore()

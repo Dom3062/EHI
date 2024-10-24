@@ -31,8 +31,7 @@ end
 function EHIWaypointManager:AddWaypoint(id, params)
     if not self._enabled then
         return
-    end
-    if not self._hud then
+    elseif not self._hud then
         self._stored_waypoints[id] = params
         return
     end

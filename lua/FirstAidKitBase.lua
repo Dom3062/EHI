@@ -4,7 +4,6 @@ if EHI:CheckLoadHook("FirstAidKitBase") or not EHI:GetEquipmentOption("show_equi
 end
 
 local UpdateTracker
-
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(key, amount)
         if managers.ehi_tracker:TrackerDoesNotExist("Deployables") then
@@ -57,10 +56,6 @@ function FirstAidKitBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     UpdateTracker(self._ehi_key, 1)
-end
-
-function FirstAidKitBase:GetEHIKey()
-    return self._ehi_key
 end
 
 function FirstAidKitBase:GetRealAmount()

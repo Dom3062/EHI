@@ -121,7 +121,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         self._sniper_respawn_buffer_size = 0
         self._sniper_respawn_element = 0
         self:SetBGSize(self._bg_box:w() / 2)
-        self:SetIconX()
+        self:SetIconsX()
         local half = self._bg_box:w() / 2
         self._count_text:set_color(self._sniper_text_color)
         self._count_text:set_w(half)

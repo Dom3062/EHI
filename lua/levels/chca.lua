@@ -208,6 +208,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[101699] = { count = 0, id = "Snipers", special_function = SF.SetCounter }
 end
 if EHI:IsLootCounterVisible() then
     local units =

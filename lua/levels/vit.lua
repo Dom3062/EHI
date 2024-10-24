@@ -25,6 +25,10 @@ local triggers = {
 
     [101504] = { time = 12 + 11, id = "AirlockOpenInside", icons = { Icon.Door }, hint = Hints.Wait },
 
+    [EHI:GetInstanceElementID(100015, 22250)] = { id = "MaxHacks", max = 3, icons = { Icon.PCHack }, show_progress_on_finish = true, class = TT.Timer.Progress, hint = Hints.Hack },
+    [EHI:GetInstanceElementID(100017, 22250)] = { id = "MaxHacks", special_function = SF.IncreaseProgress },
+    [104055] = { id = "MaxHacks", special_function = SF.RemoveTracker },
+
     [102095] = { special_function = SF.Trigger, data = { 1020951, 1020952 } },
     [1020951] = { time = 26, id = "AirlockOpenOutside", icons = { Icon.Door }, condition_function = CF.IsStealth, hint = Hints.Wait },
     [1020952] = EHI:AddEndlessAssault(26, "AirlockOpenOutsideEndlessAssault", true),
@@ -36,9 +40,17 @@ if EHI:IsClient() then
     triggers[103500] = EHI:ClientCopyTrigger(triggers[102104], { time = 26 })
 end
 
+---@param self EHIManager
+---@param disable boolean
+local function ToggleAssaultTracker(self, disable)
+    self._assault:SetControlStateBlock(disable, 30)
+end
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ control = 30 })
+    [100109] = EHI:AddAssaultDelay({ control = 30 }),
+    [103357] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = true }, -- Inside an airlock
+    [103087] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = false }, -- Enabled preferreds after looking at the vault
+    [103130] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = true } -- Left PEOC
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
@@ -72,10 +84,16 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     -- Enemies killed via "ElementAIRemove" DOES NOT TRIGGER ElementEnemyDummyTrigger if "force_ragdoll" and "true_death" are set to "false" and "use_instigator" is set to "true"
     other[102596] = { id = "Snipers", special_function = SF.RemoveTracker }
 end
+EHI:UpdateUnits({
+    [EHI:GetInstanceUnitID(100058, 22250)] = { tracker_merge_id = "MaxHacks" },
+    [EHI:GetInstanceUnitID(100191, 22250)] = { tracker_merge_id = "MaxHacks" },
+    [EHI:GetInstanceUnitID(100192, 22250)] = { tracker_merge_id = "MaxHacks", destroy_tracker_merge_on_done = true }
+})
 
 EHI.Manager:ParseTriggers({
     mission = triggers,
     other = other,
+    pre_parse = { filter_out_not_loaded_trackers = "show_timers" },
     sync_triggers = { element = element_sync_triggers }
 })
 

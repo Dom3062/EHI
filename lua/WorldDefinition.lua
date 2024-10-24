@@ -177,7 +177,7 @@ local instances =
     },
     ["levels/instances/unique/vit/vit_safe/world"] =
     {
-        [100239] = { remove_vanilla_waypoint = 100254 } -- Drill
+        [100239] = { remove_vanilla_waypoint = 100254, power_off_override = true } -- Drill
     },
     ["levels/instances/unique/mex/mex_explosives/world"] =
     {

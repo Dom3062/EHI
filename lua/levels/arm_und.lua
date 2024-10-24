@@ -26,33 +26,19 @@ if EHI:GetOption("show_escape_chance") then
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 10)
     end)
 end
-if EHI:IsSyncedLootCounterVisible() then
-    -- [ID of disabled unit when truck is visible] = truck ID
-    local trucks =
-    {
-        [100872] = 100007, -- 2/2
-        [100874] = 100021, -- 3/3
-        [101805] = 100022, -- 4/4
-        [100899] = 100023, -- 5/5
-        [100900] = 100024, -- 9/6
-        [100907] = 100025, -- 6/7
-        [100913] = 100097, -- 7/8
-        [100905] = 100100 -- 8/9
-    }
+if EHI:IsLootCounterVisible() then
     ---@param count number
     local function LootCounter(count)
-        EHI:ShowLootCounterSynced({ max_random = count * 9 })
-        local truck = 0
-        local hook_function = tweak_data.ehi.functions.HookArmoredTransportUnit
-        for disabled_unit_id, truck_id in pairs(trucks) do
-            if managers.game_play_central:IsMissionUnitDisabled(disabled_unit_id) then
-                truck = truck + 1
-                hook_function(truck_id)
-                if truck == count then
-                    break
-                end
-            end
-        end
+        EHI:ShowLootCounterNoChecks({
+            max_random = count * 9,
+            carry_data =
+            {
+                at_loot = true,
+                no_at_loot = true
+            },
+            client_from_start = true
+        })
+        managers.ehi_loot:SetCountOfArmoredTransports(count)
     end
     other[100238] = { special_function = SF.CustomCode, f = LootCounter, arg = 1 }
     other[101231] = { special_function = SF.CustomCode, f = LootCounter, arg = 2 }

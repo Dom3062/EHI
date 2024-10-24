@@ -131,7 +131,7 @@ end
 function EHITotalXPTracker:OverridePanel()
     self:SetBGSize(self._bg_box:w() / 2)
     self._text:set_w(self._bg_box:w())
-    self:SetIconX()
+    self:SetIconsX()
 end
 
 ---@param amount number?
@@ -151,11 +151,4 @@ function EHITotalXPTracker:SetXP(amount)
         self._text:animate(self._anim_xp, self)
         self:AnimateBG()
     end
-end
-
-function EHITotalXPTracker:delete()
-    if self._text and alive(self._text) then
-        self._text:stop()
-    end
-    EHITotalXPTracker.super.delete(self)
 end

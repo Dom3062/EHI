@@ -40,7 +40,7 @@ end
     local CreateCounter = true
     other[101419] = EHI:AddLootCounter3(function(self, ...)
         if CreateCounter then
-            EHI:ShowLootCounterNoCheck({})
+            EHI:ShowLootCounterNoChecks({})
             CreateCounter = false
         end
         self._loot:IncreaseLootCounterProgressMax()

@@ -27,7 +27,7 @@ function EHIPiggyBankMutatorTracker:OverridePanel()
         left = self._text:right(),
         FitTheText = true
     })
-    self:SetIconX()
+    self:SetIconsX()
 end
 
 function EHIPiggyBankMutatorTracker:FormatLevels()
@@ -110,11 +110,4 @@ end
 function EHIPiggyBankMutatorTracker:SetTextColor(color)
     self._levels_text:set_color(color)
     EHIPiggyBankMutatorTracker.super.SetTextColor(self, color)
-end
-
-function EHIPiggyBankMutatorTracker:delete()
-    if self._text and alive(self._text) then
-        self._text:stop()
-    end
-    EHIPiggyBankMutatorTracker.super.delete(self)
 end

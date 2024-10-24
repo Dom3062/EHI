@@ -139,9 +139,6 @@ if EHI:GetOption("show_mission_trackers") then
     other[101150].icons = Icon.BoatLootDrop
     other[101150].waypoint_f = waypoint_f
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100457] = { time = 23 + 1, id = "Snipers", class = TT.Sniper.Warning }
-end
 
 EHI.Manager:ParseTriggers({
     mission = triggers,

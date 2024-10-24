@@ -11,16 +11,34 @@
             <extension name="ehi" class="EHICarryData"/>
         </target>
     </tweak>
-    <!-- <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_special_gold" extension="unit">
+    <!-- Loot in Armored Transport -->
+    <tweak version="2" name="units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_money" extension="unit">
         <search>
-            <?xml version="1.0"?>
-            <unit type="bnk" slot="1"/>
+            <unit type="spawn" slot="1"/>
             <extensions/>
         </search>
         <target mode="attach">
-            <extension name="ehi" class="EHICarryData"/>
+            <extension name="ehi" class="EHIATCarryData"/>
         </target>
-    </tweak> -->
+    </tweak>
+    <tweak version="2" name="units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_gold" extension="unit">
+        <search>
+            <unit type="spawn" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHIATCarryData"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_jewelry" extension="unit">
+        <search>
+            <unit type="spawn" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHIATCarryData"/>
+        </target>
+    </tweak>
     <!-- Small loot (no lootbag) -->
     <tweak version="2" name="units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_a" extension="unit">
         <search>
@@ -102,6 +120,46 @@
         </search>
         <target mode="attach">
             <extension name="ehi" class="EHINoCarryData"/>
+        </target>
+    </tweak>
+    <!-- War documents -->
+    <tweak version="2" name="units/pd2_dlc_jfr/pickups/spawn_german_folder/spawn_german_folder" extension="unit">
+        <search>
+            <unit type="spawn" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHIATNoCarryData"/>
+        </target>
+    </tweak>
+    <!-- Crap / Small loot / No loot (Armored Transport) -->
+    <tweak version="2" name="units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/str_vehicle_truck_gensec_transport_deposit_box" extension="unit">
+        <search>
+            <unit type="spawn" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHIATNoCarryData"/>
+        </target>
+    </tweak>
+    <!-- Train document -->
+    <tweak version="2" name="units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/str_vehicle_truck_gensec_transport_deposit_box_intel" extension="unit">
+        <search>
+            <unit type="spawn" slot="1"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHIATNoCarryData"/>
+        </target>
+    </tweak>
+    <!-- Armored Transport Exploded -->
+    <tweak version="2" name="units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_gensec_doors/spawn_gensec_doors" extension="unit">
+        <search>
+            <unit type="spawn" slot="18"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHIATExplosionData"/>
         </target>
     </tweak>
     <!-- Fixes -->

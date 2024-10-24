@@ -92,19 +92,3 @@ function LootManager:EHIReportProgress(check_type, loot_type, f)
         managers.chat:_receive_message(1, "[EHI]", "Secured: " .. loot_name .. "; Carry ID: " .. tostring(loot_type), Color.white)
     end
 end
-
-if EHI.debug.loot_manager_escape then
-    original.init = LootManager.init
-    function LootManager:init(...)
-        original.init(self, ...)
-        self._distribution_loot[#self._distribution_loot + 1] = { carry_id = "money", multiplier = 1 }
-        self._distribution_loot[#self._distribution_loot + 1] = { carry_id = "money", multiplier = 1 }
-        self._distribution_loot[#self._distribution_loot + 1] = { carry_id = "money", multiplier = 1 }
-        self._distribution_loot[#self._distribution_loot + 1] = { carry_id = "money", multiplier = 1 }
-        self._distribution_loot[#self._distribution_loot + 1] = { carry_id = "coke", multiplier = 1 }
-        self._distribution_loot[#self._distribution_loot + 1] = { carry_id = "coke", multiplier = 1 }
-        self._distribution_loot[#self._distribution_loot + 1] = { carry_id = "coke", multiplier = 1 }
-        self._distribution_loot[#self._distribution_loot + 1] = { carry_id = "coke", multiplier = 1 }
-        self._distribution_loot[#self._distribution_loot + 1] = { carry_id = "coke", multiplier = 1 }
-    end
-end

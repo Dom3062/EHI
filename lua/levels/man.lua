@@ -131,7 +131,7 @@ EHI:AddXPBreakdown({
         { amount = 500, name = "undercover_deal_loud" },
         { amount = 4000, name = "undercover_limo_open" },
         { amount = 4000, name = "undercover_taxman_is_in_chair" },
-        { amount = 4000, name = "pc_hack", times = 3 },
+        { amount = 4000, name = "pc_hack" },
         { amount = 1000, name = "undercover_hack_fixed", optional = true },
         { escape = 3000 }
     },
@@ -145,6 +145,7 @@ EHI:AddXPBreakdown({
                 {
                     undercover_deal_stealth = { min = 0 },
                     undercover_deal_loud = { max = 0 },
+                    pc_hack = { min_max = 3 },
                     undercover_hack_fixed = { min = 0, max = 3 }
                 }
             }

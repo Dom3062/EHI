@@ -1,5 +1,4 @@
 ---@class EHIAggregatedHealthEquipmentTracker : EHIAggregatedEquipmentTracker
----@field _icon2 PanelBitmap?
 ---@field super EHIAggregatedEquipmentTracker
 EHIAggregatedHealthEquipmentTracker = class(EHIAggregatedEquipmentTracker)
 EHIAggregatedHealthEquipmentTracker._ids = { "doctor_bag", "first_aid_kit" }
@@ -37,11 +36,8 @@ end
 
 function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
     local visibility = {}
-    for i = 1, 2, 1 do
-        local icon = self["_icon" .. tostring(i)]
-        if icon then
-            icon:set_visible(false)
-        end
+    for _, icon in ipairs(self._icons) do
+        icon:set_visible(false)
     end
     for i, id in ipairs(self._ids) do
         if self._count[id].amount > 0 then
@@ -50,7 +46,7 @@ function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
     end
     local icons = 0
     for i, _ in pairs(visibility) do
-        local icon = self["_icon" .. tostring(i)]
+        local icon = self._icons[i]
         if icon then
             icon:set_visible(true)
             icon:set_x(self:GetIconPosition(icons))
@@ -78,7 +74,7 @@ end
 
 function EHIAggregatedHealthEquipmentTracker:HintPositioned()
     self._hint_positioned = true
-    if self._icon2 then
+    if self._icons[2] then
         if self._VERTICAL_ANIM_W_LEFT then
             if self._ICON_LEFT_SIDE_START then
                 self:AdjustHintX(self._icon_gap_size_scaled)

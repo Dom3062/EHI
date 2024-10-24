@@ -1,9 +1,25 @@
 local EHI = EHI
-if EHI:CheckLoadHook("DoctorBagBase") or not EHI:GetEquipmentOption("show_equipment_doctorbag") then
+if EHI:CheckLoadHook("DoctorBagBase")then
     return
 end
 
 local UpdateTracker
+function DoctorBagBase:GetRealAmount()
+    return (self._amount or self._max_amount) - (self._offset or 0)
+end
+
+---@param offset number
+function DoctorBagBase:SetOffset(offset)
+    self._offset = offset
+    if self._ehi_key and self._unit:interaction():active() and not self._ignore then
+        UpdateTracker(self._ehi_key, self:GetRealAmount())
+    end
+end
+
+if not EHI:GetEquipmentOption("show_equipment_doctorbag") then
+    return
+end
+
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(key, amount)
         if managers.ehi_tracker:TrackerDoesNotExist("Deployables") then
@@ -59,21 +75,6 @@ end
 function DoctorBagBase:_set_visual_stage(...)
     original._set_visual_stage(self, ...)
     UpdateTracker(self._ehi_key, self:GetRealAmount())
-end
-
-function DoctorBagBase:GetEHIKey()
-    return self._ehi_key
-end
-
-function DoctorBagBase:GetRealAmount()
-    return (self._amount or self._max_amount) - self._offset
-end
-
-function DoctorBagBase:SetOffset(offset)
-    self._offset = offset
-    if self._unit:interaction():active() and not self._ignore then
-        UpdateTracker(self._ehi_key, self:GetRealAmount())
-    end
 end
 
 function DoctorBagBase:destroy(...)

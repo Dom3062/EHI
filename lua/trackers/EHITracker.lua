@@ -58,10 +58,11 @@ local panel_w
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or EHI:IsVerticalAlignmentAndOption("tracker_vertical_w_anim") == 2 then -- Horizontal; Right to Left or Panel W anim is Right to Left and Vertical alignment
     ---@param o PanelBaseObject
     ---@param target_w number
+    ---@param from_w number?
     ---@param self EHITracker?
-    panel_w = function(o, target_w, self)
+    panel_w = function(o, target_w, from_w, self)
         local TOTAL_T = 0.18
-        local from_w = o:w()
+        from_w = from_w or o:w()
         local from_x = o:x()
         local abs = -(from_w - target_w)
         local target_x = from_x + -(target_w - from_w)
@@ -80,10 +81,11 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or 
 else
     ---@param o PanelBaseObject
     ---@param target_w number
+    ---@param from_w number?
     ---@param self EHITracker?
-    panel_w = function(o, target_w, self)
+    panel_w = function(o, target_w, from_w, self)
         local TOTAL_T = 0.18
-        local from_w = o:w()
+        from_w = from_w or o:w()
         local abs = -(from_w - target_w)
         local t = (1 - abs / abs) * TOTAL_T
         while TOTAL_T > t do
@@ -97,7 +99,6 @@ else
         end
     end
 end
-
 ---@param o PanelBaseObject
 ---@param target_x number
 local function icon_x(o, target_x)
@@ -110,7 +111,6 @@ local function icon_x(o, target_x)
         local lerp = t / TOTAL_T
         o:set_x(math.lerp(from_x, target_x, lerp))
     end
-    o:set_x(target_x)
 end
 ---@param bg PanelRectangle
 ---@param total_t number
@@ -136,7 +136,6 @@ local function destroy(o, skip, self)
             visibility(o, 0)
         end
     end
-    self._bg_box:child("bg"):stop()
     o:parent():remove(o)
     if self._hint then
         self._hint:parent():remove(self._hint)
@@ -152,8 +151,8 @@ local function GetIcon(icon)
     return tweak_data.hud_icons:get_icon_or(icon, icons.default.texture, icons.default.texture_rect)
 end
 
-local bg_visibility = EHI:GetOption("show_tracker_bg")
-local corner_visibility = EHI:GetOption("show_tracker_corners")
+local bg_visibility = EHI:GetOption("show_tracker_bg") --[[@as boolean]]
+local corner_visibility = EHI:GetOption("show_tracker_corners") --[[@as boolean]]
 
 ---@param panel Panel
 ---@param params table
@@ -227,7 +226,9 @@ end
 ---@field _forced_time number? Forces specific time in the tracker
 ---@field _forced_hint_text string? Forces specific hint text in the tracker
 ---@field _forced_icon_color Color[]? Forces specific icon color in the tracker
----@field _icon1 PanelBitmap
+---@field _icons PanelBitmap[]
+---@field _icons_x number[]
+---@field _panel_from_w number? Used in Panel Width animation
 ---@field _panel_override_w number?
 ---@field _hint_no_localization boolean?
 ---@field _hint_vanilla_localization boolean?
@@ -255,7 +256,6 @@ end
 EHITracker._init_create_text = true
 if EHI:GetOption("show_icon_position") == 1 then
     EHITracker._ICON_LEFT_SIDE_START = true
-    EHITracker._ICON_ANIM_BLOCKED = true
 end
 EHITracker.make_fine_text = BlackMarketGui.make_fine_text
 ---@param panel Panel Main panel provided by `EHITrackerManager`
@@ -264,14 +264,18 @@ EHITracker.make_fine_text = BlackMarketGui.make_fine_text
 function EHITracker:init(panel, params, parent_class)
     self:pre_init(params)
     self._id = params.id
-    self._icons = self._forced_icons or params.icons
+    self._icons = {}
     self._parent_class = parent_class
     self._n_of_icons = 0
     local gap = 0
-    if type(self._icons) == "table" then
-        self._n_of_icons = #self._icons
+    local tracker_icons = self._forced_icons or params.icons
+    if type(tracker_icons) == "table" then
+        self._n_of_icons = #tracker_icons
         if self._ONE_ICON and self._n_of_icons > 1 then
             self._n_of_icons = 1
+        end
+        if self._ICON_LEFT_SIDE_START and self._n_of_icons > 1 and not self._HORIZONTAL_ALINGMENT then
+            self.__vertical_anim_w_left_diff = -(self._icon_gap_size_scaled * (self._n_of_icons - 1))
         end
         gap = self._gap * self._n_of_icons
     end
@@ -304,7 +308,8 @@ function EHITracker:init(panel, params, parent_class)
         self:FitTheText()
     end
     if self._n_of_icons > 0 then
-        self:CreateIcons()
+        self._icons_x = {}
+        self:CreateIcons(tracker_icons) ---@diagnostic disable-line
     end
     self:OverridePanel()
     self._hide_on_delete = params.hide_on_delete
@@ -339,7 +344,9 @@ end
 function EHITracker:PosAndSetVisible(x, y)
     if self.__vertical_anim_w_left_diff then
         x = x + self.__vertical_anim_w_left_diff
-        self.__vertical_anim_w_left_diff = nil
+        if not self._hide_on_delete then
+            self.__vertical_anim_w_left_diff = nil
+        end
     end
     self._panel:set_x(x)
     self._panel:set_y(y)
@@ -394,7 +401,7 @@ function EHITracker:AnimatePanelW(target_w)
     if self._anim_set_w then
         self._panel:stop(self._anim_set_w)
     end
-    self._anim_set_w = self._panel:animate(panel_w, target_w)
+    self._anim_set_w = self._panel:animate(panel_w, target_w, self._panel_from_w)
 end
 
 ---@param target_w number
@@ -402,13 +409,13 @@ function EHITracker:AnimatePanelWAndRefresh(target_w)
     if self._anim_set_w then
         self._panel:stop(self._anim_set_w)
     end
-    self._anim_set_w = self._panel:animate(panel_w, target_w, self)
+    self._anim_set_w = self._panel:animate(panel_w, target_w, self._panel_from_w, self)
 end
 
 ---@param previous_icon PanelBitmap?
----@param icon PanelBitmap? Defaults to `self._icon1` if not provided
+---@param icon PanelBitmap? Defaults to `self._icons[1]` if not provided
 function EHITracker:SetIconX(previous_icon, icon)
-    icon = icon or self._icon1
+    icon = icon or self._icons[1]
     if icon then
         local x = previous_icon and previous_icon:right() or (self._ICON_LEFT_SIDE_START and 0 or self._bg_box:w())
         local gap = previous_icon and self._gap_scaled or (self._ICON_LEFT_SIDE_START and 0 or self._gap_scaled)
@@ -418,42 +425,25 @@ end
 
 function EHITracker:SetIconsX()
     local previous_icon ---@type PanelBitmap?
-    for i = 1, self._n_of_icons, 1 do
-        local icon = self["_icon" .. tostring(i)] --[[@as PanelBitmap?]]
-        if icon then
-            self:SetIconX(previous_icon, icon)
-            previous_icon = icon
-        end
+    for _, icon in ipairs(self._icons) do
+        self:SetIconX(previous_icon, icon)
+        previous_icon = icon
     end
 end
 
----@param target_x number
-function EHITracker:AnimIconX(target_x)
-    if self._ICON_ANIM_BLOCKED or not self._icon1 then
+---@param x number
+function EHITracker:AnimIconsX(x)
+    if self._ICON_LEFT_SIDE_START then
         return
     end
     self._icon_anims = self._icon_anims or {}
-    if self._icon_anims[1] then
-        self._icon1:stop(self._icon_anims[1])
-    end
-    self._icon_anims[1] = self._icon1:animate(icon_x, target_x)
-end
-
----@param target_x number
-function EHITracker:AnimIconsX(target_x)
-    if self._ICON_ANIM_BLOCKED then
-        return
-    end
-    self._icon_anims = self._icon_anims or {}
-    local offset = self._icon_gap_size_scaled
-    for i = 1, self._n_of_icons, 1 do
-        local icon = self["_icon" .. tostring(i)] ---@type PanelBitmap?
-        if icon then
-            if self._icon_anims[i] then
-                icon:stop(self._icon_anims[i])
-            end
-            self._icon_anims[i] = icon:animate(icon_x, target_x + (offset * (i - 1)))
+    for i, icon in ipairs(self._icons) do
+        if self._icon_anims[i] then
+            icon:stop(self._icon_anims[i])
         end
+        local new_x = self._icons_x[i] + x
+        self._icon_anims[i] = icon:animate(icon_x, new_x)
+        self._icons_x[i] = new_x
     end
 end
 
@@ -473,28 +463,29 @@ end
 
 if EHI:GetOption("show_one_icon") then
     EHITracker._ONE_ICON = true
-    function EHITracker:CreateIcons()
+    ---@param tracker_icons table
+    function EHITracker:CreateIcons(tracker_icons)
         local icon_pos = self._ICON_LEFT_SIDE_START and 0 or (self._bg_box:w() + self._gap_scaled)
-        local first_icon = self._icons[1]
+        local first_icon = tracker_icons[1]
         if type(first_icon) == "string" then
             local texture, rect = GetIcon(first_icon)
-            self:CreateIcon(1, "1", texture, rect, icon_pos)
+            self:CreateIcon(1, texture, rect, icon_pos)
         elseif type(first_icon) == "table" then
             local texture, rect = GetIcon(first_icon.icon or "default")
-            self:CreateIcon(1, "1", texture, rect, icon_pos, first_icon.visible, first_icon.color, first_icon.alpha)
+            self:CreateIcon(1, texture, rect, icon_pos, first_icon.visible, first_icon.color, first_icon.alpha)
         end
     end
 else
-    function EHITracker:CreateIcons()
+    ---@param tracker_icons table
+    function EHITracker:CreateIcons(tracker_icons)
         local icon_pos = self._ICON_LEFT_SIDE_START and 0 or (self._bg_box:w() + self._gap_scaled)
-        for i, v in ipairs(self._icons) do
-            local s_i = tostring(i)
+        for i, v in ipairs(tracker_icons) do
             if type(v) == "string" then
                 local texture, rect = GetIcon(v)
-                self:CreateIcon(i, s_i, texture, rect, icon_pos)
+                self:CreateIcon(i, texture, rect, icon_pos)
             elseif type(v) == "table" then -- table
                 local texture, rect = GetIcon(v.icon or "default")
-                self:CreateIcon(i, s_i, texture, rect, icon_pos, v.visible, v.color, v.alpha)
+                self:CreateIcon(i, texture, rect, icon_pos, v.visible, v.color, v.alpha)
             end
             icon_pos = icon_pos + self._icon_gap_size_scaled
         end
@@ -502,15 +493,14 @@ else
 end
 
 ---@param i number
----@param s_i string
 ---@param texture string
 ---@param texture_rect number[]
 ---@param x number
 ---@param visible boolean?
 ---@param color Color?
 ---@param alpha number?
-function EHITracker:CreateIcon(i, s_i, texture, texture_rect, x, visible, color, alpha)
-    self["_icon" .. s_i] = self._panel:bitmap({
+function EHITracker:CreateIcon(i, texture, texture_rect, x, visible, color, alpha)
+    self._icons[i] = self._panel:bitmap({
         texture = texture,
         texture_rect = texture_rect,
         color = self._forced_icon_color and self._forced_icon_color[i] or color or Color.white,
@@ -520,6 +510,7 @@ function EHITracker:CreateIcon(i, s_i, texture, texture_rect, x, visible, color,
         w = self._icon_size_scaled,
         h = self._icon_size_scaled
     })
+    self._icons_x[i] = x
 end
 
 ---@param params EHITracker.CreateText?
@@ -589,52 +580,27 @@ function EHITracker:AdjustHintX(x)
     if not self._hint then
         return
     end
-    self._hint:set_x(self._hint:x() + x)
-    self._hint_pos.x = self._hint_pos.x + x
+    local new_x = self._hint_pos.x + x
+    self._hint:set_x(new_x)
+    self._hint_pos.x = new_x
 end
 
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] = true, [2] = true }) then
     if EHI:GetOption("tracker_vertical_w_anim") == 2 then
         EHITracker._VERTICAL_ANIM_W_LEFT = true
-        EHITracker._ICON_ANIM_BLOCKED = nil
-        ---@param target_w number
-        function EHITracker:AnimateHintX(target_w)
-        end
-
-        ---@param target_w number
-        function EHITracker:SetHintX(target_w)
-        end
-
-        if EHITracker._ICON_LEFT_SIDE_START then
-            ---Adjusts hint X position; this function needs to run last after all panel animations are called
-            ---@param x number
-            ---@param icons_moved boolean?
-            function EHITracker:AnimateAdjustHintX(x, icons_moved)
-                if not self._hint then
-                    return
-                end
-                if self._anim_hint_x then
-                    self._hint:stop(self._anim_hint_x)
-                end
-                local new_x = self._hint_pos.x - x
-                self._anim_hint_x = self._hint:animate(left, new_x)
-                self._hint_pos.x = new_x
+        ---Adjusts hint X position; this function needs to run last after all panel animations are called
+        ---@param x number
+        ---@param icons_moved boolean?
+        function EHITracker:AnimateAdjustHintX(x, icons_moved)
+            if not self._hint or (icons_moved and not self._ICON_LEFT_SIDE_START) then
+                return
             end
-        else
-            ---Adjusts hint X position; this function needs to run last after all panel animations are called
-            ---@param x number
-            ---@param icons_moved boolean?
-            function EHITracker:AnimateAdjustHintX(x, icons_moved)
-                if not self._hint or icons_moved then
-                    return
-                end
-                if self._anim_hint_x then
-                    self._hint:stop(self._anim_hint_x)
-                end
-                local new_x = self._hint_pos.x - x
-                self._anim_hint_x = self._hint:animate(left, new_x)
-                self._hint_pos.x = new_x
+            if self._anim_hint_x then
+                self._hint:stop(self._anim_hint_x)
             end
+            local new_x = self._hint_pos.x - x
+            self._anim_hint_x = self._hint:animate(left, new_x)
+            self._hint_pos.x = new_x
         end
 
         ---@param x number World X
@@ -654,34 +620,11 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
             self:HintPositioned()
         end
     else
-        ---@param target_w number
-        function EHITracker:AnimateHintX(target_w)
-            if not self._hint then
-                return
-            end
-            if self._anim_hint_x then
-                self._hint:stop(self._anim_hint_x)
-            end
-            local x = self._hint_pos.x + (target_w - self._panel:w())
-            self._anim_hint_x = self._hint:animate(left, x)
-            self._hint_pos.x = x
-        end
-
-        ---@param target_w number
-        function EHITracker:SetHintX(target_w)
-            if not self._hint then
-                return
-            end
-            local x = self._hint_pos.x + (target_w - self._panel:w())
-            self._hint:set_x(x)
-            self._hint_pos.x = x
-        end
-
         ---Adjusts hint X position; this function needs to run last after all panel animations are called
         ---@param x number
         ---@param icons_moved boolean?
         function EHITracker:AnimateAdjustHintX(x, icons_moved)
-            if not self._hint then
+            if not self._hint or (self._ICON_LEFT_SIDE_START and icons_moved) then
                 return
             end
             if self._anim_hint_x then
@@ -710,6 +653,7 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
         end
     end
 else
+    EHITracker._HORIZONTAL_ALINGMENT = true
     ---@param x number World X
     ---@param y number World Y
     function EHITracker:PositionHint(x, y)
@@ -729,17 +673,6 @@ else
     end
 
     if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [3] = true }) then
-        ---@param target_w number
-        function EHITracker:AnimateHintX(target_w)
-            if not self._hint then
-                return
-            end
-            self._hint:set_w(target_w)
-            self:FitTheText(self._hint, 18)
-            self._hint:set_x(self._hint_pos.x)
-        end
-        EHITracker.SetHintX = EHITracker.AnimateHintX
-
         ---Adjusts hint X position; this function needs to run last after all panel animations are called
         ---@param x number
         ---@param icons_moved boolean?
@@ -752,34 +685,7 @@ else
             self._hint:set_x(self._hint_pos.x)
         end
     else
-        EHITracker._PANEL_RIGHT_TO_LEFT = true
-        ---@param target_w number
-        function EHITracker:AnimateHintX(target_w)
-            if not self._hint then
-                return
-            end
-            if self._anim_hint_x then
-                self._hint:stop(self._anim_hint_x)
-            end
-            self._hint:set_w(target_w)
-            self:FitTheText(self._hint, 18)
-            local x = self._panel:x() + -(target_w - self._panel:w())
-            self._anim_hint_x = self._hint:animate(left, x)
-            self._hint_pos.x = x
-        end
-
-        ---@param target_w number
-        function EHITracker:SetHintX(target_w)
-            if not self._hint then
-                return
-            end
-            self._hint:set_w(target_w)
-            self:FitTheText(self._hint, 18)
-            local x = self._panel:x() + -(target_w - self._panel:w())
-            self._hint:set_x(x)
-            self._hint_pos.x = x
-        end
-
+        EHITracker._HORIZONTAL_RIGHT_TO_LEFT = true
         ---Adjusts hint X position; this function needs to run last after all panel animations are called
         ---@param x number
         ---@param icons_moved boolean?
@@ -789,7 +695,7 @@ else
             end
             self._hint:set_w(self._panel_override_w or self:GetTrackerSize())
             self:FitTheText(self._hint, 18)
-            self._hint:set_x(self._parent_class._trackers[self._id].x)
+            self._hint:set_x(self._parent_class._trackers[self._id].x) -- There should be a better way to do this
         end
     end
 end
@@ -809,8 +715,8 @@ if EHITracker._VERTICAL_ANIM_W_LEFT then
         self._hint:set_text(managers.localization:text(loc))
         self:make_fine_text(self._hint)
         if self._hint_positioned then
-            local x = self._panel:x()
-            self._hint:set_x(x - self._hint:w() - 3)
+            local x = self._panel:x() - self._hint:w() - 3
+            self._hint:set_x(x)
             self._hint_pos.x = x
         end
     end
@@ -859,7 +765,7 @@ function EHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
     if self._VERTICAL_ANIM_W_LEFT and self._panel:alpha() == 0 then
         -- Panel is not visible, adjustment will be performed when manager calls the `EHITracker:PosAndSetVisible()` function  
         -- Otherwise you need to adjust panel position via animation
-        self.__vertical_anim_w_left_diff = original_w - self._bg_box:w()
+        self.__vertical_anim_w_left_diff = (self.__vertical_anim_w_left_diff or 0) + original_w - self._bg_box:w()
     end
 end
 
@@ -980,27 +886,23 @@ function EHITracker:StopAndSetTextColor(color, text)
 end
 
 ---@param new_icon string
----@return string, { x: number, y: number, w: number, h: number }
-function EHITracker:GetIcon(new_icon)
-    return GetIcon(new_icon)
-end
-
----@param new_icon string
 ---@param icon PanelBitmap?
 function EHITracker:SetIcon(new_icon, icon)
-    icon = icon or self._icon1
-    local texture, texture_rect = GetIcon(new_icon)
-    if texture_rect then
-        icon:set_image(texture, unpack(texture_rect))
-    else
-        icon:set_image(texture)
+    icon = icon or self._icons[1]
+    if icon then
+        local texture, texture_rect = GetIcon(new_icon)
+        if texture_rect then
+            icon:set_image(texture, unpack(texture_rect))
+        else
+            icon:set_image(texture)
+        end
     end
 end
 
 ---@param color Color
 ---@param icon PanelBitmap?
 function EHITracker:SetIconColor(color, icon)
-    icon = icon or self._icon1
+    icon = icon or self._icons[1]
     if icon then
         icon:set_color(color)
     end
@@ -1057,11 +959,14 @@ function EHITracker:StopPanelAnims()
     end
 end
 
+function EHITracker:pre_delete()
+end
+
 ---@param skip boolean?
 function EHITracker:destroy(skip)
     if alive(self._panel) then
-        if self._icon1 then
-            self._icon1:stop()
+        for _, icon in ipairs(self._icons) do
+            icon:stop()
         end
         self:StopPanelAnims()
         self._panel:animate(destroy, skip, self)
@@ -1078,6 +983,7 @@ function EHITracker:delete()
         self:Refresh()
         return
     end
+    self:pre_delete()
     self:destroy()
     self._parent_class:_destroy_tracker(self._id)
 end

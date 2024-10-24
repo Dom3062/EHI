@@ -9,9 +9,6 @@ EHIameno3Tracker.FormatNumber = EHINeededValueTracker.Format
 EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
 EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIameno3Tracker.AddLootListener = EHIAchievementProgressTracker.AddLootListener
----@param o PanelText
----@param old_color Color
----@param color Color
 ---@param class EHIameno3Tracker
 EHIameno3Tracker._anim_warning = function(o, old_color, color, start_t, class)
     local c = Color(old_color.r, old_color.g, old_color.b)
@@ -56,7 +53,7 @@ function EHIameno3Tracker:OverridePanel()
         FitTheText = true
     })
     self._text:set_left(self._money_text:right())
-    self:SetIconX()
+    self:SetIconsX()
 end
 
 function EHIameno3Tracker:SetProgress(progress)
@@ -86,9 +83,8 @@ function EHIameno3Tracker:SetTextColor(color)
     self._money_text:set_color(color)
 end
 
-function EHIameno3Tracker:delete()
+function EHIameno3Tracker:pre_delete()
     self._loot_parent:RemoveEventListener("ameno_3")
-    EHIameno3Tracker.super.delete(self)
 end
 
 local Icon = EHI.Icons

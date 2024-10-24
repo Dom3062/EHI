@@ -13,7 +13,7 @@ function EHITradeDelayTracker:init(...)
     EHITradeDelayTracker.super.init(self, ...)
     if self._SIZE_INCREASE_NEEDED then
         self:SetBGSize(self._bg_box:w() / 2)
-        self:SetIconX()
+        self:SetIconsX()
     end
     self._default_panel_w = self._panel:w()
     self._default_bg_box_w = self._bg_box:w()
@@ -44,10 +44,10 @@ end
 
 function EHITradeDelayTracker:SetIconColor()
     if self._n_of_peers >= 2 then
-        self._icon1:set_color(Color.white)
+        EHITradeDelayTracker.super.SetIconColor(self, Color.white)
     else
         local peer_id, _ = next(self._peers)
-        self._icon1:set_color(tweak_data.chat_colors[peer_id] or Color.white)
+        EHITradeDelayTracker.super.SetIconColor(self, tweak_data.chat_colors[peer_id] or Color.white)
     end
 end
 
@@ -89,7 +89,7 @@ end
 function EHITradeDelayTracker:AnimateMovement(addition)
     self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
-    self:AnimIconX(self._panel_w - self._icon_size_scaled)
+    self:AnimIconsX(addition and self._panel_half or -self._panel_half)
     self:AnimateAdjustHintX(addition and self._panel_half or -self._panel_half)
 end
 

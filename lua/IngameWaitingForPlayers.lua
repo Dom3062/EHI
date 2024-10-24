@@ -3,6 +3,9 @@ if EHI:CheckLoadHook("IngameWaitingForPlayersState") then
     return
 end
 
+---@class IngameWaitingForPlayersState
+---@field check_is_dropin fun(self: self): boolean
+
 local gage3_13_levels =
 {
     pbr = true,
@@ -362,6 +365,7 @@ local function OnSetSavedJobValue(achievement_id, keys)
 end
 
 local _f_at_exit = IngameWaitingForPlayersState.at_exit
+---@param next_state GameState
 function IngameWaitingForPlayersState:at_exit(next_state, ...)
     _f_at_exit(self, next_state, ...)
     if not game_state_machine:verify_game_state(GameStateFilters.any_ingame_playing, next_state:name()) then --- Don't do anything if host disconnected before spawn / closed game in Singleplayer

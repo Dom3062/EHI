@@ -1,15 +1,9 @@
-local lerp = math.lerp
-local sin = math.sin
-local Color = Color
 ---@class EHIcac10Tracker : EHIAchievementTracker, EHIProgressTracker
 EHIcac10Tracker = class(EHIAchievementTracker)
 EHIcac10Tracker._update = false
 EHIcac10Tracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIcac10Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac10Tracker.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
----@param o PanelText
----@param old_color Color
----@param color Color
 ---@param class EHIcac10Tracker
 EHIcac10Tracker._anim_warning = function(o, old_color, color, start_t, class)
     local c = Color(old_color.r, old_color.g, old_color.b)
@@ -18,10 +12,10 @@ EHIcac10Tracker._anim_warning = function(o, old_color, color, start_t, class)
     while true do
         while t > 0 do
             t = t - coroutine.yield()
-            local n = sin(t * 180)
-            c.r = lerp(old_color.r, color.r, n)
-            c.g = lerp(old_color.g, color.g, n)
-            c.b = lerp(old_color.b, color.b, n)
+            local n = math.sin(t * 180)
+            c.r = math.lerp(old_color.r, color.r, n)
+            c.g = math.lerp(old_color.g, color.g, n)
+            c.b = math.lerp(old_color.b, color.b, n)
             o:set_color(c)
             progress:set_color(c)
         end
@@ -39,7 +33,7 @@ function EHIcac10Tracker:OverridePanel()
         FitTheText = true
     })
     self._text:set_left(self._progress_text:right())
-    self:SetIconX()
+    self:SetIconsX()
 end
 
 function EHIcac10Tracker:SetProgressMax(max)
@@ -69,19 +63,6 @@ function EHIcac10Tracker:SetTextColor(color)
     self._progress_text:set_color(color)
 end
 
----@class EHIgreen1Tracker : EHIProgressTracker
----@field super EHIProgressTracker
-EHIgreen1Tracker = class(EHIProgressTracker)
-function EHIgreen1Tracker:SetCompleted(force)
-    EHIgreen1Tracker.super.SetCompleted(self, force)
-    self._disable_counting = false
-end
-
-function EHIgreen1Tracker:SetProgress(progress)
-    EHIgreen1Tracker.super.SetProgress(self, progress)
-    EHI:Log("green_1 -> Progress: " .. tostring(progress))
-end
-
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -104,17 +85,6 @@ local triggers = {
 ---@type ParseAchievementTable
 local achievements =
 {
-    green_1 =
-    {
-        difficulty_pass = false, -- TODO: Finish; remove after that
-        elements =
-        {
-            [103373] = { max = 6, class = "EHIgreen1Tracker", show_finish_after_reaching_target = true },
-            [102153] = { special_function = SF.IncreaseProgress },
-            [102333] = { special_function = SF.DecreaseProgress },
-            [102539] = { special_function = SF.DecreaseProgress }
-        }
-    },
     green_3 =
     {
         elements =

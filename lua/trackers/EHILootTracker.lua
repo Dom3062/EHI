@@ -23,6 +23,8 @@ function EHILootTracker:post_init(params)
     self._loot_check_n = 0
     if self._max_xp_bags > 0 then
         self:SetTextColor(Color.yellow)
+    elseif self._progress == self._max and self._max_random > 0 then
+        self:SetTextColor(Color.green)
     end
 end
 
@@ -43,15 +45,16 @@ function EHILootTracker:IncreaseTrackerSize(animate)
         local new_w = self._bg_box:w()
         local new_panel_w = self:GetTrackerSize()
         self._text:set_w(new_w)
-        self:AnimIconX(new_w + self._gap_scaled)
+        self:AnimIconsX(self._default_bg_size / 2)
         self:AnimatePanelWAndRefresh(new_panel_w)
         self:ChangeTrackerWidth(new_panel_w)
         self:AnimateAdjustHintX(self._default_bg_size / 2)
     else
         self:SetBGSize(self._bg_box:w() / 2, "add")
         self._text:set_w(self._bg_box:w())
-        self:SetIconX()
+        self:SetIconsX()
         self:SetAndFitTheText()
+        self:AdjustHintX(self._default_bg_size / 2)
     end
 end
 
@@ -66,16 +69,16 @@ function EHILootTracker:DecreaseTrackerSize(animate)
         local new_w = self._bg_box:w()
         local new_panel_w = self:GetTrackerSize()
         self._text:set_w(new_w)
-        self:AnimIconX(new_w + self._gap_scaled)
+        self:AnimIconsX(-(self._default_bg_size / 2))
         self:AnimatePanelWAndRefresh(new_panel_w)
         self:ChangeTrackerWidth(new_panel_w)
         self:AnimateAdjustHintX(-(self._default_bg_size / 2))
     else
         self:SetBGSize(self._default_bg_size, "set", animate)
         self._text:set_w(self._bg_box:w())
-        self:SetIconX()
+        self:SetIconsX()
         self:SetAndFitTheText()
-        self:SetHintX(self:GetTrackerSize())
+        self:AdjustHintX(-(self._default_bg_size / 2))
     end
 end
 
@@ -318,9 +321,48 @@ function EHILootTracker:SecuredMissionLoot()
     self:SetProgress(progress)
 end
 
-function EHILootTracker:delete()
+---@param count number
+function EHILootTracker:SetCountOfArmoredTransports(count)
+    self._n_of_loot_in_transports = count * 9
+    self._n_of_loot_in_one_transport = 9
+end
+
+function EHILootTracker:RandomLootSpawnedInTransport()
+    if self._n_of_loot_in_transports <= 0 then
+        return
+    end
+    self:RandomLootSpawned()
+    self._n_of_loot_in_transports = self._n_of_loot_in_transports - 1
+    self._n_of_loot_in_one_transport = self._n_of_loot_in_one_transport - 1
+    if self._n_of_loot_in_one_transport == 0 and self._n_of_loot_in_transports > 0 then
+        self._n_of_loot_in_one_transport = 9
+    end
+end
+
+function EHILootTracker:RandomLootDeclinedInTransport()
+    if self._n_of_loot_in_transports <= 0 then
+        return
+    end
+    self:RandomLootDeclined()
+    self._n_of_loot_in_transports = self._n_of_loot_in_transports - 1
+    self._n_of_loot_in_one_transport = self._n_of_loot_in_one_transport - 1
+    if self._n_of_loot_in_one_transport == 0 and self._n_of_loot_in_transports > 0 then
+        self._n_of_loot_in_one_transport = 9
+    end
+end
+
+function EHILootTracker:ExplosionInTransport()
+    while self._n_of_loot_in_one_transport ~= 9 and self._n_of_loot_in_transports > 0 do
+        self:RandomLootDeclinedInTransport()
+    end
+    if self._n_of_loot_in_transports <= 0 and self._n_of_loot_in_one_transport > 0 then
+        self:RandomLootDeclined(self._n_of_loot_in_one_transport)
+        self._n_of_loot_in_one_transport = 0
+    end
+end
+
+function EHILootTracker:pre_delete()
     self._loot_parent:RemoveEventListener(self._id)
-    EHILootTracker.super.delete(self)
 end
 EHILootTracker.FormatProgress = EHILootTracker.Format
 
@@ -428,7 +470,6 @@ function EHILootMaxTracker:ObjectiveXPAwarded(amount)
 end
 
 ---@class EHIAchievementLootCounterTracker : EHILootTracker, EHIAchievementTracker
----@field _icon2 PanelBitmap
 ---@field super EHILootTracker
 EHIAchievementLootCounterTracker = ehi_achievement_class(EHILootTracker)
 EHIAchievementLootCounterTracker._PrepareHint = EHIAchievementTracker.PrepareHint
@@ -445,12 +486,11 @@ function EHIAchievementLootCounterTracker:init(panel, params, ...)
     EHIAchievementLootCounterTracker.super.init(self, panel, params, ...)
     if params.start_silent then
         self._silent_start = true
-        if self._icon2 then
-            self._icon2:set_visible(true)
-            self._icon1:set_visible(false)
+        if self._icons[2] then
+            self._icons[2]:set_x(self._icons[1]:x())
+            self._icons[2]:set_visible(true)
+            self._icons[1]:set_visible(false)
             self._panel_override_w = self._bg_box:w() + self._icon_gap_size_scaled
-            self:SetHintX(self._panel_override_w)
-            self._icon2:set_x(self._icon1:x())
         else
             self:SetIconColor(Color.white)
             self:SetIcon("pd2_loot")
@@ -490,10 +530,12 @@ end
 function EHIAchievementLootCounterTracker:SetFailed()
     if self._loot_counter_on_fail then
         self:AnimateBG()
-        if self._icon2 then
-            self._icon2:set_visible(true)
-            self._icon1:set_visible(false)
-            self._icon2:set_x(self._icon1:x())
+        if self._icons[2] then
+            self._icons[2]:set_visible(true)
+            self._icons[1]:set_visible(false)
+            if not self._ICON_LEFT_SIDE_START then
+                self._icons[2]:set_x(self._icons[1]:x())
+            end
             self:ChangeTrackerWidth(self._bg_box:w() + self._icon_gap_size_scaled, true)
             self._hint_vanilla_localization = nil
             self:UpdateHint("loot_counter")
@@ -537,9 +579,9 @@ function EHIAchievementLootCounterTracker:SetStarted()
             self:UpdateHint("achievement_" .. self._id)
         end
         self:ShowStartedPopup()
-        self._icon1:set_visible(true)
-        if self._icon2 then
-            self._icon2:set_visible(true)
+        self._icons[1]:set_visible(true)
+        if self._icons[2] then
+            self._icons[2]:set_visible(true)
             self:SetIconsX()
             self._panel_override_w = nil
             self:AnimateAdjustHintX(self._icon_gap_size_scaled, true)

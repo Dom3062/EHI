@@ -71,6 +71,7 @@
     "ehi_status_objective" : "ÚKOL",
     "ehi_status_fail" : "SELHÁNÍ",
     "ehi_status_endless" : "NEKONEČNÝ",
+    "ehi_status_break" : "PAUZA",
     "ehi_hint_drill" : "Vrták",
     "ehi_hint_hack" : "Hack",
     "ehi_hint_laser" : "Laser",
@@ -396,7 +397,7 @@
     "ehi_show_timers_desc" : "Zobrazuje časovače, když zařízení hackuje, vrtá, řeže a tak dále...",
 
     "ehi_show_timers_max_in_group" : "Počet časovaců ve skupině",
-    "ehi_show_timers_max_in_group_desc" : "Nastavuje maximální počet časovaců v jednom sledovači. Pokud je maximum překročeno, je vytvořen další sledovač, kde se tento časovač (a nebo další) objeví.\n\nChcete-li tuto funkci zakázat, nastavte hodnotu na '1'.",
+    "ehi_show_timers_max_in_group_desc" : "Nastavuje maximální počet časovaců v jednom sledovači. Pokud je maximum překročeno, je vytvořen další sledovač, kde se tento časovač (a nebo další) objeví.\n\nChcete-li tuto funkci zakázat, nastavte hodnotu na '1'\n\nPokud je hodnota nastavena na jinou hodnotu kromě 1 a je vybráno Vodorovné zarovnání, EHI bude preferovat neomezený počet časovačů ve skupině k ušetření místa",
 
     "ehi_show_camera_loop" : "Zobrazovat kameru se zpětnou smyčkou",
     "ehi_show_camera_loop_desc" : "Zobrazuje sledovač, když je bezpečnostní kamera ve smyčce",
@@ -547,9 +548,6 @@
 
     "ehi_show_assault_diff_in_assault_trackers" : "Zobrazovat obtížnost vlny ve sledovačích s útokem",
     "ehi_show_assault_diff_in_assault_trackers_desc" : "V herním režimu Holdout tato možnost zobrazí zvýšení uděleného poškození a zdraví nepřátel, v tomto pořadí\n\nV ostatních herních režimech tato možnost zobrazí obtížnost vlny v procentech",
-
-    "ehi_show_endless_assault" : "Zobrazovat nekonečný útok ve sledovači",
-    "ehi_show_endless_assault_desc" : "Zobrazuje 'NEKONEČNÝ' ve sledovači jakmile se spustí nekonečný útok",
     
     "ehi_show_loot_counter" : "Zobrazovat počet lupu",
     "ehi_show_loot_counter_desc" : "Zobrazuje sledovač s počtem lupu v loupeži",
@@ -915,6 +913,11 @@
     "ehi_other_show_floating_health_bar_converts" : "Zobrazovat zdraví převedenců",
     "ehi_other_show_floating_health_bar_civilians" : "Zobrazovat zdraví civilistů",
 
+    "ehi_other_show_use_left_ammo_bag" : "Zobrazovat počet použití u Ammo Bagů",
+    "ehi_other_show_use_left_doctor_bag" : "Zobrazovat počet použití u Doctor Bagů",
+    "ehi_other_show_use_left_bodybags_bag" : "Zobrazovat počet použití u Bodybagů",
+    "ehi_other_show_use_left_grenades" : "Zobrazovat počet použití u kufříků s granáty",
+
     "ehi_colors_menu" : "Barvy",
     "ehi_colors_menu_desc" : "Mění použité barvy",
 
@@ -929,6 +932,9 @@
     "ehi_colors_drill_autorepair" : "Autorestart vrtáku či pily",
     "ehi_colors_drill_autorepair_desc" : "Mění barvu ikony když vrták či pila se umí automaticky restartovat sám od sebe",
 
+    "ehi_colors_drill_not_powered" : "Žádné elektrické napájení vrtáku či pily",
+    "ehi_colors_drill_not_powered_desc" : "Mění barvu textu když vrták či pila není napájena elektrickým proudem",
+    
     "ehi_colors_warning" : "Varování",
     "ehi_colors_warning_desc" : "Animuje barvu textu když zbývá 10 vteřin",
 

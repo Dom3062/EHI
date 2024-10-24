@@ -56,12 +56,12 @@ local other =
 }
 if EHI:IsLootCounterVisible() then
     other[100073] = EHI:AddLootCounter(function()
-        EHI:ShowLootCounterNoCheck({ max = 10, client_from_start = true })
+        EHI:ShowLootCounterNoChecks({ max = 10, client_from_start = true })
     end, true, function(self)
         local jewelry = { 102948, 102949, 102950, 100005, 100006, 100013, 100014, 100007, 100008 }
         local jewelry_to_subtract = 0
         for _, jewelry_id in ipairs(jewelry) do
-            if self:IsMissionElementDisabled(jewelry_id) then
+            if managers.game_play_central:IsMissionUnitDisabled(jewelry_id) then
                 jewelry_to_subtract = jewelry_to_subtract + 1
             end
         end

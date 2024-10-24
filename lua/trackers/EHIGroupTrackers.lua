@@ -110,7 +110,6 @@ end
 ---@param n number
 ---@param delete boolean?
 function EHIGroupTracker:AnimateMovement(n, delete)
-    local w = self._default_bg_size * n
     if delete then
         self._panel_override_w = self._panel_override_w - self._default_bg_size
     else
@@ -118,9 +117,9 @@ function EHIGroupTracker:AnimateMovement(n, delete)
     end
     self:AnimatePanelWAndRefresh(self._panel_override_w)
     self:ChangeTrackerWidth(self._panel_override_w)
-    self:AnimIconsX(w + self._gap_scaled)
+    self:AnimIconsX(delete and -self._default_bg_size or self._default_bg_size)
     self:AnimateAdjustHintX(delete and -self._default_bg_size or self._default_bg_size)
-    self:SetBGSize(w, "set", true)
+    self:SetBGSize(self._default_bg_size * n, "set", true)
 end
 
 function EHIGroupTracker:AddUnit()
@@ -166,6 +165,7 @@ EHIWarningGroupTracker.RemoveByID = EHIGroupTracker.RemoveByID
 EHIWarningGroupTracker.AnimateMovement = EHIGroupTracker.AnimateMovement
 EHIWarningGroupTracker.AddUnit = EHIGroupTracker.AddUnit
 EHIWarningGroupTracker.RemoveUnit = EHIGroupTracker.RemoveUnit
+EHIWarningGroupTracker.delete = EHIGroupTracker.delete
 function EHIWarningGroupTracker:update(dt)
     for i, timer in ipairs(self._timers) do
         timer.time = timer.time - dt
@@ -194,21 +194,6 @@ function EHIWarningGroupTracker:_SetTimeNoAnim(timer, time)
     timer.warning = false
     timer.check_timer_progress = time <= 10
     timer.label:stop()
-end
-
-function EHIWarningGroupTracker:delete()
-    for _, timer in ipairs(self._timers) do
-        if timer.label and alive(timer.label) then
-            timer.label:stop()
-            timer.label:parent():remove(timer.label)
-        end
-    end
-    if self._hide_on_delete then
-        self._timers = nil
-        self._timers = {}
-        self._timers_n = 0
-    end
-    EHIWarningGroupTracker.super.delete(self)
 end
 
 ---@class EHIProgressGroupTracker : EHIProgressTracker
@@ -268,10 +253,10 @@ function EHIProgressGroupTracker:AddFromSync(counters)
         end
         local x_diff = (self._default_bg_size * (self._counters - previous_counter - 1))
         self:AdjustHintX(self._VERTICAL_ANIM_W_LEFT and -x_diff or x_diff)
-        if self._VERTICAL_ANIM_W_LEFT or self._PANEL_RIGHT_TO_LEFT then
+        if self._VERTICAL_ANIM_W_LEFT or self._HORIZONTAL_RIGHT_TO_LEFT then
             self._panel:set_x(self._panel:x() - x_diff)
             self:SetIconsX()
-            if self._PANEL_RIGHT_TO_LEFT and self._hint then
+            if self._HORIZONTAL_RIGHT_TO_LEFT and self._hint then
                 local hint_x = self._panel:x()
                 self._hint:set_w(self._panel:w())
                 self:FitTheText(self._hint, 18)

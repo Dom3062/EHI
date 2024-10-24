@@ -1,12 +1,17 @@
 ---@class EHITimerManager
 EHITimerManager = {}
-EHITimerManager._max_timers = EHI:GetOption("show_timers_max_in_group") --[[@as number]]
-EHITimerManager._grouping_is_enabled = EHITimerManager._max_timers > 1
 ---@param ehi_tracker EHITrackerManager
 function EHITimerManager:new(ehi_tracker)
     self._trackers = ehi_tracker
     self._groups = {} --[[@as table<string, { count: number, [number]: { count: number, [number]: { name: string, timer_count: number }}}> ]]
     self._units_in_active_group = {} --[[@as table<string, string?>]]
+    local max_timers = EHI:GetOption("show_timers_max_in_group") --[[@as number]]
+    if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [3] = true, [4] = true }) then
+        self._max_timers = max_timers > 1 and math.huge or 1
+    else
+        self._max_timers = max_timers
+    end
+    self._grouping_is_enabled = self._max_timers > 1
     return self
 end
 

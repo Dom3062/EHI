@@ -749,6 +749,8 @@ _G.BlackMarketGui = {}
 _G.BaseNetworkSession = {}
 ---@class GrenadeCrateBase
 _G.GrenadeCrateBase = {}
+---@class GrenadeCrateInteractionExt
+_G.GrenadeCrateInteractionExt = {}
 ---@class CallbackEventHandler
 _G.CallbackEventHandler = {}
 ---@class CarryTweakData
@@ -788,6 +790,8 @@ _G.GamePlayCentralManager = {}
 _G.GroupAITweakData = {}
 ---@class GroupAIStateBase
 _G.GroupAIStateBase = {}
+---@class IngameWaitingForPlayersState
+_G.IngameWaitingForPlayersState = {}
 ---@class JobManager
 _G.JobManager = {}
 ---@class LevelsTweakData
@@ -947,7 +951,8 @@ end
 ---@field with_alpha fun(self: self, alpha: number): self
 
 ---@class Idstring
----@field key fun(): string
+---@field key fun(self: self): string
+---@field t fun(self: self): string Returns self formatted as @ID<16 byte hex>@; Example: `@IDe166f63494083d58@`
 
 ---@class ElementAreaTrigger : MissionScriptElement
 ---@field _is_inside fun(self: self, position: Vector3): boolean
@@ -1029,6 +1034,9 @@ end
 ---@class MissionScript
 ---@field element fun(self: self, id: number): MissionScriptElement?
 
+---@class BaseInteractionExt
+---@field _add_string_macros fun(self: self, macros: table<string, string>)
+
 ---@class BlackMarketManager
 ---@field equipped_grenade fun(self: self): string
 ---@field equipped_grenade_allows_pickups fun(self: self): boolean
@@ -1082,6 +1090,9 @@ end
 ---@field full_to_safe fun(self: self, in_x: number, in_y: number): number, number
 ---@field full_scaled_size fun(self: self): { x: number, y: number, w: number, h: number }
 
+---@class GrenadeCrateInteractionExt : UseInteractionExt
+---@field _unit UnitGrenadeDeployable
+
 ---@class GroupAIManager
 ---@field state fun(self: self): GroupAIStateBase
 
@@ -1098,6 +1109,13 @@ end
 
 ---@class ChatManager
 ---@field _receive_message fun(self: self, channel_id: number, name: string, message: string, color: Color, icon: string?)
+
+---@class GameState
+---@field at_enter fun(self: self, previous_state: self)
+---@field at_exit fun(self: self, next_state: self)
+---@field name fun(self: self): string
+
+---@class IngameWaitingForPlayersState : GameState
 
 ---@class MissionManager
 ---@field _scripts table<string, MissionScript> All running scripts in a mission
@@ -1165,6 +1183,8 @@ end
 
 ---@class UnoAchievementChallenge
 ---@field challenge fun(self: self): string[]?
+
+---@class UseInteractionExt : BaseInteractionExt
 
 ---@class ViewportManager
 ---@field add_resolution_changed_func fun(self: self, func: function): function
@@ -1312,10 +1332,11 @@ end
 ---@class tablelib
 ---@field size fun(tbl: table): number Returns number of elements in the table
 ---@field count fun(v: table, func: fun(item: any, key: any): boolean): number
----@field contains fun(v: table, e: string): boolean Returns `true` or `false` if `e` exists in the table
+---@field contains fun(v: table, e: any): boolean Returns `true` or `false` if `e` value exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
 ---@field get_vector_index fun(v: table, e: any): number?
 ---@field empty fun(v: table): boolean
+---@field has fun(v: table, k: any): boolean Returns `true` or `false` if `k` key exists in the table
 
 ---Maps values as keys with value `true`
 ---@generic K
@@ -1346,7 +1367,7 @@ function table.random_key(t)
 end
 
 ---@class string
----@field key fun(self: self): string Returns IdString
+---@field key fun(self: self): string Returns Idstring
 
 ---@class ContourExt
 ---@field _contour_list table?
@@ -1452,6 +1473,7 @@ end
 
 ---@class C_UnitOOBB
 ---@field center fun(self: self): number
+---@field size fun(self: self): { x: number, y: number, z: number }
 ---@field x fun(self: self): number
 ---@field y fun(self: self): number
 ---@field z fun(self: self): number
@@ -1464,6 +1486,7 @@ end
 ---@field name fun(): Idstring
 ---@field parent fun(): UnitBase?
 ---@field position fun(self: self): Vector3
+---@field rotation fun(self: self): Rotation
 ---@field oobb fun(self: self): C_UnitOOBB Object Oriented Bounding Box
 ---@field set_extension_update_enabled fun(self: self, class_name: Idstring, state: boolean)
 
@@ -1532,6 +1555,7 @@ end
 
 ---@class UnitGrenadeDeployable : UnitDeployable
 ---@field base fun(): GrenadeCrateBase
+---@field interaction fun(): GrenadeCrateInteractionExt
 
 ---@class UnitECM : UnitBase
 ---@field base fun(): ECMJammerBase
@@ -1582,7 +1606,7 @@ end
 ---@field set_rightbottom fun(self: self, right: number, bottom: number)
 ---@field alpha fun(self: self) : number
 ---@field set_alpha fun(self: self, alpha: number)
----@field stop fun(self: self, anim_thread: thread?)
+---@field stop fun(self: self, anim_thread: thread?) If `anim_thread` is not provided, the function stops all current active animations
 ---@field animate fun(self: self, f: fun(o: self, ...: any?), ...:any?): thread
 ---@field set_size fun(self: self, w: number, h: number)
 ---@field size fun(self: self): w: number, h: number

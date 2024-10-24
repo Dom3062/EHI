@@ -62,7 +62,7 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
 	local right_top = box_panel:bitmap({
 		texture = "guis/textures/pd2_mod_ehi/hud_corner",
 		name = "right_top",
-		visible = corner_visible,
+		visible = corner_visible or (config.alignment <= 2 and config.vertical_anim_left and params.first),
 		layer = 0,
 		x = 0,
 		y = 0,
@@ -96,9 +96,11 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
 end
 
 ---@class FakeEHITracker : EHITracker
----@field _icon1 PanelBitmap
+---@field _icons PanelBitmap[]
 ---@field _text_color Color?
 FakeEHITracker = class()
+FakeEHITracker.pre_init = EHITracker.pre_init
+FakeEHITracker.post_init = EHITracker.post_init
 FakeEHITracker.CreateIcon = EHITracker.CreateIcon
 FakeEHITracker.CreateText = EHITracker.CreateText
 FakeEHITracker.FitTheText = EHITracker.FitTheText
@@ -118,6 +120,7 @@ function FakeEHITracker:init(panel, params, parent_class)
     self._first = params.first
     self._tracker_alignment = params.tracker_alignment
     self._tracker_vertical_anim_left = params.tracker_vertical_anim == 2
+    self._icons = {}
     self._n_of_icons = 0
     self._bg_box_w = 64 * self._scale
     self.__icon_pos_left = params.icon_pos == 1
@@ -148,7 +151,8 @@ function FakeEHITracker:init(panel, params, parent_class)
         bg_visible = params.bg,
         corner_visible = params.corners,
         first = self._first,
-        alignment = self._tracker_alignment
+        alignment = self._tracker_alignment,
+        vertical_anim_left = self._tracker_vertical_anim_left
     })
     if params.extend then
         self:SetBGSize()
@@ -167,16 +171,16 @@ function FakeEHITracker:init(panel, params, parent_class)
     })
     self:FitTheText()
     if self._n_of_icons > 0 then
+        self._icons_x = {}
         local start = self.__icon_pos_left and 0 or self._bg_box:w()
         local icon_gap = self.__icon_pos_left and 0 or self._gap_scaled
         for i, v in ipairs(params.icons) do
-            local s_i = tostring(i)
             if type(v) == "string" then
                 local texture, rect = GetIcon(v)
-                self:CreateIcon(i, s_i, texture, rect, start + icon_gap, true, Color.white, 1)
+                self:CreateIcon(i, texture, rect, start + icon_gap, true, Color.white, 1)
             else -- table
                 local texture, rect = GetIcon(v.icon)
-                self:CreateIcon(i, s_i, texture, rect, start + icon_gap,
+                self:CreateIcon(i, texture, rect, start + icon_gap,
                     v.visible ~= false,
                     v.color,
                     v.alpha or 1)
@@ -194,25 +198,17 @@ function FakeEHITracker:init(panel, params, parent_class)
     self:post_init(params)
 end
 
----@param params EHITracker.params
-function FakeEHITracker:pre_init(params)
-end
-
----@param params EHITracker.params
-function FakeEHITracker:post_init(params)
-end
-
 function FakeEHITracker:SetBGSize(w, ...)
-    if self._tracker_vertical_anim_left then
+    if self._tracker_vertical_anim_left or self.__icon_pos_left then
         self._panel:set_x(self._panel:x() - (w or self._bg_box:w()))
     end
     self:_SetBGSize(w, ...)
 end
 
 ---@param previous_icon PanelBitmap?
----@param icon PanelBitmap? Defaults to `self._icon1` if not provided
+---@param icon PanelBitmap? Defaults to `self._icons[1]` if not provided
 function FakeEHITracker:SetIconX(previous_icon, icon)
-    icon = icon or self._icon1
+    icon = icon or self._icons[1]
     if icon then
         local x = previous_icon and previous_icon:right() or (self.__icon_pos_left and 0 or self._bg_box:w())
         local gap = previous_icon and self._gap_scaled or (self.__icon_pos_left and 0 or self._gap_scaled)
@@ -239,8 +235,16 @@ end
 ---@param x number
 function FakeEHITracker:SetX(x)
     self._panel:set_x(x)
-    if self._tracker_vertical_anim_left and self._bg_box:w() > self._bg_box_w then
-        self._panel:set_x(self._panel:x() - (self._bg_box:w() - self._bg_box_w))
+    if self._tracker_vertical_anim_left then
+        if self._bg_box:w() > self._bg_box_w then
+            self._panel:set_x(self._panel:x() - (self._bg_box:w() - self._bg_box_w))
+        elseif self.__icon_pos_left and self._n_of_icons > 1 and self._n > 1 then
+            local n_of_icons = self._n_of_icons - 1
+            self._panel:set_x(self._panel:x() - (self._icon_gap_size_scaled * n_of_icons))
+        end
+    elseif self.__icon_pos_left and self._n_of_icons > 1 and self._n > 1 then
+        local n_of_icons = self._n_of_icons - 1
+        self._panel:set_x(self._panel:x() - (self._icon_gap_size_scaled * n_of_icons))
     end
 end
 
@@ -281,7 +285,7 @@ end
 function FakeEHITracker:UpdateCornerVisibility(visibility)
     self._bg_box:child("left_top"):set_visible(visibility or (self._tracker_alignment == 1 and self._first))
     self._bg_box:child("left_bottom"):set_visible(visibility or (self._tracker_alignment == 2 and self._first))
-    self._bg_box:child("right_top"):set_visible(visibility)
+    self._bg_box:child("right_top"):set_visible(visibility or (self._tracker_alignment <= 2 and self._tracker_vertical_anim_left and self._first))
     self._bg_box:child("right_bottom"):set_visible(visibility)
 end
 
@@ -290,7 +294,7 @@ function FakeEHITracker:UpdateIconsVisibility(visibility)
     local i_start = visibility and 2 or 1
     self._n = visibility and 1 or self._n_of_icons
     for i = i_start, self._n_of_icons, 1 do
-        self["_icon" .. i]:set_visible(not visibility)
+        self._icons[i]:set_visible(not visibility)
     end
     if self.__icon_pos_left then
         self._bg_box:set_x(self._icon_gap_size_scaled * self._n)
@@ -309,8 +313,8 @@ end
 
 ---@param color Color?
 function FakeEHITracker:UpdateIconColor(color)
-    if self._icon1 then
-        self._icon1:set_color(color or Color.white)
+    if self._icons[1] then
+        self._icons[1]:set_color(color or Color.white)
     end
 end
 
@@ -318,6 +322,15 @@ end
 function FakeEHITracker:UpdateTextScale(scale)
     self._text_scale = scale
     self:FitTheText()
+end
+
+---@param anim number
+function FakeEHITracker:UpdateTrackerVerticalAnim(anim)
+    local vertical = anim == 2
+    if self._tracker_vertical_anim_left == vertical then
+        return
+    end
+    self._tracker_vertical_anim_left = vertical
 end
 
 function FakeEHITracker:GetSize()
@@ -484,7 +497,7 @@ end
 
 ---@param value number
 function FakeEHIMinionCounterTracker:UpdateFormat(value)
-    self._icon1:set_color(value == 1 and self._parent_class:GetLocalPeerColor() or Color.white)
+    self._icons[1]:set_color(value == 1 and self._parent_class:GetLocalPeerColor() or Color.white)
     self._text_second_player:set_visible(value == 3)
     self._text:set_text(tostring(value == 2 and (self._charges + self._charges_second_player) or self._charges))
     self._text:set_color(value == 3 and self._parent_class:GetLocalPeerColor() or Color.white)
@@ -515,12 +528,11 @@ end
 
 ---@class FakeEHIEnemyCountTracker : FakeEHICountTracker
 ---@field super FakeEHICountTracker
----@field _icon2 PanelBitmap
 FakeEHIEnemyCountTracker = class(FakeEHICountTracker)
-function FakeEHIEnemyCountTracker:init(panel, params, parent_class)
+function FakeEHIEnemyCountTracker:init(...)
     self._alarm_count = math.random(0, 10)
     self._format_alarm = EHI:GetOption("show_enemy_count_show_pagers") --[[@as boolean]]
-    FakeEHIEnemyCountTracker.super.init(self, panel, params, parent_class)
+    FakeEHIEnemyCountTracker.super.init(self, ...)
 end
 
 function FakeEHIEnemyCountTracker:GetSize()
@@ -546,16 +558,16 @@ end
 ---@param reposition boolean?
 function FakeEHIEnemyCountTracker:UpdateIconPos(reposition)
     if self._n == 1 then -- 1 icon
-        self._icon1:set_visible(self._format_alarm)
-        self._icon2:set_visible(not self._format_alarm)
-        self._icon2:set_x(self._icon1:x())
+        self._icons[1]:set_visible(self._format_alarm)
+        self._icons[2]:set_visible(not self._format_alarm)
+        self._icons[2]:set_x(self._icons[1]:x())
     else
-        self._icon1:set_visible(self._format_alarm)
-        self._icon2:set_visible(true)
+        self._icons[1]:set_visible(self._format_alarm)
+        self._icons[2]:set_visible(true)
         if self._format_alarm then
-            self._icon2:set_x(self._icon1:x() + self._icon_gap_size_scaled)
+            self._icons[2]:set_x(self._icons[1]:x() + self._icon_gap_size_scaled)
         else
-            self._icon2:set_x(self._icon1:x())
+            self._icons[2]:set_x(self._icons[1]:x())
         end
     end
     if reposition then
@@ -574,10 +586,10 @@ FakeEHIEnemyCountTracker.UpdateIcons = FakeEHIEnemyCountTracker.UpdateIconPos
 ---@field super FakeEHITracker
 FakeEHITimerTracker = class(FakeEHITracker)
 FakeEHITimerTracker.FormatProgress = FakeEHIProgressTracker.Format
-function FakeEHITimerTracker:init(panel, params, parent_class)
+function FakeEHITimerTracker:init(...)
     self._max = 3
     self._progress = math.random(0, 2)
-    FakeEHITimerTracker.super.init(self, panel, params, parent_class)
+    FakeEHITimerTracker.super.init(self, ...)
     self._text:set_left(0)
     self._progress_text = self:CreateText({
         text = self:FormatProgress(),
@@ -599,11 +611,10 @@ end
 
 ---@class FakeEHICivilianCountTracker : FakeEHICountTracker
 ---@field super FakeEHICountTracker
----@field _icon2 PanelBitmap
 FakeEHICivilianCountTracker = class(FakeEHICountTracker)
 FakeEHICivilianCountTracker._ehi_option = "civilian_count_tracker_format"
-function FakeEHICivilianCountTracker:pre_init(params)
-    FakeEHICivilianCountTracker.super.pre_init(self, params)
+function FakeEHICivilianCountTracker:pre_init(...)
+    FakeEHICivilianCountTracker.super.pre_init(self, ...)
     self._tied_count = math.random(0, self._count)
     self._format_civilian = EHI:GetOption(self._ehi_option)
 end
@@ -639,12 +650,12 @@ end
 function FakeEHICivilianCountTracker:UpdateIconPos(reposition)
     if self._n == 1 then -- 1 icon
         self:SetIconX()
-        self._icon2:set_visible(false)
+        self._icons[2]:set_visible(false)
     else
-        self._icon2:set_visible(self._format_civilian >= 2)
+        self._icons[2]:set_visible(self._format_civilian >= 2)
         if self._format_civilian == 2 then
-            self:SetIconX(nil, self._icon2)
-            self:SetIconX(self._icon2)
+            self:SetIconX(nil, self._icons[2])
+            self:SetIconX(self._icons[2])
         else
             self:SetIconsX()
         end
@@ -655,12 +666,11 @@ function FakeEHICivilianCountTracker:UpdateIconPos(reposition)
 end
 
 function FakeEHICivilianCountTracker:UpdateIcons()
-    self._icon2:set_visible(self._format_civilian >= 2)
+    self._icons[2]:set_visible(self._format_civilian >= 2)
 end
 
----@param visibility boolean
-function FakeEHICivilianCountTracker:UpdateIconsVisibility(visibility)
-    FakeEHICivilianCountTracker.super.UpdateIconsVisibility(self, visibility)
+function FakeEHICivilianCountTracker:UpdateIconsVisibility(...)
+    FakeEHICivilianCountTracker.super.UpdateIconsVisibility(self, ...)
     self:UpdateIconPos()
 end
 
@@ -668,8 +678,8 @@ end
 ---@field super FakeEHICivilianCountTracker
 FakeEHIHostageCountTracker = class(FakeEHICivilianCountTracker)
 FakeEHIHostageCountTracker._ehi_option = "hostage_count_tracker_format"
-function FakeEHIHostageCountTracker:pre_init(params)
-    FakeEHIHostageCountTracker.super.pre_init(self, params)
+function FakeEHIHostageCountTracker:pre_init(...)
+    FakeEHIHostageCountTracker.super.pre_init(self, ...)
     self._tied_count = math.random(0, math.floor(self._count / 2))
 end
 
@@ -708,13 +718,13 @@ FakeEHIAssaultTimeTracker = class(FakeEHITracker)
 FakeEHIAssaultTimeTracker.FormatChance = FakeEHIChanceTracker.Format
 function FakeEHIAssaultTimeTracker:post_init(params)
     if params.control then
-        self._icon1:set_color(Color.white)
+        self._icons[1]:set_color(Color.white)
     elseif self._time <= 5 then -- Fade
-        self._icon1:set_color(Color(255, 0, 255, 255) / 255)
+        self._icons[1]:set_color(Color(255, 0, 255, 255) / 255)
     elseif self._time >= 205 then -- Build
-        self._icon1:set_color(Color.yellow)
+        self._icons[1]:set_color(Color.yellow)
     else
-        self._icon1:set_color(Color(255, 237, 127, 127) / 255)
+        self._icons[1]:set_color(Color(255, 237, 127, 127) / 255)
     end
     self._bg_size = self._bg_box:w()
     self._chance = params.diff
@@ -762,7 +772,7 @@ function FakeEHISniperTracker:post_init(params)
 end
 
 function FakeEHISniperTracker:SetTextColor()
-    self._icon1:set_color(self._selected and self._text_color or Color.white)
+    self._icons[1]:set_color(self._selected and self._text_color or Color.white)
 end
 
 ---@param color Color

@@ -10,7 +10,7 @@ local triggers = {
     [100936] = { time = 524/30, id = "CarPickupLoot", icons = Icon.CarLootDrop, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Loot },
     [102686] = { time = 552/30, id = "CarPickupLoot", icons = Icon.CarLootDrop, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Loot },
 
-    [101256] = { time = 3 + 28 + 10 + 135/30 + 0.5 + 210/30, id = "CarEscape", icons = Icon.CarEscapeNoLoot, hint = Hints.Escape },
+    [101256] = { time = 3 + 28 + 10 + 135/30 + 0.5 + 210/30, id = "CarEscape", icons = Icon.CarEscapeNoLoot, hint = Hints.Escape, waypoint = { icon = Icon.Escape, position_by_element = 101130, remove_vanilla_waypoint = 101472 } },
     [101088] = { id = "CarEscape", special_function = SF.RemoveTracker },
 
     [101218] = { time = 60 + 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },

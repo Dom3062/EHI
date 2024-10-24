@@ -1,3 +1,9 @@
+r267 (24. 10. 2024):
+Added options "Drill/Saw Not Powered", "Show uses left for Ammo Bags", "Show uses left for Doctor Bags", "Show uses left for Bodybag Bags" and "Show uses left for Grenade cases"
+Improved timer grouping if tracker alignment is set to horizontal and timer grouping is enabled, to preserve space
+Removed option "Show Endless Assault in the Tracker", EHI will show endless assault by default
+Armored Transports: Improved random loot detection in deposit boxes
+
 r266 (10. 10. 2024):
 Aggregated Health Equipment Tracker: Fixed a gap if icons are on the left side
 

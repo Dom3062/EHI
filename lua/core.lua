@@ -8,7 +8,6 @@ _G.EHI =
     {
         achievements = false,
         mission_door = false,
-        loot_manager_escape = false,
         all_instances = false,
         gained_experience = { enabled = false, log = true },
         instance = false
@@ -222,7 +221,7 @@ _G.EHI =
         DecreaseProgressMax = 52,
         -- Requires `id` and `progress`
         DecreaseProgress = 53,
-        -- Requires `id`
+        -- Requires `id`  
         -- Optional `count`
         IncreaseCounter = 54,
         -- Requires `id`
@@ -479,7 +478,8 @@ _G.EHI =
             -- Requires `time`  
             -- Optional `count_on_refresh`
             TimedCount = "EHISniperTimedCountTracker",
-            -- Requires `chance`, `time` and `recheck_t`
+            -- Requires `chance`, `time` and `recheck_t`   
+            -- Optional `no_logic_annoucement`
             TimedChance = "EHISniperTimedChanceTracker",
             -- Requires `chance`, `time` and `recheck_t`  
             -- Optional `single_sniper` and `heli_sniper`
@@ -604,6 +604,12 @@ local function LoadDefaultValues(self)
                     r = 137,
                     g = 209,
                     b = 254
+                },
+                drill_not_powered =
+                {
+                    r = 255,
+                    g = 95,
+                    b = 21
                 },
                 warning =
                 {
@@ -799,7 +805,6 @@ local function LoadDefaultValues(self)
         show_assault_delay_tracker = true,
         show_assault_time_tracker = true,
         show_assault_diff_in_assault_trackers = true,
-        show_endless_assault = true,
         show_loot_counter = true,
         show_all_loot_secured_popup = true,
         variable_random_loot_format = 3, -- 1 = Progress/Max-(Max+Random)?; 2 = Progress/MaxRandom?; 3 = Progress/Max+Random?
@@ -994,7 +999,11 @@ local function LoadDefaultValues(self)
         show_mission_xp_overview = true,
         show_floating_health_bar = true,
         show_floating_health_bar_converts = true,
-        show_floating_health_bar_civilians = true
+        show_floating_health_bar_civilians = true,
+        show_use_left_ammo_bag = true,
+        show_use_left_doctor_bag = true,
+        show_use_left_bodybags_bag = true,
+        show_use_left_grenades = true
     }
 end
 
@@ -1626,11 +1635,6 @@ function EHI:AddEventListener(id, events, f)
     end
 end
 
----@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)
-function EHI:RegisterCustomSF(f)
-    return managers.ehi_manager:RegisterCustomSF(f)
-end
-
 ---@param trigger ElementTrigger
 function EHI:CleanupCustomSFTrigger(trigger)
     if trigger.special_function and trigger.special_function > self.SpecialFunctions.CustomSF then
@@ -1944,6 +1948,15 @@ function EHI:ShowLootCounterNoChecks(params)
         if params.carry_data.no_loot and EHINoCarryData then
             EHINoCarryData._enabled = true
         end
+        if params.carry_data.at_loot and EHIATCarryData then
+            EHIATCarryData._enabled = true
+        end
+        if params.carry_data.no_at_loot and EHIATNoCarryData then
+            EHIATNoCarryData._enabled = true
+        end
+        if params.carry_data.at_loot and params.carry_data.no_at_loot and EHIATExplosionData then
+            EHIATExplosionData._enabled = true
+        end
     end
 end
 
@@ -2105,6 +2118,9 @@ function EHI:FinalizeUnits(tbl)
                     if unit_data.custom_callback then
                         timer_gui:SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
                     end
+                    if unit_data.power_off_override then
+                        timer_gui:SetJammedStatusOverridePoweredStatus()
+                    end
                     if unit_data.hint then
                         timer_gui:SetHint(unit_data.hint)
                     end
@@ -2205,7 +2221,7 @@ function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_cont
     end
 end
 
----@param tbl MissionDoorTable
+---@param tbl table<Vector3, number|MissionDoorTable>
 function EHI:SetMissionDoorData(tbl)
     if TimerGui.SetMissionDoorData then
         TimerGui.SetMissionDoorData(tbl)
@@ -2367,7 +2383,7 @@ function EHI:SetDeployableIgnorePos(type, pos)
 end
 
 function EHI:CanShowCivilianCountTracker()
-    return self:GetOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not tweak_data.levels:IsLevelSkirmish() and not table.contains({
+    return self:GetOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not tweak_data.levels:IsLevelSkirmish() and not table.has({
         alex_1 = true,
         haunted = true,
         man = true,
@@ -2436,8 +2452,8 @@ end
 
 ---@param time number|EHIRandomTime
 ---@param trigger_name string?
----@param include_loud_check boolean?
-function EHI:AddEndlessAssault(time, trigger_name, include_loud_check)
+---@param loud_check boolean?
+function EHI:AddEndlessAssault(time, trigger_name, loud_check)
     local tbl = ---@type ElementTrigger
     {
         id = trigger_name or "EndlessAssault",
@@ -2452,7 +2468,7 @@ function EHI:AddEndlessAssault(time, trigger_name, include_loud_check)
         tbl.additional_time = start_t
         tbl.random_time = time[2] - start_t
     end
-    if include_loud_check then
+    if loud_check then
         tbl.condition_function = self.ConditionFunctions.IsLoud
     end
     return tbl

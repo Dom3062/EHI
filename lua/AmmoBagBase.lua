@@ -3,11 +3,23 @@ if EHI:CheckLoadHook("AmmoBagBase") then
     return
 end
 
+local UpdateTracker
+function AmmoBagBase:GetRealAmount()
+    return (self._ammo_amount or self._max_ammo_amount) - (self._offset or 0)
+end
+
+---@param offset number
+function AmmoBagBase:SetOffset(offset)
+    self._offset = offset
+    if self._ehi_key and self._unit:interaction():active() and not self._ignore then
+        UpdateTracker(self._ehi_key, self:GetRealAmount())
+    end
+end
+
 if not EHI:GetEquipmentOption("show_equipment_ammobag") then
     return
 end
 
-local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(key, amount)
         if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount ~= 0 then
@@ -66,22 +78,6 @@ function AmmoBagBase:init(unit, ...)
     self._offset = 0
     if next(ignored_pos) and ignored_pos[tostring(unit:position())] then
         self._ignore = true
-    end
-end
-
-function AmmoBagBase:GetEHIKey()
-    return self._ehi_key
-end
-
-function AmmoBagBase:GetRealAmount()
-    return (self._ammo_amount or self._max_ammo_amount) - self._offset
-end
-
----@param offset number
-function AmmoBagBase:SetOffset(offset)
-    self._offset = offset
-    if self._unit:interaction():active() and not self._ignore then
-        UpdateTracker(self._ehi_key, self:GetRealAmount())
     end
 end
 

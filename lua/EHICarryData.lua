@@ -28,3 +28,36 @@ function EHINoCarryData:init(unit)
         managers.ehi_loot:RandomLootDeclined()
     end
 end
+
+---@class EHIATCarryData
+EHIATCarryData = class()
+EHIATCarryData._enabled = false
+---@param unit UnitCarry
+function EHIATCarryData:init(unit)
+    unit:set_extension_update_enabled(Idstring("ehi"), false)
+    if self._enabled then
+        managers.ehi_loot:RandomLootSpawnedInTransport()
+    end
+end
+
+---@class EHIATNoCarryData
+EHIATNoCarryData = class()
+EHIATNoCarryData._enabled = false
+---@param unit UnitCarry
+function EHIATNoCarryData:init(unit)
+    unit:set_extension_update_enabled(Idstring("ehi"), false)
+    if self._enabled then
+        managers.ehi_loot:RandomLootDeclinedInTransport()
+    end
+end
+
+---@class EHIATExplosionData
+EHIATExplosionData = class()
+EHIATExplosionData._enabled = false
+---@param unit Unit
+function EHIATExplosionData:init(unit)
+    unit:set_extension_update_enabled(Idstring("ehi"), false)
+    if self._enabled then
+        managers.ehi_loot:ExplosionInTransport()
+    end
+end

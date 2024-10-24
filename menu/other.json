@@ -80,6 +80,50 @@
             "default_value": true,
             "parent" : "ehi_other_show_floating_health_bar_choice",
             "ehi_ver" : 253
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_use_left_ammo_bag_choice",
+            "title": "ehi_other_show_use_left_ammo_bag",
+            "callback": "SetOption",
+            "callback_arguments": "show_use_left_ammo_bag",
+            "value": "show_use_left_ammo_bag",
+            "default_value": true,
+            "ehi_ver" : 267
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_use_left_doctor_bag_choice",
+            "title": "ehi_other_show_use_left_doctor_bag",
+            "callback": "SetOption",
+            "callback_arguments": "show_use_left_doctor_bag",
+            "value": "show_use_left_doctor_bag",
+            "default_value": true,
+            "ehi_ver" : 267
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_use_left_bodybags_bag_choice",
+            "title": "ehi_other_show_use_left_bodybags_bag",
+            "callback": "SetOption",
+            "callback_arguments": "show_use_left_bodybags_bag",
+            "value": "show_use_left_bodybags_bag",
+            "default_value": true,
+            "ehi_ver" : 267
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_use_left_grenades_choice",
+            "title": "ehi_other_show_use_left_grenades",
+            "callback": "SetOption",
+            "callback_arguments": "show_use_left_grenades",
+            "value": "show_use_left_grenades",
+            "default_value": true,
+            "ehi_ver" : 267
         }
     ]
 }

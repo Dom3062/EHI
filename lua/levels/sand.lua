@@ -25,7 +25,7 @@ function EHIsand11Tracker:OverridePanel()
         color = self._text_color
     })
     self._text_chance:set_right(self._bg_box:right())
-    self:SetIconX()
+    self:SetIconsX()
 end
 
 function EHIsand11Tracker:SetChance(amount)
@@ -126,7 +126,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         overkill_or_below = 2,
         mayhem_or_above = 3
     })
-    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, sniper_count = sniper_count }
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, sniper_count = sniper_count, remaining_snipers = 4 }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -135,6 +135,10 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[101547] = EHI:AddCustomCode(function(self)
+        self._trackers:ForceRemoveTracker("Snipers")
+        self:UnhookTrigger(100015)
+    end)
 end
 
 EHI.Manager:ParseTriggers({

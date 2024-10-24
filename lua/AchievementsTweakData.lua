@@ -68,7 +68,7 @@ local achievements = {
     "uno_9",
     "ranc_9", "ranc_10", "ranc_11",
     "voff_5",
-    --[["green_1",]] "green_3", "cac_10",
+    "green_3", "cac_10",
     "run_8", "run_9", "run_10",
     "rvd_9", "rvd_10",
     "rvd_11",

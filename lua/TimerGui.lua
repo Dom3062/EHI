@@ -11,6 +11,7 @@ end
 ---@field _original_colors table?
 ---@field _current_timer number|string
 ---@field _time_left number
+---@field _jammed boolean
 ---@field THEME string
 ---@field upgrade_colors table
 ---@field themes table
@@ -18,10 +19,10 @@ end
 local Icon = EHI.Icons
 
 local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
----@type { [string]: number|MissionDoorAdvancedTable? }
+---@type { [string]: number|MissionDoorTable? }
 local MissionDoor = {}
 
----@param tbl table<Vector3, number|MissionDoorAdvancedTable>
+---@param tbl table<Vector3, number|MissionDoorTable>
 function TimerGui.SetMissionDoorData(tbl)
     for vector, value in pairs(tbl) do
         MissionDoor[tostring(vector)] = value
@@ -215,6 +216,9 @@ end
 
 ---@param jammed boolean
 function TimerGui:_set_jammed(jammed, ...)
+    if jammed == true and self._power_status_override then
+        managers.ehi_manager:SetTimerPowered(self._ehi_key, true)
+    end
     managers.ehi_manager:SetTimerJammed(self._ehi_key, jammed)
     original._set_jammed(self, jammed, ...)
 end
@@ -293,6 +297,13 @@ end
 
 function TimerGui:SetIgnoreVisibility()
     self._ignore_visibility = true
+end
+
+function TimerGui:SetJammedStatusOverridePoweredStatus()
+    self._power_status_override = true
+    if self._started and self._jammed and not self._powered then
+        managers.ehi_manager:SetTimerPowered(self._ehi_key, true)
+    end
 end
 
 ---@param units number[]

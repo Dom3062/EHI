@@ -393,7 +393,7 @@
     "ehi_show_timers_desc" : "显示地图上正在进行的黑入，钻机，电锯等进程的剩余时间",
 	
     "ehi_show_timers_max_in_group" : "一组计时器数量上限",
-    "ehi_show_timers_max_in_group_desc" : "设置追踪器中最多有几个计时器。如追踪器内计时器已达最大值则创建一个或数个追踪器以显示。\n\n若要禁用此功能则将数值设置为“1”",
+    "ehi_show_timers_max_in_group_desc" : "设置追踪器中最多有几个计时器。如追踪器内计时器已达最大值则创建一个或数个追踪器以显示。\n\n若要禁用此功能则将数值设置为“1”\n\nIf the value is set to any than 1 and Horizontal alignment is selected, EHI will prefer unlimited number of timers in a group, to preserve space",
 
     "ehi_show_camera_loop" : "显示摄像头回路追踪器",
     "ehi_show_camera_loop_desc" : "显示地图上已被设置回路的摄像头的回路持续时间",
@@ -544,9 +544,6 @@
 
     "ehi_show_assault_diff_in_assault_trackers" : "在突击追踪器中显示突击难度",
     "ehi_show_assault_diff_in_assault_trackers_desc" : "In Holdout game mode, this option will show enemy damage and health boost, respectively\n\nIn other game modes, this option will show assault difficulty, in percent",
-	
-    "ehi_show_endless_assault" : "在追踪器中显示无尽突击",
-    "ehi_show_endless_assault_desc" : "无尽突击开始后在突击追踪器中显示无尽突击文本",
     
     "ehi_show_loot_counter" : "显示战利品追踪器",
     "ehi_show_loot_counter_desc" : "显示你已经劫获多少战利品",

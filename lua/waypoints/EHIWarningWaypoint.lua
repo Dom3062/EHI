@@ -46,10 +46,3 @@ function EHIWarningWaypoint:AnimateColor(color, default_color)
         self._timer:animate(self._anim_warning, default_color or self._default_color, color or self._warning_color, self._bitmap, self._arrow, self._bitmap_world)
     end
 end
-
-function EHIWarningWaypoint:delete()
-    if self._timer and alive(self._timer) then
-        self._timer:stop()
-    end
-    EHIWarningWaypoint.super.delete(self)
-end

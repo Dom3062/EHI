@@ -105,6 +105,10 @@ function EHIMenu:UpdateTrackerAlignment(alignment)
     self._preview_panel:UpdateTrackerAlignment(alignment)
 end
 
+function EHIMenu:UpdateTrackerVerticalAnim(anim)
+    self._preview_panel:UpdateTrackerVerticalAnim(anim)
+end
+
 function EHIMenu:SetFocus(focus, value)
     self._preview_panel:SetSelected(value)
 end

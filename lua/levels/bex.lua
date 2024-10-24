@@ -21,9 +21,8 @@ function EHIbex11Tracker:pre_init(...)
     })
 end
 
-function EHIbex11Tracker:delete()
+function EHIbex11Tracker:pre_delete()
     self._loot_parent:RemoveEventListener("bex_11")
-    EHIbex11Tracker.super.delete(self)
 end
 
 function EHIbex11Tracker:CountersDone()
@@ -31,7 +30,7 @@ function EHIbex11Tracker:CountersDone()
     self:SetBGSize(self._default_bg_size, "set", true)
     local panel_w = self._default_bg_size + (self._icon_gap_size_scaled * self._n_of_icons)
     self:AnimatePanelW(panel_w)
-    self:AnimIconX(self._default_bg_size + self._gap_scaled)
+    self:AnimIconsX(-self._default_bg_size)
     self:AnimateAdjustHintX(-self._default_bg_size)
     self:ChangeTrackerWidth(panel_w)
     self:AnimateBG()

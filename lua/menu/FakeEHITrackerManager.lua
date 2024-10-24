@@ -146,6 +146,8 @@ function FakeEHITrackerManager:CreateFirstFakeTracker(params)
     local bg_box = self._fake_trackers[1]._bg_box
     if self._tracker_alignment == 2 then
         bg_box:child("left_bottom"):set_color(Color.red)
+    elseif self._tracker_alignment <= 2 and self._tracker_vertical_anim == 2 then
+        bg_box:child("right_top"):set_color(Color.red)
     else
         bg_box:child("left_top"):set_color(Color.red)
     end
@@ -271,6 +273,7 @@ function FakeEHITrackerManager:GetTrackerSize(n_of_icons)
     return final_size
 end
 
+---@param id string
 function FakeEHITrackerManager:UpdateTracker(id, value)
     local correct_id = ""
     if id == "xp_panel" then
@@ -309,10 +312,9 @@ function FakeEHITrackerManager:UpdateEquipmentFormat(format)
     end
 end
 
-function FakeEHITrackerManager:UpdateXOffset(x)
-    local x_full, _ = managers.gui_data:safe_to_full(x, 0)
-    self._x = x_full
-    self._vertical.x = x_full
+---@param x number?
+function FakeEHITrackerManager:_update_tracker_x(x)
+    self._vertical.x = x or self._x
     self._vertical.y_offset = 0
     if self._tracker_alignment == 4 then -- Horizontal; Right to Left
         for i, tracker in ipairs(self._fake_trackers) do
@@ -324,11 +326,17 @@ function FakeEHITrackerManager:UpdateXOffset(x)
             tracker:SetX(x_new)
         end
     end
-    if self._preview_text then
-        self:SetPreviewTextPosition()
-    end
 end
 
+---@param x number
+function FakeEHITrackerManager:UpdateXOffset(x)
+    local x_full, _ = managers.gui_data:safe_to_full(x, 0)
+    self._x = x_full
+    self:_update_tracker_x(x_full)
+    self:SetPreviewTextPosition()
+end
+
+---@param y number
 function FakeEHITrackerManager:UpdateYOffset(y)
     local _, y_full = managers.gui_data:safe_to_full(0, y)
     self._y = y_full
@@ -348,6 +356,7 @@ function FakeEHITrackerManager:UpdateYOffset(y)
     self:SetPreviewTextPosition()
 end
 
+---@param id string
 function FakeEHITrackerManager:SetSelected(id)
     for _, tracker in ipairs(self._fake_trackers) do
         tracker:SetSelected(id)
@@ -362,10 +371,11 @@ function FakeEHITrackerManager:UpdateTextScale(scale)
     end
 end
 
+---@param scale number
 function FakeEHITrackerManager:UpdateScale(scale)
     self._scale = scale
-    panel_size = panel_size_original * self._scale
-    panel_offset = panel_offset_original * self._scale
+    panel_size = panel_size_original * scale
+    panel_offset = panel_offset_original * scale
     self:Redraw()
 end
 
@@ -408,6 +418,17 @@ function FakeEHITrackerManager:UpdateTrackerAlignment(alignment)
     end
     self._tracker_alignment = alignment
     self:Redraw()
+end
+
+function FakeEHITrackerManager:UpdateTrackerVerticalAnim(anim)
+    if self._tracker_vertical_anim == anim then
+        return
+    end
+    self._tracker_vertical_anim = anim
+    for _, tracker in ipairs(self._fake_trackers) do
+        tracker:UpdateTrackerVerticalAnim(anim)
+    end
+    self:_update_tracker_x()
 end
 
 function FakeEHITrackerManager:Redraw()

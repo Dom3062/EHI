@@ -13,9 +13,9 @@ local triggers = {
     [101715] = { time = 11, id = "Thermite3", icons = { Icon.Fire }, hint = Hints.Thermite },
     [101716] = { time = 11, id = "Thermite4", icons = { Icon.Fire }, hint = Hints.Thermite },
 
-    [101815] = { time = 10, id = "MoveWalkway", icons = { Icon.Wait }, hint = Hints.Wait },
+    [102606] = { time = 10, id = "MoveWalkway", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [101137] = { max = 10, id = "EnemyDeathOutside", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress, hint = Hints.Kills },
+    [101137] = { max = 10, id = "EnemyDeathOutside", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress, hint = Hints.Kills, waypoint = { data_from_element_and_remove_vanilla_waypoint = 101793 } },
     [101412] = { id = "EnemyDeathOutside", special_function = SF.IncreaseProgress }
 }
 

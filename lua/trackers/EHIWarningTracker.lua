@@ -51,10 +51,3 @@ function EHIWarningTracker:SetTimeNoAnim(time)
     self._check_anim_progress = time <= 10
     EHIWarningTracker.super.SetTimeNoAnim(self, time)
 end
-
-function EHIWarningTracker:delete()
-    if self._text and alive(self._text) then
-        self._text:stop()
-    end
-    EHIWarningTracker.super.delete(self)
-end

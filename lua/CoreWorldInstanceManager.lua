@@ -37,7 +37,7 @@ local instances =
     },
     ["levels/instances/unique/holly_2/heli_c4_drop/world"] =
     {
-        [100000] = { time = 120 + 25 + 0.25 + 2 + 2, id = "jolly_C4Drop", icons = Icon.HeliDropC4, hint = Hints.C4Delivery, waypoint = { position_by_element = 100021 } }
+        [100000] = { time = 120 + 25 + 0.25 + 2 + 2, id = "jolly_C4Drop", icons = Icon.HeliDropC4, hint = Hints.C4Delivery, waypoint = { icon = Icon.C4, position_by_element = 100021 } }
     },
     ["levels/instances/unique/hlm_reader/world"] =
     {
@@ -466,7 +466,15 @@ local instances =
             end
         end },
         [100089] = { time = 0.1 + 400/30, id = "trai_CraneLowerHooks", icons = { Icon.Winch }, hint = Hints.des_Crane },
-        [100010] = { time = 400/30 + 91.5 + 2 + 400/30, id = "trai_CraneMove", icons = { Icon.Winch }, class = TT.Pausable, hint = Hints.des_Crane },
+        [100010] = { time = 400/30 + 91.5 + 2 + 400/30, id = "trai_CraneMove", icons = { Icon.Winch }, class = TT.Pausable, hint = Hints.des_Crane, waypoint_f = function(self, trigger)
+            self._waypoints:AddWaypoint(trigger.id, {
+                time = trigger.time,
+                icon = Icon.Defend,
+                position = Vector3(), -- Needs to be manually updated
+                class = self.Waypoints.Pausable
+            })
+            self:CallEvent("trai_CraneMove", self, trigger.id)
+        end },
         [100047] = { id = "trai_CraneMove", special_function = SF.PauseTracker },
         [100059] = { id = "trai_CraneMove", special_function = SF.UnpauseTracker },
         [100060] = { id = "trai_CraneMove", special_function = SF.PauseTracker },

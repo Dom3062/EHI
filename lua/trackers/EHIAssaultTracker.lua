@@ -101,7 +101,7 @@ function EHIAssaultTracker:init(panel, params, parent_class)
         self._text_color = self._inaccurate_text_color
     end
     EHIAssaultTracker.super.init(self, panel, params, parent_class)
-    self._update = not (params.stop_counting or params.endless_assault)
+    self._update = not params.endless_assault
     if params.endless_assault then
         self:SetEndlessAssault(true)
     end
@@ -297,7 +297,7 @@ function EHIAssaultTracker:SetControlStateBlock(block, t)
     if block then
         if self._state == State.control then
             self:RemoveTrackerFromUpdate()
-            self._text:set_text("")
+            self:SetStatusText("break")
             self._control_state_block = true
         end
     elseif self._control_state_block and not block then
@@ -513,6 +513,7 @@ function EHIAssaultTracker:SetState(state)
         self:SetStatusText("endless")
         self._time_warning = nil
         self._assault = true
+        self._control_state_block = nil
         self:AnimateBG()
     else
         self:SetIconColor(Captain)
@@ -622,14 +623,5 @@ function EHIAssaultTracker:Refresh()
     if not self._assault then
         self:StopTextAnim()
         self:AnimateColor(true)
-    end
-end
-
---- The tracker `NEEDS TO BE DELETED` via `EHITrackerManager:ForceRemoveTracker()`!
-function EHIAssaultTracker:delete()
-    if self._refresh_on_delete then
-        self:Refresh()
-    else
-        EHIAssaultTracker.super.delete(self)
     end
 end

@@ -26,10 +26,10 @@ end
 
 function EHIMinionTracker:SetIconColor()
     if self._n_of_peers >= 2 then
-        self._icon1:set_color(Color.white)
+        EHIMinionTracker.super.SetIconColor(self, Color.white)
     else
         local peer_id, _ = next(self._peers)
-        self._icon1:set_color(tweak_data.chat_colors[peer_id] or Color.white)
+        EHIMinionTracker.super.SetIconColor(self, tweak_data.chat_colors[peer_id] or Color.white)
     end
 end
 
@@ -45,7 +45,7 @@ end
 function EHIMinionTracker:AnimateMovement(addition)
     self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
-    self:AnimIconX(self._panel_w - self._icon_size_scaled)
+    self:AnimIconsX(addition and self._panel_half or -self._panel_half)
     self:AnimateAdjustHintX(addition and self._panel_half or -self._panel_half)
 end
 

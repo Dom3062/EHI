@@ -72,9 +72,8 @@ function EHISniperWarningTracker:pre_init(params)
     self._single_sniper = params.single_sniper
 end
 
-function EHISniperWarningTracker:delete()
+function EHISniperWarningTracker:pre_delete()
     self:SniperSpawned()
-    EHISniperWarningTracker.super.delete(self)
 end
 
 ---@class EHISniperCountTracker : EHICountTracker, EHISniperBaseTracker
@@ -96,6 +95,15 @@ function EHISniperCountTracker:pre_init(params)
     end
 end
 
+function EHISniperCountTracker:Format()
+    local s = EHISniperCountTracker.super.Format(self)
+    if self._remaining_snipers > 0 then
+        s = string.format("%s (%d)", s, self._remaining_snipers)
+    end
+    return s
+end
+EHISniperCountTracker.FormatCount = EHISniperCountTracker.Format
+
 function EHISniperCountTracker:SniperSpawnsSuccess()
     if self._snipers_spawned_popup and self._sniper_count ~= self._current_sniper_count and self._snipers_enabled then
         if self._remaining_snipers > 0 then
@@ -109,17 +117,18 @@ function EHISniperCountTracker:SniperSpawnsSuccess()
 end
 
 function EHISniperCountTracker:DecreaseCount(count)
-    EHISniperCountTracker.super.DecreaseCount(self, count)
     local n = count or 1
-    if self._current_sniper_count then
-        self._current_sniper_count = self._current_sniper_count - n
-    end
-    if self._remaining_snipers ~= 0 then
+    if self._remaining_snipers > 0 then
         self._remaining_snipers = self._remaining_snipers - n
         if self._remaining_snipers == 0 then -- No more snipers will spawn, delete the tracker
             self:SniperLogicEnded()
             self:delete()
+            return
         end
+    end
+    EHISniperCountTracker.super.DecreaseCount(self, n)
+    if self._current_sniper_count then
+        self._current_sniper_count = self._current_sniper_count - n
     end
 end
 
@@ -283,7 +292,6 @@ EHISniperTimedChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHISniperTimedChanceTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHISniperTimedChanceTracker.Format = EHISniperTimedChanceTracker.ShortFormat
 EHISniperTimedChanceTracker._anim_chance = EHIChanceTracker._anim_chance
-EHISniperTimedChanceTracker.delete = EHIChanceTracker.delete
 function EHISniperTimedChanceTracker:pre_init(params)
     self._refresh_on_delete = true
     self._count = params.count or 0
@@ -379,9 +387,8 @@ function EHISniperTimedChanceTracker:SetChance(amount)
     self:AnimateBG(1)
 end
 
-function EHISniperTimedChanceTracker:ForceDelete()
+function EHISniperTimedChanceTracker:pre_delete()
     self:SniperLogicEnded()
-    EHISniperTimedChanceTracker.super.ForceDelete(self)
 end
 
 ---@class EHISniperLoopTracker : EHITracker, EHIChanceTracker, EHICountTracker, EHISniperBaseTracker
@@ -397,7 +404,6 @@ EHISniperLoopTracker.SetChance = EHIChanceTracker.SetChance
 EHISniperLoopTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHISniperLoopTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHISniperLoopTracker._anim_chance = EHIChanceTracker._anim_chance
-EHISniperLoopTracker.delete = EHIChanceTracker.delete
 EHISniperLoopTracker.Format = EHISniperLoopTracker.ShortFormat
 function EHISniperLoopTracker:pre_init(params)
     self._refresh_on_delete = true
@@ -437,7 +443,7 @@ function EHISniperLoopTracker:OverridePanel()
         color = self._sniper_text_color,
         left = self._text:right()
     })
-    self:SetIconX()
+    self:SetIconsX()
 end
 
 function EHISniperLoopTracker:SetTimeNoAnim(time)
@@ -509,16 +515,13 @@ function EHISniperLoopTracker:RequestRemoval()
     self:FitTheText(self._count_text)
     local panel_w = self._original_bg_size + (self._icon_gap_size_scaled * self._n_of_icons)
     self:AnimatePanelW(panel_w)
-    self:AnimIconX(self._original_bg_size + self._gap_scaled)
+    self:AnimIconsX(self._bg_box:w() - self._original_bg_size)
     self:ChangeTrackerWidth(panel_w)
     self:AnimateAdjustHintX(self._bg_box:w() - self._original_bg_size)
 end
 
-function EHISniperLoopTracker:ForceDelete()
-    if self._snipers_logic_ended then
-        managers.hud:ShowSniperLogic()
-    end
-    EHISniperLoopTracker.super.ForceDelete(self)
+function EHISniperLoopTracker:pre_delete()
+    self:SniperLogicEnded()
 end
 
 ---@class EHISniperLoopRestartTracker : EHISniperLoopTracker

@@ -123,14 +123,13 @@
             "id": "ehi_tracker_vertical_w_anim_choice",
             "title": "ehi_tracker_vertical_w_anim",
             "description": "ehi_tracker_vertical_w_anim_desc",
-            "callback": "SetOption",
+            "callback": ["SetOption", "UpdateTrackerVerticalAnim"],
             "callback_arguments": "tracker_vertical_w_anim",
             "items": [
                 "ehi_tracker_vertical_w_anim_1",
                 "ehi_tracker_vertical_w_anim_2"
             ],
             "value": "tracker_vertical_w_anim",
-            "parent_func" : "IsVerticalAlignment",
             "default_value": 1,
             "ehi_ver" : 232
         },
@@ -250,7 +249,7 @@
             "title": "ehi_other_menu",
             "description": "ehi_other_menu_desc",
             "next_menu": "ehi_other_menu",
-            "ehi_ver" : 206
+            "ehi_ver" : 267
         },
         {
             "type": "button",
@@ -258,7 +257,7 @@
             "title": "ehi_colors_menu",
             "description": "ehi_colors_menu_desc",
             "next_menu": "ehi_colors_menu",
-            "ehi_ver" : 145
+            "ehi_ver" : 267
         },
         {
             "type" : "divider",

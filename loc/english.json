@@ -71,6 +71,7 @@
     "ehi_status_objective" : "OBJECTIVE",
     "ehi_status_fail" : "FAIL",
     "ehi_status_endless" : "ENDLESS",
+    "ehi_status_break" : "BREAK",
     "ehi_hint_drill" : "Drill",
     "ehi_hint_hack" : "Hack",
     "ehi_hint_laser" : "Laser",
@@ -396,7 +397,7 @@
     "ehi_show_timers_desc" : "Shows timers for hacking, drilling, sawing, etc...",
 
     "ehi_show_timers_max_in_group" : "Count of Timers in a Group",
-    "ehi_show_timers_max_in_group_desc" : "Sets a maximum count of timers in one tracker. If the maximum is exceeded, another tracker will get created to hold that timer (or more) on screen\n\nTo disable this feature, set the value to '1'",
+    "ehi_show_timers_max_in_group_desc" : "Sets a maximum count of timers in one tracker. If the maximum is exceeded, another tracker will get created to hold that timer (or more) on screen\n\nTo disable this feature, set the value to '1'\n\nIf the value is set to any than 1 and Horizontal alignment is selected, EHI will prefer unlimited number of timers in a group, to preserve space",
 
     "ehi_show_camera_loop" : "Show Camera Loop",
     "ehi_show_camera_loop_desc" : "Shows a tracker when a security camera is looped",
@@ -547,9 +548,6 @@
 
     "ehi_show_assault_diff_in_assault_trackers" : "Show Assault Difficulty in Assault Trackers",
     "ehi_show_assault_diff_in_assault_trackers_desc" : "In Holdout game mode, this option will show enemy damage and health boost, respectively\n\nIn other game modes, this option will show assault difficulty, in percent",
-
-    "ehi_show_endless_assault" : "Show Endless Assault in the Tracker",
-    "ehi_show_endless_assault_desc" : "Shows 'ENDLESS' in the Assault tracker when endless assault is on",
     
     "ehi_show_loot_counter" : "Show Loot Counter",
     "ehi_show_loot_counter_desc" : "Shows a tracker for how much loot is in heist",
@@ -915,6 +913,11 @@
     "ehi_other_show_floating_health_bar_converts" : "Show Floating Health Bars for Converts",
     "ehi_other_show_floating_health_bar_civilians" : "Show Floating Health Bars for Civilians",
 
+    "ehi_other_show_use_left_ammo_bag" : "Show uses left for Ammo Bags",
+    "ehi_other_show_use_left_doctor_bag" : "Show uses left for Doctor Bags",
+    "ehi_other_show_use_left_bodybags_bag" : "Show uses left for Bodybag Bags",
+    "ehi_other_show_use_left_grenades" : "Show uses left for Grenade cases",
+
     "ehi_colors_menu" : "Colors",
     "ehi_colors_menu_desc" : "Changes used colors",
 
@@ -928,6 +931,9 @@
 
     "ehi_colors_drill_autorepair" : "Drill/Saw Autorestart",
     "ehi_colors_drill_autorepair_desc" : "Changes icon color when drill/saw can autorestart on its own",
+
+    "ehi_colors_drill_not_powered" : "Drill/Saw Not Powered",
+    "ehi_colors_drill_not_powered_desc" : "Changes text color when drill/saw is not powered",
 
     "ehi_colors_warning" : "Warning",
     "ehi_colors_warning_desc" : "Animates text color when there is 10 seconds left",

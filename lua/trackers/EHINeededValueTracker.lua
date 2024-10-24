@@ -15,7 +15,7 @@ function EHINeededValueTracker:OverridePanel()
     self:SetBGSize()
     self._text:set_w(self._bg_box:w())
     self:FitTheText()
-    self:SetIconX()
+    self:SetIconsX()
 end
 
 function EHINeededValueTracker:Format()

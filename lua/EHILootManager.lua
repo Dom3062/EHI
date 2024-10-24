@@ -220,6 +220,23 @@ function EHILootManager:SetUnknownRandomLoot(state)
     self._trackers:CallFunction("LootCounter", "SetUnknownRandomLoot", state)
 end
 
+---@param count number
+function EHILootManager:SetCountOfArmoredTransports(count)
+    self._trackers:CallFunction("LootCounter", "SetCountOfArmoredTransports", count)
+end
+
+function EHILootManager:RandomLootSpawnedInTransport()
+    self._trackers:CallFunction("LootCounter", "RandomLootSpawnedInTransport")
+end
+
+function EHILootManager:RandomLootDeclinedInTransport()
+    self._trackers:CallFunction("LootCounter", "RandomLootDeclinedInTransport")
+end
+
+function EHILootManager:ExplosionInTransport()
+    self._trackers:CallFunction("LootCounter", "ExplosionInTransport")
+end
+
 ---@param data table
 function EHILootManager:SetSyncData(data)
     self._loot_counter_sync_data = data
@@ -290,11 +307,11 @@ end
 ---@param data SyncData
 function EHILootManager:load(data)
     local load_data = data.EHILootManager
-    if load_data and EHI:GetOption("show_loot_counter") then
+    if load_data and EHI:IsLootCounterVisible() then
         local params = deep_clone(load_data) --[[@as LootCounterTable]]
         params.client_from_start = true
         params.no_sync_load = true
-        EHI:ShowLootCounterNoCheck(params)
+        EHI:ShowLootCounterNoChecks(params)
         self:SyncSecuredLoot()
     end
 end

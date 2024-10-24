@@ -25,50 +25,19 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
-if EHI:IsSyncedLootCounterVisible() then
-    -- [ID of disabled unit when truck is visible] = truck ID
-    local trucks =
-    {
-        [102076] = 100007, -- 2
-        [101642] = 100021, -- 3
-        [102075] = 100023, -- 5
-        [102077] = 100024, -- 6
-        [102074] = 100097, -- 8
-        [100716] = 100100, -- 9
-        [102072] = 100226, -- 11
-        [102070] = 100227 -- 12
-    }
-    local trucks_body = { 100006, 100022, 100025, 100101 }
+if EHI:IsLootCounterVisible() then
     ---@param count number
     local function LootCounter(count)
-        EHI:ShowLootCounterSynced({ max_random = count * 9 })
-        local truck = 0
-        local hook_function = tweak_data.ehi.functions.HookArmoredTransportUnit
-        for enabled_unit_id, truck_id in pairs(trucks) do
-            if managers.game_play_central:IsMissionUnitEnabled(enabled_unit_id) then
-                truck = truck + 1
-                hook_function(truck_id)
-                if truck == count then
-                    break
-                end
-            end
-        end
-        if truck ~= count then
-            local wd = managers.worlddefinition
-            for _, truck_id in ipairs(trucks_body) do
-                local unit = wd:get_unit(truck_id) --[[@as UnitBase?]]
-                if unit and unit:damage() and unit:damage()._state and unit:damage()._state.graphic_group and unit:damage()._state.graphic_group.grp_truck then
-                    local state = unit:damage()._state.graphic_group.grp_truck
-                    if state[1] == "set_visibility" and state[2] then
-                        truck = truck + 1
-                        hook_function(truck_id)
-                        if truck == count then
-                            break
-                        end
-                    end
-                end
-            end
-        end
+        EHI:ShowLootCounterNoChecks({
+            max_random = count * 9,
+            carry_data =
+            {
+                at_loot = true,
+                no_at_loot = true
+            },
+            client_from_start = true
+        })
+        managers.ehi_loot:SetCountOfArmoredTransports(count)
     end
     other[100238] = { special_function = SF.CustomCode, f = LootCounter, arg = 1 }
     other[101189] = { special_function = SF.CustomCode, f = LootCounter, arg = 2 }

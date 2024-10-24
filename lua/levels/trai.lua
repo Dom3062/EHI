@@ -17,6 +17,17 @@ local triggers =
     [103130] = { time = 10, id = "LocomotiveRefuel", icons = { Icon.Oil }, hint = Hints.FuelTransfer }
 }
 
+EHI:AddEventListener("trai_CraneMove",
+---@param self EHIManager
+---@param waypoint_id string
+function(self, waypoint_id)
+    local wp_defend = EHI:GetInstanceElementID(100074, 23450)
+    self._waypoints:SetWaypointPosition(waypoint_id, self:GetElementPositionOrDefault(wp_defend))
+    managers.hud:SoftRemoveWaypoint2(wp_defend)
+    managers.hud:SoftRemoveWaypoint2(EHI:GetInstanceElementID(100086, 23450)) -- Interact
+    self:RemoveEventListener("trai_CraneMove")
+end)
+
 local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 50 })
@@ -26,7 +37,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         veryhard_or_below = 2,
         overkill_or_above = 3
     })
-    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, sniper_count = sniper_count }
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, sniper_count = sniper_count, remaining_snipers = 5 }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%

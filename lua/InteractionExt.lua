@@ -132,15 +132,82 @@ if EHI:GetOption("show_enemy_count_tracker") and EHI:GetOption("show_enemy_count
     end)
 end
 
+do
+    local equipment = {}
+    local format_function
+    if EHI:GetOption("show_use_left_ammo_bag") then
+        equipment.ammo_bag = true
+        Hooks:PostHook(AmmoBagInteractionExt, "_add_string_macros", "EHI_ammo_add_string_macros", function(self, macros, ...)
+            local charges = managers.ehi_manager.RoundNumber(self._unit:base():GetRealAmount(), 0.01)
+            macros.EHI_USE_LEFT = format_function(charges)
+        end)
+    end
+    if EHI:GetOption("show_use_left_doctor_bag") then
+        equipment.doctor_bag = true
+        Hooks:PostHook(DoctorBagBaseInteractionExt, "_add_string_macros", "EHI_doctor_add_string_macros", function(self, macros, ...)
+            if self.tweak_data == "first_aid_kit" then
+                macros.EHI_USE_LEFT = ""
+            else
+                local charges = self._unit:base():GetRealAmount()
+                macros.EHI_USE_LEFT = format_function(charges)
+            end
+        end)
+    end
+    if EHI:GetOption("show_use_left_bodybags_bag") then
+        equipment.bodybags_bag = true
+        Hooks:PostHook(BodyBagsBagInteractionExt, "_add_string_macros", "EHI_bodybags_add_string_macros", function(self, macros, ...)
+            local charges = self._unit:base():GetRealAmount()
+            macros.EHI_USE_LEFT = format_function(charges)
+        end)
+    end
+    if EHI:GetOption("show_use_left_grenades") then
+        local grenade_case = Idstring("units/payday2/equipment/gen_equipment_grenade_crate/gen_equipment_explosives_case")
+        local grenade_case_mcshay = Idstring("units/pd2_dlc_mxm/equipment/gen_equipment_grenade_crate/gen_equipment_grenade_crate")
+        equipment.grenade_crate = true
+        Hooks:PostHook(GrenadeCrateInteractionExt, "_add_string_macros", "EHI_grenades_add_string_macros", function(self, macros, ...)
+            local name = self._unit:name()
+            if name == grenade_case or name == grenade_case_mcshay then
+                local charges = self._unit:base():GetRealAmount()
+                macros.EHI_USE_LEFT = format_function(charges)
+            else
+                macros.EHI_USE_LEFT = ""
+            end
+        end)
+    end
+    if next(equipment) then
+        ---@param loc LocalizationManager
+        ---@param lang_name string
+        EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, lang_name)
+            for key, _ in pairs(equipment) do
+                local tweak = tweak_data.interaction[key]
+                if not (tweak and tweak.text_id) then
+                    return
+                end
+                local text = loc:text(tweak.text_id, { BTN_INTERACT = "$BTN_INTERACT" })
+                LocalizationManager._custom_localizations[tweak.text_id] = string.format("%s\n%s", text, "$EHI_USE_LEFT")
+            end
+            equipment = nil
+            if lang_name == "czech" then
+                format_function = function(charges)
+                    return string.format("%s %d použití", math.within(charges, 2, 4) and "Zbývají" or "Zbývá", charges)
+                end
+            else
+                format_function = function(charges)
+                    return string.format("%d %s left", charges, charges > 1 and "uses" or "use")
+                end
+            end
+        end)
+    else
+        equipment = nil
+        format_function = nil
+    end
+end
+
 if not EHI:GetOption("show_equipment_tracker") then
     return
 end
 
 local all = EHI:GetOption("show_equipment_aggregate_all")
-
-local function StealthCheck()
-    return managers.groupai:state():whisper_mode()
-end
 
 local function pre_set_active(self, ...)
     self.__ehi_active = self._active
@@ -166,7 +233,7 @@ end
 
 if EHI:GetOption("show_equipment_ammobag") then
     EHI:PreHook(AmmoBagInteractionExt, "init", function(self, unit, ...)
-        self._ehi_key = unit:base():GetEHIKey()
+        self._ehi_key = unit:base()._ehi_key
         self._ehi_tracker_id = all and "Deployables" or "AmmoBags"
         self._ehi_unit = "ammo_bag"
         self._ehi_unit_check = all
@@ -176,8 +243,11 @@ if EHI:GetOption("show_equipment_ammobag") then
 end
 
 if EHI:GetOption("show_equipment_bodybags") then
+    local function StealthCheck()
+        return managers.groupai:state():whisper_mode()
+    end
     EHI:PreHook(BodyBagsBagInteractionExt, "init", function(self, unit, ...)
-        self._ehi_key = unit:base():GetEHIKey()
+        self._ehi_key = unit:base()._ehi_key
         self._ehi_tracker_id = all and "Deployables" or "BodyBags"
         self._ehi_unit = "bodybags_bag"
         self._ehi_load_check = StealthCheck
@@ -190,7 +260,7 @@ end
 if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_firstaidkit") then
     local aggregate = EHI:GetOption("show_equipment_aggregate_health")
     EHI:PreHook(DoctorBagBaseInteractionExt, "init", function(self, unit, ...)
-        self._ehi_key = unit:base().GetEHIKey and unit:base():GetEHIKey()
+        self._ehi_key = unit:base()._ehi_key
         if all then
             self._ehi_tracker_id = "Deployables"
         elseif aggregate then
