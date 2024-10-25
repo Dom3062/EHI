@@ -16,4 +16,21 @@ function MenuNodeMainGui:_setup_item_rows(...)
         )
         EHI._cache.SaveFileCorrupted = nil
     end
+    if EHI._cache.GameVersionNotCompatible then
+        QuickMenu:new(
+            managers.localization:text("ehi_wrong_game_version"),
+            managers.localization:text("ehi_wrong_game_version_desc"),
+            {
+                {
+                    text = managers.localization:text("ehi_button_ok"),
+                    is_cancel_button = true
+                }
+            },
+            true
+        )
+        EHI._cache.GameVersionNotCompatible = nil
+        if EHI.ModInstance then
+            EHI.ModInstance:SetEnabled(false, true)
+        end
+    end
 end

@@ -274,7 +274,7 @@ function EHITracker:init(panel, params, parent_class)
         if self._ONE_ICON and self._n_of_icons > 1 then
             self._n_of_icons = 1
         end
-        if self._ICON_LEFT_SIDE_START and self._n_of_icons > 1 and not self._HORIZONTAL_ALINGMENT then
+        if self._ICON_LEFT_SIDE_START and self._VERTICAL_ANIM_W_LEFT and self._n_of_icons > 1 and not self._HORIZONTAL_ALINGMENT then
             self.__vertical_anim_w_left_diff = -(self._icon_gap_size_scaled * (self._n_of_icons - 1))
         end
         gap = self._gap * self._n_of_icons

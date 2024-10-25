@@ -19,6 +19,7 @@ _G.BLT = {}
 ---@field GetName fun(self: self): string
 ---@field GetVersion fun(self: self): string
 ---@field IsEnabled fun(self: self): boolean
+---@field SetEnabled fun(self: self, enable: boolean, force: boolean?)
 
 ---@class DelayedCalls
 ---@field Add fun(self: self, id: any, time: number, func: function)

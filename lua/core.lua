@@ -547,6 +547,7 @@ _G.EHI =
         DeathSentence = 6
     },
 
+    ModInstance = ModInstance,
     ModVersion = ModInstance and tonumber(ModInstance:GetVersion()) or 0,
     -- PAYDAY 2/mods/Extra Heist Info/
     ModPath = ModPath,
@@ -1048,6 +1049,21 @@ local function Load()
     end
     self._cache.__loaded = true
     self._cache.AchievementsDisabled = not self:ShowMissionAchievements()
+    if not Global.load_level then
+        if Application.version then
+            local min_version, index = { 1, 143, 240 }, 1
+            for ver in string.gmatch(Application:version(), "([^.]+)") do
+                if tonumber(ver) >= min_version[index] then
+                    index = index + 1
+                else
+                    self._cache.GameVersionNotCompatible = true
+                    break
+                end
+            end
+        else
+            self._cache.GameVersionNotCompatible = true
+        end
+    end
 end
 
 function EHI:Init()
@@ -1628,10 +1644,12 @@ end
 ---@param f function
 ---@overload fun(self: EHI, id: string, f: function)
 function EHI:AddEventListener(id, events, f)
-    if f then
-        managers.ehi_manager:AddEventListener(id, events, f)
-    else
-        managers.ehi_manager:AddEventListener(id, id, events --[[@as function]])
+    if self:GetOption("show_mission_trackers") then
+        if f then
+            managers.ehi_manager:AddEventListener(id, events, f)
+        else
+            managers.ehi_manager:AddEventListener(id, id, events --[[@as function]])
+        end
     end
 end
 

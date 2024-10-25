@@ -5,6 +5,9 @@
     "ehi_save_data_corrupted" : "Uložené nastavení modu EHI je poškozené",
     "ehi_save_data_corrupted_desc" : "Uložené nastavení je poškozené a nelze ho načíst\nEHI načte výchozí hodnoty, aby hra nespadla",
 
+    "ehi_wrong_game_version": "Verze hry není kompatibilní s EHI",
+    "ehi_wrong_game_version_desc" : "Tvoje verze hry není kompatibilní s touto verzí EHI\nAby se zabránilo nečekaným pádům hry, EHI se vypne a nebude se načítat se hrou\nProsím aktualizuj hru, aby jsi mohl dál používat EHI",
+
     "ehi_menu_reset_to_default" : "$BTN_RESET Nastavit výchozí hodnotu",
     "ehi_menu_large_steps" : "$BTN_STEP Větší posunutí",
 

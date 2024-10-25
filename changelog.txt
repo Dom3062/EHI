@@ -1,3 +1,6 @@
+r268 (25. 10. 2024):
+Fixed misaligned trackers
+
 r267 (24. 10. 2024):
 Added options "Drill/Saw Not Powered", "Show uses left for Ammo Bags", "Show uses left for Doctor Bags", "Show uses left for Bodybag Bags" and "Show uses left for Grenade cases"
 Improved timer grouping if tracker alignment is set to horizontal and timer grouping is enabled, to preserve space

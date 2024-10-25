@@ -517,7 +517,7 @@ function EHISniperLoopTracker:RequestRemoval()
     self:AnimatePanelW(panel_w)
     self:AnimIconsX(self._bg_box:w() - self._original_bg_size)
     self:ChangeTrackerWidth(panel_w)
-    self:AnimateAdjustHintX(self._bg_box:w() - self._original_bg_size)
+    self:AnimateAdjustHintX(-(self._default_bg_size / 2))
 end
 
 function EHISniperLoopTracker:pre_delete()

@@ -5,6 +5,9 @@
     "ehi_save_data_corrupted" : "EHI's Save File Corrupted",
     "ehi_save_data_corrupted_desc" : "EHI's Save File got corrupted and cannot be loaded\nEHI will use default values to avoid crashing",
 
+    "ehi_wrong_game_version": "Game version is not compatible with EHI",
+    "ehi_wrong_game_version_desc" : "Your game version is not compatible with this EHI version\nTo prevent unexpected crashes, EHI will disable itself from loading\nTo keep using EHI, please update your game",
+
     "ehi_menu_reset_to_default" : "$BTN_RESET Set to default",
     "ehi_menu_large_steps" : "$BTN_STEP Large steps",
 
